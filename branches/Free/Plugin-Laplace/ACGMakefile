@@ -1,0 +1,18 @@
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Config
+#==============================================================================
+
+CXX_CFLAGS += -fopenmp
+CXX_LDFLAGS += -lgomp
+
+SUBDIRS = $(call find-subdirs)
+
+PACKAGES := qt4 glut glew opengl x11 math ACG2 openmesh2
+
+PROJ_LIBS = 
+
+MODULES := moc4 cxx
+
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Rules
+#==============================================================================
