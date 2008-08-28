@@ -1,0 +1,17 @@
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Config
+#==============================================================================
+
+#CXX_LDFLAGS += BasePlugin/Debian64_gcc4.0_max/libGUI_BasePlugin.so
+
+SUBDIRS = $(call find-subdirs)
+
+PACKAGES := 
+
+PROJ_LIBS = 
+
+MODULES := 
+
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Rules
+#==============================================================================
