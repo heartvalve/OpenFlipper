@@ -8,8 +8,6 @@
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
-#include <MeshTools/Curvature.hh>
-
 #ifdef USE_OPENMP
 #include <omp.h>
 #endif
