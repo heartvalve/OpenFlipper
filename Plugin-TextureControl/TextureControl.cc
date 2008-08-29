@@ -572,6 +572,8 @@ void TextureControlPlugin::slotTextureMenu(QAction* _action) {
          slotTextureUpdated(  _action->text() , o_it->id() );
       
       updateDialog();
+      
+      PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
   }
 }
 
@@ -588,6 +590,8 @@ void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
     emit log(LOGERR,"Unable to switch to texture " + _textureName + " (not found)");
     return; 
   }
+  
+  PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
    
   if ( activeTexture_ !=  _textureName ) {
     activeTexture_ =  _textureName;
