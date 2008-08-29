@@ -1,0 +1,77 @@
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Config
+#==============================================================================
+
+#CXX_LDFLAGS += BasePlugin/Debian64_gcc4.0_max/libOpenFlipper_BasePlugin.so
+
+$(info  )
+$(info ===================================================================== )
+
+
+ObjectTypes: PolyLineSupport BSplineCurveSupport BSplineSurfaceSupport SkeletonSupport build
+
+PolyLineSupport:
+poly-exists := $(shell test -d $(top-dir)/ObjectTypes/PolyLine && echo poly-found)
+ifeq ($(poly-exists), poly-found)
+  $(info Found PolyLine Object Type -> Enabled PolyLine Support )
+  PROJ_LIBS += ObjectTypes/PolyLine
+else
+  $(warning No PolyLine Object Found!     -> Disabled PolyLine Support )
+endif
+
+BSplineCurveSupport:
+bsplinecurve-exists := $(shell test -d $(top-dir)/ObjectTypes/BSplineCurve && echo bsplinecurve-found)
+ifeq ($(bsplinecurve-exists), bsplinecurve-found)
+  $(info Found BSplineCurve Object Type -> Enabled BSplineCurve Support )
+  PROJ_LIBS += ObjectTypes/BSplineCurve
+else
+  $(warning No BSplineCurve Object Found! -> Disabled BSplineCurve Support )
+endif
+
+BSplineSurfaceSupport:
+bsplinesurface-exists := $(shell test -d $(top-dir)/ObjectTypes/BSplineSurface && echo bsplinesurface-found)
+ifeq ($(bsplinesurface-exists), bsplinesurface-found)
+  $(info Found BSplineSurface Object Type -> Enabled BSplineSurface Support )
+  PROJ_LIBS += ObjectTypes/BSplineSurface
+else
+  $(warning No BSplineSurface Object Found! -> Disabled BSplineSurface Support )
+endif
+
+SkeletonSupport:
+skeleton-exists := $(shell test -d $(top-dir)/ObjectTypes/Skeleton && echo skeleton-found)
+ifeq ($(skeleton-exists), skeleton-found)
+  $(info Found Skeleton Object Type -> Enabled Skeleton Support )
+  PROJ_LIBS += ObjectTypes/Skeleton
+else
+  $(warning No Skeleton Object Found! -> Disabled Skeleton Support )
+endif
+
+$(info ===================================================================== )
+$(info  )
+
+SUBDIRS = common widgets Scripting ACGHelper Logging INIFile BasePlugin Core SimpleOpt
+
+PACKAGES := qt4 glut glew opengl x11 math ACG2 openmesh2
+
+PROJ_LIBS += OpenFlipper/BasePlugin \
+             OpenFlipper/Core \
+             OpenFlipper/ACGHelper \
+             OpenFlipper/common \
+             OpenFlipper/INIFile \
+             OpenFlipper/Logging \
+             OpenFlipper/Scripting \
+             OpenFlipper/Scripting/scriptPrototypes \
+             OpenFlipper/Scripting/scriptWrappers \
+             OpenFlipper/widgets/coreWidget \
+             OpenFlipper/widgets/helpBrowser \
+             OpenFlipper/widgets/loadWidget \
+	     OpenFlipper/widgets/unloadPluginsWidget \
+             OpenFlipper/widgets/viewModeWidget \
+             OpenFlipper/widgets/addEmptyWidget \
+             OpenFlipper/widgets/viewModeWidget 
+
+MODULES := moc4 cxx
+
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Rules
+#==============================================================================

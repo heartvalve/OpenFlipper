@@ -1,0 +1,28 @@
+/*! \page pluginProgramming Plugin Programming
+ * \section plugin_sec Plugin Basics
+ * 
+ * As mentioned above Openflipper is a plugin  based system. It uses the qt plugin implementation to
+ * load and unload plugins at runtime. Every algorithm should be added as one of these plugins. 
+ * 
+ * The plugins have to be created as .so (or under windows : .dll) files which should be symlinked or 
+ * copied to the Plugin subfolder. OpenFlipper distinguishes between 32/64-bit plugin versions and
+ * max or dbg (release/debug) versions. So the compiled plugins have to reside in the right subdir of
+ * Plugins. The Plugins are loaded on startup of the application (they may also be loaded at runtime 
+ * later). 
+ * 
+ * \section plugin_prog_sec Plugin programming
+ * The interface between the core and the plugins is managed via simple interfaces based on the signal/slot
+ * metaphor of qt. Your plugins have to be derived from these interfaces. You dont have to implementation
+ * all functions or signals of the interfaces you include. This has only to be done for the BaseInterface 
+ * which must be implemented by every plugin. See the BaseInterface Documentation for details.
+ * 
+ * Unimplemented functions will be left unconnected from the core and wont have any impact on the applications
+ * speed or stability. As stated above, every plugin has to be derived from the BaseInterface. This is the
+ * basic factory which makes the core aware of the plugin. The name and the description of the plugin is 
+ * exported via the baseinterface. The initialization of each plugin is done via this interface too.
+ * 
+ * After this interface of the plugin is sucessfully processed all other interfaces will be initialized
+ * and connected to the core. For details about the individual interfaces see their documentation. 
+ * \ref interfaces
+ * 
+ */

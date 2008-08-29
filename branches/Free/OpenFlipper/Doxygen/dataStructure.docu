@@ -1,0 +1,32 @@
+/** \page  dataStructure Datastructures
+ * 
+ * \section Overview
+ * All objects in OpenFlipper are handled by the core. To create and delete objects use
+ * the functions provided in PluginFunctions and BaseObject.
+ *
+ * All Objects have to be derived from the BaseObject. For the predefined Objeccts this is 
+ * already the case. In BaseObject a tree structure is implemented. You can use the functions
+ * in BaseObject to search for items and access them. A root Object is created by OpenFlipper
+ * which is the root of the object tree. You can get it via PluginFunctions::objectRoot().
+ *
+ * \section basicObjectTypes Basic object types
+ * \subsection baseObjectDescription BaseObject
+ * All objects are derived from BaseObject. This object implements the basic object 
+ * functions. It creates a tree structure of all available objects, includes object
+ * selection, name and type information. It does not contain any code to visualize
+ * objects.
+ *
+ * \subsection baseObjectDataDescription BaseObjectData
+ * This class is derived from BaseObject and includes basic visualization functions. It creates
+ * the basic scenegraph nodes for the object ( TODO : See per Object Scenegraph structure ).
+ * Additionally per object scenegraph nodes can be managed automatically by BaseObjectData.
+ *
+ * \subsection MeshObjectDescription MeshObject
+ * MeshObject is the class representing triangle or poly meshes. It uses OpenMesh as its 
+ * dataStructure. 
+ * 
+ *
+ * \section creatingCustomObjectTypes Creating custom object types
+ *
+ */
+ 

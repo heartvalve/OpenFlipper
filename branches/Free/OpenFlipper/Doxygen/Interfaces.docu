@@ -1,0 +1,33 @@
+/** \page interfaces Plugin Interfaces
+ * \section BasePlugin BasePlugin
+ * This is the Basic plugin Interface. All Plugins have to provide at least this interface. It offers plugin 
+ * name and some important Signals and slots which will be called by the main application. See BaseInterface 
+ * for details.
+ * 
+ * \section LoggingPlugin Logging Plugins
+ * This is an Interface for Logging to the included textedit widget. You can log to different levels 
+ * (LOGOUT,LOGWARN,LOGERR,LOGINFO) ( LoggingInterface ).
+ * 
+ * \section KeyPlugin Keyboard Plugins
+ *  You have to provide this interface if you want to get key events in your plugin ( KeyInterface ).
+ * 
+ * \section MousePlugin Mouse Plugin
+ * This interface is used to deliver mouse events ( MouseInterface ).
+ * 
+ * \section MenubarPlugin Menubar Plugin
+ * Provides a function to create an entry in the menubar ( MenuInterface ).
+ * 
+ * \section ToolboxPlugin ToolboxPlugin
+ * Provides functions to create an entry in the Tollbar ( ToolboxInterface ). There are also some signals 
+ * and slots which Signal if the toolbox widget has been activated.
+ * 
+ * \section TexturePlugin Texture Plugin
+ * Allows your plugin to provide a texture. ( TextureInterface )
+ * 
+ * \section PickingPlugin Mouse Picking / Pick Modes
+ * Handle mouse picking in your plugin ( PickingInterface )
+ * 
+ * \section INIPlugin Use Inifiles to store information
+ * Receive an event if an ini file is opened by the application. (INIInterface)\n
+ */
+ 
