@@ -130,6 +130,8 @@ void SmootherPlugin::simpleLaplace() {
       mesh->remove_property( orig_pos_);
       
       mesh->update_normals();
+      
+      emit updated_objects( o_it->id() );
    }
    
      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_POLY_MESH) ; 
@@ -186,6 +188,8 @@ void SmootherPlugin::simpleLaplace() {
       mesh->remove_property( orig_pos_);
       
       mesh->update_normals();
+      
+      emit updated_objects( o_it->id() );
    }
    
    emit update_view(); 
