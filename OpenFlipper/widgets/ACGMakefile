@@ -1,0 +1,17 @@
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Config
+#==============================================================================
+
+
+SUBDIRS = helpBrowser unloadPluginsWidget addEmptyWidget  loadWidget  viewModeWidget coreWidget
+
+PACKAGES := qt4 glut opengl x11 math ACG2 openmesh2
+
+PROJ_LIBS = loadWidget 
+
+MODULES := uic4 moc4 cxx
+
+
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Rules
+#==============================================================================

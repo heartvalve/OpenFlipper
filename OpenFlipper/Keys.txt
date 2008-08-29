@@ -1,0 +1,12 @@
+Main Application : -
+Selection     :
+C : Clear vertex selection
+I  : Invert vertex selection
+
+Datacontrol : 
+Strg + Shift + C  : Clear source object selection
+Strg + Alt + C     : Clear target object selection
+
+Strg + Shift + A  : Select all objects as source
+Strg + Alt + A     : Select all objects as target
+

@@ -1,0 +1,23 @@
+<!DOCTYPE webprojectsession>
+<webprojectsession>
+  <session usePreviewPrefix="0" previewPrefix="" usePersistentBookmarks="0" >
+    <itemcursorpositions>
+      <item line="0" column="0" url="OpenFlipperDeveloperDoc.html" />
+    </itemcursorpositions>
+    <uploadprofiles showtreeviews="true" defaultProfile="UserDoc" >
+      <profile remote_host="" remote_port="" remote_path="" remote_protocol="ftp" user="" name="@" />
+      <profile remote_host="" remote_port="" remote_path="/data/home1/moebius/projects/OpenFlipper/OpenFlipper/UserDocumentation/compiled/" remote_protocol="file" user="" name="UserDoc" >
+        <uploadeditem upload_time="1211976344" url="OpenFlipperDeveloperDoc.html" />
+        <uploadeditem upload_time="1211976227" url="OpenFlipperUserDoc.html" />
+        <uploadeditem upload_time="0" url="pics/" />
+      </profile>
+      <profile remote_host="" remote_port="" remote_path="/data/home1/moebius/projects/OpenFlipper/OpenFlipper/DeveloperDocumentation/compiled" remote_protocol="file" user="" name="DevDoc" >
+        <uploadeditem upload_time="1211978607" url="OpenFlipperDeveloperDoc.html" />
+        <uploadeditem upload_time="1211976227" url="OpenFlipperUserDoc.html" />
+        <uploadeditem upload_time="0" url="pics/" />
+        <uploadeditem upload_time="1211977681" url="pics/document-open.png" />
+      </profile>
+    </uploadprofiles>
+  </session>
+  <teamdata yourself="" />
+</webprojectsession>
