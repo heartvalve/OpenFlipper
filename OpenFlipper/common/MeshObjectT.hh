@@ -220,7 +220,12 @@ class DLLEXPORT MeshObject : public BaseObjectData {
   public:
     /// detect if the node has been picked
     bool picked( uint _node_idx );
-    
+
+    /// Enable or disable picking for this Node
+    void enablePicking( bool _enable );
+
+    /// Check if picking is enabled for this Node
+    bool pickingEnabled();
     
   /** @} */  
     

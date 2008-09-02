@@ -435,6 +435,21 @@
   bool MeshObject< MeshT , objectDataType >::picked( uint _node_idx ) {
     return ( _node_idx == meshNode_->id() );
   }
+
+
+  template < class MeshT , DataType objectDataType >
+  void MeshObject< MeshT , objectDataType >::enablePicking( bool _enable ) {
+    meshNode_->enablePicking( _enable );
+    areaNode_->enablePicking( _enable );
+    handleNode_->enablePicking( _enable );
+    textureNode_->enablePicking( _enable );
+    shaderNode_->enablePicking( _enable );
+  }
+
+  template < class MeshT , DataType objectDataType >
+  bool MeshObject< MeshT , objectDataType >::pickingEnabled() {
+    return meshNode_->pickingEnabled();
+  }
   
   // ===============================================================================
   // Octree
