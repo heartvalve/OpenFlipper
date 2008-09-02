@@ -155,6 +155,8 @@ void segfaultHandling (int) {
 
 int main(int argc, char **argv)
 {
+  OpenFlipper::Options::argc(argc);
+  OpenFlipper::Options::argv(argv);
   
 // Only Install signal handler if not running in debug version, otherwise gdb will get confused  
 #ifndef DEBUG  
