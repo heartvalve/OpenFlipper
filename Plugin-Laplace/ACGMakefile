@@ -2,16 +2,13 @@
 include $(ACGMAKE)/Config
 #==============================================================================
 
-CXX_CFLAGS += -fopenmp
-CXX_LDFLAGS += -lgomp
-
 SUBDIRS = $(call find-subdirs)
 
-PACKAGES := qt4 glut glew opengl x11 math ACG2 openmesh2
+PACKAGES := qt4 glut glew opengl x11 math ACG2 openmesh2 openmp
 
 PROJ_LIBS = 
 
-MODULES := moc4 cxx
+MODULES := moc4 cxxplugin
 
 #==  SYSTEM PART -- DON'T TOUCH  ==============================================
 include $(ACGMAKE)/Rules
