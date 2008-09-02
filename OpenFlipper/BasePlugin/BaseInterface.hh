@@ -94,6 +94,11 @@ class BaseInterface {
       */
       virtual void slotObjectUpdated( int _identifier ) {};
       
+      /**  \brief Called if the whole scene is cleared
+       * 
+       */
+      virtual void slotAllCleared( ) {};
+      
        /**  \brief The active object has changed
        * 
        *   This slot is called by the Main aplication if the currently active object has changed.\n
