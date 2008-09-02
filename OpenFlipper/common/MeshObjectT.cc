@@ -81,6 +81,13 @@
   template < class MeshT , DataType objectDataType >
   MeshObject< MeshT , objectDataType >::~MeshObject() 
   { 
+    // Delete the data attached to this object ( this will remove all perObject data)
+    // Not the best way to do it but it will work.
+    // This is only necessary if people use references to the mesh below and
+    // they do something with the mesh in the destructor of their
+    // perObjectData.
+    deleteData();
+    
     // Delete the Mesh only, if this object contains a mesh
     if ( mesh_ != NULL)  { 
       delete mesh_;
