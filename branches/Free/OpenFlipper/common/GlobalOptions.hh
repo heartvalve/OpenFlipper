@@ -426,6 +426,28 @@ bool iconDir(QString _dir);
 
 /** @} */
 
+//===========================================================================
+/** @name Core parameters
+* @{ */
+//===========================================================================  
+
+/// Get the argc parameter from the main application
+DLLEXPORT
+int argc();
+
+/// Get the argv parameter from the main application
+DLLEXPORT
+char ** argv();
+
+/// Set the argc parameter from the main application ( Dont use it, only called from Core!!)
+DLLEXPORT
+void  argc( int _argc );
+
+/// Set the argv parameter from the main application ( Dont use it, only called from Core!!)
+DLLEXPORT
+void argv( char** _argv);
+
+/** @} */
 
 }
 }

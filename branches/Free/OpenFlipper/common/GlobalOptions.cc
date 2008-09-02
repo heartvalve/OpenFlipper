@@ -120,6 +120,10 @@ static bool enableBackup_ = true;
 /// Currently opening an ini file?
 static bool openingIni_ = false;
 
+static int argc_;
+
+static char ** argv_;
+
 # if __WORDSIZE == 64
   const bool is64 = true;
 #else
@@ -415,6 +419,22 @@ bool openingIni( ) {
   
 void openingIni(bool _openingIni ) {
   openingIni_ = _openingIni; 
+}
+
+int argc() {
+  return argc_;
+}
+
+char ** argv() {
+  return argv_;
+}
+
+void  argc( int _argc ) {
+  argc_ = _argc;
+}
+
+void argv( char** _argv) {
+  argv_ = _argv;
 }
 
 
