@@ -401,6 +401,9 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"updated_objects(int)") )
         connect(plugin,SIGNAL(updated_objects(int)),this,SLOT(slotObjectsListUpdated(int)));
 
+      if ( checkSlot(plugin,"slotAllCleared()") )
+        connect(this,SIGNAL(allCleared()),plugin,SLOT(slotAllCleared()));
+      
       if ( checkSignal(plugin,"activeObjectChanged()") )
         connect(plugin,SIGNAL(activeObjectChanged()),this,SLOT(slotActiveObjectChanged() ));
 

@@ -493,6 +493,7 @@ void
 Core::clearAll() 
 {
   objectRoot_->deleteSubtree();
+  emit allCleared();
   emit ObjectListUpdated(-1);
   
   slotScriptInfo( "core" , "clearAll()"  );

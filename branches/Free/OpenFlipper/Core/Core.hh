@@ -132,6 +132,8 @@ protected:
     * @{ */
    //===========================================================================
 signals:
+   void allCleared();
+  
    /// When this Signal is emitted all Plugins are informed that the object list changed
    void ObjectListUpdated(int);
 
