@@ -132,6 +132,7 @@ protected:
     * @{ */
    //===========================================================================
 signals:
+   /// Signal send to plugins when whole scene is cleared
    void allCleared();
   
    /// When this Signal is emitted all Plugins are informed that the object list changed
