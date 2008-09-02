@@ -204,6 +204,18 @@ class DLLEXPORT BaseObjectData : public BaseObject
   public :
     /// detect if the node has been picked
     virtual bool picked( uint _node_idx );
+
+    /** Enable or disable picking for this Node
+     * The basic function defined here does nothing.
+     * It has to be reimplemented in the derived class
+     */
+    virtual void enablePicking( bool _enable );
+
+    /** Check if picking is enabled for this Node
+     * This function will return true unless the derived class overwrites
+     * this function.
+     */
+    virtual bool pickingEnabled();
     
   /** @} */ 
     

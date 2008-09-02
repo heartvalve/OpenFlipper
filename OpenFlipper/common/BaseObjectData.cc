@@ -184,6 +184,13 @@ bool BaseObjectData::picked( uint /* _node_idx */ ) {
  return false; 
 }
 
+void BaseObjectData::enablePicking( bool /*_enable*/ ) {
+}
+
+bool BaseObjectData::pickingEnabled() {
+  return true;
+}
+
 // ===============================================================================
 // Content Nodes
 // ===============================================================================
