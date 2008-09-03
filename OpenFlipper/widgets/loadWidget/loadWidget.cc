@@ -117,7 +117,7 @@ void LoadWidget::slotSetLoadFilters(int _typeIndex){
       QStringList filters = supportedTypes_[i].loadFilters.split(";;");
       for (int f=0; f < filters.size(); f++)
         if (filters[f].trimmed() == "") filters.removeAt(f);
-      setFilters(filters);
+      setNameFilters(filters);
 
       //add Widget for new Filter
       if ( supportedTypes_[i].loadWidget != 0 ) {
@@ -153,7 +153,7 @@ void LoadWidget::slotSetSaveFilters(int _typeIndex){
       QStringList filters = supportedTypes_[i].saveFilters.split(";;");
       for (int f=0; f < filters.size(); f++)
         if (filters[f].trimmed() == "") filters.removeAt(f);
-      setFilters(filters);
+      setNameFilters(filters);
 
       //add Widget for new Filter
       if ( supportedTypes_[i].saveWidget != 0 ) {
@@ -286,12 +286,17 @@ int LoadWidget::showSave(int _id, QString _filename){
     return QDialog::Rejected;
   }
 
+  disconnect(typeBox_, SIGNAL(activated(int)), 0, 0);
+  connect(typeBox_,SIGNAL(activated(int)),this,SLOT(slotSetSaveFilters(int)));
+
+  slotSetSaveFilters(typeBox_->currentIndex());
+
   //display correct path/name
   QFileInfo fi(_filename);
   QFile file(_filename);
   if (file.exists()) {
     setDirectory( fi.absolutePath() );
-    selectFile ( _filename );
+    selectFile ( fi.fileName() );
   } else {
 //     setDirectory(OpenFlipper::Options::currentDir().absolutePath() );
     std::cout << "setting filename = " << _filename.toStdString() << std::endl;
@@ -299,12 +304,26 @@ int LoadWidget::showSave(int _id, QString _filename){
     selectFile ( fi.fileName() );
   }
 
+  //try to select the best fitting name filter
+  for (int i=0; i < nameFilters().count(); i++){
+    int s = nameFilters()[i].indexOf("*")+2;
+    int e = nameFilters()[i].indexOf(" ", s);
+    QString ext = nameFilters()[i].mid(s,e-s);
 
+    if (ext == fi.completeSuffix()){
+      selectNameFilter(nameFilters()[i]);
+      break;
+    }
+  }
 
-  disconnect(typeBox_, SIGNAL(activated(int)), 0, 0);
-  connect(typeBox_,SIGNAL(activated(int)),this,SLOT(slotSetSaveFilters(int)));
-
-  slotSetSaveFilters(typeBox_->currentIndex());
+//workarround to force repaint
+  if (x() > 0){
+    if (step_)
+      setGeometry(x(),y(),width()+1,height());
+    else
+      setGeometry(x(),y(),width()-1,height());
+  }
+  step_ = !step_;
 
   return this->exec();
 }

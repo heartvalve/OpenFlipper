@@ -76,6 +76,8 @@ class LoadWidget : public QFileDialog
     /// QFrame on the right
     QGroupBox*    box_;
     QHBoxLayout*  boxLayout_;
+
+    bool step_;
     
 };
 
