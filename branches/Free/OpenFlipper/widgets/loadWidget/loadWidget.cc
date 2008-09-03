@@ -220,6 +220,9 @@ void LoadWidget::saveFile(){
 
     int s = selectedFilter().indexOf("*")+1;
     int e = selectedFilter().indexOf(" ", s);
+    int e2 = selectedFilter().indexOf(")", s);
+    if (e == -1 || e2 < e) e = e2;
+
     QString ext = selectedFilter().mid(s,e-s);
     filename += ext;
   }
@@ -304,10 +307,14 @@ int LoadWidget::showSave(int _id, QString _filename){
     selectFile ( fi.fileName() );
   }
 
+
   //try to select the best fitting name filter
   for (int i=0; i < nameFilters().count(); i++){
     int s = nameFilters()[i].indexOf("*")+2;
     int e = nameFilters()[i].indexOf(" ", s);
+    int e2 = nameFilters()[i].indexOf(")", s);
+    if (e == -1 || e2 < e) e = e2;
+
     QString ext = nameFilters()[i].mid(s,e-s);
 
     if (ext == fi.completeSuffix()){
