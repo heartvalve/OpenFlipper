@@ -194,7 +194,7 @@ void Core::slotSaveIniMenu(){
   QCheckBox *saveAllBox = new QCheckBox(optionsBox);
   saveAllBox->setText("Save everything to same folder");
   saveAllBox->setToolTip("Save all open files to the same folder as the ini file");
-  saveAllBox->setCheckState( Qt::Unchecked );
+  saveAllBox->setCheckState( Qt::Checked );
 
   QCheckBox *askOverwrite = new QCheckBox(optionsBox);
   askOverwrite->setText("Ask before overwriting files");
@@ -243,7 +243,6 @@ void Core::slotSaveIniMenu(){
         // Use path of ini file for all objects
         QString filename = newpath + OpenFlipper::Options::dirSeparator() + o_it->name();
 
-
         // enforce that all files end with obj extension
         if ( complete_name.endsWith("obj") )
         {
@@ -270,7 +269,8 @@ void Core::slotSaveIniMenu(){
       }
       else
       {
-        QString filename = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+//         QString filename = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+        QString filename = newpath + OpenFlipper::Options::dirSeparator() + o_it->name();
 
         std::cerr << "o_it->path  : " << o_it->path().toStdString() << std::endl;
 
