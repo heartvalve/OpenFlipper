@@ -317,3 +317,5 @@ void Core::slotSaveIniMenu(){
 
 
 }
+
+

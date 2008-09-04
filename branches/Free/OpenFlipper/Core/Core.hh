@@ -401,9 +401,6 @@ private:
    /// Get all ini files and set basic paths and options
    void setupOptions();
 
-   /// after ini-files have been loaded and core is up -> apply Options
-   void applyOptions();
-
    /// Get and set Application options from ini file
    void readApplicationOptions(INIFile& _ini);
 
@@ -411,6 +408,9 @@ private:
    void writeApplicationOptions(INIFile& _ini);
 
   public slots:
+
+   /// after ini-files have been loaded and core is up or if options have been changed -> apply Options
+   void applyOptions();
 
    /// Open an ini file and load everything in it ( Application/File Options )
    void openIniFile(QString _filename);

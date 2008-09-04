@@ -81,6 +81,7 @@ CoreWidget( SeparatorNode* _rootNode,
   stackedWidget_(0),
   helpBrowserDeveloper_(0),
   helpBrowserUser_(0),
+  optionsWidget_(0),
   root_node_(_rootNode),
   plugins_(_plugins)
   
@@ -426,8 +427,20 @@ void
 CoreWidget::closeEvent ( QCloseEvent * /* event */ ) {
   emit exit();
 }
+
+void CoreWidget::showOptionsWidget() {
+  
+  if ( OpenFlipper::Options::nogui() )
+    return;
+  
+  if ( optionsWidget_ == 0 ) {
+    optionsWidget_ = new OptionsWidget(0);
+    connect(optionsWidget_,SIGNAL(applyOptions()),this,SIGNAL(applyOptions()));
+  }
+  
+  optionsWidget_->show();
     
- 
+}
  
 
 //=============================================================================

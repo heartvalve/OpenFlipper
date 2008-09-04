@@ -157,6 +157,17 @@ void CoreWidget::setupMenuBar()
   AC_save_ini->setIcon(icon);
   connect(AC_save_ini, SIGNAL(triggered()), this, SIGNAL(saveIniMenu()));
   fileMenu_->addAction(AC_save_ini);
+
+  fileMenu_->addSeparator();
+
+  //Options
+  QAction* AC_Options = new QAction(tr("&Options"), this);
+  AC_Options->setStatusTip(tr("Edit OpenFlipper Options"));
+  AC_Options->setWhatsThis("Edit OpenFlipper Options");
+  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"preferences-system.png");
+  AC_Options->setIcon(icon);
+  connect(AC_Options, SIGNAL(triggered()), this, SLOT(showOptionsWidget()));
+  fileMenu_->addAction(AC_Options);
   
   //Remember entry of menu (required for adding File Menu entries from plugins) 
   fileMenuEnd_ = fileMenu_->addSeparator();
