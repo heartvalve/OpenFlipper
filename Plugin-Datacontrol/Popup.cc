@@ -44,7 +44,6 @@ void DataControlPlugin::slotPopupRemove (  ) {
   
   // Get all selected rows
   QModelIndexList indexList = selection->selectedRows ( 0 ); 
-  int selectedRows = indexList.size();
     
   for ( int i = 0 ; i < indexList.size() ; ++i) {
     
@@ -73,7 +72,6 @@ void DataControlPlugin::slotUngroup (  ) {
   
   // Get all selected rows
   QModelIndexList indexList = selection->selectedRows ( 0 ); 
-  int selectedRows = indexList.size();
 
   //remove complete group if selected item was a group
   BaseObject* group = model_->getItem( indexList[0]);
@@ -95,7 +93,6 @@ void DataControlPlugin::slotGroup (  ) {
   
   // Get all selected rows
   QModelIndexList indexList = selection->selectedRows ( 0 ); 
-  int selectedRows = indexList.size();
 
   //check if all objects have the same parent 
   //abort if the parents differ
