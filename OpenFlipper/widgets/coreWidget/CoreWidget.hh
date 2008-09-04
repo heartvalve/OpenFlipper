@@ -67,6 +67,7 @@
 
 #include <QDockWidget>
 
+#include <OpenFlipper/widgets/optionsWidget/optionsWidget.hh>
 #include <OpenFlipper/widgets/helpBrowser/helpWidget.hh>
 
 /** Type defining a currently loaded Plugin */
@@ -425,6 +426,25 @@ public:
     HelpWidget* helpBrowserUser_;
 
   /** @} */
+
+  //===========================================================================
+  /** @name Options System
+  * @{ */
+  //===========================================================================
+
+  public slots:
+    /// Display the Options Browser
+    void showOptionsWidget();
+
+  signals:
+    void applyOptions();
+    
+  private:
+
+    /// Pointer to the OptionsWidget
+    OptionsWidget* optionsWidget_;
+
+  /** @} */    
     
   //===========================================================================
   /** @name ToolBar controls

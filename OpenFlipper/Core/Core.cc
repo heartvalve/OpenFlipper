@@ -162,6 +162,7 @@ Core::init() {
     connect(coreWidget_, SIGNAL(saveToMenu())         , this, SLOT(slotSaveToMenu()));
     connect(coreWidget_, SIGNAL(loadIniMenu())        , this, SLOT(slotLoadIniMenu()));
     connect(coreWidget_, SIGNAL(saveIniMenu())        , this, SLOT(slotSaveIniMenu()));
+    connect(coreWidget_, SIGNAL(applyOptions())       , this, SLOT(applyOptions()));
     connect(coreWidget_, SIGNAL(recentOpen(QAction*)) , this, SLOT(slotRecentOpen(QAction*)));
     connect(coreWidget_, SIGNAL(exit())               , this, SLOT(slotExit()));
     

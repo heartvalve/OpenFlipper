@@ -3,11 +3,11 @@ include $(ACGMAKE)/Config
 #==============================================================================
 
 
-SUBDIRS = helpBrowser unloadPluginsWidget addEmptyWidget  loadWidget  viewModeWidget optionsWidget coreWidget
+SUBDIRS = $(call find-subdirs)
 
 PACKAGES := qt4 glut opengl x11 math ACG2 openmesh2
 
-PROJ_LIBS = loadWidget 
+PROJ_LIBS = 
 
 MODULES := uic4 moc4 cxx
 

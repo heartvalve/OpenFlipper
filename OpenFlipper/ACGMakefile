@@ -68,6 +68,7 @@ PROJ_LIBS += OpenFlipper/BasePlugin \
 	     OpenFlipper/widgets/unloadPluginsWidget \
              OpenFlipper/widgets/viewModeWidget \
              OpenFlipper/widgets/addEmptyWidget \
+             OpenFlipper/widgets/optionsWidget \
              OpenFlipper/widgets/viewModeWidget 
 
 MODULES := moc4 cxx
