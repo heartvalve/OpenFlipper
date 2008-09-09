@@ -223,6 +223,7 @@
       <pcs>Qt4</pcs>
       <pcs>OpenMesh2_x64</pcs>
       <pcs>ACG</pcs>
+      <pcs>OpenFlipper</pcs>
     </references>
   </kdevcppsupport>
   <kdevfileview>

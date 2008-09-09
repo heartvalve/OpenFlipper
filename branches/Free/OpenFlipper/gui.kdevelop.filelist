@@ -8,6 +8,9 @@ BasePlugin
 BasePlugin/LoggingInterface.hh
 BasePlugin/PluginFunctions.cc
 BasePlugin/PluginFunctions.hh
+BasePlugin/baseinterface_interface.h
+BasePlugin/logginginterface_interface.h
+BasePlugin/logginginterfaceinterface_interface.h
 Core
 Core/Core.cc
 Core/Core.hh
