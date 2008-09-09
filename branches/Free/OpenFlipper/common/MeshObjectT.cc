@@ -193,36 +193,40 @@
     std::string shaderDirectory = std::string( shaderDir.toUtf8() );
     shaderNode_->setShaderDir( shaderDirectory );
     
-    if ( QFile( shaderDir + "Phong/Vertex.glsl").exists() && QFile( shaderDir + "Phong/Fragment.glsl" ).exists() ) {
-      shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED, 
-                             "Phong/Vertex.glsl" ,
-                             "Phong/Fragment.glsl" );
-    } else
-      std::cerr << "Shader Files for Phong not found!" << std::endl;
+	if ( !OpenFlipper::Options::isWindows ) {
+
+       if ( QFile( shaderDir + "Phong/Vertex.glsl").exists() && QFile( shaderDir + "Phong/Fragment.glsl" ).exists() ) {
+		  shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED, 
+                                 "Phong/Vertex.glsl" ,
+                                 "Phong/Fragment.glsl" );
+       } else
+         std::cerr << "Shader Files for Phong not found!" << std::endl;
       
-    if ( QFile( shaderDir + "Ward/Vertex.glsl").exists() && QFile( shaderDir + "Ward/Fragment.glsl" ).exists() ) {
+       if ( QFile( shaderDir + "Ward/Vertex.glsl").exists() && QFile( shaderDir + "Ward/Fragment.glsl" ).exists() ) {
         
-      shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_SHADER, 
-                              "Ward/Vertex.glsl" ,
-                              "Ward/Fragment.glsl" );
+          shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_SHADER, 
+                                "Ward/Vertex.glsl" ,
+                                "Ward/Fragment.glsl" );
       
-      // Ward shader uses 3 parameters so activate shader, set params and deactivate it again
-      GLSL::PtrProgram shader = shaderNode_->getShader( ACG::SceneGraph::DrawModes::SOLID_SHADER );
-      if ( shader == 0 ) {
-        std::cerr << "Unable to get shader for shader mode" << std::endl; 
-      } else {
-        shader->use();
+          // Ward shader uses 3 parameters so activate shader, set params and deactivate it again
+          GLSL::PtrProgram shader = shaderNode_->getShader( ACG::SceneGraph::DrawModes::SOLID_SHADER );
+          if ( shader == 0 ) {
+            std::cerr << "Unable to get shader for shader mode" << std::endl; 
+          } else {
+           shader->use();
         
-        shader->setUniform("ward_specular" , 0.5f);
-        shader->setUniform("ward_diffuse"  , 1.0f);
-        shader->setUniform("ward_alpha"    , 0.1f);
+           shader->setUniform("ward_specular" , 0.5f);
+           shader->setUniform("ward_diffuse"  , 1.0f);
+           shader->setUniform("ward_alpha"    , 0.1f);
         
-        shader->disable(); 
-      }
+           shader->disable(); 
+         }
       
-    } else
-        std::cerr << "Shader Files for Ward not found!!" << std::endl;
+       } else
+           std::cerr << "Shader Files for Ward not found!!" << std::endl;
     
+	} else
+		std::cerr << "Shader support disabled for windows " << std::endl;
     
     // Update all nodes
     update();
