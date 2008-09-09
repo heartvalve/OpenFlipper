@@ -59,7 +59,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glew32s.lib glew32.lib QtNetworkd4.lib QtCored4.lib QtGuid4.lib QtOpenGLd4.lib qtmaind.lib glut32.lib"
+				AdditionalDependencies="glew32.lib QtNetworkd4.lib QtCored4.lib QtGuid4.lib QtOpenGLd4.lib qtmaind.lib glut32.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)/lib&quot;;C:\glut\lib;&quot;$(SolutionDir)\Debug&quot;;C:\glew\lib;&quot;$(QTDIR)/lib&quot;"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
@@ -133,7 +133,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glew32s.lib QtNetwork4.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib qtmain.lib glut32.lib"
+				AdditionalDependencies="glew32.lib QtNetwork4.lib QtCore4.lib QtGui4.lib QtOpenGL4.lib qtmain.lib glut32.lib"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)/lib&quot;;C:\glut\lib;&quot;$(SolutionDir)\Debug&quot;;C:\glew\lib;&quot;$(QTDIR)/lib&quot;"
 				GenerateManifest="false"
 				GenerateDebugInformation="true"
