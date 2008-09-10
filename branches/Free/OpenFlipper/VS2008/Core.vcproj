@@ -193,139 +193,139 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\OpenFlipper\widgets\addEmptyWidget\addEmptyWidget.cc"
+				RelativePath="..\..\OpenFlipper\widgets\addEmptyWidget\addEmptyWidget.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\ContextMenu.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\ContextMenu.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\Core.cc"
+				RelativePath="..\..\OpenFlipper\Core\Core.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\CoreWidget.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\CoreWidget.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\CoreWidgetLogging.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\CoreWidgetLogging.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\CoreWidgetToolbar.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\CoreWidgetToolbar.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\dragAndDrop.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\dragAndDrop.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\Help.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\Help.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\helpBrowser\helpWidget.cc"
+				RelativePath="..\..\OpenFlipper\widgets\helpBrowser\helpWidget.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\loadWidget\loadWidget.cc"
+				RelativePath="..\..\OpenFlipper\widgets\loadWidget\loadWidget.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\Logging.cc"
+				RelativePath="..\..\OpenFlipper\Core\Logging.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Scripting\scriptWrappers\matrix4x4Wrapper.cc"
+				RelativePath="..\..\OpenFlipper\Scripting\scriptWrappers\matrix4x4Wrapper.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\MenuBar.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\MenuBar.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\OpenFlipper.cc"
+				RelativePath="..\..\OpenFlipper\OpenFlipper.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\openFunctions.cc"
+				RelativePath="..\..\OpenFlipper\Core\openFunctions.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\optionHandling.cc"
+				RelativePath="..\..\OpenFlipper\Core\optionHandling.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\optionsWidget\optionsWidget.cc"
+				RelativePath="..\..\OpenFlipper\widgets\optionsWidget\optionsWidget.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\ParseIni.cc"
+				RelativePath="..\..\OpenFlipper\Core\ParseIni.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\ParseObj.cc"
+				RelativePath="..\..\OpenFlipper\Core\ParseObj.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\PluginCommunication.cc"
+				RelativePath="..\..\OpenFlipper\Core\PluginCommunication.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\PluginLoader.cc"
+				RelativePath="..\..\OpenFlipper\Core\PluginLoader.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Logging\PluginLogging.cc"
+				RelativePath="..\..\OpenFlipper\Logging\PluginLogging.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Scripting\scriptPrototypes\prototypeMatrix4x4.cc"
+				RelativePath="..\..\OpenFlipper\Scripting\scriptPrototypes\prototypeMatrix4x4.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Scripting\scriptPrototypes\prototypeVec3d.cc"
+				RelativePath="..\..\OpenFlipper\Scripting\scriptPrototypes\prototypeVec3d.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\RPC.cc"
+				RelativePath="..\..\OpenFlipper\Core\RPC.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\saveFunctions.cc"
+				RelativePath="..\..\OpenFlipper\Core\saveFunctions.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\scripting.cc"
+				RelativePath="..\..\OpenFlipper\Core\scripting.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Scripting\ScriptingWrapper.cc"
+				RelativePath="..\..\OpenFlipper\Scripting\ScriptingWrapper.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\StackWidget.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\StackWidget.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\StatusBar.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\StatusBar.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.cc"
+				RelativePath="..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Scripting\scriptWrappers\vec3dWrapper.cc"
+				RelativePath="..\..\OpenFlipper\Scripting\scriptWrappers\vec3dWrapper.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\viewMode.cc"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\viewMode.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\viewModeWidget\viewModeWidget.cc"
+				RelativePath="..\..\OpenFlipper\widgets\viewModeWidget\viewModeWidget.cc"
 				>
 			</File>
 		</Filter>
@@ -335,7 +335,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\OpenFlipper\widgets\addEmptyWidget\addEmptyWidget.hh"
+				RelativePath="..\..\OpenFlipper\widgets\addEmptyWidget\addEmptyWidget.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -343,7 +343,7 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\addEmptyWidget\addEmptyWidget.hh -o tmp\moc\moc_addEmptyWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\addEmptyWidget\addEmptyWidget.hh -o tmp\moc\moc_addEmptyWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_addEmptyWidget.cpp"
 					/>
@@ -353,14 +353,14 @@
 					>
 					<Tool
 						Name="VCCustomBuildTool"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\addEmptyWidget\addEmptyWidget.hh -o tmp\moc\moc_addEmptyWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\addEmptyWidget\addEmptyWidget.hh -o tmp\moc\moc_addEmptyWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_addEmptyWidget.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Core\Core.hh"
+				RelativePath="..\..\OpenFlipper\Core\Core.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -369,7 +369,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing Core.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Core\Core.hh -o tmp\moc\moc_Core.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Core\Core.hh -o tmp\moc\moc_Core.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_Core.cpp"
 					/>
@@ -380,14 +380,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing Core.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Core\Core.hh -o tmp\moc\moc_Core.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Core\Core.hh -o tmp\moc\moc_Core.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_Core.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\coreWidget\CoreWidget.hh"
+				RelativePath="..\..\OpenFlipper\widgets\coreWidget\CoreWidget.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -396,7 +396,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing CoreWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\coreWidget\CoreWidget.hh -o tmp\moc\moc_CoreWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\coreWidget\CoreWidget.hh -o tmp\moc\moc_CoreWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_CoreWidget.cpp"
 					/>
@@ -407,14 +407,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing CoreWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\coreWidget\CoreWidget.hh -o tmp\moc\moc_CoreWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\coreWidget\CoreWidget.hh -o tmp\moc\moc_CoreWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_CoreWidget.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\helpBrowser\helpWidget.hh"
+				RelativePath="..\..\OpenFlipper\widgets\helpBrowser\helpWidget.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -423,7 +423,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing helpWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\helpBrowser\helpWidget.hh -o tmp\moc\moc_helpWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\helpBrowser\helpWidget.hh -o tmp\moc\moc_helpWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_helpWidget.cpp"
 					/>
@@ -434,14 +434,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing helpWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\helpBrowser\helpWidget.hh -o tmp\moc\moc_helpWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\helpBrowser\helpWidget.hh -o tmp\moc\moc_helpWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_helpWidget.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\loadWidget\loadWidget.hh"
+				RelativePath="..\..\OpenFlipper\widgets\loadWidget\loadWidget.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -450,7 +450,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing loadWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\loadWidget\loadWidget.hh -o tmp\moc\moc_LoadWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\loadWidget\loadWidget.hh -o tmp\moc\moc_LoadWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_LoadWidget.cpp"
 					/>
@@ -461,14 +461,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing loadWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\loadWidget\loadWidget.hh -o tmp\moc\moc_LoadWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\loadWidget\loadWidget.hh -o tmp\moc\moc_LoadWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_LoadWidget.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Logging\Logging.hh"
+				RelativePath="..\..\OpenFlipper\Logging\Logging.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -477,7 +477,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Mocing logging.hh"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Logging\Logging.hh -o tmp\moc\moc_logging.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Logging\Logging.hh -o tmp\moc\moc_logging.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_logging.cpp"
 					/>
@@ -488,14 +488,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Mocing logging.hh"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Logging\Logging.hh -o tmp\moc\moc_logging.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Logging\Logging.hh -o tmp\moc\moc_logging.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_logging.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Scripting\scriptPrototypes\prototypeMatrix4x4.hh"
+				RelativePath="..\..\OpenFlipper\Scripting\scriptPrototypes\prototypeMatrix4x4.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -504,7 +504,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Mocing prototypeMatrix4x4.hh"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Scripting\scriptPrototypes\prototypeMatrix4x4.hh -o tmp\moc\moc_prototypeMatrix4x4.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Scripting\scriptPrototypes\prototypeMatrix4x4.hh -o tmp\moc\moc_prototypeMatrix4x4.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_prototypeMatrix4x4.cpp"
 					/>
@@ -515,14 +515,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Mocing prototypeMatrix4x4.hh"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Scripting\scriptPrototypes\prototypeMatrix4x4.hh -o tmp\moc\moc_prototypeMatrix4x4.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Scripting\scriptPrototypes\prototypeMatrix4x4.hh -o tmp\moc\moc_prototypeMatrix4x4.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_prototypeMatrix4x4.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Scripting\scriptPrototypes\prototypeVec3d.hh"
+				RelativePath="..\..\OpenFlipper\Scripting\scriptPrototypes\prototypeVec3d.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -531,7 +531,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Mocing prototypeVec3d.hh"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Scripting\scriptPrototypes\prototypeVec3d.hh -o tmp\moc\moc_prototypeVec3d.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Scripting\scriptPrototypes\prototypeVec3d.hh -o tmp\moc\moc_prototypeVec3d.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_prototypeVec3d.cpp"
 					/>
@@ -542,7 +542,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Mocing prototypeVec3d.hh"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Scripting\scriptPrototypes\prototypeVec3d.hh -o tmp\moc\moc_prototypeVec3d.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Scripting\scriptPrototypes\prototypeVec3d.hh -o tmp\moc\moc_prototypeVec3d.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_prototypeVec3d.cpp"
 					/>
@@ -553,7 +553,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\Scripting\Scripting.hh"
+				RelativePath="..\..\OpenFlipper\Scripting\Scripting.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -562,7 +562,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Mocing Scripting.hh"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Scripting\Scripting.hh -o tmp\moc\moc_scriptingwrapper.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Scripting\Scripting.hh -o tmp\moc\moc_scriptingwrapper.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_scriptingwrapper.cpp"
 					/>
@@ -573,14 +573,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Mocing Scripting.hh"
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\Scripting\Scripting.hh -o tmp\moc\moc_scriptingwrapper.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\Scripting\Scripting.hh -o tmp\moc\moc_scriptingwrapper.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_scriptingwrapper.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh"
+				RelativePath="..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -589,7 +589,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing unloadPluginsWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh -o tmp\moc\moc_unloadPluginsWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh -o tmp\moc\moc_unloadPluginsWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_unloadPluginsWidget.cpp"
 					/>
@@ -600,14 +600,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing unloadPluginsWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh -o tmp\moc\moc_unloadPluginsWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh -o tmp\moc\moc_unloadPluginsWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_unloadPluginsWidget.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\optionsWidget\unloadPluginsWidget.hh"
+				RelativePath="..\..\OpenFlipper\widgets\optionsWidget\unloadPluginsWidget.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -616,7 +616,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing optionsWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\optionsWidget\optionsWidget.hh -o tmp\moc\moc_optionsWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\optionsWidget\optionsWidget.hh -o tmp\moc\moc_optionsWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_optionsWidget.cpp"
 					/>
@@ -627,14 +627,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing optionsWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\optionsWidget\optionsWidget.hh -o tmp\moc\moc_optionsWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\optionsWidget\optionsWidget.hh -o tmp\moc\moc_optionsWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_optionsWidget.cpp"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\viewModeWidget\viewModeWidget.hh"
+				RelativePath="..\..\OpenFlipper\widgets\viewModeWidget\viewModeWidget.hh"
 				FileType="2"
 				>
 				<FileConfiguration
@@ -643,7 +643,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing viewModeWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\viewModeWidget\viewModeWidget.hh -o tmp\moc\moc_viewModeWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\viewModeWidget\viewModeWidget.hh -o tmp\moc\moc_viewModeWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_viewModeWidget.cpp"
 					/>
@@ -654,7 +654,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Moc&apos;ing viewModeWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\OpenFlipper\widgets\viewModeWidget\viewModeWidget.hh -o tmp\moc\moc_viewModeWidget.cpp&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\viewModeWidget\viewModeWidget.hh -o tmp\moc\moc_viewModeWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_viewModeWidget.cpp"
 					/>
@@ -671,7 +671,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.ui"
+				RelativePath="..\..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.ui"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -679,9 +679,9 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_addEmpty.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.ui  -o ..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.ui  -o ..\..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.hh"
+						Outputs="..\..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.hh"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -690,14 +690,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_addEmpty.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.ui  -o ..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.ui  -o ..\..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.hh"
+						Outputs="..\..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.hh"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.ui"
+				RelativePath="..\..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.ui"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -705,9 +705,9 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_helpWidget.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.ui  -o ..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.ui  -o ..\..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.hh"
+						Outputs="..\..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.hh"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -716,14 +716,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_helpWidget.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.ui  -o ..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.ui  -o ..\..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.hh"
+						Outputs="..\..\OpenFlipper\widgets\helpBrowser\ui_helpWidget.hh"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.ui"
+				RelativePath="..\..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.ui"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -731,9 +731,9 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_optionsWidget.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.ui  -o ..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.ui  -o ..\..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.hh"
+						Outputs="..\..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.hh"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -742,14 +742,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_optionsWidget.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.ui  -o ..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.ui  -o ..\..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.hh"
+						Outputs="..\..\OpenFlipper\widgets\optionsWidget\ui_optionsWidget.hh"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.ui"
+				RelativePath="..\..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.ui"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -757,9 +757,9 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_unloadPlugins.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.ui  -o ..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.ui  -o ..\..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.hh"
+						Outputs="..\..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.hh"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -768,14 +768,14 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_unloadPlugins.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.ui  -o ..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.ui  -o ..\..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.hh"
+						Outputs="..\..\OpenFlipper\widgets\unloadPluginsWidget\ui_unloadPlugins.hh"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.ui"
+				RelativePath="..\..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.ui"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -783,7 +783,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_viewMode.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.ui  -o ..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.ui  -o ..\..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
 						Outputs="tmp\ui\ui_viewMode.hh"
 					/>
@@ -794,9 +794,9 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="UIC&apos;ing ui_viewMode.ui"
-						CommandLine="$(QTDIR)\bin\uic.exe  ..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.ui  -o ..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.hh&#x0D;&#x0A;"
+						CommandLine="$(QTDIR)\bin\uic.exe  ..\..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.ui  -o ..\..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.hh&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\uic.exe"
-						Outputs="..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.hh"
+						Outputs="..\..\OpenFlipper\widgets\viewModeWidget\ui_viewMode.hh"
 					/>
 				</FileConfiguration>
 			</File>
