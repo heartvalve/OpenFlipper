@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="Debug"
-			IntermediateDirectory="Debug"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -100,8 +100,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="Release"
-			IntermediateDirectory="Release"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -580,33 +580,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh"
-				FileType="2"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing unloadPluginsWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh -o tmp\moc\moc_unloadPluginsWidget.cpp&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
-						Outputs="tmp\moc\moc_unloadPluginsWidget.cpp"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing unloadPluginsWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh -o tmp\moc\moc_unloadPluginsWidget.cpp&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
-						Outputs="tmp\moc\moc_unloadPluginsWidget.cpp"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\OpenFlipper\widgets\optionsWidget\unloadPluginsWidget.hh"
 				FileType="2"
 				>
@@ -630,6 +603,33 @@
 						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\optionsWidget\optionsWidget.hh -o tmp\moc\moc_optionsWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_optionsWidget.cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh"
+				FileType="2"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing unloadPluginsWidget.hh..."
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh -o tmp\moc\moc_unloadPluginsWidget.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
+						Outputs="tmp\moc\moc_unloadPluginsWidget.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing unloadPluginsWidget.hh..."
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh -o tmp\moc\moc_unloadPluginsWidget.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
+						Outputs="tmp\moc\moc_unloadPluginsWidget.cpp"
 					/>
 				</FileConfiguration>
 			</File>
@@ -666,10 +666,6 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
-			<File
-				RelativePath=".\OpenFlipper.rc"
-				>
-			</File>
 			<File
 				RelativePath="..\..\OpenFlipper\widgets\addEmptyWidget\ui_addEmpty.ui"
 				>
