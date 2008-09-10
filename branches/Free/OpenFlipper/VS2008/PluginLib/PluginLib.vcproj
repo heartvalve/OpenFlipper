@@ -189,79 +189,79 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\OpenFlipper\common\BaseObject.cc"
+				RelativePath="..\..\..\OpenFlipper\common\BaseObject.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\BaseObjectData.cc"
+				RelativePath="..\..\..\OpenFlipper\common\BaseObjectData.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\BaseObjectDataT.cc"
+				RelativePath="..\..\..\OpenFlipper\common\BaseObjectDataT.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\bsp\BSPImplT.cc"
+				RelativePath="..\..\..\OpenFlipper\common\bsp\BSPImplT.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\BSplineCurve\BSplineCurveObject.cc"
+				RelativePath="..\..\..\ObjectTypes\BSplineCurve\BSplineCurveObject.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\ACGHelper\DrawModeConverter.cc"
+				RelativePath="..\..\..\OpenFlipper\ACGHelper\DrawModeConverter.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\GlobalOptions.cc"
+				RelativePath="..\..\..\OpenFlipper\common\GlobalOptions.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\GroupObject.cc"
+				RelativePath="..\..\..\OpenFlipper\common\GroupObject.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\INIFile\INIFile.cc"
+				RelativePath="..\..\..\OpenFlipper\INIFile\INIFile.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\INIFile\INIFileT.cc"
+				RelativePath="..\..\..\OpenFlipper\INIFile\INIFileT.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\MeshObjectT.cc"
+				RelativePath="..\..\..\OpenFlipper\common\MeshObjectT.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\ObjectIDPointerManagerT.cc"
+				RelativePath="..\..\..\OpenFlipper\common\ObjectIDPointerManagerT.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\perObjectData.cc"
+				RelativePath="..\..\..\OpenFlipper\common\perObjectData.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\PluginFunctions.cc"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\PluginFunctions.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\BSplineCurve\PluginFunctionsBSplineCurve.cc"
+				RelativePath="..\..\..\ObjectTypes\BSplineCurve\PluginFunctionsBSplineCurve.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\PolyLine\PluginFunctionsPolyLine.cc"
+				RelativePath="..\..\..\ObjectTypes\PolyLine\PluginFunctionsPolyLine.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\PolyLine\PolyLineObject.cc"
+				RelativePath="..\..\..\ObjectTypes\PolyLine\PolyLineObject.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\RecentFiles.cc"
+				RelativePath="..\..\..\OpenFlipper\common\RecentFiles.cc"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\bsp\TriangleBSPCoreT.cc"
+				RelativePath="..\..\..\OpenFlipper\common\bsp\TriangleBSPCoreT.cc"
 				>
 			</File>
 		</Filter>
@@ -271,216 +271,216 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\BackupInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\BackupInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\BaseInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\BaseInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\BaseObject.hh"
+				RelativePath="..\..\..\OpenFlipper\common\BaseObject.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\BaseObjectData.hh"
+				RelativePath="..\..\..\OpenFlipper\common\BaseObjectData.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\bsp\BSPImplT.hh"
+				RelativePath="..\..\..\OpenFlipper\common\bsp\BSPImplT.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\BSplineCurve\BSplineCurve.hh"
+				RelativePath="..\..\..\ObjectTypes\BSplineCurve\BSplineCurve.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\BSplineCurve\BSplineCurveObject.hh"
+				RelativePath="..\..\..\ObjectTypes\BSplineCurve\BSplineCurveObject.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\BSplineCurve\BSplineCurveTypes.hh"
+				RelativePath="..\..\..\ObjectTypes\BSplineCurve\BSplineCurveTypes.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\ContextMenuInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\ContextMenuInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\ACGHelper\DrawModeConverter.hh"
+				RelativePath="..\..\..\OpenFlipper\ACGHelper\DrawModeConverter.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\FileInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\FileInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\GlobalAccessInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\GlobalAccessInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\GlobalDefines.hh"
+				RelativePath="..\..\..\OpenFlipper\common\GlobalDefines.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\GlobalOptions.hh"
+				RelativePath="..\..\..\OpenFlipper\common\GlobalOptions.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\GroupObject.hh"
+				RelativePath="..\..\..\OpenFlipper\common\GroupObject.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\INIFile\INIFile.hh"
+				RelativePath="..\..\..\OpenFlipper\INIFile\INIFile.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\INIInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\INIInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\KeyInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\KeyInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\LoadSaveInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\LoadSaveInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\LoggingInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\LoggingInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\MenuInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\MenuInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\MeshObjectT.hh"
+				RelativePath="..\..\..\OpenFlipper\common\MeshObjectT.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\MouseInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\MouseInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\ObjectIDPointerManagerT.hh"
+				RelativePath="..\..\..\OpenFlipper\common\ObjectIDPointerManagerT.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\PickingInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\PickingInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\PluginFunctions.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\PluginFunctions.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\BSplineCurve\PluginFunctionsBSplineCurve.hh"
+				RelativePath="..\..\..\ObjectTypes\BSplineCurve\PluginFunctionsBSplineCurve.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\PolyLine\PluginFunctionsPolyLine.hh"
+				RelativePath="..\..\..\ObjectTypes\PolyLine\PluginFunctionsPolyLine.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\PolyLine\PolyLine.hh"
+				RelativePath="..\..\..\ObjectTypes\PolyLine\PolyLine.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\PolyLine\PolyLineObject.hh"
+				RelativePath="..\..\..\ObjectTypes\PolyLine\PolyLineObject.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\ObjectTypes\PolyLine\PolyLineTypes.hh"
+				RelativePath="..\..\..\ObjectTypes\PolyLine\PolyLineTypes.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\PolyMeshTypes.hh"
+				RelativePath="..\..\..\OpenFlipper\common\PolyMeshTypes.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\RecentFiles.hh"
+				RelativePath="..\..\..\OpenFlipper\common\RecentFiles.hh"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\RPCInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\RPCInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\ScriptInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\ScriptInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\StatusNodeMods.hh"
+				RelativePath="..\..\..\OpenFlipper\common\StatusNodeMods.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\TextureInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\TextureInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\ToolboxInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\ToolboxInterface.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\bsp\TriangleBSPCoreT.hh"
+				RelativePath="..\..\..\OpenFlipper\common\bsp\TriangleBSPCoreT.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\bsp\TriangleBSPT.hh"
+				RelativePath="..\..\..\OpenFlipper\common\bsp\TriangleBSPT.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\TriangleMeshTypes.hh"
+				RelativePath="..\..\..\OpenFlipper\common\TriangleMeshTypes.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\common\Types.hh"
+				RelativePath="..\..\..\OpenFlipper\common\Types.hh"
 				FileType="2"
 				>
 			</File>
 			<File
-				RelativePath="..\..\OpenFlipper\BasePlugin\ViewInterface.hh"
+				RelativePath="..\..\..\OpenFlipper\BasePlugin\ViewInterface.hh"
 				FileType="2"
 				>
 			</File>
