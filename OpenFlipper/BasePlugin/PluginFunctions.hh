@@ -257,6 +257,7 @@ int visible_count();
     /** @name Mesh Property handling
     * @{ */
 //=======================================
+/*
 template < class MeshT , typename propT >
 bool get_property_handle(MeshT* _mesh , QString _name, OpenMesh::VPropHandleT< propT > & _property );
 
@@ -265,7 +266,7 @@ bool get_property_handle(MeshT* _mesh , QString _name, OpenMesh::FPropHandleT< p
 
 template <  class MeshT , typename propT >
 bool get_property_handle(MeshT* _mesh , QString _name, OpenMesh::HPropHandleT< propT > & _property );
-
+*/
 /** @} */
 
 //=======================================
@@ -632,9 +633,11 @@ BaseObject* objectRoot();
 
 }
 
+/*
 #if defined(INCLUDE_TEMPLATES) && !defined(PLUGINFUNCTIONS_C)
 #define PLUGINFUNCTIONS_TEMPLATES
 #include "PluginFunctionsT.cc"
 #endif
+*/
 
 #endif //PLUGINFUNCTIONS_HH

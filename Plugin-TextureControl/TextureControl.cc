@@ -139,7 +139,7 @@ void TextureControlPlugin::doUpdateTexture ( int _textureid, MeshT& _mesh )
     if (textures_[_textureid].dimension == 1) {
 
       OpenMesh::HPropHandleT< double > texture;
-      if ( ! PluginFunctions::get_property_handle(&_mesh,textures_[_textureid].name,texture) ) {
+	  if ( ! _mesh.get_property_handle(texture, textures_[_textureid].name.toStdString() ) ) {
         emit log(LOGERR,"Unable to get property " + textures_[_textureid].name );
         return;
       }
@@ -149,7 +149,7 @@ void TextureControlPlugin::doUpdateTexture ( int _textureid, MeshT& _mesh )
     } else if ( textures_[_textureid].dimension == 2 ) {
 
       OpenMesh::HPropHandleT< OpenMesh::Vec2d > texture2D;
-      if ( ! PluginFunctions::get_property_handle(&_mesh, textures_[_textureid].name, texture2D) ) {
+	  if ( ! _mesh.get_property_handle( texture2D, textures_[_textureid].name.toStdString() ) ) {
         emit log(LOGERR,"Unable to get property " + textures_[_textureid].name);
         return;
       }
@@ -162,7 +162,7 @@ void TextureControlPlugin::doUpdateTexture ( int _textureid, MeshT& _mesh )
     if ( textures_[_textureid].dimension == 1 ) {
 
       OpenMesh::VPropHandleT< double > texture;
-      if ( ! PluginFunctions::get_property_handle(&_mesh,textures_[_textureid].name,texture) ) {
+	  if ( ! _mesh.get_property_handle(texture,textures_[_textureid].name.toStdString() ) ) {
         emit log(LOGERR,"Unable to get property " + textures_[_textureid].name );
         return;  
       }
@@ -172,7 +172,7 @@ void TextureControlPlugin::doUpdateTexture ( int _textureid, MeshT& _mesh )
       } else if ( textures_[_textureid].dimension == 2 ) {
 
         OpenMesh::VPropHandleT< OpenMesh::Vec2d >  texture2D;
-        if ( ! PluginFunctions::get_property_handle(&_mesh,textures_[_textureid].name,texture2D) ) {
+		if ( ! _mesh.get_property_handle(texture2D,textures_[_textureid].name.toStdString() ) ) {
           emit log(LOGERR,"Unable to get property " + textures_[_textureid].name );
           return;  
         }
@@ -182,7 +182,7 @@ void TextureControlPlugin::doUpdateTexture ( int _textureid, MeshT& _mesh )
       } /*else if ( textures_[_textureid].dimension == 3 ) {
         
         OpenMesh::VPropHandleT< OpenMesh::Vec3d >  scalarField3D;
-        if ( ! PluginFunctions::get_property_handle(&_mesh,textures_[_textureid].name,scalarField3D) ) {
+        if ( ! _mesh.get_property_handle(scalarField3D,textures_[_textureid].name) ) {
           emit log(LOGERR,"Unable to get property " + textures_[_textureid].name );
           return;  
         }

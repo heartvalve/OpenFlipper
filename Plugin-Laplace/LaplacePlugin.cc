@@ -65,10 +65,10 @@ void LaplaceLengthPlugin::computeLaplaceLength(MeshT* _mesh) {
   OpenMesh::VPropHandleT< ACG::Vec3d > laplace_vector_property;
   OpenMesh::VPropHandleT< double > laplace_length_property;
   
-  if(!PluginFunctions::get_property_handle( _mesh , "Laplace Vector" , laplace_vector_property)) 
+  if(!_mesh->get_property_handle( laplace_vector_property , "Laplace Vector" )) 
     _mesh->add_property( laplace_vector_property, "Laplace Vector" );
   
-  if(!PluginFunctions::get_property_handle( _mesh , UNIFORM_LAPLACE_NAME , laplace_length_property)) 
+  if(!_mesh->get_property_handle( laplace_length_property , UNIFORM_LAPLACE_NAME )) 
     _mesh->add_property( laplace_length_property, UNIFORM_LAPLACE_NAME );
    
    
@@ -109,12 +109,12 @@ void LaplaceLengthPlugin::computeLaplaceSquaredLength(MeshT* _mesh) {
   OpenMesh::VPropHandleT< ACG::Vec3d > laplace_property;
   OpenMesh::VPropHandleT< double > laplace_squared;
   
-  if(!PluginFunctions::get_property_handle( _mesh , "Laplace Vector" , laplace_property)) {
+  if(!_mesh->get_property_handle( laplace_property , "Laplace Vector" )) {
     std::cerr << "LaplaceLengthPlugin : Unable to get Laplace Vector property" << std::endl;
     return;
   }
   
-  if(!PluginFunctions::get_property_handle( _mesh , UNIFORM_LAPLACE_SQUARED_NAME , laplace_squared)) 
+  if(!_mesh->get_property_handle( laplace_squared , UNIFORM_LAPLACE_SQUARED_NAME )) 
     _mesh->add_property( laplace_squared, UNIFORM_LAPLACE_SQUARED_NAME );
    
   QTime time;
