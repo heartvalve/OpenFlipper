@@ -89,10 +89,63 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
     }
   }
 
+  connect(this, SIGNAL(filterSelected(QString)), this, SLOT(currentFilterChanged(QString)));
+
   //overwrite dialog shouldn't be handled by the qfiledialog
   setConfirmOverwrite(false);
 
   setDirectory(OpenFlipper::Options::currentDirStr());
+}
+
+/// adjust the loadWidget / saveWidget when the selected nameFilter changed
+void LoadWidget::currentFilterChanged(QString _currentFilter){
+
+  for (int i=0; i < (int)supportedTypes_.size(); i++){
+    if (supportedTypes_[i].loadWidget != 0){
+      boxLayout_->removeWidget(supportedTypes_[i].loadWidget);
+      supportedTypes_[i].loadWidget->setParent(0);
+    }
+    if (supportedTypes_[i].saveWidget != 0){
+      boxLayout_->removeWidget(supportedTypes_[i].saveWidget);
+      supportedTypes_[i].saveWidget->setParent(0);
+    }
+  } 
+
+  const DataType type = (DataType) typeBox_->itemData( typeBox_->currentIndex() ).toInt();
+
+  if ( loadMode_ ){
+  for (int i=0; i < (int)supportedTypes_.size(); i++)
+    if (supportedTypes_[i].type == type){
+      //add Widget for new Filter
+      QWidget* nuWidget = 0;
+      nuWidget = supportedTypes_[i].plugin->loadOptionsWidget(_currentFilter);
+
+      if (nuWidget != 0){
+        boxLayout_->addWidget( nuWidget );
+        box_->show();
+      }else
+      if ( supportedTypes_[i].loadWidget != 0 ) {
+        boxLayout_->addWidget(supportedTypes_[i].loadWidget);
+        box_->show();
+      }
+    }
+  }else{
+    for (int i=0; i < (int)supportedTypes_.size(); i++)
+      if (supportedTypes_[i].type == type){
+        //add Widget for new Filter
+        QWidget* nuWidget = 0;
+        nuWidget = supportedTypes_[i].plugin->saveOptionsWidget(_currentFilter);
+  
+        if (nuWidget != 0){
+          boxLayout_->addWidget( nuWidget );
+          box_->show();
+        }else
+        if ( supportedTypes_[i].saveWidget != 0 ) {
+          boxLayout_->addWidget(supportedTypes_[i].saveWidget);
+          box_->show();
+        }
+      }
+  }
 }
 
 /// adjust load-filters to current datatype

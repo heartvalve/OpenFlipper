@@ -50,7 +50,8 @@ class LoadWidget : public QFileDialog
   private slots:
     void slotSetLoadFilters(int _typeIndex);
     void slotSetSaveFilters(int _typeIndex);
-    
+    void currentFilterChanged(QString _currentFilter); 
+
   private:
     int id_;
     bool loadMode_;
