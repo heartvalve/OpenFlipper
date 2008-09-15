@@ -101,13 +101,15 @@
 Core::
 Core() :
   QObject(),
-  root_node_(0, "Root Node"),
   nextBackupId_(0),
   standard_draw_mode_(ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED),
   set_random_base_color_(true),
   coreWidget_(0)
 {
-  
+  //init nodes
+  root_node_scenegraph_ = new ACG::SceneGraph::SeparatorNode(0, "SceneGraph Root Node");
+  root_node_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_, "Data Root Node");
+
    // Add ViewMode All
   ViewMode* vm = new ViewMode();
   vm->name = "All";
@@ -133,7 +135,9 @@ void
 Core::init() {    
   
   // Make root_node available to the plugins ( defined in PluginFunctions.hh)
-  PluginFunctions::set_rootNode( &root_node_ );  
+  PluginFunctions::set_rootNode( root_node_ );  
+
+  PluginFunctions::set_sceneGraphRootNode( root_node_scenegraph_ );  
   
   // Initialize the first object as the root Object for the object tree
   objectRoot_ =  dynamic_cast< BaseObject* > ( new GroupObject("ObjectRoot") );  
@@ -153,7 +157,7 @@ Core::init() {
       QApplication::processEvents();
     }
     
-    coreWidget_ = new CoreWidget( &root_node_, viewModes_ , plugins);
+    coreWidget_ = new CoreWidget(viewModes_ , plugins);
     
     connect(coreWidget_, SIGNAL(clearAll())           , this, SLOT(clearAll()));
     connect(coreWidget_, SIGNAL(loadMenu())           , this, SLOT(slotLoadMenu()));
@@ -484,7 +488,7 @@ Core::slotAddHiddenPickMode( const std::string _mode , QCursor _cursor) {
   */
 void Core::updateView() {
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::openingIni() ) {
-    coreWidget_->examiner_widget_->sceneGraph(&root_node_);
+    coreWidget_->examiner_widget_->sceneGraph(root_node_scenegraph_);
     coreWidget_->examiner_widget_->updateGL();
   }
 }

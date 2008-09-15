@@ -278,7 +278,11 @@ bool get_property_handle(MeshT* _mesh , QString _name, OpenMesh::HPropHandleT< p
 DLLEXPORT
 void set_examiner( ACG::QtWidgets::QtExaminerViewer* examiner_widget_ );
 
-/// Set the internal root node pointer ( DO NOT USE!! )
+/// Set the internal scenegraph root node pointer ( DO NOT USE!! )
+DLLEXPORT
+void set_sceneGraphRootNode( SeparatorNode* _root_node );
+
+/// Set the internal data root node pointer ( DO NOT USE!! )
 DLLEXPORT
 void set_rootNode( SeparatorNode* _root_node );
 
@@ -308,7 +312,19 @@ void getCurrentViewImage(QImage& _image);
 
 /// Get the root node
 DLLEXPORT
+ACG::SceneGraph::BaseNode* getSceneGraphRootNode();
+
+/// Get the root node
+DLLEXPORT
 ACG::SceneGraph::BaseNode* getRootNode();
+
+/// Add a node under the root node
+DLLEXPORT
+void addNode(ACG::SceneGraph::BaseNode* _node);
+
+/// Add a node between root node and its children
+DLLEXPORT
+void addGlobalNode(ACG::SceneGraph::BaseNode* _node);
 
 /// Set the current Action Mode (PickMode,ExamineMode,...)
 DLLEXPORT

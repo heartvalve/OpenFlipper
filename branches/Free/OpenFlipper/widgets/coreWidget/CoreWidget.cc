@@ -58,8 +58,7 @@
  * 
 */
 CoreWidget::
-CoreWidget( SeparatorNode* _rootNode,
-            QVector<ViewMode*>& _viewModes,
+CoreWidget( QVector<ViewMode*>& _viewModes,
             std::vector<PluginInfoT>& _plugins ) :
   QMainWindow(),
   viewModes_(_viewModes),
@@ -82,7 +81,6 @@ CoreWidget( SeparatorNode* _rootNode,
   helpBrowserDeveloper_(0),
   helpBrowserUser_(0),
   optionsWidget_(0),
-  root_node_(_rootNode),
   plugins_(_plugins)
   
 {
@@ -117,7 +115,7 @@ CoreWidget( SeparatorNode* _rootNode,
                                                           "Examiner Widget", 
                                                           statusBar_ , 
                                                           &format);
-  examiner_widget_->sceneGraph(root_node_);
+  examiner_widget_->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
   examiner_widget_->enablePopupMenu(false);
   stackedWidget_->addWidget(examiner_widget_);
   

@@ -132,7 +132,7 @@ class CoreWidget : public QMainWindow
 public:
 
   /// constructor
-  CoreWidget( SeparatorNode* _rootNode , QVector<ViewMode*>& _viewModes, std::vector<PluginInfoT>& _plugins );
+  CoreWidget( QVector<ViewMode*>& _viewModes, std::vector<PluginInfoT>& _plugins );
 
   /// destructor
   ~CoreWidget();
@@ -498,9 +498,6 @@ public:
   /** @} */      
     
   private :
-
-  /// Scenegraphs root node
-  SeparatorNode*  root_node_;
 
   std::vector<PluginInfoT>& plugins_;
 };
