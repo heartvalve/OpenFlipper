@@ -275,14 +275,22 @@ void FileTriangleMeshPlugin::saveIniFile( INIFile& _ini ,int _id) {
 }
 
 QWidget* FileTriangleMeshPlugin::saveOptionsWidget() {
+  return saveOptionsWidget("");
+}
+
+QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
+
   if (saveOptions_ == 0){
+    //generate widget
     saveOptions_ = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop);
     
-    saveBinary_ = new QCheckBox("Save Binary");
-    layout->addWidget(saveBinary_);
-    
+    if( ! _currentFilter.contains("Wavefront") ){ //dont add 'save binary' for obj
+      saveBinary_ = new QCheckBox("Save Binary");
+      layout->addWidget(saveBinary_);
+    }
+
     saveColor_ = new QCheckBox("Save Colors");
     layout->addWidget(saveColor_);
     
@@ -293,12 +301,22 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget() {
     layout->addWidget(saveTexCoords_);
     
     saveOptions_->setLayout(layout);
+  }else{
+    //adjust widget
+    if( _currentFilter.contains("Wavefront") ) //dont add 'save binary' for obj
+      saveBinary_->setVisible( false );
+    else
+      saveBinary_->setVisible( true );
   }
-  
+
   return saveOptions_;
 }
 
 QWidget* FileTriangleMeshPlugin::loadOptionsWidget() {
+  return 0;
+}
+
+QWidget* FileTriangleMeshPlugin::loadOptionsWidget(QString _currentFilter) {
   return 0;
 }
 
