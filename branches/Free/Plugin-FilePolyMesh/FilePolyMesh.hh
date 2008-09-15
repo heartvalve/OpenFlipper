@@ -96,6 +96,9 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
      
      QWidget* saveOptionsWidget() { return 0; };
      QWidget* loadOptionsWidget() { return 0; };
+
+     QWidget* saveOptionsWidget(QString _currentFilter) { return 0; };
+     QWidget* loadOptionsWidget(QString _currentFilter) { return 0; };
      
   private :
      BaseObject* objectRoot_;
