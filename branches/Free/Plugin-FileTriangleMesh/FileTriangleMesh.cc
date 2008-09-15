@@ -274,10 +274,6 @@ void FileTriangleMeshPlugin::saveIniFile( INIFile& _ini ,int _id) {
   }
 }
 
-QWidget* FileTriangleMeshPlugin::saveOptionsWidget() {
-  return saveOptionsWidget("");
-}
-
 QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
 
   if (saveOptions_ == 0){
@@ -310,10 +306,6 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
   }
 
   return saveOptions_;
-}
-
-QWidget* FileTriangleMeshPlugin::loadOptionsWidget() {
-  return 0;
 }
 
 QWidget* FileTriangleMeshPlugin::loadOptionsWidget(QString _currentFilter) {

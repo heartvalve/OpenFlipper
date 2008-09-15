@@ -98,9 +98,7 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
      QString getSaveFilters();
      QString getLoadFilters();
      
-     QWidget* saveOptionsWidget();
      QWidget* saveOptionsWidget(QString _currentFilter);
-     QWidget* loadOptionsWidget();
      QWidget* loadOptionsWidget(QString _currentFilter);
      
   private :
