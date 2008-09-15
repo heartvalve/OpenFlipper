@@ -62,6 +62,8 @@ static ACG::QtWidgets::QtExaminerViewer* examiner_widget_;
  */
 static SeparatorNode* root_node_;
 
+static SeparatorNode* sceneGraph_root_node_;
+
 void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
@@ -72,6 +74,10 @@ void set_examiner( ACG::QtWidgets::QtExaminerViewer* _examiner_widget ) {
 
 void set_rootNode( SeparatorNode* _root_node ) {
    PluginFunctions::root_node_ = _root_node;
+}
+
+void set_sceneGraphRootNode( SeparatorNode* _root_node ) {
+   PluginFunctions::sceneGraph_root_node_ = _root_node;
 }
 
 bool get_source_meshes( std::vector<TriMesh*>& _meshes  ) {
@@ -443,8 +449,29 @@ ACG::Vec3d upVector() {
 }
 
 
+ACG::SceneGraph::BaseNode* getSceneGraphRootNode() {
+   return PluginFunctions::sceneGraph_root_node_;
+}
+
 ACG::SceneGraph::BaseNode* getRootNode() {
    return PluginFunctions::root_node_;
+}
+
+void addNode(ACG::SceneGraph::BaseNode* _node){
+  if (PluginFunctions::root_node_)
+    _node->set_parent( PluginFunctions::root_node_ );
+}
+
+void addGlobalNode(ACG::SceneGraph::BaseNode* _node){
+  if (PluginFunctions::sceneGraph_root_node_){
+    //set node as new parent for root's children
+    while( PluginFunctions::sceneGraph_root_node_->nChildren() > 0 ){
+      ACG::SceneGraph::BaseNode* child = *(PluginFunctions::sceneGraph_root_node_->childrenBegin());
+      child->set_parent( _node );
+    }
+
+    _node->set_parent( PluginFunctions::sceneGraph_root_node_ );
+  }
 }
 
 int object_count() {

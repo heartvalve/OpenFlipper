@@ -47,7 +47,7 @@ void Core::resetScenegraph() {
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::openingIni() ) {
     // update scene graph
     coreWidget_->examiner_widget_->lockUpdate();
-    coreWidget_->examiner_widget_->sceneGraph(&root_node_);
+    coreWidget_->examiner_widget_->sceneGraph(root_node_scenegraph_);
     coreWidget_->examiner_widget_->viewAll();
     coreWidget_->examiner_widget_->setScenePos( coreWidget_->examiner_widget_->scene_center() ,
                                                 coreWidget_->examiner_widget_->scene_radius() /* 10.0*/  );

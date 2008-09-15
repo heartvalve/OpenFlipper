@@ -387,7 +387,10 @@ private:
 
    private:
       /// Scenegraphs root node
-      SeparatorNode  root_node_;
+      SeparatorNode* root_node_scenegraph_;
+
+      /// Data root node
+      SeparatorNode*  root_node_;
 
    /** @} */
 
