@@ -80,13 +80,8 @@ class FileInterface {
       
       /// Get the Qt Filters for Filedialogs when saving files
       virtual QString getSaveFilters() = 0;
-      
-      /** You can provide a special widget showing options for saving your file types
-       *  Return 0 when you dont need one
-       */
-      virtual QWidget* saveOptionsWidget() = 0;
 
-      /** You can also provide a special widget showing options for saving your file types
+      /** You can provide a special widget showing options for saving your file types
        *  depending on the current filter
        *
        *  _currentFilter: one filter from saveFilters
@@ -94,13 +89,8 @@ class FileInterface {
        *  Return 0 when you dont need one, OpenFlipper then uses saveOptionsWidget() if available 
        */
       virtual QWidget* saveOptionsWidget(QString _currentFilter) = 0;
-      
-      /** You can provide a special widget showing options for loading your file types
-        *  Return 0 when you dont need one
-       */
-      virtual QWidget* loadOptionsWidget() = 0;
 
-      /** You can also provide a special widget showing options for loading your file types
+      /** You can provide a special widget showing options for loading your file types
        *  depending on the current filter
        *
        *  _currentFilter: one filter from loadFilters
