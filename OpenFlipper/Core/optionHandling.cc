@@ -62,10 +62,10 @@ void Core::applyOptions(){
     if (OpenFlipper::Options::defaultToolboxMode() != "")
       coreWidget_->slotChangeView(OpenFlipper::Options::defaultToolboxMode(), QStringList());
     //Set Fullscreen
-    if ( OpenFlipper::Options::fullScreen() ) {
-      coreWidget_->setWindowFlags( coreWidget_->windowFlags () | Qt::FramelessWindowHint) ;
-      coreWidget_->resize(QApplication::desktop()->size());
-    }
+    if ( OpenFlipper::Options::fullScreen() )
+      coreWidget_->setWindowState(Qt::WindowFullScreen);
+    else
+      coreWidget_->setWindowState(!Qt::WindowFullScreen);
   
     //Hide Logger
     if (OpenFlipper::Options::hideLogger()) {
@@ -81,6 +81,10 @@ void Core::applyOptions(){
   
     //Backface Culling
     coreWidget_->examiner_widget_->backFaceCulling(OpenFlipper::Options::backfaceCulling());
+
+    //wheel zoom factor
+    coreWidget_->examiner_widget_->setWheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());
+    coreWidget_->examiner_widget_->setWheelZoomFactorShift(OpenFlipper::Options::wheelZoomFactorShift());
     
     //hideToolbox
     if (OpenFlipper::Options::hideToolbox()) {
@@ -97,6 +101,26 @@ void Core::applyOptions(){
     
   }
   
+}
+
+void Core::saveOptions(){
+  QString inifile = QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" + 
+                                                  OpenFlipper::Options::dirSeparator() +  "OpenFlipper.ini";
+
+  INIFile ini;
+  if ( ! ini.connect( inifile ,false) ) {
+    emit log(LOGERR,"Failed to connect to users ini file");
+    
+    if ( ! ini.connect( inifile,true) ) {
+      emit log(LOGERR,"Can not create user ini file");
+    } else {
+      writeApplicationOptions(ini);
+      ini.disconnect();
+    }
+  } else {
+    writeApplicationOptions(ini);
+    ini.disconnect();
+  }       
 }
 
 void Core::setupOptions() {

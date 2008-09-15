@@ -407,6 +407,9 @@ private:
 
   public slots:
 
+   /// Save the current options to the standard ini file
+   void saveOptions();
+
    /// after ini-files have been loaded and core is up or if options have been changed -> apply Options
    void applyOptions();
 
@@ -432,9 +435,6 @@ private:
     *  Writes the complete status to an obj file ( All open objects and their Information )
     */
    void writeObjFile(QString _filename, bool _relativePaths);
-
-   /// Write important information like recent files to ini (used e.g. on exit)
-   void writeImportant(INIFile& _ini);
 
    /// Called if app is closed and writes all information to ini file
    void writeOnExit();

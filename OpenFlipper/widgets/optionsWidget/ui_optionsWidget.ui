@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>290</width>
-    <height>404</height>
+    <width>567</width>
+    <height>487</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,14 +14,196 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
-    <widget class="QLabel" name="label" >
-     <property name="text" >
-      <string>TODO</string>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="toolTip" >
+      <string/>
      </property>
+     <property name="statusTip" >
+      <string/>
+     </property>
+     <property name="currentIndex" >
+      <number>1</number>
+     </property>
+     <property name="usesScrollButtons" >
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="general" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>545</width>
+        <height>409</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>General</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item>
+        <widget class="QCheckBox" name="fullscreen" >
+         <property name="toolTip" >
+          <string>Display OpenFlipper in fullscreen mode</string>
+         </property>
+         <property name="statusTip" >
+          <string>Display OpenFlipper in fullscreen mode</string>
+         </property>
+         <property name="text" >
+          <string>Show Fullscreen</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="splash" >
+         <property name="toolTip" >
+          <string>Show splash screen on startup</string>
+         </property>
+         <property name="statusTip" >
+          <string>Show splash screen on startup</string>
+         </property>
+         <property name="text" >
+          <string>Show Splash-Screen</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="toolbox" >
+         <property name="toolTip" >
+          <string>Show the toolbox for plugin widgets</string>
+         </property>
+         <property name="statusTip" >
+          <string>Show the toolbox for plugin widgets</string>
+         </property>
+         <property name="text" >
+          <string>Show Toolbox (CTRL+T)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="logger" >
+         <property name="toolTip" >
+          <string>Show the Logger window at the bottom</string>
+         </property>
+         <property name="statusTip" >
+          <string>Show the Logger window at the bottom</string>
+         </property>
+         <property name="text" >
+          <string>Show Logger (CTRL+L)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="viewer" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>545</width>
+        <height>409</height>
+       </rect>
+      </property>
+      <attribute name="title" >
+       <string>Viewer</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout" >
+       <item row="0" column="1" >
+        <widget class="QCheckBox" name="backfaceCulling" >
+         <property name="toolTip" >
+          <string>Enable backface culling</string>
+         </property>
+         <property name="statusTip" >
+          <string>Enable backface culling</string>
+         </property>
+         <property name="text" >
+          <string>Backface culling</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="label_2" >
+         <property name="text" >
+          <string>MouseWheel Zoomfactor:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="wZoomFactor" >
+         <property name="maximumSize" >
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="toolTip" >
+          <string>Set the factor to control the zooming with the mouse-wheel</string>
+         </property>
+         <property name="statusTip" >
+          <string>Set the factor to control the zooming with the mouse-wheel</string>
+         </property>
+         <property name="inputMask" >
+          <string>9.99; </string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="label_3" >
+         <property name="text" >
+          <string>MouseWheel Zoomfactor (shift):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLineEdit" name="wZoomFactorShift" >
+         <property name="maximumSize" >
+          <size>
+           <width>100</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="toolTip" >
+          <string>Set the factor to control the zooming with the mouse-wheel while the shift key is pressed</string>
+         </property>
+         <property name="statusTip" >
+          <string>Set the factor to control the zooming with the mouse-wheel while the shift key is pressed</string>
+         </property>
+         <property name="inputMask" >
+          <string>9.99; </string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
      <item>
       <widget class="QPushButton" name="applyButton" >
        <property name="text" >

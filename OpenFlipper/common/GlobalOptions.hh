@@ -293,6 +293,22 @@ bool iconDir(QString _dir);
   DLLEXPORT
   bool backfaceCulling( );
 
+  /// Store wheelZoomFactor setting
+  DLLEXPORT
+  void wheelZoomFactor( double _factor );
+
+  /// get wheelZoomFactor setting
+  DLLEXPORT
+  double wheelZoomFactor( );
+
+  /// Store wheelZoomFactorShift setting
+  DLLEXPORT
+  void wheelZoomFactorShift( double _factor );
+
+  /// get wheelZoomFactorShift setting
+  DLLEXPORT
+  double wheelZoomFactorShift( );
+
 /** @} */
 
 //===========================================================================

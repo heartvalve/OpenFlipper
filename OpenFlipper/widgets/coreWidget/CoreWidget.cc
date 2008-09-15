@@ -436,8 +436,16 @@ void CoreWidget::showOptionsWidget() {
   if ( optionsWidget_ == 0 ) {
     optionsWidget_ = new OptionsWidget(0);
     connect(optionsWidget_,SIGNAL(applyOptions()),this,SIGNAL(applyOptions()));
+    connect(optionsWidget_,SIGNAL(saveOptions()),this,SIGNAL(saveOptions()));
   }
-  
+
+  //show the optionsWidget centered  
+  QPoint center;
+  center.setX( x() + width() / 2 ); 
+  center.setY( y() + height() / 2 );
+
+  optionsWidget_->setGeometry(center.x() - optionsWidget_->width() / 2, center.y() - optionsWidget_->height() / 2, optionsWidget_->width(), optionsWidget_->height());
+
   optionsWidget_->show();
     
 }

@@ -86,6 +86,12 @@ static bool animation_ = false;
 /// Store the backfaceCulling mode
 static bool backfaceCulling_ = false;
 
+/// Store the wheelZoomFactor mode
+static double wheelZoomFactor_ = 1.0;
+
+/// Store the wheelZoomFactorShift mode
+static double wheelZoomFactorShift_ = 0.2;
+
 /// Store the toolbox gui Mode mode
 static bool hideToolbox_ = false;
 
@@ -309,6 +315,26 @@ void backfaceCulling( bool _backfaceCulling ) {
 /// get backfaceCulling setting
 bool backfaceCulling( ) {
   return backfaceCulling_; 
+}
+
+/// Store wheelZoomFactor setting
+void wheelZoomFactor( double _factor ) {
+  wheelZoomFactor_ = _factor; 
+}
+  
+/// get wheelZoomFactor setting
+double wheelZoomFactor( ) {
+  return wheelZoomFactor_; 
+}
+
+/// Store wheelZoomFactorShift setting
+void wheelZoomFactorShift( double _factor ) {
+  wheelZoomFactorShift_ = _factor; 
+}
+  
+/// get wheelZoomFactorShift setting
+double wheelZoomFactorShift( ) {
+  return wheelZoomFactorShift_; 
 }
 
 /// Set if we start the logging widget closed

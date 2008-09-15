@@ -148,6 +148,20 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::backfaceCulling(backface_culling);
 
     //============================================================================
+    // Load the WheelZoomFactor setting
+    //============================================================================
+    double wheelZoomFactor = 1.0;
+    if ( _ini.get_entry( wheelZoomFactor, "Options" , "WheelZoomFactor") )
+      OpenFlipper::Options::wheelZoomFactor(wheelZoomFactor);
+
+    //============================================================================
+    // Load the WheelZoomFactorShift setting
+    //============================================================================
+    double wheelZoomFactorShift = 0.2;
+    if ( _ini.get_entry( wheelZoomFactorShift, "Options" , "WheelZoomFactorShift") )
+      OpenFlipper::Options::wheelZoomFactorShift(wheelZoomFactorShift);
+
+    //============================================================================
     // Load the animation setting
     //============================================================================
     bool animation = false;
@@ -191,10 +205,10 @@ void Core::readApplicationOptions(INIFile& _ini) {
   }
 }
 
-/** Write the most important options to the given Ini File
+/** Write the standard options to the given Ini File
 * @param _ini Inifile to use
 */
-void Core::writeImportant(INIFile& _ini) {
+void Core::writeApplicationOptions(INIFile& _ini) {
 
   // Write maximum recent file count to ini
   _ini.add_entry("Options","MaxRecent",OpenFlipper::Options::maxRecent());
@@ -258,14 +272,8 @@ void Core::writeImportant(INIFile& _ini) {
 
   //write dontLoad Plugins
   _ini.add_entry("Plugins","DontLoad", dontLoad);
-}
 
 
-/** Write the standard options to the given Ini File
-* @param _ini Inifile to use
-*/
-void Core::writeApplicationOptions(INIFile& _ini) {
-  writeImportant(_ini);
 
   if ( !_ini.section_exists("Options") )
     _ini.add_section("Options");
@@ -278,6 +286,9 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
     _ini.add_entry("Options","BackfaceCulling",coreWidget_->examiner_widget_->backFaceCulling());
     _ini.add_entry("Options","Animation",coreWidget_->examiner_widget_->animation());
+
+    _ini.add_entry("Options","WheelZoomFactor",coreWidget_->examiner_widget_->wheelZoomFactor());
+    _ini.add_entry("Options","WheelZoomFactorShift",coreWidget_->examiner_widget_->wheelZoomFactorShift());
 
     //============================================================================
     // Save the current draw modes
