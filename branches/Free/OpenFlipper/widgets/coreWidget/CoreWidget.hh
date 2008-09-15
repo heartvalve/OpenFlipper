@@ -438,6 +438,7 @@ public:
 
   signals:
     void applyOptions();
+    void saveOptions();
     
   private:
 

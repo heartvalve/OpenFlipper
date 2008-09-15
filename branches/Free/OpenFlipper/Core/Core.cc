@@ -163,6 +163,7 @@ Core::init() {
     connect(coreWidget_, SIGNAL(loadIniMenu())        , this, SLOT(slotLoadIniMenu()));
     connect(coreWidget_, SIGNAL(saveIniMenu())        , this, SLOT(slotSaveIniMenu()));
     connect(coreWidget_, SIGNAL(applyOptions())       , this, SLOT(applyOptions()));
+    connect(coreWidget_, SIGNAL(saveOptions())        , this, SLOT(saveOptions()));
     connect(coreWidget_, SIGNAL(recentOpen(QAction*)) , this, SLOT(slotRecentOpen(QAction*)));
     connect(coreWidget_, SIGNAL(exit())               , this, SLOT(slotExit()));
     
@@ -598,11 +599,11 @@ Core::writeOnExit() {
     if ( ! ini.connect( inifile,true) ) {
       emit log(LOGERR,"Can not create user ini file");
     } else {
-      writeImportant(ini);
+      writeApplicationOptions(ini);
       ini.disconnect();
     }
   } else {
-    writeImportant(ini);
+    writeApplicationOptions(ini);
     ini.disconnect();
   }       
   

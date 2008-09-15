@@ -48,6 +48,7 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
 
   signals:
     void applyOptions();
+    void saveOptions();
 
   private slots:
     /// Hide widget, Update Options and tell others about changed Options

@@ -45,12 +45,35 @@ OptionsWidget::OptionsWidget( QWidget *parent)
 }
 
 void OptionsWidget::showEvent ( QShowEvent * event ) {
-  std::cerr << "Todo : Set Options in Widget" << std::endl;
+
+  //general 
+  fullscreen->setChecked( OpenFlipper::Options::fullScreen() );
+  splash->setChecked( OpenFlipper::Options::splash() );
+  toolbox->setChecked( !OpenFlipper::Options::hideToolbox() );
+  logger->setChecked( !OpenFlipper::Options::hideLogger() );
+
+  //viewer
+  backfaceCulling->setChecked( OpenFlipper::Options::backfaceCulling() );
+  wZoomFactor->setText( QString::number(OpenFlipper::Options::wheelZoomFactor(), 'f') );
+  wZoomFactorShift->setText( QString::number(OpenFlipper::Options::wheelZoomFactorShift(), 'f') );
+
 }
 
 void OptionsWidget::slotApply() {
-  std::cerr << "Todo : Get Options from Widget and set them in the core" << std::endl;
+
+  //general 
+  OpenFlipper::Options::fullScreen( fullscreen->isChecked() );
+  OpenFlipper::Options::splash( splash->isChecked() );
+  OpenFlipper::Options::hideToolbox( !toolbox->isChecked() );
+  OpenFlipper::Options::hideLogger( !logger->isChecked() );
+
+  //viewer
+  OpenFlipper::Options::backfaceCulling( backfaceCulling->isChecked() );
+  OpenFlipper::Options::wheelZoomFactor( wZoomFactor->text().toDouble() );
+  OpenFlipper::Options::wheelZoomFactorShift( wZoomFactorShift->text().toDouble() );
+
   emit applyOptions();
+  emit saveOptions();
   hide();
 }
 
