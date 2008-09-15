@@ -429,14 +429,6 @@ void Core::loadPlugin(QString filename, bool silent){
       ft.saveFilters = filePlugin->getSaveFilters();
       ft.plugin = filePlugin;
 
-      if ( OpenFlipper::Options::gui() ) {
-        ft.loadWidget = filePlugin->loadOptionsWidget();
-        ft.saveWidget = filePlugin->saveOptionsWidget();
-      } else {
-        ft.loadWidget = 0;
-        ft.saveWidget = 0;
-      }
-
       supportedTypes_.push_back(ft);
       filePlugin->setObjectRoot( objectRoot_ );
     }

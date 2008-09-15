@@ -96,8 +96,6 @@ struct fileTypes {
   QString loadFilters;
   QString saveFilters;
   FileInterface* plugin;
-  QWidget* loadWidget;
-  QWidget* saveWidget;
 };
 
 /** Core Widget of the Application

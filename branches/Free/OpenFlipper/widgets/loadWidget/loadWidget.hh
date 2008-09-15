@@ -75,8 +75,9 @@ class LoadWidget : public QFileDialog
     QComboBox* typeBox_;
     
     /// QFrame on the right
-    QGroupBox*    box_;
-    QHBoxLayout*  boxLayout_;
+    QGroupBox*          box_;
+    QHBoxLayout*        boxLayout_;
+    QVector< QWidget* > boxWidgets_;
 
     bool step_;
     

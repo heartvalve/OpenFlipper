@@ -49,7 +49,6 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
   : QFileDialog(parent),
     loadMode_(true),
     supportedTypes_(_supportedTypes)
-
 {
 
   // Get our layout
@@ -100,16 +99,12 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
 /// adjust the loadWidget / saveWidget when the selected nameFilter changed
 void LoadWidget::currentFilterChanged(QString _currentFilter){
 
-  for (int i=0; i < (int)supportedTypes_.size(); i++){
-    if (supportedTypes_[i].loadWidget != 0){
-      boxLayout_->removeWidget(supportedTypes_[i].loadWidget);
-      supportedTypes_[i].loadWidget->setParent(0);
-    }
-    if (supportedTypes_[i].saveWidget != 0){
-      boxLayout_->removeWidget(supportedTypes_[i].saveWidget);
-      supportedTypes_[i].saveWidget->setParent(0);
-    }
-  } 
+  for (int i=0; i < boxWidgets_.size(); i++){
+    boxLayout_->removeWidget( boxWidgets_[i] );
+    boxWidgets_[i]->setParent(0); 
+  }
+
+  boxWidgets_.clear();
 
   const DataType type = (DataType) typeBox_->itemData( typeBox_->currentIndex() ).toInt();
 
@@ -122,10 +117,7 @@ void LoadWidget::currentFilterChanged(QString _currentFilter){
 
       if (nuWidget != 0){
         boxLayout_->addWidget( nuWidget );
-        box_->show();
-      }else
-      if ( supportedTypes_[i].loadWidget != 0 ) {
-        boxLayout_->addWidget(supportedTypes_[i].loadWidget);
+        boxWidgets_.push_back( nuWidget );
         box_->show();
       }
     }
@@ -138,10 +130,7 @@ void LoadWidget::currentFilterChanged(QString _currentFilter){
   
         if (nuWidget != 0){
           boxLayout_->addWidget( nuWidget );
-          box_->show();
-        }else
-        if ( supportedTypes_[i].saveWidget != 0 ) {
-          boxLayout_->addWidget(supportedTypes_[i].saveWidget);
+          boxWidgets_.push_back( nuWidget );
           box_->show();
         }
       }
@@ -152,17 +141,12 @@ void LoadWidget::currentFilterChanged(QString _currentFilter){
 void LoadWidget::slotSetLoadFilters(int _typeIndex){
   box_->setTitle("Load Options");
 
-  for (int i=0; i < (int)supportedTypes_.size(); i++){
-    if (supportedTypes_[i].loadWidget != 0){
-      boxLayout_->removeWidget(supportedTypes_[i].loadWidget);
-      supportedTypes_[i].loadWidget->setParent(0);
-    }
-    if (supportedTypes_[i].saveWidget != 0){
-      boxLayout_->removeWidget(supportedTypes_[i].saveWidget);
-      supportedTypes_[i].saveWidget->setParent(0);
-    }
+  for (int i=0; i < boxWidgets_.size(); i++){
+    boxLayout_->removeWidget( boxWidgets_[i] );
+    boxWidgets_[i]->setParent(0); 
   }
 
+  boxWidgets_.clear();
 
   const DataType type = (DataType) typeBox_->itemData(_typeIndex).toInt();
   for (int i=0; i < (int)supportedTypes_.size(); i++)
@@ -173,12 +157,14 @@ void LoadWidget::slotSetLoadFilters(int _typeIndex){
       setNameFilters(filters);
 
       //add Widget for new Filter
-      if ( supportedTypes_[i].loadWidget != 0 ) {
-        boxLayout_->addWidget(supportedTypes_[i].loadWidget);
-//         boxLayout_->removeWidget(supportedTypes_[i].saveWidget);
+      QWidget* nuWidget = 0;
+      nuWidget = supportedTypes_[i].plugin->loadOptionsWidget("");
+
+      if ( nuWidget != 0 ) {
+        boxLayout_->addWidget( nuWidget );
+        boxWidgets_.push_back( nuWidget );
         box_->show();
       }
-
     }
 
   if (box_->children().count() == 1) //only the layout is left
@@ -189,16 +175,12 @@ void LoadWidget::slotSetLoadFilters(int _typeIndex){
 void LoadWidget::slotSetSaveFilters(int _typeIndex){
   box_->setTitle("Save Options");
 
-  for (int i=0; i < (int)supportedTypes_.size(); i++){
-    if (supportedTypes_[i].loadWidget != 0){
-      boxLayout_->removeWidget(supportedTypes_[i].loadWidget);
-      supportedTypes_[i].loadWidget->setParent(0);
-    }
-    if (supportedTypes_[i].saveWidget != 0){
-      boxLayout_->removeWidget(supportedTypes_[i].saveWidget);
-      supportedTypes_[i].saveWidget->setParent(0);
-    }
+  for (int i=0; i < boxWidgets_.size(); i++){
+    boxLayout_->removeWidget( boxWidgets_[i] );
+    boxWidgets_[i]->setParent(0); 
   }
+
+  boxWidgets_.clear();
 
   const DataType type = (DataType) typeBox_->itemData(_typeIndex).toInt();
   for (int i=0; i < (int)supportedTypes_.size(); i++)
@@ -209,19 +191,15 @@ void LoadWidget::slotSetSaveFilters(int _typeIndex){
       setNameFilters(filters);
 
       //add Widget for new Filter
-      if ( supportedTypes_[i].saveWidget != 0 ) {
-        boxLayout_->addWidget(supportedTypes_[i].saveWidget);
-//         boxLayout_->removeWidget(supportedTypes_[i].saveWidget);
+      QWidget* nuWidget = 0;
+      nuWidget = supportedTypes_[i].plugin->saveOptionsWidget("");
+
+      if ( nuWidget != 0 ) {
+        boxLayout_->addWidget( nuWidget );
+        boxWidgets_.push_back( nuWidget );
         box_->show();
       }
-
     }
-      //remove Widget from last Filter
-//       if ( supportedTypes_[i].loadWidget != 0 ) {
-//         boxLayout_->removeWidget(supportedTypes_[i].loadWidget);
-//         boxLayout_->removeWidget(supportedTypes_[i].saveWidget);
-//         supportedTypes_[i].saveWidget->setParent(0);
-//       }
 
   if (box_->children().count() == 1) //only the layout is left
     box_->hide();
