@@ -45,6 +45,7 @@
 
 #include "Types.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
+#include <ACG/Scenegraph/SceneGraph.hh>
 
 //== TYPEDEFS =================================================================
 
@@ -174,6 +175,16 @@ bool BaseObjectData::manipPlaced() {
 
 void BaseObjectData::manipPlaced( bool _placed ) {
   manipPlaced_ = _placed;
+}
+
+void BaseObjectData::getBoundingBox(ACG::Vec3d& bbmin, ACG::Vec3d& bbmax){
+
+  ACG::SceneGraph::BoundingBoxAction act;
+  ACG::SceneGraph::traverse(separatorNode_, act);
+
+
+  bbmin = (ACG::Vec3d) act.bbMin();
+  bbmax = (ACG::Vec3d) act.bbMax();
 }
 
 // ===============================================================================

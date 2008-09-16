@@ -175,6 +175,9 @@ class DLLEXPORT BaseObjectData : public BaseObject
     
     /// set the manipulator place status
     void manipPlaced( bool _placed );
+
+    /// get the bounding box of the object
+    void getBoundingBox(ACG::Vec3d& bbmin, ACG::Vec3d& bbmax);
     
   private :
 
