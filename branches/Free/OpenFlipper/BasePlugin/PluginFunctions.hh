@@ -308,7 +308,7 @@ ACG::GLState&  glState();
 
 /// Returns a QImage of the current View
 DLLEXPORT
-void getCurrentViewImage(QImage& _image);    
+void getCurrentViewImage(QImage& _image);
 
 /// Get the root node
 DLLEXPORT
@@ -366,26 +366,26 @@ DLLEXPORT
 void setScenePos(const ACG::Vec3d& _center, double _radius);
 
 /** \brief Set the scene position (Same as  setScenePos(const ACG::Vec3d& _center, double _radius) )
- * 
+ *
  */
 DLLEXPORT
 void setScenePos(const ACG::Vec3d& _center);
 
 /** \brief Get the current scene center
- * 
+ *
  */
 DLLEXPORT
 const ACG::Vec3d& sceneCenter();
 
 /** \brief Returns the current scene radius from the examiner widget
- * 
+ *
  * Returns the Radius of the scene
  */
 DLLEXPORT
 double sceneRadius();
 
 /** \brief Translate viewer pos by given vector
- * 
+ *
  * Translates the scene by a given vector. ( This is only a view transformation and does not
  * effect the scene center. To really translate the scene, use setScenePos );
  * @param _vector translation
@@ -394,15 +394,15 @@ DLLEXPORT
 void translate( const ACG::Vec3d &_vector );
 
 /** \brief Rotate Scene around axis
- * 
- * Rotates the current scene. 
+ *
+ * Rotates the current scene.
  * @param _axis   Rotation axis
  * @param _angle  Rotation Angle
  * @param _center Rotation Center
  */
 DLLEXPORT
-void rotate(const ACG::Vec3d&  _axis, 
-            double             _angle, 
+void rotate(const ACG::Vec3d&  _axis,
+            double             _angle,
             const ACG::Vec3d&  _center);
 
 
@@ -483,7 +483,11 @@ void mapToLocal( OpenMesh::Vec4f _color);
     * @{ */
 //=======================================
 
-///   Fly to point and viewing direction (animated).
+/**  Fly to point and viewing direction (animated).
+ * @param _position New viewer position ( the new eye point of the viewer )
+ * @param _center   The new scene center ( the point we are looking at )
+ * @param _time     Animation time in ms
+ */
 DLLEXPORT
 void flyTo (const TriMesh::Point &_position, const TriMesh::Point &_center, double _time=1000.0);
 
