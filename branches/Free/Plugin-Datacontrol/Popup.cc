@@ -145,6 +145,9 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
    }else
     // check if the item is a group item
     if ( item->isGroup() ) {
+      action = menu.addAction("Zoom to objects",this,SLOT ( slotZoomTo() )); 
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
+      action->setIcon(icon);
       menu.addAction("Ungroup",this,SLOT ( slotUngroup() )); 
       menu.addSeparator();
       action = menu.addAction("Rename",this,SLOT ( slotRename() )); 
@@ -155,6 +158,9 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"user-trash.png");
       action->setIcon(icon);
     } else {
+      action = menu.addAction("Zoom to object",this,SLOT ( slotZoomTo() )); 
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
+      action->setIcon(icon);
       action = menu.addAction("Rename",this,SLOT ( slotRename() )); 
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
       action->setIcon(icon);
@@ -222,5 +228,82 @@ void DataControlPlugin::slotRename(){
                                             item->name(), &ok);
     if (ok && !newName.isEmpty())
       item->setName(newName);
+  }
+}
+
+void DataControlPlugin::slotZoomTo(){
+  QItemSelectionModel* selection = view_->selectionModel();
+  
+  // Get all selected rows
+  QModelIndexList indexList = selection->selectedRows ( 0 ); 
+  int selectedRows = indexList.size();
+  if (selectedRows == 1){
+    BaseObject* item = model_->getItem( indexList[0]);
+
+    if ( item->isGroup() ) {
+      //zoom to all objects in this group
+      QList< BaseObject* > children = item->getLeafs();
+
+      //compute boundingBox
+      bool firstRound = true;
+      ACG::Vec3d bbmin;
+      ACG::Vec3d bbmax;
+
+      for (int i=0; i < children.size(); i++){
+        BaseObjectData* child = dynamic_cast< BaseObjectData* > (children[i]);
+        if (child){
+    
+          ACG::Vec3d cur_min;
+          ACG::Vec3d cur_max;
+      
+          child->getBoundingBox(cur_min, cur_max);
+      
+          if (firstRound){
+            bbmin = cur_min;
+            bbmax = cur_max;
+            firstRound = false;
+          }else{
+            bbmin[0] = std::min( bbmin[0], cur_min[0]);
+            bbmin[1] = std::min( bbmin[1], cur_min[1]);
+            bbmin[2] = std::min( bbmin[2], cur_min[2]);
+            bbmax[0] = std::max( bbmax[0], cur_max[0]);
+            bbmax[1] = std::max( bbmax[0], cur_max[1]);
+            bbmax[2] = std::max( bbmax[0], cur_max[2]);
+          }
+      
+        }
+      }
+      //zoom to objects
+      ACG::Vec3d bbcenter = (bbmax + bbmin) / 0.5;
+    
+      double bbradius = (bbmax - bbmin).norm();
+    
+      ACG::Vec3d eye = bbcenter + (PluginFunctions::eyePos() - bbcenter).normalize() * bbradius ;
+    
+      PluginFunctions::flyTo(eye, bbcenter );
+      
+    }else{
+      //zoom to object
+      BaseObjectData* obj = dynamic_cast< BaseObjectData* >(item);
+      
+      if (obj){
+    
+        ACG::Vec3d bbmin;
+        ACG::Vec3d bbmax;
+    
+        obj->getBoundingBox(bbmin, bbmax);
+    
+        if ((bbmin[0] > bbmax[0]) || (bbmin[1] > bbmax[1]) || (bbmin[2] > bbmax[2]))
+          std::cerr << "Error while computing bounding box!";
+    
+        ACG::Vec3d bbcenter = (bbmax + bbmin) / 0.5;
+    
+        double bbradius = (bbmax - bbmin).norm();
+    
+        ACG::Vec3d eye = bbcenter + (PluginFunctions::eyePos() - bbcenter).normalize() * bbradius ;
+    
+        PluginFunctions::flyTo(eye, bbcenter );
+      }
+    }
   }
 }

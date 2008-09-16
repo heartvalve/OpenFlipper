@@ -192,6 +192,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
         
         ///Called by the popup menu to rename items
         void slotRename ( );
+
+        ///Called by the popup menu to zoom to an object
+        void slotZoomTo();
       
       private :
         /// Index where a popup has been opened
