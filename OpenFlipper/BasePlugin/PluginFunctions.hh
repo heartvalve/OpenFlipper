@@ -483,7 +483,7 @@ void mapToLocal( OpenMesh::Vec4f _color);
     * @{ */
 //=======================================
 
-/**  Fly to point and viewing direction (animated).
+/**  Fly to point and set new viewing direction (animated).
  * @param _position New viewer position ( the new eye point of the viewer )
  * @param _center   The new scene center ( the point we are looking at )
  * @param _time     Animation time in ms
