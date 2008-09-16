@@ -63,9 +63,9 @@ void Core::applyOptions(){
       coreWidget_->slotChangeView(OpenFlipper::Options::defaultToolboxMode(), QStringList());
     //Set Fullscreen
     if ( OpenFlipper::Options::fullScreen() )
-      coreWidget_->setWindowState(Qt::WindowFullScreen);
+      coreWidget_->setWindowState( coreWidget_->windowState() | Qt::WindowFullScreen);
     else
-      coreWidget_->setWindowState(!Qt::WindowFullScreen);
+		coreWidget_->setWindowState( (coreWidget_->windowState() | Qt::WindowFullScreen) ^ Qt::WindowFullScreen);
   
     //Hide Logger
     if (OpenFlipper::Options::hideLogger()) {
