@@ -252,7 +252,6 @@ void DataControlPlugin::slotZoomTo(){
       for (int i=0; i < children.size(); i++){
         BaseObjectData* child = dynamic_cast< BaseObjectData* > (children[i]);
         if (child){
-    
           ACG::Vec3d cur_min;
           ACG::Vec3d cur_max;
       
@@ -274,7 +273,7 @@ void DataControlPlugin::slotZoomTo(){
         }
       }
       //zoom to objects
-      ACG::Vec3d bbcenter = (bbmax + bbmin) / 0.5;
+      ACG::Vec3d bbcenter = (bbmax + bbmin) * 0.5;
     
       double bbradius = (bbmax - bbmin).norm();
     
@@ -296,7 +295,7 @@ void DataControlPlugin::slotZoomTo(){
         if ((bbmin[0] > bbmax[0]) || (bbmin[1] > bbmax[1]) || (bbmin[2] > bbmax[2]))
           std::cerr << "Error while computing bounding box!";
     
-        ACG::Vec3d bbcenter = (bbmax + bbmin) / 0.5;
+        ACG::Vec3d bbcenter = (bbmax + bbmin) * 0.5;
     
         double bbradius = (bbmax - bbmin).norm();
     
