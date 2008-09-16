@@ -495,6 +495,33 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\widgets\optionsWidget\optionsWidget.hh"
+				FileType="2"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing optionsWidget.hh..."
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\optionsWidget\optionsWidget.hh -o tmp\moc\moc_optionsWidget.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
+						Outputs="tmp\moc\moc_optionsWidget.cpp"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Moc&apos;ing optionsWidget.hh..."
+						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\optionsWidget\optionsWidget.hh -o tmp\moc\moc_optionsWidget.cpp&#x0D;&#x0A;"
+						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
+						Outputs="tmp\moc\moc_optionsWidget.cpp"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath="..\..\OpenFlipper\Scripting\scriptPrototypes\prototypeMatrix4x4.hh"
 				FileType="2"
 				>
@@ -549,10 +576,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\resource.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\OpenFlipper\Scripting\Scripting.hh"
 				FileType="2"
 				>
@@ -603,33 +626,6 @@
 						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\unloadPluginsWidget\unloadPluginsWidget.hh -o tmp\moc\moc_unloadPluginsWidget.cpp&#x0D;&#x0A;"
 						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
 						Outputs="tmp\moc\moc_unloadPluginsWidget.cpp"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\OpenFlipper\widgets\optionsWidget\unloadPluginsWidget.hh"
-				FileType="2"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing optionsWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\optionsWidget\optionsWidget.hh -o tmp\moc\moc_optionsWidget.cpp&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
-						Outputs="tmp\moc\moc_optionsWidget.cpp"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						Description="Moc&apos;ing optionsWidget.hh..."
-						CommandLine="$(QTDIR)\bin\moc.exe ..\..\OpenFlipper\widgets\optionsWidget\optionsWidget.hh -o tmp\moc\moc_optionsWidget.cpp&#x0D;&#x0A;"
-						AdditionalDependencies="$(QTDIR)\bin\moc.exe"
-						Outputs="tmp\moc\moc_optionsWidget.cpp"
 					/>
 				</FileConfiguration>
 			</File>
