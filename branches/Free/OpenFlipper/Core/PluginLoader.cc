@@ -576,9 +576,9 @@ void Core::loadPlugin(QString filename, bool silent){
     if ( keyPlugin && OpenFlipper::Options::gui() ) {
       supported = supported + "KeyboardEvents ";
 
-      if ( checkSignal(plugin,"registerKey(int,Qt::KeyboardModifiers,QString)") )
-        connect(plugin,SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString) ),
-                coreWidget_,SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString)) );
+      if ( checkSignal(plugin,"registerKey(int,Qt::KeyboardModifiers,QString,bool)") )
+        connect(plugin,SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString, bool) ),
+                coreWidget_,SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString, bool)) );
 
 //       if ( checkSlot( plugin , "slotKeyEvent(QKeyEvent*)" ) )
 //         connect(coreWidget_,SIGNAL(PluginKeyEvent(QKeyEvent* )), plugin,SLOT(slotKeyEvent(QKeyEvent*)));

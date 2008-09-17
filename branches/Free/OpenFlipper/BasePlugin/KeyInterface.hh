@@ -64,8 +64,9 @@ class KeyInterface {
        * @param _key the key that should be registered
        * @param _modifiers the keyboard modifiers
        * @param _description a short description about the functionality
+       * @param _multiUse can the key additionally be registered by another plugin
        */
-      virtual void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description) {};
+      virtual void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false) {};
 
    public slots :
       

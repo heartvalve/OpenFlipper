@@ -12,6 +12,7 @@ struct KeyBinding{
   int                   key;
   Qt::KeyboardModifiers modifiers;
   QString               description;
+  bool                  multiUse;
 };
 
 /** Type defining a currently loaded Plugin */
