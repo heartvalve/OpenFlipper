@@ -474,6 +474,9 @@ CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString 
     kb.description = _description;
     kb.multiUse = multi || _multiUse;
 
+    if (multi && !_multiUse)
+      log(LOGWARN, "Key registered as multiUse key.");
+
     coreKeys_.push_back( kb );
     return;
   }
@@ -495,6 +498,9 @@ CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString 
   kb.modifiers = _modifiers;
   kb.description = _description;
   kb.multiUse = multi || _multiUse;
+
+  if (multi && !_multiUse)
+    log(LOGWARN, "Key registered as multiUse key.");
 
   pluginInfo->keys.append( kb );
 }
