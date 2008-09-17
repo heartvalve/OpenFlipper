@@ -68,6 +68,8 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
   wZoomFactorShift->setText( QString::number(OpenFlipper::Options::wheelZoomFactorShift(), 'f') );
 
   //keyBindings
+  keyTree->clear();
+
   keyTree->setColumnCount ( 2 );
 
   QStringList headerdata;
