@@ -36,10 +36,15 @@
 #include <iostream>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
-OptionsWidget::OptionsWidget( QWidget *parent)
-  : QWidget(parent)
+
+
+OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent)
+  : plugins_(_plugins),
+    coreKeys_(_core),
+    QWidget(parent)
 {
   setupUi(this);
+
   connect(applyButton,SIGNAL(clicked()),this,SLOT(slotApply()));
   connect(cancelButton,SIGNAL(clicked()),this,SLOT(slotCancel()));
 }
@@ -57,6 +62,50 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
   wZoomFactor->setText( QString::number(OpenFlipper::Options::wheelZoomFactor(), 'f') );
   wZoomFactorShift->setText( QString::number(OpenFlipper::Options::wheelZoomFactorShift(), 'f') );
 
+  //keyBindings
+  keyTree->setColumnCount ( 2 );
+
+  QStringList headerdata;
+  headerdata << "Action" << "Shortcut";
+  keyTree->setHeaderLabels(headerdata);
+
+  //add Core Keys
+  QTreeWidgetItem * core = new QTreeWidgetItem(keyTree, QStringList("CoreWidget"));
+
+  QList<QTreeWidgetItem *> keys;
+
+  for (uint i=0; i < coreKeys_.size(); i++){
+    QStringList row;
+    row << coreKeys_[i].description << QString::number(coreKeys_[i].key);
+    keys.append(new QTreeWidgetItem(core, row));
+  }
+
+  core->addChildren(keys);
+  keyTree->addTopLevelItem( core );
+
+
+
+  QList<QTreeWidgetItem *> plugins;
+
+  for (uint i=0; i < plugins_.size(); i++){
+    plugins.append(new QTreeWidgetItem(keyTree, QStringList( plugins_[i].name )));
+
+    QList<QTreeWidgetItem *> keys;
+
+    for (int k=0; k < plugins_[i].keys.count(); k++){
+      QStringList row;
+      row << plugins_[i].keys[k].description << QString::number(plugins_[i].keys[k].key);
+      keys.append(new QTreeWidgetItem(plugins[i], row));
+    }
+
+    plugins[i]->addChildren(keys);
+
+  }
+
+  keyTree->addTopLevelItems( plugins );
+
+  keyTree->resizeColumnToContents(0);
+  keyTree->resizeColumnToContents(1);
 }
 
 void OptionsWidget::slotApply() {
@@ -80,4 +129,3 @@ void OptionsWidget::slotApply() {
 void OptionsWidget::slotCancel() {
   hide();
 }
-

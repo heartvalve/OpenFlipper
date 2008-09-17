@@ -89,6 +89,8 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <OpenFlipper/Core/PluginInfo.hh>
+
 //== CLASS DEFINITION =========================================================
 
 struct fileTypes {
@@ -494,7 +496,7 @@ private:
 
   private:
     /// List of all loaded plugins
-    std::vector<PluginInfoT> plugins;
+    std::vector<PluginInfo> plugins;
 
     /// List of Plugins that should not be loaded
     QStringList dontLoadPlugins_;

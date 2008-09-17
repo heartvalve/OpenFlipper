@@ -48,6 +48,8 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/common/RecentFiles.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/BasePlugin/KeyInterface.hh>
+#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 
 #define WIDGET_HEIGHT 800
 #define WIDGET_WIDTH  800
@@ -59,7 +61,7 @@
 */
 CoreWidget::
 CoreWidget( QVector<ViewMode*>& _viewModes,
-            std::vector<PluginInfoT>& _plugins ) :
+            std::vector<PluginInfo>& _plugins ) :
   QMainWindow(),
   viewModes_(_viewModes),
   dockViewMode_(0),
@@ -251,6 +253,13 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   updateRecent();
   
   statusBar_->showMessage("Ready", 5000);
+
+  //register keys for coreWidget
+  connect(this,SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString) ),
+                this,SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString)) );
+
+  emit registerKey(Qt::Key_S,Qt::ControlModifier, "Save Object");
+  emit registerKey(Qt::Key_O,Qt::ControlModifier, "Open Object");
 }
 
 
@@ -356,7 +365,7 @@ CoreWidget::keyPressEvent(QKeyEvent* _e)
           
         // Send remaining events to plugins
         default:  
-           emit PluginKeyEvent(_e);
+           mapKeyPressEvent(_e);
         return;
     }  
   }
@@ -365,7 +374,7 @@ CoreWidget::keyPressEvent(QKeyEvent* _e)
    {
       // Send remaining events to plugins
       default:
-          emit PluginKeyEvent(_e);
+          mapKeyPressEvent(_e);
       break;
   }
 }
@@ -375,7 +384,109 @@ CoreWidget::keyPressEvent(QKeyEvent* _e)
 /** Handle Key Release Events */
 void 
 CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
-   emit PluginKeyReleaseEvent(_e);
+   mapKeyReleaseEvent(_e);
+}
+
+//-----------------------------------------------------------------------------
+
+/** Map Key Press Events to Plugins */
+void
+CoreWidget::mapKeyPressEvent(QKeyEvent* _e){
+  //find the first plugin which wants to handle that key
+  for (uint i=0; i < plugins_.size(); i++)
+    for (int k=0; k < plugins_[i].keys.count(); k++)
+      if ( plugins_[i].keys[k].key == _e->key() 
+        && plugins_[i].keys[k].modifiers == _e->modifiers() ){
+
+        KeyInterface* keyPlugin = qobject_cast< KeyInterface * >(plugins_[i].plugin);
+
+        if (keyPlugin){
+//           if ( checkSlot( plugins_[i].plugin , "slotKeyEvent(QKeyEvent*)" ) )
+            keyPlugin->slotKeyEvent(_e);
+
+          return;
+        }
+      }
+}
+
+//-----------------------------------------------------------------------------
+
+/** Map Key Release Events to Plugins */
+void
+CoreWidget::mapKeyReleaseEvent(QKeyEvent* _e){
+
+  if (_e->isAutoRepeat()) return; //consider only "real" release events
+
+  //find the first plugin which wants to handle that key
+  for (uint i=0; i < plugins_.size(); i++)
+    for (int k=0; k < plugins_[i].keys.count(); k++)
+      if ( plugins_[i].keys[k].key == _e->key()
+        && plugins_[i].keys[k].modifiers == _e->modifiers() ){
+
+        KeyInterface* keyPlugin = qobject_cast< KeyInterface * >(plugins_[i].plugin);
+
+        if (keyPlugin){
+//           if ( checkSlot( plugins_[i].plugin , "slotKeyReleaseEvent(QKeyEvent*)" ) )
+            keyPlugin->slotKeyReleaseEvent(_e);
+
+          return;
+        }
+      }
+}
+
+//-----------------------------------------------------------------------------
+
+/** Register a key to a plugin */
+void
+CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description){
+
+  //first check if the key is already registered by the coreWidget
+  bool found = false;
+  for (uint i=0; i < coreKeys_.size(); i++)
+    if (coreKeys_[i].key == _key && coreKeys_[i].modifiers == _modifiers){
+      found = true;
+      break;
+    }
+
+  //then check if the key is already registered by a different plugin
+  if (!found)
+    for (uint i=0; i < plugins_.size(); i++)
+      for (int k=0; k < plugins_[i].keys.count(); k++)
+        if (plugins_[i].keys[k].key == _key
+        && plugins_[i].keys[k].modifiers == _modifiers)
+          found = true;
+
+  if (found)
+    emit log(LOGERR, "Key already registered elsewhere.");
+
+  //check if its a key for the core
+  if (sender() == this){
+    KeyBinding kb;
+    kb.key = _key;
+    kb.modifiers = _modifiers;
+    kb.description = _description;
+    coreKeys_.push_back( kb );
+    return;
+  }
+
+  //find plugin
+ PluginInfo* pluginInfo = 0;
+
+  for (uint i=0; i < plugins_.size(); i++)
+    if (plugins_[i].plugin == sender())
+      pluginInfo = &plugins_[i];
+
+  if (pluginInfo == 0){
+    emit log(LOGERR, "Unable to register key. Plugin not found!");
+    return;
+  }
+
+  KeyBinding kb;
+  kb.key = _key;
+  kb.modifiers = _modifiers;
+  kb.description = _description;
+
+  pluginInfo->keys.append( kb );
 }
 
 //=============================================================================
@@ -432,7 +543,7 @@ void CoreWidget::showOptionsWidget() {
     return;
   
   if ( optionsWidget_ == 0 ) {
-    optionsWidget_ = new OptionsWidget(0);
+    optionsWidget_ = new OptionsWidget(plugins_, coreKeys_, 0);
     connect(optionsWidget_,SIGNAL(applyOptions()),this,SIGNAL(applyOptions()));
     connect(optionsWidget_,SIGNAL(saveOptions()),this,SIGNAL(saveOptions()));
   }
@@ -442,7 +553,8 @@ void CoreWidget::showOptionsWidget() {
   center.setX( x() + width() / 2 ); 
   center.setY( y() + height() / 2 );
 
-  optionsWidget_->setGeometry(center.x() - optionsWidget_->width() / 2, center.y() - optionsWidget_->height() / 2, optionsWidget_->width(), optionsWidget_->height());
+  optionsWidget_->setGeometry(center.x() - optionsWidget_->width() / 2,
+                              center.y() - optionsWidget_->height()/ 2, optionsWidget_->width(), optionsWidget_->height());
 
   optionsWidget_->show();
     
