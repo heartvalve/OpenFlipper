@@ -205,10 +205,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\ObjectTypes\BSplineCurve\BSplineCurveObject.cc"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\OpenFlipper\ACGHelper\DrawModeConverter.cc"
 				>
 			</File>
@@ -242,10 +238,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\OpenFlipper\BasePlugin\PluginFunctions.cc"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\ObjectTypes\BSplineCurve\PluginFunctionsBSplineCurve.cc"
 				>
 			</File>
 			<File
