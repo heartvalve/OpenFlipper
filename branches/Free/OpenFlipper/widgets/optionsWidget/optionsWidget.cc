@@ -57,6 +57,10 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
   splash->setChecked( OpenFlipper::Options::splash() );
   toolbox->setChecked( !OpenFlipper::Options::hideToolbox() );
   logger->setChecked( !OpenFlipper::Options::hideLogger() );
+  enableLogFile->setChecked( OpenFlipper::Options::logFileEnabled() );
+  
+  //paths
+  logFile->setText( OpenFlipper::Options::logFile() );
 
   //viewer
   backfaceCulling->setChecked( OpenFlipper::Options::backfaceCulling() );
@@ -118,6 +122,10 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::splash( splash->isChecked() );
   OpenFlipper::Options::hideToolbox( !toolbox->isChecked() );
   OpenFlipper::Options::hideLogger( !logger->isChecked() );
+  OpenFlipper::Options::logFileEnabled( enableLogFile->isChecked() );
+
+  //paths
+  OpenFlipper::Options::logFile( logFile->text() );
 
   //viewer
   OpenFlipper::Options::backfaceCulling( backfaceCulling->isChecked() );

@@ -202,6 +202,20 @@ void Core::readApplicationOptions(INIFile& _ini) {
     std::vector< QString > draw_modes;
     if( _ini.get_entry(draw_modes, "Options", "StandardDrawModes") )
       standard_draw_mode_ = ListToDrawMode(draw_modes);
+
+    //============================================================================
+    // Load logFile status
+    //============================================================================
+    bool logFileEnabled = true;
+    if( _ini.get_entry(logFileEnabled, "Options", "LogFileEnabled") )
+      OpenFlipper::Options::logFileEnabled(logFileEnabled);
+
+    //============================================================================
+    // Load logFile location
+    //============================================================================
+    QString logFile = "";
+    if( _ini.get_entry(logFile, "Options", "LogFileLocation") )
+      OpenFlipper::Options::logFile(logFile);
   }
 }
 
@@ -258,6 +272,13 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   //write default ToolboxMode
   _ini.add_entry("Options","DefaultToolboxMode",OpenFlipper::Options::defaultToolboxMode() );
 
+  //============================================================================
+  // logfile
+  //============================================================================
+  //write logfile status
+  _ini.add_entry("Options","LogFileEnabled",OpenFlipper::Options::logFileEnabled() );
+  //write logfile location
+  _ini.add_entry("Options","LogFileLocation",OpenFlipper::Options::logFile() );
 
   //============================================================================
   //dontLoad Plugins

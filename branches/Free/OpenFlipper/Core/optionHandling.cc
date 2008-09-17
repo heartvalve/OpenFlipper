@@ -97,10 +97,23 @@ void Core::applyOptions(){
       coreWidget_->dockViewMode_->setVisible(false);  
     }
     
+    //setup logFile
+    if (logFile_ != 0){
+
+      if (OpenFlipper::Options::logFile() != logFile_->fileName() ){
+        logFile_->close();
+        delete logFile_;
+        logFile_ = 0;
+        if (logStream_ != 0){
+          delete logStream_;
+          logStream_ = 0;
+        }
+      }
+    }
+
     updateView();
     
   }
-  
 }
 
 void Core::saveOptions(){

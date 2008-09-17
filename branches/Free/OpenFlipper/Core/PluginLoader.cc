@@ -459,6 +459,9 @@ void Core::loadPlugin(QString filename, bool silent){
       // connection to console logger
       connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
 
+      // connection to file logger
+      connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLogToFile(Logtype, QString )),Qt::DirectConnection);
+
       // connection to external plugin logger
       if ( checkSlot(plugin,"logOutput(Logtype,QString)") )
         connect(this,SIGNAL(externalLog(Logtype,QString)), plugin, SLOT(logOutput(Logtype,QString)) ) ;

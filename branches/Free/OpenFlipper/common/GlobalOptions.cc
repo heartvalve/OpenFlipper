@@ -117,6 +117,12 @@ static bool logToConsole_ = false;
 /// Extra debug info
 static bool debug_ = false;
 
+/// enable logging to file
+static bool logFileEnabled_;
+
+/// logfile location (path + filename)
+static QString logFile_;
+
 /// last used DataType
 static QString lastDataType_ = "Triangle Mesh";
 
@@ -429,7 +435,21 @@ void debug(bool _debug ) {
   debug_ = _debug;  
 }
 
+void logFileEnabled(bool _enable ){
+  logFileEnabled_ = _enable;
+}
 
+bool logFileEnabled(){
+  return logFileEnabled_;
+}
+
+void logFile(QString _filename){
+  logFile_ = _filename;
+}
+
+QString logFile(){
+  return logFile_;
+}
 
 bool backupEnabled( ) {
   return enableBackup_; 
