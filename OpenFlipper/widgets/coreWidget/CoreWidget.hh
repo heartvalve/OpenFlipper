@@ -163,7 +163,7 @@ public:
    void PluginKeyReleaseEvent(QKeyEvent* );
 
    /// internal signal to register CoreWidget keys
-   void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description);
+   void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
 
   private:
     void mapKeyPressEvent(QKeyEvent* _e);
@@ -172,7 +172,7 @@ public:
     std::vector<KeyBinding> coreKeys_;
 
   private slots:
-    void slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description);
+    void slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
 
    /** @} */
 
