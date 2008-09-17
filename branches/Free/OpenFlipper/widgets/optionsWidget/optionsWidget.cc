@@ -77,7 +77,8 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
 
   for (uint i=0; i < coreKeys_.size(); i++){
     QStringList row;
-    row << coreKeys_[i].description << QString::number(coreKeys_[i].key);
+    QKeySequence keySequence( coreKeys_[i].key + coreKeys_[i].modifiers );
+    row << coreKeys_[i].description << keySequence.toString();
     keys.append(new QTreeWidgetItem(core, row));
   }
 
@@ -95,7 +96,8 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
 
     for (int k=0; k < plugins_[i].keys.count(); k++){
       QStringList row;
-      row << plugins_[i].keys[k].description << QString::number(plugins_[i].keys[k].key);
+      QKeySequence keySequence( plugins_[i].keys[k].key + plugins_[i].keys[k].modifiers );
+      row << plugins_[i].keys[k].description << keySequence.toString();
       keys.append(new QTreeWidgetItem(plugins[i], row));
     }
 
