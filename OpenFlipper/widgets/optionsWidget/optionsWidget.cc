@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -39,9 +39,10 @@
 
 
 OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent)
-  : plugins_(_plugins),
-    coreKeys_(_core),
-    QWidget(parent)
+  : QWidget(parent),
+    plugins_(_plugins),
+    coreKeys_(_core)
+
 {
   setupUi(this);
 
@@ -51,7 +52,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 
 void OptionsWidget::showEvent ( QShowEvent * event ) {
 
-  //general 
+  //general
   fullscreen->setChecked( OpenFlipper::Options::fullScreen() );
   splash->setChecked( OpenFlipper::Options::splash() );
   toolbox->setChecked( !OpenFlipper::Options::hideToolbox() );
@@ -110,7 +111,7 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
 
 void OptionsWidget::slotApply() {
 
-  //general 
+  //general
   OpenFlipper::Options::fullScreen( fullscreen->isChecked() );
   OpenFlipper::Options::splash( splash->isChecked() );
   OpenFlipper::Options::hideToolbox( !toolbox->isChecked() );
