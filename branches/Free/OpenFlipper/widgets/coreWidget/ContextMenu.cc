@@ -91,19 +91,19 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
     // Add an empty Menu defining the current Type
     if ( object->dataType() == DATA_POLY_MESH ){
       typeEntry->setText("Poly Mesh");
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PolyType.svg");
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PolyType.png");
       typeEntry->setIcon(icon);
     } else if ( object->dataType() == DATA_TRIANGLE_MESH ) {
       typeEntry->setText("Triangle Mesh");
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"TriangleType.svg");
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"TriangleType.png");
       typeEntry->setIcon(icon);
     } else if ( object->dataType() == DATA_POLY_LINE ) {
       typeEntry->setText("Poly Line");
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PolyLineType.svg");
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PolyLineType.png");
       typeEntry->setIcon(icon);
     } else if ( object->dataType() == DATA_BSPLINE_CURVE ) {
       typeEntry->setText("BSpline Curve");
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BSplineCurveType.svg");
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BSplineCurveType.png");
       typeEntry->setIcon(icon);
     }
 
