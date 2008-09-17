@@ -49,13 +49,25 @@
  
  /** \brief Interface class for plugins which have to react on keyboard  events
   * 
-  * Using this interface you can react on key events. The key events are emitted to all plugins
-  * implementing this interface. So a key event may be handled by multiple plugins. 
-  * Use keys with care!!
-  * @todo : implement core handling of key events and warn on multiple definitions for the same key.
- */ 
+  * Using this interface you can react on key events. You first have to register
+  * a key (or key combination). For each registered key you will receive a keyEvent when
+  * the key was pressed and a keyReleaseEvent when the key was released.
+  *
+  */ 
 class KeyInterface {
-   private slots :
+   signals:
+      /**  \brief Register a key-combination for your plugin
+       * 
+       * To obtain key events from the viewer for a certain key-combination, you have
+       * to register that combination first
+       *
+       * @param _key the key that should be registered
+       * @param _modifiers the keyboard modifiers
+       * @param _description a short description about the functionality
+       */
+      virtual void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description) {};
+
+   public slots :
       
       /**  \brief Key Event from Main App
        * 
@@ -78,6 +90,6 @@ class KeyInterface {
       
 };
 
-Q_DECLARE_INTERFACE(KeyInterface,"OpenFlipper.KeyInterface/1.0")
+Q_DECLARE_INTERFACE(KeyInterface,"OpenFlipper.KeyInterface/1.1")
       
 #endif // KEYINTERFACE_HH

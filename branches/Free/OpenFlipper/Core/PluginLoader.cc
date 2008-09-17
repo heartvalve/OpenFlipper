@@ -329,7 +329,7 @@ void Core::loadPlugin(QString filename, bool silent){
 
   // Check if a plugin has been loaded
   if (plugin) {
-    PluginInfoT info;
+    PluginInfo info;
     QString supported;
 
     // Check if it is a BasePlugin
@@ -572,11 +572,16 @@ void Core::loadPlugin(QString filename, bool silent){
     KeyInterface* keyPlugin = qobject_cast< KeyInterface * >(plugin);
     if ( keyPlugin && OpenFlipper::Options::gui() ) {
       supported = supported + "KeyboardEvents ";
-      if ( checkSlot( plugin , "slotKeyEvent(QKeyEvent*)" ) )
-        connect(coreWidget_,SIGNAL(PluginKeyEvent(QKeyEvent* )), plugin,SLOT(slotKeyEvent(QKeyEvent*)));
 
-      if ( checkSlot( plugin , "slotKeyReleaseEvent(QKeyEvent*)" ) )
-        connect(coreWidget_,SIGNAL(PluginKeyReleaseEvent(QKeyEvent* )), plugin,SLOT(slotKeyReleaseEvent(QKeyEvent*)));
+      if ( checkSignal(plugin,"registerKey(int,Qt::KeyboardModifiers,QString)") )
+        connect(plugin,SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString) ),
+                coreWidget_,SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString)) );
+
+//       if ( checkSlot( plugin , "slotKeyEvent(QKeyEvent*)" ) )
+//         connect(coreWidget_,SIGNAL(PluginKeyEvent(QKeyEvent* )), plugin,SLOT(slotKeyEvent(QKeyEvent*)));
+// 
+//       if ( checkSlot( plugin , "slotKeyReleaseEvent(QKeyEvent*)" ) )
+//         connect(coreWidget_,SIGNAL(PluginKeyReleaseEvent(QKeyEvent* )), plugin,SLOT(slotKeyReleaseEvent(QKeyEvent*)));
     }
 
     //Check if the plugin supports Mouse-Interface

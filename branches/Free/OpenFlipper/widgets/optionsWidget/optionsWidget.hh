@@ -39,12 +39,14 @@
 #include <QtGui>
 #include <QStringList>
 
+#include <OpenFlipper/Core/PluginInfo.hh>
+
 class OptionsWidget : public QWidget, public Ui::OptionsWidget
 {
   
   Q_OBJECT
   public:
-    OptionsWidget(QWidget *parent = 0 );
+    OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent = 0 );
 
   signals:
     void applyOptions();
@@ -59,6 +61,11 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
 
   protected:
     void showEvent ( QShowEvent * event );
+
+  private:
+    //key-bindings
+    std::vector<PluginInfo>& plugins_;
+    std::vector<KeyBinding>& coreKeys_;
     
 };
 

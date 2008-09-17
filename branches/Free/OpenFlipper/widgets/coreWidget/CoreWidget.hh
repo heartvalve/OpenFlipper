@@ -70,30 +70,7 @@
 #include <OpenFlipper/widgets/optionsWidget/optionsWidget.hh>
 #include <OpenFlipper/widgets/helpBrowser/helpWidget.hh>
 
-/** Type defining a currently loaded Plugin */
-struct PluginInfoT{
-
-  /// Pointer to the loaded plugin (Already casted when loading it)
-  QObject*    plugin;
-
-  /// Name of the plugin ( requested from the plugin on load)
-  QString     name;
-
-  /// Description of the plugin ( requested from the plugin on load)
-  QString     description;
-
-  /// Path to the plugin ( set on load )
-  QString     path;
-
-  /// Clean rpc name of the plugin
-  QString     rpcName;
-
-  /// List of exported rpc slots
-  QStringList rpcFunctions;
-
-  /// Pointer to plugins toolbar widget (if available)
-  QDockWidget* widget;
-};
+#include <OpenFlipper/Core/PluginInfo.hh>
 
 struct ViewMode{
       QString name;
@@ -132,7 +109,7 @@ class CoreWidget : public QMainWindow
 public:
 
   /// constructor
-  CoreWidget( QVector<ViewMode*>& _viewModes, std::vector<PluginInfoT>& _plugins );
+  CoreWidget( QVector<ViewMode*>& _viewModes, std::vector<PluginInfo>& _plugins );
 
   /// destructor
   ~CoreWidget();
@@ -157,6 +134,17 @@ public:
     void closeEvent ( QCloseEvent * event );
 
    //===========================================================================
+  /** @name Logger
+  * @{ */
+  //===========================================================================
+
+  signals :
+      void log(Logtype _type, QString _message);
+      void log(QString _message);
+
+   /** @} */
+
+   //===========================================================================
   /** @name Keys
   * @{ */
   //===========================================================================
@@ -173,6 +161,18 @@ public:
 
    /// When this Signal is emitted when a key release event event occures
    void PluginKeyReleaseEvent(QKeyEvent* );
+
+   /// internal signal to register CoreWidget keys
+   void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description);
+
+  private:
+    void mapKeyPressEvent(QKeyEvent* _e);
+    void mapKeyReleaseEvent(QKeyEvent* _e);
+
+    std::vector<KeyBinding> coreKeys_;
+
+  private slots:
+    void slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description);
 
    /** @} */
 
@@ -499,7 +499,7 @@ public:
     
   private :
 
-  std::vector<PluginInfoT>& plugins_;
+  std::vector<PluginInfo>& plugins_;
 };
 
 

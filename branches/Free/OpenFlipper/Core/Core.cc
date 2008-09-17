@@ -198,7 +198,23 @@ Core::init() {
     connect(newlog,SIGNAL(log(Logtype, QString )),coreWidget_,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
   
   connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
+
+
+  // ======================================================================
+  // Create a logger class for CoreWidget
+  // ======================================================================
+
+  if ( OpenFlipper::Options::gui() ){
+    PluginLogger* widgetlog = new PluginLogger("CoreWidget");
   
+    loggers_.push_back(widgetlog);
+    connect(coreWidget_,SIGNAL(log(Logtype, QString )),widgetlog,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
+    connect(coreWidget_,SIGNAL(log(QString )),widgetlog,SLOT(slotLog(QString )),Qt::DirectConnection); 
+  
+    // Connect it to the Master logger
+    connect(widgetlog,SIGNAL(log(Logtype, QString )),coreWidget_,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
+    connect(widgetlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
+  }
   
   // ======================================================================
   // Catch OpenMesh Error logs with an own Logger
