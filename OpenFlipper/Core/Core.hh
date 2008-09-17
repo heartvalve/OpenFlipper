@@ -469,6 +469,16 @@ private:
     /// Console logger
     void slotLog(Logtype _type, QString _message);
 
+    /// log to file
+    void slotLogToFile(Logtype _type, QString _message);
+
+  private:
+    ///stream for logging to file
+    QTextStream* logStream_;
+
+    ///logfile
+    QFile* logFile_;
+
   public :
     void scriptLogFunction( QString _output);
 

@@ -106,6 +106,11 @@ Core() :
   set_random_base_color_(true),
   coreWidget_(0)
 {
+  //init logFile
+  logStream_ = 0;
+  logFile_ = 0;
+  OpenFlipper::Options::logFileEnabled(true);
+
   //init nodes
   root_node_scenegraph_ = new ACG::SceneGraph::SeparatorNode(0, "SceneGraph Root Node");
   root_node_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_, "Data Root Node");
@@ -199,6 +204,8 @@ Core::init() {
   
   connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
 
+  // connection to file logger
+  connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLogToFile(Logtype, QString )),Qt::DirectConnection);
 
   // ======================================================================
   // Create a logger class for CoreWidget
@@ -214,6 +221,8 @@ Core::init() {
     // Connect it to the Master logger
     connect(widgetlog,SIGNAL(log(Logtype, QString )),coreWidget_,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
     connect(widgetlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
+    // connection to file logger
+    connect(widgetlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLogToFile(Logtype, QString )),Qt::DirectConnection);
   }
   
   // ======================================================================
@@ -230,7 +239,8 @@ Core::init() {
     connect(newlog,SIGNAL(log(Logtype, QString )),coreWidget_,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
   
   connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
-  
+  // connection to file logger
+  connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLogToFile(Logtype, QString )),Qt::DirectConnection);
   
   // ======================================================================
   // Catch OpenMesh omout logs with an own Logger
@@ -246,7 +256,8 @@ Core::init() {
     connect(newlog,SIGNAL(log(Logtype, QString )),coreWidget_,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
   
   connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
-  
+  // connection to file logger
+  connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLogToFile(Logtype, QString )),Qt::DirectConnection);
   
   // ======================================================================
   // Catch OpenMesh omlog logs with an own Logger
@@ -261,6 +272,8 @@ Core::init() {
     connect(newlog,SIGNAL(log(Logtype, QString )),coreWidget_,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
   
   connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
+  // connection to file logger
+  connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLogToFile(Logtype, QString )),Qt::DirectConnection);
   
   // ======================================================================
   // Log Scripting stuff through a separate logger
@@ -274,7 +287,9 @@ Core::init() {
     connect(newlog,SIGNAL(log(Logtype, QString )),coreWidget_,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
   
   connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLog(Logtype, QString )),Qt::DirectConnection);
-  
+  // connection to file logger
+  connect(newlog,SIGNAL(log(Logtype, QString )),this,SLOT(slotLogToFile(Logtype, QString )),Qt::DirectConnection);  
+
   // connect signal to logger
   connect(this,SIGNAL(scriptLog(QString )),newlog,SLOT(slotLog(QString )),Qt::DirectConnection); 
   
@@ -638,6 +653,10 @@ Core::writeOnExit() {
 
 void Core::slotExit() {
   writeOnExit();
+
+  if (logFile_)
+    logFile_->close();
+
   qApp->quit();
 }     
 
@@ -656,7 +675,41 @@ bool Core::add_sync_host(const QString& _name)
   return false;
 }
 
+/// log to file
+void Core::slotLogToFile(Logtype _type, QString _message){
 
+  if (!OpenFlipper::Options::logFileEnabled())
+    return;
+
+  if (logStream_ == 0){
+    //check if a logfile has been specified
+    if (OpenFlipper::Options::logFile() == "")
+        OpenFlipper::Options::logFile(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" + 
+                                                  OpenFlipper::Options::dirSeparator() +  "OpenFlipper.log");
+
+    logFile_ = new QFile( OpenFlipper::Options::logFile() );
+    if ( logFile_->open(QFile::WriteOnly) ) {
+        logStream_ = new QTextStream (logFile_);
+    }else{
+      emit log(LOGERR, "Unable to open logfile!");
+      return;
+    }
+  }
+
+  switch (_type) {
+    case LOGINFO:
+      (*logStream_) << "INFO:"; break;
+    case LOGOUT:
+      (*logStream_) << "OUT :"; break;
+    case LOGWARN:
+      (*logStream_) << "WARN:"; break;
+    case LOGERR:
+      (*logStream_) << "ERR :"; break;
+  }
+
+  (*logStream_) << _message << "\n" << flush;
+  
+}
 
 
 //=============================================================================

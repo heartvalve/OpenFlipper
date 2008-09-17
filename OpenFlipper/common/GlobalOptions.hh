@@ -408,6 +408,22 @@ bool iconDir(QString _dir);
   DLLEXPORT
   void debug(bool _debug );
 
+  /// enable logging to file
+  DLLEXPORT
+  void logFileEnabled(bool _enable );
+
+  /// is logging to file enabled?
+  DLLEXPORT
+  bool logFileEnabled();
+
+  /// logfile location (path + filename)
+  DLLEXPORT
+  void logFile(QString _filename);
+
+  /// logfile location (path + filename)
+  DLLEXPORT
+  QString logFile();
+
 /** @} */
 
 //===========================================================================
