@@ -260,6 +260,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   emit registerKey(Qt::Key_S,Qt::ControlModifier, "Save Object");
   emit registerKey(Qt::Key_O,Qt::ControlModifier, "Open Object");
+  emit registerKey(Qt::Key_Escape,Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
 }
 
 
