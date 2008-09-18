@@ -264,6 +264,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="Updates" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>545</width>
+        <height>401</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Updates</string>
       </attribute>
@@ -326,8 +334,32 @@
            </property>
            <property name="sizeHint" stdset="0" >
             <size>
-             <width>40</width>
-             <height>20</height>
+             <width>198</width>
+             <height>27</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5" >
+         <item>
+          <widget class="QLabel" name="statusLabel" >
+           <property name="text" >
+            <string>Check for Updates?</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3" >
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>13</width>
+             <height>17</height>
             </size>
            </property>
           </spacer>

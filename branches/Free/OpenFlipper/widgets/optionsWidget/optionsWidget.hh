@@ -38,6 +38,7 @@
 #include "ui_optionsWidget.hh"
 #include <QtGui>
 #include <QStringList>
+#include <QtNetwork>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
@@ -60,7 +61,10 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
     void slotCancel();
 
     /// Checks for updates
-//     void slotCheckUpdates();
+    void slotCheckUpdates();
+
+    /// Download updates
+    void slotGetUpdates();
 
   protected:
     void showEvent ( QShowEvent * event );
@@ -69,6 +73,42 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
     //key-bindings
     std::vector<PluginInfo>& plugins_;
     std::vector<KeyBinding>& coreKeys_;
+
+    // flag indicating if something went wrong and the request has to be aborted
+    bool httpRequestAborted;
+
+    // Id of the current request
+    int httpGetId;
+
+    // Request variable
+    QHttp *http;
+
+    // File for http downloads
+    QFile *file;
+
+    // ProgressDialog for Downloads
+    QProgressDialog *progressDialog;
+
+    // What type of download is currently active
+    enum DOWNLOAD {
+      NONE,
+      VERSIONS_FILE,
+      WINDOWS_SETUP
+    } downloadType;
+
+  private slots:
+
+    // This slot is called when a http request has been finished
+    void httpRequestFinished(int requestId, bool error);
+
+    // Parses the response and gives feedback
+    void readResponseHeader(const QHttpResponseHeader &responseHeader);
+
+    // Updates the progress Dialog while downloading
+    void updateDataReadProgress(int bytesRead, int totalBytes);
+
+    // Progress dialog callback for cancel
+    void cancelDownload();
 
 };
 
