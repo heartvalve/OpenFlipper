@@ -281,6 +281,21 @@
        <property name="statusTip" >
         <string>Set the default drawMode for the viewer</string>
        </property>
+       <item>
+        <property name="text" >
+         <string>New Item</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>New Item</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>ssdsf</string>
+        </property>
+       </item>
       </widget>
       <widget class="QLabel" name="label_7" >
        <property name="geometry" >
@@ -320,6 +335,12 @@
        <layout class="QHBoxLayout" name="horizontalLayout_2" >
         <item>
          <widget class="QCheckBox" name="restrictFPS" >
+          <property name="toolTip" >
+           <string>restrict maximum framerate</string>
+          </property>
+          <property name="statusTip" >
+           <string>restrict maximum framerate</string>
+          </property>
           <property name="text" >
            <string>Restrict Framerate</string>
           </property>
@@ -342,6 +363,12 @@
          <widget class="QSpinBox" name="FPS" >
           <property name="enabled" >
            <bool>false</bool>
+          </property>
+          <property name="toolTip" >
+           <string>maximum framerate</string>
+          </property>
+          <property name="statusTip" >
+           <string>maximum framerate</string>
           </property>
           <property name="minimum" >
            <number>1</number>

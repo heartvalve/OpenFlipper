@@ -102,7 +102,6 @@ Core::
 Core() :
   QObject(),
   nextBackupId_(0),
-  standard_draw_mode_(ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED),
   set_random_base_color_(true),
   coreWidget_(0)
 {

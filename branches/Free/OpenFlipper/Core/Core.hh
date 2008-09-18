@@ -620,9 +620,6 @@ private:
   /// Id for the next backup
   int nextBackupId_;
 
-  /// Standard draw mode
-  unsigned int standard_draw_mode_;
-
   /// Use white or a random color for new objects
   bool set_random_base_color_;
 

@@ -183,6 +183,13 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::hideLogger(hideLogger);
 
     //============================================================================
+    // Load the setting for the toolbox window
+    //============================================================================
+    bool hideToolbox = false;
+    if ( _ini.get_entry( hideToolbox, "Options" , "HideToolbox") )
+      OpenFlipper::Options::hideToolbox(hideToolbox);
+
+    //============================================================================
     // Load the setting for the fullscreen option
     //============================================================================
     bool fullScreen = false;
@@ -201,7 +208,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     std::vector< QString > draw_modes;
     if( _ini.get_entry(draw_modes, "Options", "StandardDrawModes") )
-      standard_draw_mode_ = ListToDrawMode(draw_modes);
+      OpenFlipper::Options::standardDrawMode( ListToDrawMode(draw_modes) );
 
     //============================================================================
     // Load logFile status
@@ -337,13 +344,14 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     // Save the current draw modes
     //============================================================================
     std::vector< QString > draw_modes;
-    draw_modes = drawModeToList( coreWidget_->examiner_widget_->drawMode() );
+    draw_modes = drawModeToList( OpenFlipper::Options::standardDrawMode() );
     _ini.add_entry("Options","StandardDrawModes",draw_modes);
 
-    _ini.add_entry("Options","HideLogger",(coreWidget_->splitter_->sizes())[1] == 0 );
+    _ini.add_entry("Options","HideLogger", OpenFlipper::Options::hideLogger() );
+    _ini.add_entry("Options","HideToolbox", OpenFlipper::Options::hideToolbox() );
 
     // check if we are in fullscreen mode:
-    _ini.add_entry("Options","FullScreen",  bool(coreWidget_->windowFlags() & Qt::FramelessWindowHint) );
+    _ini.add_entry("Options","FullScreen", OpenFlipper::Options::fullScreen() );
   }
 
   _ini.add_entry("Options","Stereo",OpenFlipper::Options::stereo() );

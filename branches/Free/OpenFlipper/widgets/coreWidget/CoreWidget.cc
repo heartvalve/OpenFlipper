@@ -101,6 +101,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   textedit_->resize( splitter_->width() ,120);
   textedit_->setLineWrapMode( QTextEdit::NoWrap );
 
+  originalLoggerSize_ = 0;
+
   QList<int> wsizes( splitter_->sizes() );
   if (OpenFlipper::Options::hideLogger()) {
     wsizes[1] = 0;
@@ -277,9 +279,11 @@ CoreWidget::~CoreWidget() {
   */
 void
 CoreWidget::toggleFullscreen() {
-  setWindowFlags( windowFlags () ^ Qt::FramelessWindowHint) ;
-  OpenFlipper::Options::fullScreen( bool( windowFlags () | Qt::FramelessWindowHint) );
-  resize(QApplication::desktop()->size());
+  
+  setWindowState( windowState() ^  Qt::WindowFullScreen);
+
+  OpenFlipper::Options::fullScreen( bool( windowState() & Qt::WindowFullScreen) );
+
   show();
 }
 
@@ -292,8 +296,16 @@ CoreWidget::toggleLogger() {
   // toggle
   OpenFlipper::Options::hideLogger( !OpenFlipper::Options::hideLogger() );
 
+  // Hide/Show Logger
+  hideLogger( OpenFlipper::Options::hideLogger() );
+}
+
+/** Hide or show logger
+  */
+void
+CoreWidget::hideLogger(bool _hide) {
   //Hide Logger
-  if ( OpenFlipper::Options::hideLogger() ) {
+  if ( _hide ) {
     QList<int> wsizes( splitter_->sizes() );
 
     // Remember old size
@@ -308,6 +320,10 @@ CoreWidget::toggleLogger() {
         originalLoggerSize_ = 240;
 
     QList<int> wsizes( splitter_->sizes() );
+
+    if (wsizes[0] == 0)
+      wsizes[0] = height();
+    
     wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
     wsizes[1] = originalLoggerSize_;
     splitter_->setSizes(wsizes);

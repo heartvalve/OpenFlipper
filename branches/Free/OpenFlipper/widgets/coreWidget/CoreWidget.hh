@@ -205,6 +205,9 @@ public:
     
     /// Hide or show logging area
     void toggleLogger();
+
+    /// Change visibility of the logger
+    void hideLogger(bool _hide);
     
     /// Hide or show toolbox area
     void toggleToolbox();
