@@ -92,6 +92,12 @@ static double wheelZoomFactor_ = 1.0;
 /// Store the wheelZoomFactorShift mode
 static double wheelZoomFactorShift_ = 0.2;
 
+/// Store the restrictFrameRate_ mode
+static bool restrictFrameRate_ = false;
+
+/// Store the maxFrameRate_ mode
+static int maxFrameRate_ = 35;
+
 /// Store the toolbox gui Mode mode
 static bool hideToolbox_ = false;
 
@@ -341,6 +347,22 @@ void wheelZoomFactorShift( double _factor ) {
 /// get wheelZoomFactorShift setting
 double wheelZoomFactorShift( ) {
   return wheelZoomFactorShift_; 
+}
+
+void restrictFrameRate( bool _enable ){
+  restrictFrameRate_ = _enable;
+}
+
+bool restrictFrameRate( ){
+  return restrictFrameRate_;
+}
+
+void maxFrameRate( int _fps ){
+  maxFrameRate_ = _fps;
+}
+
+int maxFrameRate(){
+  return maxFrameRate_;
 }
 
 /// Set if we start the logging widget closed

@@ -523,7 +523,7 @@ Core::slotAddHiddenPickMode( const std::string _mode , QCursor _cursor) {
  /** Update the view in the examiner widget
   */
 void Core::updateView() {
-  if ( true ) {
+  if ( OpenFlipper::Options::restrictFrameRate() ) {
 
     // redraw time not reached ... waiting for timer event for next redraw
     if ( redrawTimer_->isActive() ) {
@@ -535,7 +535,7 @@ void Core::updateView() {
 
     // Start the timer if we are not called by the timer
     if ( sender() != redrawTimer_ )
-      redrawTimer_->start(35);
+      redrawTimer_->start( 1000 / OpenFlipper::Options::maxFrameRate() );
 
   }
 
