@@ -134,7 +134,7 @@ protected:
 signals:
    /// Signal send to plugins when whole scene is cleared
    void allCleared();
-  
+
    /// When this Signal is emitted all Plugins are informed that the object list changed
    void ObjectListUpdated(int);
 
@@ -650,6 +650,9 @@ private:
 
     /// List of available draw modes
     QVector<ViewMode*> viewModes_;
+
+    /// If enabled, this timer will block screen refresh if done more then 30 times per second.
+    QTimer* redrawTimer_;
 };
 
 /// Special print function for core logger
