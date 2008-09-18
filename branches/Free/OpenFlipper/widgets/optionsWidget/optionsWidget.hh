@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -43,7 +43,7 @@
 
 class OptionsWidget : public QWidget, public Ui::OptionsWidget
 {
-  
+
   Q_OBJECT
   public:
     OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent = 0 );
@@ -59,6 +59,9 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
     /// Only hide widget
     void slotCancel();
 
+    /// Checks for updates
+//     void slotCheckUpdates();
+
   protected:
     void showEvent ( QShowEvent * event );
 
@@ -66,7 +69,7 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
     //key-bindings
     std::vector<PluginInfo>& plugins_;
     std::vector<KeyBinding>& coreKeys_;
-    
+
 };
 
 #endif //OPTIONSWIDGET_HH
