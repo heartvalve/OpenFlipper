@@ -35,7 +35,7 @@
 #include "optionsWidget.hh"
 #include <iostream>
 #include <OpenFlipper/common/GlobalOptions.hh>
-
+#include <QtNetwork>
 
 
 OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent)
@@ -48,6 +48,10 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 
   connect(applyButton,SIGNAL(clicked()),this,SLOT(slotApply()));
   connect(cancelButton,SIGNAL(clicked()),this,SLOT(slotCancel()));
+//   connect(checkUpdateButton,SIGNAL(clicked()),this,SLOT(slotCheckUpdates()));
+
+
+
 }
 
 void OptionsWidget::showEvent ( QShowEvent * event ) {
@@ -58,7 +62,7 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
   toolbox->setChecked( !OpenFlipper::Options::hideToolbox() );
   logger->setChecked( !OpenFlipper::Options::hideLogger() );
   enableLogFile->setChecked( OpenFlipper::Options::logFileEnabled() );
-  
+
   //paths
   logFile->setText( OpenFlipper::Options::logFile() );
 
@@ -142,3 +146,96 @@ void OptionsWidget::slotApply() {
 void OptionsWidget::slotCancel() {
   hide();
 }
+
+// void OptionsWidget::slotCheckUpdates() {
+// //   QUrl url("https://www.graphics.rwth-aachen.de/restricted/OpenFlipper-SIL/Versions.txt");
+// //   url.setUserName("");
+// //   url.setPassord("");
+//
+//   QString ServerMainURL = updateURL->text() + "Versions.txt";
+//   QUrl url(ServerMainURL);
+//
+//   if ( ! updateUser->text().isEmpty() )
+//     url.setUserName(updateUser->text());
+//
+//   if ( ! updatePass->text().isEmpty() )
+//     url.setPassword(updatePass->text());
+//
+//   QFileInfo fileInfo( QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() +
+//                       ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + "ServerVersions.txt");
+//   QString fileName = fileInfo.filePath();
+//
+//   if (QFile::exists(fileName)) {
+//     QFile::remove(fileName);
+//     std::cerr << "File exists, removing it" << std::endl;
+//   }
+//
+//    file = new QFile(fileName);
+//   if (!file->open(QIODevice::WriteOnly)) {
+//     std::cerr << "Unable to Open local file for writing" << std::endl;
+//     delete file;
+//     file = 0;
+//   } else {
+//     QHttp* http = new QHttp;
+//     QHttp::ConnectionMode mode = url.scheme().toLower() == "https" ? QHttp::ConnectionModeHttps : QHttp::ConnectionModeHttp;
+//     http->setHost(url.host(), mode, url.port() == -1 ? 0 : url.port());
+//
+//     if (!url.userName().isEmpty())
+//         http->setUser(url.userName(), url.password());
+//
+// //     httpRequestAborted = false;
+//     QByteArray path = QUrl::toPercentEncoding(url.path(), "!$&'()*+,;=:@/");
+//     if (path.isEmpty())
+//       path = "/";
+//
+//     int httpGetId = http->get(path, file);
+//
+//     // !!! Does not work because get is non blocking
+//     file->close();
+//
+//     delete file;
+//
+// //     progressDialog->setWindowTitle(tr("HTTP"));
+// //     progressDialog->setLabelText(tr("Downloading %1.").arg(fileName));
+// //     downloadButton->setEnabled(false);
+//   }
+// }
+//
+//  void HttpWindow::httpRequestFinished(int requestId, bool error)
+//  {
+//      if (requestId != httpGetId)
+//          return;
+//      if (httpRequestAborted) {
+//          if (file) {
+//              file->close();
+//              file->remove();
+//              delete file;
+//              file = 0;
+//          }
+//
+//          progressDialog->hide();
+//          return;
+//      }
+//
+//      if (requestId != httpGetId)
+//          return;
+//
+//      progressDialog->hide();
+//      file->close();
+//
+//      if (error) {
+//          file->remove();
+//          QMessageBox::information(this, tr("HTTP"),
+//                                   tr("Download failed: %1.")
+//                                   .arg(http->errorString()));
+//      } else {
+//          QString fileName = QFileInfo(QUrl(urlLineEdit->text()).path()).fileName();
+//          statusLabel->setText(tr("Downloaded %1 to current directory.").arg(fileName));
+//      }
+//
+//      downloadButton->setEnabled(true);
+//      delete file;
+//      file = 0;
+//  }
+
+
