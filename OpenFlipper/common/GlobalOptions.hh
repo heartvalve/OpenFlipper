@@ -309,6 +309,22 @@ bool iconDir(QString _dir);
   DLLEXPORT
   double wheelZoomFactorShift( );
 
+  /// Store restrictFrameRate setting
+  DLLEXPORT
+  void restrictFrameRate( bool _enable );
+
+  /// get restrictFrameRate setting
+  DLLEXPORT
+  bool restrictFrameRate( );
+
+  /// Store maxFrameRate setting
+  DLLEXPORT
+  void maxFrameRate( int _fps );
+
+  /// get maxFrameRate setting
+  DLLEXPORT
+  int maxFrameRate( );
+
 /** @} */
 
 //===========================================================================

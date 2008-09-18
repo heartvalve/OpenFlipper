@@ -171,90 +171,195 @@
       <attribute name="title" >
        <string>Viewer</string>
       </attribute>
-      <layout class="QFormLayout" name="formLayout" >
-       <item row="0" column="1" >
-        <widget class="QCheckBox" name="backfaceCulling" >
-         <property name="toolTip" >
-          <string>Enable backface culling</string>
-         </property>
-         <property name="statusTip" >
-          <string>Enable backface culling</string>
-         </property>
-         <property name="text" >
-          <string>Backface culling</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
-          <string>MouseWheel Zoomfactor:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <widget class="QLineEdit" name="wZoomFactor" >
-         <property name="maximumSize" >
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="toolTip" >
-          <string>Set the factor to control the zooming with the mouse-wheel</string>
-         </property>
-         <property name="statusTip" >
-          <string>Set the factor to control the zooming with the mouse-wheel</string>
-         </property>
-         <property name="inputMask" >
-          <string>9.99; </string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="label_3" >
-         <property name="text" >
-          <string>MouseWheel Zoomfactor (shift):</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="QLineEdit" name="wZoomFactorShift" >
-         <property name="maximumSize" >
-          <size>
-           <width>100</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="toolTip" >
-          <string>Set the factor to control the zooming with the mouse-wheel while the shift key is pressed</string>
-         </property>
-         <property name="statusTip" >
-          <string>Set the factor to control the zooming with the mouse-wheel while the shift key is pressed</string>
-         </property>
-         <property name="inputMask" >
-          <string>9.99; </string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" >
-        <widget class="QComboBox" name="drawMode" >
-         <property name="toolTip" >
-          <string>Set the default drawMode for the viewer</string>
-         </property>
-         <property name="statusTip" >
-          <string>Set the default drawMode for the viewer</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="label_7" >
-         <property name="text" >
-          <string>Default DrawMode:</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QCheckBox" name="backfaceCulling" >
+       <property name="geometry" >
+        <rect>
+         <x>20</x>
+         <y>170</y>
+         <width>344</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="toolTip" >
+        <string>Enable backface culling</string>
+       </property>
+       <property name="statusTip" >
+        <string>Enable backface culling</string>
+       </property>
+       <property name="text" >
+        <string>Backface culling</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_2" >
+       <property name="geometry" >
+        <rect>
+         <x>9</x>
+         <y>36</y>
+         <width>143</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>MouseWheel Zoomfactor:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="wZoomFactor" >
+       <property name="geometry" >
+        <rect>
+         <x>192</x>
+         <y>36</y>
+         <width>100</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip" >
+        <string>Set the factor to control the zooming with the mouse-wheel</string>
+       </property>
+       <property name="statusTip" >
+        <string>Set the factor to control the zooming with the mouse-wheel</string>
+       </property>
+       <property name="inputMask" >
+        <string>9.99; </string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_3" >
+       <property name="geometry" >
+        <rect>
+         <x>9</x>
+         <y>64</y>
+         <width>177</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>MouseWheel Zoomfactor (shift):</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="wZoomFactorShift" >
+       <property name="geometry" >
+        <rect>
+         <x>192</x>
+         <y>64</y>
+         <width>100</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="toolTip" >
+        <string>Set the factor to control the zooming with the mouse-wheel while the shift key is pressed</string>
+       </property>
+       <property name="statusTip" >
+        <string>Set the factor to control the zooming with the mouse-wheel while the shift key is pressed</string>
+       </property>
+       <property name="inputMask" >
+        <string>9.99; </string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="drawMode" >
+       <property name="geometry" >
+        <rect>
+         <x>192</x>
+         <y>92</y>
+         <width>344</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="toolTip" >
+        <string>Set the default drawMode for the viewer</string>
+       </property>
+       <property name="statusTip" >
+        <string>Set the default drawMode for the viewer</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_7" >
+       <property name="geometry" >
+        <rect>
+         <x>9</x>
+         <y>92</y>
+         <width>107</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text" >
+        <string>Default DrawMode:</string>
+       </property>
+      </widget>
+      <widget class="Line" name="line_2" >
+       <property name="geometry" >
+        <rect>
+         <x>25</x>
+         <y>120</y>
+         <width>511</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+      <widget class="QWidget" name="" >
+       <property name="geometry" >
+        <rect>
+         <x>20</x>
+         <y>140</y>
+         <width>219</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2" >
+        <item>
+         <widget class="QCheckBox" name="restrictFPS" >
+          <property name="text" >
+           <string>Restrict Framerate</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="FPS" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="minimum" >
+           <number>1</number>
+          </property>
+          <property name="maximum" >
+           <number>200</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_8" >
+          <property name="text" >
+           <string>FPS</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
      <widget class="QWidget" name="key" >
       <property name="geometry" >
@@ -268,7 +373,7 @@
       <attribute name="title" >
        <string>Key Bindings</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+      <layout class="QVBoxLayout" name="verticalLayout_6" >
        <item>
         <widget class="QTreeWidget" name="keyTree" >
          <column>
@@ -434,5 +539,22 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>restrictFPS</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>FPS</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>115</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>187</x>
+     <y>184</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

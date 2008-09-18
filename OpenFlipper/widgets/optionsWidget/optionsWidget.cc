@@ -81,6 +81,9 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
   wZoomFactor->setText( QString::number(OpenFlipper::Options::wheelZoomFactor(), 'f') );
   wZoomFactorShift->setText( QString::number(OpenFlipper::Options::wheelZoomFactorShift(), 'f') );
 
+  restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
+  FPS->setValue( OpenFlipper::Options::maxFrameRate() );
+
   //keyBindings
   keyTree->clear();
 
@@ -110,6 +113,9 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
   QList<QTreeWidgetItem *> plugins;
 
   for (uint i=0; i < plugins_.size(); i++){
+//     if (plugins_[i].keys.count() == 0)
+//       continue;
+
     plugins.append(new QTreeWidgetItem(keyTree, QStringList( plugins_[i].name )));
 
     QList<QTreeWidgetItem *> keys;
@@ -125,10 +131,10 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
 
   }
 
-  keyTree->addTopLevelItems( plugins );
+  if (plugins.count() > 0)
+    keyTree->addTopLevelItems( plugins );
 
-  keyTree->resizeColumnToContents(0);
-  keyTree->resizeColumnToContents(1);
+  keyTree->setColumnWidth(0,350);
 }
 
 void OptionsWidget::slotApply() {
@@ -147,6 +153,9 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::backfaceCulling( backfaceCulling->isChecked() );
   OpenFlipper::Options::wheelZoomFactor( wZoomFactor->text().toDouble() );
   OpenFlipper::Options::wheelZoomFactorShift( wZoomFactorShift->text().toDouble() );
+
+  OpenFlipper::Options::restrictFrameRate( restrictFPS->isChecked() );
+  OpenFlipper::Options::maxFrameRate( FPS->value() );
 
   emit applyOptions();
   emit saveOptions();

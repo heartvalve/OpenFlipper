@@ -216,6 +216,20 @@ void Core::readApplicationOptions(INIFile& _ini) {
     QString logFile = "";
     if( _ini.get_entry(logFile, "Options", "LogFileLocation") )
       OpenFlipper::Options::logFile(logFile);
+
+    //============================================================================
+    // Load restrictFrameRate
+    //============================================================================
+    bool restrictFrameRate = false;
+    if( _ini.get_entry(restrictFrameRate, "Options", "RestrictFrameRate") )
+      OpenFlipper::Options::restrictFrameRate(restrictFrameRate);
+
+    //============================================================================
+    // Load maxFrameRate
+    //============================================================================
+    int maxFrameRate = 35;
+    if( _ini.get_entry(maxFrameRate, "Options", "MaxFrameRate") )
+      OpenFlipper::Options::maxFrameRate(maxFrameRate);
   }
 }
 
@@ -279,6 +293,14 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   _ini.add_entry("Options","LogFileEnabled",OpenFlipper::Options::logFileEnabled() );
   //write logfile location
   _ini.add_entry("Options","LogFileLocation",OpenFlipper::Options::logFile() );
+
+  //============================================================================
+  // other
+  //============================================================================
+  // restrict Framerate
+  _ini.add_entry("Options","RestrictFrameRate",OpenFlipper::Options::restrictFrameRate() );
+  // max Framerate
+  _ini.add_entry("Options","MaxFrameRate",OpenFlipper::Options::maxFrameRate() );
 
   //============================================================================
   //dontLoad Plugins
