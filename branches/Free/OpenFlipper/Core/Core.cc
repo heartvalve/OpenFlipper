@@ -527,11 +527,11 @@ void Core::updateView() {
 
     // redraw time not reached ... waiting for timer event for next redraw
     if ( redrawTimer_->isActive() ) {
-      std::cerr << "Too early for redraw!" << std::endl;
+//       std::cerr << "Too early for redraw!" << std::endl;
       return;
     }
 
-    std::cerr << "Redraw" << std::endl;
+//     std::cerr << "Redraw" << std::endl;
 
     // Start the timer if we are not called by the timer
     if ( sender() != redrawTimer_ )
