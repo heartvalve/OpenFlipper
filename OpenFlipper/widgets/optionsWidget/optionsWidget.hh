@@ -96,6 +96,9 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
       WINDOWS_SETUP
     } downloadType;
 
+  private:
+    void startDownload( QString _url );
+
   private slots:
 
     // This slot is called when a http request has been finished

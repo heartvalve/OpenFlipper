@@ -157,23 +157,23 @@ void OptionsWidget::slotCancel() {
   hide();
 }
 
-void OptionsWidget::slotCheckUpdates() {
+void OptionsWidget::startDownload( QString _url ) {
+   QUrl url(_url);
 
-   // http://www.graphics.rwth-aachen.de/restricted/OpenFlipper-SIL/
-
-  downloadType = VERSIONS_FILE;
-
-  QString ServerMainURL = updateURL->text() + "Versions.txt";
-  QUrl url(ServerMainURL);
-
-  if ( ! updateUser->text().isEmpty() )
+   // If username or passowrd are supplied, use them
+   if ( ! updateUser->text().isEmpty() )
     url.setUserName(updateUser->text());
 
   if ( ! updatePass->text().isEmpty() )
     url.setPassword(updatePass->text());
 
+
+  QFileInfo urlInfo(_url);
+
+  // Download the file to the Home Directory
   QFileInfo fileInfo( QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() +
-                      ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + "ServerVersions.txt");
+                      ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + urlInfo.fileName() );
+
   QString fileName = fileInfo.filePath();
 
   if (QFile::exists(fileName)) {
@@ -199,12 +199,24 @@ void OptionsWidget::slotCheckUpdates() {
 
     httpGetId = http->get(path, file);
 
-    statusLabel->setText("Getting Versions file from " + ServerMainURL);
+    statusLabel->setText("Getting Versions file from " + _url);
 
     progressDialog->setWindowTitle(tr("HTTP"));
     progressDialog->setLabelText(tr("Downloading %1.").arg(fileName));
     checkUpdateButton->setEnabled(false);
   }
+
+}
+
+void OptionsWidget::slotCheckUpdates() {
+
+   // http://www.graphics.rwth-aachen.de/restricted/OpenFlipper-SIL/
+
+  downloadType = VERSIONS_FILE;
+  QString ServerMainURL = updateURL->text() + "Versions.txt";
+
+  startDownload(ServerMainURL);
+
 }
 
 void OptionsWidget::slotGetUpdates() {
@@ -234,13 +246,13 @@ void OptionsWidget::httpRequestFinished(int requestId, bool error)
 
     if (error) {
         file->remove();
+        statusLabel->setText(tr("Download failed: %1.").arg(http->errorString()));
         QMessageBox::information(this, tr("HTTP"),
                                   tr("Download failed: %1.")
                                   .arg(http->errorString()));
-        statusLabel->setText(tr("Download failed: %1.").arg(http->errorString()));
     } else {
         QString fileName = QFileInfo(QUrl(updateURL->text()).path()).fileName();
-        statusLabel->setText(tr("Downloaded %1.").arg(fileName));
+        statusLabel->setText(tr("Downloaded %1").arg(file->fileName() ));
     }
 
     checkUpdateButton->setEnabled(true);
