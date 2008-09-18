@@ -53,7 +53,7 @@ void Core::resetScenegraph() {
                                                 coreWidget_->examiner_widget_->scene_radius() /* 10.0*/  );
 
     coreWidget_->examiner_widget_->setHome();
-    coreWidget_->examiner_widget_->drawMode(standard_draw_mode_);
+    coreWidget_->examiner_widget_->drawMode( OpenFlipper::Options::standardDrawMode() );
     coreWidget_->examiner_widget_->unlockUpdate();
     coreWidget_->examiner_widget_->updateGL();
   }

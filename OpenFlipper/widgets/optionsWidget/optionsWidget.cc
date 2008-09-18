@@ -84,6 +84,9 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
   restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
   FPS->setValue( OpenFlipper::Options::maxFrameRate() );
 
+  //set drawmodes
+
+
   //keyBindings
   keyTree->clear();
 

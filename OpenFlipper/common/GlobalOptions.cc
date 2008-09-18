@@ -42,6 +42,7 @@
 
 #include "GlobalOptions.hh"
 #include <stdlib.h>
+#include <ACG/Scenegraph/DrawModes.hh>
 
 
 namespace OpenFlipper {
@@ -97,6 +98,9 @@ static bool restrictFrameRate_ = false;
 
 /// Store the maxFrameRate_ mode
 static int maxFrameRate_ = 35;
+
+/// Store the standardDrawMode_ mode
+static uint standardDrawMode_ = ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED;
 
 /// Store the toolbox gui Mode mode
 static bool hideToolbox_ = false;
@@ -363,6 +367,14 @@ void maxFrameRate( int _fps ){
 
 int maxFrameRate(){
   return maxFrameRate_;
+}
+
+void standardDrawMode( uint _mode ){
+  standardDrawMode_ = _mode;
+}
+
+uint standardDrawMode(){
+  return standardDrawMode_;
 }
 
 /// Set if we start the logging widget closed

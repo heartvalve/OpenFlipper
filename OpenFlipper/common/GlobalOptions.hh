@@ -325,6 +325,14 @@ bool iconDir(QString _dir);
   DLLEXPORT
   int maxFrameRate( );
 
+  /// Store standardDrawMode setting
+  DLLEXPORT
+  void standardDrawMode( uint _mode );
+
+  /// get standardDrawMode setting
+  DLLEXPORT
+  uint standardDrawMode( );
+
 /** @} */
 
 //===========================================================================

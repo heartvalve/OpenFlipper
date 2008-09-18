@@ -65,16 +65,10 @@ void Core::applyOptions(){
     if ( OpenFlipper::Options::fullScreen() )
       coreWidget_->setWindowState( coreWidget_->windowState() | Qt::WindowFullScreen);
     else
-		coreWidget_->setWindowState( (coreWidget_->windowState() | Qt::WindowFullScreen) ^ Qt::WindowFullScreen);
+		  coreWidget_->setWindowState( (coreWidget_->windowState() | Qt::WindowFullScreen) ^ Qt::WindowFullScreen);
   
-    //Hide Logger
-    if (OpenFlipper::Options::hideLogger()) {
-      QList<int> wsizes( coreWidget_->splitter_->sizes() );
-      wsizes[0] = wsizes[0]+wsizes[1];
-      wsizes[1] = 0;
-      coreWidget_->splitter_->setSizes(wsizes);
-    }
-    
+    // Logger
+    coreWidget_->hideLogger( OpenFlipper::Options::hideLogger() );
     
     //animation
     coreWidget_->examiner_widget_->animation(OpenFlipper::Options::animation());
