@@ -97,7 +97,14 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
     } downloadType;
 
   private:
+    /// Starts the download of the given file
     void startDownload( QString _url );
+
+    /// Compares the versions from the downloaded Versions file with the current versions
+    void compareVersions();
+
+    /// Compares two version strings and returns if a newer Version is available
+    bool isNewer(QString _current, QString _latest);
 
   private slots:
 

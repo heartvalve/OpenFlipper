@@ -523,6 +523,54 @@ bool doSlotDebugging( );
 
 /** @} */
 
+//===========================================================================
+/** @name Update Options
+ * @{ */
+//===========================================================================
+
+/** Set Server URL to check for updates
+ */
+DLLEXPORT
+void updateUrl( QString _url );
+
+/** Get Server URL to check for updates
+ */
+DLLEXPORT
+QString updateUrl( );
+
+/** Set Username for updates
+ */
+DLLEXPORT
+void updateUsername( QString _username );
+
+/** Get Username for updates
+ */
+DLLEXPORT
+QString updateUsername( );
+
+/** Set Password for updates
+ */
+DLLEXPORT
+void updatePassword( QString _password );
+
+/** Get Password for updates
+ */
+DLLEXPORT
+QString updatePassword( );
+
+
+/** @} */
+
+//===========================================================================
+/** @name Version information
+ * @{ */
+//===========================================================================
+
+/// Version of OpenFlipper Core
+DLLEXPORT
+QString coreVersion();
+
+/** @} */
 }
 }
 
