@@ -118,7 +118,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
     QString type;
     if (_ini.get_entry(type, "Options" , "default_DataType" ))
       OpenFlipper::Options::lastDataType(type);
-    
+
     //============================================================================
     // Splash Screen
     //============================================================================
@@ -237,6 +237,14 @@ void Core::readApplicationOptions(INIFile& _ini) {
     int maxFrameRate = 35;
     if( _ini.get_entry(maxFrameRate, "Options", "MaxFrameRate") )
       OpenFlipper::Options::maxFrameRate(maxFrameRate);
+
+    //============================================================================
+    // Load slotDebugging state
+    //============================================================================
+    bool doSlotDebugging = false;
+    if( _ini.get_entry(doSlotDebugging, "Options", "SlotDebugging") )
+      OpenFlipper::Options::doSlotDebugging(doSlotDebugging);
+
   }
 }
 
@@ -286,7 +294,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   // Splash Screen
   //============================================================================
   _ini.add_entry( "Options" , "Splash" , OpenFlipper::Options::splash() );
-  
+
   //write default dataType to INI
   _ini.add_entry( "Options" , "default_DataType" , OpenFlipper::Options::lastDataType() );
 
@@ -308,6 +316,12 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   _ini.add_entry("Options","RestrictFrameRate",OpenFlipper::Options::restrictFrameRate() );
   // max Framerate
   _ini.add_entry("Options","MaxFrameRate",OpenFlipper::Options::maxFrameRate() );
+
+  //============================================================================
+  // Debugging
+  //============================================================================
+  // max Framerate
+  _ini.add_entry("Options","SlotDebugging",OpenFlipper::Options::doSlotDebugging() );
 
   //============================================================================
   //dontLoad Plugins
@@ -364,7 +378,7 @@ void Core::openIniFile(QString _filename) {
     emit log(LOGERR,"Failed to connect to ini file" + _filename);
     return;
   }
-  
+
   if ( OpenFlipper::Options::gui() ) {
     coreWidget_->statusMessage( "Loading ini File " + _filename + " ...");
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
@@ -438,7 +452,7 @@ void Core::openIniFile(QString _filename) {
   OpenFlipper::Options::openingIni(false);
 
   resetScenegraph();
-  
+
   if ( OpenFlipper::Options::gui() ) {
     coreWidget_->statusMessage( "Loading ini File " + _filename + " ... Done", 4000);
     coreWidget_->setStatus(ApplicationStatus::READY );
@@ -453,7 +467,7 @@ void Core::writeIniFile(QString _filename, bool _relativePaths) {
     emit log(LOGERR,"Failed to connect to _ini file" + _filename);
       return;
   }
-  
+
   if ( OpenFlipper::Options::gui() ) {
     coreWidget_->statusMessage( "Saving ini File " + _filename + " ...");
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
@@ -503,7 +517,7 @@ void Core::writeIniFile(QString _filename, bool _relativePaths) {
   emit iniSaveOptions( ini );
 
   ini.disconnect();
-  
+
   if ( OpenFlipper::Options::gui() ) {
     coreWidget_->statusMessage( "Saving ini File " + _filename + " ... Done", 4000);
     coreWidget_->setStatus(ApplicationStatus::READY );

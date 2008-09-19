@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -47,11 +47,11 @@
 
 namespace OpenFlipper {
 namespace Options {
-   
-/// Stores the base Path of the application   
+
+/// Stores the base Path of the application
 static QDir applicationDir_;
 
-/// Stores the base Path of the application   
+/// Stores the base Path of the application
 static QDir configDir_;
 
 /// Stores the Path to the Standard Plugins
@@ -127,6 +127,9 @@ static bool logToConsole_ = false;
 /// Extra debug info
 static bool debug_ = false;
 
+/// Slot Debugging
+static bool doSlotDebugging_ = false;
+
 /// enable logging to file
 static bool logFileEnabled_;
 
@@ -150,8 +153,8 @@ static char *** argv_;
   const bool is64 = true;
 #else
   const bool is64 = false;
-#endif 
-  
+#endif
+
 #ifdef WIN32
   const bool linux_ = false;
   const bool windows_ = true;
@@ -164,16 +167,16 @@ bool is64bit() { return is64; };
 bool is32bit() { return !is64; };
 
 bool isLinux() {
-  return linux_; 
+  return linux_;
 }
-  
+
 bool isWindows() {
   return windows_;
 }
 
 
 QString lang() {
-  QString lang = getenv( "LANG" ) ; 
+  QString lang = getenv( "LANG" ) ;
   return lang;
 }
 
@@ -183,10 +186,10 @@ QString dirSeparator() {
 //     return QString("\\");
 //   if (linux_)
 //     return QString("/");
-  
+
   return QString("/");
 }
-  
+
 QDir applicationDir() { return applicationDir_; }
 QDir configDir()      { return configDir_;  }
 QDir pluginDir()      { return pluginDir_;  }
@@ -215,19 +218,19 @@ void currentDir(QDir _dir)           { currentDir_     = _dir; }
 
 void optionFiles(QStringList _list) { optionFiles_ = _list; }
 
-bool applicationDir(QString _dir) { 
+bool applicationDir(QString _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
-    applicationDir_ = tmp; 
+    applicationDir_ = tmp;
     return true;
   }
   return false;
 }
 
-bool pluginDir(QString      _dir) { 
+bool pluginDir(QString      _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
-    pluginDir_      = tmp; 
+    pluginDir_      = tmp;
     return true;
   }
   return false;
@@ -236,43 +239,43 @@ bool pluginDir(QString      _dir) {
 bool shaderDir(QString _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
-    shaderDir_ = tmp; 
+    shaderDir_ = tmp;
     return true;
   }
   return false;
 }
 
-bool textureDir(QString     _dir) { 
+bool textureDir(QString     _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
-    textureDir_     = tmp; 
+    textureDir_     = tmp;
     return true;
   }
   return false;
 }
 
-bool iconDir(QString      _dir) { 
+bool iconDir(QString      _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
-    iconDir_      = tmp; 
+    iconDir_      = tmp;
     return true;
   }
   return false;
 }
 
-bool configDir(QString      _dir) { 
+bool configDir(QString      _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
-    configDir_      = tmp; 
+    configDir_      = tmp;
     return true;
   }
   return false;
 }
 
-bool currentDir(QString      _dir) { 
+bool currentDir(QString      _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
-    currentDir_     = tmp; 
+    currentDir_     = tmp;
     return true;
   }
   return false;
@@ -280,77 +283,77 @@ bool currentDir(QString      _dir) {
 
 /// Get experience level
 Experience getExperience() {
-  return experienceLevel_; 
+  return experienceLevel_;
 }
 
 /// Set experience level
 void setExperience( Experience _exp) {
-  experienceLevel_ = _exp; 
+  experienceLevel_ = _exp;
 }
 
 /// Store if a gui should be visible or not
 void nogui( bool _nogui ) {
-  nogui_ = _nogui; 
-}
-  
-/// get if a gui should be visible or not  
-bool nogui( ) {
-  return nogui_; 
+  nogui_ = _nogui;
 }
 
-/// get if a gui should be visible or not  
+/// get if a gui should be visible or not
+bool nogui( ) {
+  return nogui_;
+}
+
+/// get if a gui should be visible or not
 bool gui( ) {
-  return !nogui_; 
+  return !nogui_;
 }
 
 /// Store stereo mode setting
 void stereo( bool _stereo ) {
-  stereo_ = _stereo; 
+  stereo_ = _stereo;
 }
-  
+
 /// get current stereo setting
 bool stereo( ) {
-  return stereo_; 
+  return stereo_;
 }
 
 /// Store animation mode setting
 void animation( bool _animation ) {
-  animation_ = _animation; 
+  animation_ = _animation;
 }
-  
+
 /// get current animation setting
 bool animation( ) {
-  return animation_; 
+  return animation_;
 }
 
 /// Store backfaceCulling setting
 void backfaceCulling( bool _backfaceCulling ) {
-  backfaceCulling_ = _backfaceCulling; 
+  backfaceCulling_ = _backfaceCulling;
 }
-  
+
 /// get backfaceCulling setting
 bool backfaceCulling( ) {
-  return backfaceCulling_; 
+  return backfaceCulling_;
 }
 
 /// Store wheelZoomFactor setting
 void wheelZoomFactor( double _factor ) {
-  wheelZoomFactor_ = _factor; 
+  wheelZoomFactor_ = _factor;
 }
-  
+
 /// get wheelZoomFactor setting
 double wheelZoomFactor( ) {
-  return wheelZoomFactor_; 
+  return wheelZoomFactor_;
 }
 
 /// Store wheelZoomFactorShift setting
 void wheelZoomFactorShift( double _factor ) {
-  wheelZoomFactorShift_ = _factor; 
+  wheelZoomFactorShift_ = _factor;
 }
-  
+
 /// get wheelZoomFactorShift setting
 double wheelZoomFactorShift( ) {
-  return wheelZoomFactorShift_; 
+  return wheelZoomFactorShift_;
 }
 
 void restrictFrameRate( bool _enable ){
@@ -399,19 +402,19 @@ bool hideToolbox( ) {
 
 /// Start fullscreen Mode?
 void fullScreen( bool _fs ) {
-  fullScreen_ = _fs; 
+  fullScreen_ = _fs;
 }
 
 /// Start fullscreen Mode?
 bool fullScreen( ) {
-  return fullScreen_; 
+  return fullScreen_;
 }
 
 /// Which mode should be the default for the toolbar?
 QString defaultToolboxMode( ) {
-  return defaultToolboxMode_; 
+  return defaultToolboxMode_;
 }
-  
+
 /// Which mode should be the default for the toolbar?
 void defaultToolboxMode( QString _mode ) {
   defaultToolboxMode_ = _mode;
@@ -419,19 +422,19 @@ void defaultToolboxMode( QString _mode ) {
 
 
 QString windowTitle( ) {
-  return title_; 
+  return title_;
 }
 
 void windowTitle( QString _titel ) {
-  title_ = _titel; 
+  title_ = _titel;
 }
 
 void splash( bool _splash ) {
-  splash_ = _splash; 
+  splash_ = _splash;
 }
-  
+
 bool splash( ) {
-  return splash_; 
+  return splash_;
 }
 
 
@@ -439,34 +442,34 @@ bool splash( ) {
 QString lastDataType(){
   return lastDataType_;
 }
-  
+
 /// set the last used dataType
 void lastDataType(QString _type){
    lastDataType_ = _type;
 }
 
 bool scripting( ) {
-  return scripting_; 
+  return scripting_;
 }
-  
+
 void scripting(bool _status ) {
-  scripting_ = _status; 
+  scripting_ = _status;
 }
 
 bool logToConsole( ) {
-  return logToConsole_; 
+  return logToConsole_;
 }
-  
+
 void logToConsole(bool _logToConsole ) {
-  logToConsole_ = _logToConsole; 
+  logToConsole_ = _logToConsole;
 }
 
 bool debug() {
-  return debug_; 
+  return debug_;
 }
 
 void debug(bool _debug ) {
-  debug_ = _debug;  
+  debug_ = _debug;
 }
 
 void logFileEnabled(bool _enable ){
@@ -486,7 +489,7 @@ QString logFile(){
 }
 
 bool backupEnabled( ) {
-  return enableBackup_; 
+  return enableBackup_;
 }
 
 void enableBackup(bool _enableBackup ) {
@@ -494,11 +497,11 @@ void enableBackup(bool _enableBackup ) {
 }
 
 bool openingIni( ) {
-  return openingIni_; 
+  return openingIni_;
 }
-  
+
 void openingIni(bool _openingIni ) {
-  openingIni_ = _openingIni; 
+  openingIni_ = _openingIni;
 }
 
 int* argc() {
@@ -515,6 +518,14 @@ void  argc( int* _argc ) {
 
 void argv( char*** _argv) {
   argv_ = _argv;
+}
+
+void doSlotDebugging( bool _debugging ) {
+  doSlotDebugging_ = _debugging;
+}
+
+bool doSlotDebugging( ) {
+  return doSlotDebugging_;
 }
 
 
