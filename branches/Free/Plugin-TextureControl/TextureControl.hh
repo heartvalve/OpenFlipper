@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -53,19 +53,19 @@ struct Texture {
   QString name;
   QString filename;
   uint dimension;
-  
+
   double clamp_min;
   double clamp_max;
-  
+
   bool clamp;
   bool repeat;
-  
+
   double max_val;
-  
+
   bool center;
-  
+
   bool abs;
-  
+
   bool scale;
 
   uint type;
@@ -83,61 +83,61 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1};
 
   signals:
-    
+
     void update_view();
     void updateTexture( QString , int);
-    
+
     void log(Logtype _type, QString _message);
     void log(QString _message);
-    
+
     void addMenu(QMenu* _menu, MenuType _type);
 
   private slots:
-    void slotObjectUpdated(int _identifier); 
+    void slotObjectUpdated(int _identifier);
     void slotUpdateAllTextures( );
-    void slotTextureAdded( QString _textureName , QString _filename , uint _dimension );     
+    void slotTextureAdded( QString _textureName , QString _filename , uint _dimension );
     void slotTextureUpdated( QString _textureName , int _identifier );
     void slotSetTextureMode(QString _textureName ,QString _mode);
-    void slotSwitchTexture( QString _textureName );  
-      
+    void slotSwitchTexture( QString _textureName );
+
   private slots:
     void slotSetTextureProperties();
     void slotTextureMenu(QAction* _action);
-    
+
     void slotTexturePropertiesOk();
     void slotTexturePropertiesCancel();
     void slotTexturePropertiesApply();
-    
+
     void pluginsInitialized();
-      
+
   public :
 
     ~TextureControlPlugin() {delete(settingsDialog_);};
-    
+
     QString name() { return (QString("TextureControl")); };
-    QString description( ) { return (QString("Handles Textures which are written to mesh properties")); }; 
-     
+    QString description( ) { return (QString("Handles Textures which are written to mesh properties")); };
+
   private :
     QMenu *textureMenu_;
-    
+
     QActionGroup* actionGroup_;
-    
+
     QAction* AC_Texture_Settings;
-    
+
     QString activeTexture_;
-    
+
     std::vector< Texture > textures_;
-    
+
     std::vector<QAction*> textureActions_;
-    
+
     texturePropertiesWidget* settingsDialog_;
-    
+
     /// Set the active texture values to the values in the dialog box.
-    void applyDialogSettings(); 
-    
+    void applyDialogSettings();
+
     /// Update the values in the Dialog box to the current ones
     void updateDialog();
-    
+
     /// For a given mesh compute the minimum and maximum values depending on texture settings (vertex based)
     template< typename MeshT >
     inline
@@ -146,7 +146,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     template< typename MeshT >
     inline
     void computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::HPropHandleT< double > _texture,double& _min , double& _max);
-    
+
     /// Take a scalar value and return a clamped,... depending on texture settings
     inline
     void computeValue(int _textureid, double _min, double _max, double& _value);
@@ -168,6 +168,8 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     template< typename MeshT >
     void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::HPropHandleT< ACG::Vec2d > _texProp );
 
+  public slots:
+    QString version() { return QString("1.0"); };
  };
 
 #endif //TEXTURECONTROLPLUGIN_HH
