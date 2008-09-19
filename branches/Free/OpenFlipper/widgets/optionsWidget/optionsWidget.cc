@@ -351,24 +351,62 @@ void OptionsWidget::compareVersions() {
 
   QString updatedComponents = "Updates found for ";
 
-  if ( OpenFlipper::Options::isWindows() ) {
-    QString coreVersion;
 
-    if ( ini.get_entry(coreVersion, "Core" , "VersionWindows" )) {
+  QString systemString = "";
 
-      if ( isNewer( OpenFlipper::Options::coreVersion(), coreVersion ) ) {
-        std::cerr << "Newer Version found for Core!" << std::endl;
-        std::cerr << "Latest Version is " << coreVersion.toStdString() << std::endl;
-        std::cerr << "Current Version is " << OpenFlipper::Options::coreVersion().toStdString() << std::endl;
+  if ( true || OpenFlipper::Options::isWindows() ) {
+    systemString = "VersionWindows";
+  } else if (OpenFlipper::Options::isLinux()) {
+    systemString = "VersionLinux";
+    return;
+  } else {
+    std::cerr << "Unsupported platform for update" << std::endl;
+    return;
+  }
+
+  QString coreVersion;
+
+  if ( ini.get_entry(coreVersion, "Core" , systemString )) {
+
+    if ( isNewer( OpenFlipper::Options::coreVersion(), coreVersion ) ) {
+      std::cerr << "Newer Version found for Core!" << std::endl;
+      std::cerr << "Latest Version is " << coreVersion.toStdString() << std::endl;
+      std::cerr << "Current Version is " << OpenFlipper::Options::coreVersion().toStdString() << std::endl;
+
+      newerVersionsAvailable = true;
+      updatedComponents += "Core " + OpenFlipper::Options::coreVersion() + " -> " + coreVersion  ;
+    }
+  }
+
+  for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+
+    QString latestVersion;
+
+    if ( ini.get_entry(latestVersion, plugins_[i].name , systemString )) {
+
+      if ( isNewer(  plugins_[i].version, latestVersion ) ) {
+        std::cerr << "Newer Version found for " << plugins_[i].name.toStdString() << std::endl;
+        std::cerr << "Latest Version is " << latestVersion.toStdString() << std::endl;
+        std::cerr << "Current Version is " << plugins_[i].version.toStdString() << std::endl;
 
         newerVersionsAvailable = true;
-        updatedComponents += "Core " + OpenFlipper::Options::coreVersion() + " -> " + coreVersion;
+        updatedComponents += plugins_[i].name + " " + plugins_[i].version + " -> " + latestVersion;
       }
-    }
 
-  } else {
-    std::cerr << "Updates for linux not implemented yet" << std::endl;
+    }
+//     else {
+//
+//       std::cerr << "No Version information on server for " << plugins_[i].name.toStdString()
+//                 << ". Local Version is ";
+
+//       if ( plugins_[i].version == "-1" )
+//         std::cerr << "UNKNOWN (no info provided by plugin" << std::endl;
+//       else
+//         std::cerr << plugins_[i].version.toStdString() << std::endl;
+
+//     }
   }
+
 
   if ( newerVersionsAvailable ) {
     statusLabel->setText(updatedComponents);
