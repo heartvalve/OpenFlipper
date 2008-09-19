@@ -106,6 +106,9 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
     /// Compares two version strings and returns if a newer Version is available
     bool isNewer(QString _current, QString _latest);
 
+    /// Redraws the version table
+    void updateVersionsTable();
+
   private slots:
 
     // This slot is called when a http request has been finished
