@@ -50,39 +50,22 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect(cancelButton,SIGNAL(clicked()),this,SLOT(slotCancel()));
   connect(checkUpdateButton,SIGNAL(clicked()),this,SLOT(slotCheckUpdates()));
 
-  //setup drawmodes
-  addButton->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"arrow-right.png") );
-  remButton->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"arrow-left.png") );
-
   uint mode = 2;
   for (uint i=1; i < 22; i++) {
     std::vector< QString > dm = drawModeToList( mode );
 
-    if (dm[0].trimmed() != ""){
+    if ( !dm.empty() && dm[0].trimmed() != ""){
       QListWidgetItem* item = new QListWidgetItem(dm[0]);
 
       item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
       item->setCheckState(Qt::Unchecked);
 
       availDrawModes->addItem( item );
-break;
-//       QListWidgetItem* item2 = new QListWidgetItem(dm[0]);
-//       item2->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-//       item2->setCheckState(Qt::Unchecked);
-//       availDrawModes->addItem( item2 );
-//   break;
     }
-    mode = mode<<1;
-  }
 
-  //Check the drawModes from StandardDrawMode
-//   std::vector< QString > dm = drawModeToList( OpenFlipper::Options::standardDrawMode() );
-//
-//   for (uint i=0; i < dm.size(); i++){
-//     QList<QListWidgetItem *> found availDrawModes->findItems(dm[i],Qt::MatchExactly);
-//     for(int k=0; k < found.count(); k++)
-//       (found[k])->setCheckState(Qt::Checked);
-//   }
+    mode = mode<<1;
+
+  }
 
   http = new QHttp(this);
 
@@ -183,6 +166,21 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
     keyTree->addTopLevelItems( plugins );
 
   keyTree->setColumnWidth(0,350);
+
+
+  for (int i = 0 ; i < availDrawModes->count(); ++i )
+    availDrawModes->item( i )->setCheckState(Qt::Unchecked) ;
+
+  //Check the drawModes from StandardDrawMode
+  std::vector< QString > dm = drawModeToList( OpenFlipper::Options::standardDrawMode() );
+
+  for (uint i=0; i < dm.size(); i++){
+    if ( !dm.empty() ) {
+      QList< QListWidgetItem* > found = availDrawModes->findItems(dm[i],Qt::MatchExactly);
+      for(int k=0; k < found.count(); k++)
+        (found[k])->setCheckState(Qt::Checked);
+    }
+  }
 }
 
 void OptionsWidget::slotApply() {
@@ -215,11 +213,11 @@ void OptionsWidget::slotApply() {
     if (availDrawModes->item(i)->checkState() == Qt::Checked)
       mode.push_back( availDrawModes->item(i)->text() );
 
-  std::cerr << "Optionswidget: standarddrawmode not set yet" << std::endl;
-//   OpenFlipper::Options::standardDrawMode( ListToDrawMode(mode) );
+  OpenFlipper::Options::standardDrawMode( ListToDrawMode(mode) );
 
   emit applyOptions();
   emit saveOptions();
+
   hide();
 }
 

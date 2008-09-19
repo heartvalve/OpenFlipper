@@ -5,24 +5,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>501</width>
-    <height>480</height>
+    <width>488</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Options</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout_11" >
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="toolTip" >
-      <string/>
+      <string>This list shows the active draw modes.
+You can select multiple modes at the same time.</string>
      </property>
      <property name="statusTip" >
       <string/>
      </property>
      <property name="currentIndex" >
-      <number>5</number>
+      <number>2</number>
      </property>
      <property name="usesScrollButtons" >
       <bool>true</bool>
@@ -32,8 +33,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>479</width>
-        <height>394</height>
+        <width>466</width>
+        <height>603</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -132,8 +133,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>479</width>
-        <height>394</height>
+        <width>466</width>
+        <height>603</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -164,20 +165,32 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>479</width>
-        <height>394</height>
+        <width>466</width>
+        <height>603</height>
        </rect>
       </property>
       <attribute name="title" >
        <string>Viewer</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_11" >
+      <layout class="QVBoxLayout" name="verticalLayout" >
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
           <string> Mouse Wheel </string>
          </property>
+         <property name="alignment" >
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <property name="flat" >
+          <bool>false</bool>
+         </property>
+         <property name="checkable" >
+          <bool>false</bool>
+         </property>
          <layout class="QFormLayout" name="formLayout" >
+          <property name="fieldGrowthPolicy" >
+           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+          </property>
           <item row="0" column="0" >
            <widget class="QLabel" name="label_2" >
             <property name="text" >
@@ -235,53 +248,42 @@
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox_3" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title" >
           <string> DrawMode </string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_6" >
+         <layout class="QVBoxLayout" name="verticalLayout_7" >
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_8" >
             <item>
              <widget class="QLabel" name="label_7" >
+              <property name="toolTip" >
+               <string>This list shows the draw modes OpenFlipper uses at startup.
+You can select multiple modes at the same time.</string>
+              </property>
               <property name="text" >
-               <string>Available DrawModes:</string>
+               <string>Startup DrawModes:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="availDrawModes" />
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7" >
-            <item>
-             <widget class="QToolButton" name="addButton" >
-              <property name="text" >
-               <string>...</string>
+             <widget class="QListWidget" name="availDrawModes" >
+              <property name="minimumSize" >
+               <size>
+                <width>0</width>
+                <height>300</height>
+               </size>
+              </property>
+              <property name="toolTip" >
+               <string>This list shows the draw modes OpenFlipper uses at startup.
+You can select multiple modes at the same time.</string>
               </property>
              </widget>
-            </item>
-            <item>
-             <widget class="QToolButton" name="remButton" >
-              <property name="text" >
-               <string>...</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_9" >
-            <item>
-             <widget class="QLabel" name="label_9" >
-              <property name="text" >
-               <string>Standard DrawMode:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QListWidget" name="standardDrawMode" />
             </item>
            </layout>
           </item>
@@ -373,8 +375,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>479</width>
-        <height>394</height>
+        <width>466</width>
+        <height>603</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -397,8 +399,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>479</width>
-        <height>394</height>
+        <width>466</width>
+        <height>603</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -511,6 +513,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="Debug" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>466</width>
+        <height>603</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Debug</string>
       </attribute>
