@@ -384,6 +384,11 @@ void Core::loadPlugin(QString filename, bool silent){
       info.path          = filename;
       info.widget        = 0;
 
+      if ( checkSlot(plugin,"version()") )
+        info.version = basePlugin->version();
+      else
+        info.version = QString::number(-1);
+
       if ( OpenFlipper::Options::nogui() ) {
 
         if ( ! checkSlot( plugin , "noguiSupported()" ) ) {
@@ -403,7 +408,7 @@ void Core::loadPlugin(QString filename, bool silent){
 
       if ( checkSlot(plugin,"slotAllCleared()") )
         connect(this,SIGNAL(allCleared()),plugin,SLOT(slotAllCleared()));
-      
+
       if ( checkSignal(plugin,"activeObjectChanged()") )
         connect(plugin,SIGNAL(activeObjectChanged()),this,SLOT(slotActiveObjectChanged() ));
 
@@ -582,7 +587,7 @@ void Core::loadPlugin(QString filename, bool silent){
 
 //       if ( checkSlot( plugin , "slotKeyEvent(QKeyEvent*)" ) )
 //         connect(coreWidget_,SIGNAL(PluginKeyEvent(QKeyEvent* )), plugin,SLOT(slotKeyEvent(QKeyEvent*)));
-// 
+//
 //       if ( checkSlot( plugin , "slotKeyReleaseEvent(QKeyEvent*)" ) )
 //         connect(coreWidget_,SIGNAL(PluginKeyReleaseEvent(QKeyEvent* )), plugin,SLOT(slotKeyReleaseEvent(QKeyEvent*)));
     }

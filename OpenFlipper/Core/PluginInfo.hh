@@ -27,6 +27,9 @@ struct PluginInfo{
   /// Description of the plugin ( requested from the plugin on load)
   QString     description;
 
+  /// Version of the plugin
+  QString     version;
+
   /// Path to the plugin ( set on load )
   QString     path;
 
