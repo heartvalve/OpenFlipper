@@ -485,7 +485,7 @@ bool iconDir(QString _dir);
 //===========================================================================
 /** @name Core parameters
 * @{ */
-//===========================================================================  
+//===========================================================================
 
 /// Get the argc parameter from the main application
 DLLEXPORT
@@ -502,6 +502,24 @@ void  argc( int* _argc );
 /// Set the argv parameter from the main application ( Dont use it, only called from Core!!)
 DLLEXPORT
 void argv( char*** _argv);
+
+
+
+//===========================================================================
+/** @name Debugging Options
+ * @{ */
+//===========================================================================
+
+/** If you enable slot debugging, for some slots will be displayed who called them.
+ * Currently supported slots are:\n
+ * - updateView()
+ * - updated_objects( objectId )
+ */
+DLLEXPORT
+void doSlotDebugging( bool _debugging );
+
+DLLEXPORT
+bool doSlotDebugging( );
 
 /** @} */
 

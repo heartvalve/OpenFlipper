@@ -522,19 +522,30 @@ Core::slotAddHiddenPickMode( const std::string _mode , QCursor _cursor) {
  /** Update the view in the examiner widget
   */
 void Core::updateView() {
+
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"updateView() called by " + QString( sender()->metaObject()->className() ) );
+      }
+    }
+  }
+
   if ( OpenFlipper::Options::restrictFrameRate() ) {
 
     // redraw time not reached ... waiting for timer event for next redraw
     if ( redrawTimer_->isActive() ) {
-//       std::cerr << "Too early for redraw!" << std::endl;
+      if ( OpenFlipper::Options::doSlotDebugging() )
+        emit log(LOGINFO,"Too early for redraw! Delaying request from " + QString( sender()->metaObject()->className() ) );
       return;
     }
 
 //     std::cerr << "Redraw" << std::endl;
 
     // Start the timer if we are not called by the timer
-    if ( sender() != redrawTimer_ )
+    if ( sender() != redrawTimer_ ) {
       redrawTimer_->start( 1000 / OpenFlipper::Options::maxFrameRate() );
+    }
 
   }
 

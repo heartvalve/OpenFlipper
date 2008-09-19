@@ -57,10 +57,10 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   uint mode = 2;
   for (uint i=1; i < 22; i++) {
     std::vector< QString > dm = drawModeToList( mode );
-    
+
     if (dm[0].trimmed() != ""){
       QListWidgetItem* item = new QListWidgetItem(dm[0]);
-      
+
       item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
       item->setCheckState(Qt::Unchecked);
 
@@ -77,7 +77,7 @@ break;
 
   //Check the drawModes from StandardDrawMode
 //   std::vector< QString > dm = drawModeToList( OpenFlipper::Options::standardDrawMode() );
-// 
+//
 //   for (uint i=0; i < dm.size(); i++){
 //     QList<QListWidgetItem *> found availDrawModes->findItems(dm[i],Qt::MatchExactly);
 //     for(int k=0; k < found.count(); k++)
@@ -118,6 +118,9 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
 
   restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
   FPS->setValue( OpenFlipper::Options::maxFrameRate() );
+
+  // debugging
+  slotDebugging->setChecked(OpenFlipper::Options::doSlotDebugging());
 
   //set drawmodes
 
@@ -202,6 +205,9 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::restrictFrameRate( restrictFPS->isChecked() );
   OpenFlipper::Options::maxFrameRate( FPS->value() );
 
+  // Debugging
+  OpenFlipper::Options::doSlotDebugging(slotDebugging->isChecked());
+
   //standardDrawMode
   std::vector< QString > mode;
 
@@ -209,7 +215,8 @@ void OptionsWidget::slotApply() {
     if (availDrawModes->item(i)->checkState() == Qt::Checked)
       mode.push_back( availDrawModes->item(i)->text() );
 
-  OpenFlipper::Options::standardDrawMode( ListToDrawMode(mode) );
+  std::cerr << "Optionswidget: standarddrawmode not set yet" << std::endl;
+//   OpenFlipper::Options::standardDrawMode( ListToDrawMode(mode) );
 
   emit applyOptions();
   emit saveOptions();
