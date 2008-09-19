@@ -393,7 +393,7 @@ void OptionsWidget::compareVersions() {
         updatedComponents += plugins_[i].name + " " + plugins_[i].version + " -> " + latestVersion;
       }
 
-    }/*
+    }
     else {
 
       std::cerr << "No Version information on server for " << plugins_[i].name.toStdString()
@@ -404,7 +404,7 @@ void OptionsWidget::compareVersions() {
       else
         std::cerr << plugins_[i].version.toStdString() << std::endl;
 
-    }*/
+    }
   }
 
 
