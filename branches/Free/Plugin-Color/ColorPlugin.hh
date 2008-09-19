@@ -26,34 +26,36 @@ class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterfac
 
    signals:
      void update_view();
-     
+
      void scriptInfo( QString _functionName );
 
      void addMenu(QMenu* _menu, MenuType _type);
-     
+
      void addToolbar(QToolBar* _toolbar);
      void removeToolbar(QToolBar* _toolbar);
-     
+
      void showStatusMessage(QString _message, int _timeout = 0);
-     
+
   private slots:
-    
+
      void pluginsInitialized();
-     
+
    public :
      void init();
-     
+
      QString name() { return (QString("Color Plugin")); };
-     QString description( ) { return (QString("Sets the Default colors e.g. for slides, paper,... snapshots")); }; 
-     
+     QString description( ) { return (QString("Sets the Default colors e.g. for slides, paper,... snapshots")); };
+
    public slots:
       void setDefaultColor();
       void setPowerpointColor();
       void setPaperColor();
-      
+
       /// Set the Background Color
       void setBackgroundColor( Vector _color );
-      
+
+      QString version() { return QString("1.0"); };
+
    private :
       QAction* AC_set_Default_color;
       QAction* AC_set_Powerpoint_color;
