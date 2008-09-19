@@ -187,6 +187,112 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
         (found[k])->setCheckState(Qt::Checked);
     }
   }
+
+  updateVersionsTable();
+
+}
+
+void OptionsWidget::updateVersionsTable() {
+
+  QString fileName = QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() +
+                     ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + "Versions.ini" ;
+
+  INIFile ini;
+
+  ini.connect(fileName,false);
+
+  QString systemString = "";
+
+  if ( OpenFlipper::Options::isWindows() ) {
+    systemString = "VersionWindows";
+  } else if (OpenFlipper::Options::isLinux()) {
+    systemString = "VersionLinux";
+  } else {
+    std::cerr << "Unsupported platform for update" << std::endl;
+    return;
+  }
+
+  updateList->clear();
+  updateList->setRowCount( 1 + plugins_.size() );
+  updateList->setColumnCount(3);
+
+  QStringList header;
+
+  header << "Component" << "current Version" << "latest Version" ;
+  updateList->setHorizontalHeaderLabels(header);
+
+  QBrush currentBrush(Qt::white);
+
+  QTableWidgetItem * newItem = 0;
+
+  QString coreVersion;
+
+  if ( ini.is_connected() && ini.get_entry(coreVersion, "Core" , systemString ) ) {
+
+    // Newer Version available
+    if ( isNewer(OpenFlipper::Options::coreVersion(),coreVersion) )
+      currentBrush.setColor(Qt::red);
+    else
+      currentBrush.setColor(Qt::green);
+
+    newItem = new QTableWidgetItem( coreVersion );
+
+  } else {
+
+    // No local Information available
+    currentBrush.setColor(Qt::yellow);
+
+    newItem = new QTableWidgetItem( "Not Available" );
+  }
+
+  newItem->setBackground(currentBrush);
+  updateList->setItem(0, 2, newItem);
+
+  newItem = new QTableWidgetItem( OpenFlipper::Options::coreVersion() );
+  newItem->setBackground(currentBrush);
+  updateList->setItem(0, 1, newItem);
+
+  newItem = new QTableWidgetItem( "Core" );
+  newItem->setBackground(currentBrush);
+  updateList->setItem(0, 0, newItem);
+
+
+  for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+    QString latestVersion;
+
+    if ( ini.is_connected() && ini.get_entry(latestVersion, plugins_[i].name , systemString ) ) {
+
+
+      // Newer Version available
+      if ( isNewer(plugins_[i].version,latestVersion) )
+        currentBrush.setColor(Qt::red);
+      else
+        currentBrush.setColor(Qt::green);
+
+      newItem = new QTableWidgetItem( latestVersion );
+
+    } else {
+
+      // No local Information available
+      currentBrush.setColor(Qt::yellow);
+
+      newItem = new QTableWidgetItem( "Not Available" );
+    }
+
+    newItem->setBackground(currentBrush);
+    updateList->setItem( i + 1 , 2, newItem);
+
+    newItem = new QTableWidgetItem( plugins_[i].version );
+    newItem->setBackground(currentBrush);
+    updateList->setItem( i + 1 , 1, newItem);
+
+    newItem = new QTableWidgetItem( plugins_[i].name );
+    newItem->setBackground(currentBrush);
+    updateList->setItem( i + 1 , 0, newItem);
+  }
+
+  updateList->resizeColumnsToContents();
+
 }
 
 void OptionsWidget::slotApply() {
@@ -278,7 +384,7 @@ void OptionsWidget::startDownload( QString _url ) {
 
     httpGetId = http->get(path, file);
 
-    statusLabel->setText("Getting Versions file from " + _url);
+    statusLabel->setText("Getting Versions file from Server");
 
     progressDialog->setWindowTitle(tr("HTTP"));
     progressDialog->setLabelText(tr("Downloading %1.").arg(fileName));
@@ -339,7 +445,6 @@ void OptionsWidget::compareVersions() {
                      ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + "Versions.ini" ;
 
   INIFile ini;
-
   if ( ! ini.connect(fileName,false) ) {
     std::cerr << "Failed to connect to Versions ini file" << std::endl;
     return;
@@ -349,10 +454,7 @@ void OptionsWidget::compareVersions() {
 
   bool newerVersionsAvailable = false;
 
-  QString updatedComponents = "Updates found for ";
-
   QString systemString = "";
-
   if ( OpenFlipper::Options::isWindows() ) {
     systemString = "VersionWindows";
   } else if (OpenFlipper::Options::isLinux()) {
@@ -365,56 +467,28 @@ void OptionsWidget::compareVersions() {
   QString coreVersion;
 
   if ( ini.get_entry(coreVersion, "Core" , systemString )) {
-
     if ( isNewer( OpenFlipper::Options::coreVersion(), coreVersion ) ) {
-      std::cerr << "Newer Version found for Core!" << std::endl;
-      std::cerr << "Latest Version is " << coreVersion.toStdString() << std::endl;
-      std::cerr << "Current Version is " << OpenFlipper::Options::coreVersion().toStdString() << std::endl;
-
       newerVersionsAvailable = true;
-      updatedComponents += "Core " + OpenFlipper::Options::coreVersion() + " -> " + coreVersion  ;
-    } /*else {
-      std::cerr << "No update for core " << OpenFlipper::Options::coreVersion().toStdString() << coreVersion.toStdString() << std::endl;
-    }*/
+    }
   }
 
   for ( uint i = 0 ; i < plugins_.size(); ++i ) {
-
     QString latestVersion;
-
     if ( ini.get_entry(latestVersion, plugins_[i].name , systemString )) {
-
-      if ( isNewer(  plugins_[i].version, latestVersion ) ) {
-        std::cerr << "Newer Version found for " << plugins_[i].name.toStdString() << std::endl;
-        std::cerr << "Latest Version is " << latestVersion.toStdString() << std::endl;
-        std::cerr << "Current Version is " << plugins_[i].version.toStdString() << std::endl;
-
+      if ( isNewer(  plugins_[i].version, latestVersion ) )
         newerVersionsAvailable = true;
-        updatedComponents += plugins_[i].name + " " + plugins_[i].version + " -> " + latestVersion;
-      }
-
-    }
-    else {
-
-      std::cerr << "No Version information on server for " << plugins_[i].name.toStdString()
-                << ". Local Version is ";
-
-      if ( plugins_[i].version == "-1" )
-        std::cerr << "UNKNOWN (no info provided by plugin" << std::endl;
-      else
-        std::cerr << plugins_[i].version.toStdString() << std::endl;
-
     }
   }
 
-
   if ( newerVersionsAvailable ) {
-    statusLabel->setText(updatedComponents);
+    statusLabel->setText("Updates found");
   } else {
     statusLabel->setText("No updates found");
   }
 
   ini.disconnect();
+
+  updateVersionsTable();
 }
 
 void OptionsWidget::httpRequestFinished(int requestId, bool error)
