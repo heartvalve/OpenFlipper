@@ -410,6 +410,8 @@ void OptionsWidget::compareVersions() {
 
   if ( newerVersionsAvailable ) {
     statusLabel->setText(updatedComponents);
+  } else {
+    statusLabel->setText("No updates found");
   }
 
   ini.disconnect();
