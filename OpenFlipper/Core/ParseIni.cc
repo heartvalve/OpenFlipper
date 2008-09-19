@@ -245,6 +245,22 @@ void Core::readApplicationOptions(INIFile& _ini) {
     if( _ini.get_entry(doSlotDebugging, "Options", "SlotDebugging") )
       OpenFlipper::Options::doSlotDebugging(doSlotDebugging);
 
+    //============================================================================
+    // Update information
+    //============================================================================
+    QString updateUrl = "";
+    if( _ini.get_entry(updateUrl, "Options", "UpdateURL") )
+      OpenFlipper::Options::updateUrl(updateUrl);
+
+    QString updateUsername = "";
+    if( _ini.get_entry(updateUsername, "Options", "UpdateUsername") )
+      OpenFlipper::Options::updateUsername(updateUsername);
+
+    QString updatePassword = "";
+    if( _ini.get_entry(updatePassword, "Options", "UpdatePassword") )
+      OpenFlipper::Options::updatePassword(updatePassword);
+
+
   }
 }
 
@@ -322,6 +338,13 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   //============================================================================
   // max Framerate
   _ini.add_entry("Options","SlotDebugging",OpenFlipper::Options::doSlotDebugging() );
+
+  //============================================================================
+  // Update information
+  //============================================================================
+  _ini.add_entry("Options","UpdateURL",OpenFlipper::Options::updateUrl() );
+  _ini.add_entry("Options","UpdateUsername",OpenFlipper::Options::updateUsername() );
+  _ini.add_entry("Options","UpdatePassword",OpenFlipper::Options::updatePassword() );
 
   //============================================================================
   //dontLoad Plugins

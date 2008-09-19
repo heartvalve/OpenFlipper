@@ -37,6 +37,7 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
+#include <OpenFlipper/INIFile/INIFile.hh>
 
 OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent)
   : QWidget(parent),
@@ -101,6 +102,11 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
 
   restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
   FPS->setValue( OpenFlipper::Options::maxFrameRate() );
+
+  // updates
+  updateUser->setText( OpenFlipper::Options::updateUsername() );
+  updatePass->setText( OpenFlipper::Options::updatePassword() );
+  updateURL->setText( OpenFlipper::Options::updateUrl( ) );
 
   // debugging
   slotDebugging->setChecked(OpenFlipper::Options::doSlotDebugging());
@@ -203,6 +209,11 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::restrictFrameRate( restrictFPS->isChecked() );
   OpenFlipper::Options::maxFrameRate( FPS->value() );
 
+  // updates
+  OpenFlipper::Options::updateUrl( updateURL->text() );
+  OpenFlipper::Options::updateUsername( updateUser->text() );
+  OpenFlipper::Options::updatePassword( updatePass->text() );
+
   // Debugging
   OpenFlipper::Options::doSlotDebugging(slotDebugging->isChecked());
 
@@ -281,13 +292,89 @@ void OptionsWidget::slotCheckUpdates() {
    // http://www.graphics.rwth-aachen.de/restricted/OpenFlipper-SIL/
 
   downloadType = VERSIONS_FILE;
-  QString ServerMainURL = updateURL->text() + "Versions.txt";
+  QString ServerMainURL = updateURL->text() + "Versions.ini";
 
   startDownload(ServerMainURL);
 
 }
 
 void OptionsWidget::slotGetUpdates() {
+}
+
+bool OptionsWidget::isNewer(QString _current, QString _latest) {
+
+  QStringList latestVersionParts  = _latest.split('.');
+  QStringList currentVersionParts = _current.split('.');
+
+  bool newer = false;
+
+  for ( int i = 0 ; i < latestVersionParts.size(); ++i ) {
+
+    if ( i+1 > currentVersionParts.size() ) {
+      // Versions are identical up to now. But latest version has additional version => updated
+      newer = true;
+      break;
+    }
+
+    bool ok = false;
+    double latest  = latestVersionParts[i].toInt(&ok);
+    double current = currentVersionParts[i].toInt(&ok);
+
+    if ( !ok )
+      std::cerr << "Error when parsing version strings!" << std::endl;
+
+    if ( latest > current ) {
+      newer = true;
+      break;
+    }
+  }
+
+  return newer;
+
+}
+
+void OptionsWidget::compareVersions() {
+
+  QString fileName = QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() +
+                     ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + "Versions.ini" ;
+
+  INIFile ini;
+
+  if ( ! ini.connect(fileName,false) ) {
+    std::cerr << "Failed to connect to Versions ini file" << std::endl;
+    return;
+  }
+
+  statusLabel->setText("Checking for new versions");
+
+  bool newerVersionsAvailable = false;
+
+  QString updatedComponents = "Updates found for ";
+
+  if ( OpenFlipper::Options::isWindows() ) {
+    QString coreVersion;
+
+    if ( ini.get_entry(coreVersion, "Core" , "VersionWindows" )) {
+
+      if ( isNewer( OpenFlipper::Options::coreVersion(), coreVersion ) ) {
+        std::cerr << "Newer Version found for Core!" << std::endl;
+        std::cerr << "Latest Version is " << coreVersion.toStdString() << std::endl;
+        std::cerr << "Current Version is " << OpenFlipper::Options::coreVersion().toStdString() << std::endl;
+
+        newerVersionsAvailable = true;
+        updatedComponents += "Core " + OpenFlipper::Options::coreVersion() + " -> " + coreVersion;
+      }
+    }
+
+  } else {
+    std::cerr << "Updates for linux not implemented yet" << std::endl;
+  }
+
+  if ( newerVersionsAvailable ) {
+    statusLabel->setText(updatedComponents);
+  }
+
+  ini.disconnect();
 }
 
 void OptionsWidget::httpRequestFinished(int requestId, bool error)
@@ -326,6 +413,11 @@ void OptionsWidget::httpRequestFinished(int requestId, bool error)
     checkUpdateButton->setEnabled(true);
     delete file;
     file = 0;
+
+    if ( !error ) {
+      if ( downloadType == VERSIONS_FILE )
+        compareVersions();
+    }
 }
 
 void OptionsWidget::readResponseHeader(const QHttpResponseHeader &responseHeader)

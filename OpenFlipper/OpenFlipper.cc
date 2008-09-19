@@ -214,7 +214,7 @@ int main(int argc, char **argv)
   std::signal(SIGSEGV, segfaultHandling);
 #endif
 
-  OpenFlipper::Options::windowTitle("OpenFlipper v0.8");
+  OpenFlipper::Options::windowTitle("OpenFlipper v" + OpenFlipper::Options::coreVersion());
 
   //======================================================
   // Parse command line Options
