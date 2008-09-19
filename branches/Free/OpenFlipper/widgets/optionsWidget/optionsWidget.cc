@@ -351,14 +351,12 @@ void OptionsWidget::compareVersions() {
 
   QString updatedComponents = "Updates found for ";
 
-
   QString systemString = "";
 
-  if ( true || OpenFlipper::Options::isWindows() ) {
+  if ( OpenFlipper::Options::isWindows() ) {
     systemString = "VersionWindows";
   } else if (OpenFlipper::Options::isLinux()) {
     systemString = "VersionLinux";
-    return;
   } else {
     std::cerr << "Unsupported platform for update" << std::endl;
     return;
@@ -375,7 +373,9 @@ void OptionsWidget::compareVersions() {
 
       newerVersionsAvailable = true;
       updatedComponents += "Core " + OpenFlipper::Options::coreVersion() + " -> " + coreVersion  ;
-    }
+    } /*else {
+      std::cerr << "No update for core " << OpenFlipper::Options::coreVersion().toStdString() << coreVersion.toStdString() << std::endl;
+    }*/
   }
 
   for ( uint i = 0 ; i < plugins_.size(); ++i ) {
@@ -393,18 +393,18 @@ void OptionsWidget::compareVersions() {
         updatedComponents += plugins_[i].name + " " + plugins_[i].version + " -> " + latestVersion;
       }
 
-    }
-//     else {
-//
-//       std::cerr << "No Version information on server for " << plugins_[i].name.toStdString()
-//                 << ". Local Version is ";
+    }/*
+    else {
 
-//       if ( plugins_[i].version == "-1" )
-//         std::cerr << "UNKNOWN (no info provided by plugin" << std::endl;
-//       else
-//         std::cerr << plugins_[i].version.toStdString() << std::endl;
+      std::cerr << "No Version information on server for " << plugins_[i].name.toStdString()
+                << ". Local Version is ";
 
-//     }
+      if ( plugins_[i].version == "-1" )
+        std::cerr << "UNKNOWN (no info provided by plugin" << std::endl;
+      else
+        std::cerr << plugins_[i].version.toStdString() << std::endl;
+
+    }*/
   }
 
 
