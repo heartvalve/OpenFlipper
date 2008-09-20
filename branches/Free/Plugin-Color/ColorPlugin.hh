@@ -17,49 +17,75 @@
 
 class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterface, ToolbarInterface, StatusbarInterface
 {
-   Q_OBJECT
-   Q_INTERFACES(BaseInterface)
-   Q_INTERFACES(MenuInterface)
-   Q_INTERFACES(ScriptInterface)
-   Q_INTERFACES(ToolbarInterface)
-   Q_INTERFACES(StatusbarInterface)
+Q_OBJECT
+Q_INTERFACES(BaseInterface)
+Q_INTERFACES(MenuInterface)
+Q_INTERFACES(ScriptInterface)
+Q_INTERFACES(ToolbarInterface)
+Q_INTERFACES(StatusbarInterface)
 
-   signals:
-     void update_view();
+  signals:
+    void update_view();
+  
+    void scriptInfo( QString _functionName );
+  
+    void addMenu(QMenu* _menu, MenuType _type);
+  
+    void addToolbar(QToolBar* _toolbar);
+    void removeToolbar(QToolBar* _toolbar);
+  
+    void showStatusMessage(QString _message, int _timeout = 0);
 
-     void scriptInfo( QString _functionName );
+  private slots:  
 
-     void addMenu(QMenu* _menu, MenuType _type);
+    void pluginsInitialized();
 
-     void addToolbar(QToolBar* _toolbar);
-     void removeToolbar(QToolBar* _toolbar);
+  public :
+    
+    void init();
 
-     void showStatusMessage(QString _message, int _timeout = 0);
+    QString name() { return (QString("Color Plugin")); };
+    QString description( ) { return (QString("Sets the Default colors e.g. for slides, paper,... snapshots")); };
 
-  private slots:
+  //===========================================================================
+  /** @name Scriptable functions to set colors
+    * @{ */
+  //===========================================================================     
+     
+  public slots:
+    /**
+     * Applies Default colors to the whole scene
+     */
+    void setDefaultColor();
+    
+    /**
+     * Applies colors for presentations to the scene
+     */
+    void setPowerpointColor();
+    
+    /**
+     * Applies colors for papers
+     */
+    void setPaperColor();
 
-     void pluginsInitialized();
+    /**
+     * Sets the background color of the scene
+    */
+    void setBackgroundColor( Vector _color );
 
-   public :
-     void init();
-
-     QString name() { return (QString("Color Plugin")); };
-     QString description( ) { return (QString("Sets the Default colors e.g. for slides, paper,... snapshots")); };
-
-   public slots:
-      void setDefaultColor();
-      void setPowerpointColor();
-      void setPaperColor();
-
-      /// Set the Background Color
-      void setBackgroundColor( Vector _color );
-
-      QString version() { return QString("1.0"); };
-
-   private :
-      QAction* AC_set_Default_color;
-      QAction* AC_set_Powerpoint_color;
-      QAction* AC_set_Paper_color;
+  //===========================================================================
+  /** @name Other scriptable functions
+   * @{ */
+  //===========================================================================        
+    
+  public slots:
+    
+    /**
+     * Version info of the color plugin
+     */
+    QString version() { return QString("1.0"); };
+    
+  /** @} */
 };
 
 #endif //COLORPLUGIN_HH
