@@ -450,6 +450,8 @@ void TextureControlPlugin::pluginsInitialized() {
   // Texture menu
   textureMenu_ = new QMenu(tr("&Texture Control"));
   
+  textureMenu_->setTearOffEnabled(true);
+  
   emit addMenu( textureMenu_ , VIEWMENU ); 
   
   settingsDialog_ = new texturePropertiesWidget(0);
