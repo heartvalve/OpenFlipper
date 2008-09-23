@@ -242,7 +242,7 @@ public:
 
     public:
       /// Tab all DockWidgets which belong to ToolWidgets together
-      void tabDockWidgets();
+      void tabDockWidgets(QVector< QDockWidget* > _widgets);
 
     public slots:
 

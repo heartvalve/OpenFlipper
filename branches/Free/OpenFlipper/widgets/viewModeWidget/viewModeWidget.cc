@@ -216,7 +216,7 @@ void viewModeWidget::slotChangeView(){
   for (int i=0; i < toolList->count(); i++)
     widgets << toolList->item(i)->text();
   //get mode
-  QString mode;
+  QString mode = "";
   if (modeList->selectedItems().size() > 0)
     mode = modeList->selectedItems()[0]->text();
   emit changeView(mode,widgets);

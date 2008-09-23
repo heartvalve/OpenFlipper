@@ -905,7 +905,7 @@ void Core::loadPlugin(QString filename, bool silent){
 
     //tab all dockwidgets together
     if (OpenFlipper::Options::gui())
-      coreWidget_->tabDockWidgets();
+      coreWidget_->tabDockWidgets( QVector< QDockWidget* >() );
 
     // Initialize Plugin
     if ( basePlugin ) {
