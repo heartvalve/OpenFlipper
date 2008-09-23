@@ -82,4 +82,49 @@ void DataControlPlugin::showObject( int objectId ) {
   object->show();
 }
 
+void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
+  
+  QVector< BaseObject* > objs;
+
+  for (uint i=0; i < _objectIDs.size(); i++){
+    BaseObject* obj;
+    if ( PluginFunctions::get_object(_objectIDs[i],obj) )
+      objs.push_back(obj);
+  }
+
+  if (objs.size() == 0){
+    emit log("No objects to group.");
+    return;
+  }
+  
+  //check if all objects have the same parent 
+  //abort if the parents differ
+  BaseObject* parent = (objs[0])->parent();
+  for ( int i = 1 ; i < objs.size() ; ++i)
+    if ( parent != (objs[i])->parent() ){
+      emit log("Cannot group Objects with different parents");
+      return;
+    }
+
+  //create new group
+  if (parent == 0)
+    parent = PluginFunctions::objectRoot();
+  GroupObject* groupItem = new GroupObject( "newGroup", dynamic_cast< GroupObject* >(parent));
+  //set groupName
+  if (_groupName == "")
+    groupItem->setName("newGroup " + QString::number(groupItem->id()));
+  else
+    groupItem->setName( _groupName );
+  parent->appendChild( dynamic_cast< BaseObject* >( groupItem ) );
+  groupItem->setParent( parent );
+
+  //append new children to group
+  for ( int i = 0 ; i < objs.size() ; ++i) {
+    (objs[i])->parent()->removeChild( objs[i] );
+    (objs[i])->setParent( dynamic_cast< BaseObject* >( groupItem )  );
+    groupItem->appendChild( objs[i] );
+  }
+  
+  emit updated_objects(-1);
+}
 
