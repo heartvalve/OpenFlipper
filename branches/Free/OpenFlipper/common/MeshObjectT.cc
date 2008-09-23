@@ -342,7 +342,7 @@
   /** Shows or hides the areas on the object
    */
   template < class MeshT , DataType objectDataType >
-  void  MeshObject< MeshT , objectDataType >::hideAreaNodes( bool _hide ) {
+  void  MeshObject< MeshT , objectDataType >::hideAreas( bool _hide ) {
     if ( _hide ) {
       areaNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
       handleNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );

@@ -170,7 +170,7 @@ class DLLEXPORT MeshObject : public BaseObjectData {
     bool selectionVisible();
 
     /// Hide or show the area Nodes of the object
-    void hideAreaNodes( bool _hide );
+    void hideAreas( bool _hide );
 
     /// return if the areas are currently visible
     bool areasVisible();
