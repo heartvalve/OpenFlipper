@@ -1,5 +1,5 @@
-This is a very simple shader color coding the objects normals.
-
-The normal direction is directly encoded into color information for the object.
-
-
+[Info]
+ShortDescription=This is a very simple shader color coding the objects normals. 
+LongDescription=The normal direction is directly encoded into color information for the object.
+Version=1.0
+Name=Normal Shader
