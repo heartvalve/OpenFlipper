@@ -140,8 +140,21 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
       }
     }
   } else {
-    contextMenu_->removeAction(typeEntry);
-    contextMenu_->removeAction(entrySeparator);
+
+    emit updateContextMenu(-1);
+
+    // Add real context Menus first
+    for ( uint i = 0 ; i < contextMenus_.size(); ++i ) {
+      if ( contextMenus_[i].contextType == DATA_NONE ) {
+        contextMenu_->addMenu( contextMenus_[i].menu );
+        topLevelAdded++;
+      }
+    }
+
+    if ( topLevelAdded == 0 ) {
+      contextMenu_->removeAction(typeEntry);
+      contextMenu_->removeAction(entrySeparator);
+    }
   }
 
   if ( contextSelectionMenu_->isEmpty()  )

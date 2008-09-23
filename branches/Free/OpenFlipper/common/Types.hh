@@ -58,7 +58,7 @@
  *  type an object has, get the dataType from it.
  */
 enum DataType {
-   /// Empty Objects (Should not be used)
+   /// None of the other Objects
    DATA_NONE            = 0 ,
    /// Items used for Grouping
    DATA_GROUP           = 1 ,
