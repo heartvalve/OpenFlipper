@@ -71,6 +71,10 @@ QDir pluginDir();
 DLLEXPORT
 QDir textureDir();
 
+/// Returns the Path to the shaders
+DLLEXPORT
+QDir shaderDir();
+
 /// Returns the Path to the Icons
 DLLEXPORT
 QDir iconDir();
