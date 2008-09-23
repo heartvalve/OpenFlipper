@@ -127,56 +127,58 @@ void CoreWidget::slotSetViewMode( QAction* action){
 
 /// Slot for setting the viewMode from menu
 void CoreWidget::setViewMode( QString _mode ){
-  //find viewMode
-  for (int i=0; i < viewModes_.size(); i++)
-    if ( viewModes_[i]->name == _mode ){
-
-      OpenFlipper::Options::defaultToolboxMode(_mode);
-
-      QStringList widgets = viewModes_[i]->visibleWidgets;
-      //and find all widgets that should be visible
-      for (uint p=0; p < plugins_.size(); p++){
-        if (plugins_[p].widget == 0) continue;
-        QString name_nospace = plugins_[p].name;
-        name_nospace.remove(" ");
-        if (widgets.contains( name_nospace) )
-          plugins_[p].widget->setVisible( true );
-        else
-          plugins_[p].widget->setVisible( false );
-      }
-
-      //tab all dockWidgets together
-      tabDockWidgets();
-      break;
-
-    }
+//   //find viewMode
+//   for (int i=0; i < viewModes_.size(); i++)
+//     if ( viewModes_[i]->name == _mode ){
+// 
+//       OpenFlipper::Options::defaultToolboxMode(_mode);
+// 
+//       QStringList widgets = viewModes_[i]->visibleWidgets;
+//       //and find all widgets that should be visible
+//       for (uint p=0; p < plugins_.size(); p++){
+//         if (plugins_[p].widget == 0) continue;
+//         QString name_nospace = plugins_[p].name;
+//         name_nospace.remove(" ");
+//         if (widgets.contains( name_nospace) )
+//           plugins_[p].widget->setVisible( true );
+//         else
+//           plugins_[p].widget->setVisible( false );
+//       }
+// 
+//       //tab all dockWidgets together
+//       tabDockWidgets();
+//       break;
+// 
+//     }
+  slotChangeView(_mode, QStringList());
 }
 
 /// Tab all DockWidgets which belong to ToolWidgets together
-void CoreWidget::tabDockWidgets(){
+void CoreWidget::tabDockWidgets(QVector< QDockWidget* > _widgets){
 
   int maxH      = maximumHeight();
   int minH      = minimumHeight();
 
   setFixedHeight(height());
 
+  //if no widgets are given take all visible one's and ignore the order
+  if (_widgets.size() == 0)
+    for (uint p=0; p < plugins_.size(); p++){
+      if (plugins_[p].widget == 0) continue;
+      if ( plugins_[p].widget->isVisible() && !plugins_[p].widget->isFloating() )
+        _widgets.push_back( plugins_[p].widget );
+    }
 
   //tab all dockWidgets together
-  QVector< QDockWidget* > widgets;
-
-  for (uint p=0; p < plugins_.size(); p++)
-    if ( plugins_[p].widget && !plugins_[p].widget->isFloating() )
-        widgets.push_back( plugins_[p].widget );
-
-  if (widgets.size() > 1){
+  if (_widgets.size() > 1){
     QDockWidget* d1 = 0;
-    QDockWidget* d2 = widgets.first();
-    widgets.pop_front();
+    QDockWidget* d2 = _widgets.first();
+    _widgets.pop_front();
 
-    while (widgets.size() > 0){
+    while (_widgets.size() > 0){
       d1 = d2;
-      d2 = widgets.first();
-      widgets.pop_front();
+      d2 = _widgets.first();
+      _widgets.pop_front();
       tabifyDockWidget(d1, d2);
     }
   }
@@ -211,21 +213,33 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolWidgets){
     for (int i=0; i < viewModes_.size(); i++)
       if (viewModes_[i]->name == _mode)
         _toolWidgets = viewModes_[i]->visibleWidgets;
-  //find all widgets that should be visible
+
+  //first hide all widgets
   for (uint p=0; p < plugins_.size(); p++){
-    if (plugins_[p].widget == 0) continue;
-    QString name_nospace = plugins_[p].name;
-    name_nospace.remove(" ");
-    if (_toolWidgets.contains( name_nospace ))
-      plugins_[p].widget->setVisible( true );
-    else
+    if ( plugins_[p].widget )
       plugins_[p].widget->setVisible( false );
   }
 
-  OpenFlipper::Options::defaultToolboxMode(_mode);
+  QVector< QDockWidget* > dockWidgets;
+
+  //find all widgets that should be visible
+  for (int i=0; i < _toolWidgets.size(); i++)
+    for (uint p=0; p < plugins_.size(); p++){
+      if (plugins_[p].widget == 0) continue;
+      QString name_nospace = plugins_[p].name;
+      name_nospace.remove(" ");
+      if (_toolWidgets[i] == name_nospace ){
+        plugins_[p].widget->setVisible( true );
+        if ( !plugins_[p].widget->isFloating() )
+          dockWidgets.push_back( plugins_[p].widget );
+      }
+    }
+
+  if (_mode != "")
+    OpenFlipper::Options::defaultToolboxMode(_mode);
 
   //tab all dockWidgets together
-  tabDockWidgets();
+  tabDockWidgets(dockWidgets);
 
   setMaximumHeight(maxH);
   setMinimumHeight(minH);
