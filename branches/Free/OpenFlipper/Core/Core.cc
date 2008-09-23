@@ -550,7 +550,7 @@ void Core::updateView() {
   }
 
 
-  if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::openingIni() ) {
+  if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::openingIni() && !OpenFlipper::Options::redrawDisabled() ) {
     coreWidget_->examiner_widget_->sceneGraph(root_node_scenegraph_);
     coreWidget_->examiner_widget_->updateGL();
   }
@@ -743,5 +743,17 @@ void Core::slotLogToFile(Logtype _type, QString _message){
 
 }
 
+// //-----------------------------------------------------------------------------
+// 
+// void Core::slotGetPlugin(QString _name, QObject* & _plugin ){
+//   for (uint i=0; i < plugins.size(); i++)
+//     if (plugins[i].name == _name){
+//       _plugin = plugins[i].plugin;
+//       return;
+//     }
+//   
+//   _plugin = 0;
+//   return;
+// }
 
 //=============================================================================

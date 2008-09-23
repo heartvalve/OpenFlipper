@@ -92,6 +92,8 @@ class RPCInterface {
      */
     virtual void getValue( QString _expression , QVariant& _result  ) {};
 
+    virtual void getPlugin( QString _name, QObject* & _plugin  ) {};
+
 };
 
 Q_DECLARE_INTERFACE(RPCInterface,"OpenFlipper.RPCInterface/1.0")
