@@ -108,6 +108,9 @@ static uint standardDrawMode_ = ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED;
 /// Store the disableRedraw_ mode
 static bool redrawDisabled_ = false;
 
+/// Set if a drawMode Menu should always be in the context menu
+static bool drawModesInContextMenu_ = true;
+
 /// Store the toolbox gui Mode mode
 static bool hideToolbox_ = false;
 
@@ -413,6 +416,14 @@ void redrawDisabled( bool disable ){
 
 bool redrawDisabled( ){
   return redrawDisabled_;
+}
+
+bool drawModesInContextMenu() {
+  return drawModesInContextMenu_;
+}
+
+void drawModesInContextMenu(bool _show) {
+  drawModesInContextMenu_ = _show;
 }
 
 /// Set if we start the logging widget closed
