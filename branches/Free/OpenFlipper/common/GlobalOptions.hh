@@ -357,6 +357,14 @@ bool iconDir(QString _dir);
   DLLEXPORT
   bool redrawDisabled( );
 
+  /// Get the flag if a drawMode Menu should always be visible in the context menu
+  DLLEXPORT
+  bool drawModesInContextMenu();
+
+  /// Set the flag if a drawMode Menu should always be visible in the context menu
+  DLLEXPORT
+  void drawModesInContextMenu(bool _show);
+
 /** @} */
 
 //===========================================================================
