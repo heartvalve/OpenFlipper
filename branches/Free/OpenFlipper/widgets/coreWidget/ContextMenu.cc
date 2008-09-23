@@ -88,6 +88,8 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
 
   if ( objectId != -1) {
 
+    emit updateContextMenu(objectId);
+
     // Add an empty Menu defining the current Type
     if ( object->dataType() == DATA_POLY_MESH ){
       typeEntry->setText("Poly Mesh");
@@ -147,8 +149,6 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
 
   if ( topLevelAdded > 0 )
     contextMenu_->addSeparator();
-
-  emit updateContextMenu(objectId);
 
   // Add persistent context Menus as second part
   for ( uint i = 0 ; i < persistentContextMenus_.size(); ++i ) {
