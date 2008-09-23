@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -45,14 +45,14 @@
 #include "CoreWidget.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 
-//== IMPLEMENTATION ========================================================== 
+//== IMPLEMENTATION ==========================================================
 
 
 
 void CoreWidget::slotAddMenu( QMenu* _menu , MenuType _type ) {
-  
+
   switch (_type) {
-    case TOPLEVELMENU : 
+    case TOPLEVELMENU :
       // Add it to the menubar as a top level Menu
       menuBar()->insertMenu(helpMenu_->menuAction() ,_menu);
       break;
@@ -63,10 +63,10 @@ void CoreWidget::slotAddMenu( QMenu* _menu , MenuType _type ) {
     case VIEWMENU :
       viewMenu_->addMenu( _menu );
       viewMenu_->addSeparator( );
-      break;      
-      
+      break;
+
   }
-  
+
 }
 
 
@@ -80,12 +80,24 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   fileMenu_ = new QMenu(tr("&File"));
   menuBar()->addMenu(fileMenu_ );
-  
+
   viewMenu_ = new QMenu(tr("&View"));
   menuBar()->addMenu(viewMenu_ );
-  
+
+  if (examiner_widget_->getDrawMenu() != NULL) {
+
+    examiner_widget_->getDrawMenu()->setTitle("&DrawModes");
+    QAction* drawMenuAction = viewMenu_->addMenu(examiner_widget_->getDrawMenu() );
+
+    QIcon icon;
+    icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
+    drawMenuAction->setIcon(icon);
+
+    examiner_widget_->getDrawMenu()->setTearOffEnabled(true);
+  }
+
   QIcon icon;
-  
+
   //Clear all
   QAction* AC_clear_all = new QAction(tr("&Clear All"), this);;
   AC_clear_all->setStatusTip(tr("Clear all Objects"));
@@ -94,31 +106,31 @@ void CoreWidget::setupMenuBar()
   AC_clear_all->setIcon(icon);
   connect(AC_clear_all, SIGNAL(triggered()), this, SIGNAL(clearAll()));
   fileMenu_->addAction(AC_clear_all);
-  
+
   fileMenu_->addSeparator();
-  
-  //Load object 
+
+  //Load object
   QAction* AC_Load = new QAction(tr("&Load Object"), this);
   AC_Load->setShortcut (Qt::CTRL + Qt::Key_O);
   AC_Load->setStatusTip(tr("Load an object"));
   AC_Load->setWhatsThis("Load a new object");
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open.png");
-  AC_Load->setIcon(icon);  
-  
+  AC_Load->setIcon(icon);
+
   connect(AC_Load, SIGNAL(triggered()), this, SIGNAL(loadMenu()));
   fileMenu_->addAction(AC_Load);
-  
+
   //Add empty object
   QAction* AC_AddEmpty = new QAction(tr("&Add Empty Object"), this);
   AC_AddEmpty->setStatusTip(tr("Add an empty object"));
   AC_AddEmpty->setWhatsThis("Creates a new empty object of a given type");
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-new.png");
-  AC_AddEmpty->setIcon(icon);  
+  AC_AddEmpty->setIcon(icon);
   connect(AC_AddEmpty, SIGNAL(triggered()), this, SIGNAL(addEmptyObjectMenu()));
   fileMenu_->addAction(AC_AddEmpty);
-  
+
   fileMenu_->addSeparator();
-  
+
   //Save object
   QAction* AC_Save = new QAction(tr("&Save Object"), this);
   AC_Save->setShortcut (Qt::CTRL + Qt::Key_S);
@@ -128,7 +140,7 @@ void CoreWidget::setupMenuBar()
   AC_Save->setIcon(icon);
   connect(AC_Save, SIGNAL(triggered()), this, SIGNAL(saveMenu()));
   fileMenu_->addAction(AC_Save);
-  
+
   //Save object to
   QAction* AC_Save_to = new QAction(tr("&Save Object To"), this);
   AC_Save_to->setStatusTip(tr("Save current Object(s) To"));
@@ -137,9 +149,9 @@ void CoreWidget::setupMenuBar()
   AC_Save_to->setIcon(icon);
   connect(AC_Save_to, SIGNAL(triggered()), this, SIGNAL(saveToMenu()));
   fileMenu_->addAction(AC_Save_to);
-  
+
   fileMenu_->addSeparator();
-  
+
   //Load ini
   QAction* AC_load_ini = new QAction(tr("&Load Settings"), this);
   AC_load_ini->setStatusTip(tr("Load Settings from INI file"));
@@ -148,7 +160,7 @@ void CoreWidget::setupMenuBar()
   AC_load_ini->setIcon(icon);
   connect(AC_load_ini, SIGNAL(triggered()), this, SIGNAL(loadIniMenu()));
   fileMenu_->addAction(AC_load_ini);
-  
+
   //Save ini
   QAction* AC_save_ini = new QAction(tr("&Save Settings"), this);
   AC_save_ini->setStatusTip(tr("Save current settings to INI file"));
@@ -168,10 +180,10 @@ void CoreWidget::setupMenuBar()
   AC_Options->setIcon(icon);
   connect(AC_Options, SIGNAL(triggered()), this, SLOT(showOptionsWidget()));
   fileMenu_->addAction(AC_Options);
-  
-  //Remember entry of menu (required for adding File Menu entries from plugins) 
+
+  //Remember entry of menu (required for adding File Menu entries from plugins)
   fileMenuEnd_ = fileMenu_->addSeparator();
-  
+
   //Recent files
   recentFilesMenu_ = new QMenu(tr("&Recent Files"));
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open-recent.png");
@@ -179,9 +191,9 @@ void CoreWidget::setupMenuBar()
   recentFilesMenu_->setWhatsThis("Open recent files");
   connect(recentFilesMenu_,SIGNAL(triggered(QAction*)),this,SIGNAL(recentOpen(QAction*)));
   fileMenu_->addMenu(recentFilesMenu_);
-  
+
   fileMenu_->addSeparator();
-  
+
   //Main Application exit menu entry
   QAction* AC_exit = new QAction(tr("&Exit"), this);;
   AC_exit->setShortcut (Qt::CTRL + Qt::Key_Q);
@@ -197,7 +209,7 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   pluginsMenu_ = new QMenu(tr("&Plugins"));
   menuBar()->addMenu(pluginsMenu_);
-  
+
   //Load Plugin
   QAction* AC_LoadPlug = new QAction(tr("&Load Plugin"), this);
   AC_LoadPlug->setStatusTip(tr("Load an additional plugin"));
@@ -206,7 +218,7 @@ void CoreWidget::setupMenuBar()
   AC_LoadPlug->setIcon(icon);
   connect(AC_LoadPlug, SIGNAL(triggered()), this, SIGNAL(loadPlugin()));
   pluginsMenu_->addAction(AC_LoadPlug);
-  
+
   //Unload plugin
   QAction* AC_UnloadPlug = new QAction(tr("&Unload Plugin"), this);
   AC_UnloadPlug->setStatusTip(tr("Unload a plugin"));
@@ -215,15 +227,15 @@ void CoreWidget::setupMenuBar()
   AC_UnloadPlug->setIcon(icon);
   connect(AC_UnloadPlug, SIGNAL(triggered()), this, SIGNAL(unloadPlugin()));
   pluginsMenu_->addAction(AC_UnloadPlug);
-  
+
   pluginsMenu_->addSeparator();
-  
+
   // ======================================================================
   // help Menu
   // ======================================================================
   helpMenu_ = new QMenu(tr("&Help"));
   menuBar()->addMenu(helpMenu_);
-  
+
   //Open Help Browser
   QAction* AC_HelpBrowser = new QAction(tr("&User Help"), this);
   AC_HelpBrowser->setStatusTip(tr("Open Help Browser with User Documentation"));
@@ -232,7 +244,7 @@ void CoreWidget::setupMenuBar()
   AC_HelpBrowser->setWhatsThis("Open the <b>Help Browser</b>");
   connect(AC_HelpBrowser, SIGNAL(triggered()), this, SLOT(showHelpBrowserUser()));
   helpMenu_->addAction(AC_HelpBrowser);
-  
+
   //Open Help Browser
   AC_HelpBrowser = new QAction(tr("&Developer Help"), this);
   AC_HelpBrowser->setStatusTip(tr("Open Help Browser with Developer Documentation"));
@@ -241,15 +253,15 @@ void CoreWidget::setupMenuBar()
   AC_HelpBrowser->setWhatsThis("Open the <b>Help Browser</b>");
   connect(AC_HelpBrowser, SIGNAL(triggered()), this, SLOT(showHelpBrowserDeveloper()));
   helpMenu_->addAction(AC_HelpBrowser);
-  
+
   //Switch to whats this mode
   QAction* AC_Whats_this = QWhatsThis::createAction ( this );
   AC_Whats_this->setStatusTip(tr("Enter What's this Mode"));
   AC_Whats_this->setWhatsThis("Get information about a specific Button/Widget/...");
   helpMenu_->addAction(AC_Whats_this);
-  
+
   helpMenu_->addSeparator();
-  
+
   //About Action
   QAction* AC_About = new QAction(tr("&About"), this);
   AC_About->setStatusTip(tr("About OpenFlipper"));
@@ -258,7 +270,7 @@ void CoreWidget::setupMenuBar()
   AC_About->setWhatsThis("This entry shows information about <b>OpenFlipper</b>");
 //   connect(AC_HelpBrowser, SIGNAL(triggered()), this, SIGNAL(showHelpBrowser()));
   helpMenu_->addAction(AC_About);
-  
+
   // Add Menu entries to the main Toolbar
   mainToolbar_->addAction(AC_Load);
   mainToolbar_->addAction(AC_AddEmpty);
@@ -268,7 +280,7 @@ void CoreWidget::setupMenuBar()
   mainToolbar_->addSeparator();
   mainToolbar_->addAction(AC_load_ini);
   mainToolbar_->addAction(AC_save_ini);
-  
+
 }
 
 //=============================================================================

@@ -201,7 +201,7 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
     examiner_widget_->getFuncMenu()->setTearOffEnabled(true);
   }
 
-  if (examiner_widget_->getDrawMenu() != NULL) {
+  if ( ( examiner_widget_->getDrawMenu() != NULL ) && OpenFlipper::Options::drawModesInContextMenu() ) {
 
     examiner_widget_->getDrawMenu()->setTitle("&DrawModes");
     QAction* drawMenuAction = contextMenu_->addMenu(examiner_widget_->getDrawMenu() );
