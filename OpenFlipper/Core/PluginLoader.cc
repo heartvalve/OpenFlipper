@@ -795,6 +795,9 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"getValue(QString,QVariant&)" ) )
         connect(plugin  , SIGNAL(getValue(QString,QVariant&)),
                 this    , SLOT(slotGetValue(QString,QVariant&)) ,Qt::DirectConnection );
+//       if ( checkSignal(plugin,"getPlugin(QString,QObject*&)" ) )
+//         connect(plugin  , SIGNAL(getPlugin(QString, QObject* &)),
+//                 this    , SLOT(slotGetPlugin(QString, QObject* &)) ,Qt::DirectConnection );
     }
 
     //========================================================================================

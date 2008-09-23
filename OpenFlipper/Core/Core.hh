@@ -253,6 +253,9 @@ signals:
       /// Called when a plugin requests a list of file-filters
       void slotGetAllFilters ( QStringList& _list);
 
+      /// Get a Pointer to the Plugin with given _name (if it is loaded)
+//       void slotGetPlugin(QString _name, QObject* & _plugin );
+
    /** @} */
 
     //===========================================================================

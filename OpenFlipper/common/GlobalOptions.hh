@@ -188,6 +188,22 @@ bool iconDir(QString _dir);
   DLLEXPORT
   bool currentDir(QString _dir);
 
+  /// return the current script-directory
+  DLLEXPORT
+  QString currentScriptDirStr();
+
+  /// return the current Script-directory
+  DLLEXPORT
+  QDir currentScriptDir();
+
+  /// Sets the Path to the current Script-directory
+  DLLEXPORT
+  void currentScriptDir(QDir _dir);
+
+  /// Sets the Path to the current Script-directory
+  DLLEXPORT
+  bool currentScriptDir(QString _dir);
+
   /// return last used dataType
   DLLEXPORT
   QString lastDataType();
@@ -332,6 +348,14 @@ bool iconDir(QString _dir);
   /// get standardDrawMode setting
   DLLEXPORT
   uint standardDrawMode( );
+
+  /// Store disableRedraw setting
+  DLLEXPORT
+  void redrawDisabled( bool disable );
+
+  /// get disableRedraw setting
+  DLLEXPORT
+  bool redrawDisabled( );
 
 /** @} */
 

@@ -72,6 +72,9 @@ static QStringList optionFiles_;
 /// Currentdirectory of the application
 static QDir currentDir_;
 
+/// Current script directory of the application
+static QDir currentScriptDir_;
+
 /// Experience level of the user
 static Experience experienceLevel_ = NOVICE;
 
@@ -101,6 +104,9 @@ static int maxFrameRate_ = 35;
 
 /// Store the standardDrawMode_ mode
 static uint standardDrawMode_ = ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED;
+
+/// Store the disableRedraw_ mode
+static bool redrawDisabled_ = false;
 
 /// Store the toolbox gui Mode mode
 static bool hideToolbox_ = false;
@@ -199,31 +205,34 @@ QString dirSeparator() {
   return QString("/");
 }
 
-QDir applicationDir() { return applicationDir_; }
-QDir configDir()      { return configDir_;  }
-QDir pluginDir()      { return pluginDir_;  }
-QDir shaderDir()      { return shaderDir_;  }
-QDir textureDir()     { return textureDir_; }
-QDir iconDir()        { return iconDir_;    }
-QDir currentDir()     { return currentDir_; }
+QDir applicationDir()  { return applicationDir_; }
+QDir configDir()       { return configDir_;  }
+QDir pluginDir()       { return pluginDir_;  }
+QDir shaderDir()       { return shaderDir_;  }
+QDir textureDir()      { return textureDir_; }
+QDir iconDir()         { return iconDir_;    }
+QDir currentDir()      { return currentDir_; }
+QDir currentScriptDir(){ return currentScriptDir_; }
 
-QString applicationDirStr() { return applicationDir_.absolutePath() ; }
-QString configDirStr()      { return configDir_.absolutePath();       }
-QString pluginDirStr()      { return pluginDir_.absolutePath();       }
-QString shaderDirStr()      { return shaderDir_.absolutePath();       }
-QString textureDirStr()     { return textureDir_.absolutePath();      }
-QString iconDirStr()        { return iconDir_.absolutePath();         }
-QString currentDirStr()     { return currentDir_.absolutePath();      }
+QString applicationDirStr()  { return applicationDir_.absolutePath() ; }
+QString configDirStr()       { return configDir_.absolutePath();       }
+QString pluginDirStr()       { return pluginDir_.absolutePath();       }
+QString shaderDirStr()       { return shaderDir_.absolutePath();       }
+QString textureDirStr()      { return textureDir_.absolutePath();      }
+QString iconDirStr()         { return iconDir_.absolutePath();         }
+QString currentDirStr()      { return currentDir_.absolutePath();      }
+QString currentScriptDirStr(){ return currentScriptDir_.absolutePath();}
 
 QStringList optionFiles()   { return optionFiles_; }
 
-void applicationDir(QDir _dir)       { applicationDir_ = _dir; }
-void pluginDir(QDir _dir)            { pluginDir_      = _dir; }
-void shaderDir(QDir _dir)            { shaderDir_      = _dir; }
-void textureDir(QDir _dir)           { textureDir_     = _dir; }
-void iconDir(QDir _dir)              { iconDir_        = _dir; }
-void configDir(QDir _dir)            { configDir_      = _dir; }
-void currentDir(QDir _dir)           { currentDir_     = _dir; }
+void applicationDir(QDir _dir)       { applicationDir_   = _dir; }
+void pluginDir(QDir _dir)            { pluginDir_        = _dir; }
+void shaderDir(QDir _dir)            { shaderDir_        = _dir; }
+void textureDir(QDir _dir)           { textureDir_       = _dir; }
+void iconDir(QDir _dir)              { iconDir_          = _dir; }
+void configDir(QDir _dir)            { configDir_        = _dir; }
+void currentDir(QDir _dir)           { currentDir_       = _dir; }
+void currentScriptDir(QDir _dir)     { currentScriptDir_ = _dir; }
 
 void optionFiles(QStringList _list) { optionFiles_ = _list; }
 
@@ -285,6 +294,15 @@ bool currentDir(QString      _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
     currentDir_     = tmp;
+    return true;
+  }
+  return false;
+}
+
+bool currentScriptDir(QString _dir) {
+  QDir tmp(_dir);
+  if (tmp.exists()) {
+    currentScriptDir_     = tmp;
     return true;
   }
   return false;
@@ -387,6 +405,14 @@ void standardDrawMode( uint _mode ){
 
 uint standardDrawMode(){
   return standardDrawMode_;
+}
+
+void redrawDisabled( bool disable ){
+  redrawDisabled_ = disable;
+}
+
+bool redrawDisabled( ){
+  return redrawDisabled_;
 }
 
 /// Set if we start the logging widget closed
