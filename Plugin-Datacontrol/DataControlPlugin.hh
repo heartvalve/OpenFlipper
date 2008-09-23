@@ -272,6 +272,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
         /// Hides all objects
         void hideAll();
 
+        /// Group objects together
+        void groupObjects(idList _objectIDs, QString _groupName = "");
+
       /** @} */
 
   public slots:
