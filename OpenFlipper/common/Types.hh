@@ -81,7 +81,7 @@ enum DataType {
 };
 
 /// Datatype matching all available types
-const DataType DATA_ALL = DataType( DATA_POINTS | DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_VOLUME | DATA_POLY_LINE | DATA_BSPLINE_CURVE | DATA_BSPLINE_SURFACE);
+const DataType DATA_ALL = DataType( DATA_POINTS | DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_VOLUME | DATA_POLY_LINE | DATA_BSPLINE_CURVE | DATA_BSPLINE_SURFACE | DATA_SKELETON);
 
 //== INCLUDES =================================================================
 
