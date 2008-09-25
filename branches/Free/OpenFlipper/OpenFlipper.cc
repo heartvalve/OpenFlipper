@@ -113,20 +113,20 @@ enum {OPT_HELP , OPT_STEREO, OPT_BATCH ,OPT_CONSOLE_LOG , OPT_DEBUGGING, OPT_FUL
       OPT_REMOTE};
 
 CSimpleOpt::SOption g_rgOptions[] = {
-    { OPT_DEBUGGING        , "--debug"          , SO_NONE    },
-    { OPT_HELP             , "-?"               , SO_NONE    },
-    { OPT_HELP             , "--help"           , SO_NONE    },
-    { OPT_HELP             , "-h"               , SO_NONE    },
-    { OPT_STEREO           , "--enable-stereo"  , SO_NONE    },
-    { OPT_BATCH            , "-b"               , SO_NONE    },
-    { OPT_CONSOLE_LOG      , "-c"               , SO_NONE    },
-    { OPT_CONSOLE_LOG      , "--log-to-console" , SO_NONE    },
-    { OPT_FULLSCREEN       , "-f"               , SO_NONE    },
-    { OPT_HIDDDEN_LOGGER   , "-l"               , SO_NONE    },
-    { OPT_NOSPLASH         , "--no-splash"      , SO_NONE    },
-    { OPT_HIDDDEN_TOOLBOX  , "-t"               , SO_NONE    },
-    { OPT_LOAD_POLYMESHES  , "-p"               , SO_NONE    },
-    { OPT_REMOTE           , "--remote-control" , SO_NONE    },
+    { OPT_DEBUGGING        , (char*) "--debug"          , SO_NONE    },
+    { OPT_HELP             , (char*) "-?"               , SO_NONE    },
+    { OPT_HELP             , (char*) "--help"           , SO_NONE    },
+    { OPT_HELP             , (char*) "-h"               , SO_NONE    },
+    { OPT_STEREO           , (char*) "--enable-stereo"  , SO_NONE    },
+    { OPT_BATCH            , (char*) "-b"               , SO_NONE    },
+    { OPT_CONSOLE_LOG      , (char*) "-c"               , SO_NONE    },
+    { OPT_CONSOLE_LOG      , (char*) "--log-to-console" , SO_NONE    },
+    { OPT_FULLSCREEN       , (char*) "-f"               , SO_NONE    },
+    { OPT_HIDDDEN_LOGGER   , (char*) "-l"               , SO_NONE    },
+    { OPT_NOSPLASH         , (char*) "--no-splash"      , SO_NONE    },
+    { OPT_HIDDDEN_TOOLBOX  , (char*) "-t"               , SO_NONE    },
+    { OPT_LOAD_POLYMESHES  , (char*) "-p"               , SO_NONE    },
+    { OPT_REMOTE           , (char*) "--remote-control" , SO_NONE    },
     SO_END_OF_OPTIONS                       // END
 };
 

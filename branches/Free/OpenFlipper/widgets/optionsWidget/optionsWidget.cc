@@ -53,13 +53,17 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 
   uint mode = 2;
   for (uint i=1; i < 22; i++) {
-    std::vector< QString > dm = drawModeToList( mode );
+    std::vector< QString > dm = drawModeToDescriptions( mode );
 
     if ( !dm.empty() && dm[0].trimmed() != ""){
       QListWidgetItem* item = new QListWidgetItem(dm[0]);
 
       item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-      item->setCheckState(Qt::Unchecked);
+
+//       if (OpenFlipper::Options::standardDrawMode() )
+//         item->setCheckState(Qt::Checked);
+//       else
+        item->setCheckState(Qt::Unchecked);
 
       availDrawModes->addItem( item );
     }
@@ -330,7 +334,7 @@ void OptionsWidget::slotApply() {
     if (availDrawModes->item(i)->checkState() == Qt::Checked)
       mode.push_back( availDrawModes->item(i)->text() );
 
-  OpenFlipper::Options::standardDrawMode( ListToDrawMode(mode) );
+  OpenFlipper::Options::standardDrawMode( descriptionsToDrawMode(mode) );
 
   emit applyOptions();
   emit saveOptions();
