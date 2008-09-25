@@ -64,6 +64,11 @@ std::vector< QString > drawModeToList(unsigned int _drawMode);
 DLLEXPORT
 unsigned int ListToDrawMode ( std::vector< QString > _draw_modes );
 
+DLLEXPORT
+std::vector< QString > drawModeToDescriptions(unsigned int _drawMode);
+
+DLLEXPORT
+unsigned int descriptionsToDrawMode ( std::vector< QString > _draw_modes );
 
 //=============================================================================
 #endif // DRAWMODECONVERTER_HH defined
