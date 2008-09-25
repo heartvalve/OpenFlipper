@@ -32,7 +32,7 @@
 
 
 
-#include "Ui_TextureProperties.hh"
+#include "ui_textureProperties.hh"
 #include <QtGui>
 
 class texturePropertiesWidget : public QDialog, public Ui::Dialog
