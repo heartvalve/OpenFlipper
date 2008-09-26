@@ -9,6 +9,14 @@ PACKAGES := qt4 glut opengl x11 math ACG2 openmesh2
 
 PROJ_LIBS = loadWidget 
 
+CXX_CFLAGS = -I../widgets/optionsWidget/$(build-dir)/ \
+             -I../widgets/addEmptyWidget/$(build-dir)/ \
+	     -I../widgets/helpBrowser/$(build-dir)/ \
+	     -I../widgets/loadWidget/$(build-dir)/ \
+	     -I../widgets/optionsWidget/$(build-dir)/ \
+	     -I../widgets/unloadPluginsWidget/$(build-dir)/ \
+	     -I../widgets/viewModeWidget/$(build-dir)/
+
 MODULES := uic4 moc4 cxx
 
 
