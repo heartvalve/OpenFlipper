@@ -13,8 +13,6 @@ glew()
 
 DIRECTORIES = ../BasePlugin ../common ../common/bsp  ../INIFile 
 
-message($$DIRECTORIES)
-
 # Input
 HEADERS += $$getFilesFromDir($$DIRECTORIES,*.hh)
 SOURCES += $$getFilesFromDir($$DIRECTORIES,*.cc)
