@@ -10,6 +10,7 @@ acg()
 openmesh()
 glut()
 glew()
+openmp()
 
 DIRECTORIES = ../BasePlugin ../common ../common/bsp  ../INIFile $$files( $${TOPDIR}/ObjectTypes/* )
 
