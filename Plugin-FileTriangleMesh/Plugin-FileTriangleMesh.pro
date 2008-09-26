@@ -2,7 +2,7 @@
 #
 ################################################################################
 
-include( $$TOPDIR/qmake/Plugins.include )
+include( $$TOPDIR/qmake/all.include )
 
 Plugin()
 

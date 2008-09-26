@@ -2,6 +2,10 @@
 #
 ################################################################################
 
+include( $$TOPDIR/qmake/all.include )
+
+Plugin()
+
 DIRECTORIES = .
 
 # Input
