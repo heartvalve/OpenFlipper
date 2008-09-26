@@ -11,7 +11,7 @@ openmesh()
 glut()
 glew()
 
-DIRECTORIES = ../BasePlugin ../common ../common/bsp  ../INIFile 
+DIRECTORIES = ../BasePlugin ../common ../common/bsp  ../INIFile $$files( $${TOPDIR}/ObjectTypes/* )
 
 # Input
 HEADERS += $$getFilesFromDir($$DIRECTORIES,*.hh)
