@@ -7,9 +7,17 @@ SUBDIRS = $(call find-subdirs)
 
 PACKAGES := qt4 glut opengl x11 math ACG2 openmesh2
 
+CXX_CFLAGS += -I../optionsWidget/$(build-dir)/ \
+              -I../addEmptyWidget/$(build-dir)/ \
+	      -I../helpBrowser/$(build-dir)/ \
+	      -I../loadWidget/$(build-dir)/ \
+	      -I../optionsWidget/$(build-dir)/ \
+	      -I../unloadPluginsWidget/$(build-dir)/ \
+	      -I../viewModeWidget/$(build-dir)/ 
+
 PROJ_LIBS = 
 
-MODULES := uic4 moc4 cxx
+MODULES := uic4compat moc4 cxx
 
 
 #==  SYSTEM PART -- DON'T TOUCH  ==============================================
