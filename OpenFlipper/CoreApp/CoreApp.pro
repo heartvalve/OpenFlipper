@@ -23,8 +23,6 @@ LIBS+= -Wl,-rpath=$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPlug
 TARGET=OpenFlipper
 DESTDIR=$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/
 
-message($$DIRECTORIES)
-
 # Input
 HEADERS += $$getFilesFromDir($$DIRECTORIES,*.hh)
 SOURCES += $$getFilesFromDir($$DIRECTORIES,*.cc)
