@@ -71,6 +71,15 @@ PROJ_LIBS += OpenFlipper/BasePlugin \
              OpenFlipper/widgets/optionsWidget \
              OpenFlipper/widgets/viewModeWidget 
 
+CXX_CFLAGS += -Iwidgets/optionsWidget/$(build-dir)/ \
+              -Iwidgets/addEmptyWidget/$(build-dir)/ \
+              -Iwidgets/helpBrowser/$(build-dir)/ \
+              -Iwidgets/loadWidget/$(build-dir)/ \
+              -Iwidgets/optionsWidget/$(build-dir)/ \
+              -Iwidgets/unloadPluginsWidget/$(build-dir)/ \
+              -Iwidgets/viewModeWidget/$(build-dir)/
+
+
 MODULES := moc4 cxx
 
 #==  SYSTEM PART -- DON'T TOUCH  ==============================================
