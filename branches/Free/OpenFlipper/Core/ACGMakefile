@@ -17,7 +17,7 @@ CXX_CFLAGS += -I../widgets/optionsWidget/$(build-dir)/ \
 	      -I../widgets/unloadPluginsWidget/$(build-dir)/ \
 	      -I../widgets/viewModeWidget/$(build-dir)/
 
-MODULES := uic4 moc4 cxx
+MODULES := uic4compat moc4 cxx
 
 
 #==  SYSTEM PART -- DON'T TOUCH  ==============================================
