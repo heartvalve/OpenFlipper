@@ -1,16 +1,16 @@
 ################################################################################
 #
-# Plugin-Color.proj
-#
 ################################################################################
 
 include( $$TOPDIR/qmake/all.include )
 
 Plugin()
 
+DIRECTORIES = .
+
 # Input
-HEADERS += ColorPlugin.hh
-SOURCES += ColorPlugin.cc
+HEADERS += $$getFilesFromDir($$DIRECTORIES,*.hh)
+SOURCES += $$getFilesFromDir($$DIRECTORIES,*.cc)
+FORMS     += $$getFilesFromDir($$DIRECTORIES,*.ui)
 
 ################################################################################
-
