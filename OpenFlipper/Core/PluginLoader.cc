@@ -133,7 +133,7 @@ void Core::loadPlugins()
   QStringList pluginlist2 = OpenFlipper::Options::pluginDir().entryList(QDir::Files);
 
   for (int i=0; i < pluginlist2.size(); i++)
-    pluginlist2[i] = tempDir.absoluteFilePath(pluginlist2[i]);
+    pluginlist2[i] = OpenFlipper::Options::pluginDir().absoluteFilePath(pluginlist2[i]);
 
   pluginlist += pluginlist2;
 
@@ -377,8 +377,12 @@ void Core::loadPlugin(QString filename, bool silent){
       }
 
       //Check if plugin is already loaded
-      for (uint k=0; k < plugins.size(); k++)
-        if (plugins[k].name == basePlugin->name()){
+      for (uint k=0; k < plugins.size(); k++){
+
+          QString name_nospace =  basePlugin->name();
+          name_nospace.remove(" ");
+
+        if (plugins[k].name == name_nospace){
           if (silent || OpenFlipper::Options::nogui() ){ //dont load the plugin
             emit log(LOGWARN, "\t\t\t Already loaded from " + plugins[k].path);
             emit log(LOGOUT,"=============================================================================================");
@@ -400,6 +404,7 @@ void Core::loadPlugin(QString filename, bool silent){
             }
           }
         }
+      }
 
       if ( dontLoadPlugins_.contains(basePlugin->name(), Qt::CaseInsensitive) ) {
         emit log(LOGWARN,"OpenFlipper.ini prevented Plugin " + basePlugin->name() + " from being loaded! ");
