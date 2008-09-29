@@ -11,7 +11,7 @@ openmesh()
 glut()
 glew()
 
-DIRECTORIES =   ../ ../ACGHelper ../Core ../Logging \
+DIRECTORIES =   ../ ../Core ../Logging \
 			    ../Scripting  ../Scripting/scriptPrototypes ../Scripting/scriptWrappers ../SimpleOpt \
 			    ../widgets/addEmptyWidget ../widgets/coreWidget ../widgets/helpBrowser \
 			    ../widgets/loadWidget ../widgets/optionsWidget ../widgets/unloadPluginsWidget \

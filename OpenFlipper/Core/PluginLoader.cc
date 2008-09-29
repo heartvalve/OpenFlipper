@@ -553,7 +553,8 @@ void Core::loadPlugin(QString filename, bool silent){
             widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
             widget->setMinimumWidth(300);
             widget->setMaximumWidth(600);
-
+            
+            dock->setObjectName( "ToolWidget" + QString::number(toolboxindex_++) );
 
             coreWidget_->setDockOptions(QMainWindow::AllowTabbedDocks | QMainWindow::VerticalTabs);
             coreWidget_->addDockWidget(Qt::RightDockWidgetArea,dock);

@@ -418,6 +418,30 @@ Core::init() {
   applyOptions();
 
   if ( OpenFlipper::Options::gui() ) {
+
+    //try to restore the windowState
+    QFile file(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
+                                                  OpenFlipper::Options::dirSeparator() +  "windowState.dat");
+    if (file.open(QIODevice::ReadOnly)){
+      QByteArray bytes = file.readAll();
+    
+      coreWidget_->restoreState( bytes );
+    
+      file.close();
+    }
+
+    //try to restore the geometry
+    QFile file2(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
+                                                  OpenFlipper::Options::dirSeparator() +  "geometry.dat");
+    if (file2.open(QIODevice::ReadOnly)){
+      QByteArray bytes = file2.readAll();
+    
+      coreWidget_->restoreGeometry( bytes );
+    
+      file2.close();
+    }
+
+
     coreWidget_->show();
 
     if ( OpenFlipper::Options::splash() ) {
@@ -672,6 +696,24 @@ Core::writeOnExit() {
   } else {
     writeApplicationOptions(ini);
     ini.disconnect();
+  }
+
+  //store the windowState
+  if ( OpenFlipper::Options::gui() ) {
+    QFile file(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
+                                                  OpenFlipper::Options::dirSeparator() +  "windowState.dat");
+    if (file.open(QIODevice::WriteOnly))
+    {
+      file.write( coreWidget_->saveState() );
+      file.close();
+    }
+    QFile file2(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
+                                                  OpenFlipper::Options::dirSeparator() +  "geometry.dat");
+    if (file2.open(QIODevice::WriteOnly))
+    {
+      file2.write( coreWidget_->saveGeometry() );
+      file2.close();
+    }
   }
 
   // Call exit for all plugins

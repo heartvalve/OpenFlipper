@@ -50,7 +50,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect(applyButton,SIGNAL(clicked()),this,SLOT(slotApply()));
   connect(cancelButton,SIGNAL(clicked()),this,SLOT(slotCancel()));
   connect(checkUpdateButton,SIGNAL(clicked()),this,SLOT(slotCheckUpdates()));
-
+  connect( restrictFPS, SIGNAL(toggled(bool)), FPS, SLOT(setEnabled(bool)) );
   uint mode = 2;
   for (uint i=1; i < 22; i++) {
     std::vector< QString > dm = drawModeToDescriptions( mode );
@@ -182,7 +182,7 @@ void OptionsWidget::showEvent ( QShowEvent * event ) {
     availDrawModes->item( i )->setCheckState(Qt::Unchecked) ;
 
   //Check the drawModes from StandardDrawMode
-  std::vector< QString > dm = drawModeToList( OpenFlipper::Options::standardDrawMode() );
+  std::vector< QString > dm = drawModeToDescriptions( OpenFlipper::Options::standardDrawMode() );
 
   for (uint i=0; i < dm.size(); i++){
     if ( !dm.empty() ) {

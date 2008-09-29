@@ -12,7 +12,7 @@ glut()
 glew()
 openmp()
 
-DIRECTORIES = ../BasePlugin ../common ../common/bsp  ../INIFile $$files( $${TOPDIR}/ObjectTypes/* )
+DIRECTORIES = ../BasePlugin ../ACGHelper ../common ../common/bsp  ../INIFile $$files( $${TOPDIR}/ObjectTypes/* )
 
 # Input
 HEADERS += $$getFilesFromDir($$DIRECTORIES,*.hh)
