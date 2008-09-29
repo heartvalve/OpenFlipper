@@ -139,6 +139,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // ======================================================================
 
   mainToolbar_ = new QToolBar("Main Toolbar");
+  mainToolbar_->setObjectName("MainToolbar");
   addToolBar(mainToolbar_);
 
   // ======================================================================
@@ -151,6 +152,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   viewerToolbar_->setParent(this);
   viewerToolbar_->setAllowedAreas(Qt::AllToolBarAreas);
   viewerToolbar_->setIconSize(QSize(20,20));
+  viewerToolbar_->setObjectName("ViewerToolbar");
 
   // Set our own Icons
   QList<QAction *> actions = viewerToolbar_->actions();
@@ -231,6 +233,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Create Upper DockWidget for ToolWidget control
   // ======================================================================
   dockViewMode_ = new QDockWidget("ViewMode" , this );
+  dockViewMode_->setObjectName("DockViewMode");
   QPushButton* button = new QPushButton("Change View Mode");
   dockViewMode_->setWidget(button);
   button->setParent(dockViewMode_);

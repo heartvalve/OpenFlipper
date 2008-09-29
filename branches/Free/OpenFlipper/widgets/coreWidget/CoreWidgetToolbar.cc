@@ -52,6 +52,7 @@
 
 void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
   addToolBar( _toolbar );
+  _toolbar->setObjectName("Toolbar" + QString::number(toolbarCount_++));
 }
 
 void CoreWidget::slotRemoveToolbar(QToolBar* _toolbar) {

@@ -344,6 +344,8 @@ public:
   //===========================================================================
   private:      
     QToolBar* viewerToolbar_;
+
+    int toolbarCount_;
         
   /** @} */
 
