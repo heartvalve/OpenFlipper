@@ -246,7 +246,7 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolWidgets){
 }
 
 /// Slot is called when the visibility of a toolWidget changes
-void CoreWidget::slotVisibilityChanged ( bool visible ){
+void CoreWidget::slotVisibilityChanged ( bool /*visible*/ ){
   for (uint p=0; p < plugins_.size(); p++){
     if (!plugins_[p].widget) continue;
     if (plugins_[p].widget->isVisible() && !plugins_[p].widget->isFloating()){

@@ -61,19 +61,19 @@ class LoggingInterface {
        * @param _type Message type (LOGINFO,LOGOUT,LOGWARN,LOGERR)
        * @param _message Message to be displayed
        */
-      virtual void log(Logtype _type, QString _message) = 0;
+      virtual void log(Logtype /*_type*/, QString /*_message*/) = 0;
       
       /** Send a log message to the mainwindow of the widget \n
        * defaults to LOGOUT message type
        * @param _message Message to be displayed
        */
-      virtual void log(QString _message) = 0;
+      virtual void log(QString /*_message*/) = 0;
       
    private slots:
      
       /** Through this slot you can receive all logging information emitted by OpenFlipper
        * or one of its plugins */
-      virtual void logOutput( Logtype _type , QString _message ) {};
+      virtual void logOutput( Logtype /*_type*/ , QString /*_message*/ ) {};
       
 };
 

@@ -60,37 +60,37 @@ class LoadSaveInterface {
        * @param _type Type to be loaded 
        * @param _id Here the id of the loaded object is returned. id its -1 something went wrong
        */
-      virtual void load(QString _filename, DataType _type, int& _id) {};
+      virtual void load(QString /*_filename*/, DataType /*_type*/, int& /*_id*/) {};
       
       /** Add an empty object of the given type
        * 
        * @param _type Type to be created
        * @param _id Here the id of the loaded object is returned. id its -1 something went wrong
        */
-      virtual void addEmptyObject( DataType _type, int& _id) {};
+      virtual void addEmptyObject( DataType /*_type*/, int& /*_id*/) {};
       
       /**
        * 
        * @param _id Object to Save
        * @param _filename Filename to save it to (Leave as "" to automatically determine filename)
        */
-      virtual void save(int _id , QString _filename ) {};
+      virtual void save(int /*_id*/ , QString /*_filename*/ ) {};
     
       /** \brief file has been opened
        * @param _id Id of the opened object
        */
-      virtual void openedFile( int _id ) {};
+      virtual void openedFile( int /*_id*/ ) {};
       
       /** \brief Emit this signal if an empty object has been created
        * @param _id Id of the added object
              */
-      virtual void emptyObjectAdded( int _id ) {};
+      virtual void emptyObjectAdded( int /*_id*/ ) {};
 
     /**  \brief get a list of all Filters
        * request a list of all Filters
        *  @param _list StringList where the filters should be put into
      */
-      virtual void getAllFilters( QStringList& _list ) {};
+      virtual void getAllFilters( QStringList& /*_list*/ ) {};
     
   private slots :
   
@@ -99,7 +99,7 @@ class LoadSaveInterface {
      *  This slot is called if a file has been opened by the core.\n
      *  @param _id Id of the new object
      */
-    virtual void fileOpened( int _id ) {};
+    virtual void fileOpened( int /*_id*/ ) {};
       
 };
 

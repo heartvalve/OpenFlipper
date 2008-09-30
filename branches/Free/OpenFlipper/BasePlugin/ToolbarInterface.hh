@@ -68,14 +68,14 @@ class ToolbarInterface {
       * To create your own Toolbar, emit this signal with a pointer to your Toolbar.
       * @param _toolbar Your Toolbar
       */
-      virtual void addToolbar(QToolBar* _toolbar) {};
+      virtual void addToolbar(QToolBar* /*_toolbar*/) {};
       
       
       /** \brief Remove a Toolbar from the main widget
       *
       * @param _toolbar Toolbar to be removed
       */
-      virtual void removeToolbar(QToolBar* _toolbar) {};
+      virtual void removeToolbar(QToolBar* /*_toolbar*/) {};
 
 
 };

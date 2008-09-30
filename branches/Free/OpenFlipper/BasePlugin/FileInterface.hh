@@ -61,7 +61,7 @@ class FileInterface {
    public :
 
       /** \brief The core gives the root of the object tree via this function */
-      virtual void setObjectRoot( BaseObject* _root ) = 0;
+      virtual void setObjectRoot( BaseObject* /*_root*/ ) = 0;
 
       /// Return support for adding empty objects
       virtual bool supportAddEmpty() = 0;
@@ -88,7 +88,7 @@ class FileInterface {
        *
        *  Return 0 when you dont need one
        */
-      virtual QWidget* saveOptionsWidget(QString _currentFilter) = 0;
+      virtual QWidget* saveOptionsWidget(QString /*_currentFilter*/) = 0;
 
       /** You can provide a special widget showing options for loading your file types
        *  depending on the current filter
@@ -97,15 +97,15 @@ class FileInterface {
        *
        *  Return 0 when you dont need one
        */
-      virtual QWidget* loadOptionsWidget(QString _currentFilter) = 0;
+      virtual QWidget* loadOptionsWidget(QString /*_currentFilter*/) = 0;
 
 public slots:
 
       /// load an object from the given file
-      virtual int loadObject(QString _filename) = 0;
+      virtual int loadObject(QString /*_filename*/) = 0;
 
       /// Save the object with given id,filename
-      virtual bool saveObject(int _id, QString _filename) = 0;
+      virtual bool saveObject(int /*_id*/, QString /*_filename*/) = 0;
 
       //Optionswidget
 

@@ -71,23 +71,23 @@ class INIInterface {
        *  @param _ini ini file
        *  @param _id Id of the object to load data for
        */
-      virtual void loadIniFile( INIFile& _ini ,int _id ) {};
+      virtual void loadIniFile( INIFile& /*_ini*/ ,int /*_id*/ ) {};
       
       /** Save object information to an ini file
        * @param _ini ini file
        * @param _id Identifier of the object to save (-1 for all)
        */
-      virtual void saveIniFile( INIFile& _ini ,int _id) {};
+      virtual void saveIniFile( INIFile& /*_ini*/ ,int /*_id*/) {};
       
       /** Load Plugin options (state information) to an ini file
        * @param _ini  ini file
        */
-      virtual void loadIniFileOptions( INIFile& _ini ) {};
+      virtual void loadIniFileOptions( INIFile& /*_ini*/ ) {};
       
       /** Save Plugin options (state information) to an ini file
        * @param _ini ini file
        */
-      virtual void saveIniFileOptions( INIFile& _ini ) {};
+      virtual void saveIniFileOptions( INIFile& /*_ini*/ ) {};
       
 };
 

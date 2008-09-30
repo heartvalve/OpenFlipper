@@ -61,20 +61,20 @@ class ViewInterface {
       * @param _name Name of the Widget
       * @param _widget The requested widget or 0 if not found
       */
-     virtual void getStackWidget( QString _name, QWidget*& _widget ) {};
+     virtual void getStackWidget( QString /*_name*/, QWidget*& /*_widget*/ ) {};
      
     /** Update a widget form the Stackwidget with Name.       * 
       * @param _name Name of the Widget
       * @param _widget The requested widget or 0 if not found
       */
-     virtual void updateStackWidget( QString _name, QWidget* _widget ) {};
+     virtual void updateStackWidget( QString /*_name*/, QWidget* /*_widget*/ ) {};
      
     /** Add a widget to the Stackwidget with a Name.
       * 
       * @param _name Name of the Widget
       * @param _widget The new widget
     */
-     virtual void addStackWidget( QString _name, QWidget* _widget ) {};
+     virtual void addStackWidget( QString /*_name*/, QWidget* /*_widget*/ ) {};
       
    public : 
        

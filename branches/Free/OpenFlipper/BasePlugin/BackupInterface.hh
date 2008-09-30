@@ -61,7 +61,7 @@ class BackupInterface {
        * @param _id Identifier of the object to create the backup
        * @param _name Name of the Backup, to show the user what can be recovered
        */
-      virtual void createBackup( int _id , QString _name ) {};
+      virtual void createBackup( int /*_id*/ , QString /*_name*/ ) {};
    
    private slots:
       /** This function will be called if a plugin requests a backup. You can
@@ -70,7 +70,7 @@ class BackupInterface {
        * @param _name Name of the Backup, to show the user what can be recovered
        * @param _backup_id Unique Number of the backup. 
        */
-      virtual void slotBackupRequested( int _id , QString _name , int _backup_id) {} ;
+      virtual void slotBackupRequested( int /*_id*/ , QString /*_name*/ , int /*_backup_id*/) {} ;
             
       /** This function will be called if a plugin requests a backup. You can
        * also react on this event.
@@ -78,7 +78,7 @@ class BackupInterface {
        * @param _name Name of the Backup, to show the user what can be recovered
        * @param _backup_id Unique Number of the backup. 
        */
-      virtual void slotRestoreRequested( int _id , QString _name , int _backup_id) {};      
+      virtual void slotRestoreRequested( int /*_id*/ , QString /*_name*/ , int /*_backup_id*/) {};      
       
    public : 
        

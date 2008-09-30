@@ -72,13 +72,13 @@ class StatusbarInterface {
        * You can specify a timeout if the message should be removed after
        * _timeout milliseconds
        */
-      virtual void showStatusMessage(QString _message, int _timeout = 0) {};
+      virtual void showStatusMessage(QString /*_message*/, int /*_timeout*/ = 0) {};
       
       
       /** \brief Sets the icon of the StatusBar
        * 
        */
-      void setStatus( ApplicationStatus::applicationStatus _status) {};
+      void setStatus( ApplicationStatus::applicationStatus /*_status*/) {};
       
       /** \brief Removes the current message from the statusBar
        * 

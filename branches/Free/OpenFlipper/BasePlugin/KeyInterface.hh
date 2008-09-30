@@ -66,7 +66,7 @@ class KeyInterface {
        * @param _description a short description about the functionality
        * @param _multiUse can the key additionally be registered by another plugin
        */
-      virtual void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false) {};
+      virtual void registerKey(int /*_key*/, Qt::KeyboardModifiers /*_modifiers*/, QString /*_description*/, bool /*_multiUse*/ = false) {};
 
    public slots :
       
@@ -75,14 +75,14 @@ class KeyInterface {
        * This slot is called if a key event occured in the Viewer 
        * @param _event Keyevent
       */
-      virtual void slotKeyEvent( QKeyEvent* _event ) {};
+      virtual void slotKeyEvent( QKeyEvent* /*_event*/ ) {};
       
       /**  \brief Key Release Event from Main App
        * 
        * This slot is called if a key release event occured in the Viewer 
        * @param _event Keyevent
       */
-      virtual void slotKeyReleaseEvent( QKeyEvent* _event ) {};
+      virtual void slotKeyReleaseEvent( QKeyEvent* /*_event*/ ) {};
       
    public : 
        

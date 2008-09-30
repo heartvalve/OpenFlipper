@@ -92,7 +92,7 @@ class BaseInterface {
        *   Dont emit BaseInterface::updated_objects(int) in this slot as this causes an endless Loop!!
        *  @param _identifier Identifier of the updated/new object or -1 if one is deleted
       */
-      virtual void slotObjectUpdated( int _identifier ) {};
+      virtual void slotObjectUpdated( int /*_identifier*/ ) {};
 
       /**  \brief Called if the whole scene is cleared
        *
