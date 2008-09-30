@@ -67,7 +67,7 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
     void emptyObjectAdded( int _id );
 
   private slots:
-    void fileOpened( int _id ){};
+    void fileOpened( int /*_id*/ ){};
 
     void loadIniFile( INIFile& _ini ,int _id );
     void saveIniFile( INIFile& _ini ,int _id);
@@ -94,8 +94,8 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
      QString getSaveFilters();
      QString getLoadFilters();
 
-     QWidget* saveOptionsWidget(QString _currentFilter) { return 0; };
-     QWidget* loadOptionsWidget(QString _currentFilter) { return 0; };
+     QWidget* saveOptionsWidget(QString /*_currentFilter*/) { return 0; };
+     QWidget* loadOptionsWidget(QString /*_currentFilter*/) { return 0; };
 
   private :
      BaseObject* objectRoot_;
