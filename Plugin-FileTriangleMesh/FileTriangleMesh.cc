@@ -308,7 +308,7 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
   return saveOptions_;
 }
 
-QWidget* FileTriangleMeshPlugin::loadOptionsWidget(QString _currentFilter) {
+QWidget* FileTriangleMeshPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
   return 0;
 }
 
