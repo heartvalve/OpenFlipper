@@ -211,7 +211,7 @@ void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh:
 }
 
 template< typename MeshT >
-void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh::VPropHandleT< OpenMesh::Vec2d > _texProp )
+void TextureControlPlugin::copyTexture ( int /*_textureid*/, MeshT& _mesh, OpenMesh::VPropHandleT< OpenMesh::Vec2d > _texProp )
 {
   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
     OpenMesh::Vec2d value = _mesh.property(_texProp, v_it);
@@ -233,7 +233,7 @@ void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh:
 }
 
 template< typename MeshT >
-void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh::HPropHandleT< OpenMesh::Vec2d > _texProp )
+void TextureControlPlugin::copyTexture ( int /*_textureid*/, MeshT& _mesh, OpenMesh::HPropHandleT< OpenMesh::Vec2d > _texProp )
 {
   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
     OpenMesh::Vec2d value = _mesh.property(_texProp, h_it);
