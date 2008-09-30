@@ -2,7 +2,7 @@
 #
 ################################################################################
 
-#include( $$TOPDIR/qmake/all.include )
+include( $$TOPDIR/qmake/all.include )
 
 Application()
 
