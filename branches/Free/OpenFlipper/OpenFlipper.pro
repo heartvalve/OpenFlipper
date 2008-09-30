@@ -1,6 +1,11 @@
 
-TEMPLATE = subdirs
-CONFIG += ordered
+include( $$TOPDIR/qmake/all.include )
+
+Subdirs()
 
 addSubdirs( PluginLib )
 addSubdirs( CoreApp , PluginLib)
+
+
+
+
