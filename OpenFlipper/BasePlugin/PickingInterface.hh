@@ -58,7 +58,7 @@ class PickingInterface {
        * 
        * @param _mode Identifier of Picking mode or "Separator" to add a Separator
       */
-      virtual void addPickMode( const std::string _mode ) {};
+      virtual void addPickMode( const std::string /*_mode*/ ) {};
       
       /** \brief Add a new picking mode to the examiner which will be invisible
        * 
@@ -68,13 +68,13 @@ class PickingInterface {
        * 
        * @param _mode Identifier of Picking mode or "Separator" to add a Separator
       */
-      virtual void addHiddenPickMode( const std::string _mode ) {};      
+      virtual void addHiddenPickMode( const std::string /*_mode*/ ) {};      
       
       /** \brief Add a new picking mode to the examiner and has its own cursor
        * 
        * @param _mode Identifier of Picking mode or "Separator" to add a Separator
       */
-      virtual void addPickMode( const std::string _mode , QCursor _cursor ) {};
+      virtual void addPickMode( const std::string /*_mode*/ , QCursor /*_cursor*/ ) {};
       
       /** \brief Add a new picking mode to the examiner which will be invisible but has its own cursor
        * 
@@ -84,7 +84,7 @@ class PickingInterface {
        * 
        * @param _mode Identifier of Picking mode or "Separator" to add a Separator
       */
-      virtual void addHiddenPickMode( const std::string _mode , QCursor _cursor ) {};            
+      virtual void addHiddenPickMode( const std::string /*_mode*/ , QCursor /*_cursor*/ ) {};            
       
       
       /**  \brief The pickingMode has changed
@@ -92,7 +92,7 @@ class PickingInterface {
        * This slot is called if the user changes the current picking mode
        * @param _mode Identifier of Picking mode
       */
-      virtual void slotPickModeChanged( const std::string& _mode) {};
+      virtual void slotPickModeChanged( const std::string& /*_mode*/) {};
    
    public : 
        

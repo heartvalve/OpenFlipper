@@ -61,22 +61,22 @@ class ScriptInterface {
        * @param _functionName the called function
        * @param _exists found or not
        */
-    virtual void scriptInfo( QString _functionName  ) {};
+    virtual void scriptInfo( QString /*_functionName*/  ) {};
     
     /** Emit this signal to execute a script
        * @param _script The script to execute
        */
-    virtual void executeScript( QString _script  ) {};
+    virtual void executeScript( QString /*_script*/  ) {};
     
     /** Emit this signal to get the core scripting engine
       * @param _engine The scripting Engine
       */
-    virtual void getScriptingEngine( QScriptEngine*& _engine  ) {};
+    virtual void getScriptingEngine( QScriptEngine*& /*_engine*/  ) {};
     
     /** With this signal you can get a list of all available scripting functions
      * @param _functions All available functions
      */
-    virtual void getAvailableFunctions( QStringList& _functions  ) {};
+    virtual void getAvailableFunctions( QStringList& /*_functions*/  ) {};
     
   private slots:
     
@@ -85,19 +85,19 @@ class ScriptInterface {
      * @param _pluginName Name of the plugin that executed a scriptable function
      * @param _functionName Name of the executed function
      */
-    virtual void slotScriptInfo( QString _pluginName , QString _functionName  ) {};
+    virtual void slotScriptInfo( QString /*_pluginName*/ , QString /*_functionName*/  ) {};
     
     
     /** Slot for a scripting plugin. Gets the Script and executes it.
      * 
      * @param _script Script to execute
      */
-    virtual void slotExecuteScript( QString _script ) {};
+    virtual void slotExecuteScript( QString /*_script*/ ) {};
     
     
     /** Call this slot to open the given file and execute the script in it
      */
-    virtual void slotExecuteFileScript( QString _filename ) {};
+    virtual void slotExecuteFileScript( QString /*_filename*/ ) {};
     
     
 };

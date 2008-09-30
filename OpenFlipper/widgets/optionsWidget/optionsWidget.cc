@@ -87,7 +87,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect(progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
 }
 
-void OptionsWidget::showEvent ( QShowEvent * event ) {
+void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   //general
   fullscreen->setChecked( OpenFlipper::Options::fullScreen() );

@@ -82,7 +82,7 @@ signals:
     * This Menu will be always visible  when you rightclick in the viewer widget.
     * @param _menu Pointer to the new Menu
   */
-  virtual void addContextMenu(QMenu* _menu , ContextMenuType _type) {};
+  virtual void addContextMenu(QMenu* /*_menu*/ , ContextMenuType /*_type*/) {};
   
   /**  \brief Add an entry for a  context Menu
     * 
@@ -95,7 +95,7 @@ signals:
     * @param _objectType Type of the picked object
    *  @param _type Type of the context Menu ( See ContextMenuType )
   */
-  virtual void addContextMenu(QMenu* _menu ,DataType _objectType , ContextMenuType _type ) {};
+  virtual void addContextMenu(QMenu* /*_menu*/ ,DataType /*_objectType*/ , ContextMenuType /*_type*/ ) {};
   
 private slots:
   
@@ -104,7 +104,7 @@ private slots:
    * depending on the given object,
    * @param _objectId id of the object or -1 if nothing picked
    */
-  virtual void slotUpdateContextMenu( int _objectId ) {};
+  virtual void slotUpdateContextMenu( int /*_objectId*/ ) {};
 
 };
 

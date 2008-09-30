@@ -136,12 +136,12 @@ void viewModeWidget::slotRemoveWidget(){
 }
 
 /// Slot for updating removeButton when new mode is selected
-void viewModeWidget::slotModeClicked(QModelIndex _id){
+void viewModeWidget::slotModeClicked(QModelIndex /*_id*/){
   slotModeChanged(QString());
 }
 
 /// Slot for updating removeButton when new mode is selected
-void viewModeWidget::slotModeChanged(QString _mode){
+void viewModeWidget::slotModeChanged(QString /*_mode*/){
   //check if mode is custom e.g. that it can be removed
   if (modeList->selectedItems().count() > 0){
     for (int i=0; i < modes_.size(); i++)

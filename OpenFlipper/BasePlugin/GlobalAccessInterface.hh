@@ -65,7 +65,7 @@ class GlobalAccessInterface {
        *  This function is called to set a pointer to the global examiner Widget.\n
        *  @param _examiner_widget Pointer to the Examiner Widget in the Main app
        */
-      virtual void set_examiner(ACG::QtWidgets::QtExaminerViewer* _examiner_widget) = 0;
+      virtual void set_examiner(ACG::QtWidgets::QtExaminerViewer* /*_examiner_widget*/) = 0;
       
 };
 

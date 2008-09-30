@@ -88,7 +88,7 @@ signals:
     * @param _menu Pointer to the new Menu
     * @param _type Type of the Menu ( See MenuType for Details )
   */
-  virtual void initializeMenu(QMenu* _menu, MenuType _type ) {};
+  virtual void initializeMenu(QMenu* /*_menu*/, MenuType /*_type*/ ) {};
 
 };
 

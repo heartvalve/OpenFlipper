@@ -77,14 +77,14 @@ class ToolboxInterface {
        * @param _widget Pointer to the new Widget
        * @return Return true if a widget has been created
       */
-      virtual bool initializeToolbox(QWidget*& _widget) = 0;
+      virtual bool initializeToolbox(QWidget*& /*_widget*/) = 0;
 
        /** \brief The Toolbox of this Widget is activated/deactivated
        *
        * Called, when the user selected this widgets toolbox
        * @param _active (when true, toolbox has been activated else deactivated)
        */
-      virtual void toolboxActivated(bool _active ) = 0;
+      virtual void toolboxActivated(bool /*_active*/ ) = 0;
 
     signals :
 
@@ -95,7 +95,7 @@ class ToolboxInterface {
        * @param _mode name of the ViewMode
        * @param _usedWidgets list of used Widgets names
        */
-      virtual void defineViewMode(QString& _mode, QStringList& _usedWidgets){};
+      virtual void defineViewMode(QString& /*_mode*/, QStringList& /*_usedWidgets*/){};
 
 
 };

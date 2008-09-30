@@ -64,11 +64,11 @@ class TextureInterface {
        *  @param _filename Filename of the texture ( "./Textures/<name>")
        *  @param _dimension 1D texture ( currenty only supports 1 )
        */
-      virtual void addTexture( QString _name , QString _filename , uint _dimension ) {};
+      virtual void addTexture( QString /*_name*/ , QString /*_filename*/ , uint /*_dimension*/ ) {};
       
       /** \brief Tell Plugins to update the given texture for the given identifier
        */
-      virtual void updateTexture( QString _textureName  , int _identifier) {};
+      virtual void updateTexture( QString /*_textureName*/  , int /*_identifier*/) {};
       
       /** \brief Tell Plugins to update all textures
        */
@@ -107,14 +107,14 @@ class TextureInterface {
        *  @param _textureName Name of your Texture
        *  @param _mode colon seperated String describing your settings (e.g. clamp,abs )
       */
-      virtual void setTextureMode(QString _textureName ,QString _mode) {};
+      virtual void setTextureMode(QString /*_textureName*/ ,QString /*_mode*/) {};
       
    private slots :
       /** \brief update the texture with the given Name ( if this plugin provides this texture ) for all meshes
        * @param _textureName Name of the Texture to be updated
        * @param _identifier The id of the object to update
       */
-      virtual void slotUpdateTexture( QString _textureName , int _identifier) {};
+      virtual void slotUpdateTexture( QString /*_textureName*/ , int /*_identifier*/) {};
       
       /** \brief update all textures provided by this plugin
        */
@@ -127,7 +127,7 @@ class TextureInterface {
        * @param _filename Filename of the Texture Image to be used
        * @param dimension Dimension of the Texture (currently only 1D and 2D Textures are supported
        */
-      virtual void slotTextureAdded( QString _textureName , QString _filename , uint dimension ) {};
+      virtual void slotTextureAdded( QString /*_textureName*/ , QString /*_filename*/ , uint /*dimension*/ ) {};
       
       /** \brief A texture has been updated
        * 
@@ -135,7 +135,7 @@ class TextureInterface {
        *  @param _textureName The name of the updated texture
        *  @param _identifier -1 if all objects updated, otherwise the identifier of the object
        */
-      virtual void slotTextureUpdated( QString _textureName , int _identifier ) {};
+      virtual void slotTextureUpdated( QString /*_textureName*/ , int /*_identifier*/ ) {};
       
       /** \brief Texturemode for texture should be changed
        * 
@@ -143,13 +143,13 @@ class TextureInterface {
        *  @param _textureName The name of the updated texture
        *  @param _mode New mode flags for the given texture
        */
-      virtual void slotSetTextureMode(QString _textureName ,QString _mode) {};
+      virtual void slotSetTextureMode(QString /*_textureName*/ ,QString /*_mode*/) {};
       
       /** \brief This slot is called when a plugin requests to switch to a different texture mode
        * 
        * @param _textureName Name of the Texture
       */
-      virtual void slotSwitchTexture( QString _textureName ) {};
+      virtual void slotSwitchTexture( QString /*_textureName*/ ) {};
       
    public : 
        
