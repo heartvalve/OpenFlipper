@@ -294,6 +294,12 @@ public slots:
     /// Set the drawMode ( ; separated list )
     void setDrawMode(QString _mode);
 
+    /// Enable or disable framerate restriction
+    void restrictFrameRate( bool _enable );
+
+    /// set the maximal framerate ( automatically enables framerate restriction )
+    void setMaxFrameRate( int _rate );
+
     /** @} */
 
    //===========================================================================
