@@ -68,7 +68,7 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
 
   private slots:
 
-    void fileOpened( int _id ){};
+    void fileOpened( int /*_id*/ ){};
 
     void loadIniFile( INIFile& _ini ,int _id );
     void saveIniFile( INIFile& _ini ,int _id);
