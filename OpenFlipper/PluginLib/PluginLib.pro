@@ -12,6 +12,7 @@ glut()
 glew()
 openmp()
 
+DEPENDPATH += $$files( $${TOPDIR}/ObjectTypes/* )
 DIRECTORIES = ../BasePlugin ../ACGHelper ../common ../common/bsp  ../INIFile $$files( $${TOPDIR}/ObjectTypes/* )
 
 # Input
