@@ -126,7 +126,7 @@ void DataControlPlugin::slotObjectUpdated( int _identifier ) {
   model_->updatedObject( _identifier );
 }
 
-void DataControlPlugin::slotCellClicked(int _row , int _col) {
+void DataControlPlugin::slotCellClicked(int /*_row*/ , int /*_col*/) {
 
 //    if ( _col == 0 ) {
 //          QTableWidgetItem* target = objectList_->item(_row,_col);
@@ -141,7 +141,7 @@ void DataControlPlugin::slotCellClicked(int _row , int _col) {
 //    }
 }
 
-void DataControlPlugin::verticalHeaderClicked( int _row ) {
+void DataControlPlugin::verticalHeaderClicked( int /*_row*/ ) {
 //     (*data_)[_row]->target ( !(*data_)[_row]->target() );
 //    QTableWidgetItem* target = objectList_->item(_row,3);
 //    if ( target->checkState() == Qt::Checked ) {
@@ -156,7 +156,7 @@ void DataControlPlugin::verticalHeaderClicked( int _row ) {
 // //    objectList_->setRangeSelected(range,true);
 }
 
-void DataControlPlugin::verticalCountClicked( int  id , int old , int newc ) {
+void DataControlPlugin::verticalCountClicked( int  /*id*/ , int /*old*/ , int /*newc*/ ) {
 //    emit log(LOGWARN,"VHeader : Count " + QString::number(id) + " " + QString::number(old) + " " + QString::number(newc));
 }
 
@@ -335,7 +335,7 @@ void DataControlPlugin::showAll() {
 }
 
 void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
-                                          const QModelIndex & bottomRight )
+                                          const QModelIndex & /*bottomRight*/ )
 {
 
   switch (topLeft.column()) {
@@ -365,7 +365,7 @@ void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
   view_->expandToDepth(0);
 }
 
-void DataControlPlugin::slotRowsRemoved ( const QModelIndex & _parent, int _start, int _end ) {
+void DataControlPlugin::slotRowsRemoved ( const QModelIndex & /*_parent*/, int /*_start*/, int /*_end*/ ) {
   std::cerr << "Row removed! " << std::endl;
   emit update_view();
 }

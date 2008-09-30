@@ -58,7 +58,7 @@ TreeModel::~TreeModel()
 }
 
 /// Return the number of columns
-int TreeModel::columnCount(const QModelIndex &_parent) const
+int TreeModel::columnCount(const QModelIndex &/*_parent*/) const
 {
   // Name,Visible,Source,Target -> 4
   return (4);
@@ -424,7 +424,7 @@ BaseObject *TreeModel::getItem(const QModelIndex &index) const
 }
 
 /// Set Data at 'index' to 'value'
-bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
+bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
 {
   BaseObject *item = getItem(index);
   
