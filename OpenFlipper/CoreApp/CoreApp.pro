@@ -18,7 +18,14 @@ DIRECTORIES =   ../ ../Core ../Logging \
 			    ../widgets/viewModeWidget
 
 QMAKE_LIBDIR +=  $${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY}
-LIBS+= -Wl,-rpath=$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
+
+unix {
+	LIBS+= -Wl,-rpath=$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
+} 
+
+win32 {
+	LIBS+= -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
+}
 
 TARGET=OpenFlipper
 DESTDIR=$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/
