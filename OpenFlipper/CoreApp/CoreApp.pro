@@ -24,7 +24,7 @@ unix {
 } 
 
 win32 {
-	LIBS+= -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
+	LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lPluginLib
 }
 
 TARGET=OpenFlipper
