@@ -35,7 +35,7 @@
 #ifndef OPTIONSWIDGET_HH
 #define OPTIONSWIDGET_HH
 
-#include <ui_optionsWidget.hh>
+#include "ui_optionsWidget.hh"
 #include <QtGui>
 #include <QStringList>
 #include <QtNetwork>
