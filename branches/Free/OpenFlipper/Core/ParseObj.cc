@@ -248,7 +248,7 @@ void Core::preprocessObjFile(QString _filename)
 //-----------------------------------------------------------------------------
 
 
-void Core::writeObjFile(QString _filename, bool _relativePaths)
+void Core::writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly)
 {
   // open file
   std::string fname = _filename.toStdString();
@@ -266,9 +266,14 @@ void Core::writeObjFile(QString _filename, bool _relativePaths)
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
+  PluginFunctions::IteratorRestriction restriction;
+  if ( _targetOnly )
+    restriction = PluginFunctions::TARGET_OBJECTS;
+  else 
+    restriction = PluginFunctions::ALL_OBJECTS;
 
   // write all objects to a separate obj file and save external references in the global obj file
-  for ( PluginFunctions::ObjectIterator o_it (PluginFunctions::ALL_OBJECTS) ;
+  for ( PluginFunctions::ObjectIterator o_it (restriction) ;
                                         o_it != PluginFunctions::objects_end(); ++o_it)
   {
     QString file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();

@@ -494,7 +494,7 @@ void Core::openIniFile(QString _filename) {
 
 }
 
-void Core::writeIniFile(QString _filename, bool _relativePaths) {
+void Core::writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly) {
   INIFile ini;
 
   if ( ! ini.connect(_filename,true) ) {
@@ -512,9 +512,16 @@ void Core::writeIniFile(QString _filename, bool _relativePaths) {
   // This vector will hold the file sections to open
   QStringList openFiles;
 
+
+  PluginFunctions::IteratorRestriction restriction;
+  if ( _targetOnly )
+    restriction = PluginFunctions::TARGET_OBJECTS;
+  else 
+    restriction = PluginFunctions::ALL_OBJECTS;
+
   QString keyName;
   QString sectionName;
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+  for ( PluginFunctions::ObjectIterator o_it(restriction) ;
                                         o_it != PluginFunctions::objects_end(); ++o_it) {
     QString file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
     if (QFile(file).exists()){

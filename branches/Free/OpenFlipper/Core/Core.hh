@@ -442,13 +442,13 @@ private:
     *
     *  Writes the complete status to an ini file ( All open objects and their Information )
     */
-   void writeIniFile(QString _filename, bool _relativePaths);
+   void writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly);
 
    /** \brief Write current status to obj file (Application and File Options)
     *
     *  Writes the complete status to an obj file ( All open objects and their Information )
     */
-   void writeObjFile(QString _filename, bool _relativePaths);
+   void writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly);
 
    /// Called if app is closed and writes all information to ini file
    void writeOnExit();
