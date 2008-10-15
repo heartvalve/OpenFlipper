@@ -471,6 +471,10 @@ void Core::loadPlugin(QString filename, bool silent){
 
       if ( checkSlot( plugin , "pluginsInitialized()" ) )
         connect(this,SIGNAL(pluginsInitialized()),plugin,SLOT(pluginsInitialized()), Qt::DirectConnection);
+
+      if ( checkSignal(plugin,"setSlotDescription(QString,QString,QStringList,QStringList)") )
+        connect(plugin, SIGNAL(setSlotDescription(QString,QString,QStringList,QStringList)),
+                this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
     }
 
     //Check if its a filePlugin
@@ -917,6 +921,11 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(this      , SIGNAL(scriptInfo(QString,QString)),
                 plugin    , SLOT(slotScriptInfo(QString,QString)));
       }
+
+      // Function descriptions
+      if ( checkSignal(plugin,"getDescription(QString,QString&,QStringList&,QStringList&)") )
+        connect(plugin    , SIGNAL( getDescription(QString,QString&,QStringList&,QStringList&) ),
+                this      , SLOT( slotGetDescription(QString,QString&,QStringList&,QStringList&) ));
 
       //========= Script Execution ==========
 

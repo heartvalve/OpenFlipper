@@ -15,6 +15,13 @@ struct KeyBinding{
   bool                  multiUse;
 };
 
+struct SlotInfo{
+  QString slotName;
+  QString slotDescription;
+  QStringList parameters;
+  QStringList descriptions;
+};
+
 /** Type defining a currently loaded Plugin */
 struct PluginInfo{
 
@@ -38,6 +45,9 @@ struct PluginInfo{
 
   /// List of exported rpc slots
   QStringList rpcFunctions;
+
+  /// This list contains Descriptions about public slots if available
+  QList< SlotInfo > slotInfos;
 
   /// List of registered keys with description
   QList< KeyBinding > keys;

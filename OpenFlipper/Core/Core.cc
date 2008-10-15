@@ -124,6 +124,8 @@ Core() :
 
   // Get all relevant Paths and Options from option files
   setupOptions();
+  // set discriptions for scriptable slots
+  setDescriptions();
 }
 
 /** \brief Second initialization stage
@@ -798,6 +800,124 @@ void Core::slotLogToFile(Logtype _type, QString _message){
 
 }
 
+/// set descriptions for a scriptable slot
+void Core::slotSetSlotDescription(QString      _slotName,   QString _slotDescription,
+                              QStringList _parameters, QStringList _descriptions)
+{
+  //handle core slots
+  if (sender() == this){
+    SlotInfo info;
+    info.slotName = _slotName;
+    info.slotDescription = _slotDescription;
+    info.parameters = _parameters;
+    info.descriptions = _descriptions;
+
+    coreSlots_.push_back( info );
+    return;
+  }
+
+  //handle plugin slots
+
+  //find plugin
+ PluginInfo* pluginInfo = 0;
+
+  for (uint i=0; i < plugins.size(); i++)
+    if (plugins[i].plugin == sender())
+      pluginInfo = &plugins[i];
+
+  if (pluginInfo == 0){
+    emit log(LOGERR, "Unable to set slot-description. Plugin not found!");
+    return;
+  }
+
+  SlotInfo info;
+  info.slotName = _slotName;
+  info.slotDescription = _slotDescription;
+  info.parameters = _parameters;
+  info.descriptions = _descriptions;
+
+  pluginInfo->slotInfos.append( info );
+}
+
+/// get available Descriptions for a scriptable slot
+void Core::slotGetDescription(QString      _function,   QString&     _fnDescription,
+                              QStringList& _parameters, QStringList& _descriptions )
+{
+  QString pluginName = _function.section(".", 0, 0);
+  QString slotName   = _function.section(".", 1, 1);
+
+  //handle core slots
+  if (pluginName == "core"){
+
+    _fnDescription = "";
+    _parameters.clear();
+    _descriptions.clear();
+
+    for (int i=0; i < coreSlots_.count(); i++)
+      if (coreSlots_[i].slotName == slotName){
+      _fnDescription = coreSlots_[i].slotDescription;
+      _parameters    = coreSlots_[i].parameters;
+      _descriptions  = coreSlots_[i].descriptions;
+      return;
+      }
+    return;
+  }
+
+  //handle plugin slots
+
+  //find plugin
+  PluginInfo* pluginInfo = 0;
+
+  for (uint i=0; i < plugins.size(); i++)
+    if (plugins[i].rpcName == pluginName)
+      pluginInfo = &plugins[i];
+
+  if (pluginInfo == 0){
+    emit log(LOGERR, "Unable to get slot-description. Plugin not found!");
+    return;
+  }
+
+  _fnDescription = "";
+  _parameters.clear();
+  _descriptions.clear();
+
+  //find slot
+  for (int i=0; i < pluginInfo->slotInfos.count(); i++)
+    if (pluginInfo->slotInfos[i].slotName == slotName){
+      _fnDescription = pluginInfo->slotInfos[i].slotDescription;
+      _parameters    = pluginInfo->slotInfos[i].parameters;
+      _descriptions  = pluginInfo->slotInfos[i].descriptions;
+      return;
+    }
+}
+
+/// set the descriptions for scriptable slots of the core
+void Core::setDescriptions(){
+
+  connect(this, SIGNAL(setSlotDescription(QString,QString,QStringList,QStringList)),
+          this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
+
+  emit setSlotDescription("updateView()", "Redraw the contents of the viewer.", QStringList(), QStringList());
+  emit setSlotDescription("clearAll()", "Clear all data objects.", QStringList(), QStringList());
+  emit setSlotDescription("exitApplication()", "Quit OpenFlipper", QStringList(), QStringList());
+  emit setSlotDescription("translate(Vector)", "translate Scene",
+                          QStringList("TranslationVector"), QStringList("vector for the translation."));
+  emit setSlotDescription("rotate(Vector,double,Vector)", "Rotate Scene",
+                          QString("Axis,Angle,Center").split(","),
+                          QString("Rotation axis., Rotation Angle., Rotation Center.").split(","));
+  emit setSlotDescription("setViewingDirection(Vector,Vector)", "Set the viewing direction",
+                          QString("direction,upVector").split(","),
+                          QString("Viewing direction., Up-Vector.").split(","));  
+  emit setSlotDescription("fullscreen()", "Toggle fullscreen mode", QStringList(), QStringList());
+  emit setSlotDescription("logger()", "Toggle logging window visibility", QStringList(), QStringList());
+  emit setSlotDescription("toolbox()", "Toggle toolbox visibility", QStringList(), QStringList());
+  emit setSlotDescription("setDrawMode(QString)", "Set the drawMode",
+                        QStringList("DrawMode"), QStringList("the drawMode ( ; separated list )"));
+  emit setSlotDescription("restrictFrameRate(bool)", "Restrict FrameRate to MaxFrameRate",
+                        QStringList("enabled"), QStringList("restriction switch"));
+  emit setSlotDescription("setMaxFrameRate(int)", "set the maximal framerate (automatically enables framerate restriction)",
+                        QStringList("frameRate"), QStringList("Maximum frameRate"));
+}
 // //-----------------------------------------------------------------------------
 //
 // void Core::slotGetPlugin(QString _name, QObject* & _plugin ){

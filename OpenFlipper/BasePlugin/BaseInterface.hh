@@ -81,6 +81,19 @@ class BaseInterface {
       */
       virtual void activeObjectChanged() {};
 
+      /**  \brief Set a description for a public slot
+       *
+       *   public slots of each plugin are automaticly available for scripting. \n
+       *   Use this Signal to add a description for your slot so that everyone knows what it is used for. \n
+       *
+       *   @param _slotName the name of the slot
+       *   @param _slotDescription a description for the slot
+       *   @param _parameters list of parameters
+       *   @param _descriptions list of descriptions for the parameters (_descriptions[i] corresponds to _parameters[i])
+      */
+      virtual void setSlotDescription(QString     /*_slotName*/,    QString     /*_slotDescription*/,
+                                      QStringList /*_parameters*/, QStringList /*_descriptions*/) {};
+
    private slots :
 
       /**  \brief An object has been updated by an other plugin
