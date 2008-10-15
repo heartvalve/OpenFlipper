@@ -341,7 +341,7 @@ void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
   switch (topLeft.column()) {
     // Name
     case 0:
-//         std::cerr << "Todo : NameChange" << std::endl;
+      view_->expandToDepth(0);
       break;
 
     // show/hide
@@ -361,8 +361,6 @@ void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
     default:
       break;
   }
-
-  view_->expandToDepth(0);
 }
 
 void DataControlPlugin::slotRowsRemoved ( const QModelIndex & /*_parent*/, int /*_start*/, int /*_end*/ ) {
