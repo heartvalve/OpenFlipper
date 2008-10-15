@@ -52,6 +52,11 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 
+void DataControlPlugin::initializePlugin(){
+  //set the slot descriptions
+  setDescriptions();
+}
+
 void DataControlPlugin::pluginsInitialized() {
   QMenu* contextMenu = new QMenu("Object selection");
 
