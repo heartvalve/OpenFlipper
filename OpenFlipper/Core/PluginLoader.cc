@@ -114,23 +114,36 @@ void Core::loadPlugins()
   else
     tempDir.cd("32");
 
+  #ifdef WIN32
+	#ifndef NDEBUG
+	  #define DEBUG
+	#endif
+  #endif
+
   #ifdef DEBUG
     tempDir.cd("Debug");
   #else
     tempDir.cd("Release");
   #endif
 
-  QStringList pluginlist = tempDir.entryList(QDir::Files);
+  QStringList filters;
+
+  #ifdef WIN32
+	filters << "*.dll";
+  #else
+	filters << "*.so";
+  #endif
+
+  QStringList pluginlist = tempDir.entryList(filters, QDir::Files);
 
   for (int i=0; i < pluginlist.size(); i++)
     pluginlist[i] = tempDir.absoluteFilePath(pluginlist[i]);
 
   //try to load plugins from old location
-
-  emit log(LOGOUT,"Trying to find Plugins at " + OpenFlipper::Options::pluginDir().absolutePath() );
+  emit log(LOGOUT,"Trying to find Plugins at " + tempDir.absolutePath() );
 
   // Get all files in the Plugin dir
-  QStringList pluginlist2 = OpenFlipper::Options::pluginDir().entryList(QDir::Files);
+  QStringList pluginlist2 = OpenFlipper::Options::pluginDir().entryList(filters,QDir::Files);
 
   for (int i=0; i < pluginlist2.size(); i++)
     pluginlist2[i] = OpenFlipper::Options::pluginDir().absoluteFilePath(pluginlist2[i]);
