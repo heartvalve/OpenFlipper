@@ -37,6 +37,31 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 
+void DataControlPlugin::setDescriptions(){
+
+  emit setSlotDescription("getObject(QString)","Returns the id of an object with given name.",
+                          QStringList("Name"), QStringList("Name of an object"));
+
+  emit setSlotDescription("getObjectName(int)","Returns the name of an object with given id.",
+                          QStringList("objectId"), QStringList("ID of an object"));
+
+  emit setSlotDescription("hideObject(int)","Hide object with the given id.",
+                          QStringList("objectId"), QStringList("ID of an object"));
+
+  emit setSlotDescription("showObject(int)","Show object with the given id.",
+                          QStringList("objectId"), QStringList("ID of an object"));
+
+  emit setSlotDescription("groupObjects(idList,QString)","Group given Objects together.",
+                          QString("objectIds,groupName").split(","),
+                          QString("List of objects that should be grouped., Name of the group.").split(","));
+
+  emit setSlotDescription("groupObjects(idList)","Group given Objects together.",
+                          QStringList("objectIds"), QStringList("List of objects that should be grouped."));
+
+}
+
+
+/// Returns the id of an object with given name
 int DataControlPlugin::getObject( QString _name ) {
   
   BaseObject* object = PluginFunctions::objectRoot()->childExists(_name); 
@@ -47,6 +72,7 @@ int DataControlPlugin::getObject( QString _name ) {
   return object->id();
 }
 
+/// Returns the name of an object with given id
 QString DataControlPlugin::getObjectName( int objectId ) {
   
   BaseObjectData* object;
@@ -58,6 +84,7 @@ QString DataControlPlugin::getObjectName( int objectId ) {
   
 }
 
+/// Hide object with the given id
 void DataControlPlugin::hideObject( int objectId ) {
   
   BaseObjectData* object;
@@ -70,6 +97,7 @@ void DataControlPlugin::hideObject( int objectId ) {
   object->hide();
 }
 
+/// Show object with the given id
 void DataControlPlugin::showObject( int objectId ) {
   
   BaseObjectData* object;
@@ -82,6 +110,7 @@ void DataControlPlugin::showObject( int objectId ) {
   object->show();
 }
 
+/// Group given Objects together
 void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
   
   QVector< BaseObject* > objs;

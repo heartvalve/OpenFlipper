@@ -84,6 +84,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
     void addContextMenu(QMenu* _menu );
     void addContextMenu(QMenu* _menu ,DataType _objectType , ContextMenuType _type );
 
+    void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                            QStringList _parameters, QStringList _descriptions);
+
+
    private slots :
       /// Updates the table widget
       void slotObjectUpdated( int _identifier );
@@ -95,7 +99,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
       void saveIniFileOptions( INIFile& _ini );
 
       void pluginsInitialized();
-
+      void initializePlugin();
    public :
 
      ~DataControlPlugin() {};
@@ -240,6 +244,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
       /** @name Scripting functions
       * @{ */
       //===========================================================================
+
+      private slots:
+        void setDescriptions();
 
       public slots:
         /// Get the Objects name from the id
