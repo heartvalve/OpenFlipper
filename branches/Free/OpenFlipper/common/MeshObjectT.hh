@@ -291,7 +291,7 @@ class DLLEXPORT MeshObject : public BaseObjectData {
 //=============================================================================
 
 #if defined(INCLUDE_TEMPLATES) && !defined(MESHOBJECT_C)
-#define TYPES_TEMPLATES
+#define MESHOBJECT_TEMPLATES
 #include "MeshObjectT.cc"
 #endif
 
