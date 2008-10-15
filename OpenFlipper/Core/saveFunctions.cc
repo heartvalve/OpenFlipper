@@ -201,9 +201,15 @@ void Core::slotSaveIniMenu(){
   askOverwrite->setToolTip("If a file exists you will get asked what to do");
   askOverwrite->setCheckState( Qt::Checked );
 
+  QCheckBox *targetOnly = new QCheckBox(optionsBox);
+  targetOnly->setText("Save only target objects");
+  targetOnly->setToolTip("Only objects with target flag will be handled");
+  targetOnly->setCheckState( Qt::Unchecked );
+
   QBoxLayout* frameLayout = new QBoxLayout(QBoxLayout::TopToBottom,optionsBox);
   frameLayout->addWidget( saveAllBox   , 0 , 0);
   frameLayout->addWidget( askOverwrite , 1 , 0);
+  frameLayout->addWidget( targetOnly   , 2 , 0);
   frameLayout->addStretch();
 
   QStringList fileNames;
@@ -234,8 +240,14 @@ void Core::slotSaveIniMenu(){
     connect(widget,SIGNAL(save(int, QString)),this,SLOT(slotSave(int, QString)));
   }
 
+  PluginFunctions::IteratorRestriction restriction;
+  if ( targetOnly->isChecked() )
+    restriction = PluginFunctions::TARGET_OBJECTS;
+  else 
+    restriction = PluginFunctions::ALL_OBJECTS;
+
   //iterate over opened objects and save them
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+  for ( PluginFunctions::ObjectIterator o_it(restriction);
                                         o_it != PluginFunctions::objects_end(); ++o_it)
   {
       if ( saveAllBox->isChecked() )
@@ -309,10 +321,10 @@ void Core::slotSaveIniMenu(){
 
   if ( complete_name.endsWith("ini") ) {
     //write to ini
-    writeIniFile(complete_name, saveAllBox->isChecked());
+    writeIniFile(complete_name, saveAllBox->isChecked(), targetOnly->isChecked() );
   } else if ( complete_name.endsWith("obj") ) {
     //write to obj
-    writeObjFile(complete_name, saveAllBox->isChecked());
+    writeObjFile(complete_name, saveAllBox->isChecked(), targetOnly->isChecked() );
   }
 
 
