@@ -77,6 +77,16 @@ class ScriptInterface {
      * @param _functions All available functions
      */
     virtual void getAvailableFunctions( QStringList& /*_functions*/  ) {};
+
+    /** With this signal you can get descriptions about a given function if available
+     *
+     *   @param _function name of the function (e.g. plugin.function)
+     *   @param _description a description for the function
+     *   @param _parameters list of names for the parameters
+     *   @param _descriptions list of descriptions for the parameters (_descriptions[i] corresponds to _parameters[i])
+     */
+    virtual void getDescription(QString /*_function*/, QString& /*_description*/,
+                                QStringList& /*_parameters*/, QStringList& /*_descriptions*/  ) {};
     
   private slots:
     

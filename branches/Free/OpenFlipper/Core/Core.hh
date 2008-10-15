@@ -557,6 +557,8 @@ private:
 
     void executeFileScript( QString _filename );
 
+    void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                            QStringList _parameters, QStringList _descriptions);
   private :
     /// Core scripting engine
     QScriptEngine scriptEngine_;
@@ -582,6 +584,19 @@ private:
     void slotGetScriptingEngine( QScriptEngine*& _engine  );
 
     void slotGetAllAvailableFunctions( QStringList& _functions  );
+
+    /// set a description for one of the plugin's public slots
+    void slotSetSlotDescription(QString     _slotName,   QString _slotDescription,
+                                QStringList _parameters, QStringList _descriptions);
+    /// get available descriptions for a given public slot
+    void slotGetDescription(QString _function, QString& _fnDescription,
+                                QStringList& _parameters, QStringList& _descriptions );
+
+  private:
+
+    QList< SlotInfo > coreSlots_;
+    
+    void setDescriptions();
 
   /** @} */
 
