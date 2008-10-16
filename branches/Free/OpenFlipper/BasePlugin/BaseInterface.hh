@@ -175,6 +175,6 @@ class BaseInterface {
 
 };
 
-Q_DECLARE_INTERFACE(BaseInterface,"OpenFlipper.BaseInterface/0.3")
+Q_DECLARE_INTERFACE(BaseInterface,"OpenFlipper.BaseInterface/1.0")
 
 #endif // BASEINTERFACE_HH
