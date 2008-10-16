@@ -825,8 +825,8 @@ void Core::slotSetSlotDescription(QString      _slotName,   QString _slotDescrip
     if (plugins[i].plugin == sender())
       pluginInfo = &plugins[i];
 
-  if (pluginInfo == 0){
-    emit log(LOGERR, "Unable to set slot-description. Plugin not found!");
+    if (pluginInfo == 0){
+      emit log(LOGERR, "Unable to set slot-description. Plugin not found!");
     return;
   }
 
@@ -907,7 +907,7 @@ void Core::setDescriptions(){
                           QString("Rotation axis., Rotation Angle., Rotation Center.").split(","));
   emit setSlotDescription("setViewingDirection(Vector,Vector)", "Set the viewing direction",
                           QString("direction,upVector").split(","),
-                          QString("Viewing direction., Up-Vector.").split(","));  
+                          QString("Viewing direction., Up-Vector.").split(","));
   emit setSlotDescription("fullscreen()", "Toggle fullscreen mode", QStringList(), QStringList());
   emit setSlotDescription("logger()", "Toggle logging window visibility", QStringList(), QStringList());
   emit setSlotDescription("toolbox()", "Toggle toolbox visibility", QStringList(), QStringList());
