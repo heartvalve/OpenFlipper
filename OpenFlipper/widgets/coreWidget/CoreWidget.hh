@@ -72,6 +72,7 @@
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
+
 struct ViewMode{
       QString name;
       bool custom; //is the mode defined by the user?
@@ -193,25 +194,25 @@ public:
   void updateRecent();
 
   /** @} */
-  
+
   //===========================================================================
   /** @name GUI Controls
   * @{ */
   //===========================================================================
-  
+
   public :
     /// Set application to Fullscreen and back
     void toggleFullscreen();
-    
+
     /// Hide or show logging area
     void toggleLogger();
 
     /// Change visibility of the logger
     void hideLogger(bool _hide);
-    
+
     /// Hide or show toolbox area
     void toggleToolbox();
-    
+
   /** @} */
 
   //===========================================================================
@@ -292,10 +293,10 @@ public:
 
     ///Spliter between toplevel objects and the textedit at the bottom
     QSplitter* splitter_;
-    
+
     /// Textedit at the bottom for log messages
     QTextEdit* textedit_;
-    
+
     /// Size of the logging window ( defaults to 240 )
     int originalLoggerSize_;
 
@@ -337,16 +338,16 @@ public:
     QAction* fileMenuEnd_;
 
   /** @} */
-    
+
   //===========================================================================
     /** @name ToolBar controls
       * @{ */
   //===========================================================================
-  private:      
+  private:
     QToolBar* viewerToolbar_;
 
     int toolbarCount_;
-        
+
   /** @} */
 
   //===========================================================================
@@ -444,64 +445,64 @@ public:
   signals:
     void applyOptions();
     void saveOptions();
-    
+
   private:
 
     /// Pointer to the OptionsWidget
     OptionsWidget* optionsWidget_;
 
-  /** @} */    
-    
+  /** @} */
+
   //===========================================================================
   /** @name ToolBar controls
   * @{ */
   //===========================================================================
-  private slots:  
+  private slots:
     /// Called by Plugins to add a Toolbar
     void slotAddToolbar(QToolBar* _toolbar);
-    
+
     /// Called by Plugins to remove a Toolbar
     void slotRemoveToolbar(QToolBar* _toolbar);
 
   private :
     QToolBar* mainToolbar_;
-    
-  /** @} */  
-    
+
+  /** @} */
+
   //===========================================================================
   /** @name StatusBar controls
    * @{ */
   //===========================================================================
   public slots:
     void statusMessage(QString _message, int _timeout = 0);
-    
+
     void clearStatusMessage();
-    
+
     void setStatus( ApplicationStatus::applicationStatus _status);
-    
+
   private:
     void setupStatusBar();
-    
+
   private :
     QStatusBar* statusBar_;
-    
+
     QLabel* statusIcon_;
-    
-  /** @} */  
-    
+
+  /** @} */
+
   //===========================================================================
   /** @name Drag and Drop
    * @{ */
   //===========================================================================
   private slots:
     void startDrag( QMouseEvent* _event );
-    
+
     void dragEnterEvent(QDragEnterEvent* _event);
-    
+
     void dropEvent( QDropEvent* _event );
-    
-  /** @} */      
-    
+
+  /** @} */
+
   private :
 
   std::vector<PluginInfo>& plugins_;
