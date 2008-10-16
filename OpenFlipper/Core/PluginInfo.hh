@@ -1,3 +1,4 @@
+
 #ifndef PLUGININFO_HH
 #define PLUGININFO_HH
 
@@ -23,7 +24,37 @@ struct SlotInfo{
 };
 
 /** Type defining a currently loaded Plugin */
-struct PluginInfo{
+class PluginInfo{
+
+  public :
+
+  PluginInfo() {
+     plugin = 0;
+     name = "";
+     description = "";
+     version = "";
+     path = "";
+     rpcName = "";
+     rpcFunctions.clear();
+     slotInfos.clear();
+     keys.clear();
+     widget = 0;
+  }
+
+
+
+  PluginInfo( const PluginInfo& _i) {
+     plugin = _i.plugin;
+     name = _i.name;
+     description = _i.description;
+     version = _i.version;
+     path = _i.path;
+     rpcName = _i.rpcName;
+     rpcFunctions = _i.rpcFunctions;
+     slotInfos = _i.slotInfos;
+     keys = _i.keys;
+     widget = _i.widget;
+  }
 
   /// Pointer to the loaded plugin (Already casted when loading it)
   QObject*    plugin;
