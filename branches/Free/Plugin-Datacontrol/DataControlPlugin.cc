@@ -53,11 +53,13 @@
 
 
 void DataControlPlugin::initializePlugin(){
-  //set the slot descriptions
-  setDescriptions();
 }
 
 void DataControlPlugin::pluginsInitialized() {
+  
+  //set the slot descriptions
+  setDescriptions();
+
   QMenu* contextMenu = new QMenu("Object selection");
 
   //Target Objects
