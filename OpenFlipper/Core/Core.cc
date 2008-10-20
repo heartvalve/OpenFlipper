@@ -891,6 +891,17 @@ void Core::slotGetDescription(QString      _function,   QString&     _fnDescript
     }
 }
 
+void Core::snapshotBaseFileName(const QString& _fname){
+  if ( OpenFlipper::Options::gui() )
+    coreWidget_->examiner_widget_->snapshotBaseFileName(_fname);
+}
+
+void Core::snapshot(){
+  if ( OpenFlipper::Options::gui() )
+    coreWidget_->examiner_widget_->snapshot();
+
+}
+
 /// set the descriptions for scriptable slots of the core
 void Core::setDescriptions(){
 

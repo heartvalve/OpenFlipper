@@ -300,6 +300,16 @@ public slots:
     /// set the maximal framerate ( automatically enables framerate restriction )
     void setMaxFrameRate( int _rate );
 
+    /// set the baseFilename for snapshots (a counter is automatically increased when
+    /// snapshot() is called)
+    void snapshotBaseFileName(const QString& _fname);
+  
+    /** Trigger a snapshot and increase the snapshot counter.
+      Save snapshot to file determined by snapshotBaseFileName() and
+      the current snapshot counter. The \a back buffer will be saved.
+    */
+    void snapshot();
+
     /** @} */
 
    //===========================================================================
