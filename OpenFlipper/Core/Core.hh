@@ -310,6 +310,9 @@ public slots:
     */
     void snapshot();
 
+    /// resize the examinerViewer
+    void resizeViewer(int _width, int _height );
+
     /** @} */
 
    //===========================================================================
