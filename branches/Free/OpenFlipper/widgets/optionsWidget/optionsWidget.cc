@@ -52,6 +52,8 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect(applyButton,SIGNAL(clicked()),this,SLOT(slotApply()));
   connect(cancelButton,SIGNAL(clicked()),this,SLOT(slotCancel()));
   connect(checkUpdateButton,SIGNAL(clicked()),this,SLOT(slotCheckUpdates()));
+  connect(updateButton,SIGNAL(clicked()),this,SLOT(slotGetUpdates()));
+  updateButton->setEnabled(false);
   connect( restrictFPS, SIGNAL(toggled(bool)), FPS, SLOT(setEnabled(bool)) );
   uint mode = 2;
   for (uint i=1; i < 22; i++) {
@@ -95,7 +97,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 
 void OptionsWidget::getBackgroundColor(){
   QColor newColor = QColorDialog::getColor (QColor(OpenFlipper::Options::defaultBackgroundColor()));
-  
+
   OpenFlipper::Options::defaultBackgroundColor( newColor.rgb() );
 
   QPixmap color(16,16);
@@ -218,6 +220,8 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
 void OptionsWidget::updateVersionsTable() {
 
+  updatedPlugins_.clear();
+
   QString fileName = QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() +
                      ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + "Versions.ini" ;
 
@@ -254,9 +258,10 @@ void OptionsWidget::updateVersionsTable() {
   if ( ini.is_connected() && ini.get_entry(coreVersion, "Core" , systemString ) ) {
 
     // Newer Version available
-    if ( isNewer(OpenFlipper::Options::coreVersion(),coreVersion) )
+    if ( isNewer(OpenFlipper::Options::coreVersion(),coreVersion) ) {
       currentBrush.setColor(Qt::red);
-    else if ( isNewer(coreVersion , OpenFlipper::Options::coreVersion()) )
+      updatedPlugins_ << "Core";
+    } else if ( isNewer(coreVersion , OpenFlipper::Options::coreVersion()) )
       currentBrush.setColor(Qt::blue);
     else
       currentBrush.setColor(Qt::green);
@@ -290,9 +295,11 @@ void OptionsWidget::updateVersionsTable() {
 
 
       // Newer Version available
-      if ( isNewer(plugins_[i].version,latestVersion) )
+      if ( isNewer(plugins_[i].version,latestVersion) ) {
          currentBrush.setColor(Qt::red);
-      else if ( isNewer(latestVersion,plugins_[i].version) )
+         QFileInfo pluginFile(plugins_[i].path );
+         updatedPlugins_ << pluginFile.fileName();
+      } else if ( isNewer(latestVersion,plugins_[i].version) )
          currentBrush.setColor(Qt::blue);
       else
          currentBrush.setColor(Qt::green);
@@ -320,6 +327,8 @@ void OptionsWidget::updateVersionsTable() {
   }
 
   updateList->resizeColumnsToContents();
+
+  updateButton->setEnabled(!updatedPlugins_.empty());
 
 }
 
@@ -395,7 +404,7 @@ void OptionsWidget::startDownload( QString _url ) {
 
   file = new QFile(fileName);
   if (!file->open(QIODevice::WriteOnly)) {
-    std::cerr << "Unable to Open local file for writing" << std::endl;
+    std::cerr << "Unable to Open local file " + fileName.toStdString() + " for writing" << std::endl;
     delete file;
     file = 0;
   } else {
@@ -436,6 +445,65 @@ void OptionsWidget::slotCheckUpdates() {
 }
 
 void OptionsWidget::slotGetUpdates() {
+   std::cerr << "Not implemented yet: Get updates" << std::endl;
+   QString url = updateURL->text();
+
+   if ( !url.endsWith("/") )
+     url += "/";
+
+
+   pluginPath_.clear();
+   pluginPath_ = "Plugins";
+
+   if ( OpenFlipper::Options::isWindows() ) {
+      pluginPath_ += "Windows/";
+   } else if ( OpenFlipper::Options::isLinux() ) {
+      pluginPath_ += "Linux/";
+   } else {
+      std::cerr << "Unknown operating system type, aborting update" << std::endl;
+      return;
+   }
+
+   if ( OpenFlipper::Options::is64bit() ) {
+      pluginPath_ += "64/";
+   } else if ( OpenFlipper::Options::is32bit() ) {
+      pluginPath_ += "32/";
+   } else {
+      std::cerr << "Unknown architecture type, aborting update" << std::endl;
+      return;
+   }
+
+   pluginPath_ += "Release/";
+
+   if ( !updatedPlugins_.empty() && updatedPlugins_[0] == "Core" ) {
+      std::cerr << "Core update not supported!" << std::endl;
+      return;
+   }
+
+   if ( !updatedPlugins_.empty() ) {
+      currentUpdateName_ = updatedPlugins_[0];
+      std::cerr << "Downloading " << (url + pluginPath_ + currentUpdateName_).toStdString() << std::endl;
+      updatedPlugins_.pop_front();
+
+      downloadType = COMPONENT;
+
+      startDownload(url + pluginPath_ + currentUpdateName_);
+   }
+
+}
+
+void OptionsWidget::updateComponent() {
+   std::cerr << "Todo : Update component" << std::endl;
+
+   QFileInfo updateFileInfo (QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() +
+                             ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + currentUpdateName_);
+
+   if ( ! updateFileInfo.exists() ) {
+      std::cerr << "Download failed?! " << std::endl;
+   } else {
+
+   }
+//    QString pluginPath_;
 }
 
 bool OptionsWidget::isNewer(QString _current, QString _latest) {
@@ -561,7 +629,9 @@ void OptionsWidget::httpRequestFinished(int requestId, bool error)
 
     if ( !error ) {
       if ( downloadType == VERSIONS_FILE )
-        compareVersions();
+         compareVersions();
+      if ( downloadType == COMPONENT )
+         updateComponent();
     }
 }
 
