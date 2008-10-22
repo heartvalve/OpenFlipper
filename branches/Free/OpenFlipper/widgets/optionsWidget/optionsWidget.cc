@@ -459,19 +459,27 @@ void OptionsWidget::updateComponent() {
 
    if ( ! sourceFileInfo.exists() ) {
       statusLabel->setText("Download failed!");
+      slotGetUpdates();
       return;
    } else {
       if ( ! targetFileInfo.exists() ) {
          statusLabel->setText("plugin target does not exist");
+         slotGetUpdates();
          return;
       }
 
       statusLabel->setText("Installing new file");
 
+      // Remove the old plugin
       QFile targetFile(targetName);
       targetFile.remove();
 
+      // copy new to old
       QFile::copy(sourceName,targetName);
+
+      // remove downloaded file
+      QFile sourceFile(sourceName);
+      sourceFile.remove();
 
       statusLabel->setText("updated " + currentUpdateName_);
    }
