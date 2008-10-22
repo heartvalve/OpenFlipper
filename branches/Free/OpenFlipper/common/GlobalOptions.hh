@@ -57,6 +57,7 @@
 
 #include <QDir>
 #include <QStringList>
+#include <QColor>
 
 namespace OpenFlipper {
 namespace Options {
@@ -425,6 +426,14 @@ bool iconDir(QString _dir);
   /// Display splash screen?
   DLLEXPORT
   bool splash( );
+
+  /// Default background color
+  DLLEXPORT
+  void defaultBackgroundColor( QRgb _color );
+
+  /// Default background color
+  DLLEXPORT
+  QRgb defaultBackgroundColor();
 
 /** @} */
 
