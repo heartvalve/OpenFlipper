@@ -45,86 +45,105 @@
 class OptionsWidget : public QWidget, public Ui::OptionsWidget
 {
 
-  Q_OBJECT
-  public:
-    OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent = 0 );
+Q_OBJECT
 
-  signals:
-    void applyOptions();
-    void saveOptions();
+public:
+   OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent = 0 );
 
-  private slots:
-    /// Hide widget, Update Options and tell others about changed Options
-    void slotApply();
+signals:
+   void applyOptions();
+   void saveOptions();
 
-    /// Only hide widget
-    void slotCancel();
+private slots:
+   /// Hide widget, Update Options and tell others about changed Options
+   void slotApply();
 
-    /// Checks for updates
-    void slotCheckUpdates();
+   /// Only hide widget
+   void slotCancel();
 
-    /// Download updates
-    void slotGetUpdates();
+   /// Checks for updates
+   void slotCheckUpdates();
 
-    /// open a dialog to determine the color
-    void getBackgroundColor();
+   /// Download updates
+   void slotGetUpdates();
+    
+   /// open a dialog to determine the color
+   void getBackgroundColor();
 
-  protected:
-    void showEvent ( QShowEvent * event );
+protected:
+   void showEvent ( QShowEvent * event );
 
-  private:
-    //key-bindings
-    std::vector<PluginInfo>& plugins_;
-    std::vector<KeyBinding>& coreKeys_;
+private:
+   //key-bindings
+   std::vector<PluginInfo>& plugins_;
+   std::vector<KeyBinding>& coreKeys_;
 
-    // flag indicating if something went wrong and the request has to be aborted
-    bool httpRequestAborted;
+   // flag indicating if something went wrong and the request has to be aborted
+   bool httpRequestAborted;
 
-    // Id of the current request
-    int httpGetId;
+   // Id of the current request
+   int httpGetId;
 
-    // Request variable
-    QHttp *http;
+   // Request variable
+   QHttp *http;
 
-    // File for http downloads
-    QFile *file;
+   // File for http downloads
+   QFile *file;
 
-    // ProgressDialog for Downloads
-    QProgressDialog *progressDialog;
+   // ProgressDialog for Downloads
+   QProgressDialog *progressDialog;
 
-    // What type of download is currently active
-    enum DOWNLOAD {
+   // What type of download is currently active
+   enum DOWNLOAD {
       NONE,
       VERSIONS_FILE,
+      COMPONENT,
       WINDOWS_SETUP
-    } downloadType;
+   } downloadType;
 
-  private:
-    /// Starts the download of the given file
-    void startDownload( QString _url );
+private:
+   /// Starts the download of the given file
+   void startDownload( QString _url );
 
-    /// Compares the versions from the downloaded Versions file with the current versions
-    void compareVersions();
+   /// Compares the versions from the downloaded Versions file with the current versions
+   void compareVersions();
 
-    /// Compares two version strings and returns if a newer Version is available
-    bool isNewer(QString _current, QString _latest);
+   /// Compares two version strings and returns if a newer Version is available
+   bool isNewer(QString _current, QString _latest);
 
-    /// Redraws the version table
-    void updateVersionsTable();
+   /// Redraws the version table
+   void updateVersionsTable();
 
-  private slots:
+private slots:
 
-    // This slot is called when a http request has been finished
-    void httpRequestFinished(int requestId, bool error);
+   // This slot is called when a http request has been finished
+   void httpRequestFinished(int requestId, bool error);
 
-    // Parses the response and gives feedback
-    void readResponseHeader(const QHttpResponseHeader &responseHeader);
+   // Parses the response and gives feedback
+   void readResponseHeader(const QHttpResponseHeader &responseHeader);
 
-    // Updates the progress Dialog while downloading
-    void updateDataReadProgress(int bytesRead, int totalBytes);
+   // Updates the progress Dialog while downloading
+   void updateDataReadProgress(int bytesRead, int totalBytes);
 
-    // Progress dialog callback for cancel
-    void cancelDownload();
+   // Progress dialog callback for cancel
+   void cancelDownload();
+
+   // Update component of OpenFlipper
+   void updateComponent();
+
+private:
+   /** After checking for updates this variable will contain a list of filenames for which updates are available
+    */
+   QStringList updatedPlugins_;
+
+   /** Here the architecture specific path for plugins will be created
+    */
+   QString pluginPath_;
+
+   /** Current filename of the plugin to be updated
+    */
+   QString currentUpdateName_;
+
 
 };
 
