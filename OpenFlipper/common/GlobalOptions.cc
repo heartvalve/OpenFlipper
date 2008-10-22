@@ -127,6 +127,9 @@ static QString title_ = "OpenFlipper v?";
 /// Show a splash screen on init?
 static bool splash_ = true;
 
+/// default background color for the viewer
+static QRgb defaultBackgroundColor_ = 0;
+
 /// Scripting status
 static bool scripting_ = false;
 
@@ -483,6 +486,13 @@ bool splash( ) {
   return splash_;
 }
 
+void defaultBackgroundColor( QRgb _color ) {
+  defaultBackgroundColor_ = _color;
+}
+
+QRgb defaultBackgroundColor() {
+  return defaultBackgroundColor_;
+}
 
 /// return last used dataType
 QString lastDataType(){

@@ -48,6 +48,7 @@
 
 #include "OpenFlipper/INIFile/INIFile.hh"
 #include "OpenFlipper/common/GlobalOptions.hh"
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 //== IMPLEMENTATION ==========================================================
 
@@ -104,6 +105,10 @@ void Core::applyOptions(){
         }
       }
     }
+  
+    //set defaultBackgroundColor
+    QColor c = QColor( OpenFlipper::Options::defaultBackgroundColor() );
+    PluginFunctions::setBackColor( OpenMesh::Vec4f(c.redF(),c.greenF(),c.blueF(),0.0f) );
 
     updateView();
 

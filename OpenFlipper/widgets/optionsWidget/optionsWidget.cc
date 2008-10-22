@@ -39,6 +39,8 @@
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 #include <OpenFlipper/INIFile/INIFile.hh>
 
+#include <QColorDialog>
+
 OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent)
   : QWidget(parent),
     plugins_(_plugins),
@@ -85,6 +87,20 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 
   progressDialog = new QProgressDialog(this);
   connect(progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
+
+
+  //colordialog
+  connect(backgroundButton, SIGNAL(clicked()), this, SLOT(getBackgroundColor()) );
+}
+
+void OptionsWidget::getBackgroundColor(){
+  QColor newColor = QColorDialog::getColor (QColor(OpenFlipper::Options::defaultBackgroundColor()));
+  
+  OpenFlipper::Options::defaultBackgroundColor( newColor.rgb() );
+
+  QPixmap color(16,16);
+  color.fill(QColor(OpenFlipper::Options::defaultBackgroundColor()));
+  backgroundButton->setIcon( QIcon(color) );
 }
 
 void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
@@ -106,6 +122,10 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
   FPS->setValue( OpenFlipper::Options::maxFrameRate() );
+
+  QPixmap color(16,16);
+  color.fill(QColor(OpenFlipper::Options::defaultBackgroundColor()));
+  backgroundButton->setIcon( QIcon(color) );
 
   // updates
   updateUser->setText( OpenFlipper::Options::updateUsername() );

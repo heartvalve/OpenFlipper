@@ -66,6 +66,9 @@ class OptionsWidget : public QWidget, public Ui::OptionsWidget
     /// Download updates
     void slotGetUpdates();
 
+    /// open a dialog to determine the color
+    void getBackgroundColor();
+
   protected:
     void showEvent ( QShowEvent * event );
 

@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>488</width>
-    <height>689</height>
+    <width>484</width>
+    <height>763</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -23,7 +23,7 @@ You can select multiple modes at the same time.</string>
       <string/>
      </property>
      <property name="currentIndex" >
-      <number>4</number>
+      <number>2</number>
      </property>
      <property name="usesScrollButtons" >
       <bool>true</bool>
@@ -33,8 +33,8 @@ You can select multiple modes at the same time.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>466</width>
-        <height>603</height>
+        <width>462</width>
+        <height>685</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -133,8 +133,8 @@ You can select multiple modes at the same time.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>466</width>
-        <height>603</height>
+        <width>462</width>
+        <height>685</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -165,14 +165,14 @@ You can select multiple modes at the same time.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>466</width>
-        <height>603</height>
+        <width>462</width>
+        <height>685</height>
        </rect>
       </property>
       <attribute name="title" >
        <string>Viewer</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout" >
+      <layout class="QVBoxLayout" name="verticalLayout_9" >
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
@@ -295,7 +295,7 @@ You can select multiple modes at the same time.</string>
          <property name="title" >
           <string> Other </string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_10" >
+         <layout class="QVBoxLayout" name="verticalLayout" >
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2" >
             <item>
@@ -365,6 +365,30 @@ You can select multiple modes at the same time.</string>
             </property>
            </widget>
           </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6" >
+            <item>
+             <widget class="QPushButton" name="backgroundButton" >
+              <property name="text" >
+               <string>Default background color</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_6" >
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </item>
@@ -375,8 +399,8 @@ You can select multiple modes at the same time.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>466</width>
-        <height>603</height>
+        <width>462</width>
+        <height>685</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -399,8 +423,8 @@ You can select multiple modes at the same time.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>466</width>
-        <height>603</height>
+        <width>462</width>
+        <height>685</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -514,8 +538,8 @@ You can select multiple modes at the same time.</string>
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>466</width>
-        <height>603</height>
+        <width>462</width>
+        <height>685</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -606,7 +630,6 @@ p, li { white-space: pre-wrap; }
     </layout>
    </item>
   </layout>
-  <zorder>tabWidget</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -204,6 +204,13 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::fullScreen(fullScreen);
 
     //============================================================================
+    // Load the setting for the fullscreen option
+    //============================================================================
+    uint backgroundColor = 0;
+    if ( _ini.get_entry( backgroundColor, "Options" , "DefaultBackgroundColor") )
+      OpenFlipper::Options::defaultBackgroundColor(backgroundColor);
+
+    //============================================================================
     // Load the setting for the default Toolbox mode
     //============================================================================
     QString toolboxMode = false;
@@ -400,6 +407,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
     // check if we are in fullscreen mode:
     _ini.add_entry("Options","FullScreen", OpenFlipper::Options::fullScreen() );
+
+    _ini.add_entry("Options","DefaultBackgroundColor", (uint)OpenFlipper::Options::defaultBackgroundColor() );
   }
 
   _ini.add_entry("Options","Stereo",OpenFlipper::Options::stereo() );
