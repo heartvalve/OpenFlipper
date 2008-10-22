@@ -903,8 +903,10 @@ void Core::snapshot(){
 }
 
 void Core::resizeViewer(int _width, int _height ){
-  if ( OpenFlipper::Options::gui() )
-    coreWidget_->examiner_widget_->setSize(_width, _height);
+  if ( OpenFlipper::Options::gui() ){
+    //+40 / +20 corresponds to the bottom and right scrollbar
+    coreWidget_->examiner_widget_->resize(_width+40, _height+20);
+  }
 }
 
 /// set the descriptions for scriptable slots of the core
@@ -933,8 +935,12 @@ void Core::setDescriptions(){
                         QStringList("enabled"), QStringList("restriction switch"));
   emit setSlotDescription("setMaxFrameRate(int)", "set the maximal framerate (automatically enables framerate restriction)",
                         QStringList("frameRate"), QStringList("Maximum frameRate"));
-  emit setSlotDescription("snapshotBaseFileName(QString&)", "", QStringList(), QStringList());
-  emit setSlotDescription("snapshot()", "Make a snapshot of the viewer.", QStringList(), QStringList());
+  emit setSlotDescription("snapshotBaseFileName(QString&)", "Set a filename for storing snapshots."
+                          , QStringList(), QStringList());
+  emit setSlotDescription("snapshot()", "Make a snapshot of the viewer. If no filename"
+                          " was set using snapshotBaseFileName() the snapshot is stored"
+                          " in snap.png in the current directory. For every snapshot"
+                          " a counter is added to the filename.", QStringList(), QStringList());
   emit setSlotDescription("resizeViewer(int,int)", "Resize the viewer",
                            QString("width,height").split(","),
                            QString("new width for the viewer,new height for the viewer").split(","));
