@@ -406,10 +406,13 @@ void OptionsWidget::slotCheckUpdates() {
    // http://www.graphics.rwth-aachen.de/restricted/OpenFlipper-SIL/
 
   downloadType = VERSIONS_FILE;
-  QString ServerMainURL = updateURL->text() + "Versions.ini";
+  QString ServerMainURL = updateURL->text();
+  if ( !ServerMainURL.endsWith("/") )
+     ServerMainURL += "/";
+
+  ServerMainURL += "Versions.ini";
 
   startDownload(ServerMainURL);
-
 }
 
 void OptionsWidget::slotGetUpdates() {
