@@ -1,0 +1,111 @@
+<ui version="4.0" >
+ <class>AboutWidget</class>
+ <widget class="QMainWindow" name="AboutWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>517</width>
+    <height>567</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>About OpenFlipper</string>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>25</y>
+     <width>517</width>
+     <height>517</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout" >
+    <item>
+     <widget class="QTabWidget" name="About" >
+      <property name="currentIndex" >
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab" >
+       <property name="geometry" >
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>495</width>
+         <height>431</height>
+        </rect>
+       </property>
+       <attribute name="title" >
+        <string>OpenFlipper</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <item>
+         <widget class="QTextEdit" name="OpenFlipperAbout" />
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout" >
+      <item>
+       <spacer name="horizontalSpacer" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="closeButton" >
+        <property name="text" >
+         <string>Close</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>517</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>File</string>
+    </property>
+    <addaction name="actionClose" />
+   </widget>
+   <addaction name="menuFile" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>542</y>
+     <width>517</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <action name="actionClose" >
+   <property name="text" >
+    <string>Close</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
