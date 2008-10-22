@@ -453,7 +453,7 @@ void OptionsWidget::slotGetUpdates() {
 
 
    pluginPath_.clear();
-   pluginPath_ = "Plugins";
+   pluginPath_ = "Plugins/";
 
    if ( OpenFlipper::Options::isWindows() ) {
       pluginPath_ += "Windows/";
@@ -485,7 +485,7 @@ void OptionsWidget::slotGetUpdates() {
       std::cerr << "Downloading " << (url + pluginPath_ + currentUpdateName_).toStdString() << std::endl;
       updatedPlugins_.pop_front();
 
-      downloadType = COMPONENT;
+      downloadType = PLUGIN;
 
       startDownload(url + pluginPath_ + currentUpdateName_);
    }
@@ -495,15 +495,39 @@ void OptionsWidget::slotGetUpdates() {
 void OptionsWidget::updateComponent() {
    std::cerr << "Todo : Update component" << std::endl;
 
-   QFileInfo updateFileInfo (QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() +
-                             ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + currentUpdateName_);
 
-   if ( ! updateFileInfo.exists() ) {
-      std::cerr << "Download failed?! " << std::endl;
+
+   QString sourceName = QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() +
+                                     ".OpenFlipper" + OpenFlipper::Options::dirSeparator() + currentUpdateName_ ;
+
+   QString targetName = OpenFlipper::Options::applicationDirStr() + "/" + pluginPath_ + currentUpdateName_;
+
+   QFileInfo sourceFileInfo(sourceName);
+   QFileInfo targetFileInfo(targetName);
+
+   std::cerr << sourceName.toStdString() << std::endl;
+   std::cerr << targetName.toStdString() << std::endl;
+
+   if ( ! sourceFileInfo.exists() ) {
+      statusLabel->setText("Download failed!");
+      return;
    } else {
+      if ( ! targetFileInfo.exists() ) {
+         statusLabel->setText("plugin target does not exist");
+         return;
+      }
 
+      statusLabel->setText("Installing new file");
+
+      QFile targetFile(targetName);
+      targetFile.remove();
+
+      QFile::copy(sourceName,targetName);
+
+      statusLabel->setText("updated " + currentUpdateName_);
    }
-//    QString pluginPath_;
+
+   slotGetUpdates();
 }
 
 bool OptionsWidget::isNewer(QString _current, QString _latest) {
@@ -630,7 +654,7 @@ void OptionsWidget::httpRequestFinished(int requestId, bool error)
     if ( !error ) {
       if ( downloadType == VERSIONS_FILE )
          compareVersions();
-      if ( downloadType == COMPONENT )
+      if ( downloadType == PLUGIN )
          updateComponent();
     }
 }
