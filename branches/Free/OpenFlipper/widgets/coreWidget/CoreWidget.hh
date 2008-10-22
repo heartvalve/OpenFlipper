@@ -67,6 +67,7 @@
 
 #include <QDockWidget>
 
+#include <OpenFlipper/widgets/aboutWidget/aboutWidget.hh>
 #include <OpenFlipper/widgets/optionsWidget/optionsWidget.hh>
 #include <OpenFlipper/widgets/helpBrowser/helpWidget.hh>
 
@@ -430,6 +431,21 @@ public:
 
     /// Pointer to the help Browser
     HelpWidget* helpBrowserUser_;
+
+  /** @} */
+
+  //===========================================================================
+  /** @name About System
+  * @{ */
+  //===========================================================================
+
+  public slots:
+    /// Display the about widget
+    void showAboutWidget();
+
+  private:
+    /// Pointer to the about widget
+    AboutWidget* aboutWidget_;
 
   /** @} */
 

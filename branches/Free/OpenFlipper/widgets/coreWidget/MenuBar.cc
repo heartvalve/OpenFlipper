@@ -268,7 +268,7 @@ void CoreWidget::setupMenuBar()
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-about.png");
   AC_About->setIcon(icon);
   AC_About->setWhatsThis("This entry shows information about <b>OpenFlipper</b>");
-//   connect(AC_HelpBrowser, SIGNAL(triggered()), this, SIGNAL(showHelpBrowser()));
+  connect(AC_About, SIGNAL(triggered()), this, SLOT(showAboutWidget()));
   helpMenu_->addAction(AC_About);
 
   // Add Menu entries to the main Toolbar

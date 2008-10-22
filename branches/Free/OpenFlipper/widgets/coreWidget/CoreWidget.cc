@@ -82,6 +82,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   stackedWidget_(0),
   helpBrowserDeveloper_(0),
   helpBrowserUser_(0),
+  aboutWidget_(0),
   optionsWidget_(0),
   plugins_(_plugins)
 
@@ -282,7 +283,7 @@ CoreWidget::~CoreWidget() {
   */
 void
 CoreWidget::toggleFullscreen() {
-  
+
   setWindowState( windowState() ^  Qt::WindowFullScreen);
 
   OpenFlipper::Options::fullScreen( bool( windowState() & Qt::WindowFullScreen) );
@@ -326,7 +327,7 @@ CoreWidget::hideLogger(bool _hide) {
 
     if (wsizes[0] == 0)
       wsizes[0] = height();
-    
+
     wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
     wsizes[1] = originalLoggerSize_;
     splitter_->setSizes(wsizes);
