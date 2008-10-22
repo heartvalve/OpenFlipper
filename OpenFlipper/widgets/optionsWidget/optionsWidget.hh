@@ -66,7 +66,7 @@ private slots:
 
    /// Download updates
    void slotGetUpdates();
-    
+
    /// open a dialog to determine the color
    void getBackgroundColor();
 
@@ -97,7 +97,7 @@ private:
    enum DOWNLOAD {
       NONE,
       VERSIONS_FILE,
-      COMPONENT,
+      PLUGIN,
       WINDOWS_SETUP
    } downloadType;
 
