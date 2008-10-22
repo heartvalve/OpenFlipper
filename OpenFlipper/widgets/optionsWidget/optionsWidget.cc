@@ -236,6 +236,8 @@ void OptionsWidget::updateVersionsTable() {
     // Newer Version available
     if ( isNewer(OpenFlipper::Options::coreVersion(),coreVersion) )
       currentBrush.setColor(Qt::red);
+    else if ( isNewer(coreVersion , OpenFlipper::Options::coreVersion()) )
+      currentBrush.setColor(Qt::blue);
     else
       currentBrush.setColor(Qt::green);
 
@@ -269,9 +271,11 @@ void OptionsWidget::updateVersionsTable() {
 
       // Newer Version available
       if ( isNewer(plugins_[i].version,latestVersion) )
-        currentBrush.setColor(Qt::red);
+         currentBrush.setColor(Qt::red);
+      else if ( isNewer(latestVersion,plugins_[i].version) )
+         currentBrush.setColor(Qt::blue);
       else
-        currentBrush.setColor(Qt::green);
+         currentBrush.setColor(Qt::green);
 
       newItem = new QTableWidgetItem( latestVersion );
 
