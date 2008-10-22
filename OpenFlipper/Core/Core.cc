@@ -909,6 +909,35 @@ void Core::resizeViewer(int _width, int _height ){
   }
 }
 
+void Core::writeVersionNumbers(QString _filename){
+  
+INIFile ini;
+
+  if ( ! ini.connect(_filename,true) ) {
+    emit log(LOGERR,"Failed to connect to _ini file" + _filename);
+      return;
+  }
+
+  //add coreVersion
+  ini.add_section( "Core" );
+  if ( OpenFlipper::Options::isWindows() )
+    ini.add_entry( "Core" , "VersionWindows" , OpenFlipper::Options::coreVersion() );
+  else
+    ini.add_entry( "Core" , "VersionLinux"   , OpenFlipper::Options::coreVersion() );
+
+  //add pluginVersions
+  for (uint i=0; i < plugins.size(); i++){
+    ini.add_section( plugins[i].name );
+
+    if ( OpenFlipper::Options::isWindows() )
+      ini.add_entry( plugins[i].name , "VersionWindows" , plugins[i].version );
+    else
+      ini.add_entry( plugins[i].name , "VersionLinux"   , plugins[i].version );
+  }
+
+  ini.disconnect();
+}
+
 /// set the descriptions for scriptable slots of the core
 void Core::setDescriptions(){
 
@@ -944,7 +973,9 @@ void Core::setDescriptions(){
   emit setSlotDescription("resizeViewer(int,int)", "Resize the viewer",
                            QString("width,height").split(","),
                            QString("new width for the viewer,new height for the viewer").split(","));
-
+  emit setSlotDescription("writeVersionNumbers(QString)", "write the current versions of all plugins to INI file",
+                           QStringList("filename"),
+                           QStringList("fullpath to a file where the versions should be written to."));
 }
 // //-----------------------------------------------------------------------------
 //

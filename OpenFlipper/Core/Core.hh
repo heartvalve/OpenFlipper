@@ -313,6 +313,9 @@ public slots:
     /// resize the examinerViewer
     void resizeViewer(int _width, int _height );
 
+    /// write the current versions of all plugins to ini file
+    void writeVersionNumbers(QString _filename);
+
     /** @} */
 
    //===========================================================================
