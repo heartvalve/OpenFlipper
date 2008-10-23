@@ -214,8 +214,8 @@
         shader->use();
 
         shader->setUniform("ward_specular" , 0.5f);
-        shader->setUniform("ward_diffuse"  , 1.0f);
-        shader->setUniform("ward_alpha"    , 0.1f);
+        shader->setUniform("ward_diffuse"  , 3.0f);
+        shader->setUniform("ward_alpha"    , 0.2f);
 
         shader->disable();
       }
