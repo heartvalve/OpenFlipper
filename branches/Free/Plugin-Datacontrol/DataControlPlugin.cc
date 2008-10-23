@@ -56,7 +56,7 @@ void DataControlPlugin::initializePlugin(){
 }
 
 void DataControlPlugin::pluginsInitialized() {
-  
+
   //set the slot descriptions
   setDescriptions();
 
@@ -88,7 +88,9 @@ void DataControlPlugin::pluginsInitialized() {
 bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
 {
    locked = false;
-   tool_ = new QWidget();
+   tool_ = new DatacontrolToolboxWidget();
+   connect( tool_ , SIGNAL( keyEvent( QKeyEvent* ) ),
+            this  , SLOT(slotKeyEvent ( QKeyEvent* ) ));
    _widget = tool_;
    QSize size(300, 300);
    tool_->resize(size);
@@ -295,6 +297,16 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
         return;
     }
   }
+
+    switch (_event->key()) {
+      case Qt::Key_Delete :
+          std::cerr << "Todo : Datacontrol Plugin: got delete key ..." << std::endl;
+          slotPopupRemove();
+        return;
+      default:
+        return;
+    }
+
 }
 
 void DataControlPlugin::setAllTarget() {

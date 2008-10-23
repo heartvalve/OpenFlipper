@@ -49,6 +49,7 @@
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <ACG/QtWidgets/QtExaminerViewer.hh>
 #include <OpenFlipper/common/Types.hh>
+#include "Toolbox.hh"
 
 //#include "QCheckBoxDelegate.hh"
 
@@ -126,7 +127,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
 
    private :
       /// Widget for Toolbox
-      QWidget* tool_;
+      DatacontrolToolboxWidget* tool_;
 
       /// Layout for Toolbox
       QGridLayout* MeshDialogLayout_;
