@@ -50,7 +50,7 @@
 
  /**
  * This Interface should be used by plugins which will provide a toolbar.
- * Each Plugin can create own Toolbars. Emit 
+ * Each Plugin can create own Toolbars. Emit
  */
 class ToolbarInterface {
 
@@ -69,8 +69,8 @@ class ToolbarInterface {
       * @param _toolbar Your Toolbar
       */
       virtual void addToolbar(QToolBar* /*_toolbar*/) {};
-      
-      
+
+
       /** \brief Remove a Toolbar from the main widget
       *
       * @param _toolbar Toolbar to be removed
@@ -78,8 +78,16 @@ class ToolbarInterface {
       virtual void removeToolbar(QToolBar* /*_toolbar*/) {};
 
 
+      /** \brief Get a pointer to a Toolbar of the given name or 0 if it does not exist.
+      *
+      * @param _name Name of the Toolbar
+      * @param _toolbar requested Toolbar or 0
+      */
+      virtual void getToolBar( QString /*_name*/, QToolBar*& /*_toolbar*/ ) {};
+
+
 };
 
-Q_DECLARE_INTERFACE(ToolbarInterface,"OpenFlipper.ToolbarInterface/1.0")
+Q_DECLARE_INTERFACE(ToolbarInterface,"OpenFlipper.ToolbarInterface/1.1")
 
 #endif // TOOLBARINTERFACE_HH
