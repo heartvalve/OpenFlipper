@@ -480,8 +480,13 @@ public:
     /// Called by Plugins to remove a Toolbar
     void slotRemoveToolbar(QToolBar* _toolbar);
 
+    /// Called by Plugins to get access to specific Toolbars by name
+    void getToolBar( QString _name, QToolBar*& _toolbar);
+
   private :
     QToolBar* mainToolbar_;
+
+    std::vector< QToolBar* > toolbars_;
 
   /** @} */
 

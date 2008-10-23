@@ -615,6 +615,10 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"removeToolbar(QToolBar*)") )
         connect(plugin,SIGNAL(removeToolbar(QToolBar*)),
                 coreWidget_,SLOT(slotRemoveToolbar(QToolBar*)),Qt::DirectConnection);
+
+      if ( checkSignal(plugin,"getToolBar(QString,QToolBar*&)") )
+        connect(plugin,SIGNAL(getToolBar(QString,QToolBar*&)),
+                coreWidget_,SLOT(getToolBar(QString,QToolBar*&)),Qt::DirectConnection);
     }
 
     //Check if the plugin supports StatusBar-Interface

@@ -86,6 +86,9 @@
         <default/>
       </environments>
     </other>
+    <general>
+      <activedir>OpenFlipper</activedir>
+    </general>
   </kdevcustomproject>
   <kdevdebugger>
     <general>

@@ -51,15 +51,45 @@
 //== IMPLEMENTATION ==========================================================
 
 void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
+
+//   int newNumber = toolbarCount_;
+//   toolbarCount_++;
+//   QString number = QString::number(newNumber);
+//   _toolbar->setObjectName("Toolbar" + number);
+  for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
+    if ( toolbars_[i]->windowTitle() == _toolbar->windowTitle() ) {
+      std::cerr << "Toolbar exists! " << std::endl;
+      return;
+    }
+  }
+  _toolbar->setObjectName( _toolbar->windowTitle() );
+  toolbars_.push_back( _toolbar );
   addToolBar( _toolbar );
-  int newNumber = toolbarCount_;
-  toolbarCount_++;
-  QString number = QString::number(newNumber);
-  _toolbar->setObjectName("Toolbar" + number);
+}
+
+void CoreWidget::getToolBar( QString _name, QToolBar*& _toolbar) {
+
+  for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
+    if ( toolbars_[i]->windowTitle() == _name ) {
+      std::cerr << "Toolbar found! " << std::endl;
+      _toolbar = toolbars_[i];
+      return;
+    }
+  }
+
+  _toolbar = 0;
 }
 
 void CoreWidget::slotRemoveToolbar(QToolBar* _toolbar) {
-  removeToolBar( _toolbar );
+  for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
+    if ( toolbars_[i]->windowTitle() == _toolbar->windowTitle() ) {
+      std::cerr << "Todo : erase Toolbar from list" << std::endl;
+      removeToolBar( _toolbar );
+      return;
+    }
+  }
+
+  emit log(LOGERR,"Remove Toolbar: Toolbar not found." );
 }
 
 

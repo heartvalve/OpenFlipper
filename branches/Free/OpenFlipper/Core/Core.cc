@@ -152,6 +152,7 @@ Core::init() {
 
   if ( OpenFlipper::Options::gui() ) {
 
+    // Initialize redraw timer. Will be used to restrict the rendering framerate.
     redrawTimer_ = new QTimer();
     redrawTimer_->setSingleShot(true);
     connect(redrawTimer_, SIGNAL(timeout()), this, SLOT(updateView()),Qt::DirectConnection);
@@ -910,7 +911,7 @@ void Core::resizeViewer(int _width, int _height ){
 }
 
 void Core::writeVersionNumbers(QString _filename){
-  
+
 INIFile ini;
 
   if ( ! ini.connect(_filename,true) ) {

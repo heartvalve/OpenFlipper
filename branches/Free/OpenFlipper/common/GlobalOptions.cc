@@ -609,7 +609,7 @@ QString updatePassword( ) {
 }
 
 QString coreVersion() {
-  return QString("0.9");
+  return QString("0.9.1");
 }
 
 

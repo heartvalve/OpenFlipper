@@ -1,31 +1,55 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="8" >
-  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/TemplateModelingPlugin.cc" >
-   <View0 Encoding="" line="27" Type="Source" />
+ <DocsAndViews NumberOfDocuments="16" >
+  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/INIFile/INIFile.hh" >
+   <View0 Encoding="" line="276" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/TemplateModelingPlugin.hh" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/CoreWidget.cc" >
+   <View0 Encoding="" line="143" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/ManipulatorPlacement.cc" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/CoreWidget.hh" >
+   <View0 Encoding="" line="488" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/Matching.cc" >
-   <View0 Encoding="" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/optionsWidget/optionsWidget.cc" >
+   <View0 Encoding="" line="472" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/TemplateBlendingComputation.cc" >
-   <View0 Encoding="" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Color/ColorPlugin.hh" >
+   <View0 Encoding="" line="34" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/DataContainerT.hh" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Scissor/ScissorPlugin.cc" >
+   <View0 Encoding="" line="61" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/Init.cc" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/Core.cc" >
+   <View0 Encoding="" line="158" Type="Source" />
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/SensorFramework/GPS/widgets/GPSWidget.hh" >
-   <View0 Encoding="" line="24" Type="Source" />
+  <Doc7 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/CoreWidgetToolbar.cc" >
+   <View0 Encoding="" line="72" Type="Source" />
   </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/PluginLoader.cc" >
+   <View0 Encoding="" line="602" Type="Source" />
+  </Doc8>
+  <Doc9 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/BasePlugin/ToolbarInterface.hh" >
+   <View0 Encoding="" line="85" Type="Source" />
+  </Doc9>
+  <Doc10 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/GlobalOptions.cc" >
+   <View0 Encoding="" line="601" Type="Source" />
+  </Doc10>
+  <Doc11 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Datacontrol/DataControlPlugin.hh" >
+   <View0 Encoding="" line="94" Type="Source" />
+  </Doc11>
+  <Doc12 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Datacontrol/DataControlPlugin.cc" >
+   <View0 Encoding="" line="303" Type="Source" />
+  </Doc12>
+  <Doc13 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Datacontrol/Toolbox.cc" >
+   <View0 Encoding="" line="7" Type="Source" />
+  </Doc13>
+  <Doc14 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Datacontrol/Toolbox.hh" >
+   <View0 Encoding="" line="7" Type="Source" />
+  </Doc14>
+  <Doc15 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Datacontrol/Popup.cc" >
+   <View0 Encoding="" line="41" Type="Source" />
+  </Doc15>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
