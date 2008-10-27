@@ -140,8 +140,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // ======================================================================
 
   mainToolbar_ = new QToolBar("Main Toolbar");
+  mainToolbar_->setWindowTitle("Main Toolbar");
   mainToolbar_->setObjectName("MainToolbar");
-  addToolBar(mainToolbar_);
+  slotAddToolbar(mainToolbar_);
 
   // ======================================================================
   // Get Toolbar from examiner and integrate it into main window
