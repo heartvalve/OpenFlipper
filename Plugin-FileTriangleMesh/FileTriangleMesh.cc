@@ -138,6 +138,12 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
   BaseObjectData* object;
   PluginFunctions::get_object(_id,object);
 
+  if (object  == 0){
+      emit log(LOGERR, "Unable to save " + object->path() + OpenFlipper::Options::dirSeparator() + object->name()
+                     + " (Could not get object)");
+      return false;
+  }
+
   std::string filename = std::string( _filename.toUtf8() );
 
   if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
@@ -148,18 +154,21 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
 
     OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
 
-    if (saveBinary_->isChecked())
-      opt += OpenMesh::IO::Options::Binary;
-    
-    if (saveColor_->isChecked())
-      opt += OpenMesh::IO::Options::VertexColor;
-    
-    if (saveNormals_->isChecked())
-      opt += OpenMesh::IO::Options::VertexNormal;
-    
-    if (saveTexCoords_->isChecked())
-      opt += OpenMesh::IO::Options::VertexTexCoord;
-    
+    if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0){
+
+      if (saveBinary_->isChecked())
+        opt += OpenMesh::IO::Options::Binary;
+      
+      if (saveColor_->isChecked())
+        opt += OpenMesh::IO::Options::VertexColor;
+      
+      if (saveNormals_->isChecked())
+        opt += OpenMesh::IO::Options::VertexNormal;
+      
+      if (saveTexCoords_->isChecked())
+        opt += OpenMesh::IO::Options::VertexTexCoord;
+
+    }
 
     if (OpenMesh::IO::write_mesh(*triObj->mesh(), filename.c_str(),opt) ){
       emit log(LOGINFO, "Saved object to " + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
@@ -304,6 +313,11 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
     else
       saveBinary_->setVisible( true );
   }
+
+  saveBinary_->setChecked( Qt::Unchecked );
+  saveColor_->setChecked( Qt::Unchecked );
+  saveNormals_->setChecked( Qt::Unchecked );
+  saveTexCoords_->setChecked( Qt::Unchecked );
 
   return saveOptions_;
 }
