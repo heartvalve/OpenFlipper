@@ -241,9 +241,6 @@ signals:
       /// A plugin wants to load a given file
       void slotLoad(QString _filename, DataType _type, int& _id);
 
-      /// A plugin wants to save an object;
-      void slotSave(int _id , QString _filename);
-
       /// Called when a file has been opened
       void slotObjectOpened ( int _id );
 
@@ -350,16 +347,43 @@ private:
    */
   int loadObject( DataType _type, QString _filename);
 
-  /** Save object with given id
-   * @param _id id of the object
-   */
-  bool saveObject( int _id, QString _filename );
+  /** @} */
 
-  /** Show dialog for saving an object to a new location
-   * @param _id id of the object
-   * @param _filename current filename of the object
-   */
-  bool saveObjectTo( int _id, QString _filename );
+  //===========================================================================
+    /** @name Load / Save slots
+    * @{ */
+  //===========================================================================
+
+  public slots:
+
+    /** Save object with given id
+      * @param _id id of the object
+      */
+    bool saveObject( int _id, QString _filename );
+    
+    /** Show dialog for saving an object to a new location
+      * @param _id id of the object
+      * @param _filename current filename of the object
+      */
+    bool saveObjectTo( int _id, QString _filename );
+
+    /// Slot for saving objects from Menu
+    void saveAllObjects();
+
+    /// Slot for saving objects to a new location
+    void saveAllObjectsTo();
+
+    /// Save current status to a settings file
+    void saveSettings();
+
+    /// Open Load Widget
+    void loadObject();
+
+    /// Load status from file
+    void loadSettings();
+
+    /// Load status from file
+    void loadSettings(QString _filename);
 
   /** @} */
 
@@ -384,23 +408,8 @@ private:
       /// Slot adding empty object from Menu of a given type
       void slotAddEmptyObject( DataType _type , int& _id );
 
-      /// Slot for saving objects from Menu
-      void slotSaveMenu();
-
-      /// Slot for saving objects to a new location
-      void slotSaveToMenu();
-
-      /// Load status from ini file
-      void slotLoadIniMenu();
-
-      /// Save current status to ini file
-      void slotSaveIniMenu();
-
       /// Exit Application
       void slotExit();
-
-      /// Open Load Widget
-      void slotLoadMenu();
 
       /// Open Recent file
       void slotRecentOpen(QAction* _action);

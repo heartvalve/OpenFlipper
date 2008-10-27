@@ -427,7 +427,7 @@ void Core::openIniFile(QString _filename) {
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
-  OpenFlipper::Options::openingIni(true);
+  OpenFlipper::Options::loadingSettings(true);
 
   readApplicationOptions(ini);
 
@@ -492,7 +492,7 @@ void Core::openIniFile(QString _filename) {
 
   ini.disconnect();
 
-  OpenFlipper::Options::openingIni(false);
+  OpenFlipper::Options::loadingSettings(false);
 
   resetScenegraph();
 

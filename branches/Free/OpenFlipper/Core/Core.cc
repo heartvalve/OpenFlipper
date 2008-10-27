@@ -172,12 +172,12 @@ Core::init() {
     coreWidget_ = new CoreWidget(viewModes_ , plugins);
 
     connect(coreWidget_, SIGNAL(clearAll())           , this, SLOT(clearAll()));
-    connect(coreWidget_, SIGNAL(loadMenu())           , this, SLOT(slotLoadMenu()));
+    connect(coreWidget_, SIGNAL(loadMenu())           , this, SLOT(loadObject()));
     connect(coreWidget_, SIGNAL(addEmptyObjectMenu()) , this, SLOT(slotAddEmptyObjectMenu()));
-    connect(coreWidget_, SIGNAL(saveMenu())           , this, SLOT(slotSaveMenu()));
-    connect(coreWidget_, SIGNAL(saveToMenu())         , this, SLOT(slotSaveToMenu()));
-    connect(coreWidget_, SIGNAL(loadIniMenu())        , this, SLOT(slotLoadIniMenu()));
-    connect(coreWidget_, SIGNAL(saveIniMenu())        , this, SLOT(slotSaveIniMenu()));
+    connect(coreWidget_, SIGNAL(saveMenu())           , this, SLOT(saveAllObjects()));
+    connect(coreWidget_, SIGNAL(saveToMenu())         , this, SLOT(saveAllObjectsTo()));
+    connect(coreWidget_, SIGNAL(loadIniMenu())        , this, SLOT(loadSettings()));
+    connect(coreWidget_, SIGNAL(saveIniMenu())        , this, SLOT(saveSettings()));
     connect(coreWidget_, SIGNAL(applyOptions())       , this, SLOT(applyOptions()));
     connect(coreWidget_, SIGNAL(saveOptions())        , this, SLOT(saveOptions()));
     connect(coreWidget_, SIGNAL(recentOpen(QAction*)) , this, SLOT(slotRecentOpen(QAction*)));
@@ -577,7 +577,7 @@ void Core::updateView() {
   }
 
 
-  if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::openingIni() && !OpenFlipper::Options::redrawDisabled() ) {
+  if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() && !OpenFlipper::Options::redrawDisabled() ) {
     coreWidget_->examiner_widget_->sceneGraph(root_node_scenegraph_);
     coreWidget_->examiner_widget_->updateGL();
   }
@@ -977,6 +977,24 @@ void Core::setDescriptions(){
   emit setSlotDescription("writeVersionNumbers(QString)", "write the current versions of all plugins to INI file",
                            QStringList("filename"),
                            QStringList("fullpath to a file where the versions should be written to."));
+  //save slots
+  emit setSlotDescription("saveObject(int,QString)", "Save object to file. If the file exists it will be overwritten.",
+                           QString("object-id,filename").split(","),
+                           QString("id of the object, complete path and filename").split(","));
+  emit setSlotDescription("saveObjectTo(int,QString)", "Save object to file. The location can be chosen in a dialog. "
+                          "(only works if GUI is available)",
+                           QString("object-id,filename").split(","),
+                           QString("id of the object, initial filename for the dialog").split(","));
+  emit setSlotDescription("saveAllObjects()", "Saves all opened objects. Before overwriting the user is asked. "
+                          "If no filename is available a dialog is shown. (only works if GUI is available)",QStringList(), QStringList());
+  emit setSlotDescription("saveAllObjectsTo()", "Saves all opened objects. The locations can be chosen in dialogs. "
+                          "(only works if GUI is available)",QStringList(), QStringList());
+  emit setSlotDescription("saveSettings()", "Show the dialog to save the current setting. (only works if GUI is available)",QStringList(), QStringList());
+  //load slots
+  emit setSlotDescription("loadObject()", "Show the dialog to load an object. (only works if GUI is available)",QStringList(), QStringList());
+  emit setSlotDescription("loadSettings()", "Show the dialog to load settings. (only works if GUI is available)",QStringList(), QStringList());
+  emit setSlotDescription("loadSettings(QString)", "load settings from file.",QStringList(), QStringList());
+
 }
 // //-----------------------------------------------------------------------------
 //

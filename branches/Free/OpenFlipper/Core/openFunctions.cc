@@ -44,7 +44,7 @@
 #include "OpenFlipper/widgets/addEmptyWidget/addEmptyWidget.hh"
 
 void Core::resetScenegraph() {
-  if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::openingIni() ) {
+  if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() ) {
     // update scene graph
     coreWidget_->examiner_widget_->lockUpdate();
     coreWidget_->examiner_widget_->sceneGraph(root_node_scenegraph_);
@@ -121,7 +121,7 @@ int Core::loadObject( DataType _type, QString _filename) {
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( "Loading " + _filename + " ...");
-        if ( !OpenFlipper::Options::openingIni() )
+        if ( !OpenFlipper::Options::loadingSettings() )
           coreWidget_->setStatus(ApplicationStatus::PROCESSING );
       }
 
@@ -134,7 +134,7 @@ int Core::loadObject( DataType _type, QString _filename) {
         else
           coreWidget_->statusMessage( "Loading " + _filename + " ... failed!", 4000 );
 
-        if ( !OpenFlipper::Options::openingIni() )
+        if ( !OpenFlipper::Options::loadingSettings() )
           coreWidget_->setStatus(ApplicationStatus::READY );
       }
 
@@ -248,45 +248,75 @@ void Core::slotAddEmptyObjectMenu() {
     emit log(LOGERR,"Could not show 'add Empty' dialog. Missing file-plugins.");
 }
 
-/// Open Load-Object Widget
-void Core::slotLoadMenu() {
-  if (supportedTypes_.size() != 0){
-    static LoadWidget* widget = 0;
+//========================================================================================
+// ===             Public Slots                                 ============================
+//========================================================================================
 
-    // Open Widget
-    if ( !widget ){
-      widget = new LoadWidget(supportedTypes_);
-      connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
-      connect(widget,SIGNAL(save(int, QString)),this,SLOT(slotSave(int, QString)));
-    }
-    widget->showLoad();
-  }else
-    emit log(LOGERR,"Could not show 'load objects' dialog. Missing file-plugins.");
+/// Open Load-Object Widget
+void Core::loadObject() {
+
+  if ( OpenFlipper::Options::gui() ){
+
+    if (supportedTypes_.size() != 0){
+      static LoadWidget* widget = 0;
+  
+      // Open Widget
+      if ( !widget ){
+        widget = new LoadWidget(supportedTypes_);
+        connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
+        connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
+      }
+      widget->showLoad();
+    }else
+      emit log(LOGERR,"Could not show 'load objects' dialog. Missing file-plugins.");
+
+  }
 }
 
-/// Load settings from ini-file
-void Core::slotLoadIniMenu(){
+/// Load settings from file
+void Core::loadSettings(){
 
-  QString complete_name;
+  if ( OpenFlipper::Options::gui() ){
 
-  complete_name = ACG::getOpenFileName(coreWidget_,
-                                       tr("Load Settings"),
-                                       tr("INI files (*.ini);;OBJ files (*.obj)"),
-                                       OpenFlipper::Options::currentDirStr());
-  if (complete_name.isEmpty())
+    QString complete_name;
+  
+    complete_name = ACG::getOpenFileName(coreWidget_,
+                                        tr("Load Settings"),
+                                        tr("INI files (*.ini);;OBJ files (*.obj)"),
+                                        OpenFlipper::Options::currentDirStr());
+    if (complete_name.isEmpty())
+      return;
+  
+    QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
+    OpenFlipper::Options::currentDir(newpath);
+  
+    if ( complete_name.endsWith("ini") ) {
+      openIniFile(complete_name);
+      applyOptions();
+    } else if ( complete_name.endsWith("obj") ) {
+      openObjFile(complete_name);
+      applyOptions();
+    }
+  
+    coreWidget_->addRecent(complete_name, DATA_NONE);
+  }
+}
+
+/// Load settings from file
+void Core::loadSettings(QString _filename){
+  
+  if ( !QFile(_filename).exists() )
     return;
 
-  QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
+  QString newpath = _filename.section(OpenFlipper::Options::dirSeparator(),0,-2);
   OpenFlipper::Options::currentDir(newpath);
 
-  if ( complete_name.endsWith("ini") ) {
-    openIniFile(complete_name);
+  if ( _filename.endsWith("ini") ) {
+    openIniFile(_filename);
     applyOptions();
-  } else if ( complete_name.endsWith("obj") ) {
-    openObjFile(complete_name);
+  } else if ( _filename.endsWith("obj") ) {
+    openObjFile(_filename);
     applyOptions();
   }
 
-  if ( OpenFlipper::Options::gui() )
-    coreWidget_->addRecent(complete_name, DATA_NONE);
 }

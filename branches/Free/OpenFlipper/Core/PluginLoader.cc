@@ -800,7 +800,7 @@ void Core::loadPlugin(QString filename, bool silent){
                 this   , SLOT(slotLoad( QString,DataType,int& )),Qt::DirectConnection );
       if ( checkSignal(plugin,"save(int,QString)" ) )
         connect(plugin , SIGNAL( save(int,QString) ) ,
-                this   , SLOT( slotSave(int,QString) ), Qt::DirectConnection);
+                this   , SLOT( saveObject(int,QString) ), Qt::DirectConnection);
 
       if ( checkSlot( plugin , "fileOpened(int)" ) )
         connect(this   , SIGNAL( openedFile( int) ) ,
