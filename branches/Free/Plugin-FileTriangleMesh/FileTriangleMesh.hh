@@ -104,11 +104,13 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
   private :
     BaseObject* objectRoot_;
 
+
+  private slots:
+    bool saveObject(int _id, QString _filename);
+
   public slots:
 
     int loadObject(QString _filename);
-
-    bool saveObject(int _id, QString _filename);
 
     int addNewTriangleMesh(  );
 
