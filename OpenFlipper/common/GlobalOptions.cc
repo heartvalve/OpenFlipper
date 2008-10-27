@@ -163,8 +163,11 @@ static QString lastDataType_ = "Triangle Mesh";
 /// Should backups be enabled
 static bool enableBackup_ = true;
 
-/// Currently opening an ini file?
-static bool openingIni_ = false;
+/// Currently loading Settings?
+static bool loadingSettings_ = false;
+
+/// Currently saving Settings?
+static bool savingSettings_ = false;
 
 static int* argc_;
 
@@ -552,12 +555,20 @@ void enableBackup(bool _enableBackup ) {
   enableBackup_ = _enableBackup;
 }
 
-bool openingIni( ) {
-  return openingIni_;
+bool loadingSettings( ) {
+  return loadingSettings_;
 }
 
-void openingIni(bool _openingIni ) {
-  openingIni_ = _openingIni;
+void loadingSettings(bool _loadingSettings ) {
+  loadingSettings_ = _loadingSettings;
+}
+
+bool savingSettings( ) {
+  return savingSettings_;
+}
+
+void savingSettings(bool _savingSettings ) {
+  savingSettings_ = _savingSettings;
 }
 
 int* argc() {

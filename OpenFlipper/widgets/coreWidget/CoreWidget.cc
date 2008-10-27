@@ -532,8 +532,8 @@ CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString 
 void
 CoreWidget::addRecent(QString _filename, DataType _type)
 {
-  //dont add objects within INI files to recentMenu
-  if ( OpenFlipper::Options::openingIni() ) return;
+  //dont add objects to recentMenu while loadind Settings
+  if ( OpenFlipper::Options::loadingSettings() ) return;
 
   OpenFlipper::Options::addRecentFile(_filename, _type);
 

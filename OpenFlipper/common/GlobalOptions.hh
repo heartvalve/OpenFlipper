@@ -514,18 +514,25 @@ bool iconDir(QString _dir);
 /** @} */
 
 //===========================================================================
-/** @name INI operations
+/** @name Settings
 * @{ */
 //===========================================================================
 
-  /// Do backups?
+  /// currently loading Settings ?
   DLLEXPORT
-  bool openingIni( );
+  bool loadingSettings( );
 
-  /// Do backups?
+  /// currently loading Settings ?
   DLLEXPORT
-  void openingIni(bool _openingIni );
+  void loadingSettings(bool _loadingSettings );
 
+  /// currently saving Settings ?
+  DLLEXPORT
+  bool savingSettings( );
+
+  /// currently saving Settings ?
+  DLLEXPORT
+  void savingSettings(bool _savingSettings );
 
 /** @} */
 

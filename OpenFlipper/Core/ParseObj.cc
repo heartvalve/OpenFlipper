@@ -75,7 +75,7 @@ void Core::openObjFile(QString _filename)
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
-  OpenFlipper::Options::openingIni(true);
+  OpenFlipper::Options::loadingSettings(true);
 
 
   while(!in.eof())
@@ -112,7 +112,7 @@ void Core::openObjFile(QString _filename)
   }
 
 
-  OpenFlipper::Options::openingIni(false);
+  OpenFlipper::Options::loadingSettings(false);
 
   resetScenegraph();
 
