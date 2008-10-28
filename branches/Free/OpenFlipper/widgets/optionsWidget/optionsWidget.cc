@@ -137,7 +137,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   // debugging
   slotDebugging->setChecked(OpenFlipper::Options::doSlotDebugging());
 
-  renderPicking->setChecked(OpenFlipper::Options::renderPicking);
+  renderPicking->setChecked(OpenFlipper::Options::renderPicking());
   int itemIndex = pickingRenderMode->findText( OpenFlipper::Options::pickingRenderMode() );
   if (  itemIndex != -1 )
     pickingRenderMode->setCurrentIndex(itemIndex);
