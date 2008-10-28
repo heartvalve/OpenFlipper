@@ -53,7 +53,7 @@
 #else
 #define DLLEXPORT
 #endif
-#endif 
+#endif
 
 #include <QDir>
 #include <QStringList>
@@ -623,6 +623,33 @@ QString updatePassword( );
 /// Version of OpenFlipper Core
 DLLEXPORT
 QString coreVersion();
+
+/** @} */
+
+//===========================================================================
+/** @name Picking Debugger
+ * @{ */
+//===========================================================================
+
+/** Set rendering Mode for Picking Debugger
+ */
+DLLEXPORT
+void pickingRenderMode( QString _target );
+
+/** Get rendering Mode for Picking Debugger
+ */
+DLLEXPORT
+QString pickingRenderMode( );
+
+/** Enable/Disable Picking Debugger
+ */
+DLLEXPORT
+void renderPicking(bool _enable);
+
+/** Get Picking Debugger state
+ */
+DLLEXPORT
+bool renderPicking( );
 
 /** @} */
 }

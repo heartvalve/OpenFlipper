@@ -81,6 +81,22 @@ void Core::applyOptions(){
     coreWidget_->examiner_widget_->setWheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());
     coreWidget_->examiner_widget_->setWheelZoomFactorShift(OpenFlipper::Options::wheelZoomFactorShift());
 
+    // Picking Debugger
+    ACG::SceneGraph::PickTarget target;
+    if ( OpenFlipper::Options::pickingRenderMode() == "PICK_ANYHING") {
+      target = ACG::SceneGraph::PICK_ANYTHING;
+    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_VERTEX") {
+      target = ACG::SceneGraph::PICK_VERTEX;
+    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_EDGE") {
+      target = ACG::SceneGraph::PICK_EDGE;
+    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_FACE") {
+      target = ACG::SceneGraph::PICK_FACE;
+    } else {
+      target = ACG::SceneGraph::PICK_ANYTHING;
+    }
+    coreWidget_->examiner_widget_->renderPicking(OpenFlipper::Options::renderPicking(), target );
+
+
     //hideToolbox
     if (OpenFlipper::Options::hideToolbox()) {
       //hide all toolWidgets
@@ -105,7 +121,7 @@ void Core::applyOptions(){
         }
       }
     }
-  
+
     //set defaultBackgroundColor
     QColor c = QColor( OpenFlipper::Options::defaultBackgroundColor() );
     PluginFunctions::setBackColor( OpenMesh::Vec4f(c.redF(),c.greenF(),c.blueF(),0.0f) );
