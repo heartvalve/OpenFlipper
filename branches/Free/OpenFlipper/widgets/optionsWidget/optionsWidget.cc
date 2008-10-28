@@ -137,8 +137,10 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   // debugging
   slotDebugging->setChecked(OpenFlipper::Options::doSlotDebugging());
 
-  //set drawmodes
-
+  renderPicking->setChecked(OpenFlipper::Options::renderPicking);
+  int itemIndex = pickingRenderMode->findText( OpenFlipper::Options::pickingRenderMode() );
+  if (  itemIndex != -1 )
+    pickingRenderMode->setCurrentIndex(itemIndex);
 
   //keyBindings
   keyTree->clear();
@@ -359,6 +361,9 @@ void OptionsWidget::slotApply() {
 
   // Debugging
   OpenFlipper::Options::doSlotDebugging(slotDebugging->isChecked());
+
+  OpenFlipper::Options::renderPicking(renderPicking->isChecked());
+  OpenFlipper::Options::pickingRenderMode( pickingRenderMode->currentText() );
 
   //standardDrawMode
   std::vector< QString > mode;

@@ -23,7 +23,7 @@ You can select multiple modes at the same time.</string>
       <string/>
      </property>
      <property name="currentIndex" >
-      <number>4</number>
+      <number>5</number>
      </property>
      <property name="usesScrollButtons" >
       <bool>true</bool>
@@ -34,7 +34,7 @@ You can select multiple modes at the same time.</string>
         <x>0</x>
         <y>0</y>
         <width>462</width>
-        <height>685</height>
+        <height>677</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -134,7 +134,7 @@ You can select multiple modes at the same time.</string>
         <x>0</x>
         <y>0</y>
         <width>462</width>
-        <height>685</height>
+        <height>677</height>
        </rect>
       </property>
       <attribute name="title" >
@@ -550,13 +550,13 @@ You can select multiple modes at the same time.</string>
         <x>0</x>
         <y>0</y>
         <width>462</width>
-        <height>685</height>
+        <height>677</height>
        </rect>
       </property>
       <attribute name="title" >
        <string>Debug</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_12" >
+      <layout class="QVBoxLayout" name="verticalLayout_10" >
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_7" >
          <item>
@@ -589,6 +589,59 @@ p, li { white-space: pre-wrap; }
             </size>
            </property>
           </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="Line" name="line_2" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9" >
+         <item>
+          <widget class="QCheckBox" name="renderPicking" >
+           <property name="toolTip" >
+            <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:11pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Print information about plugins calling specific slots&lt;br />Currently supported slots:&lt;br />- updateView()&lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">- updated_objects( id )&lt;/p>&lt;/body>&lt;/html></string>
+           </property>
+           <property name="statusTip" >
+            <string>Print information about plugins calling specific slots</string>
+           </property>
+           <property name="text" >
+            <string>render picking</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="pickingRenderMode" >
+           <item>
+            <property name="text" >
+             <string>PICK_ANYTHING</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>PICK_VERTEX</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>PICK_EDGE</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>PICK_FACE</string>
+            </property>
+           </item>
+          </widget>
          </item>
         </layout>
        </item>

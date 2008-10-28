@@ -169,6 +169,12 @@ static bool loadingSettings_ = false;
 /// Currently saving Settings?
 static bool savingSettings_ = false;
 
+/// Enable picking renderer?
+static bool renderPicking_ = false;
+
+/// picking Renderer Mode
+static QString pickingRenderMode_ = "PICK_ANYTHING";
+
 static int* argc_;
 
 static char *** argv_;
@@ -621,6 +627,22 @@ QString updatePassword( ) {
 
 QString coreVersion() {
   return QString("0.9.1");
+}
+
+void pickingRenderMode( QString _target ) {
+  pickingRenderMode_ = _target;
+}
+
+QString pickingRenderMode( ) {
+  return pickingRenderMode_;
+}
+
+void renderPicking(bool _enable) {
+  renderPicking_ = _enable;
+}
+
+bool renderPicking( ) {
+  return renderPicking_;
 }
 
 
