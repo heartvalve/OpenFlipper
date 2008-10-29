@@ -1,15 +1,27 @@
 <!DOCTYPE webproject>
 <webproject>
-  <project type="Local" name="OpenFlipper User Documentation" encoding="utf8" >
+  <project type="Local" name="OpenFlipper User Documentation" encoding="utf8" enableEvents="true" >
     <upload/>
-    <author/>
-    <email/>
-    <defaultDTD>-//W3C//DTD HTML 4.01 Transitional//EN</defaultDTD>
+    <defaultDTD>-//w3c//dtd html 4.01 transitional//en</defaultDTD>
     <item url="" uploadstatus="1" />
     <annotations/>
     <templates>templates/</templates>
     <toolbars>toolbars/</toolbars>
-    <item modified_time="1211978619" url="OpenFlipperUserDoc.html" uploadstatus="1" />
-    <item url="pics/" uploadstatus="1" />
+    <item url="User/" uploadstatus="1" />
+    <item url="Developer/" uploadstatus="1" />
+    <item modified_time="1225284259" url="User/OpenFlipperUserDoc.html" uploadstatus="1" />
+    <item url="User/pics/" uploadstatus="1" />
+    <item url="Developer/pics/" uploadstatus="1" />
+    <item modified_time="1225284259" url="Developer/OpenFlipperDeveloperDoc.html" uploadstatus="1" />
+    <author></author>
+    <email></email>
+    <debuggerclient persistentWatches="0" persistentBreakpoints="0" >Kein Debugger</debuggerclient>
+    <exclude cvsignore="false" ></exclude>
+    <teamdata>
+      <taskleaders/>
+      <subprojectleaders/>
+      <mailinglist address="" />
+    </teamdata>
+    <events/>
   </project>
 </webproject>

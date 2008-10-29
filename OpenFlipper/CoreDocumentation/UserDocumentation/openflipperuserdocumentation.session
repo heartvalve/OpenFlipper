@@ -1,19 +1,21 @@
 <!DOCTYPE webprojectsession>
 <webprojectsession>
-  <session usePreviewPrefix="0" previewPrefix="" >
-    <itemcursorpositions>
-      <item line="18" column="0" url="OpenFlipperUserDoc.html" />
-    </itemcursorpositions>
-    <uploadprofiles defaultProfile="UserDoc" >
+  <session usePreviewPrefix="0" previewPrefix="" usePersistentBookmarks="0" >
+    <itemcursorpositions/>
+    <uploadprofiles showtreeviews="true" defaultProfile="UserDoc" >
       <profile remote_host="" remote_port="" remote_path="" remote_protocol="ftp" user="" name="@" />
-      <profile remote_host="" remote_port="" remote_path="/data/home1/moebius/projects/OpenFlipper/OpenFlipper/UserDocumentation/compiled/" remote_protocol="file" user="" name="UserDoc" >
-        <uploadeditem upload_time="1211978619" url="OpenFlipperUserDoc.html" />
+      <profile remote_host="" remote_port="" remote_path="/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Docs/" remote_protocol="file" user="" name="UserDoc" >
+        <uploadeditem upload_time="0" url="Developer/" />
+        <uploadeditem upload_time="1225284259" url="Developer/OpenFlipperDeveloperDoc.html" />
+        <uploadeditem upload_time="0" url="Developer/pics/" />
+        <uploadeditem upload_time="1225284259" url="OpenFlipperUserDoc.html" />
+        <uploadeditem upload_time="0" url="User/" />
+        <uploadeditem upload_time="1225284259" url="User/OpenFlipperUserDoc.html" />
+        <uploadeditem upload_time="0" url="User/pics/" />
         <uploadeditem upload_time="0" url="pics/" />
         <uploadeditem upload_time="1211977687" url="pics/document-open.png" />
       </profile>
     </uploadprofiles>
-    <treestatus>
-      <openfolder url="pics" />
-    </treestatus>
   </session>
+  <teamdata yourself="" />
 </webprojectsession>
