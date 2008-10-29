@@ -134,7 +134,7 @@ void CoreWidget::setupMenuBar()
   //Save object
   QAction* AC_Save = new QAction(tr("&Save Object"), this);
   AC_Save->setShortcut (Qt::CTRL + Qt::Key_S);
-  AC_Save->setStatusTip(tr("Save objects"));
+  AC_Save->setStatusTip(tr("Save currently selected objects"));
   AC_Save->setWhatsThis("Saves all currently selected objects");
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save.png");
   AC_Save->setIcon(icon);

@@ -688,7 +688,10 @@ Core::slotRecentOpen(QAction* _action)
   QVector< OpenFlipper::Options::RecentFile > recentFiles = OpenFlipper::Options::recentFiles();
   for (int i = 0 ; i < recentFiles.size() ; ++i )
     if ( recentFiles[i].filename == _action->text() ){
-      loadObject(recentFiles[i].type, recentFiles[i].filename);
+      if (recentFiles[i].type == DATA_NONE)
+        loadSettings( recentFiles[i].filename );
+      else
+        loadObject(recentFiles[i].type, recentFiles[i].filename);
       break;
     }
 }
@@ -985,9 +988,9 @@ void Core::setDescriptions(){
                           "(only works if GUI is available)",
                            QString("object-id,filename").split(","),
                            QString("id of the object, initial filename for the dialog").split(","));
-  emit setSlotDescription("saveAllObjects()", "Saves all opened objects. Before overwriting the user is asked. "
+  emit setSlotDescription("saveAllObjects()", "Saves all target objects. "
                           "If no filename is available a dialog is shown. (only works if GUI is available)",QStringList(), QStringList());
-  emit setSlotDescription("saveAllObjectsTo()", "Saves all opened objects. The locations can be chosen in dialogs. "
+  emit setSlotDescription("saveAllObjectsTo()", "Saves all target objects. The locations can be chosen in dialogs. "
                           "(only works if GUI is available)",QStringList(), QStringList());
   emit setSlotDescription("saveSettings()", "Show the dialog to save the current setting. (only works if GUI is available)",QStringList(), QStringList());
   //load slots

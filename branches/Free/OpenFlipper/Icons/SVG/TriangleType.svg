@@ -2,7 +2,7 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
@@ -12,16 +12,24 @@
    height="50"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.45.1"
+   inkscape:version="0.46"
    version="1.0"
    sodipodi:docbase="/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Icons"
    sodipodi:docname="TriangleType.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Icons/TriangleType.png"
+   inkscape:export-filename="/data/home2/wilden/projects/OpenFlipper/OpenFlipper/Icons/TriangleType.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
-     id="defs4" />
+     id="defs4">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 25 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="50 : 25 : 1"
+       inkscape:persp3d-origin="25 : 16.666667 : 1"
+       id="perspective8" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -30,7 +38,7 @@
      gridtolerance="10000"
      guidetolerance="10"
      objecttolerance="10"
-     inkscape:pageopacity="1"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
      inkscape:cx="77.20135"
@@ -42,7 +50,8 @@
      inkscape:window-width="1185"
      inkscape:window-height="1010"
      inkscape:window-x="245"
-     inkscape:window-y="142" />
+     inkscape:window-y="142"
+     showgrid="false" />
   <metadata
      id="metadata7">
     <rdf:RDF>
