@@ -1,0 +1,22 @@
+<!DOCTYPE webproject>
+<webproject>
+  <project type="Local" name="Plugin-Color" encoding="utf8" enableEvents="true" >
+    <upload/>
+    <defaultDTD>-//w3c//dtd html 4.01 transitional//en</defaultDTD>
+    <item url="" uploadstatus="1" />
+    <templates>templates/</templates>
+    <toolbars>toolbars/</toolbars>
+    <item modified_time="1225289883" url="index.html" uploadstatus="1" />
+    <annotations/>
+    <author/>
+    <email/>
+    <debuggerclient persistentWatches="0" persistentBreakpoints="0" >Kein Debugger</debuggerclient>
+    <exclude cvsignore="false" />
+    <teamdata>
+      <taskleaders/>
+      <subprojectleaders/>
+      <mailinglist address="" />
+    </teamdata>
+    <events/>
+  </project>
+</webproject>
