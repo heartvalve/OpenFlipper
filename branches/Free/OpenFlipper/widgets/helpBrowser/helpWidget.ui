@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>895</width>
-    <height>969</height>
+    <width>1008</width>
+    <height>813</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -16,14 +16,62 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>25</y>
-     <width>895</width>
-     <height>919</height>
+     <y>35</y>
+     <width>1008</width>
+     <height>757</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout" >
+   <layout class="QVBoxLayout" name="verticalLayout_2" >
     <item>
-     <widget class="QTextBrowser" name="textBrowser" />
+     <layout class="QHBoxLayout" name="horizontalLayout_2" >
+      <item>
+       <widget class="QTreeWidget" name="tree" >
+        <property name="minimumSize" >
+         <size>
+          <width>160</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTabWidget" name="tabWidget" >
+        <property name="currentIndex" >
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="tab" >
+         <property name="geometry" >
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>818</width>
+           <height>677</height>
+          </rect>
+         </property>
+         <attribute name="title" >
+          <string>Tab 1</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout" >
+          <item>
+           <widget class="QWebView" name="webView" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="url" >
+             <url>
+              <string>about:blank</string>
+             </url>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout" >
@@ -56,8 +104,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>895</width>
-     <height>25</height>
+     <width>1008</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile" >
@@ -72,11 +120,30 @@
    <property name="geometry" >
     <rect>
      <x>0</x>
-     <y>944</y>
-     <width>895</width>
-     <height>25</height>
+     <y>792</y>
+     <width>1008</width>
+     <height>21</height>
     </rect>
    </property>
+  </widget>
+  <widget class="QToolBar" name="toolBar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>21</y>
+     <width>1008</width>
+     <height>14</height>
+    </rect>
+   </property>
+   <property name="windowTitle" >
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
   </widget>
   <action name="actionClose" >
    <property name="text" >
@@ -84,6 +151,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKit/QWebView</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
