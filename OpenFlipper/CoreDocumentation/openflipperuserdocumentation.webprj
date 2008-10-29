@@ -9,10 +9,14 @@
     <toolbars>toolbars/</toolbars>
     <item url="User/" uploadstatus="1" />
     <item url="Developer/" uploadstatus="1" />
-    <item modified_time="1225285347" url="User/OpenFlipperUserDoc.html" uploadstatus="1" />
+    <item modified_time="1225286834" url="User/OpenFlipperUserDoc.html" uploadstatus="1" />
     <item url="User/pics/" uploadstatus="1" />
     <item url="Developer/pics/" uploadstatus="1" />
-    <item modified_time="1225285351" url="Developer/OpenFlipperDeveloperDoc.html" uploadstatus="1" />
+    <item modified_time="1225286841" url="Developer/OpenFlipperDeveloperDoc.html" uploadstatus="1" />
+    <item url="css/" uploadstatus="1" />
+    <item modified_time="1225285408" url="css/acg_style.css" uploadstatus="1" />
+    <item modified_time="1220019844" url="User/pics/splash.png" uploadstatus="1" />
+    <item modified_time="1220019844" url="Developer/pics/splash.png" uploadstatus="1" />
     <author/>
     <email/>
     <debuggerclient persistentWatches="0" persistentBreakpoints="0" >Kein Debugger</debuggerclient>
@@ -23,8 +27,5 @@
       <mailinglist address="" />
     </teamdata>
     <events/>
-    <item url="css/" />
-    <item url="css/acg_styles.css" />
-    <item modified_time="1225285408" url="css/acg_style.css" />
   </project>
 </webproject>
