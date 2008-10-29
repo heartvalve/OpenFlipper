@@ -128,30 +128,14 @@ void Core::saveAllObjects(){
       supportedTypes_[i].plugin->saveOptionsWidget("");
   
     //iterate over all target objects
-    bool overwrite_all = false;
-  
-    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ;
           o_it != PluginFunctions::objects_end(); ++o_it)  {
   
             if ( !QDir(o_it->path()).exists() || o_it->path().trimmed() == "" ) // if path isn't valid use 'save object to'
               saveObjectTo(o_it->id(),o_it->name());
             else{
-              //ask for overwriting
+              //save (existing files will be overwritten)
               QString filename = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name() ;
-              QFile file(filename);
-              if ( file.exists() && !overwrite_all){
-                int ret = QMessageBox::warning(coreWidget_, tr("File exists"),QString("The file '" +filename+ "' already exists.\n"+
-                    "Do you want to overwrite the file?"),QMessageBox::YesToAll |
-                        QMessageBox::Yes|QMessageBox::No|QMessageBox::NoToAll,QMessageBox::No);
-                switch(ret){
-                  case QMessageBox::YesToAll: overwrite_all = true;break;
-                  case QMessageBox::Yes: break;
-                  case QMessageBox::No: continue;
-                  case QMessageBox::NoToAll: return;
-                }
-              }
-  
-              // and save
               saveObject(o_it->id(),filename);
             }
     }
@@ -165,7 +149,7 @@ void Core::saveAllObjectsTo(){
   if ( OpenFlipper::Options::gui() ){
     if (supportedTypes_.size() != 0){
       //iterate over all target objects
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS);
+      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS);
             o_it != PluginFunctions::objects_end(); ++o_it)  {
         QString filename = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
         saveObjectTo(o_it->id(),filename);
