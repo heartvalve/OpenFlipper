@@ -1,4 +1,4 @@
-varying vec4 diffuse;
+varying vec4 diffuse_color;
 varying vec3 normal;
 varying vec4 vertexPosition;
 uniform float ward_specular;
@@ -10,5 +10,5 @@ void main()
    normal = normalize(gl_NormalMatrix * gl_Normal);
    vertexPosition = gl_ModelViewMatrix * gl_Vertex;
    gl_Position = gl_ProjectionMatrix * vertexPosition;
-   diffuse = gl_FrontMaterial.diffuse;
+   diffuse_color = gl_FrontMaterial.diffuse;
 }

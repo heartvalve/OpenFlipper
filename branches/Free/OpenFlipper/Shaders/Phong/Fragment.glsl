@@ -1,4 +1,4 @@
-varying vec4 diffuse;
+varying vec4 diffuse_color;
 varying vec3 normal;
 varying vec4 vertexPosition;
 
@@ -21,6 +21,10 @@ vec4 phong_direct(int lightSource) {
     if (NdotL > 0.0 && LdotD < 0.0) {
         color = gl_LightSource[lightSource].diffuse * -LdotD * NdotL;
     }
+
+    // Use Alpha Value from original color
+    color[3] = diffuse_color[3];
+
     return color;
 }
 
