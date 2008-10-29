@@ -2,7 +2,7 @@
 <webprojectsession>
   <session usePreviewPrefix="0" previewPrefix="" >
     <itemcursorpositions>
-      <item column="0" line="0" url="OpenFlipperUserDoc.html" />
+      <item line="18" column="0" url="OpenFlipperUserDoc.html" />
     </itemcursorpositions>
     <uploadprofiles defaultProfile="UserDoc" >
       <profile remote_host="" remote_port="" remote_path="" remote_protocol="ftp" user="" name="@" />
