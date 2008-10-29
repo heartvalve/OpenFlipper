@@ -56,7 +56,7 @@ void Core::saveSettings(){
 
   fileDialog.setAcceptMode ( QFileDialog::AcceptSave );
   fileDialog.setFileMode ( QFileDialog::AnyFile );
-  fileDialog.setDefaultSuffix("ini");
+
   QGridLayout *layout = (QGridLayout*)fileDialog.layout();
 
   QGroupBox* optionsBox = new QGroupBox( &fileDialog ) ;
@@ -101,6 +101,15 @@ void Core::saveSettings(){
   }
 
   complete_name = fileNames[0];
+
+  //check the extension
+  if ( !complete_name.endsWith(".ini", Qt::CaseInsensitive) && !complete_name.endsWith(".obj", Qt::CaseInsensitive) ){
+    if ( fileDialog.selectedNameFilter().contains("INI files (*.ini)") )
+      complete_name += ".ini";
+    else
+      complete_name += ".obj";
+  }
+  
 
   QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
   OpenFlipper::Options::currentDir(newpath);
