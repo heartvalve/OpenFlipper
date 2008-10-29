@@ -1,4 +1,4 @@
-varying vec4 diffuse;
+varying vec4 diffuse_color;
 varying vec3 normal;
 varying vec4 vertexPosition;
 uniform float ward_specular;
@@ -39,6 +39,10 @@ vec4 ward_direct(int lightSource)
 
         color = gl_LightSource[lightSource].diffuse *  f_R * G;
     }
+
+    //use Alpha value from original object color
+    color[3] = diffuse_color[3];
+
     return color;
 }
 
