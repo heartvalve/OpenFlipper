@@ -1,73 +1,25 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="22" >
-  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/INIFile/INIFile.hh" >
-   <View0 Encoding="" Type="Source" />
+ <DocsAndViews NumberOfDocuments="6" >
+  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/CoreWidget.cc" >
+   <View0 Encoding="" line="18" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/CoreWidget.cc" >
-   <View0 Encoding="" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/Scenegraph/MeshNodeT.hh" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/CoreWidget.hh" >
-   <View0 Encoding="" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/Scenegraph/MeshNodeT.cc" >
+   <View0 Encoding="" line="825" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/CoreWidgetToolbar.cc" >
-   <View0 Encoding="" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/MeshObjectT.hh" >
+   <View0 Encoding="" line="204" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/BasePlugin/ToolbarInterface.hh" >
-   <View0 Encoding="" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Move/MovePlugin.cc" >
+   <View0 Encoding="" line="25" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Database/DatabasePlugin.cc" >
-   <View0 Encoding="" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-PolyLine/PolyLinePlugin.cc" >
+   <View0 Encoding="" line="56" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Database/DatabasePlugin.hh" >
-   <View0 Encoding="" Type="Source" />
-  </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TextureControl/TextureControl.cc" >
-   <View0 Encoding="" Type="Source" />
-  </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/QtWidgets/QtBaseViewer.hh" >
-   <View0 Encoding="" Type="Source" />
-  </Doc8>
-  <Doc9 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/Scenegraph/BaseNode.hh" >
-   <View0 Encoding="" Type="Source" />
-  </Doc9>
-  <Doc10 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/QtWidgets/QtBaseViewerSnapshot.cc" >
-   <View0 Encoding="UTF-8" Type="Source" />
-  </Doc10>
-  <Doc11 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/QtWidgets/QtBaseViewer.cc" >
-   <View0 Encoding="" Type="Source" />
-  </Doc11>
-  <Doc12 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/optionsWidget/optionsWidget.cc" >
-   <View0 Encoding="" Type="Source" />
-  </Doc12>
-  <Doc13 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/GlobalOptions.hh" >
-   <View0 Encoding="" Type="Source" />
-  </Doc13>
-  <Doc14 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/GlobalOptions.cc" >
-   <View0 Encoding="" Type="Source" />
-  </Doc14>
-  <Doc15 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/ParseIni.cc" >
-   <View0 Encoding="" Type="Source" />
-  </Doc15>
-  <Doc16 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/Core.cc" >
-   <View0 Encoding="" Type="Source" />
-  </Doc16>
-  <Doc17 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/saveFunctions.cc" >
-   <View0 Encoding="" Type="Source" />
-  </Doc17>
-  <Doc18 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/optionHandling.cc" >
-   <View0 Encoding="" Type="Source" />
-  </Doc18>
-  <Doc19 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/QtWidgets/QtInternalGLWidget.cc" >
-   <View0 Encoding="" Type="Source" />
-  </Doc19>
-  <Doc20 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/QtWidgets/QtInternalGLWidget.hh" >
-   <View0 Encoding="" Type="Source" />
-  </Doc20>
-  <Doc21 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/Scenegraph/PolyLineNodeT.cc" >
-   <View0 Encoding="" line="206" Type="Source" />
-  </Doc21>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
