@@ -41,9 +41,11 @@
 
 void DataControlPlugin::slotPopupRemove (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
+
+  if (selection == 0) return;
   
   // Get all selected rows
-  QModelIndexList indexList = selection->selectedRows ( 0 ); 
+  QModelIndexList indexList = selection->selectedRows(); 
     
   for ( int i = 0 ; i < indexList.size() ; ++i) {
     
