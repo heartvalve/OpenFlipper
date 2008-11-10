@@ -52,8 +52,8 @@
 
 
 FileTriangleMeshPlugin::FileTriangleMeshPlugin() 
-: saveOptions_(0){
-
+: saveOptions_(0),
+  loadOptions_(0){
 }
 
 /// Add an empty triangle mesh
@@ -111,8 +111,39 @@ int FileTriangleMeshPlugin::loadObject(QString _filename){
 
   std::string filename = std::string( _filename.toUtf8() );
 
+  //set options
+  OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
+
+  if ( !OpenFlipper::Options::loadingSettings() &&
+       !OpenFlipper::Options::loadingRecentFile() && loadOptions_ != 0){
+
+    if (loadVertexColor_->isChecked())
+      opt += OpenMesh::IO::Options::VertexColor;
+    
+    if (loadFaceColor_->isChecked())
+      opt += OpenMesh::IO::Options::FaceColor;
+
+    //ColorAlpha is only checked when loading binary off's
+    if (loadAlpha_->isChecked())
+      opt += OpenMesh::IO::Options::ColorAlpha;
+
+    if (loadNormals_->isChecked())
+      opt += OpenMesh::IO::Options::VertexNormal;
+    
+    if (loadTexCoords_->isChecked())
+      opt += OpenMesh::IO::Options::VertexTexCoord;
+
+  }else{
+    //let openmesh try to read everything it can
+    opt += OpenMesh::IO::Options::VertexColor;
+    opt += OpenMesh::IO::Options::FaceColor;
+    opt += OpenMesh::IO::Options::VertexNormal;
+    opt += OpenMesh::IO::Options::VertexTexCoord;
+  }
+
+
   // load file
-  bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename );
+  bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename, opt );
   if (!ok)
   {
     std::cerr << "Plugin FileTriangleMesh : Read error for Triangle Mesh\n";
@@ -159,9 +190,15 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
       if (saveBinary_->isChecked())
         opt += OpenMesh::IO::Options::Binary;
       
-      if (saveColor_->isChecked())
+      if (saveColor_->isChecked()){
         opt += OpenMesh::IO::Options::VertexColor;
-      
+        opt += OpenMesh::IO::Options::FaceColor;
+      }
+
+      if (saveAlpha_->isChecked()){
+        opt += OpenMesh::IO::Options::ColorAlpha;
+      }
+
       if (saveNormals_->isChecked())
         opt += OpenMesh::IO::Options::VertexNormal;
       
@@ -298,6 +335,9 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
 
     saveColor_ = new QCheckBox("Save Colors");
     layout->addWidget(saveColor_);
+
+    saveAlpha_ = new QCheckBox("Save Color Alpha");
+    layout->addWidget(saveAlpha_);
     
     saveNormals_ = new QCheckBox("Save Normals");
     layout->addWidget(saveNormals_);
@@ -316,6 +356,7 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
 
   saveBinary_->setChecked( Qt::Unchecked );
   saveColor_->setChecked( Qt::Unchecked );
+  saveAlpha_->setChecked( Qt::Unchecked );
   saveNormals_->setChecked( Qt::Unchecked );
   saveTexCoords_->setChecked( Qt::Unchecked );
 
@@ -323,7 +364,40 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
 }
 
 QWidget* FileTriangleMeshPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
-  return 0;
+
+  if (loadOptions_ == 0){
+    //generate widget
+    loadOptions_ = new QWidget();
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->setAlignment(Qt::AlignTop);
+    
+    loadVertexColor_ = new QCheckBox("Load Vertex Colors");
+    layout->addWidget(loadVertexColor_);
+
+    loadFaceColor_ = new QCheckBox("Load Face Colors");
+    layout->addWidget(loadFaceColor_);
+
+    loadAlpha_ = new QCheckBox("Load Color Alpha");
+    layout->addWidget(loadAlpha_);
+    
+    loadNormals_ = new QCheckBox("Load Normals");
+    layout->addWidget(loadNormals_);
+    
+    loadTexCoords_ = new QCheckBox("Load TexCoords");
+    layout->addWidget(loadTexCoords_);
+    
+    loadOptions_->setLayout(layout);
+
+  ///TODO load face normals checkbox except for off
+  }
+
+  loadVertexColor_->setChecked( Qt::Checked );
+  loadFaceColor_->setChecked( Qt::Checked );
+  loadAlpha_->setChecked( Qt::Checked );
+  loadNormals_->setChecked( Qt::Checked );
+  loadTexCoords_->setChecked( Qt::Checked );
+
+  return loadOptions_;
 }
 
 Q_EXPORT_PLUGIN2( filetrianglemeshplugin , FileTriangleMeshPlugin );
