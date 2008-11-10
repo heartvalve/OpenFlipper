@@ -534,6 +534,14 @@ bool iconDir(QString _dir);
   DLLEXPORT
   void savingSettings(bool _savingSettings );
 
+  /// currently loading recent file ?
+  DLLEXPORT
+  bool loadingRecentFile( );
+
+  /// currently loading recent file ?
+  DLLEXPORT
+  void loadingRecentFile(bool _loadingRecentFile );
+
 /** @} */
 
 //===========================================================================
