@@ -121,8 +121,15 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
     QWidget* saveOptions_;
     QCheckBox* saveBinary_;
     QCheckBox* saveColor_;
+    QCheckBox* saveAlpha_;
     QCheckBox* saveNormals_;
     QCheckBox* saveTexCoords_;
+    QWidget* loadOptions_;
+    QCheckBox* loadVertexColor_;
+    QCheckBox* loadFaceColor_;
+    QCheckBox* loadAlpha_;
+    QCheckBox* loadNormals_;
+    QCheckBox* loadTexCoords_;
 };
 
 #endif //FILETRIANGLEMESHPLUGIN_HH
