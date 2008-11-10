@@ -166,6 +166,9 @@ static bool enableBackup_ = true;
 /// Currently loading Settings?
 static bool loadingSettings_ = false;
 
+/// Currently loading recent file?
+static bool loadingRecentFile_ = false;
+
 /// Currently saving Settings?
 static bool savingSettings_ = false;
 
@@ -575,6 +578,14 @@ bool savingSettings( ) {
 
 void savingSettings(bool _savingSettings ) {
   savingSettings_ = _savingSettings;
+}
+
+bool loadingRecentFile( ) {
+  return loadingRecentFile_;
+}
+
+void loadingRecentFile(bool _loadingRecentFile ) {
+  loadingRecentFile_ = _loadingRecentFile;
 }
 
 int* argc() {

@@ -690,8 +690,11 @@ Core::slotRecentOpen(QAction* _action)
     if ( recentFiles[i].filename == _action->text() ){
       if (recentFiles[i].type == DATA_NONE)
         loadSettings( recentFiles[i].filename );
-      else
+      else{
+        OpenFlipper::Options::loadingRecentFile(true);
         loadObject(recentFiles[i].type, recentFiles[i].filename);
+        OpenFlipper::Options::loadingRecentFile(false);
+      }
       break;
     }
 }
