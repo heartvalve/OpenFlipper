@@ -190,8 +190,11 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
       if (saveBinary_->isChecked())
         opt += OpenMesh::IO::Options::Binary;
       
-      if (saveColor_->isChecked()){
+      if (saveVertexColor_->isChecked()){
         opt += OpenMesh::IO::Options::VertexColor;
+      }
+
+      if (saveFaceColor_->isChecked()){
         opt += OpenMesh::IO::Options::FaceColor;
       }
 
@@ -333,8 +336,11 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
       layout->addWidget(saveBinary_);
     }
 
-    saveColor_ = new QCheckBox("Save Colors");
-    layout->addWidget(saveColor_);
+    saveVertexColor_ = new QCheckBox("Save Vertex Colors");
+    layout->addWidget(saveVertexColor_);
+
+    saveFaceColor_ = new QCheckBox("Save Face Colors");
+    layout->addWidget(saveFaceColor_);
 
     saveAlpha_ = new QCheckBox("Save Color Alpha");
     layout->addWidget(saveAlpha_);
@@ -355,7 +361,8 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
   }
 
   saveBinary_->setChecked( Qt::Unchecked );
-  saveColor_->setChecked( Qt::Unchecked );
+  saveVertexColor_->setChecked( Qt::Unchecked );
+  saveFaceColor_->setChecked( Qt::Unchecked );
   saveAlpha_->setChecked( Qt::Unchecked );
   saveNormals_->setChecked( Qt::Unchecked );
   saveTexCoords_->setChecked( Qt::Unchecked );
