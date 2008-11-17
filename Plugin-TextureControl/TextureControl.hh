@@ -155,12 +155,28 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     template< typename MeshT >
     void doUpdateTexture ( int _textureid, MeshT& _mesh);
 
+
+    //===========================================================================
+    /** @name 1D Texture copy functions( copy 1D input textures to target texture coordinates and transform values )
+      * @{ */
+    //===========================================================================
+
     /// Copy the supplied 1D vertex property to both coordinates of the 2D vertex OM texture property
     template< typename MeshT >
     void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::VPropHandleT< double > _texProp );
+
     /// Copy the supplied 1D halfedge property to both coordinates of the 2D halfedge OM texture property
     template< typename MeshT >
     void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp );
+
+    /** @} */
+
+    //===========================================================================
+    /** @name 2D Texture copy functions( copy 2D input textures to target texture coordinates and transform values )
+      * @{ */
+    //===========================================================================
+
+
     /// Copy the supplied 2D vertex property to the 2D vertex OM property
     template< typename MeshT >
     void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::VPropHandleT< ACG::Vec2d > _texProp );
@@ -168,8 +184,22 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     template< typename MeshT >
     void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::HPropHandleT< ACG::Vec2d > _texProp );
 
+    /** @} */
+
   public slots:
     QString version() { return QString("1.0"); };
  };
+
+//=============================================================================
+#if defined(INCLUDE_TEMPLATES) && !defined(TEXTURECONTROL_1D_TEXTURE_HANDLING_C)
+#define TEXTURECONTROL_1D_TEXTURE_HANDLING_TEMPLATES
+#include "TextureControl1DTextureHandlingT.cc"
+#endif
+
+#if defined(INCLUDE_TEMPLATES) && !defined(TEXTURECONTROL_2D_TEXTURE_HANDLING_C)
+#define TEXTURECONTROL_2D_TEXTURE_HANDLING_TEMPLATES
+#include "TextureControl2DTextureHandlingT.cc"
+#endif
+
 
 #endif //TEXTURECONTROLPLUGIN_HH
