@@ -37,7 +37,11 @@ template< typename MeshT >
 void TextureControlPlugin::copyTexture ( int /*_textureid*/, MeshT& _mesh, OpenMesh::VPropHandleT< OpenMesh::Vec2d > _texProp )
 {
   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
+
+    // Get the value of the property
     OpenMesh::Vec2d value = _mesh.property(_texProp, v_it);
+
+    // Write result to the openmesh texture coordinates
     _mesh.set_texcoord2D( v_it, ACG::Vec2f(float(value[0]), float(value[1]) ) );
   }
 }
@@ -46,7 +50,11 @@ template< typename MeshT >
 void TextureControlPlugin::copyTexture ( int /*_textureid*/, MeshT& _mesh, OpenMesh::HPropHandleT< OpenMesh::Vec2d > _texProp )
 {
   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
+
+    // Get the value of the property
     OpenMesh::Vec2d value = _mesh.property(_texProp, h_it);
+
+    // Write result to the openmesh texture coordinates
     _mesh.set_texcoord2D( h_it, ACG::Vec2f(float(value[0]), float(value[1]) ) );
   }
 }

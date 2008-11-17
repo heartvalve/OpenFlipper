@@ -138,14 +138,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     /// Update the values in the Dialog box to the current ones
     void updateDialog();
 
-    /// For a given mesh compute the minimum and maximum values depending on texture settings (vertex based)
-    template< typename MeshT >
-    inline
-    void computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::VPropHandleT< double > _texture,double& _min , double& _max);
-    /// For a given mesh compute the minimum and maximum values depending on texture settings (halfedge based)
-    template< typename MeshT >
-    inline
-    void computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::HPropHandleT< double > _texture,double& _min , double& _max);
+
 
     /// Take a scalar value and return a clamped,... depending on texture settings
     inline
@@ -168,6 +161,17 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     /// Copy the supplied 1D halfedge property to both coordinates of the 2D halfedge OM texture property
     template< typename MeshT >
     void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp );
+
+
+    /// For a given mesh compute the minimum and maximum values depending on texture settings (vertex based)
+    template< typename MeshT >
+    inline
+    void computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::VPropHandleT< double > _texture,double& _min , double& _max);
+
+    /// For a given mesh compute the minimum and maximum values depending on texture settings (halfedge based)
+    template< typename MeshT >
+    inline
+    void computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::HPropHandleT< double > _texture,double& _min , double& _max);
 
     /** @} */
 
