@@ -4,6 +4,8 @@
 
 include( $$TOPDIR/qmake/all.include )
 
+qwt()
+
 Plugin()
 
 DIRECTORIES = .

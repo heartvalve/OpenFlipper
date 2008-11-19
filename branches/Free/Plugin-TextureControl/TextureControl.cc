@@ -401,27 +401,25 @@ void TextureControlPlugin::updateDialog() {
   tmp.setNum(textures_[textureid].clamp_max);
   settingsDialog_->clamp_max->setText(tmp);
 
-//   // update plot only when dimension is 1
-//   if ( textures_[textureid].dimension == 1) {
-//     std::vector< double > x,y;
-//
-// //     getOriginalHistogram();
-//
-//   }
-}
+  // update plot only when dimension is 1
+  if ( textures_[textureid].dimension == 1) {
+    std::vector< double > x,y;
 
-// template< typename MeshT >
-// void TextureControlPlugin::getOriginalHistogram(std::vector< double>& _x, std::vector< double>& _y,
-//                                                 int _textureid, MeshT& _mesh,
-//                                                 OpenMesh::VPropHandleT< double > _texProp) {
-//   _x.clear();
-//   _y.clear();
-//
-//   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
-//     double value = _mesh.property(_texProp, v_it);
-//   }
-//
-// }
+    x.push_back(100.0);
+    y.push_back(100.0);
+
+    x.push_back(200.0);
+    y.push_back(150.0);
+
+    x.push_back(300.0);
+    y.push_back(10.0);
+
+    settingsDialog_->setOriginalData(x,y);
+
+//     getOriginalHistogram();
+
+  }
+}
 
 void TextureControlPlugin::slotSetTextureProperties() {
   updateDialog();
