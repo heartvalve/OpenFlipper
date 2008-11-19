@@ -172,7 +172,7 @@ void TextureControlPlugin::doUpdateTexture ( int _textureid, MeshT& _mesh )
       } else if ( textures_[_textureid].dimension == 2 ) {
 
         OpenMesh::VPropHandleT< OpenMesh::Vec2d >  texture2D;
-		if ( ! _mesh.get_property_handle(texture2D,textures_[_textureid].name.toStdString() ) ) {
+		  if ( ! _mesh.get_property_handle(texture2D,textures_[_textureid].name.toStdString() ) ) {
           emit log(LOGERR,"Unable to get property " + textures_[_textureid].name );
           return;
         }
@@ -195,108 +195,6 @@ void TextureControlPlugin::doUpdateTexture ( int _textureid, MeshT& _mesh )
     } else
       emit log(LOGERR, "Unsupported Texture type");
 
-}
-
-template< typename MeshT >
-void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh::VPropHandleT< double > _texProp )
-{
-  double max,min;
-  computeMinMaxScalar(_textureid, _mesh, _texProp, min, max);
-
-  for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
-    double value = _mesh.property(_texProp, v_it);
-    computeValue(_textureid, min, max, value);
-    _mesh.set_texcoord2D( v_it, ACG::Vec2f(float(value), float(value) ) );
-  }
-}
-
-template< typename MeshT >
-void TextureControlPlugin::copyTexture ( int /*_textureid*/, MeshT& _mesh, OpenMesh::VPropHandleT< OpenMesh::Vec2d > _texProp )
-{
-  for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
-    OpenMesh::Vec2d value = _mesh.property(_texProp, v_it);
-    _mesh.set_texcoord2D( v_it, ACG::Vec2f(float(value[0]), float(value[1]) ) );
-  }
-}
-
-template< typename MeshT >
-void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp )
-{
-  double max,min;
-  computeMinMaxScalar(_textureid, _mesh, _texProp, min, max);
-
-  for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
-    double value = _mesh.property(_texProp, h_it);
-    computeValue(_textureid, min, max, value);
-    _mesh.set_texcoord2D( h_it, ACG::Vec2f(float(value), float(value) ) );
-  }
-}
-
-template< typename MeshT >
-void TextureControlPlugin::copyTexture ( int /*_textureid*/, MeshT& _mesh, OpenMesh::HPropHandleT< OpenMesh::Vec2d > _texProp )
-{
-  for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
-    OpenMesh::Vec2d value = _mesh.property(_texProp, h_it);
-    _mesh.set_texcoord2D( h_it, ACG::Vec2f(float(value[0]), float(value[1]) ) );
-  }
-}
-
-template< typename MeshT >
-void TextureControlPlugin::computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::VPropHandleT< double > _texture,
-                                                               double& _min , double& _max) {
-   const bool   abs = textures_[_textureid].abs;
-   const bool   clamp = textures_[_textureid].clamp ;
-   const double clamp_max = textures_[_textureid].clamp_max;
-   const double clamp_min = textures_[_textureid].clamp_min;
-
-   _max = FLT_MIN;
-   _min = FLT_MAX;
-
-   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin() ; v_it != _mesh.vertices_end(); ++v_it) {
-      if ( abs ) {
-         _max = std::max( fabs(_mesh.property(_texture,v_it)) , _max);
-         _min = std::min( fabs(_mesh.property(_texture,v_it)) , _min);
-      } else {
-         _max = std::max( _mesh.property(_texture,v_it) , _max);
-         _min = std::min( _mesh.property(_texture,v_it) , _min);
-      }
-   }
-
-   if ( clamp ) {
-      if ( _max > clamp_max )
-         _max = clamp_max;
-      if (_min < clamp_min)
-         _min = clamp_min;
-   }
-}
-
-template< typename MeshT >
-void TextureControlPlugin::computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::HPropHandleT< double > _texture,
-                                                               double& _min , double& _max) {
-   const bool   abs = textures_[_textureid].abs;
-   const bool   clamp = textures_[_textureid].clamp ;
-   const double clamp_max = textures_[_textureid].clamp_max;
-   const double clamp_min = textures_[_textureid].clamp_min;
-
-   _max = FLT_MIN;
-   _min = FLT_MAX;
-
-   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin() ; h_it != _mesh.halfedges_end(); ++h_it) {
-      if ( abs ) {
-         _max = std::max( fabs(_mesh.property(_texture,h_it)) , _max);
-         _min = std::min( fabs(_mesh.property(_texture,h_it)) , _min);
-      } else {
-         _max = std::max( _mesh.property(_texture,h_it) , _max);
-         _min = std::min( _mesh.property(_texture,h_it) , _min);
-      }
-   }
-
-   if ( clamp ) {
-      if ( _max > clamp_max )
-         _max = clamp_max;
-      if (_min < clamp_min)
-         _min = clamp_min;
-   }
 }
 
 void TextureControlPlugin::computeValue(int _textureid, double _min, double _max, double& _value) {
@@ -474,95 +372,116 @@ void TextureControlPlugin::pluginsInitialized() {
   textureMenu_->addActions(actionGroup_->actions());
 }
 
- void TextureControlPlugin::updateDialog() {
-   if ( textures_.size() == 0 )
-      return;
+void TextureControlPlugin::updateDialog() {
+  if ( textures_.size() == 0 )
+    return;
 
-   int textureid = -1;
-   for ( int i = 0 ; i < (int)textures_.size() ; ++i ) {
-        if ( textures_[i].name == activeTexture_ ) {
-             textureid = i;
-             break;
-        }
-   }
-
-  if ( textureid == -1 ) {
-     emit log(LOGERR,"Active Texture not found");
-     return;
+  int textureid = -1;
+  for ( int i = 0 ; i < (int)textures_.size() ; ++i ) {
+      if ( textures_[i].name == activeTexture_ ) {
+            textureid = i;
+            break;
+      }
   }
 
-   settingsDialog_->repeatBox->setChecked(textures_[textureid].repeat);
-   settingsDialog_->clampBox->setChecked(textures_[textureid].clamp);
-   settingsDialog_->centerBox->setChecked(textures_[textureid].center);
-   settingsDialog_->absBox->setChecked(textures_[textureid].abs);
-   QString tmp;
-   tmp.setNum(textures_[textureid].max_val);
-   settingsDialog_->max_val->setText( tmp );
-   tmp.setNum(textures_[textureid].clamp_min);
-   settingsDialog_->clamp_min->setText(tmp);
-   tmp.setNum(textures_[textureid].clamp_max);
-   settingsDialog_->clamp_max->setText(tmp);
- }
-
- void TextureControlPlugin::slotSetTextureProperties() {
-   updateDialog();
-   if ( textures_.size() == 0 )
+  if ( textureid == -1 ) {
+      emit log(LOGERR,"Active Texture not found");
       return;
+  }
 
-   settingsDialog_->show();
- }
+  settingsDialog_->repeatBox->setChecked(textures_[textureid].repeat);
+  settingsDialog_->clampBox->setChecked(textures_[textureid].clamp);
+  settingsDialog_->centerBox->setChecked(textures_[textureid].center);
+  settingsDialog_->absBox->setChecked(textures_[textureid].abs);
+  QString tmp;
+  tmp.setNum(textures_[textureid].max_val);
+  settingsDialog_->max_val->setText( tmp );
+  tmp.setNum(textures_[textureid].clamp_min);
+  settingsDialog_->clamp_min->setText(tmp);
+  tmp.setNum(textures_[textureid].clamp_max);
+  settingsDialog_->clamp_max->setText(tmp);
 
-void TextureControlPlugin::applyDialogSettings() {
-   if ( textures_.size() == 0 )
-      return;
-
-   int textureid = -1;
-   for ( int i = 0 ; i < (int)textures_.size() ; ++i ) {
-         if ( textures_[i].name == activeTexture_ ) {
-               textureid = i;
-               break;
-         }
-   }
-
-   if (textureid == -1) {
-      emit log(LOGERR,"Unable to get active Texture");
-   }
-
-   textures_[textureid].repeat=settingsDialog_->repeatBox->isChecked();
-   textures_[textureid].clamp=settingsDialog_->clampBox->isChecked();
-   textures_[textureid].center=settingsDialog_->centerBox->isChecked();
-   textures_[textureid].abs=settingsDialog_->absBox->isChecked();
-   textures_[textureid].scale=settingsDialog_->scaleBox->isChecked();
-
-   QString tmp;
-   tmp = settingsDialog_->max_val->text();
-   textures_[textureid].max_val = tmp.toDouble();
-
-   tmp = settingsDialog_->clamp_min->text();
-   textures_[textureid].clamp_min = tmp.toDouble();
-
-   tmp = settingsDialog_->clamp_max->text();
-   textures_[textureid].clamp_max = tmp.toDouble();
-
-   // Update the corresponding meshes
-   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
-      slotTextureUpdated(  activeTexture_ , o_it->id() );
-
-   emit update_view();
+//   // update plot only when dimension is 1
+//   if ( textures_[textureid].dimension == 1) {
+//     std::vector< double > x,y;
+//
+// //     getOriginalHistogram();
+//
+//   }
 }
 
- void TextureControlPlugin::slotTexturePropertiesOk() {
-   applyDialogSettings();
-   settingsDialog_->hide();
+// template< typename MeshT >
+// void TextureControlPlugin::getOriginalHistogram(std::vector< double>& _x, std::vector< double>& _y,
+//                                                 int _textureid, MeshT& _mesh,
+//                                                 OpenMesh::VPropHandleT< double > _texProp) {
+//   _x.clear();
+//   _y.clear();
+//
+//   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
+//     double value = _mesh.property(_texProp, v_it);
+//   }
+//
+// }
+
+void TextureControlPlugin::slotSetTextureProperties() {
+  updateDialog();
+  if ( textures_.size() == 0 )
+      return;
+
+  settingsDialog_->show();
+}
+
+void TextureControlPlugin::applyDialogSettings() {
+  if ( textures_.size() == 0 )
+      return;
+
+  int textureid = -1;
+  for ( int i = 0 ; i < (int)textures_.size() ; ++i ) {
+        if ( textures_[i].name == activeTexture_ ) {
+              textureid = i;
+              break;
+        }
+  }
+
+  if (textureid == -1) {
+      emit log(LOGERR,"Unable to get active Texture");
+  }
+
+  textures_[textureid].repeat=settingsDialog_->repeatBox->isChecked();
+  textures_[textureid].clamp=settingsDialog_->clampBox->isChecked();
+  textures_[textureid].center=settingsDialog_->centerBox->isChecked();
+  textures_[textureid].abs=settingsDialog_->absBox->isChecked();
+  textures_[textureid].scale=settingsDialog_->scaleBox->isChecked();
+
+  QString tmp;
+  tmp = settingsDialog_->max_val->text();
+  textures_[textureid].max_val = tmp.toDouble();
+
+  tmp = settingsDialog_->clamp_min->text();
+  textures_[textureid].clamp_min = tmp.toDouble();
+
+  tmp = settingsDialog_->clamp_max->text();
+  textures_[textureid].clamp_max = tmp.toDouble();
+
+  // Update the corresponding meshes
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
+      slotTextureUpdated(  activeTexture_ , o_it->id() );
+
+  emit update_view();
+}
+
+void TextureControlPlugin::slotTexturePropertiesOk() {
+  applyDialogSettings();
+  settingsDialog_->hide();
 }
 
   void TextureControlPlugin::slotTexturePropertiesApply() {
-     applyDialogSettings();
- }
+    applyDialogSettings();
+}
 
- void TextureControlPlugin::slotTexturePropertiesCancel() {
+void TextureControlPlugin::slotTexturePropertiesCancel() {
     settingsDialog_->hide();
- }
+}
 
 
 void TextureControlPlugin::slotTextureMenu(QAction* _action) {
@@ -571,7 +490,7 @@ void TextureControlPlugin::slotTextureMenu(QAction* _action) {
 
       // Force an update of all objects
       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
-         slotTextureUpdated(  _action->text() , o_it->id() );
+        slotTextureUpdated(  _action->text() , o_it->id() );
 
       updateDialog();
 

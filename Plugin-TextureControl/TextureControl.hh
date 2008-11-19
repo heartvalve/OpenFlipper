@@ -139,7 +139,6 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void updateDialog();
 
 
-
     /// Take a scalar value and return a clamped,... depending on texture settings
     inline
     void computeValue(int _textureid, double _min, double _max, double& _value);
