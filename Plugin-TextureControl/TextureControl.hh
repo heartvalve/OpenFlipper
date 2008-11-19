@@ -147,6 +147,10 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     template< typename MeshT >
     void doUpdateTexture ( int _textureid, MeshT& _mesh);
 
+    template< typename MeshT >
+    void getOriginalHistogram(std::vector< double>& _x, std::vector< double>& _y,
+                              int _textureid, MeshT& _mesh,
+                              OpenMesh::VPropHandleT< double > _texProp);
 
     //===========================================================================
     /** @name 1D Texture copy functions( copy 1D input textures to target texture coordinates and transform values )
@@ -202,6 +206,11 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 #if defined(INCLUDE_TEMPLATES) && !defined(TEXTURECONTROL_2D_TEXTURE_HANDLING_C)
 #define TEXTURECONTROL_2D_TEXTURE_HANDLING_TEMPLATES
 #include "TextureControl2DTextureHandlingT.cc"
+#endif
+
+#if defined(INCLUDE_TEMPLATES) && !defined(TEXTURECONTROL_HISTOGRAMS_C)
+#define TEXTURECONTROL_HISTOGRAMS_TEMPLATES
+#include "TextureControlHistogramsT.cc"
 #endif
 
 
