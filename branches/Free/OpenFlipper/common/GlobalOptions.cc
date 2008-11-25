@@ -66,6 +66,9 @@ static QDir textureDir_;
 /// Stores the Path to the Icons
 static QDir iconDir_;
 
+/// Stores the Path to the Fonts
+static QDir fontsDir_;
+
 /// Stores all available option files in the Order in which they should be used
 static QStringList optionFiles_;
 
@@ -229,6 +232,7 @@ QDir pluginDir()       { return pluginDir_;  }
 QDir shaderDir()       { return shaderDir_;  }
 QDir textureDir()      { return textureDir_; }
 QDir iconDir()         { return iconDir_;    }
+QDir fontsDir()        { return fontsDir_;    }
 QDir currentDir()      { return currentDir_; }
 QDir currentScriptDir(){ return currentScriptDir_; }
 
@@ -238,6 +242,7 @@ QString pluginDirStr()       { return pluginDir_.absolutePath();       }
 QString shaderDirStr()       { return shaderDir_.absolutePath();       }
 QString textureDirStr()      { return textureDir_.absolutePath();      }
 QString iconDirStr()         { return iconDir_.absolutePath();         }
+QString fontsDirStr()        { return fontsDir_.absolutePath();        }
 QString currentDirStr()      { return currentDir_.absolutePath();      }
 QString currentScriptDirStr(){ return currentScriptDir_.absolutePath();}
 
@@ -248,6 +253,7 @@ void pluginDir(QDir _dir)            { pluginDir_        = _dir; }
 void shaderDir(QDir _dir)            { shaderDir_        = _dir; }
 void textureDir(QDir _dir)           { textureDir_       = _dir; }
 void iconDir(QDir _dir)              { iconDir_          = _dir; }
+void fontsDir(QDir _dir)             { fontsDir_          = _dir;}
 void configDir(QDir _dir)            { configDir_        = _dir; }
 void currentDir(QDir _dir)           { currentDir_       = _dir; }
 void currentScriptDir(QDir _dir)     { currentScriptDir_ = _dir; }
@@ -293,7 +299,16 @@ bool textureDir(QString     _dir) {
 bool iconDir(QString      _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
-    iconDir_      = tmp;
+    iconDir_ = tmp;
+    return true;
+  }
+  return false;
+}
+
+bool fontsDir(QString      _dir) {
+  QDir tmp(_dir);
+  if (tmp.exists()) {
+    fontsDir_      = tmp;
     return true;
   }
   return false;

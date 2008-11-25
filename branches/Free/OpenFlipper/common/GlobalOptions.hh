@@ -82,6 +82,10 @@ QDir shaderDir();
 DLLEXPORT
 QDir iconDir();
 
+/// Returns the Path to Fonts
+DLLEXPORT
+QDir fontsDir();
+
 /// Returns the base Path of the application
 DLLEXPORT
 QString applicationDirStr();
@@ -101,6 +105,10 @@ QString textureDirStr();
 /// Returns the Path to the Icons
 DLLEXPORT
 QString iconDirStr();
+
+/// Returns the Path to Fonts
+DLLEXPORT
+QString fontsDirStr();
 
 /// Sets the base Path of the application
 DLLEXPORT
@@ -122,6 +130,10 @@ void textureDir(QDir _dir);
 DLLEXPORT
 void iconDir(QDir _dir);
 
+/// Sets the Path to the Fonts
+DLLEXPORT
+void fontsDir(QDir _dir);
+
 /// Sets the base Path of the application
 DLLEXPORT
 bool applicationDir(QString _dir);
@@ -141,6 +153,10 @@ bool textureDir(QString _dir);
 /// Sets the Path to the Icons
 DLLEXPORT
 bool iconDir(QString _dir);
+
+/// Sets the Path to the Fonts
+DLLEXPORT
+void fontsDir(QDir _dir);
 
 
 //===========================================================================
