@@ -55,7 +55,7 @@
 #else
 #define DLLEXPORT
 #endif
-#endif 
+#endif
 
 //== INCLUDES =================================================================
 
@@ -87,6 +87,13 @@ typedef ACG::SceneGraph::BaseNode                         BaseNode;
 class DLLEXPORT BaseObjectData : public BaseObject
 {
   public:
+
+    /** \brief copy constructor
+     *
+     *  Create new basic scenegraph nodes for this object
+     */
+    BaseObjectData(const BaseObjectData& _object);
+
     /// constructor
     BaseObjectData(SeparatorNode* _rootNode);
 

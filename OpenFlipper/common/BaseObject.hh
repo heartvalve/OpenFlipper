@@ -78,6 +78,12 @@ class DLLEXPORT BaseObject {
   friend class BaseObjectData;
 
   public :
+
+    /** Creates a copy of this Object. Currently it will not have any per Object data attached.
+     *  Its also not attached to the object tree. This has to be done by using setParent.
+     */
+    BaseObject(const BaseObject& _object);
+
     BaseObject( BaseObject *_parent = 0);
 
     virtual ~BaseObject();
@@ -238,6 +244,9 @@ class DLLEXPORT BaseObject {
 
     /// Debugging function, writing the subtree to output
     void dumpTree();
+
+    /// Returns a full copy of the object
+    virtual BaseObject* copy();
 
   /** @} */
 

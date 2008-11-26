@@ -54,7 +54,7 @@
 #else
 #define DLLEXPORT
 #endif
-#endif 
+#endif
 
 //== INCLUDES =================================================================
 
@@ -99,6 +99,13 @@ typedef ACG::SceneGraph::TextureNode                      TextureNode;
 template < class MeshT, DataType objectDataType >
 class DLLEXPORT MeshObject : public BaseObjectData {
   public:
+
+    /** \brief copy constructor
+     *
+     *  Create a copy of this object
+     */
+    MeshObject(const MeshObject& _object);
+
     /// constructor
     MeshObject(SeparatorNode* _rootNode);
 
@@ -111,7 +118,7 @@ class DLLEXPORT MeshObject : public BaseObjectData {
   protected:
 
     /// Initialise current object, including all related nodes.
-    virtual void init();
+    virtual void init( MeshT* _mesh = 0);
 
   //===========================================================================
   /** @name Name and Path handling
@@ -146,6 +153,11 @@ class DLLEXPORT MeshObject : public BaseObjectData {
 
     /// Update Topology of all data structures
     void updateTopology();
+
+    /** return a full copy of this object ( All scenegraph nodes will be created )
+     *  but the object will not be a part of the object tree.
+     */
+    BaseObject* copy();
 
   private:
     MeshT*           mesh_;

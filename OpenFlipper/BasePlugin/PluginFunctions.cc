@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -168,39 +168,39 @@ bool get_target_identifiers( std::vector<int>& _identifiers  ) {
 // ===============================================================================
 
 bool get_object(  int _identifier , BaseObject*& _object ) {
-  
+
   if ( _identifier == -1 )
     return false;
-  
+
   _object = objectRoot_->childExists( _identifier );
   return ( _object != 0 );
 }
 
 bool get_object(  int _identifier , BaseObjectData*& _object ) {
-  
+
   if ( _identifier == -1 )
     return false;
-  
+
   BaseObject* object = objectRoot_->childExists( _identifier );
   _object = dynamic_cast< BaseObjectData* >(object);
   return ( _object != 0 );
 }
 
 bool get_object(  int _identifier , TriMeshObject*& _object ) {
-  
+
   if ( _identifier == -1 )
     return false;
-  
+
   BaseObject* object = objectRoot_->childExists( _identifier );
   _object = dynamic_cast< TriMeshObject* >(object);
   return ( _object != 0 );
 }
 
 bool get_object(  int _identifier , PolyMeshObject*& _object ) {
-  
+
   if ( _identifier == -1 )
     return false;
-  
+
   BaseObject* object = objectRoot_->childExists( _identifier );
   _object = dynamic_cast< PolyMeshObject* >(object);
   return ( _object != 0 );
@@ -211,10 +211,10 @@ bool get_object(  int _identifier , PolyMeshObject*& _object ) {
 
 
 bool get_mesh(  int _identifier , TriMesh*& _mesh ) {
-  
+
   if ( _identifier == -1 )
     return false;
-  
+
   BaseObject* object = objectRoot_->childExists( _identifier );
 
   // Unable to find object
@@ -232,10 +232,10 @@ bool get_mesh(  int _identifier , TriMesh*& _mesh ) {
 }
 
 bool get_mesh(  int _identifier , PolyMesh*& _mesh ) {
-  
+
   if ( _identifier == -1 )
     return false;
-  
+
   BaseObject* object = objectRoot_->childExists( _identifier );
 
   // Unable to find object
@@ -253,7 +253,7 @@ bool get_mesh(  int _identifier , PolyMesh*& _mesh ) {
 }
 
 bool deleteObject( int _id ) {
-  
+
   if ( _id == -1 )
     return false;
 
@@ -281,12 +281,40 @@ void deleteAll( ) {
   objectRoot()->deleteSubtree();
 }
 
+int copyObject( int _id ) {
+  if ( _id == -1 )
+    return -1;
+
+  // get the node
+  BaseObject* object = objectRoot_->childExists(_id);
+
+  if ( !object ) {
+    std::cerr << "Error while copying object ... not found" << std::endl;
+    return -1;
+  }
+
+  // remove the whole subtree below this item
+  BaseObject* copy = object->copy();
+
+  if ( copy == 0 ) {
+    std::cerr << "Unable to create a copy of the object." << std::endl;
+  }
+
+  // Integrate into object tree
+  copy->setParent( object->parent() );
+  if ( object->parent() )
+    object->parent()->appendChild(copy);
+  else
+    std::cerr << "Unable to add copy to object list" << std::endl;
+
+  return copy->id();
+}
 
 bool object_exists(  int _identifier ) {
-  
+
   if ( _identifier == -1 )
     return false;
-  
+
   BaseObject* object = objectRoot_->childExists( _identifier );
   return ( object != 0 );
 }
@@ -421,8 +449,8 @@ void translate( const ACG::Vec3d &_vector ) {
   examiner_widget_->translate(_vector);
 }
 
-void rotate(const ACG::Vec3d&  _axis, 
-            double             _angle, 
+void rotate(const ACG::Vec3d&  _axis,
+            double             _angle,
             const ACG::Vec3d&  _center)
 {
   examiner_widget_->rotate(_axis,_angle,_center);
@@ -437,11 +465,11 @@ void viewAll() {
 }
 
 ACG::Vec3d viewingDirection() {
-  return examiner_widget_->glState().viewing_direction(); 
+  return examiner_widget_->glState().viewing_direction();
 }
 
 ACG::Vec3d eyePos() {
-  return examiner_widget_->glState().eye(); 
+  return examiner_widget_->glState().eye();
 }
 
 ACG::Vec3d upVector() {
@@ -694,14 +722,14 @@ ObjectIterator objects_end() {
 BaseObjectData* baseObjectData( BaseObject* _object ){
   if ( _object == 0 )
     return 0;
-  
+
   return dynamic_cast< BaseObjectData* >(_object);
 }
 
 TriMesh* triMesh( BaseObjectData* _object ) {
   if ( _object == 0 )
     return 0;
-  
+
   if ( _object->dataType(DATA_TRIANGLE_MESH) ) {
     TriMeshObject* object = dynamic_cast< TriMeshObject* >(_object);
     return object->mesh();
@@ -712,7 +740,7 @@ TriMesh* triMesh( BaseObjectData* _object ) {
 PolyMesh* polyMesh( BaseObjectData* _object ) {
   if ( _object == 0 )
     return 0;
-  
+
   if ( _object->dataType(DATA_POLY_MESH) ) {
     PolyMeshObject* object = dynamic_cast< PolyMeshObject* >(_object);
     return object->mesh();
@@ -723,7 +751,7 @@ PolyMesh* polyMesh( BaseObjectData* _object ) {
 TriMeshObject* triMeshObject( BaseObjectData* _object ) {
   if ( _object == 0 )
     return 0;
-  
+
   if ( ! _object->dataType(DATA_TRIANGLE_MESH) )
     return NULL;
   return dynamic_cast< TriMeshObject* >( _object );
@@ -732,7 +760,7 @@ TriMeshObject* triMeshObject( BaseObjectData* _object ) {
 PolyMeshObject* polyMeshObject( BaseObjectData* _object ) {
   if ( _object == 0 )
     return 0;
-  
+
   if ( ! _object->dataType(DATA_POLY_MESH) )
     return NULL;
   return dynamic_cast< PolyMeshObject* >( _object );
