@@ -167,7 +167,7 @@ ShowFiles(args.FileCount(), args.Files());
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*! @mainpage
+/*!  \page SimpleOpt SimpleOpt Documentation Page
 
     <table>
         <tr><th>Library     <td>SimpleOpt
