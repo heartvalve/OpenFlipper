@@ -48,6 +48,18 @@
 
 //== CLASS DEFINITION =========================================================
 
+BaseObjectData::BaseObjectData(const BaseObjectData& _object)
+  : BaseObject(_object),
+    path_("."),
+    rootNode_(_object.rootNode_),
+    separatorNode_(0),
+    manipulatorNode_(0),
+    materialNode_(0)
+{
+  // We have to create our own visualization nodes as we are a new object
+  init();
+}
+
 BaseObjectData::BaseObjectData( SeparatorNode* _rootNode ) :
   BaseObject(),
   path_("."),

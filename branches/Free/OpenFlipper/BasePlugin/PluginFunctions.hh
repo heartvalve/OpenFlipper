@@ -123,6 +123,16 @@ bool deleteObject( int _id );
 DLLEXPORT
 void deleteAll( );
 
+/** \brief Create a copy of the object with the given id
+ *
+ * Creates a copy of an object. All scenegraph nodes will be created. The object will
+ * not be part of the object tree. This has to be done by setParent of the object.
+ * @return Pointer to new object or 0 if failed;
+ * */
+DLLEXPORT
+int copyObject( int _id );
+
+
 
 
 /** @} */

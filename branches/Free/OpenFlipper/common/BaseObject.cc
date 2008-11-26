@@ -54,6 +54,21 @@
  */
 static int idGenerator = 1;
 
+BaseObject::BaseObject(const BaseObject& _object) {
+  id_           = idGenerator;
+  ++idGenerator;
+  persistentId_ = _object.persistentId_;
+  objectType_   = _object.objectType_;
+  target_ = _object.target_;
+  source_ = _object.source_;
+  visible_ = _object.visible_;
+  parentItem_ = 0;
+  childItems_.clear();
+  name_ = "Copy of " + _object.name_;
+
+  ///@todo Maybe copy per Object Data
+  dataMap_.clear();
+}
 
 BaseObject::BaseObject(BaseObject* _parent) :
   id_(-1),
@@ -531,6 +546,11 @@ void BaseObject::dumpTree() {
   for ( int i = 0 ; i < childItems_.size(); ++i)
     childItems_[i]->dumpTree();
 
+}
+
+BaseObject* BaseObject::copy() {
+  std::cerr << "Copy not supported by this Object" << std::endl;
+  return  0;
 }
 
 

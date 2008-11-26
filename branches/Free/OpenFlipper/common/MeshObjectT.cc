@@ -52,6 +52,22 @@
 
   //== CLASS DEFINITION =========================================================
 
+  template < class MeshT , DataType objectDataType >
+  MeshObject< MeshT , objectDataType >::MeshObject(const MeshObject& _object) :
+      BaseObjectData(_object),
+      statusNode_(0),
+      areaNode_(0),
+      handleNode_(0),
+      meshNode_(0),
+      textureNode_(0),
+      shaderNode_(0),
+      triangle_bsp_(0)
+  {
+    init(_object.mesh_);
+
+    setName( name() );
+  }
+
   /** Constructor for Mesh Objects. This object class gets a Separator Node giving
   *  the root node to which it should be connected. The mesh is generated internally
   *  and all nodes for visualization will be added below the scenegraph node.\n
@@ -144,8 +160,12 @@
   *  the mesh and requests all required properties for the mesh.
   */
   template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::init() {
-    mesh_ = new MeshT();
+  void MeshObject< MeshT , objectDataType >::init(MeshT* _mesh) {
+
+    if ( _mesh == 0 )
+      mesh_ = new MeshT();
+    else
+      mesh_ = new MeshT(*_mesh);
 
     mesh_->request_vertex_normals();
     mesh_->request_face_normals();
@@ -305,6 +325,13 @@
   void MeshObject< MeshT , objectDataType >::updateModelingRegions() {
     areaNode_->update_cache();
     handleNode_->update_cache();
+  }
+
+
+  template < class MeshT , DataType objectDataType >
+  BaseObject* MeshObject< MeshT , objectDataType >::copy() {
+    MeshObject< MeshT , objectDataType >* object = new MeshObject< MeshT , objectDataType >(*this);
+    return dynamic_cast< BaseObject* >(object);
   }
 
   // ===============================================================================
