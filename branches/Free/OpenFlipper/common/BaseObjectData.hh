@@ -65,7 +65,7 @@
 #include <ACG/Scenegraph/SeparatorNode.hh>
 #include <ACG/Scenegraph/ShaderNode.hh>
 #include <ACG/Scenegraph/BaseNode.hh>
-#include <ACG/Scenegraph/ManipulatorNode.hh>
+#include <ACG/QtScenegraph/QtManipulatorNode.hh>
 
 //== TYPEDEFS =================================================================
 
@@ -73,7 +73,7 @@
 /// Materialnode
 typedef ACG::SceneGraph::MaterialNode                     MaterialNode;
 /// ManipulatorNode
-typedef ACG::SceneGraph::ManipulatorNode                  ManipulatorNode;
+typedef ACG::SceneGraph::QtManipulatorNode                  QtManipulatorNode;
 /// Seperator Node
 typedef ACG::SceneGraph::SeparatorNode                    SeparatorNode;
 /// Base Node
@@ -172,7 +172,7 @@ class DLLEXPORT BaseObjectData : public BaseObject
     /** get the ManipulatorNode node of this object (Use this node to add custom Nodes to the Object
      * which should be transformed with the manipulator of the Object)
      */
-    ManipulatorNode* manipulatorNode();
+    QtManipulatorNode* manipulatorNode();
 
     /** Return pointer to the shader node
      * If you want to support shaders, you have to add a shader node into your scenegraph structure
@@ -208,7 +208,7 @@ class DLLEXPORT BaseObjectData : public BaseObject
     SeparatorNode*    separatorNode_;
 
     /// Manipulator used for this Object
-    ManipulatorNode*  manipulatorNode_;
+    QtManipulatorNode*  manipulatorNode_;
 
     /// Scenegraph Material Node for the object
     MaterialNode*    materialNode_;
