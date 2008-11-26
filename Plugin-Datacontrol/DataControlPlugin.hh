@@ -195,6 +195,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
         /// Called by the popup menu to group items
         void slotGroup ( );
 
+        /// Called by the popup menu to copy items
+        void slotCopy();
+
         ///Called by the popup menu to rename items
         void slotRename ( );
 
