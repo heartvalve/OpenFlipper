@@ -108,10 +108,10 @@ void DataControlPlugin::slotCopy (  ) {
       continue;
     }
 
+    emit updated_objects(copyItem->id());
   }
 
   emit update_view();
-  emit updated_objects(-1);
 }
 
 void DataControlPlugin::slotGroup (  ) {
