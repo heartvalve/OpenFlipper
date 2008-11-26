@@ -289,7 +289,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
       /** @} */
 
   public slots:
-    QString version() { return QString("1.01"); };
+    QString version() { return QString("1.02"); };
 };
 
 #endif //COLORPLUGIN_HH
