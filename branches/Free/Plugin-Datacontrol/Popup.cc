@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -43,37 +43,37 @@ void DataControlPlugin::slotPopupRemove (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
 
   if (selection == 0) return;
-  
+
   // Get all selected rows
-  QModelIndexList indexList = selection->selectedRows(); 
-    
+  QModelIndexList indexList = selection->selectedRows();
+
   for ( int i = 0 ; i < indexList.size() ; ++i) {
-    
+
     BaseObject* deleteItem = model_->getItem( indexList[i] );
-    
+
     // Skip the root item
     if ( model_->isRoot( deleteItem ) )
       continue;
-    
+
     // remove the whole subtree below this item
     deleteItem->deleteSubtree();
-    
+
     // remove the item itself from the parent
     deleteItem->parent()->removeChild(deleteItem);
-    
+
     // delete it
     delete deleteItem;
   }
-   
+
   emit update_view();
-  emit updated_objects(-1);    
+  emit updated_objects(-1);
 }
 
 void DataControlPlugin::slotUngroup (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
-  
+
   // Get all selected rows
-  QModelIndexList indexList = selection->selectedRows ( 0 ); 
+  QModelIndexList indexList = selection->selectedRows ( 0 );
 
   //remove complete group if selected item was a group
   BaseObject* group = model_->getItem( indexList[0]);
@@ -90,13 +90,37 @@ void DataControlPlugin::slotUngroup (  ) {
   emit updated_objects(-1);
 }
 
+void DataControlPlugin::slotCopy (  ) {
+  QItemSelectionModel* selection = view_->selectionModel();
+
+  if (selection == 0) return;
+
+  // Get all selected rows
+  QModelIndexList indexList = selection->selectedRows();
+
+  for ( int i = 0 ; i < indexList.size() ; ++i) {
+
+    BaseObject* copyItem = model_->getItem( indexList[i] );
+
+    // remove the whole subtree below this item
+    if ( PluginFunctions::copyObject(copyItem->id()) == -1 ) {
+      emit log(LOGERR, "Unable to copy object" );
+      continue;
+    }
+
+  }
+
+  emit update_view();
+  emit updated_objects(-1);
+}
+
 void DataControlPlugin::slotGroup (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
-  
-  // Get all selected rows
-  QModelIndexList indexList = selection->selectedRows ( 0 ); 
 
-  //check if all objects have the same parent 
+  // Get all selected rows
+  QModelIndexList indexList = selection->selectedRows ( 0 );
+
+  //check if all objects have the same parent
   //abort if the parents differ
   BaseObject* parent = (model_->getItem( indexList[0]))->parent();
   for ( int i = 1 ; i < indexList.size() ; ++i) {
@@ -122,105 +146,111 @@ void DataControlPlugin::slotGroup (  ) {
     item->setParent( dynamic_cast< BaseObject* >( groupItem )  );
     groupItem->appendChild(item);
   }
-  
+
   emit updated_objects(-1);
 }
 
 void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
   popupIndex_ = view_->indexAt(_pos);
-  
+
   BaseObject* item = model_->getItem(popupIndex_);
-  
+
   QItemSelectionModel* selection = view_->selectionModel();
-  
+
   // Get all selected rows
-  QModelIndexList indexList = selection->selectedRows ( 0 ); 
+  QModelIndexList indexList = selection->selectedRows ( 0 );
   int selectedRows = indexList.size();
-  
+
   QMenu    menu(0);
   QAction* action;
   QIcon icon;
   if ( selectedRows > 1 ) {
-    menu.addAction("Group",this,SLOT ( slotGroup() )); 
+    action = menu.addAction("Copy",this,SLOT ( slotCopy() ));
+    icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png");
+    action->setIcon(icon);
+    menu.addAction("Group",this,SLOT ( slotGroup() ));
     menu.addSeparator();
-    menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));  
+    menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
    }else
     // check if the item is a group item
     if ( item->isGroup() ) {
-      action = menu.addAction("Zoom to objects",this,SLOT ( slotZoomTo() )); 
+      action = menu.addAction("Zoom to objects",this,SLOT ( slotZoomTo() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
       action->setIcon(icon);
-      menu.addAction("Ungroup",this,SLOT ( slotUngroup() )); 
+      menu.addAction("Ungroup",this,SLOT ( slotUngroup() ));
       menu.addSeparator();
-      action = menu.addAction("Rename",this,SLOT ( slotRename() )); 
+      action = menu.addAction("Rename",this,SLOT ( slotRename() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
       action->setIcon(icon);
       menu.addSeparator();
-      action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));  
+      action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"user-trash.png");
       action->setIcon(icon);
     } else {
-      action = menu.addAction("Zoom to object",this,SLOT ( slotZoomTo() )); 
+      action = menu.addAction("Zoom to object",this,SLOT ( slotZoomTo() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
       action->setIcon(icon);
-      action = menu.addAction("Rename",this,SLOT ( slotRename() )); 
+      action = menu.addAction("Copy",this,SLOT ( slotCopy() ));
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png");
+      action->setIcon(icon);
+      action = menu.addAction("Rename",this,SLOT ( slotRename() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
       action->setIcon(icon);
       menu.addSeparator();
-      action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));  
+      action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"user-trash.png");
       action->setIcon(icon);
     }
-  
-  
-  
+
+
+
   menu.exec(view_->mapToGlobal( _pos) );
-  
+
 }
 
 void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _pos ) {
-  
+
   headerPopupType_ = viewHeader_->logicalIndexAt( _pos );
-  
+
   QMenu menu(0);
-  
+
   QIcon icon;
-  
-  
-  
+
+
+
   switch (headerPopupType_) {
 //     case 0 :
 //       std::cerr << "0";
-//       break; 
+//       break;
     //Show / Hide
     case 1 :
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
-      menu.addAction(icon,"Show all",this,SLOT ( showAll() )); 
-      menu.addAction("Hide all",this,SLOT ( hideAll() )); 
+      menu.addAction(icon,"Show all",this,SLOT ( showAll() ));
+      menu.addAction("Hide all",this,SLOT ( hideAll() ));
       break;
     // Source
     case 2 :
-      menu.addAction("Select all",this,SLOT ( setAllSource() )); 
-      menu.addAction("Deselect all",this,SLOT ( clearAllSource() )); 
-      break; 
-    // Target 
+      menu.addAction("Select all",this,SLOT ( setAllSource() ));
+      menu.addAction("Deselect all",this,SLOT ( clearAllSource() ));
+      break;
+    // Target
     case 3 :
-      menu.addAction("Select all",this,SLOT ( setAllTarget() )); 
-      menu.addAction("Deselect all",this,SLOT ( clearAllTarget() )); 
+      menu.addAction("Select all",this,SLOT ( setAllTarget() ));
+      menu.addAction("Deselect all",this,SLOT ( clearAllTarget() ));
       break;
     default :
 //       std::cerr << "def";
       break;
   }
-  
+
   menu.exec(viewHeader_->mapToGlobal( _pos ) );
 }
 
 void DataControlPlugin::slotRename(){
   QItemSelectionModel* selection = view_->selectionModel();
-  
+
   // Get all selected rows
-  QModelIndexList indexList = selection->selectedRows ( 0 ); 
+  QModelIndexList indexList = selection->selectedRows ( 0 );
   int selectedRows = indexList.size();
   if (selectedRows == 1){
     BaseObject* item = model_->getItem( indexList[0]);
@@ -235,9 +265,9 @@ void DataControlPlugin::slotRename(){
 
 void DataControlPlugin::slotZoomTo(){
   QItemSelectionModel* selection = view_->selectionModel();
-  
+
   // Get all selected rows
-  QModelIndexList indexList = selection->selectedRows ( 0 ); 
+  QModelIndexList indexList = selection->selectedRows ( 0 );
   int selectedRows = indexList.size();
   if (selectedRows == 1){
     BaseObject* item = model_->getItem( indexList[0]);
@@ -256,9 +286,9 @@ void DataControlPlugin::slotZoomTo(){
         if (child){
           ACG::Vec3d cur_min;
           ACG::Vec3d cur_max;
-      
+
           child->getBoundingBox(cur_min, cur_max);
-      
+
           if (firstRound){
             bbmin = cur_min;
             bbmax = cur_max;
@@ -271,38 +301,38 @@ void DataControlPlugin::slotZoomTo(){
             bbmax[1] = std::max( bbmax[0], cur_max[1]);
             bbmax[2] = std::max( bbmax[0], cur_max[2]);
           }
-      
+
         }
       }
       //zoom to objects
       ACG::Vec3d bbcenter = (bbmax + bbmin) * 0.5;
-    
+
       double bbradius = (bbmax - bbmin).norm();
-    
+
       ACG::Vec3d eye = bbcenter + (PluginFunctions::eyePos() - bbcenter).normalize() * bbradius ;
-    
+
       PluginFunctions::flyTo(eye, bbcenter );
-      
+
     }else{
       //zoom to object
       BaseObjectData* obj = dynamic_cast< BaseObjectData* >(item);
-      
+
       if (obj){
-    
+
         ACG::Vec3d bbmin;
         ACG::Vec3d bbmax;
-    
+
         obj->getBoundingBox(bbmin, bbmax);
-    
+
         if ((bbmin[0] > bbmax[0]) || (bbmin[1] > bbmax[1]) || (bbmin[2] > bbmax[2]))
           std::cerr << "Error while computing bounding box!";
-    
+
         ACG::Vec3d bbcenter = (bbmax + bbmin) * 0.5;
-    
+
         double bbradius = (bbmax - bbmin).norm();
-    
+
         ACG::Vec3d eye = bbcenter + (PluginFunctions::eyePos() - bbcenter).normalize() * bbradius ;
-    
+
         PluginFunctions::flyTo(eye, bbcenter );
       }
     }
