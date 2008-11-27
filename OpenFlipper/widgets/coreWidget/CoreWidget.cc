@@ -564,7 +564,7 @@ CoreWidget::updateRecent()
       case DATA_BSPLINE_CURVE:
         path += "BSplineCurveType.png"; break;
       case DATA_NONE:
-        path += "folder_grey.png"; break;
+        path += "Settings-Icon.png"; break;
       default: path = "";
     }
     recentFilesMenu_->addAction(QIcon(path), recentFiles[i].filename);
