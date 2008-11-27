@@ -16,7 +16,7 @@
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Debian_64_Release/OpenFlipper</mainprogram>
+      <mainprogram>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Debian_64_Debug/OpenFlipper</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs/>

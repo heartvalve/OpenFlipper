@@ -1,25 +1,16 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="6" >
-  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/CoreWidget.cc" >
-   <View0 Encoding="" line="18" Type="Source" />
+ <DocsAndViews NumberOfDocuments="3" >
+  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/TemplateModelingPlugin.cc" >
+   <View0 Encoding="" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/Scenegraph/MeshNodeT.hh" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/TemplateBlendingComputation.cc" >
+   <View0 Encoding="" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/Scenegraph/MeshNodeT.cc" >
-   <View0 Encoding="" line="825" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/Init.cc" >
+   <View0 Encoding="" line="1041" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/MeshObjectT.hh" >
-   <View0 Encoding="" line="204" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Move/MovePlugin.cc" >
-   <View0 Encoding="" line="25" Type="Source" />
-  </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-PolyLine/PolyLinePlugin.cc" >
-   <View0 Encoding="" line="56" Type="Source" />
-  </Doc5>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
