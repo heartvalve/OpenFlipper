@@ -184,7 +184,7 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
       action->setIcon(icon);
       menu.addSeparator();
       action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"user-trash.png");
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
       action->setIcon(icon);
     } else {
       action = menu.addAction("Zoom to object",this,SLOT ( slotZoomTo() ));
@@ -198,7 +198,7 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
       action->setIcon(icon);
       menu.addSeparator();
       action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"user-trash.png");
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
       action->setIcon(icon);
     }
 

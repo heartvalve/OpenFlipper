@@ -124,7 +124,7 @@ void CoreWidget::setupMenuBar()
   QAction* AC_AddEmpty = new QAction(tr("&Add Empty Object"), this);
   AC_AddEmpty->setStatusTip(tr("Add an empty object"));
   AC_AddEmpty->setWhatsThis("Creates a new empty object of a given type");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-new.png");
+  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"add-empty-object.png");
   AC_AddEmpty->setIcon(icon);
   connect(AC_AddEmpty, SIGNAL(triggered()), this, SIGNAL(addEmptyObjectMenu()));
   fileMenu_->addAction(AC_AddEmpty);
@@ -156,7 +156,7 @@ void CoreWidget::setupMenuBar()
   QAction* AC_load_ini = new QAction(tr("&Load Settings"), this);
   AC_load_ini->setStatusTip(tr("Load Settings from INI file"));
   AC_load_ini->setWhatsThis("Load a previous settings from file (objects,colors,...)");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"folder.png");
+  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"load-settings.png");
   AC_load_ini->setIcon(icon);
   connect(AC_load_ini, SIGNAL(triggered()), this, SIGNAL(loadIniMenu()));
   fileMenu_->addAction(AC_load_ini);
@@ -165,7 +165,7 @@ void CoreWidget::setupMenuBar()
   QAction* AC_save_ini = new QAction(tr("&Save Settings"), this);
   AC_save_ini->setStatusTip(tr("Save current settings to INI file"));
   AC_save_ini->setWhatsThis("Save settings to file (objects,colors,...)");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"folder-txt.png");
+  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"save-settings.png");
   AC_save_ini->setIcon(icon);
   connect(AC_save_ini, SIGNAL(triggered()), this, SIGNAL(saveIniMenu()));
   fileMenu_->addAction(AC_save_ini);

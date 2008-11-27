@@ -179,7 +179,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
       button->setIcon(icon);
     } else if ( actions[i]->text() == "Light" ) {
       QIcon icon;
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"ktip.png");
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-mode.png");
 
       QToolButton * button = qobject_cast<QToolButton *>( viewerToolbar_->widgetForAction ( actions[i] ) );
       button->setIcon(icon);
