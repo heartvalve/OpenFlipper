@@ -158,8 +158,17 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   for (uint i=0; i < coreKeys_.size(); i++){
     QStringList row;
-    QKeySequence keySequence( coreKeys_[i].key + coreKeys_[i].modifiers );
-    row << coreKeys_[i].description << keySequence.toString();
+
+    int key = coreKeys_[i].key;
+
+      if (key == Qt::Key_AltGr || key == Qt::Key_Alt || key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Meta){
+        QString keyString = QKeySequence( coreKeys_[i].modifiers ).toString();
+        row << coreKeys_[i].description << (keyString).left(keyString.size()-1);
+      }else{
+        QString keyString = QKeySequence( key + coreKeys_[i].modifiers ).toString();
+        row << coreKeys_[i].description << (keyString).left(keyString.size()-1);
+      }
+
     keys.append(new QTreeWidgetItem(core, row));
   }
 
@@ -182,8 +191,17 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
     for (int k=0; k < plugins_[i].keys.count(); k++){
       QStringList row;
-      QKeySequence keySequence( plugins_[i].keys[k].key + plugins_[i].keys[k].modifiers );
-      row << plugins_[i].keys[k].description << keySequence.toString();
+      
+      int key = plugins_[i].keys[k].key;
+
+      if (key == Qt::Key_AltGr || key == Qt::Key_Alt || key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Meta){
+        QString keyString = QKeySequence( plugins_[i].keys[k].modifiers ).toString();
+        row << plugins_[i].keys[k].description << (keyString).left(keyString.size()-1);
+      }else{
+        QString keyString = QKeySequence( key + plugins_[i].keys[k].modifiers ).toString();
+        row << plugins_[i].keys[k].description << (keyString).left(keyString.size()-1);
+      }
+
       keys.append(new QTreeWidgetItem(plugins[i-off], row));
     }
 
