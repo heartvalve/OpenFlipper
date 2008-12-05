@@ -205,6 +205,9 @@ public:
     /// Set application to Fullscreen and back
     void toggleFullscreen();
 
+    /// Enable or disable fullscreen mode
+    void setFullscreen(bool _state );
+
     /// Hide or show logging area
     void toggleLogger();
 

@@ -667,6 +667,13 @@ void Core::fullscreen() {
 
 //-----------------------------------------------------------------------------
 
+void Core::fullscreen( bool _state ) {
+  if ( OpenFlipper::Options::gui() )
+    coreWidget_->setFullscreen(_state);
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::logger() {
   if ( OpenFlipper::Options::gui() )
     coreWidget_->toggleLogger();

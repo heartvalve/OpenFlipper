@@ -294,6 +294,24 @@ CoreWidget::toggleFullscreen() {
 
 //-----------------------------------------------------------------------------
 
+/** Enable or disable Fullscreen Mode
+  */
+void
+CoreWidget::setFullscreen(bool _state ) {
+  if ( _state )
+    setWindowState( windowState() | Qt::WindowFullScreen);
+  else {
+    if ( windowState() & Qt::WindowFullScreen )
+      setWindowState( windowState() ^  Qt::WindowFullScreen);
+  }
+
+  OpenFlipper::Options::fullScreen( bool( windowState() & Qt::WindowFullScreen) );
+
+  show();
+}
+
+//-----------------------------------------------------------------------------
+
 /** Hide or show logger
   */
 void
