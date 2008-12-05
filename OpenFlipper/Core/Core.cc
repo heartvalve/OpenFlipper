@@ -970,6 +970,9 @@ void Core::setDescriptions(){
                           QString("direction,upVector").split(","),
                           QString("Viewing direction., Up-Vector.").split(","));
   emit setSlotDescription("fullscreen()", "Toggle fullscreen mode", QStringList(), QStringList());
+  emit setSlotDescription("fullscreen(bool)", "Enable or disable fullscreen mode",
+                           QStringList("enabled") ,
+                           QStringList("Enable or disable fullscreen mode"));
   emit setSlotDescription("logger()", "Toggle logging window visibility", QStringList(), QStringList());
   emit setSlotDescription("toolbox()", "Toggle toolbox visibility", QStringList(), QStringList());
   emit setSlotDescription("setDrawMode(QString)", "Set the drawMode",
