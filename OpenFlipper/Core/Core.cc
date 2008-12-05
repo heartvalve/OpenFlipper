@@ -667,16 +667,16 @@ void Core::fullscreen( bool _state ) {
 
 //-----------------------------------------------------------------------------
 
-void Core::logger() {
+void Core::showLogger(bool _state) {
   if ( OpenFlipper::Options::gui() )
-    coreWidget_->toggleLogger();
+    coreWidget_->showLogger( _state );
 }
 
 //-----------------------------------------------------------------------------
 
-void Core::toolbox() {
+void Core::showToolbox( bool _state ) {
   if ( OpenFlipper::Options::gui() )
-    coreWidget_->toggleToolbox();
+    coreWidget_->showToolbox(_state);
 }
 
 
@@ -965,8 +965,8 @@ void Core::setDescriptions(){
   emit setSlotDescription("fullscreen(bool)", "Enable or disable fullscreen mode",
                            QStringList("enabled") ,
                            QStringList("Enable or disable fullscreen mode"));
-  emit setSlotDescription("logger()", "Toggle logging window visibility", QStringList(), QStringList());
-  emit setSlotDescription("toolbox()", "Toggle toolbox visibility", QStringList(), QStringList());
+  emit setSlotDescription("showLogger(bool)", "Show or hide logger window", QStringList("Show or hide logger window"), QStringList());
+  emit setSlotDescription("showToolbox(bool)", "Show or hide toolbox", QStringList("Show or hide the toolbox"), QStringList());
   emit setSlotDescription("setDrawMode(QString)", "Set the drawMode",
                         QStringList("DrawMode"), QStringList("the drawMode ( ; separated list )"));
   emit setSlotDescription("restrictFrameRate(bool)", "Restrict FrameRate to MaxFrameRate",
@@ -1002,6 +1002,10 @@ void Core::setDescriptions(){
   emit setSlotDescription("loadObject()", "Show the dialog to load an object. (only works if GUI is available)",QStringList(), QStringList());
   emit setSlotDescription("loadSettings()", "Show the dialog to load settings. (only works if GUI is available)",QStringList(), QStringList());
   emit setSlotDescription("loadSettings(QString)", "load settings from file.",QStringList(), QStringList());
+  emit setSlotDescription("createWidget(QString,QString);", "Create a widget from an ui file",
+                          QString("Object name,ui file").split(","),
+                          QString("Name of the new widget in script,ui file to load").split(","));
+
 
 }
 // //-----------------------------------------------------------------------------

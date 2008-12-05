@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -43,8 +43,10 @@
 
 // -------------------- mview
 #include "Core.hh"
+#include <QtUiTools/QUiLoader>
 
-//== IMPLEMENTATION ========================================================== 
+
+//== IMPLEMENTATION ==========================================================
 
 
 
@@ -57,7 +59,7 @@ void Core::slotExecuteScript( QString _script ) {
 }
 
 void Core::slotGetScriptingEngine( QScriptEngine*& _engine  ) {
-  _engine = &scriptEngine_; 
+  _engine = &scriptEngine_;
 }
 
 void Core::slotGetAllAvailableFunctions( QStringList& _functions  ) {
@@ -65,11 +67,29 @@ void Core::slotGetAllAvailableFunctions( QStringList& _functions  ) {
 }
 
 void Core::scriptLogFunction( QString _output) {
-   emit scriptLog(_output); 
+   emit scriptLog(_output);
+}
+
+void Core::createWidget(QString _objectName, QString _uiFilename) {
+  QUiLoader loader;
+
+  QFile uiFile(_uiFilename);
+  uiFile.open(QIODevice::ReadOnly);
+  QWidget *ui = loader.load(&uiFile);
+  uiFile.close();
+
+  QScriptValue scriptUi = scriptEngine_.newQObject(ui, QScriptEngine::ScriptOwnership);
+  scriptEngine_.globalObject().setProperty(_objectName, scriptUi);
+
+
+  ui->show();
+
+// core.createWidget("calc1","/data/home1/moebius/Calculator.ui");
+
 }
 
 //=============================================================================
-//== Script Special Functions ================================================= 
+//== Script Special Functions =================================================
 //=============================================================================
 
 QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
@@ -80,13 +100,13 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
         result.append(" ");
     result.append(context->argument(i).toString());
   }
-  
+
   // Get the textedit for Output ( Set in Core.cc )
   QScriptValue calleeData = context->callee().property("textedit");
   Core *widget = qobject_cast<Core*>(calleeData.toQObject());
-  
-  widget->scriptLogFunction(result); 
-  
+
+  widget->scriptLogFunction(result);
+
   return engine->undefinedValue();
 }
 

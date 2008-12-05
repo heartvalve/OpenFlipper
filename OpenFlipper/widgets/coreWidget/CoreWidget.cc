@@ -320,15 +320,15 @@ CoreWidget::toggleLogger() {
   OpenFlipper::Options::hideLogger( !OpenFlipper::Options::hideLogger() );
 
   // Hide/Show Logger
-  hideLogger( OpenFlipper::Options::hideLogger() );
+  showLogger( !OpenFlipper::Options::hideLogger() );
 }
 
 /** Hide or show logger
   */
 void
-CoreWidget::hideLogger(bool _hide) {
+CoreWidget::showLogger(bool _state) {
   //Hide Logger
-  if ( _hide ) {
+  if ( !_state ) {
     QList<int> wsizes( splitter_->sizes() );
 
     // Remember old size
@@ -361,7 +361,18 @@ void
 CoreWidget::toggleToolbox() {
 
   //toggle
-  OpenFlipper::Options::hideToolbox(!OpenFlipper::Options::hideToolbox());
+  showToolbox( OpenFlipper::Options::hideToolbox() );
+}
+
+//-----------------------------------------------------------------------------
+
+/** Hide or show toolbox
+  */
+void
+CoreWidget::showToolbox( bool _state ) {
+
+  //toggle
+  OpenFlipper::Options::hideToolbox( !_state );
 
   if ( OpenFlipper::Options::hideToolbox() ){
     //hide all toolWidgets

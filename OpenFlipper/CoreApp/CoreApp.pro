@@ -11,6 +11,7 @@ openmesh()
 glut()
 glew()
 openmp()
+qt()
 
 DIRECTORIES =   ../ ../Core ../Logging \
 			    ../Scripting  ../Scripting/scriptPrototypes ../Scripting/scriptWrappers ../SimpleOpt \

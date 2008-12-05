@@ -283,10 +283,10 @@ public slots:
     void fullscreen( bool _state );
 
     /// Hide or show logging window
-    void logger();
+    void showLogger(bool _state);
 
-    /// Hide or show toolbox window
-    void toolbox();
+    /// Show or hide toolbox
+    void showToolbox( bool _state );
 
     /// Set the drawMode ( ; separated list )
     void setDrawMode(QString _mode);
@@ -584,6 +584,17 @@ private:
 
     void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                             QStringList _parameters, QStringList _descriptions);
+
+  public slots:
+    /** \brief Create an script object from a ui file
+     *
+     * This function will load an ui file, set up a qwidget from that and makes it available
+     * under _objectName for scripting.
+     * @param _objectName The name in scripting environment used for the new object
+     * @param _uiFilename ui file to load
+     */
+    void createWidget(QString _objectName, QString _uiFilename);
+
   private :
     /// Core scripting engine
     QScriptEngine scriptEngine_;

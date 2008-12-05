@@ -212,10 +212,13 @@ public:
     void toggleLogger();
 
     /// Change visibility of the logger
-    void hideLogger(bool _hide);
+    void showLogger(bool _state);
 
     /// Hide or show toolbox area
     void toggleToolbox();
+
+    /// Show or hide toolbox
+    void showToolbox( bool _state );
 
   /** @} */
 
