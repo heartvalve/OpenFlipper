@@ -69,7 +69,7 @@ void Core::applyOptions(){
 		  coreWidget_->setWindowState( (coreWidget_->windowState() | Qt::WindowFullScreen) ^ Qt::WindowFullScreen);
 
     // Logger
-    coreWidget_->hideLogger( OpenFlipper::Options::hideLogger() );
+    coreWidget_->showLogger( !OpenFlipper::Options::hideLogger() );
 
     //animation
     coreWidget_->examiner_widget_->animation(OpenFlipper::Options::animation());
