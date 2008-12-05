@@ -1,16 +1,19 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="3" >
-  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/TemplateModelingPlugin.cc" >
-   <View0 Encoding="" Type="Source" />
+ <DocsAndViews NumberOfDocuments="4" >
+  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/Init.cc" >
+   <View0 Encoding="" line="1130" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/TemplateBlendingComputation.cc" >
-   <View0 Encoding="" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/TemplateModelingPlugin.hh" >
+   <View0 Encoding="" line="157" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/Init.cc" >
-   <View0 Encoding="" line="1041" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/Matching.cc" >
+   <View0 Encoding="" line="58" Type="Source" />
   </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TemplateModeling/TemplateModelingPlugin.cc" >
+   <View0 Encoding="" line="410" Type="Source" />
+  </Doc3>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

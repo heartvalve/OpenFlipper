@@ -282,6 +282,9 @@ public slots:
     /// toggle fullscreen mode
     void fullscreen();
 
+    /// set fullscreen mode
+    void fullscreen( bool _state );
+
     /// Hide or show logging window
     void logger();
 
@@ -300,7 +303,7 @@ public slots:
     /// set the baseFilename for snapshots (a counter is automatically increased when
     /// snapshot() is called)
     void snapshotBaseFileName(const QString& _fname);
-  
+
     /** Trigger a snapshot and increase the snapshot counter.
       Save snapshot to file determined by snapshotBaseFileName() and
       the current snapshot counter. The \a back buffer will be saved.
@@ -360,7 +363,7 @@ private:
       * @param _id id of the object
       */
     bool saveObject( int _id, QString _filename );
-    
+
     /** Show dialog for saving an object to a new location
       * @param _id id of the object
       * @param _filename current filename of the object
@@ -620,7 +623,7 @@ private:
   private:
 
     QList< SlotInfo > coreSlots_;
-    
+
     void setDescriptions();
 
   /** @} */

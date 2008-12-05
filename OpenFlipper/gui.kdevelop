@@ -87,7 +87,7 @@
       </environments>
     </other>
     <general>
-      <activedir>ACG</activedir>
+      <activedir>Plugin-TemplateModeling</activedir>
     </general>
   </kdevcustomproject>
   <kdevdebugger>
