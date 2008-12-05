@@ -279,9 +279,6 @@ public slots:
     /// Set the viewing direction
     void setViewingDirection( Vector _direction, Vector _upvector );
 
-    /// toggle fullscreen mode
-    void fullscreen();
-
     /// set fullscreen mode
     void fullscreen( bool _state );
 

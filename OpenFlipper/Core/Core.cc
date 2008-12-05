@@ -660,13 +660,6 @@ void Core::setViewingDirection( Vector _direction, Vector _upvector ) {
 
 //-----------------------------------------------------------------------------
 
-void Core::fullscreen() {
-  if ( OpenFlipper::Options::gui() )
-    coreWidget_->toggleFullscreen();
-}
-
-//-----------------------------------------------------------------------------
-
 void Core::fullscreen( bool _state ) {
   if ( OpenFlipper::Options::gui() )
     coreWidget_->setFullscreen(_state);
@@ -969,7 +962,6 @@ void Core::setDescriptions(){
   emit setSlotDescription("setViewingDirection(Vector,Vector)", "Set the viewing direction",
                           QString("direction,upVector").split(","),
                           QString("Viewing direction., Up-Vector.").split(","));
-  emit setSlotDescription("fullscreen()", "Toggle fullscreen mode", QStringList(), QStringList());
   emit setSlotDescription("fullscreen(bool)", "Enable or disable fullscreen mode",
                            QStringList("enabled") ,
                            QStringList("Enable or disable fullscreen mode"));

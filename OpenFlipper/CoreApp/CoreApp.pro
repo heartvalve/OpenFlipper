@@ -10,6 +10,7 @@ acg()
 openmesh()
 glut()
 glew()
+openmp()
 
 DIRECTORIES =   ../ ../Core ../Logging \
 			    ../Scripting  ../Scripting/scriptPrototypes ../Scripting/scriptWrappers ../SimpleOpt \
