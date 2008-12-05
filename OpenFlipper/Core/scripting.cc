@@ -74,11 +74,28 @@ void Core::createWidget(QString _objectName, QString _uiFilename) {
   QUiLoader loader;
 
   QFile uiFile(_uiFilename);
+
+  if ( !uiFile.exists() ) {
+    emit log(LOGERR,"File does not exist : " + _uiFilename );
+    return;
+  }
+
   uiFile.open(QIODevice::ReadOnly);
   QWidget *ui = loader.load(&uiFile);
   uiFile.close();
 
+  if ( ui == 0 ) {
+    emit log(LOGERR,"Unable to create QWidget from ui file for " + _objectName );
+	return;
+  }
+
   QScriptValue scriptUi = scriptEngine_.newQObject(ui, QScriptEngine::ScriptOwnership);
+
+  if ( !scriptUi.isValid() ) {
+    emit log(LOGERR,"Unable to generate script interface for " + _objectName );
+	return;
+  }
+
   scriptEngine_.globalObject().setProperty(_objectName, scriptUi);
 
 
