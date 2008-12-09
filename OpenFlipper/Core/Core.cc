@@ -482,9 +482,9 @@ Core::~Core()
 void
 Core::slotMouseEventIdentify( QMouseEvent* _event )
 {
-  // Dont do anything as a context Menu will popup on right button click
-  if ( _event->button() == Qt::RightButton )
-    return;
+//   // Dont do anything as a context Menu will popup on right button click
+//   if ( _event->button() == Qt::RightButton )
+//     return;
 
   emit PluginMouseEventIdentify( _event );
 }
@@ -495,9 +495,9 @@ Core::slotMouseEventIdentify( QMouseEvent* _event )
 void
 Core::slotMouseEvent( QMouseEvent* _event )
 {
-  // Dont do anything as a context Menu will popup on right button click
-  if ( _event->button() == Qt::RightButton )
-    return;
+//   // Dont do anything as a context Menu will popup on right button click
+//   if ( _event->button() == Qt::RightButton )
+//     return;
 
   emit PluginMouseEvent(_event );
 }
@@ -525,24 +525,6 @@ Core::slotAddHiddenPickMode( const std::string _mode ) {
   if ( OpenFlipper::Options::gui() )
     coreWidget_->examiner_widget_->addPickMode(_mode,false,1000,false);
 }
-
-//-----------------------------------------------------------------------------
-
-void
-Core::slotAddPickMode( const std::string _mode , QCursor _cursor) {
-  if ( OpenFlipper::Options::gui() )
-    coreWidget_->examiner_widget_->addPickMode(_mode,false,1000,true,_cursor);
-}
-
-//-----------------------------------------------------------------------------
-
-void
-Core::slotAddHiddenPickMode( const std::string _mode , QCursor _cursor) {
-  if ( OpenFlipper::Options::gui() )
-    coreWidget_->examiner_widget_->addPickMode(_mode,false,1000,false, _cursor);
-}
-
-
 
 //-----------------------------------------------------------------------------
 
