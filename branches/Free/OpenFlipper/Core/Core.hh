@@ -211,12 +211,6 @@ signals:
       /// Add a new and invisible picking mode to the examiner_widget_
       void slotAddHiddenPickMode( const std::string _mode );
 
-      /// Add a new and visible picking mode to the examiner_widget_ with its own cursor
-      void slotAddPickMode( const std::string _mode , QCursor _cursor);
-
-      /// Add a new and invisible picking mode to the examiner_widget_ with its own cursor
-      void slotAddHiddenPickMode( const std::string _mode , QCursor _cursor);
-
       /// Called by a plugin if it creates a texture
       void slotAddTexture( QString _textureName , QString _filename , uint _dimension );
 

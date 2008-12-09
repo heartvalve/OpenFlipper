@@ -692,13 +692,13 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"addHiddenPickMode(const std::string)") )
         connect(plugin,SIGNAL(addHiddenPickMode( const std::string )),
                 this,SLOT(slotAddHiddenPickMode( const std::string )),Qt::DirectConnection);
-      if ( checkSignal(plugin,"addPickMode(const std::string,QCursor)") )
-        connect(plugin,SIGNAL(addPickMode( const std::string ,QCursor)),
-                this,SLOT(slotAddPickMode( const std::string ,QCursor)),Qt::DirectConnection);
+      if ( checkSignal(plugin,"setPickModeCursor(const std::string,QCursor)") )
+        connect(plugin,SIGNAL(setPickModeCursor( const std::string ,QCursor)),
+                coreWidget_->examiner_widget_,SLOT(setPickModeCursor( const std::string ,QCursor)),Qt::DirectConnection);
 
-      if ( checkSignal(plugin,"addHiddenPickMode(const std::string,QCursor)") )
-        connect(plugin,SIGNAL(addHiddenPickMode( const std::string ,QCursor)),
-                this,SLOT(slotAddHiddenPickMode( const std::string ,QCursor)),Qt::DirectConnection);
+      if ( checkSignal(plugin,"setPickModeMouseTracking(const std::string,bool)") )
+        connect(plugin,SIGNAL(setPickModeMouseTracking( const std::string ,bool)),
+                coreWidget_->examiner_widget_,SLOT(setPickModeMouseTracking( const std::string ,bool)),Qt::DirectConnection);
     }
 
     //Check if the plugin supports INI-Interface

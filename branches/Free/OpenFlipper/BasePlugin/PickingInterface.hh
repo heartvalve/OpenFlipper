@@ -58,7 +58,7 @@ class PickingInterface {
        * 
        * @param _mode Identifier of Picking mode or "Separator" to add a Separator
       */
-      virtual void addPickMode( const std::string /*_mode*/ ) {};
+      virtual void addPickMode( const std::string /*_mode*/) {};
       
       /** \brief Add a new picking mode to the examiner which will be invisible
        * 
@@ -70,23 +70,25 @@ class PickingInterface {
       */
       virtual void addHiddenPickMode( const std::string /*_mode*/ ) {};      
       
-      /** \brief Add a new picking mode to the examiner and has its own cursor
+      /** \brief Set the cursor of the given PickMode
        * 
-       * @param _mode Identifier of Picking mode or "Separator" to add a Separator
+       * Set the cursor that should be used inside the pickMode
+       * 
+       * @param _mode Identifier of Picking mode
+       * @param _cursor the new cursor
       */
-      virtual void addPickMode( const std::string /*_mode*/ , QCursor /*_cursor*/ ) {};
-      
-      /** \brief Add a new picking mode to the examiner which will be invisible but has its own cursor
+      virtual void setPickModeCursor( const std::string /*_mode*/ , QCursor /*_cursor*/ ) {};
+
+      /** \brief Set mouse tracking for the given PickMode
        * 
-       * The added PickMode will not appear in the context menus Picking menu.
-       * You have to provide a button or menuentry yourself if you want to switch to
-       * the picking mode provided here.
+       * Enable mouseTracking for the given PickMode. When MouseTracking is enabled
+       * you receive mouseMove events also when no button is pressed (via MouseInterface)
        * 
-       * @param _mode Identifier of Picking mode or "Separator" to add a Separator
+       * @param _mode Identifier of Picking mode
+       * @param _mouseTracking new state of mouseTracking
       */
-      virtual void addHiddenPickMode( const std::string /*_mode*/ , QCursor /*_cursor*/ ) {};            
-      
-      
+      virtual void setPickModeMouseTracking( const std::string /*_mode*/ , bool /*_mouseTracking*/ ) {};
+
       /**  \brief The pickingMode has changed
        * 
        * This slot is called if the user changes the current picking mode
@@ -101,6 +103,6 @@ class PickingInterface {
       
 };
 
-Q_DECLARE_INTERFACE(PickingInterface,"OpenFlipper.PickingInterface/1.0")
+Q_DECLARE_INTERFACE(PickingInterface,"OpenFlipper.PickingInterface/1.1")
       
 #endif // PICKINGINTERFACE_HH
