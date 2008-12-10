@@ -106,11 +106,11 @@ void BaseObjectData::init() {
     std::cerr << "Separator Node already exists. this should not happen!" << std::endl;
 
   if ( manipulatorNode_ == 0 ) {
-    manipulatorNode_      = new QtManipulatorNode(baseNode(),"NEW ManipulatorNode");
+    manipulatorNode_      = new QtTranslationManipulatorNode(baseNode(),"NEW ManipulatorNode");
 
     // Bind this manipulator to the current object
     manipulatorNode_->setIdentifier(id());
-    manipulatorNode_->set_status( ACG::SceneGraph::ManipulatorNode::HideNode );
+    manipulatorNode_->set_status( ACG::SceneGraph::TranslationManipulatorNode::HideNode );
   }
   else
     std::cerr << "Manipulator Node already exists. this should not happen!" << std::endl;
@@ -169,7 +169,7 @@ SeparatorNode* BaseObjectData::baseNode() {
   return separatorNode_;
 }
 
-QtManipulatorNode* BaseObjectData::manipulatorNode() {
+QtTranslationManipulatorNode* BaseObjectData::manipulatorNode() {
   return manipulatorNode_;
 }
 
