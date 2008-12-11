@@ -443,13 +443,13 @@ CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
 /** Map Key Press Events to Plugins */
 void
 CoreWidget::mapKeyPressEvent(QKeyEvent* _e){
-std::cerr << "keypress " << _e->key() << std::endl;
+
   //find the first plugin which wants to handle that key
   for (uint i=0; i < plugins_.size(); i++)
     for (int k=0; k < plugins_[i].keys.count(); k++)
       if ( plugins_[i].keys[k].key == _e->key()
         && plugins_[i].keys[k].modifiers == _e->modifiers() ){
-std::cerr << "keypress " << plugins_[i].name.toStdString() << std::endl;
+
         KeyInterface* keyPlugin = qobject_cast< KeyInterface * >(plugins_[i].plugin);
 
         if (keyPlugin){
