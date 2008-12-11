@@ -101,8 +101,6 @@ void Core::createWidget(QString _objectName, QString _uiFilename) {
 
   ui->show();
 
-// core.createWidget("calc1","/data/home1/moebius/Calculator.ui");
-
 }
 
 //=============================================================================
