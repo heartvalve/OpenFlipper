@@ -78,10 +78,14 @@ enum DataType {
    DATA_BSPLINE_SURFACE = 1 << 7,
    /// Skeletons
    DATA_SKELETON        = 1 << 8,
+   /// Gis Data
+   DATA_GIS             = 1 << 9
 };
 
 /// Datatype matching all available types
-const DataType DATA_ALL = DataType( DATA_POINTS | DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_VOLUME | DATA_POLY_LINE | DATA_BSPLINE_CURVE | DATA_BSPLINE_SURFACE | DATA_SKELETON);
+const DataType DATA_ALL = DataType( DATA_POINTS | DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_VOLUME | DATA_POLY_LINE | DATA_BSPLINE_CURVE | DATA_BSPLINE_SURFACE | DATA_SKELETON | DATA_GIS );
+
+// TODO: Make types runtime addable
 
 //== INCLUDES =================================================================
 
