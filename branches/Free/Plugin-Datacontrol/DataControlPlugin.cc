@@ -45,6 +45,7 @@
 #include <ACG/GL/GLState.hh>
 #include <QStringList>
 #include <ACG/Scenegraph/BaseNode.hh>
+#include <ACG/QtWidgets/QtMaterialDialog.hh>
 #include <QModelIndexList>
 
 #include <queue>
