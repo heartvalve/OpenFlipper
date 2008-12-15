@@ -195,11 +195,54 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
     examiner_widget_->getPickMenu()->setTearOffEnabled(true);
   }
 
-  if (examiner_widget_->getFuncMenu() != NULL) {
-    examiner_widget_->getFuncMenu()->setTitle("&Functions");
-    contextMenu_->addMenu(examiner_widget_->getFuncMenu() );
-    examiner_widget_->getFuncMenu()->setTearOffEnabled(true);
-  }
+  // Add a functions menu
+  QAction* action;
+  QMenu* functionMenu = new QMenu("&Functions",contextMenu_);
+  action = functionMenu->addAction("Set Background Color");
+  action->setToolTip("Set the background color for the viewer");
+  connect(action, SIGNAL(triggered()), this, SLOT(changeBackgroundColor()) );
+  functionMenu->addSeparator();
+  action = functionMenu->addAction("Snapshot");
+  action->setToolTip("Make a snapshot");
+  connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionSnapshot()) );
+  action = functionMenu->addAction("Set Snapshot Name");
+  action->setToolTip("Set a name for snapshots");
+  connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionSnapshotName()) );
+  functionMenu->addSeparator();
+  action = functionMenu->addAction("Copy View");
+  action->setToolTip("Copy current view to clipboard");
+  connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionCopyView()) );
+  action = functionMenu->addAction("Paste View");
+  action->setToolTip("Paste current view from clipboard");
+  connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionPasteView()) );
+  functionMenu->addSeparator();
+  action = functionMenu->addAction("Synchronization");
+  action->setToolTip("Synchronize two different viewers");
+  action->setCheckable( true );
+  action->setChecked( OpenFlipper::Options::synchronization() );
+  connect(action, SIGNAL(triggered(bool)), examiner_widget_, SLOT(actionSynchronize(bool)) );
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+  action = functionMenu->addAction("Animation");
+  action->setToolTip("Animate rotation of objects");
+  action->setCheckable( true );
+  action->setChecked( OpenFlipper::Options::animation() );
+  connect(action, SIGNAL(triggered(bool)), examiner_widget_, SLOT(actionAnimation(bool)) );
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+  action = functionMenu->addAction("Backface Culling");
+  action->setToolTip("Enable backface culling");
+  action->setCheckable( true );
+  action->setChecked( OpenFlipper::Options::backfaceCulling() );
+  connect(action, SIGNAL(triggered(bool)), examiner_widget_, SLOT(actionBackfaceCulling(bool)) );
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+  action = functionMenu->addAction("Two-sided Lighting");
+  action->setToolTip("Enable two-sided lighting");
+  action->setCheckable( true );
+  action->setChecked( OpenFlipper::Options::twoSidedLighting() );
+  connect(action, SIGNAL(triggered(bool)), examiner_widget_, SLOT(actionTwoSidedLighting(bool)) );
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+
+  functionMenu->setTearOffEnabled(true);
+  contextMenu_->addMenu(functionMenu );
 
   if ( ( examiner_widget_->getDrawMenu() != NULL ) && OpenFlipper::Options::drawModesInContextMenu() ) {
 
@@ -212,6 +255,28 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
 
     examiner_widget_->getDrawMenu()->setTearOffEnabled(true);
   }
+}
+
+void CoreWidget::changeBackgroundColor(){
+  ACG::Vec4f bc = examiner_widget_->backgroundColor();
+
+  QColor backCol((int)bc[0], (int)bc[1], (int)bc[2]);
+  QColor c = QColorDialog::getColor(backCol,this);
+  if (c != backCol && c.isValid()){
+    examiner_widget_->backgroundColor(ACG::Vec4f(((double) c.red())   / 255.0,
+                                                  ((double) c.green()) / 255.0,
+                                                  ((double) c.blue())  / 255.0,
+                                                            1.0));
+
+    OpenFlipper::Options::defaultBackgroundColor( c.rgb() );
+  }
+}
+
+void CoreWidget::updateGlobalOptions(bool /*_enable*/){
+  OpenFlipper::Options::synchronization( examiner_widget_->synchronization() );
+  OpenFlipper::Options::animation( examiner_widget_->animation() );
+  OpenFlipper::Options::backfaceCulling( examiner_widget_->backFaceCulling() );
+  OpenFlipper::Options::twoSidedLighting( examiner_widget_->twoSidedLighting() );
 }
 
 void CoreWidget::slotAddContextMenu(QMenu* _menu) {

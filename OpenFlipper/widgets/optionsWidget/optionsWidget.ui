@@ -23,20 +23,12 @@ You can select multiple modes at the same time.</string>
       <string/>
      </property>
      <property name="currentIndex" >
-      <number>5</number>
+      <number>2</number>
      </property>
      <property name="usesScrollButtons" >
       <bool>true</bool>
      </property>
      <widget class="QWidget" name="general" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>462</width>
-        <height>677</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>General</string>
       </attribute>
@@ -129,14 +121,6 @@ You can select multiple modes at the same time.</string>
       </layout>
      </widget>
      <widget class="QWidget" name="paths" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>462</width>
-        <height>677</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Paths</string>
       </attribute>
@@ -161,14 +145,6 @@ You can select multiple modes at the same time.</string>
       </layout>
      </widget>
      <widget class="QWidget" name="viewer" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>462</width>
-        <height>677</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Viewer</string>
       </attribute>
@@ -366,6 +342,19 @@ You can select multiple modes at the same time.</string>
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="animation" >
+            <property name="toolTip" >
+             <string>Enable animated rotations</string>
+            </property>
+            <property name="statusTip" >
+             <string>Enable animated rotations</string>
+            </property>
+            <property name="text" >
+             <string>Animation</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_6" >
             <item>
              <widget class="QPushButton" name="backgroundButton" >
@@ -395,14 +384,6 @@ You can select multiple modes at the same time.</string>
       </layout>
      </widget>
      <widget class="QWidget" name="key" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>462</width>
-        <height>677</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Key Bindings</string>
       </attribute>
@@ -419,14 +400,6 @@ You can select multiple modes at the same time.</string>
       </layout>
      </widget>
      <widget class="QWidget" name="Updates" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>462</width>
-        <height>677</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Updates</string>
       </attribute>
@@ -545,14 +518,6 @@ You can select multiple modes at the same time.</string>
       </layout>
      </widget>
      <widget class="QWidget" name="Debug" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>462</width>
-        <height>677</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Debug</string>
       </attribute>

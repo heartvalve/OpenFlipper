@@ -375,6 +375,12 @@ public:
     /// called by plugins to add a real context menu depending on DataType
     void slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextMenuType type_);
 
+    /// update globalOptions for actions in the contexMenu
+    void updateGlobalOptions(bool _enable);
+
+    /// change the background color
+    void changeBackgroundColor();
+
   private :
     void updatePopupMenu(const QPoint& _point);
 
