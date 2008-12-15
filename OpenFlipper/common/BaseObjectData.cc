@@ -51,6 +51,7 @@
 BaseObjectData::BaseObjectData(const BaseObjectData& _object)
   : BaseObject(_object),
     path_("."),
+    manipPlaced_(false),
     rootNode_(_object.rootNode_),
     separatorNode_(0),
     manipulatorNode_(0),
