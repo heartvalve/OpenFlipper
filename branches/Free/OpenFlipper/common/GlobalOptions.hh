@@ -316,6 +316,14 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   bool stereo( );
 
+  /// Store synchronization setting
+  DLLEXPORT
+  void synchronization( bool _synchronization );
+
+  /// get current synchronization setting
+  DLLEXPORT
+  bool synchronization( );
+
   /// Store animation mode setting
   DLLEXPORT
   void animation( bool _animation );
@@ -331,6 +339,14 @@ void fontsDir(QDir _dir);
   /// get backface Culling setting
   DLLEXPORT
   bool backfaceCulling( );
+
+  /// Store twoSidedLighting setting
+  DLLEXPORT
+  void twoSidedLighting( bool _twoSidedLighting );
+
+  /// get twoSidedLighting setting
+  DLLEXPORT
+  bool twoSidedLighting( );
 
   /// Store wheelZoomFactor setting
   DLLEXPORT

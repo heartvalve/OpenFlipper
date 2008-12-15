@@ -176,6 +176,20 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::animation(animation);
 
     //============================================================================
+    // Load the twoSidedLighting setting
+    //============================================================================
+    bool twoSidedLighting = false;
+    if ( _ini.get_entry( twoSidedLighting, "Options" , "TwoSidedLighting") )
+      OpenFlipper::Options::twoSidedLighting(twoSidedLighting);
+
+    //============================================================================
+    // Load the synchronization setting
+    //============================================================================
+    bool synchronization = false;
+    if ( _ini.get_entry( synchronization, "Options" , "Synchronization") )
+      OpenFlipper::Options::synchronization(synchronization);
+
+    //============================================================================
     // Load the stereo mode setting
     //============================================================================
     bool stereo = false;
@@ -407,6 +421,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
     _ini.add_entry("Options","BackfaceCulling",coreWidget_->examiner_widget_->backFaceCulling());
     _ini.add_entry("Options","Animation",coreWidget_->examiner_widget_->animation());
+    _ini.add_entry("Options","Synchronization",coreWidget_->examiner_widget_->synchronization());
+    _ini.add_entry("Options","twoSidedLighting",coreWidget_->examiner_widget_->twoSidedLighting());
 
     _ini.add_entry("Options","WheelZoomFactor",coreWidget_->examiner_widget_->wheelZoomFactor());
     _ini.add_entry("Options","WheelZoomFactorShift",coreWidget_->examiner_widget_->wheelZoomFactorShift());

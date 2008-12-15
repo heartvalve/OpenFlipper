@@ -252,7 +252,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   connect( examiner_widget_ , SIGNAL(signalCustomContextMenuRequested( const QPoint&) ) ,
            this             , SLOT( slotCustomContextMenu( const QPoint&) ) );
 
-  contextMenu_ = new QMenu(0);
+  contextMenu_ = new QMenu(this);
   contextSelectionMenu_ = new QMenu("Selection",0);
 
   setupMenuBar();
