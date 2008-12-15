@@ -37,8 +37,11 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <ACG/QtWidgets/QtMaterialDialog.hh>
+
 #include <QInputDialog>
 
+/// Slot for Remove action in ContextMenu
 void DataControlPlugin::slotPopupRemove (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
 
@@ -69,6 +72,7 @@ void DataControlPlugin::slotPopupRemove (  ) {
   emit updated_objects(-1);
 }
 
+/// Slot for Ungroup action in ContextMenu
 void DataControlPlugin::slotUngroup (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
 
@@ -90,6 +94,7 @@ void DataControlPlugin::slotUngroup (  ) {
   emit updated_objects(-1);
 }
 
+/// Slot for Copy action in ContextMenu
 void DataControlPlugin::slotCopy (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
 
@@ -114,6 +119,7 @@ void DataControlPlugin::slotCopy (  ) {
   emit update_view();
 }
 
+/// Slot for Group action in ContextMenu
 void DataControlPlugin::slotGroup (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
 
@@ -150,6 +156,7 @@ void DataControlPlugin::slotGroup (  ) {
   emit updated_objects(-1);
 }
 
+/// ContextMenu requested - creates the contextMenu
 void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
   popupIndex_ = view_->indexAt(_pos);
 
@@ -195,6 +202,9 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
       action->setIcon(icon);
       action = menu.addAction("Rename",this,SLOT ( slotRename() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
+      action->setIcon(icon);
+      action = menu.addAction("Material Properties",this,SLOT ( slotMaterialProperties() ));
+      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
       action->setIcon(icon);
       menu.addSeparator();
       action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
@@ -261,6 +271,36 @@ void DataControlPlugin::slotRename(){
     if (ok && !newName.isEmpty())
       item->setName(newName);
   }
+}
+
+void DataControlPlugin::slotMaterialProperties(){
+  QItemSelectionModel* selection = view_->selectionModel();
+
+  // Get all selected rows
+  QModelIndexList indexList = selection->selectedRows ( 0 );
+  int selectedRows = indexList.size();
+  if (selectedRows == 1){
+    BaseObject* item = model_->getItem( indexList[0]);
+
+    BaseObjectData* itemData = dynamic_cast< BaseObjectData* > (item);
+
+    ACG::QtWidgets::QtMaterialDialog* dialog = new ACG::QtWidgets::QtMaterialDialog( 0, itemData->materialNode() );
+
+    dialog->setWindowFlags(dialog->windowFlags() | Qt::WindowStaysOnTopHint);
+
+    connect(dialog, SIGNAL(signalNodeChanged(ACG::SceneGraph::BaseNode*)),
+            this,   SLOT(slotNodeChanged(ACG::SceneGraph::BaseNode*)) );
+
+    dialog->setWindowIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png"));
+
+    dialog->show();
+
+  }
+}
+
+///Called when the material properties were changed inside the material dialog
+void DataControlPlugin::slotNodeChanged( ACG::SceneGraph::BaseNode* /*_node*/ ){
+  emit update_view();
 }
 
 void DataControlPlugin::slotZoomTo(){

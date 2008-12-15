@@ -204,6 +204,12 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
         ///Called by the popup menu to zoom to an object
         void slotZoomTo();
 
+        ///Called by the popup menu to set material properties
+        void slotMaterialProperties();
+
+        ///Called when the material properties were changed inside the material dialog
+        void slotNodeChanged( ACG::SceneGraph::BaseNode* _node );
+
       private :
         /// Index where a popup has been opened
         QModelIndex popupIndex_;
