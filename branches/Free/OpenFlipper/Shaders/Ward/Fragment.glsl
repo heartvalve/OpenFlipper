@@ -34,8 +34,8 @@ vec4 ward_direct(int lightSource)
         float G = (IdotD * NdotI);
         float HdotN = dot(h, n);
 
-        vec4 f_R = ward_diffuse * pi_rec + (ward_specular * exp((HdotN * HdotN - 1) / (HdotN * HdotN * ward_alpha * ward_alpha)))
-                                            / (4 * pi * ward_alpha * ward_alpha * sqrt(NdotI * NdotO));
+        vec4 f_R = vec4( ward_diffuse * pi_rec + (ward_specular * exp((HdotN * HdotN - 1.0) / (HdotN * HdotN * ward_alpha * ward_alpha)))
+                                                   / (4.0 * pi * ward_alpha * ward_alpha * sqrt(NdotI * NdotO)) );
 
         color = gl_LightSource[lightSource].diffuse *  f_R * G;
     }
