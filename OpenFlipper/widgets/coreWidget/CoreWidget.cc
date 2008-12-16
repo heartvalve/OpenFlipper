@@ -584,19 +584,8 @@ CoreWidget::updateRecent()
   QVector< OpenFlipper::Options::RecentFile > recentFiles = OpenFlipper::Options::recentFiles();
   for (int i = 0 ; i < recentFiles.size() ; ++i ) {
     QString path = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    switch(recentFiles[i].type){
-      case DATA_TRIANGLE_MESH:
-        path += "TriangleType.png"; break;
-      case DATA_POLY_MESH:
-        path += "PolyType.png"; break;
-      case DATA_POLY_LINE:
-        path += "PolyLineType.png"; break;
-      case DATA_BSPLINE_CURVE:
-        path += "BSplineCurveType.png"; break;
-      case DATA_NONE:
-        path += "Settings-Icon.png"; break;
-      default: path = "";
-    }
+    path += typeIcon( recentFiles[i].type );
+
     recentFilesMenu_->addAction(QIcon(path), recentFiles[i].filename);
   }
 

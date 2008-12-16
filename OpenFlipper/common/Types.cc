@@ -60,11 +60,15 @@ static bool initialized_ = false;
 
 /** This map maps an dataType id to an typeName
  */
-static std::map< unsigned int, QString > typesToString;
+static std::map< unsigned int, QString > typeToString;
 
-/** This map maps an dataType name to its id
+/** This map maps an dataType name to its id in the types vector
  */
-static std::map< QString , unsigned int > StringToType;
+static std::map< QString , unsigned int > stringToTypeInfo;
+
+/** This map maps an dataType id to its id in the types vector
+ */
+static std::map< unsigned int , unsigned int > typeToTypeInfo;
 
 class TypeInfo {
 
@@ -92,59 +96,149 @@ static std::vector< TypeInfo > types;
 
 void initialize() {
   if ( !initialized_ ) {
+    stringToTypeInfo["Unknown"] = types.size();
+    typeToTypeInfo[DATA_NONE]   = types.size();
     types.push_back( TypeInfo(DATA_NONE            ,"Unknown"        ,"Unknown.png") );
+    stringToTypeInfo["Group"]  = types.size();
+    typeToTypeInfo[DATA_GROUP] = types.size();
     types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"Unknown.png") );
+    stringToTypeInfo["Points"]  = types.size();
+    typeToTypeInfo[DATA_POINTS] = types.size();
     types.push_back( TypeInfo(DATA_POINTS          ,"Points"         ,"Unknown.png") );
 
+    stringToTypeInfo["PolyLine"]   = types.size();
+    typeToTypeInfo[DATA_POLY_LINE] = types.size();
     types.push_back( TypeInfo(DATA_POLY_LINE       ,"PolyLine"       ,"PolyLineType.png") );
+    stringToTypeInfo["TriangleMesh"]   = types.size();
+    typeToTypeInfo[DATA_TRIANGLE_MESH] = types.size();
     types.push_back( TypeInfo(DATA_TRIANGLE_MESH   ,"TriangleMesh"   ,"TriangleType.png") );
+    stringToTypeInfo["PolyMesh"]   = types.size();
+    typeToTypeInfo[DATA_POLY_MESH] = types.size();
     types.push_back( TypeInfo(DATA_POLY_MESH       ,"PolyMesh"       ,"PolyType.png") );
 
+    stringToTypeInfo["BSplineCurve"]   = types.size();
+    typeToTypeInfo[DATA_BSPLINE_CURVE] = types.size();
     types.push_back( TypeInfo(DATA_BSPLINE_CURVE   ,"BSplineCurve"   ,"BSplineCurveType.png") );
+    stringToTypeInfo["Volume"]  = types.size();
+    typeToTypeInfo[DATA_VOLUME] = types.size();
     types.push_back( TypeInfo(DATA_VOLUME          ,"Volume"         ,"Unknown.png") );
+    stringToTypeInfo["BSplineSurface"]   = types.size();
+    typeToTypeInfo[DATA_BSPLINE_SURFACE] = types.size();
     types.push_back( TypeInfo(DATA_BSPLINE_SURFACE ,"BSplineSurface" ,"Unknown.png") );
 
+    stringToTypeInfo["Skeleton"]  = types.size();
+    typeToTypeInfo[DATA_SKELETON] = types.size();
     types.push_back( TypeInfo(DATA_SKELETON        ,"Skeleton"       ,"Unknown.png") );
+    stringToTypeInfo["GIS"]  = types.size();
+    typeToTypeInfo[DATA_GIS] = types.size();
     types.push_back( TypeInfo(DATA_GIS             ,"GIS"            ,"Unknown.png") );
+    stringToTypeInfo["All"]  = types.size();
+    typeToTypeInfo[DATA_ALL] = types.size();
     types.push_back( TypeInfo(DATA_ALL             ,"All"            ,"Unknown.png") );
 
-    std::cerr << "Todo : Initialize DataType system" << std::endl;
+    typeToString[DATA_NONE] = "Unknown";
+    typeToString[DATA_GROUP] = "Group";
+    typeToString[DATA_POINTS] = "Points";
+    typeToString[DATA_POLY_LINE] = "PolyLine";
+    typeToString[DATA_TRIANGLE_MESH] = "TriangleMesh";
+    typeToString[DATA_POLY_MESH] = "PolyMesh";
+    typeToString[DATA_BSPLINE_CURVE] = "BSplineCurve";
+    typeToString[DATA_VOLUME] = "Volume";
+    typeToString[DATA_BSPLINE_SURFACE] = "BSplineSurface";
+    typeToString[DATA_SKELETON] = "Skeleton";
+    typeToString[DATA_GIS] = "GIS";
+    typeToString[DATA_ALL] = "All";
+
     initialized_ = true;
   }
 }
 
-// Adds a datatype and returns the id for the new type
+/// Adds a datatype and returns the id for the new type
 DataType addDataType(QString _name) {
   initialize();
-  std::cerr << "addDataType in Types.cc not implemented yet" << std::endl;
+
+  int type = nextTypeId_;
+
+  stringToTypeInfo[ _name ] = types.size();
+  typeToTypeInfo[ type ] = types.size();
+  types.push_back( TypeInfo(type, _name, "Unknown.png") );
+
+  typeToString[type] = _name;
+
   nextTypeId_ *= 2;
-  return( nextTypeId_ /2 );
+  return( type );
 }
 
+/// Get the id of a type with given name
 DataType typeId(QString _name) {
   initialize();
-  std::cerr << "typeId in Types.cc not implemented yet" << std::endl;
-  return (DATA_NONE);
+
+  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
+
+  if ( index != stringToTypeInfo.end() )
+    return types[ index->second ].type;
+  else
+    return -1;
 }
 
+/// Get the name of a type with given id
+QString typeName(DataType _id) {
+  initialize();
+
+  std::map<unsigned int, QString>::iterator name = typeToString.find(_id);
+
+  if ( name != typeToString.end() )
+    return name->second;
+  else
+    return "Unknown";
+}
+
+/// Get the icon of a given dataType
 QString typeIcon(QString  _name) {
   initialize();
-  return QString("");
+
+  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
+
+  if ( index != stringToTypeInfo.end() )
+    return types[ index->second ].iconName;
+  else
+    return "Unknown.png";
 }
 
+/// get the icon of a given dataType
 QString typeIcon(DataType _id) {
   initialize();
-  return QString("");
+
+  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+
+  if ( index != typeToTypeInfo.end() )
+    return types[ index->second ].iconName;
+  else
+    return "Unknown.png";
 }
 
+/// Set the icon for a given dataType
 void setTypeIcon( DataType _id   , QString _icon ) {
   initialize();
 
+  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+
+  if ( index != typeToTypeInfo.end() )
+    types[ index->second ].iconName = _icon;
+  else
+    std::cerr << "Could not set icon for DataType. Type not found!" << std::endl;
 }
 
+/// Set the icon for a given dataType
 void setTypeIcon( QString  _name , QString _icon ) {
   initialize();
 
+  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
+
+  if ( index != stringToTypeInfo.end() )
+    types[ index->second ].iconName = _icon;
+  else
+    std::cerr << "Could not set icon for DataType. Type not found!" << std::endl;
 }
 
 //=============================================================================

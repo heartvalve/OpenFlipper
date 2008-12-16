@@ -79,12 +79,12 @@ void Core::readApplicationOptions(INIFile& _ini) {
         continue;
 
       key = "type" + QString::number(j);
-      int type;
+      QString type;
 
       if ( !_ini.get_entry( type , "Options" , key ) )
         continue;
 
-      OpenFlipper::Options::addRecentFile(file, (DataType) type);
+      OpenFlipper::Options::addRecentFile(file, typeId(type) );
     }
 
     // load ViewModes
@@ -320,7 +320,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     _ini.add_entry( "Options" , key , filename );
     // Save DataType
     key = "type" + QString::number(j);
-    int type = recentFiles[j].type;
+    QString type = typeName( recentFiles[j].type );
     _ini.add_entry( "Options" , key , type );
   }
 
