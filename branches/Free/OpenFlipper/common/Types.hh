@@ -48,6 +48,7 @@
 #define TYPES_HH
 
 #include "GlobalDefines.hh"
+#include <limits.h>
 
 
 //== Global Typedefs  =================================================================
@@ -57,33 +58,45 @@
  *  This is an enumerator defining the supported data types. To decide which object
  *  type an object has, get the dataType from it.
  */
-enum DataType {
-   /// None of the other Objects
-   DATA_NONE            = 0 ,
-   /// Items used for Grouping
-   DATA_GROUP           = 1 ,
-   /// Point based objects
-   DATA_POINTS          = 1 << 1,
-   /// PolyLine objects
-   DATA_POLY_LINE       = 1 << 2,
-   /// Triangle Mesh objects
-   DATA_TRIANGLE_MESH   = 1 << 3,
-   /// Poly Mesh Objects
-   DATA_POLY_MESH       = 1 << 4,
-   /// Volumetric objects
-   DATA_VOLUME          = 1 << 5,
-   /// BSpline objects
-   DATA_BSPLINE_CURVE   = 1 << 6,
-   /// BSpline Surface objects
-   DATA_BSPLINE_SURFACE = 1 << 7,
-   /// Skeletons
-   DATA_SKELETON        = 1 << 8,
-   /// Gis Data
-   DATA_GIS             = 1 << 9
-};
 
-/// Datatype matching all available types
-const DataType DATA_ALL = DataType( DATA_POINTS | DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_VOLUME | DATA_POLY_LINE | DATA_BSPLINE_CURVE | DATA_BSPLINE_SURFACE | DATA_SKELETON | DATA_GIS );
+/// None of the other Objects
+const unsigned int DATA_NONE          = 0;
+
+/// Items used for Grouping
+const unsigned int DATA_GROUP         = 1;
+
+/// Point based objects
+const unsigned int DATA_POINTS        = 2;
+
+/// PolyLine objects
+const unsigned int DATA_POLY_LINE     = 4;
+
+/// Triangle Mesh objects
+const unsigned int DATA_TRIANGLE_MESH = 8;
+
+/// Poly Mesh Objects
+const unsigned int DATA_POLY_MESH     = 16;
+
+/// BSpline objects
+const unsigned int DATA_BSPLINE_CURVE = 32;
+
+/// Volumetric objects
+const unsigned int DATA_VOLUME        = 64;
+
+/// BSpline Surface objects
+const unsigned int DATA_BSPLINE_SURFACE = 128;
+
+/// Skeletons
+const unsigned int DATA_SKELETON       = 256;
+
+/// Gis Data
+const unsigned int DATA_GIS            = 512;
+
+
+/// Identifier for all available objects
+const unsigned int DATA_ALL           = UINT_MAX;
+
+typedef unsigned int DataType;
 
 // TODO: Make types runtime addable
 
@@ -121,7 +134,13 @@ typedef MeshObject< TriMesh , DATA_TRIANGLE_MESH > TriMeshObject;
 /// Typedef for a Meshobject containing a poly mesh
 typedef MeshObject< PolyMesh , DATA_POLY_MESH >    PolyMeshObject;
 
-//== CLASS DEFINITION =========================================================
+//== Functions for adding dataTypes =========================================================
+
+/// Adds a datatype and returns the id for the new type
+DataType addDataType(QString _name);
+
+/// Given a dataType Identifier string this function will return the id of the datatype
+DataType typeId(QString _name);
 
 //=============================================================================
 #endif // TYPES_HH defined
