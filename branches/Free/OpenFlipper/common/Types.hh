@@ -143,6 +143,9 @@ DataType addDataType(QString _name);
 /// Given a dataType Identifier string this function will return the id of the datatype
 DataType typeId(QString _name);
 
+/// Get the name of a type with given id
+QString typeName(DataType _id);
+
 //================================================================================================
 /** @name Datatype Icons
 * @{ */

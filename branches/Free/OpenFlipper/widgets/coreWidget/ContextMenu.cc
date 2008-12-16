@@ -91,24 +91,9 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
     emit updateContextMenu(objectId);
 
     // Add an empty Menu defining the current Type
-    if ( object->dataType() == DATA_POLY_MESH ){
-      typeEntry->setText("Poly Mesh");
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PolyType.png");
-      typeEntry->setIcon(icon);
-    } else if ( object->dataType() == DATA_TRIANGLE_MESH ) {
-      typeEntry->setText("Triangle Mesh");
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"TriangleType.png");
-      typeEntry->setIcon(icon);
-    } else if ( object->dataType() == DATA_POLY_LINE ) {
-      typeEntry->setText("Poly Line");
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"PolyLineType.png");
-      typeEntry->setIcon(icon);
-    } else if ( object->dataType() == DATA_BSPLINE_CURVE ) {
-      typeEntry->setText("BSpline Curve");
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BSplineCurveType.png");
-      typeEntry->setIcon(icon);
-    } else
-      std::cerr << "Datatype unknown... returned type was : " << object->dataType() << std::endl;
+    typeEntry->setText( typeName(object->dataType()) );
+    icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+ typeIcon(object->dataType()) );
+    typeEntry->setIcon(icon);
 
 
     // Add real context Menus first
