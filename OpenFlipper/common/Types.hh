@@ -49,14 +49,15 @@
 
 #include "GlobalDefines.hh"
 #include <limits.h>
+#include <QIcon>
 
 
 //== Global Typedefs  =================================================================
 
-/** \brief Field describing the type of Objects.
+/** \brief Predefined datatypes
  *
- *  This is an enumerator defining the supported data types. To decide which object
- *  type an object has, get the dataType from it.
+ * Here are several datatypes which have predefined ids. This might be changed to runtime added
+ * datatypes in the futere.
  */
 
 /// None of the other Objects
@@ -141,6 +142,24 @@ DataType addDataType(QString _name);
 
 /// Given a dataType Identifier string this function will return the id of the datatype
 DataType typeId(QString _name);
+
+//================================================================================================
+/** @name Datatype Icons
+* @{ */
+//================================================================================================
+
+/// Get an icon for a given DataType
+QString typeIcon(QString  _name);
+/// Get an icon for a given DataType
+QString typeIcon(DataType _id);
+
+/// Set an Icon for a given DataType
+void setTypeIcon( DataType _id   , QString _icon);
+/// Set an Icon for a given DataType
+void setTypeIcon( QString  _name , QString _icon );
+
+/** @} */
+
 
 //=============================================================================
 #endif // TYPES_HH defined
