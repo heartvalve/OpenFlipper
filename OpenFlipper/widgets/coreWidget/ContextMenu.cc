@@ -107,7 +107,8 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
       typeEntry->setText("BSpline Curve");
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BSplineCurveType.png");
       typeEntry->setIcon(icon);
-    }
+    } else
+      std::cerr << "Datatype unknown... returned type was : " << object->dataType() << std::endl;
 
 
     // Add real context Menus first

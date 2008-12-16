@@ -127,7 +127,11 @@ void BaseObject::cleanup() {
 // ===============================================================================
 
 bool BaseObject::dataType(DataType _type) {
-  return (objectType_ & _type);
+  if ( _type == DATA_ALL ) {
+    return true;
+  }
+
+  return ( objectType_ & _type);
 }
 
 DataType BaseObject::dataType() {
