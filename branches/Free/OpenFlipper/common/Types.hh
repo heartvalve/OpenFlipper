@@ -138,12 +138,15 @@ typedef MeshObject< PolyMesh , DATA_POLY_MESH >    PolyMeshObject;
 //== Functions for adding dataTypes =========================================================
 
 /// Adds a datatype and returns the id for the new type
+DLLEXPORT
 DataType addDataType(QString _name);
 
 /// Given a dataType Identifier string this function will return the id of the datatype
+DLLEXPORT
 DataType typeId(QString _name);
 
 /// Get the name of a type with given id
+DLLEXPORT
 QString typeName(DataType _id);
 
 //================================================================================================
@@ -152,13 +155,19 @@ QString typeName(DataType _id);
 //================================================================================================
 
 /// Get an icon for a given DataType
+DLLEXPORT
 QString typeIcon(QString  _name);
+
 /// Get an icon for a given DataType
+DLLEXPORT
 QString typeIcon(DataType _id);
 
 /// Set an Icon for a given DataType
+DLLEXPORT
 void setTypeIcon( DataType _id   , QString _icon);
+
 /// Set an Icon for a given DataType
+DLLEXPORT
 void setTypeIcon( QString  _name , QString _icon );
 
 /** @} */
