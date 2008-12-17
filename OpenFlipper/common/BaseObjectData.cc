@@ -64,6 +64,7 @@ BaseObjectData::BaseObjectData(const BaseObjectData& _object)
 BaseObjectData::BaseObjectData( SeparatorNode* _rootNode ) :
   BaseObject(),
   path_("."),
+  manipPlaced_(false),
   rootNode_(_rootNode),
   separatorNode_(0),
   manipulatorNode_(0),
