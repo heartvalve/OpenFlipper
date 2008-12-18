@@ -296,7 +296,10 @@ public:
   public :
 
     /// Examiner Widget
-    ACG::QtWidgets::QtExaminerViewer  *examiner_widget_;
+    std::vector< ACG::QtWidgets::QtExaminerViewer* >  examiner_widgets_;
+
+    /// temporary pointer pointing to first element of above vector for porting to multi view mode
+    ACG::QtWidgets::QtExaminerViewer* examiner_widget_;
 
     ///Spliter between toplevel objects and the textedit at the bottom
     QSplitter* splitter_;
@@ -382,7 +385,12 @@ public:
     void changeBackgroundColor();
 
   private :
-    void updatePopupMenu(const QPoint& _point);
+    /** Update the contextmenu for the given position inside an examiner widget
+     *
+     * @param _point      Picking position in coordinates of the viewer
+     * @param _examinerId Id of the examinerWidget used
+     */
+    void updatePopupMenu(const QPoint& _point, unsigned int _examinerId);
 
   private :
     /// context Menu for the gl area

@@ -71,17 +71,7 @@ void Core::applyOptions(){
     // Logger
     coreWidget_->showLogger( !OpenFlipper::Options::hideLogger() );
 
-    //animation
-    coreWidget_->examiner_widget_->animation(OpenFlipper::Options::animation());
-
-    //Backface Culling
-    coreWidget_->examiner_widget_->backFaceCulling(OpenFlipper::Options::backfaceCulling());
-
-    //wheel zoom factor
-    coreWidget_->examiner_widget_->setWheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());
-    coreWidget_->examiner_widget_->setWheelZoomFactorShift(OpenFlipper::Options::wheelZoomFactorShift());
-
-    // Picking Debugger
+    // Prepare Picking Debugger Flag
     ACG::SceneGraph::PickTarget target;
     if ( OpenFlipper::Options::pickingRenderMode() == "PICK_ANYHING") {
       target = ACG::SceneGraph::PICK_ANYTHING;
@@ -94,7 +84,23 @@ void Core::applyOptions(){
     } else {
       target = ACG::SceneGraph::PICK_ANYTHING;
     }
-    coreWidget_->examiner_widget_->renderPicking(OpenFlipper::Options::renderPicking(), target );
+
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+
+      //animation
+      coreWidget_->examiner_widgets_[i]->animation(OpenFlipper::Options::animation());
+
+      //Backface Culling
+      coreWidget_->examiner_widgets_[i]->backFaceCulling(OpenFlipper::Options::backfaceCulling());
+
+      //wheel zoom factor
+      coreWidget_->examiner_widgets_[i]->setWheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());
+      coreWidget_->examiner_widgets_[i]->setWheelZoomFactorShift(OpenFlipper::Options::wheelZoomFactorShift());
+
+      // Picking Debugger
+      coreWidget_->examiner_widgets_[i]->renderPicking(OpenFlipper::Options::renderPicking(), target );
+
+    }
 
 
     //hideToolbox

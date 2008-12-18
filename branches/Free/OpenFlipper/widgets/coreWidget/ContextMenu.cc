@@ -51,14 +51,33 @@
 
 void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
-  updatePopupMenu(_point);
+  QObject* senderPointer = sender();
+  unsigned int examinerId = 0;
+  QPoint   popupPosition;
+
+  if ( senderPointer == 0 ) {
+    std::cerr << "Error : slotCustomContextMenu directly called! This should only be called by an examiner" << std::endl;
+  } else {
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+      if ( senderPointer == examiner_widgets_[i] ) {
+        popupPosition =  examiner_widgets_[i]->glMapToGlobal(_point);
+        examinerId = i;
+        break;
+      }
+    }
+
+  }
+
+  updatePopupMenu(_point,examinerId);
 
   // If not initialized, dont show it!!
   if ( !contextMenu_->isEmpty () )
-    contextMenu_->exec( examiner_widget_->mapToGlobal(_point) );
+    contextMenu_->exec( popupPosition );
+
 }
 
-void CoreWidget::updatePopupMenu(const QPoint& _point) {
+void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId) {
+
   contextMenu_->clear();
   contextSelectionMenu_->clear();
 
@@ -79,7 +98,7 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
   unsigned int    node_idx, target_idx;
   ACG::Vec3d      hit_point;
   BaseObjectData* object;
-  if (PluginFunctions::scenegraph_pick(ACG::SceneGraph::PICK_ANYTHING, _point,node_idx, target_idx, &hit_point)) {
+  if (examiner_widgets_[_examinerId]->pick( ACG::SceneGraph::PICK_ANYTHING,_point,node_idx, target_idx, &hit_point ) ) {
     if ( PluginFunctions::get_picked_object(node_idx, object) )
       objectId = object->id();
   }

@@ -190,8 +190,13 @@ Core::init() {
 
     coreWidget_->setWindowTitle( OpenFlipper::Options::windowTitle() );
 
+
     // Make examiner available to the plugins ( defined in PluginFunctions.hh)
-    PluginFunctions::set_examiner( coreWidget_->examiner_widget_ );
+    PluginFunctions::set_examiner( coreWidget_->examiner_widgets_[0] );
+
+    if ( OpenFlipper::Options::multiView() ) {
+      std::cerr << "Todo : Pluginfunctions set multiple examiners" << std::endl;
+    }
 
 
   }
@@ -560,8 +565,12 @@ void Core::updateView() {
 
 
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() && !OpenFlipper::Options::redrawDisabled() ) {
-    coreWidget_->examiner_widget_->sceneGraph(root_node_scenegraph_);
-    coreWidget_->examiner_widget_->updateGL();
+
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_);
+      coreWidget_->examiner_widgets_[i]->updateGL();
+    }
+
   }
 }
 

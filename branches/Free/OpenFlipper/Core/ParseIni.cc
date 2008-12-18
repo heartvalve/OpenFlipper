@@ -419,13 +419,17 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
   if ( OpenFlipper::Options::gui() ) {
 
-    _ini.add_entry("Options","BackfaceCulling",coreWidget_->examiner_widget_->backFaceCulling());
-    _ini.add_entry("Options","Animation",coreWidget_->examiner_widget_->animation());
-    _ini.add_entry("Options","Synchronization",coreWidget_->examiner_widget_->synchronization());
-    _ini.add_entry("Options","twoSidedLighting",coreWidget_->examiner_widget_->twoSidedLighting());
+    if ( OpenFlipper::Options::multiView() ) {
+      std::cerr << "Todo : Save application options for multiple views" << std::endl;
+    }
 
-    _ini.add_entry("Options","WheelZoomFactor",coreWidget_->examiner_widget_->wheelZoomFactor());
-    _ini.add_entry("Options","WheelZoomFactorShift",coreWidget_->examiner_widget_->wheelZoomFactorShift());
+    _ini.add_entry("Options","BackfaceCulling",coreWidget_->examiner_widgets_[0]->backFaceCulling());
+    _ini.add_entry("Options","Animation",coreWidget_->examiner_widgets_[0]->animation());
+    _ini.add_entry("Options","Synchronization",coreWidget_->examiner_widgets_[0]->synchronization());
+    _ini.add_entry("Options","twoSidedLighting",coreWidget_->examiner_widgets_[0]->twoSidedLighting());
+
+    _ini.add_entry("Options","WheelZoomFactor",coreWidget_->examiner_widgets_[0]->wheelZoomFactor());
+    _ini.add_entry("Options","WheelZoomFactorShift",coreWidget_->examiner_widgets_[0]->wheelZoomFactorShift());
 
     //============================================================================
     // Save the current draw modes
