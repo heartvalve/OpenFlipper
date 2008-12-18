@@ -304,14 +304,15 @@ void set_rootNode( SeparatorNode* _root_node );
  * This picking function will pick in the last active examiner context which is automatically
  * Set by mouseevents from the core
  */
-
 DLLEXPORT
 bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
 
 DLLEXPORT
 bool scenegraph_pick( unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
 
-/// Execute Scenegraph traversal with action and use the last active examiner
+/** Execute Scenegraph traversal with action and use the last active examiner
+ *  If you are reacting on a mouseEvent you should use this function as it will automatically set the right view
+ */
 DLLEXPORT
 void traverse( ACG::SceneGraph::MouseEventAction  &_action );
 
