@@ -106,11 +106,6 @@ typedef unsigned int DataType;
 #include "BaseObject.hh"
 #include "GroupObject.hh"
 #include "BaseObjectData.hh"
-#include "MeshObjectT.hh"
-
-#ifdef ENABLE_BSPLINESURFACE_SUPPORT
-#include "BSplineSurface/BSplineSurfaceObject.hh"
-#endif
 
 //== TYPEDEFS =================================================================
 
@@ -128,12 +123,6 @@ Q_DECLARE_METATYPE(Matrix4x4);
 
 /// Vector Type containing the Data Objects
 typedef std::vector<BaseObjectData*> DataContainer;
-
-/// Typedef for a Meshobject containing a triangle mesh
-typedef MeshObject< TriMesh , DATA_TRIANGLE_MESH > TriMeshObject;
-
-/// Typedef for a Meshobject containing a poly mesh
-typedef MeshObject< PolyMesh , DATA_POLY_MESH >    PolyMeshObject;
 
 //== Functions for adding dataTypes =========================================================
 

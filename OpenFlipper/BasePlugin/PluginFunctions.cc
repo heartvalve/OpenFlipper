@@ -90,58 +90,6 @@ void set_sceneGraphRootNode( SeparatorNode* _root_node ) {
    PluginFunctions::sceneGraph_root_node_ = _root_node;
 }
 
-bool get_source_meshes( std::vector<TriMesh*>& _meshes  ) {
-  _meshes.clear();
-
-  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_TRIANGLE_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
-    if (! o_it->source() )
-      continue;
-    _meshes.push_back ( dynamic_cast< TriMeshObject* >( *o_it )->mesh() );
-  }
-
-  return (_meshes.size() > 0 );
-}
-
-bool get_source_meshes( std::vector<PolyMesh*>& _meshes  ) {
-  _meshes.clear();
-
-  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_POLY_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
-    if (! o_it->source() )
-      continue;
-    _meshes.push_back ( dynamic_cast< PolyMeshObject* >( *o_it )->mesh() );
-  }
-
-  return (_meshes.size() > 0 );
-}
-
-
-bool get_target_meshes( std::vector<TriMesh*>& _meshes  ) {
-  _meshes.clear();
-
-  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_TRIANGLE_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
-    if (! o_it->target() )
-      continue;
-    if ( dynamic_cast< TriMeshObject* >( *o_it )->mesh() )
-      _meshes.push_back ( dynamic_cast< TriMeshObject* >( *o_it )->mesh() );
-  }
-
-  return (_meshes.size() > 0 );
-}
-
-bool get_target_meshes( std::vector<PolyMesh*>& _meshes  ) {
-  _meshes.clear();
-
-  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_POLY_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
-    if (! o_it->target() )
-      continue;
-    if ( dynamic_cast< PolyMeshObject* >( *o_it )->mesh() )
-      _meshes.push_back ( dynamic_cast< PolyMeshObject* >( *o_it )->mesh() );
-  }
-
-  return (_meshes.size() > 0 );
-}
-
-
 bool get_picked_object(uint _node_idx , BaseObjectData*& _object) {
   for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
     if ( o_it->picked( _node_idx ) ) {
@@ -196,71 +144,9 @@ bool get_object(  int _identifier , BaseObjectData*& _object ) {
   return ( _object != 0 );
 }
 
-bool get_object(  int _identifier , TriMeshObject*& _object ) {
-
-  if ( _identifier == -1 )
-    return false;
-
-  BaseObject* object = objectRoot_->childExists( _identifier );
-  _object = dynamic_cast< TriMeshObject* >(object);
-  return ( _object != 0 );
-}
-
-bool get_object(  int _identifier , PolyMeshObject*& _object ) {
-
-  if ( _identifier == -1 )
-    return false;
-
-  BaseObject* object = objectRoot_->childExists( _identifier );
-  _object = dynamic_cast< PolyMeshObject* >(object);
-  return ( _object != 0 );
-}
-
 // ===============================================================================
 // ===============================================================================
 
-
-bool get_mesh(  int _identifier , TriMesh*& _mesh ) {
-
-  if ( _identifier == -1 )
-    return false;
-
-  BaseObject* object = objectRoot_->childExists( _identifier );
-
-  // Unable to find object
-  if ( object == 0)
-    return false;
-
-  TriMeshObject* triangleMeshObject = dynamic_cast< TriMeshObject* > (object);
-
-  // Object is not a triangle mesh
-  if ( triangleMeshObject == 0)
-    return false;
-
-  _mesh = triangleMeshObject->mesh();
-  return true;
-}
-
-bool get_mesh(  int _identifier , PolyMesh*& _mesh ) {
-
-  if ( _identifier == -1 )
-    return false;
-
-  BaseObject* object = objectRoot_->childExists( _identifier );
-
-  // Unable to find object
-  if ( object == 0)
-    return false;
-
-  PolyMeshObject* polyMeshObject = dynamic_cast< PolyMeshObject* > (object);
-
-  // Object is not a triangle mesh
-  if ( polyMeshObject == 0)
-    return false;
-
-  _mesh = polyMeshObject->mesh();
-  return true;
-}
 
 bool deleteObject( int _id ) {
 
@@ -618,8 +504,8 @@ void get_all_objects( std::vector < BaseObjectData*>& _objects ) {
 }
 
 ///   Fly to point and viewing direction (animated).
-void   flyTo (const TriMesh::Point &_position, const TriMesh::Point &_center, double _time) {
-   examiner_widget_->flyTo((ACG::Vec3d)_position,(ACG::Vec3d)_center,_time);
+void   flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time) {
+   examiner_widget_->flyTo(_position,_center,_time);
 }
 
 
@@ -633,48 +519,6 @@ BaseObjectData* baseObjectData( BaseObject* _object ){
 
   return dynamic_cast< BaseObjectData* >(_object);
 }
-
-TriMesh* triMesh( BaseObjectData* _object ) {
-  if ( _object == 0 )
-    return 0;
-
-  if ( _object->dataType(DATA_TRIANGLE_MESH) ) {
-    TriMeshObject* object = dynamic_cast< TriMeshObject* >(_object);
-    return object->mesh();
-  } else
-    return NULL;
-}
-
-PolyMesh* polyMesh( BaseObjectData* _object ) {
-  if ( _object == 0 )
-    return 0;
-
-  if ( _object->dataType(DATA_POLY_MESH) ) {
-    PolyMeshObject* object = dynamic_cast< PolyMeshObject* >(_object);
-    return object->mesh();
-  } else
-    return NULL;
-}
-
-TriMeshObject* triMeshObject( BaseObjectData* _object ) {
-  if ( _object == 0 )
-    return 0;
-
-  if ( ! _object->dataType(DATA_TRIANGLE_MESH) )
-    return NULL;
-  return dynamic_cast< TriMeshObject* >( _object );
-}
-
-PolyMeshObject* polyMeshObject( BaseObjectData* _object ) {
-  if ( _object == 0 )
-    return 0;
-
-  if ( ! _object->dataType(DATA_POLY_MESH) )
-    return NULL;
-  return dynamic_cast< PolyMeshObject* >( _object );
-}
-
-
 
 // ===============================================================================
 // Get the root of the object structure
