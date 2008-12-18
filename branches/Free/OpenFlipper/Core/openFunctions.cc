@@ -51,8 +51,8 @@ void Core::resetScenegraph() {
       coreWidget_->examiner_widgets_[i]->lockUpdate();
       coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_);
       coreWidget_->examiner_widgets_[i]->viewAll();
-      coreWidget_->examiner_widgets_[i]->setScenePos( coreWidget_->examiner_widget_->scene_center() ,
-                                                  coreWidget_->examiner_widget_->scene_radius() /* 10.0*/  );
+      coreWidget_->examiner_widgets_[i]->setScenePos( coreWidget_->examiner_widgets_[i]->scene_center() ,
+                                                      coreWidget_->examiner_widgets_[i]->scene_radius() /* 10.0*/  );
 
       coreWidget_->examiner_widgets_[i]->setHome();
       coreWidget_->examiner_widgets_[i]->drawMode( OpenFlipper::Options::standardDrawMode() );

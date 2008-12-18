@@ -54,7 +54,12 @@ static BaseObject* objectRoot_;
  *
  * This pointer is internally used to acces the examiner widget in the main apllication
  */
-static ACG::QtWidgets::QtExaminerViewer* examiner_widget_;
+static std::vector< ACG::QtWidgets::QtExaminerViewer* > examiner_widgets_;
+
+/// TODO : Remove this variable and implement multiView correctly here
+static ACG::QtWidgets::QtExaminerViewer*  examiner_widget_;
+
+static unsigned int activeExaminer_ = 0;
 
 /** \brief DONT USE DIRECTLY!!
  *
@@ -68,8 +73,13 @@ void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
 
-void set_examiner( ACG::QtWidgets::QtExaminerViewer* _examiner_widget ) {
-   PluginFunctions::examiner_widget_ = _examiner_widget;
+void set_examiner( std::vector< ACG::QtWidgets::QtExaminerViewer* > _examiner_widgets ) {
+   PluginFunctions::examiner_widgets_ = _examiner_widgets;
+   PluginFunctions::examiner_widget_ =  examiner_widgets_[0];
+}
+
+void setActiveExaminer( unsigned int _id ) {
+  activeExaminer_ = _id;
 }
 
 void set_rootNode( SeparatorNode* _root_node ) {
@@ -348,15 +358,15 @@ bool get_all_object_identifiers( std::vector<int>& _identifiers  ) {
 }
 
 void setBackColor( OpenMesh::Vec4f _color) {
-  examiner_widget_->backgroundColor(_color);
+  examiner_widgets_[activeExaminer_]->backgroundColor(_color);
 }
 
 QPoint mapToGlobal(QPoint _point ) {
-  return examiner_widget_->glMapToGlobal(_point);
+  return examiner_widgets_[activeExaminer_]->glMapToGlobal(_point);
 }
 
 QPoint mapToLocal( QPoint _point ) {
-  return examiner_widget_->glMapFromGlobal(_point);
+  return examiner_widgets_[activeExaminer_]->glMapFromGlobal(_point);
 }
 
 /** Set the draw Mode of the examiner widget.\n
@@ -365,8 +375,10 @@ QPoint mapToLocal( QPoint _point ) {
  * They can be combined.
  */
 void setDrawMode( unsigned int _mode ) {
-  examiner_widget_->drawMode(_mode);
-  examiner_widget_->updateGL();
+  for ( uint i = 0 ; i < examiner_widgets_.size() ; ++i ) {
+    examiner_widgets_[i]->drawMode(_mode);
+    examiner_widgets_[i]->updateGL();
+  }
 }
 
 /** Get the current draw Mode of the examiner widget.\n
@@ -379,21 +391,54 @@ unsigned int drawMode( ) {
 }
 
 bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
-   return examiner_widget_->pick( _pickTarget,_mousePos,_nodeIdx,_targetIdx,_hitPointPtr );
+
+   return examiner_widgets_[activeExaminer_]->pick( _pickTarget,_mousePos,_nodeIdx,_targetIdx,_hitPointPtr );
+}
+
+bool scenegraph_pick( unsigned int _examiner, ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
+
+  if ( _examiner >= examiner_widgets_.size() ) {
+    std::cerr << "Wrong examiner id" << std::endl;
+    return false;
+  }
+  return examiner_widgets_[_examiner]->pick( _pickTarget,_mousePos,_nodeIdx,_targetIdx,_hitPointPtr );
 }
 
 
 //Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
 void traverse( ACG::SceneGraph::MouseEventAction  &_action ) {
-   ACG::SceneGraph::traverse(PluginFunctions::examiner_widget_->sceneGraph(), _action,PluginFunctions::examiner_widget_->glState() );
+   ACG::SceneGraph::traverse(PluginFunctions::examiner_widgets_[activeExaminer_]->sceneGraph(),
+                             _action,PluginFunctions::examiner_widgets_[activeExaminer_]->glState() );
 }
+
+//Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
+void traverse(  unsigned int _examiner, ACG::SceneGraph::MouseEventAction  &_action ) {
+
+  if ( _examiner >= examiner_widgets_.size() ) {
+    std::cerr << "Wrong examiner id" << std::endl;
+    return;
+  }
+
+  ACG::SceneGraph::traverse(PluginFunctions::examiner_widgets_[_examiner]->sceneGraph(), _action,PluginFunctions::examiner_widgets_[_examiner]->glState() );
+}
+
 
 const std::string & pickMode () {
    return examiner_widget_->pickMode();
 }
 
 void pickMode ( std::string _mode) {
-  examiner_widget_->pickMode(_mode);
+  for ( uint i = 0 ; i < examiner_widgets_.size() ; ++i )
+    examiner_widgets_[i]->pickMode(_mode);
+}
+
+void pickMode ( unsigned int _examiner, std::string _mode) {
+  if ( _examiner >= examiner_widgets_.size() ) {
+    std::cerr << "Wrong examiner id" << std::endl;
+    return;
+  }
+
+  examiner_widgets_[_examiner]->pickMode(_mode);
 }
 
 void actionMode ( ACG::QtWidgets::QtBaseViewer::ActionMode _mode) {
@@ -578,143 +623,6 @@ void   flyTo (const TriMesh::Point &_position, const TriMesh::Point &_center, do
 }
 
 
-
-
-
-ObjectIterator::ObjectIterator( IteratorRestriction _restriction , DataType _dataType) {
-
-  // Initialize with invalid pos
-  pos_ = 0;
-
-  // Store the restriction for the operator ( Source/Target )
-  restriction_ = _restriction;
-
-  // Store the requested DataType
-  dataType_ = _dataType;
-
-  // Start at the root Node
-  BaseObject* currentPos = objectRoot_->next();
-
-  // Go through the tree and stop at the root node or if we found a baseObjectData Object
-  while ( (currentPos != objectRoot_) && !dynamic_cast<BaseObjectData* > (currentPos)  )
-    currentPos = currentPos->next();
-
-  if (currentPos == objectRoot_)
-    return;
-
-
-  while ( (currentPos != objectRoot_) ) {
-
-    // Return only target objects if requested
-    if ( (restriction_ == TARGET_OBJECTS) && (! currentPos->target() ) ) {
-      currentPos = currentPos->next();
-      continue;
-    }
-
-    // Return only source objects if requested
-    if ( (restriction_ == SOURCE_OBJECTS) && (! currentPos->source() ) ) {
-      currentPos = currentPos->next();
-      continue;
-    }
-
-    // Return only the right dataType
-    if ( _dataType != DATA_ALL )
-      if ( ! (currentPos->dataType( dataType_ ) ) ) {
-        currentPos = currentPos->next();
-        continue;
-      }
-
-    // found a valid object
-    pos_ = dynamic_cast<BaseObjectData* > (currentPos);
-    break;
-  }
-}
-
-ObjectIterator::ObjectIterator(BaseObjectData* pos, IteratorRestriction _restriction , DataType _data)
-{
-   restriction_ = _restriction;
-   pos_         = pos;
-   dataType_    = _data;
-};
-
-
-bool ObjectIterator::operator==( const ObjectIterator& _rhs) {
-   std::cerr << "==" << std::endl;
-   return ( _rhs.pos_ == pos_ );
-}
-
-bool ObjectIterator::operator!=( const ObjectIterator& _rhs) {
-   return ( _rhs.pos_ != pos_ );
-}
-
-ObjectIterator& ObjectIterator::operator=( const ObjectIterator& _rhs) {
-   pos_ = _rhs.pos_;
-   return *this;
-}
-
-
-ObjectIterator::pointer ObjectIterator::operator->(){
-   return pos_;
-}
-
-ObjectIterator& ObjectIterator::operator++() {
-
-  // Convert our pointer to the basic one
-  BaseObject* currentPos = dynamic_cast< BaseObject* >(pos_);
-
-  // Get the next element in the tree
-  currentPos = currentPos->next();
-
-  while ( (currentPos != objectRoot_) ) {
-
-    // Return only target objects if requested
-    if ( (restriction_ == TARGET_OBJECTS) && (! currentPos->target() ) ) {
-      currentPos = currentPos->next();
-      continue;
-    }
-
-    // Return only source objects if requested
-    if ( (restriction_ == SOURCE_OBJECTS) && (! currentPos->source() ) ) {
-      currentPos = currentPos->next();
-      continue;
-    }
-
-    // Return only the right dataType
-    if ( ! (currentPos->dataType( dataType_ ) ) ) {
-      currentPos = currentPos->next();
-      continue;
-    }
-
-    // found a valid object
-    pos_ = dynamic_cast<BaseObjectData* > (currentPos);
-    return *this;
-  }
-
-  // No valid object found
-  pos_ = 0;
-  return *this;
-}
-
-ObjectIterator& ObjectIterator::operator--() {
-   std::cerr << "TODO :--" << std::endl;
-   return *this;
-}
-
-/** This operator returns a pointer to the current object the iterator
- * points to.
- *
- * @return Pointer to the current ObjectData
- */
-BaseObjectData* ObjectIterator::operator*() {
-   return pos_;
-}
-
-/// Return Iterator to Object End
-ObjectIterator objects_end() {
-   return ObjectIterator(0);
-};
-
-
 // ===============================================================================
 // Getting data from objects and casting between them
 // ===============================================================================
@@ -771,7 +679,7 @@ PolyMeshObject* polyMeshObject( BaseObjectData* _object ) {
 // ===============================================================================
 // Get the root of the object structure
 // ===============================================================================
-BaseObject* objectRoot() {
+BaseObject*& objectRoot() {
   return (objectRoot_);
 }
 
