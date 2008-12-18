@@ -58,6 +58,8 @@
 #include "PluginFunctionsBSplineSurface.hh"
 #endif
 
+#include "PluginFunctionsPolyMesh.hh"
+
 /** The Namespace PluginFunctions contains functions for all plugins. These functions should be used to get the
  *  objects to work on or to set modes in the examiner widget. */
 namespace PluginFunctions {
@@ -259,24 +261,6 @@ int source_count();
 DLLEXPORT
 int visible_count();
 
-/** @} */
-
-
-//=======================================
-// Add/Get additional Scenegraph Nodes to Object
-    /** @name Mesh Property handling
-    * @{ */
-//=======================================
-/*
-template < class MeshT , typename propT >
-bool get_property_handle(MeshT* _mesh , QString _name, OpenMesh::VPropHandleT< propT > & _property );
-
-template <  class MeshT , typename propT >
-bool get_property_handle(MeshT* _mesh , QString _name, OpenMesh::FPropHandleT< propT > & _property );
-
-template <  class MeshT , typename propT >
-bool get_property_handle(MeshT* _mesh , QString _name, OpenMesh::HPropHandleT< propT > & _property );
-*/
 /** @} */
 
 //=======================================
@@ -681,6 +665,8 @@ DLLEXPORT
 BaseObject*& objectRoot();
 
 }
+
+
 
 /*
 #if defined(INCLUDE_TEMPLATES) && !defined(PLUGINFUNCTIONS_C)
