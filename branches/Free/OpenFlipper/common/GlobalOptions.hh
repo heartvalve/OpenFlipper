@@ -411,6 +411,18 @@ void fontsDir(QDir _dir);
 * @{ */
 //===========================================================================
 
+  /// Use multiview Mode?
+  DLLEXPORT
+  void multiView( bool _multiView);
+
+  /// Use multiview Mode?
+  DLLEXPORT
+  bool multiView();
+
+  /// Number of examiner widgets
+  DLLEXPORT
+  unsigned int examinerWidgets();
+
   /// Set if we start the logging widget closed
   DLLEXPORT
   void hideLogger( bool _hide);

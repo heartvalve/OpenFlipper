@@ -126,6 +126,9 @@ static bool hideToolbox_ = false;
 /// Store the logger gui Mode mode
 static bool hideLogger_ = false;
 
+/// Store if we should go into multiview Mode
+static bool multiView_ = false;
+
 /// Start in Fullscreen Mode?
 static bool fullScreen_ = false;
 
@@ -481,6 +484,23 @@ bool drawModesInContextMenu() {
 void drawModesInContextMenu(bool _show) {
   drawModesInContextMenu_ = _show;
 }
+
+
+void multiView( bool _multiView) {
+  multiView_ = _multiView;
+}
+
+bool multiView() {
+  return multiView_;
+}
+
+unsigned int examinerWidgets() {
+  if ( multiView_)
+    return 4;
+  else
+    return 1;
+}
+
 
 /// Set if we start the logging widget closed
 void hideLogger( bool _hide) {
