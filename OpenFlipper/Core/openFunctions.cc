@@ -45,17 +45,21 @@
 
 void Core::resetScenegraph() {
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() ) {
-    // update scene graph
-    coreWidget_->examiner_widget_->lockUpdate();
-    coreWidget_->examiner_widget_->sceneGraph(root_node_scenegraph_);
-    coreWidget_->examiner_widget_->viewAll();
-    coreWidget_->examiner_widget_->setScenePos( coreWidget_->examiner_widget_->scene_center() ,
-                                                coreWidget_->examiner_widget_->scene_radius() /* 10.0*/  );
 
-    coreWidget_->examiner_widget_->setHome();
-    coreWidget_->examiner_widget_->drawMode( OpenFlipper::Options::standardDrawMode() );
-    coreWidget_->examiner_widget_->unlockUpdate();
-    coreWidget_->examiner_widget_->updateGL();
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+      // update scene graph
+      coreWidget_->examiner_widgets_[i]->lockUpdate();
+      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_);
+      coreWidget_->examiner_widgets_[i]->viewAll();
+      coreWidget_->examiner_widgets_[i]->setScenePos( coreWidget_->examiner_widget_->scene_center() ,
+                                                  coreWidget_->examiner_widget_->scene_radius() /* 10.0*/  );
+
+      coreWidget_->examiner_widgets_[i]->setHome();
+      coreWidget_->examiner_widgets_[i]->drawMode( OpenFlipper::Options::standardDrawMode() );
+      coreWidget_->examiner_widgets_[i]->unlockUpdate();
+      coreWidget_->examiner_widgets_[i]->updateGL();
+    }
+
   }
 }
 
@@ -259,7 +263,7 @@ void Core::loadObject() {
 
     if (supportedTypes_.size() != 0){
       static LoadWidget* widget = 0;
-  
+
       // Open Widget
       if ( !widget ){
         widget = new LoadWidget(supportedTypes_);
@@ -279,17 +283,17 @@ void Core::loadSettings(){
   if ( OpenFlipper::Options::gui() ){
 
     QString complete_name;
-  
+
     complete_name = ACG::getOpenFileName(coreWidget_,
                                         tr("Load Settings"),
                                         tr("INI files (*.ini);;OBJ files (*.obj)"),
                                         OpenFlipper::Options::currentDirStr());
     if (complete_name.isEmpty())
       return;
-  
+
     QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
     OpenFlipper::Options::currentDir(newpath);
-  
+
     if ( complete_name.endsWith("ini") ) {
       openIniFile(complete_name);
       applyOptions();
@@ -297,14 +301,14 @@ void Core::loadSettings(){
       openObjFile(complete_name);
       applyOptions();
     }
-  
+
     coreWidget_->addRecent(complete_name, DATA_NONE);
   }
 }
 
 /// Load settings from file
 void Core::loadSettings(QString _filename){
-  
+
   if ( !QFile(_filename).exists() )
     return;
 

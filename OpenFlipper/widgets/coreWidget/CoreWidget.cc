@@ -68,7 +68,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   viewModeButton_(0),
   viewModeMenu_(0),
   viewGroup_(0),
-  examiner_widget_(0),
   splitter_(0),
   textedit_(0),
   recentFilesMenu_(0),
@@ -116,13 +115,65 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   QGLFormat format;
   QGLFormat::setDefaultFormat(format);
   format.setStereo( OpenFlipper::Options::stereo() );
-  examiner_widget_ = new ACG::QtWidgets::QtExaminerViewer(stackedWidget_,
-                                                          "Examiner Widget",
-                                                          statusBar_ ,
-                                                          &format);
-  examiner_widget_->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
-  examiner_widget_->enablePopupMenu(false);
-  stackedWidget_->addWidget(examiner_widget_);
+
+  QWidget* tmp = 0;
+
+  if ( !OpenFlipper::Options::multiView() ) {
+
+    examiner_widget_ = new ACG::QtWidgets::QtExaminerViewer(stackedWidget_,
+                                                            "Examiner Widget",
+                                                            statusBar_ ,
+                                                            &format);
+
+    examiner_widgets_.push_back(examiner_widget_);
+
+    examiner_widget_->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
+    examiner_widget_->enablePopupMenu(false);
+
+    stackedWidget_->addWidget(examiner_widget_);
+
+  } else {
+
+    // Create collector widget which holds all viewers
+    tmp = new QWidget(stackedWidget_);
+
+    // Create master examiner widget
+    examiner_widget_ = new ACG::QtWidgets::QtExaminerViewer(tmp,
+                                                            "Examiner Widget",
+                                                            statusBar_ ,
+                                                            &format,
+                                                            0,
+                                                            ACG::QtWidgets::QtExaminerViewer::Nothing);
+    examiner_widgets_.push_back(examiner_widget_);
+
+
+    // Create all other examiners using the same gl context as the others
+    for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+      ACG::QtWidgets::QtExaminerViewer* newWidget = new ACG::QtWidgets::QtExaminerViewer(tmp,
+                                                                                         "Examiner Widget",
+                                                                                         statusBar_ ,
+                                                                                         &format,
+                                                                                         examiner_widget_,
+                                                                                         ACG::QtWidgets::QtExaminerViewer::Nothing);
+      examiner_widgets_.push_back(newWidget);
+    }
+
+    // Initialize all examiners
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+      examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
+      examiner_widgets_[i]->enablePopupMenu(false);
+    }
+
+    QGridLayout* layout = new QGridLayout(tmp);
+    layout->addWidget(examiner_widgets_[0],0,0);
+    layout->addWidget(examiner_widgets_[1],0,1);
+    layout->addWidget(examiner_widgets_[2],1,0);
+    layout->addWidget(examiner_widgets_[3],1,1);
+
+    stackedWidget_->addWidget(tmp);
+
+  }
+
 
   // ======================================================================
   // Setup dragging for examiner widget
@@ -134,6 +185,13 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
            this, SLOT(dragEnterEvent(QDragEnterEvent* )));
   connect( examiner_widget_, SIGNAL(dropEvent( QDropEvent*)),
            this, SLOT(dropEvent(QDropEvent* )));
+
+  if ( OpenFlipper::Options::multiView() ) {
+    // TODO: Check drag and drop for multiview
+    std::cerr << "Todo : Check drag and drop for multiview" << std::endl;
+
+  }
+
 
   // ======================================================================
   // Create main Toolbar
@@ -148,8 +206,16 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Get Toolbar from examiner and integrate it into main window
   // ======================================================================
 
+
   // Take control over the toolbar
-  viewerToolbar_ = examiner_widget_->removeToolBar();
+  viewerToolbar_ = examiner_widgets_[0]->removeToolBar();
+
+  for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+    examiner_widgets_[i]->removeToolBar();
+    examiner_widgets_[i]->removeToolBar();
+    examiner_widgets_[i]->removeToolBar();
+  }
+
   addToolBar(Qt::TopToolBarArea,viewerToolbar_);
   viewerToolbar_->setParent(this);
   viewerToolbar_->setAllowedAreas(Qt::AllToolBarAreas);
@@ -225,7 +291,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 //       std::cerr << actions[i]->text().toStdString() << std::endl;
   }
 
-  stackWidgetList_.push_back( StackWidgetInfo( false, "3D Examiner Widget", examiner_widget_ ) );
+  if ( !OpenFlipper::Options::multiView() ) {
+    stackWidgetList_.push_back( StackWidgetInfo( false, "3D Examiner Widget", examiner_widgets_[0] ) );
+  } else {
+    stackWidgetList_.push_back( StackWidgetInfo( false, "3D Examiner Widget", tmp ) );
+  }
 
   // Remember logger size
   wsizes = splitter_->sizes();
@@ -249,8 +319,10 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Context menu setup
   // ======================================================================
 
-  connect( examiner_widget_ , SIGNAL(signalCustomContextMenuRequested( const QPoint&) ) ,
-           this             , SLOT( slotCustomContextMenu( const QPoint&) ) );
+  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+    connect( examiner_widgets_[i] , SIGNAL(signalCustomContextMenuRequested( const QPoint&) ) ,
+             this                 , SLOT( slotCustomContextMenu( const QPoint&) ) );
+  }
 
   contextMenu_ = new QMenu(this);
   contextSelectionMenu_ = new QMenu("Selection",0);
