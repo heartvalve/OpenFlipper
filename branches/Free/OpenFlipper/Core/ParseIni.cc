@@ -492,10 +492,21 @@ void Core::openIniFile(QString _filename) {
 
       int tmpType;
       DataType type = DATA_TRIANGLE_MESH;
+      int tmpTypeId=0;
+
       if ( ini.get_entry( tmpType, sectionName , "type"  )) {
         type = DataType(tmpType);
-      } else
-        emit log(LOGWARN, "Unable to get DataType for object " +  sectionName + " assuming Triangle Mesh" );
+      } else {
+        std::cerr << "Unable to get an integer from the type field!" << std::endl;
+        std::cerr << "Assuming new inifile version" << std::endl;
+
+        QString typeName="";
+
+        if ( ini.get_entry( typeName, sectionName , "type"  )) {
+          type = typeId(typeName);
+        } else
+          emit log(LOGWARN, "Unable to get DataType for object " +  sectionName + " assuming Triangle Mesh" );
+      }
 
       int newObjectId = loadObject(type, path);
 
@@ -583,7 +594,7 @@ void Core::writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly
       }
       // Add the path of this object to the section
       ini.add_entry( sectionName , "path" , file );
-      ini.add_entry( sectionName , "type" , o_it->dataType() );
+      ini.add_entry( sectionName , "type" , typeName(o_it->dataType() ) );
       ini.add_entry( sectionName , "target" , o_it->target() );
       ini.add_entry( sectionName , "source" , o_it->source() );
 
