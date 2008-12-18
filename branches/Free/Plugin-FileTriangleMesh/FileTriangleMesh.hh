@@ -46,6 +46,8 @@
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
 
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+
 class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, INIInterface
 {
    Q_OBJECT

@@ -49,16 +49,10 @@
 
 #include <OpenFlipper/common/Types.hh>
 
-
+// #include <ACG/Math/VectorT.hh>
 #include <ACG/QtWidgets/QtExaminerViewer.hh>
 #include <ACG/QtWidgets/QtBaseViewer.hh>
 #include <ACG/GL/GLState.hh>
-
-#ifdef ENABLE_BSPLINESURFACE_SUPPORT
-#include "PluginFunctionsBSplineSurface.hh"
-#endif
-
-#include "PluginFunctionsPolyMesh.hh"
 
 /** The Namespace PluginFunctions contains functions for all plugins. These functions should be used to get the
  *  objects to work on or to set modes in the examiner widget. */
@@ -69,38 +63,6 @@ namespace PluginFunctions {
 /** @name Active Objects
 * @{ */
 //=======================================
-
-/** \brief Get a pointer to every Triangle Mesh which is marked as a source mesh.
- *
- * @param _meshes ( vector returning the source meshes )
- * @return false, if no mesh is selected as source
-*/
-DLLEXPORT
-bool get_source_meshes( std::vector<TriMesh*>& _meshes  );
-
-/** \brief Get a pointer to every Poly Mesh which is marked as a source mesh.
- *
- * @param _meshes ( vector returning the source meshes )
- * @return false, if no mesh is selected as source
-*/
-DLLEXPORT
-bool get_source_meshes( std::vector<PolyMesh*>& _meshes  );
-
-/** \brief Get a pointer to every Triangle Mesh which is marked as a target mesh.
- *
- * @param _meshes ( vector returning the target meshes )
- * @return false, if no mesh is selected as target
-*/
-DLLEXPORT
-bool get_target_meshes( std::vector<TriMesh*>& _meshes  );
-
-/** \brief Get a pointer to every Poly Mesh which is marked as a target mesh.
- *
- * @param _meshes ( vector returning the target meshes )
- * @return false, if no mesh is selected as target
-*/
-DLLEXPORT
-bool get_target_meshes( std::vector<PolyMesh*>& _meshes  );
 
 /** \brief Get the picked mesh
  * @param _node_idx Node index returned by examiner picking
@@ -196,46 +158,6 @@ bool get_object(  int _identifier , BaseObject*& _object );
  */
 DLLEXPORT
 bool get_object(  int _identifier , BaseObjectData*& _object );
-
-/** This functions returns the object with the given id if it is a TriMeshObject.
- * See get_object(  int _identifier , BaseObject*& _object ) for more details.
- */
-DLLEXPORT
-bool get_object(  int _identifier , TriMeshObject*& _object );
-
-/** This functions returns the object with the given id if it is a PolyMeshObject.
- * See get_object(  int _identifier , BaseObject*& _object ) for more details.
- */
-DLLEXPORT
-bool get_object(  int _identifier , PolyMeshObject*& _object );
-
-
-/** \brief Get the Triangle Mesh which has the given identifier.
- *
- *   Every loaded object has a unique identifier which is stored in the id field of the object container.
- *   Use this function to get the mesh which has this id. This can be used for a consistent mapping
- *   even if the data objects change during plugin operations (e.g. selection and main algorithm).\n
- *   This function checks, if the object requested contains a mesh.
- * @param _identifier Object id to search for
- * @param _mesh  returns the mesh
- * @return Mesh found?
- */
-DLLEXPORT
-bool get_mesh(  int _identifier , TriMesh*& _mesh );
-
-/** \brief Get the Poly Mesh which has the given identifier.
- *
- *   Every loaded object has a unique identifier which is stored in the id field of the object container.
- *   Use this function to get the mesh which has this id. This can be used for a consistent mapping
- *   even if the data objects change during plugin operations (e.g. selection and main algorithm).\n
- *   This function checks, if the object requested contains a mesh.
- * @param _identifier Object id to search for
- * @param _mesh  returns the mesh
- * @return Mesh found?
- */
-DLLEXPORT
-bool get_mesh(  int _identifier , PolyMesh*& _mesh );
-
 
 /** \brief Check if an object with this identifier exists.
  *
@@ -502,7 +424,7 @@ void mapToLocal( OpenMesh::Vec4f _color);
  * @param _time     Animation time in ms
  */
 DLLEXPORT
-void flyTo (const TriMesh::Point &_position, const TriMesh::Point &_center, double _time=1000.0);
+void flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time=1000.0);
 
 /** @} */
 
@@ -618,38 +540,6 @@ void setDataRoot( BaseObject* _root );
      * @{ */
 //=======================================
 
-/** \brief Get a triangle mesh from an object.
- *
- * @param _object The object should be of type BaseDataObject. If the content is a triangle Mesh, a
- *                triangle mesh will be returned. Otherwise a NULL pointer is returned.
- */
-DLLEXPORT
-TriMesh* triMesh( BaseObjectData* _object );
-
-/** \brief Get a poly mesh from an object.
- *
- * @param _object The object should be of type BaseDataObject. If the content is a poly Mesh, a
- *                poly mesh will be returned. Otherwise a NULL pointer is returned.
- */
-DLLEXPORT
-PolyMesh* polyMesh( BaseObjectData* _object );
-
-/** \brief Cast an BaseObject to a TriMeshObject if possible
- *
- * @param _object The object should be of type BaseDataObject. If the content is a triangle Mesh, a
- *                a TriMeshObject is returned. Otherwise a NULL pointer is returned.
- */
-DLLEXPORT
-TriMeshObject* triMeshObject( BaseObjectData* _object );
-
-/** \brief Cast an BaseObject to a PolyMeshObject if possible
- *
- * @param _object The object should be of type BaseDataObject. If the content is a poly Mesh, a
- *                a PolyMeshObject is returned. Otherwise a NULL pointer is returned.
- */
-DLLEXPORT
-PolyMeshObject* polyMeshObject( BaseObjectData* _object );
-
 /** \brief Cast an BaseObject to a BaseObjectData if possible
  *
  * @param _object The object should be of type BaseObject. If the content is a BaseObjectData, a
@@ -665,14 +555,5 @@ DLLEXPORT
 BaseObject*& objectRoot();
 
 }
-
-
-
-/*
-#if defined(INCLUDE_TEMPLATES) && !defined(PLUGINFUNCTIONS_C)
-#define PLUGINFUNCTIONS_TEMPLATES
-#include "PluginFunctionsT.cc"
-#endif
-*/
 
 #endif //PLUGINFUNCTIONS_HH

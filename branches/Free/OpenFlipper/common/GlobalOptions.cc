@@ -127,7 +127,7 @@ static bool hideToolbox_ = false;
 static bool hideLogger_ = false;
 
 /// Store if we should go into multiview Mode
-static bool multiView_ = false;
+static bool multiView_ = true;
 
 /// Start in Fullscreen Mode?
 static bool fullScreen_ = false;

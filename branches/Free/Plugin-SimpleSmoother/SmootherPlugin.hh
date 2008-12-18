@@ -43,6 +43,8 @@
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <ACG/QtWidgets/QtExaminerViewer.hh>
 #include <OpenFlipper/common/Types.hh>
+#include <ObjectTypes/PolyMesh/PolyMesh.hh>
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
 class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface
 {
