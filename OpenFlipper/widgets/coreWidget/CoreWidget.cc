@@ -120,17 +120,19 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   if ( !OpenFlipper::Options::multiView() ) {
 
-    examiner_widget_ = new ACG::QtWidgets::QtExaminerViewer(stackedWidget_,
-                                                            "Examiner Widget",
-                                                            statusBar_ ,
-                                                            &format);
+    ACG::QtWidgets::QtExaminerViewer* examinerWidget = new ACG::QtWidgets::QtExaminerViewer(stackedWidget_,
+                                                                                            "Examiner Widget",
+                                                                                            statusBar_ ,
+                                                                                            &format);
 
-    examiner_widgets_.push_back(examiner_widget_);
+    examiner_widgets_.push_back(examinerWidget);
 
-    examiner_widget_->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
-    examiner_widget_->enablePopupMenu(false);
+    examinerWidget->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
+    examinerWidget->enablePopupMenu(false);
 
-    stackedWidget_->addWidget(examiner_widget_);
+    stackedWidget_->addWidget(examinerWidget);
+
+    examiner_widget_ = examinerWidget;
 
   } else {
 
@@ -222,7 +224,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   viewerToolbar_->setIconSize(QSize(20,20));
   viewerToolbar_->setObjectName("ViewerToolbar");
 
-  // Set our own Icons
+  // Set our own Icons and connect to additional examiner widgets
   QList<QAction *> actions = viewerToolbar_->actions();
   for ( int i = 0 ; i < actions.size(); ++i ) {
     if ( actions[i]->text() == "Move" ) {

@@ -286,7 +286,11 @@ bool get_property_handle(MeshT* _mesh , QString _name, OpenMesh::HPropHandleT< p
 //=======================================
 /// Set the internal examiner pointer ( DO NOT USE!! )
 DLLEXPORT
-void set_examiner( ACG::QtWidgets::QtExaminerViewer* examiner_widget_ );
+void set_examiner( std::vector< ACG::QtWidgets::QtExaminerViewer* > _examiner_widgets );
+
+/// Set the active id of the examiner which got the last mouse events
+DLLEXPORT
+void setActiveExaminer( unsigned int _id );
 
 /// Set the internal scenegraph root node pointer ( DO NOT USE!! )
 DLLEXPORT
@@ -296,21 +300,35 @@ void set_sceneGraphRootNode( SeparatorNode* _root_node );
 DLLEXPORT
 void set_rootNode( SeparatorNode* _root_node );
 
-/// Execute picking operation on scenegraph
+/** Execute picking operation on scenegraph
+ * This picking function will pick in the last active examiner context which is automatically
+ * Set by mouseevents from the core
+ */
+
 DLLEXPORT
 bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
 
-/// Execute Scenegraph traversal with action
+DLLEXPORT
+bool scenegraph_pick( unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
+
+/// Execute Scenegraph traversal with action and use the last active examiner
 DLLEXPORT
 void traverse( ACG::SceneGraph::MouseEventAction  &_action );
+
+/// Execute Scenegraph traversal with action and a specified examiner
+void traverse(  unsigned int _examiner, ACG::SceneGraph::MouseEventAction  &_action );
 
 /// Get the current Picking mode
 DLLEXPORT
 const std::string & pickMode ();
 
-/// Set the current Picking mode
+/// Set the current Picking mode for all examiner widgets
 DLLEXPORT
 void pickMode ( std::string _mode);
+
+/// Set pick mode for a specific examiner
+DLLEXPORT
+void pickMode ( unsigned int _examiner, std::string _mode);
 
 /// Get the current gl state from examiner
 DLLEXPORT
@@ -659,7 +677,7 @@ BaseObjectData* baseObjectData( BaseObject* _object );
 
 /// Get the root of the object structure
 DLLEXPORT
-BaseObject* objectRoot();
+BaseObject*& objectRoot();
 
 }
 

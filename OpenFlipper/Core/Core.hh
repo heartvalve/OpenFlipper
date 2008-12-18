@@ -293,13 +293,13 @@ public slots:
 
     /// set the baseFilename for snapshots (a counter is automatically increased when
     /// snapshot() is called)
-    void snapshotBaseFileName(const QString& _fname);
+    void snapshotBaseFileName(const QString& _fname, unsigned int _viewerId = 0);
 
     /** Trigger a snapshot and increase the snapshot counter.
       Save snapshot to file determined by snapshotBaseFileName() and
       the current snapshot counter. The \a back buffer will be saved.
     */
-    void snapshot();
+    void snapshot(unsigned int _viewerId = 0);
 
     /// resize the examinerViewer
     void resizeViewer(int _width, int _height );

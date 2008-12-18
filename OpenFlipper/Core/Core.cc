@@ -192,12 +192,7 @@ Core::init() {
 
 
     // Make examiner available to the plugins ( defined in PluginFunctions.hh)
-    PluginFunctions::set_examiner( coreWidget_->examiner_widgets_[0] );
-
-    if ( OpenFlipper::Options::multiView() ) {
-      std::cerr << "Todo : Pluginfunctions set multiple examiners" << std::endl;
-    }
-
+    PluginFunctions::set_examiner( coreWidget_->examiner_widgets_ );
 
   }
 
@@ -393,12 +388,14 @@ Core::init() {
     else
       coreWidget_->setViewMode("All");
 
-    connect( coreWidget_->examiner_widget_, SIGNAL(signalMouseEvent(QMouseEvent*)),
-            this,SLOT(slotMouseEvent(QMouseEvent*)));
-    connect( coreWidget_->examiner_widget_, SIGNAL(signalMouseEventIdentify(QMouseEvent*)),
-            this,SLOT(slotMouseEventIdentify(QMouseEvent*)));
-    connect( coreWidget_->examiner_widget_, SIGNAL(signalWheelEvent(QWheelEvent *, const std::string &)),
-            this,                           SLOT(slotWheelEvent(QWheelEvent *, const std::string &)));
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+      connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalMouseEvent(QMouseEvent*)),
+              this                              , SLOT(slotMouseEvent(QMouseEvent*)));
+      connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalMouseEventIdentify(QMouseEvent*)),
+              this                              , SLOT(slotMouseEventIdentify(QMouseEvent*)));
+      connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalWheelEvent(QWheelEvent *, const std::string &)),
+              this                              , SLOT(slotWheelEvent(QWheelEvent *, const std::string &)));
+    }
 
   }
 
@@ -491,7 +488,26 @@ Core::slotMouseEventIdentify( QMouseEvent* _event )
 //   if ( _event->button() == Qt::RightButton )
 //     return;
 
+  const QObject* senderPointer = sender();
+  unsigned int examinerId = 0;
+
+  if ( senderPointer == 0 ) {
+    std::cerr << "Error : slotMouseEventIdentify directly called! This should only be called by an examiner" << std::endl;
+  } else {
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+      if ( senderPointer == coreWidget_->examiner_widgets_[i] ) {
+        examinerId = i;
+        break;
+      }
+    }
+
+  }
+
+  PluginFunctions::setActiveExaminer( examinerId );
+
   emit PluginMouseEventIdentify( _event );
+
+
 }
 
 //-----------------------------------------------------------------------------
@@ -504,6 +520,23 @@ Core::slotMouseEvent( QMouseEvent* _event )
 //   if ( _event->button() == Qt::RightButton )
 //     return;
 
+  const QObject* senderPointer = sender();
+  unsigned int examinerId = 0;
+
+  if ( senderPointer == 0 ) {
+    std::cerr << "Error : slotMouseEvent directly called! This should only be called by an examiner" << std::endl;
+  } else {
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+      if ( senderPointer == coreWidget_->examiner_widgets_[i] ) {
+        examinerId = i;
+        break;
+      }
+    }
+
+  }
+
+  PluginFunctions::setActiveExaminer( examinerId );
+
   emit PluginMouseEvent(_event );
 }
 
@@ -512,6 +545,23 @@ Core::slotMouseEvent( QMouseEvent* _event )
 void
 Core::slotWheelEvent( QWheelEvent * _event, const std::string & _mode)
 {
+  const QObject* senderPointer = sender();
+  unsigned int examinerId = 0;
+
+  if ( senderPointer == 0 ) {
+    std::cerr << "Error : slotWheelEvent directly called! This should only be called by an examiner" << std::endl;
+  } else {
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+      if ( senderPointer == coreWidget_->examiner_widgets_[i] ) {
+        examinerId = i;
+        break;
+      }
+    }
+
+  }
+
+  PluginFunctions::setActiveExaminer( examinerId );
+
   emit PluginWheelEvent(_event , _mode );
 }
 
@@ -520,15 +570,20 @@ Core::slotWheelEvent( QWheelEvent * _event, const std::string & _mode)
 void
 Core::slotAddPickMode( const std::string _mode ) {
   if ( OpenFlipper::Options::gui() )
-    coreWidget_->examiner_widget_->addPickMode(_mode);
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
+      coreWidget_->examiner_widgets_[i]->addPickMode(_mode);
+
 }
 
 //-----------------------------------------------------------------------------
 
 void
 Core::slotAddHiddenPickMode( const std::string _mode ) {
+
   if ( OpenFlipper::Options::gui() )
-    coreWidget_->examiner_widget_->addPickMode(_mode,false,1000,false);
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
+      coreWidget_->examiner_widgets_[i]->addPickMode(_mode,false,1000,false);
+
 }
 
 //-----------------------------------------------------------------------------
@@ -750,11 +805,12 @@ void Core::slotExit() {
 /// Synchronise two viewers
 bool Core::add_sync_host(const QString& _name)
 {
+  // Todo : Only syncing one Viewer
   if ( OpenFlipper::Options::gui() ) {
     emit log(LOGINFO,"Adding SyncHost");
-    bool ok = coreWidget_->examiner_widget_->add_sync_host(_name);
+    bool ok = coreWidget_->examiner_widgets_[0]->add_sync_host(_name);
     if (ok)
-      coreWidget_->examiner_widget_->setSynchronization(true);
+      coreWidget_->examiner_widgets_[0]->setSynchronization(true);
     else
       emit log(LOGERR,"Sync failed! ");
     return ok;
@@ -889,14 +945,30 @@ void Core::slotGetDescription(QString      _function,   QString&     _fnDescript
     }
 }
 
-void Core::snapshotBaseFileName(const QString& _fname){
-  if ( OpenFlipper::Options::gui() )
-    coreWidget_->examiner_widget_->snapshotBaseFileName(_fname);
+void Core::snapshotBaseFileName(const QString& _fname, unsigned int _viewerId ){
+
+  if ( OpenFlipper::Options::gui() ) {
+    if ( _viewerId >= OpenFlipper::Options::examinerWidgets() ) {
+      emit log(LOGERR,"Unable to snapshotBaseFileName for viewer " + QString::number(_viewerId) );
+      return;
+    }
+
+
+    coreWidget_->examiner_widgets_[_viewerId]->snapshotBaseFileName( _fname );
+  }
+
 }
 
-void Core::snapshot(){
-  if ( OpenFlipper::Options::gui() )
-    coreWidget_->examiner_widget_->snapshot();
+void Core::snapshot( unsigned int _viewerId ){
+
+
+  if ( OpenFlipper::Options::gui() ) {
+    if ( _viewerId >= OpenFlipper::Options::examinerWidgets() ) {
+      emit log(LOGERR,"Unable to create snapshot for viewer " + QString::number(_viewerId) );
+      return;
+    }
+    coreWidget_->examiner_widgets_[_viewerId]->snapshot();
+  }
 
 }
 
