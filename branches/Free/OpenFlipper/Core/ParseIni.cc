@@ -492,7 +492,6 @@ void Core::openIniFile(QString _filename) {
 
       int tmpType;
       DataType type = DATA_TRIANGLE_MESH;
-      int tmpTypeId=0;
 
       if ( ini.get_entry( tmpType, sectionName , "type"  )) {
         type = DataType(tmpType);
