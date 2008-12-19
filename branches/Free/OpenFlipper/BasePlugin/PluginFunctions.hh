@@ -446,6 +446,7 @@ enum IteratorRestriction {
  * This is the core iterator for the whole framework. You should use this iterator to access your data.\n
  * You can Choose if the iterator returns only Target, Source or all objects.\n
  * Additionally you can set the type of objects returned by the iterator.
+ * The ObjectIterator will only return real Objects. Groups are not considered to be objects
  */
 class DLLEXPORT ObjectIterator {
 
