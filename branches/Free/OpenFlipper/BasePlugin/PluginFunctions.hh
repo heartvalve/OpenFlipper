@@ -513,6 +513,11 @@ class DLLEXPORT ObjectIterator {
       /// Restriction of the iterator
       IteratorRestriction restriction_;
 
+      /** Takes an object and goes through the object tree to the next BaseObjectData
+        *  It stops at the root node.
+        */
+      inline void proceedToNextBaseObjectData(BaseObject*& _object);
+
 };
 
 // /// Return Iterator to Mesh End
