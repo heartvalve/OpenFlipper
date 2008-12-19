@@ -63,10 +63,6 @@ ObjectIterator::ObjectIterator( IteratorRestriction _restriction , DataType _dat
   while ( (currentPos != objectRoot()) && !dynamic_cast<BaseObjectData* > (currentPos)  )
     currentPos = currentPos->next();
 
-  if (currentPos == objectRoot())
-    return;
-
-
   while ( (currentPos != objectRoot()) ) {
 
     // Return only target objects if requested
@@ -128,6 +124,10 @@ ObjectIterator& ObjectIterator::operator++() {
 
   // Get the next element in the tree
   currentPos = currentPos->next();
+
+  // Go through the tree and stop at the root node or if we found a baseObjectData Object
+  while ( (currentPos != objectRoot()) && !dynamic_cast<BaseObjectData* > (currentPos)  )
+    currentPos = currentPos->next();
 
   while ( (currentPos != objectRoot() ) ) {
 
