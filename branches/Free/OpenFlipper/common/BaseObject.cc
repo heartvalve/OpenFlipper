@@ -208,6 +208,46 @@ bool BaseObject::visible() {
 // ===============================================================================
 // ===============================================================================
 
+BaseObject* BaseObject::last() {
+  //indexOf
+
+//   // Visit child item of this node
+//   if ( childItems_.size() > 0 ) {
+//      return childItems_[0];
+//   }
+//
+//   // No Child Item so visit the next child of the parentItem_
+//   if ( parentItem_ ) {
+//
+//     BaseObject* parentPointer = parentItem_;
+//     BaseObject* thisPointer   = this;
+//
+//     // while we are not at the root node
+//     while ( parentPointer ) {
+//
+//       // If there is an unvisited child of the parent, return this one
+//       if ( parentPointer->childCount() > ( thisPointer->row() + 1) ) {
+//         return parentPointer->childItems_[ thisPointer->row() + 1 ];
+//       }
+//
+//       // Go to the next level
+//       thisPointer   = parentPointer;
+//       parentPointer = parentPointer->parentItem_;
+//
+//     }
+//
+//     return thisPointer;
+//   }
+//
+//   return this;
+  std::cerr << "Last not implemented yet! " << std::endl;
+  return 0;
+
+}
+
+// ===============================================================================
+// ===============================================================================
+
 BaseObject* BaseObject::next() {
   // Visit child item of this node
   if ( childItems_.size() > 0 ) {
@@ -240,6 +280,9 @@ BaseObject* BaseObject::next() {
   return this;
 
 }
+
+// ===============================================================================
+// ===============================================================================
 
 int BaseObject::level() {
   int level = 0;
