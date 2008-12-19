@@ -258,6 +258,10 @@ class DLLEXPORT BaseObject {
 
   public:
 
+    /** Get the last item of the tree (Preorder traversal of the tree)
+     */
+    BaseObject* last();
+
     /** Get the next item of the tree (Preorder traversal of the tree)
      */
     BaseObject* next();
