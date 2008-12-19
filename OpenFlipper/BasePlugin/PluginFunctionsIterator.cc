@@ -67,20 +67,32 @@ ObjectIterator::ObjectIterator( IteratorRestriction _restriction , DataType _dat
 
     // Return only target objects if requested
     if ( (restriction_ == TARGET_OBJECTS) && (! currentPos->target() ) ) {
-      currentPos = currentPos->next();
+
+      // Go through the tree and stop at the root node or if we found a baseObjectData Object
+      while ( (currentPos != objectRoot()) && !dynamic_cast<BaseObjectData* > (currentPos)  )
+        currentPos = currentPos->next();
+
       continue;
     }
 
     // Return only source objects if requested
     if ( (restriction_ == SOURCE_OBJECTS) && (! currentPos->source() ) ) {
-      currentPos = currentPos->next();
+
+      // Go through the tree and stop at the root node or if we found a baseObjectData Object
+      while ( (currentPos != objectRoot()) && !dynamic_cast<BaseObjectData* > (currentPos)  )
+        currentPos = currentPos->next();
+
       continue;
     }
 
     // Return only the right dataType
     if ( _dataType != DATA_ALL )
       if ( ! (currentPos->dataType( dataType_ ) ) ) {
-        currentPos = currentPos->next();
+
+        // Go through the tree and stop at the root node or if we found a baseObjectData Object
+        while ( (currentPos != objectRoot()) && !dynamic_cast<BaseObjectData* > (currentPos)  )
+          currentPos = currentPos->next();
+
         continue;
       }
 
@@ -133,19 +145,31 @@ ObjectIterator& ObjectIterator::operator++() {
 
     // Return only target objects if requested
     if ( (restriction_ == TARGET_OBJECTS) && (! currentPos->target() ) ) {
-      currentPos = currentPos->next();
+
+      // Go through the tree and stop at the root node or if we found a baseObjectData Object
+      while ( (currentPos != objectRoot()) && !dynamic_cast<BaseObjectData* > (currentPos)  )
+        currentPos = currentPos->next();
+
       continue;
     }
 
     // Return only source objects if requested
     if ( (restriction_ == SOURCE_OBJECTS) && (! currentPos->source() ) ) {
-      currentPos = currentPos->next();
+
+      // Go through the tree and stop at the root node or if we found a baseObjectData Object
+      while ( (currentPos != objectRoot()) && !dynamic_cast<BaseObjectData* > (currentPos)  )
+        currentPos = currentPos->next();
+
       continue;
     }
 
     // Return only the right dataType
     if ( ! (currentPos->dataType( dataType_ ) ) ) {
-      currentPos = currentPos->next();
+
+      // Go through the tree and stop at the root node or if we found a baseObjectData Object
+      while ( (currentPos != objectRoot()) && !dynamic_cast<BaseObjectData* > (currentPos)  )
+        currentPos = currentPos->next();
+
       continue;
     }
 
