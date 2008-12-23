@@ -213,11 +213,15 @@ void set_rootNode( SeparatorNode* _root_node );
 DLLEXPORT
 bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
 
+/** Execute picking operation on scenegraph
+ * This picking function will pick in the specified examiner context
+ */
 DLLEXPORT
 bool scenegraph_pick( unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
 
 /** Execute Scenegraph traversal with action and use the last active examiner
- *  If you are reacting on a mouseEvent you should use this function as it will automatically set the right view
+ *  If you are reacting on a mouseEvent you should use this function as it will
+ *  automatically set the right view
  */
 DLLEXPORT
 void traverse( ACG::SceneGraph::MouseEventAction  &_action );
