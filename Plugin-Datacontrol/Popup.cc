@@ -206,6 +206,7 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
       action = menu.addAction("Material Properties",this,SLOT ( slotMaterialProperties() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
       action->setIcon(icon);
+      menu.addAction("Group",this,SLOT ( slotGroup() ));
       menu.addSeparator();
       action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
