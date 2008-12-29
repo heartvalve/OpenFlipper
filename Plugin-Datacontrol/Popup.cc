@@ -40,6 +40,7 @@
 #include <ACG/QtWidgets/QtMaterialDialog.hh>
 
 #include <QInputDialog>
+#include <QMessageBox>
 
 /// Slot for Remove action in ContextMenu
 void DataControlPlugin::slotPopupRemove (  ) {
@@ -49,6 +50,23 @@ void DataControlPlugin::slotPopupRemove (  ) {
 
   // Get all selected rows
   QModelIndexList indexList = selection->selectedRows();
+
+
+  QMessageBox msgBox;
+  msgBox.setText("Do you really want to remove the selected objects?");
+  msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  msgBox.setDefaultButton(QMessageBox::No);
+
+  QString text;
+
+  for ( int i = 0 ; i < indexList.size() ; ++i) {
+    BaseObject* deleteItem = model_->getItem( indexList[i] );
+    text += deleteItem->name() + "\n";
+  }
+  msgBox.setDetailedText(text);
+
+  if ( msgBox.exec() == QMessageBox::No)
+    return;
 
   for ( int i = 0 ; i < indexList.size() ; ++i) {
 
