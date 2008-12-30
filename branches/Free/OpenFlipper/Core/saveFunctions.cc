@@ -98,12 +98,10 @@ bool Core::saveObjectTo( int _id, QString _filename ) {
     PluginFunctions::get_object(_id,object);
   
     //init widget
-    static LoadWidget* widget = 0;
-    if ( !widget ){
-      widget = new LoadWidget(supportedTypes_);
-      connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
-      connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
-    }
+    LoadWidget* widget = new LoadWidget(supportedTypes_);
+
+    connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
+    connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
   
     if (supportedTypes_.size() != 0)
       return widget->showSave(_id,_filename);
@@ -111,6 +109,8 @@ bool Core::saveObjectTo( int _id, QString _filename ) {
       emit log(LOGERR,"Could not show 'save objects' dialog. Missing file-plugins.");
       return false;
     }
+
+    delete widget;
 
   }else
     return false;
