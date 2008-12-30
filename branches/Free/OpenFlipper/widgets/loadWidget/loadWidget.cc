@@ -96,6 +96,17 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
   setDirectory(OpenFlipper::Options::currentDirStr());
 }
 
+/// Desctructor
+LoadWidget::~LoadWidget()
+{
+  // remove the optionWidgets so they don't get destroyed
+  // (the fileplugins control the optionWidgets)
+  for (int i=0; i < boxWidgets_.size(); i++){
+    boxLayout_->removeWidget( boxWidgets_[i] );
+    boxWidgets_[i]->setParent(0); 
+  }
+}
+
 /// adjust the loadWidget / saveWidget when the selected nameFilter changed
 void LoadWidget::currentFilterChanged(QString _currentFilter){
 
@@ -354,15 +365,6 @@ int LoadWidget::showSave(int _id, QString _filename){
       break;
     }
   }
-
-//workarround to force repaint
-  if (x() > 0){
-    if (step_)
-      setGeometry(x(),y(),width()+1,height());
-    else
-      setGeometry(x(),y(),width()-1,height());
-  }
-  step_ = !step_;
 
   return this->exec();
 }

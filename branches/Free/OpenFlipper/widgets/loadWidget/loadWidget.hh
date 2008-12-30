@@ -43,6 +43,8 @@ class LoadWidget : public QFileDialog
   Q_OBJECT
   public:
     LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent = 0 );
+    ~LoadWidget();
+
   signals:
     void load(QString _filename, DataType _type, int& _id);
     void save(int _id, QString _filename);
