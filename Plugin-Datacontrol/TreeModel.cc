@@ -103,7 +103,6 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         // visiblity group
         if (item->isGroup()){
           QList< BaseObject* > children = item->getLeafs();
-          
           bool initRound = true;
           for (int i=0; i < children.size(); i++){
             if (initRound){
@@ -601,7 +600,9 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
       
   }
   
-  emit dataChanged(index,index);
+//   emit dataChanged(index,index);
+  //force everything to be updated (needed to updated parent groups)
+  emit dataChanged(QModelIndex(),QModelIndex());
   return true;
 }
 
