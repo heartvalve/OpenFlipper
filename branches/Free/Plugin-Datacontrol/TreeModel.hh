@@ -83,6 +83,16 @@ public:
     bool isRoot(BaseObject * _item);
     
     bool getObjectName(BaseObject* _object , QString& _name);
+
+    //drag & Drop
+    Qt::DropActions supportedDropActions() const;
+
+    QStringList mimeTypes() const;
+
+    QMimeData* mimeData(const QModelIndexList& indexes) const;
+
+    bool dropMimeData(const QMimeData *data,
+     Qt::DropAction action, int row, int column, const QModelIndex &parent);
     
 private:
     /// Rootitem of the tree

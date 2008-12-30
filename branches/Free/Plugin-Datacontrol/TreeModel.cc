@@ -187,17 +187,27 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return 0;
-    
+
+    Qt::ItemFlags flags = 0;
+
     // Show/Source/Target
     if ( ( index.column() == 1 ) || 
          ( index.column() == 2 ) ||
          ( index.column() == 3 ) )
-      return Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-
+      flags = Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    else
     if ( index.column() == 0 )
-      return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
-    
-    return Qt::ItemIsEnabled;
+      flags = Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    else
+      flags = Qt::ItemIsEnabled;
+
+  // Get the corresponding tree item
+  BaseObject *item = static_cast<BaseObject*>(index.internalPointer());
+
+  if ( item->isGroup() )
+    return flags | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
+  else
+    return flags | Qt::ItemIsDragEnabled;
 }
 
 /// Returns the data in the header
@@ -611,4 +621,91 @@ bool TreeModel::isRoot(BaseObject * _item) {
   return ( _item == rootItem_ ); 
 }
 
+//-------------------------------------------------------------
+// Drag Drop - Stuff
+//-------------------------------------------------------------
 
+Qt::DropActions TreeModel::supportedDropActions() const
+{
+    return /*Qt::CopyAction |*/ Qt::MoveAction;
+}
+
+QStringList TreeModel::mimeTypes() const
+{
+    QStringList types;
+    types << "DataControl/dragDrop";
+    return types;
+}
+
+QMimeData* TreeModel::mimeData(const QModelIndexList& indexes) const
+{
+    QMimeData *mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    QVector< int > rows;
+
+    foreach (QModelIndex index, indexes) {
+        if (index.isValid()) {
+
+          if (!rows.contains( index.row() ) ){
+            BaseObject *item = getItem(index);
+            stream << item->id();
+
+            rows.push_back( index.row() );
+          }
+        }
+    }
+
+    mimeData->setData("DataControl/dragDrop", encodedData);
+    return mimeData;
+}
+
+bool TreeModel::dropMimeData(const QMimeData *data,
+     Qt::DropAction action, int /*row*/, int /*column*/, const QModelIndex &parent)
+ {
+     if (action == Qt::IgnoreAction)
+         return true;
+
+     if (!data->hasFormat("DataControl/dragDrop"))
+         return false;
+
+     QByteArray encodedData = data->data("DataControl/dragDrop");
+     QDataStream stream(&encodedData, QIODevice::ReadOnly);
+
+     QVector< int > ids;
+
+     while (!stream.atEnd()) {
+       int id;
+       stream >> id;
+
+       ids.push_back( id ); 
+     }
+
+    if (ids.count() != 1)
+      return false;
+
+    //get new parent
+    BaseObject *newParent = getItem(parent);
+
+    if ( newParent == 0 || !newParent->isGroup() )
+      return false;
+
+    BaseObject* item = 0;
+    if (PluginFunctions::get_object(ids[0], item)){
+
+      item->parent()->removeChild(item);
+      item->setParent( newParent  );
+      newParent->appendChild( item );
+
+//       emit dataChanged(QModelIndex(),QModelIndex());
+
+      //TODO do something better than reset
+      reset();
+
+      return true;
+    }
+
+  return false;
+ }
