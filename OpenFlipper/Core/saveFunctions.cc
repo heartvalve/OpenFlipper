@@ -92,6 +92,8 @@ bool Core::saveObject( int _id, QString _filename ) {
 /// Show the save-widget to determine a filename, the widget calls slotSave to save the object
 bool Core::saveObjectTo( int _id, QString _filename ) {
 
+  bool result = false;
+
   if ( OpenFlipper::Options::gui() ){
 
     BaseObjectData* object;
@@ -104,16 +106,15 @@ bool Core::saveObjectTo( int _id, QString _filename ) {
     connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
   
     if (supportedTypes_.size() != 0)
-      return widget->showSave(_id,_filename);
-    else{
+      result = widget->showSave(_id,_filename);
+    else
       emit log(LOGERR,"Could not show 'save objects' dialog. Missing file-plugins.");
-      return false;
-    }
 
+    widget->disconnect();
     delete widget;
+  }
 
-  }else
-    return false;
+  return result;
 }
 
 //-----------------------------------------------------------------------------------------------------

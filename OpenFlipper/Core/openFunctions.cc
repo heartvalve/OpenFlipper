@@ -262,15 +262,15 @@ void Core::loadObject() {
   if ( OpenFlipper::Options::gui() ){
 
     if (supportedTypes_.size() != 0){
-      static LoadWidget* widget = 0;
+      LoadWidget* widget = new LoadWidget(supportedTypes_);
+      connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
+      connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
 
-      // Open Widget
-      if ( !widget ){
-        widget = new LoadWidget(supportedTypes_);
-        connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
-        connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
-      }
       widget->showLoad();
+
+      widget->disconnect();
+      delete widget;
+
     }else
       emit log(LOGERR,"Could not show 'load objects' dialog. Missing file-plugins.");
 
