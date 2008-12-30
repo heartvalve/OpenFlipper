@@ -600,7 +600,7 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
       
   }
   
-//   emit dataChanged(index,index);
+  emit dataChanged(index,index);
   //force everything to be updated (needed to updated parent groups)
   emit dataChanged(QModelIndex(),QModelIndex());
   return true;
