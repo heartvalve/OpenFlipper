@@ -328,6 +328,7 @@ int LoadWidget::showSave(int _id, QString _filename){
   //display correct path/name
   QFileInfo fi(_filename);
   QFile file(_filename);
+
   if (file.exists()) {
     setDirectory( fi.absolutePath() );
     selectFile ( fi.fileName() );
