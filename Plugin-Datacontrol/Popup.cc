@@ -41,6 +41,7 @@
 
 #include <QInputDialog>
 #include <QMessageBox>
+#include "Menu.hh"
 
 /// Slot for Remove action in ContextMenu
 void DataControlPlugin::slotPopupRemove (  ) {
@@ -178,7 +179,11 @@ void DataControlPlugin::slotGroup (  ) {
 void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
   popupIndex_ = view_->indexAt(_pos);
 
+  if (!popupIndex_.isValid())
+    return;
+
   BaseObject* item = model_->getItem(popupIndex_);
+
 
   QItemSelectionModel* selection = view_->selectionModel();
 
@@ -186,7 +191,7 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
   QModelIndexList indexList = selection->selectedRows ( 0 );
   int selectedRows = indexList.size();
 
-  QMenu    menu(0);
+  Menu    menu(0);
   QAction* action;
   QIcon icon;
   if ( selectedRows > 1 ) {

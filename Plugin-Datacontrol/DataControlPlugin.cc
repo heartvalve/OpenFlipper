@@ -84,6 +84,7 @@ void DataControlPlugin::pluginsInitialized() {
   contextMenu->addAction(sourceAction_);
 
   emit addContextMenu(contextMenu , DATA_ALL , CONTEXTTOPLEVELMENU);
+
 }
 
 bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
@@ -108,6 +109,10 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
 
    view_->setContextMenuPolicy(Qt::CustomContextMenu);
 
+   view_->setDragEnabled(true);
+   view_->setAcceptDrops(true);
+   view_->setDropIndicatorShown(true);
+
    view_->setSelectionBehavior(QAbstractItemView::SelectRows);
    view_->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -119,6 +124,7 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
 
    connect( view_,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
             this,SLOT(slotCustomContextMenuRequested ( const QPoint & ) ));
+
 
    MeshDialogLayout_->addWidget( view_ , 0,0  );
 
