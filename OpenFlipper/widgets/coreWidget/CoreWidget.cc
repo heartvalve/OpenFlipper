@@ -473,8 +473,6 @@ CoreWidget::showToolbox( bool _state ) {
 void
 CoreWidget::keyPressEvent(QKeyEvent* _e)
 {
-  std::cerr << "Key event in core" << std::endl;
-
   if (_e->modifiers() == Qt::ControlModifier ) {
     switch (_e->key())
     {
@@ -500,7 +498,6 @@ CoreWidget::keyPressEvent(QKeyEvent* _e)
    switch (_e->key())
    {
      case Qt::Key_Escape:
-        std::cerr << "Escape Key" << std::endl;
         for ( uint i = 0 ; i < examiner_widgets_.size(); ++i)
           examiner_widgets_[i]->actionMode(examiner_widgets_[i]->lastActionMode());
 
