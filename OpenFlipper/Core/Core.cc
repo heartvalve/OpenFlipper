@@ -649,7 +649,7 @@ Core::clearAll()
 {
   objectRoot_->deleteSubtree();
   emit allCleared();
-  emit ObjectListUpdated(-1);
+  emit signalObjectUpdated(-1);
 
   slotScriptInfo( "core" , "clearAll()"  );
 }

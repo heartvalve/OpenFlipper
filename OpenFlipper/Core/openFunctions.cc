@@ -190,7 +190,7 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
    emit openedFile( _id );
 
   // Tell the Plugins that the Object List and the active object have changed
-   emit ObjectListUpdated(_id);
+   emit signalObjectUpdated(_id);
    emit activeObjectChanged();
 
    backupRequest(_id,"Original Object");
@@ -213,7 +213,7 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
  /// Slot gets called after a file-plugin has opened an object
  void Core::slotEmptyObjectAdded ( int _id ) {
   // Tell the Plugins that the Object List and the active object have changed
-   emit ObjectListUpdated(_id);
+   emit signalObjectUpdated(_id);
    emit activeObjectChanged();
 
    backupRequest(_id,"Original Object");

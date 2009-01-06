@@ -455,7 +455,7 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(plugin,SIGNAL(update_view()),this,SLOT(updateView()));
 
       if ( checkSignal(plugin,"updated_objects(int)") )
-        connect(plugin,SIGNAL(updated_objects(int)),this,SLOT(slotObjectsListUpdated(int)));
+        connect(plugin,SIGNAL(updated_objects(int)),this,SLOT(slotObjectUpdated(int)));
 
       if ( checkSlot(plugin,"slotAllCleared()") )
         connect(this,SIGNAL(allCleared()),plugin,SLOT(slotAllCleared()));
@@ -467,7 +467,7 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(this,SIGNAL(activeObjectChanged()),plugin,SLOT(slotActiveObjectChanged() ));
 
       if ( checkSlot( plugin , "slotObjectUpdated(int)" ) )
-        connect(this,SIGNAL(ObjectListUpdated(int)),plugin,SLOT(slotObjectUpdated(int)));
+        connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)));
 
       if ( checkSlot( plugin , "pluginsInitialized()" ) )
         connect(this,SIGNAL(pluginsInitialized()),plugin,SLOT(pluginsInitialized()), Qt::DirectConnection);
