@@ -15,7 +15,8 @@ qt()
 
 DIRECTORIES =   ../ ../Core ../Logging \
 			    ../Scripting  ../Scripting/scriptPrototypes ../Scripting/scriptWrappers ../SimpleOpt \
-			    ../widgets/aboutWidget ../widgets/addEmptyWidget ../widgets/coreWidget ../widgets/helpBrowser \
+			    ../widgets/aboutWidget ../widgets/addEmptyWidget ../widgets/loggerWidget \
+                            ../widgets/coreWidget ../widgets/helpBrowser \
 			    ../widgets/loadWidget ../widgets/optionsWidget ../widgets/unloadPluginsWidget \
 			    ../widgets/viewModeWidget
 
