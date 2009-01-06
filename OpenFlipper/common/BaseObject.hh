@@ -239,7 +239,12 @@ class DLLEXPORT BaseObject {
   //===========================================================================
 
   public:
-    /// This function is called to update the object
+    /** \brief  This function is called to update the object
+     *
+     * If the object changes, the core will call this function. Normally this will update
+     * the corresponding scenegraph nodes or trigger other data handling which has to be done
+     * when the object changes.
+     */
     virtual void update();
 
     /// Debugging function, writing the subtree to output
