@@ -68,6 +68,7 @@
 #include <QDockWidget>
 
 #include <OpenFlipper/widgets/aboutWidget/aboutWidget.hh>
+#include <OpenFlipper/widgets/loggerWidget/loggerWidget.hh>
 #include <OpenFlipper/widgets/optionsWidget/optionsWidget.hh>
 #include <OpenFlipper/widgets/helpBrowser/helpWidget.hh>
 
@@ -305,7 +306,7 @@ public:
     QSplitter* splitter_;
 
     /// Textedit at the bottom for log messages
-    QTextEdit* textedit_;
+    LoggerWidget* logWidget_;
 
     /// Size of the logging window ( defaults to 240 )
     int originalLoggerSize_;

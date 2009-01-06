@@ -69,7 +69,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   viewModeMenu_(0),
   viewGroup_(0),
   splitter_(0),
-  textedit_(0),
+  logWidget_(0),
   recentFilesMenu_(0),
   pluginsMenu_(0),
   fileMenu_(0),
@@ -95,11 +95,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // ======================================================================
   // Set up the logging window
   // ======================================================================
-  textedit_ = new QTextEdit(splitter_);
-  textedit_->setReadOnly(true);
-  textedit_->setSizePolicy( QSizePolicy ( QSizePolicy::Preferred , QSizePolicy::Preferred ) );
-  textedit_->resize( splitter_->width() ,120);
-  textedit_->setLineWrapMode( QTextEdit::NoWrap );
+  logWidget_ = new LoggerWidget(splitter_);
+  logWidget_->setReadOnly(true);
+  logWidget_->setSizePolicy( QSizePolicy ( QSizePolicy::Preferred , QSizePolicy::Preferred ) );
+  logWidget_->resize( splitter_->width() ,120);
+  logWidget_->setLineWrapMode( QTextEdit::NoWrap );
 
   originalLoggerSize_ = 0;
 
@@ -473,6 +473,8 @@ CoreWidget::showToolbox( bool _state ) {
 void
 CoreWidget::keyPressEvent(QKeyEvent* _e)
 {
+  std::cerr << "Key event in core" << std::endl;
+
   if (_e->modifiers() == Qt::ControlModifier ) {
     switch (_e->key())
     {
@@ -497,6 +499,11 @@ CoreWidget::keyPressEvent(QKeyEvent* _e)
 
    switch (_e->key())
    {
+     case Qt::Key_Escape:
+        std::cerr << "Escape Key" << std::endl;
+        for ( uint i = 0 ; i < examiner_widgets_.size(); ++i)
+          examiner_widgets_[i]->actionMode(examiner_widgets_[i]->lastActionMode());
+
       // Send remaining events to plugins
       default:
           mapKeyPressEvent(_e);
