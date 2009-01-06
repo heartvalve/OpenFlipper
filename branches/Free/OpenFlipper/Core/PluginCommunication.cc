@@ -49,6 +49,8 @@
 #include "OpenFlipper/BasePlugin/ToolboxInterface.hh"
 #include "OpenFlipper/BasePlugin/TextureInterface.hh"
 
+#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+
 //== IMPLEMENTATION ==========================================================
 
 //========================================================================================
@@ -58,7 +60,7 @@
 /** This function is called by a plugin if it changed something in the object list (source,target,...). The information is passed to all plugins.
  * @param _identifier Id of the updated object
  */
-void Core::slotObjectsListUpdated(int _identifier) {
+void Core::slotObjectUpdated(int _identifier) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
@@ -68,8 +70,19 @@ void Core::slotObjectsListUpdated(int _identifier) {
     }
   }
 
+  // If we are called for a special object, we update it ourself so the Plugins dont need to do that.
+  if ( _identifier != -1 ) {
+    BaseObject* object = 0;
+    PluginFunctions::get_object(_identifier,object);
+
+    if ( !object ) {
+      emit log(LOGERR,"updated_objects called for non existing object with id : " + QString::number(_identifier) );
+      return;
+    }
+  }
+
   // just inform the plugins as we dont do anything else
-  emit ObjectListUpdated(_identifier);
+  emit signalObjectUpdated(_identifier);
 }
 
  /** This function is called if the active object has changed. The information is passed to all plugins.

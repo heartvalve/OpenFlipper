@@ -136,7 +136,7 @@ signals:
    void allCleared();
 
    /// When this Signal is emitted all Plugins are informed that the object list changed
-   void ObjectListUpdated(int);
+   void signalObjectUpdated(int);
 
    /// When this Signal is emitted when a Wheel Event occures
    void PluginWheelEvent(QWheelEvent * , const std::string & );
@@ -200,7 +200,7 @@ signals:
       /** Called by the plugins if they changed something in the object list (deleted, added,...)
        * @param _identifier Id of the object
        */
-      void slotObjectsListUpdated(int _identifier);
+      void slotObjectUpdated(int _identifier);
 
       /// Called by Plugins if they changed the active object
       void slotActiveObjectChanged();
