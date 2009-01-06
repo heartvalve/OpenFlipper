@@ -9,5 +9,8 @@ DatacontrolToolboxWidget::DatacontrolToolboxWidget(QWidget* _parent)
 
 
 void DatacontrolToolboxWidget::keyPressEvent (QKeyEvent * _event ) {
-  emit keyEvent( _event );
+  if ( _event->key() == Qt::Key_Escape )
+    _event->ignore();
+  else
+    emit keyEvent( _event );
 }
