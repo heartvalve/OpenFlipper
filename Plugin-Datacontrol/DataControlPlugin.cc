@@ -305,14 +305,13 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
     }
   }
 
-    switch (_event->key()) {
-      case Qt::Key_Delete :
-          std::cerr << "Todo : Datacontrol Plugin: got delete key ..." << std::endl;
-          slotPopupRemove();
-        return;
-      default:
-        return;
-    }
+  switch (_event->key()) {
+    case Qt::Key_Delete :
+        slotPopupRemove();
+      return;
+    default:
+      return;
+  }
 
 }
 
