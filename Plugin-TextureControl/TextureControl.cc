@@ -128,7 +128,7 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
 
     PluginFunctions::polyMeshObject(object)->textureNode()->read(filename.toUtf8());
   }
-  emit update_view();
+  emit updateView();
 
 }
 
@@ -339,7 +339,7 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
          updateTexture(  _textureName , o_it->id() );
 
-      emit update_view();
+      emit updateView();
    }
 }
 
@@ -464,7 +464,7 @@ void TextureControlPlugin::applyDialogSettings() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
       slotTextureUpdated(  activeTexture_ , o_it->id() );
 
-  emit update_view();
+  emit updateView();
 }
 
 void TextureControlPlugin::slotTexturePropertiesOk() {

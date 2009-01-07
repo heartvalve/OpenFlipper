@@ -86,7 +86,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
   signals:
 
-    void update_view();
+    void updateView();
     void updateTexture( QString , int);
 
     void log(Logtype _type, QString _message);
