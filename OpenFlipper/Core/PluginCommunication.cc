@@ -73,16 +73,18 @@ void Core::slotObjectUpdated(int _identifier) {
   // If we are called for a special object, we update it ourself so the Plugins dont need to do that.
   if ( _identifier != -1 ) {
     BaseObject* object = 0;
-    PluginFunctions::get_object(_identifier,object);
 
-    if ( !object ) {
+    if ( !PluginFunctions::get_object(_identifier,object) ) {
       emit log(LOGERR,"updated_objects called for non existing object with id : " + QString::number(_identifier) );
       return;
     }
+
+    object->update();
   }
 
   // just inform the plugins as we dont do anything else
   emit signalObjectUpdated(_identifier);
+
   updateView();
 }
 
