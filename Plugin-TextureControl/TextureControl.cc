@@ -254,7 +254,6 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
       emit updateTexture( textures_[i].name , _identifier );
    }
 
-   emit update_view();
 }
 
 void TextureControlPlugin::slotUpdateAllTextures( ) {
