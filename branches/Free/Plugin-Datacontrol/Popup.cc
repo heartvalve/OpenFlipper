@@ -87,8 +87,8 @@ void DataControlPlugin::slotPopupRemove (  ) {
     delete deleteItem;
   }
 
-  emit update_view();
-  emit updated_objects(-1);
+  emit updateView();
+  emit updatedObject(-1);
 }
 
 /// Slot for Ungroup action in ContextMenu
@@ -110,7 +110,7 @@ void DataControlPlugin::slotUngroup (  ) {
 
   delete group;
 
-  emit updated_objects(-1);
+  emit updatedObject(-1);
 }
 
 /// Slot for Copy action in ContextMenu
@@ -132,10 +132,10 @@ void DataControlPlugin::slotCopy (  ) {
       continue;
     }
 
-    emit updated_objects(copyItem->id());
+    emit updatedObject(copyItem->id());
   }
 
-  emit update_view();
+  emit updateView();
 }
 
 /// Slot for Group action in ContextMenu
@@ -172,7 +172,7 @@ void DataControlPlugin::slotGroup (  ) {
     groupItem->appendChild(item);
   }
 
-  emit updated_objects(-1);
+  emit updatedObject(-1);
 }
 
 /// ContextMenu requested - creates the contextMenu
@@ -324,7 +324,7 @@ void DataControlPlugin::slotMaterialProperties(){
 
 ///Called when the material properties were changed inside the material dialog
 void DataControlPlugin::slotNodeChanged( ACG::SceneGraph::BaseNode* /*_node*/ ){
-  emit update_view();
+  emit updateView();
 }
 
 void DataControlPlugin::slotZoomTo(){

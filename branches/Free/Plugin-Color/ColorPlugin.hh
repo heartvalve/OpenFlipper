@@ -25,7 +25,7 @@ Q_INTERFACES(ToolbarInterface)
 Q_INTERFACES(StatusbarInterface)
 
   signals:
-    void update_view();
+    void updateView();
   
     void scriptInfo( QString _functionName );
   

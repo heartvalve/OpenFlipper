@@ -154,6 +154,6 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
     groupItem->appendChild( objs[i] );
   }
   
-  emit updated_objects(-1);
+  emit updatedObject(-1);
 }
 

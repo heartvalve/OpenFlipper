@@ -101,7 +101,7 @@ void ColorPlugin::setDefaultColor() {
     mat->set_line_width(line_width);
   }
 
-  emit update_view();
+  emit updateView();
 }
 
 void ColorPlugin::setPowerpointColor() {
@@ -146,7 +146,7 @@ void ColorPlugin::setPowerpointColor() {
     mat->set_line_width(line_width);
   }
 
-  emit update_view();
+  emit updateView();
 }
 
 void ColorPlugin::setPaperColor() {
@@ -191,7 +191,7 @@ void ColorPlugin::setPaperColor() {
     mat->set_line_width(line_width);
   }
 
-  emit update_view();
+  emit updateView();
 }
 
 //-----------------------------------------------------------------------------
