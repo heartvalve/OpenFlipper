@@ -64,7 +64,7 @@ void Core::slotObjectUpdated(int _identifier) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"updated_objects( " + QString::number(_identifier) + " ) called by " +
+        emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + " ) called by " +
                  QString( sender()->metaObject()->className() ) );
       }
     }
@@ -83,6 +83,7 @@ void Core::slotObjectUpdated(int _identifier) {
 
   // just inform the plugins as we dont do anything else
   emit signalObjectUpdated(_identifier);
+  updateView();
 }
 
  /** This function is called if the active object has changed. The information is passed to all plugins.

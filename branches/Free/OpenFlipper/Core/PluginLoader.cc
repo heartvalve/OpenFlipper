@@ -451,11 +451,26 @@ void Core::loadPlugin(QString filename, bool silent){
       }
 
 
-      if ( checkSignal(plugin,"update_view()") )
-        connect(plugin,SIGNAL(update_view()),this,SLOT(updateView()));
+      // Check for baseInterface of old style!
+      if ( checkSignal(plugin,"updated_objects(int)") ) {
+        log(LOGERR,"Plugin Uses old style updated_objects! Convert to updated_objects!");
+        emit log(LOGOUT,"=============================================================================================");
+        return;
+      }
 
-      if ( checkSignal(plugin,"updated_objects(int)") )
-        connect(plugin,SIGNAL(updated_objects(int)),this,SLOT(slotObjectUpdated(int)));
+      if ( checkSignal(plugin,"update_view()") ) {
+        log(LOGERR,"Plugin Uses old style update_view! Convert to updateView!");
+        emit log(LOGOUT,"=============================================================================================");
+        return;
+      }
+
+      if ( checkSignal(plugin,"updateView()") )
+        connect(plugin,SIGNAL(updateView()),this,SLOT(updateView()));
+
+      if ( checkSignal(plugin,"updatedObject(int)") )
+        connect(plugin,SIGNAL(updatedObject(int)),this,SLOT(slotObjectUpdated(int)));
+
+
 
       if ( checkSlot(plugin,"slotAllCleared()") )
         connect(this,SIGNAL(allCleared()),plugin,SLOT(slotAllCleared()));

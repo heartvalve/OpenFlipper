@@ -63,16 +63,18 @@ class BaseInterface {
        *  This should be done for example if you changed a scenegraph node or a mesh and have
        *  to redraw it.
       */
-      virtual void update_view() {};
+      virtual void updateView() {};
 
       /** \brief The object list has been changed by this plugin
        *
-       *  Emit this Signal, if the object list has changed (e.g. Source or Target changed).\n
-       *  If you changed the element itself (geometry, topology,..) You should also emit this signal.\n
+       *  Emit this Signal, if you updated an object (e.g. Source or Target changed).\n
+       *  If you changed the element itself (geometry, topology,..) You also have to emit this signal.\n
        *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
        *  Give the id of the new object as parameter or -1 if you deleted an object.
+       *
+       *  The parameter has to be the id of the object or -1 if refering to all objects.
        */
-      virtual void updated_objects(int) {};
+      virtual void updatedObject(int ) {};
 
       /**  \brief The active object has been switched by this plugin
        *
@@ -102,7 +104,7 @@ class BaseInterface {
        *   an existing object has been changed. This could mean, that objects are added or deleted
        *   or that for an existing object with the given id has been modified.
        *   If you store local information about one of these Objects, you should check if its still valid!\n
-       *   Dont emit BaseInterface::updated_objects(int) in this slot as this causes an endless Loop!!
+       *   Dont emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
        *  @param _identifier Identifier of the updated/new object or -1 if one is deleted
       */
       virtual void slotObjectUpdated( int /*_identifier*/ ) {};
