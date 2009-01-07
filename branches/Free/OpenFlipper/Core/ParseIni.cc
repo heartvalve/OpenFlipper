@@ -495,9 +495,9 @@ void Core::openIniFile(QString _filename) {
 
       if ( ini.get_entry( tmpType, sectionName , "type"  )) {
         type = DataType(tmpType);
+        emit log(LOGWARN, "This ini file uses old int style ObjectType fields!" );
+        emit log(LOGWARN, "Please convert it to new format! ( ... just save it )" );
       } else {
-        std::cerr << "Unable to get an integer from the type field!" << std::endl;
-        std::cerr << "Assuming new inifile version" << std::endl;
 
         QString typeName="";
 
