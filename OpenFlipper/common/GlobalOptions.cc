@@ -42,6 +42,7 @@
 
 #include "GlobalOptions.hh"
 #include <stdlib.h>
+#include <iostream>
 #include <ACG/Scenegraph/DrawModes.hh>
 
 
@@ -115,7 +116,7 @@ static int maxFrameRate_ = 35;
 static uint standardDrawMode_ = ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED;
 
 /// Store the disableRedraw_ mode
-static bool redrawDisabled_ = false;
+static int redrawDisabled_ = 0;
 
 /// Set if a drawMode Menu should always be in the context menu
 static bool drawModesInContextMenu_ = true;
@@ -470,11 +471,17 @@ uint standardDrawMode(){
 }
 
 void redrawDisabled( bool disable ){
-  redrawDisabled_ = disable;
+  if ( disable )
+    redrawDisabled_++;
+  else
+    if ( redrawDisabled_ == 0 )
+      std::cerr << "Mismatch of redraw enable/disable!!" << std::endl;
+    else
+      redrawDisabled_--;
 }
 
 bool redrawDisabled( ){
-  return redrawDisabled_;
+  return (redrawDisabled_ > 0);
 }
 
 bool drawModesInContextMenu() {
