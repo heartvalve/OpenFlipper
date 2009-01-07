@@ -214,7 +214,7 @@ void DataControlPlugin::update_active( ) {
       }
   }
 
-  emit update_view();
+  emit updateView();
 }
 
 void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
@@ -259,7 +259,7 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 //                for ( uint i = 0 ; i < data_->size() ; ++i ) {
 //                   (*data_)[i]->source(false);
 //                }
-//                emit updated_objects(-1);
+//                emit updatedObject(-1);
 //               return;
 //           }
 //
@@ -267,7 +267,7 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 //              for ( uint i = 0 ; i < data_->size() ; ++i ) {
 //                 (*data_)[i]->target(false);
 //               }
-//               emit updated_objects(-1);
+//               emit updatedObject(-1);
 //              return;
 //           }
 //
@@ -278,7 +278,7 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 //                for ( uint i = 0 ; i < data_->size() ; ++i ) {
 //                   (*data_)[i]->source(true);
 //                }
-//                emit updated_objects(-1);
+//                emit updatedObject(-1);
 //               return;
 //           }
 //
@@ -286,7 +286,7 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 //              for ( uint i = 0 ; i < data_->size() ; ++i ) {
 //                 (*data_)[i]->target(true);
 //               }
-//               emit updated_objects(-1);
+//               emit updatedObject(-1);
 //              return;
 //           }
 //
@@ -320,14 +320,14 @@ void DataControlPlugin::setAllTarget() {
                                     o_it != PluginFunctions::objects_end(); ++o_it)
   o_it->target(true);
   emit activeObjectChanged();
-  emit updated_objects(-1);
+  emit updatedObject(-1);
 }
 
 void DataControlPlugin::setAllSource() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
                                     o_it != PluginFunctions::objects_end(); ++o_it)
   o_it->source(true);
-  emit updated_objects(-1);
+  emit updatedObject(-1);
 }
 
 void DataControlPlugin::clearAllTarget() {
@@ -335,28 +335,28 @@ void DataControlPlugin::clearAllTarget() {
                                     o_it != PluginFunctions::objects_end(); ++o_it)
   o_it->target(false);
   emit activeObjectChanged();
-  emit updated_objects(-1);
+  emit updatedObject(-1);
 }
 
 void DataControlPlugin::clearAllSource() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
                                     o_it != PluginFunctions::objects_end(); ++o_it)
   o_it->source(false);
-  emit updated_objects(-1);
+  emit updatedObject(-1);
 }
 
 void DataControlPlugin::hideAll() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
                                     o_it != PluginFunctions::objects_end(); ++o_it)
     o_it->hide();
-  emit update_view();
+  emit updateView();
 }
 
 void DataControlPlugin::showAll() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
                                     o_it != PluginFunctions::objects_end(); ++o_it)
     o_it->show();
-  emit update_view();
+  emit updateView();
 }
 
 void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
@@ -371,7 +371,7 @@ void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
 
     // show/hide
     case 1:
-        emit update_view();
+        emit updateView();
       break;
 
     // source
@@ -390,7 +390,7 @@ void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
 
 void DataControlPlugin::slotRowsRemoved ( const QModelIndex & /*_parent*/, int /*_start*/, int /*_end*/ ) {
   std::cerr << "Row removed! " << std::endl;
-  emit update_view();
+  emit updateView();
 }
 
 void DataControlPlugin::loadIniFileOptions( INIFile& _ini ) {
@@ -455,7 +455,7 @@ void DataControlPlugin::loadIniFileOptions( INIFile& _ini ) {
     }
   }
 
-  emit updated_objects(-1);
+  emit updatedObject(-1);
 }
 
 void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {

@@ -72,10 +72,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
 
   signals:
     /// Force Examiner widget to update their views
-    void update_view();
+    void updateView();
 
     /// Emit this Signal, if object list has changed (e.g. Source or Target changed)
-    void updated_objects(int);
+    void updatedObject(int);
 
     void activeObjectChanged();
 
@@ -110,7 +110,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
       *   Creates Table and buttons */
      bool initializeToolbox(QWidget*& _widget);
 
-     /// Sets examiner Widget (dummy here, using update_view signal here)
+     /// Sets examiner Widget (dummy here, using updateView signal here)
      void set_examiner(ACG::QtWidgets::QtExaminerViewer*  /* _examiner_widget */ ) { };
 
      /// Name of the Plugin
