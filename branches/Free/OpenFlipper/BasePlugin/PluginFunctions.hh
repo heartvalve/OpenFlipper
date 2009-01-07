@@ -75,7 +75,7 @@ bool get_picked_object(uint _node_idx , BaseObjectData*& _object);
 /** \brief Delete the object with the given id
  *
  *  Deletes the given object ( you have to emit the right signals yourself)\n
- *  update_view , objectListUpdate ... )
+ *  updateView , objectListUpdate ... )
  * @return successful?
  * */
 DLLEXPORT
