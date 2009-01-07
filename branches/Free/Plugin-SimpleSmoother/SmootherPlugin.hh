@@ -53,8 +53,8 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface
    Q_INTERFACES(ToolboxInterface)
 
    signals:
-     void update_view();
-     void updated_objects(int);
+     void updateView();
+     void updatedObject(int);
 
    public :
 
