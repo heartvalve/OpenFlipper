@@ -139,6 +139,16 @@ void Core::slotAddTexture( QString _textureName , QString _filename, uint _dimen
  * See in the documentation of the texture plugin interfaces for further detail.
 */
 void Core::slotUpdateTexture( QString _name , int _identifier){
+
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"slotUpdateTexture( "  + _name + " , " + QString::number(_identifier) + " ) called by " +
+                 QString( sender()->metaObject()->className() ) );
+      }
+    }
+  }
+
   emit updateTexture(_name, _identifier);
 }
 
@@ -160,6 +170,14 @@ void Core::slotSetTextureMode(QString _textureName ,QString _mode) {
  * See in the documentation of the texture plugin interfaces for further detail.
 */
 void Core::slotTextureUpdated( QString _textureName , int _identifier ) {
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"slotTextureUpdated( " + _textureName + " , " + QString::number(_identifier) + " ) called by " +
+                 QString( sender()->metaObject()->className() ) );
+      }
+    }
+  }
   emit updatedTextures(_textureName,_identifier);
 }
 
