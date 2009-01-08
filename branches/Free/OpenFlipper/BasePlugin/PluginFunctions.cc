@@ -78,7 +78,7 @@ void set_examiner( std::vector< ACG::QtWidgets::QtExaminerViewer* > _examiner_wi
    PluginFunctions::examiner_widget_ =  examiner_widgets_[0];
 }
 
-void setActiveExaminer( unsigned int _id ) {
+void setActiveExaminer( const unsigned int _id ) {
   activeExaminer_ = _id;
 }
 
@@ -90,7 +90,7 @@ void set_sceneGraphRootNode( SeparatorNode* _root_node ) {
    PluginFunctions::sceneGraph_root_node_ = _root_node;
 }
 
-bool get_picked_object(uint _node_idx , BaseObjectData*& _object) {
+bool get_picked_object(const unsigned int _node_idx , BaseObjectData*& _object) {
   for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
     if ( o_it->picked( _node_idx ) ) {
       _object = *o_it;
@@ -125,7 +125,7 @@ bool get_target_identifiers( std::vector<int>& _identifiers  ) {
 // Get objects
 // ===============================================================================
 
-bool get_object(  int _identifier , BaseObject*& _object ) {
+bool get_object(  const int _identifier , BaseObject*& _object ) {
 
   if ( _identifier == -1 )
     return false;
@@ -134,7 +134,7 @@ bool get_object(  int _identifier , BaseObject*& _object ) {
   return ( _object != 0 );
 }
 
-bool get_object(  int _identifier , BaseObjectData*& _object ) {
+bool get_object(  const int _identifier , BaseObjectData*& _object ) {
 
   if ( _identifier == -1 )
     return false;
@@ -148,7 +148,7 @@ bool get_object(  int _identifier , BaseObjectData*& _object ) {
 // ===============================================================================
 
 
-bool deleteObject( int _id ) {
+bool deleteObject( const int _id ) {
 
   if ( _id == -1 )
     return false;
@@ -177,7 +177,7 @@ void deleteAll( ) {
   objectRoot()->deleteSubtree();
 }
 
-int copyObject( int _id ) {
+int copyObject( const int _id ) {
   if ( _id == -1 )
     return -1;
 
@@ -206,7 +206,7 @@ int copyObject( int _id ) {
   return copy->id();
 }
 
-bool object_exists(  int _identifier ) {
+bool object_exists(  const int _identifier ) {
 
   if ( _identifier == -1 )
     return false;
@@ -247,11 +247,11 @@ void setBackColor( OpenMesh::Vec4f _color) {
   examiner_widgets_[activeExaminer_]->backgroundColor(_color);
 }
 
-QPoint mapToGlobal(QPoint _point ) {
+QPoint mapToGlobal(const QPoint _point ) {
   return examiner_widgets_[activeExaminer_]->glMapToGlobal(_point);
 }
 
-QPoint mapToLocal( QPoint _point ) {
+QPoint mapToLocal( const QPoint _point ) {
   return examiner_widgets_[activeExaminer_]->glMapFromGlobal(_point);
 }
 
@@ -260,7 +260,7 @@ QPoint mapToLocal( QPoint _point ) {
  * The DrawModes are defined at ACG/Scenegraph/DrawModes.hh \n
  * They can be combined.
  */
-void setDrawMode( unsigned int _mode ) {
+void setDrawMode( const unsigned int _mode ) {
   for ( uint i = 0 ; i < examiner_widgets_.size() ; ++i ) {
     examiner_widgets_[i]->drawMode(_mode);
     examiner_widgets_[i]->updateGL();
@@ -281,7 +281,7 @@ bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mo
    return examiner_widgets_[activeExaminer_]->pick( _pickTarget,_mousePos,_nodeIdx,_targetIdx,_hitPointPtr );
 }
 
-bool scenegraph_pick( unsigned int _examiner, ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
+bool scenegraph_pick( const unsigned int _examiner, ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
 
   if ( _examiner >= examiner_widgets_.size() ) {
     std::cerr << "Wrong examiner id" << std::endl;
@@ -298,7 +298,7 @@ void traverse( ACG::SceneGraph::MouseEventAction  &_action ) {
 }
 
 //Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
-void traverse(  unsigned int _examiner, ACG::SceneGraph::MouseEventAction  &_action ) {
+void traverse( const unsigned int _examiner, ACG::SceneGraph::MouseEventAction  &_action ) {
 
   if ( _examiner >= examiner_widgets_.size() ) {
     std::cerr << "Wrong examiner id" << std::endl;
@@ -318,7 +318,7 @@ void pickMode ( std::string _mode) {
     examiner_widgets_[i]->pickMode(_mode);
 }
 
-void pickMode ( unsigned int _examiner, std::string _mode) {
+void pickMode ( const unsigned int _examiner, std::string _mode) {
   if ( _examiner >= examiner_widgets_.size() ) {
     std::cerr << "Wrong examiner id" << std::endl;
     return;
@@ -360,7 +360,7 @@ void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up) {
 }
 
 
-void setScenePos(const ACG::Vec3d& _center, double _radius) {
+void setScenePos(const ACG::Vec3d& _center,const double _radius) {
   examiner_widget_->setScenePos( _center, _radius );
 }
 
@@ -381,7 +381,7 @@ void translate( const ACG::Vec3d &_vector ) {
 }
 
 void rotate(const ACG::Vec3d&  _axis,
-            double             _angle,
+            const double       _angle,
             const ACG::Vec3d&  _center)
 {
   examiner_widget_->rotate(_axis,_angle,_center);
