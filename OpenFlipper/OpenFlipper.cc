@@ -209,10 +209,10 @@ int main(int argc, char **argv)
   OpenFlipper::Options::argv(&argv);
 
 // Only Install signal handler if not running in debug version, otherwise gdb will get confused
-#ifndef DEBUG
+// #ifndef DEBUG
   // Set a handler for segfaults
   std::signal(SIGSEGV, segfaultHandling);
-#endif
+// #endif
 
   OpenFlipper::Options::windowTitle("OpenFlipper v" + OpenFlipper::Options::coreVersion());
 
