@@ -70,7 +70,7 @@ namespace PluginFunctions {
  * @return true if mesh was found, false if picked object is not a mesh or not found
  */
 DLLEXPORT
-bool get_picked_object(uint _node_idx , BaseObjectData*& _object);
+bool get_picked_object(const unsigned int _node_idx , BaseObjectData*& _object);
 
 /** \brief Delete the object with the given id
  *
@@ -79,7 +79,7 @@ bool get_picked_object(uint _node_idx , BaseObjectData*& _object);
  * @return successful?
  * */
 DLLEXPORT
-bool deleteObject( int _id );
+bool deleteObject( const int _id );
 
 /** \brief Delete all objects
  *
@@ -94,7 +94,7 @@ void deleteAll( );
  * @return Pointer to new object or 0 if failed;
  * */
 DLLEXPORT
-int copyObject( int _id );
+int copyObject( const int _id );
 
 
 
@@ -151,13 +151,13 @@ bool get_all_object_identifiers( std::vector<int>& _identifiers  );
  * @return Object found?
  */
 DLLEXPORT
-bool get_object(  int _identifier , BaseObject*& _object );
+bool get_object(  const int _identifier , BaseObject*& _object );
 
 /** This functions returns the object with the given id regardless of the type of object.
  * See get_object(  int _identifier , BaseObject*& _object ) for more details.
  */
 DLLEXPORT
-bool get_object(  int _identifier , BaseObjectData*& _object );
+bool get_object(  const int _identifier , BaseObjectData*& _object );
 
 /** \brief Check if an object with this identifier exists.
  *
@@ -165,7 +165,7 @@ bool get_object(  int _identifier , BaseObjectData*& _object );
  * @param _identifier  Object id to search for
  */
 DLLEXPORT
-bool object_exists(  int _identifier );
+bool object_exists(  const int _identifier );
 
 /// Get the number of available objects
 DLLEXPORT
@@ -196,7 +196,7 @@ void set_examiner( std::vector< ACG::QtWidgets::QtExaminerViewer* > _examiner_wi
 
 /// Set the active id of the examiner which got the last mouse events
 DLLEXPORT
-void setActiveExaminer( unsigned int _id );
+void setActiveExaminer( const unsigned int _id );
 
 /// Set the internal scenegraph root node pointer ( DO NOT USE!! )
 DLLEXPORT
@@ -217,7 +217,7 @@ bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mo
  * This picking function will pick in the specified examiner context
  */
 DLLEXPORT
-bool scenegraph_pick( unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
+bool scenegraph_pick( const unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
 
 /** Execute Scenegraph traversal with action and use the last active examiner
  *  If you are reacting on a mouseEvent you should use this function as it will
@@ -227,7 +227,7 @@ DLLEXPORT
 void traverse( ACG::SceneGraph::MouseEventAction  &_action );
 
 /// Execute Scenegraph traversal with action and a specified examiner
-void traverse(  unsigned int _examiner, ACG::SceneGraph::MouseEventAction  &_action );
+void traverse(  const unsigned int _examiner, ACG::SceneGraph::MouseEventAction  &_action );
 
 /// Get the current Picking mode
 DLLEXPORT
@@ -239,7 +239,7 @@ void pickMode ( std::string _mode);
 
 /// Set pick mode for a specific examiner
 DLLEXPORT
-void pickMode ( unsigned int _examiner, std::string _mode);
+void pickMode ( const unsigned int _examiner, std::string _mode);
 
 /// Get the current gl state from examiner
 DLLEXPORT
@@ -302,7 +302,7 @@ void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up);
  * @param _radius Radius of the scene ( Use scene_radius to get the current radius )
  */
 DLLEXPORT
-void setScenePos(const ACG::Vec3d& _center, double _radius);
+void setScenePos(const ACG::Vec3d& _center, const double _radius);
 
 /** \brief Set the scene position (Same as  setScenePos(const ACG::Vec3d& _center, double _radius) )
  *
@@ -341,7 +341,7 @@ void translate( const ACG::Vec3d &_vector );
  */
 DLLEXPORT
 void rotate(const ACG::Vec3d&  _axis,
-            double             _angle,
+            const double       _angle,
             const ACG::Vec3d&  _center);
 
 
@@ -386,7 +386,7 @@ void perspectiveProjection();
  *
  */
 DLLEXPORT
-void setDrawMode( unsigned int _mode );
+void setDrawMode( const unsigned int _mode );
 
 /** \brief Get the current draw Mode
  *
@@ -405,13 +405,13 @@ void setBackColor( OpenMesh::Vec4f _color);
  *
  */
 DLLEXPORT
-void mapToGlobal( );
+QPoint mapToGlobal( const QPoint _point );
 
 /** \brief Map global coordinates to GL Widget local coordinates
  *
  */
 DLLEXPORT
-void mapToLocal( OpenMesh::Vec4f _color);
+QPoint mapToLocal( const QPoint _point );
 
 /** @} */
 
