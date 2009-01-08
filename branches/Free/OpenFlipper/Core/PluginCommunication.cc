@@ -85,7 +85,8 @@ void Core::slotObjectUpdated(int _identifier) {
   // just inform the plugins as we dont do anything else
   emit signalObjectUpdated(_identifier);
 
-  object->update();
+  if ( object != 0 )
+    object->update();
 
   // Reenable redraws
   OpenFlipper::Options::redrawDisabled(false);
