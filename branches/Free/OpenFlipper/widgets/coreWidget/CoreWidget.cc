@@ -466,175 +466,6 @@ CoreWidget::showToolbox( bool _state ) {
   }
 }
 
-//-----------------------------------------------------------------------------
-
-/** Handles keypress events or passes them to plugins
-  */
-void
-CoreWidget::keyPressEvent(QKeyEvent* _e)
-{
-  if (_e->modifiers() == Qt::ControlModifier ) {
-    switch (_e->key())
-    {
-        case Qt::Key_F :
-            toggleFullscreen();
-          return;
-
-        case Qt::Key_L :
-            toggleLogger();
-          return;
-
-        case Qt::Key_T :
-            toggleToolbox();
-          return;
-
-        // Send remaining events to plugins
-        default:
-           mapKeyPressEvent(_e);
-        return;
-    }
-  }
-
-   switch (_e->key())
-   {
-     case Qt::Key_Escape:
-        for ( uint i = 0 ; i < examiner_widgets_.size(); ++i)
-          examiner_widgets_[i]->actionMode(examiner_widgets_[i]->lastActionMode());
-
-      // Send remaining events to plugins
-      default:
-          mapKeyPressEvent(_e);
-      break;
-  }
-}
-
-//-----------------------------------------------------------------------------
-
-/** Handle Key Release Events */
-void
-CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
-   mapKeyReleaseEvent(_e);
-}
-
-//-----------------------------------------------------------------------------
-
-/** Map Key Press Events to Plugins */
-void
-CoreWidget::mapKeyPressEvent(QKeyEvent* _e){
-
-  //find the first plugin which wants to handle that key
-  for (uint i=0; i < plugins_.size(); i++)
-    for (int k=0; k < plugins_[i].keys.count(); k++)
-      if ( plugins_[i].keys[k].key == _e->key()
-        && plugins_[i].keys[k].modifiers == _e->modifiers() ){
-
-        KeyInterface* keyPlugin = qobject_cast< KeyInterface * >(plugins_[i].plugin);
-
-        if (keyPlugin){
-//           if ( checkSlot( plugins_[i].plugin , "slotKeyEvent(QKeyEvent*)" ) )
-            keyPlugin->slotKeyEvent(_e);
-        }
-        //only inform further plugins if this is a multiUse key
-        if (!plugins_[i].keys[k].multiUse)
-          return;
-      }
-}
-
-//-----------------------------------------------------------------------------
-
-/** Map Key Release Events to Plugins */
-void
-CoreWidget::mapKeyReleaseEvent(QKeyEvent* _e){
-
-  if (_e->isAutoRepeat()) return; //consider only "real" release events
-
-  //find the first plugin which wants to handle that key
-  for (uint i=0; i < plugins_.size(); i++)
-    for (int k=0; k < plugins_[i].keys.count(); k++)
-      if ( plugins_[i].keys[k].key == _e->key()
-        && plugins_[i].keys[k].modifiers == _e->modifiers() ){
-
-        KeyInterface* keyPlugin = qobject_cast< KeyInterface * >(plugins_[i].plugin);
-
-        if (keyPlugin){
-//           if ( checkSlot( plugins_[i].plugin , "slotKeyReleaseEvent(QKeyEvent*)" ) )
-            keyPlugin->slotKeyReleaseEvent(_e);
-        }
-        //only inform further plugins if this is a multiUse key
-        if (!plugins_[i].keys[k].multiUse)
-          return;
-      }
-}
-
-//-----------------------------------------------------------------------------
-
-/** Register a key to a plugin */
-void
-CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse){
-
-  //first check if the key is already registered by the coreWidget
-  bool found = false;
-  bool multi = false;
-  for (uint i=0; i < coreKeys_.size(); i++)
-    if (coreKeys_[i].key == _key && coreKeys_[i].modifiers == _modifiers){
-      found = true;
-      multi = coreKeys_[i].multiUse;
-      break;
-    }
-
-  //then check if the key is already registered by a different plugin
-  if (!found)
-    for (uint i=0; i < plugins_.size(); i++)
-      for (int k=0; k < plugins_[i].keys.count(); k++)
-        if (plugins_[i].keys[k].key == _key
-        && plugins_[i].keys[k].modifiers == _modifiers){
-          found = true;
-          multi = plugins_[i].keys[k].multiUse;
-          break;
-        }
-
-  if (found)
-    emit log(LOGERR, "Key already registered elsewhere.");
-
-  //check if its a key for the core
-  if (sender() == this){
-    KeyBinding kb;
-    kb.key = _key;
-    kb.modifiers = _modifiers;
-    kb.description = _description;
-    kb.multiUse = multi || _multiUse;
-
-    if (multi && !_multiUse)
-      log(LOGWARN, "Key registered as multiUse key.");
-
-    coreKeys_.push_back( kb );
-    return;
-  }
-
-  //find plugin
- PluginInfo* pluginInfo = 0;
-
-  for (uint i=0; i < plugins_.size(); i++)
-    if (plugins_[i].plugin == sender())
-      pluginInfo = &plugins_[i];
-
-  if (pluginInfo == 0){
-    emit log(LOGERR, "Unable to register key. Plugin not found!");
-    return;
-  }
-
-  KeyBinding kb;
-  kb.key = _key;
-  kb.modifiers = _modifiers;
-  kb.description = _description;
-  kb.multiUse = multi || _multiUse;
-
-  if (multi && !_multiUse)
-    log(LOGWARN, "Key registered as multiUse key.");
-
-  pluginInfo->keys.append( kb );
-}
-
 //=============================================================================
 
 void
@@ -680,9 +511,11 @@ void CoreWidget::showOptionsWidget() {
     return;
 
   if ( optionsWidget_ == 0 ) {
-    optionsWidget_ = new OptionsWidget(plugins_, coreKeys_, 0);
+    optionsWidget_ = new OptionsWidget(plugins_, coreKeys_, invKeys_, 0);
     connect(optionsWidget_,SIGNAL(applyOptions()),this,SIGNAL(applyOptions()));
     connect(optionsWidget_,SIGNAL(saveOptions()),this,SIGNAL(saveOptions()));
+    connect(optionsWidget_,SIGNAL(addKeyMapping(int,Qt::KeyboardModifiers,QObject*,int)),
+            this,          SLOT(slotAddKeyMapping(int,Qt::KeyboardModifiers,QObject*,int)));
   }
 
   //show the optionsWidget centered

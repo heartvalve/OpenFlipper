@@ -42,17 +42,23 @@
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
+//map for keyBindings
+typedef std::multimap< std::pair< QObject*, int >, std::pair< int, Qt::KeyboardModifiers > > InverseKeyMap;
+
+
 class OptionsWidget : public QWidget, public Ui::OptionsWidget
 {
 
 Q_OBJECT
 
 public:
-   OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent = 0 );
+   OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, InverseKeyMap& _invKeys, QWidget* parent =0 );
 
 signals:
    void applyOptions();
    void saveOptions();
+
+   void addKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, QObject* _plugin, int _keyBindingID);
 
 private slots:
    /// Hide widget, Update Options and tell others about changed Options
@@ -70,13 +76,29 @@ private slots:
    /// open a dialog to determine the color
    void getBackgroundColor();
 
+   /// keyBinding TreeWidget-Item changed
+   void keyTreeItemChanged( QTreeWidgetItem* current, QTreeWidgetItem* previous );
+
+   void keyTreeDoubleClicked(QTreeWidgetItem* _item, int col);
+
+   void updateShortcut();
+
 protected:
    void showEvent ( QShowEvent * event );
 
 private:
+
    //key-bindings
    std::vector<PluginInfo>& plugins_;
    std::vector<KeyBinding>& coreKeys_;
+
+   InverseKeyMap& keys_;
+
+   int getPluginInfo(QString pluginName);
+
+   void initKeyTree();
+
+   void applyShortcuts();
 
    // flag indicating if something went wrong and the request has to be aborted
    bool httpRequestAborted;

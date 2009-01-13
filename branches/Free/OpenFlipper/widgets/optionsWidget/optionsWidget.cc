@@ -41,10 +41,11 @@
 
 #include <QColorDialog>
 
-OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, QWidget *parent)
+OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, InverseKeyMap& _invKeys, QWidget *parent)
   : QWidget(parent),
     plugins_(_plugins),
-    coreKeys_(_core)
+    coreKeys_(_core),
+    keys_(_invKeys)
 
 {
   setupUi(this);
@@ -144,81 +145,18 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
     pickingRenderMode->setCurrentIndex(itemIndex);
 
   //keyBindings
-  keyTree->clear();
+  initKeyTree();
 
-  keyTree->setColumnCount ( 2 );
+  keyTree->disconnect(); //to be sure..disconnect every slot
 
-  QStringList headerdata;
-  headerdata << "Action" << "Shortcut";
-  keyTree->setHeaderLabels(headerdata);
+  connect(keyTree, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+          this,    SLOT(keyTreeItemChanged( QTreeWidgetItem*, QTreeWidgetItem*)) );
 
-  //add Core Keys
-  QTreeWidgetItem * core = new QTreeWidgetItem(keyTree, QStringList("CoreWidget"));
-
-  QList<QTreeWidgetItem *> keys;
-
-  for (uint i=0; i < coreKeys_.size(); i++){
-    QStringList row;
-
-    int key = coreKeys_[i].key;
-
-      if (key == Qt::Key_AltGr || key == Qt::Key_Alt || key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Meta){
-        QString keyString = QKeySequence( coreKeys_[i].modifiers ).toString();
-        row << coreKeys_[i].description << (keyString).left(keyString.size()-1);
-      }else{
-        QString keyString = QKeySequence( key + coreKeys_[i].modifiers ).toString();
-        row << coreKeys_[i].description << keyString;
-      }
-
-    keys.append(new QTreeWidgetItem(core, row));
-  }
-
-  core->addChildren(keys);
-  keyTree->addTopLevelItem( core );
+  connect(keyTree, SIGNAL(itemDoubleClicked (QTreeWidgetItem*, int)),
+          this,    SLOT(keyTreeDoubleClicked( QTreeWidgetItem*, int)) );
 
 
-
-  QList<QTreeWidgetItem *> plugins;
-
-  int off = 0;
-
-  for (uint i=0; i < plugins_.size(); i++){
-//      if (( (plugins_[i]).keys).size() == 0)
-//        continue;
-
-    plugins.append(new QTreeWidgetItem(keyTree, QStringList( plugins_[i].name )));
-
-    QList<QTreeWidgetItem *> keys;
-
-    for (int k=0; k < plugins_[i].keys.count(); k++){
-      QStringList row;
-      
-      int key = plugins_[i].keys[k].key;
-
-      if (key == Qt::Key_AltGr || key == Qt::Key_Alt || key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Meta){
-        QString keyString = QKeySequence( plugins_[i].keys[k].modifiers ).toString();
-        row << plugins_[i].keys[k].description << (keyString).left(keyString.size()-1);
-      }else{
-        QString keyString = QKeySequence( key + plugins_[i].keys[k].modifiers ).toString();
-        row << plugins_[i].keys[k].description << keyString;
-      }
-
-      keys.append(new QTreeWidgetItem(plugins[i-off], row));
-    }
-
-    if (keys.count() > 0)
-      plugins[i-off]->addChildren(keys);
-    else{
-      delete plugins[i-off];
-      plugins.removeLast();
-      off++;
-    }
-  }
-
-  if (plugins.count() > 0)
-    keyTree->addTopLevelItems( plugins );
-
-  keyTree->setColumnWidth(0,350);
+  connect(shortcutButton, SIGNAL(keyChanged()), this, SLOT(updateShortcut()) );
 
 
   for (int i = 0 ; i < availDrawModes->count(); ++i )
@@ -393,6 +331,8 @@ void OptionsWidget::slotApply() {
       mode.push_back( availDrawModes->item(i)->text() );
 
   OpenFlipper::Options::standardDrawMode( descriptionsToDrawMode(mode) );
+
+  applyShortcuts();
 
   emit applyOptions();
   emit saveOptions();

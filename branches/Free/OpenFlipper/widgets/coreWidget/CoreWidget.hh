@@ -166,16 +166,38 @@ public:
    void PluginKeyReleaseEvent(QKeyEvent* );
 
    /// internal signal to register CoreWidget keys
-   void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
+   void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description,
+                    bool _multiUse = false);
 
   private:
-    void mapKeyPressEvent(QKeyEvent* _e);
-    void mapKeyReleaseEvent(QKeyEvent* _e);
+    ///typedefs
+    typedef std::multimap<  std::pair< int, Qt::KeyboardModifiers >  ,  std::pair< QObject*, int > > KeyMap;
 
+    typedef std::multimap< std::pair< QObject*, int >, std::pair< int, Qt::KeyboardModifiers > > InverseKeyMap;
+
+    typedef std::pair< KeyMap::iterator, KeyMap::iterator > KeyRange;
+
+    /// Handle core key events
+    void coreKeyPressEvent  (QKeyEvent* _e);
+    void coreKeyReleaseEvent(QKeyEvent* _e);
+
+    KeyBinding getKeyBinding(QObject* _plugin, int _keyIndex );
+
+    ///vector of keys registered to the core
     std::vector<KeyBinding> coreKeys_;
 
+    ///mapping of all keys to registered keys and the corresponding plugins
+    KeyMap keys_;
+
+    ///mapping of all registered keys and the corresponding plugins to currently assigned keys
+    InverseKeyMap invKeys_;
+
   private slots:
-    void slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
+    void slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description,
+                         bool _multiUse = false);
+
+  public slots:
+    void slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, QObject* _plugin, int _keyBindingID);
 
    /** @} */
 
