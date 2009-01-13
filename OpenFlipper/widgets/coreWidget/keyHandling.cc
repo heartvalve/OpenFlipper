@@ -241,14 +241,14 @@ void CoreWidget::slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, Q
       return;
     }
 
-  //now we can add the mapping
-  keys_.insert   ( std::make_pair( keyCombi , std::make_pair(_plugin, _keyBindingID) ));
-  invKeys_.insert( std::make_pair( std::make_pair(_plugin, _keyBindingID),  keyCombi ));
-
   if (replace){
     keys_.erase(oldCombi);
     invKeys_.erase(oldTarget);
   }
+
+  //now we can add the mapping
+  keys_.insert   ( std::make_pair( keyCombi , std::make_pair(_plugin, _keyBindingID) ));
+  invKeys_.insert( std::make_pair( std::make_pair(_plugin, _keyBindingID),  keyCombi ));
 
 }
 
