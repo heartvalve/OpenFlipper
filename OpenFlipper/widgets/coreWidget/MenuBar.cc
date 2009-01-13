@@ -111,7 +111,7 @@ void CoreWidget::setupMenuBar()
 
   //Load object
   QAction* AC_Load = new QAction(tr("&Load Object"), this);
-  AC_Load->setShortcut (Qt::CTRL + Qt::Key_O);
+//   AC_Load->setShortcut (Qt::CTRL + Qt::Key_O);
   AC_Load->setStatusTip(tr("Load an object"));
   AC_Load->setWhatsThis("Load a new object");
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open.png");
@@ -133,7 +133,7 @@ void CoreWidget::setupMenuBar()
 
   //Save object
   QAction* AC_Save = new QAction(tr("&Save Object"), this);
-  AC_Save->setShortcut (Qt::CTRL + Qt::Key_S);
+//   AC_Save->setShortcut (Qt::CTRL + Qt::Key_S);
   AC_Save->setStatusTip(tr("Save currently selected objects"));
   AC_Save->setWhatsThis("Saves all currently selected objects");
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save.png");

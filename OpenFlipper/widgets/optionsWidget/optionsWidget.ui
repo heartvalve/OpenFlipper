@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>484</width>
+    <width>472</width>
     <height>763</height>
    </rect>
   </property>
@@ -16,14 +16,13 @@
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="toolTip" >
-      <string>This list shows the active draw modes.
-You can select multiple modes at the same time.</string>
+      <string/>
      </property>
      <property name="statusTip" >
       <string/>
      </property>
      <property name="currentIndex" >
-      <number>2</number>
+      <number>3</number>
      </property>
      <property name="usesScrollButtons" >
       <bool>true</bool>
@@ -387,14 +386,63 @@ You can select multiple modes at the same time.</string>
       <attribute name="title" >
        <string>Key Bindings</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_6" >
+      <layout class="QVBoxLayout" name="verticalLayout_12" >
        <item>
         <widget class="QTreeWidget" name="keyTree" >
+         <property name="editTriggers" >
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="expandsOnDoubleClick" >
+          <bool>false</bool>
+         </property>
          <column>
           <property name="text" >
            <string>1</string>
           </property>
          </column>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="shortcutBox" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="title" >
+          <string> Shortcut for selected action </string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6" >
+          <item>
+           <widget class="ShortcutButton" name="shortcutButton" >
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_10" >
+            <item>
+             <widget class="QLabel" name="label_9" >
+              <property name="text" >
+               <string>Default Shortcut:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="defaultShortcut" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -660,6 +708,13 @@ p, li { white-space: pre-wrap; }
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ShortcutButton</class>
+   <extends>QPushButton</extends>
+   <header>../../../widgets/optionsWidget/ShortcutButton.hh</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
