@@ -174,9 +174,13 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     layout->addWidget(examiner_widgets_[2],1,0);
     layout->addWidget(examiner_widgets_[3],1,1);
 
-    stackedWidget_->addWidget(tmp);
+    for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+      examiner_widgets_[i]->hide();
 
+    stackedWidget_->addWidget(tmp);
   }
+
+
 
 
   // ======================================================================
