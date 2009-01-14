@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -51,7 +51,7 @@
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
 
-FileTriangleMeshPlugin::FileTriangleMeshPlugin() 
+FileTriangleMeshPlugin::FileTriangleMeshPlugin()
 : saveOptions_(0),
   loadOptions_(0){
 }
@@ -119,7 +119,7 @@ int FileTriangleMeshPlugin::loadObject(QString _filename){
 
     if (loadVertexColor_->isChecked())
       opt += OpenMesh::IO::Options::VertexColor;
-    
+
     if (loadFaceColor_->isChecked())
       opt += OpenMesh::IO::Options::FaceColor;
 
@@ -129,7 +129,7 @@ int FileTriangleMeshPlugin::loadObject(QString _filename){
 
     if (loadNormals_->isChecked())
       opt += OpenMesh::IO::Options::VertexNormal;
-    
+
     if (loadTexCoords_->isChecked())
       opt += OpenMesh::IO::Options::VertexTexCoord;
 
@@ -147,7 +147,7 @@ int FileTriangleMeshPlugin::loadObject(QString _filename){
   if (!ok)
   {
     std::cerr << "Plugin FileTriangleMesh : Read error for Triangle Mesh\n";
-    ///@todo : Remove object after error while loading
+    PluginFunctions::deleteObject( object->id() );
     return -1;
   }
 
@@ -189,7 +189,7 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
 
       if (saveBinary_->isChecked())
         opt += OpenMesh::IO::Options::Binary;
-      
+
       if (saveVertexColor_->isChecked()){
         opt += OpenMesh::IO::Options::VertexColor;
       }
@@ -204,7 +204,7 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
 
       if (saveNormals_->isChecked())
         opt += OpenMesh::IO::Options::VertexNormal;
-      
+
       if (saveTexCoords_->isChecked())
         opt += OpenMesh::IO::Options::VertexTexCoord;
 
@@ -330,7 +330,7 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
     saveOptions_ = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop);
-    
+
     if( ! _currentFilter.contains("Wavefront") ){ //dont add 'save binary' for obj
       saveBinary_ = new QCheckBox("Save Binary");
       layout->addWidget(saveBinary_);
@@ -344,13 +344,13 @@ QWidget* FileTriangleMeshPlugin::saveOptionsWidget(QString _currentFilter) {
 
     saveAlpha_ = new QCheckBox("Save Color Alpha");
     layout->addWidget(saveAlpha_);
-    
+
     saveNormals_ = new QCheckBox("Save Normals");
     layout->addWidget(saveNormals_);
-    
+
     saveTexCoords_ = new QCheckBox("Save TexCoords");
     layout->addWidget(saveTexCoords_);
-    
+
     saveOptions_->setLayout(layout);
   }else{
     //adjust widget
@@ -377,7 +377,7 @@ QWidget* FileTriangleMeshPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
     loadOptions_ = new QWidget();
     QVBoxLayout* layout = new QVBoxLayout();
     layout->setAlignment(Qt::AlignTop);
-    
+
     loadVertexColor_ = new QCheckBox("Load Vertex Colors");
     layout->addWidget(loadVertexColor_);
 
@@ -386,13 +386,13 @@ QWidget* FileTriangleMeshPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
 
     loadAlpha_ = new QCheckBox("Load Color Alpha");
     layout->addWidget(loadAlpha_);
-    
+
     loadNormals_ = new QCheckBox("Load Normals");
     layout->addWidget(loadNormals_);
-    
+
     loadTexCoords_ = new QCheckBox("Load TexCoords");
     layout->addWidget(loadTexCoords_);
-    
+
     loadOptions_->setLayout(layout);
 
   ///TODO load face normals checkbox except for off
