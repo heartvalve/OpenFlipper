@@ -23,6 +23,8 @@ KeyBinding CoreWidget::getKeyBinding(QObject* _plugin, int _keyIndex ){
 /// passes keyPressEvents to either the Core or a Plugin depending on who has registered the key
 void CoreWidget::keyPressEvent(QKeyEvent* _e)
 {
+  std::cerr << "Key press event in core" << std::endl;
+
   std::pair< int,Qt::KeyboardModifiers > key = std::make_pair(_e->key(), _e->modifiers() );
 
   //iterate over all assigned keys
@@ -69,6 +71,7 @@ void CoreWidget::keyPressEvent(QKeyEvent* _e)
 
 /// passes keyReleaseEvents to either the Core or a Plugin depending on who has registered the key
 void CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
+  std::cerr << "Key release event in core" << std::endl;
 
   if (_e->isAutoRepeat()) return; //consider only "real" release events
 
@@ -270,6 +273,7 @@ void CoreWidget::registerCoreKeys() {
   emit registerKey(Qt::Key_E      , Qt::ControlModifier | Qt::AltModifier, "Adjust Eye distance for stereo mode");
   emit registerKey(Qt::Key_F      , Qt::ControlModifier | Qt::AltModifier, "Adjust Focal distance for stereo mode");
   emit registerKey(Qt::Key_Escape , Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
+  emit registerKey(Qt::Key_Space  , Qt::NoModifier, "Toggle between multiview and single view");
 
 }
 
@@ -359,7 +363,24 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
       std::cerr << "Todo : On Print Screen, create a snapshot for all viewers" << std::endl;
       break;
 
-    // Send remaining events to plugins
+    case Qt::Key_Space:
+      if ( OpenFlipper::Options::multiView() ) {
+        if ( examiner_widgets_[1]->isHidden() ) {
+
+          for ( uint i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+            examiner_widgets_[i]->show();
+
+        } else {
+
+          for ( uint i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+            examiner_widgets_[i]->hide();
+
+        }
+      }
+
+      break;
+
+    // This should never be reached!
     default:
       return;
   }
