@@ -337,9 +337,6 @@ public:
     /// Examiner Widget
     std::vector< ACG::QtWidgets::QtExaminerViewer* >  examiner_widgets_;
 
-    /// temporary pointer pointing to first element of above vector for porting to multi view mode
-    ACG::QtWidgets::QtExaminerViewer* examiner_widget_;
-
     ///Spliter between toplevel objects and the textedit at the bottom
     QSplitter* splitter_;
 
@@ -428,6 +425,12 @@ public:
 
     /// Copy view from the last active examiner
     void slotCopyView( );
+
+    /// Create a snapshot of the last active examiner
+    void slotSnapshot();
+
+    /// Set the snapShot name for all examiners
+    void slotSnapshotName();
 
   private :
     /** Update the contextmenu for the given position inside an examiner widget
