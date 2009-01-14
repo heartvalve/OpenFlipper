@@ -248,7 +248,8 @@ bool get_all_object_identifiers( std::vector<int>& _identifiers  ) {
 }
 
 void setBackColor( OpenMesh::Vec4f _color) {
-  examiner_widgets_[activeExaminer_]->backgroundColor(_color);
+  for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+    examiner_widgets_[i]->backgroundColor(_color);
 }
 
 QPoint mapToGlobal(const QPoint _point ) {
@@ -277,7 +278,8 @@ void setDrawMode( const unsigned int _mode ) {
  * They can be combined.
  */
 unsigned int drawMode( ) {
-  return examiner_widget_->drawMode();
+  // No seperate draw modes available all should have the same so take first
+  return examiner_widgets_[0]->drawMode();
 }
 
 bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
@@ -314,7 +316,8 @@ void traverse( const unsigned int _examiner, ACG::SceneGraph::MouseEventAction  
 
 
 const std::string & pickMode () {
-   return examiner_widget_->pickMode();
+  // No seperate draw modes available all should have the same so take first
+  return examiner_widgets_[0]->pickMode();
 }
 
 void pickMode ( std::string _mode) {
@@ -332,7 +335,8 @@ void pickMode ( const unsigned int _examiner, std::string _mode) {
 }
 
 void actionMode ( ACG::QtWidgets::QtBaseViewer::ActionMode _mode) {
-  examiner_widget_->actionMode(_mode);
+  for ( uint i = 0 ; i < examiner_widgets_.size() ; ++i )
+    examiner_widgets_[i]->actionMode(_mode);
 }
 
 ACG::GLState&  glState() {
