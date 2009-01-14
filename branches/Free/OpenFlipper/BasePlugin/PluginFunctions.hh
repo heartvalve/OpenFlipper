@@ -200,6 +200,10 @@ void set_examiner( std::vector< ACG::QtWidgets::QtExaminerViewer* > _examiner_wi
 DLLEXPORT
 void setActiveExaminer( const unsigned int _id );
 
+/// Get the id of the examiner which got the last mouse events
+DLLEXPORT
+unsigned int activeExaminer();
+
 /// Set the internal scenegraph root node pointer ( DO NOT USE!! )
 DLLEXPORT
 void set_sceneGraphRootNode( SeparatorNode* _root_node );

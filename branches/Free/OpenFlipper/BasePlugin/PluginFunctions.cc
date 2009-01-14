@@ -82,6 +82,10 @@ void setActiveExaminer( const unsigned int _id ) {
   activeExaminer_ = _id;
 }
 
+unsigned int activeExaminer( ) {
+  return activeExaminer_;
+}
+
 void set_rootNode( SeparatorNode* _root_node ) {
    PluginFunctions::root_node_ = _root_node;
 }
