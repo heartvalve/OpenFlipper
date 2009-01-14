@@ -183,7 +183,14 @@ public:
 
     typedef std::pair< KeyMap::iterator, KeyMap::iterator > KeyRange;
 
-    /// This function registers all keys for the core
+    /** \brief Register all events related to the core
+     */
+    void registerCoreKeys();
+
+    /** \brief handle key events for the core
+     *
+     * This function is called to handle key events which are registered to the core
+     */
     void coreKeyPressEvent();
 
     /// Handle core key events
