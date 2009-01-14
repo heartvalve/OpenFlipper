@@ -259,8 +259,12 @@ void CoreWidget::registerCoreKeys() {
   connect(this , SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString) ),
           this , SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString)) );
 
+  emit registerKey(Qt::Key_Print  , Qt::NoModifier, "Create Snapshot");
   emit registerKey(Qt::Key_S      , Qt::ControlModifier, "Save Object");
   emit registerKey(Qt::Key_O      , Qt::ControlModifier, "Open Object");
+  emit registerKey(Qt::Key_L      , Qt::ControlModifier, "Show/Hide Logger");
+  emit registerKey(Qt::Key_T      , Qt::ControlModifier, "Show/Hide Toolbox");
+  emit registerKey(Qt::Key_F      , Qt::ControlModifier, "Toggle Fullscreen");
   emit registerKey(Qt::Key_Escape , Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
 
 }
@@ -268,7 +272,7 @@ void CoreWidget::registerCoreKeys() {
 /// if a keyPressEvent belongs to the core this functions is called
 void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 
-  if (_e->modifiers() == Qt::ControlModifier ) {
+  if (_e->modifiers() & Qt::ControlModifier ) {
     switch (_e->key())
     {
         case Qt::Key_F :
@@ -294,15 +298,19 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
     }
   }
 
-   switch (_e->key())
-   {
-     case Qt::Key_Escape:
-        for ( uint i = 0 ; i < examiner_widgets_.size(); ++i)
-          examiner_widgets_[i]->actionMode(examiner_widgets_[i]->lastActionMode());
+  switch (_e->key()) {
+    case Qt::Key_Escape:
+      for ( uint i = 0 ; i < examiner_widgets_.size(); ++i)
+        examiner_widgets_[i]->actionMode(examiner_widgets_[i]->lastActionMode());
+      break;
 
-      // Send remaining events to plugins
-      default:
-        return;
+    case Qt::Key_Print:
+      std::cerr << "Todo : On Print Screen, create a snapshot for all viewers" << std::endl;
+      break;
+
+    // Send remaining events to plugins
+    default:
+      return;
   }
 }
 
