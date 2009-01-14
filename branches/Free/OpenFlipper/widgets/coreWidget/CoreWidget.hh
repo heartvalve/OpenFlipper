@@ -423,6 +423,12 @@ public:
     /// change the background color
     void changeBackgroundColor();
 
+    /// Paste the view to the last active examiner
+    void slotPasteView( );
+
+    /// Copy view from the last active examiner
+    void slotCopyView( );
+
   private :
     /** Update the contextmenu for the given position inside an examiner widget
      *
