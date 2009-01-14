@@ -68,6 +68,8 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
   }
 
+  PluginFunctions::setActiveExaminer( examinerId );
+
   updatePopupMenu(_point,examinerId);
 
   // If not initialized, dont show it!!
@@ -234,13 +236,13 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
 
   action = functionMenu->addAction("Copy View");
   action->setToolTip("Copy current view to clipboard");
-  connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionCopyView()) );
+  connect(action, SIGNAL(triggered()), this, SLOT(slotCopyView()) );
 
   //====================================================================================================
 
   action = functionMenu->addAction("Paste View");
   action->setToolTip("Paste current view from clipboard");
-  connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionPasteView()) );
+  connect(action, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
 
   //====================================================================================================
 
@@ -314,6 +316,15 @@ void CoreWidget::changeBackgroundColor(){
 
     OpenFlipper::Options::defaultBackgroundColor( c.rgb() );
   }
+}
+
+void CoreWidget::slotPasteView( ) {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
+}
+
+void CoreWidget::slotCopyView( ) {
+  std::cerr << "Copy View" << PluginFunctions::activeExaminer() << std::endl;
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView();
 }
 
 void CoreWidget::updateGlobalOptions(bool /*_enable*/){
