@@ -420,8 +420,6 @@ Core::init() {
     emit log(LOGWARN,"Work is in progress to resolve this issue.");
   }
 
-  applyOptions();
-
   if ( OpenFlipper::Options::gui() ) {
 
     //try to restore the windowState
@@ -446,8 +444,9 @@ Core::init() {
       file2.close();
     }
 
-
     coreWidget_->show();
+
+    applyOptions();
 
     if ( OpenFlipper::Options::splash() ) {
       splash_->finish(coreWidget_);

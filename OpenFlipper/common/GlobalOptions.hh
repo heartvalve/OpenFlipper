@@ -471,13 +471,13 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   bool splash( );
 
-  /// Default background color
+  /// Default background color 
   DLLEXPORT
-  void defaultBackgroundColor( QRgb _color );
+  void defaultBackgroundColor( QColor _color );
 
   /// Default background color
   DLLEXPORT
-  QRgb defaultBackgroundColor();
+  QColor defaultBackgroundColor();
 
 /** @} */
 

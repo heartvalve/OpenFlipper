@@ -141,7 +141,7 @@ static QString title_ = "OpenFlipper v?";
 static bool splash_ = true;
 
 /// default background color for the viewer
-static QRgb defaultBackgroundColor_ = 0;
+static QColor defaultBackgroundColor_ = QColor(0.0,0.0,0.0,0.0);
 
 /// Scripting status
 static bool scripting_ = false;
@@ -566,11 +566,11 @@ bool splash( ) {
   return splash_;
 }
 
-void defaultBackgroundColor( QRgb _color ) {
+void defaultBackgroundColor( QColor _color ) {
   defaultBackgroundColor_ = _color;
 }
 
-QRgb defaultBackgroundColor() {
+QColor defaultBackgroundColor() {
   return defaultBackgroundColor_;
 }
 

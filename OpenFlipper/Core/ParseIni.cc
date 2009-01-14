@@ -222,7 +222,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     uint backgroundColor = 0;
     if ( _ini.get_entry( backgroundColor, "Options" , "DefaultBackgroundColor") )
-      OpenFlipper::Options::defaultBackgroundColor(backgroundColor);
+      OpenFlipper::Options::defaultBackgroundColor(QRgb(backgroundColor));
 
     //============================================================================
     // Load the setting for the default Toolbox mode
@@ -444,7 +444,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     // check if we are in fullscreen mode:
     _ini.add_entry("Options","FullScreen", OpenFlipper::Options::fullScreen() );
 
-    _ini.add_entry("Options","DefaultBackgroundColor", (uint)OpenFlipper::Options::defaultBackgroundColor() );
+    _ini.add_entry("Options","DefaultBackgroundColor", (uint)OpenFlipper::Options::defaultBackgroundColor().rgba ()  );
   }
 
   _ini.add_entry("Options","Stereo",OpenFlipper::Options::stereo() );
