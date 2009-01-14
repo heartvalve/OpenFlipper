@@ -85,8 +85,14 @@ void Core::applyOptions(){
       target = ACG::SceneGraph::PICK_ANYTHING;
     }
 
-    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+    //set defaultBackgroundColor
+    QColor c = OpenFlipper::Options::defaultBackgroundColor() ;
 
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+        std::cerr << "Color before : " << i << " : " <<  coreWidget_->examiner_widgets_[i]->backgroundColor() << std::endl;
+
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+      std::cerr << "Examiner " << i << std::endl;
       //animation
       coreWidget_->examiner_widgets_[i]->animation(OpenFlipper::Options::animation());
 
@@ -100,7 +106,14 @@ void Core::applyOptions(){
       // Picking Debugger
       coreWidget_->examiner_widgets_[i]->renderPicking(OpenFlipper::Options::renderPicking(), target );
 
+      std::cerr << "Setting " << i << " to " <<  ACG::Vec4f( c.redF(), c.greenF(), c.blueF(),1.0f) << std::endl;
+      // Background color
+      coreWidget_->examiner_widgets_[i]->backgroundColor( ACG::Vec4f(c.redF(),c.greenF(),c.blueF(),1.0f) );
+
     }
+
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+        std::cerr << "Color After : " << i << " : " <<  coreWidget_->examiner_widgets_[i]->backgroundColor() << std::endl;;
 
 
     //hideToolbox
@@ -127,10 +140,6 @@ void Core::applyOptions(){
         }
       }
     }
-
-    //set defaultBackgroundColor
-    QColor c = QColor( OpenFlipper::Options::defaultBackgroundColor() );
-    PluginFunctions::setBackColor( OpenMesh::Vec4f(c.redF(),c.greenF(),c.blueF(),0.0f) );
 
     updateView();
 

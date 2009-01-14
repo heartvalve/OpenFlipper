@@ -311,19 +311,29 @@ void CoreWidget::slotSnapshotName() {
 
 void CoreWidget::changeBackgroundColor(){
 
-  ACG::Vec4f bc = examiner_widgets_[PluginFunctions::activeExaminer()]->backgroundColor();
+  ACG::Vec4f bc = examiner_widgets_[PluginFunctions::activeExaminer()]->backgroundColor() * 255.0;
 
-  QColor backCol((int)bc[0], (int)bc[1], (int)bc[2]);
+//   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+//         std::cerr << "Color before : " << i << " : " <<  examiner_widgets_[i]->backgroundColor() << std::endl;
+
+  QColor backCol((int)bc[0], (int)bc[1], (int)bc[2], (int)bc[3]);
   QColor c = QColorDialog::getColor(backCol,this);
   if (c != backCol && c.isValid()){
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
-      examiner_widgets_[i]->backgroundColor(ACG::Vec4f(((double) c.red())   / 255.0,
-                                                       ((double) c.green()) / 255.0,
-                                                       ((double) c.blue())  / 255.0,
+    std::cerr << "Examiner widgets : " << OpenFlipper::Options::examinerWidgets() << std::endl;
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+      examiner_widgets_[i]->backgroundColor(ACG::Vec4f(((double) c.redF())   ,
+                                                       ((double) c.greenF()) ,
+                                                       ((double) c.blueF())  ,
                                                          1.0));
+      std::cerr << "i is  " << i << std::endl;
+    }
 
-    OpenFlipper::Options::defaultBackgroundColor( c.rgb() );
+    OpenFlipper::Options::defaultBackgroundColor( c );
   }
+
+  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+        std::cerr << "Color after : " << i << " : " <<  examiner_widgets_[i]->backgroundColor() << std::endl;
+
 }
 
 void CoreWidget::slotSnapshot() {
