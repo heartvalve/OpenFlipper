@@ -253,7 +253,7 @@ void CoreWidget::slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, Q
 }
 
 /// if a keyPressEvent belongs to the core this functions is called
-void CoreWidget::coreKeyPressEvent {
+void CoreWidget::registerCoreKeys() {
 
   //register keys for coreWidget
   connect(this , SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString) ),
