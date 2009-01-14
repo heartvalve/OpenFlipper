@@ -460,8 +460,13 @@ private:
    /** \brief Write current status to ini file (Application and File Options)
     *
     *  Writes the complete status to an ini file ( All open objects and their Information )
+    *
+    * @param _filename filename of the ini file to write with full path
+    * @param _relativePaths This defines if the paths to the objects should be made relative
+    * @param _targetOnly Select if we want all open objects or only the ones which are selected as target.
+    * @param _systemSettings Choose if you also want to save system settings into the ini file.
     */
-   void writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly);
+   void writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly, bool _systemSettings);
 
    /** \brief Write current status to obj file (Application and File Options)
     *

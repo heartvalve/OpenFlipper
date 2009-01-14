@@ -549,7 +549,11 @@ void Core::openIniFile(QString _filename) {
 
 }
 
-void Core::writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly) {
+void Core::writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly, bool _systemSettings ) {
+
+  if ( ! _systemSettings )
+      std::cerr << "Currently unsupported : Saving ini files without including global settings" << std::endl;
+
   INIFile ini;
 
   if ( ! ini.connect(_filename,true) ) {
