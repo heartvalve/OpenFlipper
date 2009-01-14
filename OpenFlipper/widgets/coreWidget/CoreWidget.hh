@@ -159,15 +159,21 @@ public:
     virtual void keyReleaseEvent(QKeyEvent* _e);
 
   signals :
-   /// When this Signal is emitted when a Keyevent Event occures
-   void PluginKeyEvent(QKeyEvent* );
 
-   /// When this Signal is emitted when a key release event event occures
-   void PluginKeyReleaseEvent(QKeyEvent* );
+    /** When this Signal is emitted when a Keyevent Event occures
+     *  The signal is connected to all Plugins implementing KeyInterface by the pluginLoader
+     */
+    void PluginKeyEvent(QKeyEvent* );
 
-   /// internal signal to register CoreWidget keys
-   void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description,
-                    bool _multiUse = false);
+    /** When this Signal is emitted when a Keyevent Release occures
+     *  The signal is connected to all Plugins implementing KeyInterface by the pluginLoader
+     */
+    void PluginKeyReleaseEvent(QKeyEvent* );
+
+    /// internal signal to register CoreWidget keys
+    void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description,
+                     bool _multiUse = false);
+
 
   private:
     ///typedefs
@@ -176,6 +182,9 @@ public:
     typedef std::multimap< std::pair< QObject*, int >, std::pair< int, Qt::KeyboardModifiers > > InverseKeyMap;
 
     typedef std::pair< KeyMap::iterator, KeyMap::iterator > KeyRange;
+
+    /// This function registers all keys for the core
+    void coreKeyPressEvent();
 
     /// Handle core key events
     void coreKeyPressEvent  (QKeyEvent* _e);

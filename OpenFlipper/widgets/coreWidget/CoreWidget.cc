@@ -337,13 +337,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   statusBar_->showMessage("Ready", 5000);
 
-  //register keys for coreWidget
-  connect(this,SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString) ),
-                this,SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString)) );
+  registerCoreKeys();
 
-  emit registerKey(Qt::Key_S,Qt::ControlModifier, "Save Object");
-  emit registerKey(Qt::Key_O,Qt::ControlModifier, "Open Object");
-  emit registerKey(Qt::Key_Escape,Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
 }
 
 
