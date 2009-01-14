@@ -45,6 +45,7 @@
 #include "CoreWidget.hh"
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 
 
@@ -57,73 +58,113 @@ static const char VIEW_MAGIC[] = "ACG::QtWidgets::QGLViewerWidget encoded view";
 
 void CoreWidget::startDrag ( QMouseEvent* _event )
 {
+  QObject* senderPointer = sender();
+  int examinerId = -1;
 
-   // Get the correct position in the widget
-   QPoint position = _event->pos();
-
-   // -1 if no object id found for the current picking position
-   // otherwise the id of the object
-   int objectId = -1;
-
-   // Do picking in the gl area to find an object
-   unsigned int    node_idx, target_idx;
-   ACG::Vec3d      hit_point;
-   BaseObjectData* object;
-   if ( PluginFunctions::scenegraph_pick ( ACG::SceneGraph::PICK_ANYTHING, 
-                                           position, 
-                                           node_idx, 
-                                           target_idx, 
-                                           &hit_point ) ) {
-      if ( PluginFunctions::get_picked_object ( node_idx, object ) )
-         objectId = object->id();
-   }
-
-   if ( objectId != -1 ) {
-     std::cerr << "dragEvent Picked Object" << std::endl;
-   }
-
-
-      QString view;
-      examiner_widget_->encodeView ( view );
-
-      QDrag     * drag = new QDrag ( examiner_widget_ );
-      QMimeData * mime_data = new QMimeData;
-
-      mime_data->setText ( view );
-      drag->setMimeData ( mime_data );
-      drag->start();
-
-   }
-
-   void CoreWidget::dragEnterEvent ( QDragEnterEvent* _event ) {
-      if ( _event->mimeData()->hasFormat ( "text/plain" ) ) {
-         QString view ( _event->mimeData()->text() );
-
-         // view information entering via drag
-         if ( view.left ( sizeof ( VIEW_MAGIC ) - 1 ) == QString ( VIEW_MAGIC ) ) {
-            _event->acceptProposedAction();
-         }
-
+  if ( senderPointer != 0 ) {
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+      if ( senderPointer == examiner_widgets_[i] ) {
+        examinerId = i;
+        break;
       }
-   }
+    }
 
-   void CoreWidget::dropEvent ( QDropEvent* _event ) {
+  }
+
+  if ( examinerId == -1 ) {
+    std::cerr << "startDrag in Core called by non examiner, stopping here" << std::endl;
+    return;
+  }
+
+  PluginFunctions::setActiveExaminer(examinerId);
+
+  // Get the correct position in the widget
+  QPoint position = _event->pos();
+
+  // -1 if no object id found for the current picking position
+  // otherwise the id of the object
+  int objectId = -1;
+
+  // Do picking in the gl area to find an object
+  unsigned int    node_idx, target_idx;
+  ACG::Vec3d      hit_point;
+  BaseObjectData* object;
+  if ( PluginFunctions::scenegraph_pick ( ACG::SceneGraph::PICK_ANYTHING,
+                                          position,
+                                          node_idx,
+                                          target_idx,
+                                          &hit_point ) ) {
+    if ( PluginFunctions::get_picked_object ( node_idx, object ) )
+        objectId = object->id();
+  }
+
+  if ( objectId != -1 ) {
+    std::cerr << "dragEvent Picked Object" << std::endl;
+  }
 
 
-      if ( _event->mimeData()->hasFormat ( "text/plain" ) ) {
 
-         QString view ( _event->mimeData()->text() );
 
-         // Dropped view information
-         if ( view.left ( sizeof ( VIEW_MAGIC ) - 1 ) == QString ( VIEW_MAGIC ) ) {
-            examiner_widget_->decodeView ( view );
-            _event->acceptProposedAction();
-            return;
-         }
+  QString view;
+  examiner_widgets_[PluginFunctions::activeExaminer()]->encodeView ( view );
 
+  QDrag     * drag = new QDrag ( examiner_widgets_[PluginFunctions::activeExaminer()] );
+  QMimeData * mime_data = new QMimeData;
+
+  mime_data->setText ( view );
+  drag->setMimeData ( mime_data );
+  drag->start();
+
+}
+
+void CoreWidget::dragEnterEvent ( QDragEnterEvent* _event ) {
+
+  if ( _event->mimeData()->hasFormat ( "text/plain" ) ) {
+      QString view ( _event->mimeData()->text() );
+
+      // view information entering via drag
+      if ( view.left ( sizeof ( VIEW_MAGIC ) - 1 ) == QString ( VIEW_MAGIC ) ) {
+        _event->acceptProposedAction();
       }
 
+  }
 
-   }
+}
+
+void CoreWidget::dropEvent ( QDropEvent* _event ) {
+  QObject* senderPointer = sender();
+  int examinerId = -1;
+
+  if ( senderPointer != 0 ) {
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+      if ( senderPointer == examiner_widgets_[i] ) {
+        examinerId = i;
+        break;
+      }
+    }
+  }
+
+  if ( examinerId == -1 ) {
+    std::cerr << "dropEvent in Core called by non examiner, stopping here" << std::endl;
+    return;
+  }
+
+  PluginFunctions::setActiveExaminer(examinerId);
+
+  if ( _event->mimeData()->hasFormat ( "text/plain" ) ) {
+
+    QString view ( _event->mimeData()->text() );
+
+    // Dropped view information
+    if ( view.left ( sizeof ( VIEW_MAGIC ) - 1 ) == QString ( VIEW_MAGIC ) ) {
+      examiner_widgets_[PluginFunctions::activeExaminer()]->decodeView ( view );
+      _event->acceptProposedAction();
+      return;
+    }
+
+  }
+
+
+}
 
 //=============================================================================
