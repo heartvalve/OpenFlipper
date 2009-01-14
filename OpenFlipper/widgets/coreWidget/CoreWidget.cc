@@ -133,21 +133,19 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     stackedWidget_->addWidget(examinerWidget);
 
-    examiner_widget_ = examinerWidget;
-
   } else {
 
     // Create collector widget which holds all viewers
     tmp = new QWidget(stackedWidget_);
 
     // Create master examiner widget
-    examiner_widget_ = new ACG::QtWidgets::QtExaminerViewer(tmp,
-                                                            "Examiner Widget",
-                                                            statusBar_ ,
-                                                            &format,
-                                                            0,
-                                                            ACG::QtWidgets::QtExaminerViewer::Nothing);
-    examiner_widgets_.push_back(examiner_widget_);
+    ACG::QtWidgets::QtExaminerViewer* examinerWidget = new ACG::QtWidgets::QtExaminerViewer(tmp,
+                                                                                            "Examiner Widget",
+                                                                                            statusBar_ ,
+                                                                                            &format,
+                                                                                            0,
+                                                                                            ACG::QtWidgets::QtExaminerViewer::Nothing);
+    examiner_widgets_.push_back(examinerWidget);
 
 
     // Create all other examiners using the same gl context as the others
@@ -156,7 +154,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                                                                                          "Examiner Widget",
                                                                                          statusBar_ ,
                                                                                          &format,
-                                                                                         examiner_widget_,
+                                                                                         examinerWidget,
                                                                                          ACG::QtWidgets::QtExaminerViewer::Nothing);
       examiner_widgets_.push_back(newWidget);
     }
@@ -186,18 +184,15 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // ======================================================================
   // Setup dragging for examiner widget
   // ======================================================================
-  examiner_widget_->setExternalDrag(true);
-  connect( examiner_widget_, SIGNAL(startDragEvent( QMouseEvent*)),
-           this, SLOT(startDrag(QMouseEvent* )));
-  connect( examiner_widget_, SIGNAL(dragEnterEvent( QDragEnterEvent*)),
-           this, SLOT(dragEnterEvent(QDragEnterEvent* )));
-  connect( examiner_widget_, SIGNAL(dropEvent( QDropEvent*)),
-           this, SLOT(dropEvent(QDropEvent* )));
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+    examiner_widgets_[i]->setExternalDrag(true);
 
-  if ( OpenFlipper::Options::multiView() ) {
-    // TODO: Check drag and drop for multiview
-    std::cerr << "Todo : Check drag and drop for multiview" << std::endl;
-
+    connect( examiner_widgets_[i], SIGNAL(startDragEvent( QMouseEvent*)),
+             this, SLOT(startDrag(QMouseEvent* )));
+    connect( examiner_widgets_[i], SIGNAL(dragEnterEvent( QDragEnterEvent*)),
+            this, SLOT(dragEnterEvent(QDragEnterEvent* )));
+    connect( examiner_widgets_[i], SIGNAL(dropEvent( QDropEvent*)),
+            this, SLOT(dropEvent(QDropEvent* )));
   }
 
 
@@ -219,8 +214,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   viewerToolbar_ = examiner_widgets_[0]->removeToolBar();
 
   for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-    examiner_widgets_[i]->removeToolBar();
-    examiner_widgets_[i]->removeToolBar();
     examiner_widgets_[i]->removeToolBar();
   }
 
