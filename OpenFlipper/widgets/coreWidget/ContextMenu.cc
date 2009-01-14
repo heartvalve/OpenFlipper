@@ -196,10 +196,10 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
   if ( persistentContextMenus_.size() > 0 )
     contextMenu_->addSeparator();
 
-  if (examiner_widget_->getPickMenu() != NULL) {
-    examiner_widget_->getPickMenu()->setTitle("&Picking");
-    contextMenu_->addMenu(examiner_widget_->getPickMenu() );
-    examiner_widget_->getPickMenu()->setTearOffEnabled(true);
+  if (examiner_widgets_[0]->getPickMenu() != NULL) {
+    examiner_widgets_[0]->getPickMenu()->setTitle("&Picking");
+    contextMenu_->addMenu(examiner_widgets_[0]->getPickMenu() );
+    examiner_widgets_[0]->getPickMenu()->setTearOffEnabled(true);
   }
 
   // Add a functions menu
@@ -220,13 +220,13 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
 
   action = functionMenu->addAction("Snapshot");
   action->setToolTip("Make a snapshot");
-  connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionSnapshot()) );
+  connect(action, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
 
   //====================================================================================================
 
   action = functionMenu->addAction("Set Snapshot Name");
   action->setToolTip("Set a name for snapshots");
-  connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionSnapshotName()) );
+  connect(action, SIGNAL(triggered()), this, SLOT(slotSnapshotName()) );
 
   //====================================================================================================
 
@@ -254,7 +254,8 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
   action->setToolTip("Synchronize two different viewers");
   action->setCheckable( true );
   action->setChecked( OpenFlipper::Options::synchronization() );
-  connect(action, SIGNAL(triggered(bool)), examiner_widget_, SLOT(actionSynchronize(bool)) );
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    connect(action, SIGNAL(triggered(bool)), examiner_widgets_[i], SLOT(actionSynchronize(bool)) );
   connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
 
   //====================================================================================================
@@ -290,32 +291,43 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
   functionMenu->setTearOffEnabled(true);
   contextMenu_->addMenu(functionMenu );
 
-  if ( ( examiner_widget_->getDrawMenu() != NULL ) && OpenFlipper::Options::drawModesInContextMenu() ) {
+  if ( ( examiner_widgets_[0]->getDrawMenu() != NULL ) && OpenFlipper::Options::drawModesInContextMenu() ) {
 
-    examiner_widget_->getDrawMenu()->setTitle("&DrawModes");
-    QAction* drawMenuAction = contextMenu_->addMenu(examiner_widget_->getDrawMenu() );
+    examiner_widgets_[0]->getDrawMenu()->setTitle("&DrawModes");
+    QAction* drawMenuAction = contextMenu_->addMenu(examiner_widgets_[0]->getDrawMenu() );
 
     QIcon icon;
     icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
     drawMenuAction->setIcon(icon);
 
-    examiner_widget_->getDrawMenu()->setTearOffEnabled(true);
+    examiner_widgets_[0]->getDrawMenu()->setTearOffEnabled(true);
   }
 }
 
+void CoreWidget::slotSnapshotName() {
+  std::cerr << "Todo : slotSnapShotName only sets name for current viewer" << std::endl;
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionSnapshotName();
+}
+
 void CoreWidget::changeBackgroundColor(){
-  ACG::Vec4f bc = examiner_widget_->backgroundColor();
+
+  ACG::Vec4f bc = examiner_widgets_[PluginFunctions::activeExaminer()]->backgroundColor();
 
   QColor backCol((int)bc[0], (int)bc[1], (int)bc[2]);
   QColor c = QColorDialog::getColor(backCol,this);
   if (c != backCol && c.isValid()){
-    examiner_widget_->backgroundColor(ACG::Vec4f(((double) c.red())   / 255.0,
-                                                  ((double) c.green()) / 255.0,
-                                                  ((double) c.blue())  / 255.0,
-                                                            1.0));
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
+      examiner_widgets_[i]->backgroundColor(ACG::Vec4f(((double) c.red())   / 255.0,
+                                                       ((double) c.green()) / 255.0,
+                                                       ((double) c.blue())  / 255.0,
+                                                         1.0));
 
     OpenFlipper::Options::defaultBackgroundColor( c.rgb() );
   }
+}
+
+void CoreWidget::slotSnapshot() {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionSnapshot();
 }
 
 void CoreWidget::slotPasteView( ) {
@@ -323,15 +335,14 @@ void CoreWidget::slotPasteView( ) {
 }
 
 void CoreWidget::slotCopyView( ) {
-  std::cerr << "Copy View" << PluginFunctions::activeExaminer() << std::endl;
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView();
 }
 
 void CoreWidget::updateGlobalOptions(bool /*_enable*/){
-  OpenFlipper::Options::synchronization( examiner_widget_->synchronization() );
-  OpenFlipper::Options::animation( examiner_widget_->animation() );
-  OpenFlipper::Options::backfaceCulling( examiner_widget_->backFaceCulling() );
-  OpenFlipper::Options::twoSidedLighting( examiner_widget_->twoSidedLighting() );
+  OpenFlipper::Options::synchronization( examiner_widgets_[0]->synchronization() );
+  OpenFlipper::Options::animation( examiner_widgets_[0]->animation() );
+  OpenFlipper::Options::backfaceCulling( examiner_widgets_[0]->backFaceCulling() );
+  OpenFlipper::Options::twoSidedLighting( examiner_widgets_[0]->twoSidedLighting() );
 }
 
 void CoreWidget::slotAddContextMenu(QMenu* _menu) {
