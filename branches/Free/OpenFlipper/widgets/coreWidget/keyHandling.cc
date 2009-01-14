@@ -221,7 +221,7 @@ void CoreWidget::slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, Q
           emit log(LOGERR, "Could not add key mapping. Key already assigned to the core.");
         else{
           BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugin);
-  
+
           if (basePlugin)
             emit log(LOGERR, "Could not add key mapping. Key already assigned to " + basePlugin->name() );
           else
@@ -249,6 +249,19 @@ void CoreWidget::slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, Q
   //now we can add the mapping
   keys_.insert   ( std::make_pair( keyCombi , std::make_pair(_plugin, _keyBindingID) ));
   invKeys_.insert( std::make_pair( std::make_pair(_plugin, _keyBindingID),  keyCombi ));
+
+}
+
+/// if a keyPressEvent belongs to the core this functions is called
+void CoreWidget::coreKeyPressEvent {
+
+  //register keys for coreWidget
+  connect(this , SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString) ),
+          this , SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString)) );
+
+  emit registerKey(Qt::Key_S      , Qt::ControlModifier, "Save Object");
+  emit registerKey(Qt::Key_O      , Qt::ControlModifier, "Open Object");
+  emit registerKey(Qt::Key_Escape , Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
 
 }
 
