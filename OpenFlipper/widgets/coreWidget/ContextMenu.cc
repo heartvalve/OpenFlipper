@@ -203,47 +203,86 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
   // Add a functions menu
   QAction* action;
   QMenu* functionMenu = new QMenu("&Functions",contextMenu_);
+
+  //====================================================================================================
+
   action = functionMenu->addAction("Set Background Color");
   action->setToolTip("Set the background color for the viewer");
   connect(action, SIGNAL(triggered()), this, SLOT(changeBackgroundColor()) );
+
+  //====================================================================================================
+
   functionMenu->addSeparator();
+
+  //====================================================================================================
+
   action = functionMenu->addAction("Snapshot");
   action->setToolTip("Make a snapshot");
   connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionSnapshot()) );
+
+  //====================================================================================================
+
   action = functionMenu->addAction("Set Snapshot Name");
   action->setToolTip("Set a name for snapshots");
   connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionSnapshotName()) );
+
+  //====================================================================================================
+
   functionMenu->addSeparator();
+
+  //====================================================================================================
+
   action = functionMenu->addAction("Copy View");
   action->setToolTip("Copy current view to clipboard");
   connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionCopyView()) );
+
+  //====================================================================================================
+
   action = functionMenu->addAction("Paste View");
   action->setToolTip("Paste current view from clipboard");
   connect(action, SIGNAL(triggered()), examiner_widget_, SLOT(actionPasteView()) );
+
+  //====================================================================================================
+
   functionMenu->addSeparator();
+
+  //====================================================================================================
+
   action = functionMenu->addAction("Synchronization");
   action->setToolTip("Synchronize two different viewers");
   action->setCheckable( true );
   action->setChecked( OpenFlipper::Options::synchronization() );
   connect(action, SIGNAL(triggered(bool)), examiner_widget_, SLOT(actionSynchronize(bool)) );
   connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+
+  //====================================================================================================
+
   action = functionMenu->addAction("Animation");
   action->setToolTip("Animate rotation of objects");
   action->setCheckable( true );
   action->setChecked( OpenFlipper::Options::animation() );
-  connect(action, SIGNAL(triggered(bool)), examiner_widget_, SLOT(actionAnimation(bool)) );
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    connect(action, SIGNAL(triggered(bool)), examiner_widgets_[i], SLOT(actionAnimation(bool)) );
   connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+
+  //====================================================================================================
+
   action = functionMenu->addAction("Backface Culling");
   action->setToolTip("Enable backface culling");
   action->setCheckable( true );
   action->setChecked( OpenFlipper::Options::backfaceCulling() );
-  connect(action, SIGNAL(triggered(bool)), examiner_widget_, SLOT(actionBackfaceCulling(bool)) );
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    connect(action, SIGNAL(triggered(bool)), examiner_widgets_[i], SLOT(actionBackfaceCulling(bool)) );
   connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+
+  //====================================================================================================
+
   action = functionMenu->addAction("Two-sided Lighting");
   action->setToolTip("Enable two-sided lighting");
   action->setCheckable( true );
   action->setChecked( OpenFlipper::Options::twoSidedLighting() );
-  connect(action, SIGNAL(triggered(bool)), examiner_widget_, SLOT(actionTwoSidedLighting(bool)) );
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    connect(action, SIGNAL(triggered(bool)), examiner_widgets_[i], SLOT(actionTwoSidedLighting(bool)) );
   connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
 
   functionMenu->setTearOffEnabled(true);
