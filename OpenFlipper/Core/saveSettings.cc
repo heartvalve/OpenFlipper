@@ -45,7 +45,9 @@
 /// Save Settings (slot is called from CoreWidget's File-Menu)
 void Core::saveSettings(){
 
+  // ========================================================================================
   // generate the saveSettings-Dialog
+  // ========================================================================================
 
   QString complete_name;
 
@@ -64,6 +66,11 @@ void Core::saveSettings(){
   optionsBox->setTitle("Options");
   layout->addWidget( optionsBox, layout->rowCount() , 0 , 1,layout->columnCount() );
 
+  QCheckBox *saveProgramSettings = new QCheckBox(optionsBox);
+  saveProgramSettings->setText("Save program settings");
+  saveProgramSettings->setToolTip("Save all current program settings to the file ( This will include view settings, colors,...) ");
+  saveProgramSettings->setCheckState( Qt::Unchecked );
+
   QCheckBox *saveAllBox = new QCheckBox(optionsBox);
   saveAllBox->setText("Save everything to same folder");
   saveAllBox->setToolTip("Save all open files to the same folder as the ini file");
@@ -80,14 +87,16 @@ void Core::saveSettings(){
   targetOnly->setCheckState( Qt::Unchecked );
 
   QBoxLayout* frameLayout = new QBoxLayout(QBoxLayout::TopToBottom,optionsBox);
-  frameLayout->addWidget( saveAllBox   , 0 , 0);
-  frameLayout->addWidget( askOverwrite , 1 , 0);
-  frameLayout->addWidget( targetOnly   , 2 , 0);
+  frameLayout->addWidget( saveProgramSettings   , 0 , 0);
+  frameLayout->addWidget( saveAllBox   , 1 , 0);
+  frameLayout->addWidget( askOverwrite , 2 , 0);
+  frameLayout->addWidget( targetOnly   , 3 , 0);
   frameLayout->addStretch();
 
 
-  // show the saveSettings-Dialog
-
+  // ========================================================================================
+  // show the saveSettings-Dialog and get the target file
+  // ========================================================================================
   QStringList fileNames;
   if (fileDialog.exec()) {
     fileNames = fileDialog.selectedFiles();
@@ -102,19 +111,24 @@ void Core::saveSettings(){
 
   complete_name = fileNames[0];
 
-  //check the extension
+  //check the extension if its a known one
   if ( !complete_name.endsWith(".ini", Qt::CaseInsensitive) && !complete_name.endsWith(".obj", Qt::CaseInsensitive) ){
+
+    // If its unknown, get the type from the currently selected filter and add this extension to the filename
     if ( fileDialog.selectedNameFilter().contains("INI files (*.ini)") )
       complete_name += ".ini";
     else
       complete_name += ".obj";
-  }
-  
 
+  }
+
+  // Get the chosen directory and remember it.
   QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
   OpenFlipper::Options::currentDir(newpath);
 
-  //update status
+  // ========================================================================================
+  // update status information
+  // ========================================================================================
   OpenFlipper::Options::savingSettings(true);
 
   if ( OpenFlipper::Options::gui() ) {
@@ -122,14 +136,18 @@ void Core::saveSettings(){
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
+  // ========================================================================================
+  // Save the objects itself
+  // ========================================================================================
+  // Depending on the checkbox iterate over all objects or only the selected ones.
 
   PluginFunctions::IteratorRestriction restriction;
   if ( targetOnly->isChecked() )
     restriction = PluginFunctions::TARGET_OBJECTS;
-  else 
+  else
     restriction = PluginFunctions::ALL_OBJECTS;
 
-  //iterate over opened objects and save them
+  //Iterate over opened objects and save them
   for ( PluginFunctions::ObjectIterator o_it(restriction);
                                         o_it != PluginFunctions::objects_end(); ++o_it)
   {
@@ -144,7 +162,6 @@ void Core::saveSettings(){
     {
       // Use objects own path if it has one. Otherwise also use path of settings file
       filename = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
-//       filename = newpath + OpenFlipper::Options::dirSeparator() + o_it->name();
 
       // handle the case that the object was created in current session and not loaded from disk
       if (o_it->path() == ".") {
@@ -176,17 +193,22 @@ void Core::saveSettings(){
   }
 
 
-  //finally save all Settings
-
+  // ========================================================================================
+  // Finally save all Settings
+  // ========================================================================================
   if ( complete_name.endsWith("ini") ) {
-    //write to ini
-    writeIniFile(complete_name, saveAllBox->isChecked(), targetOnly->isChecked() );
+
+    // write to ini
+    writeIniFile(complete_name, saveAllBox->isChecked(), targetOnly->isChecked(), saveProgramSettings->isChecked());
+
   } else if ( complete_name.endsWith("obj") ) {
+
     //write to obj
     writeObjFile(complete_name, saveAllBox->isChecked(), targetOnly->isChecked() );
+
   }
 
-  //update status
+  // update status
   OpenFlipper::Options::savingSettings(false);
 
   if ( OpenFlipper::Options::gui() ) {
