@@ -975,7 +975,7 @@ void Core::snapshot( unsigned int _viewerId ){
 void Core::resizeViewer(int _width, int _height ){
   if ( OpenFlipper::Options::gui() ){
     //+40 / +20 corresponds to the bottom and right scrollbar
-    coreWidget_->examiner_widget_->resize(_width+40, _height+20);
+    coreWidget_->examiner_widgets_[0]->resize(_width+40, _height+20);
   }
 }
 
