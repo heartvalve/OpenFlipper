@@ -84,16 +84,16 @@ void CoreWidget::setupMenuBar()
   viewMenu_ = new QMenu(tr("&View"));
   menuBar()->addMenu(viewMenu_ );
 
-  if (examiner_widget_->getDrawMenu() != NULL) {
+  if (examiner_widgets_[0]->getDrawMenu() != NULL) {
 
-    examiner_widget_->getDrawMenu()->setTitle("&DrawModes");
-    QAction* drawMenuAction = viewMenu_->addMenu(examiner_widget_->getDrawMenu() );
+    examiner_widgets_[0]->getDrawMenu()->setTitle("&DrawModes");
+    QAction* drawMenuAction = viewMenu_->addMenu(examiner_widgets_[0]->getDrawMenu() );
 
     QIcon icon;
     icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
     drawMenuAction->setIcon(icon);
 
-    examiner_widget_->getDrawMenu()->setTearOffEnabled(true);
+    examiner_widgets_[0]->getDrawMenu()->setTearOffEnabled(true);
   }
 
   QIcon icon;
