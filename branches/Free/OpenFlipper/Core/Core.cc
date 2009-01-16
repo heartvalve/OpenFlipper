@@ -46,6 +46,7 @@
 #include "Core.hh"
 // -------------------- ACG
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/Scenegraph/SceneGraph.hh>
 
 #include <ACG/QtWidgets/QtFileDialog.hh>
 // -------------------- Qt
@@ -157,6 +158,14 @@ Core::init() {
     redrawTimer_->setSingleShot(true);
     connect(redrawTimer_, SIGNAL(timeout()), this, SLOT(updateView()),Qt::DirectConnection);
 
+    // Initialice scenegraph check timer. Will be used to check for changes in the scenegraph
+    scenegraphCheckTimer_ = new QTimer();
+    scenegraphCheckTimer_->setSingleShot(false);
+    connect(scenegraphCheckTimer_, SIGNAL(timeout()), this, SLOT(checkScenegraphDirty()),Qt::DirectConnection);
+
+    // Will measure the time between redraws
+    redrawTime_ = new QTime();
+    redrawTime_->start ();
 
     if ( OpenFlipper::Options::splash() ) {
       QPixmap splashPixmap(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "splash.png");
@@ -452,6 +461,9 @@ Core::init() {
       splash_->finish(coreWidget_);
     }
 
+    // start checking for scenegraph changes
+    scenegraphCheckTimer_->setInterval (1000 / OpenFlipper::Options::maxFrameRate());
+    scenegraphCheckTimer_->start ();
   }
 
 }
@@ -601,22 +613,27 @@ void Core::updateView() {
 
   if ( OpenFlipper::Options::restrictFrameRate() ) {
 
-    // redraw time not reached ... waiting for timer event for next redraw
-    if ( redrawTimer_->isActive() ) {
-      if ( OpenFlipper::Options::doSlotDebugging() )
-        emit log(LOGINFO,"Too early for redraw! Delaying request from " + QString( sender()->metaObject()->className() ) );
-      return;
-    }
+    int elapsed = redrawTime_->elapsed ();
 
-//     std::cerr << "Redraw" << std::endl;
+    if ( elapsed < 1000 / OpenFlipper::Options::maxFrameRate() )
+    {
+	// redraw time not reached ... waiting for timer event for next redraw
+	if ( redrawTimer_->isActive() ) {
+	  if ( OpenFlipper::Options::doSlotDebugging() )
+	    emit log(LOGINFO,"Too early for redraw! Delaying request from " + QString( sender()->metaObject()->className() ) );
+	  return;
+	}
 
-    // Start the timer if we are not called by the timer
-    if ( sender() != redrawTimer_ ) {
-      redrawTimer_->start( 1000 / OpenFlipper::Options::maxFrameRate() );
+	// Start the timer
+	redrawTimer_->start( (1000 / OpenFlipper::Options::maxFrameRate()) - elapsed);
+	return;
     }
+    else if ( redrawTimer_->isActive() )
+	redrawTimer_->stop ();
 
   }
 
+  redrawTime_->restart ();
 
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() && !OpenFlipper::Options::redrawDisabled() ) {
 
@@ -625,6 +642,20 @@ void Core::updateView() {
       coreWidget_->examiner_widgets_[i]->updateGL();
     }
 
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+ /** Check if scenegraph is dirty and initiate redraw
+  */
+void Core::checkScenegraphDirty() {
+  if ( true )
+  {
+    ACG::SceneGraph::CheckDirtyAction action;
+    ACG::SceneGraph::traverse( root_node_scenegraph_, action );
+    if ( action.isDirty () )
+      emit updateView ();
   }
 }
 
@@ -639,6 +670,9 @@ void Core::restrictFrameRate( bool _enable ) {
 void Core::setMaxFrameRate( int _rate ) {
   OpenFlipper::Options::maxFrameRate( _rate );
   OpenFlipper::Options::restrictFrameRate( true );
+
+  // update Timer to new framerate
+  scenegraphCheckTimer_->setInterval (1000 / OpenFlipper::Options::maxFrameRate());
 }
 
 //-----------------------------------------------------------------------------
