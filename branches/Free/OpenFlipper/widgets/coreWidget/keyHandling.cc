@@ -23,8 +23,6 @@ KeyBinding CoreWidget::getKeyBinding(QObject* _plugin, int _keyIndex ){
 /// passes keyPressEvents to either the Core or a Plugin depending on who has registered the key
 void CoreWidget::keyPressEvent(QKeyEvent* _e)
 {
-  std::cerr << "Key press event in core" << std::endl;
-
   std::pair< int,Qt::KeyboardModifiers > key = std::make_pair(_e->key(), _e->modifiers() );
 
   //iterate over all assigned keys
@@ -71,7 +69,6 @@ void CoreWidget::keyPressEvent(QKeyEvent* _e)
 
 /// passes keyReleaseEvents to either the Core or a Plugin depending on who has registered the key
 void CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
-  std::cerr << "Key release event in core" << std::endl;
 
   if (_e->isAutoRepeat()) return; //consider only "real" release events
 
