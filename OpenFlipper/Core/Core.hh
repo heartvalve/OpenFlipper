@@ -674,6 +674,26 @@ private:
 
   /** @} */
 
+  //===========================================================================
+    /** @name Scenegraph redraw handling
+      * @{ */
+  //===========================================================================
+
+  private slots:
+
+    /// Called to check if the scenegraph needs to be redrawn
+    void checkScenegraphDirty();
+
+  private:
+
+    /// Timer that starts scenegraph check
+    QTimer *scenegraphCheckTimer_;
+
+    /// Holds the time since last redraw
+    QTime *redrawTime_;
+  
+  /** @} */
+
   private :
 
   /// Id for the next backup
