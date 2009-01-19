@@ -699,9 +699,6 @@ private:
   /// Id for the next backup
   int nextBackupId_;
 
-  /// Use white or a random color for new objects
-  bool set_random_base_color_;
-
   /// Logger interfaces between plugins and core logger
   std::vector<PluginLogger*> loggers_;
 

@@ -103,7 +103,6 @@ Core::
 Core() :
   QObject(),
   nextBackupId_(0),
-  set_random_base_color_(true),
   coreWidget_(0)
 {
   //init logFile

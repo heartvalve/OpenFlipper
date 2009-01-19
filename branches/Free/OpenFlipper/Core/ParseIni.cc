@@ -143,9 +143,9 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     // Load the random base color setting
     //============================================================================
-    bool set_random_base_color = true;
-    if ( _ini.get_entry( set_random_base_color, "Options" , "SetRandomBaseColor") )
-      set_random_base_color_ = set_random_base_color;
+    bool random_base_color = false;
+    if ( _ini.get_entry( random_base_color, "Options" , "RandomBaseColor") )
+      OpenFlipper::Options::randomBaseColor( random_base_color );
 
     //============================================================================
     // Load the backface culling setting
@@ -218,11 +218,18 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::fullScreen(fullScreen);
 
     //============================================================================
-    // Load the setting for the fullscreen option
+    // Load the setting for the background color option
     //============================================================================
     uint backgroundColor = 0;
     if ( _ini.get_entry( backgroundColor, "Options" , "DefaultBackgroundColor") )
       OpenFlipper::Options::defaultBackgroundColor(QRgb(backgroundColor));
+
+    //============================================================================
+    // Load the setting for the object color option
+    //============================================================================
+    uint baseColor = 0;
+    if ( _ini.get_entry( baseColor, "Options" , "DefaultBaseColor") )
+      OpenFlipper::Options::defaultBaseColor(QRgb(baseColor));
 
     //============================================================================
     // Load the setting for the default Toolbox mode
@@ -415,7 +422,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   QString scriptDir = OpenFlipper::Options::currentScriptDirStr().toUtf8();
   _ini.add_entry("Options","ScriptDir",scriptDir);
 
-  _ini.add_entry("Options","SetRandomBaseColor",set_random_base_color_);
+  _ini.add_entry("Options","RandomBaseColor", OpenFlipper::Options::randomBaseColor() );
 
   if ( OpenFlipper::Options::gui() ) {
 
@@ -445,6 +452,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     _ini.add_entry("Options","FullScreen", OpenFlipper::Options::fullScreen() );
 
     _ini.add_entry("Options","DefaultBackgroundColor", (uint)OpenFlipper::Options::defaultBackgroundColor().rgba ()  );
+    _ini.add_entry("Options","DefaultBaseColor", (uint)OpenFlipper::Options::defaultBaseColor().rgba ()  );
   }
 
   _ini.add_entry("Options","Stereo",OpenFlipper::Options::stereo() );
