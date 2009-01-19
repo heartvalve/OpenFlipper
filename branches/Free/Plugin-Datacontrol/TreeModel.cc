@@ -683,29 +683,43 @@ bool TreeModel::dropMimeData(const QMimeData *data,
        ids.push_back( id ); 
      }
 
-    if (ids.count() != 1)
+    if (ids.count() == 0)
       return false;
 
-    //get new parent
-    BaseObject *newParent = getItem(parent);
+      //get new parent
 
-    if ( newParent == 0 || !newParent->isGroup() )
-      return false;
+      BaseObject *newParent = getItem(parent);
+  
+      if ( newParent == 0 || !newParent->isGroup() )
+        return false;
 
-    BaseObject* item = 0;
-    if (PluginFunctions::get_object(ids[0], item)){
-
-      item->parent()->removeChild(item);
-      item->setParent( newParent  );
-      newParent->appendChild( item );
+      //and move all objects
+      for (int i = 0; i < ids.count(); i++){
+ 
+        BaseObject* item = 0;
+        if (PluginFunctions::get_object(ids[i], item)){
+    
+          item->parent()->removeChild(item);
+  
+          //if parent was group and is empty now ->delete it
+          if ( !isRoot( item->parent() ) &&
+              item->parent()->isGroup() && item->parent()->childCount() == 0){
+  
+            // remove the parent itself from the parent
+            item->parent()->parent()->removeChild(item->parent());
+  
+            // delete it
+            delete item->parent();
+  
+          }
+  
+          item->setParent( newParent  );
+          newParent->appendChild( item );
+        }
+      }
 
 //       emit dataChanged(QModelIndex(),QModelIndex());
-
-      //TODO do something better than reset
-      reset();
-
-      return true;
-    }
-
-  return false;
+//TODO do something better than reset
+  reset();
+  return true;
  }
