@@ -61,7 +61,9 @@ signals:
    void addKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, QObject* _plugin, int _keyBindingID);
 
 private slots:
-   /// Hide widget, Update Options and tell others about changed Options
+   /// call slotApply and hide widget
+   void slotOk();
+   /// Update Options and tell others about changed Options
    void slotApply();
 
    /// Only hide widget
@@ -83,10 +85,17 @@ private slots:
 
    void updateShortcut();
 
+   void slotShowPluginOptions(const QString& _pluginName );
+
 protected:
    void showEvent ( QShowEvent * event );
 
 private:
+
+   // plugin Options
+   void initPluginOptions();
+
+   QVBoxLayout* pluginOptionsLayout;
 
    //key-bindings
    std::vector<PluginInfo>& plugins_;

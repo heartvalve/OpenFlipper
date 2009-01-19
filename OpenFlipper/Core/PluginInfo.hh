@@ -39,6 +39,7 @@ class PluginInfo{
      slotInfos.clear();
      keys.clear();
      widget = 0;
+     optionsWidget = 0;
   }
 
 
@@ -54,6 +55,7 @@ class PluginInfo{
      slotInfos = _i.slotInfos;
      keys = _i.keys;
      widget = _i.widget;
+     optionsWidget = _i.optionsWidget;
   }
 
   /// Pointer to the loaded plugin (Already casted when loading it)
@@ -85,6 +87,9 @@ class PluginInfo{
 
   /// Pointer to plugins toolbar widget (if available)
   QDockWidget* widget;
+
+  /// Pointer to plugins options widget (if available)
+  QWidget* optionsWidget;
 };
 
 #endif //PLUGININFO_HH
