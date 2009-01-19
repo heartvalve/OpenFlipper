@@ -112,7 +112,7 @@ class CoreWidget : public QMainWindow
 public:
 
   /// constructor
-  CoreWidget( QVector<ViewMode*>& _viewModes, std::vector<PluginInfo>& _plugins );
+  CoreWidget( QVector<ViewMode*>& _viewModes, std::vector<PluginInfo>& _plugins, QList< SlotInfo >& _coreSlots );
 
   /// destructor
   ~CoreWidget();
@@ -174,6 +174,8 @@ public:
     void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description,
                      bool _multiUse = false);
 
+    ///call a scripting function
+    void call( QString _expression , bool& _success  );
 
   private:
     ///typedefs
@@ -198,6 +200,7 @@ public:
     void coreKeyReleaseEvent(QKeyEvent* _e);
 
     KeyBinding getKeyBinding(QObject* _plugin, int _keyIndex );
+    QString    getRPCName(QObject* _plugin );
 
     ///vector of keys registered to the core
     std::vector<KeyBinding> coreKeys_;
@@ -208,12 +211,17 @@ public:
     ///mapping of all registered keys and the corresponding plugins to currently assigned keys
     InverseKeyMap invKeys_;
 
+    ///list of scripting slots from core
+    QList< SlotInfo >& coreSlots_;
+
   private slots:
     void slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description,
                          bool _multiUse = false);
 
   public slots:
     void slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, QObject* _plugin, int _keyBindingID);
+
+    void slotRegisterSlotKeyBindings();
 
    /** @} */
 

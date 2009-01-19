@@ -61,8 +61,10 @@
 */
 CoreWidget::
 CoreWidget( QVector<ViewMode*>& _viewModes,
-            std::vector<PluginInfo>& _plugins ) :
+            std::vector<PluginInfo>& _plugins,
+            QList< SlotInfo >& _coreSlots ) :
   QMainWindow(),
+  coreSlots_(_coreSlots),
   viewModes_(_viewModes),
   dockViewMode_(0),
   viewModeButton_(0),

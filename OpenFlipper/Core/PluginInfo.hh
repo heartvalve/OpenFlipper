@@ -14,6 +14,7 @@ struct KeyBinding{
   Qt::KeyboardModifiers modifiers;
   QString               description;
   bool                  multiUse;
+  bool                  slot;
 };
 
 struct SlotInfo{

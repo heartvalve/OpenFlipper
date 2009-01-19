@@ -20,6 +20,19 @@ KeyBinding CoreWidget::getKeyBinding(QObject* _plugin, int _keyIndex ){
   return KeyBinding();
 }
 
+QString CoreWidget::getRPCName(QObject* _plugin ){
+  if (_plugin == 0)
+    return "";
+
+  for (uint i=0; i < plugins_.size(); i++){
+    if (plugins_[i].plugin == _plugin)
+      return plugins_[i].rpcName;
+  }
+
+  std::cerr << "ERROR: could not get rpcName\n";
+  return "";
+}
+
 /// passes keyPressEvents to either the Core or a Plugin depending on who has registered the key
 void CoreWidget::keyPressEvent(QKeyEvent* _e)
 {
@@ -36,6 +49,15 @@ void CoreWidget::keyPressEvent(QKeyEvent* _e)
 
     //check if its a core Key
     if (plugin == 0){
+
+      //the key belongs to a slot
+      if (binding.slot){
+        bool ok;
+        emit call("core." + binding.description, ok);
+        return;
+      }
+
+      //the key was specified through keyInterface
       QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
                                              _e->text(), _e->isAutoRepeat(), _e->count() );
 
@@ -51,6 +73,15 @@ void CoreWidget::keyPressEvent(QKeyEvent* _e)
     }
 
     //it's a plugin key
+
+    //the key belongs to a slot
+    if (binding.slot){
+      bool ok;
+      emit call(getRPCName(plugin) +"."+ binding.description, ok);
+      return;
+    }
+
+    //the key was specified through keyInterface
     KeyInterface* keyPlugin = qobject_cast< KeyInterface * >(plugin);
 
     if (keyPlugin){
@@ -150,6 +181,7 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
     kb.modifiers = _modifiers;
     kb.description = _description;
     kb.multiUse = multi || _multiUse;
+    kb.slot = false;
 
     if (multi && !_multiUse)
       log(LOGWARN, "Key registered as multiUse key.");
@@ -178,6 +210,7 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
   kb.modifiers = _modifiers;
   kb.description = _description;
   kb.multiUse = multi || _multiUse;
+  kb.slot = false;
 
   if (multi && !_multiUse)
     log(LOGWARN, "Key registered as multiUse key.");
@@ -186,6 +219,53 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
 
   keys_.insert( std::make_pair( std::make_pair(_key, _modifiers) , std::make_pair(pluginInfo->plugin, pluginInfo->keys.size()-1) ) );
   invKeys_.insert( std::make_pair( std::make_pair(pluginInfo->plugin, pluginInfo->keys.size()-1) , std::make_pair(_key, _modifiers) ) );
+}
+
+///scripting slots will automatically registered to be assigned  to an invalid key(-1)
+void CoreWidget::slotRegisterSlotKeyBindings(){
+
+  //check the core slots
+  for (int i=0; i < coreSlots_.count(); i++){
+
+    //only consider functions without arguments
+    if ( !coreSlots_.at(i).slotName.contains( "()" ) )
+      continue;
+
+    KeyBinding kb;
+    kb.key = -1;
+    kb.modifiers = 0;
+    kb.description = coreSlots_.at(i).slotName;
+    kb.multiUse = true;
+    kb.slot = true;
+
+    coreKeys_.push_back( kb );
+
+    keys_.insert( std::make_pair( std::make_pair(-1, 0) , std::make_pair ((QObject*)0, coreKeys_.size()-1 ) )) ;
+    invKeys_.insert( std::make_pair( std::make_pair ((QObject*)0, coreKeys_.size()-1 ) , std::make_pair(-1, 0) ) );
+  }
+
+  //check all plugins
+  for (uint i=0; i < plugins_.size(); i++)
+
+    for (int j=0; j < plugins_[i].rpcFunctions.count(); j++){
+
+      //only consider functions without arguments
+      if ( !plugins_[i].rpcFunctions[j].contains( "()" )
+         || plugins_[i].rpcFunctions[j] == "version()")
+        continue;
+
+      KeyBinding kb;
+      kb.key = -1;
+      kb.modifiers = 0;
+      kb.description = plugins_[i].rpcFunctions[j];
+      kb.multiUse = true;
+      kb.slot = true;
+    
+      plugins_[i].keys.append( kb );
+    
+      keys_.insert( std::make_pair( std::make_pair(-1, 0) , std::make_pair(plugins_[i].plugin, plugins_[i].keys.size()-1) ) );
+      invKeys_.insert( std::make_pair( std::make_pair(plugins_[i].plugin, plugins_[i].keys.size()-1) , std::make_pair(-1, 0) ) );
+    }
 }
 
 /// add a new keyMapping (keyBindingID is the id of the keyBinding in the pluginInfo of _plugin :)
@@ -212,7 +292,6 @@ void CoreWidget::slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, Q
       replace = true;
       oldCombi = (*it).first;
       oldTarget = (*it).second;
-std::cerr << "replacing \n";
       continue;
     }
 
