@@ -479,6 +479,22 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   QColor defaultBackgroundColor();
 
+  /// Default base color 
+  DLLEXPORT
+  void defaultBaseColor( QColor _color );
+
+  /// Default base color
+  DLLEXPORT
+  QColor defaultBaseColor();
+
+  /// use randomized base color 
+  DLLEXPORT
+  void randomBaseColor(bool _random);
+
+  /// use randomized base color 
+  DLLEXPORT
+  bool randomBaseColor();
+
 /** @} */
 
 //===========================================================================

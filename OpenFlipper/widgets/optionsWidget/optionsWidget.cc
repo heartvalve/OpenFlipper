@@ -98,6 +98,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 
   //colordialog
   connect(backgroundButton, SIGNAL(clicked()), this, SLOT(getBackgroundColor()) );
+  connect(baseColorButton, SIGNAL(clicked()), this, SLOT(getBaseColor()) );
 }
 
 void OptionsWidget::getBackgroundColor(){
@@ -108,6 +109,16 @@ void OptionsWidget::getBackgroundColor(){
   QPixmap color(16,16);
   color.fill( OpenFlipper::Options::defaultBackgroundColor() );
   backgroundButton->setIcon( QIcon(color) );
+}
+
+void OptionsWidget::getBaseColor(){
+  QColor newColor = QColorDialog::getColor ( OpenFlipper::Options::defaultBaseColor() );
+
+  OpenFlipper::Options::defaultBaseColor( newColor) ;
+
+  QPixmap color(16,16);
+  color.fill( OpenFlipper::Options::defaultBaseColor() );
+  baseColorButton->setIcon( QIcon(color) );
 }
 
 void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
@@ -134,6 +145,11 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   QPixmap color(16,16);
   color.fill( OpenFlipper::Options::defaultBackgroundColor() );
   backgroundButton->setIcon( QIcon(color) );
+
+  color.fill( OpenFlipper::Options::defaultBaseColor() );
+  baseColorButton->setIcon( QIcon(color) );
+
+  randomBaseColor->setChecked( OpenFlipper::Options::randomBaseColor() );
 
   // plugin options
   initPluginOptions();
@@ -359,6 +375,8 @@ void OptionsWidget::slotApply() {
 
   OpenFlipper::Options::restrictFrameRate( restrictFPS->isChecked() );
   OpenFlipper::Options::maxFrameRate( FPS->value() );
+
+  OpenFlipper::Options::randomBaseColor( randomBaseColor->isChecked() );
 
   // updates
   OpenFlipper::Options::updateUrl( updateURL->text() );

@@ -143,6 +143,12 @@ static bool splash_ = true;
 /// default background color for the viewer
 static QColor defaultBackgroundColor_ = QColor(0.0,0.0,0.0,0.0);
 
+/// default base color
+static QColor defaultBaseColor_ = QColor(1.0,1.0,1.0,1.0);
+
+/// use random base color
+static bool randomBaseColor_ = false;
+
 /// Scripting status
 static bool scripting_ = false;
 
@@ -572,6 +578,22 @@ void defaultBackgroundColor( QColor _color ) {
 
 QColor defaultBackgroundColor() {
   return defaultBackgroundColor_;
+}
+
+void defaultBaseColor( QColor _color ) {
+  defaultBaseColor_ = _color;
+}
+
+QColor defaultBaseColor() {
+  return defaultBaseColor_;
+}
+
+void randomBaseColor(bool _random) {
+  randomBaseColor_ = _random;
+}
+
+bool randomBaseColor() {
+  return randomBaseColor_;
 }
 
 /// return last used dataType

@@ -176,14 +176,27 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
 
 /// Slot gets called after a file-plugin has opened an object
  void Core::slotObjectOpened ( int _id ) {
-   ///@todo Add Globaloption for setRandomBaseColor
-//    if ( set_random_base_color_ )
-//      object->setBaseColor(ACG::Vec4f((float)(rand()%255)/255.0,
-//                           (float)(rand()%255)/255.0,
-//                            (float)(rand()%255)/255.0,
-//                             1.0 ));
-//    else
-//      object->setBaseColor(ACG::Vec4f(255,255,255,1));
+
+  // get the opened object
+   BaseObjectData* object;
+   PluginFunctions::get_object(_id,object);
+
+   if ( OpenFlipper::Options::randomBaseColor() )
+     object->setBaseColor(ACG::Vec4f((float)(rand()%255)/255.0,
+                          (float)(rand()%255)/255.0,
+                           (float)(rand()%255)/255.0,
+                            1.0 ));
+   else{
+      ACG::Vec4f color;
+      QColor defColor = OpenFlipper::Options::defaultBaseColor();
+
+      color[0] = defColor.redF();
+      color[1] = defColor.greenF();
+      color[2] = defColor.blueF();
+      color[3] = defColor.alphaF();
+
+      object->setBaseColor( color );
+   }
 
    resetScenegraph();
 
@@ -194,10 +207,6 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
    emit activeObjectChanged();
 
    backupRequest(_id,"Original Object");
-
-  // get the opened object
-   BaseObjectData* object;
-   PluginFunctions::get_object(_id,object);
 
    QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
 
