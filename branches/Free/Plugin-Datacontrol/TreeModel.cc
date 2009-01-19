@@ -85,12 +85,12 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
       return QVariant( QBrush(QColor(100,100,100) ) ); 
     }
   }
-  
+
   switch (index.column() ) {
     // Name
     case 0 :
       
-      if (role != Qt::DisplayRole )
+      if (role != Qt::DisplayRole && role != Qt::EditRole )
         return QVariant();
       
       return QVariant(item->name());
