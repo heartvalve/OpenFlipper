@@ -180,6 +180,7 @@ void OptionsWidget::initKeyTree(){
     //get the default settings
     QString               description;
     bool                  multiUse;
+    bool                  slot;
     int                   defKey;
     Qt::KeyboardModifiers defModi;
 
@@ -187,6 +188,7 @@ void OptionsWidget::initKeyTree(){
 
       description = coreKeys_[bindingID].description;
       multiUse = coreKeys_[bindingID].multiUse;
+      slot = coreKeys_[bindingID].slot;
       defKey = coreKeys_[bindingID].key;
       defModi = coreKeys_[bindingID].modifiers;
 
@@ -194,6 +196,7 @@ void OptionsWidget::initKeyTree(){
 
       description = plugins_[i].keys[bindingID].description;
       multiUse = plugins_[i].keys[bindingID].multiUse;
+      slot = plugins_[i].keys[bindingID].slot;
       defKey = plugins_[i].keys[bindingID].key;
       defModi = plugins_[i].keys[bindingID].modifiers;
     }
@@ -203,7 +206,9 @@ void OptionsWidget::initKeyTree(){
     //setup the strings for the shortcuts
     QString keyString;
 
-    if (key == Qt::Key_AltGr || key == Qt::Key_Alt || key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Meta){
+    if (key == -1 && modifiers == 0){
+      keyString = "unassigned";
+    }else if (key == Qt::Key_AltGr || key == Qt::Key_Alt || key == Qt::Key_Control || key == Qt::Key_Shift || key == Qt::Key_Meta){
       keyString = QKeySequence( modifiers ).toString();
       keyString = keyString.left(keyString.size()-1);
     }else
@@ -211,7 +216,10 @@ void OptionsWidget::initKeyTree(){
 
     QString defaultStr;
 
-    if (defKey == Qt::Key_AltGr || defKey == Qt::Key_Alt || defKey == Qt::Key_Control || defKey == Qt::Key_Shift || defKey == Qt::Key_Meta){
+    if (defKey == -1 && defModi == 0){
+      defaultStr = "unassigned";
+    }else if (defKey == Qt::Key_AltGr || defKey == Qt::Key_Alt || defKey == Qt::Key_Control
+           || defKey == Qt::Key_Shift || defKey == Qt::Key_Meta){
       defaultStr = QKeySequence( defModi ).toString();
       defaultStr = defaultStr.left(defaultStr.size()-1);
     }else

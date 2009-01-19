@@ -177,7 +177,7 @@ Core::init() {
       QApplication::processEvents();
     }
 
-    coreWidget_ = new CoreWidget(viewModes_ , plugins);
+    coreWidget_ = new CoreWidget(viewModes_ , plugins, coreSlots_);
 
     connect(coreWidget_, SIGNAL(clearAll())           , this, SLOT(clearAll()));
     connect(coreWidget_, SIGNAL(loadMenu())           , this, SLOT(loadObject()));
@@ -193,6 +193,8 @@ Core::init() {
 
     connect(coreWidget_, SIGNAL(loadPlugin())         , this, SLOT(slotLoadPlugin()));
     connect(coreWidget_, SIGNAL(unloadPlugin())       , this, SLOT(slotUnloadPlugin()));
+
+    connect(coreWidget_, SIGNAL(call(QString,bool&)), this, SLOT(slotCall(QString,bool&)));
 
     coreWidget_->resize(1000,1000);
 
@@ -390,6 +392,9 @@ Core::init() {
   loadPlugins();
 
   if ( OpenFlipper::Options::gui() ) {
+
+    //register keyBinding for all scripting slots
+    coreWidget_->slotRegisterSlotKeyBindings();
 
     if ( OpenFlipper::Options::defaultToolboxMode( ) != "" )
       coreWidget_->setViewMode( OpenFlipper::Options::defaultToolboxMode() );
