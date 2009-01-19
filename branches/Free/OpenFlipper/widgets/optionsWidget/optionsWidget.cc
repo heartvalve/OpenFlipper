@@ -50,6 +50,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 {
   setupUi(this);
 
+  connect(okButton,SIGNAL(clicked()),this,SLOT(slotOk()));
   connect(applyButton,SIGNAL(clicked()),this,SLOT(slotApply()));
   connect(cancelButton,SIGNAL(clicked()),this,SLOT(slotCancel()));
   connect(checkUpdateButton,SIGNAL(clicked()),this,SLOT(slotCheckUpdates()));
@@ -76,6 +77,9 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
     mode = mode<<1;
 
   }
+
+  pluginOptionsLayout = new QVBoxLayout;
+  pluginOptions->setLayout( pluginOptionsLayout );
 
   http = new QHttp(this);
 
@@ -130,6 +134,9 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   QPixmap color(16,16);
   color.fill( OpenFlipper::Options::defaultBackgroundColor() );
   backgroundButton->setIcon( QIcon(color) );
+
+  // plugin options
+  initPluginOptions();
 
   // updates
   updateUser->setText( OpenFlipper::Options::updateUsername() );
@@ -291,6 +298,47 @@ void OptionsWidget::updateVersionsTable() {
 
 }
 
+void OptionsWidget::initPluginOptions(){
+
+  pluginList->disconnect();
+
+  connect(pluginList, SIGNAL( currentTextChanged(const QString&) ), this, SLOT( slotShowPluginOptions(const QString&) ) );
+
+  //init list of plugins
+  pluginList->clear();
+
+  for ( uint i = 0 ; i < plugins_.size(); ++i )
+    if (plugins_[i].optionsWidget != 0){
+
+      pluginList->addItem( plugins_[i].name );
+    }
+
+  if ( pluginList->count() > 0)
+    pluginList->setCurrentRow(0);
+}
+
+void OptionsWidget::slotShowPluginOptions(const QString& _pluginName ){
+
+  //remove old children
+  for (int i = 0; i < pluginOptionsLayout->count(); ++i){
+    QWidget* w = pluginOptionsLayout->itemAt(i)->widget();
+
+    if (w != 0)
+      w->setParent(0);
+
+    pluginOptionsLayout->removeItem( pluginOptionsLayout->itemAt(i) );
+  }
+
+  //find the new optionsWidget
+  for ( uint i = 0 ; i < plugins_.size(); ++i )
+    if (plugins_[i].optionsWidget != 0 && plugins_[i].name == _pluginName){
+
+      pluginOptionsLayout->addWidget( plugins_[i].optionsWidget );
+      pluginOptionsLayout->addStretch();
+      return;
+    }
+}
+
 void OptionsWidget::slotApply() {
 
   //general
@@ -336,7 +384,10 @@ void OptionsWidget::slotApply() {
 
   emit applyOptions();
   emit saveOptions();
+}
 
+void OptionsWidget::slotOk(){
+  slotApply();
   hide();
 }
 

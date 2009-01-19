@@ -57,6 +57,7 @@
 #include "OpenFlipper/BasePlugin/MouseInterface.hh"
 #include "OpenFlipper/BasePlugin/PickingInterface.hh"
 #include "OpenFlipper/BasePlugin/ToolboxInterface.hh"
+#include "OpenFlipper/BasePlugin/OptionsInterface.hh"
 #include "OpenFlipper/BasePlugin/ToolbarInterface.hh"
 #include "OpenFlipper/BasePlugin/TextureInterface.hh"
 #include "OpenFlipper/BasePlugin/MenuInterface.hh"
@@ -618,7 +619,22 @@ void Core::loadPlugin(QString filename, bool silent){
 
     }
 
-    //Check if the plugin supports Toolbox-Interface
+    //Check if the plugin supports Options-Interface
+    OptionsInterface* optionsPlugin = qobject_cast< OptionsInterface * >(plugin);
+    if ( optionsPlugin && OpenFlipper::Options::gui() ) {
+      supported = supported + "Options ";
+
+      QWidget* widget = 0;
+      if ( optionsPlugin->initializeOptionsWidget( widget ) ) {
+            info.optionsWidget = widget;
+
+            if ( checkSlot(plugin,"applyOptions()") )
+              connect(coreWidget_ , SIGNAL( applyOptions() ),
+                      plugin      , SLOT( applyOptions() ),Qt::DirectConnection);
+      }
+    }
+
+    //Check if the plugin supports Toolbar-Interface
     ToolbarInterface* toolbarPlugin = qobject_cast< ToolbarInterface * >(plugin);
     if ( toolbarPlugin && OpenFlipper::Options::gui() ) {
       supported = supported + "Toolbars ";

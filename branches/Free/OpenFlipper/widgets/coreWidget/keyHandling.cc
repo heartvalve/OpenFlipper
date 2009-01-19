@@ -212,6 +212,7 @@ void CoreWidget::slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, Q
       replace = true;
       oldCombi = (*it).first;
       oldTarget = (*it).second;
+std::cerr << "replacing \n";
       continue;
     }
 

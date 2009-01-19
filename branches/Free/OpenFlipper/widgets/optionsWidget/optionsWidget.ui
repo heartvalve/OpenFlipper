@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>472</width>
+    <width>541</width>
     <height>763</height>
    </rect>
   </property>
@@ -382,6 +382,36 @@ You can select multiple modes at the same time.</string>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Plugins</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_11" >
+       <item>
+        <widget class="QListWidget" name="pluginList" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Fixed" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize" >
+          <size>
+           <width>150</width>
+           <height>16777215</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="pluginOptions" >
+         <property name="title" >
+          <string>Options</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="key" >
       <attribute name="title" >
        <string>Key Bindings</string>
@@ -678,29 +708,36 @@ p, li { white-space: pre-wrap; }
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
+      <widget class="QPushButton" name="applyButton" >
+       <property name="text" >
+        <string>&amp;Apply</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer" >
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0" >
         <size>
-         <width>40</width>
-         <height>20</height>
+         <width>188</width>
+         <height>23</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="applyButton" >
+      <widget class="QPushButton" name="okButton" >
        <property name="text" >
-        <string>Apply</string>
+        <string>&amp;Ok</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="cancelButton" >
        <property name="text" >
-        <string>Cancel</string>
+        <string>&amp;Cancel</string>
        </property>
       </widget>
      </item>
