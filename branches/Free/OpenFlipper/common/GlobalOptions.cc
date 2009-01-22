@@ -141,10 +141,10 @@ static QString title_ = "OpenFlipper v?";
 static bool splash_ = true;
 
 /// default background color for the viewer
-static QColor defaultBackgroundColor_ = QColor(0.0,0.0,0.0,0.0);
+static QColor defaultBackgroundColor_ = QColor("black");
 
 /// default base color
-static QColor defaultBaseColor_ = QColor(1.0,1.0,1.0,1.0);
+static QColor defaultBaseColor_ = QColor("white");
 
 /// use random base color
 static bool randomBaseColor_ = false;
