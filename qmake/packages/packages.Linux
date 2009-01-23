@@ -1,0 +1,280 @@
+
+################################################################################
+# INCLUDE Packages
+################################################################################
+
+contains( ARCHITECTURE, 32 ) {
+  ACG=/ACG/acgdev/gcc-4.3-i686
+  export(ACG)
+}
+
+contains( ARCHITECTURE, 64 ) {
+  ACG=/ACG/acgdev/gcc-4.3-x86_64
+  export(ACG)
+}
+
+
+defineTest( qt ) {
+  CONFIG *= uitools
+  export(CONFIG)
+  QT += opengl network script sql
+  export(QT)
+}
+
+defineTest( gmm ) {
+  INCLUDEPATH += $${ACG}/gmm-3/include/
+  export(INCLUDEPATH)
+}
+
+defineTest( superlu ) {
+  INCLUDEPATH *= /usr/include/superlu
+  export(INCLUDEPATH)
+  LIBS *= -L/usr/lib -lsuperlu
+  export(LIBS)
+}
+
+defineTest( taucs ) {
+  INCLUDEPATH *= $${ACG}/taucs-2.2-gfortran/include
+  export(INCLUDEPATH)
+  LIBS *= -L/ACG/acgdev/gcc-4.2-x86_64/taucs-2.2.new/lib/ -llapack -lmetis  
+  LIBS *= /ACG/acgdev/gcc-4.2-x86_64/taucs-2.2.new/lib/libtaucs.a
+  export(LIBS)
+}
+
+defineTest( cgal ) {
+  INCLUDEPATH *= /usr/include 
+  export(INCLUDEPATH)
+  LIBS *= -L/usr/lib -lCGAL -l CGALcore++ -lCGALimageIO -lCGALPDB -lCGALQt
+  export(LIBS)
+}
+
+
+
+defineTest( lapack ) {
+  INCLUDEPATH *= /usr/include
+  export(INCLUDEPATH)
+  LIBS *= -L/usr/lib/ -llapack
+  export(LIBS)
+}
+
+defineTest( wordnet ) {
+  INCLUDEPATH *= /usr/include
+  export(INCLUDEPATH)
+  LIBS *= -L/usr/lib/ -lwordnet
+  export(LIBS)
+}
+
+defineTest( qwt ) {
+  INCLUDEPATH *= /usr/include/qwt-qt4/
+  export(INCLUDEPATH)
+  LIBS *= -L/usr/lib/ -lqwt-qt4
+  export(LIBS)
+}
+
+defineTest( glew ) {
+  INCLUDEPATH *= /usr/include/GL
+  export(INCLUDEPATH)
+  LIBS *= -L/usr/lib -lGLEW
+  export(LIBS)
+}
+
+defineTest( glut ) {
+  INCLUDEPATH *=$${ACG}/OpenGL/include
+  export(INCLUDEPATH)
+  LIBS *= -L/usr/X11R6/lib -lglut
+  export(LIBS)
+}
+
+defineTest( acg ) {
+  QMAKE_LIBDIR += $${TOPDIR}/ACG/lib/$${BUILDDIRECTORY}
+  LIBS+= -Wl,-rpath=$${TOPDIR}/ACG/lib/$${BUILDDIRECTORY} -lACG
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+}
+
+defineTest( openmesh ) {
+  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY}
+  LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY} -lCore
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+}
+
+defineTest( openmp ) {
+
+  addLib( /usr/lib/gcc/x86_64-linux-gnu/4.3 /usr/lib, gomp ) {
+
+    QMAKE_CXXFLAGS_RELEASE += -fopenmp
+    QMAKE_CXXFLAGS_DEBUG   += -fopenmp
+    QMAKE_CFLAGS_RELEASE   += -fopenmp
+    QMAKE_CFLAGS_DEBUG     += -fopenmp
+    QMAKE_LFLAGS_DEBUG     += -fopenmp
+    QMAKE_LFLAGS_RELEASE   += -fopenmp
+
+    export(QMAKE_CXXFLAGS_RELEASE)
+    export(QMAKE_CFLAGS_RELEASE)
+    export(QMAKE_CXXFLAGS_DEBUG)
+    export(QMAKE_CFLAGS_DEBUG)
+    export(QMAKE_LFLAGS_DEBUG)
+    export(QMAKE_LFLAGS_RELEASE)
+  } else {
+    message("Unable to find OpenMP lib for linking. OpenMP support will be disabled!!")
+  }
+
+}
+
+defineTest( ltilib ) {
+  INCLUDEPATH *= $${ACG}/ltilib/include
+  QMAKE_LIBDIR += $${ACG}/ltilib/lib
+
+  CONFIG( debug, debug|release ){
+	LIBS *= -lltid
+  } else {
+        LIBS *= -lltir
+  }
+
+  LIBS *= -ljpeg
+  LIBS *= -Wl,-rpath=$${ACG}/ltilib/lib
+
+  export(INCLUDEPATH)
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+}
+
+
+defineTest( fftw ) {
+  INCLUDEPATH *= /usr/include
+  LIBS *= -lfftw3 -lfftw3f
+
+  export(INCLUDEPATH)
+  export(LIBS)
+}
+
+defineTest( freetype ) {
+  INCLUDEPATH *= /usr/include/freetype2
+  export(INCLUDEPATH)
+}
+
+defineTest( ftgl ) {
+  freetype()
+  INCLUDEPATH *= /usr/include 
+  LIBS *= -lftgl
+  export(INCLUDEPATH)
+  export(LIBS)
+}
+
+
+defineTest( png ) {
+  INCLUDEPATH *= /usr/include/libpng
+  LIBS *= -lpng
+
+  export(INCLUDEPATH)
+  export(LIBS)
+}
+
+
+defineTest( netpbm ) {
+  INCLUDEPATH *= /usr/include
+  LIBS *= -lnetpbm
+
+  export(INCLUDEPATH)
+  export(LIBS)
+}
+
+
+defineTest( dc1394 ) {
+  INCLUDEPATH *= $${ACG}/libdc1394-2.0.1/include
+  QMAKE_LIBDIR *= $${ACG}/libdc1394-2.0.1/lib
+  LIBS *= -ldc1394
+  LIBS *= -Wl,-rpath=$${ACG}/libdc1394-2.0.1/lib
+
+  export(INCLUDEPATH)
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+}
+
+
+defineTest( swissranger ) {
+
+  INCLUDEPATH *= $${ACG}/swissranger/include
+  QMAKE_LIBDIR *= $${ACG}/swissranger/lib
+  LIBS *= -lusbSR
+  LIBS *= -Wl,-rpath=$${ACG}/swissranger/lib
+
+  export(INCLUDEPATH)
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+
+}
+
+
+defineTest( cuda ) {
+
+  CONFIG(debug, debug|release){
+    CUDA_NVCCFLAGS_DEBUG += -g -deviceemu
+  } else {
+
+  }
+
+
+  unix {
+    # auto-detect CUDA path
+    CUDA_DIR = $$system(which nvcc)
+    CUDA_DIR = $$replace(CUDA_DIR,/bin/nvcc,/)
+    isEmpty( CUDA_DIR ) {
+        exists(/usr/local/cuda) {
+            CUDA_DIR = '/usr/local/cuda'
+        }
+        isEmpty( CUDA_DIR ) {
+            CUDA_DIR = '/ACG/acgdev/gcc-4.0-x86_64/cuda2'
+        }
+        exists($$CUDA_DIR){
+            !build_pass : message("Found CUDA at" $$CUDA_DIR)
+        }
+    }
+    NVCCPATH = $$CUDA_DIR/bin/nvcc
+    INCLUDEPATH += $$CUDA_DIR/include
+    QMAKE_LIBDIR += $$CUDA_DIR/lib
+    LIBS += -Wl,-rpath=$$CUDA_DIR/lib -lcudart
+
+
+    cuda.output = ${OBJECTS_DIR}${QMAKE_FILE_BASE}_cuda.obj
+    cuda.commands = $$NVCCPATH $$CUDA_NVCCFLAGS_DEBUG -c -Xcompiler -fPIC -Xcompiler $$join(QMAKE_CXXFLAGS,",") $$join(INCLUDEPATH,'" -I "','-I "','"') ${QMAKE_FILE_NAME} -Xptxas -v -o ${QMAKE_FILE_OUT}
+    cuda.dependcy_type = TYPE_C
+    cuda.depend_command = $$NVCCPATH $$CUDA_NVCCFLAGS_DEBUG -M -Xcompiler $$join(QMAKE_CXXFLAGS,",") $$join(INCLUDEPATH,'" -I "','-I "','"') ${QMAKE_FILE_NAME} | sed "s/^.*:\ //" | sed "s/^\ *//" | tr -d '\\\n'
+  }
+
+  cuda.input = CUDA_SOURCES
+
+  export(INCLUDEPATH)
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+  export(CUDA_DIR)
+  export(NVCCPATH)
+
+  export(cuda.output)
+  export(cuda.commands)
+  export(cuda.dependcy_type)
+  export(cuda.depend_command)
+  export(cuda.input)
+
+  QMAKE_EXTRA_COMPILERS += cuda
+  export(QMAKE_EXTRA_COMPILERS)
+}
+
+defineTest( usb ) {
+  LIBS *= -L/usr/lib -lusb -lusbpp
+  export(LIBS)
+}
+
+
+
+defineTest( cholmod ) {
+  INCLUDEPATH *= $${ACG}/cholmod-1.7.0/include
+  export(INCLUDEPATH)
+  LIBS *= -L$${ACG}/cholmod-1.7.0/lib -lcholmod -lcolamd -lccolamd -lcamd -lamd -lmetis -llapack
+  export(LIBS)
+}
+
+
+
+

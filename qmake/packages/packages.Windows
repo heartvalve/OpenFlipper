@@ -1,0 +1,140 @@
+
+################################################################################
+# INCLUDE Packages
+################################################################################
+
+
+defineTest( glew ) {
+  INCLUDEPATH *= c:\glew\include
+  export(INCLUDEPATH)
+  LIBS *= -Lc:\glew\lib -lglew32
+  export(LIBS)
+}
+
+defineTest( qt ) {
+
+}
+
+defineTest( glut ) {
+  INCLUDEPATH *= c:\glut\include
+  export(INCLUDEPATH)
+  LIBS *= -Lc:\glut\lib -lglut32
+  export(LIBS)
+}
+
+defineTest( acg ) {
+  DEFINES *= INCLUDE_TEMPLATES
+  DEFINES *= _USE_MATH_DEFINES NOMINMAX
+  export(DEFINES)
+  contains( OPENFLIPPER , OpenFlipper ){
+    LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lACG
+#    message(Using internal ACG Library of OpenFlipper)
+  } else {
+    QMAKE_LIBDIR += $${TOPDIR}/ACG/lib/$${BUILDDIRECTORY}
+    LIBS+= -L$${TOPDIR}/ACG/lib/$${BUILDDIRECTORY} -lACG
+    export(QMAKE_LIBDIR)
+  }
+  export(LIBS)
+}
+
+defineTest( openmesh ) {
+  contains( OPENFLIPPER , OpenFlipper ){
+#    message(Using internal OpenMesh Library of OpenFlipper)
+    LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lCore
+  } else {
+    QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY}
+    LIBS+= -L$${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY} -lCore
+    export(QMAKE_LIBDIR)
+  }
+  
+  DEFINES *= INCLUDE_TEMPLATES
+  DEFINES *= _USE_MATH_DEFINES NOMINMAX
+  
+  export(LIBS)
+  export(DEFINES)
+}
+
+defineTest( openmp ) {
+	QMAKE_CXXFLAGS_DEBUG += /openmp
+	QMAKE_CXXFLAGS_RELEASE += /openmp
+	export(QMAKE_CXXFLAGS_DEBUG)
+	export(QMAKE_CXXFLAGS_RELEASE)
+}
+
+defineTest( gmm ) {
+  INCLUDEPATH += c:\gmm-3.0\include\gmm
+  DEFINES *= _SCL_SECURE_NO_DEPRECATE
+  export(DEFINES) 
+  export(INCLUDEPATH)
+}
+
+defineTest( wordnet ) {
+  INCLUDEPATH *= "C:\Program Files\WordNet\2.1\src\include"
+  export(INCLUDEPATH)
+  LIBS += -l"C:\Program Files\WordNet\2.1\lib\wn" 
+  export(LIBS)
+}
+
+defineTest( lapack ) {
+  LIBS *= -LC:\CLAPACK\LIB\Win32 -lclapack_nowrap -lblas_nowrap -llibf2c -ltmglib_nowrap
+  LIBS *= /NODEFAULTLIB:"libcmt"
+  export(LIBS)
+}
+
+defineTest( taucs ) {
+  LIBS *= -LC:\taucs\lib -llibtaucs
+  INCLUDEPATH += C:\taucs\include
+  export(INCLUDEPATH)
+  export(LIBS)
+}
+
+defineTest( qwt ) {
+  INCLUDEPATH *= C:\qwt\src 
+  export(INCLUDEPATH)
+  LIBS *= -LC:\qwt\lib\ -lqwt5
+  export(LIBS)
+}
+
+defineTest( superlu ) {
+  INCLUDEPATH *= "C:\SuperLU_3.0"
+  CONFIG( debug, debug|release ){
+    LIBS *= -LC:\SuperLU_3.0\lib -lSuperLUd
+  } else {
+    LIBS *= -LC:\SuperLU_3.0\lib -lSuperLU
+  }
+  export(INCLUDEPATH)
+  export(LIBS)
+}
+
+defineTest( physim2 ) {
+  REQUIRES += PhysimLibrary
+  export(REQUIRES)
+  message( TODO : Windows physim2 )
+}
+
+defineTest( usb ) {
+  REQUIRES += USBLibrary
+  export(REQUIRES)
+  message( TODO : Windows usb )
+}
+
+defineTest( freetype ) {
+   LIBS *= -LC:\GnuWin32\lib -lfreetype
+   export(LIBS)
+}
+
+defineTest( ftgl ) {
+  freetype()
+  CONFIG( debug, debug|release ){
+    LIBS *= -LC:\ftgl\msvc\Build -lftgl_D
+  } else {
+    LIBS *= -LC:\ftgl\msvc\Build -lftgl
+  }
+  
+  INCLUDEPATH *= C:\ftgl\src $$quote(C:\GnuWin32\include) $$quote(C:\GnuWin32\include\freetype2) 
+  export(LIBS)
+  export(INCLUDEPATH)
+}
+
+
+
