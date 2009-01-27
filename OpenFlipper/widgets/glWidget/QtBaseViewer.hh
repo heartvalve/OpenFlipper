@@ -351,6 +351,12 @@ public:
   /// get action mode
   ActionMode actionMode() const { return actionMode_; }
 
+  signals:
+    void actionModeChanged( QtBaseViewer::ActionMode _mode );
+
+
+  public:
+
 
   /// orientation of the faces
  enum FaceOrientation {
@@ -467,11 +473,6 @@ public:
   QMenu * getFuncMenu() { return funcMenu_; };
   QMenu * getDrawMenu() { return drawMenu_; };
 
-  /// Returns a pointer to the Toolbar
-  QToolBar* getToolBar();
-
-  /// Returns a pointer to the toolbar and removes it from the default position in the examiner widget
-  QToolBar* removeToolBar();
 
 //---------------------------------------------------------------- public slots
 public slots:
@@ -521,6 +522,11 @@ public slots:
   /// toggle projection mode
   virtual void toggleProjectionMode();
 
+  signals:
+
+    void projectionModeChanged( bool _ortho );
+
+  public slots:
   /// show scenegraph widget
   virtual void showSceneGraphDialog();
 
@@ -811,30 +817,6 @@ private:
   // Layout for the basic widget ( viewer + wheels )
   QGridLayout* glLayout_;
 
-  // tool bar
-  QToolBar    * buttonBar_;
-
-  // set pick mode
-  QToolButton* pickButton_;
-  // set move mode
-  QToolButton* moveButton_;
-  // set light mode
-  QToolButton* lightButton_;
-  // set question mode
-  QToolButton* questionButton_;
-  // change projection mode (perspective/orthographic)
-  QToolButton* projectionButton_;
-  // go to home() position
-  QToolButton* homeButton_;
-  // setHome()
-  QToolButton* setHomeButton_;
-  // viewAll()
-  QToolButton* viewAllButton_;
-  // show sceneGraphDialog_
-  QToolButton* sceneGraphButton_;
-  // enable/disable stereo viewing
-  QToolButton* stereoButton_;
-
   // rotate around x-axis
   ACG::QtWidgets::QtWheel* wheelX_;
   // rotate around y-axis
@@ -857,9 +839,6 @@ private:
   //===========================================================================
 
   public slots:
-
-    /// toggle stereo mode
-    virtual void toggleStereoMode();
 
     /// enable/disable stereo mode
     virtual void setStereoMode(bool _b);
