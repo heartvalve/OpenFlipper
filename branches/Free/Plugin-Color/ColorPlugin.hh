@@ -5,9 +5,6 @@
 #include <QMenuBar>
 #include "ColorPlugin.hh"
 
-
-#include <ACG/QtWidgets/QtExaminerViewer.hh>
-
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
@@ -26,22 +23,22 @@ Q_INTERFACES(StatusbarInterface)
 
   signals:
     void updateView();
-  
+
     void scriptInfo( QString _functionName );
-  
+
     void addMenu(QMenu* _menu, MenuType _type);
-  
+
     void addToolbar(QToolBar* _toolbar);
     void removeToolbar(QToolBar* _toolbar);
-  
+
     void showStatusMessage(QString _message, int _timeout = 0);
 
-  private slots:  
+  private slots:
 
     void pluginsInitialized();
 
   public :
-    
+
     void init();
 
     QString name() { return (QString("Color Plugin")); };
@@ -50,19 +47,19 @@ Q_INTERFACES(StatusbarInterface)
   //===========================================================================
   /** @name Scriptable functions to set colors
     * @{ */
-  //===========================================================================     
-     
+  //===========================================================================
+
   public slots:
     /**
      * Applies Default colors to the whole scene
      */
     void setDefaultColor();
-    
+
     /**
      * Applies colors for presentations to the scene
      */
     void setPowerpointColor();
-    
+
     /**
      * Applies colors for papers
      */
@@ -76,15 +73,15 @@ Q_INTERFACES(StatusbarInterface)
   //===========================================================================
   /** @name Other scriptable functions
    * @{ */
-  //===========================================================================        
-    
+  //===========================================================================
+
   public slots:
-    
+
     /**
      * Version info of the color plugin
      */
     QString version() { return QString("1.0"); };
-    
+
   /** @} */
 };
 

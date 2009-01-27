@@ -46,7 +46,6 @@
 
  #include <QtGui>
  #include <QMenuBar>
- #include <ACG/QtWidgets/QtExaminerViewer.hh>
  #include <OpenFlipper/common/Types.hh>
 
  /** \brief Interface class from which all plugins have to be created.

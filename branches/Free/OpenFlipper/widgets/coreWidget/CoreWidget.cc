@@ -122,10 +122,10 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   if ( !OpenFlipper::Options::multiView() ) {
 
-    ACG::QtWidgets::QtExaminerViewer* examinerWidget = new ACG::QtWidgets::QtExaminerViewer(stackedWidget_,
-                                                                                            "Examiner Widget",
-                                                                                            statusBar_ ,
-                                                                                            &format);
+    QtExaminerViewer* examinerWidget = new QtExaminerViewer(stackedWidget_,
+                                                            "Examiner Widget",
+                                                            statusBar_ ,
+                                                            &format);
 
     examiner_widgets_.push_back(examinerWidget);
 
@@ -141,23 +141,23 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     tmp = new QWidget(stackedWidget_);
 
     // Create master examiner widget
-    ACG::QtWidgets::QtExaminerViewer* examinerWidget = new ACG::QtWidgets::QtExaminerViewer(tmp,
-                                                                                            "Examiner Widget",
-                                                                                            statusBar_ ,
-                                                                                            &format,
-                                                                                            0,
-                                                                                            ACG::QtWidgets::QtExaminerViewer::Nothing);
+    QtExaminerViewer* examinerWidget = new QtExaminerViewer(tmp,
+                                                            "Examiner Widget",
+                                                            statusBar_ ,
+                                                            &format,
+                                                            0,
+                                                            QtExaminerViewer::Nothing);
     examiner_widgets_.push_back(examinerWidget);
 
 
     // Create all other examiners using the same gl context as the others
     for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      ACG::QtWidgets::QtExaminerViewer* newWidget = new ACG::QtWidgets::QtExaminerViewer(tmp,
-                                                                                         "Examiner Widget",
-                                                                                         statusBar_ ,
-                                                                                         &format,
-                                                                                         examinerWidget,
-                                                                                         ACG::QtWidgets::QtExaminerViewer::Nothing);
+      QtExaminerViewer* newWidget = new QtExaminerViewer(tmp,
+                                                         "Examiner Widget",
+                                                         statusBar_ ,
+                                                         &format,
+                                                         examinerWidget,
+                                                         QtExaminerViewer::Nothing);
       examiner_widgets_.push_back(newWidget);
     }
 

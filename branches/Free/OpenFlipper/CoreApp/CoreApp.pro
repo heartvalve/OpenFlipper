@@ -15,6 +15,7 @@ qt()
 
 DIRECTORIES =   ../ ../Core ../Logging \
 			    ../Scripting  ../Scripting/scriptPrototypes ../Scripting/scriptWrappers ../SimpleOpt \
+			    ../widgets/glWidget \
 			    ../widgets/aboutWidget ../widgets/addEmptyWidget ../widgets/loggerWidget \
                             ../widgets/coreWidget ../widgets/helpBrowser \
 			    ../widgets/loadWidget ../widgets/optionsWidget ../widgets/unloadPluginsWidget \

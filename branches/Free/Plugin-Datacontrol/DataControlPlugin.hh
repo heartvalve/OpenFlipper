@@ -41,13 +41,11 @@
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
-#include <OpenFlipper/BasePlugin/GlobalAccessInterface.hh>
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
-#include <ACG/QtWidgets/QtExaminerViewer.hh>
 #include <OpenFlipper/common/Types.hh>
 #include "Toolbox.hh"
 
@@ -58,12 +56,11 @@
 
 /** Plugin for controlling the Object data structures (Show,hide Object, Target, Source selection
 */
-class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, GlobalAccessInterface, KeyInterface , LoggingInterface, INIInterface, ContextMenuInterface, ScriptInterface
+class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyInterface , LoggingInterface, INIInterface, ContextMenuInterface, ScriptInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(ToolboxInterface)
-  Q_INTERFACES(GlobalAccessInterface)
   Q_INTERFACES(KeyInterface)
   Q_INTERFACES(LoggingInterface)
   Q_INTERFACES(INIInterface)
@@ -110,9 +107,6 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
       *   Creates Table and buttons */
      bool initializeToolbox(QWidget*& _widget);
 
-     /// Sets examiner Widget (dummy here, using updateView signal here)
-     void set_examiner(ACG::QtWidgets::QtExaminerViewer*  /* _examiner_widget */ ) { };
-
      /// Name of the Plugin
      QString name(){ return (QString("DataControl")); };
 
@@ -149,10 +143,6 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, Globa
 
       /// Delegate for boolean values
       //QCheckBoxDelegate* checkboxDelegate_;
-
-
-
-      ACG::QtWidgets::QtExaminerViewer*  examiner_widget_;
 
    private slots:
 

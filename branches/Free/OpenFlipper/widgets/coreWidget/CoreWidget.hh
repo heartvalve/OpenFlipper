@@ -56,7 +56,7 @@
 #include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 
 
-#include <ACG/QtWidgets/QtExaminerViewer.hh>
+#include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
 
 // QT INCLUDES
 #include <QMainWindow>
@@ -343,7 +343,7 @@ public:
   public :
 
     /// Examiner Widget
-    std::vector< ACG::QtWidgets::QtExaminerViewer* >  examiner_widgets_;
+    std::vector< QtExaminerViewer* >  examiner_widgets_;
 
     ///Spliter between toplevel objects and the textedit at the bottom
     QSplitter* splitter_;

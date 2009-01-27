@@ -23,52 +23,46 @@
 //
 //-----------------------------------------------------------------------------
 //
-//   $Revision$
-//   $Author$
-//   $Date$
+//   $Revision: 1720 $
+//   $Author: moebius $
+//   $Date: 2008-05-09 14:15:53 +0200 (Fri, 09 May 2008) $
 //
 //=============================================================================
 
 
 
 
+//=============================================================================
 //
-// C++ Interface: BasePlugin
+//  CLASS QtExaminerWidget
 //
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
+//=============================================================================
 
-#ifndef GLOBALACCESSINTERFACE_HH
-#define GLOBALACCESSINTERFACE_HH
+#ifndef ACG_QTEXAMINERWIDGET_HH
+#define ACG_QTEXAMINERWIDGET_HH
 
- #include <QtGui>
- #include <QMenuBar>
- #include <OpenFlipper/common/Types.hh>
- #include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
 
- /** \brief Interface class for plugins which need access to global Data
-  *
-  * Do not use this Interface!!!!
- */
-class GlobalAccessInterface {
+//== INCLUDES =================================================================
 
-   public :
+#include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
 
-      /// Destructor
-      virtual ~GlobalAccessInterface() {};
 
-      /** \brief DONT USE THIS (Get a pointer to the examiner Widget from Main App)
-       *
-       *  This function is called to set a pointer to the global examiner Widget.\n
-       *  @param _examiner_widget Pointer to the Examiner Widget in the Main app
-       */
-      virtual void set_examiner( QtExaminerViewer* /*_examiner_widget*/) = 0;
+//== NAMESPACES ===============================================================
 
-};
 
-Q_DECLARE_INTERFACE(GlobalAccessInterface,"OpenFlipper.GlobalAccessInterface/0.3")
+//== CLASS DEFINITION =========================================================
 
-#endif // GLOBALACCESSINTERFACE_HH
+
+#ifndef ACG_HIDE_DEPRECATED
+#warning QtExaminerWidget is deprecated, use QtExaminerViewer instead.
+typedef QtExaminerViewer QtExaminerWidget;
+#else
+#error QtExaminerWidget is deprecated, use QtExaminerViewer instead.
+#endif
+
+
+//=============================================================================
+//=============================================================================
+#endif // ACG_QTEXAMINERWIDGET_HH defined
+//=============================================================================
+

@@ -52,7 +52,7 @@
 
 #include "OpenFlipper/common/Types.hh"
 
-#include <ACG/QtWidgets/QtExaminerViewer.hh>
+#include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
 
 // QT INCLUDES
 #include <qvariant.h>
@@ -691,7 +691,7 @@ private:
 
     /// Holds the time since last redraw
     QTime *redrawTime_;
-  
+
   /** @} */
 
   private :
