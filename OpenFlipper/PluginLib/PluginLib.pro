@@ -12,7 +12,8 @@ glut()
 glew()
 openmp()
 
-DIRECTORIES = ../BasePlugin ../ACGHelper ../common ../common/bsp  ../INIFile $$files( $${TOPDIR}/ObjectTypes/* )
+DIRECTORIES = ../BasePlugin ../ACGHelper ../common ../common/bsp  ../INIFile $$files( $${TOPDIR}/ObjectTypes/* ) \
+              ../widgets/glWidget
 win32 {
 	DESTDIR = ../$${BUILDDIRECTORY}
 } 
