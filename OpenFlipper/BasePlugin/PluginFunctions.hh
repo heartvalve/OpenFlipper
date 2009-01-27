@@ -50,8 +50,8 @@
 #include <OpenFlipper/common/Types.hh>
 
 // #include <ACG/Math/VectorT.hh>
-#include <ACG/QtWidgets/QtExaminerViewer.hh>
-#include <ACG/QtWidgets/QtBaseViewer.hh>
+#include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
+#include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <ACG/GL/GLState.hh>
 
 /** The Namespace PluginFunctions contains functions for all plugins. These functions should be used to get the
@@ -194,7 +194,7 @@ int visible_count();
 //=======================================
 /// Set the internal examiner pointer ( DO NOT USE!! )
 DLLEXPORT
-void set_examiner( std::vector< ACG::QtWidgets::QtExaminerViewer* > _examiner_widgets );
+void set_examiner( std::vector< QtExaminerViewer* > _examiner_widgets );
 
 /// Set the active id of the examiner which got the last mouse events
 DLLEXPORT
@@ -273,11 +273,11 @@ void addGlobalNode(ACG::SceneGraph::BaseNode* _node);
 
 /// Set the current Action Mode (PickMode,ExamineMode,...)
 DLLEXPORT
-void actionMode ( ACG::QtWidgets::QtBaseViewer::ActionMode _mode);
+void actionMode ( QtBaseViewer::ActionMode _mode);
 
 /// Get the current Action mode
 DLLEXPORT
-ACG::QtWidgets::QtBaseViewer::ActionMode actionMode();
+QtBaseViewer::ActionMode actionMode();
 
 /** Lock scene rotation via mouse
  *

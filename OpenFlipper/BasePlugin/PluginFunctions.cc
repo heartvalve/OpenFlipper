@@ -54,10 +54,10 @@ static BaseObject* objectRoot_;
  *
  * This pointer is internally used to acces the examiner widget in the main apllication
  */
-static std::vector< ACG::QtWidgets::QtExaminerViewer* > examiner_widgets_;
+static std::vector< QtExaminerViewer* > examiner_widgets_;
 
 /// TODO : Remove this variable and implement multiView correctly here
-static ACG::QtWidgets::QtExaminerViewer*  examiner_widget_;
+static QtExaminerViewer*  examiner_widget_;
 
 static unsigned int activeExaminer_ = 0;
 
@@ -73,7 +73,7 @@ void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
 
-void set_examiner( std::vector< ACG::QtWidgets::QtExaminerViewer* > _examiner_widgets ) {
+void set_examiner( std::vector< QtExaminerViewer* > _examiner_widgets ) {
    PluginFunctions::examiner_widgets_ = _examiner_widgets;
    PluginFunctions::examiner_widget_ =  examiner_widgets_[0];
 }
@@ -334,7 +334,7 @@ void pickMode ( const unsigned int _examiner, std::string _mode) {
   examiner_widgets_[_examiner]->pickMode(_mode);
 }
 
-void actionMode ( ACG::QtWidgets::QtBaseViewer::ActionMode _mode) {
+void actionMode ( QtBaseViewer::ActionMode _mode) {
   for ( uint i = 0 ; i < examiner_widgets_.size() ; ++i )
     examiner_widgets_[i]->actionMode(_mode);
 }
@@ -347,7 +347,7 @@ void getCurrentViewImage(QImage& _image) {
   examiner_widget_->copyToImage( _image );
 }
 
-ACG::QtWidgets::QtBaseViewer::ActionMode actionMode() {
+QtBaseViewer::ActionMode actionMode() {
    return examiner_widget_->actionMode();
 }
 

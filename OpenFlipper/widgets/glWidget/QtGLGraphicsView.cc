@@ -23,52 +23,46 @@
 //
 //-----------------------------------------------------------------------------
 //
-//   $Revision$
-//   $Author$
-//   $Date$
+//   $Revision: $
+//   $Author: $
+//   $Date: $
 //
 //=============================================================================
 
 
 
 
+//=============================================================================
 //
-// C++ Interface: BasePlugin
+//  CLASS QtGLGraphicsView - IMPLEMENTATION
 //
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
+//=============================================================================
 
-#ifndef GLOBALACCESSINTERFACE_HH
-#define GLOBALACCESSINTERFACE_HH
+//== INCLUDES =================================================================
 
- #include <QtGui>
- #include <QMenuBar>
- #include <OpenFlipper/common/Types.hh>
- #include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
+#include "QtGLGraphicsView.hh"
 
- /** \brief Interface class for plugins which need access to global Data
-  *
-  * Do not use this Interface!!!!
- */
-class GlobalAccessInterface {
+//== NAMESPACES ===============================================================
 
-   public :
 
-      /// Destructor
-      virtual ~GlobalAccessInterface() {};
+//== CLASS DEFINITION =========================================================
 
-      /** \brief DONT USE THIS (Get a pointer to the examiner Widget from Main App)
-       *
-       *  This function is called to set a pointer to the global examiner Widget.\n
-       *  @param _examiner_widget Pointer to the Examiner Widget in the Main app
-       */
-      virtual void set_examiner( QtExaminerViewer* /*_examiner_widget*/) = 0;
 
-};
+QtGLGraphicsView::QtGLGraphicsView(QtBaseViewer* _w, QWidget* _parent) :
+  QGraphicsView (_parent),
+  w_(_w)
+{
+  setFocusPolicy(Qt::StrongFocus);
+  setAcceptDrops (true);
+}
 
-Q_DECLARE_INTERFACE(GlobalAccessInterface,"OpenFlipper.GlobalAccessInterface/0.3")
+void QtGLGraphicsView::resizeEvent(QResizeEvent *_event) {
+  if (scene())
+    scene()->setSceneRect(QRect(QPoint(0, 0), _event->size()));
+  QGraphicsView::resizeEvent(_event);
+  w_->resizeGL (_event->size().width(), _event->size().height ());
+}
 
-#endif // GLOBALACCESSINTERFACE_HH
+
+//=============================================================================
+//=============================================================================

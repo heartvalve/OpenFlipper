@@ -23,52 +23,46 @@
 //
 //-----------------------------------------------------------------------------
 //
-//   $Revision$
-//   $Author$
-//   $Date$
+//   $Revision: $
+//   $Author: $
+//   $Date: $
 //
 //=============================================================================
 
 
 
 
+//=============================================================================
 //
-// C++ Interface: BasePlugin
+//  CLASS QtGLGraphicsView - IMPLEMENTATION
 //
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
+//=============================================================================
 
-#ifndef GLOBALACCESSINTERFACE_HH
-#define GLOBALACCESSINTERFACE_HH
+//== INCLUDES =================================================================
 
- #include <QtGui>
- #include <QMenuBar>
- #include <OpenFlipper/common/Types.hh>
- #include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
+#include <QGraphicsView>
+#include "QtBaseViewer.hh"
 
- /** \brief Interface class for plugins which need access to global Data
-  *
-  * Do not use this Interface!!!!
- */
-class GlobalAccessInterface {
+//== NAMESPACES ===============================================================
 
-   public :
+//== CLASS DEFINITION =========================================================
 
-      /// Destructor
-      virtual ~GlobalAccessInterface() {};
 
-      /** \brief DONT USE THIS (Get a pointer to the examiner Widget from Main App)
-       *
-       *  This function is called to set a pointer to the global examiner Widget.\n
-       *  @param _examiner_widget Pointer to the Examiner Widget in the Main app
-       */
-      virtual void set_examiner( QtExaminerViewer* /*_examiner_widget*/) = 0;
+/** Graphics view Widget that is used to display the QtGLGraphicsScene scene.
+*/
 
+class QtGLGraphicsView : public QGraphicsView
+{
+public:
+  QtGLGraphicsView(QtBaseViewer* _w, QWidget* _parent);
+
+protected:
+  virtual void resizeEvent(QResizeEvent *_event);
+
+private:
+  QtBaseViewer* w_;
 };
 
-Q_DECLARE_INTERFACE(GlobalAccessInterface,"OpenFlipper.GlobalAccessInterface/0.3")
+//=============================================================================
 
-#endif // GLOBALACCESSINTERFACE_HH
+//=============================================================================

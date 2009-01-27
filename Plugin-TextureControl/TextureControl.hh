@@ -44,7 +44,6 @@
 #include <OpenFlipper/BasePlugin/TextureInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
-#include <ACG/QtWidgets/QtExaminerViewer.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 

@@ -44,7 +44,6 @@
  #include <QtGui>
  #include <QMenuBar>
  #include <QStringList>
- #include <ACG/QtWidgets/QtExaminerViewer.hh>
  #include <OpenFlipper/common/Types.hh>
  #include <QToolBar>
 

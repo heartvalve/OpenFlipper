@@ -3,7 +3,6 @@
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/TextureInterface.hh>
-#include <ACG/QtWidgets/QtExaminerViewer.hh>
 #include <OpenFlipper/common/Types.hh>
 
 class LaplaceLengthPlugin : public QObject, BaseInterface, TextureInterface
