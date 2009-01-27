@@ -267,6 +267,7 @@ public:
     /// Show or hide toolbox
     void showToolbox( bool _state );
 
+
   /** @} */
 
   //===========================================================================
@@ -401,6 +402,13 @@ public:
     QToolBar* viewerToolbar_;
 
     int toolbarCount_;
+
+    QToolButton* stereoButton_;
+    QToolButton* projectionButton_;
+    QToolButton* moveButton_;
+    QToolButton* lightButton_;
+    QToolButton* pickButton_;
+    QToolButton* questionButton_;
 
   /** @} */
 
@@ -603,6 +611,28 @@ public:
   private :
 
   std::vector<PluginInfo>& plugins_;
+
+
+  //===========================================================================
+  /** @name Viewer Controls
+   * @{ */
+  //===========================================================================
+
+  private slots:
+
+    /// Enable or disable Stereo
+    void slotToggleStereoMode();
+
+    /// Change icons if the stereo mode has changed in the examiner
+    void slotProjectionModeChanged( bool _ortho );
+
+    /// Change Icons if action mode is changed in an examiner
+    void slotActionModeChanged( QtBaseViewer::ActionMode _mode );
+
+  private :
+    bool stereoActive_;
+
+  /** @} */
 };
 
 

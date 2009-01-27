@@ -90,34 +90,6 @@
 #include <QGraphicsGridLayout>
 #include <QGraphicsProxyWidget>
 
-#include "move.xpm"
-#include "light.xpm"
-#include "info.xpm"
-#include "home.xpm"
-#include "set_home.xpm"
-#include "viewall.xpm"
-#include "pick.xpm"
-#include "persp.xpm"
-#include "ortho.xpm"
-#include "scenegraph.xpm"
-#include "mono.xpm"
-#include "stereo.xpm"
-
-
-#define homeIcon         home_xpm
-#define sethomeIcon      set_home_xpm
-#define moveIcon         move_xpm
-#define lightIcon        light_xpm
-#define questionIcon     info_xpm
-#define viewallIcon      viewall_xpm
-#define pickIcon         pick_xpm
-#define perspectiveIcon  persp_xpm
-#define orthoIcon        ortho_xpm
-#define sceneGraphIcon   scenegraph_xpm
-#define monoIcon         mono_xpm
-#define stereoIcon       stereo_xpm
-
-
 #ifdef max
 #  undef max
 #endif
@@ -359,12 +331,6 @@ void QtBaseViewer::applyOptions(int _options)
   else if (privateStatusBar_!=0)
     privateStatusBar_->hide();
 
-  if (_options&ShowToolBar)        buttonBar_->show();
-  else                             buttonBar_->hide();
-  if (_options&ShowPickButton)     pickButton_->show();
-  else                             pickButton_->hide();
-  if (_options&ShowQuestionButton) questionButton_->show();
-  else                             questionButton_->hide();
   if (_options&ShowWheelX)         wheelX_->show();
   else                             wheelX_->hide();
   if (_options&ShowWheelY)         wheelY_->show();
@@ -505,9 +471,9 @@ void QtBaseViewer::toggleProjectionMode()
 void QtBaseViewer::projectionMode(ProjectionMode _p)
 {
   if ((projectionMode_ = _p) == ORTHOGRAPHIC_PROJECTION)
-    projectionButton_->setIcon( QPixmap(orthoIcon) );
+    emit projectionModeChanged( true );
   else
-    projectionButton_->setIcon( QPixmap(perspectiveIcon) );
+    emit projectionModeChanged( false );
 
   updateProjectionMatrix();
 }
@@ -579,10 +545,8 @@ void QtBaseViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _
 
 void QtBaseViewer::actionMode(ActionMode _am)
 {
-  moveButton_->setDown(false);
-  lightButton_->setDown(false);
-  pickButton_->setDown(false);
-  questionButton_->setDown(false);
+  emit actionModeChanged( _am );
+
 
   trackMouse(false);
 
@@ -600,7 +564,6 @@ void QtBaseViewer::actionMode(ActionMode _am)
     {
       glView_->setCursor(Qt::PointingHandCursor);
       glBase_->setCursor(Qt::PointingHandCursor);
-      moveButton_->setDown(true);
       break;
     }
 
@@ -609,7 +572,6 @@ void QtBaseViewer::actionMode(ActionMode _am)
     {
       glView_->setCursor(Qt::PointingHandCursor);
       glBase_->setCursor(Qt::PointingHandCursor);
-      lightButton_->setDown(true);
       break;
     }
 
@@ -618,11 +580,10 @@ void QtBaseViewer::actionMode(ActionMode _am)
     {
       glView_->setCursor(Qt::ArrowCursor);
       glBase_->setCursor(Qt::ArrowCursor);
-      pickButton_->setDown(true);
       if (pick_mode_idx_ != -1) {
 	     trackMouse(pick_modes_[pick_mode_idx_].tracking);
         glView_->setCursor(pick_modes_[pick_mode_idx_].cursor);
-	glBase_->setCursor(pick_modes_[pick_mode_idx_].cursor);
+	     glBase_->setCursor(pick_modes_[pick_mode_idx_].cursor);
       }
 
       break;
@@ -633,7 +594,6 @@ void QtBaseViewer::actionMode(ActionMode _am)
     {
       glView_->setCursor(Qt::WhatsThisCursor);
       glBase_->setCursor(Qt::WhatsThisCursor);
-      questionButton_->setDown(true);
       break;
     }
   }
@@ -1628,182 +1588,20 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
 	      << (glWidget_->format().stereo() ? "ok\n" : "failed\n");
 
 
-  // toolbar
-  buttonBar_= new QToolBar( "Viewer Toolbar", work );
-  buttonBar_->setOrientation(Qt::Vertical);
-
-  moveButton_ = new QToolButton( buttonBar_ );
-  moveButton_->setIcon( QPixmap(moveIcon) );
-  moveButton_->setMinimumSize( 16, 16 );
-  moveButton_->setMaximumSize( 32, 32 );
-  moveButton_->setToolTip( "Switch to <b>move</b> mode." );
-  moveButton_->setWhatsThis(
-                  "Switch to <b>move</b> mode.<br>"
-                  "<ul><li><b>Rotate</b> using <b>left</b> mouse button.</li>"
-                  "<li><b>Translate</b> using <b>middle</b> mouse button.</li>"
-                  "<li><b>Zoom</b> using <b>left+middle</b> mouse buttons.</li></ul>" );
-  QObject::connect( moveButton_, SIGNAL( clicked() ),
-                    this,        SLOT( examineMode() ) );
-
-  buttonBar_->addWidget( moveButton_)->setText("Move");
-
-  lightButton_ = new QToolButton( buttonBar_ );
-  lightButton_->setIcon( QPixmap(lightIcon) );
-  lightButton_->setMinimumSize( 16, 16 );
-  lightButton_->setMaximumSize( 32, 32 );
-  lightButton_->setToolTip("Switch to <b>light</b> mode.");
-  lightButton_->setWhatsThis(
-                  "Switch to <b>light</b> mode.<br>"
-                  "Rotate lights using left mouse button.");
-  QObject::connect( lightButton_, SIGNAL( clicked() ),
-                    this,         SLOT( lightMode() ) );
-  buttonBar_->addWidget( lightButton_)->setText("Light");
 
 
-  pickButton_ = new QToolButton( buttonBar_ );
-  pickButton_->setIcon( QPixmap(pickIcon) );
-  pickButton_->setMinimumSize( 16, 16 );
-  pickButton_->setMaximumSize( 32, 32 );
-  pickButton_->setToolTip("Switch to <b>picking</b> mode.");
-  pickButton_->setWhatsThis(
-                  "Switch to <b>picking</b> mode.<br>"
-                  "Use picking functions like flipping edges.<br>"
-                  "To change the mode use the right click<br>"
-                  "context menu in the viewer.");
-  QObject::connect( pickButton_, SIGNAL( clicked() ),
-                    this,        SLOT( pickingMode() ) );
-  buttonBar_->addWidget( pickButton_)->setText("Pick");
 
 
-  questionButton_ = new QToolButton( buttonBar_ );
-  questionButton_->setIcon( QPixmap(questionIcon) );
-  questionButton_->setMinimumSize( 16, 16 );
-  questionButton_->setMaximumSize( 32, 32 );
-  questionButton_->setToolTip("Switch to <b>identification</b> mode.");
-  questionButton_->setWhatsThis(
-                  "Switch to <b>identification</b> mode.<br>"
-                  "Use identification mode to get information "
-                  "about objects. Click on an object and see "
-                  "the log output for information about the "
-                  "object.");
-  QObject::connect( questionButton_, SIGNAL( clicked() ),
-                    this,            SLOT( questionMode() ) );
-  buttonBar_->addWidget( questionButton_)->setText("Question");
 
-  buttonBar_->addSeparator();
-
-  homeButton_ = new QToolButton( buttonBar_ );
-  homeButton_->setIcon( QPixmap(homeIcon) );
-  homeButton_->setMinimumSize( 16, 16 );
-  homeButton_->setMaximumSize( 32, 32 );
-  homeButton_->setCheckable( false );
-  homeButton_->setToolTip("Restore <b>home</b> view.");
-  homeButton_->setWhatsThis(
-                  "Restore home view<br><br>"
-                  "Resets the view to the home view");
-  QObject::connect( homeButton_, SIGNAL( clicked() ),
-                    this,        SLOT( home() ) );
-  buttonBar_->addWidget( homeButton_)->setText("Home");
-
-
-  setHomeButton_ = new QToolButton( buttonBar_ );
-  setHomeButton_->setIcon( QPixmap(sethomeIcon) );
-  setHomeButton_->setMinimumSize( 16, 16 );
-  setHomeButton_->setMaximumSize( 32, 32 );
-  setHomeButton_->setCheckable( false );
-  setHomeButton_->setToolTip("Set <b>home</b> view");
-  setHomeButton_->setWhatsThis(
-                  "Store home view<br><br>"
-                  "Stores the current view as the home view");
-  QObject::connect( setHomeButton_, SIGNAL( clicked() ),
-                    this,           SLOT( setHome() ) );
-  buttonBar_->addWidget( setHomeButton_)->setText("Set Home");
-
-
-  viewAllButton_ = new QToolButton( buttonBar_ );
-  viewAllButton_->setIcon( QPixmap(viewallIcon) );
-  viewAllButton_->setMinimumSize( 16, 16 );
-  viewAllButton_->setMaximumSize( 32, 32 );
-  viewAllButton_->setCheckable( false );
-  viewAllButton_->setToolTip("View all.");
-  viewAllButton_->setWhatsThis(
-                  "View all<br><br>"
-                  "Move the objects in the scene so that"
-                  " the whole scene is visible.");
-  QObject::connect( viewAllButton_, SIGNAL( clicked() ),
-                    this,           SLOT( viewAll() ) );
-  buttonBar_->addWidget( viewAllButton_)->setText("View all");
-
-
-  projectionButton_ = new QToolButton( buttonBar_ );
-  projectionButton_->setIcon( QPixmap(perspectiveIcon) );
-  projectionButton_->setMinimumSize( 16, 16 );
-  projectionButton_->setMaximumSize( 32, 32 );
-  projectionButton_->setCheckable( false );
-  projectionButton_->setToolTip(
-                "Switch between <b>perspective</b> and "
-                "<b>parrallel</b> projection mode.");
-  projectionButton_->setWhatsThis(
-                "Switch projection modes<br><br>"
-                "Switch between <b>perspective</b> and "
-                "<b>parrallel</b> projection mode.");
-  QObject::connect( projectionButton_, SIGNAL( clicked() ),
-                    this,              SLOT( toggleProjectionMode() ) );
-  buttonBar_->addWidget( projectionButton_)->setText( "Projection" );
-
-
-  if (glWidget_->format().stereo())
-  {
-    stereoButton_ = new QToolButton( buttonBar_ );
-    stereoButton_->setIcon( QPixmap(monoIcon) );
-    stereoButton_->setMinimumSize( 16, 16 );
-    stereoButton_->setMaximumSize( 32, 32 );
-    stereoButton_->setCheckable( true );
-    stereoButton_->setToolTip( "Toggle stereo viewing");
-    stereoButton_->setWhatsThis(
-                  "Toggle stereo mode<br><br>"
-                  "Use this button to switch between stereo "
-                  "and mono view. To use this feature you need "
-                  "a stereo capable graphics card and a stereo "
-                  "display/projection system.");
-    QObject::connect( stereoButton_, SIGNAL( clicked() ),
-                      this,          SLOT( toggleStereoMode() ) );
-    buttonBar_->addWidget( stereoButton_)->setText( "Stereo");
-  }
-
-  buttonBar_->addSeparator();
-
-  sceneGraphButton_ = new QToolButton( buttonBar_ );
-  sceneGraphButton_->setIcon( QPixmap(sceneGraphIcon) );
-  sceneGraphButton_->setMinimumSize( 16, 16 );
-  sceneGraphButton_->setMaximumSize( 32, 32 );
-  sceneGraphButton_->setCheckable( false );
-  sceneGraphButton_->setToolTip("Toggle scene graph viewer.");
-  sceneGraphButton_->setWhatsThis(
-                  "Toggle scene graph viewer<br><br>"
-                  "The scene graph viewer enables you to examine the "
-                  "displayed scene graph and to modify certain nodes.<br><br>"
-                  "There are three modi for the scene graph viewer:"
-                  "<ul><li><b>hidden</b></li>"
-                  "<li><b>split</b>: share space</li>"
-                  "<li><b>dialog</b>: own dialog window</li></ul>"
-                  "This button toggles between these modi.");
-  QObject::connect( sceneGraphButton_, SIGNAL( clicked() ),
-                    this,              SLOT( showSceneGraphDialog() ) );
-  buttonBar_->addWidget( sceneGraphButton_)->setText( "SceneGraph" );
 
   glLayout_ = new QGridLayout(work);
   glLayout_->setSpacing( 0 );
   glLayout_->setMargin( 0 );
 
   glLayout_->addWidget(glView_,    0,0);
-  glLayout_->addWidget(buttonBar_, 0,1);
 
   glLayout_->setColumnStretch(0,1);
   glLayout_->setColumnStretch(1,0);
-
-  if (!(options_ & ShowToolBar))
-    buttonBar_->hide();
 
 }
 
@@ -2424,20 +2222,6 @@ void QtBaseViewer::actionPickMenu( QAction * _action )
   actionMode( PickingMode );
 
   hidePopupMenus();
-}
-
-
-
-
-//-----------------------------------------------------------------------------
-
-QToolBar* QtBaseViewer::getToolBar() {
-  return buttonBar_;
-}
-
-QToolBar* QtBaseViewer::removeToolBar() {
-  glLayout_->removeWidget( buttonBar_ );
-  return buttonBar_;
 }
 
 //=============================================================================

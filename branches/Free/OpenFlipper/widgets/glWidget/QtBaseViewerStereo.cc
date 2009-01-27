@@ -45,11 +45,6 @@
 #include <QStatusBar>
 #include <QToolButton>
 
-#include "mono.xpm"
-#include "stereo.xpm"
-
-#define monoIcon         mono_xpm
-#define stereoIcon       stereo_xpm
 
 //== NAMESPACES ===============================================================
 
@@ -74,10 +69,6 @@ double QtBaseViewer::focalDistance( ) {
   return focalDist_;
 }
 
-void QtBaseViewer::toggleStereoMode() {
-  QtBaseViewer::setStereoMode(!stereo_);
-}
-
 //-----------------------------------------------------------------------------
 
 
@@ -86,15 +77,7 @@ QtBaseViewer::setStereoMode(bool _b)
 {
   stereo_ = _b;
 
-  if (stereo_)
-  {
-    statusbar_->showMessage("Stereo enabled");
-    stereoButton_->setIcon( QPixmap(stereoIcon) );
-  }
-  else
-  {
-    statusbar_->showMessage("Stereo disabled");
-    stereoButton_->setIcon( QPixmap(monoIcon) );
+  if (!stereo_) {
     makeCurrent();
     glDrawBuffer(GL_BACK);
   }
