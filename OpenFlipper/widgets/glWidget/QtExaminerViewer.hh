@@ -73,7 +73,7 @@ class QtSceneGraphWidget;
     This widget is used in all viewers that want to explore scenegraphs.
     For WalkMode use "QtWalkViewer"
  **/
-class ACGDLLEXPORT QtExaminerViewer : public QtBaseViewer
+class DLLEXPORT QtExaminerViewer : public QtBaseViewer
 {
 Q_OBJECT
 

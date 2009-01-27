@@ -43,6 +43,7 @@
 
 //== INCLUDES =================================================================
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 #include <ACG/GL/GLState.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
@@ -108,7 +109,7 @@ class QtShiftPopupMenu;
     See for example "QtExaminerViewer"
  **/
 
-class ACGDLLEXPORT QtBaseViewer : public QWidget
+class DLLEXPORT QtBaseViewer : public QWidget
 {
 Q_OBJECT
 
