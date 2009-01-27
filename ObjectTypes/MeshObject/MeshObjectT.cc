@@ -440,6 +440,8 @@
    */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::boundingBox( ACG::Vec3f& _bbMin , ACG::Vec3f& _bbMax ) {
+    _bbMin = ACG::Vec3f(FLT_MAX, FLT_MAX, FLT_MAX);
+    _bbMax = ACG::Vec3f(FLT_MIN, FLT_MIN, FLT_MIN);
     meshNode_->boundingBox(_bbMin,_bbMax);
   }
 
