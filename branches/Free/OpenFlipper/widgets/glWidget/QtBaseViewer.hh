@@ -259,18 +259,18 @@ public:
 
   /// Is animation enabled?
   bool animation() const { return animation_; }
-  /// Set animation enabled.
-  void animation(bool _b);
+
+  public slots:
+    /// Set animation enabled.
+    void animation(bool _b);
+
+  signals :
+    void functionMenuUpdate();
+
+  public:
 
   /// Enable/disable mouse tracking (move events with no button press)
   void trackMouse(bool _track);
-
-  /// Enable/disable right button draw mode menu (default: enabled)
-  void enablePopupMenu(bool _enable);
-
-
-
-
 
 
   /// Returns: root node of scene graph
@@ -369,13 +369,19 @@ public:
   /// get face orientation
   FaceOrientation faceOrientation() const { return faceOrientation_; }
 
-  /// set backface culling on/off
-  void backFaceCulling( bool _b );
+  public slots:
+    /// set backface culling on/off
+    void backFaceCulling( bool _b );
+
+  public:
   /// is backface culling enabled?
   bool backFaceCulling() const { return backFaceCulling_; }
 
+  public slots:
   /// set 2-sided lighting on/off
   void twoSidedLighting( bool _b );
+
+  public:
   /// is 2-sided lighing enabled?
   bool twoSidedLighting() const { return twoSidedLighting_; }
 
@@ -470,7 +476,6 @@ public:
 
   /// Get the menu pointers (required to add them to the menubar as a temp workaround for a qt 4.3 bug
   QMenu * getPickMenu() { return pickMenu_; };
-  QMenu * getFuncMenu() { return funcMenu_; };
   QMenu * getDrawMenu() { return drawMenu_; };
 
 
@@ -534,21 +539,13 @@ public slots:
   virtual void setView( const ACG::GLMatrixd& _modelview,
 			               const ACG::GLMatrixd& _inverse_modelview );
 
-  void actionBackground();
-  void actionCopyView();
-  void actionPasteView();
-  void actionPasteDropSize();
-  void actionSynchronize();
-  void actionAnimation();
-  void actionBackfaceCulling();
-  void actionTwoSidedLighting();
-  void actionSynchronize(bool _enable);
-  void actionAnimation(bool _enable);
-  void actionBackfaceCulling(bool _enable);
-  void actionTwoSidedLighting(bool _enable);
-
   void actionDrawMenu( QAction * _action );
   void actionPickMenu( QAction * _action );
+
+  void actionSnapshotName();
+  void actionSnapshot();
+  void actionPasteView();
+  void actionCopyView();
 
 
 
@@ -682,21 +679,6 @@ private slots:
 //----------------------------------------------------------- private functions
 private:
 
-  // IDs for \c funcMenu_
-  enum FuncMenuID {
-    M_CopyView=0x100,
-    M_PasteView,
-    M_PasteDropSize,
-    M_Animation,
-    M_BackfaceCulling,
-    M_TwoSidedLighting,
-    M_Background,
-    M_Snapshot,
-    M_SnapshotName,
-    M_SnapshotSavesView,
-    M_Synchronize
-  };
-
   /// Copy constructor. Never used!
   QtBaseViewer(const QtBaseViewer&);
   /// Assignment operator. Never used!
@@ -772,13 +754,11 @@ private:
 
   // helper
   bool                         trackMouse_;
-  bool                         popupEnabled_;
   bool                         glareaGrabbed_;
   double                       frame_time_;
 
 
   QMenu * pickMenu_;
-  QMenu * funcMenu_;
   QMenu * drawMenu_;
 
   // scenegraph stuff
@@ -823,9 +803,6 @@ private:
   ACG::QtWidgets::QtWheel* wheelY_;
   // translate along z-axis
   ACG::QtWidgets::QtWheel* wheelZ_;
-
-  // all actions
-  QMap< QString, QAction * > action_;
 
   // vector of current draw mode actions
   std::vector< QAction * > drawMenuActions_;
@@ -987,8 +964,7 @@ private:
     /// unsync two sync_connect()ed QtBaseViewer's
     void sync_disconnect(const QtBaseViewer*);
 
-    /// toggle global synchronization
-    virtual void setSynchronization(bool _b);
+
 
     /// add host to synchronize with, given by its name
     bool add_sync_host(const QString& _name);
@@ -996,6 +972,11 @@ private:
     void add_sync_host(QHostAddress& _adr);
 
     bool synchronization();
+
+  public slots:
+
+    /// toggle global synchronization
+    virtual void setSynchronization(bool _b);
 
   private slots:
 
@@ -1042,18 +1023,6 @@ private:
         the current snapshot counter. The \a back buffer will be saved.
     */
     virtual void snapshot();
-
-    /** This action triggers a snapshot
-     */
-    void actionSnapshot();
-
-    /** This action creates a widget for entering the snapshots name.
-     */
-    void actionSnapshotName();
-
-    /** Doesn't do anything at the moment. Widget shows a checkbox for that.
-     */
-    void actionSnapshotSavesView();
 
   private:
 

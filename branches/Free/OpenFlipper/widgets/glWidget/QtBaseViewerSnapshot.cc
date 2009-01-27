@@ -94,12 +94,12 @@ void QtBaseViewer::snapshot()
    if (rval)
    {
      statusbar_->showMessage(QString("snapshot: ")+fname,5000);
-     if ( action_["SnapshotSavesView"]->isChecked() )
-     {
-       QString view; encodeView(view);
-       QFile f(fname+".view"); f.open(QIODevice::WriteOnly|QIODevice::Truncate);
-       QTextStream sf(&f); sf << view; f.close();
-     }
+//      if ( action_["SnapshotSavesView"]->isChecked() )
+//      {
+//        QString view; encodeView(view);
+//        QFile f(fname+".view"); f.open(QIODevice::WriteOnly|QIODevice::Truncate);
+//        QTextStream sf(&f); sf << view; f.close();
+//      }
    }
    else
    {
@@ -139,12 +139,6 @@ void QtBaseViewer::actionSnapshotName()
 }
 
 
-//-----------------------------------------------------------------------------
-
-
-void QtBaseViewer::actionSnapshotSavesView()
-{
-}
 
 //=============================================================================
 //=============================================================================

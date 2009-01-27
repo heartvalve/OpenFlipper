@@ -77,7 +77,14 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   fileMenu_(0),
   viewMenu_(0),
   fileMenuEnd_(0),
+  stereoButton_(0),
+  projectionButton_(0),
+  moveButton_(0),
+  lightButton_(0),
+  pickButton_(0),
+  questionButton_(0),
   contextMenu_(0),
+  functionMenu_(0),
   contextSelectionMenu_(0),
   stackMenu_(0),
   stackedWidget_(0),
@@ -131,7 +138,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     examinerWidget->disableKeyHandling(true);
     examinerWidget->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
-    examinerWidget->enablePopupMenu(false);
 
     stackedWidget_->addWidget(examinerWidget);
 
@@ -164,7 +170,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     // Initialize all examiners
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
-      examiner_widgets_[i]->enablePopupMenu(false);
       examiner_widgets_[i]->disableKeyHandling(true);
     }
 
