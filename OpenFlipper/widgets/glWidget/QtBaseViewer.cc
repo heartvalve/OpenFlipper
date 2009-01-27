@@ -180,15 +180,12 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
   snapshot_=new QImage;
 
   trackMouse_ = false;
-  popupEnabled_ = true;
-
 
   // stereo
   stereo_ = false;
 
 
   pickMenu_ = 0;
-  funcMenu_ = 0;
   drawMenu_ = 0;
 
 
@@ -217,52 +214,6 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
 
   // Note: we start locked (initialization of updateLocked_)
   // will be unlocked in initializeGL()
-
-
-  // Actions
-
-  action_.insert( "Background",        new QAction( "Background color", this ) );
-  action_.insert( "Snapshot",          new QAction( "Snapshot", this ) );
-  action_.insert( "SnapshotName",      new QAction( "Set snapshot name", this ) );
-  action_.insert( "SnapshotSavesView", new QAction( "Snapshot saves view", this ) );
-  action_.insert( "CopyView",          new QAction( "Copy view", this ) );
-  action_.insert( "PasteView",         new QAction( "Paste view", this ) );
-  action_.insert( "PasteDropSize",     new QAction( "Paste/Drop effects size", this ) );
-  action_.insert( "Synchronize",       new QAction( "Synchronize", this ) );
-  action_.insert( "Animation",         new QAction( "Animation", this ) );
-  action_.insert( "BackfaceCulling",   new QAction( "Backface culling", this ) );
-  action_.insert( "TwoSidedLighting",  new QAction( "Two-sided lighting", this ) );
-
-  connect( action_["Background"], SIGNAL( triggered() ),
-	   this, SLOT( actionBackground() ) );
-  connect( action_["Snapshot"], SIGNAL( triggered() ),
-	   this, SLOT( actionSnapshot() ) );
-  connect( action_["SnapshotName"], SIGNAL( triggered() ),
-	   this, SLOT( actionSnapshotName() ) );
-  connect( action_["SnapshotSavesView"], SIGNAL( triggered() ),
-	   this, SLOT( actionSnapshotSavesView() ) );
-  connect( action_["CopyView"], SIGNAL( triggered() ),
-	   this, SLOT( actionCopyView() ) );
-  connect( action_["PasteView"], SIGNAL( triggered() ),
-	   this, SLOT( actionPasteView() ) );
-  connect( action_["PasteDropSize"], SIGNAL( triggered() ),
-	   this, SLOT( actionPasteDropSize() ) );
-  connect( action_["Synchronize"], SIGNAL( triggered() ),
-	   this, SLOT( actionSynchronize() ) );
-  connect( action_["Animation"], SIGNAL( triggered() ),
-	   this, SLOT( actionAnimation() ) );
-  connect( action_["BackfaceCulling"], SIGNAL( triggered() ),
-	   this, SLOT( actionBackfaceCulling() ) );
-  connect( action_["TwoSidedLighting"], SIGNAL( triggered() ),
-	   this, SLOT( actionTwoSidedLighting() ) );
-
-  action_["SnapshotSavesView"]->setCheckable( true );
-  action_["PasteDropSize"]->setCheckable( true );
-  action_["Synchronize"]->setCheckable( true );
-  action_["Animation"]->setCheckable( true );
-  action_["BackfaceCulling"]->setCheckable( true );
-  action_["TwoSidedLighting"]->setCheckable( true );
-
 
   QSizePolicy sp = sizePolicy();
   sp.setHorizontalPolicy( QSizePolicy::Expanding );
@@ -419,22 +370,6 @@ void QtBaseViewer::unlockAndUpdate()
 void QtBaseViewer::trackMouse(bool _track)
 {
   trackMouse_ = _track;
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void QtBaseViewer::enablePopupMenu(bool _enable)
-{
-  popupEnabled_ = _enable;
-
-  if ( popupEnabled_ ) {
-    glView_->setContextMenuPolicy( Qt::DefaultContextMenu );
-  } else {
-    glView_->setContextMenuPolicy( Qt::CustomContextMenu );
-  }
-
 }
 
 
@@ -635,34 +570,34 @@ void QtBaseViewer::faceOrientation(FaceOrientation _ori)
 
 void QtBaseViewer::backFaceCulling(bool _b)
 {
+  emit functionMenuUpdate();
+
   makeCurrent();
-  if (funcMenu_==0)  updatePopupMenu();
+
   if ( (backFaceCulling_ = _b) )
     glEnable( GL_CULL_FACE );
   else
     glDisable( GL_CULL_FACE );
 
-  action_["BackfaceCulling"]->setChecked( backFaceCulling_ );
   updateGL();
 }
 
 
 void QtBaseViewer::twoSidedLighting(bool _b)
 {
+  emit functionMenuUpdate();
+
   makeCurrent();
-  if (funcMenu_==0)  updatePopupMenu();
   glstate_->set_twosided_lighting(twoSidedLighting_=_b);
-  action_["TwoSidedLighting"]->setChecked(twoSidedLighting_);
   updateGL();
 }
 
 
 void QtBaseViewer::animation(bool _b)
 {
+  emit functionMenuUpdate();
   makeCurrent();
-  if (funcMenu_==0)  updatePopupMenu();
   animation_ = _b;
-  action_["Animation"]->setChecked( animation_ );
   updateGL();
 }
 
@@ -1301,19 +1236,41 @@ bool QtBaseViewer::decodeView(const QString& _view)
   glstate_->set_modelview(m);
 
 
-  if (w>0 && h>0 &&
-      action_["PasteDropSize"]->isChecked() )
-  {
-    glstate_->set_projection(p);
-    glView_->setFixedSize(w,h);
-    updateGeometry();
-  }
+  std::cerr << "Todo : Add Checkbox if size should also be pasted" << std::endl;
+
+//   if (w>0 && h>0 &&
+//       action_["PasteDropSize"]->isChecked() )
+//   {
+//     glstate_->set_projection(p);
+//     glView_->setFixedSize(w,h);
+//     updateGeometry();
+//   }
 
 
   updateGL();
 
 
   return true;
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void QtBaseViewer::actionCopyView()
+{
+  QString view; encodeView(view);
+  QApplication::clipboard()->setText(view);
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void QtBaseViewer::actionPasteView()
+{
+  QString view; view=QApplication::clipboard()->text();
+  decodeView(view);
 }
 
 
@@ -1358,109 +1315,9 @@ void QtBaseViewer::actionDrawMenu( QAction * _action )
 
 //-----------------------------------------------------------------------------
 
-
-void QtBaseViewer::actionBackground()
-{
-  const ACG::Vec4f bc = glstate_->clear_color() * 255.0;
-  QColor backCol((int)bc[0], (int)bc[1], (int)bc[2]);
-  QColor c = QColorDialog::getColor(backCol,this);
-  if (c != backCol && c.isValid())
-    backgroundColor(ACG::Vec4f(((double) c.red())   / 255.0,
-			  ((double) c.green()) / 255.0,
-			  ((double) c.blue())  / 255.0,
-			  1.0));
-
-}
-
-//-----------------------------------------------------------------------------
-
-
-void QtBaseViewer::actionCopyView()
-{
-  QString view; encodeView(view);
-  QApplication::clipboard()->setText(view);
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void QtBaseViewer::actionPasteView()
-{
-  QString view; view=QApplication::clipboard()->text();
-  decodeView(view);
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void QtBaseViewer::actionPasteDropSize()
-{
-}
-
-//-----------------------------------------------------------------------------
-
-
-void QtBaseViewer::actionSynchronize()
-{
-  setSynchronization( action_["Synchronize"]->isChecked() );
-}
-
-//-----------------------------------------------------------------------------
-
-void QtBaseViewer::actionSynchronize(bool _enable)
-{
-  setSynchronization( _enable );
-}
-
 bool QtBaseViewer::synchronization(){
   return synchronized_;
 }
-
-//-----------------------------------------------------------------------------
-
-void QtBaseViewer::actionAnimation()
-{
-  animation(!animation());
-}
-
-//-----------------------------------------------------------------------------
-
-void QtBaseViewer::actionAnimation(bool _enable)
-{
-  animation(_enable);
-}
-
-//-----------------------------------------------------------------------------
-
-void QtBaseViewer::actionBackfaceCulling()
-{
-  backFaceCulling(!backFaceCulling());
-}
-
-//-----------------------------------------------------------------------------
-
-void QtBaseViewer::actionBackfaceCulling(bool _enable)
-{
-  backFaceCulling(_enable);
-}
-
-//-----------------------------------------------------------------------------
-
-void QtBaseViewer::actionTwoSidedLighting()
-{
-  twoSidedLighting(!twoSidedLighting());
-}
-
-//-----------------------------------------------------------------------------
-
-void QtBaseViewer::actionTwoSidedLighting(bool _enable)
-{
-  twoSidedLighting(_enable);
-}
-
-//-----------------------------------------------------------------------------
 
 void
 QtBaseViewer::createWidgets(const QGLFormat* _format,
@@ -1470,7 +1327,6 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
   statusbar_=privateStatusBar_=0;
   setStatusBar(_sb);
   drawMenu_=0;
-  funcMenu_=0;
   pickMenu_=0;
 
 
@@ -1509,6 +1365,8 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
   glView_->setViewport(glWidget_);
   glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
   glView_->setScene(glScene_);
+
+  glView_->setContextMenuPolicy( Qt::CustomContextMenu );
 
   wheelZ_=new ACG::QtWidgets::QtWheel( 0,"wheel-z",ACG::QtWidgets::QtWheel::Vertical);
   wheelZ_->setMinimumSize(wheelZ_->sizeHint());
@@ -1576,7 +1434,6 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
   connect ( glScene_, SIGNAL( sceneRectChanged( const QRectF & ) ),
             this, SLOT( sceneRectChanged( const QRectF & ) ) );
 
-  // If popupEnabled_ this signal will not be emitted!
   // If popupEnabled_ is set to false the Contextmenu Mode will be set to customContextMenuRequested
   // and this signal will be emitted on right click
   connect( glView_ , SIGNAL( customContextMenuRequested( const QPoint& ) ) ,
@@ -1653,33 +1510,6 @@ void QtBaseViewer::updatePopupMenu()
   drawMenu_->addActions( drawGroup->actions() );
 
 
-  // function menu
-
-  if (!funcMenu_)
-  {
-    funcMenu_=new QMenu( this );
-
-    funcMenu_->addAction( action_[ "Background" ] );
-    funcMenu_->addSeparator();
-    funcMenu_->addAction( action_[ "Snapshot" ] );
-    funcMenu_->addAction( action_[ "SnapshotName" ] );
-    funcMenu_->addAction( action_[ "SnapshotSavesView" ] );
-    funcMenu_->addSeparator();
-    funcMenu_->addAction( action_[ "CopyView" ] );
-    funcMenu_->addAction( action_[ "PasteView" ] );
-    funcMenu_->addAction( action_[ "PasteDropSize" ] );
-    funcMenu_->addSeparator();
-    funcMenu_->addAction( action_[ "Synchronize" ] );
-    funcMenu_->addSeparator();
-    funcMenu_->addAction( action_[ "Animation" ] );
-    funcMenu_->addAction( action_[ "BackfaceCulling" ] );
-    funcMenu_->addAction( action_[ "TwoSidedLighting" ] );
-
-    connect( funcMenu_, SIGNAL( aboutToHide() ),
-	     this, SLOT( hidePopupMenus() ) );
-  }
-
-
 }
 
 
@@ -1693,13 +1523,6 @@ void QtBaseViewer::hidePopupMenus()
     drawMenu_->blockSignals(true);
     drawMenu_->hide();
     drawMenu_->blockSignals(false);
-  }
-
-  if ( funcMenu_ )
-  {
-    funcMenu_->blockSignals(true);
-    funcMenu_->hide();
-    funcMenu_->blockSignals(false);
   }
 
   if ( pickMenu_ )
@@ -1877,127 +1700,6 @@ void QtBaseViewer::releaseGLArea()
 void QtBaseViewer::glContextMenuEvent(QContextMenuEvent* _event)
 {
 
-  if (popupEnabled_)
-  {
-    QPoint  cpos(QCursor::pos()), dpos, fpos, ppos;
-    int     offset = 10, dw, dh, fw, fh, pw, ph;
-    int     minx, maxx, miny, maxy;
-    int     dx(0), dy(0);
-
-
-#ifdef ARCH_DARWIN
-#  define WIDTH  width()
-#  define HEIGHT height()
-#else
-#  define WIDTH  sizeHint().width()
-#  define HEIGHT sizeHint().height()
-#endif
-
-
-
-    // drawing mode menu
-    if (drawMenu_)//TODO: && drawMenu_->count()>0)
-    {
-      dw = drawMenu_->WIDTH;
-      dh = drawMenu_->HEIGHT;
-      dpos = cpos + QPoint(offset, offset);
-    }
-    else
-    {
-      dpos = cpos; dw=dh=0;
-    }
-
-
-    // function menu
-    ///@todo:    if (funcMenu_ && funcMenu_->count()>0)
-    if (funcMenu_)
-    {
-      fw = funcMenu_->WIDTH;
-      fh = funcMenu_->HEIGHT;
-      fpos = cpos + QPoint(offset, -offset-fh);
-    }
-    else
-    {
-      fpos = cpos; fw=fh=0;
-    }
-
-
-    // pick mode menu
-    ///@todo: if (pickMenu_ && pickMenu_->count()>0)
-    if (pickMenu_)
-    {
-      pw = pickMenu_->WIDTH;
-      ph = pickMenu_->HEIGHT;
-      ppos = cpos + QPoint(-offset-pw, -ph/2);
-    }
-    else
-    {
-      ppos = cpos; pw=ph=0;
-    }
-
-
-
-    // handle screen boundaries
-    minx = std::min(dpos.x(),    std::min(fpos.x(),    ppos.x()));
-    maxx = std::max(dpos.x()+dw, std::max(fpos.x()+fw, ppos.x()+pw));
-    miny = std::min(dpos.y(),    std::min(fpos.y(),    ppos.y()));
-    maxy = std::max(dpos.y()+dh, std::max(fpos.y()+fh, ppos.y()+ph));
-
-
-    if (minx < 0)
-    {
-      dx = -minx;
-    }
-    else if (maxx >= qApp->desktop()->width())
-    {
-      dx = qApp->desktop()->width() - maxx;
-    }
-
-    if (miny < 0)
-    {
-      dy = -miny;
-    }
-    else if (maxy >= qApp->desktop()->height())
-    {
-      dy = qApp->desktop()->height() - maxy;
-    }
-
-
-    dpos += QPoint(dx, dy);
-    fpos += QPoint(dx, dy);
-    ppos += QPoint(dx, dy);
-
-
-
-    // popping up 3 menus only works w/o Qt menu fade/animate effects
-    bool animate_menu = qApp->isEffectEnabled(Qt::UI_AnimateMenu);
-    bool fade_menu    = qApp->isEffectEnabled(Qt::UI_FadeMenu);
-    if (animate_menu)  qApp->setEffectEnabled(Qt::UI_AnimateMenu, false);
-    if (fade_menu)     qApp->setEffectEnabled(Qt::UI_FadeMenu, false);
-
-
-    // popup the 3 menus
-
-    if (drawMenu_) ///@todo: && drawMenu_->count()>0)
-    {
-      //      SceneGraph::DrawModes::setQPopupMenuChecked(drawMenu_, curDrawMode_);
-      drawMenu_->popup(dpos);
-    }
-
-    if (funcMenu_) ///@todo: && funcMenu_->count()>0)
-      funcMenu_->popup(fpos);
-
-    if (pickMenu_) ///@todo: && pickMenu_->count()>0)
-      pickMenu_->popup(ppos);
-
-
-    // restore effect state
-    if (animate_menu)  qApp->setEffectEnabled(Qt::UI_AnimateMenu, true);
-    if (fade_menu)     qApp->setEffectEnabled(Qt::UI_FadeMenu, true);
-
-
-    _event->accept();
-  }
 }
 
 
@@ -2007,11 +1709,7 @@ void QtBaseViewer::glContextMenuEvent(QContextMenuEvent* _event)
 void QtBaseViewer::glMousePressEvent(QMouseEvent* _event)
 {
   // right button pressed => popup menu (ignore here)
-  if (_event->button() == Qt::RightButton && popupEnabled_)
-  {
-    return;
-  }
-  else
+  if (_event->button() != Qt::RightButton )
   {
     switch (actionMode_)
     {
@@ -2115,7 +1813,7 @@ void QtBaseViewer::glMouseReleaseEvent(QMouseEvent* _event)
 //     hidePopupMenus();
 
   if (_event->button() != Qt::RightButton ||
-      (actionMode_ == PickingMode && !popupEnabled_) )
+      (actionMode_ == PickingMode ) )
   {
     switch ( actionMode_ )
     {

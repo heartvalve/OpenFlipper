@@ -113,4 +113,25 @@ void CoreWidget::slotActionModeChanged( QtBaseViewer::ActionMode _mode ) {
   }
 }
 
+void CoreWidget::slotFunctionMenuUpdate() {
+  std::cerr << "DF" <<std::endl;
+  if ( examiner_widgets_.empty() )
+    return;
+
+  QList< QAction *> allActions = functionMenu_->actions();
+
+  for ( int i = 0 ; i <  allActions.size(); ++i ) {
+    if ( allActions[i]->text() == "Synchronization" )
+      allActions[i]->setChecked(examiner_widgets_[0]->synchronization());
+    else if ( allActions[i]->text() == "Animation" )
+      allActions[i]->setChecked(examiner_widgets_[0]->animation());
+    else if ( allActions[i]->text() == "Backface Culling" )
+      allActions[i]->setChecked(examiner_widgets_[0]->backFaceCulling());
+    else if ( allActions[i]->text() == "Two-sided Lighting" )
+      allActions[i]->setChecked(examiner_widgets_[0]->twoSidedLighting());
+  }
+
+}
+
+
 //=============================================================================

@@ -460,6 +460,9 @@ public:
     /// context Menu for the gl area
     QMenu*  contextMenu_;
 
+    /// Function Menu
+    QMenu* functionMenu_;
+
     /// Context Menu containing all selection elements
     QMenu*  contextSelectionMenu_;
 
@@ -628,6 +631,9 @@ public:
 
     /// Change Icons if action mode is changed in an examiner
     void slotActionModeChanged( QtBaseViewer::ActionMode _mode );
+
+    /// Called when the functionMenu has to be updated
+    void slotFunctionMenuUpdate();
 
   private :
     bool stereoActive_;

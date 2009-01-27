@@ -148,13 +148,15 @@ void QtBaseViewer::sync_receive()
 
   glstate_->set_modelview(m);
 
-  if (w>0 && h>0 &&
-      action_["PasteDropSize"]->isChecked() )
-  {
-    glstate_->set_projection(p);
-    glView_->setFixedSize(w,h);
-    updateGeometry();
-  }
+  std::cerr << "Todo : Checkbox if size should be applied to" << std::endl;
+
+//   if (w>0 && h>0 &&
+//       action_["PasteDropSize"]->isChecked() )
+//   {
+//     glstate_->set_projection(p);
+//     glView_->setFixedSize(w,h);
+//     updateGeometry();
+//   }
 
   blockSignals(false);
 
@@ -167,8 +169,9 @@ void QtBaseViewer::sync_receive()
 
 void QtBaseViewer::setSynchronization(bool _b)
 {
+  emit functionMenuUpdate();
+
   synchronized_ = _b;
-  action_["Synchronize"]->setChecked( synchronized_ );
 
   if (synchronized_)
   {
