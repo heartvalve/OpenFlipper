@@ -894,57 +894,6 @@ private:
 
   /** @} */
 
-
-  //===========================================================================
-  /** @name Synchronize different viewers
-   * @{ */
-  //===========================================================================
-
-  public:
-    /** Synchronize with other QtBaseViewer. A QtBaseViewer can
-      be synchronized with other instances. The viewing position is
-      copied from the other widget after each transformation.
-    */
-    void sync_connect(const QtBaseViewer*);
-
-    /// unsync two sync_connect()ed QtBaseViewer's
-    void sync_disconnect(const QtBaseViewer*);
-
-
-
-    /// add host to synchronize with, given by its name
-    bool add_sync_host(const QString& _name);
-    /// add host to synchronize with, given by its address
-    void add_sync_host(QHostAddress& _adr);
-
-    bool synchronization();
-
-  public slots:
-
-    /// toggle global synchronization
-    virtual void setSynchronization(bool _b);
-
-  private slots:
-
-    void sync_receive();
-    void sync_send(const ACG::GLMatrixd& _modelview,
-                   const ACG::GLMatrixd& _inverse_modelview);
-
-  private:
-    /// synchronized with different viewer?
-    bool                         synchronized_;
-
-    /// Skips the next synch event
-    bool                         skipNextSync_;
-
-    /// socket used for synchronization
-    QUdpSocket *                 socket_;
-
-    /// List of hosts which should receive sync information
-    std::vector<QHostAddress>    sync_hosts_;
-
-  /** @} */
-
   //===========================================================================
   /** @name Snapshots
    * @{ */

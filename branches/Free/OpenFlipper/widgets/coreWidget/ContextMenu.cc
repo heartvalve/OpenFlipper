@@ -251,16 +251,6 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
 
     //====================================================================================================
 
-    action = functionMenu_->addAction("Synchronization");
-    action->setToolTip("Synchronize two different viewers");
-    action->setCheckable( true );
-    action->setChecked( OpenFlipper::Options::synchronization() );
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      connect(action, SIGNAL(triggered(bool)), examiner_widgets_[i], SLOT(setSynchronization(bool)) );
-    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
-
-    //====================================================================================================
-
     action = functionMenu_->addAction("Animation");
     action->setToolTip("Animate rotation of objects");
     action->setCheckable( true );
@@ -352,7 +342,6 @@ void CoreWidget::slotCopyView( ) {
 }
 
 void CoreWidget::updateGlobalOptions(bool /*_enable*/){
-  OpenFlipper::Options::synchronization( examiner_widgets_[0]->synchronization() );
   OpenFlipper::Options::animation( examiner_widgets_[0]->animation() );
   OpenFlipper::Options::backfaceCulling( examiner_widgets_[0]->backFaceCulling() );
   OpenFlipper::Options::twoSidedLighting( examiner_widgets_[0]->twoSidedLighting() );
