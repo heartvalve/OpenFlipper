@@ -96,7 +96,7 @@ defineTest(Plugin) {
   		LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lPluginLib		
 		export(LIBS)
 		DEPENDPATH += $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} 
-		DEFINES += ACGDLL USEACG
+		DEFINES += ACGDLL USEACG PLUGINLIBDLL USEPLUGINLIBDLL
 		export(DEFINES)
 		export(DEPENDPATH)
 		glut()

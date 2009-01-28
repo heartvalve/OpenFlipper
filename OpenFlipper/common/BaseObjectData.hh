@@ -49,16 +49,9 @@
 #define BASEOBJECTDATA_HH
 
 
-#ifndef DLLEXPORT
-#ifdef WIN32
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT
-#endif
-#endif
-
 //== INCLUDES =================================================================
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include "BaseObject.hh"
 #include <vector>
 #include <ACG/Scenegraph/MaterialNode.hh>

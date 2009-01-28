@@ -47,17 +47,9 @@
 #ifndef BASEOBJECT_HH
 #define BASEOBJECT_HH
 
-
-#ifndef DLLEXPORT
-#ifdef WIN32
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT
-#endif
-#endif
-
 //== INCLUDES =================================================================
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <QString>
 #include <QList>
 #include <QStringList>
@@ -74,7 +66,7 @@
  * This is the basic Data class providing the functions common to all objects.
  * If the Datacontrol Plugin is available, a Tree structure will be generated allowing groups of objects.
  */
-class DLLEXPORT BaseObject {
+class DLLEXPORTONLY BaseObject {
   friend class BaseObjectData;
 
   public :
