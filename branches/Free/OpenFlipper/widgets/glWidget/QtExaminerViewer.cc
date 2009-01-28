@@ -69,9 +69,8 @@ QtExaminerViewer::QtExaminerViewer( QWidget* _parent,
 				    const char* _name,
 				    QStatusBar *_statusBar,
 				    const QGLFormat* _format,
-				    const QtBaseViewer* _share,
-				    Options _options ) :
-  QtBaseViewer(_parent, _name, _statusBar, _format, _share, _options)
+				    const QtBaseViewer* _share) :
+  QtBaseViewer(_parent, _name, _statusBar, _format, _share)
 {
 
   // timer for animation
