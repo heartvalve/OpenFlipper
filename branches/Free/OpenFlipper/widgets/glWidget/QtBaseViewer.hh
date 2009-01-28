@@ -868,12 +868,12 @@ private:
    * @{ */
   //===========================================================================
 
-  protected:
+  public:
 
     /// drag & drop for modelview copying
-    virtual void glDragEnterEvent(QDragEnterEvent* _event);
+    void glDragEnterEvent(QDragEnterEvent* _event){ std::cerr << "dragEnter" << std::endl; emit dragEnterEvent(_event); };
     /// drag & drop for modelview copying
-    virtual void glDropEvent(QDropEvent* _event);
+    void glDropEvent(QDropEvent* _event){ std::cerr << "drop" << std::endl; emit dropEvent( _event ); }
 
   signals:
     /** Signal is emitted when Control modifier is pressed and mouse moded.
