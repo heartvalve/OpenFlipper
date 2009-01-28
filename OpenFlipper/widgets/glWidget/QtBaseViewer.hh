@@ -836,26 +836,13 @@ private:
      */
     void signalKeyPressEvent(QKeyEvent*);
 
-  public:
-    /** \brief Enable or disable internal Key handling
-     *
-     * With this function you can enable or disable viewers internal key handling.
-     * If disabled, all key events are passed to the widgets parent.
-     */
-    void disableKeyHandling(bool _state );
-
-    /** \brief get the current key handling state.
-     *
-     */
-    bool keyHandlingState();
-
   protected:
 
     /** \brief Get keyPress events from the glArea
      *
      * This function is called by the internal gl widget when receiving a key press event.
      */
-    virtual void glKeyPressEvent(QKeyEvent*);
+    virtual void glKeyPressEvent(QKeyEvent* _event) { _event->ignore(); };
 
     /** \brief Get keyRelease events from the glArea
      *
@@ -863,7 +850,7 @@ private:
      * Here these events are simply passed to the parent widget.
      *
      */
-    virtual void glKeyReleaseEvent(QKeyEvent* _event);
+    virtual void glKeyReleaseEvent(QKeyEvent* _event) { _event->ignore(); };
 
     /** \brief Handle key events in view mode
      *
@@ -873,9 +860,6 @@ private:
      * @return If the derived class handled the event it has to return true otherwise false
      */
     virtual bool viewKeyPressEvent(QKeyEvent* _event) = 0;
-
-  private:
-    bool disableKeyHandling_;
 
   /** @} */
 

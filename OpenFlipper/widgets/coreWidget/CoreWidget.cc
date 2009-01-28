@@ -136,7 +136,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     examiner_widgets_.push_back(examinerWidget);
 
-    examinerWidget->disableKeyHandling(true);
     examinerWidget->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
 
     stackedWidget_->addWidget(examinerWidget);
@@ -170,7 +169,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     // Initialize all examiners
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
-      examiner_widgets_[i]->disableKeyHandling(true);
     }
 
     QGridLayout* layout = new QGridLayout(tmp);
