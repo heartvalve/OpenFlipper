@@ -126,7 +126,6 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
   sceneGraphDialog_(0),
   options_(_options),
   disableKeyHandling_(false),
-  externalDrag_(false),
   snapshotName_("snap.png"),
   snapshotCounter_(0),
   snapshot_(0),
@@ -1690,11 +1689,7 @@ void QtBaseViewer::glMousePressEvent(QMouseEvent* _event)
     {
       case ExamineMode:
         if ((_event->modifiers() & Qt::ControlModifier)) // drag&drop
-          if ( externalDrag_ ) {
-            emit startDragEvent( _event );
-          } else {
-            startDrag();
-          }
+          emit startDragEvent( _event );
         else
           viewMouseEvent(_event); // examine
         break;

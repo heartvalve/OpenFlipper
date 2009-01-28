@@ -887,15 +887,9 @@ private:
   protected:
 
     /// drag & drop for modelview copying
-    virtual void startDrag();
-    /// drag & drop for modelview copying
     virtual void glDragEnterEvent(QDragEnterEvent* _event);
     /// drag & drop for modelview copying
     virtual void glDropEvent(QDropEvent* _event);
-
-  public:
-    /// Enable or disable external dragging controls
-    void setExternalDrag( bool _external ) { externalDrag_ = _external; };
 
   signals:
     /** Signal is emitted when Control modifier is pressed and mouse moded.
@@ -913,12 +907,6 @@ private:
      */
     void dropEvent( QDropEvent* _event );
 
-  private:
-
-    /** flag defining, if dragging will be handled internal by the viewer or passed via signals to
-     * the application
-    */
-    bool externalDrag_;
 
   /** @} */
 

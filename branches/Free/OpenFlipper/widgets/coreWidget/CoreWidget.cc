@@ -192,7 +192,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Setup dragging for examiner widget
   // ======================================================================
   for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-    examiner_widgets_[i]->setExternalDrag(true);
 
     connect( examiner_widgets_[i], SIGNAL(startDragEvent( QMouseEvent*)),
              this, SLOT(startDrag(QMouseEvent* )));
