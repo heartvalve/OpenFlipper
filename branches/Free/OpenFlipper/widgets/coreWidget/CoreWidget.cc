@@ -74,6 +74,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   logWidget_(0),
   recentFilesMenu_(0),
   pluginsMenu_(0),
+  helpMenu_(0),
+  sceneGraphDialog_(0),
   fileMenu_(0),
   viewMenu_(0),
   fileMenuEnd_(0),
@@ -365,7 +367,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "<li><b>dialog</b>: own dialog window</li></ul>"
                   "This button toggles between these modi.");
   QObject::connect( sceneGraphButton, SIGNAL( clicked() ),
-                    examiner_widgets_[0], SLOT( showSceneGraphDialog() ) );
+                    this, SLOT( slotShowSceneGraphDialog() ) );
   viewerToolbar_->addWidget( sceneGraphButton)->setText( "SceneGraph" );
 
 
@@ -622,6 +624,31 @@ void CoreWidget::showOptionsWidget() {
   optionsWidget_->show();
 
 }
+
+
+void
+CoreWidget::slotShowSceneGraphDialog()
+{
+  if ( PluginFunctions::getSceneGraphRootNode() )
+  {
+    if (!sceneGraphDialog_)
+    {
+      sceneGraphDialog_ = new ACG::QtWidgets::QtSceneGraphDialog( this, PluginFunctions::getSceneGraphRootNode() );
+
+      for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+        connect(examiner_widgets_[i], SIGNAL(signalSceneGraphChanged(ACG::SceneGraph::BaseNode*)),
+                sceneGraphDialog_,    SLOT(update(ACG::SceneGraph::BaseNode*)));
+
+        connect(sceneGraphDialog_, SIGNAL(signalNodeChanged(ACG::SceneGraph::BaseNode*)),
+                examiner_widgets_[i], SLOT(slotNodeChanged(ACG::SceneGraph::BaseNode*)));
+      }
+
+    }
+
+    sceneGraphDialog_->show();
+  }
+}
+
 
 
 //=============================================================================
