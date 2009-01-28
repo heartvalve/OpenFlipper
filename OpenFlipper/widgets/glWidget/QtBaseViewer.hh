@@ -116,40 +116,6 @@ Q_OBJECT
 //-------------------------------------------------------------- public methods
 public:
 
-  /** Options for creating a QtBaseViewer.
-    (cf. QtBaseViewer::QtBaseViewer(), applyOptions())
-    */
-  enum Options {
-    /// all options disabled
-    Nothing=0,
-
-    /** Show tool bar? <br>
-        The tool bar consists of several buttons that can be used to control
-	this view, etc. It will be placed vertically on the right side.
-
-	\a Note: This toolbar inlcudes the wheels for translation along the
-	z-axis (right, cf. ShowWheelZ)!
-   */
-
-    /// Show wheel for rotation around x-axis (left)?
-    ShowWheelX=0x20,
-    /// Show wheel for rotation around y-axis (bottom)?
-    ShowWheelY=0x40,
-    /** Show wheel for translation along z-axis (right)?
-	Effect only if ShowToolBar!
-     */
-    ShowWheelZ=0x80,
-
-    /// Show all three wheels (default)!
-    ShowWheels=0xe0,
-
-    /// default: all options enabled
-    DefaultOptions = 0xffff
-  };
-
-
-
-
   //--------------------------------------------------- constructor / destructor
 
   /** Create a QtBaseViewer.
@@ -158,14 +124,12 @@ public:
     \param _statusBar pointer to an existing status bar for this widget,
      if \c statusBar==0 then a \a private status bar will be created
     \param _format OpenGL context settings, will be passed to glarea()
-    \param _options QtBaseViewer::Options
   */
   QtBaseViewer( QWidget* _parent=0,
 		const char* _name=0,
 		QStatusBar *_statusBar=0,
 		const QGLFormat* _format=0,
-		const QtBaseViewer* _share=0,
-		Options _options=DefaultOptions );
+		const QtBaseViewer* _share=0);
 
   /// Destructor.
   virtual ~QtBaseViewer();
@@ -183,12 +147,6 @@ public:
       output, e.g. the frame rate of the rotation animation.
   */
   void setStatusBar(QStatusBar* _sb);
-
-  /// Apply ORed Options \c _options.
-  void applyOptions(int _options);
-  /// get current ORed Options
-  int options() const { return options_; }
-
 
   /// Makes this widget the current widget for OpenGL operations.
   virtual void makeCurrent();
@@ -753,9 +711,6 @@ private:
   ACG::QtWidgets::QtSceneGraphDialog*     sceneGraphDialog_;
 
 
-
-  // options
-  Options options_;
   // gl widget used as drawing area to paint the graphics scene
   QGLWidget* glWidget_;
   // graphics scene used to paint gl context and widgets

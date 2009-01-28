@@ -115,8 +115,7 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
 			    const char* /* _name */ ,
 			    QStatusBar *_statusBar,
 			    const QGLFormat* _format,
-			    const QtBaseViewer* _share,
-			    Options _options ) :
+			    const QtBaseViewer* _share) :
   QWidget(_parent),
   statusbar_(_statusBar),
   glareaGrabbed_(false),
@@ -124,7 +123,6 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
   projectionUpdateLocked_(false),
   blending_(true),
   sceneGraphDialog_(0),
-  options_(_options),
   snapshotName_("snap.png"),
   snapshotCounter_(0),
   snapshot_(0),
@@ -235,22 +233,6 @@ void QtBaseViewer::setStatusBar(QStatusBar* _sb)
 {
   statusbar_ = _sb;
 }
-
-
-//-----------------------------------------------------------------------------
-
-
-void QtBaseViewer::applyOptions(int _options)
-{
-
-  if (_options&ShowWheelX)         wheelX_->show();
-  else                             wheelX_->hide();
-  if (_options&ShowWheelY)         wheelY_->show();
-  else                             wheelY_->hide();
-  if (_options&ShowWheelZ)         wheelZ_->show();
-  else                             wheelZ_->hide();
-}
-
 
 //-----------------------------------------------------------------------------
 
@@ -1325,8 +1307,6 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
 	  this,SLOT(slotWheelZ(double)));
   wheelZ_->setToolTip( "Translate along <b>z-axis</b>.");
   wheelZ_->setWhatsThis( "Translate along <b>z-axis</b>.");
-  if ((options_&ShowWheelZ)==0)
-    wheelZ_->hide();
 
   wheelY_=new ACG::QtWidgets::QtWheel( 0,"wheel-y",ACG::QtWidgets::QtWheel::Horizontal);
   wheelY_->setMinimumSize(wheelY_->sizeHint());
@@ -1335,8 +1315,6 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
           this,SLOT(slotWheelY(double)));
   wheelY_->setToolTip("Rotate around <b>y-axis</b>.");
   wheelY_->setWhatsThis( "Rotate around <b>y-axis</b>.");
-  if ((options_&ShowWheelY)==0)
-    wheelY_->hide();
 
   wheelX_=new ACG::QtWidgets::QtWheel( 0,"wheel-x",ACG::QtWidgets::QtWheel::Vertical);
   wheelX_->setMinimumSize(wheelX_->sizeHint());
@@ -1345,8 +1323,6 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
           this,SLOT(slotWheelX(double)));
   wheelX_->setToolTip("Rotate around <b>x-axis</b>.");
   wheelX_->setWhatsThis( "Rotate around <b>x-axis</b>.");
-  if ((options_&ShowWheelX)==0)
-    wheelX_->hide();
 
 
   QGraphicsWidget *wheelX = glScene_->addWidget (wheelX_);

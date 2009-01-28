@@ -150,8 +150,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                                                             "Examiner Widget",
                                                             statusBar_ ,
                                                             &format,
-                                                            0,
-                                                            QtExaminerViewer::Nothing);
+                                                            0);
     examiner_widgets_.push_back(examinerWidget);
 
 
@@ -161,8 +160,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                                                          "Examiner Widget",
                                                          statusBar_ ,
                                                          &format,
-                                                         examinerWidget,
-                                                         QtExaminerViewer::Nothing);
+                                                         examinerWidget);
       examiner_widgets_.push_back(newWidget);
     }
 
