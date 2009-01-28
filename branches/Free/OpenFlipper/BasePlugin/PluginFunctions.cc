@@ -54,10 +54,10 @@ static BaseObject* objectRoot_;
  *
  * This pointer is internally used to acces the examiner widget in the main apllication
  */
-static std::vector< QtExaminerViewer* > examiner_widgets_;
+static std::vector< QtBaseViewer* > examiner_widgets_;
 
 /// TODO : Remove this variable and implement multiView correctly here
-static QtExaminerViewer*  examiner_widget_;
+static QtBaseViewer*  examiner_widget_;
 
 static unsigned int activeExaminer_ = 0;
 
@@ -73,7 +73,7 @@ void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
 
-void set_examiner( std::vector< QtExaminerViewer* > _examiner_widgets ) {
+void set_examiner( std::vector< QtBaseViewer* > _examiner_widgets ) {
    PluginFunctions::examiner_widgets_ = _examiner_widgets;
    PluginFunctions::examiner_widget_ =  examiner_widgets_[0];
 }

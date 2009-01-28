@@ -47,7 +47,7 @@
  #include <QtGui>
  #include <QMenuBar>
  #include <OpenFlipper/common/Types.hh>
- #include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
+ #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 
  /** \brief Interface class for plugins which need access to global Data
   *
@@ -65,7 +65,7 @@ class GlobalAccessInterface {
        *  This function is called to set a pointer to the global examiner Widget.\n
        *  @param _examiner_widget Pointer to the Examiner Widget in the Main app
        */
-      virtual void set_examiner( QtExaminerViewer* /*_examiner_widget*/) = 0;
+      virtual void set_examiner( QtBaseViewer* /*_examiner_widget*/) = 0;
 
 };
 
