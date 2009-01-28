@@ -123,31 +123,13 @@ public:
     /// all options disabled
     Nothing=0,
 
-    /** Show \a private status bar? <br>
-        If the widget is constructed (cf. QtBaseViewer::QtBaseViewer())
-	with no status bar (\c _statusBar==0) then a \a private \c QStatusBar
-	will be created. Use this option to show or hide it. It has \a no
-	\a effect if the \c QStatusBar is provided externally.
-     */
-    ShowPrivateStatusBar=1,
-
     /** Show tool bar? <br>
         The tool bar consists of several buttons that can be used to control
 	this view, etc. It will be placed vertically on the right side.
 
 	\a Note: This toolbar inlcudes the wheels for translation along the
 	z-axis (right, cf. ShowWheelZ)!
-
-	The default setting is to show \a all buttons (see below).
-     */
-    ShowToolBar=2,
-
-    /// Show pick button?  Effect only if ShowToolBar!
-    ShowPickButton=4,
-    /// Show lasso button? Effect only if ShowToolBar!
-    ShowLassoButton=8,
-    /// Show question button? Effect only if ShowToolBar!
-    ShowQuestionButton=0x10,
+   */
 
     /// Show wheel for rotation around x-axis (left)?
     ShowWheelX=0x20,
@@ -161,8 +143,8 @@ public:
     /// Show all three wheels (default)!
     ShowWheels=0xe0,
 
-    /// default: all options (but not private statusbar) enabled
-    DefaultOptions = 0xffff & (~ShowPrivateStatusBar)
+    /// default: all options enabled
+    DefaultOptions = 0xffff
   };
 
 
@@ -196,15 +178,9 @@ public:
 
   virtual QSize sizeHint () const;
 
-  /// get status bar, guaranteed to be not 0 (\c QStatusBar may be invisible)
-  QStatusBar* statusBar() { return statusbar_; }
   /** Set status bar.
-      Sets the \c QStatusBar widget that is used for informational
+      Sets the \c QStatusBar widget that is used for information
       output, e.g. the frame rate of the rotation animation.
-      If \c sb==0 a \a private \c QStatusBar will be used,
-      cf. Options. This private status bar may be invisible,
-      but statusBar() will \a never return 0 even if setStatusBar(0)
-      has been called!
   */
   void setStatusBar(QStatusBar* _sb);
 
@@ -580,7 +556,8 @@ signals:
    */
   void signalMouseEventIdentify( QMouseEvent* );
 
-  /// set view, used for synchronizing (cf. slotSetView())
+
+/// set view, used for synchronizing (cf. slotSetView())
   void signalSetView( const ACG::GLMatrixd& _modelview,
 		                const ACG::GLMatrixd& _inverse_modelview );
   /// scene graph has changed
@@ -790,9 +767,6 @@ private:
   QGraphicsWidget* glBase_;
   // Base graphics widget layout
   QGraphicsGridLayout* glBaseLayout_;
-
-  // private status bar, 0 if status bar is provided externally
-  QStatusBar* privateStatusBar_;
 
   // Layout for the basic widget ( viewer + wheels )
   QGridLayout* glLayout_;
