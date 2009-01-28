@@ -47,7 +47,7 @@
 #ifndef TYPES_HH
 #define TYPES_HH
 
-#include "GlobalDefines.hh"
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <limits.h>
 #include <QIcon>
 

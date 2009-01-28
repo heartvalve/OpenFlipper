@@ -16,6 +16,7 @@ DIRECTORIES = ../BasePlugin ../ACGHelper ../common ../common/bsp  ../INIFile $$f
               ../widgets/glWidget
 win32 {
 	DESTDIR = ../$${BUILDDIRECTORY}
+	DEFINES += PLUGINLIBDLL
 } 
 
   

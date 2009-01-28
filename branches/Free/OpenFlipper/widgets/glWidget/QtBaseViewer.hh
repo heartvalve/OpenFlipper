@@ -38,8 +38,8 @@
 //
 //=============================================================================
 
-#ifndef ACG_QTBASEVIEWER_HH
-#define ACG_QTBASEVIEWER_HH
+#ifndef BASEVIEWER_HH
+#define BASEVIEWER_HH
 
 //== INCLUDES =================================================================
 
@@ -95,7 +95,6 @@ namespace ACG {
 }
 class QtGLGraphicsScene;
 class QtGLGraphicsView;
-class QtSceneGraphDialog;
 class QtShiftPopupMenu;
 
 
@@ -1086,5 +1085,5 @@ private:
 
 //=============================================================================
 //=============================================================================
-#endif // ACG_QTBASEVIEWER_HH defined
+#endif // BASEVIEWER_HH defined
 //=============================================================================

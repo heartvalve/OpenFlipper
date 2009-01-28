@@ -45,17 +45,10 @@
 
 #include <ACG/Scenegraph/DrawModes.hh> 
 #include <QString>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 //== DEFINES =================================================================
 
- 
-#ifndef DLLEXPORT
-#ifdef WIN32
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT
-#endif
-#endif 
 
 //== TYPEDEFS =================================================================
 

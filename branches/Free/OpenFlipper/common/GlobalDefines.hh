@@ -58,14 +58,25 @@
  */
 #define USE_OPENMP
 
-#ifdef WIN32
+
 #ifndef DLLEXPORT
-#define DLLEXPORT __declspec(dllexport)
-#endif
-#else
-#ifndef DLLEXPORT
-#define DLLEXPORT
-#endif
+	#ifdef WIN32 
+		#ifdef PLUGINLIBDLL 
+			#ifdef USEPLUGINLIBDLL 
+				#define DLLEXPORT __declspec(dllimport) 		
+				#define DLLEXPORTONLY 
+			#else 
+				#define DLLEXPORT __declspec(dllexport) 
+				#define DLLEXPORTONLY __declspec(dllexport)
+			#endif
+		#else		
+			#define DLLEXPORT	
+			#define DLLEXPORTONLY
+		#endif
+	#else
+		#define DLLEXPORT
+		#define DLLEXPORTONLY
+	#endif
 #endif
 
 

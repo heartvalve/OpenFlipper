@@ -442,6 +442,7 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 
     case Qt::Key_Space:
       if ( OpenFlipper::Options::multiView() ) {
+        emit log( "Switch to MultiView");
         if ( examiner_widgets_[1]->isHidden() ) {
 
           for ( uint i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )

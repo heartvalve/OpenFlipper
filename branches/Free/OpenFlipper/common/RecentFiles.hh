@@ -47,12 +47,6 @@
 #ifndef RECENTFILES_HH
 #define RECENTFILES_HH
 
-#ifdef WIN32
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT
-#endif
-
 #include <QDir>
 #include <QStringList>
 

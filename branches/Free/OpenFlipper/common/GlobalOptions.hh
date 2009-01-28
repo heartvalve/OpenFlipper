@@ -47,14 +47,7 @@
 #ifndef OPTIONS_HH
 #define OPTIONS_HH
 
-#ifndef DLLEXPORT
-#ifdef WIN32
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT
-#endif
-#endif
-
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <QDir>
 #include <QStringList>
 #include <QColor>
