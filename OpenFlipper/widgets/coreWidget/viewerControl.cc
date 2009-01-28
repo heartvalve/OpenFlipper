@@ -121,9 +121,7 @@ void CoreWidget::slotFunctionMenuUpdate() {
   QList< QAction *> allActions = functionMenu_->actions();
 
   for ( int i = 0 ; i <  allActions.size(); ++i ) {
-    if ( allActions[i]->text() == "Synchronization" )
-      allActions[i]->setChecked(examiner_widgets_[0]->synchronization());
-    else if ( allActions[i]->text() == "Animation" )
+    if ( allActions[i]->text() == "Animation" )
       allActions[i]->setChecked(examiner_widgets_[0]->animation());
     else if ( allActions[i]->text() == "Backface Culling" )
       allActions[i]->setChecked(examiner_widgets_[0]->backFaceCulling());

@@ -839,22 +839,6 @@ void Core::slotExit() {
   qApp->quit();
 }
 
-/// Synchronise two viewers
-bool Core::add_sync_host(const QString& _name)
-{
-  // Todo : Only syncing one Viewer
-  if ( OpenFlipper::Options::gui() ) {
-    emit log(LOGINFO,"Adding SyncHost");
-    bool ok = coreWidget_->examiner_widgets_[0]->add_sync_host(_name);
-    if (ok)
-      coreWidget_->examiner_widgets_[0]->setSynchronization(true);
-    else
-      emit log(LOGERR,"Sync failed! ");
-    return ok;
-  }
-  return false;
-}
-
 /// log to file
 void Core::slotLogToFile(Logtype _type, QString _message){
 

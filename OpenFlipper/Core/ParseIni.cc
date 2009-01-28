@@ -432,7 +432,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
     _ini.add_entry("Options","BackfaceCulling",coreWidget_->examiner_widgets_[0]->backFaceCulling());
     _ini.add_entry("Options","Animation",coreWidget_->examiner_widgets_[0]->animation());
-    _ini.add_entry("Options","Synchronization",coreWidget_->examiner_widgets_[0]->synchronization());
     _ini.add_entry("Options","twoSidedLighting",coreWidget_->examiner_widgets_[0]->twoSidedLighting());
 
     _ini.add_entry("Options","WheelZoomFactor",coreWidget_->examiner_widgets_[0]->wheelZoomFactor());

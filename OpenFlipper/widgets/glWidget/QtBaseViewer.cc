@@ -192,23 +192,6 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
   examineMode();
 
 
-  // clipboard sync stuff
-  synchronized_ = false;
-  skipNextSync_ = false;
-
-  socket_ = new QUdpSocket();
-
-  for (int i=6666; i<6676; ++i)
-    if ( socket_->bind( i ) )
-    {
-      std::cout << "listen on port " << i << "\n";
-      break;
-    }
-
-  add_sync_host("127.0.0.1");
-
-
-
   // Note: we start locked (initialization of updateLocked_)
   // will be unlocked in initializeGL()
 
@@ -232,8 +215,6 @@ QtBaseViewer::~QtBaseViewer()
   delete snapshot_;
   delete glstate_;
   delete sceneGraphDialog_;
-  delete socket_;
-  //  delete socket_notifier_;
 }
 
 
@@ -1295,10 +1276,6 @@ void QtBaseViewer::actionDrawMenu( QAction * _action )
 
 //-----------------------------------------------------------------------------
 
-bool QtBaseViewer::synchronization(){
-  return synchronized_;
-}
-
 void
 QtBaseViewer::createWidgets(const QGLFormat* _format,
                             QStatusBar* _sb,
@@ -1539,8 +1516,6 @@ void QtBaseViewer::rotate(const ACG::Vec3d&  _axis,
   glstate_->translate(-t[0], -t[1], -t[2], ACG::MULT_FROM_LEFT);
   glstate_->rotate(_angle, _axis[0], _axis[1], _axis[2], ACG::MULT_FROM_LEFT);
   glstate_->translate( t[0],  t[1],  t[2], ACG::MULT_FROM_LEFT);
-
-  sync_send( glstate_->modelview(), glstate_->inverse_modelview() );
 }
 
 
