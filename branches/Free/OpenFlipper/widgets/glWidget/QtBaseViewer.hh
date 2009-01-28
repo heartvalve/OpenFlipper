@@ -580,6 +580,8 @@ signals:
    */
   void signalMouseEventIdentify( QMouseEvent* );
 
+
+
   /// set view, used for synchronizing (cf. slotSetView())
   void signalSetView( const ACG::GLMatrixd& _modelview,
 		                const ACG::GLMatrixd& _inverse_modelview );
