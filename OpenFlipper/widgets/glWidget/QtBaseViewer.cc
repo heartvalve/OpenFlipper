@@ -118,14 +118,13 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
 			    const QtBaseViewer* _share,
 			    Options _options ) :
   QWidget(_parent),
-  statusbar_(0),
+  statusbar_(_statusBar),
   glareaGrabbed_(false),
   updateLocked_(false),
   projectionUpdateLocked_(false),
   blending_(true),
   sceneGraphDialog_(0),
   options_(_options),
-  privateStatusBar_(0),
   disableKeyHandling_(false),
   externalDrag_(false),
   snapshotName_("snap.png"),
@@ -232,7 +231,6 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
 
 QtBaseViewer::~QtBaseViewer()
 {
-  delete privateStatusBar_;
   delete snapshot_;
   delete glstate_;
   delete sceneGraphDialog_;
@@ -256,19 +254,7 @@ QtBaseViewer::sizeHint() const
 
 void QtBaseViewer::setStatusBar(QStatusBar* _sb)
 {
-  if (_sb==0)
-  {
-    if (privateStatusBar_==0)
-      privateStatusBar_=new QStatusBar(this);
-    statusbar_=privateStatusBar_;
-    if (options_ & ShowPrivateStatusBar)
-      privateStatusBar_->show();
-    else
-      privateStatusBar_->hide();
-  }
-  else {
-    statusbar_ = _sb;
-  }
+  statusbar_ = _sb;
 }
 
 
@@ -277,10 +263,6 @@ void QtBaseViewer::setStatusBar(QStatusBar* _sb)
 
 void QtBaseViewer::applyOptions(int _options)
 {
-  if (_options&ShowPrivateStatusBar)
-    setStatusBar(0);
-  else if (privateStatusBar_!=0)
-    privateStatusBar_->hide();
 
   if (_options&ShowWheelX)         wheelX_->show();
   else                             wheelX_->hide();
@@ -1324,7 +1306,6 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
                             QStatusBar* _sb,
                             const QtBaseViewer* _share)
 {
-  statusbar_=privateStatusBar_=0;
   setStatusBar(_sb);
   drawMenu_=0;
   pickMenu_=0;
@@ -1342,12 +1323,6 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
   QFrame* work=new QFrame(this);
 
   layout->addWidget(work,1); // gets all stretch
-
-
-  // private status bar
-  assert(statusbar_!=0);
-  if (privateStatusBar_!=0)
-    layout->addWidget(privateStatusBar_,0); // no stretch
 
 
   // Construct GL context & widget
