@@ -164,10 +164,11 @@ void QtGLGraphicsScene::contextMenuEvent(QGraphicsSceneContextMenuEvent* _e)
 
 void QtGLGraphicsScene::dragEnterEvent(QGraphicsSceneDragDropEvent* _e)
 {
+  std::cerr << "Todo : SceneDragEnterEvent not working with external handling" << std::endl;
   QGraphicsScene::dragEnterEvent(_e);
   if (_e->isAccepted())
     return;
-
+  std::cerr << "Not Accepted ... passing to baseviewer" << std::endl;
   QPoint p (_e->scenePos().x(), _e->scenePos().y());
   QDragEnterEvent de(p, _e->possibleActions(), _e->mimeData(), _e->buttons(),
 		     _e->modifiers ());
@@ -177,9 +178,11 @@ void QtGLGraphicsScene::dragEnterEvent(QGraphicsSceneDragDropEvent* _e)
 
 void QtGLGraphicsScene::dropEvent(QGraphicsSceneDragDropEvent* _e)
 {
+  std::cerr << "Todo : SceneDropEvent not working with external handling" << std::endl;
   QGraphicsScene::dropEvent(_e);
   if (_e->isAccepted())
     return;
+  std::cerr << "Not Accepted ... passing to baseviewer" << std::endl;
   QPoint p (_e->scenePos().x(), _e->scenePos().y());
   QDropEvent de(p, _e->possibleActions(), _e->mimeData(), _e->buttons(),
 		_e->modifiers ());
