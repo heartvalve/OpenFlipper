@@ -47,43 +47,15 @@
 
 //== IMPLEMENTATION ==========================================================
 
-void QtBaseViewer::startDrag()
-{
-  QString view;
-  encodeView(view);
-
-  QDrag     * drag = new QDrag( this );
-  QMimeData * mime_data = new QMimeData;
-
-  mime_data->setText( view );
-  drag->setMimeData( mime_data );
-  drag->start();
-}
-
-
 void QtBaseViewer::glDragEnterEvent(QDragEnterEvent* _event)
 {
-  if ( externalDrag_ ) {
-    emit dragEnterEvent(_event);
-  } else {
-    if ( _event->mimeData()->hasFormat("text/plain") )
-      _event->acceptProposedAction();
-  }
+ emit dragEnterEvent(_event);
 }
 
 
 void QtBaseViewer::glDropEvent(QDropEvent* _event)
 {
-  if ( externalDrag_ ) {
-    emit dropEvent( _event );
-  } else {
-    if ( _event->source() != this )
-    {
-      QString view( _event->mimeData()->text() );
-      decodeView(view);
-      _event->acceptProposedAction();
-    }
-  }
+ emit dropEvent( _event );
 }
 
 //=============================================================================
