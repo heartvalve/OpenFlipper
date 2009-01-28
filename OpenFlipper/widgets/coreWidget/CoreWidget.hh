@@ -74,6 +74,8 @@
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
+#include <ACG/QtWidgets/QtSceneGraphWidget.hh>
+
 
 struct ViewMode{
       QString name;
@@ -364,9 +366,18 @@ public:
     /// Help Menu
     QMenu* helpMenu_;
 
+    // widget showing the scenegraph
+    ACG::QtWidgets::QtSceneGraphDialog* sceneGraphDialog_;
+
   /** @} */
 
   private slots:
+
+    /** Creates and shows the Scenegraph Dialog
+     */
+    void slotShowSceneGraphDialog();
+
+
    /** Display a log message in the Mainwidget
     * @param _type Type of Message (OUT,WARN,ERR)
     * @param _message The message to be displayed

@@ -44,7 +44,6 @@
 #include "QtBaseViewer.hh"
 #include "QtGLGraphicsScene.hh"
 #include "QtGLGraphicsView.hh"
-#include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 #include <ACG/QtWidgets/QtWheel.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/GL/gl.hh>
@@ -122,7 +121,6 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
   updateLocked_(false),
   projectionUpdateLocked_(false),
   blending_(true),
-  sceneGraphDialog_(0),
   snapshotName_("snap.png"),
   snapshotCounter_(0),
   snapshot_(0),
@@ -212,7 +210,6 @@ QtBaseViewer::~QtBaseViewer()
 {
   delete snapshot_;
   delete glstate_;
-  delete sceneGraphDialog_;
 }
 
 
@@ -1513,34 +1510,6 @@ QPoint QtBaseViewer::glMapFromGlobal( const QPoint& _pos ) const {
 
 QPoint QtBaseViewer::glMapToGlobal( const QPoint& _pos ) const {
   return glView_->mapToGlobal(_pos);
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void
-QtBaseViewer::showSceneGraphDialog()
-{
-  if (sceneGraphRoot_)
-  {
-    if (!sceneGraphDialog_)
-    {
-      sceneGraphDialog_ = new ACG::QtWidgets::QtSceneGraphDialog( this, sceneGraphRoot_ );
-
-      connect(this,
-              SIGNAL(signalSceneGraphChanged(ACG::SceneGraph::BaseNode*)),
-              sceneGraphDialog_,
-              SLOT(update(ACG::SceneGraph::BaseNode*)));
-
-      connect(sceneGraphDialog_,
-              SIGNAL(signalNodeChanged(ACG::SceneGraph::BaseNode*)),
-              this,
-              SLOT(slotNodeChanged(ACG::SceneGraph::BaseNode*)));
-    }
-
-    sceneGraphDialog_->show();
-  }
 }
 
 

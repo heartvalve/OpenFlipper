@@ -467,8 +467,6 @@ public slots:
     void projectionModeChanged( bool _ortho );
 
   public slots:
-  /// show scenegraph widget
-  virtual void showSceneGraphDialog();
 
   /// set view, used for synchronizing
   virtual void setView( const ACG::GLMatrixd& _modelview,
@@ -707,8 +705,7 @@ private:
   bool                         blending_;
 
 
-  // widget showing the scenegraph
-  ACG::QtWidgets::QtSceneGraphDialog*     sceneGraphDialog_;
+
 
 
   // gl widget used as drawing area to paint the graphics scene
