@@ -131,10 +131,10 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   if ( !OpenFlipper::Options::multiView() ) {
 
-    QtExaminerViewer* examinerWidget = new QtExaminerViewer(stackedWidget_,
-                                                            "Examiner Widget",
-                                                            statusBar_ ,
-                                                            &format);
+    QtBaseViewer* examinerWidget = new QtBaseViewer(stackedWidget_,
+                                                    "Examiner Widget",
+                                                    statusBar_ ,
+                                                    &format);
 
     examiner_widgets_.push_back(examinerWidget);
 
@@ -148,7 +148,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     tmp = new QWidget(stackedWidget_);
 
     // Create master examiner widget
-    QtExaminerViewer* examinerWidget = new QtExaminerViewer(tmp,
+    QtBaseViewer* examinerWidget = new QtBaseViewer(tmp,
                                                             "Examiner Widget",
                                                             statusBar_ ,
                                                             &format,
@@ -158,7 +158,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     // Create all other examiners using the same gl context as the others
     for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      QtExaminerViewer* newWidget = new QtExaminerViewer(tmp,
+      QtBaseViewer* newWidget = new QtBaseViewer(tmp,
                                                          "Examiner Widget",
                                                          statusBar_ ,
                                                          &format,

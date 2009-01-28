@@ -50,7 +50,6 @@
 #include <OpenFlipper/common/Types.hh>
 
 // #include <ACG/Math/VectorT.hh>
-#include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <ACG/GL/GLState.hh>
 
@@ -194,7 +193,7 @@ int visible_count();
 //=======================================
 /// Set the internal examiner pointer ( DO NOT USE!! )
 DLLEXPORT
-void set_examiner( std::vector< QtExaminerViewer* > _examiner_widgets );
+void set_examiner( std::vector< QtBaseViewer* > _examiner_widgets );
 
 /// Set the active id of the examiner which got the last mouse events
 DLLEXPORT

@@ -564,12 +564,12 @@ protected:
 
 
   /// specialized viewer: hande mouse events
-  virtual void viewMouseEvent( QMouseEvent* _event) = 0;
+  void viewMouseEvent( QMouseEvent* _event);
   /// specialized viewer: handle wheel events
-  virtual void viewWheelEvent(QWheelEvent* _event) = 0;
+  void viewWheelEvent(QWheelEvent* _event);
 
   /// optional: hande mouse events to rotate light
-  virtual void lightMouseEvent( QMouseEvent* /* _event */ ) {}
+  void lightMouseEvent( QMouseEvent* /* _event */ );
 
 
   protected:
@@ -811,7 +811,7 @@ private:
      *
      * @return If the derived class handled the event it has to return true otherwise false
      */
-    virtual bool viewKeyPressEvent(QKeyEvent* _event) = 0;
+    virtual bool viewKeyPressEvent(QKeyEvent* /*_event*/) { return false; };
 
   /** @} */
 
@@ -1023,6 +1023,64 @@ private:
     ACG::SceneGraph::PickTarget pickRendererMode_;
 
   /** @} */
+
+
+
+
+
+
+
+
+  //===========================================================================
+  /** @name Merge from examiner
+   * @{ */
+  //===========================================================================
+
+  public:
+
+  /// Lock scene rotation
+  void allowRotation( bool _mode ) { allowRotation_ = _mode; };
+
+
+  /// Factors for zooming with the wheel
+  public:
+    double wheelZoomFactor();
+    double wheelZoomFactorShift();
+    void setWheelZoomFactor(double _factor);
+    void setWheelZoomFactorShift(double _factor);
+  private:
+    double wZoomFactor_;
+    double wZoomFactorShift_;
+
+
+  private slots:
+
+    void slotAnimation();
+
+  protected:
+
+    // mouse interaction
+    QPoint   lastPoint2D_;
+
+  private:
+
+    /// virtual trackball: map 2D screen point to unit sphere
+    bool mapToSphere(const QPoint& _p, ACG::Vec3d& _result) const;
+
+
+    // mouse interaction
+    ACG::Vec3d    lastPoint3D_;
+    bool          lastPoint_hitSphere_;
+    bool          allowRotation_;
+
+
+    // animation stuff
+    ACG::Vec3d                   lastRotationAxis_;
+    double                       lastRotationAngle_;
+    QTime                        lastMoveTime_;
+    QTimer*                      timer_;
+
+    /** @} */
 };
 
 

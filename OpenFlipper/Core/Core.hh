@@ -52,7 +52,7 @@
 
 #include "OpenFlipper/common/Types.hh"
 
-#include <OpenFlipper/widgets/glWidget/QtExaminerViewer.hh>
+#include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 
 // QT INCLUDES
 #include <qvariant.h>
