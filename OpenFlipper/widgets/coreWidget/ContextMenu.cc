@@ -299,7 +299,20 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
 
 void CoreWidget::slotSnapshotName() {
   std::cerr << "Todo : slotSnapShotName only sets name for current viewer" << std::endl;
-  examiner_widgets_[PluginFunctions::activeExaminer()]->actionSnapshotName();
+
+  QString fname = PluginFunctions::viewerProperties().snapshotName();
+
+  fname.replace('%', '$');
+  fname = QFileDialog::getSaveFileName ( 0, "Save snapshot name" );
+  if (!fname.isEmpty())
+  {
+    fname.replace('$', '%');
+
+    PluginFunctions::viewerProperties().snapshotBaseFileName(fname);
+    QString msg="next snapshot: ";
+    statusBar()->showMessage(msg);
+  }
+
 }
 
 void CoreWidget::changeBackgroundColor(){
@@ -330,7 +343,7 @@ void CoreWidget::changeBackgroundColor(){
 }
 
 void CoreWidget::slotSnapshot() {
-  examiner_widgets_[PluginFunctions::activeExaminer()]->actionSnapshot();
+  examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot();
 }
 
 void CoreWidget::slotPasteView( ) {

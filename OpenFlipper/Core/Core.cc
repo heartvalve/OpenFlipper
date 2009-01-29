@@ -971,8 +971,7 @@ void Core::snapshotBaseFileName(const QString& _fname, unsigned int _viewerId ){
       return;
     }
 
-
-    coreWidget_->examiner_widgets_[_viewerId]->snapshotBaseFileName( _fname );
+    PluginFunctions::viewerProperties(_viewerId).snapshotBaseFileName( _fname );
   }
 
 }

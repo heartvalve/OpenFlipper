@@ -121,9 +121,6 @@ glViewer::glViewer( QWidget* _parent,
   updateLocked_(false),
   projectionUpdateLocked_(false),
   blending_(true),
-  snapshotName_("snap.png"),
-  snapshotCounter_(0),
-  snapshot_(0),
   pick_mode_name_(""),
   pick_mode_idx_(-1),
   renderPicking_(false),
@@ -168,9 +165,6 @@ glViewer::glViewer( QWidget* _parent,
   animation_        = false;
 
   light_matrix_.identity();
-
-
-  snapshot_=new QImage;
 
   trackMouse_ = false;
 
@@ -217,7 +211,6 @@ glViewer::glViewer( QWidget* _parent,
 
 glViewer::~glViewer()
 {
-  delete snapshot_;
   delete glstate_;
 }
 
@@ -2167,6 +2160,46 @@ void glViewer::slotAnimation()
 
 void glViewer::slotPropertiesUpdated() {
   std::cerr << "glViewer : Properties updated" << std::endl;
+}
+
+
+void glViewer::snapshot()
+{
+   makeCurrent();
+
+   glView_->raise();
+   qApp->processEvents();
+   makeCurrent();
+   paintGL();
+   glFinish();
+
+   QImage snapshot;
+   copyToImage(snapshot, 0, 0, glWidth(), glHeight(), GL_BACK);
+
+   QFileInfo fi(properties_.snapshotName());
+
+   QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()) + ".";
+
+   QString format="png";
+
+   if (fi.completeSuffix() == "ppm")
+     format="ppmraw";
+
+   fname += format;
+
+   bool rval=snapshot.save(fname,format.toUpper().toLatin1());
+
+
+   assert(statusbar_!=0);
+   if (rval)
+   {
+     statusbar_->showMessage(QString("snapshot: ")+fname,5000);
+   }
+   else
+   {
+     statusbar_->showMessage(QString("could not save snapshot to ")+fname);
+   }
+
 }
 
 //=============================================================================
