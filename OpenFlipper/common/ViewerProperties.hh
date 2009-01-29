@@ -135,6 +135,24 @@ namespace Viewer {
 
     /** @} */
 
+    //===========================================================================
+    /** @name Rendering Settings
+    * @{ */
+    //===========================================================================
+    public slots:
+      /** true if counter clockwise orientation should be used to define front facing orientation.
+       */
+      bool isCCWFront(){ return CCWFront_; };
+
+      /// Set counter clockwise orientation as front
+      void ccwFront() { CCWFront_ = true; emit updated(); };
+      /// Set clockwise orientation as front
+      void cwFront() { CCWFront_ = false; emit updated(); };
+
+    private:
+      bool CCWFront_;
+
+    /** @} */
 
     signals:
       /** \brief This signal is emitted when the configuration has been changed
