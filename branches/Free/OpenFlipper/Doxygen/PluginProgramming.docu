@@ -24,5 +24,63 @@
  * After this interface of the plugin is sucessfully processed all other interfaces will be initialized
  * and connected to the core. For details about the individual interfaces see their documentation. 
  * \ref interfaces
+ *
+ * \section ex1 A simple example
+ *
+ * In this section we are going to build our own OpenFlipper plugin step by step. The goal of this
+ * tutorial is to build a simple plugin that is loaded by OpenFlipper at launch.
+ *
+ * We start by creating the plugin directory in OpenFlipper's root directory,
+ * naming it e.g. \c Plugin-SimplePlugin.
+ * The interface definition should contain the following header includes:
  * 
+ * \dontinclude example/simplePlugin.hh
+ * \skipline #include
+ * \until Types.hh>
+ *
+ * As we know the plugin class has to be derived from at least \c BaseInterface,
+ * the class definition will look like:
+ *
+ * \dontinclude example/simplePlugin.hh
+ * \skipline class
+ *
+ * (Since we implement a Qt-class, our base object is QObject which provides
+ * some basic functionality and type definitions.)
+ * We then use the macros \c Q_OBJECT and \c Q_INTERFACES in order to make accessible the signals and
+ * slots which have to be overridden later on. See BaseInterface documentation for signals and slots
+ * that can be overriden.
+ *
+ * \dontinclude example/simplePlugin.hh
+ * \skipline Q_OBJECT
+ * \skipline Q_INTERFACES
+ *
+ * For now, the only thing we override from our base class is \c name() and \c description() which
+ * each returns the name and description of our plugin, respectively. The override of these two
+ * functions is mandatory, all other slots/signals are optional.
+ * Each of the functions returns a QString (see Qt documentation for information on Qt types).
+ *
+ * \dontinclude example/simplePlugin.hh
+ * \skipline QString name(
+ * \skipline QString description(
+ *
+ * If you made it to this point, don't give up, we're almost there! Looks like this is it for
+ * the interface definition. We're now considering our implementation which consists of only a few lines.
+ * (Since we don't want to implement any functionality at this point).
+ *
+ * The implementation only contains the macro
+ *
+ * \dontinclude example/simplePlugin.cc
+ * \skipline Q_EXPORT
+ *
+ * which exports the plugin class \c SimplePlugin with the name \c simplePlugin (note that our class
+ * name is with a capital s whereas the export name is lower case). An important constraint is
+ * that the export name has to be unique (in case there exist multiple plugins).
+ *
+ * The complete source code looks like this:
+ *
+ * simplePlugin.hh
+ * \include example/simplePlugin.hh
+ *
+ * simplePlugin.cc
+ * \include example/simplePlugin.cc
  */
