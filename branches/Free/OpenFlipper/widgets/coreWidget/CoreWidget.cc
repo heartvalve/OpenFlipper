@@ -645,7 +645,7 @@ CoreWidget::slotShowSceneGraphDialog()
                 sceneGraphDialog_,    SLOT(update(ACG::SceneGraph::BaseNode*)));
 
         connect(sceneGraphDialog_, SIGNAL(signalNodeChanged(ACG::SceneGraph::BaseNode*)),
-                examiner_widgets_[i], SLOT(slotNodeChanged(ACG::SceneGraph::BaseNode*)));
+                examiner_widgets_[i], SLOT(updateGL()));
       }
 
     }

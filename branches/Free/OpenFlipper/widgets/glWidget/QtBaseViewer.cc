@@ -1405,18 +1405,6 @@ QPoint glViewer::glMapToGlobal( const QPoint& _pos ) const {
   return glView_->mapToGlobal(_pos);
 }
 
-
-//-----------------------------------------------------------------------------
-
-
-void
-glViewer::slotNodeChanged(ACG::SceneGraph::BaseNode* _node)
-{
-  emit(signalNodeChanged(_node));
-  updateGL();
-}
-
-
 //-----------------------------------------------------------------------------
 
 

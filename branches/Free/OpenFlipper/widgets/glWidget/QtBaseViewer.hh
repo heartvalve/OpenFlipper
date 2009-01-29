@@ -358,9 +358,6 @@ public slots:
   void actionPasteView();
   void actionCopyView();
 
-
-
-
 //-------------------------------------------------------------- public signals
 signals:
 
@@ -389,8 +386,7 @@ signals:
 
   /// scene graph has changed
   void signalSceneGraphChanged(ACG::SceneGraph::BaseNode* _root);
-  /// scene graph has changed
-  void signalNodeChanged(ACG::SceneGraph::BaseNode* _node);
+
 
   signals:
 
@@ -460,9 +456,6 @@ protected slots:
   virtual void slotWheelY(double _dAngle);
   /// process signals from wheelZ_
   virtual void slotWheelZ(double _dist);
-
-  /// connected to scenegraph widget
-  virtual void slotNodeChanged(ACG::SceneGraph::BaseNode* _node);
 
   /// correct ??? (same function as in qt src)
   virtual void cleanupEventFilter()
