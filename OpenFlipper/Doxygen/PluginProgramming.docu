@@ -90,10 +90,10 @@
  * that is used to generate the Makefiles for the plugin. For general information on how to build
  * OpenFlipper with qmake see \ref buildingOpenFlipper.
  * So lets get started! First off we create a file \c Plugin-SimplePlugin.pro in the plugins's directory.
- * For consistency reasons it is recommended to name the project file after the project's directory.
+ * It is mandatory to name the project file after the project's directory.
  *
  * Our first line includes OpenFlipper's predefined qmake functions. This allows us to simply call
- * \c Plugin() in order build our code as a plugin. The variable \c DIRECTORY holds
+ * \c Plugin() in order to build our code as a plugin. The variable \c DIRECTORY holds
  * the directories that are to be build (we only need the plugin's directory here since the plugin does not
  * depend on external libraries or sources). Our project file looks like this:
  *
