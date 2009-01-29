@@ -561,7 +561,6 @@ private:
   unsigned int                 curDrawMode_,
                                availDrawModes_;
 
-  bool                         updateLocked_;
   bool                         projectionUpdateLocked_;
   bool                         blending_;
 

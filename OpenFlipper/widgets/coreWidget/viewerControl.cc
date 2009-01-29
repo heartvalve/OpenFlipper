@@ -121,7 +121,7 @@ void CoreWidget::slotFunctionMenuUpdate() {
   QList< QAction *> allActions = functionMenu_->actions();
 
   for ( int i = 0 ; i <  allActions.size(); ++i ) {
-    if ( allActions[i]->text() == "Animation" )
+    if ( allActions[i]->text()      == "Animation" )
       allActions[i]->setChecked(PluginFunctions::viewerProperties().animation());
     else if ( allActions[i]->text() == "Backface Culling" )
       allActions[i]->setChecked(PluginFunctions::viewerProperties().backFaceCulling());
