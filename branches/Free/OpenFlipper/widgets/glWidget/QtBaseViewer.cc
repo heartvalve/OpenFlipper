@@ -186,9 +186,6 @@ glViewer::glViewer( QWidget* _parent,
 
   allowRotation_ = true;
 
-  //default wheel zoom factors
-  wZoomFactor_ = 1.0;
-  wZoomFactorShift_ = 0.2;
 
   connect( &properties_,SIGNAL(updated()), this, SLOT( slotPropertiesUpdated() ) );
   connect( &properties_,SIGNAL(actionModeChanged(Viewer::ActionMode)), this, SLOT( updateActionMode(Viewer::ActionMode) ) );
@@ -1746,7 +1743,7 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
       double factor  = 1.0;
 
       if (_event->modifiers() == Qt::ShiftModifier)
-        factor = wZoomFactorShift_;
+        factor = properties_.wheelZoomFactorShift();
 
       // mouse button should be pressed
       if (_event->buttons() & (Qt::LeftButton | Qt::MidButton))
@@ -1924,36 +1921,12 @@ glViewer::lightMouseEvent(QMouseEvent* _event)
 
 //-----------------------------------------------------------------------------
 
-double glViewer::wheelZoomFactor(){
-  return wZoomFactor_;
-}
-
-//-----------------------------------------------------------------------------
-
-double glViewer::wheelZoomFactorShift(){
-  return wZoomFactorShift_;
-}
-
-//-----------------------------------------------------------------------------
-
-void glViewer::setWheelZoomFactor(double _factor){
-  wZoomFactor_ = _factor;
-}
-
-//-----------------------------------------------------------------------------
-
-void glViewer::setWheelZoomFactorShift(double _factor){
-  wZoomFactorShift_ = _factor;
-}
-
-//-----------------------------------------------------------------------------
-
 void glViewer::viewWheelEvent( QWheelEvent* _event)
 {
-  double factor = wZoomFactor_;
+  double factor = properties_.wheelZoomFactor();
 
   if (_event->modifiers() == Qt::ShiftModifier)
-    factor = wZoomFactorShift_;
+    factor = properties_.wheelZoomFactorShift();
 
   switch (projectionMode())
   {
@@ -2042,16 +2015,12 @@ void glViewer::applyProperties() {
   else
     glDisable( GL_CULL_FACE );
 
-
 }
 
 void glViewer::slotPropertiesUpdated() {
   std::cerr << "Properties updated" << std::endl;
-
   makeCurrent();
-
   applyProperties();
-
   updateGL();
 }
 

@@ -140,6 +140,34 @@ namespace Viewer {
 
     //===========================================================================
     //===========================================================================
+    /** @name Mouse Wheel Settings
+    * @{ */
+    //===========================================================================
+    //===========================================================================
+
+
+    public slots:
+      /// Zoom factor when using mousewheel
+      double wheelZoomFactor() { return wZoomFactor_; };
+
+      /// Zoom factor when using mousewheel and pressing shift
+      double wheelZoomFactorShift() { return wZoomFactorShift_; };
+
+      /// Set zoom factor when using mousewheel
+      void wheelZoomFactor(double _factor) { wZoomFactor_ = _factor; };
+
+      /// Set zoom factor when using mousewheel and pressing shift
+      void wheelZoomFactorShift(double _factor) { wZoomFactorShift_ = _factor; }; ;
+
+    private:
+      double wZoomFactor_;
+
+      double wZoomFactorShift_;
+
+    /** @} */
+
+    //===========================================================================
+    //===========================================================================
     /** @name Rendering Settings
     * @{ */
     //===========================================================================
@@ -267,6 +295,7 @@ namespace Viewer {
 
     private:
       bool animation_;
+
 
     //===========================================================================
 
