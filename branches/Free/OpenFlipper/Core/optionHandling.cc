@@ -90,10 +90,10 @@ void Core::applyOptions(){
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       //animation
-      coreWidget_->examiner_widgets_[i]->animation(OpenFlipper::Options::animation());
+      PluginFunctions::viewerProperties(i).animation(OpenFlipper::Options::animation());
 
       //Backface Culling
-      coreWidget_->examiner_widgets_[i]->backFaceCulling(OpenFlipper::Options::backfaceCulling());
+      PluginFunctions::viewerProperties(i).backFaceCulling(OpenFlipper::Options::backfaceCulling());
 
       //wheel zoom factor
       coreWidget_->examiner_widgets_[i]->setWheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());

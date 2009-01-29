@@ -430,9 +430,9 @@ void Core::writeApplicationOptions(INIFile& _ini) {
       std::cerr << "Todo : Save application options for multiple views" << std::endl;
     }
 
-    _ini.add_entry("Options","BackfaceCulling",coreWidget_->examiner_widgets_[0]->backFaceCulling());
-    _ini.add_entry("Options","Animation",coreWidget_->examiner_widgets_[0]->animation());
-    _ini.add_entry("Options","twoSidedLighting",coreWidget_->examiner_widgets_[0]->twoSidedLighting());
+    _ini.add_entry("Options","BackfaceCulling",PluginFunctions::viewerProperties().backFaceCulling());
+    _ini.add_entry("Options","Animation",PluginFunctions::viewerProperties().animation());
+    _ini.add_entry("Options","twoSidedLighting",PluginFunctions::viewerProperties().twoSidedLighting());
 
     _ini.add_entry("Options","WheelZoomFactor",coreWidget_->examiner_widgets_[0]->wheelZoomFactor());
     _ini.add_entry("Options","WheelZoomFactorShift",coreWidget_->examiner_widgets_[0]->wheelZoomFactorShift());

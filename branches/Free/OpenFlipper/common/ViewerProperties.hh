@@ -231,6 +231,43 @@ namespace Viewer {
     private:
       int locked_;
 
+
+    //===========================================================================
+
+    public slots:
+      /// Get current state of backface culling
+      bool backFaceCulling() { return backFaceCulling_; };
+
+      /// Enable or disable backface culling
+      void backFaceCulling(bool _state ) { backFaceCulling_ = _state; emit updated(); }
+
+    private:
+      bool backFaceCulling_;
+
+    //===========================================================================
+
+    public slots:
+      /// set 2-sided lighting on/off
+      void twoSidedLighting(bool _state ) { twoSidedLighting_ = _state; glState_->set_twosided_lighting( _state ); emit updated(); }
+
+      /// is 2-sided lighing enabled?
+      bool twoSidedLighting() { return twoSidedLighting_; };
+
+    private:
+      bool twoSidedLighting_;
+
+    //===========================================================================
+
+    public slots:
+      /// set 2-sided lighting on/off
+      void animation(bool _state ) { animation_ = _state; emit updated(); }
+
+      /// is 2-sided lighing enabled?
+      bool animation() { return animation_; };
+
+    private:
+      bool animation_;
+
     //===========================================================================
 
     public:
