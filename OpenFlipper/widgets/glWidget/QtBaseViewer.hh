@@ -158,14 +158,7 @@ public:
   ACG::GLState& glState() { return *glstate_; }
 
 
-  /** Set background color.
-      Sets the OpenGL clear color to (_c.red(), _c.green(), _c.blue(), 0).
-   */
-  void backgroundColor(const ACG::Vec4f& _color) {
-    glstate_->set_clear_color(_color); updateGL();
-  }
-  /// get background color
-  ACG::Vec4f backgroundColor() { return glstate_->clear_color(); }
+
 
 
   /** Lock update of display.
@@ -1000,10 +993,19 @@ private:
     Viewer::ViewerProperties properties_;
 
   private slots:
+    /** Called when properties for the viewer require a redraw
+     * The slot will trigger the redraw after setting the right properties.
+     */
     void slotPropertiesUpdated();
 
     /// Called when the actionMode has been updated
     void updateActionMode(Viewer::ActionMode _am);
+
+  private:
+    /** This will apply all properties without redrawing
+     *  You have to set the context yourself!
+     */
+    void applyProperties();
 
   /** @} */
 };
