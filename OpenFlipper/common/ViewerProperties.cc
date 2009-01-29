@@ -23,9 +23,9 @@
 //
 //-----------------------------------------------------------------------------
 //
-//   $Revision: $
-//   $Author: $
-//   $Date: $
+//   $Revision: 4482 $
+//   $Author: moebius $
+//   $Date: 2009-01-28 11:12:14 +0100 (Mi, 28. Jan 2009) $
 //
 //=============================================================================
 
@@ -34,35 +34,37 @@
 
 //=============================================================================
 //
-//  CLASS QtGLGraphicsView - IMPLEMENTATION
+// Property storage Class for glWidgets
 //
 //=============================================================================
 
-//== INCLUDES =================================================================
+#include <OpenFlipper/common/GlobalDefines.hh>
+#include "ViewerProperties.hh"
+#include <iostream>
 
-#include <QGraphicsView>
-#include "QtBaseViewer.hh"
+namespace Viewer {
 
-//== NAMESPACES ===============================================================
+  ViewerProperties::ViewerProperties():
+    actionMode_(Viewer::PickingMode),
+    lastActionMode_(Viewer::PickingMode)
+  {
 
-//== CLASS DEFINITION =========================================================
+  }
+
+  ViewerProperties::~ViewerProperties() {
+
+  }
+
+  void ViewerProperties::actionMode(Viewer::ActionMode _am) {
+    std::cerr << "ActionModeChanged" << std::endl;
+    if (_am != actionMode_) {
+      lastActionMode_ = actionMode_;
+      actionMode_ = _am;
+      emit actionModeChanged(_am);
+    }
+
+  }
 
 
-/** Graphics view Widget that is used to display the QtGLGraphicsScene scene.
-*/
 
-class QtGLGraphicsView : public QGraphicsView
-{
-public:
-  QtGLGraphicsView(glViewer* _w, QWidget* _parent);
-
-protected:
-  virtual void resizeEvent(QResizeEvent *_event);
-
-private:
-  glViewer* w_;
-};
-
-//=============================================================================
-
-//=============================================================================
+}

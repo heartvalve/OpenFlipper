@@ -34,7 +34,7 @@
 
 //=============================================================================
 //
-//  CLASS QtBaseViewer - IMPLEMENTATION
+//  CLASS glViewer - IMPLEMENTATION
 //
 //=============================================================================
 
@@ -51,21 +51,21 @@
 
 //== IMPLEMENTATION ==========================================================
 
-void QtBaseViewer::setEyeDistance(double _distance) {
+void glViewer::setEyeDistance(double _distance) {
   eyeDist_ = _distance;
   updateGL();
 }
 
-double QtBaseViewer::eyeDistance( ) {
+double glViewer::eyeDistance( ) {
   return eyeDist_;
 }
 
-void QtBaseViewer::setFocalDistance(double _distance) {
+void glViewer::setFocalDistance(double _distance) {
   focalDist_ = _distance;
   updateGL();
 }
 
-double QtBaseViewer::focalDistance( ) {
+double glViewer::focalDistance( ) {
   return focalDist_;
 }
 
@@ -73,7 +73,7 @@ double QtBaseViewer::focalDistance( ) {
 
 
 void
-QtBaseViewer::setStereoMode(bool _b)
+glViewer::setStereoMode(bool _b)
 {
   stereo_ = _b;
 

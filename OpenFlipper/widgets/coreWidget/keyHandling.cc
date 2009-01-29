@@ -5,6 +5,8 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+
 //-----------------------------------------------------------------------------
 
 KeyBinding CoreWidget::getKeyBinding(QObject* _plugin, int _keyIndex ){
@@ -260,9 +262,9 @@ void CoreWidget::slotRegisterSlotKeyBindings(){
       kb.description = plugins_[i].rpcFunctions[j];
       kb.multiUse = true;
       kb.slot = true;
-    
+
       plugins_[i].keys.append( kb );
-    
+
       keys_.insert( std::make_pair( std::make_pair(-1, 0) , std::make_pair(plugins_[i].plugin, plugins_[i].keys.size()-1) ) );
       invKeys_.insert( std::make_pair( std::make_pair(plugins_[i].plugin, plugins_[i].keys.size()-1) , std::make_pair(-1, 0) ) );
     }
@@ -433,7 +435,7 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
   switch (_e->key()) {
     case Qt::Key_Escape:
       for ( uint i = 0 ; i < examiner_widgets_.size(); ++i)
-        examiner_widgets_[i]->actionMode(examiner_widgets_[i]->lastActionMode());
+        PluginFunctions::viewerProperties(i).actionMode( PluginFunctions::viewerProperties(i).lastActionMode() );
       break;
 
     case Qt::Key_Print:

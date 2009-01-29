@@ -50,7 +50,7 @@
 
 //== IMPLEMENTATION ===========================================================
 
-QtGLGraphicsScene::QtGLGraphicsScene(QtBaseViewer* _w) :
+QtGLGraphicsScene::QtGLGraphicsScene(glViewer* _w) :
   QGraphicsScene (),
   w_(_w)
 {

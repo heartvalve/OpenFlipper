@@ -51,9 +51,9 @@
 
 /** OpenGL drawing area and widget scene -- for \a internal use only.
     The scene basically redirects calls to a
-    ACG::QtWidgets::QtBaseViewer, the corresponding virtual methods there
+    ACG::QtWidgets::glViewer, the corresponding virtual methods there
     are prefixed with \c gl.
-    \sa ACG::QtWidgets::QtBaseViewer
+    \sa ACG::QtWidgets::glViewer
 */
 
 class QtGLGraphicsScene : public QGraphicsScene
@@ -61,10 +61,10 @@ class QtGLGraphicsScene : public QGraphicsScene
 Q_OBJECT
 
 public:
-  QtGLGraphicsScene(QtBaseViewer* _w);
+  QtGLGraphicsScene(glViewer* _w);
 
 protected:
-  friend class QtBaseViewer;
+  friend class glViewer;
 
   virtual void drawBackground(QPainter *_painter, const QRectF &_rect);
 
@@ -80,7 +80,7 @@ protected:
   virtual void dropEvent(QGraphicsSceneDragDropEvent* _e);
 
 private:
-  QtBaseViewer* w_;
+  glViewer* w_;
 };
 
 //=============================================================================

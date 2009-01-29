@@ -23,9 +23,9 @@
 //
 //-----------------------------------------------------------------------------
 //
-//   $Revision: $
-//   $Author: $
-//   $Date: $
+//   $Revision: 4482 $
+//   $Author: moebius $
+//   $Date: 2009-01-28 11:12:14 +0100 (Mi, 28. Jan 2009) $
 //
 //=============================================================================
 
@@ -34,35 +34,45 @@
 
 //=============================================================================
 //
-//  CLASS QtGLGraphicsView - IMPLEMENTATION
+//  Standard Functions
 //
 //=============================================================================
 
-//== INCLUDES =================================================================
+/**
+ * \file PluginFunctions.hh
+ * This file contains functions to setup the internal structures for PluginFunctions.
+ * Dont Use these Functions in your Plugins!
+ */
 
-#include <QGraphicsView>
-#include "QtBaseViewer.hh"
+//
+#ifndef PLUGINFUNCTIONSCORE_HH
+#define PLUGINFUNCTIONSCORE_HH
 
-//== NAMESPACES ===============================================================
+#include <OpenFlipper/common/GlobalDefines.hh>
 
-//== CLASS DEFINITION =========================================================
+#include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 
+namespace PluginFunctions {
 
-/** Graphics view Widget that is used to display the QtGLGraphicsScene scene.
-*/
+//=======================================
+// Set pointers for global handling in PluginFunctions without exporting them to the Plugins
+    /** @name Setup Functions
+    * @{ */
+//=======================================
+/// Set the internal examiner pointer ( DO NOT USE!! )
+DLLEXPORT
+void setViewers( std::vector< glViewer* > _examiner_widgets );
 
-class QtGLGraphicsView : public QGraphicsView
-{
-public:
-  QtGLGraphicsView(glViewer* _w, QWidget* _parent);
+/// Set the internal scenegraph root node pointer ( DO NOT USE!! )
+DLLEXPORT
+void setSceneGraphRootNode( SeparatorNode* _root_node );
 
-protected:
-  virtual void resizeEvent(QResizeEvent *_event);
+/// Set the internal data root node pointer ( DO NOT USE!! )
+DLLEXPORT
+void setRootNode( SeparatorNode* _root_node );
 
-private:
-  glViewer* w_;
-};
+/** @} */
 
-//=============================================================================
+}
 
-//=============================================================================
+#endif //PLUGINFUNCTIONSCORE_HH

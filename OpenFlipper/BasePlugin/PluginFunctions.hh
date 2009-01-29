@@ -49,9 +49,10 @@
 
 #include <OpenFlipper/common/Types.hh>
 
-// #include <ACG/Math/VectorT.hh>
-#include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
+#include <ACG/Scenegraph/SceneGraph.hh>
+// #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <ACG/GL/GLState.hh>
+#include <OpenFlipper/common/ViewerProperties.hh>
 
 /** The Namespace PluginFunctions contains functions for all plugins. These functions should be used to get the
  *  objects to work on or to set modes in the examiner widget. */
@@ -191,9 +192,6 @@ int visible_count();
     /** @name Examiner handling
     * @{ */
 //=======================================
-/// Set the internal examiner pointer ( DO NOT USE!! )
-DLLEXPORT
-void set_examiner( std::vector< QtBaseViewer* > _examiner_widgets );
 
 /// Set the active id of the examiner which got the last mouse events
 DLLEXPORT
@@ -202,14 +200,6 @@ void setActiveExaminer( const unsigned int _id );
 /// Get the id of the examiner which got the last mouse events
 DLLEXPORT
 unsigned int activeExaminer();
-
-/// Set the internal scenegraph root node pointer ( DO NOT USE!! )
-DLLEXPORT
-void set_sceneGraphRootNode( SeparatorNode* _root_node );
-
-/// Set the internal data root node pointer ( DO NOT USE!! )
-DLLEXPORT
-void set_rootNode( SeparatorNode* _root_node );
 
 /** Execute picking operation on scenegraph
  * This picking function will pick in the last active examiner context which is automatically
@@ -272,11 +262,20 @@ void addGlobalNode(ACG::SceneGraph::BaseNode* _node);
 
 /// Set the current Action Mode (PickMode,ExamineMode,...)
 DLLEXPORT
-void actionMode ( QtBaseViewer::ActionMode _mode);
+void actionMode ( Viewer::ActionMode _mode);
 
 /// Get the current Action mode
 DLLEXPORT
-QtBaseViewer::ActionMode actionMode();
+Viewer::ActionMode actionMode();
+
+/** Get the viewer properties
+ * -1 will get the properties of the active Viewer which is the default
+ */
+DLLEXPORT
+Viewer::ViewerProperties& viewerProperties(int _id = -1);
+
+
+
 
 /** Lock scene rotation via mouse
  *
