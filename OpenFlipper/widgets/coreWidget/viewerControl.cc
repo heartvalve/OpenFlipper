@@ -122,11 +122,11 @@ void CoreWidget::slotFunctionMenuUpdate() {
 
   for ( int i = 0 ; i <  allActions.size(); ++i ) {
     if ( allActions[i]->text() == "Animation" )
-      allActions[i]->setChecked(examiner_widgets_[0]->animation());
+      allActions[i]->setChecked(PluginFunctions::viewerProperties().animation());
     else if ( allActions[i]->text() == "Backface Culling" )
-      allActions[i]->setChecked(examiner_widgets_[0]->backFaceCulling());
+      allActions[i]->setChecked(PluginFunctions::viewerProperties().backFaceCulling());
     else if ( allActions[i]->text() == "Two-sided Lighting" )
-      allActions[i]->setChecked(examiner_widgets_[0]->twoSidedLighting());
+      allActions[i]->setChecked(PluginFunctions::viewerProperties().twoSidedLighting());
   }
 
 }

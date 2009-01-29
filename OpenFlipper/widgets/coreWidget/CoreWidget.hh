@@ -442,7 +442,7 @@ public:
     void slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextMenuType type_);
 
     /// update globalOptions for actions in the contexMenu
-    void updateGlobalOptions(bool _enable);
+    void updateGlobalOptions();
 
     /// change the background color
     void changeBackgroundColor();

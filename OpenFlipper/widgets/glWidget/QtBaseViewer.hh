@@ -159,13 +159,6 @@ public:
   /// Unlock update of projection matrix.
   void unlockProjectionUpdate( void ) { projectionUpdateLocked_ = false; }
 
-  /// Is animation enabled?
-  bool animation() const { return animation_; }
-
-  public slots:
-    /// Set animation enabled.
-    void animation(bool _b);
-
   signals :
     void functionMenuUpdate();
 
@@ -213,24 +206,6 @@ public:
 
   /// set the viewing direction
   void viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up );
-
-  public:
-
-  public slots:
-    /// set backface culling on/off
-    void backFaceCulling( bool _b );
-
-  public:
-  /// is backface culling enabled?
-  bool backFaceCulling() const { return backFaceCulling_; }
-
-  public slots:
-  /// set 2-sided lighting on/off
-  void twoSidedLighting( bool _b );
-
-  public:
-  /// is 2-sided lighing enabled?
-  bool twoSidedLighting() const { return twoSidedLighting_; }
 
   /// Automatically normalize normals?
   enum NormalsMode {
@@ -569,9 +544,7 @@ private:
   // modi
   NormalsMode                  normalsMode_;
   ProjectionMode               projectionMode_;
-  bool                         backFaceCulling_;
-  bool                         twoSidedLighting_;
-  bool                         animation_;
+
 
   // helper
   bool                         trackMouse_;

@@ -54,6 +54,9 @@ namespace Viewer {
     renderPicking_(false),
     pickRendererMode_(ACG::SceneGraph::PICK_ANYTHING),
     locked_(0),
+    backFaceCulling_(false),
+    twoSidedLighting_(true),
+    animation_(false),
     glState_(0)
   {
 

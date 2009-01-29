@@ -256,8 +256,8 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
     action->setCheckable( true );
     action->setChecked( OpenFlipper::Options::animation() );
     for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      connect(action, SIGNAL(triggered(bool)), examiner_widgets_[i], SLOT(animation(bool)) );
-    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+      connect(action, SIGNAL(triggered(bool)), &(PluginFunctions::viewerProperties(i)), SLOT(animation(bool)) );
+    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions()) );
 
     //====================================================================================================
 
@@ -266,8 +266,8 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
     action->setCheckable( true );
     action->setChecked( OpenFlipper::Options::backfaceCulling() );
     for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      connect(action, SIGNAL(triggered(bool)), examiner_widgets_[i], SLOT(backFaceCulling(bool)) );
-    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+      connect(action, SIGNAL(triggered(bool)), &(PluginFunctions::viewerProperties(i)), SLOT(backFaceCulling(bool)) );
+    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions()) );
 
     //====================================================================================================
 
@@ -276,10 +276,14 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
     action->setCheckable( true );
     action->setChecked( OpenFlipper::Options::twoSidedLighting() );
     for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      connect(action, SIGNAL(triggered(bool)), examiner_widgets_[i], SLOT(twoSidedLighting(bool)) );
-    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions(bool)) );
+      connect(action, SIGNAL(triggered(bool)), &(PluginFunctions::viewerProperties(i)) , SLOT(twoSidedLighting(bool)) );
+    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions()) );
 
     functionMenu_->setTearOffEnabled(true);
+
+
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
+      connect( &(PluginFunctions::viewerProperties(i)) , SIGNAL(updated()) , this, SLOT(updateGlobalOptions()));
   }
 
   contextMenu_->addMenu(functionMenu_ );
@@ -354,10 +358,10 @@ void CoreWidget::slotCopyView( ) {
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView();
 }
 
-void CoreWidget::updateGlobalOptions(bool /*_enable*/){
-  OpenFlipper::Options::animation( examiner_widgets_[0]->animation() );
-  OpenFlipper::Options::backfaceCulling( examiner_widgets_[0]->backFaceCulling() );
-  OpenFlipper::Options::twoSidedLighting( examiner_widgets_[0]->twoSidedLighting() );
+void CoreWidget::updateGlobalOptions(){
+  OpenFlipper::Options::animation( PluginFunctions::viewerProperties().animation() );
+  OpenFlipper::Options::backfaceCulling( PluginFunctions::viewerProperties().backFaceCulling() );
+  OpenFlipper::Options::twoSidedLighting( PluginFunctions::viewerProperties().twoSidedLighting() );
 }
 
 void CoreWidget::slotAddContextMenu(QMenu* _menu) {

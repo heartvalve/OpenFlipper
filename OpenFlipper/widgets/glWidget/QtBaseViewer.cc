@@ -132,16 +132,12 @@ glViewer::glViewer( QWidget* _parent,
     exit(1);
   }
 
-
   // widget stuff
   createWidgets(_format,_statusBar,_share);
 
-
   // bind GL context to GL state class
   glstate_ = new ACG::GLState();
-
   properties_.setglState( glstate_ );
-
 
   // state
   orthoWidth_       = 2.0;
@@ -159,9 +155,7 @@ glViewer::glViewer( QWidget* _parent,
 
   normalsMode_      = DONT_TOUCH_NORMALS;
   projectionMode_   = PERSPECTIVE_PROJECTION;
-  backFaceCulling_  = false;
-  twoSidedLighting_ = true;
-  animation_        = false;
+
 
   light_matrix_.identity();
 
@@ -443,43 +437,6 @@ void glViewer::updateActionMode(Viewer::ActionMode _am)
     emit(signalPickModeChanged(pick_mode_name_));
   else
     emit(signalPickModeChanged(""));
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void glViewer::backFaceCulling(bool _b)
-{
-  emit functionMenuUpdate();
-
-  makeCurrent();
-
-  if ( (backFaceCulling_ = _b) )
-    glEnable( GL_CULL_FACE );
-  else
-    glDisable( GL_CULL_FACE );
-
-  updateGL();
-}
-
-
-void glViewer::twoSidedLighting(bool _b)
-{
-  emit functionMenuUpdate();
-
-  makeCurrent();
-  glstate_->set_twosided_lighting(twoSidedLighting_=_b);
-  updateGL();
-}
-
-
-void glViewer::animation(bool _b)
-{
-  emit functionMenuUpdate();
-  makeCurrent();
-  animation_ = _b;
-  updateGL();
 }
 
 
@@ -871,8 +828,6 @@ void glViewer::initializeGL()
 
   projectionMode(   projectionMode_   );
   normalsMode(      normalsMode_      );
-  backFaceCulling(  backFaceCulling_  );
-  twoSidedLighting( twoSidedLighting_ );
 
   // Update all settings which would require a redraw
   applyProperties();
@@ -1017,7 +972,6 @@ void glViewer::paintGL()
 
 
     normalsMode(      normalsMode_      );
-    backFaceCulling(  backFaceCulling_  );
 
     applyProperties();
 
@@ -1316,13 +1270,6 @@ glViewer::createWidgets(const QGLFormat* _format,
   if (format.stereo())
     std::cerr << "Stereo buffer requested: "
 	      << (glWidget_->format().stereo() ? "ok\n" : "failed\n");
-
-
-
-
-
-
-
 
   glLayout_ = new QGridLayout(work);
   glLayout_->setSpacing( 0 );
@@ -1896,8 +1843,7 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
       if ( isRotating_ &&
       (_event->button() == Qt::LeftButton) &&
       (!(_event->buttons() & Qt::MidButton)) &&
-      (lastMoveTime_.elapsed() < 10) &&
-      animation() )
+      (lastMoveTime_.elapsed() < 10) && properties_.animation() )
         timer_->start(0);
       break;
     }
@@ -2091,6 +2037,13 @@ void glViewer::applyProperties() {
     glFrontFace( GL_CCW );
   else
     glFrontFace( GL_CW );
+
+  if ( properties_.backFaceCulling() )
+    glEnable( GL_CULL_FACE );
+  else
+    glDisable( GL_CULL_FACE );
+
+
 }
 
 void glViewer::slotPropertiesUpdated() {
