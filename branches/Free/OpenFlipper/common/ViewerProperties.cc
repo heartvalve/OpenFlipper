@@ -52,12 +52,17 @@ namespace Viewer {
     CCWFront_(true),
     backgroundColor_(0.0f,0.0f,0.0f,0.0f),
     renderPicking_(false),
-    pickRendererMode_(ACG::SceneGraph::PICK_ANYTHING)
+    pickRendererMode_(ACG::SceneGraph::PICK_ANYTHING),
+    locked_(0),
+    glState_(0)
   {
 
   }
 
   ViewerProperties::~ViewerProperties() {
+
+    if ( glState_ != 0 )
+      delete glState_;
 
   }
 

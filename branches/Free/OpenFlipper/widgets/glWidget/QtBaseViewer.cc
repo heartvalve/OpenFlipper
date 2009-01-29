@@ -122,8 +122,8 @@ glViewer::glViewer( QWidget* _parent,
   projectionUpdateLocked_(false),
   blending_(true),
   pick_mode_name_(""),
-  pick_mode_idx_(-1)
-
+  pick_mode_idx_(-1),
+  glstate_(0)
 {
   // check for OpenGL support
   if ( !QGLFormat::hasOpenGL() )
@@ -139,6 +139,8 @@ glViewer::glViewer( QWidget* _parent,
 
   // bind GL context to GL state class
   glstate_ = new ACG::GLState();
+
+  properties_.setglState( glstate_ );
 
 
   // state
@@ -276,30 +278,6 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
   updateGL();
 
   emit(signalSceneGraphChanged(sceneGraphRoot_));
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void glViewer::lockUpdate()
-{
-  updateLocked_ = true;
-  //  QToolTip::add(moveButton_, "Switch to <b>move</b> mode (display locked)");
-}
-
-
-void glViewer::unlockUpdate()
-{
-  //  QToolTip::add(moveButton_,"Switch to <b>move</b> mode");
-  updateLocked_ = false;
-}
-
-
-void glViewer::unlockAndUpdate()
-{
-  unlockUpdate();
-  updateGL();
 }
 
 
@@ -560,7 +538,7 @@ void glViewer::drawNow()
 
 void glViewer::updateGL()
 {
-  if (!isUpdateLocked() && !isHidden() )
+  if (!properties_.updateLocked() && !isHidden() )
   {
     glScene_->update();
   }
@@ -623,8 +601,6 @@ void glViewer::drawScene()
 
 void glViewer::drawScene_mono()
 {
-  emit(signalDrawScene(glstate_));
-
   if (sceneGraphRoot_)
   {
     if (! properties_.renderPicking() ) {
@@ -771,7 +747,7 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
   {
     if (projectionMode_ == PERSPECTIVE_PROJECTION)
     {
-      ACG::Vec3d eye(glState().eye());
+      ACG::Vec3d eye(glstate_->eye());
       ACG::Vec3d t = hitPoint - eye;
       ACG::Vec3d e = eye + t * (_move_back ? -0.5f : 0.5f);
       flyTo(e, hitPoint, 300);
@@ -892,7 +868,7 @@ void glViewer::initializeGL()
 
 
   // lock update
-  lockUpdate();
+  properties_.lockUpdate();
 
   // init GL state
   glstate_->initialize();
@@ -944,7 +920,7 @@ void glViewer::initializeGL()
 
 
   // unlock update (we started locked)
-  unlockUpdate();
+  properties_.unLockUpdate();
 }
 
 
@@ -1004,7 +980,7 @@ void glViewer::paintGL()
     glewInit();
 
     // lock update
-    lockUpdate();
+    properties_.lockUpdate();
 
     // init GL state
     glstate_->initialize();
@@ -1035,14 +1011,14 @@ void glViewer::paintGL()
     emit(signalInitializeGL());
 
     // unlock update (we started locked)
-    unlockUpdate();
+    properties_.unLockUpdate();
 
     initialized = true;
   }
 
-  if (!isUpdateLocked())
+  if (!properties_.updateLocked())
   {
-    lockUpdate();
+    properties_.lockUpdate();
 
     glPushAttrib (GL_ALL_ATTRIB_BITS);
 
@@ -1074,7 +1050,7 @@ void glViewer::paintGL()
     if (!stereo_)
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    unlockUpdate();
+    properties_.unLockUpdate();
 
     // draw scene
     drawScene();
@@ -1821,7 +1797,7 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
         if (fast_pick(_event->pos(), c))
         {
           trackball_center_ = c;
-          trackball_radius_ = std::max(scene_radius_, (c-glState().eye()).norm()*0.9f);
+          trackball_radius_ = std::max(scene_radius_, (c-glstate_->eye()).norm()*0.9f);
         }
       }
 
@@ -2122,7 +2098,7 @@ void glViewer::slotAnimation()
   rotate( lastRotationAxis_, lastRotationAngle_ );
   updateGL();
 
-  if (!isUpdateLocked()) {
+  if (!properties_.updateLocked()) {
     msecs += t.elapsed();
     if (count==10) {
       assert(statusbar_!=0);
