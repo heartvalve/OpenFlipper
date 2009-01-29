@@ -851,12 +851,6 @@ private:
      */
     void pickMode( int _id );
 
-    /** Use this function to switch the viewer to visualize picking.
-     * When you set this function to true the renderer will render the picking
-     * elements rather then the scene
-     */
-    void renderPicking(bool _renderPicking, ACG::SceneGraph::PickTarget _mode);
-
   public slots:
 
     /** \brief  set a new cursor for the pick mode
@@ -917,15 +911,8 @@ private:
      */
     int                    pick_mode_idx_;
 
-    /** This variable controls if the scene is rendered in normal or in picking mode
-     */
-    bool renderPicking_;
 
-    /** If rendering is in picking mode, this variable controls which picking targets
-     * will be rendered. ( see renderPicking_ , renderPicking(bool _renderPicking, PickRendererMode _mode) ,
-     * and ACG::SceneGraph::PickTarget
-     */
-    ACG::SceneGraph::PickTarget pickRendererMode_;
+
 
   /** @} */
 

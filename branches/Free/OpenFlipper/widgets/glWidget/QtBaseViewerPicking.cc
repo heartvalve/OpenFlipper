@@ -55,14 +55,6 @@ static const unsigned int  NAME_STACK_SIZE       = 2;
 //== IMPLEMENTATION ==========================================================
 
 
-void glViewer::renderPicking(bool _renderPicking, ACG::SceneGraph::PickTarget _mode) {
-  renderPicking_    = _renderPicking;
-  pickRendererMode_ = _mode;
-}
-
-//-----------------------------------------------------------------------------
-
-
 bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
                          const QPoint&               _mousePos,
                          unsigned int&               _nodeIdx,
