@@ -13,7 +13,7 @@ public :
   
   ~SimplePlugin() {};
   
-  QString name() { return QString("My first plugin"); };
+  QString name() { return QString("SimplePlugin"); };
   
   QString description() { return QString("Does actually nothing but works!"); };
   
