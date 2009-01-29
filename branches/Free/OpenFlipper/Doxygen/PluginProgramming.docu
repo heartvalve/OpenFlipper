@@ -76,11 +76,38 @@
  * name is with a capital s whereas the export name is lower case). An important constraint is
  * that the export name has to be unique (in case there exist multiple plugins).
  *
- * The complete source code looks like this:
+ * The complete source code of the plugin looks like this:
  *
  * simplePlugin.hh
  * \include example/simplePlugin.hh
  *
  * simplePlugin.cc
  * \include example/simplePlugin.cc
+ *
+ * \section ex1b Building our plugin
+ * 
+ * The only thing that's still left to be created is our qmake project file
+ * that is used to generate the Makefiles for the plugin. For general information on how to build
+ * OpenFlipper with qmake see \ref buildingOpenFlipper.
+ * So lets get started! First off we create a file \c Plugin-SimplePlugin.pro in the plugins's directory.
+ * For consistency reasons it is recommended to name the project file after the project's directory.
+ *
+ * Our first line includes OpenFlipper's predefined qmake functions. This allows us to simply call
+ * \c Plugin() in order build our code as a plugin. The variable \c DIRECTORY holds
+ * the directories that are to be build (we only need the plugin's directory here since the plugin does not
+ * depend on external libraries or sources). Our project file looks like this:
+ *
+ * Plugin-SimplePlugin.pro
+ * \include example/Plugin-SimplePlugin.pro
+ *
+ * The \c HEADERS and \c SOURCES variables should be self-explanatory. \c FORMS contains qt user interface
+ * files which aren't needed at this time but become important when using user forms for the plugin.
+ *
+ * Now go to the root path of OpenFlipper and enter \c qmake (be sure to use version 4 of qmake; some
+ * linux distributions use the link \c qmake-qt4 against the executable) in order to create
+ * the new Makefiles now containing our plugin. We now build OpenFlipper by entering \c make.
+ *
+ * To test if our plugin has been successfully loaded, we launch OpenFlipper and select \c Plugins->Unload \c Plugin.
+ * If our plugin \c SimplePlugin is listed, everything is fine. If it's not listed, read OpenFlippers
+ * log to see what happened wrong.
  */
