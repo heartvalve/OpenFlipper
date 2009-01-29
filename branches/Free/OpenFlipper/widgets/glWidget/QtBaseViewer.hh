@@ -505,17 +505,11 @@ protected:
   GLdouble                     orthoWidth_;
   GLdouble                     near_, far_, fovy_;
 
-
-
-
-
   // helper
   bool                         isRotating_;
 
-
-  // current status bar, guaranteed to be !=0
+  // current status bar
   QStatusBar* statusbar_;
-
 
 
 //---------------------------------------------------------------- private data
@@ -556,10 +550,6 @@ private:
 
   bool                         projectionUpdateLocked_;
   bool                         blending_;
-
-
-
-
 
   // gl widget used as drawing area to paint the graphics scene
   QGLWidget* glWidget_;
