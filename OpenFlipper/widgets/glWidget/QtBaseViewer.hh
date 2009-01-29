@@ -207,11 +207,6 @@ public:
   /// Enable/disable mouse tracking (move events with no button press)
   void trackMouse(bool _track);
 
-
-  /// Returns: root node of scene graph
-  ACG::SceneGraph::BaseNode* sceneGraph() { return sceneGraphRoot_; }
-  /// same but \c const
-  const ACG::SceneGraph::BaseNode* sceneGraph() const { return sceneGraphRoot_; }
   /** Set scene graph.
       Sets the scene graph to the the graph rooted at \c _root.
       The available draw modes in the scene graph will be collected

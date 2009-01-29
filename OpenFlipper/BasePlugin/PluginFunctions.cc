@@ -302,7 +302,7 @@ bool scenegraph_pick( const unsigned int _examiner, ACG::SceneGraph::PickTarget 
 
 //Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
 void traverse( ACG::SceneGraph::MouseEventAction  &_action ) {
-   ACG::SceneGraph::traverse(PluginFunctions::examiner_widgets_[activeExaminer_]->sceneGraph(),
+   ACG::SceneGraph::traverse(sceneGraph_root_node_,
                              _action,PluginFunctions::examiner_widgets_[activeExaminer_]->glState() );
 }
 
@@ -314,7 +314,7 @@ void traverse( const unsigned int _examiner, ACG::SceneGraph::MouseEventAction  
     return;
   }
 
-  ACG::SceneGraph::traverse(PluginFunctions::examiner_widgets_[_examiner]->sceneGraph(), _action,PluginFunctions::examiner_widgets_[_examiner]->glState() );
+  ACG::SceneGraph::traverse(sceneGraph_root_node_, _action,PluginFunctions::examiner_widgets_[_examiner]->glState() );
 }
 
 
