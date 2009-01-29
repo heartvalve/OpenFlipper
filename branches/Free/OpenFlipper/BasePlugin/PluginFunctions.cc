@@ -41,6 +41,7 @@
 #include <OpenFlipper/common/Types.hh>
 
 #include "PluginFunctions.hh"
+#include "PluginFunctionsCore.hh"
 
 namespace PluginFunctions {
 
@@ -54,10 +55,10 @@ static BaseObject* objectRoot_;
  *
  * This pointer is internally used to acces the examiner widget in the main apllication
  */
-static std::vector< QtBaseViewer* > examiner_widgets_;
+static std::vector< glViewer* > examiner_widgets_;
 
 /// TODO : Remove this variable and implement multiView correctly here
-static QtBaseViewer*  examiner_widget_;
+static glViewer*  examiner_widget_;
 
 static unsigned int activeExaminer_ = 0;
 
@@ -69,11 +70,13 @@ static SeparatorNode* root_node_;
 
 static SeparatorNode* sceneGraph_root_node_;
 
+static Viewer::ViewerProperties dummyProperties;
+
 void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
 
-void set_examiner( std::vector< QtBaseViewer* > _examiner_widgets ) {
+void setViewers( std::vector< glViewer* > _examiner_widgets ) {
    PluginFunctions::examiner_widgets_ = _examiner_widgets;
    PluginFunctions::examiner_widget_ =  examiner_widgets_[0];
 }
@@ -86,11 +89,11 @@ unsigned int activeExaminer( ) {
   return activeExaminer_;
 }
 
-void set_rootNode( SeparatorNode* _root_node ) {
+void setRootNode( SeparatorNode* _root_node ) {
    PluginFunctions::root_node_ = _root_node;
 }
 
-void set_sceneGraphRootNode( SeparatorNode* _root_node ) {
+void setSceneGraphRootNode( SeparatorNode* _root_node ) {
    PluginFunctions::sceneGraph_root_node_ = _root_node;
 }
 
@@ -334,9 +337,10 @@ void pickMode ( const unsigned int _examiner, std::string _mode) {
   examiner_widgets_[_examiner]->pickMode(_mode);
 }
 
-void actionMode ( QtBaseViewer::ActionMode _mode) {
+void actionMode ( Viewer::ActionMode _mode) {
+
   for ( uint i = 0 ; i < examiner_widgets_.size() ; ++i )
-    examiner_widgets_[i]->actionMode(_mode);
+    viewerProperties(i).actionMode(_mode);
 }
 
 ACG::GLState&  glState() {
@@ -347,8 +351,21 @@ void getCurrentViewImage(QImage& _image) {
   examiner_widget_->copyToImage( _image );
 }
 
-QtBaseViewer::ActionMode actionMode() {
-   return examiner_widget_->actionMode();
+Viewer::ActionMode actionMode() {
+   return viewerProperties(activeExaminer_).actionMode();
+}
+
+Viewer::ViewerProperties& viewerProperties(int _id) {
+  if ( _id >= (int)examiner_widgets_.size() ) {
+    std::cerr << " Error, requested properties for non-existing Viewer!" << std::endl;
+    return dummyProperties;
+  }
+
+  if ( _id == -1 )
+    _id = activeExaminer_;
+
+  return (*examiner_widgets_[_id]->properties());
+
 }
 
 void perspectiveProjection() {

@@ -76,7 +76,7 @@ void CoreWidget::slotProjectionModeChanged( bool _ortho ) {
 
 }
 
-void CoreWidget::slotActionModeChanged( QtBaseViewer::ActionMode _mode ) {
+void CoreWidget::slotActionModeChanged( Viewer::ActionMode _mode ) {
   moveButton_->setDown(false);
   lightButton_->setDown(false);
   pickButton_->setDown(false);
@@ -84,28 +84,28 @@ void CoreWidget::slotActionModeChanged( QtBaseViewer::ActionMode _mode ) {
 
   switch (_mode)
   {
-    case QtBaseViewer::ExamineMode:
+    case Viewer::ExamineMode:
     {
       moveButton_->setDown(true);
       break;
     }
 
 
-    case QtBaseViewer::LightMode:
+    case Viewer::LightMode:
     {
       lightButton_->setDown(true);
       break;
     }
 
 
-    case QtBaseViewer::PickingMode:
+    case Viewer::PickingMode:
     {
       pickButton_->setDown(true);
       break;
     }
 
 
-    case QtBaseViewer::QuestionMode:
+    case Viewer::QuestionMode:
     {
       questionButton_->setDown(true);
       break;

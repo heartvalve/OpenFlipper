@@ -34,7 +34,7 @@
 
 //=============================================================================
 //
-//  CLASS QtBaseViewer - IMPLEMENTATION
+//  CLASS glViewer - IMPLEMENTATION
 //
 //=============================================================================
 
@@ -110,11 +110,11 @@ static const char          VIEW_MAGIC[] =
 //== IMPLEMENTATION ==========================================================
 
 
-QtBaseViewer::QtBaseViewer( QWidget* _parent,
+glViewer::glViewer( QWidget* _parent,
 			    const char* /* _name */ ,
 			    QStatusBar *_statusBar,
 			    const QGLFormat* _format,
-			    const QtBaseViewer* _share) :
+			    const glViewer* _share) :
   QWidget(_parent),
   statusbar_(_statusBar),
   glareaGrabbed_(false),
@@ -182,12 +182,6 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
   drawMenu_ = 0;
 
 
-  // init action modes: Examine & Pick
-  actionMode_ = PickingMode;
-  lastActionMode_ = PickingMode;
-  examineMode();
-
-
   // Note: we start locked (initialization of updateLocked_)
   // will be unlocked in initializeGL()
 
@@ -210,13 +204,18 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
   wZoomFactor_ = 1.0;
   wZoomFactorShift_ = 0.2;
 
+  connect( &properties_,SIGNAL(updated()), this, SLOT( slotPropertiesUpdated() ) );
+  connect( &properties_,SIGNAL(actionModeChanged(Viewer::ActionMode)), this, SLOT( updateActionMode(Viewer::ActionMode) ) );
+
+  properties_.setExamineMode();
+
 }
 
 
 //-----------------------------------------------------------------------------
 
 
-QtBaseViewer::~QtBaseViewer()
+glViewer::~glViewer()
 {
   delete snapshot_;
   delete glstate_;
@@ -227,7 +226,7 @@ QtBaseViewer::~QtBaseViewer()
 
 
 QSize
-QtBaseViewer::sizeHint() const
+glViewer::sizeHint() const
 {
   return QSize( 600, 600 );
 }
@@ -236,7 +235,7 @@ QtBaseViewer::sizeHint() const
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::setStatusBar(QStatusBar* _sb)
+void glViewer::setStatusBar(QStatusBar* _sb)
 {
   statusbar_ = _sb;
 }
@@ -244,11 +243,11 @@ void QtBaseViewer::setStatusBar(QStatusBar* _sb)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::makeCurrent() {
+void glViewer::makeCurrent() {
   glWidget_->makeCurrent();
 }
 
-void QtBaseViewer::swapBuffers() {
+void glViewer::swapBuffers() {
   glWidget_->swapBuffers();
 }
 
@@ -256,7 +255,7 @@ void QtBaseViewer::swapBuffers() {
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
+void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
 {
   sceneGraphRoot_ = _root;
 
@@ -293,21 +292,21 @@ void QtBaseViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::lockUpdate()
+void glViewer::lockUpdate()
 {
   updateLocked_ = true;
   //  QToolTip::add(moveButton_, "Switch to <b>move</b> mode (display locked)");
 }
 
 
-void QtBaseViewer::unlockUpdate()
+void glViewer::unlockUpdate()
 {
   //  QToolTip::add(moveButton_,"Switch to <b>move</b> mode");
   updateLocked_ = false;
 }
 
 
-void QtBaseViewer::unlockAndUpdate()
+void glViewer::unlockAndUpdate()
 {
   unlockUpdate();
   updateGL();
@@ -317,7 +316,7 @@ void QtBaseViewer::unlockAndUpdate()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::trackMouse(bool _track)
+void glViewer::trackMouse(bool _track)
 {
   trackMouse_ = _track;
 }
@@ -325,21 +324,21 @@ void QtBaseViewer::trackMouse(bool _track)
 
 //-----------------------------------------------------------------------------
 
-void QtBaseViewer::perspectiveProjection()
+void glViewer::perspectiveProjection()
 {
   projectionMode(PERSPECTIVE_PROJECTION);
   updateGL();
 }
 
 
-void QtBaseViewer::orthographicProjection()
+void glViewer::orthographicProjection()
 {
   projectionMode(ORTHOGRAPHIC_PROJECTION);
   updateGL();
 }
 
 
-void QtBaseViewer::toggleProjectionMode()
+void glViewer::toggleProjectionMode()
 {
   if (projectionMode_ == ORTHOGRAPHIC_PROJECTION)
     projectionMode(PERSPECTIVE_PROJECTION);
@@ -353,7 +352,7 @@ void QtBaseViewer::toggleProjectionMode()
 }
 
 
-void QtBaseViewer::projectionMode(ProjectionMode _p)
+void glViewer::projectionMode(ProjectionMode _p)
 {
   if ((projectionMode_ = _p) == ORTHOGRAPHIC_PROJECTION)
     emit projectionModeChanged( true );
@@ -364,7 +363,7 @@ void QtBaseViewer::projectionMode(ProjectionMode _p)
 }
 
 
-void QtBaseViewer::updateProjectionMatrix()
+void glViewer::updateProjectionMatrix()
 {
   if( projectionUpdateLocked_ )
     return;
@@ -398,7 +397,7 @@ void QtBaseViewer::updateProjectionMatrix()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::setScenePos(const ACG::Vec3d& _center, double _radius)
+void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius)
 {
   scene_center_ = trackball_center_ = _center;
   scene_radius_ = trackball_radius_ = _radius;
@@ -415,7 +414,7 @@ void QtBaseViewer::setScenePos(const ACG::Vec3d& _center, double _radius)
 //----------------------------------------------------------------------------
 
 
-void QtBaseViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
+void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
 {
   // calc eye point for this direction
   ACG::Vec3d eye = scene_center_ - _dir*(3.0*scene_radius_);
@@ -428,24 +427,15 @@ void QtBaseViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::actionMode(ActionMode _am)
+void glViewer::updateActionMode(Viewer::ActionMode _am)
 {
-  emit actionModeChanged( _am );
-
 
   trackMouse(false);
 
 
-  if (_am != actionMode_)
+  switch ( properties_.actionMode() )
   {
-    lastActionMode_ = actionMode_;
-    actionMode_ = _am;
-  }
-
-
-  switch (actionMode_)
-  {
-    case ExamineMode:
+    case Viewer::ExamineMode:
     {
       glView_->setCursor(Qt::PointingHandCursor);
       glBase_->setCursor(Qt::PointingHandCursor);
@@ -453,7 +443,7 @@ void QtBaseViewer::actionMode(ActionMode _am)
     }
 
 
-    case LightMode:
+    case Viewer::LightMode:
     {
       glView_->setCursor(Qt::PointingHandCursor);
       glBase_->setCursor(Qt::PointingHandCursor);
@@ -461,7 +451,7 @@ void QtBaseViewer::actionMode(ActionMode _am)
     }
 
 
-    case PickingMode:
+    case Viewer::PickingMode:
     {
       glView_->setCursor(Qt::ArrowCursor);
       glBase_->setCursor(Qt::ArrowCursor);
@@ -475,7 +465,7 @@ void QtBaseViewer::actionMode(ActionMode _am)
     }
 
 
-    case QuestionMode:
+    case Viewer::QuestionMode:
     {
       glView_->setCursor(Qt::WhatsThisCursor);
       glBase_->setCursor(Qt::WhatsThisCursor);
@@ -484,10 +474,10 @@ void QtBaseViewer::actionMode(ActionMode _am)
   }
 
 
-  emit(signalActionModeChanged(actionMode_));
+  emit(signalActionModeChanged( _am ));
 
   //emit pickmodeChanged with either the name of the current pickmode or an empty string
-  if(actionMode_ == PickingMode)
+  if( properties_.pickingMode() )
     emit(signalPickModeChanged(pick_mode_name_));
   else
     emit(signalPickModeChanged(""));
@@ -497,7 +487,7 @@ void QtBaseViewer::actionMode(ActionMode _am)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::faceOrientation(FaceOrientation _ori)
+void glViewer::faceOrientation(FaceOrientation _ori)
 {
   makeCurrent();
 
@@ -518,7 +508,7 @@ void QtBaseViewer::faceOrientation(FaceOrientation _ori)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::backFaceCulling(bool _b)
+void glViewer::backFaceCulling(bool _b)
 {
   emit functionMenuUpdate();
 
@@ -533,7 +523,7 @@ void QtBaseViewer::backFaceCulling(bool _b)
 }
 
 
-void QtBaseViewer::twoSidedLighting(bool _b)
+void glViewer::twoSidedLighting(bool _b)
 {
   emit functionMenuUpdate();
 
@@ -543,7 +533,7 @@ void QtBaseViewer::twoSidedLighting(bool _b)
 }
 
 
-void QtBaseViewer::animation(bool _b)
+void glViewer::animation(bool _b)
 {
   emit functionMenuUpdate();
   makeCurrent();
@@ -555,7 +545,7 @@ void QtBaseViewer::animation(bool _b)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::normalsMode(NormalsMode _mode)
+void glViewer::normalsMode(NormalsMode _mode)
 {
   makeCurrent();
 
@@ -578,7 +568,7 @@ void QtBaseViewer::normalsMode(NormalsMode _mode)
 
 
 void
-QtBaseViewer::copyToImage( QImage& _image,
+glViewer::copyToImage( QImage& _image,
 			   unsigned int /* _l */ , unsigned int /* _t */ ,
 			   unsigned int /* _w */ , unsigned int /* _h */ ,
 			   GLenum /* _buffer */ )
@@ -591,7 +581,7 @@ QtBaseViewer::copyToImage( QImage& _image,
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::drawNow()
+void glViewer::drawNow()
 {
   makeCurrent();
   paintGL();
@@ -599,7 +589,7 @@ void QtBaseViewer::drawNow()
   glView_->repaint();
 }
 
-void QtBaseViewer::updateGL()
+void glViewer::updateGL()
 {
   if (!isUpdateLocked() && !isHidden() )
   {
@@ -612,16 +602,37 @@ void QtBaseViewer::updateGL()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::drawScene()
+void glViewer::drawScene()
 {
   QTime  timer;
   timer.start();
 
 
-  // adjust clipping planes
+  // *****************************************************************
+  // Adjust clipping planes
+  // *****************************************************************
+  // Far plane
   ACG::Vec3d c = glstate_->modelview().transform_point(scene_center_);
-  near_   = std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_));
+
+  // Set far plane
   far_    = std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_));
+
+  // Set near plane
+  near_   = std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_));
+
+  // measure distance from scene center ( as projection onto the z-Axis )
+//   if ( -c[2] < scene_radius_ ) {
+//     std::cerr << "Camera in scene radius" << std::endl;
+//
+//   }
+//
+//   std::cerr << "-c[2]   : " << -c[2] << std::endl;
+//   std::cerr << "radius  : " << scene_radius_ << std::endl;
+//   std::cerr << "z-range : " << far_ - near_ << std::endl;
+//   std::cerr << "Near    : " << near_ << std::endl;
+//   std::cerr << "Far     : " << far_ << std::endl;
+//   near_   = std::max(far_ / 256.0f,  -(c[2] + scene_radius_));
+
   updateProjectionMatrix();
 
   // store time since last repaint in gl state and restart timer
@@ -641,7 +652,7 @@ void QtBaseViewer::drawScene()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::drawScene_mono()
+void glViewer::drawScene_mono()
 {
   emit(signalDrawScene(glstate_));
 
@@ -680,7 +691,7 @@ void QtBaseViewer::drawScene_mono()
 
 
 void
-QtBaseViewer::drawScene_stereo()
+glViewer::drawScene_stereo()
 {
   double l, r, t, b, w, h, a, radians, wd2, ndfl;
 
@@ -730,7 +741,7 @@ QtBaseViewer::drawScene_stereo()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::setHome()
+void glViewer::setHome()
 {
   home_modelview_          = glstate_->modelview();
   home_inverse_modelview_  = glstate_->inverse_modelview();
@@ -740,7 +751,7 @@ void QtBaseViewer::setHome()
 }
 
 
-void QtBaseViewer::home()
+void glViewer::home()
 {
   makeCurrent();
   glstate_->set_modelview(home_modelview_, home_inverse_modelview_);
@@ -758,7 +769,7 @@ void QtBaseViewer::home()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::viewAll()
+void glViewer::viewAll()
 {
   makeCurrent();
 
@@ -780,7 +791,7 @@ void QtBaseViewer::viewAll()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::flyTo(const QPoint& _pos, bool _move_back)
+void glViewer::flyTo(const QPoint& _pos, bool _move_back)
 {
   makeCurrent();
 
@@ -820,7 +831,7 @@ void QtBaseViewer::flyTo(const QPoint& _pos, bool _move_back)
 }
 
 
-void QtBaseViewer::flyTo(const ACG::Vec3d&  _position,
+void glViewer::flyTo(const ACG::Vec3d&  _position,
 			 const ACG::Vec3d&  _center,
 			 double        _time)
 {
@@ -892,7 +903,7 @@ void QtBaseViewer::flyTo(const ACG::Vec3d&  _position,
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::setView(const ACG::GLMatrixd& _modelview,
+void glViewer::setView(const ACG::GLMatrixd& _modelview,
 			                  const ACG::GLMatrixd& _inverse_modelview)
 {
   makeCurrent();
@@ -904,7 +915,7 @@ void QtBaseViewer::setView(const ACG::GLMatrixd& _modelview,
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::initializeGL()
+void glViewer::initializeGL()
 {
   // we use GLEW to manage extensions
   // initialize it first
@@ -970,7 +981,7 @@ void QtBaseViewer::initializeGL()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::update_lights()
+void glViewer::update_lights()
 {
   makeCurrent();
 
@@ -1003,7 +1014,7 @@ void QtBaseViewer::update_lights()
 }
 
 
-void QtBaseViewer::rotate_lights(ACG::Vec3d& _axis, double _angle)
+void glViewer::rotate_lights(ACG::Vec3d& _axis, double _angle)
 {
   light_matrix_.rotate(_angle, _axis[0], _axis[1], _axis[2], ACG::MULT_FROM_LEFT);
   update_lights();
@@ -1013,7 +1024,7 @@ void QtBaseViewer::rotate_lights(ACG::Vec3d& _axis, double _angle)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::paintGL()
+void glViewer::paintGL()
 {
   static bool initialized = false;
   if (!initialized)
@@ -1110,7 +1121,7 @@ void QtBaseViewer::paintGL()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::resizeGL(int _w, int _h)
+void glViewer::resizeGL(int _w, int _h)
 {
   updateProjectionMatrix();
   glstate_->viewport(0, 0, _w, _h);
@@ -1121,7 +1132,7 @@ void QtBaseViewer::resizeGL(int _w, int _h)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::encodeView(QString& _view)
+void glViewer::encodeView(QString& _view)
 {
   const ACG::GLMatrixd m = glstate_->modelview();
   const ACG::GLMatrixd p = glstate_->projection();
@@ -1150,7 +1161,7 @@ void QtBaseViewer::encodeView(QString& _view)
 //----------------------------------------------------------------------------
 
 
-bool QtBaseViewer::decodeView(const QString& _view)
+bool glViewer::decodeView(const QString& _view)
 {
   if (_view.left(sizeof(VIEW_MAGIC)-1) != QString(VIEW_MAGIC))
     return false;
@@ -1207,7 +1218,7 @@ bool QtBaseViewer::decodeView(const QString& _view)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::actionCopyView()
+void glViewer::actionCopyView()
 {
   QString view; encodeView(view);
   QApplication::clipboard()->setText(view);
@@ -1217,7 +1228,7 @@ void QtBaseViewer::actionCopyView()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::actionPasteView()
+void glViewer::actionPasteView()
 {
   QString view; view=QApplication::clipboard()->text();
   decodeView(view);
@@ -1227,7 +1238,7 @@ void QtBaseViewer::actionPasteView()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::actionDrawMenu( QAction * _action )
+void glViewer::actionDrawMenu( QAction * _action )
 {
   unsigned int mode( _action->data().toUInt() );
 
@@ -1266,9 +1277,9 @@ void QtBaseViewer::actionDrawMenu( QAction * _action )
 //-----------------------------------------------------------------------------
 
 void
-QtBaseViewer::createWidgets(const QGLFormat* _format,
+glViewer::createWidgets(const QGLFormat* _format,
                             QStatusBar* _sb,
-                            const QtBaseViewer* _share)
+                            const glViewer* _share)
 {
   setStatusBar(_sb);
   drawMenu_=0;
@@ -1399,7 +1410,7 @@ QtBaseViewer::createWidgets(const QGLFormat* _format,
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::updatePopupMenu()
+void glViewer::updatePopupMenu()
 {
   //
   // Draw mode menu
@@ -1449,7 +1460,7 @@ void QtBaseViewer::updatePopupMenu()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::hidePopupMenus()
+void glViewer::hidePopupMenus()
 {
   if ( drawMenu_ )
   {
@@ -1470,7 +1481,7 @@ void QtBaseViewer::hidePopupMenus()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::translate(const ACG::Vec3d& _trans)
+void glViewer::translate(const ACG::Vec3d& _trans)
 {
   makeCurrent();
   glstate_->translate(_trans[0], _trans[1], _trans[2], ACG::MULT_FROM_LEFT);
@@ -1480,7 +1491,7 @@ void QtBaseViewer::translate(const ACG::Vec3d& _trans)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::initModelviewMatrix()
+void glViewer::initModelviewMatrix()
 {
   makeCurrent();
   glstate_->reset_modelview();
@@ -1490,7 +1501,7 @@ void QtBaseViewer::initModelviewMatrix()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::rotate(const ACG::Vec3d&  _axis,
+void glViewer::rotate(const ACG::Vec3d&  _axis,
                           double        _angle,
                           const ACG::Vec3d&  _center)
 {
@@ -1505,20 +1516,20 @@ void QtBaseViewer::rotate(const ACG::Vec3d&  _axis,
 //-----------------------------------------------------------------------------
 
 
-unsigned int QtBaseViewer::glWidth() const {
+unsigned int glViewer::glWidth() const {
   return glView_->width();
 }
-unsigned int QtBaseViewer::glHeight() const {
+unsigned int glViewer::glHeight() const {
   return glView_->height();
 }
-QSize QtBaseViewer::glSize() const {
+QSize glViewer::glSize() const {
   return glView_->size();
 }
-QPoint QtBaseViewer::glMapFromGlobal( const QPoint& _pos ) const {
+QPoint glViewer::glMapFromGlobal( const QPoint& _pos ) const {
   return glView_->mapFromGlobal(_pos);
 }
 
-QPoint QtBaseViewer::glMapToGlobal( const QPoint& _pos ) const {
+QPoint glViewer::glMapToGlobal( const QPoint& _pos ) const {
   return glView_->mapToGlobal(_pos);
 }
 
@@ -1527,7 +1538,7 @@ QPoint QtBaseViewer::glMapToGlobal( const QPoint& _pos ) const {
 
 
 void
-QtBaseViewer::slotNodeChanged(ACG::SceneGraph::BaseNode* _node)
+glViewer::slotNodeChanged(ACG::SceneGraph::BaseNode* _node)
 {
   emit(signalNodeChanged(_node));
   updateGL();
@@ -1537,7 +1548,7 @@ QtBaseViewer::slotNodeChanged(ACG::SceneGraph::BaseNode* _node)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::slotWheelX(double _dAngle)
+void glViewer::slotWheelX(double _dAngle)
 {
   rotate(ACG::Vec3d(1,0,0),ACG::QtWidgets::QtWheel::deg(ACG::QtWidgets::QtWheel::clip(_dAngle)));
   updateGL();
@@ -1546,7 +1557,7 @@ void QtBaseViewer::slotWheelX(double _dAngle)
   emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
 }
 
-void QtBaseViewer::slotWheelY(double _dAngle)
+void glViewer::slotWheelY(double _dAngle)
 {
   rotate(ACG::Vec3d(0,1,0),ACG::QtWidgets::QtWheel::deg(ACG::QtWidgets::QtWheel::clip(_dAngle)));
   updateGL();
@@ -1555,7 +1566,7 @@ void QtBaseViewer::slotWheelY(double _dAngle)
   emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
 }
 
-void QtBaseViewer::slotWheelZ(double _dist)
+void glViewer::slotWheelZ(double _dist)
 {
   double dz=_dist*0.5/M_PI*scene_radius_*2.0;
   translate(ACG::Vec3d(0,0,dz));
@@ -1568,7 +1579,7 @@ void QtBaseViewer::slotWheelZ(double _dist)
 
 //-----------------------------------------------------------------------------
 
-void QtBaseViewer::sceneRectChanged(const QRectF &rect)
+void glViewer::sceneRectChanged(const QRectF &rect)
 {
   glBase_->setGeometry (rect);
 }
@@ -1576,7 +1587,7 @@ void QtBaseViewer::sceneRectChanged(const QRectF &rect)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::grabGLArea()
+void glViewer::grabGLArea()
 {
   glareaGrabbed_ = true;
 
@@ -1586,7 +1597,7 @@ void QtBaseViewer::grabGLArea()
   glView_->grabKeyboard();
 }
 
-void QtBaseViewer::releaseGLArea()
+void glViewer::releaseGLArea()
 {
   glareaGrabbed_ = false;
 
@@ -1600,7 +1611,7 @@ void QtBaseViewer::releaseGLArea()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::glContextMenuEvent(QContextMenuEvent* _event)
+void glViewer::glContextMenuEvent(QContextMenuEvent* _event)
 {
 
 }
@@ -1609,30 +1620,30 @@ void QtBaseViewer::glContextMenuEvent(QContextMenuEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::glMousePressEvent(QMouseEvent* _event)
+void glViewer::glMousePressEvent(QMouseEvent* _event)
 {
   // right button pressed => popup menu (ignore here)
   if (_event->button() != Qt::RightButton )
   {
-    switch (actionMode_)
+    switch (properties_.actionMode())
     {
-      case ExamineMode:
+      case Viewer::ExamineMode:
         if ((_event->modifiers() & Qt::ControlModifier)) // drag&drop
           emit startDragEvent( _event );
         else
           viewMouseEvent(_event); // examine
         break;
 
-      case LightMode:
+      case Viewer::LightMode:
 	lightMouseEvent(_event);
 	break;
 
-      case PickingMode: // give event to application
+      case Viewer::PickingMode: // give event to application
         emit(signalMouseEvent(_event, pick_mode_name_));
         emit(signalMouseEvent(_event));
         break;
 
-      case QuestionMode: // give event to application
+      case Viewer::QuestionMode: // give event to application
         emit(signalMouseEventIdentify(_event));
         break;
     }
@@ -1643,24 +1654,24 @@ void QtBaseViewer::glMousePressEvent(QMouseEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::glMouseDoubleClickEvent(QMouseEvent* _event)
+void glViewer::glMouseDoubleClickEvent(QMouseEvent* _event)
 {
-  switch (actionMode_)
+  switch (properties_.actionMode())
   {
-    case ExamineMode:
+    case Viewer::ExamineMode:
       viewMouseEvent(_event);
       break;
 
-    case LightMode:
+    case Viewer::LightMode:
       lightMouseEvent(_event);
       break;
 
-    case PickingMode: // give event to application
+    case Viewer::PickingMode: // give event to application
       emit(signalMouseEvent(_event, pick_mode_name_));
       emit(signalMouseEvent(_event));
       break;
 
-    case QuestionMode: // give event to application
+    case Viewer::QuestionMode: // give event to application
       emit(signalMouseEventIdentify(_event));
       break;
   }
@@ -1670,19 +1681,19 @@ void QtBaseViewer::glMouseDoubleClickEvent(QMouseEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::glMouseMoveEvent(QMouseEvent* _event)
+void glViewer::glMouseMoveEvent(QMouseEvent* _event)
 {
-  switch ( actionMode_ )
+  switch ( properties_.actionMode() )
   {
-    case ExamineMode:
+    case Viewer::ExamineMode:
       viewMouseEvent(_event);
       break;
 
-    case LightMode:
+    case Viewer::LightMode:
       lightMouseEvent(_event);
       break;
 
-    case PickingMode:
+    case Viewer::PickingMode:
       // give event to application
       // deliver mouse moves with no button down, if tracking is enabled,
       if ((_event->buttons() & (Qt::LeftButton | Qt::MidButton | Qt::RightButton))
@@ -1693,7 +1704,7 @@ void QtBaseViewer::glMouseMoveEvent(QMouseEvent* _event)
       }
       break;
 
-    case QuestionMode: // give event to application
+    case Viewer::QuestionMode: // give event to application
       emit(signalMouseEventIdentify(_event));
       break;
 
@@ -1706,30 +1717,30 @@ void QtBaseViewer::glMouseMoveEvent(QMouseEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::glMouseReleaseEvent(QMouseEvent* _event)
+void glViewer::glMouseReleaseEvent(QMouseEvent* _event)
 {
 //   if (_event->button() == Qt::RightButton )
 //     hidePopupMenus();
 
   if (_event->button() != Qt::RightButton ||
-      (actionMode_ == PickingMode ) )
+      properties_.pickingMode() )
   {
-    switch ( actionMode_ )
+    switch ( properties_.actionMode() )
     {
-      case ExamineMode:
+      case Viewer::ExamineMode:
         viewMouseEvent(_event);
         break;
 
-      case LightMode:
+      case Viewer::LightMode:
         lightMouseEvent(_event);
         break;
 
-      case PickingMode: // give event to application
+      case Viewer::PickingMode: // give event to application
         emit(signalMouseEvent(_event, pick_mode_name_));
         emit(signalMouseEvent(_event));
         break;
 
-      case QuestionMode: // give event to application
+      case Viewer::QuestionMode: // give event to application
         emit(signalMouseEventIdentify(_event));
         break;
 
@@ -1745,15 +1756,15 @@ void QtBaseViewer::glMouseReleaseEvent(QMouseEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::glMouseWheelEvent(QWheelEvent* _event)
+void glViewer::glMouseWheelEvent(QWheelEvent* _event)
 {
-  switch ( actionMode_ )
+  switch ( properties_.actionMode() )
   {
-    case ExamineMode:
+    case Viewer::ExamineMode:
       viewWheelEvent(_event);
       break;
 
-    case PickingMode: // give event to application
+    case Viewer::PickingMode: // give event to application
       emit(signalWheelEvent(_event, pick_mode_name_));
       break;
 
@@ -1767,7 +1778,7 @@ void QtBaseViewer::glMouseWheelEvent(QWheelEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::updatePickMenu()
+void glViewer::updatePickMenu()
 {
   delete pickMenu_;
 
@@ -1808,7 +1819,7 @@ void QtBaseViewer::updatePickMenu()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::actionPickMenu( QAction * _action )
+void glViewer::actionPickMenu( QAction * _action )
 {
   int _id = _action->data().toInt();
   if (_id < (int) pick_modes_.size() )
@@ -1816,7 +1827,7 @@ void QtBaseViewer::actionPickMenu( QAction * _action )
     pickMode( _id );
   }
 
-  actionMode( PickingMode );
+  properties_.setPickingMode();
 
   hidePopupMenus();
 }
@@ -1826,7 +1837,7 @@ void QtBaseViewer::actionPickMenu( QAction * _action )
 
 
 void
-QtBaseViewer::viewMouseEvent(QMouseEvent* _event)
+glViewer::viewMouseEvent(QMouseEvent* _event)
 {
   switch (_event->type())
   {
@@ -1982,7 +1993,7 @@ QtBaseViewer::viewMouseEvent(QMouseEvent* _event)
 
 
 void
-QtBaseViewer::lightMouseEvent(QMouseEvent* _event)
+glViewer::lightMouseEvent(QMouseEvent* _event)
 {
   switch (_event->type())
   {
@@ -2047,31 +2058,31 @@ QtBaseViewer::lightMouseEvent(QMouseEvent* _event)
 
 //-----------------------------------------------------------------------------
 
-double QtBaseViewer::wheelZoomFactor(){
+double glViewer::wheelZoomFactor(){
   return wZoomFactor_;
 }
 
 //-----------------------------------------------------------------------------
 
-double QtBaseViewer::wheelZoomFactorShift(){
+double glViewer::wheelZoomFactorShift(){
   return wZoomFactorShift_;
 }
 
 //-----------------------------------------------------------------------------
 
-void QtBaseViewer::setWheelZoomFactor(double _factor){
+void glViewer::setWheelZoomFactor(double _factor){
   wZoomFactor_ = _factor;
 }
 
 //-----------------------------------------------------------------------------
 
-void QtBaseViewer::setWheelZoomFactorShift(double _factor){
+void glViewer::setWheelZoomFactorShift(double _factor){
   wZoomFactorShift_ = _factor;
 }
 
 //-----------------------------------------------------------------------------
 
-void QtBaseViewer::viewWheelEvent( QWheelEvent* _event)
+void glViewer::viewWheelEvent( QWheelEvent* _event)
 {
   double factor = wZoomFactor_;
 
@@ -2107,7 +2118,7 @@ void QtBaseViewer::viewWheelEvent( QWheelEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-bool QtBaseViewer::mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D) const
+bool glViewer::mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D) const
 {
   if ( (_v2D.x() >= 0) && (_v2D.x() < (int)glWidth()) &&
        (_v2D.y() >= 0) && (_v2D.y() < (int)glHeight()) )
@@ -2131,7 +2142,7 @@ bool QtBaseViewer::mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D) const
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::slotAnimation()
+void glViewer::slotAnimation()
 {
   static int msecs=0, count=0;
   QTime t;
@@ -2152,6 +2163,10 @@ void QtBaseViewer::slotAnimation()
     else
       ++count;
   }
+}
+
+void glViewer::slotPropertiesUpdated() {
+  std::cerr << "glViewer : Properties updated" << std::endl;
 }
 
 //=============================================================================

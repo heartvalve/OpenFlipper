@@ -48,7 +48,7 @@
 //== CLASS DEFINITION =========================================================
 
 
-QtGLGraphicsView::QtGLGraphicsView(QtBaseViewer* _w, QWidget* _parent) :
+QtGLGraphicsView::QtGLGraphicsView(glViewer* _w, QWidget* _parent) :
   QGraphicsView (_parent),
   w_(_w)
 {

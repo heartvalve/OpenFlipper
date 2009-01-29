@@ -34,7 +34,7 @@
 
 //=============================================================================
 //
-//  CLASS QtBaseViewer - IMPLEMENTATION
+//  CLASS glViewer - IMPLEMENTATION
 //
 //=============================================================================
 
@@ -55,7 +55,7 @@
 
 //== IMPLEMENTATION ==========================================================
 
-void QtBaseViewer::snapshotBaseFileName(const QString& _fname)
+void glViewer::snapshotBaseFileName(const QString& _fname)
 {
   snapshotName_=_fname;
   snapshotCounter_=0;
@@ -65,7 +65,7 @@ void QtBaseViewer::snapshotBaseFileName(const QString& _fname)
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::snapshot()
+void glViewer::snapshot()
 {
    makeCurrent();
 
@@ -112,7 +112,7 @@ void QtBaseViewer::snapshot()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::actionSnapshot()
+void glViewer::actionSnapshot()
 {
   snapshot();
 }
@@ -121,7 +121,7 @@ void QtBaseViewer::actionSnapshot()
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::actionSnapshotName()
+void glViewer::actionSnapshotName()
 {
   QString fname=snapshotName_;
 

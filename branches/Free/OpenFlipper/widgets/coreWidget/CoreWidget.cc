@@ -48,6 +48,7 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/common/RecentFiles.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctionsCore.hh>
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 
@@ -131,7 +132,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   if ( !OpenFlipper::Options::multiView() ) {
 
-    QtBaseViewer* examinerWidget = new QtBaseViewer(stackedWidget_,
+    glViewer* examinerWidget = new glViewer(stackedWidget_,
                                                     "Examiner Widget",
                                                     statusBar_ ,
                                                     &format);
@@ -148,7 +149,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     tmp = new QWidget(stackedWidget_);
 
     // Create master examiner widget
-    QtBaseViewer* examinerWidget = new QtBaseViewer(tmp,
+    glViewer* examinerWidget = new glViewer(tmp,
                                                             "Examiner Widget",
                                                             statusBar_ ,
                                                             &format,
@@ -158,7 +159,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     // Create all other examiners using the same gl context as the others
     for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      QtBaseViewer* newWidget = new QtBaseViewer(tmp,
+      glViewer* newWidget = new glViewer(tmp,
                                                          "Examiner Widget",
                                                          statusBar_ ,
                                                          &format,
@@ -182,6 +183,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     stackedWidget_->addWidget(tmp);
   }
+
+  // Make examiner available to the plugins ( defined in PluginFunctions.hh)
+  PluginFunctions::setViewers( examiner_widgets_ );
 
 
 
@@ -232,8 +236,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "<li><b>Translate</b> using <b>middle</b> mouse button.</li>"
                   "<li><b>Zoom</b> using <b>left+middle</b> mouse buttons.</li></ul>" );
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-    connect( moveButton_,SIGNAL( clicked() ), examiner_widgets_[i], SLOT( examineMode() ) );
-    connect( examiner_widgets_[i],SIGNAL( actionModeChanged( QtBaseViewer::ActionMode ) ),this , SLOT( slotActionModeChanged(QtBaseViewer::ActionMode) ) );
+    connect( moveButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setExamineMode() ) );
+    connect( examiner_widgets_[i] , SIGNAL( signalActionModeChanged( Viewer::ActionMode ) ),
+             this                 , SLOT( slotActionModeChanged(Viewer::ActionMode) ) );
   }
 
   viewerToolbar_->addWidget( moveButton_ )->setText("Move");
@@ -249,7 +254,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "Switch to <b>light</b> mode.<br>"
                   "Rotate lights using left mouse button.");
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-        connect( lightButton_,SIGNAL( clicked() ), examiner_widgets_[i], SLOT( lightMode() ) );
+        connect( lightButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setLightMode() ) );
   viewerToolbar_->addWidget( lightButton_)->setText("Light");
 
 
@@ -264,7 +269,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "To change the mode use the right click<br>"
                   "context menu in the viewer.");
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-    connect( pickButton_,SIGNAL( clicked() ), examiner_widgets_[i], SLOT( pickingMode() ) );
+    connect( pickButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setPickingMode() ) );
   viewerToolbar_->addWidget( pickButton_)->setText("Pick");
 
 
@@ -280,7 +285,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "the log output for information about the "
                   "object.");
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-    connect( questionButton_,SIGNAL( clicked() ), examiner_widgets_[i], SLOT( questionMode() ) );
+    connect( questionButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setQuestionMode() ) );
   viewerToolbar_->addWidget( questionButton_)->setText("Question");
 
   viewerToolbar_->addSeparator();

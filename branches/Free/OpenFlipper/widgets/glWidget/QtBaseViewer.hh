@@ -34,7 +34,7 @@
 
 //=============================================================================
 //
-//  CLASS QtBaseViewer
+//  CLASS glViewer
 //
 //=============================================================================
 
@@ -43,7 +43,8 @@
 
 //== INCLUDES =================================================================
 
-#include <OpenFlipper/common/GlobalDefines.hh>
+#include <OpenFlipper/common/Types.hh>
+#include <OpenFlipper/common/ViewerProperties.hh>
 
 #include <ACG/GL/GLState.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
@@ -101,14 +102,14 @@ class QtShiftPopupMenu;
 //== CLASS DEFINITION =========================================================
 
 
-/** \class QtBaseViewer QtBaseViewer.hh <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
+/** \class glViewer glViewer.hh <OpenFlipper/widgets/glWidget/glViewer.hh>
 
     Base Viewer Widget: All viewers are derived from this one. Implement
     Mouse & Keyboard Events. Redefine Signals and Slots.
     See for example "QtExaminerViewer"
  **/
 
-class DLLEXPORT QtBaseViewer : public QWidget
+class DLLEXPORT glViewer : public QWidget
 {
 Q_OBJECT
 
@@ -117,21 +118,21 @@ public:
 
   //--------------------------------------------------- constructor / destructor
 
-  /** Create a QtBaseViewer.
+  /** Create a glViewer.
     \param _parent parent widget
     \param _name name (qt internal, qt debugging)
     \param _statusBar pointer to an existing status bar for this widget,
      if \c statusBar==0 then a \a private status bar will be created
     \param _format OpenGL context settings, will be passed to glarea()
   */
-  QtBaseViewer( QWidget* _parent=0,
+  glViewer( QWidget* _parent=0,
 		const char* _name=0,
 		QStatusBar *_statusBar=0,
 		const QGLFormat* _format=0,
-		const QtBaseViewer* _share=0);
+		const glViewer* _share=0);
 
   /// Destructor.
-  virtual ~QtBaseViewer();
+  virtual ~glViewer();
 
 
 
@@ -250,44 +251,6 @@ public:
 
   /// set the viewing direction
   void viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up );
-
-
-
-
-
-
-
-  /// How to react on mouse events?
-  enum ActionMode {
-    // examine geometry, get transformations from mouse events
-    ExamineMode,
-    /** Picking mode. Actually no pick()ing is performed (!) but events are
-        forwarded to the application via signalMouseEvent().
-     */
-    PickingMode,
-    // same as picking, but emit signalMouseEventIdentify()
-    QuestionMode,
-    // Ligh rotation mode
-    LightMode
-  };
-
-
-  /** Set action mode.
-      The ActionMode determines the type of reaction on mouse events.
-      \a Note: You may also use the slots examineMode(), etc. to set this
-      mode.
-   */
-  void actionMode(ActionMode);
-
-  /// Return the last action mode
-  ActionMode lastActionMode(){ return lastActionMode_; };
-
-  /// get action mode
-  ActionMode actionMode() const { return actionMode_; }
-
-  signals:
-    void actionModeChanged( QtBaseViewer::ActionMode _mode );
-
 
   public:
 
@@ -447,13 +410,6 @@ public slots:
 		               const ACG::Vec3d& _center,
 		               double       _time = 1000.0);
 
-  /// calls actionMode() with \c ExamineMode (cf. ActionMode)
-  virtual void examineMode() { actionMode(ExamineMode); }
-  /// calls actionMode() with \c LightMode (cf. ActionMode)
-  virtual void lightMode() { actionMode(LightMode); }
-  /// calls actionMode() with \c QuestionMode (cf. ActionMode)
-  virtual void questionMode() { actionMode(QuestionMode); }
-
   /// set perspective view (projectionMode(PERSPECTIVE_PROJECTION))
   virtual void perspectiveProjection();
   /// set orthographic view (projectionMode(ORTHOGRAPHIC_PROJECTION))
@@ -520,7 +476,7 @@ signals:
   /// scene graph has changed
   void signalNodeChanged(ACG::SceneGraph::BaseNode* _node);
   /// action mode was changed
-  void signalActionModeChanged( QtBaseViewer::ActionMode _m);
+  void signalActionModeChanged( Viewer::ActionMode _m);
   /// render callback
   void signalDrawScene(ACG::GLState* _state);
 
@@ -612,13 +568,13 @@ private slots:
 private:
 
   /// Copy constructor. Never used!
-  QtBaseViewer(const QtBaseViewer&);
+  glViewer(const glViewer&);
   /// Assignment operator. Never used!
-  QtBaseViewer& operator=(const QtBaseViewer&);
+  glViewer& operator=(const glViewer&);
 
   // create widgets
   void createWidgets(const QGLFormat* _format,QStatusBar* _sb,
-		     const QtBaseViewer* _share);
+		     const glViewer* _share);
 
   /* Recursively draws each node in the scene graph.
       Called by paintGL(). */
@@ -679,7 +635,6 @@ private:
   NormalsMode                  normalsMode_;
   FaceOrientation              faceOrientation_;
   ProjectionMode               projectionMode_;
-  ActionMode                   actionMode_, lastActionMode_;
   bool                         backFaceCulling_;
   bool                         twoSidedLighting_;
   bool                         animation_;
@@ -948,11 +903,6 @@ private:
 
   public slots:
 
-    /** calls actionMode() with \c PickingMode (cf. ActionMode)
-     * Switches to pickingMode
-     */
-    virtual void pickingMode();
-
     /** \brief  set a new cursor for the pick mode
      *
      *  @param _name Name of the Pick Mode
@@ -1023,13 +973,6 @@ private:
 
   /** @} */
 
-
-
-
-
-
-
-
   //===========================================================================
   /** @name Merge from examiner
    * @{ */
@@ -1080,6 +1023,26 @@ private:
     QTimer*                      timer_;
 
     /** @} */
+
+  //===========================================================================
+  /** @name Viewer State
+   * @{ */
+  //===========================================================================
+
+  public:
+    /// Returns a pointer to the Viewer Status
+    Viewer::ViewerProperties* properties(){ return &properties_; };
+
+  private:
+    Viewer::ViewerProperties properties_;
+
+  private slots:
+    void slotPropertiesUpdated();
+
+    /// Called when the actionMode has been updated
+    void updateActionMode(Viewer::ActionMode _am);
+
+  /** @} */
 };
 
 

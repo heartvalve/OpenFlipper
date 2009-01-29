@@ -83,6 +83,7 @@
 #include <ACG/Scenegraph/SeparatorNode.hh>
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include "OpenFlipper/BasePlugin/PluginFunctionsCore.hh"
 
 #include <OpenMesh/Core/System/omstream.hh>
 
@@ -141,9 +142,9 @@ void
 Core::init() {
 
   // Make root_node available to the plugins ( defined in PluginFunctions.hh)
-  PluginFunctions::set_rootNode( root_node_ );
+  PluginFunctions::setRootNode( root_node_ );
 
-  PluginFunctions::set_sceneGraphRootNode( root_node_scenegraph_ );
+  PluginFunctions::setSceneGraphRootNode( root_node_scenegraph_ );
 
   // Initialize the first object as the root Object for the object tree
   objectRoot_ =  dynamic_cast< BaseObject* > ( new GroupObject("ObjectRoot") );
@@ -199,10 +200,6 @@ Core::init() {
     coreWidget_->resize(1000,1000);
 
     coreWidget_->setWindowTitle( OpenFlipper::Options::windowTitle() );
-
-
-    // Make examiner available to the plugins ( defined in PluginFunctions.hh)
-    PluginFunctions::set_examiner( coreWidget_->examiner_widgets_ );
 
   }
 

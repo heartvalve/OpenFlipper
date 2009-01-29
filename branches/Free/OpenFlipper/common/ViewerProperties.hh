@@ -1,0 +1,128 @@
+//=============================================================================
+//
+//                               OpenFlipper
+//        Copyright (C) 2008 by Computer Graphics Group, RWTH Aachen
+//                           www.openflipper.org
+//
+//-----------------------------------------------------------------------------
+//
+//                                License
+//
+//  OpenFlipper is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  OpenFlipper is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
+//
+//-----------------------------------------------------------------------------
+//
+//   $Revision: 4482 $
+//   $Author: moebius $
+//   $Date: 2009-01-28 11:12:14 +0100 (Mi, 28. Jan 2009) $
+//
+//=============================================================================
+
+
+
+
+//=============================================================================
+//
+//  Property storage Class for glWidgets
+//
+//=============================================================================
+
+/**
+ * \file ViewerProperties.hh
+ * This file contains a class for managing all viewer settings
+ */
+
+//
+#ifndef VIEWERPROPERTIES_HH
+#define VIEWERPROPERTIES_HH
+
+#include <QObject>
+
+namespace Viewer {
+
+  /// How to react on mouse events?
+  enum ActionMode {
+    // examine geometry, get transformations from mouse events
+    ExamineMode,
+    /** Picking mode. Actually no pick()ing is performed (!) but events are
+        forwarded to the application via signalMouseEvent().
+      */
+    PickingMode,
+    // same as picking, but emit signalMouseEventIdentify()
+    QuestionMode,
+    // Ligh rotation mode
+    LightMode
+  };
+
+  class ViewerProperties : public QObject {
+
+    Q_OBJECT
+
+    public:
+      ViewerProperties();
+      ~ViewerProperties();
+
+    //===========================================================================
+    /** @name Action Mode States
+    * @{ */
+    //===========================================================================
+
+    public slots:
+
+      bool examineMode() { return(actionMode_ == Viewer::ExamineMode  ); };
+      bool pickingMode() { return(actionMode_ == Viewer::PickingMode  ); };
+      bool lightMode()   { return(actionMode_ == Viewer::LightMode    ); };
+      bool questionMode(){ return(actionMode_ == Viewer::QuestionMode ); };
+
+      /** Set action mode.
+        The ActionMode determines the type of reaction on mouse events.
+      */
+      void setExamineMode() { actionMode(Viewer::ExamineMode  ); };
+      void setPickingMode() { actionMode(Viewer::PickingMode  ); };
+      void setLightMode()   { actionMode(Viewer::LightMode    ); };
+      void setQuestionMode(){ actionMode(Viewer::QuestionMode ); };
+
+    public:
+      void               actionMode(Viewer::ActionMode _am);
+      Viewer::ActionMode actionMode() { return actionMode_; };
+      Viewer::ActionMode lastActionMode() { return lastActionMode_; };
+
+    private :
+      Viewer::ActionMode actionMode_, lastActionMode_;
+
+    /** @} */
+
+
+    //===========================================================================
+    /** @name Action Mode States
+    * @{ */
+    //===========================================================================
+
+
+
+    /** @} */
+
+
+    signals:
+      /** \brief This signal is emitted when the configuration has been changed
+      */
+      void updated();
+
+      void actionModeChanged( Viewer::ActionMode );
+  };
+
+}
+
+
+#endif //VIEWERPROPERTIES_HH

@@ -34,7 +34,7 @@
 
 //=============================================================================
 //
-//  CLASS QtBaseViewer - IMPLEMENTATION
+//  CLASS glViewer - IMPLEMENTATION
 //
 //=============================================================================
 
@@ -55,7 +55,7 @@ static const unsigned int  NAME_STACK_SIZE       = 2;
 //== IMPLEMENTATION ==========================================================
 
 
-void QtBaseViewer::renderPicking(bool _renderPicking, ACG::SceneGraph::PickTarget _mode) {
+void glViewer::renderPicking(bool _renderPicking, ACG::SceneGraph::PickTarget _mode) {
   renderPicking_    = _renderPicking;
   pickRendererMode_ = _mode;
 }
@@ -63,7 +63,7 @@ void QtBaseViewer::renderPicking(bool _renderPicking, ACG::SceneGraph::PickTarge
 //-----------------------------------------------------------------------------
 
 
-bool QtBaseViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
+bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
                          const QPoint&               _mousePos,
                          unsigned int&               _nodeIdx,
                          unsigned int&               _targetIdx,
@@ -126,7 +126,7 @@ bool QtBaseViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
         num_names = *ptr++;
         if ( num_names != NAME_STACK_SIZE )
         {
-          std::cerr << "QtBaseViewer::pick() : namestack error\n\n";
+          std::cerr << "glViewer::pick() : namestack error\n\n";
           return false;
         }
 
@@ -155,7 +155,7 @@ bool QtBaseViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
       return true;
     }
     else if (hits < 0)
-      std::cerr << "QtBaseViewer::pick() : selection buffer overflow\n\n";
+      std::cerr << "glViewer::pick() : selection buffer overflow\n\n";
   }
 
   return false;
@@ -166,7 +166,7 @@ bool QtBaseViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
 
 
 bool
-QtBaseViewer::
+glViewer::
 fast_pick( const QPoint&  _mousePos,
            ACG::Vec3d&    _hitPoint )
 {
@@ -192,7 +192,7 @@ fast_pick( const QPoint&  _mousePos,
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::pickMode( int _id )
+void glViewer::pickMode( int _id )
 {
   if (_id < (int) pick_modes_.size() )
   {
@@ -200,11 +200,11 @@ void QtBaseViewer::pickMode( int _id )
     pick_mode_name_ = pick_modes_[pick_mode_idx_].name;
 
     // adjust mouse tracking
-    if ( actionMode_ == PickingMode )
+    if ( properties_.pickingMode() )
       trackMouse(pick_modes_[pick_mode_idx_].tracking);
 
     // adjust Cursor
-    if ( actionMode_ == PickingMode )
+    if ( properties_.pickingMode() )
       glView_->setCursor( pick_modes_[pick_mode_idx_].cursor);
 
     // emit signal
@@ -216,7 +216,7 @@ void QtBaseViewer::pickMode( int _id )
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::addPickMode(const std::string& _name,
+void glViewer::addPickMode(const std::string& _name,
                                bool _tracking,
                                int  _pos,
                                bool _visible,
@@ -236,14 +236,14 @@ void QtBaseViewer::addPickMode(const std::string& _name,
 
 //-----------------------------------------------------------------------------
 
-void QtBaseViewer::setPickModeCursor(const std::string& _name, QCursor _cursor)
+void glViewer::setPickModeCursor(const std::string& _name, QCursor _cursor)
 {
   for (uint i=0; i < pick_modes_.size(); i++)
     if ( pick_modes_[i].name == _name ){
       pick_modes_[i].cursor = _cursor;
 
       //switch cursor if pickMode is active
-      if (pick_mode_name_ == _name && actionMode_ == PickingMode)
+      if (pick_mode_name_ == _name && properties_.pickingMode() )
         glView_->setCursor(_cursor);
       break;
     }
@@ -251,14 +251,14 @@ void QtBaseViewer::setPickModeCursor(const std::string& _name, QCursor _cursor)
 
 //-----------------------------------------------------------------------------
 
-void QtBaseViewer::setPickModeMouseTracking(const std::string& _name, bool _mouseTracking)
+void glViewer::setPickModeMouseTracking(const std::string& _name, bool _mouseTracking)
 {
   for (uint i=0; i < pick_modes_.size(); i++)
     if ( pick_modes_[i].name == _name ){
       pick_modes_[i].tracking = _mouseTracking;
 
       //switch cursor if pickMode is active
-      if (pick_mode_name_ == _name && actionMode_ == PickingMode)
+      if (pick_mode_name_ == _name && properties_.pickingMode() )
         trackMouse(_mouseTracking);
       break;
     }
@@ -267,7 +267,7 @@ void QtBaseViewer::setPickModeMouseTracking(const std::string& _name, bool _mous
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::clearPickModes()
+void glViewer::clearPickModes()
 {
   pick_modes_.clear();
   pick_mode_idx_  = -1;
@@ -279,7 +279,7 @@ void QtBaseViewer::clearPickModes()
 //-----------------------------------------------------------------------------
 
 
-const std::string& QtBaseViewer::pickMode() const
+const std::string& glViewer::pickMode() const
 {
   return pick_mode_name_;
 }
@@ -288,7 +288,7 @@ const std::string& QtBaseViewer::pickMode() const
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::pickMode(const std::string& _name)
+void glViewer::pickMode(const std::string& _name)
 {
   for (unsigned int i=0; i<pick_modes_.size(); ++i)
   {
@@ -301,11 +301,6 @@ void QtBaseViewer::pickMode(const std::string& _name)
   }
 }
 
-//-----------------------------------------------------------------------------
-
-void QtBaseViewer::pickingMode() {
-  actionMode(PickingMode);
-}
 
 
 //=============================================================================

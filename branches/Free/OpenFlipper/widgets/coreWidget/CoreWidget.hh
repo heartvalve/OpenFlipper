@@ -346,7 +346,7 @@ public:
   public :
 
     /// Examiner Widget
-    std::vector< QtBaseViewer* >  examiner_widgets_;
+    std::vector< glViewer* >  examiner_widgets_;
 
     ///Spliter between toplevel objects and the textedit at the bottom
     QSplitter* splitter_;
@@ -641,7 +641,7 @@ public:
     void slotProjectionModeChanged( bool _ortho );
 
     /// Change Icons if action mode is changed in an examiner
-    void slotActionModeChanged( QtBaseViewer::ActionMode _mode );
+    void slotActionModeChanged( Viewer::ActionMode _mode );
 
     /// Called when the functionMenu has to be updated
     void slotFunctionMenuUpdate();
