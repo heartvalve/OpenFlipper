@@ -389,9 +389,6 @@ public slots:
 //-------------------------------------------------------------- public signals
 signals:
 
-  /// emitted when OpenGL stuff can be initialized
-  void signalInitializeGL();
-
   /** A signal for giving mouse events to the application.
       This is done if the Pick-Button (top-most button of the toolbar)
       is activated. Connect to this signal to implement application
@@ -415,16 +412,10 @@ signals:
    */
   void signalMouseEventIdentify( QMouseEvent* );
 
-
-/// set view, used for synchronizing (cf. slotSetView())
-  void signalSetView( const ACG::GLMatrixd& _modelview,
-		                const ACG::GLMatrixd& _inverse_modelview );
   /// scene graph has changed
   void signalSceneGraphChanged(ACG::SceneGraph::BaseNode* _root);
   /// scene graph has changed
   void signalNodeChanged(ACG::SceneGraph::BaseNode* _node);
-  /// action mode was changed
-  void signalActionModeChanged( Viewer::ActionMode _m);
 
   signals:
 

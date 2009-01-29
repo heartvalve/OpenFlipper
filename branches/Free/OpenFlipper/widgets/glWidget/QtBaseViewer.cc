@@ -313,9 +313,6 @@ void glViewer::toggleProjectionMode()
   else
     projectionMode(ORTHOGRAPHIC_PROJECTION);
 
-  // sync
-  emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
-
   updateGL();
 }
 
@@ -440,9 +437,6 @@ void glViewer::updateActionMode(Viewer::ActionMode _am)
       break;
     }
   }
-
-
-  emit(signalActionModeChanged( _am ));
 
   //emit pickmodeChanged with either the name of the current pickmode or an empty string
   if( properties_.pickingMode() )
@@ -706,8 +700,6 @@ void glViewer::home()
   updateProjectionMatrix();
   updateGL();
 
-  // sync
-  emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
 }
 
 
@@ -728,8 +720,6 @@ void glViewer::viewAll()
   updateProjectionMatrix();
   updateGL();
 
-  // sync
-  emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
 }
 
 
@@ -770,8 +760,7 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
       updateGL();
     }
 
-    // sync with external viewer
-    emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
+
   }
 }
 
@@ -915,10 +904,6 @@ void glViewer::initializeGL()
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
 
-  // emit initialization signal
-  emit(signalInitializeGL());
-
-
   // unlock update (we started locked)
   properties_.unLockUpdate();
 }
@@ -1006,9 +991,6 @@ void glViewer::paintGL()
     glPixelStorei(GL_PACK_SKIP_ROWS, 0);
     glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
-
-    // emit initialization signal
-    emit(signalInitializeGL());
 
     // unlock update (we started locked)
     properties_.unLockUpdate();
@@ -1500,8 +1482,6 @@ void glViewer::slotWheelX(double _dAngle)
   rotate(ACG::Vec3d(1,0,0),ACG::QtWidgets::QtWheel::deg(ACG::QtWidgets::QtWheel::clip(_dAngle)));
   updateGL();
 
-  // sync
-  emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
 }
 
 void glViewer::slotWheelY(double _dAngle)
@@ -1509,8 +1489,6 @@ void glViewer::slotWheelY(double _dAngle)
   rotate(ACG::Vec3d(0,1,0),ACG::QtWidgets::QtWheel::deg(ACG::QtWidgets::QtWheel::clip(_dAngle)));
   updateGL();
 
-  // sync
-  emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
 }
 
 void glViewer::slotWheelZ(double _dist)
@@ -1519,8 +1497,6 @@ void glViewer::slotWheelZ(double _dist)
   translate(ACG::Vec3d(0,0,dz));
   updateGL();
 
-  // sync
-  emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
 }
 
 
@@ -1931,8 +1907,6 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
   }
 
 
-  // sync views
-  emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
 }
 
 
@@ -2057,8 +2031,6 @@ void glViewer::viewWheelEvent( QWheelEvent* _event)
   }
 
 
-  // sync views
-  emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
 }
 
 
