@@ -317,7 +317,7 @@ void CoreWidget::slotSnapshotName() {
 
 void CoreWidget::changeBackgroundColor(){
 
-  ACG::Vec4f bc = examiner_widgets_[PluginFunctions::activeExaminer()]->backgroundColor() * 255.0;
+  ACG::Vec4f bc = PluginFunctions::viewerProperties().backgroundColor() * 255.0;
 
 //   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
 //         std::cerr << "Color before : " << i << " : " <<  examiner_widgets_[i]->backgroundColor() << std::endl;
@@ -327,7 +327,7 @@ void CoreWidget::changeBackgroundColor(){
   if (c != backCol && c.isValid()){
     std::cerr << "Examiner widgets : " << OpenFlipper::Options::examinerWidgets() << std::endl;
     for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
-      examiner_widgets_[i]->backgroundColor(ACG::Vec4f(((double) c.redF())   ,
+      PluginFunctions::viewerProperties(i).backgroundColor(ACG::Vec4f(((double) c.redF())   ,
                                                        ((double) c.greenF()) ,
                                                        ((double) c.blueF())  ,
                                                          1.0));
@@ -338,7 +338,7 @@ void CoreWidget::changeBackgroundColor(){
   }
 
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-        std::cerr << "Color after : " << i << " : " <<  examiner_widgets_[i]->backgroundColor() << std::endl;
+        std::cerr << "Color after : " << i << " : " <<  PluginFunctions::viewerProperties(i).backgroundColor() << std::endl;
 
 }
 

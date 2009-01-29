@@ -912,7 +912,7 @@ void glViewer::initializeGL()
   twoSidedLighting( twoSidedLighting_ );
 
   // Update all settings which would require a redraw
-  slotPropertiesUpdated();
+  applyProperties();
 
   // light sources
   light_matrix_.identity();
@@ -1063,7 +1063,7 @@ void glViewer::paintGL()
     normalsMode(      normalsMode_      );
     backFaceCulling(  backFaceCulling_  );
 
-    slotPropertiesUpdated();
+    applyProperties();
 
     // light sources
     update_lights();
@@ -2138,15 +2138,21 @@ void glViewer::slotAnimation()
   }
 }
 
-void glViewer::slotPropertiesUpdated() {
-  std::cerr << "glViewer : Properties updated" << std::endl;
-
-  makeCurrent();
+void glViewer::applyProperties() {
+  glstate_->set_clear_color( properties_.backgroundColor() );
 
   if (properties_.isCCWFront() )
     glFrontFace( GL_CCW );
   else
     glFrontFace( GL_CW );
+}
+
+void glViewer::slotPropertiesUpdated() {
+  std::cerr << "Properties updated" << std::endl;
+
+  makeCurrent();
+
+  applyProperties();
 
   updateGL();
 }

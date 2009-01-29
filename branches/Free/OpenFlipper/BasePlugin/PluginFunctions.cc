@@ -252,7 +252,7 @@ bool get_all_object_identifiers( std::vector<int>& _identifiers  ) {
 
 void setBackColor( OpenMesh::Vec4f _color) {
   for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
-    examiner_widgets_[i]->backgroundColor(_color);
+    PluginFunctions::viewerProperties(i).backgroundColor(_color);
 }
 
 QPoint mapToGlobal(const QPoint _point ) {

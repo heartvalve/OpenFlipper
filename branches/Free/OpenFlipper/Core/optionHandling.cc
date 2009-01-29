@@ -103,7 +103,7 @@ void Core::applyOptions(){
       coreWidget_->examiner_widgets_[i]->renderPicking(OpenFlipper::Options::renderPicking(), target );
 
       // Background color
-      coreWidget_->examiner_widgets_[i]->backgroundColor( ACG::Vec4f(c.redF(),c.greenF(),c.blueF(),1.0f) );
+      PluginFunctions::viewerProperties(i).backgroundColor( ACG::Vec4f(c.redF(),c.greenF(),c.blueF(),1.0f) );
 
     }
 

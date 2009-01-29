@@ -48,6 +48,7 @@
 #define VIEWERPROPERTIES_HH
 
 #include <QObject>
+#include <ACG/Math/VectorT.hh>
 
 namespace Viewer {
 
@@ -151,6 +152,18 @@ namespace Viewer {
 
     private:
       bool CCWFront_;
+
+    public slots:
+
+      /// Get current background color
+      ACG::Vec4f backgroundColor() { return backgroundColor_; }
+
+      /** Set background color.
+      */
+      void backgroundColor( ACG::Vec4f _color ) { backgroundColor_ = _color; emit updated(); };
+
+    private:
+      ACG::Vec4f backgroundColor_;
 
     /** @} */
 
