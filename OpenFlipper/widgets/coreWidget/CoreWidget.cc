@@ -237,8 +237,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "<li><b>Zoom</b> using <b>left+middle</b> mouse buttons.</li></ul>" );
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
     connect( moveButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setExamineMode() ) );
-    connect( examiner_widgets_[i] , SIGNAL( signalActionModeChanged( Viewer::ActionMode ) ),
-             this                 , SLOT( slotActionModeChanged(Viewer::ActionMode) ) );
+    connect( &PluginFunctions::viewerProperties(i) , SIGNAL( signalActionModeChanged( Viewer::ActionMode ) ),
+             this                                  , SLOT(   slotActionModeChanged(Viewer::ActionMode) ) );
   }
 
   viewerToolbar_->addWidget( moveButton_ )->setText("Move");
