@@ -249,18 +249,6 @@ public:
 
   public:
 
-
-  /// orientation of the faces
- enum FaceOrientation {
-    CCW_ORIENTATION, //!< counter clockwise (default)
-    CW_ORIENTATION   //!< clockwise
-  };
-
-  /// set face orientation (used for back face culling, backFaceCulling())
-  void faceOrientation(FaceOrientation);
-  /// get face orientation
-  FaceOrientation faceOrientation() const { return faceOrientation_; }
-
   public slots:
     /// set backface culling on/off
     void backFaceCulling( bool _b );
@@ -626,7 +614,6 @@ private:
 
   // modi
   NormalsMode                  normalsMode_;
-  FaceOrientation              faceOrientation_;
   ProjectionMode               projectionMode_;
   bool                         backFaceCulling_;
   bool                         twoSidedLighting_;

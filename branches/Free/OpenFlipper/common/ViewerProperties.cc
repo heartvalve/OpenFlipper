@@ -48,7 +48,8 @@ namespace Viewer {
     actionMode_(Viewer::PickingMode),
     lastActionMode_(Viewer::PickingMode),
     snapshotName_("snap.png"),
-    snapshotCounter_(0)
+    snapshotCounter_(0),
+    CCWFront_(true)
   {
 
   }

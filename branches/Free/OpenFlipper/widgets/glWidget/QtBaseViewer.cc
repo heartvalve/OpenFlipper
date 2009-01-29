@@ -158,7 +158,6 @@ glViewer::glViewer( QWidget* _parent,
   availDrawModes_   = ACG::SceneGraph::DrawModes::NONE;
 
   normalsMode_      = DONT_TOUCH_NORMALS;
-  faceOrientation_  = CCW_ORIENTATION;
   projectionMode_   = PERSPECTIVE_PROJECTION;
   backFaceCulling_  = false;
   twoSidedLighting_ = true;
@@ -474,27 +473,6 @@ void glViewer::updateActionMode(Viewer::ActionMode _am)
     emit(signalPickModeChanged(pick_mode_name_));
   else
     emit(signalPickModeChanged(""));
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void glViewer::faceOrientation(FaceOrientation _ori)
-{
-  makeCurrent();
-
-  switch ( faceOrientation_ = _ori ) {
-    case CCW_ORIENTATION:
-      glFrontFace( GL_CCW );
-      break;
-
-    case CW_ORIENTATION:
-      glFrontFace( GL_CW );
-      break;
-  }
-
-  updateGL();
 }
 
 
@@ -930,10 +908,11 @@ void glViewer::initializeGL()
 
   projectionMode(   projectionMode_   );
   normalsMode(      normalsMode_      );
-  faceOrientation(  faceOrientation_  );
   backFaceCulling(  backFaceCulling_  );
   twoSidedLighting( twoSidedLighting_ );
 
+  // Update all settings which would require a redraw
+  slotPropertiesUpdated();
 
   // light sources
   light_matrix_.identity();
@@ -1082,8 +1061,9 @@ void glViewer::paintGL()
 
 
     normalsMode(      normalsMode_      );
-    faceOrientation(  faceOrientation_  );
     backFaceCulling(  backFaceCulling_  );
+
+    slotPropertiesUpdated();
 
     // light sources
     update_lights();
@@ -2160,6 +2140,15 @@ void glViewer::slotAnimation()
 
 void glViewer::slotPropertiesUpdated() {
   std::cerr << "glViewer : Properties updated" << std::endl;
+
+  makeCurrent();
+
+  if (properties_.isCCWFront() )
+    glFrontFace( GL_CCW );
+  else
+    glFrontFace( GL_CW );
+
+  updateGL();
 }
 
 
