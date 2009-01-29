@@ -71,8 +71,8 @@ bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
     GLuint        selectionBuffer[ SELECTION_BUFFER_SIZE ],
                   nameBuffer[ NAME_STACK_SIZE ];
 
-    const ACG::GLMatrixd&  modelview  = glstate_->modelview();
-    const ACG::GLMatrixd&  projection = glstate_->projection();
+    const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
+    const ACG::GLMatrixd&  projection = properties_.glState().projection();
 
 
     // prepare GL state
@@ -93,7 +93,7 @@ bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
 
     // do the picking
     ACG::SceneGraph::PickAction action(_pickTarget);
-    ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_);
+    ACG::SceneGraph::traverse(sceneGraphRoot_, action, properties_.glState());
     int hits = glRenderMode(GL_RENDER);
 
     // restore GL state
@@ -141,7 +141,7 @@ bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
         GLdouble min_zz = ((GLdouble)min_z) / ((GLdouble)zscale);
         GLdouble max_zz = ((GLdouble)max_z) / ((GLdouble)zscale);
         GLdouble zz     = 0.5F * (min_zz + max_zz);
-        *_hitPointPtr = glstate_->unproject(ACG::Vec3d(x,y,zz));
+        *_hitPointPtr = properties_.glState().unproject(ACG::Vec3d(x,y,zz));
       }
 
       return true;
@@ -175,7 +175,7 @@ fast_pick( const QPoint&  _mousePos,
 
   if (z < 0.99999)
   {
-    _hitPoint = glstate_->unproject( ACG::Vec3d(x, y, z) );
+    _hitPoint = properties_.glState().unproject( ACG::Vec3d(x, y, z) );
     return true;
   }
   else return false;

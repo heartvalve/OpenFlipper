@@ -153,32 +153,6 @@ public:
   /// Swaps the screen contents with the off-screen buffer.
   virtual void swapBuffers();
 
-
-  /// get OpenGL state
-  ACG::GLState& glState() { return *glstate_; }
-
-
-
-
-
-  /** Lock update of display.
-      If locked (isUpdateLocked()) then all calls to updateDisplayList()
-      and updateGL() will have no effect! This is true until the display is
-      unlockUpdate()'ed.
-  */
-  virtual void lockUpdate();
-  /// Unlock display locked by updateLock().
-  virtual void unlockUpdate();
-  /** Convenient unlock and update.
-      Calls unlockUpdate() and then updateDisplayList() and updateGL()
-      (Note that this has only an effect if !isUpdateLocked().)
-  */
-  virtual void unlockAndUpdate();
-  /** Are updateDisplayList() and updateGL() locked?
-      (c.f. lockUpdate()) */
-  bool isUpdateLocked() const { return updateLocked_; }
-
-
   /// Lock update of projection matrix.
   void lockProjectionUpdate( void ) { projectionUpdateLocked_ = true; }
 
@@ -451,9 +425,6 @@ signals:
   void signalNodeChanged(ACG::SceneGraph::BaseNode* _node);
   /// action mode was changed
   void signalActionModeChanged( Viewer::ActionMode _m);
-  /// render callback
-  void signalDrawScene(ACG::GLState* _state);
-
 
   signals:
 
@@ -576,8 +547,7 @@ protected:
   GLdouble                     near_, far_, fovy_;
 
 
-  // scenegraph
-  ACG::GLState                     *glstate_;
+
 
 
   // helper
@@ -977,7 +947,11 @@ private:
     Viewer::ViewerProperties* properties(){ return &properties_; };
 
   private:
+    /// All properties for this viewer
     Viewer::ViewerProperties properties_;
+
+    /// Gl State
+    ACG::GLState                 *glstate_;
 
   private slots:
     /** Called when properties for the viewer require a redraw

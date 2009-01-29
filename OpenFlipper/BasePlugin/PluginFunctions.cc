@@ -303,7 +303,7 @@ bool scenegraph_pick( const unsigned int _examiner, ACG::SceneGraph::PickTarget 
 //Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
 void traverse( ACG::SceneGraph::MouseEventAction  &_action ) {
    ACG::SceneGraph::traverse(sceneGraph_root_node_,
-                             _action,PluginFunctions::examiner_widgets_[activeExaminer_]->glState() );
+                             _action,viewerProperties().glState() );
 }
 
 //Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
@@ -314,7 +314,7 @@ void traverse( const unsigned int _examiner, ACG::SceneGraph::MouseEventAction  
     return;
   }
 
-  ACG::SceneGraph::traverse(sceneGraph_root_node_, _action,PluginFunctions::examiner_widgets_[_examiner]->glState() );
+  ACG::SceneGraph::traverse(sceneGraph_root_node_, _action,viewerProperties(_examiner).glState() );
 }
 
 
@@ -344,7 +344,7 @@ void actionMode ( Viewer::ActionMode _mode) {
 }
 
 ACG::GLState&  glState() {
-   return examiner_widget_->glState();
+   return viewerProperties().glState();
 }
 
 void getCurrentViewImage(QImage& _image) {
@@ -421,15 +421,15 @@ void viewAll() {
 }
 
 ACG::Vec3d viewingDirection() {
-  return examiner_widget_->glState().viewing_direction();
+  return viewerProperties().glState().viewing_direction();
 }
 
 ACG::Vec3d eyePos() {
-  return examiner_widget_->glState().eye();
+  return viewerProperties().glState().eye();
 }
 
 ACG::Vec3d upVector() {
-  return examiner_widget_->glState().up();
+  return viewerProperties().glState().up();
 }
 
 

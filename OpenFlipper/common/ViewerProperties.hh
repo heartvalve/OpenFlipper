@@ -50,6 +50,7 @@
 #include <QObject>
 #include <ACG/Math/VectorT.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
+#include <ACG/GL/GLState.hh>
 
 namespace Viewer {
 
@@ -203,6 +204,46 @@ namespace Viewer {
       */
       ACG::SceneGraph::PickTarget pickRendererMode_;
 
+
+    //===========================================================================
+
+    public slots:
+      /** Lock update of display.
+      If locked (isUpdateLocked()) then all calls to updateDisplayList()
+      and updateGL() will have no effect! This is true until the display is
+      unlockUpdate()'ed.
+      */
+      void lockUpdate()  { locked_++; };
+
+      /// Unlock display locked by updateLock().
+      void unLockUpdate(){
+        locked_-- ;
+        if ( locked_ <0 ) {
+          std::cerr << "More unlocks then locks" << std::endl;
+          locked_ = 0;
+        }
+      };
+
+      /** Are updateDisplayList() and updateGL() locked?
+      (c.f. lockUpdate()) */
+      bool updateLocked() { return (locked_ != 0); };
+
+    private:
+      int locked_;
+
+    //===========================================================================
+
+    public:
+      /// Get the glState of the Viewer
+      ACG::GLState& glState() { return (*glState_); };
+
+      void setglState(ACG::GLState* _glState) { glState_ = _glState; };
+
+    private:
+      /// Pointer to the glState of the Viewer
+      ACG::GLState* glState_;
+
+
     /** @} */
 
     signals:
@@ -211,6 +252,8 @@ namespace Viewer {
       void updated();
 
       void actionModeChanged( Viewer::ActionMode );
+
+
   };
 
 }
