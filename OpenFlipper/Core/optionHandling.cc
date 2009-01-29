@@ -96,8 +96,8 @@ void Core::applyOptions(){
       PluginFunctions::viewerProperties(i).backFaceCulling(OpenFlipper::Options::backfaceCulling());
 
       //wheel zoom factor
-      coreWidget_->examiner_widgets_[i]->setWheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());
-      coreWidget_->examiner_widgets_[i]->setWheelZoomFactorShift(OpenFlipper::Options::wheelZoomFactorShift());
+      PluginFunctions::viewerProperties().wheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());
+      PluginFunctions::viewerProperties().wheelZoomFactorShift(OpenFlipper::Options::wheelZoomFactorShift());
 
       // Picking Debugger
       PluginFunctions::viewerProperties(i).renderPicking(OpenFlipper::Options::renderPicking(), target );

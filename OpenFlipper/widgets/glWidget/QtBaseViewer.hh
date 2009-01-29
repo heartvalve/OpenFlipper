@@ -860,17 +860,6 @@ private:
   void allowRotation( bool _mode ) { allowRotation_ = _mode; };
 
 
-  /// Factors for zooming with the wheel
-  public:
-    double wheelZoomFactor();
-    double wheelZoomFactorShift();
-    void setWheelZoomFactor(double _factor);
-    void setWheelZoomFactorShift(double _factor);
-  private:
-    double wZoomFactor_;
-    double wZoomFactorShift_;
-
-
   private slots:
 
     void slotAnimation();

@@ -49,6 +49,8 @@ namespace Viewer {
     lastActionMode_(Viewer::PickingMode),
     snapshotName_("snap.png"),
     snapshotCounter_(0),
+    wZoomFactor_(1.0),
+    wZoomFactorShift_(0.2),
     CCWFront_(true),
     backgroundColor_(0.0f,0.0f,0.0f,0.0f),
     renderPicking_(false),
