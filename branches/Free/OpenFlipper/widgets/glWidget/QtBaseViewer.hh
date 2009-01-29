@@ -430,8 +430,6 @@ public slots:
   void actionDrawMenu( QAction * _action );
   void actionPickMenu( QAction * _action );
 
-  void actionSnapshotName();
-  void actionSnapshot();
   void actionPasteView();
   void actionCopyView();
 
@@ -806,30 +804,13 @@ private:
   //===========================================================================
 
   public slots:
-    /** Set the base file name and reset the counter for snapshots.
 
-      The image file format is determined from the file name extension,
-      the \a QImageIO formats are supported (e.g. ".ppm" [raw], ".png").
-
-      The current snapshot counter will be added in front of the last "."
-      in the filename.
-
-      \a Note: Calling snapshotBaseFileName() will always reset the snapshot
-      counter to 0.
-    */
-    virtual void snapshotBaseFileName(const QString& _fname);
 
     /** Trigger a snapshot and increase the snapshot counter.
         Save snapshot to file determined by snapshotBaseFileName() and
         the current snapshot counter. The \a back buffer will be saved.
     */
     virtual void snapshot();
-
-  private:
-
-    QString                      snapshotName_;
-    int                          snapshotCounter_;
-    QImage*                      snapshot_;
 
   /** @} */
 

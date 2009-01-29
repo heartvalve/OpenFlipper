@@ -105,11 +105,33 @@ namespace Viewer {
 
 
     //===========================================================================
-    /** @name Action Mode States
+    /** @name Snapshot settings
     * @{ */
     //===========================================================================
 
+    public slots:
+      /** Set the base file name and reset the counter for snapshots.
 
+        The image file format is determined from the file name extension,
+        the \a QImageIO formats are supported (e.g. ".ppm" [raw], ".png").
+
+        The current snapshot counter will be added in front of the last "."
+        in the filename.
+
+        \a Note: Calling snapshotBaseFileName() will always reset the snapshot
+        counter to 0.
+      */
+      void snapshotBaseFileName(const QString& _fname);
+
+      /** Get the name for the current snapshot */
+      QString snapshotName() { return snapshotName_; };
+
+      /** Get the counter for the current snapshot and increases the counter */
+      int snapshotCounter() { return snapshotCounter_++; };
+
+    private:
+      QString                      snapshotName_;
+      int                          snapshotCounter_;
 
     /** @} */
 
