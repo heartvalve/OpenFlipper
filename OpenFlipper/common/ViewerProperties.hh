@@ -49,6 +49,7 @@
 
 #include <QObject>
 #include <ACG/Math/VectorT.hh>
+#include <ACG/Scenegraph/SceneGraph.hh>
 
 namespace Viewer {
 
@@ -137,9 +138,12 @@ namespace Viewer {
     /** @} */
 
     //===========================================================================
+    //===========================================================================
     /** @name Rendering Settings
     * @{ */
     //===========================================================================
+    //===========================================================================
+
     public slots:
       /** true if counter clockwise orientation should be used to define front facing orientation.
        */
@@ -153,6 +157,9 @@ namespace Viewer {
     private:
       bool CCWFront_;
 
+
+    //===========================================================================
+
     public slots:
 
       /// Get current background color
@@ -164,6 +171,37 @@ namespace Viewer {
 
     private:
       ACG::Vec4f backgroundColor_;
+
+    //===========================================================================
+
+    public slots:
+
+      /// Render picking or not
+      bool renderPicking() { return renderPicking_; };
+
+      /// Mode used for the picking renderer
+      ACG::SceneGraph::PickTarget renderPickingMode() { return pickRendererMode_; };
+
+      void renderPickin(bool _mode ) { renderPicking_ = _mode; emit updated(); };
+
+      /** Use this function to switch the viewer to visualize picking.
+      * When you set this function to true the renderer will render the picking
+      * elements rather then the scene
+      */
+      void renderPicking(bool _renderPicking, ACG::SceneGraph::PickTarget _mode) {
+        pickRendererMode_ = _mode ; renderPicking_ = _renderPicking; emit updated();
+      }
+
+    private:
+      /** This variable controls if the scene is rendered in normal or in picking mode
+      */
+      bool renderPicking_;
+
+      /** If rendering is in picking mode, this variable controls which picking targets
+      * will be rendered. ( see renderPicking_ , renderPicking(bool _renderPicking, PickRendererMode _mode) ,
+      * and ACG::SceneGraph::PickTarget
+      */
+      ACG::SceneGraph::PickTarget pickRendererMode_;
 
     /** @} */
 

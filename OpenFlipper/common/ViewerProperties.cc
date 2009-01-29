@@ -49,7 +49,10 @@ namespace Viewer {
     lastActionMode_(Viewer::PickingMode),
     snapshotName_("snap.png"),
     snapshotCounter_(0),
-    CCWFront_(true)
+    CCWFront_(true),
+    backgroundColor_(0.0f,0.0f,0.0f,0.0f),
+    renderPicking_(false),
+    pickRendererMode_(ACG::SceneGraph::PICK_ANYTHING)
   {
 
   }

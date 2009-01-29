@@ -122,9 +122,7 @@ glViewer::glViewer( QWidget* _parent,
   projectionUpdateLocked_(false),
   blending_(true),
   pick_mode_name_(""),
-  pick_mode_idx_(-1),
-  renderPicking_(false),
-  pickRendererMode_(ACG::SceneGraph::PICK_ANYTHING)
+  pick_mode_idx_(-1)
 
 {
   // check for OpenGL support
@@ -629,7 +627,7 @@ void glViewer::drawScene_mono()
 
   if (sceneGraphRoot_)
   {
-    if (! renderPicking_ ) {
+    if (! properties_.renderPicking() ) {
       ACG::SceneGraph::DrawAction action(curDrawMode_, false);
       ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, curDrawMode_);
 
@@ -649,7 +647,7 @@ void glViewer::drawScene_mono()
       glPushName((GLuint) 0);
 
       // do the picking
-      ACG::SceneGraph::PickAction action(pickRendererMode_);
+      ACG::SceneGraph::PickAction action(properties_.renderPickingMode());
       ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_);
 
       glEnable(GL_LIGHTING);
