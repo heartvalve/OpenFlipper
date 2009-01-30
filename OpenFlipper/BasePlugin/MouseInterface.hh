@@ -51,8 +51,14 @@
   *
   * When using mouse events in your plugins implement this interface. Remember that
   * all plugins may get these signals. Therefore you hav to check if the current pickingMode
-  * is active before doing anything. Only the slotMouseEventIdentify is independent of picking modes.
- */
+  * you want to react on is active before doing anything. Only the slotMouseEventIdentify is
+  * independent of picking modes.
+  *
+  * The slotMouseWheelEvent anf slotMouseEvent Only get called when the system is in picking
+  * mode.
+  *
+  * slotMouseEventIdentify will be used when question mode is active.
+  */
 class MouseInterface {
 
   private slots :
