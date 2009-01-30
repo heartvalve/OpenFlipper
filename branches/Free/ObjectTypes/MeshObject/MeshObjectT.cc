@@ -46,6 +46,7 @@
   #include <OpenFlipper/common/Types.hh>
   #include <ACG/Scenegraph/DrawModes.hh>
   #include <OpenFlipper/common/GlobalOptions.hh>
+  #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 
   //== TYPEDEFS =================================================================
@@ -314,6 +315,7 @@
   */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::update() {
+    PluginFunctions::setMainGLContext();
     updateGeometry();
     updateTopology();
     updateSelection();
