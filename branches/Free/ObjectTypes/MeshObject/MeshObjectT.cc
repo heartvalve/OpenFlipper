@@ -183,7 +183,7 @@
     mesh_->request_vertex_texcoords2D();
     mesh_->request_halfedge_texcoords2D();
 
-	if ( manipulatorNode() == NULL)
+ 	 if ( manipulatorNode() == NULL)
 		std::cerr << "Error when creating Mesh Object! manipulatorNode is NULL!" << std::endl;
 
     statusNode_ = new ACG::SceneGraph::SelectionNodeT<MeshT>(*mesh_,manipulatorNode(),"NEW StatusNode for mesh " );
@@ -447,14 +447,29 @@
     meshNode_->boundingBox(_bbMin,_bbMax);
   }
 
-  /** Add a texture to the object.
-  * @param _property Name of the mesh property handle containing the texture.
-  * @param _textureFile Name of the texturefile used (has to be in the Textures dir of OpenFlipper)
-  */
+
   template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::addTexture(QString _property, QString _textureFile )
+  void MeshObject< MeshT , objectDataType >::addTexture(QImage& _image , int _id )
   {
-    textures.push_back( std::pair<QString,QString>(_property,_textureFile) );
+
+    if ( textures_.empty() ) {
+      std::cerr << "No texture set." << std::endl;
+    }
+
+    if ( _id >= textures_.size() ) {
+      std::cerr << "Expanded texture index vector." << std::endl;
+      textures_.resize(_id + 1,0);
+    }
+
+    std::cerr << "Add texture" << std::endl;
+    textures_[_id] = textureNode_->add_texture(_image);
+
+    meshNode_->set_texture_map(&textures_);
+
+    if ( textures_.size() > 1 &&  !mesh_.has_face_texture_index() ) {
+      std::cerr << " More than one textures available but no faceindex set. Only first texture will be used." << std::endl;
+    }
+
   }
 
 
