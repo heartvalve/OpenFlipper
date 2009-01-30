@@ -231,6 +231,8 @@ public:
   /// update light position
   void update_lights();
 
+  void draw_lights();
+
 
   /// copy current framebuffer to an QImage
   void copyToImage( QImage& _image, GLenum _buffer=GL_BACK) {
