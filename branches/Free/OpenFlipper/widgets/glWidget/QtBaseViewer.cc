@@ -537,9 +537,10 @@ void glViewer::drawScene()
   if (stereo_) drawScene_stereo();
   else         drawScene_mono();
 
-
   glFinish();
   frame_time_ = timer.elapsed();
+
+
 }
 
 
@@ -576,6 +577,8 @@ void glViewer::drawScene_mono()
       glEnable(GL_LIGHTING);
     }
   }
+
+  draw_lights();
 }
 
 
@@ -862,6 +865,42 @@ void glViewer::initializeGL()
 
 //-----------------------------------------------------------------------------
 
+/**
+ *
+ */
+void  glViewer::draw_lights() {
+//   makeCurrent();
+// //
+//   glMatrixMode(GL_MODELVIEW);
+//   glPushMatrix();
+//   glLoadIdentity();
+//   glMultMatrixd(light_matrix_.data());
+//
+//   std::cerr << "light_matrix_\n" << light_matrix_ << std::endl;
+// //
+//   glPointSize(3);
+// //
+//   glColor3f(1.0,1.0,1.0);
+// //   glDisable(GL_LIGHTING);
+// //   glDisable(GL_BLEND);
+//   glBegin(GL_LINES);
+//     glVertex3f(0.0,  0.0, -1000.0);
+//     glVertex3f(0.0,  0.0, 10000.0);
+//     glVertex3f(0.0, -1000.0,0.0);
+//     glVertex3f(0.0, 1000.0,0.0);
+//     glVertex3f(1000.0,0.0,0.0);
+//     glVertex3f(-1000.0,0.0,0.0);
+// //     glVertex3d(0.0,  0.0, 1.1);
+// //     glVertex3d(-1.0,  1.0, 0.8);
+// //     glVertex3d( 1.0,  1.0, 0.8);
+//
+//   glEnd();
+// //   glEnable(GL_LIGHTING);
+// //   glEnable(GL_BLEND);
+// //
+//   glPopMatrix();
+
+}
 
 void glViewer::update_lights()
 {
@@ -2006,7 +2045,6 @@ void glViewer::applyProperties() {
 }
 
 void glViewer::slotPropertiesUpdated() {
-  std::cerr << "Properties updated" << std::endl;
   makeCurrent();
   applyProperties();
   updateGL();
