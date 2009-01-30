@@ -294,6 +294,12 @@ void allowRotation(bool _mode);
     * @{ */
 //=======================================
 
+/** \brief Set current GL Context to main context
+ */
+DLLEXPORT
+void setMainGLContext();
+
+
 /** \brief Set the viewing direction
  * @param _dir direction
  * @param _up up vector

@@ -380,6 +380,10 @@ void allowRotation(bool _mode) {
   examiner_widget_->allowRotation(_mode);
 }
 
+void setMainGLContext() {
+  examiner_widget_->makeCurrent();
+}
+
 void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up) {
   examiner_widget_->viewingDirection(_dir,_up);
 }
