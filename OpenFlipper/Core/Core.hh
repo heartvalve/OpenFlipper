@@ -446,8 +446,16 @@ private:
    /// after ini-files have been loaded and core is up or if options have been changed -> apply Options
    void applyOptions();
 
-   /// Open an ini file and load everything in it ( Application/File Options )
-   void openIniFile(QString _filename);
+   /** \brief Load information from an ini file
+    *
+    * This function will open an ini file and load the information in it.
+    *
+    * @param _filename Name of the ini file
+    * @param _perPluginSettings Load per plugin settings from the file
+    * @param _coreSettings Load core settings from the file
+    *
+    */
+   void openIniFile(QString _filename, bool _coreSettings , bool _perPluginSettings);
 
    /// Open an obj file and load everything in it ( Application/File Options )
    void openObjFile(QString _filename);

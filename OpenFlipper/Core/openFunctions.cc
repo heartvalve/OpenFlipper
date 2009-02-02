@@ -99,9 +99,13 @@ void Core::commandLineScript(const char* _filename ) {
 /// Load object by guessing DataType depending on the files extension
 int Core::loadObject ( QString _filename ) {
   if (_filename.endsWith(".ini")) {
-    openIniFile(_filename);
+
+    // Load all information from the given ini file
+    openIniFile(_filename,true,true);
+
     if ( OpenFlipper::Options::gui() )
       coreWidget_->addRecent(_filename, DATA_NONE);
+
     return -2;
   } else
   if (_filename.endsWith(".ofs")) {
@@ -304,7 +308,8 @@ void Core::loadSettings(){
     OpenFlipper::Options::currentDir(newpath);
 
     if ( complete_name.endsWith("ini") ) {
-      openIniFile(complete_name);
+      // TODO OptionsDialog for choosing which information should be read
+      openIniFile(complete_name,true,true);
       applyOptions();
     } else if ( complete_name.endsWith("obj") ) {
       openObjFile(complete_name);
@@ -325,7 +330,8 @@ void Core::loadSettings(QString _filename){
   OpenFlipper::Options::currentDir(newpath);
 
   if ( _filename.endsWith("ini") ) {
-    openIniFile(_filename);
+    // Loaded function for recent files. Load everything.
+    openIniFile(_filename,true,true);
     applyOptions();
   } else if ( _filename.endsWith("obj") ) {
     openObjFile(_filename);

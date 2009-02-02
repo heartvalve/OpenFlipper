@@ -418,7 +418,8 @@ Core::init() {
       QApplication::processEvents();
     }
 
-    openIniFile( optionFiles[i] );
+    // Load global ini files. Use plugin and global options from these files
+    openIniFile( optionFiles[i] ,true,true);
   }
 
 
