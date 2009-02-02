@@ -6,24 +6,24 @@
  * at least version 4.4 is required. As the framework depends on qt we use the
  * qt make tool qmake to build OpenFlipper.
  *
- * \section Build System
+ * \section bs Build System
  * The build system uses qmake to generate all makefiles. In the toplevel directory of
  * OpenFlipper is a .qmake.cache file which defines the variable TOPLEVEL available
  * in all qmake project files. This file also includes our qmake configuration in the
  * qmake subdirectory. The files in this directory control the build process for the 
- * the core as well as for the plugins. Library dependencies are specified in the project
+ * core as well as for the plugins. Library dependencies are specified in the project
  * files by calling functions which will check for the requested libs. These functions are
  * defined in architecture dependend files under qmake/packages . If you get errors
  * about libraries not found, please change the paths in these configuration files.
  * 
- * \section Required libraries
+ * \section reqlibs Required libraries
  * <ul>
  * <li> Qt >= 4.4 </li>
  * <li> freetype2 </li>
  * <li> ftgl </li>
  * </ul> 
  * 
- * \section Building OpenFlipper under Linux
+ * \section blinux Building OpenFlipper under Linux
  * <ul>
  * <li> First extract the source code. </li>
  * <li> Get all required libraries and install them ( including headers! ).</li>
@@ -36,7 +36,7 @@
  * After building OpenFlipper the Core can be found in the OpenFlipper/<OperatingSystem>_<Arch>_Release.
  * The Plugins are build in the OpenFlipper/Plugins directory.
  * 
- * \section Building OpenFlipper under Windows
+ * \section bwin Building OpenFlipper under Windows
  * <ul>
  * <li> Get Visual Studio 2008 </li>
  * <li> First extract the source code. </li>
@@ -53,6 +53,6 @@
  * After building OpenFlipper the Core can be found in the OpenFlipper/Windows_<Arch>_Release.
  * The Plugins are build in the OpenFlipper/Plugins directory.
  *
- * \section Building OpenFlipper under MacOsX
+ * \section bmac Building OpenFlipper under MacOSX
  * Work in progress...
  */
