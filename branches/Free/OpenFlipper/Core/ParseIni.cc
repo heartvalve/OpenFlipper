@@ -457,7 +457,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   _ini.add_entry("Options","Stereo",OpenFlipper::Options::stereo() );
 }
 
-void Core::openIniFile(QString _filename) {
+void Core::openIniFile(QString _filename, bool _coreSettings, bool _perPluginSettings ){
   INIFile ini;
 
   if ( ! ini.connect(_filename,false) ) {
@@ -472,7 +472,9 @@ void Core::openIniFile(QString _filename) {
 
   OpenFlipper::Options::loadingSettings(true);
 
-  readApplicationOptions(ini);
+  // Load Core settings only if requested
+  if ( _coreSettings )
+    readApplicationOptions(ini);
 
   QStringList openFiles;
 
@@ -539,9 +541,9 @@ void Core::openIniFile(QString _filename) {
 
   }
 
-
-
-  emit iniLoadOptions( ini );
+  // if requested load per Plugin settings from the settings file
+  if ( _perPluginSettings )
+    emit iniLoadOptions( ini );
 
   ini.disconnect();
 
@@ -558,7 +560,7 @@ void Core::openIniFile(QString _filename) {
 
 void Core::writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly, bool _systemSettings ) {
 
-  if ( ! _systemSettings )
+
       std::cerr << "Currently unsupported : Saving ini files without including global settings" << std::endl;
 
   INIFile ini;
@@ -573,7 +575,9 @@ void Core::writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
-  writeApplicationOptions(ini);
+  // Only save application settings when requested
+  if ( _systemSettings )
+    writeApplicationOptions(ini);
 
   // This vector will hold the file sections to open
   QStringList openFiles;
@@ -621,6 +625,7 @@ void Core::writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly
                                         o_it != PluginFunctions::objects_end(); ++o_it)
     emit iniSave(  ini , o_it->id() );
 
+  // TODO : Save per plugin options only if requested
   emit iniSaveOptions( ini );
 
   ini.disconnect();
