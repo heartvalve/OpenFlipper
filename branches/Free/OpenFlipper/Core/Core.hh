@@ -441,6 +441,9 @@ private:
    /// Write Application options to ini file
    void writeApplicationOptions(INIFile& _ini);
 
+   /// Restore key assignments from configs files
+   void restoreKeyBindings();
+
   public slots:
 
    /// Save the current options to the standard ini file

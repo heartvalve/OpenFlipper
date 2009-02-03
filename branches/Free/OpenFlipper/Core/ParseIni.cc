@@ -352,6 +352,10 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   for (int i=0; i < entries.size(); i++)
     _ini.add_entry("Options","ViewMode" + QString::number(i) ,entries[i]);
 
+  //save KeyBindings
+  if ( OpenFlipper::Options::gui() )
+    coreWidget_->saveKeyBindings(_ini);
+
   //============================================================================
   // Splash Screen
   //============================================================================

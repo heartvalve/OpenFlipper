@@ -78,6 +78,7 @@
 
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
+#include <OpenFlipper/INIFile/INIFile.hh>
 
 struct ViewMode{
       QString name;
@@ -219,13 +220,34 @@ public:
     QList< SlotInfo >& coreSlots_;
 
   private slots:
+     /** \brief key registration
+     *
+     * internal slot that registers a keyCombination to the sender() who emitted the registerKey() signal
+     * only after registering keyCombinations plugins receive keyEvents to the corresponding keyCombinations via KeyInterface.
+     */
     void slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description,
                          bool _multiUse = false);
 
   public slots:
+     /** \brief add a new key Mapping
+     *
+     * internal function that stores a new keyCombination assignment for an existing keyBinding
+     */
     void slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, QObject* _plugin, int _keyBindingID);
 
+     /** \brief register scripting slots to allow keyBindings
+     *
+     * internal function that registers all public slots without parameters of each plugin (or core)
+     * to the key management system. This allows the assignment of keyBindings for each of these slots.
+     */
     void slotRegisterSlotKeyBindings();
+
+  public:
+    ///Load key assignments from a given INI file
+    void loadKeyBindings(INIFile& _ini);
+
+    ///Store current key assignments to a given INI file
+    void saveKeyBindings(INIFile& _ini);
 
    /** @} */
 

@@ -112,10 +112,46 @@ void OptionsWidget::applyShortcuts(){
         int key = item->text(4).toInt();
 
         Qt::KeyboardModifiers modi = (Qt::KeyboardModifiers) item->text(5).toInt();
- 
+
         emit addKeyMapping(key, modi, plugin, bindingID);
       }
     }
+}
+
+void OptionsWidget::restoreKeyPresets(){
+
+   //check if the shortcut already exists
+  for (int i=0; i < keyTree->topLevelItemCount(); i++)
+    for (int j=0; j < keyTree->topLevelItem(i)->childCount(); j++){
+
+      QTreeWidgetItem* item = keyTree->topLevelItem(i)->child(j);
+      QString key = item->text(1);
+
+      QString pluginName = item->parent()->text(0);
+      int bindingID = item->text(3).toInt();
+
+      if (pluginName == "Core"){
+
+        item->setText( 1, item->text(2) );
+        item->setText( 4, QString::number(coreKeys_[ bindingID ].key) );
+        item->setText( 5, QString::number(coreKeys_[ bindingID ].modifiers) );
+
+      } else {
+
+        //get the plugin object
+        int index = getPluginInfo(pluginName);
+
+        if (index == -1) //if pluginInfo was not found ->skip
+          continue;
+
+        item->setText( 1, item->text(2) );
+        item->setText( 4, QString::number(plugins_[index].keys[ bindingID ].key) );
+        item->setText( 5, QString::number(plugins_[index].keys[ bindingID ].modifiers) );
+      }
+    }
+
+  keyTree->setFocus(Qt::TabFocusReason);
+  keyTreeItemChanged(keyTree->currentItem(), 0);
 }
 
 /// init the TreeWidget containing the keyBindings
@@ -150,7 +186,7 @@ void OptionsWidget::initKeyTree(){
     else{
 
       BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugin);
-  
+
       if (basePlugin)
         name = basePlugin->name();
       else{
@@ -226,7 +262,7 @@ void OptionsWidget::initKeyTree(){
       defaultStr = QKeySequence( defKey + defModi ).toString();
 
     //and add the row
-    rows << description << keyString << defaultStr << QString::number(bindingID) << QString::number(key) 
+    rows << description << keyString << defaultStr << QString::number(bindingID) << QString::number(key)
          << QString::number(modifiers) << QString::number(multiUse) << keyString;
 
     QTreeWidgetItem* keyItem = new QTreeWidgetItem(parent, rows);

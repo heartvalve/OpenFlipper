@@ -88,6 +88,9 @@ private slots:
 
    void slotShowPluginOptions(const QString& _pluginName );
 
+   ///restore keyBinding Presets
+   void restoreKeyPresets();
+
 protected:
    void showEvent ( QShowEvent * event );
 

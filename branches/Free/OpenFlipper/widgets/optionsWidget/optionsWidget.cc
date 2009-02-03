@@ -180,7 +180,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
 
   connect(shortcutButton, SIGNAL(keyChanged()), this, SLOT(updateShortcut()) );
-
+  connect(presetsButton, SIGNAL(clicked()), this, SLOT(restoreKeyPresets()) );
 
   for (int i = 0 ; i < availDrawModes->count(); ++i )
     availDrawModes->item( i )->setCheckState(Qt::Unchecked) ;
