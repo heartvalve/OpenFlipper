@@ -60,9 +60,6 @@ class FileInterface {
 
    public :
 
-      /** \brief The core gives the root of the object tree via this function */
-      virtual void setObjectRoot( BaseObject* /*_root*/ ) = 0;
-
       /// Return support for adding empty objects
       virtual bool supportAddEmpty() = 0;
 

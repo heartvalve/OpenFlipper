@@ -83,8 +83,6 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
      QString name() { return (QString("FilePolyMesh")); };
      QString description( ) { return (QString("Load/Save Poly Meshes")); };
 
-     void setObjectRoot( BaseObject* _root );
-
      bool supportAddEmpty(){return true;};
 
      int addEmpty( );
@@ -98,9 +96,6 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
 
      QWidget* saveOptionsWidget(QString /*_currentFilter*/) { return 0; };
      QWidget* loadOptionsWidget(QString /*_currentFilter*/) { return 0; };
-
-  private :
-     BaseObject* objectRoot_;
 
   public slots:
 

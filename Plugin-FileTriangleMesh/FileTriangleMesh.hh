@@ -85,13 +85,9 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
      QString name() { return (QString("FileTriangleMesh")); };
      QString description( ) { return (QString("Load/Save Triangle Meshes Meshes")); };
 
-     void setObjectRoot( BaseObject* _root );
-
      bool supportAddEmpty(){return true;};
 
      int addEmpty( );
-
-
 
      QString typeName() { return (QString("Triangle Mesh")); };
 
@@ -102,9 +98,6 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
 
      QWidget* saveOptionsWidget(QString _currentFilter);
      QWidget* loadOptionsWidget(QString _currentFilter);
-
-  private :
-    BaseObject* objectRoot_;
 
   public slots:
     bool saveObject(int _id, QString _filename);
