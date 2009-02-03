@@ -65,7 +65,7 @@ int FileTriangleMeshPlugin::addEmpty(  ){
 
   // Set pointers for tree structure
   object->setParent(PluginFunctions::objectRoot());
-  objectRoot_->appendChild(object);
+  PluginFunctions::objectRoot()->appendChild(object);
 
   if (PluginFunctions::target_count() == 1 )
     object->target(true);
@@ -97,8 +97,8 @@ int FileTriangleMeshPlugin::loadObject(QString _filename){
 
 
   // Set pointers for tree structure
-  object->setParent(objectRoot_);
-  objectRoot_->appendChild(object);
+  object->setParent(PluginFunctions::objectRoot());
+  PluginFunctions::objectRoot()->appendChild(object);
 
   if (PluginFunctions::object_count() == 1 )
     object->target(true);
