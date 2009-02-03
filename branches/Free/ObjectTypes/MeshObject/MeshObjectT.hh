@@ -297,7 +297,8 @@ class DLLEXPORT MeshObject : public BaseObjectData {
      *  the mesh has requested a face_index_texture with request_face_texture_index. Additionally
      *  request_halfedge_texcoords2D has to be used to set per face texture coordinates.
      */
-    std::vector< std::pair< QString , GLuint > > textures_;
+    std::vector< GLuint  > textures_;
+    std::vector< QString > textureNames_;
   /** @} */
 
   //===========================================================================
