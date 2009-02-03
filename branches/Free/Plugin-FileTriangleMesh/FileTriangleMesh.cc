@@ -245,7 +245,7 @@ void FileTriangleMeshPlugin::setObjectRoot( BaseObject* _root ) {
   objectRoot_ = _root;
 }
 
-void FileTriangleMeshPlugin::loadIniFile( INIFile& _ini ,int _id ) {
+void FileTriangleMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
   BaseObjectData* baseObject;
   if ( !PluginFunctions::get_object(_id,baseObject) ) {
     emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );

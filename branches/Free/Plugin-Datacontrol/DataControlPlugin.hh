@@ -93,7 +93,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
 
       void slotKeyEvent( QKeyEvent* _event );
 
-      void loadIniFileOptions( INIFile& _ini );
+      void loadIniFileOptionsLast( INIFile& _ini );
       void saveIniFileOptions( INIFile& _ini );
 
       void pluginsInitialized();

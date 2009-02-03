@@ -178,7 +178,7 @@ void FilePolyMeshPlugin::setObjectRoot( BaseObject* _root ) {
 }
 
 
-void FilePolyMeshPlugin::loadIniFile( INIFile& _ini ,int _id ) {
+void FilePolyMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
   BaseObjectData* baseObject;
   if ( !PluginFunctions::get_object(_id,baseObject) ) {
     emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );

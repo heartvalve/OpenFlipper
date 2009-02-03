@@ -393,7 +393,7 @@ void DataControlPlugin::slotRowsRemoved ( const QModelIndex & /*_parent*/, int /
   emit updateView();
 }
 
-void DataControlPlugin::loadIniFileOptions( INIFile& _ini ) {
+void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
   if ( !_ini.section_exists( "Groups" ) )
     return;
 
