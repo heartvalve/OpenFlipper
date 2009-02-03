@@ -83,8 +83,6 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
      QString name() { return (QString("FilePolyMesh")); };
      QString description( ) { return (QString("Load/Save Poly Meshes")); };
 
-     bool supportAddEmpty(){return true;};
-
      int addEmpty( );
 
      QString typeName() { return (QString("Poly Mesh")); };
