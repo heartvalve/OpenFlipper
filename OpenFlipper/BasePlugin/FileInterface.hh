@@ -81,7 +81,8 @@ class FileInterface {
       *  Return 0 when you dont need one
       */
     virtual QWidget* loadOptionsWidget(QString /*_currentFilter*/) = 0;
-}
+
+/** @} */
 
 //===========================================================================
 /** @name Supported types
