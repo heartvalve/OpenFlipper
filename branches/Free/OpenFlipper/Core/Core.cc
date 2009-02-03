@@ -125,6 +125,7 @@ Core() :
 
   // Get all relevant Paths and Options from option files
   setupOptions();
+
   // set discriptions for scriptable slots
   setDescriptions();
 }
@@ -422,8 +423,9 @@ Core::init() {
       QApplication::processEvents();
     }
 
-    // Load global ini files. Use plugin and global options from these files but dont load objects
-    openIniFile( optionFiles[i] ,true,true,false);
+    // Load global ini files. Use only plugin global options from these files as the
+    // rest has been loaded at the beginning.
+    openIniFile( optionFiles[i] ,false,true,false);
   }
 
   // ===============================================================================================
