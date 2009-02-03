@@ -66,6 +66,8 @@
 #include <QMenu>
 #include <QToolBar>
 #include <QTime>
+#include <QGraphicsWidget>
+#include <QGraphicsSceneDragDropEvent>
 
 #include <vector>
 #include <string>
@@ -81,7 +83,6 @@ class QSplitter;
 class QTimer;
 class QImage;
 class QSocketNotifier;
-class QGraphicsWidget;
 class QGraphicsGridLayout;
 
 
@@ -109,7 +110,7 @@ class QtShiftPopupMenu;
     See for example "QtExaminerViewer"
  **/
 
-class DLLEXPORT glViewer : public QWidget
+class DLLEXPORT glViewer : public QGraphicsWidget
 {
 Q_OBJECT
 
@@ -125,11 +126,11 @@ public:
      if \c statusBar==0 then a \a private status bar will be created
     \param _format OpenGL context settings, will be passed to glarea()
   */
-  glViewer( QWidget* _parent=0,
-		const char* _name=0,
-		QStatusBar *_statusBar=0,
-		const QGLFormat* _format=0,
-		const glViewer* _share=0);
+  glViewer( QtGLGraphicsScene* _scene,
+	    QGLWidget* _glWidget,
+	    QGraphicsWidget* _parent=0,
+	    const char* _name=0,
+	    QStatusBar *_statusBar=0);
 
   /// Destructor.
   virtual ~glViewer();
@@ -306,12 +307,6 @@ public:
 //---------------------------------------------------------------- public slots
 public slots:
 
-  /** Draws the scene immediately.
-      This method does \a not trigger a paint event (like updateGL())
-      but redraws the scene immediately. It does not swap buffers! This
-      has to be done manually.
-  */
-  virtual void drawNow();
   /// Redraw scene. Triggers paint event for updating the view (cf. drawNow()).
   virtual void updateGL();
 
@@ -410,8 +405,11 @@ protected:
   /// draw the scene. Triggered by updateGL().
   virtual void paintGL();
   /// handle resize events
-  virtual void resizeGL(int _w, int _h);
-
+  virtual void resizeEvent(QGraphicsSceneResizeEvent * _e);
+  /// handle move events
+  virtual void moveEvent (QGraphicsSceneMoveEvent * _e);
+  /// do painting
+  virtual void paint(QPainter * _painter, const QStyleOptionGraphicsItem * _option, QWidget * _widget = 0);
 
   /// handle mouse press events
   virtual void glMousePressEvent(QMouseEvent* _event);
@@ -424,7 +422,7 @@ protected:
   /// handle mouse wheel events
   virtual void glMouseWheelEvent(QWheelEvent* _event);
   /// handle mouse press events
-  virtual void glContextMenuEvent(QContextMenuEvent* _event);
+  virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent* _e);
 
 
   /// specialized viewer: hande mouse events
@@ -448,9 +446,6 @@ protected:
 
 //------------------------------------------------------------- protected slots
 protected slots:
-
-  /// process graphics scene size changes
-  virtual void sceneRectChanged(const QRectF & rect);
 
   /// process signals from wheelX_
   virtual void slotWheelX(double _dAngle);
@@ -479,8 +474,7 @@ private:
   glViewer& operator=(const glViewer&);
 
   // create widgets
-  void createWidgets(const QGLFormat* _format,QStatusBar* _sb,
-		     const glViewer* _share);
+  void createWidgets(QStatusBar* _sb);
 
   /* Recursively draws each node in the scene graph.
       Called by paintGL(). */
@@ -553,20 +547,14 @@ private:
   bool                         projectionUpdateLocked_;
   bool                         blending_;
 
-  // gl widget used as drawing area to paint the graphics scene
-  QGLWidget* glWidget_;
   // graphics scene used to paint gl context and widgets
   QtGLGraphicsScene* glScene_;
-  // graphics view that holds the gl scene
-  QtGLGraphicsView* glView_;
 
-  // Base graphics widget for wheels in the scene
-  QGraphicsWidget* glBase_;
+  // gl widget used as drawing area to paint the graphics scene
+  QGLWidget* glWidget_;
+
   // Base graphics widget layout
   QGraphicsGridLayout* glBaseLayout_;
-
-  // Layout for the basic widget ( viewer + wheels )
-  QGridLayout* glLayout_;
 
   // rotate around x-axis
   ACG::QtWidgets::QtWheel* wheelX_;
@@ -639,7 +627,7 @@ private:
      *
      * This function is called by the internal gl widget when receiving a key press event.
      */
-    virtual void glKeyPressEvent(QKeyEvent* _event) { _event->ignore(); };
+    virtual void keyPressEvent(QKeyEvent* _event) { _event->ignore(); };
 
     /** \brief Get keyRelease events from the glArea
      *
@@ -647,7 +635,7 @@ private:
      * Here these events are simply passed to the parent widget.
      *
      */
-    virtual void glKeyReleaseEvent(QKeyEvent* _event) { _event->ignore(); };
+    virtual void keyReleaseEvent(QKeyEvent* _event) { _event->ignore(); };
 
     /** \brief Handle key events in view mode
      *
@@ -668,9 +656,10 @@ private:
   public:
 
     /// drag & drop for modelview copying
-    void glDragEnterEvent(QDragEnterEvent* _event){ std::cerr << "dragEnter" << std::endl; emit dragEnterEvent(_event); };
+    virtual void dragEnterEvent(QGraphicsSceneDragDropEvent* _e);
+
     /// drag & drop for modelview copying
-    void glDropEvent(QDropEvent* _event){ std::cerr << "drop" << std::endl; emit dropEvent( _event ); }
+    virtual void dropEvent(QGraphicsSceneDragDropEvent* _e);
 
   signals:
     /** Signal is emitted when Control modifier is pressed and mouse moded.

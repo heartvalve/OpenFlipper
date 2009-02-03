@@ -88,6 +88,8 @@
 #include <QGraphicsWidget>
 #include <QGraphicsGridLayout>
 #include <QGraphicsProxyWidget>
+#include <QPainter>
+#include <QPaintEngine>
 
 #ifdef max
 #  undef max
@@ -110,29 +112,25 @@ static const char          VIEW_MAGIC[] =
 //== IMPLEMENTATION ==========================================================
 
 
-glViewer::glViewer( QWidget* _parent,
-			    const char* /* _name */ ,
-			    QStatusBar *_statusBar,
-			    const QGLFormat* _format,
-			    const glViewer* _share) :
-  QWidget(_parent),
+glViewer::glViewer( QtGLGraphicsScene* _scene,
+		    QGLWidget* _glWidget,
+		    QGraphicsWidget* _parent,
+		    const char* /* _name */ ,
+		    QStatusBar *_statusBar) :
+  QGraphicsWidget(_parent),
   statusbar_(_statusBar),
   glareaGrabbed_(false),
   projectionUpdateLocked_(false),
   blending_(true),
+  glScene_(_scene),
+  glWidget_(_glWidget),
   pick_mode_name_(""),
   pick_mode_idx_(-1),
   glstate_(0)
 {
-  // check for OpenGL support
-  if ( !QGLFormat::hasOpenGL() )
-  {
-    std::cerr << "This system has no OpenGL support.\n";
-    exit(1);
-  }
 
   // widget stuff
-  createWidgets(_format,_statusBar,_share);
+  createWidgets(_statusBar);
 
   // bind GL context to GL state class
   glstate_ = new ACG::GLState();
@@ -192,6 +190,7 @@ glViewer::glViewer( QWidget* _parent,
 
   properties_.setExamineMode();
 
+  setAcceptDrops(true);
 }
 
 
@@ -382,7 +381,7 @@ void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
 //-----------------------------------------------------------------------------
 
 
-void glViewer::updateActionMode(Viewer::ActionMode _am)
+void glViewer::updateActionMode(Viewer::ActionMode)
 {
 
   trackMouse(false);
@@ -392,28 +391,24 @@ void glViewer::updateActionMode(Viewer::ActionMode _am)
   {
     case Viewer::ExamineMode:
     {
-      glView_->setCursor(Qt::PointingHandCursor);
-      glBase_->setCursor(Qt::PointingHandCursor);
+      setCursor(Qt::PointingHandCursor);
       break;
     }
 
 
     case Viewer::LightMode:
     {
-      glView_->setCursor(Qt::PointingHandCursor);
-      glBase_->setCursor(Qt::PointingHandCursor);
+      setCursor(Qt::PointingHandCursor);
       break;
     }
 
 
     case Viewer::PickingMode:
     {
-      glView_->setCursor(Qt::ArrowCursor);
-      glBase_->setCursor(Qt::ArrowCursor);
+      setCursor(Qt::ArrowCursor);
       if (pick_mode_idx_ != -1) {
-	     trackMouse(pick_modes_[pick_mode_idx_].tracking);
-        glView_->setCursor(pick_modes_[pick_mode_idx_].cursor);
-	     glBase_->setCursor(pick_modes_[pick_mode_idx_].cursor);
+	trackMouse(pick_modes_[pick_mode_idx_].tracking);
+        setCursor(pick_modes_[pick_mode_idx_].cursor);
       }
 
       break;
@@ -422,8 +417,7 @@ void glViewer::updateActionMode(Viewer::ActionMode _am)
 
     case Viewer::QuestionMode:
     {
-      glView_->setCursor(Qt::WhatsThisCursor);
-      glBase_->setCursor(Qt::WhatsThisCursor);
+      setCursor(Qt::WhatsThisCursor);
       break;
     }
   }
@@ -475,19 +469,11 @@ glViewer::copyToImage( QImage& _image,
 //-----------------------------------------------------------------------------
 
 
-void glViewer::drawNow()
-{
-  makeCurrent();
-  paintGL();
-  swapBuffers();
-  glView_->repaint();
-}
-
 void glViewer::updateGL()
 {
-  if (!properties_.updateLocked() && !isHidden() )
+  if (!properties_.updateLocked() && isVisible() )
   {
-    glScene_->update();
+    update();
   }
 }
 
@@ -615,7 +601,8 @@ glViewer::drawScene_stereo()
   glTranslatef(-offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glDrawBuffer(GL_BACK_LEFT);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glstate_->clearBuffers ();
+  glClear(GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
 
 
@@ -626,7 +613,8 @@ glViewer::drawScene_stereo()
   glTranslatef(offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glDrawBuffer(GL_BACK_RIGHT);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glstate_->clearBuffers ();
+  glClear(GL_DEPTH_BUFFER_BIT);
   drawScene_mono();
   glDrawBuffer(GL_BACK);
 }
@@ -768,7 +756,8 @@ void glViewer::flyTo(const ACG::Vec3d&  _position,
       if (fabs(a) > FLT_MIN)
 	     rotate(axis, a, _center);
 
-      drawNow();
+      update();
+      qApp->processEvents();
     }
   }
 
@@ -1019,7 +1008,7 @@ void glViewer::paintGL()
 
     // clear (stereo mode clears buffers on its own)
     if (!stereo_)
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glstate_->clearBuffers ();
 
     properties_.unLockUpdate();
 
@@ -1039,16 +1028,35 @@ void glViewer::paintGL()
 //-----------------------------------------------------------------------------
 
 
-void glViewer::resizeGL(int _w, int _h)
+void glViewer::resizeEvent(QGraphicsSceneResizeEvent *)
 {
   updateProjectionMatrix();
-  glstate_->viewport(0, 0, _w, _h);
-  updateGL();
+  glstate_->viewport(scenePos().x(),
+		     scene()->height () - scenePos().y() - size().height (),
+		     size().width (), size().height (),
+		     scene()->width (), scene()->height ());
+  update();
 }
 
+void glViewer::moveEvent (QGraphicsSceneMoveEvent *)
+{
+  glstate_->viewport(scenePos().x(),
+		     scene()->height () - scenePos().y() - size().height (),
+		     size().width (), size().height (),
+		     scene()->width (), scene()->height ());
+  update();
+}
 
 //-----------------------------------------------------------------------------
 
+void glViewer::paint(QPainter * _painter, const QStyleOptionGraphicsItem *, QWidget *)
+{
+  if (_painter->paintEngine()->type() != QPaintEngine::OpenGL) {
+    std::cerr << "glViewer: paint needs a QGLWidget to be set as viewport on the graphics view\n";
+    return;
+  }
+  paintGL ();
+}
 
 void glViewer::encodeView(QString& _view)
 {
@@ -1195,46 +1203,13 @@ void glViewer::actionDrawMenu( QAction * _action )
 //-----------------------------------------------------------------------------
 
 void
-glViewer::createWidgets(const QGLFormat* _format,
-                            QStatusBar* _sb,
-                            const glViewer* _share)
+glViewer::createWidgets(QStatusBar* _sb)
 {
   setStatusBar(_sb);
   drawMenu_=0;
   pickMenu_=0;
 
-
-  // contains splitter and eventually status bar
-  // QT3:  Q3VBoxLayout* layout=new Q3VBoxLayout(this,0,0,"toplevel layout");
-  QVBoxLayout* layout=new QVBoxLayout(this);
-  layout->setSpacing( 0 );
-  layout->setMargin( 0 );
-
-  // contains glarea and buttons
-
-  // QT3:  Q3Frame* work=new Q3Frame(this,"box-glarea-buttons");
-  QFrame* work=new QFrame(this);
-
-  layout->addWidget(work,1); // gets all stretch
-
-
   // Construct GL context & widget
-  QGLWidget* share = 0;
-  if (_share)  share = _share->glWidget_;
-
-  QGLFormat format;
-  format.setAlpha(true);
-  if (_format!=0) format = *_format;
-
-  glWidget_ = new QGLWidget(format, 0, share);
-  glView_ = new QtGLGraphicsView(this, work);
-  glScene_ = new QtGLGraphicsScene (this);
-
-  glView_->setViewport(glWidget_);
-  glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-  glView_->setScene(glScene_);
-
-  glView_->setContextMenuPolicy( Qt::CustomContextMenu );
 
   wheelZ_=new ACG::QtWidgets::QtWheel( 0,"wheel-z",ACG::QtWidgets::QtWheel::Vertical);
   wheelZ_->setMinimumSize(wheelZ_->sizeHint());
@@ -1287,34 +1262,7 @@ glViewer::createWidgets(const QGLFormat* _format,
   glBaseLayout_->setRowStretchFactor(1,0);
   glBaseLayout_->setRowStretchFactor(2,0);
 
-  glBase_ = new QGraphicsWidget;
-  glBase_->setLayout(glBaseLayout_);
-  glScene_->addItem(glBase_);
-  glBase_->setGeometry (glScene_->sceneRect ());
-  QRectF r = glScene_->sceneRect ();
-
-  connect ( glScene_, SIGNAL( sceneRectChanged( const QRectF & ) ),
-            this, SLOT( sceneRectChanged( const QRectF & ) ) );
-
-  // If popupEnabled_ is set to false the Contextmenu Mode will be set to customContextMenuRequested
-  // and this signal will be emitted on right click
-  connect( glView_ , SIGNAL( customContextMenuRequested( const QPoint& ) ) ,
-           this    , SIGNAL( signalCustomContextMenuRequested( const QPoint& ) ) );
-
-  // is stereo possible ?
-  if (format.stereo())
-    std::cerr << "Stereo buffer requested: "
-	      << (glWidget_->format().stereo() ? "ok\n" : "failed\n");
-
-  glLayout_ = new QGridLayout(work);
-  glLayout_->setSpacing( 0 );
-  glLayout_->setMargin( 0 );
-
-  glLayout_->addWidget(glView_,    0,0);
-
-  glLayout_->setColumnStretch(0,1);
-  glLayout_->setColumnStretch(1,0);
-
+  setLayout(glBaseLayout_);
 }
 
 
@@ -1329,7 +1277,7 @@ void glViewer::updatePopupMenu()
 
   if ( ! drawMenu_ )
   {
-    drawMenu_ = new QMenu( this );
+    drawMenu_ = new QMenu( scene()->views().first() );
     connect( drawMenu_, SIGNAL( aboutToHide() ),
 	     this, SLOT( hidePopupMenus() ) );
 
@@ -1428,20 +1376,24 @@ void glViewer::rotate(const ACG::Vec3d&  _axis,
 
 
 unsigned int glViewer::glWidth() const {
-  return glView_->width();
+  return size().width();
 }
 unsigned int glViewer::glHeight() const {
-  return glView_->height();
+  return size().height();
 }
 QSize glViewer::glSize() const {
-  return glView_->size();
+  return QSize(size().width(),size().height());
 }
 QPoint glViewer::glMapFromGlobal( const QPoint& _pos ) const {
-  return glView_->mapFromGlobal(_pos);
+  QPoint p (scene()->views().front()->mapFromGlobal(_pos));
+  QPointF f (mapFromScene(QPointF(p.x(), p.y ())));
+  return QPoint (f.x(), f.y());
 }
 
 QPoint glViewer::glMapToGlobal( const QPoint& _pos ) const {
-  return glView_->mapToGlobal(_pos);
+  QPointF f (mapToScene(QPointF(_pos.x(), _pos.y ())));
+  QPoint p (f.x(), f.y());
+  return scene()->views().front()->mapToGlobal(p);
 }
 
 //-----------------------------------------------------------------------------
@@ -1469,14 +1421,6 @@ void glViewer::slotWheelZ(double _dist)
 
 }
 
-
-//-----------------------------------------------------------------------------
-
-void glViewer::sceneRectChanged(const QRectF &rect)
-{
-  glBase_->setGeometry (rect);
-}
-
 //-----------------------------------------------------------------------------
 
 
@@ -1484,34 +1428,32 @@ void glViewer::grabGLArea()
 {
   glareaGrabbed_ = true;
 
-  glView_->setCursor(Qt::BlankCursor);
-  glBase_->setCursor(Qt::BlankCursor);
-  glView_->grabMouse();
-  glView_->grabKeyboard();
+  setCursor(Qt::BlankCursor);
+  grabMouse();
+  grabKeyboard();
 }
 
 void glViewer::releaseGLArea()
 {
   glareaGrabbed_ = false;
 
-  glView_->releaseMouse();
-  glView_->releaseKeyboard();
-  glView_->setCursor(Qt::ArrowCursor);
-  glBase_->setCursor(Qt::ArrowCursor);
+  ungrabMouse();
+  ungrabKeyboard();
+  setCursor(Qt::ArrowCursor);
 }
 
 
 //-----------------------------------------------------------------------------
 
 
-void glViewer::glContextMenuEvent(QContextMenuEvent* _event)
+void glViewer::contextMenuEvent(QGraphicsSceneContextMenuEvent* _e)
 {
-
+  QPoint p (_e->pos().x(), _e->pos().y());
+  emit signalCustomContextMenuRequested (p);
 }
 
 
 //-----------------------------------------------------------------------------
-
 
 void glViewer::glMousePressEvent(QMouseEvent* _event)
 {
@@ -1670,6 +1612,32 @@ void glViewer::glMouseWheelEvent(QWheelEvent* _event)
 
 //-----------------------------------------------------------------------------
 
+void glViewer::dragEnterEvent(QGraphicsSceneDragDropEvent* _e)
+{
+  std::cerr << "dragEnter" << std::endl;
+
+  QPoint p (_e->pos().x(), _e->pos().y());
+  QDragEnterEvent de(p, _e->possibleActions(), _e->mimeData(), _e->buttons(),
+		     _e->modifiers ());
+  emit dragEnterEvent(&de);
+  _e->accept();
+}
+
+//-----------------------------------------------------------------------------
+
+
+void glViewer::dropEvent(QGraphicsSceneDragDropEvent* _e)
+{
+  std::cerr << "drop" << std::endl;
+
+  QPoint p (_e->pos().x(), _e->pos().y());
+  QDropEvent de(p, _e->possibleActions(), _e->mimeData(), _e->buttons(),
+		_e->modifiers ());
+  emit dropEvent(&de);
+  _e->accept();
+}
+
+//-----------------------------------------------------------------------------
 
 void glViewer::updatePickMenu()
 {
@@ -2055,14 +2023,13 @@ void glViewer::snapshot()
 {
    makeCurrent();
 
-   glView_->raise();
    qApp->processEvents();
    makeCurrent();
    paintGL();
    glFinish();
 
    QImage snapshot;
-   copyToImage(snapshot, 0, 0, glWidth(), glHeight(), GL_BACK);
+   copyToImage(snapshot, scenePos().x(), scenePos().y(), glWidth(), glHeight(), GL_BACK);
 
    QFileInfo fi(properties_.snapshotName());
 

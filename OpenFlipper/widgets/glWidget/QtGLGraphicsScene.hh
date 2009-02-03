@@ -31,6 +31,8 @@
 
 
 
+#ifndef QTGLGRAPHICSSCENE_HH
+#define QTGLGRAPHICSSCENE_HH
 
 //=============================================================================
 //
@@ -44,9 +46,13 @@
 #include <QGraphicsItem>
 #include "QtBaseViewer.hh"
 
+//== FORWARDDECLARATIONS ======================================================
+class glViewer;
+
 //== NAMESPACES ===============================================================
 
 //== CLASS DEFINITION =========================================================
+
 
 
 /** OpenGL drawing area and widget scene -- for \a internal use only.
@@ -61,27 +67,27 @@ class QtGLGraphicsScene : public QGraphicsScene
 Q_OBJECT
 
 public:
-  QtGLGraphicsScene(glViewer* _w);
+  QtGLGraphicsScene(std::vector< glViewer *> *_views);
 
 protected:
-  friend class glViewer;
 
+/*
   virtual void drawBackground(QPainter *_painter, const QRectF &_rect);
-
+*/
   virtual void mousePressEvent(QGraphicsSceneMouseEvent* _e);
   virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e);
   virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* _e);
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* _e);
   virtual void wheelEvent(QGraphicsSceneWheelEvent* _e);
-  virtual void keyPressEvent(QKeyEvent* _e);
-  virtual void keyReleaseEvent(QKeyEvent* _e);
-  virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent* _e);
-  virtual void dragEnterEvent(QGraphicsSceneDragDropEvent* _e);
-  virtual void dropEvent(QGraphicsSceneDragDropEvent* _e);
 
 private:
-  glViewer* w_;
+
+  glViewer* findView (const QPointF &p);
+
+  std::vector< glViewer *> *views_;
 };
+
+#endif
 
 //=============================================================================
 //=============================================================================
