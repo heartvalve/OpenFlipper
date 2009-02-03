@@ -419,7 +419,7 @@ Core::init() {
     }
 
     // Load global ini files. Use plugin and global options from these files
-    openIniFile( optionFiles[i] ,true,true);
+    openIniFile( optionFiles[i] ,true,true,false);
   }
 
 

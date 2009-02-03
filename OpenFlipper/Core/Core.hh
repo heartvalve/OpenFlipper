@@ -180,6 +180,9 @@ signals:
    /// This signal is used to tell the plugins to load their new status
    void iniLoadOptions(  INIFile& _ini );
 
+   /// This signal is used to tell the plugins to load their new status after objects are loaded
+   void iniLoadOptionsLast(  INIFile& _ini );
+
    /// Tell plugins to create a backup
    void createBackup( int _id , QString _name , int nextBackupId_);
 
@@ -451,11 +454,15 @@ private:
     * This function will open an ini file and load the information in it.
     *
     * @param _filename Name of the ini file
+    * @param _coreSettings      Load core settings from the file
     * @param _perPluginSettings Load per plugin settings from the file
-    * @param _coreSettings Load core settings from the file
+    * @param _loadObjects       Load objects defined in the ini file
     *
     */
-   void openIniFile(QString _filename, bool _coreSettings , bool _perPluginSettings);
+   void openIniFile( QString _filename,
+                     bool    _coreSettings ,
+                     bool    _perPluginSettings,
+                     bool    _loadObjects );
 
    /// Open an obj file and load everything in it ( Application/File Options )
    void openObjFile(QString _filename);
@@ -472,9 +479,16 @@ private:
     * @param _filename filename of the ini file to write with full path
     * @param _relativePaths This defines if the paths to the objects should be made relative
     * @param _targetOnly Select if we want all open objects or only the ones which are selected as target.
-    * @param _systemSettings Choose if you also want to save system settings into the ini file.
+    * @param _saveSystemSettings Choose if you also want to save system settings into the ini file.
+    * @param _savePluginSettings Choose if you want to save per Plugin global settings into the ini file.
+    * @param _saveObjectInfo If you want to store information about all open objects this has to be true
     */
-   void writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly, bool _systemSettings);
+   void writeIniFile( QString _filename,
+                      bool    _relativePaths,
+                      bool    _targetOnly,
+                      bool    _saveSystemSettings,
+                      bool    _savePluginSettings ,
+                      bool    _saveObjectInfo );
 
    /** \brief Write current status to obj file (Application and File Options)
     *

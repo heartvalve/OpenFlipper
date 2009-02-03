@@ -756,6 +756,10 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSlot( plugin , "loadIniFileOptions(INIFile&)" ) )
         connect(this    , SIGNAL(iniLoadOptions( INIFile& )),
                 plugin  , SLOT( loadIniFileOptions( INIFile& ) ),Qt::DirectConnection);
+
+      if ( checkSlot( plugin , "loadIniFileOptionsLast(INIFile&)" ) )
+        connect(this    , SIGNAL(iniLoadOptionsLast( INIFile& )),
+                plugin  , SLOT( loadIniFileOptionsLast( INIFile& ) ),Qt::DirectConnection);
     }
 
     //Check if the plugin supports Texture-Interface

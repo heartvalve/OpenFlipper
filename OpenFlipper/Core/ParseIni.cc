@@ -457,7 +457,10 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   _ini.add_entry("Options","Stereo",OpenFlipper::Options::stereo() );
 }
 
-void Core::openIniFile(QString _filename, bool _coreSettings, bool _perPluginSettings ){
+void Core::openIniFile( QString _filename,
+                        bool    _coreSettings,
+                        bool    _perPluginSettings,
+                        bool    _loadObjects ){
   INIFile ini;
 
   if ( ! ini.connect(_filename,false) ) {
@@ -476,74 +479,82 @@ void Core::openIniFile(QString _filename, bool _coreSettings, bool _perPluginSet
   if ( _coreSettings )
     readApplicationOptions(ini);
 
-  QStringList openFiles;
-
-  // Parse File section for files to open
-  if ( ini.section_exists("OpenFiles") && ini.get_entry(openFiles,"OpenFiles","open") ) {
-
-    bool newActiveObject = false;
-
-    for ( int i = 0 ; i < openFiles.size(); ++i ) {
-
-      QString sectionName = openFiles[i];
-
-      QString path;
-      ini.get_entry( path, sectionName , "path" );
-
-      //check if path is relative
-      if (path.startsWith( "." + OpenFlipper::Options::dirSeparator() )){
-        //check if _filename contains a path
-        if (_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2) != ""){
-          path.remove(0,1); // remove .
-          path = _filename.section(OpenFlipper::Options::dirSeparator(), 0, -2) + path;
-        }
-      }
-
-      int tmpType;
-      DataType type = DATA_TRIANGLE_MESH;
-
-      if ( ini.get_entry( tmpType, sectionName , "type"  )) {
-        type = DataType(tmpType);
-        emit log(LOGWARN, "This ini file uses old int style ObjectType fields!" );
-        emit log(LOGWARN, "Please convert it to new format! ( ... just save it )" );
-      } else {
-
-        QString typeName="";
-
-        if ( ini.get_entry( typeName, sectionName , "type"  )) {
-          type = typeId(typeName);
-        } else
-          emit log(LOGWARN, "Unable to get DataType for object " +  sectionName + " assuming Triangle Mesh" );
-      }
-
-      int newObjectId = loadObject(type, path);
-
-      BaseObject* object = objectRoot_->childExists( newObjectId );
-      if ( object == 0 )  {
-        emit log(LOGERR,"Unable to open Object " + path);
-        continue;
-      }
-
-      bool flag;
-      if ( ini.get_entry( flag, sectionName , "target" ) ) {
-        object->target(flag);
-        newActiveObject = true;
-      }
-
-      if ( ini.get_entry( flag, sectionName , "source" ) )
-        object->source(flag);
-
-      emit iniLoad( ini,object->id() );
-    }
-
-    if ( newActiveObject )
-      emit activeObjectChanged();
-
-  }
-
   // if requested load per Plugin settings from the settings file
   if ( _perPluginSettings )
     emit iniLoadOptions( ini );
+
+  if ( _loadObjects ) {
+
+    QStringList openFiles;
+
+    // Parse File section for files to open
+    if ( ini.section_exists("OpenFiles") && ini.get_entry(openFiles,"OpenFiles","open") ) {
+
+      bool newActiveObject = false;
+
+      for ( int i = 0 ; i < openFiles.size(); ++i ) {
+
+        QString sectionName = openFiles[i];
+
+        QString path;
+        ini.get_entry( path, sectionName , "path" );
+
+        //check if path is relative
+        if (path.startsWith( "." + OpenFlipper::Options::dirSeparator() )){
+          //check if _filename contains a path
+          if (_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2) != ""){
+            path.remove(0,1); // remove .
+            path = _filename.section(OpenFlipper::Options::dirSeparator(), 0, -2) + path;
+          }
+        }
+
+        int tmpType;
+        DataType type = DATA_TRIANGLE_MESH;
+
+        if ( ini.get_entry( tmpType, sectionName , "type"  )) {
+          type = DataType(tmpType);
+          emit log(LOGWARN, "This ini file uses old int style ObjectType fields!" );
+          emit log(LOGWARN, "Please convert it to new format! ( ... just save it )" );
+        } else {
+
+          QString typeName="";
+
+          if ( ini.get_entry( typeName, sectionName , "type"  )) {
+            type = typeId(typeName);
+          } else
+            emit log(LOGWARN, "Unable to get DataType for object " +  sectionName + " assuming Triangle Mesh" );
+        }
+
+        int newObjectId = loadObject(type, path);
+
+        BaseObject* object = objectRoot_->childExists( newObjectId );
+        if ( object == 0 )  {
+          emit log(LOGERR,"Unable to open Object " + path);
+          continue;
+        }
+
+        bool flag;
+        if ( ini.get_entry( flag, sectionName , "target" ) ) {
+          object->target(flag);
+          newActiveObject = true;
+        }
+
+        if ( ini.get_entry( flag, sectionName , "source" ) )
+          object->source(flag);
+
+        emit iniLoad( ini,object->id() );
+      }
+
+      if ( newActiveObject )
+        emit activeObjectChanged();
+
+    }
+
+  }
+
+  // Tell Plugins that all objects are
+  if ( _perPluginSettings )
+    emit iniLoadOptionsLast( ini );
 
   ini.disconnect();
 
@@ -558,10 +569,12 @@ void Core::openIniFile(QString _filename, bool _coreSettings, bool _perPluginSet
 
 }
 
-void Core::writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly, bool _systemSettings ) {
-
-
-      std::cerr << "Currently unsupported : Saving ini files without including global settings" << std::endl;
+void Core::writeIniFile(QString _filename,
+                        bool _relativePaths,
+                        bool _targetOnly,
+                        bool _saveSystemSettings,
+                        bool _savePluginSettings ,
+                        bool _saveObjectInfo ) {
 
   INIFile ini;
 
@@ -576,57 +589,58 @@ void Core::writeIniFile(QString _filename, bool _relativePaths, bool _targetOnly
   }
 
   // Only save application settings when requested
-  if ( _systemSettings )
+  if ( _saveSystemSettings )
     writeApplicationOptions(ini);
 
-  // This vector will hold the file sections to open
-  QStringList openFiles;
+  if ( _savePluginSettings )
+    emit iniSaveOptions( ini );
+
+  if ( _saveObjectInfo ) {
+    // This vector will hold the file sections to open
+    QStringList openFiles;
 
 
-  PluginFunctions::IteratorRestriction restriction;
-  if ( _targetOnly )
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  else
-    restriction = PluginFunctions::ALL_OBJECTS;
+    PluginFunctions::IteratorRestriction restriction;
+    if ( _targetOnly )
+      restriction = PluginFunctions::TARGET_OBJECTS;
+    else
+      restriction = PluginFunctions::ALL_OBJECTS;
 
-  QString keyName;
-  QString sectionName;
-  for ( PluginFunctions::ObjectIterator o_it(restriction) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it) {
-    QString file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
-    if (QFile(file).exists()){
-      // Add a section for this object
-      sectionName = o_it->name();
-      ini.add_section( sectionName );
-      openFiles.push_back( sectionName );
+    QString keyName;
+    QString sectionName;
+    for ( PluginFunctions::ObjectIterator o_it(restriction) ;
+                                          o_it != PluginFunctions::objects_end(); ++o_it) {
+      QString file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+      if (QFile(file).exists()){
+        // Add a section for this object
+        sectionName = o_it->name();
+        ini.add_section( sectionName );
+        openFiles.push_back( sectionName );
 
-      //modify filename if relativePaths are wanted
-      if (_relativePaths){
-        int prefixLen = _filename.section(OpenFlipper::Options::dirSeparator(),0,-2).length();
-        file.remove(0, prefixLen);
-        file = "." + file;
+        //modify filename if relativePaths are wanted
+        if (_relativePaths){
+          int prefixLen = _filename.section(OpenFlipper::Options::dirSeparator(),0,-2).length();
+          file.remove(0, prefixLen);
+          file = "." + file;
+        }
+        // Add the path of this object to the section
+        ini.add_entry( sectionName , "path" , file );
+        ini.add_entry( sectionName , "type" , typeName(o_it->dataType() ) );
+        ini.add_entry( sectionName , "target" , o_it->target() );
+        ini.add_entry( sectionName , "source" , o_it->source() );
+
       }
-      // Add the path of this object to the section
-      ini.add_entry( sectionName , "path" , file );
-      ini.add_entry( sectionName , "type" , typeName(o_it->dataType() ) );
-      ini.add_entry( sectionName , "target" , o_it->target() );
-      ini.add_entry( sectionName , "source" , o_it->source() );
-
     }
+
+    ini.add_entry("OpenFiles","open",openFiles);
+
+    // Tell plugins to save their information for the given object
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                          o_it != PluginFunctions::objects_end(); ++o_it)
+      emit iniSave(  ini , o_it->id() );
   }
 
-  ini.add_entry("OpenFiles","open",openFiles);
 
-  ///@todo :write ini file ( Ask for objects which are not written yet
-  std::cerr << "Todo :  write ini file ( Ask for objects which are not written yet )" << std::endl;
-
-  // Tell plugins to save their information for the given object
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)
-    emit iniSave(  ini , o_it->id() );
-
-  // TODO : Save per plugin options only if requested
-  emit iniSaveOptions( ini );
 
   ini.disconnect();
 
