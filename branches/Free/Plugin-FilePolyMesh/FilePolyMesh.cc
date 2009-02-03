@@ -60,7 +60,7 @@ int FilePolyMeshPlugin::addEmpty( ){
   object = new MeshObject< PolyMesh, DATA_POLY_MESH >( dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ) );
 
   // Set pointers for tree structure
-  object->setParent(objectRoot_);
+  object->setParent(PluginFunctions::objectRoot());
   objectRoot_->appendChild(object);
 
   if (PluginFunctions::target_count() == 0 )
@@ -171,12 +171,6 @@ DataType  FilePolyMeshPlugin::supportedType() {
   DataType type = DATA_POLY_MESH;
   return type;
 }
-
-/// set root object for appending empty objects
-void FilePolyMeshPlugin::setObjectRoot( BaseObject* _root ) {
-  objectRoot_ = _root;
-}
-
 
 void FilePolyMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
   BaseObjectData* baseObject;

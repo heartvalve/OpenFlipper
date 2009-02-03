@@ -506,7 +506,6 @@ void Core::loadPlugin(QString filename, bool silent){
       ft.plugin = filePlugin;
 
       supportedTypes_.push_back(ft);
-      filePlugin->setObjectRoot( objectRoot_ );
     }
 
     GlobalAccessInterface* globalAccessPlugin = qobject_cast< GlobalAccessInterface * >(plugin);

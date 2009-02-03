@@ -64,7 +64,7 @@ int FileTriangleMeshPlugin::addEmpty(  ){
   object = new MeshObject< TriMesh, DATA_TRIANGLE_MESH >( dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ) );
 
   // Set pointers for tree structure
-  object->setParent(objectRoot_);
+  object->setParent(PluginFunctions::objectRoot());
   objectRoot_->appendChild(object);
 
   if (PluginFunctions::target_count() == 1 )
@@ -238,11 +238,6 @@ QString FileTriangleMeshPlugin::getSaveFilters() {
 DataType FileTriangleMeshPlugin::supportedType() {
   DataType type = DATA_TRIANGLE_MESH;
   return type;
-}
-
-/// set root object for appending empty objects
-void FileTriangleMeshPlugin::setObjectRoot( BaseObject* _root ) {
-  objectRoot_ = _root;
 }
 
 void FileTriangleMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
