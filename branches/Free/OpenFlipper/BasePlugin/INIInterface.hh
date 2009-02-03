@@ -52,12 +52,15 @@
 
  /** \brief Interface class for Plugins which have to store information in ini files
   *
-  * Using this interface you can store additional information to ini file on an
-  * per object basis. After the basic information is written to the ini file by the core
-  * ( or loaded by the core ) the corresponding functions in this Interface will be executed.
+  * Using this interface you can store or load additional information to an ini file on a
+  * per object basis or settings for your plugin. After basic information is written to the
+  * ini file by the core ( or loaded by the core ) the corresponding functions in this
+  * Interface will be executed.
   * You get the object id for the object which has to be used. For every object the functions
   * will get called and you have to save your data only for the given object!\n
-  * the ini file in the functions is already open. You may not close it!
+  * The ini file in the functions is already open. You may not close it!
+  * Additionally there are two slots which are called once per plugin when writing a settings
+  * file. These slots should be used to store information which is used by your plugin.
  */
 class INIInterface {
    public :
@@ -66,27 +69,79 @@ class INIInterface {
       virtual ~INIInterface() {};
 
    private slots:
-      /** Load object information from an ini file as well as plugin options.\n
+
+    //=======================================
+    /** @name Per object settings
+    * @{ */
+    //=======================================
+      /** \brief Load per object settings
+       *
+       *  Every time the core opens a settings file containing objects
+       *  the core will call this slot for each object it finds.
+       *  The object itself is loaded before the slot is called. Therefore
+       *  the object is available from within your plugin.
+       *
        *  @param _ini ini file
        *  @param _id Id of the object to load data for
        */
       virtual void loadIniFile( INIFile& /*_ini*/ ,int /*_id*/ ) {};
 
-      /** Save object information to an ini file
+      /** \brief Save per object settings
+       *
+       * Every time a settings file is created this slot is called
+       * once per object. Here you can write additional information
+       * handled by your plugin which is attached to the object.
+       *
        * @param _ini ini file
-       * @param _id Identifier of the object to save (-1 for all)
+       * @param _id Identifier of the object to save
        */
       virtual void saveIniFile( INIFile& /*_ini*/ ,int /*_id*/) {};
 
-      /** Load Plugin options (state information) to an ini file
+    /** @} */
+
+
+    //=======================================
+    /** @name Plugin Options and Settings
+    * @{ */
+    //=======================================
+
+    private slots:
+
+      /** \brief Load per Plugin settings
+       *
+       *  When the core loads an ini file and it contains settings for
+       *  Plugin or the core itself this slot will be
+       *  called once per Plugin.
+       *  This Slot will be called after loading the core settings and
+       *  before objects are loaded
+       *
        * @param _ini  ini file
        */
       virtual void loadIniFileOptions( INIFile& /*_ini*/ ) {};
 
-      /** Save Plugin options (state information) to an ini file
+      /** \brief Load per Plugin settings after objects are loaded
+       *
+       *  When the core loads an ini file and it contains settings for
+       *  Plugin or the core itself this slot will be
+       *  called once per Plugin. In contrast to loadIniFileOptions
+       *  this slot will be called after all objects are loaded
+       *
+       * @param _ini  ini file
+       */
+      virtual void loadIniFileOptionsLast( INIFile& /*_ini*/ ) {};
+
+      /** \brief Save Plugin Options
+       *  When the core is a bout to save an ini file this slot will be
+       *  called once per Plugin.
+       *  This Slot will be called after saving the core settings and
+       *  before objects are saved to the file
+       *
        * @param _ini ini file
        */
       virtual void saveIniFileOptions( INIFile& /*_ini*/ ) {};
+
+   /** @} */
+
 
 };
 
