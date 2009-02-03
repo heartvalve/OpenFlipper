@@ -449,29 +449,59 @@
 
 
   template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::addTexture(QImage& _image , int _id )
+  void MeshObject< MeshT , objectDataType >::addTexture(QString _name , QImage& _image , int _id )
   {
+    if ( _id == -1 )
+      std::cerr << "This texture has no id from the mesh!!!!!" << std::endl;
 
     if ( textures_.empty() ) {
       std::cerr << "No texture set." << std::endl;
     }
 
-    if ( _id >= textures_.size() ) {
-      std::cerr << "Expanded texture index vector." << std::endl;
-      textures_.resize(_id + 1,0);
+    for ( uint i = 0 ; i < textures_.size(); ++i ) {
+      if ( textures_[i].first == _name ) {
+        std::cerr << "Texture already exists!! Use setTexture to change a texture. Setting new texture" << std::endl;
+        setTexture( _name, _image );
+        return;
+      }
     }
 
-    std::cerr << "Add texture" << std::endl;
-    textures_[_id] = textureNode_->add_texture(_image);
+    if ( _id >= textures_.size() ) {
+      std::cerr << "Expanded texture index vector." << std::endl;
+      textures_.resize(_id + 1);
+    }
+
+    std::cerr << "Adding texture" << std::endl;
+    textures_[_id] = std::pair< QString , GLuint >( _name, textureNode_->add_texture(_image) );
 
     meshNode_->set_texture_map(&textures_);
 
     if ( textures_.size() > 1 &&  !mesh_.has_face_texture_index() ) {
-      std::cerr << " More than one textures available but no faceindex set. Only first texture will be used." << std::endl;
+      std::cerr << "More than one textures available but no faceindex set. Only first texture will be used." << std::endl;
     }
 
   }
 
+  template < class MeshT , DataType objectDataType >
+  void MeshObject< MeshT , objectDataType >::setTexture( QString _name , QImage& _image ) {
+    for ( uint i = 0 ; i < textures_.size(); ++i ) {
+      if ( textures_[i].first == _name ) {
+        std::cerr << "Found Texture, TODO : update" << std::endl;
+        return;
+      }
+    }
+
+    std::cerr << "Texture not found in this object" << std::endl;
+  }
+
+  template < class MeshT , DataType objectDataType >
+  bool MeshObject< MeshT , objectDataType >::textureExists( QString _name )  {
+    for ( uint i = 0 ; i < textures_.size(); ++i ) {
+      if ( textures_[i].first == _name )
+        return true;
+    }
+    return false;
+  }
 
   // ===============================================================================
   // Load/Save
