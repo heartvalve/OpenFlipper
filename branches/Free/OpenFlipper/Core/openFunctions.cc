@@ -358,7 +358,6 @@ void Core::loadSettings(){
     OpenFlipper::Options::currentDir(newpath);
 
     if ( complete_name.endsWith("ini") ) {
-      // TODO OptionsDialog for choosing which information should be read
       openIniFile( complete_name,
                    loadProgramSettings->isChecked(),
                    loadPluginSettings->isChecked(),
