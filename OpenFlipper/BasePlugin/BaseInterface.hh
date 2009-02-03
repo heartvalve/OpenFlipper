@@ -55,73 +55,14 @@
   * them just add them to your plugin header.
  */
 class BaseInterface {
-   signals :
-      /** \brief Update current view in Main Application
-       *
-       *  Emit this Signal if the examiner widget in the Main Application should update the current view.
-       *  This should be done for example if you changed a scenegraph node or a mesh and have
-       *  to redraw it.
-      */
-      virtual void updateView() {};
 
-      /** \brief The object list has been changed by this plugin
-       *
-       *  Emit this Signal, if you updated an object (e.g. Source or Target changed).\n
-       *  If you changed the element itself (geometry, topology,..) You also have to emit this signal.\n
-       *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
-       *  Give the id of the new object as parameter or -1 if you deleted an object.
-       *
-       *  The parameter has to be the id of the object or -1 if refering to all objects.
-       */
-      virtual void updatedObject(int ) {};
+   //===========================================================================
+    /** @name Initialization
+    * @{ */
+   //===========================================================================
 
-      /**  \brief The active object has been switched by this plugin
-       *
-       *   This Signal is used to tell the other plugins that the active object has been changed.\n
-       *   You should only do this if you are writing a plugin that manages the objects(e.g. DatacontrolPlugin).\n
-      */
-      virtual void activeObjectChanged() {};
-
-      /**  \brief Set a description for a public slot
-       *
-       *   public slots of each plugin are automaticly available for scripting. \n
-       *   Use this Signal to add a description for your slot so that everyone knows what it is used for. \n
-       *
-       *   @param _slotName the name of the slot
-       *   @param _slotDescription a description for the slot
-       *   @param _parameters list of parameters
-       *   @param _descriptions list of descriptions for the parameters (_descriptions[i] corresponds to _parameters[i])
-      */
-      virtual void setSlotDescription(QString     /*_slotName*/,    QString     /*_slotDescription*/,
-                                      QStringList /*_parameters*/, QStringList /*_descriptions*/) {};
-
-   private slots :
-
-      /**  \brief An object has been updated by an other plugin
-       *
-       *   This slot is called by the Main aplication if the number or status of existing objects changed or if
-       *   an existing object has been changed. This could mean, that objects are added or deleted
-       *   or that for an existing object with the given id has been modified.
-       *   If you store local information about one of these Objects, you should check if its still valid!\n
-       *   Dont emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
-       *  @param _identifier Identifier of the updated/new object or -1 if one is deleted
-      */
-      virtual void slotObjectUpdated( int /*_identifier*/ ) {};
-
-      /**  \brief Called if the whole scene is cleared
-       *
-       */
-      virtual void slotAllCleared( ) {};
-
-       /**  \brief The active object has changed
-       *
-       *   This slot is called by the Main aplication if the currently active object has changed.\n
-       *   This means that the selection of target objects has changed.
-      */
-      virtual void slotActiveObjectChanged() {};
-
-
-       /**  \brief Initialize Plugin
+  private slots:
+      /**  \brief Initialize Plugin
        *
        *   This slot is called if the plugin is loaded and has to be initialized. All initialization stuff
        *   in this slot has to stay inside the plugin, no external signals are allowed here.
@@ -138,16 +79,85 @@ class BaseInterface {
       */
       virtual void pluginsInitialized() {};
 
-      /** This function is called when the application exits or when your plugin is about to be unloaded.
-       * Here you can clean up your plugin, delete local variables...
-       */
-      virtual void exit(){};
 
-      /** Using this function you can inform the core that your plugin can run without creating a widget.
-       * If your plugin does not implement this function, it will not be loaded in scripting mode.
-       * You dont have to do anything in this function.
-       */
-      virtual void noguiSupported( ) {} ;
+  /** @} */
+
+  //===========================================================================
+  /** @name Object/View updates
+  * @{ */
+  //===========================================================================
+
+  signals :
+    /** \brief Update current view in Main Application
+      *
+      *  Emit this Signal if the examiner widget in the Main Application should update the current view.
+      *  If you do an updatedObject the core will trigger an update itself
+    */
+    virtual void updateView() {};
+
+    /** \brief The object list has been changed by this plugin
+      *
+      *  Emit this Signal, if you updated an object (e.g. Source or Target changed).\n
+      *  If you changed the element itself (geometry, topology,..) You also have to emit this signal.\n
+      *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
+      *  Give the id of the new object as parameter or -1 if you deleted an object.
+      *
+      *  The parameter has to be the id of the object or -1 if refering to all objects.
+      */
+    virtual void updatedObject(int ) {};
+
+    /**  \brief The active object has been switched by this plugin
+      *
+      *   This Signal is used to tell the other plugins that the active object has been changed.\n
+      *   You should only do this if you are writing a plugin that manages the objects(e.g. DatacontrolPlugin).\n
+    */
+    virtual void activeObjectChanged() {};
+
+  private slots:
+
+    /**  \brief An object has been updated by an other plugin
+      *
+      *   This slot is called by the Main aplication if the number or status of existing objects changed or if
+      *   an existing object has been changed. This could mean, that objects are added or deleted
+      *   or that for an existing object with the given id has been modified.
+      *   If you store local information about one of these Objects, you should check if its still valid!\n
+      *   Dont emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
+      *   You dont need to call updateView as the core triggers a redraw itself.
+      *  @param _identifier Identifier of the updated/new object or -1 if one is deleted
+    */
+    virtual void slotObjectUpdated( int /*_identifier*/ ) {};
+
+    /**  \brief Called if the whole scene is cleared
+      *
+      */
+    virtual void slotAllCleared( ) {};
+
+      /**  \brief The active object has changed
+      *
+      *   This slot is called by the Main aplication if the currently active object has changed.\n
+      *   This means that the selection of target objects has changed.
+    */
+    virtual void slotActiveObjectChanged() {};
+
+  /** @} */
+
+  //===========================================================================
+  /** @name Plugin identification
+  * @{ */
+  //===========================================================================
+  public :
+
+    /** \brief Return a Name for the plugin
+      *
+      * This Function has to return the name of the plugin.
+    */
+    virtual QString name() = 0;
+
+    /** \brief Return a description of what the plugin is doing
+      *
+      * This function has to return a basic description of the plugin
+      */
+    virtual QString description() = 0;
 
   public slots:
       /** \brief Return a version string for your plugin
@@ -157,22 +167,40 @@ class BaseInterface {
        */
       virtual QString version() { return QString("-1"); };
 
-   public :
+  signals:
 
-      /// Destructor
-      virtual ~BaseInterface() {};
-
-      /** \brief Return a Name for the plugin
+      /**  \brief Set a description for a public slot
        *
-       * This Function has to return the name of the plugin.
+       *   public slots of each plugin are automaticly available for scripting. \n
+       *   Use this Signal to add a description for your slot so that everyone knows what it is used for. \n
+       *
+       *   @param _slotName the name of the slot
+       *   @param _slotDescription a description for the slot
+       *   @param _parameters list of parameters
+       *   @param _descriptions list of descriptions for the parameters (_descriptions[i] corresponds to _parameters[i])
       */
-      virtual QString name() = 0;
+      virtual void setSlotDescription(QString     /*_slotName*/,    QString     /*_slotDescription*/,
+                                      QStringList /*_parameters*/, QStringList /*_descriptions*/) {};
 
-      /** \brief Return a description of what the plugin is doing
-       *
-       * This function has to return a basic description of the plugin
-       */
-      virtual QString description() = 0;
+  /** @} */
+
+  private slots :
+
+    /** This function is called when the application exits or when your plugin is about to be unloaded.
+      * Here you can clean up your plugin, delete local variables...
+      */
+    virtual void exit(){};
+
+    /** Using this function you can inform the core that your plugin can run without creating a widget.
+      * If your plugin does not implement this function, it will not be loaded in scripting mode.
+      * You dont have to do anything in this function.
+      */
+    virtual void noguiSupported( ) {} ;
+
+  public :
+
+    /// Destructor
+    virtual ~BaseInterface() {};
 
 };
 
