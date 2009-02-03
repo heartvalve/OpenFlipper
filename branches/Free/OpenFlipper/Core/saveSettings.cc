@@ -71,6 +71,16 @@ void Core::saveSettings(){
   saveProgramSettings->setToolTip("Save all current program settings to the file ( This will include view settings, colors,...) ");
   saveProgramSettings->setCheckState( Qt::Unchecked );
 
+  QCheckBox *savePluginSettings = new QCheckBox(optionsBox);
+  savePluginSettings->setText("Save per Plugin Settings");
+  savePluginSettings->setToolTip("Plugins should add their current global settings to the file");
+  savePluginSettings->setCheckState( Qt::Checked );
+
+  QCheckBox *saveObjectInfo = new QCheckBox(optionsBox);
+  saveObjectInfo->setText("Save open object information to the file");
+  saveObjectInfo->setToolTip("Save all open Objects and add them to the settings file ( they will be loaded if opening the settings file");
+  saveObjectInfo->setCheckState( Qt::Checked );
+
   QCheckBox *saveAllBox = new QCheckBox(optionsBox);
   saveAllBox->setText("Save everything to same folder");
   saveAllBox->setToolTip("Save all open files to the same folder as the ini file");
@@ -87,10 +97,12 @@ void Core::saveSettings(){
   targetOnly->setCheckState( Qt::Unchecked );
 
   QBoxLayout* frameLayout = new QBoxLayout(QBoxLayout::TopToBottom,optionsBox);
-  frameLayout->addWidget( saveProgramSettings   , 0 , 0);
-  frameLayout->addWidget( saveAllBox   , 1 , 0);
-  frameLayout->addWidget( askOverwrite , 2 , 0);
-  frameLayout->addWidget( targetOnly   , 3 , 0);
+  frameLayout->addWidget( saveProgramSettings , 0 , 0);
+  frameLayout->addWidget( savePluginSettings  , 1 , 0);
+  frameLayout->addWidget( saveObjectInfo      , 2 , 0);
+  frameLayout->addWidget( saveAllBox          , 3 , 0);
+  frameLayout->addWidget( askOverwrite        , 4 , 0);
+  frameLayout->addWidget( targetOnly          , 5 , 0);
   frameLayout->addStretch();
 
 
@@ -141,55 +153,58 @@ void Core::saveSettings(){
   // ========================================================================================
   // Depending on the checkbox iterate over all objects or only the selected ones.
 
-  PluginFunctions::IteratorRestriction restriction;
-  if ( targetOnly->isChecked() )
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  else
-    restriction = PluginFunctions::ALL_OBJECTS;
+  if ( saveObjectInfo->isChecked() ) {
 
-  //Iterate over opened objects and save them
-  for ( PluginFunctions::ObjectIterator o_it(restriction);
-                                        o_it != PluginFunctions::objects_end(); ++o_it)
-  {
-    QString filename;
-
-    if ( saveAllBox->isChecked() )
-    {
-      // Use path of settings file for all objects
-      filename = newpath + OpenFlipper::Options::dirSeparator() + o_it->name();
-    }
+    PluginFunctions::IteratorRestriction restriction;
+    if ( targetOnly->isChecked() )
+      restriction = PluginFunctions::TARGET_OBJECTS;
     else
-    {
-      // Use objects own path if it has one. Otherwise also use path of settings file
-      filename = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+      restriction = PluginFunctions::ALL_OBJECTS;
 
-      // handle the case that the object was created in current session and not loaded from disk
-      if (o_it->path() == ".") {
-        filename = newpath + OpenFlipper::Options::dirSeparator() + o_it->name();
-        std::cerr << "newpath : " << newpath.toStdString() << std::endl;
-        std::cerr << "name  : " << o_it->name().toStdString() << std::endl;
-      }
-    }
-
-    // enforce that all files end with obj extension if its an obj-settings file
-    if ( complete_name.endsWith("obj") )
+    //Iterate over opened objects and save them
+    for ( PluginFunctions::ObjectIterator o_it(restriction);
+                                          o_it != PluginFunctions::objects_end(); ++o_it)
     {
-      if (!filename.endsWith("obj"))
+      QString filename;
+
+      if ( saveAllBox->isChecked() )
       {
-        // remove old extension
-        int pos = filename.lastIndexOf(".");
-        filename.remove(pos+1, filename.length() - pos);
-        // add obj extension
-        filename += "obj";
+        // Use path of settings file for all objects
+        filename = newpath + OpenFlipper::Options::dirSeparator() + o_it->name();
       }
+      else
+      {
+        // Use objects own path if it has one. Otherwise also use path of settings file
+        filename = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+
+        // handle the case that the object was created in current session and not loaded from disk
+        if (o_it->path() == ".") {
+          filename = newpath + OpenFlipper::Options::dirSeparator() + o_it->name();
+          std::cerr << "newpath : " << newpath.toStdString() << std::endl;
+          std::cerr << "name  : " << o_it->name().toStdString() << std::endl;
+        }
+      }
+
+      // enforce that all files end with obj extension if its an obj-settings file
+      if ( complete_name.endsWith("obj") )
+      {
+        if (!filename.endsWith("obj"))
+        {
+          // remove old extension
+          int pos = filename.lastIndexOf(".");
+          filename.remove(pos+1, filename.length() - pos);
+          // add obj extension
+          filename += "obj";
+        }
+      }
+
+      // decide whether to use saveObject or saveObjectTo
+      if ( !QFile(filename).exists() || !askOverwrite->isChecked() )
+        saveObject( o_it->id(), filename);
+      else
+        saveObjectTo(o_it->id(), filename);
+
     }
-
-    // decide whether to use saveObject or saveObjectTo
-    if ( !QFile(filename).exists() || !askOverwrite->isChecked() )
-      saveObject( o_it->id(), filename);
-    else
-      saveObjectTo(o_it->id(), filename);
-
   }
 
 
@@ -199,7 +214,12 @@ void Core::saveSettings(){
   if ( complete_name.endsWith("ini") ) {
 
     // write to ini
-    writeIniFile(complete_name, saveAllBox->isChecked(), targetOnly->isChecked(), saveProgramSettings->isChecked());
+    writeIniFile( complete_name,
+                  saveAllBox->isChecked(),
+                  targetOnly->isChecked(),
+                  saveProgramSettings->isChecked(),
+                  savePluginSettings->isChecked(),
+                  saveObjectInfo->isChecked());
 
   } else if ( complete_name.endsWith("obj") ) {
 

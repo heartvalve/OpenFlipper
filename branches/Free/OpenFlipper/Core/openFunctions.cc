@@ -101,7 +101,7 @@ int Core::loadObject ( QString _filename ) {
   if (_filename.endsWith(".ini")) {
 
     // Load all information from the given ini file
-    openIniFile(_filename,true,true);
+    openIniFile(_filename,true,true,true);
 
     if ( OpenFlipper::Options::gui() )
       coreWidget_->addRecent(_filename, DATA_NONE);
@@ -297,19 +297,70 @@ void Core::loadSettings(){
 
     QString complete_name;
 
-    complete_name = ACG::getOpenFileName(coreWidget_,
-                                        tr("Load Settings"),
-                                        tr("INI files (*.ini);;OBJ files (*.obj)"),
-                                        OpenFlipper::Options::currentDirStr());
-    if (complete_name.isEmpty())
+
+    QFileDialog fileDialog( coreWidget_,
+                            tr("Load Settings"),
+                            OpenFlipper::Options::currentDirStr(),
+                            tr("INI files (*.ini);;OBJ files (*.obj )") );
+
+    fileDialog.setAcceptMode ( QFileDialog::AcceptOpen );
+    fileDialog.setFileMode ( QFileDialog::AnyFile );
+
+    QGridLayout *layout = (QGridLayout*)fileDialog.layout();
+
+    QGroupBox* optionsBox = new QGroupBox( &fileDialog ) ;
+    optionsBox->setSizePolicy( QSizePolicy ( QSizePolicy::Expanding , QSizePolicy::Preferred ) );
+    optionsBox->setTitle("Options");
+    layout->addWidget( optionsBox, layout->rowCount() , 0 , 1,layout->columnCount() );
+
+    QCheckBox *loadProgramSettings = new QCheckBox(optionsBox);
+    loadProgramSettings->setText("Load program settings");
+    loadProgramSettings->setToolTip("Load all current program settings from the file ( This will include view settings, colors,...) ");
+    loadProgramSettings->setCheckState( Qt::Unchecked );
+
+    QCheckBox *loadPluginSettings = new QCheckBox(optionsBox);
+    loadPluginSettings->setText("Load per Plugin Settings");
+    loadPluginSettings->setToolTip("Plugins should load their current global settings from the file");
+    loadPluginSettings->setCheckState( Qt::Checked );
+
+    QCheckBox *loadObjectInfo = new QCheckBox(optionsBox);
+    loadObjectInfo->setText("Load all objects defined in the file");
+    loadObjectInfo->setToolTip("Load all objects which are defined in the file");
+    loadObjectInfo->setCheckState( Qt::Checked );
+
+    QBoxLayout* frameLayout = new QBoxLayout(QBoxLayout::TopToBottom,optionsBox);
+    frameLayout->addWidget( loadProgramSettings , 0 , 0);
+    frameLayout->addWidget( loadPluginSettings  , 1 , 0);
+    frameLayout->addWidget( loadObjectInfo      , 2 , 0);
+    frameLayout->addStretch();
+
+    // ========================================================================================
+    // show the saveSettings-Dialog and get the target file
+    // ========================================================================================
+    QStringList fileNames;
+    if (fileDialog.exec()) {
+      fileNames = fileDialog.selectedFiles();
+    } else {
       return;
+    }
+
+    if ( fileNames.size() > 1 ) {
+      std::cerr << "Too many save filenames selected" << std::endl;
+      return;
+    }
+
+    complete_name = fileNames[0];
+
 
     QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
     OpenFlipper::Options::currentDir(newpath);
 
     if ( complete_name.endsWith("ini") ) {
       // TODO OptionsDialog for choosing which information should be read
-      openIniFile(complete_name,true,true);
+      openIniFile( complete_name,
+                   loadProgramSettings->isChecked(),
+                   loadPluginSettings->isChecked(),
+                   loadObjectInfo->isChecked());
       applyOptions();
     } else if ( complete_name.endsWith("obj") ) {
       openObjFile(complete_name);
@@ -331,7 +382,7 @@ void Core::loadSettings(QString _filename){
 
   if ( _filename.endsWith("ini") ) {
     // Loaded function for recent files. Load everything.
-    openIniFile(_filename,true,true);
+    openIniFile(_filename,true,true,true);
     applyOptions();
   } else if ( _filename.endsWith("obj") ) {
     openObjFile(_filename);
