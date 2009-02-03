@@ -71,7 +71,7 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
   private slots:
     void fileOpened( int /*_id*/ ){};
 
-    void loadIniFile( INIFile& _ini ,int _id );
+    void loadIniFileLast( INIFile& _ini ,int _id );
     void saveIniFile( INIFile& _ini ,int _id);
 
     void noguiSupported( ) {} ;
