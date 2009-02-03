@@ -275,16 +275,29 @@ class DLLEXPORT MeshObject : public BaseObjectData {
 
     /** Add a texture to the object.
     * @param _image Image to use as texture
-    * @param _id    Id of the texture in the texture_index property of the mesh
+    * @param _id    Id of the texture in the texture_index property of the mesh ( if available
+    *               otherwise -1)
+    * @param _name  Name of the texture. Required to access the texture
     */
-    void addTexture( QImage& _image , int _id );
+    void addTexture( QString _name , QImage& _image , int _id = -1);
 
+    /** Change an already loaded texture
+     *
+     */
+    void setTexture( QString _name , QImage& _image );
+
+    /** Checks if a texture already exists
+     *
+     */
+    bool textureExists( QString _name );
+
+  private:
     /** This vector is used to store the available Textures. Each call to addTexture will load
      *  the texture in the textureNode. The MeshNode will use only the first texture unless
      *  the mesh has requested a face_index_texture with request_face_texture_index. Additionally
      *  request_halfedge_texcoords2D has to be used to set per face texture coordinates.
      */
-    std::vector< GLuint > textures_;
+    std::vector< std::pair< QString , GLuint > > textures_;
   /** @} */
 
   //===========================================================================
