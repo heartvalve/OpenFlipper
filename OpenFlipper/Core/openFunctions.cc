@@ -334,6 +334,8 @@ void Core::loadSettings(){
     frameLayout->addWidget( loadObjectInfo      , 2 , 0);
     frameLayout->addStretch();
 
+    fileDialog.resize(550 ,500);
+
     // ========================================================================================
     // show the saveSettings-Dialog and get the target file
     // ========================================================================================
