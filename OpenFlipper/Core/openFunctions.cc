@@ -363,10 +363,12 @@ void Core::loadSettings(){
                    loadProgramSettings->isChecked(),
                    loadPluginSettings->isChecked(),
                    loadObjectInfo->isChecked());
-      applyOptions();
+      if ( loadProgramSettings->isChecked() )
+        applyOptions();
     } else if ( complete_name.endsWith("obj") ) {
       openObjFile(complete_name);
-      applyOptions();
+      if ( loadProgramSettings->isChecked() )
+        applyOptions();
     }
 
     coreWidget_->addRecent(complete_name, DATA_NONE);
