@@ -124,9 +124,9 @@ class BaseInterface {
        /**  \brief Initialize Plugin
        *
        *   This slot is called if the plugin is loaded and has to be initialized. All initialization stuff
-       *   in this slot has to stay inside the plugin, no external singals are allowed here.
+       *   in this slot has to stay inside the plugin, no external signals are allowed here.
        *   Dont create any objects via pluginfunctions here. Use the pluginsInitialized() slot for external
-       *   Initialization. After execution of this slot your plugin should be fully functional.
+       *   initialization. After execution of this slot your plugin should be fully functional.
        *   Only gui elements may be uninitialized and should be created in pluginsInitialized().
       */
       virtual void initializePlugin() {};
