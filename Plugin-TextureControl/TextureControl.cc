@@ -110,10 +110,18 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
     doUpdateTexture(textureid, *mesh);
     PluginFunctions::triMeshObject(object)->textureNode()->set_repeat(repeat);
     QString filename = OpenFlipper::Options::textureDir().absolutePath() +
-      OpenFlipper::Options::dirSeparator() +
-      textures_[textureid].filename;
+                       OpenFlipper::Options::dirSeparator() +
+                       textures_[textureid].filename;
 
-    PluginFunctions::triMeshObject(object)->textureNode()->read(filename.toUtf8());
+       // load to image
+    QImage textureImage;
+    if ( !textureImage.load( filename ) )
+    {
+        std::cerr << "Cannot load texture " << filename.toStdString() << "\n";
+        return ;
+    }
+
+    PluginFunctions::triMeshObject(object)->addTexture(_textureName,textureImage);
   }
 
   if ( object->dataType( DATA_POLY_MESH ) ) {
@@ -123,10 +131,18 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
 
     PluginFunctions::polyMeshObject(object)->textureNode()->set_repeat(repeat);
     QString filename = OpenFlipper::Options::textureDir().absolutePath() +
-      OpenFlipper::Options::dirSeparator() +
-      textures_[textureid].filename;
+                       OpenFlipper::Options::dirSeparator() +
+                       textures_[textureid].filename;
 
-    PluginFunctions::polyMeshObject(object)->textureNode()->read(filename.toUtf8());
+    // load to image
+    QImage textureImage;
+    if ( !textureImage.load( filename ) )
+    {
+        std::cerr << "Cannot load texture " << filename.toStdString() << "\n";
+        return ;
+    }
+
+    PluginFunctions::polyMeshObject(object)->addTexture(_textureName,textureImage);
   }
   emit updateView();
 
