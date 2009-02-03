@@ -269,4 +269,47 @@ void Core::setupOptions() {
 
 }
 
+/// restore key Assignments that were saved in config files
+void Core::restoreKeyBindings(){
+
+  QStringList optionFiles;
+
+  // ==============================================================
+  // Global ini file in the application directory
+  // ==============================================================
+  QFile globalIni(OpenFlipper::Options::applicationDir().absolutePath() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini");
+  if ( globalIni.exists() )
+    optionFiles.push_back(OpenFlipper::Options::applicationDir().absolutePath() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini");
+
+  // ==============================================================
+  // Local ini file in the users home directory
+  // ==============================================================
+  QFile localIni(OpenFlipper::Options::configDirStr() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini");
+  if ( localIni.exists() )
+    optionFiles.push_back(OpenFlipper::Options::configDirStr() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini");
+
+  // Set the previously generated Optionfiles
+  OpenFlipper::Options::optionFiles(optionFiles);
+
+
+  // ==============================================================
+  // Load Application options from all files available
+  // ==============================================================
+
+  for ( int i = 0 ; i < (int)optionFiles.size(); ++i) {
+
+    INIFile _ini;
+
+    if ( ! _ini.connect(optionFiles[i],false) ) {
+      emit log(LOGERR,"Failed to connect to _ini file" + optionFiles[i]);
+      continue;
+    }
+
+    if ( OpenFlipper::Options::gui() )
+      coreWidget_->loadKeyBindings(_ini);
+
+    _ini.disconnect();
+  }
+}
+
 //=============================================================================

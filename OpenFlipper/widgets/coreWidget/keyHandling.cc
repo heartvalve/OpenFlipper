@@ -336,6 +336,115 @@ void CoreWidget::slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, Q
 
 }
 
+///Load key assignments from a given INI file
+void CoreWidget::loadKeyBindings(INIFile& _ini){
+
+  QVector< int > keys;
+  QVector< int > modifiers;
+  QStringList pluginNames;
+  QVector< int > bindingIDs;
+
+  //first load everything from INI file
+  if ( !_ini.section_exists("KeyBindings") )
+     return;
+
+  int keyCount;
+  if (_ini.get_entry(keyCount,"KeyBindings","KeyCount") ){
+
+    int key;
+    int mod;
+    QString name;
+    int binding;
+
+    for (int i=0; i < keyCount; i++){
+
+      if (!_ini.get_entry(key,     "KeyBindings","Key" + QString::number(i) ) ) continue;
+      if (!_ini.get_entry(mod,     "KeyBindings","KeyModifiers" + QString::number(i) ) )  continue;
+      if (!_ini.get_entry(name,    "KeyBindings","KeyTarget" + QString::number(i) ) )  continue;
+      if (!_ini.get_entry(binding, "KeyBindings","KeyBinding" + QString::number(i) ) ) continue;
+
+      keys.push_back( key );
+      modifiers.push_back( mod );
+      pluginNames.push_back( name );
+      bindingIDs.push_back( binding );
+    }
+  }
+
+  //add the keyMapping
+  for (int i=0; i < keys.count(); i++){
+
+    //first we need the plugin
+    QObject* plugin = 0;
+
+    if (pluginNames[i] != "Core" ){
+      //search for the plugin
+      for (uint i=0; i < plugins_.size(); i++)
+        if (plugins_[i].rpcName == pluginNames[i] ){
+          plugin = plugins_[i].plugin;
+          break;
+        }
+
+      if (plugin == 0)
+        continue; //because plugin was not found
+    }
+
+    slotAddKeyMapping( keys[i], (Qt::KeyboardModifiers) modifiers[i], plugin, bindingIDs[i] );
+  }
+
+}
+
+///Store current key assignments to a given INI file
+void CoreWidget::saveKeyBindings(INIFile& _ini){
+
+  QVector< int > keys;
+  QVector< int > modifiers;
+  QStringList pluginNames;
+  QVector< int > bindingIDs;
+
+  //first get all keys with custom assignments
+  KeyMap::iterator it;
+  for (it=keys_.begin(); it != keys_.end(); ++it){
+
+    int key = (*it).first.first;
+    Qt::KeyboardModifiers mod = (*it).first.second;
+    QObject* plugin = (*it).second.first;
+    int bindingID = (*it).second.second;
+    KeyBinding binding = getKeyBinding(plugin, bindingID);
+
+    //check if current key assignment and original assignment differ
+    if (key != binding.key || mod != binding.modifiers){
+
+      //get the pluginName
+      QString name;
+
+      if (plugin == 0)
+        name = "Core";
+      else
+        name = getRPCName(plugin);
+
+      //store key assignment
+      keys.push_back( key );
+      modifiers.push_back( mod );
+      pluginNames.push_back( name );
+      bindingIDs.push_back( bindingID );
+    }
+  }
+
+  //finally store everything to INI file
+  if ( !_ini.section_exists("KeyBindings") )
+    _ini.add_section("KeyBindings");
+
+  _ini.add_entry("KeyBindings","KeyCount", keys.count());
+
+  for (int i=0; i < keys.count(); i++){
+
+    _ini.add_entry("KeyBindings","Key" + QString::number(i)         , keys[i] );
+    _ini.add_entry("KeyBindings","KeyModifiers" + QString::number(i), modifiers[i] );
+    _ini.add_entry("KeyBindings","KeyTarget" + QString::number(i)   , pluginNames[i] );
+    _ini.add_entry("KeyBindings","KeyBinding" + QString::number(i)  , bindingIDs[i] );
+  }
+}
+
 /// if a keyPressEvent belongs to the core this functions is called
 void CoreWidget::registerCoreKeys() {
 

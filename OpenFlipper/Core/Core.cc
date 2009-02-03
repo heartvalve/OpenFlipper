@@ -394,6 +394,9 @@ Core::init() {
     //register keyBinding for all scripting slots
     coreWidget_->slotRegisterSlotKeyBindings();
 
+    //get keyAssignments from config files
+    restoreKeyBindings();
+
     if ( OpenFlipper::Options::defaultToolboxMode( ) != "" )
       coreWidget_->setViewMode( OpenFlipper::Options::defaultToolboxMode() );
     else
@@ -853,8 +856,11 @@ void Core::slotLogToFile(Logtype _type, QString _message){
     return;
 
   if (logStream_ == 0){
-    //check if a logfile has been specified
-    if (OpenFlipper::Options::logFile() == "")
+    //check if a logfile has been specified and if the path is valid
+
+    QFileInfo fi( OpenFlipper::Options::logFile() );
+
+    if (OpenFlipper::Options::logFile() == "" || !fi.dir().exists() )
         OpenFlipper::Options::logFile(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
                                                   OpenFlipper::Options::dirSeparator() +  "OpenFlipper.log");
 
