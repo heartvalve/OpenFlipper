@@ -105,6 +105,7 @@ void Core::saveSettings(){
   frameLayout->addWidget( targetOnly          , 5 , 0);
   frameLayout->addStretch();
 
+  fileDialog.resize(550 ,600);
 
   // ========================================================================================
   // show the saveSettings-Dialog and get the target file
