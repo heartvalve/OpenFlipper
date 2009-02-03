@@ -60,23 +60,7 @@ class FileInterface {
 
    public :
 
-      /// Return support for adding empty objects
-      virtual bool supportAddEmpty() = 0;
 
-      /// Add an empty object
-      virtual int addEmpty() = 0;
-
-      /// Return name for the types of data this plugin handles
-      virtual QString typeName() = 0;
-
-      /// Return supported Object type
-      virtual DataType supportedType() = 0;
-
-      /// Get the Qt Filters for Filedialogs when loading files
-      virtual QString getLoadFilters() = 0;
-
-      /// Get the Qt Filters for Filedialogs when saving files
-      virtual QString getSaveFilters() = 0;
 
       /** You can provide a special widget showing options for saving your file types
        *  depending on the current filter
@@ -96,15 +80,68 @@ class FileInterface {
        */
       virtual QWidget* loadOptionsWidget(QString /*_currentFilter*/) = 0;
 
+//===========================================================================
+/** @name Supported types
+* @{ */
+//===========================================================================
+
+public:
+
+  /** Return the name of your supported type (e.g. "Triangle Mesh"
+   */
+  virtual QString typeName() = 0;
+
+  /** Return your supported object type( e.g. DATA_TRIANGLE_MESH )
+   *
+   * TODO : Support for adding new datatypes at runtime
+   */
+  virtual DataType supportedType() = 0;
+
+
+  /** Return the Qt Filters for Filedialogs when loading files (e.g. "Off files ( *.off )" )
+   *
+   */
+  virtual QString getLoadFilters() = 0;
+
+  /** Get the Qt Filters for Filedialogs when saving files (e.g. "Off files ( *.off )" )
+   *
+   */
+  virtual QString getSaveFilters() = 0;
+
+/** @} */
+
+//===========================================================================
+/** @name Load Save Implementation
+* @{ */
+//===========================================================================
+
 public slots:
 
-      /// load an object from the given file
+      /** \brief Create an empty object
+       *
+       * When this slot is called you have to create an object of your supported type.
+       * @return Id of the new Object
+       */
+      virtual int addEmpty() = 0;
+
+      /** \brief Load an object from the given file
+       *
+       * The Core will call this slot if you should load a file. The core will
+       * check if you support the given file type depending on the provided
+       * filters and dataTypes ( see supportedType and getLoadFilters )
+       */
       virtual int loadObject(QString /*_filename*/) = 0;
 
-      /// Save the object with given id,filename
+      /** \brief Save an object from the given file
+       *
+       * The Core will call this slot if you should save an object to a file.
+       * The core will check if you support the given object depending on the
+       * provided dataTypes ( see supportedType ).
+       * Additionally to the filename you get the id of the object to save
+       */
       virtual bool saveObject(int /*_id*/, QString /*_filename*/) = 0;
 
-      //Optionswidget
+/** @} */
 
 };
 

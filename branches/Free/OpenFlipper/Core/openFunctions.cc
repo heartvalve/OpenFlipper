@@ -252,11 +252,10 @@ void Core::slotAddEmptyObjectMenu() {
     if ( !widget ){
       std::vector< DataType > types;
       QStringList typeNames;
-      for (int i=0; i < (int)supportedTypes_.size(); i++)
-        if (supportedTypes_[i].plugin->supportAddEmpty()){
-          types.push_back(supportedTypes_[i].type);
-          typeNames.push_back(supportedTypes_[i].plugin->typeName());
-        }
+      for (int i=0; i < (int)supportedTypes_.size(); i++) {
+        types.push_back(supportedTypes_[i].type);
+        typeNames.push_back(supportedTypes_[i].plugin->typeName());
+      }
       widget = new addEmptyWidget(types,typeNames);
       connect(widget,SIGNAL(chosen(DataType, int&)),this,SLOT(slotAddEmptyObject(DataType, int&)));
     }
