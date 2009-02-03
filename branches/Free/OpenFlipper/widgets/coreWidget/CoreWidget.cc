@@ -90,7 +90,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   functionMenu_(0),
   contextSelectionMenu_(0),
   stackMenu_(0),
-  stackedWidget_(0),
   helpBrowserDeveloper_(0),
   helpBrowserUser_(0),
   aboutWidget_(0),
@@ -103,6 +102,38 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   splitter_ = new QSplitter(Qt::Vertical,this);
   setCentralWidget(splitter_);
   stackedWidget_ = new QStackedWidget(splitter_);
+
+  QGLFormat format;
+  QGLFormat::setDefaultFormat(format);
+  format.setStereo( OpenFlipper::Options::stereo() );
+  format.setAlpha(true);
+
+  // Construct GL context & widget
+
+  glWidget_ = new QGLWidget(format);
+  glView_ = new QtGLGraphicsView(stackedWidget_);
+  glScene_ = new QtGLGraphicsScene (&examiner_widgets_);
+
+  // is stereo possible ?
+  if (format.stereo())
+    std::cerr << "Stereo buffer requested: "
+	      << (glWidget_->format().stereo() ? "ok\n" : "failed\n");
+
+  glView_->setViewport(glWidget_);
+  glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+  glView_->setScene(glScene_);
+
+  baseLayout_ = new QGraphicsGridLayout;
+  baseLayout_->setContentsMargins(0,0,0,0);
+  centerWidget_ = new QGraphicsWidget;
+  glScene_->addItem(centerWidget_);
+  centerWidget_->setGeometry (glScene_->sceneRect ());
+
+  connect ( glView_, SIGNAL( sceneRectChanged( const QRectF & ) ),
+            this, SLOT( sceneRectChanged( const QRectF & ) ) );
+
+  stackedWidget_->addWidget(glView_);
+  stackWidgetList_.push_back( StackWidgetInfo( false, "3D Examiner Widget", glView_ ) );
 
   // ======================================================================
   // Set up the logging window
@@ -124,47 +155,34 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // ======================================================================
   // Create examiner
   // ======================================================================
-  QGLFormat format;
-  QGLFormat::setDefaultFormat(format);
-  format.setStereo( OpenFlipper::Options::stereo() );
-
-  QWidget* tmp = 0;
 
   if ( !OpenFlipper::Options::multiView() ) {
 
-    glViewer* examinerWidget = new glViewer(stackedWidget_,
-                                                    "Examiner Widget",
-                                                    statusBar_ ,
-                                                    &format);
+    glViewer* examinerWidget = new glViewer(glScene_,
+					    glWidget_,
+					    centerWidget_,
+                                            "Examiner Widget",
+                                            statusBar_);
 
     examiner_widgets_.push_back(examinerWidget);
 
     examinerWidget->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
 
-    stackedWidget_->addWidget(examinerWidget);
+    glScene_->addItem(examinerWidget);
+    baseLayout_->addItem(examinerWidget, 0, 0);
 
   } else {
 
-    // Create collector widget which holds all viewers
-    tmp = new QWidget(stackedWidget_);
 
-    // Create master examiner widget
-    glViewer* examinerWidget = new glViewer(tmp,
-                                                            "Examiner Widget",
-                                                            statusBar_ ,
-                                                            &format,
-                                                            0);
-    examiner_widgets_.push_back(examinerWidget);
-
-
-    // Create all other examiners using the same gl context as the others
-    for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      glViewer* newWidget = new glViewer(tmp,
-                                                         "Examiner Widget",
-                                                         statusBar_ ,
-                                                         &format,
-                                                         examinerWidget);
+    // Create examiners
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+      glViewer* newWidget = new glViewer(glScene_,
+					 glWidget_,
+					 centerWidget_,
+					 "Examiner Widget",
+                                         statusBar_ );
       examiner_widgets_.push_back(newWidget);
+      glScene_->addItem(newWidget);
     }
 
     // Initialize all examiners
@@ -172,22 +190,20 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
       examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
     }
 
-    QGridLayout* layout = new QGridLayout(tmp);
-    layout->addWidget(examiner_widgets_[0],0,0);
-    layout->addWidget(examiner_widgets_[1],0,1);
-    layout->addWidget(examiner_widgets_[2],1,0);
-    layout->addWidget(examiner_widgets_[3],1,1);
+    baseLayout_->addItem(examiner_widgets_[0],0,0);
+    baseLayout_->addItem(examiner_widgets_[1],0,1);
+    baseLayout_->addItem(examiner_widgets_[2],1,0);
+    baseLayout_->addItem(examiner_widgets_[3],1,1);
 
     for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
       examiner_widgets_[i]->hide();
 
-    stackedWidget_->addWidget(tmp);
   }
 
   // Make examiner available to the plugins ( defined in PluginFunctions.hh)
   PluginFunctions::setViewers( examiner_widgets_ );
 
-
+  centerWidget_->setLayout(baseLayout_);
 
 
   // ======================================================================
@@ -396,13 +412,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
 
   addToolBar(Qt::TopToolBarArea,viewerToolbar_);
-
-
-  if ( !OpenFlipper::Options::multiView() ) {
-    stackWidgetList_.push_back( StackWidgetInfo( false, "3D Examiner Widget", examiner_widgets_[0] ) );
-  } else {
-    stackWidgetList_.push_back( StackWidgetInfo( false, "3D Examiner Widget", tmp ) );
-  }
 
   // Remember logger size
   wsizes = splitter_->sizes();
@@ -653,6 +662,15 @@ CoreWidget::slotShowSceneGraphDialog()
     sceneGraphDialog_->show();
   }
 }
+
+//-----------------------------------------------------------------------------
+
+void
+CoreWidget::sceneRectChanged(const QRectF &rect)
+{
+  centerWidget_->setGeometry (rect);
+}
+
 
 
 

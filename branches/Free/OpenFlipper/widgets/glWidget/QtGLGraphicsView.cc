@@ -48,19 +48,21 @@
 //== CLASS DEFINITION =========================================================
 
 
-QtGLGraphicsView::QtGLGraphicsView(glViewer* _w, QWidget* _parent) :
-  QGraphicsView (_parent),
-  w_(_w)
+QtGLGraphicsView::QtGLGraphicsView(QWidget* _parent) :
+  QGraphicsView (_parent)
 {
   setFocusPolicy(Qt::StrongFocus);
   setAcceptDrops (true);
 }
 
 void QtGLGraphicsView::resizeEvent(QResizeEvent *_event) {
-  if (scene())
-    scene()->setSceneRect(QRect(QPoint(0, 0), _event->size()));
   QGraphicsView::resizeEvent(_event);
-  w_->resizeGL (_event->size().width(), _event->size().height ());
+  if (scene())
+  {
+    scene()->setSceneRect(QRect(QPoint(0, 0), _event->size()));
+    emit sceneRectChanged (QRectF (0, 0, _event->size().width(),_event->size().height()));
+  }
+  
 }
 
 

@@ -65,9 +65,11 @@ bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
   {
     GLint         w = glWidth(),
                   h = glHeight(),
+		  l = scenePos().x(),
+		  b = scene()->height () - scenePos().y() - h,
                   x = _mousePos.x(),
-                  y = h - _mousePos.y();
-    GLint         viewport[4] = {0,0,w,h};
+                  y = scene()->height () - _mousePos.y();
+    GLint         viewport[4] = {l,b,w,h};
     GLuint        selectionBuffer[ SELECTION_BUFFER_SIZE ],
                   nameBuffer[ NAME_STACK_SIZE ];
 
@@ -197,7 +199,7 @@ void glViewer::pickMode( int _id )
 
     // adjust Cursor
     if ( properties_.pickingMode() )
-      glView_->setCursor( pick_modes_[pick_mode_idx_].cursor);
+      setCursor( pick_modes_[pick_mode_idx_].cursor);
 
     // emit signal
     emit(signalPickModeChanged(pick_mode_name_));
@@ -236,7 +238,7 @@ void glViewer::setPickModeCursor(const std::string& _name, QCursor _cursor)
 
       //switch cursor if pickMode is active
       if (pick_mode_name_ == _name && properties_.pickingMode() )
-        glView_->setCursor(_cursor);
+        setCursor(_cursor);
       break;
     }
 }

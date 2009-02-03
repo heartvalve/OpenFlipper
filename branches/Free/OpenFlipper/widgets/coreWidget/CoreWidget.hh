@@ -57,6 +57,8 @@
 
 
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
+#include <OpenFlipper/widgets/glWidget/QtGLGraphicsScene.hh>
+#include <OpenFlipper/widgets/glWidget/QtGLGraphicsView.hh>
 
 // QT INCLUDES
 #include <QMainWindow>
@@ -366,6 +368,22 @@ public:
     /// Help Menu
     QMenu* helpMenu_;
 
+    /// gl widget used as drawing area to paint the graphics scene
+    QGLWidget* glWidget_;
+
+    /// graphics scene used to paint gl context and widgets
+    QtGLGraphicsScene* glScene_;
+
+    /// graphics view that holds the gl scene
+    QtGLGraphicsView* glView_;
+
+    /// center widged
+    QGraphicsWidget* centerWidget_;
+
+    /// Base layout that holds gl views
+    QGraphicsGridLayout* baseLayout_;
+
+
     // widget showing the scenegraph
     ACG::QtWidgets::QtSceneGraphDialog* sceneGraphDialog_;
 
@@ -383,6 +401,10 @@ public:
     * @param _message The message to be displayed
     */
    void slotLog(Logtype _type, QString _message);
+
+   /** Updates the size of the main graphics widget in the scene
+     */
+   void sceneRectChanged(const QRectF &rect);
 
   //===========================================================================
     /** @name Menubar controls

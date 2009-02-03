@@ -108,7 +108,7 @@ void CoreWidget::startDrag ( QMouseEvent* _event )
   QString view;
   examiner_widgets_[PluginFunctions::activeExaminer()]->encodeView ( view );
 
-  QDrag     * drag = new QDrag ( examiner_widgets_[PluginFunctions::activeExaminer()] );
+  QDrag     * drag = new QDrag ( this );
   QMimeData * mime_data = new QMimeData;
 
   mime_data->setText ( view );

@@ -53,14 +53,16 @@
 
 class QtGLGraphicsView : public QGraphicsView
 {
+ Q_OBJECT
+
 public:
-  QtGLGraphicsView(glViewer* _w, QWidget* _parent);
+  QtGLGraphicsView(QWidget* _parent);
+
+signals:
+  void sceneRectChanged(const QRectF &rect);
 
 protected:
   virtual void resizeEvent(QResizeEvent *_event);
-
-private:
-  glViewer* w_;
 };
 
 //=============================================================================
