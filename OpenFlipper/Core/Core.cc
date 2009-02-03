@@ -409,6 +409,10 @@ Core::init() {
 
   }
 
+  // ===============================================================================================
+  // Load Settings from configuration files
+  // ===============================================================================================
+
   QStringList optionFiles = OpenFlipper::Options::optionFiles();
   for ( int i = 0 ; i < (int)optionFiles.size(); ++i) {
 
@@ -418,17 +422,20 @@ Core::init() {
       QApplication::processEvents();
     }
 
-    // Load global ini files. Use plugin and global options from these files
+    // Load global ini files. Use plugin and global options from these files but dont load objects
     openIniFile( optionFiles[i] ,true,true,false);
   }
 
+  // ===============================================================================================
+  // Load Settings from configuration files
+  // ===============================================================================================
 
   if ( OpenFlipper::Options::lang().contains("UTF") || OpenFlipper::Options::lang().contains("utf") ) {
-    emit log(LOGWARN,"Warning, OpenFlipper detected that you are using an utf-8 locale!");
-    emit log(LOGWARN,"Only OFF files are fully supported with UTF8. Others might fail.");
-    emit log(LOGWARN,"You can change your locale by :");
-    emit log(LOGWARN,"export LANG=C");
-    emit log(LOGWARN,"Work is in progress to resolve this issue.");
+    emit log(LOGWARN,"UTF8-Locale used!");
+//     emit log(LOGWARN,"Only OFF files are fully supported with UTF8. Others might fail.");
+//     emit log(LOGWARN,"You can change your locale by :");
+//     emit log(LOGWARN,"export LANG=C");
+//     emit log(LOGWARN,"Work is in progress to resolve this issue.");
   }
 
   if ( OpenFlipper::Options::gui() ) {
