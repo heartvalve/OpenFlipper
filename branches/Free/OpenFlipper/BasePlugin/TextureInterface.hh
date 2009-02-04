@@ -49,6 +49,8 @@
  #include <OpenFlipper/common/Types.hh>
 
  /**
+  * \brief Provide texture support for a plugin.
+  *
   * This Interface should be used by plugins which will provide a texture. The texture coordinates have
   * to be written into a mesh property. You do not need to write texture information into the texture
   * coordinates of the mesh. As other plugins may provide textures to, the visualization of the
