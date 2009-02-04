@@ -54,7 +54,7 @@
   * you want to react on is active before doing anything. Only the slotMouseEventIdentify is
   * independent of picking modes.
   *
-  * The slotMouseWheelEvent anf slotMouseEvent Only get called when the system is in picking
+  * The slotMouseWheelEvent and slotMouseEvent only get called when the system is in picking
   * mode.
   *
   * slotMouseEventIdentify will be used when question mode is active.
