@@ -49,7 +49,9 @@
  #include <OpenFlipper/common/Types.hh>
 
  /**
-  *  Interface Class which allows access to picking functions
+  * \brief Allow access to picking functions.
+  *
+  * Interface Class which allows access to picking functions
  */
 class PickingInterface {
    signals :
