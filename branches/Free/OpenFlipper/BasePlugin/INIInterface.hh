@@ -61,6 +61,8 @@
   * The ini file in the functions is already open. You may not close it!
   * Additionally there are two slots which are called once per plugin when writing a settings
   * file. These slots should be used to store information which is used by your plugin.
+  *
+  * See \ref dataFlow for a detailed overview of OpenFlipper's data flow and interface function calls.
  */
 class INIInterface {
    public :
