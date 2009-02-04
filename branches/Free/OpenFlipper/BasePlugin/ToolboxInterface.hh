@@ -50,12 +50,14 @@
  #include <OpenFlipper/common/Types.hh>
 
  /**
- * This Interface should be used by plugins which will provide a toolbox widget.
- * Each Plugin can create own Widgets in the Toolbox area as long as they use the returned widget as their parent.
- * ToolboxInterface::initializeToolbox(QWidget*& _widget). You can create extra Signals and slots in your Plugin.
- * These can be connected between your toolbox and your plugin. Signals and slots across plugins are currently
- * not available but may be possible via an internal message system later.\n
- */
+  * \brief Plugins can add its own toolbox to the main widget's toolbox area by using this interface.
+  * 
+  * This Interface should be used by plugins which will provide a toolbox widget.
+  * Each Plugin can create own Widgets in the Toolbox area as long as they use the returned widget as their parent.
+  * ToolboxInterface::initializeToolbox(QWidget*& _widget). You can create extra Signals and slots in your Plugin.
+  * These can be connected between your toolbox and your plugin. Signals and slots across plugins are currently
+  * not available but may be possible via an internal message system later.\n
+  */
 class ToolboxInterface {
 
    private slots :
