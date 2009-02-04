@@ -53,6 +53,11 @@
   * You have to implement at least name and description for your plugin.
   * All other functions and signals are optional. If you want to implement or use
   * them just add them to your plugin header.
+  * 
+  * See \ref pluginProgramming for a tutorial on plugin programming.
+  *
+  * Also see \ref dataFlow diagrams for a detailed overview of
+  * OpenFlipper's data flow and interface function calls.
  */
 class BaseInterface {
 
