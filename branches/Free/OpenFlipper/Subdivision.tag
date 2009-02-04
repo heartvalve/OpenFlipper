@@ -19,6 +19,7 @@
     <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/BasePlugin/</path>
     <filename>PluginFunctions_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
+    <includes id="ViewerProperties_8hh" name="ViewerProperties.hh" local="no" imported="no">OpenFlipper/common/ViewerProperties.hh</includes>
     <namespace>PluginFunctions</namespace>
     <class kind="class">PluginFunctions::ObjectIterator</class>
     <member kind="function">
@@ -142,13 +143,6 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>set_examiner</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>a6a2fa63b034150cc354b5709fc22f7f</anchor>
-      <arglist>(std::vector&lt; QtBaseViewer * &gt; _examiner_widgets)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
       <name>setActiveExaminer</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>b67d722dc9182c4973603519638e98f8</anchor>
@@ -160,20 +154,6 @@
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>c092e03e4f2fd8744c6ea4b721bf8c13</anchor>
       <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>set_sceneGraphRootNode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>6c5036444d35d0f7e09966cbffefb479</anchor>
-      <arglist>(SeparatorNode *_root_node)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>set_rootNode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>331db522180614b2e44387ed3f4994e4</anchor>
-      <arglist>(SeparatorNode *_root_node)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -270,15 +250,22 @@
       <type>void</type>
       <name>actionMode</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>4c3ccd1bcb83bda20f39e9068853eb84</anchor>
-      <arglist>(QtBaseViewer::ActionMode _mode)</arglist>
+      <anchor>10625157f033ef4f8e3c73554450e1b0</anchor>
+      <arglist>(Viewer::ActionMode _mode)</arglist>
     </member>
     <member kind="function">
-      <type>QtBaseViewer::ActionMode</type>
+      <type>Viewer::ActionMode</type>
       <name>actionMode</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>a17c404fa6e0bc0a9a08d489533fd01c</anchor>
+      <anchor>a7ad2d5b69ca3cc449a3e702fb4e5d4f</anchor>
       <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Viewer::ViewerProperties &amp;</type>
+      <name>viewerProperties</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>897bdc5ebf036348c0e543380c2a6cfa</anchor>
+      <arglist>(int _id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -286,6 +273,13 @@
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>bbc156ec199665bf2ac229741e8ca586</anchor>
       <arglist>(bool _mode)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setMainGLContext</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>bf5a1e13a33047b0af8399456e5363a0</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -1752,6 +1746,18 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>ViewerProperties.hh</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
+    <filename>ViewerProperties_8hh</filename>
+    <class kind="class">Viewer::ViewerProperties</class>
+    <member kind="enumvalue">
+      <name>PickingMode</name>
+      <anchorfile>namespaceViewer.html</anchorfile>
+      <anchor>23df76c69888d15a460c61ef853567d89ca30e13af1da823ee1e8e7a5b8df15d</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>Core.hh</name>
     <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/</path>
     <filename>Core_8hh</filename>
@@ -1796,10 +1802,28 @@
     <name>buildingOpenFlipper</name>
     <title>Building OpenFlipper</title>
     <filename>buildingOpenFlipper</filename>
+    <docanchor file="buildingOpenFlipper">bs</docanchor>
+    <docanchor file="buildingOpenFlipper">blinux</docanchor>
     <docanchor file="buildingOpenFlipper">dependencies</docanchor>
-    <docanchor file="buildingOpenFlipper">Building</docanchor>
-    <docanchor file="buildingOpenFlipper">Build</docanchor>
-    <docanchor file="buildingOpenFlipper">Required</docanchor>
+    <docanchor file="buildingOpenFlipper">reqlibs</docanchor>
+    <docanchor file="buildingOpenFlipper">bwin</docanchor>
+    <docanchor file="buildingOpenFlipper">bmac</docanchor>
+  </compound>
+  <compound kind="page">
+    <name>dataFlow</name>
+    <title>Dataflow</title>
+    <filename>dataFlow</filename>
+    <docanchor file="dataFlow">updateObjects</docanchor>
+    <docanchor file="dataFlow">saveSettings</docanchor>
+    <docanchor file="dataFlow">loadSettings</docanchor>
+    <docanchor file="dataFlow">ref1</docanchor>
+    <docanchor file="dataFlow">ref2</docanchor>
+    <docanchor file="dataFlow">updateView</docanchor>
+    <docanchor file="dataFlow">ref3</docanchor>
+    <docanchor file="dataFlow">ref4</docanchor>
+    <docanchor file="dataFlow">quickref</docanchor>
+    <docanchor file="dataFlow">ref5</docanchor>
+    <docanchor file="dataFlow">startup</docanchor>
   </compound>
   <compound kind="page">
     <name>dataStructure</name>
@@ -1830,6 +1854,8 @@
     <name>pluginProgramming</name>
     <title>Plugin Programming</title>
     <filename>pluginProgramming</filename>
+    <docanchor file="pluginProgramming">ex1b</docanchor>
+    <docanchor file="pluginProgramming">ex1</docanchor>
     <docanchor file="pluginProgramming">plugin_sec</docanchor>
     <docanchor file="pluginProgramming">plugin_prog_sec</docanchor>
   </compound>
@@ -1868,11 +1894,25 @@
   <compound kind="class">
     <name>BaseInterface</name>
     <filename>classBaseInterface.html</filename>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual QString</type>
-      <name>version</name>
+    <member kind="slot" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>slotObjectUpdated</name>
       <anchorfile>classBaseInterface.html</anchorfile>
-      <anchor>1223005ae02b961eb515823343811adc</anchor>
+      <anchor>98f47d25101c25198b8230c751e4d5d6</anchor>
+      <arglist>(int)</arglist>
+    </member>
+    <member kind="slot" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>slotAllCleared</name>
+      <anchorfile>classBaseInterface.html</anchorfile>
+      <anchor>a00a3111da5d92c9d001a0a8272c5a91</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>slotActiveObjectChanged</name>
+      <anchorfile>classBaseInterface.html</anchorfile>
+      <anchor>67453077e07cfd4b9f92c27046c861bf</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="signal" virtualness="virtual">
@@ -1903,13 +1943,6 @@
       <anchor>e44dcc39152105cb9b00f7cccc979246</anchor>
       <arglist>(QString, QString, QStringList, QStringList)</arglist>
     </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual</type>
-      <name>~BaseInterface</name>
-      <anchorfile>classBaseInterface.html</anchorfile>
-      <anchor>ab4caea3727739ce97fa28bdc5ddf575</anchor>
-      <arglist>()</arglist>
-    </member>
     <member kind="function" virtualness="pure">
       <type>virtual QString</type>
       <name>name</name>
@@ -1924,39 +1957,18 @@
       <anchor>43f0d3612695b53c848c14f48fea9a7a</anchor>
       <arglist>()=0</arglist>
     </member>
-    <member kind="slot" protection="private" virtualness="virtual">
-      <type>virtual void</type>
-      <name>slotObjectUpdated</name>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual QString</type>
+      <name>version</name>
       <anchorfile>classBaseInterface.html</anchorfile>
-      <anchor>98f47d25101c25198b8230c751e4d5d6</anchor>
-      <arglist>(int)</arglist>
-    </member>
-    <member kind="slot" protection="private" virtualness="virtual">
-      <type>virtual void</type>
-      <name>slotAllCleared</name>
-      <anchorfile>classBaseInterface.html</anchorfile>
-      <anchor>a00a3111da5d92c9d001a0a8272c5a91</anchor>
+      <anchor>1223005ae02b961eb515823343811adc</anchor>
       <arglist>()</arglist>
     </member>
-    <member kind="slot" protection="private" virtualness="virtual">
-      <type>virtual void</type>
-      <name>slotActiveObjectChanged</name>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~BaseInterface</name>
       <anchorfile>classBaseInterface.html</anchorfile>
-      <anchor>67453077e07cfd4b9f92c27046c861bf</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" protection="private" virtualness="virtual">
-      <type>virtual void</type>
-      <name>initializePlugin</name>
-      <anchorfile>classBaseInterface.html</anchorfile>
-      <anchor>705fdf2e221af47198aed689b0da7a32</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" protection="private" virtualness="virtual">
-      <type>virtual void</type>
-      <name>pluginsInitialized</name>
-      <anchorfile>classBaseInterface.html</anchorfile>
-      <anchor>5f240478907447bf172618bd4205df65</anchor>
+      <anchor>ab4caea3727739ce97fa28bdc5ddf575</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="slot" protection="private" virtualness="virtual">
@@ -1971,6 +1983,20 @@
       <name>noguiSupported</name>
       <anchorfile>classBaseInterface.html</anchorfile>
       <anchor>79ba17f1f9aca08b95ec56f85d2d1204</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>initializePlugin</name>
+      <anchorfile>classBaseInterface.html</anchorfile>
+      <anchor>705fdf2e221af47198aed689b0da7a32</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>pluginsInitialized</name>
+      <anchorfile>classBaseInterface.html</anchorfile>
+      <anchor>5f240478907447bf172618bd4205df65</anchor>
       <arglist>()</arglist>
     </member>
   </compound>
@@ -3038,8 +3064,8 @@
       <type>void</type>
       <name>openIniFile</name>
       <anchorfile>classCore.html</anchorfile>
-      <anchor>9318f30d3faec5401af0f6c61b79861b</anchor>
-      <arglist>(QString _filename)</arglist>
+      <anchor>fe994b01c7e2d7f19aaebadfe2fedb8e</anchor>
+      <arglist>(QString _filename, bool _coreSettings, bool _perPluginSettings, bool _loadObjects)</arglist>
     </member>
     <member kind="slot">
       <type>void</type>
@@ -3078,10 +3104,17 @@
     </member>
     <member kind="function" protection="private">
       <type>void</type>
+      <name>restoreKeyBindings</name>
+      <anchorfile>classCore.html</anchorfile>
+      <anchor>ccf920a8a2f57801516816ee1f5c4b43</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
       <name>writeIniFile</name>
       <anchorfile>classCore.html</anchorfile>
-      <anchor>62516a67c78656a2cf5b85d6070229e1</anchor>
-      <arglist>(QString _filename, bool _relativePaths, bool _targetOnly, bool _systemSettings)</arglist>
+      <anchor>7b3b84aac13b3d922fa78b28cbf951ad</anchor>
+      <arglist>(QString _filename, bool _relativePaths, bool _targetOnly, bool _saveSystemSettings, bool _savePluginSettings, bool _saveObjectInfo)</arglist>
     </member>
     <member kind="function" protection="private">
       <type>void</type>
@@ -3375,6 +3408,13 @@
       <name>iniLoadOptions</name>
       <anchorfile>classCore.html</anchorfile>
       <anchor>7ba3d4b3589e7f43108d776db9b9eac4</anchor>
+      <arglist>(INIFile &amp;_ini)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>iniLoadOptionsLast</name>
+      <anchorfile>classCore.html</anchorfile>
+      <anchor>3a0e9cb3c946d5a714650ec9a1abecf9</anchor>
       <arglist>(INIFile &amp;_ini)</arglist>
     </member>
     <member kind="signal">
@@ -3759,6 +3799,20 @@
       <anchor>5f8996f83bc9c2e625c04bc007ca92a9</anchor>
       <arglist></arglist>
     </member>
+    <member kind="function">
+      <type>void</type>
+      <name>loadKeyBindings</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>95ca5b4f82f2894de15939af26501156</anchor>
+      <arglist>(INIFile &amp;_ini)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>saveKeyBindings</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>955990bd5c4afc4b960488c0ce2bf6af</anchor>
+      <arglist>(INIFile &amp;_ini)</arglist>
+    </member>
     <member kind="signal">
       <type>void</type>
       <name>PluginKeyEvent</name>
@@ -4071,8 +4125,8 @@
       <type>void</type>
       <name>updateGlobalOptions</name>
       <anchorfile>classCoreWidget.html</anchorfile>
-      <anchor>c6d9d80379ad5deab6d7a806bbfbcad8</anchor>
-      <arglist>(bool _enable)</arglist>
+      <anchor>413c073ba2419770eb430012e22dc7ab</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="slot" protection="private">
       <type>void</type>
@@ -4344,8 +4398,8 @@
       <type>void</type>
       <name>slotActionModeChanged</name>
       <anchorfile>classCoreWidget.html</anchorfile>
-      <anchor>42eab7fb271a4261eb2233ea4cd7f3bd</anchor>
-      <arglist>(QtBaseViewer::ActionMode _mode)</arglist>
+      <anchor>aa054f75c98879a835825c1b9c7227f2</anchor>
+      <arglist>(Viewer::ActionMode _mode)</arglist>
     </member>
     <member kind="slot" protection="private">
       <type>void</type>
@@ -4523,10 +4577,10 @@
       <arglist>(bool _state)</arglist>
     </member>
     <member kind="variable">
-      <type>std::vector&lt; QtBaseViewer * &gt;</type>
+      <type>std::vector&lt; glViewer * &gt;</type>
       <name>examiner_widgets_</name>
       <anchorfile>classCoreWidget.html</anchorfile>
-      <anchor>f6dc5701a86c0327e3179b3187406562</anchor>
+      <anchor>2140c923a209abf1f070da33570fc129</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
@@ -4572,6 +4626,41 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
+      <type>QGLWidget *</type>
+      <name>glWidget_</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>e0f7b8a6eeea3a7d6452203bce78914b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>QtGLGraphicsScene *</type>
+      <name>glScene_</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>35ec4d501b157c452a3655d53a13f94b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>QtGLGraphicsView *</type>
+      <name>glView_</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>bff2fdaa2c2e510074327d1540cc67f7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>QGraphicsWidget *</type>
+      <name>centerWidget_</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>11a925fb82dfe0994c9f3ea718e18ba7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>QGraphicsGridLayout *</type>
+      <name>baseLayout_</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>3ad40eb41f75e29687ae4573c12cb777</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
       <type>ACG::QtWidgets::QtSceneGraphDialog *</type>
       <name>sceneGraphDialog_</name>
       <anchorfile>classCoreWidget.html</anchorfile>
@@ -4598,6 +4687,13 @@
       <anchorfile>classCoreWidget.html</anchorfile>
       <anchor>a51e3d88efc42526907734abc9f0a178</anchor>
       <arglist>(Logtype _type, QString _message)</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>sceneRectChanged</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>98f0b09a56303ef0663b9913a43df4ca</anchor>
+      <arglist>(const QRectF &amp;rect)</arglist>
     </member>
     <member kind="slot" protection="private">
       <type>void</type>
@@ -4689,6 +4785,13 @@
     <filename>classFileInterface.html</filename>
     <member kind="slot" virtualness="pure">
       <type>virtual int</type>
+      <name>addEmpty</name>
+      <anchorfile>classFileInterface.html</anchorfile>
+      <anchor>59e29d9d4b046c74afc332379ebb85bf</anchor>
+      <arglist>()=0</arglist>
+    </member>
+    <member kind="slot" virtualness="pure">
+      <type>virtual int</type>
       <name>loadObject</name>
       <anchorfile>classFileInterface.html</anchorfile>
       <anchor>e54da5fb8992d7850ea6b2d87851cd27</anchor>
@@ -4702,25 +4805,18 @@
       <arglist>(int, QString)=0</arglist>
     </member>
     <member kind="function" virtualness="pure">
-      <type>virtual void</type>
-      <name>setObjectRoot</name>
+      <type>virtual QWidget *</type>
+      <name>saveOptionsWidget</name>
       <anchorfile>classFileInterface.html</anchorfile>
-      <anchor>2b8b5887fca63d5e94d3f9e273ae6c47</anchor>
-      <arglist>(BaseObject *)=0</arglist>
+      <anchor>7c833c5577f76b7fcdeb43ef03fb4b2a</anchor>
+      <arglist>(QString)=0</arglist>
     </member>
     <member kind="function" virtualness="pure">
-      <type>virtual bool</type>
-      <name>supportAddEmpty</name>
+      <type>virtual QWidget *</type>
+      <name>loadOptionsWidget</name>
       <anchorfile>classFileInterface.html</anchorfile>
-      <anchor>d52e2c7a9d7e15a97c3472fa2918b07c</anchor>
-      <arglist>()=0</arglist>
-    </member>
-    <member kind="function" virtualness="pure">
-      <type>virtual int</type>
-      <name>addEmpty</name>
-      <anchorfile>classFileInterface.html</anchorfile>
-      <anchor>59e29d9d4b046c74afc332379ebb85bf</anchor>
-      <arglist>()=0</arglist>
+      <anchor>132713e6d18b3ab275b2d174bb220dd7</anchor>
+      <arglist>(QString)=0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual QString</type>
@@ -4750,20 +4846,6 @@
       <anchor>86b79f14fef9913720c6456df43de7df</anchor>
       <arglist>()=0</arglist>
     </member>
-    <member kind="function" virtualness="pure">
-      <type>virtual QWidget *</type>
-      <name>saveOptionsWidget</name>
-      <anchorfile>classFileInterface.html</anchorfile>
-      <anchor>7c833c5577f76b7fcdeb43ef03fb4b2a</anchor>
-      <arglist>(QString)=0</arglist>
-    </member>
-    <member kind="function" virtualness="pure">
-      <type>virtual QWidget *</type>
-      <name>loadOptionsWidget</name>
-      <anchorfile>classFileInterface.html</anchorfile>
-      <anchor>132713e6d18b3ab275b2d174bb220dd7</anchor>
-      <arglist>(QString)=0</arglist>
-    </member>
   </compound>
   <compound kind="class">
     <name>GlobalAccessInterface</name>
@@ -4779,8 +4861,1348 @@
       <type>virtual void</type>
       <name>set_examiner</name>
       <anchorfile>classGlobalAccessInterface.html</anchorfile>
-      <anchor>1b74b361292165bfb0da496f4ea7a158</anchor>
-      <arglist>(QtBaseViewer *)=0</arglist>
+      <anchor>4d62afb1662143b21dfd26b78006bc42</anchor>
+      <arglist>(glViewer *)=0</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>glViewer</name>
+    <filename>classglViewer.html</filename>
+    <member kind="variable" protection="protected">
+      <type>QPoint</type>
+      <name>lastPoint2D_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>00446950f8b6d47d8acd31636e43f51b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::Vec3d</type>
+      <name>lastPoint3D_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a2b83d75bf45d04b422df9ed9b66b039</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>lastPoint_hitSphere_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>9db33b61abd6b84c46ede4fa75a1a246</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>allowRotation_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>22941ad7c7da19057c029940dd4e763b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::Vec3d</type>
+      <name>lastRotationAxis_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>5a4e5688ae7163cd2b8e8496b4ad67ee</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>double</type>
+      <name>lastRotationAngle_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>19ac1c6a32492ab833ad7ede3f5e8e89</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QTime</type>
+      <name>lastMoveTime_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a2ee419cea934d78372d486a2ae084cf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QTimer *</type>
+      <name>timer_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>2e95cbe21947cfdf06f1f46178c740e2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>allowRotation</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>3d054f546c2fa9b94f00634edeffcb63</anchor>
+      <arglist>(bool _mode)</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>slotAnimation</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>581ff3dcb5ff643572f1bd740ea91c9d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>bool</type>
+      <name>mapToSphere</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>cb6a95462f8576f4741b2647a13bded1</anchor>
+      <arglist>(const QPoint &amp;_p, ACG::Vec3d &amp;_result) const </arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>stereo_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>0046283fd48cadac04c30cd8921de956</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>double</type>
+      <name>eyeDist_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>4b6d680f93eee269360d40ee72b77fbf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>double</type>
+      <name>focalDist_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>97c9059ac0e67b0fd19fc197329d6574</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setEyeDistance</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>aadeb3b979ce1e595d601c2afa76e2f1</anchor>
+      <arglist>(double _distance)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>eyeDistance</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>ea1b5eb7c11dee67424fb1452fe9d0d9</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setFocalDistance</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f0a8aeedc38f4f06daf66d0b50fd39bf</anchor>
+      <arglist>(double _distance)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>focalDistance</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>cd4a87453269ccd501f51539294cf6bc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setStereoMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>95925e71190d9bd331d5208c8c2fd97c</anchor>
+      <arglist>(bool _b)</arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>std::vector&lt; PickMode &gt;</type>
+      <name>pick_modes_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>019fdcfc41e7e7ccc0062d57b9ea92d6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>std::string</type>
+      <name>pick_mode_name_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>9a4ec2feed01efb0d00ecf4818515145</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>int</type>
+      <name>pick_mode_idx_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>aafe5532f3ea7195c6a55d96b1107ba0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>pick</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>1a66a4c613ec1e81697c29029674c121</anchor>
+      <arglist>(ACG::SceneGraph::PickTarget _pickTarget, const QPoint &amp;_mousePos, unsigned int &amp;_nodeIdx, unsigned int &amp;_targetIdx, ACG::Vec3d *_hitPointPtr=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>fast_pick</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f062e1ff98e412324d8b473442452ffb</anchor>
+      <arglist>(const QPoint &amp;_mousePos, ACG::Vec3d &amp;_hitPoint)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>addPickMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>865176ee03c4993699c2993290086805</anchor>
+      <arglist>(const std::string &amp;_name, bool _mouse_tracking=false, int _pos=-1, bool _visible=true, QCursor _cursor=Qt::ArrowCursor)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>clearPickModes</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>baa98a137239890f004489682fb23a5f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>const std::string &amp;</type>
+      <name>pickMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>db51a7e4c94c49a945cff456f976d077</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>pickMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>be2ebf608a2ae4305f141c206c41cc2d</anchor>
+      <arglist>(const std::string &amp;_name)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>pickMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>070ec2061d800a79626eaf7af77b25dd</anchor>
+      <arglist>(int _id)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>signalPickModeChanged</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f820e0c63f528f689fac6ef2a02cc192</anchor>
+      <arglist>(const std::string &amp;)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>setPickModeCursor</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>1ba55746366be14987fb59373146fe99</anchor>
+      <arglist>(const std::string &amp;_name, QCursor _cursor)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>setPickModeMouseTracking</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a174fe4a23cf1d7f913db66a605c2939</anchor>
+      <arglist>(const std::string &amp;_name, bool _mouseTracking)</arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>Viewer::ViewerProperties</type>
+      <name>properties_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>d28fbefa8fbd0e360da20175493ffcb7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::GLState *</type>
+      <name>glstate_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>973f1239106e8ab29f3d6f17cd29e23a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>Viewer::ViewerProperties *</type>
+      <name>properties</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>196247d4b997aeafdd42dfecc0bea987</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>slotPropertiesUpdated</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>447cb4cd04c778ae72dacd1e165f06f8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>updateActionMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>60f4c70ea8f80c41349ce7be0d0223ba</anchor>
+      <arglist>(Viewer::ActionMode _am)</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>applyProperties</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>b625defb1e20d9a9c00e48c252a32943</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>dragEnterEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>cbf88b37ee977196bb465cfea66b690c</anchor>
+      <arglist>(QGraphicsSceneDragDropEvent *_e)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>dropEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>fe3f0abf667d3dc4bd835ee992c253bd</anchor>
+      <arglist>(QGraphicsSceneDragDropEvent *_e)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>startDragEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>6eb7c7867eea5eea34a424cda5206f2b</anchor>
+      <arglist>(QMouseEvent *_event)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>dragEnterEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>acc76abe69982fcd9df74fdfb4cc951c</anchor>
+      <arglist>(QDragEnterEvent *_event)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>dropEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f46ab2ec34f01c28cc3ccc44d76a2ffa</anchor>
+      <arglist>(QDropEvent *_event)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>signalKeyPressEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>46b1def1a4c0b415f6590410e9ef553e</anchor>
+      <arglist>(QKeyEvent *)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>keyPressEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>e374e0892f03f013bd61025845f6f17b</anchor>
+      <arglist>(QKeyEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>keyReleaseEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>b9cf2f9b2c44c136f11da2244ba7ac2d</anchor>
+      <arglist>(QKeyEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>viewKeyPressEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a35d841027bd3ea68363b037b7e1ee09</anchor>
+      <arglist>(QKeyEvent *)</arglist>
+    </member>
+    <member kind="enumeration">
+      <name>ProjectionMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>410894db0a91cbe0db227fdfd1d7de10</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>ORTHOGRAPHIC_PROJECTION</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>410894db0a91cbe0db227fdfd1d7de10de297f12b9ffb4273aafdc6c817bc347</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>PERSPECTIVE_PROJECTION</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>410894db0a91cbe0db227fdfd1d7de1079422bc64c445223b76b06ab4d729914</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumeration">
+      <name>NormalsMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>adec7bceb301564e3ec6dfdba72334fc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>DONT_TOUCH_NORMALS</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>adec7bceb301564e3ec6dfdba72334fc1be493a002b76cae55a430acb6ad46dc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="enumvalue">
+      <name>NORMALIZE_NORMALS</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>adec7bceb301564e3ec6dfdba72334fc55f7de2ad77cd04402094e5f6b62d771</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>updateGL</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>24818991e6804b48e6c4a12109da19fb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setHome</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>5e86fc0e8248bcfac7ef9c0aaac7d36a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>home</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>fad20e7d26d32a5d7f4a775c389418ac</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>viewAll</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>916e56338ded6e740746e806db8e9a28</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>flyTo</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>ce2bc533bf496bd46a9a479f49fa1ea0</anchor>
+      <arglist>(const QPoint &amp;_pos, bool _move_back)</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>flyTo</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>c13823fc6d7c827633a5ad434892ad00</anchor>
+      <arglist>(const QPoint &amp;_pos)</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>flyFrom</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>fa7e2db85d8d707e4c4909ebfafdd562</anchor>
+      <arglist>(const QPoint &amp;_pos)</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>flyTo</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>05466ae797f8efb3ea5cbb73963ab9d4</anchor>
+      <arglist>(const ACG::Vec3d &amp;_position, const ACG::Vec3d &amp;_center, double _time=1000.0)</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>perspectiveProjection</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>832c32182b7803d7a6fc599e3113bfbc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>orthographicProjection</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f7a7cd1f49fecd1190e34aa3ea174395</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>toggleProjectionMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>4c79b3661f49e815c7e94b1dd7e581ee</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>setView</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>9ee5f113d217408a147710be4eb21b81</anchor>
+      <arglist>(const ACG::GLMatrixd &amp;_modelview, const ACG::GLMatrixd &amp;_inverse_modelview)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>actionDrawMenu</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>2a4ae8521f7fd7dd12568376fb23899e</anchor>
+      <arglist>(QAction *_action)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>actionPickMenu</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>9c5e09777a5a0501150d75a462ea8658</anchor>
+      <arglist>(QAction *_action)</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>actionPasteView</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>ab9400a60a728c6d7d59d2c22de4fef4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot">
+      <type>void</type>
+      <name>actionCopyView</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>ee726408335b52430ad8a5d446bcf8aa</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" virtualness="virtual">
+      <type>virtual void</type>
+      <name>snapshot</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>59d2a88c92cedabdac9a07add6476456</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>functionMenuUpdate</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>0cdfbe2a1de94d34888ff174a33ff478</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>projectionModeChanged</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>057711652ef62fafa7d84e0371bba8c8</anchor>
+      <arglist>(bool _ortho)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>signalMouseEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a87c11591840eab0a4fe21947b0f219f</anchor>
+      <arglist>(QMouseEvent *, const std::string &amp;)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>signalMouseEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>3dec380630eb571f7fafe5b0c7a66664</anchor>
+      <arglist>(QMouseEvent *)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>signalWheelEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>fb6949194894261df0716e0267b2dc67</anchor>
+      <arglist>(QWheelEvent *, const std::string &amp;)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>signalMouseEventIdentify</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a7a0233b9b04661ee7ee3423077cbab2</anchor>
+      <arglist>(QMouseEvent *)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>signalSceneGraphChanged</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>e06c270eef78abd328a37c79bbf143da</anchor>
+      <arglist>(ACG::SceneGraph::BaseNode *_root)</arglist>
+    </member>
+    <member kind="signal">
+      <type>void</type>
+      <name>signalCustomContextMenuRequested</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f7d40857f258091128fe9172dbd96236</anchor>
+      <arglist>(const QPoint &amp;)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>glViewer</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a2cf4ae4c2c221a96e2b8eff892cf653</anchor>
+      <arglist>(QtGLGraphicsScene *_scene, QGLWidget *_glWidget, QGraphicsWidget *_parent=0, const char *_name=0, QStatusBar *_statusBar=0)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~glViewer</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>9c31464f316965958b2b3a45c06ea8cf</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual QSize</type>
+      <name>sizeHint</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>4db8872e1e8425d78aeef2051cc82a3e</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setStatusBar</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>68aff31861e4cbdf4f2f168e67724547</anchor>
+      <arglist>(QStatusBar *_sb)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>makeCurrent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>003e4066701ae292c8102af4c27f5730</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>swapBuffers</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>42d0ee8d7b2b12601229f39e03c95e4e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>lockProjectionUpdate</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>629706c05138e2dd46c76f5324255190</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>unlockProjectionUpdate</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>5aac6542217b081831d504314b7cb44f</anchor>
+      <arglist>(void)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>trackMouse</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>111d4749bf6cc3b98ccd9d1cb786b2c8</anchor>
+      <arglist>(bool _track)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>sceneGraph</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>717d9473f39adf79e6b2f7160e580173</anchor>
+      <arglist>(ACG::SceneGraph::BaseNode *_root)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>projectionMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>81bd7d788711d21bc91b0cdf2a99b6dd</anchor>
+      <arglist>(ProjectionMode _p)</arglist>
+    </member>
+    <member kind="function">
+      <type>ProjectionMode</type>
+      <name>projectionMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>faf1994ff92b14e9c75b04ddf294a37d</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setScenePos</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>9e7ca32f4659d3a457f937af30f3282e</anchor>
+      <arglist>(const ACG::Vec3d &amp;_center, double _radius)</arglist>
+    </member>
+    <member kind="function">
+      <type>const ACG::Vec3d &amp;</type>
+      <name>scene_center</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>16829cc5ec8f75cfeb9de1d67931c689</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>scene_radius</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>e1d4aae9e66e99ec3e4e400244a27d9d</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>viewingDirection</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>58752cbd503d9e014c577f4b206f1b42</anchor>
+      <arglist>(const ACG::Vec3d &amp;_dir, const ACG::Vec3d &amp;_up)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>normalsMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f7cbae18b60e8c5279db7180c0c66754</anchor>
+      <arglist>(NormalsMode _mode)</arglist>
+    </member>
+    <member kind="function">
+      <type>NormalsMode</type>
+      <name>normalsMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>87e61d3777f9b00d3ff7da835bf4bb99</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>ACG::GLMatrixd &amp;</type>
+      <name>light_matrix</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>04aadc295f7cf8b295b8efa7c46249fd</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>rotate_lights</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>34d692e4d81d3b468c216d7ff049d28d</anchor>
+      <arglist>(ACG::Vec3d &amp;_axis, double _angle)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>update_lights</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>26ca3f4077ebb22e54a408df34ffb419</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>draw_lights</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>3d9dd2f1ba2b3d759fec695e59fe3673</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>copyToImage</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>afb3a04dd5fa1d800d0815776e5dff42</anchor>
+      <arglist>(QImage &amp;_image, GLenum _buffer=GL_BACK)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>copyToImage</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>56c6f5eec36d3c32a74c84705e5a66e1</anchor>
+      <arglist>(QImage &amp;_image, unsigned int _left, unsigned int _top, unsigned int _width, unsigned int _height, GLenum _buffer)</arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>glWidth</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>67e9500c789b14e03096967260a80745</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>glHeight</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>ae762c72733eab2ae4bdd202bb5946c9</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>QSize</type>
+      <name>glSize</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>5712ae947d682be1bf9e2dd37ac302a4</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function">
+      <type>QPoint</type>
+      <name>glMapFromGlobal</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>667c6cac9c155d516b50ac97abffbb66</anchor>
+      <arglist>(const QPoint &amp;_pos) const </arglist>
+    </member>
+    <member kind="function">
+      <type>QPoint</type>
+      <name>glMapToGlobal</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>b29318c79333130d56e3504f60e29b86</anchor>
+      <arglist>(const QPoint &amp;_pos) const </arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>drawMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>85204078badebb60902fc841d04e20d5</anchor>
+      <arglist>(unsigned int _mode)</arglist>
+    </member>
+    <member kind="function">
+      <type>unsigned int</type>
+      <name>drawMode</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>673abd6f1aebe2f83d836bfe0d6bf2c2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>encodeView</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>230e93e4308f6fa6746329d16ed6a6ac</anchor>
+      <arglist>(QString &amp;_view)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>decodeView</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a86ad933c05cb700a0417789710f1c98</anchor>
+      <arglist>(const QString &amp;_view)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>initModelviewMatrix</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>632c7f6e2f5443fcebf418107133c06e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>grabGLArea</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>927d0d7ec8a8db5e4cb718d0e7862674</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>releaseGLArea</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>9bbe625cf2970316e364e9473936e137</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>drawBlendedObjects</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>d40bf80a8373314196a65e90bc9b689c</anchor>
+      <arglist>(bool _status)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>translate</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>52c553a9c1cc8301a5e04e7ac9fd068a</anchor>
+      <arglist>(const ACG::Vec3d &amp;trans)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>rotate</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>b388bab4401e34c8550c7176960999e5</anchor>
+      <arglist>(const ACG::Vec3d &amp;axis, double angle)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>rotate</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>caef294fb3953261a12e8d7b496e57b4</anchor>
+      <arglist>(const ACG::Vec3d &amp;axis, double angle, const ACG::Vec3d &amp;_center)</arglist>
+    </member>
+    <member kind="function">
+      <type>QMenu *</type>
+      <name>getPickMenu</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>3fbbb4e0d7c9ce574157d1b95a33c199</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>QMenu *</type>
+      <name>getDrawMenu</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>449f8648a1c726b92a35ee6e12dfaf01</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>slotWheelX</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>c83763336ca57153b416b7ce46e99679</anchor>
+      <arglist>(double _dAngle)</arglist>
+    </member>
+    <member kind="slot" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>slotWheelY</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>97914c75c475fd83ea9ca7917c0a5f17</anchor>
+      <arglist>(double _dAngle)</arglist>
+    </member>
+    <member kind="slot" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>slotWheelZ</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>aba207a41fd6c100129571f9fe1a3855</anchor>
+      <arglist>(double _dist)</arglist>
+    </member>
+    <member kind="slot" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>cleanupEventFilter</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>13e16fa2dd25b59b9c5687e2459448dc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>initializeGL</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>e496c7f46e2001020468aa04ccd43609</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>paintGL</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>3ee498f1a82cb698dad5618fcf559aec</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>resizeEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>5d0dd2173cbd6dcd4abb01db1e52c2b0</anchor>
+      <arglist>(QGraphicsSceneResizeEvent *_e)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>moveEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>9f77b53640eeaa7d2cba609c2aefecf7</anchor>
+      <arglist>(QGraphicsSceneMoveEvent *_e)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>paint</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>6a09ad5e223f4311c6a62ac6dd471a21</anchor>
+      <arglist>(QPainter *_painter, const QStyleOptionGraphicsItem *_option, QWidget *_widget=0)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>glMousePressEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>e5dac0efa27dd24fe48cf862f53269b7</anchor>
+      <arglist>(QMouseEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>glMouseDoubleClickEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>1f923264435cbc170830be39c6135e5e</anchor>
+      <arglist>(QMouseEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>glMouseMoveEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>2b2fc03c5ea61bef158f279f5545d189</anchor>
+      <arglist>(QMouseEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>glMouseReleaseEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f5abda9d6851aa8edef84bb4ad949fe1</anchor>
+      <arglist>(QMouseEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>glMouseWheelEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>fd5ba310d2085bf12a5aeba292dea9a5</anchor>
+      <arglist>(QWheelEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>contextMenuEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>54fefb36ba9ec5c1440bc0265f269ee1</anchor>
+      <arglist>(QGraphicsSceneContextMenuEvent *_e)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>viewMouseEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>003655d5cf214c2c1b25ec23745422d7</anchor>
+      <arglist>(QMouseEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>viewWheelEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>4763dde17ec77eb451c16353c88e91dc</anchor>
+      <arglist>(QWheelEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>lightMouseEvent</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>d39f54b96a1546aa3eb62c1ca50f3ab9</anchor>
+      <arglist>(QMouseEvent *)</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>updateProjectionMatrix</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>49c8ab97dcd94c3d20a411168a2b28a6</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected">
+      <type>void</type>
+      <name>updatePickMenu</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>c05c0bc62704a83fafe19262dee386bc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>ACG::Vec3d</type>
+      <name>scene_center_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>46578b6914aec849f9d43a93e17f4e5f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>ACG::Vec3d</type>
+      <name>trackball_center_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>e562a3dec669f150f04d1dbd76b689b8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>double</type>
+      <name>scene_radius_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>d11ef3eb3f0fc7dbfc85d103e322cfb6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>double</type>
+      <name>trackball_radius_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>004a4acc0b3639769781b89bb017eeb3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>GLdouble</type>
+      <name>orthoWidth_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>cc8b069523cb527128967e21704c41f1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>GLdouble</type>
+      <name>near_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>74cc6449d22f1d2fc6ae39861a508573</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>GLdouble</type>
+      <name>far_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>6879cd7d10d098d121eee60935042d63</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>GLdouble</type>
+      <name>fovy_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>2542f1d760c2845075d030de9e51b391</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>bool</type>
+      <name>isRotating_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>5c3bc8459f255917177f028d5d830513</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="protected">
+      <type>QStatusBar *</type>
+      <name>statusbar_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>6be700f980852a4ac3875a1164d6aa4f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>hidePopupMenus</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>73803dc79273f245c7f5f7de9e8c036b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type></type>
+      <name>glViewer</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>5e0cfdf762eabf4ddf897de5039acaa0</anchor>
+      <arglist>(const glViewer &amp;)</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>glViewer &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>22c16bc98678f02859c25e0c91ef58bf</anchor>
+      <arglist>(const glViewer &amp;)</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>createWidgets</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>767d36f04936f3e10f3bcb824709b05e</anchor>
+      <arglist>(QStatusBar *_sb)</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>drawScene</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>94eff5864439047e50f4b39745da1289</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>drawScene_mono</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>c4264b22ac7383a35e0a8b8344de1ed3</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>drawScene_stereo</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>349d8fbade52abe39c08822b0b517f23</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>updatePopupMenu</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>e24b0eeef65628f682be7042d94c8eb5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::Vec3d</type>
+      <name>home_center_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>1739023c9ebb66dda710e0700b8c8319</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>double</type>
+      <name>home_radius_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>af5300288859a5373f1a2784690fb13d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::GLMatrixd</type>
+      <name>home_modelview_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>4e5b1b5742878566310d3d0dbd9cbebf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::GLMatrixd</type>
+      <name>home_inverse_modelview_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>aa38d2a9eb8ef89110f1e5c79c3bd189</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>double</type>
+      <name>homeOrthoWidth_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>b19a60338e6ba34ab59fe25bd1274248</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::GLMatrixd</type>
+      <name>light_matrix_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>cc73292049ad87f600c435f7fbf1d523</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>NormalsMode</type>
+      <name>normalsMode_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>adc25f7abae3617d48f86374d6d410e4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ProjectionMode</type>
+      <name>projectionMode_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f8568246dd2f9db01e9e03fc6065181e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>trackMouse_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>08de6f306773b5ad3cc8cb789dcca71d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>glareaGrabbed_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>82b268bb05dc7e02201de139c06d3bca</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>double</type>
+      <name>frame_time_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>21c40c7d69d88cd9c420b9a0e3528c9d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QMenu *</type>
+      <name>pickMenu_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>9cc958d82ac5f7a77b463ce2b18fda8b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QMenu *</type>
+      <name>drawMenu_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>3c7097c1b356ea5842c0b2d3ea77b183</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::SceneGraph::BaseNode *</type>
+      <name>sceneGraphRoot_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a06dcb6574da54fe191cb17d0f48a850</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>unsigned int</type>
+      <name>curDrawMode_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>d4c016d567c756dc3b68a723b945c6a6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>unsigned int</type>
+      <name>availDrawModes_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>7ad2097c90a565a0b78880c12f69563c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>projectionUpdateLocked_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>4dbf3a87a38e4e4576fc313d65cb8c9b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>blending_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>d0861134310331ea2f2baaa793bf65b7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QtGLGraphicsScene *</type>
+      <name>glScene_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>414a4a6f7f1ba957e54e554988d65dd3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QGLWidget *</type>
+      <name>glWidget_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a8d9728d2dceb8faec7d195b5415c0c1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QGraphicsGridLayout *</type>
+      <name>glBaseLayout_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f433ed75eca62a895c48ef1fcd765304</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::QtWidgets::QtWheel *</type>
+      <name>wheelX_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>44878f1de9090b69efc048d427e3431b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::QtWidgets::QtWheel *</type>
+      <name>wheelY_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>ece8b2ddcb87cf2a3bec5ee673623bfc</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::QtWidgets::QtWheel *</type>
+      <name>wheelZ_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a8955ed54d3997766c68344c99cbddd4</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>std::vector&lt; QAction * &gt;</type>
+      <name>drawMenuActions_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>f02f00a06049f1834182d5bfac144b22</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QTime</type>
+      <name>redrawTime_</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>d9541ae0c0d2eb851e0b97256839fe87</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="friend" protection="protected">
+      <type>friend class</type>
+      <name>QtGLGraphicsScene</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>d9f8454cbfc6c3545a60f8aaad41f34b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="friend" protection="protected">
+      <type>friend class</type>
+      <name>QtGLGraphicsView</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a24555e8027e8185a689c90d12788f2d</anchor>
+      <arglist></arglist>
+    </member>
+    <class kind="struct">glViewer::PickMode</class>
+  </compound>
+  <compound kind="struct">
+    <name>glViewer::PickMode</name>
+    <filename>structglViewer_1_1PickMode.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>PickMode</name>
+      <anchorfile>structglViewer_1_1PickMode.html</anchorfile>
+      <anchor>70823e685e647a7671487f8a14e3c3c1</anchor>
+      <arglist>(const std::string &amp;_n, bool _t, bool _v, QCursor _c)</arglist>
+    </member>
+    <member kind="variable">
+      <type>std::string</type>
+      <name>name</name>
+      <anchorfile>structglViewer_1_1PickMode.html</anchorfile>
+      <anchor>f38208271942bb539fa129819b428ba9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>tracking</name>
+      <anchorfile>structglViewer_1_1PickMode.html</anchorfile>
+      <anchor>16b508991ac0ba448527d846a183b179</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>visible</name>
+      <anchorfile>structglViewer_1_1PickMode.html</anchorfile>
+      <anchor>43718c9f81fd5fef86eb9475f577c1c2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>QCursor</type>
+      <name>cursor</name>
+      <anchorfile>structglViewer_1_1PickMode.html</anchorfile>
+      <anchor>39050fcc9c75cd04d14436fd72027610</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -5199,6 +6621,13 @@
       <name>loadIniFileOptions</name>
       <anchorfile>classINIInterface.html</anchorfile>
       <anchor>3e4a73ff680732b8cab88d36622888f1</anchor>
+      <arglist>(INIFile &amp;)</arglist>
+    </member>
+    <member kind="slot" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>loadIniFileOptionsLast</name>
+      <anchorfile>classINIInterface.html</anchorfile>
+      <anchor>c0061b86e0da5a1f576cd5d20923430f</anchor>
       <arglist>(INIFile &amp;)</arglist>
     </member>
     <member kind="slot" protection="private" virtualness="virtual">
@@ -5790,7 +7219,7 @@
       <type>QTimer *</type>
       <name>timer_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d1d724631139b608b9488160a973596a</anchor>
+      <anchor>556231f1f39442d30187de2ca021e55b</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -5895,7 +7324,7 @@
       <type>virtual void</type>
       <name>setStereoMode</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ca4d007dde32586094ddc4354da94adf</anchor>
+      <anchor>a45af932a4a20ec4f08aa4d75459b1a7</anchor>
       <arglist>(bool _b)</arglist>
     </member>
     <member kind="variable" protection="private">
@@ -5916,28 +7345,21 @@
       <type>QImage *</type>
       <name>snapshot_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>9877e73bc651c488dbf8ee27d3e2eb69</anchor>
+      <anchor>507e0d59f6d37a06990226b7937bc9f5</anchor>
       <arglist></arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>snapshotBaseFileName</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c829f5e02ab5a8c8709d565b267d67bc</anchor>
-      <arglist>(const QString &amp;_fname)</arglist>
     </member>
     <member kind="slot" virtualness="virtual">
       <type>virtual void</type>
       <name>snapshot</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>f33646d99183fb47768741ea63e443ed</anchor>
+      <anchor>d008841c4b51c5d0b5069dbfad7806af</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="variable" protection="private">
       <type>std::vector&lt; PickMode &gt;</type>
       <name>pick_modes_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>feba59a42a21c53d27ed8f918bfcd821</anchor>
+      <anchor>6194c3dbb25c7e64bad67f6ffb1326ed</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
@@ -5967,195 +7389,6 @@
       <anchorfile>classQtBaseViewer.html</anchorfile>
       <anchor>efa495b2d83ba33371ed64df3a2c314b</anchor>
       <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>pick</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ed78c0e697c52a197ee7cdbc7fb42f82</anchor>
-      <arglist>(ACG::SceneGraph::PickTarget _pickTarget, const QPoint &amp;_mousePos, unsigned int &amp;_nodeIdx, unsigned int &amp;_targetIdx, ACG::Vec3d *_hitPointPtr=0)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>fast_pick</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>e90bb8bd03d73065c78e705c44be55a5</anchor>
-      <arglist>(const QPoint &amp;_mousePos, ACG::Vec3d &amp;_hitPoint)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>addPickMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>4c53f370e24f60c68797f88068ff0ec4</anchor>
-      <arglist>(const std::string &amp;_name, bool _mouse_tracking=false, int _pos=-1, bool _visible=true, QCursor _cursor=Qt::ArrowCursor)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>clearPickModes</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>71b3497cce5ff438449bf68714f68216</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>const std::string &amp;</type>
-      <name>pickMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a2a93c54ff08bfa7b470d4824786c25e</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>pickMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>0086422d11fe45bd5a0282889beae912</anchor>
-      <arglist>(const std::string &amp;_name)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>pickMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b79bbf31602c7f4bc8c2f2c795e4620e</anchor>
-      <arglist>(int _id)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>renderPicking</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c8d9edb44c265bbafca81edb0ab61f60</anchor>
-      <arglist>(bool _renderPicking, ACG::SceneGraph::PickTarget _mode)</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>pickingMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>6fe6d1e49808951a9cd995104c1a12ac</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>setPickModeCursor</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>59cfff97cb74f80b5b809725e2c91036</anchor>
-      <arglist>(const std::string &amp;_name, QCursor _cursor)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>setPickModeMouseTracking</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d8228897e8798c6d71d172e47f646179</anchor>
-      <arglist>(const std::string &amp;_name, bool _mouseTracking)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalPickModeChanged</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>e8e3772dbe5919a2703972a24ac8fe89</anchor>
-      <arglist>(const std::string &amp;)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>glDragEnterEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>02c9a65780568c5b07dc0232458df999</anchor>
-      <arglist>(QDragEnterEvent *_event)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>glDropEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>7f96657e6c79eca2c23ced3bf792fbfc</anchor>
-      <arglist>(QDropEvent *_event)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>startDragEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a90b3a961a8ad11ec3e18b73d76dbe37</anchor>
-      <arglist>(QMouseEvent *_event)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>dragEnterEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>7122ca553f07b0fe77cef7ede416235c</anchor>
-      <arglist>(QDragEnterEvent *_event)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>dropEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>83720d0f698b51b6dbff969d3cd0f358</anchor>
-      <arglist>(QDropEvent *_event)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setEyeDistance</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>eedba2b97676f2cfd8ab6acf47cf8c4b</anchor>
-      <arglist>(double _distance)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>eyeDistance</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>033c12a12a50a159d93c9a2370550a5f</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setFocalDistance</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>24c135445010a306b69966a43419e544</anchor>
-      <arglist>(double _distance)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>focalDistance</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>31d5121dbbb52e9835508bf9e9107550</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>setStereoMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a45af932a4a20ec4f08aa4d75459b1a7</anchor>
-      <arglist>(bool _b)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>glDragEnterEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>02c9a65780568c5b07dc0232458df999</anchor>
-      <arglist>(QDragEnterEvent *_event)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>glDropEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>7f96657e6c79eca2c23ced3bf792fbfc</anchor>
-      <arglist>(QDropEvent *_event)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>startDragEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a90b3a961a8ad11ec3e18b73d76dbe37</anchor>
-      <arglist>(QMouseEvent *_event)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>dragEnterEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>7122ca553f07b0fe77cef7ede416235c</anchor>
-      <arglist>(QDragEnterEvent *_event)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>dropEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>83720d0f698b51b6dbff969d3cd0f358</anchor>
-      <arglist>(QDropEvent *_event)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -6243,80 +7476,38 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>allowRotation</name>
+      <name>glDragEnterEvent</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>8f3cd8428eb17561c62ae4f0515f1845</anchor>
-      <arglist>(bool _mode)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>wheelZoomFactor</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>da53979202cfdf1f71d9c861f2a0fe18</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>wheelZoomFactorShift</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>7744b2fc64d67a82cd995a266343affe</anchor>
-      <arglist>()</arglist>
+      <anchor>02c9a65780568c5b07dc0232458df999</anchor>
+      <arglist>(QDragEnterEvent *_event)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
-      <name>setWheelZoomFactor</name>
+      <name>glDropEvent</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>6dd815d9aee41b4b863ad2bd48681772</anchor>
-      <arglist>(double _factor)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setWheelZoomFactorShift</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>80913427d373fb63091dfd3b74c45bd9</anchor>
-      <arglist>(double _factor)</arglist>
-    </member>
-    <member kind="slot" protection="private">
-      <type>void</type>
-      <name>slotAnimation</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c19b63bc599bb1a00592c6cf05235410</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>bool</type>
-      <name>mapToSphere</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>aef5b685437983c0b71543e6cb8766c2</anchor>
-      <arglist>(const QPoint &amp;_p, ACG::Vec3d &amp;_result) const </arglist>
+      <anchor>7f96657e6c79eca2c23ced3bf792fbfc</anchor>
+      <arglist>(QDropEvent *_event)</arglist>
     </member>
     <member kind="signal">
       <type>void</type>
-      <name>signalKeyPressEvent</name>
+      <name>startDragEvent</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>4aef0aa498ab88f93fcdac06a166ea23</anchor>
-      <arglist>(QKeyEvent *)</arglist>
+      <anchor>a90b3a961a8ad11ec3e18b73d76dbe37</anchor>
+      <arglist>(QMouseEvent *_event)</arglist>
     </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>glKeyPressEvent</name>
+    <member kind="signal">
+      <type>void</type>
+      <name>dragEnterEvent</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>aa06f0d3f7f60fe7a6e1465f6f34b07c</anchor>
-      <arglist>(QKeyEvent *_event)</arglist>
+      <anchor>7122ca553f07b0fe77cef7ede416235c</anchor>
+      <arglist>(QDragEnterEvent *_event)</arglist>
     </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>glKeyReleaseEvent</name>
+    <member kind="signal">
+      <type>void</type>
+      <name>dropEvent</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>34121e85dcaa2fe5d889926e9bfc6b68</anchor>
-      <arglist>(QKeyEvent *_event)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual bool</type>
-      <name>viewKeyPressEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>f395aaa5180ad0dbd751ad290fe00e68</anchor>
-      <arglist>(QKeyEvent *)</arglist>
+      <anchor>83720d0f698b51b6dbff969d3cd0f358</anchor>
+      <arglist>(QDropEvent *_event)</arglist>
     </member>
     <member kind="signal">
       <type>void</type>
@@ -6355,25 +7546,13 @@
     <member kind="enumvalue">
       <name>ORTHOGRAPHIC_PROJECTION</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b438d14ceea328781a08f5dc3aad3d902270831e9532b25aa88a2692b66268fc</anchor>
+      <anchor>b438d14ceea328781a08f5dc3aad3d90f6f8c2dfb96462c2374736bd363b9d8a</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
       <name>PERSPECTIVE_PROJECTION</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b438d14ceea328781a08f5dc3aad3d90109351cfd9a6750abeec5e8e38220118</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ORTHOGRAPHIC_PROJECTION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b438d14ceea328781a08f5dc3aad3d902270831e9532b25aa88a2692b66268fc</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>PERSPECTIVE_PROJECTION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b438d14ceea328781a08f5dc3aad3d90109351cfd9a6750abeec5e8e38220118</anchor>
+      <anchor>b438d14ceea328781a08f5dc3aad3d90eea47b0c670462df87a0b3755e573029</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -6385,13 +7564,7 @@
     <member kind="enumvalue">
       <name>PickingMode</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ef816569cc640d50f2bc2f7a5d24a1754e87bbb96ed8fe3cc9a8a11ea809dc60</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>PickingMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ef816569cc640d50f2bc2f7a5d24a1754e87bbb96ed8fe3cc9a8a11ea809dc60</anchor>
+      <anchor>ef816569cc640d50f2bc2f7a5d24a175abca1bf5aa2caea1806a948f853bc2c6</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -6403,25 +7576,13 @@
     <member kind="enumvalue">
       <name>CCW_ORIENTATION</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3f7b17f9c22ab2ae6c8bf301242b9976c41e8c3183550feea7514b90c3826417</anchor>
+      <anchor>3f7b17f9c22ab2ae6c8bf301242b99768b564dd884628ec4d2a39426e20e7fc0</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
       <name>CW_ORIENTATION</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3f7b17f9c22ab2ae6c8bf301242b99762510de959954e0fd351905e457fb1b62</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CCW_ORIENTATION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3f7b17f9c22ab2ae6c8bf301242b9976c41e8c3183550feea7514b90c3826417</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CW_ORIENTATION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3f7b17f9c22ab2ae6c8bf301242b99762510de959954e0fd351905e457fb1b62</anchor>
+      <anchor>3f7b17f9c22ab2ae6c8bf301242b99765cad2b57c54a89d8df24963a7df8707f</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
@@ -6433,133 +7594,13 @@
     <member kind="enumvalue">
       <name>DONT_TOUCH_NORMALS</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>fb1c58962df518c1aaa593217ec21dc5976f447ffa89a0497a2a8a35ef4f7e5a</anchor>
+      <anchor>fb1c58962df518c1aaa593217ec21dc5b60d6d5935369ed97307a0a5eaf0a1e1</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumvalue">
       <name>NORMALIZE_NORMALS</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>fb1c58962df518c1aaa593217ec21dc565a4badee0b1d4220167801cab2b4c77</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>DONT_TOUCH_NORMALS</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>fb1c58962df518c1aaa593217ec21dc5976f447ffa89a0497a2a8a35ef4f7e5a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>NORMALIZE_NORMALS</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>fb1c58962df518c1aaa593217ec21dc565a4badee0b1d4220167801cab2b4c77</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <name>ProjectionMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b438d14ceea328781a08f5dc3aad3d90</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ORTHOGRAPHIC_PROJECTION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b438d14ceea328781a08f5dc3aad3d902270831e9532b25aa88a2692b66268fc</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>PERSPECTIVE_PROJECTION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b438d14ceea328781a08f5dc3aad3d90109351cfd9a6750abeec5e8e38220118</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>ORTHOGRAPHIC_PROJECTION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b438d14ceea328781a08f5dc3aad3d902270831e9532b25aa88a2692b66268fc</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>PERSPECTIVE_PROJECTION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b438d14ceea328781a08f5dc3aad3d90109351cfd9a6750abeec5e8e38220118</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <name>ActionMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ef816569cc640d50f2bc2f7a5d24a175</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>PickingMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ef816569cc640d50f2bc2f7a5d24a1754e87bbb96ed8fe3cc9a8a11ea809dc60</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>PickingMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ef816569cc640d50f2bc2f7a5d24a1754e87bbb96ed8fe3cc9a8a11ea809dc60</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <name>FaceOrientation</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3f7b17f9c22ab2ae6c8bf301242b9976</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CCW_ORIENTATION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3f7b17f9c22ab2ae6c8bf301242b9976c41e8c3183550feea7514b90c3826417</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CW_ORIENTATION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3f7b17f9c22ab2ae6c8bf301242b99762510de959954e0fd351905e457fb1b62</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CCW_ORIENTATION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3f7b17f9c22ab2ae6c8bf301242b9976c41e8c3183550feea7514b90c3826417</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>CW_ORIENTATION</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3f7b17f9c22ab2ae6c8bf301242b99762510de959954e0fd351905e457fb1b62</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumeration">
-      <name>NormalsMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>fb1c58962df518c1aaa593217ec21dc5</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>DONT_TOUCH_NORMALS</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>fb1c58962df518c1aaa593217ec21dc5976f447ffa89a0497a2a8a35ef4f7e5a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>NORMALIZE_NORMALS</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>fb1c58962df518c1aaa593217ec21dc565a4badee0b1d4220167801cab2b4c77</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>DONT_TOUCH_NORMALS</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>fb1c58962df518c1aaa593217ec21dc5976f447ffa89a0497a2a8a35ef4f7e5a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="enumvalue">
-      <name>NORMALIZE_NORMALS</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>fb1c58962df518c1aaa593217ec21dc565a4badee0b1d4220167801cab2b4c77</anchor>
+      <anchor>fb1c58962df518c1aaa593217ec21dc5b17a08dec597ffeb27125b5426511156</anchor>
       <arglist></arglist>
     </member>
     <member kind="slot">
@@ -6711,13 +7752,6 @@
     </member>
     <member kind="slot">
       <type>void</type>
-      <name>actionSnapshotName</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>49ff17f19b6e4293c95696e2921b9c13</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
       <name>actionSnapshot</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
       <anchor>451dec21abcfa420199c79ebfbd4846b</anchor>
@@ -6735,195 +7769,6 @@
       <name>actionCopyView</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
       <anchor>6aab74ab04e735ccbc8a6953c17dc40a</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>animation</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>8ae8b3eda1e692b2a5176cb655bab471</anchor>
-      <arglist>(bool _b)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>backFaceCulling</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>06a894364978ddaa333fd47a02c13246</anchor>
-      <arglist>(bool _b)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>twoSidedLighting</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>168feeef599d7d45105b1eac38c1707a</anchor>
-      <arglist>(bool _b)</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>drawNow</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>08cfe0284102753bf2e6dbe0f266fae2</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>updateGL</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>8e52cb8b7ff52a9673e94e59ae2257bc</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>setHome</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>334772e7b12144f1e6355846822a2539</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>home</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>6665c3185c150cf87f4057fb795cd6bf</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>viewAll</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c8d1fb0fcfdaff6966cc9d18ab0d9df9</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>flyTo</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>bfa8a2d83e4ced8ba512eb07dc06a4ed</anchor>
-      <arglist>(const QPoint &amp;_pos, bool _move_back)</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>flyTo</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>741d4d4d1fa852d61c765ab48d3ec581</anchor>
-      <arglist>(const QPoint &amp;_pos)</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>flyFrom</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>87ad4a7aa9cedad04e2baad92f41bb35</anchor>
-      <arglist>(const QPoint &amp;_pos)</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>flyTo</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>9d759cd450f93430ca78f61ba0cde207</anchor>
-      <arglist>(const ACG::Vec3d &amp;_position, const ACG::Vec3d &amp;_center, double _time=1000.0)</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>examineMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ba8cfb409ce8bbc7545deec271b601f2</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>lightMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>f2e4e7c06ed6a7461e692661e073d6d7</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>questionMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d66b9a6bbecd8130c9b39dc6b09410ff</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>perspectiveProjection</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>e6faa8f5d0039dcb2085633b3d498acb</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>orthographicProjection</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>4754e1ae4978b95d67475a53da23cfaa</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>toggleProjectionMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>228a836b535bb2dc0e7fcf5d05cf5acd</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>setView</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>59210a4bea3f638615a8780c954f087e</anchor>
-      <arglist>(const ACG::GLMatrixd &amp;_modelview, const ACG::GLMatrixd &amp;_inverse_modelview)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>actionDrawMenu</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>4b6237d832a15703406e43aa78c36e9a</anchor>
-      <arglist>(QAction *_action)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>actionPickMenu</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>811d55d1cea2304984f2544fe129f41c</anchor>
-      <arglist>(QAction *_action)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>actionSnapshotName</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>49ff17f19b6e4293c95696e2921b9c13</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>actionSnapshot</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>451dec21abcfa420199c79ebfbd4846b</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>actionPasteView</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a114e837612ae4648a182660499e5859</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>actionCopyView</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>6aab74ab04e735ccbc8a6953c17dc40a</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>snapshotBaseFileName</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>f330524ab0217f0c699af604a4a9fb6b</anchor>
-      <arglist>(const QString &amp;_fname)</arglist>
-    </member>
-    <member kind="slot" virtualness="virtual">
-      <type>virtual void</type>
-      <name>snapshot</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d008841c4b51c5d0b5069dbfad7806af</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="signal">
@@ -7009,111 +7854,6 @@
       <anchorfile>classQtBaseViewer.html</anchorfile>
       <anchor>e86df057b7b2561eb4b05ef95d7ef0ad</anchor>
       <arglist>(QtBaseViewer::ActionMode _m)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalDrawScene</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>0b556ff68d2933b40107cd91e7c54b85</anchor>
-      <arglist>(ACG::GLState *_state)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalCustomContextMenuRequested</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>da91f416fd821898fd09f19da2a911bd</anchor>
-      <arglist>(const QPoint &amp;)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>functionMenuUpdate</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>5388c91232ee199d4e53427187976d59</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>actionModeChanged</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>e3cd3d76ad427b518771c460027f7fb6</anchor>
-      <arglist>(QtBaseViewer::ActionMode _mode)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>projectionModeChanged</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>335afba64bbadd87fc9ab192c0a5bfca</anchor>
-      <arglist>(bool _ortho)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalInitializeGL</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>930c42eec3a65af09526eecb41886991</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalMouseEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>7178b121aba1ec913697a3e65f069491</anchor>
-      <arglist>(QMouseEvent *, const std::string &amp;)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalMouseEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a63b438704d7d87369b0bc0ce0dc5f96</anchor>
-      <arglist>(QMouseEvent *)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalWheelEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>bfdbfdb86156276858574bb927c06afb</anchor>
-      <arglist>(QWheelEvent *, const std::string &amp;)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalMouseEventIdentify</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b666c50873f6fa3123f400db164d04fe</anchor>
-      <arglist>(QMouseEvent *)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalSetView</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>1a04acbd4c7e48ce47e46e5c11a84bf7</anchor>
-      <arglist>(const ACG::GLMatrixd &amp;_modelview, const ACG::GLMatrixd &amp;_inverse_modelview)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalSceneGraphChanged</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>9090641450a5213f1e1f7c17b53d6ff8</anchor>
-      <arglist>(ACG::SceneGraph::BaseNode *_root)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalNodeChanged</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>9d10bc8631d5aab8be4244e15f67426c</anchor>
-      <arglist>(ACG::SceneGraph::BaseNode *_node)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalActionModeChanged</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>e86df057b7b2561eb4b05ef95d7ef0ad</anchor>
-      <arglist>(QtBaseViewer::ActionMode _m)</arglist>
-    </member>
-    <member kind="signal">
-      <type>void</type>
-      <name>signalDrawScene</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>0b556ff68d2933b40107cd91e7c54b85</anchor>
-      <arglist>(ACG::GLState *_state)</arglist>
     </member>
     <member kind="signal">
       <type>void</type>
@@ -7528,412 +8268,6 @@
       <anchor>1a8ea8a08af9d16c4ec5080a28794208</anchor>
       <arglist>()</arglist>
     </member>
-    <member kind="function">
-      <type></type>
-      <name>QtBaseViewer</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>decdd1b1fa706322909c7ee5c59d3fb6</anchor>
-      <arglist>(QWidget *_parent=0, const char *_name=0, QStatusBar *_statusBar=0, const QGLFormat *_format=0, const QtBaseViewer *_share=0)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual</type>
-      <name>~QtBaseViewer</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b5bf746935caef1707f383eefb9b0c96</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual QSize</type>
-      <name>sizeHint</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>47df799d9b3f4679ab2d0fee5f30c6d9</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setStatusBar</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>e2f45f499a2f5efb9eca32c1499871c9</anchor>
-      <arglist>(QStatusBar *_sb)</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>makeCurrent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>1e09694059683f6acbeb6d9b529f3066</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>swapBuffers</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>772e92fb6ff272666338bf518d015e1e</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>ACG::GLState &amp;</type>
-      <name>glState</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d3c04d0d9b086be8b8f67dcf013f551c</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>backgroundColor</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>85e327823b283dbd355129c3712509d0</anchor>
-      <arglist>(const ACG::Vec4f &amp;_color)</arglist>
-    </member>
-    <member kind="function">
-      <type>ACG::Vec4f</type>
-      <name>backgroundColor</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a3ade801aaf9d0030aa7d1807c7ce868</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>lockUpdate</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>9ab6f1a477fe750c74c86689bba922b6</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>unlockUpdate</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b9d3997c437e5cc84c438514f5215c3d</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" virtualness="virtual">
-      <type>virtual void</type>
-      <name>unlockAndUpdate</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>0d5b2af571abf0fbe71f5e3f4e6180eb</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>isUpdateLocked</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>75732ac212fb42164b837755a8a477c7</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>lockProjectionUpdate</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c4abb420fd0f6b93fede9b79200ceca0</anchor>
-      <arglist>(void)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>unlockProjectionUpdate</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>62f1e9f2b22c7188e37c4528ecda23b0</anchor>
-      <arglist>(void)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>animation</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>5e2c8746c7478f72b7871b055445bd10</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>trackMouse</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>0893cb0e99276b1dc6aa312d565f8de7</anchor>
-      <arglist>(bool _track)</arglist>
-    </member>
-    <member kind="function">
-      <type>ACG::SceneGraph::BaseNode *</type>
-      <name>sceneGraph</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d63e0930a24817a583c6b95dc468bca1</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>const ACG::SceneGraph::BaseNode *</type>
-      <name>sceneGraph</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>af909c2bf37444fcfc5a281bc3c05ad3</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>sceneGraph</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ea9f71bbe505f42025150d8b6248b870</anchor>
-      <arglist>(ACG::SceneGraph::BaseNode *_root)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>projectionMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>f2df247cb2466aa49dc8a8df90964b0a</anchor>
-      <arglist>(ProjectionMode _p)</arglist>
-    </member>
-    <member kind="function">
-      <type>ProjectionMode</type>
-      <name>projectionMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>1b2fae8adb1544dcce67e0ee4d8799fe</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setScenePos</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>651a82aea1bdfe55e991de3e756f4ea0</anchor>
-      <arglist>(const ACG::Vec3d &amp;_center, double _radius)</arglist>
-    </member>
-    <member kind="function">
-      <type>const ACG::Vec3d &amp;</type>
-      <name>scene_center</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>33428e9de9d8789310a93774d3978a8f</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>scene_radius</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>2583eadf503ce5e2ca96a08f1cf8e551</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>viewingDirection</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>cc16329acb118390a6d6a8870e24f601</anchor>
-      <arglist>(const ACG::Vec3d &amp;_dir, const ACG::Vec3d &amp;_up)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>actionMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>dc828d926e75c956c85166ec6ff86f02</anchor>
-      <arglist>(ActionMode)</arglist>
-    </member>
-    <member kind="function">
-      <type>ActionMode</type>
-      <name>lastActionMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d50260d38838796bcd00d3e16ea7a293</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>ActionMode</type>
-      <name>actionMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>1b57d04e64a03181d5df2e6746150338</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>faceOrientation</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ae4e17e8d01de3a7777cd7d34df1a3d7</anchor>
-      <arglist>(FaceOrientation)</arglist>
-    </member>
-    <member kind="function">
-      <type>FaceOrientation</type>
-      <name>faceOrientation</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>43f9513d84035bc6eb60b84edf0b1ab7</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>backFaceCulling</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>9a07c928c60fa0de74df71b65157458a</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>twoSidedLighting</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c6ba3c7a9e366d1a6f64eef36532d852</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>normalsMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>9fd9639873d3da2680345f3f48844e6c</anchor>
-      <arglist>(NormalsMode _mode)</arglist>
-    </member>
-    <member kind="function">
-      <type>NormalsMode</type>
-      <name>normalsMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>00ddbb818f664f28f3f1d84239a58235</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>ACG::GLMatrixd &amp;</type>
-      <name>light_matrix</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>2bb0005e5fe11319a6c01da77c1a209c</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>rotate_lights</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a9ae172f7c10500e68edbf9e648ad6c7</anchor>
-      <arglist>(ACG::Vec3d &amp;_axis, double _angle)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>update_lights</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>676b64bbd2f1ce8e36e9f076dbd6a178</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>copyToImage</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d9b363c92923eaa21d911fbdfdaf00d0</anchor>
-      <arglist>(QImage &amp;_image, GLenum _buffer=GL_BACK)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>copyToImage</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>1845d437520d14661931cd06148ac3b3</anchor>
-      <arglist>(QImage &amp;_image, unsigned int _left, unsigned int _top, unsigned int _width, unsigned int _height, GLenum _buffer)</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>glWidth</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>910ea78828ea946e6707de52c12af59b</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>glHeight</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a78e4ebbfedfafb50a812f061a139426</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>QSize</type>
-      <name>glSize</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>69f078a3c5f15388204c2e4427718c86</anchor>
-      <arglist>() const </arglist>
-    </member>
-    <member kind="function">
-      <type>QPoint</type>
-      <name>glMapFromGlobal</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>69488e09c17ad39cf74525934d4873e0</anchor>
-      <arglist>(const QPoint &amp;_pos) const </arglist>
-    </member>
-    <member kind="function">
-      <type>QPoint</type>
-      <name>glMapToGlobal</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>efd861f110df39fa8ee28b1dc8b9ff7f</anchor>
-      <arglist>(const QPoint &amp;_pos) const </arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>drawMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>cd7e7a5d8d093739647e7d7a85ad7660</anchor>
-      <arglist>(unsigned int _mode)</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>drawMode</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a4027f8ed1797845eae7b5b30caf147c</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>encodeView</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b51184071f3f35288c60498881dd9146</anchor>
-      <arglist>(QString &amp;_view)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>decodeView</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>197c7cd620f853b47c7714b9b6d801ba</anchor>
-      <arglist>(const QString &amp;_view)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>initModelviewMatrix</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a8741161ac577755d109377d21eeaef0</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>grabGLArea</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>f96f13ca26f3eb4e5b0e5b6ccc65852a</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>releaseGLArea</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>697bcb7794a1b5eb90061c5704768694</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>drawBlendedObjects</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>965b1f4d17ef28840d4750f38b4f5a11</anchor>
-      <arglist>(bool _status)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>translate</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>6f563ee4d222c37284525d501fb265c3</anchor>
-      <arglist>(const ACG::Vec3d &amp;trans)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>rotate</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>5850d59e72928fdc5800174b692e33da</anchor>
-      <arglist>(const ACG::Vec3d &amp;axis, double angle)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>rotate</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>0d4bd4705f56ebfd12c70f748b2ca8a4</anchor>
-      <arglist>(const ACG::Vec3d &amp;axis, double angle, const ACG::Vec3d &amp;_center)</arglist>
-    </member>
-    <member kind="function">
-      <type>QMenu *</type>
-      <name>getPickMenu</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d5f4c3cf110be1a2a837fdf493f8e700</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>QMenu *</type>
-      <name>getDrawMenu</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>1a8ea8a08af9d16c4ec5080a28794208</anchor>
-      <arglist>()</arglist>
-    </member>
     <member kind="slot" protection="protected" virtualness="virtual">
       <type>virtual void</type>
       <name>sceneRectChanged</name>
@@ -7967,48 +8301,6 @@
       <name>slotNodeChanged</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
       <anchor>6240779b47a7ea0241100c2a94480720</anchor>
-      <arglist>(ACG::SceneGraph::BaseNode *_node)</arglist>
-    </member>
-    <member kind="slot" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>cleanupEventFilter</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>69313663fa907984a446c8495c925f58</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>sceneRectChanged</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>44b7d82508e0f33c1ca87616e0cf27e7</anchor>
-      <arglist>(const QRectF &amp;rect)</arglist>
-    </member>
-    <member kind="slot" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>slotWheelX</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3c60b7a441d5b621cc8acac23d07567c</anchor>
-      <arglist>(double _dAngle)</arglist>
-    </member>
-    <member kind="slot" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>slotWheelY</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>dad59a4e524c11b8d72180825d7cc727</anchor>
-      <arglist>(double _dAngle)</arglist>
-    </member>
-    <member kind="slot" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>slotWheelZ</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>57336dafd18f70818024d1396b4691d4</anchor>
-      <arglist>(double _dist)</arglist>
-    </member>
-    <member kind="slot" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>slotNodeChanged</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>50fcdca5f9f276c664beb6f51939ecc8</anchor>
       <arglist>(ACG::SceneGraph::BaseNode *_node)</arglist>
     </member>
     <member kind="slot" protection="protected" virtualness="virtual">
@@ -8116,104 +8408,6 @@
       <anchor>b0609d2a4561964eeef43dc2f1be19b7</anchor>
       <arglist>()</arglist>
     </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>initializeGL</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>43974163d9e041bdd6a86ef315da1054</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>paintGL</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>cb6d22df7cb4625071f76a8d59f5dbbd</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>resizeGL</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c88d405d533e23a27f6dd3e31622bdb0</anchor>
-      <arglist>(int _w, int _h)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>glMousePressEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>261ff8cc344c0468ce7643d91d6ff5b6</anchor>
-      <arglist>(QMouseEvent *_event)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>glMouseDoubleClickEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3d45b2bbfdd7c3ed67542e4f9019c445</anchor>
-      <arglist>(QMouseEvent *_event)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>glMouseMoveEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c7a5cf4ee9beeace941b2a443d1bd54d</anchor>
-      <arglist>(QMouseEvent *_event)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>glMouseReleaseEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ad142acba89716d309b8123927c99201</anchor>
-      <arglist>(QMouseEvent *_event)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>glMouseWheelEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b64e14dd09c1ad7951eb7b1ec786db24</anchor>
-      <arglist>(QWheelEvent *_event)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>glContextMenuEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>0f0b43b2cbbb53516cd09b031234daea</anchor>
-      <arglist>(QContextMenuEvent *_event)</arglist>
-    </member>
-    <member kind="function" protection="protected">
-      <type>void</type>
-      <name>viewMouseEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>31e89e86fa46226192db092016b9db1c</anchor>
-      <arglist>(QMouseEvent *_event)</arglist>
-    </member>
-    <member kind="function" protection="protected">
-      <type>void</type>
-      <name>viewWheelEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>638711e56bf2cab30cf7daff5b2ecbe8</anchor>
-      <arglist>(QWheelEvent *_event)</arglist>
-    </member>
-    <member kind="function" protection="protected">
-      <type>void</type>
-      <name>lightMouseEvent</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>08626d70bc0103546f3d33b0fa10fb20</anchor>
-      <arglist>(QMouseEvent *)</arglist>
-    </member>
-    <member kind="function" protection="protected">
-      <type>void</type>
-      <name>updateProjectionMatrix</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>db305d816b1c1d300705c81c98ca88a7</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="protected">
-      <type>void</type>
-      <name>updatePickMenu</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b0609d2a4561964eeef43dc2f1be19b7</anchor>
-      <arglist>()</arglist>
-    </member>
     <member kind="variable" protection="protected">
       <type>ACG::Vec3d</type>
       <name>scene_center_</name>
@@ -8274,7 +8468,7 @@
       <type>ACG::GLState *</type>
       <name>glstate_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c4c1a80dbbca239c86ac0eb3be203340</anchor>
+      <anchor>157235ac2b10a4fb33a952f7cf045fa6</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="protected">
@@ -8288,7 +8482,7 @@
       <type>QStatusBar *</type>
       <name>statusbar_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>3e18780090cc9c6eeccc6d2fbd195a6f</anchor>
+      <anchor>fafbc80f3f22e0aa4850acd041d60ad2</anchor>
       <arglist></arglist>
     </member>
     <member kind="slot" protection="private">
@@ -8296,62 +8490,6 @@
       <name>hidePopupMenus</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
       <anchor>e19414f1661697c019ac2bd8f3ade2a5</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" protection="private">
-      <type>void</type>
-      <name>hidePopupMenus</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>e19414f1661697c019ac2bd8f3ade2a5</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type></type>
-      <name>QtBaseViewer</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>9f7cab99d438474d22ed50508760c09c</anchor>
-      <arglist>(const QtBaseViewer &amp;)</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>QtBaseViewer &amp;</type>
-      <name>operator=</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>0f09fbd614456007c3216f77e9464b66</anchor>
-      <arglist>(const QtBaseViewer &amp;)</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>createWidgets</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ffaf8fdfe1ea901be84c3e4fe36b3f1a</anchor>
-      <arglist>(const QGLFormat *_format, QStatusBar *_sb, const QtBaseViewer *_share)</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>drawScene</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a49efdd3641c2b2f189e5135bf7f0e9b</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>drawScene_mono</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>62355ae99632e812fec2022663847288</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>drawScene_stereo</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a0f06bca3872f5fad043e04c94684b42</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function" protection="private">
-      <type>void</type>
-      <name>updatePopupMenu</name>
-      <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>e6b35d26b985f05cd78c0027cfffff74</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function" protection="private">
@@ -8526,21 +8664,21 @@
       <type>QMenu *</type>
       <name>pickMenu_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>36f9ded3237ff3399ca4e3ddf9ff35a4</anchor>
+      <anchor>e4079ffc01e3b3ab4aa2174b0d5be476</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>QMenu *</type>
       <name>drawMenu_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>cf01078cd5309b2430bb1e677673063a</anchor>
+      <anchor>17fb871a7f1317d054e43dc621cd0ed0</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>ACG::SceneGraph::BaseNode *</type>
       <name>sceneGraphRoot_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>ecdff06b7e63354080b8f24db18d5e1c</anchor>
+      <anchor>779b3d4f3d7f44032a0a37b37d156d74</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
@@ -8582,63 +8720,63 @@
       <type>QGLWidget *</type>
       <name>glWidget_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>518d66c4c91cab7db298e8949f5f22f5</anchor>
+      <anchor>b0367413ca36453ca6bf3f45e4c0cc97</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>QtGLGraphicsScene *</type>
       <name>glScene_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>477a3d8e3ea301c30fc9fa82618b2e03</anchor>
+      <anchor>7dede6fc0168c9518a8b5e83bd6677e1</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>QtGLGraphicsView *</type>
       <name>glView_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>44797a3e545934ac7d10ccea7b1fc468</anchor>
+      <anchor>ea3005e562a82e08631c29cf75576387</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>QGraphicsWidget *</type>
       <name>glBase_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>c31a7f32017a5aab38bf49f6fb857a71</anchor>
+      <anchor>75a9b8659b35c2e01968d60c519aa6eb</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>QGraphicsGridLayout *</type>
       <name>glBaseLayout_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>05dda12865842889ea467f3e76ec9d2e</anchor>
+      <anchor>0d733b1745425703b8a9fe7e98572ec6</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>QGridLayout *</type>
       <name>glLayout_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>7b3335f7596e1ea6484082a133b43f71</anchor>
+      <anchor>33fb273b730ed007d3b39c80ac7265f0</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>ACG::QtWidgets::QtWheel *</type>
       <name>wheelX_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>b8136e10c5e0a214e59a5cdceb3563f5</anchor>
+      <anchor>8fc7eff84559d02a5ad6cf4ba65219f1</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>ACG::QtWidgets::QtWheel *</type>
       <name>wheelY_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>d7e918971853d33e69a5afb4e3d4898d</anchor>
+      <anchor>4d4e91f8be7e128ee47fa1cba96fb08d</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
       <type>ACG::QtWidgets::QtWheel *</type>
       <name>wheelZ_</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>1d045249bffa51877e71a6ccb6ee96e6</anchor>
+      <anchor>013837e128c3c25443c98f5c7ca8ea1a</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
@@ -8659,14 +8797,14 @@
       <type>friend class</type>
       <name>QtGLGraphicsScene</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>a4540c148f4ad7bef7de3bbbab2b428d</anchor>
+      <anchor>d9f8454cbfc6c3545a60f8aaad41f34b</anchor>
       <arglist></arglist>
     </member>
     <member kind="friend" protection="protected">
       <type>friend class</type>
       <name>QtGLGraphicsView</name>
       <anchorfile>classQtBaseViewer.html</anchorfile>
-      <anchor>0a6d7401fff7b2a2fa86b310200325db</anchor>
+      <anchor>a24555e8027e8185a689c90d12788f2d</anchor>
       <arglist></arglist>
     </member>
     <class kind="struct">QtBaseViewer::PickMode</class>
@@ -8674,13 +8812,6 @@
   <compound kind="struct">
     <name>QtBaseViewer::PickMode</name>
     <filename>structQtBaseViewer_1_1PickMode.html</filename>
-    <member kind="function">
-      <type></type>
-      <name>PickMode</name>
-      <anchorfile>structQtBaseViewer_1_1PickMode.html</anchorfile>
-      <anchor>86d797ec3fe56845e551bcb302cd7409</anchor>
-      <arglist>(const std::string &amp;_n, bool _t, bool _v, QCursor _c)</arglist>
-    </member>
     <member kind="function">
       <type></type>
       <name>PickMode</name>
@@ -8724,15 +8855,8 @@
       <type></type>
       <name>QtGLGraphicsScene</name>
       <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>c48f6445b837cd6d359cf7594ba5662e</anchor>
-      <arglist>(QtBaseViewer *_w)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>drawBackground</name>
-      <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>943928a1c8340ce088851b2c9361b8be</anchor>
-      <arglist>(QPainter *_painter, const QRectF &amp;_rect)</arglist>
+      <anchor>ab9ea27b34b8691562b5d5027d0e65f1</anchor>
+      <arglist>(std::vector&lt; glViewer * &gt; *_views)</arglist>
     </member>
     <member kind="function" protection="protected" virtualness="virtual">
       <type>virtual void</type>
@@ -8769,65 +8893,37 @@
       <anchor>0ad6cd993b336420a5d17aa32a4e461d</anchor>
       <arglist>(QGraphicsSceneWheelEvent *_e)</arglist>
     </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>keyPressEvent</name>
+    <member kind="function" protection="private">
+      <type>glViewer *</type>
+      <name>findView</name>
       <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>91c43c1274e70237a1270c2664235cbc</anchor>
-      <arglist>(QKeyEvent *_e)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>keyReleaseEvent</name>
-      <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>3e561b34dfd7dd8bd3a9d974ec3eaa56</anchor>
-      <arglist>(QKeyEvent *_e)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>contextMenuEvent</name>
-      <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>28a04d850bef851d313856a794ab18d3</anchor>
-      <arglist>(QGraphicsSceneContextMenuEvent *_e)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>dragEnterEvent</name>
-      <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>5be5260c9f1ef4260c44152d9b6a7309</anchor>
-      <arglist>(QGraphicsSceneDragDropEvent *_e)</arglist>
-    </member>
-    <member kind="function" protection="protected" virtualness="virtual">
-      <type>virtual void</type>
-      <name>dropEvent</name>
-      <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>7f4a6ebff95462f33394775cab3daa96</anchor>
-      <arglist>(QGraphicsSceneDragDropEvent *_e)</arglist>
+      <anchor>2cd9123f872fd669320b3caafb66c710</anchor>
+      <arglist>(const QPointF &amp;p)</arglist>
     </member>
     <member kind="variable" protection="private">
-      <type>QtBaseViewer *</type>
-      <name>w_</name>
+      <type>std::vector&lt; glViewer * &gt; *</type>
+      <name>views_</name>
       <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>0dec8fe344ec27f032f8470afd379e92</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="friend" protection="protected">
-      <type>friend class</type>
-      <name>QtBaseViewer</name>
-      <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>5ce77e2986027201318ae0f34efd3dfd</anchor>
+      <anchor>a03f0031f03479a525adbac1e8dbd29c</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
     <name>QtGLGraphicsView</name>
     <filename>classQtGLGraphicsView.html</filename>
+    <member kind="signal">
+      <type>void</type>
+      <name>sceneRectChanged</name>
+      <anchorfile>classQtGLGraphicsView.html</anchorfile>
+      <anchor>ccb6cb5917634a8cc9a14d9ae4b8f0c3</anchor>
+      <arglist>(const QRectF &amp;rect)</arglist>
+    </member>
     <member kind="function">
       <type></type>
       <name>QtGLGraphicsView</name>
       <anchorfile>classQtGLGraphicsView.html</anchorfile>
-      <anchor>c67fb85d3a0e312839d2342b6dab68bb</anchor>
-      <arglist>(QtBaseViewer *_w, QWidget *_parent)</arglist>
+      <anchor>00be1c483271b3ac6375c9b78d4fa8d5</anchor>
+      <arglist>(QWidget *_parent)</arglist>
     </member>
     <member kind="function" protection="protected" virtualness="virtual">
       <type>virtual void</type>
@@ -8835,13 +8931,6 @@
       <anchorfile>classQtGLGraphicsView.html</anchorfile>
       <anchor>b3127696f62af47c878fc11bef81bd3f</anchor>
       <arglist>(QResizeEvent *_event)</arglist>
-    </member>
-    <member kind="variable" protection="private">
-      <type>QtBaseViewer *</type>
-      <name>w_</name>
-      <anchorfile>classQtGLGraphicsView.html</anchorfile>
-      <anchor>3e86709a1405cce96d605040e0801e57</anchor>
-      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -9232,10 +9321,24 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>set_examiner</name>
+      <name>setViewers</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>a6a2fa63b034150cc354b5709fc22f7f</anchor>
-      <arglist>(std::vector&lt; QtBaseViewer * &gt; _examiner_widgets)</arglist>
+      <anchor>8955188d50725b0bde4f048900bbd3dc</anchor>
+      <arglist>(std::vector&lt; glViewer * &gt; _examiner_widgets)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setRootNode</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>b49f3df01bed203c614e7e6e748277fb</anchor>
+      <arglist>(SeparatorNode *_root_node)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setSceneGraphRootNode</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>42b42db6bee14300b3c80a7e7a209041</anchor>
+      <arglist>(SeparatorNode *_root_node)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -9250,20 +9353,6 @@
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>c092e03e4f2fd8744c6ea4b721bf8c13</anchor>
       <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>set_rootNode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>331db522180614b2e44387ed3f4994e4</anchor>
-      <arglist>(SeparatorNode *_root_node)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>set_sceneGraphRootNode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>6c5036444d35d0f7e09966cbffefb479</anchor>
-      <arglist>(SeparatorNode *_root_node)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -9318,8 +9407,8 @@
       <type>void</type>
       <name>actionMode</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>4c3ccd1bcb83bda20f39e9068853eb84</anchor>
-      <arglist>(QtBaseViewer::ActionMode _mode)</arglist>
+      <anchor>10625157f033ef4f8e3c73554450e1b0</anchor>
+      <arglist>(Viewer::ActionMode _mode)</arglist>
     </member>
     <member kind="function">
       <type>ACG::GLState &amp;</type>
@@ -9336,11 +9425,18 @@
       <arglist>(QImage &amp;_image)</arglist>
     </member>
     <member kind="function">
-      <type>QtBaseViewer::ActionMode</type>
+      <type>Viewer::ActionMode</type>
       <name>actionMode</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>a17c404fa6e0bc0a9a08d489533fd01c</anchor>
+      <anchor>a7ad2d5b69ca3cc449a3e702fb4e5d4f</anchor>
       <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Viewer::ViewerProperties &amp;</type>
+      <name>viewerProperties</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>897bdc5ebf036348c0e543380c2a6cfa</anchor>
+      <arglist>(int _id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -9533,6 +9629,13 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>setMainGLContext</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>bf5a1e13a33047b0af8399456e5363a0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>viewingDirection</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>30c72bddf5bcdd6b39abe24e6b8267a7</anchor>
@@ -9637,17 +9740,17 @@
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
-      <type>static std::vector&lt; QtBaseViewer * &gt;</type>
+      <type>static std::vector&lt; glViewer * &gt;</type>
       <name>examiner_widgets_</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>35a4de47e386a60ce8ce82a3ed34a209</anchor>
+      <anchor>6912bcdbedb83b624d8f3a9b7c171e23</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
-      <type>static QtBaseViewer *</type>
+      <type>static glViewer *</type>
       <name>examiner_widget_</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>431cd16266a0a4c8bc160e64c7c0dfef</anchor>
+      <anchor>2e0fef01dee014b1d6be9603b3247fbc</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
@@ -9669,6 +9772,13 @@
       <name>sceneGraph_root_node_</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>4db889b13389632daf3621ce0226c03e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static Viewer::ViewerProperties</type>
+      <name>dummyProperties</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>0034857058dc22d14b7ea49f473bc04b</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -9856,6 +9966,7 @@
     <file>PickingInterface.hh</file>
     <file>PluginFunctions.cc</file>
     <file>PluginFunctions.hh</file>
+    <file>PluginFunctionsCore.hh</file>
     <file>PluginFunctionsIterator.cc</file>
     <file>RPCInterface.hh</file>
     <file>ScriptInterface.hh</file>
@@ -9898,6 +10009,8 @@
     <file>RecentFiles.hh</file>
     <file>Types.cc</file>
     <file>Types.hh</file>
+    <file>ViewerProperties.cc</file>
+    <file>ViewerProperties.hh</file>
   </compound>
   <compound kind="dir">
     <name>Core/</name>
@@ -9941,11 +10054,20 @@
     <name>Doxygen/</name>
     <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Doxygen/</path>
     <filename>dir_15ee26eb48dc46c47c455f7f6deafd0c.html</filename>
+    <dir>Doxygen/example/</dir>
     <file>building.docu</file>
+    <file>dataFlow.docu</file>
     <file>dataStructure.docu</file>
     <file>Interfaces.docu</file>
     <file>mainpage.docu</file>
     <file>PluginProgramming.docu</file>
+  </compound>
+  <compound kind="dir">
+    <name>Doxygen/example/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Doxygen/example/</path>
+    <filename>dir_c7b53bd8fb9bdaa6c3d877caf61c300f.html</filename>
+    <file>simplePlugin.cc</file>
+    <file>simplePlugin.hh</file>
   </compound>
   <compound kind="dir">
     <name>widgets/glWidget/</name>
@@ -9955,7 +10077,6 @@
     <file>QtBaseViewer.cc</file>
     <file>QtBaseViewer.hh</file>
     <file>QtBaseViewerPicking.cc</file>
-    <file>QtBaseViewerSnapshot.cc</file>
     <file>QtBaseViewerStereo.cc</file>
     <file>QtGLGraphicsScene.cc</file>
     <file>QtGLGraphicsScene.hh</file>
