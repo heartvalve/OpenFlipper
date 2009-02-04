@@ -148,6 +148,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   QList<int> wsizes( splitter_->sizes() );
   if (OpenFlipper::Options::hideLogger()) {
+    wsizes[0] = 1;
     wsizes[1] = 0;
     splitter_->setSizes(wsizes);
   }
