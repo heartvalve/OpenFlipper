@@ -452,58 +452,60 @@
   void MeshObject< MeshT , objectDataType >::addTexture(QString _name , QImage& _image , int _id )
   {
     if ( _id == -1 ) {
-      std::cerr << "This texture has no id from the mesh using next free id!!!!!" << std::endl;
       _id = textures_.size();
-    }
-
-    if ( textures_.empty() ) {
-      std::cerr << "No texture set." << std::endl;
     }
 
     for ( uint i = 0 ; i < textures_.size(); ++i ) {
       if ( textureNames_[i] == _name ) {
-        std::cerr << "Texture already exists!! Use setTexture to change a texture. Setting new texture" << std::endl;
+        std::cerr << "Texture already exists!! Use setTexture to change a texture. Setting new texture anyway" << std::endl;
         setTexture( _name, _image );
         return;
       }
     }
 
     if ( _id >= (int)textures_.size() ) {
-      std::cerr << "Expanded texture index vector." << std::endl;
       textures_.resize(_id + 1);
       textureNames_.resize(_id + 1);
     }
 
-    std::cerr << "Adding texture" << std::endl;
     textures_[_id] = textureNode_->add_texture(_image) ;
     textureNames_[_id] = _name;
 
 
     meshNode_->set_texture_map(&textures_);
 
-    if ( textures_.size() > 1 &&  !mesh_->has_face_texture_index() ) {
-      std::cerr << "More than one textures available but no faceindex set. Only first texture will be used." << std::endl;
-    }
+//     if ( textures_.size() > 1 &&  !mesh_->has_face_texture_index() ) {
+//       std::cerr << "More than one textures available but no faceindex set. Only first texture will be used." << std::endl;
+//     }
 
   }
 
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::setTexture( QString _name , QImage& _image ) {
-    std::cerr << _image.size().width() << std::endl;
     for ( uint i = 0 ; i < textures_.size(); ++i ) {
       if ( textureNames_[i] == _name ) {
-        std::cerr << "Found Texture, TODO : update" << std::endl;
+        textureNode_->set_texture(_image,textures_[i]);
         return;
       }
     }
 
-    std::cerr << "Texture not found in this object" << std::endl;
+    addTexture( _name , _image );
   }
 
   template < class MeshT , DataType objectDataType >
   bool MeshObject< MeshT , objectDataType >::textureExists( QString _name )  {
     for ( uint i = 0 ; i < textures_.size(); ++i ) {
       if ( textureNames_[i] == _name )
+        return true;
+    }
+    return false;
+  }
+
+  template < class MeshT , DataType objectDataType >
+  bool MeshObject< MeshT , objectDataType >::enableTexture( QString _name ) {
+    for ( uint i = 0 ; i < textures_.size(); ++i ) {
+      if ( textureNames_[i] == _name )
+        textureNode_->activateTexture(textures_[i]);
         return true;
     }
     return false;

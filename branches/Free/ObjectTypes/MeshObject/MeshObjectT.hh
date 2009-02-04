@@ -281,7 +281,9 @@ class DLLEXPORT MeshObject : public BaseObjectData {
     */
     void addTexture( QString _name , QImage& _image , int _id = -1);
 
-    /** Change an already loaded texture
+    /** \brief Change an already loaded texture by replacing it with the given image.
+     *
+     * If the texture does not exist, a new one will be created.
      *
      */
     void setTexture( QString _name , QImage& _image );
@@ -290,6 +292,12 @@ class DLLEXPORT MeshObject : public BaseObjectData {
      *
      */
     bool textureExists( QString _name );
+
+    /** \brief Enable the given texture
+     *
+     * Use this function to enable a specific texture.
+     */
+    bool enableTexture( QString _name );
 
   private:
     /** This vector is used to store the available Textures. Each call to addTexture will load
