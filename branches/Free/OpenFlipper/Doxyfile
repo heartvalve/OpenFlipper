@@ -149,10 +149,10 @@ EXCLUDE_PATTERNS       = */Debian*/* \
                          */.svn/* \
                          SimpleOpt*
 EXCLUDE_SYMBOLS        = 
-EXAMPLE_PATH           = /data/home2/kremer/projects/OpenFlipper/OpenFlipper/Doxygen/example/
+EXAMPLE_PATH           = ./Doxygen/example/
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
-IMAGE_PATH             = /data/home2/kremer/projects/OpenFlipper/OpenFlipper/Doxygen/pics/
+IMAGE_PATH             = ./Doxygen/pics/
 INPUT_FILTER           = 
 FILTER_PATTERNS        = 
 FILTER_SOURCE_FILES    = NO
