@@ -13,6 +13,7 @@
  * - \subpage pluginProgramming "Plugin Programming" 
  * - \subpage interfaces "Plugin Interfaces"
  * - \subpage dataStructure "Datastructures"
+ * - \subpage dataFlow "Dataflow"
  * 
  * 
  * \section BasicPlugins Basic Plugins
@@ -27,11 +28,11 @@
  * the ObjectData::dataType is set to the correct value. \n
  * Visible objects have to be derived from the BaseObjectData class. This class provides the basic nodes for the Scenegraph 
  * and name or path handling. \n
- * For every object, the top node is the the ObjectData::SeparatorNode
+ * For every object, the top node is the ObjectData::SeparatorNode
  * You should add all custom nodes which belong to an object below this node. Below the Seperator Node is a 
  * ObjectData::ManipulatorNode. This Node is controlled by the MovePlugin. If you want your objects to move 
  * with the main object, place them below this node. 
- * Meshes ( PolyMesh or TriMesh  ) The MeshObject classes are used. Below the ManipulatorNode is a Status Node and a texture node for a mesh.
+ * For meshes ( PolyMesh or TriMesh  ) the MeshObject classes are used. Below the ManipulatorNode is a Status Node and a texture node for a mesh.
  * Below the texture node is a material node and below the material node is a meshnode.\n
  * For additional nodes the vector ObjectData::additional_nodes is created. You should not access it directly but use PluginFunctions::addAdditionalNode
  * and PluginFunctions::getAdditionalNode.\n
