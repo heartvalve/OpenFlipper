@@ -20,6 +20,7 @@
  * speed or stability. As stated above, every plugin has to be derived from the BaseInterface. This is the
  * basic factory which makes the core aware of the plugin. The name and the description of the plugin is 
  * exported via the baseinterface. The initialization of each plugin is done via this interface too.
+ * See \ref dataFlow for an overview of OpenFlipper's data flow and interface function calls.
  * 
  * After this interface of the plugin is sucessfully processed all other interfaces will be initialized
  * and connected to the core. For details about the individual interfaces see their documentation. 
@@ -110,4 +111,6 @@
  * To test if our plugin has been successfully loaded, we launch OpenFlipper and select \c Plugins->Unload \c Plugin.
  * If our plugin \c SimplePlugin is listed, everything is fine. If it's not listed, read OpenFlippers
  * log to see what happened wrong.
+ *
+ * See \ref dataFlow for further information on interface function calls.
  */
