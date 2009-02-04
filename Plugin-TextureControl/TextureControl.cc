@@ -102,47 +102,38 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   if ( activeTexture_ != _textureName)
     return;
 
-  const bool repeat = textures_[textureid].repeat;
+  QString filename = OpenFlipper::Options::textureDir().absolutePath() +
+                     OpenFlipper::Options::dirSeparator() +
+                     textures_[textureid].filename;
+
+  // load to image
+  QImage textureImage;
+  if ( !textureImage.load( filename ) )
+  {
+      std::cerr << "Cannot load texture " << filename.toStdString() << "\n";
+      return ;
+  }
 
   if( object->dataType( DATA_TRIANGLE_MESH ) ) {
-
     TriMesh* mesh = PluginFunctions::triMesh(object);
     doUpdateTexture(textureid, *mesh);
-    PluginFunctions::triMeshObject(object)->textureNode()->set_repeat(repeat);
-    QString filename = OpenFlipper::Options::textureDir().absolutePath() +
-                       OpenFlipper::Options::dirSeparator() +
-                       textures_[textureid].filename;
+    PluginFunctions::triMeshObject(object)->textureNode()->set_repeat(textures_[textureid].repeat);
+    PluginFunctions::triMeshObject(object)->setTexture(_textureName,textureImage);
 
-       // load to image
-    QImage textureImage;
-    if ( !textureImage.load( filename ) )
-    {
-        std::cerr << "Cannot load texture " << filename.toStdString() << "\n";
-        return ;
-    }
-
-    PluginFunctions::triMeshObject(object)->addTexture(_textureName,textureImage);
+    //TODO
+    //textureExists
+    //enableTexture
   }
 
   if ( object->dataType( DATA_POLY_MESH ) ) {
-
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
     doUpdateTexture(textureid, *mesh);
+    PluginFunctions::polyMeshObject(object)->textureNode()->set_repeat(textures_[textureid].repeat);
+    PluginFunctions::polyMeshObject(object)->setTexture(_textureName,textureImage);
 
-    PluginFunctions::polyMeshObject(object)->textureNode()->set_repeat(repeat);
-    QString filename = OpenFlipper::Options::textureDir().absolutePath() +
-                       OpenFlipper::Options::dirSeparator() +
-                       textures_[textureid].filename;
-
-    // load to image
-    QImage textureImage;
-    if ( !textureImage.load( filename ) )
-    {
-        std::cerr << "Cannot load texture " << filename.toStdString() << "\n";
-        return ;
-    }
-
-    PluginFunctions::polyMeshObject(object)->addTexture(_textureName,textureImage);
+    //TODO
+    //textureExists
+    //enableTexture
   }
   emit updateView();
 
