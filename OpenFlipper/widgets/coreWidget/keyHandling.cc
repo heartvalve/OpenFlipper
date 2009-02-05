@@ -138,7 +138,7 @@ void CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
     if (keyPlugin){
       QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
                                              _e->text(), _e->isAutoRepeat(), _e->count() );
-      keyPlugin->slotKeyEvent(mappedEvent);
+      keyPlugin->slotKeyReleaseEvent(mappedEvent);
     }
 
     //if its not a multiUse key we are ready
