@@ -94,6 +94,7 @@ defineTest( acg ) {
 
 defineTest( openmesh ) {
   QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY}
+  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Tools/lib/$${BUILDDIRECTORY}
   LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY} -lCore
   LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/Tools/lib/$${BUILDDIRECTORY} -lTools
   export(QMAKE_LIBDIR)
