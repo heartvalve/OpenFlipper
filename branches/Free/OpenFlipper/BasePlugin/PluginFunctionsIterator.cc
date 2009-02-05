@@ -98,7 +98,6 @@ ObjectIterator::ObjectIterator(BaseObjectData* pos, IteratorRestriction _restric
 
 
 bool ObjectIterator::operator==( const ObjectIterator& _rhs) {
-   std::cerr << "==" << std::endl;
    return ( _rhs.pos_ == pos_ );
 }
 
