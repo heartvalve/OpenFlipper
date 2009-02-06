@@ -282,6 +282,14 @@ unsigned int drawMode( ) {
   return examiner_widgets_[activeExaminer_]->drawMode();
 }
 
+void setGlobalDrawMode( const unsigned int _mode ) {
+  for ( uint i = 0 ; i < examiner_widgets_.size(); ++i ) {
+    examiner_widgets_[i]->drawMode(_mode);
+    examiner_widgets_[i]->updateGL();
+  }
+
+}
+
 bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
 
    return examiner_widgets_[activeExaminer_]->pick( _pickTarget,_mousePos,_nodeIdx,_targetIdx,_hitPointPtr );

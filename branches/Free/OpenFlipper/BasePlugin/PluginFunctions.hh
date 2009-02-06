@@ -392,17 +392,24 @@ void orthographicProjection();
 DLLEXPORT
 void perspectiveProjection();
 
-/** \brief Switch to a different draw mode
+/** \brief Switch active examiner to a different draw mode
  *
  */
 DLLEXPORT
 void setDrawMode( const unsigned int _mode );
 
-/** \brief Get the current draw Mode
+/** \brief Get the current draw Mode of the active Examiner
  *
  */
 DLLEXPORT
 unsigned int drawMode( );
+
+/** \brief Switch all examiners to a different draw mode
+ *
+ */
+DLLEXPORT
+void setGlobalDrawMode( const unsigned int _mode );
+
 
 /** \brief Set the background color of the examiner widget.
  *
