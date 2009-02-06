@@ -454,7 +454,7 @@ void Core::loadPlugin(QString filename, bool silent){
 
       // Check for baseInterface of old style!
       if ( checkSignal(plugin,"updated_objects(int)") ) {
-        log(LOGERR,"Plugin Uses old style updated_objects! Convert to updated_objects!");
+        log(LOGERR,"Plugin Uses old style updated_objects! Convert to updatedObject!");
         emit log(LOGOUT,"=============================================================================================");
         return;
       }
