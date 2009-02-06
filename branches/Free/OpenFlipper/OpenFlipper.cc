@@ -289,6 +289,13 @@ int main(int argc, char **argv)
     // After setting all Options from command line, build the real gui
     w->init();
 
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+      /* Problem: glewInit failed, something is seriously wrong. */
+      fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    }
+
     for ( int i = 0 ; i < args.FileCount(); ++i )
       w->commandLineOpen(args.File(i), openPolyMeshes);
 
