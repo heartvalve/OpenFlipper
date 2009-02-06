@@ -31,62 +31,107 @@
 
 
 
-#ifndef QTGLGRAPHICSSCENE_HH
-#define QTGLGRAPHICSSCENE_HH
 
 //=============================================================================
 //
-//  CLASS QtGLGraphicsScene - IMPLEMENTATION
+//  CLASS QtMultiViewLayout - IMPLEMENTATION
 //
 //=============================================================================
 
 //== INCLUDES =================================================================
 
-#include <QGraphicsScene>
-#include <QGraphicsItem>
-#include "QtBaseViewer.hh"
-
-//== FORWARDDECLARATIONS ======================================================
-class glViewer;
+#include <QGraphicsLayout>
+#include <QGraphicsLayoutItem>
+#include <QGraphicsWidget>
 
 //== NAMESPACES ===============================================================
 
 //== CLASS DEFINITION =========================================================
 
 
-
-/** OpenGL drawing area and widget scene -- for \a internal use only.
-    The scene basically redirects calls to a
-    ACG::QtWidgets::glViewer, the corresponding virtual methods there
-    are prefixed with \c gl.
-    \sa ACG::QtWidgets::glViewer
+/** Graphics scene layout for multi view.
 */
 
-class QtGLGraphicsScene : public QGraphicsScene
+class QtMultiViewLayout : public QGraphicsLayout
 {
-Q_OBJECT
+  public:
 
-public:
-  QtGLGraphicsScene(std::vector< glViewer *> *_views);
+    /// MultiView display modes
+    enum MultiViewMode {
+       /*
+       * #############
+       * #           #
+       * #           #
+       * #     1     #
+       * #           #
+       * #           #
+       * #############
+       */
+       SingleView,
+       /*
+       * #############
+       * #  1  #  2  #
+       * #     #     #
+       * #############
+       * #  3  #  4  #
+       * #     #     #
+       * #############
+       */
+      Grid,
+      /*
+       * #############
+       * #       # 2 #
+       * #       #####
+       * #   1   # 3 #
+       * #       #####
+       * #       # 4 #
+       * #############
+       */	
+      HSplit
+    };
 
-protected:
+    QtMultiViewLayout (QGraphicsLayoutItem * _parent = 0);
 
-  virtual void drawBackground(QPainter *_painter, const QRectF &_rect);
+    /// Adds Widget to Layout
+    void addItem (QGraphicsWidget *_item, unsigned int _pos);
 
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void wheelEvent(QGraphicsSceneWheelEvent* _e);
+    /// Sets layout mode
+    void setMode (MultiViewMode _mode);
 
-private:
+    /// Retruns current layout modes
+    MultiViewMode mode() const { return mode_;};
 
-  glViewer* findView (const QPointF &p);
+    /// Sets space between items
+    void setSpacing (unsigned int _s);
 
-  std::vector< glViewer *> *views_;
+
+    /// Pure virtual functions that have to be implemented
+    virtual int count() const;
+    virtual QGraphicsLayoutItem * itemAt(int _i) const;
+    virtual void removeAt (int _index);
+
+    virtual QSizeF sizeHint(Qt::SizeHint _which, const QSizeF & _constraint = QSizeF()) const;
+
+    /// Tracks geometry changes
+    virtual void setGeometry(const QRectF & rect);
+
+
+  private:
+
+    /// Recalculate layout
+    void reLayout ();
+
+    /// current modes
+    MultiViewMode mode_;
+
+    /// Spacing
+    unsigned int  spacing_;
+
+    /// Items
+    QGraphicsWidget *items_[4];
+
 };
 
-#endif
-
 //=============================================================================
+
 //=============================================================================

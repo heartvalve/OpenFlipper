@@ -59,6 +59,7 @@
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <OpenFlipper/widgets/glWidget/QtGLGraphicsScene.hh>
 #include <OpenFlipper/widgets/glWidget/QtGLGraphicsView.hh>
+#include <OpenFlipper/widgets/glWidget/QtMultiViewLayout.hh>
 
 // QT INCLUDES
 #include <QMainWindow>
@@ -403,7 +404,7 @@ public:
     QGraphicsWidget* centerWidget_;
 
     /// Base layout that holds gl views
-    QGraphicsGridLayout* baseLayout_;
+    QtMultiViewLayout* baseLayout_;
 
 
     // widget showing the scenegraph

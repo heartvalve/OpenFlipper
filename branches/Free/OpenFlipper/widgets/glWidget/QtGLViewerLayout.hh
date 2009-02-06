@@ -31,62 +31,63 @@
 
 
 
-#ifndef QTGLGRAPHICSSCENE_HH
-#define QTGLGRAPHICSSCENE_HH
 
 //=============================================================================
 //
-//  CLASS QtGLGraphicsScene - IMPLEMENTATION
+//  CLASS QtGLViewerLayout - IMPLEMENTATION
 //
 //=============================================================================
 
 //== INCLUDES =================================================================
 
-#include <QGraphicsScene>
-#include <QGraphicsItem>
-#include "QtBaseViewer.hh"
-
-//== FORWARDDECLARATIONS ======================================================
-class glViewer;
+#include <QGraphicsLayout>
+#include <QGraphicsLayoutItem>
+#include <QGraphicsWidget>
 
 //== NAMESPACES ===============================================================
 
 //== CLASS DEFINITION =========================================================
 
 
-
-/** OpenGL drawing area and widget scene -- for \a internal use only.
-    The scene basically redirects calls to a
-    ACG::QtWidgets::glViewer, the corresponding virtual methods there
-    are prefixed with \c gl.
-    \sa ACG::QtWidgets::glViewer
+/** Graphics scene layout for examiner widget.
 */
 
-class QtGLGraphicsScene : public QGraphicsScene
+class QtGLViewerLayout : public QGraphicsLayout
 {
-Q_OBJECT
+  public:
 
-public:
-  QtGLGraphicsScene(std::vector< glViewer *> *_views);
+    QtGLViewerLayout (QGraphicsLayoutItem * _parent = 0);
 
-protected:
+    /// Add Wheel Widget to Layout
+    void addWheelX (QGraphicsWidget *_item);
+    void addWheelY (QGraphicsWidget *_item);
+    void addWheelZ (QGraphicsWidget *_item);
 
-  virtual void drawBackground(QPainter *_painter, const QRectF &_rect);
+    /// Pure virtual functions that have to be implemented
+    virtual int count() const;
+    virtual QGraphicsLayoutItem * itemAt(int _i) const;
+    virtual void removeAt (int _index);
 
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void wheelEvent(QGraphicsSceneWheelEvent* _e);
+    virtual QSizeF sizeHint(Qt::SizeHint _which, const QSizeF & _constraint = QSizeF()) const;
 
-private:
+    /// Tracks geometry changes
+    virtual void setGeometry(const QRectF & rect);
 
-  glViewer* findView (const QPointF &p);
 
-  std::vector< glViewer *> *views_;
+  private:
+
+    /// Recalculate layout
+    void reLayout ();
+
+    /// Items
+    QGraphicsWidget *wheelX_;
+    QGraphicsWidget *wheelY_;
+    QGraphicsWidget *wheelZ_;
+
+    QVector<QGraphicsWidget *> items_;
+
 };
 
-#endif
-
 //=============================================================================
+
 //=============================================================================

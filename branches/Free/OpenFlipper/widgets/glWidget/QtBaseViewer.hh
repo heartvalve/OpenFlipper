@@ -83,7 +83,6 @@ class QSplitter;
 class QTimer;
 class QImage;
 class QSocketNotifier;
-class QGraphicsGridLayout;
 
 
 //== NAMESPACES ===============================================================
@@ -97,6 +96,7 @@ namespace ACG {
 }
 class QtGLGraphicsScene;
 class QtGLGraphicsView;
+class QtGLViewerLayout;
 class QtShiftPopupMenu;
 
 
@@ -408,8 +408,6 @@ protected:
   virtual void resizeEvent(QGraphicsSceneResizeEvent * _e);
   /// handle move events
   virtual void moveEvent (QGraphicsSceneMoveEvent * _e);
-  /// do painting
-  virtual void paint(QPainter * _painter, const QStyleOptionGraphicsItem * _option, QWidget * _widget = 0);
 
   /// handle mouse press events
   virtual void glMousePressEvent(QMouseEvent* _event);
@@ -554,7 +552,7 @@ private:
   QGLWidget* glWidget_;
 
   // Base graphics widget layout
-  QGraphicsGridLayout* glBaseLayout_;
+  QtGLViewerLayout* glBaseLayout_;
 
   // rotate around x-axis
   ACG::QtWidgets::QtWheel* wheelX_;
@@ -853,7 +851,6 @@ private:
     ACG::Vec3d    lastPoint3D_;
     bool          lastPoint_hitSphere_;
     bool          allowRotation_;
-
 
     // animation stuff
     ACG::Vec3d                   lastRotationAxis_;

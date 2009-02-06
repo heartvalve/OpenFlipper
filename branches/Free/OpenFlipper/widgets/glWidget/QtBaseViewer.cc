@@ -44,6 +44,7 @@
 #include "QtBaseViewer.hh"
 #include "QtGLGraphicsScene.hh"
 #include "QtGLGraphicsView.hh"
+#include "QtGLViewerLayout.hh"
 #include <ACG/QtWidgets/QtWheel.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/GL/gl.hh>
@@ -238,9 +239,12 @@ void glViewer::swapBuffers() {
 
 void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
 {
+  if (sceneGraphRoot_ == _root)
+    return;
+
   sceneGraphRoot_ = _root;
 
-  if (sceneGraphRoot_)
+  if (sceneGraphRoot_ )
   {
     // get draw modes
     ACG::SceneGraph::CollectDrawModesAction action;
@@ -330,7 +334,13 @@ void glViewer::updateProjectionMatrix()
   {
     case ORTHOGRAPHIC_PROJECTION:
     {
-      double aspect = (double) glWidth() / (double) glHeight();
+      double aspect;
+
+      if (isVisible())
+        aspect = (double) glWidth() / (double) glHeight();
+      else
+	aspect = 1.0;
+
       glstate_->ortho( -orthoWidth_, orthoWidth_,
 		       -orthoWidth_/aspect, orthoWidth_/aspect,
 		       near_, far_ );
@@ -457,12 +467,12 @@ void glViewer::normalsMode(NormalsMode _mode)
 
 void
 glViewer::copyToImage( QImage& _image,
-			   unsigned int /* _l */ , unsigned int /* _t */ ,
-			   unsigned int /* _w */ , unsigned int /* _h */ ,
+		       unsigned int _l, unsigned int _t,
+		       unsigned int _w, unsigned int _h,
 			   GLenum /* _buffer */ )
 {
   makeCurrent();
-  _image = glWidget_->grabFrameBuffer(true);
+  _image = glWidget_->grabFrameBuffer(true).copy (_l, _t, _w, _h).convertToFormat (QImage::Format_RGB32);
 }
 
 
@@ -939,10 +949,6 @@ void glViewer::paintGL()
   static bool initialized = false;
   if (!initialized)
   {
-    // we use GLEW to manage extensions
-    // initialize it first
-    glewInit();
-
     // lock update
     properties_.lockUpdate();
 
@@ -1048,15 +1054,6 @@ void glViewer::moveEvent (QGraphicsSceneMoveEvent *)
 }
 
 //-----------------------------------------------------------------------------
-
-void glViewer::paint(QPainter * _painter, const QStyleOptionGraphicsItem *, QWidget *)
-{
-  if (_painter->paintEngine()->type() != QPaintEngine::OpenGL) {
-    std::cerr << "glViewer: paint needs a QGLWidget to be set as viewport on the graphics view\n";
-    return;
-  }
-  paintGL ();
-}
 
 void glViewer::encodeView(QString& _view)
 {
@@ -1248,19 +1245,10 @@ glViewer::createWidgets(QStatusBar* _sb)
   wheelY->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
   wheelZ->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
 
-  glBaseLayout_ = new QGraphicsGridLayout;
-  glBaseLayout_->addItem(wheelX, 1, 0);
-  glBaseLayout_->addItem(wheelY, 2, 1);
-  glBaseLayout_->addItem(wheelZ, 1, 3);
-
-  glBaseLayout_->setColumnStretchFactor(0,0);
-  glBaseLayout_->setColumnStretchFactor(1,0);
-  glBaseLayout_->setColumnStretchFactor(2,1);
-  glBaseLayout_->setColumnStretchFactor(3,0);
-
-  glBaseLayout_->setRowStretchFactor(0,1);
-  glBaseLayout_->setRowStretchFactor(1,0);
-  glBaseLayout_->setRowStretchFactor(2,0);
+  glBaseLayout_ = new QtGLViewerLayout;
+  glBaseLayout_->addWheelX(wheelX);
+  glBaseLayout_->addWheelY(wheelY);
+  glBaseLayout_->addWheelZ(wheelZ);
 
   setLayout(glBaseLayout_);
 }
@@ -1700,6 +1688,9 @@ void glViewer::actionPickMenu( QAction * _action )
 void
 glViewer::viewMouseEvent(QMouseEvent* _event)
 {
+  QPointF f (mapFromScene(QPointF(_event->pos().x(), _event->pos().y())));
+  QPoint pos (f.x(), f.y());
+
   switch (_event->type())
   {
     case QEvent::MouseButtonPress:
@@ -1708,14 +1699,14 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
       if (_event->modifiers() & Qt::ShiftModifier)
       {
         ACG::Vec3d c;
-        if (fast_pick(_event->pos(), c))
+        if (fast_pick(pos, c))
         {
           trackball_center_ = c;
           trackball_radius_ = std::max(scene_radius_, (c-glstate_->eye()).norm()*0.9f);
         }
       }
 
-      lastPoint_hitSphere_ = mapToSphere( lastPoint2D_=_event->pos(),
+      lastPoint_hitSphere_ = mapToSphere( lastPoint2D_= pos,
                  lastPoint3D_ );
       isRotating_ = true;
       timer_->stop();
@@ -1743,7 +1734,7 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
       // mouse button should be pressed
       if (_event->buttons() & (Qt::LeftButton | Qt::MidButton))
       {
-        QPoint newPoint2D = _event->pos();
+        QPoint newPoint2D = pos;
 
         if ( (newPoint2D.x()<0) || (newPoint2D.x() > (int)glWidth()) ||
              (newPoint2D.y()<0) || (newPoint2D.y() > (int)glHeight()) )
@@ -1853,11 +1844,14 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
 void
 glViewer::lightMouseEvent(QMouseEvent* _event)
 {
+  QPointF f (mapFromScene(QPointF(_event->pos().x(), _event->pos().y())));
+  QPoint pos (f.x(), f.y());
+
   switch (_event->type())
   {
     case QEvent::MouseButtonPress:
     {
-      lastPoint_hitSphere_ = mapToSphere( lastPoint2D_=_event->pos(),
+      lastPoint_hitSphere_ = mapToSphere( lastPoint2D_= pos,
                  lastPoint3D_ );
       isRotating_ = true;
       timer_->stop();
@@ -1870,7 +1864,7 @@ glViewer::lightMouseEvent(QMouseEvent* _event)
       // rotate lights
       if (_event->buttons() & Qt::LeftButton)
       {
-   QPoint newPoint2D = _event->pos();
+   QPoint newPoint2D = pos;
 
    if ( (newPoint2D.x()<0) || (newPoint2D.x() > (int)glWidth()) ||
         (newPoint2D.y()<0) || (newPoint2D.y() > (int)glHeight()) )
@@ -1977,18 +1971,17 @@ bool glViewer::mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D) const
 void glViewer::slotAnimation()
 {
   static int msecs=0, count=0;
-  QTime t;
-  t.start();
+
   makeCurrent();
   rotate( lastRotationAxis_, lastRotationAngle_ );
   updateGL();
 
   if (!properties_.updateLocked()) {
-    msecs += t.elapsed();
-    if (count==10) {
+    msecs += frame_time_;
+    if (count >= 10 && msecs >= 500) {
       assert(statusbar_!=0);
       char s[100];
-      sprintf( s, "%.3f fps", (10000.0 / (float)msecs) );
+      sprintf( s, "%.3f fps", (1000.0 * count / (float)msecs) );
       statusbar_->showMessage(s,2000);
       count = msecs = 0;
     }
@@ -2025,6 +2018,7 @@ void glViewer::snapshot()
 
    qApp->processEvents();
    makeCurrent();
+   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    paintGL();
    glFinish();
 

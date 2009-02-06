@@ -57,19 +57,28 @@ QtGLGraphicsScene::QtGLGraphicsScene(std::vector< glViewer *> *_views) :
 {
 }
 
-/*
+
 void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &)
 {
-    if (_painter->paintEngine()->type() != QPaintEngine::OpenGL) {
-        std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
-        return;
-    }
+  if (_painter->paintEngine()->type() != QPaintEngine::OpenGL) {
+    std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
+    return;
+  }
 
-    w_->paintGL();
+  static bool initialized = false;
+  if (!initialized)
+  {
+    // we use GLEW to manage extensions
+    // initialize it first
+    glewInit();
+  }
 
+  for (unsigned int i = 0; i < views_->size (); i++)
+  {
+    if (views_->at(i)->isVisible())
+      views_->at(i)->paintGL();
+  }
 }
-
-*/
 
 glViewer* QtGLGraphicsScene::findView (const QPointF &p)
 {
