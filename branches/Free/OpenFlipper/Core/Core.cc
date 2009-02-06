@@ -651,10 +651,8 @@ void Core::updateView() {
 
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() && !OpenFlipper::Options::redrawDisabled() ) {
 
-    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_);
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
       coreWidget_->examiner_widgets_[i]->updateGL();
-    }
 
   }
 }
