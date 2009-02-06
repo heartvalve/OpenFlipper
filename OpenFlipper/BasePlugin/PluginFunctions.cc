@@ -390,43 +390,43 @@ void setMainGLContext() {
 }
 
 void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up) {
-  examiner_widget_->viewingDirection(_dir,_up);
+  examiner_widgets_[activeExaminer_]->viewingDirection(_dir,_up);
 }
 
 
 void setScenePos(const ACG::Vec3d& _center,const double _radius) {
-  examiner_widget_->setScenePos( _center, _radius );
+  examiner_widgets_[activeExaminer_]->setScenePos( _center, _radius );
 }
 
 void setScenePos(const ACG::Vec3d& _center) {
-  examiner_widget_->setScenePos( _center, examiner_widget_->scene_radius() );
+  examiner_widgets_[activeExaminer_]->setScenePos( _center, examiner_widgets_[activeExaminer_]->scene_radius() );
 }
 
 const ACG::Vec3d& sceneCenter() {
-   return examiner_widget_->scene_center();
+   return examiner_widgets_[activeExaminer_]->scene_center();
 }
 
 double sceneRadius() {
-   return examiner_widget_->scene_radius();
+   return examiner_widgets_[activeExaminer_]->scene_radius();
 }
 
 void translate( const ACG::Vec3d &_vector ) {
-  examiner_widget_->translate(_vector);
+  examiner_widgets_[activeExaminer_]->translate(_vector);
 }
 
 void rotate(const ACG::Vec3d&  _axis,
             const double       _angle,
             const ACG::Vec3d&  _center)
 {
-  examiner_widget_->rotate(_axis,_angle,_center);
+  examiner_widgets_[activeExaminer_]->rotate(_axis,_angle,_center);
 }
 
 void viewHome() {
-  examiner_widget_->home();
+  examiner_widgets_[activeExaminer_]->home();
 }
 
 void viewAll() {
-  examiner_widget_->viewAll();
+  examiner_widgets_[activeExaminer_]->viewAll();
 }
 
 ACG::Vec3d viewingDirection() {
@@ -539,7 +539,7 @@ void get_all_objects( std::vector < BaseObjectData*>& _objects ) {
 
 ///   Fly to point and viewing direction (animated).
 void   flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time) {
-   examiner_widget_->flyTo(_position,_center,_time);
+   examiner_widgets_[activeExaminer_]->flyTo(_position,_center,_time);
 }
 
 
