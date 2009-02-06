@@ -54,6 +54,7 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
   QObject* senderPointer = sender();
   unsigned int examinerId = 0;
   QPoint   popupPosition;
+  QPoint   scenePos;
 
   if ( senderPointer == 0 ) {
     std::cerr << "Error : slotCustomContextMenu directly called! This should only be called by an examiner" << std::endl;
@@ -61,6 +62,8 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
       if ( senderPointer == examiner_widgets_[i] ) {
         popupPosition =  examiner_widgets_[i]->glMapToGlobal(_point);
+	QPointF f = examiner_widgets_[i]->mapToScene(QPointF(_point.x(), _point.y()));
+	scenePos = QPoint (f.x(), f.y());
         examinerId = i;
         break;
       }
@@ -70,7 +73,7 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
   PluginFunctions::setActiveExaminer( examinerId );
 
-  updatePopupMenu(_point,examinerId);
+  updatePopupMenu(scenePos,examinerId);
 
   // If not initialized, dont show it!!
   if ( !contextMenu_->isEmpty () )
@@ -288,16 +291,16 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
 
   contextMenu_->addMenu(functionMenu_ );
 
-  if ( ( examiner_widgets_[0]->getDrawMenu() != NULL ) && OpenFlipper::Options::drawModesInContextMenu() ) {
+  if ( ( examiner_widgets_[_examinerId]->getDrawMenu() != NULL ) && OpenFlipper::Options::drawModesInContextMenu() ) {
 
-    examiner_widgets_[0]->getDrawMenu()->setTitle("&DrawModes");
-    QAction* drawMenuAction = contextMenu_->addMenu(examiner_widgets_[0]->getDrawMenu() );
+    examiner_widgets_[_examinerId]->getDrawMenu()->setTitle("&DrawModes");
+    QAction* drawMenuAction = contextMenu_->addMenu(examiner_widgets_[_examinerId]->getDrawMenu() );
 
     QIcon icon;
     icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
     drawMenuAction->setIcon(icon);
 
-    examiner_widgets_[0]->getDrawMenu()->setTearOffEnabled(true);
+    examiner_widgets_[_examinerId]->getDrawMenu()->setTearOffEnabled(true);
   }
 }
 

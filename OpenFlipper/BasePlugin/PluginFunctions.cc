@@ -269,10 +269,8 @@ QPoint mapToLocal( const QPoint _point ) {
  * They can be combined.
  */
 void setDrawMode( const unsigned int _mode ) {
-  for ( uint i = 0 ; i < examiner_widgets_.size() ; ++i ) {
-    examiner_widgets_[i]->drawMode(_mode);
-    examiner_widgets_[i]->updateGL();
-  }
+  examiner_widgets_[activeExaminer_]->drawMode(_mode);
+  examiner_widgets_[activeExaminer_]->updateGL();
 }
 
 /** Get the current draw Mode of the examiner widget.\n
@@ -281,8 +279,7 @@ void setDrawMode( const unsigned int _mode ) {
  * They can be combined.
  */
 unsigned int drawMode( ) {
-  // No seperate draw modes available all should have the same so take first
-  return examiner_widgets_[0]->drawMode();
+  return examiner_widgets_[activeExaminer_]->drawMode();
 }
 
 bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {

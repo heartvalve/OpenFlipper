@@ -123,7 +123,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
   glView_->setScene(glScene_);
 
-  baseLayout_ = new QGraphicsGridLayout;
+  baseLayout_ = new QtMultiViewLayout;
   baseLayout_->setContentsMargins(0,0,0,0);
   centerWidget_ = new QGraphicsWidget;
   glScene_->addItem(centerWidget_);
@@ -169,8 +169,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     examinerWidget->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
 
-    glScene_->addItem(examinerWidget);
-    baseLayout_->addItem(examinerWidget, 0, 0);
+    baseLayout_->addItem(examinerWidget, 0);
 
   } else {
 
@@ -183,7 +182,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 					 "Examiner Widget",
                                          statusBar_ );
       examiner_widgets_.push_back(newWidget);
-      glScene_->addItem(newWidget);
     }
 
     // Initialize all examiners
@@ -191,14 +189,10 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
       examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
     }
 
-    baseLayout_->addItem(examiner_widgets_[0],0,0);
-    baseLayout_->addItem(examiner_widgets_[1],0,1);
-    baseLayout_->addItem(examiner_widgets_[2],1,0);
-    baseLayout_->addItem(examiner_widgets_[3],1,1);
-
-    for ( unsigned int i = 1 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      examiner_widgets_[i]->hide();
-
+    baseLayout_->addItem(examiner_widgets_[0],0);
+    baseLayout_->addItem(examiner_widgets_[1],1);
+    baseLayout_->addItem(examiner_widgets_[2],2);
+    baseLayout_->addItem(examiner_widgets_[3],3);
   }
 
   // Make examiner available to the plugins ( defined in PluginFunctions.hh)
