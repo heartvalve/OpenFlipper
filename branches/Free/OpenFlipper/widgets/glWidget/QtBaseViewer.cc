@@ -239,8 +239,8 @@ void glViewer::swapBuffers() {
 
 void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
 {
-  if (sceneGraphRoot_ == _root)
-    return;
+//   if (sceneGraphRoot_ == _root)
+//     return;
 
   sceneGraphRoot_ = _root;
 
