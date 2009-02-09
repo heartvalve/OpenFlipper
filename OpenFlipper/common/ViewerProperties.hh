@@ -47,10 +47,13 @@
 #ifndef VIEWERPROPERTIES_HH
 #define VIEWERPROPERTIES_HH
 
+
 #include <QObject>
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <ACG/Math/VectorT.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <ACG/GL/GLState.hh>
+
 
 namespace Viewer {
 
@@ -68,7 +71,7 @@ namespace Viewer {
     LightMode
   };
 
-  class ViewerProperties : public QObject {
+  class DLLEXPORT ViewerProperties : public QObject {
 
     Q_OBJECT
 
