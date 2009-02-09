@@ -41,7 +41,8 @@
  * <li> Get Visual Studio 2008 </li>
  * <li> First extract the source code. </li>
  * <li> Get all required libraries and install them ( including headers! ).</li>
- * <li> Go to the qmake/packages directory and change the packages.<Architecture > files to match the library paths</li>
+ * <li> Open \c OpenMesh\qmake\packages\packages.Windows in a text editor and change header and library paths<br>
+ * such that they match the ones installed (see comments to find path entries).</li>
  * <li> Open Visual Studio 2008 and go to Tools->Visual Studio command prompt</li>
  * <li> Go to the toplevel OpenFlipper directory </li>
  * <li> Call <b> qmake </b> ( It should be the qmake Version for qt4! ) 
