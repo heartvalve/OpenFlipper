@@ -47,6 +47,15 @@
 #define GLOBALDEFINES_HH
 
 
+/**
+ * Get GCC version and convert to MMmm where MM is the major
+ * and mm the minor release version.
+ * For example if GCC_VERSION == 4030, we consider gcc-4.3.
+ */
+
+#define GCC_VERSION (__GNUC__ * 1000 + __GNUC_MINOR__ * 10)
+
+
 //== DEEFINES =================================================================
 
 /** Force static casts for Properties in OpenMesh.
@@ -54,9 +63,11 @@
  */
 #define OM_FORCE_STATIC_CAST
 
-/** Enable openmp where possible
+/** Enable openmp where possible (for gcc version >= 4.3)
  */
-#define USE_OPENMP
+#if GCC_VERSION >= 4030
+  #define USE_OPENMP
+#endif
 
 
 #ifndef DLLEXPORT
