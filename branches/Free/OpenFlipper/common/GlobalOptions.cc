@@ -207,10 +207,16 @@ static char *** argv_;
   const bool is64 = false;
 #endif
 
-#ifdef WIN32
+#if defined(WIN32)
   const bool linux_ = false;
   const bool windows_ = true;
+  const bool darwin_ = false;
+#elif defined(ARCH_DARWIN)
+  const bool darwin_ = true;
+  const bool linux_ = false;
+  const bool windows_ = false;
 #else
+  const bool darwin_ = false;
   const bool linux_ = true;
   const bool windows_ = false;
 #endif
@@ -224,6 +230,10 @@ bool isLinux() {
 
 bool isWindows() {
   return windows_;
+}
+
+bool isDarwin() {
+ return darwin_;
 }
 
 
