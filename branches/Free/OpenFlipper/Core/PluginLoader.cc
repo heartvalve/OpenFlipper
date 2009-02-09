@@ -104,8 +104,10 @@ void Core::loadPlugins()
   QDir tempDir = QDir(OpenFlipper::Options::applicationDir());
   tempDir.cd("Plugins");
 
-  #ifdef WIN32
+  #if defined(WIN32)
     tempDir.cd("Windows");
+  #elif defined(ARCH_DARWIN)
+    tempDir.cd("Darwin");
   #else
     tempDir.cd("Linux");
   #endif
@@ -129,8 +131,10 @@ void Core::loadPlugins()
 
   QStringList filters;
 
-  #ifdef WIN32
+  #if defined(WIN32)
 	filters << "*.dll";
+  #elif defined(ARCH_DARWIN)
+	filters << "*.dylib";
   #else
 	filters << "*.so";
   #endif
@@ -190,7 +194,7 @@ void Core::loadPlugins()
       ini.disconnect();
 
    } else
-      emit log(LOGWARN,"Failed to connect to  ProgramOptions.ini file: " + configFiles[fileCount]);
+      emit log(LOGWARN,"Failed to connect to ProgramOptions.ini file: " + configFiles[fileCount]);
   }
 
   pluginlist = iniPlugins << pluginlist;
@@ -252,8 +256,11 @@ void Core::slotLoadPlugin(){
   QString filter;
   if ( OpenFlipper::Options::isWindows() )
     filter = "Plugins (*.dll)";
+  else if ( OpenFlipper::Options::isDarwin() )
+    filter = "Plugins (*.dylib)";
   else
     filter = "Plugins (*.so)";
+
 
   QString filename = ACG::getOpenFileName(coreWidget_,tr("Load Plugin"),filter,OpenFlipper::Options::currentDirStr());
 
