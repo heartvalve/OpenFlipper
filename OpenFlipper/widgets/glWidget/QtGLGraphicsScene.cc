@@ -40,8 +40,10 @@
 
 //== INCLUDES =================================================================
 
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include "QtGLGraphicsScene.hh"
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
+#include <QApplication>
 #include <QPainter>
 #include <QPaintEngine>
 #include <QGraphicsSceneMouseEvent>
@@ -58,7 +60,7 @@ QtGLGraphicsScene::QtGLGraphicsScene(std::vector< glViewer *> *_views) :
 }
 
 
-void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &)
+void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
 {
   if (_painter->paintEngine()->type() != QPaintEngine::OpenGL) {
     std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
@@ -73,19 +75,52 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &)
     glewInit();
   }
 
+  _painter->setBackground(QApplication::palette().window());
+  _painter->eraseRect(_rect);
+
   for (unsigned int i = 0; i < views_->size (); i++)
   {
     if (views_->at(i)->isVisible())
       views_->at(i)->paintGL();
   }
+
+  
+  int i = PluginFunctions::activeExaminer();
+
+  QPen pen(Qt::red);
+  pen.setWidth (2);
+  _painter->setPen(pen);
+  _painter->drawLine(views_->at(i)->scenePos().x(),
+                     views_->at(i)->scenePos().y(),
+                     views_->at(i)->scenePos().x(),
+                     views_->at(i)->scenePos().y() + views_->at(i)->size().height() - 1);
+  _painter->drawLine(views_->at(i)->scenePos().x() + views_->at(i)->size().width(),
+                     views_->at(i)->scenePos().y(),
+                     views_->at(i)->scenePos().x() + views_->at(i)->size().width(),
+                     views_->at(i)->scenePos().y() + views_->at(i)->size().height() - 1);
+  _painter->drawLine(views_->at(i)->scenePos().x(),
+                     views_->at(i)->scenePos().y() - 1,
+                     views_->at(i)->scenePos().x() + views_->at(i)->size().width(),
+                     views_->at(i)->scenePos().y() - 1);
+  _painter->drawLine(views_->at(i)->scenePos().x(),
+                     views_->at(i)->scenePos().y() + views_->at(i)->size().height() - 1,
+                     views_->at(i)->scenePos().x() + views_->at(i)->size().width(),
+                     views_->at(i)->scenePos().y() + views_->at(i)->size().height() - 1);
 }
 
-glViewer* QtGLGraphicsScene::findView (const QPointF &p)
+glViewer* QtGLGraphicsScene::findView (const QPointF &_p, bool _setActive)
 {
   for (unsigned int i = 0; i < views_->size (); i++)
   {
-      if (views_->at(i)->contains(views_->at(i)->mapFromScene (p)))
-	  return views_->at(i);
+    if (views_->at(i)->contains(views_->at(i)->mapFromScene (_p)))
+    {
+      if (_setActive && PluginFunctions::activeExaminer() != i)
+      {
+        PluginFunctions::setActiveExaminer (i);
+	update();
+      }
+      return views_->at(i);
+    }
   }
   return NULL;
 }
@@ -95,7 +130,7 @@ void QtGLGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* _e)
   QGraphicsScene::mousePressEvent(_e);
   if (_e->isAccepted())
     return;
-  glViewer *v = findView (_e->scenePos());
+  glViewer *v = findView (_e->scenePos(), true);
   if (!v)
     return;
 
@@ -111,7 +146,7 @@ void QtGLGraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e)
   QGraphicsScene::mouseDoubleClickEvent(_e);
   if (_e->isAccepted())
     return;
-  glViewer *v = findView (_e->scenePos());
+  glViewer *v = findView (_e->scenePos(), true);
   if (!v)
     return;
 
@@ -161,7 +196,7 @@ void QtGLGraphicsScene::wheelEvent(QGraphicsSceneWheelEvent* _e)
   if (_e->isAccepted())
     return;
 
-  glViewer *v = findView (_e->scenePos());
+  glViewer *v = findView (_e->scenePos(), true);
   if (!v)
     return;
 
