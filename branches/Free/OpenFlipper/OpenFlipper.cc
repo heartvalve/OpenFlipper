@@ -50,7 +50,7 @@
 
 #include <OpenFlipper/SimpleOpt/SimpleOpt.h>
 
-#ifdef (WIN32 || ARCH_DARWIN)
+#if ( defined(WIN32) || defined(ARCH_DARWIN) )
   #define NO_EXECINFO
 #endif
 
