@@ -82,7 +82,7 @@ protected:
 
 private:
 
-  glViewer* findView (const QPointF &p);
+  glViewer* findView (const QPointF &_p, bool _setActive = false);
 
   std::vector< glViewer *> *views_;
 };

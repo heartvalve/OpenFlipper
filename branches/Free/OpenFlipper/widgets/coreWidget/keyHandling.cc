@@ -564,6 +564,7 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 	    break;
 	  case QtMultiViewLayout::HSplit:
 	    baseLayout_->setMode (QtMultiViewLayout::SingleView);
+	    PluginFunctions::setActiveExaminer (0);
 	    break;
 	}
       }
