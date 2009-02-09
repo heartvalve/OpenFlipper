@@ -22,6 +22,11 @@ defineTest( glut ) {
   export(LIBS)
 }
 
+defineTest( gmm ) {
+  INCLUDEPATH += /usr/local/include/gmm
+  export(INCLUDEPATH)
+}
+
 defineTest( freetype ) {
   INCLUDEPATH *= /usr/local/include/freetype2
   export(INCLUDEPATH)
@@ -37,13 +42,15 @@ defineTest( ftgl ) {
 
 defineTest( acg ) {
   QMAKE_LIBDIR += $${TOPDIR}/ACG/lib/$${BUILDDIRECTORY}
+  LIBS += -ACG
   export(QMAKE_LIBDIR)
   export(LIBS)
 }
 
 defineTest( openmesh ) {
   QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY}
-  LIBS+= -install_name$${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY} -lCore
+  # LIBS+= -install_name$${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY} -lCore
+  LIBS += -lCore
   export(QMAKE_LIBDIR)
   export(LIBS)
 }
