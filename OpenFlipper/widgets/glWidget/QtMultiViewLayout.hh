@@ -40,6 +40,7 @@
 
 //== INCLUDES =================================================================
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <QGraphicsLayout>
 #include <QGraphicsLayoutItem>
 #include <QGraphicsWidget>
@@ -52,7 +53,7 @@
 /** Graphics scene layout for multi view.
 */
 
-class QtMultiViewLayout : public QGraphicsLayout
+class DLLEXPORT QtMultiViewLayout : public QGraphicsLayout
 {
   public:
 
