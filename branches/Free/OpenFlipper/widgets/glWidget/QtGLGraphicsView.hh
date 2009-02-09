@@ -40,6 +40,7 @@
 
 //== INCLUDES =================================================================
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <QGraphicsView>
 #include "QtBaseViewer.hh"
 
@@ -51,7 +52,7 @@
 /** Graphics view Widget that is used to display the QtGLGraphicsScene scene.
 */
 
-class QtGLGraphicsView : public QGraphicsView
+class DLLEXPORT QtGLGraphicsView : public QGraphicsView
 {
  Q_OBJECT
 

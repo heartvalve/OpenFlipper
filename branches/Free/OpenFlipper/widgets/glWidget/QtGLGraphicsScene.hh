@@ -42,6 +42,7 @@
 
 //== INCLUDES =================================================================
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include "QtBaseViewer.hh"
@@ -62,7 +63,7 @@ class glViewer;
     \sa ACG::QtWidgets::glViewer
 */
 
-class QtGLGraphicsScene : public QGraphicsScene
+class DLLEXPORT QtGLGraphicsScene : public QGraphicsScene
 {
 Q_OBJECT
 
