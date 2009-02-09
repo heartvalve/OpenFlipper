@@ -247,6 +247,9 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   bool isWindows();
 
+  DLLEXPORT
+  bool isDarwin();
+
   /// Returns the right separator String for this architecture ( Linux: "/" Windows: "\" )
   DLLEXPORT
   QString dirSeparator();
