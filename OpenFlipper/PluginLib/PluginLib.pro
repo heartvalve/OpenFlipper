@@ -19,7 +19,10 @@ win32 {
 	DEFINES += PLUGINLIBDLL
 } 
 
-  
+macx {
+  QMAKE_LFLAGS_SONAME = -install_name$${LITERAL_WHITESPACE}$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY}/
+  export( QMAKE_LFLAGS_SONAME )
+}  
 
 # Input
 HEADERS += $$getFilesFromDir($$DIRECTORIES,*.hh)
