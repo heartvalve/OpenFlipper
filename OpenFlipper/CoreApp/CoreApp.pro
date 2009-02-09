@@ -23,8 +23,15 @@ DIRECTORIES =   ../ ../Core ../Logging \
 QMAKE_LIBDIR +=  $${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY}
 
 unix {
-	LIBS+= -Wl,-rpath=$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
-} 
+	!contains( OPERATING_SYSTEM, Darwin ) {
+		LIBS += -Wl,-rpath=$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
+	}	
+}
+
+macx {
+        LIBS += -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
+        QMAKE_LFLAGS_SONAME += -install_name$${LITERAL_WHITESPACE}$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY}/
+}
 
 win32 {
 	LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lPluginLib
