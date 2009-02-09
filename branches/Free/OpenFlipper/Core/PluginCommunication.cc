@@ -91,7 +91,8 @@ void Core::slotObjectUpdated(int _identifier) {
   // Reenable redraws
   OpenFlipper::Options::redrawDisabled(false);
 
-  resetScenegraph();
+//   resetScenegraph();
+  // TODO Set correct view after bb of object has changed
 
   updateView();
 }
