@@ -9,9 +9,9 @@ defineTest( qt ) {
 }
 
 defineTest( glew ) {
-  INCLUDEPATH *= /Users/sattler/acg/glew/include/GL
+  INCLUDEPATH *= /sw/include/GL
   export(INCLUDEPATH)
-  LIBS *= -L/Users/sattler/acg/glew/lib -lGLEW
+  LIBS *= -L/sw/lib -lGLEW
   export(LIBS)
 }
 
