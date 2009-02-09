@@ -5,9 +5,21 @@
 
 
 defineTest( glew ) {
-  INCLUDEPATH *= c:\glew\include
+
+  #######################################
+  ## Enter here the correct path to GLEW
+  #######################################
+
+  GLEW_PATH = c:\glew
+
+  ######################################
+
+  !exists ( $${GLEW_PATH} ) {
+    error (ERROR: GLEW not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows!)
+  }
+  INCLUDEPATH *= $${GLEW_PATH}\include
   export(INCLUDEPATH)
-  LIBS *= -Lc:\glew\lib -lglew32
+  LIBS *= -L$${GLEW_PATH}\lib -lglew32
   export(LIBS)
 }
 
@@ -16,9 +28,21 @@ defineTest( qt ) {
 }
 
 defineTest( glut ) {
-  INCLUDEPATH *= c:\glut\include
+
+  #######################################
+  ## Enter here the correct path to GLUT
+  #######################################
+
+  GLUT_PATH = c:\glut
+
+  #######################################
+
+  !exists ( $${GLUT_PATH} ) {
+    error (ERROR: GLUT not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows!)
+  }
+  INCLUDEPATH *= $${GLUT_PATH}\include
   export(INCLUDEPATH)
-  LIBS *= -Lc:\glut\lib -lglut32
+  LIBS *= -L$${GLUT_PATH}\lib -lglut32
   export(LIBS)
 }
 
@@ -54,6 +78,27 @@ defineTest( openmesh ) {
   export(DEFINES)
 }
 
+defineTest( qwt ) {
+
+  #######################################
+  ## Enter here the correct path to qwt
+  #######################################
+
+  QWT_PATH = C:\qwt
+
+  #######################################
+
+  !exists( $${QWT_PATH} ) {
+    error( ERROR: qwt not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+  }
+
+  INCLUDEPATH *= $${QWT_PATH}\src
+  export(INCLUDEPATH)
+  LIBS *= -L$${QWT_PATH}\lib\ -lqwt5
+  export(LIBS)
+}
+
+
 defineTest( openmp ) {
 	QMAKE_CXXFLAGS_DEBUG += /openmp
 	QMAKE_CXXFLAGS_RELEASE += /openmp
@@ -62,45 +107,104 @@ defineTest( openmp ) {
 }
 
 defineTest( gmm ) {
-  INCLUDEPATH += c:\gmm-3.0\include\gmm
+
+  #######################################
+  ## Enter here the correct path to GMM
+  #######################################
+
+  GMM_PATH = c:\gmm-3.0
+
+  #######################################
+
+  !exists( $${GMM_PATH} ) {
+    error( ERROR: GMM not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+  }
+
+  INCLUDEPATH += $${GMM_PATH}\include\gmm
   DEFINES *= _SCL_SECURE_NO_DEPRECATE
   export(DEFINES) 
   export(INCLUDEPATH)
 }
 
 defineTest( wordnet ) {
-  INCLUDEPATH *= "C:\Program Files\WordNet\2.1\src\include"
+
+  ##########################################
+  ## Enter here the correct path to wordnet
+  ##########################################
+
+  WN_PATH = C:\Program Files\WordNet\2.1
+
+  ##########################################
+
+  !exists( $${WN_PATH} ) {
+    error( ERROR: Wordnet not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+  }
+  
+
+  INCLUDEPATH *= $${WN_PATH}\src\include
   export(INCLUDEPATH)
-  LIBS += -l"C:\Program Files\WordNet\2.1\lib\wn" 
+  LIBS += -l$${WN_PATH}\lib\wn
   export(LIBS)
 }
 
 defineTest( lapack ) {
-  LIBS *= -LC:\CLAPACK\LIB\Win32 -lclapack_nowrap -lblas_nowrap -llibf2c -ltmglib_nowrap
+
+  ##############################################
+  ## Enter here the correct path to lapack libs
+  ##############################################
+
+  LAP_LIB_PATH = C:\CLAPACK\LIB\Win32
+
+  ##############################################
+
+  !exists( $${LAP_LIB_PATH} ) {
+    error( ERROR: lapack not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+  }
+
+  LIBS *= -L$${LAP_LIB_PATH} -lclapack_nowrap -lblas_nowrap -llibf2c -ltmglib_nowrap
   LIBS *= /NODEFAULTLIB:"libcmt"
   export(LIBS)
 }
 
 defineTest( taucs ) {
-  LIBS *= -LC:\taucs\lib -llibtaucs
-  INCLUDEPATH += C:\taucs\include
-  export(INCLUDEPATH)
-  export(LIBS)
-}
 
-defineTest( qwt ) {
-  INCLUDEPATH *= C:\qwt\src 
+  #########################################
+  ## Enter here the correct path to taucs
+  #########################################
+
+  TAUCS_PATH = C:\taucs
+
+  #########################################
+
+  !exists( $${TAUCS_PATH} ) {
+    error( ERROR: taucs not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+  }
+
+  LIBS *= -L$${TAUCS_PATH}\lib -llibtaucs
+  INCLUDEPATH += $${TAUCS_PATH}\include
   export(INCLUDEPATH)
-  LIBS *= -LC:\qwt\lib\ -lqwt5
   export(LIBS)
 }
 
 defineTest( superlu ) {
-  INCLUDEPATH *= "C:\SuperLU_3.0"
+
+  ###########################################
+  ## Enter here the correct path to superlu
+  ###########################################
+
+  SLU_PATH = C:\SuperLU_3.0
+
+  ###########################################
+
+  !exists( $${SLU_PATH} ) {
+    error( ERROR: SuperLU not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+  }
+
+  INCLUDEPATH *= $${SLU_PATH}
   CONFIG( debug, debug|release ){
-    LIBS *= -LC:\SuperLU_3.0\lib -lSuperLUd
+    LIBS *= -L$${SLU_PATH}\lib -lSuperLUd
   } else {
-    LIBS *= -LC:\SuperLU_3.0\lib -lSuperLU
+    LIBS *= -L$${SLU_PATH}\lib -lSuperLU
   }
   export(INCLUDEPATH)
   export(LIBS)
@@ -119,19 +223,46 @@ defineTest( usb ) {
 }
 
 defineTest( freetype ) {
-   LIBS *= -LC:\GnuWin32\lib -lfreetype
-   export(LIBS)
+
+  ###########################################
+  ## Enter here the correct path to freetype
+  ###########################################
+
+  FT_PATH = C:\GnuWin32
+
+  ###########################################
+
+  !exists( $${FT_PATH} ) {
+    error( ERROR: FreeType not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+  }
+
+  LIBS *= -L$${FT_PATH}\lib -lfreetype
+  export(LIBS)
+  export(FT_PATH)
 }
 
 defineTest( ftgl ) {
+
+  #########################################
+  ## Enter here the correct path to FTGL
+  #########################################
+
+  FTGL_PATH = C:\ftgl
+
+  #########################################
+
+  !exists( $${FTGL_PATH} ) {
+    error( ERROR: FTGL not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+  }
+
   freetype()
   CONFIG( debug, debug|release ){
-    LIBS *= -LC:\ftgl\msvc\Build -lftgl_D
+    LIBS *= -L$${FTGL_PATH}\msvc\Build -lftgl_D
   } else {
-    LIBS *= -LC:\ftgl\msvc\Build -lftgl
+    LIBS *= -L$${FTGL_PATH}\msvc\Build -lftgl
   }
   
-  INCLUDEPATH *= C:\ftgl\src $$quote(C:\GnuWin32\include) $$quote(C:\GnuWin32\include\freetype2) 
+  INCLUDEPATH *= $${FTGL_PATH}\src $$quote($${FT_PATH}\include) $$quote($${FT_PATH}\include\freetype2) 
   export(LIBS)
   export(INCLUDEPATH)
 }
