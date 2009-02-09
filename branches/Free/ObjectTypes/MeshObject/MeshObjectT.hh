@@ -47,15 +47,6 @@
 #ifndef MESHOBJECT_HH
 #define MESHOBJECT_HH
 
-
-#ifndef DLLEXPORT
-#ifdef WIN32
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT
-#endif
-#endif
-
 //== INCLUDES =================================================================
 
 // -------------------- OpenMesh
@@ -65,6 +56,8 @@
 #include <ACG/Scenegraph/TextureNode.hh>
 #include <ACG/Scenegraph/ShaderNode.hh>
 #include <ACG/Scenegraph/StatusNodesT.hh>
+
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 /// Additional Node status Bits for Mesh
 enum StatusBits {
@@ -97,7 +90,7 @@ typedef ACG::SceneGraph::TextureNode                      TextureNode;
 /** This class provides the functionality for all kind of meshes for the framework
  */
 template < class MeshT, DataType objectDataType >
-class DLLEXPORT MeshObject : public BaseObjectData {
+class DLLEXPORTONLY MeshObject : public BaseObjectData {
   public:
 
     /** \brief copy constructor
