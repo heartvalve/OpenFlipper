@@ -37,7 +37,6 @@ defineTest( ftgl ) {
 
 defineTest( acg ) {
   QMAKE_LIBDIR += $${TOPDIR}/ACG/lib/$${BUILDDIRECTORY}
-  LIBS+= -install_name$${TOPDIR}/ACG/lib/$${BUILDDIRECTORY} -lACG
   export(QMAKE_LIBDIR)
   export(LIBS)
 }
