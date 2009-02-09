@@ -50,7 +50,11 @@
 
 #include <OpenFlipper/SimpleOpt/SimpleOpt.h>
 
-#ifndef WIN32
+#ifdef (WIN32 || ARCH_DARWIN)
+  #define NO_EXECINFO
+#endif
+
+#ifndef NO_EXECINFO
 #include <execinfo.h>
 #endif
 
@@ -163,7 +167,7 @@ void showHelp() {
 }
 
 
-#ifndef WIN32
+#ifndef NO_EXECINFO
 void backtrace()
 {
   void *addresses[10];
@@ -191,7 +195,7 @@ void segfaultHandling (int) {
   std::cerr << "\33[31m" << "This should not happen,... Sorry :-(" << std::endl;
   std::cerr << "\33[31m" << "=====================================================" << std::endl;
   std::cerr << "\n" << std::endl;
-#ifndef WIN32
+#ifndef NO_EXECINFO
   std::cerr << "\33[0m"  << "Trying a backtrace to show what happened last: " << std::endl;
   backtrace();
 
