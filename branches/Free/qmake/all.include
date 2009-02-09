@@ -103,6 +103,8 @@ defineTest(Plugin) {
 	}
         macx {
  		glut()
+		LIBS+= -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
+                export(LIBS)
         }
 	export(TEMPLATE)
 	CONFIG *= plugin
