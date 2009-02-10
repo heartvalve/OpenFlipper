@@ -74,7 +74,11 @@ class LoggingInterface {
       /** Through this slot you can receive all logging information emitted by OpenFlipper
        * or one of its plugins */
       virtual void logOutput( Logtype /*_type*/ , QString /*_message*/ ) {};
-      
+
+   public:
+
+      /// Destructor
+      virtual ~LoggingInterface() {};
 };
 
 Q_DECLARE_INTERFACE(LoggingInterface,"OpenFlipper.LoggingInterface/1.0")
