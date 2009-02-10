@@ -49,6 +49,7 @@
 
 //== FORWARDDECLARATIONS ======================================================
 class glViewer;
+class QtMultiViewLayout;
 
 //== NAMESPACES ===============================================================
 
@@ -68,7 +69,7 @@ class DLLEXPORT QtGLGraphicsScene : public QGraphicsScene
 Q_OBJECT
 
 public:
-  QtGLGraphicsScene(std::vector< glViewer *> *_views);
+  QtGLGraphicsScene(std::vector< glViewer *> *_views, QtMultiViewLayout *_layout);
 
 protected:
 
@@ -85,6 +86,7 @@ private:
   glViewer* findView (const QPointF &_p, bool _setActive = false);
 
   std::vector< glViewer *> *views_;
+  QtMultiViewLayout *layout_;
 };
 
 #endif
