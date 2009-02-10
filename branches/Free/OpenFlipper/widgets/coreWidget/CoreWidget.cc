@@ -110,9 +110,12 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   // Construct GL context & widget
 
+  baseLayout_ = new QtMultiViewLayout;
+  baseLayout_->setContentsMargins(0,0,0,0);
+
   glWidget_ = new QGLWidget(format);
   glView_ = new QtGLGraphicsView(stackedWidget_);
-  glScene_ = new QtGLGraphicsScene (&examiner_widgets_);
+  glScene_ = new QtGLGraphicsScene (&examiner_widgets_, baseLayout_);
 
   // is stereo possible ?
   if (format.stereo())
@@ -123,8 +126,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
   glView_->setScene(glScene_);
 
-  baseLayout_ = new QtMultiViewLayout;
-  baseLayout_->setContentsMargins(0,0,0,0);
+
   centerWidget_ = new QGraphicsWidget;
   glScene_->addItem(centerWidget_);
   centerWidget_->setGeometry (glScene_->sceneRect ());

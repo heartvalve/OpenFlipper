@@ -42,6 +42,7 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include "QtGLGraphicsScene.hh"
+#include "QtMultiViewLayout.hh"
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <QApplication>
 #include <QPainter>
@@ -53,9 +54,11 @@
 
 //== IMPLEMENTATION ===========================================================
 
-QtGLGraphicsScene::QtGLGraphicsScene(std::vector< glViewer *> *_views) :
+QtGLGraphicsScene::QtGLGraphicsScene(std::vector< glViewer *> *_views,
+				     QtMultiViewLayout *_layout) :
   QGraphicsScene (),
-  views_(_views)
+  views_(_views),
+  layout_(_layout)
 {
 }
 
@@ -84,28 +87,28 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
       views_->at(i)->paintGL();
   }
 
-  
-  int i = PluginFunctions::activeExaminer();
 
-  QPen pen(Qt::red);
-  pen.setWidth (2);
-  _painter->setPen(pen);
-  _painter->drawLine(views_->at(i)->scenePos().x(),
-                     views_->at(i)->scenePos().y(),
-                     views_->at(i)->scenePos().x(),
-                     views_->at(i)->scenePos().y() + views_->at(i)->size().height() - 1);
-  _painter->drawLine(views_->at(i)->scenePos().x() + views_->at(i)->size().width(),
-                     views_->at(i)->scenePos().y(),
-                     views_->at(i)->scenePos().x() + views_->at(i)->size().width(),
-                     views_->at(i)->scenePos().y() + views_->at(i)->size().height() - 1);
-  _painter->drawLine(views_->at(i)->scenePos().x(),
-                     views_->at(i)->scenePos().y() - 1,
-                     views_->at(i)->scenePos().x() + views_->at(i)->size().width(),
-                     views_->at(i)->scenePos().y() - 1);
-  _painter->drawLine(views_->at(i)->scenePos().x(),
-                     views_->at(i)->scenePos().y() + views_->at(i)->size().height() - 1,
-                     views_->at(i)->scenePos().x() + views_->at(i)->size().width(),
-                     views_->at(i)->scenePos().y() + views_->at(i)->size().height() - 1);
+  if (layout_->mode() != QtMultiViewLayout::SingleView)
+  {
+    glViewer *v = views_->at(PluginFunctions::activeExaminer());
+
+    QPen pen(Qt::red);
+    pen.setWidth (2);
+    _painter->setPen(pen);
+    _painter->drawLine(v->scenePos().x(), v->scenePos().y(),
+                       v->scenePos().x(),
+                       v->scenePos().y() + v->size().height() - 1);
+    _painter->drawLine(v->scenePos().x() + v->size().width(), v->scenePos().y(),
+                       v->scenePos().x() + v->size().width(),
+                       v->scenePos().y() + v->size().height() - 1);
+    _painter->drawLine(v->scenePos().x(), v->scenePos().y() - 1,
+                       v->scenePos().x() + v->size().width(),
+                       v->scenePos().y() - 1);
+    _painter->drawLine(v->scenePos().x(),
+                       v->scenePos().y() + v->size().height() - 1,
+                       v->scenePos().x() + v->size().width(),
+                       v->scenePos().y() + v->size().height() - 1);
+  }
 }
 
 glViewer* QtGLGraphicsScene::findView (const QPointF &_p, bool _setActive)
