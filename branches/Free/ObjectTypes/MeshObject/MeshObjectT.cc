@@ -68,6 +68,12 @@
     init(_object.mesh_);
 
     setName( name() );
+
+    textures_.resize(1);
+    textureNames_.resize(1);
+
+    textures_[0] = 0 ;
+    textureNames_[0] = "No Texture";
   }
 
   /** Constructor for Mesh Objects. This object class gets a Separator Node giving
