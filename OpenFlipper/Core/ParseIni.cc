@@ -566,6 +566,11 @@ void Core::openIniFile( QString _filename,
 
   resetScenegraph();
 
+  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+    coreWidget_->examiner_widgets_[i]->drawMode( OpenFlipper::Options::standardDrawMode() );
+    coreWidget_->examiner_widgets_[i]->viewAll();
+  }
+
   if ( OpenFlipper::Options::gui() ) {
     coreWidget_->statusMessage( "Loading ini File " + _filename + " ... Done", 4000);
     coreWidget_->setStatus(ApplicationStatus::READY );
