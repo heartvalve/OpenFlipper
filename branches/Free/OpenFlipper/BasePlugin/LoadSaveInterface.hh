@@ -52,6 +52,11 @@
   * create new empty objects. 
  */ 
 class LoadSaveInterface {
+
+   public:
+      
+      /// Destructor
+      virtual ~LoadSaveInterface() {};
   
    signals :
       /** Tries to load the file as a given type
