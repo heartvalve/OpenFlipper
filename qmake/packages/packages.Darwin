@@ -27,6 +27,20 @@ defineTest( gmm ) {
   export(INCLUDEPATH)
 }
 
+defineTest( qwt ) {
+  INCLUDEPATH *= /usr/local/qwt-5.1.1/include
+  export(INCLUDEPATH)
+  LIBS *= -L/usr/local/qwt-5.1.1/lib -lqwt
+  export(LIBS)
+}
+
+defineTest( lapack ) {
+  INCLUDEPATH *= /sw/include/lapack
+  export(INCLUDEPATH)
+  LIBS *= -L/sw/lib/ -llapack
+  export(LIBS)
+}
+
 defineTest( freetype ) {
   INCLUDEPATH *= /usr/local/include/freetype2
   export(INCLUDEPATH)
@@ -42,14 +56,13 @@ defineTest( ftgl ) {
 
 defineTest( acg ) {
   QMAKE_LIBDIR += $${TOPDIR}/ACG/lib/$${BUILDDIRECTORY}
-  LIBS += -ACG
+  LIBS += -lACG
   export(QMAKE_LIBDIR)
   export(LIBS)
 }
 
 defineTest( openmesh ) {
   QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY}
-  # LIBS+= -install_name$${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY} -lCore
   LIBS += -lCore
   export(QMAKE_LIBDIR)
   export(LIBS)
