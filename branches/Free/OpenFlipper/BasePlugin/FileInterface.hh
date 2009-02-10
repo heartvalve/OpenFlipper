@@ -62,7 +62,10 @@ class FileInterface {
 /** @name Widgets
 * @{ */
 //===========================================================================
-  public :
+  public:
+
+    /// Destructor
+    virtual ~FileInterface() {};  
 
     /** You can provide a special widget showing options for saving your file types
       *  depending on the current filter
