@@ -47,15 +47,9 @@ void Core::resetScenegraph() {
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() ) {
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      // update scene graph
+      // update scene graph (get new bounding box and set projection right, including near and far plane)
       PluginFunctions::viewerProperties(i).lockUpdate();
       coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_);
-      coreWidget_->examiner_widgets_[i]->viewAll();
-      coreWidget_->examiner_widgets_[i]->setScenePos( coreWidget_->examiner_widgets_[i]->scene_center() ,
-                                                      coreWidget_->examiner_widgets_[i]->scene_radius() /* 10.0*/  );
-
-      coreWidget_->examiner_widgets_[i]->setHome();
-      coreWidget_->examiner_widgets_[i]->drawMode( OpenFlipper::Options::standardDrawMode() );
       PluginFunctions::viewerProperties(i).unLockUpdate();
       coreWidget_->examiner_widgets_[i]->updateGL();
     }
@@ -219,6 +213,11 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
 
    if ( OpenFlipper::Options::gui() )
     coreWidget_->addRecent( filename, object2->dataType() );
+
+   // if this is the first object opend, reset the global draw mode of all examiners to standard draw mode
+   if ( PluginFunctions::object_count() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+      coreWidget_->examiner_widgets_[i]->drawMode( OpenFlipper::Options::standardDrawMode() );
 
   // objectRoot_->dumpTree();
  }
