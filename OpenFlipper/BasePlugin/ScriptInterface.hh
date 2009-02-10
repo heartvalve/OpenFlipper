@@ -52,6 +52,10 @@
 */
 class ScriptInterface {
 
+   public:
+      /// Destructor
+      virtual ~ScriptInterface() {};
+
   signals :
 
      /** \brief Emit this signal if a scriptable function is executed

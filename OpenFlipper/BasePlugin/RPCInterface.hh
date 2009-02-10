@@ -48,7 +48,12 @@
 */
 class RPCInterface {
 
-  signals :
+   public:
+      
+      /// Destructor
+      virtual ~RPCInterface() {};
+
+   signals :
 
      /** Check if the plugin exists in the current Environment \n
        * @param _pluginName Name of the Plugin (has to be the clean version .. no Spaces etc)
