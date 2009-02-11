@@ -91,15 +91,6 @@ static bool stereo_ = false;
 /// Store the synchronization mode
 static bool synchronization_ = false;
 
-/// Store the animation mode
-static bool animation_ = false;
-
-/// Store the backfaceCulling mode
-static bool backfaceCulling_ = false;
-
-/// Store the backfaceCulling mode
-static bool twoSidedLighting_ = false;
-
 /// Store the wheelZoomFactor mode
 static double wheelZoomFactor_ = 1.0;
 
@@ -410,36 +401,6 @@ void synchronization( bool _synchronization ) {
 /// get current synchronization setting
 bool synchronization( ) {
   return synchronization_;
-}
-
-/// Store animation mode setting
-void animation( bool _animation ) {
-  animation_ = _animation;
-}
-
-/// get current animation setting
-bool animation( ) {
-  return animation_;
-}
-
-/// Store backfaceCulling setting
-void backfaceCulling( bool _backfaceCulling ) {
-  backfaceCulling_ = _backfaceCulling;
-}
-
-/// get backfaceCulling setting
-bool backfaceCulling( ) {
-  return backfaceCulling_;
-}
-
-/// Store twoSidedLighting setting
-void twoSidedLighting( bool _twoSidedLighting ) {
-  twoSidedLighting_ = _twoSidedLighting;
-}
-
-/// get twoSidedLighting setting
-bool twoSidedLighting( ) {
-  return twoSidedLighting_;
 }
 
 /// Store wheelZoomFactor setting

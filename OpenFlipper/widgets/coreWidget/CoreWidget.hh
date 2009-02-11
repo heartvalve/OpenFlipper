@@ -250,6 +250,10 @@ public:
     ///Store current key assignments to a given INI file
     void saveKeyBindings(INIFile& _ini);
 
+  private:
+    /// Store the state of the shift key
+    bool shiftPressed_;
+
    /** @} */
 
   //===========================================================================
@@ -486,11 +490,17 @@ public:
     /// called by plugins to add a real context menu depending on DataType
     void slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextMenuType type_);
 
-    /// update globalOptions for actions in the contexMenu
-    void updateGlobalOptions();
-
     /// change the background color
     void changeBackgroundColor();
+
+    /// change the animation setting
+    void slotChangeAnimation(bool _animation);
+
+    /// change the backFaceCulling setting
+    void slotChangeBackFaceCulling(bool _backFaceCulling);
+
+    /// change the twoSidedLighting setting
+    void slotChangeTwoSidedLighting(bool _lighting);
 
     /// Paste the view to the last active examiner
     void slotPasteView( );

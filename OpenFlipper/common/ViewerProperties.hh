@@ -49,11 +49,11 @@
 
 
 #include <QObject>
+#include <QColor>
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <ACG/Math/VectorT.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <ACG/GL/GLState.hh>
-
 
 namespace Viewer {
 
@@ -206,9 +206,26 @@ namespace Viewer {
       /// Get current background color
       ACG::Vec4f backgroundColor() { return backgroundColor_; }
 
+      /// Get current background color
+      QRgb backgroundColorRgb(){ QColor c;
+                                 c.setRedF(  backgroundColor_[0]);
+                                 c.setGreenF(backgroundColor_[1]);
+                                 c.setBlueF( backgroundColor_[2]);
+                                 c.setAlphaF(backgroundColor_[3]);
+                                 return c.rgba(); };
+
       /** Set background color.
       */
       void backgroundColor( ACG::Vec4f _color ) { backgroundColor_ = _color; emit updated(); };
+
+      /** Set background color.
+      */
+      void backgroundColor( QRgb _color ) { QColor c(_color);
+                                            backgroundColor_[0] = c.redF();
+                                            backgroundColor_[1] = c.greenF();
+                                            backgroundColor_[2] = c.blueF();
+                                            backgroundColor_[3] = c.alphaF();
+                                            emit updated(); };
 
     private:
       ACG::Vec4f backgroundColor_;

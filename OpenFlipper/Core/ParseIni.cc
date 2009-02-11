@@ -148,41 +148,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::randomBaseColor( random_base_color );
 
     //============================================================================
-    // Load the backface culling setting
-    //============================================================================
-    bool backface_culling = false;
-    if ( _ini.get_entry( backface_culling, "Options" , "BackfaceCulling") )
-      OpenFlipper::Options::backfaceCulling(backface_culling);
-
-    //============================================================================
-    // Load the WheelZoomFactor setting
-    //============================================================================
-    double wheelZoomFactor = 1.0;
-    if ( _ini.get_entry( wheelZoomFactor, "Options" , "WheelZoomFactor") )
-      OpenFlipper::Options::wheelZoomFactor(wheelZoomFactor);
-
-    //============================================================================
-    // Load the WheelZoomFactorShift setting
-    //============================================================================
-    double wheelZoomFactorShift = 0.2;
-    if ( _ini.get_entry( wheelZoomFactorShift, "Options" , "WheelZoomFactorShift") )
-      OpenFlipper::Options::wheelZoomFactorShift(wheelZoomFactorShift);
-
-    //============================================================================
-    // Load the animation setting
-    //============================================================================
-    bool animation = false;
-    if ( _ini.get_entry( animation, "Options" , "Animation") )
-      OpenFlipper::Options::animation(animation);
-
-    //============================================================================
-    // Load the twoSidedLighting setting
-    //============================================================================
-    bool twoSidedLighting = false;
-    if ( _ini.get_entry( twoSidedLighting, "Options" , "TwoSidedLighting") )
-      OpenFlipper::Options::twoSidedLighting(twoSidedLighting);
-
-    //============================================================================
     // Load the synchronization setting
     //============================================================================
     bool synchronization = false;
@@ -260,6 +225,20 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::logFile(logFile);
 
     //============================================================================
+    // Load the WheelZoomFactor setting
+    //============================================================================
+    double wheelZoomFactor = 1.0;
+    if ( _ini.get_entry( wheelZoomFactor, "Options" , "WheelZoomFactor") )
+      OpenFlipper::Options::wheelZoomFactor(wheelZoomFactor);
+
+    //============================================================================
+    // Load the WheelZoomFactorShift setting
+    //============================================================================
+    double wheelZoomFactorShift = 0.2;
+    if ( _ini.get_entry( wheelZoomFactorShift, "Options" , "WheelZoomFactorShift" ) )
+      OpenFlipper::Options::wheelZoomFactorShift(wheelZoomFactorShift);
+
+    //============================================================================
     // Load restrictFrameRate
     //============================================================================
     bool restrictFrameRate = false;
@@ -305,8 +284,57 @@ void Core::readApplicationOptions(INIFile& _ini) {
     QString updatePassword = "";
     if( _ini.get_entry(updatePassword, "Options", "UpdatePassword") )
       OpenFlipper::Options::updatePassword(updatePassword);
+  }
+}
 
+/// Read Options that needs the GUI to be set up completely
+void Core::readGUIOptions(INIFile& _ini) {
 
+  if ( !OpenFlipper::Options::gui() )
+    return;
+
+  uint viewerCount = 0;
+
+  if ( _ini.section_exists("Options") ) {
+
+    //============================================================================
+    // ViewerProperties
+    //============================================================================
+
+    bool multiView = false;
+    if( _ini.get_entry(multiView, "Options", "MultiView") )
+      OpenFlipper::Options::multiView(multiView);
+
+    if( _ini.get_entry(viewerCount, "Options", "ViewerCount") ){
+    }
+  }
+
+  if ( _ini.section_exists("ViewerProperties") ){
+    for ( unsigned int i = 0 ; i < viewerCount; ++i ) {
+
+      if (OpenFlipper::Options::examinerWidgets() < i)
+        break;
+
+      // Load the animation setting
+      bool animation = false;
+      if ( _ini.get_entry( animation, "ViewerProperties" , "Animation" + QString::number(i) ) )
+        PluginFunctions::viewerProperties(i).animation(animation);
+
+      // Load the twoSidedLighting setting
+      bool twoSidedLighting = false;
+      if ( _ini.get_entry( twoSidedLighting, "ViewerProperties" , "TwoSidedLighting" + QString::number(i)) )
+        PluginFunctions::viewerProperties(i).twoSidedLighting(twoSidedLighting);
+
+      // Load the backface culling setting
+      bool backface_culling = false;
+      if ( _ini.get_entry( backface_culling, "ViewerProperties" , "BackfaceCulling" + QString::number(i)) )
+        PluginFunctions::viewerProperties(i).backFaceCulling(backface_culling);
+
+      // Load the setting for the background color option
+      uint viewerBackground = 0;
+      if ( _ini.get_entry( viewerBackground, "ViewerProperties" , "BackgroundColor" + QString::number(i)) )
+        PluginFunctions::viewerProperties(i).backgroundColor( QRgb(viewerBackground) );
+    }
   }
 }
 
@@ -378,6 +406,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   //============================================================================
   // other
   //============================================================================
+  _ini.add_entry("Options","WheelZoomFactor", OpenFlipper::Options::wheelZoomFactor() );
+  _ini.add_entry("Options","WheelZoomFactorShift", OpenFlipper::Options::wheelZoomFactorShift() );
   // restrict Framerate
   _ini.add_entry("Options","RestrictFrameRate",OpenFlipper::Options::restrictFrameRate() );
   // max Framerate
@@ -430,17 +460,20 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
   if ( OpenFlipper::Options::gui() ) {
 
-    if ( OpenFlipper::Options::multiView() ) {
-      std::cerr << "Todo : Save application options for multiple views" << std::endl;
+    _ini.add_entry("Options","MultiView", OpenFlipper::Options::multiView() );
+    _ini.add_entry("Options","ViewerCount", OpenFlipper::Options::examinerWidgets() );
+
+    if ( !_ini.section_exists("ViewerProperties") )
+      _ini.add_section("ViewerProperties");
+
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+
+      _ini.add_entry("ViewerProperties","Animation" + QString::number(i),       PluginFunctions::viewerProperties(i).animation());
+      _ini.add_entry("ViewerProperties","BackfaceCulling" + QString::number(i), PluginFunctions::viewerProperties(i).backFaceCulling());
+      _ini.add_entry("ViewerProperties","TwoSidedLighting" + QString::number(i),PluginFunctions::viewerProperties(i).twoSidedLighting());
+      _ini.add_entry("ViewerProperties","BackgroundColor" + QString::number(i),
+                     (uint)PluginFunctions::viewerProperties(i).backgroundColorRgb() );
     }
-
-    _ini.add_entry("Options","BackfaceCulling",PluginFunctions::viewerProperties().backFaceCulling());
-    _ini.add_entry("Options","Animation",PluginFunctions::viewerProperties().animation());
-    _ini.add_entry("Options","twoSidedLighting",PluginFunctions::viewerProperties().twoSidedLighting());
-
-    _ini.add_entry("Options","WheelZoomFactor",PluginFunctions::viewerProperties().wheelZoomFactor());
-    _ini.add_entry("Options","WheelZoomFactorShift",PluginFunctions::viewerProperties().wheelZoomFactorShift());
-
     //============================================================================
     // Save the current draw modes
     //============================================================================
@@ -482,6 +515,8 @@ void Core::openIniFile( QString _filename,
   // Load Core settings only if requested
   if ( _coreSettings )
     readApplicationOptions(ini);
+
+  readGUIOptions(ini);
 
   // if requested load per Plugin settings from the settings file
   if ( _perPluginSettings )

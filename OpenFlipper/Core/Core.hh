@@ -435,6 +435,9 @@ private:
    /// Get all ini files and set basic paths and options
    void setupOptions();
 
+   /// Read Options that needs the GUI to be set up completely
+   void readGUIOptions(INIFile& _ini);
+
    /// Get and set Application options from ini file
    void readApplicationOptions(INIFile& _ini);
 
