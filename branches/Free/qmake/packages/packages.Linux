@@ -2,14 +2,15 @@
 # INCLUDE Packages
 ################################################################################
 
-# Get ACG path
+# ACG base directory (many libraries can be found there)
+# if ACG is not installed, change it to "/usr"
 contains( ARCHITECTURE, 32 ) {
-  ACG=/ACG/acgdev/gcc-4.3-i686
-  export(ACG)
+  BASE_PATH=/ACG/acgdev/gcc-4.3-i686
+  export(BASE_PATH)
 }
 contains( ARCHITECTURE, 64 ) {
-  ACG=/ACG/acgdev/gcc-4.3-x86_64
-  export(ACG)
+  BASE_PATH=/ACG/acgdev/gcc-4.3-x86_64
+  export(BASE_PATH)
 }
 
 DEBUGADDLIB = true
@@ -24,9 +25,9 @@ DEBUGADDLIB = true
 # and library files in /usr/example/lib
 #################################################################################
 
-# gmm (where $${ACG} is the installation directory of ACG)
-GMM_PATH_INC 		= $${ACG}/gmm-3/include
-GMM_PATH_LIB 		= $${ACG}/gmm-3/lib
+# gmm (where $${BASE_PATH} is the installation directory of ACG)
+GMM_PATH_INC 		= $${BASE_PATH}/gmm-3/include
+GMM_PATH_LIB 		= $${BASE_PATH}/gmm-3/lib
 
 # superlu
 SLU_PATH_INC 		= /usr/include/superlu
@@ -57,22 +58,22 @@ GLEW_PATH_INC		= /usr/include/GL
 GLEW_PATH_LIB		= /usr/lib
 
 # glut
-GLUT_PATH_INC		= $${ACG}/OpenGL/include
-GLUT_PATH_LIB		= $${ACG}/OpenGL/lib
+GLUT_PATH_INC		= /usr/include/GL
+GLUT_PATH_LIB		= /usr/lib
 
 # openmp
 OMP_PATH_LIB		= /usr/lib/gcc/x86_64-linux-gnu/4.3
 
 # ltilib
-LTI_PATH_INC		= $${ACG}/ltilib/include
-LTI_PATH_LIB		= $${ACG}/ltilib/lib
+LTI_PATH_INC		= $${BASE_PATH}/ltilib/include
+LTI_PATH_LIB		= $${BASE_PATH}/ltilib/lib
 
 # fftw
 FFTW_PATH_INC		= /usr/include
 FFTW_PATH_LIB		= /usr/lib
 
 # freetype2
-FT2_PATH_INC		= /usr/include/freetype2
+FT2_PATH_INC		= /usr/include/freetype2/freetype
 FT2_PATH_LIB		= /usr/lib
 
 # ftgl
@@ -88,20 +89,20 @@ NPBM_PATH_INC		= /usr/include
 NPBM_PATH_LIB		= /usr/lib
 
 # dc1394
-DC1394_PATH_INC	= $${ACG}/libdc1394-2.0.1/include
-DC1394_PATH_LIB	= $${ACG}/libdc1394-2.0.1/lib
+DC1394_PATH_INC	= $${BASE_PATH}/libdc1394-2.0.1/include
+DC1394_PATH_LIB	= $${BASE_PATH}/libdc1394-2.0.1/lib
 
 # swissranger
-SR_PATH_INC			= $${ACG}/swissranger/include
-SR_PATH_LIB			= $${ACG}/swissranger/lib
+SR_PATH_INC			= $${BASE_PATH}/swissranger/include
+SR_PATH_LIB			= $${BASE_PATH}/swissranger/lib
 
 # usb
 USB_PATH_INC		= /usr/include
 USB_PATH_LIB		= /usr/lib
 
 # cholmod
-CHM_PATH_INC		= $${ACG}/cholmod-1.7.0/include
-CHM_PATH_LIB		= $${ACG}/cholmod-1.7.0/lib
+CHM_PATH_INC		= $${BASE_PATH}/cholmod-1.7.0/include
+CHM_PATH_LIB		= $${BASE_PATH}/cholmod-1.7.0/lib
 
 ################################################################################
 
@@ -363,13 +364,15 @@ defineTest( fftw ) {
 
 defineTest( freetype ) {
 
-	exists ( $${FT_PATH_INC} ) {
+	exists ( $${FT2_PATH_INC} ) {
+		addLib ( /usr/lib  $${FT2_PATH_LIB}, freetype ) {
 
-  		INCLUDEPATH *= $${FT_PATH_INC}
+  		INCLUDEPATH *= $${FT2_PATH_INC}
   		export(INCLUDEPATH)
 
 			return(true)
 
+		}
 	} else {
 		message ( WARNING: freetype2 header files not found! )
 	}
