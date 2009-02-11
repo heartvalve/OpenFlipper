@@ -73,7 +73,7 @@ FFTW_PATH_INC		= /usr/include
 FFTW_PATH_LIB		= /usr/lib
 
 # freetype2
-FT2_PATH_INC		= /usr/include/freetype2/freetype
+FT2_PATH_INC		= /usr/include/freetype2
 FT2_PATH_LIB		= /usr/lib
 
 # ftgl
