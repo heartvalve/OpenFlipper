@@ -11,6 +11,7 @@ acg()
 glut()
 glew()
 openmp()
+ftgl()
 
 DIRECTORIES = ../BasePlugin ../ACGHelper ../common ../common/bsp  ../INIFile $$files( $${TOPDIR}/ObjectTypes/* ) \
               ../widgets/glWidget
