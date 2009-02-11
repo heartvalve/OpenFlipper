@@ -3,6 +3,7 @@
 # INCLUDE Packages
 ################################################################################
 
+#ADDLIBDEBUG = true
 
 defineTest( glew ) {
 
@@ -14,13 +15,12 @@ defineTest( glew ) {
 
   ######################################
 
-  !exists ( $${GLEW_PATH} ) {
-    error (ERROR: GLEW not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows!)
-  }
   INCLUDEPATH *= $${GLEW_PATH}\include
-  export(INCLUDEPATH)
-  LIBS *= -L$${GLEW_PATH}\lib -lglew32
-  export(LIBS)
+  export(INCLUDEPATH)  
+
+  !addLib( $${GLEW_PATH}\lib , glew32 ) {
+    error (ERROR: GLEW not found or wrong path entry in qmake\packages\packages.Windows!) 
+  }
 }
 
 defineTest( qt ) {
@@ -37,13 +37,13 @@ defineTest( glut ) {
 
   #######################################
 
-  !exists ( $${GLUT_PATH} ) {
-    error (ERROR: GLUT not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows!)
-  }
   INCLUDEPATH *= $${GLUT_PATH}\include
   export(INCLUDEPATH)
-  LIBS *= -L$${GLUT_PATH}\lib -lglut32
-  export(LIBS)
+
+  !addLib( $${GLUT_PATH}\lib , glut32) {
+    error (ERROR: GLUT not found or wrong path entry in qmake\packages\packages.Windows!) 
+  }
+
 }
 
 defineTest( acg ) {
@@ -88,14 +88,17 @@ defineTest( qwt ) {
 
   #######################################
 
-  !exists( $${QWT_PATH} ) {
-    error( ERROR: qwt not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
-  }
 
   INCLUDEPATH *= $${QWT_PATH}\src
   export(INCLUDEPATH)
-  LIBS *= -L$${QWT_PATH}\lib\ -lqwt5
-  export(LIBS)
+
+  !addLib( $${QWT_PATH}\lib , qwt5) {
+    message (WARNING: QWT not found or wrong path entry in qmake\packages\packages.Windows!) 
+  } else {
+    DEFINES *= USE_QWT
+    export(DEFINES)
+  }
+
 }
 
 
@@ -237,9 +240,15 @@ defineTest( freetype ) {
     return(false)
   }
 
-  LIBS *= -L$${FT_PATH}\lib -lfreetype
-  export(LIBS)
-  export(FT_PATH)
+  !addLib( $${FT_PATH}\lib , freetype) {
+    error (ERROR: freetype not found or wrong path entry in qmake\packages\packages.Windows!) 
+    return(false)
+  } else {
+    INCLUDEPATH += $$quote($${FT_PATH}\include) $$quote($${FT_PATH}\include\freetype2) 
+    export(INCLUDEPATH)
+    return(true)
+  }
+
 }
 
 defineTest( ftgl ) {
@@ -252,27 +261,32 @@ defineTest( ftgl ) {
 
   #########################################
 
-  !exists( $${FTGL_PATH} ) {
-    message( WARNING: FTGL not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
-    return(false)
-  } else {
-    freetype() {
-      DEFINES += USE_FTGL
-      export(DEFINES)
-    } else {
-      error ( ERROR: FTGL requires FreeType but FreeType was not found )
-    }
-  }
 
-  CONFIG( debug, debug|release ){
-    LIBS *= -L$${FTGL_PATH}\msvc\Build -lftgl_D
-  } else {
-    LIBS *= -L$${FTGL_PATH}\msvc\Build -lftgl
+  !freetype() {
+    error ( ERROR: FTGL requires FreeType but FreeType was not found )
   }
   
-  INCLUDEPATH *= $${FTGL_PATH}\src $$quote($${FT_PATH}\include) $$quote($${FT_PATH}\include\freetype2) 
-  export(LIBS)
-  export(INCLUDEPATH)
+
+  CONFIG( debug, debug|release ){
+    addLib( $${FTGL_PATH}\msvc\Build , ftgl_D ) {
+      DEFINES += USE_FTGL
+      INCLUDEPATH *= $${FTGL_PATH}\src 
+      export(INCLUDEPATH)
+      export(DEFINES)
+    } else {
+      message( WARNING: FTGL not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! ) 
+    }
+  } else {
+    addLib( $${FTGL_PATH}\msvc\Build , ftgl ) {
+      DEFINES += USE_FTGL
+      INCLUDEPATH *= $${FTGL_PATH}\src 
+      export(INCLUDEPATH)
+      export(DEFINES)
+    } else {
+      message( WARNING: FTGL not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+    }
+  }
+  
 }
 
 
