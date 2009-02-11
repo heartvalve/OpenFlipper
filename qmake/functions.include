@@ -40,25 +40,67 @@ defineTest( addSubdirs ) {
     export (SUBDIRS)
 }
 
+defineTest( addLibDebug ) {
+  contains( ADDLIBDEBUG , true ) {
+     return(true)
+  }
+  return (false)
+}
+
 # given a list of paths and a libname this function checks if the lib is there
 # adds the path and returns true if found otherwise false
 defineTest( addLib ) {
+   
     dirs = $$1
     name = $$2
 
+    ADDLIBFOUNDPATH = 
+
     # check for the library
     for(dir , dirs) {
-        check = $${dir}/lib$${name}.so
+        unix {
+	   check = $${dir}/lib$${name}.so
+        } 
+     
+        win32 {
+           # The name of the lib will end with lib! Not DLL!
+           check = $${dir}/$${name}.lib
+        }
 
-        # Found, so use it
-	      exists( $$check ) {
-           LIBS *= -L$${dir} -l$$name
-      	   export(LIBS)
-           return(true)
+        isEmpty( ADDLIBFOUNDPATH ) {
+   	   addLibDebug( ) {
+             message( Checking for lib $$name at $$check )
+           }
+
+           # Found, so use it
+	   exists( $$check ) {
+	     addLibDebug( ) {
+                message( Found lib $$name at $$check )
+             }
+             ADDLIBFOUNDPATH = $${dir}
+           }
+
         }
     }
 
+    # Check if we found the library
+    !isEmpty( ADDLIBFOUNDPATH ) {
+
+       LIBS         *= -L$${ADDLIBFOUNDPATH} -l$$name
+       QMAKE_LIBDIR *= $${ADDLIBFOUNDPATH}
+       export(QMAKE_LIBDIR)
+       export(LIBS)
+       addLibDebug( ) {
+          message( Setting LibPath for $$name to $${ADDLIBFOUNDPATH} )
+       }
+       return(true)       
+           
+    } else {
+       return(false)
+    }
+
     return(false)
+
 }
 
 
