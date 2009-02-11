@@ -27,7 +27,6 @@ DEBUGADDLIB = true
 
 # gmm (where $${BASE_PATH} is the installation directory of ACG)
 GMM_PATH_INC 		= $${BASE_PATH}/gmm-3/include
-GMM_PATH_LIB 		= $${BASE_PATH}/gmm-3/lib
 
 # superlu
 SLU_PATH_INC 		= /usr/include/superlu
