@@ -64,7 +64,7 @@ defineTest( addLib ) {
      
         win32 {
            # The name of the lib will end with lib! Not DLL!
-           check = $${dir}/$${name}.lib
+           check = $${dir}\\$${name}.lib
         }
 
         macx {
