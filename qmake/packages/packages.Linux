@@ -33,7 +33,7 @@ SLU_PATH_INC 		= /usr/include/superlu
 SLU_PATH_LIB 		= /usr/lib
 
 # taucs
-TAUCS_PATH_INC	= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/include
+TAUCS_PATH_INC	= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include/
 TAUCS_PATH_LIB	= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
 
 # CGAL
