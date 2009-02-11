@@ -67,6 +67,12 @@ defineTest( addLib ) {
            check = $${dir}/$${name}.lib
         }
 
+        macx {
+          # The name of the lib will end with dylib
+          check = $${dir}/lib$${name}.dylib
+
+        }
+
         isEmpty( ADDLIBFOUNDPATH ) {
    	   addLibDebug( ) {
              message( Checking for lib $$name at $$check )
