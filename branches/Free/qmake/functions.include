@@ -109,6 +109,10 @@ defineTest( addLib ) {
 
 }
 
+defineTest( addInclude ) {
+
+}
+
 
 defineReplace( getCurrentDir ) {
 	DIR = ''
