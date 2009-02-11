@@ -34,7 +34,7 @@ SLU_PATH_INC 		= /usr/include/superlu
 SLU_PATH_LIB 		= /usr/lib
 
 # taucs
-TAUCS_PATH_INC	= /ACG/acgdev/gcc-4.2-x86_64/taucs-2.2.new/inlude
+TAUCS_PATH_INC	= /ACG/acgdev/gcc-4.2-x86_64/taucs-2.2.new/include
 TAUCS_PATH_LIB	= /ACG/acgdev/gcc-4.2-x86_64/taucs-2.2.new/lib
 
 # CGAL
@@ -154,9 +154,14 @@ defineTest( superlu ) {
 defineTest( taucs ) {
 
 	exists ( $${TAUCS_PATH_INC}/taucs.h ) {
-		addLib ( /usr/lib $${TAUCS_PATH_LIB}, taucs ) {
-			addLib ( /usr/lib $${TAUCS_PATH_LIB}, lapack ) {
-				addLib ( /usr/lib $${TAUCS_PATH_LIB}, metis ) {
+		exists ( $${TAUCS_PATH_LIB}/libtaucs.a ) {
+			exists ( $${TAUCS_PATH_LIB}/liblapack.a ) {
+				exists ( $${TAUCS_PATH_LIB}/libmetis.a ) {
+
+					LIBS *= -l$${TAUCS_PATH_LIB}/libtaucs.a
+					LIBS *= -l$${TAUCS_PATH_LIB}/liblapack.a
+					LIBS *= -l$${TAUCS_PATH_LIB}/libmetis.a
+					export(LIBS)
 
 					INCLUDEPATH *= $${TAUCS_PATH_INC}
 					export(INCLUDEPATH)
