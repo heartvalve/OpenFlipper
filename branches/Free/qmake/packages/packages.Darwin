@@ -1,8 +1,572 @@
-
 ################################################################################
 # INCLUDE Packages
 ################################################################################
 
+DEBUGADDLIB = true
+
+################################################################################
+# Library paths
+################################################################################
+# Enter correct paths to libraries and header files.
+#
+# Setting "EXAMPLE_LIB_PATH = /usr/example" for example
+# supposes to find header files in /usr/example/include
+# and library files in /usr/example/lib
+#################################################################################
+
+# gmm (where $${BASE_PATH} is the installation directory of ACG)
+GMM_PATH_INC 		= /usr/local/include/gmm
+GMM_PATH_LIB 		= /usr/lib
+
+# glew
+GLEW_PATH_INC		= /sw/include/GL
+GLEW_PATH_LIB		= /sw/lib
+
+# openmp
+OMP_PATH_LIB		= /usr/lib/gcc/i686-apple-darwin8/4.3
+
+# ltilib
+LTI_PATH_INC		= /usr/local/include/ltilib/include
+LTI_PATH_LIB		= /usr/lib/ltilib/lib
+
+# fftw
+FFTW_PATH_INC		= /usr/local/include
+FFTW_PATH_LIB		= /usr/local/lib
+
+# freetype2
+FT2_PATH_INC		= /usr/local/include/freetype2
+FT2_PATH_LIB		= /usr/local/lib
+
+# ftgl
+FTGL_PATH_INC		= /usr/local/include/FTGL
+FTGL_PATH_LIB		= /usr/local/lib
+
+# png
+PNG_PATH_INC		= /usr/local/include/libpng
+PNG_PATH_LIB		= /usr/local/lib
+
+# netpbm
+NPBM_PATH_INC		= /usr/local/include
+NPBM_PATH_LIB		= /usr/local/lib
+
+# dc1394
+DC1394_PATH_INC	= /usr/local/include
+DC1394_PATH_LIB	= /usr/local/lib
+
+# swissranger
+SR_PATH_INC			= /usr/local/swissranger/include
+SR_PATH_LIB			= /usr/local/swissranger/lib
+
+# usb
+USB_PATH_INC		= /usr/local/include
+USB_PATH_LIB		= /usr/local/lib
+
+# cholmod
+CHM_PATH_INC		= /usr/local/cholmod-1.7.0/include
+CHM_PATH_LIB		= /usr/local/cholmod-1.7.0/lib
+
+################################################################################
+
+################################################################################
+# Don't make any changes below!
+################################################################################
+
+defineTest( qt ) {
+  QT += opengl network script sql
+  export(QT)
+}
+
+defineTest( gmm ) {
+
+	exists ( $${GMM_PATH_INC}/gmm.h ) {
+
+  	INCLUDEPATH += $${GMM_PATH_INC}
+  	export(INCLUDEPATH)
+
+		return(true)
+
+	} else {
+		message ( WARNING: gmm header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( superlu ) {
+
+	exists ( $${SLU_PATH_INC}/slu_Cnames.h ) {
+		addLib ( /usr/lib /sw/lib $${SLU_PATH_LIB}, superlu ) {
+  		
+			INCLUDEPATH *= $${SLU_PATH_INC}
+  		export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: superlu header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( taucs ) {
+
+	exists ( $${TAUCS_PATH_INC}/taucs.h ) {
+		exists ( $${TAUCS_PATH_LIB}/libtaucs.a ) {
+			exists ( $${TAUCS_PATH_LIB}/liblapack.a ) {
+				exists ( $${TAUCS_PATH_LIB}/libmetis.a ) {
+
+					LIBS *= -l$${TAUCS_PATH_LIB}/libtaucs.a
+					LIBS *= -l$${TAUCS_PATH_LIB}/liblapack.a
+					LIBS *= -l$${TAUCS_PATH_LIB}/libmetis.a
+					export(LIBS)
+
+					INCLUDEPATH *= $${TAUCS_PATH_INC}
+					export(INCLUDEPATH)
+
+					return(true)
+
+				}
+			}
+		}
+	} else {
+		message ( WARNING: taucs header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( cgal ) {
+
+	exists ( $${CGAL_PATH_INC} ) {
+		addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGAL ) {
+			addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGALcore++ ) {
+				addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGALimageIO ) {
+					addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGALPDB ) {
+						addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGALQt ) {
+
+  						INCLUDEPATH *= $${CGAL_PATH_INC}
+  						export(INCLUDEPATH)
+
+							return(true)
+						}
+					}
+				}
+			}
+		}
+	} else {
+		message ( WARNING: cgal header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( lapack ) {
+
+	exists ( $${LAP_PATH_INC} ) {
+		addLib ( /usr/lib /sw/lib $${LAP_PATH_LIB}, lapack ) {
+
+  		INCLUDEPATH *= $${LAP_PATH_INC}
+  		export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: lapack header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( wordnet ) {
+
+	exists ( $${WN_PATH_INC}/wn.h ) {
+		addLib ( /usr/lib /sw/lib $${WN_PATH_LIB}, wordnet ) {
+
+  		INCLUDEPATH *= $${WN_PATH_INC}
+  		export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: wordnet header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( qwt ) {
+
+	exists ( $${QWT_PATH_INC} ) {
+		addLib ( /usr/lib /sw/lib $${QWT_PATH_LIB}, qwt ) {
+
+  		INCLUDEPATH *= $${QWT_PATH_INC}
+  		export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: qwt header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( glew ) {
+
+	exists ( $${GLEW_PATH_INC}/glew.h ) {
+		addLib ( /usr/lib /sw/lib $${GLEW_PATH_LIB}, GLEW ) {
+  
+			INCLUDEPATH *= $${GLEW_PATH_INC}
+  		export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: glew header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( glut ) {
+  INCLUDEPATH *= /System/Library/Frameworks/GLUT.framework/Headers
+  export(INCLUDEPATH)
+  LIBS *= -framework GLUT
+  export(LIBS)
+}
+
+defineTest( openmp ) {
+
+  addLib( /usr/lib /sw/lib $${OMP_PATH_LIB}, gomp ) {
+
+    QMAKE_CXXFLAGS_RELEASE += -fopenmp
+    QMAKE_CXXFLAGS_DEBUG   += -fopenmp
+    QMAKE_CFLAGS_RELEASE   += -fopenmp
+    QMAKE_CFLAGS_DEBUG     += -fopenmp
+    QMAKE_LFLAGS_DEBUG     += -fopenmp
+    QMAKE_LFLAGS_RELEASE   += -fopenmp
+
+    export(QMAKE_CXXFLAGS_RELEASE)
+    export(QMAKE_CFLAGS_RELEASE)
+    export(QMAKE_CXXFLAGS_DEBUG)
+    export(QMAKE_CFLAGS_DEBUG)
+    export(QMAKE_LFLAGS_DEBUG)
+    export(QMAKE_LFLAGS_RELEASE)
+
+		return(true)
+
+  } else {
+    message("WARNING: Unable to find OpenMP lib for linking. OpenMP support will be disabled!")
+  }
+
+	return(false)
+}
+
+defineTest( ltilib ) {
+
+	exists ( $${LTI_PATH_INC} ) {
+		CONFIG( debug, debug|release ){
+			# debug
+			TEST = addLib( /usr/lib /sw/lib $${LTI_PATH_LIB}, ltid )
+  	} else {
+			# release
+  		TEST = addLib( /usr/lib /sw/lib $${LTI_PATH_LIB}, ltir )
+  	}
+		TEST {
+			addLib( /usr/lib /sw/lib $${LTI_PATH_LIB}, jpeg ) {
+
+		  	INCLUDEPATH *= $${LTI_PATH_INC}
+				export(INCLUDEPATH)
+
+				return(true)
+
+			}
+		}
+	} else {
+		message ( WARNING: ltilib header files not found! )
+	}
+	
+	return(false)
+}
+
+defineTest( fftw ) {
+
+	exists ( $${FFTW_PATH_INC}/fftw.h ) {
+		addLib ( /usr/lib /sw/lib $${FFTW_PATH_LIB}, fftw3 ) {
+			addLib ( /usr/lib /sw/lib $${FFTW_PATH_LIB}, fftw3f ) {
+
+  			INCLUDEPATH *= $${FFTW_PATH_INC}
+  			export(INCLUDEPATH)
+
+				return(true)	
+
+			}
+		}
+	} else {
+		message ( WARNING: fftw header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( freetype ) {
+
+	exists ( $${FT2_PATH_INC} ) {
+		addLib ( /usr/lib /sw/lib  $${FT2_PATH_LIB}, freetype ) {
+
+  		INCLUDEPATH *= $${FT2_PATH_INC}
+  		export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: freetype2 header files not found! )
+	}
+}
+
+defineTest( ftgl ) {
+
+	freetype() {
+		exists ( $${FTGL_PATH_INC} ) {
+			addLib ( /usr/lib /sw/lib $${FTGL_PATH_LIB}, ftgl ) {
+  			
+				INCLUDEPATH *= $${FTGL_PATH_INC}
+				export(INCLUDEPATH)
+  			DEFINES += USE_FTGL
+  			export(DEFINES)
+
+				return(true)
+
+			}
+		} else {
+		message ( WARNING: ftgl header files not found! )
+		}
+	}
+  		
+  return(false)
+}
+
+
+defineTest( png ) {
+
+	exists ( $${PNG_PATH_INC} ) {
+		addLib ( /usr/lib /sw/lib $${PNG_PATH_LIB}, png ) {
+  		
+			INCLUDEPATH *= $${PNG_PATH_INC}
+			export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: png header files not found! )
+	}
+
+	return(false)
+}
+
+
+defineTest( netpbm ) {
+
+	exists ( $${NPBM_PATH_INC} ) {
+		addLib ( /usr/lib /sw/lib $${NPBM_PATH_LIB}, netpbm ) {
+  
+			INCLUDEPATH *= $${NPBM_PATH_INC}
+  		export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: netpbm header files not found! )
+	}
+
+	return(false)
+}
+
+
+defineTest( dc1394 ) {
+
+	exists ( $${DC1394_PATH_INC} ) {
+		addLib ( /usr/lib /sw/lib $${DC1394_PATH_LIB}, dc1394 ) {
+
+  		INCLUDEPATH *= $${DC1394_PATH_INC}
+  		export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: dc1394 header files not found! )
+	}
+
+	return(false)
+}
+
+
+defineTest( swissranger ) {
+
+	exists ( $${SR_PATH_INC} ) {
+		addLib ( /usr/lib /sw/lib $${SR_PATH_LIB}, usbSR ) {
+
+  		INCLUDEPATH *= $${SR_PATH_INC}
+  		export(INCLUDEPATH)
+
+			return(true)
+
+		}
+	} else {
+		message ( WARNING: swissranger header files not found! )
+	}
+
+	return(false)
+}
+
+
+defineTest( cuda ) {
+
+  CONFIG(debug, debug|release){
+    CUDA_NVCCFLAGS_DEBUG += -g -deviceemu
+  } else {
+
+  }
+
+
+  unix {
+    # auto-detect CUDA path
+    CUDA_DIR = $$system(which nvcc)
+    CUDA_DIR = $$replace(CUDA_DIR,/bin/nvcc,/)
+    isEmpty( CUDA_DIR ) {
+        exists(/usr/local/cuda) {
+            CUDA_DIR = '/usr/local/cuda'
+        }
+        isEmpty( CUDA_DIR ) {
+            CUDA_DIR = '/ACG/acgdev/gcc-4.0-x86_64/cuda2'
+        }
+        exists($$CUDA_DIR){
+            !build_pass : message("Found CUDA at" $$CUDA_DIR)
+        }
+    }
+    NVCCPATH = $$CUDA_DIR/bin/nvcc
+    INCLUDEPATH += $$CUDA_DIR/include
+    QMAKE_LIBDIR += $$CUDA_DIR/lib
+    LIBS += -Wl,-rpath=$$CUDA_DIR/lib -lcudart
+
+
+    cuda.output = ${OBJECTS_DIR}${QMAKE_FILE_BASE}_cuda.obj
+    cuda.commands = $$NVCCPATH $$CUDA_NVCCFLAGS_DEBUG -c -Xcompiler -fPIC -Xcompiler $$join(QMAKE_CXXFLAGS,",") $$join(INCLUDEPATH,'" -I "','-I "','"') ${QMAKE_FILE_NAME} -Xptxas -v -o ${QMAKE_FILE_OUT}
+    cuda.dependcy_type = TYPE_C
+    cuda.depend_command = $$NVCCPATH $$CUDA_NVCCFLAGS_DEBUG -M -Xcompiler $$join(QMAKE_CXXFLAGS,",") $$join(INCLUDEPATH,'" -I "','-I "','"') ${QMAKE_FILE_NAME} | sed "s/^.*:\ //" | sed "s/^\ *//" | tr -d '\\\n'
+  }
+
+  cuda.input = CUDA_SOURCES
+
+  export(INCLUDEPATH)
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+  export(CUDA_DIR)
+  export(NVCCPATH)
+
+  export(cuda.output)
+  export(cuda.commands)
+  export(cuda.dependcy_type)
+  export(cuda.depend_command)
+  export(cuda.input)
+
+  QMAKE_EXTRA_COMPILERS += cuda
+  export(QMAKE_EXTRA_COMPILERS)
+}
+
+defineTest( usb ) {
+
+	exists ( $${USB_PATH_INC}/usb.h ) {
+		addLib ( /usr/lib /sw/lib $${USB_PATH_LIB}, usb ) {
+			addLib ( /usr/lib /sw/lib $${USB_PATH_LIB}, usbpp ) {
+
+				INCLUDEPATH *= $${USB_PATH_INC}
+  			export(INCLUDEPATH)
+
+				return(true)
+
+			}
+		}
+	} else {
+		message ( WARNING: usb header files not found! )
+	}
+	
+	return(false)
+}
+
+
+
+defineTest( cholmod ) {
+
+	exists ( $${CHM_PATH_INC} ) {
+		addLib ( /usr/lib /sw/lib $${CHM_PATH_LIB}, cholmod ) {
+			addLib ( /usr/lib /sw/lib $${CHM_PATH_LIB}, colamd ) {
+				addLib ( /usr/lib /sw/lib $${CHM_PATH_LIB}, ccolamd ) {
+					addLib ( /usr/lib /sw/lib $${CHM_PATH_LIB}, camd ) {
+						addLib ( /usr/lib /sw/lib $${CHM_PATH_LIB}, amd ) {
+							addLib ( /usr/lib /sw/lib $${CHM_PATH_LIB}, metis ) {
+								addLib ( /usr/lib /sw/lib $${CHM_PATH_LIB}, lapack ) {
+
+  								INCLUDEPATH *= $${CHM_PATH_INC}
+  								export(INCLUDEPATH)
+
+									return(true)
+
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	} else {
+		message ( WARNING: cholmod header files not found! )
+	}
+
+	return(false)
+}
+
+defineTest( acg ) {
+  QMAKE_LIBDIR += $${TOPDIR}/ACG/lib/$${BUILDDIRECTORY}
+  LIBS += -lACG
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+}
+
+defineTest( openmesh ) {
+  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY}
+  LIBS += -lCore
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################################
 defineTest( qt ) {
   QT += opengl network script sql
   export(QT)
