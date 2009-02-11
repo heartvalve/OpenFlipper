@@ -38,8 +38,8 @@ TAUCS_PATH_INC	= /ACG/acgdev/gcc-4.2-x86_64/taucs-2.2.new/inlude
 TAUCS_PATH_LIB	= /ACG/acgdev/gcc-4.2-x86_64/taucs-2.2.new/lib
 
 # CGAL
-CGAL_PATH_INC		= $${BASE_PATH}/CGAL-3.2.1/include/CGAL/
-CGAL_PATH_LIB		= $${BASE_PATH}/CGAL-3.2.1/lib
+CGAL_PATH_INC		= /usr/include/CGAL/
+CGAL_PATH_LIB		= /usr/lib
 
 # lapack
 LAP_PATH_INC		= /usr/include
