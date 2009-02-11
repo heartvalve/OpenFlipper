@@ -233,7 +233,8 @@ defineTest( freetype ) {
   ###########################################
 
   !exists( $${FT_PATH} ) {
-    error( ERROR: FreeType not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+    message( WARNING: FreeType not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+    return(false)
   }
 
   LIBS *= -L$${FT_PATH}\lib -lfreetype
@@ -252,10 +253,17 @@ defineTest( ftgl ) {
   #########################################
 
   !exists( $${FTGL_PATH} ) {
-    error( ERROR: FTGL not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+    message( WARNING: FTGL not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
+    return(false)
+  } else {
+    freetype() {
+      DEFINES += USE_FTGL
+      export(DEFINES)
+    } else {
+      error ( ERROR: FTGL requires FreeType but FreeType was not found )
+    }
   }
 
-  freetype()
   CONFIG( debug, debug|release ){
     LIBS *= -L$${FTGL_PATH}\msvc\Build -lftgl_D
   } else {

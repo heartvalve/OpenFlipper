@@ -160,6 +160,8 @@ defineTest( ftgl ) {
   freetype()
   INCLUDEPATH *= /usr/include 
   LIBS *= -lftgl
+  DEFINES += USE_FTGL
+  export(DEFINES)
   export(INCLUDEPATH)
   export(LIBS)
 }
