@@ -463,6 +463,8 @@ void CoreWidget::registerCoreKeys() {
   emit registerKey(Qt::Key_Escape , Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
   emit registerKey(Qt::Key_Space  , Qt::NoModifier, "Toggle between multiview and single view");
 
+  emit registerKey(Qt::Key_Shift  , Qt::ShiftModifier, "Apply context menu action to all Viewers", true);
+  emit registerKey(Qt::Key_Shift  , Qt::NoModifier, "Apply context menu action to all Viewers", true);
 }
 
 /// if a keyPressEvent belongs to the core this functions is called
@@ -554,30 +556,41 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
     case Qt::Key_Space:
       if ( OpenFlipper::Options::multiView() ) {
         emit log( "Switch MultiView mode");
-	switch (baseLayout_->mode())
-	{
-	  case QtMultiViewLayout::SingleView:
-	    baseLayout_->setMode (QtMultiViewLayout::Grid);
-	    break;
-	  case QtMultiViewLayout::Grid:
-	    baseLayout_->setMode (QtMultiViewLayout::HSplit);
-	    break;
-	  case QtMultiViewLayout::HSplit:
-	    baseLayout_->setMode (QtMultiViewLayout::SingleView);
-	    PluginFunctions::setActiveExaminer (0);
-	    break;
-	}
-      }
 
+        switch (baseLayout_->mode())
+        {
+          case QtMultiViewLayout::SingleView:
+            baseLayout_->setMode (QtMultiViewLayout::Grid);
+            break;
+          case QtMultiViewLayout::Grid:
+            baseLayout_->setMode (QtMultiViewLayout::HSplit);
+            break;
+          case QtMultiViewLayout::HSplit:
+            baseLayout_->setMode (QtMultiViewLayout::SingleView);
+            PluginFunctions::setActiveExaminer (0);
+            break;
+        }
+      }
       break;
 
-    // This should never be reached!
+    case Qt::Key_Shift :
+      shiftPressed_ = true;
+      break;
+
     default:
+      shiftPressed_ = false;
       return;
   }
 }
 
 /// if a keyReleaseEvent belongs to the core this functions is called
-void CoreWidget::coreKeyReleaseEvent(QKeyEvent* /*_e*/){
+void CoreWidget::coreKeyReleaseEvent(QKeyEvent* _e){
 
+  switch (_e->key()) {
+    case Qt::Key_Shift :
+      shiftPressed_ = false;
+      break;
+    default:
+      return;
+  }
 }

@@ -89,22 +89,12 @@ void Core::applyOptions(){
     QColor c = OpenFlipper::Options::defaultBackgroundColor() ;
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      //animation
-      PluginFunctions::viewerProperties(i).animation(OpenFlipper::Options::animation());
-
-      //Backface Culling
-      PluginFunctions::viewerProperties(i).backFaceCulling(OpenFlipper::Options::backfaceCulling());
-
       //wheel zoom factor
-      PluginFunctions::viewerProperties().wheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());
-      PluginFunctions::viewerProperties().wheelZoomFactorShift(OpenFlipper::Options::wheelZoomFactorShift());
+      PluginFunctions::viewerProperties(i).wheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());
+      PluginFunctions::viewerProperties(i).wheelZoomFactorShift(OpenFlipper::Options::wheelZoomFactorShift());
 
       // Picking Debugger
       PluginFunctions::viewerProperties(i).renderPicking(OpenFlipper::Options::renderPicking(), target );
-
-      // Background color
-      PluginFunctions::viewerProperties(i).backgroundColor( ACG::Vec4f(c.redF(),c.greenF(),c.blueF(),1.0f) );
-
     }
 
     //hideToolbox

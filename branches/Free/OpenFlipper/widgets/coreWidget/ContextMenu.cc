@@ -207,86 +207,77 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
 
   // Add a functions menu
   QAction* action;
-  if ( functionMenu_ == 0 ) {
+  if ( functionMenu_ == 0 ){
+  
     functionMenu_ = new QMenu("&Functions",contextMenu_);
-
+  
     //====================================================================================================
-
+  
     action = functionMenu_->addAction("Set Background Color");
     action->setToolTip("Set the background color for the viewer");
     connect(action, SIGNAL(triggered()), this, SLOT(changeBackgroundColor()) );
-
+  
     //====================================================================================================
-
+  
     functionMenu_->addSeparator();
-
+  
     //====================================================================================================
-
+  
     action = functionMenu_->addAction("Snapshot");
     action->setToolTip("Make a snapshot");
     connect(action, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
-
+  
     //====================================================================================================
-
+  
     action = functionMenu_->addAction("Set Snapshot Name");
     action->setToolTip("Set a name for snapshots");
     connect(action, SIGNAL(triggered()), this, SLOT(slotSnapshotName()) );
-
+  
     //====================================================================================================
-
+  
     functionMenu_->addSeparator();
-
+  
     //====================================================================================================
-
+  
     action = functionMenu_->addAction("Copy View");
     action->setToolTip("Copy current view to clipboard");
     connect(action, SIGNAL(triggered()), this, SLOT(slotCopyView()) );
-
+  
     //====================================================================================================
-
+  
     action = functionMenu_->addAction("Paste View");
     action->setToolTip("Paste current view from clipboard");
     connect(action, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
-
+  
     //====================================================================================================
-
+  
     functionMenu_->addSeparator();
-
+  
     //====================================================================================================
-
+  
     action = functionMenu_->addAction("Animation");
     action->setToolTip("Animate rotation of objects");
     action->setCheckable( true );
-    action->setChecked( OpenFlipper::Options::animation() );
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      connect(action, SIGNAL(triggered(bool)), &(PluginFunctions::viewerProperties(i)), SLOT(animation(bool)) );
-    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions()) );
-
+    action->setChecked( PluginFunctions::viewerProperties().animation() );
+    connect(action, SIGNAL(triggered(bool)), this , SLOT( slotChangeAnimation(bool) ) );
+  
     //====================================================================================================
-
+  
     action = functionMenu_->addAction("Backface Culling");
     action->setToolTip("Enable backface culling");
     action->setCheckable( true );
-    action->setChecked( OpenFlipper::Options::backfaceCulling() );
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      connect(action, SIGNAL(triggered(bool)), &(PluginFunctions::viewerProperties(i)), SLOT(backFaceCulling(bool)) );
-    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions()) );
-
+    action->setChecked( PluginFunctions::viewerProperties().backFaceCulling() );
+    connect(action, SIGNAL(triggered(bool)), this , SLOT( slotChangeBackFaceCulling(bool) ) );
+  
     //====================================================================================================
-
+  
     action = functionMenu_->addAction("Two-sided Lighting");
     action->setToolTip("Enable two-sided lighting");
     action->setCheckable( true );
-    action->setChecked( OpenFlipper::Options::twoSidedLighting() );
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      connect(action, SIGNAL(triggered(bool)), &(PluginFunctions::viewerProperties(i)) , SLOT(twoSidedLighting(bool)) );
-    connect(action, SIGNAL(triggered(bool)), this, SLOT(updateGlobalOptions()) );
-
+    action->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
+    connect(action, SIGNAL(triggered(bool)), this , SLOT( slotChangeTwoSidedLighting(bool) ) );
+  
     functionMenu_->setTearOffEnabled(true);
-
-
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
-      connect( &(PluginFunctions::viewerProperties(i)) , SIGNAL(updated()) , this, SLOT(updateGlobalOptions()));
   }
 
   contextMenu_->addMenu(functionMenu_ );
@@ -326,27 +317,54 @@ void CoreWidget::changeBackgroundColor(){
 
   ACG::Vec4f bc = PluginFunctions::viewerProperties().backgroundColor() * 255.0;
 
-//   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-//         std::cerr << "Color before : " << i << " : " <<  examiner_widgets_[i]->backgroundColor() << std::endl;
-
   QColor backCol((int)bc[0], (int)bc[1], (int)bc[2], (int)bc[3]);
   QColor c = QColorDialog::getColor(backCol,this);
+
   if (c != backCol && c.isValid()){
-    std::cerr << "Examiner widgets : " << OpenFlipper::Options::examinerWidgets() << std::endl;
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
-      PluginFunctions::viewerProperties(i).backgroundColor(ACG::Vec4f(((double) c.redF())   ,
-                                                       ((double) c.greenF()) ,
-                                                       ((double) c.blueF())  ,
-                                                         1.0));
-      std::cerr << "i is  " << i << std::endl;
+
+    if ( shiftPressed_ ){
+      //apply to all viewers
+      for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+        PluginFunctions::viewerProperties(i).backgroundColor(ACG::Vec4f(((double) c.redF())   ,
+                                                                        ((double) c.greenF()) ,
+                                                                        ((double) c.blueF())  ,
+                                                                         1.0));
+      }
+
+    } else{
+      //apply only to active viewer
+      PluginFunctions::viewerProperties().backgroundColor(ACG::Vec4f(((double) c.redF())   ,
+                                                                        ((double) c.greenF()) ,
+                                                                        ((double) c.blueF())  ,
+                                                                         1.0));
     }
 
     OpenFlipper::Options::defaultBackgroundColor( c );
   }
+}
 
-  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-        std::cerr << "Color after : " << i << " : " <<  PluginFunctions::viewerProperties(i).backgroundColor() << std::endl;
+void CoreWidget::slotChangeAnimation(bool _animation){
+  if ( shiftPressed_ ){
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+      PluginFunctions::viewerProperties(i).animation(_animation);
+    }else
+      PluginFunctions::viewerProperties().animation(_animation);
+}
 
+void CoreWidget::slotChangeBackFaceCulling(bool _backFaceCulling){
+  if ( shiftPressed_ ){
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+      PluginFunctions::viewerProperties(i).backFaceCulling(_backFaceCulling);
+    }else
+      PluginFunctions::viewerProperties().backFaceCulling(_backFaceCulling);
+}
+
+void CoreWidget::slotChangeTwoSidedLighting(bool _lighting){
+  if ( shiftPressed_ ){
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+      PluginFunctions::viewerProperties(i).twoSidedLighting(_lighting);
+    }else
+      PluginFunctions::viewerProperties().twoSidedLighting(_lighting);
 }
 
 void CoreWidget::slotSnapshot() {
@@ -359,12 +377,6 @@ void CoreWidget::slotPasteView( ) {
 
 void CoreWidget::slotCopyView( ) {
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView();
-}
-
-void CoreWidget::updateGlobalOptions(){
-  OpenFlipper::Options::animation( PluginFunctions::viewerProperties().animation() );
-  OpenFlipper::Options::backfaceCulling( PluginFunctions::viewerProperties().backFaceCulling() );
-  OpenFlipper::Options::twoSidedLighting( PluginFunctions::viewerProperties().twoSidedLighting() );
 }
 
 void CoreWidget::slotAddContextMenu(QMenu* _menu) {

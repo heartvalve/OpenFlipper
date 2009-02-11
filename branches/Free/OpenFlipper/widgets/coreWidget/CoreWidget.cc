@@ -66,6 +66,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
             QList< SlotInfo >& _coreSlots ) :
   QMainWindow(),
   coreSlots_(_coreSlots),
+  shiftPressed_(false),
   viewModes_(_viewModes),
   dockViewMode_(0),
   viewModeButton_(0),

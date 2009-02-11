@@ -320,30 +320,6 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   bool synchronization( );
 
-  /// Store animation mode setting
-  DLLEXPORT
-  void animation( bool _animation );
-
-  /// get current animation setting
-  DLLEXPORT
-  bool animation( );
-
-  /// Store backfaceCulling setting
-  DLLEXPORT
-  void backfaceCulling( bool _backfaceCulling );
-
-  /// get backface Culling setting
-  DLLEXPORT
-  bool backfaceCulling( );
-
-  /// Store twoSidedLighting setting
-  DLLEXPORT
-  void twoSidedLighting( bool _twoSidedLighting );
-
-  /// get twoSidedLighting setting
-  DLLEXPORT
-  bool twoSidedLighting( );
-
   /// Store wheelZoomFactor setting
   DLLEXPORT
   void wheelZoomFactor( double _factor );

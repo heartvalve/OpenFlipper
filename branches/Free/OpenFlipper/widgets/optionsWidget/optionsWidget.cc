@@ -134,8 +134,6 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   logFile->setText( OpenFlipper::Options::logFile() );
 
   //viewer
-  animation->setChecked( OpenFlipper::Options::animation() );
-  backfaceCulling->setChecked( OpenFlipper::Options::backfaceCulling() );
   wZoomFactor->setText( QString::number(OpenFlipper::Options::wheelZoomFactor(), 'f') );
   wZoomFactorShift->setText( QString::number(OpenFlipper::Options::wheelZoomFactorShift(), 'f') );
 
@@ -368,8 +366,6 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::logFile( logFile->text() );
 
   //viewer
-  OpenFlipper::Options::animation( animation->isChecked() );
-  OpenFlipper::Options::backfaceCulling( backfaceCulling->isChecked() );
   OpenFlipper::Options::wheelZoomFactor( wZoomFactor->text().toDouble() );
   OpenFlipper::Options::wheelZoomFactorShift( wZoomFactorShift->text().toDouble() );
 
