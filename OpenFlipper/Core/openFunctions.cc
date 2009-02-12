@@ -43,6 +43,8 @@
 #include "OpenFlipper/widgets/loadWidget/loadWidget.hh"
 #include "OpenFlipper/widgets/addEmptyWidget/addEmptyWidget.hh"
 
+#include <time.h>
+
 void Core::resetScenegraph() {
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() ) {
 
@@ -179,22 +181,35 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
    BaseObjectData* object;
    PluginFunctions::getObject(_id,object);
 
-   if ( OpenFlipper::Options::randomBaseColor() )
-     object->setBaseColor(ACG::Vec4f((float)(rand()%255)/255.0,
-                          (float)(rand()%255)/255.0,
-                           (float)(rand()%255)/255.0,
-                            1.0 ));
-   else{
-      ACG::Vec4f color;
-      QColor defColor = OpenFlipper::Options::defaultBaseColor();
+   QColor color;
 
-      color[0] = defColor.redF();
-      color[1] = defColor.greenF();
-      color[2] = defColor.blueF();
-      color[3] = defColor.alphaF();
+   if ( OpenFlipper::Options::randomBaseColor() ){
 
-      object->setBaseColor( color );
+      //init random seed
+      srand ( time(NULL) );
+
+      QColor bckgrnd = OpenFlipper::Options::defaultBackgroundColor();
+      int diff;
+
+      do{
+        color.setRgb(rand()%255, rand()%255, rand()%255);
+
+        diff = (bckgrnd.red()   - color.red())  *(bckgrnd.red()   - color.red())
+              +(bckgrnd.green() - color.green())*(bckgrnd.green() - color.green())
+              +(bckgrnd.blue()  - color.blue()) *(bckgrnd.blue()  - color.blue());
+      }while (diff < 25);
    }
+   else{
+      color = OpenFlipper::Options::defaultBaseColor();
+   }
+
+   ACG::Vec4f colorV;
+   colorV[0] = color.redF();
+   colorV[1] = color.greenF();
+   colorV[2] = color.blueF();
+   colorV[3] = color.alphaF();
+
+   object->setBaseColor( colorV );
 
    resetScenegraph();
 
