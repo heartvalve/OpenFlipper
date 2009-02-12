@@ -18,6 +18,30 @@ DEBUGADDLIB = true
 GMM_PATH_INC 		= /usr/local/include/gmm
 GMM_PATH_LIB 		= /usr/lib
 
+# superlu
+SLU_PATH_INC 		= /usw/include/superlu
+SLU_PATH_LIB 		= /sw/lib
+
+# taucs
+TAUCS_PATH_INC		= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include
+TAUCS_PATH_LIB		= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
+
+# CGAL
+CGAL_PATH_INC		= /usr/include/CGAL/
+CGAL_PATH_LIB		= /usr/lib
+
+# lapack
+LAP_PATH_INC		= /sw/include
+LAP_PATH_LIB		= /sw/lib
+
+# wordnet
+WN_PATH_INC		= /usr/local/WordNet-3.0/include
+WN_PATH_LIB		= /usr/local/WordNet-3.0/lib
+
+# qwt
+QWT_PATH_INC		= /usr/local/qwt-5.1.2-svn/include
+QWT_PATH_LIB		= /usr/local/qwt-5.1.2-svn/lib
+
 # glew
 GLEW_PATH_INC		= /sw/include/GL
 GLEW_PATH_LIB		= /sw/lib
