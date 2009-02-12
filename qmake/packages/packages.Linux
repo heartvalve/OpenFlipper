@@ -154,21 +154,18 @@ defineTest( taucs ) {
 
 	exists ( $${TAUCS_PATH_INC}/taucs.h ) {
 		exists ( $${TAUCS_PATH_LIB}/libtaucs.a ) {
-	#		exists ( $${TAUCS_PATH_LIB}/liblapack.a ) {
-#				exists ( $${TAUCS_PATH_LIB}/libmetis.a ) {
 
-					LIBS *= $${TAUCS_PATH_LIB}/libtaucs.a
-	#				LIBS *= $${TAUCS_PATH_LIB}/liblapack.a
-#					LIBS *= $${TAUCS_PATH_LIB}/libmetis.a
-					export(LIBS)
+			lapack()
 
-					INCLUDEPATH *= $${TAUCS_PATH_INC}
-					export(INCLUDEPATH)
+			
+			LIBS *= $${TAUCS_PATH_LIB}/libtaucs.a -lmetis
+			export(LIBS)
 
-					return(true)
+    			INCLUDEPATH *= $${TAUCS_PATH_INC}
+			export(INCLUDEPATH)
 
-#				}
-	#		}
+			return(true)
+
 		}
 	} else {
 		message ( WARNING: taucs header files not found! )
