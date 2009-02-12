@@ -546,7 +546,7 @@ class DLLEXPORT ObjectIterator {
 
 /// Return Iterator to Object End
 DLLEXPORT
-ObjectIterator objects_end();
+ObjectIterator objectsEnd();
 
 /** @} */
 

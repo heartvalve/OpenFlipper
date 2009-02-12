@@ -168,7 +168,7 @@ BaseObjectData* ObjectIterator::operator*() {
 }
 
 /// Return Iterator to Object End
-ObjectIterator objects_end() {
+ObjectIterator objectsEnd() {
    return ObjectIterator(0);
 }
 
