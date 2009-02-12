@@ -33,8 +33,8 @@ SLU_PATH_INC 		= /usr/include/superlu
 SLU_PATH_LIB 		= /usr/lib
 
 # taucs
-TAUCS_PATH_INC	= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include/
-TAUCS_PATH_LIB	= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
+TAUCS_PATH_INC	= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include
+TAUCS_PATH_LIB	= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-new/lib
 
 # CGAL
 CGAL_PATH_INC		= /usr/include/CGAL/
@@ -154,12 +154,12 @@ defineTest( taucs ) {
 
 	exists ( $${TAUCS_PATH_INC}/taucs.h ) {
 		exists ( $${TAUCS_PATH_LIB}/libtaucs.a ) {
-			exists ( $${TAUCS_PATH_LIB}/liblapack.a ) {
-				exists ( $${TAUCS_PATH_LIB}/libmetis.a ) {
+	#		exists ( $${TAUCS_PATH_LIB}/liblapack.a ) {
+	#			exists ( $${TAUCS_PATH_LIB}/libmetis.a ) {
 
 					LIBS *= $${TAUCS_PATH_LIB}/libtaucs.a
-					LIBS *= $${TAUCS_PATH_LIB}/liblapack.a
-					LIBS *= $${TAUCS_PATH_LIB}/libmetis.a
+	#				LIBS *= $${TAUCS_PATH_LIB}/liblapack.a
+	#				LIBS *= $${TAUCS_PATH_LIB}/libmetis.a
 					export(LIBS)
 
 					INCLUDEPATH *= $${TAUCS_PATH_INC}
@@ -167,8 +167,8 @@ defineTest( taucs ) {
 
 					return(true)
 
-				}
-			}
+	#			}
+	#		}
 		}
 	} else {
 		message ( WARNING: taucs header files not found! )
