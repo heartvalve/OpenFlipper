@@ -607,7 +607,7 @@ defineTest( openmesh ) {
 defineTest( physim2 ) {
   exists( $${TOPDIR}/PhySim ) {
     QMAKE_LIBDIR += $${TOPDIR}/PhySim/lib/$${BUILDDIRECTORY}
-    LIBS+= -Wl,-rpath=$${TOPDIR}/PhySim/lib/$${BUILDDIRECTORY} -lPhySim
+    LIBS+= -lPhySim #-Wl,-rpath=$${TOPDIR}/PhySim/lib/$${BUILDDIRECTORY} -lPhySim
     INCLUDEPATH *= $${TOPDIR}/PhySim $${TOPDIR}/PhySim/include
     export(QMAKE_LIBDIR)
     export(LIBS)
