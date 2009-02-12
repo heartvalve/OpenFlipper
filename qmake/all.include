@@ -85,7 +85,9 @@ UI_DIR = tmp/$$BUILDDIRECTORY
 # This function sets all parameters required to build a plugin
 defineTest(Plugin) {
 	unix{
-		TEMPLATE = lib		
+		TEMPLATE = lib
+		DESTDIR = $${TOPDIR}/OpenFlipper/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}
+	        export(DESTDIR)	
 	}	
 	win32 {
 		TEMPLATE = vclib
@@ -99,18 +101,21 @@ defineTest(Plugin) {
 		DEFINES += ACGDLL USEACG PLUGINLIBDLL USEPLUGINLIBDLL
 		export(DEFINES)
 		export(DEPENDPATH)
+		DESTDIR = $${TOPDIR}/OpenFlipper/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}
+	        export(DESTDIR)
 		glut()
 	}
         macx {
  		glut()
 		LIBS+= -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
                 export(LIBS)
+		DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents
+	        export(DESTDIR)
+
         }
 	export(TEMPLATE)
 	CONFIG *= plugin
 	export(CONFIG)
-	DESTDIR = $${TOPDIR}/OpenFlipper/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}	
-	export(DESTDIR)	
 	acg()
 	openmesh()
 	glew()
@@ -144,7 +149,8 @@ defineTest(Application) {
 		TEMPLATE = vcapp
 	}
 	macx {
-		CONFIG -= app_bundle
+		# CONFIG -= app_bundle	# Do not build a framework bundle
+		CONFIG += x86		# Add ppc to build universal binary
 		export( CONFIG )
 	}
 	export(TEMPLATE)
