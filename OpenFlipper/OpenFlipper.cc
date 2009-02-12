@@ -207,27 +207,10 @@ void segfaultHandling (int) {
   std::abort();
 }
 
-int main(int argc, char **argv)
-{
-  OpenFlipper::Options::argc(&argc);
-  OpenFlipper::Options::argv(&argv);
+bool openPolyMeshes = false;
+bool remoteControl  = false;
 
-// Only Install signal handler if not running in debug version, otherwise gdb will get confused
-// #ifndef DEBUG
-  // Set a handler for segfaults
-  std::signal(SIGSEGV, segfaultHandling);
-// #endif
-
-  OpenFlipper::Options::windowTitle("OpenFlipper v" + OpenFlipper::Options::coreVersion());
-
-  //======================================================
-  // Parse command line Options
-  //======================================================
-  bool openPolyMeshes = false;
-
-  bool remoteControl  = false;
-
-  CSimpleOpt args(argc, argv, g_rgOptions);
+bool parseCommandLineOptions(CSimpleOpt& args){
 
   // while there are arguments left to process
   while (args.Next()) {
@@ -270,9 +253,26 @@ int main(int argc, char **argv)
     } else {
       std::cerr << "Invalid argument: " << args.OptionText() << std::endl;
       showHelp();
-      return 1;
+      return false;
     }
   }
+  return true;
+}
+
+int main(int argc, char **argv)
+{
+  OpenFlipper::Options::argc(&argc);
+  OpenFlipper::Options::argv(&argv);
+
+  CSimpleOpt args(argc, argv, g_rgOptions);
+
+// Only Install signal handler if not running in debug version, otherwise gdb will get confused
+// #ifndef DEBUG
+  // Set a handler for segfaults
+  std::signal(SIGSEGV, segfaultHandling);
+// #endif
+
+  OpenFlipper::Options::windowTitle("OpenFlipper v" + OpenFlipper::Options::coreVersion());
 
   if ( !OpenFlipper::Options::nogui() ) {
 
@@ -289,6 +289,9 @@ int main(int argc, char **argv)
 
     // create core ( this also reads the ini files )
     Core * w = new Core( );
+
+    if ( !parseCommandLineOptions(args) )
+      return 1;
 
     // After setting all Options from command line, build the real gui
     w->init();
@@ -311,6 +314,9 @@ int main(int argc, char **argv)
 
     // create widget ( this also reads the ini files )
     Core * w = new Core( );
+
+    if ( !parseCommandLineOptions(args) )
+      return 1;
 
     // After setting all Options from command line, build the real gui
     w->init();

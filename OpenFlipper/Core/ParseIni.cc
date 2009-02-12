@@ -271,6 +271,46 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::pickingRenderMode(pickingRenderMode);
 
     //============================================================================
+    // ViewerProperties
+    //============================================================================
+
+    bool multiView = false;
+    if( _ini.get_entry(multiView, "Options", "MultiView") )
+      OpenFlipper::Options::multiView(multiView);
+
+    uint viewerCount = 0;
+    if( _ini.get_entry(viewerCount, "Options", "ViewerCount") ){
+    }
+
+    if ( _ini.section_exists("ViewerProperties") ){
+      for ( unsigned int i = 0 ; i < viewerCount; ++i ) {
+  
+        if (OpenFlipper::Options::examinerWidgets() < i)
+          break;
+  
+        // Load the animation setting
+        bool animation = false;
+        if ( _ini.get_entry( animation, "ViewerProperties" , "Animation" + QString::number(i) ) )
+          PluginFunctions::viewerProperties(i).animation(animation);
+  
+        // Load the twoSidedLighting setting
+        bool twoSidedLighting = false;
+        if ( _ini.get_entry( twoSidedLighting, "ViewerProperties" , "TwoSidedLighting" + QString::number(i)) )
+          PluginFunctions::viewerProperties(i).twoSidedLighting(twoSidedLighting);
+  
+        // Load the backface culling setting
+        bool backface_culling = false;
+        if ( _ini.get_entry( backface_culling, "ViewerProperties" , "BackfaceCulling" + QString::number(i)) )
+          PluginFunctions::viewerProperties(i).backFaceCulling(backface_culling);
+  
+        // Load the setting for the background color option
+        uint viewerBackground = 0;
+        if ( _ini.get_entry( viewerBackground, "ViewerProperties" , "BackgroundColor" + QString::number(i)) )
+          PluginFunctions::viewerProperties(i).backgroundColor( QRgb(viewerBackground) );
+      }
+    }
+
+    //============================================================================
     // Update information
     //============================================================================
     QString updateUrl = "";
@@ -284,57 +324,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
     QString updatePassword = "";
     if( _ini.get_entry(updatePassword, "Options", "UpdatePassword") )
       OpenFlipper::Options::updatePassword(updatePassword);
-  }
-}
-
-/// Read Options that needs the GUI to be set up completely
-void Core::readGUIOptions(INIFile& _ini) {
-
-  if ( !OpenFlipper::Options::gui() )
-    return;
-
-  uint viewerCount = 0;
-
-  if ( _ini.section_exists("Options") ) {
-
-    //============================================================================
-    // ViewerProperties
-    //============================================================================
-
-    bool multiView = false;
-    if( _ini.get_entry(multiView, "Options", "MultiView") )
-      OpenFlipper::Options::multiView(multiView);
-
-    if( _ini.get_entry(viewerCount, "Options", "ViewerCount") ){
-    }
-  }
-
-  if ( _ini.section_exists("ViewerProperties") ){
-    for ( unsigned int i = 0 ; i < viewerCount; ++i ) {
-
-      if (OpenFlipper::Options::examinerWidgets() < i)
-        break;
-
-      // Load the animation setting
-      bool animation = false;
-      if ( _ini.get_entry( animation, "ViewerProperties" , "Animation" + QString::number(i) ) )
-        PluginFunctions::viewerProperties(i).animation(animation);
-
-      // Load the twoSidedLighting setting
-      bool twoSidedLighting = false;
-      if ( _ini.get_entry( twoSidedLighting, "ViewerProperties" , "TwoSidedLighting" + QString::number(i)) )
-        PluginFunctions::viewerProperties(i).twoSidedLighting(twoSidedLighting);
-
-      // Load the backface culling setting
-      bool backface_culling = false;
-      if ( _ini.get_entry( backface_culling, "ViewerProperties" , "BackfaceCulling" + QString::number(i)) )
-        PluginFunctions::viewerProperties(i).backFaceCulling(backface_culling);
-
-      // Load the setting for the background color option
-      uint viewerBackground = 0;
-      if ( _ini.get_entry( viewerBackground, "ViewerProperties" , "BackgroundColor" + QString::number(i)) )
-        PluginFunctions::viewerProperties(i).backgroundColor( QRgb(viewerBackground) );
-    }
   }
 }
 
@@ -515,8 +504,6 @@ void Core::openIniFile( QString _filename,
   // Load Core settings only if requested
   if ( _coreSettings )
     readApplicationOptions(ini);
-
-  readGUIOptions(ini);
 
   // if requested load per Plugin settings from the settings file
   if ( _perPluginSettings )

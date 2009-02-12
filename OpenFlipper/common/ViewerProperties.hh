@@ -305,7 +305,7 @@ namespace Viewer {
 
     public slots:
       /// set 2-sided lighting on/off
-      void twoSidedLighting(bool _state ) { twoSidedLighting_ = _state; glState_->set_twosided_lighting( _state ); emit updated(); }
+      void twoSidedLighting(bool _state ) { twoSidedLighting_ = _state; emit updated(); }
 
       /// is 2-sided lighing enabled?
       bool twoSidedLighting() { return twoSidedLighting_; };

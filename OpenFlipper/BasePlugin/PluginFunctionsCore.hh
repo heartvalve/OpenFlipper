@@ -51,6 +51,7 @@
 #include <OpenFlipper/common/GlobalDefines.hh>
 
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
+#include <OpenFlipper/common/ViewerProperties.hh>
 
 namespace PluginFunctions {
 
@@ -62,6 +63,10 @@ namespace PluginFunctions {
 /// Set the internal examiner pointer ( DO NOT USE!! )
 DLLEXPORT
 void setViewers( std::vector< glViewer* > _examiner_widgets );
+
+/// Set the internal viewerProperties pointer ( DO NOT USE!! )
+DLLEXPORT
+void setViewerProperties( std::vector< Viewer::ViewerProperties* > _viewerProperties );
 
 /// Set the internal scenegraph root node pointer ( DO NOT USE!! )
 DLLEXPORT

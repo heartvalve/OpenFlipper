@@ -115,6 +115,7 @@ static const char          VIEW_MAGIC[] =
 
 glViewer::glViewer( QtGLGraphicsScene* _scene,
 		    QGLWidget* _glWidget,
+        Viewer::ViewerProperties& _properties,
 		    QGraphicsWidget* _parent,
 		    const char* /* _name */ ,
 		    QStatusBar *_statusBar) :
@@ -127,6 +128,7 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   glWidget_(_glWidget),
   pick_mode_name_(""),
   pick_mode_idx_(-1),
+  properties_(_properties),
   glstate_(0)
 {
 
@@ -190,6 +192,9 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   connect( &properties_,SIGNAL(actionModeChanged(Viewer::ActionMode)), this, SLOT( updateActionMode(Viewer::ActionMode) ) );
 
   properties_.setExamineMode();
+
+  //check for updated properties once
+  slotPropertiesUpdated();
 
   setAcceptDrops(true);
 }
@@ -1991,6 +1996,9 @@ void glViewer::slotAnimation()
 }
 
 void glViewer::applyProperties() {
+
+  glstate_->set_twosided_lighting( properties_.twoSidedLighting() );
+
   glstate_->set_clear_color( properties_.backgroundColor() );
 
   if (properties_.isCCWFront() )

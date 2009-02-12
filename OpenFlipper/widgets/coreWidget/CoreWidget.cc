@@ -164,6 +164,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     glViewer* examinerWidget = new glViewer(glScene_,
 					    glWidget_,
+              PluginFunctions::viewerProperties(0),
 					    centerWidget_,
                                             "Examiner Widget",
                                             statusBar_);
@@ -181,9 +182,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       glViewer* newWidget = new glViewer(glScene_,
 					 glWidget_,
+           PluginFunctions::viewerProperties(i),
 					 centerWidget_,
 					 "Examiner Widget",
-                                         statusBar_ );
+           statusBar_);
+
       examiner_widgets_.push_back(newWidget);
     }
 
