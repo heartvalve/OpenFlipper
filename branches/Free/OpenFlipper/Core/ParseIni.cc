@@ -653,7 +653,7 @@ void Core::writeIniFile(QString _filename,
     QString keyName;
     QString sectionName;
     for ( PluginFunctions::ObjectIterator o_it(restriction) ;
-                                          o_it != PluginFunctions::objects_end(); ++o_it) {
+                                          o_it != PluginFunctions::objectsEnd(); ++o_it) {
       QString file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
       if (QFile(file).exists()){
         // Add a section for this object
@@ -680,7 +680,7 @@ void Core::writeIniFile(QString _filename,
 
     // Tell plugins to save their information for the given object
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                          o_it != PluginFunctions::objects_end(); ++o_it)
+                                          o_it != PluginFunctions::objectsEnd(); ++o_it)
       emit iniSave(  ini , o_it->id() );
   }
 

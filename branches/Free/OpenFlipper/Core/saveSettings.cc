@@ -164,7 +164,7 @@ void Core::saveSettings(){
 
     //Iterate over opened objects and save them
     for ( PluginFunctions::ObjectIterator o_it(restriction);
-                                          o_it != PluginFunctions::objects_end(); ++o_it)
+                                          o_it != PluginFunctions::objectsEnd(); ++o_it)
     {
       QString filename;
 

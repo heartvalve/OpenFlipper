@@ -51,7 +51,7 @@ namespace PluginFunctions {
 bool getSourceMeshes( std::vector<PolyMesh*>& _meshes  ) {
   _meshes.clear();
 
-  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_POLY_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
+  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_POLY_MESH) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     if (! o_it->source() )
       continue;
     _meshes.push_back ( dynamic_cast< PolyMeshObject* >( *o_it )->mesh() );
@@ -63,7 +63,7 @@ bool getSourceMeshes( std::vector<PolyMesh*>& _meshes  ) {
 bool getTargetMeshes( std::vector<PolyMesh*>& _meshes  ) {
   _meshes.clear();
 
-  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_POLY_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
+  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_POLY_MESH) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     if (! o_it->target() )
       continue;
     if ( dynamic_cast< PolyMeshObject* >( *o_it )->mesh() )

@@ -98,7 +98,7 @@ void setSceneGraphRootNode( SeparatorNode* _root_node ) {
 }
 
 bool getPickedObject(const unsigned int _node_idx , BaseObjectData*& _object) {
-  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
+  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     if ( o_it->picked( _node_idx ) ) {
       _object = *o_it;
       return true;
@@ -111,7 +111,7 @@ bool getPickedObject(const unsigned int _node_idx , BaseObjectData*& _object) {
 bool getSourceIdentifiers( std::vector<int>& _identifiers  ) {
   _identifiers.clear();
 
-  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
+  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     if ( o_it->source() )
       _identifiers.push_back ( o_it->id() );
   }
@@ -121,7 +121,7 @@ bool getSourceIdentifiers( std::vector<int>& _identifiers  ) {
 bool getTargetIdentifiers( std::vector<int>& _identifiers  ) {
   _identifiers.clear();
 
-  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
+  for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     if ( o_it->target() )
       _identifiers.push_back ( o_it->id() );
   }
@@ -230,7 +230,7 @@ bool getAllMeshes( std::vector<int>& _identifiers  ) {
 
   // find changed manipulator
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_TRIANGLE_MESH) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     _identifiers.push_back( o_it->id() );
   }
 
@@ -243,7 +243,7 @@ bool get_all_object_identifiers( std::vector<int>& _identifiers  ) {
 
   // find changed manipulator
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     _identifiers.push_back( o_it->id() );
   }
 
@@ -473,7 +473,7 @@ int objectCount() {
 
   // find changed manipulator
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     ++count;
   }
 
@@ -487,7 +487,7 @@ int targetCount() {
 
   // find changed manipulator
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     ++count;
   }
 
@@ -499,7 +499,7 @@ int sourceCount() {
 
   // find changed manipulator
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::SOURCE_OBJECTS) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     ++count;
   }
 
@@ -511,7 +511,7 @@ int visibleCount() {
 
   // find changed manipulator
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     if ( o_it->visible() )
     ++count;
   }
@@ -531,7 +531,7 @@ void get_all_objects( std::vector < BaseObjectData*>& _objects ) {
 
   // find changed manipulator
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_TRIANGLE_MESH) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     _objects.push_back( *o_it );
   }
 

@@ -274,7 +274,7 @@ void Core::writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly
 
   // write all objects to a separate obj file and save external references in the global obj file
   for ( PluginFunctions::ObjectIterator o_it (restriction) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)
   {
     QString file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
 

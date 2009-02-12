@@ -188,7 +188,7 @@ void DataControlPlugin::slotActiveObjectChanged()
 void DataControlPlugin::update_active( ) {
   // find changed manipulator
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                        o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
       if ( o_it->target() ) {
                o_it->materialNode()->disable_blending();
                OpenMesh::Vec4f base_color = o_it->materialNode()->base_color();
@@ -317,7 +317,7 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 
 void DataControlPlugin::setAllTarget() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objects_end(); ++o_it)
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
   o_it->target(true);
   emit activeObjectChanged();
   emit updatedObject(-1);
@@ -325,14 +325,14 @@ void DataControlPlugin::setAllTarget() {
 
 void DataControlPlugin::setAllSource() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objects_end(); ++o_it)
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
   o_it->source(true);
   emit updatedObject(-1);
 }
 
 void DataControlPlugin::clearAllTarget() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objects_end(); ++o_it)
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
   o_it->target(false);
   emit activeObjectChanged();
   emit updatedObject(-1);
@@ -340,21 +340,21 @@ void DataControlPlugin::clearAllTarget() {
 
 void DataControlPlugin::clearAllSource() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objects_end(); ++o_it)
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
   o_it->source(false);
   emit updatedObject(-1);
 }
 
 void DataControlPlugin::hideAll() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objects_end(); ++o_it)
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
     o_it->hide();
   emit updateView();
 }
 
 void DataControlPlugin::showAll() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objects_end(); ++o_it)
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
     o_it->show();
   emit updateView();
 }

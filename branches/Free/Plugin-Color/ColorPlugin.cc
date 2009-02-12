@@ -92,7 +92,7 @@ void ColorPlugin::setDefaultColor() {
   // =============================================================================
   // Apply to all objects
   // =============================================================================
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     MaterialNode* mat = o_it->materialNode();
     mat->set_base_color(base_color);
     mat->set_ambient_color(ambient_color);
@@ -137,7 +137,7 @@ void ColorPlugin::setPowerpointColor() {
   // =============================================================================
   // Apply to all objects
   // =============================================================================
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     MaterialNode* mat = o_it->materialNode();
     mat->set_base_color(base_color);
     mat->set_ambient_color(ambient_color);
@@ -182,7 +182,7 @@ void ColorPlugin::setPaperColor() {
   // =============================================================================
   // Apply to all objects
   // =============================================================================
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
     MaterialNode* mat = o_it->materialNode();
     mat->set_base_color(base_color);
     mat->set_ambient_color(ambient_color);

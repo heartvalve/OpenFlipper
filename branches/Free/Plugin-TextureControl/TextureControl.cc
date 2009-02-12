@@ -265,7 +265,7 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
 
 void TextureControlPlugin::slotUpdateAllTextures( ) {
    // Force an update of all textures which are available for the updated object
-   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
+   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
       for ( uint i = 0 ; i < textures_.size() ; ++i )
          emit updateTexture( textures_[i].name , o_it->id() );
 }
@@ -343,7 +343,7 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
    if ( activeTexture_ == _textureName ) {
 
       // Force an update of all objects
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
+      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
          updateTexture(  _textureName , o_it->id() );
 
       emit updateView();
@@ -468,7 +468,7 @@ void TextureControlPlugin::applyDialogSettings() {
   textures_[textureid].clamp_max = tmp.toDouble();
 
   // Update the corresponding meshes
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
       slotTextureUpdated(  activeTexture_ , o_it->id() );
 
   emit updateView();
@@ -493,7 +493,7 @@ void TextureControlPlugin::slotTextureMenu(QAction* _action) {
       activeTexture_ =  _action->text();
 
       // Force an update of all objects
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
+      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
         slotTextureUpdated(  _action->text() , o_it->id() );
 
       updateDialog();
@@ -522,7 +522,7 @@ void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
     activeTexture_ =  _textureName;
 
     // Force an update of all objects
-    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it)
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
         slotTextureUpdated(  _textureName , o_it->id() );
 
     updateDialog();

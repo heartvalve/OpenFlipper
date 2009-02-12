@@ -130,7 +130,7 @@ void Core::saveAllObjects(){
   
     //iterate over all target objects
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ;
-          o_it != PluginFunctions::objects_end(); ++o_it)  {
+          o_it != PluginFunctions::objectsEnd(); ++o_it)  {
   
             if ( !QDir(o_it->path()).exists() || o_it->path().trimmed() == "" ) // if path isn't valid use 'save object to'
               saveObjectTo(o_it->id(),o_it->name());
@@ -151,7 +151,7 @@ void Core::saveAllObjectsTo(){
     if (supportedTypes_.size() != 0){
       //iterate over all target objects
       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS);
-            o_it != PluginFunctions::objects_end(); ++o_it)  {
+            o_it != PluginFunctions::objectsEnd(); ++o_it)  {
         QString filename = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
         saveObjectTo(o_it->id(),filename);
       }

@@ -77,7 +77,7 @@ void SmootherPlugin::simpleLaplace() {
 
 
    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
-                                         o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
        // Get the mesh to work on
       TriMesh* mesh = PluginFunctions::triMesh(*o_it);
 
@@ -135,7 +135,7 @@ void SmootherPlugin::simpleLaplace() {
    }
 
      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_POLY_MESH) ;
-                                         o_it != PluginFunctions::objects_end(); ++o_it)  {
+                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
        // Get the mesh to work on
       PolyMesh* mesh = dynamic_cast< MeshObject< PolyMesh,DATA_POLY_MESH >* > (*o_it)->mesh();
 
