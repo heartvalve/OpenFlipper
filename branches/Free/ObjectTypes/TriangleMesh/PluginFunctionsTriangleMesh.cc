@@ -85,7 +85,7 @@ bool getObject(  int _identifier , TriMeshObject*& _object ) {
 // ===============================================================================
 
 
-bool getMSesh(  int _identifier , TriMesh*& _mesh ) {
+bool getMesh(  int _identifier , TriMesh*& _mesh ) {
 
   if ( _identifier == -1 )
     return false;
