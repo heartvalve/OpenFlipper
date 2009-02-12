@@ -154,17 +154,18 @@ defineTest( taucs ) {
 
 	exists ( $${TAUCS_PATH_INC}/taucs.h ) {
 		exists ( $${TAUCS_PATH_LIB}/libtaucs.a ) {
-
-			lapack()
+                        addLib ( /usr/lib $${TAUCS_PATH_LIB}, metis )
+			
+                            lapack()
 
 			
-			LIBS *= $${TAUCS_PATH_LIB}/libtaucs.a -lmetis
-			export(LIBS)
+			    LIBS *= $${TAUCS_PATH_LIB}/libtaucs.a
+			    export(LIBS)
 
-    			INCLUDEPATH *= $${TAUCS_PATH_INC}
-			export(INCLUDEPATH)
+    			    INCLUDEPATH *= $${TAUCS_PATH_INC}
+			    export(INCLUDEPATH)
 
-			return(true)
+			    return(true)
 
 		}
 	} else {
@@ -378,6 +379,8 @@ defineTest( freetype ) {
 	} else {
 		message ( WARNING: freetype2 header files not found! )
 	}
+	
+	return(false)
 }
 
 defineTest( ftgl ) {
