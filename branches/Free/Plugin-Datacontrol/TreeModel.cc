@@ -697,7 +697,7 @@ bool TreeModel::dropMimeData(const QMimeData *data,
       for (int i = 0; i < ids.count(); i++){
  
         BaseObject* item = 0;
-        if (PluginFunctions::get_object(ids[i], item)){
+        if (PluginFunctions::getObject(ids[i], item)){
     
           item->parent()->removeChild(item);
   

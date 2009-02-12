@@ -78,7 +78,7 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
 void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _identifier ) {
 
   BaseObjectData* object;
-  if (! PluginFunctions::get_object(  _identifier , object ) ) {
+  if (! PluginFunctions::getObject(  _identifier , object ) ) {
     emit log(LOGERR,"Unable to get Object for id " + QString::number(_identifier) );
     return;
   }

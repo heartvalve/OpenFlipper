@@ -104,7 +104,7 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
   ACG::Vec3d      hit_point;
   BaseObjectData* object;
   if (examiner_widgets_[_examinerId]->pick( ACG::SceneGraph::PICK_ANYTHING,_point,node_idx, target_idx, &hit_point ) ) {
-    if ( PluginFunctions::get_picked_object(node_idx, object) )
+    if ( PluginFunctions::getPickedObject(node_idx, object) )
       objectId = object->id();
   }
 

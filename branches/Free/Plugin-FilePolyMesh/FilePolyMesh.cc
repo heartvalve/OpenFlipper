@@ -63,7 +63,7 @@ int FilePolyMeshPlugin::addEmpty( ){
   object->setParent(PluginFunctions::objectRoot());
   PluginFunctions::objectRoot()->appendChild(object);
 
-  if (PluginFunctions::target_count() == 0 )
+  if (PluginFunctions::targetCount() == 0 )
     object->target(true);
 
 
@@ -96,7 +96,7 @@ int FilePolyMeshPlugin::loadObject(QString _filename){
   object->setParent(PluginFunctions::objectRoot());
   PluginFunctions::objectRoot()->appendChild(object);
 
-  if (PluginFunctions::object_count() == 1 )
+  if (PluginFunctions::objectCount() == 1 )
     object->target(true);
 
   object->setFromFileName(_filename);
@@ -132,7 +132,7 @@ int FilePolyMeshPlugin::loadObject(QString _filename){
 /// Save object with given id
 bool FilePolyMeshPlugin::saveObject(int _id, QString _filename){
   BaseObjectData* object;
-  PluginFunctions::get_object(_id,object);
+  PluginFunctions::getObject(_id,object);
 
   std::string filename = std::string( _filename.toUtf8() );
 
@@ -174,7 +174,7 @@ DataType  FilePolyMeshPlugin::supportedType() {
 
 void FilePolyMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
   BaseObjectData* baseObject;
-  if ( !PluginFunctions::get_object(_id,baseObject) ) {
+  if ( !PluginFunctions::getObject(_id,baseObject) ) {
     emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
     return;
   }
@@ -214,7 +214,7 @@ void FilePolyMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
 
 void FilePolyMeshPlugin::saveIniFile( INIFile& _ini ,int _id) {
   BaseObjectData* baseObject;
-  if ( !PluginFunctions::get_object(_id,baseObject) ) {
+  if ( !PluginFunctions::getObject(_id,baseObject) ) {
     emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
     return;
   }

@@ -66,7 +66,7 @@ namespace PluginFunctions {
  * @return false, if no mesh is selected as source
 */
 DLLEXPORT
-bool get_source_meshes( std::vector<TriMesh*>& _meshes  );
+bool getSourceMeshes( std::vector<TriMesh*>& _meshes  );
 
 /** \brief Get a pointer to every Triangle Mesh which is marked as a target mesh.
  *
@@ -74,7 +74,7 @@ bool get_source_meshes( std::vector<TriMesh*>& _meshes  );
  * @return false, if no mesh is selected as target
 */
 DLLEXPORT
-bool get_target_meshes( std::vector<TriMesh*>& _meshes  );
+bool getTargetMeshes( std::vector<TriMesh*>& _meshes  );
 
 /** @} */
 
@@ -88,7 +88,7 @@ bool get_target_meshes( std::vector<TriMesh*>& _meshes  );
  * See get_object(  int _identifier , BaseObject*& _object ) for more details.
  */
 DLLEXPORT
-bool get_object(  int _identifier , TriMeshObject*& _object );
+bool getObject(  int _identifier , TriMeshObject*& _object );
 
 
 /** \brief Get the Triangle Mesh which has the given identifier.
@@ -102,7 +102,7 @@ bool get_object(  int _identifier , TriMeshObject*& _object );
  * @return Mesh found?
  */
 DLLEXPORT
-bool get_mesh(  int _identifier , TriMesh*& _mesh );
+bool getMesh(  int _identifier , TriMesh*& _mesh );
 
 /** @} */
 

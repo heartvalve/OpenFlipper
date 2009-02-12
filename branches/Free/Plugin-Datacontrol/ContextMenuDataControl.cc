@@ -43,7 +43,7 @@ void DataControlPlugin::slotContextMenuTarget( ) {
     return;
   
   BaseObjectData* object;
-  if ( ! PluginFunctions::get_object(objectId,object) )
+  if ( ! PluginFunctions::getObject(objectId,object) )
     return;
   
   object->target( targetAction_->isChecked() );
@@ -60,7 +60,7 @@ void DataControlPlugin::slotContextMenuHide( ) {
     return;
   
   BaseObjectData* object;
-  if ( ! PluginFunctions::get_object(objectId,object) )
+  if ( ! PluginFunctions::getObject(objectId,object) )
     return;
   
   object->hide();
@@ -78,7 +78,7 @@ void DataControlPlugin::slotContextMenuSource( ) {
     return;
   
   BaseObjectData* object;
-  if ( ! PluginFunctions::get_object(objectId,object) )
+  if ( ! PluginFunctions::getObject(objectId,object) )
     return;
   
   object->source( sourceAction_->isChecked() );
@@ -91,7 +91,7 @@ void DataControlPlugin::slotUpdateContextMenu( int _objectId) {
     return;
   
   BaseObjectData* object;
-  if ( ! PluginFunctions::get_object(_objectId,object) )
+  if ( ! PluginFunctions::getObject(_objectId,object) )
     return;
   
   sourceAction_->setText( "Source" );

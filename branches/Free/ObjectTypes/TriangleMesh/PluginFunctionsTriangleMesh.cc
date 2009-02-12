@@ -45,7 +45,7 @@
 
 namespace PluginFunctions {
 
-bool get_source_meshes( std::vector<TriMesh*>& _meshes  ) {
+bool getSourceMeshes( std::vector<TriMesh*>& _meshes  ) {
   _meshes.clear();
 
   for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_TRIANGLE_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
@@ -57,7 +57,7 @@ bool get_source_meshes( std::vector<TriMesh*>& _meshes  ) {
   return (_meshes.size() > 0 );
 }
 
-bool get_target_meshes( std::vector<TriMesh*>& _meshes  ) {
+bool getTargetMeshes( std::vector<TriMesh*>& _meshes  ) {
   _meshes.clear();
 
   for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_TRIANGLE_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
@@ -71,7 +71,7 @@ bool get_target_meshes( std::vector<TriMesh*>& _meshes  ) {
 }
 
 
-bool get_object(  int _identifier , TriMeshObject*& _object ) {
+bool getObject(  int _identifier , TriMeshObject*& _object ) {
 
   if ( _identifier == -1 )
     return false;
@@ -85,7 +85,7 @@ bool get_object(  int _identifier , TriMeshObject*& _object ) {
 // ===============================================================================
 
 
-bool get_mesh(  int _identifier , TriMesh*& _mesh ) {
+bool getMSesh(  int _identifier , TriMesh*& _mesh ) {
 
   if ( _identifier == -1 )
     return false;

@@ -70,7 +70,7 @@ namespace PluginFunctions {
  * @return true if mesh was found, false if picked object is not a mesh or not found
  */
 DLLEXPORT
-bool get_picked_object(const unsigned int _node_idx , BaseObjectData*& _object);
+bool getPickedObject(const unsigned int _node_idx , BaseObjectData*& _object);
 
 /** \brief Delete the object with the given id
  *
@@ -115,7 +115,7 @@ int copyObject( const int _id );
  * @return false, if no object is selected as source
 */
 DLLEXPORT
-bool get_source_identifiers( std::vector<int>& _identifiers  );
+bool getSourceIdentifiers( std::vector<int>& _identifiers  );
 
 /** \brief Get the identifiers of all objects marked as a target object.
  *
@@ -123,7 +123,7 @@ bool get_source_identifiers( std::vector<int>& _identifiers  );
  * @return false, if no object is selected as target
 */
 DLLEXPORT
-bool get_target_identifiers( std::vector<int>& _identifiers  );
+bool getTargetIdentifiers( std::vector<int>& _identifiers  );
 
 /** \brief Get identifiers of all meshes
  *
@@ -131,7 +131,7 @@ bool get_target_identifiers( std::vector<int>& _identifiers  );
  * @return false, if no mesh is found
 */
 DLLEXPORT
-bool get_all_meshes( std::vector<int>& _identifiers  );
+bool getAllMeshes( std::vector<int>& _identifiers  );
 
 /** \brief Get identifiers of all objects
  *
@@ -139,7 +139,7 @@ bool get_all_meshes( std::vector<int>& _identifiers  );
  * @return false, if no mesh is found
 */
 DLLEXPORT
-bool get_all_object_identifiers( std::vector<int>& _identifiers  );
+bool getAllObjectIdentifiers( std::vector<int>& _identifiers  );
 
 
 /** \brief Get the object which has the given identifier.
@@ -153,13 +153,13 @@ bool get_all_object_identifiers( std::vector<int>& _identifiers  );
  * @return Object found?
  */
 DLLEXPORT
-bool get_object(  const int _identifier , BaseObject*& _object );
+bool getObject(  const int _identifier , BaseObject*& _object );
 
 /** This functions returns the object with the given id regardless of the type of object.
  * See get_object(  int _identifier , BaseObject*& _object ) for more details.
  */
 DLLEXPORT
-bool get_object(  const int _identifier , BaseObjectData*& _object );
+bool getObject(  const int _identifier , BaseObjectData*& _object );
 
 /** \brief Check if an object with this identifier exists.
  *
@@ -167,23 +167,23 @@ bool get_object(  const int _identifier , BaseObjectData*& _object );
  * @param _identifier  Object id to search for
  */
 DLLEXPORT
-bool object_exists(  const int _identifier );
+bool objectExists(  const int _identifier );
 
 /// Get the number of available objects
 DLLEXPORT
-int object_count();
+int objectCount();
 
 /// Get the number of target objects
 DLLEXPORT
-int target_count();
+int targetCount();
 
 /// Get the number of source objects
 DLLEXPORT
-int source_count();
+int sourceCount();
 
 /// Get the number of visible objects
 DLLEXPORT
-int visible_count();
+int visibleCount();
 
 /** @} */
 
@@ -206,13 +206,13 @@ unsigned int activeExaminer();
  * Set by mouseevents from the core
  */
 DLLEXPORT
-bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
+bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
 
 /** Execute picking operation on scenegraph
  * This picking function will pick in the specified examiner context
  */
 DLLEXPORT
-bool scenegraph_pick( const unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
+bool scenegraphPick( const unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
 
 /** Execute Scenegraph traversal with action and use the last active examiner
  *  If you are reacting on a mouseEvent you should use this function as it will

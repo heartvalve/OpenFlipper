@@ -590,7 +590,7 @@
   // Picking
   // ===============================================================================
 
-  /** Given an node index from PluginFunctions::scenegraph_pick this function can be used to
+  /** Given an node index from PluginFunctions::scenegraphPick this function can be used to
   * check if the meshNode of the object has been picked.
   *
   * @param _node_idx Index of the picked mesh node

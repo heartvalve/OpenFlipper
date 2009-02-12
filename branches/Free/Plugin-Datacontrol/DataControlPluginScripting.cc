@@ -76,7 +76,7 @@ int DataControlPlugin::getObject( QString _name ) {
 QString DataControlPlugin::getObjectName( int objectId ) {
   
   BaseObjectData* object;
-  if ( ! PluginFunctions::get_object(objectId,object) ) {
+  if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,"getObjectName : unable to get object" ); 
     return QString("Unknown Object");
   } else 
@@ -88,7 +88,7 @@ QString DataControlPlugin::getObjectName( int objectId ) {
 void DataControlPlugin::hideObject( int objectId ) {
   
   BaseObjectData* object;
-  if ( ! PluginFunctions::get_object(objectId,object) ) 
+  if ( ! PluginFunctions::getObject(objectId,object) ) 
     return;
   
   if ( object == 0)
@@ -101,7 +101,7 @@ void DataControlPlugin::hideObject( int objectId ) {
 void DataControlPlugin::showObject( int objectId ) {
   
   BaseObjectData* object;
-  if ( ! PluginFunctions::get_object(objectId,object) ) 
+  if ( ! PluginFunctions::getObject(objectId,object) ) 
     return;
   
   if ( object == 0)
@@ -117,7 +117,7 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
 
   for (uint i=0; i < _objectIDs.size(); i++){
     BaseObject* obj;
-    if ( PluginFunctions::get_object(_objectIDs[i],obj) )
+    if ( PluginFunctions::getObject(_objectIDs[i],obj) )
       objs.push_back(obj);
   }
 
