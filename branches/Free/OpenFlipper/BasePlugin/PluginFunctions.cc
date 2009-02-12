@@ -57,6 +57,12 @@ static BaseObject* objectRoot_;
  */
 static std::vector< glViewer* > examiner_widgets_;
 
+/** \brief DONT USE DIRECTLY!!
+ *
+ * This vector is used internally to access properties of all viewers
+ */
+static std::vector< Viewer::ViewerProperties* > viewerProperties_;
+
 /// TODO : Remove this variable and implement multiView correctly here
 static glViewer*  examiner_widget_;
 
@@ -79,6 +85,10 @@ void setDataRoot( BaseObject* _root ) {
 void setViewers( std::vector< glViewer* > _examiner_widgets ) {
    PluginFunctions::examiner_widgets_ = _examiner_widgets;
    PluginFunctions::examiner_widget_ =  examiner_widgets_[0];
+}
+
+void setViewerProperties( std::vector< Viewer::ViewerProperties* > _viewerProperties ) {
+   PluginFunctions::viewerProperties_ = _viewerProperties;
 }
 
 void setActiveExaminer( const unsigned int _id ) {
@@ -361,7 +371,7 @@ Viewer::ActionMode actionMode() {
 }
 
 Viewer::ViewerProperties& viewerProperties(int _id) {
-  if ( _id >= (int)examiner_widgets_.size() ) {
+  if ( _id >= (int)viewerProperties_.size() ) {
     std::cerr << " Error, requested properties for non-existing Viewer!" << std::endl;
     return dummyProperties;
   }
@@ -369,7 +379,7 @@ Viewer::ViewerProperties& viewerProperties(int _id) {
   if ( _id == -1 )
     _id = activeExaminer_;
 
-  return (*examiner_widgets_[_id]->properties());
+  return ( *viewerProperties_[_id] );
 
 }
 

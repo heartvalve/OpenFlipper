@@ -123,6 +123,14 @@ Core() :
 
   viewModes_.push_front(vm);
 
+  //init ViewerProperties (always for 4 Viewers!)
+  std::vector< Viewer::ViewerProperties* > viewerProperties;
+
+  for (int i=0; i < 4; i++)
+    viewerProperties.push_back( new Viewer::ViewerProperties() );
+
+  PluginFunctions::setViewerProperties(viewerProperties);
+
   // Get all relevant Paths and Options from option files
   setupOptions();
 
