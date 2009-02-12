@@ -114,25 +114,23 @@ defineTest( taucs ) {
 
 	exists ( $${TAUCS_PATH_INC}/taucs.h ) {
 		exists ( $${TAUCS_PATH_LIB}/libtaucs.a ) {
-			exists ( $${TAUCS_PATH_LIB}/liblapack.a ) {
-				exists ( $${TAUCS_PATH_LIB}/libmetis.a ) {
+                        addLib ( /usr/lib $${TAUCS_PATH_LIB}, metis )
+			
+                            lapack()
 
-					LIBS *= -l$${TAUCS_PATH_LIB}/libtaucs.a
-					LIBS *= -l$${TAUCS_PATH_LIB}/liblapack.a
-					LIBS *= -l$${TAUCS_PATH_LIB}/libmetis.a
-					export(LIBS)
+			
+			    LIBS *= $${TAUCS_PATH_LIB}/libtaucs.a
+			    export(LIBS)
 
-					INCLUDEPATH *= $${TAUCS_PATH_INC}
-					export(INCLUDEPATH)
+    			    INCLUDEPATH *= $${TAUCS_PATH_INC}
+			    export(INCLUDEPATH)
 
-					return(true)
+			    return(true)
 
-				}
-			}
-		}
-	} else {
+}
+} else {
 		message ( WARNING: taucs header files not found! )
-	}
+}
 
 	return(false)
 }
@@ -548,4 +546,15 @@ defineTest( openmesh ) {
   LIBS += -lCore
   export(QMAKE_LIBDIR)
   export(LIBS)
+}
+
+defineTest( physim2 ) {
+    exists( $${TOPDIR}/PhySim ) {
+        QMAKE_LIBDIR += $${TOPDIR}/PhySim/lib/$${BUILDDIRECTORY}
+        LIBS+= -lPhySim
+        INCLUDEPATH *= $${TOPDIR}/PhySim $${TOPDIR}/PhySim/include
+        export(QMAKE_LIBDIR)
+        export(LIBS)
+        export(INCLUDEPATH)
+    }
 }
