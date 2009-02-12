@@ -184,7 +184,6 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
    QColor color;
 
    if ( OpenFlipper::Options::randomBaseColor() ){
-
       //init random seed
       srand ( time(NULL) );
 
@@ -197,7 +196,7 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
         diff = (bckgrnd.red()   - color.red())  *(bckgrnd.red()   - color.red())
               +(bckgrnd.green() - color.green())*(bckgrnd.green() - color.green())
               +(bckgrnd.blue()  - color.blue()) *(bckgrnd.blue()  - color.blue());
-      }while (diff < 25);
+      }while (diff < 70000);
    }
    else{
       color = OpenFlipper::Options::defaultBaseColor();
