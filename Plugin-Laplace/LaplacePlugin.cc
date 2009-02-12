@@ -33,7 +33,7 @@ void LaplaceLengthPlugin::slotUpdateTexture( QString _textureName , int _identif
    }
 
    BaseObjectData* object;
-   if (! PluginFunctions::get_object(  _identifier , object ) ) {
+   if (! PluginFunctions::getObject(  _identifier , object ) ) {
       return;
    }
 

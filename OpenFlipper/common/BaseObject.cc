@@ -427,7 +427,7 @@ void BaseObject::deleteSubtree() {
 //   BaseObjectData* object;
 //
 //   // If id is -1 this is a group or rootitem so dont stop here
-//   if ( (objectId_ != -1) && !PluginFunctions::get_object(objectId_,object)  )
+//   if ( (objectId_ != -1) && !PluginFunctions::getObject(objectId_,object)  )
 //     return this;
 //
 //   for ( int i = 0 ; i < childItems.size(); ++i ) {

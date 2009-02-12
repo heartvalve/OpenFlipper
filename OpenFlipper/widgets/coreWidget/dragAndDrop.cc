@@ -89,12 +89,12 @@ void CoreWidget::startDrag ( QMouseEvent* _event )
   unsigned int    node_idx, target_idx;
   ACG::Vec3d      hit_point;
   BaseObjectData* object;
-  if ( PluginFunctions::scenegraph_pick ( ACG::SceneGraph::PICK_ANYTHING,
+  if ( PluginFunctions::scenegraphPick ( ACG::SceneGraph::PICK_ANYTHING,
                                           position,
                                           node_idx,
                                           target_idx,
                                           &hit_point ) ) {
-    if ( PluginFunctions::get_picked_object ( node_idx, object ) )
+    if ( PluginFunctions::getPickedObject ( node_idx, object ) )
         objectId = object->id();
   }
 

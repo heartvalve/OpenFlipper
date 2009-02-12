@@ -47,7 +47,7 @@
 /// (existing files will be overwritten)
 bool Core::saveObject( int _id, QString _filename ) {
   BaseObjectData* object;
-  PluginFunctions::get_object(_id,object);
+  PluginFunctions::getObject(_id,object);
 
   for (int i=0; i < (int)supportedTypes_.size(); i++)
     if (object->dataType() == supportedTypes_[i].type) {
@@ -97,7 +97,7 @@ bool Core::saveObjectTo( int _id, QString _filename ) {
   if ( OpenFlipper::Options::gui() ){
 
     BaseObjectData* object;
-    PluginFunctions::get_object(_id,object);
+    PluginFunctions::getObject(_id,object);
   
     //init widget
     LoadWidget* widget = new LoadWidget(supportedTypes_);

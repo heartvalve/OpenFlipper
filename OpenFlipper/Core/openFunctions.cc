@@ -177,7 +177,7 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
 
   // get the opened object
    BaseObjectData* object;
-   PluginFunctions::get_object(_id,object);
+   PluginFunctions::getObject(_id,object);
 
    if ( OpenFlipper::Options::randomBaseColor() )
      object->setBaseColor(ACG::Vec4f((float)(rand()%255)/255.0,
@@ -209,13 +209,13 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
    QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
 
    BaseObject* object2;
-   PluginFunctions::get_object(_id,object2);
+   PluginFunctions::getObject(_id,object2);
 
    if ( OpenFlipper::Options::gui() )
     coreWidget_->addRecent( filename, object2->dataType() );
 
    // if this is the first object opend, reset the global draw mode of all examiners to standard draw mode
-   if ( PluginFunctions::object_count() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
+   if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       coreWidget_->examiner_widgets_[i]->drawMode( OpenFlipper::Options::standardDrawMode() );
       coreWidget_->examiner_widgets_[i]->viewAll();
@@ -234,7 +234,7 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
 
   // get the opened object
    BaseObjectData* object;
-   PluginFunctions::get_object(_id,object);
+   PluginFunctions::getObject(_id,object);
 
    ///@todo : set a default path for new objects
 //    QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();

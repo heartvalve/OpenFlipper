@@ -97,7 +97,7 @@ void setSceneGraphRootNode( SeparatorNode* _root_node ) {
    PluginFunctions::sceneGraph_root_node_ = _root_node;
 }
 
-bool get_picked_object(const unsigned int _node_idx , BaseObjectData*& _object) {
+bool getPickedObject(const unsigned int _node_idx , BaseObjectData*& _object) {
   for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
     if ( o_it->picked( _node_idx ) ) {
       _object = *o_it;
@@ -108,7 +108,7 @@ bool get_picked_object(const unsigned int _node_idx , BaseObjectData*& _object) 
 }
 
 
-bool get_source_identifiers( std::vector<int>& _identifiers  ) {
+bool getSourceIdentifiers( std::vector<int>& _identifiers  ) {
   _identifiers.clear();
 
   for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
@@ -118,7 +118,7 @@ bool get_source_identifiers( std::vector<int>& _identifiers  ) {
   return (_identifiers.size() >0 );
 }
 
-bool get_target_identifiers( std::vector<int>& _identifiers  ) {
+bool getTargetIdentifiers( std::vector<int>& _identifiers  ) {
   _identifiers.clear();
 
   for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objects_end(); ++o_it) {
@@ -132,7 +132,7 @@ bool get_target_identifiers( std::vector<int>& _identifiers  ) {
 // Get objects
 // ===============================================================================
 
-bool get_object(  const int _identifier , BaseObject*& _object ) {
+bool getObject(  const int _identifier , BaseObject*& _object ) {
 
   if ( _identifier == -1 )
     return false;
@@ -141,7 +141,7 @@ bool get_object(  const int _identifier , BaseObject*& _object ) {
   return ( _object != 0 );
 }
 
-bool get_object(  const int _identifier , BaseObjectData*& _object ) {
+bool getObject(  const int _identifier , BaseObjectData*& _object ) {
 
   if ( _identifier == -1 )
     return false;
@@ -224,7 +224,7 @@ bool object_exists(  const int _identifier ) {
 
 //===============================================================================
 
-bool get_all_meshes( std::vector<int>& _identifiers  ) {
+bool getAllMeshes( std::vector<int>& _identifiers  ) {
 
   _identifiers.clear();
 
@@ -290,12 +290,12 @@ void setGlobalDrawMode( const unsigned int _mode ) {
 
 }
 
-bool scenegraph_pick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
+bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
 
    return examiner_widgets_[activeExaminer_]->pick( _pickTarget,_mousePos,_nodeIdx,_targetIdx,_hitPointPtr );
 }
 
-bool scenegraph_pick( const unsigned int _examiner, ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
+bool scenegraphPick( const unsigned int _examiner, ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
 
   if ( _examiner >= examiner_widgets_.size() ) {
     std::cerr << "Wrong examiner id" << std::endl;
@@ -467,7 +467,7 @@ void addGlobalNode(ACG::SceneGraph::BaseNode* _node){
   }
 }
 
-int object_count() {
+int objectCount() {
 
   int count = 0;
 
@@ -481,7 +481,7 @@ int object_count() {
 
 }
 
-int target_count() {
+int targetCount() {
 
   int count = 0;
 
@@ -494,7 +494,7 @@ int target_count() {
   return ( count );
 }
 
-int source_count() {
+int sourceCount() {
   int count = 0;
 
   // find changed manipulator
@@ -506,7 +506,7 @@ int source_count() {
   return ( count );
 }
 
-int visible_count() {
+int visibleCount() {
   int count = 0;
 
   // find changed manipulator

@@ -314,7 +314,7 @@ int LoadWidget::showSave(int _id, QString _filename){
 
   //set dataType
   BaseObjectData* object;
-  PluginFunctions::get_object(_id,object);
+  PluginFunctions::getObject(_id,object);
 
   bool typeFound = false;
   for (int i=0; i < typeBox_->count(); i++){

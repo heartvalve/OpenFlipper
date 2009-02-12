@@ -48,7 +48,7 @@
 namespace PluginFunctions {
 
 
-bool get_source_meshes( std::vector<PolyMesh*>& _meshes  ) {
+bool getSourceMeshes( std::vector<PolyMesh*>& _meshes  ) {
   _meshes.clear();
 
   for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_POLY_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
@@ -60,7 +60,7 @@ bool get_source_meshes( std::vector<PolyMesh*>& _meshes  ) {
   return (_meshes.size() > 0 );
 }
 
-bool get_target_meshes( std::vector<PolyMesh*>& _meshes  ) {
+bool getTargetMeshes( std::vector<PolyMesh*>& _meshes  ) {
   _meshes.clear();
 
   for ( ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_POLY_MESH) ; o_it != PluginFunctions::objects_end(); ++o_it) {
@@ -73,7 +73,7 @@ bool get_target_meshes( std::vector<PolyMesh*>& _meshes  ) {
   return (_meshes.size() > 0 );
 }
 
-bool get_object(  int _identifier , PolyMeshObject*& _object ) {
+bool getObject(  int _identifier , PolyMeshObject*& _object ) {
 
   if ( _identifier == -1 )
     return false;
@@ -83,7 +83,7 @@ bool get_object(  int _identifier , PolyMeshObject*& _object ) {
   return ( _object != 0 );
 }
 
-bool get_mesh(  int _identifier , PolyMesh*& _mesh ) {
+bool getMesh(  int _identifier , PolyMesh*& _mesh ) {
 
   if ( _identifier == -1 )
     return false;

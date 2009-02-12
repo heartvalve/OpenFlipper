@@ -67,7 +67,7 @@ int FileTriangleMeshPlugin::addEmpty(  ){
   object->setParent(PluginFunctions::objectRoot());
   PluginFunctions::objectRoot()->appendChild(object);
 
-  if (PluginFunctions::target_count() == 1 )
+  if (PluginFunctions::targetCount() == 1 )
     object->target(true);
 
   QString name = "TriangleMesh " + QString::number( object->id() ) + ".off";
@@ -100,7 +100,7 @@ int FileTriangleMeshPlugin::loadObject(QString _filename){
   object->setParent(PluginFunctions::objectRoot());
   PluginFunctions::objectRoot()->appendChild(object);
 
-  if (PluginFunctions::object_count() == 1 )
+  if (PluginFunctions::objectCount() == 1 )
     object->target(true);
 
   object->setFromFileName(_filename);
@@ -167,7 +167,7 @@ int FileTriangleMeshPlugin::loadObject(QString _filename){
 /// Save object with given id
 bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
   BaseObjectData* object;
-  PluginFunctions::get_object(_id,object);
+  PluginFunctions::getObject(_id,object);
 
   if (object  == 0){
       emit log(LOGERR, "Unable to save " + object->path() + OpenFlipper::Options::dirSeparator() + object->name()
@@ -242,7 +242,7 @@ DataType FileTriangleMeshPlugin::supportedType() {
 
 void FileTriangleMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
   BaseObjectData* baseObject;
-  if ( !PluginFunctions::get_object(_id,baseObject) ) {
+  if ( !PluginFunctions::getObject(_id,baseObject) ) {
     emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
     return;
   }
@@ -282,7 +282,7 @@ void FileTriangleMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
 
 void FileTriangleMeshPlugin::saveIniFile( INIFile& _ini ,int _id) {
   BaseObjectData* baseObject;
-  if ( !PluginFunctions::get_object(_id,baseObject) ) {
+  if ( !PluginFunctions::getObject(_id,baseObject) ) {
     emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
     return;
   }
