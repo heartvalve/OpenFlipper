@@ -249,6 +249,8 @@ defineTest( freetype ) {
     return(true)
   }
 
+
+  return(true)
 }
 
 defineTest( ftgl ) {
