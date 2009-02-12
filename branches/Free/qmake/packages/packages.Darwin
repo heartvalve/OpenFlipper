@@ -19,7 +19,7 @@ GMM_PATH_INC 		= /usr/local/include/gmm
 GMM_PATH_LIB 		= /usr/lib
 
 # superlu
-SLU_PATH_INC 		= /usw/include/superlu
+SLU_PATH_INC 		= /sw/include/superlu
 SLU_PATH_LIB 		= /sw/lib
 
 # taucs
@@ -118,7 +118,7 @@ defineTest( gmm ) {
 
 defineTest( superlu ) {
 
-	exists ( $${SLU_PATH_INC}/slu_Cnames.h ) {
+	exists ( $${SLU_PATH_INC}/SRC/slu_Cnames.h ) {
 		addLib ( /usr/lib /sw/lib $${SLU_PATH_LIB}, superlu ) {
   		
 			INCLUDEPATH *= $${SLU_PATH_INC}
