@@ -112,7 +112,7 @@ bool ObjectIDPointerManagerT<Pointer>::delete_object(int _identifier) {
 //-----------------------------------------------------------------------------
 
 template< class Pointer >
-void ObjectIDPointerManagerT<Pointer>::get_object_ids(std::vector<int> & _ids)
+void ObjectIDPointerManagerT<Pointer>::getObject_ids(std::vector<int> & _ids)
 {
   _ids.clear();
 
