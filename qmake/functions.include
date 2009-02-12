@@ -102,6 +102,7 @@ defineTest( addLib ) {
        return(true)       
            
     } else {
+       message( Unable to find Library $$name in the following dirs: $$dirs  )
        return(false)
     }
 
