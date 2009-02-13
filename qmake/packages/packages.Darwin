@@ -15,26 +15,26 @@ DEBUGADDLIB = true
 #################################################################################
 
 # gmm (where $${BASE_PATH} is the installation directory of ACG)
-GMM_PATH_INC 		= /usr/local/include/gmm
+GMM_PATH_INC 		= $${TOPDIR}/MacOS/Libs/gmm-3.1/include/gmm
 
 # superlu
-SLU_PATH_INC 		= /sw/include/superlu3_0
-SLU_PATH_LIB 		= /sw/lib
+SLU_PATH_INC 		= $${TOPDIR}/MacOS/Libs/SuperLU_3.0
+SLU_PATH_LIB 		= $${TOPDIR}/MacOS/Libs/SuperLU_3.0/SuperLU
 
 # taucs
-TAUCS_PATH_INC		= /sw/include/taucs
-TAUCS_PATH_LIB		= /sw/lib
+TAUCS_PATH_INC		= $${TOPDIR}/MacOS/Libs/taucs_ready/include
+TAUCS_PATH_LIB		= $${TOPDIR}/MacOS/Libs/taucs_ready/lib
 
 # CGAL
 CGAL_PATH_INC		= /usr/include/CGAL/
 CGAL_PATH_LIB		= /usr/lib
 
 # blas
-BLAS_PATH_LIB            = /usr/lib
+BLAS_PATH_LIB            = $${TOPDIR}/MacOS/Libs/CLAPACK/BLAS/BLAS
 
 # lapack
-LAP_PATH_INC		= /sw/include
-LAP_PATH_LIB		= /sw/lib
+LAP_PATH_INC		= $${TOPDIR}/MacOS/Libs/CLAPACK/lapack
+LAP_PATH_LIB		= $${TOPDIR}/MacOS/Libs/CLAPACK
 
 # wordnet
 WN_PATH_INC		= /usr/local/WordNet-3.0/include
@@ -45,8 +45,9 @@ QWT_PATH_INC		= /usr/local/qwt-5.1.2-svn/include
 QWT_PATH_LIB		= /usr/local/qwt-5.1.2-svn/lib
 
 # glew
-GLEW_PATH_INC		= /sw/include/GL
-GLEW_PATH_LIB		= /sw/lib
+GLEW_PATH_INC		= /opt/local/include/GL
+#/sw/include/GL
+GLEW_PATH_LIB		= /sw/lib /opt/local/lib
 
 # openmp
 OMP_PATH_LIB		= /usr/lib/gcc/i686-apple-darwin8/4.3
@@ -118,15 +119,16 @@ defineTest( gmm ) {
 	return(false)
 }
 
+
 defineTest( superlu ) {
 
 	exists ( $${SLU_PATH_INC}/SRC/slu_Cnames.h ) {
-  	LIBS += /sw/lib/libsuperlu.a
-        export(LIBS)	
-			INCLUDEPATH *= $${SLU_PATH_INC}
-  			export(INCLUDEPATH)
+  		LIBS *= $${SLU_PATH_LIB}/libsuperlu.a 
+        	export(LIBS)	
+		INCLUDEPATH *= $${SLU_PATH_INC}
+  		export(INCLUDEPATH)
 
-			return(true)
+		return(true)
 
 	} else {
 		message ( WARNING: superlu header files not found! )
@@ -186,13 +188,7 @@ defineTest( cgal ) {
 
 defineTest( blas ) {
 
-        addLib( /usr/lib /sw/lib $${BLAS_PATH_LIB}, blas) {
-                        
-		return(true)
-
-        } else {
-                message ( WARNING: blas library files not found! )
-        }
+	LIBS *= $${BLAS_PATH_LIB}/libblas.a
 
         return(false)
 }
@@ -203,13 +199,19 @@ defineTest( lapack ) {
 		
 		blas()
 
-		LIBS *= $${LAP_PATH_LIB}/liblapack.a
+		
+                LIBS *= $${LAP_PATH_LIB}/BLAS/BLAS/libblas.a
+                LIBS *= $${LAP_PATH_LIB}/lapack/liblapack.a
+                LIBS *= $${LAP_PATH_LIB}/F2CLIBS/libf2c/liblibf2c.a
 		export(LIBS)
+
+
+#QMAKE_LIBDIR *= $${HOME}/projects/OpenFlipper/MacOS/Libs/CLAPACK/BLAS/BLAS $${HOME}/projects/OpenFlipper/MacOS/Libs/CLAPACK/lapack $${HOME}/projects/OpenFlipper/MacOS/Libs/CLAPACK/F2CLIBS/libf2c $${HOME}/projects/OpenFlipper/MacOS/Libs/SuperLU_3.0
 
   		INCLUDEPATH *= $${LAP_PATH_INC}
   		export(INCLUDEPATH)
 
-			return(true)
+		return(true)
 
 		
 	} else {
