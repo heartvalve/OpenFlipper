@@ -8,7 +8,7 @@
 # Needed Qt packages and build plugin
 ################################################################################
 
-CONFIG += qt uitools opengl thread debug_and_release silent
+CONFIG += qt uitools opengl thread debug_and_release
 
 QT += opengl network script sql webkit
 
@@ -109,7 +109,7 @@ defineTest(Plugin) {
  		glut()
 		LIBS+= -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
                 export(LIBS)
-		DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents
+		DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents/Plugins
 	        export(DESTDIR)
 
         }
