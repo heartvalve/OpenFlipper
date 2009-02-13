@@ -274,7 +274,7 @@ int main(int argc, char **argv)
   OpenFlipper::Options::argv(&argv);
 
   //print arguments
-  std::fstream filestr ("param.log", std::fstream::out);
+  std::fstream filestr ("/Users/moebius/param.log", std::fstream::out);
 
   for (int i=0; i < argc; i++)
     filestr << argv[i] << " ";
