@@ -23,8 +23,8 @@ SLU_PATH_INC 		= /sw/include/superlu
 SLU_PATH_LIB 		= /sw/lib
 
 # taucs
-TAUCS_PATH_INC		= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include
-TAUCS_PATH_LIB		= /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
+TAUCS_PATH_INC		= /sw/include/taucs
+TAUCS_PATH_LIB		= /sw/lib
 
 # CGAL
 CGAL_PATH_INC		= /usr/include/CGAL/
@@ -119,14 +119,13 @@ defineTest( gmm ) {
 defineTest( superlu ) {
 
 	exists ( $${SLU_PATH_INC}/SRC/slu_Cnames.h ) {
-		addLib ( /usr/lib /sw/lib $${SLU_PATH_LIB}, superlu ) {
-  		
+  	LIBS += /sw/lib/libsuperlu.a
+        export(LIBS)	
 			INCLUDEPATH *= $${SLU_PATH_INC}
   		export(INCLUDEPATH)
 
 			return(true)
 
-		}
 	} else {
 		message ( WARNING: superlu header files not found! )
 	}
@@ -138,12 +137,11 @@ defineTest( taucs ) {
 
 	exists ( $${TAUCS_PATH_INC}/taucs.h ) {
 		exists ( $${TAUCS_PATH_LIB}/libtaucs.a ) {
-                        addLib ( /usr/lib $${TAUCS_PATH_LIB}, metis )
 			
                             lapack()
 
 			
-			    LIBS *= $${TAUCS_PATH_LIB}/libtaucs.a
+			    LIBS *= $${TAUCS_PATH_LIB}/libtaucs.a /opt/local/lib/libmetis.a
 			    export(LIBS)
 
     			    INCLUDEPATH *= $${TAUCS_PATH_INC}
@@ -566,7 +564,9 @@ defineTest( acg ) {
 }
 
 defineTest( openmesh ) {
+  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Tools/lib/$${BUILDDIRECTORY}
   QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY}
+  LIBS += -lTools
   LIBS += -lCore
   export(QMAKE_LIBDIR)
   export(LIBS)
