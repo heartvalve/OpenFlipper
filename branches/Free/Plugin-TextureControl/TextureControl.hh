@@ -84,17 +84,21 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1};
 
   signals:
-
+    // BaseInterface
     void updateView();
+    // TextureInterface
     void updateTexture( QString , int);
-
+    // LoggingInterface
     void log(Logtype _type, QString _message);
     void log(QString _message);
-
+    // MenuInterface
     void addMenu(QMenu* _menu, MenuType _type);
 
   private slots:
+    // BaseInterface
+    void pluginsInitialized();
     void slotObjectUpdated(int _identifier);
+    // TextureInterface
     void slotUpdateAllTextures( );
     void slotTextureAdded( QString _textureName , QString _filename , uint _dimension );
     void slotTextureUpdated( QString _textureName , int _identifier );
@@ -102,17 +106,22 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void slotSwitchTexture( QString _textureName );
 
   private slots:
-    void slotSetTextureProperties();
+    /// Called when an action in the TextureMenu is triggered
     void slotTextureMenu(QAction* _action);
 
+    /// Slot for showing the TextureProperties Dialog
+    void slotSetTextureProperties();
+    /// Called when Ok was clicked in the dialog
     void slotTexturePropertiesOk();
+    /// Called when Cancel was clicked in the dialog
     void slotTexturePropertiesCancel();
+    /// Called when Apply was clicked in the dialog
     void slotTexturePropertiesApply();
 
-    void pluginsInitialized();
-
   public :
-
+    /// Constructor
+    TextureControlPlugin() {};
+    /// Destructor
     ~TextureControlPlugin() {delete(settingsDialog_);};
 
     QString name() { return (QString("TextureControl")); };
