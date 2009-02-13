@@ -34,7 +34,10 @@
 
 #include "ui_textureProperties.hh"
 #include <QtGui>
-#include <qwt_plot_curve.h>
+
+#ifdef QWT
+  #include <qwt_plot_curve.h>
+#endif
 
 class texturePropertiesWidget : public QDialog, public Ui::Dialog
 {
@@ -46,8 +49,10 @@ class texturePropertiesWidget : public QDialog, public Ui::Dialog
     void setOriginalData(std::vector< double > _x, std::vector< double > _y  );
 
   private:
+#ifdef QWT
     QwtPlot* originalDataHistogram_;
     QwtPlotCurve histogramCurve_;
+#endif
 
 };
 
