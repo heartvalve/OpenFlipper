@@ -16,10 +16,9 @@ DEBUGADDLIB = true
 
 # gmm (where $${BASE_PATH} is the installation directory of ACG)
 GMM_PATH_INC 		= /usr/local/include/gmm
-GMM_PATH_LIB 		= /usr/lib
 
 # superlu
-SLU_PATH_INC 		= /sw/include/superlu
+SLU_PATH_INC 		= /sw/include/superlu3_0
 SLU_PATH_LIB 		= /sw/lib
 
 # taucs
