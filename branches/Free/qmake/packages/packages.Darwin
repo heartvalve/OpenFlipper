@@ -29,6 +29,9 @@ TAUCS_PATH_LIB		= /sw/lib
 CGAL_PATH_INC		= /usr/include/CGAL/
 CGAL_PATH_LIB		= /usr/lib
 
+# blas
+BLAS_PATH_LIB            = /usr/lib
+
 # lapack
 LAP_PATH_INC		= /sw/include
 LAP_PATH_LIB		= /sw/lib
@@ -121,7 +124,7 @@ defineTest( superlu ) {
   	LIBS += /sw/lib/libsuperlu.a
         export(LIBS)	
 			INCLUDEPATH *= $${SLU_PATH_INC}
-  		export(INCLUDEPATH)
+  			export(INCLUDEPATH)
 
 			return(true)
 
@@ -181,17 +184,34 @@ defineTest( cgal ) {
 	return(false)
 }
 
+defineTest( blas ) {
+
+        addLib( /usr/lib /sw/lib $${BLAS_PATH_LIB}, blas) {
+                        
+		return(true)
+
+        } else {
+                message ( WARNING: blas library files not found! )
+        }
+
+        return(false)
+}
+
 defineTest( lapack ) {
 
 	exists ( $${LAP_PATH_INC} ) {
-		addLib ( /usr/lib /sw/lib $${LAP_PATH_LIB}, lapack ) {
+		
+		blas()
+
+		LIBS *= $${LAP_PATH_LIB}/liblapack.a
+		export(LIBS)
 
   		INCLUDEPATH *= $${LAP_PATH_INC}
   		export(INCLUDEPATH)
 
 			return(true)
 
-		}
+		
 	} else {
 		message ( WARNING: lapack header files not found! )
 	}
