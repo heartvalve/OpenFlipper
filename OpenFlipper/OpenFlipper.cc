@@ -274,9 +274,13 @@ int main(int argc, char **argv)
   OpenFlipper::Options::argv(&argv);
 
   //print arguments
+  std::fstream filestr ("param.log", std::fstream::out);
+
   for (int i=0; i < argc; i++)
-    std::cerr << argv[i] << " ";
-  std::cerr << std::endl;
+    filestr << argv[i] << " ";
+  filestr << std::endl;
+
+  filestr.close();
 
   CSimpleOpt args(argc, argv, g_rgOptions);
 
