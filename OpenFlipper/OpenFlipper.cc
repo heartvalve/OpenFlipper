@@ -273,6 +273,11 @@ int main(int argc, char **argv)
   OpenFlipper::Options::argc(&argc);
   OpenFlipper::Options::argv(&argv);
 
+  //print arguments
+  for (int i=0; i < argc; i++)
+    std::cerr << argv[i] << " ";
+  std::cerr << std::endl;
+
   CSimpleOpt args(argc, argv, g_rgOptions);
 
 // Only Install signal handler if not running in debug version, otherwise gdb will get confused
