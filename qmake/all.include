@@ -151,6 +151,8 @@ defineTest(Application) {
 	macx {
 		# CONFIG -= app_bundle	# Do not build a framework bundle
 		CONFIG += x86		# Add ppc to build universal binary
+		ICON = $${TOPDIR}/OpenFlipper/Icons/OpenFlipper_Icon.icns
+		export( ICON )
 		export( CONFIG )
 	}
 	export(TEMPLATE)
