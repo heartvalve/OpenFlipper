@@ -140,10 +140,10 @@ void Core::loadPlugins()
   #endif
 	
   // Get all files in the Plugin dir
-  QStringList pluginlist = OpenFlipper::Options::pluginDir().entryList(filters,QDir::Files);
+  QStringList pluginlist = tempDir.entryList(filters,QDir::Files);
 
   for (int i=0; i < pluginlist.size(); i++)
-     pluginlist[i] = OpenFlipper::Options::pluginDir().absoluteFilePath(pluginlist[i]);
+     pluginlist[i] = tempDir.absoluteFilePath(pluginlist[i]);
 
   // Get all config files to be used
   QStringList configFiles = OpenFlipper::Options::optionFiles();
