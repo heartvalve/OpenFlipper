@@ -263,6 +263,21 @@ bool parseCommandLineOptions(CSimpleOpt& args){
 
 int main(int argc, char **argv)
 {
+  // Remove -psn_0_xxxxx argument which is automatically
+  // attached by MacOSX
+  for (int i = 0; i < m_argc; i++) {
+    if(strlen(m_argv[i]) > 4) {
+      if( ( (m_argv[i])[0] == (SOCHAR)'-' ) &&
+        ( (m_argv[i])[1] == (SOCHAR)'p' ) &&
+        ( (m_argv[i])[2] == (SOCHAR)'s' ) &&
+        ( (m_argv[i])[3] == (SOCHAR)'n' ) ) {
+          m_argc--;
+          m_nLastArg--;
+	  m_argv[i] = "";
+      }
+    }
+  }
+   
   OpenFlipper::Options::argc(&argc);
   OpenFlipper::Options::argv(&argv);
 
