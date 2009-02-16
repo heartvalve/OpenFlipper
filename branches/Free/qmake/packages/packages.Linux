@@ -184,9 +184,12 @@ defineTest( cgal ) {
 					addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_PDB ) {
 						addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_Qt4 ) {
 
-        # disabled due to compiler errors with gmp
-  	#					INCLUDEPATH *= $${CGAL_PATH_INC}
-  						export(INCLUDEPATH)
+						        # disabled due to compiler errors with gmp
+  						        #INCLUDEPATH *= $${CGAL_PATH_INC}
+  						        #export(INCLUDEPATH)
+							DEFINES += CGAL_USE_F2C
+							export(DEFINES)
+						
 
 							return(true)
 						}
@@ -607,7 +610,7 @@ defineTest( openmesh ) {
 defineTest( physim2 ) {
   exists( $${TOPDIR}/PhySim ) {
     QMAKE_LIBDIR += $${TOPDIR}/PhySim/lib/$${BUILDDIRECTORY}
-    LIBS+= -lPhySim #-Wl,-rpath=$${TOPDIR}/PhySim/lib/$${BUILDDIRECTORY} -lPhySim
+    LIBS +=  -Wl,-rpath=$${TOPDIR}/PhySim/lib/$${BUILDDIRECTORY} -lPhySim
     INCLUDEPATH *= $${TOPDIR}/PhySim $${TOPDIR}/PhySim/include
     export(QMAKE_LIBDIR)
     export(LIBS)
