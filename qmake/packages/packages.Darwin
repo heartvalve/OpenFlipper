@@ -26,14 +26,14 @@ TAUCS_PATH_INC		= $${TOPDIR}/MacOS/Libs/taucs/src
 TAUCS_PATH_LIB		= $${TOPDIR}/MacOS/Libs/taucs/lib/darwin9.0
 
 # CGAL
-CGAL_PATH_INC		= /usr/include/CGAL/
-CGAL_PATH_LIB		= /usr/lib
+CGAL_PATH_INC		= $${TOPDIR}/MacOS/Libs/CGAL-3.4/include
+CGAL_PATH_LIB		= $${TOPDIR}/MacOS/Libs/CGAL-3.4/lib
 
 # blas
 BLAS_PATH_LIB            = $${TOPDIR}/MacOS/Libs/CLAPACK/BLAS/BLAS
 
 # lapack
-LAP_PATH_INC		= $${TOPDIR}/MacOS/Libs/CLAPACK/lapack
+LAP_PATH_INC		= $${TOPDIR}/MacOS/Libs/CLAPACK/include
 LAP_PATH_LIB		= $${TOPDIR}/MacOS/Libs/CLAPACK
 
 # wordnet
@@ -167,13 +167,14 @@ defineTest( cgal ) {
 
 	exists ( $${CGAL_PATH_INC} ) {
 		addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGAL ) {
-			addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGALcore++ ) {
-				addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGALimageIO ) {
-					addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGALPDB ) {
-						addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGALQt ) {
+			addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGAL_Core ) {
+				addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGAL_ImageIO ) {
+					addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGAL_PDB ) {
+						addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGAL_Qt4 ) {
 
-  						INCLUDEPATH *= $${CGAL_PATH_INC}
-  						export(INCLUDEPATH)
+							lapack()
+  							INCLUDEPATH *= $${CGAL_PATH_INC}
+  							export(INCLUDEPATH)
 
 							return(true)
 						}
@@ -208,9 +209,8 @@ defineTest( lapack ) {
 		export(LIBS)
 
 
-#QMAKE_LIBDIR *= $${HOME}/projects/OpenFlipper/MacOS/Libs/CLAPACK/BLAS/BLAS $${HOME}/projects/OpenFlipper/MacOS/Libs/CLAPACK/lapack $${HOME}/projects/OpenFlipper/MacOS/Libs/CLAPACK/F2CLIBS/libf2c $${HOME}/projects/OpenFlipper/MacOS/Libs/SuperLU_3.0
 
-  		INCLUDEPATH *= $${LAP_PATH_INC}
+  		INCLUDEPATH *= $${LAP_PATH_INC} 
   		export(INCLUDEPATH)
 
 		return(true)
