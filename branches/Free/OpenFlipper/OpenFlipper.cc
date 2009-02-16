@@ -265,7 +265,7 @@ int main(int argc, char **argv)
 {
   // Remove -psn_0_xxxxx argument which is automatically
   // attached by MacOSX
-  for (int i = 0; i < m_argc; i++) {
+  for (int i = 0; i < argc; i++) {
     if(strlen(argv[i]) > 4) {
       if( ( (argv[i])[0] == '-' ) &&
         ( (argv[i])[1] == 'p' ) &&
