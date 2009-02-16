@@ -8,7 +8,7 @@
 # Needed Qt packages and build plugin
 ################################################################################
 
-CONFIG += qt uitools opengl thread debug_and_release
+CONFIG += qt uitools opengl thread debug_and_release silent
 
 QT += opengl network script sql webkit
 
