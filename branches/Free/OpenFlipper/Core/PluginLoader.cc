@@ -138,29 +138,12 @@ void Core::loadPlugins()
   #else
 	filters << "*.so";
   #endif
-
-  QStringList pluginlist = tempDir.entryList(filters, QDir::Files);
+	
+  // Get all files in the Plugin dir
+  QStringList pluginlist = OpenFlipper::Options::pluginDir().entryList(filters,QDir::Files);
 
   for (int i=0; i < pluginlist.size(); i++)
-    pluginlist[i] = tempDir.absoluteFilePath(pluginlist[i]);
-
-  //try to load plugins from old location
-  emit log(LOGOUT,"Trying to find Plugins at " + tempDir.absolutePath() );
-
-  // Get all files in the Plugin dir
-  QStringList pluginlist2 = OpenFlipper::Options::pluginDir().entryList(filters,QDir::Files);
-
-  for (int i=0; i < pluginlist2.size(); i++)
-     pluginlist2[i] = OpenFlipper::Options::pluginDir().absoluteFilePath(pluginlist2[i]);
-
-
-  // Remove all duplicate entries
-  for (QStringList::const_iterator constIterator = pluginlist.constBegin(); constIterator != pluginlist.constEnd();
-       ++constIterator) {
-     pluginlist2.removeAll((*constIterator));
-  }
-
-  pluginlist += pluginlist2;
+     pluginlist[i] = OpenFlipper::Options::pluginDir().absoluteFilePath(pluginlist[i]);
 
   // Get all config files to be used
   QStringList configFiles = OpenFlipper::Options::optionFiles();
