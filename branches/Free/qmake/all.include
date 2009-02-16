@@ -109,7 +109,7 @@ defineTest(Plugin) {
  		glut()
 		LIBS+= -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
                 export(LIBS)
-		DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents/Plugins
+		DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}
 	        export(DESTDIR)
 
         }
