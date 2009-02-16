@@ -269,7 +269,7 @@ enum _ESOFlags
         separated argument "-opt arg" is supplied by the user as a 
         combined argument "-opt=arg". By default this is not considered 
         an error. */
-    SO_O_PEDANTIC    = 0x0040, 
+    SO_O_PEDANTIC    = 0x0040,
 
     /*! Case-insensitive comparisons for short arguments */
     SO_O_ICASE_SHORT = 0x0100, 
@@ -573,6 +573,21 @@ CSimpleOptTempl<SOCHAR>::Init(
     m_nFlags         = a_nFlags;
     m_pszClump       = NULL;
 
+    // Remove -psn_0_xxxxx argument which is automatically
+    // attached by MacOSX
+    for (int i = 0; i < m_argc; i++) {
+      if(strlen(m_argv[i]) > 4) {
+	  if( ( (m_argv[i])[0] == (SOCHAR)'-' ) &&
+	      ( (m_argv[i])[1] == (SOCHAR)'p' ) &&
+	      ( (m_argv[i])[2] == (SOCHAR)'s' ) &&
+	      ( (m_argv[i])[3] == (SOCHAR)'n' ) ) {
+	    m_argc--;
+	    m_nLastArg--;
+	    m_argv[i] = "";
+	  }
+      }
+    }
+
 #ifdef SO_MAX_ARGS
 	if (m_argc > SO_MAX_ARGS) {
         m_nLastError = SO_ARG_INVALID_DATA;
@@ -793,7 +808,7 @@ CSimpleOptTempl<SOCHAR>::PrepareArg(
         return (SOCHAR)'/';
     }
 #endif
-    return a_pszString[0];
+    return a_pszString == 0x0 ? NULL : a_pszString[0];
 }
 
 template<class SOCHAR>
