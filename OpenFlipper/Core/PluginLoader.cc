@@ -157,10 +157,7 @@ void Core::loadPlugins()
   // Remove all duplicate entries
   for (QStringList::const_iterator constIterator = pluginlist.constBegin(); constIterator != pluginlist.constEnd();
        ++constIterator) {
-     for (QStringList::const_iterator constIterator2 = pluginlist2.constBegin(); constIterator2 != pluginlist2.constEnd();
-	  ++constIterator2) {
-	   pluginlist2.removeAll((*constIterator));
-     }
+     pluginlist2.removeAll((*constIterator));
   }
 
   pluginlist += pluginlist2;
