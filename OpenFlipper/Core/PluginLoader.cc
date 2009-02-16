@@ -151,7 +151,17 @@ void Core::loadPlugins()
   QStringList pluginlist2 = OpenFlipper::Options::pluginDir().entryList(filters,QDir::Files);
 
   for (int i=0; i < pluginlist2.size(); i++)
-    pluginlist2[i] = OpenFlipper::Options::pluginDir().absoluteFilePath(pluginlist2[i]);
+     pluginlist2[i] = OpenFlipper::Options::pluginDir().absoluteFilePath(pluginlist2[i]);
+
+
+  // Remove all duplicate entries
+  for (QStringList::const_iterator constIterator = pluginlist.constBegin(); constIterator != pluginlist.constEnd();
+       ++constIterator) {
+     for (QStringList::const_iterator constIterator2 = pluginlist2.constBegin(); constIterator2 != pluginlist2.constEnd();
+	  ++constIterator2) {
+	   pluginlist2.removeAll((*constIterator));
+     }
+  }
 
   pluginlist += pluginlist2;
 
