@@ -179,10 +179,10 @@ defineTest( cgal ) {
 
 	exists ( $${CGAL_PATH_INC} ) {
 		addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL ) {
-			addLib ( /usr/lib $${CGAL_PATH_LIB}, CGALcore++ ) {
-				addLib ( /usr/lib $${CGAL_PATH_LIB}, CGALimageIO ) {
-					addLib ( /usr/lib $${CGAL_PATH_LIB}, CGALPDB ) {
-						addLib ( /usr/lib $${CGAL_PATH_LIB}, CGALQt ) {
+			addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_Core ) {
+				addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_ImageIO ) {
+					addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_PDB ) {
+						addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_Qt4 ) {
 
         # disabled due to compiler errors with gmp
   	#					INCLUDEPATH *= $${CGAL_PATH_INC}
