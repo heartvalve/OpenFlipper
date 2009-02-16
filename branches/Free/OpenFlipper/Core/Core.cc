@@ -207,20 +207,21 @@ Core::init() {
     connect(coreWidget_, SIGNAL(call(QString,bool&)), this, SLOT(slotCall(QString,bool&)));
 
     QRect rect = QApplication::desktop()->screenGeometry();
-    std::cerr << "Width : " << rect.width() << std::endl;;
-    std::cerr << "Height: " << rect.height() << std::endl;
 
     uint width = rect.width();
     if ( width > 1000 ) {
       width = 1000;
-      std::cerr << "Full width" << std::endl;
     }
 
     uint height = rect.height();
     if ( height > 1000 ) {
       height = 1000;
-      std::cerr << "Full height" << std::endl;
     }
+
+#ifdef ARCH_DARWIN
+    width = rect.width() - 300;
+    height = rect.height() - 150;
+#endif
 
     coreWidget_->resize(width,height);
 
