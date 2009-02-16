@@ -272,7 +272,7 @@ int main(int argc, char **argv)
         ( (argv[i])[2] == 's' ) &&
         ( (argv[i])[3] == 'n' ) ) {
 	 argc--;
-	  argv[i] = "";
+	 argv[i] = (char *)"";
       }
     }
   }
