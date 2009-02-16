@@ -206,7 +206,23 @@ Core::init() {
 
     connect(coreWidget_, SIGNAL(call(QString,bool&)), this, SLOT(slotCall(QString,bool&)));
 
-    coreWidget_->resize(1000,1000);
+    QRect rect = QApplication::desktop()->screenGeometry();
+    std::cerr << "Width : " << rect.width() << std::endl;;
+    std::cerr << "Height: " << rect.height() << std::endl;
+
+    uint width = rect.width();
+    if ( width > 1000 ) {
+      width = 1000;
+      std::cerr << "Full width" << std::endl;
+    }
+
+    uint height = rect.height();
+    if ( height > 1000 ) {
+      height = 1000;
+      std::cerr << "Full height" << std::endl;
+    }
+
+    coreWidget_->resize(width,height);
 
     coreWidget_->setWindowTitle( OpenFlipper::Options::windowTitle() );
 
