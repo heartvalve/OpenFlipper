@@ -129,8 +129,7 @@ CSimpleOpt::SOption g_rgOptions[] = {
     { OPT_HIDDDEN_LOGGER   , (char*) "-l"               , SO_NONE    },
     { OPT_NOSPLASH         , (char*) "--no-splash"      , SO_NONE    },
     { OPT_HIDDDEN_TOOLBOX  , (char*) "-t"               , SO_NONE    },
-    { OPT_LOAD_POLYMESHES  , (char*) "-p"               , SO_NONE    },
-//     { OPT_DARWINPHANTOM    , (char*) "-psn_"            , SO_NONE    },
+    { OPT_LOAD_POLYMESHES  , (char*) "-p"               , SO_OPT    },
     { OPT_REMOTE           , (char*) "--remote-control" , SO_NONE    },
     SO_END_OF_OPTIONS                       // END
 };
