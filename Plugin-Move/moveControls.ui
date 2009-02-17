@@ -1,0 +1,866 @@
+<ui version="4.0" >
+ <class>moveControls</class>
+ <widget class="QWidget" name="moveControls" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>348</width>
+    <height>889</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QCheckBox" name="targetObjects" >
+     <property name="text" >
+      <string>Apply Transformation to Target Objects</string>
+     </property>
+     <property name="checked" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>2</number>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Move</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3" >
+       <item>
+        <widget class="QPushButton" name="moveToOrigin" >
+         <property name="toolTip" >
+          <string>Move COG to origin</string>
+         </property>
+         <property name="statusTip" >
+          <string>Move COG of selected objects to origin</string>
+         </property>
+         <property name="whatsThis" >
+          <string>Moves the selected objects such that
+their center of gravity is at the origin.</string>
+         </property>
+         <property name="text" >
+          <string>Move COG to origin</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="Transform" >
+      <attribute name="title" >
+       <string>Transform</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item>
+        <widget class="QPushButton" name="unifyBoundingBoxDiagonal" >
+         <property name="toolTip" >
+          <string>Normalize bounding box diagonal of objects</string>
+         </property>
+         <property name="statusTip" >
+          <string>Normalize bounding box diagonal of objects</string>
+         </property>
+         <property name="whatsThis" >
+          <string>Rescale objects such that its bounding box
+diagonal has length one.</string>
+         </property>
+         <property name="text" >
+          <string>Unify Boundingbox Diagonal</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>753</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>Manipulators</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5" >
+       <item>
+        <widget class="QGroupBox" name="groupBox_5" >
+         <property name="title" >
+          <string>Current Values</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout" >
+          <item row="0" column="1" >
+           <widget class="QLabel" name="label_8" >
+            <property name="font" >
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text" >
+             <string>&lt;font color=red>X&lt;/font></string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" >
+           <widget class="QLabel" name="label_9" >
+            <property name="font" >
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text" >
+             <string>&lt;font color=green>Y&lt;/font></string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="label_11" >
+            <property name="text" >
+             <string>Position</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLineEdit" name="posx" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" >
+           <widget class="QLineEdit" name="posy" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3" >
+           <widget class="QLineEdit" name="posz" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="label_12" >
+            <property name="text" >
+             <string>X Direction</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QLineEdit" name="dirxx" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" >
+           <widget class="QLineEdit" name="dirxy" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3" >
+           <widget class="QLineEdit" name="dirxz" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QLabel" name="label_17" >
+            <property name="text" >
+             <string>Y Direction</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QLineEdit" name="diryx" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2" >
+           <widget class="QLineEdit" name="diryy" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3" >
+           <widget class="QLineEdit" name="diryz" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" >
+           <widget class="QLabel" name="label_18" >
+            <property name="text" >
+             <string>Z Direction</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <widget class="QLineEdit" name="dirzx" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2" >
+           <widget class="QLineEdit" name="dirzy" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3" >
+           <widget class="QLineEdit" name="dirzz" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="maxLength" >
+             <number>6</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3" >
+           <widget class="QLabel" name="label_10" >
+            <property name="font" >
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text" >
+             <string>&lt;font color=blue>Z&lt;/font></string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+         <zorder>diryy</zorder>
+         <zorder>diryx</zorder>
+         <zorder>label_17</zorder>
+         <zorder>diryz</zorder>
+         <zorder>dirzy</zorder>
+         <zorder>dirzx</zorder>
+         <zorder>label_18</zorder>
+         <zorder>dirzz</zorder>
+         <zorder>label_10</zorder>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3" >
+         <property name="title" >
+          <string>Set Values</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4" >
+          <item>
+           <layout class="QGridLayout" name="gridLayout_2" >
+            <item row="0" column="1" >
+             <widget class="QLabel" name="label" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=red>X&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLabel" name="label_2" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=green>Y&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3" >
+             <widget class="QLabel" name="label_3" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=blue>Z&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QPushButton" name="posButton" >
+              <property name="toolTip" >
+               <string>Set the position of the manipulator</string>
+              </property>
+              <property name="statusTip" >
+               <string>Set the position of the manipulator</string>
+              </property>
+              <property name="text" >
+               <string>Position</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLineEdit" name="nposx" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2" >
+             <widget class="QLineEdit" name="nposy" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3" >
+             <widget class="QLineEdit" name="nposz" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line_3" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_3" >
+            <item row="0" column="1" >
+             <widget class="QLabel" name="label_5" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=red>X&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLabel" name="label_6" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=green>Y&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3" >
+             <widget class="QLabel" name="label_7" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=blue>Z&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QPushButton" name="axisAButton" >
+              <property name="toolTip" >
+               <string>Toggle the direction axis</string>
+              </property>
+              <property name="statusTip" >
+               <string>Toggle the direction axis</string>
+              </property>
+              <property name="text" >
+               <string>X Direction</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLineEdit" name="ndirAx" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2" >
+             <widget class="QLineEdit" name="ndirAy" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3" >
+             <widget class="QLineEdit" name="ndirAz" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QPushButton" name="axisBButton" >
+              <property name="toolTip" >
+               <string>Toggle the direction axis</string>
+              </property>
+              <property name="statusTip" >
+               <string>Toggle the direction axis</string>
+              </property>
+              <property name="text" >
+               <string>Y Direction</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="QLineEdit" name="ndirBx" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2" >
+             <widget class="QLineEdit" name="ndirBy" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3" >
+             <widget class="QLineEdit" name="ndirBz" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" colspan="3" >
+             <widget class="QPushButton" name="dirButton" >
+              <property name="toolTip" >
+               <string>Set the directions of the manipulator</string>
+              </property>
+              <property name="statusTip" >
+               <string>Set the directions of the manipulator</string>
+              </property>
+              <property name="text" >
+               <string>Set Direction</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_4" >
+            <item row="0" column="1" >
+             <widget class="QLabel" name="label_21" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=red>X&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLabel" name="label_19" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=green>Y&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3" >
+             <widget class="QLabel" name="label_20" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=blue>Z&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QPushButton" name="transButton" >
+              <property name="toolTip" >
+               <string>Translate the manipulator</string>
+              </property>
+              <property name="statusTip" >
+               <string>Translate the manipulator</string>
+              </property>
+              <property name="text" >
+               <string>Translate</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLineEdit" name="translationX" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2" >
+             <widget class="QLineEdit" name="translationY" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3" >
+             <widget class="QLineEdit" name="translationZ" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line_2" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QGridLayout" >
+            <item row="0" column="1" >
+             <widget class="QLabel" name="label_13" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=red>X&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLabel" name="label_14" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=green>Y&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3" >
+             <widget class="QLabel" name="label_15" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=blue>Z&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="4" >
+             <widget class="QLabel" name="label_16" >
+              <property name="text" >
+               <string>angle</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QPushButton" name="rotButton" >
+              <property name="toolTip" >
+               <string>Rotate the manipulator</string>
+              </property>
+              <property name="statusTip" >
+               <string>Rotate the manipulator</string>
+              </property>
+              <property name="text" >
+               <string>Rotate</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLineEdit" name="rotx" >
+              <property name="maxLength" >
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2" >
+             <widget class="QLineEdit" name="roty" >
+              <property name="maxLength" >
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3" >
+             <widget class="QLineEdit" name="rotz" >
+              <property name="maxLength" >
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="4" >
+             <widget class="QLineEdit" name="rotAngle" >
+              <property name="maxLength" >
+               <number>5</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <item>
+             <widget class="QPushButton" name="scaleButton" >
+              <property name="toolTip" >
+               <string>Scale the manipulator</string>
+              </property>
+              <property name="statusTip" >
+               <string>Scale the manipulator</string>
+              </property>
+              <property name="text" >
+               <string>Scale</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="scalex" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="scaley" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="scalez" >
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+         <zorder>line</zorder>
+         <zorder>line_2</zorder>
+         <zorder>ndirBy</zorder>
+         <zorder>ndirBz</zorder>
+         <zorder>axisBButton</zorder>
+         <zorder>ndirBx</zorder>
+         <zorder>ndirzy</zorder>
+         <zorder>ndirzz</zorder>
+         <zorder>dirZButton</zorder>
+         <zorder>ndirzx</zorder>
+         <zorder>line_3</zorder>
+         <zorder>dirButton</zorder>
+         <zorder>label_5</zorder>
+         <zorder>label_6</zorder>
+         <zorder>label_7</zorder>
+         <zorder>translationY</zorder>
+         <zorder>label_19</zorder>
+         <zorder>label_20</zorder>
+         <zorder>label_21</zorder>
+         <zorder>translationZ</zorder>
+         <zorder>translationX</zorder>
+         <zorder>groupBox_5</zorder>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4" >
+         <property name="title" >
+          <string>Special operations for manipulators</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout" >
+          <item>
+           <widget class="QPushButton" name="projectTangentButton" >
+            <property name="text" >
+             <string>project to Tangent Plane</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="moveManipToCOG" >
+            <property name="text" >
+             <string>Move to COG</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>308</width>
+           <height>171</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
