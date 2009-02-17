@@ -583,7 +583,7 @@ void Core::loadPlugin(QString filename, bool silent){
             scrollArea->setWidgetResizable(true);
 
             dock->setWidget(scrollArea);
-            dock->setMaximumWidth(400);
+//             dock->setMaximumWidth(400);
 
             int newNumber = toolboxindex_;
             toolboxindex_++;
