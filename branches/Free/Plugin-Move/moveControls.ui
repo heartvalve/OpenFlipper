@@ -6,13 +6,25 @@
     <x>0</x>
     <y>0</y>
     <width>348</width>
-    <height>889</height>
+    <height>993</height>
    </rect>
+  </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize" >
+   <size>
+    <width>348</width>
+    <height>16777215</height>
+   </size>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout_6" >
    <item>
     <widget class="QCheckBox" name="targetObjects" >
      <property name="text" >
@@ -25,6 +37,15 @@
    </item>
    <item>
     <widget class="QTabWidget" name="tabWidget" >
+     <property name="enabled" >
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex" >
       <number>2</number>
      </property>
@@ -106,219 +127,310 @@ diagonal has length one.</string>
       <attribute name="title" >
        <string>Manipulators</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5" >
+      <layout class="QVBoxLayout" name="verticalLayout_7" >
        <item>
         <widget class="QGroupBox" name="groupBox_5" >
          <property name="title" >
           <string>Current Values</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout" >
-          <item row="0" column="1" >
-           <widget class="QLabel" name="label_8" >
-            <property name="font" >
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text" >
-             <string>&lt;font color=red>X&lt;/font></string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2" >
-           <widget class="QLabel" name="label_9" >
-            <property name="font" >
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text" >
-             <string>&lt;font color=green>Y&lt;/font></string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="label_11" >
-            <property name="text" >
-             <string>Position</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="QLineEdit" name="posx" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2" >
-           <widget class="QLineEdit" name="posy" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3" >
-           <widget class="QLineEdit" name="posz" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="label_12" >
-            <property name="text" >
-             <string>X Direction</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <widget class="QLineEdit" name="dirxx" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2" >
-           <widget class="QLineEdit" name="dirxy" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3" >
-           <widget class="QLineEdit" name="dirxz" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" >
-           <widget class="QLabel" name="label_17" >
-            <property name="text" >
-             <string>Y Direction</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" >
-           <widget class="QLineEdit" name="diryx" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2" >
-           <widget class="QLineEdit" name="diryy" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="3" >
-           <widget class="QLineEdit" name="diryz" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" >
-           <widget class="QLabel" name="label_18" >
-            <property name="text" >
-             <string>Z Direction</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" >
-           <widget class="QLineEdit" name="dirzx" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2" >
-           <widget class="QLineEdit" name="dirzy" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="3" >
-           <widget class="QLineEdit" name="dirzz" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="maxLength" >
-             <number>6</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3" >
-           <widget class="QLabel" name="label_10" >
-            <property name="font" >
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text" >
-             <string>&lt;font color=blue>Z&lt;/font></string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
+         <layout class="QVBoxLayout" name="verticalLayout_5" >
+          <item>
+           <layout class="QGridLayout" name="gridLayout" >
+            <item row="0" column="1" >
+             <widget class="QLabel" name="label_8" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=red>X&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2" >
+             <widget class="QLabel" name="label_9" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=green>Y&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3" >
+             <widget class="QLabel" name="label_10" >
+              <property name="font" >
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text" >
+               <string>&lt;font color=blue>Z&lt;/font></string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="label_11" >
+              <property name="text" >
+               <string>Position</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLineEdit" name="posx" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>2</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2" >
+             <widget class="QLineEdit" name="posy" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3" >
+             <widget class="QLineEdit" name="posz" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="label_12" >
+              <property name="text" >
+               <string>X Direction</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" >
+             <widget class="QLineEdit" name="dirxx" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Ignored" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2" >
+             <widget class="QLineEdit" name="dirxy" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3" >
+             <widget class="QLineEdit" name="dirxz" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" >
+             <widget class="QLabel" name="label_17" >
+              <property name="text" >
+               <string>Y Direction</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" >
+             <widget class="QLineEdit" name="diryx" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Ignored" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2" >
+             <widget class="QLineEdit" name="diryy" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="3" >
+             <widget class="QLineEdit" name="diryz" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0" >
+             <widget class="QLabel" name="label_18" >
+              <property name="text" >
+               <string>Z Direction</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1" >
+             <widget class="QLineEdit" name="dirzx" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Ignored" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2" >
+             <widget class="QLineEdit" name="dirzy" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="3" >
+             <widget class="QLineEdit" name="dirzz" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
-         <zorder>diryy</zorder>
-         <zorder>diryx</zorder>
-         <zorder>label_17</zorder>
-         <zorder>diryz</zorder>
-         <zorder>dirzy</zorder>
-         <zorder>dirzx</zorder>
-         <zorder>label_18</zorder>
-         <zorder>dirzz</zorder>
-         <zorder>label_10</zorder>
         </widget>
        </item>
        <item>
@@ -392,13 +504,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="1" >
              <widget class="QLineEdit" name="nposx" >
-              <property name="maxLength" >
-               <number>6</number>
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
               </property>
-             </widget>
-            </item>
-            <item row="1" column="2" >
-             <widget class="QLineEdit" name="nposy" >
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -406,6 +517,25 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="3" >
              <widget class="QLineEdit" name="nposz" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maxLength" >
+               <number>6</number>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2" >
+             <widget class="QLineEdit" name="nposy" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -485,6 +615,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="1" >
              <widget class="QLineEdit" name="ndirAx" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -492,6 +628,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="2" >
              <widget class="QLineEdit" name="ndirAy" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -499,6 +641,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="3" >
              <widget class="QLineEdit" name="ndirAz" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -519,6 +667,12 @@ diagonal has length one.</string>
             </item>
             <item row="2" column="1" >
              <widget class="QLineEdit" name="ndirBx" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -526,6 +680,12 @@ diagonal has length one.</string>
             </item>
             <item row="2" column="2" >
              <widget class="QLineEdit" name="ndirBy" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -533,6 +693,12 @@ diagonal has length one.</string>
             </item>
             <item row="2" column="3" >
              <widget class="QLineEdit" name="ndirBz" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -625,6 +791,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="1" >
              <widget class="QLineEdit" name="translationX" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -632,6 +804,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="2" >
              <widget class="QLineEdit" name="translationY" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -639,6 +817,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="3" >
              <widget class="QLineEdit" name="translationZ" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -728,6 +912,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="1" >
              <widget class="QLineEdit" name="rotx" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>5</number>
               </property>
@@ -735,6 +925,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="2" >
              <widget class="QLineEdit" name="roty" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>5</number>
               </property>
@@ -742,6 +938,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="3" >
              <widget class="QLineEdit" name="rotz" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>5</number>
               </property>
@@ -749,6 +951,12 @@ diagonal has length one.</string>
             </item>
             <item row="1" column="4" >
              <widget class="QLineEdit" name="rotAngle" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>5</number>
               </property>
@@ -773,6 +981,12 @@ diagonal has length one.</string>
             </item>
             <item>
              <widget class="QLineEdit" name="scalex" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -780,6 +994,12 @@ diagonal has length one.</string>
             </item>
             <item>
              <widget class="QLineEdit" name="scaley" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -787,6 +1007,12 @@ diagonal has length one.</string>
             </item>
             <item>
              <widget class="QLineEdit" name="scalez" >
+              <property name="minimumSize" >
+               <size>
+                <width>1</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="maxLength" >
                <number>6</number>
               </property>
@@ -797,26 +1023,7 @@ diagonal has length one.</string>
          </layout>
          <zorder>line</zorder>
          <zorder>line_2</zorder>
-         <zorder>ndirBy</zorder>
-         <zorder>ndirBz</zorder>
-         <zorder>axisBButton</zorder>
-         <zorder>ndirBx</zorder>
-         <zorder>ndirzy</zorder>
-         <zorder>ndirzz</zorder>
-         <zorder>dirZButton</zorder>
-         <zorder>ndirzx</zorder>
          <zorder>line_3</zorder>
-         <zorder>dirButton</zorder>
-         <zorder>label_5</zorder>
-         <zorder>label_6</zorder>
-         <zorder>label_7</zorder>
-         <zorder>translationY</zorder>
-         <zorder>label_19</zorder>
-         <zorder>label_20</zorder>
-         <zorder>label_21</zorder>
-         <zorder>translationZ</zorder>
-         <zorder>translationX</zorder>
-         <zorder>groupBox_5</zorder>
         </widget>
        </item>
        <item>
