@@ -198,24 +198,9 @@ void ViewControlPlugin::contextMenuTriggered(QAction* _action){
     if ( objectId == -1)
       return;
 
-    BaseObjectData* object = 0;
-    if ( ! PluginFunctions::getObject(objectId,object) )
-      return;
-
-    if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
-      TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
-      if ( triMeshObject )
-        triMeshObject->hideSelection( triMeshObject->selectionVisible() );
-    }
-
-    if ( object->dataType( DATA_POLY_MESH ) ) {
-      PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
-      if ( polyMeshObject )
-        polyMeshObject->hideSelection( polyMeshObject->selectionVisible() );
-    }
+    showSelection( objectId , !selectionVisible( objectId) );
 
     emit updateView();
-
   }
 
   if ( _action->text() == SHOW_AREAS) {
@@ -226,24 +211,9 @@ void ViewControlPlugin::contextMenuTriggered(QAction* _action){
     if ( objectId == -1)
       return;
 
-    BaseObjectData* object = 0;
-    if ( ! PluginFunctions::getObject(objectId,object) )
-      return;
-
-    if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
-      TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
-      if ( triMeshObject )
-        triMeshObject->hideAreas( triMeshObject->areasVisible() );
-    }
-
-    if ( object->dataType( DATA_POLY_MESH ) ) {
-      PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
-      if ( polyMeshObject )
-        polyMeshObject->hideAreas( polyMeshObject->areasVisible() );
-    }
+    showModelingAreas( objectId, !modelingAreasVisible(objectId) );
 
     emit updateView();
-
   }
 
    if ( _action->text() == SHOW_FEATURES) {
@@ -295,6 +265,101 @@ void ViewControlPlugin::contextMenuTriggered(QAction* _action){
 
     emit updateView();
   }
+
+}
+
+bool ViewControlPlugin::selectionVisible( int _id ) {
+  if ( _id == -1)
+      return false;
+
+  BaseObjectData* object = 0;
+  if ( ! PluginFunctions::getObject(_id,object) )
+    return false;
+
+  if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+    TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
+    if ( triMeshObject )
+      return triMeshObject->selectionVisible();
+  }
+
+  if ( object->dataType( DATA_POLY_MESH ) ) {
+    PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
+    if ( polyMeshObject )
+      return polyMeshObject->selectionVisible();
+  }
+
+  return false;
+}
+
+bool ViewControlPlugin::modelingAreasVisible( int _id ) {
+
+  if ( _id == -1)
+      return false;
+
+  BaseObjectData* object = 0;
+  if ( ! PluginFunctions::getObject(_id,object) )
+    return false;
+
+  if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+    TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
+    if ( triMeshObject )
+      return triMeshObject->areasVisible();
+  }
+
+  if ( object->dataType( DATA_POLY_MESH ) ) {
+    PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
+    if ( polyMeshObject )
+      return( polyMeshObject->areasVisible() );
+  }
+
+  return false;
+
+}
+
+void ViewControlPlugin::showModelingAreas( int _id , bool _state  ) {
+
+  if ( _id == -1)
+      return;
+
+  BaseObjectData* object = 0;
+  if ( ! PluginFunctions::getObject(_id,object) )
+    return;
+
+  if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+    TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
+    if ( triMeshObject )
+      triMeshObject->hideAreas( !_state);
+  }
+
+  if ( object->dataType( DATA_POLY_MESH ) ) {
+    PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
+    if ( polyMeshObject )
+      polyMeshObject->hideAreas( !_state);
+  }
+
+}
+
+
+void ViewControlPlugin::showSelection( int _id , bool _state ) {
+
+    if ( _id == -1)
+      return;
+
+    BaseObjectData* object = 0;
+    if ( ! PluginFunctions::getObject(_id,object) )
+      return;
+
+    if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+      TriMeshObject* triMeshObject = PluginFunctions::triMeshObject( object );
+      if ( triMeshObject )
+        triMeshObject->hideSelection( !_state );
+    }
+
+    if ( object->dataType( DATA_POLY_MESH ) ) {
+      PolyMeshObject* polyMeshObject = PluginFunctions::polyMeshObject( object );
+      if ( polyMeshObject )
+        polyMeshObject->hideSelection( !_state );
+    }
 
 }
 
