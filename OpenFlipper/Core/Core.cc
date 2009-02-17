@@ -221,6 +221,8 @@ Core::init() {
 #ifdef ARCH_DARWIN
     width = rect.width() - 300;
     height = rect.height() - 150;
+
+    coreWidget_->setMaximumSize( width, height  );
 #endif
 
     coreWidget_->resize(width,height);
