@@ -98,8 +98,6 @@ bool MovePlugin::initializeToolbox(QWidget*& _widget)
    toolboxActive_ = false;
    tool_ = new moveToolbarWidget();
    _widget = tool_;
-   QSize size(300, 300);
-   tool_->resize(size);
 
    connect(tool_->moveToOrigin,SIGNAL(clicked() ),this,SLOT(slotMoveToOrigin()));
 
