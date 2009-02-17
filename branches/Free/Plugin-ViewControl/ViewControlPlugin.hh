@@ -120,6 +120,20 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     // initialize the shader Widget
     void initShaderWidget();
 
+
+  public slots:
+    /// For meshes returns if the selection for this object is visible
+    bool selectionVisible( int _id );
+
+    /// Allows to enable/disable visualization of the objects selection for meshes
+    void showSelection( int _id , bool _state );
+
+    /// For meshes returns if the modeling areas for this object is visible
+    bool modelingAreasVisible( int _id );
+
+    /// Allows to enable/disable visualization of the objects modeling area for meshes
+    void showModelingAreas( int _id , bool _state  );
+
 };
 
 #endif //ViewControlPlugin_HH
