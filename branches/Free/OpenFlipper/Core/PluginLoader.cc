@@ -583,7 +583,11 @@ void Core::loadPlugin(QString filename, bool silent){
             scrollArea->setWidgetResizable(true);
 
             dock->setWidget(scrollArea);
-//             dock->setMaximumWidth(400);
+            dock->setMaximumWidth(400);
+
+//             std::cerr << info.name.toStdString() << std::endl;
+//             std::cerr << "minimumSizeHint : " << widget->minimumSizeHint().width() << std::endl;
+//             std::cerr << "minimumSize     : " << widget->minimumSize().width() << std::endl;
 
             int newNumber = toolboxindex_;
             toolboxindex_++;
