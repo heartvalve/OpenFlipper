@@ -156,10 +156,10 @@ void CoreWidget::setViewMode( QString _mode ){
 /// Tab all DockWidgets which belong to ToolWidgets together
 void CoreWidget::tabDockWidgets(QVector< QDockWidget* > _widgets){
 
-//   int maxH      = maximumHeight();
-//   int minH      = minimumHeight();
-//
-//   setFixedHeight(height());
+  int maxH      = maximumHeight();
+  int minH      = minimumHeight();
+
+  setFixedHeight(height());
 
   //if no widgets are given take all visible one's and ignore the order
   if (_widgets.size() == 0)
@@ -182,9 +182,9 @@ void CoreWidget::tabDockWidgets(QVector< QDockWidget* > _widgets){
       tabifyDockWidget(d1, d2);
     }
   }
-/*
+
   setMaximumHeight(maxH);
-  setMinimumHeight(minH);*/
+  setMinimumHeight(minH);
 }
 
 /// show dialog for changing ViewMode
@@ -203,10 +203,10 @@ void CoreWidget::slotViewModeDialog(){
 /// Slot for Changing visible toolWidgets
 void CoreWidget::slotChangeView(QString _mode, QStringList _toolWidgets){
 
-//   int maxH      = maximumHeight();
-//   int minH      = minimumHeight();
+  int maxH      = maximumHeight();
+  int minH      = minimumHeight();
 
-//   setFixedHeight(height());
+  setFixedHeight(height());
 
   //try to find Widgets if they aren't given
   if (_mode != "" && _toolWidgets.size() == 0)
@@ -229,10 +229,6 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolWidgets){
       QString name_nospace = plugins_[p].name;
       name_nospace.remove(" ");
       if (_toolWidgets[i] == name_nospace ){
-
-//         plugins_[p].widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-//         plugins_[p].widget->setMaximumWidth(900);
-
         plugins_[p].widget->setVisible( true );
         if ( !plugins_[p].widget->isFloating() )
           dockWidgets.push_back( plugins_[p].widget );
@@ -245,8 +241,8 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolWidgets){
   //tab all dockWidgets together
   tabDockWidgets(dockWidgets);
 
-//   setMaximumHeight(maxH);
-//   setMinimumHeight(minH);
+  setMaximumHeight(maxH);
+  setMinimumHeight(minH);
 }
 
 /// Slot is called when the visibility of a toolWidget changes
