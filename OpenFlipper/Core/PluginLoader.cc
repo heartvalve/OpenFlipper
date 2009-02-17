@@ -48,6 +48,7 @@
 #include <QToolBox>
 #include <QMessageBox>
 #include <QApplication>
+#include <QScrollArea>
 
 #include <QPluginLoader>
 #include "OpenFlipper/BasePlugin/BaseInterface.hh"
@@ -138,7 +139,7 @@ void Core::loadPlugins()
   #else
 	filters << "*.so";
   #endif
-	
+
   // Get all files in the Plugin dir
   QStringList pluginlist = tempDir.entryList(filters,QDir::Files);
 
@@ -577,13 +578,12 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( toolboxPlugin->initializeToolbox( widget ) ) {
 
             QDockWidget* dock = new QDockWidget(info.name , coreWidget_ );
-            dock->setWidget(widget);
-            widget->setParent(dock);
-            widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
-            widget->setMinimumWidth(300);
-            widget->setMaximumWidth(600);
+            QScrollArea* scrollArea = new QScrollArea(dock);
+            scrollArea->setWidget(widget);
+            scrollArea->setWidgetResizable(true);
 
-
+            dock->setWidget(scrollArea);
+            dock->setMaximumWidth(400);
 
             int newNumber = toolboxindex_;
             toolboxindex_++;
@@ -593,10 +593,8 @@ void Core::loadPlugin(QString filename, bool silent){
             coreWidget_->setDockOptions(QMainWindow::AllowTabbedDocks | QMainWindow::VerticalTabs);
             coreWidget_->addDockWidget(Qt::RightDockWidgetArea,dock);
 
-            dock->resize(300,widget->height() );
+//             dock->resize(300,widget->height() );
             connect(dock, SIGNAL( visibilityChanged (bool) ), coreWidget_ , SLOT( slotVisibilityChanged(bool) ));
-
-            widget->show();
 
             info.widget = dock;
 
