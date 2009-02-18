@@ -761,23 +761,41 @@ void ViewControlPlugin::slotSetShader(){
 }
 
 void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _vertexShader, QString _fragmentShader ){
-  std::cerr << "Todo : Scripting to set Shader" << std::endl;
-//   if ( OpenFlipper::Options::nogui() )
-//     return;
-//
-//   BaseObjectData* object = 0;
-//   PluginFunctions::getObject( _id, object );
-//
-//   if ( object && object->shaderNode() ){
-//     object->shaderNode()->setShader( descriptionsToDrawMode(_drawMode), _vertexShader.toStdString() , _fragmentShader.toStdString());
-//   }
 
+  if ( OpenFlipper::Options::nogui() )
+    return;
+
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject( _id, object );
+
+  std::vector< QString > mode;
+  mode.push_back( _drawMode );
+
+  if ( object && object->shaderNode() ){
+
+    QFileInfo vertexFile(_vertexShader);
+    QFileInfo fragmentFile(_fragmentShader);
+
+    if (vertexFile.absolutePath() != fragmentFile.absolutePath()){
+      emit log(LOGERR, "Cannot set shader. Currently shader files have to be in the same folder.");
+      return;
+    }
+
+    object->shaderNode()->setShaderDir( (vertexFile.absolutePath() + OpenFlipper::Options::dirSeparator()).toStdString() );
+
+    object->shaderNode()->setShader(ListToDrawMode( mode ), vertexFile.fileName().toStdString(),
+                                    fragmentFile.fileName().toStdString());
+  }
+
+  emit updateView();
 }
 
 void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
 
   if ( OpenFlipper::Options::nogui() )
     return;
+
+  updateShaderList();
 
   //get current shader index
    int index = -1;
@@ -796,10 +814,18 @@ void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
   BaseObjectData* object = 0;
   PluginFunctions::getObject( _id, object );
 
+  std::vector< QString > mode;
+  mode.push_back( _drawMode );
+
   if ( object && object->shaderNode() ){
-    std::cerr << "TODO : Get right shader from list, set uniforms as stored in the list" << std::endl;
+
+    object->shaderNode()->setShaderDir( (shaderList_[index].directory + OpenFlipper::Options::dirSeparator()).toStdString() );
+
+    object->shaderNode()->setShader(ListToDrawMode( mode ), shaderList_[index].vertexShader.toStdString(),
+                                    shaderList_[index].fragmentShader.toStdString());
   }
 
+  emit updateView();
 }
 
 
