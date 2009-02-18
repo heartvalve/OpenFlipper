@@ -74,6 +74,8 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     /// Emit this Signal, if object list has changed (e.g. Source or Target changed)
     void updatedObject(int);
 
+    void visibilityChanged( );
+
     void activeObjectChanged();
 
     void log(Logtype _type, QString _message);

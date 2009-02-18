@@ -371,7 +371,7 @@ void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
 
     // show/hide
     case 1:
-        emit updatedObject(-1);
+        emit visibilityChanged( );
         emit updateView();
       break;
 
