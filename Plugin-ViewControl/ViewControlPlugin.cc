@@ -829,5 +829,18 @@ void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
 }
 
 
+void ViewControlPlugin::setViewingDirection(Vector _dir){
+
+}
+
+void ViewControlPlugin::setEyePosition(Vector _eye){
+
+}
+
+void ViewControlPlugin::setSceneCenter(Vector _center){
+
+}
+
+
 Q_EXPORT_PLUGIN2( viewcontrolplugin , ViewControlPlugin );
 

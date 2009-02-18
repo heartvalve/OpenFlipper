@@ -147,6 +147,13 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
      */
     void setShader(int _id, QString _drawMode, QString _name );
 
+
+    void setViewingDirection(Vector _dir);
+
+
+    void setEyePosition(Vector _eye);
+
+    void setSceneCenter(Vector _center);
 };
 
 #endif //ViewControlPlugin_HH
