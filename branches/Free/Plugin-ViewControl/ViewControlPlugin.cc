@@ -760,6 +760,48 @@ void ViewControlPlugin::slotSetShader(){
    emit updateView();
 }
 
+void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _vertexShader, QString _fragmentShader ){
+  std::cerr << "Todo : Scripting to set Shader" << std::endl;
+//   if ( OpenFlipper::Options::nogui() )
+//     return;
+//
+//   BaseObjectData* object = 0;
+//   PluginFunctions::getObject( _id, object );
+//
+//   if ( object && object->shaderNode() ){
+//     object->shaderNode()->setShader( descriptionsToDrawMode(_drawMode), _vertexShader.toStdString() , _fragmentShader.toStdString());
+//   }
+
+}
+
+void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
+
+  if ( OpenFlipper::Options::nogui() )
+    return;
+
+  //get current shader index
+   int index = -1;
+   for ( int i = 0 ; i < (int)shaderList_.size(); ++i) {
+      if ( shaderList_[i].name == _name ) {
+         index = i;
+         break;
+      }
+   }
+
+   if ( index == -1 ) {
+      std::cerr << "Error: Shader not found! " << std::endl;
+      return;
+   }
+
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject( _id, object );
+
+  if ( object && object->shaderNode() ){
+    std::cerr << "TODO : Get right shader from list, set uniforms as stored in the list" << std::endl;
+  }
+
+}
+
 
 Q_EXPORT_PLUGIN2( viewcontrolplugin , ViewControlPlugin );
 
