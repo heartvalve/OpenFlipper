@@ -134,6 +134,19 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     /// Allows to enable/disable visualization of the objects modeling area for meshes
     void showModelingAreas( int _id , bool _state  );
 
+    /** Sets a shader for the object and the given drawMode( can be a combination of draw modes )
+     *  @param _id Object Id
+     *  @param _drawMode ; seperated list of drawmodes used by the shader
+     *  @param _vertexShader   File with the vertex shader code
+     *  @param _fragmentShader File with the fragment shader code
+     */
+    void setShader(int _id, QString _drawMode, QString _vertexShader, QString _fragmentShader );
+
+    /** Sets a Shader from the Shader directory of OpenFlipper ( Name of the one given inside the ini file )
+     *
+     */
+    void setShader(int _id, QString _drawMode, QString _name );
+
 };
 
 #endif //ViewControlPlugin_HH
