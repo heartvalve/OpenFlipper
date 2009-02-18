@@ -96,6 +96,11 @@ void Core::slotObjectUpdated(int _identifier) {
   updateView();
 }
 
+ void Core::slotVisibilityChanged() {
+    resetScenegraph();
+    updateView();
+ }
+
  /** This function is called if the active object has changed. The information is passed to all plugins.
  */
  void Core::slotActiveObjectChanged()

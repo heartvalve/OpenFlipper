@@ -469,6 +469,8 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"updatedObject(int)") )
         connect(plugin,SIGNAL(updatedObject(int)),this,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
 
+      if ( checkSignal(plugin,"visibilityChanged()") )
+        connect(plugin,SIGNAL(visibilityChanged()),this,SLOT(slotVisibilityChanged), Qt::DirectConnection);
 
 
       if ( checkSlot(plugin,"slotAllCleared()") )
@@ -597,7 +599,6 @@ void Core::loadPlugin(QString filename, bool silent){
             coreWidget_->setDockOptions(QMainWindow::AllowTabbedDocks | QMainWindow::VerticalTabs);
             coreWidget_->addDockWidget(Qt::RightDockWidgetArea,dock);
 
-//             dock->resize(300,widget->height() );
             connect(dock, SIGNAL( visibilityChanged (bool) ), coreWidget_ , SLOT( slotVisibilityChanged(bool) ));
 
             info.widget = dock;
