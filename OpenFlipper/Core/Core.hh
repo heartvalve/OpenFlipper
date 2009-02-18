@@ -205,6 +205,9 @@ signals:
        */
       void slotObjectUpdated(int _identifier);
 
+      /// Called when a plugin changes the visibility of an object
+      void slotVisibilityChanged();
+
       /// Called by Plugins if they changed the active object
       void slotActiveObjectChanged();
 

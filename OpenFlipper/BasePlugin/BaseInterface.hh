@@ -53,7 +53,7 @@
   * You have to implement at least name and description for your plugin.
   * All other functions and signals are optional. If you want to implement or use
   * them just add them to your plugin header.
-  * 
+  *
   * See \ref pluginProgramming for a tutorial on plugin programming.
   *
   * Also see \ref dataFlow diagrams for a detailed overview of
@@ -110,6 +110,15 @@ class BaseInterface {
       *  The parameter has to be the id of the object or -1 if refering to all objects.
       */
     virtual void updatedObject(int ) {};
+
+    /** \brief An Object has been shown or hidden
+      *
+      *  Emit this Signal, if youchanged the visibility of an object.
+      *  This is required to reset the near and far plane for the viewers to provide
+      *  an optimal view.
+      *
+      */
+    virtual void visibilityChanged( ) {};
 
     /**  \brief The active object has been switched by this plugin
       *
