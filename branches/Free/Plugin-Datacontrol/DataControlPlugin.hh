@@ -269,6 +269,15 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Show the given Object
         void showObject( int objectId );
 
+        /// set the given Object as target
+        void setTarget( int objectId, bool _target );
+
+        /// set the given Object as source
+        void setSource( int objectId, bool _source );
+
+        /// set the name of the given object
+        void setObjectName( int objectId, QString _name );
+
         /// Makes all available objects target
         void setAllTarget();
 

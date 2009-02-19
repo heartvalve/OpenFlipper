@@ -315,50 +315,6 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 
 }
 
-void DataControlPlugin::setAllTarget() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
-  o_it->target(true);
-  emit activeObjectChanged();
-  emit updatedObject(-1);
-}
-
-void DataControlPlugin::setAllSource() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
-  o_it->source(true);
-  emit updatedObject(-1);
-}
-
-void DataControlPlugin::clearAllTarget() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
-  o_it->target(false);
-  emit activeObjectChanged();
-  emit updatedObject(-1);
-}
-
-void DataControlPlugin::clearAllSource() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
-  o_it->source(false);
-  emit updatedObject(-1);
-}
-
-void DataControlPlugin::hideAll() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
-    o_it->hide();
-  emit updateView();
-}
-
-void DataControlPlugin::showAll() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
-    o_it->show();
-  emit updateView();
-}
-
 void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
                                           const QModelIndex & /*bottomRight*/ )
 {

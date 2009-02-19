@@ -51,6 +51,18 @@ void DataControlPlugin::setDescriptions(){
   emit setSlotDescription("showObject(int)","Show object with the given id.",
                           QStringList("objectId"), QStringList("ID of an object"));
 
+  emit setSlotDescription("setTarget(int,bool)","Set given object as target.",
+                          QString("ObjectId,Target").split(","),
+                          QString("id of the object, set object as target?").split(","));
+
+  emit setSlotDescription("setSource(int,bool)","Set given object as source.",
+                          QString("ObjectId,Source").split(","),
+                          QString("id of the object, set object as source?").split(","));
+
+  emit setSlotDescription("setObjectName(int,QString)","Set name of given object.",
+                          QString("ObjectId,name").split(","),
+                          QString("id of the object, the new name").split(","));
+
   emit setSlotDescription("groupObjects(idList,QString)","Group given Objects together.",
                           QString("objectIds,groupName").split(","),
                           QString("List of objects that should be grouped., Name of the group.").split(","));
@@ -64,6 +76,23 @@ void DataControlPlugin::setDescriptions(){
   emit setSlotDescription("copyObject(int)","Create a copy of an object",
                           QStringList("objectId"), QStringList("Object to copy."));
 
+  emit setSlotDescription("setAllTarget()","Set All objects as targets",
+                          QStringList(), QStringList());
+
+  emit setSlotDescription("setAllSource()","Set All objects as source",
+                          QStringList(), QStringList());
+
+  emit setSlotDescription("clearAllTarget()","Clear targets",
+                          QStringList(), QStringList());
+
+  emit setSlotDescription("clearAllSource()","Clear sources",
+                          QStringList(), QStringList());
+
+  emit setSlotDescription("showAll()","Show all objects",
+                          QStringList(), QStringList());
+
+  emit setSlotDescription("hideAll()","Hide all objects",
+                          QStringList(), QStringList());
 }
 
 
@@ -114,6 +143,45 @@ void DataControlPlugin::hideObject( int objectId ) {
     return;
 
   object->hide();
+}
+
+/// set the given Object as target
+void DataControlPlugin::setTarget( int objectId, bool _target ) {
+
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(objectId,object) )
+    return;
+
+  if ( object == 0)
+    return;
+
+  object->target( _target );
+}
+
+/// set the given Object as source
+void DataControlPlugin::setSource( int objectId, bool _source ) {
+
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(objectId,object) )
+    return;
+
+  if ( object == 0)
+    return;
+
+  object->source( _source );
+}
+
+/// set the name of the given Object as source
+void DataControlPlugin::setObjectName( int objectId, QString _name ) {
+
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(objectId,object) )
+    return;
+
+  if ( object == 0)
+    return;
+
+  object->setName( _name );
 }
 
 void DataControlPlugin::deleteObject( int objectId ) {
@@ -188,3 +256,46 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
   emit updatedObject(-1);
 }
 
+void DataControlPlugin::setAllTarget() {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
+  o_it->target(true);
+  emit activeObjectChanged();
+  emit updatedObject(-1);
+}
+
+void DataControlPlugin::setAllSource() {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
+  o_it->source(true);
+  emit updatedObject(-1);
+}
+
+void DataControlPlugin::clearAllTarget() {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
+  o_it->target(false);
+  emit activeObjectChanged();
+  emit updatedObject(-1);
+}
+
+void DataControlPlugin::clearAllSource() {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
+  o_it->source(false);
+  emit updatedObject(-1);
+}
+
+void DataControlPlugin::hideAll() {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
+    o_it->hide();
+  emit updateView();
+}
+
+void DataControlPlugin::showAll() {
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
+    o_it->show();
+  emit updateView();
+}
