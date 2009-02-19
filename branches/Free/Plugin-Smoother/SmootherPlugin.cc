@@ -107,6 +107,71 @@ slot_smooth()
 
 }
 
+void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction , QString _continuity) {
+  BaseObjectData* baseObjectData;
+  if ( ! PluginFunctions::getObject(_objectId,baseObjectData) ) {
+    emit log(LOGERR,"Unable to get Object");
+    return;
+  }
+
+  if ( baseObjectData->dataType() == DATA_TRIANGLE_MESH ) {
+    TriMeshObject* object = PluginFunctions::triMeshObject(baseObjectData);
+
+    if ( object == 0 ) {
+      emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
+      return;
+    }
+
+    SmootherObject* data = dynamic_cast< SmootherObject* > ( object->objectData(SMOOTHER) );
+
+    if (data == 0){
+      TriMesh* mesh = PluginFunctions::triMesh(object);
+      data = new SmootherObject(mesh);
+      object->setObjectData(SMOOTHER, data);
+    }
+
+    OpenMesh::Smoother::SmootherT< TriMesh >::Component component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential_and_Normal;
+    bool tangential = _direction.contains("tangential");
+    bool normal     = _direction.contains("normal");
+
+    if ( tangential && normal )
+      component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential_and_Normal;
+    else if ( tangential )
+      component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential;
+    else
+      component = OpenMesh::Smoother::SmootherT< TriMesh >::Normal;
+
+    OpenMesh::Smoother::SmootherT< TriMesh >::Continuity continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
+    bool c0 = _continuity.contains("C0");
+    bool c1 = _continuity.contains("C1");
+
+    if ( c0 && c1 )
+      std::cerr << "Continuity C0 + C1 ? Using C1" << std::endl;
+    if( c1 )
+      continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C1;
+    else if( c0 )
+      continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
+
+    data->smoother->initialize(component,continuity);
+
+    data->smoother->smooth( _iterations );
+    TriMesh* mesh = PluginFunctions::triMesh(object);
+
+    if (mesh != 0) {
+      mesh->garbage_collection();
+      mesh->update_normals();
+    }
+
+    emit updatedObject( object->id() );
+
+
+  } else {
+    emit log(LOGERR,"Unsupported object type for smoother");
+    return;
+  }
+
+}
+
 //-----------------------------------------------------------------------------
 
 Q_EXPORT_PLUGIN2( SmootherPlugin , SmootherPlugin );
