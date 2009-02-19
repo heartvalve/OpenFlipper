@@ -270,15 +270,6 @@ public slots:
     /// exit the current application
     void exitApplication();
 
-    /// translate Scene
-    void translate( Vector _vec );
-
-    /// Rotate Scene
-    void rotate( Vector _axis, double _angle, Vector _center );
-
-    /// Set the viewing direction
-    void setViewingDirection( Vector _direction, Vector _upvector );
-
     /// set fullscreen mode
     void fullscreen( bool _state );
 
@@ -288,8 +279,8 @@ public slots:
     /// Show or hide toolbox
     void showToolbox( bool _state );
 
-    /// Set the drawMode ( ; separated list )
-    void setDrawMode(QString _mode);
+    /// Switch the multiView Mode
+    void multiViewMode( int _mode );
 
     /// Enable or disable framerate restriction
     void restrictFrameRate( bool _enable );

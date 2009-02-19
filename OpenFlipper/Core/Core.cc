@@ -740,44 +740,6 @@ Core::exitApplication()
 
 //-----------------------------------------------------------------------------
 
-void
-Core::setDrawMode(QString _mode)
-{
-
-  QStringList list = _mode.split(';');
-
-  std::vector< QString > drawModeList;
-
-  for ( int i = 0 ; i < list.size() ; ++i )
-    drawModeList.push_back(list[i]);
-
-  unsigned int mode = ListToDrawMode(drawModeList);
-
-  PluginFunctions::setDrawMode( mode );
-  emit updateView();
-}
-
-
-//-----------------------------------------------------------------------------
-
-void Core::translate( Vector _vec ) {
-  PluginFunctions::translate( _vec );
-}
-
-//-----------------------------------------------------------------------------
-
-void Core::rotate( Vector _axis, double _angle, Vector _center ) {
-  PluginFunctions::rotate( _axis, _angle, _center );
-}
-
-//-----------------------------------------------------------------------------
-
-void Core::setViewingDirection( Vector _direction, Vector _upvector ) {
-  PluginFunctions::viewingDirection(_direction, _upvector);
-}
-
-//-----------------------------------------------------------------------------
-
 void Core::fullscreen( bool _state ) {
   if ( OpenFlipper::Options::gui() )
     coreWidget_->setFullscreen(_state);
@@ -796,6 +758,31 @@ void Core::showToolbox( bool _state ) {
   if ( OpenFlipper::Options::gui() )
     coreWidget_->showToolbox(_state);
 }
+
+void Core::multiViewMode( int _mode ) {
+  if ( !OpenFlipper::Options::gui() || !OpenFlipper::Options::multiView() )
+    return;
+
+  switch (_mode)
+  {
+    case 0:
+      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::SingleView);
+      PluginFunctions::setActiveExaminer(0);
+      break;
+    case 1:
+      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::Grid);
+      break;
+    case 2:
+      coreWidget_->baseLayout_->setMode (QtMultiViewLayout::HSplit);
+      break;
+
+    default:
+      emit log(LOGERR,"Requested illegal multiview mode!");
+  }
+
+}
+
+
 
 
 //-----------------------------------------------------------------------------
@@ -1075,21 +1062,14 @@ void Core::setDescriptions(){
   emit setSlotDescription("updateView()", "Redraw the contents of the viewer.", QStringList(), QStringList());
   emit setSlotDescription("clearAll()", "Clear all data objects.", QStringList(), QStringList());
   emit setSlotDescription("exitApplication()", "Quit OpenFlipper", QStringList(), QStringList());
-  emit setSlotDescription("translate(Vector)", "translate Scene",
-                          QStringList("TranslationVector"), QStringList("vector for the translation."));
-  emit setSlotDescription("rotate(Vector,double,Vector)", "Rotate Scene",
-                          QString("Axis,Angle,Center").split(","),
-                          QString("Rotation axis., Rotation Angle., Rotation Center.").split(","));
-  emit setSlotDescription("setViewingDirection(Vector,Vector)", "Set the viewing direction",
-                          QString("direction,upVector").split(","),
-                          QString("Viewing direction., Up-Vector.").split(","));
   emit setSlotDescription("fullscreen(bool)", "Enable or disable fullscreen mode",
                            QStringList("enabled") ,
                            QStringList("Enable or disable fullscreen mode"));
   emit setSlotDescription("showLogger(bool)", "Show or hide logger window", QStringList("Show or hide logger window"), QStringList());
   emit setSlotDescription("showToolbox(bool)", "Show or hide toolbox", QStringList("Show or hide the toolbox"), QStringList());
-  emit setSlotDescription("setDrawMode(QString)", "Set the drawMode",
-                        QStringList("DrawMode"), QStringList("the drawMode ( ; separated list )"));
+  emit setSlotDescription("multiViewMode(int)", "Switch MultiView Mode",
+                          QStringList("Mode"), QStringList("0: One Viewer\n 1: Grid \n 2: Horizontal split"));
+
   emit setSlotDescription("restrictFrameRate(bool)", "Restrict FrameRate to MaxFrameRate",
                         QStringList("enabled"), QStringList("restriction switch"));
   emit setSlotDescription("setMaxFrameRate(int)", "set the maximal framerate (automatically enables framerate restriction)",

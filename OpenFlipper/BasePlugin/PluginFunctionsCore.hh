@@ -60,9 +60,13 @@ namespace PluginFunctions {
     /** @name Setup Functions
     * @{ */
 //=======================================
-/// Set the internal examiner pointer ( DO NOT USE!! )
+/// Set the internal Viewer pointer ( DO NOT USE!! )
 DLLEXPORT
-void setViewers( std::vector< glViewer* > _examiner_widgets );
+void setViewers( std::vector< glViewer* > _viewerWidgets );
+
+/// Get a Viewer
+DLLEXPORT
+glViewer* viewer(int  _viewerId );
 
 /// Set the internal viewerProperties pointer ( DO NOT USE!! )
 DLLEXPORT
