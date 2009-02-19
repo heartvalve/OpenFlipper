@@ -388,7 +388,7 @@ void SelectionPlugin::slotMouseEvent( QMouseEvent* _event ) {
   if ( PluginFunctions::pickMode() == LASSO_SELECTION) {
     if ( lasso_ == 0 ) {
       // create lasso For screen lasso selection
-      lasso_ = new ACG::QtLasso(PluginFunctions::glState());
+      lasso_ = new ACG::QtLasso(PluginFunctions::viewerProperties().glState());
       connect(lasso_ , SIGNAL(signalLassoSelection(ACG::QtLasso::SelectionMode)),
               this   , SLOT(slotLassoSelection(ACG::QtLasso::SelectionMode)));
     }
