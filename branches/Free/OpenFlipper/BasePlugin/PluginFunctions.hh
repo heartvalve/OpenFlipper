@@ -50,9 +50,7 @@
 #include <OpenFlipper/common/Types.hh>
 
 #include <ACG/Scenegraph/SceneGraph.hh>
-// #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
-#include <ACG/GL/GLState.hh>
-#include <OpenFlipper/common/ViewerProperties.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh>
 
 /** The Namespace PluginFunctions contains functions for all plugins. These functions should be used to get the
  *  objects to work on or to set modes in the examiner widget. */
@@ -236,10 +234,6 @@ void pickMode ( std::string _mode);
 DLLEXPORT
 void pickMode ( const unsigned int _examiner, std::string _mode);
 
-/// Get the current gl state from examiner
-DLLEXPORT
-ACG::GLState&  glState();
-
 /// Returns a QImage of the current View
 DLLEXPORT
 void getCurrentViewImage(QImage& _image);
@@ -268,155 +262,12 @@ void actionMode ( Viewer::ActionMode _mode);
 DLLEXPORT
 Viewer::ActionMode actionMode();
 
-/** Get the viewer properties
- * -1 will get the properties of the active Viewer which is the default
- */
-DLLEXPORT
-Viewer::ViewerProperties& viewerProperties(int _id = -1);
-
-
-
-
 /** Lock scene rotation via mouse
  *
  * @param _mode allow or disallow rotation
  */
 DLLEXPORT
 void allowRotation(bool _mode);
-
-
-/** @} */
-
-
-//=======================================
-// View settings
-    /** @name View settings
-    * @{ */
-//=======================================
-
-/** \brief Set current GL Context to main context
- */
-DLLEXPORT
-void setMainGLContext();
-
-
-/** \brief Set the viewing direction
- * @param _dir direction
- * @param _up up vector
- */
-DLLEXPORT
-void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up);
-
-/** \brief Set the Scene position
- * @param _center Center of the current scene
- * @param _radius Radius of the scene ( Use scene_radius to get the current radius )
- */
-DLLEXPORT
-void setScenePos(const ACG::Vec3d& _center, const double _radius);
-
-/** \brief Set the scene position (Same as  setScenePos(const ACG::Vec3d& _center, double _radius) )
- *
- */
-DLLEXPORT
-void setScenePos(const ACG::Vec3d& _center);
-
-/** \brief Get the current scene center
- *
- */
-DLLEXPORT
-const ACG::Vec3d& sceneCenter();
-
-/** \brief Returns the current scene radius from the examiner widget
- *
- * Returns the Radius of the scene
- */
-DLLEXPORT
-double sceneRadius();
-
-/** \brief Translate viewer pos by given vector
- *
- * Translates the scene by a given vector. ( This is only a view transformation and does not
- * effect the scene center. To really translate the scene, use setScenePos );
- * @param _vector translation
- */
-DLLEXPORT
-void translate( const ACG::Vec3d &_vector );
-
-/** \brief Rotate Scene around axis
- *
- * Rotates the current scene.
- * @param _axis   Rotation axis
- * @param _angle  Rotation Angle
- * @param _center Rotation Center
- */
-DLLEXPORT
-void rotate(const ACG::Vec3d&  _axis,
-            const double       _angle,
-            const ACG::Vec3d&  _center);
-
-
-/** \brief Go to home position
- */
-DLLEXPORT
-void viewHome();
-
-/** \brief View the whole scene
- */
-DLLEXPORT
-void viewAll();
-
-/** \brief Get the current viewing Direction
- */
-DLLEXPORT
-ACG::Vec3d viewingDirection();
-
-/** \brief Get the current viewer position
- */
-DLLEXPORT
-ACG::Vec3d eyePos();
-
-/** \brief Get the current up vector
- */
-DLLEXPORT
-ACG::Vec3d upVector();
-
-/** \brief Switch to orthographic Projection
- *
- */
-DLLEXPORT
-void orthographicProjection();
-
-/** \brief Switch to perspective Projection
- *
- */
-DLLEXPORT
-void perspectiveProjection();
-
-/** \brief Switch active examiner to a different draw mode
- *
- */
-DLLEXPORT
-void setDrawMode( const unsigned int _mode );
-
-/** \brief Get the current draw Mode of the active Examiner
- *
- */
-DLLEXPORT
-unsigned int drawMode( );
-
-/** \brief Switch all examiners to a different draw mode
- *
- */
-DLLEXPORT
-void setGlobalDrawMode( const unsigned int _mode );
-
-
-/** \brief Set the background color of the examiner widget.
- *
- */
-DLLEXPORT
-void setBackColor( OpenMesh::Vec4f _color);
-
 
 /** \brief Map coordinates of GL Widget to global coordinates
  *
@@ -431,24 +282,6 @@ DLLEXPORT
 QPoint mapToLocal( const QPoint _point );
 
 /** @} */
-
-
-//=======================================
-// Do animations in examiner viewer
-    /** @name Animations
-    * @{ */
-//=======================================
-
-/**  Fly to point and set new viewing direction (animated).
- * @param _position New viewer position ( the new eye point of the viewer )
- * @param _center   The new scene center ( the point we are looking at )
- * @param _time     Animation time in ms
- */
-DLLEXPORT
-void flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time=1000.0);
-
-/** @} */
-
 
 //=======================================
 // Iterators for object Access

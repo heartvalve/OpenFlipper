@@ -82,8 +82,8 @@ void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
 
-void setViewers( std::vector< glViewer* > _examiner_widgets ) {
-   PluginFunctions::examiner_widgets_ = _examiner_widgets;
+void setViewers( std::vector< glViewer* > _viewerWidgets ) {
+   PluginFunctions::examiner_widgets_ = _viewerWidgets;
    PluginFunctions::examiner_widget_ =  examiner_widgets_[0];
 }
 
@@ -93,6 +93,15 @@ void setViewerProperties( std::vector< Viewer::ViewerProperties* > _viewerProper
 
 void setActiveExaminer( const unsigned int _id ) {
   activeExaminer_ = _id;
+}
+
+glViewer* viewer(int  _viewerId ) {
+   if ( _viewerId < 0 || _viewerId >= (int)examiner_widgets_.size() ) {
+     std::cerr << "Requested unknown viewer with id : " << _viewerId << std::endl;
+     return examiner_widgets_[activeExaminer()];
+   }
+
+   return( examiner_widgets_[_viewerId] );
 }
 
 unsigned int activeExaminer( ) {
@@ -273,14 +282,23 @@ QPoint mapToLocal( const QPoint _point ) {
   return examiner_widgets_[activeExaminer_]->glMapFromGlobal(_point);
 }
 
-/** Set the draw Mode of the examiner widget.\n
- *
- * The DrawModes are defined at ACG/Scenegraph/DrawModes.hh \n
- * They can be combined.
- */
-void setDrawMode( const unsigned int _mode ) {
-  examiner_widgets_[activeExaminer_]->drawMode(_mode);
-  examiner_widgets_[activeExaminer_]->updateGL();
+void setDrawMode( const unsigned int _mode , int _viewer) {
+
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->drawMode(_mode);
+    examiner_widgets_[activeExaminer_]->updateGL();
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i ) {
+      examiner_widgets_[i]->drawMode(_mode);
+      examiner_widgets_[i]->updateGL();
+    }
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() ) {
+    examiner_widgets_[_viewer]->drawMode(_mode);
+    examiner_widgets_[_viewer]->updateGL();
+  }
+  else
+    std::cerr << "Requested illegal viewer for setting DrawMode!!" << std::endl;
+
 }
 
 /** Get the current draw Mode of the examiner widget.\n
@@ -288,16 +306,17 @@ void setDrawMode( const unsigned int _mode ) {
  * The DrawModes are defined at ACG/Scenegraph/DrawModes.hh \n
  * They can be combined.
  */
-unsigned int drawMode( ) {
+unsigned int drawMode( int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    return examiner_widgets_[activeExaminer_]->drawMode();
+  } else if ( _viewer == ALL_VIEWERS )
+    std::cerr << "Please select viewer to get viewing direction!" << std::endl;
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    return examiner_widgets_[_viewer]->drawMode();
+  else
+    std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
+
   return examiner_widgets_[activeExaminer_]->drawMode();
-}
-
-void setGlobalDrawMode( const unsigned int _mode ) {
-  for ( uint i = 0 ; i < examiner_widgets_.size(); ++i ) {
-    examiner_widgets_[i]->drawMode(_mode);
-    examiner_widgets_[i]->updateGL();
-  }
-
 }
 
 bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {
@@ -358,10 +377,6 @@ void actionMode ( Viewer::ActionMode _mode) {
     viewerProperties(i).actionMode(_mode);
 }
 
-ACG::GLState&  glState() {
-   return viewerProperties().glState();
-}
-
 void getCurrentViewImage(QImage& _image) {
   examiner_widget_->copyToImage( _image );
 }
@@ -399,17 +414,42 @@ void setMainGLContext() {
   examiner_widget_->makeCurrent();
 }
 
-void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up) {
-  examiner_widgets_[activeExaminer_]->viewingDirection(_dir,_up);
+void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up , int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->viewingDirection(_dir,_up);
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->viewingDirection(_dir,_up);
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->viewingDirection(_dir,_up);
+  else
+    std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
 }
 
 
-void setScenePos(const ACG::Vec3d& _center,const double _radius) {
-  examiner_widgets_[activeExaminer_]->setScenePos( _center, _radius );
+void setScenePos(const ACG::Vec3d& _center,const double _radius, int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->setScenePos( _center, _radius );
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->setScenePos( _center, _radius );
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->setScenePos( _center, _radius );
+  else
+    std::cerr << "Requested illegal viewer for setScenePos!!" << std::endl;
+  examiner_widgets_[activeExaminer_];
 }
 
-void setScenePos(const ACG::Vec3d& _center) {
-  examiner_widgets_[activeExaminer_]->setScenePos( _center, examiner_widgets_[activeExaminer_]->scene_radius() );
+void setScenePos(const ACG::Vec3d& _center, int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->setScenePos( _center, examiner_widgets_[activeExaminer_]->scene_radius() );
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->setScenePos( _center, examiner_widgets_[i]->scene_radius() );
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->setScenePos( _center, examiner_widgets_[_viewer]->scene_radius() );
+  else
+    std::cerr << "Requested illegal viewer for setScenePos!!" << std::endl;
 }
 
 const ACG::Vec3d& sceneCenter() {
@@ -420,34 +460,94 @@ double sceneRadius() {
    return examiner_widgets_[activeExaminer_]->scene_radius();
 }
 
-void translate( const ACG::Vec3d &_vector ) {
-  examiner_widgets_[activeExaminer_]->translate(_vector);
+void translate( const ACG::Vec3d &_vector , int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->translate(_vector);
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->translate(_vector);
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->translate(_vector);
+  else
+    std::cerr << "Requested illegal viewer for translate!!" << std::endl;
 }
 
 void rotate(const ACG::Vec3d&  _axis,
             const double       _angle,
-            const ACG::Vec3d&  _center)
+            const ACG::Vec3d&  _center,
+            int                _viewer )
 {
-  examiner_widgets_[activeExaminer_]->rotate(_axis,_angle,_center);
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->rotate(_axis,_angle,_center);
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->rotate(_axis,_angle,_center);
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->rotate(_axis,_angle,_center);
+  else
+    std::cerr << "Requested illegal viewer for rotate!!" << std::endl;
 }
 
-void viewHome() {
-  examiner_widgets_[activeExaminer_]->home();
+void viewHome(int _viewer) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->home();
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->home();
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->home();
+  else
+    std::cerr << "Requested illegal viewer for viewHome!!" << std::endl;
 }
 
-void viewAll() {
-  examiner_widgets_[activeExaminer_]->viewAll();
+void viewAll(int _viewer) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->viewAll();
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->viewAll();
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->viewAll();
+  else
+    std::cerr << "Requested illegal viewer for viewAll!!" << std::endl;
 }
 
-ACG::Vec3d viewingDirection() {
+ACG::Vec3d viewingDirection(int _viewer) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    return viewerProperties(activeExaminer_).glState().viewing_direction();
+  } else if ( _viewer == ALL_VIEWERS )
+    std::cerr << "Please select viewer to get viewing direction!" << std::endl;
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    return viewerProperties(_viewer).glState().viewing_direction();
+  else
+    std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
+
   return viewerProperties().glState().viewing_direction();
 }
 
-ACG::Vec3d eyePos() {
+ACG::Vec3d eyePos(int _viewer) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    return viewerProperties(activeExaminer_).glState().eye();
+  } else if ( _viewer == ALL_VIEWERS )
+    std::cerr << "Please select viewer to get eyePos!" << std::endl;
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    return viewerProperties(_viewer).glState().eye();
+  else
+    std::cerr << "Requested illegal viewer for eyePos!!" << std::endl;
+
   return viewerProperties().glState().eye();
 }
 
-ACG::Vec3d upVector() {
+ACG::Vec3d upVector(int _viewer) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    return viewerProperties(activeExaminer_).glState().up();
+  } else if ( _viewer == ALL_VIEWERS )
+    std::cerr << "Please select viewer to get up vector!" << std::endl;
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    return viewerProperties(_viewer).glState().up();
+  else
+    std::cerr << "Requested illegal viewer for up vector!!" << std::endl;
+
   return viewerProperties().glState().up();
 }
 
