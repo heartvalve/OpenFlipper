@@ -181,6 +181,9 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     /// Set the scene center
     void setSceneCenter( Vector _center, int _viewer = PluginFunctions::ALL_VIEWERS );
 
+    /// Enable or disable Backface culling
+    void enableBackfaceCulling( bool _state , int _viewer = PluginFunctions::ALL_VIEWERS );
+
 
     void setEyePosition(Vector _eye);
 };

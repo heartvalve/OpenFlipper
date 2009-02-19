@@ -849,6 +849,19 @@ void ViewControlPlugin::translate( Vector _vec , int _viewer) {
 }
 
 
+void ViewControlPlugin::enableBackfaceCulling( bool _state , int _viewer  ) {
+  if ( _viewer == PluginFunctions::ALL_VIEWERS )
+    for ( uint i = 0 ; i < PluginFunctions::viewers( ); ++i )
+      PluginFunctions::viewerProperties(i).backFaceCulling(_state);
+  else if ( _viewer == PluginFunctions::ACTIVE_VIEWER )
+    PluginFunctions::viewerProperties(PluginFunctions::activeExaminer()).backFaceCulling(_state);
+  else if ( _viewer >= 0 && _viewer < PluginFunctions::viewers( ) )
+    PluginFunctions::viewerProperties(_viewer).backFaceCulling(_state);
+  else
+    std::cerr << "Illegal viewer requested! " << std::endl;
+
+}
+
 
 //-----------------------------------------------------------------------------
 
