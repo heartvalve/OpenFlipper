@@ -67,6 +67,9 @@ static QDir textureDir_;
 /// Stores the Path to the Icons
 static QDir iconDir_;
 
+/// Stores the OpenFlipper Icon
+static QIcon* OpenFlipperIcon_ = 0;
+
 /// Stores the Path to the Fonts
 static QDir fontsDir_;
 
@@ -320,6 +323,18 @@ bool iconDir(QString      _dir) {
     return true;
   }
   return false;
+}
+
+QIcon& OpenFlipperIcon() {
+
+  if (OpenFlipperIcon_ == 0){
+    OpenFlipperIcon_ = new QIcon( iconDirStr() + dirSeparator() + "OpenFlipper_Icon_128x128x32.png");
+    OpenFlipperIcon_->addFile( iconDirStr() + dirSeparator() + "OpenFlipper_Icon_48x48x32.png", QSize(48,48) );
+    OpenFlipperIcon_->addFile( iconDirStr() + dirSeparator() + "OpenFlipper_Icon_32x32x32.png", QSize(32,32) );
+    OpenFlipperIcon_->addFile( iconDirStr() + dirSeparator() + "OpenFlipper_Icon_16x16x32.png", QSize(16,16) );
+  }
+
+  return *OpenFlipperIcon_;
 }
 
 bool fontsDir(QString      _dir) {

@@ -51,6 +51,7 @@
 #include <QDir>
 #include <QStringList>
 #include <QColor>
+#include <QIcon>
 
 namespace OpenFlipper {
 namespace Options {
@@ -98,6 +99,10 @@ QString textureDirStr();
 /// Returns the Path to the Icons
 DLLEXPORT
 QString iconDirStr();
+
+/// Returns the OpenFlipper Icon
+DLLEXPORT
+QIcon& OpenFlipperIcon();
 
 /// Returns the Path to Fonts
 DLLEXPORT

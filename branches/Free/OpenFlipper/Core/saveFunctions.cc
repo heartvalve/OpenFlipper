@@ -101,6 +101,7 @@ bool Core::saveObjectTo( int _id, QString _filename ) {
   
     //init widget
     LoadWidget* widget = new LoadWidget(supportedTypes_);
+    widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
 
     connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
     connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
