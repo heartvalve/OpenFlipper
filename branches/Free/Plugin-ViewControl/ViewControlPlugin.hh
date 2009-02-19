@@ -166,9 +166,23 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     /// Set the draw mode for a viewer
     void setDrawMode(QString _mode, int _viewer = PluginFunctions::ALL_VIEWERS );
 
-    void setEyePosition(Vector _eye);
+    /// Get a viewers viewing direction
+    Vector viewingDirection( int _viewer = PluginFunctions::ACTIVE_VIEWER );
 
-    void setSceneCenter(Vector _center);
+    /// get a viewers up vector
+    Vector upVector( int _viewer = PluginFunctions::ACTIVE_VIEWER );
+
+    /// get a viewers eye Position
+    Vector eyePosition( int _viewer = PluginFunctions::ACTIVE_VIEWER );
+
+    /// Get the scene center
+    Vector sceneCenter( int _viewer = PluginFunctions::ACTIVE_VIEWER );
+
+    /// Set the scene center
+    void setSceneCenter( Vector _center, int _viewer = PluginFunctions::ALL_VIEWERS );
+
+
+    void setEyePosition(Vector _eye);
 };
 
 #endif //ViewControlPlugin_HH
