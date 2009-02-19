@@ -87,6 +87,15 @@ private slots:
 public slots:
    QString version() { return QString("1.0"); };
 
+   /** \brief  Smooth object
+    *
+    * @param _objectId Object to smooth
+    * @param _iterations Number of smoothing iterations
+    * @param _direction tangential/normal/tangential+normal
+    * @param _continuity C0/C1
+    */
+   void smooth(int _objectId , int _iterations , QString _direction , QString _continuity);
+
 };
 
 #endif //SMOOTHERPLUGIN_HH
