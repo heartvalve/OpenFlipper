@@ -254,6 +254,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Get the Objects name from the id
         QString getObjectName( int objectId );
 
+        /// Delete the given object
+        void deleteObject(int objectId);
+
         /// Get the id of an object by its name
         int getObject( QString _name );
 
