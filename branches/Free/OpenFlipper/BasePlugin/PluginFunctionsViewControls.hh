@@ -134,7 +134,7 @@ void setScenePos(const ACG::Vec3d& _center  , int _viewer = ALL_VIEWERS);
  *
  */
 DLLEXPORT
-const ACG::Vec3d& sceneCenter();
+const ACG::Vec3d& sceneCenter( int _viewer = ACTIVE_VIEWER );
 
 /** \brief Returns the current scene radius from the examiner widget
  *
