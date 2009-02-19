@@ -82,6 +82,10 @@ void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
 
+int viewers( ) {
+  return examiner_widgets_.size();
+}
+
 void setViewers( std::vector< glViewer* > _viewerWidgets ) {
    PluginFunctions::examiner_widgets_ = _viewerWidgets;
    PluginFunctions::examiner_widget_ =  examiner_widgets_[0];

@@ -191,6 +191,11 @@ int visibleCount();
     * @{ */
 //=======================================
 
+
+/// Get the number of viewers
+DLLEXPORT
+int viewers( );
+
 /// Set the active id of the examiner which got the last mouse events
 DLLEXPORT
 void setActiveExaminer( const unsigned int _id );
