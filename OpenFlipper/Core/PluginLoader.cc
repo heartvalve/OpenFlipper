@@ -303,6 +303,7 @@ void Core::slotUnloadPlugin(){
   //init and show the widget
   if (!widget){
     widget = new unloadPluginsWidget(pluginNames);
+    widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
     connect( widget, SIGNAL(unload(QString)), this, SLOT(unloadPlugin(QString)));
     connect( widget, SIGNAL(dontLoadPlugins(QStringList)), this, SLOT(dontLoadPlugins(QStringList)));
   }else

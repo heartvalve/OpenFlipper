@@ -452,6 +452,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   registerCoreKeys();
 
+
+  setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
+
 }
 
 
@@ -626,6 +629,8 @@ void CoreWidget::showOptionsWidget() {
     connect(optionsWidget_,SIGNAL(saveOptions()),this,SIGNAL(saveOptions()));
     connect(optionsWidget_,SIGNAL(addKeyMapping(int,Qt::KeyboardModifiers,QObject*,int)),
             this,          SLOT(slotAddKeyMapping(int,Qt::KeyboardModifiers,QObject*,int)));
+
+    optionsWidget_->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
   }
 
   //show the optionsWidget centered

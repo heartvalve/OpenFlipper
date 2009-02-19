@@ -272,6 +272,7 @@ void Core::slotAddEmptyObjectMenu() {
         typeNames.push_back(supportedTypes_[i].plugin->typeName());
       }
       widget = new addEmptyWidget(types,typeNames);
+      widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
       connect(widget,SIGNAL(chosen(DataType, int&)),this,SLOT(slotAddEmptyObject(DataType, int&)));
     }
     widget->show();
@@ -292,6 +293,8 @@ void Core::loadObject() {
       LoadWidget* widget = new LoadWidget(supportedTypes_);
       connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
       connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
+
+      widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
 
       widget->showLoad();
 

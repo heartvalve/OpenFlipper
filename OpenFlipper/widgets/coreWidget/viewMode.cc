@@ -193,6 +193,7 @@ void CoreWidget::slotViewModeDialog(){
   static viewModeWidget* widget = 0;
   if ( !widget ){
     widget = new viewModeWidget(viewModes_);
+    widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
     connect(widget, SIGNAL(changeView(QString, QStringList)), this, SLOT(slotChangeView(QString, QStringList)) );
     connect(widget, SIGNAL(saveMode(QString, bool, QStringList)), this, SLOT(slotAddViewMode(QString, bool, QStringList)) );
     connect(widget, SIGNAL(removeMode(QString)), this, SLOT(slotRemoveViewMode(QString)) );
