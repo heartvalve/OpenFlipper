@@ -172,6 +172,8 @@ defineTest( cgal ) {
 					addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGAL_PDB ) {
 						addLib ( /usr/lib /sw/lib $${CGAL_PATH_LIB}, CGAL_Qt4 ) {
 
+							DEFINES += CGAL_USE_F2C
+							export(DEFINES)
 							lapack()
   							INCLUDEPATH *= $${CGAL_PATH_INC}
   							export(INCLUDEPATH)
