@@ -53,6 +53,9 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
 
     void addContextMenu(QMenu* _menu ,DataType _objectType , ContextMenuType _type );
 
+    void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                            QStringList _parameters, QStringList _descriptions);
+
   private slots:
 
     void pluginsInitialized();
@@ -120,6 +123,9 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     // initialize the shader Widget
     void initShaderWidget();
 
+    // Announce local slots
+    void setDescriptions();
+
 
   public slots:
     /// For meshes returns if the selection for this object is visible
@@ -148,8 +154,17 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     void setShader(int _id, QString _drawMode, QString _name );
 
 
-    void setViewingDirection(Vector _dir);
+    /// Set the viewing direction
+    void setViewingDirection( Vector _direction, Vector _upvector , int _viewer = PluginFunctions::ALL_VIEWERS );
 
+    /// Rotate Scene
+    void rotate( Vector _axis, double _angle, Vector _center , int _viewer = PluginFunctions::ALL_VIEWERS );
+
+    /// translate Scene
+    void translate( Vector _vec , int _viewer = PluginFunctions::ALL_VIEWERS );
+
+    /// Set the draw mode for a viewer
+    void setDrawMode(QString _mode, int _viewer = PluginFunctions::ALL_VIEWERS );
 
     void setEyePosition(Vector _eye);
 

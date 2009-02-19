@@ -36,6 +36,8 @@ void ViewControlPlugin::pluginsInitialized() {
 
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 
+  setDescriptions();
+
 }
 
 void ViewControlPlugin::updateShaderList() {
@@ -828,16 +830,79 @@ void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
   emit updateView();
 }
 
+//-----------------------------------------------------------------------------
 
-void ViewControlPlugin::setViewingDirection(Vector _dir){
-
+void ViewControlPlugin::setViewingDirection( Vector _direction, Vector _upvector , int _viewer){
+  PluginFunctions::viewingDirection(_direction, _upvector, _viewer);
 }
+
+//-----------------------------------------------------------------------------
+
+void ViewControlPlugin::rotate( Vector _axis, double _angle, Vector _center , int _viewer) {
+  PluginFunctions::rotate( _axis, _angle, _center ,_viewer);
+}
+
+//-----------------------------------------------------------------------------
+
+void ViewControlPlugin::translate( Vector _vec , int _viewer) {
+  PluginFunctions::translate( _vec ,_viewer);
+}
+
+
+
+//-----------------------------------------------------------------------------
+
+void
+ViewControlPlugin::setDrawMode(QString _mode, int _viewer)
+{
+
+  QStringList list = _mode.split(';');
+
+  std::vector< QString > drawModeList;
+
+  for ( int i = 0 ; i < list.size() ; ++i )
+    drawModeList.push_back(list[i]);
+
+  unsigned int mode = ListToDrawMode(drawModeList);
+
+  PluginFunctions::setDrawMode( mode , _viewer );
+  emit updateView();
+}
+
+//-----------------------------------------------------------------------------
 
 void ViewControlPlugin::setEyePosition(Vector _eye){
 
 }
 
 void ViewControlPlugin::setSceneCenter(Vector _center){
+
+}
+
+void ViewControlPlugin::setDescriptions() {
+  emit setSlotDescription("translate(Vector,int)", "Translate Scene",
+                          QString("TranslationVector,Viewer").split(","),
+                          QString("vector for the translation.,Viewer id (default is all)").split(","));
+  emit setSlotDescription("translate(Vector)", "Translate Scene in all Viewers",
+                          QString("TranslationVector").split(","),
+                          QString("vector for the translation.").split(","));
+  emit setSlotDescription("rotate(Vector,double,Vector,int)", "Rotate Scene",
+                          QString("Axis,Angle,Center,Viewer").split(","),
+                          QString("Rotation axis., Rotation Angle., Rotation Center.").split(","));
+  emit setSlotDescription("rotate(Vector,double,Vector)", "Rotate Scene in all viewers",
+                          QString("Axis,Angle,Center").split(","),
+                          QString("Rotation axis., Rotation Angle., Rotation Center.").split(","));
+  emit setSlotDescription("setViewingDirection(Vector,Vector,int)", "Set the viewing direction",
+                          QString("direction,upVector,Viewer").split(","),
+                          QString("Viewing direction., Up-Vector.,Viewer id (default is all)").split(","));
+  emit setSlotDescription("setViewingDirection(Vector,Vector)", "Set the viewing direction in all viewers",
+                          QString("direction,upVector").split(","),
+                          QString("Viewing direction., Up-Vector.").split(","));
+  emit setSlotDescription("setDrawMode(QString,int)", "Set the drawMode",
+                          QString("DrawMode,Viewer").split(","),
+                          QString("the drawMode ( ; separated list ),Viewer id (default is all)").split(","));
+  emit setSlotDescription("setDrawMode(QString)", "Set the drawMode for all viewers",
+                          QStringList("DrawMode"), QStringList("the drawMode ( ; separated list )"));
 
 }
 
