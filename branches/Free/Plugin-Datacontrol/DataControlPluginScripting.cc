@@ -61,6 +61,9 @@ void DataControlPlugin::setDescriptions(){
   emit setSlotDescription("deleteObject(int)","Delete an object",
                           QStringList("objectId"), QStringList("Delete the given object."));
 
+  emit setSlotDescription("copyObject(int)","Create a copy of an object",
+                          QStringList("objectId"), QStringList("Object to copy."));
+
 }
 
 
@@ -74,6 +77,19 @@ int DataControlPlugin::getObject( QString _name ) {
 
   return object->id();
 }
+
+int DataControlPlugin::copyObject( int objectId ) {
+
+  int newObject = PluginFunctions::copyObject( objectId );
+
+  if ( newObject == -1 )
+    std::cerr << "Unable to copy object" << std::endl;
+  else
+    emit updatedObject(newObject);
+
+  return newObject;
+}
+
 
 /// Returns the name of an object with given id
 QString DataControlPlugin::getObjectName( int objectId ) {
