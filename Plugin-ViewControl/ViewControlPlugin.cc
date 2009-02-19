@@ -871,11 +871,29 @@ ViewControlPlugin::setDrawMode(QString _mode, int _viewer)
 
 //-----------------------------------------------------------------------------
 
-void ViewControlPlugin::setEyePosition(Vector _eye){
-
+Vector ViewControlPlugin::viewingDirection( int _viewer ) {
+  return PluginFunctions::viewingDirection(_viewer);
 }
 
-void ViewControlPlugin::setSceneCenter(Vector _center){
+Vector ViewControlPlugin::upVector( int _viewer ) {
+  return PluginFunctions::upVector(_viewer);
+}
+
+Vector ViewControlPlugin::eyePosition( int _viewer ) {
+  return PluginFunctions::eyePos(_viewer);
+}
+
+void ViewControlPlugin::setSceneCenter( Vector _center, int _viewer ) {
+  PluginFunctions::setScenePos(_center, _viewer);
+}
+
+Vector ViewControlPlugin::sceneCenter( int _viewer ) {
+  return PluginFunctions::sceneCenter(_viewer);
+}
+
+//-----------------------------------------------------------------------------
+
+void ViewControlPlugin::setEyePosition(Vector _eye){
 
 }
 
