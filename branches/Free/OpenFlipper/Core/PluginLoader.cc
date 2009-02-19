@@ -470,7 +470,7 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(plugin,SIGNAL(updatedObject(int)),this,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
 
       if ( checkSignal(plugin,"visibilityChanged()") )
-        connect(plugin,SIGNAL(visibilityChanged()),this,SLOT(slotVisibilityChanged), Qt::DirectConnection);
+        connect(plugin,SIGNAL(visibilityChanged()),this,SLOT(slotVisibilityChanged()), Qt::DirectConnection);
 
 
       if ( checkSlot(plugin,"slotAllCleared()") )
