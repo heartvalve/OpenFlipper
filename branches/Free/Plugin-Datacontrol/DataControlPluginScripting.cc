@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -58,61 +58,76 @@ void DataControlPlugin::setDescriptions(){
   emit setSlotDescription("groupObjects(idList)","Group given Objects together.",
                           QStringList("objectIds"), QStringList("List of objects that should be grouped."));
 
+  emit setSlotDescription("deleteObject(int)","Delete an object",
+                          QStringList("objectId"), QStringList("Delete the given object."));
+
 }
 
 
 /// Returns the id of an object with given name
 int DataControlPlugin::getObject( QString _name ) {
-  
-  BaseObject* object = PluginFunctions::objectRoot()->childExists(_name); 
-  
+
+  BaseObject* object = PluginFunctions::objectRoot()->childExists(_name);
+
   if ( object == 0)
     return -1;
-  
+
   return object->id();
 }
 
 /// Returns the name of an object with given id
 QString DataControlPlugin::getObjectName( int objectId ) {
-  
+
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"getObjectName : unable to get object" ); 
+    emit log(LOGERR,"getObjectName : unable to get object" );
     return QString("Unknown Object");
-  } else 
+  } else
     return  object->name() ;
-  
+
 }
 
 /// Hide object with the given id
 void DataControlPlugin::hideObject( int objectId ) {
-  
+
   BaseObjectData* object;
-  if ( ! PluginFunctions::getObject(objectId,object) ) 
+  if ( ! PluginFunctions::getObject(objectId,object) )
     return;
-  
+
   if ( object == 0)
     return;
-  
+
   object->hide();
+}
+
+void DataControlPlugin::deleteObject( int objectId ) {
+
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(objectId,object) )
+    return;
+
+  if ( object == 0)
+    return;
+
+  PluginFunctions::deleteObject(objectId);
 }
 
 /// Show object with the given id
 void DataControlPlugin::showObject( int objectId ) {
-  
+
   BaseObjectData* object;
-  if ( ! PluginFunctions::getObject(objectId,object) ) 
+  if ( ! PluginFunctions::getObject(objectId,object) )
     return;
-  
+
   if ( object == 0)
     return;
-  
+
   object->show();
 }
 
 /// Group given Objects together
 void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
-  
+
   QVector< BaseObject* > objs;
 
   for (uint i=0; i < _objectIDs.size(); i++){
@@ -125,8 +140,8 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
     emit log("No objects to group.");
     return;
   }
-  
-  //check if all objects have the same parent 
+
+  //check if all objects have the same parent
   //abort if the parents differ
   BaseObject* parent = (objs[0])->parent();
   for ( int i = 1 ; i < objs.size() ; ++i)
@@ -153,7 +168,7 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
     (objs[i])->setParent( dynamic_cast< BaseObject* >( groupItem )  );
     groupItem->appendChild( objs[i] );
   }
-  
+
   emit updatedObject(-1);
 }
 
