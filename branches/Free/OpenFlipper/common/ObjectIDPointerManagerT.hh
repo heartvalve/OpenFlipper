@@ -56,6 +56,14 @@
 #include <vector>
 #include <iostream>
 
+#ifndef WIN32
+#warning Included deprecated Header ObjectIDPointerManger
+#warning You can attach data to objects by using the perObjectData class!
+#warning Derive from perObjectData and use setObjectData on an Object
+#warning to attach the data to it. You can read the data by using
+#warning the objectData function of each object.
+#endif
+
 //== FORWARDDECLARATIONS ======================================================
 
 //== NAMESPACES ===============================================================
