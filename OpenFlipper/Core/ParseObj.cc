@@ -208,11 +208,28 @@ void Core::preprocessObjFile(QString _filename)
     // curve/surface type
     else if (token == "cstype")
     {
+      bool nextLine = false;
       in >> tmp;
       if (tmp == "bspline")
       {
-        dataType = DATA_BSPLINE_CURVE;
-        typeFound = true;
+        // find out if it is a curve or a surface
+        while((!nextLine) && (!in.eof()))
+        {
+          in >> tmp;
+          if (tmp == "curv")
+          {
+            nextLine = true;
+            dataType = DATA_BSPLINE_CURVE;
+            typeFound = true;
+          }
+          else if (tmp == "surf")
+          {
+            nextLine = true;
+            dataType = DATA_BSPLINE_SURFACE;
+            typeFound = true;
+          }
+        }
+
       }
     }
 
@@ -231,6 +248,8 @@ void Core::preprocessObjFile(QString _filename)
     std::cout << _filename.toStdString() << " is of type DATA_TRIANGLE_MESH" << std::endl;
   else if  (dataType == DATA_BSPLINE_CURVE)
     std::cout << _filename.toStdString() << " is of type DATA_BSPLINE_CURVE" << std::endl;
+  else if  (dataType == DATA_BSPLINE_SURFACE)
+    std::cout << _filename.toStdString() << " is of type DATA_BSPLINE_SURFACE" << std::endl;
   else
     std::cout << "no data type found " << std::endl;
 
@@ -269,7 +288,7 @@ void Core::writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly
   PluginFunctions::IteratorRestriction restriction;
   if ( _targetOnly )
     restriction = PluginFunctions::TARGET_OBJECTS;
-  else 
+  else
     restriction = PluginFunctions::ALL_OBJECTS;
 
   // write all objects to a separate obj file and save external references in the global obj file
