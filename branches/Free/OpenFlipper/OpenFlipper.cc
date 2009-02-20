@@ -121,7 +121,7 @@ CSimpleOpt::SOption g_rgOptions[] = {
     { OPT_HELP             , (char*) "-?"               , SO_NONE    },
     { OPT_HELP             , (char*) "--help"           , SO_NONE    },
     { OPT_HELP             , (char*) "-h"               , SO_NONE    },
-    { OPT_STEREO           , (char*) "--enable-stereo"  , SO_NONE    },
+    { OPT_STEREO           , (char*) "--disable-stereo" , SO_NONE    },
     { OPT_BATCH            , (char*) "-b"               , SO_NONE    },
     { OPT_CONSOLE_LOG      , (char*) "-c"               , SO_NONE    },
     { OPT_CONSOLE_LOG      , (char*) "--log-to-console" , SO_NONE    },
@@ -228,7 +228,7 @@ bool parseCommandLineOptions(CSimpleOpt& args){
           OpenFlipper::Options::debug(true);
           break;
         case OPT_STEREO:
-            OpenFlipper::Options::stereo(true);
+            OpenFlipper::Options::stereo(false);
             break;
         case OPT_HIDDDEN_TOOLBOX:
             OpenFlipper::Options::hideToolbox(true);
@@ -276,7 +276,7 @@ int main(int argc, char **argv)
       }
     }
   }
-   
+
   OpenFlipper::Options::argc(&argc);
   OpenFlipper::Options::argv(&argv);
 
