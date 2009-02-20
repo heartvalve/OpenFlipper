@@ -89,7 +89,7 @@ static Experience experienceLevel_ = NOVICE;
 static bool nogui_ = false;
 
 /// Store the stereo mode
-static bool stereo_ = false;
+static bool stereo_ = true;
 
 /// Store the synchronization mode
 static bool synchronization_ = false;
