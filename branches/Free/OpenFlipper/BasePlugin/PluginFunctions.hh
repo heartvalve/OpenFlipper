@@ -154,7 +154,7 @@ DLLEXPORT
 bool getObject(  const int _identifier , BaseObject*& _object );
 
 /** This functions returns the object with the given id regardless of the type of object.
- * See get_object(  int _identifier , BaseObject*& _object ) for more details.
+ * See get_object(  int _identifier , ject*& _object ) for more details.
  */
 DLLEXPORT
 bool getObject(  const int _identifier , BaseObjectData*& _object );
@@ -451,11 +451,6 @@ class DLLEXPORT BaseObjectIterator {
       /// Restriction of the iterator
       IteratorRestriction restriction_;
 
-      /** Takes an object and goes through the object tree to the next BaseObject
-        *  It stops at the root node.
-        */
-      inline void proceedToNextBaseObject(BaseObject*& _object);
-
 };
 
 // /// Return Iterator to Mesh End
@@ -467,7 +462,7 @@ ObjectIterator objectsEnd();
 
 /// Return Iterator to Object End
 DLLEXPORT
-ObjectIterator baseObjectsEnd();
+BaseObjectIterator baseObjectsEnd();
 
 /** @} */
 
