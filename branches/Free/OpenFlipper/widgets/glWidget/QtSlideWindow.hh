@@ -41,6 +41,7 @@
 //== INCLUDES =================================================================
 
 #include <QGraphicsProxyWidget>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -57,7 +58,7 @@ class QGraphicsItemAnimation;
    for a child widget
  **/
 
-class QtSlideWindow : public QGraphicsProxyWidget
+class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
 {
     Q_OBJECT
 
