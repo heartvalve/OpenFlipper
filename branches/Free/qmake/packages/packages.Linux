@@ -7,10 +7,12 @@
 contains( ARCHITECTURE, 32 ) {
   BASE_PATH=/ACG/acgdev/gcc-4.3-i686
   export(BASE_PATH)
+  LIB_BASE=/usr/lib
 }
 contains( ARCHITECTURE, 64 ) {
   BASE_PATH=/ACG/acgdev/gcc-4.3-x86_64
   export(BASE_PATH)
+  LIB_BASE=/usr/lib64 /usr/lib
 }
 
 DEBUGADDLIB = true
@@ -135,10 +137,10 @@ defineTest( gmm ) {
 defineTest( superlu ) {
 
 	exists ( $${SLU_PATH_INC}/slu_Cnames.h ) {
-		addLib ( /usr/lib $${SLU_PATH_LIB}, superlu ) {
+		addLib ( $${LIB_BASE} $${SLU_PATH_LIB}, superlu ) {
   		
 			INCLUDEPATH *= $${SLU_PATH_INC}
-  		export(INCLUDEPATH)
+	  		export(INCLUDEPATH)
 
 			return(true)
 
@@ -154,7 +156,7 @@ defineTest( taucs ) {
 
 	exists ( $${TAUCS_PATH_INC}/taucs.h ) {
 		exists ( $${TAUCS_PATH_LIB}/libtaucs.a ) {
-                        addLib ( /usr/lib $${TAUCS_PATH_LIB}, metis )
+                        addLib ( $${LIB_BASE} $${TAUCS_PATH_LIB}, metis )
 			
                             lapack()
 
@@ -178,11 +180,11 @@ defineTest( taucs ) {
 defineTest( cgal ) {
 
 	exists ( $${CGAL_PATH_INC} ) {
-		addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL ) {
-			addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_Core ) {
-				addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_ImageIO ) {
-					addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_PDB ) {
-						addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_Qt4 ) {
+		addLib ( $${LIB_BASE} $${CGAL_PATH_LIB}, CGAL ) {
+			addLib ( $${LIB_BASE} $${CGAL_PATH_LIB}, CGAL_Core ) {
+				addLib ( $${LIB_BASE} $${CGAL_PATH_LIB}, CGAL_ImageIO ) {
+					addLib ( $${LIB_BASE} $${CGAL_PATH_LIB}, CGAL_PDB ) {
+						addLib ( $${LIB_BASE} $${CGAL_PATH_LIB}, CGAL_Qt4 ) {
 
 						        # disabled due to compiler errors with gmp
   						        #INCLUDEPATH *= $${CGAL_PATH_INC}
@@ -207,7 +209,7 @@ defineTest( cgal ) {
 defineTest( lapack ) {
 
 	exists ( $${LAP_PATH_INC} ) {
-		addLib ( /usr/lib $${LAP_PATH_LIB}, lapack ) {
+		addLib ( $${LIB_BASE} $${LAP_PATH_LIB}, lapack ) {
 
   		INCLUDEPATH *= $${LAP_PATH_INC}
   		export(INCLUDEPATH)
@@ -225,7 +227,7 @@ defineTest( lapack ) {
 defineTest( wordnet ) {
 
 	exists ( $${WN_PATH_INC}/wn.h ) {
-		addLib ( /usr/lib $${WN_PATH_LIB}, wordnet ) {
+		addLib ( $${LIB_BASE} $${WN_PATH_LIB}, wordnet ) {
 
   		INCLUDEPATH *= $${WN_PATH_INC}
   		export(INCLUDEPATH)
@@ -243,7 +245,7 @@ defineTest( wordnet ) {
 defineTest( qwt ) {
 
 	exists ( $${QWT_PATH_INC} ) {
-		addLib ( /usr/lib $${QWT_PATH_LIB}, qwt-qt4 ) {
+		addLib ( $${LIB_BASE} $${QWT_PATH_LIB}, qwt-qt4 ) {
 
   		INCLUDEPATH *= $${QWT_PATH_INC}
   		export(INCLUDEPATH)
@@ -261,7 +263,7 @@ defineTest( qwt ) {
 defineTest( glew ) {
 
 	exists ( $${GLEW_PATH_INC}/glew.h ) {
-		addLib ( /usr/lib $${GLEW_PATH_LIB}, GLEW ) {
+		addLib ( $${LIB_BASE} $${GLEW_PATH_LIB}, GLEW ) {
   
 			INCLUDEPATH *= $${GLEW_PATH_INC}
   		export(INCLUDEPATH)
@@ -279,7 +281,7 @@ defineTest( glew ) {
 defineTest( glut ) {
 
 	exists ( $${GLUT_PATH_INC}/glut.h ) {
-		addLib ( /usr/lib $${GLUT_PATH_LIB}, glut ) {
+		addLib ( $${LIB_BASE} $${GLUT_PATH_LIB}, glut ) {
 
   		INCLUDEPATH *= $${GLUT_PATH_INC}
   		export(INCLUDEPATH)
@@ -296,7 +298,7 @@ defineTest( glut ) {
 
 defineTest( openmp ) {
 
-  addLib( /usr/lib $${OMP_PATH_LIB}, gomp ) {
+  addLib( $${LIB_BASE} $${OMP_PATH_LIB}, gomp ) {
 
     QMAKE_CXXFLAGS_RELEASE += -fopenmp
     QMAKE_CXXFLAGS_DEBUG   += -fopenmp
@@ -326,13 +328,13 @@ defineTest( ltilib ) {
 	exists ( $${LTI_PATH_INC} ) {
 		CONFIG( debug, debug|release ){
 			# debug
-			TEST = addLib( /usr/lib $${LTI_PATH_LIB}, ltid )
+			TEST = addLib( $${LIB_BASE} $${LTI_PATH_LIB}, ltid )
   	} else {
 			# release
-  		TEST = addLib( /usr/lib $${LTI_PATH_LIB}, ltir )
+  		TEST = addLib( $${LIB_BASE} $${LTI_PATH_LIB}, ltir )
   	}
 		TEST {
-			addLib( /usr/lib $${LTI_PATH_LIB}, jpeg ) {
+			addLib( $${LIB_BASE} $${LTI_PATH_LIB}, jpeg ) {
 
 		  	INCLUDEPATH *= $${LTI_PATH_INC}
 				export(INCLUDEPATH)
@@ -351,8 +353,8 @@ defineTest( ltilib ) {
 defineTest( fftw ) {
 
 	exists ( $${FFTW_PATH_INC}/fftw.h ) {
-		addLib ( /usr/lib $${FFTW_PATH_LIB}, fftw3 ) {
-			addLib ( /usr/lib $${FFTW_PATH_LIB}, fftw3f ) {
+		addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3 ) {
+			addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3f ) {
 
   			INCLUDEPATH *= $${FFTW_PATH_INC}
   			export(INCLUDEPATH)
@@ -371,7 +373,7 @@ defineTest( fftw ) {
 defineTest( freetype ) {
 
 	exists ( $${FT2_PATH_INC} ) {
-		addLib ( /usr/lib  $${FT2_PATH_LIB}, freetype ) {
+		addLib ( $${LIB_BASE}  $${FT2_PATH_LIB}, freetype ) {
 
   		INCLUDEPATH *= $${FT2_PATH_INC}
   		export(INCLUDEPATH)
@@ -390,7 +392,7 @@ defineTest( ftgl ) {
 
 	freetype() {
 		exists ( $${FTGL_PATH_INC} ) {
-			addLib ( /usr/lib $${FTGL_PATH_LIB}, ftgl ) {
+			addLib ( $${LIB_BASE} $${FTGL_PATH_LIB}, ftgl ) {
   			
 				INCLUDEPATH *= $${FTGL_PATH_INC}
 				export(INCLUDEPATH)
@@ -412,7 +414,7 @@ defineTest( ftgl ) {
 defineTest( png ) {
 
 	exists ( $${PNG_PATH_INC} ) {
-		addLib ( /usr/lib $${PNG_PATH_LIB}, png ) {
+		addLib ( $${LIB_BASE} $${PNG_PATH_LIB}, png ) {
   		
 			INCLUDEPATH *= $${PNG_PATH_INC}
 			export(INCLUDEPATH)
@@ -431,7 +433,7 @@ defineTest( png ) {
 defineTest( netpbm ) {
 
 	exists ( $${NPBM_PATH_INC} ) {
-		addLib ( /usr/lib $${NPBM_PATH_LIB}, netpbm ) {
+		addLib ( $${LIB_BASE} $${NPBM_PATH_LIB}, netpbm ) {
   
 			INCLUDEPATH *= $${NPBM_PATH_INC}
   		export(INCLUDEPATH)
@@ -450,7 +452,7 @@ defineTest( netpbm ) {
 defineTest( dc1394 ) {
 
 	exists ( $${DC1394_PATH_INC} ) {
-		addLib ( /usr/lib $${DC1394_PATH_LIB}, dc1394 ) {
+		addLib ( $${LIB_BASE} $${DC1394_PATH_LIB}, dc1394 ) {
 
   		INCLUDEPATH *= $${DC1394_PATH_INC}
   		export(INCLUDEPATH)
@@ -469,7 +471,7 @@ defineTest( dc1394 ) {
 defineTest( swissranger ) {
 
 	exists ( $${SR_PATH_INC} ) {
-		addLib ( /usr/lib $${SR_PATH_LIB}, usbSR ) {
+		addLib ( $${LIB_BASE} $${SR_PATH_LIB}, usbSR ) {
 
   		INCLUDEPATH *= $${SR_PATH_INC}
   		export(INCLUDEPATH)
@@ -542,8 +544,8 @@ defineTest( cuda ) {
 defineTest( usb ) {
 
 	exists ( $${USB_PATH_INC}/usb.h ) {
-		addLib ( /usr/lib $${USB_PATH_LIB}, usb ) {
-			addLib ( /usr/lib $${USB_PATH_LIB}, usbpp ) {
+		addLib ( $${LIB_BASE} $${USB_PATH_LIB}, usb ) {
+			addLib ( $${LIB_BASE} $${USB_PATH_LIB}, usbpp ) {
 
 				INCLUDEPATH *= $${USB_PATH_INC}
   			export(INCLUDEPATH)
@@ -564,13 +566,13 @@ defineTest( usb ) {
 defineTest( cholmod ) {
 
 	exists ( $${CHM_PATH_INC} ) {
-		addLib ( /usr/lib $${CHM_PATH_LIB}, cholmod ) {
-			addLib ( /usr/lib $${CHM_PATH_LIB}, colamd ) {
-				addLib ( /usr/lib $${CHM_PATH_LIB}, ccolamd ) {
-					addLib ( /usr/lib $${CHM_PATH_LIB}, camd ) {
-						addLib ( /usr/lib $${CHM_PATH_LIB}, amd ) {
-							addLib ( /usr/lib $${CHM_PATH_LIB}, metis ) {
-								addLib ( /usr/lib $${CHM_PATH_LIB}, lapack ) {
+		addLib ( $${LIB_BASE} $${CHM_PATH_LIB}, cholmod ) {
+			addLib ( $${LIB_BASE} $${CHM_PATH_LIB}, colamd ) {
+				addLib ( $${LIB_BASE} $${CHM_PATH_LIB}, ccolamd ) {
+					addLib ( $${LIB_BASE} $${CHM_PATH_LIB}, camd ) {
+						addLib ( $${LIB_BASE} $${CHM_PATH_LIB}, amd ) {
+							addLib ( $${LIB_BASE} $${CHM_PATH_LIB}, metis ) {
+								addLib ( $${LIB_BASE} $${CHM_PATH_LIB}, lapack ) {
 
   								INCLUDEPATH *= $${CHM_PATH_INC}
   								export(INCLUDEPATH)
