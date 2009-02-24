@@ -143,16 +143,22 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // ======================================================================
   // Set up the logging window
   // ======================================================================
+
+  slidingLogger_ = new QtSlideWindow ("Log Viewer", centerWidget_);
+  tempLogWidget = new QWidget;
+
   logWidget_ = new LoggerWidget(splitter_);
   logWidget_->setReadOnly(true);
   logWidget_->setSizePolicy( QSizePolicy ( QSizePolicy::Preferred , QSizePolicy::Preferred ) );
-  logWidget_->resize( splitter_->width() ,120);
+  logWidget_->resize( splitter_->width() ,240);
   logWidget_->setLineWrapMode( QTextEdit::NoWrap );
 
   originalLoggerSize_ = 0;
 
   QList<int> wsizes( splitter_->sizes() );
   if (OpenFlipper::Options::hideLogger()) {
+    slidingLogger_->attachWidget (logWidget_);
+    splitter_->insertWidget (1, tempLogWidget);
     wsizes[0] = 1;
     wsizes[1] = 0;
     splitter_->setSizes(wsizes);
@@ -523,10 +529,16 @@ CoreWidget::showLogger(bool _state) {
     // Remember old size
     originalLoggerSize_  = wsizes[1];
 
+    int height = logWidget_->height ();
+
+    splitter_->insertWidget (1, tempLogWidget);
     wsizes[0] = wsizes[0]+wsizes[1];
     wsizes[1] = 0;
     splitter_->setSizes(wsizes);
-  } else {
+    logWidget_->resize (logWidget_->width (), height);
+    slidingLogger_->attachWidget (logWidget_);
+
+  } else if (splitter_->widget (1) == logWidget_) {
 
     if ( originalLoggerSize_ == 0)
         originalLoggerSize_ = 240;
@@ -539,6 +551,31 @@ CoreWidget::showLogger(bool _state) {
     wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
     wsizes[1] = originalLoggerSize_;
     splitter_->setSizes(wsizes);
+  } else {
+
+    QList<int> wsizes( splitter_->sizes() );
+
+    int height = logWidget_->height ();
+
+    slidingLogger_->detachWidget ();
+    splitter_->insertWidget (1, logWidget_);
+
+    wsizes[0] = wsizes[0]+wsizes[1] - height;
+    wsizes[1] = height;
+    splitter_->setSizes(wsizes);
+/*
+    if ( originalLoggerSize_ == 0)
+        originalLoggerSize_ = 240;
+
+    QList<int> wsizes( splitter_->sizes() );
+
+    if (wsizes[0] == 0)
+      wsizes[0] = height();
+
+    wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
+    wsizes[1] = originalLoggerSize_;
+    splitter_->setSizes(wsizes);
+    */
   }
 }
 
@@ -677,6 +714,7 @@ void
 CoreWidget::sceneRectChanged(const QRectF &rect)
 {
   centerWidget_->setGeometry (rect);
+  slidingLogger_->updateGeometry ();
 }
 
 
