@@ -907,7 +907,7 @@ Vector ViewControlPlugin::sceneCenter( int _viewer ) {
 //-----------------------------------------------------------------------------
 
 void ViewControlPlugin::setEyePosition(Vector _eye){
-
+  emit log(LOGERR, "not yet implemented");
 }
 
 void ViewControlPlugin::setDescriptions() {
