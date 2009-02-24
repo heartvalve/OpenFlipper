@@ -303,7 +303,7 @@ enum IteratorRestriction {
 /** \brief Core Data Iterator
  *
  * This is the core iterator for the whole framework. You should use this iterator to access your data.\n
- * You can Choose if the iterator returns only Target, Source or all objects.\n
+ * You can choose if the iterator returns only Target, Source or all objects.\n
  * Additionally you can set the type of objects returned by the iterator.
  * The ObjectIterator will only return real Objects. Groups are not considered to be objects
  */
@@ -381,10 +381,10 @@ class DLLEXPORT ObjectIterator {
 
 /** \brief Core Data Iterator used to iterate over all objects (Including groups)
  *
- * This is the core iterator for the whole framework. You should use this iterator to access your data.\n
- * You can Choose if the iterator returns only Target, Source or all objects.\n
+ * This iterator is a more low level one not only returning really visible objects but also
+ * Data containers ( e.g. groups... )
+ * You can choose if the iterator returns only Target, Source or all objects.\n
  * Additionally you can set the type of objects returned by the iterator.
- * The ObjectIterator will only return real Objects. Groups are not considered to be objects
  */
 class DLLEXPORT BaseObjectIterator {
 
@@ -451,7 +451,7 @@ class DLLEXPORT BaseObjectIterator {
       /// Restriction of the iterator
       IteratorRestriction restriction_;
 
-      /** Takes an object and goes through the object tree to the next BaseObjectData
+      /** Takes an object and goes through the object tree to the next BaseObject
         *  It stops at the root node.
         */
       inline void proceedToNextBaseObject(BaseObject*& _object);
