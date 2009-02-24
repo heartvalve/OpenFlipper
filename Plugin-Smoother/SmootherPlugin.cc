@@ -25,6 +25,11 @@
 //== IMPLEMENTATION ==========================================================
 
 
+/** \brief Initialize the toolbox
+ * 
+ * @param _widget reference to the toolbox
+ * @return was the toolbox successfully created?
+ */
 bool
 SmootherPlugin::
 initializeToolbox(QWidget*& _widget)
@@ -42,6 +47,30 @@ initializeToolbox(QWidget*& _widget)
 
 //-----------------------------------------------------------------------------
 
+/** \brief Set the scripting slot descriptions
+ * 
+ */
+void
+SmootherPlugin::pluginsInitialized(){
+
+  emit setSlotDescription("smooth(int,int,QString,QString,double)", "Smooth an object",
+                          QString("object_id,iterations,direction,continuity,maxDistance").split(","),
+                          QString("id of an object, number of smoothing iterations, Smoothing direction. (tangential;normal;tangential+normal), Continuity. (C1 or C2), max distance the smoothed mesh is allowed to differ from the original").split(","));
+
+  emit setSlotDescription("smooth(int,int,QString,QString)", "Smooth an object",
+                          QString("object_id,iterations,direction,continuity").split(","),
+                          QString("id of an object, number of smoothing iterations, Smoothing direction. (tangential;normal;tangential+normal), Continuity. (C1 or C2)").split(","));
+
+}
+
+
+//-----------------------------------------------------------------------------
+
+/** \brief Smooth all target objects 
+ * 
+ * Parameters for the smoothing are retrieved from the toolbox
+ *
+ */
 void
 SmootherPlugin::
 slot_smooth()
@@ -107,7 +136,19 @@ slot_smooth()
 
 }
 
-void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction , QString _continuity) {
+
+//-----------------------------------------------------------------------------
+
+/** \brief  Smooth object
+*
+* @param _objectId Object to smooth
+* @param _iterations Number of smoothing iterations
+* @param _direction tangential/normal/tangential+normal
+* @param _continuity C0/C1
+* @param _maxDistance the maximum distance that the smoothed mesh is allowed to differ from the original mesh
+*/
+void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction , QString _continuity, double _maxDistance) {
+
   BaseObjectData* baseObjectData;
   if ( ! PluginFunctions::getObject(_objectId,baseObjectData) ) {
     emit log(LOGERR,"Unable to get Object");
@@ -151,6 +192,11 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
       continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C1;
     else if( c0 )
       continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
+
+    if ( _maxDistance > 0.0)
+      data->smoother->set_absolute_local_error( _maxDistance );
+    else
+      data->smoother->set_absolute_local_error( FLT_MAX );
 
     data->smoother->initialize(component,continuity);
 

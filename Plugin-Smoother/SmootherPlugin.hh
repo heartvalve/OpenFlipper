@@ -42,26 +42,29 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
 
 signals:
 
-  /// Force Examiner widget to update their views
+  // BaseInterface
   void updateView();
 
-  void log(Logtype _type, QString _message);
-  void log(QString _message);
-
-  /// Emit this Signal, if object list has changed (e.g. Source or Target changed)
   void updatedObject(int);
 
   void activeObjectChanged();
 
+  void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                          QStringList _parameters, QStringList _descriptions);
+
+  // LoggingInterface
+  void log(Logtype _type, QString _message);
+  void log(QString _message);
+
 public :
 
-  // default constructor
+  /// default constructor
   SmootherPlugin() : tool_(0) {};
 
-  // default destructor
+  /// default destructor
   ~SmootherPlugin() {};
 
-  /** Initialize the toolbar (create a widget in the right side toolbox) */
+  /// Initialize the toolbar (create a widget in the right side toolbox)
   bool initializeToolbox(QWidget*& _widget);
 
   /// Name of the Plugin
@@ -73,6 +76,10 @@ public :
   /// User selected plugins Toolbox
   void toolboxActivated( bool /*_activated*/  ) {};
 
+private slots:
+
+  /// Second initialization stage
+  void pluginsInitialized();
 
 private :
 
@@ -81,20 +88,22 @@ private :
 
 private slots:
 
+  /// Slot connected to the smooth button in the toolbox
   void slot_smooth();
 
+//===========================================================================
+/** @name Scripting Functions
+  * @{ */
+//===========================================================================
+public slots:
+
+   /// Smooth an object
+   void smooth(int _objectId , int _iterations , QString _direction , QString _continuity, double _maxDistance = -1.0);
 
 public slots:
    QString version() { return QString("1.0"); };
 
-   /** \brief  Smooth object
-    *
-    * @param _objectId Object to smooth
-    * @param _iterations Number of smoothing iterations
-    * @param _direction tangential/normal/tangential+normal
-    * @param _continuity C0/C1
-    */
-   void smooth(int _objectId , int _iterations , QString _direction , QString _continuity);
+/** @} */
 
 };
 
