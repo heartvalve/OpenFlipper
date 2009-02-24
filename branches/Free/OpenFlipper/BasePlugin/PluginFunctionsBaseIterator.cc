@@ -177,7 +177,7 @@ void BaseObjectIterator::proceedToNextBaseObject(BaseObject*& _object) {
   _object = _object->next();
 
   // Go through the tree and stop at the root node or if we found a BaseObject Object
-  while ( (_object != objectRoot()) && !dynamic_cast<BaseObject* > (_object)  )
+  while ( (_object != objectRoot()) )
      _object = _object->next();
 }
 
