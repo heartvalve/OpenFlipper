@@ -379,12 +379,95 @@ class DLLEXPORT ObjectIterator {
 
 };
 
+/** \brief Core Data Iterator used to iterate over all objects (Including groups)
+ *
+ * This is the core iterator for the whole framework. You should use this iterator to access your data.\n
+ * You can Choose if the iterator returns only Target, Source or all objects.\n
+ * Additionally you can set the type of objects returned by the iterator.
+ * The ObjectIterator will only return real Objects. Groups are not considered to be objects
+ */
+class DLLEXPORT BaseObjectIterator {
+
+   public :
+
+      /// type of the Objects the iterator works on
+      typedef BaseObject  value_type;
+
+      /// handle type (just an int)
+      typedef BaseObject* value_handle;
+
+      /// reference type
+      typedef value_type&     reference;
+
+      /// basic pointer type
+      typedef value_type*     pointer;
+
+   /** \brief Use this constructor for iterating through your data.
+    *
+    * @param _restriction Use this parameter to define which objects will be returned.\n
+    *                     You can select between ALL_OBJECTS , TARGET_OBJECTS , SOURCE_OBJECTS.
+    * @param _dataType Use this parameter to select the returned object types.
+    *                  You can use DATA_ALL DATA_POLY_MESH DATA_TRIANGLE_MESH DATA_VOLUME
+    */
+   BaseObjectIterator(IteratorRestriction _restriction = ALL_OBJECTS , DataType _dataType = DATA_ALL );
+
+   /// additional constructor starting at a given position
+   BaseObjectIterator(BaseObject* pos, IteratorRestriction _restriction = ALL_OBJECTS , DataType _dataType = DATA_ALL );
+
+   /// return the current position of the iterator
+   operator value_handle() { return pos_;  };
+
+   /// compare iterators
+   bool operator==( const BaseObjectIterator& _rhs);
+
+   /// compare iterators
+   bool operator!=( const BaseObjectIterator& _rhs);
+
+   /// assign iterators
+   BaseObjectIterator& operator=( const BaseObjectIterator& _rhs);
+
+   /// dereference
+   pointer operator->();
+
+   /// next element
+   BaseObjectIterator& operator++();
+
+   /// last element
+   BaseObjectIterator& operator--();
+
+   /// dereference the iterator
+   BaseObject* operator*();
+
+   /// return current position of the iterator
+   BaseObject* index() { return pos_; };
+
+   private :
+      /// current position of the iterator
+      BaseObject* pos_;
+
+      /// returned data types of the iterator
+      DataType dataType_;
+
+      /// Restriction of the iterator
+      IteratorRestriction restriction_;
+
+      /** Takes an object and goes through the object tree to the next BaseObjectData
+        *  It stops at the root node.
+        */
+      inline void proceedToNextBaseObject(BaseObject*& _object);
+
+};
+
 // /// Return Iterator to Mesh End
 // MeshIterator meshes_end();
 
 /// Return Iterator to Object End
 DLLEXPORT
 ObjectIterator objectsEnd();
+
+/// Return Iterator to Object End
+DLLEXPORT
+ObjectIterator baseObjectsEnd();
 
 /** @} */
 
