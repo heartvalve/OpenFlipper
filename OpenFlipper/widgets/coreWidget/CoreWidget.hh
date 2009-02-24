@@ -60,6 +60,7 @@
 #include <OpenFlipper/widgets/glWidget/QtGLGraphicsScene.hh>
 #include <OpenFlipper/widgets/glWidget/QtGLGraphicsView.hh>
 #include <OpenFlipper/widgets/glWidget/QtMultiViewLayout.hh>
+#include <OpenFlipper/widgets/glWidget/QtSlideWindow.hh>
 
 // QT INCLUDES
 #include <QMainWindow>
@@ -409,6 +410,12 @@ public:
 
     /// Base layout that holds gl views
     QtMultiViewLayout* baseLayout_;
+
+    /// Class that holds the animated log widget
+    QtSlideWindow* slidingLogger_;
+
+    /// Temporary widget
+    QWidget* tempLogWidget;
 
 
     // widget showing the scenegraph

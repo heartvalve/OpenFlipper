@@ -1,0 +1,132 @@
+//=============================================================================
+//
+//                               OpenFlipper
+//        Copyright (C) 2008 by Computer Graphics Group, RWTH Aachen
+//                           www.openflipper.org
+//
+//-----------------------------------------------------------------------------
+//
+//                                License
+//
+//  OpenFlipper is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  OpenFlipper is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
+//
+//-----------------------------------------------------------------------------
+//
+//   $Revision: $
+//   $Author: $
+//   $Date: $
+//
+//=============================================================================
+
+#ifndef QT_SLIDE_WINDOW_
+#define QT_SLIDE_WINDOW_
+
+//=============================================================================
+//
+//  CLASS QtSlideWindow
+//
+//=============================================================================
+
+//== INCLUDES =================================================================
+
+#include <QGraphicsProxyWidget>
+
+//== FORWARDDECLARATIONS ======================================================
+
+class QtGraphicsButton;
+class QTimeLine;
+class QGraphicsItemAnimation;
+
+//== CLASS DEFINITION =========================================================
+
+
+/** \class QtSlideWindow QtSlideWindow.hh <OpenFlipper/widgets/glWidget/QtSlideWindow.hh>
+
+   A graphics scene widget that has a hover slide effect and detach functionality
+   for a child widget
+ **/
+
+class QtSlideWindow : public QGraphicsProxyWidget
+{
+    Q_OBJECT
+
+  public:
+    /** Create a glViewer.
+    \param _name displayed titlebar name
+    \param _parent parent graphics item
+    */
+    QtSlideWindow (QString _name = 0, QGraphicsItem *_parent = 0);
+
+    /// recalculate geometry
+    void updateGeometry ();
+
+    /// attach a child widget
+    void attachWidget (QWidget *_m);
+
+    /// detach child widget
+    void detachWidget ();
+
+  private:
+
+    /// paints decoration
+    virtual void paintWindowFrame(QPainter *_painter, const QStyleOptionGraphicsItem *_option, QWidget *_widget = 0);
+
+    /// track frame events
+    virtual bool windowFrameEvent(QEvent *_e);
+
+    /// categorize frame area
+    virtual Qt::WindowFrameSection windowFrameSectionAt(const QPointF &_pos) const;
+
+    /// hove event tracking
+    virtual void hoverEnterEvent (QGraphicsSceneHoverEvent *_event);
+    virtual void hoverLeaveEvent (QGraphicsSceneHoverEvent *_event);
+
+    /// size & position event tracking
+    virtual void resizeEvent (QGraphicsSceneResizeEvent *_event);
+    virtual void moveEvent (QGraphicsSceneMoveEvent *_event);
+
+  private slots:
+    /// detach button pressed
+    void detachPressed ();
+
+    /// detached dialog closed
+    void dialogClosed ();
+
+    /// autohide button presed
+    void autohidePressed ();
+
+  private:
+
+    // name
+    QString name_;
+
+    // child widget
+    QWidget *mainWidget_;
+
+    // buttons
+    QtGraphicsButton *autohideButton_;
+    QtGraphicsButton *detachButton_;
+
+    // animation
+    QTimeLine *hideTimeLine_;
+    QGraphicsItemAnimation *hideAnimation_;
+
+    // detached dialog
+    QDialog *dialog_;
+};
+
+//=============================================================================
+//=============================================================================
+#endif // QT_SLIDE_WINDOW_ defined
+//=============================================================================
