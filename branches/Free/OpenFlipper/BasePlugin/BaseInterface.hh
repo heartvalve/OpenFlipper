@@ -70,8 +70,8 @@ class BaseInterface {
       /**  \brief Initialize Plugin
        *
        *   This slot is called if the plugin is loaded and has to be initialized. All initialization stuff
-       *   in this slot has to stay inside the plugin, no external signals are allowed here.
-       *   Dont create any objects via pluginfunctions here. Use the pluginsInitialized() slot for external
+       *   in this slot has to stay inside the plugin, no external signals are allowed here (and will be ignored).
+       *   Don't create any objects via pluginfunctions here. Use the pluginsInitialized() slot for external
        *   initialization. After execution of this slot your plugin should be fully functional.
        *   Only gui elements may be uninitialized and should be created in pluginsInitialized().
       */
@@ -95,25 +95,26 @@ class BaseInterface {
   signals :
     /** \brief Update current view in Main Application
       *
-      *  Emit this Signal if the examiner widget in the Main Application should update the current view.
-      *  If you do an updatedObject the core will trigger an update itself
+      *  Emit this Signal if the viewer widget in the main application should update the current view.
+      *  If you do an updatedObject the core will trigger an update itself and you don't have to care
+      *  about it.
     */
     virtual void updateView() {};
 
-    /** \brief The object list has been changed by this plugin
+    /** \brief An object has been changed or added by this plugin
       *
-      *  Emit this Signal, if you updated an object (e.g. Source or Target changed).\n
-      *  If you changed the element itself (geometry, topology,..) You also have to emit this signal.\n
+      *  Emit this Signal, if you updated any part of an object (e.g. source/target ).\n
+      *  If you changed the element itself (geometry, topology,..) you also have to emit this signal.\n
       *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
-      *  Give the id of the new object as parameter or -1 if you deleted an object.
+      *  Give the id of the new object as parameter or -1 if you updated all objects or deleted an object.
       *
-      *  The parameter has to be the id of the object or -1 if refering to all objects.
+      *  The parameter has to be the id of the object or -1 if refering to all or deleted objects.
       */
     virtual void updatedObject(int ) {};
 
-    /** \brief An Object has been shown or hidden
+    /** \brief An object has been shown or hidden
       *
-      *  Emit this Signal, if youchanged the visibility of an object.
+      *  Emit this Signal, if you changed the visibility of an object.
       *  This is required to reset the near and far plane for the viewers to provide
       *  an optimal view.
       *
@@ -122,18 +123,18 @@ class BaseInterface {
 
     /**  \brief The active object has been switched by this plugin
       *
-      *   This Signal is used to tell the other plugins that the active object has been changed.\n
+      *   This signal is used to tell the other plugins that the active object has been changed.\n
       *   You should only do this if you are writing a plugin that manages the objects(e.g. DatacontrolPlugin).\n
     */
     virtual void activeObjectChanged() {};
 
   private slots:
 
-    /**  \brief An object has been updated by an other plugin
+    /**  \brief An object has been updated by another plugin
       *
-      *   This slot is called by the Main aplication if the number or status of existing objects changed or if
+      *   This slot is called by the main aplication if the number or status of existing objects changed or if
       *   an existing object has been changed. This could mean, that objects are added or deleted
-      *   or that for an existing object with the given id has been modified.
+      *   or that an existing object with the given id has been modified.
       *   If you store local information about one of these Objects, you should check if its still valid!\n
       *   Dont emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
       *   You dont need to call updateView as the core triggers a redraw itself.
@@ -143,12 +144,15 @@ class BaseInterface {
 
     /**  \brief Called if the whole scene is cleared
       *
+      * This slot is called if the main application cleared the whole scene. No objects will remain in memory
+      * and all destructors of the objects are called before this signal is emitted.
+      *
       */
     virtual void slotAllCleared( ) {};
 
       /**  \brief The active object has changed
       *
-      *   This slot is called by the Main aplication if the currently active object has changed.\n
+      *   This slot is called by the main aplication if the currently active object has changed.\n
       *   This means that the selection of target objects has changed.
     */
     virtual void slotActiveObjectChanged() {};
@@ -161,7 +165,7 @@ class BaseInterface {
   //===========================================================================
   public :
 
-    /** \brief Return a Name for the plugin
+    /** \brief Return a name for the plugin
       *
       * This Function has to return the name of the plugin.
     */
@@ -206,7 +210,7 @@ class BaseInterface {
     virtual void exit(){};
 
     /** Using this function you can inform the core that your plugin can run without creating a widget.
-      * If your plugin does not implement this function, it will not be loaded in scripting mode.
+      * If your plugin does not implement this function, it will not be loaded in scripting mode without gui.
       * You dont have to do anything in this function.
       */
     virtual void noguiSupported( ) {} ;
