@@ -80,13 +80,6 @@ class ToolboxInterface {
       */
       virtual bool initializeToolbox(QWidget*& /*_widget*/) = 0;
 
-       /** \brief The Toolbox of this Widget is activated/deactivated
-       *
-       * Called, when the user selected this widgets toolbox
-       * @param _active (when true, toolbox has been activated else deactivated)
-       */
-      virtual void toolboxActivated(bool /*_active*/ ) = 0;
-
     signals :
 
        /** \brief Defines a new ViewMode
@@ -101,6 +94,6 @@ class ToolboxInterface {
 
 };
 
-Q_DECLARE_INTERFACE(ToolboxInterface,"OpenFlipper.ToolboxInterface/1.0")
+Q_DECLARE_INTERFACE(ToolboxInterface,"OpenFlipper.ToolboxInterface/1.1")
 
 #endif // TOOLBOXINTERFACE_HH
