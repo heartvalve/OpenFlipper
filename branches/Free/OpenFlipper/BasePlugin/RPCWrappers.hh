@@ -142,6 +142,16 @@ ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , 
   return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
 }
 
+template <typename ReturnValue , typename T0, typename T1 , typename T2 >
+ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 ) {
+  QScriptEngine* engine = getScriptEngine();
+  std::vector< QScriptValue > parameters;
+  parameters.push_back( QScriptValue( engine,_t0 ) );
+  parameters.push_back( QScriptValue( engine,_t1 ) );
+  parameters.push_back( QScriptValue( engine,_t2 ) );
+  return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
+}
+
 template <typename ReturnValue , typename T0, typename T1 , typename T2, typename T3>
 ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 , T3 _t3 ) {
   QScriptEngine* engine = getScriptEngine();
