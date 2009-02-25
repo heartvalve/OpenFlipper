@@ -46,7 +46,9 @@
 
 #include <OpenFlipper/BasePlugin/RPCWrappers.hh>
 
-/** Interface for all Plugins which do remote procedure calls ( and cross plugin calls)
+/** Interface for all Plugins which do remote procedure calls ( and cross plugin calls).\n
+ * The functions provided in the interface are only used to verify that certain plugins or
+ * functions are available. The actual calls are in the RPCWrappers.hh file.
 */
 class RPCInterface {
 
@@ -71,65 +73,8 @@ class RPCInterface {
        */
     virtual void functionExists( QString /*_pluginName*/ , QString /*_functionName*/ , bool& /*_exists*/  ) {};
 
-    /** Execute the function of the given plugin \n
-       *
-       * @param _pluginName Name of the Plugin (has to be the clean version .. no Spaces etc)
-       * @param _functionName requested function
-       * @param _success Function call succeeded
-    */
-    virtual void call( QString /*_pluginName*/ , QString /*_functionName*/ , bool& /*_success*/  ) {};
-
-    /** Executes the given expression.
-     * No checks are performed if the remote function is available.
-     *
-     * @param _expression command to execute
-     * @param _success successfull execution?
-     */
-    virtual void call( QString /*_expression*/ , bool& /*_success*/  ) {};
-
-    /** Executes the given expression and returns the result
-     *  No checks are performed if the remote function is available.
-     *  if an error occurs the result contains an invalid QVariant
-     *
-     * ex. getValue("databaseplugin.tableExists(\"meshes\")", result) )
-     *     result.toBool() == true
-     *
-     * @param _expression command to execute
-     * @param _result The return value of the command
-     */
-    virtual void getValue( QString /*_expression*/ , QVariant& /*_result*/  ) {};
-
-    virtual void getPlugin( QString /*_name*/, QObject* & /*_plugin*/  ) {};
-
 };
 
 Q_DECLARE_INTERFACE(RPCInterface,"OpenFlipper.RPCInterface/1.0")
 
 #endif // RPCINTERFACE_HH
-
-
-
-//   std::cerr << "RPC Test : " << std::endl;
-//
-//   bool ok = false;
-//   emit pluginExists( "colorplugin" , ok );
-//
-//   if ( ok )
-//     std::cerr << "Found plugin" << std::endl;
-//
-//   emit functionExists( "colorplugin" , "slotTest(int)" , ok  );
-//
-//   if ( ok )
-//     std::cerr << "Found Function" << std::endl;
-//
-//   ok = false;
-//
-//   emit call( "colorplugin.slotTest( 15 )",ok);
-//
-//   if ( ok )
-//     std::cerr << "Execution ok" << std::endl;
-
-
-
-
-
