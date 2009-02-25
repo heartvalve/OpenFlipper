@@ -164,9 +164,9 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     // Load the setting for the loger window
     //============================================================================
-    bool hideLogger = false;
-    if ( _ini.get_entry( hideLogger, "Options" , "HideLogger") )
-      OpenFlipper::Options::hideLogger(hideLogger);
+    int loggerState = 0;
+    if ( _ini.get_entry( loggerState, "Options" , "LoggerState") )
+      OpenFlipper::Options::loggerState(static_cast<OpenFlipper::Options::LoggerState> (loggerState));
 
     //============================================================================
     // Load the setting for the toolbox window
@@ -470,7 +470,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     draw_modes = drawModeToList( OpenFlipper::Options::standardDrawMode() );
     _ini.add_entry("Options","StandardDrawModes",draw_modes);
 
-    _ini.add_entry("Options","HideLogger", OpenFlipper::Options::hideLogger() );
+    _ini.add_entry("Options","LoggerState", OpenFlipper::Options::loggerState() );
     _ini.add_entry("Options","HideToolbox", OpenFlipper::Options::hideToolbox() );
 
     // check if we are in fullscreen mode:

@@ -49,6 +49,7 @@
 //== INCLUDES =================================================================
 
 #include "OpenFlipper/common/Types.hh"
+#include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
@@ -81,6 +82,7 @@
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
 #include <OpenFlipper/INIFile/INIFile.hh>
+
 
 struct ViewMode{
       QString name;
@@ -291,13 +293,16 @@ public:
     void toggleLogger();
 
     /// Change visibility of the logger
-    void showLogger(bool _state);
+    void showLogger(OpenFlipper::Options::LoggerState _state);
 
     /// Hide or show toolbox area
     void toggleToolbox();
 
     /// Show or hide toolbox
     void showToolbox( bool _state );
+
+  private:
+    OpenFlipper::Options::LoggerState loggerState_;
 
 
   /** @} */

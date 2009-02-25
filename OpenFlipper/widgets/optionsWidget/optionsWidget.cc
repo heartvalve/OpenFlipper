@@ -127,7 +127,8 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   fullscreen->setChecked( OpenFlipper::Options::fullScreen() );
   splash->setChecked( OpenFlipper::Options::splash() );
   toolbox->setChecked( !OpenFlipper::Options::hideToolbox() );
-  logger->setChecked( !OpenFlipper::Options::hideLogger() );
+#warning FIXME
+  logger->setChecked( OpenFlipper::Options::loggerState() != OpenFlipper::Options::Hidden);
   enableLogFile->setChecked( OpenFlipper::Options::logFileEnabled() );
 
   //paths
@@ -359,7 +360,10 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::fullScreen( fullscreen->isChecked() );
   OpenFlipper::Options::splash( splash->isChecked() );
   OpenFlipper::Options::hideToolbox( !toolbox->isChecked() );
-  OpenFlipper::Options::hideLogger( !logger->isChecked() );
+  if (logger->isChecked())
+    OpenFlipper::Options::loggerState( OpenFlipper::Options::Normal );
+  else
+    OpenFlipper::Options::loggerState( OpenFlipper::Options::Hidden );
   OpenFlipper::Options::logFileEnabled( enableLogFile->isChecked() );
 
   //paths

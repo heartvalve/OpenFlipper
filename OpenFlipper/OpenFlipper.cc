@@ -234,7 +234,7 @@ bool parseCommandLineOptions(CSimpleOpt& args){
             OpenFlipper::Options::hideToolbox(true);
             break;
         case OPT_HIDDDEN_LOGGER:
-            OpenFlipper::Options::hideLogger(true);
+            OpenFlipper::Options::loggerState(OpenFlipper::Options::Hidden);
             break;
         case OPT_FULLSCREEN:
             OpenFlipper::Options::fullScreen(true);

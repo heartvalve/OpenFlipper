@@ -69,7 +69,7 @@ void Core::applyOptions(){
 		  coreWidget_->setWindowState( (coreWidget_->windowState() | Qt::WindowFullScreen) ^ Qt::WindowFullScreen);
 
     // Logger
-    coreWidget_->showLogger( !OpenFlipper::Options::hideLogger() );
+    coreWidget_->showLogger( OpenFlipper::Options::loggerState() );
 
     // Prepare Picking Debugger Flag
     ACG::SceneGraph::PickTarget target;

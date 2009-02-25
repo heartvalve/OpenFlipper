@@ -19,14 +19,21 @@
     <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/BasePlugin/</path>
     <filename>PluginFunctions_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
-    <includes id="ViewerProperties_8hh" name="ViewerProperties.hh" local="no" imported="no">OpenFlipper/common/ViewerProperties.hh</includes>
     <namespace>PluginFunctions</namespace>
     <class kind="class">PluginFunctions::ObjectIterator</class>
+    <class kind="class">PluginFunctions::BaseObjectIterator</class>
     <member kind="function">
       <type>DLLEXPORT ObjectIterator</type>
-      <name>objects_end</name>
+      <name>objectsEnd</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>d1ebd6bab5cdb61704584c9f7a8fa1e3</anchor>
+      <anchor>25c8015c612b1aaf3a840ca072ce68ca</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DLLEXPORT BaseObjectIterator</type>
+      <name>baseObjectsEnd</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>0170e02e7bd4ef07a4b3718d82ef4978</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -38,9 +45,9 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_picked_object</name>
+      <name>getPickedObject</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>5a5a6830d7f7289647fa6fecec7ab36c</anchor>
+      <anchor>f54bc387d31df6054829e57377bb617d</anchor>
       <arglist>(const unsigned int _node_idx, BaseObjectData *&amp;_object)</arglist>
     </member>
     <member kind="function">
@@ -66,79 +73,86 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_source_identifiers</name>
+      <name>getSourceIdentifiers</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>585008c20534d0ac70ffd428bdbb14ef</anchor>
+      <anchor>949b8b558e9119de7bf9cb26326fa4e0</anchor>
       <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_target_identifiers</name>
+      <name>getTargetIdentifiers</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>7845369871c9fb0596dbc1c52aaf45c1</anchor>
+      <anchor>b71e4cf2dd51eb0281b2f7b9d243dcb2</anchor>
       <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_all_meshes</name>
+      <name>getAllMeshes</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>ca145e68854ad4b3be4fec112737e08c</anchor>
+      <anchor>bd08c0d79cb35d559e76c3c3b822ac58</anchor>
+      <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
+    </member>
+    <member kind="function">
+      <type>DLLEXPORT bool</type>
+      <name>getAllObjectIdentifiers</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>79c4165f279935b30fe6d3db99ae04d3</anchor>
       <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_all_object_identifiers</name>
+      <name>getObject</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>c42895597dc095942768517d7aa70cf4</anchor>
-      <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>get_object</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>634e1aa080dbbd82e96144b0483fd085</anchor>
+      <anchor>457fae57adecd43d140a3328ee935df3</anchor>
       <arglist>(const int _identifier, BaseObject *&amp;_object)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_object</name>
+      <name>getObject</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>17125357788f11bf91380cd146aa6a3d</anchor>
+      <anchor>14147706f895f469852959e21f29e7fc</anchor>
       <arglist>(const int _identifier, BaseObjectData *&amp;_object)</arglist>
     </member>
     <member kind="function">
-      <type>bool</type>
-      <name>object_exists</name>
+      <type>DLLEXPORT bool</type>
+      <name>objectExists</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>924e6965de6c3a36291811c121ded9df</anchor>
+      <anchor>839512f6451ed80e09d4cc2b1e6324ab</anchor>
       <arglist>(const int _identifier)</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>object_count</name>
+      <name>objectCount</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>7c8f86352f3912f2d11f94e00d9fb2c6</anchor>
+      <anchor>5bbfd68dc2841f7e3256d14b716a06ae</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>target_count</name>
+      <name>targetCount</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>45a2037e6dfdbed46d38bb95b22a947c</anchor>
+      <anchor>1cf8f6cdf2dcb91bbed498d53d2d382c</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>source_count</name>
+      <name>sourceCount</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>48e21304e2102dbb519d71e644fbb453</anchor>
+      <anchor>3fdc4340584fcb0f039d8c141b2d3de2</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>int</type>
-      <name>visible_count</name>
+      <name>visibleCount</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>211e3474ca5477b24af33f3cf0afe654</anchor>
+      <anchor>a394f1c74b7eed4a844d2cbc78a010f7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>viewers</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>79838d9a4e7a09b4de2a2e2c043f1a9c</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -157,16 +171,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>scenegraph_pick</name>
+      <name>scenegraphPick</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>e20d1424a44165838009bc1828f982ff</anchor>
+      <anchor>093d540f6cd68dce6b43417c563ceb8d</anchor>
       <arglist>(ACG::SceneGraph::PickTarget _pickTarget, const QPoint &amp;_mousePos, unsigned int &amp;_nodeIdx, unsigned int &amp;_targetIdx, ACG::Vec3d *_hitPointPtr=0)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>scenegraph_pick</name>
+      <name>scenegraphPick</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>da942b5e50f2ca047ed4fc54b6834e51</anchor>
+      <anchor>c3421597cd5815f735d768c9c1b68933</anchor>
       <arglist>(const unsigned int _examiner, ACG::SceneGraph::PickTarget _pickTarget, const QPoint &amp;_mousePos, unsigned int &amp;_nodeIdx, unsigned int &amp;_targetIdx, ACG::Vec3d *_hitPointPtr=0)</arglist>
     </member>
     <member kind="function">
@@ -203,13 +217,6 @@
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>354c6201d4629d6607ebd0a43d2125e2</anchor>
       <arglist>(const unsigned int _examiner, std::string _mode)</arglist>
-    </member>
-    <member kind="function">
-      <type>ACG::GLState &amp;</type>
-      <name>glState</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>42afb52dcbd4fef6986d372f2f8118f8</anchor>
-      <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -261,151 +268,11 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>Viewer::ViewerProperties &amp;</type>
-      <name>viewerProperties</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>897bdc5ebf036348c0e543380c2a6cfa</anchor>
-      <arglist>(int _id)</arglist>
-    </member>
-    <member kind="function">
       <type>void</type>
       <name>allowRotation</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>bbc156ec199665bf2ac229741e8ca586</anchor>
       <arglist>(bool _mode)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setMainGLContext</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>bf5a1e13a33047b0af8399456e5363a0</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>viewingDirection</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>30c72bddf5bcdd6b39abe24e6b8267a7</anchor>
-      <arglist>(const ACG::Vec3d &amp;_dir, const ACG::Vec3d &amp;_up)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setScenePos</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>0b648e6b44a59282e5edfc8eda51c675</anchor>
-      <arglist>(const ACG::Vec3d &amp;_center, const double _radius)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setScenePos</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>a6fa94d1d14e272693d9d12138fb88c2</anchor>
-      <arglist>(const ACG::Vec3d &amp;_center)</arglist>
-    </member>
-    <member kind="function">
-      <type>const ACG::Vec3d &amp;</type>
-      <name>sceneCenter</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>f8548472c36e305d995dbd7531a8d1e0</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>sceneRadius</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>259318bab04fb94a356fa923384f36bf</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>translate</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>d53f8c6306496ee49021ae68d8873fc7</anchor>
-      <arglist>(const ACG::Vec3d &amp;_vector)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>rotate</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>5edf7564992ebddd3e5b5ed4207c72bc</anchor>
-      <arglist>(const ACG::Vec3d &amp;_axis, const double _angle, const ACG::Vec3d &amp;_center)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>viewHome</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>9ad0d550a7d8849130166a8b0c8470d3</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>viewAll</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>c4811a358a7fcd79f1b8ea2b6fdfb8e3</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>ACG::Vec3d</type>
-      <name>viewingDirection</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>74db7476ef45e6a94c2a3556ca362551</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>ACG::Vec3d</type>
-      <name>eyePos</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>c7b81abe92e8f2e4f5d07c6b6ba48f46</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>ACG::Vec3d</type>
-      <name>upVector</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>67be45b4919eb692a281fd7ee1ca4a1e</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>orthographicProjection</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>642fd4181e6702ade84257495b56f9c2</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>perspectiveProjection</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>7ec716d6a176219b3937994a91ac169a</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setDrawMode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>a0d5f7587ac6b1cdd1ae5a84feb428ef</anchor>
-      <arglist>(const unsigned int _mode)</arglist>
-    </member>
-    <member kind="function">
-      <type>unsigned int</type>
-      <name>drawMode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>43d94fd55d1a0e22c5c9cba49c52c66b</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setGlobalDrawMode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>47c8bcb0fcca09628f1f9470906d27df</anchor>
-      <arglist>(const unsigned int _mode)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setBackColor</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>37a6e72ec175b6ae536f99aa0ca38f61</anchor>
-      <arglist>(OpenMesh::Vec4f _color)</arglist>
     </member>
     <member kind="function">
       <type>QPoint</type>
@@ -423,13 +290,6 @@
     </member>
     <member kind="function">
       <type>void</type>
-      <name>flyTo</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>b06ba401a82fc57b90afa01f9e29af07</anchor>
-      <arglist>(const ACG::Vec3d &amp;_position, const ACG::Vec3d &amp;_center, double _time)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
       <name>setDataRoot</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>500a4c2660d974cc5d9ab8ea0604a5ff</anchor>
@@ -441,6 +301,96 @@
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>ffb238a514f9754ca2a3680ccb4b59a4</anchor>
       <arglist>(BaseObject *_object)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>RPCWrappers.hh</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/BasePlugin/</path>
+    <filename>RPCWrappers_8hh</filename>
+    <namespace>RPC</namespace>
+    <member kind="function">
+      <type>QScriptEngine *</type>
+      <name>getScriptEngine</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>f304d9b8acaf062a11d5c6e86e26d604</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>QScriptValue</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>e1cebc67ceb99d35de2019d715df84ae</anchor>
+      <arglist>(QString _plugin, QString _functionName)</arglist>
+    </member>
+    <member kind="function">
+      <type>QScriptValue</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>01e60295c1a3a9392b0a952e98a2b4cd</anchor>
+      <arglist>(QString _plugin, QString _functionName, std::vector&lt; QScriptValue &gt; _parameters)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>6163023fc134501980dc8dd2d0ecb10c</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>d261db93cb95ed7caa5cb83e4c2d1a0e</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>7bbc7f5cca6c4634e14ec498bb8c4afa</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1, T2 _t2)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>88f136b1547274daa6c584a97bc55ae5</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1, T2 _t2, T3 _t3)</arglist>
+    </member>
+    <member kind="function">
+      <type>ReturnValue</type>
+      <name>callFunctionValue</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>4849b4603b17d2a8b4749978a59101fe</anchor>
+      <arglist>(QString _plugin, QString _functionName)</arglist>
+    </member>
+    <member kind="function">
+      <type>ReturnValue</type>
+      <name>callFunctionValue</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>aa3f04f79f84e88db1861f74156cb42e</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0)</arglist>
+    </member>
+    <member kind="function">
+      <type>ReturnValue</type>
+      <name>callFunctionValue</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>c8ec66eb93e570ff5e7dc510da6617da</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1)</arglist>
+    </member>
+    <member kind="function">
+      <type>ReturnValue</type>
+      <name>callFunctionValue</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>f999327657a8bc7ba27d429f9409feaa</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1, T2 _t2, T3 _t3)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setScriptEngine</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>a2690ae5183818a8ad2e2f175d425968</anchor>
+      <arglist>(QScriptEngine *_engine)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -493,16 +443,16 @@
     <filename>GlobalDefines_8hh</filename>
     <member kind="define">
       <type>#define</type>
-      <name>OM_FORCE_STATIC_CAST</name>
+      <name>GCC_VERSION</name>
       <anchorfile>GlobalDefines_8hh.html</anchorfile>
-      <anchor>9ea21f5ddf8cd6c7e8abd4c48673fcab</anchor>
+      <anchor>dbba0f726fc66d7100916c683b7568ae</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
       <type>#define</type>
-      <name>USE_OPENMP</name>
+      <name>OM_FORCE_STATIC_CAST</name>
       <anchorfile>GlobalDefines_8hh.html</anchorfile>
-      <anchor>01df339826abe970836832ae79e5f894</anchor>
+      <anchor>9ea21f5ddf8cd6c7e8abd4c48673fcab</anchor>
       <arglist></arglist>
     </member>
     <member kind="define">
@@ -614,6 +564,13 @@
       <name>iconDirStr</name>
       <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
       <anchor>2edc0f88cd2fd6afc2b50bd44fdf58eb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>QIcon &amp;</type>
+      <name>OpenFlipperIcon</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>c5ed65be932af2a2b2dc4d4fd7de065c</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -841,6 +798,13 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
+      <type>bool</type>
+      <name>isDarwin</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>e2a6e277c3e54ef8b27ced4c607e1ecc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
       <type>QString</type>
       <name>dirSeparator</name>
       <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
@@ -901,48 +865,6 @@
       <name>synchronization</name>
       <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
       <anchor>2f2d3cc7de72adbf2f4ac9356aa6c530</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>animation</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>fed0d617d9db544bd778fc02d9c837ff</anchor>
-      <arglist>(bool _animation)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>animation</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>bb52e0e9b838fef19c63f6c8b1e189f0</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>backfaceCulling</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>ed6ed751e36ab95a29bf423cb2f85021</anchor>
-      <arglist>(bool _backfaceCulling)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>backfaceCulling</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>73c17200256f7609fb79c2b654bf077a</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>twoSidedLighting</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>fce9476037e3dc278bf3012858361a38</anchor>
-      <arglist>(bool _twoSidedLighting)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>twoSidedLighting</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>763cc9f51b329e7a24b320a66928aa05</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -1756,6 +1678,7 @@
     <name>ViewerProperties.hh</name>
     <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
     <filename>ViewerProperties_8hh</filename>
+    <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <class kind="class">Viewer::ViewerProperties</class>
     <member kind="enumvalue">
       <name>PickingMode</name>
@@ -1848,14 +1771,15 @@
     <title>Plugin Interfaces</title>
     <filename>interfaces</filename>
     <docanchor file="interfaces">KeyPlugin</docanchor>
+    <docanchor file="interfaces">RPCPlugin</docanchor>
     <docanchor file="interfaces">BasePlugin</docanchor>
     <docanchor file="interfaces">ToolboxPlugin</docanchor>
     <docanchor file="interfaces">MousePlugin</docanchor>
     <docanchor file="interfaces">PickingPlugin</docanchor>
     <docanchor file="interfaces">TexturePlugin</docanchor>
     <docanchor file="interfaces">INIPlugin</docanchor>
-    <docanchor file="interfaces">MenubarPlugin</docanchor>
     <docanchor file="interfaces">LoggingPlugin</docanchor>
+    <docanchor file="interfaces">MenubarPlugin</docanchor>
   </compound>
   <compound kind="page">
     <name>pluginProgramming</name>
@@ -1935,6 +1859,13 @@
       <anchorfile>classBaseInterface.html</anchorfile>
       <anchor>c500b033dc68fb00ed571f0424f954a4</anchor>
       <arglist>(int)</arglist>
+    </member>
+    <member kind="signal" virtualness="virtual">
+      <type>virtual void</type>
+      <name>visibilityChanged</name>
+      <anchorfile>classBaseInterface.html</anchorfile>
+      <anchor>bde4f5e0eb032df25cee02f78e696b3d</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="signal" virtualness="virtual">
       <type>virtual void</type>
@@ -3097,6 +3028,13 @@
     </member>
     <member kind="function" protection="private">
       <type>void</type>
+      <name>readGUIOptions</name>
+      <anchorfile>classCore.html</anchorfile>
+      <anchor>92d93955c4a8e4873c687236c5e416ec</anchor>
+      <arglist>(INIFile &amp;_ini)</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
       <name>readApplicationOptions</name>
       <anchorfile>classCore.html</anchorfile>
       <anchor>77241fa8487f84cdf3aea5f29df7ecf1</anchor>
@@ -3160,27 +3098,6 @@
     </member>
     <member kind="slot">
       <type>void</type>
-      <name>translate</name>
-      <anchorfile>classCore.html</anchorfile>
-      <anchor>ac6e21d790ce73a00b603e8d872672df</anchor>
-      <arglist>(Vector _vec)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>rotate</name>
-      <anchorfile>classCore.html</anchorfile>
-      <anchor>9d64d351cf75351b720abe57b65f591b</anchor>
-      <arglist>(Vector _axis, double _angle, Vector _center)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>setViewingDirection</name>
-      <anchorfile>classCore.html</anchorfile>
-      <anchor>48819454934fd4b7cf8e9367ed20d97a</anchor>
-      <arglist>(Vector _direction, Vector _upvector)</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
       <name>fullscreen</name>
       <anchorfile>classCore.html</anchorfile>
       <anchor>4d1913bc396afb49fefe6158abc21381</anchor>
@@ -3202,10 +3119,10 @@
     </member>
     <member kind="slot">
       <type>void</type>
-      <name>setDrawMode</name>
+      <name>multiViewMode</name>
       <anchorfile>classCore.html</anchorfile>
-      <anchor>23b2b4eb6e23a58e8869df5daea4c5fc</anchor>
-      <arglist>(QString _mode)</arglist>
+      <anchor>e2a9f86c1727d8687388c0baa9b78e55</anchor>
+      <arglist>(int _mode)</arglist>
     </member>
     <member kind="slot">
       <type>void</type>
@@ -3486,6 +3403,13 @@
       <anchorfile>classCore.html</anchorfile>
       <anchor>c86dff1812e25d8afeaf1e20de0cdc86</anchor>
       <arglist>(int _identifier)</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>slotVisibilityChanged</name>
+      <anchorfile>classCore.html</anchorfile>
+      <anchor>48ced2c370c1160ec8739b05412a6247</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="slot" protection="private">
       <type>void</type>
@@ -3804,6 +3728,13 @@
       <name>coreSlots_</name>
       <anchorfile>classCoreWidget.html</anchorfile>
       <anchor>5f8996f83bc9c2e625c04bc007ca92a9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>shiftPressed_</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>ad0b57e8c9f9caf14200df011a4cf289</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -4130,17 +4061,31 @@
     </member>
     <member kind="slot" protection="private">
       <type>void</type>
-      <name>updateGlobalOptions</name>
-      <anchorfile>classCoreWidget.html</anchorfile>
-      <anchor>413c073ba2419770eb430012e22dc7ab</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot" protection="private">
-      <type>void</type>
       <name>changeBackgroundColor</name>
       <anchorfile>classCoreWidget.html</anchorfile>
       <anchor>a79f7f9d75b8525d95c322b03a792cfe</anchor>
       <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>slotChangeAnimation</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>58d00f8fd95415f49db9a5465ca79b50</anchor>
+      <arglist>(bool _animation)</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>slotChangeBackFaceCulling</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>c00ec81c76d1ccd505816bc755ed624e</anchor>
+      <arglist>(bool _backFaceCulling)</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>slotChangeTwoSidedLighting</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>d16aba88f828ca01b2c30062a24ef55e</anchor>
+      <arglist>(bool _lighting)</arglist>
     </member>
     <member kind="slot" protection="private">
       <type>void</type>
@@ -4668,6 +4613,20 @@
       <arglist></arglist>
     </member>
     <member kind="variable">
+      <type>QtSlideWindow *</type>
+      <name>slidingLogger_</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>11204888c9ec1d531e1d9186fa5e80f0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>QWidget *</type>
+      <name>tempLogWidget</name>
+      <anchorfile>classCoreWidget.html</anchorfile>
+      <anchor>4c50e773e01d9c21868359ad171e0a9a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
       <type>ACG::QtWidgets::QtSceneGraphDialog *</type>
       <name>sceneGraphDialog_</name>
       <anchorfile>classCoreWidget.html</anchorfile>
@@ -4810,6 +4769,13 @@
       <anchorfile>classFileInterface.html</anchorfile>
       <anchor>5ed9d6acc10a25f0b2488d0587e3840a</anchor>
       <arglist>(int, QString)=0</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~FileInterface</name>
+      <anchorfile>classFileInterface.html</anchorfile>
+      <anchor>e65a01c7d0f025d504acb88dc8e223f4</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual QWidget *</type>
@@ -5100,10 +5066,10 @@
       <arglist>(const std::string &amp;_name, bool _mouseTracking)</arglist>
     </member>
     <member kind="variable" protection="private">
-      <type>Viewer::ViewerProperties</type>
+      <type>Viewer::ViewerProperties &amp;</type>
       <name>properties_</name>
       <anchorfile>classglViewer.html</anchorfile>
-      <anchor>d28fbefa8fbd0e360da20175493ffcb7</anchor>
+      <anchor>a9ce09d920545983b8fe8f439f866ce9</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
@@ -5419,8 +5385,8 @@
       <type></type>
       <name>glViewer</name>
       <anchorfile>classglViewer.html</anchorfile>
-      <anchor>a2cf4ae4c2c221a96e2b8eff892cf653</anchor>
-      <arglist>(QtGLGraphicsScene *_scene, QGLWidget *_glWidget, QGraphicsWidget *_parent=0, const char *_name=0, QStatusBar *_statusBar=0)</arglist>
+      <anchor>94402cf84761f0f4df9854e67da5d9e5</anchor>
+      <arglist>(QtGLGraphicsScene *_scene, QGLWidget *_glWidget, Viewer::ViewerProperties &amp;_properties, QGraphicsWidget *_parent=0, const char *_name=0, QStatusBar *_statusBar=0)</arglist>
     </member>
     <member kind="function" virtualness="virtual">
       <type>virtual</type>
@@ -6715,6 +6681,13 @@
       <anchor>45b6a3e59f49fe5d6c522d27fe102d86</anchor>
       <arglist>(QStringList &amp;)</arglist>
     </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~LoadSaveInterface</name>
+      <anchorfile>classLoadSaveInterface.html</anchorfile>
+      <anchor>e1002bcd9c8b19677c560cb7834d625e</anchor>
+      <arglist>()</arglist>
+    </member>
     <member kind="slot" protection="private" virtualness="virtual">
       <type>virtual void</type>
       <name>fileOpened</name>
@@ -6757,6 +6730,13 @@
       <anchorfile>classLoggingInterface.html</anchorfile>
       <anchor>d9724024d8924ba7bb70f6ba8f8c2de9</anchor>
       <arglist>(QString)=0</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~LoggingInterface</name>
+      <anchorfile>classLoggingInterface.html</anchorfile>
+      <anchor>0098b23e68799067757bd0dce5fb52b7</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="slot" protection="private" virtualness="virtual">
       <type>virtual void</type>
@@ -7156,8 +7136,8 @@
       <type></type>
       <name>QtGLGraphicsScene</name>
       <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>ab9ea27b34b8691562b5d5027d0e65f1</anchor>
-      <arglist>(std::vector&lt; glViewer * &gt; *_views)</arglist>
+      <anchor>4532a92487fbe3c5b024c4d1e511ed99</anchor>
+      <arglist>(std::vector&lt; glViewer * &gt; *_views, QtMultiViewLayout *_layout)</arglist>
     </member>
     <member kind="function" protection="protected" virtualness="virtual">
       <type>virtual void</type>
@@ -7205,14 +7185,21 @@
       <type>glViewer *</type>
       <name>findView</name>
       <anchorfile>classQtGLGraphicsScene.html</anchorfile>
-      <anchor>2cd9123f872fd669320b3caafb66c710</anchor>
-      <arglist>(const QPointF &amp;p)</arglist>
+      <anchor>09a14a5812de53d4b9aa3e01ccde3bf4</anchor>
+      <arglist>(const QPointF &amp;_p, bool _setActive=false)</arglist>
     </member>
     <member kind="variable" protection="private">
       <type>std::vector&lt; glViewer * &gt; *</type>
       <name>views_</name>
       <anchorfile>classQtGLGraphicsScene.html</anchorfile>
       <anchor>a03f0031f03479a525adbac1e8dbd29c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QtMultiViewLayout *</type>
+      <name>layout_</name>
+      <anchorfile>classQtGLGraphicsScene.html</anchorfile>
+      <anchor>cfcd405b55b329ac28c1bf18e575bfdf</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -7344,6 +7331,157 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>QtGraphicsButton</name>
+    <filename>classQtGraphicsButton.html</filename>
+    <member kind="signal">
+      <type>void</type>
+      <name>pressed</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>f2c5455500ce2cc533e8ca32a2543ac8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>QtGraphicsButton</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>8203c3642ad838f710b79084b4d63908</anchor>
+      <arglist>(const QImage &amp;_image, QGraphicsItem *_parent=0, int _width=-1, int _height=-1)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual QRectF</type>
+      <name>boundingRect</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>db92807e8ce12d233fae1181f07b9617</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>paint</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>89bcccba3c6148a1ff1e3db07d518f80</anchor>
+      <arglist>(QPainter *_painter, const QStyleOptionGraphicsItem *_option, QWidget *_widget=0)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>hoverEnterEvent</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>7c4ce50a6d6a58220d29494d3ed8e7c0</anchor>
+      <arglist>(QGraphicsSceneHoverEvent *_event)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>hoverLeaveEvent</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>3806d69aa197a368b38d0b4f4bd9bedc</anchor>
+      <arglist>(QGraphicsSceneHoverEvent *_event)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>mousePressEvent</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>8287bcc8aba5109850d88ab24eab7332</anchor>
+      <arglist>(QGraphicsSceneMouseEvent *_event)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>mouseReleaseEvent</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>b57081e33213bb8bfdf7cf70318f9c5e</anchor>
+      <arglist>(QGraphicsSceneMouseEvent *_event)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual QVariant</type>
+      <name>itemChange</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>61a15bfcd1257cad39125be7be302cd1</anchor>
+      <arglist>(GraphicsItemChange _change, const QVariant &amp;_value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setCheckable</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>54e9d5558a3d64eb0abd6445b8acdfa9</anchor>
+      <arglist>(bool _value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setChecked</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>2f2095734e75d5c582f83e1d65e2a4d2</anchor>
+      <arglist>(bool _value)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>isChecked</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>ac839a015cc781f256c1201e6ebce520</anchor>
+      <arglist>() const </arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>checkable_</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>14f70b83b19e3e77e4bfd076d89bf792</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>checked_</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>0032e1fc460e34fb49d582208f2f236a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>pressed_</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>8efecdbded7d30fc8f8685d79f992253</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>over_</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>a6ab67f2a2c4a7919e0fa4bcddae41d1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>int</type>
+      <name>width_</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>1ac56ed7c1500a3d3cc125591f2f1b1d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>int</type>
+      <name>height_</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>fbe4c890d328b1475ef90fad6950f673</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QPixmap</type>
+      <name>normalPix_</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>d1552558a745fa2f258b6b21a4170f0c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QPixmap</type>
+      <name>overPix_</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>c2df1f7b5c29d8da7656021198563419</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QPixmap</type>
+      <name>checkedPix_</name>
+      <anchorfile>classQtGraphicsButton.html</anchorfile>
+      <anchor>f8e3957bc2b6518290eeca5ed75a4844</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>QtMultiViewLayout</name>
     <filename>classQtMultiViewLayout.html</filename>
     <member kind="enumeration">
@@ -7452,6 +7590,157 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>QtSlideWindow</name>
+    <filename>classQtSlideWindow.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>QtSlideWindow</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>fead5916fba62a8fd75927631329c88e</anchor>
+      <arglist>(QString _name=0, QGraphicsItem *_parent=0)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>updateGeometry</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>1ce4662787acb07ef19cdb2f788e3932</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>attachWidget</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>baac412f54edf8f16c8185c4ee132573</anchor>
+      <arglist>(QWidget *_m)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>detachWidget</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>480341dcbe14a429d6476128068d5e73</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>detachPressed</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>f95b1c400e286b5487dc62f9ee15a0fb</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>dialogClosed</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>91ab018325d1eda01c0d8fce53fec4e7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="slot" protection="private">
+      <type>void</type>
+      <name>autohidePressed</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>549df7b3cd42b98a1a6101244d9f66b1</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>paintWindowFrame</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>f6a432c0ffdda4fd12617d7e5421eeaf</anchor>
+      <arglist>(QPainter *_painter, const QStyleOptionGraphicsItem *_option, QWidget *_widget=0)</arglist>
+    </member>
+    <member kind="function" protection="private" virtualness="virtual">
+      <type>virtual bool</type>
+      <name>windowFrameEvent</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>18f52538ccd58064d7262f765ea143f8</anchor>
+      <arglist>(QEvent *_e)</arglist>
+    </member>
+    <member kind="function" protection="private" virtualness="virtual">
+      <type>virtual Qt::WindowFrameSection</type>
+      <name>windowFrameSectionAt</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>47ec299a1d88ac734055fcb8cd399800</anchor>
+      <arglist>(const QPointF &amp;_pos) const </arglist>
+    </member>
+    <member kind="function" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>hoverEnterEvent</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>a6a75282465cc6eff10f1b70bd4f06d0</anchor>
+      <arglist>(QGraphicsSceneHoverEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>hoverLeaveEvent</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>af32cdf3d808a21b81cd1c19b48f3ae6</anchor>
+      <arglist>(QGraphicsSceneHoverEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>resizeEvent</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>f1559e6e37ec6e4c10992389c0958d9a</anchor>
+      <arglist>(QGraphicsSceneResizeEvent *_event)</arglist>
+    </member>
+    <member kind="function" protection="private" virtualness="virtual">
+      <type>virtual void</type>
+      <name>moveEvent</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>66eaa223ffa9ca70891bec3440b6adfc</anchor>
+      <arglist>(QGraphicsSceneMoveEvent *_event)</arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QString</type>
+      <name>name_</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>5a2e3f7f9371fdd5234f92158ffaf1d8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QWidget *</type>
+      <name>mainWidget_</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>42ffcdf5153a151326f75bb88e0df021</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QtGraphicsButton *</type>
+      <name>autohideButton_</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>f378b6f9d186c9c3e016baee8a7a5aff</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QtGraphicsButton *</type>
+      <name>detachButton_</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>8e092299b233234ee1ad888b77dc618e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QTimeLine *</type>
+      <name>hideTimeLine_</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>f4aee0c2d6e3af6f934f8ddcea76a92d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QGraphicsItemAnimation *</type>
+      <name>hideAnimation_</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>c37139dc14cd44c77fce9eb69a095660</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>QDialog *</type>
+      <name>dialog_</name>
+      <anchorfile>classQtSlideWindow.html</anchorfile>
+      <anchor>dc6d2a7cc2accfdeecf4221a500de617</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>RPCInterface</name>
     <filename>classRPCInterface.html</filename>
     <member kind="signal" virtualness="virtual">
@@ -7495,6 +7784,13 @@
       <anchorfile>classRPCInterface.html</anchorfile>
       <anchor>831515a71a6e6effe54d859732a073e1</anchor>
       <arglist>(QString, QObject *&amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~RPCInterface</name>
+      <anchorfile>classRPCInterface.html</anchorfile>
+      <anchor>d5fb61f820baec94a83bd122fc93be9e</anchor>
+      <arglist>()</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -7573,6 +7869,13 @@
       <anchorfile>classScriptInterface.html</anchorfile>
       <anchor>4e79d06e3951a46dfdff03676919763a</anchor>
       <arglist>(QString, QString &amp;, QStringList &amp;, QStringList &amp;)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~ScriptInterface</name>
+      <anchorfile>classScriptInterface.html</anchorfile>
+      <anchor>0e077be7c424854cfb9e001bc35bbb38</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="slot" protection="private" virtualness="virtual">
       <type>virtual void</type>
@@ -7809,12 +8112,34 @@
     <name>PluginFunctions</name>
     <filename>namespacePluginFunctions.html</filename>
     <class kind="class">PluginFunctions::ObjectIterator</class>
+    <class kind="class">PluginFunctions::BaseObjectIterator</class>
     <member kind="function">
       <type>DLLEXPORT ObjectIterator</type>
-      <name>objects_end</name>
+      <name>objectsEnd</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>d1ebd6bab5cdb61704584c9f7a8fa1e3</anchor>
+      <anchor>25c8015c612b1aaf3a840ca072ce68ca</anchor>
       <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DLLEXPORT BaseObjectIterator</type>
+      <name>baseObjectsEnd</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>0170e02e7bd4ef07a4b3718d82ef4978</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>object_exists</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>2b2ad93729336892c9f6ccc64dec4975</anchor>
+      <arglist>(const int _identifier)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>get_all_object_identifiers</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>a6820be88cefee7a0f0e98d124cfa4b7</anchor>
+      <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -7838,25 +8163,11 @@
       <arglist>(BaseObject *_root)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>setViewers</name>
+      <type>int</type>
+      <name>viewers</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>8955188d50725b0bde4f048900bbd3dc</anchor>
-      <arglist>(std::vector&lt; glViewer * &gt; _examiner_widgets)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setRootNode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>b49f3df01bed203c614e7e6e748277fb</anchor>
-      <arglist>(SeparatorNode *_root_node)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setSceneGraphRootNode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>42b42db6bee14300b3c80a7e7a209041</anchor>
-      <arglist>(SeparatorNode *_root_node)</arglist>
+      <anchor>79838d9a4e7a09b4de2a2e2c043f1a9c</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -7873,17 +8184,31 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>bool</type>
-      <name>scenegraph_pick</name>
+      <type>QPoint</type>
+      <name>mapToGlobal</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>e20d1424a44165838009bc1828f982ff</anchor>
+      <anchor>499ada11f6b60e736f314d03395dd808</anchor>
+      <arglist>(const QPoint _point)</arglist>
+    </member>
+    <member kind="function">
+      <type>QPoint</type>
+      <name>mapToLocal</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>6da01f4b28ec6cca2a6699cd7c93f244</anchor>
+      <arglist>(const QPoint _point)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>scenegraphPick</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>093d540f6cd68dce6b43417c563ceb8d</anchor>
       <arglist>(ACG::SceneGraph::PickTarget _pickTarget, const QPoint &amp;_mousePos, unsigned int &amp;_nodeIdx, unsigned int &amp;_targetIdx, ACG::Vec3d *_hitPointPtr=0)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>scenegraph_pick</name>
+      <name>scenegraphPick</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>da942b5e50f2ca047ed4fc54b6834e51</anchor>
+      <anchor>c3421597cd5815f735d768c9c1b68933</anchor>
       <arglist>(const unsigned int _examiner, ACG::SceneGraph::PickTarget _pickTarget, const QPoint &amp;_mousePos, unsigned int &amp;_nodeIdx, unsigned int &amp;_targetIdx, ACG::Vec3d *_hitPointPtr=0)</arglist>
     </member>
     <member kind="function">
@@ -7929,13 +8254,6 @@
       <arglist>(Viewer::ActionMode _mode)</arglist>
     </member>
     <member kind="function">
-      <type>ACG::GLState &amp;</type>
-      <name>glState</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>42afb52dcbd4fef6986d372f2f8118f8</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
       <type>void</type>
       <name>getCurrentViewImage</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
@@ -7948,13 +8266,6 @@
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>a7ad2d5b69ca3cc449a3e702fb4e5d4f</anchor>
       <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>Viewer::ViewerProperties &amp;</type>
-      <name>viewerProperties</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>897bdc5ebf036348c0e543380c2a6cfa</anchor>
-      <arglist>(int _id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -7992,10 +8303,45 @@
       <arglist>(ACG::SceneGraph::BaseNode *_node)</arglist>
     </member>
     <member kind="function">
-      <type>bool</type>
-      <name>get_picked_object</name>
+      <type>void</type>
+      <name>setViewers</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>5a5a6830d7f7289647fa6fecec7ab36c</anchor>
+      <anchor>e449258cdd3312c615fbb8903cb0402a</anchor>
+      <arglist>(std::vector&lt; glViewer * &gt; _viewerWidgets)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setViewerProperties</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>9e974bfcabd2e2d6ead4d9bca86d5bba</anchor>
+      <arglist>(std::vector&lt; Viewer::ViewerProperties * &gt; _viewerProperties)</arglist>
+    </member>
+    <member kind="function">
+      <type>glViewer *</type>
+      <name>viewer</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>5907c06476bf9a92db09a09481b42cef</anchor>
+      <arglist>(int _viewerId)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setRootNode</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>b49f3df01bed203c614e7e6e748277fb</anchor>
+      <arglist>(SeparatorNode *_root_node)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setSceneGraphRootNode</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>42b42db6bee14300b3c80a7e7a209041</anchor>
+      <arglist>(SeparatorNode *_root_node)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>getPickedObject</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>f54bc387d31df6054829e57377bb617d</anchor>
       <arglist>(const unsigned int _node_idx, BaseObjectData *&amp;_object)</arglist>
     </member>
     <member kind="function">
@@ -8021,80 +8367,80 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_source_identifiers</name>
+      <name>getSourceIdentifiers</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>585008c20534d0ac70ffd428bdbb14ef</anchor>
+      <anchor>949b8b558e9119de7bf9cb26326fa4e0</anchor>
       <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_target_identifiers</name>
+      <name>getTargetIdentifiers</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>7845369871c9fb0596dbc1c52aaf45c1</anchor>
+      <anchor>b71e4cf2dd51eb0281b2f7b9d243dcb2</anchor>
       <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_object</name>
+      <name>getObject</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>634e1aa080dbbd82e96144b0483fd085</anchor>
+      <anchor>457fae57adecd43d140a3328ee935df3</anchor>
       <arglist>(const int _identifier, BaseObject *&amp;_object)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>get_object</name>
+      <name>getObject</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>17125357788f11bf91380cd146aa6a3d</anchor>
+      <anchor>14147706f895f469852959e21f29e7fc</anchor>
       <arglist>(const int _identifier, BaseObjectData *&amp;_object)</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>object_exists</name>
+      <name>getAllMeshes</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>924e6965de6c3a36291811c121ded9df</anchor>
+      <anchor>bd08c0d79cb35d559e76c3c3b822ac58</anchor>
+      <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>objectCount</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>5bbfd68dc2841f7e3256d14b716a06ae</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>targetCount</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>1cf8f6cdf2dcb91bbed498d53d2d382c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>sourceCount</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>3fdc4340584fcb0f039d8c141b2d3de2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>visibleCount</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>a394f1c74b7eed4a844d2cbc78a010f7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DLLEXPORT bool</type>
+      <name>getAllObjectIdentifiers</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>79c4165f279935b30fe6d3db99ae04d3</anchor>
+      <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
+    </member>
+    <member kind="function">
+      <type>DLLEXPORT bool</type>
+      <name>objectExists</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>839512f6451ed80e09d4cc2b1e6324ab</anchor>
       <arglist>(const int _identifier)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>get_all_meshes</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>ca145e68854ad4b3be4fec112737e08c</anchor>
-      <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>get_all_object_identifiers</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>c42895597dc095942768517d7aa70cf4</anchor>
-      <arglist>(std::vector&lt; int &gt; &amp;_identifiers)</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>object_count</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>7c8f86352f3912f2d11f94e00d9fb2c6</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>target_count</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>45a2037e6dfdbed46d38bb95b22a947c</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>source_count</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>48e21304e2102dbb519d71e644fbb453</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>visible_count</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>211e3474ca5477b24af33f3cf0afe654</anchor>
-      <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -8104,39 +8450,18 @@
       <arglist>(OpenMesh::Vec4f _color)</arglist>
     </member>
     <member kind="function">
-      <type>QPoint</type>
-      <name>mapToGlobal</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>499ada11f6b60e736f314d03395dd808</anchor>
-      <arglist>(const QPoint _point)</arglist>
-    </member>
-    <member kind="function">
-      <type>QPoint</type>
-      <name>mapToLocal</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>6da01f4b28ec6cca2a6699cd7c93f244</anchor>
-      <arglist>(const QPoint _point)</arglist>
-    </member>
-    <member kind="function">
       <type>void</type>
       <name>setDrawMode</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>a0d5f7587ac6b1cdd1ae5a84feb428ef</anchor>
-      <arglist>(const unsigned int _mode)</arglist>
+      <anchor>1efe4bee421b08165a9265b92fc12205</anchor>
+      <arglist>(const unsigned int _mode, int _viewer=ALL_VIEWERS)</arglist>
     </member>
     <member kind="function">
       <type>unsigned int</type>
       <name>drawMode</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>43d94fd55d1a0e22c5c9cba49c52c66b</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setGlobalDrawMode</name>
-      <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>47c8bcb0fcca09628f1f9470906d27df</anchor>
-      <arglist>(const unsigned int _mode)</arglist>
+      <anchor>c8dc53f80aa94843ced3697c966ff241</anchor>
+      <arglist>(int _viewer=ACTIVE_VIEWER)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -8163,29 +8488,29 @@
       <type>void</type>
       <name>viewingDirection</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>30c72bddf5bcdd6b39abe24e6b8267a7</anchor>
-      <arglist>(const ACG::Vec3d &amp;_dir, const ACG::Vec3d &amp;_up)</arglist>
+      <anchor>8bb70fdba72b880eb2f84cf4a73a297d</anchor>
+      <arglist>(const ACG::Vec3d &amp;_dir, const ACG::Vec3d &amp;_up, int _viewer=ALL_VIEWERS)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setScenePos</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>0b648e6b44a59282e5edfc8eda51c675</anchor>
-      <arglist>(const ACG::Vec3d &amp;_center, const double _radius)</arglist>
+      <anchor>5f9d50f4c35ac7b665e143fff6a5694d</anchor>
+      <arglist>(const ACG::Vec3d &amp;_center, const double _radius, int _viewer=ALL_VIEWERS)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>setScenePos</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>a6fa94d1d14e272693d9d12138fb88c2</anchor>
-      <arglist>(const ACG::Vec3d &amp;_center)</arglist>
+      <anchor>46f9e4e95fc926bf456d671d3009fe20</anchor>
+      <arglist>(const ACG::Vec3d &amp;_center, int _viewer=ALL_VIEWERS)</arglist>
     </member>
     <member kind="function">
       <type>const ACG::Vec3d &amp;</type>
       <name>sceneCenter</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>f8548472c36e305d995dbd7531a8d1e0</anchor>
-      <arglist>()</arglist>
+      <anchor>9d5d7cd0859781aa075ed1fa16510514</anchor>
+      <arglist>(int _viewer=ACTIVE_VIEWER)</arglist>
     </member>
     <member kind="function">
       <type>double</type>
@@ -8198,50 +8523,57 @@
       <type>void</type>
       <name>translate</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>d53f8c6306496ee49021ae68d8873fc7</anchor>
-      <arglist>(const ACG::Vec3d &amp;_vector)</arglist>
+      <anchor>03c04f127e8b245e0ddbfdc46a03dfcc</anchor>
+      <arglist>(const ACG::Vec3d &amp;_vector, int _viewer=ALL_VIEWERS)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>rotate</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>5edf7564992ebddd3e5b5ed4207c72bc</anchor>
-      <arglist>(const ACG::Vec3d &amp;_axis, const double _angle, const ACG::Vec3d &amp;_center)</arglist>
+      <anchor>772833a79fff199451a1aad6f18bf63f</anchor>
+      <arglist>(const ACG::Vec3d &amp;_axis, const double _angle, const ACG::Vec3d &amp;_center, int _viewer=ALL_VIEWERS)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>viewHome</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>9ad0d550a7d8849130166a8b0c8470d3</anchor>
-      <arglist>()</arglist>
+      <anchor>373653112fd9d0f657aa512062730d10</anchor>
+      <arglist>(int _viewer=ALL_VIEWERS)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>viewAll</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>c4811a358a7fcd79f1b8ea2b6fdfb8e3</anchor>
-      <arglist>()</arglist>
+      <anchor>fb6ba50cd13b03ae5c8ed921b82f9157</anchor>
+      <arglist>(int _viewer=ALL_VIEWERS)</arglist>
     </member>
     <member kind="function">
       <type>ACG::Vec3d</type>
       <name>viewingDirection</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>74db7476ef45e6a94c2a3556ca362551</anchor>
-      <arglist>()</arglist>
+      <anchor>4067da1ac9e8293333368d209531596e</anchor>
+      <arglist>(int _viewer=ACTIVE_VIEWER)</arglist>
     </member>
     <member kind="function">
       <type>ACG::Vec3d</type>
       <name>eyePos</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>c7b81abe92e8f2e4f5d07c6b6ba48f46</anchor>
-      <arglist>()</arglist>
+      <anchor>22dfd6ee3f9eac0a55c3a8fb720c7693</anchor>
+      <arglist>(int _viewer=ACTIVE_VIEWER)</arglist>
     </member>
     <member kind="function">
       <type>ACG::Vec3d</type>
       <name>upVector</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
-      <anchor>67be45b4919eb692a281fd7ee1ca4a1e</anchor>
-      <arglist>()</arglist>
+      <anchor>749649c3a78bff74e47d00de34a77853</anchor>
+      <arglist>(int _viewer=ACTIVE_VIEWER)</arglist>
+    </member>
+    <member kind="function">
+      <type>Viewer::ViewerProperties &amp;</type>
+      <name>viewerProperties</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>897bdc5ebf036348c0e543380c2a6cfa</anchor>
+      <arglist>(int _id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -8269,6 +8601,13 @@
       <name>examiner_widgets_</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>6912bcdbedb83b624d8f3a9b7c171e23</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static std::vector&lt; Viewer::ViewerProperties * &gt;</type>
+      <name>viewerProperties_</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>3a84db5e243a8b1d13112fea6bd831c9</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" static="yes">
@@ -8304,6 +8643,20 @@
       <name>dummyProperties</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
       <anchor>0034857058dc22d14b7ea49f473bc04b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const int</type>
+      <name>ALL_VIEWERS</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>e806c205fc44df6f63379c56a0c467c3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>const int</type>
+      <name>ACTIVE_VIEWER</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>696cc98abfbe469ae9ad57328c0103ab</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -8444,6 +8797,231 @@
       <arglist></arglist>
     </member>
   </compound>
+  <compound kind="class">
+    <name>PluginFunctions::BaseObjectIterator</name>
+    <filename>classPluginFunctions_1_1BaseObjectIterator.html</filename>
+    <member kind="typedef">
+      <type>BaseObject</type>
+      <name>value_type</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>9bb01bead020c596d0add83d47193f4e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>BaseObject *</type>
+      <name>value_handle</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>827dcfcb07b86c8f6ea9a8699a515812</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>value_type &amp;</type>
+      <name>reference</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>73103be943ef243af150993be3a499ea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>value_type *</type>
+      <name>pointer</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>4fe74a88166e7799b56ad53ce2e53602</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>BaseObjectIterator</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>d6054ca8b620fcbb3360e77100132d5b</anchor>
+      <arglist>(IteratorRestriction _restriction=ALL_OBJECTS, DataType _dataType=DATA_ALL)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>BaseObjectIterator</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>53f6bed2c770f92226c534289ad2237f</anchor>
+      <arglist>(BaseObject *pos, IteratorRestriction _restriction=ALL_OBJECTS, DataType _dataType=DATA_ALL)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>operator value_handle</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>1cbb2c924ee7e933c97e9ee0c07021f7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator==</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>ebb015419ec9ff78c52376aba5f93deb</anchor>
+      <arglist>(const BaseObjectIterator &amp;_rhs)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>operator!=</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>940de25e07e5eea6fdbc2cb02d56c43f</anchor>
+      <arglist>(const BaseObjectIterator &amp;_rhs)</arglist>
+    </member>
+    <member kind="function">
+      <type>BaseObjectIterator &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>53475118734fff977a5e522f2fcedc50</anchor>
+      <arglist>(const BaseObjectIterator &amp;_rhs)</arglist>
+    </member>
+    <member kind="function">
+      <type>pointer</type>
+      <name>operator-&gt;</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>473ea103ca8b1a7ca2818a93d8330c1b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BaseObjectIterator &amp;</type>
+      <name>operator++</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>6417a932e63c5427cbe3b802f104d7c2</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BaseObjectIterator &amp;</type>
+      <name>operator--</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>bc726ec2bd89582b4650952579486358</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BaseObject *</type>
+      <name>operator*</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>26d0c6691552ca1a1743bf00e6d93d56</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BaseObject *</type>
+      <name>index</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>e680007513d168bd9b7577b6d40a858f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>BaseObject *</type>
+      <name>pos_</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>1f46ab5a606c51960ba9956c24b2b21d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>DataType</type>
+      <name>dataType_</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>7f03b0cdf3036019a157b206fa97b59f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>IteratorRestriction</type>
+      <name>restriction_</name>
+      <anchorfile>classPluginFunctions_1_1BaseObjectIterator.html</anchorfile>
+      <anchor>4cd6828fffebfd81daae0123349043eb</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="namespace">
+    <name>RPC</name>
+    <filename>namespaceRPC.html</filename>
+    <member kind="function">
+      <type>QScriptValue</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>01e60295c1a3a9392b0a952e98a2b4cd</anchor>
+      <arglist>(QString _plugin, QString _functionName, std::vector&lt; QScriptValue &gt; _parameters)</arglist>
+    </member>
+    <member kind="function">
+      <type>QScriptValue</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>e1cebc67ceb99d35de2019d715df84ae</anchor>
+      <arglist>(QString _plugin, QString _functionName)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setScriptEngine</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>a2690ae5183818a8ad2e2f175d425968</anchor>
+      <arglist>(QScriptEngine *_engine)</arglist>
+    </member>
+    <member kind="function">
+      <type>QScriptEngine *</type>
+      <name>getScriptEngine</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>f304d9b8acaf062a11d5c6e86e26d604</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>6163023fc134501980dc8dd2d0ecb10c</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>d261db93cb95ed7caa5cb83e4c2d1a0e</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>7bbc7f5cca6c4634e14ec498bb8c4afa</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1, T2 _t2)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>callFunction</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>88f136b1547274daa6c584a97bc55ae5</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1, T2 _t2, T3 _t3)</arglist>
+    </member>
+    <member kind="function">
+      <type>ReturnValue</type>
+      <name>callFunctionValue</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>4849b4603b17d2a8b4749978a59101fe</anchor>
+      <arglist>(QString _plugin, QString _functionName)</arglist>
+    </member>
+    <member kind="function">
+      <type>ReturnValue</type>
+      <name>callFunctionValue</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>aa3f04f79f84e88db1861f74156cb42e</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0)</arglist>
+    </member>
+    <member kind="function">
+      <type>ReturnValue</type>
+      <name>callFunctionValue</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>c8ec66eb93e570ff5e7dc510da6617da</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1)</arglist>
+    </member>
+    <member kind="function">
+      <type>ReturnValue</type>
+      <name>callFunctionValue</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>f999327657a8bc7ba27d429f9409feaa</anchor>
+      <arglist>(QString _plugin, QString _functionName, T0 _t0, T1 _t1, T2 _t2, T3 _t3)</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static QScriptEngine *</type>
+      <name>engine_</name>
+      <anchorfile>namespaceRPC.html</anchorfile>
+      <anchor>0fe26dbf58b2d748d64984b01011a212</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
   <compound kind="dir">
     <name>widgets/aboutWidget/</name>
     <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/aboutWidget/</path>
@@ -8484,9 +9062,13 @@
     <file>PickingInterface.hh</file>
     <file>PluginFunctions.cc</file>
     <file>PluginFunctions.hh</file>
+    <file>PluginFunctionsBaseIterator.cc</file>
     <file>PluginFunctionsCore.hh</file>
     <file>PluginFunctionsIterator.cc</file>
+    <file>PluginFunctionsViewControls.hh</file>
     <file>RPCInterface.hh</file>
+    <file>RPCWrappers.cc</file>
+    <file>RPCWrappers.hh</file>
     <file>ScriptInterface.hh</file>
     <file>StatusbarInterface.hh</file>
     <file>TextureInterface.hh</file>
@@ -8601,8 +9183,12 @@
     <file>QtGLGraphicsView.hh</file>
     <file>QtGLViewerLayout.cc</file>
     <file>QtGLViewerLayout.hh</file>
+    <file>QtGraphicsButton.cc</file>
+    <file>QtGraphicsButton.hh</file>
     <file>QtMultiViewLayout.cc</file>
     <file>QtMultiViewLayout.hh</file>
+    <file>QtSlideWindow.cc</file>
+    <file>QtSlideWindow.hh</file>
   </compound>
   <compound kind="dir">
     <name>widgets/helpBrowser/</name>

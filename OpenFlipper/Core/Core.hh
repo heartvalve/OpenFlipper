@@ -273,8 +273,8 @@ public slots:
     /// set fullscreen mode
     void fullscreen( bool _state );
 
-    /// Hide or show logging window
-    void showLogger(bool _state);
+    /// Change the logging window state
+    void loggerState(int _state);
 
     /// Show or hide toolbox
     void showToolbox( bool _state );
