@@ -1,33 +1,54 @@
 /** \page interfaces Plugin Interfaces
- * \section BasePlugin BasePlugin
- * This is the Basic plugin Interface. All Plugins have to provide at least this interface. It offers plugin 
- * name and some important Signals and slots which will be called by the main application. See BaseInterface 
+ *
+ * OpenFlipper provides a flexible plugin interface. Plugins can implement various interfaces.
+ * Each interface provides special signals/slots or functions to communicate with the core or
+ * to react on special events. The most important interface is the BaseInterface. This Interface
+ * provides the core functionality for the plugin. E.g. loading the plugin, specifying its name
+ * and basic communication regrading object changes or view updates ( See BaseInterface for further details).\n
+ * Additional functionality is provided by the other interfaces. For user interaction one typically uses the
+ * MouseInterface or KeyInterface which will provide events based on mouse or keyboard interaction.\n
+ * The interface of OpenFlipper can also be used by plugins. The MenubarInterface provides functions to
+ * add additional icons to the menubar. Using the ToolboxInterface one can add widgets to the toolbox on
+ * the right of the OpenFlipper screen.
+ *
+ *
+ * \section BasePlugin Base Interface
+ * This is the Basic plugin Interface. All Plugins have to provide at least this interface. It offers plugin
+ * name and some important Signals and slots which will be called by the main application. See BaseInterface
  * for details.
- * 
- * \section LoggingPlugin Logging Plugins
- * This is an Interface for Logging to the included textedit widget. You can log to different levels 
- * (LOGOUT,LOGWARN,LOGERR,LOGINFO) ( LoggingInterface ).
- * 
- * \section KeyPlugin Keyboard Plugins
- *  You have to provide this interface if you want to get key events in your plugin ( KeyInterface ).
- * 
- * \section MousePlugin Mouse Plugin
- * This interface is used to deliver mouse events ( MouseInterface ).
- * 
- * \section MenubarPlugin Menubar Plugin
+ *
+ * \section KeyPlugin Keyboard Interface
+ * \image html keyInterface.png
+ *  You have to provide this interface if you want to get key events in your plugin ( KeyInterface ).\n
+ *
+ *
+ * \section MousePlugin Mouse Interface
+ * \image html mouseInterface.png
+ * This interface is used to deliver mouse events to a plugin ( MouseInterface ).\n
+ *
+ *
+ * \section MenubarPlugin Menubar Interface
  * Provides a function to create an entry in the menubar ( MenuInterface ).
- * 
- * \section ToolboxPlugin ToolboxPlugin
- * Provides functions to create an entry in the Tollbar ( ToolboxInterface ). There are also some signals 
- * and slots which Signal if the toolbox widget has been activated.
- * 
- * \section TexturePlugin Texture Plugin
+ *
+ *
+ * \section ToolboxPlugin Toolbox Interface
+ * Provides functions to create a separate widget in the toolbox on the right.
+ *
+ *
+ * \section LoggingPlugin Logging Interface
+ * This is an Interface for Logging to the included textedit widget. You can log to different levels
+ * (LOGOUT,LOGWARN,LOGERR,LOGINFO) ( LoggingInterface ).
+ *
+ *
+ * \section TexturePlugin Texture Interface
  * Allows your plugin to provide a texture. ( TextureInterface )
- * 
+ *
  * \section PickingPlugin Mouse Picking / Pick Modes
  * Handle mouse picking in your plugin ( PickingInterface )
- * 
+ *
+ * \section RPCPlugin RPC Interface
+ * This interface is used to call functions across different plugins ( RPCInterface ).
+ *
  * \section INIPlugin Use Inifiles to store information
  * Receive an event if an ini file is opened by the application. (INIInterface)\n
  */
- 
