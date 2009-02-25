@@ -103,11 +103,10 @@ class QtShiftPopupMenu;
 //== CLASS DEFINITION =========================================================
 
 
-/** \class glViewer glViewer.hh <OpenFlipper/widgets/glWidget/glViewer.hh>
+/** \class glViewer QtBaseViewer.hh <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 
-    Base Viewer Widget: All viewers are derived from this one. Implement
-    Mouse & Keyboard Events. Redefine Signals and Slots.
-    See for example "QtExaminerViewer"
+    Base Viewer Widget: All viewers are derived from this one. Implements
+    Mouse & Keyboard Events.
  **/
 
 class DLLEXPORT glViewer : public QGraphicsWidget
