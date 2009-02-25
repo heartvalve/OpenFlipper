@@ -155,7 +155,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         // target group
         if (item->isGroup()){
           QList< BaseObject* > children = item->getLeafs();
-          
+
           bool initRound = true;
           for (int i=0; i < children.size(); i++){
             if (initRound){
@@ -432,6 +432,51 @@ BaseObject *TreeModel::getItem(const QModelIndex &index) const
     return rootItem_;
 }
 
+/// Return index of given item
+QModelIndex TreeModel::getModelIndex(BaseObject* _object, int _column ){
+
+  for (int i=0; i < persistentIndexList().count(); i++){
+    BaseObject* tmp = static_cast<BaseObject*>(persistentIndexList().at(i).internalPointer());
+    if ( tmp == _object && persistentIndexList().at(i).column() == _column )
+      return persistentIndexList().at(i);
+  }
+
+  return QModelIndex();
+}
+
+
+void TreeModel::updateSourceSelection(BaseObject* _obj ){
+
+  if ( isRoot(_obj) || (!_obj->isGroup()) )
+    return;
+
+  QList< BaseObject* > children = _obj->getLeafs();
+
+  bool source = false;
+  for (int i=0; i < children.size(); i++)
+    source |= children[i]->source();
+
+  _obj->source( source );
+
+  updateSourceSelection( _obj->parent() );
+}
+
+void TreeModel::updateTargetSelection(BaseObject* _obj ){
+
+  if ( isRoot(_obj) || (!_obj->isGroup()) )
+    return;
+
+  QList< BaseObject* > children = _obj->getLeafs();
+
+  bool target = false;
+  for (int i=0; i < children.size(); i++)
+    target |= children[i]->target();
+
+  _obj->target( target );
+
+  updateTargetSelection( _obj->parent() );
+}
+
 /// Set Data at 'index' to 'value'
 bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
 {
@@ -482,6 +527,8 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
       // source
       case 2 : 
         if ( value.toInt() == Qt::Unchecked ) {
+
+          item->source(false);
                  
           QList< BaseObject* > children = item->getLeafs();
 
@@ -494,6 +541,8 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
         }
       
         if ( value.toInt() == Qt::Checked ) {
+
+          item->source(true);
           
           QList< BaseObject* > children = item->getLeafs();
           
@@ -510,6 +559,8 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
       case 3 : 
         if ( value.toInt() == Qt::Unchecked ) {
                  
+          item->target(false);
+
           QList< BaseObject* > children = item->getLeafs();
 
           childCount = children.size();
@@ -521,7 +572,9 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
         }
       
         if ( value.toInt() == Qt::Checked ) {
-          
+
+          item->target(true);
+
           QList< BaseObject* > children = item->getLeafs();
           
           childCount = children.size();
@@ -581,7 +634,8 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
       break;      
       
     // source
-    case 2 :  
+    case 2 :
+
       if ( value.toInt() == Qt::Unchecked ) {
         item->source(false);
       }
@@ -590,6 +644,8 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
         item->source(true);
       }
       
+      updateSourceSelection( item->parent() );
+
       break;
     
     //target
@@ -601,6 +657,8 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
       if ( value.toInt() == Qt::Checked ) {
         item->target(true);
       }
+
+      updateTargetSelection( item->parent() );
       
       break;
     

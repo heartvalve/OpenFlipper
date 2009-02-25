@@ -78,6 +78,8 @@ public:
     bool setData(const QModelIndex &index, const QVariant &value , int role);
     
     BaseObject *getItem(const QModelIndex &index) const;
+
+    QModelIndex getModelIndex(BaseObject* _object, int _column );
     
     /// Check if the given item is the root item
     bool isRoot(BaseObject * _item);
@@ -103,6 +105,11 @@ private:
      * represents this group
      */
     std::map< int, TreeItem* > map_;
+
+    /// Recursively update source,target selection up to the root of the tree
+    void updateSourceSelection(BaseObject* _obj );
+    void updateTargetSelection(BaseObject* _obj );
+
 
 };
 

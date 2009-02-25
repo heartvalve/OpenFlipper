@@ -147,6 +147,9 @@ void DataControlPlugin::slotGroup (  ) {
 
   //check if all objects have the same parent
   //abort if the parents differ
+  bool target = (model_->getItem( indexList[0]))->target();
+  bool source = (model_->getItem( indexList[0]))->source();
+
   BaseObject* parent = (model_->getItem( indexList[0]))->parent();
   for ( int i = 1 ; i < indexList.size() ; ++i) {
     BaseObject* item = model_->getItem( indexList[i] );
@@ -154,6 +157,10 @@ void DataControlPlugin::slotGroup (  ) {
       emit log("Cannot group Objects with different parents");
       return;
     }
+
+    //remember if at least on child was target/source
+    target |= (model_->getItem( indexList[i]))->target();
+    source |= (model_->getItem( indexList[i]))->source();
   }
 
   //create new group
@@ -171,6 +178,18 @@ void DataControlPlugin::slotGroup (  ) {
     item->setParent( dynamic_cast< BaseObject* >( groupItem )  );
     groupItem->appendChild(item);
   }
+
+  //update target/source state
+  groupItem->target(target);
+  groupItem->source(source);
+
+  //get a modelIndex for the source column (2) and update the treeModel
+  QModelIndex index = model_->getModelIndex( dynamic_cast< BaseObject* > (groupItem), 2 );
+  model_->setData( index, source, 0 );
+
+  //get a modelIndex for the target column (3) and update the treeModel
+  index = model_->getModelIndex( dynamic_cast< BaseObject* > (groupItem), 3 );
+  model_->setData( index, target, 0 );
 
   emit updatedObject(-1);
 }
