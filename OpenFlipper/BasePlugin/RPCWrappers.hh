@@ -49,6 +49,7 @@
 
 #include <QtScript>
 #include <vector>
+#include <OpenFlipper/common/Types.hh>
 
 /** Namespace containing RPC helper functions used to call functions across plugins
  */
@@ -86,7 +87,24 @@ template <typename T0>
 void callFunction( QString _plugin, QString _functionName, T0 _t0) {
   QScriptEngine* engine = getScriptEngine();
   std::vector< QScriptValue > parameters;
-  parameters.push_back( QScriptValue( engine,_t0 ) );
+//   QVariant bla = qVariantFromValue(_t0);
+//
+//   idList list = qVariantValue<idList>( bla ) ;
+//   std::cerr << "iDList size:" <<  list.size() << std::endl;;
+//   std::cerr << list[0] << std::endl;
+//   std::cerr << list[1] << std::endl;
+//   std::cerr << "Type id is : " << QMetaType::type("idList") << std::endl;
+//   engine->globalObject().setProperty("ParameterData22",engine->toScriptValue(list));
+/*
+  QVariant blubb = engine->globalObject().property("ParameterData22").toVariant();
+  idList list1 = qVariantValue<idList>( blubb ) ;
+  std::cerr << "iDList1 size:" <<  list1.size() << std::endl;;
+  std::cerr << list1[0] << std::endl;
+  std::cerr << list1[1] << std::endl;
+  std::cerr << "Type id is : " << QMetaType::type("idList") << std::endl;*/
+
+
+  parameters.push_back( engine->toScriptValue(_t0) );
   callFunction(_plugin,_functionName,parameters);
 }
 
@@ -94,8 +112,8 @@ template <typename T0, typename T1>
 void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1) {
   QScriptEngine* engine = getScriptEngine();
   std::vector< QScriptValue > parameters;
-  parameters.push_back( QScriptValue( engine,_t0 ) );
-  parameters.push_back( QScriptValue( engine,_t1 ) );
+  parameters.push_back( engine->toScriptValue( _t0 ) );
+  parameters.push_back( engine->toScriptValue( _t1 ) );
   callFunction(_plugin,_functionName,parameters);
 }
 
@@ -103,9 +121,9 @@ template <typename T0, typename T1 , typename T2>
 void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 ) {
   QScriptEngine* engine = getScriptEngine();
   std::vector< QScriptValue > parameters;
-  parameters.push_back( QScriptValue( engine,_t0 ) );
-  parameters.push_back( QScriptValue( engine,_t1 ) );
-  parameters.push_back( QScriptValue( engine,_t2 ) );
+  parameters.push_back( engine->toScriptValue(_t0 ) );
+  parameters.push_back( engine->toScriptValue( _t1 ) );
+  parameters.push_back( engine->toScriptValue( _t2 ) );
   callFunction(_plugin,_functionName,parameters);
 }
 
@@ -113,10 +131,10 @@ template <typename T0, typename T1 , typename T2,  typename T3>
 void callFunction( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 , T3 _t3 ) {
   QScriptEngine* engine = getScriptEngine();
   std::vector< QScriptValue > parameters;
-  parameters.push_back( QScriptValue( engine,_t0 ) );
-  parameters.push_back( QScriptValue( engine,_t1 ) );
-  parameters.push_back( QScriptValue( engine,_t2 ) );
-  parameters.push_back( QScriptValue( engine,_t3 ) );
+  parameters.push_back( engine->toScriptValue( _t0 ) );
+  parameters.push_back( engine->toScriptValue( _t1 ) );
+  parameters.push_back( engine->toScriptValue( _t2 ) );
+  parameters.push_back( engine->toScriptValue( _t3 ) );
   callFunction(_plugin,_functionName,parameters);
 }
 
@@ -129,7 +147,7 @@ template <typename ReturnValue , typename T0>
 ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0) {
   QScriptEngine* engine = getScriptEngine();
   std::vector< QScriptValue > parameters;
-  parameters.push_back( QScriptValue( engine,_t0 ) );
+  parameters.push_back( engine->toScriptValue( _t0 ) );
   return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
 }
 
@@ -137,8 +155,8 @@ template <typename ReturnValue , typename T0, typename T1>
 ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , T1 _t1) {
   QScriptEngine* engine = getScriptEngine();
   std::vector< QScriptValue > parameters;
-  parameters.push_back( QScriptValue( engine,_t0 ) );
-  parameters.push_back( QScriptValue( engine,_t1 ) );
+  parameters.push_back( engine->toScriptValue( _t0 ) );
+  parameters.push_back( engine->toScriptValue( _t1 ) );
   return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
 }
 
@@ -146,9 +164,9 @@ template <typename ReturnValue , typename T0, typename T1 , typename T2 >
 ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 ) {
   QScriptEngine* engine = getScriptEngine();
   std::vector< QScriptValue > parameters;
-  parameters.push_back( QScriptValue( engine,_t0 ) );
-  parameters.push_back( QScriptValue( engine,_t1 ) );
-  parameters.push_back( QScriptValue( engine,_t2 ) );
+  parameters.push_back( engine->toScriptValue( _t0 ) );
+  parameters.push_back( engine->toScriptValue( _t1 ) );
+  parameters.push_back( engine->toScriptValue( _t2 ) );
   return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
 }
 
@@ -156,10 +174,10 @@ template <typename ReturnValue , typename T0, typename T1 , typename T2, typenam
 ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , T1 _t1 , T2 _t2 , T3 _t3 ) {
   QScriptEngine* engine = getScriptEngine();
   std::vector< QScriptValue > parameters;
-  parameters.push_back( QScriptValue( engine,_t0 ) );
-  parameters.push_back( QScriptValue( engine,_t1 ) );
-  parameters.push_back( QScriptValue( engine,_t2 ) );
-  parameters.push_back( QScriptValue( engine,_t3 ) );
+  parameters.push_back( engine->toScriptValue( _t0 ) );
+  parameters.push_back( engine->toScriptValue( _t1 ) );
+  parameters.push_back( engine->toScriptValue( _t2 ) );
+  parameters.push_back( engine->toScriptValue( _t3 ) );
   return qscriptvalue_cast<ReturnValue>( callFunction(_plugin,_functionName,parameters) );
 }
 
