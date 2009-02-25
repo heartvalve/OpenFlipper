@@ -86,6 +86,59 @@ slot_decimate()
   emit updateView();
 }
 
+
+//-----------------------------------------------------------------------------
+
+void DecimaterPlugin::decimate(int _objID, QString _constraints, QString _values){
+
+  
+  BaseObjectData* baseObjectData;
+  if ( ! PluginFunctions::getObject(_objID,baseObjectData) ) {
+    emit log(LOGERR,"Unable to get Object");
+    return;
+  }
+
+  if ( baseObjectData->dataType() == DATA_TRIANGLE_MESH ) {
+    TriMeshObject* object = PluginFunctions::triMeshObject(baseObjectData);
+
+    if ( object == 0 ) {
+      emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
+      return;
+    }
+
+    DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( object->objectData(DECIMATER) );
+    
+    if (decimater == 0){
+      TriMesh* mesh = PluginFunctions::triMesh(*object);
+      decimater = new DecimaterInfo( tool_, mesh );
+      object->setObjectData(DECIMATER, decimater);
+    }
+
+    decimater->update();
+    
+    if( ! decimater->decimater()->is_initialized() ){
+      emit log(LOGWARN, "Decimater could not be initialized");
+      continue;
+    }
+
+    //decimate
+    if ( tool_->cbTriangles->isChecked() )
+      decimater->decimater()->decimate_to( tool_->triangleCount->value() );         // do decimation
+    else
+      decimater->decimater()->decimate();         // do decimation
+    
+    object->mesh()->garbage_collection();
+    object->mesh()->update_normals();
+    object->update();
+
+
+  } else {
+    emit log(LOGERR,"Unsupported object type for decimater");
+    return;
+  }
+
+}
+
 //-----------------------------------------------------------------------------
 
 Q_EXPORT_PLUGIN2( DecimaterPlugin , DecimaterPlugin );

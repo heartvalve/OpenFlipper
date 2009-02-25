@@ -46,29 +46,26 @@ class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, Logging
 
 signals:
 
-  /// Force Examiner widget to update their views
+  // BaseInterface
   void updateView();
+  void updatedObject(int);
+  void activeObjectChanged();
+  void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                          QStringList _parameters, QStringList _descriptions);
 
+  // LoggingInterface
   void log(Logtype _type, QString _message);
   void log(QString _message);
 
-  /// Emit this Signal, if object list has changed (e.g. Source or Target changed)
-  void updatedObject(int);
-
-  void activeObjectChanged();
-
 public :
 
-  // default constructor
-  DecimaterPlugin()
-    : tool_(0)
+  /// Default constructor
+  DecimaterPlugin() : tool_(0) {};
 
-  {};
-
-  // default destructor
+  /// Default destructor
   ~DecimaterPlugin() {};
 
-  /** Initialize the toolbar (create a widget in the right side toolbox) */
+  /// Initialize the toolbar (create a widget in the right side toolbox)
   bool initializeToolbox(QWidget*& _widget);
 
   /// Name of the Plugin
@@ -77,10 +74,6 @@ public :
   /// Description of the Plugin
   QString description() { return (QString("Mesh Decimation ...")); };
 
-  /// User selected plugins Toolbox
-  void toolboxActivated( bool /*_activated*/  ) {};
-
-
 private :
 
   /// Widget for Toolbox
@@ -88,10 +81,22 @@ private :
 
 private slots:
 
+  /// decimating called from button in toolbox
   void slot_decimate();
+
+//===========================================================================
+/** @name Scripting Functions
+  * @{ */
+//===========================================================================
+
+public slots:
+  void decimate(int _objID, QString _constraints, QString _values);
 
 public slots:
    QString version() { return QString("1.0"); };
+
+
+/** @} */
 
 };
 

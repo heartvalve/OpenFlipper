@@ -115,9 +115,6 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
      /// Description of the Plugin
      QString description() { return (QString("Manages Data Objects")); };
 
-     /// User selected plugins Toolbox
-      void toolboxActivated( bool /* _activated */   ) { };
-
       /// Update the visualization of the active objects
       void update_active( );
 
