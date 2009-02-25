@@ -400,13 +400,20 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   unsigned int examinerWidgets();
 
-  /// Set if we start the logging widget closed
-  DLLEXPORT
-  void hideLogger( bool _hide);
+  /// State of the logging widget
+  enum LoggerState {
+    InScene,
+    Normal,
+    Hidden
+  };
 
-  /// Start the logging widget closed?
+  /// Set the logging widget state
   DLLEXPORT
-  bool hideLogger( );
+  void loggerState( LoggerState _state);
+
+  /// What is the current state of the logging widget?
+  DLLEXPORT
+  LoggerState loggerState( );
 
   /// Set if we start the toolbox widget closed
   DLLEXPORT

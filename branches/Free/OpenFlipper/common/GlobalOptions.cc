@@ -119,7 +119,7 @@ static bool drawModesInContextMenu_ = true;
 static bool hideToolbox_ = false;
 
 /// Store the logger gui Mode mode
-static bool hideLogger_ = false;
+static LoggerState loggerState_ = InScene;
 
 /// Store if we should go into multiview Mode
 static bool multiView_ = true;
@@ -501,14 +501,14 @@ unsigned int examinerWidgets() {
 }
 
 
-/// Set if we start the logging widget closed
-void hideLogger( bool _hide) {
-  hideLogger_ = _hide;
+/// Set to current
+void loggerState( LoggerState _state) {
+  loggerState_ = _state;
 }
 
-/// Start the logging widget closed?
-bool hideLogger( ) {
-  return hideLogger_;
+/// Current state of the logging window?
+LoggerState loggerState( ) {
+  return loggerState_;
 }
 
 /// Set if we start the toolbox widget closed

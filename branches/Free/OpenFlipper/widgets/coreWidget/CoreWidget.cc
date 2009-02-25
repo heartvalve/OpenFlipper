@@ -154,13 +154,27 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   logWidget_->setLineWrapMode( QTextEdit::NoWrap );
 
   originalLoggerSize_ = 0;
+  loggerState_ = OpenFlipper::Options::Normal;
 
   QList<int> wsizes( splitter_->sizes() );
-  if (OpenFlipper::Options::hideLogger()) {
+  
+  if (OpenFlipper::Options::loggerState() == OpenFlipper::Options::InScene) {
     slidingLogger_->attachWidget (logWidget_);
     splitter_->insertWidget (1, tempLogWidget);
     wsizes[0] = 1;
     wsizes[1] = 0;
+    splitter_->setSizes(wsizes);
+    loggerState_ = OpenFlipper::Options::InScene;
+  } else if (OpenFlipper::Options::loggerState() == OpenFlipper::Options::Hidden) {
+    splitter_->insertWidget (1, tempLogWidget);
+    wsizes[0] = 1;
+    wsizes[1] = 0;
+    splitter_->setSizes(wsizes);
+    loggerState_ = OpenFlipper::Options::Hidden;
+  } else {
+    // Set initial values to have a usable state
+    wsizes[0] = 480;
+    wsizes[1] = 240;
     splitter_->setSizes(wsizes);
   }
 
@@ -511,18 +525,95 @@ CoreWidget::setFullscreen(bool _state ) {
   */
 void
 CoreWidget::toggleLogger() {
-  // toggle
-  OpenFlipper::Options::hideLogger( !OpenFlipper::Options::hideLogger() );
+
+  switch (OpenFlipper::Options::loggerState ())
+  {
+    case OpenFlipper::Options::InScene:
+      OpenFlipper::Options::loggerState(OpenFlipper::Options::Normal);
+      break;
+    case OpenFlipper::Options::Normal:
+      OpenFlipper::Options::loggerState(OpenFlipper::Options::Hidden);
+      break;
+    case OpenFlipper::Options::Hidden:
+      OpenFlipper::Options::loggerState(OpenFlipper::Options::InScene);
+      break;
+  }
 
   // Hide/Show Logger
-  showLogger( !OpenFlipper::Options::hideLogger() );
+  showLogger( OpenFlipper::Options::loggerState() );
 }
 
 /** Hide or show logger
   */
 void
-CoreWidget::showLogger(bool _state) {
+CoreWidget::showLogger(OpenFlipper::Options::LoggerState _state) {
   //Hide Logger
+  if (_state == loggerState_)
+    return;
+
+  switch (_state)
+  {
+    case OpenFlipper::Options::InScene:
+      {
+        QList<int> wsizes( splitter_->sizes() );
+
+        // Remember old size
+        if (loggerState_ == OpenFlipper::Options::Normal)
+          originalLoggerSize_  = wsizes[1];
+
+	if ( originalLoggerSize_ == 0)
+          originalLoggerSize_ = 240;
+
+        splitter_->insertWidget (1, tempLogWidget);
+        wsizes[0] = wsizes[0]+wsizes[1];
+        wsizes[1] = 0;
+        splitter_->setSizes(wsizes);
+        logWidget_->resize (logWidget_->width (), originalLoggerSize_);
+        slidingLogger_->attachWidget (logWidget_);
+      }
+      break;
+    case OpenFlipper::Options::Normal:
+      {
+        if ( originalLoggerSize_ == 0)
+          originalLoggerSize_ = 240;
+
+        QList<int> wsizes( splitter_->sizes() );
+
+        if (loggerState_ == OpenFlipper::Options::InScene)
+          originalLoggerSize_ = logWidget_->height ();
+
+        slidingLogger_->detachWidget ();
+        splitter_->insertWidget (1, logWidget_);
+
+        wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
+        wsizes[1] = originalLoggerSize_;
+        splitter_->setSizes(wsizes);
+      }
+      break;
+    case OpenFlipper::Options::Hidden:
+      {
+        QList<int> wsizes( splitter_->sizes() );
+
+        // Remember old size
+        if (loggerState_ == OpenFlipper::Options::Normal)
+          originalLoggerSize_  = wsizes[1];
+
+	if (loggerState_ == OpenFlipper::Options::InScene)
+	{
+	  slidingLogger_->detachWidget ();
+	  originalLoggerSize_ = logWidget_->height ();
+	}
+
+        splitter_->insertWidget (1, tempLogWidget);
+        wsizes[0] = wsizes[0]+wsizes[1];
+        wsizes[1] = 0;
+        splitter_->setSizes(wsizes);
+      }
+      break;
+  }
+  loggerState_ = _state;
+
+/*
   if ( !_state ) {
     QList<int> wsizes( splitter_->sizes() );
 
@@ -563,20 +654,8 @@ CoreWidget::showLogger(bool _state) {
     wsizes[0] = wsizes[0]+wsizes[1] - height;
     wsizes[1] = height;
     splitter_->setSizes(wsizes);
-/*
-    if ( originalLoggerSize_ == 0)
-        originalLoggerSize_ = 240;
-
-    QList<int> wsizes( splitter_->sizes() );
-
-    if (wsizes[0] == 0)
-      wsizes[0] = height();
-
-    wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
-    wsizes[1] = originalLoggerSize_;
-    splitter_->setSizes(wsizes);
-    */
   }
+  */
 }
 
 //-----------------------------------------------------------------------------

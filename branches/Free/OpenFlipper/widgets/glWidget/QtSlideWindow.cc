@@ -43,7 +43,7 @@
 #define BACKGROUND_BLUE  0xff
 #define BACKGROUND_ALPHA 0xcf
 
-#define SLIDE_DURATION 500
+#define SLIDE_DURATION 1000
 
 
 //== INCLUDES =================================================================
@@ -100,8 +100,10 @@ QtSlideWindow::QtSlideWindow(QString _name, QGraphicsItem *_parent) :
   hideAnimation_->setItem (this);
   hideAnimation_->setTimeLine (hideTimeLine_);
 
+  hideAnimation_->setTranslationAt (0.0, 0, geometry ().height ());
   for (int i = 0; i < geometry ().height (); ++i)
-    hideAnimation_->setTranslationAt (i / geometry ().height (), 0, geometry ().height () - i);
+    hideAnimation_->setTranslationAt (0.25 + (i / (geometry ().height () * 2.0)), 0, geometry ().height () - i);
+  hideAnimation_->setTranslationAt (1.0, 0, 0);
 
   hide ();
 }
@@ -234,8 +236,10 @@ void QtSlideWindow::resizeEvent (QGraphicsSceneResizeEvent *_event)
   if (hideAnimation_)
   {
     hideAnimation_->clear ();
+    hideAnimation_->setTranslationAt (0.0, 0, geometry ().height ());
     for (int i = 0; i < geometry ().height (); ++i)
-      hideAnimation_->setTranslationAt (i / geometry ().height (), 0, geometry ().height () - i);
+      hideAnimation_->setTranslationAt (0.25 + (i / (geometry ().height () * 2.0)), 0, geometry ().height () - i);
+    hideAnimation_->setTranslationAt (1.0, 0, 0);
   }
 }
 
@@ -247,8 +251,10 @@ void QtSlideWindow::moveEvent (QGraphicsSceneMoveEvent *_event)
   if (hideAnimation_)
   {
     hideAnimation_->clear ();
+    hideAnimation_->setTranslationAt (0.0, 0, geometry ().height ());
     for (int i = 0; i < geometry ().height (); ++i)
-      hideAnimation_->setTranslationAt (i / geometry ().height (), 0, geometry ().height () - i);
+      hideAnimation_->setTranslationAt (0.25 + (i / (geometry ().height () * 2.0)), 0, geometry ().height () - i);
+    hideAnimation_->setTranslationAt (1.0, 0, 0);
   }
 }
 
