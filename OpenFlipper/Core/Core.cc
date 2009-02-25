@@ -85,6 +85,8 @@
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include "OpenFlipper/BasePlugin/PluginFunctionsCore.hh"
 
+#include "OpenFlipper/BasePlugin/RPCWrappers.hh"
+
 #include <OpenMesh/Core/System/omstream.hh>
 
 #define WIDGET_HEIGHT 800
@@ -340,6 +342,9 @@ Core::init() {
   // ======================================================================
   ///@todo reimplement
 //   connect(module_list,SIGNAL(currentChanged(int)),this,SLOT(slotToolboxSwitched(int)));
+
+  // Set a reference to the scriptengine for simple rpc calls
+  RPC::setScriptEngine(&scriptEngine_);
 
   // process Events every 500 msecs during script execution
   scriptEngine_.setProcessEventsInterval( 500 );
