@@ -44,12 +44,14 @@
 #ifndef RPCINTERFACE_HH
 #define RPCINTERFACE_HH
 
+#include <OpenFlipper/BasePlugin/RPCWrappers.hh>
+
 /** Interface for all Plugins which do remote procedure calls ( and cross plugin calls)
 */
 class RPCInterface {
 
    public:
-      
+
       /// Destructor
       virtual ~RPCInterface() {};
 
