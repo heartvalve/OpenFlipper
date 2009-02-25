@@ -101,7 +101,7 @@ void DataControlPlugin::setDescriptions(){
 //******************************************************************************
 
 /** \brief Returns the id of an object with given name
- * 
+ *
  * @param _name name of an object
  * @return the id
  */
@@ -119,7 +119,7 @@ int DataControlPlugin::getObject( QString _name ) {
 //******************************************************************************
 
 /** \brief Generate a copy of an object
- * 
+ *
  * @param objectId id of an object
  * @return id of the generated object
  */
@@ -139,7 +139,7 @@ int DataControlPlugin::copyObject( int objectId ) {
 //******************************************************************************
 
 /** \brief Returns the name of an object with given id
- * 
+ *
  * @param objectId id of an object
  * @return name of the given object
  */
@@ -158,7 +158,7 @@ QString DataControlPlugin::getObjectName( int objectId ) {
 //******************************************************************************
 
 /** \brief Hide object with the given id
- * 
+ *
  * @param objectId id of an object
  */
 void DataControlPlugin::hideObject( int objectId ) {
@@ -181,7 +181,7 @@ void DataControlPlugin::hideObject( int objectId ) {
 //******************************************************************************
 
 /** \brief set the given Object as target
- * 
+ *
  * @param objectId id of an object
  * @param _target set object as target?
  */
@@ -206,7 +206,7 @@ void DataControlPlugin::setTarget( int objectId, bool _target ) {
 //******************************************************************************
 
 /** \brief set the given Object as source
- * 
+ *
  * @param objectId id of an object
  * @param _source set object as source?
  */
@@ -230,7 +230,7 @@ void DataControlPlugin::setSource( int objectId, bool _source ) {
 //******************************************************************************
 
 /** \brief set the name of the given Object
- * 
+ *
  * @param objectId id of an object
  * @param _name new name
  */
@@ -254,7 +254,7 @@ void DataControlPlugin::setObjectName( int objectId, QString _name ) {
 //******************************************************************************
 
 /** \brief Delete an object
- * 
+ *
  * @param objectId id of the object that should be deleted
  */
 void DataControlPlugin::deleteObject( int objectId ) {
@@ -273,7 +273,7 @@ void DataControlPlugin::deleteObject( int objectId ) {
 //******************************************************************************
 
 /** \brief Show object with the given id
- * 
+ *
  * @param objectId id of an object
  */
 void DataControlPlugin::showObject( int objectId ) {
@@ -296,12 +296,11 @@ void DataControlPlugin::showObject( int objectId ) {
 //******************************************************************************
 
 /** \brief Group given Objects together
- * 
+ *
  * @param _objectIDs list of object ids
  * @param _groupName the name of the new group
  */
 void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
-
   QVector< BaseObject* > objs;
 
   for (uint i=0; i < _objectIDs.size(); i++){
@@ -369,7 +368,7 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
 //******************************************************************************
 
 /** \brief Set Traget Selection for all objects
- * 
+ *
  */
 void DataControlPlugin::setAllTarget() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
@@ -394,7 +393,7 @@ void DataControlPlugin::setAllTarget() {
 //******************************************************************************
 
 /** \brief Set Source Selection for all objects
- * 
+ *
  */
 void DataControlPlugin::setAllSource() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
@@ -417,8 +416,8 @@ void DataControlPlugin::setAllSource() {
 
 //******************************************************************************
 
-/** \brief Clear Target Selection for all objects 
- * 
+/** \brief Clear Target Selection for all objects
+ *
  */
 void DataControlPlugin::clearAllTarget() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
@@ -443,7 +442,7 @@ void DataControlPlugin::clearAllTarget() {
 //******************************************************************************
 
 /** \brief Clear Source Selection for all objects
- * 
+ *
  */
 void DataControlPlugin::clearAllSource() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
@@ -467,7 +466,7 @@ void DataControlPlugin::clearAllSource() {
 //******************************************************************************
 
 /** \brief Hide all objects
- * 
+ *
  */
 void DataControlPlugin::hideAll() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
@@ -491,7 +490,7 @@ void DataControlPlugin::hideAll() {
 //******************************************************************************
 
 /** \brief Show all objects
- * 
+ *
  */
 void DataControlPlugin::showAll() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
