@@ -150,7 +150,6 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     ~SelectionPlugin() {};
     //Toolbox Interface
     bool initializeToolbox(QWidget*& _widget);
-    void toolboxActivated( bool /*_activated*/ ){};
     //BaseInterface
     QString name() { return (QString("Selections")); };
     QString description( ) { return (QString("Allows to select parts of Objects")); };

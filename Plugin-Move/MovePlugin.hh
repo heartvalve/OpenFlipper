@@ -95,9 +95,6 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
     /// Description of the Plugin
     QString description() { return (QString("Moves Meshes with Manipulators")); };
 
-    /// User selected plugins Toolbox
-    void toolboxActivated( bool _activated  );
-
 //===========================================================================
 /** @name ToolBox
   * @{ */

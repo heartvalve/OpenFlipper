@@ -35,61 +35,43 @@
 #ifndef SMOOTHERPLUGIN_HH
 #define SMOOTHERPLUGIN_HH
 
-#include <QObject>
-#include <QMenuBar>
-#include <QSpinBox>
-
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
+#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/common/Types.hh>
-#include <ObjectTypes/PolyMesh/PolyMesh.hh>
-#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
-class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface
+class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface
 {
-   Q_OBJECT
-   Q_INTERFACES(BaseInterface)
-   Q_INTERFACES(ToolboxInterface)
+  Q_OBJECT
+  Q_INTERFACES(BaseInterface)
+  Q_INTERFACES(ToolboxInterface)
+  Q_INTERFACES(LoggingInterface)
 
-   signals:
-     void updateView();
-     void updatedObject(int);
+  signals:
+    //BaseInterface
+    void updateView();
+    void updatedObject(int _id);
 
-   public :
+    //LoggingInterface
+    void log(Logtype _type, QString _message);
+    void log(QString _message);
 
-     ~SmootherPlugin() {};
+  public:
 
-     bool initializeToolbox(QWidget*& _widget);
-     void toolboxActivated( bool /*_activated*/ ){ };
+    // ToolboxInterface
+    bool initializeToolbox(QWidget*& _widget);
 
-     QString name() { return (QString("Simple Smoother")); };
-     QString description( ) { return (QString("Smooths the active Mesh")); };
+    // BaseInterface
+    QString name() { return (QString("Simple Smoother")); };
+    QString description( ) { return (QString("Smooths the active Mesh")); };
 
-   private :
+   private:
 
-       /// Widget for Toolbox
-      QWidget* tool_;
-
-      /// Layout for Toolbox
-      QGridLayout* MeshDialogLayout_;
-
-      /// Button for slotTransfer
-      QPushButton* smoothButton_;
-
-      /// SpinBox for Number of iterations
-      QSpinBox* iterationsSpinbox_;
-
-      QComboBox* smootherTypeBox_;
-
-
-      /// Property for the active mesh to store original point positions
-      OpenMesh::VPropHandleT< TriMesh::Point > orig_pos_;
-
-      void simpleLaplace();
+    /// SpinBox for Number of iterations
+    QSpinBox* iterationsSpinbox_;
 
    private slots:
-      void slotSmooth();
-
+    void simpleLaplace();
 
    public slots:
       QString version() { return QString("1.0"); };

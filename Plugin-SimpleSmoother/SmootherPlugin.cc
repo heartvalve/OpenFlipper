@@ -31,123 +31,128 @@
 
 
 
-
-
-#include <QtGui>
- #include <QSpacerItem>
-
 #include "SmootherPlugin.hh"
 
-#include <iostream>
-#include <ACG/GL/GLState.hh>
+
+#include <ObjectTypes/PolyMesh/PolyMesh.hh>
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
- bool SmootherPlugin::initializeToolbox(QWidget*& _widget)
+bool SmootherPlugin::initializeToolbox(QWidget*& _widget)
 {
    // Create the Toolbox Widget
-   tool_ = new QWidget();
-   _widget = tool_;
-   QSize size(300, 300);
-   tool_->resize(size);
-   MeshDialogLayout_ = new QGridLayout( tool_);
+   QWidget* toolBox = new QWidget();
+   _widget = toolBox;
 
+   QGridLayout* layout = new QGridLayout(toolBox);
 
-   smoothButton_ = new QPushButton("&Smooth",tool_);
+   QPushButton* smoothButton = new QPushButton("&Smooth",toolBox);
 
-   iterationsSpinbox_ =  new QSpinBox(tool_) ;
+   iterationsSpinbox_ =  new QSpinBox(toolBox) ;
    iterationsSpinbox_->setMinimum(1);
    iterationsSpinbox_->setMaximum(1000);
    iterationsSpinbox_->setSingleStep(1);
 
-   smootherTypeBox_ = new QComboBox();
-   smootherTypeBox_->addItem("Simple Laplace");
+   QLabel* label = new QLabel("Iterations:");
 
-   MeshDialogLayout_->addWidget( smootherTypeBox_,0 , 0 , 1 , 2 , Qt::AlignTop );
-   MeshDialogLayout_->addWidget( smoothButton_     , 1, 0 , Qt::AlignTop );
-   MeshDialogLayout_->addWidget( iterationsSpinbox_, 1, 1 , Qt::AlignTop );
-   MeshDialogLayout_->addItem(new QSpacerItem(10,10,QSizePolicy::Expanding,QSizePolicy::Expanding),2,0,1,2);
+   layout->addWidget( label             , 0, 0);
+   layout->addWidget( smoothButton      , 1, 1);
+   layout->addWidget( iterationsSpinbox_, 0, 1);
 
-   connect(smoothButton_,SIGNAL(clicked()),this,SLOT(slotSmooth()));
+   layout->addItem(new QSpacerItem(10,10,QSizePolicy::Expanding,QSizePolicy::Expanding),2,0,1,2);
+
+   connect( smoothButton, SIGNAL(clicked()), this, SLOT(simpleLaplace()) );
 
    return true;
 }
 
+/** \brief 
+ * 
+ */
 void SmootherPlugin::simpleLaplace() {
 
 
-   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
-                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-       // Get the mesh to work on
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
+    
+    if ( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
+    
+        // Get the mesh to work on
       TriMesh* mesh = PluginFunctions::triMesh(*o_it);
-
+      
+      // Property for the active mesh to store original point positions
+      OpenMesh::VPropHandleT< TriMesh::Point > origPositions;
+      
       // Add a property to the mesh to store original vertex positions
-      mesh->add_property( orig_pos_, "SmootherPlugin_Original_Positions" );
-
+      mesh->add_property( origPositions, "SmootherPlugin_Original_Positions" );
+      
       for ( int i = 0 ; i < iterationsSpinbox_->value() ; ++i ) {
-
-         // Copy original positions to backup ( in Vertex property )
-         TriMesh::VertexIter v_it, v_end=mesh->vertices_end();
-         for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
-            mesh->property(  orig_pos_ , v_it ) = mesh->point(v_it);
-         }
-
-         // Do one smoothing step (For each point of the mesh ... )
-         for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
-
+      
+          // Copy original positions to backup ( in Vertex property )
+          TriMesh::VertexIter v_it, v_end=mesh->vertices_end();
+          for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
+            mesh->property( origPositions, v_it ) = mesh->point(v_it);
+          }
+      
+          // Do one smoothing step (For each point of the mesh ... )
+          for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
+      
             TriMesh::Point point = TriMesh::Point(0.0,0.0,0.0);
-
+      
             // Flag, to skip boundary vertices
             bool skip = false;
-
+      
             // ( .. for each Outoing halfedge .. )
             TriMesh::VertexOHalfedgeIter voh_it(*mesh,v_it);
             for ( ; voh_it; ++voh_it ) {
-               // .. add the (original) position of the Neighbour ( end of the outgoing halfedge )
-               point += mesh->property( orig_pos_ , mesh->to_vertex_handle(voh_it) );
-
-               // Check if the current Halfedge is a boundary halfedge
-               // If it is, abort and keep the current vertex position
-               if ( mesh->is_boundary( voh_it.handle() ) ) {
+                // .. add the (original) position of the Neighbour ( end of the outgoing halfedge )
+                point += mesh->property( origPositions, mesh->to_vertex_handle(voh_it) );
+      
+                // Check if the current Halfedge is a boundary halfedge
+                // If it is, abort and keep the current vertex position
+                if ( mesh->is_boundary( voh_it.handle() ) ) {
                   skip = true;
                   break;
-               }
-
+                }
+      
             }
-
+      
             // Devide by the valence of the current vertex
             point /= mesh->valence( v_it );
-
+      
             if ( ! skip ) {
-               // Set new position for the mesh if its not on the boundary
-               mesh->point(v_it) = point;
+                // Set new position for the mesh if its not on the boundary
+                mesh->point(v_it) = point;
             }
-         }
-
+          }
+      
       }// Iterations end
-
+      
       // Remove the property
-      mesh->remove_property( orig_pos_);
-
+      mesh->remove_property( origPositions );
+      
       mesh->update_normals();
-
+      
       emit updatedObject( o_it->id() );
-   }
 
-     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_POLY_MESH) ;
-                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+
+   } else if ( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
+
        // Get the mesh to work on
       PolyMesh* mesh = dynamic_cast< MeshObject< PolyMesh,DATA_POLY_MESH >* > (*o_it)->mesh();
 
+      // Property for the active mesh to store original point positions
+      OpenMesh::VPropHandleT< TriMesh::Point > origPositions;
+
       // Add a property to the mesh to store original vertex positions
-      mesh->add_property( orig_pos_, "SmootherPlugin_Original_Positions" );
+      mesh->add_property( origPositions, "SmootherPlugin_Original_Positions" );
 
       for ( int i = 0 ; i < iterationsSpinbox_->value() ; ++i ) {
 
          // Copy original positions to backup ( in Vertex property )
          PolyMesh::VertexIter v_it, v_end=mesh->vertices_end();
          for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
-            mesh->property(  orig_pos_ , v_it ) = mesh->point(v_it);
+            mesh->property( origPositions, v_it ) = mesh->point(v_it);
          }
 
          // Do one smoothing step (For each point of the mesh ... )
@@ -162,7 +167,7 @@ void SmootherPlugin::simpleLaplace() {
             PolyMesh::VertexOHalfedgeIter voh_it(*mesh,v_it);
             for ( ; voh_it; ++voh_it ) {
                // .. add the (original) position of the Neighbour ( end of the outgoing halfedge )
-               point += mesh->property( orig_pos_ , mesh->to_vertex_handle(voh_it) );
+               point += mesh->property( origPositions, mesh->to_vertex_handle(voh_it) );
 
                // Check if the current Halfedge is a boundary halfedge
                // If it is, abort and keep the current vertex position
@@ -185,23 +190,16 @@ void SmootherPlugin::simpleLaplace() {
       }// Iterations end
 
       // Remove the property
-      mesh->remove_property( orig_pos_);
+      mesh->remove_property( origPositions );
 
       mesh->update_normals();
 
       emit updatedObject( o_it->id() );
-   }
 
-}
+    } else {
 
- void SmootherPlugin::slotSmooth()
-{
-  switch (smootherTypeBox_->currentIndex() ) {
-    case 0 :
-       simpleLaplace();
-       break;
-     default :
-        std::cerr << "Smoother : Smoother type error" << std::endl;
+      emit log(LOGERR, "DataType not supported.");
+    }
   }
 }
 

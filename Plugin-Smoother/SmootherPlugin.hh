@@ -73,9 +73,6 @@ public :
   /// Description of the Plugin
   QString description() { return (QString("Mesh Smoothing ...")); };
 
-  /// User selected plugins Toolbox
-  void toolboxActivated( bool /*_activated*/  ) {};
-
 private slots:
 
   /// Second initialization stage

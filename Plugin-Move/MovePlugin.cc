@@ -127,22 +127,6 @@ bool MovePlugin::initializeToolbox(QWidget*& _widget)
 }
 
 
-//------------------------------------------------------------------------------
-
-/** \brief Toolbox state changes
- * 
- * @param _activated new state
- */
-void MovePlugin::toolboxActivated( bool _activated  )
-{
-   toolboxActive_ = _activated;
-
-   showManipulators();
-
-   emit updateView();
-}
-
-
 /*******************************************************************************
         MouseInterface implementation
  *******************************************************************************/
