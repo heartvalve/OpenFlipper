@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -60,7 +60,7 @@
 namespace ACG {
 
 
-//== IMPLEMENTATION ========================================================== 
+//== IMPLEMENTATION ==========================================================
 
 
 
@@ -116,7 +116,7 @@ slotMouseEvent(QMouseEvent* _event)
   glPushMatrix();
   glLoadIdentity();
 
-  glDisable(GL_DEPTH_TEST);      
+  glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
   glDisable(GL_DITHER);
   glLineWidth(2.0);
@@ -127,7 +127,7 @@ slotMouseEvent(QMouseEvent* _event)
 
 
   // process mouse event
-  switch(_event->type()) 
+  switch(_event->type())
   {
     case QEvent::MouseButtonPress:
     {
@@ -135,81 +135,81 @@ slotMouseEvent(QMouseEvent* _event)
 
       // initialize
       if (!is_active())
-      {	
-	is_active_ = true;
-	first_point_ = last_point_ = p;
+      {
+        is_active_ = true;
+        first_point_ = last_point_ = p;
       }
 
       // draw line
-      glBegin(GL_LINES);	  
+      glBegin(GL_LINES);
       glVertex(last_point_);
       glVertex(p);
       glEnd();
       last_point_ = rubberband_point_ = p;
       break;
     }
-      
+
 
     case QEvent::MouseMove:
     {
       if (is_active())
       {
-	Vec2i p(_event->pos().x(), height-_event->pos().y());
+        Vec2i p(_event->pos().x(), height-_event->pos().y());
 
-	// draw freehand
-	if (_event->modifiers() & Qt::LeftButton)
-	{
-	  glBegin(GL_LINES);	  
-	  glVertex(last_point_);
-	  glVertex(p);
-	  glEnd();
-	  last_point_ = rubberband_point_ = p;
-	}
+        // draw freehand
+        if (_event->modifiers() & Qt::LeftButton)
+        {
+          glBegin(GL_LINES);
+          glVertex(last_point_);
+          glVertex(p);
+          glEnd();
+          last_point_ = rubberband_point_ = p;
+        }
 
-	// draw rubber band
-	else
-	{
-	  glEnable(GL_COLOR_LOGIC_OP);
-	  glLogicOp(GL_XOR);
-	  glBegin(GL_LINES);	  
-	  glVertex(last_point_);
-	  glVertex(rubberband_point_);
-	  glVertex(last_point_);
-	  glVertex(p);
-	  glEnd();
-	  glDisable(GL_COLOR_LOGIC_OP);
-	  rubberband_point_ = p;
-	}
+        // draw rubber band
+        else
+        {
+          glEnable(GL_COLOR_LOGIC_OP);
+          glLogicOp(GL_XOR);
+          glBegin(GL_LINES);
+          glVertex(last_point_);
+          glVertex(rubberband_point_);
+          glVertex(last_point_);
+          glVertex(p);
+          glEnd();
+          glDisable(GL_COLOR_LOGIC_OP);
+          rubberband_point_ = p;
+        }
       }
       break;
     }
-    
-    
+
+
     case QEvent::MouseButtonDblClick:
     {
       if (is_active())
       {
-	// close polygon
-	glBegin(GL_LINES);  
-	glVertex(last_point_);
-	glVertex(first_point_);
-	glEnd();
-	glFinish();
+        // close polygon
+        glBegin(GL_LINES);
+        glVertex(last_point_);
+        glVertex(first_point_);
+        glEnd();
+        glFinish();
 
-	
-	// mark reference point (0,0) with border color
-	glPointSize(1.0);
-	glBegin(GL_POINTS); 
-	glVertex2i(0, 0);
-	glEnd();
-	glPointSize(glstate_.point_size());
 
-	
-	// create mask and precompute matrix
-	create_mask();
-	is_active_ = false;
+        // mark reference point (0,0) with border color
+        glPointSize(1.0);
+        glBegin(GL_POINTS);
+        glVertex2i(0, 0);
+        glEnd();
+        glPointSize(glstate_.point_size());
 
-	emit_signal = true;
+
+        // create mask and precompute matrix
+        create_mask();
+        is_active_ = false;
+
+        emit_signal = true;
       }
       break;
     }
@@ -217,7 +217,7 @@ slotMouseEvent(QMouseEvent* _event)
 
     default: // avoid warning
       break;
-  } 
+  }
 
 
   // restore GL settings
@@ -264,7 +264,7 @@ create_mask()
   GLubyte       *fbuffer;
   QRgb          rgb, borderRgb;
 
-  
+
   // GL context
   w = glstate_.viewport_width();
   h = glstate_.viewport_height();
@@ -292,27 +292,27 @@ create_mask()
   // read lasso color
   borderRgb = qRgb( fbuffer[0], fbuffer[1], fbuffer[2] );
   fbuffer[0] = fbuffer[1] = fbuffer[2] = 0;
-  
+
 
   // mark lasso pixels
-  for (y = 0; y < h; ++y) 
+  for (y = 0; y < h; ++y)
   {
     offset = y*w;
-    for (x = 0; x < w; ++x) 
+    for (x = 0; x < w; ++x)
     {
-      i = 3*(offset + x);      
+      i = 3*(offset + x);
       rgb = qRgb(fbuffer[i], fbuffer[i+1], fbuffer[i+2]);
       mask_[offset+x] = (rgb == borderRgb) ? 3 : 1;
     }
   }
-    
 
-  // seed fill 
+
+  // seed fill
   std::vector<Vec2i> toDo;
   toDo.reserve(w*h);
   toDo.push_back(Vec2i(0,0));
 
-  while (!toDo.empty()) 
+  while (!toDo.empty())
   {
     Vec2i p = toDo.back();
     toDo.pop_back();
@@ -320,39 +320,39 @@ create_mask()
     x = p[0];
     y = p[1];
     unsigned char &s = MASK(x, y);
-      
-    if (s != 3) 
+
+    if (s != 3)
     {
       s = 0;
-	
+
       xx = x-1; yy = y;
-      if ((xx<w) && (MASK(xx,yy)==1)) 
+      if ((xx<w) && (MASK(xx,yy)==1))
       {
-	toDo.push_back(Vec2i(xx,yy));
-	MASK(xx,yy) = 2; 
+        toDo.push_back(Vec2i(xx,yy));
+        MASK(xx,yy) = 2;
       }
-	
+
       xx = x+1; yy = y;
       if ((xx<w) && (MASK(xx,yy)==1))
       {
-	toDo.push_back(Vec2i(xx,yy));
-	MASK(xx,yy) = 2; 
+        toDo.push_back(Vec2i(xx,yy));
+        MASK(xx,yy) = 2;
       }
-      
+
       xx = x; yy = y-1;
       if ((yy<h) && (MASK(xx,yy)==1))
       {
-	toDo.push_back(Vec2i(xx,yy));
-	MASK(xx,yy) = 2; 
+        toDo.push_back(Vec2i(xx,yy));
+        MASK(xx,yy) = 2;
       }
-	
+
       xx = x; yy = y+1;
       if ((yy<h) && (MASK(xx,yy)==1))
       {
-	toDo.push_back(Vec2i(xx,yy));  
-	MASK(xx,yy) = 2; 
+        toDo.push_back(Vec2i(xx,yy));
+        MASK(xx,yy) = 2;
       }
-    }    
+    }
   }
 
 
@@ -367,10 +367,10 @@ create_mask()
 void
 QtLasso::
 free_mask()
-{ 
-  if (mask_) 
-  { 
-    delete[] mask_; 
+{
+  if (mask_)
+  {
+    delete[] mask_;
     mask_ = 0;
     mask_width_ = mask_height_ = 0;
   }
@@ -390,19 +390,19 @@ is_vertex_selected(const Vec3d& _v)
   // size changed?
   w = glstate_.viewport_width();
   h = glstate_.viewport_height();
-  if ((w != mask_width_) || (h != mask_height_)) 
+  if ((w != mask_width_) || (h != mask_height_))
   {
     std::cerr << "Lasso: viewport size has changed.\n";
     return false;
   }
 
-  
+
   // project vertex to 2D integer coordinates
   Vec3d v = glstate_.project(_v);
   x = (unsigned int)(v[0] + 0.5);
   y = (unsigned int)(v[1] + 0.5);
 
-  
+
   // near and far plane clipping
   if (v[2] < 0.0 || v[2] > 1.0)
     return false;
