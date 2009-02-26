@@ -1,22 +1,18 @@
 #ifndef TOPOLOGYPLUGIN_HH
 #define TOPOLOGYPLUGIN_HH
 
-#include <QObject>
-#include <QMenuBar>
-#include <QGroupBox>
-
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/MouseInterface.hh>
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/PickingInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
-#include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
+#include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
-class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterface, PickingInterface, BackupInterface, LoggingInterface, ContextMenuInterface
+class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterface, PickingInterface, BackupInterface, LoggingInterface, ToolbarInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -25,34 +21,42 @@ class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterf
   Q_INTERFACES(PickingInterface)
   Q_INTERFACES(BackupInterface)
   Q_INTERFACES(LoggingInterface)
-  Q_INTERFACES(ContextMenuInterface)
+  Q_INTERFACES(ToolbarInterface)
 
   signals:
+    // BaseInterface
     void updateView();
     void updatedObject(int);
 
+    // PickingInterface
     void addHiddenPickMode( const std::string _mode );
 
+    // BackupInterface
     void createBackup( int _id , QString _name );
 
+    // LoggingInterface
     void log(Logtype _type, QString _message);
     void log(QString _message);
 
-    void addContextMenu(QMenu* _menu ,DataType _objectType , ContextMenuType _type );
+    // ToolbarInterface
+    void addToolbar(QToolBar* _toolbar);
 
   private slots:
-    void slotMouseEvent( QMouseEvent* _event );
 
-    void slotKeyEvent( QKeyEvent* /*_event*/ ){};
-
+    // BaseInterface
     void pluginsInitialized();
 
-    void contextMenuTriggered(QAction* _action);
+    // MouseInterface
+    void slotMouseEvent( QMouseEvent* _event );
 
-    void slotUpdateContextMenu( int _objectId );
+  private slots:
+
+    /// called when an action on the toolbar was triggered
+    void toolBarTriggered(QAction* _action);
 
   public :
 
+    /// Destructor
     ~TopologyPlugin() {};
 
 
@@ -83,9 +87,10 @@ class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterf
     void split_edge(QMouseEvent* _event);
 
   private:
+
     std::vector< std::pair<int,int> > addFaceVertices_;
-    QMenu* trimeshMenu_;
-    QMenu* polymeshMenu_;
+
+    QToolBar* toolbar_;
 
 
    public slots:
