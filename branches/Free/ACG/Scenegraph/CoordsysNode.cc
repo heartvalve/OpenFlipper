@@ -176,11 +176,12 @@ CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
   // Origin
     glLoadIdentity();
+    glLoadName(0);
     gluSphere( quadric, sphereRadius, slices, stacks );
 
   // X-Axis
     glLoadIdentity();
-
+    glLoadName(1);
     glMultMatrixd(modelview.get_raw_data());
     glRotatef(-90, 0, 1, 0);
     glTranslatef( 0, 0, -bodyLength );
@@ -195,6 +196,7 @@ CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
   // Y-Axis
     glLoadIdentity();
+    glLoadName(2);
     glMultMatrixd(modelview.get_raw_data());
     glRotatef(90, 1, 0, 0);
     glTranslatef( 0, 0, -bodyLength );
@@ -209,6 +211,7 @@ CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
   // Z-Axis
     glLoadIdentity();
+    glLoadName(3);
     glMultMatrixd(modelview.get_raw_data());
     glRotatef(180, 0, 1, 0);
     glTranslatef( 0, 0, -bodyLength );
