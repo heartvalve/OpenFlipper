@@ -49,7 +49,6 @@ signals:
   // BaseInterface
   void updateView();
   void updatedObject(int);
-  void activeObjectChanged();
   void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                           QStringList _parameters, QStringList _descriptions);
 
