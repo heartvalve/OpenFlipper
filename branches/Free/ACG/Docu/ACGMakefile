@@ -1,0 +1,24 @@
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Config
+#==============================================================================
+
+
+MODULES := doxygen
+
+DOXY_PROJECT_NAME     =  ACG
+
+DOXY_FILE_PATTERNS    =  *.cc *.hh *.docu
+DOXY_EXCLUDE_DIRS     = $(proj-dir)/Templates $(proj-dir)/Apps
+DOXY_EXCLUDE_PATTERNS = CVS $(build-dir) *.moc.cc
+DOXY_EXAMPLE_PATH     = 
+DOXY_EXAMPLE_PATTERNS = *.cc *.hh
+
+DOXY_GENERATE_HTML    =  YES
+DOXY_GENERATE_LATEX   =  NO
+DOXY_GENERATE_RTF     =  NO
+DOXY_GENERATE_MAN     =  NO
+
+
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Rules
+#==============================================================================

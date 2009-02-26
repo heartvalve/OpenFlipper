@@ -1,0 +1,49 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenMesh_Core", "..\..\OpenMesh\Core\OpenMesh_Core.vcproj", "{ED38FC0A-3C42-4D41-B234-B2912430DE52}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenMesh_Tools", "..\..\OpenMesh\Tools\OpenMesh_Tools.vcproj", "{682CF0FD-24AD-44AC-8438-A6BECD7ABE1C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED38FC0A-3C42-4D41-B234-B2912430DE52} = {ED38FC0A-3C42-4D41-B234-B2912430DE52}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ACG_VC2005", "ACG_VC2005\ACG_VC2005.vcproj", "{C19056DB-9E3F-4D52-8D0E-0CEDD42B8DDC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{682CF0FD-24AD-44AC-8438-A6BECD7ABE1C} = {682CF0FD-24AD-44AC-8438-A6BECD7ABE1C}
+		{ED38FC0A-3C42-4D41-B234-B2912430DE52} = {ED38FC0A-3C42-4D41-B234-B2912430DE52}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MVIEW", "MVIEW\MVIEW.vcproj", "{F3285AAB-E8C1-40B6-BC57-C0D46F18BBE1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{ED38FC0A-3C42-4D41-B234-B2912430DE52} = {ED38FC0A-3C42-4D41-B234-B2912430DE52}
+		{C19056DB-9E3F-4D52-8D0E-0CEDD42B8DDC} = {C19056DB-9E3F-4D52-8D0E-0CEDD42B8DDC}
+		{682CF0FD-24AD-44AC-8438-A6BECD7ABE1C} = {682CF0FD-24AD-44AC-8438-A6BECD7ABE1C}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ED38FC0A-3C42-4D41-B234-B2912430DE52}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ED38FC0A-3C42-4D41-B234-B2912430DE52}.Debug|Win32.Build.0 = Debug|Win32
+		{ED38FC0A-3C42-4D41-B234-B2912430DE52}.Release|Win32.ActiveCfg = Release|Win32
+		{ED38FC0A-3C42-4D41-B234-B2912430DE52}.Release|Win32.Build.0 = Release|Win32
+		{682CF0FD-24AD-44AC-8438-A6BECD7ABE1C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{682CF0FD-24AD-44AC-8438-A6BECD7ABE1C}.Debug|Win32.Build.0 = Debug|Win32
+		{682CF0FD-24AD-44AC-8438-A6BECD7ABE1C}.Release|Win32.ActiveCfg = Release|Win32
+		{682CF0FD-24AD-44AC-8438-A6BECD7ABE1C}.Release|Win32.Build.0 = Release|Win32
+		{C19056DB-9E3F-4D52-8D0E-0CEDD42B8DDC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C19056DB-9E3F-4D52-8D0E-0CEDD42B8DDC}.Debug|Win32.Build.0 = Debug|Win32
+		{C19056DB-9E3F-4D52-8D0E-0CEDD42B8DDC}.Release|Win32.ActiveCfg = Release|Win32
+		{C19056DB-9E3F-4D52-8D0E-0CEDD42B8DDC}.Release|Win32.Build.0 = Release|Win32
+		{F3285AAB-E8C1-40B6-BC57-C0D46F18BBE1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F3285AAB-E8C1-40B6-BC57-C0D46F18BBE1}.Debug|Win32.Build.0 = Debug|Win32
+		{F3285AAB-E8C1-40B6-BC57-C0D46F18BBE1}.Release|Win32.ActiveCfg = Release|Win32
+		{F3285AAB-E8C1-40B6-BC57-C0D46F18BBE1}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

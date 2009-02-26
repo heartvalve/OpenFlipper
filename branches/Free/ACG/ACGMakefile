@@ -1,0 +1,33 @@
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Config
+#==============================================================================
+
+
+buildtargets: build createLinks
+
+# subdirs to process
+SUBDIRS   := Math IO Utils ShaderUtils GL Glut Scenegraph QtWidgets MeshTools Geometry
+PACKAGES  := glew glut opengl qt openmesh2
+PROJ_LIBS := OpenMesh/Core
+MODULES   := cxxlib
+
+createLinks:
+directory := $(ARCH)_$(COMP)$(COMP_VERSION)_$(CODE_LEVEL)
+targetlink-exists := $(shell test -d "./lib/$(directory)" && echo targetlink-found)
+ifneq ($(targetlink-exists), targetlink-found)
+   $(shell mkdir ./lib/$(directory)  )
+   $(shell ln -s ../../$(directory)/libACG.so ./lib/$(directory)/   )
+endif
+
+
+
+
+
+
+
+
+
+
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Rules
+#==============================================================================

@@ -1,0 +1,191 @@
+//=============================================================================
+//
+//                               OpenFlipper
+//        Copyright (C) 2008 by Computer Graphics Group, RWTH Aachen
+//                           www.openflipper.org
+//
+//-----------------------------------------------------------------------------
+//
+//                                License
+//
+//  OpenFlipper is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+// 
+//  OpenFlipper is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+// 
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
+//
+//-----------------------------------------------------------------------------
+//
+//   $Revision$
+//   $Author$
+//   $Date$
+//
+//=============================================================================
+
+
+
+
+//=============================================================================
+
+#include "CartesianClippingNode.hh"
+
+//=============================================================================
+
+namespace ACG {
+namespace SceneGraph {
+
+//=============================================================================
+
+
+CartesianClippingNode::CartesianClippingNode( BaseNode*           _parent,
+					      const std::string&  _name )
+  : BaseNode( _parent, _name )
+{
+  set_cursor( Vec3f( 0, 0, 0 ) );
+  enabled_ = NONE;
+}
+
+//-----------------------------------------------------------------------------
+
+
+void
+CartesianClippingNode::enter( GLState & _state, unsigned int /* _drawmode */ )
+{
+  Vec3d eye = _state.eye();
+
+  if ( is_enabled( XY_PLANE ) )
+  {
+    GLdouble xy_plane[4];  
+    if ( eye[2] > 0 )
+    {  
+      xy_plane[0] = 0;
+      xy_plane[1] = 0;
+      xy_plane[2] = -1;
+      xy_plane[3] = cursor_[2];
+    }
+    else
+    {
+      xy_plane[0] = 0;
+      xy_plane[1] = 0;
+      xy_plane[2] = 1;
+      xy_plane[3] = -cursor_[2];
+    }
+    
+    glClipPlane( GL_CLIP_PLANE0, xy_plane );
+    glEnable( GL_CLIP_PLANE0 );
+  }
+
+  if ( is_enabled( YZ_PLANE ) )
+  {
+    GLdouble yz_plane[4];  
+    if ( eye[0] > 0 )
+    {  
+      yz_plane[0] = -1;
+      yz_plane[1] = 0;
+      yz_plane[2] = 0;
+      yz_plane[3] = cursor_[0];
+    }
+    else
+    {
+      yz_plane[0] = 1;
+      yz_plane[1] = 0;
+      yz_plane[2] = 0;
+      yz_plane[3] = -cursor_[0];
+    }
+    
+    glClipPlane( GL_CLIP_PLANE1, yz_plane );
+    glEnable( GL_CLIP_PLANE1 );
+  }
+
+  if ( is_enabled( XZ_PLANE ) )
+  {
+    GLdouble xz_plane[4];  
+    if ( eye[1] > 0 )
+    {  
+      xz_plane[0] = 0;
+      xz_plane[1] = -1;
+      xz_plane[2] = 0;
+      xz_plane[3] = cursor_[1];
+    }
+    else
+    {
+      xz_plane[0] = 0;
+      xz_plane[1] = 1;
+      xz_plane[2] = 0;
+      xz_plane[3] = -cursor_[1];
+    }
+    
+    glClipPlane( GL_CLIP_PLANE2, xz_plane );
+    glEnable( GL_CLIP_PLANE2 );
+  }
+
+
+  
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void
+CartesianClippingNode::leave( GLState & /* _state */ , unsigned int /* _drawmode */ )
+{
+  glDisable( GL_CLIP_PLANE0 );
+  glDisable( GL_CLIP_PLANE1 );
+  glDisable( GL_CLIP_PLANE2 );
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void
+CartesianClippingNode::set_cursor( const Vec3f & _cursor )
+{
+  cursor_ = _cursor;
+  
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+const
+Vec3f &
+CartesianClippingNode::cursor() const
+{
+  return cursor_;
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void
+CartesianClippingNode::set_enabled( Plane _plane ) 
+{
+  enabled_ = _plane;
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+bool
+CartesianClippingNode::is_enabled( Plane _plane ) const
+{
+  return ( enabled_ == _plane );
+}
+
+
+//=============================================================================
+} // namespace SceneGraph
+} // namespace ACG
+//=============================================================================

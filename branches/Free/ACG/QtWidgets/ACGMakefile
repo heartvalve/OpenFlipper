@@ -1,0 +1,18 @@
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Config
+#==============================================================================
+
+
+#SUBDIRS = $(call find-subdirs)
+
+PACKAGES := qt4 glew glut opengl openmesh2
+
+PROJ_LIBS = 
+
+MODULES :=  uic4compat moc4 cxxlib
+
+
+#==  SYSTEM PART -- DON'T TOUCH  ==============================================
+include $(ACGMAKE)/Rules
+#==============================================================================
+

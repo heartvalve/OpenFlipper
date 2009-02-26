@@ -1,0 +1,153 @@
+//=============================================================================
+//
+//                               OpenFlipper
+//        Copyright (C) 2008 by Computer Graphics Group, RWTH Aachen
+//                           www.openflipper.org
+//
+//-----------------------------------------------------------------------------
+//
+//                                License
+//
+//  OpenFlipper is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  OpenFlipper is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
+//
+//-----------------------------------------------------------------------------
+//
+//   $Revision: 3468 $
+//   $Author: moebius $
+//   $Date: 2008-10-17 14:58:52 +0200 (Fr, 17. Okt 2008) $
+//
+//=============================================================================
+
+
+
+
+//=============================================================================
+//
+//  CLASS PointNode
+//
+//=============================================================================
+
+#ifdef USE_FTGL
+
+#ifndef ACG_TEXTNODE_HH
+#define ACG_TEXTNODE_HH
+
+
+//== INCLUDES =================================================================
+
+#include "BaseNode.hh"
+#include "DrawModes.hh"
+#include <vector>
+
+//== NAMESPACES ===============================================================
+
+namespace ACG {
+namespace SceneGraph {
+
+//== CLASS DEFINITION =========================================================
+
+
+
+/** \class TextNode TextNode.hh <ACG/Scenegraph/TextNode.hh>
+
+    TextNode renders Text.
+
+**/
+
+class ACGDLLEXPORT TextNode : public BaseNode
+{
+public:
+
+  enum TextMode {
+    SCREEN_ALIGNED, /// Text will always stay parallel to screen
+    OBJECT_ALIGNED  /// Text will be transformed and projected by Modelview and projection matrix
+  };
+
+  /** default constructor
+   * @param _parent Define the parent Node this node gets attached to
+   * @param _fontfile Font File ( should include full path )
+   * @param _name Name of this Node
+   * @param _textMode Define the text rendering style ( see TextNode::TextMode )
+   */
+  TextNode( std::string       _fontFile,
+            BaseNode*         _parent=0,
+	         std::string  _name="<TextNode>",
+            TextMode     _textMode = SCREEN_ALIGNED)
+            : BaseNode(_parent, _name),
+			  font_(0),
+              size_(_textMode == SCREEN_ALIGNED ? 15 : 1),
+              fontFile_(_fontFile),
+              textMode_(_textMode)
+  {
+	  UpdateFont();
+  }
+
+  /// destructor
+  ~TextNode();
+
+  /// static name of this class
+  ACG_CLASSNAME(TextNode);
+
+  /// return available draw modes
+  unsigned int availableDrawModes() const;
+
+  /// update bounding box
+  void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
+
+  /// draw Text
+  void draw(GLState& _state, unsigned int _drawMode);
+
+  /** Set the rendering mode ( see TextNode::TextMode )
+   */
+
+  void setRenderingMode(TextMode _textMode) { textMode_ = _textMode; };
+
+  TextMode renderingMode() { return textMode_; };
+
+  void setText(std::string _text) {text_ = _text;};
+
+  void setSize(unsigned int _size) {size_ = _size; UpdateFont();};
+
+protected:
+  void UpdateFont();
+
+private:
+  void *font_;
+
+  unsigned int size_;
+
+  std::string text_;
+
+  std::string fontFile_;
+
+  TextMode textMode_;
+};
+
+
+//=============================================================================
+} // namespace SceneGraph
+} // namespace ACG
+//=============================================================================
+#endif // ACG_TEXTNODE_HH defined
+//=============================================================================
+#else // NO USE_FTGL but header included
+
+  #ifdef WIN32
+    #pragma message ( "TextNode requires ftgl but ftgl was not found" )
+  #else
+    #warning TextNode requires ftgl but ftgl was not found
+  #endif
+
+#endif // USE_FTGL defined
+//=============================================================================

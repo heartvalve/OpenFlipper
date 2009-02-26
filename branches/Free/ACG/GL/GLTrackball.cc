@@ -1,0 +1,228 @@
+//=============================================================================
+//
+//                               OpenFlipper
+//        Copyright (C) 2008 by Computer Graphics Group, RWTH Aachen
+//                           www.openflipper.org
+//
+//-----------------------------------------------------------------------------
+//
+//                                License
+//
+//  OpenFlipper is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+// 
+//  OpenFlipper is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+// 
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
+//
+//-----------------------------------------------------------------------------
+//
+//   $Revision$
+//   $Author$
+//   $Date$
+//
+//=============================================================================
+
+
+
+
+//=============================================================================
+//
+//  CLASS GLTrackball - IMPLEMENTATION
+//
+//=============================================================================
+
+//== INCLUDES =================================================================
+
+
+#include "GLTrackball.hh"
+
+
+//== NAMESPACES ===============================================================
+
+
+namespace ACG {
+
+
+//== IMPLEMENTATION ========================================================== 
+
+
+GLTrackball::
+GLTrackball(GLState& _state) 
+  : glstate_(_state), 
+    center_(0,0,0) 
+{
+  for (int i=0; i<10; ++i)
+    button_down_[i] = false;
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void 
+GLTrackball::mouse_press(int button, int x, int y)
+{
+  last_point_2D_ = ACG::Vec2i(x, y);
+  last_point_ok_ = map_to_sphere(last_point_2D_, last_point_3D_);
+
+  button_down_[button] = true;
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void 
+GLTrackball::mouse_release(int button, int /* x */ , int /* y */ )
+{
+  last_point_ok_ = false;
+  button_down_[button] = false;
+
+  // GLUT: button 3 or 4 -> mouse wheel clicked
+  if (button == 3)       
+    zoom(0, (int)(last_point_2D_[1] - 0.05*glstate_.viewport_width()));
+  else if (button == 4)
+    zoom(0, (int)(last_point_2D_[1] + 0.05*glstate_.viewport_width()));
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void 
+GLTrackball::mouse_move(int x, int y)
+{
+  if (button_down_[0] && button_down_[1])
+    action_ = ZOOM;
+  else if (button_down_[0])
+    action_ = ROTATION;
+  else if (button_down_[1])
+    action_ = TRANSLATION;
+
+  switch (action_)
+  {
+    case ROTATION:    rotation(x, y);     break;
+    case TRANSLATION: translation(x, y);  break;
+    case ZOOM:        zoom(x, y);         break;
+  }
+
+  last_point_2D_ = ACG::Vec2i(x, y);
+  last_point_ok_ = map_to_sphere(last_point_2D_, last_point_3D_);
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void 
+GLTrackball::rotation(int x, int y)
+{
+  if (last_point_ok_) 
+  {
+    Vec2i  new_point_2D_;
+    Vec3f  new_point_3D_;
+    bool   new_point_ok_;
+
+    new_point_2D_ = ACG::Vec2i(x, y);
+    new_point_ok_ = map_to_sphere(new_point_2D_, new_point_3D_);
+    
+    if (new_point_ok_)
+    {
+      Vec3f axis      = (last_point_3D_ % new_point_3D_);
+      float cos_angle = (last_point_3D_ | new_point_3D_);
+
+      if (fabs(cos_angle) < 1.0) 
+      {
+	float angle = 2.0*acos(cos_angle) * 180.0 / M_PI;
+
+	Vec3f t = glstate_.modelview().transform_point(center_);
+	glstate_.translate(-t[0], -t[1], -t[2], MULT_FROM_LEFT);
+	glstate_.rotate(angle, axis[0], axis[1], axis[2], MULT_FROM_LEFT);
+	glstate_.translate( t[0],  t[1],  t[2], MULT_FROM_LEFT);
+      }
+    }
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void 
+GLTrackball::translation(int x, int y)
+{
+  float dx = x - last_point_2D_[0];
+  float dy = y - last_point_2D_[1];
+
+  float z      = glstate_.modelview().transform_point(center_)[2];
+  float w      = glstate_.viewport_width();
+  float h      = glstate_.viewport_height();
+  float fovy   = glstate_.fovy();
+  float nearpl = glstate_.near_plane();
+
+  float aspect = w / h;
+  float top    = tan(fovy/2.0f*M_PI/180.f) * nearpl;
+  float right  = aspect*top;
+
+  glstate_.translate(-2.0*dx/w*right/nearpl*z, 
+		     2.0*dy/h*top/nearpl*z, 
+		     0.0,
+		     MULT_FROM_LEFT);
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+void 
+GLTrackball::zoom(int /* x */ , int y)
+{
+  float dy = y - last_point_2D_[1];
+  float z  = glstate_.modelview().transform_point(center_)[2];
+  float h  = glstate_.viewport_height();
+
+  glstate_.translate(0.0,
+		     0.0,
+		     -2.0*dy/h*z, 
+		     MULT_FROM_LEFT);
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+bool
+GLTrackball::map_to_sphere(const Vec2i& _point, Vec3f& _result)
+{
+  float width  = glstate_.viewport_width();
+  float height = glstate_.viewport_height();
+  
+  if ( (_point[0] >= 0) && (_point[0] <= width) &&
+       (_point[1] >= 0) && (_point[1] <= height) ) 
+  {
+    double x            = (_point[0] - 0.5*width)  / width;
+    double y            = (0.5*height - _point[1]) / height;
+    double sinx         = sin(M_PI * x * 0.5);
+    double siny         = sin(M_PI * y * 0.5);
+    double sinx2siny2   = sinx * sinx + siny * siny;
+    
+    _result[0] = sinx;
+    _result[1] = siny;
+    _result[2] = sinx2siny2 < 1.0 ? sqrt(1.0 - sinx2siny2) : 0.0;
+    
+    return true;
+  }
+  else return false;
+}
+
+
+//=============================================================================
+} // namespace ACG
+//=============================================================================
