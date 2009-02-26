@@ -63,7 +63,6 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
   private slots :
 
     // BaseInterface
-    void slotActiveObjectChanged() {};
     void pluginsInitialized();
 
     // MouseInterface
