@@ -1,0 +1,20 @@
+//=============================================================================
+//
+//  Documents all used namespaces for doxygen
+//
+//=============================================================================
+
+
+/** \namespace ACG::QtWidgets
+    This namespace holds the Qt based GUI elements.
+**/
+
+
+/** \namespace ACG::SceneGraph
+    This namespace holds the ACG scene graph, all its nodes and helpers.
+**/
+
+
+/** \namespace ACG::Geometry
+    This namespace holds some geometric types as well as geometry algorithms.
+**/
