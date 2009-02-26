@@ -354,17 +354,17 @@ void TreeModel::updatedObject(int _id) {
 
     if (obj != 0 && getModelIndex(obj,0).isValid() ){
 
-      //set new values for the object
-      QVector< QVariant > values;
-
-      values.push_back( obj->name()    );
-      values.push_back( obj->visible() );
-      values.push_back( obj->source()  );
-      values.push_back( obj->target()  );
-
-      for(int i=0; i < 4; i++)
-        setData( getModelIndex(obj,i), values[i], 0);
-
+//       //set new values for the object
+//       QVector< QVariant > values;
+// 
+//       values.push_back( obj->name()    );
+//       values.push_back( obj->visible() );
+//       values.push_back( obj->source()  );
+//       values.push_back( obj->target()  );
+// 
+//       for(int i=0; i < 4; i++)
+//         setData( getModelIndex(obj,i), values[i], 0);
+// 
       return;
     }
   }
@@ -588,7 +588,9 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
   }
 
   // <- Item is not a group
-      
+
+  bool checked;
+
   // Decide on column what to do with the value ( abort if anything goes wrong)
   switch ( index.column() ) {
     // Name :
@@ -624,30 +626,23 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
     // source
     case 2 :
 
-      if ( value.toInt() == Qt::Unchecked ) {
-        item->source(false);
-      }
-      
-      if ( value.toInt() == Qt::Checked ) {
-        item->source(true);
-      }
-      
+      checked = value.toBool();
+
+      item->source( checked );
+
       updateSourceSelection( item->parent() );
 
       break;
-    
+
     //target
     case 3 : 
-      if ( value.toInt() == Qt::Unchecked ) {
-        item->target(false);
-      }
-      
-      if ( value.toInt() == Qt::Checked ) {
-        item->target(true);
-      }
+
+      checked = value.toBool();
+
+      item->target( checked );
 
       updateTargetSelection( item->parent() );
-      
+
       break;
     
     default:
