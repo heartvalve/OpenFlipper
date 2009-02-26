@@ -32,12 +32,9 @@
 
 
 
-#ifndef COLORPLUGIN_HH
-#define COLORPLUGIN_HH
+#ifndef DATACONTROLPLUGIN_HH
+#define DATACONTROLPLUGIN_HH
 
-#include <QObject>
-#include <QMenuBar>
-#include "DataControlPlugin.hh"
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
@@ -48,8 +45,6 @@
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include "Toolbox.hh"
-
-//#include "QCheckBoxDelegate.hh"
 
 #include "TreeModel.hh"
 
@@ -68,109 +63,93 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   Q_INTERFACES(ScriptInterface)
 
   signals:
-    /// Force Examiner widget to update their views
+    // BaseInterface
     void updateView();
-
-    /// Emit this Signal, if object list has changed (e.g. Source or Target changed)
     void updatedObject(int);
-
-    void visibilityChanged( );
-
+    void visibilityChanged();
     void activeObjectChanged();
-
-    void log(Logtype _type, QString _message);
-    void log(QString _message);
-
-    void addContextMenu(QMenu* _menu );
-    void addContextMenu(QMenu* _menu ,DataType _objectType , ContextMenuType _type );
 
     void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                             QStringList _parameters, QStringList _descriptions);
 
+    // LoggingInterface
+    void log(Logtype _type, QString _message);
+    void log(QString _message);
+    // ContextMenuInterface
+    void addContextMenu(QMenu* _menu );
+    void addContextMenu(QMenu* _menu ,DataType _objectType , ContextMenuType _type );
 
-   private slots :
-      /// Updates the table widget
-      void slotObjectUpdated( int _identifier );
-      void slotActiveObjectChanged();
+  private slots :
+    // BaseInterface
+    void pluginsInitialized();
+    void slotObjectUpdated( int _identifier );
+    void slotActiveObjectChanged();
 
-      void slotKeyEvent( QKeyEvent* _event );
+    // KeyInterface
+    void slotKeyEvent( QKeyEvent* _event );
 
-      void loadIniFileOptionsLast( INIFile& _ini );
-      void saveIniFileOptions( INIFile& _ini );
+    // INIInterface
+    void loadIniFileOptionsLast( INIFile& _ini );
+    void saveIniFileOptions( INIFile& _ini );
 
-      void pluginsInitialized();
-      void initializePlugin();
-   public :
+  public :
+    /// Destructor
+    ~DataControlPlugin() {};
 
-     ~DataControlPlugin() {};
+    /// Initialize the ToolBox
+    bool initializeToolbox(QWidget*& _widget);
 
+    /// Name of the Plugin
+    QString name(){ return (QString("DataControl")); };
 
-     /** Initialize the toolbar (create a widget in the right side toolbox)\n
-      *   Creates Table and buttons */
-     bool initializeToolbox(QWidget*& _widget);
+    /// Description of the Plugin
+    QString description() { return (QString("Manages Data Objects")); };
 
-     /// Name of the Plugin
-     QString name(){ return (QString("DataControl")); };
+  private :
+    /// Widget for Toolbox
+    DatacontrolToolboxWidget* tool_;
 
-     /// Description of the Plugin
-     QString description() { return (QString("Manages Data Objects")); };
+    /// Layout for Toolbox
+    QGridLayout* MeshDialogLayout_;
 
-      /// Update the visualization of the active objects
-      void update_active( );
+    /// Table containing Mesh information and status
+    QTableWidget* objectList_;
 
-   private :
-      /// Widget for Toolbox
-      DatacontrolToolboxWidget* tool_;
+    /// Flag set to true if meshlist is updated, preventing signal for list udate to be called
+    bool locked;
 
-      /// Layout for Toolbox
-      QGridLayout* MeshDialogLayout_;
+    /// The Treemodel organizing the data
+    TreeModel* model_;
 
-      /// Table containing Mesh information and status
-      QTableWidget* objectList_;
+    ///Tree view
+    QTreeView* view_;
 
-      /// Flag set to true if meshlist is updated, preventing signal for list udate to be called
-      bool locked;
+    /// Pointer to the header to the view widget
+    QHeaderView * viewHeader_;
 
-      /// The Treemodel organizing the data
-      TreeModel* model_;
+//===========================================================================
+/** @name Slots which are called if data changed
+* @{ */
+//===========================================================================
 
-      ///Tree view
-      QTreeView* view_;
+  private slots:
 
-      /// Pointer to the header to the view widget
-      QHeaderView * viewHeader_;
+    /// Gets called when the data in the table has changed
+    void slotDataChanged ( const QModelIndex & topLeft, const QModelIndex & bottomRight );
 
-      /// Delegate for boolean values
-      //QCheckBoxDelegate* checkboxDelegate_;
+    void slotModelAboutToReset();
 
-   private slots:
+    void slotModelResetComplete();
 
-      /// This slot is called when the mesh selection changed in the table
-      void slotCellClicked(int _row, int _col);
+  private:
+    std::map< BaseObject*, bool > isExpanded_;
 
-      /// Vertical header of the list has been clicked
-      void verticalHeaderClicked( int _row );
+/** @} */
 
-      void verticalCountClicked( int id , int old , int newc );
-
-
-      //===========================================================================
-      /** @name Slots which are called if data changed
-      * @{ */
-      //===========================================================================
-
-      /// Gets called when the data in the table has changed
-      void slotDataChanged ( const QModelIndex & topLeft, const QModelIndex & bottomRight );
-
-      /// called when an object is removed from the view
-      void slotRowsRemoved ( const QModelIndex & _parent, int _start, int _end );
-
-      /** @} */
-
-      //===========================================================================
-      /** @name Popup Menu related
-      * @{ */
-      //===========================================================================
+//===========================================================================
+/** @name Popup Menu related
+* @{ */
+//===========================================================================
       private slots:
         /// Display a custom context window for the TreeView
         void slotCustomContextMenuRequested ( const QPoint & _pos );
@@ -212,12 +191,12 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Defines the section of the Popup
         int headerPopupType_;
 
-      /** @} */
+/** @} */
 
-       //===========================================================================
-      /** @name GL Area Context Menu related slots
-      * @{ */
-      //===========================================================================
+//===========================================================================
+/** @name GL Area Context Menu related slots
+* @{ */
+//===========================================================================
 
       private slots:
 
@@ -237,12 +216,12 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         QAction* targetAction_;
         QAction* sourceAction_;
 
-      /** @} */
+/** @} */
 
-      //===========================================================================
-      /** @name Scripting functions
-      * @{ */
-      //===========================================================================
+//===========================================================================
+/** @name Scripting functions
+* @{ */
+//===========================================================================
 
       private slots:
         void setDescriptions();
@@ -296,10 +275,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Group objects together
         void groupObjects(idList _objectIDs, QString _groupName = "");
 
-      /** @} */
+/** @} */
 
   public slots:
-    QString version() { return QString("1.02"); };
+    QString version() { return QString("1.03"); };
 };
 
-#endif //COLORPLUGIN_HH
+#endif //DATACONTROLPLUGIN_HH

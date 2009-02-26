@@ -55,6 +55,13 @@ public:
     /// Destructor
     ~TreeModel();
 
+//===========================================================================
+/** @name inherited from QAbstractItemModel
+  * @{ */
+//===========================================================================
+
+public:
+
     /// Get the data of the corresponding entry
     QVariant data(const QModelIndex &index, int role) const;
 
@@ -79,14 +86,17 @@ public:
     /// get the number of columns
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
-    /// The object with the given id has been updated. Check if model has to be changed
-    void updatedObject(int id_);
-
     /// Set the data at the given index
     bool setData(const QModelIndex &index, const QVariant &value , int role);
 
-    /// Get the BaseObject corresponding to a given ModelIndex
-    BaseObject *getItem(const QModelIndex &index) const;
+/** @} */
+
+//===========================================================================
+/** @name Internal DataStructure (the BaseObject Tree)
+  * @{ */
+//===========================================================================
+
+public:
 
     /// Return the ModelIndex corresponding to a given BaseObject and Column
     QModelIndex getModelIndex(BaseObject* _object, int _column );
@@ -97,11 +107,35 @@ public:
     /// Get the name of a given object
     bool getObjectName(BaseObject* _object , QString& _name);
 
+    /// The object with the given id has been updated. Check if model has to be changed
+    void updatedObject(int id_);
+
+    /// Get the BaseObject corresponding to a given ModelIndex
+    BaseObject *getItem(const QModelIndex &index) const;
+
+private:
+
+    /// Rootitem of the tree
+    BaseObject* rootItem_;
+    
+    /** Mapping of the group ids to their parent
+     * Use this to check if a group with the given id exists and which item 
+     * represents this group
+     */
+    std::map< int, TreeItem* > map_;
+
+    /// Recursively update source,target selection up to the root of the tree
+    void updateSourceSelection(BaseObject* _obj );
+    void updateTargetSelection(BaseObject* _obj );
+
+/** @} */
 
 //===========================================================================
 /** @name Drag and Drop
   * @{ */
 //===========================================================================
+
+public:
 
     /// supported drag & Drop actions
     Qt::DropActions supportedDropActions() const;
@@ -118,26 +152,7 @@ public:
 
 /** @} */
 
-private:
-    /// Rootitem of the tree
-    BaseObject* rootItem_;
-    
-    /** Mapping of the group ids to their parent
-     * Use this to check if a group with the given id exists and which item 
-     * represents this group
-     */
-    std::map< int, TreeItem* > map_;
-
-    /// Recursively update source,target selection up to the root of the tree
-    void updateSourceSelection(BaseObject* _obj );
-    void updateTargetSelection(BaseObject* _obj );
-
 };
-
-///@todo : Save group names on exit
-///@todo : Load group names
-///@todo : emit update objects in the right place
-///@todo : emit dataChanged instead of reset();
 
 #endif
 

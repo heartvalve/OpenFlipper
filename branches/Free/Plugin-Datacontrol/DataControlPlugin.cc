@@ -53,9 +53,11 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 
-void DataControlPlugin::initializePlugin(){
-}
+//******************************************************************************
 
+/** \brief Plugin initialization
+ * 
+ */
 void DataControlPlugin::pluginsInitialized() {
 
   //set the slot descriptions
@@ -87,6 +89,14 @@ void DataControlPlugin::pluginsInitialized() {
 
 }
 
+
+//******************************************************************************
+
+/** \brief initialize the toolBox
+ * 
+ * @param _widget a reference to the toolBox
+ * @return returns if the toolbox was created successfully
+ */
 bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
 {
    locked = false;
@@ -119,8 +129,11 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
    connect( model_,SIGNAL(dataChanged( const QModelIndex&, const QModelIndex& ) ),
              this,SLOT(slotDataChanged( const QModelIndex&, const QModelIndex& )));
 
-   connect( model_ , SIGNAL(rowsRemoved( const QModelIndex &, int , int ) ),
-            this , SLOT(slotRowsRemoved ( const QModelIndex &, int , int ) ) );
+   connect( model_ , SIGNAL( modelAboutToBeReset() ),
+            this , SLOT(slotModelAboutToReset() ) );
+
+   connect( model_ , SIGNAL( modelReset() ),
+            this , SLOT( slotModelResetComplete() ) );
 
    connect( view_,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
             this,SLOT(slotCustomContextMenuRequested ( const QPoint & ) ));
@@ -138,54 +151,26 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
    return true;
 }
 
+
+//******************************************************************************
+
+/** \brief inform the model that it has to reset when an object changes
+ * 
+ * @param _identifier id of an object
+ */
 void DataControlPlugin::slotObjectUpdated( int _identifier ) {
   model_->updatedObject( _identifier );
 }
 
-void DataControlPlugin::slotCellClicked(int /*_row*/ , int /*_col*/) {
 
-//    if ( _col == 0 ) {
-//          QTableWidgetItem* target = objectList_->item(_row,_col);
-//          if ( target->checkState() == Qt::Checked ) {
-//             target->setCheckState(Qt::Unchecked);
-//             (*data_)[_row]->target(false);
-//          } else {
-//             target->setCheckState(Qt::Checked);
-//             (*data_)[_row]->target(true);
-//          }
-//         emit activeObjectChanged();
-//    }
-}
+//******************************************************************************
 
-void DataControlPlugin::verticalHeaderClicked( int /*_row*/ ) {
-//     (*data_)[_row]->target ( !(*data_)[_row]->target() );
-//    QTableWidgetItem* target = objectList_->item(_row,3);
-//    if ( target->checkState() == Qt::Checked ) {
-//       target->setCheckState(Qt::Unchecked);
-//       (*data_)[_row]->target(false);
-//    } else {
-//       target->setCheckState(Qt::Checked);
-//       (*data_)[_row]->target(true);
-//    }
-//    emit activeObjectChanged();
-// //    QTableWidgetSelectionRange range(5,0,5,3);
-// //    objectList_->setRangeSelected(range,true);
-}
-
-void DataControlPlugin::verticalCountClicked( int  /*id*/ , int /*old*/ , int /*newc*/ ) {
-//    emit log(LOGWARN,"VHeader : Count " + QString::number(id) + " " + QString::number(old) + " " + QString::number(newc));
-}
-
-
+/** \brief update drawing of objects when the active object changed
+ * 
+ */
 void DataControlPlugin::slotActiveObjectChanged()
 {
-  ///@todo set all target checkboxes right
-  // hint : dont call slotObjectUpdated -1 as this will do a redraw
-//   slotObjectUpdated(-1);
-  update_active();
-}
 
-void DataControlPlugin::update_active( ) {
   // find changed manipulator
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
@@ -217,83 +202,15 @@ void DataControlPlugin::update_active( ) {
   emit updateView();
 }
 
+
+//******************************************************************************
+
+/** \brief a key event occurred
+ * 
+ * @param _event the event that occurred
+ */
 void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 {
-
-//    QList<QTableWidgetItem *> selected ;
-//    QList<QTableWidgetSelectionRange> ranges;
-//    switch (_event->key())
-//    {
-//      case Qt::Key_M :
-//           for ( uint i = 0 ; i < data_->size() ; ++i ) {
-//                QTableWidgetSelectionRange range(i,0,i,3);
-//                objectList_->setRangeSelected(range,true);
-//          }
-//          return;
-//
-//       case Qt::Key_N :
-//          std::cerr << "Checking : " << std::endl;
-//          for ( uint i = 0 ; i < data_->size() ; ++i ) {
-//             QTableWidgetItem * item = objectList_->verticalHeaderItem ( i );
-//             if ( objectList_->isItemSelected(item)  )
-//                std::cerr << i << item->text().toStdString() << " : yes" << std::endl;
-//             else {
-//                std::cerr << i << item->text().toStdString() << " : no" << std::endl;
-//             }
-//          }
-//
-//          selected = objectList_->selectedItems();
-//          std::cerr << "Selected " << selected.size() << std::endl;
-//
-//          ranges = objectList_->selectedRanges();
-//          std::cerr << "Ranges " << ranges.size() << std::endl;
-//
-//          for ( int i = 0 ; i < ranges.size(); ++i ) {
-//            std::cerr << "Range " << i << " : " << ranges[i].topRow() << " .. " << ranges[i].bottomRow() << std::endl;
-//            std::cerr << "Range " << i << " : " << ranges[i].leftColumn() << " .. " << ranges[i].rightColumn() << std::endl;
-//          }
-//
-//          return;
-//       case Qt::Key_C :
-//           if ( _event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ) {
-//                for ( uint i = 0 ; i < data_->size() ; ++i ) {
-//                   (*data_)[i]->source(false);
-//                }
-//                emit updatedObject(-1);
-//               return;
-//           }
-//
-//           if ( _event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier) ) {
-//              for ( uint i = 0 ; i < data_->size() ; ++i ) {
-//                 (*data_)[i]->target(false);
-//               }
-//               emit updatedObject(-1);
-//              return;
-//           }
-//
-//           return;
-//
-//        case Qt::Key_A :
-//           if ( _event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ) {
-//                for ( uint i = 0 ; i < data_->size() ; ++i ) {
-//                   (*data_)[i]->source(true);
-//                }
-//                emit updatedObject(-1);
-//               return;
-//           }
-//
-//           if ( _event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier) ) {
-//              for ( uint i = 0 ; i < data_->size() ; ++i ) {
-//                 (*data_)[i]->target(true);
-//               }
-//               emit updatedObject(-1);
-//              return;
-//           }
-//
-//           return;
-//       default:
-//       break;
-//   }
 
   if ( _event->modifiers() == Qt::ControlModifier ) {
     switch (_event->key()) {
@@ -315,6 +232,14 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 
 }
 
+
+//******************************************************************************
+
+/** \brief emit the right updates when the model changed
+ * 
+ * @param topLeft index in the model
+ * @param  
+ */
 void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
                                           const QModelIndex & /*bottomRight*/ )
 {
@@ -345,11 +270,67 @@ void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
   }
 }
 
-void DataControlPlugin::slotRowsRemoved ( const QModelIndex & /*_parent*/, int /*_start*/, int /*_end*/ ) {
-  std::cerr << "Row removed! " << std::endl;
-  emit updateView();
+
+//******************************************************************************
+
+/** \brief Store the expanded status of all objects when the model wants to reset
+ * 
+ */
+void DataControlPlugin::slotModelAboutToReset(){
+
+  isExpanded_.clear();
+
+  QVector< BaseObject* > stack;
+
+  stack.push_back( PluginFunctions::objectRoot() );
+
+  BaseObject* item;
+
+
+  do{ // Store the expanded state of all objects
+
+    item = stack.front();
+
+    stack.pop_front();
+
+    for(int i=0; i < item->childCount(); i++)
+      stack.push_back( item->child(i) );
+
+    isExpanded_[ item ] = view_->isExpanded( model_->getModelIndex(item, 0 ) );
+
+  } while ( !stack.isEmpty() );
+
 }
 
+
+//******************************************************************************
+
+/** \brief restore the expanded status of all objects after reset
+ * 
+ */
+void DataControlPlugin::slotModelResetComplete(){
+
+  // first expandAll so that alle ModelIndices in the TreeModel are recreated
+  view_->expandAll();
+
+  // and then restore the expanded state
+  std::map< BaseObject*, bool>::iterator it;
+
+  for ( it=isExpanded_.begin() ; it != isExpanded_.end(); it++ ){
+    QModelIndex index = model_->getModelIndex( (*it).first, 0 );
+
+    if (index.isValid())
+      view_->setExpanded( index, (*it).second);
+  }
+}
+
+
+//******************************************************************************
+
+/** \brief Load Groups from ini file
+ * 
+ * @param _ini an ini file
+ */
 void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
   if ( !_ini.section_exists( "Groups" ) )
     return;
@@ -415,6 +396,13 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
   emit updatedObject(-1);
 }
 
+
+//******************************************************************************
+
+/** \brief Save groups to ini file
+ * 
+ * @param _ini an ini file
+ */
 void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
   if ( !_ini.section_exists( "Groups" ) )
     _ini.add_section("Groups");
