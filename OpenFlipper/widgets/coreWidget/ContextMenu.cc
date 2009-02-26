@@ -62,16 +62,14 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
       if ( senderPointer == examiner_widgets_[i] ) {
         popupPosition =  examiner_widgets_[i]->glMapToGlobal(_point);
-	QPointF f = examiner_widgets_[i]->mapToScene(QPointF(_point.x(), _point.y()));
-	scenePos = QPoint (f.x(), f.y());
+	     QPointF f = examiner_widgets_[i]->mapToScene(QPointF(_point.x(), _point.y()));
+	     scenePos = QPoint (f.x(), f.y());
         examinerId = i;
         break;
       }
     }
 
   }
-
-  PluginFunctions::setActiveExaminer( examinerId );
 
   updatePopupMenu(scenePos,examinerId);
 
@@ -104,8 +102,20 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
   ACG::Vec3d      hit_point;
   BaseObjectData* object;
   if (examiner_widgets_[_examinerId]->pick( ACG::SceneGraph::PICK_ANYTHING,_point,node_idx, target_idx, &hit_point ) ) {
+
     if ( PluginFunctions::getPickedObject(node_idx, object) )
       objectId = object->id();
+
+    if ( objectId == -1 ) {
+      std::cerr << "NodeIndex is : " << node_idx << std::endl;
+
+      ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode() , node_idx );
+
+      if ( node == 0 )
+        std::cerr << "Node not found" << std::endl;
+      else
+        std::cerr << "Picked Node with name" << node->name() << std::endl;
+    }
   }
 
   int topLevelAdded  = 0;
@@ -208,75 +218,75 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
   // Add a functions menu
   QAction* action;
   if ( functionMenu_ == 0 ){
-  
+
     functionMenu_ = new QMenu("&Functions",contextMenu_);
-  
+
     //====================================================================================================
-  
+
     action = functionMenu_->addAction("Set Background Color");
     action->setToolTip("Set the background color for the viewer");
     connect(action, SIGNAL(triggered()), this, SLOT(changeBackgroundColor()) );
-  
+
     //====================================================================================================
-  
+
     functionMenu_->addSeparator();
-  
+
     //====================================================================================================
-  
+
     action = functionMenu_->addAction("Snapshot");
     action->setToolTip("Make a snapshot");
     connect(action, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
-  
+
     //====================================================================================================
-  
+
     action = functionMenu_->addAction("Set Snapshot Name");
     action->setToolTip("Set a name for snapshots");
     connect(action, SIGNAL(triggered()), this, SLOT(slotSnapshotName()) );
-  
+
     //====================================================================================================
-  
+
     functionMenu_->addSeparator();
-  
+
     //====================================================================================================
-  
+
     action = functionMenu_->addAction("Copy View");
     action->setToolTip("Copy current view to clipboard");
     connect(action, SIGNAL(triggered()), this, SLOT(slotCopyView()) );
-  
+
     //====================================================================================================
-  
+
     action = functionMenu_->addAction("Paste View");
     action->setToolTip("Paste current view from clipboard");
     connect(action, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
-  
+
     //====================================================================================================
-  
+
     functionMenu_->addSeparator();
-  
+
     //====================================================================================================
-  
+
     action = functionMenu_->addAction("Animation");
     action->setToolTip("Animate rotation of objects");
     action->setCheckable( true );
     action->setChecked( PluginFunctions::viewerProperties().animation() );
     connect(action, SIGNAL(triggered(bool)), this , SLOT( slotChangeAnimation(bool) ) );
-  
+
     //====================================================================================================
-  
+
     action = functionMenu_->addAction("Backface Culling");
     action->setToolTip("Enable backface culling");
     action->setCheckable( true );
     action->setChecked( PluginFunctions::viewerProperties().backFaceCulling() );
     connect(action, SIGNAL(triggered(bool)), this , SLOT( slotChangeBackFaceCulling(bool) ) );
-  
+
     //====================================================================================================
-  
+
     action = functionMenu_->addAction("Two-sided Lighting");
     action->setToolTip("Enable two-sided lighting");
     action->setCheckable( true );
     action->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
     connect(action, SIGNAL(triggered(bool)), this , SLOT( slotChangeTwoSidedLighting(bool) ) );
-  
+
     functionMenu_->setTearOffEnabled(true);
   }
 
