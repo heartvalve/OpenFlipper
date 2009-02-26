@@ -498,7 +498,9 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
     //for object selection only toggle and lasso are available
     paintSphereAction_->setEnabled( !objectAction_->isChecked() );
     boundaryAction_->setEnabled( !objectAction_->isChecked() );
+#ifdef ENABLE_POLYLINE_SUPPORT
     surfaceLassoAction_->setEnabled( !objectAction_->isChecked() );
+#endif
     connectedAction_->setEnabled( !objectAction_->isChecked() );
 
   }else{
