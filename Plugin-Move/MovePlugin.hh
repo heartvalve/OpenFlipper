@@ -39,7 +39,6 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
     // BaseInterface
     void updateView();
     void updatedObject(int);
-    void activeObjectChanged();
 
     // PickingInterface
     void addPickMode( const std::string _mode );
