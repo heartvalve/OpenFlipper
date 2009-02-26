@@ -43,7 +43,12 @@
 #include <QMessageBox>
 #include "Menu.hh"
 
-/// Slot for Remove action in ContextMenu
+
+//******************************************************************************
+
+/** \brief Slot for Remove action in ContextMenu
+ * 
+ */
 void DataControlPlugin::slotPopupRemove (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
 
@@ -91,7 +96,12 @@ void DataControlPlugin::slotPopupRemove (  ) {
   emit updatedObject(-1);
 }
 
-/// Slot for Ungroup action in ContextMenu
+
+//******************************************************************************
+
+/** \brief Slot for Ungroup action in ContextMenu
+ * 
+ */
 void DataControlPlugin::slotUngroup (  ) {
   QItemSelectionModel* selection = view_->selectionModel();
 
@@ -113,8 +123,13 @@ void DataControlPlugin::slotUngroup (  ) {
   emit updatedObject(-1);
 }
 
-/// Slot for Copy action in ContextMenu
-void DataControlPlugin::slotCopy (  ) {
+
+//******************************************************************************
+
+/** \brief Slot for Copy action in ContextMenu
+ * 
+ */
+void DataControlPlugin::slotCopy() {
   QItemSelectionModel* selection = view_->selectionModel();
 
   if (selection == 0) return;
@@ -138,8 +153,13 @@ void DataControlPlugin::slotCopy (  ) {
   emit updateView();
 }
 
-/// Slot for Group action in ContextMenu
-void DataControlPlugin::slotGroup (  ) {
+
+//******************************************************************************
+
+/** \brief Slot for Group action in ContextMenu
+ * 
+ */
+void DataControlPlugin::slotGroup() {
   QItemSelectionModel* selection = view_->selectionModel();
 
   // Get all selected rows
@@ -194,7 +214,13 @@ void DataControlPlugin::slotGroup (  ) {
   emit updatedObject(-1);
 }
 
-/// ContextMenu requested - creates the contextMenu
+
+//******************************************************************************
+
+/** \brief ContextMenu requested - creates the contextMenu
+ * 
+ * @param _pos Position where it was requested
+ */
 void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
   popupIndex_ = view_->indexAt(_pos);
 
@@ -261,6 +287,13 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
 
 }
 
+
+//******************************************************************************
+
+/** \brief Generate a ContextMenu for the header of the TreeView
+ * 
+ * @param _pos Position where the Menu has to be created
+ */
 void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _pos ) {
 
   headerPopupType_ = viewHeader_->logicalIndexAt( _pos );
@@ -299,6 +332,12 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
   menu.exec(viewHeader_->mapToGlobal( _pos ) );
 }
 
+
+//******************************************************************************
+
+/** \brief show a rename dialog for object names
+ * 
+ */
 void DataControlPlugin::slotRename(){
   QItemSelectionModel* selection = view_->selectionModel();
 
@@ -316,6 +355,12 @@ void DataControlPlugin::slotRename(){
   }
 }
 
+
+//******************************************************************************
+
+/** \brief show the material properties dialog
+ * 
+ */
 void DataControlPlugin::slotMaterialProperties(){
   QItemSelectionModel* selection = view_->selectionModel();
 
@@ -341,11 +386,22 @@ void DataControlPlugin::slotMaterialProperties(){
   }
 }
 
-///Called when the material properties were changed inside the material dialog
+
+//******************************************************************************
+
+/** \brief Called when the material properties were changed inside the material dialog
+ * 
+ * @param  unused
+ */
 void DataControlPlugin::slotNodeChanged( ACG::SceneGraph::BaseNode* /*_node*/ ){
   emit updateView();
 }
 
+//******************************************************************************
+
+/** \brief Zoom to an object
+ * 
+ */
 void DataControlPlugin::slotZoomTo(){
   QItemSelectionModel* selection = view_->selectionModel();
 

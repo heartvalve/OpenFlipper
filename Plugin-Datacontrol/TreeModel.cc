@@ -29,14 +29,10 @@
 //
 //=============================================================================
 
-
-
-
 #include <QtGui>
 #include <QBrush>
 
 #include "TreeModel.hh"
-
 
 #include <iostream>
 
@@ -44,27 +40,52 @@
 #include <OpenFlipper/common/Types.hh>
 #include "../OpenFlipper/BasePlugin/PluginFunctions.hh"
 
-/// Constructor
+
+//******************************************************************************
+
+/** \brief Constructor
+ * 
+ * @param _parent parent Object
+ */
 TreeModel::TreeModel( QObject *_parent) : QAbstractItemModel(_parent)
 {
   rootItem_ = PluginFunctions::objectRoot();
 }
 
-/// Destructor
+
+//******************************************************************************
+
+/** \brief Destructor
+ * 
+ */
 TreeModel::~TreeModel()
 {
-  /// @todo : delete in core
-//   delete rootItem_;
+
 }
 
-/// Return the number of columns
+
+//******************************************************************************
+
+/** \brief Return the number of columns
+ * 
+ * @param unused
+ * @return return always 4
+ */
 int TreeModel::columnCount(const QModelIndex &/*_parent*/) const
 {
   // Name,Visible,Source,Target -> 4
   return (4);
 }
 
-/// Returns the data stored under the given role for the item referred to by the index
+
+//******************************************************************************
+
+/** \brief Returns the data stored under the given role for the item referred to by the index
+ * 
+ * @param index a ModelIndex that defines the item in the tree
+ * @param role defines the kind of data requested
+ * @return requested data
+ */
 QVariant TreeModel::data(const QModelIndex &index, int role) const
 {
 
@@ -182,7 +203,14 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
 
 }
 
-/// Returns the item flags for the given index
+
+//******************************************************************************
+
+/** \brief Returns the item flags for the given index
+ * 
+ * @param index ModelIndex that defines an item in the tree
+ * @return flags for the given ModelIndex
+ */
 Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -210,7 +238,16 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     return flags | Qt::ItemIsDragEnabled;
 }
 
-/// Returns the data in the header
+
+//******************************************************************************
+
+/** \brief Returns the data in the header
+ * 
+ * @param section the column in the header
+ * @param orientation header orientation (only horizontal handled)
+ * @param role the role that defines the type of data
+ * @return the requested data
+ */
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
                                 int role) const
 {
@@ -228,7 +265,16 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
     return QVariant();
 }
 
-/// Returns the index of the item in the model specified by the given row, column and parent index.
+
+//******************************************************************************
+
+/** \brief Returns the index of the item in the model specified by the given row, column and parent index.
+ * 
+ * @param row the row 
+ * @param column the column
+ * @param _parent parent item
+ * @return corresponding ModelIndex
+ */
 QModelIndex TreeModel::index(int row, int column, const QModelIndex &_parent) const
 {
     if (!hasIndex(row, column, _parent))
@@ -248,7 +294,14 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &_parent) co
         return QModelIndex();
 }
 
-/// Return index of parent item
+
+//******************************************************************************
+
+/** \brief Return index of parent item
+ * 
+ * @param index a ModelIndex
+ * @return parent of the given ModelIndex
+ */
 QModelIndex TreeModel::parent(const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -263,7 +316,14 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     return createIndex(parentItem->row(), 0, parentItem);
 }
 
-/// Returns the number of rows
+
+//******************************************************************************
+
+/** \brief Returns the number of rows under given parent
+ * 
+ * @param _parent parent Item
+ * @return number of rows that are children of given parent
+ */
 int TreeModel::rowCount(const QModelIndex &_parent) const
 {
     BaseObject *parentItem;
@@ -279,151 +339,49 @@ int TreeModel::rowCount(const QModelIndex &_parent) const
 }
 
 
+//******************************************************************************
+
+/** \brief The object with the given id has been updated. Update the model.
+ * 
+ * @param _id  id of an object
+ */
 void TreeModel::updatedObject(int _id) {
 
+  if ( _id != -1 ){
 
-  // If _id is -1 we have to rescan the tree for inconsitent objects
-  bool scan = ( _id == -1 );
-  
-  // Check if we already have this item
-  BaseObject* tmp = rootItem_->childExists( _id );
-  bool itemExists   = ( (tmp != 0) );
-  
-//   std::cerr << "updated Object" << std::endl;
-  
-  
-  // object has been created
-  if ( !scan && !itemExists ) {
-    std::cerr << "Newly added Item" << std::endl;
-    
-//     // If group is -1 add it to the top level
-//     if ( object->group() == -1 ) {
-//       QList<QVariant> columnData;
-//       columnData << object->name() 
-//                 << QVariant(object->visible() ) 
-//                 << QVariant(object->source()) 
-//                 << QVariant(object->target());
-//       tmp = new TreeItem( columnData , rootItem_ );
-//       tmp->objectId(object->id());
-//       rootItem_->appendChild(tmp);
-//       
-      reset();
-//       
-//       //emit ...
-//       return;
-//     }
-//     
-//     // check if we already saw this group
-//     if ( map_.count( object->group() ) == 0 ) {
-//       
-//       QList<QVariant> columnData;
-//       columnData << "Group " + QString::number(object->group() ) 
-//                 << QVariant(false) 
-//                 << QVariant(false) 
-//                 << QVariant(false);
-//       TreeItem* tmp = new TreeItem( columnData , rootItem_ );
-//       map_[ object->group() ] = tmp;
-//       
-//       rootItem_->appendChild(tmp);
-//     }
-//     
-//     // Add the item to the matching group
-//     TreeItem* groupItem = map_[ object->group() ];
-//     
-//     // Create the new item
-//     QList<QVariant> columnData;
-//     columnData << object->name()  
-//               << QVariant( object->visible() ) 
-//               << QVariant( object->source() ) 
-//               << QVariant( object->target() );
-//     
-//     TreeItem* tmp = new TreeItem(columnData, groupItem );
-//     tmp->objectId(object->id());
-//     
-//     groupItem->appendChild(tmp);
-//     
-//     reset();
-//     
-//     //emit ...
-//     
-//     return;
+    BaseObject* obj = 0;
+    PluginFunctions::getObject(_id, obj);
+
+    if (obj != 0 && getModelIndex(obj,0).isValid() ){
+
+      //set new values for the object
+      QVector< QVariant > values;
+
+      values.push_back( obj->name()    );
+      values.push_back( obj->visible() );
+      values.push_back( obj->source()  );
+      values.push_back( obj->target()  );
+
+      for(int i=0; i < 4; i++)
+        setData( getModelIndex(obj,i), values[i], 0);
+
+      return;
+    }
   }
-  
-  // Modified item.
-  if ( !scan && itemExists ) {
-    QModelIndex index = createIndex(tmp->row(), 0, tmp);
-//     QModelIndex index1 = createIndex(tmp->row(), 1, tmp);
 
-//     std::cerr << "TODO: modified item" << std::endl; 
-    
-    // actually a row has been added by the item
-
-    emit dataChanged( index,index );
-
-    return;
-  }
-  
-  if ( scan ) {
-//     std::cerr << "Scan" << std::endl;
-    reset();
-    
-//     std::cerr << "Scan done" << std::endl;
-//     
-//     bool update = false;
-//     
-//     std::cerr << "Scan with id " << _id << std::endl;
-//     while ( true ) {
-//       
-//       // get an inconsistent item ( object id does not exist anymore )
-//       tmp = rootItem_->inConsistent();
-//       
-//       // Tree is clean now
-//       if ( tmp == 0 ) 
-//         break;
-//       
-//       // Item has been removed, update required
-//       update = true;
-//       
-//       TreeItem* parentItem;
-//       
-//       // Delete parent groups if empty
-//       while (true) {
-//         parentItem = tmp->parent();
-//         
-//         //if this was the rootItem, we stop here
-//         if ( parentItem == 0 )
-//           break;
-//         
-//         // Remove child from the tree and delete it
-//         parentItem->removeChild(tmp);
-//         delete (tmp);
-//         
-//         // Stop if the parent has one child
-//         tmp = parentItem;
-//         if ( parentItem->childCount() > 0 ) {
-//           reset();
-//           break;
-//         }
-//       }
-//     }
-//     
-//     if (update)
-//       reset();
-//     
-//     /// @todo : emit columnsRemoved ( const QModelIndex & parent, int start, int end )
-//     
-//     emit dataChanged( index(0,0),index(0,0) );
-//     
-//     return;
-  }
-    
-//   std::cerr << "Warning, undefined object configuration" << std::endl; 
-    
-    //   reset();
+  //otherwise reset the model
+  reset();
 }
 
-/// Return item at given index
-BaseObject *TreeModel::getItem(const QModelIndex &index) const
+
+//******************************************************************************
+
+/** \brief Return item at given index
+ * 
+ * @param index a ModelIndex
+ * @return item at given index
+ */
+BaseObject* TreeModel::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
         BaseObject *item = static_cast<BaseObject*>(index.internalPointer());
@@ -432,7 +390,15 @@ BaseObject *TreeModel::getItem(const QModelIndex &index) const
     return rootItem_;
 }
 
-/// Return index of given item
+
+//******************************************************************************
+
+/** \brief Return index of given item
+ * 
+ * @param _object an object
+ * @param _column a column
+ * @return index of object and column
+ */
 QModelIndex TreeModel::getModelIndex(BaseObject* _object, int _column ){
 
   for (int i=0; i < persistentIndexList().count(); i++){
@@ -445,6 +411,12 @@ QModelIndex TreeModel::getModelIndex(BaseObject* _object, int _column ){
 }
 
 
+//******************************************************************************
+
+/** \brief Recursively update source selection up to the root of the tree
+ * 
+ * @param _obj object to start with 
+ */
 void TreeModel::updateSourceSelection(BaseObject* _obj ){
 
   if ( isRoot(_obj) || (!_obj->isGroup()) )
@@ -461,6 +433,13 @@ void TreeModel::updateSourceSelection(BaseObject* _obj ){
   updateSourceSelection( _obj->parent() );
 }
 
+
+//******************************************************************************
+
+/** \brief Recursively update target selection up to the root of the tree
+ * 
+ * @param _obj object to start with
+ */
 void TreeModel::updateTargetSelection(BaseObject* _obj ){
 
   if ( isRoot(_obj) || (!_obj->isGroup()) )
@@ -477,7 +456,16 @@ void TreeModel::updateTargetSelection(BaseObject* _obj ){
   updateTargetSelection( _obj->parent() );
 }
 
-/// Set Data at 'index' to 'value'
+
+//******************************************************************************
+
+/** \brief Set Data at 'index' to 'value'
+ * 
+ * @param index a ModelIndex defining the positin in the model
+ * @param value the new value
+ * @param  unused
+ * @return return if the data was set successfully
+ */
 bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
 {
   BaseObject *item = getItem(index);
@@ -674,20 +662,38 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
   return true;
 }
 
-/// return if an object is equal to the root object
+
+//******************************************************************************
+
+/** \brief return if an object is equal to the root object
+ * 
+ * @param _item the item to be checked
+ * @return is it the root object?
+ */
 bool TreeModel::isRoot(BaseObject * _item) {
   return ( _item == rootItem_ ); 
 }
 
-//-------------------------------------------------------------
-// Drag Drop - Stuff
-//-------------------------------------------------------------
+/*******************************************************************************
+        drag & drop stuff
+ *******************************************************************************/
 
+/** \brief return the supported drop actions
+ * 
+ * @return drop actions
+ */
 Qt::DropActions TreeModel::supportedDropActions() const
 {
     return /*Qt::CopyAction |*/ Qt::MoveAction;
 }
 
+
+//******************************************************************************
+
+/** \brief return the mimeType for drag & drop
+ * 
+ * @return the mimeType
+ */
 QStringList TreeModel::mimeTypes() const
 {
     QStringList types;
@@ -695,6 +701,14 @@ QStringList TreeModel::mimeTypes() const
     return types;
 }
 
+
+//******************************************************************************
+
+/** \brief generate mimeData for given ModelIndexes
+ * 
+ * @param indexes list of ModelIndexes
+ * @return the mimeData
+ */
 QMimeData* TreeModel::mimeData(const QModelIndexList& indexes) const
 {
     QMimeData *mimeData = new QMimeData();
@@ -720,6 +734,18 @@ QMimeData* TreeModel::mimeData(const QModelIndexList& indexes) const
     return mimeData;
 }
 
+
+//******************************************************************************
+
+/** \brief this is called when mimeData is dropped
+ * 
+ * @param data the dropped data
+ * @param action the definition of the dropAction which occured
+ * @param unused
+ * @param unused 
+ * @param parent parent under which the drop occurred 
+ * @return returns if the drop was sucessful
+ */
 bool TreeModel::dropMimeData(const QMimeData *data,
      Qt::DropAction action, int /*row*/, int /*column*/, const QModelIndex &parent)
  {
@@ -776,8 +802,6 @@ bool TreeModel::dropMimeData(const QMimeData *data,
         }
       }
 
-//       emit dataChanged(QModelIndex(),QModelIndex());
-//TODO do something better than reset
   reset();
   return true;
  }
