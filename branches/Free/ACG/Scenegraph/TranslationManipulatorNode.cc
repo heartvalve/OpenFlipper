@@ -297,6 +297,9 @@ bool TranslationManipulatorNode::updateCurrentColors (GLState& _state)
 
 void TranslationManipulatorNode::drawMaipulator (GLState& _state, bool _active)
 {
+  glPushAttrib(GL_ENABLE_BIT );
+  glDisable( GL_CULL_FACE );
+
   // Save modelview matrix
   _state.push_modelview_matrix();
 
@@ -481,7 +484,9 @@ void TranslationManipulatorNode::drawMaipulator (GLState& _state, bool _active)
   _state.rotate(90, 1.0, 0.0, 0.0);
   drawCircle(2*manipulator_height_, 2*manipulator_height_ - manipulator_height_/4.0);
 
+  glPopAttrib(); // ENABLE_BIT
   glPopAttrib(); // LIGHTING_BIT
+
 
   _state.pop_modelview_matrix();
 }
