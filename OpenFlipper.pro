@@ -9,12 +9,23 @@ unix {
 }
 
 addSubdirs( OpenMesh/Core)
-addSubdirs( ACG , OpenMesh/Core )
 addSubdirs( OpenMesh/Tools, OpenMesh/Core  )
+addSubdirs( ACG , OpenMesh/Core )
+
+unix {
+	exists(PhySim) {
+            addSubdirs( PhySim, ACG )
+        }
+}
+
 addSubdirs( OpenFlipper/PluginLib , ACG OpenMesh/Core OpenMesh/Tools )
 addSubdirs( OpenFlipper/CoreApp , ACG OpenFlipper/PluginLib OpenMesh/Core OpenMesh/Tools )
 
 addSubdirs( Plugin-*, OpenFlipper/PluginLib OpenMesh/Core  OpenMesh/Tools ACG   )
+
+macx {
+	SUBDIRS -= Plugin_SpaceNavigator
+}
 
 # ugly hack to call qmake separately in each plugin subdir. Otherwise it segfaults after 20 Plugins or so
 # when using recursive
@@ -43,7 +54,6 @@ win32 {
 	SUBDIRS -= Plugin_SpaceNavigator
 	SUBDIRS -= Plugin_ToradexSensors
 	SUBDIRS -= Plugin_ReverseEngineering
-	SUBDIRS -= Plugin_FeatureDetection
 	SUBDIRS -= Plugin_GeometryTransfer
 	SUBDIRS -= Plugin_Hodge
 	SUBDIRS -= Plugin_PrincipalCurvature
