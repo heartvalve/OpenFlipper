@@ -13,7 +13,7 @@ void CoordsysPlugin::pluginsInitialized() {
   std::cerr << "Initializing coordsys plugin" << std::endl;
 
   //init the slice node
-  node_ = new ACG::SceneGraph::CoordsysNode(PluginFunctions::getSceneGraphRootNode(),"Coordsys Node");
+  node_ = new ACG::SceneGraph::CoordsysNode(PluginFunctions::getSceneGraphRootNode(),"Core Coordsys Node");
 
 
 }
