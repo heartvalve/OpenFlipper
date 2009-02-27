@@ -1,0 +1,622 @@
+Index: Plugin-Selection/SelectionPlugin.hh
+===================================================================
+--- Plugin-Selection/SelectionPlugin.hh	(Revision 5126)
++++ Plugin-Selection/SelectionPlugin.hh	(Arbeitskopie)
+@@ -106,7 +106,6 @@
+     //BaseInterface
+     void updateView();
+     void updatedObject(int);
+-    void activeObjectChanged();
+     //PickingInterface
+     void addHiddenPickMode( const std::string _mode );
+     void setPickModeMouseTracking( const std::string _mode, bool _mouseTracking);
+Index: Plugin-Selection/SelectionFunctions.cc
+===================================================================
+--- Plugin-Selection/SelectionFunctions.cc	(Revision 5126)
++++ Plugin-Selection/SelectionFunctions.cc	(Arbeitskopie)
+@@ -31,13 +31,13 @@
+         if (sourceSelection_){
+ 
+           object->source( !object->source() );
+-          emit updatedObject(object->id());
+ 
++          emit objectSelectionChanged(object->id());
++
+         } else {
+           object->target( !object->target() );
+ 
+-          emit activeObjectChanged();
+-          emit updatedObject(object->id());
++          emit objectSelectionChanged(object->id());
+         }
+       }
+ 
+@@ -280,13 +280,12 @@
+             if (sourceSelection_){
+ 
+               o_it->source( !deselection_ );
+-              emit updatedObject(o_it->id());
++              emit objectSelectionChanged(o_it->id());
+ 
+             } else {
+               o_it->target( !deselection_ );
+ 
+-              emit activeObjectChanged();
+-              emit updatedObject(o_it->id());
++              emit objectSelectionChanged(o_it->id());
+             }
+           }
+         }
+@@ -298,13 +297,12 @@
+             if (sourceSelection_){
+ 
+               o_it->source( !deselection_ );
+-              emit updatedObject(o_it->id());
++              emit objectSelectionChanged(o_it->id());
+ 
+             } else {
+               o_it->target( !deselection_ );
+ 
+-              emit activeObjectChanged();
+-              emit updatedObject(o_it->id());
++              emit objectSelectionChanged(o_it->id());
+             }
+           }
+         }
+Index: Plugin-Selection/SelectionContextMenu.cc
+===================================================================
+--- Plugin-Selection/SelectionContextMenu.cc	(Revision 5126)
++++ Plugin-Selection/SelectionContextMenu.cc	(Arbeitskopie)
+@@ -12,12 +12,12 @@
+ //  it under the terms of the GNU Lesser General Public License as published by
+ //  the Free Software Foundation, either version 3 of the License, or
+ //  (at your option) any later version.
+-// 
++//
+ //  OpenFlipper is distributed in the hope that it will be useful,
+ //  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ //  GNU Lesser General Public License for more details.
+-// 
++//
+ //  You should have received a copy of the GNU Lesser General Public License
+ //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
+ //
+@@ -39,28 +39,27 @@
+ void SelectionPlugin::selectionContextMenu(QAction* _action) {
+   QVariant contextObject = _action->data();
+   int objectId = contextObject.toInt();
+-  
++
+   if ( objectId == -1)
+     return;
+-  
++
+   BaseObjectData* object;
+   if ( ! PluginFunctions::getObject(objectId,object) )
+     return;
+-  
+-  if ( _action->text() == "All") 
++
++  if ( _action->text() == "All")
+     selectAll( objectId );
+-  else if ( _action->text() == "Clear")      
++  else if ( _action->text() == "Clear")
+     clearSelection( objectId );
+   else if ( _action->text() == "Invert")
+-    invertSelection( objectId );      
++    invertSelection( objectId );
+   else if ( _action->text() == "Shrink")
+-    shrinkSelection( objectId );        
++    shrinkSelection( objectId );
+   else if ( _action->text() == "Grow")
+-    growSelection( objectId );          
++    growSelection( objectId );
+   else if ( _action->text() == "Boundary")
+     selectBoundary( objectId );
+ 
+-  emit activeObjectChanged();
+   emit updatedObject(objectId);
+ }
+ 
+Index: OpenFlipper/BasePlugin/BaseInterface.hh
+===================================================================
+--- OpenFlipper/BasePlugin/BaseInterface.hh	(Revision 5126)
++++ OpenFlipper/BasePlugin/BaseInterface.hh	(Arbeitskopie)
+@@ -103,7 +103,7 @@
+ 
+     /** \brief An object has been changed or added by this plugin
+       *
+-      *  Emit this Signal, if you updated any part of an object (e.g. source/target ).\n
++      *  Emit this Signal, if you updated any part of an object.\n
+       *  If you changed the element itself (geometry, topology,..) you also have to emit this signal.\n
+       *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
+       *  Give the id of the new object as parameter or -1 if you updated all objects or deleted an object.
+@@ -116,17 +116,18 @@
+       *
+       *  Emit this Signal, if you changed the visibility of an object.
+       *  This is required to reset the near and far plane for the viewers to provide
+-      *  an optimal view.
++      *  an optimal view. Use the id of the object you show or hide as a parameter.
++      *  Otherwise use -1 if you dont have the id.
+       *
+       */
+-    virtual void visibilityChanged( ) {};
++    virtual void visibilityChanged( int /*_identifier*/ ) {};
+ 
+-    /**  \brief The active object has been switched by this plugin
++    /**  \brief The object selection has been changed by this plugin
+       *
+-      *   This signal is used to tell the other plugins that the active object has been changed.\n
+-      *   You should only do this if you are writing a plugin that manages the objects(e.g. DatacontrolPlugin).\n
++      *   This signal is used to tell the other plugins that the object selection (source/target) has been changed.\n
++      *
+     */
+-    virtual void activeObjectChanged() {};
++    virtual void objectSelectionChanged( int /*_identifier*/ ) {};
+ 
+   private slots:
+ 
+@@ -138,7 +139,7 @@
+       *   If you store local information about one of these Objects, you should check if its still valid!\n
+       *   Dont emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
+       *   You dont need to call updateView as the core triggers a redraw itself.
+-      *  @param _identifier Identifier of the updated/new object or -1 if one is deleted
++      *  @param _identifier Identifier of the updated/new object or -1 if one is deleted.
+     */
+     virtual void slotObjectUpdated( int /*_identifier*/ ) {};
+ 
+@@ -152,11 +153,22 @@
+ 
+       /**  \brief The active object has changed
+       *
+-      *   This slot is called by the main aplication if the currently active object has changed.\n
+-      *   This means that the selection of target objects has changed.
++      *   This slot is called by the main aplication if the currentselection of an object has changed.\n
++      *   This means that the selection of source / target objects has changed.
++      *   Addisionally you get the id of the object that has been changed or -1 if all objects
++      *   have been modified.
+     */
+-    virtual void slotActiveObjectChanged() {};
++    virtual void slotObjectSelectionChanged( int /*_identifier*/ ) {};
+ 
++    /** \brief An object has been shown or hidden
++      *
++      *  This slot is called if an objecct is shown or hidden.
++      *  The id of the object is given as a parameter.
++      *  If multiple or all objects have changed, the id will be -1.
++      *
++      */
++    virtual void slotVisibilityChanged( int /*_identifier*/ ) {};
++
+   /** @} */
+ 
+   //===========================================================================
+Index: OpenFlipper/Core/Core.hh
+===================================================================
+--- OpenFlipper/Core/Core.hh	(Revision 5126)
++++ OpenFlipper/Core/Core.hh	(Arbeitskopie)
+@@ -147,8 +147,8 @@
+    /// Emitted when an identify event occurs
+    void PluginMouseEventIdentify( QMouseEvent* );
+ 
+-   /// This signal is emitted if the active object has been changed
+-   void activeObjectChanged();
++   /// This signal is emitted if the object has been changed (source/target)
++   void objectSelectionChanged( int );
+ 
+    /// The texture with the given name and filename has been added
+    void addTexture( QString, QString , uint );
+@@ -192,6 +192,9 @@
+    /// Called after all plugins are loaded
+    void pluginsInitialized();
+ 
++   /// Tell plugins that the visibility of an object has changed
++   void visibilityChanged(int _id);
++
+    /** @} */
+ 
+    //===========================================================================
+@@ -206,10 +209,10 @@
+       void slotObjectUpdated(int _identifier);
+ 
+       /// Called when a plugin changes the visibility of an object
+-      void slotVisibilityChanged();
++      void slotVisibilityChanged(int _id);
+ 
+       /// Called by Plugins if they changed the active object
+-      void slotActiveObjectChanged();
++      void slotObjectSelectionChanged( int _id);
+ 
+       /// Add a new picking mode to the examiner_widget_
+       void slotAddPickMode( const std::string _mode );
+Index: OpenFlipper/Core/ParseObj.cc
+===================================================================
+--- OpenFlipper/Core/ParseObj.cc	(Revision 5126)
++++ OpenFlipper/Core/ParseObj.cc	(Arbeitskopie)
+@@ -261,7 +261,7 @@
+     emit log(LOGERR,"Unable to open Object " + path);
+ 
+   if ( newActiveObject )
+-    emit activeObjectChanged();
++    emit objectSelectionChanged(-1);
+ }
+ 
+ //-----------------------------------------------------------------------------
+Index: OpenFlipper/Core/ParseIni.cc
+===================================================================
+--- OpenFlipper/Core/ParseIni.cc	(Revision 5126)
++++ OpenFlipper/Core/ParseIni.cc	(Arbeitskopie)
+@@ -572,7 +572,7 @@
+       }
+ 
+       if ( newActiveObject )
+-        emit activeObjectChanged();
++        emit objectSelectionChanged(-1);
+ 
+     }
+ 
+Index: OpenFlipper/Core/PluginCommunication.cc
+===================================================================
+--- OpenFlipper/Core/PluginCommunication.cc	(Revision 5126)
++++ OpenFlipper/Core/PluginCommunication.cc	(Arbeitskopie)
+@@ -96,19 +96,26 @@
+   updateView();
+ }
+ 
+- void Core::slotVisibilityChanged() {
+-    resetScenegraph();
+-    updateView();
+- }
++void Core::slotVisibilityChanged( int _id ) {
+ 
+- /** This function is called if the active object has changed. The information is passed to all plugins.
+- */
+- void Core::slotActiveObjectChanged()
+- {
+-    // just inform the plugins as we dont do anything else
+-    emit activeObjectChanged();
+- }
++  // tell plugins
++  emit visibilityChanged( _id );
+ 
++  resetScenegraph();
++  updateView();
++}
++
++/** This function is called if the active object has changed. The information is passed to all plugins.
++*/
++void Core::slotObjectSelectionChanged( int _id )
++{
++  // just inform the plugins as we dont do anything else
++  emit objectSelectionChanged(_id);
++
++  std::cerr << "objectSelection changed triggrs updatedObjects for now" << std::endl;
++//   emit updatedObject(_id);
++}
++
+ //====================================================================================
+ // ===             Toolbox handling                                   =================
+ //=====================================================================================
+Index: OpenFlipper/Core/PluginLoader.cc
+===================================================================
+--- OpenFlipper/Core/PluginLoader.cc	(Revision 5126)
++++ OpenFlipper/Core/PluginLoader.cc	(Arbeitskopie)
+@@ -470,25 +470,34 @@
+       if ( checkSignal(plugin,"updateView()") )
+         connect(plugin,SIGNAL(updateView()),this,SLOT(updateView()));
+ 
++
++
+       if ( checkSignal(plugin,"updatedObject(int)") )
+         connect(plugin,SIGNAL(updatedObject(int)),this,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
+ 
+-      if ( checkSignal(plugin,"visibilityChanged()") )
+-        connect(plugin,SIGNAL(visibilityChanged()),this,SLOT(slotVisibilityChanged()), Qt::DirectConnection);
++      if ( checkSlot( plugin , "slotObjectUpdated(int)" ) )
++        connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
+ 
+ 
++
++      if ( checkSignal(plugin,"visibilityChanged(int)") )
++        connect(plugin,SIGNAL(visibilityChanged(int)),this,SLOT(slotVisibilityChanged(int)), Qt::DirectConnection);
++
++      if ( checkSlot(plugin,"slotVisibilityChanged(int)") )
++        connect(this,SIGNAL(visibilityChanged(int)),plugin,SLOT(slotVisibilityChanged(int)), Qt::DirectConnection);
++
++
+       if ( checkSlot(plugin,"slotAllCleared()") )
+         connect(this,SIGNAL(allCleared()),plugin,SLOT(slotAllCleared()));
+ 
+-      if ( checkSignal(plugin,"activeObjectChanged()") )
+-        connect(plugin,SIGNAL(activeObjectChanged()),this,SLOT(slotActiveObjectChanged() ));
+ 
+-      if ( checkSlot( plugin , "slotActiveObjectChanged()" ) )
+-        connect(this,SIGNAL(activeObjectChanged()),plugin,SLOT(slotActiveObjectChanged() ));
++      if ( checkSignal(plugin,"objectSelectionChanged(int)") )
++        connect(plugin,SIGNAL(objectSelectionChanged(int)),this,SLOT(slotObjectSelectionChanged(int) ));
+ 
+-      if ( checkSlot( plugin , "slotObjectUpdated(int)" ) )
+-        connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
++      if ( checkSlot( plugin , "slotObjectSelectionChanged(int)" ) )
++        connect(this,SIGNAL(objectSelectionChanged(int)),plugin,SLOT(slotObjectSelectionChanged(int) ));
+ 
++
+       if ( checkSlot( plugin , "pluginsInitialized()" ) )
+         connect(this,SIGNAL(pluginsInitialized()),plugin,SLOT(pluginsInitialized()), Qt::DirectConnection);
+ 
+Index: OpenFlipper/Core/openFunctions.cc
+===================================================================
+--- OpenFlipper/Core/openFunctions.cc	(Revision 5126)
++++ OpenFlipper/Core/openFunctions.cc	(Arbeitskopie)
+@@ -216,7 +216,7 @@
+ 
+   // Tell the Plugins that the Object List and the active object have changed
+    emit signalObjectUpdated(_id);
+-   emit activeObjectChanged();
++   emit objectSelectionChanged(-1);
+ 
+    backupRequest(_id,"Original Object");
+ 
+@@ -242,7 +242,7 @@
+  void Core::slotEmptyObjectAdded ( int _id ) {
+   // Tell the Plugins that the Object List and the active object have changed
+    emit signalObjectUpdated(_id);
+-   emit activeObjectChanged();
++   emit objectSelectionChanged(_id);
+ 
+    backupRequest(_id,"Original Object");
+ 
+Index: Plugin-Datacontrol/DataControlPlugin.hh
+===================================================================
+--- Plugin-Datacontrol/DataControlPlugin.hh	(Revision 5126)
++++ Plugin-Datacontrol/DataControlPlugin.hh	(Arbeitskopie)
+@@ -66,8 +66,8 @@
+     // BaseInterface
+     void updateView();
+     void updatedObject(int);
+-    void visibilityChanged();
+-    void activeObjectChanged();
++    void visibilityChanged( int _id );
++    void objectSelectionChanged(int _id);
+ 
+     void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                             QStringList _parameters, QStringList _descriptions);
+Index: Plugin-Datacontrol/ContextMenuDataControl.cc
+===================================================================
+--- Plugin-Datacontrol/ContextMenuDataControl.cc	(Revision 5126)
++++ Plugin-Datacontrol/ContextMenuDataControl.cc	(Arbeitskopie)
+@@ -12,12 +12,12 @@
+ //  it under the terms of the GNU Lesser General Public License as published by
+ //  the Free Software Foundation, either version 3 of the License, or
+ //  (at your option) any later version.
+-// 
++//
+ //  OpenFlipper is distributed in the hope that it will be useful,
+ //  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ //  GNU Lesser General Public License for more details.
+-// 
++//
+ //  You should have received a copy of the GNU Lesser General Public License
+ //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
+ //
+@@ -38,33 +38,33 @@
+ void DataControlPlugin::slotContextMenuTarget( ) {
+   QVariant contextObject = targetAction_->data();
+   int objectId = contextObject.toInt();
+-  
++
+   if ( objectId == -1)
+     return;
+-  
++
+   BaseObjectData* object;
+   if ( ! PluginFunctions::getObject(objectId,object) )
+     return;
+-  
++
+   object->target( targetAction_->isChecked() );
+-  
+-  emit activeObjectChanged();
++
++  emit objectSelectionChanged(objectId);
+   emit updatedObject(objectId);
+ }
+ 
+ void DataControlPlugin::slotContextMenuHide( ) {
+   QVariant contextObject = targetAction_->data();
+   int objectId = contextObject.toInt();
+-  
++
+   if ( objectId == -1)
+     return;
+-  
++
+   BaseObjectData* object;
+   if ( ! PluginFunctions::getObject(objectId,object) )
+     return;
+-  
++
+   object->hide();
+-  
++
+   emit updateView();
+   emit updatedObject(objectId);
+ }
+@@ -73,30 +73,29 @@
+ void DataControlPlugin::slotContextMenuSource( ) {
+   QVariant contextObject = sourceAction_->data();
+   int objectId = contextObject.toInt();
+-  
++
+   if ( objectId == -1)
+     return;
+-  
++
+   BaseObjectData* object;
+   if ( ! PluginFunctions::getObject(objectId,object) )
+     return;
+-  
++
+   object->source( sourceAction_->isChecked() );
+-  
+-  emit updatedObject(objectId);
++  emit objectSelectionChanged(object->id());
+ }
+ 
+ void DataControlPlugin::slotUpdateContextMenu( int _objectId) {
+   if ( _objectId == -1)
+     return;
+-  
++
+   BaseObjectData* object;
+   if ( ! PluginFunctions::getObject(_objectId,object) )
+     return;
+-  
++
+   sourceAction_->setText( "Source" );
+   sourceAction_->setChecked( object->source() );
+-  
++
+   targetAction_->setText( "Target" );
+   targetAction_->setChecked( object->target() );
+ }
+Index: Plugin-Datacontrol/DataControlPluginScripting.cc
+===================================================================
+--- Plugin-Datacontrol/DataControlPluginScripting.cc	(Revision 5126)
++++ Plugin-Datacontrol/DataControlPluginScripting.cc	(Arbeitskopie)
+@@ -384,8 +384,7 @@
+       model_->setData( index, true, 0 );
+     }
+   }
+-
+-  emit activeObjectChanged();
++  emit objectSelectionChanged(-1);
+   emit updatedObject(-1);
+ }
+ 
+@@ -434,7 +433,7 @@
+     }
+   }
+ 
+-  emit activeObjectChanged();
++  emit objectSelectionChanged(-1);
+   emit updatedObject(-1);
+ }
+ 
+Index: Plugin-Datacontrol/DataControlPlugin.cc
+===================================================================
+--- Plugin-Datacontrol/DataControlPlugin.cc	(Revision 5126)
++++ Plugin-Datacontrol/DataControlPlugin.cc	(Arbeitskopie)
+@@ -56,7 +56,7 @@
+ //******************************************************************************
+ 
+ /** \brief Plugin initialization
+- * 
++ *
+  */
+ void DataControlPlugin::pluginsInitialized() {
+ 
+@@ -93,7 +93,7 @@
+ //******************************************************************************
+ 
+ /** \brief initialize the toolBox
+- * 
++ *
+  * @param _widget a reference to the toolBox
+  * @return returns if the toolbox was created successfully
+  */
+@@ -155,7 +155,7 @@
+ //******************************************************************************
+ 
+ /** \brief inform the model that it has to reset when an object changes
+- * 
++ *
+  * @param _identifier id of an object
+  */
+ void DataControlPlugin::slotObjectUpdated( int _identifier ) {
+@@ -166,7 +166,7 @@
+ //******************************************************************************
+ 
+ /** \brief update drawing of objects when the active object changed
+- * 
++ *
+  */
+ void DataControlPlugin::slotActiveObjectChanged()
+ {
+@@ -206,7 +206,7 @@
+ //******************************************************************************
+ 
+ /** \brief a key event occurred
+- * 
++ *
+  * @param _event the event that occurred
+  */
+ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
+@@ -236,9 +236,9 @@
+ //******************************************************************************
+ 
+ /** \brief emit the right updates when the model changed
+- * 
++ *
+  * @param topLeft index in the model
+- * @param  
++ * @param
+  */
+ void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
+                                           const QModelIndex & /*bottomRight*/ )
+@@ -252,7 +252,7 @@
+ 
+     // show/hide
+     case 1:
+-        emit visibilityChanged( );
++        emit visibilityChanged( -1 );
+         emit updateView();
+       break;
+ 
+@@ -262,7 +262,7 @@
+ 
+     // target
+     case 3:
+-      emit activeObjectChanged();
++      emit objectSelectionChanged(-1);
+       break;
+ 
+     default:
+@@ -274,7 +274,7 @@
+ //******************************************************************************
+ 
+ /** \brief Store the expanded status of all objects when the model wants to reset
+- * 
++ *
+  */
+ void DataControlPlugin::slotModelAboutToReset(){
+ 
+@@ -306,7 +306,7 @@
+ //******************************************************************************
+ 
+ /** \brief restore the expanded status of all objects after reset
+- * 
++ *
+  */
+ void DataControlPlugin::slotModelResetComplete(){
+ 
+@@ -328,7 +328,7 @@
+ //******************************************************************************
+ 
+ /** \brief Load Groups from ini file
+- * 
++ *
+  * @param _ini an ini file
+  */
+ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
+@@ -400,7 +400,7 @@
+ //******************************************************************************
+ 
+ /** \brief Save groups to ini file
+- * 
++ *
+  * @param _ini an ini file
+  */
+ void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
