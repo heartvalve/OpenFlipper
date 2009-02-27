@@ -278,7 +278,11 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     glGetDoublev( GL_MODELVIEW_MATRIX, mvm);
     glPopMatrix();
     glGetDoublev( GL_PROJECTION_MATRIX, pm);
-    glGetIntegerv( GL_VIEWPORT, viewport);
+
+    viewport[0] = left;
+    viewport[1] = bottom;
+    viewport[2] = width;
+    viewport[3] = height;
 
 
     gluUnProject(posx, posy, 0.5, mvm, pm, viewport, &x, &y, &z);
@@ -375,8 +379,11 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       glGetDoublev( GL_MODELVIEW_MATRIX, mvm);
       glPopMatrix();
       glGetDoublev( GL_PROJECTION_MATRIX, pm);
-      glGetIntegerv( GL_VIEWPORT, viewport);
 
+      viewport[0] = left;
+      viewport[1] = bottom;
+      viewport[2] = width;
+      viewport[3] = height;
 
       gluUnProject(posx, posy, 0.5, mvm, pm, viewport, &x, &y, &z);
 
