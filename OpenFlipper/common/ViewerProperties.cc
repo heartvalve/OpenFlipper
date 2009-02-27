@@ -85,6 +85,5 @@ namespace Viewer {
     snapshotCounter_ = 0;
   }
 
-
-
 }
+
