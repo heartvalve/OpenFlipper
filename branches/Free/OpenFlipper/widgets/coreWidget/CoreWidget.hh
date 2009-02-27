@@ -527,9 +527,12 @@ public:
     /** Update the contextmenu for the given position inside an examiner widget
      *
      * @param _point      Picking position in coordinates of the viewer
-     * @param _examinerId Id of the examinerWidget used
      */
-    void updatePopupMenu(const QPoint& _point, unsigned int _examinerId);
+    void updatePopupMenu(const QPoint& _point);
+
+    /** This function creates the PopupMenu Part when clicking on the Coordsys Node
+     */
+    void updatePopupMenuCoordsysNode(QMenu* _menu , const QPoint& _point);
 
   private :
     /// context Menu for the gl area
