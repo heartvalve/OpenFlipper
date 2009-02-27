@@ -113,8 +113,10 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
 
       if ( node == 0 )
         std::cerr << "Node not found" << std::endl;
-      else
+      else {
         std::cerr << "Picked Node with name" << node->name() << std::endl;
+        std::cerr << "Target index was : " << target_idx << std::endl;
+      }
     }
   }
 
@@ -210,9 +212,11 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
     contextMenu_->addSeparator();
 
   if (examiner_widgets_[0]->getPickMenu() != NULL) {
-    examiner_widgets_[0]->getPickMenu()->setTitle("&Picking");
-    contextMenu_->addMenu(examiner_widgets_[0]->getPickMenu() );
-    examiner_widgets_[0]->getPickMenu()->setTearOffEnabled(true);
+    if ( examiner_widgets_[0]->getPickMenu()->actions().size() > 0 ) {
+      examiner_widgets_[0]->getPickMenu()->setTitle("&Picking");
+      contextMenu_->addMenu(examiner_widgets_[0]->getPickMenu() );
+      examiner_widgets_[0]->getPickMenu()->setTearOffEnabled(true);
+    }
   }
 
   // Add a functions menu
