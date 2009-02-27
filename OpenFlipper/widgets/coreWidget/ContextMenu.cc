@@ -51,27 +51,25 @@
 
 void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
-  QObject* senderPointer = sender();
-  unsigned int examinerId = 0;
+//   QObject* senderPointer = sender();
   QPoint   popupPosition;
   QPoint   scenePos;
 
-  if ( senderPointer == 0 ) {
-    std::cerr << "Error : slotCustomContextMenu directly called! This should only be called by an examiner" << std::endl;
-  } else {
-    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
-      if ( senderPointer == examiner_widgets_[i] ) {
-        popupPosition =  examiner_widgets_[i]->glMapToGlobal(_point);
-	     QPointF f = examiner_widgets_[i]->mapToScene(QPointF(_point.x(), _point.y()));
+//   if ( senderPointer == 0 ) {
+//     std::cerr << "Error : slotCustomContextMenu directly called! This should only be called by an examiner" << std::endl;
+//   } else {
+//     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+//       if ( senderPointer == examiner_widgets_[i] ) {
+        popupPosition =  examiner_widgets_[PluginFunctions::activeExaminer()]->glMapToGlobal(_point);
+	     QPointF f = examiner_widgets_[PluginFunctions::activeExaminer()]->mapToScene(QPointF(_point.x(), _point.y()));
 	     scenePos = QPoint (f.x(), f.y());
-        examinerId = i;
-        break;
-      }
-    }
+//         break;
+//       }
+//     }
 
-  }
+//   }
 
-  updatePopupMenu(scenePos,examinerId);
+  updatePopupMenu(scenePos);
 
   // If not initialized, dont show it!!
   if ( !contextMenu_->isEmpty () )
@@ -79,13 +77,17 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
 }
 
-void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId) {
+void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu , const QPoint& _point) {
+
+}
+
+void CoreWidget::updatePopupMenu(const QPoint& _point) {
 
   contextMenu_->clear();
   contextSelectionMenu_->clear();
 
   QIcon icon;
-  QAction* typeEntry = new QAction("No type",contextMenu_);
+  QAction* typeEntry = new QAction("Viewer",contextMenu_);
   contextMenu_->addAction( typeEntry );
 
   QAction* entrySeparator = contextMenu_->addSeparator( );
@@ -101,7 +103,7 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
   unsigned int    node_idx, target_idx;
   ACG::Vec3d      hit_point;
   BaseObjectData* object;
-  if (examiner_widgets_[_examinerId]->pick( ACG::SceneGraph::PICK_ANYTHING,_point,node_idx, target_idx, &hit_point ) ) {
+  if (examiner_widgets_[PluginFunctions::activeExaminer()]->pick( ACG::SceneGraph::PICK_ANYTHING,_point,node_idx, target_idx, &hit_point ) ) {
 
     if ( PluginFunctions::getPickedObject(node_idx, object) )
       objectId = object->id();
@@ -114,6 +116,11 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
       if ( node == 0 )
         std::cerr << "Node not found" << std::endl;
       else {
+        if ( node->name() == "Core Coordsys Node") {
+          std::cerr << "Picked Coordsys Node" << std::endl;
+          typeEntry->setText( "Viewer Settings" );
+
+        }
         std::cerr << "Picked Node with name" << node->name() << std::endl;
         std::cerr << "Target index was : " << target_idx << std::endl;
       }
@@ -296,16 +303,16 @@ void CoreWidget::updatePopupMenu(const QPoint& _point, unsigned int _examinerId)
 
   contextMenu_->addMenu(functionMenu_ );
 
-  if ( ( examiner_widgets_[_examinerId]->getDrawMenu() != NULL ) && OpenFlipper::Options::drawModesInContextMenu() ) {
+  if ( ( examiner_widgets_[PluginFunctions::activeExaminer()]->getDrawMenu() != NULL ) && OpenFlipper::Options::drawModesInContextMenu() ) {
 
-    examiner_widgets_[_examinerId]->getDrawMenu()->setTitle("&DrawModes");
-    QAction* drawMenuAction = contextMenu_->addMenu(examiner_widgets_[_examinerId]->getDrawMenu() );
+    examiner_widgets_[PluginFunctions::activeExaminer()]->getDrawMenu()->setTitle("&DrawModes");
+    QAction* drawMenuAction = contextMenu_->addMenu(examiner_widgets_[PluginFunctions::activeExaminer()]->getDrawMenu() );
 
     QIcon icon;
     icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
     drawMenuAction->setIcon(icon);
 
-    examiner_widgets_[_examinerId]->getDrawMenu()->setTearOffEnabled(true);
+    examiner_widgets_[PluginFunctions::activeExaminer()]->getDrawMenu()->setTearOffEnabled(true);
   }
 }
 
