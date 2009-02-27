@@ -337,68 +337,78 @@ getMode() const
 void
 CoordsysNode::pick(GLState& _state, PickTarget _target)
 {
-    if (_target == PICK_ANYTHING) {
+  if (_target == PICK_ANYTHING) {
+
     // Push Modelview-Matrix
-	_state.push_modelview_matrix();
-	glLoadName(0);
+    _state.push_modelview_matrix();
+    glLoadName(0);
 
     // Init state - changes when mode_ != POSITION
-	Vec3d pos3D(0.0,0.0,0.0);
+    Vec3d pos3D(0.0,0.0,0.0);
 
-	if ( mode_ == SCREENPOS ) {
+    if ( mode_ == SCREENPOS ) {
 
-	    int left, bottom, width, height;
-	    _state.get_viewport(left, bottom, width, height);
+      int left, bottom, width, height;
+      _state.get_viewport(left, bottom, width, height);
 
-	// Projection reset
-	    _state.push_projection_matrix();
-	    glMatrixMode(GL_PROJECTION);
-	    _state.reset_modelview();
-	    gluPerspective(45.0, _state.aspect(), 0.8, 20.0);
-	    glMatrixMode(GL_MODELVIEW);
+      // Projection reset
+      _state.push_projection_matrix();
+      glMatrixMode(GL_PROJECTION);
+      glPushMatrix ();
+      glLoadIdentity();
+      gluPerspective(45.0, _state.aspect(), 0.8, 20.0);
 
-	    float posx = width - 30.0 ;
-	    float posy = height - 30.0 ;
+      glMatrixMode(GL_MODELVIEW);
 
-	    Vec3d screenposCenterPoint( posx , posy , 0.0);
+      float posx = left + width - 30.0 ;
+      float posy = bottom + height - 30.0 ;
 
-	    double pm[16], mvm[16];
-	    double x,y,z;
-	    GLint viewport[4];
+      Vec3d screenposCenterPoint( posx , posy , 0.0);
 
-	    glMatrixMode(GL_MODELVIEW);
-	    _state.push_modelview_matrix();
-	    _state.reset_modelview();
-	    glGetDoublev( GL_MODELVIEW_MATRIX, mvm);
-	    _state.pop_modelview_matrix();
-	    glGetDoublev( GL_PROJECTION_MATRIX, pm);
-	    glGetIntegerv( GL_VIEWPORT, viewport);
+      double pm[16], mvm[16];
+      double x,y,z;
+      GLint viewport[4];
 
-	    gluUnProject(posx, posy, 0.5, mvm, pm, viewport, &x, &y, &z);
+      glMatrixMode(GL_MODELVIEW);
+      glPushMatrix();
+      glLoadIdentity();
+      glGetDoublev( GL_MODELVIEW_MATRIX, mvm);
+      glPopMatrix();
+      glGetDoublev( GL_PROJECTION_MATRIX, pm);
+      glGetIntegerv( GL_VIEWPORT, viewport);
 
-	    pos3D = Vec3d(x, y, z);
 
-	// Projection Translation
-	    glMatrixMode(GL_PROJECTION);
-	// Translation in rechte obere Ecke
-	    _state.translate(pos3D[0], pos3D[1], pos3D[2]-0.3);
-	    glMatrixMode(GL_MODELVIEW);
+      gluUnProject(posx, posy, 0.5, mvm, pm, viewport, &x, &y, &z);
 
-	// Koordinatensystem zeichnen
-	    drawCoordsysPick(_state);
+      pos3D = Vec3d(x, y, z);
 
-	// Projection reload
-	    _state.pop_projection_matrix();
-	    glMatrixMode(GL_MODELVIEW);
+      // Projection Translation
+      glMatrixMode(GL_PROJECTION);
 
-	} else if (mode_ == POSITION) { /* mode_ == POSITION */
+      // go back to gluPickMatrix
+      glPopMatrix ();
+      glMultMatrixd( _state.inverse_projection().get_raw_data());
+      // add our matrix
+      gluPerspective(45.0, _state.aspect(), 0.8, 20.0);
+      // Translation in rechte obere Ecke
+      glTranslatef(pos3D[0], pos3D[1], pos3D[2]-0.3);
+      glMatrixMode(GL_MODELVIEW);
 
-	    drawCoordsysPick(_state);
-	}
+      // Koordinatensystem zeichnen
+      drawCoordsysPick(_state);
 
-    // Reload old configuration
-	_state.pop_modelview_matrix();
+      // Projection reload
+      _state.pop_projection_matrix();
+
+    } else if (mode_ == POSITION) { /* mode_ == POSITION */
+
+      drawCoordsysPick(_state);
+
     }
+    // Reload old configuration
+    _state.pop_modelview_matrix();
+
+  }
 }
 
 //=============================================================================
