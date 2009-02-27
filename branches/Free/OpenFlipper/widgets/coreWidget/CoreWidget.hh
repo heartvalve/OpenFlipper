@@ -138,7 +138,7 @@ public:
     void exit();
 
     void loadPlugin();
-    void unloadPlugin();
+    void showPlugins();
 
   private slots:
 
@@ -394,9 +394,6 @@ public:
 
     /// QMenu containing the recently opened files
     QMenu* recentFilesMenu_;
-
-    /// Plugins Menu
-    QMenu* pluginsMenu_;
 
     /// Help Menu
     QMenu* helpMenu_;

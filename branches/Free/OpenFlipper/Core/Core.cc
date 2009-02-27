@@ -203,8 +203,7 @@ Core::init() {
     connect(coreWidget_, SIGNAL(recentOpen(QAction*)) , this, SLOT(slotRecentOpen(QAction*)));
     connect(coreWidget_, SIGNAL(exit())               , this, SLOT(slotExit()));
 
-    connect(coreWidget_, SIGNAL(loadPlugin())         , this, SLOT(slotLoadPlugin()));
-    connect(coreWidget_, SIGNAL(unloadPlugin())       , this, SLOT(slotUnloadPlugin()));
+    connect(coreWidget_, SIGNAL(showPlugins())       , this, SLOT(slotShowPlugins()));
 
     connect(coreWidget_, SIGNAL(call(QString,bool&)), this, SLOT(slotCall(QString,bool&)));
 

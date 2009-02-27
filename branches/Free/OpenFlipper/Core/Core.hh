@@ -575,8 +575,8 @@ private:
     /// Load all plugins from default plugin directory and from INI-File
     void loadPlugins();
   private slots:
-    /// Unload Plugins from menu
-    void slotUnloadPlugin();
+    /// Show Plugins Dialog
+    void slotShowPlugins();
 
     /// Function for unloading Plugins
     void unloadPlugin(QString name);
