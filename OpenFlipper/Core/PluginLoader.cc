@@ -80,7 +80,7 @@
 #include <QtScript/QScriptValueIterator>
 
 #include <ACG/QtWidgets/QtFileDialog.hh>
-#include "OpenFlipper/widgets/unloadPluginsWidget/unloadPluginsWidget.hh"
+#include "OpenFlipper/widgets/PluginDialog/PluginDialog.hh"
 
 //== IMPLEMENTATION ==========================================================
 
@@ -290,26 +290,29 @@ void Core::slotLoadPlugin(){
   loadPlugin(filename,false);
 }
 
-/** @brief slot for unloading Plugins
+/** @brief slot for showing loaded Plugins
  */
-void Core::slotUnloadPlugin(){
-  static unloadPluginsWidget* widget = 0;
+void Core::slotShowPlugins(){
 
-  //make a list of pluginNames
-  QStringList pluginNames;
-  for (uint i=0; i < plugins.size(); i++)
-    pluginNames << plugins[i].name;
+  if ( OpenFlipper::Options::gui() ){
 
-  //init and show the widget
-  if (!widget){
-    widget = new unloadPluginsWidget(pluginNames);
-    widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
-    connect( widget, SIGNAL(unload(QString)), this, SLOT(unloadPlugin(QString)));
-    connect( widget, SIGNAL(dontLoadPlugins(QStringList)), this, SLOT(dontLoadPlugins(QStringList)));
-  }else
-    widget->setPlugins(pluginNames);
+    int ret = 0;
 
-  widget->show();
+    while (ret == 0){
+
+      PluginDialog* dialog = new PluginDialog(plugins, coreWidget_);
+
+      //connect signals
+      connect(dialog, SIGNAL(unloadPlugin(QString)), this, SLOT(unloadPlugin(QString)));
+      connect(dialog, SIGNAL(dontLoadPlugins(QStringList)), this, SLOT(dontLoadPlugins(QStringList)));
+      connect(dialog, SIGNAL( loadPlugin() ), this, SLOT( slotLoadPlugin() ));
+
+      //if a plugin was deleted/loaded the dialog returns 0 and it needs to be loaded again
+      ret = dialog->exec();
+
+      delete dialog;
+    }
+  }
 }
 
 /** @brief Unload a Plugin with given name (slot)
@@ -317,7 +320,7 @@ void Core::slotUnloadPlugin(){
  */
 void Core::unloadPlugin(QString name){
   for (uint i=0; i < plugins.size(); i++)
-    if (plugins[i].name == name){
+    if (plugins[i].rpcName == name){
       if ( checkSlot( plugins[i].plugin , "exit()" ) )
         QMetaObject::invokeMethod(plugins[i].plugin, "exit",  Qt::DirectConnection);
 

@@ -205,32 +205,6 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addAction(AC_exit);
 
   // ======================================================================
-  // Plugins Menu
-  // ======================================================================
-  pluginsMenu_ = new QMenu(tr("&Plugins"));
-  menuBar()->addMenu(pluginsMenu_);
-
-  //Load Plugin
-  QAction* AC_LoadPlug = new QAction(tr("&Load Plugin"), this);
-  AC_LoadPlug->setStatusTip(tr("Load an additional plugin"));
-  AC_LoadPlug->setWhatsThis("Load an additional plugin from file");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"network-connect.png");
-  AC_LoadPlug->setIcon(icon);
-  connect(AC_LoadPlug, SIGNAL(triggered()), this, SIGNAL(loadPlugin()));
-  pluginsMenu_->addAction(AC_LoadPlug);
-
-  //Unload plugin
-  QAction* AC_UnloadPlug = new QAction(tr("&Unload Plugin"), this);
-  AC_UnloadPlug->setStatusTip(tr("Unload a plugin"));
-  AC_UnloadPlug->setWhatsThis("Close a currently loaded plugin");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"network-disconnect.png");
-  AC_UnloadPlug->setIcon(icon);
-  connect(AC_UnloadPlug, SIGNAL(triggered()), this, SIGNAL(unloadPlugin()));
-  pluginsMenu_->addAction(AC_UnloadPlug);
-
-  pluginsMenu_->addSeparator();
-
-  // ======================================================================
   // help Menu
   // ======================================================================
   helpMenu_ = new QMenu(tr("&Help"));
@@ -259,6 +233,17 @@ void CoreWidget::setupMenuBar()
   AC_Whats_this->setStatusTip(tr("Enter What's this Mode"));
   AC_Whats_this->setWhatsThis("Get information about a specific Button/Widget/...");
   helpMenu_->addAction(AC_Whats_this);
+
+  helpMenu_->addSeparator();
+
+  //show plugins
+  QAction* AC_Plugins = new QAction(tr("&Plugins"), this);
+  AC_Plugins->setStatusTip(tr("Show loaded plugins"));
+  AC_Plugins->setWhatsThis("Show loaded plugins");
+  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"network-connect.png");
+  AC_Plugins->setIcon(icon);
+  connect(AC_Plugins, SIGNAL(triggered()), this, SIGNAL(showPlugins()));
+  helpMenu_->addAction(AC_Plugins);
 
   helpMenu_->addSeparator();
 
