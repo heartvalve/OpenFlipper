@@ -84,7 +84,7 @@ slotLog(Logtype _type, QString _message) {
   bar->setValue(bar->maximum());
 
   // Make shure, we see the message
-  QApplication::processEvents();
+//   QApplication::processEvents();
 }
 
 //=============================================================================
