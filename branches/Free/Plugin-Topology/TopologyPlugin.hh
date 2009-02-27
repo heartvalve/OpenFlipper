@@ -77,6 +77,9 @@ class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterf
     // BaseInterface
     void pluginsInitialized();
 
+    //PickingInterface
+    void slotPickModeChanged( const std::string& _mode);
+
     // MouseInterface
     void slotMouseEvent( QMouseEvent* _event );
 
@@ -122,6 +125,14 @@ class TopologyPlugin : public QObject, BaseInterface , MouseInterface, KeyInterf
     std::vector< std::pair<int,int> > addFaceVertices_;
 
     QToolBar* toolbar_;
+
+    QAction* edgeFlipAction_;
+    QAction* edgeSplitAction_;
+    QAction* edgeCollapseAction_;
+
+    QAction* faceAddAction_;
+    QAction* faceDeleteAction_;
+    QAction* faceSplitAction_;
 
 
    public slots:

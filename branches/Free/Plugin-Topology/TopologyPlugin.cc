@@ -50,7 +50,7 @@
 //******************************************************************************
 
 /** \brief initialize the Plugin
- * 
+ *
  */
 void TopologyPlugin::pluginsInitialized() {
    emit addHiddenPickMode(EDGE_FLIP_POPUP);
@@ -64,27 +64,28 @@ void TopologyPlugin::pluginsInitialized() {
   toolbar_ = new QToolBar("Topology");
 
   QActionGroup* group = new QActionGroup(0);
-  QAction* act;
 
-  act = toolbar_->addAction( EDGE_FLIP_POPUP );
-  act->setCheckable( true);
-  act->setActionGroup(group);
-  act = toolbar_->addAction( EDGE_SPLIT_POPUP );
-  act->setCheckable( true);
-  act->setActionGroup(group);
-  act = toolbar_->addAction( EDGE_COLLAPSE_POPUP );
-  act->setCheckable( true);
-  act->setActionGroup(group);
+  QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+
+  edgeFlipAction_ = toolbar_->addAction( QIcon(iconPath + "topology-edgeFlip.png"), EDGE_FLIP_POPUP );
+  edgeFlipAction_->setCheckable( true);
+  edgeFlipAction_->setActionGroup(group);
+  edgeSplitAction_ = toolbar_->addAction( QIcon(iconPath + "topology-edgeSplit.png"), EDGE_SPLIT_POPUP );
+  edgeSplitAction_->setCheckable( true);
+  edgeSplitAction_->setActionGroup(group);
+  edgeCollapseAction_ = toolbar_->addAction( QIcon(iconPath + "topology-edgeCollapse.png"), EDGE_COLLAPSE_POPUP );
+  edgeCollapseAction_->setCheckable( true);
+  edgeCollapseAction_->setActionGroup(group);
   toolbar_->addSeparator();
-  act = toolbar_->addAction( FACE_ADD_POPUP );
-  act->setCheckable( true);
-  act->setActionGroup(group);
-  act = toolbar_->addAction( FACE_SPLIT_POPUP );
-  act->setCheckable( true);
-  act->setActionGroup(group);
-  act = toolbar_->addAction( FACE_DELETE_POPUP );
-  act->setCheckable( true);
-  act->setActionGroup(group);
+  faceAddAction_ = toolbar_->addAction( QIcon(iconPath + "topology-addFace.png"), FACE_ADD_POPUP );
+  faceAddAction_->setCheckable( true);
+  faceAddAction_->setActionGroup(group);
+  faceDeleteAction_ = toolbar_->addAction( QIcon(iconPath + "topology-deleteFace.png"), FACE_DELETE_POPUP );
+  faceDeleteAction_->setCheckable( true);
+  faceDeleteAction_->setActionGroup(group);
+  faceSplitAction_ = toolbar_->addAction( QIcon(iconPath + "topology-splitFace.png"), FACE_SPLIT_POPUP );
+  faceSplitAction_->setCheckable( true);
+  faceSplitAction_->setActionGroup(group);
 
   group->setExclusive(true);
 
@@ -98,7 +99,7 @@ void TopologyPlugin::pluginsInitialized() {
 
 
 /** \brief Toolbar action was triggered
- * 
+ *
  * @param _action the action that was triggered
  */
 void TopologyPlugin::toolBarTriggered(QAction* _action){
@@ -121,8 +122,24 @@ void TopologyPlugin::toolBarTriggered(QAction* _action){
 
 //******************************************************************************
 
+/** \brief Toggle actions when the PickMode changes
+ *
+ * @param _mode the new PickMode
+ */
+void TopologyPlugin::slotPickModeChanged( const std::string& _mode) {
+
+  edgeFlipAction_->setChecked(     _mode == EDGE_FLIP_POPUP );
+  edgeSplitAction_->setChecked(    _mode == EDGE_SPLIT_POPUP );
+  edgeCollapseAction_->setChecked( _mode == EDGE_COLLAPSE_POPUP );
+  faceAddAction_->setChecked(      _mode == FACE_ADD_POPUP );
+  faceDeleteAction_->setChecked(   _mode == FACE_DELETE_POPUP );
+  faceSplitAction_->setChecked(    _mode == FACE_SPLIT_POPUP );
+}
+
+//******************************************************************************
+
 /** \brief this is called when a mouse event occurred
- * 
+ *
  * @param _event the event that occurred
  */
 void TopologyPlugin::slotMouseEvent( QMouseEvent* _event ) {
@@ -141,7 +158,7 @@ void TopologyPlugin::slotMouseEvent( QMouseEvent* _event ) {
 //******************************************************************************
 
 /** \brief Deselect the vertices from AddFace mode
- * 
+ *
  */
 void TopologyPlugin::clearAddFaceVertices() {
   for ( uint i = 0 ; i < addFaceVertices_.size() ; ++i ) {
@@ -177,7 +194,7 @@ void TopologyPlugin::clearAddFaceVertices() {
 //******************************************************************************
 
 /** \brief Add a face
- * 
+ *
  * @param _event mouse position where one of the vertices is picked
  */
 void TopologyPlugin::add_face(QMouseEvent* _event) {
@@ -410,7 +427,7 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
 //******************************************************************************
 
 /** \brief Split a face at the given point
- * 
+ *
  * @param _event mouse position where the face is picked
  */
 void TopologyPlugin::split_face(QMouseEvent* _event) {
@@ -454,7 +471,7 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
 //******************************************************************************
 
 /** \brief Delete a face at the given position
- * 
+ *
  * @param _event mouse position where the face is picked
  */
 void TopologyPlugin::delete_face(QMouseEvent* _event) {
@@ -504,7 +521,7 @@ void TopologyPlugin::delete_face(QMouseEvent* _event) {
 //******************************************************************************
 
 /** \brief Flip an edge at the given position
- * 
+ *
  * @param _event mouse position where the edge is picked
  */
 void TopologyPlugin::flip_edge(QMouseEvent* _event) {
@@ -568,7 +585,7 @@ void TopologyPlugin::flip_edge(QMouseEvent* _event) {
 //******************************************************************************
 
 /** \brief Collapse an edge at the given position
- * 
+ *
  * @param _event mouse position where the edge is picked
  */
 void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
@@ -640,7 +657,7 @@ void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
 //******************************************************************************
 
 /** \brief Split an edge at the given position
- * 
+ *
  * @param _event mouse position where the edge is picked
  */
 void TopologyPlugin::split_edge(QMouseEvent* _event) {
