@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>311</width>
-    <height>404</height>
+    <height>383</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -28,13 +28,19 @@
       </item>
       <item row="1" column="0" >
        <widget class="QCheckBox" name="cbNormalDev" >
+        <property name="toolTip" >
+         <string>Restrict Normal Deviation</string>
+        </property>
+        <property name="statusTip" >
+         <string>Restrict Normal Deviation</string>
+        </property>
         <property name="text" >
          <string>Normal Dev.</string>
         </property>
        </widget>
       </item>
       <item row="1" column="2" >
-       <widget class="QSpinBox" name="sbNormalDev" >
+       <widget class="QSpinBox" name="normalDeviation" >
         <property name="enabled" >
          <bool>true</bool>
         </property>
@@ -45,6 +51,9 @@ p, li { white-space: pre-wrap; }
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Maximal normal deviation between &lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">original normal and normals after &lt;/p>
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">decimation step defined in degrees.&lt;/p>&lt;/body>&lt;/html></string>
+        </property>
+        <property name="statusTip" >
+         <string>Restrict Normal deviation</string>
         </property>
         <property name="maximum" >
          <number>180</number>
@@ -71,7 +80,13 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="2" column="1" >
-       <widget class="QSlider" name="horizontalSlider_2" >
+       <widget class="QSlider" name="roundnessSlider" >
+        <property name="maximum" >
+         <number>100</number>
+        </property>
+        <property name="value" >
+         <number>50</number>
+        </property>
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
@@ -88,7 +103,13 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="3" column="1" >
-       <widget class="QSlider" name="horizontalSlider_3" >
+       <widget class="QSlider" name="triangleCountSlider" >
+        <property name="maximum" >
+         <number>100000</number>
+        </property>
+        <property name="value" >
+         <number>5000</number>
+        </property>
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
@@ -100,7 +121,7 @@ p, li { white-space: pre-wrap; }
          <bool>true</bool>
         </property>
         <property name="maximum" >
-         <number>100000</number>
+         <number>99999</number>
         </property>
         <property name="value" >
          <number>5000</number>
@@ -127,7 +148,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="0" column="2" >
-       <widget class="QDoubleSpinBox" name="sbDistance" >
+       <widget class="QDoubleSpinBox" name="distance" >
         <property name="decimals" >
          <number>3</number>
         </property>
@@ -143,24 +164,30 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="QSlider" name="horizontalSlider" >
+       <widget class="QSlider" name="normalDeviationSlider" >
+        <property name="toolTip" >
+         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Maximal normal deviation between &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">original normal and normals after &lt;/p>
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">decimation step defined in degrees.&lt;/p>&lt;/body>&lt;/html></string>
+        </property>
+        <property name="statusTip" >
+         <string>Restrict Normal Deviation</string>
+        </property>
+        <property name="maximum" >
+         <number>180</number>
+        </property>
+        <property name="value" >
+         <number>10</number>
+        </property>
         <property name="orientation" >
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
      </layout>
-     <zorder>cbDistance</zorder>
-     <zorder>cbNormalDev</zorder>
-     <zorder>sbNormalDev</zorder>
-     <zorder>cbRoundness</zorder>
-     <zorder>horizontalSlider_2</zorder>
-     <zorder>cbTriangles</zorder>
-     <zorder>horizontalSlider_3</zorder>
-     <zorder>triangleCount</zorder>
-     <zorder>roundness</zorder>
-     <zorder>sbDistance</zorder>
-     <zorder>horizontalSlider</zorder>
     </widget>
    </item>
    <item>
@@ -191,5 +218,70 @@ p, li { white-space: pre-wrap; }
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>normalDeviationSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>normalDeviation</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>179</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>258</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>normalDeviation</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>normalDeviationSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>189</x>
+     <y>82</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>triangleCountSlider</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>triangleCount</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>190</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>261</x>
+     <y>141</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>triangleCount</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>triangleCountSlider</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>232</x>
+     <y>133</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>192</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

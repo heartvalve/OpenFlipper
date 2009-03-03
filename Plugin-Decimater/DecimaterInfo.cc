@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -31,78 +31,82 @@
 
 #include "DecimaterInfo.hh"
 
-DecimaterInfo::DecimaterInfo(DecimaterToolbarWidget* _tool , TriMesh* _mesh) :
-  tool_(_tool),
+DecimaterInfo::DecimaterInfo(TriMesh* _mesh) :
   decimater_(0),
   normalDeviation_(false),
   distance_(false),
   roundness_(false)
 {
   decimater_ = new DecimaterType( *_mesh );
-    
+
   decimater_->add( hModQuadric_priority );
   decimater_->module( hModQuadric_priority ).unset_max_err();
-    
-  update();    
+
 }
 
 
 DecimaterInfo::~DecimaterInfo() {
   if ( decimater_ )
-    delete decimater_;     
+    delete decimater_;
 }
 
 //-----------------------------------------------------------------------------------
 
-void DecimaterInfo::update() {
-    
+
+void DecimaterInfo::removeConstraints(){
+
   decimater_->module( hModQuadric_priority ).unset_max_err();
-    
-    //remove old module
-    
-  if ( normalDeviation_ && !tool_->cbNormalDev->isChecked() ) {
-    decimater_->remove( hModNormalFlipping ); 
+
+  //remove modules
+
+  if ( normalDeviation_ ) {
+    decimater_->remove( hModNormalFlipping );
     normalDeviation_ = false;
   }
-  
-  if ( distance_ && !tool_->cbDistance->isChecked() ) {
+
+  if ( distance_ ) {
     decimater_->remove( hModQuadric );
     distance_ = false;
   }
-    
-  if ( roundness_ && !tool_->cbRoundness->isChecked() ) {
+
+  if ( roundness_ ) {
     decimater_->remove( hModRoundness );
     roundness_ = false;
   }
-    
-  //add new module
-      
-  if ( tool_->cbNormalDev->isChecked() ) {
-    
-    if ( ! normalDeviation_)
-      if ( decimater_->add( hModNormalFlipping ) ) {
-        decimater_->module( hModNormalFlipping ).set_normal_deviation( tool_->sbNormalDev->value() );
-        normalDeviation_ = true;
-      }
-  }
-    
-  if ( tool_->cbDistance->isChecked() ) {
-    if ( ! distance_)
-      if (  decimater_->add( hModQuadric ) ) {
-        decimater_->module( hModQuadric ).set_max_err( tool_->sbDistance->value() );
-        distance_ = true;
-      }
-  }
-    
-  if ( tool_->cbRoundness->isChecked() ) {
-    if ( ! roundness_)
-      if ( ! decimater_->add( hModRoundness ) ) {
-        decimater_->module( hModRoundness ).set_min_roundness( tool_->roundness->value() , true );
-        roundness_ = true;
-      }
-  }
-  
-  decimater_->initialize();
-    
+
 }
+
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::setDistanceConstraint( double _value ){
+
+  if (  decimater_->add( hModQuadric ) ) {
+    decimater_->module( hModQuadric ).set_max_err( _value );
+    distance_ = true;
+  }
+}
+
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::setNormalDeviationConstraint( int _value ){
+
+  if ( decimater_->add( hModNormalFlipping ) ) {
+    decimater_->module( hModNormalFlipping ).set_normal_deviation( _value );
+    normalDeviation_ = true;
+  }
+}
+
+
+//-----------------------------------------------------------------------------------
+
+void DecimaterInfo::setRoundnessConstraint( double _value ){
+
+  if ( decimater_->add( hModRoundness ) ) {
+    decimater_->module( hModRoundness ).set_min_roundness( _value , true );
+    roundness_ = true;
+  }
+}
+
 
