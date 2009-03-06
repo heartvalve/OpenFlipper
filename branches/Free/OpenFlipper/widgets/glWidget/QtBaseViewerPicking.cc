@@ -63,20 +63,20 @@ bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
 {
   if (sceneGraphRoot_)
   {
-    unsigned int node, target;
-    QTime time;
-    time.start ();
+    // unsigned int node, target;
+    // QTime time;
+    // time.start ();
     int rv = pickColor (_pickTarget, _mousePos, _nodeIdx, _targetIdx, _hitPointPtr);
-    printf ("ColorPicking took %d msec\n",time.restart ());
-    rv = -1;
-    node = _nodeIdx;
-    target = _targetIdx;
+    // printf ("ColorPicking took %d msec\n",time.restart ());
+    // rv = -1;
+    // node = _nodeIdx;
+    // target = _targetIdx;
     if (rv < 0)
       rv = pickGL (_pickTarget, _mousePos, _nodeIdx, _targetIdx, _hitPointPtr);
-    printf ("GLPicking took %d msec\n",time.restart ());
+    // printf ("GLPicking took %d msec\n",time.restart ());
 
-    if (rv > 0 && (node != _nodeIdx || target != _targetIdx))
-      printf ("***** Picking difference Color %d/%d GL %d/%d\n",node, target, _nodeIdx, _targetIdx);
+    // if (rv > 0 && (node != _nodeIdx || target != _targetIdx))
+    //   printf ("***** Picking difference Color %d/%d GL %d/%d\n",node, target, _nodeIdx, _targetIdx);
     if (rv > 0)
       return rv;
   }
@@ -93,13 +93,8 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
                          ACG::Vec3d*                 _hitPointPtr )
 {
 
-  GLint         w = glWidth(),
-                h = glHeight(),
-                l = scenePos().x(),
-                b = scene()->height () - scenePos().y() - h,
-                x = _mousePos.x(),
+  GLint         x = _mousePos.x(),
                 y = scene()->height () - _mousePos.y();
-  GLint         viewport[4] = {l,b,w,h};
   GLubyte       pixels[9][3];
   GLfloat       depths[9];
   int           hit = -1;
