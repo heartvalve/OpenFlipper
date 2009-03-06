@@ -56,111 +56,224 @@ static const unsigned int  NAME_STACK_SIZE       = 2;
 
 
 bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
-                         const QPoint&               _mousePos,
-                         unsigned int&               _nodeIdx,
-                         unsigned int&               _targetIdx,
-                         ACG::Vec3d*                 _hitPointPtr )
+                     const QPoint&               _mousePos,
+                     unsigned int&               _nodeIdx,
+                     unsigned int&               _targetIdx,
+                     ACG::Vec3d*                 _hitPointPtr )
 {
   if (sceneGraphRoot_)
   {
-    GLint         w = glWidth(),
-                  h = glHeight(),
-		  l = scenePos().x(),
-		  b = scene()->height () - scenePos().y() - h,
-                  x = _mousePos.x(),
-                  y = scene()->height () - _mousePos.y();
-    GLint         viewport[4] = {l,b,w,h};
-    GLuint        selectionBuffer[ SELECTION_BUFFER_SIZE ],
-                  nameBuffer[ NAME_STACK_SIZE ];
+    unsigned int node, target;
+    QTime time;
+    time.start ();
+    int rv = pickColor (_pickTarget, _mousePos, _nodeIdx, _targetIdx, _hitPointPtr);
+    printf ("ColorPicking took %d msec\n",time.restart ());
+    rv = -1;
+    node = _nodeIdx;
+    target = _targetIdx;
+    if (rv < 0)
+      rv = pickGL (_pickTarget, _mousePos, _nodeIdx, _targetIdx, _hitPointPtr);
+    printf ("GLPicking took %d msec\n",time.restart ());
 
-    const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
-    const ACG::GLMatrixd&  projection = properties_.glState().projection();
-
-
-    // prepare GL state
-    makeCurrent();
-
-    glSelectBuffer( SELECTION_BUFFER_SIZE, selectionBuffer );
-    glRenderMode(GL_SELECT);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPickMatrix((GLdouble) x, (GLdouble) y, 3, 3, viewport);
-    glMultMatrixd(projection.get_raw_data());
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixd(modelview.get_raw_data());
-    glDisable(GL_LIGHTING);
-    glClear(GL_DEPTH_BUFFER_BIT);
-    glInitNames();
-    glPushName((GLuint) 0);
-
-    // do the picking
-    ACG::SceneGraph::PickAction action(_pickTarget);
-    ACG::SceneGraph::traverse(sceneGraphRoot_, action, properties_.glState());
-    int hits = glRenderMode(GL_RENDER);
-
-    // restore GL state
-    glMatrixMode( GL_PROJECTION );
-    glLoadMatrixd(projection.get_raw_data());
-    glMatrixMode( GL_MODELVIEW );
-    glLoadMatrixd(modelview.get_raw_data());
-    glEnable(GL_LIGHTING);
-
-    printf("Got %d Hits\n",hits);
-
-    // process hit record
-    if ( hits > 0 )
-    {
-      GLuint *ptr = selectionBuffer,
-      num_names,
-      z,
-      min_z=~(0u),
-      max_z=0;
-
-      for (int i=0; i<hits; ++i)
-      {
-        num_names = *ptr++;
-        if ( num_names != NAME_STACK_SIZE )
-        {
-          std::cerr << "glViewer::pick() : namestack error\n\n";
-          return false;
-        }
-
-        if ( (z = *ptr++) < min_z )
-        {
-          min_z = z;
-          max_z = *ptr++;
-          for (unsigned int j=0; j<num_names; ++j)
-            nameBuffer[j] = *ptr++;
-        }
-        else ptr += 1+num_names;
-      }
-
-      _nodeIdx   = nameBuffer[0];
-      _targetIdx = nameBuffer[1];
-
-      printf("Found Node %d Element %d\n",_nodeIdx, _targetIdx);
-
-      if (_hitPointPtr)
-      {
-        GLuint zscale=~(0u);
-        GLdouble min_zz = ((GLdouble)min_z) / ((GLdouble)zscale);
-        GLdouble max_zz = ((GLdouble)max_z) / ((GLdouble)zscale);
-        GLdouble zz     = 0.5F * (min_zz + max_zz);
-        *_hitPointPtr = properties_.glState().unproject(ACG::Vec3d(x,y,zz));
-      }
-
-      return true;
-    }
-    else if (hits < 0)
-      std::cerr << "glViewer::pick() : selection buffer overflow\n\n";
+    if (rv > 0 && (node != _nodeIdx || target != _targetIdx))
+      printf ("***** Picking difference Color %d/%d GL %d/%d\n",node, target, _nodeIdx, _targetIdx);
+    if (rv > 0)
+      return rv;
   }
-
   return false;
 }
 
 
 //-----------------------------------------------------------------------------
 
+int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
+                         const QPoint&               _mousePos,
+                         unsigned int&               _nodeIdx,
+                         unsigned int&               _targetIdx,
+                         ACG::Vec3d*                 _hitPointPtr )
+{
+
+  GLint         w = glWidth(),
+                h = glHeight(),
+                l = scenePos().x(),
+                b = scene()->height () - scenePos().y() - h,
+                x = _mousePos.x(),
+                y = scene()->height () - _mousePos.y();
+  GLint         viewport[4] = {l,b,w,h};
+  GLubyte       pixels[9][3];
+  GLfloat       depths[9];
+  int           hit = -1;
+  unsigned char order[9] = { 4, 7, 1, 3, 5, 0, 2, 6, 8 };
+
+  const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
+  const ACG::GLMatrixd&  projection = properties_.glState().projection();
+
+  // prepare GL state
+  makeCurrent();
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  //    gluPickMatrix((GLdouble) x, (GLdouble) y, 3, 3, viewport);
+  glMultMatrixd(projection.get_raw_data());
+  glMatrixMode(GL_MODELVIEW);
+  glLoadMatrixd(modelview.get_raw_data());
+  glDisable(GL_LIGHTING);
+  glEnable(GL_DEPTH_TEST);
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+  properties_.glState().pick_init (true);
+
+  // do the picking
+  ACG::SceneGraph::PickAction action(_pickTarget);
+  ACG::SceneGraph::traverse(sceneGraphRoot_, action, properties_.glState());
+
+  // restore GL state
+  glMatrixMode( GL_PROJECTION );
+  glLoadMatrixd(projection.get_raw_data());
+  glMatrixMode( GL_MODELVIEW );
+  glLoadMatrixd(modelview.get_raw_data());
+  glEnable(GL_LIGHTING);
+
+  if (properties_.glState().pick_error ())
+    return -1;
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  glReadPixels (x, y, 3, 3, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+  glReadPixels (x, y, 3, 3, GL_DEPTH_COMPONENT, GL_FLOAT, depths);
+
+  for (int i = 0; i < 9; i++)
+  {
+    if (hit < 0 && (pixels[order[i]][2] != 0 || pixels[order[i]][1] != 0 || pixels[order[i]][0] != 0))
+    {
+      hit = order[i];
+      break;
+    }
+  }
+
+  if (hit < 0)
+    return 0;
+
+
+  ACG::Vec3uc rgb;
+  rgb[0] = pixels[hit][0];
+  rgb[1] = pixels[hit][1];
+  rgb[2] = pixels[hit][2];
+
+  std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgb);
+
+  // something wrong with the color stack ?
+  if (rv.size () < 2)
+    return -1;
+
+  _nodeIdx   = rv[1];
+  _targetIdx = rv[0];
+
+  if (_hitPointPtr)
+  {
+    *_hitPointPtr = properties_.glState().unproject(ACG::Vec3d(x,y,depths[hit]));
+  }
+
+  return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+bool glViewer::pickGL( ACG::SceneGraph::PickTarget _pickTarget,
+                       const QPoint&               _mousePos,
+                       unsigned int&               _nodeIdx,
+                       unsigned int&               _targetIdx,
+                       ACG::Vec3d*                 _hitPointPtr )
+{
+  GLint         w = glWidth(),
+                h = glHeight(),
+                l = scenePos().x(),
+                b = scene()->height () - scenePos().y() - h,
+                x = _mousePos.x(),
+                y = scene()->height () - _mousePos.y();
+  GLint         viewport[4] = {l,b,w,h};
+  GLuint        selectionBuffer[ SELECTION_BUFFER_SIZE ],
+                nameBuffer[ NAME_STACK_SIZE ];
+
+  const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
+  const ACG::GLMatrixd&  projection = properties_.glState().projection();
+
+  // prepare GL state
+  makeCurrent();
+
+  glSelectBuffer( SELECTION_BUFFER_SIZE, selectionBuffer );
+  glRenderMode(GL_SELECT);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  gluPickMatrix((GLdouble) x, (GLdouble) y, 3, 3, viewport);
+  glMultMatrixd(projection.get_raw_data());
+  glMatrixMode(GL_MODELVIEW);
+  glLoadMatrixd(modelview.get_raw_data());
+  glDisable(GL_LIGHTING);
+  glClear(GL_DEPTH_BUFFER_BIT);
+  properties_.glState().pick_init (false);
+
+  // do the picking
+  ACG::SceneGraph::PickAction action(_pickTarget);
+  ACG::SceneGraph::traverse(sceneGraphRoot_, action, properties_.glState());
+  int hits = glRenderMode(GL_RENDER);
+
+  // restore GL state
+  glMatrixMode( GL_PROJECTION );
+  glLoadMatrixd(projection.get_raw_data());
+  glMatrixMode( GL_MODELVIEW );
+  glLoadMatrixd(modelview.get_raw_data());
+  glEnable(GL_LIGHTING);
+
+  // process hit record
+  if ( hits > 0 )
+  {
+    GLuint *ptr = selectionBuffer,
+    num_names,
+    z,
+    min_z=~(0u),
+    max_z=0;
+
+    for (int i=0; i<hits; ++i)
+    {
+      num_names = *ptr++;
+      if ( num_names != NAME_STACK_SIZE )
+      {
+        std::cerr << "glViewer::pick() : namestack error\n\n";
+        return false;
+      }
+
+      if ( (z = *ptr++) < min_z )
+      {
+        min_z = z;
+        max_z = *ptr++;
+        for (unsigned int j=0; j<num_names; ++j)
+          nameBuffer[j] = *ptr++;
+      }
+      else ptr += 1+num_names;
+    }
+
+    _nodeIdx   = nameBuffer[0];
+    _targetIdx = nameBuffer[1];
+
+    if (_hitPointPtr)
+    {
+      GLuint zscale=~(0u);
+      GLdouble min_zz = ((GLdouble)min_z) / ((GLdouble)zscale);
+      GLdouble max_zz = ((GLdouble)max_z) / ((GLdouble)zscale);
+      GLdouble zz     = 0.5F * (min_zz + max_zz);
+      *_hitPointPtr = properties_.glState().unproject(ACG::Vec3d(x,y,zz));
+    }
+
+    return true;
+  }
+  else if (hits < 0)
+    std::cerr << "glViewer::pick() : selection buffer overflow\n\n";
+
+  return false;
+}
+
+//-----------------------------------------------------------------------------
 
 bool
 glViewer::

@@ -572,6 +572,7 @@ void glViewer::drawScene_mono()
       glPushName((GLuint) 0);
 
       // do the picking
+      glstate_->pick_init (true);
       ACG::SceneGraph::PickAction action(properties_.renderPickingMode());
       ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_);
 
