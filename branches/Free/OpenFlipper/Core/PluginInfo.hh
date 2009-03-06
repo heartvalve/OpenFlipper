@@ -39,7 +39,7 @@ class PluginInfo{
      rpcFunctions.clear();
      slotInfos.clear();
      keys.clear();
-     widget = 0;
+     widgets.clear();
      optionsWidget = 0;
   }
 
@@ -55,7 +55,7 @@ class PluginInfo{
      rpcFunctions = _i.rpcFunctions;
      slotInfos = _i.slotInfos;
      keys = _i.keys;
-     widget = _i.widget;
+     widgets = _i.widgets;
      optionsWidget = _i.optionsWidget;
   }
 
@@ -87,7 +87,7 @@ class PluginInfo{
   QList< KeyBinding > keys;
 
   /// Pointer to plugins toolbar widget (if available)
-  QWidget* widget;
+  std::vector< std::pair< QString , QWidget* > > widgets;
 
   /// Pointer to plugins options widget (if available)
   QWidget* optionsWidget;

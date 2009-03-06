@@ -160,12 +160,9 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolWidgets){
   //find all widgets that should be visible
   for (int i=0; i < _toolWidgets.size(); i++)
     for (uint p=0; p < plugins_.size(); p++){
-      if (plugins_[p].widget == 0) continue;
-      QString name_nospace = plugins_[p].name;
-      name_nospace.remove(" ");
-      if (_toolWidgets[i] == name_nospace ){
-        toolBox_->addItem (plugins_[p].widget, plugins_[p].name);
-      }
+      for ( uint j = 0 ; j < plugins_[p].widgets.size(); ++j )
+        if (_toolWidgets[i] == plugins_[p].widgets[j].first )
+          toolBox_->addItem (plugins_[p].widgets[j].second, plugins_[p].widgets[j].first);
     }
 
   if (_mode != "")

@@ -329,10 +329,11 @@ void Core::unloadPlugin(QString name){
       name_nospace.remove(" ");
       if ( coreWidget_->viewModes_[0]->visibleWidgets.contains(name_nospace) )
         coreWidget_->viewModes_[0]->visibleWidgets.removeAt(coreWidget_->viewModes_[0]->visibleWidgets.indexOf(name_nospace));
-      if (plugins[i].widget){
-        plugins[i].widget->setVisible(false);
-        delete plugins[i].widget;
-      }
+      for ( uint j = 0 ; j < plugins[i].widgets.size() ; ++j )
+        if (plugins[i].widgets[j].second ){
+          plugins[i].widgets[j].second->setVisible(false);
+          delete plugins[i].widgets[j].second;
+        }
 
       plugins.erase(plugins.begin() + i);
 
@@ -436,7 +437,6 @@ void Core::loadPlugin(QString filename, bool silent){
       info.description   = basePlugin->description();
       info.plugin        = plugin;
       info.path          = filename;
-      info.widget        = 0;
 
       if ( checkSlot(plugin,"version()") )
         info.version = basePlugin->version();
@@ -583,13 +583,11 @@ void Core::loadPlugin(QString filename, bool silent){
       QWidget* widget = 0;
       if ( toolboxPlugin->initializeToolbox( widget ) ) {
 
-            info.widget = widget;
+            info.widgets.push_back( std::pair< QString,QWidget* >( info.name , widget) );
 
             // add widget name to viewMode 'all'
-            QString name_nospace = info.name;
-            name_nospace.remove(" ");
-            if ( !viewModes_[0]->visibleWidgets.contains(name_nospace) ){
-              viewModes_[0]->visibleWidgets << name_nospace;
+            if ( !viewModes_[0]->visibleWidgets.contains(info.name) ){
+              viewModes_[0]->visibleWidgets << info.name;
               viewModes_[0]->visibleWidgets.sort();
             }
       }
@@ -597,6 +595,12 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin, "defineViewMode(QString,QStringList)"))
         connect(plugin, SIGNAL( defineViewMode(QString, QStringList) ),
                 coreWidget_, SLOT( slotAddViewMode(QString, QStringList) ),Qt::DirectConnection );
+
+      if ( checkSignal(plugin, "addToolbox(QString,QWidget*)"))
+        connect(plugin, SIGNAL( addToolbox(QString,QWidget*) ),
+                this, SLOT( slotAddToolbox(QString,QWidget*) ),Qt::DirectConnection );
+
+
 
     }
 
