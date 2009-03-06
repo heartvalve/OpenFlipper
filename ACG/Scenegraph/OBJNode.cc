@@ -205,7 +205,7 @@ OBJNode::draw_obj_tex() const
 
 
 void
-OBJNode::pick(GLState& /* _state */ , PickTarget _target)
+OBJNode::pick(GLState& _state, PickTarget _target)
 {
   switch (_target)
   {
@@ -218,9 +218,10 @@ OBJNode::pick(GLState& /* _state */ , PickTarget _target)
       break;
     }
     case PICK_ANYTHING:
-    case PICK_FACE: 
-    { 
-      glLoadName(0);
+    case PICK_FACE:
+    {
+      _state.pick_set_maximum (1);
+      _state.pick_set_name (0);
       draw_obj();
       break; 
     }

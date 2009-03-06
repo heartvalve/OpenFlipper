@@ -76,28 +76,11 @@ bool PickAction::operator()(BaseNode* _node, GLState& _state)
   glDisable(GL_DITHER);
   glShadeModel(GL_FLAT);
 
-
-  if (pickTarget_ == PICK_COLOR_PASS1)
-  {
-    ColorTranslator  ct;
-    ct.initialize();
-
-    if (ct.max_index() < _node->id())
-    {
-      std::cerr << "PickAction: color range too small, picking failed\n";
-      return false;
-    }
-
-    glColor(ct.index2color(_node->id()));
-  }
-
-
-  glLoadName((GLuint) _node->id()); 
-  glPushName(0);
+  _state.pick_push_name ((GLuint) _node->id());
 
   _node->pick(_state, pickTarget_);
 
-  glPopName();
+  _state.pick_pop_name ();
   return true;
 }
 

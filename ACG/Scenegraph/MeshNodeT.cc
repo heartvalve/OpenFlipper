@@ -1085,27 +1085,20 @@ draw_faces(FaceMode _mode)
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-pick(GLState& /* _state */ , PickTarget _target)
+pick(GLState& _state, PickTarget _target)
 {
   switch (_target)
   {
     case PICK_VERTEX:
     {
-      pick_vertices();
+      pick_vertices(_state);
       break;
     }
 
     case PICK_ANYTHING:
     case PICK_FACE:
-    case PICK_COLOR_PASS1:
     {
-      pick_faces(false);
-      break;
-    }
-
-    case PICK_COLOR_PASS2:
-    {
-      pick_faces(true);
+      pick_faces(_state);
       break;
     }
 
@@ -1121,15 +1114,22 @@ pick(GLState& /* _state */ , PickTarget _target)
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-pick_vertices()
+pick_vertices(GLState& _state)
 {
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
                                  v_end(mesh_.vertices_end());
   GLuint                         idx(0);
 
+  if (!_state.pick_set_maximum (mesh_.n_vertices()))
+  {
+    omerr() << "MeshNode::pick_vertices: color range too small, "
+            << "picking failed\n";
+    return;
+  }
+
   for (; v_it!=v_end; ++v_it, ++idx)
   {
-    glLoadName(idx);
+    _state.pick_set_name (idx);
     glBegin(GL_POINTS);
     glVertex(mesh_.point(v_it));
     glEnd();
@@ -1143,7 +1143,7 @@ pick_vertices()
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-pick_faces(bool _face_color)
+pick_faces(GLState& _state)
 {
   typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
                                       f_end(mesh_.faces_end());
@@ -1151,28 +1151,19 @@ pick_faces(bool _face_color)
   ColorTranslator                     ct;
 
 
-  if (_face_color)
+  if (!_state.pick_set_maximum (mesh_.n_faces()))
   {
-    ct.initialize();
-    if (ct.max_index() < mesh_.n_faces())
-    {
-      omerr() << "MeshNode::pick_faces: color range too small, "
-	      << "picking failed\n";
-      return;
-    }
+    omerr() << "MeshNode::pick_faces: color range too small, "
+	    << "picking failed\n";
+    return;
   }
-
 
   if (mesh_.is_trimesh())
   {
     for (; f_it!=f_end; ++f_it)
     {
       // set index
-      glLoadName(f_it.handle().idx());
-
-      // set color representing index idx
-      if (_face_color)
-	     glColor(ct.index2color(f_it.handle().idx()));
+      _state.pick_set_name (f_it.handle().idx());
 
       glBegin(GL_TRIANGLES);
       glVertex(mesh_.point(fv_it=mesh_.cfv_iter(f_it)));
@@ -1186,11 +1177,7 @@ pick_faces(bool _face_color)
     for (; f_it!=f_end; ++f_it)
     {
       // set index
-      glLoadName(f_it.handle().idx());
-
-      // set color representing index idx
-      if (_face_color)
-	     glColor(ct.index2color(f_it.handle().idx()));
+      _state.pick_set_name (f_it.handle().idx());
 
       glBegin(GL_POLYGON);
 

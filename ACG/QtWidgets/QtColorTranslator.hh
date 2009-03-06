@@ -34,13 +34,13 @@
 
 //=============================================================================
 //
-//  CLASS ColorTranslator
+//  CLASS QtColorTranslator
 //
 //=============================================================================
 
 
-#ifndef ACG_COLORTRANSLATOR_HH
-#define ACG_COLORTRANSLATOR_HH
+#ifndef ACG_QTCOLORTRANSLATOR_HH
+#define ACG_QTCOLORTRANSLATOR_HH
 
 
 //== INCLUDES =================================================================
@@ -56,29 +56,29 @@ namespace ACG {
 //== CLASS DEFINITION =========================================================
 
 
-/** \class ColorTranslator ColorTranslator.hh <ACG/QtWidgets/ColorTranslator.hh>
+/** \class QtColorTranslator QtColorTranslator.hh <ACG/QtWidgets/QtColorTranslator.hh>
 
     This class translates index <-> RGB color.
 
-    The ColorTranslator is attached to a QGLContext and translates
+    The QtColorTranslator is attached to a QGLContext and translates
     index to color and vice versa. If the RGB bits of one buffer are
     not sufficient, both front and back buffer can be used.
 **/
 
-class ACGDLLEXPORT ColorTranslator
+class ACGDLLEXPORT QtColorTranslator
 {
 public:
 
   /// Default constructor.
-  ColorTranslator()
+  QtColorTranslator()
     : initialized_(false) {};
 
   /// construct with QGLcontext
-  ColorTranslator(QGLContext& _context)
+  QtColorTranslator(QGLContext& _context)
   { initialize(_context); }
 
   /// Destructor.
-  ~ColorTranslator(){};
+  ~QtColorTranslator(){};
 
 
   /// init (takes current QGLcontext)
@@ -123,6 +123,6 @@ private:
 //=============================================================================
 } // namespace ACG
 //=============================================================================
-#endif // ACG_COLORTRANSLATOR_HH defined
+#endif // ACG_QTCOLORTRANSLATOR_HH defined
 //=============================================================================
 

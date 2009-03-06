@@ -505,11 +505,13 @@ SliceNode::set_texture_box( const Vec3f & _box_min,
 
 
 void
-SliceNode::pick( GLState & /* _state */ , PickTarget /* _target */  )
+SliceNode::pick( GLState & _state, PickTarget /* _target */  )
 {
 //   if ( _target == PICK_ANYTHING )
 //     return;
 
+  _state.pick_set_maximum (1);
+  _state.pick_set_name (0);
   glDisable(GL_LIGHTING);
   glPushMatrix();
   draw_planes();

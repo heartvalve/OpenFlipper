@@ -53,7 +53,6 @@
 
 
 namespace ACG {
-namespace SceneGraph {
 
 
 //== CLASS DEFINITION =========================================================
@@ -100,7 +99,6 @@ private:
 
 
 //=============================================================================
-} // namespace SceneGraph
 } // namespace ACG
 //=============================================================================
 #endif // ACG_COLORTRANSLATOR_HH defined

@@ -50,7 +50,9 @@
 #include "../Math/GLMatrixT.hh"
 #include "../Math/VectorT.hh"
 #include "../Config/ACGDefines.hh"
+#include "ColorStack.hh"
 #include <stack>
+#include <vector>
 
 #ifdef WIN32
 	#pragma warning(push)
@@ -364,7 +366,34 @@ public:
   /// get whether transparenet or solid objects should be drawn
   bool twosided_lighting() { return twosided_lighting_; }
 
+  //--- picking ---------------------------------------------------------------
 
+  /// initialize name/color picking stack
+  void pick_init (bool _color);
+
+  /// sets the maximum used name index at current stack position (only used in color picking)
+  bool pick_set_maximum (unsigned int _idx);
+
+  /// sets the current name/color
+  void pick_set_name (unsigned int _idx);
+
+  /// creates a new name the stack
+  void pick_push_name (unsigned int _idx);
+
+  /// pops the current name from the stack
+  void pick_pop_name ();
+
+  /// converts the given color to index values on the stack (only used in color picking)
+  std::vector<unsigned int> pick_color_to_stack (Vec3uc _rgb) const;
+
+  /// returns maximal available index count (only used in color picking)
+  unsigned int pick_free_indicies () const;
+
+  /// Did an error occur during picking (only used in color picking)
+  bool pick_error () const;
+
+  /// returns the current color picking index (can be used for caching)
+  unsigned int pick_current_index () const;
 
 
 private: //--------------------------------------------------------------------
@@ -422,6 +451,12 @@ private: //--------------------------------------------------------------------
 
   // time since last redraw
   unsigned int msSinceLastRedraw_;
+
+  // stack for color picking
+  ColorStack colorStack_;
+
+  // are we using color picking
+  bool colorPicking_;
 
 };
 

@@ -176,12 +176,12 @@ CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
   // Origin
     glLoadIdentity();
-    glLoadName(0);
+    _state.pick_set_name (0);
     gluSphere( quadric, sphereRadius, slices, stacks );
 
   // X-Axis
     glLoadIdentity();
-    glLoadName(1);
+    _state.pick_set_name (1);
     glMultMatrixd(modelview.get_raw_data());
     glRotatef(-90, 0, 1, 0);
     glTranslatef( 0, 0, -bodyLength );
@@ -196,7 +196,7 @@ CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
   // Y-Axis
     glLoadIdentity();
-    glLoadName(2);
+    _state.pick_set_name (2);
     glMultMatrixd(modelview.get_raw_data());
     glRotatef(90, 1, 0, 0);
     glTranslatef( 0, 0, -bodyLength );
@@ -211,7 +211,7 @@ CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
   // Z-Axis
     glLoadIdentity();
-    glLoadName(3);
+    _state.pick_set_name (3);
     glMultMatrixd(modelview.get_raw_data());
     glRotatef(180, 0, 1, 0);
     glTranslatef( 0, 0, -bodyLength );
@@ -345,7 +345,8 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
     // Push Modelview-Matrix
     _state.push_modelview_matrix();
-    glLoadName(0);
+    _state.pick_set_maximum (4);
+    _state.pick_set_name (0);
 
     // Init state - changes when mode_ != POSITION
     Vec3d pos3D(0.0,0.0,0.0);

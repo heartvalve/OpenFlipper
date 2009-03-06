@@ -52,6 +52,7 @@
 
 #include <QMouseEvent>
 #include <QEvent>
+#include <QRgb>
 
 
 

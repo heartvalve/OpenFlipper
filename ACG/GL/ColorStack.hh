@@ -1,0 +1,157 @@
+//=============================================================================
+//
+//                               OpenFlipper
+//        Copyright (C) 2008 by Computer Graphics Group, RWTH Aachen
+//                           www.openflipper.org
+//
+//-----------------------------------------------------------------------------
+//
+//                                License
+//
+//  OpenFlipper is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+// 
+//  OpenFlipper is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+// 
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
+//
+//-----------------------------------------------------------------------------
+//
+//   $Revision: 3469 $
+//   $Author: moebius $
+//   $Date: 2008-10-17 15:15:46 +0200 (Fr, 17. Okt 2008) $
+//
+//=============================================================================
+
+
+
+
+//=============================================================================
+//
+//  CLASS ColorStack
+//
+//=============================================================================
+
+#ifndef ACG_COLORSTACK_HH
+#define ACG_COLORSTACK_HH
+
+
+//== INCLUDES =================================================================
+
+#include <vector>
+
+#include "gl.hh"
+#include "../Math/VectorT.hh"
+#include "ColorTranslator.hh"
+
+
+//== NAMESPACES ===============================================================
+
+
+namespace ACG {
+
+
+//== CLASS DEFINITION =========================================================
+
+
+/** This class can be used to implement a gl picking stack based on colors
+*/
+class ACGDLLEXPORT ColorStack
+{
+public:
+   
+  /// Default constructor.
+  ColorStack();
+   /// Destructor.
+  ~ColorStack();
+
+  
+  /// init (takes current GL context/ like glInitNames (); glPushName (0))
+  void initialize();
+  /// has it been initialized?
+  bool initialized() const { return initialized_; }
+
+  /// sets the maximum index number used in current node 
+  bool setMaximumIndex (unsigned int _idx);
+
+  /// sets the current color the given index (like glLoadName)
+  void setIndex (unsigned int _idx);
+
+  /// creates a new node the stack (like glPushName)
+  void pushIndex (unsigned int _idx);
+
+  /// pops the current node from the stack (like glPopName)
+  void popIndex ();
+
+  /// converts the given color to index values on the stack
+  std::vector<unsigned int> colorToStack (Vec3uc _rgb) const;
+
+  /// returns maximal available index count
+  unsigned int freeIndicies () const;
+
+  /// Did an error occur during picking
+  bool error () const { return error_ && initialized_; };
+
+  /// returns the current color index
+  unsigned int currentIndex () const;
+
+private:
+
+  // Internal class used realize the color stack
+
+  class Node {
+    public:
+      Node (unsigned int _idx, Node *_parent, ColorTranslator *_ct);
+      ~Node ();
+
+      /// sets the maximum index number used in current node 
+      bool setMaximumIndex (unsigned int _idx);
+
+      /// sets the current color the given index (like glLoadName)
+      bool setIndex (unsigned int _idx) const;
+
+      /// creates a new node the stack (like glPushName)
+      Node * pushIndex (unsigned int _idx);
+
+      /// pops the current node from the stack (like glPopName)
+      Node * popIndex ();
+
+      void colorToStack (std::vector<unsigned int> &_stack, unsigned int _index);
+
+      unsigned int startIndex () { return startIdx_; };
+      unsigned int endIndex () { return endIdx_; };
+      unsigned int colorIndex () { return colorStartIdx_; };
+
+    private:
+      Node                *parent_;
+      unsigned int        index_;
+      ColorTranslator     *translator_;
+      std::vector<Node *> nodes_;
+
+      unsigned int startIdx_;
+      unsigned int endIdx_;
+      unsigned int colorStartIdx_;
+      unsigned int colorEndIdx_;
+
+  };
+
+  bool            initialized_;
+  ColorTranslator translator_;
+  Node            *root_;
+  Node            *currentNode_;
+  bool            error_;
+};
+
+
+//=============================================================================
+} // namespace ACG
+//=============================================================================
+#endif // ACG_COLORSTACK_HH defined
+//=============================================================================
+
