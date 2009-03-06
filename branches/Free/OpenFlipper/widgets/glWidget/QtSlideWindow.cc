@@ -174,7 +174,10 @@ void QtSlideWindow::paintWindowFrame(QPainter *_painter,
                                    BACKGROUND_GREEN,
                                    BACKGROUND_BLUE,
                                    BACKGROUND_ALPHA)));
-  _painter->setPen(Qt::NoPen);
+  _painter->setPen(QColor(BACKGROUND_RED / 4,
+                          BACKGROUND_GREEN / 4,
+                          BACKGROUND_BLUE / 4,
+                          BACKGROUND_ALPHA));
   _painter->drawRoundedRect(-2, -15, w + 4, h + 40, 4, 4);
 
   _painter->setPen(Qt::SolidLine);
