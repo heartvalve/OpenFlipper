@@ -51,81 +51,144 @@
 
 void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
-//   QObject* senderPointer = sender();
   QPoint   popupPosition;
   QPoint   scenePos;
 
-//   if ( senderPointer == 0 ) {
-//     std::cerr << "Error : slotCustomContextMenu directly called! This should only be called by an examiner" << std::endl;
-//   } else {
-//     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
-//       if ( senderPointer == examiner_widgets_[i] ) {
-        popupPosition =  examiner_widgets_[PluginFunctions::activeExaminer()]->glMapToGlobal(_point);
-	     QPointF f = examiner_widgets_[PluginFunctions::activeExaminer()]->mapToScene(QPointF(_point.x(), _point.y()));
-	     scenePos = QPoint (f.x(), f.y());
-//         break;
-//       }
-//     }
-
-//   }
-
+  // Calculate popup position. Use the position from the viewer which was clicked on.
+  popupPosition =  examiner_widgets_[PluginFunctions::activeExaminer()]->glMapToGlobal(_point);
+  QPointF f = examiner_widgets_[PluginFunctions::activeExaminer()]->mapToScene(QPointF(_point.x(), _point.y()));
+  scenePos = QPoint (f.x(), f.y());
+  
+  // Call function to adapt the menu to the currently used contex.
   updatePopupMenu(scenePos);
 
-  // If not initialized, dont show it!!
+  // If the menu is not correctly initialized, dont try to show it.
   if ( !contextMenu_->isEmpty () )
     contextMenu_->exec( popupPosition );
 
 }
 
-void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu , const QPoint& _point) {
-
+/** \brief Update context Menu when Coordsys node has been clicked on.
+ * 
+ * This function is called when the coordinate system in a viewer has been clicked on.
+ * This context menu will show all function relevant for the current view like the
+ * projection/viewing direction...
+ * 
+ * @param _menu Pointer to the context Menu
+ * @param _part id of the coordsys part which has been clicked on.
+ */
+void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
+  std::cerr << "Coordsys part was : " << _part << std::endl;
+  QAction* typeEntry = new QAction("Viewer Settings",_menu);
+  _menu->addAction( typeEntry );
+  
+  //====================================================================================================
+  
+  
 }
 
+/** \brief Update context Menu when background has been clicked on.
+ * 
+ * This function is called when the background in a viewer has been clicked on.
+ * This context menu will show functions which are related to the background of the 
+ * viewer.
+ * 
+ * @param _menu Pointer to the context Menu
+ * @param _point position in the viewer where the user clicked.
+ */
+void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& _point) {
+  QAction* typeEntry = new QAction("Background",_menu);
+  _menu->addAction( typeEntry );
+  
+  //====================================================================================================
+  
+  QAction* action = _menu->addAction("Set Background Color");
+  action->setToolTip("Set the background color for the current viewer");
+  action->setStatusTip(tr("Set the background color for the current viewer"));
+  action->setWhatsThis(tr("Set the background color for the current viewer"));  
+  connect(action, SIGNAL(triggered()), this, SLOT(slotSetLocalBackgroundColor()) );
+  
+  //====================================================================================================
+  
+}
+
+/** \brief Update context Menu an object has been clicked on.
+ * 
+ * This function is called when an object has been clicked on.
+ * This context menu will show all properties for the given object.
+ * 
+ * @param _menu Pointer to the context Menu
+ * @param _objectId Id of the object that has been clicked on.
+ */
+void CoreWidget::updatePopupMenuObject(QMenu* _menu , const int _objectId ) {
+  std::cerr << "Object Context Menu for id: " << _objectId << std::endl;
+}
+
+
+
+/** \brief check current context and initialize context menu according to this context. 
+ * 
+ * This function is called whenever a context menu for the corewidget is requested. 
+ * It will decide about the current context, collect all menus for plugins and
+ * construct the final context menu.
+ */
 void CoreWidget::updatePopupMenu(const QPoint& _point) {
 
+  // Clear the complete context menu.
   contextMenu_->clear();
+  
+  // Clear the selection context menu part.
   contextSelectionMenu_->clear();
 
-  QIcon icon;
-  QAction* typeEntry = new QAction("Viewer",contextMenu_);
-  contextMenu_->addAction( typeEntry );
-
-  QAction* entrySeparator = contextMenu_->addSeparator( );
-
-
-  QAction* contextSelectionAction = contextMenu_->addMenu( contextSelectionMenu_ );
-
-  // -1 if no object id found for the current picking position
-  // otherwise the id of the object
+  // =============================================================================
+  // First do a picking on the current position to check which context we are in.
+  // =============================================================================
   int objectId = -1;
+  
+  enum CONTEXTTYPE {
+    COORDSYSCONTEXT ,BACKGROUNDCONTEXT ,OBJECTCONTEXT
+  } context = BACKGROUNDCONTEXT;
 
   // Do picking in the gl area to find an object
   unsigned int    node_idx, target_idx;
   ACG::Vec3d      hit_point;
   BaseObjectData* object;
+  
   if (examiner_widgets_[PluginFunctions::activeExaminer()]->pick( ACG::SceneGraph::PICK_ANYTHING,_point,node_idx, target_idx, &hit_point ) ) {
 
-    if ( PluginFunctions::getPickedObject(node_idx, object) )
+    if ( PluginFunctions::getPickedObject(node_idx, object) ) {
       objectId = object->id();
-
-    if ( objectId == -1 ) {
-      std::cerr << "NodeIndex is : " << node_idx << std::endl;
-
+      context  = OBJECTCONTEXT;
+    } else {
       ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode() , node_idx );
-
-      if ( node == 0 )
-        std::cerr << "Node not found" << std::endl;
-      else {
-        if ( node->name() == "Core Coordsys Node") {
-          std::cerr << "Picked Coordsys Node" << std::endl;
-          typeEntry->setText( "Viewer Settings" );
-
-        }
-        std::cerr << "Picked Node with name" << node->name() << std::endl;
-        std::cerr << "Target index was : " << target_idx << std::endl;
-      }
+      if ( node != 0 && ( node->name() == "Core Coordsys Node") ) 
+        context = COORDSYSCONTEXT;
     }
+  } 
+  
+  // =============================================================================
+  // Depending on the context create the basic context menu.
+  // =============================================================================
+  
+  QIcon icon;
+  QAction* typeEntry = 0;      
+  switch (context) {
+    case BACKGROUNDCONTEXT:
+      updatePopupMenuBackground(contextMenu_,_point);
+      break;
+    case OBJECTCONTEXT:
+      typeEntry = new QAction("Object",contextMenu_);
+      contextMenu_->addAction( typeEntry );
+      break;
+    case COORDSYSCONTEXT:
+      updatePopupMenuCoordsysNode(contextMenu_,target_idx);
+      break;
   }
+  
+  // Add the global entry to the context menu.
+  QAction* entrySeparator = contextMenu_->addSeparator( );
+
+  QAction* contextSelectionAction = contextMenu_->addMenu( contextSelectionMenu_ );
 
   int topLevelAdded  = 0;
 
@@ -234,16 +297,6 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
 
     //====================================================================================================
 
-    action = functionMenu_->addAction("Set Background Color");
-    action->setToolTip("Set the background color for the viewer");
-    connect(action, SIGNAL(triggered()), this, SLOT(changeBackgroundColor()) );
-
-    //====================================================================================================
-
-    functionMenu_->addSeparator();
-
-    //====================================================================================================
-
     action = functionMenu_->addAction("Snapshot");
     action->setToolTip("Make a snapshot");
     connect(action, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
@@ -332,36 +385,6 @@ void CoreWidget::slotSnapshotName() {
     statusBar()->showMessage(msg);
   }
 
-}
-
-void CoreWidget::changeBackgroundColor(){
-
-  ACG::Vec4f bc = PluginFunctions::viewerProperties().backgroundColor() * 255.0;
-
-  QColor backCol((int)bc[0], (int)bc[1], (int)bc[2], (int)bc[3]);
-  QColor c = QColorDialog::getColor(backCol,this);
-
-  if (c != backCol && c.isValid()){
-
-    if ( shiftPressed_ ){
-      //apply to all viewers
-      for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
-        PluginFunctions::viewerProperties(i).backgroundColor(ACG::Vec4f(((double) c.redF())   ,
-                                                                        ((double) c.greenF()) ,
-                                                                        ((double) c.blueF())  ,
-                                                                         1.0));
-      }
-
-    } else{
-      //apply only to active viewer
-      PluginFunctions::viewerProperties().backgroundColor(ACG::Vec4f(((double) c.redF())   ,
-                                                                        ((double) c.greenF()) ,
-                                                                        ((double) c.blueF())  ,
-                                                                         1.0));
-    }
-
-    OpenFlipper::Options::defaultBackgroundColor( c );
-  }
 }
 
 void CoreWidget::slotChangeAnimation(bool _animation){

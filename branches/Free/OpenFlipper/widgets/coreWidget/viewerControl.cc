@@ -131,5 +131,37 @@ void CoreWidget::slotFunctionMenuUpdate() {
 
 }
 
+void CoreWidget::slotSetGlobalBackgroundColor() {
+  ACG::Vec4f bc = PluginFunctions::viewerProperties().backgroundColor() * 255.0;
+
+  QColor backCol((int)bc[0], (int)bc[1], (int)bc[2], (int)bc[3]);
+  QColor c = QColorDialog::getColor(backCol,this);
+
+  if (c != backCol && c.isValid())
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) 
+      PluginFunctions::viewerProperties(i).backgroundColor(ACG::Vec4f(((double) c.redF())   ,
+                                                                      ((double) c.greenF()) ,
+                                                                      ((double) c.blueF())  ,
+                                                                        1.0));
+
+  OpenFlipper::Options::defaultBackgroundColor( c );
+
+}
+
+void CoreWidget::slotSetLocalBackgroundColor() {
+  ACG::Vec4f bc = PluginFunctions::viewerProperties().backgroundColor() * 255.0;
+
+  QColor backCol((int)bc[0], (int)bc[1], (int)bc[2], (int)bc[3]);
+  QColor c = QColorDialog::getColor(backCol,this);
+
+  if (c != backCol && c.isValid())
+    PluginFunctions::viewerProperties().backgroundColor(ACG::Vec4f(((double) c.redF())   ,
+                                                                    ((double) c.greenF()) ,
+                                                                    ((double) c.blueF())  ,
+                                                                     1.0));
+}
+
+
+
 
 //=============================================================================
