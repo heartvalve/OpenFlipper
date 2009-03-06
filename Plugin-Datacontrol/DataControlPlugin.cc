@@ -56,7 +56,7 @@
 //******************************************************************************
 
 /** \brief Plugin initialization
- * 
+ *
  */
 void DataControlPlugin::pluginsInitialized() {
 
@@ -93,7 +93,7 @@ void DataControlPlugin::pluginsInitialized() {
 //******************************************************************************
 
 /** \brief initialize the toolBox
- * 
+ *
  * @param _widget a reference to the toolBox
  * @return returns if the toolbox was created successfully
  */
@@ -112,6 +112,8 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
 
    view_ = new QTreeView(0);
    view_->setModel(model_);
+
+   view_->setMinimumHeight(400);
 
    view_->QTreeView::resizeColumnToContents(1);
    view_->QTreeView::resizeColumnToContents(2);
@@ -155,7 +157,7 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
 //******************************************************************************
 
 /** \brief inform the model that it has to reset when an object changes
- * 
+ *
  * @param _identifier id of an object
  */
 void DataControlPlugin::slotObjectUpdated( int _identifier ) {
@@ -166,7 +168,7 @@ void DataControlPlugin::slotObjectUpdated( int _identifier ) {
 //******************************************************************************
 
 /** \brief update drawing of objects when the active object changed
- * 
+ *
  */
 void DataControlPlugin::slotActiveObjectChanged()
 {
@@ -206,7 +208,7 @@ void DataControlPlugin::slotActiveObjectChanged()
 //******************************************************************************
 
 /** \brief a key event occurred
- * 
+ *
  * @param _event the event that occurred
  */
 void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
@@ -236,9 +238,9 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 //******************************************************************************
 
 /** \brief emit the right updates when the model changed
- * 
+ *
  * @param topLeft index in the model
- * @param  
+ * @param
  */
 void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
                                           const QModelIndex & /*bottomRight*/ )
@@ -274,7 +276,7 @@ void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
 //******************************************************************************
 
 /** \brief Store the expanded status of all objects when the model wants to reset
- * 
+ *
  */
 void DataControlPlugin::slotModelAboutToReset(){
 
@@ -306,7 +308,7 @@ void DataControlPlugin::slotModelAboutToReset(){
 //******************************************************************************
 
 /** \brief restore the expanded status of all objects after reset
- * 
+ *
  */
 void DataControlPlugin::slotModelResetComplete(){
 
@@ -328,7 +330,7 @@ void DataControlPlugin::slotModelResetComplete(){
 //******************************************************************************
 
 /** \brief Load Groups from ini file
- * 
+ *
  * @param _ini an ini file
  */
 void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
@@ -400,7 +402,7 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
 //******************************************************************************
 
 /** \brief Save groups to ini file
- * 
+ *
  * @param _ini an ini file
  */
 void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
