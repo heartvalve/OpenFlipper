@@ -73,7 +73,8 @@ QtSlideWindow::QtSlideWindow(QString _name, QGraphicsItem *_parent) :
   autohideButton_(0),
   detachButton_(0),
   hideAnimation_(0),
-  dialog_(0)
+  dialog_(0),
+  tempWidget_(new QWidget)
 {
   setCacheMode (QGraphicsItem::DeviceCoordinateCache);
   setWindowFrameMargins (2, 15, 2, 2);
@@ -106,6 +107,7 @@ QtSlideWindow::QtSlideWindow(QString _name, QGraphicsItem *_parent) :
   hideAnimation_->setTranslationAt (1.0, 0, 0);
 
   hide ();
+  connect (hideTimeLine_, SIGNAL(finished()), this, SLOT(timelineFinished()));
 }
 
 //-----------------------------------------------------------------------------
@@ -117,17 +119,23 @@ void QtSlideWindow::attachWidget (QWidget *_m)
 
   mainWidget_ = _m;
   mainWidget_->setParent(0);
-  setWidget (mainWidget_);
-  setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
 
-  show ();
   if (autohideButton_->isChecked ())
   {
+    tempWidget_->setGeometry (mainWidget_->geometry ());
+    setWidget (tempWidget_);
+    setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+
+    show ();
     hideTimeLine_->setCurrentTime (0);
     hideAnimation_->setStep (0.0);
   }
   else
   {
+    setWidget (mainWidget_);
+    setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+
+    show ();
     hideTimeLine_->setCurrentTime (SLIDE_DURATION);
     hideAnimation_->setStep (1.0);
   }
@@ -213,6 +221,12 @@ void QtSlideWindow::hoverEnterEvent (QGraphicsSceneHoverEvent *)
     hideTimeLine_->setDirection (QTimeLine::Forward);
     if (hideTimeLine_->state () == QTimeLine::NotRunning)
       hideTimeLine_->start ();
+  }
+  if (!mainWidget_->isVisible ())
+  {
+    setWidget (mainWidget_);
+    setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+    show ();
   }
 }
 
@@ -375,6 +389,21 @@ void QtSlideWindow::restoreState (QSettings &_settings)
 
   if (dialog_)
     dialog_->restoreGeometry (_settings.value ("DialogGeometry").toByteArray ());
+}
+
+//-----------------------------------------------------------------------------
+
+void QtSlideWindow::timelineFinished ()
+{
+  if (hideTimeLine_->currentValue () == 0.0)
+  {
+    tempWidget_->setGeometry (mainWidget_->geometry ());
+    setWidget (tempWidget_);
+    setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+    mainWidget_->setParent (0);
+    mainWidget_->hide ();
+    show ();
+  }
 }
 
 //=============================================================================
