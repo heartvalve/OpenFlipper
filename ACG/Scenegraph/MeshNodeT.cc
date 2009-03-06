@@ -76,8 +76,14 @@ MeshNodeT(const Mesh&  _mesh,
     vertexBufferInitialized_(false),
     normalBufferInitialized_(false),
     faceIndexBufferInitialized_(false),
-    textureMap_(0)
+    textureMap_(0),
+    updateFaceList_(true),
+    updateVertexList_(true),
+    faceBaseIndex_(0),
+    vertexBaseIndex_(0)
 {
+  faceList_ = glGenLists (1);
+  vertexList_ = glGenLists (1);
 }
 
 
@@ -97,6 +103,11 @@ MeshNodeT<Mesh>::
   if (face_index_buffer_)
     glDeleteBuffersARB(1, (GLuint*)  &face_index_buffer_ );
 
+  if (faceList_)
+    glDeleteLists (faceList_, 1);
+
+  if (vertexList_)
+    glDeleteLists (vertexList_, 1);
 }
 
 
@@ -351,6 +362,9 @@ void
 MeshNodeT<Mesh>::
 update_geometry()
 {
+  updateFaceList_ = true;
+  updateVertexList_ = true;
+
   if (GLEW_ARB_vertex_buffer_object) {
     typedef typename Mesh::Point         Point;
     typedef typename Point::value_type   PointScalar;
@@ -448,6 +462,9 @@ void
 MeshNodeT<Mesh>::
 update_topology()
 {
+  updateFaceList_ = true;
+  updateVertexList_ = true;
+
   if (mesh_.is_trimesh())
   {
     typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
@@ -1127,6 +1144,19 @@ pick_vertices(GLState& _state)
     return;
   }
 
+  if (vertexList_ && !updateVertexList_ && _state.pick_current_index () == vertexBaseIndex_)
+  {
+    glCallList (vertexList_);
+    return;
+  }
+
+  if (vertexList_)
+  {
+    glNewList (vertexList_, GL_COMPILE_AND_EXECUTE);
+    updateVertexList_ = false;
+    vertexBaseIndex_ = _state.pick_current_index ();
+  }
+
   for (; v_it!=v_end; ++v_it, ++idx)
   {
     _state.pick_set_name (idx);
@@ -1134,6 +1164,9 @@ pick_vertices(GLState& _state)
     glVertex(mesh_.point(v_it));
     glEnd();
   }
+
+  if (vertexList_)
+    glEndList ();
 }
 
 
@@ -1156,6 +1189,19 @@ pick_faces(GLState& _state)
     omerr() << "MeshNode::pick_faces: color range too small, "
 	    << "picking failed\n";
     return;
+  }
+
+  if (faceList_ && !updateFaceList_ && _state.pick_current_index () == faceBaseIndex_)
+  {
+    glCallList (faceList_);
+    return;
+  }
+
+  if (faceList_)
+  {
+    glNewList (faceList_, GL_COMPILE_AND_EXECUTE);
+    updateFaceList_ = false;
+    faceBaseIndex_ = _state.pick_current_index ();
   }
 
   if (mesh_.is_trimesh())
@@ -1187,6 +1233,9 @@ pick_faces(GLState& _state)
       glEnd();
     }
   }
+
+  if (faceList_)
+    glEndList ();
 }
 
 

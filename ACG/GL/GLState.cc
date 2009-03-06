@@ -846,8 +846,9 @@ void GLState::pick_init (bool _color)
 
 bool GLState::pick_set_maximum (unsigned int _idx)
 {
+  bool rv = colorStack_.setMaximumIndex (_idx);
   if (colorPicking_)
-    return colorStack_.setMaximumIndex (_idx);
+    return rv;
   return true;
 }
 
