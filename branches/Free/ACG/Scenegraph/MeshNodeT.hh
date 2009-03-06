@@ -177,6 +177,15 @@ private:
   // Mapping of mesh face texture indeces to gltexture id ( has to be provided externally )
   std::vector< GLuint >* textureMap_;
 
+  // display Lists used for picking
+  GLuint faceList_;
+  GLuint vertexList_;
+
+  // do we need to update our display lists?
+  bool updateFaceList_;
+  bool updateVertexList_;
+  unsigned int faceBaseIndex_;
+  unsigned int vertexBaseIndex_;
 };
 
 
