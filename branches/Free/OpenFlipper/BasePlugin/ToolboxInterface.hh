@@ -96,7 +96,7 @@ class ToolboxInterface {
        *
        * This signal adds a toolbox widget to the toolbar on the right.
        */
-      virtual void addToolbox( QString /* _name */ , QWidget*& /*_widget*/ ) {};
+      virtual void addToolbox( QString /* _name */ , QWidget* /*_widget*/ ) {};
 
 
 };
