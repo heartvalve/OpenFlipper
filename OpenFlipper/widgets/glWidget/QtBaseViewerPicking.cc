@@ -113,7 +113,7 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  //    gluPickMatrix((GLdouble) x, (GLdouble) y, 3, 3, viewport);
+
   glMultMatrixd(projection.get_raw_data());
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
@@ -139,8 +139,8 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-  glReadPixels (x, y, 3, 3, GL_RGB, GL_UNSIGNED_BYTE, pixels);
-  glReadPixels (x, y, 3, 3, GL_DEPTH_COMPONENT, GL_FLOAT, depths);
+  glReadPixels (x - 1, y - 1, 3, 3, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+  glReadPixels (x - 1, y - 1, 3, 3, GL_DEPTH_COMPONENT, GL_FLOAT, depths);
 
   for (int i = 0; i < 9; i++)
   {
