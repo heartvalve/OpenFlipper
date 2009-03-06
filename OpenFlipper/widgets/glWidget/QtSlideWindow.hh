@@ -116,6 +116,10 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
     /// autohide button presed
     void autohidePressed ();
 
+    /// Executed if the timeline reches the end of its animation
+    void timelineFinished ();
+
+
   private:
 
     // name
@@ -134,6 +138,9 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
 
     // detached dialog
     QDialog *dialog_;
+
+    // temporary widget
+    QWidget *tempWidget_;
 };
 
 //=============================================================================
