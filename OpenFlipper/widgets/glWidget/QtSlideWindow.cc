@@ -328,5 +328,54 @@ void QtSlideWindow::updateGeometry ()
   }
 }
 
+//-----------------------------------------------------------------------------
+
+void QtSlideWindow::saveState (QSettings &_settings)
+{
+  _settings.setValue ("AutoHide", autohideButton_->isChecked ());
+  _settings.setValue ("Detached", (dialog_ != 0));
+  _settings.setValue ("WidgedGeometry", (mainWidget_) ? mainWidget_->saveGeometry (): QByteArray());
+  _settings.setValue ("DialogGeometry", (dialog_) ? dialog_->saveGeometry (): QByteArray());
+}
+
+//-----------------------------------------------------------------------------
+
+void QtSlideWindow::restoreState (QSettings &_settings)
+{
+  autohideButton_->setChecked (_settings.value ("AutoHide", autohideButton_->isChecked ()).toBool ());
+
+  if (_settings.value ("Detached", false).toBool () && !dialog_ && mainWidget_)
+  {
+    detachPressed ();
+  }
+
+  if (mainWidget_)
+  {
+    mainWidget_->restoreGeometry (_settings.value ("WidgedGeometry").toByteArray ());
+    if (hideAnimation_)
+    {
+      hideAnimation_->clear ();
+      hideAnimation_->setTranslationAt (0.0, 0, geometry ().height ());
+      for (int i = 0; i < geometry ().height (); ++i)
+        hideAnimation_->setTranslationAt (0.25 + (i / (geometry ().height () * 2.0)), 0, geometry ().height () - i);
+      hideAnimation_->setTranslationAt (1.0, 0, 0);
+    }
+  }
+
+  if (autohideButton_->isChecked ())
+  {
+    hideTimeLine_->setCurrentTime (0);
+    hideAnimation_->setStep (0.0);
+  }
+  else
+  {
+    hideTimeLine_->setCurrentTime (SLIDE_DURATION);
+    hideAnimation_->setStep (1.0);
+  }
+
+  if (dialog_)
+    dialog_->restoreGeometry (_settings.value ("DialogGeometry").toByteArray ());
+}
+
 //=============================================================================
 //=============================================================================

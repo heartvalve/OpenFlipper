@@ -68,7 +68,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   coreSlots_(_coreSlots),
   shiftPressed_(false),
   viewModes_(_viewModes),
-  dockViewMode_(0),
   viewModeButton_(0),
   viewModeMenu_(0),
   viewGroup_(0),
@@ -99,8 +98,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 {
   setupStatusBar();
 
-  splitter_ = new QSplitter(Qt::Vertical,this);
-  setCentralWidget(splitter_);
+  toolSplitter_ = new QSplitter(Qt::Horizontal,this);
+
+  setCentralWidget(toolSplitter_);
+
+  splitter_ = new QSplitter(Qt::Vertical,toolSplitter_);
   stackedWidget_ = new QStackedWidget(splitter_);
 
   QGLFormat format;
@@ -440,18 +442,39 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   originalLoggerSize_  = wsizes[1];
 
   // ======================================================================
-  // Create Upper DockWidget for ToolWidget control
+  // Create ToolBox area
   // ======================================================================
-  dockViewMode_ = new QDockWidget("ViewMode" , this );
-  dockViewMode_->setObjectName("DockViewMode");
-  QPushButton* button = new QPushButton("Change View Mode");
-  dockViewMode_->setWidget(button);
-  button->setParent(dockViewMode_);
-  dockViewMode_->setFeatures( QDockWidget::NoDockWidgetFeatures );
-  button->show();
-  addDockWidget(Qt::RightDockWidgetArea,dockViewMode_);
-  connect(button, SIGNAL(clicked()), this, SLOT(slotViewModeDialog()));
-  dockViewMode_->setVisible(false);
+
+  toolBoxArea_ = new QWidget (toolSplitter_);
+
+  QGroupBox *gb = new QGroupBox ("ViewMode");
+
+  QHBoxLayout *hLayout = new QHBoxLayout;
+
+  QPushButton* vmButton = new QPushButton("Change View Mode");
+  hLayout->addWidget (vmButton);
+  gb->setLayout (hLayout);
+
+  connect(vmButton, SIGNAL(clicked()), this, SLOT(slotViewModeDialog()));
+
+  toolBoxScroll_ = new QScrollArea ();
+  toolBox_ = new SideArea ();
+  toolBoxScroll_->setWidget (toolBox_);
+  toolBoxScroll_->setWidgetResizable (true);
+  toolBoxScroll_->setFrameStyle (QFrame::StyledPanel);
+
+  QVBoxLayout *vLayout = new QVBoxLayout;
+  vLayout->addWidget(gb);
+  vLayout->addWidget(toolBoxScroll_);
+
+  toolBoxArea_->setLayout (vLayout);
+
+  wsizes = toolSplitter_->sizes();
+
+  wsizes[0] = 480;
+  wsizes[1] = 240;
+  toolSplitter_->setSizes(wsizes);
+
 
   // ======================================================================
   // Context menu setup
@@ -679,13 +702,9 @@ CoreWidget::showToolbox( bool _state ) {
   OpenFlipper::Options::hideToolbox( !_state );
 
   if ( OpenFlipper::Options::hideToolbox() ){
-    //hide all toolWidgets
-    for (uint p=0; p < plugins_.size(); p++)
-      if (plugins_[p].widget)
-        plugins_[p].widget->setVisible(false);
 
     //hide ViewMode Selection Widget
-    dockViewMode_->setVisible(false);
+    toolBoxArea_->setVisible(false);
 
   }else{
     //reset last ViewMode
@@ -693,6 +712,7 @@ CoreWidget::showToolbox( bool _state ) {
       setViewMode("All");
     else
       setViewMode( OpenFlipper::Options::defaultToolboxMode() );
+    toolBoxArea_->setVisible(true);
   }
 }
 

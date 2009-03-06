@@ -583,29 +583,7 @@ void Core::loadPlugin(QString filename, bool silent){
       QWidget* widget = 0;
       if ( toolboxPlugin->initializeToolbox( widget ) ) {
 
-            QDockWidget* dock = new QDockWidget(info.name , coreWidget_ );
-            QScrollArea* scrollArea = new QScrollArea(dock);
-            scrollArea->setWidget(widget);
-            scrollArea->setWidgetResizable(true);
-
-            dock->setWidget(scrollArea);
-            dock->setMaximumWidth(400);
-
-//             std::cerr << info.name.toStdString() << std::endl;
-//             std::cerr << "minimumSizeHint : " << widget->minimumSizeHint().width() << std::endl;
-//             std::cerr << "minimumSize     : " << widget->minimumSize().width() << std::endl;
-
-            int newNumber = toolboxindex_;
-            toolboxindex_++;
-            QString number = QString::number(newNumber);
-            dock->setObjectName( "ToolWidget" + number );
-
-            coreWidget_->setDockOptions(QMainWindow::AllowTabbedDocks | QMainWindow::VerticalTabs);
-            coreWidget_->addDockWidget(Qt::RightDockWidgetArea,dock);
-
-            connect(dock, SIGNAL( visibilityChanged (bool) ), coreWidget_ , SLOT( slotVisibilityChanged(bool) ));
-
-            info.widget = dock;
+            info.widget = widget;
 
             // add widget name to viewMode 'all'
             QString name_nospace = info.name;
@@ -1013,10 +991,6 @@ void Core::loadPlugin(QString filename, bool silent){
     //========================================================================================
 
     plugins.push_back(info);
-
-    //tab all dockwidgets together
-    if (OpenFlipper::Options::gui())
-      coreWidget_->tabDockWidgets( QVector< QDockWidget* >() );
 
     // Initialize Plugin
     if ( basePlugin ) {

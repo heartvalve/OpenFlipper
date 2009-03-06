@@ -40,6 +40,8 @@
 
 //== INCLUDES =================================================================
 
+#include <QSettings>
+
 #include <QGraphicsProxyWidget>
 #include <OpenFlipper/common/GlobalDefines.hh>
 
@@ -77,6 +79,13 @@ class DLLEXPORT QtSlideWindow : public QGraphicsProxyWidget
 
     /// detach child widget
     void detachWidget ();
+
+
+    /// saves the current state
+    void saveState (QSettings &_settings);
+
+    /// restores the state
+    void restoreState (QSettings &_settings);
 
   private:
 

@@ -99,13 +99,8 @@ void Core::applyOptions(){
 
     //hideToolbox
     if (OpenFlipper::Options::hideToolbox()) {
-      //hide all toolWidgets
-      for (uint p=0; p < plugins.size(); p++)
-        if (plugins[p].widget)
-          plugins[p].widget->setVisible(false);
-
-      //hide ViewMode Selection Widget
-      coreWidget_->dockViewMode_->setVisible(false);
+      
+      coreWidget_->showToolbox (false);
     }
 
     //setup logFile
