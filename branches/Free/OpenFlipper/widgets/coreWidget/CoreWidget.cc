@@ -612,11 +612,12 @@ CoreWidget::showLogger(OpenFlipper::Options::LoggerState _state) {
 
         slidingLogger_->detachWidget ();
         splitter_->insertWidget (1, logWidget_);
+        logWidget_->show ();
 
         wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
         wsizes[1] = originalLoggerSize_;
         splitter_->setSizes(wsizes);
-        baseLayout_->setContentsMargins (left, top, right, 0);
+        baseLayout_->setContentsMargins (left, top, right, 0);       
       }
       break;
     case OpenFlipper::Options::Hidden:
