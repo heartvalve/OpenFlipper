@@ -200,8 +200,10 @@ QuadNode::draw_wireframe()
 
 
 void
-QuadNode::pick( GLState & /* _state */ , PickTarget /* _target */  )
+QuadNode::pick( GLState & _state, PickTarget /* _target */  )
 {
+  _state.pick_set_maximum (1);
+  _state.pick_set_name (0);
   draw_faces();
 }
 

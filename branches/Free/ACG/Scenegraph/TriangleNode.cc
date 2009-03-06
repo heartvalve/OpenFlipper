@@ -199,8 +199,10 @@ TriangleNode::draw_wireframe()
 
 
 void
-TriangleNode::pick( GLState & /* _state */ , PickTarget /* _target */ )
+TriangleNode::pick( GLState & _state, PickTarget /* _target */ )
 {
+  _state.pick_set_maximum (1);
+  _state.pick_set_name (0);
   draw_faces();
 }
 

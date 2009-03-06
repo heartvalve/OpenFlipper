@@ -99,8 +99,7 @@ bool QtBaseViewer::pick( SceneGraph::PickTarget _pickTarget,
     glLoadMatrixd(modelview.get_raw_data());
     glDisable(GL_LIGHTING);
     glClear(GL_DEPTH_BUFFER_BIT);
-    glInitNames();
-    glPushName((GLuint) 0);
+    glstate_->pick_init (false);
 
     // do the picking
     SceneGraph::PickAction action(_pickTarget);

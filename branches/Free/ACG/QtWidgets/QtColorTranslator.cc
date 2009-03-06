@@ -34,7 +34,7 @@
 
 //=============================================================================
 //
-//  CLASS ColorTranslator - IMPLEMENTATION
+//  CLASS QtColorTranslator - IMPLEMENTATION
 //
 //=============================================================================
 
@@ -55,7 +55,7 @@ namespace ACG {
 
 
 void
-ColorTranslator::initialize()
+QtColorTranslator::initialize()
 {
   glGetIntegerv( GL_RED_BITS,   &redBits_ );
   glGetIntegerv( GL_GREEN_BITS, &greenBits_ );
@@ -87,7 +87,7 @@ ColorTranslator::initialize()
 
 
 bool
-ColorTranslator::index2color(unsigned int _idx, QRgb& _col) const 
+QtColorTranslator::index2color(unsigned int _idx, QRgb& _col) const
 {
   assert(initialized());
   unsigned char  r, g, b;
@@ -117,7 +117,7 @@ ColorTranslator::index2color(unsigned int _idx, QRgb& _col) const
 
 
 bool
-ColorTranslator::index2color(unsigned int _idx, QRgb& _fc, QRgb& _bc) const 
+QtColorTranslator::index2color(unsigned int _idx, QRgb& _fc, QRgb& _bc) const
 {
   assert(initialized());
   unsigned char  r, g, b;
@@ -167,7 +167,7 @@ ColorTranslator::index2color(unsigned int _idx, QRgb& _fc, QRgb& _bc) const
 
 
 int
-ColorTranslator::color2index(QRgb _c) const 
+QtColorTranslator::color2index(QRgb _c) const
 {
   assert(initialized());
   unsigned int result;
@@ -186,7 +186,7 @@ ColorTranslator::color2index(QRgb _c) const
 
 
 int
-ColorTranslator::color2index(QRgb _fc, QRgb _bc) const 
+QtColorTranslator::color2index(QRgb _fc, QRgb _bc) const
 {
   assert(initialized());
   unsigned int result;
@@ -212,7 +212,7 @@ ColorTranslator::color2index(QRgb _fc, QRgb _bc) const
 
 
 unsigned int
-ColorTranslator::maxIndex() const 
+QtColorTranslator::maxIndex() const
 {
   assert(initialized());
   unsigned int result(~0);

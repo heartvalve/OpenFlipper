@@ -832,6 +832,83 @@ void GLState::pop_modelview_matrix()
   }
 }
 
+//-----------------------------------------------------------------------------
+
+void GLState::pick_init (bool _color)
+{
+  colorPicking_ = _color;
+  colorStack_.initialize ();
+  glInitNames();
+  glPushName((GLuint) 0);
+}
+
+//-----------------------------------------------------------------------------
+
+bool GLState::pick_set_maximum (unsigned int _idx)
+{
+  if (colorPicking_)
+    return colorStack_.setMaximumIndex (_idx);
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+void GLState::pick_set_name (unsigned int _idx)
+{
+  colorStack_.setIndex (_idx);
+  glLoadName (_idx);
+}
+
+//-----------------------------------------------------------------------------
+
+void GLState::pick_push_name (unsigned int _idx)
+{
+  colorStack_.pushIndex (_idx);
+  glLoadName (_idx);
+  glPushName (0);
+}
+
+//-----------------------------------------------------------------------------
+
+void GLState::pick_pop_name ()
+{
+  colorStack_.popIndex ();
+  glPopName ();
+}
+
+//-----------------------------------------------------------------------------
+
+std::vector<unsigned int> GLState::pick_color_to_stack (Vec3uc _rgb) const
+{
+  if (colorPicking_ && colorStack_.initialized ())
+    return colorStack_.colorToStack (_rgb);
+  return std::vector<unsigned int> ();
+}
+
+//-----------------------------------------------------------------------------
+
+unsigned int GLState::pick_free_indicies () const
+{
+  if (colorPicking_ && colorStack_.initialized ())
+    return colorStack_.freeIndicies ();
+  return -1;
+}
+
+//-----------------------------------------------------------------------------
+
+bool GLState::pick_error () const
+{
+  if (colorPicking_)
+    return colorStack_.error ();
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+unsigned int GLState::pick_current_index () const
+{
+  return colorStack_.currentIndex ();
+}
 
 //=============================================================================
 } // namespace ACG

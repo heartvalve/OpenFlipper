@@ -81,10 +81,7 @@ enum PickTarget
   /// picks verices (may not be implemented for all nodes)
   PICK_VERTEX,
   /// pick any of the prior targets (should be implemented for all nodes)
-  PICK_ANYTHING,
-
-  PICK_COLOR_PASS1,
-  PICK_COLOR_PASS2
+  PICK_ANYTHING
 };
 
 
