@@ -83,6 +83,17 @@ void CoreWidget::setupMenuBar()
 
   viewMenu_ = new QMenu(tr("&View"));
   menuBar()->addMenu(viewMenu_ );
+  
+  QIcon icon;
+  QAction* setGlobalBackgroundColor = new QAction(tr("&Background Color"), this);;
+  setGlobalBackgroundColor->setToolTip(tr("Set Background Color for all viewers"));
+  setGlobalBackgroundColor->setStatusTip(tr("Set Background Color for all viewers"));
+  setGlobalBackgroundColor->setWhatsThis("Set Background Color for all viewers");
+  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"bgColor.png");
+  setGlobalBackgroundColor->setIcon(icon);
+  connect(setGlobalBackgroundColor, SIGNAL(triggered()), this, SLOT(slotSetGlobalBackgroundColor()));
+  viewMenu_->addAction(setGlobalBackgroundColor);
+  
 
   if (examiner_widgets_[0]->getDrawMenu() != NULL) {
 
@@ -95,8 +106,6 @@ void CoreWidget::setupMenuBar()
 
     examiner_widgets_[0]->getDrawMenu()->setTearOffEnabled(true);
   }
-
-  QIcon icon;
 
   //Clear all
   QAction* AC_clear_all = new QAction(tr("&Clear All"), this);;

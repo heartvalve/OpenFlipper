@@ -503,9 +503,6 @@ public:
     /// called by plugins to add a real context menu depending on DataType
     void slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextMenuType type_);
 
-    /// change the background color
-    void changeBackgroundColor();
-
     /// change the animation setting
     void slotChangeAnimation(bool _animation);
 
@@ -534,9 +531,9 @@ public:
      */
     void updatePopupMenu(const QPoint& _point);
 
-    /** This function creates the PopupMenu Part when clicking on the Coordsys Node
-     */
-    void updatePopupMenuCoordsysNode(QMenu* _menu , const QPoint& _point);
+    void updatePopupMenuCoordsysNode(QMenu* _menu , const int _part);    
+    void updatePopupMenuObject(QMenu* _menu , const int _objectId );
+    void updatePopupMenuBackground(QMenu* _menu , const QPoint& _point);
 
   private :
     /// context Menu for the gl area
@@ -716,6 +713,12 @@ public:
 
     /// Called when the functionMenu has to be updated
     void slotFunctionMenuUpdate();
+    
+    /// Set Background Color for all viewers at once.
+    void slotSetGlobalBackgroundColor();
+    
+    /// Set Background Color for one viewer.
+    void slotSetLocalBackgroundColor();
 
   private :
     bool stereoActive_;
