@@ -166,6 +166,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     wsizes[1] = 0;
     splitter_->setSizes(wsizes);
     loggerState_ = OpenFlipper::Options::InScene;
+    baseLayout_->setContentsMargins (0, 0, 0, 16);
   } else if (OpenFlipper::Options::loggerState() == OpenFlipper::Options::Hidden) {
     splitter_->insertWidget (1, tempLogWidget);
     wsizes[0] = 1;
@@ -178,6 +179,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     wsizes[1] = 240;
     splitter_->setSizes(wsizes);
   }
+
 
   // ======================================================================
   // Create examiner
@@ -573,6 +575,9 @@ CoreWidget::showLogger(OpenFlipper::Options::LoggerState _state) {
   if (_state == loggerState_)
     return;
 
+  qreal left, top, right, bottom;
+  baseLayout_->getContentsMargins (&left, &top, &right, &bottom);
+
   switch (_state)
   {
     case OpenFlipper::Options::InScene:
@@ -592,6 +597,7 @@ CoreWidget::showLogger(OpenFlipper::Options::LoggerState _state) {
         splitter_->setSizes(wsizes);
         logWidget_->resize (logWidget_->width (), originalLoggerSize_);
         slidingLogger_->attachWidget (logWidget_);
+        baseLayout_->setContentsMargins (left, top, right, 16);
       }
       break;
     case OpenFlipper::Options::Normal:
@@ -610,6 +616,7 @@ CoreWidget::showLogger(OpenFlipper::Options::LoggerState _state) {
         wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
         wsizes[1] = originalLoggerSize_;
         splitter_->setSizes(wsizes);
+        baseLayout_->setContentsMargins (left, top, right, 0);
       }
       break;
     case OpenFlipper::Options::Hidden:
@@ -630,6 +637,7 @@ CoreWidget::showLogger(OpenFlipper::Options::LoggerState _state) {
         wsizes[0] = wsizes[0]+wsizes[1];
         wsizes[1] = 0;
         splitter_->setSizes(wsizes);
+        baseLayout_->setContentsMargins (left, top, right, 0);
       }
       break;
   }
