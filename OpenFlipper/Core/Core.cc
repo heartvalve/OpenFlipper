@@ -750,7 +750,7 @@ void Core::fullscreen( bool _state ) {
 
 void Core::loggerState(int _state) {
   OpenFlipper::Options::LoggerState state = static_cast<OpenFlipper::Options::LoggerState> (_state);
-  if ( OpenFlipper::Options::gui() && 
+  if ( OpenFlipper::Options::gui() &&
        (state == OpenFlipper::Options::Hidden ||
         state == OpenFlipper::Options::InScene ||
         state == OpenFlipper::Options::Normal))
@@ -1116,6 +1116,33 @@ void Core::setDescriptions(){
 
 
 }
+
+void Core::slotAddToolbox(QString _name ,QWidget* _widget) {
+  int id = -1;
+
+  for ( uint i = 0 ; i < plugins.size(); ++i ) {
+    if ( plugins[i].plugin == sender() ) {
+      id = i;
+      std::cerr << "Found" << std::endl;
+      break;
+    }
+  }
+
+  if ( id == -1 ) {
+    std::cerr << "Unknown sender plugin when adding Toolbox!" << std::endl;
+    return;
+  }
+
+  plugins[id].widgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
+
+  // add widget name to viewMode 'all'
+  if ( !viewModes_[0]->visibleWidgets.contains(_name) ){
+    viewModes_[0]->visibleWidgets << _name;
+    viewModes_[0]->visibleWidgets.sort();
+  }
+
+}
+
 // //-----------------------------------------------------------------------------
 //
 // void Core::slotGetPlugin(QString _name, QObject* & _plugin ){

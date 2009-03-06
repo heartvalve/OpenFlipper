@@ -51,7 +51,7 @@
 
  /**
   * \brief Plugins can add its own toolbox to the main widget's toolbox area by using this interface.
-  * 
+  *
   * This Interface should be used by plugins which will provide a toolbox widget.
   * Each Plugin can create own Widgets in the Toolbox area as long as they use the returned widget as their parent.
   * ToolboxInterface::initializeToolbox(QWidget*& _widget). You can create extra Signals and slots in your Plugin.
@@ -90,6 +90,13 @@ class ToolboxInterface {
        * @param _usedWidgets list of used Widgets names
        */
       virtual void defineViewMode(QString& /*_mode*/, QStringList& /*_usedWidgets*/){};
+
+
+      /** \brief Add a toolbox widget to the gui with the given name
+       *
+       * This signal adds a toolbox widget to the toolbar on the right.
+       */
+      virtual void addToolbox( QString /* _name */ , QWidget*& /*_widget*/ ) {};
 
 
 };
