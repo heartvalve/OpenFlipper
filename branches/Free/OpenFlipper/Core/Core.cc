@@ -59,6 +59,7 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QFile>
+#include <QSettings>
 
 #include <QPluginLoader>
 #include "OpenFlipper/BasePlugin/BaseInterface.hh"
@@ -476,31 +477,27 @@ Core::init() {
 
   if ( OpenFlipper::Options::gui() ) {
 
+    QSettings windowStates(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
+                           OpenFlipper::Options::dirSeparator() +  "WindowStates.dat", QSettings::IniFormat);
+
     //try to restore the windowState
-    QFile file(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                                                  OpenFlipper::Options::dirSeparator() +  "windowState.dat");
-    if (file.open(QIODevice::ReadOnly)){
-      QByteArray bytes = file.readAll();
-
-      coreWidget_->restoreState( bytes );
-
-      file.close();
-    }
-
+    coreWidget_->restoreState (windowStates.value("Core/Window/State").toByteArray ());
     //try to restore the geometry
-    QFile file2(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                                                  OpenFlipper::Options::dirSeparator() +  "geometry.dat");
-    if (file2.open(QIODevice::ReadOnly)){
-      QByteArray bytes = file2.readAll();
+    coreWidget_->restoreGeometry (windowStates.value("Core/Window/Geometry").toByteArray ());
 
-      coreWidget_->restoreGeometry( bytes );
-
-      file2.close();
-    }
+    coreWidget_->toolSplitter_->restoreState (windowStates.value("Core/ToolSplitter").toByteArray ());
+    coreWidget_->splitter_->restoreState (windowStates.value("Core/LogSplitter").toByteArray ());
 
     coreWidget_->show();
 
     applyOptions();
+
+    windowStates.beginGroup ("Core");
+    windowStates.beginGroup ("LogSlider");
+    coreWidget_->slidingLogger_->restoreState (windowStates);
+    windowStates.endGroup ();
+    coreWidget_->toolBox_->restoreState (windowStates);
+    windowStates.endGroup ();
 
     if ( OpenFlipper::Options::splash() ) {
       splash_->finish(coreWidget_);
@@ -835,20 +832,22 @@ Core::writeOnExit() {
 
   //store the windowState
   if ( OpenFlipper::Options::gui() ) {
-    QFile file(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                                                  OpenFlipper::Options::dirSeparator() +  "windowState.dat");
-    if (file.open(QIODevice::WriteOnly))
-    {
-      file.write( coreWidget_->saveState() );
-      file.close();
-    }
-    QFile file2(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                                                  OpenFlipper::Options::dirSeparator() +  "geometry.dat");
-    if (file2.open(QIODevice::WriteOnly))
-    {
-      file2.write( coreWidget_->saveGeometry() );
-      file2.close();
-    }
+
+    QSettings windowStates(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
+                           OpenFlipper::Options::dirSeparator() +  "WindowStates.dat", QSettings::IniFormat);
+
+    windowStates.setValue("Core/Window/State", coreWidget_->saveState ());
+    windowStates.setValue("Core/Window/Geometry", coreWidget_->saveGeometry ());
+
+    windowStates.setValue ("Core/ToolSplitter", coreWidget_->toolSplitter_->saveState ());
+    windowStates.setValue ("Core/LogSplitter", coreWidget_->splitter_->saveState ());
+
+    windowStates.beginGroup ("Core");
+    windowStates.beginGroup ("LogSlider");
+    coreWidget_->slidingLogger_->saveState (windowStates);
+    windowStates.endGroup ();
+    coreWidget_->toolBox_->saveState (windowStates);
+    windowStates.endGroup ();
   }
 
   // Call exit for all plugins

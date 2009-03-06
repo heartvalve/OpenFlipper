@@ -56,6 +56,7 @@
 #include <OpenFlipper/BasePlugin/ViewInterface.hh>
 #include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 
+#include <OpenFlipper/widgets/coreWidget/SideArea.hh>
 
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <OpenFlipper/widgets/glWidget/QtGLGraphicsScene.hh>
@@ -82,6 +83,7 @@
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
 #include <OpenFlipper/INIFile/INIFile.hh>
+
 
 
 struct ViewMode{
@@ -320,9 +322,6 @@ public:
       /// List of currently available viewModes
       QVector<ViewMode*>& viewModes_;
 
-      ///DockWidget and Button for changing viewMode via dialog
-      QDockWidget* dockViewMode_;
-
     private:
 
       QPushButton* viewModeButton_;
@@ -332,10 +331,6 @@ public:
 
       /// Group for all menu items
       QActionGroup* viewGroup_;
-
-    public:
-      /// Tab all DockWidgets which belong to ToolWidgets together
-      void tabDockWidgets(QVector< QDockWidget* > _widgets);
 
     public slots:
 
@@ -361,9 +356,6 @@ public:
 
       /// Show a dialog in which the viewMode can be changed
       void slotViewModeDialog();
-
-      /// Slot is called when the visibility of a toolWidget changes
-      void slotVisibilityChanged ( bool visible );
 
       /// Set the view Mode to the given Mode
     public slots :
@@ -418,6 +410,18 @@ public:
 
     /// Temporary widget
     QWidget* tempLogWidget;
+
+    /// Widget for toolBox
+    QWidget* toolBoxArea_;
+
+    /// Spliter between toplevel objects and toolbox
+    QSplitter* toolSplitter_;
+
+    /// Toolbox
+    SideArea* toolBox_;
+
+    /// Toolbox scroll area
+    QScrollArea* toolBoxScroll_;
 
 
     // widget showing the scenegraph

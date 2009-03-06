@@ -105,6 +105,7 @@ bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
     glLoadMatrixd(modelview.get_raw_data());
     glEnable(GL_LIGHTING);
 
+    printf("Got %d Hits\n",hits);
 
     // process hit record
     if ( hits > 0 )
@@ -136,6 +137,8 @@ bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
 
       _nodeIdx   = nameBuffer[0];
       _targetIdx = nameBuffer[1];
+
+      printf("Found Node %d Element %d\n",_nodeIdx, _targetIdx);
 
       if (_hitPointPtr)
       {

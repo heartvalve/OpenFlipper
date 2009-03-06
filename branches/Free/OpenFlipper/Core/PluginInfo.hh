@@ -87,7 +87,7 @@ class PluginInfo{
   QList< KeyBinding > keys;
 
   /// Pointer to plugins toolbar widget (if available)
-  QDockWidget* widget;
+  QWidget* widget;
 
   /// Pointer to plugins options widget (if available)
   QWidget* optionsWidget;
