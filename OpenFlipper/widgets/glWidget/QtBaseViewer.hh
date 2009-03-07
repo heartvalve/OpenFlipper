@@ -259,16 +259,6 @@ public:
   /// map glarea coords to global coords
   QPoint glMapToGlobal( const QPoint& _pos ) const;
 
-
-  /// set draw mode (No test if this mode is available!)
-  void drawMode(unsigned int _mode)
-  {
-    curDrawMode_ = _mode;
-  }
-
-  /// get current draw mode
-  unsigned int drawMode() { return curDrawMode_; }
-
   /// convert current view to text representation
   void encodeView(QString& _view);
   /** Decode and apply text representation of view encoded by encodeView().
@@ -348,7 +338,6 @@ public slots:
   virtual void setView( const ACG::GLMatrixd& _modelview,
 			               const ACG::GLMatrixd& _inverse_modelview );
 
-  void actionDrawMenu( QAction * _action );
   void actionPickMenu( QAction * _action );
 
   void actionPasteView();
@@ -532,8 +521,6 @@ private:
 
   // scenegraph stuff
   ACG::SceneGraph::BaseNode*   sceneGraphRoot_;
-
-  unsigned int                 curDrawMode_;
 
   bool                         projectionUpdateLocked_;
   bool                         blending_;

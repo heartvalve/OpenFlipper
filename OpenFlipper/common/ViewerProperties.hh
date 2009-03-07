@@ -108,8 +108,26 @@ namespace Viewer {
       Viewer::ActionMode actionMode_, lastActionMode_;
 
     /** @} */
+      
+      
+    //===========================================================================
+    /** @name Draw Mode States
+     * @{ */
+    //===========================================================================      
 
+    public:
+      /// set draw mode (No test if this mode is available!)
+      void drawMode(unsigned int _mode) { currentDrawMode_ = _mode; emit updated(); };
+      
+      /// get current draw mode
+      unsigned int drawMode() { return currentDrawMode_; };
+      
+    private:
+      
+      unsigned int currentDrawMode_;
 
+    /** @} */
+      
     //===========================================================================
     /** @name Snapshot settings
     * @{ */

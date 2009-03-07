@@ -288,18 +288,13 @@ QPoint mapToLocal( const QPoint _point ) {
 
 void setDrawMode( const unsigned int _mode , int _viewer) {
 
-  if ( _viewer == ACTIVE_VIEWER ) {
-    examiner_widgets_[activeExaminer_]->drawMode(_mode);
-    examiner_widgets_[activeExaminer_]->updateGL();
-  } else if ( _viewer == ALL_VIEWERS )
-    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i ) {
-      examiner_widgets_[i]->drawMode(_mode);
-      examiner_widgets_[i]->updateGL();
-    }
-  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() ) {
-    examiner_widgets_[_viewer]->drawMode(_mode);
-    examiner_widgets_[_viewer]->updateGL();
-  }
+  if ( _viewer == ACTIVE_VIEWER ) 
+    viewerProperties(activeExaminer()).drawMode(_mode);
+  else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i ) 
+      viewerProperties(i).drawMode(_mode);
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() ) 
+    viewerProperties(_viewer).drawMode(_mode);
   else
     std::cerr << "Requested illegal viewer for setting DrawMode!!" << std::endl;
 
@@ -312,15 +307,15 @@ void setDrawMode( const unsigned int _mode , int _viewer) {
  */
 unsigned int drawMode( int _viewer ) {
   if ( _viewer == ACTIVE_VIEWER ) {
-    return examiner_widgets_[activeExaminer_]->drawMode();
+    return viewerProperties(activeExaminer()).drawMode();
   } else if ( _viewer == ALL_VIEWERS )
     std::cerr << "Please select viewer to get viewing direction!" << std::endl;
   else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
-    return examiner_widgets_[_viewer]->drawMode();
+    return viewerProperties(_viewer).drawMode();
   else
     std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
 
-  return examiner_widgets_[activeExaminer_]->drawMode();
+  return viewerProperties(activeExaminer()).drawMode();
 }
 
 bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr=0 ) {

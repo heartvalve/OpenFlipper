@@ -39,6 +39,7 @@
 //=============================================================================
 
 #include <OpenFlipper/common/GlobalDefines.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
 #include "ViewerProperties.hh"
 #include <iostream>
 
@@ -47,6 +48,7 @@ namespace Viewer {
   ViewerProperties::ViewerProperties():
     actionMode_(Viewer::PickingMode),
     lastActionMode_(Viewer::PickingMode),
+    currentDrawMode_(ACG::SceneGraph::DrawModes::NONE),
     snapshotName_("snap.png"),
     snapshotCounter_(0),
     wZoomFactor_(1.0),
