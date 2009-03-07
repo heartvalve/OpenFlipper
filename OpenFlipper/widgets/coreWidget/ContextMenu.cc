@@ -102,6 +102,7 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& _point) 
   action->setToolTip("Set the background color for the current viewer");
   action->setStatusTip(tr("Set the background color for the current viewer"));
   action->setWhatsThis(tr("Set the background color for the current viewer"));  
+  action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BackgroundColor.png") );
   connect(action, SIGNAL(triggered()), this, SLOT(slotSetLocalBackgroundColor()) );
   
   //====================================================================================================
