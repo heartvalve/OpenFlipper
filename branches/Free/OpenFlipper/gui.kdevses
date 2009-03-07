@@ -1,17 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="3" >
-  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ObjectTypes/MeshObject/MeshObjectT.cc" >
-   <View0 Encoding="" line="489" Type="Source" />
-  </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ObjectTypes/MeshObject/MeshObjectT.hh" >
-   <View0 Encoding="" line="294" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TextureControl/TextureControl.cc" >
-   <View0 Encoding="" line="128" Type="Source" />
-  </Doc2>
- </DocsAndViews>
+ <DocsAndViews NumberOfDocuments="0" />
  <pluginList>
   <kdevdebugger>
    <breakpointList/>
