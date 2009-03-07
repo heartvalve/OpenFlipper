@@ -300,7 +300,7 @@ void CoreWidget::slotUpdateGlobalDrawMenu() {
   // Collect available draw Modes 
   ACG::SceneGraph::CollectDrawModesAction actionAvailable;
   ACG::SceneGraph::traverse( PluginFunctions::getRootNode() , actionAvailable);
-  availableDrawModes_ = actionAvailable.drawModes();
+  availableGlobalDrawModes_ = actionAvailable.drawModes();
   
   // Get currently active drawModes (first viewer only )
   // TODO: create combination from all viewers!
@@ -310,7 +310,7 @@ void CoreWidget::slotUpdateGlobalDrawMenu() {
   
   // Convert to ids
   std::vector< unsigned int > availDrawModeIds;
-  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableDrawModes_ );
+  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableGlobalDrawModes_ );
   
   globalDrawMenu_->clear();
   
@@ -335,7 +335,7 @@ void CoreWidget::slotGlobalDrawMenu(QAction * _action) {
   //======================================================================================
   unsigned int mode = 0;
   std::vector< unsigned int > availDrawModeIds;
-  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableDrawModes_ );
+  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableGlobalDrawModes_ );
   for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
   {
     QString descr = QString( ACG::SceneGraph::DrawModes::description( availDrawModeIds[i] ).c_str() );

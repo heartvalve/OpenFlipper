@@ -513,7 +513,7 @@ public:
     
     int activeDrawModes_;
     
-    int availableDrawModes_;
+    int availableGlobalDrawModes_;
     
   /** @} */
 
