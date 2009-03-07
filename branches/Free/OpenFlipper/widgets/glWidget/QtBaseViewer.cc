@@ -115,7 +115,7 @@ static const char          VIEW_MAGIC[] =
 
 glViewer::glViewer( QtGLGraphicsScene* _scene,
 		    QGLWidget* _glWidget,
-        Viewer::ViewerProperties& _properties,
+                    Viewer::ViewerProperties& _properties,
 		    QGraphicsWidget* _parent,
 		    const char* /* _name */ ,
 		    QStatusBar *_statusBar) :
@@ -150,7 +150,6 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   eyeDist_          = 0.01;
 
   sceneGraphRoot_   = 0;
-  curDrawMode_      = ACG::SceneGraph::DrawModes::NONE;
 
   normalsMode_      = DONT_TOUCH_NORMALS;
   projectionMode_   = PERSPECTIVE_PROJECTION;
@@ -544,13 +543,13 @@ void glViewer::drawScene_mono()
   if (sceneGraphRoot_)
   {
     if (! properties_.renderPicking() ) {
-      ACG::SceneGraph::DrawAction action(curDrawMode_, false);
-      ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, curDrawMode_);
+      ACG::SceneGraph::DrawAction action( properties_.drawMode() , false);
+      ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, properties_.drawMode() );
 
       if( blending_ )
       {
-        ACG::SceneGraph::DrawAction action(curDrawMode_, true);
-        ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, curDrawMode_);
+        ACG::SceneGraph::DrawAction action(properties_.drawMode(), true);
+        ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, properties_.drawMode());
       }
     } else {
 
@@ -1152,45 +1151,6 @@ void glViewer::actionPasteView()
 {
   QString view; view=QApplication::clipboard()->text();
   decodeView(view);
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void glViewer::actionDrawMenu( QAction * _action )
-{
-  unsigned int mode( _action->data().toUInt() );
-
-  // combine draw modes
-  if (qApp->keyboardModifiers() & Qt::ShiftModifier)
-  {
-    if (drawMode() & mode)
-      drawMode(drawMode() & ~mode);
-    else
-      drawMode(drawMode() | mode);
-  }
-
-  // simply switch draw mode
-  else
-  {
-    // clear all other checked items
-    std::vector< QAction * >::iterator aIter, aEnd;
-
-    aEnd = drawMenuActions_.end();
-    for( aIter = drawMenuActions_.begin();
-	 aIter != aEnd;
-	 ++aIter )
-    {
-      if( (*aIter)->data().toUInt() != mode )
-	  (*aIter)->setChecked( false );
-    }
-
-    drawMode(mode);
-  }
-
-  hidePopupMenus();
-  updateGL();
 }
 
 
