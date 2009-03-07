@@ -270,7 +270,14 @@ public:
 
   /// Setup the main menubar
   void setupMenuBar();
-
+  
+  /** @} */
+  
+  //===========================================================================
+  /** @name Recent File Menu handling
+   * @{ */
+  //===========================================================================
+      
   /// Add a recent file and update menu
   void addRecent(QString _filename, DataType _type);
 
@@ -328,9 +335,6 @@ public:
 
       /// Submenu holding all ViewMode actions
       QMenu* viewModeMenu_;
-
-      /// Group for all menu items
-      QActionGroup* viewGroup_;
 
     public slots:
 
@@ -486,9 +490,38 @@ public:
   /** @} */
 
   //===========================================================================
-    /** @name Context Menu
+    /** @name View Menu
       * @{ */
   //===========================================================================
+    
+  public slots:
+    /// Setup and update the global draw menu
+    void slotUpdateGlobalDrawMenu();
+  
+  private slots:
+    /// Called when the global drawMode is selected
+    void slotGlobalDrawMenu(QAction * _action);
+  
+  private:
+    /// This variable holds the global draw menu
+    QMenu* globalDrawMenu_;
+   
+    QActionGroup * drawGroup_;    
+    
+    /// Group for all menu items
+    QActionGroup* viewGroup_;
+    
+    int activeDrawModes_;
+    
+    int availableDrawModes_;
+    
+  /** @} */
+
+  //===========================================================================
+    /** @name Context Menu
+     * @{ */
+  //===========================================================================
+    
   signals :
     // tells the plugins to update their context menu
     void updateContextMenu(int) ;

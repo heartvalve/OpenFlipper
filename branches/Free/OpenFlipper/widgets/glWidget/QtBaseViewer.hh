@@ -263,8 +263,7 @@ public:
   /// set draw mode (No test if this mode is available!)
   void drawMode(unsigned int _mode)
   {
-    curDrawMode_=_mode;
-    updatePopupMenu();
+    curDrawMode_ = _mode;
   }
 
   /// get current draw mode
@@ -302,7 +301,6 @@ public:
 
   /// Get the menu pointers (required to add them to the menubar as a temp workaround for a qt 4.3 bug
   QMenu * getPickMenu() { return pickMenu_; };
-  QMenu * getDrawMenu() { return drawMenu_; };
 
 
 //---------------------------------------------------------------- public slots
@@ -483,10 +481,6 @@ private:
   // helper called by drawScene() when stereo viewing is active.
   void drawScene_stereo();
 
-
-  // updates popup menu with the available draw modes
-  void updatePopupMenu();
-
 //-------------------------------------------------------------- protected data
 protected:
 
@@ -535,13 +529,11 @@ private:
 
 
   QMenu * pickMenu_;
-  QMenu * drawMenu_;
 
   // scenegraph stuff
   ACG::SceneGraph::BaseNode*   sceneGraphRoot_;
 
-  unsigned int                 curDrawMode_,
-                               availDrawModes_;
+  unsigned int                 curDrawMode_;
 
   bool                         projectionUpdateLocked_;
   bool                         blending_;

@@ -44,6 +44,7 @@
 // -------------------- mview
 #include "CoreWidget.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 //== IMPLEMENTATION ==========================================================
 
@@ -94,19 +95,8 @@ void CoreWidget::setupMenuBar()
   connect(setGlobalBackgroundColor, SIGNAL(triggered()), this, SLOT(slotSetGlobalBackgroundColor()));
   viewMenu_->addAction(setGlobalBackgroundColor);
   
-
-  if (examiner_widgets_[0]->getDrawMenu() != NULL) {
-
-    examiner_widgets_[0]->getDrawMenu()->setTitle("&DrawModes");
-    QAction* drawMenuAction = viewMenu_->addMenu(examiner_widgets_[0]->getDrawMenu() );
-
-    QIcon icon;
-    icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
-    drawMenuAction->setIcon(icon);
-
-    examiner_widgets_[0]->getDrawMenu()->setTearOffEnabled(true);
-  }
-
+  slotUpdateGlobalDrawMenu();
+  
   //Clear all
   QAction* AC_clear_all = new QAction(tr("&Clear All"), this);;
   AC_clear_all->setStatusTip(tr("Clear all Objects"));
@@ -275,6 +265,94 @@ void CoreWidget::setupMenuBar()
   mainToolbar_->addAction(AC_load_ini);
   mainToolbar_->addAction(AC_save_ini);
 
+}
+
+void CoreWidget::slotUpdateGlobalDrawMenu() {
+  if ( drawGroup_ ) {
+    
+    disconnect( drawGroup_ , SIGNAL( triggered( QAction * ) ),
+                this       , SLOT( slotGlobalDrawMenu( QAction * ) ) );
+    delete( drawGroup_ );
+    drawGroup_ = 0;
+    
+  }
+  
+  // Recreate drawGroup
+  drawGroup_ = new QActionGroup( this );
+  drawGroup_->setExclusive( false );
+  
+  connect( drawGroup_ , SIGNAL( triggered( QAction * ) ),
+           this       , SLOT( slotGlobalDrawMenu( QAction * ) ) );  
+  
+  if ( !globalDrawMenu_ ) {
+    
+    QIcon icon;
+    icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
+    globalDrawMenu_  = new QMenu("Set Global DrawMode"); 
+    globalDrawMenu_->setTearOffEnabled(true);
+    globalDrawMenu_->setIcon(icon);
+    
+    connect(globalDrawMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdateGlobalDrawMenu() ) );
+    
+    viewMenu_->addMenu(globalDrawMenu_);
+  }
+  
+  // Collect available draw Modes 
+  ACG::SceneGraph::CollectDrawModesAction actionAvailable;
+  ACG::SceneGraph::traverse( PluginFunctions::getRootNode() , actionAvailable);
+  availableDrawModes_ = actionAvailable.drawModes();
+  
+  // Get currently active drawModes (first viewer only )
+  // TODO: create combination from all viewers!
+  activeDrawModes_ = INT_MAX;
+  for ( int i = 0 ; i < PluginFunctions::viewers(); ++i )
+    activeDrawModes_ &= PluginFunctions::drawMode(i);
+  
+  // Convert to ids
+  std::vector< unsigned int > availDrawModeIds;
+  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableDrawModes_ );
+  
+  globalDrawMenu_->clear();
+  
+  for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
+  {
+    unsigned int id    = availDrawModeIds[i];
+    std::string  descr = ACG::SceneGraph::DrawModes::description( id );
+
+    QAction * action = new QAction( descr.c_str(), drawGroup_ );
+    action->setCheckable( true );
+    action->setChecked( ACG::SceneGraph::DrawModes::containsId( activeDrawModes_, id ) );
+  }
+
+  globalDrawMenu_->addActions( drawGroup_->actions() );
+
+}
+
+void CoreWidget::slotGlobalDrawMenu(QAction * _action) {
+  
+  //======================================================================================
+  // Get the mode toggled
+  //======================================================================================
+  unsigned int mode = 0;
+  std::vector< unsigned int > availDrawModeIds;
+  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableDrawModes_ );
+  for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
+  {
+    QString descr = QString( ACG::SceneGraph::DrawModes::description( availDrawModeIds[i] ).c_str() );
+
+    if ( descr == _action->text() ) {
+      mode = availDrawModeIds[i];
+      break;
+    }
+  }
+  
+  if ( qApp->keyboardModifiers() & Qt::ShiftModifier )
+    activeDrawModes_ = ( activeDrawModes_ ^ mode);
+  else
+    activeDrawModes_ = mode ;
+  
+  PluginFunctions::setDrawMode( activeDrawModes_ );
+  slotUpdateGlobalDrawMenu();
 }
 
 //=============================================================================

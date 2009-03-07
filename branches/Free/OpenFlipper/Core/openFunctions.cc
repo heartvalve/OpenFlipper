@@ -57,6 +57,9 @@ void Core::resetScenegraph() {
     }
 
   }
+  
+  // Update the draw Modes Menu
+  coreWidget_->slotUpdateGlobalDrawMenu();
 }
 
 //========================================================================================
