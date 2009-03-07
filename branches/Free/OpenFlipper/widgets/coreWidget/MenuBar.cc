@@ -90,8 +90,7 @@ void CoreWidget::setupMenuBar()
   setGlobalBackgroundColor->setToolTip(tr("Set Background Color for all viewers"));
   setGlobalBackgroundColor->setStatusTip(tr("Set Background Color for all viewers"));
   setGlobalBackgroundColor->setWhatsThis("Set Background Color for all viewers");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"bgColor.png");
-  setGlobalBackgroundColor->setIcon(icon);
+  setGlobalBackgroundColor->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BackgroundColor.png") );
   connect(setGlobalBackgroundColor, SIGNAL(triggered()), this, SLOT(slotSetGlobalBackgroundColor()));
   viewMenu_->addAction(setGlobalBackgroundColor);
   
