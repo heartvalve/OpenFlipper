@@ -569,7 +569,7 @@ void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
   if ( object )
     ACG::SceneGraph::traverse( object->baseNode() , actionActive);
   else
-    PluginFunctions::setDrawMode( activeDrawModes_ );
+    PluginFunctions::setDrawMode( activeDrawModes_ , PluginFunctions::activeExaminer() );
 
   emit updateView();
 }
@@ -881,7 +881,7 @@ void ViewControlPlugin::translate( Vector _vec , int _viewer) {
 
 void ViewControlPlugin::enableBackfaceCulling( bool _state , int _viewer  ) {
   if ( _viewer == PluginFunctions::ALL_VIEWERS )
-    for ( uint i = 0 ; i < PluginFunctions::viewers( ); ++i )
+    for ( int i = 0 ; i < PluginFunctions::viewers( ); ++i )
       PluginFunctions::viewerProperties(i).backFaceCulling(_state);
   else if ( _viewer == PluginFunctions::ACTIVE_VIEWER )
     PluginFunctions::viewerProperties(PluginFunctions::activeExaminer()).backFaceCulling(_state);
