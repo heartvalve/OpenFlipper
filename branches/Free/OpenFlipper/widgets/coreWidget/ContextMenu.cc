@@ -97,10 +97,6 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
  * @param _point position in the viewer where the user clicked.
  */
 void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& _point) {
-  QAction* typeEntry = new QAction("Background",_menu);
-  _menu->addAction( typeEntry );
-  
-  //====================================================================================================
   
   QAction* action = _menu->addAction("Set Background Color");
   action->setToolTip("Set the background color for the current viewer");
