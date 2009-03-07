@@ -225,12 +225,10 @@
       <synchronize>true</synchronize>
       <orientation>Vertical</orientation>
     </splitheadersource>
-    <references>
-      <pcs>OpenFlipper</pcs>
-      <pcs>Qt4</pcs>
-      <pcs>OpenMesh2_x64</pcs>
-      <pcs>ACG</pcs>
-    </references>
+    <references/>
+    <designerintegration>
+      <qtdesigner/>
+    </designerintegration>
   </kdevcppsupport>
   <kdevfileview>
     <tree>
