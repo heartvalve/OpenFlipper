@@ -129,6 +129,8 @@ protected:
   void pick_vertices(GLState& _state);
   // pick polygons. to be overridden by TriMeshNodeT
   void pick_faces(GLState& _state);
+  // pick edges
+  void pick_edges(GLState& _state);
 
 
   // opengl vertex array stuff
@@ -180,12 +182,15 @@ private:
   // display Lists used for picking
   GLuint faceList_;
   GLuint vertexList_;
+  GLuint edgeList_;
 
   // do we need to update our display lists?
   bool updateFaceList_;
   bool updateVertexList_;
+  bool updateEdgeList_;
   unsigned int faceBaseIndex_;
   unsigned int vertexBaseIndex_;
+  unsigned int edgeBaseIndex_;
 };
 
 

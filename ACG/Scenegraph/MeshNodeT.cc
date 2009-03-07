@@ -79,11 +79,14 @@ MeshNodeT(const Mesh&  _mesh,
     textureMap_(0),
     updateFaceList_(true),
     updateVertexList_(true),
+    updateEdgeList_(true),
     faceBaseIndex_(0),
-    vertexBaseIndex_(0)
+    vertexBaseIndex_(0),
+    edgeBaseIndex_(0)
 {
   faceList_ = glGenLists (1);
   vertexList_ = glGenLists (1);
+  edgeList_ = glGenLists (1);
 }
 
 
@@ -108,6 +111,9 @@ MeshNodeT<Mesh>::
 
   if (vertexList_)
     glDeleteLists (vertexList_, 1);
+
+  if (edgeList_)
+    glDeleteLists (edgeList_, 1);
 }
 
 
@@ -1119,6 +1125,12 @@ pick(GLState& _state, PickTarget _target)
       break;
     }
 
+    case PICK_EDGE:
+    {
+      pick_edges(_state);
+      break;
+    }
+
     default:
       break;
   }
@@ -1181,7 +1193,6 @@ pick_faces(GLState& _state)
   typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
                                       f_end(mesh_.faces_end());
   typename Mesh::ConstFaceVertexIter  fv_it;
-  ColorTranslator                     ct;
 
 
   if (!_state.pick_set_maximum (mesh_.n_faces()))
@@ -1238,6 +1249,49 @@ pick_faces(GLState& _state)
     glEndList ();
 }
 
+//----------------------------------------------------------------------------
+
+
+template<class Mesh>
+void
+MeshNodeT<Mesh>::
+pick_edges(GLState& _state)
+{
+  typename Mesh::ConstEdgeIter        e_it(mesh_.edges_sbegin()),
+                                      e_end(mesh_.edges_end());
+
+  if (!_state.pick_set_maximum (mesh_.n_edges()))
+  {
+    omerr() << "MeshNode::pick_edges: color range too small, "
+            << "picking failed\n";
+    return;
+  }
+
+  if (edgeList_ && !updateEdgeList_ && _state.pick_current_index () == edgeBaseIndex_)
+  {
+    glCallList (edgeList_);
+    return;
+  }
+
+  if (edgeList_)
+  {
+    glNewList (edgeList_, GL_COMPILE_AND_EXECUTE);
+    updateEdgeList_ = false;
+    edgeBaseIndex_ = _state.pick_current_index ();
+  }
+
+  for (; e_it!=e_end; ++e_it)
+  {
+    _state.pick_set_name (e_it.handle().idx());
+    glBegin(GL_LINES);
+    glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0))));
+    glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1))));
+    glEnd();
+  }
+
+  if (faceList_)
+    glEndList ();
+}
 
 //=============================================================================
 } // namespace SceneGraph
