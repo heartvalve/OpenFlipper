@@ -93,7 +93,11 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
                          ACG::Vec3d*                 _hitPointPtr )
 {
 
-  GLint         x = _mousePos.x(),
+  GLint         w = glWidth(),
+                h = glHeight(),
+                l = scenePos().x(),
+                b = scene()->height () - scenePos().y() - h,
+                x = _mousePos.x(),
                 y = scene()->height () - _mousePos.y();
   GLubyte       pixels[9][3];
   GLfloat       depths[9];
@@ -106,6 +110,7 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   // prepare GL state
   makeCurrent();
 
+  glViewport (l, b, w, h);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
 
