@@ -518,7 +518,6 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
     QAction * action = new QAction( descr.c_str(), drawGroup );
     action->setCheckable( true );
     action->setChecked( ACG::SceneGraph::DrawModes::containsId( activeDrawModes_, id ) );
-    drawMenuActions_.push_back( action );
   }
 
   viewControlMenu_->addActions( drawGroup->actions() );
