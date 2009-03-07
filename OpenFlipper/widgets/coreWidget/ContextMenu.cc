@@ -351,18 +351,6 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
   }
 
   contextMenu_->addMenu(functionMenu_ );
-
-  if ( ( examiner_widgets_[PluginFunctions::activeExaminer()]->getDrawMenu() != NULL ) && OpenFlipper::Options::drawModesInContextMenu() ) {
-
-    examiner_widgets_[PluginFunctions::activeExaminer()]->getDrawMenu()->setTitle("&DrawModes");
-    QAction* drawMenuAction = contextMenu_->addMenu(examiner_widgets_[PluginFunctions::activeExaminer()]->getDrawMenu() );
-
-    QIcon icon;
-    icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
-    drawMenuAction->setIcon(icon);
-
-    examiner_widgets_[PluginFunctions::activeExaminer()]->getDrawMenu()->setTearOffEnabled(true);
-  }
 }
 
 void CoreWidget::slotSnapshotName() {

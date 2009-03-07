@@ -151,7 +151,6 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
 
   sceneGraphRoot_   = 0;
   curDrawMode_      = ACG::SceneGraph::DrawModes::NONE;
-  availDrawModes_   = ACG::SceneGraph::DrawModes::NONE;
 
   normalsMode_      = DONT_TOUCH_NORMALS;
   projectionMode_   = PERSPECTIVE_PROJECTION;
@@ -166,8 +165,6 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
 
 
   pickMenu_ = 0;
-  drawMenu_ = 0;
-
 
   // Note: we start locked (initialization of updateLocked_)
   // will be unlocked in initializeGL()
@@ -251,12 +248,6 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
 
   if (sceneGraphRoot_ )
   {
-    // get draw modes
-    ACG::SceneGraph::CollectDrawModesAction action;
-    ACG::SceneGraph::traverse(sceneGraphRoot_, action);
-    availDrawModes_ = action.drawModes();
-    updatePopupMenu();
-
     // get scene size
     ACG::SceneGraph::BoundingBoxAction act;
     ACG::SceneGraph::traverse(sceneGraphRoot_, act);
@@ -1209,7 +1200,6 @@ void
 glViewer::createWidgets(QStatusBar* _sb)
 {
   setStatusBar(_sb);
-  drawMenu_=0;
   pickMenu_=0;
 
   // Construct GL context & widget
@@ -1259,68 +1249,11 @@ glViewer::createWidgets(QStatusBar* _sb)
   setLayout(glBaseLayout_);
 }
 
-
-//-----------------------------------------------------------------------------
-
-
-void glViewer::updatePopupMenu()
-{
-  //
-  // Draw mode menu
-  //
-
-  if ( ! drawMenu_ )
-  {
-    drawMenu_ = new QMenu( scene()->views().first() );
-    connect( drawMenu_, SIGNAL( aboutToHide() ),
-	     this, SLOT( hidePopupMenus() ) );
-
-  }
-
-  QActionGroup * drawGroup = new QActionGroup( this );
-  drawGroup->setExclusive( false );
-  connect( drawGroup, SIGNAL( triggered( QAction * ) ),
-	   this, SLOT( actionDrawMenu( QAction * ) ) );
-
-
-
-  drawMenuActions_.clear();
-
-  std::vector< unsigned int > draw_mode_id;
-
-  draw_mode_id = ACG::SceneGraph::DrawModes::getDrawModeIDs( availDrawModes_ );
-
-  for ( unsigned int i = 0; i < draw_mode_id.size(); ++i )
-  {
-    unsigned int id    = draw_mode_id[i];
-    std::string  descr = ACG::SceneGraph::DrawModes::description( id );
-
-    QAction * action = new QAction( descr.c_str(), drawGroup );
-    action->setData( QVariant( id ) );
-    action->setCheckable( true );
-    action->setChecked( ACG::SceneGraph::DrawModes::containsId( curDrawMode_, id ) );
-    drawMenuActions_.push_back( action );
-  }
-
-
-  drawMenu_->clear();
-  drawMenu_->addActions( drawGroup->actions() );
-
-
-}
-
-
 //-----------------------------------------------------------------------------
 
 
 void glViewer::hidePopupMenus()
 {
-  if ( drawMenu_ )
-  {
-    drawMenu_->blockSignals(true);
-    drawMenu_->hide();
-    drawMenu_->blockSignals(false);
-  }
 
   if ( pickMenu_ )
   {
