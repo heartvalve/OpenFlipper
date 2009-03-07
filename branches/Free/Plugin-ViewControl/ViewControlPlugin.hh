@@ -111,10 +111,6 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
      */
     int lastObjectId_;
 
-    /** Actions in the draw Context Menu
-     */
-    std::vector< QAction * > drawMenuActions_;
-
     /** Active draw Modes for the last clicked object and its children
      */
     unsigned int activeDrawModes_;
