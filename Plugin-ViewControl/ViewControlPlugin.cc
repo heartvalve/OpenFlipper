@@ -61,9 +61,6 @@ void ViewControlPlugin::pluginsInitialized() {
   emit addContextMenu(viewControlMenu_ , DATA_TRIANGLE_MESH , CONTEXTTOPLEVELMENU );
   emit addContextMenu(viewControlMenu_ , DATA_POLY_MESH     , CONTEXTTOPLEVELMENU );
 
-  // Show the menu if the user did not click on an object
-  emit addContextMenu(viewControlMenu_ , DATA_NONE          , CONTEXTTOPLEVELMENU );
-
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 
   setDescriptions();
@@ -402,9 +399,12 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
   lastObjectId_ = _objectId;
 
   BaseObjectData* object = 0;
-  PluginFunctions::getObject( _objectId, object );
-
-  if ( object && (object->dataType( DATA_TRIANGLE_MESH ) || object->dataType( DATA_POLY_MESH ) ) ) {
+  if ( !PluginFunctions::getObject( _objectId, object ) ) {
+    emit log(LOGERR,"Unable to create Context Menu ... Unable to get Object"); 
+    return;
+  }
+    
+  if (object->dataType( DATA_TRIANGLE_MESH ) || object->dataType( DATA_POLY_MESH ) )  {
 
     QAction* act;
     act = viewControlMenu_->addAction( SHOW_SELECTION );
@@ -466,7 +466,7 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
   }
 
   // If this Object has a shader Node, allow settings for the shader
-  if ( object && object->shaderNode() ) {
+  if ( object->shaderNode() ) {
     viewControlMenu_->addSeparator();
 
     QAction* act = viewControlMenu_->addAction( SETSHADERS );
@@ -475,37 +475,28 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
 
   viewControlMenu_->addSeparator();
 
-  if ( object ) {
-    QActionGroup * globalDrawActionsGroup = new QActionGroup( this );
+  QActionGroup * globalDrawActionsGroup = new QActionGroup( this );
 
-    QAction * action = new QAction( USEGLOBALDRAWMODE , globalDrawActionsGroup );
-    action->setCheckable( false );
+  QAction * action = new QAction( USEGLOBALDRAWMODE , globalDrawActionsGroup );
+  action->setCheckable( false );
 
-    viewControlMenu_->addActions(globalDrawActionsGroup->actions());
+  viewControlMenu_->addActions(globalDrawActionsGroup->actions());
 
-    connect( globalDrawActionsGroup, SIGNAL( triggered( QAction * ) ),
-              this                 , SLOT(   slotDrawModeSelected( QAction * ) ) );
-  }
+  connect( globalDrawActionsGroup, SIGNAL( triggered( QAction * ) ),
+            this                 , SLOT(   slotDrawModeSelected( QAction * ) ) );
 
   QActionGroup * drawGroup = new QActionGroup( this );
   drawGroup->setExclusive( false );
 
   // Collect available draw Modes for this object
   ACG::SceneGraph::CollectDrawModesAction actionAvailable;
-  if ( object )
-    ACG::SceneGraph::traverse( object->baseNode() , actionAvailable);
-  else
-    ACG::SceneGraph::traverse( PluginFunctions::getRootNode() , actionAvailable);
+  ACG::SceneGraph::traverse( object->baseNode() , actionAvailable);
   availDrawModes_ = actionAvailable.drawModes();
 
   // Collect available draw Modes for this object
-  if ( object ) {
-    ACG::SceneGraph::CollectActiveDrawModesAction actionActive;
-    ACG::SceneGraph::traverse( object->baseNode() , actionActive);
-    activeDrawModes_ = actionActive.drawMode();
-  } else {
-    activeDrawModes_ = PluginFunctions::drawMode();
-  }
+  ACG::SceneGraph::CollectActiveDrawModesAction actionActive;
+  ACG::SceneGraph::traverse( object->baseNode() , actionActive);
+  activeDrawModes_ = actionActive.drawMode();
 
   std::vector< unsigned int > availDrawModeIds;
   availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availDrawModes_ );
