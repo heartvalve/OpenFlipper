@@ -91,6 +91,8 @@
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
+#include <ACG/Scenegraph/CoordsysNode.hh>
+
 //== CLASS DEFINITION =========================================================
 
 struct fileTypes {
@@ -421,6 +423,9 @@ private:
 
       /// Data root node
       SeparatorNode*  root_node_;
+      
+      /// Node for the coordinate system
+      ACG::SceneGraph::CoordsysNode* coordsysNode_;
 
    /** @} */
 
