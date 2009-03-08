@@ -130,8 +130,11 @@ Core() :
   //init ViewerProperties (always for 4 Viewers!)
   std::vector< Viewer::ViewerProperties* > viewerProperties;
 
-  for (int i=0; i < 4; i++)
-    viewerProperties.push_back( new Viewer::ViewerProperties() );
+  for (int i=0; i < 4; i++) {
+    Viewer::ViewerProperties* viewerProperty = new Viewer::ViewerProperties();
+    viewerProperty->snapshotBaseFileName("snap-Viewer-" + QString::number(i) + ".png");
+    viewerProperties.push_back( viewerProperty );
+  }
 
   PluginFunctions::setViewerProperties(viewerProperties);
 

@@ -81,8 +81,137 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
   std::cerr << "Coordsys part was : " << _part << std::endl;
   QAction* typeEntry = new QAction("Viewer Settings",_menu);
   _menu->addAction( typeEntry );
+  _menu->addSeparator();
   
   //====================================================================================================
+  // DrawModes
+  //====================================================================================================
+  slotUpdateViewerDrawMenu();
+  _menu->addMenu( viewerDrawMenu_ );
+  
+  //====================================================================================================
+  // RenderingOptions
+  //====================================================================================================
+  
+  QMenu* renderingOptionsMenu = new QMenu("Rendering Options",_menu);
+  renderingOptionsMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"renderingOptions.png"));
+  _menu->addMenu(renderingOptionsMenu);
+  
+  QAction* projectionAction = 0;
+  if ( examiner_widgets_[PluginFunctions::activeExaminer() ]->projectionMode() == glViewer::PERSPECTIVE_PROJECTION ) {
+    projectionAction = new QAction( "Switch to Orthogonal Projection", renderingOptionsMenu );
+    projectionAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+    projectionAction->setToolTip(   "Switch to perspective orthogonal mode.");
+  } else {
+    projectionAction = new QAction( "Switch to Perspective Projection", renderingOptionsMenu );
+    projectionAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
+    projectionAction->setToolTip(   "Switch to perspective projection mode.");
+  }
+  
+  projectionAction->setCheckable( false );
+  projectionAction->setToolTip(   "Switch between <b>perspective</b> and "
+      "<b>parrallel</b> projection mode.");
+  projectionAction->setWhatsThis( "Switch projection modes<br><br>"
+      "Switch between <b>perspective</b> and "
+      "<b>parrallel</b> projection mode.");
+  connect( projectionAction,SIGNAL( triggered() ), this, SLOT( slotContextSwitchProjection() ) );
+  renderingOptionsMenu->addAction( projectionAction );
+  
+  
+  QAction* animation = renderingOptionsMenu->addAction("Animation");
+  
+  animation->setToolTip("Animate rotation of objects");
+  animation->setCheckable( true );
+  animation->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"animation.png") );
+  animation->setChecked( PluginFunctions::viewerProperties(PluginFunctions::activeExaminer()).animation() );
+  connect(animation, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeAnimation(bool) ) );
+  
+  
+  //====================================================================================================
+
+  QAction* backfaceCulling = renderingOptionsMenu->addAction("Backface Culling");
+  backfaceCulling->setToolTip("Enable backface culling");
+  backfaceCulling->setCheckable( true );
+  backfaceCulling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"backFaceCulling.png") );
+  backfaceCulling->setChecked( PluginFunctions::viewerProperties().backFaceCulling() );
+  connect(backfaceCulling, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeBackFaceCulling(bool) ) );
+
+  //====================================================================================================
+
+  QAction* twoSidedLighting = renderingOptionsMenu->addAction("Two-sided Lighting");
+  twoSidedLighting->setToolTip("Enable two-sided lighting");
+  twoSidedLighting->setCheckable( true );
+  twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
+  twoSidedLighting->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
+  connect(twoSidedLighting, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeTwoSidedLighting(bool) ) );
+  
+  //====================================================================================================
+  // Other Toplevel Action
+  //====================================================================================================
+  
+  _menu->addSeparator();
+  
+  //====================================================================================================
+  
+  QAction* homeAction = new QAction("Restore home view",_menu);
+  homeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"go-home.png") );
+  homeAction->setCheckable( false );
+  homeAction->setToolTip("Restore <b>home</b> view.");
+  homeAction->setWhatsThis( "Restore home view<br><br>"
+                            "Resets the view to the home view");
+  _menu->addAction( homeAction );
+  connect( homeAction,SIGNAL( triggered() ), this, SLOT( slotContextHomeView() ) );
+  
+  QAction* setHomeAction = new QAction( "Set Home View" , _menu );
+  setHomeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"set-home.png") );
+  setHomeAction->setCheckable( false );
+  setHomeAction->setToolTip("Set <b>home</b> view");
+  setHomeAction->setWhatsThis( "Store home view<br><br>"
+                               "Stores the current view as the home view");
+  _menu->addAction( setHomeAction);
+  connect( setHomeAction,SIGNAL( triggered() ), this, SLOT( slotContextSetHomeView() ) );  
+  
+  QAction* viewAllAction = new QAction( "View all", _menu );
+  viewAllAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewall.png") );
+  viewAllAction->setCheckable( false );
+  viewAllAction->setToolTip("View all.");
+  viewAllAction->setWhatsThis( "View all<br><br>"
+                               "Move the objects in the scene so that"
+                               " the whole scene is visible.");
+  connect( viewAllAction,SIGNAL( triggered() ), this, SLOT( slotContextViewAll() ) );
+  _menu->addAction( viewAllAction);
+  
+  
+  _menu->addSeparator();
+  
+  //====================================================================================================
+  
+  QAction* copyView = _menu->addAction("Copy View");
+  copyView->setToolTip("Copy current view to clipboard");
+  copyView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"copyView.png") );
+  connect(copyView, SIGNAL(triggered()), this, SLOT(slotCopyView()) );
+
+  //====================================================================================================
+
+  QAction* pasteView = _menu->addAction("Paste View");
+  pasteView->setToolTip("Paste current view from clipboard");
+  pasteView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"pasteView.png") );
+  connect(pasteView, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
+  
+  //====================================================================================================
+  
+  QAction* snapshot = _menu->addAction("Snapshot");
+  snapshot->setToolTip("Make a snapshot");
+  snapshot->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
+  connect(snapshot, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
+  
+  //====================================================================================================
+
+  QAction* snapshotName = _menu->addAction("Set Snapshot Name");
+  snapshotName->setToolTip("Set a name for snapshots");
+  snapshotName->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshotName.png") );
+  connect(snapshotName, SIGNAL(triggered()), this, SLOT(slotSnapshotName()) );
+    
   
   
 }
@@ -103,7 +232,7 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& _point) 
   action->setStatusTip(tr("Set the background color for the current viewer"));
   action->setWhatsThis(tr("Set the background color for the current viewer"));  
   action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BackgroundColor.png") );
-  connect(action, SIGNAL(triggered()), this, SLOT(slotSetLocalBackgroundColor()) );
+  connect(action, SIGNAL(triggered()), this, SLOT(slotSetContextBackgroundColor()) );
   
   //====================================================================================================
   
@@ -172,6 +301,7 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
   switch (context) {
     case BACKGROUNDCONTEXT:
       updatePopupMenuBackground(contextMenu_,_point);
+      return;
       break;
     case OBJECTCONTEXT:
       typeEntry = new QAction("Object",contextMenu_);
@@ -179,6 +309,7 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
       break;
     case COORDSYSCONTEXT:
       updatePopupMenuCoordsysNode(contextMenu_,target_idx);
+      return;
       break;
   }
   
@@ -286,73 +417,8 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
     }
   }
 
-  // Add a functions menu
-  QAction* action;
-  if ( functionMenu_ == 0 ){
-
-    functionMenu_ = new QMenu("&Functions",contextMenu_);
-
-    //====================================================================================================
-
-    action = functionMenu_->addAction("Snapshot");
-    action->setToolTip("Make a snapshot");
-    connect(action, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
-
-    //====================================================================================================
-
-    action = functionMenu_->addAction("Set Snapshot Name");
-    action->setToolTip("Set a name for snapshots");
-    connect(action, SIGNAL(triggered()), this, SLOT(slotSnapshotName()) );
-
-    //====================================================================================================
-
-    functionMenu_->addSeparator();
-
-    //====================================================================================================
-
-    action = functionMenu_->addAction("Copy View");
-    action->setToolTip("Copy current view to clipboard");
-    connect(action, SIGNAL(triggered()), this, SLOT(slotCopyView()) );
-
-    //====================================================================================================
-
-    action = functionMenu_->addAction("Paste View");
-    action->setToolTip("Paste current view from clipboard");
-    connect(action, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
-
-    //====================================================================================================
-
-    functionMenu_->addSeparator();
-
-    //====================================================================================================
-
-    action = functionMenu_->addAction("Animation");
-    action->setToolTip("Animate rotation of objects");
-    action->setCheckable( true );
-    action->setChecked( PluginFunctions::viewerProperties().animation() );
-    connect(action, SIGNAL(triggered(bool)), this , SLOT( slotChangeAnimation(bool) ) );
-
-    //====================================================================================================
-
-    action = functionMenu_->addAction("Backface Culling");
-    action->setToolTip("Enable backface culling");
-    action->setCheckable( true );
-    action->setChecked( PluginFunctions::viewerProperties().backFaceCulling() );
-    connect(action, SIGNAL(triggered(bool)), this , SLOT( slotChangeBackFaceCulling(bool) ) );
-
-    //====================================================================================================
-
-    action = functionMenu_->addAction("Two-sided Lighting");
-    action->setToolTip("Enable two-sided lighting");
-    action->setCheckable( true );
-    action->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
-    connect(action, SIGNAL(triggered(bool)), this , SLOT( slotChangeTwoSidedLighting(bool) ) );
-
-    functionMenu_->setTearOffEnabled(true);
-  }
-
-  contextMenu_->addMenu(functionMenu_ );
 }
+
 
 void CoreWidget::slotSnapshotName() {
   std::cerr << "Todo : slotSnapShotName only sets name for current viewer" << std::endl;
@@ -372,42 +438,6 @@ void CoreWidget::slotSnapshotName() {
 
 }
 
-void CoreWidget::slotChangeAnimation(bool _animation){
-  if ( shiftPressed_ ){
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      PluginFunctions::viewerProperties(i).animation(_animation);
-    }else
-      PluginFunctions::viewerProperties().animation(_animation);
-}
-
-void CoreWidget::slotChangeBackFaceCulling(bool _backFaceCulling){
-  if ( shiftPressed_ ){
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      PluginFunctions::viewerProperties(i).backFaceCulling(_backFaceCulling);
-    }else
-      PluginFunctions::viewerProperties().backFaceCulling(_backFaceCulling);
-}
-
-void CoreWidget::slotChangeTwoSidedLighting(bool _lighting){
-  if ( shiftPressed_ ){
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      PluginFunctions::viewerProperties(i).twoSidedLighting(_lighting);
-    }else
-      PluginFunctions::viewerProperties().twoSidedLighting(_lighting);
-}
-
-void CoreWidget::slotSnapshot() {
-  examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot();
-}
-
-void CoreWidget::slotPasteView( ) {
-  examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
-}
-
-void CoreWidget::slotCopyView( ) {
-  examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView();
-}
-
 void CoreWidget::slotAddContextMenu(QMenu* _menu) {
   MenuInfo info;
   info.menu = _menu;
@@ -422,6 +452,88 @@ void CoreWidget::slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextM
   info.position    = _type;
 
   contextMenus_.push_back(info);
+}
+
+void CoreWidget::slotUpdateViewerDrawMenu() {
+  if ( drawGroupViewer_ ) {
+    
+    disconnect( drawGroupViewer_ , SIGNAL( triggered( QAction * ) ),
+                this             , SLOT( slotViewerDrawMenu( QAction * ) ) );
+    delete( drawGroupViewer_ );
+    drawGroupViewer_ = 0;
+    
+  }
+  
+  // Recreate drawGroup
+  drawGroupViewer_ = new QActionGroup( this );
+  drawGroupViewer_->setExclusive( false );
+  
+  connect( drawGroupViewer_ , SIGNAL( triggered( QAction * ) ),
+           this       , SLOT( slotViewerDrawMenu( QAction * ) ) );  
+  
+  if ( !viewerDrawMenu_ ) {
+    
+    QIcon icon;
+    icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
+    viewerDrawMenu_  = new QMenu("Set Draw Mode"); 
+    viewerDrawMenu_->setTearOffEnabled(true);
+    viewerDrawMenu_->setIcon(icon);
+    
+    connect(viewerDrawMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdateGlobalDrawMenu() ) );
+  }
+  
+  // Collect available draw Modes 
+  ACG::SceneGraph::CollectDrawModesAction actionAvailable;
+  ACG::SceneGraph::traverse( PluginFunctions::getRootNode() , actionAvailable);
+  availableGlobalDrawModes_ = actionAvailable.drawModes();
+  
+  // Get currently active drawModes (first viewer only )
+  // TODO: create combination from all viewers!
+  int activeDrawModes = PluginFunctions::drawMode();
+  
+  // Convert to ids
+  std::vector< unsigned int > availDrawModeIds;
+  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableGlobalDrawModes_ );
+  
+  viewerDrawMenu_->clear();
+  
+  for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
+  {
+    unsigned int id    = availDrawModeIds[i];
+    std::string  descr = ACG::SceneGraph::DrawModes::description( id );
+
+    QAction * action = new QAction( descr.c_str(), drawGroupViewer_ );
+    action->setCheckable( true );
+    action->setChecked( ACG::SceneGraph::DrawModes::containsId( activeDrawModes, id ) );
+  }
+
+  viewerDrawMenu_->addActions( drawGroupViewer_->actions() );
+
+}
+
+void CoreWidget::slotViewerDrawMenu(QAction * _action) {
+  
+  //======================================================================================
+  // Get the mode toggled
+  //======================================================================================
+  unsigned int mode = 0;
+  std::vector< unsigned int > availDrawModeIds;
+  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableGlobalDrawModes_ );
+  for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
+  {
+    QString descr = QString( ACG::SceneGraph::DrawModes::description( availDrawModeIds[i] ).c_str() );
+
+    if ( descr == _action->text() ) {
+      mode = availDrawModeIds[i];
+      break;
+    }
+  }
+  
+  if ( qApp->keyboardModifiers() & Qt::ShiftModifier )
+    PluginFunctions::viewerProperties().drawMode(  PluginFunctions::viewerProperties().drawMode() ^ mode );
+  else
+    PluginFunctions::viewerProperties().drawMode(mode );
+  
 }
 
 //=============================================================================

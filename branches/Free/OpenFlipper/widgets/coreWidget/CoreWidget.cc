@@ -76,10 +76,10 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   helpMenu_(0),
   sceneGraphDialog_(0),
   fileMenu_(0),   
-  viewMenu_(0),         
+  viewMenu_(0), 
+  toolsMenu_(0),        
   fileMenuEnd_(0),
   stereoButton_(0),
-  projectionButton_(0),
   moveButton_(0),
   lightButton_(0),
   pickButton_(0),
@@ -87,11 +87,13 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   globalDrawMenu_(0),             
   drawGroup_(0),  
   viewGroup_(0),  
+  perspectiveProjectionAction_(0),
   activeDrawModes_(0),                     
   availableGlobalDrawModes_(0),                   
   contextMenu_(0),
-  functionMenu_(0),
   contextSelectionMenu_(0),
+  drawGroupViewer_(0),
+  viewerDrawMenu_(0),
   stackMenu_(0),
   helpBrowserDeveloper_(0),
   helpBrowserUser_(0),
@@ -193,7 +195,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     glViewer* examinerWidget = new glViewer(glScene_,
 					    glWidget_,
-              PluginFunctions::viewerProperties(0),
+                                            PluginFunctions::viewerProperties(0),
 					    centerWidget_,
                                             "Examiner Widget",
                                             statusBar_);
@@ -211,7 +213,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       glViewer* newWidget = new glViewer(glScene_,
 					 glWidget_,
-           PluginFunctions::viewerProperties(i),
+                                         PluginFunctions::viewerProperties(i),
 					 centerWidget_,
 					 "Examiner Widget",
            statusBar_);
@@ -333,94 +335,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     connect( questionButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setQuestionMode() ) );
   viewerToolbar_->addWidget( questionButton_)->setText("Question");
-
+ 
   viewerToolbar_->addSeparator();
-
-  QToolButton* homeButton = new QToolButton( viewerToolbar_ );
-  homeButton->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"go-home.png") );
-  homeButton->setMinimumSize( 16, 16 );
-  homeButton->setMaximumSize( 32, 32 );
-  homeButton->setCheckable( false );
-  homeButton->setToolTip("Restore <b>home</b> view.");
-  homeButton->setWhatsThis(
-                  "Restore home view<br><br>"
-                  "Resets the view to the home view");
-  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-    connect( homeButton,SIGNAL( clicked() ), examiner_widgets_[i], SLOT( home() ) );
-  viewerToolbar_->addWidget( homeButton)->setText("Home");
-
-
-  QToolButton* setHomeButton = new QToolButton( viewerToolbar_ );
-  setHomeButton->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"set-home.png") );
-  setHomeButton->setMinimumSize( 16, 16 );
-  setHomeButton->setMaximumSize( 32, 32 );
-  setHomeButton->setCheckable( false );
-  setHomeButton->setToolTip("Set <b>home</b> view");
-  setHomeButton->setWhatsThis(
-                  "Store home view<br><br>"
-                  "Stores the current view as the home view");
-  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-    connect( setHomeButton,SIGNAL( clicked() ), examiner_widgets_[i], SLOT( setHome() ) );
-  viewerToolbar_->addWidget( setHomeButton)->setText("Set Home");
-
-
-  QToolButton* viewAllButton = new QToolButton( viewerToolbar_ );
-  viewAllButton->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewall.png") );
-  viewAllButton->setMinimumSize( 16, 16 );
-  viewAllButton->setMaximumSize( 32, 32 );
-  viewAllButton->setCheckable( false );
-  viewAllButton->setToolTip("View all.");
-  viewAllButton->setWhatsThis(
-                  "View all<br><br>"
-                  "Move the objects in the scene so that"
-                  " the whole scene is visible.");
-  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-    connect( viewAllButton,SIGNAL( clicked() ), examiner_widgets_[i], SLOT( viewAll() ) );
-  viewerToolbar_->addWidget( viewAllButton)->setText("View all");
-
-
-  projectionButton_ = new QToolButton( viewerToolbar_ );
-  projectionButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
-  projectionButton_->setMinimumSize( 16, 16 );
-  projectionButton_->setMaximumSize( 32, 32 );
-  projectionButton_->setCheckable( false );
-  projectionButton_->setToolTip(
-                "Switch between <b>perspective</b> and "
-                "<b>parrallel</b> projection mode.");
-  projectionButton_->setWhatsThis(
-                "Switch projection modes<br><br>"
-                "Switch between <b>perspective</b> and "
-                "<b>parrallel</b> projection mode.");
-  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-    connect( projectionButton_,SIGNAL( clicked() ), examiner_widgets_[i], SLOT( toggleProjectionMode() ) );
-    connect( examiner_widgets_[i],SIGNAL( projectionModeChanged( bool ) ), this , SLOT( slotProjectionModeChanged( bool ) ) );
-  }
-
-
-  viewerToolbar_->addWidget( projectionButton_)->setText( "Projection" );
-
-
-  viewerToolbar_->addSeparator();
-
-  QToolButton* sceneGraphButton = new QToolButton( viewerToolbar_ );
-  sceneGraphButton->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"scenegraph.png") );
-  sceneGraphButton->setMinimumSize( 16, 16 );
-  sceneGraphButton->setMaximumSize( 32, 32 );
-  sceneGraphButton->setCheckable( false );
-  sceneGraphButton->setToolTip("Toggle scene graph viewer.");
-  sceneGraphButton->setWhatsThis(
-                  "Toggle scene graph viewer<br><br>"
-                  "The scene graph viewer enables you to examine the "
-                  "displayed scene graph and to modify certain nodes.<br><br>"
-                  "There are three modi for the scene graph viewer:"
-                  "<ul><li><b>hidden</b></li>"
-                  "<li><b>split</b>: share space</li>"
-                  "<li><b>dialog</b>: own dialog window</li></ul>"
-                  "This button toggles between these modi.");
-  QObject::connect( sceneGraphButton, SIGNAL( clicked() ),
-                    this, SLOT( slotShowSceneGraphDialog() ) );
-  viewerToolbar_->addWidget( sceneGraphButton)->setText( "SceneGraph" );
-
 
   if (OpenFlipper::Options::stereo())
   {

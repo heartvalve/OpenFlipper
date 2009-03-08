@@ -68,14 +68,6 @@ void CoreWidget::slotToggleStereoMode()
     examiner_widgets_[i]->setStereoMode(stereoActive_);
 }
 
-void CoreWidget::slotProjectionModeChanged( bool _ortho ) {
-  if ( !_ortho )
-    projectionButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
-  else
-    projectionButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
-
-}
-
 void CoreWidget::slotActionModeChanged( Viewer::ActionMode _mode ) {
   moveButton_->setDown(false);
   lightButton_->setDown(false);
@@ -113,24 +105,6 @@ void CoreWidget::slotActionModeChanged( Viewer::ActionMode _mode ) {
   }
 }
 
-void CoreWidget::slotFunctionMenuUpdate() {
-  std::cerr << "DF" <<std::endl;
-  if ( examiner_widgets_.empty() )
-    return;
-
-  QList< QAction *> allActions = functionMenu_->actions();
-
-  for ( int i = 0 ; i <  allActions.size(); ++i ) {
-    if ( allActions[i]->text()      == "Animation" )
-      allActions[i]->setChecked(PluginFunctions::viewerProperties().animation());
-    else if ( allActions[i]->text() == "Backface Culling" )
-      allActions[i]->setChecked(PluginFunctions::viewerProperties().backFaceCulling());
-    else if ( allActions[i]->text() == "Two-sided Lighting" )
-      allActions[i]->setChecked(PluginFunctions::viewerProperties().twoSidedLighting());
-  }
-
-}
-
 void CoreWidget::slotSetGlobalBackgroundColor() {
   ACG::Vec4f bc = PluginFunctions::viewerProperties().backgroundColor() * 255.0;
 
@@ -148,7 +122,7 @@ void CoreWidget::slotSetGlobalBackgroundColor() {
 
 }
 
-void CoreWidget::slotSetLocalBackgroundColor() {
+void CoreWidget::slotSetContextBackgroundColor() {
   ACG::Vec4f bc = PluginFunctions::viewerProperties().backgroundColor() * 255.0;
 
   QColor backCol((int)bc[0], (int)bc[1], (int)bc[2], (int)bc[3]);
@@ -162,6 +136,108 @@ void CoreWidget::slotSetLocalBackgroundColor() {
 }
 
 
+/// Set the viewer to home position
+void CoreWidget::slotContextHomeView() {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->home();
+}
+
+
+/// Set the viewer to home position
+void CoreWidget::slotGlobalHomeView() {
+  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i )
+    examiner_widgets_[i]->home();
+}
+
+/// Set the viewers home position
+void CoreWidget::slotContextSetHomeView() {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->setHome();
+}
+
+
+/// Set the home position for all viewers
+void CoreWidget::slotGlobalSetHomeView() {
+  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i )
+    examiner_widgets_[i]->setHome();
+}
+
+/// Change view on active viewer to view complete scene
+void CoreWidget::slotContextViewAll() {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->viewAll();
+}
+
+
+/// Change view on all viewers to view complete scene
+void CoreWidget::slotGlobalViewAll() {
+  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i )
+    examiner_widgets_[i]->viewAll();
+}
+
+/// Toggle projection Mode of the active viewer
+void CoreWidget::slotContextSwitchProjection() {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->toggleProjectionMode();
+}
+
+/// Toggle projection Mode of all viewers to perspective projection
+void CoreWidget::slotGlobalPerspectiveProjection() {
+  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i )
+    examiner_widgets_[i]->perspectiveProjection();
+}
+
+/// Toggle projection Mode of all viewers to orthogonal projection
+void CoreWidget::slotGlobalOrthographicProjection() {
+  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i )
+    examiner_widgets_[i]->orthographicProjection();
+}
+
+/// Set the animation Mode for all viewers
+void CoreWidget::slotGlobalChangeAnimation(bool _animation){
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    PluginFunctions::viewerProperties(i).animation(_animation);
+}
+
+/// Set the animation Mode for active viewer
+void CoreWidget::slotLocalChangeAnimation(bool _animation){
+  PluginFunctions::viewerProperties().animation(_animation);
+}
+
+/// Set Backface culling for all viewers
+void CoreWidget::slotGlobalChangeBackFaceCulling(bool _backFaceCulling){
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    PluginFunctions::viewerProperties(i).backFaceCulling(_backFaceCulling);
+
+}
+
+/// Set Backface culling for active viewer
+void CoreWidget::slotLocalChangeBackFaceCulling(bool _backFaceCulling){
+  PluginFunctions::viewerProperties().backFaceCulling(_backFaceCulling);
+}
+
+
+/// Set two sided lighting for all viewers
+void CoreWidget::slotGlobalChangeTwoSidedLighting(bool _lighting) {
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    PluginFunctions::viewerProperties(i).twoSidedLighting(_lighting);
+}
+
+/// Set two sided lighting for active viewer
+void CoreWidget::slotLocalChangeTwoSidedLighting(bool _lighting) {
+  PluginFunctions::viewerProperties().twoSidedLighting(_lighting);
+}
+
+
+void CoreWidget::slotSnapshot() {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot();
+}
+
+void CoreWidget::slotPasteView( ) {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();
+}
+
+void CoreWidget::slotCopyView( ) {
+  examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView();
+}
+
+   
 
 
 //=============================================================================

@@ -465,6 +465,9 @@ public:
 
     /// View Menu
     QMenu *viewMenu_;
+    
+    /// Tools Menu
+    QMenu *toolsMenu_;
 
     /// First entry after all relevant parts of the File Menu
     QAction* fileMenuEnd_;
@@ -481,7 +484,6 @@ public:
     int toolbarCount_;
 
     QToolButton* stereoButton_;
-    QToolButton* projectionButton_;
     QToolButton* moveButton_;
     QToolButton* lightButton_;
     QToolButton* pickButton_;
@@ -501,6 +503,9 @@ public:
   private slots:
     /// Called when the global drawMode is selected
     void slotGlobalDrawMenu(QAction * _action);
+    
+    /// Called before the view Menu is shown
+    void slotViewMenuAboutToShow();
   
   private:
     /// This variable holds the global draw menu
@@ -510,6 +515,9 @@ public:
     
     /// Group for all menu items
     QActionGroup* viewGroup_;
+    
+    QAction* perspectiveProjectionAction_;
+    QAction* orthogonalProjectionAction_;
     
     int activeDrawModes_;
     
@@ -536,15 +544,6 @@ public:
     /// called by plugins to add a real context menu depending on DataType
     void slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextMenuType type_);
 
-    /// change the animation setting
-    void slotChangeAnimation(bool _animation);
-
-    /// change the backFaceCulling setting
-    void slotChangeBackFaceCulling(bool _backFaceCulling);
-
-    /// change the twoSidedLighting setting
-    void slotChangeTwoSidedLighting(bool _lighting);
-
     /// Paste the view to the last active examiner
     void slotPasteView( );
 
@@ -556,6 +555,12 @@ public:
 
     /// Set the snapShot name for all examiners
     void slotSnapshotName();
+    
+    /// Called when a coordsys drawMode has been changed
+    void slotViewerDrawMenu( QAction * _action );
+    
+    /// Creates a draw Menu for the currently active Viewer
+    void slotUpdateViewerDrawMenu();
 
   private :
     /** Update the contextmenu for the given position inside an examiner widget
@@ -572,9 +577,6 @@ public:
     /// context Menu for the gl area
     QMenu*  contextMenu_;
 
-    /// Function Menu
-    QMenu* functionMenu_;
-
     /// Context Menu containing all selection elements
     QMenu*  contextSelectionMenu_;
 
@@ -583,6 +585,12 @@ public:
 
     /// All real context menu entries
     std::vector< MenuInfo > contextMenus_;
+    
+    /// DrawGroup for per Viewer Draw Modes
+    QActionGroup* drawGroupViewer_;
+    
+    /// Draw Menu for per Viewer Draw Modes
+    QMenu* viewerDrawMenu_;
 
   /** @} */
 
@@ -738,20 +746,73 @@ public:
     /// Enable or disable Stereo
     void slotToggleStereoMode();
 
-    /// Change icons if the stereo mode has changed in the examiner
-    void slotProjectionModeChanged( bool _ortho );
-
     /// Change Icons if action mode is changed in an examiner
     void slotActionModeChanged( Viewer::ActionMode _mode );
 
-    /// Called when the functionMenu has to be updated
-    void slotFunctionMenuUpdate();
-    
     /// Set Background Color for all viewers at once.
     void slotSetGlobalBackgroundColor();
     
     /// Set Background Color for one viewer.
-    void slotSetLocalBackgroundColor();
+    void slotSetContextBackgroundColor();
+    
+    
+    
+    /// Set the active viewer to home position
+    void slotContextHomeView();
+    
+    /// Set the viewer to home position
+    void slotGlobalHomeView();
+    
+    
+    
+    /// Set the active viewers home position
+    void slotContextSetHomeView();
+    
+    /// Set the home position for all viewers        
+    void slotGlobalSetHomeView();
+    
+    
+    
+    /// Change view on active viewer to view complete scene
+    void slotContextViewAll();
+
+    /// Change view on all viewers to view complete scene
+    void slotGlobalViewAll();
+    
+    
+    /// Toggle projection Mode of the active viewer.
+    void slotContextSwitchProjection();
+    
+    /// Toggle projection Mode of all viewers to perspective projection
+    void slotGlobalPerspectiveProjection();
+
+    /// Toggle projection Mode of all viewers to orthographic projection
+    void slotGlobalOrthographicProjection();
+    
+    
+    
+    /// Set the animation Mode for all viewers
+    void slotGlobalChangeAnimation(bool _animation);
+
+    /// Set the animation Mode for active viewer
+    void slotLocalChangeAnimation(bool _animation);
+    
+    
+    
+    /// Set Backface culling for all viewers
+    void slotGlobalChangeBackFaceCulling(bool _backFaceCulling);
+    
+    /// Set Backface culling for active viewer
+    void slotLocalChangeBackFaceCulling(bool _backFaceCulling);
+    
+    
+    
+    /// Set two sided lighting for all viewers
+    void slotGlobalChangeTwoSidedLighting(bool _lighting);
+    
+    /// Set two sided lighting for active viewer
+    void slotLocalChangeTwoSidedLighting(bool _lighting);
+
 
   private :
     bool stereoActive_;
