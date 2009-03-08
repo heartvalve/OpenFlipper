@@ -77,7 +77,7 @@ void ColorPlugin::pluginsInitialized()
   // =============================================================================
   // Add a Menu for color selection
   // =============================================================================
-  QMenu *colorMenu = new QMenu(tr("&Colors"));
+  QMenu *colorMenu = new QMenu(tr("&Color schemes"));
   QIcon icon;
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"format-stroke-color.png");
   colorMenu->setIcon(icon);
@@ -112,10 +112,11 @@ void ColorPlugin::pluginsInitialized()
   colorMenu->addAction(AC_set_Paper_color);
 
   // =============================================================================
-  // Create symbol bar with same contents
+  // Create Tool bar with same contents
   // =============================================================================
 
   QToolBar* toolbar = new QToolBar("Color Toolbar");
+  toolbar->hide();
   toolbar->addAction(AC_set_Default_color);
   toolbar->addAction(AC_set_Presentation_color);
   toolbar->addAction(AC_set_Paper_color);
