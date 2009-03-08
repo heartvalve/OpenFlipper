@@ -193,6 +193,8 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   slotPropertiesUpdated();
 
   setAcceptDrops(true);
+  
+  setHome();
 }
 
 

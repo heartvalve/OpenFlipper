@@ -81,27 +81,12 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   fileMenu_ = new QMenu(tr("&File"));
   menuBar()->addMenu(fileMenu_ );
-
-  viewMenu_ = new QMenu(tr("&View"));
-  menuBar()->addMenu(viewMenu_ );
-  
-  QIcon icon;
-  QAction* setGlobalBackgroundColor = new QAction(tr("&Background Color"), this);;
-  setGlobalBackgroundColor->setToolTip(tr("Set Background Color for all viewers"));
-  setGlobalBackgroundColor->setStatusTip(tr("Set Background Color for all viewers"));
-  setGlobalBackgroundColor->setWhatsThis("Set Background Color for all viewers");
-  setGlobalBackgroundColor->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BackgroundColor.png") );
-  connect(setGlobalBackgroundColor, SIGNAL(triggered()), this, SLOT(slotSetGlobalBackgroundColor()));
-  viewMenu_->addAction(setGlobalBackgroundColor);
-  
-  slotUpdateGlobalDrawMenu();
   
   //Clear all
   QAction* AC_clear_all = new QAction(tr("&Clear All"), this);;
   AC_clear_all->setStatusTip(tr("Clear all Objects"));
   AC_clear_all->setWhatsThis("Close all open Objects");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-clear.png");
-  AC_clear_all->setIcon(icon);
+  AC_clear_all->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-clear.png"));
   connect(AC_clear_all, SIGNAL(triggered()), this, SIGNAL(clearAll()));
   fileMenu_->addAction(AC_clear_all);
 
@@ -112,8 +97,7 @@ void CoreWidget::setupMenuBar()
 //   AC_Load->setShortcut (Qt::CTRL + Qt::Key_O);
   AC_Load->setStatusTip(tr("Load an object"));
   AC_Load->setWhatsThis("Load a new object");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open.png");
-  AC_Load->setIcon(icon);
+  AC_Load->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open.png"));
 
   connect(AC_Load, SIGNAL(triggered()), this, SIGNAL(loadMenu()));
   fileMenu_->addAction(AC_Load);
@@ -122,8 +106,7 @@ void CoreWidget::setupMenuBar()
   QAction* AC_AddEmpty = new QAction(tr("&Add Empty Object"), this);
   AC_AddEmpty->setStatusTip(tr("Add an empty object"));
   AC_AddEmpty->setWhatsThis("Creates a new empty object of a given type");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"add-empty-object.png");
-  AC_AddEmpty->setIcon(icon);
+  AC_AddEmpty->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"add-empty-object.png"));
   connect(AC_AddEmpty, SIGNAL(triggered()), this, SIGNAL(addEmptyObjectMenu()));
   fileMenu_->addAction(AC_AddEmpty);
 
@@ -134,8 +117,7 @@ void CoreWidget::setupMenuBar()
 //   AC_Save->setShortcut (Qt::CTRL + Qt::Key_S);
   AC_Save->setStatusTip(tr("Save currently selected objects"));
   AC_Save->setWhatsThis("Saves all currently selected objects");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save.png");
-  AC_Save->setIcon(icon);
+  AC_Save->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save.png"));
   connect(AC_Save, SIGNAL(triggered()), this, SIGNAL(saveMenu()));
   fileMenu_->addAction(AC_Save);
 
@@ -143,8 +125,7 @@ void CoreWidget::setupMenuBar()
   QAction* AC_Save_to = new QAction(tr("&Save Object To"), this);
   AC_Save_to->setStatusTip(tr("Save current Object(s) To"));
   AC_Save_to->setWhatsThis("Saves all currently selected objects under a new name");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save-as.png");
-  AC_Save_to->setIcon(icon);
+  AC_Save_to->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save-as.png"));
   connect(AC_Save_to, SIGNAL(triggered()), this, SIGNAL(saveToMenu()));
   fileMenu_->addAction(AC_Save_to);
 
@@ -154,8 +135,7 @@ void CoreWidget::setupMenuBar()
   QAction* AC_load_ini = new QAction(tr("&Load Settings"), this);
   AC_load_ini->setStatusTip(tr("Load Settings from INI file"));
   AC_load_ini->setWhatsThis("Load a previous settings from file (objects,colors,...)");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"load-settings.png");
-  AC_load_ini->setIcon(icon);
+  AC_load_ini->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"load-settings.png"));
   connect(AC_load_ini, SIGNAL(triggered()), this, SIGNAL(loadIniMenu()));
   fileMenu_->addAction(AC_load_ini);
 
@@ -163,8 +143,7 @@ void CoreWidget::setupMenuBar()
   QAction* AC_save_ini = new QAction(tr("&Save Settings"), this);
   AC_save_ini->setStatusTip(tr("Save current settings to INI file"));
   AC_save_ini->setWhatsThis("Save settings to file (objects,colors,...)");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"save-settings.png");
-  AC_save_ini->setIcon(icon);
+  AC_save_ini->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"save-settings.png"));
   connect(AC_save_ini, SIGNAL(triggered()), this, SIGNAL(saveIniMenu()));
   fileMenu_->addAction(AC_save_ini);
 
@@ -174,8 +153,7 @@ void CoreWidget::setupMenuBar()
   QAction* AC_Options = new QAction(tr("&Options"), this);
   AC_Options->setStatusTip(tr("Edit OpenFlipper Options"));
   AC_Options->setWhatsThis("Edit OpenFlipper Options");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"options.png");
-  AC_Options->setIcon(icon);
+  AC_Options->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"options.png"));
   connect(AC_Options, SIGNAL(triggered()), this, SLOT(showOptionsWidget()));
   fileMenu_->addAction(AC_Options);
 
@@ -184,8 +162,7 @@ void CoreWidget::setupMenuBar()
 
   //Recent files
   recentFilesMenu_ = new QMenu(tr("&Recent Files"));
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open-recent.png");
-  recentFilesMenu_->setIcon(icon);
+  recentFilesMenu_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open-recent.png"));
   recentFilesMenu_->setWhatsThis("Open recent files");
   connect(recentFilesMenu_,SIGNAL(triggered(QAction*)),this,SIGNAL(recentOpen(QAction*)));
   fileMenu_->addMenu(recentFilesMenu_);
@@ -197,11 +174,188 @@ void CoreWidget::setupMenuBar()
   AC_exit->setShortcut (Qt::CTRL + Qt::Key_Q);
   AC_exit->setStatusTip(tr("Exit Application"));
   recentFilesMenu_->setWhatsThis("Close OpenFlipper");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"application-exit.png");
-  AC_exit->setIcon(icon);
+  AC_exit->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"application-exit.png"));
   connect(AC_exit, SIGNAL(triggered()), this, SIGNAL(exit()));
   fileMenu_->addAction(AC_exit);
 
+  
+  // ======================================================================
+  // View Menu
+  // ======================================================================
+  viewMenu_ = new QMenu(tr("&View"));
+  menuBar()->addMenu(viewMenu_ );
+  
+  slotUpdateGlobalDrawMenu();
+  viewMenu_->addMenu(globalDrawMenu_);
+  
+  //============================================================================================================
+  // Rendering options Menu
+  //============================================================================================================
+  
+  QMenu* renderingOptionsMenu = new QMenu("Rendering Options",viewMenu_);
+  renderingOptionsMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"renderingOptions.png"));
+  viewMenu_->addMenu(renderingOptionsMenu);
+  
+  orthogonalProjectionAction_ = new QAction( "Switch Viewers to Orthogonal Projection", renderingOptionsMenu );;
+  orthogonalProjectionAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  orthogonalProjectionAction_->setCheckable( false );
+  orthogonalProjectionAction_->setToolTip(   "Switch to orthogonal projection mode.");
+  orthogonalProjectionAction_->setWhatsThis( "Switch projection mode<br><br>"
+      "Switch to <b>orthogonal</b> projection mode.");  
+  connect( orthogonalProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalOrthographicProjection() ) );
+  renderingOptionsMenu->addAction( orthogonalProjectionAction_);
+  
+  QAction* animation = renderingOptionsMenu->addAction("Animation");
+  
+  uint enabledCount = 0;
+  uint disabledCount = 0;
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).animation() )
+      enabledCount++;
+    else 
+      disabledCount++;
+  }
+      
+  if ( enabledCount != 0 && disabledCount != 0 )
+    animation->setChecked(Qt::PartiallyChecked);    
+  else if ( enabledCount == 4 )
+    animation->setChecked( Qt::Checked );
+  else
+    animation->setChecked( Qt::Unchecked );
+  
+  animation->setToolTip("Animate rotation of objects");
+  animation->setCheckable( true );
+  animation->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"animation.png") );
+  connect(animation, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeAnimation(bool) ) );
+  
+  
+  //======================
+  
+  QAction* backfaceCulling = renderingOptionsMenu->addAction("Backface Culling");
+  
+  enabledCount  = 0;
+  disabledCount = 0;
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).backFaceCulling() )
+      enabledCount++;
+    else 
+      disabledCount++;
+  }
+  
+  if ( enabledCount != 0 && disabledCount != 0 )
+    backfaceCulling->setChecked(Qt::PartiallyChecked);    
+  else if ( enabledCount == 4 )
+    backfaceCulling->setChecked( Qt::Checked );
+  else
+    backfaceCulling->setChecked( Qt::Unchecked );
+  
+  backfaceCulling->setToolTip("Enable backface culling");
+  backfaceCulling->setCheckable( true );
+  backfaceCulling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"backFaceCulling.png") );
+  connect(backfaceCulling, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeBackFaceCulling(bool) ) );
+
+  //======================
+
+  QAction* twoSidedLighting = renderingOptionsMenu->addAction("Two-sided Lighting");
+    
+  enabledCount  = 0;
+  disabledCount = 0; 
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).twoSidedLighting() )
+      enabledCount++;
+    else 
+      disabledCount++;
+  }
+  
+  if ( enabledCount != 0 && disabledCount != 0 )
+    twoSidedLighting->setChecked(Qt::PartiallyChecked);    
+  else if ( enabledCount == 4 )
+    twoSidedLighting->setChecked( Qt::Checked );
+  else
+    twoSidedLighting->setChecked( Qt::Unchecked );
+  
+  twoSidedLighting->setToolTip("Enable two-sided lighting");
+  twoSidedLighting->setCheckable( true );
+  twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
+  twoSidedLighting->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
+  connect(twoSidedLighting, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeTwoSidedLighting(bool) ) );
+  
+  //============================================================================================================
+  // Other toplevel actions
+  //============================================================================================================
+  
+  viewMenu_->addSeparator();
+  
+  connect( viewMenu_,SIGNAL( aboutToShow() ), this, SLOT( slotViewMenuAboutToShow() ) );
+  
+  QAction* homeAction = new QAction("Restore Home View",viewMenu_);
+  homeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"go-home.png") );
+  homeAction->setCheckable( false );
+  homeAction->setToolTip("Restore <b>home</b> view.");
+  homeAction->setWhatsThis( "Restore home view<br><br>"
+                            "Resets the view to the home view");
+  viewMenu_->addAction( homeAction );
+  connect( homeAction,SIGNAL( triggered() ), this, SLOT( slotGlobalHomeView() ) );
+  
+  
+  QAction* setHomeAction = new QAction( "Set Home View" , viewMenu_ );
+  setHomeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"set-home.png") );
+  setHomeAction->setCheckable( false );
+  setHomeAction->setToolTip("Set <b>home</b> view");
+  setHomeAction->setWhatsThis( "Store home view<br><br>"
+                               "Stores the current view as the home view");
+  viewMenu_->addAction( setHomeAction);
+  connect( setHomeAction,SIGNAL( triggered() ), this, SLOT( slotGlobalSetHomeView() ) );
+  
+  QAction* viewAllAction = new QAction( "View all", viewMenu_ );
+  viewAllAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewall.png") );
+  viewAllAction->setCheckable( false );
+  viewAllAction->setToolTip("View all.");
+  viewAllAction->setWhatsThis( "View all<br><br>"
+                               "Move the objects in the scene so that"
+                               " the whole scene is visible.");
+  connect( viewAllAction,SIGNAL( triggered() ), this, SLOT( slotGlobalViewAll() ) );
+  viewMenu_->addAction( viewAllAction);
+  
+  perspectiveProjectionAction_ = new QAction( "Switch Viewers to Perspective Projection", viewMenu_ );;
+  perspectiveProjectionAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
+  perspectiveProjectionAction_->setCheckable( false );
+  perspectiveProjectionAction_->setToolTip(   "Switch to perspective projection mode.");
+  perspectiveProjectionAction_->setWhatsThis( "Switch projection mode<br><br>"
+                                              "Switch to <b>perspective</b> projection mode.");
+  connect( perspectiveProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalPerspectiveProjection() ) );
+  viewMenu_->addAction( perspectiveProjectionAction_);
+  
+ 
+  
+  viewMenu_->addSeparator();
+  
+  QAction* setGlobalBackgroundColor = new QAction(tr("&Set Background Color"), this);;
+  setGlobalBackgroundColor->setToolTip(tr("Set Background Color for all viewers"));
+  setGlobalBackgroundColor->setStatusTip(tr("Set Background Color for all viewers"));
+  setGlobalBackgroundColor->setWhatsThis("Set Background Color for all viewers");
+  setGlobalBackgroundColor->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BackgroundColor.png") );
+  connect(setGlobalBackgroundColor, SIGNAL(triggered()), this, SLOT(slotSetGlobalBackgroundColor()));
+  viewMenu_->addAction(setGlobalBackgroundColor);
+   
+  //===========================================================================================================================
+  // Tools Menu
+  //===========================================================================================================================
+  
+  toolsMenu_ = new QMenu(tr("&Tools"));
+  menuBar()->addMenu(toolsMenu_ );
+  
+  QAction* sceneGraphAction = new QAction( "Show SceneGraph " ,toolsMenu_ );
+  sceneGraphAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"scenegraph.png") );
+  sceneGraphAction->setCheckable( false );
+  sceneGraphAction->setToolTip("Show scene graph viewer.");
+  sceneGraphAction->setWhatsThis( "Toggle scene graph viewer<br><br>"
+                                  "The scene graph viewer enables you to examine the "
+                                  "displayed scene graph and to modify certain nodes.<br><br>" );
+  QObject::connect( sceneGraphAction, SIGNAL( triggered() ),
+                    this,             SLOT( slotShowSceneGraphDialog() ) );
+  toolsMenu_->addAction( sceneGraphAction);
+  
   // ======================================================================
   // help Menu
   // ======================================================================
@@ -211,8 +365,7 @@ void CoreWidget::setupMenuBar()
   //Open Help Browser
   QAction* AC_HelpBrowser = new QAction(tr("&User Help"), this);
   AC_HelpBrowser->setStatusTip(tr("Open Help Browser with User Documentation"));
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png");
-  AC_HelpBrowser->setIcon(icon);
+  AC_HelpBrowser->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png"));
   AC_HelpBrowser->setWhatsThis("Open the <b>Help Browser</b>");
   connect(AC_HelpBrowser, SIGNAL(triggered()), this, SLOT(showHelpBrowserUser()));
   helpMenu_->addAction(AC_HelpBrowser);
@@ -220,8 +373,7 @@ void CoreWidget::setupMenuBar()
   //Open Help Browser
   AC_HelpBrowser = new QAction(tr("&Developer Help"), this);
   AC_HelpBrowser->setStatusTip(tr("Open Help Browser with Developer Documentation"));
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png");
-  AC_HelpBrowser->setIcon(icon);
+  AC_HelpBrowser->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png"));
   AC_HelpBrowser->setWhatsThis("Open the <b>Help Browser</b>");
   connect(AC_HelpBrowser, SIGNAL(triggered()), this, SLOT(showHelpBrowserDeveloper()));
   helpMenu_->addAction(AC_HelpBrowser);
@@ -238,8 +390,7 @@ void CoreWidget::setupMenuBar()
   QAction* AC_Plugins = new QAction(tr("&Plugins"), this);
   AC_Plugins->setStatusTip(tr("Show loaded plugins"));
   AC_Plugins->setWhatsThis("Show loaded plugins");
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"network-connect.png");
-  AC_Plugins->setIcon(icon);
+  AC_Plugins->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"network-connect.png"));
   connect(AC_Plugins, SIGNAL(triggered()), this, SIGNAL(showPlugins()));
   helpMenu_->addAction(AC_Plugins);
 
@@ -248,8 +399,7 @@ void CoreWidget::setupMenuBar()
   //About Action
   QAction* AC_About = new QAction(tr("&About"), this);
   AC_About->setStatusTip(tr("About OpenFlipper"));
-  icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-about.png");
-  AC_About->setIcon(icon);
+  AC_About->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-about.png"));
   AC_About->setWhatsThis("This entry shows information about <b>OpenFlipper</b>");
   connect(AC_About, SIGNAL(triggered()), this, SLOT(showAboutWidget()));
   helpMenu_->addAction(AC_About);
@@ -264,6 +414,30 @@ void CoreWidget::setupMenuBar()
   mainToolbar_->addAction(AC_load_ini);
   mainToolbar_->addAction(AC_save_ini);
 
+}
+
+void CoreWidget::slotViewMenuAboutToShow() {
+  
+  uint perspectiveCount = 0;
+  uint orthogonalCount = 0;
+  
+  for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i ) {
+    if ( examiner_widgets_[ i ]->projectionMode() == glViewer::PERSPECTIVE_PROJECTION )
+      perspectiveCount++;
+    else
+      orthogonalCount++;
+  }
+  
+  if ( perspectiveCount == 4 ) 
+    perspectiveProjectionAction_->setVisible(false);
+  else
+    perspectiveProjectionAction_->setVisible(true);
+    
+  if ( orthogonalCount == 4 )
+    orthogonalProjectionAction_->setVisible(false);
+  else
+    orthogonalProjectionAction_->setVisible(true);
+  
 }
 
 void CoreWidget::slotUpdateGlobalDrawMenu() {
@@ -292,8 +466,6 @@ void CoreWidget::slotUpdateGlobalDrawMenu() {
     globalDrawMenu_->setIcon(icon);
     
     connect(globalDrawMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdateGlobalDrawMenu() ) );
-    
-    viewMenu_->addMenu(globalDrawMenu_);
   }
   
   // Collect available draw Modes 
@@ -353,5 +525,6 @@ void CoreWidget::slotGlobalDrawMenu(QAction * _action) {
   PluginFunctions::setDrawMode( activeDrawModes_ );
   slotUpdateGlobalDrawMenu();
 }
+
 
 //=============================================================================
