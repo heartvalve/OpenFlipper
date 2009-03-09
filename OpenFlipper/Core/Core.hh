@@ -401,9 +401,6 @@ private:
       /// The current Toolbox item has changed
 //       void slotToolboxSwitched(int _index);
 
-      /// Add a Toolbox from a plugin
-      void slotAddToolbox(QString _name ,QWidget* _widget);
-
       /// Slot adding empty object from Menu
       void slotAddEmptyObjectMenu();
 
@@ -415,6 +412,11 @@ private:
 
       /// Open Recent file
       void slotRecentOpen(QAction* _action);
+      
+   public slots:
+     
+    /// Add a Toolbox from a plugin or from scripting
+     void addToolbox(QString _name ,QWidget* _widget);
 
    private :
 

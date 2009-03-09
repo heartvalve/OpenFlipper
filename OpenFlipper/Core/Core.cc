@@ -1126,27 +1126,40 @@ void Core::setDescriptions(){
   emit setSlotDescription("loadObject()", "Show the dialog to load an object. (only works if GUI is available)",QStringList(), QStringList());
   emit setSlotDescription("loadSettings()", "Show the dialog to load settings. (only works if GUI is available)",QStringList(), QStringList());
   emit setSlotDescription("loadSettings(QString)", "load settings from file.",QStringList(), QStringList());
-  emit setSlotDescription("createWidget(QString,QString);", "Create a widget from an ui file",
+  
+  emit setSlotDescription("createWidget(QString,QString)", "Create a widget from an ui file",
                           QString("Object name,ui file").split(","),
                           QString("Name of the new widget in script,ui file to load").split(","));
 
+  emit setSlotDescription("addToolbox(QString,QWidget*)", "Add a widget as a toolbox",
+                          QString("Toolbox Entry name,Widget").split(","),
+                          QString("Name of the new widget in the toolbox,Pointer to the new widget").split(","));
 
 }
 
-void Core::slotAddToolbox(QString _name ,QWidget* _widget) {
+void Core::addToolbox(QString _name ,QWidget* _widget) {
   int id = -1;
 
   for ( uint i = 0 ; i < plugins.size(); ++i ) {
     if ( plugins[i].plugin == sender() ) {
       id = i;
-      std::cerr << "Found" << std::endl;
       break;
     }
   }
 
   if ( id == -1 ) {
-    std::cerr << "Unknown sender plugin when adding Toolbox!" << std::endl;
-    return;
+    for ( uint i = 0 ; i < plugins.size(); ++i ) {
+      if ( plugins[i].name == "Scripting" ) {
+        id = i;
+        break;
+      }
+    }
+    
+    
+    if ( id == -1 ) {
+      std::cerr << "Unknown sender plugin when adding Toolbox!" << std::endl;
+      return;
+    }
   }
 
   plugins[id].widgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );

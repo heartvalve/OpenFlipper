@@ -605,7 +605,7 @@ void Core::loadPlugin(QString filename, bool silent){
 
       if ( checkSignal(plugin, "addToolbox(QString,QWidget*)"))
         connect(plugin, SIGNAL( addToolbox(QString,QWidget*) ),
-                this, SLOT( slotAddToolbox(QString,QWidget*) ),Qt::DirectConnection );
+                this, SLOT( addToolbox(QString,QWidget*) ),Qt::DirectConnection );
 
 
 
