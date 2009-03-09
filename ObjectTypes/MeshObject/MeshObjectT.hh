@@ -75,7 +75,7 @@ enum StatusBits {
 
 
 #include <OpenFlipper/common/BaseObjectData.hh>
-#include <ACG/Scenegraph/MeshNodeT.hh>
+#include <ACG/Scenegraph/TriStripNodeT.hh>
 
 
 
@@ -192,7 +192,7 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     bool areasVisible();
 
     /// Get the Scenegraph Mesh Node
-    ACG::SceneGraph::MeshNodeT<MeshT>* meshNode();;
+    ACG::SceneGraph::TriStripNodeT<MeshT>* meshNode();;
 
     /// Get the BoundingBox of this object
     void boundingBox( ACG::Vec3f& _bbMin , typename ACG::Vec3f& _bbMax );
@@ -211,7 +211,7 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     ACG::SceneGraph::StatusNodeT<MeshT, FeatureNodeMod<MeshT> > *featureNode_;
 
     /// Scenegraph Mesh Node
-    ACG::SceneGraph::MeshNodeT<MeshT>*                     meshNode_;
+    ACG::SceneGraph::TriStripNodeT<MeshT>*                     meshNode_;
 
     /// Scenegraph TextureNode
     TextureNode*     textureNode_;
