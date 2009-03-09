@@ -317,6 +317,25 @@ void CoreWidget::setupMenuBar()
   connect( viewAllAction,SIGNAL( triggered() ), this, SLOT( slotGlobalViewAll() ) );
   viewMenu_->addAction( viewAllAction);
 
+
+//   QAction* snapShotAction = new QAction( "Viewer Snapshot", viewMenu_ );
+//   snapShotAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
+//   snapShotAction->setCheckable( false );
+//   snapShotAction->setToolTip("Take a snapshot from all viewers.");
+//   snapShotAction->setWhatsThis( "Viewer Snapshot<br><br>"
+//                                "Take a snapshot of all viewers at once.");
+//   connect( snapShotAction,SIGNAL( triggered() ), this, SLOT( slotSnapshot() ) );
+//   viewMenu_->addAction( snapShotAction);
+
+  QAction* appSnapShotAction = new QAction( "Snapshot", viewMenu_ );
+  appSnapShotAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
+  appSnapShotAction->setCheckable( false );
+  appSnapShotAction->setToolTip("Take a snapshot from OpenFlipper.");
+  appSnapShotAction->setWhatsThis( "Snapshot<br><br>"
+                               "Take a snapshot from OpenFlipper.");
+  connect( appSnapShotAction,SIGNAL( triggered() ), this, SLOT( applicationSnapshotDialog() ) );
+  viewMenu_->addAction( appSnapShotAction);
+
   perspectiveProjectionAction_ = new QAction( "Switch Viewers to Perspective Projection", viewMenu_ );;
   perspectiveProjectionAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
   perspectiveProjectionAction_->setCheckable( false );

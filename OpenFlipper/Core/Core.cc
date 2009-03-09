@@ -1028,6 +1028,18 @@ void Core::snapshot( unsigned int _viewerId ){
 
 }
 
+void Core::applicationSnapshot(){
+
+  if ( OpenFlipper::Options::gui() )
+    coreWidget_->applicationSnapshot();
+}
+
+void Core::applicationSnapshotName(QString _name){
+
+  if ( OpenFlipper::Options::gui() )
+    coreWidget_->applicationSnapshotName(_name);
+}
+
 void Core::resizeViewer(int _width, int _height ){
   if ( OpenFlipper::Options::gui() ){
     //+40 / +20 corresponds to the bottom and right scrollbar

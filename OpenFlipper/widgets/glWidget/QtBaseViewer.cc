@@ -1915,6 +1915,18 @@ void glViewer::slotPropertiesUpdated() {
   updateGL();
 }
 
+void glViewer::snapshot(QImage& _image)
+{
+   makeCurrent();
+
+   qApp->processEvents();
+   makeCurrent();
+   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   paintGL();
+   glFinish();
+
+   copyToImage(_image, scenePos().x(), scenePos().y(), glWidth(), glHeight(), GL_BACK);
+}
 
 void glViewer::snapshot()
 {
