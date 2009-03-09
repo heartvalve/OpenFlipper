@@ -58,7 +58,7 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
   popupPosition =  examiner_widgets_[PluginFunctions::activeExaminer()]->glMapToGlobal(_point);
   QPointF f = examiner_widgets_[PluginFunctions::activeExaminer()]->mapToScene(QPointF(_point.x(), _point.y()));
   scenePos = QPoint (f.x(), f.y());
-  
+
   // Call function to adapt the menu to the currently used contex.
   updatePopupMenu(scenePos);
 
@@ -68,12 +68,33 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
 }
 
+/** \brief Update context Menu when an arbitrary node has been clicked on.
+ *
+ * This function is called when a node has been clicked on not belonging to an object.
+ * This context menu will show all function relevant for the Node.
+ *
+ * @param _menu Pointer to the context Menu
+ * @param _node node which has been clicked on.
+ */
+void CoreWidget::updatePopupMenuNode(QMenu* _menu , ACG::SceneGraph::BaseNode* _node) {
+
+  QString nodeName = QString(_node->name().c_str());
+  QAction* typeEntry = new QAction( nodeName ,_menu );
+  _menu->addAction( typeEntry );
+
+  _menu->addSeparator();
+
+  emit updateContextMenuNode(_node->id());
+
+  addContextMenus( _menu , CONTEXTNODEMENU ) ;
+}
+
 /** \brief Update context Menu when Coordsys node has been clicked on.
- * 
+ *
  * This function is called when the coordinate system in a viewer has been clicked on.
  * This context menu will show all function relevant for the current view like the
  * projection/viewing direction...
- * 
+ *
  * @param _menu Pointer to the context Menu
  * @param _part id of the coordsys part which has been clicked on.
  */
@@ -82,21 +103,21 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
   QAction* typeEntry = new QAction("Viewer Settings",_menu);
   _menu->addAction( typeEntry );
   _menu->addSeparator();
-  
+
   //====================================================================================================
   // DrawModes
   //====================================================================================================
   slotUpdateViewerDrawMenu();
   _menu->addMenu( viewerDrawMenu_ );
-  
+
   //====================================================================================================
   // RenderingOptions
   //====================================================================================================
-  
+
   QMenu* renderingOptionsMenu = new QMenu("Rendering Options",_menu);
   renderingOptionsMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"renderingOptions.png"));
   _menu->addMenu(renderingOptionsMenu);
-  
+
   QAction* projectionAction = 0;
   if ( examiner_widgets_[PluginFunctions::activeExaminer() ]->projectionMode() == glViewer::PERSPECTIVE_PROJECTION ) {
     projectionAction = new QAction( "Switch to Orthogonal Projection", renderingOptionsMenu );
@@ -107,7 +128,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
     projectionAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
     projectionAction->setToolTip(   "Switch to perspective projection mode.");
   }
-  
+
   projectionAction->setCheckable( false );
   projectionAction->setToolTip(   "Switch between <b>perspective</b> and "
       "<b>parrallel</b> projection mode.");
@@ -116,17 +137,17 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
       "<b>parrallel</b> projection mode.");
   connect( projectionAction,SIGNAL( triggered() ), this, SLOT( slotContextSwitchProjection() ) );
   renderingOptionsMenu->addAction( projectionAction );
-  
-  
+
+
   QAction* animation = renderingOptionsMenu->addAction("Animation");
-  
+
   animation->setToolTip("Animate rotation of objects");
   animation->setCheckable( true );
   animation->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"animation.png") );
   animation->setChecked( PluginFunctions::viewerProperties(PluginFunctions::activeExaminer()).animation() );
   connect(animation, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeAnimation(bool) ) );
-  
-  
+
+
   //====================================================================================================
 
   QAction* backfaceCulling = renderingOptionsMenu->addAction("Backface Culling");
@@ -144,15 +165,15 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
   twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
   twoSidedLighting->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
   connect(twoSidedLighting, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeTwoSidedLighting(bool) ) );
-  
+
   //====================================================================================================
   // Other Toplevel Action
   //====================================================================================================
-  
+
   _menu->addSeparator();
-  
+
   //====================================================================================================
-  
+
   QAction* homeAction = new QAction("Restore home view",_menu);
   homeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"go-home.png") );
   homeAction->setCheckable( false );
@@ -161,7 +182,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
                             "Resets the view to the home view");
   _menu->addAction( homeAction );
   connect( homeAction,SIGNAL( triggered() ), this, SLOT( slotContextHomeView() ) );
-  
+
   QAction* setHomeAction = new QAction( "Set Home View" , _menu );
   setHomeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"set-home.png") );
   setHomeAction->setCheckable( false );
@@ -169,8 +190,8 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
   setHomeAction->setWhatsThis( "Store home view<br><br>"
                                "Stores the current view as the home view");
   _menu->addAction( setHomeAction);
-  connect( setHomeAction,SIGNAL( triggered() ), this, SLOT( slotContextSetHomeView() ) );  
-  
+  connect( setHomeAction,SIGNAL( triggered() ), this, SLOT( slotContextSetHomeView() ) );
+
   QAction* viewAllAction = new QAction( "View all", _menu );
   viewAllAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewall.png") );
   viewAllAction->setCheckable( false );
@@ -180,12 +201,12 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
                                " the whole scene is visible.");
   connect( viewAllAction,SIGNAL( triggered() ), this, SLOT( slotContextViewAll() ) );
   _menu->addAction( viewAllAction);
-  
-  
+
+
   _menu->addSeparator();
-  
+
   //====================================================================================================
-  
+
   QAction* copyView = _menu->addAction("Copy View");
   copyView->setToolTip("Copy current view to clipboard");
   copyView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"copyView.png") );
@@ -197,205 +218,128 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
   pasteView->setToolTip("Paste current view from clipboard");
   pasteView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"pasteView.png") );
   connect(pasteView, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
-  
+
   //====================================================================================================
-  
+
   QAction* snapshot = _menu->addAction("Snapshot");
   snapshot->setToolTip("Make a snapshot");
   snapshot->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
   connect(snapshot, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
-  
+
   //====================================================================================================
 
   QAction* snapshotName = _menu->addAction("Set Snapshot Name");
   snapshotName->setToolTip("Set a name for snapshots");
   snapshotName->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshotName.png") );
   connect(snapshotName, SIGNAL(triggered()), this, SLOT(slotSnapshotName()) );
-    
-  
-  
+
+
 }
 
 /** \brief Update context Menu when background has been clicked on.
- * 
+ *
  * This function is called when the background in a viewer has been clicked on.
- * This context menu will show functions which are related to the background of the 
+ * This context menu will show functions which are related to the background of the
  * viewer.
- * 
+ *
  * @param _menu Pointer to the context Menu
  * @param _point position in the viewer where the user clicked.
  */
 void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& _point) {
-  
+
   QAction* action = _menu->addAction("Set Background Color");
   action->setToolTip("Set the background color for the current viewer");
   action->setStatusTip(tr("Set the background color for the current viewer"));
-  action->setWhatsThis(tr("Set the background color for the current viewer"));  
+  action->setWhatsThis(tr("Set the background color for the current viewer"));
   action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BackgroundColor.png") );
   connect(action, SIGNAL(triggered()), this, SLOT(slotSetContextBackgroundColor()) );
-  
-  //====================================================================================================
-  
+
+  // Tell Plugins to update their context Menu
+  emit updateContextMenuBackground();
+
+  addContextMenus( _menu , CONTEXTBACKGROUNDMENU ) ;
+
 }
 
 /** \brief Update context Menu an object has been clicked on.
- * 
+ *
  * This function is called when an object has been clicked on.
  * This context menu will show all properties for the given object.
- * 
+ *
  * @param _menu Pointer to the context Menu
  * @param _objectId Id of the object that has been clicked on.
  */
-void CoreWidget::updatePopupMenuObject(QMenu* _menu , const int _objectId ) {
-  std::cerr << "Object Context Menu for id: " << _objectId << std::endl;
+void CoreWidget::updatePopupMenuObject(QMenu* _menu , BaseObjectData* _object ) {
+
+  QAction* typeEntry = new QAction( typeName(_object->dataType()) ,_menu);
+  typeEntry->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+ typeIcon(_object->dataType()) ));
+  _menu->addAction( typeEntry );
+
+  _menu->addSeparator( );
+
+  // Tell Plugins to update their context Menu
+  emit updateContextMenu(_object->id() );
+
+  if ( addContextMenus( _menu , CONTEXTOBJECTMENU , _object->id() ) )
+    _menu->addSeparator();
+
+  // Add picking Menu
+  if (examiner_widgets_[0]->getPickMenu() != NULL) {
+    if ( examiner_widgets_[0]->getPickMenu()->actions().size() > 0 ) {
+      examiner_widgets_[0]->getPickMenu()->setTitle("&Picking");
+      contextMenu_->addMenu(examiner_widgets_[0]->getPickMenu() );
+      examiner_widgets_[0]->getPickMenu()->setTearOffEnabled(true);
+    }
+  }
+
+
+
 }
 
+bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id ) {
 
+  bool added = false;
 
-/** \brief check current context and initialize context menu according to this context. 
- * 
- * This function is called whenever a context menu for the corewidget is requested. 
- * It will decide about the current context, collect all menus for plugins and
- * construct the final context menu.
- */
-void CoreWidget::updatePopupMenu(const QPoint& _point) {
+  // Add context menus from plugins
+  for ( uint i = 0 ; i < contextMenus_.size(); ++i ) {
 
-  // Clear the complete context menu.
-  contextMenu_->clear();
-  
-  // Clear the selection context menu part.
-  contextSelectionMenu_->clear();
+    if ( contextMenus_[i].type != _type )
+      continue;
 
-  // =============================================================================
-  // First do a picking on the current position to check which context we are in.
-  // =============================================================================
-  int objectId = -1;
-  
-  enum CONTEXTTYPE {
-    COORDSYSCONTEXT ,BACKGROUNDCONTEXT ,OBJECTCONTEXT
-  } context = BACKGROUNDCONTEXT;
-
-  // Do picking in the gl area to find an object
-  unsigned int    node_idx, target_idx;
-  ACG::Vec3d      hit_point;
-  BaseObjectData* object;
-  
-  if (examiner_widgets_[PluginFunctions::activeExaminer()]->pick( ACG::SceneGraph::PICK_ANYTHING,_point,node_idx, target_idx, &hit_point ) ) {
-
-    if ( PluginFunctions::getPickedObject(node_idx, object) ) {
-      objectId = object->id();
-      context  = OBJECTCONTEXT;
-    } else {
-      ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode() , node_idx );
-      if ( node != 0 && ( node->name() == "Core Coordsys Node") ) 
-        context = COORDSYSCONTEXT;
-    }
-  } 
-  
-  // =============================================================================
-  // Depending on the context create the basic context menu.
-  // =============================================================================
-  
-  QIcon icon;
-  QAction* typeEntry = 0;      
-  switch (context) {
-    case BACKGROUNDCONTEXT:
-      updatePopupMenuBackground(contextMenu_,_point);
-      return;
-      break;
-    case OBJECTCONTEXT:
-      typeEntry = new QAction("Object",contextMenu_);
-      contextMenu_->addAction( typeEntry );
-      break;
-    case COORDSYSCONTEXT:
-      updatePopupMenuCoordsysNode(contextMenu_,target_idx);
-      return;
-      break;
-  }
-  
-  // Add the global entry to the context menu.
-  QAction* entrySeparator = contextMenu_->addSeparator( );
-
-  QAction* contextSelectionAction = contextMenu_->addMenu( contextSelectionMenu_ );
-
-  int topLevelAdded  = 0;
-
-  if ( objectId != -1) {
-
-    emit updateContextMenu(objectId);
-
-    // Add an empty Menu defining the current Type
-    typeEntry->setText( typeName(object->dataType()) );
-    icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+ typeIcon(object->dataType()) );
-    typeEntry->setIcon(icon);
-
-
-    // Add real context Menus first
-    for ( uint i = 0 ; i < contextMenus_.size(); ++i ) {
-
-      // check if the dataType of the object matches the context type
-      if ( object->dataType(  contextMenus_[i].contextType ) ) {
-        if ( contextMenus_[i].position == CONTEXTTOPLEVELMENU ) {
-          contextMenu_->addMenu( contextMenus_[i].menu );
-          topLevelAdded++;
-        } else if ( contextMenus_[i].position == CONTEXTSELECTIONMENU ) {
-          contextSelectionMenu_->addMenu(contextMenus_[i].menu);
+    switch (contextMenus_[i].type) {
+      case CONTEXTBACKGROUNDMENU:
+        break;
+      case CONTEXTOBJECTMENU:
+        BaseObjectData* object;
+        if ( !PluginFunctions::getObject(_id, object) ) {
+          emit log(LOGERR,"Cant get object for objectContextMenu");
+          continue;
         }
 
-        // Get all Actions in the menu and its submenus.
-        // Set their data to the picked Object id
-        QList< QAction *> allActions = contextMenus_[i].menu->actions();
-        while ( !allActions.empty() ) {
-          QList< QAction *> tmpList;
+        // Datatype does not match
+        if ( ! object->dataType(  contextMenus_[i].contextType ) )
+          continue;
 
-          // Set userdata of all actions to the picked Object Id
-          for ( int j = 0 ; j < allActions.size(); ++j ) {
-            allActions[j]->setData( QVariant( objectId ) );
-            if ( allActions[j]->menu() != 0 )
-              tmpList << allActions[j]->menu()->actions();
-          }
+        break;
+      case CONTEXTNODEMENU:
+        break;
 
-          allActions = tmpList;
-        }
-      }
-    }
-  } else {
-
-    emit updateContextMenu(-1);
-
-    // Add real context Menus first
-    for ( uint i = 0 ; i < contextMenus_.size(); ++i ) {
-      if ( contextMenus_[i].contextType == DATA_NONE ) {
-        contextMenu_->addMenu( contextMenus_[i].menu );
-        topLevelAdded++;
-      }
     }
 
-    if ( topLevelAdded == 0 ) {
-      contextMenu_->removeAction(typeEntry);
-      contextMenu_->removeAction(entrySeparator);
-    }
-  }
 
-  if ( contextSelectionMenu_->isEmpty()  )
-    contextMenu_->removeAction( contextSelectionAction );
-
-  if ( topLevelAdded > 0 )
-    contextMenu_->addSeparator();
-
-  // Add persistent context Menus as second part
-  for ( uint i = 0 ; i < persistentContextMenus_.size(); ++i ) {
-    contextMenu_->addMenu( persistentContextMenus_[i].menu );
+    // check if the dataType of the object matches the context type
+    _menu->addMenu( contextMenus_[i].menu );
+    added = true;
 
     // Get all Actions in the menu and its submenus.
     // Set their data to the picked Object id
-    QList< QAction *> allActions = persistentContextMenus_[i].menu->actions();
+    QList< QAction *> allActions = contextMenus_[i].menu->actions();
     while ( !allActions.empty() ) {
       QList< QAction *> tmpList;
 
       // Set userdata of all actions to the picked Object Id
       for ( int j = 0 ; j < allActions.size(); ++j ) {
-        allActions[j]->setData( QVariant( objectId ) );
+        allActions[j]->setData( QVariant( _id ) );
         if ( allActions[j]->menu() != 0 )
           tmpList << allActions[j]->menu()->actions();
       }
@@ -405,16 +349,78 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
 
   }
 
-  // Only add Separator if we had plugin context menus
-  if ( persistentContextMenus_.size() > 0 )
-    contextMenu_->addSeparator();
+  return added;
 
-  if (examiner_widgets_[0]->getPickMenu() != NULL) {
-    if ( examiner_widgets_[0]->getPickMenu()->actions().size() > 0 ) {
-      examiner_widgets_[0]->getPickMenu()->setTitle("&Picking");
-      contextMenu_->addMenu(examiner_widgets_[0]->getPickMenu() );
-      examiner_widgets_[0]->getPickMenu()->setTearOffEnabled(true);
+}
+
+
+
+/** \brief check current context and initialize context menu according to this context.
+ *
+ * This function is called whenever a context menu for the corewidget is requested.
+ * It will decide about the current context, collect all menus for plugins and
+ * construct the final context menu.
+ */
+void CoreWidget::updatePopupMenu(const QPoint& _point) {
+
+  // Clear the complete context menu.
+  contextMenu_->clear();
+
+  // Clear the selection context menu part.
+  contextSelectionMenu_->clear();
+
+  // =============================================================================
+  // First do a picking on the current position to check which context we are in.
+  // =============================================================================
+  int objectId = -1;
+
+  enum CONTEXTTYPE {
+    COORDSYSCONTEXT ,BACKGROUNDCONTEXT ,OBJECTCONTEXT, NODECONTEXT
+  } context = BACKGROUNDCONTEXT;
+
+  // Do picking in the gl area to find an object
+  unsigned int               node_idx, target_idx;
+  ACG::Vec3d                 hit_point;
+  BaseObjectData*            object;
+  ACG::SceneGraph::BaseNode* node = 0;
+
+  if (examiner_widgets_[PluginFunctions::activeExaminer()]->pick( ACG::SceneGraph::PICK_ANYTHING,_point,node_idx, target_idx, &hit_point ) ) {
+
+    if ( PluginFunctions::getPickedObject(node_idx, object) ) {
+      objectId = object->id();
+      context  = OBJECTCONTEXT;
+    } else {
+      node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode() , node_idx );
+      if ( node != 0 && ( node->name() == "Core Coordsys Node") )
+        context = COORDSYSCONTEXT;
+      else
+        context = NODECONTEXT;
     }
+  }
+
+  // =============================================================================
+  // Depending on the context create the basic context menu.
+  // =============================================================================
+
+  QIcon icon;
+
+  switch (context) {
+    case BACKGROUNDCONTEXT:
+      updatePopupMenuBackground(contextMenu_,_point);
+      return;
+      break;
+    case OBJECTCONTEXT:
+      updatePopupMenuObject(contextMenu_ , object );
+//       return;
+      break;
+    case COORDSYSCONTEXT:
+      updatePopupMenuCoordsysNode(contextMenu_,target_idx);
+      return;
+      break;
+    case NODECONTEXT:
+      updatePopupMenuNode(contextMenu_,node);
+      return;
+      break;
   }
 
 }
@@ -438,65 +444,66 @@ void CoreWidget::slotSnapshotName() {
 
 }
 
-void CoreWidget::slotAddContextMenu(QMenu* _menu) {
+void CoreWidget::slotAddContextMenu(QMenu* _menu, ContextMenuType _type) {
   MenuInfo info;
   info.menu = _menu;
+  info.type = _type;
 
-  persistentContextMenus_.push_back(info);
+  contextMenus_.push_back(info);
 }
 
 void CoreWidget::slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextMenuType _type ) {
   MenuInfo info;
   info.menu        = _menu;
   info.contextType = _dataType;
-  info.position    = _type;
+  info.type    = _type;
 
   contextMenus_.push_back(info);
 }
 
 void CoreWidget::slotUpdateViewerDrawMenu() {
   if ( drawGroupViewer_ ) {
-    
+
     disconnect( drawGroupViewer_ , SIGNAL( triggered( QAction * ) ),
                 this             , SLOT( slotViewerDrawMenu( QAction * ) ) );
     delete( drawGroupViewer_ );
     drawGroupViewer_ = 0;
-    
+
   }
-  
+
   // Recreate drawGroup
   drawGroupViewer_ = new QActionGroup( this );
   drawGroupViewer_->setExclusive( false );
-  
+
   connect( drawGroupViewer_ , SIGNAL( triggered( QAction * ) ),
-           this       , SLOT( slotViewerDrawMenu( QAction * ) ) );  
-  
+           this       , SLOT( slotViewerDrawMenu( QAction * ) ) );
+
   if ( !viewerDrawMenu_ ) {
-    
+
     QIcon icon;
     icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
-    viewerDrawMenu_  = new QMenu("Set Draw Mode"); 
+    viewerDrawMenu_  = new QMenu("Set Draw Mode");
     viewerDrawMenu_->setTearOffEnabled(true);
     viewerDrawMenu_->setIcon(icon);
-    
+
     connect(viewerDrawMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdateGlobalDrawMenu() ) );
   }
-  
-  // Collect available draw Modes 
+
+  // Collect available draw Modes
   ACG::SceneGraph::CollectDrawModesAction actionAvailable;
   ACG::SceneGraph::traverse( PluginFunctions::getRootNode() , actionAvailable);
   availableGlobalDrawModes_ = actionAvailable.drawModes();
-  
+
   // Get currently active drawModes (first viewer only )
   // TODO: create combination from all viewers!
   int activeDrawModes = PluginFunctions::drawMode();
-  
+
   // Convert to ids
   std::vector< unsigned int > availDrawModeIds;
   availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableGlobalDrawModes_ );
-  
+
   viewerDrawMenu_->clear();
-  
+
   for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
   {
     unsigned int id    = availDrawModeIds[i];
@@ -512,7 +519,7 @@ void CoreWidget::slotUpdateViewerDrawMenu() {
 }
 
 void CoreWidget::slotViewerDrawMenu(QAction * _action) {
-  
+
   //======================================================================================
   // Get the mode toggled
   //======================================================================================
@@ -528,12 +535,12 @@ void CoreWidget::slotViewerDrawMenu(QAction * _action) {
       break;
     }
   }
-  
+
   if ( qApp->keyboardModifiers() & Qt::ShiftModifier )
     PluginFunctions::viewerProperties().drawMode(  PluginFunctions::viewerProperties().drawMode() ^ mode );
   else
     PluginFunctions::viewerProperties().drawMode(mode );
-  
+
 }
 
 //=============================================================================

@@ -110,8 +110,8 @@ struct MenuInfo {
   /// Type of objects for which the context Menu should be visible
   DataType        contextType;
 
-  /// Position of the context Menu inside the main widgets context Menu
-  ContextMenuType position;
+  /// Type of the context Menu ( Context for what type .. Background,Object,Node)
+  ContextMenuType type;
 };
 
 /** Core Widget of the Application
@@ -270,14 +270,14 @@ public:
 
   /// Setup the main menubar
   void setupMenuBar();
-  
+
   /** @} */
-  
+
   //===========================================================================
   /** @name Recent File Menu handling
    * @{ */
   //===========================================================================
-      
+
   /// Add a recent file and update menu
   void addRecent(QString _filename, DataType _type);
 
@@ -465,7 +465,7 @@ public:
 
     /// View Menu
     QMenu *viewMenu_;
-    
+
     /// Tools Menu
     QMenu *toolsMenu_;
 
@@ -495,51 +495,58 @@ public:
     /** @name View Menu
       * @{ */
   //===========================================================================
-    
+
   public slots:
     /// Setup and update the global draw menu
     void slotUpdateGlobalDrawMenu();
-  
+
   private slots:
     /// Called when the global drawMode is selected
     void slotGlobalDrawMenu(QAction * _action);
-    
+
     /// Called before the view Menu is shown
     void slotViewMenuAboutToShow();
-  
+
   private:
     /// This variable holds the global draw menu
     QMenu* globalDrawMenu_;
-   
-    QActionGroup * drawGroup_;    
-    
+
+    QActionGroup * drawGroup_;
+
     /// Group for all menu items
     QActionGroup* viewGroup_;
-    
+
     QAction* perspectiveProjectionAction_;
     QAction* orthogonalProjectionAction_;
-    
+
     int activeDrawModes_;
-    
+
     int availableGlobalDrawModes_;
-    
+
   /** @} */
 
   //===========================================================================
     /** @name Context Menu
      * @{ */
   //===========================================================================
-    
+
   signals :
-    // tells the plugins to update their context menu
-    void updateContextMenu(int) ;
+    /// tells the plugins to update their context menu when an object is picked
+    void updateContextMenu(int);
+
+    /// tells the plugins to update their context menu when a node is picked
+    void updateContextMenuNode(int);
+
+    /// tells the plugins to update their context menu when the background is picked
+    void updateContextMenuBackground();
+
 
   private slots:
     /// This slot is called by the examiner widgets gl area when a context menu is requested
     void slotCustomContextMenu( const QPoint& _point );
 
     /// called by plugins to add a new context menu
-    void slotAddContextMenu(QMenu* _menu);
+    void slotAddContextMenu(QMenu* _menu, ContextMenuType _type);
 
     /// called by plugins to add a real context menu depending on DataType
     void slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextMenuType type_);
@@ -555,10 +562,10 @@ public:
 
     /// Set the snapShot name for all examiners
     void slotSnapshotName();
-    
+
     /// Called when a coordsys drawMode has been changed
     void slotViewerDrawMenu( QAction * _action );
-    
+
     /// Creates a draw Menu for the currently active Viewer
     void slotUpdateViewerDrawMenu();
 
@@ -569,9 +576,12 @@ public:
      */
     void updatePopupMenu(const QPoint& _point);
 
-    void updatePopupMenuCoordsysNode(QMenu* _menu , const int _part);    
-    void updatePopupMenuObject(QMenu* _menu , const int _objectId );
+    void updatePopupMenuCoordsysNode(QMenu* _menu , const int _part);
+    void updatePopupMenuObject(QMenu* _menu , BaseObjectData* _object );
     void updatePopupMenuBackground(QMenu* _menu , const QPoint& _point);
+    void updatePopupMenuNode(QMenu* _menu , ACG::SceneGraph::BaseNode* _node);
+
+    bool addContextMenus( QMenu* _menu , ContextMenuType _type, int _id = -1);
 
   private :
     /// context Menu for the gl area
@@ -580,15 +590,12 @@ public:
     /// Context Menu containing all selection elements
     QMenu*  contextSelectionMenu_;
 
-    /// All context menu entries which will always be available
-    std::vector< MenuInfo > persistentContextMenus_;
-
     /// All real context menu entries
     std::vector< MenuInfo > contextMenus_;
-    
+
     /// DrawGroup for per Viewer Draw Modes
     QActionGroup* drawGroupViewer_;
-    
+
     /// Draw Menu for per Viewer Draw Modes
     QMenu* viewerDrawMenu_;
 
@@ -751,65 +758,65 @@ public:
 
     /// Set Background Color for all viewers at once.
     void slotSetGlobalBackgroundColor();
-    
+
     /// Set Background Color for one viewer.
     void slotSetContextBackgroundColor();
-    
-    
-    
+
+
+
     /// Set the active viewer to home position
     void slotContextHomeView();
-    
+
     /// Set the viewer to home position
     void slotGlobalHomeView();
-    
-    
-    
+
+
+
     /// Set the active viewers home position
     void slotContextSetHomeView();
-    
-    /// Set the home position for all viewers        
+
+    /// Set the home position for all viewers
     void slotGlobalSetHomeView();
-    
-    
-    
+
+
+
     /// Change view on active viewer to view complete scene
     void slotContextViewAll();
 
     /// Change view on all viewers to view complete scene
     void slotGlobalViewAll();
-    
-    
+
+
     /// Toggle projection Mode of the active viewer.
     void slotContextSwitchProjection();
-    
+
     /// Toggle projection Mode of all viewers to perspective projection
     void slotGlobalPerspectiveProjection();
 
     /// Toggle projection Mode of all viewers to orthographic projection
     void slotGlobalOrthographicProjection();
-    
-    
-    
+
+
+
     /// Set the animation Mode for all viewers
     void slotGlobalChangeAnimation(bool _animation);
 
     /// Set the animation Mode for active viewer
     void slotLocalChangeAnimation(bool _animation);
-    
-    
-    
+
+
+
     /// Set Backface culling for all viewers
     void slotGlobalChangeBackFaceCulling(bool _backFaceCulling);
-    
+
     /// Set Backface culling for active viewer
     void slotLocalChangeBackFaceCulling(bool _backFaceCulling);
-    
-    
-    
+
+
+
     /// Set two sided lighting for all viewers
     void slotGlobalChangeTwoSidedLighting(bool _lighting);
-    
+
     /// Set two sided lighting for active viewer
     void slotLocalChangeTwoSidedLighting(bool _lighting);
 
