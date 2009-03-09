@@ -65,10 +65,10 @@ enum MenuActionType {
 
 /** \brief Interface for all plugins which provide entries to the main menubar
   *
-  * To add custom menus to the menubar, you have to use this interface class. Create
-  * your own QMenu and emit initializeMenu to add it to the menubar. You can connect the
-  * signals and slots for your menu inside the plugin.\n
-  * The placement of your menu is controlled by the MenuType. See MenuType for details.
+  * To add custom menus or action to the menubar and its submenus, you have to use this interface class. Create
+  * your own QMenu or QAction and emit addMenubarAction to add it to the menubar. You can connect the
+  * signals and slots for your menu or action inside the plugin.\n
+  * The placement of your menu in the global menubar is controlled by the MenuActionType. See MenuActionType for details.
  */
 class MenuInterface {
 
