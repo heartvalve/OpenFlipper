@@ -86,7 +86,7 @@ void CoreWidget::updatePopupMenuNode(QMenu* _menu , ACG::SceneGraph::BaseNode* _
 
   emit updateContextMenuNode(_node->id());
 
-  addContextMenus( _menu , CONTEXTNODEMENU ) ;
+  addContextMenus( _menu , CONTEXTNODEMENU, _node->id() ) ;
 }
 
 /** \brief Update context Menu when Coordsys node has been clicked on.
