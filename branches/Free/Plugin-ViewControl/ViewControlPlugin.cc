@@ -58,8 +58,8 @@ void ViewControlPlugin::pluginsInitialized() {
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
   viewControlMenu_->setIcon(icon);
 
-  emit addContextMenu(viewControlMenu_ , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
-  emit addContextMenu(viewControlMenu_ , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
 
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 

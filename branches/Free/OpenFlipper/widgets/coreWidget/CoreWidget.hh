@@ -104,8 +104,8 @@ class StackWidgetInfo {
 /** Info struct containing information about custom context menus
  */
 struct MenuInfo {
-  /// The context Menu
-  QMenu*          menu;
+  /// The context item
+  QAction*          action;
 
   /// Type of objects for which the context Menu should be visible
   DataType        contextType;
@@ -545,11 +545,11 @@ public:
     /// This slot is called by the examiner widgets gl area when a context menu is requested
     void slotCustomContextMenu( const QPoint& _point );
 
-    /// called by plugins to add a new context menu
-    void slotAddContextMenu(QMenu* _menu, ContextMenuType _type);
+    /// called by plugins to add a new context menu item
+    void slotAddContextItem(QAction* _entry, ContextMenuType _type);
 
-    /// called by plugins to add a real context menu depending on DataType
-    void slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextMenuType type_);
+    /// called by plugins to add a real context menu item depending on DataType
+    void slotAddContextItem( QAction* _entry , DataType _dataType ,ContextMenuType type_);
 
     /// Paste the view to the last active examiner
     void slotPasteView( );

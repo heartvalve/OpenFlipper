@@ -80,25 +80,28 @@ signals:
 
   /**  \brief Add an entry for a context Menu
     *
-    * Create an QMenu and register this menu as a context menu to the core.
-    * This Menu will be visible  when you rightclick in the viewer widget on
-    * The given Context Menu Type.
-    * @param _menu Pointer to the new Menu
+    * Create an Action (Can also be the action of a Menu) and register this menu as a context menu to the core.
+    * This Action will be visible  when you rightclick in the viewer widget on
+    * The given Context Menu Type. You can add a whole Menu here by adding the action:
+    * menu->menuAction()
+    *
+    * @param _menu Pointer to the new Action
   */
-  virtual void addContextMenu(QMenu* /*_menu*/ , ContextMenuType /*_type*/) {};
+  virtual void addContextMenuItem(QAction* /*_action*/ , ContextMenuType /*_type*/) {};
 
   /**  \brief Add an entry for a  context Menu
     *
-    * Create an QMenu and register this menu as a context menu to the core.
-    * This Menu will only be visible if the picked object is of the given datatype.
+    * Create an action (Can also be the action of a Menu) and register this action as a context menu entry to the core.
+    * This Action will only be visible if the picked object is of the given datatype.
     * To support multiple object types with your menu, you can emit this signal multiple
-    * times with the same menu but different DataTypes
+    * times with the same action but different DataTypes. You can add a whole Menu here by adding the action:
+    * menu->menuAction()
     *
-    * @param _menu Pointer to the new Menu
+    * @param _action Pointer to the new action
     * @param _objectType Type of the picked object
    *  @param _type Type of the context Menu ( See ContextMenuType )
   */
-  virtual void addContextMenu(QMenu* /*_menu*/ ,DataType /*_objectType*/ , ContextMenuType /*_type*/ ) {};
+  virtual void addContextMenuItem(QAction* /*_action*/ ,DataType /*_objectType*/ , ContextMenuType /*_type*/ ) {};
 
 private slots:
 

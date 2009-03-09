@@ -76,8 +76,8 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     void log(Logtype _type, QString _message);
     void log(QString _message);
     // ContextMenuInterface
-    void addContextMenu(QMenu* _menu );
-    void addContextMenu(QMenu* _menu ,DataType _objectType , ContextMenuType _type );
+    void addContextMenuItem(QAction* _action , ContextMenuType _type);
+    void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
 
   private slots :
     // BaseInterface

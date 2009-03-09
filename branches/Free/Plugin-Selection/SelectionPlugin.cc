@@ -162,10 +162,10 @@ void SelectionPlugin::pluginsInitialized() {
   lastAction->setStatusTip( lastAction->toolTip() );
 
 
-  emit addContextMenu(contextMenu_ , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
-  emit addContextMenu(contextMenu_ , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
-  emit addContextMenu(contextMenu_ , DATA_POLY_LINE     , CONTEXTOBJECTMENU );
-  emit addContextMenu(contextMenu_ , DATA_BSPLINE_CURVE , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(contextMenu_->menuAction() , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_LINE     , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(contextMenu_->menuAction() , DATA_BSPLINE_CURVE , CONTEXTOBJECTMENU );
 
   connect( contextMenu_ , SIGNAL( triggered(QAction*) ),
            this,          SLOT(selectionContextMenu(QAction*)) );
