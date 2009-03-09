@@ -328,12 +328,20 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
 
 
     // check if the dataType of the object matches the context type
-    _menu->addMenu( contextMenus_[i].menu );
+    _menu->addAction( contextMenus_[i].action );
     added = true;
 
     // Get all Actions in the menu and its submenus.
     // Set their data to the picked Object id
-    QList< QAction *> allActions = contextMenus_[i].menu->actions();
+    QMenu* menu = contextMenus_[i].action->menu();
+
+    QList< QAction *> allActions;
+    if ( menu == 0) {
+      allActions.push_back(contextMenus_[i].action);
+    } else {
+      allActions = menu->actions();
+    }
+
     while ( !allActions.empty() ) {
       QList< QAction *> tmpList;
 
@@ -444,19 +452,19 @@ void CoreWidget::slotSnapshotName() {
 
 }
 
-void CoreWidget::slotAddContextMenu(QMenu* _menu, ContextMenuType _type) {
+void CoreWidget::slotAddContextItem(QAction* _entry, ContextMenuType _type) {
   MenuInfo info;
-  info.menu = _menu;
-  info.type = _type;
+  info.action = _entry;
+  info.type   = _type;
 
   contextMenus_.push_back(info);
 }
 
-void CoreWidget::slotAddContextMenu( QMenu* _menu , DataType _dataType ,ContextMenuType _type ) {
+void CoreWidget::slotAddContextItem( QAction* _entry , DataType _dataType ,ContextMenuType _type ) {
   MenuInfo info;
-  info.menu        = _menu;
+  info.action      = _entry;
   info.contextType = _dataType;
-  info.type    = _type;
+  info.type        = _type;
 
   contextMenus_.push_back(info);
 }

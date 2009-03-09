@@ -85,7 +85,7 @@ void DataControlPlugin::pluginsInitialized() {
   connect(sourceAction_, SIGNAL(triggered()), this, SLOT(slotContextMenuSource()) );
   contextMenu->addAction(sourceAction_);
 
-  emit addContextMenu(contextMenu , DATA_ALL , CONTEXTOBJECTMENU);
+  emit addContextMenuItem(contextMenu->menuAction() , DATA_ALL , CONTEXTOBJECTMENU);
 
 }
 

@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -82,7 +82,9 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     void log(Logtype _type, QString _message);
     void log(QString _message);
 
-    void addContextMenu(QMenu* _menu ,DataType _objectType , ContextMenuType _type );
+    // ContextMenuInterface
+    void addContextMenuItem(QAction* _action , ContextMenuType _type);
+    void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
 
     void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                             QStringList _parameters, QStringList _descriptions);

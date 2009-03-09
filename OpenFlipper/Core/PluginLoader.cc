@@ -561,13 +561,13 @@ void Core::loadPlugin(QString filename, bool silent){
     if ( contextMenuPlugin && OpenFlipper::Options::gui() ) {
       supported = supported + "ContextMenu ";
 
-      if ( checkSignal(plugin,"addContextMenu(QMenu*,ContextMenuType)") )
-        connect(plugin      , SIGNAL(addContextMenu(QMenu*,ContextMenuType)),
-                coreWidget_ , SLOT(slotAddContextMenu(QMenu*,ContextMenuType)),Qt::DirectConnection);
+      if ( checkSignal(plugin,"addContextMenuItem(QAction*,ContextMenuType)") )
+        connect(plugin      , SIGNAL(addContextMenuItem(QAction*,ContextMenuType)),
+                coreWidget_ , SLOT(slotAddContextItem(QAction*,ContextMenuType)),Qt::DirectConnection);
 
-      if ( checkSignal(plugin,"addContextMenu(QMenu*,DataType,ContextMenuType)") )
-        connect(plugin      , SIGNAL(addContextMenu(QMenu*,DataType,ContextMenuType)),
-                coreWidget_ , SLOT(slotAddContextMenu(QMenu*,DataType,ContextMenuType)),Qt::DirectConnection);
+      if ( checkSignal(plugin,"addContextMenuItem(QAction*,DataType,ContextMenuType)") )
+        connect(plugin      , SIGNAL(addContextMenuItem(QAction*,DataType,ContextMenuType)),
+                coreWidget_ , SLOT(slotAddContextItem(QAction*,DataType,ContextMenuType)),Qt::DirectConnection);
 
       if ( checkSlot(plugin,"slotUpdateContextMenu(int)") )
         connect(coreWidget_ , SIGNAL(updateContextMenu(int)),
