@@ -49,10 +49,13 @@
 #include <OpenFlipper/common/Types.hh>
 
 enum ContextMenuType {
-    /// The Menu will be created directly inside the Menu.
-    CONTEXTTOPLEVELMENU,
-    /// The Menu will be added inside the Selection part of the Context Menu
-    CONTEXTSELECTIONMENU
+
+    /// The Menu will be shown when an object was picked
+    CONTEXTOBJECTMENU,
+    /// The Menu will be shown when a node was picked
+    CONTEXTNODEMENU,
+    /// The Menu will be shown when the background was picked
+    CONTEXTBACKGROUNDMENU
 };
 
  /** \brief Interface class for creating custom context menus
@@ -75,10 +78,11 @@ public :
 
 signals:
 
-  /**  \brief Add an entry for a persistent context Menu
+  /**  \brief Add an entry for a context Menu
     *
-    * Create an QMenu and register this menu as a persistent context menu to the core.
-    * This Menu will be always visible  when you rightclick in the viewer widget.
+    * Create an QMenu and register this menu as a context menu to the core.
+    * This Menu will be visible  when you rightclick in the viewer widget on
+    * The given Context Menu Type.
     * @param _menu Pointer to the new Menu
   */
   virtual void addContextMenu(QMenu* /*_menu*/ , ContextMenuType /*_type*/) {};
@@ -100,10 +104,25 @@ private slots:
 
   /** When the main application requests a context menu, this slot is called before showing the window.
    * If an object is picked the id will be given in this call so you can change the contents of your menu
-   * depending on the given object,
-   * @param _objectId id of the object or -1 if nothing picked
+   * depending on the given object.
+   * @param _objectId id of the object
    */
   virtual void slotUpdateContextMenu( int /*_objectId*/ ) {};
+
+  /** When the main application requests a context menu, this slot is called before showing the window.
+   * This slot will be called indicating that a scenegraph node not belonging to an object
+   * has been picked.
+   * The id of the node is given as a parameter
+   * @param _node id of the picked node
+   */
+  virtual void slotUpdateContextMenuNode( int /*_nodeId*/ ) {};
+
+  /** When the main application requests a context menu, this slot is called before showing the window.
+   * This slot will be called indicating thatthe background has been picked.
+   * The id of the node is given as a parameter
+   * @param _node id of the picked node
+   */
+  virtual void slotUpdateContextMenuBackground( ) {};
 
 };
 
