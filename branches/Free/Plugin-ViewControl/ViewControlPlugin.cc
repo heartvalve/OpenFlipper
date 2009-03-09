@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -58,8 +58,8 @@ void ViewControlPlugin::pluginsInitialized() {
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
   viewControlMenu_->setIcon(icon);
 
-  emit addContextMenu(viewControlMenu_ , DATA_TRIANGLE_MESH , CONTEXTTOPLEVELMENU );
-  emit addContextMenu(viewControlMenu_ , DATA_POLY_MESH     , CONTEXTTOPLEVELMENU );
+  emit addContextMenu(viewControlMenu_ , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
+  emit addContextMenu(viewControlMenu_ , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
 
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 
@@ -400,10 +400,10 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
 
   BaseObjectData* object = 0;
   if ( !PluginFunctions::getObject( _objectId, object ) ) {
-    emit log(LOGERR,"Unable to create Context Menu ... Unable to get Object"); 
+    emit log(LOGERR,"Unable to create Context Menu ... Unable to get Object");
     return;
   }
-    
+
   if (object->dataType( DATA_TRIANGLE_MESH ) || object->dataType( DATA_POLY_MESH ) )  {
 
     QAction* act;
