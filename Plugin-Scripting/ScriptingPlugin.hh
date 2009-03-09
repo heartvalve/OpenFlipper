@@ -33,7 +33,7 @@ signals:
   void log(Logtype _type, QString _message);
   void log(QString _message);
 
-  void addMenu(QMenu* _menu, MenuType _type);
+  void addMenubarAction(QAction* _action, MenuActionType _type );
 
   void getDescription(QString      _function,   QString&     _description,
                       QStringList& _parameters, QStringList& _descriptions);

@@ -81,7 +81,7 @@ void ColorPlugin::pluginsInitialized()
   QIcon icon;
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"format-stroke-color.png");
   colorMenu->setIcon(icon);
-  emit addMenu( colorMenu, VIEWMENU );
+  emit addMenubarAction(colorMenu->menuAction(), VIEWMENU );
 
   // =============================================================================
   // Add Menu entries

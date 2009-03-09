@@ -48,7 +48,7 @@
 #include <QMenuBar>
 #include <OpenFlipper/common/Types.hh>
 
-enum MenuType {
+enum MenuActionType {
     /// The Menu will be created directly inside the Menubar.
     TOPLEVELMENU,
 
@@ -56,7 +56,10 @@ enum MenuType {
     FILEMENU,
 
     /// The Menu will be added inside the View Menu
-    VIEWMENU
+    VIEWMENU,
+
+    /// The Menu will be added inside the Tools Menu
+    TOOLSMENU
 
 };
 
@@ -75,22 +78,24 @@ public :
   virtual ~MenuInterface() {};
 
 signals:
-  /**  \brief Initialize the Menubar
+  /**  \brief Adds an action to the menubar
     *
-    *  Initialize a Menu (create a new menu in the main menubar) \n
+    *  Add an action to the menubar or one of its sub menus \n
     * \n
     *   Example : \n
     *   QMenu *colorMenu = new QMenu(tr("&Colors")); \n
-    *   _menu = colorMenu;\n
+    *   emit addMenubarAction( colorMenu->menuAction(), TOOLSMENU )
     * \n
-    * In the menu you can add anything you want.
-    * @param _menu Pointer to the new Menu
-    * @param _type Type of the Menu ( See MenuType for Details )
+    * All actions or sub actions can be freely controlled by yourself. You have
+    * to connect the required signals and slots to your plugin.
+    *
+    * @param _action Pointer to the new action
+    * @param _type Type of the Action ( See MenuActionType for Details )
   */
-  virtual void initializeMenu(QMenu* /*_menu*/, MenuType /*_type*/ ) {};
+  virtual void addMenubarAction(QAction* /*_action*/, MenuActionType /*_type*/ ) {};
 
 };
 
-Q_DECLARE_INTERFACE(MenuInterface,"OpenFlipper.MenuInterface/0.3")
+Q_DECLARE_INTERFACE(MenuInterface,"OpenFlipper.MenuInterface/1.0")
 
 #endif // MENUBARINTERFACE_HH

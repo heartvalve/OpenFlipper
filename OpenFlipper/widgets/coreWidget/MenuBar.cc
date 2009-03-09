@@ -50,22 +50,22 @@
 
 
 
-void CoreWidget::slotAddMenu( QMenu* _menu , MenuType _type ) {
+void CoreWidget::slotAddMenubarAction( QAction* _action , MenuActionType _type ) {
 
   switch (_type) {
     case TOPLEVELMENU :
       // Add it to the menubar as a top level Menu
-      menuBar()->insertMenu(helpMenu_->menuAction() ,_menu);
+      menuBar()->insertAction(helpMenu_->menuAction() ,_action);
       break;
     case FILEMENU :
       fileMenu_->insertSeparator(fileMenuEnd_);
-      fileMenu_->insertMenu( fileMenuEnd_ , _menu );
+      fileMenu_->insertAction( fileMenuEnd_ , _action );
       break;
     case VIEWMENU :
-      viewMenu_->addMenu( _menu );
-      viewMenu_->addSeparator( );
+      viewMenu_->addAction( _action );
       break;
-
+    case TOOLSMENU:
+      toolsMenu_->addAction( _action );
   }
 
 }
@@ -81,7 +81,7 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   fileMenu_ = new QMenu(tr("&File"));
   menuBar()->addMenu(fileMenu_ );
-  
+
   //Clear all
   QAction* AC_clear_all = new QAction(tr("&Clear All"), this);;
   AC_clear_all->setStatusTip(tr("Clear all Objects"));
@@ -178,77 +178,77 @@ void CoreWidget::setupMenuBar()
   connect(AC_exit, SIGNAL(triggered()), this, SIGNAL(exit()));
   fileMenu_->addAction(AC_exit);
 
-  
+
   // ======================================================================
   // View Menu
   // ======================================================================
   viewMenu_ = new QMenu(tr("&View"));
   menuBar()->addMenu(viewMenu_ );
-  
+
   slotUpdateGlobalDrawMenu();
   viewMenu_->addMenu(globalDrawMenu_);
-  
+
   //============================================================================================================
   // Rendering options Menu
   //============================================================================================================
-  
+
   QMenu* renderingOptionsMenu = new QMenu("Rendering Options",viewMenu_);
   renderingOptionsMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"renderingOptions.png"));
   viewMenu_->addMenu(renderingOptionsMenu);
-  
+
   orthogonalProjectionAction_ = new QAction( "Switch Viewers to Orthogonal Projection", renderingOptionsMenu );;
   orthogonalProjectionAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
   orthogonalProjectionAction_->setCheckable( false );
   orthogonalProjectionAction_->setToolTip(   "Switch to orthogonal projection mode.");
   orthogonalProjectionAction_->setWhatsThis( "Switch projection mode<br><br>"
-      "Switch to <b>orthogonal</b> projection mode.");  
+      "Switch to <b>orthogonal</b> projection mode.");
   connect( orthogonalProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalOrthographicProjection() ) );
   renderingOptionsMenu->addAction( orthogonalProjectionAction_);
-  
+
   QAction* animation = renderingOptionsMenu->addAction("Animation");
-  
+
   uint enabledCount = 0;
   uint disabledCount = 0;
   for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
     if ( PluginFunctions::viewerProperties(i).animation() )
       enabledCount++;
-    else 
+    else
       disabledCount++;
   }
-      
+
   if ( enabledCount != 0 && disabledCount != 0 )
-    animation->setChecked(Qt::PartiallyChecked);    
+    animation->setChecked(Qt::PartiallyChecked);
   else if ( enabledCount == 4 )
     animation->setChecked( Qt::Checked );
   else
     animation->setChecked( Qt::Unchecked );
-  
+
   animation->setToolTip("Animate rotation of objects");
   animation->setCheckable( true );
   animation->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"animation.png") );
   connect(animation, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeAnimation(bool) ) );
-  
-  
+
+
   //======================
-  
+
   QAction* backfaceCulling = renderingOptionsMenu->addAction("Backface Culling");
-  
+
   enabledCount  = 0;
   disabledCount = 0;
   for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
     if ( PluginFunctions::viewerProperties(i).backFaceCulling() )
       enabledCount++;
-    else 
+    else
       disabledCount++;
   }
-  
+
   if ( enabledCount != 0 && disabledCount != 0 )
-    backfaceCulling->setChecked(Qt::PartiallyChecked);    
+    backfaceCulling->setChecked(Qt::PartiallyChecked);
   else if ( enabledCount == 4 )
     backfaceCulling->setChecked( Qt::Checked );
   else
     backfaceCulling->setChecked( Qt::Unchecked );
-  
+
   backfaceCulling->setToolTip("Enable backface culling");
   backfaceCulling->setCheckable( true );
   backfaceCulling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"backFaceCulling.png") );
@@ -257,37 +257,37 @@ void CoreWidget::setupMenuBar()
   //======================
 
   QAction* twoSidedLighting = renderingOptionsMenu->addAction("Two-sided Lighting");
-    
+
   enabledCount  = 0;
-  disabledCount = 0; 
+  disabledCount = 0;
   for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
     if ( PluginFunctions::viewerProperties(i).twoSidedLighting() )
       enabledCount++;
-    else 
+    else
       disabledCount++;
   }
-  
+
   if ( enabledCount != 0 && disabledCount != 0 )
-    twoSidedLighting->setChecked(Qt::PartiallyChecked);    
+    twoSidedLighting->setChecked(Qt::PartiallyChecked);
   else if ( enabledCount == 4 )
     twoSidedLighting->setChecked( Qt::Checked );
   else
     twoSidedLighting->setChecked( Qt::Unchecked );
-  
+
   twoSidedLighting->setToolTip("Enable two-sided lighting");
   twoSidedLighting->setCheckable( true );
   twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
   twoSidedLighting->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
   connect(twoSidedLighting, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeTwoSidedLighting(bool) ) );
-  
+
   //============================================================================================================
   // Other toplevel actions
   //============================================================================================================
-  
+
   viewMenu_->addSeparator();
-  
+
   connect( viewMenu_,SIGNAL( aboutToShow() ), this, SLOT( slotViewMenuAboutToShow() ) );
-  
+
   QAction* homeAction = new QAction("Restore Home View",viewMenu_);
   homeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"go-home.png") );
   homeAction->setCheckable( false );
@@ -296,8 +296,8 @@ void CoreWidget::setupMenuBar()
                             "Resets the view to the home view");
   viewMenu_->addAction( homeAction );
   connect( homeAction,SIGNAL( triggered() ), this, SLOT( slotGlobalHomeView() ) );
-  
-  
+
+
   QAction* setHomeAction = new QAction( "Set Home View" , viewMenu_ );
   setHomeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"set-home.png") );
   setHomeAction->setCheckable( false );
@@ -306,7 +306,7 @@ void CoreWidget::setupMenuBar()
                                "Stores the current view as the home view");
   viewMenu_->addAction( setHomeAction);
   connect( setHomeAction,SIGNAL( triggered() ), this, SLOT( slotGlobalSetHomeView() ) );
-  
+
   QAction* viewAllAction = new QAction( "View all", viewMenu_ );
   viewAllAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewall.png") );
   viewAllAction->setCheckable( false );
@@ -316,7 +316,7 @@ void CoreWidget::setupMenuBar()
                                " the whole scene is visible.");
   connect( viewAllAction,SIGNAL( triggered() ), this, SLOT( slotGlobalViewAll() ) );
   viewMenu_->addAction( viewAllAction);
-  
+
   perspectiveProjectionAction_ = new QAction( "Switch Viewers to Perspective Projection", viewMenu_ );;
   perspectiveProjectionAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
   perspectiveProjectionAction_->setCheckable( false );
@@ -325,11 +325,11 @@ void CoreWidget::setupMenuBar()
                                               "Switch to <b>perspective</b> projection mode.");
   connect( perspectiveProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalPerspectiveProjection() ) );
   viewMenu_->addAction( perspectiveProjectionAction_);
-  
- 
-  
+
+
+
   viewMenu_->addSeparator();
-  
+
   QAction* setGlobalBackgroundColor = new QAction(tr("&Set Background Color"), this);;
   setGlobalBackgroundColor->setToolTip(tr("Set Background Color for all viewers"));
   setGlobalBackgroundColor->setStatusTip(tr("Set Background Color for all viewers"));
@@ -337,14 +337,14 @@ void CoreWidget::setupMenuBar()
   setGlobalBackgroundColor->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BackgroundColor.png") );
   connect(setGlobalBackgroundColor, SIGNAL(triggered()), this, SLOT(slotSetGlobalBackgroundColor()));
   viewMenu_->addAction(setGlobalBackgroundColor);
-   
+
   //===========================================================================================================================
   // Tools Menu
   //===========================================================================================================================
-  
+
   toolsMenu_ = new QMenu(tr("&Tools"));
   menuBar()->addMenu(toolsMenu_ );
-  
+
   QAction* sceneGraphAction = new QAction( "Show SceneGraph " ,toolsMenu_ );
   sceneGraphAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"scenegraph.png") );
   sceneGraphAction->setCheckable( false );
@@ -355,7 +355,7 @@ void CoreWidget::setupMenuBar()
   QObject::connect( sceneGraphAction, SIGNAL( triggered() ),
                     this,             SLOT( slotShowSceneGraphDialog() ) );
   toolsMenu_->addAction( sceneGraphAction);
-  
+
   // ======================================================================
   // help Menu
   // ======================================================================
@@ -417,74 +417,74 @@ void CoreWidget::setupMenuBar()
 }
 
 void CoreWidget::slotViewMenuAboutToShow() {
-  
+
   uint perspectiveCount = 0;
   uint orthogonalCount = 0;
-  
+
   for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i ) {
     if ( examiner_widgets_[ i ]->projectionMode() == glViewer::PERSPECTIVE_PROJECTION )
       perspectiveCount++;
     else
       orthogonalCount++;
   }
-  
-  if ( perspectiveCount == 4 ) 
+
+  if ( perspectiveCount == 4 )
     perspectiveProjectionAction_->setVisible(false);
   else
     perspectiveProjectionAction_->setVisible(true);
-    
+
   if ( orthogonalCount == 4 )
     orthogonalProjectionAction_->setVisible(false);
   else
     orthogonalProjectionAction_->setVisible(true);
-  
+
 }
 
 void CoreWidget::slotUpdateGlobalDrawMenu() {
   if ( drawGroup_ ) {
-    
+
     disconnect( drawGroup_ , SIGNAL( triggered( QAction * ) ),
                 this       , SLOT( slotGlobalDrawMenu( QAction * ) ) );
     delete( drawGroup_ );
     drawGroup_ = 0;
-    
+
   }
-  
+
   // Recreate drawGroup
   drawGroup_ = new QActionGroup( this );
   drawGroup_->setExclusive( false );
-  
+
   connect( drawGroup_ , SIGNAL( triggered( QAction * ) ),
-           this       , SLOT( slotGlobalDrawMenu( QAction * ) ) );  
-  
+           this       , SLOT( slotGlobalDrawMenu( QAction * ) ) );
+
   if ( !globalDrawMenu_ ) {
-    
+
     QIcon icon;
     icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
-    globalDrawMenu_  = new QMenu("Set Global DrawMode"); 
+    globalDrawMenu_  = new QMenu("Set Global DrawMode");
     globalDrawMenu_->setTearOffEnabled(true);
     globalDrawMenu_->setIcon(icon);
-    
+
     connect(globalDrawMenu_,SIGNAL(aboutToShow () ) , this, SLOT(slotUpdateGlobalDrawMenu() ) );
   }
-  
-  // Collect available draw Modes 
+
+  // Collect available draw Modes
   ACG::SceneGraph::CollectDrawModesAction actionAvailable;
   ACG::SceneGraph::traverse( PluginFunctions::getRootNode() , actionAvailable);
   availableGlobalDrawModes_ = actionAvailable.drawModes();
-  
+
   // Get currently active drawModes (first viewer only )
   // TODO: create combination from all viewers!
   activeDrawModes_ = INT_MAX;
   for ( int i = 0 ; i < PluginFunctions::viewers(); ++i )
     activeDrawModes_ &= PluginFunctions::drawMode(i);
-  
+
   // Convert to ids
   std::vector< unsigned int > availDrawModeIds;
   availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableGlobalDrawModes_ );
-  
+
   globalDrawMenu_->clear();
-  
+
   for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
   {
     unsigned int id    = availDrawModeIds[i];
@@ -500,7 +500,7 @@ void CoreWidget::slotUpdateGlobalDrawMenu() {
 }
 
 void CoreWidget::slotGlobalDrawMenu(QAction * _action) {
-  
+
   //======================================================================================
   // Get the mode toggled
   //======================================================================================
@@ -516,12 +516,12 @@ void CoreWidget::slotGlobalDrawMenu(QAction * _action) {
       break;
     }
   }
-  
+
   if ( qApp->keyboardModifiers() & Qt::ShiftModifier )
     activeDrawModes_ = ( activeDrawModes_ ^ mode);
   else
     activeDrawModes_ = mode ;
-  
+
   PluginFunctions::setDrawMode( activeDrawModes_ );
   slotUpdateGlobalDrawMenu();
 }

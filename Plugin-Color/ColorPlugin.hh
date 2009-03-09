@@ -68,7 +68,7 @@ Q_INTERFACES(INIInterface)
     void scriptInfo( QString _functionName );
 
     // MenuInterface
-    void addMenu(QMenu* _menu, MenuType _type);
+    void addMenubarAction(QAction* _action, MenuActionType _type );
 
     // ToolbarInterface
     void addToolbar(QToolBar* _toolbar);
