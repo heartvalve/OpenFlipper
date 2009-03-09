@@ -30,7 +30,7 @@ void ScriptingPlugin::pluginsInitialized() {
   // Scriping Menu
   QMenu *scriptingMenu = new QMenu(tr("&Scripting"));
 
-  emit addMenu( scriptingMenu , TOPLEVELMENU );
+  emit addMenubarAction(scriptingMenu->menuAction(), TOPLEVELMENU );
 
   QIcon icon;
   QAction* showWidget = scriptingMenu->addAction( "Show script editor" );

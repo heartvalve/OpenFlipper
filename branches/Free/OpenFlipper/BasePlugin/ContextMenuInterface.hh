@@ -61,13 +61,13 @@ enum ContextMenuType {
  /** \brief Interface class for creating custom context menus
   *
   * Using this interface you can create custom context menus for your plugin. You
-  * can choose between a persistent context menu which will be visible every time
-  * you rightclick in the viewerwindow or an object based context menu. This type
-  * of menu will only show up when the user clicked on a specific type defined by
-  * your plugin.\n
-  * You have to create a QMenu. The signals and slots of your menu have to be connected
+  * can choose between context menus for objects nodes or the background.\n
+  * Before a menu of the requested type is shown, an update function for the specific type
+  * will be invoked by the core.
+  * You have to create a QAction. The signals and slots of your actions have to be connected
   * to your plugin. Just connect them as usual. Only visibility of the menu is handled
-  * by the core.
+  * by the core. You can also add submenus to the context menus. Just add the action for
+  * the menu ( menu->menuAction() )
  */
 class ContextMenuInterface {
 
@@ -81,10 +81,9 @@ signals:
   /**  \brief Add an entry for a context Menu
     *
     * Create an Action (Can also be the action of a Menu) and register this menu as a context menu to the core.
-    * This Action will be visible  when you rightclick in the viewer widget on
-    * The given Context Menu Type. You can add a whole Menu here by adding the action:
-    * menu->menuAction()
-    *
+    * This Action will be visible  when you rightclick in the viewer widget on an item
+    * of the given context menu type. You can add a whole menu here by adding the action:
+    * menu->menuAction() of your own menu.
     * @param _menu Pointer to the new Action
   */
   virtual void addContextMenuItem(QAction* /*_action*/ , ContextMenuType /*_type*/) {};
@@ -129,6 +128,6 @@ private slots:
 
 };
 
-Q_DECLARE_INTERFACE(ContextMenuInterface,"OpenFlipper.ContextMenuInterface/0.3")
+Q_DECLARE_INTERFACE(ContextMenuInterface,"OpenFlipper.ContextMenuInterface/1.0")
 
 #endif // CONTEXTMENUINTERFACE_HH

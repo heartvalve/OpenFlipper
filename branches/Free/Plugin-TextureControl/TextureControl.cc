@@ -356,7 +356,7 @@ void TextureControlPlugin::pluginsInitialized() {
 
   textureMenu_->setTearOffEnabled(true);
 
-  emit addMenu( textureMenu_ , VIEWMENU );
+  emit addMenubarAction(textureMenu_->menuAction(), VIEWMENU );
 
   settingsDialog_ = new texturePropertiesWidget(0);
 

@@ -92,7 +92,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void log(Logtype _type, QString _message);
     void log(QString _message);
     // MenuInterface
-    void addMenu(QMenu* _menu, MenuType _type);
+    void addMenubarAction(QAction* _action, MenuActionType _type );
 
   private slots:
     // BaseInterface

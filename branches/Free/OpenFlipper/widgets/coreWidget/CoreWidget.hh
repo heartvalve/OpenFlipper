@@ -456,7 +456,7 @@ public:
   //===========================================================================
   private slots :
 
-    void slotAddMenu( QMenu* _menu , MenuType _type );
+    void slotAddMenubarAction( QAction* _action , MenuActionType _type );
 
   private:
 
