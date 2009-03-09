@@ -118,8 +118,11 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void log(QString _message);
     //ScriptInterface
     void scriptInfo( QString _functionName );
+
     //ContextMenuInterface
     void addContextMenu(QMenu* _menu ,DataType _objectType , ContextMenuType _type );
+    void addContextMenu(QMenu* _menu ,ContextMenuType _type );
+
     //KeyInterface
     void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
     //ToolbarInterface
