@@ -557,17 +557,17 @@ public:
     /// Copy view from the last active examiner
     void slotCopyView( );
 
-    /// Create a snapshot of the last active examiner
-    void slotSnapshot();
-
-    /// Set the snapShot name for all examiners
-    void slotSnapshotName();
-
     /// Called when a coordsys drawMode has been changed
     void slotViewerDrawMenu( QAction * _action );
 
     /// Creates a draw Menu for the currently active Viewer
     void slotUpdateViewerDrawMenu();
+
+    /// Create a snapshot of the last active examiner
+    void slotSnapshot();
+
+    /// Set the snapShot name for all examiners
+    void slotSnapshotName();
 
   private :
     /** Update the contextmenu for the given position inside an examiner widget
@@ -598,6 +598,36 @@ public:
 
     /// Draw Menu for per Viewer Draw Modes
     QMenu* viewerDrawMenu_;
+
+  /** @} */
+
+  //===========================================================================
+    /** @name Snapshots
+     * @{ */
+  //===========================================================================
+
+  private:
+
+    QString snapshotName_;
+    int     snapshotCounter_;
+
+  public slots:
+
+    /// Create a snapshot of the whole app with fileDialog
+//     void viewerSnapshotDialog();
+
+    /// Create a snapshot of the whole app
+//     void viewerSnapshot();
+
+    /// Create a snapshot of the whole app with fileDialog
+    void applicationSnapshotDialog();
+
+    /// Create a snapshot of the whole app
+    void applicationSnapshot();
+
+    /// Set the snapshot name
+    void applicationSnapshotName(QString _name);
+
 
   /** @} */
 

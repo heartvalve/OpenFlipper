@@ -209,14 +209,14 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
 
   QAction* copyView = _menu->addAction("Copy View");
   copyView->setToolTip("Copy current view to clipboard");
-  copyView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"copyView.png") );
+  copyView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png") );
   connect(copyView, SIGNAL(triggered()), this, SLOT(slotCopyView()) );
 
   //====================================================================================================
 
   QAction* pasteView = _menu->addAction("Paste View");
   pasteView->setToolTip("Paste current view from clipboard");
-  pasteView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"pasteView.png") );
+  pasteView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-paste.png") );
   connect(pasteView, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
 
   //====================================================================================================
@@ -225,14 +225,6 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
   snapshot->setToolTip("Make a snapshot");
   snapshot->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
   connect(snapshot, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
-
-  //====================================================================================================
-
-  QAction* snapshotName = _menu->addAction("Set Snapshot Name");
-  snapshotName->setToolTip("Set a name for snapshots");
-  snapshotName->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshotName.png") );
-  connect(snapshotName, SIGNAL(triggered()), this, SLOT(slotSnapshotName()) );
-
 
 }
 

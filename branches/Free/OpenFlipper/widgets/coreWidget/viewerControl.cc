@@ -224,10 +224,126 @@ void CoreWidget::slotLocalChangeTwoSidedLighting(bool _lighting) {
   PluginFunctions::viewerProperties().twoSidedLighting(_lighting);
 }
 
-
+/// Take a snapshot of the current Viewer
 void CoreWidget::slotSnapshot() {
-  examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot();
+
+  QFileInfo fi(PluginFunctions::viewerProperties().snapshotName());
+  int counter = PluginFunctions::viewerProperties().snapshotCounter();
+
+  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(counter) + ".";
+
+  QString format="png";
+
+  if (fi.completeSuffix() == "ppm")
+    format="ppmraw";
+
+  suggest += format;
+
+  QString newName = QFileDialog::getSaveFileName(this, tr("Save Snapshot"), suggest, tr("Images (*.png *.ppm)"));
+
+  if (!newName.isEmpty())
+  {
+
+    if (newName != suggest)
+      PluginFunctions::viewerProperties().snapshotBaseFileName(newName);
+
+    examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot();
+  }
 }
+
+///Take a snapshot of the whole application
+void CoreWidget::applicationSnapshotDialog() {
+
+  QFileInfo fi(snapshotName_);
+
+  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_) + ".";
+
+  QString format="png";
+
+  if (fi.completeSuffix() == "ppm")
+    format="ppmraw";
+
+  suggest += format;
+
+  QString newName = QFileDialog::getSaveFileName(this, tr("Save Snapshot"), suggest, tr("Images (*.png *.ppm)"));
+
+  if (!newName.isEmpty())
+  {
+
+    if (newName != suggest){
+      snapshotName_ = newName;
+      snapshotCounter_ = 0;
+    }else
+      snapshotCounter_++;
+
+    QApplication::processEvents();
+
+    QPixmap pic = QPixmap::grabWindow( winId() );
+
+    pic.save(newName);
+  }
+}
+
+///Take a snapshot of the whole application
+void CoreWidget::applicationSnapshot() {
+
+  QFileInfo fi(snapshotName_);
+
+  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_++) + ".";
+
+  QString format="png";
+
+  if (fi.completeSuffix() == "ppm")
+    format="ppmraw";
+
+  suggest += format;
+
+  QApplication::processEvents();
+
+  QPixmap pic = QPixmap::grabWindow( winId() );
+
+  pic.save(suggest);
+}
+
+///Take a snapshot of all viewers
+// void CoreWidget::viewerSnapshot() {
+// 
+//   QFileInfo fi(snapshotName_);
+// 
+//   QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_++) + ".";
+// 
+//   QString format="png";
+// 
+//   if (fi.completeSuffix() == "ppm")
+//     format="ppmraw";
+// 
+//   suggest += format;
+// 
+//   switch ( coreWidget_->baseLayout_->mode() ){
+// 
+//     case QtMultiViewLayout::SingleView:
+// 
+//       QImage img;
+//       examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(img);
+// 
+//       img.save(suggest);
+// 
+//       break;
+//     case QtMultiViewLayout::Grid:
+//       break;
+//     case QtMultiViewLayout::HSplit:
+//       break;
+//     default: break;
+// 
+//   }
+// }
+
+void CoreWidget::applicationSnapshotName(QString _name) {
+
+  snapshotName_ = _name;
+  snapshotCounter_ = 0;
+}
+
 
 void CoreWidget::slotPasteView( ) {
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionPasteView();

@@ -300,6 +300,12 @@ public slots:
     */
     void snapshot(unsigned int _viewerId = 0);
 
+    /// Take a snapshot from the whole app
+    void applicationSnapshot();
+
+    /// Set the baseName for the application snapshot
+    void applicationSnapshotName(QString _name);
+
     /// resize the examinerViewer
     void resizeViewer(int _width, int _height );
 
