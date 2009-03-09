@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -60,7 +60,7 @@ namespace SceneGraph {
 
 //== CLASS DEFINITION =========================================================
 
-	      
+
 
 /** \class TriStripNodeT TriStripNodeT.hh <ACG/Scenegraph/TriStripNodeT.hh>
 
@@ -71,7 +71,7 @@ template <class Mesh>
 class ACGDLLEXPORT TriStripNodeT : public MeshNodeT<Mesh>
 {
 public:
-   
+
   typedef OpenMesh::StripifierT<Mesh>  MyStripifier;
   typedef MeshNodeT<Mesh>              Base;
   typedef typename Base::FaceMode      FaceMode;
@@ -85,7 +85,7 @@ public:
       strips_(_mesh)
   {}
 
- 
+
   /// Destructor
   ~TriStripNodeT() {}
 
@@ -94,10 +94,10 @@ public:
 
 
   /// build triangle strips, delete face indices
-  void update_strips() 
+  void update_strips()
   {
     std::vector<unsigned int>().swap(Base::indices_);
-    strips_.stripify(); 
+    strips_.stripify();
   }
 
 
@@ -108,21 +108,21 @@ public:
     Base::update_topology();
   }
 
- 
+
 
 private:
 
   virtual void draw_faces(FaceMode _mode)
   {
     if (Base::mesh_.is_trimesh()  &&
-	_mode == Base::PER_VERTEX && 
-	strips_.is_valid())
+	     _mode == Base::PER_VERTEX &&
+	     strips_.is_valid())
     {
       typename MyStripifier::StripsIterator strip_it   = strips_.begin();
       typename MyStripifier::StripsIterator strip_last = strips_.end();
 
       for (; strip_it!=strip_last; ++strip_it)
-	glDrawElements(GL_TRIANGLE_STRIP, 
+	          glDrawElements(GL_TRIANGLE_STRIP,
 		       strip_it->size(),
 		       GL_UNSIGNED_INT,
 		       &(*strip_it)[0] );
