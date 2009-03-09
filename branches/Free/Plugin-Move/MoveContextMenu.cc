@@ -36,21 +36,14 @@
 
 //***********************************************************************************
 
-// ContextMenu Action triggered
-void MovePlugin::moveContextMenu(QAction* _action) {
-  QVariant contextObject = _action->data();
-  int objectId = contextObject.toInt();
+void MovePlugin::showProps(){
+    
+    QVariant contextObject = lastAction_->data();
+    int objectId = contextObject.toInt();
   
-  if ( objectId == -1)
-    return;
+    if ( objectId == -1)
+	return;
   
-  if ( _action->text() == "Set properties") 
-    showProps( objectId );
-}
-
-//***********************************************************************************
-
-void MovePlugin::showProps( int objectId ){
     // Get Node
     ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), objectId );
     
@@ -63,8 +56,14 @@ void MovePlugin::showProps( int objectId ){
     }
     
     int meshID = mNode->getIdentifier();
-    
+
+    BaseObjectData* obj;
+    if ( ! PluginFunctions::getObject(meshID,obj) )
+        return;
+
     ACG::SceneGraph::BaseNode* mesh = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), meshID );
+    
+    // TODO: Fenster an obj attachen und Daten per Signale austauschen
     
     propsWindow_->setWindowTitle(QString((mesh->name()).c_str()));
     

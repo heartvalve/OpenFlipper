@@ -296,16 +296,14 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
 
     private slots:
 
-    /// called by the move context Menu
-    void moveContextMenu(QAction* _action);
-
+    /// Show properties of move manipulator in a dialog
+    void showProps( );
+	
     private:
     /// Move context menu
     QMenu* contextMenu_;
     movePropsWidget* propsWindow_;
-
-    /// Show properties of move manipulator in a dialog
-    void showProps( int objectId );
+    QAction* lastAction_;
 
 /** @} */
 	

@@ -92,19 +92,15 @@ void MovePlugin::pluginsInitialized() {
   // CONTEXT MENU
   propsWindow_ = new movePropsWidget();
   propsWindow_->hide();
-  
-  contextMenu_ = new QMenu("Move");
-  
-  QAction* lastAction;
 
-  lastAction = contextMenu_->addAction( "Set properties" );
-  lastAction->setToolTip("Set properties");
-  lastAction->setStatusTip( lastAction->toolTip() );
+  lastAction_ = new QAction("Set properties", this);
+  lastAction_->setToolTip("Set properties");
+  lastAction_->setStatusTip( lastAction_->toolTip() );
+
+  emit addContextMenuItem(lastAction_ , CONTEXTNODEMENU );
   
-  emit addContextMenuItem(contextMenu_->menuAction() , CONTEXTNODEMENU );
-  
-  connect( contextMenu_ , SIGNAL( triggered(QAction*) ),
-	   this,          SLOT(moveContextMenu(QAction*)) );
+  connect( lastAction_ , SIGNAL( triggered() ),
+	   this, SLOT(showProps()) );
 
   //TOOLBAR
   toolbar_ = new QToolBar("Transform and Move");
