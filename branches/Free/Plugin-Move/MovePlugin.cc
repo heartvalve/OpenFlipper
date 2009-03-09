@@ -88,7 +88,23 @@ void MovePlugin::pluginsInitialized() {
 
   //SCRIPTING SLOT DESCRIPTIONS
   setDescriptions();
+  
+  // CONTEXT MENU
+  propsWindow_ = new movePropsWidget();
+  propsWindow_->hide();
+  
+  contextMenu_ = new QMenu("Move");
+  
+  QAction* lastAction;
 
+  lastAction = contextMenu_->addAction( "Set properties" );
+  lastAction->setToolTip("Set properties");
+  lastAction->setStatusTip( lastAction->toolTip() );
+  
+  emit addContextMenuItem(contextMenu_->menuAction() , CONTEXTNODEMENU );
+  
+  connect( contextMenu_ , SIGNAL( triggered(QAction*) ),
+	   this,          SLOT(moveContextMenu(QAction*)) );
 
   //TOOLBAR
   toolbar_ = new QToolBar("Transform and Move");
@@ -135,17 +151,17 @@ bool MovePlugin::initializeToolbox(QWidget*& _widget)
    tool_->moveToOrigin->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "moveToCOG.png") );
    tool_->moveToOrigin->setIconSize(QSize(48,48));
 
-   connect(tool_->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));
-   connect(tool_->axisAButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisA()));
-   connect(tool_->axisBButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisB()));
-   connect(tool_->dirButton,SIGNAL(clicked() ),this,SLOT(slotSetDirection()));
-   connect(tool_->transButton,SIGNAL(clicked() ),this,SLOT(slotTranslation()));
-
-   connect(tool_->rotButton,SIGNAL(clicked() ),this,SLOT(slotRotate()));
-   connect(tool_->scaleButton,SIGNAL(clicked() ),this,SLOT(slotScale()));
-
-   connect(tool_->projectTangentButton,SIGNAL(clicked() ),this,SLOT(slotProjectToTangentPlane()));
-   connect(tool_->moveManipToCOG,SIGNAL(clicked() ),this,SLOT(slotMoveManipToCOG()));
+//    connect(tool_->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));
+//    connect(tool_->axisAButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisA()));
+//    connect(tool_->axisBButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisB()));
+//    connect(tool_->dirButton,SIGNAL(clicked() ),this,SLOT(slotSetDirection()));
+//    connect(tool_->transButton,SIGNAL(clicked() ),this,SLOT(slotTranslation()));
+// 
+//    connect(tool_->rotButton,SIGNAL(clicked() ),this,SLOT(slotRotate()));
+//    connect(tool_->scaleButton,SIGNAL(clicked() ),this,SLOT(slotScale()));
+// 
+//    connect(tool_->projectTangentButton,SIGNAL(clicked() ),this,SLOT(slotProjectToTangentPlane()));
+//    connect(tool_->moveManipToCOG,SIGNAL(clicked() ),this,SLOT(slotMoveManipToCOG()));
 
    connect(tool_->unifyBoundingBoxDiagonal,SIGNAL(clicked() ),this,SLOT(slotUnifyBoundingBoxDiagonal()));
    tool_->unifyBoundingBoxDiagonal->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "unifyBB.png") );
@@ -445,11 +461,11 @@ void MovePlugin::slotSetPosition() {
    TriMesh::Point newpos;
 
    bool ok = false;
-   newpos[0] =  (tool_->nposx->text()).toDouble(&ok);
+   newpos[0] =  (propsWindow_->nposx->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate"); return; }
-   newpos[1] =  (tool_->nposy->text()).toDouble(&ok);
+   newpos[1] =  (propsWindow_->nposy->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   newpos[2] =  (tool_->nposz->text()).toDouble(&ok);
+   newpos[2] =  (propsWindow_->nposz->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
 
    BaseObjectData* object;
@@ -476,9 +492,9 @@ void MovePlugin::slotToggleAxisA() {
     axisA_ = (axisA_ + 1) % 3;
 
   switch(axisA_){
-    case 0: tool_->axisAButton->setText("X Direction"); break;
-    case 1: tool_->axisAButton->setText("Y Direction"); break;
-    case 2: tool_->axisAButton->setText("Z Direction"); break;
+    case 0: propsWindow_->axisAButton->setText("X Direction"); break;
+    case 1: propsWindow_->axisAButton->setText("Y Direction"); break;
+    case 2: propsWindow_->axisAButton->setText("Z Direction"); break;
     default: break;
   }
 }
@@ -497,9 +513,9 @@ void MovePlugin::slotToggleAxisB() {
     axisB_ = (axisB_ + 1) % 3;
 
   switch(axisB_){
-    case 0: tool_->axisBButton->setText("X Direction"); break;
-    case 1: tool_->axisBButton->setText("Y Direction"); break;
-    case 2: tool_->axisBButton->setText("Z Direction"); break;
+    case 0: propsWindow_->axisBButton->setText("X Direction"); break;
+    case 1: propsWindow_->axisBButton->setText("Y Direction"); break;
+    case 2: propsWindow_->axisBButton->setText("Z Direction"); break;
     default: break;
   }
 }
@@ -517,18 +533,18 @@ void MovePlugin::slotSetDirection() {
    ACG::Vec3d dirZ(0.0,0.0,0.0);
 
    bool ok = false;
-   newdirA[0] =  (tool_->ndirAx->text()).toDouble(&ok);
+   newdirA[0] =  (propsWindow_->ndirAx->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
-   newdirA[1] =  (tool_->ndirAy->text()).toDouble(&ok);
+   newdirA[1] =  (propsWindow_->ndirAy->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   newdirA[2] =  (tool_->ndirAz->text()).toDouble(&ok);
+   newdirA[2] =  (propsWindow_->ndirAz->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
 
-   newdirB[0] =  (tool_->ndirBx->text()).toDouble(&ok);
+   newdirB[0] =  (propsWindow_->ndirBx->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
-   newdirB[1] =  (tool_->ndirBy->text()).toDouble(&ok);
+   newdirB[1] =  (propsWindow_->ndirBy->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   newdirB[2] =  (tool_->ndirBz->text()).toDouble(&ok);
+   newdirB[2] =  (propsWindow_->ndirBz->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
 
    bool xAxis = false;
@@ -559,7 +575,7 @@ void MovePlugin::slotSetDirection() {
    }
 
    // Apply to All Target Objects
-   if ( tool_->targetObjects->isChecked() ) {
+   if ( propsWindow_->targetObjects->isChecked() ) {
       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it){
 
          o_it->manipulatorNode()->set_direction( dirX, dirY );
@@ -589,15 +605,15 @@ void MovePlugin::slotTranslation() {
    ACG::Vec3d translation;
 
    bool ok = false;
-   translation[0] =  (tool_->translationX->text()).toDouble(&ok);
+   translation[0] =  (propsWindow_->translationX->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
-   translation[1] =  (tool_->translationY->text()).toDouble(&ok);
+   translation[1] =  (propsWindow_->translationY->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   translation[2] =  (tool_->translationZ->text()).toDouble(&ok);
+   translation[2] =  (propsWindow_->translationZ->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
 
     // Apply to All Target Objects
-   if ( tool_->targetObjects->isChecked() ) {
+   if ( propsWindow_->targetObjects->isChecked() ) {
 
       int manipcount = 0; // Check how many of the target meshes have an visible manipulator
       int targets = 0;        // Count the number of target meshes
@@ -622,6 +638,7 @@ void MovePlugin::slotTranslation() {
 
          o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() + translation  );
          emit createBackup(o_it->id(),"Translation");
+	 emit updatedObject(o_it->id());
       }
 
    } else {
@@ -633,11 +650,13 @@ void MovePlugin::slotTranslation() {
 
             object->manipulatorNode()->set_center( object->manipulatorNode()->center() + translation  );
             emit createBackup(object->id(),"Translation");
+	    emit updatedObject(object->id());
          }
       } else return;
    }
 
    updateManipulatorDialog();
+   emit scriptInfo(QString("slotTranslation()"));
    emit updateView();
 }
 
@@ -649,7 +668,7 @@ void MovePlugin::slotTranslation() {
  */
 void MovePlugin::slotProjectToTangentPlane() {
 
-   if ( tool_->targetObjects->isChecked() ) {
+   if ( propsWindow_->targetObjects->isChecked() ) {
      emit log(LOGWARN,"TODO Project for multiple targets");
      return;
    } else {
@@ -666,7 +685,7 @@ void MovePlugin::slotProjectToTangentPlane() {
  * 
  */
 void MovePlugin::slotMoveManipToCOG() {
-   if ( tool_->targetObjects->isChecked() ) {
+   if ( propsWindow_->targetObjects->isChecked() ) {
        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
             if (  o_it->manipulatorNode()->hidden() )
                continue;
@@ -708,17 +727,17 @@ void MovePlugin::slotRotate() {
    double angle;
 
    bool ok = false;
-   axis[0] =  (tool_->rotx->text()).toDouble(&ok);
+   axis[0] =  (propsWindow_->rotx->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
-   axis[1] =  (tool_->roty->text()).toDouble(&ok);
+   axis[1] =  (propsWindow_->roty->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   axis[2] =  (tool_->rotz->text()).toDouble(&ok);
+   axis[2] =  (propsWindow_->rotz->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
 
-   angle =  (tool_->rotAngle->text()).toDouble(&ok);
+   angle =  (propsWindow_->rotAngle->text()).toDouble(&ok);
    if ( !ok ) {  emit log(LOGERR,"Wrong Format for Angle"); return; }
 
-    if ( tool_->targetObjects->isChecked() ) {
+    if ( propsWindow_->targetObjects->isChecked() ) {
        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
             if (  o_it->manipulatorNode()->hidden() )
                continue;
@@ -734,6 +753,7 @@ void MovePlugin::slotRotate() {
             updateManipulatorDialog();
 
             emit createBackup(o_it->id(),"Rotation");
+	    emit updatedObject(o_it->id());
        }
    } else {
       BaseObjectData* object;
@@ -750,8 +770,10 @@ void MovePlugin::slotRotate() {
          updateManipulatorDialog();
 
          emit createBackup(object->id(),"Rotation");
+	 emit updatedObject(object->id());
       }
    }
+   emit scriptInfo(QString("slotRotate()"));
    emit updateView();
 
 }
@@ -766,14 +788,14 @@ void MovePlugin::slotScale() {
    TriMesh::Point scale;
 
    bool ok = false;
-   scale[0] =  (tool_->scalex->text()).toDouble(&ok);
+   scale[0] =  (propsWindow_->scalex->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 1");  return; }
-   scale[1] =  (tool_->scaley->text()).toDouble(&ok);
+   scale[1] =  (propsWindow_->scaley->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 2"); return; }
-   scale[2] =  (tool_->scalez->text()).toDouble(&ok);
+   scale[2] =  (propsWindow_->scalez->text()).toDouble(&ok);
    if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 3"); return; }
 
-   if ( tool_->targetObjects->isChecked() ) {
+   if ( propsWindow_->targetObjects->isChecked() ) {
        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
             if (  o_it->manipulatorNode()->hidden() )
                continue;
@@ -789,6 +811,7 @@ void MovePlugin::slotScale() {
             updateManipulatorDialog();
 
             emit createBackup(o_it->id(),"Scaling");
+	    emit updatedObject(o_it->id());
        }
    } else {
       BaseObjectData* object;
@@ -805,8 +828,10 @@ void MovePlugin::slotScale() {
          updateManipulatorDialog();
 
          emit createBackup(object->id(),"Scaling");
+	 emit updatedObject(object->id());
       }
    }
+   emit scriptInfo(QString("slotScale()"));
    emit updateView();
 }
 
@@ -894,33 +919,38 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
  * 
  */
 void MovePlugin::updateManipulatorDialog() {
-   BaseObjectData* object;
-   if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-      if (  object->manipulatorNode()->visible() ) {
-        const TriMesh::Point pos = object->manipulatorNode()->center();
-
-        QString num;
-        num = QString::number(pos[0]); tool_->posx->setText(num);
-        num = QString::number(pos[1]); tool_->posy->setText(num);
-        num = QString::number(pos[2]); tool_->posz->setText(num);
-
-        TriMesh::Point direction = object->manipulatorNode()->directionX();
-        num = QString::number(direction[0]); tool_->dirxx->setText(num);
-        num = QString::number(direction[1]); tool_->dirxy->setText(num);
-        num = QString::number(direction[2]); tool_->dirxz->setText(num);
-  
-        direction = object->manipulatorNode()->directionY();
-        num = QString::number(direction[0]); tool_->diryx->setText(num);
-        num = QString::number(direction[1]); tool_->diryy->setText(num);
-        num = QString::number(direction[2]); tool_->diryz->setText(num);
-  
-        direction = object->manipulatorNode()->directionZ();
-        num = QString::number(direction[0]); tool_->dirzx->setText(num);
-        num = QString::number(direction[1]); tool_->dirzy->setText(num);
-        num = QString::number(direction[2]); tool_->dirzz->setText(num);
-
-      }
-   }
+    
+    if(!propsWindow_->isHidden()) {
+	
+	BaseObjectData* object;
+	if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
+	    if (  object->manipulatorNode()->visible() ) {
+		const TriMesh::Point pos = object->manipulatorNode()->center();
+	
+		QString num;
+		
+		num = QString::number(pos[0]); propsWindow_->posx->setText(num);
+		num = QString::number(pos[1]); propsWindow_->posy->setText(num);
+		num = QString::number(pos[2]); propsWindow_->posz->setText(num);
+	
+		TriMesh::Point direction = object->manipulatorNode()->directionX();
+		num = QString::number(direction[0]); propsWindow_->dirxx->setText(num);
+		num = QString::number(direction[1]); propsWindow_->dirxy->setText(num);
+		num = QString::number(direction[2]); propsWindow_->dirxz->setText(num);
+	
+		direction = object->manipulatorNode()->directionY();
+		num = QString::number(direction[0]); propsWindow_->diryx->setText(num);
+		num = QString::number(direction[1]); propsWindow_->diryy->setText(num);
+		num = QString::number(direction[2]); propsWindow_->diryz->setText(num);
+	
+		direction = object->manipulatorNode()->directionZ();
+		num = QString::number(direction[0]); propsWindow_->dirzx->setText(num);
+		num = QString::number(direction[1]); propsWindow_->dirzy->setText(num);
+		num = QString::number(direction[2]); propsWindow_->dirzz->setText(num);
+		
+	    }
+	}
+    }
 }
 
 

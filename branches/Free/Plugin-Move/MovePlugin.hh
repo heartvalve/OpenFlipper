@@ -44,17 +44,19 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
+#include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
 #include "MoveToolbar.hh"
+#include "MoveProps.hh"
 
 enum SelectionType {VERTEX, EDGE, FACE };
 
 /** Plugin for moving objects and selections
 */
-class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterface, ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface,ToolbarInterface
+class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterface, ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface,ToolbarInterface, ContextMenuInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -63,6 +65,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
   Q_INTERFACES(ToolboxInterface)
   Q_INTERFACES(BackupInterface)
   Q_INTERFACES(LoggingInterface)
+  Q_INTERFACES(ContextMenuInterface)
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(ToolbarInterface)
 
@@ -76,6 +79,9 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
     void addHiddenPickMode( const std::string _mode );
     void setPickModeMouseTracking (const std::string _mode, bool _mouseTracking);
 
+    // ContextMenuInterface
+    void addContextMenuItem(QAction* _action , ContextMenuType _type);
+    
     // BackupInterface
     void createBackup( int _id , QString _name );
 
@@ -282,7 +288,27 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
     void slotSelectionModeChanged(QAction* _action);
 
 /** @} */
+    
+  //===========================================================================
+  /** @name Context Menu
+   * @{ */
+  //===========================================================================
 
+    private slots:
+
+    /// called by the move context Menu
+    void moveContextMenu(QAction* _action);
+
+    private:
+    /// Move context menu
+    QMenu* contextMenu_;
+    movePropsWidget* propsWindow_;
+
+    /// Show properties of move manipulator in a dialog
+    void showProps( int objectId );
+
+/** @} */
+	
 //===========================================================================
 /** @name Scriptable Functions
   * @{ */
