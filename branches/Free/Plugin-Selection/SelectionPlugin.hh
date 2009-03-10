@@ -49,8 +49,8 @@
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
-#include <ACG/QtWidgets/QtLasso.hh>
 #include <ACG/Scenegraph/GlutPrimitiveNode.hh>
+#include <ACG/Scenegraph/LineNode.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
@@ -251,6 +251,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     template< class MeshT >
     void componentSelection(MeshT* _mesh, uint _fh);
 
+    /// Handle Mouse move event for lasso selection
+    void handleLassoSelection(QMouseEvent* _event);
+
     /** @} */
   private slots:
 
@@ -269,13 +272,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Delete all selected elements of the target meshes
     void slotDeleteSelection();
 
-    /// Called by lasso after user has selected a region
-    void slotLassoSelection(ACG::QtLasso::SelectionMode);
-
   private:
-    /// Select regions of the mesh that are encapsulated by the lasso
-    template< class MeshT>
-    bool lassoSelection(MeshT& _mesh);
+
+    /// Select mesh elements for each object in the list
+    void forEachObject(QList<QPair<unsigned int, unsigned int> > &_list, SelectionPrimitive _type);
 
   //===========================================================================
   /** @name Button slots
@@ -486,6 +486,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Sphere Node
     ACG::SceneGraph::GlutPrimitiveNode* sphere_node_;
 
+    /// Line Node
+    ACG::SceneGraph::LineNode* line_node_;
+
     /// Current radius of the sphere
     float sphere_radius_;
 
@@ -495,18 +498,16 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// vector containing all object-id's whose selection has changed
     std::vector< int > selection_changes_;
 
+    /// vector containing all projected lasso points
+    std::vector< ACG::Vec3f > lasso_points_;
+
+    /// vector containing all lasso points
+    QPolygon lasso_2Dpoints_;
+
+    /// true if currently selecting with lasso
+    bool lasso_selection_;
+
   /** @} */
-
-  //===========================================================================
-  /** @name Variables for Lasso Scene Selection
-  * @{ */
-  //===========================================================================
-
-    /// The lasso widget
-    ACG::QtLasso*          lasso_;
-
-  /** @} */
-
 
 
   //===========================================================================
