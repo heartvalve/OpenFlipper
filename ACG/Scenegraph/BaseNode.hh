@@ -81,7 +81,12 @@ enum PickTarget
   /// picks verices (may not be implemented for all nodes)
   PICK_VERTEX,
   /// pick any of the prior targets (should be implemented for all nodes)
-  PICK_ANYTHING
+  PICK_ANYTHING,
+
+  /// picks only visible front edges (may not be implemented for all nodes)
+  PICK_FRONT_EDGE,
+  /// picks only visible front verices (may not be implemented for all nodes)
+  PICK_FRONT_VERTEX
 };
 
 
