@@ -60,11 +60,9 @@ void MovePlugin::showProps(){
     BaseObjectData* obj;
     if ( ! PluginFunctions::getObject(meshID,obj) )
         return;
-
-    ACG::SceneGraph::BaseNode* mesh = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), meshID );
     
     movePropsWidget* pW = new movePropsWidget(obj);
-    pW->setWindowTitle(QString((mesh->name()).c_str()));
+    pW->setWindowTitle(QString((mNode->name()).c_str()));
     
     connect(pW->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));
     connect(pW->axisAButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisA()));

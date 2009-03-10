@@ -298,14 +298,26 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
 
     /// Show properties of move manipulator in a dialog
     void showProps( );
+    
+    /// Get properties dialog widget that is attached to BaseDataObject obj
     movePropsWidget* getDialogWidget(BaseObjectData* _obj);
+    
+    /// Get parent properties dialog widget of QPushButton but
     movePropsWidget* getDialogFromButton(QPushButton* _but);
+    
+    /** Override ContextMenuInterface slot in order to avoid appearance of
+     * context menu entry when clicking on other nodes (other than manpipulator nodes)
+     */ 
     void slotUpdateContextMenuNode( int _nodeId );
 	
     private:
     /// Move context menu
     QMenu* contextMenu_;
+    
+    /// List of properties dialogs (each corresponding to one manipulator)
     QList<movePropsWidget*> propsWindows_;
+    
+    /// Context menu entry
     QAction* contextAction_;
 
 /** @} */
