@@ -222,7 +222,8 @@ void SelectionPlugin::pluginsInitialized() {
   boundaryAction_->setCheckable( true );
   toolBar_->addAction( boundaryAction_ );
   #ifdef ENABLE_POLYLINE_SUPPORT
-  surfaceLassoAction_ = new QAction( QIcon(iconPath + "surface-lasso.png"), "Surface Lasso", toolBarActions_ );
+  surfaceLassoAction_ = new QAction( QIcon(iconPath + "surface-lasso.png"),
+                              "<B>Surface Lasso</B><br>Draw a Lasso on the surface.", toolBarActions_ );
   surfaceLassoAction_->setCheckable( true );
   toolBar_->addAction( surfaceLassoAction_ );
   #endif
@@ -469,6 +470,7 @@ void SelectionPlugin::slotPickModeChanged( const std::string& _mode) {
  */
 void SelectionPlugin::toolBarActionClicked(QAction * _action)
 {
+
   //Selction Types
   if ( _action->text() == "Enable Object Selection" ||
        _action->text() == "Enable Vertex Selection" ||
@@ -508,17 +510,17 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
     //Selction Modes
     PluginFunctions::actionMode( Viewer::PickingMode );
 
-    if (_action->text() == "Toggle")
+    if (_action == toggleAction_)
       PluginFunctions::pickMode( TOGGLE_SELECTION );
-    else if (_action->text() == "Paint Sphere")
+    else if (_action == paintSphereAction_)
       PluginFunctions::pickMode( PAINT_SPHERE_SELECTION );
-    else if (_action->text() == "Closest Boundary")
+    else if (_action == boundaryAction_)
       PluginFunctions::pickMode( CLOSEST_BOUNDARY_SELECTION );
-    else if (_action->text() == "Lasso")
+    else if (_action == lassoAction_)
       PluginFunctions::pickMode( LASSO_SELECTION );
-    else if (_action->text() == "Connected Component")
+    else if (_action == connectedAction_)
       PluginFunctions::pickMode( CONNECTED_COMPONENT_SELECTION );
-    else if (_action->text() == "Surface Lasso"){
+    else if (_action == surfaceLassoAction_){
       waitingForPolyLineSelection_ = true;
       PluginFunctions::pickMode("PolyLine");
     }
