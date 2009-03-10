@@ -205,16 +205,20 @@ void SelectionPlugin::pluginsInitialized() {
   toolBar_->addSeparator();
 
   // TOOLBAR - SELECTION ACTIONS
-  toggleAction_ = new QAction( QIcon(iconPath + "selection_toggleV.png"), "Toggle", toolBarActions_ );
+  toggleAction_ = new QAction( QIcon(iconPath + "selection_toggle.png"),
+                              "<B>Toggle Selection</B><br>Select or deselect clicked elements.", toolBarActions_ );
   toggleAction_->setCheckable( true );
   toolBar_->addAction( toggleAction_ );
-  lassoAction_ = new QAction( QIcon(iconPath + "lasso.png"), "Lasso", toolBarActions_ );
+  lassoAction_ = new QAction( QIcon(iconPath + "selection_lasso.png"),
+                              "<B>Lasso Selection</B><br>Draw a Lasso to select elements.", toolBarActions_ );
   lassoAction_->setCheckable( true );
   toolBar_->addAction( lassoAction_ );
-  paintSphereAction_ = new QAction( QIcon(iconPath + "paintSphereVertex.png"), "Paint Sphere", toolBarActions_ );
+  paintSphereAction_ = new QAction( QIcon(iconPath + "selection_paintSphere.png"),
+                              "<B>Sphere Selection</B><br>Select elements by painting with a sphere.", toolBarActions_ );
   paintSphereAction_->setCheckable( true );
   toolBar_->addAction( paintSphereAction_ );
-  boundaryAction_ = new QAction( QIcon(iconPath + "selection_boundary.png"), "Closest Boundary", toolBarActions_ );
+  boundaryAction_ = new QAction( QIcon(iconPath + "selection_boundary.png"), 
+                              "<B>Closest Boundary</B><br>Select the closest boundary to a clicked point.", toolBarActions_ );
   boundaryAction_->setCheckable( true );
   toolBar_->addAction( boundaryAction_ );
   #ifdef ENABLE_POLYLINE_SUPPORT
@@ -222,7 +226,8 @@ void SelectionPlugin::pluginsInitialized() {
   surfaceLassoAction_->setCheckable( true );
   toolBar_->addAction( surfaceLassoAction_ );
   #endif
-  connectedAction_ = new QAction( QIcon(iconPath + "selection_connectedV.png"), "Connected Component", toolBarActions_ );
+  connectedAction_ = new QAction( QIcon(iconPath + "selection_connected.png"),
+                               "<B>Connected Component</B><br>Select the connect component to a clicked element.", toolBarActions_ );
   connectedAction_->setCheckable( true );
   toolBar_->addAction( connectedAction_ );
 
