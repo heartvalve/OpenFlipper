@@ -391,7 +391,6 @@ void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
 void glViewer::updateActionMode(Viewer::ActionMode)
 {
 
-  std::cerr << "UpdateActionMode" << properties_.actionMode() << std::endl;
   trackMouse(false);
 
 
