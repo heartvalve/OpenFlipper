@@ -701,6 +701,21 @@ private:
                unsigned int& _targetIdx,
                ACG::Vec3d*   _hitPointPtr=0 );
 
+    /** Apply pick action. <br>
+     *   Picks all objects in the given Region. Information about the picked primitives is stored in the
+     *   provided list. Resulting values are defined only if \c true
+     *   has been returned!
+     *  <br>
+     *
+     * @param _pickTarget Select what should be picked: Faces/Vertices/...
+     * @param _region     Area for picking
+     * @param _list       List of found scenegraph objects (node/target pairs)
+     * @return Successfull?
+     */
+    bool pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
+                      const QRegion&                             _region,
+                      QList<QPair<unsigned int, unsigned int> >& _list);
+
     /** get the coordinates of the picked point by z-buffer re-projection
      * @param _mousePos The position to pick
      * @param _hitPoint The point returned by the reprojection

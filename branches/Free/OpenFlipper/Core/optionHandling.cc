@@ -81,6 +81,10 @@ void Core::applyOptions(){
       target = ACG::SceneGraph::PICK_EDGE;
     } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_FACE") {
       target = ACG::SceneGraph::PICK_FACE;
+    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_FRONT_VERTEX") {
+      target = ACG::SceneGraph::PICK_FRONT_VERTEX;
+    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_FRONT_EDGE") {
+      target = ACG::SceneGraph::PICK_FRONT_EDGE;
     } else {
       target = ACG::SceneGraph::PICK_ANYTHING;
     }
