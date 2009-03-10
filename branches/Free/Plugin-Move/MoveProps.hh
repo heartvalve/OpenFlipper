@@ -32,11 +32,20 @@
 #include "ui_setProps.hh"
 #include <QtGui>
 
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+
 class movePropsWidget : public QWidget, public Ui::setProps
 {
   Q_OBJECT
 
   public:
-    movePropsWidget(QWidget *parent = 0);
+    movePropsWidget(BaseObjectData* obj, QWidget *parent = 0);
+    
+    BaseObjectData* getBaseObjectData() { return obd; };
+    
+  private:
+    
+   BaseObjectData* obd;
+	
 };
 

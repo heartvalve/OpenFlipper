@@ -298,10 +298,13 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
 
     /// Show properties of move manipulator in a dialog
     void showProps( );
+    movePropsWidget* getDialogWidget(BaseObjectData* _obj);
+    movePropsWidget* getDialogFromButton(QPushButton* _but);
 	
     private:
     /// Move context menu
     QMenu* contextMenu_;
+    QList<movePropsWidget*> propsWindows_;
     movePropsWidget* propsWindow_;
     QAction* lastAction_;
 
