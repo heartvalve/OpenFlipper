@@ -337,6 +337,10 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
   }
 }
 
+
+#endif
+
+
 /** \brief Handle Mouse move event for sphere painting selection
  *
  * @param _event mouse event that occurred
@@ -423,7 +427,7 @@ void SelectionPlugin::handleLassoSelection(QMouseEvent* _event) {
 
         if (!PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
           hit_point = PluginFunctions::viewerProperties().glState().unproject(ACG::Vec3d(_event->pos().x(),y,0.5));
- 
+
         hit_pointf = hit_point;
         lasso_points_.push_back (hit_pointf);
         line_node_->clear();
@@ -527,8 +531,6 @@ void SelectionPlugin::forEachObject(QList<QPair<unsigned int, unsigned int> > &_
   }
 }
 
-
-#endif
 
 
 
