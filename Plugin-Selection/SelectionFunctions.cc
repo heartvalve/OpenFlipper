@@ -256,68 +256,6 @@ void SelectionPlugin::componentSelection(QMouseEvent* _event) {
 
 }
 
-
-//***********************************************************************************
-
-/** \brief Slots calls the actual selection function after QtLasso finished selecting
- *
- * @param _event mouse event that occurred
- */
-void SelectionPlugin::slotLassoSelection(ACG::QtLasso::SelectionMode /*_mode*/) {
-   PluginFunctions::IteratorRestriction targets;
-
-   if ( tool_->selectOnAll->isChecked() || (selectionType_ & OBJECT) )
-      targets = PluginFunctions::ALL_OBJECTS;
-   else
-      targets = PluginFunctions::TARGET_OBJECTS;
-
-   for ( PluginFunctions::ObjectIterator o_it(targets) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
-     if ( o_it->visible() ){
-        if ( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
-          bool sel = lassoSelection(*(PluginFunctions::triMesh(*o_it)));
-
-          if ( (selectionType_ & OBJECT) && sel ){
-            if (sourceSelection_){
-
-              o_it->source( !deselection_ );
-              emit updatedObject(o_it->id());
-
-            } else {
-              o_it->target( !deselection_ );
-
-              emit activeObjectChanged();
-              emit updatedObject(o_it->id());
-            }
-          }
-        }
-
-        if ( o_it->dataType( DATA_POLY_MESH ) ) {
-          bool sel = lassoSelection(*(PluginFunctions::polyMesh(*o_it)));
-
-          if ( (selectionType_ & OBJECT) && sel ){
-            if (sourceSelection_){
-
-              o_it->source( !deselection_ );
-              emit updatedObject(o_it->id());
-
-            } else {
-              o_it->target( !deselection_ );
-
-              emit activeObjectChanged();
-              emit updatedObject(o_it->id());
-            }
-          }
-        }
-
-        o_it->update();
-        emit createBackup(o_it->id(),"Lasso Selection");
-     }
-   }
-
-   lasso_->reset();
-   emit updateView();
-}
-
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_POLYLINE_SUPPORT
@@ -398,6 +336,197 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
     }
   }
 }
+
+/** \brief Handle Mouse move event for sphere painting selection
+ *
+ * @param _event mouse event that occurred
+ */
+void SelectionPlugin::handleLassoSelection(QMouseEvent* _event) {
+   unsigned int        node_idx, target_idx;
+   ACG::Vec3d          hit_point;
+   ACG::Vec3f          hit_pointf;
+   int                 y = PluginFunctions::viewerProperties().glState().context_height() - _event->pos().y();
+
+  if ( _event->button() == Qt::RightButton ){
+    //do not bother the context menu
+    line_node_->hide();
+    return;
+  }
+
+   switch ( _event->type() ) {
+      case QEvent::MouseButtonDblClick :
+        if (lasso_selection_) {
+          line_node_->add_point(lasso_points_[0]);
+
+          line_node_->hide();
+
+          lasso_2Dpoints_ << lasso_2Dpoints_[0];
+
+          QRegion region (lasso_2Dpoints_);
+          QList <QPair<unsigned int, unsigned int> >list;
+          QSet <unsigned int> objects;
+
+          if (selectionType_ & (FACE | OBJECT) && PluginFunctions::scenegraphRegionPick(ACG::SceneGraph::PICK_FACE, region, list))
+          {
+            for (QList<QPair<unsigned int, unsigned int> >::iterator it = list.begin();
+                 it != list.end(); ++it)
+            {
+              objects << (*it).first;
+            }
+            if (selectionType_ & FACE)
+              forEachObject (list, FACE);
+          }
+          if (selectionType_ & VERTEX && PluginFunctions::scenegraphRegionPick(ACG::SceneGraph::PICK_FRONT_VERTEX, region, list))
+          {
+            forEachObject (list, VERTEX);
+          }
+          if (selectionType_ & EDGE && PluginFunctions::scenegraphRegionPick(ACG::SceneGraph::PICK_FRONT_EDGE, region, list))
+          {
+            forEachObject (list, EDGE);
+          }
+
+          // Object selection
+          if (selectionType_ & OBJECT) {
+            BaseObjectData* object(0);
+            foreach (unsigned int i, objects)
+              if(PluginFunctions::getPickedObject(i, object))
+              {
+                if (sourceSelection_){
+                  object->source( !deselection_ );
+                  emit updatedObject(object->id());
+
+                } else {
+                  object->target( !deselection_ );
+                  emit activeObjectChanged();
+                  emit updatedObject(object->id());
+                }
+              }
+          }
+
+          lasso_selection_ = false;
+        }
+        break;
+      case QEvent::MouseButtonPress :
+        if (!lasso_selection_)
+        {
+          line_node_->show();
+          line_node_->clear();
+          lasso_points_.clear();
+          lasso_2Dpoints_.clear();
+          lasso_selection_ = true;
+        }
+
+        if (deselection_)
+          line_node_->set_color(ACG::Vec4f(1.0, 0.0, 0.0, 1.0));
+        else
+          line_node_->set_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+
+        if (!PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
+          hit_point = PluginFunctions::viewerProperties().glState().unproject(ACG::Vec3d(_event->pos().x(),y,0.5));
+ 
+        hit_pointf = hit_point;
+        lasso_points_.push_back (hit_pointf);
+        line_node_->clear();
+        for (std::vector< ACG::Vec3f >::iterator it = lasso_points_.begin();
+             it != lasso_points_.end(); ++it)
+          line_node_->add_point(*it);
+        line_node_->add_point(lasso_points_[0]);
+
+        lasso_2Dpoints_ << _event->pos();
+
+        break;
+      case QEvent::MouseMove :
+        if (lasso_selection_)
+        {
+          if (deselection_)
+            line_node_->set_color(ACG::Vec4f(1.0, 0.0, 0.0, 1.0));
+          else
+            line_node_->set_color(ACG::Vec4f(0.0, 1.0, 0.0, 1.0));
+
+          if (!PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
+            hit_point = PluginFunctions::viewerProperties().glState().unproject(ACG::Vec3d(_event->pos().x(),y,0.5));
+
+          hit_pointf = hit_point;
+
+          if (!_event->buttons() && lasso_points_.size () > 1)
+          {
+            lasso_points_.pop_back ();
+            lasso_2Dpoints_.pop_back ();
+          }
+
+          lasso_points_.push_back (hit_pointf);
+          line_node_->clear();
+          for (std::vector< ACG::Vec3f >::iterator it = lasso_points_.begin();
+               it != lasso_points_.end(); ++it)
+            line_node_->add_point(*it);
+          line_node_->add_point(lasso_points_[0]);
+
+          lasso_2Dpoints_ << _event->pos();
+        }
+        break;
+      default:
+         break;
+   }
+
+   emit updateView();
+}
+
+/** \brief Execute mesh element selection for each object
+ *
+ * @param _list object/element pair list
+ * @param _type selection type
+ */
+void SelectionPlugin::forEachObject(QList<QPair<unsigned int, unsigned int> > &_list, SelectionPrimitive _type)
+{
+  QSet <unsigned int> objects;
+  idList              elements;
+  BaseObjectData*     object(0);
+
+  for (QList<QPair<unsigned int, unsigned int> >::iterator it = _list.begin();
+       it != _list.end(); ++it)
+  {
+    objects << (*it).first;
+  }
+
+  foreach (unsigned int obj, objects)
+  {
+    elements.clear();
+    for (QList<QPair<unsigned int, unsigned int> >::iterator it = _list.begin();
+       it != _list.end(); ++it)
+    {
+      if ((*it).first == obj)
+        elements.push_back((*it).second);
+    }
+
+    if(PluginFunctions::getPickedObject(obj, object))
+    {
+      switch (_type)
+      {
+        case VERTEX:
+          if (deselection_)
+            unselectVertices (object->id (), elements);
+          else
+            selectVertices (object->id (), elements);
+          break;
+        case FACE:
+          if (deselection_)
+            unselectFaces (object->id (), elements);
+          else
+            selectFaces (object->id (), elements);
+          break;
+        case EDGE:
+          if (deselection_)
+            unselectEdges (object->id (), elements);
+          else
+            selectEdges (object->id (), elements);
+          break;
+        default:
+          break;
+      }
+    }
+  }
+}
+
 
 #endif
 

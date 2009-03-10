@@ -52,7 +52,6 @@
 /** \brief Default Constructor
  */
 SelectionPlugin::SelectionPlugin() :
-  lasso_(0),
   waitingForPolyLineSelection_(false),
   polyLineID_(-1)
 {
@@ -60,6 +59,7 @@ SelectionPlugin::SelectionPlugin() :
 
   sourceSelection_ = false;
   deselection_ = false;
+  lasso_selection_ = false;
 }
 
 /*******************************************************************************
@@ -93,6 +93,10 @@ void SelectionPlugin::initializePlugin() {
 
   sphere_selection_ = false;
 
+  line_node_ = new ACG::SceneGraph::LineNode (ACG::SceneGraph::LineNode::PolygonMode,
+                                              PluginFunctions::getRootNode(), "Lasso line");
+  line_node_->set_line_width (2.0);
+  line_node_->hide();
 
   //register keys for the plugin
   emit registerKey(Qt::Key_C,      Qt::NoModifier, "Clear Selection");
@@ -130,6 +134,7 @@ void SelectionPlugin::pluginsInitialized() {
   emit addHiddenPickMode(CONNECTED_COMPONENT_SELECTION);
 
   emit setPickModeMouseTracking(PAINT_SPHERE_SELECTION, true);
+  emit setPickModeMouseTracking(LASSO_SELECTION, true);
   emit setPickModeCursor(SURFACE_LASSO_SELECTION, Qt::CrossCursor);
 
   // CONTEXT MENU
@@ -386,17 +391,7 @@ void SelectionPlugin::slotMouseEvent( QMouseEvent* _event ) {
   if ( PluginFunctions::pickMode() == TOGGLE_SELECTION)              toggleSelection(_event);       else
   if ( PluginFunctions::pickMode() == PAINT_SPHERE_SELECTION)        paintSphereSelection(_event);  else
   if ( PluginFunctions::pickMode() == CLOSEST_BOUNDARY_SELECTION)    closestBoundarySelection(_event); else
-  if ( PluginFunctions::pickMode() == LASSO_SELECTION) {
-    if ( lasso_ == 0 ) {
-      // create lasso For screen lasso selection
-      lasso_ = new ACG::QtLasso(PluginFunctions::viewerProperties().glState());
-      connect(lasso_ , SIGNAL(signalLassoSelection(ACG::QtLasso::SelectionMode)),
-              this   , SLOT(slotLassoSelection(ACG::QtLasso::SelectionMode)));
-    }
-
-    lasso_->slotMouseEvent(_event);
-
-  } else
+  if ( PluginFunctions::pickMode() == LASSO_SELECTION)               handleLassoSelection(_event); else
   if ( PluginFunctions::pickMode() == CONNECTED_COMPONENT_SELECTION) componentSelection(_event);
 #ifdef ENABLE_POLYLINE_SUPPORT
   else
@@ -443,12 +438,6 @@ void SelectionPlugin::slotPickModeChanged( const std::string& _mode) {
    if ( _mode != PAINT_SPHERE_SELECTION && sphere_node_->visible() ){
       sphere_node_->hide();
       emit updateView();
-   }
-
-   if ( (_mode != LASSO_SELECTION) && (lasso_ != 0) ) {
-     lasso_->reset();
-     delete lasso_;
-     lasso_ = 0;
    }
 
 #ifdef ENABLE_POLYLINE_SUPPORT
