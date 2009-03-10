@@ -90,9 +90,6 @@ void MovePlugin::pluginsInitialized() {
   setDescriptions();
   
   // CONTEXT MENU
-  propsWindow_ = new movePropsWidget();
-  propsWindow_->hide();
-
   lastAction_ = new QAction("Set properties", this);
   lastAction_->setToolTip("Set properties");
   lastAction_->setStatusTip( lastAction_->toolTip() );
@@ -447,31 +444,45 @@ void MovePlugin::showManipulators( )
 
 }
 
+//------------------------------------------------------------------------------
 
+/** \brief Get Dialog Widget that contains the button
+ * 
+ * @param _but Reference to QPushButton object that has been pressed
+ */
+movePropsWidget* MovePlugin::getDialogFromButton(QPushButton* _but) {
+
+    if(_but == 0) return 0;
+    return dynamic_cast<movePropsWidget*>((((_but->parentWidget())->parentWidget())->parentWidget()));
+}
 //------------------------------------------------------------------------------
 
 /** \brief Position of manipulator in tab changed
  * 
  */
 void MovePlugin::slotSetPosition() {
-   TriMesh::Point newpos;
-
-   bool ok = false;
-   newpos[0] =  (propsWindow_->nposx->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate"); return; }
-   newpos[1] =  (propsWindow_->nposy->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   newpos[2] =  (propsWindow_->nposz->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
-
-   BaseObjectData* object;
-   if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-      if (  object->manipulatorNode()->visible() )
-         object->manipulatorNode()->set_center( newpos );
-      updateManipulatorDialog();
-      emit updateView();
-   }
-
+    
+    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+    movePropsWidget* pW = getDialogFromButton(but);
+    if(pW == 0) return;
+    
+    TriMesh::Point newpos;
+    
+    bool ok = false;
+    newpos[0] =  (pW->nposx->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate"); return; }
+    newpos[1] =  (pW->nposy->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    newpos[2] =  (pW->nposz->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    
+    BaseObjectData* object;
+    if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
+	if (  object->manipulatorNode()->visible() )
+	    object->manipulatorNode()->set_center( newpos );
+	updateManipulatorDialog();
+	emit updateView();
+    }
 }
 
 
@@ -481,18 +492,22 @@ void MovePlugin::slotSetPosition() {
  * 
  */
 void MovePlugin::slotToggleAxisA() {
+    
+    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+    movePropsWidget* pW = getDialogFromButton(but);
+    if(pW == 0) return;
 
-  axisA_ = (axisA_ + 1) % 3;
-
-  if (axisA_ == axisB_)
     axisA_ = (axisA_ + 1) % 3;
-
-  switch(axisA_){
-    case 0: propsWindow_->axisAButton->setText("X Direction"); break;
-    case 1: propsWindow_->axisAButton->setText("Y Direction"); break;
-    case 2: propsWindow_->axisAButton->setText("Z Direction"); break;
-    default: break;
-  }
+    
+    if (axisA_ == axisB_)
+	axisA_ = (axisA_ + 1) % 3;
+    
+    switch(axisA_){
+	case 0: pW->axisAButton->setText("X Direction"); break;
+	case 1: pW->axisAButton->setText("Y Direction"); break;
+	case 2: pW->axisAButton->setText("Z Direction"); break;
+	default: break;
+    }
 }
 
 
@@ -502,18 +517,22 @@ void MovePlugin::slotToggleAxisA() {
  * 
  */
 void MovePlugin::slotToggleAxisB() {
+    
+    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+    movePropsWidget* pW = getDialogFromButton(but);
+    if(pW == 0) return;
 
-  axisB_ = (axisB_ + 1) % 3;
-
-  if (axisA_ == axisB_)
     axisB_ = (axisB_ + 1) % 3;
-
-  switch(axisB_){
-    case 0: propsWindow_->axisBButton->setText("X Direction"); break;
-    case 1: propsWindow_->axisBButton->setText("Y Direction"); break;
-    case 2: propsWindow_->axisBButton->setText("Z Direction"); break;
-    default: break;
-  }
+    
+    if (axisA_ == axisB_)
+	axisB_ = (axisB_ + 1) % 3;
+    
+    switch(axisB_){
+	case 0: pW->axisBButton->setText("X Direction"); break;
+	case 1: pW->axisBButton->setText("Y Direction"); break;
+	case 2: pW->axisBButton->setText("Z Direction"); break;
+	default: break;
+    }
 }
 
 
@@ -523,71 +542,76 @@ void MovePlugin::slotToggleAxisB() {
  * 
  */
 void MovePlugin::slotSetDirection() {
+    
+    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+    movePropsWidget* pW = getDialogFromButton(but);
+    if(pW == 0) return;
 
-   ACG::Vec3d newdirA,newdirB;
-   ACG::Vec3d dirX,dirY;
-   ACG::Vec3d dirZ(0.0,0.0,0.0);
-
-   bool ok = false;
-   newdirA[0] =  (propsWindow_->ndirAx->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
-   newdirA[1] =  (propsWindow_->ndirAy->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   newdirA[2] =  (propsWindow_->ndirAz->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
-
-   newdirB[0] =  (propsWindow_->ndirBx->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
-   newdirB[1] =  (propsWindow_->ndirBy->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   newdirB[2] =  (propsWindow_->ndirBz->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
-
-   bool xAxis = false;
-   bool yAxis = false;
-
-   switch(axisA_){
-    case  0: dirX = newdirA; xAxis = true; break;
-    case  1: dirY = newdirA; yAxis = true; break;
-    default: dirZ = newdirA; break;
-   }
-
-   switch(axisB_){
-    case  0: dirX = newdirB; xAxis = true; break;
-    case  1: dirY = newdirB; yAxis = true; break;
-    default: dirZ = newdirB; break;
-   }
-
-   if (!xAxis)
-     dirX = dirY % dirZ;
-
-   if (!yAxis)
-     dirY = dirX % dirZ;
-
-
-   if ( (dirX | dirY) != 0.0){
-      emit log(LOGERR,"The axes of the new direction have to be orthogonal");
-      return;
-   }
-
-   // Apply to All Target Objects
-   if ( propsWindow_->targetObjects->isChecked() ) {
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it){
-
-         o_it->manipulatorNode()->set_direction( dirX, dirY );
-      }
-   } else {
-      BaseObjectData* object;
-      if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-         if (  object->manipulatorNode()->visible() ){
+    ACG::Vec3d newdirA,newdirB;
+    ACG::Vec3d dirX,dirY;
+    ACG::Vec3d dirZ(0.0,0.0,0.0);
+    
+    bool ok = false;
+    newdirA[0] =  (pW->ndirAx->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
+    newdirA[1] =  (pW->ndirAy->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    newdirA[2] =  (pW->ndirAz->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    
+    newdirB[0] =  (pW->ndirBx->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
+    newdirB[1] =  (pW->ndirBy->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    newdirB[2] =  (pW->ndirBz->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    
+    bool xAxis = false;
+    bool yAxis = false;
+    
+    switch(axisA_){
+	case  0: dirX = newdirA; xAxis = true; break;
+	case  1: dirY = newdirA; yAxis = true; break;
+	default: dirZ = newdirA; break;
+    }
+    
+    switch(axisB_){
+	case  0: dirX = newdirB; xAxis = true; break;
+	case  1: dirY = newdirB; yAxis = true; break;
+	default: dirZ = newdirB; break;
+    }
+    
+    if (!xAxis)
+	dirX = dirY % dirZ;
+    
+    if (!yAxis)
+	dirY = dirX % dirZ;
+    
+    
+    if ( (dirX | dirY) != 0.0){
+	emit log(LOGERR,"The axes of the new direction have to be orthogonal");
+	return;
+    }
+    
+//    // Apply to All Target Objects
+//     if ( pW->targetObjects->isChecked() ) {
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ;
+//              o_it PluginFunctions::objectsEnd(); ++o_it){
+// 
+// 	    o_it->manipulatorNode()->set_direction( dirX, dirY );
+// 	}
+//     }
+	
+    BaseObjectData* object = pW->getBaseObjectData();
+    if ( object != 0 ) {
+        if (  object->manipulatorNode()->visible() ){
 
             object->manipulatorNode()->set_direction( dirX, dirY );
-         }
-      } else return;
-   }
-
-   updateManipulatorDialog();
-   emit updateView();
+	}
+    } else return;
+    
+    updateManipulatorDialog();
+    emit updateView();
 }
 
 
@@ -597,63 +621,68 @@ void MovePlugin::slotSetDirection() {
  * 
  */
 void MovePlugin::slotTranslation() {
+    
+    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+    movePropsWidget* pW = getDialogFromButton(but);
+    if(pW == 0) return;
 
-   ACG::Vec3d translation;
+    ACG::Vec3d translation;
+    
+    bool ok = false;
+    translation[0] =  (pW->translationX->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
+    translation[1] =  (pW->translationY->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    translation[2] =  (pW->translationZ->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    
+	// Apply to All Target Objects
+//     if ( pW->targetObjects->isChecked() ) {
+//     
+// 	int manipcount = 0; // Check how many of the target meshes have an visible manipulator
+// 	int targets = 0;        // Count the number of target meshes
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+// 	    ++targets;
+// 	    if ( ! o_it->manipulatorNode()->hidden() ) {
+// 		++ manipcount;
+// 	    }
+// 	}
+//     
+// 	if (manipcount == 0 ) // No manipulator -> no translation
+// 	    return;
+//     
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
+// 		o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+// 	    if ( manipcount > 1 ) { // Use manipulator direction for each target mesh
+// 		if ( o_it->manipulatorNode()->hidden() )
+// 		    continue;
+// 	    }
+//     
+// 	    translate( o_it->id() , translation );
+//     
+// 	    o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() + translation  );
+// 	    emit createBackup(o_it->id(),"Translation");
+// 	    emit updatedObject(o_it->id());
+// 	}
+//     
+//     }
+	
+    BaseObjectData* object = pW->getBaseObjectData();
+    if ( object != 0 ) {
+	if (  object->manipulatorNode()->visible() ){
 
-   bool ok = false;
-   translation[0] =  (propsWindow_->translationX->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
-   translation[1] =  (propsWindow_->translationY->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   translation[2] =  (propsWindow_->translationZ->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+        	translate( object->id() , translation );
+    
+		object->manipulatorNode()->set_center( object->manipulatorNode()->center() + translation  );
+		emit createBackup(object->id(),"Translation");
+		emit updatedObject(object->id());
+	}
+    } else return;
 
-    // Apply to All Target Objects
-   if ( propsWindow_->targetObjects->isChecked() ) {
-
-      int manipcount = 0; // Check how many of the target meshes have an visible manipulator
-      int targets = 0;        // Count the number of target meshes
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-         ++targets;
-         if ( ! o_it->manipulatorNode()->hidden() ) {
-            ++ manipcount;
-         }
-      }
-
-      if (manipcount == 0 ) // No manipulator -> no translation
-         return;
-
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
-            o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-         if ( manipcount > 1 ) { // Use manipulator direction for each target mesh
-               if ( o_it->manipulatorNode()->hidden() )
-                  continue;
-         }
-
-         translate( o_it->id() , translation );
-
-         o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() + translation  );
-         emit createBackup(o_it->id(),"Translation");
-	 emit updatedObject(o_it->id());
-      }
-
-   } else {
-      BaseObjectData* object;
-      if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-         if (  object->manipulatorNode()->visible() ) {
-
-            translate( object->id() , translation );
-
-            object->manipulatorNode()->set_center( object->manipulatorNode()->center() + translation  );
-            emit createBackup(object->id(),"Translation");
-	    emit updatedObject(object->id());
-         }
-      } else return;
-   }
-
-   updateManipulatorDialog();
-   emit scriptInfo(QString("slotTranslation()"));
-   emit updateView();
+    
+    updateManipulatorDialog();
+    emit scriptInfo(QString("slotTranslation()"));
+    emit updateView();
 }
 
 
@@ -663,14 +692,18 @@ void MovePlugin::slotTranslation() {
  * 
  */
 void MovePlugin::slotProjectToTangentPlane() {
+    
+    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+    movePropsWidget* pW = getDialogFromButton(but);
+    if(pW == 0) return;
 
-   if ( propsWindow_->targetObjects->isChecked() ) {
-     emit log(LOGWARN,"TODO Project for multiple targets");
-     return;
-   } else {
-     emit log(LOGWARN,"TODO Project for one target");
-     return;
-   }
+    if ( pW->targetObjects->isChecked() ) {
+	emit log(LOGWARN,"TODO Project for multiple targets");
+	return;
+    } else {
+	emit log(LOGWARN,"TODO Project for one target");
+	return;
+    }
 
 }
 
@@ -681,35 +714,42 @@ void MovePlugin::slotProjectToTangentPlane() {
  * 
  */
 void MovePlugin::slotMoveManipToCOG() {
-   if ( propsWindow_->targetObjects->isChecked() ) {
-       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-            if (  o_it->manipulatorNode()->hidden() )
-               continue;
+    
+    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+    movePropsWidget* pW = getDialogFromButton(but);
+    if(pW == 0) return;
+    
+    
+//     if ( pW->targetObjects->isChecked() ) {
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+// 		if (  o_it->manipulatorNode()->hidden() )
+// 		continue;
+//     
+// 		if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
+// 		o_it->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::triMesh(*o_it) ) );
+// 		else if ( o_it->dataType( DATA_POLY_MESH ) )
+// 		o_it->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::polyMesh(*o_it)) );
+//     
+// 		updateManipulatorDialog();
+// 		o_it->manipulatorNode()->loadIdentity();
+// 	}
+//     } else {
+    
+    BaseObjectData* object = pW->getBaseObjectData();
+    if ( object != 0 ) {
+	if (  object->manipulatorNode()->visible() ){
+    
+	    if ( object->dataType( DATA_TRIANGLE_MESH ) )
+	    object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::triMesh(object)) );
+	    else if ( object->dataType( DATA_POLY_MESH ) )
+	    object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::polyMesh(object)) );
 
-            if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
-               o_it->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::triMesh(*o_it) ) );
-            else if ( o_it->dataType( DATA_POLY_MESH ) )
-               o_it->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::polyMesh(*o_it)) );
+	    updateManipulatorDialog();
+	    object->manipulatorNode()->loadIdentity();
+	}
+    }
 
-            updateManipulatorDialog();
-            o_it->manipulatorNode()->loadIdentity();
-       }
-   } else {
-      BaseObjectData* object;
-      if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-         if (  object->manipulatorNode()->visible() ) {
-
-            if ( object->dataType( DATA_TRIANGLE_MESH ) )
-               object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::triMesh(object)) );
-            else if ( object->dataType( DATA_POLY_MESH ) )
-               object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::polyMesh(object)) );
-
-            updateManipulatorDialog();
-            object->manipulatorNode()->loadIdentity();
-         }
-      }
-   }
-   emit updateView();
+    emit updateView();
 }
 
 
@@ -719,59 +759,67 @@ void MovePlugin::slotMoveManipToCOG() {
  * 
  */
 void MovePlugin::slotRotate() {
-   TriMesh::Point axis;
-   double angle;
-
-   bool ok = false;
-   axis[0] =  (propsWindow_->rotx->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
-   axis[1] =  (propsWindow_->roty->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
-   axis[2] =  (propsWindow_->rotz->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
-
-   angle =  (propsWindow_->rotAngle->text()).toDouble(&ok);
-   if ( !ok ) {  emit log(LOGERR,"Wrong Format for Angle"); return; }
-
-    if ( propsWindow_->targetObjects->isChecked() ) {
-       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-            if (  o_it->manipulatorNode()->hidden() )
-               continue;
-            o_it->manipulatorNode()->rotate(  angle,axis);
-
-            if (o_it->dataType( DATA_TRIANGLE_MESH ) )
-               transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
-
-            if (o_it->dataType( DATA_POLY_MESH ) )
-               transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
-
-            o_it->manipulatorNode()->loadIdentity();
-            updateManipulatorDialog();
-
-            emit createBackup(o_it->id(),"Rotation");
-	    emit updatedObject(o_it->id());
-       }
-   } else {
-      BaseObjectData* object;
-      if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-
-         object->manipulatorNode()->rotate(angle,axis);
-
-         if (object->dataType( DATA_TRIANGLE_MESH ) )
-               transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::triMesh(object)) );
-
-         if (object->dataType( DATA_POLY_MESH ) )
-               transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::polyMesh(object)) );
-
-         updateManipulatorDialog();
-
-         emit createBackup(object->id(),"Rotation");
-	 emit updatedObject(object->id());
-      }
-   }
-   emit scriptInfo(QString("slotRotate()"));
-   emit updateView();
-
+    
+    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+    movePropsWidget* pW = getDialogFromButton(but);
+    if(pW == 0) return;
+    
+    TriMesh::Point axis;
+    double angle;
+    
+    bool ok = false;
+    axis[0] =  (pW->rotx->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
+    axis[1] =  (pW->roty->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    axis[2] =  (pW->rotz->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    
+    angle =  (pW->rotAngle->text()).toDouble(&ok);
+    if ( !ok ) {  emit log(LOGERR,"Wrong Format for Angle"); return; }
+    
+//     if ( pW->targetObjects->isChecked() ) {
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+// 		if (  o_it->manipulatorNode()->hidden() )
+// 		continue;
+// 		o_it->manipulatorNode()->rotate(  angle,axis);
+//     
+// 		if (o_it->dataType( DATA_TRIANGLE_MESH ) )
+// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
+//     
+// 		if (o_it->dataType( DATA_POLY_MESH ) )
+// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
+//     
+// 		o_it->manipulatorNode()->loadIdentity();
+// 		updateManipulatorDialog();
+//     
+// 		emit createBackup(o_it->id(),"Rotation");
+// 		emit updatedObject(o_it->id());
+// 	}
+//     } else {
+	
+    
+    BaseObjectData* object = pW->getBaseObjectData();
+    if ( object != 0 ) {
+	if (  object->manipulatorNode()->visible() ){
+    
+	    object->manipulatorNode()->rotate(angle,axis);
+    
+	    if (object->dataType( DATA_TRIANGLE_MESH ) )
+		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::triMesh(object)) );
+    
+	    if (object->dataType( DATA_POLY_MESH ) )
+		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::polyMesh(object)) );
+    
+	    updateManipulatorDialog();
+    
+	    emit createBackup(object->id(),"Rotation");
+	    emit updatedObject(object->id());
+	}
+    }
+    
+    emit scriptInfo(QString("slotRotate()"));
+    emit updateView();
 }
 
 
@@ -781,54 +829,64 @@ void MovePlugin::slotRotate() {
  * 
  */
 void MovePlugin::slotScale() {
-   TriMesh::Point scale;
+    
+    QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
+    movePropsWidget* pW = getDialogFromButton(but);
+    if(pW == 0) return;
+    
+    
+    TriMesh::Point scale;
+    
+    bool ok = false;
+    scale[0] =  (pW->scalex->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 1");  return; }
+    scale[1] =  (pW->scaley->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 2"); return; }
+    scale[2] =  (pW->scalez->text()).toDouble(&ok);
+    if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 3"); return; }
+    
+//    if ( pW->targetObjects->isChecked() ) {
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+// 		if (  o_it->manipulatorNode()->hidden() )
+// 		continue;
+// 		o_it->manipulatorNode()->scale(  scale);
+//     
+// 		if (o_it->dataType( DATA_TRIANGLE_MESH ) )
+// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
+//     
+// 		if (o_it->dataType( DATA_POLY_MESH ) )
+// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
+//     
+// 		o_it->manipulatorNode()->loadIdentity();
+// 		updateManipulatorDialog();
+//     
+// 		emit createBackup(o_it->id(),"Scaling");
+// 		emit updatedObject(o_it->id());
+// 	}
+//     } else {
+	
+	
+    BaseObjectData* object = pW->getBaseObjectData();
+    if ( object != 0 ) {
+	if (  object->manipulatorNode()->visible() ){
 
-   bool ok = false;
-   scale[0] =  (propsWindow_->scalex->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 1");  return; }
-   scale[1] =  (propsWindow_->scaley->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 2"); return; }
-   scale[2] =  (propsWindow_->scalez->text()).toDouble(&ok);
-   if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 3"); return; }
+	    object->manipulatorNode()->scale(  scale);
+    
+	    if (object->dataType( DATA_TRIANGLE_MESH ) )
+		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::triMesh(object)) );
+    
+	    if (object->dataType( DATA_POLY_MESH ) )
+		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::polyMesh(object)) );
+    
+	    updateManipulatorDialog();
+    
+	    emit createBackup(object->id(),"Scaling");
+	    emit updatedObject(object->id());
+	}
+    }
 
-   if ( propsWindow_->targetObjects->isChecked() ) {
-       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-            if (  o_it->manipulatorNode()->hidden() )
-               continue;
-            o_it->manipulatorNode()->scale(  scale);
-
-            if (o_it->dataType( DATA_TRIANGLE_MESH ) )
-               transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
-
-            if (o_it->dataType( DATA_POLY_MESH ) )
-               transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
-
-            o_it->manipulatorNode()->loadIdentity();
-            updateManipulatorDialog();
-
-            emit createBackup(o_it->id(),"Scaling");
-	    emit updatedObject(o_it->id());
-       }
-   } else {
-      BaseObjectData* object;
-      if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-
-         object->manipulatorNode()->scale(  scale);
-
-         if (object->dataType( DATA_TRIANGLE_MESH ) )
-            transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::triMesh(object)) );
-
-         if (object->dataType( DATA_POLY_MESH ) )
-            transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::polyMesh(object)) );
-
-         updateManipulatorDialog();
-
-         emit createBackup(object->id(),"Scaling");
-	 emit updatedObject(object->id());
-      }
-   }
-   emit scriptInfo(QString("slotScale()"));
-   emit updateView();
+    emit scriptInfo(QString("slotScale()"));
+    emit updateView();
 }
 
 
@@ -916,40 +974,61 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
  */
 void MovePlugin::updateManipulatorDialog() {
     
-    if(!propsWindow_->isHidden()) {
+    BaseObjectData* object;
+    if ( !PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
+	return;
+    }
+    
+    if ( object->manipulatorNode()->visible() ) {
+    
+	// Get properties widget that corresponds to
+        // to the last manipulated object
+        movePropsWidget* pW = getDialogWidget(object);
+    
+        // If there's no properties dialog yet...
+        if(pW == 0) return;
+    
+	const TriMesh::Point pos = object->manipulatorNode()->center();
+
+	QString num;
+
+	num = QString::number(pos[0]); pW->posx->setText(num);
+	num = QString::number(pos[1]); pW->posy->setText(num);
+	num = QString::number(pos[2]); pW->posz->setText(num);
+
+	TriMesh::Point direction = object->manipulatorNode()->directionX();
+	num = QString::number(direction[0]); pW->dirxx->setText(num);
+	num = QString::number(direction[1]); pW->dirxy->setText(num);
+	num = QString::number(direction[2]); pW->dirxz->setText(num);
+
+	direction = object->manipulatorNode()->directionY();
+	num = QString::number(direction[0]); pW->diryx->setText(num);
+	num = QString::number(direction[1]); pW->diryy->setText(num);
+	num = QString::number(direction[2]); pW->diryz->setText(num);
+
+	direction = object->manipulatorNode()->directionZ();
+	num = QString::number(direction[0]); pW->dirzx->setText(num);
+	num = QString::number(direction[1]); pW->dirzy->setText(num);
+	num = QString::number(direction[2]); pW->dirzz->setText(num);
 	
-	BaseObjectData* object;
-	if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-	    if (  object->manipulatorNode()->visible() ) {
-		const TriMesh::Point pos = object->manipulatorNode()->center();
-	
-		QString num;
-		
-		num = QString::number(pos[0]); propsWindow_->posx->setText(num);
-		num = QString::number(pos[1]); propsWindow_->posy->setText(num);
-		num = QString::number(pos[2]); propsWindow_->posz->setText(num);
-	
-		TriMesh::Point direction = object->manipulatorNode()->directionX();
-		num = QString::number(direction[0]); propsWindow_->dirxx->setText(num);
-		num = QString::number(direction[1]); propsWindow_->dirxy->setText(num);
-		num = QString::number(direction[2]); propsWindow_->dirxz->setText(num);
-	
-		direction = object->manipulatorNode()->directionY();
-		num = QString::number(direction[0]); propsWindow_->diryx->setText(num);
-		num = QString::number(direction[1]); propsWindow_->diryy->setText(num);
-		num = QString::number(direction[2]); propsWindow_->diryz->setText(num);
-	
-		direction = object->manipulatorNode()->directionZ();
-		num = QString::number(direction[0]); propsWindow_->dirzx->setText(num);
-		num = QString::number(direction[1]); propsWindow_->dirzy->setText(num);
-		num = QString::number(direction[2]); propsWindow_->dirzz->setText(num);
-		
-	    }
-	}
     }
 }
 
+//------------------------------------------------------------------------------
 
+/** \brief Get pointer to corresponding dialog widget
+ * 
+ * @param _obj the object to which the dialog is attached
+ */
+movePropsWidget* MovePlugin::getDialogWidget(BaseObjectData* _obj) {
+    
+    for(QList<movePropsWidget*>::iterator it = propsWindows_.begin();
+       it != propsWindows_.end(); it++) {
+	   if ((*it)->getBaseObjectData() == _obj)
+	       return *it;
+       }
+    return 0;
+}
 //------------------------------------------------------------------------------
 
 /** \brief Called by Toolbar to enable move mode

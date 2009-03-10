@@ -63,21 +63,20 @@ void MovePlugin::showProps(){
 
     ACG::SceneGraph::BaseNode* mesh = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), meshID );
     
-    // TODO: Fenster an obj attachen und Daten per Signale austauschen
+    movePropsWidget* pW = new movePropsWidget(obj);
+    pW->setWindowTitle(QString((mesh->name()).c_str()));
     
-    propsWindow_->setWindowTitle(QString((mesh->name()).c_str()));
-    
-    connect(propsWindow_->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));
-    connect(propsWindow_->axisAButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisA()));
-    connect(propsWindow_->axisBButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisB()));
-    connect(propsWindow_->dirButton,SIGNAL(clicked() ),this,SLOT(slotSetDirection()));
-    connect(propsWindow_->transButton,SIGNAL(clicked() ),this,SLOT(slotTranslation()));
+    connect(pW->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));
+    connect(pW->axisAButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisA()));
+    connect(pW->axisBButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisB()));
+    connect(pW->dirButton,SIGNAL(clicked() ),this,SLOT(slotSetDirection()));
+    connect(pW->transButton,SIGNAL(clicked() ),this,SLOT(slotTranslation()));
 
-    connect(propsWindow_->rotButton,SIGNAL(clicked() ),this,SLOT(slotRotate()));
-    connect(propsWindow_->scaleButton,SIGNAL(clicked() ),this,SLOT(slotScale()));
+    connect(pW->rotButton,SIGNAL(clicked() ),this,SLOT(slotRotate()));
+    connect(pW->scaleButton,SIGNAL(clicked() ),this,SLOT(slotScale()));
 
-    connect(propsWindow_->projectTangentButton,SIGNAL(clicked() ),this,SLOT(slotProjectToTangentPlane()));
-    connect(propsWindow_->moveManipToCOG,SIGNAL(clicked() ),this,SLOT(slotMoveManipToCOG()));
+    connect(pW->projectTangentButton,SIGNAL(clicked() ),this,SLOT(slotProjectToTangentPlane()));
+    connect(pW->moveManipToCOG,SIGNAL(clicked() ),this,SLOT(slotMoveManipToCOG()));
     
     // Values
     BaseObjectData* object;
@@ -87,27 +86,28 @@ void MovePlugin::showProps(){
 
 	    QString num;
 	
-	    num = QString::number(pos[0]); propsWindow_->posx->setText(num);
-	    num = QString::number(pos[1]); propsWindow_->posy->setText(num);
-	    num = QString::number(pos[2]); propsWindow_->posz->setText(num);
+	    num = QString::number(pos[0]); pW->posx->setText(num);
+	    num = QString::number(pos[1]); pW->posy->setText(num);
+	    num = QString::number(pos[2]); pW->posz->setText(num);
 
 	    TriMesh::Point direction = object->manipulatorNode()->directionX();
-	    num = QString::number(direction[0]); propsWindow_->dirxx->setText(num);
-	    num = QString::number(direction[1]); propsWindow_->dirxy->setText(num);
-	    num = QString::number(direction[2]); propsWindow_->dirxz->setText(num);
+	    num = QString::number(direction[0]); pW->dirxx->setText(num);
+	    num = QString::number(direction[1]); pW->dirxy->setText(num);
+	    num = QString::number(direction[2]); pW->dirxz->setText(num);
   
 	    direction = object->manipulatorNode()->directionY();
-	    num = QString::number(direction[0]); propsWindow_->diryx->setText(num);
-	    num = QString::number(direction[1]); propsWindow_->diryy->setText(num);
-	    num = QString::number(direction[2]); propsWindow_->diryz->setText(num);
+	    num = QString::number(direction[0]); pW->diryx->setText(num);
+	    num = QString::number(direction[1]); pW->diryy->setText(num);
+	    num = QString::number(direction[2]); pW->diryz->setText(num);
   
 	    direction = object->manipulatorNode()->directionZ();
-	    num = QString::number(direction[0]); propsWindow_->dirzx->setText(num);
-	    num = QString::number(direction[1]); propsWindow_->dirzy->setText(num);
-	    num = QString::number(direction[2]); propsWindow_->dirzz->setText(num);
+	    num = QString::number(direction[0]); pW->dirzx->setText(num);
+	    num = QString::number(direction[1]); pW->dirzy->setText(num);
+	    num = QString::number(direction[2]); pW->dirzz->setText(num);
 	
 	}
     }
 
-    propsWindow_->show();
+    pW->show();
+    propsWindows_.append(pW);
 }
