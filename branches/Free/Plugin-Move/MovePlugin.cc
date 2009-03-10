@@ -90,13 +90,13 @@ void MovePlugin::pluginsInitialized() {
   setDescriptions();
   
   // CONTEXT MENU
-  lastAction_ = new QAction("Set properties", this);
-  lastAction_->setToolTip("Set properties");
-  lastAction_->setStatusTip( lastAction_->toolTip() );
+  contextAction_ = new QAction("Set properties", this);
+  contextAction_->setToolTip("Set properties");
+  contextAction_->setStatusTip( contextAction_->toolTip() );
 
-  emit addContextMenuItem(lastAction_ , CONTEXTNODEMENU );
+  emit addContextMenuItem(contextAction_ , CONTEXTNODEMENU );
   
-  connect( lastAction_ , SIGNAL( triggered() ),
+  connect( contextAction_ , SIGNAL( triggered() ),
 	   this, SLOT(showProps()) );
 
   //TOOLBAR
@@ -143,18 +143,6 @@ bool MovePlugin::initializeToolbox(QWidget*& _widget)
 
    tool_->moveToOrigin->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "moveToCOG.png") );
    tool_->moveToOrigin->setIconSize(QSize(48,48));
-
-//    connect(tool_->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));
-//    connect(tool_->axisAButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisA()));
-//    connect(tool_->axisBButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisB()));
-//    connect(tool_->dirButton,SIGNAL(clicked() ),this,SLOT(slotSetDirection()));
-//    connect(tool_->transButton,SIGNAL(clicked() ),this,SLOT(slotTranslation()));
-// 
-//    connect(tool_->rotButton,SIGNAL(clicked() ),this,SLOT(slotRotate()));
-//    connect(tool_->scaleButton,SIGNAL(clicked() ),this,SLOT(slotScale()));
-// 
-//    connect(tool_->projectTangentButton,SIGNAL(clicked() ),this,SLOT(slotProjectToTangentPlane()));
-//    connect(tool_->moveManipToCOG,SIGNAL(clicked() ),this,SLOT(slotMoveManipToCOG()));
 
    connect(tool_->unifyBoundingBoxDiagonal,SIGNAL(clicked() ),this,SLOT(slotUnifyBoundingBoxDiagonal()));
    tool_->unifyBoundingBoxDiagonal->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "unifyBB.png") );
@@ -287,6 +275,25 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id) {
 //   emit createBackup(_id,"MoveSelection");
 }
 
+//------------------------------------------------------------------------------
+
+/** \brief Hide context menu entry when right clicking on node other than manipulator node
+ * 
+ * @param _nodeId Identifier of node that has been clicked
+ */
+void MovePlugin::slotUpdateContextMenuNode( int _nodeId ) {
+    
+    ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), _nodeId );
+    
+    if (node == 0) return;
+    
+    if(node->className() != "QtTranslationManipulatorNode") {
+	contextAction_->setVisible(false);
+    }
+    else {
+	contextAction_->setVisible(true);
+    }
+}
 
 //------------------------------------------------------------------------------
 
