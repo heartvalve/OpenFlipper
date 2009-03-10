@@ -38,7 +38,7 @@
 
 void MovePlugin::showProps(){
     
-    QVariant contextObject = lastAction_->data();
+    QVariant contextObject = contextAction_->data();
     int objectId = contextObject.toInt();
   
     if ( objectId == -1)
