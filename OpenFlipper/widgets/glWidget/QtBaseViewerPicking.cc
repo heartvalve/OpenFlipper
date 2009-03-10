@@ -275,6 +275,90 @@ bool glViewer::pickGL( ACG::SceneGraph::PickTarget _pickTarget,
 
 //-----------------------------------------------------------------------------
 
+bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
+                            const QRegion&                             _region,
+                            QList<QPair<unsigned int, unsigned int> >& _list)
+{
+  GLint    w = glWidth(),
+           h = glHeight(),
+           l = scenePos().x(),
+           b = scene()->height () - scenePos().y() - h;
+  GLubyte* buffer;
+  QRect    rect = _region.boundingRect();
+
+
+  const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
+  const ACG::GLMatrixd&  projection = properties_.glState().projection();
+
+  // prepare GL state
+  makeCurrent();
+
+  glViewport (l, b, w, h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  glMultMatrixd(projection.get_raw_data());
+  glMatrixMode(GL_MODELVIEW);
+  glLoadMatrixd(modelview.get_raw_data());
+  glDisable(GL_LIGHTING);
+  glEnable(GL_DEPTH_TEST);
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+  properties_.glState().pick_init (true);
+
+  // do the picking
+  ACG::SceneGraph::PickAction action(_pickTarget);
+  ACG::SceneGraph::traverse(sceneGraphRoot_, action, properties_.glState());
+
+  // restore GL state
+  glMatrixMode( GL_PROJECTION );
+  glLoadMatrixd(projection.get_raw_data());
+  glMatrixMode( GL_MODELVIEW );
+  glLoadMatrixd(modelview.get_raw_data());
+  glEnable(GL_LIGHTING);
+
+  if (properties_.glState().pick_error ())
+    return false;
+
+  buffer = new GLubyte[3 * rect.width() * rect.height()];
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  glReadPixels (rect.x(), scene()->height () - rect.bottom() , rect.width(),
+                rect.height(), GL_RGB, GL_UNSIGNED_BYTE, buffer);
+
+  QSet<QPair<unsigned int, unsigned int> > found;
+
+  for (int y = 0; y < rect.height (); y++)
+    for (int x = 0; x < rect.width (); x++)
+    {
+      if (_region.contains (QPoint (rect.x() + x, rect.y() + y)))
+      {
+        int bPos = (((rect.height () - (y + 1)) * rect.width ()) + x) * 3;
+        if (buffer[bPos + 2] != 0 || buffer[bPos + 1] != 0 || buffer[bPos] != 0)
+        {
+          ACG::Vec3uc rgb;
+          rgb[0] = buffer[bPos];
+          rgb[1] = buffer[bPos + 1];
+          rgb[2] = buffer[bPos + 2];
+
+          std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgb);
+          if (rv.size () < 2)
+            continue;
+
+          found << QPair<unsigned int, unsigned int>(rv[1], rv[0]);
+        }
+      }
+    }
+
+  delete buffer;
+  _list = found.toList();
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 bool
 glViewer::
 fast_pick( const QPoint&  _mousePos,

@@ -193,7 +193,7 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   slotPropertiesUpdated();
 
   setAcceptDrops(true);
-  
+
   setHome();
 }
 
@@ -391,6 +391,7 @@ void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
 void glViewer::updateActionMode(Viewer::ActionMode)
 {
 
+  std::cerr << "UpdateActionMode" << properties_.actionMode() << std::endl;
   trackMouse(false);
 
 
@@ -414,7 +415,7 @@ void glViewer::updateActionMode(Viewer::ActionMode)
     {
       setCursor(Qt::ArrowCursor);
       if (pick_mode_idx_ != -1) {
-	trackMouse(pick_modes_[pick_mode_idx_].tracking);
+	     trackMouse(pick_modes_[pick_mode_idx_].tracking);
         setCursor(pick_modes_[pick_mode_idx_].cursor);
       }
 

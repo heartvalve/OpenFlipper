@@ -47,6 +47,8 @@
 #ifndef PLUGINFUNCTIONS_HH
 #define PLUGINFUNCTIONS_HH
 
+#include <QPair>
+
 #include <OpenFlipper/common/Types.hh>
 
 #include <ACG/Scenegraph/SceneGraph.hh>
@@ -216,6 +218,25 @@ bool scenegraphPick( ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mou
  */
 DLLEXPORT
 bool scenegraphPick( const unsigned int _examiner ,ACG::SceneGraph::PickTarget _pickTarget, const QPoint &_mousePos, unsigned int &_nodeIdx, unsigned int &_targetIdx, ACG::Vec3d *_hitPointPtr );
+
+/** Execute picking operation on scenegraph
+ * This picking function will pick in the last active examiner context which is automatically
+ * Set by mouseevents from the core
+ */
+DLLEXPORT
+bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
+                           const QRegion&                             _region,
+                           QList<QPair<unsigned int, unsigned int> >& _list);
+
+/** Execute picking operation on scenegraph
+ * This picking function will pick in the specified examiner context
+ */
+DLLEXPORT
+bool scenegraphRegionPick( const unsigned int                         _examiner,
+                           ACG::SceneGraph::PickTarget                _pickTarget,
+                           const QRegion&                             _region,
+                           QList<QPair<unsigned int, unsigned int> >& _list);
+
 
 /** Execute Scenegraph traversal with action and use the last active examiner
  *  If you are reacting on a mouseEvent you should use this function as it will
