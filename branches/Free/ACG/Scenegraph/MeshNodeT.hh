@@ -126,11 +126,11 @@ protected:
   virtual void draw_faces(FaceMode _mode);
 
   // pick vertices
-  void pick_vertices(GLState& _state);
+  void pick_vertices(GLState& _state, bool _front = false);
   // pick polygons. to be overridden by TriMeshNodeT
   void pick_faces(GLState& _state);
   // pick edges
-  void pick_edges(GLState& _state);
+  void pick_edges(GLState& _state, bool _front = false);
 
 
   // opengl vertex array stuff

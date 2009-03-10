@@ -1117,6 +1117,11 @@ pick(GLState& _state, PickTarget _target)
       pick_vertices(_state);
       break;
     }
+    case PICK_FRONT_VERTEX:
+    {
+      pick_vertices(_state, true);
+      break;
+    }
 
     case PICK_ANYTHING:
     case PICK_FACE:
@@ -1128,6 +1133,12 @@ pick(GLState& _state, PickTarget _target)
     case PICK_EDGE:
     {
       pick_edges(_state);
+      break;
+    }
+
+    case PICK_FRONT_EDGE:
+    {
+      pick_edges(_state, true);
       break;
     }
 
@@ -1143,7 +1154,7 @@ pick(GLState& _state, PickTarget _target)
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-pick_vertices(GLState& _state)
+pick_vertices(GLState& _state, bool _front)
 {
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
                                  v_end(mesh_.vertices_end());
@@ -1155,6 +1166,31 @@ pick_vertices(GLState& _state)
             << "picking failed\n";
     return;
   }
+
+  if (_front)
+  {
+    enable_arrays(VERTEX_ARRAY);
+
+    Vec4f  clear_color = _state.clear_color();
+    Vec4f  base_color  = _state.base_color();
+    clear_color[3] = 1.0;
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    _state.set_base_color(clear_color);
+
+    glDepthRange(0.01, 1.0);
+    draw_faces(PER_VERTEX);
+    glDepthRange(0.0, 1.0);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDepthFunc(GL_LEQUAL);
+    _state.set_base_color(base_color);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    enable_arrays(0);
+  }
+
 
   if (vertexList_ && !updateVertexList_ && _state.pick_current_index () == vertexBaseIndex_)
   {
@@ -1179,6 +1215,9 @@ pick_vertices(GLState& _state)
 
   if (vertexList_)
     glEndList ();
+
+  if (_front)
+    glDepthFunc(depthFunc());
 }
 
 
@@ -1255,7 +1294,7 @@ pick_faces(GLState& _state)
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-pick_edges(GLState& _state)
+pick_edges(GLState& _state, bool _front)
 {
   typename Mesh::ConstEdgeIter        e_it(mesh_.edges_sbegin()),
                                       e_end(mesh_.edges_end());
@@ -1265,6 +1304,30 @@ pick_edges(GLState& _state)
     omerr() << "MeshNode::pick_edges: color range too small, "
             << "picking failed\n";
     return;
+  }
+
+  if (_front)
+  {
+    enable_arrays(VERTEX_ARRAY);
+
+    Vec4f  clear_color = _state.clear_color();
+    Vec4f  base_color  = _state.base_color();
+    clear_color[3] = 1.0;
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    _state.set_base_color(clear_color);
+
+    glDepthRange(0.01, 1.0);
+    draw_faces(PER_VERTEX);
+    glDepthRange(0.0, 1.0);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDepthFunc(GL_LEQUAL);
+    _state.set_base_color(base_color);
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    enable_arrays(0);
   }
 
   if (edgeList_ && !updateEdgeList_ && _state.pick_current_index () == edgeBaseIndex_)
@@ -1289,8 +1352,11 @@ pick_edges(GLState& _state)
     glEnd();
   }
 
-  if (faceList_)
+  if (edgeList_)
     glEndList ();
+
+  if (_front)
+    glDepthFunc(depthFunc());
 }
 
 //=============================================================================
