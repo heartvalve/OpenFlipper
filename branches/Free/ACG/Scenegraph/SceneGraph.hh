@@ -230,6 +230,7 @@ private:
 /** Traverse scenegraph starting at _root, looking for a node whose id
     is \c _node_idx. Returns 0 if node wasn't found.
 **/
+ACGDLLEXPORT
 BaseNode* find_node( BaseNode* _root, unsigned int _node_idx );
 
 
