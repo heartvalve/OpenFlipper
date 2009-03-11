@@ -1,0 +1,17 @@
+var object = filetrianglemesh.loadObject("/data/home1/moebius/Desktop/BatchJob/test.off");
+
+var objectOrig = filetrianglemesh.loadObject("/data/home1/moebius/Desktop/BatchJob/test.off");
+
+selections.loadFlipperModelingSelection(object,"/data/home1/moebius/Desktop/BatchJob/L-Profil-fine-inflow.sel");
+
+modeling.initialize(object);
+
+var mat = Matrix4x4(1,0,0,10,0,1,0,0,0,0,1,0,0,0,0,1);
+modeling.transformHandleRegion(object,mat);
+modeling.solve(object);
+
+meshcompare.writeDifferenceVectors(objectOrig,object,"testdiff.diff");
+
+
+
+

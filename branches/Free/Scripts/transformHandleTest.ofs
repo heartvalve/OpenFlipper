@@ -1,0 +1,18 @@
+var object = datacontrol.getObject("plane64.off");
+modeling.initialize(object);
+
+for ( i = 0 ; i < 100 ; ++i ) {
+  var mat = Matrix4x4(1,0,0,0,0,1,0,0,0,0,1,0.01,0,0,0,1);
+  modeling.transformHandleRegion(object,mat);
+  modeling.solve(object);
+  core.updateView();
+}
+
+scripting.waitContinue()
+
+for ( i = 0 ; i < 100 ; ++i ) {
+  var mat = Matrix4x4(1,0,0,0,0,1,0,0,0,0,1,-0.01,0,0,0,1);
+  modeling.transformHandleRegion(object,mat);
+  modeling.solve(object);
+  core.updateView();
+}

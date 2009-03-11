@@ -1,0 +1,2 @@
+var vec = Vector(2,4,6);
+print(vec);

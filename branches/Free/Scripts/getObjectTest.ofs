@@ -1,0 +1,5 @@
+var object = new Object();
+object = datacontrol.getObject("test.off");
+selections.clearFaceSelection(object)
+core.updateView();
+print(object);
