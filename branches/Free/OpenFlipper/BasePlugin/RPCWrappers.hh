@@ -65,6 +65,7 @@ namespace RPC {
 /** \brief get a pointer to the scripting engine
  *
  */
+DLLEXPORT
 QScriptEngine* getScriptEngine();
 
 /** \brief call a function provided by a plugin
@@ -72,6 +73,7 @@ QScriptEngine* getScriptEngine();
  * @param _plugin Plugin name ( Scripting name )
  * @param _functionName Name of the remote function
  */
+DLLEXPORT
 QScriptValue callFunction( QString _plugin, QString _functionName );
 
 /** \brief call a function provided by a plugin getting multiple parameters
@@ -80,6 +82,7 @@ QScriptValue callFunction( QString _plugin, QString _functionName );
  * @param _functionName Name of the remote function
  * @param _parameters vector of scriptvalues containing the functions parameters in the right order
  */
+DLLEXPORT
 QScriptValue callFunction( QString _plugin, QString _functionName , std::vector< QScriptValue > _parameters );
 
 
@@ -186,6 +189,7 @@ ReturnValue callFunctionValue( QString _plugin, QString _functionName, T0 _t0 , 
  *
  * Function to set the internal reference to the script engine from the core
  */
+DLLEXPORT
 void setScriptEngine( QScriptEngine* _engine );
 
 }
