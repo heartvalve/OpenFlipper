@@ -1,0 +1,30 @@
+// Create a new widget named calc1 in scripting
+core.createWidget("widget",ScriptPath+"/testWidget.ui");
+
+// change label text for buttons
+widget.zeroButton.text="setPowerpointColor"
+widget.oneButton.text="setDefaultColor"
+widget.twoButton.text="Read Value"
+
+
+
+// Display a number in the widget
+widget.display.text = "22";
+
+// Connect simple buttons to slots from plugins
+widget.zeroButton.clicked.connect(colorplugin.setPresentationColor);
+widget.oneButton.clicked.connect(colorplugin.setDefaultColor);
+
+// Define a function invoked by a signal reading a value and
+// passing it to the next function
+widget.slotInt = function()
+{
+  var rate = widget.display.text
+  print(rate)
+}
+
+// Connect the new slot
+widget.twoButton.clicked.connect(widget, "slotInt");
+widget.hide();
+
+core.addToolbox("TestBox",widget)
