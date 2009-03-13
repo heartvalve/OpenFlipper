@@ -68,7 +68,7 @@ namespace SceneGraph {
 */
 
 template <class Mesh>
-class ACGDLLEXPORT TriStripNodeT : public MeshNodeT<Mesh>
+class TriStripNodeT : public MeshNodeT<Mesh>
 {
 public:
 
