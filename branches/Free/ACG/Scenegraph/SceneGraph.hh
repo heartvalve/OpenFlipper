@@ -90,21 +90,24 @@ traverse( BaseNode*     _node,
       if (_node->status() != BaseNode::HideNode)
       {
         _node->enter(_state, drawmode);
-        if (_node->traverseMode() == BaseNode::NodeFirst)
+        if (_node->traverseMode() & BaseNode::NodeFirst)
           process_children &= _action(_node, _state);
       }
 
       if (process_children)
       {
-	     BaseNode::ChildIter cIt(_node->childrenBegin()),
-	                         cEnd(_node->childrenEnd());
-	     for (; cIt != cEnd; ++cIt)
-	       traverse(*cIt, _action, _state, _drawmode);
+	BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
+	for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
+	    traverse(*cIt, _action, _state, _drawmode);
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if ((*cIt)->traverseMode() & BaseNode::SecondPass)
+            traverse(*cIt, _action, _state, _drawmode);
       }
 
       if (_node->status() != BaseNode::HideNode)
       {
-        if (_node->traverseMode() == BaseNode::ChildrenFirst)
+        if (_node->traverseMode() & BaseNode::ChildrenFirst)
           _action(_node, _state);
         _node->leave(_state, drawmode);
       }
@@ -133,19 +136,22 @@ traverse( BaseNode* _node, Action& _action )
     if (status != BaseNode::HideSubtree)
     {
       if (_node->status() != BaseNode::HideNode &&
-	  _node->traverseMode() == BaseNode::NodeFirst)
+	  _node->traverseMode() & BaseNode::NodeFirst)
 	process_children &= _action(_node);
 
       if (process_children)
       {
-	BaseNode::ChildIter cIt(_node->childrenBegin()),
-	                    cEnd(_node->childrenEnd());
-	for (; cIt != cEnd; ++cIt)
-	  traverse(*cIt, _action);
+	BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
+	for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
+	    traverse(*cIt, _action);
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if ((*cIt)->traverseMode() & BaseNode::SecondPass)
+            traverse(*cIt, _action);
       }
 
       if (_node->status() != BaseNode::HideNode &&
-	  _node->traverseMode() == BaseNode::ChildrenFirst)
+	  _node->traverseMode() & BaseNode::ChildrenFirst)
 	_action(_node);
     }
   }
