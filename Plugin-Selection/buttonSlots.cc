@@ -38,14 +38,17 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-//=========================================================
-//==== Vertex selections
-//=========================================================
+#include <OpenFlipper/INIFile/INIFile.hh>
 
+//-----------------------------------------------------------------------------
+
+/** \brief Select all elements of each (target) object
+ * 
+ */
 void SelectionPlugin::slotSelectAll()
 {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else 
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -58,12 +61,16 @@ void SelectionPlugin::slotSelectAll()
   emit updateView();
 }
 
+
 //-----------------------------------------------------------------------------
 
+/** \brief Clear the selection of each (target) object
+ * 
+ */
 void SelectionPlugin::slotClearSelection()
 {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else 
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -77,12 +84,15 @@ void SelectionPlugin::slotClearSelection()
   emit updateView();
 }
 
+
 //-----------------------------------------------------------------------------
 
- 
+/** \brief Invert the selection of each (target) object
+ * 
+ */ 
 void SelectionPlugin::slotInvertSelection() {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else 
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -96,12 +106,16 @@ void SelectionPlugin::slotInvertSelection() {
   emit updateView();
 }
 
+
 //-----------------------------------------------------------------------------
 
+/** \brief Select the boundary of each (target) object
+ * 
+ */
 void SelectionPlugin::slotSelectBoundary()
 {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else 
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -114,12 +128,16 @@ void SelectionPlugin::slotSelectBoundary()
   emit updateView();
 }
 
+
 //-----------------------------------------------------------------------------
 
+/** \brief Shrink the selection of each (target) object
+ * 
+ */
 void SelectionPlugin::slotShrinkSelection() {
   
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else 
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -132,11 +150,15 @@ void SelectionPlugin::slotShrinkSelection() {
   emit updateView();
 }
 
+
 //-----------------------------------------------------------------------------
 
+/** \brief Grow the selection of each (target) object
+ * 
+ */
 void SelectionPlugin::slotGrowSelection() {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else 
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -149,229 +171,75 @@ void SelectionPlugin::slotGrowSelection() {
   emit updateView();
 }
 
-//=========================================================
-//==== Vertex selections
-//=========================================================
-
-void SelectionPlugin::slotSelectAllVertices()
-{
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_POLY_LINE)) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      selectAllVertices( o_it->id() );
-
-  emit updateView();
-}
 
 //-----------------------------------------------------------------------------
 
-void SelectionPlugin::slotClearVertexSelection()
-{
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  // process all meshes
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_POLY_LINE )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      clearVertexSelection( o_it->id() );
-
-  emit updateView();
-}
-
-//-----------------------------------------------------------------------------
-
- 
-void SelectionPlugin::slotInvertVertexSelection() {
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  // process all meshes
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_POLY_LINE )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      invertVertexSelection( o_it->id() );
-
-  emit updateView();
-}
-
-//-----------------------------------------------------------------------------
-
-void SelectionPlugin::slotSelectBoundaryVertices()
-{
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      selectBoundaryVertices( o_it->id() );
-  
-  emit updateView();
-}
-
-//-----------------------------------------------------------------------------
-
-void SelectionPlugin::slotShrinkVertexSelection() {
-  
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      shrinkVertexSelection( o_it->id() );
-  
-  emit updateView();
-}
-
-//-----------------------------------------------------------------------------
-
-void SelectionPlugin::slotGrowVertexSelection() {
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      growVertexSelection( o_it->id() );
-  
-  emit updateView();
-}
+/** \brief load a selection from ini file
+  * 
+  */
+void SelectionPlugin::slotLoadSelection(){
 
 
-//=========================================================
-//==== Face selections
-//=========================================================
+  QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),"", tr("INI files (*.ini)"));
 
-void SelectionPlugin::slotSelectAllFaces()
-{
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      selectAllFaces( o_it->id() );
-  
-  emit updateView();
-}
+  if ( !fileName.isEmpty() ){
 
-//------------------------------------------------------------------------------
+    INIFile ini;
 
-void SelectionPlugin::slotClearFaceSelection()
-{
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      clearFaceSelection( o_it->id() );
-  
-  emit updateView();
-}
+    if ( ! ini.connect(fileName,false) ) {
+      emit log(LOGERR,"Failed to load ini file " + fileName);
+      return;
+    }
 
-//-----------------------------------------------------------------------------
+    PluginFunctions::IteratorRestriction restriction;
+    if ( !tool_->restrictOnTargets->isChecked() )
+      restriction = PluginFunctions::ALL_OBJECTS;
+    else 
+      restriction = PluginFunctions::TARGET_OBJECTS;
+    
+    for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
+          o_it != PluginFunctions::objectsEnd(); ++o_it)
+      if ( o_it->visible() )
+        loadIniFile(ini, o_it->id() );
 
+    ini.disconnect();
+  }
 
-void SelectionPlugin::slotInvertFaceSelection() {
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      invertFaceSelection( o_it->id() );
-  
-  emit updateView();
-}
-
-//------------------------------------------------------------------------------
-
-void SelectionPlugin::slotSelectBoundaryFaces()
-{
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      selectBoundaryFaces( o_it->id() );
-  
-  emit updateView();
-}
-
-//-----------------------------------------------------------------------------
-
-void SelectionPlugin::slotShrinkFaceSelection() {
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      shrinkFaceSelection( o_it->id() );
-  
-  emit updateView();
-}
-
-//-----------------------------------------------------------------------------
-
-
-void SelectionPlugin::slotGrowFaceSelection() {
-  PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else 
-    restriction = PluginFunctions::TARGET_OBJECTS;
-  
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-        o_it != PluginFunctions::objectsEnd(); ++o_it)
-    if ( o_it->visible() )
-      growFaceSelection( o_it->id() );
-  
-  emit updateView();
 }
 
 
 //-----------------------------------------------------------------------------
 
+/** \brief Save a selection to ini file
+  * 
+  */
+void SelectionPlugin::slotSaveSelection(){
 
+  QString fileName = QFileDialog::getSaveFileName(0, tr("Save File"),"", tr("INI files (*.ini)"));
 
+  if ( !fileName.isEmpty() ){
+
+    INIFile ini;
+
+    if ( ! ini.connect(fileName,true) ) {
+      emit log(LOGERR,"Failed to save ini file " + fileName);
+      return;
+    }
+
+    PluginFunctions::IteratorRestriction restriction;
+    if ( !tool_->restrictOnTargets->isChecked() )
+      restriction = PluginFunctions::ALL_OBJECTS;
+    else 
+      restriction = PluginFunctions::TARGET_OBJECTS;
+    
+    for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
+          o_it != PluginFunctions::objectsEnd(); ++o_it)
+      if ( o_it->visible() ){
+
+        ini.add_section( o_it->name() );
+        saveIniFile(ini, o_it->id() );
+      }
+
+    ini.disconnect();
+  }
+}

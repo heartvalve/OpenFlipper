@@ -528,7 +528,7 @@ bool SelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _state, QRegio
   typename MeshT::VertexIter v_it, v_end( _mesh->vertices_end() );
   for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
     _mesh->status(v_it).set_tagged(false);
-printf("Volume selection\n");
+
   //tag all vertives that are projected into region
   for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
   {
