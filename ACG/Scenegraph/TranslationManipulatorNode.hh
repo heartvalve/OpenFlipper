@@ -111,12 +111,18 @@ public:
   Vec3d directionZ() const;
 
   /// set cylindersize  (height + radius)
-  void set_size( double _size) { manipulator_height_ = _size;
-                                 manipulator_radius_ = _size/10.0;
+  void set_size( double _size) { set_manipulator_height_ = _size;
+                                 set_manipulator_radius_ = _size/10.0;
                                  setDirty (); }
 
   /// get cylindersize
-  double size() const { return manipulator_height_; }
+  double size() const { return set_manipulator_height_; }
+
+  /// set auto size
+  void set_autosize (bool _enable) { auto_size_ = _enable; }
+
+  /// get autosize
+  bool autosize () const { return auto_size_; }
 
   void rotate (double _angle, Vec3d _axis)
   {
@@ -175,6 +181,10 @@ private:
   void updateTargetColors ();
   bool updateCurrentColors (GLState& _state);
 
+  double get_screen_length (GLState& _state, Vec3d& _point) const;
+
+  void updateSize (GLState& _state);
+
   // ELEMENTS
   bool               draw_manipulator_;
 
@@ -185,6 +195,8 @@ private:
   GLUquadricObj*     axis_;
   double             manipulator_radius_;
   double             manipulator_height_;
+  double             set_manipulator_radius_;
+  double             set_manipulator_height_;
   int                manipulator_slices_;
   int                manipulator_stacks_;
 
@@ -232,6 +244,8 @@ private:
   Vec2i              oldPoint2D_;
 
   GLMatrixd          localTransformation_;
+
+  bool               auto_size_;
 };
 
 
