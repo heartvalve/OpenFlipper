@@ -1,0 +1,88 @@
+/*! \page ex1 A simple plugin
+ *
+ * In this section we are going to build our own OpenFlipper plugin step by step. The goal of this
+ * tutorial is to build a simple plugin that is loaded by OpenFlipper at launch.
+ *
+ * We start by creating the plugin directory in OpenFlipper's root directory,
+ * naming it e.g. \c Plugin-SimplePlugin.
+ * The interface definition should contain the following header includes:
+ * 
+ * \dontinclude example/simplePlugin.hh
+ * \skipline #include
+ * \until Types.hh>
+ *
+ * As we know the plugin class has to be derived from at least \c BaseInterface,
+ * the class definition will look like:
+ *
+ * \dontinclude example/simplePlugin.hh
+ * \skipline class
+ *
+ * (Since we implement a Qt-class, our base object is QObject which provides
+ * some basic functionality and type definitions.)
+ * We then use the macros \c Q_OBJECT and \c Q_INTERFACES in order to make accessible the signals and
+ * slots which have to be overridden later on. See BaseInterface documentation for signals and slots
+ * that can be overriden.
+ *
+ * \dontinclude example/simplePlugin.hh
+ * \skipline Q_OBJECT
+ * \skipline Q_INTERFACES
+ *
+ * For now, the only thing we override from our base class is \c name() and \c description() which
+ * each returns the name and description of our plugin, respectively. The override of these two
+ * functions is mandatory, all other slots/signals are optional.
+ * Each of the functions returns a QString (see Qt documentation for information on Qt types).
+ *
+ * \dontinclude example/simplePlugin.hh
+ * \skipline QString name(
+ * \skipline QString description(
+ *
+ * If you made it to this point, don't give up, we're almost there! Looks like this is it for
+ * the interface definition. We're now considering our implementation which consists of only a few lines.
+ * (Since we don't want to implement any functionality at this point).
+ *
+ * The implementation only contains the macro
+ *
+ * \dontinclude example/simplePlugin.cc
+ * \skipline Q_EXPORT
+ *
+ * which exports the plugin class \c SimplePlugin with the name \c simplePlugin (note that our class
+ * name is with a capital s whereas the export name is lower case). An important constraint is
+ * that the export name has to be unique (in case there exist multiple plugins).
+ *
+ * The complete source code of the plugin looks like this:
+ *
+ * simplePlugin.hh
+ * \include example/simplePlugin.hh
+ *
+ * simplePlugin.cc
+ * \include example/simplePlugin.cc
+ *
+ * \section ex1b How to build a plugin with qmake
+ * 
+ * The only thing that's still left to be created is our qmake project file
+ * that is used to generate the Makefiles for the plugin. For general information on how to build
+ * OpenFlipper with qmake see \ref buildingOpenFlipper.
+ * So lets get started! First off we create a file \c Plugin-SimplePlugin.pro in the plugins's directory.
+ * It is mandatory to name the project file after the project's directory.
+ *
+ * Our first line includes OpenFlipper's predefined qmake functions. This allows us to simply call
+ * \c Plugin() in order to build our code as a plugin. The variable \c DIRECTORY holds
+ * the directories that are to be build (we only need the plugin's directory here since the plugin does not
+ * depend on external libraries or sources). Our project file looks like this:
+ *
+ * Plugin-SimplePlugin.pro
+ * \include example/Plugin-SimplePlugin.pro
+ *
+ * The \c HEADERS and \c SOURCES variables should be self-explanatory. \c FORMS contains qt user interface
+ * files which aren't needed at this time but become important when using user forms for the plugin.
+ *
+ * Now go to the root path of OpenFlipper and enter \c qmake (be sure to use version 4 of qmake; some
+ * linux distributions use the link \c qmake-qt4 against the executable) in order to create
+ * the new Makefiles now containing our plugin. We now build OpenFlipper by entering \c make.
+ *
+ * To test if our plugin has been successfully loaded, we launch OpenFlipper and select \c Plugins->Unload \c Plugin.
+ * If our plugin \c SimplePlugin is listed, everything is fine. If it's not listed, read OpenFlippers
+ * log to see what went wrong.
+ *
+ * See \ref dataFlow for further information on interface function calls.
+ */
