@@ -114,7 +114,8 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
     any_axis_over_(false),
     any_top_over_(false),
     origin_over_(false),
-    outer_ring_over_(false)
+    outer_ring_over_(false),
+    auto_size_(false)
 {
   localTransformation_.identity();
   axis_ = gluNewQuadric();
@@ -160,6 +161,7 @@ update_manipulator_system(GLState& _state)
   _state.scale(1.0/scaling()[0], 1.0/scaling()[1], 1.0/scaling()[2]); // Adapt scaling
 
   update_rotation(_state);
+  updateSize (_state);
 }
 
 //----------------------------------------------------------------------------
@@ -498,6 +500,7 @@ void
 TranslationManipulatorNode::draw(GLState& _state, unsigned int /* _drawMode */ )
 {
    if (draw_manipulator_) {
+
     // Store lighting bits and enable lighting
     glPushAttrib(GL_LIGHTING_BIT);
     glEnable(GL_LIGHTING);
@@ -578,6 +581,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
   Vec3d         newPoint3D;
   double        old_axis_hit, new_axis_hit, new_axis_over;
 
+  updateSize (_state);
 
   switch (_event->type()) {
 
@@ -1448,6 +1452,8 @@ pick(GLState& _state, PickTarget _target)
 
     if (draw_manipulator_) {
 
+        updateSize (_state);
+
         _state.pick_set_maximum(5);
 
 	// Enable depth test but store original status
@@ -1627,7 +1633,40 @@ TranslationManipulatorNode::directionZ() const
   return MathTools::sane_normalized(localTransformation_.transform_vector(dirZ_));
 }
 
+//----------------------------------------------------------------------------
 
+double TranslationManipulatorNode::get_screen_length (GLState& _state, Vec3d& _point) const
+{
+  Vec3d proj = _state.project (_point);
+  proj[0] += 1.0;
+  Vec3d uproj = _state.unproject (proj);
+  uproj -= _point;
+  return uproj.length ();
+}
+
+//----------------------------------------------------------------------------
+
+void TranslationManipulatorNode::updateSize (GLState& _state)
+{
+  if (auto_size_)
+  {
+    Vec3d point = localTransformation_.transform_point(Vec3d (0.0, 0.0, 0.0));
+
+    int tmp, width, height;
+
+    _state.get_viewport (tmp, tmp, width, height);
+
+    double length = get_screen_length (_state, point) * (width + height) * 0.02;
+
+    manipulator_radius_ = set_manipulator_radius_ * length;
+    manipulator_height_ = set_manipulator_height_ * length;
+  }
+  else
+  {
+    manipulator_radius_ = set_manipulator_radius_;
+    manipulator_height_ = set_manipulator_height_;
+  }
+}
 
 //=============================================================================
 } // namespace SceneGraph
