@@ -244,6 +244,9 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     _state.set_modelview (modelview);
     _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
+    // clear depth buffer behind coordsys node
+    drawClearArea(_state, false);
+
     // Koordinatensystem zeichnen
     drawCoordsys(_state);
 
@@ -260,6 +263,9 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     modelview(2,3) = 0.0;
 
     _state.set_modelview (modelview);
+
+    // clear depth buffer behind coordsys node
+    drawClearArea(_state, false);
     drawCoordsys(_state);
 
   }
@@ -338,6 +344,9 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       _state.set_modelview (modelview);
       _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
+      // clear depth buffer behind coordsys node
+      drawClearArea(_state, true);
+
       // Koordinatensystem zeichnen
       drawCoordsysPick(_state);
 
@@ -353,14 +362,166 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       modelview(1,3) = 0.0;
       modelview(2,3) = 0.0;
 
-     
+      // clear depth buffer behind coordsys node
+      drawClearArea(_state, true);
       drawCoordsysPick(_state);
-
     }
     // Reload old configuration
     _state.pop_modelview_matrix();
 
   }
+}
+
+//----------------------------------------------------------------------------
+
+void CoordsysNode::drawClearArea(GLState&  _state, bool _pick)
+{
+  std::vector<Vec2f> points;
+  Vec2f center;
+  float radius;
+
+  int left, bottom, width, height;
+  _state.get_viewport(left, bottom, width, height);
+
+  GLUquadricObj *quadric = gluNewQuadric();
+
+  // respect sphere radius
+  Vec3d proj = _state.project (Vec3d (-0.01, -0.01, -0.01));
+  points.push_back (Vec2f (proj[0], proj[1]));
+
+  proj = _state.project (Vec3d (0.1, 0.0, 0.0));
+  points.push_back (Vec2f (proj[0], proj[1]));
+
+  proj = _state.project (Vec3d (0.0, 0.1, 0.0));
+  points.push_back (Vec2f (proj[0], proj[1]));
+
+  proj = _state.project (Vec3d (0.0, 0.0, 0.1));
+  points.push_back (Vec2f (proj[0], proj[1]));
+
+
+  // get bounding circle of projected 4 points of the coord node
+  boundingCircle(points, center, radius);
+
+  _state.push_projection_matrix();
+  _state.reset_projection();
+  _state.ortho (left, left + width, bottom, bottom + height, 0.0, 1.0);
+
+  _state.push_modelview_matrix();
+  _state.reset_modelview();
+  glDepthFunc (GL_ALWAYS);
+  _state.translate (center[0], center[1], -1.0);
+
+  if (_pick)
+    _state.pick_set_name (0);
+  else
+    glColorMask(false, false, false, false);
+
+  // 10% more to ensure everything is in
+  gluDisk( quadric, 0, radius * 1.1, 10, 10 );
+
+  glDepthFunc (GL_LESS);
+  _state.pop_modelview_matrix();
+  _state.pop_projection_matrix();
+
+  if (!_pick)
+    glColorMask(true, true, true, true);
+
+  gluDeleteQuadric(quadric);
+}
+
+//----------------------------------------------------------------------------
+
+void CoordsysNode::boundingCircle(std::vector<Vec2f> &_in, Vec2f &_center, float &_radius)
+{
+  if (_in.size () == 0)
+    return;
+  if (_in.size () < 2)
+  {
+    _center = _in[0];
+    _radius = 0.0f;
+    return;
+  }
+  bool found = false;
+
+  // try all circumcircles of all possible lines
+  for (unsigned int i = 0; i < _in.size () - 1; i++)
+    for (unsigned int j = i + 1; j < _in.size (); j++)
+    {
+      Vec2f cen = (_in[i] + _in[j]) * 0.5;
+      float rad = (_in[i] - cen).length ();
+      bool allin = true;
+
+      for (unsigned int k = 0; k < _in.size (); k++)
+        if (k != i && k != j && (_in[k] - cen).length () > rad)
+        {
+          allin = false;
+          break;
+        }
+
+      if (!allin)
+        continue;
+
+      if (found)
+      {
+        if (rad < _radius)
+        {
+          _center = cen;
+          _radius = rad;
+        }
+      }
+      else
+      {
+        found = true;
+        _center = cen;
+        _radius = rad;
+      }
+    }
+
+  if (found)
+    return;
+
+  // try all circumcircles of all possible triangles
+  for (unsigned int i = 0; i < _in.size () - 2; i++)
+    for (unsigned int j = i + 1; j < _in.size () - 1; j++)
+      for (unsigned int k = j + 1; k < _in.size (); k++)
+      {
+        float v = ((_in[k][0]-_in[j][0])*((_in[i][0]*_in[i][0])+(_in[i][1]*_in[i][1]))) +
+                  ((_in[i][0]-_in[k][0])*((_in[j][0]*_in[j][0])+(_in[j][1]*_in[j][1]))) +
+                  ((_in[j][0]-_in[i][0])*((_in[k][0]*_in[k][0])+(_in[k][1]*_in[k][1])));
+        float u = ((_in[j][1]-_in[k][1])*((_in[i][0]*_in[i][0])+(_in[i][1]*_in[i][1]))) +
+                  ((_in[k][1]-_in[i][1])*((_in[j][0]*_in[j][0])+(_in[j][1]*_in[j][1]))) +
+                  ((_in[i][1]-_in[j][1])*((_in[k][0]*_in[k][0])+(_in[k][1]*_in[k][1])));
+        float d = (_in[i][0]*_in[j][1])+(_in[j][0]*_in[k][1])+(_in[k][0]*_in[i][1]) -
+                  (_in[i][0]*_in[k][1])-(_in[j][0]*_in[i][1])-(_in[k][0]*_in[j][1]);
+        Vec2f cen(0.5 * (u/d), 0.5 * (v/d));
+        float rad = (_in[i] - cen).length ();
+        bool allin = true;
+
+        for (unsigned int l = 0; l < _in.size (); l++)
+          if (l != i && l != j && l != k && (_in[l] - cen).length () > rad)
+          {
+            allin = false;
+            break;
+          }
+
+        if (!allin)
+          continue;
+
+        if (found)
+        {
+          if (rad < _radius)
+          {
+            _center = cen;
+            _radius = rad;
+          }
+        }
+        else
+        {
+          found = true;
+          _center = cen;
+          _radius = rad;
+        }
+      }
 }
 
 //=============================================================================
