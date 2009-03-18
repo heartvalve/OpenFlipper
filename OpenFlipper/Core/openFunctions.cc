@@ -57,7 +57,7 @@ void Core::resetScenegraph() {
     }
 
   }
-  
+
   // Update the draw Modes Menu
   coreWidget_->slotUpdateGlobalDrawMenu();
 }
@@ -219,7 +219,7 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
 
   // Tell the Plugins that the Object List and the active object have changed
    emit signalObjectUpdated(_id);
-   emit activeObjectChanged();
+   emit objectSelectionChanged( _id );
 
    backupRequest(_id,"Original Object");
 
@@ -245,7 +245,7 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
  void Core::slotEmptyObjectAdded ( int _id ) {
   // Tell the Plugins that the Object List and the active object have changed
    emit signalObjectUpdated(_id);
-   emit activeObjectChanged();
+   emit objectSelectionChanged(_id);
 
    backupRequest(_id,"Original Object");
 

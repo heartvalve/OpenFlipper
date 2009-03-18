@@ -470,24 +470,40 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"updateView()") )
         connect(plugin,SIGNAL(updateView()),this,SLOT(updateView()));
 
+
+
       if ( checkSignal(plugin,"updatedObject(int)") )
         connect(plugin,SIGNAL(updatedObject(int)),this,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
 
-      if ( checkSignal(plugin,"visibilityChanged()") )
-        connect(plugin,SIGNAL(visibilityChanged()),this,SLOT(slotVisibilityChanged()), Qt::DirectConnection);
+      if ( checkSlot( plugin , "slotObjectUpdated(int)" ) )
+        connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
 
+
+      if ( checkSignal(plugin,"visibilityChanged(int)" ) )
+        emit log (LOGERR,"Signal visibilityChanged() now requires objectid or -1 as argument " );
+
+      if ( checkSignal(plugin,"visibilityChanged(int)") )
+        connect(plugin,SIGNAL(visibilityChanged(int)),this,SLOT(slotVisibilityChanged(int)), Qt::DirectConnection);
+
+      if ( checkSlot(plugin,"slotVisibilityChanged(int)") )
+        connect(this,SIGNAL(visibilityChanged(int)),plugin,SLOT(slotVisibilityChanged(int)), Qt::DirectConnection);
+
+      if ( checkSignal(plugin,"activeObjectChanged()" ) )
+        emit log (LOGERR,"Signal activeObjectChanged() is now objectSelectionChanged( int _objectId ) " );
+
+      if ( checkSignal(plugin,"slotActiveObjectChanged()" ) )
+        emit log (LOGERR,"Signal activeObjectChanged() is now slotObjectSelectionChanged( int _objectId ) " );
 
       if ( checkSlot(plugin,"slotAllCleared()") )
         connect(this,SIGNAL(allCleared()),plugin,SLOT(slotAllCleared()));
 
-      if ( checkSignal(plugin,"activeObjectChanged()") )
-        connect(plugin,SIGNAL(activeObjectChanged()),this,SLOT(slotActiveObjectChanged() ));
 
-      if ( checkSlot( plugin , "slotActiveObjectChanged()" ) )
-        connect(this,SIGNAL(activeObjectChanged()),plugin,SLOT(slotActiveObjectChanged() ));
+      if ( checkSignal(plugin,"objectSelectionChanged(int)") )
+        connect(plugin,SIGNAL(objectSelectionChanged(int)),this,SLOT(slotObjectSelectionChanged(int) ));
 
-      if ( checkSlot( plugin , "slotObjectUpdated(int)" ) )
-        connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
+      if ( checkSlot( plugin , "slotObjectSelectionChanged(int)" ) )
+        connect(this,SIGNAL(objectSelectionChanged(int)),plugin,SLOT(slotObjectSelectionChanged(int) ));
+
 
       if ( checkSlot( plugin , "pluginsInitialized()" ) )
         connect(this,SIGNAL(pluginsInitialized()),plugin,SLOT(pluginsInitialized()), Qt::DirectConnection);

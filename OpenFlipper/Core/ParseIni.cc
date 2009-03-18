@@ -572,7 +572,7 @@ void Core::openIniFile( QString _filename,
       }
 
       if ( newActiveObject )
-        emit activeObjectChanged();
+        emit objectSelectionChanged(-1);
 
     }
 

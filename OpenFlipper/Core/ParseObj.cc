@@ -261,7 +261,7 @@ void Core::preprocessObjFile(QString _filename)
     emit log(LOGERR,"Unable to open Object " + path);
 
   if ( newActiveObject )
-    emit activeObjectChanged();
+    emit objectSelectionChanged(-1);
 }
 
 //-----------------------------------------------------------------------------
