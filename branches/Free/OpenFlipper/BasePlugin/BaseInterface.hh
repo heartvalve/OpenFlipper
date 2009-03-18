@@ -103,7 +103,7 @@ class BaseInterface {
 
     /** \brief An object has been changed or added by this plugin
       *
-      *  Emit this Signal, if you updated any part of an object (e.g. source/target ).\n
+      *  Emit this Signal, if you updated any part of an object.\n
       *  If you changed the element itself (geometry, topology,..) you also have to emit this signal.\n
       *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
       *  Give the id of the new object as parameter or -1 if you updated all objects or deleted an object.
@@ -116,17 +116,18 @@ class BaseInterface {
       *
       *  Emit this Signal, if you changed the visibility of an object.
       *  This is required to reset the near and far plane for the viewers to provide
-      *  an optimal view.
+      *  an optimal view. Use the id of the object you show or hide as a parameter.
+      *  Otherwise use -1 if you dont have the id.
       *
       */
-    virtual void visibilityChanged( ) {};
+    virtual void visibilityChanged( int /*_identifier*/ ) {};
 
-    /**  \brief The active object has been switched by this plugin
+    /**  \brief The object selection has been changed by this plugin
       *
-      *   This signal is used to tell the other plugins that the active object has been changed.\n
-      *   You should only do this if you are writing a plugin that manages the objects(e.g. DatacontrolPlugin).\n
+      *   This signal is used to tell the other plugins that the object selection (source/target) has been changed.\n
+      *
     */
-    virtual void activeObjectChanged() {};
+    virtual void objectSelectionChanged( int /*_identifier*/ ) {};
 
   private slots:
 
@@ -138,7 +139,7 @@ class BaseInterface {
       *   If you store local information about one of these Objects, you should check if its still valid!\n
       *   Dont emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
       *   You dont need to call updateView as the core triggers a redraw itself.
-      *  @param _identifier Identifier of the updated/new object or -1 if one is deleted
+      *  @param _identifier Identifier of the updated/new object or -1 if one is deleted.
     */
     virtual void slotObjectUpdated( int /*_identifier*/ ) {};
 
@@ -152,10 +153,21 @@ class BaseInterface {
 
       /**  \brief The active object has changed
       *
-      *   This slot is called by the main aplication if the currently active object has changed.\n
-      *   This means that the selection of target objects has changed.
+      *   This slot is called by the main aplication if the currentselection of an object has changed.\n
+      *   This means that the selection of source / target objects has changed.
+      *   Addisionally you get the id of the object that has been changed or -1 if all objects
+      *   have been modified.
     */
-    virtual void slotActiveObjectChanged() {};
+    virtual void slotObjectSelectionChanged( int /*_identifier*/ ) {};
+
+    /** \brief An object has been shown or hidden
+      *
+      *  This slot is called if an objecct is shown or hidden.
+      *  The id of the object is given as a parameter.
+      *  If multiple or all objects have changed, the id will be -1.
+      *
+      */
+    virtual void slotVisibilityChanged( int /*_identifier*/ ) {};
 
   /** @} */
 

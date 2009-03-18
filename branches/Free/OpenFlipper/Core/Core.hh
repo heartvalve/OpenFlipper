@@ -149,8 +149,8 @@ signals:
    /// Emitted when an identify event occurs
    void PluginMouseEventIdentify( QMouseEvent* );
 
-   /// This signal is emitted if the active object has been changed
-   void activeObjectChanged();
+   /// This signal is emitted if the object has been changed (source/target)
+   void objectSelectionChanged( int );
 
    /// The texture with the given name and filename has been added
    void addTexture( QString, QString , uint );
@@ -194,6 +194,9 @@ signals:
    /// Called after all plugins are loaded
    void pluginsInitialized();
 
+   /// Tell plugins that the visibility of an object has changed
+   void visibilityChanged(int _id);
+
    /** @} */
 
    //===========================================================================
@@ -208,10 +211,10 @@ signals:
       void slotObjectUpdated(int _identifier);
 
       /// Called when a plugin changes the visibility of an object
-      void slotVisibilityChanged();
+      void slotVisibilityChanged(int _id);
 
       /// Called by Plugins if they changed the active object
-      void slotActiveObjectChanged();
+      void slotObjectSelectionChanged( int _id);
 
       /// Add a new picking mode to the examiner_widget_
       void slotAddPickMode( const std::string _mode );

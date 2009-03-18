@@ -96,18 +96,25 @@ void Core::slotObjectUpdated(int _identifier) {
   updateView();
 }
 
- void Core::slotVisibilityChanged() {
-    resetScenegraph();
-    updateView();
- }
+void Core::slotVisibilityChanged( int _id ) {
 
- /** This function is called if the active object has changed. The information is passed to all plugins.
- */
- void Core::slotActiveObjectChanged()
- {
-    // just inform the plugins as we dont do anything else
-    emit activeObjectChanged();
- }
+  // tell plugins
+  emit visibilityChanged( _id );
+
+  resetScenegraph();
+  updateView();
+}
+
+/** This function is called if the active object has changed. The information is passed to all plugins.
+*/
+void Core::slotObjectSelectionChanged( int _id )
+{
+  // just inform the plugins as we dont do anything else
+  emit objectSelectionChanged(_id);
+
+//   std::cerr << "objectSelection changed triggers updatedObjects for now" << std::endl;
+//   emit updatedObject(_id);
+}
 
 //====================================================================================
 // ===             Toolbox handling                                   =================
