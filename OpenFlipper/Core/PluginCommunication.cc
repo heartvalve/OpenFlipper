@@ -116,6 +116,11 @@ void Core::slotObjectSelectionChanged( int _id )
 //   emit updatedObject(_id);
 }
 
+void Core::slotObjectPropertiesChanged( int _id )
+{
+  emit objectPropertiesChanged(_id);
+}
+
 //====================================================================================
 // ===             Toolbox handling                                   =================
 //=====================================================================================
