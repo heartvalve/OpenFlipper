@@ -96,6 +96,8 @@ void SelectionPlugin::initializePlugin() {
   line_node_ = new ACG::SceneGraph::LineNode (ACG::SceneGraph::LineNode::PolygonMode,
                                               PluginFunctions::getRootNode(), "Lasso line");
   line_node_->set_line_width (2.0);
+  line_node_->depthFunc (GL_ALWAYS);
+  line_node_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);
   line_node_->hide();
 
   //register keys for the plugin
