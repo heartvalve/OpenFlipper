@@ -93,62 +93,42 @@ drawCoordsys( GLState&  _state) {
 
   GLUquadricObj *quadric = gluNewQuadric();
 
-  GLMatrixd modelview = _state.modelview();
-
-  modelview(0,3) = 0.0;
-  modelview(1,3) = 0.0;
-  modelview(2,3) = 0.0;
-
   // Origin
   glColor3f(0.5, 0.5, 0.5);
-  glLoadIdentity();
   gluSphere( quadric, sphereRadius, slices, stacks );
 
   // X-Axis
   glColor3f(1.0, 0.0, 0.0);
-  glLoadIdentity();
-
-  glMultMatrixd(modelview.get_raw_data());
-  glRotatef(-90, 0, 1, 0);
-  glTranslatef( 0, 0, -bodyLength );
+  _state.push_modelview_matrix ();
+  _state.rotate (-90, 0, 1, 0);
+  _state.translate ( 0, 0, -bodyLength );
   gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-  glLoadIdentity();
-  glMultMatrixd(modelview.get_raw_data());
-  glRotatef(-90, 0, 1, 0);
-  glTranslatef( 0, 0, -bodyLength );
   gluDisk( quadric, 0, topRadius, slices, loops );
-  glTranslatef( 0, 0, -arrowLength );
+  _state.translate ( 0, 0, -arrowLength );
   gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  _state.pop_modelview_matrix ();
 
   // Y-Axis
   glColor3f(0.0, 1.0, 0.0);
-  glLoadIdentity();
-  glMultMatrixd(modelview.get_raw_data());
-  glRotatef(90, 1, 0, 0);
-  glTranslatef( 0, 0, -bodyLength );
+  _state.push_modelview_matrix ();
+  _state.rotate (90, 1, 0, 0);
+  _state.translate ( 0, 0, -bodyLength );
   gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-  glLoadIdentity();
-  glMultMatrixd(modelview.get_raw_data());
-  glRotatef(90, 1, 0, 0);
-  glTranslatef( 0, 0, -bodyLength );
   gluDisk( quadric, 0, topRadius, slices, loops );
-  glTranslatef( 0, 0, -arrowLength );
+  _state.translate ( 0, 0, -arrowLength );
   gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  _state.pop_modelview_matrix ();
 
   // Z-Axis
   glColor3f(0.0, 0.0, 1.0);
-  glLoadIdentity();
-  glMultMatrixd(modelview.get_raw_data());
-  glRotatef(180, 0, 1, 0);
-  glTranslatef( 0, 0, -bodyLength );
+  _state.push_modelview_matrix ();
+  _state.rotate (180, 0, 1, 0);
+  _state.translate ( 0, 0, -bodyLength );
   gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-  glLoadIdentity();
-  glMultMatrixd(modelview.get_raw_data());
-  glRotatef(180, 0, 1, 0);
-  glTranslatef( 0, 0, -bodyLength );
   gluDisk( quadric, 0, topRadius, slices, loops );
-  glTranslatef( 0, 0, -arrowLength );
+  _state.translate ( 0, 0, -arrowLength );
   gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  _state.pop_modelview_matrix ();
 
   gluDeleteQuadric(quadric);
 }
@@ -158,73 +138,56 @@ drawCoordsys( GLState&  _state) {
 void
 CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
-    double topRadius = 0.01;
-    double arrowLength = 0.04;
-    double bodyRadius = 0.004;
-    double bodyLength = 0.06;
-    int slices = 10;
-    int stacks = 10;
-    int loops = 10;
-    double sphereRadius = 0.01;
+  double topRadius = 0.01;
+  double arrowLength = 0.04;
+  double bodyRadius = 0.004;
+  double bodyLength = 0.06;
+  int slices = 10;
+  int stacks = 10;
+  int loops = 10;
+  double sphereRadius = 0.01;
 
-    GLUquadricObj *quadric = gluNewQuadric();
-    GLMatrixd modelview = _state.modelview();
-
-    modelview(0,3) = 0.0;
-    modelview(1,3) = 0.0;
-    modelview(2,3) = 0.0;
+  GLUquadricObj *quadric = gluNewQuadric();
 
   // Origin
-    glLoadIdentity();
-    _state.pick_set_name (0);
-    gluSphere( quadric, sphereRadius, slices, stacks );
+  _state.pick_set_name (1);
+  gluSphere( quadric, sphereRadius, slices, stacks );
 
   // X-Axis
-    glLoadIdentity();
-    _state.pick_set_name (1);
-    glMultMatrixd(modelview.get_raw_data());
-    glRotatef(-90, 0, 1, 0);
-    glTranslatef( 0, 0, -bodyLength );
-    gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-    glLoadIdentity();
-    glMultMatrixd(modelview.get_raw_data());
-    glRotatef(-90, 0, 1, 0);
-    glTranslatef( 0, 0, -bodyLength );
-    gluDisk( quadric, 0, topRadius, slices, loops );
-    glTranslatef( 0, 0, -arrowLength );
-    gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  _state.pick_set_name (2);
+  _state.push_modelview_matrix ();
+  _state.rotate (-90, 0, 1, 0);
+  _state.translate ( 0, 0, -bodyLength );
+  gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
+  gluDisk( quadric, 0, topRadius, slices, loops );
+  _state.translate ( 0, 0, -arrowLength );
+  gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  _state.pop_modelview_matrix ();
 
   // Y-Axis
-    glLoadIdentity();
-    _state.pick_set_name (2);
-    glMultMatrixd(modelview.get_raw_data());
-    glRotatef(90, 1, 0, 0);
-    glTranslatef( 0, 0, -bodyLength );
-    gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-    glLoadIdentity();
-    glMultMatrixd(modelview.get_raw_data());
-    glRotatef(90, 1, 0, 0);
-    glTranslatef( 0, 0, -bodyLength );
-    gluDisk( quadric, 0, topRadius, slices, loops );
-    glTranslatef( 0, 0, -arrowLength );
-    gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  _state.pick_set_name (3);
+  _state.push_modelview_matrix ();
+  _state.rotate (90, 1, 0, 0);
+  _state.translate ( 0, 0, -bodyLength );
+  gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
+  gluDisk( quadric, 0, topRadius, slices, loops );
+  _state.translate ( 0, 0, -arrowLength );
+  gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  _state.pop_modelview_matrix ();
 
   // Z-Axis
-    glLoadIdentity();
-    _state.pick_set_name (3);
-    glMultMatrixd(modelview.get_raw_data());
-    glRotatef(180, 0, 1, 0);
-    glTranslatef( 0, 0, -bodyLength );
-    gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
-    glLoadIdentity();
-    glMultMatrixd(modelview.get_raw_data());
-    glRotatef(180, 0, 1, 0);
-    glTranslatef( 0, 0, -bodyLength );
-    gluDisk( quadric, 0, topRadius, slices, loops );
-    glTranslatef( 0, 0, -arrowLength );
-    gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  _state.pick_set_name (4);
+  _state.push_modelview_matrix ();
+  _state.rotate (180, 0, 1, 0);
+  _state.translate ( 0, 0, -bodyLength );
+  gluCylinder( quadric, bodyRadius, bodyRadius, bodyLength, slices, stacks );
+  gluDisk( quadric, 0, topRadius, slices, loops );
+  _state.translate ( 0, 0, -arrowLength );
+  gluCylinder( quadric, 0, topRadius, arrowLength, slices, stacks );
+  _state.pop_modelview_matrix ();
 
-    gluDeleteQuadric(quadric);
+
+  gluDeleteQuadric(quadric);
 
 }
 
@@ -257,53 +220,46 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
 
     // Projection reset
     _state.push_projection_matrix();
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(45.0, _state.aspect(), 0.8, 20.0);
-
-    glMatrixMode(GL_MODELVIEW);
+    _state.reset_projection();
+    _state.perspective(45.0, _state.aspect(), 0.8, 20.0);
 
     float posx = left + width - 30.0 ;
     float posy = bottom + height - 30.0 ;
 
     Vec3d screenposCenterPoint( posx , posy , 0.0);
 
-    double pm[16], mvm[16];
-    double x,y,z;
-    GLint viewport[4];
+    _state.push_modelview_matrix();
+    _state.reset_modelview();
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    glGetDoublev( GL_MODELVIEW_MATRIX, mvm);
-    glPopMatrix();
-    glGetDoublev( GL_PROJECTION_MATRIX, pm);
+    pos3D = _state.unproject (Vec3d (posx, posy, 0.5));
+    _state.pop_modelview_matrix();
 
-    viewport[0] = left;
-    viewport[1] = bottom;
-    viewport[2] = width;
-    viewport[3] = height;
+    // reset scene translation
+    GLMatrixd modelview = _state.modelview();
 
+    modelview(0,3) = 0.0;
+    modelview(1,3) = 0.0;
+    modelview(2,3) = 0.0;
 
-    gluUnProject(posx, posy, 0.5, mvm, pm, viewport, &x, &y, &z);
-
-    pos3D = Vec3d(x, y, z);
-
-    // Projection Translation
-    glMatrixMode(GL_PROJECTION);
-    // Translation in rechte obere Ecke
-    glTranslatef(pos3D[0], pos3D[1], pos3D[2]-0.3);
-    glMatrixMode(GL_MODELVIEW);
+    _state.set_modelview (modelview);
+    _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
     // Koordinatensystem zeichnen
     drawCoordsys(_state);
 
     // Projection reload
     _state.pop_projection_matrix();
-    glMatrixMode(GL_MODELVIEW);
+
 
   } else if (mode_ == POSITION) { /* mode_ == POSITION */
 
+    GLMatrixd modelview = _state.modelview();
+
+    modelview(0,3) = 0.0;
+    modelview(1,3) = 0.0;
+    modelview(2,3) = 0.0;
+
+    _state.set_modelview (modelview);
     drawCoordsys(_state);
 
   }
@@ -345,7 +301,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
     // Push Modelview-Matrix
     _state.push_modelview_matrix();
-    _state.pick_set_maximum (4);
+    _state.pick_set_maximum (5);
     _state.pick_set_name (0);
 
     // Init state - changes when mode_ != POSITION
@@ -358,49 +314,29 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
       // Projection reset
       _state.push_projection_matrix();
-      glMatrixMode(GL_PROJECTION);
-      glPushMatrix ();
-      glLoadIdentity();
-      gluPerspective(45.0, _state.aspect(), 0.8, 20.0);
-
-      glMatrixMode(GL_MODELVIEW);
+      _state.reset_projection();
+      _state.perspective(45.0, _state.aspect(), 0.8, 20.0);
 
       float posx = left + width - 30.0 ;
       float posy = bottom + height - 30.0 ;
 
       Vec3d screenposCenterPoint( posx , posy , 0.0);
 
-      double pm[16], mvm[16];
-      double x,y,z;
-      GLint viewport[4];
+      _state.push_modelview_matrix();
+      _state.reset_modelview();
 
-      glMatrixMode(GL_MODELVIEW);
-      glPushMatrix();
-      glLoadIdentity();
-      glGetDoublev( GL_MODELVIEW_MATRIX, mvm);
-      glPopMatrix();
-      glGetDoublev( GL_PROJECTION_MATRIX, pm);
+      pos3D = _state.unproject (Vec3d (posx, posy, 0.5));
+      _state.pop_modelview_matrix();
 
-      viewport[0] = left;
-      viewport[1] = bottom;
-      viewport[2] = width;
-      viewport[3] = height;
+      // reset scene translation
+      GLMatrixd modelview = _state.modelview();
 
-      gluUnProject(posx, posy, 0.5, mvm, pm, viewport, &x, &y, &z);
+      modelview(0,3) = 0.0;
+      modelview(1,3) = 0.0;
+      modelview(2,3) = 0.0;
 
-      pos3D = Vec3d(x, y, z);
-
-      // Projection Translation
-      glMatrixMode(GL_PROJECTION);
-
-      // go back to gluPickMatrix
-      glPopMatrix ();
-      glMultMatrixd( _state.inverse_projection().get_raw_data());
-      // add our matrix
-      gluPerspective(45.0, _state.aspect(), 0.8, 20.0);
-      // Translation in rechte obere Ecke
-      glTranslatef(pos3D[0], pos3D[1], pos3D[2]-0.3);
-      glMatrixMode(GL_MODELVIEW);
+      _state.set_modelview (modelview);
+      _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
       // Koordinatensystem zeichnen
       drawCoordsysPick(_state);
@@ -408,8 +344,16 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       // Projection reload
       _state.pop_projection_matrix();
 
+
     } else if (mode_ == POSITION) { /* mode_ == POSITION */
 
+      GLMatrixd modelview = _state.modelview();
+
+      modelview(0,3) = 0.0;
+      modelview(1,3) = 0.0;
+      modelview(2,3) = 0.0;
+
+     
       drawCoordsysPick(_state);
 
     }
