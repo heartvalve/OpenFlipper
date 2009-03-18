@@ -60,7 +60,6 @@ void SelectionPlugin::selectionContextMenu(QAction* _action) {
   else if ( _action->text() == "Boundary")
     selectBoundary( objectId );
 
-  emit activeObjectChanged();
   emit updatedObject(objectId);
 }
 

@@ -31,13 +31,12 @@ void SelectionPlugin::toggleSelection(QMouseEvent* _event)
         if (sourceSelection_){
 
           object->source( !object->source() );
-          emit updatedObject(object->id());
+          emit objectSelectionChanged(object->id());
 
         } else {
           object->target( !object->target() );
 
-          emit activeObjectChanged();
-          emit updatedObject(object->id());
+          emit objectSelectionChanged(object->id());
         }
       }
 
@@ -399,12 +398,11 @@ void SelectionPlugin::handleLassoSelection(QMouseEvent* _event, bool _volume) {
                 {
                   if (sourceSelection_){
                     object->source( !deselection_ );
-                    emit updatedObject(object->id());
+                    emit objectSelectionChanged(object->id());
 
                   } else {
                     object->target( !deselection_ );
-                    emit activeObjectChanged();
-                    emit updatedObject(object->id());
+                    emit objectSelectionChanged(object->id());
                   }
                 }
             }
@@ -567,14 +565,14 @@ bool SelectVolumeAction::operator()(BaseNode* _node, ACG::GLState& _state)
 
       if (plugin_->sourceSelection_){
         object->source( !plugin_->deselection_ );
+        emit plugin_->objectSelectionChanged( object->id() );
       } else {
         object->target( !plugin_->deselection_ );
-        emit plugin_->activeObjectChanged();
+        emit plugin_->objectSelectionChanged( object->id() );
       }
-    }
 
-    if (selected)
-      emit plugin_->updatedObject(object->id());
+    } else if (selected)
+      emit plugin_->updatedObject( object->id() );
   }
   return true;
 }
