@@ -130,6 +130,7 @@ void SelectionPlugin::pluginsInitialized() {
   emit addHiddenPickMode(PAINT_SPHERE_SELECTION);
   emit addHiddenPickMode(CLOSEST_BOUNDARY_SELECTION);
   emit addHiddenPickMode(LASSO_SELECTION);
+  emit addHiddenPickMode(VOLUME_LASSO_SELECTION);
   emit addHiddenPickMode(SURFACE_LASSO_SELECTION);
   emit addHiddenPickMode(CONNECTED_COMPONENT_SELECTION);
 
@@ -210,9 +211,13 @@ void SelectionPlugin::pluginsInitialized() {
   toggleAction_->setCheckable( true );
   toolBar_->addAction( toggleAction_ );
   lassoAction_ = new QAction( QIcon(iconPath + "selection_lasso.png"),
-                              "<B>Lasso Selection</B><br>Draw a Lasso to select elements.", toolBarActions_ );
+                              "<B>Lasso Selection</B><br>Draw a Lasso to select elements on the surface.", toolBarActions_ );
   lassoAction_->setCheckable( true );
   toolBar_->addAction( lassoAction_ );
+  volumeLassoAction_ = new QAction( QIcon(iconPath + "selection_lasso.png"),
+                              "<B>Volume Lasso Selection</B><br>Draw a Lasso to select elements in the drawn volume.", toolBarActions_ );
+  volumeLassoAction_->setCheckable( true );
+  toolBar_->addAction( volumeLassoAction_ );
   paintSphereAction_ = new QAction( QIcon(iconPath + "selection_paintSphere.png"),
                               "<B>Sphere Selection</B><br>Select elements by painting with a sphere.", toolBarActions_ );
   paintSphereAction_->setCheckable( true );
@@ -397,7 +402,8 @@ void SelectionPlugin::slotMouseEvent( QMouseEvent* _event ) {
   if ( PluginFunctions::pickMode() == TOGGLE_SELECTION)              toggleSelection(_event);       else
   if ( PluginFunctions::pickMode() == PAINT_SPHERE_SELECTION)        paintSphereSelection(_event);  else
   if ( PluginFunctions::pickMode() == CLOSEST_BOUNDARY_SELECTION)    closestBoundarySelection(_event); else
-  if ( PluginFunctions::pickMode() == LASSO_SELECTION)               handleLassoSelection(_event); else
+  if ( PluginFunctions::pickMode() == LASSO_SELECTION)               handleLassoSelection(_event, false); else
+  if ( PluginFunctions::pickMode() == VOLUME_LASSO_SELECTION)        handleLassoSelection(_event, true); else
   if ( PluginFunctions::pickMode() == CONNECTED_COMPONENT_SELECTION) componentSelection(_event);
 #ifdef ENABLE_POLYLINE_SUPPORT
   else
@@ -439,6 +445,7 @@ void SelectionPlugin::slotPickModeChanged( const std::string& _mode) {
   paintSphereAction_->setChecked( _mode == PAINT_SPHERE_SELECTION );
   boundaryAction_->setChecked(    _mode == CLOSEST_BOUNDARY_SELECTION );
   lassoAction_->setChecked(       _mode == LASSO_SELECTION );
+  volumeLassoAction_->setChecked( _mode == VOLUME_LASSO_SELECTION );
   connectedAction_->setChecked(   _mode == CONNECTED_COMPONENT_SELECTION );
 
    if ( _mode != PAINT_SPHERE_SELECTION && sphere_node_->visible() ){
@@ -518,6 +525,8 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
       PluginFunctions::pickMode( CLOSEST_BOUNDARY_SELECTION );
     else if (_action == lassoAction_)
       PluginFunctions::pickMode( LASSO_SELECTION );
+    else if (_action == volumeLassoAction_)
+      PluginFunctions::pickMode( VOLUME_LASSO_SELECTION );
     else if (_action == connectedAction_)
       PluginFunctions::pickMode( CONNECTED_COMPONENT_SELECTION );
     else if (_action == surfaceLassoAction_){

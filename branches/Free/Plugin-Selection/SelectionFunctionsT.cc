@@ -509,3 +509,65 @@ void SelectionPlugin::componentSelection(MeshT* _mesh, uint _fh) {
       }
 }
 
+//***********************************************************************************
+
+/** \brief Select all primitves that are projected to the given region
+ *
+ * @param _mesh a mesh
+ * @param _state current gl state
+ * @param _region region
+ * @return was something selected
+ */
+template< class MeshT >
+bool SelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _state, QRegion *_region)
+{
+  bool rv = false;
+  ACG::Vec3d proj;
+
+  //reset tagged status
+  typename MeshT::VertexIter v_it, v_end( _mesh->vertices_end() );
+  for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
+    _mesh->status(v_it).set_tagged(false);
+printf("Volume selection\n");
+  //tag all vertives that are projected into region
+  for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
+  {
+    proj = _state.project (_mesh->point (v_it));
+    if (_region->contains (QPoint (proj[0], _state.context_height () - proj[1])))
+    {
+      _mesh->status(v_it).set_tagged(true);
+      rv = true;
+      if (selectionType_ & VERTEX)
+      {
+         _mesh->status(v_it).set_selected( !deselection_ );
+      }
+    }
+  }
+
+
+  if (selectionType_ & EDGE) {
+    typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
+    for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
+    {
+      if (_mesh->status(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 0))).tagged () ||
+          _mesh->status(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 1))).tagged ())
+        _mesh->status(e_it).set_selected ( !deselection_ );
+    }
+  }
+  if (selectionType_ & FACE) {
+    typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
+    for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
+    {
+      bool select = false;
+      for (typename MeshT::FaceVertexIter fv_it(*_mesh,f_it); fv_it; ++fv_it)
+        if (_mesh->status (fv_it).tagged())
+          select = true;
+
+      if (select)
+        _mesh->status(f_it).set_selected ( !deselection_ );
+    }
+  }
+
+  return rv;
+}
+

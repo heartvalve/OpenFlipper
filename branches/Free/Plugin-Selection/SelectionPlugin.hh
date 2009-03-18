@@ -54,7 +54,6 @@
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
@@ -77,6 +76,7 @@
 #define PAINT_SPHERE_SELECTION "Select (Paint Sphere)"
 #define CLOSEST_BOUNDARY_SELECTION "Select (Closest Boundary)"
 #define LASSO_SELECTION "Select (Lasso)"
+#define VOLUME_LASSO_SELECTION "Select (Volume Lasso)"
 #define SURFACE_LASSO_SELECTION "Select (Surface Lasso)"
 #define CONNECTED_COMPONENT_SELECTION "Select (Connected Component)"
 
@@ -157,6 +157,8 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     QString name() { return (QString("Selections")); };
     QString description( ) { return (QString("Allows to select parts of Objects")); };
 
+    friend class SelectVolumeAction;
+
   private :
   //GUI objects
     /// Widget for Toolbox
@@ -174,6 +176,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     QAction* paintSphereAction_;
     QAction* boundaryAction_;
     QAction* lassoAction_;
+    QAction* volumeLassoAction_;
     QAction* surfaceLassoAction_;
     QAction* connectedAction_;
 
@@ -252,7 +255,11 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void componentSelection(MeshT* _mesh, uint _fh);
 
     /// Handle Mouse move event for lasso selection
-    void handleLassoSelection(QMouseEvent* _event);
+    void handleLassoSelection(QMouseEvent* _event, bool _volume);
+
+    /// Select all primitves that are projected to the given region
+    template< class MeshT >
+    bool volumeSelection(MeshT* _mesh, ACG::GLState& _state, QRegion *_region);
 
     /** @} */
   private slots:
@@ -591,6 +598,23 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     QString version() { return QString("1.0"); };
 
 };
+
+/// Traverse the scenegraph and call the selection function for mesh nodes
+class SelectVolumeAction
+{
+public:
+
+  SelectVolumeAction(QRegion *_region, SelectionPlugin *_plugin) :
+    region_(_region), plugin_(_plugin) {}
+
+  bool operator()(BaseNode* _node, ACG::GLState& _state);
+
+private:
+
+  QRegion         *region_;
+  SelectionPlugin *plugin_;
+};
+
 
 //=============================================================================
 #if defined(INCLUDE_TEMPLATES) && !defined(SELECTIONPLUGINT_C)
