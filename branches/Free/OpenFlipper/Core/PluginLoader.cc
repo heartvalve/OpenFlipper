@@ -479,6 +479,7 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
 
 
+
       if ( checkSignal(plugin,"visibilityChanged(int)" ) )
         emit log (LOGERR,"Signal visibilityChanged() now requires objectid or -1 as argument " );
 
@@ -491,7 +492,7 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"activeObjectChanged()" ) )
         emit log (LOGERR,"Signal activeObjectChanged() is now objectSelectionChanged( int _objectId ) " );
 
-      if ( checkSignal(plugin,"slotActiveObjectChanged()" ) )
+      if ( checkSlot(plugin,"slotActiveObjectChanged()" ) )
         emit log (LOGERR,"Signal activeObjectChanged() is now slotObjectSelectionChanged( int _objectId ) " );
 
       if ( checkSlot(plugin,"slotAllCleared()") )
