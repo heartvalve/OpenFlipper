@@ -382,8 +382,6 @@ void MovePlugin::ManipulatorPositionChanged(QtTranslationManipulatorNode* _node 
  */
 void MovePlugin::placeManip(QMouseEvent * _event)
 {
-   manip_size_ = PluginFunctions::sceneRadius() * 0.1;
-
    unsigned int  node_idx, target_idx;
    OpenMesh::Vec3d         hitPoint;
 
@@ -401,6 +399,7 @@ void MovePlugin::placeManip(QMouseEvent * _event)
          object->manipulatorNode()->loadIdentity();
          object->manipulatorNode()->set_center(hitPoint);
          object->manipulatorNode()->set_draw_cylinder(true);
+         object->manipulatorNode()->set_autosize(true);
          object->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
          object->manipulatorNode()->show();
 
