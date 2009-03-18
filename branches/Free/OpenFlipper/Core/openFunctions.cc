@@ -77,22 +77,39 @@ void Core::slotGetAllFilters ( QStringList& _list){
 }
 
 void Core::commandLineOpen(const char* _filename, bool asPolyMesh ){
-  if (asPolyMesh)
-    loadObject(DATA_POLY_MESH, _filename);
-  else
-    loadObject(_filename);
+  commandLineFileNames_.push_back(std::pair< const char* , bool >(_filename,asPolyMesh));
+  std::cerr << "Open" << std::endl;
 }
 
 void Core::commandLineScript(const char* _filename ) {
-  //check if we have scripting support:
-  bool ok = false;
-  slotPluginExists("scripting",ok);
-  if ( ! ok ) {
-    emit log(LOGERR ,"No scripting support available, please check if we load a scripting plugin");
-    return;
+  commandLineScriptNames_.push_back(_filename);
+}
+
+void Core::slotCommandLineOpen() {
+  std::cerr << "1" << std::endl;
+  for ( uint i = 0 ; i < commandLineFileNames_.size() ; ++i ) {
+    std::cerr << i << std::endl;
+    if (commandLineFileNames_[i].second)
+      loadObject(DATA_POLY_MESH, commandLineFileNames_[i].first);
+    else
+      loadObject(commandLineFileNames_[i].first);
   }
 
-  emit executeFileScript(_filename);
+  std::cerr << "2" << std::endl;
+  for ( uint i = 0 ; i < commandLineScriptNames_.size() ; ++i ) {
+    std::cerr << i << std::endl;
+    //check if we have scripting support:
+    bool ok = false;
+    slotPluginExists("scripting",ok);
+    if ( ! ok ) {
+      emit log(LOGERR ,"No scripting support available, please check if we load a scripting plugin");
+      return;
+    }
+
+    emit executeFileScript(commandLineScriptNames_[i]);
+  }
+
+
 }
 
 /// Load object by guessing DataType depending on the files extension
