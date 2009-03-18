@@ -1447,6 +1447,9 @@ pick(GLState& _state, PickTarget _target)
 	   _target == PICK_ANYTHING) {
 
     if (draw_manipulator_) {
+
+        _state.pick_set_maximum(5);
+
 	// Enable depth test but store original status
 	glPushAttrib(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -1458,7 +1461,7 @@ pick(GLState& _state, PickTarget _target)
 	// Correctly align nodes local coordinate system
 	update_manipulator_system(_state);
 
-	glLoadName(0);
+	_state.pick_set_name(0);
 	//================================================================================================
 	// Z-Axis
 	//================================================================================================
@@ -1482,7 +1485,7 @@ pick(GLState& _state, PickTarget _target)
 	manipulator_stacks_);
 	_state.translate(0.0, 0.0, -manipulator_height_);
 
-	glLoadName(1);
+	_state.pick_set_name(1);
 	//================================================================================================
 	// Y-Axis
 	//================================================================================================
@@ -1505,7 +1508,7 @@ pick(GLState& _state, PickTarget _target)
 	_state.translate(0.0, 0.0, -manipulator_height_);
 
 
-	glLoadName(2);
+	_state.pick_set_name(2);
 	//================================================================================================
 	// X-Axis
 	//================================================================================================
@@ -1528,7 +1531,7 @@ pick(GLState& _state, PickTarget _target)
 	manipulator_stacks_);
 	_state.translate(0.0, 0.0, -manipulator_height_);
 
-	glLoadName(3);
+	_state.pick_set_name(3);
 	//=================================================================================================
 	// Sphere
 	//=================================================================================================
@@ -1539,7 +1542,7 @@ pick(GLState& _state, PickTarget _target)
 	// Outer-Spheres
 	//=================================================================================================
 
-	glLoadName(4);
+	_state.pick_set_name(4);
 	drawCircle(2*manipulator_height_, 2*manipulator_height_ - manipulator_height_/4.0);
 
 	_state.rotate(90, 0.0, 1.0, 0.0);
