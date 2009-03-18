@@ -345,7 +345,7 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
  *
  * @param _event mouse event that occurred
  */
-void SelectionPlugin::handleLassoSelection(QMouseEvent* _event) {
+void SelectionPlugin::handleLassoSelection(QMouseEvent* _event, bool _volume) {
    unsigned int        node_idx, target_idx;
    ACG::Vec3d          hit_point;
    ACG::Vec3f          hit_pointf;
@@ -370,41 +370,55 @@ void SelectionPlugin::handleLassoSelection(QMouseEvent* _event) {
           QList <QPair<unsigned int, unsigned int> >list;
           QSet <unsigned int> objects;
 
-          if (selectionType_ & (FACE | OBJECT) && PluginFunctions::scenegraphRegionPick(ACG::SceneGraph::PICK_FACE, region, list))
+          if (!_volume)
           {
-            for (QList<QPair<unsigned int, unsigned int> >::iterator it = list.begin();
-                 it != list.end(); ++it)
+            if (selectionType_ & (FACE | OBJECT) && PluginFunctions::scenegraphRegionPick(ACG::SceneGraph::PICK_FACE, region, list))
             {
-              objects << (*it).first;
-            }
-            if (selectionType_ & FACE)
-              forEachObject (list, FACE);
-          }
-          if (selectionType_ & VERTEX && PluginFunctions::scenegraphRegionPick(ACG::SceneGraph::PICK_FRONT_VERTEX, region, list))
-          {
-            forEachObject (list, VERTEX);
-          }
-          if (selectionType_ & EDGE && PluginFunctions::scenegraphRegionPick(ACG::SceneGraph::PICK_FRONT_EDGE, region, list))
-          {
-            forEachObject (list, EDGE);
-          }
-
-          // Object selection
-          if (selectionType_ & OBJECT) {
-            BaseObjectData* object(0);
-            foreach (unsigned int i, objects)
-              if(PluginFunctions::getPickedObject(i, object))
+              for (QList<QPair<unsigned int, unsigned int> >::iterator it = list.begin();
+                   it != list.end(); ++it)
               {
-                if (sourceSelection_){
-                  object->source( !deselection_ );
-                  emit updatedObject(object->id());
-
-                } else {
-                  object->target( !deselection_ );
-                  emit activeObjectChanged();
-                  emit updatedObject(object->id());
-                }
+                objects << (*it).first;
               }
+              if (selectionType_ & FACE)
+                forEachObject (list, FACE);
+            }
+            if (selectionType_ & VERTEX && PluginFunctions::scenegraphRegionPick(ACG::SceneGraph::PICK_FRONT_VERTEX, region, list))
+            {
+              forEachObject (list, VERTEX);
+            }
+            if (selectionType_ & EDGE && PluginFunctions::scenegraphRegionPick(ACG::SceneGraph::PICK_FRONT_EDGE, region, list))
+            {
+              forEachObject (list, EDGE);
+            }
+
+            // Object selection
+            if (selectionType_ & OBJECT) {
+              BaseObjectData* object(0);
+              foreach (unsigned int i, objects)
+                if(PluginFunctions::getPickedObject(i, object))
+                {
+                  if (sourceSelection_){
+                    object->source( !deselection_ );
+                    emit updatedObject(object->id());
+
+                  } else {
+                    object->target( !deselection_ );
+                    emit activeObjectChanged();
+                    emit updatedObject(object->id());
+                  }
+                }
+            }
+          }
+          else
+          {
+            ACG::GLState &state = PluginFunctions::viewerProperties().glState();
+            bool         updateGL = state.updateGL ();
+            state.set_updateGL (false);
+
+            SelectVolumeAction action(&region, this);
+            ACG::SceneGraph::traverse (PluginFunctions::getRootNode(), action, state);
+
+            state.set_updateGL (updateGL);
           }
 
           lasso_selection_ = false;
@@ -530,6 +544,41 @@ void SelectionPlugin::forEachObject(QList<QPair<unsigned int, unsigned int> > &_
     }
   }
 }
+
+/// Traverse the scenegraph and call the selection function for nodes
+bool SelectVolumeAction::operator()(BaseNode* _node, ACG::GLState& _state)
+{
+  BaseObjectData *object = 0;
+  if (PluginFunctions::getPickedObject(_node->id (), object))
+  {
+    bool selected = false;
+    if ( object->dataType(DATA_TRIANGLE_MESH) ) {
+
+      TriMesh* m = PluginFunctions::triMesh(object);
+      selected = plugin_->volumeSelection (m, _state, region_);
+
+    } else if ( object->dataType(DATA_POLY_MESH) ) {
+
+      PolyMesh* m = PluginFunctions::polyMesh(object);
+      selected = plugin_->volumeSelection (m, _state, region_);
+    }
+
+    if (selected && plugin_->selectionType_ & OBJECT) {
+
+      if (plugin_->sourceSelection_){
+        object->source( !plugin_->deselection_ );
+      } else {
+        object->target( !plugin_->deselection_ );
+        emit plugin_->activeObjectChanged();
+      }
+    }
+
+    if (selected)
+      emit plugin_->updatedObject(object->id());
+  }
+  return true;
+}
+
 
 
 
