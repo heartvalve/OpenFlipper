@@ -197,6 +197,9 @@ signals:
    /// Tell plugins that the visibility of an object has changed
    void visibilityChanged(int _id);
 
+   /// Tell plugins that object properties such as object names have been changed
+   void objectPropertiesChanged( int _id );
+
    /** @} */
 
    //===========================================================================
@@ -212,6 +215,9 @@ signals:
 
       /// Called when a plugin changes the visibility of an object
       void slotVisibilityChanged(int _id);
+
+      /// Called by plugins if object properties like names have changed
+      void slotObjectPropertiesChanged( int _id );
 
       /// Called by Plugins if they changed the active object
       void slotObjectSelectionChanged( int _id);
@@ -415,9 +421,9 @@ private:
 
       /// Open Recent file
       void slotRecentOpen(QAction* _action);
-      
+
    public slots:
-     
+
     /// Add a Toolbox from a plugin or from scripting
      void addToolbox(QString _name ,QWidget* _widget);
 
@@ -434,7 +440,7 @@ private:
 
       /// Data root node
       SeparatorNode*  root_node_;
-      
+
       /// Node for the coordinate system
       ACG::SceneGraph::CoordsysNode* coordsysNode_;
 

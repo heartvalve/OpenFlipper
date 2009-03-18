@@ -129,6 +129,13 @@ class BaseInterface {
     */
     virtual void objectSelectionChanged( int /*_identifier*/ ) {};
 
+    /**  \brief Object properties have been changed
+      *
+      *   This signal is used to tell the other plugins that the object properties (e.g. name ) have changed
+      *
+    */
+    virtual void objectPropertiesChanged( int /*_identifier*/ ) {};
+
   private slots:
 
     /**  \brief An object has been updated by another plugin
@@ -168,6 +175,15 @@ class BaseInterface {
       *
       */
     virtual void slotVisibilityChanged( int /*_identifier*/ ) {};
+
+    /**  \brief Object properties have been changed
+      *
+      *  This slot is called if the object properties (e.g. name ) have changed
+      *  The id of the object is given as a parameter.
+      *  If multiple or all objects have changed, the id will be -1.
+      *
+    */
+    virtual void slotObjectPropertiesChanged( int /*_identifier*/ ) {};
 
   /** @} */
 
