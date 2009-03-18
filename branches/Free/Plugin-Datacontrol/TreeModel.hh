@@ -47,6 +47,9 @@ class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
+signals:
+   void dataChangedInside(const QModelIndex& _index);
+
 public:
 
     /// Constructor
@@ -107,8 +110,8 @@ public:
     /// Get the name of a given object
     bool getObjectName(BaseObject* _object , QString& _name);
 
-    /// The object with the given id has been updated. Check if model has to be changed
-    void updatedObject(int id_);
+    /// The object with the given id has been changed. Check if model also has to be changed
+    void objectChanged(int id_);
 
     /// Get the BaseObject corresponding to a given ModelIndex
     BaseObject *getItem(const QModelIndex &index) const;
@@ -124,9 +127,9 @@ private:
      */
     std::map< int, TreeItem* > map_;
 
-    /// Recursively update source,target selection up to the root of the tree
-    void updateSourceSelection(BaseObject* _obj );
-    void updateTargetSelection(BaseObject* _obj );
+    
+    void propagateUpwards(BaseObject* _obj,   int _column );
+    void propagateDownwards(BaseObject* _obj, int _column );
 
 /** @} */
 

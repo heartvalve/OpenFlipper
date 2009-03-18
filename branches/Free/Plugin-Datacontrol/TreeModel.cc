@@ -341,32 +341,35 @@ int TreeModel::rowCount(const QModelIndex &_parent) const
 
 //******************************************************************************
 
-/** \brief The object with the given id has been updated. Update the model.
+/** \brief The object with the given id has been changed. Update the model.
  * 
  * @param _id  id of an object
  */
-void TreeModel::updatedObject(int _id) {
+void TreeModel::objectChanged(int _id) {
 
   if ( _id != -1 ){
 
     BaseObject* obj = 0;
     PluginFunctions::getObject(_id, obj);
 
-    if (obj != 0 && getModelIndex(obj,0).isValid() ){
+    QModelIndex name    = getModelIndex(obj,0);
+    QModelIndex visible = getModelIndex(obj,1);
+    QModelIndex source  = getModelIndex(obj,2);
+    QModelIndex target  = getModelIndex(obj,3);
 
-//       //set new values for the object
-//       QVector< QVariant > values;
-// 
-//       values.push_back( obj->name()    );
-//       values.push_back( obj->visible() );
-//       values.push_back( obj->source()  );
-//       values.push_back( obj->target()  );
-// 
-//       for(int i=0; i < 4; i++)
-//         setData( getModelIndex(obj,i), values[i], 0);
-// 
-      return;
+    if (obj != 0 ){
+
+      if ( name.isValid() )
+        emit dataChanged( name, name);
+      if ( visible.isValid() )
+        emit dataChanged( visible, visible);
+      if ( source.isValid() )
+        emit dataChanged( source, source);
+      if ( target.isValid() )
+        emit dataChanged( target, target);
     }
+
+    return;
   }
 
   //otherwise reset the model
@@ -413,49 +416,127 @@ QModelIndex TreeModel::getModelIndex(BaseObject* _object, int _column ){
 
 //******************************************************************************
 
-/** \brief Recursively update source selection up to the root of the tree
- * 
- * @param _obj object to start with 
- */
-void TreeModel::updateSourceSelection(BaseObject* _obj ){
-
-  if ( isRoot(_obj) || (!_obj->isGroup()) )
-    return;
-
-  QList< BaseObject* > children = _obj->getLeafs();
-
-  bool source = false;
-  for (int i=0; i < children.size(); i++)
-    source |= children[i]->source();
-
-  _obj->source( source );
-
-  updateSourceSelection( _obj->parent() );
-}
-
-
-//******************************************************************************
-
-/** \brief Recursively update target selection up to the root of the tree
+/** \brief Recursively update a column up to the root of the tree
  * 
  * @param _obj object to start with
  */
-void TreeModel::updateTargetSelection(BaseObject* _obj ){
+void TreeModel::propagateUpwards(BaseObject* _obj, int _column ){
 
   if ( isRoot(_obj) || (!_obj->isGroup()) )
     return;
 
   QList< BaseObject* > children = _obj->getLeafs();
+  bool changed = false;
+  bool value   = false;
 
-  bool target = false;
-  for (int i=0; i < children.size(); i++)
-    target |= children[i]->target();
+  switch ( _column ){
 
-  _obj->target( target );
+    case 1: //VISIBILTY
 
-  updateTargetSelection( _obj->parent() );
+      for (int i=0; i < children.size(); i++)
+        value |= children[i]->visible();
+
+      if ( true /*_obj->visible() != value*/){
+        _obj->visible( value );
+        changed = true;
+      }
+      break;
+
+    case 2: //SOURCE
+
+      for (int i=0; i < children.size(); i++)
+        value |= children[i]->source();
+
+      if (_obj->source() != value){
+
+        _obj->source( value );
+        changed = true;
+      }
+      break;
+
+    case 3: //TARGET
+
+      for (int i=0; i < children.size(); i++)
+        value |= children[i]->target();
+
+      if (_obj->target() != value){
+
+        _obj->target( value );
+        changed = true;
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  //if (changed){
+
+    QModelIndex index = getModelIndex(_obj, _column);
+    emit dataChanged(index, index);
+    emit dataChangedInside(index);
+  //}
+
+  propagateUpwards( _obj->parent(), _column );
 }
 
+//******************************************************************************
+
+/** \brief Recursively update a column up to the root of the tree
+ * 
+ * @param _obj object to start with
+ */
+void TreeModel::propagateDownwards(BaseObject* _obj, int _column ){
+
+  for (int i=0; i < _obj->childCount(); i++){
+
+    BaseObject* current = _obj->child(i);
+
+    bool changed = false;
+
+    switch ( _column ){
+
+      case 1: //VISIBILTY
+
+        if ( current->visible() != _obj->visible() ){
+          current->visible( _obj->visible() );
+          changed = true;
+        }
+        break;
+
+      case 2: //SOURCE
+
+        if ( current->source() != _obj->source() ){
+
+          current->source( _obj->source() );
+          changed = true;
+        }
+        break;
+
+      case 3: //TARGET
+
+        if ( current->target() != _obj->target() ){
+
+          current->target( _obj->target() );
+          changed = true;
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    if ( current->isGroup() )
+      propagateDownwards(current, _column);
+
+    //if (changed){
+
+      QModelIndex index = getModelIndex(current, _column);
+      emit dataChanged(index, index);
+      emit dataChangedInside(index);
+    //}
+  }
+}
 
 //******************************************************************************
 
@@ -469,191 +550,178 @@ void TreeModel::updateTargetSelection(BaseObject* _obj ){
 bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
 {
   BaseObject *item = getItem(index);
-  
+
+  bool changed  = false;
+  bool newValue;
+
   if ( item->isGroup() ) {
     int childCount = 0;
     // Decide on column what to do with the value
     switch ( index.column() ) {
+
       // Name
       case 0 :
         if ( value.toString() == "" ) 
           return false; 
-        
-        item->setName( value.toString() );
+
+        if (item->name() != value.toString() ){
+          item->setName( value.toString() );
+          changed = true;
+        }
         break;
-        
+
        // visible
-      case 1 : 
-        if ( value.toInt() == Qt::Unchecked ) {
-                 
-          QList< BaseObject* > children = item->getLeafs();
-          
-          childCount = children.size();
+      case 1 :
+        newValue = value.toBool();
 
-          for (int i=0; i < children.size(); i++){
-              BaseObjectData* child = dynamic_cast< BaseObjectData* > (children[i]);
-              if (child)
-                child->hide();
-          }
-        }
-      
-        if ( value.toInt() == Qt::Checked ) {
-          
-          QList< BaseObject* > children = item->getLeafs();
-          
-          childCount = children.size();
+std::cerr << "change visibilty :" << item->visible() << " to " << newValue << std::endl;
 
-          for (int i=0; i < children.size(); i++){
-            BaseObjectData* child = dynamic_cast< BaseObjectData* > (children[i]);
-            if (child)
-              child->show();
-          }
+        if ( true /*item->visible() != newValue*/){
+
+          item->visible(newValue);
+          changed = true;
+std::cerr << "changed visibilty :" << item->visible() << " to " << newValue << std::endl;
+
+          propagateDownwards(item, index.row());
+
         }
-      
-        break;  
-      
+
+        break;
+
       // source
       case 2 : 
-        if ( value.toInt() == Qt::Unchecked ) {
+        newValue = value.toBool();
 
-          item->source(false);
-                 
+        if (item->source() != newValue){
+
+          item->source( newValue );
+          changed = true;
+  
           QList< BaseObject* > children = item->getLeafs();
-
+  
           childCount = children.size();
-          
+  
           for (int i=0; i < children.size(); i++){
-              if (children[i])
-                children[i]->source(false);
+            if (children[i] && children[i]->source() != newValue){
+              children[i]->source( newValue );
+  
+              QModelIndex childIndex = createIndex((children[i])->row(), index.column(), children[i]);
+              emit dataChanged( childIndex, childIndex );
+              emit dataChangedInside(childIndex);
+            }
           }
         }
-      
-        if ( value.toInt() == Qt::Checked ) {
 
-          item->source(true);
-          
-          QList< BaseObject* > children = item->getLeafs();
-          
-          childCount = children.size();
-
-          for (int i=0; i < children.size(); i++){
-              if (children[i])
-                children[i]->source(true);
-          }
-        } 
         break;
-      
+
       //target
       case 3 : 
-        if ( value.toInt() == Qt::Unchecked ) {
-                 
-          item->target(false);
+        newValue = value.toBool();
 
+        if (item->target() != newValue){
+
+          item->target( newValue );
+          changed = true;
+  
           QList< BaseObject* > children = item->getLeafs();
-
+  
           childCount = children.size();
-          
+  
           for (int i=0; i < children.size(); i++){
-              if (children[i])
-                children[i]->target(false);
+            if (children[i] && children[i]->target() != newValue){
+              children[i]->target( newValue );
+  
+              QModelIndex childIndex = createIndex((children[i])->row(), index.column(), children[i]);
+              emit dataChanged( childIndex, childIndex );
+              emit dataChangedInside(childIndex);
+            }
           }
         }
-      
-        if ( value.toInt() == Qt::Checked ) {
 
-          item->target(true);
-
-          QList< BaseObject* > children = item->getLeafs();
-          
-          childCount = children.size();
-
-          for (int i=0; i < children.size(); i++){
-              if (children[i])
-                children[i]->target(true);
-          }
-        }
         break;
     }
 
-    if (childCount > 0){
-      BaseObject* obj = item->getLeafs()[childCount-1];
-
-      QModelIndex childIndex = createIndex(obj->row(),index.column() , obj);
-
-      emit dataChanged( index,childIndex );
-    }else
+    if (changed){
       emit dataChanged( index, index );
+      emit dataChangedInside(index);
+    }
 
     return true; 
   }
 
   // <- Item is not a group
 
-  bool checked;
+  BaseObjectData* baseObject = 0;
 
   // Decide on column what to do with the value ( abort if anything goes wrong)
   switch ( index.column() ) {
-    // Name :
+
+    // Name
     case 0 :
       if ( value.toString() == "" ) 
         return false; 
-      item->setName(value.toString());
+
+      if (item->name() != value.toString() ){
+        item->setName( value.toString() );
+        changed = true;
+      }
       break;
-      
+
     // visible
     case 1 : 
-      if ( value.toInt() == Qt::Unchecked ) {
-        
-        BaseObjectData* baseObject = dynamic_cast< BaseObjectData* >(item);
-        
-        if ( baseObject )
-          baseObject->hide();
-        else 
-          std::cerr << " Trying to hide invisible object e.g. Group " << std::endl;
-      }
-      
-      if ( value.toInt() == Qt::Checked ) {
-        BaseObjectData* baseObject = dynamic_cast< BaseObjectData* >(item);
-        
-        if ( baseObject )
-          baseObject->show();
-        else
-          std::cerr << " Trying to show invisible object e.g. Group " << std::endl;
-      }
-      
-      break;      
-      
+
+      newValue = value.toBool();
+
+      baseObject = dynamic_cast< BaseObjectData* >(item);
+
+      if ( baseObject )
+        if ( item->visible() != newValue ){
+
+          baseObject->visible(newValue);
+          changed = true;
+
+          propagateUpwards( item->parent(), index.column() );
+        }
+
+      break;
+
     // source
     case 2 :
 
-      checked = value.toBool();
+      newValue = value.toBool();
 
-      item->source( checked );
+      if (item->source() != newValue){
 
-      updateSourceSelection( item->parent() );
+        item->source( newValue );
+        changed = true;
 
+        propagateUpwards( item->parent(), index.column() );
+      }
       break;
 
     //target
     case 3 : 
 
-      checked = value.toBool();
+      newValue = value.toBool();
 
-      item->target( checked );
+      if (item->target() != newValue){
 
-      updateTargetSelection( item->parent() );
+        item->target( newValue );
+        changed = true;
 
+        propagateUpwards( item->parent(), index.column() );
+      }
       break;
-    
+
     default:
-      
       break;
-      
   }
-  
-  emit dataChanged(index,index);
-  //force everything to be updated (needed to updated parent groups)
-  emit dataChanged(QModelIndex(),QModelIndex());
+
+  if (changed){
+    emit dataChanged(index,index);
+    emit dataChangedInside(index);
+  }
+
   return true;
 }
 

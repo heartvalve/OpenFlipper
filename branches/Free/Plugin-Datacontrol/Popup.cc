@@ -120,7 +120,8 @@ void DataControlPlugin::slotUngroup (  ) {
 
   delete group;
 
-  emit updatedObject(-1);
+  //because the parent of all items in the group changed
+  emit objectPropertiesChanged( -1 );
 }
 
 
@@ -146,8 +147,6 @@ void DataControlPlugin::slotCopy() {
       emit log(LOGERR, "Unable to copy object" );
       continue;
     }
-
-    emit updatedObject(copyItem->id());
   }
 
   emit updateView();
@@ -167,8 +166,9 @@ void DataControlPlugin::slotGroup() {
 
   //check if all objects have the same parent
   //abort if the parents differ
-  bool target = (model_->getItem( indexList[0]))->target();
-  bool source = (model_->getItem( indexList[0]))->source();
+  bool visible = (model_->getItem( indexList[0]))->visible();
+  bool target  = (model_->getItem( indexList[0]))->target();
+  bool source  = (model_->getItem( indexList[0]))->source();
 
   BaseObject* parent = (model_->getItem( indexList[0]))->parent();
   for ( int i = 1 ; i < indexList.size() ; ++i) {
@@ -179,8 +179,9 @@ void DataControlPlugin::slotGroup() {
     }
 
     //remember if at least on child was target/source
-    target |= (model_->getItem( indexList[i]))->target();
-    source |= (model_->getItem( indexList[i]))->source();
+    visible |= (model_->getItem( indexList[i]))->visible();
+    target  |= (model_->getItem( indexList[i]))->target();
+    source  |= (model_->getItem( indexList[i]))->source();
   }
 
   //create new group
@@ -200,18 +201,16 @@ void DataControlPlugin::slotGroup() {
   }
 
   //update target/source state
+  groupItem->visible(visible);
   groupItem->target(target);
   groupItem->source(source);
 
-  //get a modelIndex for the source column (2) and update the treeModel
-  QModelIndex index = model_->getModelIndex( dynamic_cast< BaseObject* > (groupItem), 2 );
-  model_->setData( index, source, 0 );
+  emit visibilityChanged( groupItem->id() );
+  emit objectPropertiesChanged( groupItem->id() );
+  emit objectSelectionChanged ( groupItem->id() );
 
-  //get a modelIndex for the target column (3) and update the treeModel
-  index = model_->getModelIndex( dynamic_cast< BaseObject* > (groupItem), 3 );
-  model_->setData( index, target, 0 );
-
-  emit updatedObject(-1);
+  //because the parent of all items in the group changed
+  emit objectPropertiesChanged( -1 );
 }
 
 
@@ -350,8 +349,10 @@ void DataControlPlugin::slotRename(){
     QString newName = QInputDialog::getText(0, tr("Rename"),
                                             tr("Enter a new name:"), QLineEdit::Normal,
                                             item->name(), &ok);
-    if (ok && !newName.isEmpty())
+    if (ok && !newName.isEmpty()){
       item->setName(newName);
+      emit objectPropertiesChanged( item->id() );
+    }
   }
 }
 

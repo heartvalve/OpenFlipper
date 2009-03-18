@@ -128,8 +128,9 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
    view_->setSelectionBehavior(QAbstractItemView::SelectRows);
    view_->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-   connect( model_,SIGNAL(dataChanged( const QModelIndex&, const QModelIndex& ) ),
-             this,SLOT(slotDataChanged( const QModelIndex&, const QModelIndex& )));
+
+   connect( model_,SIGNAL(dataChangedInside( const QModelIndex&) ),
+            this,  SLOT(  slotDataChanged( const QModelIndex& )) );
 
    connect( model_ , SIGNAL( modelAboutToBeReset() ),
             this , SLOT(slotModelAboutToReset() ) );
@@ -156,54 +157,88 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
 
 //******************************************************************************
 
-/** \brief inform the model that it has to reset when an object changes
+/** \brief update drawing of objects when the active object changed
  *
- * @param _identifier id of an object
  */
-void DataControlPlugin::slotObjectUpdated( int _identifier ) {
-  model_->updatedObject( _identifier );
+void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
+{
+
+  BaseObjectData* obj = 0;
+
+  if ( PluginFunctions::getObject( _identifier, obj) ){
+
+    if ( obj->target() ) {
+      obj->materialNode()->disable_blending();
+      OpenMesh::Vec4f base_color = obj->materialNode()->base_color();
+      base_color[3] = 1.0;
+      obj->materialNode()->set_base_color(base_color);
+      OpenMesh::Vec4f ambient_color = obj->materialNode()->ambient_color();
+      ambient_color[3] = 1.0;
+      obj->materialNode()->set_ambient_color(ambient_color);
+      OpenMesh::Vec4f diffuse_color = obj->materialNode()->diffuse_color();
+      diffuse_color[3] = 1.0;
+      obj->materialNode()->set_diffuse_color(diffuse_color);
+    }  else {
+      obj->materialNode()->enable_blending();
+      OpenMesh::Vec4f base_color = obj->materialNode()->base_color();
+      base_color[3] = 0.4;
+      obj->materialNode()->set_base_color(base_color);
+      OpenMesh::Vec4f ambient_color = obj->materialNode()->ambient_color();
+      ambient_color[3] = 0.4;
+      obj->materialNode()->set_ambient_color(ambient_color);
+      OpenMesh::Vec4f diffuse_color = obj->materialNode()->diffuse_color();
+      diffuse_color[3] = 0.4;
+      obj->materialNode()->set_diffuse_color(diffuse_color);
+    }
+  }
+
+  model_->objectChanged( _identifier );
+
+  emit updateView();
 }
 
 
 //******************************************************************************
 
-/** \brief update drawing of objects when the active object changed
- *
+/** \brief Update the model if the visibility of an object changed
+ * 
+ * @param _identifier id of an object
  */
-void DataControlPlugin::slotActiveObjectChanged()
-{
-
-  // find changed manipulator
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-      if ( o_it->target() ) {
-               o_it->materialNode()->disable_blending();
-               OpenMesh::Vec4f base_color = o_it->materialNode()->base_color();
-               base_color[3] = 1.0;
-               o_it->materialNode()->set_base_color(base_color);
-               OpenMesh::Vec4f ambient_color = o_it->materialNode()->ambient_color();
-               ambient_color[3] = 1.0;
-               o_it->materialNode()->set_ambient_color(ambient_color);
-               OpenMesh::Vec4f diffuse_color = o_it->materialNode()->diffuse_color();
-               diffuse_color[3] = 1.0;
-               o_it->materialNode()->set_diffuse_color(diffuse_color);
-      }  else {
-            o_it->materialNode()->enable_blending();
-            OpenMesh::Vec4f base_color = o_it->materialNode()->base_color();
-            base_color[3] = 0.4;
-            o_it->materialNode()->set_base_color(base_color);
-            OpenMesh::Vec4f ambient_color = o_it->materialNode()->ambient_color();
-            ambient_color[3] = 0.4;
-            o_it->materialNode()->set_ambient_color(ambient_color);
-            OpenMesh::Vec4f diffuse_color = o_it->materialNode()->diffuse_color();
-            diffuse_color[3] = 0.4;
-            o_it->materialNode()->set_diffuse_color(diffuse_color);
-      }
-  }
-
-  emit updateView();
+void DataControlPlugin::slotVisibilityChanged( int _identifier ){
+  model_->objectChanged( _identifier );
 }
 
+
+//******************************************************************************
+
+/** \brief Update the model if properties of an object changed
+ * 
+ * @param _identifier id of an object
+ */
+void DataControlPlugin::slotObjectPropertiesChanged( int _identifier ){
+  model_->objectChanged( _identifier );
+}
+
+
+//******************************************************************************
+
+/** \brief Update the model if an object was created/deleted
+ * 
+ * @param _identifier id of an object
+ */
+void DataControlPlugin::slotObjectUpdated( int _identifier ){
+
+  if (_identifier != -1){
+    //abort if the object is already in the model
+    BaseObject* obj;
+
+    if ( PluginFunctions::getObject( _identifier, obj) )
+      if ( (model_->getModelIndex(obj, 0)).isValid() )
+        return;
+  }
+
+  model_->objectChanged( -1 );
+}
 
 //******************************************************************************
 
@@ -242,29 +277,32 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
  * @param topLeft index in the model
  * @param
  */
-void DataControlPlugin::slotDataChanged ( const QModelIndex & topLeft,
-                                          const QModelIndex & /*bottomRight*/ )
+void DataControlPlugin::slotDataChanged ( const QModelIndex& _index)
 {
 
-  switch (topLeft.column()) {
+  BaseObject* obj = model_->getItem(_index);
+
+  switch (_index.column()) {
     // Name
     case 0:
+      emit objectPropertiesChanged( obj->id() );
       view_->expandToDepth(0);
       break;
 
     // show/hide
     case 1:
-        emit visibilityChanged( );
-        emit updateView();
+      emit visibilityChanged( obj->id() );
+      emit updateView();
       break;
 
     // source
     case 2:
+      emit objectSelectionChanged( obj->id() );
       break;
 
     // target
     case 3:
-      emit activeObjectChanged();
+      emit objectSelectionChanged( obj->id() );
       break;
 
     default:

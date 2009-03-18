@@ -48,8 +48,7 @@ void DataControlPlugin::slotContextMenuTarget( ) {
   
   object->target( targetAction_->isChecked() );
   
-  emit activeObjectChanged();
-  emit updatedObject(objectId);
+  emit objectSelectionChanged(objectId);
 }
 
 void DataControlPlugin::slotContextMenuHide( ) {
@@ -65,8 +64,8 @@ void DataControlPlugin::slotContextMenuHide( ) {
   
   object->hide();
   
+  emit visibilityChanged(objectId);
   emit updateView();
-  emit updatedObject(objectId);
 }
 
 
@@ -83,7 +82,7 @@ void DataControlPlugin::slotContextMenuSource( ) {
   
   object->source( sourceAction_->isChecked() );
   
-  emit updatedObject(objectId);
+  emit objectSelectionChanged(objectId);
 }
 
 void DataControlPlugin::slotUpdateContextMenu( int _objectId) {
