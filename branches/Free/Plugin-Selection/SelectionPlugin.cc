@@ -241,6 +241,19 @@ void SelectionPlugin::pluginsInitialized() {
 
   connect( toolBarActions_, SIGNAL( triggered(QAction*) ), this, SLOT(toolBarActionClicked(QAction*)) );
   connect( toolBarTypes_, SIGNAL( triggered(QAction*) ), this, SLOT(toolBarActionClicked(QAction*)) );
+
+
+  //connect the toolbar Actions to the Toolbox Buttons
+  connect( tool_->objectSelection, SIGNAL(clicked(bool)), objectAction_, SLOT(setChecked(bool)) );
+  connect( tool_->vertexSelection, SIGNAL(clicked(bool)), vertexAction_, SLOT(setChecked(bool)) );
+  connect( tool_->edgeSelection,   SIGNAL(clicked(bool)), edgeAction_,   SLOT(setChecked(bool)) );
+  connect( tool_->faceSelection,   SIGNAL(clicked(bool)), faceAction_,   SLOT(setChecked(bool)) );
+
+  connect( objectAction_, SIGNAL(toggled(bool)),tool_->objectSelection , SLOT(setChecked(bool)) );
+  connect( vertexAction_, SIGNAL(toggled(bool)),tool_->vertexSelection , SLOT(setChecked(bool)) );
+  connect( edgeAction_,   SIGNAL(toggled(bool)),tool_->edgeSelection ,   SLOT(setChecked(bool)) );
+  connect( faceAction_,   SIGNAL(toggled(bool)),tool_->faceSelection ,   SLOT(setChecked(bool)) );
+
 }
 
 //***********************************************************************************
@@ -296,36 +309,39 @@ bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
   QSize size(300, 300);
   tool_->resize(size);
 
-  connect( tool_->selectBoundaryVerticesButton,SIGNAL(clicked()), this,SLOT(slotSelectBoundaryVertices()) );
-  connect( tool_->selectBoundaryFacesButton,SIGNAL(clicked()), this,SLOT(slotSelectBoundaryFaces()) );
+  //Selection Mode
+  QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
 
-  connect( tool_->clearVertexSelectionButton ,SIGNAL(clicked()), this,SLOT(slotClearVertexSelection()) );
-  connect( tool_->clearFaceSelectionButton ,SIGNAL(clicked()), this,SLOT(slotClearFaceSelection()) );
+  tool_->objectSelection->setIcon( QIcon(iconPath + "selection_object.png") );
+  tool_->vertexSelection->setIcon( QIcon(iconPath + "selection_vertex.png") );
+  tool_->edgeSelection->setIcon( QIcon(iconPath + "selection_edge.png") );
+  tool_->faceSelection->setIcon( QIcon(iconPath + "selection_face.png") );
 
-  connect( tool_->selectAllVerticesButton ,SIGNAL(clicked()), this,SLOT(slotSelectAllVertices()) );
-  connect( tool_->selectAllFacesButton ,SIGNAL(clicked()), this,SLOT(slotSelectAllFaces()) );
+  connect (tool_->restrictOnTargets, SIGNAL(clicked()), this, SLOT(slotToggleSelectionRestriction()) );
 
-  connect( tool_->invertVertexSelectionButton ,SIGNAL(clicked()), this,SLOT(slotInvertVertexSelection()) );
-  connect( tool_->invertFaceSelectionButton ,SIGNAL(clicked()), this,SLOT(slotInvertFaceSelection()) );
+  //Selection Buttons
+  connect( tool_->selectAll,       SIGNAL(clicked()), this,SLOT(slotSelectAll()) );
+  connect( tool_->clearSelection,  SIGNAL(clicked()), this,SLOT(slotClearSelection()) );
 
-  connect( tool_->growVertexSelectionButton ,SIGNAL(clicked()), this,SLOT(slotGrowVertexSelection()) );
-  connect( tool_->growFaceSelectionButton ,SIGNAL(clicked()), this,SLOT(slotGrowFaceSelection()) );
+  connect( tool_->growSelection,   SIGNAL(clicked()), this,SLOT(slotGrowSelection()) );
+  connect( tool_->shrinkSelection, SIGNAL(clicked()), this,SLOT(slotShrinkSelection()) );
 
-  connect( tool_->shrinkVertexSelectionButton ,SIGNAL(clicked()), this,SLOT(slotShrinkVertexSelection()) );
-  connect( tool_->shrinkFaceSelectionButton ,SIGNAL(clicked()), this,SLOT(slotShrinkFaceSelection()) );
+  connect( tool_->invertSelection, SIGNAL(clicked()), this,SLOT(slotInvertSelection()) );
+  connect( tool_->selectBoundary,  SIGNAL(clicked()), this,SLOT(slotSelectBoundary()) );
 
-  connect( tool_->setAreaButton ,SIGNAL(clicked()), this,SLOT(slotSetArea()) );
-  connect( tool_->setHandleButton ,SIGNAL(clicked()), this,SLOT(slotSetHandle()) );
-  connect( tool_->clearAreaButton ,SIGNAL(clicked()), this,SLOT(slotClearArea()) );
-  connect( tool_->clearHandleButton ,SIGNAL(clicked()), this,SLOT(slotClearHandle()));
-//    connect( tool_->saveModelingArea ,SIGNAL(clicked()), this,SLOT(slotSaveModelingArea()));
-//    connect( tool_->loadModelingArea ,SIGNAL(clicked()), this,SLOT(slotLoadModelingArea()));
-//    connect( tool_->saveHandleRegion ,SIGNAL(clicked()), this,SLOT(slotSaveHandleRegion()));
-//    connect( tool_->loadHandleRegion ,SIGNAL(clicked()), this,SLOT(slotLoadHandleRegion()));
-//    connect( tool_->saveSelection ,SIGNAL(clicked()), this,SLOT(slotSaveSelection()));
-//    connect( tool_->loadSelection ,SIGNAL(clicked()), this,SLOT(slotLoadSelection()));
-//    connect( tool_->saveSelectionFaces ,SIGNAL(clicked()), this,SLOT(slotSaveFaceSelection()));
-//    connect( tool_->loadSelectionFaces ,SIGNAL(clicked()), this,SLOT(slotLoadFaceSelection()));
+  connect( tool_->deleteSelection,  SIGNAL(clicked()), this,SLOT(slotDeleteSelection()) );
+
+  connect( tool_->loadSelection, SIGNAL(clicked()), this,SLOT(slotLoadSelection()) );
+  connect( tool_->saveSelection, SIGNAL(clicked()), this,SLOT(slotSaveSelection()) );
+
+  //Mesh Properties
+  connect( tool_->setModelingArea, SIGNAL(clicked()), this,SLOT(slotSetArea()) );
+  connect( tool_->setHandleRegion, SIGNAL(clicked()), this,SLOT(slotSetHandle()) );
+  connect( tool_->setFeatures,     SIGNAL(clicked()), this,SLOT(slotSetFeatures()) );
+
+  connect( tool_->clearModelingArea, SIGNAL(clicked()), this,SLOT(slotClearArea()) );
+  connect( tool_->clearHandleRegion, SIGNAL(clicked()), this,SLOT(slotClearHandle()));
+  connect( tool_->clearFeatures,     SIGNAL(clicked()), this,SLOT(slotClearFeatures()));
 
   return true;
 }
@@ -544,7 +560,7 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
  */
 void SelectionPlugin::slotSetArea() {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -569,7 +585,7 @@ void SelectionPlugin::slotSetArea() {
  */
 void SelectionPlugin::slotSetHandle() {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -590,11 +606,35 @@ void SelectionPlugin::slotSetHandle() {
 //******************************************************************************
 
 
+/** \brief convert current selection to feature
+ */
+void SelectionPlugin::slotSetFeatures() {
+  PluginFunctions::IteratorRestriction restriction;
+  if ( !tool_->restrictOnTargets->isChecked() )
+    restriction = PluginFunctions::ALL_OBJECTS;
+  else
+    restriction = PluginFunctions::TARGET_OBJECTS;
+
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
+        o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+    if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
+        set_features(PluginFunctions::triMesh(*o_it));
+    if ( o_it->dataType( DATA_POLY_MESH ) )
+        set_features(PluginFunctions::polyMesh(*o_it));
+    o_it->update();
+  }
+
+  emit updateView();
+}
+
+//******************************************************************************
+
+
 /** \brief Clear Handle Bits
  */
 void SelectionPlugin::slotClearHandle() {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -618,7 +658,7 @@ void SelectionPlugin::slotClearHandle() {
  */
 void SelectionPlugin::slotClearArea() {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -638,11 +678,34 @@ void SelectionPlugin::slotClearArea() {
 
 //******************************************************************************
 
+/** \brief Clear Features
+ */
+void SelectionPlugin::slotClearFeatures() {
+  PluginFunctions::IteratorRestriction restriction;
+  if ( !tool_->restrictOnTargets->isChecked() )
+    restriction = PluginFunctions::ALL_OBJECTS;
+  else
+    restriction = PluginFunctions::TARGET_OBJECTS;
+
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
+        o_it != PluginFunctions::objectsEnd(); ++o_it) {
+    if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
+        clear_features(PluginFunctions::triMesh(*o_it));
+    if ( o_it->dataType( DATA_POLY_MESH ) )
+        clear_features(PluginFunctions::polyMesh(*o_it));
+    o_it->update();
+  }
+
+  emit updateView();
+}
+
+//******************************************************************************
+
 /** \brief Delete all selected elements of the target meshes
  */
 void SelectionPlugin::slotDeleteSelection() {
   PluginFunctions::IteratorRestriction restriction;
-  if ( tool_->selectOnAll->isChecked() )
+  if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
@@ -662,6 +725,16 @@ void SelectionPlugin::slotDeleteSelection() {
   emit updateView();
 }
 
+
+/** \brief Toggle the selection Restriction
+ * 
+ */
+void SelectionPlugin::slotToggleSelectionRestriction(){
+  if ( tool_->restrictOnTargets->isChecked() )
+      tool_->restrictOnTargets->setText("Select on target objects only");
+  else
+      tool_->restrictOnTargets->setText("Select on all objects");
+}
 
 //******************************************************************************
 
@@ -708,7 +781,7 @@ void SelectionPlugin::saveIniFile( INIFile& _ini , int _id) {
  */
 void SelectionPlugin::loadIniFile( INIFile& _ini, int _id )
 {
-  std::cerr << "a" << std::endl;
+
   BaseObjectData* object;
   if ( !PluginFunctions::getObject(_id,object) ) {
     emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );

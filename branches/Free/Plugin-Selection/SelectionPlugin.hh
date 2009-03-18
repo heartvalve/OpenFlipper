@@ -197,6 +197,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     template< typename MeshType >
     void set_handle(MeshType* _mesh);
 
+    /// convert current selection to features
+    template< typename MeshType >
+    void set_features(MeshType* _mesh);
+
     /// Clear Handle vertices
     template< typename MeshType >
     void clear_handle(MeshType* _mesh);
@@ -204,6 +208,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Clear Area
     template< typename MeshType >
     void clear_area(MeshType* _mesh);
+
+    /// Clear Features
+    template< typename MeshType >
+    void clear_features(MeshType* _mesh);
 
     /// Delete all selected elements of a mesh
     template< typename MeshT >
@@ -270,14 +278,23 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Use current selection to set Handle bits
     void slotSetHandle();
 
+    /// convert current selection to feature
+    void slotSetFeatures();
+
     /// Clear Handle Bits
     void slotClearHandle();
 
     /// Clear Area Bits
     void slotClearArea();
 
+    /// Clear Features
+    void slotClearFeatures();
+
     /// Delete all selected elements of the target meshes
     void slotDeleteSelection();
+
+    /// Toggle the selection Restriction
+    void slotToggleSelectionRestriction();
 
   private:
 
@@ -308,45 +325,12 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Grow the current selection
     void slotGrowSelection();
 
-    //==========================================
+    /// load a selection
+    void slotLoadSelection();
 
-    /// Select all vertices of the active object
-    void slotSelectAllVertices();
+    /// Save the current selection
+    void slotSaveSelection();
 
-    /// Clear Vertex selection of current objects
-    void slotClearVertexSelection();
-
-    /// Invert the current vertex selection
-    void slotInvertVertexSelection();
-
-    /// Select all vertices which lie on the boundary of the object
-    void slotSelectBoundaryVertices();
-
-    /// Shrink the current vertex selection
-    void slotShrinkVertexSelection();
-
-    /// Grow the current vertex selection
-    void slotGrowVertexSelection();
-
-    //==========================================
-
-    /// Select all faces of the active object
-    void slotSelectAllFaces();
-
-    /// Clear Face selection of current objects
-    void slotClearFaceSelection();
-
-    /// Invert the current face selection
-    void slotInvertFaceSelection();
-
-    /// Select all Faces which lie on the boundary of the object
-    void slotSelectBoundaryFaces();
-
-    /// Shrink the current face selection
-    void slotShrinkFaceSelection();
-
-    /// Grow the current face selection
-    void slotGrowFaceSelection();
 
   /** @} */
 

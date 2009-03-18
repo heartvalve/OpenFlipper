@@ -5,27 +5,161 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>352</width>
-    <height>801</height>
+    <width>267</width>
+    <height>659</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>controls</string>
+   <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout_4" >
    <item>
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
-      <string>Lasso selection</string>
+      <string> Selection Mode </string>
      </property>
-     <layout class="QVBoxLayout" >
-      <item>
-       <widget class="QCheckBox" name="selectOnAll" >
+     <layout class="QFormLayout" name="formLayout" >
+      <item row="0" column="1" >
+       <layout class="QHBoxLayout" name="horizontalLayout_3" >
+        <item>
+         <widget class="QPushButton" name="objectSelection" >
+          <property name="toolTip" >
+           <string>Enable Object Selection</string>
+          </property>
+          <property name="statusTip" >
+           <string>Enable Object Selection</string>
+          </property>
+          <property name="text" >
+           <string/>
+          </property>
+          <property name="iconSize" >
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="checkable" >
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive" >
+           <bool>true</bool>
+          </property>
+          <property name="flat" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="vertexSelection" >
+          <property name="toolTip" >
+           <string>Enable Vertex Selection</string>
+          </property>
+          <property name="statusTip" >
+           <string>Enable Vertex Selection</string>
+          </property>
+          <property name="text" >
+           <string/>
+          </property>
+          <property name="iconSize" >
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="checkable" >
+           <bool>true</bool>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive" >
+           <bool>true</bool>
+          </property>
+          <property name="flat" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="edgeSelection" >
+          <property name="toolTip" >
+           <string>Enable Edge Selection</string>
+          </property>
+          <property name="statusTip" >
+           <string>Enable Edge Selection</string>
+          </property>
+          <property name="text" >
+           <string/>
+          </property>
+          <property name="iconSize" >
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="checkable" >
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive" >
+           <bool>true</bool>
+          </property>
+          <property name="flat" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="faceSelection" >
+          <property name="toolTip" >
+           <string>Enable Face Selection</string>
+          </property>
+          <property name="statusTip" >
+           <string>Enable Face Selection</string>
+          </property>
+          <property name="text" >
+           <string/>
+          </property>
+          <property name="iconSize" >
+           <size>
+            <width>32</width>
+            <height>32</height>
+           </size>
+          </property>
+          <property name="checkable" >
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive" >
+           <bool>true</bool>
+          </property>
+          <property name="flat" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QPushButton" name="restrictOnTargets" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="toolTip" >
-         <string>Select on all or only on active Objects</string>
+         <string>Restrict all selection methods in this toolbox to target objects</string>
+        </property>
+        <property name="statusTip" >
+         <string>Restrict all selection methods in this toolbox to target objects</string>
         </property>
         <property name="text" >
-         <string>Select on all Objects</string>
+         <string>Select on target objects only</string>
+        </property>
+        <property name="checkable" >
+         <bool>true</bool>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -33,198 +167,139 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <item>
-      <widget class="QGroupBox" name="groupBox_3" >
-       <property name="title" >
-        <string>Vertex Selection</string>
-       </property>
-       <layout class="QVBoxLayout" >
-        <item>
-         <widget class="QPushButton" name="selectAllVerticesButton" >
-          <property name="text" >
-           <string>Select all</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="clearVertexSelectionButton" >
-          <property name="text" >
-           <string>Clear</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="invertVertexSelectionButton" >
-          <property name="text" >
-           <string>Invert</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="shrinkVertexSelectionButton" >
-          <property name="text" >
-           <string>Shrink</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="growVertexSelectionButton" >
-          <property name="text" >
-           <string>Grow</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="selectBoundaryVerticesButton" >
-          <property name="text" >
-           <string>Select Boundary </string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="loadSelection" >
-          <property name="text" >
-           <string>loadSelection</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="saveSelection" >
-          <property name="text" >
-           <string>saveSelection</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox_2" >
-       <property name="title" >
-        <string>Face Selection</string>
-       </property>
-       <layout class="QVBoxLayout" >
-        <item>
-         <widget class="QPushButton" name="selectAllFacesButton" >
-          <property name="text" >
-           <string>Select all</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="clearFaceSelectionButton" >
-          <property name="text" >
-           <string>Clear</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="invertFaceSelectionButton" >
-          <property name="text" >
-           <string>Invert</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="shrinkFaceSelectionButton" >
-          <property name="text" >
-           <string>Shrink</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="growFaceSelectionButton" >
-          <property name="text" >
-           <string>Grow</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="selectBoundaryFacesButton" >
-          <property name="text" >
-           <string>Select Boundary </string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="loadSelectionFaces" >
-          <property name="text" >
-           <string>loadSelection</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="saveSelectionFaces" >
-          <property name="text" >
-           <string>saveSelection</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_4" >
+    <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
-      <string>Modeling Regions</string>
+      <string> Selection </string>
      </property>
-     <layout class="QGridLayout" >
+     <layout class="QGridLayout" name="gridLayout" >
       <item row="0" column="0" >
-       <widget class="QPushButton" name="setAreaButton" >
+       <widget class="QPushButton" name="selectAll" >
+        <property name="toolTip" >
+         <string>Select all elements of each (target) object</string>
+        </property>
+        <property name="statusTip" >
+         <string>Select all elements of each (target) object</string>
+        </property>
         <property name="text" >
-         <string>Set Modeling Area</string>
+         <string>Select All</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="QPushButton" name="setHandleButton" >
+       <widget class="QPushButton" name="clearSelection" >
+        <property name="toolTip" >
+         <string>Clear the selection of each (target) object</string>
+        </property>
+        <property name="statusTip" >
+         <string>Clear the selection of each (target) object</string>
+        </property>
         <property name="text" >
-         <string>Set Handle Region</string>
+         <string>Clear</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QPushButton" name="clearAreaButton" >
+       <widget class="QPushButton" name="growSelection" >
+        <property name="toolTip" >
+         <string>Grow selection on all (target) objects</string>
+        </property>
+        <property name="statusTip" >
+         <string>Grow selection on all (target) objects</string>
+        </property>
         <property name="text" >
-         <string>Clear Modeling Area</string>
+         <string>Grow</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="QPushButton" name="clearHandleButton" >
+       <widget class="QPushButton" name="shrinkSelection" >
+        <property name="toolTip" >
+         <string>Shrink selection on all (target) objects</string>
+        </property>
+        <property name="statusTip" >
+         <string>Shrink selection on all (target) objects</string>
+        </property>
         <property name="text" >
-         <string>Clear Handle Region</string>
+         <string>Shrink</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0" >
-       <widget class="QPushButton" name="loadModelingArea" >
+       <widget class="QPushButton" name="invertSelection" >
+        <property name="toolTip" >
+         <string>Invert selection on all (target) objects</string>
+        </property>
+        <property name="statusTip" >
+         <string>Invert selection on all (target) objects</string>
+        </property>
         <property name="text" >
-         <string>Load Modeling Area</string>
+         <string>Invert</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1" >
-       <widget class="QPushButton" name="loadHandleRegion" >
+       <widget class="QPushButton" name="selectBoundary" >
+        <property name="toolTip" >
+         <string>Select Boundary on all (target) objects</string>
+        </property>
+        <property name="statusTip" >
+         <string>Select Boundary on all (target) objects</string>
+        </property>
         <property name="text" >
-         <string>Load Handle Region</string>
+         <string>Select Boundary</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0" >
-       <widget class="QPushButton" name="saveModelingArea" >
+       <widget class="QPushButton" name="deleteSelection" >
+        <property name="toolTip" >
+         <string>Delete selection on all (target) objects</string>
+        </property>
+        <property name="statusTip" >
+         <string>Delete selection on all (target) objects</string>
+        </property>
         <property name="text" >
-         <string>Save Modeling Area</string>
+         <string>Delete</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1" >
-       <widget class="QPushButton" name="saveHandleRegion" >
+      <item row="4" column="0" >
+       <widget class="Line" name="line_2" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" >
+       <widget class="Line" name="line_3" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0" >
+       <widget class="QPushButton" name="loadSelection" >
+        <property name="toolTip" >
+         <string>Load current selection from file</string>
+        </property>
+        <property name="statusTip" >
+         <string>Load current selection from file</string>
+        </property>
         <property name="text" >
-         <string>Save Handle Region</string>
+         <string>Load Selection</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" >
+       <widget class="QPushButton" name="saveSelection" >
+        <property name="toolTip" >
+         <string>Save current selection to file</string>
+        </property>
+        <property name="statusTip" >
+         <string>Save current selection to file</string>
+        </property>
+        <property name="text" >
+         <string>Save Selection</string>
         </property>
        </widget>
       </item>
@@ -232,14 +307,141 @@
     </widget>
    </item>
    <item>
-    <spacer>
+    <widget class="QGroupBox" name="groupBox_3" >
+     <property name="title" >
+      <string> Mesh Properties </string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3" >
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2" >
+        <item>
+         <widget class="QLabel" name="label_3" >
+          <property name="text" >
+           <string>Convert Selection to:</string>
+          </property>
+          <property name="wordWrap" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2" >
+          <item>
+           <widget class="QPushButton" name="setModelingArea" >
+            <property name="toolTip" >
+             <string>Convert the selection of all (target) objects to a modeling area</string>
+            </property>
+            <property name="statusTip" >
+             <string>Convert the selection of all (target) objects to a modeling area</string>
+            </property>
+            <property name="text" >
+             <string>Modeling Area</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="setHandleRegion" >
+            <property name="toolTip" >
+             <string>Convert the selection of all (target) objects to a handle region</string>
+            </property>
+            <property name="statusTip" >
+             <string>Convert the selection of all (target) objects to a handle region</string>
+            </property>
+            <property name="text" >
+             <string>Handle Region</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="setFeatures" >
+            <property name="toolTip" >
+             <string>Convert the selection of all (target) objects to a feature</string>
+            </property>
+            <property name="statusTip" >
+             <string>Convert the selection of all (target) objects to a feature</string>
+            </property>
+            <property name="text" >
+             <string>Feature</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout" >
+        <item>
+         <widget class="QLabel" name="label_4" >
+          <property name="text" >
+           <string>Clear Property:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout" >
+          <item>
+           <widget class="QPushButton" name="clearModelingArea" >
+            <property name="toolTip" >
+             <string>Clear the modeling area of all (target) objects</string>
+            </property>
+            <property name="statusTip" >
+             <string>Clear the modeling area of all (target) objects</string>
+            </property>
+            <property name="text" >
+             <string>Clear Modeling Area</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearHandleRegion" >
+            <property name="toolTip" >
+             <string>Clear the handle region of all (target) objects</string>
+            </property>
+            <property name="statusTip" >
+             <string>Clear the handle region of all (target) objects</string>
+            </property>
+            <property name="text" >
+             <string>Clear Handle Region</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearFeatures" >
+            <property name="toolTip" >
+             <string>Clear the features of all (target) objects</string>
+            </property>
+            <property name="statusTip" >
+             <string>Clear the features of all (target) objects</string>
+            </property>
+            <property name="text" >
+             <string>Clear Features</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
-       <width>334</width>
-       <height>191</height>
+       <width>20</width>
+       <height>40</height>
       </size>
      </property>
     </spacer>
