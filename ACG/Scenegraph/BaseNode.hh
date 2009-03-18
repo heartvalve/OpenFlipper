@@ -339,14 +339,16 @@ public:
     /// Execute action on node first and then on its children
     NodeFirst = 0x1,
     /// Execute action the children first and then on this node
-    ChildrenFirst = 0x2
+    ChildrenFirst = 0x2,
+    /// Draw node in second pass
+    SecondPass = 0x4
   };
 
   /// Return how the node should be traversed
-  TraverseMode traverseMode () const { return traverseMode_; }
+  unsigned int traverseMode () const { return traverseMode_; }
 
   /// Set traverse mode for node
-  void setTraverseMode(TraverseMode _mode) { traverseMode_ = _mode; }
+  void setTraverseMode(unsigned int _mode) { traverseMode_ = _mode; }
   
 private:  
 
@@ -389,7 +391,7 @@ private:
   bool dirty_;
 
   /// traverse mode
-  TraverseMode traverseMode_;
+  unsigned int traverseMode_;
 };
 
 
