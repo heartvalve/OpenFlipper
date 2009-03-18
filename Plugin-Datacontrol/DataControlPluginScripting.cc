@@ -164,17 +164,11 @@ QString DataControlPlugin::getObjectName( int objectId ) {
 void DataControlPlugin::hideObject( int objectId ) {
 
   BaseObjectData* object;
-  if ( ! PluginFunctions::getObject(objectId,object) )
-    return;
+  if ( PluginFunctions::getObject(objectId,object) ){
+    object->hide();
 
-  if ( object == 0)
-    return;
-
-  object->hide();
-
-  //get a modelIndex for the visible column (1) and update the treeModel
-  QModelIndex index = model_->getModelIndex( dynamic_cast< BaseObject* > (object), 1 );
-  model_->setData( index, false, 0 );
+    emit visibilityChanged( object->id() );
+  }
 }
 
 
@@ -188,18 +182,11 @@ void DataControlPlugin::hideObject( int objectId ) {
 void DataControlPlugin::setTarget( int objectId, bool _target ) {
 
   BaseObjectData* object;
-  if ( ! PluginFunctions::getObject(objectId,object) )
-    return;
+  if ( PluginFunctions::getObject(objectId,object) ){
+    object->target( _target );
 
-  if ( object == 0)
-    return;
-
-  object->target( _target );
-
-  //get a modelIndex for the target column (3) and update the treeModel
-  QModelIndex index = model_->getModelIndex( dynamic_cast< BaseObject* > (object), 3 );
-  model_->setData( index, _target, 0 );
-
+    emit objectSelectionChanged( object->id() );
+  }
 }
 
 
@@ -213,17 +200,12 @@ void DataControlPlugin::setTarget( int objectId, bool _target ) {
 void DataControlPlugin::setSource( int objectId, bool _source ) {
 
   BaseObjectData* object;
-  if ( ! PluginFunctions::getObject(objectId,object) )
-    return;
+  if ( PluginFunctions::getObject(objectId,object) ){
+    object->source( _source );
 
-  if ( object == 0)
-    return;
+    emit objectSelectionChanged( object->id() );
+  }
 
-  object->source( _source );
-
-  //get a modelIndex for the source column (2) and update the treeModel
-  QModelIndex index = model_->getModelIndex( dynamic_cast< BaseObject* > (object), 2 );
-  model_->setData( index, _source, 0 );
 }
 
 
@@ -237,17 +219,11 @@ void DataControlPlugin::setSource( int objectId, bool _source ) {
 void DataControlPlugin::setObjectName( int objectId, QString _name ) {
 
   BaseObjectData* object;
-  if ( ! PluginFunctions::getObject(objectId,object) )
-    return;
+  if ( PluginFunctions::getObject(objectId,object) ){
+    object->setName( _name );
 
-  if ( object == 0)
-    return;
-
-  object->setName( _name );
-
-  //get a modelIndex for the name column (0) and update the treeModel
-  QModelIndex index = model_->getModelIndex( dynamic_cast< BaseObject* > (object), 0 );
-  model_->setData( index, _name, 0 );
+    emit objectPropertiesChanged( object->id() );
+  }
 }
 
 
@@ -279,17 +255,11 @@ void DataControlPlugin::deleteObject( int objectId ) {
 void DataControlPlugin::showObject( int objectId ) {
 
   BaseObjectData* object;
-  if ( ! PluginFunctions::getObject(objectId,object) )
-    return;
+  if ( PluginFunctions::getObject(objectId,object) ){
+    object->show();
 
-  if ( object == 0)
-    return;
-
-  object->show();
-
-  //get a modelIndex for the visible column (1) and update the treeModel
-  QModelIndex index = model_->getModelIndex( dynamic_cast< BaseObject* > (object), 1 );
-  model_->setData( index, true, 0 );
+    emit visibilityChanged( object->id() );
+  }
 }
 
 
@@ -353,21 +323,17 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
   groupItem->target(target);
   groupItem->source(source);
 
-  //get a modelIndex for the source column (2) and update the treeModel
-  QModelIndex index = model_->getModelIndex( dynamic_cast< BaseObject* > (groupItem), 2 );
-  model_->setData( index, source, 0 );
+  emit objectPropertiesChanged( groupItem->id() );
+  emit objectSelectionChanged ( groupItem->id() );
 
-  //get a modelIndex for the target column (3) and update the treeModel
-  index = model_->getModelIndex( dynamic_cast< BaseObject* > (groupItem), 3 );
-  model_->setData( index, target, 0 );
-
-  emit updatedObject(-1);
+  //because the parent of all items in the group changed
+  emit objectPropertiesChanged( -1 );
 }
 
 
 //******************************************************************************
 
-/** \brief Set Traget Selection for all objects
+/** \brief Set Target Selection for all objects
  *
  */
 void DataControlPlugin::setAllTarget() {
@@ -375,18 +341,8 @@ void DataControlPlugin::setAllTarget() {
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->target(true);
 
-    BaseObject* obj = 0;
-    PluginFunctions::getObject(o_it->id(), obj);
-
-    //get a modelIndex for the target column (3) and update the treeModel
-    if (obj != 0){
-      QModelIndex index = model_->getModelIndex( obj, 3 );
-      model_->setData( index, true, 0 );
-    }
+    emit objectSelectionChanged( o_it->id() );
   }
-
-  emit activeObjectChanged();
-  emit updatedObject(-1);
 }
 
 
@@ -400,17 +356,8 @@ void DataControlPlugin::setAllSource() {
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->source(true);
 
-    //get a modelIndex for the source column (2) and update the treeModel
-    BaseObject* obj = 0;
-    PluginFunctions::getObject(o_it->id(), obj);
-
-    if (obj != 0){
-      QModelIndex index = model_->getModelIndex( obj, 2 );
-      model_->setData( index, true, 0 );
-    }
+    emit objectSelectionChanged( o_it->id() );
   }
-
-  emit updatedObject(-1);
 }
 
 
@@ -424,18 +371,8 @@ void DataControlPlugin::clearAllTarget() {
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->target(false);
 
-    //get a modelIndex for the target column (3) and update the treeModel
-    BaseObject* obj = 0;
-    PluginFunctions::getObject(o_it->id(), obj);
-
-    if (obj != 0){
-      QModelIndex index = model_->getModelIndex( obj, 3 );
-      model_->setData( index, false, 0 );
-    }
+    emit objectSelectionChanged( o_it->id() );
   }
-
-  emit activeObjectChanged();
-  emit updatedObject(-1);
 }
 
 
@@ -449,17 +386,8 @@ void DataControlPlugin::clearAllSource() {
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->source(false);
 
-    //get a modelIndex for the source column (2) and update the treeModel
-    BaseObject* obj = 0;
-    PluginFunctions::getObject(o_it->id(), obj);
-
-    if (obj != 0){
-      QModelIndex index = model_->getModelIndex( obj, 2 );
-      model_->setData( index, false, 0 );
-    }
+    emit objectSelectionChanged( o_it->id() );
   }
-
-  emit updatedObject(-1);
 }
 
 
@@ -473,14 +401,7 @@ void DataControlPlugin::hideAll() {
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->hide();
 
-    //get a modelIndex for the visible column (1) and update the treeModel
-    BaseObject* obj = 0;
-    PluginFunctions::getObject(o_it->id(), obj);
-
-    if (obj != 0){
-      QModelIndex index = model_->getModelIndex( obj, 1 );
-      model_->setData( index, false, 0 );
-    }
+    emit visibilityChanged( o_it->id() );
   }
 
   emit updateView();
@@ -497,14 +418,7 @@ void DataControlPlugin::showAll() {
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->show();
 
-    //get a modelIndex for the visible column (1) and update the treeModel
-    BaseObject* obj = 0;
-    PluginFunctions::getObject(o_it->id(), obj);
-
-    if (obj != 0){
-      QModelIndex index = model_->getModelIndex( obj, 1 );
-      model_->setData( index, true, 0 );
-    }
+    visibilityChanged( o_it->id() );
   }
 
   emit updateView();

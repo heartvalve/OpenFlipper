@@ -66,8 +66,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // BaseInterface
     void updateView();
     void updatedObject(int);
-    void visibilityChanged();
-    void activeObjectChanged();
+    void visibilityChanged(int);
+    void objectSelectionChanged(int);
+    void objectPropertiesChanged(int);
 
     void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                             QStringList _parameters, QStringList _descriptions);
@@ -82,8 +83,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   private slots :
     // BaseInterface
     void pluginsInitialized();
-    void slotObjectUpdated( int _identifier );
-    void slotActiveObjectChanged();
+    void slotObjectUpdated          ( int _identifier );
+    void slotVisibilityChanged      ( int _identifier );
+    void slotObjectSelectionChanged ( int _identifier );
+    void slotObjectPropertiesChanged( int _identifier );
 
     // KeyInterface
     void slotKeyEvent( QKeyEvent* _event );
@@ -127,6 +130,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     /// Pointer to the header to the view widget
     QHeaderView * viewHeader_;
 
+
 //===========================================================================
 /** @name Slots which are called if data changed
 * @{ */
@@ -135,7 +139,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   private slots:
 
     /// Gets called when the data in the table has changed
-    void slotDataChanged ( const QModelIndex & topLeft, const QModelIndex & bottomRight );
+    void slotDataChanged ( const QModelIndex & _index );
 
     void slotModelAboutToReset();
 
