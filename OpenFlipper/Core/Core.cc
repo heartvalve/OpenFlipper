@@ -513,7 +513,9 @@ Core::init() {
     scenegraphCheckTimer_->start ();
   }
 
+  QTimer::singleShot(100, this, SLOT(slotCommandLineOpen()));
 }
+
 
 //-----------------------------------------------------------------------------
 
@@ -1127,7 +1129,7 @@ void Core::setDescriptions(){
   emit setSlotDescription("loadObject()", "Show the dialog to load an object. (only works if GUI is available)",QStringList(), QStringList());
   emit setSlotDescription("loadSettings()", "Show the dialog to load settings. (only works if GUI is available)",QStringList(), QStringList());
   emit setSlotDescription("loadSettings(QString)", "load settings from file.",QStringList(), QStringList());
-  
+
   emit setSlotDescription("createWidget(QString,QString)", "Create a widget from an ui file",
                           QString("Object name,ui file").split(","),
                           QString("Name of the new widget in script,ui file to load").split(","));
@@ -1155,8 +1157,8 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
         break;
       }
     }
-    
-    
+
+
     if ( id == -1 ) {
       std::cerr << "Unknown sender plugin when adding Toolbox!" << std::endl;
       return;

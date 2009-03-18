@@ -345,6 +345,17 @@ private:
   /// Execute a script from the command Line
   void commandLineScript(const char* _filename );
 
+  private slots:
+
+  /// Executed after loading core completly
+  void slotCommandLineOpen();
+
+  private:
+    std::vector< std::pair < const char* , bool >  > commandLineFileNames_;
+    std::vector< const char* > commandLineScriptNames_;
+
+  public:
+
   /** Add an empty Object of the given Type
   * @return id of the new object or -1 if unsupported
   */

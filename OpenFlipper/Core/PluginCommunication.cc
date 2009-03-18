@@ -67,6 +67,8 @@ void Core::slotObjectUpdated(int _identifier) {
         emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + " ) called by " +
                  QString( sender()->metaObject()->className() ) );
       }
+    } else {
+      emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + " ) called by Core" );
     }
   }
 

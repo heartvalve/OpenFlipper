@@ -349,7 +349,7 @@ int main(int argc, char **argv)
     for ( int i = 0 ; i < args.FileCount(); ++i )
       w->commandLineScript(args.File(i));
 
-    if ( remoteControl)
+    if ( remoteControl )
       return app.exec();
   }
 
