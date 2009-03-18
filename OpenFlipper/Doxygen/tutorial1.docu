@@ -57,7 +57,7 @@
  * simplePlugin.cc
  * \include example/simplePlugin.cc
  *
- * \section ex1b How to build a plugin with qmake
+ * \section ex1b How to build the plugin with qmake
  * 
  * The only thing that's still left to be created is our qmake project file
  * that is used to generate the Makefiles for the plugin. For general information on how to build

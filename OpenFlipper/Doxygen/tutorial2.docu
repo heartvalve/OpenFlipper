@@ -1,4 +1,4 @@
-/*! \page ex2 Implementing a mesh smoother Plugin
+/*! \page ex2 Implementing a mesh smoother plugin
  *
  * The last section dealt with the implementation of a first plugin without any functionality at all. This section
  * will show you how to progam a simple mesh smoother. We are assuming that you have read \ref ex1 and will only
@@ -106,10 +106,71 @@
  * So these are the places to look for if you want to add additional functionality and therefore need to communicate
  * with OpenFlipper.
  *
- * We initialize the PluginFunctions::ObjectIterator with PluginFunctions::TARGET_OBJECTS and thereby make sure that the
+ * We initialize the PluginFunctions::ObjectIterator with PluginFunctions::TARGET_OBJECTS and thereby make sure that
  * the iteration is restricted to target objects only.
  *
  * \dontinclude example/SmootherPlugin.cc
  * \skipline void SmootherPlugin::simpleLaplace() {
  * \until ++o_it) {
+ *
+ * In the next line we test if we have to deal with a triangle mesh. Since computation on triangle meshes
+ * is in many cases more efficient than on arbitrary polygonal meshes OpenMesh treats them seperately
+ * (see OpenMesh documentation for further information on this topic). See also \ref OpenFlipper/common/Types.hh
+ * for data types in OpenFlipper.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline if ( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
+ *
+ * First off, we backup the current vertex positions by adding a custom property to our mesh.
+ * We assume that you already made yourself familiar with OpenMesh. Otherwise we recommend you to
+ * read the OpenMesh documentation first since we use many of OpenMeshes's core functions in this tutorial. 
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline // Get the mesh to work on
+ * \until mesh->add_property( origPositions, "SmootherPlugin_Original_Positions" );
+ * 
+ * The smoothing algorithm itself depends on the number of iterations that one can adjust
+ * in the plugin's toolbox.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline for ( int i = 0 ; i < iterationsSpinbox_->value() ; ++i ) {
+ * \until }// Iterations end
+ *
+ * In a few words the algorithm iterates over each vertex of the mesh, accumulates the positions of it's neighboring
+ * vertices, devides the sum by it's valence and updates it's position to the computed value.
+ * If the current vertex is a boundary vertex, we skip over to the next one without updating the position.
+ *
+ * Now that the smoothing operation is done, we want to get rid of the original vertex positions.
+ * Since we changed vertices, we also have to update the normals.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline  // Remove the propert
+ * \until mesh->update_normals();
+ *
+ * The next step is to tell the OpenFlipper core that our plugin has updated an object in the scene.
+ * The affected object will then be redrawn. See \ref geometryData for information on how to handle geometry data in a plugin.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline emit updatedObject( o_it->id() );
+ *
+ * The smoothing algorithm on arbitrary polygonal meshes in this case works analogously.
+ * See \ref com_src_ex2 for the complete source code.
+ *
+ * If the object's type is neither triangle nor polygonal mesh, we make use of the implemented
+ * \ref LoggingInterface by dumping an error log message to OpenFlipper's log widget.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline } else {
+ * \until } // Switch data type
+ *
+ * \section com_src_ex2 The complete source code of the example
+ *
+ * SmootherPlugin.hh
+ * \include example/SmootherPlugin.hh
+ *
+ * SmootherPlugin.cc
+ * \include example/SmootherPlugin.cc
+ * 
+ * We use the qmake project file presented in \ref ex1b to build this plugin.
+ *
  */

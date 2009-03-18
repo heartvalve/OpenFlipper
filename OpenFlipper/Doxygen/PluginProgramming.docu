@@ -3,6 +3,7 @@
  * \section quickref Quick references:
  * - \ref plugin_sec
  * - \ref plugin_prog_sec
+ * - \ref geometryData
  * \section tuts Tutorials
  * - \ref ex1
  * - \ref ex1b
@@ -10,7 +11,7 @@
  *
  * \section plugin_sec Plugin Basics
  * 
- * As mentioned above Openflipper is a plugin  based system. It uses the qt plugin implementation to
+ * As mentioned above Openflipper is a plugin based system. It uses the qt plugin implementation to
  * load and unload plugins at runtime. Every algorithm should be added as one of these plugins. 
  * 
  * The plugins have to be created as .so (or under windows : .dll) files which should be symlinked or 
@@ -35,4 +36,5 @@
  * and connected to the core. For details about the individual interfaces see their documentation. 
  * \ref interfaces
  *
+ * \section geometryData Handling geometry data whithin a plugin
  */
