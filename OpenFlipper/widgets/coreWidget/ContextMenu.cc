@@ -99,7 +99,7 @@ void CoreWidget::updatePopupMenuNode(QMenu* _menu , ACG::SceneGraph::BaseNode* _
  * @param _part id of the coordsys part which has been clicked on.
  */
 void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
-  std::cerr << "Coordsys part was : " << _part << std::endl;
+//   std::cerr << "Coordsys part was : " << _part << std::endl;
   QAction* typeEntry = new QAction("Viewer Settings",_menu);
   _menu->addAction( typeEntry );
   _menu->addSeparator();
