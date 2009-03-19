@@ -29,6 +29,9 @@ void SelectionPlugin::togglePolyLineSelection(QMouseEvent* _event)
       {
         PolyLineObject* plo = PluginFunctions::polyLineObject( object );
 
+        if ( !plo )
+          return;
+
         if( plo->line()->vertex_selections_available() ) {
           if( target_idx < plo->line()->n_vertices()) {
             if( plo->line()->vertex_selection( target_idx) == 0)
@@ -51,6 +54,9 @@ void SelectionPlugin::togglePolyLineSelection(QMouseEvent* _event)
       if ( PluginFunctions::getPickedObject(node_idx, object) )
       {
         PolyLineObject* plo = PluginFunctions::polyLineObject( object );
+
+        if ( !plo )
+          return;
 
         if( plo->line()->edge_selections_available() ){
           if( target_idx < plo->line()->n_edges()) {
