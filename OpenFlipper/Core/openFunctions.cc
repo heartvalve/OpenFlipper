@@ -78,7 +78,6 @@ void Core::slotGetAllFilters ( QStringList& _list){
 
 void Core::commandLineOpen(const char* _filename, bool asPolyMesh ){
   commandLineFileNames_.push_back(std::pair< const char* , bool >(_filename,asPolyMesh));
-  std::cerr << "Open" << std::endl;
 }
 
 void Core::commandLineScript(const char* _filename ) {
@@ -86,18 +85,14 @@ void Core::commandLineScript(const char* _filename ) {
 }
 
 void Core::slotCommandLineOpen() {
-  std::cerr << "1" << std::endl;
   for ( uint i = 0 ; i < commandLineFileNames_.size() ; ++i ) {
-    std::cerr << i << std::endl;
     if (commandLineFileNames_[i].second)
       loadObject(DATA_POLY_MESH, commandLineFileNames_[i].first);
     else
       loadObject(commandLineFileNames_[i].first);
   }
 
-  std::cerr << "2" << std::endl;
   for ( uint i = 0 ; i < commandLineScriptNames_.size() ; ++i ) {
-    std::cerr << i << std::endl;
     //check if we have scripting support:
     bool ok = false;
     slotPluginExists("scripting",ok);
@@ -108,7 +103,6 @@ void Core::slotCommandLineOpen() {
 
     emit executeFileScript(commandLineScriptNames_[i]);
   }
-
 
 }
 
