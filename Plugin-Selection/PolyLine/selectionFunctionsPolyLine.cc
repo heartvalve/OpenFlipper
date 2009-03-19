@@ -5,7 +5,7 @@
 
 //-----------------------------------------------------------------------------
 
-#ifdef ENABLE_POLYLINE_SUPPORT  
+#ifdef ENABLE_POLYLINE_SUPPORT
 
 #include <ObjectTypes/PolyLine/PolyLine.hh>
 
@@ -24,15 +24,17 @@ void SelectionPlugin::togglePolyLineSelection(QMouseEvent* _event)
 
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(),node_idx, target_idx, &hit_point)) {
       BaseObjectData* object;
-  
+
       if ( PluginFunctions::getPickedObject(node_idx, object) )
       {
         PolyLineObject* plo = PluginFunctions::polyLineObject( object );
-  
+
         if( plo->line()->vertex_selections_available() ) {
           if( target_idx < plo->line()->n_vertices()) {
             if( plo->line()->vertex_selection( target_idx) == 0)
               plo->line()->vertex_selection( target_idx ) = 1;
+            else
+              plo->line()->vertex_selection( target_idx ) = 0;
           }
         } else
           plo->line()->vertex_selection( target_idx ) = 0;
@@ -45,7 +47,7 @@ void SelectionPlugin::togglePolyLineSelection(QMouseEvent* _event)
 
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_EDGE, _event->pos(),node_idx, target_idx, &hit_point)) {
       BaseObjectData* object;
-    
+
       if ( PluginFunctions::getPickedObject(node_idx, object) )
       {
         PolyLineObject* plo = PluginFunctions::polyLineObject( object );
@@ -54,6 +56,8 @@ void SelectionPlugin::togglePolyLineSelection(QMouseEvent* _event)
           if( target_idx < plo->line()->n_edges()) {
             if( plo->line()->edge_selection( target_idx) == 0)
               plo->line()->edge_selection( target_idx ) = 1;
+            else
+              plo->line()->edge_selection( target_idx ) = 0;
           }
         } else
           plo->line()->edge_selection( target_idx ) = 0;
@@ -65,5 +69,5 @@ void SelectionPlugin::togglePolyLineSelection(QMouseEvent* _event)
   emit updateView();
 }
 
-#endif 
+#endif
 
