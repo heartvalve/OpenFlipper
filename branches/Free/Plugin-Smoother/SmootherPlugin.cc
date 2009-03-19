@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -57,7 +57,7 @@
 
 
 /** \brief Initialize the toolbox
- * 
+ *
  * @param _widget reference to the toolbox
  * @return was the toolbox successfully created?
  */
@@ -79,7 +79,7 @@ initializeToolbox(QWidget*& _widget)
 //-----------------------------------------------------------------------------
 
 /** \brief Set the scripting slot descriptions
- * 
+ *
  */
 void
 SmootherPlugin::pluginsInitialized(){
@@ -97,8 +97,8 @@ SmootherPlugin::pluginsInitialized(){
 
 //-----------------------------------------------------------------------------
 
-/** \brief Smooth all target objects 
- * 
+/** \brief Smooth all target objects
+ *
  * Parameters for the smoothing are retrieved from the toolbox
  *
  */
@@ -153,7 +153,8 @@ slot_smooth()
         emit log(LOGWARN , "Unable to read distance error from LineEdit");
     }
 
-    data->smoother->initialize(component,continuity);
+    data->smoother->initialize(component,continuity );
+    data->smoother->skip_features(tool_->respectFeatures->isChecked());
 
     data->smoother->smooth( tool_->sB_iter->value() );
 
