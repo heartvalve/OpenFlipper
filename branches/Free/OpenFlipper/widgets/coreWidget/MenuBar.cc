@@ -318,14 +318,14 @@ void CoreWidget::setupMenuBar()
   viewMenu_->addAction( viewAllAction);
 
 
-//   QAction* snapShotAction = new QAction( "Viewer Snapshot", viewMenu_ );
-//   snapShotAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
-//   snapShotAction->setCheckable( false );
-//   snapShotAction->setToolTip("Take a snapshot from all viewers.");
-//   snapShotAction->setWhatsThis( "Viewer Snapshot<br><br>"
-//                                "Take a snapshot of all viewers at once.");
-//   connect( snapShotAction,SIGNAL( triggered() ), this, SLOT( slotSnapshot() ) );
-//   viewMenu_->addAction( snapShotAction);
+  QAction* snapShotAction = new QAction( "Viewer Snapshot", viewMenu_ );
+  snapShotAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewerSnapshot.png") );
+  snapShotAction->setCheckable( false );
+  snapShotAction->setToolTip("Take a snapshot from all viewers.");
+  snapShotAction->setWhatsThis( "Viewer Snapshot<br><br>"
+                               "Take a snapshot of all viewers at once.");
+  connect( snapShotAction,SIGNAL( triggered() ), this, SLOT( viewerSnapshotDialog() ) );
+  viewMenu_->addAction( snapShotAction);
 
   QAction* appSnapShotAction = new QAction( "Snapshot", viewMenu_ );
   appSnapShotAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );

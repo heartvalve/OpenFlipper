@@ -614,7 +614,7 @@ public:
   public slots:
 
     /// Create a snapshot of the whole app with fileDialog
-//     void viewerSnapshotDialog();
+    void viewerSnapshotDialog();
 
     /// Create a snapshot of the whole app
     void viewerSnapshot();
