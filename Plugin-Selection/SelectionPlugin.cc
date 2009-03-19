@@ -240,14 +240,14 @@ void SelectionPlugin::pluginsInitialized() {
   toolBar_->addAction( connectedAction_ );
 
   connect( toolBarActions_, SIGNAL( triggered(QAction*) ), this, SLOT(toolBarActionClicked(QAction*)) );
-  connect( toolBarTypes_, SIGNAL( triggered(QAction*) ), this, SLOT(toolBarActionClicked(QAction*)) );
+  connect( toolBarTypes_,   SIGNAL( triggered(QAction*) ), this, SLOT(toolBarActionClicked(QAction*)) );
 
 
   //connect the toolbar Actions to the Toolbox Buttons
-  connect( tool_->objectSelection, SIGNAL(clicked(bool)), objectAction_, SLOT(setChecked(bool)) );
-  connect( tool_->vertexSelection, SIGNAL(clicked(bool)), vertexAction_, SLOT(setChecked(bool)) );
-  connect( tool_->edgeSelection,   SIGNAL(clicked(bool)), edgeAction_,   SLOT(setChecked(bool)) );
-  connect( tool_->faceSelection,   SIGNAL(clicked(bool)), faceAction_,   SLOT(setChecked(bool)) );
+  connect( tool_->objectSelection, SIGNAL(clicked()), objectAction_, SLOT(trigger()) );
+  connect( tool_->vertexSelection, SIGNAL(clicked()), vertexAction_, SLOT(trigger()) );
+  connect( tool_->edgeSelection,   SIGNAL(clicked()), edgeAction_,   SLOT(trigger()) );
+  connect( tool_->faceSelection,   SIGNAL(clicked()), faceAction_,   SLOT(trigger()) );
 
   connect( objectAction_, SIGNAL(toggled(bool)),tool_->objectSelection , SLOT(setChecked(bool)) );
   connect( vertexAction_, SIGNAL(toggled(bool)),tool_->vertexSelection , SLOT(setChecked(bool)) );
