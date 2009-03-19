@@ -216,7 +216,7 @@ void SelectionPlugin::pluginsInitialized() {
                               "<B>Lasso Selection</B><br>Draw a Lasso to select elements on the surface.", toolBarActions_ );
   lassoAction_->setCheckable( true );
   toolBar_->addAction( lassoAction_ );
-  volumeLassoAction_ = new QAction( QIcon(iconPath + "selection_lasso.png"),
+  volumeLassoAction_ = new QAction( QIcon(iconPath + "selection_lasso2.png"),
                               "<B>Volume Lasso Selection</B><br>Draw a Lasso to select elements in the drawn volume.", toolBarActions_ );
   volumeLassoAction_->setCheckable( true );
   toolBar_->addAction( volumeLassoAction_ );
