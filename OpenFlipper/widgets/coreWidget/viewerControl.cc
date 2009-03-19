@@ -58,10 +58,10 @@ void CoreWidget::slotToggleStereoMode()
 
   if ( stereoActive_ ) {
     statusBar_->showMessage("Stereo enabled");
-    stereoButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"mono.png") );
+    stereoButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"stereo.png") );
   } else {
     statusBar_->showMessage("Stereo disabled");
-    stereoButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"stereo.png") );
+    stereoButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"mono.png") );
   }
 
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
