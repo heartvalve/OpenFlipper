@@ -191,6 +191,9 @@ signals:
    /// Tell the plugins that a file has been opened ( -> Database)
    void openedFile( int _id );
 
+   /// Tell the plugins that an empty object has been added
+   void emptyObjectAdded( int _id);
+
    /// Called after all plugins are loaded
    void pluginsInitialized();
 
@@ -314,6 +317,9 @@ public slots:
 
     /// Set the baseName for the application snapshot
     void applicationSnapshotName(QString _name);
+
+    /// Take a snapshot from all viewers
+    void viewerSnapshot();
 
     /// resize the examinerViewer
     void resizeViewer(int _width, int _height );
