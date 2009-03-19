@@ -48,7 +48,7 @@ class TreeModel : public QAbstractItemModel
     Q_OBJECT
 
 signals:
-   void dataChangedInside(const QModelIndex& _index);
+   void dataChangedInside(BaseObject* _obj, int _column);
 
 public:
 

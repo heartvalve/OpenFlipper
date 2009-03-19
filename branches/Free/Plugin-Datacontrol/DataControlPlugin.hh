@@ -43,6 +43,7 @@
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include "Toolbox.hh"
 
@@ -51,7 +52,7 @@
 
 /** Plugin for controlling the Object data structures (Show,hide Object, Target, Source selection
 */
-class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyInterface , LoggingInterface, INIInterface, ContextMenuInterface, ScriptInterface
+class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyInterface , LoggingInterface, INIInterface, ContextMenuInterface, ScriptInterface, LoadSaveInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -61,6 +62,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   Q_INTERFACES(INIInterface)
   Q_INTERFACES(ContextMenuInterface)
   Q_INTERFACES(ScriptInterface)
+  Q_INTERFACES(LoadSaveInterface)
 
   signals:
     // BaseInterface
@@ -94,6 +96,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // INIInterface
     void loadIniFileOptionsLast( INIFile& _ini );
     void saveIniFileOptions( INIFile& _ini );
+
+    // LoadSaveInterface
+    void fileOpened(int _id);
+    void addedEmptyObject(int _id);
 
   public :
     /// Destructor
@@ -139,7 +145,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   private slots:
 
     /// Gets called when the data in the table has changed
-    void slotDataChanged ( const QModelIndex & _index );
+    void slotDataChanged ( BaseObject* _obj, int _column );
 
     void slotModelAboutToReset();
 
