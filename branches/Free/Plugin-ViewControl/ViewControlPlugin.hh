@@ -215,6 +215,35 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
 
 
     void setEyePosition(Vector _eye);
+
+    /// Change View on all viewers to view whole scene
+    void viewAll();
+
+    /// Change View on given Viewer to view whole scene
+    void viewAll(int _viewer);
+
+    /// Change View on given Viewer to view home position
+    void viewHome();
+
+    /// Change View on all Viewers to view home position
+    void viewHome(int _viewer);
+
+
+
+    /// Change Viewer to orthographicProjection
+    void orthographicProjection();
+
+    /// Change all Viewers to orthographicProjection
+    void orthographicProjection(int _viewer);
+
+
+
+    /// Change Viewer to perspectiveProjection
+    void perspectiveProjection();
+
+    /// Change all Viewers to perspectiveProjection
+    void perspectiveProjection(int _viewer);
+
 };
 
 #endif //ViewControlPlugin_HH
