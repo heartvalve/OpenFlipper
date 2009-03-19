@@ -75,6 +75,10 @@ signals:
   void log(Logtype _type, QString _message);
   void log(QString _message);
 
+private slots:
+    // BaseInterface
+    void pluginsInitialized();
+
 public :
 
   /// Default constructor
