@@ -36,7 +36,7 @@
  * and connected to the core. For details about the individual interfaces see their documentation. 
  * \ref interfaces
  *
- * \section geometryData Handling geometry data whithin a plugin
+ * \section geometryData Handling geometry data within a plugin
  *
  * \subsection pluginFunctions OpenFlipper's plugin functions
  *
