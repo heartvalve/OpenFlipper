@@ -230,7 +230,7 @@ void CoreWidget::slotSnapshot() {
   QFileInfo fi(PluginFunctions::viewerProperties().snapshotName());
   int counter = PluginFunctions::viewerProperties().snapshotCounter();
 
-  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(counter) + ".";
+  QString suggest = fi.baseName() + "." + QString::number(counter) + ".";
 
   QString format="png";
 
@@ -239,15 +239,27 @@ void CoreWidget::slotSnapshot() {
 
   suggest += format;
 
-  QString newName = QFileDialog::getSaveFileName(this, tr("Save Snapshot"), suggest, tr("Images (*.png *.ppm)"));
+  QFileDialog dialog(this);
+  dialog.setFileMode(QFileDialog::AnyFile);
+  dialog.setDefaultSuffix("png");
+  dialog.setNameFilter("Images (*.png *.ppm)");
+  dialog.setFileMode(QFileDialog::AnyFile);
+  dialog.setConfirmOverwrite(true);
+  dialog.setDirectory( fi.path() );
+  dialog.selectFile( suggest );
+  dialog.setAcceptMode(QFileDialog::AcceptSave);
+  dialog.setWindowTitle("Save Snapshot");
 
-  if (!newName.isEmpty())
-  {
+ if (dialog.exec()){
+     QString newName = dialog.selectedFiles()[0];
 
-    if (newName != suggest)
-      PluginFunctions::viewerProperties().snapshotBaseFileName(newName);
+      if (newName != fi.path() + OpenFlipper::Options::dirSeparator() + suggest)
+        PluginFunctions::viewerProperties().snapshotBaseFileName(newName);
 
-    examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot();
+      QImage image;
+      examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(image);
+
+      image.save(newName);
   }
 }
 
@@ -256,7 +268,7 @@ void CoreWidget::applicationSnapshotDialog() {
 
   QFileInfo fi(snapshotName_);
 
-  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_) + ".";
+  QString suggest = fi.baseName() + "." + QString::number(snapshotCounter_) + ".";
 
   QString format="png";
 
@@ -265,12 +277,21 @@ void CoreWidget::applicationSnapshotDialog() {
 
   suggest += format;
 
-  QString newName = QFileDialog::getSaveFileName(this, tr("Save Snapshot"), suggest, tr("Images (*.png *.ppm)"));
+  QFileDialog dialog(this);
+  dialog.setFileMode(QFileDialog::AnyFile);
+  dialog.setDefaultSuffix("png");
+  dialog.setNameFilter("Images (*.png *.ppm)");
+  dialog.setFileMode(QFileDialog::AnyFile);
+  dialog.setConfirmOverwrite(true);
+  dialog.setDirectory( fi.path() );
+  dialog.selectFile( suggest );
+  dialog.setAcceptMode(QFileDialog::AcceptSave);
+  dialog.setWindowTitle("Save Snapshot");
 
-  if (!newName.isEmpty())
-  {
+  if (dialog.exec()){
+    QString newName = dialog.selectedFiles()[0];
 
-    if (newName != suggest){
+    if (newName != fi.path() + OpenFlipper::Options::dirSeparator() + suggest){
       snapshotName_ = newName;
       snapshotCounter_ = 0;
     }else
@@ -305,6 +326,110 @@ void CoreWidget::applicationSnapshot() {
   pic.save(suggest);
 }
 
+
+///Take a snapshot of all viewers
+void CoreWidget::viewerSnapshotDialog() {
+
+  QFileInfo fi(snapshotName_);
+
+  QString suggest = fi.baseName() + "." + QString::number(snapshotCounter_) + ".";
+
+  QString format="png";
+
+  if (fi.completeSuffix() == "ppm")
+    format="ppmraw";
+
+  suggest += format;
+
+  QFileDialog dialog(this);
+  dialog.setFileMode(QFileDialog::AnyFile);
+  dialog.setDefaultSuffix("png");
+  dialog.setNameFilter("Images (*.png *.ppm)");
+  dialog.setFileMode(QFileDialog::AnyFile);
+  dialog.setConfirmOverwrite(true);
+  dialog.setDirectory( fi.path() );
+  dialog.selectFile( suggest );
+  dialog.setAcceptMode(QFileDialog::AcceptSave);
+  dialog.setWindowTitle("Save Snapshot");
+
+  if (dialog.exec()){
+    QString newName = dialog.selectedFiles()[0];
+
+    if (newName != fi.path() + OpenFlipper::Options::dirSeparator() + suggest){
+      snapshotName_ = newName;
+      snapshotCounter_ = 0;
+    }else
+      snapshotCounter_++;
+
+    //now take the snapshot
+    switch ( baseLayout_->mode() ){
+
+      case QtMultiViewLayout::SingleView:
+      {
+        QImage finalImage;
+
+        examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(finalImage);
+
+        finalImage.save(newName);
+
+        break;
+      }
+      case QtMultiViewLayout::Grid:
+      {
+        QImage img0,img1,img2,img3;
+
+        examiner_widgets_[0]->snapshot(img0);
+        examiner_widgets_[1]->snapshot(img1);
+        examiner_widgets_[2]->snapshot(img2);
+        examiner_widgets_[3]->snapshot(img3);
+
+        QImage finalImage(img0.width() + img1.width(), img0.height() + img2.height(), QImage::Format_ARGB32_Premultiplied);
+
+        QPainter painter(&finalImage);
+        painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
+                          QRectF(           0,             0, img0.width(), img0.height()) );
+        painter.drawImage(QRectF(img0.width(),             0, img1.width(), img1.height()),img1,
+                          QRectF(           0,             0, img1.width(), img1.height()) );
+        painter.drawImage(QRectF(           0, img0.height(), img2.width(), img2.height()),img2,
+                          QRectF(           0,             0, img2.width(), img2.height()) );
+        painter.drawImage(QRectF(img0.width(), img0.height(), img3.width(), img3.height()),img3,
+                          QRectF(           0,             0, img3.width(), img3.height()) );
+
+        finalImage.save(newName);
+
+        break;
+      }
+      case QtMultiViewLayout::HSplit:
+      {
+        QImage img0,img1,img2,img3;
+
+        examiner_widgets_[0]->snapshot(img0);
+        examiner_widgets_[1]->snapshot(img1);
+        examiner_widgets_[2]->snapshot(img2);
+        examiner_widgets_[3]->snapshot(img3);
+
+        QImage finalImage(img0.width() + img1.width(), img0.height(), QImage::Format_ARGB32_Premultiplied);
+
+        QPainter painter(&finalImage);
+        painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
+                          QRectF(           0,             0, img0.width(), img0.height()) );
+        painter.drawImage(QRectF(img0.width(),             0, img1.width(), img1.height()),img1,
+                          QRectF(           0,             0, img1.width(), img1.height()) );
+        painter.drawImage(QRectF(img0.width(), img1.height(), img2.width(), img2.height()),img2,
+                          QRectF(           0,             0, img2.width(), img2.height()) );
+        painter.drawImage(QRectF(img0.width(), img1.height()+img2.height(), img3.width(),img3.height()),img3,
+                          QRectF(           0,             0, img3.width(), img3.height()) );
+
+        finalImage.save(newName);
+
+        break;
+      }
+      default: break;
+
+    }
+  }
+}
+
 ///Take a snapshot of all viewers
 void CoreWidget::viewerSnapshot() {
 
@@ -334,16 +459,26 @@ void CoreWidget::viewerSnapshot() {
     }
     case QtMultiViewLayout::Grid:
     {
-//       QImage img0,img1,img2,img3;
-// 
-//       QImage finalImage(img0.width() + img1.width(), img0.height() + img2.height(), QImage::Format_ARGB32_Premultiplied);
-// 
-//       examiner_widgets_[0]->snapshot(finalImage, 0, 0);
-//       examiner_widgets_[1]->snapshot(finalImage,examiner_widgets_[0]->glWidth(), 0);
-//       examiner_widgets_[2]->snapshot(finalImage,0, examiner_widgets_[0]->glHeight());
-//       examiner_widgets_[3]->snapshot(finalImage,examiner_widgets_[0]->glWidth(),examiner_widgets_[0]->glHeight());
-// 
-//       finalImage.save(suggest);
+      QImage img0,img1,img2,img3;
+
+      examiner_widgets_[0]->snapshot(img0);
+      examiner_widgets_[1]->snapshot(img1);
+      examiner_widgets_[2]->snapshot(img2);
+      examiner_widgets_[3]->snapshot(img3);
+
+      QImage finalImage(img0.width() + img1.width(), img0.height() + img2.height(), QImage::Format_ARGB32_Premultiplied);
+
+      QPainter painter(&finalImage);
+      painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
+                        QRectF(           0,             0, img0.width(), img0.height()) );
+      painter.drawImage(QRectF(img0.width(),             0, img1.width(), img1.height()),img1,
+                        QRectF(           0,             0, img1.width(), img1.height()) );
+      painter.drawImage(QRectF(           0, img0.height(), img2.width(), img2.height()),img2,
+                        QRectF(           0,             0, img2.width(), img2.height()) );
+      painter.drawImage(QRectF(img0.width(), img0.height(), img3.width(), img3.height()),img3,
+                        QRectF(           0,             0, img3.width(), img3.height()) );
+
+      finalImage.save(suggest);
 
       break;
     }
@@ -358,10 +493,15 @@ void CoreWidget::viewerSnapshot() {
 
       QImage finalImage(img0.width() + img1.width(), img0.height(), QImage::Format_ARGB32_Premultiplied);
 
-//       finalImage.paintEngine()->drawImage(QRectF(0,0,img0.width(),img0.height()),img0, QRectF(0,0,img0.width(),img0.height()) );
-//       finalImage.paintEngine()->drawImage(QRectF(img0.width(),0,img1.width(),img1.height()),img1, QRectF(0,0,img1.width(),img1.height()) );
-//       finalImage.paintEngine()->drawImage(QRectF(img0.width(),img1.height(),img2.width(),img2.height()),img2, QRectF(0,0,img2.width(),img2.height()) );
-//       finalImage.paintEngine()->drawImage(QRectF(img0.width(),img2.height(),img3.width(),img3.height()),img3, QRectF(0,0,img3.width(),img3.height()) );
+      QPainter painter(&finalImage);
+      painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
+                        QRectF(           0,             0, img0.width(), img0.height()) );
+      painter.drawImage(QRectF(img0.width(),             0, img1.width(), img1.height()),img1,
+                        QRectF(           0,             0, img1.width(), img1.height()) );
+      painter.drawImage(QRectF(img0.width(), img1.height(), img2.width(), img2.height()),img2,
+                        QRectF(           0,             0, img2.width(), img2.height()) );
+      painter.drawImage(QRectF(img0.width(), img1.height()+img2.height(), img3.width(),img3.height()),img3,
+                        QRectF(           0,             0, img3.width(), img3.height()) );
 
       finalImage.save(suggest);
 
