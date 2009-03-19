@@ -265,7 +265,6 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
    PluginFunctions::getObject(_id,object);
 
    emit emptyObjectAdded( _id );
-   emit openedFile( _id );
 
    ///@todo : set a default path for new objects
 //    QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
