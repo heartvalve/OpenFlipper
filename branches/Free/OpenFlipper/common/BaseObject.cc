@@ -202,6 +202,10 @@ bool BaseObject::visible() {
   return visible_;
 }
 
+void BaseObject::visible(bool _visible) {
+  visible_ = _visible;
+}
+
 // ===============================================================================
 // ===============================================================================
 // Tree Structure :

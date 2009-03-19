@@ -167,6 +167,20 @@ void BaseObjectData::hide() {
   visible_ = false;
 }
 
+bool BaseObjectData::visible(){
+  return visible_;
+}
+
+void BaseObjectData::visible(bool _visible) {
+
+  if (_visible)
+    separatorNode_->set_status( ACG::SceneGraph::BaseNode::Active  );
+  else
+    separatorNode_->set_status( ACG::SceneGraph::BaseNode::HideSubtree );
+
+  visible_ = _visible;
+}
+
 SeparatorNode* BaseObjectData::baseNode() {
   return separatorNode_;
 }

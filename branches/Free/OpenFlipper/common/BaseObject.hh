@@ -213,8 +213,11 @@ class DLLEXPORTONLY BaseObject {
   //===========================================================================
 
   public :
-  /// return if object is visible
-  bool visible();
+    /// return if object is visible
+    virtual bool visible();
+
+    /// Sets visiblity
+    virtual void visible(bool _visible);
 
   private :
     /** Show/hide/ Object\n
