@@ -134,7 +134,7 @@ void setScenePos(const ACG::Vec3d& _center  , int _viewer = ALL_VIEWERS);
  *
  */
 DLLEXPORT
-const ACG::Vec3d& sceneCenter( int _viewer = ACTIVE_VIEWER );
+const ACG::Vec3d& sceneCenter( int _viewer = ALL_VIEWERS );
 
 /** \brief Returns the current scene radius from the examiner widget
  *
@@ -201,7 +201,7 @@ void viewAll(int _viewer = ALL_VIEWERS);
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-ACG::Vec3d viewingDirection(int _viewer = ACTIVE_VIEWER);
+ACG::Vec3d viewingDirection(int _viewer = ALL_VIEWERS);
 
 /** \brief Get the current viewer position
  *
@@ -210,7 +210,7 @@ ACG::Vec3d viewingDirection(int _viewer = ACTIVE_VIEWER);
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-ACG::Vec3d eyePos(int _viewer = ACTIVE_VIEWER);
+ACG::Vec3d eyePos(int _viewer = ALL_VIEWERS);
 
 /** \brief Get the current up vector
  *
@@ -219,19 +219,25 @@ ACG::Vec3d eyePos(int _viewer = ACTIVE_VIEWER);
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-ACG::Vec3d upVector(int _viewer = ACTIVE_VIEWER);
+ACG::Vec3d upVector(int _viewer = ALL_VIEWERS);
 
 /** \brief Switch to orthographic Projection
  *
+ * @param _viewer Id of the viewer to use.
+ *                ACTIVE_VIEWER active viewer
+ *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-void orthographicProjection();
+void orthographicProjection( int _viewer = ALL_VIEWERS );
 
 /** \brief Switch to perspective Projection
  *
+ * @param _viewer Id of the viewer to use.
+ *                ACTIVE_VIEWER active viewer
+ *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-void perspectiveProjection();
+void perspectiveProjection( int _viewer = ALL_VIEWERS );
 
 /** \brief Set the draw Mode of a Viewer.\n
  *
@@ -253,7 +259,7 @@ void setDrawMode( const unsigned int _mode , int _viewer = ALL_VIEWERS);
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-unsigned int drawMode( int _viewer = ACTIVE_VIEWER );
+unsigned int drawMode( int _viewer = ALL_VIEWERS );
 
 
 /** \brief Set the background color of the examiner widget.
