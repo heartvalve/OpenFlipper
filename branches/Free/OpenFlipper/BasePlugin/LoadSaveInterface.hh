@@ -105,7 +105,14 @@ class LoadSaveInterface {
      *  @param _id Id of the new object
      */
     virtual void fileOpened( int /*_id*/ ) {};
-      
+
+    /**  \brief An empty object has been added
+     * 
+     *  This slot is called if an empty object has been added by the core.\n
+     *  @param _id Id of the new object
+     */
+    virtual void addedEmptyObject( int /*_id*/ ) {};
+
 };
 
 Q_DECLARE_INTERFACE(LoadSaveInterface,"OpenFlipper.LoadSaveInterface/1.0")

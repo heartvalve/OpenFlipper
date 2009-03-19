@@ -306,37 +306,71 @@ void CoreWidget::applicationSnapshot() {
 }
 
 ///Take a snapshot of all viewers
-// void CoreWidget::viewerSnapshot() {
+void CoreWidget::viewerSnapshot() {
+
+  QFileInfo fi(snapshotName_);
+
+  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_++) + ".";
+
+  QString format="png";
+
+  if (fi.completeSuffix() == "ppm")
+    format="ppmraw";
+
+  suggest += format;
+
+
+  switch ( baseLayout_->mode() ){
+
+    case QtMultiViewLayout::SingleView:
+    {
+      QImage finalImage;
+
+      examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(finalImage);
+
+      finalImage.save(suggest);
+
+      break;
+    }
+    case QtMultiViewLayout::Grid:
+    {
+//       QImage img0,img1,img2,img3;
 // 
-//   QFileInfo fi(snapshotName_);
+//       QImage finalImage(img0.width() + img1.width(), img0.height() + img2.height(), QImage::Format_ARGB32_Premultiplied);
 // 
-//   QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_++) + ".";
+//       examiner_widgets_[0]->snapshot(finalImage, 0, 0);
+//       examiner_widgets_[1]->snapshot(finalImage,examiner_widgets_[0]->glWidth(), 0);
+//       examiner_widgets_[2]->snapshot(finalImage,0, examiner_widgets_[0]->glHeight());
+//       examiner_widgets_[3]->snapshot(finalImage,examiner_widgets_[0]->glWidth(),examiner_widgets_[0]->glHeight());
 // 
-//   QString format="png";
-// 
-//   if (fi.completeSuffix() == "ppm")
-//     format="ppmraw";
-// 
-//   suggest += format;
-// 
-//   switch ( coreWidget_->baseLayout_->mode() ){
-// 
-//     case QtMultiViewLayout::SingleView:
-// 
-//       QImage img;
-//       examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(img);
-// 
-//       img.save(suggest);
-// 
-//       break;
-//     case QtMultiViewLayout::Grid:
-//       break;
-//     case QtMultiViewLayout::HSplit:
-//       break;
-//     default: break;
-// 
-//   }
-// }
+//       finalImage.save(suggest);
+
+      break;
+    }
+    case QtMultiViewLayout::HSplit:
+    {
+      QImage img0,img1,img2,img3;
+
+      examiner_widgets_[0]->snapshot(img0);
+      examiner_widgets_[1]->snapshot(img1);
+      examiner_widgets_[2]->snapshot(img2);
+      examiner_widgets_[3]->snapshot(img3);
+
+      QImage finalImage(img0.width() + img1.width(), img0.height(), QImage::Format_ARGB32_Premultiplied);
+
+//       finalImage.paintEngine()->drawImage(QRectF(0,0,img0.width(),img0.height()),img0, QRectF(0,0,img0.width(),img0.height()) );
+//       finalImage.paintEngine()->drawImage(QRectF(img0.width(),0,img1.width(),img1.height()),img1, QRectF(0,0,img1.width(),img1.height()) );
+//       finalImage.paintEngine()->drawImage(QRectF(img0.width(),img1.height(),img2.width(),img2.height()),img2, QRectF(0,0,img2.width(),img2.height()) );
+//       finalImage.paintEngine()->drawImage(QRectF(img0.width(),img2.height(),img3.width(),img3.height()),img3, QRectF(0,0,img3.width(),img3.height()) );
+
+      finalImage.save(suggest);
+
+      break;
+    }
+    default: break;
+
+  }
+}
 
 void CoreWidget::applicationSnapshotName(QString _name) {
 

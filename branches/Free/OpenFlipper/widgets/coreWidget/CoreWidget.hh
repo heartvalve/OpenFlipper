@@ -617,7 +617,7 @@ public:
 //     void viewerSnapshotDialog();
 
     /// Create a snapshot of the whole app
-//     void viewerSnapshot();
+    void viewerSnapshot();
 
     /// Create a snapshot of the whole app with fileDialog
     void applicationSnapshotDialog();

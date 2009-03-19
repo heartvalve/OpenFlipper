@@ -871,6 +871,10 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(plugin , SIGNAL( emptyObjectAdded( int ) ) ,
                 this   , SLOT( slotEmptyObjectAdded ( int ) ),Qt::DirectConnection);
 
+      if ( checkSlot(plugin,"addedEmptyObject(int)" ) )
+        connect(this ,   SIGNAL( emptyObjectAdded( int ) ) ,
+                plugin   , SLOT( addedEmptyObject( int ) ),Qt::DirectConnection);
+
       if ( checkSignal(plugin,"getAllFilters(QStringList&)" ) )
         connect(plugin , SIGNAL( getAllFilters( QStringList& ) ) ,
                 this   , SLOT( slotGetAllFilters ( QStringList& ) ),Qt::DirectConnection);
