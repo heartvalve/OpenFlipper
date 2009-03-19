@@ -77,6 +77,16 @@ bool DecimaterPlugin::initializeToolbox(QWidget*& _widget)
   return true;
 }
 
+/** \brief Initialization of the plugin when it is loaded by the core
+ * 
+ */
+void DecimaterPlugin::pluginsInitialized() {
+
+  emit setSlotDescription("decimate(int,QString,QString)","Decimate a given object",
+                          QString("objectId,constraints,values").split(","),
+                          QString("ID of an object; comma separated list of constraints (distance,normal_deviation,roundness,triangles); comma separated list of constraint values suited to 'constraints' parameter").split(";"));
+}
+
 
 //-----------------------------------------------------------------------------
 
