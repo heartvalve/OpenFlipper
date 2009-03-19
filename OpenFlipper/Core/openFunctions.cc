@@ -189,15 +189,25 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
 }
 
 /// Slot gets called after a file-plugin has opened an object
- void Core::slotObjectOpened ( int _id ) {
+void Core::slotObjectOpened ( int _id ) {
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"slotObjectOpened( " + QString::number(_id) + " ) called by " +
+                  QString( sender()->metaObject()->className() ) );
+      }
+    } else {
+      emit log(LOGINFO,"slotObjectOpened( " + QString::number(_id) + " ) called by Core" );
+    }
+  }
 
   // get the opened object
-   BaseObjectData* object;
-   PluginFunctions::getObject(_id,object);
+  BaseObjectData* object;
+  PluginFunctions::getObject(_id,object);
 
-   QColor color;
+  QColor color;
 
-   if ( OpenFlipper::Options::randomBaseColor() ){
+  if ( OpenFlipper::Options::randomBaseColor() ){
       //init random seed
       srand ( time(NULL) );
 
@@ -211,66 +221,78 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
               +(bckgrnd.green() - color.green())*(bckgrnd.green() - color.green())
               +(bckgrnd.blue()  - color.blue()) *(bckgrnd.blue()  - color.blue());
       }while (diff < 70000);
-   }
-   else{
+  }
+  else{
       color = OpenFlipper::Options::defaultBaseColor();
-   }
+  }
 
-   ACG::Vec4f colorV;
-   colorV[0] = color.redF();
-   colorV[1] = color.greenF();
-   colorV[2] = color.blueF();
-   colorV[3] = color.alphaF();
+  ACG::Vec4f colorV;
+  colorV[0] = color.redF();
+  colorV[1] = color.greenF();
+  colorV[2] = color.blueF();
+  colorV[3] = color.alphaF();
 
-   object->setBaseColor( colorV );
+  object->setBaseColor( colorV );
 
-   resetScenegraph();
+  resetScenegraph();
 
-   emit openedFile( _id );
+  emit openedFile( _id );
 
   // Tell the Plugins that the Object List and the active object have changed
-   emit signalObjectUpdated(_id);
-   emit objectSelectionChanged( _id );
+  emit signalObjectUpdated(_id);
+  emit objectSelectionChanged( _id );
 
-   backupRequest(_id,"Original Object");
+  backupRequest(_id,"Original Object");
 
-   QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
+  QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
 
-   BaseObject* object2;
-   PluginFunctions::getObject(_id,object2);
+  BaseObject* object2;
+  PluginFunctions::getObject(_id,object2);
 
-   if ( OpenFlipper::Options::gui() )
+  if ( OpenFlipper::Options::gui() )
     coreWidget_->addRecent( filename, object2->dataType() );
 
-   // if this is the first object opend, reset the global draw mode of all examiners to standard draw mode
-   if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
+  // if this is the first object opend, reset the global draw mode of all examiners to standard draw mode
+  if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::standardDrawMode() );
       coreWidget_->examiner_widgets_[i]->viewAll();
     }
 
   // objectRoot_->dumpTree();
- }
+}
 
  /// Slot gets called after a file-plugin has opened an object
- void Core::slotEmptyObjectAdded ( int _id ) {
-  // Tell the Plugins that the Object List and the active object have changed
-   emit signalObjectUpdated(_id);
-   emit objectSelectionChanged(_id);
+void Core::slotEmptyObjectAdded ( int _id ) {
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"slotEmptyObjectAdded( " + QString::number(_id) + " ) called by " +
+                  QString( sender()->metaObject()->className() ) );
+      }
+    } else {
+      emit log(LOGINFO,"slotEmptyObjectAdded( " + QString::number(_id) + " ) called by Core" );
+    }
+  }
 
-   backupRequest(_id,"Original Object");
+
+  // Tell the Plugins that the Object List and the active object have changed
+  emit signalObjectUpdated(_id);
+  emit objectSelectionChanged(_id);
+
+  backupRequest(_id,"Original Object");
 
   // get the opened object
-   BaseObjectData* object;
-   PluginFunctions::getObject(_id,object);
+  BaseObjectData* object;
+  PluginFunctions::getObject(_id,object);
 
-   emit emptyObjectAdded( _id );
+  emit emptyObjectAdded( _id );
 
-   ///@todo : set a default path for new objects
+  ///@todo : set a default path for new objects
 //    QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
 
 //    addRecent(filename);
- }
+}
 
 //========================================================================================
 // ===             Menu Slots                                 ============================
