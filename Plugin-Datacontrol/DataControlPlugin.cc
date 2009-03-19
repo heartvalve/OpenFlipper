@@ -129,8 +129,8 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
    view_->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
 
-   connect( model_,SIGNAL(dataChangedInside( const QModelIndex&) ),
-            this,  SLOT(  slotDataChanged( const QModelIndex& )) );
+   connect( model_,SIGNAL(dataChangedInside(BaseObject*,int) ),
+            this,  SLOT(  slotDataChanged(BaseObject*,int)) );
 
    connect( model_ , SIGNAL( modelAboutToBeReset() ),
             this , SLOT(slotModelAboutToReset() ) );
@@ -228,17 +228,32 @@ void DataControlPlugin::slotObjectPropertiesChanged( int _identifier ){
  */
 void DataControlPlugin::slotObjectUpdated( int _identifier ){
 
-  if (_identifier != -1){
-    //abort if the object is already in the model
-    BaseObject* obj;
-
-    if ( PluginFunctions::getObject( _identifier, obj) )
-      if ( (model_->getModelIndex(obj, 0)).isValid() )
-        return;
-  }
-
-  model_->objectChanged( -1 );
+  if (_identifier == -1)
+    model_->objectChanged( _identifier );
 }
+
+
+//******************************************************************************
+
+/** \brief Update the model if a file has been opened
+ * 
+ * @param _id id of an object
+ */
+void DataControlPlugin::fileOpened(int){
+  model_->objectChanged(-1);
+}
+
+
+//******************************************************************************
+
+/** \brief Update the model if an empty object has been added
+ * 
+ * @param _id id of an object
+ */
+void DataControlPlugin::addedEmptyObject(int){
+  model_->objectChanged(-1);
+}
+
 
 //******************************************************************************
 
@@ -277,36 +292,37 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
  * @param topLeft index in the model
  * @param
  */
-void DataControlPlugin::slotDataChanged ( const QModelIndex& _index)
+void DataControlPlugin::slotDataChanged ( BaseObject* _obj, int _column)
 {
 
-  BaseObject* obj = model_->getItem(_index);
+  if (_obj != 0){
+// std::cerr << "slotDataChanged obj " << _obj->id() << " column " << _column << std::endl;
+    switch ( _column ) {
+      // Name
+      case 0:
+        emit objectPropertiesChanged( _obj->id() );
+        view_->expandToDepth(0);
+        break;
 
-  switch (_index.column()) {
-    // Name
-    case 0:
-      emit objectPropertiesChanged( obj->id() );
-      view_->expandToDepth(0);
-      break;
+      // show/hide
+      case 1:
+        emit visibilityChanged( _obj->id() );
+        emit updateView();
+        break;
 
-    // show/hide
-    case 1:
-      emit visibilityChanged( obj->id() );
-      emit updateView();
-      break;
+      // source
+      case 2:
+        emit objectSelectionChanged( _obj->id() );
+        break;
 
-    // source
-    case 2:
-      emit objectSelectionChanged( obj->id() );
-      break;
+      // target
+      case 3:
+        emit objectSelectionChanged( _obj->id() );
+        break;
 
-    // target
-    case 3:
-      emit objectSelectionChanged( obj->id() );
-      break;
-
-    default:
-      break;
+      default:
+        break;
+    }
   }
 }
 
