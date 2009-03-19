@@ -342,8 +342,8 @@ draw_sphere( const Point& _p0, double _r)
 
   qobj = gluNewQuadric();
 
-  gluQuadricDrawStyle(qobj, GLU_FILL);
-  gluQuadricNormals(qobj, GLU_NONE);
+//   gluQuadricDrawStyle(qobj, GLU_FILL);
+//   gluQuadricNormals(qobj, GLU_NONE);
 
   gluSphere(qobj, _r, slices, stacks);
   glPopMatrix();
