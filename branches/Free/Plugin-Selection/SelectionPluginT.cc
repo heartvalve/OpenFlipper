@@ -220,28 +220,31 @@ void SelectionPlugin::set_features(MeshType* _mesh)
   if (selectionType_ & VERTEX){
     typename MeshType::VertexIter v_it, v_end=_mesh->vertices_end();
 
-    for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it){
-      _mesh->status(v_it).set_feature( _mesh->status(v_it).selected() );
-      _mesh->status(v_it).set_selected( false );
-    }
+    for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
+      if ( _mesh->status(v_it).selected() ){
+       _mesh->status(v_it).set_feature( _mesh->status(v_it).selected() );
+       _mesh->status(v_it).set_selected( false );
+      }
   }
 
   if (selectionType_ & EDGE){
     typename MeshType::EdgeIter e_it, e_end( _mesh->edges_end() );
 
-    for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it){
-      _mesh->status(e_it).set_feature( _mesh->status(e_it).selected() );
-      _mesh->status(e_it).set_selected( false );
-    }
+    for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
+      if ( _mesh->status(e_it).selected() ){
+        _mesh->status(e_it).set_feature( _mesh->status(e_it).selected() );
+        _mesh->status(e_it).set_selected( false );
+      }
   }
 
   if (selectionType_ & FACE){
     typename MeshType::FaceIter f_it, f_end( _mesh->faces_end() );
 
-    for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it){
-      _mesh->status(f_it).set_feature( _mesh->status(f_it).selected() );
-      _mesh->status(f_it).set_selected( false );
-    }
+    for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
+      if ( _mesh->status(f_it).selected() ){
+        _mesh->status(f_it).set_feature( _mesh->status(f_it).selected() );
+        _mesh->status(f_it).set_selected( false );
+      }
   }
 }
 
