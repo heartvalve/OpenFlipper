@@ -219,9 +219,12 @@ pick_vertices( GLState& _state )
   // radius in pixels
   int psize = 7;
 
+  _state.pick_set_maximum (polyline_.n_vertices());
+  _state.pick_set_name (0);
+
   for (unsigned int i=0; i< polyline_.n_vertices(); ++i)
   {
-    glLoadName(GLuint(i));
+    _state.pick_set_name (i);
 
     // compute 3d radius of sphere
     Vec3d window_pos = _state.project( (Vec3d) polyline_.point(i));
@@ -255,10 +258,14 @@ pick_edges( GLState& _state, unsigned int _offset)
   unsigned int n_end = polyline_.n_edges()+1;
   if( !polyline_.is_closed()) --n_end;
 
+
+  _state.pick_set_maximum (n_end);
+  _state.pick_set_name (0);
+
   // draw possibly closed PolyLine
   for (unsigned int i=0; i<n_end; ++i)
   {
-    glLoadName(GLuint(i+_offset));
+    _state.pick_set_name (i+_offset);
     Point p0 = polyline_.point(i     % polyline_.n_vertices());
     Point p1 = polyline_.point((i+1) % polyline_.n_vertices());
     Point pm = 0.5*(p0+p1);
@@ -310,8 +317,8 @@ draw_cylinder( const Point& _p0, const Point& _axis, double _r)
 
   qobj = gluNewQuadric();
 
-  gluQuadricDrawStyle(qobj, GLU_FILL);
-  gluQuadricNormals(qobj, GLU_SMOOTH);
+//   gluQuadricDrawStyle(qobj, GLU_FILL);
+//   gluQuadricNormals(qobj, GLU_SMOOTH);
 
   gluCylinder(qobj, _r, _r, _axis.norm(), slices, stacks);
   glPopMatrix();
