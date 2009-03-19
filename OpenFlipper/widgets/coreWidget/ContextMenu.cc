@@ -239,6 +239,14 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
  */
 void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& _point) {
 
+  //====================================================================================================
+  // DrawModes
+  //====================================================================================================
+  slotUpdateViewerDrawMenu();
+  _menu->addMenu( viewerDrawMenu_ );
+
+  _menu->addSeparator();
+
   QAction* action = _menu->addAction("Set Background Color");
   action->setToolTip("Set the background color for the current viewer");
   action->setStatusTip(tr("Set the background color for the current viewer"));
