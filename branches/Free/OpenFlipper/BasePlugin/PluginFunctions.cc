@@ -288,12 +288,12 @@ QPoint mapToLocal( const QPoint _point ) {
 
 void setDrawMode( const unsigned int _mode , int _viewer) {
 
-  if ( _viewer == ACTIVE_VIEWER ) 
+  if ( _viewer == ACTIVE_VIEWER )
     viewerProperties(activeExaminer()).drawMode(_mode);
   else if ( _viewer == ALL_VIEWERS )
-    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i ) 
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
       viewerProperties(i).drawMode(_mode);
-  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() ) 
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
     viewerProperties(_viewer).drawMode(_mode);
   else
     std::cerr << "Requested illegal viewer for setting DrawMode!!" << std::endl;
@@ -417,12 +417,28 @@ Viewer::ViewerProperties& viewerProperties(int _id) {
 
 }
 
-void perspectiveProjection() {
-  examiner_widget_->perspectiveProjection();
+void perspectiveProjection( int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->perspectiveProjection();
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->perspectiveProjection();
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->perspectiveProjection();
+  else
+    std::cerr << "Requested illegal viewer for perspectiveProjection()!!" << std::endl;
 }
 
-void orthographicProjection() {
-  examiner_widget_->orthographicProjection();
+void orthographicProjection( int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->orthographicProjection();
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->orthographicProjection();
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->orthographicProjection();
+  else
+    std::cerr << "Requested illegal viewer for orthographicProjection()!!" << std::endl;
 }
 
 void allowRotation(bool _mode) {
