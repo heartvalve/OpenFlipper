@@ -930,6 +930,40 @@ void ViewControlPlugin::setEyePosition(Vector _eye){
   emit log(LOGERR, "not yet implemented");
 }
 
+
+void ViewControlPlugin::viewAll() {
+  PluginFunctions::viewAll();
+}
+
+void ViewControlPlugin::viewAll(int _viewer) {
+  PluginFunctions::viewAll(_viewer);
+}
+
+void ViewControlPlugin::viewHome() {
+  PluginFunctions::viewHome();
+}
+
+void ViewControlPlugin::viewHome(int _viewer) {
+  PluginFunctions::viewHome(_viewer);
+}
+
+void ViewControlPlugin::orthographicProjection() {
+  PluginFunctions::orthographicProjection();
+}
+
+void ViewControlPlugin::orthographicProjection(int _viewer) {
+  PluginFunctions::orthographicProjection( _viewer );
+}
+
+
+void ViewControlPlugin::perspectiveProjection() {
+  PluginFunctions::perspectiveProjection();
+}
+
+void ViewControlPlugin::perspectiveProjection(int _viewer) {
+  PluginFunctions::perspectiveProjection(_viewer);
+}
+
 void ViewControlPlugin::setDescriptions() {
   emit setSlotDescription("translate(Vector,int)", "Translate Scene",
                           QString("TranslationVector,Viewer").split(","),
@@ -954,6 +988,28 @@ void ViewControlPlugin::setDescriptions() {
                           QString("the drawMode ( ; separated list ),Viewer id (default is all)").split(","));
   emit setSlotDescription("setDrawMode(QString)", "Set the drawMode for all viewers",
                           QStringList("DrawMode"), QStringList("the drawMode ( ; separated list )"));
+
+  emit setSlotDescription("viewAll()", "Change View on all viewers to view whole scene",
+                          QStringList(), QStringList());
+  emit setSlotDescription("viewAll(int)", "Change View on given viewer to view whole scene",
+                          QStringList("Viewer"), QStringList("Id of the viewer to change"));
+
+  emit setSlotDescription("viewHome()", "Change View on all viewers to view home position",
+                          QStringList(), QStringList());
+  emit setSlotDescription("viewHome(int)", "Change View on given viewer to view home position",
+                          QStringList("Viewer"), QStringList("Id of the viewer to change"));
+
+
+  emit setSlotDescription("orthographicProjection()", "Change Viewer to orthographic projection",
+                          QStringList(), QStringList());
+  emit setSlotDescription("orthographicProjection(int)", "Change all Viewers to orthographic projection",
+                          QStringList("Viewer"), QStringList("Id of the viewer to change"));
+
+
+  emit setSlotDescription("perspectiveProjection()", "Change Viewer to perspective projection",
+                          QStringList(), QStringList());
+  emit setSlotDescription("perspectiveProjection(int)", "Change all Viewers to perspective projection",
+                          QStringList("Viewer"), QStringList("Id of the viewer to change"));
 
 }
 
