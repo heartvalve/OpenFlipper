@@ -81,7 +81,8 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action , ContextMenuType _type);
     void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
-
+    // LoadSaveInterface
+    void deleteObject( int _id );
   private slots :
     // BaseInterface
     void pluginsInitialized();
@@ -241,7 +242,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         QString getObjectName( int objectId );
 
         /// Delete the given object
-        void deleteObject(int objectId);
+        void objectDelete(int objectId);
 
         /// Creates an object copy
         int copyObject( int objectId );
