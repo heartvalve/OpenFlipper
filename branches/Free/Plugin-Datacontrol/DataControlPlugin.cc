@@ -222,7 +222,7 @@ void DataControlPlugin::slotObjectPropertiesChanged( int _identifier ){
 
 //******************************************************************************
 
-/** \brief Update the model if an object was created/deleted
+/** \brief Update the model if an object was deleted
  * 
  * @param _identifier id of an object
  */
@@ -253,7 +253,6 @@ void DataControlPlugin::fileOpened(int){
 void DataControlPlugin::addedEmptyObject(int){
   model_->objectChanged(-1);
 }
-
 
 //******************************************************************************
 

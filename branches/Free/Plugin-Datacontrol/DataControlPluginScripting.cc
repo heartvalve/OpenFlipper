@@ -72,7 +72,7 @@ void DataControlPlugin::setDescriptions(){
   emit setSlotDescription("groupObjects(idList)","Group given Objects together.",
                           QStringList("objectIds"), QStringList("List of objects that should be grouped."));
 
-  emit setSlotDescription("deleteObject(int)","Delete an object",
+  emit setSlotDescription("objectDelete(int)","Delete an object",
                           QStringList("objectId"), QStringList("Delete the given object."));
 
   emit setSlotDescription("copyObject(int)","Create a copy of an object",
@@ -233,7 +233,7 @@ void DataControlPlugin::setObjectName( int objectId, QString _name ) {
  *
  * @param objectId id of the object that should be deleted
  */
-void DataControlPlugin::deleteObject( int objectId ) {
+void DataControlPlugin::objectDelete( int objectId ) {
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) )
@@ -242,7 +242,7 @@ void DataControlPlugin::deleteObject( int objectId ) {
   if ( object == 0)
     return;
 
-  PluginFunctions::deleteObject(objectId);
+  emit deleteObject(objectId);
 }
 
 
