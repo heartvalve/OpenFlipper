@@ -371,37 +371,26 @@ void traverse( const unsigned int _examiner, ACG::SceneGraph::MouseEventAction  
 }
 
 
-const std::string & pickMode () {
+const std::string pickMode () {
   // No seperate draw modes available all should have the same so take first
-  return examiner_widgets_[0]->pickMode();
+  return viewerProperties().pickMode();
 }
 
 void pickMode ( std::string _mode) {
-  for ( uint i = 0 ; i < examiner_widgets_.size() ; ++i )
-    examiner_widgets_[i]->pickMode(_mode);
+  viewerProperties().pickMode(_mode);
 }
 
-void pickMode ( const unsigned int _examiner, std::string _mode) {
-  if ( _examiner >= examiner_widgets_.size() ) {
-    std::cerr << "Wrong examiner id" << std::endl;
-    return;
-  }
-
-  examiner_widgets_[_examiner]->pickMode(_mode);
+Viewer::ActionMode actionMode() {
+   return viewerProperties().actionMode();
 }
 
 void actionMode ( Viewer::ActionMode _mode) {
 
-  for ( uint i = 0 ; i < examiner_widgets_.size() ; ++i )
-    viewerProperties(i).actionMode(_mode);
+  viewerProperties().actionMode(_mode);
 }
 
 void getCurrentViewImage(QImage& _image) {
   examiner_widget_->copyToImage( _image );
-}
-
-Viewer::ActionMode actionMode() {
-   return viewerProperties(activeExaminer_).actionMode();
 }
 
 Viewer::ViewerProperties& viewerProperties(int _id) {

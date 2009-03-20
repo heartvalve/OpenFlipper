@@ -68,43 +68,6 @@ void CoreWidget::slotToggleStereoMode()
     examiner_widgets_[i]->setStereoMode(stereoActive_);
 }
 
-void CoreWidget::slotActionModeChanged( Viewer::ActionMode _mode ) {
-  moveButton_->setDown(false);
-  lightButton_->setDown(false);
-  pickButton_->setDown(false);
-  questionButton_->setDown(false);
-
-  switch (_mode)
-  {
-    case Viewer::ExamineMode:
-    {
-      moveButton_->setDown(true);
-      break;
-    }
-
-
-    case Viewer::LightMode:
-    {
-      lightButton_->setDown(true);
-      break;
-    }
-
-
-    case Viewer::PickingMode:
-    {
-      pickButton_->setDown(true);
-      break;
-    }
-
-
-    case Viewer::QuestionMode:
-    {
-      questionButton_->setDown(true);
-      break;
-    }
-  }
-}
-
 void CoreWidget::slotSetGlobalBackgroundColor() {
   ACG::Vec4f bc = PluginFunctions::viewerProperties().backgroundColor() * 255.0;
 

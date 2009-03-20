@@ -83,7 +83,7 @@
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
 #include <OpenFlipper/INIFile/INIFile.hh>
-
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 
 struct ViewMode{
@@ -783,9 +783,6 @@ public:
     /// Enable or disable Stereo
     void slotToggleStereoMode();
 
-    /// Change Icons if action mode is changed in an examiner
-    void slotActionModeChanged( Viewer::ActionMode _mode );
-
     /// Set Background Color for all viewers at once.
     void slotSetGlobalBackgroundColor();
 
@@ -855,6 +852,153 @@ public:
     bool stereoActive_;
 
   /** @} */
+
+  //===========================================================================
+  /** @name Action Mode States
+   * @{ */
+  //===========================================================================
+
+  public slots:
+
+    bool examineMode() { return(actionMode_ == Viewer::ExamineMode  ); };
+    bool pickingMode() { return(actionMode_ == Viewer::PickingMode  ); };
+    bool lightMode()   { return(actionMode_ == Viewer::LightMode    ); };
+    bool questionMode(){ return(actionMode_ == Viewer::QuestionMode ); };
+
+    /** Set action mode.
+      The ActionMode determines the type of reaction on mouse events.
+    */
+    void setExamineMode() { setActionMode(Viewer::ExamineMode  ); };
+    void setPickingMode() { setActionMode(Viewer::PickingMode  ); };
+    void setLightMode()   { setActionMode(Viewer::LightMode    ); };
+    void setQuestionMode(){ setActionMode(Viewer::QuestionMode ); };
+
+    void setActionMode(const Viewer::ActionMode  _am);
+    void getActionMode(Viewer::ActionMode& _am);
+
+  public:
+    Viewer::ActionMode actionMode() { return actionMode_; };
+    Viewer::ActionMode lastActionMode() { return lastActionMode_; };
+
+  private :
+    Viewer::ActionMode actionMode_, lastActionMode_;
+
+  /** @} */
+
+  //===========================================================================
+  /** @name PickModes
+   * @{ */
+  //===========================================================================
+
+  public:
+
+    /** \brief  add pick mode
+     *
+     *  @param _name Name of the Pick Mode or "Separator" to insert a separator
+     *  @param _mouse_tracking true: every mouse movement will emit mouse events not only when mousebutton is pressed
+     *  @param _pos position to insert the mode in the popup menu.
+     */
+    void addPickMode(const std::string& _name,
+                     bool               _mouse_tracking = false,
+                     int                _pos            = -1,
+                     bool               _visible        = true,
+                     QCursor            _cursor         = Qt::ArrowCursor );
+
+    /** clear all pick modes
+     */
+    void clearPickModes();
+
+    /** return the currently active pick mode
+     */
+    const std::string& pickMode() const;
+
+    /** Switch to given picking mode
+     * @param _id Id of the picking Mode
+     */
+    void pickMode( int _id );
+
+  public slots:
+
+    /** Switch to given picking mode
+     * @param _name Name of the picking mode
+     */
+    void setPickMode(const std::string  _name);
+
+
+    void getPickMode(std::string& _name);
+
+  public slots:
+
+    /** \brief  set a new cursor for the pick mode
+     *
+     *  @param _name Name of the Pick Mode
+     *  @param _cursor the new cursor
+     */
+    void setPickModeCursor(const std::string& _name, QCursor _cursor);
+
+    /** \brief  set mouseTracking for the pick mode
+     *
+     *  @param _name Name of the Pick Mode
+     *  @param _mouseTracking true: every mouse movement will emit mouse events not only when mousebutton is pressed
+     */
+    void setPickModeMouseTracking(const std::string& _name, bool _mouseTracking);
+
+    void actionPickMenu( QAction * _action );
+
+  signals:
+    /** This signal is emitted when the pickMode is changed and contains the new PickMode
+     */
+    void signalPickModeChanged(const std::string&);
+
+  private:
+
+    QMenu* pickMenu_;
+
+    /** Struct containing information about pickModes
+     */
+    struct PickMode
+    {
+      /// Constructor
+      PickMode(const std::string& _n, bool _t, bool _v, QCursor _c) :
+               name(_n), tracking(_t), visible(_v), cursor(_c) {}
+
+      /// Name of the pickMode
+      std::string  name;
+
+      /** MouseTracking enabled for this mode?
+       */
+      bool         tracking;
+
+      /** Defines if the Mode will be visible in the popup Menu
+       */
+      bool         visible;
+
+      /** Cursor used in  this pickMode
+       */
+      QCursor      cursor;
+    };
+
+    /** Vector of all Picking modes
+     */
+    std::vector<PickMode>  pick_modes_;
+
+    /** Name of current pickMode
+     */
+    std::string            pick_mode_name_;
+
+    /** Index of current pickMode
+     */
+    int                    pick_mode_idx_;
+
+
+    /// update pick mode menu
+    void updatePickMenu();
+
+  private slots:
+
+    void hidePopupMenus();
+  /** @} */
+
 };
 
 

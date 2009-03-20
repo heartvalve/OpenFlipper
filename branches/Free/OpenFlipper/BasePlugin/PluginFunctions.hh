@@ -54,6 +54,7 @@
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh>
 
+
 /** The Namespace PluginFunctions contains functions for all plugins. These functions should be used to get the
  *  objects to work on or to set modes in the examiner widget. */
 namespace PluginFunctions {
@@ -250,15 +251,11 @@ void traverse(  const unsigned int _examiner, ACG::SceneGraph::MouseEventAction 
 
 /// Get the current Picking mode
 DLLEXPORT
-const std::string & pickMode ();
+const std::string pickMode ();
 
 /// Set the current Picking mode for all examiner widgets
 DLLEXPORT
 void pickMode ( std::string _mode);
-
-/// Set pick mode for a specific examiner
-DLLEXPORT
-void pickMode ( const unsigned int _examiner, std::string _mode);
 
 /// Returns a QImage of the current View
 DLLEXPORT
@@ -308,6 +305,7 @@ DLLEXPORT
 QPoint mapToLocal( const QPoint _point );
 
 /** @} */
+
 
 //=======================================
 // Iterators for object Access

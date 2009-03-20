@@ -100,6 +100,7 @@
 #  undef min
 #endif
 
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -126,8 +127,6 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   blending_(true),
   glScene_(_scene),
   glWidget_(_glWidget),
-  pick_mode_name_(""),
-  pick_mode_idx_(-1),
   properties_(_properties),
   glstate_(0)
 {
@@ -162,9 +161,6 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   // stereo
   stereo_ = false;
 
-
-  pickMenu_ = 0;
-
   // Note: we start locked (initialization of updateLocked_)
   // will be unlocked in initializeGL()
 
@@ -185,9 +181,7 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
 
 
   connect( &properties_,SIGNAL(updated()), this, SLOT( slotPropertiesUpdated() ) );
-  connect( &properties_,SIGNAL(actionModeChanged(Viewer::ActionMode)), this, SLOT( updateActionMode(Viewer::ActionMode) ) );
 
-  properties_.setExamineMode();
 
   //check for updated properties once
   slotPropertiesUpdated();
@@ -382,58 +376,6 @@ void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
 
   glstate_->reset_modelview();
   glstate_->lookAt((ACG::Vec3d)eye, (ACG::Vec3d)scene_center_, (ACG::Vec3d)_up);
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void glViewer::updateActionMode(Viewer::ActionMode)
-{
-
-  trackMouse(false);
-
-
-  switch ( properties_.actionMode() )
-  {
-    case Viewer::ExamineMode:
-    {
-      setCursor(Qt::PointingHandCursor);
-      break;
-    }
-
-
-    case Viewer::LightMode:
-    {
-      setCursor(Qt::PointingHandCursor);
-      break;
-    }
-
-
-    case Viewer::PickingMode:
-    {
-      setCursor(Qt::ArrowCursor);
-      if (pick_mode_idx_ != -1) {
-	     trackMouse(pick_modes_[pick_mode_idx_].tracking);
-        setCursor(pick_modes_[pick_mode_idx_].cursor);
-      }
-
-      break;
-    }
-
-
-    case Viewer::QuestionMode:
-    {
-      setCursor(Qt::WhatsThisCursor);
-      break;
-    }
-  }
-
-  //emit pickmodeChanged with either the name of the current pickmode or an empty string
-  if( properties_.pickingMode() )
-    emit(signalPickModeChanged(pick_mode_name_));
-  else
-    emit(signalPickModeChanged(""));
 }
 
 
@@ -1162,7 +1104,6 @@ void
 glViewer::createWidgets(QStatusBar* _sb)
 {
   setStatusBar(_sb);
-  pickMenu_=0;
 
   // Construct GL context & widget
 
@@ -1210,21 +1151,6 @@ glViewer::createWidgets(QStatusBar* _sb)
 
   setLayout(glBaseLayout_);
 }
-
-//-----------------------------------------------------------------------------
-
-
-void glViewer::hidePopupMenus()
-{
-
-  if ( pickMenu_ )
-  {
-    pickMenu_->blockSignals(true);
-    pickMenu_->hide();
-    pickMenu_->blockSignals(false);
-  }
-}
-
 
 //-----------------------------------------------------------------------------
 
@@ -1349,7 +1275,7 @@ void glViewer::glMousePressEvent(QMouseEvent* _event)
   // right button pressed => popup menu (ignore here)
   if (_event->button() != Qt::RightButton )
   {
-    switch (properties_.actionMode())
+    switch (PluginFunctions::actionMode())
     {
       case Viewer::ExamineMode:
         if ((_event->modifiers() & Qt::ControlModifier)) // drag&drop
@@ -1359,11 +1285,11 @@ void glViewer::glMousePressEvent(QMouseEvent* _event)
         break;
 
       case Viewer::LightMode:
-	lightMouseEvent(_event);
-	break;
+        lightMouseEvent(_event);
+        break;
 
       case Viewer::PickingMode: // give event to application
-        emit(signalMouseEvent(_event, pick_mode_name_));
+        emit(signalMouseEvent(_event, PluginFunctions::pickMode() ));
         emit(signalMouseEvent(_event));
         break;
 
@@ -1380,7 +1306,7 @@ void glViewer::glMousePressEvent(QMouseEvent* _event)
 
 void glViewer::glMouseDoubleClickEvent(QMouseEvent* _event)
 {
-  switch (properties_.actionMode())
+  switch (PluginFunctions::actionMode())
   {
     case Viewer::ExamineMode:
       viewMouseEvent(_event);
@@ -1391,7 +1317,7 @@ void glViewer::glMouseDoubleClickEvent(QMouseEvent* _event)
       break;
 
     case Viewer::PickingMode: // give event to application
-      emit(signalMouseEvent(_event, pick_mode_name_));
+      emit(signalMouseEvent(_event, PluginFunctions::pickMode() ));
       emit(signalMouseEvent(_event));
       break;
 
@@ -1407,7 +1333,7 @@ void glViewer::glMouseDoubleClickEvent(QMouseEvent* _event)
 
 void glViewer::glMouseMoveEvent(QMouseEvent* _event)
 {
-  switch ( properties_.actionMode() )
+  switch ( PluginFunctions::actionMode() )
   {
     case Viewer::ExamineMode:
       viewMouseEvent(_event);
@@ -1423,7 +1349,7 @@ void glViewer::glMouseMoveEvent(QMouseEvent* _event)
       if ((_event->buttons() & (Qt::LeftButton | Qt::MidButton | Qt::RightButton))
           || trackMouse_)
       {
-        emit(signalMouseEvent(_event, pick_mode_name_));
+        emit(signalMouseEvent(_event, PluginFunctions::pickMode() ));
         emit(signalMouseEvent(_event));
       }
       break;
@@ -1446,10 +1372,9 @@ void glViewer::glMouseReleaseEvent(QMouseEvent* _event)
 //   if (_event->button() == Qt::RightButton )
 //     hidePopupMenus();
 
-  if (_event->button() != Qt::RightButton ||
-      properties_.pickingMode() )
+  if (_event->button() != Qt::RightButton || (PluginFunctions::actionMode() == Viewer::PickingMode) )
   {
-    switch ( properties_.actionMode() )
+    switch ( PluginFunctions::actionMode() )
     {
       case Viewer::ExamineMode:
         viewMouseEvent(_event);
@@ -1460,7 +1385,7 @@ void glViewer::glMouseReleaseEvent(QMouseEvent* _event)
         break;
 
       case Viewer::PickingMode: // give event to application
-        emit(signalMouseEvent(_event, pick_mode_name_));
+        emit(signalMouseEvent(_event, PluginFunctions::pickMode() ));
         emit(signalMouseEvent(_event));
         break;
 
@@ -1482,14 +1407,14 @@ void glViewer::glMouseReleaseEvent(QMouseEvent* _event)
 
 void glViewer::glMouseWheelEvent(QWheelEvent* _event)
 {
-  switch ( properties_.actionMode() )
+  switch ( PluginFunctions::actionMode() )
   {
     case Viewer::ExamineMode:
       viewWheelEvent(_event);
       break;
 
     case Viewer::PickingMode: // give event to application
-      emit(signalWheelEvent(_event, pick_mode_name_));
+      emit(signalWheelEvent(_event, PluginFunctions::pickMode() ));
       break;
 
     default: // avoid warning
@@ -1525,63 +1450,6 @@ void glViewer::dropEvent(QGraphicsSceneDragDropEvent* _e)
   emit dropEvent(&de);
   _e->accept();
 }
-
-//-----------------------------------------------------------------------------
-
-void glViewer::updatePickMenu()
-{
-  delete pickMenu_;
-
-  pickMenu_ = new QMenu( 0 );
-  connect( pickMenu_, SIGNAL( aboutToHide() ),
-	   this, SLOT( hidePopupMenus() ) );
-
-  QActionGroup * ag = new QActionGroup( pickMenu_ );
-  ag->setExclusive( true );
-
-  for (unsigned int i=0; i<pick_modes_.size(); ++i) {
-    if ( !pick_modes_[i].visible )
-      continue;
-
-    if (pick_modes_[i].name == "Separator")
-    {
-      if ((i > 0) && (i<pick_modes_.size()-1)) // not first, not last
-	   pickMenu_->addSeparator();
-    }
-    else
-    {
-      QAction * ac = new QAction( pick_modes_[i].name.c_str(), ag );
-      ac->setData( QVariant( i ) );
-      ac->setCheckable( true );
-
-      if ((int)i == pick_mode_idx_)
-        ac->setChecked( true );
-
-      pickMenu_->addAction( ac );
-    }
-  }
-
-  connect( ag, SIGNAL( triggered( QAction * ) ),
-	   this, SLOT( actionPickMenu( QAction * ) ));
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void glViewer::actionPickMenu( QAction * _action )
-{
-  int _id = _action->data().toInt();
-  if (_id < (int) pick_modes_.size() )
-  {
-    pickMode( _id );
-  }
-
-  properties_.setPickingMode();
-
-  hidePopupMenus();
-}
-
 
 //-----------------------------------------------------------------------------
 

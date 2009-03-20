@@ -78,37 +78,6 @@ namespace Viewer {
     public:
       ViewerProperties();
       ~ViewerProperties();
-
-    //===========================================================================
-    /** @name Action Mode States
-    * @{ */
-    //===========================================================================
-
-    public slots:
-
-      bool examineMode() { return(actionMode_ == Viewer::ExamineMode  ); };
-      bool pickingMode() { return(actionMode_ == Viewer::PickingMode  ); };
-      bool lightMode()   { return(actionMode_ == Viewer::LightMode    ); };
-      bool questionMode(){ return(actionMode_ == Viewer::QuestionMode ); };
-
-      /** Set action mode.
-        The ActionMode determines the type of reaction on mouse events.
-      */
-      void setExamineMode() { actionMode(Viewer::ExamineMode  ); };
-      void setPickingMode() { actionMode(Viewer::PickingMode  ); };
-      void setLightMode()   { actionMode(Viewer::LightMode    ); };
-      void setQuestionMode(){ actionMode(Viewer::QuestionMode ); };
-
-    public:
-      void               actionMode(Viewer::ActionMode _am);
-      Viewer::ActionMode actionMode() { return actionMode_; };
-      Viewer::ActionMode lastActionMode() { return lastActionMode_; };
-
-    private :
-      Viewer::ActionMode actionMode_, lastActionMode_;
-
-    /** @} */
-      
       
     //===========================================================================
     /** @name Draw Mode States
@@ -364,8 +333,25 @@ namespace Viewer {
       */
       void updated();
 
-      void actionModeChanged( Viewer::ActionMode );
+      void getPickMode(std::string& _mode );
+      void setPickMode(const std::string  _mode );
 
+      void getActionMode(Viewer::ActionMode& _am);
+      void setActionMode(const Viewer::ActionMode  _am);
+
+    public:
+
+      /// get active pick mode
+      std::string pickMode();
+
+      /// set the pickMode
+      void pickMode(const std::string _name);
+
+      /// get the action mode
+      Viewer::ActionMode actionMode();
+
+      /// set active action mode
+      void actionMode(const Viewer::ActionMode _am);
 
   };
 
