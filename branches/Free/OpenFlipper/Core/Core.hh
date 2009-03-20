@@ -203,6 +203,9 @@ signals:
    /// Tell plugins that object properties such as object names have been changed
    void objectPropertiesChanged( int _id );
 
+   /// Called after an object has been deleted
+   void objectDeleted( int );
+
    /** @} */
 
    //===========================================================================
@@ -263,6 +266,9 @@ signals:
 
       /// Called when a plugin requests a list of file-filters
       void slotGetAllFilters ( QStringList& _list);
+
+      /// Called when a plugin wants to delete an object
+      void slotDeleteObject( int _id );
 
       /// Get a Pointer to the Plugin with given _name (if it is loaded)
 //       void slotGetPlugin(QString _name, QObject* & _plugin );

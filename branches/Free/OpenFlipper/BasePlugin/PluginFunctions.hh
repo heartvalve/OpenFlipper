@@ -73,21 +73,6 @@ namespace PluginFunctions {
 DLLEXPORT
 bool getPickedObject(const unsigned int _node_idx , BaseObjectData*& _object);
 
-/** \brief Delete the object with the given id
- *
- *  Deletes the given object ( you have to emit the right signals yourself)\n
- *  updateView , objectListUpdate ... )
- * @return successful?
- * */
-DLLEXPORT
-bool deleteObject( const int _id );
-
-/** \brief Delete all objects
- *
- * */
-DLLEXPORT
-void deleteAll( );
-
 /** \brief Create a copy of the object with the given id
  *
  * Creates a copy of an object. All scenegraph nodes will be created. The object will

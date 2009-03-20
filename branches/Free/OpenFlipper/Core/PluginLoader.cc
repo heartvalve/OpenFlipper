@@ -879,6 +879,14 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(plugin , SIGNAL( getAllFilters( QStringList& ) ) ,
                 this   , SLOT( slotGetAllFilters ( QStringList& ) ),Qt::DirectConnection);
 
+      if ( checkSignal(plugin,"deleteObject(int)" ) )
+        connect(plugin , SIGNAL( deleteObject( int ) ) ,
+                this   , SLOT( slotDeleteObject( int ) ),Qt::DirectConnection);
+
+      if ( checkSlot(plugin,"objectDeleted(int)" ) )
+        connect(this ,   SIGNAL( objectDeleted( int ) ) ,
+                plugin   , SLOT( objectDeleted( int ) ),Qt::DirectConnection);
+
     }
 
     //Check if the plugin supports View-Interface
