@@ -303,7 +303,7 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
 
           surfaceLassoSelection(m, pline->line(), fh, tbsp );
 
-          PluginFunctions::deleteObject(polyLineID_);
+          emit deleteObject(polyLineID_);
 
           emit updatedObject(-1);
 
