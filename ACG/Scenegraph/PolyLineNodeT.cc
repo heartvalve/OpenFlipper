@@ -218,6 +218,8 @@ pick_vertices( GLState& _state )
 {
   // radius in pixels
   int psize = 7;
+  unsigned int slices(4);
+  unsigned int stacks(3);
 
   _state.pick_set_maximum (polyline_.n_vertices());
   _state.pick_set_name (0);
@@ -235,7 +237,14 @@ pick_vertices( GLState& _state )
     double r = l*tan(angle);
 
     // draw 3d sphere
-    draw_sphere( polyline_.point(i), r);
+    _state.push_modelview_matrix();
+    _state.translate(polyline_.point(i)[0], polyline_.point(i)[1], polyline_.point(i)[2]);
+
+    GLUquadricObj *qobj = gluNewQuadric();
+    gluSphere(qobj, r, slices, stacks);
+    gluDeleteQuadric(qobj);
+
+    _state.pop_modelview_matrix();
   }
 }
 
@@ -279,7 +288,7 @@ pick_edges( GLState& _state, unsigned int _offset)
     double r = l*tan(angle);
 
     // draw cylinder
-    draw_cylinder( p0, p1-p0, r);
+    draw_cylinder( p0, p1-p0, r, _state);
   }
 }
 
@@ -290,10 +299,10 @@ pick_edges( GLState& _state, unsigned int _offset)
 template <class PolyLine>
 void
 PolyLineNodeT<PolyLine>::
-draw_cylinder( const Point& _p0, const Point& _axis, double _r)
+draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state)
 {
-  glPushMatrix();
-  glTranslated( _p0[0], _p0[1], _p0[2]);
+  _state.push_modelview_matrix();
+  _state.translate(_p0[0], _p0[1], _p0[2]);
 
   unsigned int slices(6);
   unsigned int stacks(1);
@@ -308,47 +317,17 @@ draw_cylinder( const Point& _p0, const Point& _axis, double _r)
   rot_normal = ((z_axis % direction).normalize());
 
 
-  if(fabs(rot_angle) > 0.0001 && fabs(180-rot_angle) > 0.0001)
-    glRotatef(rot_angle,rot_normal[0], rot_normal[1], rot_normal[2]);
+  if( fabs( rot_angle ) > 0.0001 && fabs( 180 - rot_angle ) > 0.0001)
+    _state.rotate(rot_angle,rot_normal[0], rot_normal[1], rot_normal[2]);
   else
-    glRotatef(rot_angle,1,0,0);
+    _state.rotate(rot_angle,1,0,0);
 
-  GLUquadricObj *qobj;
-
-  qobj = gluNewQuadric();
-
-//   gluQuadricDrawStyle(qobj, GLU_FILL);
-//   gluQuadricNormals(qobj, GLU_SMOOTH);
-
+  GLUquadricObj *qobj = gluNewQuadric();
   gluCylinder(qobj, _r, _r, _axis.norm(), slices, stacks);
-  glPopMatrix();
+  gluDeleteQuadric(qobj);
+
+  _state.pop_modelview_matrix();
 }
-
-//----------------------------------------------------------------------------
-
-
-template <class PolyLine>
-void
-PolyLineNodeT<PolyLine>::
-draw_sphere( const Point& _p0, double _r)
-{
-  glPushMatrix();
-  glTranslated( _p0[0], _p0[1], _p0[2]);
-
-  unsigned int slices(4);
-  unsigned int stacks(3);
-
-  GLUquadricObj *qobj;
-
-  qobj = gluNewQuadric();
-
-//   gluQuadricDrawStyle(qobj, GLU_FILL);
-//   gluQuadricNormals(qobj, GLU_NONE);
-
-  gluSphere(qobj, _r, slices, stacks);
-  glPopMatrix();
-}
-
 
 //----------------------------------------------------------------------------
 

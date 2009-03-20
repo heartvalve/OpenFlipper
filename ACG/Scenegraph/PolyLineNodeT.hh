@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -61,11 +61,11 @@ namespace SceneGraph {
 
 
 
-	      
+
 /** \class PolyLineNodeT PolyLineNodeT.hh <ACG/.../PolyLineNodeT.hh>
 
     Brief Description.
-  
+
     A more elaborate description follows.
 */
 
@@ -73,7 +73,7 @@ template <class PolyLine>
 class PolyLineNodeT : public MaterialNode
 {
 public:
-   
+
   // typedefs for easy access
   typedef typename PolyLine::Point Point;
 
@@ -81,9 +81,9 @@ public:
   PolyLineNodeT(PolyLine& _pl,
 		BaseNode*    _parent=0,
 		std::string  _name="<PolyLineNode>" ) :
-    MaterialNode(_parent, 
-		 _name, 
-		 MaterialNode::BaseColor | 
+    MaterialNode(_parent,
+		 _name,
+		 MaterialNode::BaseColor |
 		 MaterialNode::LineWidth |
 		 MaterialNode::PointSize |
 		 MaterialNode::RoundPoints),
@@ -95,7 +95,7 @@ public:
     set_round_points(true);
     set_random_color();
   }
- 
+
   /// Destructor
   ~PolyLineNodeT() {}
 
@@ -118,15 +118,14 @@ public:
   /// picking
   void pick(GLState& _state, PickTarget _target);
 
-  
+
 private:
 
   void pick_vertices( GLState& _state );
   void pick_edges( GLState& _state, unsigned int _offset);
-    
 
-  void draw_cylinder( const Point& _p0, const Point& _axis, double _r);
-  void draw_sphere  ( const Point& _p0, double _r);
+
+  void draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state);
 
 
   /// Copy constructor (not used)
@@ -134,7 +133,7 @@ private:
 
   /// Assignment operator (not used)
   PolyLineNodeT& operator=(const PolyLineNodeT& _rhs);
-  
+
 private:
 
   PolyLine& polyline_;
