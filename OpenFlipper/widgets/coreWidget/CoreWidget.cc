@@ -102,7 +102,12 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   aboutWidget_(0),
   optionsWidget_(0),
   plugins_(_plugins),
-  stereoActive_(false)
+  stereoActive_(false),
+  actionMode_(Viewer::PickingMode),
+  lastActionMode_(Viewer::ExamineMode),
+  pickMenu_(0),
+  pick_mode_name_(""),
+  pick_mode_idx_(-1)
 {
   setupStatusBar();
 
@@ -221,6 +226,16 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
            statusBar_);
 
       examiner_widgets_.push_back(newWidget);
+
+      connect (&PluginFunctions::viewerProperties(i), SIGNAL( getPickMode(std::string&) ),
+               this,                                   SLOT( getPickMode(std::string&) ),Qt::DirectConnection );
+      connect (&PluginFunctions::viewerProperties(i), SIGNAL( setPickMode(const std::string) ),
+               this,                                   SLOT( setPickMode(const std::string) ),Qt::DirectConnection );
+      connect (&PluginFunctions::viewerProperties(i), SIGNAL( getActionMode(Viewer::ActionMode&) ),
+               this,                                   SLOT( getActionMode(Viewer::ActionMode&) ),Qt::DirectConnection );
+      connect (&PluginFunctions::viewerProperties(i), SIGNAL( setActionMode(const Viewer::ActionMode) ),
+               this,                                   SLOT( setActionMode(const Viewer::ActionMode)), Qt::DirectConnection );
+
     }
 
     // Initialize all examiners
@@ -285,11 +300,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "<ul><li><b>Rotate</b> using <b>left</b> mouse button.</li>"
                   "<li><b>Translate</b> using <b>middle</b> mouse button.</li>"
                   "<li><b>Zoom</b> using <b>left+middle</b> mouse buttons.</li></ul>" );
-  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-    connect( moveButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setExamineMode() ) );
-    connect( &PluginFunctions::viewerProperties(i) , SIGNAL( actionModeChanged( Viewer::ActionMode ) ),
-             this                                  , SLOT(   slotActionModeChanged(Viewer::ActionMode) ) );
-  }
+
+  connect( moveButton_,SIGNAL( clicked() ), this, SLOT( setExamineMode() ) );
+
+  connect( this, SIGNAL( actionModeChanged( Viewer::ActionMode ) ),
+            this, SLOT(   slotActionModeChanged(Viewer::ActionMode) ) );
 
   viewerToolbar_->addWidget( moveButton_ )->setText("Move");
   moveButton_->setDown(true);
@@ -303,8 +318,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   lightButton_->setWhatsThis(
                   "Switch to <b>light</b> mode.<br>"
                   "Rotate lights using left mouse button.");
-  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-        connect( lightButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setLightMode() ) );
+
+  connect( lightButton_,SIGNAL( clicked() ), this, SLOT( setLightMode() ) );
   viewerToolbar_->addWidget( lightButton_)->setText("Light");
 
 
@@ -318,8 +333,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "Use picking functions like flipping edges.<br>"
                   "To change the mode use the right click<br>"
                   "context menu in the viewer.");
-  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-    connect( pickButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setPickingMode() ) );
+  connect( pickButton_,SIGNAL( clicked() ), this, SLOT( setPickingMode() ) );
   viewerToolbar_->addWidget( pickButton_)->setText("Pick");
 
 
@@ -334,8 +348,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "about objects. Click on an object and see "
                   "the log output for information about the "
                   "object.");
-  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-    connect( questionButton_,SIGNAL( clicked() ), &PluginFunctions::viewerProperties(i), SLOT( setQuestionMode() ) );
+  connect( questionButton_,SIGNAL( clicked() ), this, SLOT( setQuestionMode() ) );
   viewerToolbar_->addWidget( questionButton_)->setText("Question");
  
   viewerToolbar_->addSeparator();
@@ -420,6 +433,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   registerCoreKeys();
 
+  setExamineMode();
 
   setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
 

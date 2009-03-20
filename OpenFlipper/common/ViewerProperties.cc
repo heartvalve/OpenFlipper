@@ -46,8 +46,6 @@
 namespace Viewer {
 
   ViewerProperties::ViewerProperties():
-    actionMode_(Viewer::PickingMode),
-    lastActionMode_(Viewer::PickingMode),
     currentDrawMode_(ACG::SceneGraph::DrawModes::NONE),
     snapshotName_("snap.png"),
     snapshotCounter_(0),
@@ -73,18 +71,30 @@ namespace Viewer {
 
   }
 
-  void ViewerProperties::actionMode(Viewer::ActionMode _am) {
-    if (_am != actionMode_) {
-      lastActionMode_ = actionMode_;
-      actionMode_ = _am;
-      emit actionModeChanged(_am);
-    }
-
-  }
-
   void ViewerProperties::snapshotBaseFileName(const QString& _fname) {
     snapshotName_    = _fname;
     snapshotCounter_ = 0;
+  }
+
+  std::string ViewerProperties::pickMode(){
+
+    std::string mode;
+    emit getPickMode(mode);
+    return mode;
+  }
+
+  void ViewerProperties::pickMode(const std::string _name){
+    emit setPickMode(_name);
+  }
+
+  Viewer::ActionMode ViewerProperties::actionMode(){
+    Viewer::ActionMode am;
+    emit getActionMode(am);
+    return am;
+  }
+
+  void ViewerProperties::actionMode(const Viewer::ActionMode _am){
+    emit setActionMode(_am);
   }
 
 }

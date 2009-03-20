@@ -630,8 +630,7 @@ Core::slotWheelEvent( QWheelEvent * _event, const std::string & _mode)
 void
 Core::slotAddPickMode( const std::string _mode ) {
   if ( OpenFlipper::Options::gui() )
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
-      coreWidget_->examiner_widgets_[i]->addPickMode(_mode);
+    coreWidget_->addPickMode(_mode);
 
 }
 
@@ -641,8 +640,7 @@ void
 Core::slotAddHiddenPickMode( const std::string _mode ) {
 
   if ( OpenFlipper::Options::gui() )
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
-      coreWidget_->examiner_widgets_[i]->addPickMode(_mode,false,1000,false);
+    coreWidget_->addPickMode(_mode,false,1000,false);
 
 }
 

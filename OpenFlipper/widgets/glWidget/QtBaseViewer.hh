@@ -289,10 +289,6 @@ public:
   /// rotate the scene and update modelview matrix
   void rotate(const ACG::Vec3d& axis, double angle, const ACG::Vec3d& _center);
 
-  /// Get the menu pointers (required to add them to the menubar as a temp workaround for a qt 4.3 bug
-  QMenu * getPickMenu() { return pickMenu_; };
-
-
 //---------------------------------------------------------------- public slots
 public slots:
 
@@ -337,8 +333,6 @@ public slots:
   /// set view, used for synchronizing
   virtual void setView( const ACG::GLMatrixd& _modelview,
 			               const ACG::GLMatrixd& _inverse_modelview );
-
-  void actionPickMenu( QAction * _action );
 
   void actionPasteView();
   void actionCopyView();
@@ -425,9 +419,6 @@ protected:
 
   /// updates projection matrix
   void updateProjectionMatrix();
-  /// update pick mode menu
-  void updatePickMenu();
-
 
 
 //------------------------------------------------------------- protected slots
@@ -443,13 +434,6 @@ protected slots:
   /// correct ??? (same function as in qt src)
   virtual void cleanupEventFilter()
   { removeEventFilter( sender());}
-
-
-
-//--------------------------------------------------------------- private slots
-private slots:
-
-  void hidePopupMenus();
 
 //----------------------------------------------------------- private functions
 private:
@@ -516,8 +500,6 @@ private:
   bool                         glareaGrabbed_;
   double                       frame_time_;
 
-
-  QMenu * pickMenu_;
 
   // scenegraph stuff
   ACG::SceneGraph::BaseNode*   sceneGraphRoot_;
@@ -724,57 +706,6 @@ private:
     bool fast_pick( const QPoint&  _mousePos,
                     ACG::Vec3d&    _hitPoint );
 
-    /** \brief  add pick mode
-     *
-     *  @param _name Name of the Pick Mode or "Separator" to insert a separator
-     *  @param _mouse_tracking true: every mouse movement will emit mouse events not only when mousebutton is pressed
-     *  @param _pos position to insert the mode in the popup menu.
-     */
-    void addPickMode(const std::string& _name,
-                     bool               _mouse_tracking = false,
-                     int                _pos            = -1,
-                     bool               _visible        = true,
-                     QCursor            _cursor         = Qt::ArrowCursor );
-
-    /** clear all pick modes
-     */
-    void clearPickModes();
-
-    /** return the currently active pick mode
-     */
-    const std::string& pickMode() const;
-
-    /** Switch to given picking mode
-     * @param _name Name of the picking mode
-     */
-    void pickMode(const std::string& _name);
-
-    /** Switch to given picking mode
-     * @param _id Id of the picking Mode
-     */
-    void pickMode( int _id );
-
-  public slots:
-
-    /** \brief  set a new cursor for the pick mode
-     *
-     *  @param _name Name of the Pick Mode
-     *  @param _cursor the new cursor
-     */
-    void setPickModeCursor(const std::string& _name, QCursor _cursor);
-
-    /** \brief  set mouseTracking for the pick mode
-     *
-     *  @param _name Name of the Pick Mode
-     *  @param _mouseTracking true: every mouse movement will emit mouse events not only when mousebutton is pressed
-     */
-    void setPickModeMouseTracking(const std::string& _name, bool _mouseTracking);
-
-  signals:
-    /** This signal is emitted when the pickMode is changed and contains the new PickMode
-     */
-    void signalPickModeChanged(const std::string&);
-
   private:
 
     /// pick using colors
@@ -790,46 +721,6 @@ private:
                  unsigned int& _nodeIdx,
                  unsigned int& _targetIdx,
                  ACG::Vec3d*   _hitPointPtr=0 );
-
-    /** Struct containing information about pickModes
-     */
-    struct PickMode
-    {
-      /// Constructor
-      PickMode(const std::string& _n, bool _t, bool _v, QCursor _c) :
-               name(_n), tracking(_t), visible(_v), cursor(_c) {}
-
-      /** Name of the pickMode
-       */
-      std::string  name;
-
-      /** MouseTracking enabled for this mode?
-       */
-      bool         tracking;
-
-      /** Defines if the Mode will be visible in the popup Menu
-       */
-      bool         visible;
-
-      /** Cursor used in  this pickMode
-       */
-      QCursor      cursor;
-    };
-
-    /** Vector of all Picking modes
-     */
-    std::vector<PickMode>  pick_modes_;
-
-    /** Name of current pickMode
-     */
-    std::string            pick_mode_name_;
-
-    /** Index of current pickMode
-     */
-    int                    pick_mode_idx_;
-
-
-
 
   /** @} */
 
@@ -893,9 +784,6 @@ private:
      * The slot will trigger the redraw after setting the right properties.
      */
     void slotPropertiesUpdated();
-
-    /// Called when the actionMode has been updated
-    void updateActionMode(Viewer::ActionMode _am);
 
   private:
     /** This will apply all properties without redrawing

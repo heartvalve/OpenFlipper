@@ -545,8 +545,7 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 
   switch (_e->key()) {
     case Qt::Key_Escape:
-      for ( uint i = 0 ; i < examiner_widgets_.size(); ++i)
-        PluginFunctions::viewerProperties(i).actionMode( PluginFunctions::viewerProperties(i).lastActionMode() );
+        setActionMode( lastActionMode() );
       break;
 
     case Qt::Key_Print:

@@ -284,16 +284,11 @@ void CoreWidget::updatePopupMenuObject(QMenu* _menu , BaseObjectData* _object ) 
     _menu->addSeparator();
 
   // Add picking Menu
-  if (examiner_widgets_[0]->getPickMenu() != NULL) {
-    if ( examiner_widgets_[0]->getPickMenu()->actions().size() > 0 ) {
-      examiner_widgets_[0]->getPickMenu()->setTitle("&Picking");
-      contextMenu_->addMenu(examiner_widgets_[0]->getPickMenu() );
-      examiner_widgets_[0]->getPickMenu()->setTearOffEnabled(true);
-    }
+  if (pickMenu_ != 0 && pickMenu_->actions().size() > 0) {
+    pickMenu_->setTitle("&Picking");
+    contextMenu_->addMenu( pickMenu_ );
+    pickMenu_->setTearOffEnabled(true);
   }
-
-
-
 }
 
 bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id ) {
