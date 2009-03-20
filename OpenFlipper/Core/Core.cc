@@ -1179,6 +1179,33 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
 
 }
 
+void Core::slotDeleteObject( int _id ){
+
+  if ( _id == -1 )
+    return;
+
+  // get the node
+  BaseObject* object = objectRoot_->childExists(_id);
+
+  if ( !object || object == objectRoot_ ) {
+    std::cerr << "Error while deleting object, does not exist!!" << std::endl;
+    return;
+  }
+
+  // remove the whole subtree below this item
+  object->deleteSubtree();
+
+  // remove the item itself from the parent
+  object->parent()->removeChild(object);
+
+  // delete it
+  delete object;
+
+  emit objectDeleted(_id);
+
+  slotObjectUpdated(-1);
+}
+
 // //-----------------------------------------------------------------------------
 //
 // void Core::slotGetPlugin(QString _name, QObject* & _plugin ){

@@ -88,15 +88,24 @@ class LoadSaveInterface {
       
       /** \brief Emit this signal if an empty object has been created
        * @param _id Id of the added object
-             */
+       */
       virtual void emptyObjectAdded( int /*_id*/ ) {};
 
-    /**  \brief get a list of all Filters
-       * request a list of all Filters
+     /** \brief get a list of all Filters
+       *
+       *  request a list of all Filters
+       *
        *  @param _list StringList where the filters should be put into
-     */
+       */
       virtual void getAllFilters( QStringList& /*_list*/ ) {};
-    
+
+
+      /** \brief Delete an object
+       *
+       * @param _id Id of the object
+       */
+      virtual void deleteObject( int /*_id*/ ){};
+
   private slots :
   
     /**  \brief A file has been opened
@@ -112,6 +121,12 @@ class LoadSaveInterface {
      *  @param _id Id of the new object
      */
     virtual void addedEmptyObject( int /*_id*/ ) {};
+
+    /** \brief An object was deleted
+      *
+      * @param _id Id of the object
+      */
+    virtual void objectDeleted( int /*_id*/ ){};
 
 };
 

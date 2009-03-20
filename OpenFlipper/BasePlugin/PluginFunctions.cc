@@ -177,36 +177,6 @@ bool getObject(  const int _identifier , BaseObjectData*& _object ) {
 // ===============================================================================
 // ===============================================================================
 
-
-bool deleteObject( const int _id ) {
-
-  if ( _id == -1 )
-    return false;
-
-  // get the node
-  BaseObject* object = objectRoot_->childExists(_id);
-
-  if ( !object || object == objectRoot() ) {
-    std::cerr << "Error while deleting object, does not exist!!" << std::endl;
-    return false;
-  }
-
-  // remove the whole subtree below this item
-  object->deleteSubtree();
-
-  // remove the item itself from the parent
-  object->parent()->removeChild(object);
-
-  // delete it
-  delete object;
-
-  return true;
-}
-
-void deleteAll( ) {
-  objectRoot()->deleteSubtree();
-}
-
 int copyObject( const int _id ) {
   if ( _id == -1 )
     return -1;
