@@ -67,7 +67,7 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
     void log(QString _message);
 
     void emptyObjectAdded( int _id );
-
+    void deleteObject( int _id );
   private slots:
 
     void fileOpened( int /*_id*/ ){};
