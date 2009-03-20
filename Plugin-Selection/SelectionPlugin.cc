@@ -280,7 +280,7 @@ void SelectionPlugin::slotObjectUpdated(int _id){
         polyLineID_ = _id;
       }else if (polyLineID_ != _id){
         //the user added a second polyline so delete the first
-        PluginFunctions::deleteObject(polyLineID_);
+        emit deleteObject(polyLineID_);
         polyLineID_ = _id;
       }
       if (pline->line()->is_closed()){
@@ -478,7 +478,7 @@ void SelectionPlugin::slotPickModeChanged( const std::string& _mode) {
    if (waitingForPolyLineSelection_)
      if (_mode != "" && _mode != "PolyLine" && _mode != SURFACE_LASSO_SELECTION ){
       waitingForPolyLineSelection_ = false;
-      PluginFunctions::deleteObject(polyLineID_);
+      emit deleteObject(polyLineID_);
       polyLineID_ = -1;
     }
 #endif

@@ -45,6 +45,7 @@
 #include <OpenFlipper/BasePlugin/PickingInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
@@ -87,7 +88,7 @@ enum SelectionPrimitive {
   OBJECT = 0x08
 };
 
-class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, INIInterface, BackupInterface, LoggingInterface, ScriptInterface, ContextMenuInterface, ToolbarInterface
+class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, INIInterface, BackupInterface, LoggingInterface, ScriptInterface, ContextMenuInterface, ToolbarInterface, LoadSaveInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -101,6 +102,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(ContextMenuInterface)
   Q_INTERFACES(ToolbarInterface)
+  Q_INTERFACES(LoadSaveInterface)
 
   signals:
     //BaseInterface
@@ -128,6 +130,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     //ToolbarInterface
     void addToolbar(QToolBar* _toolbar);
     void getToolBar(QString _name, QToolBar*& _toolbar);
+
+    //LoadSaveInterface
+    void deleteObject( int _id );
 
   private slots:
     //MouseInterface
