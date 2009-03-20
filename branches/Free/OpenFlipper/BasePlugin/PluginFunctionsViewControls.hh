@@ -105,7 +105,7 @@ void setMainGLContext();
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up  , int _viewer = ALL_VIEWERS);
+void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up  , int _viewer = ACTIVE_VIEWER);
 
 /** \brief Set the Scene position
  * @param _center Center of the current scene
@@ -210,7 +210,7 @@ ACG::Vec3d viewingDirection(int _viewer = ALL_VIEWERS);
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-ACG::Vec3d eyePos(int _viewer = ALL_VIEWERS);
+ACG::Vec3d eyePos(int _viewer = ACTIVE_VIEWER);
 
 /** \brief Get the current up vector
  *
@@ -259,7 +259,7 @@ void setDrawMode( const unsigned int _mode , int _viewer = ALL_VIEWERS);
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-unsigned int drawMode( int _viewer = ALL_VIEWERS );
+unsigned int drawMode( int _viewer = ACTIVE_VIEWER );
 
 
 /** \brief Set the background color of the examiner widget.
