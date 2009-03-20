@@ -147,7 +147,7 @@ int FileTriangleMeshPlugin::loadObject(QString _filename){
   if (!ok)
   {
     std::cerr << "Plugin FileTriangleMesh : Read error for Triangle Mesh\n";
-    PluginFunctions::deleteObject( object->id() );
+    emit deleteObject( object->id() );
     return -1;
   }
 

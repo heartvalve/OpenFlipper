@@ -112,7 +112,7 @@ int FilePolyMeshPlugin::loadObject(QString _filename){
   if (!ok)
   {
     std::cerr << "Plugin FilePolyMesh : Read error for Poly Mesh\n";
-    PluginFunctions::deleteObject( object->id() );
+    emit deleteObject( object->id() );
     return -1;
   }
 

@@ -67,7 +67,7 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
     void log(QString _message);
 
     void emptyObjectAdded( int _id );
-
+    void deleteObject( int _id );
   private slots:
     void fileOpened( int /*_id*/ ){};
 
