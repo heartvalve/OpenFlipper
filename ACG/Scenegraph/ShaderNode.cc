@@ -86,14 +86,15 @@ ShaderNode::~ShaderNode() {
 //----------------------------------------------------------------------------
 bool
 ShaderNode::
-hasShader( unsigned int _drawmode ) {
+hasShader( unsigned int _drawmode, bool _pick ) {
 
   unsigned int mode = _drawmode;
   for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
     if (mode & 1) {
-      if ( shaders[i].initialized ) {
-        return true;
-      }
+      if (_pick)
+        return pickShaders[i].initialized;
+      else
+        return shaders[i].initialized;
     }
 
     mode >>= 1;
@@ -120,13 +121,39 @@ ShaderNode::enter(GLState& /*_state*/, unsigned int _drawmode  )
 }
 
 //----------------------------------------------------------------------------
-std::string
-ShaderNode::vertexShaderName(unsigned int _drawmode) {
+
+void
+ShaderNode::enterPick(GLState& /*_state*/, PickTarget /*_target*/, unsigned int _drawmode  )
+{
   unsigned int mode = _drawmode;
   for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
     if (mode & 1) {
-      if ( shaders[i].initialized ) {
-        return shaders[i].vertexShaderFile;
+      if ( pickShaders[i].initialized ) {
+        pickShaders[i].program->use();
+     }
+    }
+
+    mode >>= 1;
+  }
+}
+
+//----------------------------------------------------------------------------
+std::string
+ShaderNode::vertexShaderName(unsigned int _drawmode, bool _pick) {
+  unsigned int mode = _drawmode;
+  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
+    if (mode & 1) {
+      if (_pick)
+      {
+        if ( pickShaders[i].initialized ) {
+          return pickShaders[i].vertexShaderFile;
+        }
+      }
+      else
+      {
+        if ( shaders[i].initialized ) {
+          return shaders[i].vertexShaderFile;
+        }
       }
     }
 
@@ -138,12 +165,21 @@ ShaderNode::vertexShaderName(unsigned int _drawmode) {
 
 //----------------------------------------------------------------------------
 std::string
-ShaderNode::fragmentShaderName(unsigned int _drawmode) {
+ShaderNode::fragmentShaderName(unsigned int _drawmode, bool _pick) {
   unsigned int mode = _drawmode;
   for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
     if (mode & 1) {
-      if ( shaders[i].initialized ) {
-        return shaders[i].fragmentShaderFile;
+      if (_pick)
+      {
+        if ( pickShaders[i].initialized ) {
+          return pickShaders[i].fragmentShaderFile;
+        }
+      }
+      else
+      {
+        if ( shaders[i].initialized ) {
+          return shaders[i].fragmentShaderFile;
+        }
       }
     }
 
@@ -173,15 +209,41 @@ void ShaderNode::leave(GLState& /*_state*/, unsigned int _drawmode )
 
 //----------------------------------------------------------------------------
 
-/// Get the shader for the given drawMode
-GLSL::PtrProgram
-ShaderNode::
-getShader( unsigned int _drawmode ) {
+
+void ShaderNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, unsigned int _drawmode )
+{
   unsigned int mode = _drawmode;
   for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
     if (mode & 1) {
-      if ( shaders[i].initialized ) {
-        return shaders[i].program;
+      if ( pickShaders[i].initialized ) {
+        pickShaders[i].program->disable();
+      }
+    }
+
+    mode >>= 1;
+  }
+}
+
+//----------------------------------------------------------------------------
+
+/// Get the shader for the given drawMode
+GLSL::PtrProgram
+ShaderNode::
+getShader( unsigned int _drawmode, bool _pick ) {
+  unsigned int mode = _drawmode;
+  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
+    if (mode & 1) {
+      if (_pick)
+      {
+        if ( pickShaders[i].initialized ) {
+          return pickShaders[i].program;
+        }
+      }
+      else
+      {
+        if ( shaders[i].initialized ) {
+          return shaders[i].program;
+        }
       }
     }
 
@@ -200,7 +262,9 @@ void
 ShaderNode::
 setShader( unsigned int _drawmode ,
            std::string _vertexShader,
-           std::string _fragmentShader) {
+           std::string _fragmentShader,
+           std::string _pickVertexShader,
+           std::string _pickFragmentShader) {
 
   // OpenGl 2.0 is needed for GLSL support
   if (!glewIsSupported("GL_VERSION_2_0")) {
@@ -259,6 +323,48 @@ setShader( unsigned int _drawmode ,
 
       shaders[i].initialized = true;
 
+      if ( pickShaders[i].initialized ) {
+        if ( pickShaders[i].program != 0 )
+           delete pickShaders[i].program;
+
+         if ( pickShaders[i].vertexShader != 0 )
+           delete pickShaders[i].vertexShader;
+
+         if ( pickShaders[i].fragmentShader != 0 )
+           delete pickShaders[i].fragmentShader;
+
+         pickShaders[i].initialized    = false;
+      }
+
+      if (_pickVertexShader.length () > 0 && _pickFragmentShader.length () > 0)
+      {
+        pickShaders[i].vertexShaderFile   = shaderDir_ + _pickVertexShader;
+        pickShaders[i].fragmentShaderFile = shaderDir_ + _pickFragmentShader;
+
+        const char* vertexShaderFilePath   = pickShaders[i].vertexShaderFile.c_str();
+        const char* fragmentShaderFilePath = pickShaders[i].fragmentShaderFile.c_str();
+        pickShaders[i].vertexShader        = GLSL::loadVertexShader(vertexShaderFilePath);
+        pickShaders[i].fragmentShader      = GLSL::loadFragmentShader(fragmentShaderFilePath);
+        pickShaders[i].program             = GLSL::PtrProgram(new GLSL::Program());
+
+        if ( (pickShaders[i].vertexShader == 0) ||
+             (pickShaders[i].fragmentShader == 0) ||
+             (pickShaders[i].program == 0) ) {
+          std::cerr << "Unable to load pick shaders" << pickShaders[i].vertexShaderFile <<
+                       " or " << pickShaders[i].fragmentShaderFile << std::endl;
+          pickShaders[i].vertexShader   = 0;
+          pickShaders[i].fragmentShader = 0;
+          pickShaders[i].program        = 0;
+          pickShaders[i].initialized    = false;
+          return;
+        }
+
+        pickShaders[i].program->attach(pickShaders[i].vertexShader);
+        pickShaders[i].program->attach(pickShaders[i].fragmentShader);
+        pickShaders[i].program->link();
+
+        pickShaders[i].initialized = true;
+      }
     }
 
     mode >>= 1;
