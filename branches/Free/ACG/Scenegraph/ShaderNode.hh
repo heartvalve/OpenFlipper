@@ -84,14 +84,21 @@ public:
   /// disable shader
   void leave(GLState& /*_state*/, unsigned int _drawmode);
 
+  /// set shader
+  void enterPick(GLState& /*_state*/, PickTarget _target, unsigned int _drawmode);
+  /// disable shader
+  void leavePick(GLState& /*_state*/, PickTarget _target, unsigned int _drawmode);
+
+
   /// Sets the shader dir.
   void setShaderDir( std::string _shaderDir);
 
   std::string shaderDir() { return shaderDir_; };
 
-  std::string vertexShaderName(unsigned int _drawmode);
+  std::string vertexShaderName(unsigned int _drawmode, bool _pick = false);
 
-  std::string fragmentShaderName(unsigned int _drawmode);
+  std::string fragmentShaderName(unsigned int _drawmode, bool _pick = false);
+
 
   /** Sets a Shader for this draw Mode
    * @param _drawmode Set the drawmode for which the shader should be activated
@@ -100,13 +107,15 @@ public:
   */
   void setShader( unsigned int _drawmode ,
                   std::string _vertexShader,
-                  std::string _fragmentShader);
+                  std::string _fragmentShader,
+                  std::string _pickVertexShader = "",
+                  std::string _pickFragmentShader = "");
 
   /// Get the shader for the given drawMode
-  GLSL::PtrProgram getShader( unsigned int _drawmode );
+  GLSL::PtrProgram getShader( unsigned int _drawmode, bool _pick = false);
 
   /// Check if a shader is available for the given drawMode
-  bool hasShader( unsigned int _drawmode );
+  bool hasShader( unsigned int _drawmode, bool _pick = false);
 
   /// return available draw modes
   unsigned int availableDrawModes() const;
@@ -140,6 +149,7 @@ private :
   };
 
   ShaderInfo shaders[32];
+  ShaderInfo pickShaders[32];
 };
 
 
