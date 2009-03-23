@@ -824,8 +824,8 @@ void QtBaseViewer::drawScene_mono()
       glPushName((GLuint) 0);
 
       // do the picking
-      SceneGraph::PickAction action(pickRendererMode_);
-      SceneGraph::traverse(sceneGraphRoot_, action, *glstate_);
+      SceneGraph::PickAction action(*glstate_, pickRendererMode_, curDrawMode_);
+      SceneGraph::traverse(sceneGraphRoot_, action);
 
       glEnable(GL_LIGHTING);
     }

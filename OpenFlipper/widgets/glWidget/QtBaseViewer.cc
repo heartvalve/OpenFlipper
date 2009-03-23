@@ -507,8 +507,8 @@ void glViewer::drawScene_mono()
 
       // do the picking
       glstate_->pick_init (true);
-      ACG::SceneGraph::PickAction action(properties_.renderPickingMode());
-      ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_);
+      ACG::SceneGraph::PickAction action(*glstate_, properties_.renderPickingMode(), properties_.drawMode());
+      ACG::SceneGraph::traverse(sceneGraphRoot_, action);
 
       glEnable(GL_LIGHTING);
     }

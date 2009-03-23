@@ -102,8 +102,8 @@ bool QtBaseViewer::pick( SceneGraph::PickTarget _pickTarget,
     glstate_->pick_init (false);
 
     // do the picking
-    SceneGraph::PickAction action(_pickTarget);
-    SceneGraph::traverse(sceneGraphRoot_, action, *glstate_);
+    SceneGraph::PickAction action(*glstate_, _pickTarget, curDrawMode_);
+    SceneGraph::traverse(sceneGraphRoot_, action);
     int hits = glRenderMode(GL_RENDER);
 
     // restore GL state
