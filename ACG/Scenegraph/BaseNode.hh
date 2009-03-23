@@ -155,11 +155,26 @@ public:
   */
   virtual void leave(GLState& /* _state */, unsigned int /* _drawMode */) {}
 
+  /** This function is called when traversing the scene graph during picking
+      and arriving at this node. It can be used to store GL states that
+      will be changed in order to restore then in the leavePick()
+      function. Its default implementation will call the enter() function.
+  */
+  virtual void enterPick(GLState& _state , PickTarget _target,
+                         unsigned int _drawMode );
+  
   /** Draw the node using the GL picking name stack. The node's ID
       will already be on the name stack, so only names identifing e.g. faces
       should be used ( by glLoadName() ).
   */
   virtual void pick(GLState& /* _state */, PickTarget /* _target */ ) {}
+
+  /** The leavePick function is used to restore GL states the have been changed.
+      This function must restore the status before enterPick() !
+      Its default implementation will call the leave() function.
+  */
+  virtual void leavePick(GLState& _state, PickTarget _target,
+                         unsigned int _drawMode );
   
   /** Enable or Disable picking for this node
    *  ( default: enabled )
