@@ -462,13 +462,34 @@ class ACGDLLEXPORT PickAction
 public:
 
   /// constructor: what picking target to use
-  PickAction(PickTarget _target) : pickTarget_(_target) {}
+  PickAction(GLState &_state, PickTarget _target, unsigned int _drawmode) :
+    state_(_state),
+    pickTarget_(_target),
+    drawmode_(_drawmode) {}
 
-  bool operator()(BaseNode* _node, GLState& _state);
+  bool operator()(BaseNode* _node);
+
+  void enter(BaseNode* _node)
+  {
+    if (_node->drawMode() == DrawModes::DEFAULT)
+        _node->enterPick(state_, pickTarget_, drawmode_);
+      else
+        _node->enterPick(state_, pickTarget_, _node->drawMode());    
+  }
+
+  void leave(BaseNode* _node)
+  {
+    if (_node->drawMode() == DrawModes::DEFAULT)
+        _node->leavePick(state_, pickTarget_, drawmode_);
+      else
+        _node->leavePick(state_, pickTarget_, _node->drawMode());
+  }
 
 private:
 
-  PickTarget  pickTarget_;
+  GLState      &state_;
+  PickTarget   pickTarget_;
+  unsigned int drawmode_;
 };
 
 

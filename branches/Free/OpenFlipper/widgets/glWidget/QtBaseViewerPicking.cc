@@ -126,8 +126,8 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   properties_.glState().pick_init (true);
 
   // do the picking
-  ACG::SceneGraph::PickAction action(_pickTarget);
-  ACG::SceneGraph::traverse(sceneGraphRoot_, action, properties_.glState());
+  ACG::SceneGraph::PickAction action(properties_.glState(), _pickTarget, properties_.drawMode());
+  ACG::SceneGraph::traverse(sceneGraphRoot_, action);
 
   // restore GL state
   glMatrixMode( GL_PROJECTION );
@@ -219,8 +219,8 @@ bool glViewer::pickGL( ACG::SceneGraph::PickTarget _pickTarget,
   properties_.glState().pick_init (false);
 
   // do the picking
-  ACG::SceneGraph::PickAction action(_pickTarget);
-  ACG::SceneGraph::traverse(sceneGraphRoot_, action, properties_.glState());
+  ACG::SceneGraph::PickAction action(properties_.glState(), _pickTarget, properties_.drawMode());
+  ACG::SceneGraph::traverse(sceneGraphRoot_, action);
   int hits = glRenderMode(GL_RENDER);
 
   // restore GL state
@@ -314,8 +314,8 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   properties_.glState().pick_init (true);
 
   // do the picking
-  ACG::SceneGraph::PickAction action(_pickTarget);
-  ACG::SceneGraph::traverse(sceneGraphRoot_, action, properties_.glState());
+  ACG::SceneGraph::PickAction action(properties_.glState(), _pickTarget, properties_.drawMode());
+  ACG::SceneGraph::traverse(sceneGraphRoot_, action);
 
   // restore GL state
   glMatrixMode( GL_PROJECTION );

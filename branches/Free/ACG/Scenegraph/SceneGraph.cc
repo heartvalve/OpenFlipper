@@ -65,7 +65,7 @@ BaseNode* find_node(BaseNode* _root, unsigned int _node_idx)
 //----------------------------------------------------------------------------
 
 
-bool PickAction::operator()(BaseNode* _node, GLState& _state)
+bool PickAction::operator()(BaseNode* _node)
 {
   // If picking is disabled for the given Node, return here
   // As this is not a failure return true;
@@ -76,11 +76,11 @@ bool PickAction::operator()(BaseNode* _node, GLState& _state)
   glDisable(GL_DITHER);
   glShadeModel(GL_FLAT);
 
-  _state.pick_push_name ((GLuint) _node->id());
+  state_.pick_push_name ((GLuint) _node->id());
 
-  _node->pick(_state, pickTarget_);
+  _node->pick(state_, pickTarget_);
 
-  _state.pick_pop_name ();
+  state_.pick_pop_name ();
   return true;
 }
 
