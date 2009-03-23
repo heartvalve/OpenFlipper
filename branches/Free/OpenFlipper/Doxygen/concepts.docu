@@ -26,7 +26,7 @@
  * has to implement the \ref MouseInterface and \ref KeyInterface
  * (for keyboard shortcuts, etc.). Read tutorial \ref ex3 to learn how
  * to add mouse and keyboard interactivity to your plugin. Also see
- * \interfaces for an overview of implementable interfaces.
+ * \ref interfaces for an overview of implementable interfaces.
  *
  * \section viewport_widget The viewport widget
  *
