@@ -1,4 +1,21 @@
 /*! \page ex3 Implementing mouse and keyboard interaction
  *
- * Coming soon...
+ * \section overview_ex3 Overview
+ *
+ * Mouse interaction (especially object picking) and keyboard shortcuts
+ * form essential and often used functionality in OpenFlipper. In this
+ * tutorial we will learn how to use picking modes, context menus and
+ * simple keyboard shortcuts. In addition we will focus a little bit on
+ * what is explained in \ref geometryData. The plugin will provide the following functions:
+ *
+ * - Hide objects by clicking at our own context menu entry
+ * - Rotate an object by hitting the arrow keys on the keyboard
+ *
+ * For this purpose we will make use of the following \ref interfaces:
+ *
+ * - \ref BaseInterface
+ * - \ref MouseInterface
+ * - \ref PickingInterface
+ * - \ref KeyInterface
+ * - \ref LoggingInterface
  */
