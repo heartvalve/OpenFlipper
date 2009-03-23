@@ -1,6 +1,19 @@
 /** \page uiconcept "User Interface Concepts"
  *
- * This page describes the global OpenFlipper user interface concept.
+ * The OpenFlipper user interface is composed of 4 essential widgets
+ * each accessible and extendable by user plugins:
  *
+ * -\ref viewport_widget
+ * -\ref plugin_widget
+ * -\ref logging_widget
+ * -\ref tool_bar
+ *
+ * \subsection viewport_widget The viewport widget
+ *
+ * 
+ *
+ * \subsection plugin_widget The plugin widget
+ * \subsection logging_widget The logging widget
+ * \subsection tool_bar The tool bar
  */
 

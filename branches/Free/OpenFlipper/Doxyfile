@@ -153,7 +153,8 @@ EXCLUDE_SYMBOLS        =
 EXAMPLE_PATH           = ./Doxygen/example/
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
-IMAGE_PATH             = ./Doxygen/pics/
+IMAGE_PATH             = ./Doxygen/pics/ \
+                         ./Doxygen/screenshots/
 INPUT_FILTER           = 
 FILTER_PATTERNS        = 
 FILTER_SOURCE_FILES    = NO
