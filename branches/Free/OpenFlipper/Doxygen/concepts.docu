@@ -23,7 +23,7 @@
  *
  * The user interactivity is gained by plain Qt mouse and keyboard events. If
  * the plugin wants to interact with the mouse or keyboard, it
- * has to implement the \ref MouseInterface and \ref KeyboardInterface
+ * has to implement the \ref MouseInterface and \ref KeyInterface
  * (for keyboard shortcuts, etc.). See \interfaces for an overview of
  * implementable interfaces.
  *

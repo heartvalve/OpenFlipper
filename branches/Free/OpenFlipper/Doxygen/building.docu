@@ -64,5 +64,7 @@
  * - Install required libraries (using a portage system like MacPorts is recommended)
  * - Download and extract OpenFlipper sources<br />
  * 	 (or download via svn:<code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code>)
- * - Adapt library paths in $OpenFlipper/qmake/packages/packages.Darwin
+ * - Adapt library paths in <code><b> $OpenFlipper/qmake/packages/packages.Darwin </b></code>
+ * - Go into OpenFlipper's root directory and type <code><b> qmake -spec macx-g++ -o Makefile </b></code>
+ * - Now type <code><b>make</b></code> to build OpenFlipper
  */
