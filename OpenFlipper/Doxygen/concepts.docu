@@ -38,7 +38,7 @@
  * - Projection mode (orthogonal, perspective)
  * - Set / reset home view
  * - Capture screenshots
- * - Adapt colors such that they match the desired profile (for printing, presention,...)
+ * - Adapt colors such that they match the desired profile (for printing, presentation,...)
  *
  * See \ref geometryData for information on how to manipulate geometry
  * in the scenegraph from within a plugin.
