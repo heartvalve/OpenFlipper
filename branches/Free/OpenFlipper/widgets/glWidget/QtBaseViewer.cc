@@ -925,6 +925,8 @@ void glViewer::paintGL()
 
   if (!properties_.updateLocked())
   {
+    ACG::Vec4f clear_color;
+
     properties_.lockUpdate();
 
     glPushAttrib (GL_ALL_ATTRIB_BITS);
@@ -952,6 +954,12 @@ void glViewer::paintGL()
 
     glColor4f(1.0,0.0,0.0,1.0);
 
+    if (properties_.renderPicking())
+    {
+      clear_color = properties_.glState().clear_color();
+      properties_.glState().set_clear_color (ACG::Vec4f (0.0, 0.0, 0.0, 1.0));
+    }
+
     // clear (stereo mode clears buffers on its own)
     if (!stereo_)
       glstate_->clearBuffers ();
@@ -967,6 +975,9 @@ void glViewer::paintGL()
     glPopMatrix();
 
     glPopAttrib ();
+
+    if (properties_.renderPicking())
+      properties_.glState().set_clear_color (clear_color);
   }
 }
 

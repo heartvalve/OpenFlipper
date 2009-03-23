@@ -107,6 +107,9 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
   const ACG::GLMatrixd&  projection = properties_.glState().projection();
 
+  ACG::Vec4f clear_color = properties_.glState().clear_color();
+  properties_.glState().set_clear_color (ACG::Vec4f (0.0, 0.0, 0.0, 0.0));
+
   // prepare GL state
   makeCurrent();
 
@@ -132,6 +135,8 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
   glEnable(GL_LIGHTING);
+
+  properties_.glState().set_clear_color (clear_color);
 
   if (properties_.glState().pick_error ())
     return -1;
@@ -290,6 +295,9 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
   const ACG::GLMatrixd&  projection = properties_.glState().projection();
 
+  ACG::Vec4f clear_color = properties_.glState().clear_color();
+  properties_.glState().set_clear_color (ACG::Vec4f (0.0, 0.0, 0.0, 0.0));
+
   // prepare GL state
   makeCurrent();
 
@@ -315,6 +323,8 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
   glEnable(GL_LIGHTING);
+
+  properties_.glState().set_clear_color (clear_color);
 
   if (properties_.glState().pick_error ())
     return false;
