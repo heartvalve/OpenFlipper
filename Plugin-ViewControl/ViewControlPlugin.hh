@@ -57,6 +57,9 @@ struct ShaderInfo {
       QString vertexShader;
       QString fragmentShader;
 
+      QString pickVertexShader;
+      QString pickFragmentShader;
+
       bool        hasUniforms;
       QStringList uniforms;
       QStringList uniformTypes;
@@ -174,8 +177,11 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
      *  @param _drawMode ; seperated list of drawmodes used by the shader
      *  @param _vertexShader   File with the vertex shader code
      *  @param _fragmentShader File with the fragment shader code
+     *  @param _pickVertexShader   File with the picking vertex shader code
+     *  @param _pickFragmentShader File with the picking fragment shader code
      */
-    void setShader(int _id, QString _drawMode, QString _vertexShader, QString _fragmentShader );
+    void setShader(int _id, QString _drawMode, QString _vertexShader, QString _fragmentShader,
+                   QString _pickVertexShader = "", QString _pickFragmentShader = "");
 
     /** Sets a Shader from the Shader directory of OpenFlipper ( Name of the one given inside the ini file )
      *
