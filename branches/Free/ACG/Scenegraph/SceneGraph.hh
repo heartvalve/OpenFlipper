@@ -60,6 +60,148 @@ namespace SceneGraph {
 
 //== CLASS DEFINITION =========================================================
 
+/** Template functions to check if an action has enter or leave member functions
+**/
+
+template<bool C, typename T = void>
+struct enable_if {
+  typedef T type;
+};
+
+template<typename T>
+struct enable_if<false, T> { };
+
+#define HAS_MEM_FUNC(func) \
+    template<typename T, typename Sign>                                               \
+    struct has_##func {                                                               \
+        template <typename U, U> struct type_check;                                   \
+        template <typename _1> static char (& chk(type_check<Sign, &_1::func> *))[1]; \
+        template <typename   > static char (& chk(...))[2];                           \
+        static bool const value = sizeof(chk<T>(0)) == 1;                             \
+    };
+
+HAS_MEM_FUNC(enter)
+
+// if the enter function is implemented
+template<typename Action> 
+typename enable_if<has_enter <Action, void (Action::*) (BaseNode *) >::value, void>::type
+if_has_enter(Action &_action, BaseNode *_node) {
+  _action.enter (_node);
+}
+
+// if the enter function isn't implemented
+template<typename Action> 
+typename enable_if<!has_enter <Action, void (Action::*) (BaseNode *) >::value, void>::type
+if_has_enter(Action &, BaseNode *) {
+}
+
+HAS_MEM_FUNC(leave)
+
+// if the enter function is implemented
+template<typename Action> 
+typename enable_if<has_leave <Action, void (Action::*) (BaseNode *) >::value, void>::type
+if_has_leave(Action &_action, BaseNode *_node) {
+  _action.leave (_node);
+}
+
+// if the enter function isn't implemented
+template<typename Action> 
+typename enable_if<!has_enter <Action, void (Action::*) (BaseNode *) >::value, void>::type
+if_has_leave(Action &, BaseNode *) {
+}
+
+//----------------------------------------------------------------------------
+
+
+/** Traverse the scenegraph starting at the node \c _node and apply
+    the action \c _action to each node. This traversal function will call the
+    enter/leave functions of the action if they have been implemented.
+**/
+template <class Action>
+void
+traverse( BaseNode* _node, Action& _action )
+{
+  if (_node)
+  {
+    BaseNode::StatusMode status(_node->status());
+    bool process_children(status != BaseNode::HideChildren);
+
+    if (status != BaseNode::HideSubtree)
+    {
+
+      if (_node->status() != BaseNode::HideNode)
+      {
+        if_has_enter (_action, _node);
+        if (_node->traverseMode() & BaseNode::NodeFirst)
+          process_children &= _action(_node);
+      }
+
+      if (process_children)
+      {
+        BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
+            traverse(*cIt, _action);
+        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+          if ((*cIt)->traverseMode() & BaseNode::SecondPass)
+            traverse(*cIt, _action);
+      }
+
+      if (_node->status() != BaseNode::HideNode)
+      {
+        if (_node->traverseMode() & BaseNode::ChildrenFirst)
+          _action(_node);
+        if_has_leave (_action, _node);
+      }
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+
+/** This is a meta action class that is used to wrap an action from the
+    traverse( BaseNode*, Action&, GLState&, unsigned int) into the
+    traverse( BaseNode*, Action&) function
+**/
+
+template <class Action>
+class MetaAction
+{
+  public:
+    MetaAction (Action & _action, GLState& _state, unsigned int _drawmode) :
+      action_(_action),
+      state_(_state),
+      drawmode_(_drawmode)
+    {
+    }
+
+    bool operator()(BaseNode* _node)
+    {
+      return action_(_node, state_);
+    }
+
+    void enter (BaseNode *_node)
+    {
+      unsigned int drawmode = ((_node->drawMode() == DrawModes::DEFAULT) ?
+                               drawmode_ : _node->drawMode());
+      _node->enter(state_, drawmode);
+    }
+
+    void leave (BaseNode *_node)
+    {
+      unsigned int drawmode = ((_node->drawMode() == DrawModes::DEFAULT) ?
+                               drawmode_ : _node->drawMode());
+      _node->leave(state_, drawmode);
+    }
+
+  private:
+    Action  &action_;
+    GLState &state_;
+    unsigned int drawmode_;
+
+};
+
+//----------------------------------------------------------------------------
 
 /** Traverse the scenegraph starting at the node \c _node and apply
     the action \c action to each node. When arriving at a node, its
@@ -77,86 +219,9 @@ traverse( BaseNode*     _node,
 	  GLState&      _state,
 	  unsigned int  _drawmode=DrawModes::DEFAULT)
 {
-  if (_node)
-  {
-    BaseNode::StatusMode status(_node->status());
-    bool process_children(status != BaseNode::HideChildren);
-
-    if (status != BaseNode::HideSubtree)
-    {
-      unsigned int drawmode = ((_node->drawMode() == DrawModes::DEFAULT) ?
-			       _drawmode : _node->drawMode());
-
-      if (_node->status() != BaseNode::HideNode)
-      {
-        _node->enter(_state, drawmode);
-        if (_node->traverseMode() & BaseNode::NodeFirst)
-          process_children &= _action(_node, _state);
-      }
-
-      if (process_children)
-      {
-	BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
-	for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
-          if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
-	    traverse(*cIt, _action, _state, _drawmode);
-        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
-          if ((*cIt)->traverseMode() & BaseNode::SecondPass)
-            traverse(*cIt, _action, _state, _drawmode);
-      }
-
-      if (_node->status() != BaseNode::HideNode)
-      {
-        if (_node->traverseMode() & BaseNode::ChildrenFirst)
-          _action(_node, _state);
-        _node->leave(_state, drawmode);
-      }
-    }
-  }
+  MetaAction<Action> action (_action, _state, _drawmode);
+  traverse (_node, action);
 }
-
-
-//----------------------------------------------------------------------------
-
-
-/** Traverse the scenegraph starting at the node \c _node and apply
-    the action \c _action to each node. This traversal function does
-    \b not call then BaseNode::enter() and BaseNode::leave() methods
-    and therefore doesn't need the \c GLState& reference.
-**/
-template <class Action>
-void
-traverse( BaseNode* _node, Action& _action )
-{
-  if (_node)
-  {
-    BaseNode::StatusMode status(_node->status());
-    bool process_children(status != BaseNode::HideChildren);
-
-    if (status != BaseNode::HideSubtree)
-    {
-      if (_node->status() != BaseNode::HideNode &&
-	  _node->traverseMode() & BaseNode::NodeFirst)
-	process_children &= _action(_node);
-
-      if (process_children)
-      {
-	BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
-	for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
-          if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
-	    traverse(*cIt, _action);
-        for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
-          if ((*cIt)->traverseMode() & BaseNode::SecondPass)
-            traverse(*cIt, _action);
-      }
-
-      if (_node->status() != BaseNode::HideNode &&
-	  _node->traverseMode() & BaseNode::ChildrenFirst)
-	_action(_node);
-    }
-  }
-}
-
 
 //----------------------------------------------------------------------------
 
