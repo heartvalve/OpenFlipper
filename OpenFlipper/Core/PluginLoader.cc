@@ -71,6 +71,7 @@
 #include "OpenFlipper/BasePlugin/FileInterface.hh"
 #include "OpenFlipper/BasePlugin/RPCInterface.hh"
 #include "OpenFlipper/BasePlugin/ScriptInterface.hh"
+// #include "OpenFlipper/BasePlugin/SecurityInterface.hh"
 
 #include "OpenFlipper/INIFile/INIFile.hh"
 
@@ -399,11 +400,11 @@ void Core::loadPlugin(QString filename, bool silent){
           QString name_nospace =  basePlugin->name();
           name_nospace.remove(" ");
 
-        if (plugins[k].name == name_nospace){
-          if (silent || OpenFlipper::Options::nogui() ){ //dont load the plugin
-            emit log(LOGWARN, "\t\t\t Already loaded from " + plugins[k].path);
-            emit log(LOGOUT,"=============================================================================================");
-            return;
+          if (plugins[k].name == name_nospace){
+            if (silent || OpenFlipper::Options::nogui() ){ //dont load the plugin
+              emit log(LOGWARN, "\t\t\t Already loaded from " + plugins[k].path);
+              emit log(LOGOUT,"=============================================================================================");
+              return;
           }else{ //ask the user
             int ret = QMessageBox::question(coreWidget_,
                                             tr("Plugin already loaded"),
@@ -428,6 +429,28 @@ void Core::loadPlugin(QString filename, bool silent){
         emit log(LOGOUT,"=============================================================================================");
         return;
       }
+
+//       //Check if it is a BasePlugin
+//       SecurityInterface * securePlugin = qobject_cast< SecurityInterface * >(plugin);
+//       if ( securePlugin ) {
+//         emit log(LOGINFO,"Plugin uses security interface. Trying to authenticate against plugin ...");
+//
+//         QMetaObject::invokeMethod(plugin,"authenticate" ) ;
+//
+//         std::cerr << "2" << std::endl;
+//
+//         securePlugin->authenticate();
+//
+//         if ( true )
+//
+//           emit log(LOGINFO,"... ok. Loading plugin ");
+//         else {
+//           emit log(LOGERR,"... failed. Plugin access denied.");
+//           emit log(LOGOUT,"=============================================================================================");
+//           return;
+//         }
+//       }
+
 
       emit log(LOGOUT,"Plugin Desciption :\t\t " + basePlugin->description());
 
@@ -882,6 +905,10 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"deleteObject(int)" ) )
         connect(plugin , SIGNAL( deleteObject( int ) ) ,
                 this   , SLOT( slotDeleteObject( int ) ),Qt::DirectConnection);
+
+      if ( checkSignal(plugin,"deleteAllObjects()" ) )
+        connect(plugin , SIGNAL( deleteAllObjects() ) ,
+                this   , SLOT( slotDeleteAllObjects() ),Qt::DirectConnection);
 
       if ( checkSlot(plugin,"objectDeleted(int)" ) )
         connect(this ,   SIGNAL( objectDeleted( int ) ) ,
