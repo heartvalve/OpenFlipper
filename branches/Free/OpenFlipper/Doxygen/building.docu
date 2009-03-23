@@ -37,15 +37,18 @@
  * The Plugins are build in the OpenFlipper/Plugins directory.
  * 
  * \section bwin Building OpenFlipper under Windows
+ *
  * <ul>
  * <li> Get Visual Studio 2008 </li>
- * <li> First extract the source code. </li>
+ * <li> Get and Install Qt ( >= 4.5 ) </li>
+ * <li> Set the QTDIR Variable to your Qt Installation directory </li>
+ * <li> Extract OpenFlipper source code. </li>
  * <li> Get all required libraries and install them ( including headers! ).</li>
  * <li> Open \c OpenMesh\qmake\packages\packages.Windows in a text editor and change header and library paths<br>
  * such that they match the ones installed (see comments to find path entries).</li>
  * <li> Open Visual Studio 2008 and go to Tools->Visual Studio command prompt</li>
  * <li> Go to the toplevel OpenFlipper directory </li>
- * <li> Call <b> qmake </b> ( It should be the qmake Version for qt4! ) 
+ * <li> Call <b> qmake -spec win32-msvc2008 -r </b> ( It should be the qmake Version for qt4! ) 
            This will build Visual Studio project files and a solution file.</li>
  * <li> Open the OpenFlipper.sln file in the toplevel directory. </li>
  * <li> Now you can build OpenFlipper from within Visual Studio. </li>
