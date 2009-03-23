@@ -1,19 +1,64 @@
-/** \page uiconcept "User Interface Concepts"
+/** \page uiconcept User Interface Concepts
  *
- * The OpenFlipper user interface is composed of 4 essential widgets
+ * OpenFlipper is a powerful tool that allows implementing algorithms on geometry
+ * with preferably small effort.
+ * It bases on the Qt plugin model such that it is easily extendable
+ * by user defined plugins. For information on how Qt plugins work we recommend
+ * developers to read the Qt documentation. The integration of a plugin into
+ * OpenFlipper's user interface and its interactivity are controlled by
+ * \ref interfaces that can be implemented. Also see \ref pluginProgramming for
+ * a few small tutorials on OpenFlipper plugin programming.
+ *
+ * \section userInterface The user interface
+ *
+ * The OpenFlipper user interface is composed of four essential widgets
  * each accessible and extendable by user plugins:
  *
- * -\ref viewport_widget
- * -\ref plugin_widget
- * -\ref logging_widget
- * -\ref tool_bar
+ * - \ref viewport_widget
+ * - \ref plugin_widget
+ * - \ref logging_widget
+ * - \ref tool_bar
  *
- * \subsection viewport_widget The viewport widget
+ * \section viewport_widget The viewport widget
  *
- * 
+ * The viewport widget visualizes the whole scenegraph. One can adjust
+ * viewer specific settings by chosing \c View in OpenFlippers
+ * menu bar. Adjustable settings contain:
  *
- * \subsection plugin_widget The plugin widget
- * \subsection logging_widget The logging widget
- * \subsection tool_bar The tool bar
+ * - Drawmodes (points, wireframe, solid,...)
+ * - Projection mode (orthogonal, perspective)
+ * - Set / reset home view
+ * - Capture screenshots
+ * - Adapt colors such that they match the desired profile (for printing, presention,...)
+ *
+ * See \ref geometryData for information on how to manipulate geometry
+ * in the scenegraph from within a plugin.
+ *
+ * \image html viewport_widget.png The viewport widget
+ *
+ * \section plugin_widget The plugin widget
+ *
+ * The plugin widget shows the Qt toolboxes of the loaded plugins. A plugin can integrate
+ * its own toolbox by simply implementing the \ref ToolboxInterface. Providing toolboxes
+ * is not mandatory, but most plugins make use of it in order to offer user control
+ * to its parameters.
+ *
+ * \image html plugin_widget.png The plugin widget with simple smoother plugin opened
+ *
+ * \section logging_widget The logging widget
+ *
+ * The logging widget is used to display plugin specific information,
+ * warnings or errors. By implementing the \ref LoggingInterface a plugin
+ * can easily tell the user what is going on inside.
+ *
+ * \image html logging_widget.png The logging widget after opening a triangle mesh file
+ *
+ * \section tool_bar The tool bar
+ *
+ * The toolbar at the top of OpenFlippers main window offers clickable icons to
+ * quickly access a plugins function. A user plugin can integrate its own buttons
+ * into the tool bar by implementing the \ref ToolbarInterface.
+ *
+ * \image html tool_bar.png The tool bar
  */
 
