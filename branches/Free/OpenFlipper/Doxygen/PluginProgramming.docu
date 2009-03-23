@@ -87,9 +87,8 @@
  *
  * where \c _id is the object's id.
  *
- * When changing object properties e.g. changing the marking from source to target object, it
- * won't be necessary to redraw the scene since it can be expensive in computation power.
- * In this case, one should call
+ * When changing object properties it won't be necessary to redraw the scene
+ * since it can be expensive in computation power. In this case, one should call
  *
  * \ref BaseInterface::objectPropertiesChanged(int _id)
  *
