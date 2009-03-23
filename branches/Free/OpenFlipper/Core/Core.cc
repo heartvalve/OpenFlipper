@@ -1206,6 +1206,25 @@ void Core::slotDeleteObject( int _id ){
   slotObjectUpdated(-1);
 }
 
+void Core::slotDeleteAllObjects( ){
+
+  // Remember ids
+  std::vector< int > ids;
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+    ids.push_back( o_it->id() );
+  }
+
+  // remove the whole subtree below the root
+  objectRoot_->deleteSubtree();
+
+  for ( uint i = 0 ; i < ids.size(); ++i ) {
+    emit objectDeleted(ids[i]);
+  }
+
+  slotObjectUpdated(-1);
+}
+
 // //-----------------------------------------------------------------------------
 //
 // void Core::slotGetPlugin(QString _name, QObject* & _plugin ){

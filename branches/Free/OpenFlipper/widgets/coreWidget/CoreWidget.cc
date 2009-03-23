@@ -69,27 +69,27 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   shiftPressed_(false),
   viewModes_(_viewModes),
   viewModeButton_(0),
-  viewModeMenu_(0),  
+  viewModeMenu_(0),
   splitter_(0),
   logWidget_(0),
   recentFilesMenu_(0),
   helpMenu_(0),
   sceneGraphDialog_(0),
-  fileMenu_(0),   
-  viewMenu_(0), 
-  toolsMenu_(0),        
+  fileMenu_(0),
+  viewMenu_(0),
+  toolsMenu_(0),
   fileMenuEnd_(0),
   stereoButton_(0),
   moveButton_(0),
   lightButton_(0),
   pickButton_(0),
   questionButton_(0),
-  globalDrawMenu_(0),             
-  drawGroup_(0),  
-  viewGroup_(0),  
+  globalDrawMenu_(0),
+  drawGroup_(0),
+  viewGroup_(0),
   perspectiveProjectionAction_(0),
-  activeDrawModes_(0),                     
-  availableGlobalDrawModes_(0),                   
+  activeDrawModes_(0),
+  availableGlobalDrawModes_(0),
   contextMenu_(0),
   contextSelectionMenu_(0),
   drawGroupViewer_(0),
@@ -171,7 +171,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   loggerState_ = OpenFlipper::Options::Normal;
 
   QList<int> wsizes( splitter_->sizes() );
-  
+
   if (OpenFlipper::Options::loggerState() == OpenFlipper::Options::InScene) {
     slidingLogger_->attachWidget (logWidget_);
     splitter_->insertWidget (1, tempLogWidget);
@@ -302,9 +302,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "<li><b>Zoom</b> using <b>left+middle</b> mouse buttons.</li></ul>" );
 
   connect( moveButton_,SIGNAL( clicked() ), this, SLOT( setExamineMode() ) );
-
+/*
   connect( this, SIGNAL( actionModeChanged( Viewer::ActionMode ) ),
-            this, SLOT(   slotActionModeChanged(Viewer::ActionMode) ) );
+            this, SLOT(   slotActionModeChanged(Viewer::ActionMode) ) );*/
 
   viewerToolbar_->addWidget( moveButton_ )->setText("Move");
   moveButton_->setDown(true);
@@ -350,7 +350,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
                   "object.");
   connect( questionButton_,SIGNAL( clicked() ), this, SLOT( setQuestionMode() ) );
   viewerToolbar_->addWidget( questionButton_)->setText("Question");
- 
+
   viewerToolbar_->addSeparator();
 
   if (OpenFlipper::Options::stereo())
@@ -553,7 +553,7 @@ CoreWidget::showLogger(OpenFlipper::Options::LoggerState _state) {
         wsizes[0] = wsizes[0]+wsizes[1] - originalLoggerSize_;
         wsizes[1] = originalLoggerSize_;
         splitter_->setSizes(wsizes);
-        baseLayout_->setContentsMargins (left, top, right, 0);       
+        baseLayout_->setContentsMargins (left, top, right, 0);
       }
       break;
     case OpenFlipper::Options::Hidden:

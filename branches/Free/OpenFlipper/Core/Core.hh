@@ -270,6 +270,9 @@ signals:
       /// Called when a plugin wants to delete an object
       void slotDeleteObject( int _id );
 
+      /// Called when a plugin wants to delete all objects
+      void slotDeleteAllObjects( );
+
       /// Get a Pointer to the Plugin with given _name (if it is loaded)
 //       void slotGetPlugin(QString _name, QObject* & _plugin );
 
