@@ -100,7 +100,7 @@
  *
  * for the core to update the visibility state of object with identifier \c _id.
  *
- * Last, when changing an object's selection flag (TARGET, SOURCE), it
+ * Last, when changing an object's selection, it
  * will be updated by calling
  *
  * \ref BaseInterface::objectSelectionChanged(int _id)
