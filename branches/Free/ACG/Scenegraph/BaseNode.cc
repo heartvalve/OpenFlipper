@@ -155,6 +155,21 @@ BaseNode::delete_subtree()
   delete this;
 }
 
+//----------------------------------------------------------------------------
+
+void
+BaseNode::enterPick(GLState& _state, PickTarget /*_target*/, unsigned int _drawMode)
+{
+  enter (_state, _drawMode);
+}
+
+//----------------------------------------------------------------------------
+
+void
+BaseNode::leavePick(GLState& _state, PickTarget /*_target*/, unsigned int _drawMode)
+{
+  leave (_state, _drawMode);
+}
 
 //=============================================================================
 } // namespace SceneGraph
