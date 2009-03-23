@@ -1899,8 +1899,14 @@
   </compound>
   <compound kind="page">
     <name>uiconcept</name>
-    <title>&quot;User Interface Concepts&quot;</title>
+    <title>User Interface Concepts</title>
     <filename>uiconcept</filename>
+    <docanchor file="uiconcept">mouseKeyboardEvents</docanchor>
+    <docanchor file="uiconcept">viewport_widget</docanchor>
+    <docanchor file="uiconcept">tool_bar</docanchor>
+    <docanchor file="uiconcept">logging_widget</docanchor>
+    <docanchor file="uiconcept">plugin_widget</docanchor>
+    <docanchor file="uiconcept">userInterface</docanchor>
   </compound>
   <compound kind="page">
     <name>dataFlow</name>

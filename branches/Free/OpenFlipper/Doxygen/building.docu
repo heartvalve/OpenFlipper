@@ -18,7 +18,7 @@
  * 
  * \section reqlibs Required libraries
  * <ul>
- * <li> Qt >= 4.4 </li>
+ * <li> Qt >= 4.5 </li>
  * <li> freetype2 </li>
  * <li> ftgl </li>
  * </ul> 
