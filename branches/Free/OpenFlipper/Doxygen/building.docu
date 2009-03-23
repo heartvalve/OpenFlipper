@@ -58,5 +58,11 @@
  * The Plugins are build in the OpenFlipper/Plugins directory.
  *
  * \section bmac Building OpenFlipper under MacOSX
- * Work in progress...
+ * 
+ * - Download and install latest Xcode Tools (including gcc)
+ * - Download and install Qt (>= 4.5)
+ * - Install required libraries (using a portage system like MacPorts is recommended)
+ * - Download and extract OpenFlipper sources<br />
+ * 	 (or download via svn:<code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code>)
+ * - Adapt library paths in $OpenFlipper/qmake/packages/packages.Darwin
  */
