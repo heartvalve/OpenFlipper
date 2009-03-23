@@ -25,7 +25,8 @@
  * 
  * \section blinux Building OpenFlipper under Linux
  * <ul>
- * <li> First extract the source code. </li>
+ * <li> First extract the source code or get it via svn:<br />
+ * <code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code></li>
  * <li> Get all required libraries and install them ( including headers! ).</li>
  * <li> Go to the qmake/packages directory and change the packages.<Architecture > files to match the library paths</li>
  * <li> In the toplevel Directory call <b> qmake </b> ( It should be the qmake Version for qt4! Debian uses for example qmake-qt4 ) 
@@ -44,7 +45,7 @@
  * <li> Set the QTDIR Variable to your Qt Installation directory </li>
  * <li> Extract OpenFlipper source code. </li>
  * <li> Get all required libraries and install them ( including headers! ).</li>
- * <li> Open \c OpenMesh\qmake\packages\packages.Windows in a text editor and change header and library paths<br>
+ * <li> Open <code><b> OpenMesh\qmake\packages\packages.Windows </b></code> in a text editor and change header and library paths<br>
  * such that they match the ones installed (see comments to find path entries).</li>
  * <li> Open Visual Studio 2008 and go to Tools->Visual Studio command prompt</li>
  * <li> Go to the toplevel OpenFlipper directory </li>
@@ -57,14 +58,19 @@
  * After building OpenFlipper the Core can be found in the OpenFlipper/Windows_<Arch>_Release.
  * The Plugins are build in the OpenFlipper/Plugins directory.
  *
- * \section bmac Building OpenFlipper under MacOSX
+ * \section bmac Building OpenFlipper under MacOS X
  * 
  * - Download and install latest Xcode Tools (including gcc)
  * - Download and install Qt (>= 4.5)
  * - Install required libraries (using a portage system like MacPorts is recommended)
  * - Download and extract OpenFlipper sources<br />
  * 	 (or download via svn:<code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code>)
- * - Adapt library paths in <code><b> $OpenFlipper/qmake/packages/packages.Darwin </b></code>
+ * - Adapt library and header paths in <code><b> $OpenFlipper/qmake/packages/packages.Darwin </b></code>
  * - Go into OpenFlipper's root directory and type <code><b> qmake -spec macx-g++ -o Makefile </b></code>
- * - Now type <code><b>make</b></code> to build OpenFlipper
+ * - Now type <code><b>make release</b></code> to build OpenFlipper as application bundle
+ * - Execute <code><b>Build_Darwin_Bundle.sh</b></code> in OpenFlipper's root directory to correct install_name paths within the application bundle
+ *
+ * Note: If you don't want qmake to build OpenFlipper as MacOS X application bundle
+ * you have to uncomment the line <code><b># CONFIG -= app_bundle  # Do not build a framework bundle</b></code>
+ * of function <code><b>defineTest(Application)</b></code> in file <code><b> $OpenFlipper/qmake/all.include </b></code>.
  */
