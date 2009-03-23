@@ -63,7 +63,6 @@ class ScriptInterface {
        * e.g. selectAllVertices( ObjectId )
        *
        * @param _functionName the called function
-       * @param _exists found or not
        */
     virtual void scriptInfo( QString /*_functionName*/  ) {};
 
