@@ -19,6 +19,14 @@
  * - \ref logging_widget
  * - \ref tool_bar
  *
+ * \section mouseKeyboardEvents Mouse and keyboard events
+ *
+ * The user interactivity is gained by plain Qt mouse and keyboard events. If
+ * the plugin wants to interact with the mouse or keyboard, it
+ * has to implement the \ref MouseInterface and \ref KeyboardInterface
+ * (for keyboard shortcuts, etc.). See \interfaces for an overview of
+ * implementable interfaces.
+ *
  * \section viewport_widget The viewport widget
  *
  * The viewport widget visualizes the whole scenegraph. One can adjust
