@@ -39,6 +39,29 @@
  *
  * \section geometryData Handling geometry data within a plugin
  *
+ * \subsection Adding and removing mesh objects in OpenFlipper
+ *
+ * If you want to load geometry data from a file or simply add objects to the scene
+ * from within a plugin, it has to implement the \ref LoadSavePlugin interface.
+ *
+ * LoadSaveInterface::load(	QString _file, DataType _type, int&	_id) tries to
+ * load file with file name _file of type _type, _id contains the new created
+ * object's id or -1 if loading failed. OpenFlipper will then create all
+ * the necessary scene graph nodes such that the developer generally does
+ * not need to know in detail how to create the required nodes.
+ *
+ * Otherwise if a file has been loaded externally, slot
+ *
+ * LoadSaveInterface::openedFile (int _id) is called.
+ *
+ * When removing objects from the scene, the plugin simply has to call
+ *
+ * LoadSaveInterface::deleteObject(int _id)
+ *
+ * or
+ *
+ * LoadSaveInterface::deleteAllObjects() in order to clear the scene.
+ *
  * \subsection pluginFunctions OpenFlipper's plugin functions
  *
  * As a plugin in most cases operates on geometry data, developers might want to know how to gain access to mesh data
