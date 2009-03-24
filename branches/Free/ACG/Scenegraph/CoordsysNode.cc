@@ -245,7 +245,7 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
     // clear depth buffer behind coordsys node
-    drawClearArea(_state, false);
+    drawClearArea(_state, false, GLMatrixd ());
 
     // Koordinatensystem zeichnen
     drawCoordsys(_state);
@@ -265,7 +265,7 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     _state.set_modelview (modelview);
 
     // clear depth buffer behind coordsys node
-    drawClearArea(_state, false);
+    drawClearArea(_state, false, GLMatrixd ());
     drawCoordsys(_state);
 
   }
@@ -305,6 +305,8 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 {
   if (_target == PICK_ANYTHING) {
 
+    GLdouble mat[16];
+
     // Push Modelview-Matrix
     _state.push_modelview_matrix();
     _state.pick_set_maximum (5);
@@ -315,6 +317,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
     if ( mode_ == SCREENPOS ) {
 
+      
       int left, bottom, width, height;
       _state.get_viewport(left, bottom, width, height);
 
@@ -334,6 +337,24 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       pos3D = _state.unproject (Vec3d (posx, posy, 0.5));
       _state.pop_modelview_matrix();
 
+      // Projection reload
+      _state.pop_projection_matrix();
+
+      // the only way to get the gl pick matrix again
+      glMatrixMode(GL_PROJECTION);
+
+      glPushMatrix ();
+      glMultMatrixd( _state.inverse_projection().get_raw_data());
+
+      glGetDoublev(GL_PROJECTION_MATRIX, mat);
+
+      GLMatrixd pickMat (mat);
+
+      // add our matrix
+      gluPerspective(45.0, _state.aspect(), 0.8, 20.0);
+
+      glMatrixMode(GL_MODELVIEW);
+
       // reset scene translation
       GLMatrixd modelview = _state.modelview();
 
@@ -345,16 +366,29 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
       // clear depth buffer behind coordsys node
-      drawClearArea(_state, true);
+      drawClearArea(_state, true, pickMat);
 
       // Koordinatensystem zeichnen
       drawCoordsysPick(_state);
 
-      // Projection reload
-      _state.pop_projection_matrix();
-
+      glMatrixMode(GL_PROJECTION);
+      glPopMatrix ();
+      glMatrixMode(GL_MODELVIEW);
 
     } else if (mode_ == POSITION) { /* mode_ == POSITION */
+
+      glMatrixMode(GL_PROJECTION);
+
+      glPushMatrix ();
+      glMultMatrixd( _state.inverse_projection().get_raw_data());
+
+      glGetDoublev(GL_PROJECTION_MATRIX, mat);
+
+      glPopMatrix ();
+
+      GLMatrixd pickMat (mat);
+
+      glMatrixMode(GL_MODELVIEW);
 
       GLMatrixd modelview = _state.modelview();
 
@@ -363,7 +397,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       modelview(2,3) = 0.0;
 
       // clear depth buffer behind coordsys node
-      drawClearArea(_state, true);
+      drawClearArea(_state, true, pickMat);
       drawCoordsysPick(_state);
     }
     // Reload old configuration
@@ -374,7 +408,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
 //----------------------------------------------------------------------------
 
-void CoordsysNode::drawClearArea(GLState&  _state, bool _pick)
+void CoordsysNode::drawClearArea(GLState&  _state, bool _pick, GLMatrixd _pickMatrix)
 {
   std::vector<Vec2f> points;
   Vec2f center;
@@ -404,6 +438,15 @@ void CoordsysNode::drawClearArea(GLState&  _state, bool _pick)
 
   _state.push_projection_matrix();
   _state.reset_projection();
+  if (_pick)
+  {
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix ();
+    glMultMatrixd(_pickMatrix.get_raw_data());
+
+    glMatrixMode(GL_MODELVIEW);
+  }
+
   _state.ortho (left, left + width, bottom, bottom + height, 0.0, 1.0);
 
   _state.push_modelview_matrix();
@@ -425,6 +468,12 @@ void CoordsysNode::drawClearArea(GLState&  _state, bool _pick)
 
   if (!_pick)
     glColorMask(true, true, true, true);
+  else
+  {
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix ();
+    glMatrixMode(GL_MODELVIEW);
+  }
 
   gluDeleteQuadric(quadric);
 }
