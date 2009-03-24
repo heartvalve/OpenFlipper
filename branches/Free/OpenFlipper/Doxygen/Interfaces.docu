@@ -27,6 +27,11 @@
  * This interface is used to deliver mouse events to a plugin ( MouseInterface ).\n
  *
  *
+ * \section LoadSavePlugin Load / Save Interface
+ * Provides functions to handle mesh files and load / unload geometry
+ * objects into the scene graph ( LoadSaveInterface ).
+ *
+ *
  * \section MenubarPlugin Menubar Interface
  * Provides a function to create an entry in the menubar ( MenuInterface ).
  *
