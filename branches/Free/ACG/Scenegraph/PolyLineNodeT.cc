@@ -181,22 +181,28 @@ void
 PolyLineNodeT<PolyLine>::
 pick(GLState& _state, PickTarget _target)
 {
+  unsigned int n_end = polyline_.n_edges()+1;
+  if( !polyline_.is_closed()) --n_end;
+
   switch (_target)
   {
     case PICK_VERTEX:
     {
+      _state.pick_set_maximum (polyline_.n_vertices());
       pick_vertices( _state);
       break;
     }
 
     case PICK_EDGE:
     {
+      _state.pick_set_maximum (n_end);
       pick_edges(_state, 0);
       break;
     }
 
     case PICK_ANYTHING:
     {
+      _state.pick_set_maximum (polyline_.n_vertices() + n_end);
       pick_vertices( _state);
       pick_edges( _state, polyline_.n_vertices());
       break;
@@ -221,7 +227,6 @@ pick_vertices( GLState& _state )
   unsigned int slices(4);
   unsigned int stacks(3);
 
-  _state.pick_set_maximum (polyline_.n_vertices());
   _state.pick_set_name (0);
 
   for (unsigned int i=0; i< polyline_.n_vertices(); ++i)
@@ -267,8 +272,6 @@ pick_edges( GLState& _state, unsigned int _offset)
   unsigned int n_end = polyline_.n_edges()+1;
   if( !polyline_.is_closed()) --n_end;
 
-
-  _state.pick_set_maximum (n_end);
   _state.pick_set_name (0);
 
   // draw possibly closed PolyLine
