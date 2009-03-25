@@ -74,8 +74,8 @@
  * The plugins are build into the application bundle's Resources directory.
  *
  * Note: If you don't want qmake to build OpenFlipper as MacOS X application bundle
- * you have to uncomment the line <code><b># CONFIG -= app_bundle  # Do not build a framework bundle</b></code>
- * of function <code><b>defineTest(Application)</b></code> an comment out line
- * <code>DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}</code>
- * in file <code><b> $OpenFlipper/qmake/all.include </b></code>.
+ * you have to uncomment line <br /><br /><code><b># CONFIG -= app_bundle  # Do not build a framework bundle</b></code><br /><br />
+ * of function <code>defineTest(Application)</code> and comment out line<br /><br />
+ * <code><b>DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}</b></code><br /><br />
+ * of function <code>defineTest(Plugin)</code> in file <code>$OpenFlipper/qmake/all.include</code>.
  */
