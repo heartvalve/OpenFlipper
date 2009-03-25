@@ -95,7 +95,7 @@ class MouseAndKeyPlugin: public QObject,
 	void contextMenuItemSelected(QAction* _action);
 
 	public slots:
-		QString version() {return QString("1.0");};
-	};
+		QString version() { return QString("1.0"); };
+};
 
 #endif //MOUSEANDKEYPLUGIN_HH
