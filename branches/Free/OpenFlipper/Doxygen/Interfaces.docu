@@ -37,7 +37,7 @@
  *
  *
  * \section ToolboxPlugin Toolbox Interface
- * Provides functions to create a separate widget in the toolbox on the right.
+ * Provides functions to create a separate widget in the toolbox on the right ( ToolboxInterface ).
  *
  *
  * \section LoggingPlugin Logging Interface
