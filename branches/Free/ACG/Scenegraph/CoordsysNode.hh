@@ -117,7 +117,7 @@ public:
 
     void drawCoordsys(GLState&  _state);
     void drawCoordsysPick(GLState&  _state);
-    void drawClearArea(GLState&  _state, bool _pick, GLMatrixd _pickMatrix);
+    void drawClearArea(GLState&  _state, bool _pick, GLMatrixd _pickMatrix, GLfloat z = 1.0);
     void boundingCircle(std::vector<Vec2f> &_in, Vec2f &_center, float &_radius);
 
     CoordsysMode mode_;
