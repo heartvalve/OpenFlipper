@@ -77,8 +77,9 @@
  * is "MouseAndKeyPlugin" we try to get the object on that the user has double clicked.
  * If the object can be found, we'll show up a dialog window displaying the picked object's
  * identifier and assign it to the member variable that holds the active object.
- * Otherwise we display "Picking failed" in the log widget. Note that if object picking
- * failed the mouse event has to be traversed through the rest of the scene graph.
+ * Otherwise we display "Picking failed" in the log widget. Note that
+ * the mouse event has to be traversed through the rest of the scene graph after
+ * intercepting and treating the desired mouse action.
  *
  * \dontinclude MouseAndKeyPlugin.cc
  * \skip void MouseAndKeyPlugin::slotMouseEvent(QMouseEvent* _event) {
