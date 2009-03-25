@@ -48,14 +48,14 @@ void MouseAndKeyPlugin::initializePlugin() {
 	// Set rotation axes to x, y and z axis
 	axis_x_ = ACG::Vec3d(1.0, 0.0, 0.0);
 	axis_y_ = ACG::Vec3d(0.0, 1.0, 0.0);
-	axis_z_ = ACG::Vec3d(0.0, 0.0, 1.0);
 
 	// Register keys
 	emit registerKey(Qt::Key_W,	Qt::NoModifier, "Rotate object down");
 	emit registerKey(Qt::Key_S,	Qt::NoModifier, "Rotate object up");
 	emit registerKey(Qt::Key_A,	Qt::NoModifier, "Rotate object left");
 	emit registerKey(Qt::Key_D,	Qt::NoModifier, "Rotate object right");
-}
+
+} // End initializePlugin
 
 /*
  * Is called after all plugins have been initialized
@@ -82,8 +82,10 @@ void MouseAndKeyPlugin::pluginsInitialized() {
 	emit addContextMenuItem(contextMenuEntry_->menuAction() , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
 	emit addContextMenuItem(contextMenuEntry_->menuAction() , DATA_POLY_MESH , CONTEXTOBJECTMENU );
 
-	connect( contextMenuEntry_ , SIGNAL( triggered(QAction*) ), this, SLOT(contextMenuItemSelected(QAction*)) );
-}
+	// Connect the created context menu entry to local function contextMenuItemSelected(QAction*)
+	connect(contextMenuEntry_, SIGNAL(triggered(QAction*)), this, SLOT(contextMenuItemSelected(QAction*)));
+
+} // End pluginsInitialized
 
 /*
  * Initialize toolbox
@@ -97,11 +99,11 @@ bool MouseAndKeyPlugin::initializeToolbox(QWidget*& _widget)
   tool_->resize(size);
 
   // Create button that can be toggled
-  // to (de)activate plugins picking mode
+  // to (de)activate plugin's picking mode
   pickButton_ = new QPushButton(tr("Select object"));
   pickButton_->setCheckable(true);
 
-  // Create label the button
+  // Create label
   QLabel* label = new QLabel();
   label->setText("(De)activate pick mode");
 
@@ -116,7 +118,8 @@ bool MouseAndKeyPlugin::initializeToolbox(QWidget*& _widget)
   connect( pickButton_, SIGNAL(clicked()), this, SLOT(slotButtonClicked()));
 
   return true;
-}
+
+} // End initializeToolbox
 
 /*
  * Is called when button in toolbox has been clicked
@@ -134,19 +137,24 @@ void MouseAndKeyPlugin::slotButtonClicked() {
 		// Picking mode shall be deactivated
 		PluginFunctions::actionMode( Viewer::ExamineMode );
 	}
-}
+
+} // End slotButtonClicked
 
 /*
  * Is called when pick mode is changed in OpenFlipper
  */
-void MouseAndKeyPlugin::slotPickModeChanged( const std::string& _mode) {
+void MouseAndKeyPlugin::slotPickModeChanged(const std::string& _mode) {
 
 	// Set button checked if pick mode is our
 	// plugin's pick mode
 	pickButton_->setChecked(_mode == "MouseAndKeyPlugin");
-}
 
-void MouseAndKeyPlugin::slotMouseEvent( QMouseEvent* _event ) {
+} // End slotPickModeChanged
+
+/*
+ * Is called each time the mouse has moved or been clicked
+ */
+void MouseAndKeyPlugin::slotMouseEvent(QMouseEvent* _event) {
 
 	if ( PluginFunctions::pickMode() == "MouseAndKeyPlugin" &&
 		PluginFunctions::actionMode() == Viewer::PickingMode ) {
@@ -194,7 +202,8 @@ void MouseAndKeyPlugin::slotMouseEvent( QMouseEvent* _event ) {
 		ACG::SceneGraph::MouseEventAction action(_event);
 		PluginFunctions::traverse(action);
 	}
-}
+
+} // End slotMouseEvent
 
 /*
  * Is called when a key on the keyboard is pressed
@@ -255,7 +264,8 @@ void MouseAndKeyPlugin::slotKeyEvent( QKeyEvent* _event ) {
 	} else {
 		emit log(LOGINFO, "No object has been selected to rotate! Select object first.");
 	}
-}
+
+} // End slotKeyEvent
 
 /*
  * Transform a mesh with the given transformation matrix
@@ -265,25 +275,32 @@ void MouseAndKeyPlugin::slotKeyEvent( QKeyEvent* _event ) {
  */
 template< typename MeshT >
 void MouseAndKeyPlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
+
    typename MeshT::VertexIter v_it  = _mesh.vertices_begin();
    typename MeshT::VertexIter v_end = _mesh.vertices_end();
+
+   // Iterator over all vertices and transform them by _mat
+   // Update normals
    for (; v_it!=v_end; ++v_it) {
-            _mesh.set_point(v_it,(typename MeshT::Point)_mat.transform_point((OpenMesh::Vec3d)(_mesh.point(v_it))));
-            _mesh.set_normal(v_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(v_it))));
+	   _mesh.set_point(v_it,(typename MeshT::Point)_mat.transform_point((OpenMesh::Vec3d)(_mesh.point(v_it))));
+	   _mesh.set_normal(v_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(v_it))));
    }
 
    typename MeshT::FaceIter f_it     = _mesh.faces_begin();
    typename MeshT::FaceIter f_end = _mesh.faces_end();
+
+   // Iterate over all faces and update face normals
    for (; f_it != f_end; ++f_it)
-            _mesh.set_normal(f_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(f_it))));
-}
+	   _mesh.set_normal(f_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(f_it))));
+
+} // End transformMesh
 
 /*
  * Is called when context menu entry has been clicked
  */
 void MouseAndKeyPlugin::contextMenuItemSelected(QAction* _action) {
 
-	// Get needed data from QAction object
+	// Get object id from QAction object
 	QVariant contextObject = _action->data();
     int objectId = contextObject.toInt();
 
@@ -312,7 +329,8 @@ void MouseAndKeyPlugin::contextMenuItemSelected(QAction* _action) {
 
     // Tell core that object's visibility has changed
     visibilityChanged(objectId);
-}
+
+} // End contextMenuItemSelected
 
 Q_EXPORT_PLUGIN2( mouseandkeyplugin , MouseAndKeyPlugin );
 

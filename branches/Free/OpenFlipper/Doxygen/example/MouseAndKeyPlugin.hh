@@ -38,12 +38,12 @@ class MouseAndKeyPlugin: public QObject,
 	void log(QString _message);
 	//ContextMenuInterface
 	void addContextMenuItem(QAction* _action , ContextMenuType _type);
-    void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
-    //PickingInterface
-    void addPickMode(const std::string _mode);
-    void addHiddenPickMode(const std::string _mode);
-    //KeyInterface
-    void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
+	void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
+	//PickingInterface
+	void addPickMode(const std::string _mode);
+	void addHiddenPickMode(const std::string _mode);
+	//KeyInterface
+	void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
 
 	private slots:
 
@@ -84,7 +84,6 @@ class MouseAndKeyPlugin: public QObject,
 	// Rotation axes
 	ACG::Vec3d axis_x_;
 	ACG::Vec3d axis_y_;
-	ACG::Vec3d axis_z_;
 
 	private slots:
 
