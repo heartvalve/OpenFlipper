@@ -29,8 +29,6 @@
 //
 //=============================================================================
 
-
-
 #include "MouseAndKeyPlugin.hh"
 
 
@@ -120,6 +118,9 @@ bool MouseAndKeyPlugin::initializeToolbox(QWidget*& _widget)
   return true;
 }
 
+/*
+ * Is called when button in toolbox has been clicked
+ */
 void MouseAndKeyPlugin::slotButtonClicked() {
 
 	if(pickButton_->isChecked()) {
@@ -277,6 +278,9 @@ void MouseAndKeyPlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
             _mesh.set_normal(f_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(f_it))));
 }
 
+/*
+ * Is called when context menu entry has been clicked
+ */
 void MouseAndKeyPlugin::contextMenuItemSelected(QAction* _action) {
 
 	// Get needed data from QAction object
