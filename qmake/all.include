@@ -109,8 +109,14 @@ defineTest(Plugin) {
  		glut()
 		LIBS+= -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
                 export(LIBS)
+
+		#######################################################################
+		# Comment out the following line for qmake to build
+		# plugins into OpenFlipper/plugins directory
+		#######################################################################
 		DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}
-	        export(DESTDIR)
+	        
+		export(DESTDIR)
 
         }
 	export(TEMPLATE)
@@ -149,8 +155,16 @@ defineTest(Application) {
 		TEMPLATE = vcapp
 	}
 	macx {
+		#############################################################
+		# Uncomment the following line if you
+		# don't want qmake to build a MacOS X
+		# application bundle
+		#############################################################
 		# CONFIG -= app_bundle	# Do not build a framework bundle
-		CONFIG += x86		# Add ppc to build universal binary
+
+		CONFIG += x86
+		# CONFIG += ppc		# Uncomment to build universal binary
+
 		ICON = $${TOPDIR}/OpenFlipper/Icons/OpenFlipper_Icon.icns
 		export( ICON )
 		export( CONFIG )
