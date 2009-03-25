@@ -1235,18 +1235,22 @@ pick_faces(GLState& _state)
 
 
   if ( mesh_.n_faces() > 0 )
+  {
     if (!_state.pick_set_maximum (mesh_.n_faces()))
     {
       omerr() << "MeshNode::pick_faces: color range too small, "
         << "picking failed\n";
       return;
     }
+  }
   else
+  {
     if (!_state.pick_set_maximum (1))
     {
       omerr() << "Strange pickSetMAximum failed for index 1 in MeshNode\n";
       return;
     }
+  }
 
   if (faceList_ && !updateFaceList_ && _state.pick_current_index () == faceBaseIndex_)
   {
