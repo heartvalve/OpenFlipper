@@ -122,6 +122,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   QGLFormat::setDefaultFormat(format);
   format.setStereo( OpenFlipper::Options::stereo() );
   format.setAlpha(true);
+  format.setStencil(true);
 
   // Construct GL context & widget
 
