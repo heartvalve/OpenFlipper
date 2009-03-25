@@ -54,7 +54,7 @@
  *
  * LoadSaveInterface::openedFile (int _id) is called.
  *
- * When removing objects from the scene, the plugin simply has to call
+ * When removing objects from the scene, the plugin simply has to emit signal
  *
  * LoadSaveInterface::deleteObject(int _id)
  *
@@ -105,27 +105,27 @@
  * - Changing selection type
  *
  * When changing geometry, OpenFlipper's core will be forced to redraw the object that has been
- * changed by calling:
+ * changed by emitting signal
  *
  * \ref BaseInterface::updatedObject(int _id)
  *
  * where \c _id is the object's id.
  *
  * When changing object properties it won't be necessary to redraw the scene
- * since it can be expensive in computation power. In this case, one should call
+ * since it can be expensive in computation power. In this case, one should emit
  *
  * \ref BaseInterface::objectPropertiesChanged(int _id)
  *
  * where \c _id once again is the object's id.
  *
- * If a plugin changed an object's visibility (hide, show), it should call
+ * If a plugin changed an object's visibility (hide, show), it should emit
  *
  * \ref BaseInterface::visibilityChanged(int _id)
  *
  * for the core to update the visibility state of object with identifier \c _id.
  *
  * Last, when changing an object's selection, it
- * will be updated by calling
+ * will be updated by emitting
  *
  * \ref BaseInterface::objectSelectionChanged(int _id)
  *
