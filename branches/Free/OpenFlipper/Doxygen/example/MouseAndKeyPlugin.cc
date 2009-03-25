@@ -1,0 +1,312 @@
+//=============================================================================
+//
+//                               OpenFlipper
+//        Copyright (C) 2008 by Computer Graphics Group, RWTH Aachen
+//                           www.openflipper.org
+//
+//-----------------------------------------------------------------------------
+//
+//                                License
+//
+//  OpenFlipper is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  OpenFlipper is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
+//
+//-----------------------------------------------------------------------------
+//
+//   $Revision: 5409 $
+//   $Author: kremer $
+//   $Date: 2009-03-23 12:47:01 +0100 (Mo, 23 Mär 2009) $
+//
+//=============================================================================
+
+
+
+#include "MouseAndKeyPlugin.hh"
+
+
+#include <ObjectTypes/PolyMesh/PolyMesh.hh>
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+
+#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+
+/*
+ * Initialize plugin
+ */
+void MouseAndKeyPlugin::initializePlugin() {
+
+	// Set active object to -1
+	activeObject_ = -1;
+
+	// Set rotation axes to x, y and z axis
+	axis_x_ = ACG::Vec3d(1.0, 0.0, 0.0);
+	axis_y_ = ACG::Vec3d(0.0, 1.0, 0.0);
+	axis_z_ = ACG::Vec3d(0.0, 0.0, 1.0);
+
+	// Register keys
+	emit registerKey(Qt::Key_W,	Qt::NoModifier, "Rotate object down");
+	emit registerKey(Qt::Key_S,	Qt::NoModifier, "Rotate object up");
+	emit registerKey(Qt::Key_A,	Qt::NoModifier, "Rotate object left");
+	emit registerKey(Qt::Key_D,	Qt::NoModifier, "Rotate object right");
+}
+
+/*
+ * Is called after all plugins have been initialized
+ */
+void MouseAndKeyPlugin::pluginsInitialized() {
+
+	// Add pickmode
+	emit addPickMode("MouseAndKeyPlugin");
+
+	// Add context menu entry
+
+	// Create submenu
+	contextMenuEntry_ = new QMenu("Mouse and key plugin");
+
+	QAction* lastAction;
+
+	// Add action to recently created menu
+	lastAction = contextMenuEntry_->addAction( "Hide object" );
+	lastAction->setToolTip("Hide selected object");
+	lastAction->setStatusTip( lastAction->toolTip() );
+
+	// Finally insert created context submenu to OpenFlipper's context menu
+	// We want our action to be visible for triangle and polygon meshes
+	emit addContextMenuItem(contextMenuEntry_->menuAction() , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
+	emit addContextMenuItem(contextMenuEntry_->menuAction() , DATA_POLY_MESH , CONTEXTOBJECTMENU );
+
+	connect( contextMenuEntry_ , SIGNAL( triggered(QAction*) ), this, SLOT(contextMenuItemSelected(QAction*)) );
+}
+
+/*
+ * Initialize toolbox
+ */
+bool MouseAndKeyPlugin::initializeToolbox(QWidget*& _widget)
+{
+
+  tool_ = new QWidget();
+  _widget = tool_;
+  QSize size(300, 300);
+  tool_->resize(size);
+
+  // Create button that can be toggled
+  // to (de)activate plugins picking mode
+  pickButton_ = new QPushButton(tr("Select object"));
+  pickButton_->setCheckable(true);
+
+  // Create label the button
+  QLabel* label = new QLabel();
+  label->setText("(De)activate pick mode");
+
+  // Set label to be above the button
+  QGridLayout* grid = new QGridLayout;
+  grid->addWidget(label, 0, 0);
+  grid->addWidget(pickButton_, 1, 0);
+
+  tool_->setLayout(grid);
+
+  // Connect button to slotButtonClicked()
+  connect( pickButton_, SIGNAL(clicked()), this, SLOT(slotButtonClicked()));
+
+  return true;
+}
+
+void MouseAndKeyPlugin::slotButtonClicked() {
+
+	if(pickButton_->isChecked()) {
+		// Picking mode of our plugin shall be activated
+		// set OpenFlipper's action mode to picking
+		PluginFunctions::actionMode( Viewer::PickingMode );
+
+		// Now activate our picking mode
+		PluginFunctions::pickMode( "MouseAndKeyPlugin" );
+	} else {
+		// Picking mode shall be deactivated
+		PluginFunctions::actionMode( Viewer::ExamineMode );
+	}
+}
+
+/*
+ * Is called when pick mode is changed in OpenFlipper
+ */
+void MouseAndKeyPlugin::slotPickModeChanged( const std::string& _mode) {
+
+	// Set button checked if pick mode is our
+	// plugin's pick mode
+	pickButton_->setChecked(_mode == "MouseAndKeyPlugin");
+}
+
+void MouseAndKeyPlugin::slotMouseEvent( QMouseEvent* _event ) {
+
+	if ( PluginFunctions::pickMode() == "MouseAndKeyPlugin" &&
+		PluginFunctions::actionMode() == Viewer::PickingMode ) {
+
+		// If double click has been performed
+		if (_event->type() == QEvent::MouseButtonDblClick) {
+
+			unsigned int node_idx, target_idx;
+			OpenMesh::Vec3d hitPoint;
+
+			// Get picked object's identifier
+			if ( PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING,_event->pos(), node_idx, target_idx, &hitPoint) ) {
+
+				BaseObjectData* object;
+
+				// Get picked object
+				if ( PluginFunctions::getPickedObject(node_idx, object) ) {
+
+					// Show small dialog window
+					QDialog* dlg = new QDialog;
+
+					QGridLayout* grid = new QGridLayout;
+					QLabel* label = new QLabel;
+					QString str = QString("You selected object ");
+					str += QString::number(node_idx);
+					label->setText(str);
+					grid->addWidget(label, 0,0);
+
+					dlg->setLayout(grid);
+
+					dlg->show();
+
+					// Set last selected object
+					activeObject_ = node_idx;
+				}
+				else {
+					emit log(LOGINFO, "Picking failed");
+				}
+			}
+
+			return;
+		}
+
+		// Continue traversing scene graph
+		ACG::SceneGraph::MouseEventAction action(_event);
+		PluginFunctions::traverse(action);
+	}
+}
+
+/*
+ * Is called when a key on the keyboard is pressed
+ */
+void MouseAndKeyPlugin::slotKeyEvent( QKeyEvent* _event ) {
+
+	BaseObjectData* object;
+	if ( PluginFunctions::getPickedObject(activeObject_, object) ) {
+
+		// Switch pressed keys
+		switch (_event->key())
+		{
+			case Qt::Key_W:
+
+				object->manipulatorNode()->loadIdentity();
+				object->manipulatorNode()->rotate(10.0, axis_x_);
+
+				break;
+
+			case Qt::Key_S :
+
+				object->manipulatorNode()->loadIdentity();
+				object->manipulatorNode()->rotate(-10.0, axis_x_);
+
+				break;
+
+			case Qt::Key_A :
+
+				object->manipulatorNode()->loadIdentity();
+				object->manipulatorNode()->rotate(10.0, axis_y_);
+
+				break;
+
+			case Qt::Key_D :
+
+				object->manipulatorNode()->loadIdentity();
+				object->manipulatorNode()->rotate(-10.0, axis_y_);
+
+				break;
+
+			default:
+			break;
+		}
+
+		// Perform rotation
+		if ( object->dataType( DATA_TRIANGLE_MESH ) )
+			transformMesh(object->manipulatorNode()->matrix(), (*PluginFunctions::triMesh(object)));
+		if ( object->dataType( DATA_POLY_MESH ) )
+			transformMesh(object->manipulatorNode()->matrix(), (*PluginFunctions::polyMesh(object)));
+
+		// Tell core that object has been modified
+		updatedObject(object->id());
+
+		// Update view
+		emit updateView();
+	} else {
+		emit log(LOGINFO, "No object has been selected to rotate! Select object first.");
+	}
+}
+
+/*
+ * Transform a mesh with the given transformation matrix
+ *
+ * _mat : transformation matrix
+ * _mesh : the mesh
+ */
+template< typename MeshT >
+void MouseAndKeyPlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
+   typename MeshT::VertexIter v_it  = _mesh.vertices_begin();
+   typename MeshT::VertexIter v_end = _mesh.vertices_end();
+   for (; v_it!=v_end; ++v_it) {
+            _mesh.set_point(v_it,(typename MeshT::Point)_mat.transform_point((OpenMesh::Vec3d)(_mesh.point(v_it))));
+            _mesh.set_normal(v_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(v_it))));
+   }
+
+   typename MeshT::FaceIter f_it     = _mesh.faces_begin();
+   typename MeshT::FaceIter f_end = _mesh.faces_end();
+   for (; f_it != f_end; ++f_it)
+            _mesh.set_normal(f_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(f_it))));
+}
+
+void MouseAndKeyPlugin::contextMenuItemSelected(QAction* _action) {
+
+	// Get needed data from QAction object
+	QVariant contextObject = _action->data();
+    int objectId = contextObject.toInt();
+
+    if ( objectId == -1) {
+
+    	log(LOGINFO, "Could not get associated object id.");
+    	return;
+    }
+
+    // Get node associated to object id
+    ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), objectId );
+
+    // Return if node id was not valid
+    if(!node) {
+
+    	log(LOGINFO, "Could not find associated object.");
+    	return;
+    }
+
+    BaseObjectData* obj;
+    if ( ! PluginFunctions::getObject(objectId,obj) )
+        return;
+
+    // Hide object
+    obj->hide();
+
+    // Tell core that object's visibility has changed
+    visibilityChanged(objectId);
+}
+
+Q_EXPORT_PLUGIN2( mouseandkeyplugin , MouseAndKeyPlugin );
+
