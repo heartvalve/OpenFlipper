@@ -286,7 +286,7 @@ void MouseAndKeyPlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
 	   _mesh.set_normal(v_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(v_it))));
    }
 
-   typename MeshT::FaceIter f_it     = _mesh.faces_begin();
+   typename MeshT::FaceIter f_it  = _mesh.faces_begin();
    typename MeshT::FaceIter f_end = _mesh.faces_end();
 
    // Iterate over all faces and update face normals
