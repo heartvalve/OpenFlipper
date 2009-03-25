@@ -273,25 +273,28 @@ void MouseAndKeyPlugin::slotKeyEvent( QKeyEvent* _event ) {
  * _mat : transformation matrix
  * _mesh : the mesh
  */
-template< typename MeshT >
-void MouseAndKeyPlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
+template<typename MeshT>
+void MouseAndKeyPlugin::transformMesh(ACG::Matrix4x4d _mat, MeshT& _mesh) {
 
-   typename MeshT::VertexIter v_it  = _mesh.vertices_begin();
-   typename MeshT::VertexIter v_end = _mesh.vertices_end();
+	typename MeshT::VertexIter v_it = _mesh.vertices_begin();
+	typename MeshT::VertexIter v_end = _mesh.vertices_end();
 
-   // Iterator over all vertices and transform them by _mat
-   // Update normals
-   for (; v_it!=v_end; ++v_it) {
-	   _mesh.set_point(v_it,(typename MeshT::Point)_mat.transform_point((OpenMesh::Vec3d)(_mesh.point(v_it))));
-	   _mesh.set_normal(v_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(v_it))));
-   }
+	// Iterator over all vertices and transform them by _mat
+	// Update normals
+	for (; v_it != v_end; ++v_it) {
+		_mesh.set_point(v_it, (typename MeshT::Point) _mat.transform_point(
+				(OpenMesh::Vec3d)(_mesh.point(v_it))));
+		_mesh.set_normal(v_it, (typename MeshT::Point) _mat.transform_vector(
+				(OpenMesh::Vec3d)(_mesh.normal(v_it))));
+	}
 
-   typename MeshT::FaceIter f_it  = _mesh.faces_begin();
-   typename MeshT::FaceIter f_end = _mesh.faces_end();
+	typename MeshT::FaceIter f_it = _mesh.faces_begin();
+	typename MeshT::FaceIter f_end = _mesh.faces_end();
 
-   // Iterate over all faces and update face normals
-   for (; f_it != f_end; ++f_it)
-	   _mesh.set_normal(f_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(f_it))));
+	// Iterate over all faces and update face normals
+	for (; f_it != f_end; ++f_it)
+		_mesh.set_normal(f_it, (typename MeshT::Point) _mat.transform_vector(
+				(OpenMesh::Vec3d)(_mesh.normal(f_it))));
 
 } // End transformMesh
 
