@@ -302,33 +302,34 @@ void MouseAndKeyPlugin::contextMenuItemSelected(QAction* _action) {
 
 	// Get object id from QAction object
 	QVariant contextObject = _action->data();
-    int objectId = contextObject.toInt();
+	int objectId = contextObject.toInt();
 
-    if ( objectId == -1) {
+	if (objectId == -1) {
 
-    	log(LOGINFO, "Could not get associated object id.");
-    	return;
-    }
+		log(LOGINFO, "Could not get associated object id.");
+		return;
+	}
 
-    // Get node associated to object id
-    ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), objectId );
+	// Get node associated to object id
+	ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node(
+			PluginFunctions::getSceneGraphRootNode(), objectId);
 
-    // Return if node id was not valid
-    if(!node) {
+	// Return if node id was not valid
+	if (!node) {
 
-    	log(LOGINFO, "Could not find associated object.");
-    	return;
-    }
+		log(LOGINFO, "Could not find associated object.");
+		return;
+	}
 
-    BaseObjectData* obj;
-    if ( ! PluginFunctions::getObject(objectId,obj) )
-        return;
+	BaseObjectData* obj;
+	if (!PluginFunctions::getObject(objectId, obj))
+		return;
 
-    // Hide object
-    obj->hide();
+	// Hide object
+	obj->hide();
 
-    // Tell core that object's visibility has changed
-    visibilityChanged(objectId);
+	// Tell core that object's visibility has changed
+	visibilityChanged(objectId);
 
 } // End contextMenuItemSelected
 
