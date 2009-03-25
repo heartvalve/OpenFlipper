@@ -201,6 +201,8 @@ void MouseAndKeyPlugin::slotMouseEvent( QMouseEvent* _event ) {
 void MouseAndKeyPlugin::slotKeyEvent( QKeyEvent* _event ) {
 
 	BaseObjectData* object;
+
+	// Get last clicked object (selected in pick mode)
 	if ( PluginFunctions::getPickedObject(activeObject_, object) ) {
 
 		// Switch pressed keys
