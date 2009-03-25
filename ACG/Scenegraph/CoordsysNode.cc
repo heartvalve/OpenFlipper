@@ -213,6 +213,9 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
   // Init state - changes when mode_ != POSITION
   Vec3d pos3D(0.0,0.0,0.0);
 
+  GLint stencil = 0;
+  glGetIntegerv(GL_STENCIL_BITS,   &stencil);
+
   if ( mode_ == SCREENPOS ) {
 
     int left, bottom, width, height;
@@ -244,11 +247,35 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     _state.set_modelview (modelview);
     _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
+    if (stencil > 0)
+    {
+      glEnable (GL_STENCIL_TEST);
+      // clear stencil buffer in desired area
+      glStencilOp (GL_ZERO, GL_KEEP, GL_KEEP);
+      glStencilFunc (GL_NEVER, 0, ~0);
+      drawClearArea(_state, false, GLMatrixd ());
+
+      // fill stencil with values
+      glStencilOp (GL_REPLACE, GL_REPLACE, GL_REPLACE);
+      glStencilFunc (GL_NEVER, 1, ~0);
+      drawCoordsys(_state);
+
+      // draw only to regions that have been marked
+      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);
+      glStencilFunc (GL_EQUAL, 1, ~0);
+    }
+
     // clear depth buffer behind coordsys node
-    drawClearArea(_state, false, GLMatrixd ());
+    drawClearArea(_state, false, GLMatrixd (), 1.0);
 
     // Koordinatensystem zeichnen
     drawCoordsys(_state);
+
+    // make sure nothing can paint above coordsys node
+    drawClearArea(_state, false, GLMatrixd (), 0.0);
+
+    if (stencil > 0)
+      glDisable (GL_STENCIL_TEST);
 
     // Projection reload
     _state.pop_projection_matrix();
@@ -264,9 +291,33 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
 
     _state.set_modelview (modelview);
 
+    if (stencil > 0)
+    {
+      glEnable (GL_STENCIL_TEST);
+      // clear stencil buffer in desired area
+      glStencilOp (GL_ZERO, GL_KEEP, GL_KEEP);
+      glStencilFunc (GL_NEVER, 0, ~0);
+      drawClearArea(_state, false, GLMatrixd ());
+
+      // fill stencil with values
+      glStencilOp (GL_REPLACE, GL_REPLACE, GL_REPLACE);
+      glStencilFunc (GL_NEVER, 1, ~0);
+      drawCoordsys(_state);
+
+      // draw only to regions that have been marked
+      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);
+      glStencilFunc (GL_EQUAL, 1, ~0);
+    }
+
     // clear depth buffer behind coordsys node
-    drawClearArea(_state, false, GLMatrixd ());
+    drawClearArea(_state, false, GLMatrixd (), 1.0);
     drawCoordsys(_state);
+
+    // make sure nothing can paint above coordsys node
+    drawClearArea(_state, false, GLMatrixd (), 0.0);
+
+    if (stencil > 0)
+      glDisable (GL_STENCIL_TEST);
 
   }
 
@@ -408,7 +459,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
 //----------------------------------------------------------------------------
 
-void CoordsysNode::drawClearArea(GLState&  _state, bool _pick, GLMatrixd _pickMatrix)
+void CoordsysNode::drawClearArea(GLState&  _state, bool _pick, GLMatrixd _pickMatrix, GLfloat z)
 {
   std::vector<Vec2f> points;
   Vec2f center;
@@ -452,7 +503,7 @@ void CoordsysNode::drawClearArea(GLState&  _state, bool _pick, GLMatrixd _pickMa
   _state.push_modelview_matrix();
   _state.reset_modelview();
   glDepthFunc (GL_ALWAYS);
-  _state.translate (center[0], center[1], -1.0);
+  _state.translate (center[0], center[1], -z);
 
   if (_pick)
     _state.pick_set_name (0);
