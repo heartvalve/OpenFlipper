@@ -264,8 +264,8 @@ class DLLEXPORT BaseObjectData : public BaseObject
     * This function can be used to store an additional Scenegraph node. If you add nodes there, you do not
     * need to keep track of deleted, added objects, as this will be done in the main application.
     * You have to create the node yourself as this function does not know the type. You should add the
-    * new node below the manipulatorNode if you want that it moves with the rest of the data. Otherwise
-    * add it below the seperatorNode of the object.
+    * new node below the manipulatorNode ( BaseObjectData::manipulatorNode() ) if you want that it moves with the rest of the data. Otherwise
+    * add it below the baseNode ( BaseObjectData::baseNode() of the object.
     *
     *  @param _node Node to add
     *  @param _pluginName Name of the current plugin
