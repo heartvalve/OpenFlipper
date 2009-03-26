@@ -57,6 +57,9 @@
   * ToolboxInterface::initializeToolbox(QWidget*& _widget). You can create extra Signals and slots in your Plugin.
   * These can be connected between your toolbox and your plugin. Signals and slots across plugins are currently
   * not available but may be possible via an internal message system later.\n
+  *
+  * See our tutorials \ref ex2 and \ref ex3 for an example of to add custom toolboxes to
+  * OpenFlipper.
   */
 class ToolboxInterface {
 

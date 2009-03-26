@@ -52,7 +52,9 @@ enum Logtype { LOGOUT, LOGINFO , LOGWARN , LOGERR };
   * By emitting the given signals you can log information to the main logger window of the core.
   * To simplify debugging the core will prepend the plugin name to every log message. You dont
   * have to do this yourself!\n
-  * The log message will either be black or will be colored depending on the Logtype you specified. 
+  * The log message will either be black or will be colored depending on the Logtype you specified.
+  *
+  * Read our tutorials \ref ex2 and \ref ex3 for an example of how to use logging output.
  */ 
 class LoggingInterface {
   

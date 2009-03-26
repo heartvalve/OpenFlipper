@@ -51,7 +51,9 @@
  /**
   * \brief Allow access to picking functions.
   *
-  * Interface Class which allows access to picking functions
+  * Interface Class which allows access to picking functions.
+  *
+  * Read tutorial \ref ex3 for an example of how to use mouse picking.
  */
 class PickingInterface {
    signals :

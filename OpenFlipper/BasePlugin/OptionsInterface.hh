@@ -36,7 +36,7 @@
 #include <QtGui>
 
  /**
- * This Interface should be used by plugins which will provide a their own options.
+ * This Interface should be used by plugins which will provide their own options.
  * For your options to show up in OpenFlippers Options window implement the initializeOptionsWidget() slot.
  * The widget you return with this slot will be integrated into the options window and when
  * the user hits the apply- or ok-button in the options window the slot applyOptions() is called and
