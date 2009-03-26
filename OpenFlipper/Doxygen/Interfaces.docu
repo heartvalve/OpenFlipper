@@ -28,19 +28,28 @@
  *
  *
  * \section LoadSavePlugin Load / Save Interface
+ * \image html loadSaveInterface.png
  * Provides functions to handle mesh files and load / unload geometry
  * objects into the scene graph ( LoadSaveInterface ).
  *
  *
+ * \section ToolbarPlugin Toolbar Interface
+ * \image html ToolbarInterface.png
+ * Provides a function to add toolbar buttons. ( ToolbarInterface )
+ *
+ *
  * \section MenubarPlugin Menubar Interface
+ * \image html MenubarInterface.png
  * Provides a function to create an entry in the menubar ( MenuInterface ).
  *
  *
  * \section ToolboxPlugin Toolbox Interface
+ * \image html ToolboxInterface.png
  * Provides functions to create a separate widget in the toolbox on the right ( ToolboxInterface ).
  *
  *
  * \section LoggingPlugin Logging Interface
+ * \image html LoggingInterface.png
  * This is an Interface for Logging to the included textedit widget. You can log to different levels
  * (LOGOUT,LOGWARN,LOGERR,LOGINFO) ( LoggingInterface ).
  *
@@ -49,11 +58,14 @@
  * Allows your plugin to provide a texture. ( TextureInterface )
  *
  * \section PickingPlugin Mouse Picking / Pick Modes
+ * \image html PickingInterface.png
  * Handle mouse picking in your plugin ( PickingInterface )
  *
  * \section RPCPlugin RPC Interface
+ * \image html RPCInterface.png
  * This interface is used to call functions across different plugins ( RPCInterface ).
  *
  * \section INIPlugin Use Inifiles to store information
+ * \image html INIInterface.png
  * Receive an event if an ini file is opened by the application. (INIInterface)\n
  */
