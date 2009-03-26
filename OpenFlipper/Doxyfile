@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = OpenFlipper
-PROJECT_NUMBER         = $version$
+PROJECT_NUMBER         = 1.0
 OUTPUT_DIRECTORY       = ./Docs/Developer/doxygen
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
