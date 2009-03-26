@@ -19,19 +19,5 @@
  * - \subpage interfaces "Plugin Interfaces"
  * - \subpage dataStructure "Datastructures"
  * - \subpage dataFlow "Dataflow"
- *
- *
- *  \section DefaultOptions Default Options and Options loaded from OpenFlipper.ini
- *  OpenFlipper.ini is read on application startup. Most of the options will also be accepted if another inifile is opened at application runtime. There can be multiple OpenFlipper.ini files. The application will look in the base path of the executable and in your home directory under ~/.OpenFlipper/OpenFlipper.ini \n
- *  Currently supported options:\n
- * \subsection Plugincontrols Options to control Plugin loader
- *
- *  [Plugins] \n
- *  DontLoad=Pluginname;Pluginname2;... ## Use this Option to tell the application to skip loading the Plugins with the specified names. (Only in OpenFlipper.ini)\n
- *
- * \subsection General General Options
- * [Options]\n
- * SetRandomBaseColor=false              ## true  : Use random base color for objects, false : Always use white as base color \n
- * StandardDrawModes=HIDDENLINE ##  Set the standard draw mode (Accepts a space separated List to select multiple Draw Modes)\n
- * StartupDir=/data/home1/moebius/projects/OpenFlipper-PROJECT/TemplateModelingPlugin ## Use this path as start for all Open Dialogs \n
+ * - \subpage options "Command line options and config files"
  */

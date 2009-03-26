@@ -1,0 +1,29 @@
+/*! \page options Command line options and config files
+ * \section cmdOptions Command line options
+ * Load/Save Options:\n
+ * -p     : Open files as PolyMeshes\n
+ *
+ * Gui Options:\n
+ * -f             : Start Fullscreen\n
+ * -l             : Start with hidden logger\n
+ * -t             : Start with hidden Toolbox\n
+ * --no-splash   : Disable splash screen\n
+ * --disable-stereo  : Disable Stereo Mode\n
+ *
+ * Log options:\n
+ * --log-to-console ( -c )        : Write logger window contents to console\n
+ *
+ * Other options:\n
+ * -b     : Batch mode, you have to provide a script for execution and the system will start without gui\n
+ * --remote-control       : Batch mode accepting remote connections\n
+ * 
+ * \section confFiles Config Files
+ * OpenFlipper uses a set of config files which are loaded at runtime and define
+ * basic settings. Most of these settings can be made through the options dialog.
+ * The settings are loaded from the following files in the given order while the later
+ * files overwrites previous settings:
+ * <ul>
+ * <li> OpenFlipper.ini from the application directory </li>
+ * <li> OpenFlipper.ini from the $HOME/.OpenFlipper </li>
+ * </lu>
+ */
