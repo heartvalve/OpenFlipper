@@ -1,0 +1,212 @@
+<ui version="4.0" >
+ <class>InfoWidget</class>
+ <widget class="QDialog" name="InfoWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>545</width>
+    <height>684</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Object Information</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2" >
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <widget class="QLabel" name="id" >
+         <property name="toolTip" >
+          <string>internal ID of the object</string>
+         </property>
+         <property name="statusTip" >
+          <string>internal ID of the object</string>
+         </property>
+         <property name="text" >
+          <string>Object ID:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="vertices" >
+         <property name="toolTip" >
+          <string>Number of Vertices</string>
+         </property>
+         <property name="statusTip" >
+          <string>Number of Vertices</string>
+         </property>
+         <property name="text" >
+          <string>Vertices:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="faces" >
+         <property name="toolTip" >
+          <string>Number of Faces</string>
+         </property>
+         <property name="statusTip" >
+          <string>Number of Faces</string>
+         </property>
+         <property name="text" >
+          <string>Faces:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="closestv" >
+         <property name="toolTip" >
+          <string>Vertex closest to selection</string>
+         </property>
+         <property name="statusTip" >
+          <string>Vertex closest to selection</string>
+         </property>
+         <property name="text" >
+          <string>Closest vertex</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="closeste" >
+         <property name="toolTip" >
+          <string>Edge closest to the selection</string>
+         </property>
+         <property name="statusTip" >
+          <string>Edge closest to the selection</string>
+         </property>
+         <property name="text" >
+          <string>Closest edge</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="edges" >
+         <property name="toolTip" >
+          <string>Number of Edges</string>
+         </property>
+         <property name="statusTip" >
+          <string>Number of Edges</string>
+         </property>
+         <property name="text" >
+          <string>Edges:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="components" >
+         <property name="toolTip" >
+          <string>Number of independent components</string>
+         </property>
+         <property name="statusTip" >
+          <string>Number of independent components</string>
+         </property>
+         <property name="text" >
+          <string>Components:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="boundaries" >
+         <property name="toolTip" >
+          <string>Number of boundaries</string>
+         </property>
+         <property name="statusTip" >
+          <string>Number of boundaries</string>
+         </property>
+         <property name="text" >
+          <string>Boundaries:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="genus" >
+         <property name="toolTip" >
+          <string>the genus of the object</string>
+         </property>
+         <property name="statusTip" >
+          <string>the genus of the object</string>
+         </property>
+         <property name="text" >
+          <string>Genus:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="table" >
+       <property name="minimumSize" >
+        <size>
+         <width>350</width>
+         <height>0</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="table3" />
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <spacer name="horizontalSpacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButton" >
+       <property name="text" >
+        <string>&amp;Close</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>InfoWidget</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>493</x>
+     <y>627</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>422</x>
+     <y>625</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
