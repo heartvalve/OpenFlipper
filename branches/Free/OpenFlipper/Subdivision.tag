@@ -2,13 +2,13 @@
 <tagfile>
   <compound kind="page">
     <name>main</name>
-    <title>Mainpage</title>
+    <title>OpenFlipper</title>
     <filename>main</filename>
     <docanchor file="main">intro_sec</docanchor>
   </compound>
   <compound kind="file">
     <name>PluginFunctionsPolyMesh.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/PolyMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</path>
     <filename>PluginFunctionsPolyMesh_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
     <includes id="PolyMesh_8hh" name="PolyMesh.hh" local="no" imported="no">ObjectTypes/PolyMesh/PolyMesh.hh</includes>
@@ -58,7 +58,7 @@
   </compound>
   <compound kind="file">
     <name>PolyMesh.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/PolyMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</path>
     <filename>PolyMesh_8hh</filename>
     <includes id="PolyMeshTypes_8hh" name="PolyMeshTypes.hh" local="no" imported="no">ObjectTypes/PolyMesh/PolyMeshTypes.hh</includes>
     <includes id="PluginFunctionsPolyMesh_8hh" name="PluginFunctionsPolyMesh.hh" local="no" imported="no">ObjectTypes/PolyMesh/PluginFunctionsPolyMesh.hh</includes>
@@ -72,7 +72,7 @@
   </compound>
   <compound kind="file">
     <name>PolyMeshTypes.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/PolyMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</path>
     <filename>PolyMeshTypes_8hh</filename>
     <class kind="struct">PolyTraits</class>
     <member kind="typedef">
@@ -85,7 +85,7 @@
   </compound>
   <compound kind="file">
     <name>PluginFunctionsTriangleMesh.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/TriangleMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</path>
     <filename>PluginFunctionsTriangleMesh_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
     <includes id="TriangleMesh_8hh" name="TriangleMesh.hh" local="no" imported="no">ObjectTypes/TriangleMesh/TriangleMesh.hh</includes>
@@ -135,7 +135,7 @@
   </compound>
   <compound kind="file">
     <name>TriangleMesh.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/TriangleMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</path>
     <filename>TriangleMesh_8hh</filename>
     <includes id="TriangleMeshTypes_8hh" name="TriangleMeshTypes.hh" local="no" imported="no">ObjectTypes/TriangleMesh/TriangleMeshTypes.hh</includes>
     <includes id="PluginFunctionsTriangleMesh_8hh" name="PluginFunctionsTriangleMesh.hh" local="no" imported="no">ObjectTypes/TriangleMesh/PluginFunctionsTriangleMesh.hh</includes>
@@ -149,7 +149,7 @@
   </compound>
   <compound kind="file">
     <name>TriangleMeshTypes.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/TriangleMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</path>
     <filename>TriangleMeshTypes_8hh</filename>
     <class kind="struct">TriTraits</class>
     <member kind="typedef">
@@ -162,7 +162,7 @@
   </compound>
   <compound kind="file">
     <name>PluginFunctions.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/BasePlugin/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/BasePlugin/</path>
     <filename>PluginFunctions_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
     <namespace>PluginFunctions</namespace>
@@ -444,7 +444,7 @@
   </compound>
   <compound kind="file">
     <name>RPCWrappers.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/BasePlugin/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/BasePlugin/</path>
     <filename>RPCWrappers_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
     <namespace>RPC</namespace>
@@ -542,7 +542,7 @@
   </compound>
   <compound kind="file">
     <name>BaseObject.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
     <filename>BaseObject_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <includes id="perObjectData_8hh" name="perObjectData.hh" local="yes" imported="no">perObjectData.hh</includes>
@@ -550,7 +550,7 @@
   </compound>
   <compound kind="file">
     <name>BaseObjectData.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
     <filename>BaseObjectData_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <includes id="BaseObject_8hh" name="BaseObject.hh" local="yes" imported="no">BaseObject.hh</includes>
@@ -586,7 +586,7 @@
   </compound>
   <compound kind="file">
     <name>GlobalDefines.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
     <filename>GlobalDefines_8hh</filename>
     <member kind="define">
       <type>#define</type>
@@ -619,7 +619,7 @@
   </compound>
   <compound kind="file">
     <name>GlobalOptions.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
     <filename>GlobalOptions_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <member kind="function">
@@ -1507,14 +1507,14 @@
   </compound>
   <compound kind="file">
     <name>perObjectData.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
     <filename>perObjectData_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <class kind="class">PerObjectData</class>
   </compound>
   <compound kind="file">
     <name>Types.cc</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
     <filename>Types_8cc</filename>
     <includes id="Types_8hh" name="Types.hh" local="yes" imported="no">Types.hh</includes>
     <class kind="class">TypeInfo</class>
@@ -1619,7 +1619,7 @@
   </compound>
   <compound kind="file">
     <name>Types.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
     <filename>Types_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <includes id="BaseObject_8hh" name="BaseObject.hh" local="yes" imported="no">BaseObject.hh</includes>
@@ -1823,7 +1823,7 @@
   </compound>
   <compound kind="file">
     <name>ViewerProperties.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
     <filename>ViewerProperties_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <class kind="class">Viewer::ViewerProperties</class>
@@ -1836,7 +1836,7 @@
   </compound>
   <compound kind="file">
     <name>Core.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Core/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Core/</path>
     <filename>Core_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="yes" imported="no">OpenFlipper/common/Types.hh</includes>
     <includes id="Logging_8hh" name="Logging.hh" local="yes" imported="no">OpenFlipper/Logging/Logging.hh</includes>
@@ -1855,19 +1855,19 @@
   </compound>
   <compound kind="file">
     <name>Logging.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Logging/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Logging/</path>
     <filename>Logging_8hh</filename>
     <class kind="class">PluginLogger</class>
   </compound>
   <compound kind="file">
     <name>Scripting.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Scripting/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Scripting/</path>
     <filename>Scripting_8hh</filename>
     <class kind="class">ScriptingWrapper</class>
   </compound>
   <compound kind="file">
     <name>CoreWidget.hh</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/coreWidget/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/coreWidget/</path>
     <filename>CoreWidget_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="yes" imported="no">OpenFlipper/common/Types.hh</includes>
     <includes id="GlobalOptions_8hh" name="GlobalOptions.hh" local="no" imported="no">OpenFlipper/common/GlobalOptions.hh</includes>
@@ -1933,14 +1933,21 @@
     <name>interfaces</name>
     <title>Plugin Interfaces</title>
     <filename>interfaces</filename>
+    <docanchor file="interfaces">ViewPlugin</docanchor>
+    <docanchor file="interfaces">FilePlugin</docanchor>
     <docanchor file="interfaces">LoadSavePlugin</docanchor>
+    <docanchor file="interfaces">OptionsPlugin</docanchor>
     <docanchor file="interfaces">KeyPlugin</docanchor>
     <docanchor file="interfaces">RPCPlugin</docanchor>
     <docanchor file="interfaces">BasePlugin</docanchor>
+    <docanchor file="interfaces">ScriptPlugin</docanchor>
+    <docanchor file="interfaces">StatusPlugin</docanchor>
     <docanchor file="interfaces">ToolboxPlugin</docanchor>
+    <docanchor file="interfaces">ToolbarPlugin</docanchor>
     <docanchor file="interfaces">MousePlugin</docanchor>
     <docanchor file="interfaces">PickingPlugin</docanchor>
     <docanchor file="interfaces">TexturePlugin</docanchor>
+    <docanchor file="interfaces">BackupPlugin</docanchor>
     <docanchor file="interfaces">INIPlugin</docanchor>
     <docanchor file="interfaces">LoggingPlugin</docanchor>
     <docanchor file="interfaces">MenubarPlugin</docanchor>
@@ -10486,29 +10493,29 @@
   </compound>
   <compound kind="dir">
     <name>widgets/aboutWidget/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/aboutWidget/</path>
-    <filename>dir_d0a46f7971211b3d1162556d8514b120.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/aboutWidget/</path>
+    <filename>dir_ac34dff667de1c6f2b79f10109d46e40.html</filename>
     <file>aboutWidget.cc</file>
     <file>aboutWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>ACGHelper/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/ACGHelper/</path>
-    <filename>dir_88338e888b818c1532f4d63221b379db.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/ACGHelper/</path>
+    <filename>dir_d14d590407d10513898d9525f76248b1.html</filename>
     <file>DrawModeConverter.cc</file>
     <file>DrawModeConverter.hh</file>
   </compound>
   <compound kind="dir">
     <name>widgets/addEmptyWidget/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/addEmptyWidget/</path>
-    <filename>dir_27090ea8df6e770198aa612d8a380559.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/addEmptyWidget/</path>
+    <filename>dir_cc4e1c4514d938ae160e889291e18fc7.html</filename>
     <file>addEmptyWidget.cc</file>
     <file>addEmptyWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>BasePlugin/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/BasePlugin/</path>
-    <filename>dir_4f0192b072a8052f65815b7985d4e085.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/BasePlugin/</path>
+    <filename>dir_34e76c48a8e6217ace039f54ab9c3f1c.html</filename>
     <file>BackupInterface.hh</file>
     <file>BaseInterface.hh</file>
     <file>ContextMenuInterface.hh</file>
@@ -10540,8 +10547,8 @@
   </compound>
   <compound kind="dir">
     <name>common/bsp/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/bsp/</path>
-    <filename>dir_72e6ccd6543b15d75ba98253fcafd441.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/bsp/</path>
+    <filename>dir_854e3eb28963a29567660daa5bd429db.html</filename>
     <file>BSPImplT.cc</file>
     <file>BSPImplT.hh</file>
     <file>TriangleBSPCoreT.cc</file>
@@ -10550,8 +10557,8 @@
   </compound>
   <compound kind="dir">
     <name>common/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/common/</path>
-    <filename>dir_388aa837e0a5c0b5a54f05d96733fe8e.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
+    <filename>dir_aab0e5275cd164abd9b16b3e7e5431da.html</filename>
     <dir>common/bsp/</dir>
     <file>BaseObject.cc</file>
     <file>BaseObject.hh</file>
@@ -10576,8 +10583,8 @@
   </compound>
   <compound kind="dir">
     <name>Core/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Core/</path>
-    <filename>dir_b63ceb4c0d81bb1bd9d5c37f84397150.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Core/</path>
+    <filename>dir_e5622f1ffc3ea30b9c90bd5149b7163e.html</filename>
     <file>Core.cc</file>
     <file>Core.hh</file>
     <file>Logging.cc</file>
@@ -10595,8 +10602,8 @@
   </compound>
   <compound kind="dir">
     <name>widgets/coreWidget/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/coreWidget/</path>
-    <filename>dir_8596e8bfbbd37e8d13bc1ab33220113b.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/coreWidget/</path>
+    <filename>dir_7a6dd14c222c79431eded54a73606c11.html</filename>
     <file>About.cc</file>
     <file>ContextMenu.cc</file>
     <file>CoreWidget.cc</file>
@@ -10619,8 +10626,8 @@
   </compound>
   <compound kind="dir">
     <name>Doxygen/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Doxygen/</path>
-    <filename>dir_789697c81fd6c995c7b30056bb7fae93.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Doxygen/</path>
+    <filename>dir_b5fb36968fbf00193c87ccb44a6d94f7.html</filename>
     <dir>Doxygen/example/</dir>
     <file>building.docu</file>
     <file>concepts.docu</file>
@@ -10636,8 +10643,8 @@
   </compound>
   <compound kind="dir">
     <name>Doxygen/example/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Doxygen/example/</path>
-    <filename>dir_3ae91bb95535c7738b8ac91e13ccfca3.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Doxygen/example/</path>
+    <filename>dir_8b2d44367d6c6f23165f4ae612b3481f.html</filename>
     <file>MouseAndKeyPlugin.cc</file>
     <file>MouseAndKeyPlugin.hh</file>
     <file>simplePlugin.cc</file>
@@ -10647,8 +10654,8 @@
   </compound>
   <compound kind="dir">
     <name>widgets/glWidget/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/glWidget/</path>
-    <filename>dir_af7ceeb0463e7016165c22f2d85329a8.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/glWidget/</path>
+    <filename>dir_7f42df41699d0212afa33679bcc52f3d.html</filename>
     <file>QtBaseViewer.cc</file>
     <file>QtBaseViewer.hh</file>
     <file>QtBaseViewerPicking.cc</file>
@@ -10668,8 +10675,8 @@
   </compound>
   <compound kind="dir">
     <name>widgets/helpBrowser/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/helpBrowser/</path>
-    <filename>dir_48055ee947cedac11815b861b7a382c8.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/helpBrowser/</path>
+    <filename>dir_cb219753ac62533bc43664cb68b6668a.html</filename>
     <file>findEdit.cc</file>
     <file>findEdit.hh</file>
     <file>helpWidget.cc</file>
@@ -10679,53 +10686,53 @@
   </compound>
   <compound kind="dir">
     <name>INIFile/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/INIFile/</path>
-    <filename>dir_5fcb728ca81567a8dff9cbbad2071454.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/INIFile/</path>
+    <filename>dir_70a444fe0dd615eb501c14ca06fc0b4c.html</filename>
     <file>INIFile.cc</file>
     <file>INIFile.hh</file>
     <file>INIFileT.cc</file>
   </compound>
   <compound kind="dir">
     <name>widgets/loadWidget/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/loadWidget/</path>
-    <filename>dir_fcd09937f902c412fc3633d47220335f.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/loadWidget/</path>
+    <filename>dir_b8912b0d9e3d28081131d5c6f9b31de2.html</filename>
     <file>loadWidget.cc</file>
     <file>loadWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>widgets/loggerWidget/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/loggerWidget/</path>
-    <filename>dir_67678525e5df086f76d1c1eb6e3e9aa9.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/loggerWidget/</path>
+    <filename>dir_927962733e65312ad1e7a29d709d8f42.html</filename>
     <file>loggerWidget.cc</file>
     <file>loggerWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>Logging/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Logging/</path>
-    <filename>dir_910204c6922fc0a33a61a181ee5a0850.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Logging/</path>
+    <filename>dir_f7e7c421e54c1dac756370f64d23aaf8.html</filename>
     <file>Logging.hh</file>
     <file>PluginLogging.cc</file>
   </compound>
   <compound kind="dir">
-    <name>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/MeshObject/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/MeshObject/</path>
-    <filename>dir_af4f71613a9503c110104aa1bf8a4df5.html</filename>
+    <name>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/MeshObject/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/MeshObject/</path>
+    <filename>dir_db9475764b4ecbe5f9fac581a276a22b.html</filename>
     <file>MeshObjectT.cc</file>
     <file>MeshObjectT.hh</file>
     <file>StatusNodeMods.hh</file>
   </compound>
   <compound kind="dir">
-    <name>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/</path>
-    <filename>dir_d36f453a33224509649ddba7cc9bb706.html</filename>
-    <dir>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/MeshObject/</dir>
-    <dir>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/PolyMesh/</dir>
-    <dir>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/TriangleMesh/</dir>
+    <name>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/</path>
+    <filename>dir_c0382abcf489c7cc2dc6e716a4d51fd8.html</filename>
+    <dir>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/MeshObject/</dir>
+    <dir>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</dir>
+    <dir>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</dir>
   </compound>
   <compound kind="dir">
     <name>widgets/optionsWidget/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/optionsWidget/</path>
-    <filename>dir_ba69d4d3e4eb6323c78497f25bdf55bc.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/optionsWidget/</path>
+    <filename>dir_834ec6d09b554faf56d5598fc67885b5.html</filename>
     <file>downloader.cc</file>
     <file>keyBindings.cc</file>
     <file>optionsWidget.cc</file>
@@ -10735,15 +10742,15 @@
   </compound>
   <compound kind="dir">
     <name>widgets/PluginDialog/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/PluginDialog/</path>
-    <filename>dir_170b7e2b8b7c5902e77c34dd2621f10e.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/PluginDialog/</path>
+    <filename>dir_a1bca2d7e62d39337fad2046f85ae9cf.html</filename>
     <file>PluginDialog.cc</file>
     <file>PluginDialog.hh</file>
   </compound>
   <compound kind="dir">
-    <name>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/PolyMesh/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/PolyMesh/</path>
-    <filename>dir_dbe37aca0f48415ad80449cb140344f4.html</filename>
+    <name>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</path>
+    <filename>dir_03e9ab9e4220aa4d0d32e0d89b295aad.html</filename>
     <file>PluginFunctionsPolyMesh.cc</file>
     <file>PluginFunctionsPolyMesh.hh</file>
     <file>PolyMesh.hh</file>
@@ -10751,8 +10758,8 @@
   </compound>
   <compound kind="dir">
     <name>Scripting/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Scripting/</path>
-    <filename>dir_1b96c619aeea55ea1e857e234c914953.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Scripting/</path>
+    <filename>dir_6df12bc8514286829251c91ec58ea303.html</filename>
     <dir>Scripting/scriptPrototypes/</dir>
     <dir>Scripting/scriptWrappers/</dir>
     <file>Scripting.hh</file>
@@ -10760,8 +10767,8 @@
   </compound>
   <compound kind="dir">
     <name>Scripting/scriptPrototypes/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Scripting/scriptPrototypes/</path>
-    <filename>dir_6fa122de35ecdcdc32f9ae7d4a210ee4.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Scripting/scriptPrototypes/</path>
+    <filename>dir_dddeb6409e5a2bf4e9b85e9ea952b891.html</filename>
     <file>prototypeIdList.cc</file>
     <file>prototypeIdList.hh</file>
     <file>prototypeMatrix4x4.cc</file>
@@ -10771,8 +10778,8 @@
   </compound>
   <compound kind="dir">
     <name>Scripting/scriptWrappers/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/Scripting/scriptWrappers/</path>
-    <filename>dir_60460adcd6644fc101080a2c495b6a76.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Scripting/scriptWrappers/</path>
+    <filename>dir_d4afed42b7636dd3208b3d2227f512ca.html</filename>
     <file>idListWrapper.cc</file>
     <file>idListWrapper.hh</file>
     <file>matrix4x4Wrapper.cc</file>
@@ -10781,9 +10788,9 @@
     <file>vec3dWrapper.hh</file>
   </compound>
   <compound kind="dir">
-    <name>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/TriangleMesh/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/ObjectTypes/TriangleMesh/</path>
-    <filename>dir_031df938bff0d9964f7341d0fffa60b9.html</filename>
+    <name>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</path>
+    <filename>dir_660d6b85fd96a73b29dfcd10b207aa35.html</filename>
     <file>PluginFunctionsTriangleMesh.cc</file>
     <file>PluginFunctionsTriangleMesh.hh</file>
     <file>TriangleMesh.hh</file>
@@ -10791,15 +10798,15 @@
   </compound>
   <compound kind="dir">
     <name>widgets/viewModeWidget/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/viewModeWidget/</path>
-    <filename>dir_f65cbcf17f6d700a9e8e4a620b93ffb9.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/viewModeWidget/</path>
+    <filename>dir_05f119968b384c39f3b328587ef8dc42.html</filename>
     <file>viewModeWidget.cc</file>
     <file>viewModeWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>widgets/</name>
-    <path>/data/home2/kremer/projects/OpenFlipperFree/OpenFlipper/widgets/</path>
-    <filename>dir_4e55841363aef17e56f6d9931b9add18.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/</path>
+    <filename>dir_d0bee36c1e0888648682399952e02f40.html</filename>
     <dir>widgets/aboutWidget/</dir>
     <dir>widgets/addEmptyWidget/</dir>
     <dir>widgets/coreWidget/</dir>
