@@ -55,6 +55,7 @@
  *
  *
  * \section TexturePlugin Texture Interface
+ * \image html TextureInterface.png
  * Allows your plugin to provide a texture. ( TextureInterface )
  *
  * \section PickingPlugin Mouse Picking / Pick Modes
