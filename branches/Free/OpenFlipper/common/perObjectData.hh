@@ -57,6 +57,14 @@
 
 //== CLASS DEFINITION =========================================================
 
+/** \brief Object Payload
+ *
+ * This class is used to add arbitrary data to objects
+ * in OpenFlipper. You can derive any kind of class from
+ * PerObjectData and attach it to an object. See
+ * BaseObject::setObjectData() for more details.
+ *
+ * */
 class DLLEXPORT PerObjectData {
 
   public :

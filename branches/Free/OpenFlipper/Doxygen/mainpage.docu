@@ -4,9 +4,13 @@
  *
  * This is the developer documentation for the OpenFlipper project.
  * OpenFlipper is a flexible geometry modeling and processing system.
- * Only basic functionality like gui and data managment is done by the core of the application.
- * All additional functionality is provided by plugins. The core also manages the communication
- * between the plugins and their load/unload.
+ * OpenFlipper consists of the core application and a set of plugins. Only
+ * the minimal required functionality is implemented inside the core. Plugins
+ * can be written to extend OpenFlipper and provide new data types, 
+ * processing functions or user interface modifications. All these plugins
+ * are managed by the core. This manual describes how OpenFlipper plugins
+ * can be created and how they can communicate with the core. There are of 
+ * course examples for a quickstart into OpenFlippers plugin interface.
  *
  * This manual is divided into the following pages:
  * - \subpage uiconcept "User Interface Concepts"
@@ -16,38 +20,6 @@
  * - \subpage dataStructure "Datastructures"
  * - \subpage dataFlow "Dataflow"
  *
- *
- * \section BasicPlugins Basic Plugins
- * \subsection Datacontrol Datacontrol
- * Manages the available objects in a table. Allows modification of visibility and source target selection.
- *
- * \subsection Texturecontrol Texturecontrol
- * Manages the available textures and their update.
- *
- * \section DataStructure DataStructure
- * All data is stored in a tree structure containing ObjectData Objects. When a new object is created,
- * the ObjectData::dataType is set to the correct value. \n
- * Visible objects have to be derived from the BaseObjectData class. This class provides the basic nodes for the Scenegraph
- * and name or path handling. \n
- * For every object, the top node is the ObjectData::SeparatorNode
- * You should add all custom nodes which belong to an object below this node. Below the Seperator Node is a
- * ObjectData::ManipulatorNode. This Node is controlled by the MovePlugin. If you want your objects to move
- * with the main object, place them below this node.
- * For meshes ( PolyMesh or TriMesh  ) the MeshObject classes are used. Below the ManipulatorNode is a Status Node and a texture node for a mesh.
- * Below the texture node is a material node and below the material node is a meshnode.\n
- * For additional nodes the vector ObjectData::additional_nodes is created. You should not access it directly but use PluginFunctions::addAdditionalNode
- * and PluginFunctions::getAdditionalNode.\n
- *
- * \subsection DataAccess Access to data from within the Plugins
- * From each plugin you have to get access to the data. Functions to get the right data are provided in the
- * PluginFunctions Namespace. Here are all functions which should be used to access the data. Most of the
- * time you will use the ObjectIterator defined there. If you
- * need consistent data access during the plugin lifetime (e.g. you have to track one mesh during the plugin
- * lifetime) you should use the identifiers made available in this namespace which never change.\n \n
- * It is possible that the vector containing the objects changes during the plugin lifetime (added or deleted objects).
- * Only the identifiers will stay constant. If one of these changes occurs, the main application will call
- * BaseInterface::slotObjectUpdated() of all Plugins. If you have to keep track of these changes, implement it in
- * this function.
  *
  *  \section DefaultOptions Default Options and Options loaded from OpenFlipper.ini
  *  OpenFlipper.ini is read on application startup. Most of the options will also be accepted if another inifile is opened at application runtime. There can be multiple OpenFlipper.ini files. The application will look in the base path of the executable and in your home directory under ~/.OpenFlipper/OpenFlipper.ini \n
