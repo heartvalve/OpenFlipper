@@ -1,33 +1,26 @@
-varying vec4 diffuse_color;
-varying vec3 normal;
-varying vec4 vertexPosition;
+varying vec4 diffuse,ambient;
+varying vec3 normal,lightDir,halfVector;
 
-vec4 phong_direct(int lightSource) {
-    vec3 light_pos = vec3(gl_LightSource[lightSource].position);
-    vec3 eye_pos = vec3(vertexPosition / vertexPosition.w);
-    vec3 lightVector = vec3(light_pos - eye_pos);
-    float lightDistance = length(lightVector);
-    lightVector /= lightDistance;
+void main()
+{      
+        vec3 n,halfV,viewV,ldir;
+	float NdotL,NdotHV;
+	vec4 color = ambient;
+	
+	/* a fragment shader can't write a verying variable, hence we need
+	a new variable to store the normalized interpolated normal */
+	n = normalize(normal);
+	
+	/* compute the dot product between normal and ldir */
+	NdotL = max(dot(n,lightDir),0.0);
 
-    vec4 color = vec4(0.0);
-    vec3 n;
-    float NdotL, NdotHV;
-    
-    n = normalize(normal);
-    
-    NdotL = dot(n, lightVector);
-    float LdotD = dot(lightVector, gl_LightSource[lightSource].spotDirection);
+	if (NdotL > 0.0) {
+		halfV = normalize(halfVector);
+		NdotHV = max(dot(n,halfV),0.0);
+		color += gl_FrontMaterial.specular * gl_LightSource[0].specular * pow(NdotHV,gl_FrontMaterial.shininess);
+		color += diffuse * NdotL;
+	}
 
-    if (NdotL > 0.0 && LdotD < 0.0) {
-        color = gl_LightSource[lightSource].diffuse * -LdotD * NdotL;
-    }
-
-    // Use Alpha Value from original color
-    color[3] = diffuse_color[3];
-
-    return color;
+	gl_FragColor = color;
 }
 
-void  main() {
-  gl_FragColor = phong_direct(0);
-}
