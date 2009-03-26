@@ -58,6 +58,9 @@
   * mode.
   *
   * slotMouseEventIdentify will be used when question mode is active.
+  *
+  * See our tutorial \ref ex3 for an example of how to use mouse and keyboard events
+  * within a plugin.
   */
 class MouseInterface {
 

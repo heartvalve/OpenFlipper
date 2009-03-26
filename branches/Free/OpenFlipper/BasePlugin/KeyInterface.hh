@@ -53,6 +53,9 @@
   * a key (or key combination). For each registered key you will receive a keyEvent when
   * the key was pressed and a keyReleaseEvent when the key was released.
   *
+  * See our tutorial \ref ex3 for an example of how to use mouse and keyboard events
+  * within a plugin.
+  *
   */ 
 class KeyInterface {
    signals:
