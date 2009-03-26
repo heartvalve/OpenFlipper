@@ -36,12 +36,12 @@
 
 #include <ACG/Geometry/Algorithms.hh>
 
-#define EDGE_FLIP_POPUP "Flip Edge"
-#define EDGE_COLLAPSE_POPUP "Collapse Edge"
-#define EDGE_SPLIT_POPUP "Split Edge"
-#define FACE_ADD_POPUP "Add Face"
-#define FACE_SPLIT_POPUP "Split Face"
-#define FACE_DELETE_POPUP "Delete Face"
+#define EDGE_FLIP_POPUP "<B>Flip Edge</B><br>Rotate an edge"
+#define EDGE_COLLAPSE_POPUP "<B>Collapse Edge</B><br>Collapse an edge into one of its vertices."
+#define EDGE_SPLIT_POPUP "<B>Split Edge</B><br>Split an edge at the clicked point."
+#define FACE_ADD_POPUP "<B>Add Face</B><br>Insert a face between clicked vertices."
+#define FACE_SPLIT_POPUP "<B>Split Face</B><br>Split a face at a clicked point."
+#define FACE_DELETE_POPUP "<B>Delete Face</B><br>Remove a clicked face."
 
 #include <OpenMesh/Core/System/omstream.hh>
 #include <float.h>
