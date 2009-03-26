@@ -25,5 +25,5 @@
  * <ul>
  * <li> OpenFlipper.ini from the application directory </li>
  * <li> OpenFlipper.ini from the $HOME/.OpenFlipper </li>
- * </lu>
+ * </ul>
  */
