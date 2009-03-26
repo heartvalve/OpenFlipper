@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>348</width>
-    <height>993</height>
+    <height>169</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -47,7 +47,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab" >
       <attribute name="title" >
@@ -70,19 +70,6 @@ their center of gravity is at the origin.</string>
           <string>Move COG to origin</string>
          </property>
         </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
@@ -107,19 +94,6 @@ diagonal has length one.</string>
           <string>Unify Boundingbox Diagonal</string>
          </property>
         </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer" >
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>20</width>
-           <height>753</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
