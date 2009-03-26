@@ -18,9 +18,12 @@
  * 
  * \section reqlibs Required libraries
  * <ul>
- * <li> Qt >= 4.5 </li>
- * <li> freetype2 </li>
- * <li> ftgl </li>
+ * <li> Qt >= 4.5 ( http://www.qtsoftware.com/downloads )</li>
+ * <li> OpenGL    ( http://www.opengl.org )</li>
+ * <li> GLUT        ( http://glew.sourceforge.net )</li>
+ * <li> GLEW       ( http://glew.sourceforge.net )</li>
+ * <li> freetype2 ( optional http://www.freetype.org/freetype2/index.html )</li>
+ * <li> ftgl           ( optional http://sourceforge.net/projects/ftgl/)</li>
  * </ul> 
  * 
  * \section blinux Building OpenFlipper under Linux
