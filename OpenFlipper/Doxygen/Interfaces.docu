@@ -58,15 +58,49 @@
  * \image html TextureInterface.png
  * Allows your plugin to provide a texture. ( TextureInterface )
  *
+ *
  * \section PickingPlugin Mouse Picking / Pick Modes
  * \image html PickingInterface.png
  * Handle mouse picking in your plugin ( PickingInterface )
+ *
  *
  * \section RPCPlugin RPC Interface
  * \image html RPCInterface.png
  * This interface is used to call functions across different plugins ( RPCInterface ).
  *
+ *
+ * \section FilePlugin File Interface
+ * \image html FileInterface.png
+ * Provides functions to read and write custom filetypes ( FileInterface )
+ *
+ *
+ * \section ViewPlugin View Interface
+ * \image html ViewInterface.png
+ * This interface is used to add additional view widgets ( ViewInterface ).
+ *
+ *
+ * \section ScriptPlugin Script Interface
+ * \image html ScriptInterface.png
+ * For plugins who provide scriptable functions ( ScriptInterface )
+ *
+ *
+ * \section StatusPlugin Status Bar Interface
+ * \image html StatusbarInterface.png
+ * This interface is used to display messages in the status bar ( StatusbarInterface )
+ *
+ *
+ * \section OptionsPlugin Options Interface
+ * \image html OptionsInterface.png
+ * This Interface is used by plugins which will provide their own options by
+ * integrating its own options widget into OpenFlipper's options window. ( OptionsInterface )
+ *
+ *
+ * \section BackupPlugin Backup Interface
+ * \image html BackupInterface.png
+ * Use this interface to backup data ( BackupInterface )
+ *
+ *
  * \section INIPlugin Use Inifiles to store information
  * \image html INIInterface.png
- * Receive an event if an ini file is opened by the application. (INIInterface)\n
+ * Receive an event if an ini file is opened by the application. ( INIInterface )\n
  */
