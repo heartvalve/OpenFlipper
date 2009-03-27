@@ -1311,6 +1311,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D60D42636F9A446CA21303D4C3497193"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D8FAC6B2B0544EFEB5811C8A39F22733"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1683,7 +1689,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -3983,7 +3989,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:FALSE"
+            "Exclude" = "11:TRUE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -4253,6 +4259,26 @@
             "TargetName" = "8:OpenFlipper_Icon_32x32x32.png"
             "Tag" = "8:"
             "Folder" = "8:_512771069F5640448CB505E0F594007C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D60D42636F9A446CA21303D4C3497193"
+            {
+            "SourcePath" = "8:..\\..\\OpenFlipper\\Windows_32_Release\\phonon4.dll"
+            "TargetName" = "8:phonon4.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_11DCE7E652D4411581A395A79770D1D8"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -4938,7 +4964,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:OpenFlipper"
         "ProductCode" = "8:{8C4A6CE0-EC64-4757-BA28-8CFF5520884B}"
-        "PackageCode" = "8:{83FFD5D3-F6D2-4646-82B9-3D87D818E644}"
+        "PackageCode" = "8:{2E9B4344-4ED3-4CAA-9C1D-8282D36E3DC3}"
         "UpgradeCode" = "8:{B08AE4DA-B505-4CD8-A3F2-1DBCEF1916D4}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
