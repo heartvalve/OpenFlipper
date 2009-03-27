@@ -149,7 +149,7 @@ void showHelp() {
   std::cerr << " -t \t\t: Start with hidden Toolbox" << std::endl;
   std::cerr << " --no-splash \t: Disable splash screen" << std::endl;
 
-  std::cerr << " --enable-stereo \t: Enable Stereo Mode" << std::endl;
+  std::cerr << " --disable-stereo \t: Disable Stereo Mode" << std::endl;
   std::cerr << std::endl;
 
   std::cerr << "Log options:" << std::endl;
