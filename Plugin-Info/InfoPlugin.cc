@@ -323,11 +323,6 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   info_->table3->setItem(row,1, new QTableWidgetItem( QString::number(cog[1],'f') ) );
   info_->table3->setItem(row,2, new QTableWidgetItem( QString::number(cog[2],'f') ) );
 
-  row++;
-  info_->table3->setItem(row,0, new QTableWidgetItem( QString::number(cog[0],'f') ) );
-  info_->table3->setItem(row,1, new QTableWidgetItem( QString::number(cog[1],'f') ) );
-  info_->table3->setItem(row,2, new QTableWidgetItem( QString::number(cog[2],'f') ) );  
-
   //face-normal
   row++;
   info_->table3->setItem(row,0, new QTableWidgetItem( QString::number( _mesh->normal(fh)[0],'f' ) ) );
@@ -336,7 +331,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
  
   fv_it = _mesh->fv_iter(fh);
   while( fv_it )
-  {
+  { 
     row++;
     info_->table3->setItem(row,0, new QTableWidgetItem( QString::number( _mesh->point(fv_it)[0],'f' ) ) );
     info_->table3->setItem(row,1, new QTableWidgetItem( QString::number( _mesh->point(fv_it)[1],'f' ) ) );
