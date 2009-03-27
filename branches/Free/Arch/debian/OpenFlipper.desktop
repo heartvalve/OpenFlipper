@@ -1,0 +1,9 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=OpenFlipper
+Comment=OpenFlipper - Geometric Modeling Framework
+Exec=OpenFlipper
+Icon=/usr/share/OpenFlipper/Icons/OpenFlipper_Icon_48x48x32.png
+Terminal=false
+Type=Application
+Categories=Graphics;Application;
