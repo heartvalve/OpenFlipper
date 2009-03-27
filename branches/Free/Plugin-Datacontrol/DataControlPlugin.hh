@@ -83,6 +83,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
     // LoadSaveInterface
     void deleteObject( int _id );
+    void emptyObjectAdded( int _id );
   private slots :
     // BaseInterface
     void pluginsInitialized();

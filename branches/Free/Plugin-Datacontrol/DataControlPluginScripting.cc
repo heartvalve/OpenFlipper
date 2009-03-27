@@ -129,8 +129,10 @@ int DataControlPlugin::copyObject( int objectId ) {
 
   if ( newObject == -1 )
     std::cerr << "Unable to copy object" << std::endl;
-  else
+  else{
+    emit emptyObjectAdded(newObject);
     emit updatedObject(newObject);
+  }
 
   return newObject;
 }

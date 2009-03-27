@@ -142,10 +142,14 @@ void DataControlPlugin::slotCopy() {
 
     BaseObject* copyItem = model_->getItem( indexList[i] );
 
-    // remove the whole subtree below this item
-    if ( PluginFunctions::copyObject(copyItem->id()) == -1 ) {
+    int newObject = PluginFunctions::copyObject(copyItem->id());
+
+    if ( newObject == -1 ) {
       emit log(LOGERR, "Unable to copy object" );
       continue;
+    } else {
+      emit emptyObjectAdded( newObject );
+      emit updatedObject( newObject );
     }
   }
 
