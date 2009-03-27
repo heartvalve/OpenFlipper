@@ -1,7 +1,6 @@
 OpenFlipper README.TXT
 =======================
 
-
 OpenFlippers Developer Documentation can be found at:
 
 OpenFlipper/Docs/Developer/doxygen/index.html
@@ -24,3 +23,6 @@ A detailed Manual is at:
 OpenFlipper/Docs/Developer/doxygen/html/buildingOpenFlipper.html
 
 
+LICENSE:
+========
+LGPL 3
