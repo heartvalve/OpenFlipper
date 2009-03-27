@@ -69,7 +69,7 @@
  * - Download and extract OpenFlipper sources<br />
  * 	 (or download via svn:<code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code>)
  * - Adapt library and header paths in <code><b> $OpenFlipper/qmake/packages/packages.Darwin </b></code>
- * - Go into OpenFlipper's root directory and type <code><b> qmake -spec macx-g++ -o Makefile </b></code>
+ * - Go into OpenFlipper's root directory and type <code><b> qmake -spec macx-g++ -r </b></code>
  * - Now type <code><b>make release</b></code> to build OpenFlipper as application bundle (if that does not work, build debug version first)
  * - Execute <code><b>Build_Darwin_Bundle.sh</b></code> in OpenFlipper's root directory to correct install_name paths within the application bundle
  *
