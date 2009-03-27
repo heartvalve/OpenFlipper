@@ -1,0 +1,13 @@
+#!/bin/bash
+
+architecture=`uname -a`;
+
+echo $architecture;
+
+if [[ $architecture == *x86_64* ]]
+then
+  ln -s /usr/share/OpenFlipper/Debian_64_Release/OpenFlipper /usr/bin/OpenFlipper
+else
+  ln -s /usr/share/OpenFlipper/Debian_32_Release/OpenFlipper /usr/bin/OpenFlipper
+fi
+
