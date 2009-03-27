@@ -151,7 +151,7 @@ void Core::preprocessObjFile(QString _filename)
 
 
   // find out data type
-  DataType dataType;
+  DataType dataType = DATA_NONE;
 
   std::string fname = _filename.toStdString();
   std::fstream in(fname.c_str(), std::ios_base::in);
