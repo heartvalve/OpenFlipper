@@ -48,12 +48,13 @@ unix {
 		OPERATING_SYSTEM = SuSE
 	}
 
-	
-	TEST_DARWIN = $$system(uname -s)
-	contains( TEST_DARWIN, Darwin) {
+	macx {
 		OPERATING_SYSTEM = Darwin
 		DEFINES += ARCH_DARWIN
-		export(DEFINES)
+		SYSTEMTYPE = Darwin
+   		export(DEFINES)
+	} else {
+		SYSTEMTYPE = Linux
 	}
 
 	HARDWARE_PLATFORM = $$system(uname -a)
@@ -63,12 +64,6 @@ unix {
 	} else {
 		# 32-bit Linux
 		ARCHITECTURE = 32
-	}
-
-	contains(TEST_DARWIN, Darwin) {
-		SYSTEMTYPE = Darwin
-	} else {
-		SYSTEMTYPE = Linux
 	}
 }
 
