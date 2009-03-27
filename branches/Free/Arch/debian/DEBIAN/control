@@ -1,0 +1,17 @@
+Package: OpenFlipper
+Version: 1.0
+Section: graphics
+Priority: optional
+Architecture: all
+Essential: no
+Depends: freeglut3 , libftgl2 , libqt4-opengl ( >= 4.4), libqt4-webkit ( >= 4.4), libqt4-network ( >= 4.4), libqt4-script ( >= 4.4), libqt4-sql-sqlite ( >= 4.4), libqt4-help ( >= 4.4), libqt4-gui ( >= 4.4)
+Recommends:
+Suggests:
+Installed-Size:
+Maintainer: RWTH Graphics Group
+Conflicts:
+Replaces:
+Provides: OpenFlipper
+Description: OpenFlipper - Geometric Modeling Framework
+ OpenFlipper is an OpenSource multi-platform application and programming framework designed for processing, modeling and rendering of geometric data.
+
