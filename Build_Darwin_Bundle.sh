@@ -17,7 +17,7 @@ if [ ! -d OpenFlipper/Darwin_32_Release/OpenFlipper.app/Contents/Frameworks ]; t
    echo Created OpenFlipper/Darwin_32_Release/OpenFlipper.app/Contents/Frameworks
 fi
 
-cp -r MacOS/Resources OpenFlipper/Darwin_32_Release/OpenFlipper.app/Contents 
+cp -r Arch/macx/Resources OpenFlipper/Darwin_32_Release/OpenFlipper.app/Contents 
 
 # Copy All basic libs to Frameworks 
 for i in $(find . -name *.dylib | grep -v "Plugin-" | grep Release ); do
