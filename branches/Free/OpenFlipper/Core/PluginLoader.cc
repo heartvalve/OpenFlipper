@@ -521,7 +521,7 @@ void Core::loadPlugin(QString filename, bool silent){
         emit log (LOGERR,"Signal activeObjectChanged() is now objectSelectionChanged( int _objectId ) " );
 
       if ( checkSlot(plugin,"slotActiveObjectChanged()" ) )
-        emit log (LOGERR,"Signal activeObjectChanged() is now slotObjectSelectionChanged( int _objectId ) " );
+        emit log (LOGERR,"Slot slotActiveObjectChanged() is now slotObjectSelectionChanged( int _objectId ) " );
 
       if ( checkSlot(plugin,"slotAllCleared()") )
         connect(this,SIGNAL(allCleared()),plugin,SLOT(slotAllCleared()));
