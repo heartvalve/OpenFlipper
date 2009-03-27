@@ -119,7 +119,7 @@ static bool drawModesInContextMenu_ = true;
 static bool hideToolbox_ = false;
 
 /// Store the logger gui Mode mode
-static LoggerState loggerState_ = InScene;
+static LoggerState loggerState_ = Normal;
 
 /// Store if we should go into multiview Mode
 static bool multiView_ = true;
