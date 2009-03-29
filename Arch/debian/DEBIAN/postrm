@@ -3,3 +3,19 @@
   if [[ -e /usr/bin/OpenFlipper ]]; then
     rm -f /usr/bin/OpenFlipper
   fi
+
+  if [[ -e /usr/lib/libACG.so.1 ]]; then
+    rm -f /usr/lib/libACG.so.1
+  fi
+
+  if [[ -e /usr/lib/libCore.so.1 ]]; then
+    rm -f /usr/lib/libCore.so.1
+  fi
+
+  if [[ -e /usr/lib/libTools.so.1 ]]; then
+    rm -f /usr/lib/libTools.so.1
+  fi
+
+  if [[ -e /usr/lib/libPluginLib.so.1 ]]; then
+    rm -f /usr/lib/libPluginLib.so.1
+  fi

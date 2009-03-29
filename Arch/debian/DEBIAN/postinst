@@ -7,7 +7,15 @@ echo $architecture;
 if [[ $architecture == *x86_64* ]]
 then
   ln -s /usr/share/OpenFlipper/Debian_64_Release/OpenFlipper /usr/bin/OpenFlipper
+  ln -s /usr/share/OpenFlipper/Debian_64_Release/libACG.so.1 /usr/lib/libACG.so.1
+  ln -s /usr/share/OpenFlipper/Debian_64_Release/libCore.so.1 /usr/lib/libCore.so.1
+  ln -s /usr/share/OpenFlipper/Debian_64_Release/libTools.so.1 /usr/lib/libTools.so.1
+  ln -s /usr/share/OpenFlipper/Debian_64_Release/libPluginLib.so.1 /usr/lib/libPluginLib.so.1
 else
   ln -s /usr/share/OpenFlipper/Debian_32_Release/OpenFlipper /usr/bin/OpenFlipper
+  ln -s /usr/share/OpenFlipper/Debian_32_Release/libACG.so.1 /usr/lib/libACG.so.1
+  ln -s /usr/share/OpenFlipper/Debian_32_Release/libCore.so.1 /usr/lib/libCore.so.1
+  ln -s /usr/share/OpenFlipper/Debian_32_Release/libTools.so.1 /usr/lib/libTools.so.1
+  ln -s /usr/share/OpenFlipper/Debian_32_Release/libPluginLib.so.1 /usr/lib/libPluginLib.so.1
 fi
 
