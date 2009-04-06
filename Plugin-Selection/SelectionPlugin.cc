@@ -471,6 +471,12 @@ void SelectionPlugin::slotPickModeChanged( const std::string& _mode) {
       emit updateView();
    }
 
+   if ( _mode == PAINT_SPHERE_SELECTION && sphere_radius_ == 0.1f){
+      //init the sphere radius once
+      sphere_radius_ = 0.05 * PluginFunctions::sceneRadius();
+   }
+
+
 #ifdef ENABLE_POLYLINE_SUPPORT
   bool check = (_mode == SURFACE_LASSO_SELECTION) || (_mode == "PolyLine" && waitingForPolyLineSelection_);
   surfaceLassoAction_->setChecked(check);
