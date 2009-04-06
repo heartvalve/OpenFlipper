@@ -227,6 +227,7 @@ void QtSlideWindow::hoverEnterEvent (QGraphicsSceneHoverEvent *)
   }
   if (!mainWidget_->isVisible ())
   {
+    mainWidget_->setGeometry (tempWidget_->geometry ());
     setWidget (mainWidget_);
     setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
     show ();
@@ -280,7 +281,7 @@ void QtSlideWindow::moveEvent (QGraphicsSceneMoveEvent *_event)
 void QtSlideWindow::detachPressed ()
 {
   setWidget (0);
-  dialog_ = new QDialog(0, Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+  dialog_ = new QDialog(0, Qt::Window);
   dialog_->setWindowTitle (name_);
   dialog_->setLayout (new QVBoxLayout);
   dialog_->resize (mainWidget_->size ());
@@ -333,11 +334,11 @@ void QtSlideWindow::autohidePressed ()
 
 void QtSlideWindow::updateGeometry ()
 {
-  if (parentWidget () && mainWidget_)
+  if (parentWidget () && widget ())
   {
     setPos (8, parentWidget ()->geometry ().height () - geometry ().height ());
     resize (parentWidget ()->geometry ().width () - 20,
-            mainWidget_->size ().height ());
+            widget ()->size ().height ());
     if (autohideButton_)
       autohideButton_->setPos (geometry().width() - 12, -13);
     if (detachButton_)
