@@ -399,7 +399,7 @@ void MovePlugin::placeManip(QMouseEvent * _event)
          object->manipulatorNode()->loadIdentity();
          object->manipulatorNode()->set_center(hitPoint);
          object->manipulatorNode()->set_draw_cylinder(true);
-         object->manipulatorNode()->set_autosize(true);
+         object->manipulatorNode()->set_autosize(QtTranslationManipulatorNode::Once);
          object->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
          object->manipulatorNode()->show();
 
