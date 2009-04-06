@@ -195,6 +195,10 @@ private:
   unsigned int vertexBaseIndex_;
   unsigned int edgeBaseIndex_;
   unsigned int anyBaseIndex_;
+
+  // bounding box
+  Vec3f bbMin_;
+  Vec3f bbMax_;
 };
 
 
