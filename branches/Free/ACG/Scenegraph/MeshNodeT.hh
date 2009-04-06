@@ -131,7 +131,8 @@ protected:
   void pick_faces(GLState& _state);
   // pick edges
   void pick_edges(GLState& _state, bool _front = false);
-
+  // pick anything
+  void pick_any(GLState& _state);
 
   // opengl vertex array stuff
   enum ArrayType
@@ -183,14 +184,17 @@ private:
   GLuint faceList_;
   GLuint vertexList_;
   GLuint edgeList_;
+  GLuint anyList_;
 
   // do we need to update our display lists?
   bool updateFaceList_;
   bool updateVertexList_;
   bool updateEdgeList_;
+  bool updateAnyList_;
   unsigned int faceBaseIndex_;
   unsigned int vertexBaseIndex_;
   unsigned int edgeBaseIndex_;
+  unsigned int anyBaseIndex_;
 };
 
 

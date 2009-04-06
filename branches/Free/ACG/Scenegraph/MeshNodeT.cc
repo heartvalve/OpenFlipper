@@ -80,13 +80,16 @@ MeshNodeT(const Mesh&  _mesh,
     updateFaceList_(true),
     updateVertexList_(true),
     updateEdgeList_(true),
+    updateAnyList_(true),
     faceBaseIndex_(0),
     vertexBaseIndex_(0),
-    edgeBaseIndex_(0)
+    edgeBaseIndex_(0),
+    anyBaseIndex_(0)
 {
   faceList_ = glGenLists (1);
   vertexList_ = glGenLists (1);
   edgeList_ = glGenLists (1);
+  anyList_ = glGenLists (1);
 }
 
 
@@ -114,6 +117,9 @@ MeshNodeT<Mesh>::
 
   if (edgeList_)
     glDeleteLists (edgeList_, 1);
+
+  if (anyList_)
+    glDeleteLists (anyList_, 1);
 }
 
 
@@ -370,6 +376,8 @@ update_geometry()
 {
   updateFaceList_ = true;
   updateVertexList_ = true;
+  updateEdgeList_ = true;
+  updateAnyList_ = true;
 
   if (GLEW_ARB_vertex_buffer_object) {
     typedef typename Mesh::Point         Point;
@@ -1124,6 +1132,10 @@ pick(GLState& _state, PickTarget _target)
     }
 
     case PICK_ANYTHING:
+    {
+      pick_any(_state);
+      break;
+    }
     case PICK_FACE:
     {
       pick_faces(_state);
@@ -1369,6 +1381,112 @@ pick_edges(GLState& _state, bool _front)
   if (_front)
     glDepthFunc(depthFunc());
 }
+
+//----------------------------------------------------------------------------
+
+
+template<class Mesh>
+void
+MeshNodeT<Mesh>::
+pick_any(GLState& _state)
+{
+  unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
+
+  // nothing to pick ?
+  if (numElements <= 0)
+    return;
+
+  if (!_state.pick_set_maximum (numElements))
+  {
+    omerr() << "MeshNode::pick_any: color range too small, "
+            << "picking failed\n";
+    return;
+  }
+
+  if (anyList_ && !updateAnyList_ && _state.pick_current_index () == anyBaseIndex_)
+  {
+    glCallList (anyList_);
+    return;
+  }
+
+  if (anyList_)
+  {
+    glNewList (anyList_, GL_COMPILE_AND_EXECUTE);
+    updateAnyList_ = false;
+    anyBaseIndex_ = _state.pick_current_index ();
+  }
+
+  // faces
+  typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
+                                      f_end(mesh_.faces_end());
+  typename Mesh::ConstFaceVertexIter  fv_it;
+
+  if (mesh_.is_trimesh())
+  {
+    for (; f_it!=f_end; ++f_it)
+    {
+      // set index
+      _state.pick_set_name (f_it.handle().idx());
+
+      glBegin(GL_TRIANGLES);
+      glVertex(mesh_.point(fv_it=mesh_.cfv_iter(f_it)));
+      glVertex(mesh_.point(++fv_it));
+      glVertex(mesh_.point(++fv_it));
+      glEnd();
+    }
+  }
+  else
+  {
+    for (; f_it!=f_end; ++f_it)
+    {
+      // set index
+      _state.pick_set_name (f_it.handle().idx());
+
+      glBegin(GL_POLYGON);
+
+      for (fv_it=mesh_.cfv_iter(f_it); fv_it; ++fv_it)
+             glVertex(mesh_.point(fv_it));
+
+      glEnd();
+    }
+  }
+
+  glDepthFunc(GL_LEQUAL);
+
+
+  // edges
+  typename Mesh::ConstEdgeIter        e_it(mesh_.edges_sbegin()),
+                                      e_end(mesh_.edges_end());
+
+  for (; e_it!=e_end; ++e_it)
+  {
+    _state.pick_set_name (mesh_.n_faces() + e_it.handle().idx());
+    glBegin(GL_LINES);
+    glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0))));
+    glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1))));
+    glEnd();
+  }
+
+
+  // vertices
+  typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
+                                 v_end(mesh_.vertices_end());
+  GLuint                         idx(mesh_.n_faces() + mesh_.n_edges());
+
+  for (; v_it!=v_end; ++v_it, ++idx)
+  {
+    _state.pick_set_name (idx);
+    glBegin(GL_POINTS);
+    glVertex(mesh_.point(v_it));
+    glEnd();
+  }
+
+  glDepthFunc(depthFunc());
+
+  if (anyList_)
+    glEndList ();
+}
+
 
 //=============================================================================
 } // namespace SceneGraph
