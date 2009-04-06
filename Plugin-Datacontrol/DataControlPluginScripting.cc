@@ -339,7 +339,16 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
  *
  */
 void DataControlPlugin::setAllTarget() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+
+  DataType type = DATA_ALL;
+
+  //try to find dataType restriction if called by contextMenu
+  QAction* action = dynamic_cast< QAction* > ( sender() );
+
+  if ( action != 0 && action->data().isValid() )
+    type = (DataType) action->data().toUInt();
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->target(true);
 
@@ -354,7 +363,16 @@ void DataControlPlugin::setAllTarget() {
  *
  */
 void DataControlPlugin::setAllSource() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+
+  DataType type = DATA_ALL;
+
+  //try to find dataType restriction if called by contextMenu
+  QAction* action = dynamic_cast< QAction* > ( sender() );
+
+  if ( action != 0 && action->data().isValid() )
+    type = (DataType) action->data().toUInt();
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->source(true);
 
@@ -369,7 +387,16 @@ void DataControlPlugin::setAllSource() {
  *
  */
 void DataControlPlugin::clearAllTarget() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+
+  DataType type = DATA_ALL;
+
+  //try to find dataType restriction if called by contextMenu
+  QAction* action = dynamic_cast< QAction* > ( sender() );
+
+  if ( action != 0 && action->data().isValid() )
+    type = (DataType) action->data().toUInt();
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->target(false);
 
@@ -384,7 +411,16 @@ void DataControlPlugin::clearAllTarget() {
  *
  */
 void DataControlPlugin::clearAllSource() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+
+  DataType type = DATA_ALL;
+
+  //try to find dataType restriction if called by contextMenu
+  QAction* action = dynamic_cast< QAction* > ( sender() );
+
+  if ( action != 0 && action->data().isValid() )
+    type = (DataType) action->data().toUInt();
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->source(false);
 
@@ -399,7 +435,16 @@ void DataControlPlugin::clearAllSource() {
  *
  */
 void DataControlPlugin::hideAll() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+
+  DataType type = DATA_ALL;
+
+  //try to find dataType restriction if called by contextMenu
+  QAction* action = dynamic_cast< QAction* > ( sender() );
+
+  if ( action != 0 && action->data().isValid() )
+    type = (DataType) action->data().toUInt();
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->hide();
 
@@ -416,8 +461,16 @@ void DataControlPlugin::hideAll() {
  *
  */
 void DataControlPlugin::showAll() {
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                    o_it != PluginFunctions::objectsEnd(); ++o_it){
+
+  DataType type = DATA_ALL;
+
+  //try to find dataType restriction if called by contextMenu
+  QAction* action = dynamic_cast< QAction* > ( sender() );
+
+  if ( action != 0 && action->data().isValid() )
+    type = (DataType) action->data().toUInt();
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type); o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->show();
 
     visibilityChanged( o_it->id() );

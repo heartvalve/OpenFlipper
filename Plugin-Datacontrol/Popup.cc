@@ -305,7 +305,15 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
 
   QIcon icon;
 
+  //get all used types
+  QVector<DataType> types;
 
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+                                    o_it != PluginFunctions::objectsEnd(); ++o_it)
+    if ( !types.contains( o_it->dataType() ) )
+      types.push_back( o_it->dataType() );
+
+  QAction* action;
 
   switch (headerPopupType_) {
 //     case 0 :
@@ -314,18 +322,69 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
     //Show / Hide
     case 1 :
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
-      menu.addAction(icon,"Show all",this,SLOT ( showAll() ));
-      menu.addAction("Hide all",this,SLOT ( hideAll() ));
+      action = menu.addAction(icon,"Show all",this,SLOT ( showAll() ));
+      action->setData( QVariant() );
+
+      if (types.count() > 1)
+      for (int i=0; i < types.count(); i++){
+        action = menu.addAction(icon, "Show all of type '" + typeName(types[i]) + "'",this,SLOT ( showAll() ));
+        action->setData( QVariant( types[i] ) );
+      }
+
+      menu.addSeparator();
+      action = menu.addAction("Hide all",this,SLOT ( hideAll() ));
+      action->setData( QVariant() );
+
+      if (types.count() > 1)
+      for (int i=0; i < types.count(); i++){
+        action = menu.addAction("Hide all of type '" + typeName(types[i]) + "'",this,SLOT ( hideAll() ));
+        action->setData( QVariant( types[i] ) );
+      }
+
       break;
     // Source
     case 2 :
-      menu.addAction("Select all",this,SLOT ( setAllSource() ));
-      menu.addAction("Deselect all",this,SLOT ( clearAllSource() ));
+      action = menu.addAction("Select all",this,SLOT ( setAllSource() ));
+      action->setData( QVariant() );
+
+      if (types.count() > 1)
+      for (int i=0; i < types.count(); i++){
+        action = menu.addAction(icon, "Select all of type '" + typeName(types[i]) + "'",this,SLOT ( setAllSource() ));
+        action->setData( QVariant( types[i] ) );
+      }
+
+      menu.addSeparator();
+      action = menu.addAction("Deselect all",this,SLOT ( clearAllSource() ));
+      action->setData( QVariant() );
+
+      if (types.count() > 1)
+      for (int i=0; i < types.count(); i++){
+        action = menu.addAction(icon, "Deselect all of type '" + typeName(types[i]) + "'",this,SLOT ( clearAllSource() ));
+        action->setData( QVariant( types[i] ) );
+      }
+
       break;
     // Target
     case 3 :
-      menu.addAction("Select all",this,SLOT ( setAllTarget() ));
-      menu.addAction("Deselect all",this,SLOT ( clearAllTarget() ));
+      action = menu.addAction("Select all",this,SLOT ( setAllTarget() ));
+      action->setData( QVariant() );
+
+      if (types.count() > 1)
+      for (int i=0; i < types.count(); i++){
+        action = menu.addAction(icon, "Select all of type '" + typeName(types[i]) + "'",this,SLOT ( setAllTarget() ));
+        action->setData( QVariant( types[i] ) );
+      }
+
+      menu.addSeparator();
+      action = menu.addAction("Deselect all",this,SLOT ( clearAllTarget() ));
+      action->setData( QVariant() );
+
+      if (types.count() > 1)
+      for (int i=0; i < types.count(); i++){
+        action = menu.addAction(icon, "Deselect all of type '" + typeName(types[i]) + "'",this,SLOT ( clearAllTarget() ));
+        action->setData( QVariant( types[i] ) );
+      }
+
       break;
     default :
 //       std::cerr << "def";
