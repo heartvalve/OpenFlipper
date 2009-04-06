@@ -147,6 +147,9 @@ public:
   /// get mouse events
   virtual void mouseEvent(GLState& _state, QMouseEvent* _event);
 
+  /// bounding box of node
+  void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
+
 private:
 
   enum StateUpdates {
