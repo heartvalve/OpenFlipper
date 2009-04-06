@@ -321,7 +321,8 @@
   */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::update() {
-    PluginFunctions::setMainGLContext();
+    if ( OpenFlipper::Options::gui() )
+      PluginFunctions::setMainGLContext();
     updateGeometry();
     updateTopology();
     updateSelection();
