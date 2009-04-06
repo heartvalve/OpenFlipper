@@ -136,6 +136,16 @@ void SideElement::detachPressed (bool checked_)
     dialog_->setWindowTitle (name_);
     dialog_->setLayout (new QVBoxLayout);
     dialog_->resize (widget_->size ());
+    if (window ())
+    {
+      int x = (window ()->width () - widget_->width ()) / 2;
+      x += window ()->x ();
+      x = qMax (0, x);
+      int y = (window ()->height () - widget_->height ()) / 2;
+      y += window ()->y ();
+      y = qMax (0, y);
+      dialog_->move (x, y);
+    }
     dialog_->layout ()->addWidget (widget_);
     dialog_->show ();
     widget_->setAttribute(Qt::WA_DeleteOnClose, false);

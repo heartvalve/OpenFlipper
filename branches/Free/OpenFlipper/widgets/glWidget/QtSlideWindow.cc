@@ -286,6 +286,17 @@ void QtSlideWindow::detachPressed ()
   dialog_->setLayout (new QVBoxLayout);
   dialog_->resize (mainWidget_->size ());
   dialog_->layout ()->addWidget (mainWidget_);
+  if (scene () && scene ()->views ()[0] && scene ()->views ()[0]->window ())
+  {
+    QWidget *w = scene ()->views ()[0]->window ();
+    int x = (w->width () - mainWidget_->width ()) / 2;
+    x += w->x ();
+    x = qMax (0, x);
+    int y = (w->height () - mainWidget_->height ()) / 2;
+    y += w->y ();
+    y = qMax (0, y);
+    dialog_->move (x, y);
+  }
   hide ();
   dialog_->show ();
   mainWidget_->setAttribute(Qt::WA_DeleteOnClose, false);
