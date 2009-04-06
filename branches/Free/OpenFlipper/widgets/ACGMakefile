@@ -3,7 +3,7 @@ include $(ACGMAKE)/Config
 #==============================================================================
 
 
-SUBDIRS = helpBrowser optionsWidget unloadPluginsWidget addEmptyWidget  loadWidget  viewModeWidget coreWidget
+SUBDIRS = helpAssistant helpBrowser optionsWidget unloadPluginsWidget addEmptyWidget  loadWidget  viewModeWidget coreWidget
 
 PACKAGES := qt4 glut opengl x11 math ACG2 openmesh2
 

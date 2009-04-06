@@ -76,7 +76,7 @@
 #include <OpenFlipper/widgets/aboutWidget/aboutWidget.hh>
 #include <OpenFlipper/widgets/loggerWidget/loggerWidget.hh>
 #include <OpenFlipper/widgets/optionsWidget/optionsWidget.hh>
-#include <OpenFlipper/widgets/helpBrowser/helpWidget.hh>
+#include <OpenFlipper/widgets/helpAssistant/helpAssistant.hh>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
@@ -671,10 +671,10 @@ public:
 
   private:
     /// Pointer to the help Browser
-    HelpWidget* helpBrowserDeveloper_;
+    HelpAssistant* helpBrowserDeveloper_;
 
     /// Pointer to the help Browser
-    HelpWidget* helpBrowserUser_;
+    HelpAssistant* helpBrowserUser_;
 
   /** @} */
 
