@@ -132,7 +132,7 @@ void SideElement::detachPressed (bool checked_)
   if (checked_)
   {
     mainLayout_->removeWidget (widget_);
-    dialog_ = new QDialog(0, Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+    dialog_ = new QDialog(0, Qt::Window);
     dialog_->setWindowTitle (name_);
     dialog_->setLayout (new QVBoxLayout);
     dialog_->resize (widget_->size ());
