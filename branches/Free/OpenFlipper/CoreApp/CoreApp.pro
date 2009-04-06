@@ -4,6 +4,9 @@
 
 include( $$TOPDIR/qmake/all.include )
 
+# For the help system
+CONFIG += help
+
 Application()
 
 acg()
@@ -16,7 +19,7 @@ qt()
 DIRECTORIES =   ../ ../Core ../Logging \
 			    ../Scripting  ../Scripting/scriptPrototypes ../Scripting/scriptWrappers ../SimpleOpt \
 			    ../widgets/aboutWidget ../widgets/addEmptyWidget ../widgets/loggerWidget \
-                            ../widgets/coreWidget ../widgets/helpBrowser \
+                            ../widgets/coreWidget ../widgets/helpAssistant \
 			    ../widgets/loadWidget ../widgets/optionsWidget ../widgets/PluginDialog \
 			    ../widgets/viewModeWidget
 
