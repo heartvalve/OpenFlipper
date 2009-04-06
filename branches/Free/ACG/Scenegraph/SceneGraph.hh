@@ -240,12 +240,37 @@ public:
   BoundingBoxAction() :
     bbMin_( FLT_MAX,  FLT_MAX,  FLT_MAX),
     bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX)
-  {}
+  {
+    state_.set_updateGL(false);
+    state_.reset_modelview();
+  }
 
   bool operator()(BaseNode* _node)
   {
-    _node->boundingBox(bbMin_, bbMax_);
+    Vec3f bbMin( FLT_MAX,  FLT_MAX,  FLT_MAX);
+    Vec3f bbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+    _node->boundingBox(bbMin, bbMax);
+
+    if ((bbMin[0] > bbMax[0]) ||
+        (bbMin[1] > bbMax[1]) ||
+        (bbMin[2] > bbMax[2]))
+      return true;
+
+    bbMin_.minimize(state_.modelview().transform_point (bbMin));
+    bbMin_.minimize(state_.modelview().transform_point (bbMax));
+    bbMax_.maximize(state_.modelview().transform_point (bbMin));
+    bbMax_.maximize(state_.modelview().transform_point (bbMax));
     return true;
+  }
+
+  void enter (BaseNode *_node)
+  {
+    _node->enter(state_, DrawModes::DEFAULT);
+  }
+
+  void leave (BaseNode *_node)
+  {
+    _node->leave(state_, DrawModes::DEFAULT);
   }
 
   /// Returns minimum point of the bounding box
@@ -255,7 +280,8 @@ public:
 
 private:
 
-  Vec3f  bbMin_, bbMax_;
+  Vec3f        bbMin_, bbMax_;
+  GLState      state_;
 };
 
 
