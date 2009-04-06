@@ -76,6 +76,12 @@ public:
     ROTATIONMODE
   };
 
+  enum AutoSizeMode {
+    Never,
+    Once,
+    Always
+  };
+
   /// Default constructor.
   TranslationManipulatorNode( BaseNode* _parent=0,
 		   const std::string& _name="<TranslationTranslationManipulatorNode>" );
@@ -118,11 +124,11 @@ public:
   /// get cylindersize
   double size() const { return set_manipulator_height_; }
 
-  /// set auto size
-  void set_autosize (bool _enable) { auto_size_ = _enable; }
+  /// set auto size mode
+  void set_autosize (AutoSizeMode _mode) { auto_size_ = _mode; }
 
-  /// get autosize
-  bool autosize () const { return auto_size_; }
+  /// get autosize mode
+  AutoSizeMode autosize () const { return auto_size_; }
 
   void rotate (double _angle, Vec3d _axis)
   {
@@ -245,7 +251,8 @@ private:
 
   GLMatrixd          localTransformation_;
 
-  bool               auto_size_;
+  AutoSizeMode       auto_size_;
+  double             auto_size_length_;
 };
 
 

@@ -115,7 +115,8 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
     any_top_over_(false),
     origin_over_(false),
     outer_ring_over_(false),
-    auto_size_(false)
+    auto_size_(TranslationManipulatorNode::Never),
+    auto_size_length_(1.0)
 {
   localTransformation_.identity();
   axis_ = gluNewQuadric();
@@ -1648,7 +1649,7 @@ double TranslationManipulatorNode::get_screen_length (GLState& _state, Vec3d& _p
 
 void TranslationManipulatorNode::updateSize (GLState& _state)
 {
-  if (auto_size_)
+  if (auto_size_ != TranslationManipulatorNode::Never)
   {
     Vec3d point = localTransformation_.transform_point(Vec3d (0.0, 0.0, 0.0));
 
@@ -1656,16 +1657,14 @@ void TranslationManipulatorNode::updateSize (GLState& _state)
 
     _state.get_viewport (tmp, tmp, width, height);
 
-    double length = get_screen_length (_state, point) * (width + height) * 0.02;
+    auto_size_length_ = get_screen_length (_state, point) * (width + height) * 0.02;
 
-    manipulator_radius_ = set_manipulator_radius_ * length;
-    manipulator_height_ = set_manipulator_height_ * length;
+    if (auto_size_ == TranslationManipulatorNode::Once)
+      auto_size_ = TranslationManipulatorNode::Never;
   }
-  else
-  {
-    manipulator_radius_ = set_manipulator_radius_;
-    manipulator_height_ = set_manipulator_height_;
-  }
+
+  manipulator_radius_ = set_manipulator_radius_ * auto_size_length_;
+  manipulator_height_ = set_manipulator_height_ * auto_size_length_;
 }
 
 //=============================================================================
