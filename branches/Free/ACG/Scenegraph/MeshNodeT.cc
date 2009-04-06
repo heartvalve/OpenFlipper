@@ -84,7 +84,9 @@ MeshNodeT(const Mesh&  _mesh,
     faceBaseIndex_(0),
     vertexBaseIndex_(0),
     edgeBaseIndex_(0),
-    anyBaseIndex_(0)
+    anyBaseIndex_(0),
+    bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
+    bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX)
 {
   faceList_ = glGenLists (1);
   vertexList_ = glGenLists (1);
@@ -131,14 +133,8 @@ void
 MeshNodeT<Mesh>::
 boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
 {
-  typename Mesh::ConstVertexIter  v_it(mesh_.vertices_begin()),
-                                  v_end(mesh_.vertices_end());
-
-  for (; v_it!=v_end; ++v_it)
-  {
-    _bbMin.minimize((Vec3f)mesh_.point(v_it));
-    _bbMax.maximize((Vec3f)mesh_.point(v_it));
-  }
+  _bbMin.minimize(bbMin_);
+  _bbMax.maximize(bbMax_);
 }
 
 
@@ -378,6 +374,17 @@ update_geometry()
   updateVertexList_ = true;
   updateEdgeList_ = true;
   updateAnyList_ = true;
+
+  bbMin_ = Vec3f(FLT_MAX,  FLT_MAX,  FLT_MAX);
+  bbMax_ = Vec3f(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+  typename Mesh::ConstVertexIter  v_it(mesh_.vertices_begin()),
+                                  v_end(mesh_.vertices_end());
+
+  for (; v_it!=v_end; ++v_it)
+  {
+    bbMin_.minimize((Vec3f)mesh_.point(v_it));
+    bbMax_.maximize((Vec3f)mesh_.point(v_it));
+  }
 
   if (GLEW_ARB_vertex_buffer_object) {
     typedef typename Mesh::Point         Point;
