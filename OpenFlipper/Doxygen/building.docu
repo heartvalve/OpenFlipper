@@ -73,6 +73,12 @@
  * - Now type <code><b>make release</b></code> to build OpenFlipper as application bundle (if that does not work, build debug version first)
  * - Execute <code><b>Build_Darwin_Bundle.sh</b></code> in OpenFlipper's root directory to correct install_name paths within the application bundle
  *
+ * <b>IMPORTANT: If you don't see any icons in the application you probably might have
+ * forgot the last step which manages to copy the <i>Icons</i>, <i>Textures</i>, <i>Shaders</i> and <i>Fonts</i> 
+ * directories into the application bundle's resource folder. It further fixes library header paths
+ * such that the application bundle can be copied anywhere without getting trouble
+ * with missing libraries.</b>
+ *
  * After building OpenFlipper the application bundle can be found in OpenFlipper/Darwin_<Arch>_Release.
  * The plugins are build into the application bundle's Resources directory.
  *
