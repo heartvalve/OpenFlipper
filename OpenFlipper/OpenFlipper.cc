@@ -246,7 +246,7 @@ bool parseCommandLineOptions(CSimpleOpt& args){
             OpenFlipper::Options::splash(false);
             break;
         case OPT_REMOTE:
-            remoteControl = true;
+            OpenFlipper::Options::remoteControl(true);
             break;
         case OPT_HELP:
           showHelp();
@@ -280,16 +280,14 @@ int main(int argc, char **argv)
   OpenFlipper::Options::argc(&argc);
   OpenFlipper::Options::argv(&argv);
 
-  //print arguments
-  std::fstream filestr ("/Users/moebius/param.log", std::fstream::out);
-
-  for (int i=0; i < argc; i++)
-    filestr << argv[i] << " ";
-  filestr << std::endl;
-
-  filestr.close();
-
   CSimpleOpt args(argc, argv, g_rgOptions);
+
+  //check only batchMode before the core is created
+  while (args.Next())
+    if (args.OptionId() == OPT_BATCH ){
+      OpenFlipper::Options::nogui(true);
+      break;
+    }
 
 // Only Install signal handler if not running in debug version, otherwise gdb will get confused
 // #ifndef DEBUG
@@ -349,8 +347,7 @@ int main(int argc, char **argv)
     for ( int i = 0 ; i < args.FileCount(); ++i )
       w->commandLineScript(args.File(i));
 
-    if ( remoteControl )
-      return app.exec();
+    return app.exec();
   }
 
   return 0;

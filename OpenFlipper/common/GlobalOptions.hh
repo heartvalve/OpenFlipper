@@ -609,7 +609,13 @@ void  argc( int* _argc );
 DLLEXPORT
 void argv( char*** _argv);
 
+/// is the core remoteControlled?
+DLLEXPORT
+bool remoteControl();
 
+/// is the core remoteControlled?
+DLLEXPORT
+void remoteControl( bool _remote );
 
 //===========================================================================
 /** @name Debugging Options
