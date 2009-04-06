@@ -136,8 +136,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // is stereo possible, use it?
   if (format.stereo()) {
     std::cerr << "Stereo buffer requested: " << (glWidget_->format().stereo() ? "ok\n" : "failed\n");
-    OpenFlipper::Options::stereo(glWidget_->format().stereo());
   }
+  OpenFlipper::Options::glStereo(glWidget_->format().stereo());
 
 
   glView_->setViewport(glWidget_);

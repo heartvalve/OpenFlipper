@@ -454,6 +454,21 @@ private:
   // helper called by drawScene() when stereo viewing is active.
   void drawScene_stereo();
 
+  // helper called by drawScene_stereo() when opengl stereo viewing is active.
+  void drawScene_glStereo();
+
+  // helper called by drawScene_stereo() when anaglyph stereo viewing is active.
+  void drawScene_anaglyphStereo();
+
+  // helper called by drawScene_stereo() when custom anaglyph stereo viewing is active.
+  void drawScene_customAnaglyphStereo();
+
+  // helper called to initialize/update custom anaglyph stereo
+  void updateCustomAnaglyphStereo();
+
+  // helper called to cleanup custom anaglyph stereo
+  void finiCustomAnaglyphStereo();
+
 //-------------------------------------------------------------- protected data
 protected:
 
@@ -562,6 +577,13 @@ private:
     // stereo stuff
     bool                         stereo_;
     double                       eyeDist_, focalDist_;
+
+    // custom anaglyph stuff
+    int    agTexWidth_;
+    int    agTexHeight_;
+    GLuint agTexture_[2];
+    GLuint agProgram_;
+    bool   customAnaglyphSupported_;
 
 
   /** @} */

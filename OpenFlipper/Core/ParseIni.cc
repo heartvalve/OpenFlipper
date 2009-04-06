@@ -162,6 +162,42 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //  OpenFlipper::Options::stereo(stereo);
 
     //============================================================================
+    // Load the stereo mode setting
+    //============================================================================
+    int stereoMode = 0;
+    if ( _ini.get_entry( stereoMode, "Options" , "StereoMode") )
+      OpenFlipper::Options::stereoMode(static_cast<OpenFlipper::Options::StereoMode> (stereoMode));
+
+    //============================================================================
+    // Load the custom anaglyph stereo mode color matrices
+    //============================================================================
+    std::vector<float> mat;
+    if ( _ini.get_entry( mat, "Options" , "CustomAnaglyphLeftEye") && mat.size () == 9)
+    {
+      OpenFlipper::Options::anaglyphLeftEyeColorMatrix(mat);
+    }
+    else
+    {
+      std::vector<float> set (9,0.0);
+      set[0] = 0.299;
+      set[3] = 0.587;
+      set[6] = 0.114;
+      OpenFlipper::Options::anaglyphLeftEyeColorMatrix(set);
+    }
+
+    if ( _ini.get_entry( mat, "Options" , "CustomAnaglyphRightEye") && mat.size () == 9)
+    {
+      OpenFlipper::Options::anaglyphRightEyeColorMatrix(mat);
+    }
+    else
+    {
+      std::vector<float> set (9,0.0);
+      set[4] = 1.0;
+      set[8] = 1.0;
+      OpenFlipper::Options::anaglyphRightEyeColorMatrix(set);
+    }
+
+    //============================================================================
     // Load the setting for the loger window
     //============================================================================
     int loggerState = 0;
@@ -478,6 +514,11 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
     _ini.add_entry("Options","DefaultBackgroundColor", (uint)OpenFlipper::Options::defaultBackgroundColor().rgba ()  );
     _ini.add_entry("Options","DefaultBaseColor", (uint)OpenFlipper::Options::defaultBaseColor().rgba ()  );
+
+    _ini.add_entry("Options","StereoMode",OpenFlipper::Options::stereoMode() );
+
+    _ini.add_entry("Options" , "CustomAnaglyphLeftEye", OpenFlipper::Options::anaglyphLeftEyeColorMatrix() );
+    _ini.add_entry("Options" , "CustomAnaglyphRightEye", OpenFlipper::Options::anaglyphRightEyeColorMatrix() );
   }
 
   // _ini.add_entry("Options","Stereo",OpenFlipper::Options::stereo() );

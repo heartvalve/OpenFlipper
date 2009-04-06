@@ -102,6 +102,8 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
+#include <OpenFlipper/common/GlobalOptions.hh>
+
 //== NAMESPACES ===============================================================
 
 
@@ -189,6 +191,14 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   setAcceptDrops(true);
 
   setHome();
+
+  // initialize custom anaglyph stereo
+  agTexWidth_ = 0;
+  agTexHeight_ = 0;
+  agTexture_[0] = 0;
+  agTexture_[1] = 0;
+  agProgram_ = 0;
+  customAnaglyphSupported_ = false;
 }
 
 
@@ -197,6 +207,7 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
 
 glViewer::~glViewer()
 {
+  finiCustomAnaglyphStereo ();
   delete glstate_;
 }
 
@@ -524,51 +535,22 @@ void glViewer::drawScene_mono()
 void
 glViewer::drawScene_stereo()
 {
-  double l, r, t, b, w, h, a, radians, wd2, ndfl;
+  if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::OpenGL && OpenFlipper::Options::glStereo ())
+  {
+    drawScene_glStereo ();
+    return;
+  }
+  else if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::AnaglyphCustom && customAnaglyphSupported_)
+  {
+    drawScene_customAnaglyphStereo ();
 
-  w = glWidth();
-  h = glHeight();
-  a = w / h;
+    // if somthing went wrong, fallback to normal anaglyph
+    if (customAnaglyphSupported_)
+      return;
+  }
 
-  radians = fovy_ * 0.5 / 180.0 * M_PI;
-  wd2     = near_ * tan(radians);
-  ndfl    = near_ / focalDist_ * scene_radius_;
-
-  l = -a*wd2;
-  r =  a*wd2;
-  t =  wd2;
-  b = -wd2;
-
-  double offset  = 0.5 * eyeDist_;
-  double offset2 = offset * ndfl;
-
-
-
-  // left eye
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glFrustum(l+offset2, r+offset2, b, t, near_, far_);
-  glTranslatef(-offset, 0.0, 0.0);
-  glMatrixMode(GL_MODELVIEW);
-  glDrawBuffer(GL_BACK_LEFT);
-  glstate_->clearBuffers ();
-  glClear(GL_DEPTH_BUFFER_BIT);
-  drawScene_mono();
-
-
-  // right eye
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glFrustum(l-offset2, r-offset2, b, t, near_, far_);
-  glTranslatef(offset, 0.0, 0.0);
-  glMatrixMode(GL_MODELVIEW);
-  glDrawBuffer(GL_BACK_RIGHT);
-  glstate_->clearBuffers ();
-  glClear(GL_DEPTH_BUFFER_BIT);
-  drawScene_mono();
-  glDrawBuffer(GL_BACK);
+  drawScene_anaglyphStereo ();
 }
-
 
 
 //-----------------------------------------------------------------------------
@@ -746,10 +728,6 @@ void glViewer::setView(const ACG::GLMatrixd& _modelview,
 
 void glViewer::initializeGL()
 {
-  // we use GLEW to manage extensions
-  // initialize it first
-  glewInit();
-
 
   // lock update
   properties_.lockUpdate();
@@ -799,6 +777,11 @@ void glViewer::initializeGL()
 
   // unlock update (we started locked)
   properties_.unLockUpdate();
+
+  customAnaglyphSupported_ = glewIsSupported("GL_ARB_fragment_program") &&
+      (glewIsSupported("GL_ARB_texture_rectangle") ||
+       glewIsSupported("GL_EXT_texture_rectangle") ||
+       glewIsSupported("GL_NV_texture_rectangle"));
 }
 
 
