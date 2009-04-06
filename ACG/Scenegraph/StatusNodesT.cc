@@ -64,7 +64,9 @@ StatusNodeT<Mesh, Mod>::
 StatusNodeT( const Mesh&         _mesh,
              BaseNode*           _parent,
              const std::string&  _name )
-  : MaterialNode(_parent, _name), mesh_(_mesh)
+  : MaterialNode(_parent, _name), mesh_(_mesh),
+  bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
+  bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX)
 {
   depthFunc(GL_LEQUAL);
 
@@ -81,14 +83,8 @@ void
 StatusNodeT<Mesh, Mod>::
 boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
 {
-  typename Mesh::ConstVertexIter  v_it(mesh_.vertices_begin()),
-                                  v_end(mesh_.vertices_end());
-
-  for (; v_it!=v_end; ++v_it)
-  {
-    _bbMin.minimize((Vec3f)mesh_.point(v_it));
-    _bbMax.maximize((Vec3f)mesh_.point(v_it));
-  }
+  _bbMin.minimize(bbMin_);
+  _bbMax.maximize(bbMax_);
 }
 
 
@@ -114,6 +110,9 @@ void
 StatusNodeT<Mesh, Mod>::
 update_cache()
 {
+  bbMin_ = Vec3f(FLT_MAX,  FLT_MAX,  FLT_MAX);
+  bbMax_ = Vec3f(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
   typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
                                   v_end(mesh_.vertices_end());
 
@@ -124,6 +123,8 @@ update_cache()
     {
       v_cache_.push_back(v_it.handle().idx());
     }
+    bbMin_.minimize((Vec3f)mesh_.point(v_it));
+    bbMax_.maximize((Vec3f)mesh_.point(v_it));
   }
 
 

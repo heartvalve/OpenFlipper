@@ -115,6 +115,10 @@ private:
   const Mesh&                mesh_;
   std::vector<unsigned int>  v_cache_, e_cache_, f_cache_;
   std::vector<FaceHandle>    fh_cache_;
+
+  // bounding box
+  Vec3f bbMin_;
+  Vec3f bbMax_;
 };
 
 
