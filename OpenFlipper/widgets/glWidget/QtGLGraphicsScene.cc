@@ -76,6 +76,11 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
     // we use GLEW to manage extensions
     // initialize it first
     glewInit();
+    for (unsigned int i = 0; i < views_->size (); i++)
+    {
+      views_->at(i)->initializeGL ();
+    }
+    initialized = true;
   }
 
   _painter->setBackground(QApplication::palette().window());
