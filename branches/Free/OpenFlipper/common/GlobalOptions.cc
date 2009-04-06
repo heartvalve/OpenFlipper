@@ -88,8 +88,18 @@ static Experience experienceLevel_ = NOVICE;
 /// Show gui or not?
 static bool nogui_ = false;
 
-/// Store the stereo mode
+/// Store the stereo support
 static bool stereo_ = true;
+
+/// Store the opengl stereo support
+static bool glStereo_ = true;
+
+/// Stereo mode
+StereoMode stereoMode_ = OpenGL;
+
+/// vectroy containing left/right color matrices for custom anaglyph mode
+std::vector<float> anaglyphLeftEyeColors_ = std::vector<float> (9, 0.0);
+std::vector<float> anaglyphRightEyeColors_ = std::vector<float> (9, 0.0);
 
 /// Store the synchronization mode
 static bool synchronization_ = false;
@@ -400,7 +410,7 @@ bool gui( ) {
   return !nogui_;
 }
 
-/// Store stereo mode setting
+/// Store stereo setting
 void stereo( bool _stereo ) {
   stereo_ = _stereo;
 }
@@ -409,6 +419,53 @@ void stereo( bool _stereo ) {
 bool stereo( ) {
   return stereo_;
 }
+
+/// Store opengl stereo mode setting
+void glStereo( bool _glStereo ) {
+  glStereo_ = _glStereo;
+}
+
+/// get current opengl stereo setting
+bool glStereo( ) {
+  return glStereo_;
+}
+
+/// Store stereo mode setting
+void stereoMode( StereoMode _mode ) {
+  stereoMode_ = _mode;
+}
+
+/// get current stereo mode setting
+StereoMode stereoMode( ) {
+  return stereoMode_;
+}
+
+/// Store the 3x3 left eye color matrix values for custom anaglyph stereo mode
+void anaglyphLeftEyeColorMatrix( std::vector<float> _mat )
+{
+  for (int i = 0; i < 9; i++)
+    anaglyphLeftEyeColors_[i] = _mat[i];
+}
+
+/// get the 3x3 left eye color matrix values for custom anaglyph stereo mode
+std::vector<float> anaglyphLeftEyeColorMatrix( )
+{
+  return anaglyphLeftEyeColors_;
+}
+
+/// Store the 3x3 right eye color matrix values for custom anaglyph stereo mode
+void anaglyphRightEyeColorMatrix( std::vector<float> _mat )
+{
+  for (int i = 0; i < 9; i++)
+    anaglyphRightEyeColors_[i] = _mat[i];
+}
+
+/// get the 3x3 right eye color matrix values for custom anaglyph stereo mode
+std::vector<float> anaglyphRightEyeColorMatrix( )
+{
+  return anaglyphRightEyeColors_;
+}
+
 
 /// Store synchronization mode setting
 void synchronization( bool _synchronization ) {

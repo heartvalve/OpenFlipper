@@ -152,6 +152,33 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   randomBaseColor->setChecked( OpenFlipper::Options::randomBaseColor() );
 
+  //stereo
+  stereoOpengl->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::OpenGL);
+  stereoAnaglyph->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphRedCyan);
+  stereoCustomAnaglyph->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphCustom);
+
+  std::vector<float> mat = OpenFlipper::Options::anaglyphLeftEyeColorMatrix ();
+  lcm0->setValue (mat[0]);
+  lcm1->setValue (mat[1]);
+  lcm2->setValue (mat[2]);
+  lcm3->setValue (mat[3]);
+  lcm4->setValue (mat[4]);
+  lcm5->setValue (mat[5]);
+  lcm6->setValue (mat[6]);
+  lcm7->setValue (mat[7]);
+  lcm8->setValue (mat[8]);
+
+  mat = OpenFlipper::Options::anaglyphRightEyeColorMatrix ();
+  rcm0->setValue (mat[0]);
+  rcm1->setValue (mat[1]);
+  rcm2->setValue (mat[2]);
+  rcm3->setValue (mat[3]);
+  rcm4->setValue (mat[4]);
+  rcm5->setValue (mat[5]);
+  rcm6->setValue (mat[6]);
+  rcm7->setValue (mat[7]);
+  rcm8->setValue (mat[8]);
+
   // plugin options
   initPluginOptions();
 
@@ -381,6 +408,39 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::maxFrameRate( FPS->value() );
 
   OpenFlipper::Options::randomBaseColor( randomBaseColor->isChecked() );
+
+  //stereo
+  if (stereoCustomAnaglyph->isChecked ())
+     OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphCustom);
+  else if (stereoAnaglyph->isChecked ())
+    OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphRedCyan);
+  else
+    OpenFlipper::Options::stereoMode(OpenFlipper::Options::OpenGL);
+
+  std::vector<float> mat (9, 0);
+  mat[0] = lcm0->value ();
+  mat[1] = lcm1->value ();
+  mat[2] = lcm2->value ();
+  mat[3] = lcm3->value ();
+  mat[4] = lcm4->value ();
+  mat[5] = lcm5->value ();
+  mat[6] = lcm6->value ();
+  mat[7] = lcm7->value ();
+  mat[8] = lcm8->value ();
+
+  OpenFlipper::Options::anaglyphLeftEyeColorMatrix (mat);
+
+  mat[0] = rcm0->value ();
+  mat[1] = rcm1->value ();
+  mat[2] = rcm2->value ();
+  mat[3] = rcm3->value ();
+  mat[4] = rcm4->value ();
+  mat[5] = rcm5->value ();
+  mat[6] = rcm6->value ();
+  mat[7] = rcm7->value ();
+  mat[8] = rcm8->value ();
+
+  OpenFlipper::Options::anaglyphRightEyeColorMatrix (mat);
 
   // updates
   OpenFlipper::Options::updateUrl( updateURL->text() );

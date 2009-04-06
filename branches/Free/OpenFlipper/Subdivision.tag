@@ -7,8 +7,79 @@
     <docanchor file="main">intro_sec</docanchor>
   </compound>
   <compound kind="file">
+    <name>PluginFunctionsPolyLine.hh</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyLine/</path>
+    <filename>PluginFunctionsPolyLine_8hh</filename>
+    <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
+    <namespace>PluginFunctions</namespace>
+    <member kind="function">
+      <type>bool</type>
+      <name>getSourcePolylines</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>9969d18956e8ff97751874c118979153</anchor>
+      <arglist>(std::vector&lt; PolyLine * &gt; &amp;_polylines)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>getTargetPolylines</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>a31234672afec7a9f34719ed775e57cd</anchor>
+      <arglist>(std::vector&lt; PolyLine * &gt; &amp;_polylines)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>getObject</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>b042a2e3e1af753b9de1798a8cf63652</anchor>
+      <arglist>(int _identifier, PolyLineObject *&amp;_object)</arglist>
+    </member>
+    <member kind="function">
+      <type>PolyLine *</type>
+      <name>polyLine</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>b3e42572ec1ff3dbcf7b8acc15f33bdf</anchor>
+      <arglist>(BaseObjectData *_object)</arglist>
+    </member>
+    <member kind="function">
+      <type>PolyLineObject *</type>
+      <name>polyLineObject</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>3ef62b4ae374764129b5d909855f9e0a</anchor>
+      <arglist>(BaseObjectData *_object)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>PolyLine.hh</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyLine/</path>
+    <filename>PolyLine_8hh</filename>
+    <includes id="PolyLineObject_8hh" name="PolyLineObject.hh" local="no" imported="no">ObjectTypes/PolyLine/PolyLineObject.hh</includes>
+    <includes id="PluginFunctionsPolyLine_8hh" name="PluginFunctionsPolyLine.hh" local="no" imported="no">ObjectTypes/PolyLine/PluginFunctionsPolyLine.hh</includes>
+    <includes id="PolyLineTypes_8hh" name="PolyLineTypes.hh" local="no" imported="no">ObjectTypes/PolyLine/PolyLineTypes.hh</includes>
+  </compound>
+  <compound kind="file">
+    <name>PolyLineObject.hh</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyLine/</path>
+    <filename>PolyLineObject_8hh</filename>
+    <includes id="PolyLineTypes_8hh" name="PolyLineTypes.hh" local="yes" imported="no">PolyLineTypes.hh</includes>
+    <includes id="BaseObjectData_8hh" name="BaseObjectData.hh" local="no" imported="no">OpenFlipper/common/BaseObjectData.hh</includes>
+    <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
+    <class kind="class">PolyLineObject</class>
+  </compound>
+  <compound kind="file">
+    <name>PolyLineTypes.hh</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyLine/</path>
+    <filename>PolyLineTypes_8hh</filename>
+    <member kind="typedef">
+      <type>ACG::PolyLineT&lt; ACG::Vec3d &gt;</type>
+      <name>PolyLine</name>
+      <anchorfile>PolyLineTypes_8hh.html</anchorfile>
+      <anchor>b54c407eed4ac40b810973a3f9f397bf</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>PluginFunctionsPolyMesh.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyMesh/</path>
     <filename>PluginFunctionsPolyMesh_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
     <includes id="PolyMesh_8hh" name="PolyMesh.hh" local="no" imported="no">ObjectTypes/PolyMesh/PolyMesh.hh</includes>
@@ -58,7 +129,7 @@
   </compound>
   <compound kind="file">
     <name>PolyMesh.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyMesh/</path>
     <filename>PolyMesh_8hh</filename>
     <includes id="PolyMeshTypes_8hh" name="PolyMeshTypes.hh" local="no" imported="no">ObjectTypes/PolyMesh/PolyMeshTypes.hh</includes>
     <includes id="PluginFunctionsPolyMesh_8hh" name="PluginFunctionsPolyMesh.hh" local="no" imported="no">ObjectTypes/PolyMesh/PluginFunctionsPolyMesh.hh</includes>
@@ -72,7 +143,7 @@
   </compound>
   <compound kind="file">
     <name>PolyMeshTypes.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyMesh/</path>
     <filename>PolyMeshTypes_8hh</filename>
     <class kind="struct">PolyTraits</class>
     <member kind="typedef">
@@ -85,7 +156,7 @@
   </compound>
   <compound kind="file">
     <name>PluginFunctionsTriangleMesh.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/TriangleMesh/</path>
     <filename>PluginFunctionsTriangleMesh_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
     <includes id="TriangleMesh_8hh" name="TriangleMesh.hh" local="no" imported="no">ObjectTypes/TriangleMesh/TriangleMesh.hh</includes>
@@ -135,7 +206,7 @@
   </compound>
   <compound kind="file">
     <name>TriangleMesh.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/TriangleMesh/</path>
     <filename>TriangleMesh_8hh</filename>
     <includes id="TriangleMeshTypes_8hh" name="TriangleMeshTypes.hh" local="no" imported="no">ObjectTypes/TriangleMesh/TriangleMeshTypes.hh</includes>
     <includes id="PluginFunctionsTriangleMesh_8hh" name="PluginFunctionsTriangleMesh.hh" local="no" imported="no">ObjectTypes/TriangleMesh/PluginFunctionsTriangleMesh.hh</includes>
@@ -149,7 +220,7 @@
   </compound>
   <compound kind="file">
     <name>TriangleMeshTypes.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/TriangleMesh/</path>
     <filename>TriangleMeshTypes_8hh</filename>
     <class kind="struct">TriTraits</class>
     <member kind="typedef">
@@ -162,7 +233,7 @@
   </compound>
   <compound kind="file">
     <name>PluginFunctions.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/BasePlugin/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/BasePlugin/</path>
     <filename>PluginFunctions_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
     <namespace>PluginFunctions</namespace>
@@ -444,7 +515,7 @@
   </compound>
   <compound kind="file">
     <name>RPCWrappers.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/BasePlugin/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/BasePlugin/</path>
     <filename>RPCWrappers_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="no" imported="no">OpenFlipper/common/Types.hh</includes>
     <namespace>RPC</namespace>
@@ -542,7 +613,7 @@
   </compound>
   <compound kind="file">
     <name>BaseObject.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
     <filename>BaseObject_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <includes id="perObjectData_8hh" name="perObjectData.hh" local="yes" imported="no">perObjectData.hh</includes>
@@ -550,7 +621,7 @@
   </compound>
   <compound kind="file">
     <name>BaseObjectData.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
     <filename>BaseObjectData_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <includes id="BaseObject_8hh" name="BaseObject.hh" local="yes" imported="no">BaseObject.hh</includes>
@@ -586,7 +657,7 @@
   </compound>
   <compound kind="file">
     <name>GlobalDefines.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
     <filename>GlobalDefines_8hh</filename>
     <member kind="define">
       <type>#define</type>
@@ -619,7 +690,7 @@
   </compound>
   <compound kind="file">
     <name>GlobalOptions.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
     <filename>GlobalOptions_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <member kind="function">
@@ -1507,14 +1578,14 @@
   </compound>
   <compound kind="file">
     <name>perObjectData.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
     <filename>perObjectData_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <class kind="class">PerObjectData</class>
   </compound>
   <compound kind="file">
     <name>Types.cc</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
     <filename>Types_8cc</filename>
     <includes id="Types_8hh" name="Types.hh" local="yes" imported="no">Types.hh</includes>
     <class kind="class">TypeInfo</class>
@@ -1619,7 +1690,7 @@
   </compound>
   <compound kind="file">
     <name>Types.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
     <filename>Types_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <includes id="BaseObject_8hh" name="BaseObject.hh" local="yes" imported="no">BaseObject.hh</includes>
@@ -1823,7 +1894,7 @@
   </compound>
   <compound kind="file">
     <name>ViewerProperties.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
     <filename>ViewerProperties_8hh</filename>
     <includes id="GlobalDefines_8hh" name="GlobalDefines.hh" local="no" imported="no">OpenFlipper/common/GlobalDefines.hh</includes>
     <class kind="class">Viewer::ViewerProperties</class>
@@ -1836,7 +1907,7 @@
   </compound>
   <compound kind="file">
     <name>Core.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Core/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/</path>
     <filename>Core_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="yes" imported="no">OpenFlipper/common/Types.hh</includes>
     <includes id="Logging_8hh" name="Logging.hh" local="yes" imported="no">OpenFlipper/Logging/Logging.hh</includes>
@@ -1855,19 +1926,19 @@
   </compound>
   <compound kind="file">
     <name>Logging.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Logging/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Logging/</path>
     <filename>Logging_8hh</filename>
     <class kind="class">PluginLogger</class>
   </compound>
   <compound kind="file">
     <name>Scripting.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Scripting/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Scripting/</path>
     <filename>Scripting_8hh</filename>
     <class kind="class">ScriptingWrapper</class>
   </compound>
   <compound kind="file">
     <name>CoreWidget.hh</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/coreWidget/</path>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/</path>
     <filename>CoreWidget_8hh</filename>
     <includes id="Types_8hh" name="Types.hh" local="yes" imported="no">OpenFlipper/common/Types.hh</includes>
     <includes id="GlobalOptions_8hh" name="GlobalOptions.hh" local="no" imported="no">OpenFlipper/common/GlobalOptions.hh</includes>
@@ -8290,6 +8361,116 @@
       <arglist></arglist>
     </member>
   </compound>
+  <compound kind="class">
+    <name>PolyLineObject</name>
+    <filename>classPolyLineObject.html</filename>
+    <base>BaseObjectData</base>
+    <member kind="variable" protection="private">
+      <type>PolyLine *</type>
+      <name>line_</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>95914f4d59050f00ad0a9a5532026de7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>PolyLine *</type>
+      <name>line</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>ea2ec15634f63d19903cdca88b58adb8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="variable" protection="private">
+      <type>ACG::SceneGraph::PolyLineNodeT&lt; PolyLine &gt; *</type>
+      <name>lineNode_</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>a8da673952e666a9650676c1fcf7156a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>ACG::SceneGraph::PolyLineNodeT&lt; PolyLine &gt; *</type>
+      <name>lineNode</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>612e63f91e9ca104ccefe7f4718a52e5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>PolyLineObject</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>2d054a4c33458fa07005b0bc5945fecf</anchor>
+      <arglist>(SeparatorNode *_rootNode)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>PolyLineObject</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>987d707d7cba170e3666e3a78dded3f4</anchor>
+      <arglist>(const PolyLineObject &amp;_object)</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual</type>
+      <name>~PolyLineObject</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>a2e4a5315a33a3597a3e20d3d9827e46</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" virtualness="virtual">
+      <type>virtual void</type>
+      <name>cleanup</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>d09632b07ed2be0496a81feb6e52196d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>BaseObject *</type>
+      <name>copy</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>803503fc28a111d392b1f7a1553ee211</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>setName</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>941b6a6f21d58a82817f5920c3e19926</anchor>
+      <arglist>(QString _name)</arglist>
+    </member>
+    <member kind="function">
+      <type>QString</type>
+      <name>getObjectinfo</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>6db45f20226b95e2704a6ec27ee2c93a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>picked</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>e7d2642deeb351e73e164462f46a47c6</anchor>
+      <arglist>(uint _node_idx)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>enablePicking</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>1fdf3f769bbd5c8149f09d0b85287a7a</anchor>
+      <arglist>(bool _enable)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>pickingEnabled</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>f0e1e4d3f711248b01d2d64fd8543e48</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="protected" virtualness="virtual">
+      <type>virtual void</type>
+      <name>init</name>
+      <anchorfile>classPolyLineObject.html</anchorfile>
+      <anchor>2604ca1c02b35dc4ef3bb3d9de793f12</anchor>
+      <arglist>(PolyLine *_line=0)</arglist>
+    </member>
+  </compound>
   <compound kind="struct">
     <name>PolyTraits</name>
     <filename>structPolyTraits.html</filename>
@@ -9548,6 +9729,41 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
+      <type>bool</type>
+      <name>getSourcePolylines</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>9969d18956e8ff97751874c118979153</anchor>
+      <arglist>(std::vector&lt; PolyLine * &gt; &amp;_polylines)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>getTargetPolylines</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>a31234672afec7a9f34719ed775e57cd</anchor>
+      <arglist>(std::vector&lt; PolyLine * &gt; &amp;_polylines)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>getObject</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>b042a2e3e1af753b9de1798a8cf63652</anchor>
+      <arglist>(int _identifier, PolyLineObject *&amp;_object)</arglist>
+    </member>
+    <member kind="function">
+      <type>PolyLine *</type>
+      <name>polyLine</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>b3e42572ec1ff3dbcf7b8acc15f33bdf</anchor>
+      <arglist>(BaseObjectData *_object)</arglist>
+    </member>
+    <member kind="function">
+      <type>PolyLineObject *</type>
+      <name>polyLineObject</name>
+      <anchorfile>namespacePluginFunctions.html</anchorfile>
+      <anchor>3ef62b4ae374764129b5d909855f9e0a</anchor>
+      <arglist>(BaseObjectData *_object)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>setDataRoot</name>
       <anchorfile>namespacePluginFunctions.html</anchorfile>
@@ -10493,29 +10709,29 @@
   </compound>
   <compound kind="dir">
     <name>widgets/aboutWidget/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/aboutWidget/</path>
-    <filename>dir_ac34dff667de1c6f2b79f10109d46e40.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/aboutWidget/</path>
+    <filename>dir_594acadcb55f93dbf4e82c7ef03393dc.html</filename>
     <file>aboutWidget.cc</file>
     <file>aboutWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>ACGHelper/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/ACGHelper/</path>
-    <filename>dir_d14d590407d10513898d9525f76248b1.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/ACGHelper/</path>
+    <filename>dir_6afef1ac87ce4b3c7cce84489a851a3f.html</filename>
     <file>DrawModeConverter.cc</file>
     <file>DrawModeConverter.hh</file>
   </compound>
   <compound kind="dir">
     <name>widgets/addEmptyWidget/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/addEmptyWidget/</path>
-    <filename>dir_cc4e1c4514d938ae160e889291e18fc7.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/addEmptyWidget/</path>
+    <filename>dir_9cc39214bb3808d91bd8644300e632f2.html</filename>
     <file>addEmptyWidget.cc</file>
     <file>addEmptyWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>BasePlugin/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/BasePlugin/</path>
-    <filename>dir_34e76c48a8e6217ace039f54ab9c3f1c.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/BasePlugin/</path>
+    <filename>dir_6b745c6e48e3706a2492895c09ed01dc.html</filename>
     <file>BackupInterface.hh</file>
     <file>BaseInterface.hh</file>
     <file>ContextMenuInterface.hh</file>
@@ -10539,6 +10755,7 @@
     <file>RPCWrappers.cc</file>
     <file>RPCWrappers.hh</file>
     <file>ScriptInterface.hh</file>
+    <file>SecurityInterface.hh</file>
     <file>StatusbarInterface.hh</file>
     <file>TextureInterface.hh</file>
     <file>ToolbarInterface.hh</file>
@@ -10547,8 +10764,8 @@
   </compound>
   <compound kind="dir">
     <name>common/bsp/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/bsp/</path>
-    <filename>dir_854e3eb28963a29567660daa5bd429db.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/bsp/</path>
+    <filename>dir_54e407fa1cbccffdd1634e73a25a0d1a.html</filename>
     <file>BSPImplT.cc</file>
     <file>BSPImplT.hh</file>
     <file>TriangleBSPCoreT.cc</file>
@@ -10557,8 +10774,8 @@
   </compound>
   <compound kind="dir">
     <name>common/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/common/</path>
-    <filename>dir_aab0e5275cd164abd9b16b3e7e5431da.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/common/</path>
+    <filename>dir_1be831ad6813636322aff3cfbb793ba7.html</filename>
     <dir>common/bsp/</dir>
     <file>BaseObject.cc</file>
     <file>BaseObject.hh</file>
@@ -10583,8 +10800,8 @@
   </compound>
   <compound kind="dir">
     <name>Core/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Core/</path>
-    <filename>dir_e5622f1ffc3ea30b9c90bd5149b7163e.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/</path>
+    <filename>dir_e320c60241f3f15353bb7cad138eff61.html</filename>
     <file>Core.cc</file>
     <file>Core.hh</file>
     <file>Logging.cc</file>
@@ -10602,8 +10819,8 @@
   </compound>
   <compound kind="dir">
     <name>widgets/coreWidget/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/coreWidget/</path>
-    <filename>dir_7a6dd14c222c79431eded54a73606c11.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/</path>
+    <filename>dir_56a69f0fbb49fda25c91167fa202740d.html</filename>
     <file>About.cc</file>
     <file>ContextMenu.cc</file>
     <file>CoreWidget.cc</file>
@@ -10626,8 +10843,8 @@
   </compound>
   <compound kind="dir">
     <name>Doxygen/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Doxygen/</path>
-    <filename>dir_b5fb36968fbf00193c87ccb44a6d94f7.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Doxygen/</path>
+    <filename>dir_15ee26eb48dc46c47c455f7f6deafd0c.html</filename>
     <dir>Doxygen/example/</dir>
     <file>building.docu</file>
     <file>concepts.docu</file>
@@ -10643,8 +10860,8 @@
   </compound>
   <compound kind="dir">
     <name>Doxygen/example/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Doxygen/example/</path>
-    <filename>dir_8b2d44367d6c6f23165f4ae612b3481f.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Doxygen/example/</path>
+    <filename>dir_c7b53bd8fb9bdaa6c3d877caf61c300f.html</filename>
     <file>MouseAndKeyPlugin.cc</file>
     <file>MouseAndKeyPlugin.hh</file>
     <file>simplePlugin.cc</file>
@@ -10654,8 +10871,8 @@
   </compound>
   <compound kind="dir">
     <name>widgets/glWidget/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/glWidget/</path>
-    <filename>dir_7f42df41699d0212afa33679bcc52f3d.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/glWidget/</path>
+    <filename>dir_79c40a2d092ad1d2d0a048801101ad10.html</filename>
     <file>QtBaseViewer.cc</file>
     <file>QtBaseViewer.hh</file>
     <file>QtBaseViewerPicking.cc</file>
@@ -10675,8 +10892,8 @@
   </compound>
   <compound kind="dir">
     <name>widgets/helpBrowser/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/helpBrowser/</path>
-    <filename>dir_cb219753ac62533bc43664cb68b6668a.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/helpBrowser/</path>
+    <filename>dir_8b62dc7f51b1e3f1ac6e79adf1dca1fc.html</filename>
     <file>findEdit.cc</file>
     <file>findEdit.hh</file>
     <file>helpWidget.cc</file>
@@ -10686,53 +10903,54 @@
   </compound>
   <compound kind="dir">
     <name>INIFile/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/INIFile/</path>
-    <filename>dir_70a444fe0dd615eb501c14ca06fc0b4c.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/INIFile/</path>
+    <filename>dir_0c04a1a7503982aacfc85ab933f0bdc1.html</filename>
     <file>INIFile.cc</file>
     <file>INIFile.hh</file>
     <file>INIFileT.cc</file>
   </compound>
   <compound kind="dir">
     <name>widgets/loadWidget/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/loadWidget/</path>
-    <filename>dir_b8912b0d9e3d28081131d5c6f9b31de2.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/loadWidget/</path>
+    <filename>dir_9fc3c5f491b01d4b75ebd1f8e39005ba.html</filename>
     <file>loadWidget.cc</file>
     <file>loadWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>widgets/loggerWidget/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/loggerWidget/</path>
-    <filename>dir_927962733e65312ad1e7a29d709d8f42.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/loggerWidget/</path>
+    <filename>dir_3ad0f73889eb06bb2591237bc66f5857.html</filename>
     <file>loggerWidget.cc</file>
     <file>loggerWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>Logging/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Logging/</path>
-    <filename>dir_f7e7c421e54c1dac756370f64d23aaf8.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Logging/</path>
+    <filename>dir_b907f522836bf04bb84548b61670133c.html</filename>
     <file>Logging.hh</file>
     <file>PluginLogging.cc</file>
   </compound>
   <compound kind="dir">
-    <name>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/MeshObject/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/MeshObject/</path>
-    <filename>dir_db9475764b4ecbe5f9fac581a276a22b.html</filename>
+    <name>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/MeshObject/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/MeshObject/</path>
+    <filename>dir_a7cbb18922c3314cc82e717661c955b9.html</filename>
     <file>MeshObjectT.cc</file>
     <file>MeshObjectT.hh</file>
     <file>StatusNodeMods.hh</file>
   </compound>
   <compound kind="dir">
-    <name>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/</path>
-    <filename>dir_c0382abcf489c7cc2dc6e716a4d51fd8.html</filename>
-    <dir>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/MeshObject/</dir>
-    <dir>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</dir>
-    <dir>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</dir>
+    <name>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/</path>
+    <filename>dir_a04022ea89b48af60438a477b2bbc9bc.html</filename>
+    <dir>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/MeshObject/</dir>
+    <dir>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyLine/</dir>
+    <dir>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyMesh/</dir>
+    <dir>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/TriangleMesh/</dir>
   </compound>
   <compound kind="dir">
     <name>widgets/optionsWidget/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/optionsWidget/</path>
-    <filename>dir_834ec6d09b554faf56d5598fc67885b5.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/optionsWidget/</path>
+    <filename>dir_5b7a6c4897525f4cca230d90bfe7b131.html</filename>
     <file>downloader.cc</file>
     <file>keyBindings.cc</file>
     <file>optionsWidget.cc</file>
@@ -10742,15 +10960,26 @@
   </compound>
   <compound kind="dir">
     <name>widgets/PluginDialog/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/PluginDialog/</path>
-    <filename>dir_a1bca2d7e62d39337fad2046f85ae9cf.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/PluginDialog/</path>
+    <filename>dir_2015293950c0506b14162260d2f60b6f.html</filename>
     <file>PluginDialog.cc</file>
     <file>PluginDialog.hh</file>
   </compound>
   <compound kind="dir">
-    <name>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/PolyMesh/</path>
-    <filename>dir_03e9ab9e4220aa4d0d32e0d89b295aad.html</filename>
+    <name>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyLine/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyLine/</path>
+    <filename>dir_33b805d8e0e2fb61a9b89d73ebbcd873.html</filename>
+    <file>PluginFunctionsPolyLine.cc</file>
+    <file>PluginFunctionsPolyLine.hh</file>
+    <file>PolyLine.hh</file>
+    <file>PolyLineObject.cc</file>
+    <file>PolyLineObject.hh</file>
+    <file>PolyLineTypes.hh</file>
+  </compound>
+  <compound kind="dir">
+    <name>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyMesh/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/PolyMesh/</path>
+    <filename>dir_a90d773ac396fc52bbe2a2637039adb2.html</filename>
     <file>PluginFunctionsPolyMesh.cc</file>
     <file>PluginFunctionsPolyMesh.hh</file>
     <file>PolyMesh.hh</file>
@@ -10758,8 +10987,8 @@
   </compound>
   <compound kind="dir">
     <name>Scripting/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Scripting/</path>
-    <filename>dir_6df12bc8514286829251c91ec58ea303.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Scripting/</path>
+    <filename>dir_c97075f2720219032fccff1b8bdcfcd5.html</filename>
     <dir>Scripting/scriptPrototypes/</dir>
     <dir>Scripting/scriptWrappers/</dir>
     <file>Scripting.hh</file>
@@ -10767,8 +10996,8 @@
   </compound>
   <compound kind="dir">
     <name>Scripting/scriptPrototypes/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Scripting/scriptPrototypes/</path>
-    <filename>dir_dddeb6409e5a2bf4e9b85e9ea952b891.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Scripting/scriptPrototypes/</path>
+    <filename>dir_7f818d5a9e258b6b503d930d08efa4e9.html</filename>
     <file>prototypeIdList.cc</file>
     <file>prototypeIdList.hh</file>
     <file>prototypeMatrix4x4.cc</file>
@@ -10778,8 +11007,8 @@
   </compound>
   <compound kind="dir">
     <name>Scripting/scriptWrappers/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/Scripting/scriptWrappers/</path>
-    <filename>dir_d4afed42b7636dd3208b3d2227f512ca.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/Scripting/scriptWrappers/</path>
+    <filename>dir_08300fed192bcb66f6137dbe84f57711.html</filename>
     <file>idListWrapper.cc</file>
     <file>idListWrapper.hh</file>
     <file>matrix4x4Wrapper.cc</file>
@@ -10788,9 +11017,9 @@
     <file>vec3dWrapper.hh</file>
   </compound>
   <compound kind="dir">
-    <name>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/ObjectTypes/TriangleMesh/</path>
-    <filename>dir_660d6b85fd96a73b29dfcd10b207aa35.html</filename>
+    <name>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/TriangleMesh/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/ObjectTypes/TriangleMesh/</path>
+    <filename>dir_904f2445559bc9c9f95bfdd9c9836b44.html</filename>
     <file>PluginFunctionsTriangleMesh.cc</file>
     <file>PluginFunctionsTriangleMesh.hh</file>
     <file>TriangleMesh.hh</file>
@@ -10798,15 +11027,15 @@
   </compound>
   <compound kind="dir">
     <name>widgets/viewModeWidget/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/viewModeWidget/</path>
-    <filename>dir_05f119968b384c39f3b328587ef8dc42.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/viewModeWidget/</path>
+    <filename>dir_d90a30b42ac5271b0fe6b95a4c309e07.html</filename>
     <file>viewModeWidget.cc</file>
     <file>viewModeWidget.hh</file>
   </compound>
   <compound kind="dir">
     <name>widgets/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper-Free/OpenFlipper/widgets/</path>
-    <filename>dir_d0bee36c1e0888648682399952e02f40.html</filename>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/</path>
+    <filename>dir_7ca3df6b42838197b5d9bc81f4b4838a.html</filename>
     <dir>widgets/aboutWidget/</dir>
     <dir>widgets/addEmptyWidget/</dir>
     <dir>widgets/coreWidget/</dir>

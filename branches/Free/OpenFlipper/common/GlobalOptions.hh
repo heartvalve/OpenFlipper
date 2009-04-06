@@ -308,14 +308,53 @@ void fontsDir(QDir _dir);
   /// get if a gui should be visible or not
   DLLEXPORT
   bool gui( );
-
-  /// Store stereo mode setting
+  
+  /// Store stereo support setting
   DLLEXPORT
   void stereo( bool _stereo );
 
-  /// get current stereo setting
+  /// get current stereo support setting
   DLLEXPORT
   bool stereo( );
+
+  /// Stereo mode
+  enum StereoMode {
+    OpenGL,
+    AnaglyphRedCyan,
+    AnaglyphCustom
+  };
+
+  /// Store opengl stereo support setting
+  DLLEXPORT
+  void glStereo( bool _stereo );
+
+  /// will be set in core is opengl stereo is supported
+  DLLEXPORT
+  bool glStereo( );
+
+  /// Store stereo mode setting
+  DLLEXPORT
+  void stereoMode( StereoMode _mode );
+
+  /// get current stereo mode setting
+  DLLEXPORT
+  StereoMode stereoMode( );
+
+  /// Store the 3x3 left eye color matrix values for custom anaglyph stereo mode
+  DLLEXPORT
+  void anaglyphLeftEyeColorMatrix( std::vector<float> _mat );
+
+  /// get the 3x3 left eye color matrix values for custom anaglyph stereo mode
+  DLLEXPORT
+  std::vector<float> anaglyphLeftEyeColorMatrix( );
+
+  /// Store the 3x3 right eye color matrix values for custom anaglyph stereo mode
+  DLLEXPORT
+  void anaglyphRightEyeColorMatrix( std::vector<float> _mat );
+
+  /// get the 3x3 right eye color matrix values for custom anaglyph stereo mode
+  DLLEXPORT
+  std::vector<float> anaglyphRightEyeColorMatrix( );
 
   /// Store synchronization setting
   DLLEXPORT
