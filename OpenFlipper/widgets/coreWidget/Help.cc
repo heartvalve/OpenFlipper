@@ -51,43 +51,54 @@
 
 void CoreWidget::showHelpBrowserUser( ) {
 
-  if ( OpenFlipper::Options::nogui() )
-    return;
+	if ( OpenFlipper::Options::nogui() )
+	return;
 
-  if ( helpBrowserUser_ == 0 ) {
-    helpBrowserUser_ = new HelpWidget( this ,true);
-  }
+	if ( helpBrowserUser_ == 0 ) {
+		helpBrowserUser_ = new HelpAssistant();
+	}
 
-  //show the widget centered
-  QPoint center;
-  center.setX( x() + width() / 2 );
-  center.setY( y() + height() / 2 );
+	helpBrowserUser_->startAssistant("user.qch");
 
-  helpBrowserUser_->setGeometry(center.x() - helpBrowserUser_->width() / 2,
-                              center.y() - helpBrowserUser_->height()/ 2, helpBrowserUser_->width(), helpBrowserUser_->height());
-
-  helpBrowserUser_->show();
+	//show the widget centered
+	//  QPoint center;
+	//  center.setX( x() + width() / 2 );
+	//  center.setY( y() + height() / 2 );
+	//
+	//  helpBrowserUser_->setGeometry(center.x() - helpBrowserUser_->width() / 2,
+	//                              center.y() - helpBrowserUser_->height()/ 2, helpBrowserUser_->width(), helpBrowserUser_->height());
+	//
+	//  helpBrowserUser_->show();
 
 }
 
 void CoreWidget::showHelpBrowserDeveloper( ) {
 
-  if ( OpenFlipper::Options::nogui() )
-    return;
+	if ( OpenFlipper::Options::nogui() )
+		return;
 
-  if ( helpBrowserDeveloper_ == 0 ) {
-    helpBrowserDeveloper_ = new HelpWidget( this ,false);
-  }
+	if ( helpBrowserUser_ == 0 ) {
+		helpBrowserUser_ = new HelpAssistant();
+	}
 
-  //show the widget centered
-  QPoint center;
-  center.setX( x() + width() / 2 );
-  center.setY( y() + height() / 2 );
+	helpBrowserUser_->startAssistant("developer.qch");
 
-  helpBrowserDeveloper_->setGeometry(center.x() - helpBrowserDeveloper_->width() / 2,
-                              center.y() - helpBrowserDeveloper_->height()/ 2, helpBrowserDeveloper_->width(), helpBrowserDeveloper_->height());
-
-  helpBrowserDeveloper_->show();
+//  if ( OpenFlipper::Options::nogui() )
+//    return;
+//
+//  if ( helpBrowserDeveloper_ == 0 ) {
+//    helpBrowserDeveloper_ = new HelpWidget( this ,false);
+//  }
+//
+//  //show the widget centered
+//  QPoint center;
+//  center.setX( x() + width() / 2 );
+//  center.setY( y() + height() / 2 );
+//
+//  helpBrowserDeveloper_->setGeometry(center.x() - helpBrowserDeveloper_->width() / 2,
+//                              center.y() - helpBrowserDeveloper_->height()/ 2, helpBrowserDeveloper_->width(), helpBrowserDeveloper_->height());
+//
+//  helpBrowserDeveloper_->show();
 
 }
 
