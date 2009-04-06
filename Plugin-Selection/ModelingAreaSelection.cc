@@ -213,14 +213,14 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
 
     header = input.readLine();
 
-    bool ok = false;
+//     bool ok = false;
 
 //     uint vertexCount = header.toUInt(&ok);
-
-    if ( !ok ) {
-       emit log(LOGERR,"Unable to parse header. Cant get vertex count from string : " + header );
-       return;
-    }
+// 
+//     if ( !ok ) {
+//        emit log(LOGERR,"Unable to parse header. Cant get vertex count from string : " + header );
+//        return;
+//     }
 
     idList handleVertices;
     idList modelingVertices;
