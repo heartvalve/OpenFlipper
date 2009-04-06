@@ -73,6 +73,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
     // BaseInterface
     void updateView();
     void updatedObject(int);
+    void visibilityChanged(int);
 
     // PickingInterface
     void addPickMode( const std::string _mode );
@@ -97,6 +98,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
     // ToolbarInterface
     void addToolbar(QToolBar* _toolbar);
     void getToolBar( QString _name, QToolBar*& _toolbar);
+
   private slots :
 
     // BaseInterface
