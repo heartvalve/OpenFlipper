@@ -658,6 +658,9 @@ void Core::updateView() {
     }
   }
 
+  if ( !OpenFlipper::Options::gui() )
+    return;
+
   if ( OpenFlipper::Options::restrictFrameRate() ) {
 
     int elapsed = redrawTime_->elapsed ();
@@ -682,7 +685,7 @@ void Core::updateView() {
 
   redrawTime_->restart ();
 
-  if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() && !OpenFlipper::Options::redrawDisabled() ) {
+  if ( !OpenFlipper::Options::loadingSettings() && !OpenFlipper::Options::redrawDisabled() ) {
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
       coreWidget_->examiner_widgets_[i]->updateGL();

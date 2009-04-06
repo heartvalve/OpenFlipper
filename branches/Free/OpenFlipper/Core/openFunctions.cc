@@ -59,7 +59,8 @@ void Core::resetScenegraph() {
   }
 
   // Update the draw Modes Menu
-  coreWidget_->slotUpdateGlobalDrawMenu();
+  if ( OpenFlipper::Options::gui() )
+    coreWidget_->slotUpdateGlobalDrawMenu();
 }
 
 //========================================================================================
@@ -104,6 +105,8 @@ void Core::slotCommandLineOpen() {
     emit executeFileScript(commandLineScriptNames_[i]);
   }
 
+  if ( !OpenFlipper::Options::gui() && !OpenFlipper::Options::remoteControl())
+    exitApplication();
 }
 
 /// Load object by guessing DataType depending on the files extension

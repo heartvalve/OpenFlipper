@@ -195,6 +195,8 @@ static int* argc_;
 
 static char *** argv_;
 
+static bool remoteControl_ = false;
+
 # if __WORDSIZE == 64
   const bool is64 = true;
 #else
@@ -678,6 +680,14 @@ void  argc( int* _argc ) {
 
 void argv( char*** _argv) {
   argv_ = _argv;
+}
+
+bool remoteControl(){
+  return remoteControl_;
+}
+
+void remoteControl(bool _remote){
+  remoteControl_ = _remote;
 }
 
 void doSlotDebugging( bool _debugging ) {
