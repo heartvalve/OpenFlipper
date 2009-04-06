@@ -123,7 +123,6 @@ void SelectionPlugin::paintSphereSelection(QMouseEvent* _event) {
                   sphere_node_->show();
                   sphere_node_->set_position((ACG::Vec3f)hit_point);
                   sphere_node_->set_size(sphere_radius_);
-
                   selection_changes_.push_back(object->id());
                   sphere_selection_ = true;
                }
