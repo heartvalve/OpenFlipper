@@ -1667,6 +1667,20 @@ void TranslationManipulatorNode::updateSize (GLState& _state)
   manipulator_height_ = set_manipulator_height_ * auto_size_length_;
 }
 
+//----------------------------------------------------------------------------
+
+
+void TranslationManipulatorNode::boundingBox( Vec3f & _bbMin, Vec3f & _bbMax )
+{
+  if (!draw_manipulator_)
+    return;
+
+  float r = 2 * manipulator_height_;
+
+  _bbMin.minimize(Vec3f(-r,-r,-r));
+  _bbMax.maximize(Vec3f(r,r,r));
+}
+
 //=============================================================================
 } // namespace SceneGraph
 } // namespace ACG
