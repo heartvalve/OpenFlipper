@@ -190,7 +190,10 @@ ColorStack::Node::~Node ()
 
 bool ColorStack::Node::setMaximumIndex (unsigned int _idx)
 {
-  if (colorStartIdx_ == 0 && _idx > 0 && translator_->max_index () > endIdx_ + _idx)
+  if (_idx == 0)
+    _idx = 1;
+
+  if (colorStartIdx_ == 0 && translator_->max_index () > endIdx_ + _idx)
   {
     colorStartIdx_ = endIdx_;
     endIdx_ = colorEndIdx_ = colorStartIdx_ + _idx;
