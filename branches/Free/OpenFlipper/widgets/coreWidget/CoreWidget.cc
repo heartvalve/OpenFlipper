@@ -125,7 +125,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   format.setStencil(true);
 
   // Construct GL context & widget
-
   baseLayout_ = new QtMultiViewLayout;
   baseLayout_->setContentsMargins(0,0,0,0);
 
@@ -134,11 +133,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   glScene_ = new QtGLGraphicsScene (&examiner_widgets_, baseLayout_);
 
   // is stereo possible, use it?
-  if (format.stereo()) {
-    std::cerr << "Stereo buffer requested: " << (glWidget_->format().stereo() ? "ok\n" : "failed\n");
-  }
   OpenFlipper::Options::glStereo(glWidget_->format().stereo());
-
 
   glView_->setViewport(glWidget_);
   glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
