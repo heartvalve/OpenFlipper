@@ -14,6 +14,7 @@
 #include <iostream>
 #include <ACG/GL/GLState.hh>
 #include <QStringList>
+#include <QLocale>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <MeshTools/MeshInfoT.hh>
@@ -31,7 +32,7 @@ void InfoPlugin::pluginsInitialized() {
 
   //set the slot descriptions
   setDescriptions();
-  
+
   // Initialize hit point
   hit_point_ = ACG::Vec3d(0.0, 0.0, 0.0);
 }
@@ -40,30 +41,32 @@ void InfoPlugin::pluginsInitialized() {
 
 template< class MeshT >
 void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
-  
+
+  QLocale locale;
+
   if (info_ == 0){
     info_ = new InfoDialog();
   }
-  
+
   int closest_v_idx = getClosestVertex(_mesh, _face);
   int closest_e_idx = getClosestEdge(_mesh, _face);
- 
+
   // ID
-  info_->id->setText( "<B>Object ID:</B> " + QString::number(_id) );
+  info_->id->setText( "<B>Object ID:</B> " + locale.toString(_id) );
   // Vertices
-  info_->vertices->setText( "<B>Vertices:</B> " + QString::number( _mesh->n_vertices() ) );
+  info_->vertices->setText( "<B>Vertices:</B> " + locale.toString( _mesh->n_vertices() ) );
   // Faces
-  info_->faces->setText( "<B>Faces:</B> " + QString::number( _mesh->n_faces() ) );
+  info_->faces->setText( "<B>Faces:</B> " + locale.toString( _mesh->n_faces() ) );
   // Edges
-  info_->edges->setText( "<B>Edges:</B> " + QString::number( _mesh->n_edges() ) );
+  info_->edges->setText( "<B>Edges:</B> " + locale.toString( _mesh->n_edges() ) );
   // Closest Vertex
-  info_->closestv->setText( "<B>Closest vertex:</B> " + QString::number( closest_v_idx ) );
+  info_->closestv->setText( "<B>Closest vertex:</B> " + locale.toString( closest_v_idx ) );
   // Closest Edge
-  info_->closeste->setText( "<B>Closest edge:</B> " + QString::number( closest_e_idx ) );
+  info_->closeste->setText( "<B>Closest edge:</B> " + locale.toString( closest_e_idx ) );
   // Components
-  info_->components->setText( "<B>Components:</B> " + QString::number(MeshInfo::componentCount(_mesh)));
+  info_->components->setText( "<B>Components:</B> " + locale.toString(MeshInfo::componentCount(_mesh)));
   // Boundaries
-  info_->boundaries->setText( "<B>Boundaries:</B> " + QString::number(MeshInfo::boundaryCount(_mesh)) );
+  info_->boundaries->setText( "<B>Boundaries:</B> " + locale.toString(MeshInfo::boundaryCount(_mesh)) );
   // Genus
   int genus = 1 - (_mesh->n_vertices() - _mesh->n_edges() + _mesh->n_faces() ) / 2;
   info_->genus->setText( "<B>Genus:</B> " + QString::number(genus) );
@@ -100,7 +103,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   // Coordinates
   typename MeshT::VertexIter v_it;
   typename MeshT::VertexIter v_end = _mesh->vertices_end();
-  
+
   float maxX = FLT_MIN;
   float minX = FLT_MAX;
   float sumX = 0.0;
@@ -116,7 +119,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   float maxE = FLT_MIN;
   float minE = FLT_MAX;
   float sumE = 0.0;
-  
+
   //iterate over all vertices
   for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it){
     typename MeshT::Point p = _mesh->point( v_it.handle() );
@@ -129,16 +132,16 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
     if (p[2] < minZ) minZ = p[2];
     if (p[2] > maxZ) maxZ = p[2];
     sumZ += p[2];
-    
 
-    
+
+
     //check valence + edge length
     int valence = 0;
     typename MeshT::VertexVertexIter vv_it;
-  
+
     for (vv_it=_mesh->vv_iter( v_it ); vv_it; ++vv_it){
       valence++;
-      
+
       typename MeshT::Point p2 = _mesh->point( vv_it.handle() );
       typename MeshT::Scalar len = (p2 - p).norm();
 
@@ -151,7 +154,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
     if (valence > maxV) maxV = valence;
     sumV += valence;
   }
-  
+
   int row=0;
   info_->table->setItem(row,0, new QTableWidgetItem( QString::number(minX,'f') ) );
   info_->table->setItem(row,1, new QTableWidgetItem( QString::number( sumX / _mesh->n_vertices(),'f' )) );
@@ -230,7 +233,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
 
     for (ff_it = _mesh->ff_iter(f_it); ff_it; ++ff_it){
 
-      typename MeshT::Normal n2 = _mesh->normal(ff_it);  
+      typename MeshT::Normal n2 = _mesh->normal(ff_it);
 
       angle = OpenMesh::rad_to_deg(acos(OpenMesh::sane_aarg( MathTools::sane_normalized(n1) | MathTools::sane_normalized(n2) )));
 
@@ -250,7 +253,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   info_->table->setItem(row,1, new QTableWidgetItem( "-" ) );
   info_->table->setItem(row,2, new QTableWidgetItem( QString::number(maxI,'f') ) );
   row++;
-  
+
   info_->table->setItem(row,0, new QTableWidgetItem( QString::number(minD,'f') ) );
   info_->table->setItem(row,1, new QTableWidgetItem( QString::number( sumD / (_mesh->n_faces()*3),'f' )) );
   info_->table->setItem(row,2, new QTableWidgetItem( QString::number(maxD,'f') ) );
@@ -287,7 +290,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
 
   //set tooltips
   info_->table3->verticalHeaderItem(0)->setToolTip("minimum corner coordinates of the bounding box");
-  info_->table3->verticalHeaderItem(1)->setToolTip("maximum corner coordinates of the bounding box"); 
+  info_->table3->verticalHeaderItem(1)->setToolTip("maximum corner coordinates of the bounding box");
   info_->table3->verticalHeaderItem(2)->setToolTip("diagonal size of the bounding box");
   info_->table3->verticalHeaderItem(3)->setToolTip("coordinates of the center of gravity");
   info_->table3->verticalHeaderItem(4)->setToolTip("direction of the face normal that was picked");
@@ -298,10 +301,10 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   ACG::Vec3d min;
   ACG::Vec3d max;
   MeshInfo::getBoundingBox(*_mesh, min, max);
-  
+
   //Bounding Box Size
   ACG::Vec3d diff = max-min;
-  
+
   row=0;
   info_->table3->setItem(row,0, new QTableWidgetItem( QString::number(min[0],'f') ) );
   info_->table3->setItem(row,1, new QTableWidgetItem( QString::number(min[1],'f') ) );
@@ -315,7 +318,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   info_->table3->setItem(row,1, new QTableWidgetItem( QString::number(diff[1],'f') ) );
   info_->table3->setItem(row,2, new QTableWidgetItem( QString::number(diff[2],'f') ) );
 
-  //COG  
+  //COG
   ACG::Vec3d cog = MeshInfo::cog(*_mesh);
 
   row++;
@@ -327,15 +330,15 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   row++;
   info_->table3->setItem(row,0, new QTableWidgetItem( QString::number( _mesh->normal(fh)[0],'f' ) ) );
   info_->table3->setItem(row,1, new QTableWidgetItem( QString::number( _mesh->normal(fh)[1],'f' ) ) );
-  info_->table3->setItem(row,2, new QTableWidgetItem( QString::number( _mesh->normal(fh)[2],'f' ) ) );  
- 
+  info_->table3->setItem(row,2, new QTableWidgetItem( QString::number( _mesh->normal(fh)[2],'f' ) ) );
+
   fv_it = _mesh->fv_iter(fh);
   while( fv_it )
-  { 
+  {
     row++;
     info_->table3->setItem(row,0, new QTableWidgetItem( QString::number( _mesh->point(fv_it)[0],'f' ) ) );
     info_->table3->setItem(row,1, new QTableWidgetItem( QString::number( _mesh->point(fv_it)[1],'f' ) ) );
-    info_->table3->setItem(row,2, new QTableWidgetItem( QString::number( _mesh->point(fv_it)[2],'f' ) ) );  
+    info_->table3->setItem(row,2, new QTableWidgetItem( QString::number( _mesh->point(fv_it)[2],'f' ) ) );
 
     ++fv_it;
   }
@@ -357,20 +360,20 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
 
 template <class MeshT>
 int InfoPlugin::getClosestVertex(MeshT* _mesh, int _face_idx) {
-    
+
     typename MeshT::FaceVertexIter fv_it;
-    
+
     int closest_v_idx = 0;
     double dist = DBL_MAX;
     double temp_dist = 0.0;
-    
+
     ACG::Vec3d vTemp = ACG::Vec3d(0.0, 0.0, 0.0);
     typename MeshT::Point p;
-    
+
     for (fv_it = _mesh->fv_iter(_mesh->face_handle(_face_idx)); fv_it; ++fv_it){
-	
+
 	p = _mesh->point( fv_it.handle() );
-	
+
 	// Find closest vertex to selection
 	vTemp = ACG::Vec3d(p[0], p[1], p[2]);
 	temp_dist = (vTemp - hit_point_).length();
@@ -394,71 +397,71 @@ int InfoPlugin::getClosestVertex(MeshT* _mesh, int _face_idx) {
 
 template <class MeshT>
 int InfoPlugin::getClosestEdge(MeshT* _mesh, int _face_idx) {
-    
+
     typename MeshT::ConstFaceHalfedgeIter fh_it;
     typename MeshT::VertexHandle v1, v2;
     typename MeshT::Point p1, p2;
-    
+
     ACG::Vec3d vp1, vp2, click, e, g, h;
     double x, temp_dist, dist = DBL_MAX;
     int closest_e_handle = 0;
     click = ACG::Vec3d(hit_point_[0], hit_point_[1], hit_point_[2]);
-    
+
     for (fh_it = _mesh->fh_iter(_mesh->face_handle(_face_idx)); fh_it; ++fh_it){
-	
+
 	v1 = _mesh->from_vertex_handle(fh_it);
 	v2 = _mesh->to_vertex_handle(fh_it);
-	
+
 	p1 = _mesh->point(v1);
 	p2 = _mesh->point(v2);
-	
+
 	vp1 = ACG::Vec3d(p1[0], p1[1], p1[2]);
 	vp2 = ACG::Vec3d(p2[0], p2[1], p2[2]);
-		
+
 	e = vp2 - vp1;
 	e.normalize();
 	g = click - vp1;
 	x = g | e;
-		
+
 	temp_dist = (click - (vp1 + x * e)).length();
-			
+
 	if (temp_dist < dist) {
 	    dist = temp_dist;
 	    closest_e_handle = _mesh->edge_handle(fh_it.handle()).idx();
 	}
     }
-    
+
     return closest_e_handle;
-}	
-	
+}
+
 //----------------------------------------------------------------------------------------------
 
-void 
+void
 InfoPlugin::
-  slotMouseEventIdentify( QMouseEvent* _event ) {   
+  slotMouseEventIdentify( QMouseEvent* _event ) {
   if (_event->type() == QEvent::MouseButtonPress)
   {
     unsigned int   node_idx, target_idx;
     ACG::Vec3d     hit_point;
-    
+
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
       BaseObjectData* object;
 
 //     BaseObject* obj = dynamic_cast< BaseObject* > (object);
-        
+
       if ( PluginFunctions::getPickedObject(node_idx, object) ) {
-        
+
          emit log( LOGINFO , object->getObjectinfo() );
-	 
+
 	 // Set hit point
 	 hit_point_ = ACG::Vec3d(hit_point[0], hit_point[1], hit_point[2]);
-        
-         if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH) ) 
+
+         if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH) )
             printMeshInfo( PluginFunctions::triMesh(object) , object->id(), target_idx );
-         
-         if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH) ) 
+
+         if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH) )
             printMeshInfo( PluginFunctions::polyMesh(object) , object->id(), target_idx );
-         
+
       } else return;
     }
   }
@@ -468,4 +471,4 @@ InfoPlugin::
 
 Q_EXPORT_PLUGIN2( InfoPlugin , InfoPlugin );
 
- 
+
