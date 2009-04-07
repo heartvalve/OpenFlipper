@@ -340,6 +340,22 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   StereoMode stereoMode( );
 
+  /// Store stereo eye distance
+  DLLEXPORT
+  void eyeDistance( float _eye );
+
+  /// get stereo eye distance
+  DLLEXPORT
+  float eyeDistance( );
+
+  /// Store stereo focal distance relative to scene near plane
+  DLLEXPORT
+  void focalDistance( float _focal );
+
+  /// get stereo focal distance relative to scene near plane
+  DLLEXPORT
+  float focalDistance( );
+
   /// Store the 3x3 left eye color matrix values for custom anaglyph stereo mode
   DLLEXPORT
   void anaglyphLeftEyeColorMatrix( std::vector<float> _mat );

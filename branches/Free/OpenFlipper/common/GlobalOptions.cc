@@ -95,7 +95,13 @@ static bool stereo_ = true;
 static bool glStereo_ = true;
 
 /// Stereo mode
-StereoMode stereoMode_ = OpenGL;
+static StereoMode stereoMode_ = OpenGL;
+
+/// get stereo eye distance (default = 7cm)
+static float eyeDistance_ = 0.07;
+
+/// stereo focal distance relative to scene near plane (default = to center of scene)
+static float focalDistance_ = 0.5;
 
 /// vectroy containing left/right color matrices for custom anaglyph mode
 std::vector<float> anaglyphLeftEyeColors_ = std::vector<float> (9, 0.0);
@@ -438,6 +444,30 @@ void stereoMode( StereoMode _mode ) {
 /// get current stereo mode setting
 StereoMode stereoMode( ) {
   return stereoMode_;
+}
+
+/// Store stereo eye distance
+void eyeDistance( float _eye )
+{
+  eyeDistance_ = _eye;
+}
+
+/// get stereo eye distance
+float eyeDistance( )
+{
+  return eyeDistance_;
+}
+
+/// Store stereo focal distance relative to scene near plane
+void focalDistance( float _focal )
+{
+  focalDistance_ = _focal;
+}
+
+/// get stereo focal distance relative to scene near plane
+float focalDistance( )
+{
+  return focalDistance_;
 }
 
 /// Store the 3x3 left eye color matrix values for custom anaglyph stereo mode

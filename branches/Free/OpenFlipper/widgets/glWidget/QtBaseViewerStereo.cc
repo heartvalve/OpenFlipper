@@ -71,27 +71,6 @@ static const char* customAnaglyphProg = {
 //-----------------------------------------------------------------------------
 
 
-void glViewer::setEyeDistance(double _distance) {
-  eyeDist_ = _distance;
-  updateGL();
-}
-
-double glViewer::eyeDistance( ) {
-  return eyeDist_;
-}
-
-void glViewer::setFocalDistance(double _distance) {
-  focalDist_ = _distance;
-  updateGL();
-}
-
-double glViewer::focalDistance( ) {
-  return focalDist_;
-}
-
-//-----------------------------------------------------------------------------
-
-
 void
 glViewer::setStereoMode(bool _b)
 {
@@ -111,7 +90,7 @@ glViewer::setStereoMode(bool _b)
 void
 glViewer::drawScene_glStereo()
 {
-  double l, r, t, b, w, h, a, radians, wd2, ndfl;
+  double l, r, t, b, w, h, a, radians, wd2, ndfl, zerop, xrange;
 
   w = glWidth();
   h = glHeight();
@@ -119,23 +98,23 @@ glViewer::drawScene_glStereo()
 
   radians = fovy_ * 0.5 / 180.0 * M_PI;
   wd2     = near_ * tan(radians);
-  ndfl    = near_ / focalDist_ * scene_radius_;
+  zerop   = near_ + ((far_ - near_) * OpenFlipper::Options::focalDistance ());
+  ndfl    = near_ / zerop ;
+  xrange  = a * wd2 * 2 * zerop / near_;
 
   l = -a*wd2;
   r =  a*wd2;
   t =  wd2;
   b = -wd2;
 
-  double offset  = 0.5 * eyeDist_;
+  double offset  = 0.5 * OpenFlipper::Options::eyeDistance () * xrange;
   double offset2 = offset * ndfl;
-
-
 
   // left eye
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glFrustum(l+offset2, r+offset2, b, t, near_, far_);
-  glTranslatef(-offset, 0.0, 0.0);
+  glTranslatef(+offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glDrawBuffer(GL_BACK_LEFT);
   glstate_->clearBuffers ();
@@ -147,7 +126,7 @@ glViewer::drawScene_glStereo()
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glFrustum(l-offset2, r-offset2, b, t, near_, far_);
-  glTranslatef(offset, 0.0, 0.0);
+  glTranslatef(-offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glDrawBuffer(GL_BACK_RIGHT);
   glstate_->clearBuffers ();
@@ -163,7 +142,7 @@ glViewer::drawScene_glStereo()
 void
 glViewer::drawScene_anaglyphStereo()
 {
-  double l, r, t, b, w, h, a, radians, wd2, ndfl;
+ double l, r, t, b, w, h, a, radians, wd2, ndfl, zerop, xrange;
 
   w = glWidth();
   h = glHeight();
@@ -171,21 +150,23 @@ glViewer::drawScene_anaglyphStereo()
 
   radians = fovy_ * 0.5 / 180.0 * M_PI;
   wd2     = near_ * tan(radians);
-  ndfl    = near_ / focalDist_ * scene_radius_;
+  zerop   = near_ + ((far_ - near_) * OpenFlipper::Options::focalDistance ());
+  ndfl    = near_ / zerop ;
+  xrange  = a * wd2 * 2 * zerop / near_;
 
   l = -a*wd2;
   r =  a*wd2;
   t =  wd2;
   b = -wd2;
 
-  double offset  = 0.5 * eyeDist_;
+  double offset  = 0.5 * OpenFlipper::Options::eyeDistance () * xrange;
   double offset2 = offset * ndfl;
 
   // left eye
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glFrustum(l+offset2, r+offset2, b, t, near_, far_);
-  glTranslatef(-offset, 0.0, 0.0);
+  glTranslatef(offset, 0.0, 0.0);
 
   glMatrixMode(GL_MODELVIEW);
   glstate_->clearBuffers ();
@@ -201,7 +182,7 @@ glViewer::drawScene_anaglyphStereo()
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glFrustum(l-offset2, r-offset2, b, t, near_, far_);
-  glTranslatef(offset, 0.0, 0.0);
+  glTranslatef(-offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -292,7 +273,7 @@ glViewer::drawScene_customAnaglyphStereo()
   if (!customAnaglyphSupported_)
     return;
 
-  double l, r, t, b, w, h, a, radians, wd2, ndfl;
+  double l, r, t, b, w, h, a, radians, wd2, ndfl, zerop, xrange;
 
   w = glWidth();
   h = glHeight();
@@ -300,14 +281,16 @@ glViewer::drawScene_customAnaglyphStereo()
 
   radians = fovy_ * 0.5 / 180.0 * M_PI;
   wd2     = near_ * tan(radians);
-  ndfl    = near_ / focalDist_ * scene_radius_;
+  zerop   = near_ + ((far_ - near_) * OpenFlipper::Options::focalDistance ());
+  ndfl    = near_ / zerop ;
+  xrange  = a * wd2 * 2 * zerop / near_;
 
   l = -a*wd2;
   r =  a*wd2;
   t =  wd2;
   b = -wd2;
 
-  double offset  = 0.5 * eyeDist_;
+  double offset  = 0.5 * OpenFlipper::Options::eyeDistance () * xrange;
   double offset2 = offset * ndfl;
 
   int vp_l, vp_b, vp_w, vp_h;
@@ -320,7 +303,7 @@ glViewer::drawScene_customAnaglyphStereo()
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glFrustum(l+offset2, r+offset2, b, t, near_, far_);
-  glTranslatef(-offset, 0.0, 0.0);
+  glTranslatef(offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glstate_->clearBuffers ();
   glClear(GL_DEPTH_BUFFER_BIT);
@@ -334,7 +317,7 @@ glViewer::drawScene_customAnaglyphStereo()
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glFrustum(l-offset2, r-offset2, b, t, near_, far_);
-  glTranslatef(offset, 0.0, 0.0);
+  glTranslatef(-offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glstate_->clearBuffers ();
   glClear(GL_DEPTH_BUFFER_BIT);
