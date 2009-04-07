@@ -169,6 +169,16 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::stereoMode(static_cast<OpenFlipper::Options::StereoMode> (stereoMode));
 
     //============================================================================
+    // Load stereo view settings
+    //============================================================================
+
+    float val;
+    if ( _ini.get_entry( val, "Options" , "EyeDistance") )
+      OpenFlipper::Options::eyeDistance(val);
+    if ( _ini.get_entry( val, "Options" , "FocalDistance") )
+      OpenFlipper::Options::focalDistance(val);
+
+    //============================================================================
     // Load the custom anaglyph stereo mode color matrices
     //============================================================================
     std::vector<float> mat;
@@ -516,6 +526,9 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     _ini.add_entry("Options","DefaultBaseColor", (uint)OpenFlipper::Options::defaultBaseColor().rgba ()  );
 
     _ini.add_entry("Options","StereoMode",OpenFlipper::Options::stereoMode() );
+
+    _ini.add_entry("Options" , "EyeDistance", OpenFlipper::Options::eyeDistance());
+    _ini.add_entry("Options" , "FocalDistance", OpenFlipper::Options::focalDistance());
 
     _ini.add_entry("Options" , "CustomAnaglyphLeftEye", OpenFlipper::Options::anaglyphLeftEyeColorMatrix() );
     _ini.add_entry("Options" , "CustomAnaglyphRightEye", OpenFlipper::Options::anaglyphRightEyeColorMatrix() );

@@ -458,8 +458,6 @@ void CoreWidget::registerCoreKeys() {
   emit registerKey(Qt::Key_L      , Qt::ControlModifier, "Show/Hide Logger");
   emit registerKey(Qt::Key_T      , Qt::ControlModifier, "Show/Hide Toolbox");
   emit registerKey(Qt::Key_F      , Qt::ControlModifier, "Toggle Fullscreen");
-  emit registerKey(Qt::Key_E      , Qt::ControlModifier | Qt::AltModifier, "Adjust Eye distance for stereo mode");
-  emit registerKey(Qt::Key_F      , Qt::ControlModifier | Qt::AltModifier, "Adjust Focal distance for stereo mode");
   emit registerKey(Qt::Key_Escape , Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
   emit registerKey(Qt::Key_Space  , Qt::NoModifier, "Toggle between multiview and single view");
 
@@ -471,75 +469,28 @@ void CoreWidget::registerCoreKeys() {
 void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 
   if (_e->modifiers() & Qt::ControlModifier ) {
-    if (_e->modifiers() & Qt::AltModifier )
+    switch (_e->key()) {
+      case Qt::Key_F :
+          toggleFullscreen();
+        return;
 
-      if ( OpenFlipper::Options::stereo() ) {
-        switch (_e->key()) {
-          // Stereo seeing: eye distance
-          case Qt::Key_E:
-          {
-            bool ok(false);
+      case Qt::Key_L :
+          toggleLogger();
+        return;
 
-            double val = QInputDialog::getDouble( this, "Eye Dist", "Eye Dist:",
-                                                  examiner_widgets_[0]->eyeDistance(),
-                                                  0.0, 100.0, 10,
-                                                  &ok);
+      case Qt::Key_T :
+          toggleToolbox();
+        return;
 
-            if (ok) {
-              for ( uint i = 0 ; i < examiner_widgets_.size(); ++i)
-                examiner_widgets_[i]->setEyeDistance(val);
-            }
+      case Qt::Key_O :
+        loadMenu();
 
-            break;
-          }
+      case Qt::Key_S :
+        saveMenu();
 
-          // Stereo setting: focal length
-          case Qt::Key_F:
-          {
-            bool ok(false);
-
-            double val = QInputDialog::getDouble( this, "Focal Dist", "Focal Dist:",
-                                                  examiner_widgets_[0]->focalDistance(),
-                                                  0.0, 100.0, 10,
-                                                  &ok);
-            if (ok) {
-              for ( uint i = 0 ; i < examiner_widgets_.size(); ++i)
-                examiner_widgets_[i]->setFocalDistance(val);
-            }
-
-            break;
-          }
-
-          default:
-            break;
-        }
-
-      } else
-        emit log(LOGWARN,"Activate stereo mode to change stereo settings");
-
-    else
-      switch (_e->key()) {
-        case Qt::Key_F :
-            toggleFullscreen();
-          return;
-
-        case Qt::Key_L :
-            toggleLogger();
-          return;
-
-        case Qt::Key_T :
-            toggleToolbox();
-          return;
-
-        case Qt::Key_O :
-          loadMenu();
-
-        case Qt::Key_S :
-          saveMenu();
-
-        default:
-          return;
-      }
+      default:
+        return;
+    }
 
   }
 

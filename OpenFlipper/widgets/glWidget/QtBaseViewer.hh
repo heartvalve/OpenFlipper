@@ -554,29 +554,9 @@ private:
     /// enable/disable stereo mode
     virtual void setStereoMode(bool _b);
 
-  public:
-    /** \brief Set eye distance for stereo
-     *
-     * Set the eye distance used for stereo projection. The function will enforce a redraw.
-     */
-    void setEyeDistance(double _distance);
-
-    /// Get the current eye Distance
-    double eyeDistance( );
-
-    /** \brief Set focal distance for stereo
-     *
-     * Set the focal distance used for stereo projection. The function will enforce a redraw.
-     */
-    void setFocalDistance(double _distance);
-
-    /// Get the current focal Distance
-    double focalDistance( );
-
   private:
     // stereo stuff
     bool                         stereo_;
-    double                       eyeDist_, focalDist_;
 
     // custom anaglyph stuff
     int    agTexWidth_;

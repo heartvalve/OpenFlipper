@@ -157,6 +157,9 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   stereoAnaglyph->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphRedCyan);
   stereoCustomAnaglyph->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphCustom);
 
+  eyeDistance->setValue (OpenFlipper::Options::eyeDistance());
+  focalDistance->setValue (OpenFlipper::Options::focalDistance() * 1000);
+
   std::vector<float> mat = OpenFlipper::Options::anaglyphLeftEyeColorMatrix ();
   lcm0->setValue (mat[0]);
   lcm1->setValue (mat[1]);
@@ -416,6 +419,9 @@ void OptionsWidget::slotApply() {
     OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphRedCyan);
   else
     OpenFlipper::Options::stereoMode(OpenFlipper::Options::OpenGL);
+
+  OpenFlipper::Options::eyeDistance(eyeDistance->value ());
+  OpenFlipper::Options::focalDistance((float)focalDistance->value () / 1000);
 
   std::vector<float> mat (9, 0);
   mat[0] = lcm0->value ();

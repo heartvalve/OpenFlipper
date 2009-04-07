@@ -147,9 +147,6 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   far_              = 100.0;
   fovy_             = 45.0;
 
-  focalDist_        = 3.0;
-  eyeDist_          = 0.01;
-
   sceneGraphRoot_   = 0;
 
   normalsMode_      = DONT_TOUCH_NORMALS;
