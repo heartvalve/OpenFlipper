@@ -280,14 +280,16 @@ int main(int argc, char **argv)
   OpenFlipper::Options::argc(&argc);
   OpenFlipper::Options::argv(&argv);
 
-  CSimpleOpt args(argc, argv, g_rgOptions);
+  CSimpleOpt argBatch(argc, argv, g_rgOptions);
 
   //check only batchMode before the core is created
-  while (args.Next())
-    if (args.OptionId() == OPT_BATCH ){
+  while (argBatch.Next())
+    if (argBatch.OptionId() == OPT_BATCH ){
       OpenFlipper::Options::nogui(true);
       break;
     }
+
+  CSimpleOpt args(argc, argv, g_rgOptions);
 
 // Only Install signal handler if not running in debug version, otherwise gdb will get confused
 // #ifndef DEBUG
