@@ -1,0 +1,12 @@
+
+OpenFlipper (1.0 RC2)
+ * Anaglyph stereo support
+ * Options dialog for stereo settings
+ * Bugfix for log widget where logger was not shown correctly (Windows, MacOSX)
+ * Move Plugin: Improved handling of manipulator size
+ * Move Plugin: Bugfixes 
+ * Datacontrol Plugin: Hide/Show all objects of same type
+ * Selection Plugin: Initial size for paint sphere corrected   
+
+OpenFlipper (1.0 RC1)
+ * Initial Release
