@@ -110,7 +110,7 @@ public:
       overridden by TriStripNodeT. */
   virtual void update_topology();
 
-  /** \brief Setup a mapping between internal texture ids on the esh and the ids for the loaded textures in opengl
+  /** \brief Setup a mapping between internal texture ids on the mesh and the ids for the loaded textures in opengl
    */
   void set_texture_map( std::vector< GLuint >* _map){ textureMap_ = _map; };
 
