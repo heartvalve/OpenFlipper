@@ -174,6 +174,19 @@ void MaterialNode::enter(GLState& _state, unsigned int /* _drawmode */ )
  }
 }
 
+//----------------------------------------------------------------------------
+
+void MaterialNode::enterPick(GLState& /*_state*/ ,
+                             PickTarget /*_target*/,
+                             unsigned int /*_drawMode*/ ) {
+
+}
+
+void MaterialNode::leavePick(GLState& /*_state*/,
+                            PickTarget /*_target*/,
+                            unsigned int /*_drawMode*/ ) {
+}
+
 
 //----------------------------------------------------------------------------
 
