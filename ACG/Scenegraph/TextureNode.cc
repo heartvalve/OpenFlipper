@@ -425,6 +425,17 @@ void TextureNode::leave(GLState& /* _state */ , unsigned int _drawmode)
    }
 }
 
+void TextureNode::enterPick(GLState& /*_state*/ ,
+                            PickTarget /*_target*/,
+                            unsigned int /*_drawMode*/ ) {
+
+}
+
+void TextureNode::leavePick(GLState& /*_state*/,
+                            PickTarget /*_target*/,
+                            unsigned int /*_drawMode*/ ) {
+}
+
 //----------------------------------------------------------------------------
 
 

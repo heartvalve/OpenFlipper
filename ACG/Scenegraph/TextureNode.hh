@@ -250,6 +250,14 @@ public:
    */
   void leave(GLState& _state, unsigned int _drawmode);
 
+  /** \brief Do nothing in picking
+   */
+  void enterPick(GLState& _state, PickTarget _target, unsigned int _drawMode );
+
+  /** \brief Do nothing in picking
+   */
+  void leavePick(GLState& _state, PickTarget _target, unsigned int _drawMode );
+
 /** @} */
 
 private:
