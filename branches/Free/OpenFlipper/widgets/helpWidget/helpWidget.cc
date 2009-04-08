@@ -27,7 +27,7 @@ HelpWidget::HelpWidget(QWidget* parent)
 	QString stylesheet = QString(OpenFlipper::Options::applicationDirStr());
 	stylesheet += "/Help/acg_style.css";
 
-	//std::cerr << filename.toStdString() << std::endl;
+	//closeTabButton->setIcon(QIcon(iconPath+"tab-close.png"));
 
 	helpEngine_ = new QHelpEngine(filename, this);
 
