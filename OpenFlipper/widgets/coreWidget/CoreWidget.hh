@@ -76,7 +76,7 @@
 #include <OpenFlipper/widgets/aboutWidget/aboutWidget.hh>
 #include <OpenFlipper/widgets/loggerWidget/loggerWidget.hh>
 #include <OpenFlipper/widgets/optionsWidget/optionsWidget.hh>
-#include <OpenFlipper/widgets/helpBrowser/helpWidget.hh>
+#include <OpenFlipper/widgets/helpWidget/helpWidget.hh>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
@@ -664,17 +664,11 @@ public:
 
   public slots:
     /// Display the help Browser
-    void showHelpBrowserUser();
-
-    /// Display the help Browser
-    void showHelpBrowserDeveloper();
+    void showHelpBrowser();
 
   private:
     /// Pointer to the help Browser
-    HelpWidget* helpBrowserDeveloper_;
-
-    /// Pointer to the help Browser
-    HelpWidget* helpBrowserUser_;
+    HelpWidget* helpWidget_;
 
   /** @} */
 

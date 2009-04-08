@@ -45,49 +45,21 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <QtHelp>
+
 //== IMPLEMENTATION ==========================================================
 
 
 
-void CoreWidget::showHelpBrowserUser( ) {
+void CoreWidget::showHelpBrowser( ) {
 
-  if ( OpenFlipper::Options::nogui() )
-    return;
+	if ( OpenFlipper::Options::nogui() )
+		return;
 
-  if ( helpBrowserUser_ == 0 ) {
-    helpBrowserUser_ = new HelpWidget( this ,true);
-  }
+	if(helpWidget_ == 0)
+		helpWidget_ = new HelpWidget();
 
-  //show the widget centered
-  QPoint center;
-  center.setX( x() + width() / 2 );
-  center.setY( y() + height() / 2 );
-
-  helpBrowserUser_->setGeometry(center.x() - helpBrowserUser_->width() / 2,
-                              center.y() - helpBrowserUser_->height()/ 2, helpBrowserUser_->width(), helpBrowserUser_->height());
-
-  helpBrowserUser_->show();
-
-}
-
-void CoreWidget::showHelpBrowserDeveloper( ) {
-
-  if ( OpenFlipper::Options::nogui() )
-    return;
-
-  if ( helpBrowserDeveloper_ == 0 ) {
-    helpBrowserDeveloper_ = new HelpWidget( this ,false);
-  }
-
-  //show the widget centered
-  QPoint center;
-  center.setX( x() + width() / 2 );
-  center.setY( y() + height() / 2 );
-
-  helpBrowserDeveloper_->setGeometry(center.x() - helpBrowserDeveloper_->width() / 2,
-                              center.y() - helpBrowserDeveloper_->height()/ 2, helpBrowserDeveloper_->width(), helpBrowserDeveloper_->height());
-
-  helpBrowserDeveloper_->show();
+	helpWidget_->show();
 
 }
 

@@ -383,19 +383,11 @@ void CoreWidget::setupMenuBar()
   menuBar()->addMenu(helpMenu_);
 
   //Open Help Browser
-  QAction* AC_HelpBrowser = new QAction(tr("&User Help"), this);
-  AC_HelpBrowser->setStatusTip(tr("Open Help Browser with User Documentation"));
+  QAction* AC_HelpBrowser = new QAction(tr("&Help"), this);
+  AC_HelpBrowser->setStatusTip(tr("Open Help Browser with Documentation"));
   AC_HelpBrowser->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png"));
   AC_HelpBrowser->setWhatsThis("Open the <b>Help Browser</b>");
-  connect(AC_HelpBrowser, SIGNAL(triggered()), this, SLOT(showHelpBrowserUser()));
-  helpMenu_->addAction(AC_HelpBrowser);
-
-  //Open Help Browser
-  AC_HelpBrowser = new QAction(tr("&Developer Help"), this);
-  AC_HelpBrowser->setStatusTip(tr("Open Help Browser with Developer Documentation"));
-  AC_HelpBrowser->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png"));
-  AC_HelpBrowser->setWhatsThis("Open the <b>Help Browser</b>");
-  connect(AC_HelpBrowser, SIGNAL(triggered()), this, SLOT(showHelpBrowserDeveloper()));
+  connect(AC_HelpBrowser, SIGNAL(triggered()), this, SLOT(showHelpBrowser()));
   helpMenu_->addAction(AC_HelpBrowser);
 
   //Switch to whats this mode
