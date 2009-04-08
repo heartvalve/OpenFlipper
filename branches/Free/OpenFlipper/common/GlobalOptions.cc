@@ -810,7 +810,7 @@ QString updatePassword( ) {
 }
 
 QString coreVersion() {
-  return QString("0.9.1");
+  return QString("1.0 RC2");
 }
 
 void pickingRenderMode( QString _target ) {
