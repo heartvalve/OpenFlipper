@@ -1,4 +1,4 @@
-# Doxyfile 1.5.6
+
 
 #---------------------------------------------------------------------------
 # Project related configuration options
@@ -27,6 +27,11 @@ INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
 STRIP_FROM_PATH        = 
 STRIP_FROM_INC_PATH    = 
+GENERATE_QHP	       = YES
+QHP_NAMESPACE	       = "com.openflipper.dev"
+QHP_VIRTUAL_FOLDER     = "openflipper-1.0"
+QCH_FILE	       = developer.qch
+QHG_LOCATION	       = /usr/bin/qhelpgenerator
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
 QT_AUTOBRIEF           = NO
@@ -184,9 +189,9 @@ HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            = Doxygen/html/acg_header.html  
 HTML_FOOTER            = Doxygen/html/acg_footer.html
-HTML_STYLESHEET        = 
+HTML_STYLESHEET        = Doxygen/html/acg_style.css 
 HTML_ALIGN_MEMBERS     = YES
-GENERATE_HTMLHELP      = NO
+GENERATE_HTMLHELP      = YES
 GENERATE_DOCSET        = NO
 DOCSET_FEEDNAME        = "Doxygen generated docs"
 DOCSET_BUNDLE_ID       = org.doxygen.Project
