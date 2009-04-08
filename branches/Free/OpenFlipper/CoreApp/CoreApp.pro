@@ -34,6 +34,7 @@ unix {
 macx {
         LIBS += -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
         QMAKE_LFLAGS_SONAME += -install_name$${LITERAL_WHITESPACE}$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY}/
+	ICON = $$TOPDIR/OpenFlipper/Icons/OpenFlipper_Icon.icns
 }
 
 win32 {

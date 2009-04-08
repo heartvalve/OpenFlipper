@@ -165,8 +165,6 @@ defineTest(Application) {
 		CONFIG += x86
 		# CONFIG += ppc		# Uncomment to build universal binary
 
-		ICON = $${TOPDIR}/OpenFlipper/Icons/OpenFlipper_Icon.icns
-		export( ICON )
 		export( CONFIG )
 	}
 	export(TEMPLATE)
