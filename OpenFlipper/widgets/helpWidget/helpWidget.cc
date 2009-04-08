@@ -138,3 +138,11 @@ void HelpWidget::searchItems() {
 void HelpWidget::openFoundSite(QListWidgetItem* _item) {
 
 }
+
+HelpWidget::~HelpWidget() {
+
+	delete searchWidget_;
+	delete results_;
+	delete textWindow_;
+	delete helpEngine_;
+}

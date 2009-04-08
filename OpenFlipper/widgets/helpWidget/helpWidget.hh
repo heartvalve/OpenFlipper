@@ -26,6 +26,8 @@ class HelpWidget : public QMainWindow, public Ui::HelpWidget
 
 	  HelpWidget(QWidget* parent = 0);
 
+	  virtual ~HelpWidget();
+
 private slots:
 
 	void goBack();
@@ -44,7 +46,6 @@ private slots:
 
 	// For the search popup
 	QDockWidget* searchWidget_;
-	QGridLayout* grid;
 	QListWidget* results_;
 
 	HelpBrowser* textWindow_;
