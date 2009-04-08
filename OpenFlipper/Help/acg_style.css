@@ -1,0 +1,189 @@
+/*
+  Style sheet for the webpages of the
+
+  Institut fuer Informatik VIII, RWTH Aachen
+*/
+
+body {
+ color:#e0e0d0;
+ background-color:#003010;
+ font-family:sans-serif;
+}
+
+a:link       { color: #f07030;}
+a:active     { color: #e0e0d0;}
+a:visited    { color: #f07030;}
+a:hover      { color: #e0e0d0;}
+a            { text-decoration: none }
+
+/* NETSCAPE 4.x needs this: */
+th,td,table {
+ color:        #e0e0d0;
+ font-family:  sans-serif;
+ border-color: #e0e0d0;
+ border-width: 0px;
+ border-collapse: collapse;
+}
+
+h1,h2,h3,h4,h5,h6,p {
+ color: #e0e0d0
+ font-family: sans-serif;
+}
+
+p {
+  text-align:left;
+}
+
+h1 {
+  font-size: 150%;
+}
+
+h2 {
+  font-size: 120%;
+}
+
+h3 {
+  font-size: 100%;
+}
+
+/* HEADER */
+
+span.acg_header {
+  float:left;
+  margin-left: 55px;
+  background-image: url("pics/header_leif.png");
+  background-repeat: no-repeat;
+  height: 83px;
+  width:500px;
+}
+
+span.acg_header_content {
+  display:none;
+}
+
+/* DISCLAIMER */
+
+p.disclaimer { text-align:right; }
+a.disclaimer { font-size: 8px; }
+
+/* Menu */
+
+div.menu1-level1-no {
+  font-size: 130%;
+  text-align:right;
+}
+
+div.menu1-level1-act {
+  font-size: 130%;
+  text-align: right;
+}
+
+div.menu1-level1-act a {
+  color: #e0e0d0;
+}
+
+div.menu1-level2-no {
+  text-align:right;
+}
+
+div.menu1-level2-act {
+  text-align: right;
+}
+
+div.menu1-level2-act a {
+  color: #e0e0d0;
+}
+
+/* Dynamic objects: */
+
+.contenttable td {
+  border-style:solid;
+  border-width:1px;
+  padding:5px;
+}
+
+table.tborders {
+  border-style:solid;
+  border-width:1px;
+}
+
+td.tborders {
+  border-style:solid;
+  border-width:1px;
+  padding:5px;
+}
+
+tr.tborders {
+  border-style:solid;
+  border-width:1px;
+}
+
+table.tbordersnopad {
+  border-style:solid;
+  border-width:1px;
+  padding: 0px;
+}
+
+td.tbordersnopad {
+  border-style:solid;
+  border-width:1px;
+  padding:0px;
+}
+
+tr.tbordersnopad {
+  border-style:solid;
+  border-width:1px;
+  padding:0px;
+}
+
+table.noborders {
+  border-style:none;
+  border-width:0px;
+}
+
+td.noborders {
+  border-style:none;
+  border-width:0px;
+  padding:5px;
+}
+
+tr.noborders {
+  border-style:none;
+  border-width:0px;
+  padding:0px;
+}
+
+td.box-element {
+  padding: 5px;
+}
+
+td.content-element {
+  padding:      5px;
+  padding-left: 55px;
+  padding-right: 55px;
+}
+
+td p.bodytext {
+  margin:0px;
+}
+
+/* Content header */
+div.csc-header {
+  background-color: #e0e0d0;
+  color:#084028;
+  clear:both;
+}
+
+div.csc-textpicHeader {
+  background-color:#e0e0d0;
+  color:#084028;
+}
+
+/* Standard formattings */
+p.align-center {
+  text-align:center;
+}
+
+p.csc-frame-frame1, table.csc-frame-frame1 { background-color: #EDEBF1; padding: 2px 4px 2px 4px; border: 1px solid #333333; }
+p.csc-frame-frame2, table.csc-frame-frame2 { background-color: #F5FFAA; padding: 2px 4px 2px 4px; border: 1px solid #333333; }
+
