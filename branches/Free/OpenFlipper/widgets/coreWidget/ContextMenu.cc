@@ -98,7 +98,7 @@ void CoreWidget::updatePopupMenuNode(QMenu* _menu , ACG::SceneGraph::BaseNode* _
  * @param _menu Pointer to the context Menu
  * @param _part id of the coordsys part which has been clicked on.
  */
-void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
+void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/) {
 //   std::cerr << "Coordsys part was : " << _part << std::endl;
   QAction* typeEntry = new QAction("Viewer Settings",_menu);
   _menu->addAction( typeEntry );
@@ -237,7 +237,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int _part) {
  * @param _menu Pointer to the context Menu
  * @param _point position in the viewer where the user clicked.
  */
-void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& _point) {
+void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point*/) {
 
   //====================================================================================================
   // DrawModes

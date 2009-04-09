@@ -163,8 +163,8 @@ void QtSlideWindow::detachWidget ()
 //-----------------------------------------------------------------------------
 
 void QtSlideWindow::paintWindowFrame(QPainter *_painter,
-                                     const QStyleOptionGraphicsItem *_option,
-                                     QWidget *_widget)
+                                     const QStyleOptionGraphicsItem* /*_option*/,
+                                     QWidget* /*_widget*/ )
 {
   int w = geometry().width();
   int h = geometry().height();
