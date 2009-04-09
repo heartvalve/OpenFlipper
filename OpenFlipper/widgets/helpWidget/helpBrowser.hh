@@ -9,10 +9,10 @@
 #define HELPBROWSER_HH_
 
 #include <QtGui>
-#include <QTextBrowser>
+#include <QWebView>
 #include <QtHelp>
 
-class HelpBrowser : public QTextBrowser {
+class HelpBrowser : public QWebView {
 	Q_OBJECT
 
 public:
@@ -20,24 +20,22 @@ public:
 
 	~HelpBrowser();
 
-	QVariant loadResource(int type, const QUrl& url);
-
-	bool setCSSData(QString& _filename);
-
-	void refreshCSS();
+	QVariant loadBytes(const QUrl& url);
 
 	bool isBackwardAvailable();
 
 	bool isForwardAvailable();
 
+	void setUrl(const QUrl& _url);
+
 signals:
-	void sourceChanged ( const QString& src );
+	void urlChanged ( const QUrl& src );
 
 public slots:
 
-	void setSource(const QUrl& url);
+	void load(const QUrl& _url);
 
-	void setSource(const QUrl& url, const QString& /* str */, bool _skipSave = false);
+	void load(const QUrl& url, const QString& _s_url, bool _skipSave = false);
 
 	void backward();
 
@@ -45,9 +43,9 @@ public slots:
 
 private:
 
-	QHelpEngine* helpEngine_;
+	QUrl getCurrentDir(const QUrl& _url);
 
-	QTextDocument* doc_;
+	QHelpEngine* helpEngine_;
 
 	QString css_str_;
 	QString css_file_;

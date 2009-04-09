@@ -13,7 +13,7 @@
 
 #include <QTextStream>
 
-HelpWidget::HelpWidget(QWidget* parent)
+HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 	: QMainWindow(parent),
 	searchWidget_(0),
 	textWindow_(0),
@@ -21,13 +21,26 @@ HelpWidget::HelpWidget(QWidget* parent)
 
 	setupUi(this);
 
+	homeSite_ = _homeSite;
+
 	QString filename = QString(OpenFlipper::Options::applicationDirStr());
 	filename += "/Help/Help.qhc";
 
 	QString stylesheet = QString(OpenFlipper::Options::applicationDirStr());
 	stylesheet += "/Help/acg_style.css";
 
-	//closeTabButton->setIcon(QIcon(iconPath+"tab-close.png"));
+	QString iconPath = QString(OpenFlipper::Options::iconDirStr());
+#ifdef WIN32
+	iconPath += "\\";
+#else
+	iconPath += "/";
+#endif
+
+	// Set Buttons
+	backButton_->setIcon(QIcon(iconPath+"arrow-left.png"));
+	forwardButton_->setIcon(QIcon(iconPath+"arrow-right.png"));
+	homeButton_->setIcon(QIcon(iconPath+"go-home.png"));
+	searchButton_->setIcon(QIcon(iconPath+"edit-find.png"));
 
 	helpEngine_ = new QHelpEngine(filename, this);
 
@@ -49,22 +62,23 @@ HelpWidget::HelpWidget(QWidget* parent)
 
 	results_ = new QListWidget();
 
-	searchWidget_->setWidget(results_);
+	searchWidget_->setWidget(helpEngine_->indexWidget());
+	//searchWidget_->setWidget(results_);
 
 	searchWidget_->hide();
 	addDockWidget(Qt::BottomDockWidgetArea, searchWidget_);
 
 
-    // Load css data
-    textWindow_->setCSSData(stylesheet);
-
     // Entry in tree view has been clicked
     connect(helpEngine_->contentWidget(), SIGNAL(linkActivated(const QUrl&)),
-            textWindow_, SLOT(setSource(const QUrl&)));
+            textWindow_, SLOT(load(const QUrl&)));
+
+    connect(helpEngine_->indexWidget(), SIGNAL(linkActivated(const QUrl&, const QString&)),
+            textWindow_, SLOT(load(const QUrl&, const QString&)));
 
     // Entry in results view (search) has been clicked
-    connect(results_, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-    		textWindow_, SLOT(openFoundSite(QListWidgetItem*)));
+    //connect(results_, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+    //		textWindow_, SLOT(openFoundSite(QListWidgetItem*)));
 
     // Search button
     connect(searchButton_, SIGNAL(clicked()), this, SLOT(searchItems()));
@@ -75,14 +89,26 @@ HelpWidget::HelpWidget(QWidget* parent)
     // Forward button
     connect(forwardButton_, SIGNAL(clicked()), this, SLOT(goForward()));
 
+    // Forward button
+    connect(homeButton_, SIGNAL(clicked()), this, SLOT(goHome()));
+
     // Source has been reloaded
-    connect(textWindow_, SIGNAL(sourceChanged(const QString&)), this, SLOT(update(const QString&)));
+    connect(textWindow_, SIGNAL(urlChanged(const QUrl&)), this, SLOT(update(const QUrl&)));
+
+    // Register documentation (if not registered yet)
+    helpEngine_->registerDocumentation(filename);
+    helpEngine_->setCurrentFilter("");
 
     // Load main page
-    textWindow_->setSource(QUrl("qthelp://com.openflipper.dev/openflipper-1.0/main.html"));
+    textWindow_->load(QUrl(homeSite_));
 }
 
-void HelpWidget::update(const QString& /* url */) {
+void HelpWidget::setHomeSite(const QString& _homeSite) {
+
+	homeSite_ = _homeSite;
+}
+
+void HelpWidget::update(const QUrl& /* url */) {
 
 	updateButtons();
 }
@@ -97,6 +123,13 @@ void HelpWidget::goForward() {
 void HelpWidget::goBack() {
 
 	textWindow_->backward();
+
+	updateButtons();
+}
+
+void HelpWidget::goHome() {
+
+	textWindow_->load(homeSite_);
 
 	updateButtons();
 }
@@ -118,19 +151,9 @@ void HelpWidget::updateButtons() {
 
 void HelpWidget::searchItems() {
 
-	QMap<QString, QUrl> map = helpEngine_->linksForIdentifier(searchEdit_->text());
-	std::cerr << "Searching for " << searchEdit_->text().toStdString() << std::endl;
+	QMap<QString, QUrl> results = helpEngine_->linksForIdentifier(searchButton_->text());
 
-	QList<QUrl> list = map.values();
-
-	std::cerr << "Found " << list.size() << " items!" << std::endl;
-
-	for(int i = 0; i < list.size(); i++) {
-		QListWidgetItem itm(list[i].toString());
-		results_->insertItem(i, &itm);
-
-		std::cerr << "Adding item " << list[i].toString().toStdString() << std::endl;
-	}
+	std::cerr << "Found: " << results.size() << std::endl;
 
 	searchWidget_->show();
 }
