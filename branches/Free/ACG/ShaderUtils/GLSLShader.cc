@@ -20,7 +20,7 @@
 #include <sstream>
 #include <fstream>
 
-#include <GL/gl.hh>
+#include <../GL/gl.hh>
 
 #include "gldebug.h"
 #include "GLSLShader.hh"
