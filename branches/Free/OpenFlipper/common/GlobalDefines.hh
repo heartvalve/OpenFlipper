@@ -65,23 +65,25 @@
 
 /** Enable openmp where possible (for gcc version >= 4.3)
  */
-#if GCC_VERSION >= 4030
-  #define USE_OPENMP
+#ifndef USE_OPENMP
+  #if GCC_VERSION >= 4030
+    #define USE_OPENMP
+  #endif
 #endif
 
 
 #ifndef DLLEXPORT
-	#ifdef WIN32 
-		#ifdef PLUGINLIBDLL 
-			#ifdef USEPLUGINLIBDLL 
-				#define DLLEXPORT __declspec(dllimport) 		
-				#define DLLEXPORTONLY 
-			#else 
-				#define DLLEXPORT __declspec(dllexport) 
+	#ifdef WIN32
+		#ifdef PLUGINLIBDLL
+			#ifdef USEPLUGINLIBDLL
+				#define DLLEXPORT __declspec(dllimport)
+				#define DLLEXPORTONLY
+			#else
+				#define DLLEXPORT __declspec(dllexport)
 				#define DLLEXPORTONLY __declspec(dllexport)
 			#endif
-		#else		
-			#define DLLEXPORT	
+		#else
+			#define DLLEXPORT
 			#define DLLEXPORTONLY
 		#endif
 	#else
