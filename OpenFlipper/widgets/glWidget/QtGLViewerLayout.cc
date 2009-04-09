@@ -121,7 +121,7 @@ void QtGLViewerLayout::removeAt (int _index)
 
 //-----------------------------------------------------------------------------
 
-QSizeF QtGLViewerLayout::sizeHint(Qt::SizeHint _which, const QSizeF & _constraint) const
+QSizeF QtGLViewerLayout::sizeHint(Qt::SizeHint /*_which*/, const QSizeF & _constraint) const
 {
   return _constraint;
 }

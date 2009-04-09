@@ -116,7 +116,7 @@ void QtMultiViewLayout::removeAt (int _index)
 
 //-----------------------------------------------------------------------------
 
-QSizeF QtMultiViewLayout::sizeHint(Qt::SizeHint _which, const QSizeF & _constraint) const
+QSizeF QtMultiViewLayout::sizeHint(Qt::SizeHint /*_which*/, const QSizeF & _constraint) const
 {
   return _constraint;
 }

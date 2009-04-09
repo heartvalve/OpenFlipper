@@ -135,7 +135,7 @@ void HelpWidget::searchItems() {
 	searchWidget_->show();
 }
 
-void HelpWidget::openFoundSite(QListWidgetItem* _item) {
+void HelpWidget::openFoundSite(QListWidgetItem* /*_item*/) {
 
 }
 
