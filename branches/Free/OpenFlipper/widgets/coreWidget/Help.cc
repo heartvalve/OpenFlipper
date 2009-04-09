@@ -57,7 +57,7 @@ void CoreWidget::showHelpBrowser( ) {
 		return;
 
 	if(helpWidget_ == 0)
-		helpWidget_ = new HelpWidget();
+		helpWidget_ = new HelpWidget(this, "qthelp://org.openflipper.doc/OpenFlipper-1.0-Dev/main.html");
 
 	helpWidget_->show();
 

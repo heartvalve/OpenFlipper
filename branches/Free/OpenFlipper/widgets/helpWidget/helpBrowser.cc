@@ -9,62 +9,66 @@
 
 #include <iostream>
 
+#include <QWebFrame>
+
 HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent) :
 
-	QTextBrowser(parent),
-	helpEngine_(_helpEngine),
-	doc_(0) {
+	QWebView(parent),
+	helpEngine_(_helpEngine) {
 
 	currentPage_ = 0;
 
-	doc_ = new QTextDocument();
+	page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+	// Link has been clicked
+    connect(this->page(), SIGNAL(linkClicked(const QUrl&)),
+            this, SLOT(load(const QUrl&)));
 
-	this->setDocument(doc_);
 }
 
 HelpBrowser::~HelpBrowser() {
 	delete helpEngine_;
 }
 
-QVariant HelpBrowser::loadResource(int type, const QUrl &url) {
-	if (url.scheme() == "qthelp") {
+QVariant HelpBrowser::loadBytes(const QUrl &url) {
 
-		QByteArray bytes = helpEngine_->fileData(url);
+	QByteArray bytes = helpEngine_->fileData(url);
 
-		return QVariant(bytes);
-	}
-	else {
-		return QTextBrowser::loadResource(type, url);
-	}
+	return QVariant(bytes);
 }
 
-void HelpBrowser::setSource(const QUrl& url) {
+void HelpBrowser::setUrl(const QUrl& _url) {
 
-	if(url.scheme() != "qthelp") {
+	load(_url, "");
+}
+
+void HelpBrowser::load(const QUrl& _url) {
+
+	load(_url, "");
+}
+
+void HelpBrowser::load(const QUrl& _url, const QString& /*_s_url*/, bool _skipSave) {
+
+	QUrl newUrl;
+
+	if(_url.scheme() != "qthelp") {
 		// Convert link to be within qthelp domain namespace
 		QString new_file = visitedPages_[currentPage_];
 		QStringList comp = new_file.split("/");
-		comp[comp.size()-1] = url.toString();
+		comp[comp.size()-1] = _url.toString();
 
-		QUrl newUrl = QUrl(comp.join("/"));
+		newUrl = QUrl(comp.join("/"));
 
-		if(helpEngine_->findFile(newUrl).isValid())
-			this->setSource(newUrl, newUrl.toString());
-		else
+		if(!helpEngine_->findFile(newUrl).isValid()) {
 			QMessageBox::warning( this, "OpenFlipper Help",
 				"Unable to find specified file within documentation.");
-
+			return;
+		}
 
 	} else {
-
-		this->setSource(url, url.toString());
+		newUrl = _url;
 	}
-}
 
-
-void HelpBrowser::setSource(const QUrl& url, const QString& /* str */, bool _skipSave) {
-
-	QVariant data = this->loadResource(QTextDocument::HtmlResource, url);
+	QVariant data = this->loadBytes(newUrl);
 
 	QString txt;
 
@@ -79,45 +83,24 @@ void HelpBrowser::setSource(const QUrl& url, const QString& /* str */, bool _ski
 		txt = data.toString();
 	}
 
-	doc_->setHtml(txt);
-	refreshCSS();
+	page()->mainFrame()->setHtml(txt, getCurrentDir(newUrl));
 
 	if(!_skipSave) {
-		visitedPages_.push_back(url.toString());
+		visitedPages_.push_back(_url.toString());
 		currentPage_ = visitedPages_.size()-1;
 	}
 
-	emit sourceChanged ( url.toString() );
+	emit urlChanged ( _url.toString() );
 }
 
-bool HelpBrowser::setCSSData(QString& _filename) {
+QUrl HelpBrowser::getCurrentDir(const QUrl& _url) {
 
-	// Load style sheet
-	QFile file(_filename);
-	if(!file.open(QIODevice::ReadOnly))
-		return false;
+	QStringList str_list = _url.toString().split("/");
+	str_list[str_list.size() - 1] = "";
 
-	QTextStream css_stream(&file);
+	QString nstr = str_list.join("/");
 
-	// Read css data into member variable
-	css_str_ = css_stream.readAll();
-	// Cut off the path to css file
-#ifdef WIN32
-	css_file_ = _filename.split("\\").last();
-#else
-	css_file_ = _filename.split("/").last();
-#endif
-
-	doc_->addResource( QTextDocument::StyleSheetResource, QUrl( css_file_ ), css_str_ );
-	doc_->setDefaultStyleSheet(css_file_);
-
-	return true;
-}
-
-void HelpBrowser::refreshCSS() {
-
-	if(css_str_.length() > 0)
-		doc_->addResource( QTextDocument::StyleSheetResource, QUrl( css_file_ ), css_str_ );
+	return QUrl(nstr);
 }
 
 bool HelpBrowser::isForwardAvailable() {
@@ -134,7 +117,7 @@ void HelpBrowser::backward() {
 
 	if(isBackwardAvailable()) {
 		currentPage_--;
-		setSource(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
+		load(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
 	}
 }
 
@@ -142,7 +125,7 @@ void HelpBrowser::forward() {
 
 	if(isForwardAvailable()) {
 		currentPage_++;
-		setSource(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
+		load(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
 	}
 }
 

@@ -24,9 +24,11 @@ class HelpWidget : public QMainWindow, public Ui::HelpWidget
 
   public:
 
-	  HelpWidget(QWidget* parent = 0);
+	  HelpWidget(QWidget* parent = 0, const QString& _homeSite = "");
 
 	  virtual ~HelpWidget();
+
+	  void setHomeSite(const QString& _homeSite);
 
 private slots:
 
@@ -34,9 +36,11 @@ private slots:
 
 	void goForward();
 
+	void goHome();
+
 	void searchItems();
 
-	void update(const QString& url);
+	void update(const QUrl& url);
 
 	void openFoundSite(QListWidgetItem* _item);
 
@@ -51,6 +55,8 @@ private slots:
 	HelpBrowser* textWindow_;
 
 	QHelpEngine* helpEngine_;
+
+	QString homeSite_;
 
 };
 
