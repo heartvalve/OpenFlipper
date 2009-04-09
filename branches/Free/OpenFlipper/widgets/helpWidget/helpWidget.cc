@@ -58,7 +58,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
     searchWidget_ = new QDockWidget(tr("Search results"), this);
 	searchWidget_->setFeatures( QDockWidget::DockWidgetClosable );
 
-	searchWidget_->resize(this->size().width(), floor(this->size().height() / 3));
+	searchWidget_->resize(this->size().width(), floor( double(this->size().height() / 3)) );
 
 	results_ = new QListWidget();
 
