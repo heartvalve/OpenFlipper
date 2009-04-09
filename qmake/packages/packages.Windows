@@ -52,12 +52,15 @@ defineTest( acg ) {
   export(DEFINES)
   contains( OPENFLIPPER , OpenFlipper ){
     LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lACG
+    INCLUDEPATH += $${TOPDIR}/ACG/include
 #    message(Using internal ACG Library of OpenFlipper)
   } else {
+    INCLUDEPATH += $${TOPDIR}/ACG/include
     QMAKE_LIBDIR += $${TOPDIR}/ACG/lib/$${BUILDDIRECTORY}
     LIBS+= -L$${TOPDIR}/ACG/lib/$${BUILDDIRECTORY} -lACG
     export(QMAKE_LIBDIR)
   }
+  export(INCLUDEPATH)
   export(LIBS)
 }
 
