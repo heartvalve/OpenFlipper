@@ -440,6 +440,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
 CoreWidget::~CoreWidget() {
 
+	delete helpWidget_;
 }
 
 //-----------------------------------------------------------------------------
