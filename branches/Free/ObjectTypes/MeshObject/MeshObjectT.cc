@@ -189,19 +189,28 @@
     mesh_->request_vertex_texcoords2D();
     mesh_->request_halfedge_texcoords2D();
 
+
+    // Only initialize scenegraph nodes when we initialized a gui!!
+    if ( OpenFlipper::Options::nogui() )
+      return;
+
+
  	 if ( manipulatorNode() == NULL)
 		std::cerr << "Error when creating Mesh Object! manipulatorNode is NULL!" << std::endl;
 
+    // Node showing selection
     statusNode_ = new ACG::SceneGraph::SelectionNodeT<MeshT>(*mesh_,manipulatorNode(),"NEW StatusNode for mesh " );
     statusNode_->set_point_size(4.0);
     statusNode_->set_color(ACG::Vec4f(1.0,0.0,0.0,1.0));
 
+    // Node showing modeling region
     areaNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, AreaNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW AreaNode for mesh ");
     areaNode_->set_round_points(true);
     areaNode_->enable_alpha_test(0.5);
     areaNode_->set_point_size(7.0);
     areaNode_->set_color(ACG::Vec4f(0.4, 0.4, 1.0, 1.0));
 
+    // Node showing handle region
     handleNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, HandleNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW HandleNode for mesh ");
     handleNode_->set_round_points(true);
     handleNode_->enable_alpha_test(0.5);
@@ -209,6 +218,7 @@
     handleNode_->set_point_size(7.0);
     handleNode_->set_color(ACG::Vec4f(0.2, 1.0, 0.2, 1.0));
 
+    // Node showing feature selection
     featureNode_ = new ACG::SceneGraph::StatusNodeT<MeshT, FeatureNodeMod<MeshT> >(*mesh_, manipulatorNode(), "NEW FeatureNode for mesh ");
     featureNode_->set_round_points(true);
     featureNode_->enable_alpha_test(0.5);
@@ -217,7 +227,7 @@
     featureNode_->set_color(ACG::Vec4f(1.0, 0.2, 1.0, 1.0));
 
 
-	if ( materialNode() == NULL)
+    if ( materialNode() == NULL)
 		std::cerr << "Error when creating Mesh Object! materialNode is NULL!" << std::endl;
 
     textureNode_ = new TextureNode(materialNode(),"NEW TextureNode for ");
@@ -232,39 +242,37 @@
     std::string shaderDirectory = std::string( shaderDir.toUtf8() );
     shaderNode_->setShaderDir( shaderDirectory );
 
-    // Only initialize shaders when we initialized a gui!!
-    if ( OpenFlipper::Options::gui() ) {
 
-      if ( QFile( shaderDir + "Phong/Vertex.glsl").exists() && QFile( shaderDir + "Phong/Fragment.glsl" ).exists() ) {
-        shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED,
-                              "Phong/Vertex.glsl" ,
-                              "Phong/Fragment.glsl" );
-      } else
-        std::cerr << "Shader Files for Phong not found!" << std::endl;
 
-      if ( QFile( shaderDir + "Ward/Vertex.glsl").exists() && QFile( shaderDir + "Ward/Fragment.glsl" ).exists() ) {
+    if ( QFile( shaderDir + "Phong/Vertex.glsl").exists() && QFile( shaderDir + "Phong/Fragment.glsl" ).exists() ) {
+      shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_PHONG_SHADED,
+                            "Phong/Vertex.glsl" ,
+                            "Phong/Fragment.glsl" );
+    } else
+      std::cerr << "Shader Files for Phong not found!" << std::endl;
 
-        shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_SHADER,
-                                "Ward/Vertex.glsl" ,
-                                "Ward/Fragment.glsl" );
+    if ( QFile( shaderDir + "Ward/Vertex.glsl").exists() && QFile( shaderDir + "Ward/Fragment.glsl" ).exists() ) {
 
-        // Ward shader uses 3 parameters so activate shader, set params and deactivate it again
-        GLSL::PtrProgram shader = shaderNode_->getShader( ACG::SceneGraph::DrawModes::SOLID_SHADER );
-        if ( shader == 0 ) {
-          std::cerr << "Unable to get shader for shader mode" << std::endl;
-        } else {
-          shader->use();
+      shaderNode_->setShader(ACG::SceneGraph::DrawModes::SOLID_SHADER,
+                              "Ward/Vertex.glsl" ,
+                              "Ward/Fragment.glsl" );
 
-          shader->setUniform("ward_specular" , 0.5f);
-          shader->setUniform("ward_diffuse"  , 3.0f);
-          shader->setUniform("ward_alpha"    , 0.2f);
+      // Ward shader uses 3 parameters so activate shader, set params and deactivate it again
+      GLSL::PtrProgram shader = shaderNode_->getShader( ACG::SceneGraph::DrawModes::SOLID_SHADER );
+      if ( shader == 0 ) {
+        std::cerr << "Unable to get shader for shader mode" << std::endl;
+      } else {
+        shader->use();
 
-          shader->disable();
-        }
+        shader->setUniform("ward_specular" , 0.5f);
+        shader->setUniform("ward_diffuse"  , 3.0f);
+        shader->setUniform("ward_alpha"    , 0.2f);
 
-      } else
-          std::cerr << "Shader Files for Ward not found!!" << std::endl;
-    }
+        shader->disable();
+      }
+
+    } else
+        std::cerr << "Shader Files for Ward not found!!" << std::endl;
 
     // Update all nodes
     update();
@@ -280,6 +288,10 @@
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::setName( QString _name ) {
     BaseObjectData::setName(_name);
+
+    // No update when gui is not active
+    if ( OpenFlipper::Options::nogui() )
+      return;
 
     std::string nodename = std::string("StatusNode for mesh " + _name.toUtf8() );
     statusNode_->name( nodename );
@@ -321,8 +333,13 @@
   */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::update() {
-    if ( OpenFlipper::Options::gui() )
-      PluginFunctions::setMainGLContext();
+
+    // No update necessary if no gui
+    if ( OpenFlipper::Options::nogui() )
+      return;
+
+    PluginFunctions::setMainGLContext();
+
     updateGeometry();
     updateTopology();
     updateSelection();
@@ -333,33 +350,40 @@
   /** Updates the selection scenegraph nodes */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::updateSelection() {
-    statusNode_->update_cache();
+    if ( statusNode_ )
+      statusNode_->update_cache();
   }
 
   /** Updates the geometry information in the mesh scenegraph node */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::updateGeometry() {
-    meshNode_->update_geometry();
+    if ( meshNode_ )
+      meshNode_->update_geometry();
   }
 
   /** Updates the topology information in the mesh scenegraph node */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::updateTopology() {
-    meshNode_->update_topology();
-    meshNode_->update_strips();
+    if ( meshNode_ ) {
+      meshNode_->update_topology();
+      meshNode_->update_strips();
+    }
   }
 
   /** Updates the modeling regions scenegraph nodes */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::updateModelingRegions() {
-    areaNode_->update_cache();
-    handleNode_->update_cache();
+    if ( areaNode_ && handleNode_ ) {
+      areaNode_->update_cache();
+      handleNode_->update_cache();
+    }
   }
 
   /** Updates the modeling regions scenegraph nodes */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::updateFeatures() {
-    featureNode_->update_cache();
+    if ( featureNode_ )
+      featureNode_->update_cache();
   }
 
 
@@ -450,9 +474,13 @@
    */
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::boundingBox( ACG::Vec3f& _bbMin , ACG::Vec3f& _bbMax ) {
-    _bbMin = ACG::Vec3f(FLT_MAX, FLT_MAX, FLT_MAX);
-    _bbMax = ACG::Vec3f(FLT_MIN, FLT_MIN, FLT_MIN);
-    meshNode_->boundingBox(_bbMin,_bbMax);
+    if ( meshNode_ ) {
+      _bbMin = ACG::Vec3f(FLT_MAX, FLT_MAX, FLT_MAX);
+      _bbMax = ACG::Vec3f(FLT_MIN, FLT_MIN, FLT_MIN);
+      meshNode_->boundingBox(_bbMin,_bbMax);
+    } else {
+      std::cerr << "Error: Bounding box computation via Scenegraph not available without gui" << std::endl;
+    }
   }
 
 
@@ -606,6 +634,9 @@
 
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::enablePicking( bool _enable ) {
+    if ( OpenFlipper::Options::nogui())
+      return;
+
     meshNode_->enablePicking( _enable );
     areaNode_->enablePicking( _enable );
     handleNode_->enablePicking( _enable );
@@ -645,7 +676,7 @@
       typename MeshT::FIter f_end = mesh()->faces_end();
 
       for (; f_it!=f_end; ++f_it)
-	triangle_bsp_->push_back(f_it.handle());
+	     triangle_bsp_->push_back(f_it.handle());
 
       triangle_bsp_->build(10, 100);
     }
