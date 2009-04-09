@@ -101,7 +101,6 @@
 #include "ortho.xpm"
 #include "scenegraph.xpm"
 #include "mono.xpm"
-#include "stereo.xpm"
 
 
 #define homeIcon         home_xpm
@@ -115,7 +114,6 @@
 #define orthoIcon        ortho_xpm
 #define sceneGraphIcon   scenegraph_xpm
 #define monoIcon         mono_xpm
-#define stereoIcon       stereo_xpm
 
 
 #ifdef max
