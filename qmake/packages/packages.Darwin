@@ -579,7 +579,9 @@ defineTest( cholmod ) {
 
 defineTest( acg ) {
   QMAKE_LIBDIR += $${TOPDIR}/ACG/lib/$${BUILDDIRECTORY}
+  INCLUDEDIR += $${TOPDIR}/ACG/include
   LIBS += -lACG
+  export(INCLUDEDIR)
   export(QMAKE_LIBDIR)
   export(LIBS)
 }
