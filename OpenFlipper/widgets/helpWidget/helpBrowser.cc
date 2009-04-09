@@ -26,7 +26,7 @@ HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent) :
 }
 
 HelpBrowser::~HelpBrowser() {
-	delete helpEngine_;
+
 }
 
 QVariant HelpBrowser::loadBytes(const QUrl &url) {

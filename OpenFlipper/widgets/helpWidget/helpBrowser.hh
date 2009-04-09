@@ -18,7 +18,7 @@ class HelpBrowser : public QWebView {
 public:
 	HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent = 0);
 
-	~HelpBrowser();
+	virtual ~HelpBrowser();
 
 	QVariant loadBytes(const QUrl& url);
 
