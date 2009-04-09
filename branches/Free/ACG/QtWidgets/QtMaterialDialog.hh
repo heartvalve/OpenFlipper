@@ -46,7 +46,7 @@
 //== INCLUDES =================================================================
 
 
-#include "../include/ui_QtMaterialDialogUi.hh"
+#include "ui_QtMaterialDialogUi.hh"
 
 #include "../Math/VectorT.hh"
 #include "../GL/gl.hh"
