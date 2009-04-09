@@ -1294,8 +1294,8 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>ShortcutButton</class>
    <extends>QPushButton</extends>
-   <header>../../../widgets/optionsWidget/ShortcutButton.hh</header>
-  </customwidget>
+   <header>../widgets/optionsWidget/ShortcutButton.hh</header>
+</customwidget>
  </customwidgets>
  <resources/>
  <connections/>
