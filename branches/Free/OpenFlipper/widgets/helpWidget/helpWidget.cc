@@ -16,9 +16,9 @@
 HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 	: QMainWindow(parent),
 	searchWidget_(0),
+	results_(0),
 	textWindow_(0),
-	helpEngine_(0),
-	results_(0) {
+	helpEngine_(0) {
 
 	setupUi(this);
 
@@ -168,5 +168,4 @@ HelpWidget::~HelpWidget() {
 	delete searchWidget_;
 	delete results_;
 	delete textWindow_;
-	delete helpEngine_;
 }
