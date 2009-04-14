@@ -6,36 +6,20 @@
     <x>0</x>
     <y>0</y>
     <width>970</width>
-    <height>734</height>
+    <height>798</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>OpenFlipper Help</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <widget class="QLineEdit" name="searchEdit_" >
-    <property name="geometry" >
-     <rect>
-      <x>510</x>
-      <y>30</y>
-      <width>361</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="maximumSize" >
-     <size>
-      <width>16777215</width>
-      <height>31</height>
-     </size>
-    </property>
-   </widget>
    <widget class="QWidget" name="gridLayoutWidget" >
     <property name="geometry" >
      <rect>
       <x>9</x>
-      <y>69</y>
+      <y>40</y>
       <width>951</width>
-      <height>631</height>
+      <height>731</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout_" />
@@ -43,8 +27,8 @@
    <widget class="QToolButton" name="backButton_" >
     <property name="geometry" >
      <rect>
-      <x>280</x>
-      <y>30</y>
+      <x>10</x>
+      <y>10</y>
       <width>51</width>
       <height>26</height>
      </rect>
@@ -68,8 +52,8 @@
    <widget class="QToolButton" name="forwardButton_" >
     <property name="geometry" >
      <rect>
-      <x>340</x>
-      <y>30</y>
+      <x>70</x>
+      <y>10</y>
       <width>51</width>
       <height>26</height>
      </rect>
@@ -93,8 +77,8 @@
    <widget class="QToolButton" name="homeButton_" >
     <property name="geometry" >
      <rect>
-      <x>430</x>
-      <y>30</y>
+      <x>160</x>
+      <y>10</y>
       <width>51</width>
       <height>26</height>
      </rect>
@@ -118,9 +102,9 @@
    <widget class="QToolButton" name="searchButton_" >
     <property name="geometry" >
      <rect>
-      <x>890</x>
-      <y>30</y>
-      <width>61</width>
+      <x>910</x>
+      <y>10</y>
+      <width>51</width>
       <height>26</height>
      </rect>
     </property>
@@ -131,10 +115,10 @@
      </size>
     </property>
     <property name="toolTip" >
-     <string>Search documentation for specified terms.</string>
+     <string>Search help for specified item.</string>
     </property>
     <property name="whatsThis" >
-     <string>Search documentation for specified terms.</string>
+     <string>Search help for specified item.</string>
     </property>
     <property name="text" >
      <string>Search</string>
