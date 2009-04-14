@@ -111,8 +111,37 @@ public:
   virtual void update_topology();
 
   /** \brief Setup a mapping between internal texture ids on the mesh and the ids for the loaded textures in opengl
+   *
+   * @param _map maps between an int index stored in the Mesh describing which texture to use for a face,
+   *             and the GluInt name of the texture bound by the TextureNode. \n
+   *             If such a map is not available ( =0 ), assume TextureNode has already bound a texture
+   *             And render without switching textures
    */
-  void set_texture_map( std::vector< GLuint >* _map){ textureMap_ = _map; };
+  void set_texture_map( std::map< int, GLuint>* _map){ textureMap_ = _map; };
+
+  /** \brief Setup a mapping between internal texture ids on the mesh and the properties containing texture coordinates
+   *
+   * @param _map maps between an int index stored in the Mesh describing which texture to use
+   *             and a property name giving 2D Texture coordinates for halfedges ( texcoords for to vertex )
+   */
+  void set_property_map( std::map< int, std::string>* _map){ propertyMap_ = _map; };
+
+  /** \brief Set default property name to get texture coordinates for per face texcoords
+   *
+   * Property has to be ACG::Vec2d as a halfedge property describing vertex coordinates for
+   * to Vertex per face. Defaults to h:texcoords2D
+   */
+  void set_default_halfedge_textcoord_property( std::string _default_halfedge_textcoord_property )
+    { default_halfedge_textcoord_property_ = _default_halfedge_textcoord_property; };
+
+  /** \brief Property to use when switching between multiple textures
+   *
+   * The given mesh property has to contain an int index of textures to use per face.
+   * If it is not given, the default face_texture_index property of OpenMesh will be used.
+   * If there is no texture map given via set_texture_map, texture switching will be disabled and
+   * only the currently bound texture will be used.
+   */
+  void set_index_property_name( std::string _index_property_name) { indexPropertyName_ = _index_property_name; };
 
 protected:
 
@@ -177,8 +206,17 @@ private:
   // Internal buffer used when rendering non float normals
   std::vector< ACG::Vec3f > normals_;
 
-  // Mapping of mesh face texture indeces to gltexture id ( has to be provided externally )
-  std::vector< GLuint >* textureMap_;
+  // Mapping of mesh face texture indices to gltexture id ( has to be provided externally )
+  std::map< int, GLuint>* textureMap_;
+
+  // Mapping of mesh face texture indices to coordinate property names ( has to be provided externally )
+  std::map< int, std::string>* propertyMap_;
+
+  // Property name of the per face texture coordinates
+  std::string default_halfedge_textcoord_property_;
+
+  // Property name of the per face texture index.
+  std::string indexPropertyName_;
 
   // display Lists used for picking
   GLuint faceList_;
