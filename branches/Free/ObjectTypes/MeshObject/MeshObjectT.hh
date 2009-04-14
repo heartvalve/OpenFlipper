@@ -268,11 +268,11 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
 
     /** Add a texture to the object.
     * @param _image Image to use as texture
-    * @param _id    Id of the texture in the texture_index property of the mesh ( if available
-    *               otherwise -1)
     * @param _name  Name of the texture. Required to access the texture
+    * @param _id    Id of the texture to be used in the texture_index property of the mesh
+    *              ( for multiple textures per object only)
     */
-    void addTexture( QString _name , QImage& _image , int _id = -1);
+    void addTexture( QString _name , QImage& _image , int& _id );
 
     /** \brief Change an already loaded texture by replacing it with the given image.
      *
@@ -298,8 +298,8 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
      *  the mesh has requested a face_index_texture with request_face_texture_index. Additionally
      *  request_halfedge_texcoords2D has to be used to set per face texture coordinates.
      */
-    std::vector< GLuint  > textures_;
-    std::vector< QString > textureNames_;
+    std::map< int, GLuint > textures_;
+    std::map< int, std::string> textureNames_;
   /** @} */
 
   //===========================================================================

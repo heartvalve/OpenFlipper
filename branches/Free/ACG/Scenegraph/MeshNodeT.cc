@@ -77,6 +77,9 @@ MeshNodeT(const Mesh&  _mesh,
     normalBufferInitialized_(false),
     faceIndexBufferInitialized_(false),
     textureMap_(0),
+    propertyMap_(0),
+    default_halfedge_textcoord_property_("h:texcoords2D"),
+    indexPropertyName_("f:textureindex"),
     updateFaceList_(true),
     updateVertexList_(true),
     updateEdgeList_(true),
@@ -174,7 +177,7 @@ availableDrawModes() const
     drawModes |= DrawModes::SOLID_FACES_COLORED;
 
     if( mesh_.has_face_normals() )
-	drawModes |= DrawModes::SOLID_FACES_COLORED_FLAT_SHADED;
+	   drawModes |= DrawModes::SOLID_FACES_COLORED_FLAT_SHADED;
   }
 
   if (mesh_.has_vertex_texcoords1D())
@@ -989,22 +992,48 @@ draw_faces(FaceMode _mode)
       break;
     }
 
-    // Henrik: Only implemented for 2D halfedge(per face) textures
+
+    // propertyMap_ maps between an int index stored in the Mesh describing which texture to use
+    // and a property name giving 2D Texture coordinates for halfedges ( texcoords for to vertex )
+
     case FACE_HALFEDGE_TEXTURED:
     {
       if (mesh_.is_trimesh())
       {
-        if ( !textureMap_ || !mesh_.has_face_texture_index() ) {
+
+        OpenMesh::FPropHandleT< int > texture_index_property;
+        if ( !mesh_.get_property_handle(texture_index_property,indexPropertyName_) ) {
+          std::cerr << "Unable to get per face texture Index property named " << indexPropertyName_ << std::endl;
+          if ( !mesh_.get_property_handle(texture_index_property,"f:textureindex") ) {
+            std::cerr << "Unable to get standard per face texture Index property" << std::endl;
+            texture_index_property.reset();
+          }
+        }
+
+        // textureMap_ maps between an int index stored in the Mesh describing which texture to use
+        // and the GluInt bound by the TextureNode. If such a map is not available, assume TextureNode
+        // has already bound a texture and we use only one texture.
+        // Additionally if we do not have an texture index property, we do not know which textures
+        // should be used .. therefore do not  switch textures if this property is missing.
+        if ( !textureMap_ || !texture_index_property.is_valid() ) {
+
+          // Get texture coords property
+          OpenMesh::HPropHandleT< typename Mesh::TexCoord2D > texture_coord_property;
+          if ( !mesh_.get_property_handle(texture_coord_property,default_halfedge_textcoord_property_) ) {
+            std::cerr << "Error: Unable to get per face texture coordinate property named "
+                      << default_halfedge_textcoord_property_ << std::endl;
+            std::cerr << "Unable to texture without texture coordinates" << std::endl;
+            return;
+          }
+
           typename Mesh::Point point;
           typename Mesh::TexCoord2D tex2d;
           glBegin(GL_TRIANGLES);
-          for (; f_it!=f_end; ++f_it)
-          {
+          for (; f_it!=f_end; ++f_it) {
             glNormal(mesh_.normal(f_it));
-            for (fh_it = mesh_.cfh_iter(f_it.handle());fh_it;++fh_it)
-            {
+            for (fh_it = mesh_.cfh_iter(f_it.handle());fh_it;++fh_it) {
               point = mesh_.point(mesh_.to_vertex_handle(fh_it));
-              tex2d = mesh_.texcoord2D(fh_it);
+              tex2d = mesh_.property(texture_coord_property,fh_it);
               glTexCoord2f(tex2d[0], tex2d[1]);
               glVertex(point);
             }
@@ -1012,19 +1041,44 @@ draw_faces(FaceMode _mode)
           glEnd();
         } else {
 
+          OpenMesh::HPropHandleT< typename Mesh::TexCoord2D > texture_coord_property;
+          int last_texture = -1;
+
           typename Mesh::Point point;
           typename Mesh::TexCoord2D tex2d;
 
           for (; f_it!=f_end; ++f_it)
           {
-            int texture_ = mesh_.texture_index(f_it);
+            int texture = mesh_.property(texture_index_property,f_it);
 
-            if ( texture_ >= (int)textureMap_->size() || texture_ < 0 ) {
-              std::cerr << "Illegal texture index ... trying to access " << texture_ << std::endl;
-              continue;
+            if ( last_texture != texture ) {
+
+              if ( textureMap_->find(texture) == textureMap_->end() ) {
+                std::cerr << "Illegal texture index ... trying to access " << texture << std::endl;
+                last_texture = -1;
+                continue;
+              }
+
+              // Get texture coords property
+              if ( !propertyMap_ || !mesh_.get_property_handle(texture_coord_property,(*propertyMap_)[texture]) ) {
+                if ( propertyMap_)
+                  std::cerr << "Error: Unable to get per face texture coordinate property named "
+                            << (*propertyMap_)[texture]  << std::endl;
+                if ( !mesh_.get_property_handle(texture_coord_property,"h:texcoords2D") ) {
+                  std::cerr << "Fallback: Unable to get standard Property for per halfedge texcoords" << std::endl;
+                  std::cerr << "Unable to texture face without texture coordinates" << std::endl;
+                  last_texture = -1;
+                  continue;
+                }
+              }
+
+
+              glBindTexture( GL_TEXTURE_2D, (*textureMap_)[texture] );
+
+              // Remember active texture to skip extra switches
+              last_texture = texture;
+
             }
-
-            glBindTexture( GL_TEXTURE_2D, (*textureMap_)[texture_] );
 
             glBegin(GL_TRIANGLES);
 
@@ -1034,7 +1088,7 @@ draw_faces(FaceMode _mode)
             for (fh_it = mesh_.cfh_iter(f_it.handle());fh_it;++fh_it)
             {
               point = mesh_.point(mesh_.to_vertex_handle(fh_it));
-              tex2d = mesh_.texcoord2D(fh_it);
+              tex2d = mesh_.property(texture_coord_property,fh_it);
               glTexCoord2f(tex2d[0], tex2d[1]);
               glVertex(point);
             }

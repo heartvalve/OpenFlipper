@@ -69,11 +69,8 @@
 
     setName( name() );
 
-    textures_.resize(1);
-    textureNames_.resize(1);
-
-    textures_[0] = 0 ;
-    textureNames_[0] = "No Texture";
+    textures_     = _object.textures_;
+    textureNames_ = _object.textureNames_;
   }
 
   /** Constructor for Mesh Objects. This object class gets a Separator Node giving
@@ -98,6 +95,14 @@
   {
     setDataType(objectDataType);
     init();
+
+    textures_.clear();
+    textureNames_.clear();
+
+    // Set the primary texture mapping to no texture
+    textures_[0]     = 0;
+    textureNames_[0] = "No Texture";
+
   }
 
   /** Destructor for Mesh Objects. The destructor deletes the mesh and all
@@ -188,6 +193,7 @@
     mesh_->request_face_colors();
     mesh_->request_vertex_texcoords2D();
     mesh_->request_halfedge_texcoords2D();
+    mesh_->request_face_texture_index();
 
 
     // Only initialize scenegraph nodes when we initialized a gui!!
@@ -485,65 +491,82 @@
 
 
   template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::addTexture(QString _name , QImage& _image , int _id )
+  void MeshObject< MeshT , objectDataType >::addTexture(QString _name , QImage& _image , int& _id )
   {
-    if ( _id == -1 ) {
-      _id = textures_.size();
-    }
 
-    for ( uint i = 0 ; i < textures_.size(); ++i ) {
-      if ( textureNames_[i] == _name ) {
-        std::cerr << "Texture already exists!! Use setTexture to change a texture. Setting new texture anyway" << std::endl;
+    int maxTextureIndex = -1;
+
+    // Check in existing textures if already available
+    for (std::map< int, std::string >::iterator it = textureNames_.begin(); it!= textureNames_.end(); ++it) {
+
+      // If available update it but keep mapping
+      if ( (*it).second == _name.toStdString() ) {
+
         setTexture( _name, _image );
+
+        // Provide old texture to keep consistent mapping
+        _id = (*it).first;
         return;
+
+      } else {
+
+        // Remember the maximal texture id
+        if ( maxTextureIndex < (*it).first )
+          maxTextureIndex = (*it).first;
+
       }
     }
 
-    if ( _id >= (int)textures_.size() ) {
-      textures_.resize(_id + 1);
-      textureNames_.resize(_id + 1);
-    }
+    // Increase id for new texture ( first free id above maximum )
+    maxTextureIndex++;
 
-    textures_[_id] = textureNode_->add_texture(_image) ;
-    textureNames_[_id] = _name;
+    // Add the texture to the map to remember GLuint
+    textures_[maxTextureIndex] = textureNode_->add_texture(_image) ;
+    // Add mapping to the textures name
+    textureNames_[maxTextureIndex] = _name.toStdString();
 
+    // Return the id of the new texture
+    _id = maxTextureIndex;
 
+    // Update the map in the meshnode
     meshNode_->set_texture_map(&textures_);
-
-//     if ( textures_.size() > 1 &&  !mesh_->has_face_texture_index() ) {
-//       std::cerr << "More than one textures available but no faceindex set. Only first texture will be used." << std::endl;
-//     }
 
   }
 
   template < class MeshT , DataType objectDataType >
   void MeshObject< MeshT , objectDataType >::setTexture( QString _name , QImage& _image ) {
-    for ( uint i = 0 ; i < textures_.size(); ++i ) {
-      if ( textureNames_[i] == _name ) {
-        textureNode_->set_texture(_image,textures_[i]);
+    for (std::map< int, std::string >::iterator it = textureNames_.begin(); it!= textureNames_.end(); ++it) {
+      if ( (*it).second == _name.toStdString() ) {
+        textureNode_->set_texture(_image,textures_[(*it).first]);
         return;
       }
     }
 
-    addTexture( _name , _image );
+    std::cerr << "Unknown Texture! " << _name.toStdString()  << std::endl;
   }
 
   template < class MeshT , DataType objectDataType >
   bool MeshObject< MeshT , objectDataType >::textureExists( QString _name )  {
-    for ( uint i = 0 ; i < textures_.size(); ++i ) {
-      if ( textureNames_[i] == _name )
+
+    for (std::map< int, std::string >::iterator it = textureNames_.begin(); it!= textureNames_.end(); ++it) {
+      if ( (*it).second == _name.toStdString() ) {
         return true;
+      }
     }
+
     return false;
   }
 
   template < class MeshT , DataType objectDataType >
   bool MeshObject< MeshT , objectDataType >::enableTexture( QString _name ) {
-    for ( uint i = 0 ; i < textures_.size(); ++i ) {
-      if ( textureNames_[i] == _name )
-        textureNode_->activateTexture(textures_[i]);
+    for (std::map< int, std::string >::iterator it = textureNames_.begin(); it!= textureNames_.end(); ++it) {
+      if ( (*it).second == _name.toStdString() ) {
+        textureNode_->activateTexture(textures_[(*it).first]);
         return true;
+      }
     }
+
+    std::cerr << "Unknown Texture! " << _name.toStdString()  << std::endl;
     return false;
   }
 
