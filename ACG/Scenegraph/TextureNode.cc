@@ -202,7 +202,7 @@ TextureNode::set_texture(const QImage& _image)
   GLint width;
   glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width );
   if ( width == 0 ) {
-    std::cerr << "Can't load texture";
+    std::cerr << "Can't load texture TextureNode::set_texture" << std::endl;
     return;
   }
 
@@ -230,7 +230,7 @@ TextureNode::set_texture(const float * _image, int _width, int _height )
   GLint width;
   glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width );
   if ( width == 0 ) {
-    std::cerr << "Can't load texture";
+    std::cerr << "Can't load texture TextureNode::set_texture" << std::endl;
     return;
   }
 
@@ -344,13 +344,12 @@ TextureNode::add_texture(const QImage& _image)
   if (5 * tex_h > 7 *h)   // tex_h longer than sqrt(2)*h means too much waste of storage space (7/5 = sqrt(2)-1%)
     tex_h >>= 1;
 
-
   // enough texture mem?
   glTexImage2D( GL_PROXY_TEXTURE_2D, 0, GL_RGBA, tex_w, tex_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 );
   GLint testWidth;
   glGetTexLevelParameteriv( GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &testWidth );
   if ( testWidth == 0 ) {
-    std::cerr << "Can't load texture";
+    std::cerr << "Can't load texture TextureNode::add_texture" << std::endl;
     return 0;  // does not really help
   }
 
