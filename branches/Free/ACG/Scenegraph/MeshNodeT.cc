@@ -713,7 +713,7 @@ draw(GLState& _state, unsigned int _drawMode)
     glDepthRange(0.0, 1.0);
 
     if( !colMaterial )
-	glDisable(GL_COLOR_MATERIAL);
+	   glDisable(GL_COLOR_MATERIAL);
 
     _state.set_base_color(base_color_backup);
   }
@@ -851,19 +851,33 @@ draw(GLState& _state, unsigned int _drawMode)
   {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
+
+    GLboolean colMaterial = glIsEnabled(GL_COLOR_MATERIAL);
+    if ( colMaterial )
+      glDisable(GL_COLOR_MATERIAL);
+
+    glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+    glEnable( GL_COLOR_MATERIAL );
+
     glShadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(FACE_HALFEDGE_TEXTURED);
     glDepthRange(0.0, 1.0);
     glDisable(GL_TEXTURE_2D);
+
+    if( !colMaterial )
+      glDisable(GL_COLOR_MATERIAL);
+
   }
 
   // If in shader mode, just draw, as the shader has to be set by a shadernode above this node
   if ( (_drawMode & DrawModes::SOLID_SHADER )  ) {
+
     if ( mesh_.has_face_normals() )
       enable_arrays( VERTEX_ARRAY | NORMAL_ARRAY);
     else
       enable_arrays( VERTEX_ARRAY );
+
     glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
@@ -1096,8 +1110,6 @@ draw_faces(FaceMode _mode)
             glEnd();
 
           }
-
-
         }
       }
       else
