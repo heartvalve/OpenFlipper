@@ -14,6 +14,9 @@
 #include <QtHelp>
 #include <QTextDocument>
 
+#include <QHelpSearchEngine>
+#include <QTabWidget>
+
 #include <iostream>
 
 #include "helpBrowser.hh"
@@ -24,7 +27,7 @@ class HelpWidget : public QMainWindow, public Ui::HelpWidget
 
   public:
 
-	  HelpWidget(QWidget* parent = 0, const QString& _homeSite = "");
+	  HelpWidget(QWidget* parent = 0, const QString& _homeSite = "", const QString& _baseURL = "");
 
 	  virtual ~HelpWidget();
 
@@ -32,13 +35,19 @@ class HelpWidget : public QMainWindow, public Ui::HelpWidget
 
 private slots:
 
+	void startSearch();
+
 	void goBack();
 
 	void goForward();
 
 	void goHome();
 
-	void searchItems();
+	void showSearchWidget();
+
+	void showFoundSite(const QUrl& _url);
+
+	void showResults(int _hits);
 
 	void update(const QUrl& url);
 
@@ -50,13 +59,17 @@ private slots:
 
 	// For the search popup
 	QDockWidget* searchWidget_;
-	QListWidget* results_;
+
+	QTabWidget* tabWidget_;
 
 	HelpBrowser* textWindow_;
 
 	QHelpEngine* helpEngine_;
+	QHelpSearchEngine* searchEngine_;
 
 	QString homeSite_;
+
+	int homeIndex_;
 
 };
 

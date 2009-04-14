@@ -9,19 +9,17 @@
 
 #include <iostream>
 
-#include <QWebFrame>
 
-HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent) :
+HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, const QUrl& _basePath, QWidget* parent) :
 
-	QWebView(parent),
-	helpEngine_(_helpEngine) {
+	QTextBrowser(parent),
+	helpEngine_(_helpEngine),
+	basePath_(_basePath) {
 
 	currentPage_ = 0;
 
-	page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-	// Link has been clicked
-    connect(this->page(), SIGNAL(linkClicked(const QUrl&)),
-            this, SLOT(load(const QUrl&)));
+	connect(this, SIGNAL(linkClicked(const QString&)),
+			this, SLOT(open(const QString&)));
 
 }
 
@@ -29,46 +27,35 @@ HelpBrowser::~HelpBrowser() {
 
 }
 
-QVariant HelpBrowser::loadBytes(const QUrl &url) {
+QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 
-	QByteArray bytes = helpEngine_->fileData(url);
+	if (_url.scheme() == "qthelp") {
 
-	return QVariant(bytes);
-}
+		return QVariant(helpEngine_->fileData(_url));
+	}
+	else {
 
-void HelpBrowser::setUrl(const QUrl& _url) {
+		// Set basePath_ as prefix of resource file
+		QUrl newUrl = QUrl(basePath_.toString() + _url.toString());
 
-	load(_url, "");
-}
-
-void HelpBrowser::load(const QUrl& _url) {
-
-	load(_url, "");
-}
-
-void HelpBrowser::load(const QUrl& _url, const QString& /*_s_url*/, bool _skipSave) {
-
-	QUrl newUrl;
-
-	if(_url.scheme() != "qthelp") {
-		// Convert link to be within qthelp domain namespace
-		QString new_file = visitedPages_[currentPage_];
-		QStringList comp = new_file.split("/");
-		comp[comp.size()-1] = _url.toString();
-
-		newUrl = QUrl(comp.join("/"));
-
-		if(!helpEngine_->findFile(newUrl).isValid()) {
-			QMessageBox::warning( this, "OpenFlipper Help",
-				"Unable to find specified file within documentation.");
-			return;
-		}
-
-	} else {
-		newUrl = _url;
+		return QVariant(helpEngine_->fileData(newUrl));
 	}
 
-	QVariant data = this->loadBytes(newUrl);
+}
+
+void HelpBrowser::open(const QString& _url) {
+
+	open(QUrl(_url), "");
+}
+
+void HelpBrowser::open(const QUrl& _url) {
+
+	open(_url, "");
+}
+
+void HelpBrowser::open(const QUrl& _url, const QString& /*_str*/, bool _skipSave) {
+
+	QVariant data = this->loadResource(QTextDocument::HtmlResource, _url);
 
 	QString txt;
 
@@ -83,7 +70,9 @@ void HelpBrowser::load(const QUrl& _url, const QString& /*_s_url*/, bool _skipSa
 		txt = data.toString();
 	}
 
-	page()->mainFrame()->setHtml(txt, getCurrentDir(newUrl));
+	//std::cerr << txt.toStdString() << std::endl;
+
+	setHtml(txt);
 
 	if(!_skipSave) {
 		visitedPages_.push_back(_url.toString());
@@ -117,7 +106,7 @@ void HelpBrowser::backward() {
 
 	if(isBackwardAvailable()) {
 		currentPage_--;
-		load(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
+		open(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
 	}
 }
 
@@ -125,7 +114,7 @@ void HelpBrowser::forward() {
 
 	if(isForwardAvailable()) {
 		currentPage_++;
-		load(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
+		open(QUrl(visitedPages_[currentPage_]), visitedPages_[currentPage_], true);
 	}
 }
 

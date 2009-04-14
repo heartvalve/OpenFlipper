@@ -13,12 +13,13 @@
 
 #include <QTextStream>
 
-HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
+HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite, const QString& _baseURL)
 	: QMainWindow(parent),
 	searchWidget_(0),
-	results_(0),
+	tabWidget_(0),
 	textWindow_(0),
-	helpEngine_(0) {
+	helpEngine_(0),
+	searchEngine_(0) {
 
 	setupUi(this);
 
@@ -43,14 +44,20 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 	homeButton_->setIcon(QIcon(iconPath+"go-home.png"));
 	searchButton_->setIcon(QIcon(iconPath+"edit-find.png"));
 
+	tabWidget_ = new QTabWidget(this);
+
 	helpEngine_ = new QHelpEngine(filename, this);
 
 	helpEngine_->setupData();
 
-    textWindow_ = new HelpBrowser(helpEngine_, this);
+	searchEngine_ = new QHelpSearchEngine(helpEngine_, this);
+
+    textWindow_ = new HelpBrowser(helpEngine_, _baseURL, this);
+
+    homeIndex_ = tabWidget_->addTab(textWindow_, "Home");
 
     gridLayout_->addWidget(helpEngine_->contentWidget(), 0, 0);
-    gridLayout_->addWidget(textWindow_, 0, 1);
+    gridLayout_->addWidget(tabWidget_, 0, 1);
 
     gridLayout_->setColumnStretch(0, 1);
     gridLayout_->setColumnStretch(1, 3);
@@ -61,9 +68,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 
 	searchWidget_->resize(this->size().width(), floor( double(this->size().height() / 3)) );
 
-	results_ = new QListWidget();
-
-	searchWidget_->setWidget(helpEngine_->indexWidget());
+	searchWidget_->setWidget(searchEngine_->queryWidget());
 	//searchWidget_->setWidget(results_);
 
 	searchWidget_->hide();
@@ -72,17 +77,24 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 
     // Entry in tree view has been clicked
     connect(helpEngine_->contentWidget(), SIGNAL(linkActivated(const QUrl&)),
-            textWindow_, SLOT(load(const QUrl&)));
+            textWindow_, SLOT(open(const QUrl&)));
 
     connect(helpEngine_->indexWidget(), SIGNAL(linkActivated(const QUrl&, const QString&)),
-            textWindow_, SLOT(load(const QUrl&, const QString&)));
+            textWindow_, SLOT(open(const QUrl&, const QString&)));
 
-    // Entry in results view (search) has been clicked
-    //connect(results_, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
-    //		textWindow_, SLOT(openFoundSite(QListWidgetItem*)));
 
     // Search button
-    connect(searchButton_, SIGNAL(clicked()), this, SLOT(searchItems()));
+    connect(searchButton_, SIGNAL(clicked()), this, SLOT(showSearchWidget()));
+
+    // Search button
+    connect(searchEngine_->queryWidget(), SIGNAL(search()), this, SLOT(startSearch()));
+
+    // Show results if search is finished
+    connect(searchEngine_, SIGNAL(searchingFinished(int)), this, SLOT(showResults(int)));
+
+    // Show results if search is finished
+    connect(searchEngine_->resultWidget(), SIGNAL(requestShowLink(const QUrl&)),
+    		this, SLOT(showFoundSite(const QUrl&)));
 
     // Back button
     connect(backButton_, SIGNAL(clicked()), this, SLOT(goBack()));
@@ -96,17 +108,25 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
     // Source has been reloaded
     connect(textWindow_, SIGNAL(urlChanged(const QUrl&)), this, SLOT(update(const QUrl&)));
 
-    // Register documentation (if not registered yet)
-    helpEngine_->registerDocumentation(filename);
-    helpEngine_->setCurrentFilter("");
 
     // Load main page
-    textWindow_->load(QUrl(homeSite_));
+    textWindow_->open(QUrl(homeSite_));
+}
+
+void HelpWidget::startSearch() {
+
+	searchEngine_->search(searchEngine_->queryWidget()->query());
 }
 
 void HelpWidget::setHomeSite(const QString& _homeSite) {
 
 	homeSite_ = _homeSite;
+}
+
+void HelpWidget::showFoundSite(const QUrl& _url) {
+
+	textWindow_->open(_url);
+	tabWidget_->setCurrentIndex(homeIndex_);
 }
 
 void HelpWidget::update(const QUrl& /* url */) {
@@ -130,7 +150,7 @@ void HelpWidget::goBack() {
 
 void HelpWidget::goHome() {
 
-	textWindow_->load(homeSite_);
+	textWindow_->open(homeSite_);
 
 	updateButtons();
 }
@@ -150,13 +170,17 @@ void HelpWidget::updateButtons() {
 	}
 }
 
-void HelpWidget::searchItems() {
-
-	QMap<QString, QUrl> results = helpEngine_->linksForIdentifier(searchButton_->text());
-
-	std::cerr << "Found: " << results.size() << std::endl;
+void HelpWidget::showSearchWidget() {
 
 	searchWidget_->show();
+}
+
+void HelpWidget::showResults(int /*_hits*/) {
+
+	searchWidget_->hide();
+
+	int resultsTabIndex_ = tabWidget_->addTab(searchEngine_->resultWidget(), "Results");
+	tabWidget_->setCurrentIndex(resultsTabIndex_);
 }
 
 void HelpWidget::openFoundSite(QListWidgetItem* /*_item*/) {
@@ -166,6 +190,5 @@ void HelpWidget::openFoundSite(QListWidgetItem* /*_item*/) {
 HelpWidget::~HelpWidget() {
 
 	delete searchWidget_;
-	delete results_;
 	delete textWindow_;
 }

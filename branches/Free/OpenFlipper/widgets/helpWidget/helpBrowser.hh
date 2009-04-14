@@ -9,33 +9,35 @@
 #define HELPBROWSER_HH_
 
 #include <QtGui>
-#include <QWebView>
+#include <QTextBrowser>
 #include <QtHelp>
 
-class HelpBrowser : public QWebView {
+class HelpBrowser : public QTextBrowser {
 	Q_OBJECT
 
 public:
-	HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent = 0);
+	HelpBrowser(QHelpEngine* _helpEngine, const QUrl& _basePath, QWidget* parent = 0);
 
 	virtual ~HelpBrowser();
 
-	QVariant loadBytes(const QUrl& url);
+	QVariant loadResource ( int _type, const QUrl& _name );
 
 	bool isBackwardAvailable();
 
 	bool isForwardAvailable();
 
-	void setUrl(const QUrl& _url);
-
 signals:
 	void urlChanged ( const QUrl& src );
 
+	void linkClicked(const QString& _link);
+
 public slots:
 
-	void load(const QUrl& _url);
+	void open(const QUrl& _url);
 
-	void load(const QUrl& url, const QString& _s_url, bool _skipSave = false);
+	void open(const QString& _url);
+
+	void open(const QUrl& _url, const QString& _str, bool _skipSave = false);
 
 	void backward();
 
@@ -47,11 +49,10 @@ private:
 
 	QHelpEngine* helpEngine_;
 
-	QString css_str_;
-	QString css_file_;
-
 	QStringList visitedPages_;
 	int currentPage_;
+
+	QUrl basePath_;
 
 };
 
