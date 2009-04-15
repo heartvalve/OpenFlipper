@@ -190,6 +190,16 @@ void Core::slotUpdateAllTextures( ){
  * See in the documentation of the texture plugin interfaces for further detail.
 */
 void Core::slotSetTextureMode(QString _textureName ,QString _mode) {
+
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"slotSetTextureMode( " + _textureName + " , " + _mode + " ) called by " +
+                 QString( sender()->metaObject()->className() ) );
+      }
+    }
+  }
+
   emit setTextureMode(_textureName,_mode);
 }
 
