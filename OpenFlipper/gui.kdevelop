@@ -90,7 +90,7 @@
       </environments>
     </other>
     <general>
-      <activedir>Plugin-TemplateModeling</activedir>
+      <activedir>Plugin-Info</activedir>
     </general>
   </kdevcustomproject>
   <kdevdebugger>
