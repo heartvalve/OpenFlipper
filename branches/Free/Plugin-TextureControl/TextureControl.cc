@@ -540,6 +540,158 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
   }
 }
 
+void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mode, int _id) {
+/*
+  std::cerr << "TextureControlPlugin::slotSetTextureMode called for : " << _textureName.toStdString()
+  std::cerr << "on object=" << _id <<  std::endl;
+
+  // Get the new object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // Get Texture data for this object
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+
+  if ( texData == 0 || ( !texData->textureExists(_textureName))  ) {
+    emit log(LOGERR,"Texture does not exist: " + _textureName + " (object=" + QString::number(_id) + ")");
+    return;
+  }
+
+  // ================================================================================
+  // Parse parameters and update them in the texture data
+  // ================================================================================
+  Texture& texture = texData->texture(_textureName);
+
+  int i = 0;
+  QString nextString = _mode.section(',',i,i);
+  while ( nextString != "" ) {
+    QString sectionName = nextString.section('=',0,0);
+    QString value = nextString.section('=',1,1);
+
+    if ( sectionName == "clamp" ) {
+        if (value == "false") {
+            texture.parameters.clamp = false;
+        } else {
+            texture.parameters.clamp = true;
+        }
+    } else
+    if ( sectionName == "clamp_max" ) {
+            texture.parameters.clamp_max = value.toDouble();
+    } else
+    if ( sectionName == "clamp_min" ) {
+            texture.parameters.clamp_min = value.toDouble();
+    } else
+    if ( sectionName == "max_val" ) {
+            texture.parameters.max_val = value.toDouble();
+    } else
+    if ( sectionName == "repeat" ) {
+        if (value == "false") {
+            texture.parameters.repeat = false;
+        } else {
+            texture.parameters.repeat = true;
+        }
+    } else
+    if ( sectionName == "center" ) {
+        if (value == "false") {
+            texture.parameters.center = false;
+        } else {
+            texture.parameters.center = true;
+        }
+    } else
+    if ( sectionName == "scale" ) {
+        if (value == "false") {
+            texture.parameters.scale = false;
+        } else {
+            texture.parameters.scale = true;
+        }
+    } else
+    if ( sectionName == "type" ) {
+        if (value == "halfedgebased") {
+            texture.type = HALFEDGEBASED;
+        } else {
+            texture.type = VERTEXBASED;
+        }
+    } else
+      emit log(LOGERR,"Unknown texture mode : " + sectionName);
+
+    ++i;
+    nextString = _mode.section(',',i,i);
+  }
+
+  // ================================================================================
+  // Mark updated texture as dirty
+  // ================================================================================
+  texture.dirty = true;
+
+
+  // check if the local textures need to be updated
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it){
+
+    TextureData* texData = dynamic_cast< TextureData* > ( o_it->objectData(TEXTUREDATA) );
+
+    if (texData != 0){
+
+      if ( texData->textureExists(_textureName) ){
+
+        Texture& localTex = texData->texture(_textureName);
+
+        //check if something changed
+        bool changed = false;
+
+        if ( _mode.contains("clamp") && (texture.parameters.clamp != localTex.parameters.clamp) ){
+          localTex.parameters.clamp = texture.parameters.clamp;
+          changed = true;
+        }
+
+        if ( _mode.contains("clamp_max") && (texture.parameters.clamp_max != localTex.parameters.clamp_max) ){
+          localTex.parameters.clamp_max = texture.parameters.clamp_max;
+          changed = true;
+        }
+
+        if ( _mode.contains("clamp_min") && (texture.parameters.clamp_min != localTex.parameters.clamp_min) ){
+          localTex.parameters.clamp_min = texture.parameters.clamp_min;
+          changed = true;
+        }
+
+        if ( _mode.contains("max_val") && (texture.parameters.max_val != localTex.parameters.max_val) ){
+          localTex.parameters.max_val = texture.parameters.max_val;
+          changed = true;
+        }
+
+        if ( _mode.contains("repeat") && (texture.parameters.repeat != localTex.parameters.repeat) ){
+          localTex.parameters.repeat = texture.parameters.repeat;
+          changed = true;
+        }
+
+        if ( _mode.contains("center") && (texture.parameters.center != localTex.parameters.center) ){
+          localTex.parameters.center = texture.parameters.center;
+          changed = true;
+        }
+
+        if ( _mode.contains("scale") && (texture.parameters.scale != localTex.parameters.scale) ){
+          localTex.parameters.scale = texture.parameters.scale;
+          changed = true;
+        }
+
+        if ( _mode.contains("type") && (texture.type != localTex.type) ){
+          localTex.type = texture.type;
+          changed = true;
+        }
+
+        //only update if the texture is enabled
+        if (changed){
+          if ( texData->isEnabled(_textureName) )
+            emit updateTexture( _textureName, o_it->id() );
+          else
+            localTex.dirty = true;
+        }
+      }
+    }
+  }*/
+}
+
 void TextureControlPlugin::pluginsInitialized() {
   // ================================================================================
   // Create global texture menu
@@ -695,61 +847,106 @@ void TextureControlPlugin::slotTextureMenu(QAction* _action) {
   slotSwitchTexture( _action->text() );
 }
 
+void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
+
+  std::cerr << "TextureControlPlugin::doSwitchTexture : " << _textureName.toStdString();
+  std::cerr << " object=" << _id << std::endl;
+
+  // Get the new object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // ================================================================================
+  // Get Texture data for current object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0) {
+    std::cerr << "Object has no texture data" << std::endl;
+    return;
+  }
+
+  // ================================================================================
+  // Enable the given texture exclusively
+  // ================================================================================
+  if ( texData->enableTexture( _textureName , true ) ) {
+    std::cerr << "Enabled Texture " << _textureName.toStdString() << std::endl;
+  } else {
+    std::cerr << "Failed to enabled Texture" << std::endl;
+    return;
+  }
+
+  // ================================================================================
+  // If texture is flagged dirty, update it ( this jumps to texture updated
+  // which will update the visualization )
+  // ================================================================================
+  if ( texData->texture( _textureName).dirty ) {
+    // TODO: maybe introduce lock to prevent extra redraws if updating all objects
+    emit updateTexture( texData->texture( _textureName ).name , obj->id() );
+    return;
+  }
+
+  // ================================================================================
+  // Update texture map from meshNode and activate it
+  // ================================================================================
+  if( obj->dataType( DATA_TRIANGLE_MESH ) ){
+    doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
+    PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
+    PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
+    PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
+  }
+
+  if ( obj->dataType( DATA_POLY_MESH ) ){
+    doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
+    PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
+    PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
+    PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
+  }
+
+}
+
+void TextureControlPlugin::slotSwitchTexture( QString _textureName , int _id ) {
+
+  std::cerr << "TextureControlPlugin::slotSwitchTexture : " << _textureName.toStdString();
+  std::cerr << "object=" << _id << std::endl;
+
+  doSwitchTexture(_textureName, _id);
+
+  // ================================================================================
+  // Switch to a texture drawMode
+  // ================================================================================
+  bool textureMode = false;
+  for ( int j = 0 ; j < PluginFunctions::viewers() ; ++j ) {
+      textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED );
+      textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+  }
+
+  if ( !textureMode )
+    PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+
+  emit updateView();
+
+  // TODO: Update menu
+//     QList<QAction *> menuEntries = actionGroup_->actions();
+//
+//     for ( int i = 0 ; i < menuEntries.size(); ++i ) {
+//       if ( menuEntries[i]->text() == _textureName )
+//         menuEntries[i]->setChecked(true);
+//     }
+
+//     updateDialog();
+}
+
 void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
 
   std::cerr << "TextureControlPlugin::slotSwitchTexture : " << _textureName.toStdString() << std::endl;
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
                                         o_it != PluginFunctions::objectsEnd();
-                                        ++o_it) {
+                                        ++o_it)
 
-    // ================================================================================
-    // Get Texture data for current object
-    // ================================================================================
-    TextureData* texData = dynamic_cast< TextureData* > ( o_it->objectData(TEXTUREDATA) );
-    if (texData == 0) {
-      std::cerr << "Object has no texture data" << std::endl;
-      continue;
-    }
-
-    // ================================================================================
-    // Enable the given texture exclusively
-    // ================================================================================
-    if ( texData->enableTexture( _textureName , true ) ) {
-      std::cerr << "Enabled Texture " << _textureName.toStdString() << std::endl;
-    } else {
-      std::cerr << "Failed to enabled Texture" << std::endl;
-      continue;
-    }
-
-    // ================================================================================
-    // If texture is flagged dirty, update it ( this jumps to texture updated
-    // which will update the visualization )
-    // ================================================================================
-    if ( texData->texture( _textureName).dirty ) {
-      // TODO: maybe introduce lock to prevent extra redraws if updating all objects
-      emit updateTexture( texData->texture( _textureName ).name , o_it->id() );
-      continue;
-    }
-
-    // ================================================================================
-    // Update texture map from meshNode and activate it
-    // ================================================================================
-    if( o_it->dataType( DATA_TRIANGLE_MESH ) ){
-      doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(o_it)->mesh());
-      PluginFunctions::triMeshObject(o_it)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
-      PluginFunctions::triMeshObject(o_it)->meshNode()->set_texture_map( texData->textureMap() );
-      PluginFunctions::triMeshObject(o_it)->meshNode()->set_property_map( texData->propertyMap() );
-    }
-
-    if ( o_it->dataType( DATA_POLY_MESH ) ){
-      doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(o_it)->mesh());
-      PluginFunctions::polyMeshObject(o_it)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
-      PluginFunctions::polyMeshObject(o_it)->meshNode()->set_texture_map( texData->textureMap() );
-      PluginFunctions::polyMeshObject(o_it)->meshNode()->set_property_map( texData->propertyMap() );
-    }
-
-  }
+    doSwitchTexture(_textureName, o_it->id() );
 
   // ================================================================================
   // Switch to a texture drawMode

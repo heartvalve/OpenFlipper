@@ -118,7 +118,9 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void slotTextureAdded( QString _textureName , QString _filename , uint _dimension , int _id );
     void slotTextureAdded( QString _textureName , QString _filename , uint _dimension );
     void slotTextureUpdated( QString _textureName , int _identifier );
+    void slotSetTextureMode(QString _textureName ,QString _mode, int _id);
     void slotSetTextureMode(QString _textureName ,QString _mode);
+    void slotSwitchTexture( QString _textureName, int _id );
     void slotSwitchTexture( QString _textureName );
 
     // LoadSaveInterface
@@ -127,6 +129,9 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     // TODO: Empty object added has to create textures as well!
 
   private slots:
+
+    void doSwitchTexture( QString _textureName, int _id );
+
     /// Called when an action in the TextureMenu is triggered
     void slotTextureMenu(QAction* _action);
 
