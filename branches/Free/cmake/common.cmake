@@ -73,6 +73,7 @@ if (NOT QT4_FOUND)
   set (QT_USE_QTNETWORK 1)
   set (QT_USE_QTSCRIPT 1)
   set (QT_USE_QTSQL 1)
+  set (QT_USE_QTHELP 1)
   set (QT_USE_QTWEBKIT 1)
   set (QT_USE_QTUITOOLS 1)
 
