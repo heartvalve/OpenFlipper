@@ -94,11 +94,13 @@ class TextureInterface {
       */
       virtual void updatedTextures( QString , int ) {};
 
-      /** \brief emit this signal if you want to switch the viewer to a specific texture mode
-       *
-       *  Give the name of the texture and the id of the object or -1 if all objects were update
-      */
-      virtual void switchTexture( QString ) {};
+      /** \brief emit this signal if you want to switch the texture of a specific object
+       */
+      virtual void switchTexture( QString /*_textureName*/ , int /*_id*/  ) {};
+
+      /** \brief emit this signal if you want to switch the global texture
+       */
+      virtual void switchTexture( QString /*_textureName*/ ) {};
 
       /** \brief emit this signal if you want to set a special mode for this texture (Clamping,...)
        *
@@ -122,6 +124,16 @@ class TextureInterface {
        *  @param _mode colon seperated String describing your settings (e.g. clamp,abs )
       */
       virtual void setTextureMode(QString /*_textureName*/ ,QString /*_mode*/) {};
+
+      /** \brief emit this signal if you want to set a special mode for this texture (Clamping,...)
+       *
+       * for info about the _mode parameter see setTextureMode(QString,QString)
+       *
+       *  @param _textureName Name of your Texture
+       *  @param _mode colon seperated String describing your settings (e.g. clamp,abs )
+       *  @param _id id of an object
+       */
+      virtual void setTextureMode(QString /*_textureName*/ ,QString /*_mode*/, int /*_id*/ ) {};
 
    private slots :
       /** \brief update the texture with the given Name ( if this plugin provides this texture ) for all meshes
@@ -168,8 +180,24 @@ class TextureInterface {
        *  A plugin has updated the Texture settings for a texture
        *  @param _textureName The name of the updated texture
        *  @param _mode New mode flags for the given texture
+       *  @param _id id of an object
+       */
+      virtual void slotSetTextureMode(QString /*_textureName*/ ,QString /*_mode*/, int /*_id*/ ) {};
+
+      /** \brief Texturemode for texture should be changed
+       *
+       *  A plugin has updated the Texture settings for a texture
+       *  @param _textureName The name of the updated texture
+       *  @param _mode New mode flags for the given texture
        */
       virtual void slotSetTextureMode(QString /*_textureName*/ ,QString /*_mode*/) {};
+
+      /** \brief This slot is called when a plugin requests to switch an objects texture
+       *
+       * @param _textureName Name of the Texture
+       * @param _id id of an object
+       */
+      virtual void slotSwitchTexture( QString /*_textureName*/, int /*_id*/ ) {};
 
       /** \brief This slot is called when a plugin requests to switch to a different texture mode
        *

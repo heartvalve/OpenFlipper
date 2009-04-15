@@ -158,6 +158,13 @@ void Core::slotObjectPropertiesChanged( int _id )
 /** Called by a plugin if it created a texture. The information is passed to all plugins. If a texture control plugin is available it has to react on the signal.\n
  * See in the documentation of the texture plugin interfaces for further detail.
 */
+void Core::slotAddTexture( QString _textureName , QString _filename, uint _dimension, int _id) {
+  emit addTexture(_textureName , _filename,_dimension,_id);
+}
+
+/** Called by a plugin if it created a texture. The information is passed to all plugins. If a texture control plugin is available it has to react on the signal.\n
+ * See in the documentation of the texture plugin interfaces for further detail.
+*/
 void Core::slotAddTexture( QString _textureName , QString _filename, uint _dimension) {
   emit addTexture(_textureName , _filename,_dimension);
 }
@@ -184,6 +191,23 @@ void Core::slotUpdateTexture( QString _name , int _identifier){
 */
 void Core::slotUpdateAllTextures( ){
   emit updateAllTextures();
+}
+
+/** Called by a plugin if the parameters of a texture should be changed. The information is passed to all plugins. A Texturecontrol plugin should react on this event.\n
+ * See in the documentation of the texture plugin interfaces for further detail.
+*/
+void Core::slotSetTextureMode(QString _textureName, QString _mode, int _id) {
+
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"slotSetTextureMode( " + _textureName + " , " + _mode + " , " + QString::number(_id) + " ) called by " +
+                 QString( sender()->metaObject()->className() ) );
+      }
+    }
+  }
+
+  emit setTextureMode(_textureName,_mode,_id);
 }
 
 /** Called by a plugin if the parameters of a texture should be changed. The information is passed to all plugins. A Texturecontrol plugin should react on this event.\n
@@ -216,6 +240,12 @@ void Core::slotTextureUpdated( QString _textureName , int _identifier ) {
     }
   }
   emit updatedTextures(_textureName,_identifier);
+}
+
+/** Called by plugins if texture mode should be switched
+ */
+void Core::slotSwitchTexture( QString _textureName, int _id ) {
+  emit switchTexture(_textureName, _id);
 }
 
 /** Called by plugins if texture mode should be switched

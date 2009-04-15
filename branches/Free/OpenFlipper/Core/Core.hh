@@ -153,6 +153,9 @@ signals:
    void objectSelectionChanged( int );
 
    /// The texture with the given name and filename has been added
+   void addTexture( QString, QString , uint, int );
+
+   /// The texture with the given name and filename has been added
    void addTexture( QString, QString , uint );
 
    /// Tell the plugins to update the given texture
@@ -165,7 +168,13 @@ signals:
    void updatedTextures( QString , int );
 
    /// A texture mode should be changed
+   void setTextureMode(QString _textureName ,QString _mode, int _id);
+
+   /// A texture mode should be changed
    void setTextureMode(QString _textureName ,QString _mode);
+
+   /// Switch Texture Plugins to a given Mode
+   void switchTexture( QString, int );
 
    /// Switch Texture Plugins to a given Mode
    void switchTexture( QString );
@@ -235,6 +244,9 @@ signals:
       void slotAddHiddenPickMode( const std::string _mode );
 
       /// Called by a plugin if it creates a texture
+      void slotAddTexture( QString _textureName , QString _filename , uint _dimension , int _id );
+
+      /// Called by a plugin if it creates a texture
       void slotAddTexture( QString _textureName , QString _filename , uint _dimension );
 
       /// Tell the plugins to update the given texture
@@ -247,7 +259,13 @@ signals:
       void slotTextureUpdated( QString _textureName , int _identifier );
 
       /// A texture mode should be changed
+      void slotSetTextureMode(QString _textureName ,QString _mode, int _id);
+
+      /// A texture mode should be changed
       void slotSetTextureMode(QString _textureName ,QString _mode);
+
+      /// Tells Plugins to switch to the given Texture
+      void slotSwitchTexture( QString _textureName, int _id );
 
       /// Tells Plugins to switch to the given Texture
       void slotSwitchTexture( QString _textureName );
