@@ -33,6 +33,7 @@
 
 
 #include "ui_textureProperties.hh"
+#include "TextureData.hh"
 #include <QtGui>
 
 #ifdef QWT
@@ -43,12 +44,35 @@ class texturePropertiesWidget : public QDialog, public Ui::Dialog
 {
   Q_OBJECT
 
+  signals:
+    void applyProperties(TextureData* _texData, QString _textureName, int _id);
+
   public:
     texturePropertiesWidget(QWidget *parent = 0);
 
     void setOriginalData(std::vector< double > _x, std::vector< double > _y  );
 
+    void show(TextureData* _texData, int _id, QString _name = "");
+
+  private slots:
+
+    void textureAboutToChange(QListWidgetItem* _item);
+
+    void textureChanged(QListWidgetItem* _item);
+
+    void slotButtonBoxClicked(QAbstractButton* _button);
+
+    void slotPropertiesChanged(double _value = 0.0);
+
   private:
+
+    bool propChanged_;
+    int  curRow_;
+
+    TextureData* texData_;
+    QString      textureName_;
+    int          id_;
+
 #ifdef QWT
     QwtPlot* originalDataHistogram_;
     QwtPlotCurve histogramCurve_;

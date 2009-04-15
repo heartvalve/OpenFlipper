@@ -635,10 +635,8 @@ void TextureControlPlugin::pluginsInitialized() {
   // ================================================================================
   // TODO : Settings dialog updates required to change global/local textures,...
   settingsDialog_ = new texturePropertiesWidget(0);
-
-  connect(settingsDialog_->okButton,SIGNAL(clicked()), this , SLOT (slotTexturePropertiesOk() ) );
-  connect(settingsDialog_->applyButton,SIGNAL(clicked()), this , SLOT (slotTexturePropertiesApply() ) );
-  connect(settingsDialog_->cancelButton,SIGNAL(clicked()), this , SLOT (slotTexturePropertiesCancel() ) );
+  connect( settingsDialog_, SIGNAL( applyProperties(TextureData*,QString,int) ),
+           this,              SLOT( applyDialogSettings(TextureData*,QString,int) ));
 
   // ================================================================================
   // Create action group and menu for global textures
@@ -666,111 +664,80 @@ void TextureControlPlugin::pluginsInitialized() {
 
 }
 
-void TextureControlPlugin::updateDialog() {
-  std::cerr << "Not implemented : updateDialog" << std::endl;
-  // TODO : Check
-//   if ( textures_.size() == 0 )
-//     return;
-//
-//   settingsDialog_->repeatBox->setChecked(textures_[textureid].repeat);
-//   settingsDialog_->clampBox->setChecked(textures_[textureid].clamp);
-//   settingsDialog_->centerBox->setChecked(textures_[textureid].center);
-//   settingsDialog_->absBox->setChecked(textures_[textureid].abs);
-//   QString tmp;
-//   tmp.setNum(textures_[textureid].max_val);
-//   settingsDialog_->max_val->setText( tmp );
-//   tmp.setNum(textures_[textureid].clamp_min);
-//   settingsDialog_->clamp_min->setText(tmp);
-//   tmp.setNum(textures_[textureid].clamp_max);
-//   settingsDialog_->clamp_max->setText(tmp);
-//
-//   // update plot only when dimension is 1
-//   if ( textures_[textureid].dimension == 1) {
-//     std::vector< double > x,y;
-//
-//     x.push_back(100.0);
-//     y.push_back(100.0);
-//
-//     x.push_back(200.0);
-//     y.push_back(150.0);
-//
-//     x.push_back(300.0);
-//     y.push_back(10.0);
-//
-//     settingsDialog_->setOriginalData(x,y);
-//
-// //     getOriginalHistogram();
-//
-//   }
-}
-
 void TextureControlPlugin::slotSetTextureProperties() {
-  std::cerr << "Not implemented : slotSetTextureProperties" << std::endl;
-  // TODO : Check
-//   updateDialog();
-//   if ( textures_.size() == 0 )
-//       return;
-//
-//   settingsDialog_->show();
+
+  settingsDialog_->show( &globalTextures_, -1);
 }
 
-void TextureControlPlugin::applyDialogSettings() {
-  std::cerr << "Not implemented : applyDialogSettings" << std::endl;
-  // TODO : Check
-//   if ( textures_.size() == 0 )
-//       return;
-//
-//   int textureid = -1;
-//   for ( int i = 0 ; i < (int)textures_.size() ; ++i ) {
-//         if ( textures_[i].name == activeTexture_ ) {
-//               textureid = i;
-//               break;
-//         }
-//   }
-//
-//   if (textureid == -1) {
-//       emit log(LOGERR,"Unable to get active Texture");
-//   }
-//
-//   textures_[textureid].repeat=settingsDialog_->repeatBox->isChecked();
-//   textures_[textureid].clamp=settingsDialog_->clampBox->isChecked();
-//   textures_[textureid].center=settingsDialog_->centerBox->isChecked();
-//   textures_[textureid].abs=settingsDialog_->absBox->isChecked();
-//   textures_[textureid].scale=settingsDialog_->scaleBox->isChecked();
-//
-//   QString tmp;
-//   tmp = settingsDialog_->max_val->text();
-//   textures_[textureid].max_val = tmp.toDouble();
-//
-//   tmp = settingsDialog_->clamp_min->text();
-//   textures_[textureid].clamp_min = tmp.toDouble();
-//
-//   tmp = settingsDialog_->clamp_max->text();
-//   textures_[textureid].clamp_max = tmp.toDouble();
-//
-//   // Update the corresponding meshes
-//   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-//       slotTextureUpdated(  activeTexture_ , o_it->id() );
-//
-//   emit updateView();
-}
+void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _textureName, int _id) {
 
-void TextureControlPlugin::slotTexturePropertiesOk() {
-  // TODO : Check
-//   applyDialogSettings();
-//   settingsDialog_->hide();
-}
+  if (_id != -1){
+    //local texture
+    if ( _texData->isEnabled(_textureName) ){
+      slotTextureUpdated( _textureName  , _id );
+      emit updateView();
+    }else
+      _texData->texture( _textureName ).dirty = true;
 
-void TextureControlPlugin::slotTexturePropertiesApply() {
-  // TODO : Check
-//     applyDialogSettings();
-}
+  } else {
+    // global texture
 
-void TextureControlPlugin::slotTexturePropertiesCancel() {
-  // TODO : Check
-//     settingsDialog_->hide();
-}
+    _texData->texture( _textureName ).dirty = true;
 
+    Texture& globalTexture = _texData->texture(_textureName);
+
+    // check if the local textures need to be updated
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it){
+
+      TextureData* texData = dynamic_cast< TextureData* > ( o_it->objectData(TEXTUREDATA) );
+
+      if ( texData != 0 && texData->textureExists(_textureName) ){
+
+        //overwrite local parameters
+        Texture& localTexture = texData->texture(_textureName);
+
+        bool changed = false;
+
+        if (localTexture.parameters.clamp != globalTexture.parameters.clamp){
+          localTexture.parameters.clamp = globalTexture.parameters.clamp;
+          changed = true;
+        }
+        if (localTexture.parameters.clamp_max != globalTexture.parameters.clamp_max){
+          localTexture.parameters.clamp_max = globalTexture.parameters.clamp_max;
+          changed = true;
+        }
+        if (localTexture.parameters.clamp_min != globalTexture.parameters.clamp_min){
+          localTexture.parameters.clamp_min = globalTexture.parameters.clamp_min;
+          changed = true;
+        }
+        if (localTexture.parameters.max_val != globalTexture.parameters.max_val){
+          localTexture.parameters.max_val = globalTexture.parameters.max_val;
+          changed = true;
+        }
+        if (localTexture.parameters.repeat != globalTexture.parameters.repeat){
+          localTexture.parameters.repeat = globalTexture.parameters.repeat;
+          changed = true;
+        }
+        if (localTexture.parameters.center != globalTexture.parameters.center){
+          localTexture.parameters.center = globalTexture.parameters.center;
+          changed = true;
+        }
+        if (localTexture.parameters.scale != globalTexture.parameters.scale){
+          localTexture.parameters.scale = globalTexture.parameters.scale;
+          changed = true;
+        }
+
+        // update if something has changed
+        if ( changed ){
+          if ( texData->isEnabled(_textureName) )
+            slotTextureUpdated( _textureName  , o_it->id() );
+          else
+            texData->texture( _textureName ).dirty = true;
+        }
+      }
+    }
+  }
+}
 
 void TextureControlPlugin::slotTextureMenu(QAction* _action) {
   // call existing function to switch the texture
@@ -938,20 +905,22 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
   connect( actionGroup, SIGNAL( triggered( QAction * ) ),
           this, SLOT( slotTextureContextMenu( QAction * ) ) );
 
+  QAction* action = actionGroup->addAction( "Texture Settings" );
+
+  contextMenu_->addAction( action );
+  contextMenu_->addSeparator();
+
   for ( uint i = 0 ; i < texData->textures().size() ; ++i ) {
 
-    QAction* action = actionGroup->addAction( texData->textures()[i].name );
+    action = actionGroup->addAction( texData->textures()[i].name );
 
     action->setCheckable(true);
 
     if ( texData->textures()[i].enabled )
       action->setChecked(true);
 
-
+    contextMenu_->addAction( action );
   }
-
-  contextMenu_->addActions(actionGroup->actions());
-
 }
 
 
@@ -963,7 +932,31 @@ void TextureControlPlugin::slotTextureContextMenu( QAction * _action ) {
 
   std::cerr << "TextureControlPlugin::slotTextureContextMenu : " << id << std::endl;
 
-  slotSwitchTexture( _action->text() , id );
+  if (_action->text() == "Texture Settings"){
+
+    BaseObjectData* obj;
+    if (! PluginFunctions::getObject(  id , obj ) ) {
+      emit log(LOGERR,"Unable to get Object for id " + QString::number(id) );
+      return;
+    }
+
+    TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+
+    if (texData == 0){
+
+      QMessageBox msgBox;
+      msgBox.setText("Cannot show Properties. No Textures available!");
+      msgBox.exec();
+      return;
+
+    } else {
+      settingsDialog_->show( texData, id, obj->name() );
+    }
+
+  } else {
+
+    slotSwitchTexture( _action->text() , id );
+  }
 
 }
 

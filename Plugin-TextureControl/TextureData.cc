@@ -42,7 +42,7 @@ TextureData::TextureData(){
 TextureData::~TextureData() {
 
 }
-/*
+
 //-----------------------------------------------------------------------------------
 
 /** \brief Check if a texture exists
@@ -94,6 +94,7 @@ bool TextureData::enableTexture(QString _textureName, bool _exclusive)
           textures_[i].enabled = false;
     return true;
   }
+  return false;
 }
 
 //-----------------------------------------------------------------------------------
