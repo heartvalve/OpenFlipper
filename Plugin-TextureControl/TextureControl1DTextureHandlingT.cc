@@ -34,12 +34,15 @@
 #include "TextureControl.hh"
 
 template< typename MeshT >
-void TextureControlPlugin::computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::VPropHandleT< double > _texture,
-                                                               double& _min , double& _max) {
-   const bool   abs = textures_[_textureid].abs;
-   const bool   clamp = textures_[_textureid].clamp ;
-   const double clamp_max = textures_[_textureid].clamp_max;
-   const double clamp_min = textures_[_textureid].clamp_min;
+void TextureControlPlugin::computeMinMaxScalar(Texture& _textureData ,
+                                               MeshT& _mesh,
+                                               OpenMesh::VPropHandleT< double > _texture,
+                                               double& _min , double& _max) {
+
+   const bool   abs       = _textureData.parameters.abs;
+   const bool   clamp     = _textureData.parameters.clamp ;
+   const double clamp_max = _textureData.parameters.clamp_max;
+   const double clamp_min = _textureData.parameters.clamp_min;
 
    _max = FLT_MIN;
    _min = FLT_MAX;
@@ -63,12 +66,15 @@ void TextureControlPlugin::computeMinMaxScalar(int _textureid, MeshT& _mesh,Open
 }
 
 template< typename MeshT >
-void TextureControlPlugin::computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::HPropHandleT< double > _texture,
-                                                               double& _min , double& _max) {
-   const bool   abs = textures_[_textureid].abs;
-   const bool   clamp = textures_[_textureid].clamp ;
-   const double clamp_max = textures_[_textureid].clamp_max;
-   const double clamp_min = textures_[_textureid].clamp_min;
+void TextureControlPlugin::computeMinMaxScalar(Texture& _textureData ,
+                                               MeshT& _mesh,
+                                               OpenMesh::HPropHandleT< double > _texture,
+                                               double& _min , double& _max) {
+
+   const bool   abs       = _textureData.parameters.abs;
+   const bool   clamp     = _textureData.parameters.clamp ;
+   const double clamp_max = _textureData.parameters.clamp_max;
+   const double clamp_min = _textureData.parameters.clamp_min;
 
    _max = FLT_MIN;
    _min = FLT_MAX;
@@ -92,18 +98,18 @@ void TextureControlPlugin::computeMinMaxScalar(int _textureid, MeshT& _mesh,Open
 }
 
 template< typename MeshT >
-void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh::VPropHandleT< double > _texProp )
+void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenMesh::VPropHandleT< double > _texProp )
 {
   // Compute some basic values for this texture
   double max,min;
-  computeMinMaxScalar(_textureid, _mesh, _texProp, min, max);
+  computeMinMaxScalar(_texture, _mesh, _texProp, min, max);
 
   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
     // Get the value of the property
     double value = _mesh.property(_texProp, v_it);
 
     // Mangle it with the predefined user options
-    computeValue(_textureid, min, max, value);
+    computeValue(_texture, min, max, value);
 
     // Write result to the openmesh texture coordinates ( 2d accessing the diagonal of a 2d texture)
     _mesh.set_texcoord2D( v_it, ACG::Vec2f(float(value), float(value) ) );
@@ -111,11 +117,11 @@ void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh:
 }
 
 template< typename MeshT >
-void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp )
+void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp )
 {
   // Compute some basic values for this texture
   double max,min;
-  computeMinMaxScalar(_textureid, _mesh, _texProp, min, max);
+  computeMinMaxScalar(_texture, _mesh, _texProp, min, max);
 
   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
 
@@ -123,7 +129,7 @@ void TextureControlPlugin::copyTexture ( int _textureid, MeshT& _mesh, OpenMesh:
     double value = _mesh.property(_texProp, h_it);
 
     // Mangle it with the predefined user options
-    computeValue(_textureid, min, max, value);
+    computeValue(_texture, min, max, value);
 
     // Write result to the openmesh texture coordinates ( 2d accessing the diagonal of a 2d texture)
     _mesh.set_texcoord2D( h_it, ACG::Vec2f(float(value), float(value) ) );
