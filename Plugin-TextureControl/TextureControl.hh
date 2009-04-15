@@ -45,6 +45,7 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+#include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
@@ -75,7 +76,7 @@ struct Texture {
   uint type;
 };*/
 
-class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, MenuInterface, LoggingInterface, LoadSaveInterface
+class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, MenuInterface, LoggingInterface, LoadSaveInterface,ContextMenuInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -83,27 +84,35 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
   Q_INTERFACES(MenuInterface)
   Q_INTERFACES(LoggingInterface)
   Q_INTERFACES(LoadSaveInterface)
+  Q_INTERFACES(ContextMenuInterface)
 
   public:
     enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1};
 
   signals:
+
     // BaseInterface
     void updateView();
+
     // TextureInterface
     void updateTexture( QString , int);
+
     // LoggingInterface
     void log(Logtype _type, QString _message);
     void log(QString _message);
+
     // MenuInterface
     void addMenubarAction(QAction* _action, MenuActionType _type );
 
-
+    // ContextMenuInterface
+    void addContextMenuItem(QAction* _action ,DataType _objectType , ContextMenuType _type );
 
   private slots:
+
     // BaseInterface
     void pluginsInitialized();
     void slotObjectUpdated(int _identifier);
+
     // TextureInterface
     void slotUpdateAllTextures( );
     void slotTextureAdded( QString _textureName , QString _filename , uint _dimension );
@@ -113,6 +122,9 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     // LoadSaveInterface
     void fileOpened( int _id );
+
+    // ContextMenuInterface
+    void slotUpdateContextMenu( int _objectId );
 
   private slots:
     /// Called when an action in the TextureMenu is triggered
@@ -150,6 +162,8 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     std::vector<QAction*> textureActions_;
 
     texturePropertiesWidget* settingsDialog_;
+
+    QMenu* contextMenu_;
 
     /// Set the active texture values to the values in the dialog box.
     void applyDialogSettings();
