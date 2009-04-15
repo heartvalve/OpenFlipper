@@ -835,6 +835,7 @@ draw(GLState& _state, unsigned int _drawMode)
   }
 
   // Textured by using coordinates stored in halfedges
+  // TODO: Check not only mesh_.has_halfedge_texcoords2D but check if custom property is available
   if ( ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE ) && mesh_.has_halfedge_texcoords2D())
   {
     glEnable(GL_TEXTURE_2D);
@@ -847,6 +848,7 @@ draw(GLState& _state, unsigned int _drawMode)
   }
 
   // Textured by using coordinates stored in halfedges
+  // TODO: Check not only mesh_.has_halfedge_texcoords2D but check if custom property is available
   if ( ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED ) && mesh_.has_halfedge_texcoords2D() && mesh_.has_face_normals())
   {
     glEnable(GL_TEXTURE_2D);
