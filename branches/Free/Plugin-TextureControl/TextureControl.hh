@@ -44,12 +44,15 @@
 #include <OpenFlipper/BasePlugin/TextureInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
 #include <OpenFlipper/common/Types.hh>
 #include "textureProperties.hh"
 
+#include "TextureData.hh"
+/*
 struct Texture {
   QString name;
   QString filename;
@@ -70,15 +73,16 @@ struct Texture {
   bool scale;
 
   uint type;
-};
+};*/
 
-class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, MenuInterface, LoggingInterface
+class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, MenuInterface, LoggingInterface, LoadSaveInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(TextureInterface)
   Q_INTERFACES(MenuInterface)
   Q_INTERFACES(LoggingInterface)
+  Q_INTERFACES(LoadSaveInterface)
 
   public:
     enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1};
@@ -94,6 +98,8 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     // MenuInterface
     void addMenubarAction(QAction* _action, MenuActionType _type );
 
+
+
   private slots:
     // BaseInterface
     void pluginsInitialized();
@@ -104,6 +110,9 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void slotTextureUpdated( QString _textureName , int _identifier );
     void slotSetTextureMode(QString _textureName ,QString _mode);
     void slotSwitchTexture( QString _textureName );
+
+    // LoadSaveInterface
+    void fileOpened( int _id );
 
   private slots:
     /// Called when an action in the TextureMenu is triggered
@@ -136,7 +145,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     QString activeTexture_;
 
-    std::vector< Texture > textures_;
+    TextureData globalTextures_;
 
     std::vector<QAction*> textureActions_;
 
@@ -151,11 +160,11 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     /// Take a scalar value and return a clamped,... depending on texture settings
     inline
-    void computeValue(int _textureid, double _min, double _max, double& _value);
+    void computeValue(Texture& _texture, double _min, double _max, double& _value);
 
     /// Calls the correct \a copyTexture() function to copy the texture property into the displayed OM property
     template< typename MeshT >
-    void doUpdateTexture ( int _textureid, MeshT& _mesh);
+    void doUpdateTexture ( Texture& _texture , MeshT& _mesh);
 
     template< typename MeshT >
     void getOriginalHistogram(std::vector< double>& _x, std::vector< double>& _y,
@@ -169,22 +178,22 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     /// Copy the supplied 1D vertex property to both coordinates of the 2D vertex OM texture property
     template< typename MeshT >
-    void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::VPropHandleT< double > _texProp );
+    void copyTexture(Texture& _texture , MeshT& _mesh, OpenMesh::VPropHandleT< double > _texProp );
 
     /// Copy the supplied 1D halfedge property to both coordinates of the 2D halfedge OM texture property
     template< typename MeshT >
-    void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp );
+    void copyTexture(Texture& _texture , MeshT& _mesh, OpenMesh::HPropHandleT< double > _texProp );
 
 
     /// For a given mesh compute the minimum and maximum values depending on texture settings (vertex based)
     template< typename MeshT >
     inline
-    void computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::VPropHandleT< double > _texture,double& _min , double& _max);
+    void computeMinMaxScalar(Texture& _textureData , MeshT& _mesh ,OpenMesh::VPropHandleT< double > _texture,double& _min , double& _max);
 
     /// For a given mesh compute the minimum and maximum values depending on texture settings (halfedge based)
     template< typename MeshT >
     inline
-    void computeMinMaxScalar(int _textureid, MeshT& _mesh,OpenMesh::HPropHandleT< double > _texture,double& _min , double& _max);
+    void computeMinMaxScalar(Texture& _textureData , MeshT& _mesh,OpenMesh::HPropHandleT< double > _texture,double& _min , double& _max);
 
     /** @} */
 
@@ -196,10 +205,10 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     /// Copy the supplied 2D vertex property to the 2D vertex OM property
     template< typename MeshT >
-    void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::VPropHandleT< ACG::Vec2d > _texProp );
+    void copyTexture(Texture& _texture, MeshT& _mesh, OpenMesh::VPropHandleT< ACG::Vec2d > _texProp );
     /// Copy the supplied 2D halfedge property to the 2D halfedge OM property
     template< typename MeshT >
-    void copyTexture(int _textureid, MeshT& _mesh, OpenMesh::HPropHandleT< ACG::Vec2d > _texProp );
+    void copyTexture(Texture& _texture, MeshT& _mesh, OpenMesh::HPropHandleT< ACG::Vec2d > _texProp );
 
     /** @} */
 
