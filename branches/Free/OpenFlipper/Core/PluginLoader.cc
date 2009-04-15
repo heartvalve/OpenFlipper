@@ -103,33 +103,7 @@ bool Core::checkSignal(QObject* _plugin , const char* _signalSignature) {
 void Core::loadPlugins()
 {
   //try to load plugins from new location
-  QDir tempDir = QDir(OpenFlipper::Options::applicationDir());
-  tempDir.cd("Plugins");
-
-  #if defined(WIN32)
-    tempDir.cd("Windows");
-  #elif defined(ARCH_DARWIN)
-    tempDir.cd("Darwin");
-  #else
-    tempDir.cd("Linux");
-  #endif
-
-  if ( OpenFlipper::Options::is64bit() )
-    tempDir.cd("64");
-  else
-    tempDir.cd("32");
-
-  #ifdef WIN32
-	#ifndef NDEBUG
-	  #define DEBUG
-	#endif
-  #endif
-
-  #ifdef DEBUG
-    tempDir.cd("Debug");
-  #else
-    tempDir.cd("Release");
-  #endif
+  QDir tempDir = QDir(OpenFlipper::Options::pluginDir());
 
   QStringList filters;
 
@@ -140,6 +114,7 @@ void Core::loadPlugins()
   #else
 	filters << "*.so";
   #endif
+
 
   // Get all files in the Plugin dir
   QStringList pluginlist = tempDir.entryList(filters,QDir::Files);
