@@ -419,41 +419,25 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
     QString value = nextString.section('=',1,1);
 
     if ( sectionName == "clamp" ) {
-        if (value == "false") {
-            texture.parameters.clamp = false;
-        } else {
-            texture.parameters.clamp = true;
-        }
+      texture.parameters.clamp = StringToBool(value);
     } else
     if ( sectionName == "clamp_max" ) {
-            texture.parameters.clamp_max = value.toDouble();
+      texture.parameters.clamp_max = value.toDouble();
     } else
     if ( sectionName == "clamp_min" ) {
-            texture.parameters.clamp_min = value.toDouble();
+      texture.parameters.clamp_min = value.toDouble();
     } else
     if ( sectionName == "max_val" ) {
-            texture.parameters.max_val = value.toDouble();
+      texture.parameters.max_val = value.toDouble();
     } else
     if ( sectionName == "repeat" ) {
-        if (value == "false") {
-            texture.parameters.repeat = false;
-        } else {
-            texture.parameters.repeat = true;
-        }
+      texture.parameters.repeat = StringToBool(value);
     } else
     if ( sectionName == "center" ) {
-        if (value == "false") {
-            texture.parameters.center = false;
-        } else {
-            texture.parameters.center = true;
-        }
+      texture.parameters.center = StringToBool(value);
     } else
     if ( sectionName == "scale" ) {
-        if (value == "false") {
-            texture.parameters.scale = false;
-        } else {
-            texture.parameters.scale = true;
-        }
+      texture.parameters.scale = StringToBool(value);
     } else
     if ( sectionName == "type" ) {
         if (value == "halfedgebased") {
@@ -540,10 +524,17 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
   }
 }
 
+bool TextureControlPlugin::StringToBool(QString _value){
+  if (_value == "false")
+    return false;
+  else
+    return true;
+}
+
 void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mode, int _id) {
-/*
-  std::cerr << "TextureControlPlugin::slotSetTextureMode called for : " << _textureName.toStdString()
-  std::cerr << "on object=" << _id <<  std::endl;
+
+  std::cerr << "TextureControlPlugin::slotSetTextureMode called for : " << _textureName.toStdString();
+  std::cerr << " on object=" << _id <<  std::endl;
 
   // Get the new object
   BaseObjectData* obj;
@@ -564,6 +555,8 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
   // ================================================================================
   Texture& texture = texData->texture(_textureName);
 
+  bool changed = false;
+
   int i = 0;
   QString nextString = _mode.section(',',i,i);
   while ( nextString != "" ) {
@@ -571,47 +564,47 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
     QString value = nextString.section('=',1,1);
 
     if ( sectionName == "clamp" ) {
-        if (value == "false") {
-            texture.parameters.clamp = false;
-        } else {
-            texture.parameters.clamp = true;
-        }
-    } else
-    if ( sectionName == "clamp_max" ) {
-            texture.parameters.clamp_max = value.toDouble();
-    } else
-    if ( sectionName == "clamp_min" ) {
-            texture.parameters.clamp_min = value.toDouble();
-    } else
-    if ( sectionName == "max_val" ) {
-            texture.parameters.max_val = value.toDouble();
-    } else
-    if ( sectionName == "repeat" ) {
-        if (value == "false") {
-            texture.parameters.repeat = false;
-        } else {
-            texture.parameters.repeat = true;
-        }
-    } else
-    if ( sectionName == "center" ) {
-        if (value == "false") {
-            texture.parameters.center = false;
-        } else {
-            texture.parameters.center = true;
-        }
-    } else
-    if ( sectionName == "scale" ) {
-        if (value == "false") {
-            texture.parameters.scale = false;
-        } else {
-            texture.parameters.scale = true;
-        }
-    } else
-    if ( sectionName == "type" ) {
+      if ( StringToBool(value) != texture.parameters.clamp ) {
+        texture.parameters.clamp = StringToBool(value);
+        changed = true;
+      }
+    } else if ( sectionName == "clamp_max" ) {
+      if (value.toDouble() != texture.parameters.clamp_max){
+        texture.parameters.clamp_max = value.toDouble();
+        changed = true;
+      }
+    } else if ( sectionName == "clamp_min" ) {
+      if (value.toDouble() != texture.parameters.clamp_min){
+        texture.parameters.clamp_min = value.toDouble();
+        changed = true;
+      }
+    } else if ( sectionName == "max_val" ) {
+      if (value.toDouble() != texture.parameters.max_val){
+        texture.parameters.max_val = value.toDouble();
+        changed = true;
+      }
+    } else if ( sectionName == "repeat" ) {
+      if ( StringToBool(value) != texture.parameters.repeat ) {
+        texture.parameters.repeat = StringToBool(value);
+        changed = true;
+      }
+    } else if ( sectionName == "center" ) {
+      if ( StringToBool(value) != texture.parameters.center ) {
+        texture.parameters.center = StringToBool(value);
+        changed = true;
+      }
+    } else if ( sectionName == "scale" ) {
+      if ( StringToBool(value) != texture.parameters.scale ) {
+        texture.parameters.scale = StringToBool(value);
+        changed = true;
+      }
+    } else if ( sectionName == "type" ) {
         if (value == "halfedgebased") {
-            texture.type = HALFEDGEBASED;
+          texture.type = HALFEDGEBASED;
+          changed = true;
         } else {
-            texture.type = VERTEXBASED;
+          texture.type = VERTEXBASED;
+          changed = true;
         }
     } else
       emit log(LOGERR,"Unknown texture mode : " + sectionName);
@@ -620,76 +613,13 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
     nextString = _mode.section(',',i,i);
   }
 
-  // ================================================================================
-  // Mark updated texture as dirty
-  // ================================================================================
-  texture.dirty = true;
-
-
-  // check if the local textures need to be updated
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it){
-
-    TextureData* texData = dynamic_cast< TextureData* > ( o_it->objectData(TEXTUREDATA) );
-
-    if (texData != 0){
-
-      if ( texData->textureExists(_textureName) ){
-
-        Texture& localTex = texData->texture(_textureName);
-
-        //check if something changed
-        bool changed = false;
-
-        if ( _mode.contains("clamp") && (texture.parameters.clamp != localTex.parameters.clamp) ){
-          localTex.parameters.clamp = texture.parameters.clamp;
-          changed = true;
-        }
-
-        if ( _mode.contains("clamp_max") && (texture.parameters.clamp_max != localTex.parameters.clamp_max) ){
-          localTex.parameters.clamp_max = texture.parameters.clamp_max;
-          changed = true;
-        }
-
-        if ( _mode.contains("clamp_min") && (texture.parameters.clamp_min != localTex.parameters.clamp_min) ){
-          localTex.parameters.clamp_min = texture.parameters.clamp_min;
-          changed = true;
-        }
-
-        if ( _mode.contains("max_val") && (texture.parameters.max_val != localTex.parameters.max_val) ){
-          localTex.parameters.max_val = texture.parameters.max_val;
-          changed = true;
-        }
-
-        if ( _mode.contains("repeat") && (texture.parameters.repeat != localTex.parameters.repeat) ){
-          localTex.parameters.repeat = texture.parameters.repeat;
-          changed = true;
-        }
-
-        if ( _mode.contains("center") && (texture.parameters.center != localTex.parameters.center) ){
-          localTex.parameters.center = texture.parameters.center;
-          changed = true;
-        }
-
-        if ( _mode.contains("scale") && (texture.parameters.scale != localTex.parameters.scale) ){
-          localTex.parameters.scale = texture.parameters.scale;
-          changed = true;
-        }
-
-        if ( _mode.contains("type") && (texture.type != localTex.type) ){
-          localTex.type = texture.type;
-          changed = true;
-        }
-
-        //only update if the texture is enabled
-        if (changed){
-          if ( texData->isEnabled(_textureName) )
-            emit updateTexture( _textureName, o_it->id() );
-          else
-            localTex.dirty = true;
-        }
-      }
-    }
-  }*/
+  //only update if the texture is enabled
+  if (changed){
+    if ( texData->isEnabled(_textureName) )
+      emit updateTexture( _textureName, _id );
+    else
+      texture.dirty = true;
+  }
 }
 
 void TextureControlPlugin::pluginsInitialized() {
