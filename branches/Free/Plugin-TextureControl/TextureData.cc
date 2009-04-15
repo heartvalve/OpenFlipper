@@ -42,7 +42,7 @@ TextureData::TextureData(){
 TextureData::~TextureData() {
 
 }
-
+/*
 //-----------------------------------------------------------------------------------
 
 /** \brief Check if a texture exists
@@ -79,7 +79,7 @@ bool TextureData::isEnabled(QString _textureName)
  * @param _textureName name of the texture
  * @param _exclusive disable other textures?
  */
-void TextureData::enableTexture(QString _textureName, bool _exclusive)
+bool TextureData::enableTexture(QString _textureName, bool _exclusive)
 {
   int id = getTextureIndex(_textureName);
 
@@ -92,6 +92,7 @@ void TextureData::enableTexture(QString _textureName, bool _exclusive)
       for ( int i = 0 ; i < (int)textures_.size() ; ++i )
         if (i != id)
           textures_[i].enabled = false;
+    return true;
   }
 }
 
@@ -131,7 +132,7 @@ int TextureData::addTexture(QString _textureName, QString _filename, uint _dimen
   tex.enabled    = true;
   tex.dirty      = false;
   tex.type       = VERTEXBASED;
-  tex.parameters = TexParameters();
+//   tex.parameters = TexParameters;
 
   textures_.push_back( tex );
 
@@ -141,24 +142,36 @@ int TextureData::addTexture(QString _textureName, QString _filename, uint _dimen
   return tex.id;
 }
 
+int TextureData::addTexture ( Texture _texture, GLuint _glName ) {
+  _texture.id     = nextInternalID_++;
+  _texture.glName = _glName;
+  textures_.push_back(_texture);
+
+  textureMap_[ _texture.id ]  = _texture.glName;
+  propertyMap_[ _texture.id ] = _texture.name.toStdString();
+
+  std::cerr << "Added texture " << _texture.name.toStdString() << std::endl;
+  return _texture.id;
+}
+
 //-----------------------------------------------------------------------------------
 
 /** \brief Delete a given texture
  *
  * @param _textureName name of the texture
  */
-void TextureData::deleteTexture(QString _textureName)
-{
-  int index = getTextureIndex(_textureName);
-
-  if ( index != -1){
-
-
-    textureMap_.erase( texture(_textureName).id );
-    propertyMap_.erase( texture(_textureName).id );
-    textures_.erase(textures_.begin()+index);
-  }
-}
+// void TextureData::deleteTexture(QString _textureName)
+// {
+//   int index = getTextureIndex(_textureName);
+//
+//   if ( index != -1){
+//
+//
+//     textureMap_.erase( texture(_textureName).id );
+//     propertyMap_.erase( texture(_textureName).id );
+//     textures_.erase(textures_.begin()+index);
+//   }
+// }
 
 //-----------------------------------------------------------------------------------
 
@@ -167,15 +180,15 @@ void TextureData::deleteTexture(QString _textureName)
  * @param _textureName name of the texture
  * @return corresponding textureParameters or invalid TexParameters
  */
-TexParameters TextureData::textureParameters(QString _textureName)
-{
-  int id = getTextureIndex(_textureName);
-
-  if ( id != -1)
-    return textures_[id].parameters;
-  else
-    return TexParameters();
-}
+// TexParameters TextureData::textureParameters(QString _textureName)
+// {
+//   int id = getTextureIndex(_textureName);
+//
+//   if ( id != -1)
+//     return textures_[id].parameters;
+//   else
+//     return TexParameters();
+// }
 
 //-----------------------------------------------------------------------------------
 
@@ -184,13 +197,13 @@ TexParameters TextureData::textureParameters(QString _textureName)
  * @param _textureName name of the texture
  * @param _params new parameters for the texture
  */
-void TextureData::setTextureParameters(QString _textureName, TexParameters _params)
-{
-  int id = getTextureIndex(_textureName);
-
-  if ( id != -1)
-    textures_[id].parameters = _params;
-}
+// void TextureData::setTextureParameters(QString _textureName, TexParameters _params)
+// {
+//   int id = getTextureIndex(_textureName);
+//
+//   if ( id != -1)
+//     textures_[id].parameters = _params;
+// }
 
 //-----------------------------------------------------------------------------------
 
@@ -199,14 +212,16 @@ void TextureData::setTextureParameters(QString _textureName, TexParameters _para
  * @param _textureName name of the texture
  * @return corresponding texture object
  */
-Texture TextureData::texture(QString _textureName)
+Texture& TextureData::texture(QString _textureName)
 {
   int id = getTextureIndex(_textureName);
 
   if ( id != -1)
     return textures_[id];
-  else
-    return Texture();
+  else {
+    std::cerr << "Invalid Texture" << _textureName.toStdString() << std::endl;
+    return noTexture;
+  }
 }
 
 //-----------------------------------------------------------------------------------
@@ -233,7 +248,7 @@ int TextureData::getTextureIndex(QString _textureName)
 //-----------------------------------------------------------------------------------
 
 /** \brief Get reference to the texture vector
- * 
+ *
  * @return texture vector
  */
 std::vector< Texture >& TextureData::textures(){
@@ -243,7 +258,7 @@ std::vector< Texture >& TextureData::textures(){
 //-----------------------------------------------------------------------------------
 
 /** \brief Get pointer to the textureMap
- * 
+ *
  * @return textureMap
  */
 std::map< int, GLuint>* TextureData::textureMap(){
@@ -253,7 +268,7 @@ std::map< int, GLuint>* TextureData::textureMap(){
 //-----------------------------------------------------------------------------------
 
 /** \brief Get pointer to the propertyMap
- * 
+ *
  * @return propertyMap
  */
 std::map< int, std::string>* TextureData::propertyMap(){

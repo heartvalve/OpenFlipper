@@ -35,21 +35,37 @@
 #include <GL/gl.h>
 #include <vector>
 #include <map>
+#include <float.h>
+#include <iostream>
 
-struct TexParameters {
-  double clamp_min;
-  double clamp_max;
+enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1};
 
-  bool clamp;
-  bool repeat;
+class TexParameters
+{
+  public:
+    TexParameters() :
+          scale ( true ),
+          clamp_min ( FLT_MIN ),
+          clamp_max ( FLT_MAX ),
+          clamp ( false ),
+          repeat ( false ),
+          center ( false ),
+          abs ( false ),
+          max_val ( 1.0 ) {std::cerr << "Constructor for parameters" << std::endl;};
 
-  double max_val;
+    bool scale;
 
-  bool center;
+    double clamp_min;
+    double clamp_max;
 
-  bool abs;
+    bool clamp;
+    bool repeat;
 
-  bool scale;
+    bool center;
+
+    bool abs;
+
+    double max_val;
 };
 
 struct Texture {
@@ -76,53 +92,76 @@ struct Texture {
 class TextureData : public PerObjectData
 {
 
-  public:
-    enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1};
-
   public :
 
-    /// Konstruktor
-    TextureData();
-    /// Destruktor
-    ~TextureData();
+      /// Constructor
+      TextureData();
+      /// Destructor
+      ~TextureData();
 
-    /// Check if a texture exists
-    bool textureExists(QString _textureName);
-    /// Check if a texture is enabled
-    bool isEnabled(QString _textureName);
-    /// Enable a given texture
-    void enableTexture(QString _textureName, bool _exclusive=false);
-    /// Disable a given texture
-    void disableTexture(QString _textureName);
-    /// Add a Texture
-    int addTexture(QString _textureName , QString _filename , uint _dimension, GLuint _glName);
-    /// Delete a given texture
-    void deleteTexture(QString _textureName);
-    /// get parameters of a given texture
-    TexParameters textureParameters(QString _textureName);
-    /// Set Parameters for a given texture
-    void setTextureParameters(QString _textureName, TexParameters _params);
-    /// Get the texture object
-    Texture texture(QString _textureName);
-    /// Get reference to the texture vector
-    std::vector< Texture >& textures();
-    /// Get reference to the textureMap
-    std::map< int, GLuint >* textureMap();
-    /// Get reference to the propertyMap
-    std::map< int, std::string >* propertyMap();
+
+      /// Check if a texture exists
+      bool textureExists(QString _textureName);
+
+
+      /// Check if a texture is enabled
+      bool isEnabled(QString _textureName);
+
+
+      /// Enable a given texture
+      bool enableTexture(QString _textureName, bool _exclusive = false);
+
+      /// Disable a given texture
+      void disableTexture(QString _textureName);
+
+      /// Add a Texture
+      int addTexture ( QString _textureName , QString _filename , uint _dimension, GLuint _glName );
+
+      /// Add a Texture ( Based on an existing specification )
+      int addTexture ( Texture _texture, GLuint _glName );
+
+      /*
+      /// Delete a given texture
+      void deleteTexture(QString _textureName);
+
+      /// get parameters of a given texture
+      TexParameters textureParameters(QString _textureName);
+
+      /// Set Parameters for a given texture
+      void setTextureParameters(QString _textureName, TexParameters _params);
+      */
+
+      /// Get the texture object
+      Texture& texture(QString _textureName);
+
+      /// Get reference to the texture vector
+      std::vector< Texture >& textures();
+
+
+      /// Get reference to the textureMap
+      std::map< int, GLuint >* textureMap();
+
+      /// Get reference to the propertyMap
+      std::map< int, std::string >* propertyMap();
+
 
   private :
 
     std::map< int, GLuint> textureMap_;
     std::map< int, std::string> propertyMap_;
 
+    // internal id for the next texture
     int nextInternalID_;
+
 
     //vector containing all textures of an object
     std::vector< Texture > textures_;
 
+
     // Get the index of a given texture
     int getTextureIndex(QString _textureName);
+
+    Texture noTexture;
 
 };
 
