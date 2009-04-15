@@ -1026,25 +1026,15 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
 
 
 void TextureControlPlugin::slotTextureContextMenu( QAction * _action ) {
+
   // id of object for which the context menu is created, is stored in the action
   QVariant idVariant = _action->data( );
   int id = idVariant.toInt();
 
-  // ================================================================================
-  // Get picking object object
-  // ================================================================================
-  if ( id == -1 )
-    return;
-
-  BaseObjectData* obj;
-  if (! PluginFunctions::getObject(  id , obj ) ) {
-    emit log(LOGERR,"slotUpdateContextMenu: Unable to get Object for id " + QString::number(id) );
-    return;
-  }
-
-
   std::cerr << "TextureControlPlugin::slotTextureContextMenu : " << id << std::endl;
-  // TODO: Switch texture for the given object.
+
+  slotSwitchTexture( _action->text() , id );
+
 }
 
 Q_EXPORT_PLUGIN2( texturecontrolplugin , TextureControlPlugin );
