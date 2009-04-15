@@ -163,58 +163,78 @@ void Core::setupOptions() {
 
   // Remember the main application directory (assumed to be one above executable Path)
   QDir tempDir = QDir(qApp->applicationDirPath());
-  tempDir.cd(".." + OpenFlipper::Options::dirSeparator() );
+  #ifdef OPENFLIPPER_APPDIR
+    tempDir.cd(OPENFLIPPER_APPDIR);
+  #else
+    tempDir.cd(".." + OpenFlipper::Options::dirSeparator() );
+  #endif
   OpenFlipper::Options::applicationDir(tempDir.absolutePath());
 
   // Set the standard path to the plugins
-  tempDir.cd("Plugins");
+  #ifdef OPENFLIPPER_PLUGINDIR
+    tempDir.cd(OPENFLIPPER_PLUGINDIR);
+  #else
+    tempDir.cd("Plugins");
 
-  ///@todo do not check WIN32 Only
-  if ( OpenFlipper::Options::is64bit() )
-    tempDir.cd("64");
+    ///@todo do not check WIN32 Only
+    if ( OpenFlipper::Options::is64bit() )
+      tempDir.cd("64");
 
-  if ( OpenFlipper::Options::is32bit() )
-      #ifdef WIN32
-         tempDir.cd("win32");
-      #else
-	      tempDir.cd("32");
-      #endif
+    if ( OpenFlipper::Options::is32bit() )
+        #ifdef WIN32
+          tempDir.cd("win32");
+        #else
+                tempDir.cd("32");
+        #endif
 
 
-   #ifdef WIN32
-      #ifdef NDEBUG
-              tempDir.cd("Release");
-      #else
-              tempDir.cd("Debug");
-      #endif
-   #else
-      #ifdef DEBUG
-              tempDir.cd("dbg");
-      #else
-              tempDir.cd("max");
-      #endif
-   #endif
+    #ifdef WIN32
+        #ifdef NDEBUG
+                tempDir.cd("Release");
+        #else
+                tempDir.cd("Debug");
+        #endif
+    #else
+        #ifdef DEBUG
+                tempDir.cd("dbg");
+        #else
+                tempDir.cd("max");
+        #endif
+    #endif
+  #endif
 
   OpenFlipper::Options::pluginDir(tempDir.absolutePath());
 
   // Set the Path to the shaders
   tempDir = QDir(OpenFlipper::Options::applicationDir());
+  #ifdef OPENFLIPPER_DATADIR
+    tempDir.cd(OPENFLIPPER_DATADIR);
+  #endif
   tempDir.cd("Shaders");
   OpenFlipper::Options::shaderDir(tempDir.absolutePath());
 
 
   // Set the Path to the textures
   tempDir = QDir(OpenFlipper::Options::applicationDir());
+  #ifdef OPENFLIPPER_DATADIR
+    tempDir.cd(OPENFLIPPER_DATADIR);
+  #endif
   tempDir.cd("Textures");
   OpenFlipper::Options::textureDir(tempDir.absolutePath());
 
   // Set the Path to the Icons
   tempDir = QDir(OpenFlipper::Options::applicationDir());
+  #ifdef OPENFLIPPER_DATADIR
+    tempDir.cd(OPENFLIPPER_DATADIR);
+  #endif
   tempDir.cd("Icons");
   OpenFlipper::Options::iconDir(tempDir.absolutePath());
 
   // Set the Path to the Fonts
   tempDir = QDir(OpenFlipper::Options::applicationDir());
+  #ifdef OPENFLIPPER_DATADIR
+    tempDir.cd(OPENFLIPPER_DATADIR);
+  #endif
   tempDir.cd("Fonts");
   OpenFlipper::Options::fontsDir(tempDir.absolutePath());
 
