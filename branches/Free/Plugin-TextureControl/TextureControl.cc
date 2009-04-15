@@ -72,6 +72,8 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
 }
 
 void TextureControlPlugin::fileOpened( int _id ) {
+  // TODO:: Store origninal texture coors in a new property!
+
   std::cerr << "File opened : " << _id << std::endl;
 
   // Get the new object
