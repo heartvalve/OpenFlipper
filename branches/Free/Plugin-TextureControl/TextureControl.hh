@@ -123,9 +123,6 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     // LoadSaveInterface
     void fileOpened( int _id );
 
-    // ContextMenuInterface
-    void slotUpdateContextMenu( int _objectId );
-
   private slots:
     /// Called when an action in the TextureMenu is triggered
     void slotTextureMenu(QAction* _action);
@@ -162,8 +159,6 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     std::vector<QAction*> textureActions_;
 
     texturePropertiesWidget* settingsDialog_;
-
-    QMenu* contextMenu_;
 
     /// Set the active texture values to the values in the dialog box.
     void applyDialogSettings();
@@ -223,6 +218,34 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     /// Copy the supplied 2D halfedge property to the 2D halfedge OM property
     template< typename MeshT >
     void copyTexture(Texture& _texture, MeshT& _mesh, OpenMesh::HPropHandleT< ACG::Vec2d > _texProp );
+
+    /** @} */
+
+    //===========================================================================
+    /** @name Context Menu stuff
+      * @{ */
+    //===========================================================================
+
+  private slots:
+
+    /** \brief Slot from the context menu interface.
+     *
+     * This slot is called, when the core requests a context menu and creates and updates
+     * the context menu.
+     */
+    void slotUpdateContextMenu( int _objectId );
+
+
+    /** \brief Called when the context menu has been triggered
+     *
+     *  This slot is called when the per object context menu is triggered.
+     *  It will switch to the requested texture and mode.
+     */
+    void slotTextureContextMenu( QAction * _action );
+
+  private:
+    /// Stores the per object context menu
+    QMenu* contextMenu_;
 
     /** @} */
 
