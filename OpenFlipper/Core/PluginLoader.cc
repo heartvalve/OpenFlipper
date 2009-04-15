@@ -804,6 +804,14 @@ void Core::loadPlugin(QString filename, bool silent){
     if ( texturePlugin && OpenFlipper::Options::gui() ) {
       supported = supported + "Textures ";
 
+      if ( checkSignal(plugin,"addTexture(QString,QString,uint,int)") )
+        connect(plugin , SIGNAL(addTexture( QString , QString , uint , int )),
+                this   , SLOT(slotAddTexture(QString, QString, uint, int)),Qt::DirectConnection);
+
+      if ( checkSlot( plugin , "slotTextureAdded(QString,QString,uint,int)" ) )
+        connect(this   , SIGNAL(addTexture(QString,QString, uint, int)),
+                plugin , SLOT(slotTextureAdded(QString,QString, uint, int)),Qt::DirectConnection);
+
       if ( checkSignal(plugin,"addTexture(QString,QString,uint)") )
         connect(plugin , SIGNAL(addTexture( QString , QString , uint )),
                 this   , SLOT(slotAddTexture(QString, QString, uint)),Qt::DirectConnection);
@@ -836,6 +844,14 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(this   , SIGNAL(updatedTextures( QString , int )),
                 plugin , SLOT(slotTextureUpdated( QString, int ) ));
 
+      if ( checkSignal(plugin,"setTextureMode(QString,QString,int)") )
+        connect(plugin , SIGNAL(setTextureMode(QString, QString, int )),
+                this   , SLOT(slotSetTextureMode(QString, QString, int )),Qt::DirectConnection );
+
+      if ( checkSlot( plugin , "slotSetTextureMode(QString,QString,int)" ) )
+        connect(this   , SIGNAL(setTextureMode(QString, QString, int )),
+                plugin , SLOT(slotSetTextureMode(QString, QString, int )),Qt::DirectConnection );
+
       if ( checkSignal(plugin,"setTextureMode(QString,QString)") )
         connect(plugin , SIGNAL(setTextureMode(QString  ,QString )),
                 this   , SLOT(slotSetTextureMode(QString  ,QString )),Qt::DirectConnection );
@@ -843,6 +859,14 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSlot( plugin , "slotSetTextureMode(QString,QString)" ) )
         connect(this   , SIGNAL(setTextureMode(QString  ,QString )),
                 plugin , SLOT(slotSetTextureMode(QString  ,QString )),Qt::DirectConnection );
+
+      if ( checkSignal(plugin,"switchTexture(QString,int)") )
+        connect(plugin , SIGNAL(switchTexture(QString, int )),
+                this   , SLOT(slotSwitchTexture(QString, int )),Qt::DirectConnection);
+
+      if ( checkSlot( plugin , "slotSwitchTexture(QString,int)" ) )
+        connect(this   , SIGNAL(switchTexture(QString, int )),
+                plugin , SLOT(slotSwitchTexture(QString, int )),Qt::DirectConnection);
 
       if ( checkSignal(plugin,"switchTexture(QString)") )
         connect(plugin , SIGNAL(switchTexture(QString )),
