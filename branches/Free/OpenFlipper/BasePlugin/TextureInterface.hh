@@ -61,6 +61,19 @@ class TextureInterface {
 
       /** \brief Emit this Signal if a texture has been added (Property Name,filename,Dimension)
        *
+       *  Emit this signal if a texture for a specific object has been added
+       *
+       *  @param  _name Name of the property which contains the tex coords (double or vec2d)
+       *  @param _filename Filename of the texture ( "./Textures/<name>")
+       *  @param _dimension 1D texture ( currenty only supports 1 )
+       *  @param _id id of an object
+       */
+      virtual void addTexture( QString /*_name*/ , QString /*_filename*/ , uint /*_dimension*/ , int /*_id*/ ) {};
+
+      /** \brief Emit this Signal if a texture has been added (Property Name,filename,Dimension)
+       *
+       *  Emit this signal if a global texture has been added
+       *
        *  @param  _name Name of the property which contains the tex coords (double or vec2d)
        *  @param _filename Filename of the texture ( "./Textures/<name>")
        *  @param _dimension 1D texture ( currenty only supports 1 )
@@ -123,7 +136,19 @@ class TextureInterface {
 
       /** \brief A texture has been added by a plugin.
        *
-       * This slot is called when a texture has been added by a plugin.
+       * This slot is called when a texture for a specific object has been added by a plugin.
+       *
+       * @param _textureName Name of the Added texture (has to be equal to the property name)
+       * @param _filename Filename of the Texture Image to be used
+       * @param _dimension Dimension of the Texture (currently only 1D and 2D Textures are supported
+       * @param _id id of an object
+       */
+      virtual void slotTextureAdded( QString /*_textureName*/ , QString /*_filename*/ , uint /*_dimension*/, int /*_id*/ ) {};
+
+      /** \brief A texture has been added by a plugin.
+       *
+       * This slot is called when a global texture has been added by a plugin.
+       *
        * @param _textureName Name of the Added texture (has to be equal to the property name)
        * @param _filename Filename of the Texture Image to be used
        * @param dimension Dimension of the Texture (currently only 1D and 2D Textures are supported
