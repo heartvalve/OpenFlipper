@@ -31,7 +31,7 @@ set (directories
   ../widgets/addEmptyWidget
   ../widgets/loggerWidget
   ../widgets/coreWidget 
-  ../widgets/helpBrowser
+  ../widgets/helpWidget
   ../widgets/loadWidget
   ../widgets/optionsWidget
   ../widgets/PluginDialog
