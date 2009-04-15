@@ -145,6 +145,9 @@ function (_build_openflipper_plugin plugin)
       find_package (GLUT)
       add_definitions (-DACGDLL -DUSEACG -DPLUGINLIBDLL -DUSEPLUGINLIBDLL)
       target_link_libraries (Plugin-${plugin}      
+	OpenMeshCore
+        OpenMeshTools
+        ACG
         PluginLib
         ${GLUT_LIBRARIES}
       )
