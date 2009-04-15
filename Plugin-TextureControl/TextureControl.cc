@@ -753,5 +753,9 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
 }
 
 
+void TextureControlPlugin::slotTextureContextMenu( QAction * _action ) {
+
+}
+
 Q_EXPORT_PLUGIN2( texturecontrolplugin , TextureControlPlugin );
 
