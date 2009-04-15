@@ -340,6 +340,7 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
   // ================================================================================
   // TODO : if not in the texture rendering mode, do not emit update
   // Involves adding a interface part to react on draw mode changes
+  // basic check implemented
   for ( uint i = 0; i < texData->textures().size(); ++i ) {
     texData->textures()[i].dirty = true;
 
@@ -653,7 +654,6 @@ void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
     // ================================================================================
     // Update texture map from meshNode and activate it
     // ================================================================================
-    //
     if( o_it->dataType( DATA_TRIANGLE_MESH ) ){
       doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(o_it)->mesh());
       PluginFunctions::triMeshObject(o_it)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
@@ -670,9 +670,17 @@ void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
 
   }
 
+  // ================================================================================
   // Switch to a texture drawMode
-  //TODO: dont switch if in SOLID_TEXTURED
-  PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+  // ================================================================================
+  bool textureMode = false;
+  for ( int j = 0 ; j < PluginFunctions::viewers() ; ++j ) {
+      textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED );
+      textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+  }
+
+  if ( !textureMode )
+    PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
 
   emit updateView();
 
