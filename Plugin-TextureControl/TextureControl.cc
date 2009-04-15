@@ -47,6 +47,34 @@
 
 
 
+void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _filename , uint _dimension , int _id)
+{
+  std::cerr << "slotLocalTextureAdded " << _textureName.toStdString() << std::endl;
+
+  // Get the new object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // Get Texture data for this object or create one if it does not exist
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0){
+    texData = new TextureData();
+    obj->setObjectData(TEXTUREDATA, texData);
+  }
+
+
+  // Add this texture to the list of global textures
+  if ( ! texData->textureExists(_textureName) ) {
+    texData->addTexture(_textureName,_filename,_dimension,0);
+    texData->texture(_textureName).enabled = false;
+  } else {
+    emit log(LOGERR,"Trying to add already existing texture " + _textureName + " for object " + QString::number(_id) );
+    return;
+  }
+}
+
 void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _filename , uint _dimension)
 {
   std::cerr << "slotGlobalTextureAdded " << _textureName.toStdString() << std::endl;
@@ -445,16 +473,71 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
   // ================================================================================
   texture.dirty = true;
 
-  // TODO: call updates for global texture for all objects
-  // ... emit( updateTexture ... )
 
-//       // Force an update of all objects
-//       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-//          updateTexture(  _textureName , o_it->id() );
-//
-//       emit updateView();
-//    }
+  // check if the local textures need to be updated
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it){
 
+    TextureData* texData = dynamic_cast< TextureData* > ( o_it->objectData(TEXTUREDATA) );
+
+    if (texData != 0){
+
+      if ( texData->textureExists(_textureName) ){
+
+        Texture& localTex = texData->texture(_textureName);
+
+        //check if something changed
+        bool changed = false;
+
+        if ( _mode.contains("clamp") && (texture.parameters.clamp != localTex.parameters.clamp) ){
+          localTex.parameters.clamp = texture.parameters.clamp;
+          changed = true;
+        }
+
+        if ( _mode.contains("clamp_max") && (texture.parameters.clamp_max != localTex.parameters.clamp_max) ){
+          localTex.parameters.clamp_max = texture.parameters.clamp_max;
+          changed = true;
+        }
+
+        if ( _mode.contains("clamp_min") && (texture.parameters.clamp_min != localTex.parameters.clamp_min) ){
+          localTex.parameters.clamp_min = texture.parameters.clamp_min;
+          changed = true;
+        }
+
+        if ( _mode.contains("max_val") && (texture.parameters.max_val != localTex.parameters.max_val) ){
+          localTex.parameters.max_val = texture.parameters.max_val;
+          changed = true;
+        }
+
+        if ( _mode.contains("repeat") && (texture.parameters.repeat != localTex.parameters.repeat) ){
+          localTex.parameters.repeat = texture.parameters.repeat;
+          changed = true;
+        }
+
+        if ( _mode.contains("center") && (texture.parameters.center != localTex.parameters.center) ){
+          localTex.parameters.center = texture.parameters.center;
+          changed = true;
+        }
+
+        if ( _mode.contains("scale") && (texture.parameters.scale != localTex.parameters.scale) ){
+          localTex.parameters.scale = texture.parameters.scale;
+          changed = true;
+        }
+
+        if ( _mode.contains("type") && (texture.type != localTex.type) ){
+          localTex.type = texture.type;
+          changed = true;
+        }
+
+        //only update if the texture is enabled
+        if (changed){
+          if ( texData->isEnabled(_textureName) )
+            emit updateTexture( _textureName, o_it->id() );
+          else
+            localTex.dirty = true;
+        }
+      }
+    }
+  }
 }
 
 void TextureControlPlugin::pluginsInitialized() {

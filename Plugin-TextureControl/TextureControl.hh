@@ -115,6 +115,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     // TextureInterface
     void slotUpdateAllTextures( );
+    void slotTextureAdded( QString _textureName , QString _filename , uint _dimension , int _id );
     void slotTextureAdded( QString _textureName , QString _filename , uint _dimension );
     void slotTextureUpdated( QString _textureName , int _identifier );
     void slotSetTextureMode(QString _textureName ,QString _mode);
