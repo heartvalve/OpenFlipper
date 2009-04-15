@@ -342,7 +342,14 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
   // Involves adding a interface part to react on draw mode changes
   for ( uint i = 0; i < texData->textures().size(); ++i ) {
     texData->textures()[i].dirty = true;
-    if ( texData->textures()[i].enabled )
+
+    bool update = false;
+    for ( int j = 0 ; j < PluginFunctions::viewers() ; ++j ) {
+       update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED );
+       update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+    }
+
+    if ( update && texData->textures()[i].enabled )
       emit updateTexture( texData->textures()[i].name , _identifier );
   }
 
@@ -648,12 +655,14 @@ void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
     // ================================================================================
     //
     if( o_it->dataType( DATA_TRIANGLE_MESH ) ){
+      doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(o_it)->mesh());
       PluginFunctions::triMeshObject(o_it)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
       PluginFunctions::triMeshObject(o_it)->meshNode()->set_texture_map( texData->textureMap() );
       PluginFunctions::triMeshObject(o_it)->meshNode()->set_property_map( texData->propertyMap() );
     }
 
     if ( o_it->dataType( DATA_POLY_MESH ) ){
+      doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(o_it)->mesh());
       PluginFunctions::polyMeshObject(o_it)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
       PluginFunctions::polyMeshObject(o_it)->meshNode()->set_texture_map( texData->textureMap() );
       PluginFunctions::polyMeshObject(o_it)->meshNode()->set_property_map( texData->propertyMap() );
