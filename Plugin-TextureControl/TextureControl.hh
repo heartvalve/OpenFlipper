@@ -124,6 +124,8 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     // LoadSaveInterface
     void fileOpened( int _id );
 
+    // TODO: Empty object added has to create textures as well!
+
   private slots:
     /// Called when an action in the TextureMenu is triggered
     void slotTextureMenu(QAction* _action);
@@ -147,17 +149,10 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     QString description( ) { return (QString("Handles Textures which are written to mesh properties")); };
 
   private :
-    QMenu *textureMenu_;
-
-    QActionGroup* actionGroup_;
 
     QAction* AC_Texture_Settings;
 
-    QString activeTexture_;
-
     TextureData globalTextures_;
-
-    std::vector<QAction*> textureActions_;
 
     texturePropertiesWidget* settingsDialog_;
 
@@ -166,7 +161,6 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     /// Update the values in the Dialog box to the current ones
     void updateDialog();
-
 
     /// Take a scalar value and return a clamped,... depending on texture settings
     inline
@@ -223,7 +217,24 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     /** @} */
 
     //===========================================================================
-    /** @name Context Menu stuff
+    /** @name Global texture menu
+      * @{ */
+    //===========================================================================
+
+  private:
+    // Global Texture menu
+    QMenu *textureMenu_;
+
+    // Action group for global texture menu
+    QActionGroup* actionGroup_;
+
+    // All actions in the global texture menu
+    std::vector<QAction*> textureActions_;
+
+    /** @} */
+
+    //===========================================================================
+    /** @name Context Menu
       * @{ */
     //===========================================================================
 

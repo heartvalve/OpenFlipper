@@ -590,19 +590,6 @@ void TextureControlPlugin::updateDialog() {
 //   if ( textures_.size() == 0 )
 //     return;
 //
-//   int textureid = -1;
-//   for ( int i = 0 ; i < (int)textures_.size() ; ++i ) {
-//       if ( textures_[i].name == activeTexture_ ) {
-//             textureid = i;
-//             break;
-//       }
-//   }
-//
-//   if ( textureid == -1 ) {
-//       emit log(LOGERR,"Active Texture not found");
-//       return;
-//   }
-//
 //   settingsDialog_->repeatBox->setChecked(textures_[textureid].repeat);
 //   settingsDialog_->clampBox->setChecked(textures_[textureid].clamp);
 //   settingsDialog_->centerBox->setChecked(textures_[textureid].center);
