@@ -709,6 +709,237 @@
     </member>
     <member kind="function">
       <type>void</type>
+      <name>nogui</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>1f9209e9274a748bc4ec5f54f283c140</anchor>
+      <arglist>(bool _nogui)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>nogui</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>f9deee761bdd24d1dd33b785101f90f5</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>gui</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>14c2143c7c68a1d1a42e6eaa9addef8c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stereo</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>b9ee54e3ebd7848c5f72b624463bd4ea</anchor>
+      <arglist>(bool _stereo)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>stereo</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>c65a7bab86e9d24953043e80affe9f60</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>glStereo</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>adb1b4c913c13a76036871b1b77f8922</anchor>
+      <arglist>(bool _glStereo)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>glStereo</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>23732bddf8e2a896921a527ab3cca5a3</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>stereoMode</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>9dad7262acf346358dc64ae906505b29</anchor>
+      <arglist>(StereoMode _mode)</arglist>
+    </member>
+    <member kind="function">
+      <type>StereoMode</type>
+      <name>stereoMode</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>a752e68f9666fe5b60c6aeb1c726940f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>eyeDistance</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>aec66ce6832e5204ab27472b7ec9451b</anchor>
+      <arglist>(float _eye)</arglist>
+    </member>
+    <member kind="function">
+      <type>float</type>
+      <name>eyeDistance</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>e2c56c19ee48350d545e4417138d4f2f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>focalDistance</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>f6fd5c05586916fc752c50ae73473952</anchor>
+      <arglist>(float _focal)</arglist>
+    </member>
+    <member kind="function">
+      <type>float</type>
+      <name>focalDistance</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>b4165aed721a3a126a54e8e5d4bdc6c0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>anaglyphLeftEyeColorMatrix</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>aa0875117019da3108a77741947da5ae</anchor>
+      <arglist>(std::vector&lt; float &gt; _mat)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; float &gt;</type>
+      <name>anaglyphLeftEyeColorMatrix</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>ffcd205bf7fc4934a5def8dccc25b76b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>anaglyphRightEyeColorMatrix</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>f1d63f647bcd4ee4376d46402158ad29</anchor>
+      <arglist>(std::vector&lt; float &gt; _mat)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; float &gt;</type>
+      <name>anaglyphRightEyeColorMatrix</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>21d986cfb854b91f95082b7345e65df0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>synchronization</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>c7b7d0dba2867fc70bc7cfedbca720d2</anchor>
+      <arglist>(bool _synchronization)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>synchronization</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>2f2d3cc7de72adbf2f4ac9356aa6c530</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>wheelZoomFactor</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>50ac0e6973ef90295736eed562b51491</anchor>
+      <arglist>(double _factor)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>wheelZoomFactor</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>0e04b69ee92ffec4b27e46ff2be7351c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>wheelZoomFactorShift</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>43d391b4e7b4dcd3d7747874cd5b2963</anchor>
+      <arglist>(double _factor)</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>wheelZoomFactorShift</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>258e8c8d6ca2d9fc5b9d680915324e81</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>restrictFrameRate</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>52ec7b67ff493d78580335e948755ec5</anchor>
+      <arglist>(bool _enable)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>restrictFrameRate</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>e8c71b0ee52bcb9b01013a8134fe113e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>maxFrameRate</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>a9fac9954c19f9dba5a319a4506dc224</anchor>
+      <arglist>(int _fps)</arglist>
+    </member>
+    <member kind="function">
+      <type>int</type>
+      <name>maxFrameRate</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>a62d58fef92b7a2eac9403ed95908d1d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>standardDrawMode</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>7a5898552d02de25382abbae82c8137b</anchor>
+      <arglist>(uint _mode)</arglist>
+    </member>
+    <member kind="function">
+      <type>uint</type>
+      <name>standardDrawMode</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>8136e7279e0eea1610f66693b06b20ba</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>redrawDisabled</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>94dd40a140ca8e65600fcdaa018c1569</anchor>
+      <arglist>(bool disable)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>redrawDisabled</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>2d537e9e76914beea19b712d539f50b0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>drawModesInContextMenu</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>c2f698c35d36f96550665a50598e5b2f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>drawModesInContextMenu</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>6f1088e6eaa3cff3f32e67b568e090f1</anchor>
+      <arglist>(bool _show)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
       <name>multiView</name>
       <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
       <anchor>be6b7acec18bfa0fdeaba74cff7ad83b</anchor>
@@ -1184,153 +1415,6 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
-      <name>nogui</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>1f9209e9274a748bc4ec5f54f283c140</anchor>
-      <arglist>(bool _nogui)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>nogui</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>f9deee761bdd24d1dd33b785101f90f5</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>gui</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>14c2143c7c68a1d1a42e6eaa9addef8c</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>stereo</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>b9ee54e3ebd7848c5f72b624463bd4ea</anchor>
-      <arglist>(bool _stereo)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>stereo</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>c65a7bab86e9d24953043e80affe9f60</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>synchronization</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>c7b7d0dba2867fc70bc7cfedbca720d2</anchor>
-      <arglist>(bool _synchronization)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>synchronization</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>2f2d3cc7de72adbf2f4ac9356aa6c530</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>wheelZoomFactor</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>50ac0e6973ef90295736eed562b51491</anchor>
-      <arglist>(double _factor)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>wheelZoomFactor</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>0e04b69ee92ffec4b27e46ff2be7351c</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>wheelZoomFactorShift</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>43d391b4e7b4dcd3d7747874cd5b2963</anchor>
-      <arglist>(double _factor)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>wheelZoomFactorShift</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>258e8c8d6ca2d9fc5b9d680915324e81</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>restrictFrameRate</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>52ec7b67ff493d78580335e948755ec5</anchor>
-      <arglist>(bool _enable)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>restrictFrameRate</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>e8c71b0ee52bcb9b01013a8134fe113e</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>maxFrameRate</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>a9fac9954c19f9dba5a319a4506dc224</anchor>
-      <arglist>(int _fps)</arglist>
-    </member>
-    <member kind="function">
-      <type>int</type>
-      <name>maxFrameRate</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>a62d58fef92b7a2eac9403ed95908d1d</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>standardDrawMode</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>7a5898552d02de25382abbae82c8137b</anchor>
-      <arglist>(uint _mode)</arglist>
-    </member>
-    <member kind="function">
-      <type>uint</type>
-      <name>standardDrawMode</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>8136e7279e0eea1610f66693b06b20ba</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>redrawDisabled</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>94dd40a140ca8e65600fcdaa018c1569</anchor>
-      <arglist>(bool disable)</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>redrawDisabled</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>2d537e9e76914beea19b712d539f50b0</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>drawModesInContextMenu</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>c2f698c35d36f96550665a50598e5b2f</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>drawModesInContextMenu</name>
-      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
-      <anchor>6f1088e6eaa3cff3f32e67b568e090f1</anchor>
-      <arglist>(bool _show)</arglist>
-    </member>
-    <member kind="function">
       <type>bool</type>
       <name>scripting</name>
       <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
@@ -1483,6 +1567,20 @@
       <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
       <anchor>bb32a019b432e8e50f97d910c1b9b67b</anchor>
       <arglist>(char ***_argv)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>remoteControl</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>7703290bf92f2ef0429d86da0c5ffadf</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>remoteControl</name>
+      <anchorfile>namespaceOpenFlipper_1_1Options.html</anchorfile>
+      <anchor>42aee7f3f200dd7b2784f42478276880</anchor>
+      <arglist>(bool _remote)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -4838,30 +4936,16 @@
     </member>
     <member kind="variable" protection="private">
       <type>HelpWidget *</type>
-      <name>helpBrowserDeveloper_</name>
+      <name>helpWidget_</name>
       <anchorfile>classCoreWidget.html</anchorfile>
-      <anchor>1fe2d9862d8ceca857ac17793bd413e9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" protection="private">
-      <type>HelpWidget *</type>
-      <name>helpBrowserUser_</name>
-      <anchorfile>classCoreWidget.html</anchorfile>
-      <anchor>692ef7880cfefbcefe34b0785eac1654</anchor>
+      <anchor>7b378fa000a5dbdea3743295b37553dc</anchor>
       <arglist></arglist>
     </member>
     <member kind="slot">
       <type>void</type>
-      <name>showHelpBrowserUser</name>
+      <name>showHelpBrowser</name>
       <anchorfile>classCoreWidget.html</anchorfile>
-      <anchor>d444bacad98dd3ae7f1d9764c50191da</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="slot">
-      <type>void</type>
-      <name>showHelpBrowserDeveloper</name>
-      <anchorfile>classCoreWidget.html</anchorfile>
-      <anchor>2c41373eb2794800d69e70feb65f96bc</anchor>
+      <anchor>f815aa5058041155e97efdc02bf7e024</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="variable" protection="private">
@@ -5930,46 +6014,39 @@
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
-      <type>double</type>
-      <name>eyeDist_</name>
+      <type>int</type>
+      <name>agTexWidth_</name>
       <anchorfile>classglViewer.html</anchorfile>
-      <anchor>4b6d680f93eee269360d40ee72b77fbf</anchor>
+      <anchor>ae12f936cda4aa60e2b885a17407ee12</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
-      <type>double</type>
-      <name>focalDist_</name>
+      <type>int</type>
+      <name>agTexHeight_</name>
       <anchorfile>classglViewer.html</anchorfile>
-      <anchor>97c9059ac0e67b0fd19fc197329d6574</anchor>
+      <anchor>40fc4ca5d05d3e92ddc645a3fbda71e3</anchor>
       <arglist></arglist>
     </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setEyeDistance</name>
+    <member kind="variable" protection="private">
+      <type>GLuint</type>
+      <name>agTexture_</name>
       <anchorfile>classglViewer.html</anchorfile>
-      <anchor>aadeb3b979ce1e595d601c2afa76e2f1</anchor>
-      <arglist>(double _distance)</arglist>
+      <anchor>980bb0648b4bb0cb8a4b6a649f4874fc</anchor>
+      <arglist>[2]</arglist>
     </member>
-    <member kind="function">
-      <type>double</type>
-      <name>eyeDistance</name>
+    <member kind="variable" protection="private">
+      <type>GLuint</type>
+      <name>agProgram_</name>
       <anchorfile>classglViewer.html</anchorfile>
-      <anchor>ea1b5eb7c11dee67424fb1452fe9d0d9</anchor>
-      <arglist>()</arglist>
+      <anchor>6df6a81a8859aaac6762fb97e3a1de6a</anchor>
+      <arglist></arglist>
     </member>
-    <member kind="function">
-      <type>void</type>
-      <name>setFocalDistance</name>
+    <member kind="variable" protection="private">
+      <type>bool</type>
+      <name>customAnaglyphSupported_</name>
       <anchorfile>classglViewer.html</anchorfile>
-      <anchor>f0a8aeedc38f4f06daf66d0b50fd39bf</anchor>
-      <arglist>(double _distance)</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>focalDistance</name>
-      <anchorfile>classglViewer.html</anchorfile>
-      <anchor>cd4a87453269ccd501f51539294cf6bc</anchor>
-      <arglist>()</arglist>
+      <anchor>0bda33350dd309867c2a70d9bae26b3f</anchor>
+      <arglist></arglist>
     </member>
     <member kind="slot" virtualness="virtual">
       <type>virtual void</type>
@@ -6817,6 +6894,41 @@
       <name>drawScene_stereo</name>
       <anchorfile>classglViewer.html</anchorfile>
       <anchor>349d8fbade52abe39c08822b0b517f23</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>drawScene_glStereo</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>b11f6ea11f9e4767429b654a8994ca27</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>drawScene_anaglyphStereo</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>55384c381abc0e3ee917e765fc28c022</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>drawScene_customAnaglyphStereo</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>8ac2da41e14c0a95247c18c0f012afac</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>updateCustomAnaglyphStereo</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>853b398a7dff162a53a5fd7ec6af3e7f</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function" protection="private">
+      <type>void</type>
+      <name>finiCustomAnaglyphStereo</name>
+      <anchorfile>classglViewer.html</anchorfile>
+      <anchor>a49269e214b4928149219ebb444257ac</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="variable" protection="private">
@@ -7863,25 +7975,25 @@
       <arglist>(ACG::Vec3f &amp;_bbMin, typename ACG::Vec3f &amp;_bbMax)</arglist>
     </member>
     <member kind="variable" protection="private">
-      <type>std::vector&lt; GLuint &gt;</type>
+      <type>std::map&lt; int, GLuint &gt;</type>
       <name>textures_</name>
       <anchorfile>classMeshObject.html</anchorfile>
-      <anchor>0e88160d879259fe149c77744c865a3f</anchor>
+      <anchor>9f7945931806822b1a775323f01d7a03</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable" protection="private">
-      <type>std::vector&lt; QString &gt;</type>
+      <type>std::map&lt; int, std::string &gt;</type>
       <name>textureNames_</name>
       <anchorfile>classMeshObject.html</anchorfile>
-      <anchor>57ad32c6e263b8b14bf8098251945116</anchor>
+      <anchor>9ac3aa5a008e18e2cbc5e93c5bcb6bc4</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>addTexture</name>
       <anchorfile>classMeshObject.html</anchorfile>
-      <anchor>851ef5bf0aba31c91dde2e98da041a4f</anchor>
-      <arglist>(QString _name, QImage &amp;_image, int _id=-1)</arglist>
+      <anchor>0bf802c324343cf7fdcdc742a8288a36</anchor>
+      <arglist>(QString _name, QImage &amp;_image, int &amp;_id)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -10891,15 +11003,13 @@
     <file>QtSlideWindow.hh</file>
   </compound>
   <compound kind="dir">
-    <name>widgets/helpBrowser/</name>
-    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/helpBrowser/</path>
-    <filename>dir_8b62dc7f51b1e3f1ac6e79adf1dca1fc.html</filename>
-    <file>findEdit.cc</file>
-    <file>findEdit.hh</file>
+    <name>widgets/helpWidget/</name>
+    <path>/data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/helpWidget/</path>
+    <filename>dir_37da95d1cdaaabc88db4b2abca456d17.html</filename>
+    <file>helpBrowser.cc</file>
+    <file>helpBrowser.hh</file>
     <file>helpWidget.cc</file>
     <file>helpWidget.hh</file>
-    <file>webView.cc</file>
-    <file>webView.hh</file>
   </compound>
   <compound kind="dir">
     <name>INIFile/</name>
@@ -11040,7 +11150,7 @@
     <dir>widgets/addEmptyWidget/</dir>
     <dir>widgets/coreWidget/</dir>
     <dir>widgets/glWidget/</dir>
-    <dir>widgets/helpBrowser/</dir>
+    <dir>widgets/helpWidget/</dir>
     <dir>widgets/loadWidget/</dir>
     <dir>widgets/loggerWidget/</dir>
     <dir>widgets/optionsWidget/</dir>
