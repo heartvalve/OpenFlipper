@@ -155,6 +155,8 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
   private :
 
+    bool StringToBool(QString _value);
+
     QAction* AC_Texture_Settings;
 
     TextureData globalTextures_;
