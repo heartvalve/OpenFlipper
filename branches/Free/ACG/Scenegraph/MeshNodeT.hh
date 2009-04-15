@@ -128,7 +128,7 @@ public:
 
   /** \brief Set default property name to get texture coordinates for per face texcoords
    *
-   * Property has to be ACG::Vec2d as a halfedge property describing vertex coordinates for
+   * Property has to be Mesh::TexCoord2D as a halfedge property describing vertex coordinates for
    * to Vertex per face. Defaults to h:texcoords2D
    */
   void set_default_halfedge_textcoord_property( std::string _default_halfedge_textcoord_property )
