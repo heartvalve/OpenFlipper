@@ -163,11 +163,10 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     texturePropertiesWidget* settingsDialog_;
 
-    /// Set the active texture values to the values in the dialog box.
-    void applyDialogSettings();
+  private slots:
+    void applyDialogSettings(TextureData* _texData, QString _textureName, int _id);
 
-    /// Update the values in the Dialog box to the current ones
-    void updateDialog();
+  private:
 
     /// Take a scalar value and return a clamped,... depending on texture settings
     inline

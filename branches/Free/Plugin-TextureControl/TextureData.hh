@@ -29,6 +29,9 @@
 //
 //=============================================================================
 
+#ifndef TEXTUREDATA_HH
+#define TEXTUREDATA_HH
+
 #include <OpenFlipper/common/perObjectData.hh>
 
 #include <QString>
@@ -165,3 +168,4 @@ class TextureData : public PerObjectData
 
 };
 
+#endif //TEXTUREDATA_HH
