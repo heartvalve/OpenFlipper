@@ -72,7 +72,7 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
 }
 
 void TextureControlPlugin::fileOpened( int _id ) {
-  // TODO:: Store origninal texture coors in a new property!
+  // TODO:: Store original texture coords in a new property!
 
   std::cerr << "File opened : " << _id << std::endl;
 
@@ -490,6 +490,15 @@ void TextureControlPlugin::pluginsInitialized() {
 
   textureMenu_->addSeparator();
   textureMenu_->addActions(actionGroup_->actions());
+
+  // ================================================================================
+  // Create basic per object context menu
+  // ================================================================================
+  contextMenu_ = new QMenu(0);
+  contextMenu_->setTitle("Textures");
+  emit addContextMenuItem(contextMenu_->menuAction() ,DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(contextMenu_->menuAction() ,DATA_POLY_MESH     , CONTEXTOBJECTMENU );
+
 }
 
 void TextureControlPlugin::updateDialog() {
@@ -695,6 +704,52 @@ void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
 //     }
 
 //     updateDialog();
+}
+
+
+void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
+
+  std::cerr << "TextureControlPlugin::slotUpdateContextMenu " << _objectId << std::endl;
+
+  // ================================================================================
+  // Get picking object object
+  // ================================================================================
+  if ( _objectId == -1 )
+    return;
+
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _objectId , obj ) ) {
+    emit log(LOGERR,"slotUpdateContextMenu: Unable to get Object for id " + QString::number(_objectId) );
+    return;
+  }
+
+  // ================================================================================
+  // Get objects texture data and verify that texture exists
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0){
+    std::cerr << "TextureControlPlugin::slotUpdateContextMenu: Texture data not found!" << std::endl;
+    return;
+  }
+
+  // ================================================================================
+  // Prepare Texture menu
+  // ================================================================================
+  contextMenu_->clear();
+  QActionGroup* actionGroup = new QActionGroup(0);
+  actionGroup->setExclusive( true );
+  connect( actionGroup, SIGNAL( triggered( QAction * ) ),
+          this, SLOT( slotTextureContextMenu( QAction * ) ) );
+
+  for ( uint i = 0 ; i < texData->textures().size() ; ++i ) {
+    QAction* action = actionGroup->addAction( texData->textures()[i].name );
+    action->setCheckable(true);
+    if ( texData->textures()[i].enabled )
+      action->setChecked(true);
+  }
+
+  contextMenu_->addActions(actionGroup->actions());
+
 }
 
 
