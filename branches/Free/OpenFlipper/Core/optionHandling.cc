@@ -103,7 +103,7 @@ void Core::applyOptions(){
 
     //hideToolbox
     if (OpenFlipper::Options::hideToolbox()) {
-      
+
       coreWidget_->showToolbox (false);
     }
 
@@ -176,30 +176,29 @@ void Core::setupOptions() {
   #else
     tempDir.cd("Plugins");
 
-    ///@todo do not check WIN32 Only
+    #if defined(WIN32)
+      tempDir.cd("Windows");
+    #elif defined(ARCH_DARWIN)
+      tempDir.cd("Darwin");
+    #else
+      tempDir.cd("Linux");
+    #endif
+
     if ( OpenFlipper::Options::is64bit() )
       tempDir.cd("64");
-
-    if ( OpenFlipper::Options::is32bit() )
-        #ifdef WIN32
-          tempDir.cd("win32");
-        #else
-                tempDir.cd("32");
-        #endif
-
+    else
+      tempDir.cd("32");
 
     #ifdef WIN32
-        #ifdef NDEBUG
-                tempDir.cd("Release");
-        #else
-                tempDir.cd("Debug");
+        #ifndef NDEBUG
+          #define DEBUG
         #endif
+    #endif
+
+    #ifdef DEBUG
+            tempDir.cd("Debug");
     #else
-        #ifdef DEBUG
-                tempDir.cd("dbg");
-        #else
-                tempDir.cd("max");
-        #endif
+            tempDir.cd("Release");
     #endif
   #endif
 
