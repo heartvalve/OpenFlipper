@@ -155,11 +155,11 @@ defineTest(Application) {
 		TEMPLATE = vcapp
 	}
 	macx {
-		#############################################################
+		############################################################
 		# Uncomment the following line if you
 		# don't want qmake to build a MacOS X
 		# application bundle
-		#############################################################
+		############################################################
 		# CONFIG -= app_bundle	# Do not build a framework bundle
 
 		CONFIG += x86
@@ -173,6 +173,46 @@ defineTest(Application) {
 	defineTargets()
 }
 
+# Create target doc which generates the documentation of a
+# plugin.
+
+defineTest(Doc) {
+
+	unix {
+		# Get version of doxygen and convert it to integer number
+		QCHSUPPORT = $$system("version=`doxygen --version | sed -e 's/\.//g'`;test $version -lt 157 && echo false || echo true")
+
+		contains(QCHSUPPORT, false) {
+			message("Doxygen version does not support qt help file generation! Settings will be ignored.")
+		}
+
+		dox.target = doc
+
+		contains(QCHSUPPORT, false) {
+			dox.commands = doxygen Doxyfile;
+		} else {
+			dox.commands = 	doxygen Doxyfile; \
+					cp Doc/html/*.qch $$TOPDIR/OpenFlipper/Help/
+		}
+
+		dox.depends =
+		dox.CONFIG =
+
+		export(dox.target)
+		export(dox.commands)
+		export(dox.depends)
+		export(dox.CONFIG)
+		export(dox)
+
+		QMAKE_EXTRA_TARGETS += dox
+
+		export(QMAKE_EXTRA_TARGETS)
+	}
+	win32 {
+		message("Automatic documentation build is not yet supported under windows!")
+	}
+
+}
 
 defineTest(Subdirs) {
 	unix {
