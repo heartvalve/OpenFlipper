@@ -82,4 +82,11 @@
  * <br/><code><b>qcollectiongenerator Help.qhcp -o Help.qhc</b></code><br/>
  *
  * Your documentation should now be available in OpenFlipper's help browser.
+ *
+ * \section ex4_fullDoxyfile The full Doxyfile template
+ *
+ * This is the full Doxyfile.dox template file that we use to generate the plugin's documentation.
+ * You can either find it in <b>OpenFlipper/Doxygen/example</b> or just copy and paste it.
+ *
+ * \include Doxyfile.dox
  */
