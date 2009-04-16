@@ -137,12 +137,6 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     /// Slot for showing the TextureProperties Dialog
     void slotSetTextureProperties();
-    /// Called when Ok was clicked in the dialog
-    void slotTexturePropertiesOk();
-    /// Called when Cancel was clicked in the dialog
-    void slotTexturePropertiesCancel();
-    /// Called when Apply was clicked in the dialog
-    void slotTexturePropertiesApply();
 
   public :
     /// Constructor
