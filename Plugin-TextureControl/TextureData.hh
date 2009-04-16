@@ -35,7 +35,7 @@
 #include <OpenFlipper/common/perObjectData.hh>
 
 #include <QString>
-#include <GL/gl.h>
+#include <ACG/GL/gl.hh>
 #include <vector>
 #include <map>
 #include <float.h>
