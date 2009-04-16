@@ -35,7 +35,6 @@
 #include "textureProperties.hh"
 
 #ifdef WITH_QWT
-#warning qwt defined in texturecontrol
   #include <qwt_plot_grid.h>
   #include <qwt_text.h>
   #include <qwt_plot.h>
