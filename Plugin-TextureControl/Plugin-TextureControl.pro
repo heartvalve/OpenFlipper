@@ -4,7 +4,9 @@
 
 include( $$TOPDIR/qmake/all.include )
 
-qwt()
+qwt() {
+   DEFINES+=WITH_QWT
+}	
 
 Plugin()
 
