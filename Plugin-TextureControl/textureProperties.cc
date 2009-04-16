@@ -34,7 +34,8 @@
 
 #include "textureProperties.hh"
 
-#ifdef QWT
+#ifdef WITH_QWT
+#warning qwt defined in texturecontrol
   #include <qwt_plot_grid.h>
   #include <qwt_text.h>
   #include <qwt_plot.h>
@@ -67,29 +68,29 @@ texturePropertiesWidget::texturePropertiesWidget(QWidget *parent)
 
     texData_ = 0;
 
-    #ifdef QWT
+    #ifdef WITH_QWT
       QGridLayout* layout = new QGridLayout( originalData);
-  
+
       originalDataHistogram_ = new QwtPlot(0);
-  
+
       layout->addWidget( originalDataHistogram_ , 0,0  );
-  
+
       QwtText axis_title_x("value");
   //     axis_title_x.setFont(arial);
       QwtText axis_title_y("count");
   //     axis_title_y.setFont(arial);
-  
+
       originalDataHistogram_->setAxisTitle(QwtPlot::xBottom, axis_title_x);
       originalDataHistogram_->setAxisTitle(QwtPlot::yLeft, axis_title_y);
       originalDataHistogram_->setCanvasBackground(Qt::white);
-  
+
       QwtPlotGrid *grid2 = new QwtPlotGrid;
       grid2->enableYMin(true);
       grid2->enableXMin(true);
       grid2->setMajPen(QPen(Qt::black, 0, Qt::DotLine));
       grid2->setMinPen(QPen(Qt::gray, 0 , Qt::DotLine));
       grid2->attach(originalDataHistogram_);
-  
+
       QwtText curve_title("Delay Spread Histogram");
   //     curve_title.setFont(arial);
       histogramCurve_.setTitle(curve_title);
@@ -206,12 +207,12 @@ void texturePropertiesWidget::textureChanged(QListWidgetItem* _item){
 
 
 void texturePropertiesWidget::setOriginalData(std::vector< double > _x, std::vector< double > _y  ) {
-  #ifdef QWT
+  #ifdef WITH_QWT
     double minx = FLT_MIN;
     double maxx = FLT_MIN;
     double miny = FLT_MAX;
     double maxy = FLT_MIN;
-  
+
     for ( uint i = 0 ; i < _x.size(); ++ i ) {
       minx = std::min(minx,_x[0]);
       maxx = std::max(maxx,_x[0]);
