@@ -36,7 +36,7 @@
 #include "TextureData.hh"
 #include <QtGui>
 
-#ifdef QWT
+#ifdef WITH_QWT
   #include <qwt_plot_curve.h>
 #endif
 
@@ -73,7 +73,7 @@ class texturePropertiesWidget : public QDialog, public Ui::Dialog
     QString      textureName_;
     int          id_;
 
-#ifdef QWT
+#ifdef WITH_QWT
     QwtPlot* originalDataHistogram_;
     QwtPlotCurve histogramCurve_;
 #endif
