@@ -72,7 +72,8 @@
  *
  * <br/><code><b>&lt;file&gt;plugin-doctest.qch&lt;/file&gt;</b></code><br/>
  *
- * under the <b>register</b> tag. The file now should look like this:
+ * under the <b>register</b> tag (note: <b>plugin-doctest.qch</b> has to be replaced
+ * with whatever filename you have chosen before). The file now should look like this:
  *
  * \include Help.qhcp
  *
