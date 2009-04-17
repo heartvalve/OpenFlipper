@@ -449,8 +449,8 @@ void CoreWidget::saveKeyBindings(INIFile& _ini){
 void CoreWidget::registerCoreKeys() {
 
   //register keys for coreWidget
-  connect(this , SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString) ),
-          this , SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString)) );
+  connect(this , SIGNAL( registerKey(int, Qt::KeyboardModifiers, QString, bool) ),
+          this , SLOT(slotRegisterKey(int, Qt::KeyboardModifiers, QString, bool)) );
 
   emit registerKey(Qt::Key_Print  , Qt::NoModifier, "Create Snapshot");
   emit registerKey(Qt::Key_S      , Qt::ControlModifier, "Save Object");
