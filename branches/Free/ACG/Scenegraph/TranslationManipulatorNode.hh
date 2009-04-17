@@ -77,6 +77,12 @@ public:
     Always
   };
 
+  enum ManipulatorMode {
+    TranslationRotation,
+    LocalRotation,
+    Resize
+  };
+
   /// Default constructor.
   TranslationManipulatorNode( BaseNode* _parent=0,
 		   const std::string& _name="<TranslationTranslationManipulatorNode>" );
@@ -145,15 +151,14 @@ public:
   /// bounding box of node
   void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
 
+  /// set current operation mode
+  void setMode (ManipulatorMode _mode);
+
+  /// get current mode
+  ManipulatorMode getMode () const { return mode_; };
+
 
 private:
-
-  enum ManipulatorMode {
-    TranslationRotation,
-    LocalRotation,
-    Resize
-  };
-
 
   enum StateUpdates {
     None,
@@ -212,8 +217,6 @@ private:
   double get_screen_length (GLState& _state, Vec3d& _point) const;
 
   void updateSize (GLState& _state);
-
-  void setMode (ManipulatorMode _mode);
 
   // ELEMENTS
   bool               draw_manipulator_;

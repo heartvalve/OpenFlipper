@@ -714,13 +714,6 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
   bool          rot[3], trans[3];
   unsigned int  i;
 
-  if (_event->modifiers() & Qt::ControlModifier)
-    setMode (Resize);
-  else if (_event->modifiers() & Qt::ShiftModifier)
-    setMode (LocalRotation);
-  else
-    setMode (TranslationRotation);
-
   updateSize (_state);
 
   switch (_event->type()) {
@@ -1805,6 +1798,7 @@ void TranslationManipulatorNode::setMode (ManipulatorMode _mode)
   if (mode_ != _mode)
     ignoreTime_ = true;
   mode_ = _mode;
+  setDirty ();
 }
 
 //=============================================================================

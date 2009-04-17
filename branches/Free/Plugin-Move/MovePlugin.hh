@@ -56,11 +56,12 @@ enum SelectionType {VERTEX, EDGE, FACE };
 
 /** Plugin for moving objects and selections
 */
-class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterface, ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface,ToolbarInterface, ContextMenuInterface
+class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface,ToolbarInterface, ContextMenuInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(MouseInterface)
+  Q_INTERFACES(KeyInterface)
   Q_INTERFACES(PickingInterface)
   Q_INTERFACES(ToolboxInterface)
   Q_INTERFACES(BackupInterface)
@@ -99,6 +100,9 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
     void addToolbar(QToolBar* _toolbar);
     void getToolBar( QString _name, QToolBar*& _toolbar);
 
+    // KeyInterface
+    void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
+
   private slots :
 
     // BaseInterface
@@ -107,6 +111,10 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
     // MouseInterface
     void slotMouseWheelEvent(QWheelEvent * _event, const std::string & _mode);
     void slotMouseEvent( QMouseEvent* _event );
+
+    // KeyInterface
+    void slotKeyEvent (QKeyEvent* _event);
+    void slotKeyReleaseEvent (QKeyEvent* _event);
 
     // PickingInterface
     void slotPickModeChanged( const std::string& _mode);
@@ -267,6 +275,11 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, PickingInterfa
 
     /// Move selection on an object with given id
     void moveSelection(ACG::Matrix4x4d mat, int _id);
+
+  private:
+
+    /// Holds the current manipulator mode
+    QtTranslationManipulatorNode::ManipulatorMode manMode_;
 
 /** @} */
 

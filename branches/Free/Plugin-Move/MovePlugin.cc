@@ -57,7 +57,8 @@
 /** \brief Default Constructor
  * 
  */
-MovePlugin::MovePlugin()
+MovePlugin::MovePlugin() :
+ manMode_ (QtTranslationManipulatorNode::TranslationRotation)
 {
     manip_size_          = 1.0;
     manip_size_modifier_ = 1.0;
@@ -85,6 +86,12 @@ void MovePlugin::pluginsInitialized() {
   emit setPickModeMouseTracking ("Move", true);
   emit addHiddenPickMode("MoveSelection");
   emit setPickModeMouseTracking ("MoveSelection", true);
+
+  //KEYS
+  emit registerKey (Qt::Key_Shift, Qt::ShiftModifier, "Manipulator rotation", true);
+  emit registerKey (Qt::Key_Shift, Qt::NoModifier, "Manipulator rotation", true);
+  emit registerKey (Qt::Key_Control, Qt::ControlModifier, "Resize", true);
+  emit registerKey (Qt::Key_Control, Qt::NoModifier, "Resize", true);
 
   //SCRIPTING SLOT DESCRIPTIONS
   setDescriptions();
@@ -179,26 +186,91 @@ void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /
  */
 void MovePlugin::slotMouseEvent( QMouseEvent* _event )
 {
-    if ( ( (PluginFunctions::pickMode() == ("Move")) || (PluginFunctions::pickMode() == ("MoveSelection")) ) &&
-         PluginFunctions::actionMode() == Viewer::PickingMode ) {
+  QtTranslationManipulatorNode::ManipulatorMode mode;
+  if (_event->modifiers() & Qt::ControlModifier)
+    mode = QtTranslationManipulatorNode::Resize;
+  else if (_event->modifiers() & Qt::ShiftModifier)
+    mode = QtTranslationManipulatorNode::LocalRotation;
+  else
+    mode = QtTranslationManipulatorNode::TranslationRotation;
 
-         if (_event->type() == QEvent::MouseButtonDblClick) {
+  if (mode != manMode_)
+  {
+    manMode_ = mode;
+    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
+        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+              o_it != PluginFunctions::objectsEnd(); ++o_it)
+           if ( o_it->manipPlaced() ) 
+                o_it->manipulatorNode()->setMode (mode);
+     }
+  }
 
-               placeManip(_event);
-               updateManipulatorDialog();
-               return;
-         }
+  if (((PluginFunctions::pickMode() == ("Move")) || (PluginFunctions::pickMode() == ("MoveSelection"))) &&
+      PluginFunctions::actionMode() == Viewer::PickingMode) {
 
-         // interaction
-         ACG::SceneGraph::MouseEventAction action(_event);
-         PluginFunctions::traverse(action);
+    if (_event->type() == QEvent::MouseButtonDblClick) {
 
-         if (_event->buttons() == Qt::LeftButton)
-           emit visibilityChanged (-1);
-
+      placeManip(_event);
+      updateManipulatorDialog();
+      return;
     }
+
+    // interaction
+    ACG::SceneGraph::MouseEventAction action(_event);
+    PluginFunctions::traverse(action);
+
+    if (_event->buttons() == Qt::LeftButton)
+      emit visibilityChanged (-1);
+
+  }
 }
 
+/*******************************************************************************
+        KeyInterface implementation
+ *******************************************************************************/
+
+void MovePlugin::slotKeyEvent (QKeyEvent* _event)
+{
+  QtTranslationManipulatorNode::ManipulatorMode mode;
+  if (_event->key() == Qt::Key_Control)
+    mode = QtTranslationManipulatorNode::Resize;
+  else if (_event->key () == Qt::Key_Shift)
+    mode = QtTranslationManipulatorNode::LocalRotation;
+  else
+    mode = QtTranslationManipulatorNode::TranslationRotation;
+
+  if (mode != manMode_)
+  {
+    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
+      manMode_ = mode;
+      for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS);
+           o_it != PluginFunctions::objectsEnd(); ++o_it)
+        if (o_it->manipPlaced())
+            o_it->manipulatorNode()->setMode (mode);
+     }
+  }
+}
+
+//------------------------------------------------------------------------------
+
+void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
+{
+  QtTranslationManipulatorNode::ManipulatorMode mode = manMode_;
+  if ((_event->key() == Qt::Key_Control && manMode_ == QtTranslationManipulatorNode::Resize) ||
+      (_event->key() == Qt::Key_Shift && manMode_ == QtTranslationManipulatorNode::LocalRotation))
+    mode = QtTranslationManipulatorNode::TranslationRotation;
+
+  if (mode != manMode_)
+  {
+    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
+      manMode_ = mode;
+      for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS);
+           o_it != PluginFunctions::objectsEnd(); ++o_it)
+        if (o_it->manipPlaced())
+            o_it->manipulatorNode()->setMode (mode);
+     }
+  }
+}
 
 /*******************************************************************************
         PickingInterface implementation
@@ -405,6 +477,7 @@ void MovePlugin::placeManip(QMouseEvent * _event)
          object->manipulatorNode()->set_draw_cylinder(true);
          object->manipulatorNode()->set_autosize(QtTranslationManipulatorNode::Once);
          object->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
+         object->manipulatorNode()->setMode (manMode_);
          object->manipulatorNode()->show();
 
          object->manipulatorNode()->apply_transformation( PluginFunctions::pickMode() == "Move" );
