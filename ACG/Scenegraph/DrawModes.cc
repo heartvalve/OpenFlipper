@@ -234,6 +234,29 @@ bool addDrawMode( const std::string & _name, unsigned int & _newId )
 }
 
 
+//----------------------------------------------------------------------------
+
+
+bool getDrawModeId( const std::string & _name, unsigned int & _Id  )
+{
+    // check if mode exists
+    VecDrawModes::iterator modeIter, modeEnd( currentDrawModes_.end() );
+
+    for( modeIter = currentDrawModes_.begin();
+	 modeIter != modeEnd;
+	 ++modeIter )
+    {
+       if( _name == modeIter->name_ )
+       {
+	   _Id = modeIter->id_;
+           return true;
+       }
+    }
+
+    // the DrawMode does not exists
+    return false;
+}
+
 
 //=============================================================================
 } // namespace DrawModes
