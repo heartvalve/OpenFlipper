@@ -75,7 +75,7 @@ void CoreWidget::slotSetGlobalBackgroundColor() {
   QColor c = QColorDialog::getColor(backCol,this);
 
   if (c != backCol && c.isValid())
-    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) 
+    for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
       PluginFunctions::viewerProperties(i).backgroundColor(ACG::Vec4f(((double) c.redF())   ,
                                                                       ((double) c.greenF()) ,
                                                                       ((double) c.blueF())  ,
@@ -279,6 +279,9 @@ void CoreWidget::applicationSnapshot() {
 
   if (fi.completeSuffix() == "ppm")
     format="ppmraw";
+
+  if (fi.completeSuffix() == "jpg")
+    format="jpg";
 
   suggest += format;
 
@@ -490,7 +493,7 @@ void CoreWidget::slotCopyView( ) {
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView();
 }
 
-   
+
 
 
 //=============================================================================
