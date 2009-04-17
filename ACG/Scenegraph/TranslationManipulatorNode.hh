@@ -71,11 +71,6 @@ class ACGDLLEXPORT TranslationManipulatorNode : public TransformNode
 {
 public:
 
-  enum ManipulatorMode {
-    TRANSLATIONMODE,
-    ROTATIONMODE
-  };
-
   enum AutoSizeMode {
     Never,
     Once,
@@ -150,7 +145,15 @@ public:
   /// bounding box of node
   void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
 
+
 private:
+
+  enum ManipulatorMode {
+    TranslationRotation,
+    LocalRotation,
+    Resize
+  };
+
 
   enum StateUpdates {
     None,
@@ -160,13 +163,29 @@ private:
 
   enum Elements {
     Origin = 0,
-    XAxis = 1,
-    YAxis = 2,
-    ZAxis = 3,
-    XYRing = 4,
-    YZRing = 5,
-    ZXRing = 6,
-    NumElements = 7
+    XTop,
+    YTop,
+    ZTop,
+    XAxis,
+    YAxis,
+    ZAxis,
+    XRing,
+    YRing,
+    ZRing,
+    NumElements
+  };
+
+  class Element {
+    public:
+      Element ();
+
+      Vec4f active_target_color_;
+      Vec4f active_current_color_;
+      Vec4f inactive_target_color_;
+      Vec4f inactive_current_color_;
+
+      bool  clicked_;
+      bool  over_;
   };
 
   /// set the current state to follow manipulator transformation
@@ -194,6 +213,8 @@ private:
 
   void updateSize (GLState& _state);
 
+  void setMode (ManipulatorMode _mode);
+
   // ELEMENTS
   bool               draw_manipulator_;
 
@@ -209,46 +230,20 @@ private:
   int                manipulator_slices_;
   int                manipulator_stacks_;
 
-  bool               axis_x_clicked_;
-  bool               axis_y_clicked_;
-  bool               axis_z_clicked_;
-
-  bool               top_x_clicked_;
-  bool               top_y_clicked_;
-  bool               top_z_clicked_;
-
-  bool               outer_ring_xy_clicked_;
-  bool               outer_ring_yz_clicked_;
-  bool               outer_ring_zx_clicked_;
-
   bool               any_axis_clicked_;
   bool               any_top_clicked_;
-
-  bool               origin_clicked_;
   bool               outer_ring_clicked_;
-
-  bool               axis_x_over_;
-  bool               axis_y_over_;
-  bool               axis_z_over_;
-
-  bool               top_x_over_;
-  bool               top_y_over_;
-  bool               top_z_over_;
-
-  bool               outer_ring_xy_over_;
-  bool               outer_ring_yz_over_;
-  bool               outer_ring_zx_over_;
 
   bool               any_axis_over_;
   bool               any_top_over_;
-
-  bool               origin_over_;
   bool               outer_ring_over_;
 
-  Vec4f              active_target_color[NumElements];
-  Vec4f              active_current_color[NumElements];
-  Vec4f              inactive_target_color[NumElements];
-  Vec4f              inactive_current_color[NumElements];
+
+  Element            element_[NumElements];
+  float              resize_current_;
+
+  ManipulatorMode    mode_;
+  bool               ignoreTime_;
 
   Vec2i              oldPoint2D_;
 
