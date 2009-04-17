@@ -128,7 +128,7 @@ public:
   */
   glViewer( QtGLGraphicsScene* _scene,
 	    QGLWidget* _glWidget,
-      Viewer::ViewerProperties& _properties,
+       Viewer::ViewerProperties& _properties,
 	    QGraphicsWidget* _parent=0,
 	    const char* _name=0,
 	    QStatusBar *_statusBar=0);
@@ -543,6 +543,13 @@ private:
 
   // Used to calculate the time passed between redraws
   QTime redrawTime_;
+
+  //===========================================================================
+  /** @name view handling
+   * @{ */
+  //===========================================================================
+  signals:
+    void viewUpdated();
 
   //===========================================================================
   /** @name Stereo
