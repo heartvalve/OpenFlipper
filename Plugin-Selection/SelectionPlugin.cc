@@ -106,15 +106,15 @@ void SelectionPlugin::initializePlugin() {
   emit registerKey(Qt::Key_Delete, Qt::NoModifier, "Delete Selection");
 
   //the release event does not contain the modifier
-  emit registerKey(Qt::Key_Control, Qt::NoModifier, "Deselect instead of Select");
-  emit registerKey(Qt::Key_Shift,   Qt::NoModifier,   "Switch between source/target Selection");
+  emit registerKey(Qt::Key_Control, Qt::NoModifier, "Deselect instead of Select", true);
+  emit registerKey(Qt::Key_Shift,   Qt::NoModifier,   "Switch between source/target Selection", true);
   //the press event contains the modifier
-  emit registerKey(Qt::Key_Control, Qt::ControlModifier, "Deselect instead of Select");
-  emit registerKey(Qt::Key_Shift,   Qt::ShiftModifier,   "Switch between source/target Selection");
+  emit registerKey(Qt::Key_Control, Qt::ControlModifier, "Deselect instead of Select", true);
+  emit registerKey(Qt::Key_Shift,   Qt::ShiftModifier,   "Switch between source/target Selection", true);
 
   //different combinations of keyPresses
-  emit registerKey(Qt::Key_Shift,   Qt::ShiftModifier | Qt::ControlModifier, "Source Deselection");
-  emit registerKey(Qt::Key_Control, Qt::ShiftModifier | Qt::ControlModifier, "Source Deselection");
+  emit registerKey(Qt::Key_Shift,   Qt::ShiftModifier | Qt::ControlModifier, "Source Deselection", true);
+  emit registerKey(Qt::Key_Control, Qt::ShiftModifier | Qt::ControlModifier, "Source Deselection", true);
 }
 
 //***********************************************************************************
