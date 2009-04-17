@@ -160,7 +160,18 @@ function (_build_openflipper_plugin plugin)
                             ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/Plugin-${plugin}.dll
                             ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR}
                           )
-    else ()
+    elseif (APPLE) 
+
+      target_link_libraries (
+         Plugin-${plugin}
+	 PluginLib
+  	 ${QT_LIBRARIES}
+      )
+      set_target_properties (
+        Plugin-${plugin} PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR}"
+      )
+    else()
       set_target_properties (
         Plugin-${plugin} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR}"
