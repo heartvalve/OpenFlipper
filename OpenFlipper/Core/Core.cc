@@ -557,6 +557,8 @@ Core::slotMouseEventIdentify( QMouseEvent* _event )
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
       if ( senderPointer == coreWidget_->examiner_widgets_[i] ) {
         examinerId = i;
+        if ( OpenFlipper::Options::doSlotDebugging() )
+              emit log(LOGINFO,"slotMouseEventIdentify from examiner " + QString::number(i) );
         break;
       }
     }
@@ -589,7 +591,25 @@ Core::slotMouseEvent( QMouseEvent* _event )
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
       if ( senderPointer == coreWidget_->examiner_widgets_[i] ) {
         examinerId = i;
+        if ( OpenFlipper::Options::doSlotDebugging() ) {
+          QString message = "slotMouseEvent from examiner " + QString::number(i) + " with ";
+
+          if ( _event->type() == QEvent::MouseButtonRelease )
+            message += " MouseButtonRelease";
+          else if ( _event->type() == QEvent::MouseButtonPress )
+            message += " MouseButtonRelease";
+          else if ( _event->type() == QEvent::MouseButtonDblClick )
+            message += " MouseButtonDblClick";
+          else if ( _event->type() == QEvent::MouseMove )
+            message += " MouseMove";
+          else
+            message += "unknown event type";
+
+          emit log(LOGINFO,message );
+        }
+
         break;
+
       }
     }
 
