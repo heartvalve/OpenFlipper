@@ -446,6 +446,9 @@ Core::init() {
               this                              , SLOT(slotMouseEventIdentify(QMouseEvent*)));
       connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalWheelEvent(QWheelEvent *, const std::string &)),
               this                              , SLOT(slotWheelEvent(QWheelEvent *, const std::string &)));
+
+      connect( coreWidget_->examiner_widgets_[i], SIGNAL( viewUpdated() ),
+               this, SLOT( viewUpdated()) );
     }
 
   }
@@ -687,16 +690,17 @@ void Core::updateView() {
 
     if ( elapsed < 1000 / OpenFlipper::Options::maxFrameRate() )
     {
-	// redraw time not reached ... waiting for timer event for next redraw
-	if ( redrawTimer_->isActive() ) {
-	  if ( OpenFlipper::Options::doSlotDebugging() )
-	    emit log(LOGINFO,"Too early for redraw! Delaying request from " + QString( sender()->metaObject()->className() ) );
-	  return;
-	}
+      // redraw time not reached ... waiting for timer event for next redraw
+      if ( redrawTimer_->isActive() ) {
+        if ( OpenFlipper::Options::doSlotDebugging() )
+          emit log(LOGINFO,"Too early for redraw! Delaying request from " +
+                           QString( sender()->metaObject()->className() ) );
+        return;
+      }
 
-	// Start the timer
-	redrawTimer_->start( (1000 / OpenFlipper::Options::maxFrameRate()) - elapsed);
-	return;
+      // Start the timer
+      redrawTimer_->start( (1000 / OpenFlipper::Options::maxFrameRate()) - elapsed);
+      return;
     }
     else if ( redrawTimer_->isActive() )
 	redrawTimer_->stop ();
@@ -709,9 +713,10 @@ void Core::updateView() {
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
       coreWidget_->examiner_widgets_[i]->updateGL();
-
   }
 }
+
+
 
 //-----------------------------------------------------------------------------
 

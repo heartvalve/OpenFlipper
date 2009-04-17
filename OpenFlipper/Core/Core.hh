@@ -402,6 +402,28 @@ private:
   /** @} */
 
   //===========================================================================
+  /** @name  Video Stream creation
+  * @{ */
+  //===========================================================================
+  private slots:
+    /// Slot called everytime the view is updated
+    void viewUpdated();
+
+    /// Function called for every frame when capturing video
+    void captureVideo();
+
+    /// Start video capturing
+    void startVideoCapture();
+
+    /// Stop video capturing
+    void stopVideoCapture();
+
+  private:
+    QTimer videoTimer_;
+    QTime  lastVideoTime_;
+
+  /** @} */
+  //===========================================================================
     /** @name Load / Save slots
     * @{ */
   //===========================================================================
