@@ -200,12 +200,15 @@ void CoreWidget::slotSnapshot() {
   if (fi.completeSuffix() == "ppm")
     format="ppmraw";
 
+  if (fi.completeSuffix() == "jpg")
+    format="jpg";
+
   suggest += format;
 
   QFileDialog dialog(this);
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setDefaultSuffix("png");
-  dialog.setNameFilter("Images (*.png *.ppm)");
+  dialog.setNameFilter("Images (*.png *.ppm *.jpg)");
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setConfirmOverwrite(true);
   dialog.setDirectory( fi.path() );
@@ -238,12 +241,15 @@ void CoreWidget::applicationSnapshotDialog() {
   if (fi.completeSuffix() == "ppm")
     format="ppmraw";
 
+  if (fi.completeSuffix() == "jpg")
+    format="jpg";
+
   suggest += format;
 
   QFileDialog dialog(this);
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setDefaultSuffix("png");
-  dialog.setNameFilter("Images (*.png *.ppm)");
+  dialog.setNameFilter("Images (*.png *.ppm *.jpg)");
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setConfirmOverwrite(true);
   dialog.setDirectory( fi.path() );
@@ -305,12 +311,15 @@ void CoreWidget::viewerSnapshotDialog() {
   if (fi.completeSuffix() == "ppm")
     format="ppmraw";
 
+  if (fi.completeSuffix() == "jpg")
+    format="jpg";
+
   suggest += format;
 
   QFileDialog dialog(this);
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setDefaultSuffix("png");
-  dialog.setNameFilter("Images (*.png *.ppm)");
+  dialog.setNameFilter("Images (*.png *.ppm *.jpg)");
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setConfirmOverwrite(true);
   dialog.setDirectory( fi.path() );
@@ -407,6 +416,9 @@ void CoreWidget::viewerSnapshot() {
 
   if (fi.completeSuffix() == "ppm")
     format="ppmraw";
+
+  if (fi.completeSuffix() == "jpg")
+    format="jpg";
 
   suggest += format;
 
