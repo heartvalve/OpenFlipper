@@ -76,6 +76,17 @@ namespace SceneGraph {
 
 //----------------------------------------------------------------------------
 
+TranslationManipulatorNode::Element::Element () :
+  active_target_color_ (0.0, 0.0, 0.0, 1.0),
+  active_current_color_ (0.0, 0.0, 0.0, 1.0),
+  inactive_target_color_ (0.0, 0.0, 0.0, 1.0),
+  inactive_current_color_ (0.0, 0.0, 0.0, 1.0),
+  clicked_ (false),
+  over_ (false)
+{
+}
+
+//----------------------------------------------------------------------------
 
 TranslationManipulatorNode::
 TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
@@ -89,32 +100,15 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
     manipulator_height_(20),
     manipulator_slices_(10),
     manipulator_stacks_(10),
-    axis_x_clicked_(false),
-    axis_y_clicked_(false),
-    axis_z_clicked_(false),
-    top_x_clicked_(false),
-    top_y_clicked_(false),
-    top_z_clicked_(false),
-    outer_ring_xy_clicked_(false),
-    outer_ring_yz_clicked_(false),
-    outer_ring_zx_clicked_(false),
     any_axis_clicked_(false),
     any_top_clicked_(false),
-    origin_clicked_(false),
     outer_ring_clicked_(false),
-    axis_x_over_(false),
-    axis_y_over_(false),
-    axis_z_over_(false),
-    top_x_over_(false),
-    top_y_over_(false),
-    top_z_over_(false),
-    outer_ring_xy_over_(false),
-    outer_ring_yz_over_(false),
-    outer_ring_zx_over_(false),
     any_axis_over_(false),
     any_top_over_(false),
-    origin_over_(false),
     outer_ring_over_(false),
+    resize_current_ (0.0),
+    mode_ (TranslationRotation),
+    ignoreTime_ (false),
     auto_size_(TranslationManipulatorNode::Never),
     auto_size_length_(1.0)
 {
@@ -125,8 +119,8 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
   updateTargetColors ();
   for (unsigned int i = 0; i < TranslationManipulatorNode::NumElements; i++)
   {
-    active_current_color[i] = active_target_color[i];
-    inactive_current_color[i] = inactive_target_color[i];
+    element_[i].active_current_color_ = element_[i].active_target_color_;
+    element_[i].inactive_current_color_ = element_[i].inactive_target_color_;
   }
 
 }
@@ -189,79 +183,135 @@ TranslationManipulatorNode::update_rotation(GLState& _state){
 
 void TranslationManipulatorNode::updateTargetColors ()
 {
+  // reset all color to default values
+  for (unsigned int i = 0; i < NumElements; i++)
+    element_[i].inactive_target_color_ = nonactive_color * 0.2;
+  element_[XRing].inactive_target_color_ = nonactive_color * 0.4;
+  element_[YRing].inactive_target_color_ = nonactive_color * 0.4;
+  element_[ZRing].inactive_target_color_ = nonactive_color * 0.4;
+
+  element_[Origin].active_target_color_ = origin_color * 0.2;
+  element_[XAxis].active_target_color_ = x_axis_color * 0.2;
+  element_[YAxis].active_target_color_ = y_axis_color * 0.2;
+  element_[ZAxis].active_target_color_ = z_axis_color * 0.2;
+  element_[XTop].active_target_color_ = x_axis_color * 0.2;
+  element_[YTop].active_target_color_ = y_axis_color * 0.2;
+  element_[ZTop].active_target_color_ = z_axis_color * 0.2;
+  element_[XRing].active_target_color_ = outer_ring_x_color * 0.4;
+  element_[YRing].active_target_color_ = outer_ring_y_color * 0.4;
+  element_[ZRing].active_target_color_ = outer_ring_z_color * 0.4;
+
+  // blending is enabled for ring so we have to set alpha correctly
+  element_[XRing].active_target_color_[3] = 1.0;
+  element_[YRing].active_target_color_[3] = 1.0;
+  element_[ZRing].active_target_color_[3] = 1.0;
+
+  // hide rings in resize mode
+  if (mode_ == Resize)
+    for (unsigned int i = 0; i < 3; i++)
+    {
+      element_[XRing + i].active_target_color_[3] = 0.0;
+      element_[XRing + i].inactive_target_color_[3] = 0.0;
+    }
+
   // set colors according to current (clicked/over/none) state
-  if(origin_clicked_){
-    active_target_color[Origin] = origin_color;
-    inactive_target_color[Origin] = nonactive_color;
-  } else if(origin_over_){
-    active_target_color[Origin] = origin_color * 0.8;
-    inactive_target_color[Origin] = nonactive_color * 0.8;
-  } else {
-    active_target_color[Origin] = origin_color * 0.2;
-    inactive_target_color[Origin] = nonactive_color * 0.2;
+  if(element_[Origin].clicked_){
+    element_[Origin].active_target_color_ = origin_color;
+    element_[Origin].inactive_target_color_ = nonactive_color;
+    for (unsigned int i = 1; i < NumElements - 3; i++)
+    {
+      element_[i].active_target_color_ *= 2.0;
+      element_[i].active_target_color_ += origin_color * 0.4;
+      element_[Origin].inactive_target_color_ = nonactive_color;
+    }
+    return;
+  } else if(element_[Origin].over_){
+    element_[Origin].active_target_color_ = origin_color * 0.8;
+    element_[Origin].inactive_target_color_ = nonactive_color * 0.8;
+    for (unsigned int i = 1; i < NumElements - 3; i++)
+    {
+      element_[i].active_target_color_ *= 2.0;
+      element_[i].active_target_color_ += origin_color * 0.2;
+      element_[Origin].inactive_target_color_ = nonactive_color;
+    }
+    return;
   }
 
-  if(axis_x_clicked_ || top_x_clicked_){
-    active_target_color[XAxis] = x_axis_color;
-    inactive_target_color[XAxis] = nonactive_color;
-  } else if(axis_x_over_ || top_x_over_){
-    active_target_color[XAxis] = x_axis_color * 0.8;
-    inactive_target_color[XAxis] = nonactive_color * 0.8;
-  } else {
-    active_target_color[XAxis] = x_axis_color * 0.2;
-    inactive_target_color[XAxis] = nonactive_color * 0.2;
-  }
-  if(axis_y_clicked_ || top_y_clicked_){
-    active_target_color[YAxis] = y_axis_color;
-    inactive_target_color[YAxis] = nonactive_color;
-  } else if(axis_y_over_ || top_y_over_){
-    active_target_color[YAxis] = y_axis_color * 0.8;
-    inactive_target_color[YAxis] = nonactive_color * 0.8;
-  } else {
-    active_target_color[YAxis] = y_axis_color * 0.2;
-    inactive_target_color[YAxis] = nonactive_color * 0.2;
-  }
-  if(axis_z_clicked_ || top_z_clicked_){
-    active_target_color[ZAxis] = z_axis_color;
-    inactive_target_color[ZAxis] = nonactive_color;
-  } else if(axis_z_over_ || top_z_over_){
-    active_target_color[ZAxis] = z_axis_color * 0.8;
-    inactive_target_color[ZAxis] = nonactive_color * 0.8;
-  } else {
-    active_target_color[ZAxis] = z_axis_color * 0.2;
-    inactive_target_color[ZAxis] = nonactive_color * 0.2;
-  }
+  for (unsigned int i = 0; i < 3; i++)
+    if (element_[i + XTop].clicked_)
+    {
+      element_[i + XTop].active_target_color_ *= 5.0;
+      element_[i + XTop].inactive_target_color_ = nonactive_color;
+      if (mode_ != TranslationRotation)
+      {
+        element_[i + XAxis].active_target_color_ *= 5.0;
+        element_[i + XAxis].inactive_target_color_ = nonactive_color;
+      }
+      if (mode_ != Resize) {
+        element_[i + XRing].active_target_color_ *= 2.5;
+        element_[i + XRing].active_target_color_[3] = 1.0;
+        element_[i + XRing].inactive_target_color_ = nonactive_color;
+      }
+      return;
+    } else if (element_[i + XTop].over_)
+    {
+      element_[i + XTop].active_target_color_ *= 4.0;
+      element_[i + XTop].inactive_target_color_ = nonactive_color;
+      if (mode_ != TranslationRotation)
+      {
+        element_[i + XAxis].active_target_color_ *= 4.0;
+        element_[i + XAxis].inactive_target_color_ = nonactive_color;
+      }
+      if (mode_ != Resize) {
+        element_[i + XRing].active_target_color_ *= 2.0;
+        element_[i + XRing].active_target_color_[3] = 1.0;
+        element_[i + XRing].inactive_target_color_ = nonactive_color;
+      }
+      return;
+    }
 
-  if(outer_ring_yz_clicked_){
-    active_target_color[YZRing] = outer_ring_x_color;
-    inactive_target_color[YZRing] = nonactive_color;
-  } else if(outer_ring_yz_over_){
-    active_target_color[YZRing] = outer_ring_x_color * 0.8;
-    inactive_target_color[YZRing] = nonactive_color * 0.8;
-  } else {
-    active_target_color[YZRing] = outer_ring_x_color * 0.4;
-    inactive_target_color[YZRing] = nonactive_color * 0.4;
-  }
-  if(outer_ring_zx_clicked_){
-    active_target_color[ZXRing] = outer_ring_y_color;
-    inactive_target_color[ZXRing] = nonactive_color;
-  } else if(outer_ring_zx_over_){
-    active_target_color[ZXRing] = outer_ring_y_color * 0.8;
-    inactive_target_color[ZXRing] = nonactive_color * 0.8;
-  } else {
-    active_target_color[ZXRing] = outer_ring_y_color * 0.4;
-    inactive_target_color[ZXRing] = nonactive_color * 0.4;
-  }
-  if(outer_ring_xy_clicked_){
-    active_target_color[XYRing] = outer_ring_z_color;
-    inactive_target_color[XYRing] = nonactive_color;
-  } else if(outer_ring_xy_over_){
-    active_target_color[XYRing] = outer_ring_z_color * 0.8;
-    inactive_target_color[XYRing] = nonactive_color * 0.8;
-  } else {
-    active_target_color[XYRing] = outer_ring_z_color * 0.4;
-    inactive_target_color[XYRing] = nonactive_color * 0.4;
-  }
+  for (unsigned int i = 0; i < 3; i++)
+    if (element_[i + XAxis].clicked_)
+    {
+      element_[i + XTop].active_target_color_ *= 5.0;
+      element_[i + XTop].inactive_target_color_ = nonactive_color;
+      element_[i + XAxis].active_target_color_ *= 5.0;
+      element_[i + XAxis].inactive_target_color_ = nonactive_color;
+      if (mode_ == LocalRotation) {
+        element_[i + XRing].active_target_color_ *= 2.5;
+        element_[i + XRing].active_target_color_[3] = 1.0;
+        element_[i + XRing].inactive_target_color_ = nonactive_color;
+      }
+      return;
+    } else if (element_[i + XAxis].over_)
+    {
+      element_[i + XTop].active_target_color_ *= 4.0;
+      element_[i + XTop].inactive_target_color_ = nonactive_color;
+      element_[i + XAxis].active_target_color_ *= 4.0;
+      element_[i + XAxis].inactive_target_color_ = nonactive_color;
+      if (mode_ == LocalRotation) {
+        element_[i + XRing].active_target_color_ *= 2.0;
+        element_[i + XRing].active_target_color_[3] = 1.0;
+        element_[i + XRing].inactive_target_color_ = nonactive_color;
+      }
+      return;
+    }
+
+  if (mode_ != Resize)
+  for (unsigned int i = 0; i < 3; i++)
+    if (element_[i + XRing].clicked_)
+    {
+      element_[i + XRing].active_target_color_ *= 2.5;
+      element_[i + XRing].active_target_color_[3] = 1.0;
+      element_[i + XRing].inactive_target_color_ = nonactive_color;
+      return;
+    } else if (element_[i + XRing].over_)
+    {
+      element_[i + XRing].active_target_color_ *= 2.0;
+      element_[i + XRing].active_target_color_[3] = 1.0;
+      element_[i + XRing].inactive_target_color_ = nonactive_color;
+      return;
+    }
 
 }
 
@@ -273,26 +323,43 @@ bool TranslationManipulatorNode::updateCurrentColors (GLState& _state)
 
     float value = (float)_state.msSinceLastRedraw () / 1000.0;
 
-    for (unsigned int i = 0; i < TranslationManipulatorNode::NumElements; i++)
+    if (ignoreTime_)
     {
-	Vec4f diff = active_target_color[i] - active_current_color[i];
-	for (unsigned int j = 0; j < 4; j++)
-	    if (diff[j] > value)
-		diff[j] = value;
-	    else if (diff[j] < -value)
-		diff[j] = -value;
-	active_current_color[i] += diff;
-	diff = inactive_target_color[i] - inactive_current_color[i];
-	for (unsigned int j = 0; j < 4; j++)
-	    if (diff[j] > value)
-		diff[j] = value;
-	    else if (diff[j] < -value)
-		diff[j] = -value;
-	inactive_current_color[i] += diff;
-
-	rv |= active_target_color[i] != active_current_color[i] ||
-	      inactive_target_color[i] != inactive_current_color[i];
+      value = 0;
+      ignoreTime_ = false;
     }
+
+    for (unsigned int i = 0; i < NumElements; i++)
+    {
+	Vec4f diff = element_[i].active_target_color_ -
+                     element_[i].active_current_color_;
+	for (unsigned int j = 0; j < 4; j++)
+	    if (diff[j] > value)
+		diff[j] = value;
+	    else if (diff[j] < -value)
+		diff[j] = -value;
+	element_[i].active_current_color_ += diff;
+	diff = element_[i].inactive_target_color_ -
+               element_[i].inactive_current_color_;
+	for (unsigned int j = 0; j < 4; j++)
+	    if (diff[j] > value)
+		diff[j] = value;
+	    else if (diff[j] < -value)
+		diff[j] = -value;
+	element_[i].inactive_current_color_ += diff;
+
+	rv |= element_[i].active_target_color_ != element_[i].active_current_color_ ||
+	      element_[i].inactive_target_color_ != element_[i].inactive_current_color_;
+    }
+
+    float diff = ((mode_ == Resize) ? 1.0 : 0.0) - resize_current_;
+    if (diff > value)
+      diff = value;
+    else if (diff < -value)
+      diff = -value;
+    resize_current_ += diff;
+    rv |= resize_current_ != ((mode_ == Resize) ? 1.0 : 0.0);
+
     return rv;
 }
 
@@ -333,23 +400,43 @@ void TranslationManipulatorNode::drawMaipulator (GLState& _state, bool _active)
 
   if (_active)
   {
-    _state.set_diffuse_color(active_current_color[ZAxis]);
-    _state.set_specular_color(active_current_color[ZAxis]);
+    _state.set_diffuse_color(element_[ZAxis].active_current_color_);
+    _state.set_specular_color(element_[ZAxis].active_current_color_);
   } else {
-    _state.set_diffuse_color(inactive_current_color[ZAxis]);
-    _state.set_specular_color(inactive_current_color[ZAxis]);
+    _state.set_diffuse_color(element_[ZAxis].inactive_current_color_);
+    _state.set_specular_color(element_[ZAxis].inactive_current_color_);
   }
+
+  // Draw Bottom of z-axis
+  gluCylinder(axis_,
+              (1.0 - resize_current_) * manipulator_radius_,
+              (1.0 + resize_current_) * manipulator_radius_,
+              manipulator_height_/2,
+              manipulator_slices_,
+              manipulator_stacks_);
+
+  // Draw center of z-axis
+  _state.translate(0.0, 0.0, manipulator_height_/2);
 
   gluCylinder(axis_,
               manipulator_radius_,
               manipulator_radius_,
-              manipulator_height_,
+              manipulator_height_/2,
               manipulator_slices_,
               manipulator_stacks_);
 
-  // Draw Top of z-axis
 
-  _state.translate(0.0, 0.0, manipulator_height_);
+  // Draw Top of z-axis
+  if (_active)
+  {
+    _state.set_diffuse_color(element_[ZTop].active_current_color_);
+    _state.set_specular_color(element_[ZTop].active_current_color_);
+  } else {
+    _state.set_diffuse_color(element_[ZTop].inactive_current_color_);
+    _state.set_specular_color(element_[ZTop].inactive_current_color_);
+  }
+
+  _state.translate(0.0, 0.0, manipulator_height_/2);
   gluCylinder(axis_,
               manipulator_radius_*2,
               0,
@@ -364,22 +451,43 @@ void TranslationManipulatorNode::drawMaipulator (GLState& _state, bool _active)
   _state.rotate(-90, 1.0, 0.0, 0.0);
   if (_active)
   {
-    _state.set_diffuse_color(active_current_color[YAxis]);
-    _state.set_specular_color(active_current_color[YAxis]);
+    _state.set_diffuse_color(element_[YAxis].active_current_color_);
+    _state.set_specular_color(element_[YAxis].active_current_color_);
   } else {
-    _state.set_diffuse_color(inactive_current_color[YAxis]);
-    _state.set_specular_color(inactive_current_color[YAxis]);
+    _state.set_diffuse_color(element_[YAxis].inactive_current_color_);
+    _state.set_specular_color(element_[YAxis].inactive_current_color_);
   }
+
+  // Draw Bottom of z-axis
+  gluCylinder(axis_,
+              (1.0 - resize_current_) * manipulator_radius_,
+              (1.0 + resize_current_) * manipulator_radius_,
+              manipulator_height_/2,
+              manipulator_slices_,
+              manipulator_stacks_);
+
+  // Draw center of z-axis
+  _state.translate(0.0, 0.0, manipulator_height_/2);
 
   gluCylinder(axis_,
               manipulator_radius_,
               manipulator_radius_,
-              manipulator_height_,
+              manipulator_height_/2,
               manipulator_slices_,
               manipulator_stacks_);
 
-  // Draw Top of y-axis
-  _state.translate(0.0, 0.0, manipulator_height_);
+
+  // Draw Top of z-axis
+  if (_active)
+  {
+    _state.set_diffuse_color(element_[YTop].active_current_color_);
+    _state.set_specular_color(element_[YTop].active_current_color_);
+  } else {
+    _state.set_diffuse_color(element_[YTop].inactive_current_color_);
+    _state.set_specular_color(element_[YTop].inactive_current_color_);
+  }
+
+  _state.translate(0.0, 0.0, manipulator_height_/2);
   gluCylinder(axis_,
               manipulator_radius_*2,
               0,
@@ -395,22 +503,43 @@ void TranslationManipulatorNode::drawMaipulator (GLState& _state, bool _active)
   _state.rotate(90, 0.0, 1.0, 0.0);
   if (_active)
   {
-    _state.set_diffuse_color(active_current_color[XAxis]);
-    _state.set_specular_color(active_current_color[XAxis]);
+    _state.set_diffuse_color(element_[XAxis].active_current_color_);
+    _state.set_specular_color(element_[XAxis].active_current_color_);
   } else {
-    _state.set_diffuse_color(inactive_current_color[XAxis]);
-    _state.set_specular_color(inactive_current_color[XAxis]);
+    _state.set_diffuse_color(element_[XAxis].inactive_current_color_);
+    _state.set_specular_color(element_[XAxis].inactive_current_color_);
   }
+
+  // Draw Bottom of z-axis
+  gluCylinder(axis_,
+              (1.0 - resize_current_) * manipulator_radius_,
+              (1.0 + resize_current_) * manipulator_radius_,
+              manipulator_height_/2,
+              manipulator_slices_,
+              manipulator_stacks_);
+
+  // Draw center of z-axis
+  _state.translate(0.0, 0.0, manipulator_height_/2);
 
   gluCylinder(axis_,
               manipulator_radius_,
               manipulator_radius_,
-              manipulator_height_,
+              manipulator_height_/2,
               manipulator_slices_,
               manipulator_stacks_);
 
-  // Draw Top of x-axis
-  _state.translate(0.0, 0.0, manipulator_height_);
+
+  // Draw Top of z-axis
+  if (_active)
+  {
+    _state.set_diffuse_color(element_[XTop].active_current_color_);
+    _state.set_specular_color(element_[XTop].active_current_color_);
+  } else {
+    _state.set_diffuse_color(element_[XTop].inactive_current_color_);
+    _state.set_specular_color(element_[XTop].inactive_current_color_);
+  }
+
+  _state.translate(0.0, 0.0, manipulator_height_/2);
   gluCylinder(axis_,
               manipulator_radius_*2,
               0,
@@ -424,11 +553,11 @@ void TranslationManipulatorNode::drawMaipulator (GLState& _state, bool _active)
   //=================================================================================================
   if (_active)
   {
-    _state.set_diffuse_color(active_current_color[Origin]);
-    _state.set_specular_color(active_current_color[Origin]);
+    _state.set_diffuse_color(element_[Origin].active_current_color_);
+    _state.set_specular_color(element_[Origin].active_current_color_);
   } else {
-    _state.set_diffuse_color(inactive_current_color[Origin]);
-    _state.set_specular_color(inactive_current_color[Origin]);
+    _state.set_diffuse_color(element_[Origin].inactive_current_color_);
+    _state.set_specular_color(element_[Origin].inactive_current_color_);
   }
 
   gluSphere( gluNewQuadric(), manipulator_radius_*2, manipulator_slices_, manipulator_stacks_ );
@@ -437,35 +566,36 @@ void TranslationManipulatorNode::drawMaipulator (GLState& _state, bool _active)
   // Outer-Rings
   //=================================================================================================
 
+  glEnable (GL_BLEND);
   glPushAttrib(GL_LIGHTING_BIT);
   glDisable(GL_LIGHTING);
 
   if (_active)
   {
-    glColor4f(active_current_color[YZRing][0],
-	      active_current_color[YZRing][1],
-	      active_current_color[YZRing][2],
-	      active_current_color[YZRing][3]);
+    glColor4f(element_[XRing].active_current_color_[0],
+	      element_[XRing].active_current_color_[1],
+	      element_[XRing].active_current_color_[2],
+	      element_[XRing].active_current_color_[3]);
   } else {
-    glColor4f(inactive_current_color[YZRing][0],
-	      inactive_current_color[YZRing][1],
-	      inactive_current_color[YZRing][2],
-	      inactive_current_color[YZRing][3]);
+    glColor4f(element_[XRing].inactive_current_color_[0],
+	      element_[XRing].inactive_current_color_[1],
+	      element_[XRing].inactive_current_color_[2],
+	      element_[XRing].inactive_current_color_[3]);
   }
 
   drawCircle(2*manipulator_height_, 2*manipulator_height_ - manipulator_height_/4.0);
 
   if (_active)
   {
-    glColor4f(active_current_color[ZXRing][0],
-	      active_current_color[ZXRing][1],
-	      active_current_color[ZXRing][2],
-	      active_current_color[ZXRing][3]);
+    glColor4f(element_[YRing].active_current_color_[0],
+              element_[YRing].active_current_color_[1],
+              element_[YRing].active_current_color_[2],
+              element_[YRing].active_current_color_[3]);
   } else {
-    glColor4f(inactive_current_color[ZXRing][0],
-	      inactive_current_color[ZXRing][1],
-	      inactive_current_color[ZXRing][2],
-	      inactive_current_color[ZXRing][3]);
+    glColor4f(element_[YRing].inactive_current_color_[0],
+              element_[YRing].inactive_current_color_[1],
+              element_[YRing].inactive_current_color_[2],
+              element_[YRing].inactive_current_color_[3]);
   }
 
   _state.rotate(90, 0.0, 1.0, 0.0);
@@ -473,15 +603,15 @@ void TranslationManipulatorNode::drawMaipulator (GLState& _state, bool _active)
 
   if (_active)
   {
-    glColor4f(active_current_color[XYRing][0],
-	      active_current_color[XYRing][1],
-	      active_current_color[XYRing][2],
-	      active_current_color[XYRing][3]);
+    glColor4f(element_[ZRing].active_current_color_[0],
+              element_[ZRing].active_current_color_[1],
+              element_[ZRing].active_current_color_[2],
+              element_[ZRing].active_current_color_[3]);
   } else {
-    glColor4f(inactive_current_color[XYRing][0],
-	      inactive_current_color[XYRing][1],
-	      inactive_current_color[XYRing][2],
-	      inactive_current_color[XYRing][3]);
+    glColor4f(element_[ZRing].inactive_current_color_[0],
+              element_[ZRing].inactive_current_color_[1],
+              element_[ZRing].inactive_current_color_[2],
+              element_[ZRing].inactive_current_color_[3]);
   }
 
   _state.rotate(90, 1.0, 0.0, 0.0);
@@ -581,6 +711,15 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
   Vec2i         newPoint2D(_event->pos().x(), _event->pos().y());
   Vec3d         newPoint3D;
   double        old_axis_hit, new_axis_hit, new_axis_over;
+  bool          rot[3], trans[3];
+  unsigned int  i;
+
+  if (_event->modifiers() & Qt::ControlModifier)
+    setMode (Resize);
+  else if (_event->modifiers() & Qt::ShiftModifier)
+    setMode (LocalRotation);
+  else
+    setMode (TranslationRotation);
 
   updateSize (_state);
 
@@ -589,8 +728,14 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
     // If mouse is pressed check if any part of the manipulator is hit and store that state
     case QEvent::MouseButtonPress:
     {
+      for (i = 0; i < NumElements; i++)
+        element_[i].clicked_ = false;
+
       // hit origin ?
-      origin_clicked_ = hitSphere(_state, newPoint2D);
+      if (mode_ != LocalRotation)
+        element_[Origin].clicked_ = hitSphere(_state, newPoint2D);
+      else
+        element_[Origin].clicked_ = false;
 
       // hit any top ?
       any_top_clicked_ = mapToCylinderTop(_state, newPoint2D, new_axis_hit, Click);
@@ -599,52 +744,32 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       any_axis_clicked_ = mapToCylinder(_state, newPoint2D, new_axis_hit, Click);
 
       // hit one of the outer rings ?
-      outer_ring_clicked_ = mapToSphere(_state, newPoint2D, newPoint3D, Click);
+      if (mode_ != Resize)
+        outer_ring_clicked_ = mapToSphere(_state, newPoint2D, newPoint3D, Click);
+      else
+        outer_ring_clicked_ = false;
 
       // origin has been hit, ignore all other parts
-      if ( origin_clicked_ ) {
-        axis_x_clicked_     = false;
-        axis_y_clicked_     = false;
-        axis_z_clicked_     = false;
-        top_x_clicked_      = false;
-        top_y_clicked_      = false;
-        top_z_clicked_      = false;
-        outer_ring_xy_clicked_ = false;
-        outer_ring_yz_clicked_ = false;
-        outer_ring_zx_clicked_ = false;
+      if (element_[Origin].clicked_) {
+        for (i = 1; i < NumElements; i++)
+          element_[i].clicked_ = false;
         any_axis_clicked_   = false;
         any_top_clicked_    = false;
         outer_ring_clicked_ = false;
       } else if ( any_top_clicked_ ) { // tops override the axes
-        axis_x_clicked_   = false;
-        axis_y_clicked_   = false;
-        axis_z_clicked_   = false;
+        for (i = XAxis; i < NumElements; i++)
+          element_[i].clicked_ = false;
         any_axis_clicked_ = false;
-        outer_ring_xy_clicked_ = false;
-        outer_ring_yz_clicked_ = false;
-        outer_ring_zx_clicked_ = false;
-        origin_clicked_   = false;
         outer_ring_clicked_ = false;
       } else if ( any_axis_clicked_ ) { // axes have been hit, disable rest ... should not be required
-        top_x_clicked_    = false;
-        top_y_clicked_    = false;
-        top_z_clicked_    = false;
-        outer_ring_xy_clicked_ = false;
-        outer_ring_yz_clicked_ = false;
-        outer_ring_zx_clicked_ = false;
-        any_top_clicked_  = false;
-        origin_clicked_   = false;
+        for (i = XRing; i < NumElements; i++)
+          element_[i].clicked_ = false;
         outer_ring_clicked_ = false;
       } else if ( outer_ring_clicked_ ) { // Nothing except the outer ring has been hit
-        axis_x_clicked_     = false;
-        axis_y_clicked_     = false;
-        axis_z_clicked_     = false;
-        top_x_clicked_      = false;
-        top_y_clicked_      = false;
-        top_z_clicked_      = false;
+        for (i = 0; i < XRing; i++)
+          element_[i].clicked_ = false;
         any_axis_clicked_   = false;
         any_top_clicked_    = false;
-        origin_clicked_     = false;
       }
 
       // Reset local transformation:
@@ -652,7 +777,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         localTransformation_.identity();
       }
 
-      oldPoint2D_   = newPoint2D;
+      oldPoint2D_ = newPoint2D;
+      ignoreTime_ = true;
       break;
     }
 
@@ -661,19 +787,12 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
     case QEvent::MouseButtonRelease:
     {
 
-      origin_clicked_     = false;
-      axis_x_clicked_     = false;
-      axis_y_clicked_     = false;
-      axis_z_clicked_     = false;
-      top_x_clicked_      = false;
-      top_y_clicked_      = false;
-      top_z_clicked_      = false;
+      for (i = 0; i < NumElements; i++)
+        element_[i].clicked_ = false;
       any_axis_clicked_   = false;
       any_top_clicked_    = false;
       outer_ring_clicked_ = false;
-      outer_ring_xy_clicked_ = false;
-      outer_ring_yz_clicked_ = false;
-      outer_ring_zx_clicked_ = false;
+      ignoreTime_ = true;
       break;
     }
 
@@ -690,25 +809,20 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
     {
       if(!draw_manipulator_) return; // Avoid manipulation if manipulator is invisible
 
-      origin_over_     = false;
-      axis_x_over_     = false;
-      axis_y_over_     = false;
-      axis_z_over_     = false;
-      top_x_over_      = false;
-      top_y_over_      = false;
-      top_z_over_      = false;
+      for (i = 0; i < NumElements; i++)
+        element_[i].over_ = false;
       any_axis_over_   = false;
       any_top_over_    = false;
       outer_ring_over_ = false;
-      outer_ring_xy_over_ = false;
-      outer_ring_yz_over_ = false;
-      outer_ring_zx_over_ = false;
 
-      if (!(origin_clicked_ || any_top_clicked_ || any_axis_clicked_ ||
+      if (!(element_[Origin].clicked_ || any_top_clicked_ || any_axis_clicked_ ||
 	    outer_ring_clicked_))
       {
         // over origin ?
-        origin_over_ = hitSphere(_state, newPoint2D);
+        if (mode_ != LocalRotation)
+          element_[Origin].over_ = hitSphere(_state, newPoint2D);
+        else
+          element_[Origin].over_ = false;
 
         // over any top ?
         any_top_over_ = mapToCylinderTop(_state, newPoint2D, new_axis_over, Over);
@@ -717,57 +831,63 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         any_axis_over_ = mapToCylinder(_state, newPoint2D, new_axis_over, Over);
 
         // over one of the outer rings ?
-        outer_ring_over_ = mapToSphere(_state, newPoint2D, newPoint3D, Over);
+        if (mode_ != Resize)
+          outer_ring_over_ = mapToSphere(_state, newPoint2D, newPoint3D, Over);
+        else
+          outer_ring_over_ = false;
 
         // origin has been hit, ignore all other parts
-        if ( origin_over_ ) {
-          axis_x_over_     = false;
-          axis_y_over_     = false;
-          axis_z_over_     = false;
-          top_x_over_      = false;
-          top_y_over_      = false;
-          top_z_over_      = false;
-          outer_ring_xy_over_ = false;
-          outer_ring_yz_over_ = false;
-          outer_ring_zx_over_ = false;
+        if (element_[Origin].over_) {
+          for (i = 1; i < NumElements; i++)
+            element_[i].over_ = false;
           any_axis_over_   = false;
           any_top_over_    = false;
           outer_ring_over_ = false;
         } else if ( any_top_over_ ) { // tops override the axes
-          axis_x_over_   = false;
-          axis_y_over_   = false;
-          axis_z_over_   = false;
+          for (i = XAxis; i < NumElements; i++)
+            element_[i].over_ = false;
           any_axis_over_ = false;
-          outer_ring_xy_over_ = false;
-          outer_ring_yz_over_ = false;
-          outer_ring_zx_over_ = false;
-          origin_over_   = false;
           outer_ring_over_ = false;
         } else if ( any_axis_over_ ) { // axes have been hit, disable rest ... should not be required
-          top_x_over_    = false;
-          top_y_over_    = false;
-          top_z_over_    = false;
-          outer_ring_xy_over_ = false;
-          outer_ring_yz_over_ = false;
-          outer_ring_zx_over_ = false;
-          any_top_over_  = false;
-          origin_over_   = false;
+          for (i = XRing; i < NumElements; i++)
+            element_[i].over_ = false;
           outer_ring_over_ = false;
         } else if ( outer_ring_over_ ) { // Nothing except the outer ring has been hit
-          axis_x_over_     = false;
-          axis_y_over_     = false;
-          axis_z_over_     = false;
-          top_x_over_      = false;
-          top_y_over_      = false;
-          top_z_over_      = false;
+          for (i = 0; i < XRing; i++)
+            element_[i].over_ = false;
           any_axis_over_   = false;
           any_top_over_    = false;
-          origin_over_     = false;
         }
       }
 
+      // set action for the different modes
+      switch (mode_)
+      {
+        case TranslationRotation:
+          for (i = 0; i < 3; i++)
+          {
+            rot[i] = element_[XTop + i].clicked_ || element_[XRing + i].clicked_;
+            trans[i] = element_[XAxis + i].clicked_;
+          }
+          break;
+        case LocalRotation:
+          for (i = 0; i < 3; i++)
+          {
+            rot[i] = element_[XTop + i].clicked_ || element_[XRing + i].clicked_ || element_[XAxis + i].clicked_;
+            trans[i] = false;
+          }
+          break;
+        case Resize:
+          for (i = 0; i < 3; i++)
+          {
+            rot[i] = false;
+            trans[i] = element_[XTop + i].clicked_ || element_[XAxis + i].clicked_;
+          }
+          break;
+      }
+
       // If origin was clicked on
-      if(origin_clicked_) {
+      if(element_[Origin].clicked_) {
 
         // translate along screen plane ( unproject to get world coords for translation and apply them )
         Vec3d d = _state.project(center());
@@ -775,12 +895,20 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         Vec3d newvec = _state.unproject(Vec3d(newPoint2D[0], (_state.context_height() - newPoint2D[1]), d[2]));
         Vec3d ntrans = newvec - oldvec;
 
-        translate(ntrans);
+        if (mode_ != Resize)
+          translate(ntrans);
+        else
+        {
+          double positive = -1;
+          if (newPoint2D[0] - oldPoint2D_[0] + oldPoint2D_[1] - newPoint2D[1] > 0)
+            positive = 1;
+          scale( 1.0 + ntrans.norm() * positive);
+        }
       }
 
 
       // x axis clicked apply translation along axis
-      if(axis_x_clicked_){
+      if (trans[0]) {
 
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
@@ -798,42 +926,39 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         // project to current direction
         ntrans       = ( ntrans | directionX() ) * directionX();
 
-        if ( _event->modifiers() & Qt::ShiftModifier ){
+        if (mode_ == Resize){
           //scaling
           double positive = -1;
           if ( (directionX() | ntrans) > 0 ) positive = 1;
 
-          if (_event->modifiers() & Qt::ControlModifier){
-            //non-uniform
-//             Vec3d sfactor;
-//             sfactor[0] = 1.0;
-//             sfactor[1] = 1.0;
-//             sfactor[2] = 1.0;
+          //non-uniform
+//           Vec3d sfactor;
+//           sfactor[0] = 1.0;
+//           sfactor[1] = 1.0;
+//           sfactor[2] = 1.0;
 
-            Vec3d xscale;
-            xscale[0] = positive * ntrans.norm();
-            xscale[1] = 0.0;
-            xscale[2] = 0.0;
+          Vec3d xscale;
+          xscale[0] = positive * ntrans.norm();
+          xscale[1] = 0.0;
+          xscale[2] = 0.0;
 
-            xscale = localTransformation_.transform_vector(xscale);
+          xscale = localTransformation_.transform_vector(xscale);
 
-            _state.push_modelview_matrix();
-            _state.translate(center()[0], center()[1], center()[2]);
+          _state.push_modelview_matrix();
+          _state.translate(center()[0], center()[1], center()[2]);
 
-            scale( Vec3d(1.0, 1.0, 1.0) + xscale );
+          scale( Vec3d(1.0, 1.0, 1.0) + xscale );
 
-            _state.pop_modelview_matrix();
+          _state.pop_modelview_matrix();
 
-          }else
-            //uniform
-            scale( 1.0 + positive * ntrans.norm() );
+
         }else
           //translation
           translate(ntrans);
       }
 
       // y axis clicked change translation along axis
-      if(axis_y_clicked_){
+      if (trans[1]) {
 
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
@@ -851,36 +976,32 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         // project to current direction
         ntrans       = ( ntrans | directionY() ) * directionY();
 
-        if ( _event->modifiers() & Qt::ShiftModifier ){
+        if (mode_ == Resize){
           //scaling
           double positive = -1;
           if ( (directionY() | ntrans) > 0 ) positive = 1;
 
-          if (_event->modifiers() & Qt::ControlModifier){
-            //non-uniform
-            Vec3d yscale;
-            yscale[0] = 0.0;
-            yscale[1] = positive * ntrans.norm();
-            yscale[2] = 0.0;
+          //non-uniform
+          Vec3d yscale;
+          yscale[0] = 0.0;
+          yscale[1] = positive * ntrans.norm();
+          yscale[2] = 0.0;
 
-            yscale = localTransformation_.transform_vector(yscale);
+          yscale = localTransformation_.transform_vector(yscale);
 
-            _state.push_modelview_matrix();
-            _state.translate(center()[0], center()[1], center()[2]);
+          _state.push_modelview_matrix();
+          _state.translate(center()[0], center()[1], center()[2]);
 
-            scale( Vec3d(1.0, 1.0, 1.0) + yscale );
+          scale( Vec3d(1.0, 1.0, 1.0) + yscale );
 
-            _state.pop_modelview_matrix();
-          }else
-            //uniform
-            scale( 1.0 + positive * ntrans.norm() );
+          _state.pop_modelview_matrix();
         }else
           //translation
           translate(ntrans);
       }
 
       // z axis clicked change translation along axis
-      if(axis_z_clicked_){
+      if (trans[2]) {
 
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
@@ -898,36 +1019,32 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         // project to current direction
         ntrans       = ( ntrans | directionZ() ) * directionZ();
 
-        if ( _event->modifiers() & Qt::ShiftModifier ){
+        if (mode_ == Resize){
           //scaling
           double positive = -1;
           if ( (directionZ() | ntrans) > 0 ) positive = 1;
 
-          if (_event->modifiers() & Qt::ControlModifier){
-            //non-uniform
-            Vec3d zscale;
-            zscale[0] = 0.0;
-            zscale[1] = 0.0;
-            zscale[2] = positive * ntrans.norm();
+          //non-uniform
+          Vec3d zscale;
+          zscale[0] = 0.0;
+          zscale[1] = 0.0;
+          zscale[2] = positive * ntrans.norm();
 
-            zscale = localTransformation_.transform_vector(zscale);
+          zscale = localTransformation_.transform_vector(zscale);
 
-            _state.push_modelview_matrix();
-            _state.translate(center()[0], center()[1], center()[2]);
+          _state.push_modelview_matrix();
+          _state.translate(center()[0], center()[1], center()[2]);
 
-            scale( Vec3d(1.0, 1.0, 1.0) + zscale );
+          scale( Vec3d(1.0, 1.0, 1.0) + zscale );
 
-            _state.pop_modelview_matrix();
-          }else
-            //uniform
-            scale( 1.0 + positive * ntrans.norm() );
+          _state.pop_modelview_matrix();
         }else
           //translation
           translate(ntrans);
       }
 
       // x top clicked: rotate around x axis
-      if( top_x_clicked_ || outer_ring_yz_clicked_) {
+      if (rot[0]) {
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
 
@@ -936,7 +1053,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
         // Shift has been pressed
         // Rotate manipulator but not parent node
-        if( _event->modifiers() & Qt::ShiftModifier ) {
+        if (mode_ == LocalRotation) {
 
           // Update only local rotation
           localTransformation_.rotate( -dist[1], directionX(),ACG::MULT_FROM_LEFT);
@@ -956,14 +1073,14 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
       // y top clicked: rotate around y axis
       // or outer ring on zx axis has been clicked
-      if( top_y_clicked_ || outer_ring_zx_clicked_) {
+      if (rot[1]) {
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
 
         Vec2i dist = oldPoint2D_ - newPoint2D;
 
 
-        if( _event->modifiers() & Qt::ShiftModifier ){
+        if (mode_ == LocalRotation) {
 
           // Update only local rotation
           localTransformation_.rotate( -dist[0], directionY(),ACG::MULT_FROM_LEFT);
@@ -979,19 +1096,19 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       }
 
       // z top clicked: rotate around z axis
-      if( top_z_clicked_ || outer_ring_xy_clicked_) {
+      if (rot[2]) {
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
 
 
         Vec2i dist = oldPoint2D_ - newPoint2D;
 
-        if( _event->modifiers() & Qt::ShiftModifier ){
+        if (mode_ == LocalRotation) {
 
           // Update only local rotation
           localTransformation_.rotate( (dist[0]+dist[1])/2, directionZ(),ACG::MULT_FROM_LEFT);
 
-        } else{
+        } else {
           _state.push_modelview_matrix();
           _state.translate(center()[0], center()[1], center()[2]);
 
@@ -1172,9 +1289,9 @@ TranslationManipulatorNode::mapToCylinder( GLState&       _state,
     // z axis has been hit
     _axis_hit = axis_hitX;
     if ( _updateStates == Click)
-      axis_x_clicked_ = true;
+      element_[XAxis].clicked_ = true;
     else
-      axis_x_over_ = true;
+      element_[XAxis].over_ = true;
 
   } else if ( ( orthodistanceY < manipulator_radius_ ) &&
 	           (   axis_hitY    >= 0 )                  &&
@@ -1184,9 +1301,9 @@ TranslationManipulatorNode::mapToCylinder( GLState&       _state,
     // y axis has been hit
     _axis_hit = axis_hitY;
     if ( _updateStates == Click)
-      axis_y_clicked_ = true;
+      element_[YAxis].clicked_ = true;
     else
-      axis_y_over_ = true;
+      element_[YAxis].over_ = true;
 
   } else if ( ( orthodistanceZ < manipulator_radius_ ) &&
 	           ( axis_hitZ      >= 0 )                  &&
@@ -1195,17 +1312,17 @@ TranslationManipulatorNode::mapToCylinder( GLState&       _state,
     // x axis has been hit
     _axis_hit = axis_hitZ;
     if ( _updateStates == Click)
-      axis_z_clicked_ = true;
+      element_[ZAxis].clicked_ = true;
     else
-      axis_z_over_ = true;
+      element_[ZAxis].over_ = true;
 
   } else
 	 _axis_hit = 0.0;
 
   if ( _updateStates == Click)
-    return (axis_x_clicked_ || axis_y_clicked_ || axis_z_clicked_);
+    return (element_[XAxis].clicked_ || element_[YAxis].clicked_ || element_[ZAxis].clicked_);
 
-  return (axis_x_over_ || axis_y_over_ || axis_z_over_);
+  return (element_[XAxis].over_ || element_[YAxis].over_ || element_[ZAxis].over_);
 }
 
 
@@ -1294,9 +1411,9 @@ TranslationManipulatorNode::mapToCylinderTop( GLState&       _state,
     // z top has been hit
     _axis_hit = axis_hitX;
     if ( _updateStates == Click)
-      top_x_clicked_ = true;
+      element_[XTop].clicked_ = true;
     else
-      top_x_over_ = true;
+      element_[XTop].over_ = true;
 
   } else if ( ( orthodistanceY <  manipulator_radius_ * 2.0 ) &&
 	           ( axis_hitY      >= 0.0 )                      &&
@@ -1306,9 +1423,9 @@ TranslationManipulatorNode::mapToCylinderTop( GLState&       _state,
     // y top has been hit
     _axis_hit = axis_hitY;
     if ( _updateStates == Click)
-      top_y_clicked_ = true;
+      element_[YTop].clicked_ = true;
     else
-      top_y_over_ = true;
+      element_[YTop].over_ = true;
 
   } else if ( ( orthodistanceZ <  manipulator_radius_ * 2.0 ) &&
 	           ( axis_hitZ      >= 0.0 )                       &&
@@ -1318,16 +1435,16 @@ TranslationManipulatorNode::mapToCylinderTop( GLState&       _state,
     // x top has been hit
     _axis_hit = axis_hitZ;
     if ( _updateStates == Click)
-      top_z_clicked_ = true;
+      element_[ZTop].clicked_ = true;
     else
-      top_z_over_ = true;
+      element_[ZTop].over_ = true;
 
   } else
     _axis_hit = 0.0;
 
   if ( _updateStates == Click)
-    return (top_x_clicked_ || top_y_clicked_ || top_z_clicked_);
-  return (top_x_over_ || top_y_over_ || top_z_over_);
+    return (element_[XTop].clicked_ || element_[YTop].clicked_ || element_[ZTop].clicked_);
+  return (element_[XTop].over_ || element_[YTop].over_ || element_[ZTop].over_);
 }
 
 //----------------------------------------------------------------------------
@@ -1410,9 +1527,9 @@ TranslationManipulatorNode::mapToSphere( GLState& _state,
   {
       // Outer ring on xy plane has been hit
       if ( _updateStates == Click)
-        outer_ring_xy_clicked_ = true;
+        element_[ZRing].clicked_ = true;
       else if ( _updateStates == Over)
-        outer_ring_xy_over_ = true;
+        element_[ZRing].over_ = true;
       _v3 = hitPointXY;
       return true;
   }
@@ -1421,9 +1538,9 @@ TranslationManipulatorNode::mapToSphere( GLState& _state,
   {
       // Outer ring on yz plane has been hit
       if ( _updateStates == Click)
-        outer_ring_yz_clicked_ = true;
+        element_[XRing].clicked_ = true;
       else if ( _updateStates == Over)
-        outer_ring_yz_over_ = true;
+        element_[XRing].over_ = true;
       _v3 = hitPointYZ;
       return true;
   }
@@ -1432,9 +1549,9 @@ TranslationManipulatorNode::mapToSphere( GLState& _state,
   {
       // Outer ring around zx plane has been hit
       if ( _updateStates == Click)
-        outer_ring_zx_clicked_ = true;
+        element_[YRing].clicked_ = true;
       else if ( _updateStates == Over)
-        outer_ring_zx_over_ = true;
+        element_[YRing].over_ = true;
       _v3 = hitPointZX;
       return true;
   }
@@ -1679,6 +1796,15 @@ void TranslationManipulatorNode::boundingBox( Vec3f & _bbMin, Vec3f & _bbMax )
 
   _bbMin.minimize(Vec3f(-r,-r,-r));
   _bbMax.maximize(Vec3f(r,r,r));
+}
+
+//----------------------------------------------------------------------------
+
+void TranslationManipulatorNode::setMode (ManipulatorMode _mode)
+{
+  if (mode_ != _mode)
+    ignoreTime_ = true;
+  mode_ = _mode;
 }
 
 //=============================================================================
