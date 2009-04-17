@@ -431,6 +431,8 @@ void glViewer::updateGL()
   if (!properties_.updateLocked() && isVisible() )
   {
     update();
+
+    emit viewUpdated();
   }
 }
 
