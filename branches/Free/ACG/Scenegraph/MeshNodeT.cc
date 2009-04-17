@@ -50,7 +50,7 @@
 #include "../GL/ColorTranslator.hh"
 
 #include <OpenMesh/Core/System/omstream.hh>
-
+#include <OpenMesh/Core/Utils/Property.hh>
 
 //== NAMESPACES ==============================================================
 

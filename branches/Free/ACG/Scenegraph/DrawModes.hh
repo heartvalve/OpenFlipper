@@ -171,6 +171,14 @@ namespace DrawModes {
   bool addDrawMode( const std::string & _name, unsigned int & _newId );
 
 
+  /** Get the Id of a DrawMode.
+      The Id of the DrawMode with name \c _name is returned in variable \c _Id.
+      Returns false if the DrawMode could not been found.
+  */
+  ACGDLLEXPORT 
+  bool getDrawModeId( const std::string & _name, unsigned int & _Id  );
+
+
   /** Get all draw mode IDs that are encoded in _drawMode
   */
   ACGDLLEXPORT 
