@@ -50,8 +50,8 @@
 
   #include <glew.h>
   #include <glut.h>
-  #include <gl.h>
-  #include <glu.h>
+  #include <OpenGL/gl.h>
+  #include <OpenGL/glu.h>
 
 #elif defined(WIN32)
 
