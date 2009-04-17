@@ -119,7 +119,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   QGLFormat format;
   QGLFormat::setDefaultFormat(format);
+  #ifdef ARCH_DARWIN
+  format.setStereo(false);
+  #else
   format.setStereo( OpenFlipper::Options::stereo() );
+  #endif
   format.setAlpha(true);
   format.setStencil(true);
 
