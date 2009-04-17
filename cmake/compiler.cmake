@@ -10,6 +10,7 @@ if (UNIX)
   set (CMAKE_CXX_FLAGS_DEBUG "-g -DINCLUDE_TEMPLATES -ftemplate-depth-100 -W -Wall -Wno-unused -DDEBUG")
 
   if (APPLE)
+    add_definitions( -DARCH_DARWIN )
     set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wno-non-virtual-dtor")
     set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wno-non-virtual-dtor")
   endif ()
