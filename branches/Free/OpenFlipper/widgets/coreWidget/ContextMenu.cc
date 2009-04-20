@@ -64,7 +64,7 @@ void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
   // If the menu is not correctly initialized, dont try to show it.
   if ( !contextMenu_->isEmpty () )
-    contextMenu_->exec( popupPosition );
+    contextMenu_->popup( popupPosition );
 
 }
 
