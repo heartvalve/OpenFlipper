@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1186</width>
+    <width>978</width>
     <height>633</height>
    </rect>
   </property>
@@ -164,7 +164,7 @@
      <property name="sizeHint" stdset="0" >
       <size>
        <width>277</width>
-       <height>250</height>
+       <height>212</height>
       </size>
      </property>
     </spacer>
@@ -211,6 +211,13 @@
        <widget class="QLabel" name="fileLabel" >
         <property name="text" >
          <string>File:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="changeImageButton" >
+        <property name="text" >
+         <string>Change Image</string>
         </property>
        </widget>
       </item>
