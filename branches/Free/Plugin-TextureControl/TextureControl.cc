@@ -192,13 +192,19 @@ void TextureControlPlugin::fileOpened( int _id ) {
     // Update texture mapping in meshNode
     // ================================================================================
     if( obj->dataType( DATA_TRIANGLE_MESH ) ){
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
+//       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
+//       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
+
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
+
+      // TODO: Multitexturing has to set the right map here!
     }
 
     if ( obj->dataType( DATA_POLY_MESH ) ){
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
+      // TODO: Multitexturing has to set the right map here!
     }
 
   }
@@ -809,15 +815,21 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   if( obj->dataType( DATA_TRIANGLE_MESH ) ){
     doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
     PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
-    PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-    PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
+//     PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
+//     PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
+    PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
+    PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
+    // TODO: Multitexturing has to set the right map here!
   }
 
   if ( obj->dataType( DATA_POLY_MESH ) ){
     doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
     PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
-    PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-    PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
+//     PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
+//     PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
+       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
+       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
+       // TODO: Multitexturing has to set the right map here!
   }
 
 }
