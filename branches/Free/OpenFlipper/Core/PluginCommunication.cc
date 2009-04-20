@@ -93,7 +93,7 @@ void Core::slotObjectUpdated(int _identifier) {
   // Reenable redraws
   OpenFlipper::Options::redrawDisabled(false);
 
-  resetScenegraph();
+//   resetScenegraph();
 
   updateView();
 }
