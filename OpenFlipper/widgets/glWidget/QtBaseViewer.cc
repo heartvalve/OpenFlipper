@@ -338,19 +338,19 @@ void glViewer::updateProjectionMatrix()
       if (isVisible())
         aspect = (double) glWidth() / (double) glHeight();
       else
-	aspect = 1.0;
+	     aspect = 1.0;
 
       glstate_->ortho( -orthoWidth_, orthoWidth_,
-		       -orthoWidth_/aspect, orthoWidth_/aspect,
-		       near_, far_ );
+		                 -orthoWidth_/aspect, orthoWidth_/aspect,
+		                 near_, far_ );
       break;
     }
 
     case PERSPECTIVE_PROJECTION:
     {
       glstate_->perspective(fovy_,
-			    (GLdouble) glWidth() / (GLdouble) glHeight(),
-			    near_, far_);
+			                   (GLdouble) glWidth() / (GLdouble) glHeight(),
+			                   near_, far_);
       break;
     }
   }

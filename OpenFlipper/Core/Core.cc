@@ -106,6 +106,7 @@
 Core::
 Core() :
   QObject(),
+  capture_(false),
   nextBackupId_(0),
   coreWidget_(0)
 {
@@ -208,6 +209,11 @@ Core::init() {
     connect(coreWidget_, SIGNAL(saveOptions())        , this, SLOT(saveOptions()));
     connect(coreWidget_, SIGNAL(recentOpen(QAction*)) , this, SLOT(slotRecentOpen(QAction*)));
     connect(coreWidget_, SIGNAL(exit())               , this, SLOT(slotExit()));
+
+    connect( coreWidget_->stopVideoCaptureAction_  , SIGNAL( triggered() ),
+             this                                  , SLOT( slotStopVideoCapture() ) );
+    connect( coreWidget_->startVideoCaptureAction_ , SIGNAL( triggered() ),
+             this                                  , SLOT( slotStartVideoCapture() ) );
 
     connect(coreWidget_, SIGNAL(showPlugins())       , this, SLOT(slotShowPlugins()));
 
@@ -448,7 +454,7 @@ Core::init() {
               this                              , SLOT(slotWheelEvent(QWheelEvent *, const std::string &)));
 
       connect( coreWidget_->examiner_widgets_[i], SIGNAL( viewUpdated() ),
-               this, SLOT( viewUpdated()) );
+               this, SLOT( viewUpdated()) ,Qt::DirectConnection);
     }
 
   }

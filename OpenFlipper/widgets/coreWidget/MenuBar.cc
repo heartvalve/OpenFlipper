@@ -376,6 +376,24 @@ void CoreWidget::setupMenuBar()
                     this,             SLOT( slotShowSceneGraphDialog() ) );
   toolsMenu_->addAction( sceneGraphAction);
 
+  toolsMenu_->addSeparator();
+
+  startVideoCaptureAction_ =  new QAction( "Start Video Capture " ,toolsMenu_ );
+  startVideoCaptureAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"recordVideo.png") );
+  startVideoCaptureAction_->setCheckable( false );
+  startVideoCaptureAction_->setToolTip( "Start video capturing." );
+  startVideoCaptureAction_->setWhatsThis( "Start to capture a video sequence of the user actions");
+  toolsMenu_->addAction( startVideoCaptureAction_ );
+
+  stopVideoCaptureAction_ =  new QAction( "Stop Video Capture " ,toolsMenu_ );
+  stopVideoCaptureAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"stopVideoCapture.png") );
+  stopVideoCaptureAction_->setCheckable( false );
+  stopVideoCaptureAction_->setToolTip( "Stop video capturing." );
+  stopVideoCaptureAction_->setWhatsThis( "Stop Video capturing");
+
+  toolsMenu_->addAction( stopVideoCaptureAction_);
+
+
   // ======================================================================
   // help Menu
   // ======================================================================

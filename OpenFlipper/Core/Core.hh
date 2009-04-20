@@ -413,14 +413,16 @@ private:
     void captureVideo();
 
     /// Start video capturing
-    void startVideoCapture();
+    void slotStartVideoCapture();
 
     /// Stop video capturing
-    void stopVideoCapture();
+    void slotStopVideoCapture();
 
   private:
     QTimer videoTimer_;
     QTime  lastVideoTime_;
+
+    bool capture_;
 
   /** @} */
   //===========================================================================
