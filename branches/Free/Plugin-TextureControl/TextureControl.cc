@@ -206,8 +206,6 @@ void TextureControlPlugin::fileOpened( int _id ) {
 
 void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _identifier ) {
 
-  std::cerr << "slotTextureUpdated called for texture " << _textureName.toStdString() << " "  << _identifier << std::endl;
-
   // ================================================================================
   // Get updated object
   // ================================================================================
@@ -370,7 +368,6 @@ void TextureControlPlugin::computeValue(Texture& _texture, double _min, double _
 
 void TextureControlPlugin::slotObjectUpdated(int _identifier)
 {
-  std::cerr << "slotObjectUpdated called for : " << _identifier << std::endl;
   // ================================================================================
   // Get updated object
   // ================================================================================
@@ -423,8 +420,6 @@ void TextureControlPlugin::slotUpdateAllTextures( ) {
 }
 
 void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mode) {
-
-  std::cerr << "TextureControlPlugin::slotSetTextureMode called for : " << _textureName.toStdString() << std::endl;
 
   // ================================================================================
   // Update texture settings for global textures
@@ -559,9 +554,6 @@ bool TextureControlPlugin::StringToBool(QString _value){
 }
 
 void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mode, int _id) {
-
-  std::cerr << "TextureControlPlugin::slotSetTextureMode called for : " << _textureName.toStdString();
-  std::cerr << " on object=" << _id <<  std::endl;
 
   // Get the new object
   BaseObjectData* obj;
