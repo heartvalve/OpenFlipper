@@ -107,6 +107,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action ,DataType _objectType , ContextMenuType _type );
 
+
   private slots:
 
     // BaseInterface
@@ -117,11 +118,14 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void slotUpdateAllTextures( );
     void slotTextureAdded( QString _textureName , QString _filename , uint _dimension , int _id );
     void slotTextureAdded( QString _textureName , QString _filename , uint _dimension );
+    void slotMultiTextureAdded( QString _textureGroup , QString _name , QString _filename , int _id , int& _textureId );
     void slotTextureUpdated( QString _textureName , int _identifier );
     void slotSetTextureMode(QString _textureName ,QString _mode, int _id);
     void slotSetTextureMode(QString _textureName ,QString _mode);
     void slotSwitchTexture( QString _textureName, int _id );
     void slotSwitchTexture( QString _textureName );
+
+
 
     // LoadSaveInterface
     void fileOpened( int _id );

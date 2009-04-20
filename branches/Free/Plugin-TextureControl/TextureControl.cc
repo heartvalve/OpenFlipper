@@ -113,8 +113,10 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   new_texture->setChecked(true);
   textureActions_.push_back(new_texture);
 
+}
 
-
+void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QString _name , QString _filename , int _id , int& _textureId ) {
+  std::cerr << "slotMultiTextureAdded" << std::endl;
 }
 
 void TextureControlPlugin::fileOpened( int _id ) {

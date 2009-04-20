@@ -64,6 +64,8 @@ class texturePropertiesWidget : public QDialog, public Ui::Dialog
 
     void slotPropertiesChanged(double _value = 0.0);
 
+    void slotChangeImage();
+
   private:
 
     bool propChanged_;

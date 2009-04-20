@@ -65,6 +65,8 @@ texturePropertiesWidget::texturePropertiesWidget(QWidget *parent)
     connect(clamp_min, SIGNAL( valueChanged(double) ), this , SLOT ( slotPropertiesChanged(double) ) );
     connect(clamp_max, SIGNAL( valueChanged(double) ), this , SLOT ( slotPropertiesChanged(double) ) );
 
+    connect(changeImageButton, SIGNAL( clicked() ), this, SLOT( slotChangeImage() ) );
+
 
     texData_ = 0;
 
@@ -231,6 +233,21 @@ void texturePropertiesWidget::setOriginalData(std::vector< double > _x, std::vec
     histogramCurve_.setData(&_x[0], &_y[0], _x.size());
     originalDataHistogram_->replot();
   #endif
+}
+
+
+void texturePropertiesWidget::slotChangeImage() {
+
+  QString fileName = QFileDialog::getOpenFileName(0, tr("Open Image"),
+                                                  OpenFlipper::Options::currentDirStr(),
+                                                  tr("Images (*.png *.xpm *.jpg)"));
+
+  imageLabel->setText("File: " + fileName );
+
+  // TODO : Set and bind the new image
+
+  std::cerr << "filename was : " << fileName.toStdString() << std::endl;
+
 }
 
 void texturePropertiesWidget::slotButtonBoxClicked(QAbstractButton* _button){
