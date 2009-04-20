@@ -158,6 +158,9 @@ signals:
    /// The texture with the given name and filename has been added
    void addTexture( QString, QString , uint );
 
+   /// The texture with the given name and filename has been added
+   void addMultiTexture( QString _textureGroup , QString _name , QString _filename , int _id , int& _textureId );
+
    /// Tell the plugins to update the given texture
    void updateTexture( QString , int );
 
@@ -248,6 +251,9 @@ signals:
 
       /// Called by a plugin if it creates a texture
       void slotAddTexture( QString _textureName , QString _filename , uint _dimension );
+
+      /// Called by a plugin if it creates a multitexture
+      void slotMultiTextureAdded( QString _textureGroup , QString _name , QString _filename , int _id , int& _textureId );
 
       /// Tell the plugins to update the given texture
       void slotUpdateTexture( QString _name , int _identifier);

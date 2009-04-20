@@ -850,6 +850,15 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSlot( plugin , "slotSwitchTexture(QString)" ) )
         connect(this   , SIGNAL(switchTexture(QString )),
                 plugin , SLOT(slotSwitchTexture(QString )),Qt::DirectConnection);
+
+      if ( checkSignal( plugin , "addMultiTexture(QString,QString,QString,int,int&)" ) )
+        connect(plugin   , SIGNAL(addMultiTexture(QString,QString,QString,int,int&) ),
+                this , SLOT(slotMultiTextureAdded(QString,QString,QString,int,int&) ),Qt::DirectConnection);
+
+      if ( checkSlot( plugin , "slotMultiTextureAdded( QString,QString,QString,int,int&)" ) )
+        connect(this   , SIGNAL(addMultiTexture(QString,QString,QString,int,int&) ),
+                plugin , SLOT(slotMultiTextureAdded( QString,QString,QString,int,int&) ),Qt::DirectConnection);
+
     }
 
     //Check if the plugin supports Backup-Interface

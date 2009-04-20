@@ -184,6 +184,11 @@ void Core::slotUpdateTexture( QString _name , int _identifier){
   emit updateTexture(_name, _identifier);
 }
 
+
+void Core::slotMultiTextureAdded( QString _textureGroup , QString _name , QString _filename , int _id , int& _textureId ) {
+  emit addMultiTexture( _textureGroup , _name , _filename , _id , _textureId  );
+}
+
 /** Called by a plugin if all textures should be updated. The information is passed to all plugins. All plugins providing textures should react on this event.\n
  * See in the documentation of the texture plugin interfaces for further detail.
 */
