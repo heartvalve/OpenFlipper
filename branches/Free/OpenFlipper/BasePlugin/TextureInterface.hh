@@ -64,7 +64,7 @@ class TextureInterface {
        *  Emit this signal if a texture for a specific object has been added
        *
        *  @param  _name Name of the property which contains the tex coords (double or vec2d)
-       *  @param _filename Filename of the texture ( "./Textures/<name>")
+       *  @param _filename Filename of the texture (either local in OpenFlippers texture dir or global ( "./Textures/<name>")
        *  @param _dimension 1D texture ( currenty only supports 1 )
        *  @param _id id of an object
        */
@@ -75,10 +75,25 @@ class TextureInterface {
        *  Emit this signal if a global texture has been added
        *
        *  @param  _name Name of the property which contains the tex coords (double or vec2d)
-       *  @param _filename Filename of the texture ( "./Textures/<name>")
+       *  @param _filename Filename of the texture (either local in OpenFlippers texture dir or global ( "./Textures/<name>")
        *  @param _dimension 1D texture ( currenty only supports 1 )
        */
       virtual void addTexture( QString /*_name*/ , QString /*_filename*/ , uint /*_dimension*/ ) {};
+
+      /** \brief Emit this Signal if you want to add a texture for a multitexturing mode
+       *
+       *  Emit this signal if a texture should be added to a multitexturing mode.
+       *  The first parameter defines a texturegroup which collects all textures
+       *  that should be painted in the multitexturing mode.
+       *  The second parameter defines the single textures name.
+       *
+       *  @param _textureGroup Multitexturing group using this texture
+       *  @param _name         Name of the property which contains the tex coords (double or vec2d)
+       *  @param _filename     Filename of the texture (either local in OpenFlippers texture dir or global ( "./Textures/<name>")
+       *  @param _id           Id of the object which should use that texture
+       *  @param _textureId    The new id of the texture( This id is object related!!)
+       */
+      virtual void addMultiTexture( QString /*_textureGroup*/ , QString /*_name*/ , QString /*_filename*/ , int /*_id*/ , int& /*_textureId*/ ) {};
 
       /** \brief Tell Plugins to update the given texture for the given identifier
        */
@@ -166,6 +181,18 @@ class TextureInterface {
        * @param dimension Dimension of the Texture (currently only 1D and 2D Textures are supported
        */
       virtual void slotTextureAdded( QString /*_textureName*/ , QString /*_filename*/ , uint /*dimension*/ ) {};
+
+      /** \brief A multiTexture has been added by a plugin.
+       *
+       * This slot is called when a Multi Texture has been added by a plugin.
+       *
+       * @param _name Name of the Added texture (has to be equal to the property name)
+       * @param _filename Filename of the Texture Image to be used
+       * @param _id Id of the object which should use the texture
+       * @param _textureId    The new id of the texture( This id is object related!!)
+       */
+      virtual void slotMultiTextureAdded( QString /*_textureGroup*/ , QString /*_name*/ ,
+                                          QString /*_filename*/ , int /*_id*/ , int& /*_textureId*/ ) {};
 
       /** \brief A texture has been updated
        *
