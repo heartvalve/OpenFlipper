@@ -45,6 +45,8 @@ private slots:
 
 	void showSearchWidget();
 
+	void linkActivated(const QUrl& _url);
+
 	void showFoundSite(const QUrl& _url);
 
 	void showResults(int _hits);
