@@ -193,7 +193,12 @@ void CoreWidget::slotSnapshot() {
   QFileInfo fi(PluginFunctions::viewerProperties().snapshotName());
   int counter = PluginFunctions::viewerProperties().snapshotCounter();
 
-  QString suggest = fi.baseName() + "." + QString::number(counter) + ".";
+    // Add leading zeros
+  QString number = QString::number(counter);
+  while ( number.size() < 7 )
+    number = "0" + number;
+
+  QString suggest = fi.baseName() + "." + number + ".";
 
   QString format="png";
 
@@ -234,7 +239,12 @@ void CoreWidget::applicationSnapshotDialog() {
 
   QFileInfo fi(snapshotName_);
 
-  QString suggest = fi.baseName() + "." + QString::number(snapshotCounter_) + ".";
+  // Add leading zeros
+  QString number = QString::number(snapshotCounter_);
+  while ( number.size() < 7 )
+    number = "0" + number;
+
+  QString suggest = fi.baseName() + "." + number + ".";
 
   QString format="png";
 
@@ -279,7 +289,12 @@ void CoreWidget::applicationSnapshot() {
 
   QFileInfo fi(snapshotName_);
 
-  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_++) + ".";
+  // Add leading zeros
+  QString number = QString::number(snapshotCounter_++);
+  while ( number.size() < 7 )
+    number = "0" + number;
+
+  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + number + ".";
 
   QString format="png";
 
@@ -304,7 +319,12 @@ void CoreWidget::viewerSnapshotDialog() {
 
   QFileInfo fi(snapshotName_);
 
-  QString suggest = fi.baseName() + "." + QString::number(snapshotCounter_) + ".";
+  // Add leading zeros
+  QString number = QString::number(snapshotCounter_);
+  while ( number.size() < 7 )
+    number = "0" + number;
+
+  QString suggest = fi.baseName() + "." + number + ".";
 
   QString format="png";
 
@@ -410,7 +430,12 @@ void CoreWidget::viewerSnapshot() {
 
   QFileInfo fi(snapshotName_);
 
-  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_++) + ".";
+  // Add leading zeros
+  QString number = QString::number(snapshotCounter_++);
+  while ( number.size() < 7 )
+    number = "0" + number;
+
+  QString suggest = fi.path() + QDir::separator() +fi.baseName() + "." + number + ".";
 
   QString format="png";
 
