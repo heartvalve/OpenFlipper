@@ -271,6 +271,10 @@ public:
   /// Setup the main menubar
   void setupMenuBar();
 
+  public:
+    QAction* startVideoCaptureAction_;
+    QAction* stopVideoCaptureAction_;
+
   /** @} */
 
   //===========================================================================
