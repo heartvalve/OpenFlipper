@@ -5,125 +5,135 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>970</width>
-    <height>798</height>
+    <width>800</width>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>OpenFlipper Help</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <widget class="QWidget" name="gridLayoutWidget" >
-    <property name="geometry" >
-     <rect>
-      <x>9</x>
-      <y>40</y>
-      <width>951</width>
-      <height>731</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_" />
-   </widget>
-   <widget class="QToolButton" name="backButton_" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>51</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="maximumSize" >
-     <size>
-      <width>16777215</width>
-      <height>31</height>
-     </size>
-    </property>
-    <property name="toolTip" >
-     <string>Go one page back.</string>
-    </property>
-    <property name="whatsThis" >
-     <string>Go one page back.</string>
-    </property>
-    <property name="text" >
-     <string>Back</string>
-    </property>
-   </widget>
-   <widget class="QToolButton" name="forwardButton_" >
-    <property name="geometry" >
-     <rect>
-      <x>70</x>
-      <y>10</y>
-      <width>51</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="maximumSize" >
-     <size>
-      <width>16777215</width>
-      <height>31</height>
-     </size>
-    </property>
-    <property name="toolTip" >
-     <string>Go one page forward.</string>
-    </property>
-    <property name="whatsThis" >
-     <string>Go one page forward.</string>
-    </property>
-    <property name="text" >
-     <string>Forward</string>
-    </property>
-   </widget>
-   <widget class="QToolButton" name="homeButton_" >
-    <property name="geometry" >
-     <rect>
-      <x>160</x>
-      <y>10</y>
-      <width>51</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="maximumSize" >
-     <size>
-      <width>16777215</width>
-      <height>31</height>
-     </size>
-    </property>
-    <property name="toolTip" >
-     <string>Open home site.</string>
-    </property>
-    <property name="whatsThis" >
-     <string>Open home site.</string>
-    </property>
-    <property name="text" >
-     <string>Home</string>
-    </property>
-   </widget>
-   <widget class="QToolButton" name="searchButton_" >
-    <property name="geometry" >
-     <rect>
-      <x>910</x>
-      <y>10</y>
-      <width>51</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="maximumSize" >
-     <size>
-      <width>16777215</width>
-      <height>31</height>
-     </size>
-    </property>
-    <property name="toolTip" >
-     <string>Search help for specified item.</string>
-    </property>
-    <property name="whatsThis" >
-     <string>Search help for specified item.</string>
-    </property>
-    <property name="text" >
-     <string>Search</string>
-    </property>
-   </widget>
+   <layout class="QGridLayout" name="gridLayout" >
+    <item row="1" column="0" >
+     <layout class="QGridLayout" name="gridLayout_" />
+    </item>
+    <item row="0" column="0" >
+     <widget class="QWidget" native="1" name="widget" >
+      <property name="minimumSize" >
+       <size>
+        <width>300</width>
+        <height>45</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>16777215</width>
+        <height>45</height>
+       </size>
+      </property>
+      <widget class="QToolButton" name="backButton_" >
+       <property name="geometry" >
+        <rect>
+         <x>70</x>
+         <y>10</y>
+         <width>45</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>16777215</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="toolTip" >
+        <string>Go one page back.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Go one page back.</string>
+       </property>
+       <property name="text" >
+        <string>Back</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="searchButton_" >
+       <property name="geometry" >
+        <rect>
+         <x>170</x>
+         <y>10</y>
+         <width>57</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>16777215</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="toolTip" >
+        <string>Search help for specified item.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Search help for specified item.</string>
+       </property>
+       <property name="text" >
+        <string>Search</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="forwardButton_" >
+       <property name="geometry" >
+        <rect>
+         <x>120</x>
+         <y>10</y>
+         <width>45</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>16777215</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="toolTip" >
+        <string>Go one page forward.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Go one page forward.</string>
+       </property>
+       <property name="text" >
+        <string>Forward</string>
+       </property>
+      </widget>
+      <widget class="QToolButton" name="homeButton_" >
+       <property name="geometry" >
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>51</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="maximumSize" >
+        <size>
+         <width>16777215</width>
+         <height>31</height>
+        </size>
+       </property>
+       <property name="toolTip" >
+        <string>Open home site.</string>
+       </property>
+       <property name="whatsThis" >
+        <string>Open home site.</string>
+       </property>
+       <property name="text" >
+        <string>Home</string>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar" />
  </widget>
