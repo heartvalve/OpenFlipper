@@ -56,8 +56,8 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite, const QString&
 
     homeIndex_ = tabWidget_->addTab(textWindow_, "Home");
 
-    gridLayout_->addWidget(helpEngine_->contentWidget(), 0, 0);
-    gridLayout_->addWidget(tabWidget_, 0, 1);
+    gridLayout_->addWidget(helpEngine_->contentWidget(), 1, 0);
+    gridLayout_->addWidget(tabWidget_, 1, 1);
 
     gridLayout_->setColumnStretch(0, 1);
     gridLayout_->setColumnStretch(1, 3);
@@ -77,10 +77,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite, const QString&
 
     // Entry in tree view has been clicked
     connect(helpEngine_->contentWidget(), SIGNAL(linkActivated(const QUrl&)),
-            textWindow_, SLOT(open(const QUrl&)));
-
-    connect(helpEngine_->indexWidget(), SIGNAL(linkActivated(const QUrl&, const QString&)),
-            textWindow_, SLOT(open(const QUrl&, const QString&)));
+            this, SLOT(linkActivated(const QUrl&)));
 
 
     // Search button
@@ -108,9 +105,17 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite, const QString&
     // Source has been reloaded
     connect(textWindow_, SIGNAL(urlChanged(const QUrl&)), this, SLOT(update(const QUrl&)));
 
+    // Register documentation
+    helpEngine_->registerDocumentation(filename);
 
     // Load main page
     textWindow_->open(QUrl(homeSite_));
+}
+
+void HelpWidget::linkActivated(const QUrl& _url) {
+
+	textWindow_->open(_url);
+	tabWidget_->setCurrentIndex(homeIndex_);
 }
 
 void HelpWidget::startSearch() {
@@ -138,6 +143,8 @@ void HelpWidget::goForward() {
 
 	textWindow_->forward();
 
+	tabWidget_->setCurrentIndex(homeIndex_);
+
 	updateButtons();
 }
 
@@ -145,12 +152,16 @@ void HelpWidget::goBack() {
 
 	textWindow_->backward();
 
+	tabWidget_->setCurrentIndex(homeIndex_);
+
 	updateButtons();
 }
 
 void HelpWidget::goHome() {
 
 	textWindow_->open(homeSite_);
+
+	tabWidget_->setCurrentIndex(homeIndex_);
 
 	updateButtons();
 }
