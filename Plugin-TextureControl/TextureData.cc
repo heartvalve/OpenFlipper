@@ -155,6 +155,20 @@ int TextureData::addTexture ( Texture _texture, GLuint _glName ) {
   return _texture.id;
 }
 
+/// Stores the given image in the texture information
+bool TextureData::setImage( QString _textureName , QImage& _image ) {
+  int textureid = -1;
+  textureid = getTextureIndex(_textureName);
+
+  if ( textureid == -1) {
+    std::cerr << "setImage: Unknown Texture!" << std::endl;
+    return true;
+  }
+
+  textures_[textureid].textureImage = _image;
+  return false;
+}
+
 //-----------------------------------------------------------------------------------
 
 /** \brief Delete a given texture

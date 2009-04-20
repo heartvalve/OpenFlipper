@@ -43,6 +43,7 @@
 #include <float.h>
 
 #include <QtGui>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 texturePropertiesWidget::texturePropertiesWidget(QWidget *parent)
     : QDialog(parent)
@@ -183,6 +184,15 @@ void texturePropertiesWidget::textureChanged(QListWidgetItem* _item){
   max_val->setValue( texture.parameters.max_val );
   clamp_min->setValue( texture.parameters.clamp_min );
   clamp_max->setValue( texture.parameters.clamp_max );
+
+  // Show the texture Image
+  imageLabel->setPixmap(QPixmap::fromImage(texture.textureImage));
+  imageLabel->setScaledContents(true);
+
+  if ( !texture.filename.startsWith("/") )
+    fileLabel->setText( "File: " + texture.filename );
+  else
+    fileLabel->setText( "File: " + OpenFlipper::Options::textureDirStr() + QDir::separator() + texture.filename );
 
   // update plot only when dimension is 1
   if ( texture.dimension == 1) {
