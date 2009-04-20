@@ -35,6 +35,7 @@
 #include <OpenFlipper/common/perObjectData.hh>
 
 #include <QString>
+#include <QImage>
 #include <ACG/GL/gl.hh>
 #include <vector>
 #include <map>
@@ -90,6 +91,8 @@ struct Texture {
   uint type;
   // Parameters
   TexParameters parameters;
+
+  QImage textureImage;
 };
 
 class TextureData : public PerObjectData
@@ -122,6 +125,9 @@ class TextureData : public PerObjectData
 
       /// Add a Texture ( Based on an existing specification )
       int addTexture ( Texture _texture, GLuint _glName );
+
+      /// Stores the given image in the texture information
+      bool setImage( QString _textureName , QImage& _image );
 
       /*
       /// Delete a given texture

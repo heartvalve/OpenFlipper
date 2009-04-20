@@ -51,6 +51,8 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
 {
   std::cerr << "slotLocalTextureAdded " << _textureName.toStdString() << std::endl;
 
+  // TODO: Load texture?! ...
+
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
@@ -77,12 +79,26 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
 
 void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _filename , uint _dimension)
 {
-  std::cerr << "slotGlobalTextureAdded " << _textureName.toStdString() << std::endl;
-
   // Add this texture to the list of global textures
   if ( ! globalTextures_.textureExists(_textureName) ) {
     globalTextures_.addTexture(_textureName,_filename,_dimension,0);
     globalTextures_.texture(_textureName).enabled = false;
+
+    QString loadFilename;
+
+    if ( _filename.startsWith("/") )
+      loadFilename = _filename;
+    else
+      loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + _filename;
+
+    QImage textureImage;
+    if ( !textureImage.load( loadFilename ) ){
+        emit log(LOGERR, "Cannot load texture " +  _filename );
+        textureImage.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
+    }
+
+    globalTextures_.texture(_textureName).textureImage = textureImage;
+
   } else {
     emit log(LOGERR,"Trying to add already existing global texture " + _textureName );
     return;
@@ -97,12 +113,12 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   new_texture->setChecked(true);
   textureActions_.push_back(new_texture);
 
+
+
 }
 
 void TextureControlPlugin::fileOpened( int _id ) {
   // TODO:: Store original texture coords in a new property!
-
-  std::cerr << "File opened : " << _id << std::endl;
 
   // Get the new object
   BaseObjectData* obj;
@@ -126,20 +142,22 @@ void TextureControlPlugin::fileOpened( int _id ) {
   // Iterate over all available global textures and add them to the object
   for ( uint i = 0 ; i < globalTextures_.textures().size() ; ++i) {
 
-    std::cerr << "Adding texture " << i << " " << globalTextures_.textures()[i].name.toStdString() << std::endl;
-
     // ================================================================================
     // Get the image file
     // ================================================================================
     // TODO: support arbitrary paths!
-    QString filename = OpenFlipper::Options::textureDir().absolutePath() +
-                       OpenFlipper::Options::dirSeparator() +
-                       globalTextures_.textures()[i].filename;
+
+    QString loadFilename;
+
+    if ( globalTextures_.textures()[i].filename.startsWith("/") )
+      loadFilename = globalTextures_.textures()[i].filename;
+    else
+      loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + globalTextures_.textures()[i].filename;
 
     QImage textureImage;
-    if ( !textureImage.load( filename ) ){
-        emit log(LOGERR, "Cannot load texture " + filename );
-        continue;
+    if ( !textureImage.load( loadFilename ) ){
+        emit log(LOGERR, "Cannot load texture " + globalTextures_.textures()[i].filename );
+        textureImage.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
     }
 
     // ================================================================================
@@ -158,8 +176,15 @@ void TextureControlPlugin::fileOpened( int _id ) {
     // Store texture information in objects metadata
     // ================================================================================
 
-    if (glName != 0)
+    if (glName != 0) {
       texData->addTexture(globalTextures_.textures()[i], glName);
+      texData->setImage(globalTextures_.textures()[i].name,textureImage);
+    }
+    else {
+      emit log(LOGERR,"Unable to bind Texture");
+      continue;
+    }
+
 
     // ================================================================================
     // Update texture mapping in meshNode
