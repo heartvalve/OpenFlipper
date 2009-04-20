@@ -102,8 +102,6 @@ void Core::slotVisibilityChanged( int _id ) {
 
   // tell plugins
   emit visibilityChanged( _id );
-
-  resetScenegraph();
   updateView();
 }
 
