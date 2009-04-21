@@ -261,48 +261,6 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
   /** @} */
 
   //===========================================================================
-  /** @name Texture Handling
-   * @{ */
-  //===========================================================================
-  public :
-
-    /** Add a texture to the object.
-    * @param _image Image to use as texture
-    * @param _name  Name of the texture. Required to access the texture
-    * @param _id    Id of the texture to be used in the texture_index property of the mesh
-    *              ( for multiple textures per object only)
-    */
-    void addTexture( QString _name , QImage& _image , int& _id );
-
-    /** \brief Change an already loaded texture by replacing it with the given image.
-     *
-     * If the texture does not exist, a new one will be created.
-     *
-     */
-    void setTexture( QString _name , QImage& _image );
-
-    /** Checks if a texture already exists
-     *
-     */
-    bool textureExists( QString _name );
-
-    /** \brief Enable the given texture
-     *
-     * Use this function to enable a specific texture.
-     */
-    bool enableTexture( QString _name );
-
-  private:
-    /** This vector is used to store the available Textures. Each call to addTexture will load
-     *  the texture in the textureNode. The MeshNode will use only the first texture unless
-     *  the mesh has requested a face_index_texture with request_face_texture_index. Additionally
-     *  request_halfedge_texcoords2D has to be used to set per face texture coordinates.
-     */
-    std::map< int, GLuint > textures_;
-    std::map< int, std::string> textureNames_;
-  /** @} */
-
-  //===========================================================================
   /** @name BSP Extension ( Implements a BSP for the mesh used for fast searches )
    * @{ */
   //===========================================================================
