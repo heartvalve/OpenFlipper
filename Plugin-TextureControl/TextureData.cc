@@ -33,8 +33,12 @@
 
 //-----------------------------------------------------------------------------------
 
-TextureData::TextureData(){
-  nextInternalID_ = 0;
+TextureData::TextureData() :
+  nextInternalID_(0)
+{
+  // map 0 to no texture
+  textureMap_[0]     = 0;
+  propertyMap_[0] = "No Texture";;
 }
 
 //-----------------------------------------------------------------------------------
@@ -125,14 +129,14 @@ int TextureData::addTexture(QString _textureName, QString _filename, uint _dimen
 {
   //generate texture object
   Texture tex;
-  tex.id         = nextInternalID_++;
-  tex.name       = _textureName;
-  tex.glName     = _glName;
-  tex.filename   = _filename;
-  tex.dimension  = _dimension;
-  tex.enabled    = true;
-  tex.dirty      = false;
-  tex.type       = VERTEXBASED;
+  tex.id           = nextInternalID_++;
+  tex.name         = _textureName;
+  tex.glName       = _glName;
+  tex.filename     = _filename;
+  tex.dimension    = _dimension;
+  tex.enabled      = true;
+  tex.dirty        = false;
+  tex.type         = VERTEXBASED;
 //   tex.parameters = TexParameters;
 
   textures_.push_back( tex );
@@ -151,8 +155,34 @@ int TextureData::addTexture ( Texture _texture, GLuint _glName ) {
   textureMap_[ _texture.id ]  = _texture.glName;
   propertyMap_[ _texture.id ] = _texture.name.toStdString();
 
-  std::cerr << "Added texture " << _texture.name.toStdString() << std::endl;
   return _texture.id;
+}
+
+bool TextureData::addMultiTexture( QString _textureName ) {
+  int textureid = -1;
+  textureid = getTextureIndex(_textureName);
+
+  if ( textureid != -1) {
+    std::cerr << "Texture exists!" << std::endl;
+    return false;
+  }
+
+  std::cerr << "TextureData::addMultiTexture" << std::endl;
+
+  //generate texture object
+  Texture tex;
+  tex.id           = nextInternalID_++;
+  tex.name         = _textureName;
+  tex.glName       = 0;
+  tex.filename     = "MultiTexture";
+  tex.dimension    = 0;
+  tex.enabled      = false;
+  tex.dirty        = false;
+  tex.type         = MULTITEXTURE;
+
+  textures_.push_back( tex );
+
+  return true;
 }
 
 /// Stores the given image in the texture information

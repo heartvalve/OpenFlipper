@@ -129,8 +129,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     // LoadSaveInterface
     void fileOpened( int _id );
-
-    // TODO: Empty object added has to create textures as well!
+    void addedEmptyObject( int _id );
 
   private slots:
 
@@ -154,6 +153,12 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
   private :
 
     bool StringToBool(QString _value);
+
+    /// Load an Image from disk ( if filename contains leading "/ " its consedered global otherwise in texturedir)
+    void getImage( QString& _fileName, QImage& _image );
+
+    /// Checks for a correct drawmode and changes if necessary
+    void switchDrawMode( bool _multiTexture );
 
     QAction* AC_Texture_Settings;
 

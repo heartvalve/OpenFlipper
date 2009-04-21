@@ -35,6 +35,7 @@
 #include <OpenFlipper/common/perObjectData.hh>
 
 #include <QString>
+#include <QStringList>
 #include <QImage>
 #include <ACG/GL/gl.hh>
 #include <vector>
@@ -42,7 +43,7 @@
 #include <float.h>
 #include <iostream>
 
-enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1};
+enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1, MULTITEXTURE = 1 << 2};
 
 class TexParameters
 {
@@ -55,7 +56,7 @@ class TexParameters
           repeat ( false ),
           center ( false ),
           abs ( false ),
-          max_val ( 1.0 ) {std::cerr << "Constructor for parameters" << std::endl;};
+          max_val ( 1.0 ) {};
 
     bool scale;
 
@@ -93,6 +94,10 @@ struct Texture {
   TexParameters parameters;
 
   QImage textureImage;
+
+  /// If this is a multiTexture, the list will contain all textures for this multi Texture node.
+  QStringList multiTextureList;
+
 };
 
 class TextureData : public PerObjectData
@@ -126,6 +131,9 @@ class TextureData : public PerObjectData
       /// Add a Texture ( Based on an existing specification )
       int addTexture ( Texture _texture, GLuint _glName );
 
+      /// Adds a new multiTexture ( This texture will only contain a list of enabled textures for multitexturing )
+      bool addMultiTexture( QString _textureName );
+
       /// Stores the given image in the texture information
       bool setImage( QString _textureName , QImage& _image );
 
@@ -147,27 +155,32 @@ class TextureData : public PerObjectData
       std::vector< Texture >& textures();
 
 
-      /// Get reference to the textureMap
+      /** This map maps all available textures for the object which this
+       *  class belongs to to their GLuint. The MeshNode will use this
+       *  map to activate one texture for each face.
+       *
+       */
       std::map< int, GLuint >* textureMap();
 
-      /// Get reference to the propertyMap
+    /** This map is used to store the available Textures and map them to their
+     *  corresponding properties.
+     */
       std::map< int, std::string >* propertyMap();
-
 
   private :
 
     std::map< int, GLuint> textureMap_;
     std::map< int, std::string> propertyMap_;
 
-    // internal id for the next texture
+    /// internal id for the next texture
     int nextInternalID_;
 
 
-    //vector containing all textures of an object
+    /// vector containing all textures of an object
     std::vector< Texture > textures_;
 
 
-    // Get the index of a given texture
+    /// Get the index of a given texture
     int getTextureIndex(QString _textureName);
 
     Texture noTexture;
