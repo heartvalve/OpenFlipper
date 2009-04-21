@@ -539,7 +539,6 @@ void GLState::update_matrices()
   backward_projection_ = inverse_modelview_;
   backward_projection_ *= inverse_projection_;
   backward_projection_ *= inverse_window2viewport_;
-
 }
 
 
@@ -783,6 +782,8 @@ void GLState::pop_projection_matrix()
 
   stack_projection_.pop();
   stack_inverse_projection_.pop();
+
+  update_matrices();
 
   if (updateGL_)
   {
