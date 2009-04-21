@@ -33,6 +33,19 @@
 
 //-----------------------------------------------------------------------------------
 
+Texture::Texture() :
+  id_(-1),
+  glName_(0),
+  name_("No Texture"),
+  filename_("Invalid"),
+  dimension(0),
+  enabled(false),
+  dirty(true),
+  type(UNSET)
+{
+
+}
+
 TextureData::TextureData() :
   nextInternalID_(0)
 {
@@ -129,10 +142,10 @@ int TextureData::addTexture(QString _textureName, QString _filename, uint _dimen
 {
   //generate texture object
   Texture tex;
-  tex.id           = nextInternalID_++;
-  tex.name         = _textureName;
-  tex.glName       = _glName;
-  tex.filename     = _filename;
+  tex.id( nextInternalID_++ );
+  tex.name( _textureName );
+  tex.glName( _glName );
+  tex.filename( _filename );
   tex.dimension    = _dimension;
   tex.enabled      = true;
   tex.dirty        = false;
@@ -141,21 +154,21 @@ int TextureData::addTexture(QString _textureName, QString _filename, uint _dimen
 
   textures_.push_back( tex );
 
-  textureMap_[ tex.id ]  = tex.glName;
-  propertyMap_[ tex.id ] = tex.name.toStdString();
+  textureMap_[ tex.id() ]  = tex.glName();
+  propertyMap_[ tex.id() ] = tex.name().toStdString();
 
-  return tex.id;
+  return tex.id();
 }
 
 int TextureData::addTexture ( Texture _texture, GLuint _glName ) {
-  _texture.id     = nextInternalID_++;
-  _texture.glName = _glName;
+  _texture.id( nextInternalID_++ );
+  _texture.glName( _glName );
   textures_.push_back(_texture);
 
-  textureMap_[ _texture.id ]  = _texture.glName;
-  propertyMap_[ _texture.id ] = _texture.name.toStdString();
+  textureMap_[ _texture.id() ]  = _texture.glName();
+  propertyMap_[ _texture.id() ] = _texture.name().toStdString();
 
-  return _texture.id;
+  return _texture.id();
 }
 
 bool TextureData::addMultiTexture( QString _textureName ) {
@@ -171,12 +184,9 @@ bool TextureData::addMultiTexture( QString _textureName ) {
 
   //generate texture object
   Texture tex;
-  tex.id           = nextInternalID_++;
-  tex.name         = _textureName;
-  tex.glName       = 0;
-  tex.filename     = "MultiTexture";
-  tex.dimension    = 0;
-  tex.enabled      = false;
+  tex.id( nextInternalID_++ );
+  tex.name( _textureName );
+  tex.filename("MultiTexture");
   tex.dirty        = false;
   tex.type         = MULTITEXTURE;
 
@@ -281,7 +291,7 @@ int TextureData::getTextureIndex(QString _textureName)
   // Search the list of textures if we have the texture
   int textureid = -1;
   for ( int i = 0 ; i < (int)textures_.size() ; ++i ) {
-    if ( textures_[i].name == _textureName ) {
+    if ( textures_[i].name() == _textureName ) {
       textureid = i;
       break;
     }
