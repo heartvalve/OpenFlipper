@@ -157,6 +157,9 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
   _textureId = -1;
   _textureId = texData->texture(_name).id();
 
+  //hide the texture (its accessible through the multiTexture)
+  texData->texture(_name).hidden( true );
+
   QImage textureImage;
   getImage(_filename,textureImage);
   texData->texture(_name).textureImage = textureImage;
@@ -1004,6 +1007,9 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
   contextMenu_->addSeparator();
 
   for ( uint i = 0 ; i < texData->textures().size() ; ++i ) {
+
+    if ( texData->textures()[i].hidden() )
+      continue;
 
     action = actionGroup->addAction( texData->textures()[i].name() );
 
