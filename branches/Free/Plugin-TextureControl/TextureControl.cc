@@ -49,14 +49,11 @@
 
 void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _filename , uint _dimension , int _id)
 {
-  std::cerr << "slotLocalTextureAdded " << _textureName.toStdString() << std::endl;
-
-  // TODO: Load texture?! ...
-
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
     emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    return;
   }
 
   // Get Texture data for this object or create one if it does not exist
@@ -66,15 +63,41 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
     obj->setObjectData(TEXTUREDATA, texData);
   }
 
-
-  // Add this texture to the list of global textures
-  if ( ! texData->textureExists(_textureName) ) {
-    texData->addTexture(_textureName,_filename,_dimension,0);
-    texData->texture(_textureName).enabled = false;
-  } else {
+  if ( texData->textureExists(_textureName) ) {
     emit log(LOGERR,"Trying to add already existing texture " + _textureName + " for object " + QString::number(_id) );
     return;
   }
+
+  // ================================================================================
+  // Get the image file
+  // ================================================================================
+
+  QImage textureImage;
+  getImage(_filename,textureImage);
+
+  // ================================================================================
+  // Add the texture to the texture node and get the corresponding id
+  // ================================================================================
+  GLuint glName = 0;
+
+  //inform textureNode about the new texture
+  if( obj->dataType( DATA_TRIANGLE_MESH ) )
+    glName = PluginFunctions::triMeshObject(obj)->textureNode()->add_texture(textureImage);
+
+  if ( obj->dataType( DATA_POLY_MESH ) )
+    glName = PluginFunctions::polyMeshObject(obj)->textureNode()->add_texture(textureImage);
+
+  // ================================================================================
+  // Store texture information in objects metadata
+  // ================================================================================
+
+  if (glName == 0) {
+    emit log(LOGERR,"Unable to bind texture!");
+    return;
+  }
+
+  texData->addTexture(_textureName,_filename,_dimension,glName);
+  texData->texture(_textureName).enabled = false;
 }
 
 void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _filename , uint _dimension)
@@ -84,19 +107,8 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
     globalTextures_.addTexture(_textureName,_filename,_dimension,0);
     globalTextures_.texture(_textureName).enabled = false;
 
-    QString loadFilename;
-
-    if ( _filename.startsWith("/") )
-      loadFilename = _filename;
-    else
-      loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + _filename;
-
     QImage textureImage;
-    if ( !textureImage.load( loadFilename ) ){
-        emit log(LOGERR, "Cannot load texture " +  _filename );
-        textureImage.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
-    }
-
+    getImage(_filename,textureImage);
     globalTextures_.texture(_textureName).textureImage = textureImage;
 
   } else {
@@ -116,7 +128,65 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
 }
 
 void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QString _name , QString _filename , int _id , int& _textureId ) {
-  std::cerr << "slotMultiTextureAdded" << std::endl;
+   // Get the new object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // Check if we support this kind of data
+  if ( !obj->dataType(DATA_TRIANGLE_MESH) && !obj->dataType(DATA_POLY_MESH) ) {
+      emit log(LOGERR,"Trying to add textures to object failed because of unsupported object type");
+      return;
+  }
+
+  // Get Texture data for this object or create one if it does not exist
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0){
+    texData = new TextureData();
+    obj->setObjectData(TEXTUREDATA, texData);
+  }
+
+  if ( !texData->textureExists( _textureGroup ) )
+    texData->addMultiTexture( _textureGroup );
+
+  // Add the texture
+  slotTextureAdded( _name , _filename , 2 , _id);
+
+  // Get the id of the new texture
+  _textureId = -1;
+  _textureId = texData->texture(_name).id;
+
+  QImage textureImage;
+  getImage(_filename,textureImage);
+  texData->texture(_name).textureImage = textureImage;
+
+  // Store the new texture in the list of this textureGroup
+  if ( _textureId != -1 ) {
+    texData->texture(_textureGroup).multiTextureList << _name ;
+  } else {
+    emit log(LOGERR,"Error when getting internal id of new multitexture!");
+  }
+
+}
+
+void TextureControlPlugin::getImage( QString& _fileName, QImage& _image ) {
+  QString loadFilename;
+
+  if ( _fileName.startsWith("/") )
+    loadFilename = _fileName;
+  else
+    loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + _fileName;
+
+  if ( !_image.load( loadFilename ) ){
+        emit log(LOGERR, "Cannot load texture " + _fileName + " at : " + loadFilename);
+        _image.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
+  }
+
+}
+
+void TextureControlPlugin::addedEmptyObject( int _id ) {
+  fileOpened(_id);
 }
 
 void TextureControlPlugin::fileOpened( int _id ) {
@@ -147,20 +217,9 @@ void TextureControlPlugin::fileOpened( int _id ) {
     // ================================================================================
     // Get the image file
     // ================================================================================
-    // TODO: support arbitrary paths!
-
-    QString loadFilename;
-
-    if ( globalTextures_.textures()[i].filename.startsWith("/") )
-      loadFilename = globalTextures_.textures()[i].filename;
-    else
-      loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + globalTextures_.textures()[i].filename;
 
     QImage textureImage;
-    if ( !textureImage.load( loadFilename ) ){
-        emit log(LOGERR, "Cannot load texture " + globalTextures_.textures()[i].filename );
-        textureImage.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
-    }
+    getImage(globalTextures_.textures()[i].filename,textureImage);
 
     // ================================================================================
     // Add the texture to the texture node and get the corresponding id
@@ -192,19 +251,13 @@ void TextureControlPlugin::fileOpened( int _id ) {
     // Update texture mapping in meshNode
     // ================================================================================
     if( obj->dataType( DATA_TRIANGLE_MESH ) ){
-//       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-//       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
-
       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
-
-      // TODO: Multitexturing has to set the right map here!
     }
 
     if ( obj->dataType( DATA_POLY_MESH ) ){
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
-      // TODO: Multitexturing has to set the right map here!
     }
 
   }
@@ -230,21 +283,25 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
     return;
   }
 
+  // ================================================================================
+  // Check if texture exists
+  // ================================================================================
   if ( ! texData->textureExists(_textureName) ) {
-    std::cerr << "Texture not found on object" << std::endl;
+    emit log(LOGERR,"Texture " + _textureName + " not found on object " + QString::number(_identifier) );
     return;
   }
 
+  // ================================================================================
+  // If texture is not enabled, mark it as dirty and defer update to visualization update
+  // ================================================================================
   if ( ! texData->texture(_textureName).enabled ) {
     texData->texture(_textureName).dirty = true;
-    std::cerr << "Texture is not active on object" << std::endl;
     return;
   }
 
   // ================================================================================
   // As the current texture is active, update it
   // ================================================================================
-
   if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
     TriMesh* mesh = PluginFunctions::triMesh(obj);
     doUpdateTexture(texData->texture(_textureName), *mesh);
@@ -255,10 +312,15 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
     PluginFunctions::polyMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
   }
 
-  // Mark the texture as not dirty
+  // ================================================================================
+  // Mark texture as not dirty
+  // ================================================================================
   texData->texture(_textureName).dirty = false;
 
-  emit updateView();
+  // ================================================================================
+  // Enable the right draw mode and update
+  // ================================================================================
+  switchDrawMode(false);
 }
 
 template< typename MeshT >
@@ -771,9 +833,6 @@ void TextureControlPlugin::slotTextureMenu(QAction* _action) {
 
 void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
 
-  std::cerr << "TextureControlPlugin::doSwitchTexture : " << _textureName.toStdString();
-  std::cerr << " object=" << _id << std::endl;
-
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
@@ -790,20 +849,42 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   }
 
   // ================================================================================
-  // Enable the given texture exclusively
+  // Check for requested Texture
   // ================================================================================
-  if ( texData->enableTexture( _textureName , true ) ) {
-    std::cerr << "Enabled Texture " << _textureName.toStdString() << std::endl;
-  } else {
-    std::cerr << "Failed to enabled Texture" << std::endl;
+  if ( !texData->textureExists(_textureName) ) {
+    emit log(LOGERR, "Texture not available! " + _textureName );
     return;
+  }
+
+  // ================================================================================
+  // Enable the given texture exclusively or use multitexture setting
+  // ================================================================================
+  bool multiTextureMode = ( texData->texture(_textureName).type == MULTITEXTURE );
+  if ( !multiTextureMode ) {
+    if ( ! texData->enableTexture( _textureName , true ) ) {
+      emit log(LOGERR, "Failed to enabled Texture " + _textureName );
+      return;
+    }
+  } else {
+    // get the list of textures for this mode
+    QStringList textureList = texData->texture(_textureName).multiTextureList;
+
+    for ( uint i = 0 ; i < texData->textures().size() ; ++i ) {
+      if ( textureList.contains( texData->textures()[i].name ) )
+        texData->enableTexture( texData->textures()[i].name , false );
+       else
+        texData->disableTexture( texData->textures()[i].name );
+
+    }
+
+    std::cerr << "Trying to enable multitexture" << std::endl;
   }
 
   // ================================================================================
   // If texture is flagged dirty, update it ( this jumps to texture updated
   // which will update the visualization )
   // ================================================================================
-  if ( texData->texture( _textureName).dirty ) {
+  if ( !multiTextureMode && texData->texture( _textureName).dirty ) {
     // TODO: maybe introduce lock to prevent extra redraws if updating all objects
     emit updateTexture( texData->texture( _textureName ).name , obj->id() );
     return;
@@ -813,62 +894,66 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // Update texture map from meshNode and activate it
   // ================================================================================
   if( obj->dataType( DATA_TRIANGLE_MESH ) ){
-    doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
-    PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
-//     PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-//     PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
-    PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
-    PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
-    // TODO: Multitexturing has to set the right map here!
+    if (!multiTextureMode) {
+      doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
+      PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
+    } else {
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
+    }
+
   }
 
   if ( obj->dataType( DATA_POLY_MESH ) ){
-    doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
-    PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
-//     PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-//     PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( texData->propertyMap() );
-       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
-       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
-       // TODO: Multitexturing has to set the right map here!
+    if (!multiTextureMode) {
+      doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
+      PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
+    } else {
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
+    }
   }
-
-}
-
-void TextureControlPlugin::slotSwitchTexture( QString _textureName , int _id ) {
-
-  std::cerr << "TextureControlPlugin::slotSwitchTexture : " << _textureName.toStdString();
-  std::cerr << "object=" << _id << std::endl;
-
-  doSwitchTexture(_textureName, _id);
 
   // ================================================================================
   // Switch to a texture drawMode
   // ================================================================================
+  switchDrawMode(multiTextureMode);
+
+}
+
+void TextureControlPlugin::switchDrawMode( bool _multiTexture ) {
+
   bool textureMode = false;
   for ( int j = 0 ; j < PluginFunctions::viewers() ; ++j ) {
-      textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED );
-      textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+      if ( _multiTexture ) {
+        textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE );
+        textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED );
+      } else {
+        textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED );
+        textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+      }
   }
 
-  if ( !textureMode )
-    PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+  if ( !textureMode ) {
+    if ( _multiTexture )
+      PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED );
+    else
+      PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+  }
 
   emit updateView();
+}
 
-  // TODO: Update menu
-//     QList<QAction *> menuEntries = actionGroup_->actions();
-//
-//     for ( int i = 0 ; i < menuEntries.size(); ++i ) {
-//       if ( menuEntries[i]->text() == _textureName )
-//         menuEntries[i]->setChecked(true);
-//     }
+void TextureControlPlugin::slotSwitchTexture( QString _textureName , int _id ) {
 
-//     updateDialog();
+  doSwitchTexture(_textureName, _id);
 }
 
 void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
-
-  std::cerr << "TextureControlPlugin::slotSwitchTexture : " << _textureName.toStdString() << std::endl;
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
                                         o_it != PluginFunctions::objectsEnd();
@@ -876,29 +961,6 @@ void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
 
     doSwitchTexture(_textureName, o_it->id() );
 
-  // ================================================================================
-  // Switch to a texture drawMode
-  // ================================================================================
-  bool textureMode = false;
-  for ( int j = 0 ; j < PluginFunctions::viewers() ; ++j ) {
-      textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED );
-      textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
-  }
-
-  if ( !textureMode )
-    PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
-
-  emit updateView();
-
-  // TODO: Update menu
-//     QList<QAction *> menuEntries = actionGroup_->actions();
-//
-//     for ( int i = 0 ; i < menuEntries.size(); ++i ) {
-//       if ( menuEntries[i]->text() == _textureName )
-//         menuEntries[i]->setChecked(true);
-//     }
-
-//     updateDialog();
 }
 
 
