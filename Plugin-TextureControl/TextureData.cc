@@ -148,7 +148,7 @@ int TextureData::addTexture(QString _textureName, QString _filename, uint _dimen
   tex.filename( _filename );
   tex.dimension(_dimension);
   tex.enable();
-  tex.dirty        = false;
+  tex.dirty        = true;
   tex.type         = VERTEXBASED;
   tex.hidden(false);
 //   tex.parameters = TexParameters;
@@ -188,7 +188,7 @@ bool TextureData::addMultiTexture( QString _textureName ) {
   tex.id( nextInternalID_++ );
   tex.name( _textureName );
   tex.filename("MultiTexture");
-  tex.dirty        = false;
+  tex.dirty        = true;
   tex.type         = MULTITEXTURE;
   tex.hidden(false);
 

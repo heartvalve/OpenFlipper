@@ -34,12 +34,6 @@
 
 #include "textureProperties.hh"
 
-#ifdef WITH_QWT
-  #include <qwt_plot_grid.h>
-  #include <qwt_text.h>
-  #include <qwt_plot.h>
-#endif
-
 #include <float.h>
 
 #include <QtGui>
@@ -73,33 +67,10 @@ texturePropertiesWidget::texturePropertiesWidget(QWidget *parent)
     #ifdef WITH_QWT
       QGridLayout* layout = new QGridLayout( originalData);
 
-      originalDataHistogram_ = new QwtPlot(0);
+      functionPlot_ = new ACG::QwtFunctionPlot(0);
 
-      layout->addWidget( originalDataHistogram_ , 0,0  );
+      layout->addWidget( functionPlot_ , 0,0  );
 
-      QwtText axis_title_x("value");
-  //     axis_title_x.setFont(arial);
-      QwtText axis_title_y("count");
-  //     axis_title_y.setFont(arial);
-
-      originalDataHistogram_->setAxisTitle(QwtPlot::xBottom, axis_title_x);
-      originalDataHistogram_->setAxisTitle(QwtPlot::yLeft, axis_title_y);
-      originalDataHistogram_->setCanvasBackground(Qt::white);
-
-      QwtPlotGrid *grid2 = new QwtPlotGrid;
-      grid2->enableYMin(true);
-      grid2->enableXMin(true);
-      grid2->setMajPen(QPen(Qt::black, 0, Qt::DotLine));
-      grid2->setMinPen(QPen(Qt::gray, 0 , Qt::DotLine));
-      grid2->attach(originalDataHistogram_);
-
-      QwtText curve_title("Delay Spread Histogram");
-  //     curve_title.setFont(arial);
-      histogramCurve_.setTitle(curve_title);
-      histogramCurve_.attach(originalDataHistogram_);
-
-  //     connect(distanceCheckBox,SIGNAL(stateChanged ( int ) ) , this , SLOT (slotDistanceCheckbox(int)) );
-  //     connect(normalCheckBox,SIGNAL(stateChanged ( int ) ) , this , SLOT (slotNormalCheckbox(int)) );
     #endif
 
 }
@@ -191,62 +162,57 @@ void texturePropertiesWidget::textureChanged(QListWidgetItem* _item){
   imageLabel->setPixmap(QPixmap::fromImage(texture.textureImage));
   imageLabel->setScaledContents(true);
 
-  if ( !texture.filename().startsWith("/") )
+  if ( texture.filename().startsWith("/") )
     fileLabel->setText( "File: " + texture.filename() );
   else
     fileLabel->setText( "File: " + OpenFlipper::Options::textureDirStr() + QDir::separator() + texture.filename() );
 
+  currentImage_ = texture.filename();
+
   // update plot only when dimension is 1
-  if ( texture.dimension() == 1) {
-    std::vector< double > x,y;
+  if ( texture.dimension() == 1 && id_ != -1) {
 
-    x.push_back(100.0);
-    y.push_back(100.0);
+    #ifdef WITH_QWT
 
-    x.push_back(200.0);
-    y.push_back(150.0);
+      std::vector< double > x;
 
-    x.push_back(300.0);
-    y.push_back(10.0);
+      emit getCoordinates1D(textureName_, id_, x);
 
-    setOriginalData(x,y);
+      if ( x.size() > 0 ){
+
+        std::vector< double > y( x.size(), 1.0);
+
+        functionPlot_->clear();
+
+        functionPlot_->add_function( x, y, "Histogram" );
+
+        functionPlot_->histogram_mode();
+      }
+
+    #endif
   }
 
   propChanged_ = false;
   curRow_ = textureList->currentRow();
 }
 
-
-void texturePropertiesWidget::setOriginalData(std::vector< double > _x, std::vector< double > _y  ) {
-  #ifdef WITH_QWT
-    double minx = FLT_MIN;
-    double maxx = FLT_MIN;
-    double miny = FLT_MAX;
-    double maxy = FLT_MIN;
-
-    for ( uint i = 0 ; i < _x.size(); ++ i ) {
-      minx = std::min(minx,_x[0]);
-      maxx = std::max(maxx,_x[0]);
-      miny = std::min(miny,_y[0]);
-      maxy = std::max(maxy,_y[0]);
-    }
-    histogramCurve_.setData(&_x[0], &_y[0], _x.size());
-    originalDataHistogram_->replot();
-  #endif
-}
-
-
 void texturePropertiesWidget::slotChangeImage() {
 
-  QString fileName = QFileDialog::getOpenFileName(0, tr("Open Image"),
+  QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
                                                   OpenFlipper::Options::currentDirStr(),
                                                   tr("Images (*.png *.xpm *.jpg)"));
 
-  imageLabel->setText("File: " + fileName );
+  if ( QFile(fileName).exists() ){
 
-  // TODO : Set and bind the new image
+    imageLabel->setPixmap( QPixmap(fileName) );
+    imageLabel->setScaledContents(true);
 
-  std::cerr << "filename was : " << fileName.toStdString() << std::endl;
+    fileLabel->setText( "File: " + fileName );
+
+    currentImage_ = fileName;
+
+    propChanged_ = true;
+  }
 
 }
 
@@ -294,6 +260,12 @@ void texturePropertiesWidget::slotButtonBoxClicked(QAbstractButton* _button){
 
     if ( texture.parameters.clamp_max != clamp_max->value() ){
       texture.parameters.clamp_max = clamp_max->value();
+      changed = true;
+    }
+
+    if ( texture.filename() != currentImage_ ){
+      texture.filename( currentImage_ );
+      texture.textureImage = QImage( currentImage_ );
       changed = true;
     }
 

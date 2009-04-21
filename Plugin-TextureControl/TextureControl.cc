@@ -43,6 +43,8 @@
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include "OpenFlipper/common/GlobalOptions.hh"
 
+#include <math.h>
+
 #define TEXTUREDATA "TextureData"
 
 
@@ -302,6 +304,9 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
     return;
   }
 
+  QImage textureImage;
+  getImage( texData->texture(_textureName).filename(), textureImage);
+
   // ================================================================================
   // As the current texture is active, update it
   // ================================================================================
@@ -309,10 +314,12 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
     TriMesh* mesh = PluginFunctions::triMesh(obj);
     doUpdateTexture(texData->texture(_textureName), *mesh);
     PluginFunctions::triMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
+    PluginFunctions::triMeshObject(obj)->textureNode()->set_texture( textureImage );
   } else if ( obj->dataType( DATA_POLY_MESH ) ) {
     PolyMesh* mesh = PluginFunctions::polyMesh(obj);
     doUpdateTexture(texData->texture(_textureName), *mesh);
     PluginFunctions::polyMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
+    PluginFunctions::polyMeshObject(obj)->textureNode()->set_texture( textureImage );
   }
 
   // ================================================================================
@@ -329,6 +336,7 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
 template< typename MeshT >
 void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 {
+
   if ( _texture.type == HALFEDGEBASED ) {
     if (_texture.dimension() == 1) {
 
@@ -728,6 +736,11 @@ void TextureControlPlugin::pluginsInitialized() {
   connect( settingsDialog_, SIGNAL( applyProperties(TextureData*,QString,int) ),
            this,              SLOT( applyDialogSettings(TextureData*,QString,int) ));
 
+  connect( settingsDialog_, SIGNAL( getCoordinates1D(QString,int,std::vector< double >&)),
+           this,              SLOT( getCoordinates1D(QString,int,std::vector< double >&)));
+
+  settingsDialog_->installEventFilter( this );
+
   // ================================================================================
   // Create action group and menu for global textures
   // ================================================================================
@@ -887,7 +900,9 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // If texture is flagged dirty, update it ( this jumps to texture updated
   // which will update the visualization )
   // ================================================================================
+
   if ( !multiTextureMode && texData->texture( _textureName).dirty ) {
+
     // TODO: maybe introduce lock to prevent extra redraws if updating all objects
     emit updateTexture( texData->texture( _textureName ).name() , obj->id() );
     return;
@@ -1057,6 +1072,60 @@ void TextureControlPlugin::slotTextureContextMenu( QAction * _action ) {
     slotSwitchTexture( _action->text() , id );
   }
 
+}
+
+//compute histogram for the given texture property
+void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::vector< double >& _x ){
+
+  // Get the new object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // ================================================================================
+  // Get Texture data for current object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0) {
+    std::cerr << "Object has no texture data" << std::endl;
+    return;
+  }
+
+  // ================================================================================
+  // Check for requested Texture
+  // ================================================================================
+  if ( !texData->textureExists(_textureName) ) {
+    emit log(LOGERR, "Texture not available! " + _textureName );
+    return;
+  }
+
+  OpenMesh::VPropHandleT< double > coordProp;
+
+  _x.clear();
+
+  if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
+    TriMesh* mesh = PluginFunctions::triMesh(obj);
+
+    if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) ){
+      std::cerr << "Texture Property not found: " << _textureName.toStdString() << std::endl;
+      return;
+    }
+
+    for ( TriMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
+      _x.push_back( mesh->property(coordProp,v_it) );
+
+  } else if ( obj->dataType( DATA_POLY_MESH ) ) {
+    PolyMesh* mesh = PluginFunctions::polyMesh(obj);
+
+    if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) ){
+      std::cerr << "Texture Property not found: " << _textureName.toStdString() << std::endl;
+      return;
+    }
+
+    for ( PolyMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
+      _x.push_back( mesh->property(coordProp,v_it) );
+  }
 }
 
 Q_EXPORT_PLUGIN2( texturecontrolplugin , TextureControlPlugin );

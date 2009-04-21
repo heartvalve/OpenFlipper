@@ -53,28 +53,6 @@
 #include "textureProperties.hh"
 
 #include "TextureData.hh"
-/*
-struct Texture {
-  QString name;
-  QString filename;
-  uint dimension;
-
-  double clamp_min;
-  double clamp_max;
-
-  bool clamp;
-  bool repeat;
-
-  double max_val;
-
-  bool center;
-
-  bool abs;
-
-  bool scale;
-
-  uint type;
-};*/
 
 class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, MenuInterface, LoggingInterface, LoadSaveInterface,ContextMenuInterface
 {
@@ -87,7 +65,6 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
   Q_INTERFACES(ContextMenuInterface)
 
   public:
-    enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1};
 
   signals:
 
@@ -124,8 +101,6 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void slotSetTextureMode(QString _textureName ,QString _mode);
     void slotSwitchTexture( QString _textureName, int _id );
     void slotSwitchTexture( QString _textureName );
-
-
 
     // LoadSaveInterface
     void fileOpened( int _id );
@@ -166,6 +141,9 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
   private slots:
     void applyDialogSettings(TextureData* _texData, QString _textureName, int _id);
+
+    //compute histogram for the given texture property
+    void getCoordinates1D(QString _textureName, int _id, std::vector< double >& _x );
 
   private:
 
