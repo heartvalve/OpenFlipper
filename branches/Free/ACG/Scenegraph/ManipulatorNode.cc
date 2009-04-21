@@ -118,7 +118,7 @@ ManipulatorNode::
 setup_cylinder_system(GLState& _state)
 {
   _state.translate(center()[0], center()[1], center()[2]);
-  _state.scale(1.0/scaling()[0], 1.0/scaling()[1], 1.0/scaling()[2]);
+  _state.mult_matrix(inverse_scale (), scale ()); // Adapt scaling
 
   // rotation axis & angle
   Vec3d z(0.0, 0.0, 1.0);
@@ -444,7 +444,7 @@ ManipulatorNode::mapToSphere( GLState& _state,
   _state.push_modelview_matrix();
 
   _state.translate(center()[0], center()[1], center()[2]);
-  _state.scale(1.0f/scaling()[0], 1.0f/scaling()[1], 1.0f/scaling()[2]);
+  _state.mult_matrix(inverse_scale (), scale ());
   _state.scale(cylinder_height_ + 4*cylinder_radius_);
 
   _state.viewing_ray(x, y, origin, direction);

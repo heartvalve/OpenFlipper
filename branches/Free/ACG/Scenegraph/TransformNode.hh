@@ -125,6 +125,9 @@ public:
   /// Add scaling to the current Transformation.
   void scale(const Vec3d& _s);
 
+  /// Add scaling to the current Transformation.
+  void scale(const GLMatrixd& _m);
+
 
   //--- get values ---
 
@@ -152,8 +155,14 @@ public:
   /// returns ref. to translation vector
   const Vec3d& translation() const { return translation_; }
 
-  /// returns scaling factor
-  const Vec3d& scaling() const { return scaling_; }
+  /// return scale matrix
+  const GLMatrixd& scale() const { 
+    return scale_matrix_; 
+  }
+  /// return inverse scale matrix
+  const GLMatrixd& inverse_scale() const { 
+    return inverse_scale_matrix_; 
+  }
 
   bool apply_transformation() { return applyTransformation_; }
 
@@ -168,10 +177,9 @@ private:
 
   // ELEMENTS
   GLMatrixd         matrix_, inverse_matrix_;
-  GLMatrixd         rotation_matrix_, inverse_rotation_matrix_;
+  GLMatrixd         rotation_matrix_, inverse_rotation_matrix_, scale_matrix_, inverse_scale_matrix_;
   Vec3d             center_;
   Vec3d             translation_;
-  Vec3d             scaling_;
   Quaterniond       quaternion_;
 
 
