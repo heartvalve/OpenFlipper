@@ -155,12 +155,10 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     bool StringToBool(QString _value);
 
     /// Load an Image from disk ( if filename contains leading "/ " its consedered global otherwise in texturedir)
-    void getImage( QString& _fileName, QImage& _image );
+    void getImage( QString _fileName, QImage& _image );
 
     /// Checks for a correct drawmode and changes if necessary
     void switchDrawMode( bool _multiTexture );
-
-    QAction* AC_Texture_Settings;
 
     TextureData globalTextures_;
 

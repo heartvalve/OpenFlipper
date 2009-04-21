@@ -155,7 +155,7 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
 
   // Get the id of the new texture
   _textureId = -1;
-  _textureId = texData->texture(_name).id;
+  _textureId = texData->texture(_name).id();
 
   QImage textureImage;
   getImage(_filename,textureImage);
@@ -170,7 +170,7 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
 
 }
 
-void TextureControlPlugin::getImage( QString& _fileName, QImage& _image ) {
+void TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
   QString loadFilename;
 
   if ( _fileName.startsWith("/") )
@@ -219,7 +219,7 @@ void TextureControlPlugin::fileOpened( int _id ) {
     // ================================================================================
 
     QImage textureImage;
-    getImage(globalTextures_.textures()[i].filename,textureImage);
+    getImage(globalTextures_.textures()[i].filename(),textureImage);
 
     // ================================================================================
     // Add the texture to the texture node and get the corresponding id
@@ -239,7 +239,7 @@ void TextureControlPlugin::fileOpened( int _id ) {
 
     if (glName != 0) {
       texData->addTexture(globalTextures_.textures()[i], glName);
-      texData->setImage(globalTextures_.textures()[i].name,textureImage);
+      texData->setImage(globalTextures_.textures()[i].name(),textureImage);
     }
     else {
       emit log(LOGERR,"Unable to bind Texture");
@@ -330,8 +330,8 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
     if (_texture.dimension == 1) {
 
       OpenMesh::HPropHandleT< double > texture;
-	  if ( ! _mesh.get_property_handle(texture, _texture.name.toStdString() ) ) {
-        emit log(LOGERR,"Unable to get property " + _texture.name );
+	  if ( ! _mesh.get_property_handle(texture, _texture.name().toStdString() ) ) {
+        emit log(LOGERR,"Unable to get property " + _texture.name() );
         return;
       }
 
@@ -340,8 +340,8 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
     } else if ( _texture.dimension == 2 ) {
 
       OpenMesh::HPropHandleT< OpenMesh::Vec2d > texture2D;
-	  if ( ! _mesh.get_property_handle( texture2D, _texture.name.toStdString() ) ) {
-        emit log(LOGERR,"Unable to get property " + _texture.name);
+	  if ( ! _mesh.get_property_handle( texture2D, _texture.name().toStdString() ) ) {
+        emit log(LOGERR,"Unable to get property " + _texture.name() );
         return;
       }
 
@@ -353,8 +353,8 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
     if ( _texture.dimension == 1 ) {
 
       OpenMesh::VPropHandleT< double > texture;
-	  if ( ! _mesh.get_property_handle(texture,_texture.name.toStdString() ) ) {
-        emit log(LOGERR,"Unable to get property " + _texture.name );
+	  if ( ! _mesh.get_property_handle(texture,_texture.name().toStdString() ) ) {
+        emit log(LOGERR,"Unable to get property " + _texture.name() );
         return;
       }
 
@@ -363,8 +363,8 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
       } else if ( _texture.dimension == 2 ) {
 
         OpenMesh::VPropHandleT< OpenMesh::Vec2d >  texture2D;
-		  if ( ! _mesh.get_property_handle(texture2D,_texture.name.toStdString() ) ) {
-          emit log(LOGERR,"Unable to get property " + _texture.name );
+		  if ( ! _mesh.get_property_handle(texture2D,_texture.name().toStdString() ) ) {
+          emit log(LOGERR,"Unable to get property " + _texture.name() );
           return;
         }
 
@@ -473,7 +473,7 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
     }
 
     if ( update && texData->textures()[i].enabled )
-      emit updateTexture( texData->textures()[i].name , _identifier );
+      emit updateTexture( texData->textures()[i].name() , _identifier );
   }
 
 }
@@ -870,10 +870,10 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
     QStringList textureList = texData->texture(_textureName).multiTextureList;
 
     for ( uint i = 0 ; i < texData->textures().size() ; ++i ) {
-      if ( textureList.contains( texData->textures()[i].name ) )
-        texData->enableTexture( texData->textures()[i].name , false );
+      if ( textureList.contains( texData->textures()[i].name() ) )
+        texData->enableTexture( texData->textures()[i].name() , false );
        else
-        texData->disableTexture( texData->textures()[i].name );
+        texData->disableTexture( texData->textures()[i].name() );
 
     }
 
@@ -886,7 +886,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // ================================================================================
   if ( !multiTextureMode && texData->texture( _textureName).dirty ) {
     // TODO: maybe introduce lock to prevent extra redraws if updating all objects
-    emit updateTexture( texData->texture( _textureName ).name , obj->id() );
+    emit updateTexture( texData->texture( _textureName ).name() , obj->id() );
     return;
   }
 
@@ -896,7 +896,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   if( obj->dataType( DATA_TRIANGLE_MESH ) ){
     if (!multiTextureMode) {
       doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
-      PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
+      PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {
@@ -909,7 +909,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   if ( obj->dataType( DATA_POLY_MESH ) ){
     if (!multiTextureMode) {
       doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
-      PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName );
+      PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {
@@ -1005,7 +1005,7 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
 
   for ( uint i = 0 ; i < texData->textures().size() ; ++i ) {
 
-    action = actionGroup->addAction( texData->textures()[i].name );
+    action = actionGroup->addAction( texData->textures()[i].name() );
 
     action->setCheckable(true);
 

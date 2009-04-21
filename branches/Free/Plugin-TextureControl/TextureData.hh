@@ -43,7 +43,10 @@
 #include <float.h>
 #include <iostream>
 
-enum TextureType { VERTEXBASED = 1 << 0, HALFEDGEBASED = 1 << 1, MULTITEXTURE = 1 << 2};
+enum TextureType { UNSET         = 1 << 0,
+                   VERTEXBASED   = 1 << 1,
+                   HALFEDGEBASED = 1 << 2,
+                   MULTITEXTURE  = 1 << 3 };
 
 class TexParameters
 {
@@ -73,15 +76,22 @@ class TexParameters
     double max_val;
 };
 
-struct Texture {
-  // Texture id
-  int id;
-  // glName
-  GLuint glName;
-  // Texture Name
-  QString name;
-  // Filename of the texture
-  QString filename;
+class Texture {
+  public :
+    Texture();
+
+    void filename( QString _name ) { filename_ = _name; };
+    QString filename() { return filename_; };
+
+    void id( int _id ) { id_ = _id; };
+    int id() { return id_; };
+
+    void glName( GLuint _glName ) { glName_ = _glName; };
+    GLuint glName() { return glName_; };
+
+    void name( QString _name ) { name_ = _name; };
+    QString name() { return name_; };
+
   // dimension
   uint dimension;
   // Status
@@ -97,6 +107,19 @@ struct Texture {
 
   /// If this is a multiTexture, the list will contain all textures for this multi Texture node.
   QStringList multiTextureList;
+
+  private:
+    // Filename of the texture
+    QString filename_;
+
+    // Texture id
+    int id_;
+
+    // glName
+    GLuint glName_;
+
+    // Texture Name
+    QString name_;
 
 };
 

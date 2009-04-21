@@ -112,7 +112,7 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
   textureList->clear();
 
   for (uint i=0; i < texData_->textures().size(); i++)
-    textureList->addItem( texData_->textures()[i].name );
+    textureList->addItem( texData_->textures()[i].name() );
 
   if ( textureList->count() == 0){
     QMessageBox msgBox(this);
@@ -191,10 +191,10 @@ void texturePropertiesWidget::textureChanged(QListWidgetItem* _item){
   imageLabel->setPixmap(QPixmap::fromImage(texture.textureImage));
   imageLabel->setScaledContents(true);
 
-  if ( !texture.filename.startsWith("/") )
-    fileLabel->setText( "File: " + texture.filename );
+  if ( !texture.filename().startsWith("/") )
+    fileLabel->setText( "File: " + texture.filename() );
   else
-    fileLabel->setText( "File: " + OpenFlipper::Options::textureDirStr() + QDir::separator() + texture.filename );
+    fileLabel->setText( "File: " + OpenFlipper::Options::textureDirStr() + QDir::separator() + texture.filename() );
 
   // update plot only when dimension is 1
   if ( texture.dimension == 1) {
