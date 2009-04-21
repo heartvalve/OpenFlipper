@@ -153,7 +153,7 @@ TranslationManipulatorNode::
 update_manipulator_system(GLState& _state)
 {
   _state.translate(center()[0], center()[1], center()[2]); // Follow translation of parent node
-  _state.scale(1.0/scaling()[0], 1.0/scaling()[1], 1.0/scaling()[2]); // Adapt scaling
+  _state.mult_matrix(inverse_scale (), scale ()); // Adapt scaling
 
   update_rotation(_state);
   updateSize (_state);
@@ -935,15 +935,14 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           xscale[1] = 0.0;
           xscale[2] = 0.0;
 
-          xscale = localTransformation_.transform_vector(xscale);
+          GLMatrixd m = localTransformation_;
+          GLMatrixd mi = localTransformation_;
+          mi.invert ();
 
-          _state.push_modelview_matrix();
-          _state.translate(center()[0], center()[1], center()[2]);
+          m.scale(Vec3d(1.0, 1.0, 1.0) + xscale);
+          m *= mi;
 
-          scale( Vec3d(1.0, 1.0, 1.0) + xscale );
-
-          _state.pop_modelview_matrix();
-
+          scale (m);
 
         }else
           //translation
@@ -980,14 +979,15 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           yscale[1] = positive * ntrans.norm();
           yscale[2] = 0.0;
 
-          yscale = localTransformation_.transform_vector(yscale);
+          GLMatrixd m = localTransformation_;
+          GLMatrixd mi = localTransformation_;
+          mi.invert ();
 
-          _state.push_modelview_matrix();
-          _state.translate(center()[0], center()[1], center()[2]);
+          m.scale(Vec3d(1.0, 1.0, 1.0) + yscale);
+          m *= mi;
 
-          scale( Vec3d(1.0, 1.0, 1.0) + yscale );
+          scale (m);
 
-          _state.pop_modelview_matrix();
         }else
           //translation
           translate(ntrans);
@@ -1023,14 +1023,15 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           zscale[1] = 0.0;
           zscale[2] = positive * ntrans.norm();
 
-          zscale = localTransformation_.transform_vector(zscale);
+          GLMatrixd m = localTransformation_;
+          GLMatrixd mi = localTransformation_;
+          mi.invert ();
 
-          _state.push_modelview_matrix();
-          _state.translate(center()[0], center()[1], center()[2]);
+          m.scale(Vec3d(1.0, 1.0, 1.0) + zscale);
+          m *= mi;
 
-          scale( Vec3d(1.0, 1.0, 1.0) + zscale );
+          scale (m);
 
-          _state.pop_modelview_matrix();
         }else
           //translation
           translate(ntrans);

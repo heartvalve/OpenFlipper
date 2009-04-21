@@ -78,8 +78,10 @@ loadIdentity()
   inverse_rotation_matrix_.identity();
   quaternion_.identity();
 
+  scale_matrix_.identity();
+  inverse_scale_matrix_.identity();
+
   translation_ = Vec3d(0.0, 0.0, 0.0);
-  scaling_     = Vec3d(1.0, 1.0, 1.0);
 }
 
 
@@ -131,7 +133,22 @@ void
 TransformNode::
 scale(const Vec3d& _s)
 {
-  scaling_ *= _s;
+  scale_matrix_.scale(_s);
+  inverse_scale_matrix_ = scale_matrix_;
+  inverse_scale_matrix_.invert();
+  updateMatrix();
+}
+
+//----------------------------------------------------------------------------
+
+
+void
+TransformNode::
+scale(const GLMatrixd& _m)
+{
+  scale_matrix_ *= _m;
+  inverse_scale_matrix_ = scale_matrix_;
+  inverse_scale_matrix_.invert();
   updateMatrix();
 }
 
@@ -148,7 +165,7 @@ updateMatrix()
   matrix_.translate(translation_);
   matrix_.translate(center_);
   matrix_ *= rotation_matrix_;
-  matrix_.scale(scaling_);
+  matrix_ *= scale_matrix_;
   matrix_.translate(-center_);
 
 

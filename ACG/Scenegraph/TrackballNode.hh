@@ -122,7 +122,10 @@ public:
   
   /// override TransformNode::setIdentity() (update radius_)
   virtual void setIdentity() {
-    radius_ *= scaling().max();
+    Vec3d vec (1.0, 1.0, 1.0);
+    
+    vec = scale ().transform_point(vec);
+    radius_ *= vec.max ();
     TransformNode::setIdentity();
   }
 
