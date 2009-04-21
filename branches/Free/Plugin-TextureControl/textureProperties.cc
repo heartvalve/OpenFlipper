@@ -197,7 +197,7 @@ void texturePropertiesWidget::textureChanged(QListWidgetItem* _item){
     fileLabel->setText( "File: " + OpenFlipper::Options::textureDirStr() + QDir::separator() + texture.filename() );
 
   // update plot only when dimension is 1
-  if ( texture.dimension == 1) {
+  if ( texture.dimension() == 1) {
     std::vector< double > x,y;
 
     x.push_back(100.0);
