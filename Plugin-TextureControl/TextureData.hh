@@ -92,10 +92,16 @@ class Texture {
     void name( QString _name ) { name_ = _name; };
     QString name() { return name_; };
 
-  // dimension
-  uint dimension;
-  // Status
-  bool enabled;
+    void dimension( uint _dimension ) { dimension_ = _dimension; };
+    uint dimension( ) { return dimension_; };
+
+    void enabled( bool _enabled ) { enabled_ = _enabled; };
+    bool enabled() { return enabled_; };
+    void enable(){ enabled_ = true; };
+    void disable(){ enabled_ = false; };
+
+
+
   // does this texture need an update?
   bool dirty;
   // Texture Type
@@ -120,6 +126,12 @@ class Texture {
 
     // Texture Name
     QString name_;
+
+    // dimension
+    uint dimension_;
+
+    // Status
+    bool enabled_;
 
 };
 

@@ -38,8 +38,8 @@ Texture::Texture() :
   glName_(0),
   name_("No Texture"),
   filename_("Invalid"),
-  dimension(0),
-  enabled(false),
+  dimension_(0),
+  enabled_(false),
   dirty(true),
   type(UNSET)
 {
@@ -84,7 +84,7 @@ bool TextureData::isEnabled(QString _textureName)
   int id = getTextureIndex(_textureName);
 
   if ( id != -1)
-    return textures_[id].enabled;
+    return textures_[id].enabled();
   else
     return false;
 }
@@ -102,13 +102,13 @@ bool TextureData::enableTexture(QString _textureName, bool _exclusive)
 
   if ( id != -1){
 
-    textures_[id].enabled = true;
+    textures_[id].enable();
 
     //disable other textures
     if (_exclusive)
       for ( int i = 0 ; i < (int)textures_.size() ; ++i )
         if (i != id)
-          textures_[i].enabled = false;
+          textures_[i].disable();
     return true;
   }
   return false;
@@ -125,7 +125,7 @@ void TextureData::disableTexture(QString _textureName)
   int id = getTextureIndex(_textureName);
 
   if ( id != -1)
-    textures_[id].enabled = false;
+    textures_[id].disable();
 }
 
 //-----------------------------------------------------------------------------------
@@ -146,8 +146,8 @@ int TextureData::addTexture(QString _textureName, QString _filename, uint _dimen
   tex.name( _textureName );
   tex.glName( _glName );
   tex.filename( _filename );
-  tex.dimension    = _dimension;
-  tex.enabled      = true;
+  tex.dimension(_dimension);
+  tex.enable();
   tex.dirty        = false;
   tex.type         = VERTEXBASED;
 //   tex.parameters = TexParameters;

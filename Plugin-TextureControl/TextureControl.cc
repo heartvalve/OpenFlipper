@@ -97,7 +97,7 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   }
 
   texData->addTexture(_textureName,_filename,_dimension,glName);
-  texData->texture(_textureName).enabled = false;
+  texData->texture(_textureName).disable();
 }
 
 void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _filename , uint _dimension)
@@ -105,7 +105,7 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   // Add this texture to the list of global textures
   if ( ! globalTextures_.textureExists(_textureName) ) {
     globalTextures_.addTexture(_textureName,_filename,_dimension,0);
-    globalTextures_.texture(_textureName).enabled = false;
+    globalTextures_.texture(_textureName).disable();
 
     QImage textureImage;
     getImage(_filename,textureImage);
@@ -294,7 +294,7 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   // ================================================================================
   // If texture is not enabled, mark it as dirty and defer update to visualization update
   // ================================================================================
-  if ( ! texData->texture(_textureName).enabled ) {
+  if ( ! texData->texture(_textureName).enabled() ) {
     texData->texture(_textureName).dirty = true;
     return;
   }
@@ -327,7 +327,7 @@ template< typename MeshT >
 void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 {
   if ( _texture.type == HALFEDGEBASED ) {
-    if (_texture.dimension == 1) {
+    if (_texture.dimension() == 1) {
 
       OpenMesh::HPropHandleT< double > texture;
 	  if ( ! _mesh.get_property_handle(texture, _texture.name().toStdString() ) ) {
@@ -337,7 +337,7 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 
       copyTexture(_texture, _mesh, texture);
 
-    } else if ( _texture.dimension == 2 ) {
+    } else if ( _texture.dimension() == 2 ) {
 
       OpenMesh::HPropHandleT< OpenMesh::Vec2d > texture2D;
 	  if ( ! _mesh.get_property_handle( texture2D, _texture.name().toStdString() ) ) {
@@ -348,9 +348,9 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
       copyTexture( _texture, _mesh, texture2D);
 
     } else
-      emit log(LOGERR, "Unsupported Texture Dimension " + QString::number(_texture.dimension) );
+      emit log(LOGERR, "Unsupported Texture Dimension " + QString::number(_texture.dimension() ) );
   } else if ( _texture.type == VERTEXBASED ) {
-    if ( _texture.dimension == 1 ) {
+    if ( _texture.dimension() == 1 ) {
 
       OpenMesh::VPropHandleT< double > texture;
 	  if ( ! _mesh.get_property_handle(texture,_texture.name().toStdString() ) ) {
@@ -360,7 +360,7 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 
         copyTexture(_texture, _mesh, texture);
 
-      } else if ( _texture.dimension == 2 ) {
+      } else if ( _texture.dimension() == 2 ) {
 
         OpenMesh::VPropHandleT< OpenMesh::Vec2d >  texture2D;
 		  if ( ! _mesh.get_property_handle(texture2D,_texture.name().toStdString() ) ) {
@@ -381,7 +381,7 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
         copyTexture(_textureid, _mesh, scalarField3D);
 
       }*/ else
-        emit log(LOGERR, "Unsupported Texture Dimension " + QString::number(_texture.dimension) );
+        emit log(LOGERR, "Unsupported Texture Dimension " + QString::number(_texture.dimension() ) );
 
     } else
       emit log(LOGERR, "Unsupported Texture type");
@@ -472,7 +472,7 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
        update |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
     }
 
-    if ( update && texData->textures()[i].enabled )
+    if ( update && texData->textures()[i].enabled() )
       emit updateTexture( texData->textures()[i].name() , _identifier );
   }
 
@@ -1009,7 +1009,7 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
 
     action->setCheckable(true);
 
-    if ( texData->textures()[i].enabled )
+    if ( texData->textures()[i].enabled() )
       action->setChecked(true);
 
     contextMenu_->addAction( action );
