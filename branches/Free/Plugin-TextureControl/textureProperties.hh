@@ -37,7 +37,7 @@
 #include <QtGui>
 
 #ifdef WITH_QWT
-  #include <qwt_plot_curve.h>
+  #include "QwtFunctionPlot.hh"
 #endif
 
 class texturePropertiesWidget : public QDialog, public Ui::Dialog
@@ -47,10 +47,10 @@ class texturePropertiesWidget : public QDialog, public Ui::Dialog
   signals:
     void applyProperties(TextureData* _texData, QString _textureName, int _id);
 
+    void getCoordinates1D(QString _textureName, int _id, std::vector< double >& _x );
+
   public:
     texturePropertiesWidget(QWidget *parent = 0);
-
-    void setOriginalData(std::vector< double > _x, std::vector< double > _y  );
 
     void show(TextureData* _texData, int _id, QString _name = "");
 
@@ -70,14 +70,15 @@ class texturePropertiesWidget : public QDialog, public Ui::Dialog
 
     bool propChanged_;
     int  curRow_;
+    QString currentImage_;
+
 
     TextureData* texData_;
     QString      textureName_;
     int          id_;
 
 #ifdef WITH_QWT
-    QwtPlot* originalDataHistogram_;
-    QwtPlotCurve histogramCurve_;
+    ACG::QwtFunctionPlot* functionPlot_;
 #endif
 
 };
