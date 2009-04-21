@@ -212,6 +212,11 @@ public:
     return modelview_;
   }
 
+  /// get viewport matrix
+  const GLMatrixd& viewport() const {
+    return window2viewport_;
+  }
+
   /// get forward projection matrix
   const GLMatrixd& forward_projection() const {
     return forward_projection_;
