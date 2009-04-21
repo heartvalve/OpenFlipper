@@ -97,6 +97,8 @@ class Texture {
 
     void enabled( bool _enabled ) { enabled_ = _enabled; };
     bool enabled() { return enabled_; };
+    void hidden( bool _hidden ) { hidden_ = _hidden; };
+    bool hidden() { return hidden_; };
     void enable(){ enabled_ = true; };
     void disable(){ enabled_ = false; };
 
@@ -132,6 +134,8 @@ class Texture {
 
     // Status
     bool enabled_;
+
+    bool hidden_;
 
 };
 
