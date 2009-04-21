@@ -1067,6 +1067,9 @@ draw_faces(FaceMode _mode)
           {
             int texture = mesh_.property(texture_index_property,f_it);
 
+            if (texture == -1) ///TODO dont skip the face, draw without texture instead
+              continue;
+
             if ( last_texture != texture ) {
 
               if ( textureMap_->find(texture) == textureMap_->end() ) {
