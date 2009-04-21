@@ -126,10 +126,10 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
   else
     textureLabel->setText("<B>Textures for object '" + _name + "'</B>");
 
+  propChanged_ = false;
+
   textureList->setCurrentItem( textureList->item(0) );
   textureChanged( textureList->item(0) );
-
-  propChanged_ = false;
 
   QDialog::show();
 }
