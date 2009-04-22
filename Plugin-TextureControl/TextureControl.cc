@@ -986,7 +986,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
     if (!multiTextureMode) {
       doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
       PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name(0);
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name("No Texture Index");
       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {
@@ -1001,7 +1001,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
     if (!multiTextureMode) {
       doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
       PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name(0);
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name("No Texture Index");
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {

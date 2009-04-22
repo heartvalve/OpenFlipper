@@ -83,9 +83,7 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
   textureList->clear();
 
   for (uint i=0; i < texData_->textures().size(); i++)
-    if ( texData_->textures()[i].hidden() ) {
-       std::cerr << "Handle Hidden" << std::endl;
-    } else {
+    if ( ! texData_->textures()[i].hidden() ) {
       if (  texData_->textures()[i].type() != MULTITEXTURE ) {
         textureList->addTopLevelItem( new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].name() ) ) );
       } else {
