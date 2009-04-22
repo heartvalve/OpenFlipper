@@ -26,7 +26,8 @@
  * In this tutorial we want to create the documentation of our plugin that we have
  * already created in \ref ex1. For this we go into our plugin's directory (here \c Plugin-SimplePlugin)
  * and create a directory named \c Doxygen. This is the directory that will contain all
- * the necessary docu-files. In this case we only create the file \c mainpage.docu.
+ * the necessary docu-files. In this case we only create one mainpage with some
+ * arbitrary content (refer to doxygen documentation in order to learn more about doxygen).
  *
  * Now copy the file <code><b>Doxyfile.dox</b></code> (which can be found in <code><b>OpenFlipper/Doxygen/example</b></code>)
  * into your plugin's directory and name it <code><b>Doxyfile</b></code>.
@@ -50,7 +51,7 @@
  * \dontinclude Doxyfile.dox
  * \skipline DOCSET_BUNDLE_ID
  *
- * IMPORTANT: For your documentation to integrate seamlessly into OpenFlipper's help
+ * <b>IMPORTANT:</b> For your documentation to integrate seamlessly into OpenFlipper's help
  * system you have to leave the <b>QHP_VIRTUAL_FOLDER</b> untouched! Further QCH_NAMESPACE
  * has to be unique, particularly the namespace "org.openflipper.dev" is reserved.
  *
