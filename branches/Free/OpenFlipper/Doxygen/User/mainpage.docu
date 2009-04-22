@@ -1,0 +1,7 @@
+/*! \mainpage OpenFlipper
+ *\image html splash.png
+ * \section intro_sec Introduction
+ *
+ * This is the developer documentation for the OpenFlipper project.
+ * OpenFlipper is a flexible geometry modeling and processing system.
+ */
