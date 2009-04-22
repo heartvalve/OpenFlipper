@@ -76,9 +76,9 @@ TextureNode::TextureNode( BaseNode*            _parent,
 
 TextureNode::~TextureNode()
 {
-  for (std::vector<GLuint>::iterator texturesIt = textures_.begin(); texturesIt != textures_.end(); texturesIt++) {
-    if ( glIsTexture( *texturesIt ) ) {
-      glDeleteTextures( 1, &(*texturesIt) );
+  for (std::vector<TextureInfo>::iterator texturesIt = textures_.begin(); texturesIt != textures_.end(); texturesIt++) {
+    if ( glIsTexture( texturesIt->id ) ) {
+      glDeleteTextures( 1, &(texturesIt->id) );
     }
   }
   textures_.clear();
@@ -124,7 +124,7 @@ TextureNode::applyGLSettings(  )
 }
 
 void
-TextureNode::applyTextureParameters(  )
+TextureNode::applyTextureParameters( int _id )
 {
   if ( texture_repeat_ ) {
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
@@ -138,19 +138,76 @@ TextureNode::applyTextureParameters(  )
     glTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );
   }
 
-  if ( texture_filter_ == GL_LINEAR ) {
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-  } else {
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+
+  switch(texture_filter_) {
+    case GL_LINEAR:
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+      break;
+    case GL_LINEAR_MIPMAP_LINEAR:
+      if (textures_[_id].mipmapAvailable) {
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+        break;
+      }
+    default:
+    case GL_NEAREST:
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+      break;
+
   }
 }
 
 
 
 
+//----------------------------------------------------------------------------
 
+void TextureNode::setTextureDataGL ( GLuint _textureId,
+                        GLenum _target,
+                        GLint _width ,
+                        GLint _height,
+                        GLenum _format ,
+                        GLenum _type,
+                        const void * _data)
+{
+  applyGLSettings();
+
+  // copy texture to GL
+  glBindTexture( GL_TEXTURE_2D, textures_[_textureId].id );
+
+  if ( texture_filter_ == GL_LINEAR_MIPMAP_LINEAR )
+    textures_[_textureId].mipmapAvailable = true;
+  else
+    textures_[_textureId].mipmapAvailable = false;
+
+  applyTextureParameters(_textureId);
+
+  // Load the image
+  if (texture_filter_ == GL_LINEAR_MIPMAP_LINEAR  ) {
+    gluBuild2DMipmaps( _target ,
+                       3 ,
+                       _width ,
+                       _height ,
+                       _format ,
+                       _type,
+                       _data);
+
+  } else {
+    glTexImage2D(_target,        // target
+                  0,                   // level
+                  GL_RGBA,             // internal format
+                  _width,              // width  (2^n)
+                  _height,             // height (2^m)
+                  0,                   // border
+                  _format,             // format
+                  _type,    // type
+                  _data );    // pointer to pixels
+  }
+
+
+}
 
 
 
@@ -169,14 +226,8 @@ TextureNode::set_texture(const unsigned char * _image, int _width, int _height)
     return;
   }
 
-  applyGLSettings();
+  setTextureDataGL(activeTexture_,GL_TEXTURE_2D,_width,_height,GL_RGBA,GL_UNSIGNED_BYTE,_image);
 
-  // copy texture to GL
-  glBindTexture( GL_TEXTURE_2D, textures_[activeTexture_] );
-
-  applyTextureParameters();
-
-  glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, _image );
 }
 
 
@@ -206,15 +257,12 @@ TextureNode::set_texture(const QImage& _image)
     return;
   }
 
-  applyGLSettings();
-
   // Convert Image
   QImage texture( QGLWidget::convertToGLFormat ( _image.scaled( tex_w, tex_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) ) );
 
-  // copy texture to GL
-  glBindTexture( GL_TEXTURE_2D, textures_[activeTexture_] );
-  applyTextureParameters();
-  glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, tex_w, tex_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture.bits() );
+  // Set the image
+  setTextureDataGL(activeTexture_,GL_TEXTURE_2D,tex_w,tex_h,GL_RGBA,GL_UNSIGNED_BYTE,texture.bits());
+
 }
 
 //----------------------------------------------------------------------------
@@ -234,12 +282,8 @@ TextureNode::set_texture(const float * _image, int _width, int _height )
     return;
   }
 
-  applyGLSettings();
-
-  // copy texture to GL
-  glBindTexture( GL_TEXTURE_2D, textures_[activeTexture_] );
-  applyTextureParameters();
-  glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_FLOAT, _image );
+  // Set the image
+  setTextureDataGL(activeTexture_,GL_TEXTURE_2D,_width,_height,GL_RGBA,GL_FLOAT,_image);
 
 }
 
@@ -251,7 +295,7 @@ void TextureNode::checkEmpty() {
   if ( textures_.empty() ) {
     textures_.resize(1);
     activeTexture_ = 0;
-    glGenTextures( 1, &(textures_[activeTexture_]) );
+    glGenTextures( 1, &(textures_[activeTexture_].id ) );
   }
 
 }
@@ -261,7 +305,7 @@ void TextureNode::checkEmpty() {
 int TextureNode::available( GLuint _id  ) {
   // If the texture is found in the array return its id otherwise -1
   for ( uint i = 0 ; i < textures_.size(); ++i )
-    if ( textures_[i] == _id )
+    if ( textures_[i].id == _id )
       return i;
 
   return -1;
@@ -356,35 +400,18 @@ TextureNode::add_texture(const QImage& _image)
   // because texture will only be accessed proportionally by texture coordinates, aspect ratio is of no concern
   QImage texture( QGLWidget::convertToGLFormat ( _image.scaled( tex_w, tex_h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation ) ) );
 
-  // set standard gl settings before generating new textures
-  applyGLSettings();
-
   textures_.resize(textures_.size()+1);  // can't push_back, because glGenTextures needs a pointer
 
   // Generate new texture
-  glGenTextures(1, &( textures_.back() ) );
-
-  // Bind it
-  glBindTexture(GL_TEXTURE_2D, textures_.back());
-
-  // Set the texture parameters for the new texture
-  applyTextureParameters();
-
-  // Load the image
-  glTexImage2D(GL_TEXTURE_2D,       // target
-                0,                   // level
-                GL_RGBA,             // internal format
-                texture.width(),     // width  (2^n)
-                texture.height(),    // height (2^m)
-                0,                   // border
-                GL_RGBA,             // format
-                GL_UNSIGNED_BYTE,    // type
-                texture.bits() );    // pointer to pixels
+  glGenTextures(1, &( textures_.back().id ) );
 
   activeTexture_ = textures_.size() - 1;
 
+   // Set the image
+  setTextureDataGL(activeTexture_ ,GL_TEXTURE_2D,tex_w,tex_h,GL_RGBA,GL_UNSIGNED_BYTE,texture.bits());
+
   // return the id of the new texture
-  return textures_.back();
+  return textures_.back().id;
 }
 
 
@@ -401,7 +428,7 @@ void TextureNode::enter(GLState& /* _state */ , unsigned int _drawmode)
    {
       glEnable( GL_TEXTURE_2D );
       if ( !textures_.empty() ) {
-        glBindTexture( GL_TEXTURE_2D, textures_[activeTexture_] );
+        glBindTexture( GL_TEXTURE_2D, textures_[activeTexture_].id );
       }
       glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, tex_mode_ );
    }
@@ -440,7 +467,7 @@ void TextureNode::leavePick(GLState& /*_state*/,
 
 GLuint TextureNode::activeTexture()
 {
-  return textures_[activeTexture_];
+  return textures_[activeTexture_].id;
 }
 
 //----------------------------------------------------------------------------
