@@ -226,7 +226,6 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
 
       // We use a different property for storing the IndexProperty to prevent overwriting them
       slotSetTextureMode("OBJ Data","indexProperty=TextureControl: OriginalFileIndexMapping", _objectId);
-      std::cerr << "Done" << std::endl;
     }
   }
 
@@ -830,11 +829,29 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
 
   if (_id != -1){
     //local texture
-    if ( _texData->isEnabled(_textureName) ){
-      slotTextureUpdated( _textureName  , _id );
-      emit updateView();
-    }else
-      _texData->texture( _textureName ).setDirty();
+
+    // Get the object
+    BaseObjectData* obj;
+    if (! PluginFunctions::getObject(  _id , obj ) ) {
+      emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    }
+
+    if ( !_texData->textureExists(_textureName) ) {
+      emit log(LOGERR,"Texture does not exist in applyDialogSettings " + _textureName );
+    }
+
+    Texture& texture = _texData->texture(_textureName );
+
+    if( obj->dataType( DATA_TRIANGLE_MESH ) ){
+      PluginFunctions::triMeshObject(obj)->textureNode()->set_texture(texture.textureImage , texture.glName() );
+    } else  if ( obj->dataType( DATA_POLY_MESH ) ) {
+      PluginFunctions::polyMeshObject(obj)->textureNode()->set_texture(texture.textureImage , texture.glName() );
+    }
+
+    // Always mark texture as dirty
+    _texData->texture( _textureName ).setDirty();
+
+    emit updateView();
 
   } else {
     // global texture
