@@ -13,7 +13,7 @@
 
 #include <QTextStream>
 
-HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite, const QString& _baseURL)
+HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 	: QMainWindow(parent),
 	searchWidget_(0),
 	tabWidget_(0),
@@ -52,7 +52,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite, const QString&
 
 	searchEngine_ = new QHelpSearchEngine(helpEngine_, this);
 
-    textWindow_ = new HelpBrowser(helpEngine_, _baseURL, this);
+    textWindow_ = new HelpBrowser(helpEngine_, this);
 
     homeIndex_ = tabWidget_->addTab(textWindow_, "Home");
 

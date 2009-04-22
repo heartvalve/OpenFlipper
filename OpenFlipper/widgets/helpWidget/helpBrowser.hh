@@ -8,6 +8,8 @@
 #ifndef HELPBROWSER_HH_
 #define HELPBROWSER_HH_
 
+#define VIRTUAL_FOLDER "doc"
+
 #include <QtGui>
 #include <QTextBrowser>
 #include <QtHelp>
@@ -16,7 +18,7 @@ class HelpBrowser : public QTextBrowser {
 	Q_OBJECT
 
 public:
-	HelpBrowser(QHelpEngine* _helpEngine, const QUrl& _basePath, QWidget* parent = 0);
+	HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent = 0);
 
 	virtual ~HelpBrowser();
 
@@ -51,8 +53,6 @@ private:
 
 	QStringList visitedPages_;
 	int currentPage_;
-
-	QUrl basePath_;
 
 };
 

@@ -45,8 +45,6 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
-#include <QtHelp>
-
 //== IMPLEMENTATION ==========================================================
 
 
@@ -57,8 +55,7 @@ void CoreWidget::showHelpBrowser( ) {
 		return;
 
 	if(helpWidget_ == 0)
-		helpWidget_ = new HelpWidget(this, "qthelp://doc.openflipper.dev/openflipper-1.0-dev/main.html",
-				"qthelp://doc.openflipper.dev/openflipper-1.0-dev/");
+		helpWidget_ = new HelpWidget(this, "qthelp://org.openflipper.dev/doc/main.html");
 
 	helpWidget_->show();
 
