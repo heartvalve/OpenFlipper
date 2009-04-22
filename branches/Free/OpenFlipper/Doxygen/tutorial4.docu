@@ -39,10 +39,10 @@
  * \skipline PROJECT_NUMBER
  *
  * \dontinclude Doxyfile.dox
- * \skipline QCH_NAMESPACE
+ * \skipline QHP_NAMESPACE
  *
  * \dontinclude Doxyfile.dox
- * \skipline QHP_FILE
+ * \skipline QCH_FILE
  *
  * \dontinclude Doxyfile.dox
  * \skipline DOCSET_FEEDNAME
