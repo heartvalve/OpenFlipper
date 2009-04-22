@@ -152,6 +152,10 @@ class TextureInterface {
 
    private slots :
       /** \brief update the texture with the given Name ( if this plugin provides this texture ) for all meshes
+       *
+       * This function is called if the texture of the object is about to be shown and the object has changed
+       * since the last rendering of the texture.
+       *
        * @param _textureName Name of the Texture to be updated
        * @param _identifier The id of the object to update
       */
@@ -160,6 +164,42 @@ class TextureInterface {
       /** \brief update all textures provided by this plugin
        */
       virtual void slotUpdateAllTextures( ) {};
+
+      /** \brief A texture has been updated
+       *
+       *  A plugin has updated a Texture
+       *  @param _textureName The name of the updated texture
+       *  @param _identifier -1 if all objects updated, otherwise the identifier of the object
+       */
+      virtual void slotTextureUpdated( QString /*_textureName*/ , int /*_identifier*/ ) {};
+
+      /** \brief This slot is called when a plugin requests to switch an objects texture
+       *
+       * @param _textureName Name of the Texture
+       * @param _id id of an object
+       */
+      virtual void slotSwitchTexture( QString /*_textureName*/, int /*_id*/ ) {};
+
+      /** \brief This slot is called when a plugin requests to switch to a different texture mode
+       *
+       * @param _textureName Name of the Texture
+      */
+      virtual void slotSwitchTexture( QString /*_textureName*/ ) {};
+
+   public :
+
+      /// Destructor
+      virtual ~TextureInterface() {};
+
+   //===========================================================================
+    /** @name Functions handled by textureControlPlugin
+     *
+     * Normally you dont have to do anything when these functions are called.
+     * Texturecontrol handles visualization and updates of textures.
+    * @{ */
+   //===========================================================================
+
+  private slots :
 
       /** \brief A texture has been added by a plugin.
        *
@@ -194,14 +234,6 @@ class TextureInterface {
       virtual void slotMultiTextureAdded( QString /*_textureGroup*/ , QString /*_name*/ ,
                                           QString /*_filename*/ , int /*_id*/ , int& /*_textureId*/ ) {};
 
-      /** \brief A texture has been updated
-       *
-       *  A plugin has updated a Texture
-       *  @param _textureName The name of the updated texture
-       *  @param _identifier -1 if all objects updated, otherwise the identifier of the object
-       */
-      virtual void slotTextureUpdated( QString /*_textureName*/ , int /*_identifier*/ ) {};
-
       /** \brief Texturemode for texture should be changed
        *
        *  A plugin has updated the Texture settings for a texture
@@ -219,24 +251,7 @@ class TextureInterface {
        */
       virtual void slotSetTextureMode(QString /*_textureName*/ ,QString /*_mode*/) {};
 
-      /** \brief This slot is called when a plugin requests to switch an objects texture
-       *
-       * @param _textureName Name of the Texture
-       * @param _id id of an object
-       */
-      virtual void slotSwitchTexture( QString /*_textureName*/, int /*_id*/ ) {};
-
-      /** \brief This slot is called when a plugin requests to switch to a different texture mode
-       *
-       * @param _textureName Name of the Texture
-      */
-      virtual void slotSwitchTexture( QString /*_textureName*/ ) {};
-
-   public :
-
-      /// Destructor
-      virtual ~TextureInterface() {};
-
+   /** @} */
 };
 
 Q_DECLARE_INTERFACE(TextureInterface,"OpenFlipper.TextureInterface/1.0")
