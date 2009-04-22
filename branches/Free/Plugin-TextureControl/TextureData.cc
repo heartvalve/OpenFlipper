@@ -34,14 +34,15 @@
 //-----------------------------------------------------------------------------------
 
 Texture::Texture() :
-  id_(-1),
-  glName_(0),
   name_("No Texture"),
   filename_("Invalid"),
+  id_(-1),
+  glName_(0),
   dimension_(0),
   enabled_(false),
-  dirty(true),
-  type(UNSET)
+  dirty_(true),
+  type_(UNSET),
+  indexMappingProperty_("f:textureindex")
 {
 
 }
@@ -148,8 +149,8 @@ int TextureData::addTexture(QString _textureName, QString _filename, uint _dimen
   tex.filename( _filename );
   tex.dimension(_dimension);
   tex.enable();
-  tex.dirty        = true;
-  tex.type         = VERTEXBASED;
+  tex.setDirty();
+  tex.type( VERTEXBASED );
   tex.hidden(false);
 //   tex.parameters = TexParameters;
 
@@ -188,8 +189,8 @@ bool TextureData::addMultiTexture( QString _textureName ) {
   tex.id( nextInternalID_++ );
   tex.name( _textureName );
   tex.filename("MultiTexture");
-  tex.dirty        = true;
-  tex.type         = MULTITEXTURE;
+  tex.setDirty();
+  tex.type(MULTITEXTURE);
   tex.hidden(false);
 
   textures_.push_back( tex );

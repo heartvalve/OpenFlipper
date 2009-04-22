@@ -160,6 +160,10 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
                               int _textureid, MeshT& _mesh,
                               OpenMesh::VPropHandleT< double > _texProp);
 
+    /// Handles data stored in new opened files ( e.g. Texture Information )
+    template< typename MeshT >
+    void handleFileOpenTextures( MeshT*& _mesh  , int _objectId  );
+
     //===========================================================================
     /** @name 1D Texture copy functions( copy 1D input textures to target texture coordinates and transform values )
       * @{ */
