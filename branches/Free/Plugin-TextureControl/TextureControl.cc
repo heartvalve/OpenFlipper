@@ -984,8 +984,6 @@ void TextureControlPlugin::slotSwitchTexture( QString _textureName ) {
 
 void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
 
-  std::cerr << "TextureControlPlugin::slotUpdateContextMenu " << _objectId << std::endl;
-
   // ================================================================================
   // Get picking object object
   // ================================================================================
@@ -1043,8 +1041,6 @@ void TextureControlPlugin::slotTextureContextMenu( QAction * _action ) {
   // id of object for which the context menu is created, is stored in the action
   QVariant idVariant = _action->data( );
   int id = idVariant.toInt();
-
-  std::cerr << "TextureControlPlugin::slotTextureContextMenu : " << id << std::endl;
 
   if (_action->text() == "Texture Settings"){
 
