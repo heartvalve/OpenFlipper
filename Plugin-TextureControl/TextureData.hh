@@ -80,62 +80,91 @@ class Texture {
   public :
     Texture();
 
+
     void filename( QString _name ) { filename_ = _name; };
     QString filename() { return filename_; };
+
 
     void id( int _id ) { id_ = _id; };
     int id() { return id_; };
 
+
     void glName( GLuint _glName ) { glName_ = _glName; };
     GLuint glName() { return glName_; };
+
 
     void name( QString _name ) { name_ = _name; };
     QString name() { return name_; };
 
+
     void dimension( uint _dimension ) { dimension_ = _dimension; };
     uint dimension( ) { return dimension_; };
 
+
     void enabled( bool _enabled ) { enabled_ = _enabled; };
     bool enabled() { return enabled_; };
-    void hidden( bool _hidden ) { hidden_ = _hidden; };
-    bool hidden() { return hidden_; };
     void enable(){ enabled_ = true; };
     void disable(){ enabled_ = false; };
 
+    void hidden( bool _hidden ) { hidden_ = _hidden; };
+    bool hidden() { return hidden_; };
+    void hide() { hidden_ = true; };
+
+    void dirty( bool _dirty ) { dirty_ = _dirty; };
+    bool dirty() { return dirty_; };
+    void clean() { dirty_ = false; };
+    void setDirty() { dirty_ = true; };
 
 
-  // does this texture need an update?
-  bool dirty;
-  // Texture Type
-  uint type;
-  // Parameters
-  TexParameters parameters;
+    void type( uint _type ) { type_ = _type; };
+    uint type( ) { return type_; };
 
-  QImage textureImage;
 
-  /// If this is a multiTexture, the list will contain all textures for this multi Texture node.
-  QStringList multiTextureList;
+    QString indexMappingProperty() { return indexMappingProperty_; };
+    void indexMappingProperty( QString _property ) { indexMappingProperty_ = _property; };
+
+
+    /// Parameters of the texture
+    TexParameters parameters;
+
+    /// The image used as the texture
+    QImage textureImage;
+
+    /// If this is a multiTexture, the list will contain all textures for this multi Texture node.
+    QStringList multiTextureList;
 
   private:
-    // Filename of the texture
-    QString filename_;
-
-    // Texture id
-    int id_;
-
-    // glName
-    GLuint glName_;
-
-    // Texture Name
+    /// Texture Name
     QString name_;
 
-    // dimension
+    /// Filename of the texture
+    QString filename_;
+
+    /// Texture id
+    int id_;
+
+    /// glName
+    GLuint glName_;
+
+    /// dimension
     uint dimension_;
 
-    // Status
+    /// Status
     bool enabled_;
 
+    /// Hidden flag ( If this texture belongs to a multitexture, it will be hidden in the context menu )
     bool hidden_;
+
+    /// does this texture need an update?
+    bool dirty_;
+
+    /// Texture Type
+    uint type_;
+
+    /** If this is a multiTexture, indexMappingProperty_ will point to the property storing the mapping
+     * Defaults to the f:textureindex
+    */
+    QString indexMappingProperty_;
 
 };
 

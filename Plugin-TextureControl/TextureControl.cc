@@ -178,7 +178,7 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
 void TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
   QString loadFilename;
 
-  if ( _fileName.startsWith("/") )
+  if ( _fileName.startsWith("/") || _fileName.startsWith(".") )
     loadFilename = _fileName;
   else
     loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + _fileName;
@@ -192,6 +192,44 @@ void TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
 
 void TextureControlPlugin::addedEmptyObject( int _id ) {
   fileOpened(_id);
+}
+
+template< typename MeshT >
+void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId ) {
+  // If this property is available we have a mapping between face_index_property and
+  // available textures stored in the map
+  OpenMesh::MPropHandleT< std::map< int, std::string > > property;
+  if ( _mesh->get_property_handle(property,"TextureMapping") ) {
+
+    // As internal texture indices might differ from the available ones,
+    // We have to remap them after loading the textures!
+    std::map< int,int > newMapping;
+
+    // TODO : If only one Texture, use single Texturing mode
+    if ( true ) {
+      // Assume multiTexture Mode now and load the Textures
+      for ( std::map< int, std::string >::iterator texture  = _mesh->property(property).begin();
+                                                   texture != _mesh->property(property).end(); texture++ ) {
+        int textureId = -1;
+        slotMultiTextureAdded("OBJ Data",QString(texture->second.c_str()) , QString(texture->second.c_str()), _objectId, textureId );
+        newMapping[texture->first] = textureId;
+      }
+
+      // Convert the indices stored in the mesh to the actual ones used for rendering
+      OpenMesh::FPropHandleT< int > newIndexProperty;
+      if (! _mesh->get_property_handle(newIndexProperty,"TextureControl: OriginalFileIndexMapping") ) {
+        _mesh->add_property(newIndexProperty,"TextureControl: OriginalFileIndexMapping");
+      }
+
+      for ( TriMesh::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it)
+        _mesh->property(newIndexProperty, f_it ) =  newMapping[_mesh->texture_index( f_it )];
+
+      // We use a different property for storing the IndexProperty to prevent overwriting them
+      slotSetTextureMode("OBJ Data","indexProperty=TextureControl: OriginalFileIndexMapping", _objectId);
+      std::cerr << "Done" << std::endl;
+    }
+  }
+
 }
 
 void TextureControlPlugin::fileOpened( int _id ) {
@@ -214,6 +252,17 @@ void TextureControlPlugin::fileOpened( int _id ) {
   if (texData == 0){
     texData = new TextureData();
     obj->setObjectData(TEXTUREDATA, texData);
+  }
+
+  // Check if the file contains a texture map and handle it before adding global textures
+  if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
+      TriMesh* mesh = PluginFunctions::triMesh(obj);
+      if ( mesh )
+        handleFileOpenTextures(mesh,_id);
+  } else if ( obj->dataType( DATA_POLY_MESH ) ) {
+    PolyMesh* mesh = PluginFunctions::polyMesh(obj);
+    if ( mesh )
+      handleFileOpenTextures(mesh,_id);
   }
 
   // Iterate over all available global textures and add them to the object
@@ -300,7 +349,7 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   // If texture is not enabled, mark it as dirty and defer update to visualization update
   // ================================================================================
   if ( ! texData->texture(_textureName).enabled() ) {
-    texData->texture(_textureName).dirty = true;
+    texData->texture(_textureName).setDirty();
     return;
   }
 
@@ -325,7 +374,7 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   // ================================================================================
   // Mark texture as not dirty
   // ================================================================================
-  texData->texture(_textureName).dirty = false;
+  texData->texture(_textureName).clean();
 
   // ================================================================================
   // Enable the right draw mode and update
@@ -337,7 +386,7 @@ template< typename MeshT >
 void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 {
 
-  if ( _texture.type == HALFEDGEBASED ) {
+  if ( _texture.type() == HALFEDGEBASED ) {
     if (_texture.dimension() == 1) {
 
       OpenMesh::HPropHandleT< double > texture;
@@ -360,7 +409,7 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 
     } else
       emit log(LOGERR, "Unsupported Texture Dimension " + QString::number(_texture.dimension() ) );
-  } else if ( _texture.type == VERTEXBASED ) {
+  } else if ( _texture.type() == VERTEXBASED ) {
     if ( _texture.dimension() == 1 ) {
 
       OpenMesh::VPropHandleT< double > texture;
@@ -475,7 +524,7 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
   // Involves adding a interface part to react on draw mode changes
   // basic check implemented
   for ( uint i = 0; i < texData->textures().size(); ++i ) {
-    texData->textures()[i].dirty = true;
+    texData->textures()[i].setDirty();
 
     bool update = false;
     for ( int j = 0 ; j < PluginFunctions::viewers() ; ++j ) {
@@ -542,9 +591,9 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
     } else
     if ( sectionName == "type" ) {
         if (value == "halfedgebased") {
-            texture.type = HALFEDGEBASED;
+            texture.type( HALFEDGEBASED );
         } else {
-            texture.type = VERTEXBASED;
+            texture.type( VERTEXBASED );
         }
     } else
       emit log(LOGERR,"Unknown texture mode : " + sectionName);
@@ -556,7 +605,7 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
   // ================================================================================
   // Mark updated texture as dirty
   // ================================================================================
-  texture.dirty = true;
+  texture.setDirty();
 
 
   // check if the local textures need to be updated
@@ -608,8 +657,8 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
           changed = true;
         }
 
-        if ( _mode.contains("type") && (texture.type != localTex.type) ){
-          localTex.type = texture.type;
+        if ( _mode.contains("type") && (texture.type() != localTex.type() ) ){
+          localTex.type( texture.type() );
           changed = true;
         }
 
@@ -618,7 +667,7 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
           if ( texData->isEnabled(_textureName) )
             emit updateTexture( _textureName, o_it->id() );
           else
-            localTex.dirty = true;
+            localTex.setDirty();
         }
       }
     }
@@ -696,12 +745,17 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
         texture.parameters.scale = StringToBool(value);
         changed = true;
       }
+    }else if ( sectionName == "indexProperty" ) {
+      if ( value != texture.indexMappingProperty() ) {
+        texture.indexMappingProperty( value );
+        changed = true;
+      }
     } else if ( sectionName == "type" ) {
         if (value == "halfedgebased") {
-          texture.type = HALFEDGEBASED;
+          texture.type( HALFEDGEBASED );
           changed = true;
         } else {
-          texture.type = VERTEXBASED;
+          texture.type( VERTEXBASED );
           changed = true;
         }
     } else
@@ -716,7 +770,7 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
     if ( texData->isEnabled(_textureName) )
       emit updateTexture( _textureName, _id );
     else
-      texture.dirty = true;
+      texture.setDirty();
   }
 }
 
@@ -780,12 +834,12 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
       slotTextureUpdated( _textureName  , _id );
       emit updateView();
     }else
-      _texData->texture( _textureName ).dirty = true;
+      _texData->texture( _textureName ).setDirty();
 
   } else {
     // global texture
 
-    _texData->texture( _textureName ).dirty = true;
+    _texData->texture( _textureName ).setDirty();
 
     Texture& globalTexture = _texData->texture(_textureName);
 
@@ -835,7 +889,7 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
           if ( texData->isEnabled(_textureName) )
             slotTextureUpdated( _textureName  , o_it->id() );
           else
-            texData->texture( _textureName ).dirty = true;
+            texData->texture( _textureName ).setDirty();
         }
       }
     }
@@ -875,7 +929,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // ================================================================================
   // Enable the given texture exclusively or use multitexture setting
   // ================================================================================
-  bool multiTextureMode = ( texData->texture(_textureName).type == MULTITEXTURE );
+  bool multiTextureMode = ( texData->texture(_textureName).type() == MULTITEXTURE );
   if ( !multiTextureMode ) {
     if ( ! texData->enableTexture( _textureName , true ) ) {
       emit log(LOGERR, "Failed to enabled Texture " + _textureName );
@@ -901,7 +955,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // which will update the visualization )
   // ================================================================================
 
-  if ( !multiTextureMode && texData->texture( _textureName).dirty ) {
+  if ( !multiTextureMode && texData->texture( _textureName).dirty() ) {
 
     // TODO: maybe introduce lock to prevent extra redraws if updating all objects
     emit updateTexture( texData->texture( _textureName ).name() , obj->id() );
@@ -915,9 +969,11 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
     if (!multiTextureMode) {
       doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
       PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name(0);
       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName ).indexMappingProperty().toStdString() );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
     }
@@ -928,9 +984,11 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
     if (!multiTextureMode) {
       doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
       PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name(0);
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName ).indexMappingProperty().toStdString() );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
     }
