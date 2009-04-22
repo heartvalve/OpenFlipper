@@ -56,9 +56,9 @@ class texturePropertiesWidget : public QDialog, public Ui::Dialog
 
   private slots:
 
-    void textureAboutToChange(QListWidgetItem* _item);
+    void textureAboutToChange(QTreeWidgetItem* _item , int _column);
 
-    void textureChanged(QListWidgetItem* _item);
+    void textureChanged(QTreeWidgetItem* _item , int _column);
 
     void slotButtonBoxClicked(QAbstractButton* _button);
 

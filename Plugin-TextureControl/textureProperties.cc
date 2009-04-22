@@ -45,8 +45,8 @@ texturePropertiesWidget::texturePropertiesWidget(QWidget *parent)
     setupUi(this);
 
     connect(buttonBox, SIGNAL( clicked(QAbstractButton*) ), this , SLOT ( slotButtonBoxClicked(QAbstractButton*) ) );
-    connect(textureList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(textureChanged(QListWidgetItem*)) );
-    connect(textureList, SIGNAL(itemPressed(QListWidgetItem*)), this, SLOT(textureAboutToChange(QListWidgetItem*)) );
+    connect(textureList, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(textureChanged(QTreeWidgetItem*,int)) );
+    connect(textureList, SIGNAL(itemPressed(QTreeWidgetItem*,int)), this, SLOT(textureAboutToChange(QTreeWidgetItem*,int)) );
 
     //remember changes
     connect(repeatBox, SIGNAL( clicked() ), this , SLOT ( slotPropertiesChanged() ) );
@@ -83,14 +83,25 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
   textureList->clear();
 
   for (uint i=0; i < texData_->textures().size(); i++)
-    textureList->addItem( texData_->textures()[i].name() );
+    if ( texData_->textures()[i].hidden() ) {
+       std::cerr << "Handle Hidden" << std::endl;
+    } else {
+      if (  texData_->textures()[i].type() != MULTITEXTURE ) {
+        textureList->addTopLevelItem( new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].name() ) ) );
+      } else {
+        QTreeWidgetItem* parent = new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].name() ) );
+        textureList->addTopLevelItem( parent ) ;
+        for ( int j = 0 ; j < texData_->textures()[i].multiTextureList.size() ; ++j )
+          textureList->addTopLevelItem( new QTreeWidgetItem(parent, QStringList(texData_->textures()[i].multiTextureList[j] )) );
+      }
+    }
 
-  if ( textureList->count() == 0){
-    QMessageBox msgBox(this);
-    msgBox.setText("Cannot show Properties. No Textures available!");
-    msgBox.exec();
-    return;
-  }
+    if ( textureList->invisibleRootItem()->childCount() == 0 )  {
+      QMessageBox msgBox(this);
+      msgBox.setText("Cannot show Properties. No Textures available!");
+      msgBox.exec();
+      return;
+    }
 
   if (id_ == -1)
     textureLabel->setText("<B>Global Textures</B>");
@@ -99,13 +110,14 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
 
   propChanged_ = false;
 
-  textureList->setCurrentItem( textureList->item(0) );
-  textureChanged( textureList->item(0) );
+  // TODO
+//   textureList->setCurrentItem( textureList->item(0) );
+//   textureChanged( textureList->item(0) );
 
   QDialog::show();
 }
 
-void texturePropertiesWidget::textureAboutToChange(QListWidgetItem* _item){
+void texturePropertiesWidget::textureAboutToChange(QTreeWidgetItem* _item, int _column){
 
   if (propChanged_){
     QMessageBox msgBox(this);
@@ -121,30 +133,33 @@ void texturePropertiesWidget::textureAboutToChange(QListWidgetItem* _item){
         if ( buttonBox->standardButton( buttonBox->buttons()[i] ) == QDialogButtonBox::Apply )
           slotButtonBoxClicked( buttonBox->buttons()[i] );
 
-      textureList->setCurrentItem( _item );
-      textureChanged( _item );
+      // TODO
+//       textureList->setCurrentItem( _item );
+      textureChanged( _item,_column );
 
     } else {
       propChanged_ = false;
 
-      textureList->setCurrentItem( _item );
-      textureChanged( _item );
+      // TODO
+//       textureList->setCurrentItem( _item );
+      textureChanged( _item,_column );
     }
   }
 }
 
-void texturePropertiesWidget::textureChanged(QListWidgetItem* _item){
+void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column){
 
   //open changes for the last texture so switch back
   if ( propChanged_ ){
-    textureList->setCurrentRow( curRow_ );
+    // TODO
+//     textureList->setCurrentRow( curRow_ );
     return;
   }
 
-  if ( !texData_->textureExists( _item->text() ) )
+  if ( !texData_->textureExists( _item->text(_column) ) )
     return; //should not happen
 
-  textureName_ = _item->text();
+  textureName_ = _item->text(_column);
 
   //update the dialog
   Texture& texture = texData_->texture(textureName_);
@@ -193,7 +208,8 @@ void texturePropertiesWidget::textureChanged(QListWidgetItem* _item){
   }
 
   propChanged_ = false;
-  curRow_ = textureList->currentRow();
+  // TODO
+//   curRow_ = textureList->currentRow();
 }
 
 void texturePropertiesWidget::slotChangeImage() {

@@ -42,13 +42,24 @@
           </widget>
          </item>
          <item>
-          <widget class="QListWidget" name="textureList" >
-           <property name="alternatingRowColors" >
+          <widget class="QTreeWidget" name="textureList" >
+           <property name="rootIsDecorated" >
+            <bool>true</bool>
+           </property>
+           <property name="uniformRowHeights" >
             <bool>false</bool>
            </property>
-           <property name="selectionBehavior" >
-            <enum>QAbstractItemView::SelectRows</enum>
+           <property name="itemsExpandable" >
+            <bool>true</bool>
            </property>
+           <property name="headerHidden" >
+            <bool>true</bool>
+           </property>
+           <column>
+            <property name="text" >
+             <string>1</string>
+            </property>
+           </column>
           </widget>
          </item>
         </layout>
