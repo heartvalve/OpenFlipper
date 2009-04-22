@@ -10,11 +10,10 @@
 #include <iostream>
 
 
-HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, const QUrl& _basePath, QWidget* parent) :
+HelpBrowser::HelpBrowser(QHelpEngine* _helpEngine, QWidget* parent) :
 
 	QTextBrowser(parent),
-	helpEngine_(_helpEngine),
-	basePath_(_basePath) {
+	helpEngine_(_helpEngine) {
 
 	currentPage_ = 0;
 
@@ -35,10 +34,24 @@ QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 	}
 	else {
 
-		// Set basePath_ as prefix of resource file
-		QUrl newUrl = QUrl(basePath_.toString() + _url.toString());
+		QUrl newUrl;
 
-		return QVariant(helpEngine_->fileData(newUrl));
+		QStringList docDomains = helpEngine_->registeredDocumentations();
+
+		// Search in all namespaces for requested file
+		for(int i = 0; i < docDomains.size(); i++) {
+
+			QString sNewUrl = "qthelp://" + docDomains[i] + "/" + VIRTUAL_FOLDER +
+				"/" + _url.toString();
+
+			newUrl = helpEngine_->findFile(QUrl(sNewUrl));
+
+			if(newUrl.isValid()) return QVariant(helpEngine_->fileData(newUrl));
+		}
+
+		// If file has not been found in any of the namespaces
+		// return an empty QVariant
+		return QVariant();
 	}
 
 }
