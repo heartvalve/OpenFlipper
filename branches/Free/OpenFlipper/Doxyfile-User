@@ -6,7 +6,7 @@
 DOXYFILE_ENCODING      = UTF-8
 PROJECT_NAME           = OpenFlipper
 PROJECT_NUMBER         = 1.0
-OUTPUT_DIRECTORY       = ./Docs/Developer/qthelp
+OUTPUT_DIRECTORY       = ./Docs/User
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
@@ -26,12 +26,12 @@ ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
 FULL_PATH_NAMES        = YES
 STRIP_FROM_PATH        = 
-STRIP_FROM_INC_PATH    = 
+STRIP_FROM_INC_PATH    =
 GENERATE_QHP           = YES
-QHP_NAMESPACE          = "org.openflipper.dev"
+QHP_NAMESPACE          = "org.openflipper.user"
 QHP_VIRTUAL_FOLDER     = "doc"
-QCH_FILE               = developer.qch
-QHG_LOCATION           = /usr/bin/qhelpgenerator
+QCH_FILE               = user.qch
+QHG_LOCATION           = /usr/bin/qhelpgenerator 
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
 QT_AUTOBRIEF           = NO
@@ -98,8 +98,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = . \
-                         ../ObjectTypes
+INPUT                  = ./Doxygen/User
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          = *.c \
                          *.cc \
@@ -147,19 +146,20 @@ FILE_PATTERNS          = *.c \
                          *.moc \
                          *.xpm \
                          *.docu \
-                         *.dox
+                         *.dox \
+			 *.qhcp
 RECURSIVE              = YES
-EXCLUDE                = 
+EXCLUDE                = ./Doxygen/Developer
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */Debian*/* \
                          */.svn/* \
                          SimpleOpt*
 EXCLUDE_SYMBOLS        = 
-EXAMPLE_PATH           = ./Doxygen/example/
+EXAMPLE_PATH           = ./Doxygen/User/example/
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
-IMAGE_PATH             = ./Doxygen/pics/ \
-                         ./Doxygen/screenshots/
+IMAGE_PATH             = ./Doxygen/User/pics/ \
+                         ./Doxygen/User/screenshots/
 INPUT_FILTER           = 
 FILTER_PATTERNS        = 
 FILTER_SOURCE_FILES    = NO
@@ -186,14 +186,14 @@ IGNORE_PREFIX          =
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
 HTML_FILE_EXTENSION    = .html
-HTML_HEADER            = 
-HTML_FOOTER            = 
-HTML_STYLESHEET        =
+HTML_HEADER            = Doxygen/User/html/acg_header.html
+HTML_FOOTER            = Doxygen/User/html/acg_footer.html
+HTML_STYLESHEET        = Doxygen/User/html/acg_style.css
 HTML_ALIGN_MEMBERS     = YES
 GENERATE_HTMLHELP      = YES
 GENERATE_DOCSET        = NO
-DOCSET_FEEDNAME        = "OpenFlipper 1.0 Help"
-DOCSET_BUNDLE_ID       = org.openflipper.doc
+DOCSET_FEEDNAME        = "Doxygen generated docs"
+DOCSET_BUNDLE_ID       = org.doxygen.user
 HTML_DYNAMIC_SECTIONS  = NO
 CHM_FILE               = 
 HHC_LOCATION           = 
@@ -201,7 +201,7 @@ GENERATE_CHI           = NO
 CHM_INDEX_ENCODING     = 
 BINARY_TOC             = NO
 TOC_EXPAND             = NO
-DISABLE_INDEX          = YES
+DISABLE_INDEX          = NO
 ENUM_VALUES_PER_LINE   = 4
 GENERATE_TREEVIEW      = YES
 TREEVIEW_WIDTH         = 250
