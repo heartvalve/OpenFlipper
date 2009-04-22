@@ -39,13 +39,20 @@
  * \skipline PROJECT_NUMBER
  *
  * \dontinclude Doxyfile.dox
- * \skipline QHP_VIRTUAL_FOLDER
+ * \skipline QCH_NAMESPACE
  *
  * \dontinclude Doxyfile.dox
- * \skipline QCH_FILE
+ * \skipline QHP_FILE
  *
  * \dontinclude Doxyfile.dox
- * \skipline QHP_NAMESPACE
+ * \skipline DOCSET_FEEDNAME
+ *
+ * \dontinclude Doxyfile.dox
+ * \skipline DOCSET_BUNDLE_ID
+ *
+ * IMPORTANT: For your documentation to integrate seamlessly into OpenFlipper's help
+ * system you have to leave the <b>QHP_VIRTUAL_FOLDER</b> untouched! Further QCH_NAMESPACE
+ * has to be unique, particularly the namespace "org.openflipper.dev" is reserved.
  *
  * The last thing to be done is adding <code><b>Doc()</b></code> to your qmake project file.
  * This adds the target <code><b>doc</b></code> to the build system which builds the
