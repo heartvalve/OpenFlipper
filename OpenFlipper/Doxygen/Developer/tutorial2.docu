@@ -1,0 +1,176 @@
+/*! \page ex2 Implementing a mesh smoother plugin
+ *
+ * The last section dealt with the implementation of a first plugin without any functionality at all. This section
+ * will show you how to progam a simple mesh smoother. We are assuming that you have read \ref ex1 and will only
+ * explain parts that have to be added in order to include new functionality.
+ *
+ * \subsection ex2Header Definition of the header
+ *
+ * To start of we first have to add two additional header files. The first one is the \c ToolboxInterface.
+ * We need this interface because we want to add a Toolbox to our plugin in order to be able to set parameters.
+ * Additionally, we want to use the \c LoggingInterface so that we can inform the user of our plugin when something
+ * went wrong.
+ *
+ * \dontinclude example/SmootherPlugin.hh
+ * \skipline #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
+ * \skipline #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
+ *
+ * In order to work with the Interfaces we have to define that the plugin will implement the additional interfaces.
+ * The class definition then looks as follows:
+ *
+ * \dontinclude example/SmootherPlugin.hh
+ * \skipline class SmootherPlugin
+ *
+ * Furthermore we have to insert the \c Q_INTERFACES macro. This makes the signals and slots from both interfaces available.
+ *
+ * \dontinclude example/SmootherPlugin.hh
+ * \skipline Q_INTERFACES(ToolboxInterface)
+ * \skipline Q_INTERFACES(LoggingInterface)
+ *
+ * Now that we have defined which Interfaces to implement, we can look at which signals and slots we want to implement.
+ * Firstly, we need two additional signals from the \c BaseInterface :
+ *
+ * \dontinclude example/SmootherPlugin.hh
+ * \skipline void updateView()
+ * \skipline void updatedObject(
+ *
+ * The first signal updateView() is emitted when we have finished computing the smoothed mesh. The signal tells OpenFlipper
+ * to redraw its viewer(s). The second signal updatedObjects() is emitted to inform all other plugins that an object
+ * has changed and therfore allows each plugin to react on this change.
+ *
+ * Since we also want to use the \c LoggingInterface we have to define the following signals which allow us to send
+ * log messages to the OpenFlipper Loggers.
+ *
+ * \dontinclude example/SmootherPlugin.hh
+ * \skipline void log(
+ * \skipline void log(
+ *
+ *
+ * The last Interface that's left over is the \c ToolboxInterface from which we are only implenting one function:
+ *
+ * \dontinclude example/SmootherPlugin.hh
+ * \skipline bool initializeToolbox
+ *
+ * As we will see later, this function is used to setup a ToolBox (i.e. a \c QWidget ) and return a reference of this
+ * ToolBox to OpenFlipper so that it can be intergrated into the GUI.
+ *
+ * As a last step we have to add to include additional class members to control the parameter for the smoothing and
+ * to actually compute the smoothed mesh.
+ *
+ * \dontinclude example/SmootherPlugin.hh
+ * \skipline private:
+ * \until Laplace();
+ *
+ * That's it for the header of the plugin. The complete header looks like this:
+ *
+ * \include example/SmootherPlugin.hh 
+ *
+ *
+ * \subsection ex2Implemenation1 Implemention of the GUI
+ *
+ * As we have already mentioned in \ref ex2Header, the ToolBox is generated inside the initializeToolbox() function.
+ * So inside this function we begin with creating the elements of the ToolBox:
+ * 
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline QWidget
+ * \until Iterations:");
+ *
+ * Later, the smoothButton is used to start the mesh smoothing and the iterationsSpinbox_ allows the user to control
+ * the number of smoothing iterations that should be performed.
+ *
+ * The created Toolbox elements are then combined into a Layout
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline QGridLayout
+ * \until 2,0,1,2);
+ *
+ * Here, the SpacerItem, which is added last, only helps aligning the elements at the top of the toolbox.
+ *
+ * We have to connect the smoothButton to the simpleLaplace() slot of our class, so that after clicking
+ * the button the slot is called. Finally, we return a reference to the new Toolbox by assigning it to _widget and
+ * return true because we succesfully created the Toolbox.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline connect
+ * \until true;
+ *
+ *
+ * \subsection ex2Implemenation2 Implemention of the Smoother
+ *
+ * Now that the Toolbox is completely setup, we can start implementing the smoother. We begin with searching objects
+ * on which we have to compute the smoothing. The algorithm takes all objects marked as target and tries to apply the
+ * smoothing.
+ *
+ * To find all these Objects we use an ObjectIterator. This iterator can be found in the PluginFunctions. Every
+ * communication between OpenFlipper and its Plugins is accomplished through either an interface or the PluginFunctions.
+ * So these are the places to look for if you want to add additional functionality and therefore need to communicate
+ * with OpenFlipper.
+ *
+ * We initialize the PluginFunctions::ObjectIterator with PluginFunctions::TARGET_OBJECTS and thereby make sure that
+ * the iteration is restricted to target objects only.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline void SmootherPlugin::simpleLaplace() {
+ * \until ++o_it) {
+ *
+ * In the next line we test if we have to deal with a triangle mesh. Since computation on triangle meshes
+ * is in many cases more efficient than on arbitrary polygonal meshes OpenMesh treats them seperately
+ * (see OpenMesh documentation for further information on this topic). See also \ref OpenFlipper/common/Types.hh
+ * for data types in OpenFlipper.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline if ( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
+ *
+ * First off, we backup the current vertex positions by adding a custom property to our mesh.
+ * We assume that you already made yourself familiar with OpenMesh. Otherwise we recommend you to
+ * read the OpenMesh documentation first since we use many of OpenMeshes's core functions in this tutorial. 
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline // Get the mesh to work on
+ * \until mesh->add_property( origPositions, "SmootherPlugin_Original_Positions" );
+ * 
+ * The smoothing algorithm itself depends on the number of iterations that one can adjust
+ * in the plugin's toolbox.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline for ( int i = 0 ; i < iterationsSpinbox_->value() ; ++i ) {
+ * \until }// Iterations end
+ *
+ * In a few words the algorithm iterates over each vertex of the mesh, accumulates the positions of it's neighboring
+ * vertices, devides the sum by it's valence and updates it's position to the computed value.
+ * If the current vertex is a boundary vertex, we skip over to the next one without updating the position.
+ *
+ * Now that the smoothing operation is done, we want to get rid of the original vertex positions.
+ * Since we changed vertices, we also have to update the normals.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline  // Remove the propert
+ * \until mesh->update_normals();
+ *
+ * The next step is to tell the OpenFlipper core that our plugin has updated an object in the scene.
+ * The affected object will then be redrawn. See \ref geometryData for information on how to handle geometry data in a plugin.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline emit updatedObject( o_it->id() );
+ *
+ * The smoothing algorithm on arbitrary polygonal meshes in this case works analogously.
+ * See \ref com_src_ex2 for the complete source code.
+ *
+ * If the object's type is neither triangle nor polygonal mesh, we make use of the implemented
+ * \ref LoggingInterface by dumping an error log message to OpenFlipper's log widget.
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline } else {
+ * \until } // Switch data type
+ *
+ * \section com_src_ex2 The complete source code of the example
+ *
+ * SmootherPlugin.hh
+ * \include example/SmootherPlugin.hh
+ *
+ * SmootherPlugin.cc
+ * \include example/SmootherPlugin.cc
+ * 
+ * We use the qmake project file presented in \ref ex1b to build this plugin.
+ *
+ */
