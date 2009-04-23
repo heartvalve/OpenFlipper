@@ -116,8 +116,8 @@ class Texture {
     void setDirty() { dirty_ = true; };
 
 
-    void type( uint _type ) { type_ = _type; };
-    uint type( ) { return type_; };
+    void type( TextureType _type ) { type_ = _type; };
+    TextureType type( ) { return type_; };
 
 
     QString indexMappingProperty() { return indexMappingProperty_; };
@@ -159,7 +159,7 @@ class Texture {
     bool dirty_;
 
     /// Texture Type
-    uint type_;
+    TextureType type_;
 
     /** If this is a multiTexture, indexMappingProperty_ will point to the property storing the mapping
      * Defaults to the f:textureindex

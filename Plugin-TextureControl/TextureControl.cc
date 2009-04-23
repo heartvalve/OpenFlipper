@@ -378,7 +378,7 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   // ================================================================================
   // Enable the right draw mode and update
   // ================================================================================
-  switchDrawMode(false);
+  switchDrawMode( texData->texture( _textureName ).type() );
 }
 
 template< typename MeshT >
@@ -1014,28 +1014,43 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // ================================================================================
   // Switch to a texture drawMode
   // ================================================================================
-  switchDrawMode(multiTextureMode);
+  switchDrawMode(texData->texture( _textureName ).type());
 
 }
 
-void TextureControlPlugin::switchDrawMode( bool _multiTexture ) {
+void TextureControlPlugin::switchDrawMode( TextureType _type ) {
 
   bool textureMode = false;
   for ( int j = 0 ; j < PluginFunctions::viewers() ; ++j ) {
-      if ( _multiTexture ) {
+    switch (_type) {
+      case MULTITEXTURE:
+      case HALFEDGEBASED:
         textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE );
         textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED );
-      } else {
+        break;
+      case VERTEXBASED:
         textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED );
         textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
-      }
+        break;
+      case UNSET:
+        emit log(LOGERR,"Switching drawmode for unknonw Texture Type!");
+        break;
+    }
   }
 
   if ( !textureMode ) {
-    if ( _multiTexture )
-      PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED );
-    else
-      PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+    switch (_type) {
+      case MULTITEXTURE:
+      case HALFEDGEBASED:
+        PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED );
+        break;
+      case VERTEXBASED:
+        PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+        break;
+      case UNSET:
+        emit log(LOGERR,"Switching drawmode for unknonw Texture Type!");
+        break;
+    }
   }
 
   emit updateView();
