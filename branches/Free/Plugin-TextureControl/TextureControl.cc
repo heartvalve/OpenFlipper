@@ -546,6 +546,80 @@ void TextureControlPlugin::slotUpdateAllTextures( ) {
 //          emit updateTexture( textures_[i].name , o_it->id() );
 }
 
+bool TextureControlPlugin::parseMode( QString _mode, Texture& _texture ) {
+
+  bool changed = false;
+
+  int i = 0;
+  QString nextString = _mode.section(',',i,i);
+  while ( nextString != "" ) {
+    QString sectionName = nextString.section('=',0,0);
+    QString value = nextString.section('=',1,1);
+
+    // Cleanup representation
+    value       = value.trimmed();
+    sectionName = sectionName.trimmed();
+
+    if ( sectionName == "clamp" ) {
+      if ( StringToBool(value) != _texture.parameters.clamp ) {
+        _texture.parameters.clamp = StringToBool(value);
+        changed = true;
+      }
+    } else if ( sectionName == "clamp_max" ) {
+      if (value.toDouble() != _texture.parameters.clamp_max){
+        _texture.parameters.clamp_max = value.toDouble();
+        changed = true;
+      }
+    } else if ( sectionName == "clamp_min" ) {
+      if (value.toDouble() != _texture.parameters.clamp_min){
+        _texture.parameters.clamp_min = value.toDouble();
+        changed = true;
+      }
+    } else if ( sectionName == "max_val" ) {
+      if (value.toDouble() != _texture.parameters.max_val){
+        _texture.parameters.max_val = value.toDouble();
+        changed = true;
+      }
+    } else if ( sectionName == "repeat" ) {
+      if ( StringToBool(value) != _texture.parameters.repeat ) {
+        _texture.parameters.repeat = StringToBool(value);
+        changed = true;
+      }
+    } else if ( sectionName == "center" ) {
+      if ( StringToBool(value) != _texture.parameters.center ) {
+        _texture.parameters.center = StringToBool(value);
+        changed = true;
+      }
+    } else if ( sectionName == "scale" ) {
+      if ( StringToBool(value) != _texture.parameters.scale ) {
+        _texture.parameters.scale = StringToBool(value);
+        changed = true;
+      }
+    }else if ( sectionName == "indexProperty" ) {
+      if ( value != _texture.indexMappingProperty() ) {
+        _texture.indexMappingProperty( value );
+        changed = true;
+      }
+    } else if ( sectionName == "type" ) {
+        if ( ( value == "halfedgebased" ) && ( _texture.type() != HALFEDGEBASED ) ) {
+          _texture.type( HALFEDGEBASED );
+          changed = true;
+        } else if ( (value == "vertexbased") && (_texture.type() != HALFEDGEBASED)  ) {
+          _texture.type( VERTEXBASED );
+          changed = true;
+        } else {
+          emit log(LOGERR,"Unknown texture type : " + value + " for texture: " + _texture.name() );
+        }
+    } else
+      emit log(LOGERR,"Unknown texture mode : " + sectionName);
+
+    ++i;
+    nextString = _mode.section(',',i,i);
+  }
+
+  return changed;
+}
+
 void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mode) {
 
   // ================================================================================
@@ -561,56 +635,9 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
   // ================================================================================
   Texture& texture = globalTextures_.texture(_textureName);
 
-  // Cleanup representation
+  // Parse the mode settings
   _mode = _mode.toLower();
-
-  int i = 0;
-  QString nextString = _mode.section(',',i,i);
-  while ( nextString != "" ) {
-    QString sectionName = nextString.section('=',0,0);
-    QString value = nextString.section('=',1,1);
-
-
-    // Cleanup representation
-    value       = value.trimmed();
-    sectionName = sectionName.trimmed();
-
-    if ( sectionName == "clamp" ) {
-      texture.parameters.clamp = StringToBool(value);
-    } else
-    if ( sectionName == "clamp_max" ) {
-      texture.parameters.clamp_max = value.toDouble();
-    } else
-    if ( sectionName == "clamp_min" ) {
-      texture.parameters.clamp_min = value.toDouble();
-    } else
-    if ( sectionName == "max_val" ) {
-      texture.parameters.max_val = value.toDouble();
-    } else
-    if ( sectionName == "repeat" ) {
-      texture.parameters.repeat = StringToBool(value);
-    } else
-    if ( sectionName == "center" ) {
-      texture.parameters.center = StringToBool(value);
-    } else
-    if ( sectionName == "scale" ) {
-      texture.parameters.scale = StringToBool(value);
-    } else
-    if ( sectionName == "type" ) {
-        if (value == "halfedgebased") {
-            texture.type( HALFEDGEBASED );
-        } else if ( value == "vertexbased")
-        {
-            texture.type( VERTEXBASED );
-        } else  {
-          emit log(LOGERR,"Unknown texture type : " + value + " for texture: " + _textureName);
-        }
-    } else
-      emit log(LOGERR,"Unknown texture mode : " + sectionName);
-
-    ++i;
-    nextString = _mode.section(',',i,i);
-  }
+  parseMode(_mode,texture);
 
   // ================================================================================
   // Mark updated texture as dirty
@@ -713,75 +740,7 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
   Texture& texture = texData->texture(_textureName);
 
   _mode = _mode.toLower();
-
-  bool changed = false;
-
-  int i = 0;
-  QString nextString = _mode.section(',',i,i);
-  while ( nextString != "" ) {
-    QString sectionName = nextString.section('=',0,0);
-    QString value = nextString.section('=',1,1);
-
-    // Cleanup representation
-    value       = value.trimmed();
-    sectionName = sectionName.trimmed();
-
-    if ( sectionName == "clamp" ) {
-      if ( StringToBool(value) != texture.parameters.clamp ) {
-        texture.parameters.clamp = StringToBool(value);
-        changed = true;
-      }
-    } else if ( sectionName == "clamp_max" ) {
-      if (value.toDouble() != texture.parameters.clamp_max){
-        texture.parameters.clamp_max = value.toDouble();
-        changed = true;
-      }
-    } else if ( sectionName == "clamp_min" ) {
-      if (value.toDouble() != texture.parameters.clamp_min){
-        texture.parameters.clamp_min = value.toDouble();
-        changed = true;
-      }
-    } else if ( sectionName == "max_val" ) {
-      if (value.toDouble() != texture.parameters.max_val){
-        texture.parameters.max_val = value.toDouble();
-        changed = true;
-      }
-    } else if ( sectionName == "repeat" ) {
-      if ( StringToBool(value) != texture.parameters.repeat ) {
-        texture.parameters.repeat = StringToBool(value);
-        changed = true;
-      }
-    } else if ( sectionName == "center" ) {
-      if ( StringToBool(value) != texture.parameters.center ) {
-        texture.parameters.center = StringToBool(value);
-        changed = true;
-      }
-    } else if ( sectionName == "scale" ) {
-      if ( StringToBool(value) != texture.parameters.scale ) {
-        texture.parameters.scale = StringToBool(value);
-        changed = true;
-      }
-    }else if ( sectionName == "indexProperty" ) {
-      if ( value != texture.indexMappingProperty() ) {
-        texture.indexMappingProperty( value );
-        changed = true;
-      }
-    } else if ( sectionName == "type" ) {
-        if ( ( value == "halfedgebased" ) && ( texture.type() != HALFEDGEBASED ) ) {
-          texture.type( HALFEDGEBASED );
-          changed = true;
-        } else if ( (value == "vertexbased") && (texture.type() != HALFEDGEBASED)  ) {
-          texture.type( VERTEXBASED );
-          changed = true;
-        } else {
-          emit log(LOGERR,"Unknown texture type : " + value + " for texture: " + _textureName);
-        }
-    } else
-      emit log(LOGERR,"Unknown texture mode : " + sectionName);
-
-    ++i;
-    nextString = _mode.section(',',i,i);
-  }
+  bool changed = parseMode(_mode,texture);
 
   //only update if the texture is enabled
   if (changed){
