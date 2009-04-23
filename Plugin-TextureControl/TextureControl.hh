@@ -164,6 +164,12 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     template< typename MeshT >
     void handleFileOpenTextures( MeshT*& _mesh  , int _objectId  );
 
+    /** \brief parse texture mode settings
+     * Parses the string _mode and changes the settings in _texture according to the string.
+     * If the setting changes, it will return true.
+     */
+    bool parseMode( QString _mode, Texture& _texture );
+
     //===========================================================================
     /** @name 1D Texture copy functions( copy 1D input textures to target texture coordinates and transform values )
       * @{ */
