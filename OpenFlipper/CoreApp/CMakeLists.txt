@@ -47,7 +47,11 @@ drop_templates (sources)
 qt4_autouic (uic_targets ${ui})
 qt4_automoc (moc_targets ${headers})
 
-add_executable (OpenFlipper ${uic_targets} ${sources} ${headers} ${moc_targets})
+if (WIN32)
+  add_executable (OpenFlipper ${CMAKE_CURRENT_SOURCE_DIR}/CoreApp.rc ${uic_targets} ${sources} ${headers} ${moc_targets})
+else ()
+  add_executable (OpenFlipper ${uic_targets} ${sources} ${headers} ${moc_targets})
+endif ()
 
 set_target_props (OpenFlipper)
 
@@ -70,7 +74,7 @@ if (WIN32)
                       COMMAND ${CMAKE_COMMAND} -E
                       copy_if_different 
                         ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/OpenFlipper.exe
-                        ${CMAKE_BINARY_DIR}/Build)
+                        ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_BINDIR}/OpenFlipper.exe)
 endif ()
 
 add_custom_command(TARGET OpenFlipper POST_BUILD
