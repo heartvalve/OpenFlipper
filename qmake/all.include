@@ -74,7 +74,7 @@ exists( $${HOME}/.qmake/config.$${SYSTEMTYPE} ) {
 # don't want qmake to build a MacOS X
 # application bundle
 ############################################################
-CONFIG -= app_bundle	# Do not build a framework bundle
+# CONFIG -= app_bundle	# Do not build a framework bundle
 export(CONFIG)
 
 		
