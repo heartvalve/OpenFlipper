@@ -108,9 +108,8 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
 
   propChanged_ = false;
 
-  // TODO
-//   textureList->setCurrentItem( textureList->item(0) );
-//   textureChanged( textureList->item(0) );
+  textureList->setCurrentItem( textureList->topLevelItem(0) );
+  textureChanged( textureList->topLevelItem(0), 0 );
 
   QDialog::show();
 }
@@ -131,15 +130,13 @@ void texturePropertiesWidget::textureAboutToChange(QTreeWidgetItem* _item, int _
         if ( buttonBox->standardButton( buttonBox->buttons()[i] ) == QDialogButtonBox::Apply )
           slotButtonBoxClicked( buttonBox->buttons()[i] );
 
-      // TODO
-//       textureList->setCurrentItem( _item );
+      textureList->setCurrentItem( _item );
       textureChanged( _item,_column );
 
     } else {
       propChanged_ = false;
 
-      // TODO
-//       textureList->setCurrentItem( _item );
+      textureList->setCurrentItem( _item );
       textureChanged( _item,_column );
     }
   }
@@ -149,8 +146,7 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
 
   //open changes for the last texture so switch back
   if ( propChanged_ ){
-    // TODO
-//     textureList->setCurrentRow( curRow_ );
+    textureList->setCurrentItem( curItem_ );
     return;
   }
 
@@ -187,27 +183,32 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
 
     #ifdef WITH_QWT
 
-      std::vector< double > x;
+      std::vector< double > coords;
 
-      emit getCoordinates1D(textureName_, id_, x);
+      emit getCoordinates1D(textureName_, id_, coords);
 
-      if ( x.size() > 0 ){
+      if ( coords.size() > 0 ){
 
-        std::vector< double > y( x.size(), 1.0);
+        functionPlot_->setFunction( coords );
 
-        functionPlot_->clear();
+        functionPlot_->setParameters(repeatBox->isChecked(), max_val->value(),
+                                     clampBox->isChecked(),  clamp_min->value(), clamp_max->value(),
+                                     centerBox->isChecked(),
+                                     absBox->isChecked(),
+                                     scaleBox->isChecked());
 
-        functionPlot_->add_function( x, y, "Histogram" );
+        image_ = texture.textureImage;
 
-        functionPlot_->histogram_mode();
+        functionPlot_->setImage( &image_ );
+
+        functionPlot_->replot();
       }
 
     #endif
   }
 
   propChanged_ = false;
-  // TODO
-//   curRow_ = textureList->currentRow();
+  curItem_ = textureList->currentItem();
 }
 
 void texturePropertiesWidget::slotChangeImage() {
@@ -224,6 +225,11 @@ void texturePropertiesWidget::slotChangeImage() {
     fileLabel->setText( "File: " + fileName );
 
     currentImage_ = fileName;
+
+    image_ = imageLabel->pixmap()->toImage();
+
+    functionPlot_->setImage( &image_ );
+    functionPlot_->replot();
 
     propChanged_ = true;
   }
@@ -298,4 +304,13 @@ void texturePropertiesWidget::slotButtonBoxClicked(QAbstractButton* _button){
 
 void texturePropertiesWidget::slotPropertiesChanged(double /*_value*/){
   propChanged_ = true;
+
+  functionPlot_->setParameters(repeatBox->isChecked(), max_val->value(),
+                              clampBox->isChecked(),  clamp_min->value(), clamp_max->value(),
+                              centerBox->isChecked(),
+                              absBox->isChecked(),
+                              scaleBox->isChecked());
+
+  functionPlot_->replot();
+
 }
