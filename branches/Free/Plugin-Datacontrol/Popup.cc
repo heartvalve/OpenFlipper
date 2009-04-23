@@ -426,13 +426,33 @@ void DataControlPlugin::slotRename(){
  * 
  */
 void DataControlPlugin::slotMaterialProperties(){
-  QItemSelectionModel* selection = view_->selectionModel();
 
-  // Get all selected rows
-  QModelIndexList indexList = selection->selectedRows ( 0 );
-  int selectedRows = indexList.size();
-  if (selectedRows == 1){
-    BaseObject* item = model_->getItem( indexList[0]);
+  BaseObject* item = 0;
+
+  //check if it was called from object contextMenu or from the toolBox
+  QAction* action = dynamic_cast< QAction* > ( sender() );
+
+  if ( action ){
+    bool ok = false;
+
+    int id = action->data().toInt(&ok);
+
+    if ( ok && id > 0 )
+      PluginFunctions::getObject(id,item);
+  }
+
+  if ( item == 0 ){
+    // the slot was called from toolbox
+    QItemSelectionModel* selection = view_->selectionModel();
+
+    // Get all selected rows
+    QModelIndexList indexList = selection->selectedRows ( 0 );
+    int selectedRows = indexList.size();
+    if (selectedRows == 1)
+      item = model_->getItem( indexList[0] );
+  }
+
+  if ( item != 0 ){
 
     BaseObjectData* itemData = dynamic_cast< BaseObjectData* > (item);
 
