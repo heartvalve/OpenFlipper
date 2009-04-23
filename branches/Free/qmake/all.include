@@ -69,6 +69,15 @@ exists( $${HOME}/.qmake/config.$${SYSTEMTYPE} ) {
 	include( $${HOME}/.qmake/config.$${SYSTEMTYPE} ) 
 }
 
+############################################################
+# Uncomment the following line if you
+# don't want qmake to build a MacOS X
+# application bundle
+############################################################
+CONFIG -= app_bundle	# Do not build a framework bundle
+export(CONFIG)
+
+		
 ################################################################################
 # Set standard build directories 
 # ( Everything generated while compiling will go # into a per architecture 
@@ -110,13 +119,10 @@ defineTest(Plugin) {
 		LIBS+= -L$${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY} -lPluginLib
                 export(LIBS)
 
-		#######################################################################
-		# Comment out the following line for qmake to build
-		# plugins into OpenFlipper/plugins directory
-		#######################################################################
-		DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}
-	        
-		export(DESTDIR)
+		CONFIG(app_bundle) {
+			DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}
+	       		export(DESTDIR)
+		}
 
         }
 	export(TEMPLATE)
@@ -155,13 +161,6 @@ defineTest(Application) {
 		TEMPLATE = vcapp
 	}
 	macx {
-		############################################################
-		# Uncomment the following line if you
-		# don't want qmake to build a MacOS X
-		# application bundle
-		############################################################
-		# CONFIG -= app_bundle	# Do not build a framework bundle
-
 		CONFIG += x86
 		# CONFIG += ppc		# Uncomment to build universal binary
 
