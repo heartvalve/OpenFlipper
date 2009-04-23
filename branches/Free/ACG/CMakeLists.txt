@@ -69,7 +69,7 @@ if (WIN32)
                       COMMAND ${CMAKE_COMMAND} -E
                       copy_if_different 
                         ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/ACG.dll
-                        ${CMAKE_BINARY_DIR}/Build
+                        ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_LIBDIR}/ACG.dll
                       )
 endif ()
 
