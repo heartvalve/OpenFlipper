@@ -29,7 +29,7 @@
  * the necessary docu-files. In this case we only create one mainpage with some
  * arbitrary content (refer to doxygen documentation in order to learn more about doxygen).
  *
- * Now copy the file <code><b>Doxyfile.dox</b></code> (which can be found in <code><b>OpenFlipper/Doxygen/example</b></code>)
+ * Now copy the file <code><b>Doxyfile.dox</b></code> (which can be found in <code><b>OpenFlipper/Doxygen/Developer/example</b></code>)
  * into your plugin's directory and name it <code><b>Doxyfile</b></code>.
  * Adapt the following project specific settings in the Doxyfile:
  *
@@ -94,7 +94,7 @@
  * \section ex4_fullDoxyfile The full Doxyfile template
  *
  * This is the full Doxyfile.dox template file that we use to generate the plugin's documentation.
- * You can either find it in <b>OpenFlipper/Doxygen/example</b> or just copy and paste it.
+ * You can either find it in <b>OpenFlipper/Doxygen/Developer/example</b> or just copy and paste it.
  *
  * \include Doxyfile.dox
  */
