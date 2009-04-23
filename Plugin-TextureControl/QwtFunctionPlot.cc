@@ -17,6 +17,11 @@
 #include <qlabel.h>
 #include <qpainter.h>
 
+#include <qwt_curve_fitter.h>
+#include <qwt_interval_data.h>
+
+#include <float.h>
+#include <math.h>
 
 //== NAMESPACES ===============================================================
 
@@ -25,201 +30,195 @@ namespace ACG {
 //== IMPLEMENTATION ========================================================== 
 
 
-void 
-QwtFunctionPlot::
-add_function( std::vector<double>& _x,
-	      std::vector<double>& _y,
-	      const char*          _title,
-	      QColor               _col  )
+/// Default constructor
+QwtFunctionPlot::QwtFunctionPlot(QWidget* _parent) : QDialog( _parent ), Ui::QwtFunctionPlotBase()
 {
-  // if color is white -> choose random color
-  QColor col = _col;
-  if( col.red() == 255 && col.green() == 255 && col.blue() == 255)
-    col.setRgb( (int)(30 + double(rand())/double(RAND_MAX)*200),
-		(int)(30 + double(rand())/double(RAND_MAX)*200),
-		(int)(30 + double(rand())/double(RAND_MAX)*200));
-  
-  // create new curve and attach it to plot widget
-  QwtPlotCurve *curve = new QwtPlotCurve(_title);
-  curve->setData( &(_x[0]), &(_y[0]), std::min(_x.size(), _y.size()));
-  curve->setPen( QPen(col));
-  functions_.push_back(curve);
-  curve->attach( qwtPlot );
-  
-  // check legend item
-  ((QwtLegendItem*)legend_->find( curve))->setChecked(true);
+  setupUi( this );
 
-  //  plot_zoomer_->setZoomBase(false);
-  update_zoom_base();
+  plot_zoomer_ = new QwtPlotZoomer( qwtPlot->canvas());
+
+  // delete widget on close
+  setAttribute(Qt::WA_DeleteOnClose, true);
+
+  histogram_ = new HistogramItem();
+  image_ = 0;
+}
+
+//------------------------------------------------------------------------------
+
+void QwtFunctionPlot::setFunction( std::vector<double>& _values)
+{
+  values_ = _values;
+
+  //get min/max values
+  min_ = FLT_MAX;
+  max_ = FLT_MIN;
+
+  for ( uint i=0; i < values_.size(); i++){
+    min_ = std::min(min_, values_[i] );
+    max_ = std::max(max_, values_[i] );
+  }
+
+}
+
+//------------------------------------------------------------------------------
+
+void QwtFunctionPlot::setParameters(bool _repeat, double _repeatMax,
+                                    bool _clamp,  double _clampMin, double _clampMax,
+                                    bool _center,
+                                    bool _absolute,
+                                    bool _scale)
+{
+  repeat_ = _repeat;
+  repeatMax_ = _repeatMax;
+  clamp_ = _clamp;
+  clampMin_ = _clampMin;
+  clampMax_ = _clampMax;
+  center_ = _center;
+  absolute_ = _absolute;
+  scale_ = _scale;
+}
+
+//------------------------------------------------------------------------------
+
+void QwtFunctionPlot::setImage(QImage* _image)
+{
+  image_ = _image;
+}
+
+//------------------------------------------------------------------------------
+
+double QwtFunctionPlot::transform( double _value ){
+
+  if (absolute_)
+    _value = fabs(_value);
+
+  if (clamp_){
+    _value = std::max( clampMin_, _value );
+    _value = std::min( clampMax_, _value );
+  }
+
+  if (repeat_){
+    _value = ( (_value - currentMin_) / (currentMax_-currentMin_) ) * repeatMax_;
+  }else{
+
+    if (center_)
+      _value -= (currentMax_-currentMin_) / 2.0; //TODO:thats wrong
+
+    if (scale_)
+      _value = (_value - currentMin_) / (currentMax_-currentMin_);
+
+    if (center_)
+      _value += 0.5;
+  }
+
+  return _value;
+}
+
+//------------------------------------------------------------------------------
+
+void QwtFunctionPlot::initValues()
+{
+
+  //get min/max values
+  currentMin_ = FLT_MAX;
+  currentMax_ = FLT_MIN;
+
+  for ( uint i=0; i < values_.size(); i++){
+
+    double tranformed = values_[i];
+
+    if (absolute_)
+      tranformed = fabs(tranformed);
+
+    if (clamp_){
+      tranformed = std::max( clampMin_, tranformed );
+      tranformed = std::min( clampMax_, tranformed );
+    }
+
+    currentMin_ = std::min(currentMin_, tranformed );
+    currentMax_ = std::max(currentMax_, tranformed );
+  }
+}
+
+//------------------------------------------------------------------------------
+
+void QwtFunctionPlot::replot()
+{
+
+  initValues();
+
+  //create intervals
+  const int intervalCount = 100;
+
+  QwtArray<QwtDoubleInterval> intervals(intervalCount);
+  QwtArray<double> count(intervalCount);
+  std::vector< QColor > colors;
+
+  double pos = transform(min_);
+  double width = ( transform(max_) - transform(min_) ) / intervalCount;
+
+  QColor lastColor = Qt::black;
+
+  for ( int i = 0; i < (int)intervals.size(); i++ )
+  {
+    intervals[i] = QwtDoubleInterval(pos, pos + width);
+    pos += width;
+
+    //compute a color for the given interval
+    if (image_ != 0){
+      double intervalCenter = pos + (width/2.0);
+
+      if (intervalCenter > 1.0 && !repeat_){
+        colors.push_back( lastColor );
+        continue;
+      }
+
+      if ( intervalCenter < 0.0){
+        colors.push_back( lastColor );
+        continue;
+      }
+
+      if ( intervalCenter > 1.0){
+        intervalCenter -= floor(intervalCenter);
+      }
+
+      int val = int( intervalCenter * image_->width() );
+
+      colors.push_back( QColor( image_->pixel(val, 0) ) );
+
+      lastColor = colors.back();
+    }
+  }
+
+  //sort values into intervals
+  for ( uint i=0; i < values_.size(); i++)
+    for ( int j = 0; j < (int)intervals.size(); j++ )
+      if ( intervals[j].contains( transform(values_[i])  ) )
+        count[j]++;
+
+  //get max Count for scaling the y-axis
+  double maxCount = 0;
+
+  for ( int i = 0; i < (int)intervals.size(); i++ )
+    maxCount = std::max(maxCount, count[i]);
+
+
+  histogram_->setData(QwtIntervalData(intervals, count));
+  histogram_->setColors(colors);
+  histogram_->attach(qwtPlot);
+
+  qwtPlot->setAxisScale(QwtPlot::yLeft, 0.0, maxCount);
+  qwtPlot->setAxisScale(QwtPlot::xBottom, transform(min_), transform(max_));
+
+  qwtPlot->setAxisTitle(QwtPlot::yLeft,   "count" );
+  qwtPlot->setAxisTitle(QwtPlot::xBottom, "values" );
+
+  //define this scaling as the zoomBase
+  plot_zoomer_->setZoomBase();
+
+  // an plot it
   qwtPlot->replot();
-}
-
-
-// ------------------------------------------------------------------------------
-
-
-void 
-QwtFunctionPlot::
-function_mode()
-{
-  for(unsigned int i=0; i<functions_.size(); ++i)
-  {
-    functions_[i]->setStyle( QwtPlotCurve::Lines );
-  }
-  qwtPlot->replot();
-}
-
-
-// ------------------------------------------------------------------------------
-
-
-void 
-QwtFunctionPlot::
-histogram_mode()
-{
-  for(unsigned int i=0; i<functions_.size(); ++i)
-  {
-    functions_[i]->setStyle( QwtPlotCurve::Sticks );
-  }
-  qwtPlot->replot();
-}
-
-// ------------------------------------------------------------------------------
-
-
-void 
-QwtFunctionPlot::
-linear_scaling()
-{
-//   qwtPlot->setAxisScaleEngine(1, (QwtScaleEngine*)linear_scale_engine_);
-//   qwtPlot->replot();
-}
-
-
-// ------------------------------------------------------------------------------
-
-void 
-QwtFunctionPlot::
-logarithmic_scaling()
-{
-//   qwtPlot->setAxisScaleEngine( 1, (QwtScaleEngine*)log10_scale_engine_);
-//   qwtPlot->replot();
-}
-
-
-// ------------------------------------------------------------------------------
-
-
-void 
-QwtFunctionPlot::
-update_pens(int _inc)
-{
-  for(unsigned int i=0; i<functions_.size(); ++i)
-  {
-    QPen pen = functions_[i]->pen();
-
-    pen.setWidth( std::max(1,(int)pen.width() + _inc) );
-
-    functions_[i]->setPen( pen);
-  }
-  qwtPlot->replot();
-}
-
-
-// ------------------------------------------------------------------------------
-
-
-void 
-QwtFunctionPlot::
-add_function( std::vector<double>& _y,
-	      const char*          _title,
-	      QColor               _col  )
-{
-  // set up uniform x-vector
-  std::vector<double> x(_y.size());
-  for(unsigned int i=0; i<x.size(); ++i)
-    x[i] = i;
-
-  add_function( x, _y, _title, _col);
-}
-
-
-// ------------------------------------------------------------------------------
-
-
-void 
-QwtFunctionPlot::
-slotLegendChecked(QwtPlotItem* _plot_item, bool _visible)
-{
-  // only draw checked curves
-  _plot_item->setVisible(_visible);
-  update_zoom_base();
-  qwtPlot->replot();
-}
-
-
-// ------------------------------------------------------------------------------
-
-
-void 
-QwtFunctionPlot::
-update_zoom_base()
-{
-  QwtDoubleRect rect;
-  for(unsigned int i=0; i<functions_.size(); ++i)
-  {
-    if(functions_[i]->isVisible())
-      rect |= functions_[i]->boundingRect();
-  }
-  if( rect.isValid())
-  {
-    plot_zoomer_->setZoomBase( rect );
-  }
-}
-
-
-// ------------------------------------------------------------------------------
-
-
-void 
-QwtFunctionPlot::
-keyPressEvent ( QKeyEvent* _event )
-{
-  switch( _event->key())
-  {
-    case Qt::Key_H:
-    {
-      std::cerr << "histogram mode...\n";
-      histogram_mode();
-      break;
-    }
-    case Qt::Key_F:
-    {
-      std::cerr << "function mode...\n";
-      function_mode();
-      break;
-    }
-    case Qt::Key_Plus:
-    {
-      update_pens(1);
-      break;
-    }
-    case Qt::Key_Minus:
-    {
-      update_pens(-1);
-      break;
-    }
-    case Qt::Key_1:
-    {
-      linear_scaling();
-      break;
-    }
-    case Qt::Key_2:
-    {
-      logarithmic_scaling();
-      break;
-    }
-  }
 }
 
 

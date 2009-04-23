@@ -69,9 +69,9 @@ class texturePropertiesWidget : public QDialog, public Ui::Dialog
   private:
 
     bool propChanged_;
-    int  curRow_;
+    QTreeWidgetItem* curItem_;
     QString currentImage_;
-
+    QImage image_;
 
     TextureData* texData_;
     QString      textureName_;

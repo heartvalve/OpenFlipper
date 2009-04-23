@@ -1164,6 +1164,9 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
     return;
   }
 
+  if ( texData->texture( _textureName ).dirty() )
+    emit updateTexture( _textureName , _id );
+
   OpenMesh::VPropHandleT< double > coordProp;
 
   _x.clear();

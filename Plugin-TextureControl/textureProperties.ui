@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1016</width>
-    <height>633</height>
+    <width>877</width>
+    <height>618</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -24,54 +24,54 @@
   <property name="windowTitle" >
    <string>Dialog</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
-   <item rowspan="2" row="0" column="0" >
+  <layout class="QVBoxLayout" name="verticalLayout_5" >
+   <item>
     <widget class="QSplitter" name="splitter" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="layoutWidget" >
-      <layout class="QGridLayout" name="gridLayout" >
-       <item row="0" column="0" >
-        <layout class="QVBoxLayout" name="verticalLayout_2" >
-         <item>
-          <widget class="QLabel" name="textureLabel" >
-           <property name="text" >
-            <string>Textures:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QTreeWidget" name="textureList" >
-           <property name="minimumSize" >
-            <size>
-             <width>300</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="rootIsDecorated" >
-            <bool>true</bool>
-           </property>
-           <property name="uniformRowHeights" >
-            <bool>false</bool>
-           </property>
-           <property name="itemsExpandable" >
-            <bool>true</bool>
-           </property>
-           <property name="headerHidden" >
-            <bool>true</bool>
-           </property>
-           <column>
-            <property name="text" >
-             <string>1</string>
-            </property>
-           </column>
-          </widget>
-         </item>
-        </layout>
+     <widget class="QWidget" name="" >
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item>
+        <widget class="QLabel" name="textureLabel" >
+         <property name="text" >
+          <string>Textures:</string>
+         </property>
+        </widget>
        </item>
-       <item row="0" column="1" >
-        <layout class="QVBoxLayout" name="verticalLayout_3" >
+       <item>
+        <widget class="QTreeWidget" name="textureList" >
+         <property name="minimumSize" >
+          <size>
+           <width>300</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="rootIsDecorated" >
+          <bool>true</bool>
+         </property>
+         <property name="uniformRowHeights" >
+          <bool>false</bool>
+         </property>
+         <property name="itemsExpandable" >
+          <bool>true</bool>
+         </property>
+         <property name="headerHidden" >
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text" >
+           <string>1</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="" >
+      <layout class="QVBoxLayout" name="verticalLayout_3" >
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3" >
          <item>
           <widget class="QGroupBox" name="groupBox" >
            <property name="title" >
@@ -108,6 +108,9 @@
             </item>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout" >
+              <property name="spacing" >
+               <number>6</number>
+              </property>
               <item>
                <widget class="QLabel" name="label" >
                 <property name="text" >
@@ -116,7 +119,20 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="clamp_min" />
+               <widget class="QDoubleSpinBox" name="clamp_min" >
+                <property name="decimals" >
+                 <number>3</number>
+                </property>
+                <property name="minimum" >
+                 <double>-9999.000000000000000</double>
+                </property>
+                <property name="maximum" >
+                 <double>9999.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="label_2" >
@@ -126,7 +142,20 @@
                </widget>
               </item>
               <item>
-               <widget class="QDoubleSpinBox" name="clamp_max" />
+               <widget class="QDoubleSpinBox" name="clamp_max" >
+                <property name="decimals" >
+                 <number>3</number>
+                </property>
+                <property name="minimum" >
+                 <double>-9999.000000000000000</double>
+                </property>
+                <property name="maximum" >
+                 <double>9999.000000000000000</double>
+                </property>
+                <property name="singleStep" >
+                 <double>0.500000000000000</double>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -155,93 +184,87 @@
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="originalData" >
+          <widget class="QGroupBox" name="imageBox" >
            <property name="minimumSize" >
             <size>
-             <width>400</width>
-             <height>0</height>
+             <width>280</width>
+             <height>280</height>
             </size>
            </property>
            <property name="title" >
-            <string>original Data</string>
+            <string>Image</string>
            </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4" >
+            <item>
+             <widget class="QLabel" name="imageLabel" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Minimum" hsizetype="Minimum" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>100</width>
+                <height>100</height>
+               </size>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>250</width>
+                <height>250</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string>Image</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="fileLabel" >
+              <property name="text" >
+               <string>File:</string>
+              </property>
+              <property name="wordWrap" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="changeImageButton" >
+              <property name="text" >
+               <string>Change Image</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="originalData" >
+         <property name="minimumSize" >
+          <size>
+           <width>400</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="title" >
+          <string> Visualization of current values </string>
+         </property>
+         <zorder>groupBox</zorder>
+        </widget>
        </item>
       </layout>
      </widget>
     </widget>
    </item>
-   <item row="1" column="1" >
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>277</width>
-       <height>212</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="0" >
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox" >
      <property name="standardButtons" >
       <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
-    </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QGroupBox" name="imageBox" >
-     <property name="minimumSize" >
-      <size>
-       <width>280</width>
-       <height>280</height>
-      </size>
-     </property>
-     <property name="title" >
-      <string>Image</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4" >
-      <item>
-       <widget class="QLabel" name="imageLabel" >
-        <property name="minimumSize" >
-         <size>
-          <width>250</width>
-          <height>250</height>
-         </size>
-        </property>
-        <property name="maximumSize" >
-         <size>
-          <width>250</width>
-          <height>250</height>
-         </size>
-        </property>
-        <property name="text" >
-         <string>Image</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="fileLabel" >
-        <property name="text" >
-         <string>File:</string>
-        </property>
-        <property name="wordWrap" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="changeImageButton" >
-        <property name="text" >
-         <string>Change Image</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>
