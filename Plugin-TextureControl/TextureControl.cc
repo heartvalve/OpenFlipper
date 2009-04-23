@@ -561,11 +561,19 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
   // ================================================================================
   Texture& texture = globalTextures_.texture(_textureName);
 
+  // Cleanup representation
+  _mode = _mode.toLower();
+
   int i = 0;
   QString nextString = _mode.section(',',i,i);
   while ( nextString != "" ) {
     QString sectionName = nextString.section('=',0,0);
     QString value = nextString.section('=',1,1);
+
+
+    // Cleanup representation
+    value       = value.trimmed();
+    sectionName = sectionName.trimmed();
 
     if ( sectionName == "clamp" ) {
       texture.parameters.clamp = StringToBool(value);
@@ -591,8 +599,11 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
     if ( sectionName == "type" ) {
         if (value == "halfedgebased") {
             texture.type( HALFEDGEBASED );
-        } else {
+        } else if ( value == "vertexbased")
+        {
             texture.type( VERTEXBASED );
+        } else  {
+          emit log(LOGERR,"Unknown texture type : " + value + " for texture: " + _textureName);
         }
     } else
       emit log(LOGERR,"Unknown texture mode : " + sectionName);
@@ -701,6 +712,8 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
   // ================================================================================
   Texture& texture = texData->texture(_textureName);
 
+  _mode = _mode.toLower();
+
   bool changed = false;
 
   int i = 0;
@@ -708,6 +721,10 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
   while ( nextString != "" ) {
     QString sectionName = nextString.section('=',0,0);
     QString value = nextString.section('=',1,1);
+
+    // Cleanup representation
+    value       = value.trimmed();
+    sectionName = sectionName.trimmed();
 
     if ( sectionName == "clamp" ) {
       if ( StringToBool(value) != texture.parameters.clamp ) {
@@ -750,12 +767,14 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
         changed = true;
       }
     } else if ( sectionName == "type" ) {
-        if (value == "halfedgebased") {
+        if ( ( value == "halfedgebased" ) && ( texture.type() != HALFEDGEBASED ) ) {
           texture.type( HALFEDGEBASED );
           changed = true;
-        } else {
+        } else if ( (value == "vertexbased") && (texture.type() != HALFEDGEBASED)  ) {
           texture.type( VERTEXBASED );
           changed = true;
+        } else {
+          emit log(LOGERR,"Unknown texture type : " + value + " for texture: " + _textureName);
         }
     } else
       emit log(LOGERR,"Unknown texture mode : " + sectionName);
