@@ -129,6 +129,10 @@ class TextureInterface {
        *  repeat texture : repeat=true/false \n
        *  Maximum value for repeat : max_val=value \n
        *  center texture : center=true/false \n
+       *  type : the texture coordinate type ( vertexbased:   each vertex has only one texture coordinate ;
+       *                                       halfedgebased: each vertex has a texture coordinate per face)
+       *
+       *
        *  \n
        * The system works like this :\n
        * First the abolute value of the property is taken if requested. Then this value is clamped against the given values. if the texture
