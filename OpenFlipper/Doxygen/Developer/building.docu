@@ -85,7 +85,5 @@
  *
  * Note: If you don't want qmake to build OpenFlipper as MacOS X application bundle
  * you have to uncomment line <br /><br /><code><b># CONFIG -= app_bundle  # Do not build a framework bundle</b></code><br /><br />
- * of function <code>defineTest(Application)</code> and comment out line<br /><br />
- * <code><b>DESTDIR = $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY}/OpenFlipper.app/Contents/Plugins/$${SYSTEMTYPE}/$${ARCHITECTURE}/$${MODE}</b></code><br /><br />
- * of function <code>defineTest(Plugin)</code> in file <code>$OpenFlipper/qmake/all.include</code>.
+ * in file <code>$OpenFlipper/qmake/all.include</code>.
  */
