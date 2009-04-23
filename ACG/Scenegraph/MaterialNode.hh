@@ -90,78 +90,130 @@ public:
     /// use blending
     Blending=64,
     /// backface culling
-    BackFaceCulling=128
+    BackFaceCulling=128,
+    /// Color Material ( Only when a drawmode using shading and lighting is enabled )
+    ColorMaterial=256
   };
 
 
 
   /// Default constructor. Applies all properties.
   MaterialNode( BaseNode*           _parent = 0,
-		const std::string&  _name = "<MaterialNode>",
-		unsigned int        _applyProperties = (All &
-							~BackFaceCulling));
+		          const std::string&  _name = "<MaterialNode>",
+		          unsigned int        _applyProperties = (All & ~BackFaceCulling));
 
   /// Destructor.
   virtual ~MaterialNode() {};
 
-
-  ACG_CLASSNAME(MaterialNode);
-
   /// read MaterialFile
   void read( std::istream & _is);
 
+  //===========================================================================
+  /** @name Scenegraph functions
+    * @{ */
+  //===========================================================================
 
-  /// set current GL-color and GL-material
-  void enter(GLState& _state, unsigned int _drawmode);
-  /// restores original GL-color and GL-material
-  void leave(GLState& _state, unsigned int _drawmode);
+    ACG_CLASSNAME(MaterialNode);
 
-  /** \brief Do nothing in picking
-   */
-  void enterPick(GLState& _state, PickTarget _target, unsigned int _drawMode );
-
-  /** \brief Do nothing in picking
-   */
-  void leavePick(GLState& _state, PickTarget _target, unsigned int _drawMode );
+    /// set current GL-color and GL-material
+    void enter(GLState& _state, unsigned int _drawmode);
+    /// restores original GL-color and GL-material
+    void leave(GLState& _state, unsigned int _drawmode);
 
 
-  /// get properties that will be applied (OR'ed ApplyProperties)
-  unsigned int applyProperties() const { return applyProperties_; }
-  /// set properties that will be applied (OR'ed ApplyProperties)
-  void applyProperties(unsigned int _applyProperties) {
-    applyProperties_ = _applyProperties;
-  }
+    /** \brief Do nothing in picking*/
+    void enterPick(GLState& _state, PickTarget _target, unsigned int _drawMode );
+
+    /** \brief Do nothing in picking */
+    void leavePick(GLState& _state, PickTarget _target, unsigned int _drawMode );
+
+  /** @} */
+
+  //===========================================================================
+  /** @name Color settings ( Applied to all objects below this node )
+    * @{ */
+  //===========================================================================
+
+    /// set color (base, ambient, diffuse, specular) based on _c
+    void set_color(const Vec4f& _c) {
+      Vec4f c;
+      set_base_color(_c);
+      c = _c * 0.2f;  c[3]=_c[3];  set_ambient_color(c);
+      c = _c * 0.6f;  c[3]=_c[3];  set_diffuse_color(c);
+      c = _c * 0.8f;  c[3]=_c[3];  set_specular_color(c);
+    }
+
+    /// set the base color
+    void set_base_color(const Vec4f& _c) { base_color_ = _c;}
+    /// get the base color
+    const Vec4f& base_color() const { return base_color_; }
+
+    /// set the ambient color.
+    void set_ambient_color(const Vec4f& _a) { ambient_color_ = _a; }
+    /// get the ambient color.
+    const Vec4f& ambient_color() const { return ambient_color_; }
+
+    /// set the diffuse color.
+    void set_diffuse_color(const Vec4f& _d) { diffuse_color_ = _d; }
+    /// get the diffuse color.
+    const Vec4f& diffuse_color() const { return diffuse_color_; }
+
+    /// set the specular color
+    void set_specular_color(const Vec4f& _s) { specular_color_ = _s; }
+    /// get the specular color
+    const Vec4f& specular_color() const { return specular_color_; }
+
+    /// Set colorMaterial
+    void colorMaterial( const bool _colorMaterial) { color_material_ = _colorMaterial; }
+    /// Enable Color Material
+    void enable_color_material() { color_material_ = true; }
+    /// Disable Color Material
+    void disable_color_material() { color_material_ = false; }
+    /// get colorMaterial state
+    bool colorMaterial() { return color_material_; }
+
+  /** @} */
+
+  //===========================================================================
+  /** @name Point/Line controls
+    * @{ */
+  //===========================================================================
+    /// set point size (default: 1.0)
+    void set_point_size(float _sz) { point_size_ = _sz; }
+    /// get point size
+    float point_size() const { return point_size_; }
+
+    /// set line width (default: 1.0)
+    void set_line_width(float _sz) { line_width_ = _sz; }
+    /// get line width
+    float line_width() const { return line_width_; }
+
+    /// set: round points enabled
+    void set_round_points(bool _b) { round_points_ = _b; }
+    /// get: round points enabled
+    bool round_points() const { return round_points_; }
+
+  /** @} */
+
+  //===========================================================================
+  /** @name Tests
+    * @{ */
+  //===========================================================================
+
+    /// enable alpha test (draw pixels if alpha >= _clip)
+    void enable_alpha_test(float _clip) {
+      alpha_test_ = true; alpha_clip_ = _clip;
+    }
+
+    /// disable alpha test
+    void disable_alpha_test() { alpha_test_ = false; }
+
+    /// Return state of Alpha test
+    bool alpha_test() { return alpha_test_; };
+
+  /** @} */
 
 
-  /// set color (base, ambient, diffuse, specular) based on _c
-  void set_color(const Vec4f& _c) {
-    Vec4f c;
-    set_base_color(_c);
-    c = _c * 0.2f;  c[3]=_c[3];  set_ambient_color(c);
-    c = _c * 0.6f;  c[3]=_c[3];  set_diffuse_color(c);
-    c = _c * 0.8f;  c[3]=_c[3];  set_specular_color(c);
-  }
-
-
-  /// set the base color
-  void set_base_color(const Vec4f& _c) { base_color_ = _c;}
-  /// get the base color
-  const Vec4f& base_color() const { return base_color_; }
-
-  /// set the ambient color.
-  void set_ambient_color(const Vec4f& _a) { ambient_color_ = _a; }
-  /// get the ambient color.
-  const Vec4f& ambient_color() const { return ambient_color_; }
-
-  /// set the diffuse color.
-  void set_diffuse_color(const Vec4f& _d) { diffuse_color_ = _d; }
-  /// get the diffuse color.
-  const Vec4f& diffuse_color() const { return diffuse_color_; }
-
-  /// set the specular color
-  void set_specular_color(const Vec4f& _s) { specular_color_ = _s; }
-  /// get the specular color
-  const Vec4f& specular_color() const { return specular_color_; }
 
   /// set shininess
   void set_shininess(float _s) { shininess_ = _s; }
@@ -169,32 +221,9 @@ public:
   float shininess() const { return shininess_; }
 
 
-  /// set point size (default: 1.0)
-  void set_point_size(float _sz) { point_size_ = _sz; }
-  /// get point size
-  float point_size() const { return point_size_; }
-
-  /// set line width (default: 1.0)
-  void set_line_width(float _sz) { line_width_ = _sz; }
-  /// get line width
-  float line_width() const { return line_width_; }
-
-  /// set: round points enabled
-  void set_round_points(bool _b) { round_points_ = _b; }
-  /// get: round points enabled
-  bool round_points() const { return round_points_; }
-
-  /// enable alpha test (draw pixels if alpha >= _clip)
-  void enable_alpha_test(float _clip) {
-    alpha_test_ = true; alpha_clip_ = _clip;
-  }
-  /// disable alpha test
-  void disable_alpha_test() { alpha_test_ = false; }
 
   ///get current alpha value for alpha_test
   float alpha_value(){ return alpha_clip_; };
-
-  bool alpha_test() { return alpha_test_; };
 
   bool blending() { return blending_; };
 
@@ -215,6 +244,13 @@ public:
   /// disable backface culling (not active by default, see applyProperties)
   void disable_backface_culling() { backface_culling_ = false; }
 
+    /// get properties that will be applied (OR'ed ApplyProperties)
+  unsigned int applyProperties() const { return applyProperties_; }
+
+  /// set properties that will be applied (OR'ed ApplyProperties)
+  void applyProperties(unsigned int _applyProperties) {
+    applyProperties_ = _applyProperties;
+  }
 
 private:
 
@@ -239,6 +275,7 @@ private:
   GLenum   blend_param1_, blend_param1_backup_;
   GLenum   blend_param2_, blend_param2_backup_;
 
+  bool     color_material_,color_material_backup_;
   bool     backface_culling_, backface_culling_backup_;
 };
 

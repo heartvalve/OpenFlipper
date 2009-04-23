@@ -699,21 +699,12 @@ draw(GLState& _state, unsigned int _drawMode)
   if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED ) && mesh_.has_face_colors() && mesh_.has_face_normals())
   {
     Vec4f base_color_backup = _state.base_color();
-    GLboolean colMaterial;
-
     glEnable(GL_LIGHTING);
-
-    colMaterial = glIsEnabled(GL_COLOR_MATERIAL);
-    glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
-    glEnable( GL_COLOR_MATERIAL );
 
     glShadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(FACE_NORMALS_COLORS);
     glDepthRange(0.0, 1.0);
-
-    if( !colMaterial )
-	   glDisable(GL_COLOR_MATERIAL);
 
     _state.set_base_color(base_color_backup);
   }
@@ -854,21 +845,11 @@ draw(GLState& _state, unsigned int _drawMode)
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
 
-    GLboolean colMaterial = glIsEnabled(GL_COLOR_MATERIAL);
-    if ( colMaterial )
-      glDisable(GL_COLOR_MATERIAL);
-
-    glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
-    glEnable( GL_COLOR_MATERIAL );
-
     glShadeModel(GL_FLAT);
     glDepthRange(0.01, 1.0);
     draw_faces(FACE_HALFEDGE_TEXTURED);
     glDepthRange(0.0, 1.0);
     glDisable(GL_TEXTURE_2D);
-
-    if( !colMaterial )
-      glDisable(GL_COLOR_MATERIAL);
 
   }
 

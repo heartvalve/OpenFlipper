@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -55,14 +55,14 @@
 #include <QSlider>
 
 
-//== NAMESPACES ============================================================== 
+//== NAMESPACES ==============================================================
 
 
 namespace ACG {
 namespace QtWidgets {
 
 
-//== IMPLEMENTATION ========================================================== 
+//== IMPLEMENTATION ==========================================================
 
 
 QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
@@ -88,6 +88,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   blending_        = bak_blending_        = node_->blending();
   blendParam1_     = bak_blendParam1_     = node_->blending_param1();
   blendParam2_     = bak_blendParam2_     = node_->blending_param2();
+  colorMaterial_   = bak_colorMaterial_   = node_->colorMaterial();
 
   baseColorActive_       = bak_baseColorActive_       = node_->applyProperties() & SceneGraph::MaterialNode::BaseColor;
   materialActive_        = bak_materialActive_        = node_->applyProperties() & SceneGraph::MaterialNode::Material;
@@ -97,6 +98,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   alphaTestActive_       = bak_alphaTestActive_       = node_->applyProperties() & SceneGraph::MaterialNode::AlphaTest;
   blendingActive_        = bak_blendingActive_        = node_->applyProperties() & SceneGraph::MaterialNode::Blending;
   backfaceCullingActive_ = bak_backfaceCullingActive_ = node_->applyProperties() & SceneGraph::MaterialNode::BackFaceCulling;
+  colorMaterialActive_   = bak_colorMaterialActive_   = node_->applyProperties() & SceneGraph::MaterialNode::ColorMaterial;
 
   setButtonColor( ui_.baseColorButton, color_ );
   setButtonColor( ui_.ambientColorButton, ambient_ );
@@ -111,6 +113,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.alphaTest->setChecked( alphaTest_ );
   ui_.alpha->setValue((int) alphaValue_ * 100.0f );
   ui_.blending->setChecked( blending_ );
+  ui_.colorMaterial->setChecked( colorMaterial_ );
 
   for (int i=0; i < ui_.blendParam1->count(); i++)
     if ( ui_.blendParam1->itemText(i) == paramToStr(blendParam1_) )
@@ -130,6 +133,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.alphaTestActive->setChecked( alphaTestActive_ );
   ui_.blendingActive->setChecked( blendingActive_ );
   ui_.backfaceCullingActive->setChecked( backfaceCullingActive_ );
+  ui_.colorMaterialActive->setChecked( colorMaterialActive_ );
 
   connect( ui_.baseColorButton,     SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
   connect( ui_.ambientColorButton,  SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
@@ -142,6 +146,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   connect( ui_.backfaceCulling,     SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
   connect( ui_.alphaTest,           SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
   connect( ui_.blending,            SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
+  connect( ui_.colorMaterial,       SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
 
   connect( ui_.baseColorButton, SIGNAL( clicked() ),
 	   this, SLOT( changeBaseColor() ) );
@@ -166,12 +171,15 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
      this, SLOT( changeAlphaTest(bool) ) );
   connect( ui_.alpha, SIGNAL( valueChanged(int) ),
      this, SLOT( changeAlphaValue(int) ) );
+  connect( ui_.colorMaterial, SIGNAL( toggled(bool) ),
+     this, SLOT( changeColorMaterial(bool) ) );
   connect( ui_.blending, SIGNAL( toggled(bool) ),
      this, SLOT( changeBlending(bool) ) );
   connect( ui_.blendParam1, SIGNAL( currentIndexChanged(const QString&) ),
      this, SLOT( changeBlendingParam1(const QString&) ) );
   connect( ui_.blendParam2, SIGNAL( currentIndexChanged(const QString&) ),
      this, SLOT( changeBlendingParam2(const QString&) ) );
+
 
   connect( ui_.baseColorActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
@@ -187,7 +195,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
      this, SLOT( changeActive(bool) ) );
   connect( ui_.blendingActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
-  connect( ui_.backfaceCullingActive, SIGNAL( toggled(bool) ),
+  connect( ui_.colorMaterialActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
 
   connect( ui_.alphaTest,  SIGNAL( toggled(bool) ),
@@ -196,6 +204,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
            ui_.blendParam1,        SLOT( setEnabled(bool) ) );
   connect( ui_.blending,  SIGNAL( toggled(bool) ),
            ui_.blendParam2,        SLOT( setEnabled(bool) ) );
+
 
   ui_.alpha->setEnabled( ui_.alphaTest->isChecked() );
   ui_.blendParam1->setEnabled( ui_.blending->isChecked() );
@@ -209,6 +218,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.alphaTestActive->setChecked(alphaTestActive_);
   ui_.blendingActive->setChecked(blendingActive_);
   ui_.backfaceCullingActive->setChecked(backfaceCullingActive_);
+  ui_.colorMaterialActive->setChecked(colorMaterialActive_);
 
   connect( ui_.okButton, SIGNAL( clicked() ),
 	   this, SLOT( accept() ) );
@@ -235,7 +245,7 @@ QtMaterialDialog::setButtonColor( QPushButton * _button,
 //-----------------------------------------------------------------------------
 
 
-QColor 
+QColor
 QtMaterialDialog::convertColor( Vec4f _color)
 {
  return QColor ((int)(_color[0]*255.0),
@@ -248,12 +258,12 @@ QtMaterialDialog::convertColor( Vec4f _color)
 //-----------------------------------------------------------------------------
 
 
-Vec4f 
+Vec4f
 QtMaterialDialog::convertColor( QColor _color)
 {
   return Vec4f (_color.redF(),
-		            _color.greenF(),
-		            _color.blueF(),
+		          _color.greenF(),
+		          _color.blueF(),
                 _color.alphaF() );
 }
 
@@ -284,6 +294,7 @@ void QtMaterialDialog::applyChanges()
   if (alphaTestActive_) properties = properties | SceneGraph::MaterialNode::AlphaTest;
   if (blendingActive_) properties = properties | SceneGraph::MaterialNode::Blending;
   if (backfaceCullingActive_) properties = properties | SceneGraph::MaterialNode::BackFaceCulling;
+  if (colorMaterialActive_) properties = properties | SceneGraph::MaterialNode::ColorMaterial;
 
   node_->applyProperties(properties);
 
@@ -310,6 +321,11 @@ void QtMaterialDialog::applyChanges()
     node_->enable_blending( blendParam1_, blendParam2_ );
   else
     node_->disable_blending();
+
+  if ( colorMaterial_ )
+    node_->enable_color_material();
+  else
+    node_->disable_color_material();
 
   // this is not optimal !
   if(round_points_)
@@ -342,6 +358,7 @@ void QtMaterialDialog::undoChanges()
   if (bak_alphaTestActive_) properties = properties | SceneGraph::MaterialNode::AlphaTest;
   if (bak_blendingActive_) properties = properties | SceneGraph::MaterialNode::Blending;
   if (bak_backfaceCullingActive_) properties = properties | SceneGraph::MaterialNode::BackFaceCulling;
+  if (bak_colorMaterialActive_) properties = properties | SceneGraph::MaterialNode::ColorMaterial;
 
   node_->applyProperties(properties);
 
@@ -368,6 +385,11 @@ void QtMaterialDialog::undoChanges()
     node_->enable_blending( bak_blendParam1_, bak_blendParam2_ );
   else
     node_->disable_blending();
+
+  if ( bak_colorMaterial_ )
+    node_->enable_color_material();
+  else
+    node_->disable_color_material();
 
   setButtonColor( ui_.diffuseColorButton, diffuse_ );
   setButtonColor( ui_.ambientColorButton, ambient_ );
@@ -511,6 +533,14 @@ QtMaterialDialog::changeAlphaTest(bool _b)
 
 //-----------------------------------------------------------------------------
 
+void
+QtMaterialDialog::changeColorMaterial(bool _b)
+{
+  colorMaterial_ = (bool)_b;
+  applyChanges();
+}
+
+//-----------------------------------------------------------------------------
 
 void
 QtMaterialDialog::changeAlphaValue(int _new)
@@ -594,6 +624,7 @@ QtMaterialDialog::changeActive(bool /*toggle*/)
   roundPointsActive_ = ui_.roundPointsActive->isChecked();
   blendingActive_ = ui_.blendingActive->isChecked();
   backfaceCullingActive_ = ui_.backfaceCullingActive->isChecked();
+  colorMaterialActive_ = ui_.colorMaterialActive->isChecked();
 
   applyChanges();
 }
@@ -614,6 +645,7 @@ QtMaterialDialog::enableProperty(int /*i*/)
   else if (sender() == ui_.backfaceCulling)     ui_.backfaceCullingActive->setChecked( true );
   else if (sender() == ui_.alphaTest)           ui_.alphaTestActive->setChecked( true );
   else if (sender() == ui_.blending)            ui_.blendingActive->setChecked( true );
+  else if (sender() == ui_.colorMaterial)       ui_.colorMaterialActive->setChecked( true );
 }
 
 //-----------------------------------------------------------------------------
@@ -633,6 +665,7 @@ QtMaterialDialog::enableProperty()
   else if (sender() == ui_.backfaceCulling)     ui_.backfaceCullingActive->setChecked( true );
   else if (sender() == ui_.alphaTest)           ui_.alphaTestActive->setChecked( true );
   else if (sender() == ui_.blending)            ui_.blendingActive->setChecked( true );
+  else if (sender() == ui_.colorMaterial)       ui_.colorMaterialActive->setChecked( true );
 
 }
 

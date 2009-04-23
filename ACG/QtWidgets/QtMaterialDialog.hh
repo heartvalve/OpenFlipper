@@ -116,6 +116,7 @@ private slots:
   void changeBlending(bool _b);
   void changeBlendingParam1(const QString& _name);
   void changeBlendingParam2(const QString& _name);
+  void changeColorMaterial(bool _b);
 
   void changeActive(bool toggle);
 
@@ -149,6 +150,7 @@ private:
   bool     blending_,         bak_blending_;
   GLenum   blendParam1_,      bak_blendParam1_;
   GLenum   blendParam2_,      bak_blendParam2_;
+  bool     colorMaterial_,    bak_colorMaterial_;
 
   bool     baseColorActive_,       bak_baseColorActive_;
   bool     materialActive_,        bak_materialActive_;
@@ -158,6 +160,7 @@ private:
   bool     alphaTestActive_,       bak_alphaTestActive_;
   bool     blendingActive_,        bak_blendingActive_;
   bool     backfaceCullingActive_, bak_backfaceCullingActive_;
+  bool     colorMaterialActive_,   bak_colorMaterialActive_;
 
   SceneGraph::MaterialNode * node_;
 
