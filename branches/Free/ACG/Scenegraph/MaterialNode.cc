@@ -43,6 +43,7 @@
 
 
 #include "MaterialNode.hh"
+#include "DrawModes.hh"
 
 
 //== NAMESPACES ===============================================================
@@ -72,6 +73,7 @@ MaterialNode::MaterialNode( BaseNode*            _parent,
     blending_(false),
     blend_param1_(GL_ONE),
     blend_param2_(GL_ZERO),
+    color_material_(true),
     backface_culling_(false)
 {}
 
@@ -79,7 +81,7 @@ MaterialNode::MaterialNode( BaseNode*            _parent,
 //----------------------------------------------------------------------------
 
 
-void MaterialNode::enter(GLState& _state, unsigned int /* _drawmode */ )
+void MaterialNode::enter(GLState& _state, unsigned int  _drawmode  )
 {
   if (applyProperties_ & BaseColor)
   {
@@ -171,7 +173,21 @@ void MaterialNode::enter(GLState& _state, unsigned int /* _drawmode */ )
       glEnable( GL_CULL_FACE );
     else
       glDisable( GL_CULL_FACE );
- }
+  }
+
+  if ( ( applyProperties_ & ColorMaterial ) && ( (_drawmode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ||
+                                                 (_drawmode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED) ) )
+  {
+    color_material_backup_ = glIsEnabled(GL_COLOR_MATERIAL);
+
+    if (color_material_ ) {
+      glDisable( GL_COLOR_MATERIAL );
+      glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
+      glEnable( GL_COLOR_MATERIAL );
+    } else
+      glDisable( GL_COLOR_MATERIAL );
+  }
+
 }
 
 //----------------------------------------------------------------------------
@@ -191,7 +207,7 @@ void MaterialNode::leavePick(GLState& /*_state*/,
 //----------------------------------------------------------------------------
 
 
-void MaterialNode::leave(GLState& _state, unsigned int /* _drawmode */ )
+void MaterialNode::leave(GLState& _state, unsigned int _drawmode )
 {
   if (applyProperties_ & BaseColor)
   {
@@ -267,6 +283,16 @@ void MaterialNode::leave(GLState& _state, unsigned int /* _drawmode */ )
     else
       glDisable( GL_CULL_FACE );
  }
+
+  if ( ( applyProperties_ & ColorMaterial ) && ( (_drawmode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ||
+                                                 (_drawmode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED) ) )
+  {
+    if (color_material_backup_ ) {
+      glEnable( GL_COLOR_MATERIAL );
+    } else
+      glDisable( GL_COLOR_MATERIAL );
+  }
+
 }
 
 
