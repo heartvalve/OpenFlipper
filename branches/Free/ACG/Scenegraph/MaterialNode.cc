@@ -169,10 +169,11 @@ void MaterialNode::enter(GLState& _state, unsigned int  _drawmode  )
   {
     backface_culling_backup_ = glIsEnabled(GL_CULL_FACE);
 
-    if (backface_culling_)
+    if ( backface_culling_ )
       glEnable( GL_CULL_FACE );
     else
       glDisable( GL_CULL_FACE );
+
   }
 
   if ( ( applyProperties_ & ColorMaterial ) && ( (_drawmode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED) ||

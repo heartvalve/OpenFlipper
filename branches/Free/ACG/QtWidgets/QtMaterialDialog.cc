@@ -112,8 +112,8 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.backfaceCulling->setChecked( backfaceCulling_ );
   ui_.alphaTest->setChecked( alphaTest_ );
   ui_.alpha->setValue((int) alphaValue_ * 100.0f );
-  ui_.blending->setChecked( blending_ );
   ui_.colorMaterial->setChecked( colorMaterial_ );
+  ui_.blending->setChecked( blending_ );
 
   for (int i=0; i < ui_.blendParam1->count(); i++)
     if ( ui_.blendParam1->itemText(i) == paramToStr(blendParam1_) )
@@ -194,6 +194,8 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   connect( ui_.alphaTestActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
   connect( ui_.blendingActive, SIGNAL( toggled(bool) ),
+     this, SLOT( changeActive(bool) ) );
+  connect( ui_.backfaceCullingActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
   connect( ui_.colorMaterialActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
