@@ -62,7 +62,9 @@ target_link_libraries (ACG
   ${FTGL_LIBS}
 )
 
-install (TARGETS ACG DESTINATION ${OPENFLIPPER_LIBDIR})
+if (NOT APPLE)
+  install (TARGETS ACG DESTINATION ${OPENFLIPPER_LIBDIR})
+endif ()
 
 if (WIN32)
   add_custom_command (TARGET ACG POST_BUILD
