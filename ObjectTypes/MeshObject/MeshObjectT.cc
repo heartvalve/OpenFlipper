@@ -228,7 +228,7 @@
     if ( materialNode() == NULL)
 		std::cerr << "Error when creating Mesh Object! materialNode is NULL!" << std::endl;
 
-    textureNode_ = new TextureNode(materialNode(),"NEW TextureNode for ");
+    textureNode_ = new TextureNode(materialNode(),"NEW TextureNode for ", true, GL_LINEAR_MIPMAP_LINEAR );
 
     shaderNode_  = new ACG::SceneGraph::ShaderNode(textureNode() , "NEW ShaderNode for ");
 
