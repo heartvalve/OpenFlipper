@@ -107,13 +107,10 @@ void Core::loadPlugins()
 
   QStringList filters;
 
-  #if defined(WIN32)
-	filters << "*.dll";
-  #elif defined(ARCH_DARWIN)
-	filters << "*.dylib";
-  #else
-	filters << "*.so";
-  #endif
+
+  filters << "*.dll";
+  filters << "*.dylib";
+  filters << "*.so";
 
 
   // Get all files in the Plugin dir
