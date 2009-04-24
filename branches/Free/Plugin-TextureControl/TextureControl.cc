@@ -196,6 +196,17 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
 
 template< typename MeshT >
 void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId ) {
+  OpenMesh::VPropHandleT< typename MeshT::TexCoord2D > oldVertexCoords;
+  _mesh->add_property(oldVertexCoords,"Original Per Vertex Texture Coords");
+  for ( TriMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it)
+    _mesh->property(oldVertexCoords, v_it ) =  _mesh->texcoord2D( v_it );
+
+  OpenMesh::HPropHandleT< typename MeshT::TexCoord2D > oldHalfedgeCoords;
+  _mesh->add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
+  for ( TriMesh::HalfedgeIter he_it = _mesh->halfedges_begin(); he_it != _mesh->halfedges_end(); ++he_it)
+    _mesh->property(oldHalfedgeCoords, he_it ) =  _mesh->texcoord2D( he_it );
+
+
   // If this property is available we have a mapping between face_index_property and
   // available textures stored in the map
   OpenMesh::MPropHandleT< std::map< int, std::string > > property;
@@ -253,11 +264,11 @@ void TextureControlPlugin::fileOpened( int _id ) {
     obj->setObjectData(TEXTUREDATA, texData);
   }
 
-  // Check if the file contains a texture map and handle it before adding global textures
+  // Check if the file contains a texture map, store original textures and handle them before adding global textures
   if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
-      TriMesh* mesh = PluginFunctions::triMesh(obj);
-      if ( mesh )
-        handleFileOpenTextures(mesh,_id);
+    TriMesh* mesh = PluginFunctions::triMesh(obj);
+    if ( mesh )
+      handleFileOpenTextures(mesh,_id);
   } else if ( obj->dataType( DATA_POLY_MESH ) ) {
     PolyMesh* mesh = PluginFunctions::polyMesh(obj);
     if ( mesh )
