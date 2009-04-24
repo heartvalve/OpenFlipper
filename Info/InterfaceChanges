@@ -1,7 +1,10 @@
 Last svn revision included in changelog: 5573
 
 OpenFlipper (1.0 RC2)
- * No Interface Change so far
+ * PickAnything behaviour change for Meshnode. TargetIndex returned is now constructed as follows:
+	- 0 .. #Faces : Face indices
+	- #Faces .. #Faces + #Edges : Edge indices ( Calculate real index as: target index - #Faces )
+	- #Faces + # Edges .. #Faces + #Edges + #Vertices : Vertex indices ( Calculate real index as: target index - #Faces - #Edges )
 
 OpenFlipper (1.0 RC1)
  * Initial Release
