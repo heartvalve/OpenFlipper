@@ -202,16 +202,15 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
   for ( TriMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it)
     _mesh->property(oldVertexCoords, v_it ) =  _mesh->texcoord2D( v_it );
 
-  emit addTexture("Original Per Vertex Texture Coords","Unknown",_objectId);
+  slotTextureAdded("Original Per Vertex Texture Coords","",_objectId);
 
   OpenMesh::HPropHandleT< typename MeshT::TexCoord2D > oldHalfedgeCoords;
   _mesh->add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
   for ( TriMesh::HalfedgeIter he_it = _mesh->halfedges_begin(); he_it != _mesh->halfedges_end(); ++he_it)
     _mesh->property(oldHalfedgeCoords, he_it ) =  _mesh->texcoord2D( he_it );
 
-  emit addTexture("Original Per Face Texture Coords","Unknown",_objectId);
-  emit setTextureMode("Original Per Face Texture Coords","type=halfedgebased",_objectId);
-
+  slotTextureAdded("Original Per Face Texture Coords","",_objectId);
+  slotSetTextureMode("Original Per Face Texture Coords","type=halfedgebased",_objectId);
 
   // If this property is available we have a mapping between face_index_property and
   // available textures stored in the map
