@@ -36,6 +36,18 @@ if (WIN32)
   if (NOT EXISTS ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_BINDIR})
     file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_BINDIR})
   endif ()
+elseif (APPLE)
+  set (OPENFLIPPER_APPDIR "../Resources/")
+  set (MAC_OPENFLIPPER_BASEDIR "OpenFlipper.app/Contents/Resources")
+  set (OPENFLIPPER_DATADIR "${MAC_OPENFLIPPER_BASEDIR}")
+  set (OPENFLIPPER_PLUGINDIR "${MAC_OPENFLIPPER_BASEDIR}/Plugins")
+  set (OPENFLIPPER_LIBDIR "${MAC_OPENFLIPPER_BASEDIR}/../MacOS")
+  set (OPENFLIPPER_BINDIR "${MAC_OPENFLIPPER_BASEDIR}/../MacOS")
+  add_definitions(
+    -DOPENFLIPPER_APPDIR="../Resources"
+    -DOPENFLIPPER_PLUGINDIR="Plugins"
+    -DOPENFLIPPER_DATADIR="."
+  )
 else ()
   set (OPENFLIPPER_APPDIR "..")
   set (OPENFLIPPER_DATADIR "share/OpenFlipper")
@@ -57,7 +69,7 @@ macro (set_target_props target)
       BUILD_WITH_INSTALL_RPATH 1
       SKIP_BUILD_RPATH 0
     )
-  else ()
+  elseif (NOT APPLE)
     set_target_properties (
       ${target} PROPERTIES
       INSTALL_RPATH "$ORIGIN/../lib/OpenFlipper"
@@ -227,4 +239,33 @@ function (add_plugins)
         get_filename_component (_plugin_dir ${_plugin} PATH)
         add_subdirectory (${CMAKE_SOURCE_DIR}/${_plugin_dir})
     endforeach ()
+endfunction ()
+
+macro (get_files_in_dir ret dir)
+  file (GLOB_RECURSE __files RELATIVE "${dir}" "${dir}/*")
+  foreach (_file ${__files})
+    if (NOT _file MATCHES ".*svn.*")
+      list (APPEND ${ret} "${_file}")
+    endif ()
+  endforeach ()
+endmacro ()
+
+function (copy_after_build target src dst)
+  of_unset (_files)
+  get_files_in_dir (_files ${src})
+  foreach (_file ${_files})
+    add_custom_command(TARGET ${target} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${src}/${_file}" "${dst}/${_file}"
+    )
+  endforeach ()
+endfunction ()
+
+function (install_dir src dst)
+  of_unset (_files)
+  get_files_in_dir (_files ${src})
+  foreach (_file ${_files})
+    install(FILES "${src}/${_file}"
+      DESTINATION "${dst}"
+    )
+  endforeach ()
 endfunction ()
