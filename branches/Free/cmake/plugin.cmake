@@ -134,6 +134,7 @@ function (_build_openflipper_plugin plugin)
 
     add_library (Plugin-${plugin} MODULE ${uic_targets} ${sources} ${headers} ${moc_targets})
 
+    of_set (OPENFLIPPER_PLUGINS "${OPENFLIPPER_PLUGINS};Plugin-${plugin}")
 
     set_target_properties (
       Plugin-${plugin} PROPERTIES
@@ -165,12 +166,17 @@ function (_build_openflipper_plugin plugin)
       target_link_libraries (
          Plugin-${plugin}
 	 PluginLib
-  	 ${QT_LIBRARIES}
+	 ${QT_LIBRARIES}
       )
-      set_target_properties (
-        Plugin-${plugin} PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR}"
-      )
+      if (NOT EXISTS ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR})
+        file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR})
+      endif ()
+      add_custom_command (TARGET Plugin-${plugin} POST_BUILD
+                          COMMAND ${CMAKE_COMMAND} -E
+                          copy_if_different
+                            ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/libPlugin-${plugin}.so
+                            ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR}/libPlugin-${plugin}.so
+                          )
     else()
       set_target_properties (
         Plugin-${plugin} PROPERTIES
@@ -182,11 +188,13 @@ function (_build_openflipper_plugin plugin)
       ${${_PLUGIN}_DEPS_LIBRARIES}
       ${${_PLUGIN}_LIBRARIES}
     )
-    
-    install (
-      TARGETS Plugin-${plugin}
-      DESTINATION ${OPENFLIPPER_PLUGINDIR}
-    )
+
+    if (NOT APPLE)
+      install (
+        TARGETS Plugin-${plugin}
+        DESTINATION ${OPENFLIPPER_PLUGINDIR}
+      )
+    endif ()
 
   else ()
     message (STATUS "[WARNING] One or more dependencies for plugin ${plugin} not found. Skipping plugin.")
