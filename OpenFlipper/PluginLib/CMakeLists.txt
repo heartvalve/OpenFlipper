@@ -61,7 +61,9 @@ target_link_libraries (PluginLib
   ${FTGL_LIBS}
 )
 
-install (TARGETS PluginLib DESTINATION ${OPENFLIPPER_LIBDIR})
+if (NOT APPLE)
+  install (TARGETS PluginLib DESTINATION ${OPENFLIPPER_LIBDIR})
+endif ()
 
 if (WIN32)
   add_custom_command (TARGET PluginLib POST_BUILD
