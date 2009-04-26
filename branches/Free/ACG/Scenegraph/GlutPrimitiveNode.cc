@@ -208,8 +208,17 @@ GlutPrimitiveNode::draw_obj() const
 
 void
 GlutPrimitiveNode::
-pick(GLState& /* _state */ , PickTarget _target)
+pick(GLState& _state , PickTarget _target)
 {
+  // initialize picking stack
+  if (!_state.pick_set_maximum (1))
+  {
+    std::cerr << "Strange pickSetMaximum failed for index 1 in GlutPrimitiveNode\n";
+    return;
+  }
+  _state.pick_set_name(0);
+
+
   switch (_target)
   {
     case PICK_ANYTHING:
