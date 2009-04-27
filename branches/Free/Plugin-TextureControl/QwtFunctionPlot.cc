@@ -29,11 +29,15 @@
 
 namespace ACG {
 
-//== IMPLEMENTATION ========================================================== 
+//== IMPLEMENTATION ==========================================================
 
 
 /// Default constructor
-QwtFunctionPlot::QwtFunctionPlot(QWidget* _parent) : QDialog( _parent ), Ui::QwtFunctionPlotBase()
+QwtFunctionPlot::QwtFunctionPlot(QWidget* _parent) :
+    QDialog( _parent ),
+    Ui::QwtFunctionPlotBase(),
+    min_(FLT_MAX),
+    max_(FLT_MIN)
 {
   setupUi( this );
 
