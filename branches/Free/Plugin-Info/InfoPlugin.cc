@@ -63,6 +63,8 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   info_->closestv->setText( "<B>Closest vertex:</B> " + locale.toString( closest_v_idx ) );
   // Closest Edge
   info_->closeste->setText( "<B>Closest edge:</B> " + locale.toString( closest_e_idx ) );
+  // Picked Vertex
+  info_->pickedFace->setText( "<B>Picked face:</B> " + locale.toString( _face ) );
   // Components
   info_->components->setText( "<B>Components:</B> " + locale.toString(MeshInfo::componentCount(_mesh)));
   // Boundaries

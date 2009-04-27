@@ -83,6 +83,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="pickedFace" >
+         <property name="text" >
+          <string>Picked face</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QLabel" name="edges" >
          <property name="toolTip" >
           <string>Number of Edges</string>
