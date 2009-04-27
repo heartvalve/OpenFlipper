@@ -64,7 +64,7 @@
  *
  * \section tool_bar The tool bar
  *
- * The toolbar at the top of OpenFlippers main window offers clickable icons to
+ * The toolbar at the top of OpenFlipper's main window offers clickable icons to
  * quickly access a plugins function. A user plugin can integrate its own buttons
  * into the tool bar by implementing the \ref ToolbarInterface.
  *
