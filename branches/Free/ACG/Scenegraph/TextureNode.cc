@@ -476,6 +476,15 @@ bool TextureNode::activateTexture(GLuint _id)
 {
   int search = available(_id);
 
+  //==========================================================================
+  // If zero is given, unbind all textures
+  //==========================================================================
+  if ( _id == 0 )
+    search = 0;
+
+  //==========================================================================
+  // Index has not been found ... No corresponding Texture in this node
+  //==========================================================================
   if ( search == -1 ) {
     std::cerr << "Texture to activate not found!" << std::endl;
     return false;
