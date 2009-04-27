@@ -191,7 +191,7 @@ defineTest(Doc) {
 			dox.commands = doxygen Doxyfile;
 		} else {
 			dox.commands = 	doxygen Doxyfile; \
-					cp Doc/html/*.qch $$TOPDIR/OpenFlipper/Help/
+					cp Docs/html/*.qch $$TOPDIR/OpenFlipper/Help/
 		}
 
 		dox.depends =
