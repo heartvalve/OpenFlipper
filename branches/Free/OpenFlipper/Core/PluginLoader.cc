@@ -895,6 +895,10 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(plugin , SIGNAL( addEmptyObject( DataType, int& )) ,
                 this   , SLOT( slotAddEmptyObject( DataType, int&) ),Qt::DirectConnection);
 
+      if ( checkSignal(plugin,"copyObject(int,int&)" ) )
+        connect(plugin , SIGNAL( copyObject( int, int& )) ,
+                this   , SLOT( slotCopyObject( int, int&) ),Qt::DirectConnection);
+
       if ( checkSignal(plugin,"emptyObjectAdded(int)" ) )
         connect(plugin , SIGNAL( emptyObjectAdded( int ) ) ,
                 this   , SLOT( slotEmptyObjectAdded ( int ) ),Qt::DirectConnection);
