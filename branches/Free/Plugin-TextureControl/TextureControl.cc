@@ -230,6 +230,9 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
     // We have to remap them after loading the textures!
     // ================================================================================
     std::map< int,int > newMapping;
+    // zero ( no texture ) always maps to to zero
+    newMapping[0]=0;
+
 
     // TODO : If only one Texture, use single Texturing mode
     if ( true ) {
@@ -966,15 +969,15 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
     // get the list of textures for this mode
     QStringList textureList = texData->texture(_textureName).multiTextureList;
 
+    texData->enableTexture(_textureName, true);
+
     for ( uint i = 0 ; i < texData->textures().size() ; ++i ) {
-      if ( textureList.contains( texData->textures()[i].name() ) )
+      if ( textureList.contains( texData->textures()[i].name() ) || (texData->textures()[i].name() == _textureName) )
         texData->enableTexture( texData->textures()[i].name() , false );
        else
         texData->disableTexture( texData->textures()[i].name() );
-
     }
 
-    std::cerr << "Trying to enable multitexture" << std::endl;
   }
 
   // ================================================================================
@@ -1001,6 +1004,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {
       PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName ).indexMappingProperty().toStdString() );
+      PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture(0);
       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
     }
@@ -1016,6 +1020,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName ).indexMappingProperty().toStdString() );
+      PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture(0);
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
     }
