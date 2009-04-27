@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>877</width>
+    <width>968</width>
     <height>618</height>
    </rect>
   </property>
@@ -30,7 +30,7 @@
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="" >
+     <widget class="QWidget" name="layoutWidget" >
       <layout class="QVBoxLayout" name="verticalLayout_2" >
        <item>
         <widget class="QLabel" name="textureLabel" >
@@ -68,7 +68,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="" >
+     <widget class="QWidget" name="layoutWidget" >
       <layout class="QVBoxLayout" name="verticalLayout_3" >
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3" >
@@ -78,6 +78,47 @@
             <string>Properties</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout" >
+            <item>
+             <widget class="QLabel" name="typeLabel" >
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>20</height>
+               </size>
+              </property>
+              <property name="text" >
+               <string>Type:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line_2" >
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4" >
+              <item>
+               <widget class="QLabel" name="indexLabel" >
+                <property name="text" >
+                 <string>Index Property:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="indexBox" />
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="Line" name="line" >
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
             <item>
              <widget class="QCheckBox" name="repeatBox" >
               <property name="text" >
@@ -253,7 +294,6 @@
          <property name="title" >
           <string> Visualization of current values </string>
          </property>
-         <zorder>groupBox</zorder>
         </widget>
        </item>
       </layout>

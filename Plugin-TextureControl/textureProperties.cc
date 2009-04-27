@@ -38,6 +38,12 @@
 
 #include <QtGui>
 #include <OpenFlipper/common/GlobalOptions.hh>
+#include <OpenFlipper/common/Types.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <ObjectTypes/PolyMesh/PolyMesh.hh>
+#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+
+
 
 texturePropertiesWidget::texturePropertiesWidget(QWidget *parent)
     : QDialog(parent)
@@ -144,18 +150,61 @@ void texturePropertiesWidget::textureAboutToChange(QTreeWidgetItem* _item, int _
 
 void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column){
 
-  //open changes for the last texture so switch back
+  // ================================================================================
+  // opened changes for the last texture so switch back
+  // ================================================================================
   if ( propChanged_ ){
     textureList->setCurrentItem( curItem_ );
     return;
   }
 
+  // ================================================================================
+  // Unable to find the right texture
+  // ================================================================================
   if ( !texData_->textureExists( _item->text(_column) ) )
-    return; //should not happen
+    return;
 
+  // ================================================================================
+  // Set name of the texture
+  // ================================================================================
   textureName_ = _item->text(_column);
 
-  //update the dialog
+  // ================================================================================
+  // Get Object to parse Properties
+  // ================================================================================
+//   BaseObjectData* obj;
+//   if ( PluginFunctions::getObject(  id_ , obj ) ) {
+//     if( obj->dataType( DATA_TRIANGLE_MESH ) ){
+//       TriMesh* mesh = PluginFunctions::triMeshObject(obj)->mesh();
+//       std::string fprops;
+//       mesh->fprop_stats(fprops);
+//       QString facePropertyString(fprops.c_str());
+//       QStringList faceProperties = facePropertyString.split(QRegExp("\n"));
+//
+//       std::cerr << "Got : \n" ;
+//       for ( int i = 0 ; i < faceProperties.size(); ++i ) {
+//         faceProperties[i] = faceProperties[i].trimmed();
+//         if ( ( ! faceProperties[i].size() == 0 ) && faceProperties[i] != "<fprop>" )
+//           std::cerr << faceProperties[i].toStdString() << std::endl;
+//         else
+//           continue;
+//
+//         OpenMesh::FPropHandleT< int > indexPropertyTest;
+//         if ( mesh->get_property_handle(indexPropertyTest,faceProperties[i].toStdString()) ) {
+//           std::cerr << "Got handle : " << faceProperties[i].toStdString() << std::endl;
+//         } else {
+//           std::cerr << "Unable to get Handle : " << faceProperties[i].toStdString() << std::endl;
+//         }
+//       }
+//
+//     } else if( obj->dataType( DATA_POLY_MESH ) ){
+//       PolyMesh* mesh = PluginFunctions::polyMeshObject(obj)->mesh();
+//     }
+//   }
+
+  // ================================================================================
+  // Update the dialog
+  // ================================================================================
   Texture& texture = texData_->texture(textureName_);
 
   repeatBox->setChecked(texture.parameters.repeat);
@@ -166,6 +215,36 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
   max_val->setValue( texture.parameters.max_val );
   clamp_min->setValue( texture.parameters.clamp_min );
   clamp_max->setValue( texture.parameters.clamp_max );
+
+  switch (texture.type()) {
+    case MULTITEXTURE:
+      typeLabel->setText("Type:   MultiTexture");
+      indexLabel->setEnabled(true);
+      indexBox->setEnabled(true);
+      indexBox->clear();
+      std::cerr << "Property status: " << std::endl;
+
+      indexBox->addItem("TODO");
+      break;
+    case HALFEDGEBASED:
+      typeLabel->setText("Type:   HalfedgeBased");
+      indexLabel->setEnabled(false);
+      indexBox->setEnabled(false);
+      indexBox->clear();
+      break;
+    case VERTEXBASED:
+      typeLabel->setText("Type:   VertexBased");
+      indexLabel->setEnabled(false);
+      indexBox->setEnabled(false);
+      indexBox->clear();
+      break;
+    case UNSET:
+      typeLabel->setText("Type:   Unset");
+      indexLabel->setEnabled(false);
+      indexBox->setEnabled(false);
+      indexBox->clear();
+      break;
+  }
 
   // Show the texture Image
   imageLabel->setPixmap(QPixmap::fromImage(texture.textureImage));
@@ -209,6 +288,7 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
 
   propChanged_ = false;
   curItem_ = textureList->currentItem();
+
 }
 
 void texturePropertiesWidget::slotChangeImage() {
@@ -230,7 +310,7 @@ void texturePropertiesWidget::slotChangeImage() {
 
     image_ = imageLabel->pixmap()->toImage();
 
-    #ifdef USE_QWT
+    #ifdef WITH_QWT
     functionPlot_->setImage( &image_ );
     functionPlot_->replot();
     #endif
@@ -309,7 +389,7 @@ void texturePropertiesWidget::slotButtonBoxClicked(QAbstractButton* _button){
 void texturePropertiesWidget::slotPropertiesChanged(double /*_value*/){
   propChanged_ = true;
 
-  #ifdef USE_QWT
+  #ifdef WITH_QWT
   functionPlot_->setParameters(repeatBox->isChecked(), max_val->value(),
                               clampBox->isChecked(),  clamp_min->value(), clamp_max->value(),
                               centerBox->isChecked(),

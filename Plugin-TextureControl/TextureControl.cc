@@ -1061,7 +1061,6 @@ void TextureControlPlugin::switchDrawMode( TextureType _type ) {
       case MULTITEXTURE:
       case HALFEDGEBASED:
         PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED, PluginFunctions::ALL_VIEWERS );
-        std::cerr << "A" << std::endl;
         break;
       case VERTEXBASED:
         PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED , PluginFunctions::ALL_VIEWERS);
