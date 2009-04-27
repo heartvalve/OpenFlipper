@@ -82,6 +82,9 @@ static QDir currentDir_;
 /// Current script directory of the application
 static QDir currentScriptDir_;
 
+/// Current texture directory of the application
+static QDir currentTextureDir_;
+
 /// Experience level of the user
 static Experience experienceLevel_ = NOVICE;
 
@@ -264,37 +267,40 @@ QString dirSeparator() {
   return QString("/");
 }
 
-QDir applicationDir()  { return applicationDir_; }
-QDir configDir()       { return configDir_;  }
-QDir pluginDir()       { return pluginDir_;  }
-QDir shaderDir()       { return shaderDir_;  }
-QDir textureDir()      { return textureDir_; }
-QDir iconDir()         { return iconDir_;    }
-QDir fontsDir()        { return fontsDir_;    }
-QDir currentDir()      { return currentDir_; }
-QDir currentScriptDir(){ return currentScriptDir_; }
+QDir applicationDir()   { return applicationDir_; }
+QDir configDir()        { return configDir_;  }
+QDir pluginDir()        { return pluginDir_;  }
+QDir shaderDir()        { return shaderDir_;  }
+QDir textureDir()       { return textureDir_; }
+QDir iconDir()          { return iconDir_;    }
+QDir fontsDir()         { return fontsDir_;    }
+QDir currentDir()       { return currentDir_; }
+QDir currentScriptDir() { return currentScriptDir_; }
+QDir currentTextureDir(){ return currentTextureDir_; }
 
-QString applicationDirStr()  { return applicationDir_.absolutePath() ; }
-QString configDirStr()       { return configDir_.absolutePath();       }
-QString pluginDirStr()       { return pluginDir_.absolutePath();       }
-QString shaderDirStr()       { return shaderDir_.absolutePath();       }
-QString textureDirStr()      { return textureDir_.absolutePath();      }
-QString iconDirStr()         { return iconDir_.absolutePath();         }
-QString fontsDirStr()        { return fontsDir_.absolutePath();        }
-QString currentDirStr()      { return currentDir_.absolutePath();      }
-QString currentScriptDirStr(){ return currentScriptDir_.absolutePath();}
+QString applicationDirStr()    { return applicationDir_.absolutePath();    }
+QString configDirStr()         { return configDir_.absolutePath();         }
+QString pluginDirStr()         { return pluginDir_.absolutePath();         }
+QString shaderDirStr()         { return shaderDir_.absolutePath();         }
+QString textureDirStr()        { return textureDir_.absolutePath();        }
+QString iconDirStr()           { return iconDir_.absolutePath();           }
+QString fontsDirStr()          { return fontsDir_.absolutePath();          }
+QString currentDirStr()        { return currentDir_.absolutePath();        }
+QString currentScriptDirStr()  { return currentScriptDir_.absolutePath();  }
+QString currentTextureDirStr() { return currentTextureDir_.absolutePath(); }
 
 QStringList optionFiles()   { return optionFiles_; }
 
-void applicationDir(QDir _dir)       { applicationDir_   = _dir; }
-void pluginDir(QDir _dir)            { pluginDir_        = _dir; }
-void shaderDir(QDir _dir)            { shaderDir_        = _dir; }
-void textureDir(QDir _dir)           { textureDir_       = _dir; }
-void iconDir(QDir _dir)              { iconDir_          = _dir; }
+void applicationDir(QDir _dir)       { applicationDir_    = _dir; }
+void pluginDir(QDir _dir)            { pluginDir_         = _dir; }
+void shaderDir(QDir _dir)            { shaderDir_         = _dir; }
+void textureDir(QDir _dir)           { textureDir_        = _dir; }
+void iconDir(QDir _dir)              { iconDir_           = _dir; }
 void fontsDir(QDir _dir)             { fontsDir_          = _dir;}
-void configDir(QDir _dir)            { configDir_        = _dir; }
-void currentDir(QDir _dir)           { currentDir_       = _dir; }
-void currentScriptDir(QDir _dir)     { currentScriptDir_ = _dir; }
+void configDir(QDir _dir)            { configDir_         = _dir; }
+void currentDir(QDir _dir)           { currentDir_        = _dir; }
+void currentScriptDir(QDir _dir)     { currentScriptDir_  = _dir; }
+void currentTextureDir(QDir _dir)    { currentTextureDir_ = _dir; }
 
 void optionFiles(QStringList _list) { optionFiles_ = _list; }
 
@@ -386,6 +392,15 @@ bool currentScriptDir(QString _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
     currentScriptDir_     = tmp;
+    return true;
+  }
+  return false;
+}
+
+bool currentTextureDir(QString _dir) {
+  QDir tmp(_dir);
+  if (tmp.exists()) {
+    currentTextureDir_ = tmp;
     return true;
   }
   return false;
