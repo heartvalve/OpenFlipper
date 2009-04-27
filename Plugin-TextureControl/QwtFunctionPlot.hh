@@ -14,7 +14,7 @@
 #ifndef ACG_QWTFUNCTIONPLOT_HH
 #define ACG_QWTFUNCTIONPLOT_HH
 
-#ifdef USE_QWT
+#ifdef WITH_QWT
 
 //== INCLUDES =================================================================
 
@@ -104,7 +104,7 @@ private:
 //=============================================================================
 } // namespace ACG
 
-#endif // USE_QWT
+#endif // WITH_QWT
 
 //=============================================================================
 #endif // ACG_QWTFUNCTIONPLOT_HH defined

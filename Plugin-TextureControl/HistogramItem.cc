@@ -1,5 +1,5 @@
 
-#ifdef USE_QWT
+#ifdef WITH_QWT
 
 #include <qstring.h>
 #include <qpainter.h>
@@ -89,24 +89,24 @@ QColor HistogramItem::color(uint i) const
 QwtDoubleRect HistogramItem::boundingRect() const
 {
     QwtDoubleRect rect = d_data->data.boundingRect();
-    if ( !rect.isValid() ) 
+    if ( !rect.isValid() )
         return rect;
 
-    if ( d_data->attributes & Xfy ) 
+    if ( d_data->attributes & Xfy )
     {
-        rect = QwtDoubleRect( rect.y(), rect.x(), 
+        rect = QwtDoubleRect( rect.y(), rect.x(),
             rect.height(), rect.width() );
 
-        if ( rect.left() > d_data->reference ) 
+        if ( rect.left() > d_data->reference )
             rect.setLeft( d_data->reference );
-        else if ( rect.right() < d_data->reference ) 
+        else if ( rect.right() < d_data->reference )
             rect.setRight( d_data->reference );
-    } 
-    else 
+    }
+    else
     {
-        if ( rect.bottom() < d_data->reference ) 
+        if ( rect.bottom() < d_data->reference )
             rect.setBottom( d_data->reference );
-        else if ( rect.top() > d_data->reference ) 
+        else if ( rect.top() > d_data->reference )
             rect.setTop( d_data->reference );
     }
 
@@ -137,7 +137,7 @@ bool HistogramItem::testHistogramAttribute(HistogramAttribute attribute) const
     return d_data->attributes & attribute;
 }
 
-void HistogramItem::draw(QPainter *painter, const QwtScaleMap &xMap, 
+void HistogramItem::draw(QPainter *painter, const QwtScaleMap &xMap,
     const QwtScaleMap &yMap, const QRect &) const
 {
     const QwtIntervalData &iData = d_data->data;
@@ -250,22 +250,22 @@ void HistogramItem::drawBar(QPainter *painter,
 
    painter->setPen(QPen(dark, 2));
 #if QT_VERSION >= 0x040000
-   QwtPainter::drawLine(painter, 
+   QwtPainter::drawLine(painter,
       r.left() + 1, r.bottom(), r.right() + 1, r.bottom());
 #else
-   QwtPainter::drawLine(painter, 
+   QwtPainter::drawLine(painter,
       r.left(), r.bottom(), r.right() + 1, r.bottom());
 #endif
 
    painter->setPen(QPen(light, 1));
 
 #if QT_VERSION >= 0x040000
-   QwtPainter::drawLine(painter, 
+   QwtPainter::drawLine(painter,
       r.left(), r.top() + 1, r.left(), r.bottom());
    QwtPainter::drawLine(painter,
       r.left() + 1, r.top() + 2, r.left() + 1, r.bottom() - 1);
 #else
-   QwtPainter::drawLine(painter, 
+   QwtPainter::drawLine(painter,
       r.left(), r.top() + 1, r.left(), r.bottom() + 1);
    QwtPainter::drawLine(painter,
       r.left() + 1, r.top() + 2, r.left() + 1, r.bottom());
@@ -274,18 +274,18 @@ void HistogramItem::drawBar(QPainter *painter,
    painter->setPen(QPen(dark, 1));
 
 #if QT_VERSION >= 0x040000
-   QwtPainter::drawLine(painter, 
+   QwtPainter::drawLine(painter,
       r.right() + 1, r.top() + 1, r.right() + 1, r.bottom());
-   QwtPainter::drawLine(painter, 
+   QwtPainter::drawLine(painter,
       r.right(), r.top() + 2, r.right(), r.bottom() - 1);
 #else
-   QwtPainter::drawLine(painter, 
+   QwtPainter::drawLine(painter,
       r.right() + 1, r.top() + 1, r.right() + 1, r.bottom() + 1);
-   QwtPainter::drawLine(painter, 
+   QwtPainter::drawLine(painter,
       r.right(), r.top() + 2, r.right(), r.bottom());
 #endif
 
    painter->restore();
 }
 
-#endif // USE_QWT
+#endif // WITH_QWT
