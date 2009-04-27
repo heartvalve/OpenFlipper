@@ -137,8 +137,15 @@ void Core::readApplicationOptions(INIFile& _ini) {
     // Load the default script directory
     //============================================================================
     QString script_dir;
-    if( _ini.get_entry(script_dir, "Options", "ScriptDir") )
+    if( _ini.get_entry(script_dir, "Options", "CurrentScriptDir") )
       OpenFlipper::Options::currentScriptDir(script_dir);
+
+    //============================================================================
+    // Load the default texture directory
+    //============================================================================
+    QString current_texture_dir;
+    if( _ini.get_entry(current_texture_dir, "Options", "CurrentTextureDir") )
+      OpenFlipper::Options::currentTextureDir(current_texture_dir);
 
     //============================================================================
     // Load the random base color setting
@@ -489,7 +496,10 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   _ini.add_entry("Options","StartupDir",dir);
 
   QString scriptDir = OpenFlipper::Options::currentScriptDirStr().toUtf8();
-  _ini.add_entry("Options","ScriptDir",scriptDir);
+  _ini.add_entry("Options","CurrentScriptDir",scriptDir);
+
+  QString current_texture_dir = OpenFlipper::Options::currentTextureDirStr().toUtf8();
+  _ini.add_entry("Options","CurrentTextureDir",current_texture_dir);
 
   _ini.add_entry("Options","RandomBaseColor", OpenFlipper::Options::randomBaseColor() );
 

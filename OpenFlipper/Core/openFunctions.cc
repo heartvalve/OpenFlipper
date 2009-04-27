@@ -266,11 +266,12 @@ void Core::slotObjectOpened ( int _id ) {
   // ================================================================================
   backupRequest(_id,"Original Object");
 
+  // ================================================================================
+  // Add the file to the recent files menu
+  // ================================================================================
   QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
-
   BaseObject* object2;
   PluginFunctions::getObject(_id,object2);
-
   if ( OpenFlipper::Options::gui() )
     coreWidget_->addRecent( filename, object2->dataType() );
 

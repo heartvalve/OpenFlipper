@@ -225,6 +225,26 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   bool currentScriptDir(QString _dir);
 
+
+
+  /// return the current texture-directory
+  DLLEXPORT
+  QString currentTextureDirStr();
+
+  /// return the current texture-directory
+  DLLEXPORT
+  QDir currentTextureDir();
+
+  /// Sets the Path to the current texture-directory
+  DLLEXPORT
+  void currentTextureDir(QDir _dir);
+
+  /// Sets the Path to the current texture-directory
+  DLLEXPORT
+  bool currentTextureDir(QString _dir);
+
+
+
   /// return last used dataType
   DLLEXPORT
   QString lastDataType();
@@ -308,7 +328,7 @@ void fontsDir(QDir _dir);
   /// get if a gui should be visible or not
   DLLEXPORT
   bool gui( );
-  
+
   /// Store stereo support setting
   DLLEXPORT
   void stereo( bool _stereo );
@@ -510,7 +530,7 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   bool splash( );
 
-  /// Default background color 
+  /// Default background color
   DLLEXPORT
   void defaultBackgroundColor( QColor _color );
 
@@ -518,7 +538,7 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   QColor defaultBackgroundColor();
 
-  /// Default base color 
+  /// Default base color
   DLLEXPORT
   void defaultBaseColor( QColor _color );
 
@@ -526,11 +546,11 @@ void fontsDir(QDir _dir);
   DLLEXPORT
   QColor defaultBaseColor();
 
-  /// use randomized base color 
+  /// use randomized base color
   DLLEXPORT
   void randomBaseColor(bool _random);
 
-  /// use randomized base color 
+  /// use randomized base color
   DLLEXPORT
   bool randomBaseColor();
 

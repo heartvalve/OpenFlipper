@@ -103,7 +103,7 @@ LoadWidget::~LoadWidget()
   // (the fileplugins control the optionWidgets)
   for (int i=0; i < boxWidgets_.size(); i++){
     boxLayout_->removeWidget( boxWidgets_[i] );
-    boxWidgets_[i]->setParent(0); 
+    boxWidgets_[i]->setParent(0);
   }
 }
 
@@ -112,7 +112,7 @@ void LoadWidget::currentFilterChanged(QString _currentFilter){
 
   for (int i=0; i < boxWidgets_.size(); i++){
     boxLayout_->removeWidget( boxWidgets_[i] );
-    boxWidgets_[i]->setParent(0); 
+    boxWidgets_[i]->setParent(0);
   }
 
   boxWidgets_.clear();
@@ -138,7 +138,7 @@ void LoadWidget::currentFilterChanged(QString _currentFilter){
         //add Widget for new Filter
         QWidget* nuWidget = 0;
         nuWidget = supportedTypes_[i].plugin->saveOptionsWidget(_currentFilter);
-  
+
         if (nuWidget != 0){
           boxLayout_->addWidget( nuWidget );
           boxWidgets_.push_back( nuWidget );
@@ -154,7 +154,7 @@ void LoadWidget::slotSetLoadFilters(int _typeIndex){
 
   for (int i=0; i < boxWidgets_.size(); i++){
     boxLayout_->removeWidget( boxWidgets_[i] );
-    boxWidgets_[i]->setParent(0); 
+    boxWidgets_[i]->setParent(0);
   }
 
   boxWidgets_.clear();
@@ -188,7 +188,7 @@ void LoadWidget::slotSetSaveFilters(int _typeIndex){
 
   for (int i=0; i < boxWidgets_.size(); i++){
     boxLayout_->removeWidget( boxWidgets_[i] );
-    boxWidgets_[i]->setParent(0); 
+    boxWidgets_[i]->setParent(0);
   }
 
   boxWidgets_.clear();
@@ -230,7 +230,9 @@ void LoadWidget::loadFile(){
   for (int i=0; i < files.size(); i++){
     QFileInfo fi(files[i]);
     QString filename = fi.absoluteFilePath();
+    OpenFlipper::Options::currentDir(fi.absolutePath());
     QFile file(filename);
+
     if (fi.isDir() || !file.exists()) continue; //do nothing if its a not a valid file
     QString ext = fi.suffix();
 
@@ -240,6 +242,8 @@ void LoadWidget::loadFile(){
     emit load(filename, type, unused);
     success = true;
   }
+
+
 
   if (success) //at least one item was loaded successfully
     OpenFlipper::Options::lastDataType(typeBox_->currentText());

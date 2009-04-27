@@ -256,6 +256,15 @@ void Core::setupOptions() {
   // Set the previously generated Optionfiles
   OpenFlipper::Options::optionFiles(optionFiles);
 
+  // ==============================================================
+  // Default File open directories
+  // ==============================================================
+  // Default to OpenFlippers Texture dir
+  OpenFlipper::Options::currentTextureDir(OpenFlipper::Options::textureDirStr());
+
+  // Default to home directory
+  OpenFlipper::Options::currentDir( QDir::home() );
+
 
   // ==============================================================
   // Load Application options from all files available
