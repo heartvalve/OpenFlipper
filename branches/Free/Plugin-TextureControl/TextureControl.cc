@@ -225,8 +225,10 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
   OpenMesh::MPropHandleT< std::map< int, std::string > > property;
   if ( _mesh->get_property_handle(property,"TextureMapping") ) {
 
-    // As internal texture indices might differ from the available ones,
+    // ================================================================================
+    // As internal texture indices might differ from the available ones loaded from files,
     // We have to remap them after loading the textures!
+    // ================================================================================
     std::map< int,int > newMapping;
 
     // TODO : If only one Texture, use single Texturing mode
@@ -241,10 +243,8 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
 
       // Convert the indices stored in the mesh to the actual ones used for rendering
       OpenMesh::FPropHandleT< int > newIndexProperty;
-      if (! _mesh->get_property_handle(newIndexProperty,"TextureControl: OriginalFileIndexMapping") ) {
+      if (! _mesh->get_property_handle(newIndexProperty,"TextureControl: OriginalFileIndexMapping") )
         _mesh->add_property(newIndexProperty,"TextureControl: OriginalFileIndexMapping");
-        _textureData.texture("OBJ Data").indexMappingProperty("TextureControl: OriginalFileIndexMapping");
-      }
 
       for ( TriMesh::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it)
         _mesh->property(newIndexProperty, f_it ) =  newMapping[_mesh->texture_index( f_it )];
@@ -590,6 +590,7 @@ bool TextureControlPlugin::parseMode( QString _mode, Texture& _texture ) {
     // Cleanup representation
     value       = value.trimmed();
     sectionName = sectionName.trimmed();
+    sectionName = sectionName.toLower();
 
     if ( sectionName == "clamp" ) {
       if ( StringToBool(value) != _texture.parameters.clamp ) {
@@ -626,7 +627,7 @@ bool TextureControlPlugin::parseMode( QString _mode, Texture& _texture ) {
         _texture.parameters.scale = StringToBool(value);
         changed = true;
       }
-    }else if ( sectionName == "indexProperty" ) {
+    }else if ( sectionName == "indexproperty" ) {
       if ( value != _texture.indexMappingProperty() ) {
         _texture.indexMappingProperty( value );
         changed = true;
@@ -667,8 +668,8 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
   Texture& texture = globalTextures_.texture(_textureName);
 
   // Parse the mode settings
-  _mode = _mode.toLower();
   parseMode(_mode,texture);
+  _mode = _mode.toLower();
 
   // ================================================================================
   // Mark updated texture as dirty
@@ -770,7 +771,7 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName, QString _mod
   // ================================================================================
   Texture& texture = texData->texture(_textureName);
 
-  _mode = _mode.toLower();
+
   bool changed = parseMode(_mode,texture);
 
   //only update if the texture is enabled
