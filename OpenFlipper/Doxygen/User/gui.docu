@@ -1,0 +1,50 @@
+/** \page gui User interface concepts
+ *
+ * \section userInterface The user interface
+ *
+ * The OpenFlipper user interface is composed of four essential widgets.
+ *
+ * - \ref viewport_widget
+ * - \ref plugin_widget
+ * - \ref logging_widget
+ * - \ref tool_bar
+ *
+ * \section viewport_widget The viewport widget
+ *
+ * The viewport widget visualizes the whole scenegraph. One can adjust
+ * viewer specific settings by chosing <b>View</b> in OpenFlippers
+ * menu bar. Adjustable settings contain:
+ *
+ * - Drawmodes (points, wireframe, solid,...)
+ * - Projection mode (orthogonal, perspective)
+ * - Set / reset home view
+ * - Capture screenshots
+ * - Adapt colors such that they match the desired profile (for printing, presentation,...)
+ *
+ * You can switch to multi viewport mode by hitting space bar.
+ * See \ref view for more information on viewing modes.
+ *
+ * \image html viewport_widget.png The viewport widget
+ *
+ * \section plugin_widget The plugin widget
+ *
+ * The plugin widget shows the toolboxes of the loaded plugins. You can customize
+ * this widget's settings by clicking an the "Change View Mode"-button.
+ *
+ * \image html plugin_widget.png The plugin widget with simple smoother plugin opened
+ *
+ * \section logging_widget The logging widget
+ *
+ * The logging widget is used to display plugin specific information,
+ * warnings or errors. Here you can keep track of what is going on inside.
+ *
+ * \image html logging_widget.png The logging widget after opening a triangle mesh file
+ *
+ * \section tool_bar The tool bar
+ *
+ * The toolbar at the top of OpenFlipper's main window offers clickable icons to
+ * quickly access a plugins function.
+ *
+ * \image html tool_bar.png The tool bar
+ */
+
