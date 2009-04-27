@@ -214,10 +214,12 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
 void texturePropertiesWidget::slotChangeImage() {
 
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
-                                                  OpenFlipper::Options::currentDirStr(),
+                                                  OpenFlipper::Options::currentTextureDirStr(),
                                                   tr("Images (*.png *.xpm *.jpg)"));
 
   if ( QFile(fileName).exists() ){
+    QFileInfo fileInfo(fileName);
+    OpenFlipper::Options::currentTextureDir( fileInfo.absolutePath() );
 
     imageLabel->setPixmap( QPixmap(fileName) );
     imageLabel->setScaledContents(true);
