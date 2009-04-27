@@ -1,10 +1,9 @@
-/*! \mainpage OpenFlipper User Documentation
- *\image html splash.png
- * \section intro_sec Introduction
+/** @mainpage OpenFlipper User Documentation
+ * @image html splash.png
+ * @section intro_sec Introduction
  *
  * This is the user documentation for the OpenFlipper project.
  * OpenFlipper is a flexible geometry modeling and processing system.
- *
  *
  * This manual is divided into the following pages:
  * - \subpage gui "User interface concepts"
