@@ -41,6 +41,7 @@
 #include <ACG/GL/GLState.hh>
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include "OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh"
 #include "OpenFlipper/common/GlobalOptions.hh"
 
 #include <math.h>
@@ -195,7 +196,7 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
 }
 
 template< typename MeshT >
-void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId, TextureData& _textureData ) {
+void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId ) {
 
   // ================================================================================
   // Create a backup of the original per Vertex texture Coordinates
@@ -252,7 +253,9 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
       for ( TriMesh::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it)
         _mesh->property(newIndexProperty, f_it ) =  newMapping[_mesh->texture_index( f_it )];
 
-      // We use a different property for storing the IndexProperty to prevent overwriting them
+      // =================================================================================================
+      // We use a different property for storing the IndexProperty to prevent overwriting the original one
+      // =================================================================================================
       slotSetTextureMode("OBJ Data","indexProperty=TextureControl: OriginalFileIndexMapping", _objectId);
 
       doSwitchTexture("OBJ Data",_objectId);
@@ -341,11 +344,11 @@ void TextureControlPlugin::fileOpened( int _id ) {
   if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
     TriMesh* mesh = PluginFunctions::triMesh(obj);
     if ( mesh )
-      handleFileOpenTextures(mesh,_id,*texData);
+      handleFileOpenTextures(mesh,_id);
   } else if ( obj->dataType( DATA_POLY_MESH ) ) {
     PolyMesh* mesh = PluginFunctions::polyMesh(obj);
     if ( mesh )
-      handleFileOpenTextures(mesh,_id,*texData);
+      handleFileOpenTextures(mesh,_id);
   }
 
 }
@@ -1057,10 +1060,11 @@ void TextureControlPlugin::switchDrawMode( TextureType _type ) {
     switch (_type) {
       case MULTITEXTURE:
       case HALFEDGEBASED:
-        PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED );
+        PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED, PluginFunctions::ALL_VIEWERS );
+        std::cerr << "A" << std::endl;
         break;
       case VERTEXBASED:
-        PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
+        PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED , PluginFunctions::ALL_VIEWERS);
         break;
       case UNSET:
         emit log(LOGERR,"Switching drawmode for unknonw Texture Type!");
