@@ -237,14 +237,33 @@ void Core::slotObjectOpened ( int _id ) {
 
   object->setBaseColor( colorV );
 
+  // ================================================================================
+  // Set standard draw mode if this is the first opened object
+  // If a plugin changes the drawmode later, this setting will be overridden!
+  // ================================================================================
+  if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+      PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::standardDrawMode() );
+
+  // ================================================================================
+  // Recompute bounding box and scenegraph info
+  // ================================================================================
   resetScenegraph();
 
+  // ================================================================================
+  // Tell plugins, that a file has been opened
+  // ================================================================================
   emit openedFile( _id );
 
-  // Tell the Plugins that the Object List and the active object have changed
+  // ================================================================================
+  // Tell plugins, that the Object is updated and the active object has changed
+  // ================================================================================
   emit signalObjectUpdated(_id);
   emit objectSelectionChanged( _id );
 
+  // ================================================================================
+  // Create initial backup
+  // ================================================================================
   backupRequest(_id,"Original Object");
 
   QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
@@ -255,10 +274,11 @@ void Core::slotObjectOpened ( int _id ) {
   if ( OpenFlipper::Options::gui() )
     coreWidget_->addRecent( filename, object2->dataType() );
 
-  // if this is the first object opend, reset the global draw mode of all examiners to standard draw mode
+  // ================================================================================
+  // if this is the first object opend, reset the global view
+  // ================================================================================
   if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::standardDrawMode() );
       coreWidget_->examiner_widgets_[i]->viewAll();
     }
 
