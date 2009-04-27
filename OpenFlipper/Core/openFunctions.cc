@@ -181,6 +181,14 @@ void Core::slotAddEmptyObject( DataType _type , int& _id ) {
   _id = addEmptyObject( _type );
 }
 
+/// Slot creating a copy of an existing object
+void slotCopyObject( int _oldId , int& _newId ) {
+  std::cerr << "slotCopyObject" << std::endl;
+
+  _newId = 99;
+
+}
+
 /// Slot for loading a given file
 void Core::slotLoad(QString _filename, DataType _type, int& _id) {
   _id = loadObject(_type,_filename);

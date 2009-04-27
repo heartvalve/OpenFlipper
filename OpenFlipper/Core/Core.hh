@@ -487,8 +487,11 @@ private:
       /// Slot adding empty object from Menu
       void slotAddEmptyObjectMenu();
 
-      /// Slot adding empty object from Menu of a given type
+      /// Slot adding empty object of a given type
       void slotAddEmptyObject( DataType _type , int& _id );
+
+      /// Slot copying an object
+      void slotCopyObject( int _oldId , int& _newId );
 
       /// Exit Application
       void slotExit();

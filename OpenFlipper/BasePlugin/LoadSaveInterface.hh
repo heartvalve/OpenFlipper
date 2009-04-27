@@ -74,6 +74,13 @@ class LoadSaveInterface {
        */
       virtual void addEmptyObject( DataType /*_type*/, int& /*_id*/) {};
 
+      /** Create a copy of an existing object
+       *
+       * @param _oldId id of the object to copy
+       * @param _newId id of the new object created
+       */
+      virtual void copyObject( int /*_oldId*/, int& /*_newId*/) {};
+
       /**
        *
        * @param _id Object to Save
