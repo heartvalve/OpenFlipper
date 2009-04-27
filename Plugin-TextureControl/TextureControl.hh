@@ -162,7 +162,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     /// Handles data stored in new opened files ( e.g. Texture Information )
     template< typename MeshT >
-    void handleFileOpenTextures( MeshT*& _mesh  , int _objectId  );
+    void handleFileOpenTextures( MeshT*& _mesh  , int _objectId , TextureData& _textureData );
 
     /** \brief parse texture mode settings
      * Parses the string _mode and changes the settings in _texture according to the string.
