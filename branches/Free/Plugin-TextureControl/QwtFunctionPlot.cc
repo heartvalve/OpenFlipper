@@ -6,7 +6,7 @@
 
 //== INCLUDES =================================================================
 
-#ifdef USE_QWT
+#ifdef WITH_QWT
 
 #include "QwtFunctionPlot.hh"
 
@@ -235,4 +235,4 @@ void QwtFunctionPlot::replot()
 } // namespace db
 //=============================================================================
 
-#endif // USE_QWT
+#endif // WITH_QWT
