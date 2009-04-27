@@ -5,6 +5,7 @@
 include( $$TOPDIR/qmake/all.include )
 
 Plugin()
+Doc(Plugin-Datacontrol)
 
 DIRECTORIES = .
 
