@@ -230,8 +230,10 @@ void texturePropertiesWidget::slotChangeImage() {
 
     image_ = imageLabel->pixmap()->toImage();
 
+    #ifdef USE_QWT
     functionPlot_->setImage( &image_ );
     functionPlot_->replot();
+    #endif
 
     propChanged_ = true;
   }
@@ -307,6 +309,7 @@ void texturePropertiesWidget::slotButtonBoxClicked(QAbstractButton* _button){
 void texturePropertiesWidget::slotPropertiesChanged(double /*_value*/){
   propChanged_ = true;
 
+  #ifdef USE_QWT
   functionPlot_->setParameters(repeatBox->isChecked(), max_val->value(),
                               clampBox->isChecked(),  clamp_min->value(), clamp_max->value(),
                               centerBox->isChecked(),
@@ -314,5 +317,5 @@ void texturePropertiesWidget::slotPropertiesChanged(double /*_value*/){
                               scaleBox->isChecked());
 
   functionPlot_->replot();
-
+  #endif
 }

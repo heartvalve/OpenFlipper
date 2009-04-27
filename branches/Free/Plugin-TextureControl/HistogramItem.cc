@@ -1,3 +1,6 @@
+
+#ifdef USE_QWT
+
 #include <qstring.h>
 #include <qpainter.h>
 #include <qwt_plot.h>
@@ -284,3 +287,5 @@ void HistogramItem::drawBar(QPainter *painter,
 
    painter->restore();
 }
+
+#endif // USE_QWT
