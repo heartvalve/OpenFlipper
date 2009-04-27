@@ -6,6 +6,8 @@
 
 //== INCLUDES =================================================================
 
+#ifdef USE_QWT
+
 #include "QwtFunctionPlot.hh"
 
 #include <iostream>
@@ -16,9 +18,9 @@
 #include <qlineedit.h>
 #include <qlabel.h>
 #include <qpainter.h>
-
 #include <qwt_curve_fitter.h>
 #include <qwt_interval_data.h>
+
 
 #include <float.h>
 #include <math.h>
@@ -222,6 +224,11 @@ void QwtFunctionPlot::replot()
 }
 
 
+
+
+
 //=============================================================================
 } // namespace db
 //=============================================================================
+
+#endif // USE_QWT
