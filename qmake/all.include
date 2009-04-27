@@ -177,6 +177,13 @@ defineTest(Application) {
 
 defineTest(Doc) {
 
+	DOCNAME = $$1
+
+	isEmpty(DOCNAME) {
+	
+		error("Error: No parameter has been specified to Doc()! Usage: Doc(Projectname).")
+	} else {
+
 	unix {
 		# Get version of doxygen and convert it to integer number
 		QCHSUPPORT = $$system("version=`doxygen --version | sed -e 's/\.//g'`;test $version -lt 157 && echo false || echo true")
@@ -191,7 +198,9 @@ defineTest(Doc) {
 			dox.commands = doxygen Doxyfile;
 		} else {
 			dox.commands = 	doxygen Doxyfile; \
-					cp Docs/html/*.qch $$TOPDIR/OpenFlipper/Help/
+					cp Docs/html/*.qch $$TOPDIR/OpenFlipper/Help/; \
+					mkdir $$TOPDIR/OpenFlipper/Docs/$$DOCNAME; \
+					cp -rf Docs/html $$TOPDIR/OpenFlipper/Docs/$$DOCNAME/
 		}
 
 		dox.depends =
@@ -211,6 +220,7 @@ defineTest(Doc) {
 		message("Automatic documentation build is not yet supported under windows!")
 	}
 
+	}
 }
 
 defineTest(Subdirs) {
