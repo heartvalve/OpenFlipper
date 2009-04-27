@@ -1,0 +1,16 @@
+/** \page coreplugins Core plugins
+ * 
+ * OpenFlipper comes along with some core plugins that are already integrated.
+ * These plugins provide the most basic functions like file reading and writing,
+ * some mesh transformation operations, data selection, etc.
+ *
+ * Here is an overview of the core plugins:
+ *
+ * - \ref datacontrol-plugin "Data Control Plugin"
+ * - \ref decimater-plugin "Decimater Plugin"
+ * - \ref move-plugin "Move Plugin"
+ * - \ref selections-plugin "Data Control Plugin"
+ * - \ref simplesmoother-plugin "Simple Smoother Plugin"
+ * - \ref smoother-plugin "Smoother Plugin"
+ *
+ */
