@@ -48,7 +48,7 @@ Texture::Texture() :
 }
 
 TextureData::TextureData() :
-  nextInternalID_(0)
+  nextInternalID_(1)
 {
   // map 0 to no texture
   textureMap_[0]     = 0;
