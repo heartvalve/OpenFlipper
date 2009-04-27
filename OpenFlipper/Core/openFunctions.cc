@@ -214,7 +214,14 @@ void Core::slotCopyObject( int _oldId , int& _newId ) {
   else
     std::cerr << "Unable to add copy to object list" << std::endl;
 
+  // return the new id
   _newId = copy->id();
+
+  // tell plugins that a new object has been created
+  slotEmptyObjectAdded(_newId);
+
+  // tell plugins that the object has been updated
+  slotObjectUpdated(_newId);
 
 }
 
