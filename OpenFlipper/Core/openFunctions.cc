@@ -182,10 +182,39 @@ void Core::slotAddEmptyObject( DataType _type , int& _id ) {
 }
 
 /// Slot creating a copy of an existing object
-void slotCopyObject( int _oldId , int& _newId ) {
-  std::cerr << "slotCopyObject" << std::endl;
+void Core::slotCopyObject( int _oldId , int& _newId ) {
 
-  _newId = 99;
+  if ( _oldId == -1 ) {
+    emit log(LOGERR,"Requested copy for illegal Object id : " + QString::number(_oldId) );
+    _newId = -1;
+    return;
+  }
+
+  // get the node
+  BaseObject* object = objectRoot_->childExists(_oldId);
+
+  if ( !object ) {
+    emit log(LOGERR,"Requested copy for unknown Object id : " + QString::number(_oldId) );
+    _newId = -1;
+    return ;
+  }
+
+  // Copy the item
+  BaseObject* copy = object->copy();
+
+  if ( copy == 0 ) {
+    emit log(LOGERR,"Unable to create a copy of the object.");
+    return;
+  }
+
+  // Integrate into object tree
+  copy->setParent( object->parent() );
+  if ( object->parent() )
+    object->parent()->appendChild(copy);
+  else
+    std::cerr << "Unable to add copy to object list" << std::endl;
+
+  _newId = copy->id();
 
 }
 
