@@ -118,7 +118,8 @@ Core() :
   //init nodes
   root_node_scenegraph_ = new ACG::SceneGraph::SeparatorNode(0, "SceneGraph Root Node");
   root_node_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_, "Data Root Node");
-  coordsysNode_ = new ACG::SceneGraph::CoordsysNode(root_node_scenegraph_,"Core Coordsys Node");
+  coordsysMaterialNode_ = new ACG::SceneGraph::MaterialNode(root_node_scenegraph_,"Coordsys Material Node");
+  coordsysNode_ = new ACG::SceneGraph::CoordsysNode(coordsysMaterialNode_,"Core Coordsys Node");
   coordsysNode_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);
 
    // Add ViewMode All
