@@ -1,3 +1,9 @@
+option (
+  DISABLE_QMAKE_BUILD
+  "Disable inclusion of qmake build system into source package"
+  OFF
+)
+
 set (CPACK_PACKAGE_NAME "OpenFlipper")
 set (CPACK_PACKAGE_VENDOR "ACG")
 
@@ -45,6 +51,29 @@ list (APPEND CPACK_SOURCE_IGNORE_FILES "/.*\\\\.kdevses")
 
 list (APPEND CPACK_SOURCE_IGNORE_FILES "/ACG/lib/")
 list (APPEND CPACK_SOURCE_IGNORE_FILES "/ACG/include/")
+
+if (DISABLE_QMAKE_BUILD)
+  list (APPEND CPACK_SOURCE_IGNORE_FILES "/.*\\\\.pro")
+  list (APPEND CPACK_SOURCE_IGNORE_FILES "/qmake/")
+  list (APPEND CPACK_SOURCE_IGNORE_FILES "\\\\.qmake\\\\.cache")
+endif ()
+
+# filter out all disabled plugins
+file (
+  GLOB _plugins_in
+  RELATIVE "${CMAKE_SOURCE_DIR}"
+  "${CMAKE_SOURCE_DIR}/Plugin-*"
+)
+foreach (_plugin ${_plugins_in})
+  string (REPLACE "Plugin-" "" _plugin_name ${_plugin})
+  string (TOUPPER ${_plugin_name} _PLUGIN)
+  if (NOT EXISTS ${CMAKE_SOURCE_DIR}/${_plugin}/CMakeLists.txt AND DISABLE_QMAKE_BUILD)
+    list (APPEND CPACK_SOURCE_IGNORE_FILES "${CMAKE_SOURCE_DIR}/${_plugin}")
+  elseif (DISABLE_PLUGIN_${_PLUGIN})
+    list (APPEND CPACK_SOURCE_IGNORE_FILES "${CMAKE_SOURCE_DIR}/${_plugin}")
+  endif ()
+endforeach ()
+
 
 if (WIN32)
   set (CPACK_GENERATOR "NSIS")
