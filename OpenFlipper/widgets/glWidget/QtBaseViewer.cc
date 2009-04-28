@@ -117,11 +117,11 @@ static const char          VIEW_MAGIC[] =
 
 
 glViewer::glViewer( QtGLGraphicsScene* _scene,
-		    QGLWidget* _glWidget,
+		              QGLWidget* _glWidget,
                     Viewer::ViewerProperties& _properties,
-		    QGraphicsWidget* _parent,
-		    const char* /* _name */ ,
-		    QStatusBar *_statusBar) :
+		              QGraphicsWidget* _parent,
+		              const char* /* _name */ ,
+		              QStatusBar *_statusBar) :
   QGraphicsWidget(_parent),
   statusbar_(_statusBar),
   glareaGrabbed_(false),

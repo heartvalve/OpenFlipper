@@ -117,8 +117,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   splitter_ = new QSplitter(Qt::Vertical,toolSplitter_);
   stackedWidget_ = new QStackedWidget(splitter_);
 
-  QGLFormat format;
-  QGLFormat::setDefaultFormat(format);
+  QGLFormat format = QGLFormat::defaultFormat();
+
   #ifdef ARCH_DARWIN
   format.setStereo(false);
   #else
@@ -126,12 +126,32 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   #endif
   format.setAlpha(true);
   format.setStencil(true);
+  format.setSampleBuffers(true);
+  QGLFormat::setDefaultFormat(format);
 
   // Construct GL context & widget
   baseLayout_ = new QtMultiViewLayout;
   baseLayout_->setContentsMargins(0,0,0,0);
 
-  glWidget_ = new QGLWidget(format);
+  // ===============================================================================
+  // Test context capabilities ...
+  // If we get stereo buffers, we use them .. which might disable multisampling
+  // If we dont have stereo, we disable it to not interfere with multisampling
+  // ===============================================================================
+  QGLWidget* test = new QGLWidget(format);
+  if ( ! test->format().stereo() ) {
+    //     std::cerr << "No stereo ... disabling stereo for real context!" << std::endl;
+    format.setStereo(false);
+    QGLFormat::setDefaultFormat(format);
+  }/* else {
+    std::cerr << "Stereo found ok" << std::endl;
+  }*/
+
+  delete test;
+
+  glWidget_ = new QGLWidget(format,0);
+
+
   glView_ = new QtGLGraphicsView(stackedWidget_);
   glScene_ = new QtGLGraphicsScene (&examiner_widgets_, baseLayout_);
 
@@ -141,6 +161,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   glView_->setViewport(glWidget_);
   glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
   glView_->setScene(glScene_);
+
 
 
   centerWidget_ = new QGraphicsWidget;
