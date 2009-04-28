@@ -94,7 +94,9 @@ public:
     /// backface culling
     BackFaceCulling=256,
     /// Color Material ( Only when a drawmode using shading and lighting is enabled )
-    ColorMaterial=512
+    ColorMaterial=512,
+    /// MultiSampling
+    MultiSampling=1024
   };
 
 
@@ -132,7 +134,7 @@ public:
   /** @} */
 
   //===========================================================================
-  /** @name Color settings ( Applied to all objects below this node )
+  /** @name Color and material settings ( Applied to all objects below this node )
     * @{ */
   //===========================================================================
 
@@ -173,6 +175,11 @@ public:
     void disable_color_material() { color_material_ = false; }
     /// get colorMaterial state
     bool colorMaterial() { return color_material_; }
+
+    /// set shininess
+    void set_shininess(float _s) { shininess_ = _s; }
+    /// get shininess
+    float shininess() const { return shininess_; }
 
   /** @} */
 
@@ -220,12 +227,35 @@ public:
 
   /** @} */
 
+  //===========================================================================
+  /** @name Other Rendering options
+    * @{ */
+  //===========================================================================
+
+    /// Enable Multisampling
+    void enable_multisampling() {
+      multiSampling_ = true;
+    }
+
+    /// enable alpha test (draw pixels if alpha >= _clip)
+    void disable_multisampling() {
+      multiSampling_ = false;
+    }
+
+    /// Get state of multisampling
+    bool multiSampling() {
+      return multiSampling_;
+    }
+
+    /// Set state of multisampling
+    void set_multisampling( bool _state ) {
+      multiSampling_ = _state;
+    }
+
+  /** @} */
 
 
-  /// set shininess
-  void set_shininess(float _s) { shininess_ = _s; }
-  /// get shininess
-  float shininess() const { return shininess_; }
+
 
 
 
@@ -251,6 +281,8 @@ public:
   /// disable backface culling (not active by default, see applyProperties)
   void disable_backface_culling() { backface_culling_ = false; }
 
+
+
     /// get properties that will be applied (OR'ed ApplyProperties)
   unsigned int applyProperties() const { return applyProperties_; }
 
@@ -273,18 +305,20 @@ private:
   float    point_size_,      point_size_backup_;
   float    line_width_,      line_width_backup_;
 
-  bool     round_points_, round_points_backup_;
-  bool     lines_smooth_, lines_smooth_backup_;
+  bool     round_points_,    round_points_backup_;
+  bool     lines_smooth_,    lines_smooth_backup_;
 
-  bool     alpha_test_, alpha_test_backup_;
-  float    alpha_clip_, alpha_clip_backup_;
+  bool     alpha_test_,      alpha_test_backup_;
+  float    alpha_clip_,      alpha_clip_backup_;
 
-  bool     blending_, blending_backup_;
-  GLenum   blend_param1_, blend_param1_backup_;
-  GLenum   blend_param2_, blend_param2_backup_;
+  bool     blending_,        blending_backup_;
+  GLenum   blend_param1_,    blend_param1_backup_;
+  GLenum   blend_param2_,    blend_param2_backup_;
 
-  bool     color_material_,color_material_backup_;
-  bool     backface_culling_, backface_culling_backup_;
+  bool     color_material_,  color_material_backup_;
+  bool     backface_culling_,backface_culling_backup_;
+
+  bool     multiSampling_,   multiSampling_backup_;
 };
 
 

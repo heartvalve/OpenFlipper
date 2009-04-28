@@ -66,7 +66,7 @@ namespace QtWidgets {
 
 
 QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
-				    SceneGraph::MaterialNode * _node )
+				                        SceneGraph::MaterialNode * _node )
   : QDialog( _parent ),
     node_(_node)
 {
@@ -90,6 +90,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   blendParam1_     = bak_blendParam1_     = node_->blending_param1();
   blendParam2_     = bak_blendParam2_     = node_->blending_param2();
   colorMaterial_   = bak_colorMaterial_   = node_->colorMaterial();
+  multiSampling_   = bak_multiSampling_   = node_->multiSampling();
 
   baseColorActive_       = bak_baseColorActive_       = node_->applyProperties() & SceneGraph::MaterialNode::BaseColor;
   materialActive_        = bak_materialActive_        = node_->applyProperties() & SceneGraph::MaterialNode::Material;
@@ -101,6 +102,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   blendingActive_        = bak_blendingActive_        = node_->applyProperties() & SceneGraph::MaterialNode::Blending;
   backfaceCullingActive_ = bak_backfaceCullingActive_ = node_->applyProperties() & SceneGraph::MaterialNode::BackFaceCulling;
   colorMaterialActive_   = bak_colorMaterialActive_   = node_->applyProperties() & SceneGraph::MaterialNode::ColorMaterial;
+  multiSamplingActive_   = bak_multiSamplingActive_   = node_->applyProperties() & SceneGraph::MaterialNode::MultiSampling;
 
   setButtonColor( ui_.baseColorButton, color_ );
   setButtonColor( ui_.ambientColorButton, ambient_ );
@@ -116,6 +118,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.alphaTest->setChecked( alphaTest_ );
   ui_.alpha->setValue((int) alphaValue_ * 100.0f );
   ui_.colorMaterial->setChecked( colorMaterial_ );
+  ui_.multiSampling->setChecked( multiSampling_ );
   ui_.blending->setChecked( blending_ );
 
   for (int i=0; i < ui_.blendParam1->count(); i++)
@@ -138,6 +141,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.blendingActive->setChecked( blendingActive_ );
   ui_.backfaceCullingActive->setChecked( backfaceCullingActive_ );
   ui_.colorMaterialActive->setChecked( colorMaterialActive_ );
+  ui_.multiSamplingActive->setChecked( multiSamplingActive_ );
 
   connect( ui_.baseColorButton,     SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
   connect( ui_.ambientColorButton,  SIGNAL( clicked() ), this, SLOT( enableProperty() ) );
@@ -152,6 +156,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   connect( ui_.alphaTest,           SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
   connect( ui_.blending,            SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
   connect( ui_.colorMaterial,       SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
+  connect( ui_.multiSampling,       SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
 
   connect( ui_.baseColorButton, SIGNAL( clicked() ),
 	   this, SLOT( changeBaseColor() ) );
@@ -180,6 +185,8 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
      this, SLOT( changeAlphaValue(int) ) );
   connect( ui_.colorMaterial, SIGNAL( toggled(bool) ),
      this, SLOT( changeColorMaterial(bool) ) );
+  connect( ui_.multiSampling, SIGNAL( toggled(bool) ),
+     this, SLOT( changeMultiSampling(bool) ) );
   connect( ui_.blending, SIGNAL( toggled(bool) ),
      this, SLOT( changeBlending(bool) ) );
   connect( ui_.blendParam1, SIGNAL( currentIndexChanged(const QString&) ),
@@ -208,6 +215,8 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
      this, SLOT( changeActive(bool) ) );
   connect( ui_.colorMaterialActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
+  connect( ui_.multiSamplingActive, SIGNAL( toggled(bool) ),
+     this, SLOT( changeActive(bool) ) );
 
   connect( ui_.alphaTest,  SIGNAL( toggled(bool) ),
            ui_.alpha,        SLOT( setEnabled(bool) ) );
@@ -231,6 +240,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.blendingActive->setChecked(blendingActive_);
   ui_.backfaceCullingActive->setChecked(backfaceCullingActive_);
   ui_.colorMaterialActive->setChecked(colorMaterialActive_);
+  ui_.multiSamplingActive->setChecked(multiSamplingActive_);
 
   connect( ui_.okButton, SIGNAL( clicked() ),
 	   this, SLOT( accept() ) );
@@ -308,6 +318,7 @@ void QtMaterialDialog::applyChanges()
   if (blendingActive_) properties = properties | SceneGraph::MaterialNode::Blending;
   if (backfaceCullingActive_) properties = properties | SceneGraph::MaterialNode::BackFaceCulling;
   if (colorMaterialActive_) properties = properties | SceneGraph::MaterialNode::ColorMaterial;
+  if (multiSamplingActive_) properties = properties | SceneGraph::MaterialNode::MultiSampling;
 
   node_->applyProperties(properties);
 
@@ -340,6 +351,11 @@ void QtMaterialDialog::applyChanges()
     node_->enable_color_material();
   else
     node_->disable_color_material();
+
+  if ( multiSampling_ )
+    node_->enable_multisampling();
+  else
+    node_->disable_multisampling();
 
   // this is not optimal !
   if(round_points_ || line_smooth_ )
@@ -374,6 +390,7 @@ void QtMaterialDialog::undoChanges()
   if (bak_blendingActive_) properties = properties | SceneGraph::MaterialNode::Blending;
   if (bak_backfaceCullingActive_) properties = properties | SceneGraph::MaterialNode::BackFaceCulling;
   if (bak_colorMaterialActive_) properties = properties | SceneGraph::MaterialNode::ColorMaterial;
+  if (bak_multiSampling_) properties = properties | SceneGraph::MaterialNode::MultiSampling;
 
   node_->applyProperties(properties);
 
@@ -406,6 +423,11 @@ void QtMaterialDialog::undoChanges()
     node_->enable_color_material();
   else
     node_->disable_color_material();
+
+  if ( bak_multiSampling_ )
+    node_->enable_multisampling();
+  else
+    node_->disable_multisampling();
 
   setButtonColor( ui_.diffuseColorButton, diffuse_ );
   setButtonColor( ui_.ambientColorButton, ambient_ );
@@ -569,6 +591,15 @@ QtMaterialDialog::changeColorMaterial(bool _b)
 //-----------------------------------------------------------------------------
 
 void
+QtMaterialDialog::changeMultiSampling(bool _b)
+{
+  multiSampling_ = (bool)_b;
+  applyChanges();
+}
+
+//-----------------------------------------------------------------------------
+
+void
 QtMaterialDialog::changeAlphaValue(int _new)
 {
   alphaValue_ = _new / 100.0f;
@@ -652,6 +683,7 @@ QtMaterialDialog::changeActive(bool /*toggle*/)
   blendingActive_        = ui_.blendingActive->isChecked();
   backfaceCullingActive_ = ui_.backfaceCullingActive->isChecked();
   colorMaterialActive_   = ui_.colorMaterialActive->isChecked();
+  multiSamplingActive_   = ui_.multiSamplingActive->isChecked();
 
   applyChanges();
 }
@@ -674,6 +706,7 @@ QtMaterialDialog::enableProperty(int /*i*/)
   else if (sender() == ui_.alphaTest)           ui_.alphaTestActive->setChecked( true );
   else if (sender() == ui_.blending)            ui_.blendingActive->setChecked( true );
   else if (sender() == ui_.colorMaterial)       ui_.colorMaterialActive->setChecked( true );
+  else if (sender() == ui_.multiSampling)       ui_.multiSamplingActive->setChecked( true );
 }
 
 //-----------------------------------------------------------------------------
@@ -695,6 +728,7 @@ QtMaterialDialog::enableProperty()
   else if (sender() == ui_.alphaTest)           ui_.alphaTestActive->setChecked( true );
   else if (sender() == ui_.blending)            ui_.blendingActive->setChecked( true );
   else if (sender() == ui_.colorMaterial)       ui_.colorMaterialActive->setChecked( true );
+  else if (sender() == ui_.multiSampling)       ui_.multiSamplingActive->setChecked( true );
 
 }
 

@@ -75,7 +75,8 @@ MaterialNode::MaterialNode( BaseNode*            _parent,
     blend_param1_(GL_ONE),
     blend_param2_(GL_ZERO),
     color_material_(true),
-    backface_culling_(false)
+    backface_culling_(false),
+    multiSampling_(true)
 {}
 
 
@@ -120,9 +121,10 @@ void MaterialNode::enter(GLState& _state, unsigned int  _drawmode  )
     round_points_backup_ = glIsEnabled(GL_POINT_SMOOTH) &&
                            glIsEnabled(GL_ALPHA_TEST);
 
-    if( round_points_)
+    if( round_points_) {
+      glHint(GL_POINT_SMOOTH_HINT,GL_NICEST);
       glEnable(GL_POINT_SMOOTH);
-    else
+    } else
       glDisable(GL_POINT_SMOOTH);
   }
 
@@ -132,12 +134,23 @@ void MaterialNode::enter(GLState& _state, unsigned int  _drawmode  )
                            glIsEnabled(GL_ALPHA_TEST);
 
     if( lines_smooth_) {
-            glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
+      glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
       glEnable(GL_LINE_SMOOTH);
     } else
       glDisable(GL_LINE_SMOOTH);
   }
 
+  if (applyProperties_ & MultiSampling)
+  {
+    multiSampling_backup_ = glIsEnabled(GL_MULTISAMPLE);
+
+    if( multiSampling_) {
+      glEnable(GL_MULTISAMPLE);
+    } else {
+      glDisable(GL_MULTISAMPLE);
+    }
+
+  }
 
   if (applyProperties_ & AlphaTest)
   {
@@ -264,6 +277,17 @@ void MaterialNode::leave(GLState& _state, unsigned int _drawmode )
       glEnable(GL_LINE_SMOOTH);
     else
       glDisable(GL_LINE_SMOOTH);
+  }
+
+  if (applyProperties_ & MultiSampling)
+  {
+
+    if( multiSampling_backup_) {
+      glEnable(GL_MULTISAMPLE);
+    } else {
+      glDisable(GL_MULTISAMPLE);
+    }
+
   }
 
   if (applyProperties_ & AlphaTest)
