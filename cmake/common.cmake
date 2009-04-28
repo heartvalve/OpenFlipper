@@ -264,8 +264,9 @@ function (install_dir src dst)
   of_unset (_files)
   get_files_in_dir (_files ${src})
   foreach (_file ${_files})
+    get_filename_component (_file_PATH ${_file} PATH)
     install(FILES "${src}/${_file}"
-      DESTINATION "${dst}"
+      DESTINATION "${dst}/${_file_PATH}"
     )
   endforeach ()
 endfunction ()
