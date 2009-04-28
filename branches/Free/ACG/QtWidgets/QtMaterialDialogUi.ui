@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>616</width>
-    <height>601</height>
+    <height>632</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -299,6 +299,13 @@
             </property>
             <property name="text" >
              <string>Round Points</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="lineSmoothCheckBox" >
+            <property name="text" >
+             <string>Smooth Lines</string>
             </property>
            </widget>
           </item>
@@ -633,6 +640,13 @@ back is visible should be rendered.</string>
          <widget class="QCheckBox" name="roundPointsActive" >
           <property name="text" >
            <string>Round Points</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="lineSmoothActive" >
+          <property name="text" >
+           <string>Line Smooth</string>
           </property>
          </widget>
         </item>
