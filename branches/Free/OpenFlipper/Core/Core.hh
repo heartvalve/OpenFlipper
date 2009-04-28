@@ -518,6 +518,9 @@ private:
       /// Data root node
       SeparatorNode*  root_node_;
 
+      /// Node for coordsys Material
+      ACG::SceneGraph::MaterialNode* coordsysMaterialNode_;
+
       /// Node for the coordinate system
       ACG::SceneGraph::CoordsysNode* coordsysNode_;
 
