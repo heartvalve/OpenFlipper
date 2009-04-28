@@ -85,14 +85,16 @@ public:
     LineWidth=8,
     /// draw smooth (round) points using glPoint()
     RoundPoints=16,
+    /// draw smooth lines using glLine()
+    LineSmooth=32,
     /// use alpha test
-    AlphaTest=32,
+    AlphaTest=64,
     /// use blending
-    Blending=64,
+    Blending=128,
     /// backface culling
-    BackFaceCulling=128,
+    BackFaceCulling=256,
     /// Color Material ( Only when a drawmode using shading and lighting is enabled )
-    ColorMaterial=256
+    ColorMaterial=512
   };
 
 
@@ -193,6 +195,11 @@ public:
     /// get: round points enabled
     bool round_points() const { return round_points_; }
 
+    /// set: smooth lines enabled
+    void set_line_smooth(bool _b) { lines_smooth_ = _b; }
+    /// get: rsmooth lines enabled
+    bool line_smooth() const { return lines_smooth_; }
+
   /** @} */
 
   //===========================================================================
@@ -267,6 +274,7 @@ private:
   float    line_width_,      line_width_backup_;
 
   bool     round_points_, round_points_backup_;
+  bool     lines_smooth_, lines_smooth_backup_;
 
   bool     alpha_test_, alpha_test_backup_;
   float    alpha_clip_, alpha_clip_backup_;

@@ -82,6 +82,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   point_size_      = bak_point_size_      = node_->point_size();
   line_width_      = bak_line_width_      = node_->line_width();
   round_points_    = bak_round_points_    = node_->round_points();
+  line_smooth_     = bak_line_smooth_     = node_->line_smooth();
   backfaceCulling_ = bak_backfaceCulling_ = node_->backface_culling();
   alphaTest_       = bak_alphaTest_       = node_->alpha_test();
   alphaValue_      = bak_alphaValue_      = node_->alpha_value();
@@ -95,6 +96,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   pointSizeActive_       = bak_pointSizeActive_       = node_->applyProperties() & SceneGraph::MaterialNode::PointSize;
   lineWidthActive_       = bak_lineWidthActive_       = node_->applyProperties() & SceneGraph::MaterialNode::LineWidth;
   roundPointsActive_     = bak_roundPointsActive_     = node_->applyProperties() & SceneGraph::MaterialNode::RoundPoints;
+  lineSmoothActive_      = bak_lineSmoothActive_      = node_->applyProperties() & SceneGraph::MaterialNode::LineSmooth;
   alphaTestActive_       = bak_alphaTestActive_       = node_->applyProperties() & SceneGraph::MaterialNode::AlphaTest;
   blendingActive_        = bak_blendingActive_        = node_->applyProperties() & SceneGraph::MaterialNode::Blending;
   backfaceCullingActive_ = bak_backfaceCullingActive_ = node_->applyProperties() & SceneGraph::MaterialNode::BackFaceCulling;
@@ -109,6 +111,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.pointSizeSpinBox->setValue((int)point_size_);
   ui_.lineWidthSpinBox->setValue((int)line_width_);
   ui_.roundPointsCheckBox->setChecked(round_points_);
+  ui_.lineSmoothCheckBox->setChecked(line_smooth_);
   ui_.backfaceCulling->setChecked( backfaceCulling_ );
   ui_.alphaTest->setChecked( alphaTest_ );
   ui_.alpha->setValue((int) alphaValue_ * 100.0f );
@@ -130,6 +133,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.pointSizeActive->setChecked( pointSizeActive_ );
   ui_.lineWidthActive->setChecked( lineWidthActive_ );
   ui_.roundPointsActive->setChecked( roundPointsActive_ );
+  ui_.lineSmoothActive->setChecked( lineSmoothActive_ );
   ui_.alphaTestActive->setChecked( alphaTestActive_ );
   ui_.blendingActive->setChecked( blendingActive_ );
   ui_.backfaceCullingActive->setChecked( backfaceCullingActive_ );
@@ -143,6 +147,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   connect( ui_.pointSizeSpinBox,    SIGNAL( valueChanged(int) ), this, SLOT( enableProperty(int) ) );
   connect( ui_.lineWidthSpinBox,    SIGNAL( valueChanged(int) ), this, SLOT( enableProperty(int) ) );
   connect( ui_.roundPointsCheckBox, SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
+  connect( ui_.lineSmoothCheckBox,  SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
   connect( ui_.backfaceCulling,     SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
   connect( ui_.alphaTest,           SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
   connect( ui_.blending,            SIGNAL( pressed() ), this, SLOT( enableProperty() ) );
@@ -165,6 +170,8 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
 	   this, SLOT( changeLineWidth(int) ) );
   connect( ui_.roundPointsCheckBox, SIGNAL( toggled(bool) ),
 	   this, SLOT( changeRoundPoints(bool) ) );
+  connect( ui_.lineSmoothCheckBox, SIGNAL( toggled(bool) ),
+      this, SLOT( changeLineSmooth(bool) ) );
   connect( ui_.backfaceCulling, SIGNAL( toggled(bool) ),
      this, SLOT( changeBackfaceCulling(bool) ) );
   connect( ui_.alphaTest, SIGNAL( toggled(bool) ),
@@ -190,6 +197,8 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   connect( ui_.lineWidthActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
   connect( ui_.roundPointsActive, SIGNAL( toggled(bool) ),
+     this, SLOT( changeActive(bool) ) );
+  connect( ui_.lineSmoothActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
   connect( ui_.alphaTestActive, SIGNAL( toggled(bool) ),
      this, SLOT( changeActive(bool) ) );
@@ -217,6 +226,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.pointSizeActive->setChecked(pointSizeActive_);
   ui_.lineWidthActive->setChecked(lineWidthActive_);
   ui_.roundPointsActive->setChecked(roundPointsActive_);
+  ui_.lineWidthActive->setChecked(lineWidthActive_);
   ui_.alphaTestActive->setChecked(alphaTestActive_);
   ui_.blendingActive->setChecked(blendingActive_);
   ui_.backfaceCullingActive->setChecked(backfaceCullingActive_);
@@ -293,6 +303,7 @@ void QtMaterialDialog::applyChanges()
   if (pointSizeActive_) properties = properties | SceneGraph::MaterialNode::PointSize;
   if (lineWidthActive_) properties = properties | SceneGraph::MaterialNode::LineWidth;
   if (roundPointsActive_) properties = properties | SceneGraph::MaterialNode::RoundPoints;
+  if (lineSmoothActive_) properties = properties | SceneGraph::MaterialNode::LineSmooth;
   if (alphaTestActive_) properties = properties | SceneGraph::MaterialNode::AlphaTest;
   if (blendingActive_) properties = properties | SceneGraph::MaterialNode::Blending;
   if (backfaceCullingActive_) properties = properties | SceneGraph::MaterialNode::BackFaceCulling;
@@ -308,6 +319,7 @@ void QtMaterialDialog::applyChanges()
   node_->set_point_size(point_size_);
   node_->set_line_width(line_width_);
   node_->set_round_points(round_points_);
+  node_->set_line_smooth(line_smooth_);
 
   if(backfaceCulling_)
     node_->enable_backface_culling();
@@ -330,7 +342,7 @@ void QtMaterialDialog::applyChanges()
     node_->disable_color_material();
 
   // this is not optimal !
-  if(round_points_)
+  if(round_points_ || line_smooth_ )
     node_->enable_alpha_test(0.5);
   else
     node_->disable_alpha_test();
@@ -357,6 +369,7 @@ void QtMaterialDialog::undoChanges()
   if (bak_pointSizeActive_) properties = properties | SceneGraph::MaterialNode::PointSize;
   if (bak_lineWidthActive_) properties = properties | SceneGraph::MaterialNode::LineWidth;
   if (bak_roundPointsActive_) properties = properties | SceneGraph::MaterialNode::RoundPoints;
+  if (bak_lineSmoothActive_) properties = properties | SceneGraph::MaterialNode::LineSmooth;
   if (bak_alphaTestActive_) properties = properties | SceneGraph::MaterialNode::AlphaTest;
   if (bak_blendingActive_) properties = properties | SceneGraph::MaterialNode::Blending;
   if (bak_backfaceCullingActive_) properties = properties | SceneGraph::MaterialNode::BackFaceCulling;
@@ -372,6 +385,7 @@ void QtMaterialDialog::undoChanges()
   node_->set_point_size(bak_point_size_);
   node_->set_line_width(bak_line_width_);
   node_->set_round_points(bak_round_points_);
+  node_->set_line_smooth(bak_line_smooth_);
 
   if(bak_backfaceCulling_)
     node_->enable_backface_culling();
@@ -517,6 +531,16 @@ QtMaterialDialog::changeRoundPoints(bool _b)
 
 
 void
+QtMaterialDialog::changeLineSmooth(bool _b)
+{
+  line_smooth_ = (bool)_b;
+  applyChanges();
+}
+
+//-----------------------------------------------------------------------------
+
+
+void
 QtMaterialDialog::changeBackfaceCulling(bool _b)
 {
   backfaceCulling_ = (bool)_b;
@@ -619,14 +643,15 @@ void
 QtMaterialDialog::changeActive(bool /*toggle*/)
 {
 
-  baseColorActive_ = ui_.baseColorActive->isChecked();
-  materialActive_ = ui_.materialActive->isChecked();
-  pointSizeActive_ = ui_.pointSizeActive->isChecked();
-  lineWidthActive_ = ui_.lineWidthActive->isChecked();
-  roundPointsActive_ = ui_.roundPointsActive->isChecked();
-  blendingActive_ = ui_.blendingActive->isChecked();
+  baseColorActive_       = ui_.baseColorActive->isChecked();
+  materialActive_        = ui_.materialActive->isChecked();
+  pointSizeActive_       = ui_.pointSizeActive->isChecked();
+  lineWidthActive_       = ui_.lineWidthActive->isChecked();
+  roundPointsActive_     = ui_.roundPointsActive->isChecked();
+  lineSmoothActive_      = ui_.lineSmoothActive->isChecked();
+  blendingActive_        = ui_.blendingActive->isChecked();
   backfaceCullingActive_ = ui_.backfaceCullingActive->isChecked();
-  colorMaterialActive_ = ui_.colorMaterialActive->isChecked();
+  colorMaterialActive_   = ui_.colorMaterialActive->isChecked();
 
   applyChanges();
 }
@@ -644,6 +669,7 @@ QtMaterialDialog::enableProperty(int /*i*/)
   else if (sender() == ui_.pointSizeSpinBox)    ui_.pointSizeActive->setChecked( true );
   else if (sender() == ui_.lineWidthSpinBox)    ui_.lineWidthActive->setChecked( true );
   else if (sender() == ui_.roundPointsCheckBox) ui_.roundPointsActive->setChecked( true );
+  else if (sender() == ui_.lineSmoothCheckBox)  ui_.lineSmoothActive->setChecked( true );
   else if (sender() == ui_.backfaceCulling)     ui_.backfaceCullingActive->setChecked( true );
   else if (sender() == ui_.alphaTest)           ui_.alphaTestActive->setChecked( true );
   else if (sender() == ui_.blending)            ui_.blendingActive->setChecked( true );
@@ -664,6 +690,7 @@ QtMaterialDialog::enableProperty()
   else if (sender() == ui_.pointSizeSpinBox)    ui_.pointSizeActive->setChecked( true );
   else if (sender() == ui_.lineWidthSpinBox)    ui_.lineWidthActive->setChecked( true );
   else if (sender() == ui_.roundPointsCheckBox) ui_.roundPointsActive->setChecked( true );
+  else if (sender() == ui_.lineSmoothCheckBox)  ui_.lineSmoothActive->setChecked( true );
   else if (sender() == ui_.backfaceCulling)     ui_.backfaceCullingActive->setChecked( true );
   else if (sender() == ui_.alphaTest)           ui_.alphaTestActive->setChecked( true );
   else if (sender() == ui_.blending)            ui_.blendingActive->setChecked( true );

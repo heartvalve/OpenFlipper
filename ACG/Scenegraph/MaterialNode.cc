@@ -68,6 +68,7 @@ MaterialNode::MaterialNode( BaseNode*            _parent,
     point_size_(1.0),
     line_width_(1.0),
     round_points_(false),
+    lines_smooth_(false),
     alpha_test_(false),
     alpha_clip_(0),
     blending_(false),
@@ -123,6 +124,18 @@ void MaterialNode::enter(GLState& _state, unsigned int  _drawmode  )
       glEnable(GL_POINT_SMOOTH);
     else
       glDisable(GL_POINT_SMOOTH);
+  }
+
+  if (applyProperties_ & LineSmooth)
+  {
+    lines_smooth_backup_ = glIsEnabled(GL_LINE_SMOOTH) &&
+                           glIsEnabled(GL_ALPHA_TEST);
+
+    if( lines_smooth_) {
+            glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
+      glEnable(GL_LINE_SMOOTH);
+    } else
+      glDisable(GL_LINE_SMOOTH);
   }
 
 
@@ -243,6 +256,14 @@ void MaterialNode::leave(GLState& _state, unsigned int _drawmode )
       glEnable(GL_POINT_SMOOTH);
     else
       glDisable(GL_POINT_SMOOTH);
+  }
+
+  if (applyProperties_ & LineSmooth)
+  {
+    if( lines_smooth_backup_)
+      glEnable(GL_LINE_SMOOTH);
+    else
+      glDisable(GL_LINE_SMOOTH);
   }
 
   if (applyProperties_ & AlphaTest)

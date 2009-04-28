@@ -110,6 +110,7 @@ private slots:
   void changePointSize(int _new);
   void changeLineWidth(int _new);
   void changeRoundPoints(bool _b);
+  void changeLineSmooth(bool _b);
   void changeBackfaceCulling(bool _b);
   void changeAlphaTest(bool _b);
   void changeAlphaValue(int _new);
@@ -144,6 +145,7 @@ private:
   float    point_size_,       bak_point_size_;
   float    line_width_,       bak_line_width_;
   bool     round_points_,     bak_round_points_;
+  bool     line_smooth_,      bak_line_smooth_;
   bool     backfaceCulling_,  bak_backfaceCulling_;
   bool     alphaTest_,        bak_alphaTest_;
   float    alphaValue_,       bak_alphaValue_;
@@ -157,6 +159,7 @@ private:
   bool     pointSizeActive_,       bak_pointSizeActive_;
   bool     lineWidthActive_,       bak_lineWidthActive_;
   bool     roundPointsActive_,     bak_roundPointsActive_;
+  bool     lineSmoothActive_,      bak_lineSmoothActive_;
   bool     alphaTestActive_,       bak_alphaTestActive_;
   bool     blendingActive_,        bak_blendingActive_;
   bool     backfaceCullingActive_, bak_backfaceCullingActive_;
