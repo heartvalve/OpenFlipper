@@ -1072,7 +1072,6 @@ draw_faces(FaceMode _mode)
                 }
               }
 
-
               glBindTexture( GL_TEXTURE_2D, (*textureMap_)[texture] );
 
               // Remember active texture to skip extra switches

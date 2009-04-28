@@ -82,7 +82,7 @@ class ACGDLLEXPORT QtMaterialDialog : public QDialog
 public:
 
   QtMaterialDialog( QWidget                  * _parent,
-		    SceneGraph::MaterialNode * _node );
+		              SceneGraph::MaterialNode * _node );
 
   ~QtMaterialDialog() {}
 
@@ -98,7 +98,7 @@ private:
   Vec4f  convertColor( QColor _color);
 
   void setButtonColor( QPushButton * _button,
-		       const Vec4f & _color );
+		                 const Vec4f & _color );
 
 private slots:
 
@@ -118,6 +118,7 @@ private slots:
   void changeBlendingParam1(const QString& _name);
   void changeBlendingParam2(const QString& _name);
   void changeColorMaterial(bool _b);
+  void changeMultiSampling(bool _b);
 
   void changeActive(bool toggle);
 
@@ -153,6 +154,7 @@ private:
   GLenum   blendParam1_,      bak_blendParam1_;
   GLenum   blendParam2_,      bak_blendParam2_;
   bool     colorMaterial_,    bak_colorMaterial_;
+  bool     multiSampling_,    bak_multiSampling_;
 
   bool     baseColorActive_,       bak_baseColorActive_;
   bool     materialActive_,        bak_materialActive_;
@@ -164,6 +166,7 @@ private:
   bool     blendingActive_,        bak_blendingActive_;
   bool     backfaceCullingActive_, bak_backfaceCullingActive_;
   bool     colorMaterialActive_,   bak_colorMaterialActive_;
+  bool     multiSamplingActive_,    bak_multiSamplingActive_;
 
   SceneGraph::MaterialNode * node_;
 
