@@ -278,7 +278,6 @@ void TextureControlPlugin::fileOpened( int _id ) {
 
   // Check if we support this kind of data
   if ( !obj->dataType(DATA_TRIANGLE_MESH) && !obj->dataType(DATA_POLY_MESH) ) {
-      emit log(LOGERR,"Trying to add textures to object failed because of unsupported object type");
       return;
   }
 
@@ -363,6 +362,10 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
     emit log(LOGERR,"Unable to get Object for id " + QString::number(_identifier) );
     return;
   }
+
+  //skip object if its not a mesh
+  if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH ) )
+    return;
 
   // ================================================================================
   // Get objects texture data and verify that texture exists
@@ -543,6 +546,10 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
     emit log(LOGERR,"slotObjectUpdated: Unable to get Object for id " + QString::number(_identifier) );
     return;
   }
+
+  //skip object if its not a mesh
+  if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH ) )
+    return;
 
   // ================================================================================
   // Get objects texture data and verify that texture exists
@@ -1103,6 +1110,10 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
     emit log(LOGERR,"slotUpdateContextMenu: Unable to get Object for id " + QString::number(_objectId) );
     return;
   }
+
+  //skip object if its not a mesh
+  if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH ) )
+    return;
 
   // ================================================================================
   // Get objects texture data and verify that texture exists
