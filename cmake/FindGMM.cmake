@@ -1,18 +1,44 @@
-if (GMM_INCLUDE_DIR)
-  # in cache already
-  set(GMM_FOUND TRUE)
-else (GMM_INCLUDE_DIR)
+# - Find GMM
+# Find the native GMM headers and libraries.
+#
+#  GMM_INCLUDE_DIR -  where to find GMM.h, etc.
+#  GMM_LIBRARIES    - List of libraries when using GMM.
+#  GMM_FOUND        - True if GMM found.
 
-find_path(GMM_INCLUDE_DIR NAMES gmm.h
-     PATHS
-     /usr/include/gmm
-     ${GMM_INCLUDE_PATH}
-   )
+IF (GMM_INCLUDE_DIR)
+  # Already in cache, be silent
+  SET(GMM_FIND_QUIETLY TRUE)
+ENDIF (GMM_INCLUDE_DIR)
 
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(GMM DEFAULT_MSG GMM_INCLUDE_DIR )
+GET_FILENAME_COMPONENT(module_file_path ${CMAKE_CURRENT_LIST_FILE} PATH )
 
-mark_as_advanced(GMM_INCLUDE_DIR)
+# Look for the header file.
+FIND_PATH(GMM_INCLUDE_DIR NAMES gmm/gmm.h 
+                           PATHS /usr/include
+                                 /usr/local/include
+                                 ../../External/include
+                                 ${module_file_path}/../../../External/include)
+MARK_AS_ADVANCED(GMM_INCLUDE_DIR)
 
-endif(GMM_INCLUDE_DIR)
+
+# Copy the results to the output variables.
+IF(GMM_INCLUDE_DIR )
+  SET(GMM_FOUND 1)
+  SET(GMM_INCLUDE_DIR ${GMM_INCLUDE_DIR})
+ELSE(GMM_INCLUDE_DIR )
+  SET(GMM_FOUND 0)
+  SET(GMM_INCLUDE_DIR)
+ENDIF(GMM_INCLUDE_DIR )
+
+# Report the results.
+IF(NOT GMM_FOUND)
+  SET(GMM_DIR_MESSAGE
+    "GMM was not found. Make sure GMM_INCLUDE_DIR is set to the directories containing the include and lib files for GMM. .")
+  IF(GMM_FIND_REQUIRED)
+      MESSAGE(FATAL_ERROR "${GMM_DIR_MESSAGE}")
+  ELSEIF(NOT GMM_FIND_QUIETLY)
+    MESSAGE(STATUS "${GMM_DIR_MESSAGE}")
+  ELSE(NOT GMM_FIND_QUIETLY)
+  ENDIF(GMM_FIND_REQUIRED)
+ENDIF(NOT GMM_FOUND)
 
