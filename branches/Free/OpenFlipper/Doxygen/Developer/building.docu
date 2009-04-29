@@ -1,4 +1,5 @@
 /*! \page buildingOpenFlipper Building OpenFlipper
+ *
  * \section dependencies Dependencies
  * 
  * OpenFlipper is developed on top of the Qt framework. This framework provides
@@ -6,16 +7,6 @@
  * at least version 4.5 is required. As the framework depends on qt we use the
  * qt make tool qmake to build OpenFlipper.
  *
- * \section bs Build System
- * The build system uses qmake to generate all makefiles. In the toplevel directory of
- * OpenFlipper is a .qmake.cache file which defines the variable TOPLEVEL available
- * in all qmake project files. This file also includes our qmake configuration in the
- * qmake subdirectory. The files in this directory control the build process for the 
- * core as well as for the plugins. Library dependencies are specified in the project
- * files by calling functions which will check for the requested libs. These functions are
- * defined in architecture dependend files under qmake/packages . If you get errors
- * about libraries not found, please change the paths in these configuration files.
- * 
  * \section reqlibs Required libraries
  * <ul>
  * <li> Qt >= 4.5 ( http://www.qtsoftware.com/downloads )</li>
@@ -25,22 +16,96 @@
  * <li> freetype2 ( optional http://www.freetype.org/freetype2/index.html )</li>
  * <li> ftgl           ( optional http://sourceforge.net/projects/ftgl/)</li>
  * </ul> 
+ *
+ * \section bs Build System
+ * The build system uses either cmake or qmake to generate all makefiles.
+ * Since v1.0 RC2 it is recommended to use cmake as primary build system.
+ * Nevertheless qmake will still be supported, too. In this section we offer
+ * descriptions for both build systems.
+ *
+ * - \ref build_cmake
+ * - \ref build_qmake
+ *
+ * \section build_cmake Building OpenFlipper using Cmake
+ *
+ * For the following section CMake >= 2.6.x has to be installed.
+ * In the toplevel directory of OpenFlipper is a CMakeLists.txt
+ * file that specifies the build configuration and targets. In most cases
+ * this file should be left untouched. Additional functions and environment
+ * settings are to be found in the cmake directory in the toplevel folder.
+ * See following subsections for information on how to build OpenFlipper
+ * for your specific operating system.
+ *
+ * \subsection cmake_blinux Building OpenFlipper under Linux
+ *
+ * <ul>
+ * <li> First install the required libraries (see above)<br />
+ * <li> Extract the source code or get it via svn:<br />
+ * <code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code></li>
+ * <li> Create a build directory (e.g. <b>build</b>) in the toplevel directory: <code><b>mkdir build</b></code></li>
+ * <li> Change to the newly created directory <code><b>cd build</b></code> and type <code><b>cmake ..</b></code></li>
+ * <li> Now call  <b>make</b> to build OpenFlipper </li>
+ * </ul>
+ *
+ * The created application (binaries, libs and shared files) are to be found in the <b>Build</b>
+ * directory.
+ *
+ * \subsection cmake_bwin Building OpenFlipper under Windows
+ *
+ * <ul>
+ * <li> Get Visual Studio 2008 </li>
+ * <li> Get and Install Qt ( >= 4.5 ) </li>
+ * <li> Set the QTDIR Variable to your Qt Installation directory </li>
+ * <li> Extract OpenFlipper source code. </li>
+ * <li> Get all required libraries and install them ( including headers! ).</li>
+ * <li> Create a directory named e.g. <b>build</b> in the toplevel directory of OpenFlipper.</li>
+ * <li> Open Visual Studio 2008 and go to Tools->Visual Studio command prompt</li>
+ * <li> Go to the newly created <b>build</b> directory within OpenFlipper's top level directory. </li>
+ * <li> Type <b>cmake ..</b></li>
+ * <li> You can now find a Visual Studio project file in the <b>build</b> directory </li>
+ * <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file. </li>
+ * </ul> 
+ *
+ * \subsection cmake_bmacos Building OpenFlipper under MacOS X
+ *
+  * <ul>
+ * <li> First install the required libraries (see above)<br />
+ * <li> Extract the source code or get it via svn:<br />
+ * <code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code></li>
+ * <li> Create a build directory (e.g. <b>build</b>) in the toplevel directory: <code><b>mkdir build</b></code></li>
+ * <li> Change to the newly created directory <code><b>cd build</b></code> and type <code><b>cmake ..</b></code></li>
+ * <li> Now call  <b>make</b> to build OpenFlipper </li>
+ * </ul>
+ *
+ * The created application bundle (that contains binaries, libs and shared files) is to be found in the <b>Build</b>
+ * directory.
+ *
+ * \section build_qmake Building OpenFlipper using Qmake
+ *
+ * In the toplevel directory of OpenFlipper is a .qmake.cache file
+ * which defines the variable TOPLEVEL available in all qmake project files.
+ * This file also includes our qmake configuration in the
+ * qmake subdirectory. The files in this directory control the build process for the 
+ * core as well as for the plugins. Library dependencies are specified in the project
+ * files by calling functions which will check for the requested libs. These functions are
+ * defined in architecture dependend files under qmake/packages . If you get errors
+ * about libraries not found, please change the paths in these configuration files.
  * 
- * \section blinux Building OpenFlipper under Linux
+ * \subsection blinux Building OpenFlipper under Linux
  * <ul>
  * <li> First extract the source code or get it via svn:<br />
  * <code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code></li>
  * <li> Get all required libraries and install them ( including headers! ).</li>
  * <li> Go to the qmake/packages directory and change the packages.<Architecture > files to match the library paths</li>
  * <li> In the toplevel Directory call <b> qmake </b> ( It should be the qmake Version for qt4! Debian uses for example qmake-qt4 ) 
-           This will build the Makefiles</li>
+ *         This will build the Makefiles</li>
  * <li> Now call  <b> make </b> to build OpenFlipper </li>
  * </ul> 
  *
  * After building OpenFlipper the Core can be found in the OpenFlipper/<OperatingSystem>_<Arch>_Release.
  * The plugins are build in the OpenFlipper/Plugins directory.
  * 
- * \section bwin Building OpenFlipper under Windows
+ * \subsection bwin Building OpenFlipper under Windows
  *
  * <ul>
  * <li> Get Visual Studio 2008 </li>
@@ -61,7 +126,7 @@
  * After building OpenFlipper the Core can be found in the OpenFlipper/Windows_<Arch>_Release.
  * The plugins are build in the OpenFlipper/Plugins directory.
  *
- * \section bmac Building OpenFlipper under MacOS X
+ * \subsection bmac Building OpenFlipper under MacOS X
  * 
  * - Download and install latest Xcode Tools (including gcc)
  * - Download and install Qt (>= 4.5)
