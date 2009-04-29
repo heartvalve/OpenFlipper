@@ -1,23 +1,25 @@
+# option to disable inclusion of qmake build system into source package
 option (
   DISABLE_QMAKE_BUILD
   "Disable inclusion of qmake build system into source package"
   OFF
 )
 
+# set name
 set (CPACK_PACKAGE_NAME "OpenFlipper")
 set (CPACK_PACKAGE_VENDOR "ACG")
 
+# set version
 set (CPACK_PACKAGE_VERSION_MAJOR "1")
 set (CPACK_PACKAGE_VERSION_MINOR "0")
 set (CPACK_PACKAGE_VERSION_PATCH "0")
 set (CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 
-
-
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "CMake is a build tool")
+# addition package info
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "OpenFlipper Mesh manipulation too")
 set (CPACK_PACKAGE_EXECUTABLES "OpenFlipper;OpenFlipper")
 set (CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
-set (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
+set (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME}")
 set (CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 set (CPACK_SOURCE_STRIP_FILES "")
 
@@ -28,7 +30,10 @@ set (CPACK_SOURCE_STRIP_FILES "")
 
 set (CPACK_STRIP_FILES "bin/OpenFlipper")
 
-set (CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
+# source package generation
+set (CPACK_SOURCE_GENERATOR "TGZ;TBZ2;ZIP")
+
+# ignored files in source package
 set (CPACK_SOURCE_IGNORE_FILES  "\\\\.#;/#;.*~")
 list (APPEND CPACK_SOURCE_IGNORE_FILES "/\\\\.git")
 list (APPEND CPACK_SOURCE_IGNORE_FILES "/\\\\.svn")
@@ -76,6 +81,7 @@ endforeach ()
 
 
 if (WIN32)
+  # window NSIS installer
   set (CPACK_GENERATOR "NSIS")
   set (CPACK_PACKAGE_INSTALL_DIRECTORY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
   set (CPACK_NSIS_DISPLAY_NAME "OpenFlipper v${CPACK_PACKAGE_VERSION}")
@@ -88,6 +94,7 @@ if (WIN32)
   # TODO: fillme
   # set (CPACK_NSIS_CONTACT "")
 
+  # append dll's to installed package
   if (EXISTS ${CMAKE_SOURCE_DIR}/WIN)
     file (GLOB _files "${CMAKE_SOURCE_DIR}/WIN/DLLs/DLLs 32 debug/*.dll")
     install(FILES ${_files}
@@ -101,6 +108,7 @@ if (WIN32)
     )
   endif ()
 elseif (APPLE)
+  # apple Drag'n'Drop installer package
   set (CPACK_GENERATOR "DragNDrop;TGZ")
   set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/Icons/OpenFlipper_Icon.icns")
 endif ()
@@ -111,4 +119,11 @@ include (CPack)
 if (NOT WIN32 AND NOT APPLE)
   # no binary target for linux
   file (REMOVE "${CMAKE_BINARY_DIR}/CPackConfig.cmake")
+endif ()
+
+# cmake doesn't create a source package target, so we have to add our own
+if (EXISTS "${CMAKE_BINARY_DIR}/CPackSourceConfig.cmake")
+  add_custom_target (PACKAGE_SOURCE
+    ${CMAKE_CPACK_COMMAND} --config "${CMAKE_BINARY_DIR}/CPackSourceConfig.cmake"
+  )
 endif ()
