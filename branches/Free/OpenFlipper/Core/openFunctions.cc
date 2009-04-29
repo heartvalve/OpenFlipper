@@ -343,18 +343,17 @@ void Core::slotEmptyObjectAdded ( int _id ) {
     }
   }
 
+  // get the opened object
+  BaseObjectData* object;
+  PluginFunctions::getObject(_id,object);
+
+  emit emptyObjectAdded( _id );
 
   // Tell the Plugins that the Object List and the active object have changed
   emit signalObjectUpdated(_id);
   emit objectSelectionChanged(_id);
 
   backupRequest(_id,"Original Object");
-
-  // get the opened object
-  BaseObjectData* object;
-  PluginFunctions::getObject(_id,object);
-
-  emit emptyObjectAdded( _id );
 
   ///@todo : set a default path for new objects
 //    QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
