@@ -86,15 +86,17 @@ endmacro ()
 
 # main function
 function (_build_openflipper_plugin plugin)
+  # base dependencies
   find_package (OpenGL)
   find_package (GLUT)
   find_package (GLEW)
 
+  # get upper plugin name
   string (TOUPPER ${plugin} _PLUGIN)
 
+  # parse parameters
   _get_plugin_parameters (${_PLUGIN} ${ARGN})
 
-  
 
   # check dependencies
   of_unset (_${_PLUGIN}_MISSING_DEPS)
@@ -128,26 +130,31 @@ function (_build_openflipper_plugin plugin)
       ${${_PLUGIN}_DIRS}
     )
 
+    # collect all header,source and ui files
     append_files (headers "*.hh" ${directories})
     append_files (sources "*.cc" ${directories})
     append_files (ui "*.ui" ${directories})
 
+    # remove template cc files from source file list
     drop_templates (sources)
 
+    # filter header,source and ui files lists if of_list_filter macro has been defined
     if (COMMAND of_list_filter)
       of_list_filter (headers)
       of_list_filter (sources)
       of_list_filter (ui)
     endif ()
 
-
+    # genereate uic and moc targets
     qt4_autouic (uic_targets ${ui})
     qt4_automoc (moc_targets ${headers})
 
     add_library (Plugin-${plugin} MODULE ${uic_targets} ${sources} ${headers} ${moc_targets})
 
+    # add this plugin to build plugin list for dependency tracking
     of_set (OPENFLIPPER_PLUGINS "${OPENFLIPPER_PLUGINS};Plugin-${plugin}")
 
+    # append compiler and linker flags from plugin dependencies
     set_target_properties (
       Plugin-${plugin} PROPERTIES
       COMPILE_FLAGS "${${_PLUGIN}_CFLAGSADD}"
@@ -155,7 +162,9 @@ function (_build_openflipper_plugin plugin)
     )
     
     if (WIN32)
+      # Visual studio requires our plugins to link with GLUT
       find_package (GLUT)
+      # generate dllinport defines
       add_definitions (-DACGDLL -DUSEACG -DPLUGINLIBDLL -DUSEPLUGINLIBDLL)
       target_link_libraries (Plugin-${plugin}      
 	OpenMeshCore
@@ -164,6 +173,10 @@ function (_build_openflipper_plugin plugin)
         PluginLib
         ${GLUT_LIBRARIES}
       )
+
+      # copy plugin dll file to "Build" directory
+      # Visual studio will create this file in a subdirectory so we can't use
+      # LIBRARY_OUTPUT_DIRECTORY directly here
       if (NOT EXISTS ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR})
         file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR})
       endif ()
@@ -180,6 +193,7 @@ function (_build_openflipper_plugin plugin)
 	 PluginLib
 	 ${QT_LIBRARIES}
       )
+      # copy plugin so file to application bundle inside "Build" directory
       if (NOT EXISTS ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR})
         file (MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR})
       endif ()
@@ -189,7 +203,8 @@ function (_build_openflipper_plugin plugin)
                             ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/libPlugin-${plugin}.so
                             ${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR}/libPlugin-${plugin}.so
                           )
-    else()
+    else ()
+      # directly generate plugin in plugin directory
       set_target_properties (
         Plugin-${plugin} PROPERTIES
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${OPENFLIPPER_PLUGINDIR}"
@@ -201,6 +216,8 @@ function (_build_openflipper_plugin plugin)
       ${${_PLUGIN}_LIBRARIES}
     )
 
+    # no install on mac, because the whole bundle will be installed in the
+    # toplevel CMakeLists.txt
     if (NOT APPLE)
       install (
         TARGETS Plugin-${plugin}
@@ -219,6 +236,7 @@ macro (openflipper_plugin)
 
   string (TOUPPER ${_plugin} _PLUGIN)
 
+  # add option to disable plugin build
   option (
     DISABLE_PLUGIN_${_PLUGIN}
     "Disable building of plugin \"${_plugin}\""
