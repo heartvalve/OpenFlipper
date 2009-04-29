@@ -53,11 +53,18 @@
  *
  * <b>IMPORTANT:</b> For your documentation to integrate seamlessly into OpenFlipper's help
  * system you have to leave the <b>QHP_VIRTUAL_FOLDER</b> untouched! Further QCH_NAMESPACE
- * has to be unique, particularly the namespace "org.openflipper.dev" is reserved.
+ * has to be unique, particularly the namespaces "org.openflipper.dev" and
+ * "org.openflipper.user" are reserved.
  *
- * The last thing to be done is adding <code><b>Doc()</b></code> to your qmake project file.
+ * The last thing to be done is adding <code><b>Doc(Plugin-SimplPlugin)</b></code> to your qmake project file.
  * This adds the target <code><b>doc</b></code> to the build system which builds the
  * plugin's documentation.
+ *
+ * <b>IMPORTANT:</b> The argument passed to the Doc() function indicates the
+ * name of the documentation's subfolder that will be created by the build system.
+ * The name passed here has to match the one specified at the end of the <b>QHP_NAMESPACE</b>
+ * (they are not considered case-sensitive).
+ * If both names are not equal, cross-referencing won't work in OpenFlipper's help browser.
  *
  * \dontinclude Plugin-DocTest.pro
  * \skipline include
