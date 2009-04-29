@@ -101,10 +101,8 @@ if (WIN32)
     )
   endif ()
 elseif (APPLE)
-  set (CPACK_GENERATOR "PackageMaker;TGZ")
+  set (CPACK_GENERATOR "DragNDrop;TGZ")
   set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/Icons/OpenFlipper_Icon.icns")
-  set (CPACK_PACKAGING_INSTALL_PREFIX "/")
-  set (CPACK_PACKAGE_DEFAULT_LOCATION "/Applications")
 endif ()
 
 # has to be last
