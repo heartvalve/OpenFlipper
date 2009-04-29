@@ -73,6 +73,9 @@ static QIcon* OpenFlipperIcon_ = 0;
 /// Stores the Path to the Fonts
 static QDir fontsDir_;
 
+/// Stores the Path to the Help
+static QDir helpDir_;
+
 /// Stores all available option files in the Order in which they should be used
 static QStringList optionFiles_;
 
@@ -273,7 +276,8 @@ QDir pluginDir()        { return pluginDir_;  }
 QDir shaderDir()        { return shaderDir_;  }
 QDir textureDir()       { return textureDir_; }
 QDir iconDir()          { return iconDir_;    }
-QDir fontsDir()         { return fontsDir_;    }
+QDir fontsDir()         { return fontsDir_;   }
+QDir helpDir()         	{ return helpDir_;    }
 QDir currentDir()       { return currentDir_; }
 QDir currentScriptDir() { return currentScriptDir_; }
 QDir currentTextureDir(){ return currentTextureDir_; }
@@ -285,6 +289,7 @@ QString shaderDirStr()         { return shaderDir_.absolutePath();         }
 QString textureDirStr()        { return textureDir_.absolutePath();        }
 QString iconDirStr()           { return iconDir_.absolutePath();           }
 QString fontsDirStr()          { return fontsDir_.absolutePath();          }
+QString helpDirStr()           { return helpDir_.absolutePath();          }
 QString currentDirStr()        { return currentDir_.absolutePath();        }
 QString currentScriptDirStr()  { return currentScriptDir_.absolutePath();  }
 QString currentTextureDirStr() { return currentTextureDir_.absolutePath(); }
@@ -297,6 +302,7 @@ void shaderDir(QDir _dir)            { shaderDir_         = _dir; }
 void textureDir(QDir _dir)           { textureDir_        = _dir; }
 void iconDir(QDir _dir)              { iconDir_           = _dir; }
 void fontsDir(QDir _dir)             { fontsDir_          = _dir;}
+void helpDir(QDir _dir)              { helpDir_          = _dir;}
 void configDir(QDir _dir)            { configDir_         = _dir; }
 void currentDir(QDir _dir)           { currentDir_        = _dir; }
 void currentScriptDir(QDir _dir)     { currentScriptDir_  = _dir; }
@@ -365,6 +371,15 @@ bool fontsDir(QString      _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
     fontsDir_      = tmp;
+    return true;
+  }
+  return false;
+}
+
+bool helpDir(QString      _dir) {
+  QDir tmp(_dir);
+  if (tmp.exists()) {
+    helpDir_      = tmp;
     return true;
   }
   return false;

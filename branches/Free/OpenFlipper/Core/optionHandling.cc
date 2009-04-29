@@ -237,6 +237,14 @@ void Core::setupOptions() {
   tempDir.cd("Fonts");
   OpenFlipper::Options::fontsDir(tempDir.absolutePath());
 
+  // Set the Path to the Help
+  tempDir = QDir(OpenFlipper::Options::applicationDir());
+  #ifdef OPENFLIPPER_DATADIR
+    tempDir.cd(OPENFLIPPER_DATADIR);
+  #endif
+  tempDir.cd("Help");
+  OpenFlipper::Options::helpDir(tempDir.absolutePath());
+
   QStringList optionFiles;
 
   // ==============================================================
