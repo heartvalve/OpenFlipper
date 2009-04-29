@@ -300,7 +300,7 @@ function (install_dir src dst)
     )
   endforeach ()
 endfunction ()
-- 1,288 ----
+
 # prevent build in source directory
 if ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
     message (SEND_ERROR "Building in the source directory is not supported.")
