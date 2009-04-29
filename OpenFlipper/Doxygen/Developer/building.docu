@@ -58,11 +58,12 @@
  * <li> Set the QTDIR Variable to your Qt Installation directory </li>
  * <li> Extract OpenFlipper source code. </li>
  * <li> Get all required libraries and install them ( including headers! ).</li>
- * <li> Create a directory named e.g. <b>build</b> in the toplevel directory of OpenFlipper.</li>
- * <li> Open Visual Studio 2008 and go to Tools->Visual Studio command prompt</li>
- * <li> Go to the newly created <b>build</b> directory within OpenFlipper's top level directory. </li>
- * <li> Type <b>cmake ..</b></li>
- * <li> You can now find a Visual Studio project file in the <b>build</b> directory </li>
+ * <li> Get cmake for windows from http://www.cmake.org/cmake/resources/software.html <li>
+ * <li> Start the cmake gui and open the OpenFlipper toplevel directory </li>
+ * <li> Choose a build directory</li>
+ * <li> Click on configure .... If any libraries are left unconfigured, you can adjust the path in the ui. Rerun configure until everything is configured correctly</li>
+ * <li> Click generate to create the visual studio project files </li>
+ * <li> You can now find a Visual Studio solution file in the <b>build</b> directory you chose in cmake </li>
  * <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file. </li>
  * </ul> 
  *
