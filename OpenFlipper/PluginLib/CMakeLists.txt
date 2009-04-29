@@ -37,6 +37,11 @@ if (WIN32)
   )
 endif ()
 
+# define core version
+add_definitions (
+    -DCORE_VERSION="${VERSION}"
+)
+
 # collect all header,source and ui files
 append_files (headers "*.hh" ${directories})
 append_files (sources "*.cc" ${directories})
