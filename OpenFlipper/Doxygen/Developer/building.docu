@@ -47,6 +47,9 @@
  * <li> Now call  <b>make</b> to build OpenFlipper </li>
  * </ul>
  *
+ * To switch between debug and release build, use <b>cmake -DCMAKE_BUILD_TYPE=Debug ..</b>
+ * Change install path: -DCMAKE_INSTALL_PREFIX=[path] 
+ *
  * The created application (binaries, libs and shared files) are to be found in the <b>Build</b>
  * directory.
  *
