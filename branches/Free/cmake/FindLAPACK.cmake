@@ -28,10 +28,12 @@
 # TODO (CGAL):
 # - find CLAPACK (http://www.netlib.org/clapack) on Unix?
 
+include(CGAL_Macros)
 
 include(CheckFunctionExists)
 
 include(CGAL_GeneratorSpecificSettings)
+
 
 
 # This macro checks for the existence of the combination of fortran libraries
