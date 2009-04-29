@@ -66,16 +66,24 @@ static std::vector< Viewer::ViewerProperties* > viewerProperties_;
 /// TODO : Remove this variable and implement multiView correctly here
 static glViewer*  examiner_widget_;
 
+/// Contains the currently active examiner
 static unsigned int activeExaminer_ = 0;
 
 /** \brief DONT USE DIRECTLY!!
  *
+ * The pointer to the beginning of the scenegraph nodes ( only visible part )
+ * Between the actual root node ( sceneGraph_root_node_ ) and this node global nodes could be added
  * This pointer is internally used to access the scenegraphs root node
  */
 static SeparatorNode* root_node_;
 
+/** \brief Scenegraph root node
+ */
 static SeparatorNode* sceneGraph_root_node_;
 
+/** \brief a dummy properties object returned as a reference if the real object does not exist
+ *
+ */
 static Viewer::ViewerProperties dummyProperties;
 
 void setDataRoot( BaseObject* _root ) {
