@@ -73,20 +73,6 @@ namespace PluginFunctions {
 DLLEXPORT
 bool getPickedObject(const unsigned int _node_idx , BaseObjectData*& _object);
 
-/** \brief Create a copy of the object with the given id
- *
- * Creates a copy of an object. All scenegraph nodes will be created. The object will
- * be part of the object tree at the same location as the parent of the original mesh.
- * This has to be done by setParent of the object.
- *
- * @return Pointer to new object or 0 if failed;
- * */
-DLLEXPORT
-int copyObject( const int _id );
-
-
-
-
 /** @} */
 
 //=======================================

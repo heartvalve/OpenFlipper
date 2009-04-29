@@ -177,35 +177,6 @@ bool getObject(  const int _identifier , BaseObjectData*& _object ) {
 // ===============================================================================
 // ===============================================================================
 
-int copyObject( const int _id ) {
-  if ( _id == -1 )
-    return -1;
-
-  // get the node
-  BaseObject* object = objectRoot_->childExists(_id);
-
-  if ( !object ) {
-    std::cerr << "Error while copying object ... not found" << std::endl;
-    return -1;
-  }
-
-  // remove the whole subtree below this item
-  BaseObject* copy = object->copy();
-
-  if ( copy == 0 ) {
-    std::cerr << "Unable to create a copy of the object." << std::endl;
-  }
-
-  // Integrate into object tree
-  copy->setParent( object->parent() );
-  if ( object->parent() )
-    object->parent()->appendChild(copy);
-  else
-    std::cerr << "Unable to add copy to object list" << std::endl;
-
-  return copy->id();
-}
-
 bool object_exists(  const int _identifier ) {
 
   if ( _identifier == -1 )

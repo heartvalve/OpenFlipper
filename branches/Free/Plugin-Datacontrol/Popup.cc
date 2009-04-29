@@ -142,15 +142,10 @@ void DataControlPlugin::slotCopy() {
 
     BaseObject* copyItem = model_->getItem( indexList[i] );
 
-    int newObject = PluginFunctions::copyObject(copyItem->id());
+    int newObject;
 
-    if ( newObject == -1 ) {
-      emit log(LOGERR, "Unable to copy object" );
-      continue;
-    } else {
-      emit emptyObjectAdded( newObject );
-      emit updatedObject( newObject );
-    }
+    emit copyObject( copyItem->id(), newObject );
+
   }
 
   emit updateView();

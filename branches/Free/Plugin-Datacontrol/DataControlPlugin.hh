@@ -84,6 +84,8 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // LoadSaveInterface
     void deleteObject( int _id );
     void emptyObjectAdded( int _id );
+    void copyObject( int _oldId, int& _newId);
+
   private slots :
     // BaseInterface
     void pluginsInitialized();
