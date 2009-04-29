@@ -76,7 +76,10 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   // ================================================================================
 
   QImage textureImage;
-  getImage(_filename,textureImage);
+
+  if ( !getImage(_filename,textureImage) )
+    emit log(LOGERR, "Cannot load texture '" + _textureName + "'. File not found '" + _filename + "'");
+
 
   // ================================================================================
   // Add the texture to the texture node and get the corresponding id
@@ -111,7 +114,10 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
     globalTextures_.texture(_textureName).disable();
 
     QImage textureImage;
-    getImage(_filename,textureImage);
+
+    if ( !getImage(_filename,textureImage) )
+      emit log(LOGERR, "Cannot load texture '" + _textureName + "'. File not found '" + _filename + "'");
+
     globalTextures_.texture(_textureName).textureImage = textureImage;
 
   } else {
@@ -164,7 +170,10 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
   texData->texture(_name).hidden( true );
 
   QImage textureImage;
-  getImage(_filename,textureImage);
+
+  if ( !getImage(_filename,textureImage) )
+    emit log(LOGERR, "Cannot load multiTexture '" + _textureGroup + "'. File not found '" + _filename + "'");
+
   texData->texture(_name).textureImage = textureImage;
 
   // Store the new texture in the list of this textureGroup
@@ -176,7 +185,7 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
 
 }
 
-void TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
+bool TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
   QString loadFilename;
 
   if ( _fileName.startsWith("/") || _fileName.startsWith(".") )
@@ -185,10 +194,11 @@ void TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
     loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + _fileName;
 
   if ( !_image.load( loadFilename ) ){
-        emit log(LOGERR, "Cannot load texture " + _fileName + " at : " + loadFilename);
-        _image.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
+    _image.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
+    return false;
   }
 
+  return true;
 }
 
 void TextureControlPlugin::addedEmptyObject( int _id ) {
@@ -296,7 +306,10 @@ void TextureControlPlugin::fileOpened( int _id ) {
     // ================================================================================
 
     QImage textureImage;
-    getImage(globalTextures_.textures()[i].filename(),textureImage);
+
+    if ( !getImage(globalTextures_.textures()[i].filename(),textureImage) )
+    emit log(LOGERR, "Cannot load global texture '" + globalTextures_.textures()[i].name() +
+                     "'. File not found '" + globalTextures_.textures()[i].filename() + "'");
 
     // ================================================================================
     // Add the texture to the texture node and get the corresponding id
@@ -393,7 +406,10 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   }
 
   QImage textureImage;
-  getImage( texData->texture(_textureName).filename(), textureImage);
+
+  if ( !getImage( texData->texture(_textureName).filename(), textureImage) )
+    emit log(LOGERR, "Cannot update texture '" + texData->texture(_textureName).name() +
+                     "'. File not found '" + texData->texture(_textureName).filename() + "'");
 
   // ================================================================================
   // As the current texture is active, update it
