@@ -295,6 +295,9 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
 
   bool added = false;
 
+  QMap< QString , QAction* > menuMap; //QMap sorts by key
+  QMap< QString , QAction* > actionMap;
+
   // Add context menus from plugins
   for ( uint i = 0 ; i < contextMenus_.size(); ++i ) {
 
@@ -321,14 +324,18 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
 
     }
 
+    QMenu* menu = contextMenus_[i].action->menu();
 
-    // check if the dataType of the object matches the context type
-    _menu->addAction( contextMenus_[i].action );
+    if (menu == 0) //is it a menu
+      actionMap[ contextMenus_[i].action->text() ] = contextMenus_[i].action;
+    else
+      menuMap[ contextMenus_[i].action->text() ] = contextMenus_[i].action;
+
     added = true;
 
     // Get all Actions in the menu and its submenus.
     // Set their data to the picked Object id
-    QMenu* menu = contextMenus_[i].action->menu();
+
 
     QList< QAction *> allActions;
     if ( menu == 0) {
@@ -352,8 +359,25 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
 
   }
 
-  return added;
+  //first add all menus
+  QMapIterator<QString, QAction*> it(menuMap);
 
+  while (it.hasNext()) {
+     it.next();
+    _menu->addAction( it.value() );
+  }
+
+  _menu->addSeparator();
+
+  //then all actions
+  QMapIterator<QString, QAction*> it2(actionMap);
+
+  while (it2.hasNext()) {
+     it2.next();
+    _menu->addAction( it2.value() );
+  }
+
+  return added;
 }
 
 

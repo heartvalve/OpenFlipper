@@ -155,10 +155,12 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
   //first check if the key is already registered by the coreWidget
   bool found = false;
   bool multi = false;
+  QString name;
   for (uint i=0; i < coreKeys_.size(); i++)
     if (coreKeys_[i].key == _key && coreKeys_[i].modifiers == _modifiers){
       found = true;
       multi = coreKeys_[i].multiUse;
+      name = "Core";
       break;
     }
 
@@ -170,11 +172,12 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
         && plugins_[i].keys[k].modifiers == _modifiers){
           found = true;
           multi = plugins_[i].keys[k].multiUse;
+          name = plugins_[i].name;
           break;
         }
 
-  if (found)
-    emit log(LOGERR, "Key already registered elsewhere.");
+  if (found && !multi)
+    emit log(LOGERR, "Key already registered by '" + name + "'");
 
   //check if its a key for the core
   if (sender() == this){
@@ -186,7 +189,7 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
     kb.slot = false;
 
     if (multi && !_multiUse)
-      log(LOGWARN, "Key registered as multiUse key.");
+      emit log(LOGERR, "Key already registered by '" + name + "'. Forced registration as multiUse key.");
 
     coreKeys_.push_back( kb );
 
@@ -215,7 +218,7 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
   kb.slot = false;
 
   if (multi && !_multiUse)
-    log(LOGWARN, "Key registered as multiUse key.");
+    emit log(LOGERR, "Key already registered by '" + name + "'. Forced registration as multiUse key.");
 
   pluginInfo->keys.append( kb );
 
