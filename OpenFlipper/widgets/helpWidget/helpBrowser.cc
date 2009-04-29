@@ -32,6 +32,43 @@ QVariant HelpBrowser::loadResource (int /*_type*/, const QUrl& _url) {
 
 		return QVariant(helpEngine_->fileData(_url));
 	}
+	else if (_url.toString().contains("../../")) {
+
+		// Relative link
+		// So convert into qthelp-link
+
+		QStringList list = _url.toString().split("/");
+
+		QString base = "";
+
+		for(int i = 0; i < list.size(); i++) {
+			if(list[i].toLower().contains("plugin")) {
+				base = list[i].toLower();
+				break;
+			}
+		}
+
+		if(base != "") {
+
+			// Build new link
+			QStringList docDomains = helpEngine_->registeredDocumentations();
+
+			QString newUrl = "qthelp://";
+
+			// This gives org.openflipper
+			newUrl += docDomains[0].split(".")[0] + "." + docDomains[0].split(".")[1];
+			newUrl += "." + base + "/doc/" + list.last();
+
+			if((helpEngine_->findFile(newUrl)).isValid()) {
+
+				return QVariant(helpEngine_->fileData(newUrl));
+			}
+
+			return QVariant();
+		}
+
+		return QVariant();
+	}
 	else {
 
 		QUrl newUrl;
