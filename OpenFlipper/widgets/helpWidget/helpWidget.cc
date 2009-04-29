@@ -25,11 +25,9 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 
 	homeSite_ = _homeSite;
 
-	QString filename = QString(OpenFlipper::Options::applicationDirStr());
-	filename += "/Help/Help.qhc";
-
-	QString stylesheet = QString(OpenFlipper::Options::applicationDirStr());
-	stylesheet += "/Help/acg_style.css";
+	QString filename = QString(OpenFlipper::Options::helpDirStr());
+	filename += OpenFlipper::Options::dirSeparator();
+	filename += "Help.qhc";
 
 	QString iconPath = QString(OpenFlipper::Options::iconDirStr());
 #ifdef WIN32

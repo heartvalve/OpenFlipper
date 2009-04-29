@@ -108,6 +108,10 @@ QIcon& OpenFlipperIcon();
 DLLEXPORT
 QString fontsDirStr();
 
+/// Returns the Path to Help
+DLLEXPORT
+QString helpDirStr();
+
 /// Sets the base Path of the application
 DLLEXPORT
 void applicationDir(QDir _dir);
@@ -132,6 +136,10 @@ void iconDir(QDir _dir);
 DLLEXPORT
 void fontsDir(QDir _dir);
 
+/// Sets the Path to the Help
+DLLEXPORT
+void helpDir(QDir _dir);
+
 /// Sets the base Path of the application
 DLLEXPORT
 bool applicationDir(QString _dir);
@@ -155,6 +163,10 @@ bool iconDir(QString _dir);
 /// Sets the Path to the Fonts
 DLLEXPORT
 void fontsDir(QDir _dir);
+
+/// Sets the Path to the Help
+DLLEXPORT
+void helpDir(QDir _dir);
 
 
 //===========================================================================
