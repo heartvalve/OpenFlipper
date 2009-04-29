@@ -125,14 +125,9 @@ int DataControlPlugin::getObject( QString _name ) {
  */
 int DataControlPlugin::copyObject( int objectId ) {
 
-  int newObject = PluginFunctions::copyObject( objectId );
+  int newObject;
 
-  if ( newObject == -1 )
-    std::cerr << "Unable to copy object" << std::endl;
-  else{
-    emit emptyObjectAdded(newObject);
-    emit updatedObject(newObject);
-  }
+  emit copyObject( objectId, newObject );
 
   return newObject;
 }
