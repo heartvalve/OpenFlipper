@@ -6,7 +6,7 @@ include( $$TOPDIR/qmake/all.include )
 
 Plugin()
 
-Doc()
+Doc(Plugin-SimplePlugin)
 
 DIRECTORIES = .
 
