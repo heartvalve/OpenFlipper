@@ -86,6 +86,9 @@ endmacro ()
 
 # main function
 function (_build_openflipper_plugin plugin)
+
+  of_set (OPENFLIPPER_${_PLUGIN}_BUILD "0")
+
   # base dependencies
   find_package (OpenGL)
   find_package (GLUT)
@@ -153,6 +156,7 @@ function (_build_openflipper_plugin plugin)
 
     # add this plugin to build plugin list for dependency tracking
     of_set (OPENFLIPPER_PLUGINS "${OPENFLIPPER_PLUGINS};Plugin-${plugin}")
+    of_set (OPENFLIPPER_${_PLUGIN}_BUILD "1")
 
     # append compiler and linker flags from plugin dependencies
     set_target_properties (
