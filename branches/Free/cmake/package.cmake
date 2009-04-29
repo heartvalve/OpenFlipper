@@ -114,6 +114,7 @@ elseif (APPLE)
 endif ()
 
 # has to be last
+include (InstallRequiredSystemLibraries)
 include (CPack)
 
 if (NOT WIN32 AND NOT APPLE)
