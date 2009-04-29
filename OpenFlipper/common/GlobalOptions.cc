@@ -840,6 +840,9 @@ QString updatePassword( ) {
 }
 
 QString coreVersion() {
+  #ifndef CORE_VERSION
+	#define CORE_VERSION "1.0.0RC2"
+  #endif
   return QString(CORE_VERSION);
 }
 
