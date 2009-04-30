@@ -50,6 +50,7 @@ include (AddFileDependencies)
 include (compiler)
 
 add_definitions (-DINCLUDE_TEMPLATES)
+include_directories (OpenMesh/src)
 
 if (WIN32)
   set (OPENFLIPPER_APPDIR "..")

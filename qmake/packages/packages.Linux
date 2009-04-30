@@ -603,10 +603,20 @@ defineTest( acg ) {
 }
 
 defineTest( openmesh ) {
-  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY}
-  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Tools/lib/$${BUILDDIRECTORY}
-  LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY} -lCore
-  LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/Tools/lib/$${BUILDDIRECTORY} -lTools
+  INCLUDEPATH += $${TOPDIR}/OpenMesh/src
+
+  QMAKE_LIBDIR += $${TOPDIR}/lib/
+  QMAKE_LIBDIR += $${TOPDIR}/lib/
+
+  CONFIG( debug, debug|release ){
+    LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/lib -lOpenMeshCored
+    LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/lib -lOpenMeshToolsd
+  } else {
+    LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/lib -lOpenMeshCore
+    LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/lib -lOpenMeshTools
+  }
+
+  export(INCLUDEPATH)
   export(QMAKE_LIBDIR)
   export(LIBS)
 }
