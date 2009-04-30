@@ -33,8 +33,8 @@ endif ()
 of_set (OPENFLIPPER_PLUGINS "")
 
 # add the basic componenets
-add_subdirectory (OpenMesh/Core)
-add_subdirectory (OpenMesh/Tools)
+add_subdirectory (OpenMesh/src/OpenMesh/Core)
+add_subdirectory (OpenMesh/src/OpenMesh/Tools)
 add_subdirectory (ACG)
 add_subdirectory (OpenFlipper/PluginLib)
 add_subdirectory (OpenFlipper/CoreApp)
