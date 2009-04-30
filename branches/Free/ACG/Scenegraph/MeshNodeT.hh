@@ -163,6 +163,9 @@ protected:
   // pick anything
   void pick_any(GLState& _state);
 
+  // update pick buffer sizes
+  void update_pick_buffers ();
+
   // opengl vertex array stuff
   enum ArrayType
   {
@@ -233,6 +236,10 @@ private:
   unsigned int vertexBaseIndex_;
   unsigned int edgeBaseIndex_;
   unsigned int anyBaseIndex_;
+
+  // buffers for draw arrays during picking
+  std::vector< ACG::Vec3f > pickVertexBuf_;
+  std::vector< ACG::Vec4uc > pickColorBuf_;
 
   // bounding box
   Vec3f bbMin_;
