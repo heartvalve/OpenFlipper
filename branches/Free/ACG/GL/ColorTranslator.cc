@@ -62,22 +62,27 @@ initialize()
   glGetIntegerv( GL_RED_BITS,   &red_bits_   );
   glGetIntegerv( GL_GREEN_BITS, &green_bits_ );
   glGetIntegerv( GL_BLUE_BITS,  &blue_bits_  );
+  glGetIntegerv( GL_ALPHA_BITS,  &alpha_bits_ );
 
   if (red_bits_   > 8)  red_bits_   = 8;
   if (green_bits_ > 8)  green_bits_ = 8;
   if (blue_bits_  > 8)  blue_bits_  = 8;
+  if (alpha_bits_ > 8)  alpha_bits_ = 8;
 
   red_mask_    = ((1 << red_bits_)   - 1);
   green_mask_  = ((1 << green_bits_) - 1);
-  blue_mask_   = ((1 << blue_bits_)  - 1);    
+  blue_mask_   = ((1 << blue_bits_)  - 1);
+  alpha_mask_  = ((1 << alpha_bits_) - 1);
 
   red_shift_   = 8 - red_bits_;
   green_shift_ = 8 - green_bits_;
-  blue_shift_  = 8 - blue_bits_;    
+  blue_shift_  = 8 - blue_bits_;
+  alpha_shift_ = 8 - alpha_bits_;
 
   red_round_   = 1 << (red_shift_   - 1);
   green_round_ = 1 << (green_shift_ - 1);
   blue_round_  = 1 << (blue_shift_  - 1);
+  alpha_round_ = 1 << (alpha_shift_ - 1);
 
   initialized_ = true;
 }
@@ -86,12 +91,12 @@ initialize()
 //-----------------------------------------------------------------------------
 
 
-Vec3uc
+Vec4uc
 ColorTranslator::
 index2color(unsigned int _idx) const 
 {
   assert(initialized());
-  unsigned char  r, g, b;
+  unsigned char  r, g, b, a;
   unsigned int   idx(_idx+1);
   
   b = ((idx & blue_mask_)  << blue_shift_)  | blue_round_;  
@@ -100,14 +105,16 @@ index2color(unsigned int _idx) const
   idx >>= green_bits_;
   r = ((idx & red_mask_)   << red_shift_)   | red_round_;  
   idx >>= red_bits_;
-  
+  a = ((idx & alpha_mask_) << alpha_shift_) | alpha_round_;
+  idx >>= alpha_bits_;
+
   if (!idx) 
-    return  Vec3uc(r, g, b);
+    return  Vec4uc(r, g, b, a);
 
   else 
   {
-    std::cerr << "Can't convert index " << _idx << " to RGB\n";
-    return Vec3uc(0, 0, 0);
+    std::cerr << "Can't convert index " << _idx << " to RGBA\n";
+    return Vec4uc(0, 0, 0, 0);
   }
 }
 
@@ -117,16 +124,18 @@ index2color(unsigned int _idx) const
 
 int
 ColorTranslator::
-color2index(Vec3uc _rgb) const 
+color2index(Vec4uc _rgba) const
 {
   assert(initialized());
   unsigned int result;
 
-  result =   _rgb[0] >> red_shift_;
+  result =   _rgba[3] >> alpha_shift_;
+  result <<= red_bits_;
+  result =   _rgba[0] >> red_shift_;
   result <<= green_bits_;
-  result |=  _rgb[1] >> green_shift_;
+  result |=  _rgba[1] >> green_shift_;
   result <<= blue_bits_;
-  result |=  _rgb[2] >> blue_shift_;    
+  result |=  _rgba[2] >> blue_shift_;    
 
   return (result-1);
 }
@@ -139,7 +148,10 @@ unsigned int
 ColorTranslator::max_index() const 
 {
   assert(initialized());
-  return (1 << (red_bits_+green_bits_+blue_bits_))-1;
+  if (red_bits_+green_bits_+blue_bits_+alpha_bits_ == 32)
+    return 0xffffffff;
+  else
+    return (1 << (red_bits_+green_bits_+blue_bits_+alpha_bits_))-1;
 }
 
 

@@ -111,6 +111,22 @@ void ColorStack::setIndex (unsigned int _idx)
 
 //----------------------------------------------------------------------------
 
+Vec4uc ColorStack::getIndexColor (unsigned int _idx)
+{
+  if (initialized_)
+  {
+    Vec4uc rv;
+    if (!currentNode_->getIndexColor (_idx, rv))
+      error_ = true;
+    else
+      return rv;
+  }
+  
+  return Vec4uc (0, 0, 0, 0);
+}
+
+//----------------------------------------------------------------------------
+
 void ColorStack::pushIndex (unsigned int _idx)
 {
   if (initialized_)
@@ -127,12 +143,12 @@ void ColorStack::popIndex ()
 
 //----------------------------------------------------------------------------
 
-std::vector<unsigned int> ColorStack::colorToStack (Vec3uc _rgb) const
+std::vector<unsigned int> ColorStack::colorToStack (Vec4uc _rgba) const
 {
   std::vector<unsigned int> rv(0);
   if (initialized_ && !error_)
   {
-    unsigned int idx = translator_.color2index (_rgb);
+    unsigned int idx = translator_.color2index (_rgba);
     if (idx >= root_->startIndex () && idx < root_->endIndex ())
       root_->colorToStack (rv, idx);
   }
@@ -209,6 +225,18 @@ bool ColorStack::Node::setIndex (unsigned int _idx) const
   if (colorStartIdx_ && colorStartIdx_ + _idx < colorEndIdx_)
   {
     glColor(translator_->index2color(colorStartIdx_ + _idx));
+    return true;
+  }
+  return false;
+}
+
+//----------------------------------------------------------------------------
+
+bool ColorStack::Node::getIndexColor (unsigned int _idx, Vec4uc &_rgba) const
+{
+  if (colorStartIdx_ && colorStartIdx_ + _idx < colorEndIdx_)
+  {
+    _rgba = translator_->index2color(colorStartIdx_ + _idx);
     return true;
   }
   return false;

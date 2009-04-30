@@ -79,9 +79,9 @@ public:
 
 
   /// index -> color (one buffer)
-  Vec3uc index2color(unsigned int _idx) const;
+  Vec4uc index2color(unsigned int _idx) const;
   /// color -> index (one buffer)
-  int color2index(Vec3uc _rgb) const;
+  int color2index(Vec4uc _rgba) const;
 
 
   /// returns maximal convertable index
@@ -91,10 +91,10 @@ public:
 private:
 
   bool     initialized_;
-  GLint    red_bits_, green_bits_, blue_bits_;
-  GLuint   red_mask_, green_mask_, blue_mask_;
-  GLuint   red_shift_, green_shift_, blue_shift_;
-  GLuint   red_round_, green_round_, blue_round_;
+  GLint    red_bits_, green_bits_, blue_bits_, alpha_bits_;
+  GLuint   red_mask_, green_mask_, blue_mask_, alpha_mask_;
+  GLuint   red_shift_, green_shift_, blue_shift_, alpha_shift_;
+  GLuint   red_round_, green_round_, blue_round_, alpha_round_;
 };
 
 

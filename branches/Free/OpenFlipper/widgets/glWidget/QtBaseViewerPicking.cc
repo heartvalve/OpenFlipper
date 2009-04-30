@@ -99,7 +99,7 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
                 b = scene()->height () - scenePos().y() - h,
                 x = _mousePos.x(),
                 y = scene()->height () - _mousePos.y();
-  GLubyte       pixels[9][3];
+  GLubyte       pixels[9][4];
   GLfloat       depths[9];
   int           hit = -1;
   unsigned char order[9] = { 4, 7, 1, 3, 5, 0, 2, 6, 8 };
@@ -144,12 +144,12 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-  glReadPixels (x - 1, y - 1, 3, 3, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+  glReadPixels (x - 1, y - 1, 3, 3, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
   glReadPixels (x - 1, y - 1, 3, 3, GL_DEPTH_COMPONENT, GL_FLOAT, depths);
 
   for (int i = 0; i < 9; i++)
   {
-    if (hit < 0 && (pixels[order[i]][2] != 0 || pixels[order[i]][1] != 0 || pixels[order[i]][0] != 0))
+    if (hit < 0 && (pixels[order[i]][2] != 0 || pixels[order[i]][1] != 0 || pixels[order[i]][0] != 0 || pixels[order[i]][3] != 0))
     {
       hit = order[i];
       break;
@@ -160,12 +160,13 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
     return 0;
 
 
-  ACG::Vec3uc rgb;
-  rgb[0] = pixels[hit][0];
-  rgb[1] = pixels[hit][1];
-  rgb[2] = pixels[hit][2];
+  ACG::Vec4uc rgba;
+  rgba[0] = pixels[hit][0];
+  rgba[1] = pixels[hit][1];
+  rgba[2] = pixels[hit][2];
+  rgba[3] = pixels[hit][3];
 
-  std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgb);
+  std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgba);
 
   // something wrong with the color stack ?
   if (rv.size () < 2)
@@ -215,6 +216,7 @@ bool glViewer::pickGL( ACG::SceneGraph::PickTarget _pickTarget,
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
   glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
   glClear(GL_DEPTH_BUFFER_BIT);
   properties_.glState().pick_init (false);
 
@@ -229,6 +231,7 @@ bool glViewer::pickGL( ACG::SceneGraph::PickTarget _pickTarget,
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
   glEnable(GL_LIGHTING);
+  glEnable(GL_BLEND);
 
   // process hit record
   if ( hits > 0 )
@@ -309,6 +312,7 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
   glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   properties_.glState().pick_init (true);
@@ -323,19 +327,20 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   glMatrixMode( GL_MODELVIEW );
   glLoadMatrixd(modelview.get_raw_data());
   glEnable(GL_LIGHTING);
+  glEnable(GL_BLEND);
 
   properties_.glState().set_clear_color (clear_color);
 
   if (properties_.glState().pick_error ())
     return false;
 
-  buffer = new GLubyte[3 * rect.width() * rect.height()];
+  buffer = new GLubyte[4 * rect.width() * rect.height()];
 
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
   glReadPixels (rect.x(), scene()->height () - rect.bottom() , rect.width(),
-                rect.height(), GL_RGB, GL_UNSIGNED_BYTE, buffer);
+                rect.height(), GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
   QSet<QPair<unsigned int, unsigned int> > found;
 
@@ -344,15 +349,16 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
     {
       if (_region.contains (QPoint (rect.x() + x, rect.y() + y)))
       {
-        int bPos = (((rect.height () - (y + 1)) * rect.width ()) + x) * 3;
-        if (buffer[bPos + 2] != 0 || buffer[bPos + 1] != 0 || buffer[bPos] != 0)
+        int bPos = (((rect.height () - (y + 1)) * rect.width ()) + x) * 4;
+        if (buffer[bPos + 2] != 0 || buffer[bPos + 1] != 0 || buffer[bPos] != 0 || buffer[bPos + 3] != 0)
         {
-          ACG::Vec3uc rgb;
-          rgb[0] = buffer[bPos];
-          rgb[1] = buffer[bPos + 1];
-          rgb[2] = buffer[bPos + 2];
+          ACG::Vec4uc rgba;
+          rgba[0] = buffer[bPos];
+          rgba[1] = buffer[bPos + 1];
+          rgba[2] = buffer[bPos + 2];
+          rgba[3] = buffer[bPos + 3];
 
-          std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgb);
+          std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgba);
           if (rv.size () < 2)
             continue;
 
