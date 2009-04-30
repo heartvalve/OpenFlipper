@@ -511,6 +511,7 @@ void glViewer::drawScene_mono()
       makeCurrent();
 
       glDisable(GL_LIGHTING);
+      glDisable(GL_BLEND);
       glClear(GL_DEPTH_BUFFER_BIT);
       glInitNames();
       glPushName((GLuint) 0);
@@ -521,6 +522,7 @@ void glViewer::drawScene_mono()
       ACG::SceneGraph::traverse(sceneGraphRoot_, action);
 
       glEnable(GL_LIGHTING);
+      glEnable(GL_BLEND);
     }
   }
 

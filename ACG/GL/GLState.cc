@@ -880,10 +880,10 @@ void GLState::pick_pop_name ()
 
 //-----------------------------------------------------------------------------
 
-std::vector<unsigned int> GLState::pick_color_to_stack (Vec3uc _rgb) const
+std::vector<unsigned int> GLState::pick_color_to_stack (Vec4uc _rgba) const
 {
   if (colorPicking_ && colorStack_.initialized ())
-    return colorStack_.colorToStack (_rgb);
+    return colorStack_.colorToStack (_rgba);
   return std::vector<unsigned int> ();
 }
 
@@ -909,7 +909,17 @@ bool GLState::pick_error () const
 
 unsigned int GLState::pick_current_index () const
 {
-  return colorStack_.currentIndex ();
+  if (colorPicking_)
+    return colorStack_.currentIndex ();
+  else
+    return 0;
+}
+
+//-----------------------------------------------------------------------------
+
+bool GLState::color_picking () const
+{
+  return colorPicking_;
 }
 
 //=============================================================================

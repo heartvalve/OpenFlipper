@@ -83,6 +83,9 @@ public:
   /// sets the current color the given index (like glLoadName)
   void setIndex (unsigned int _idx);
 
+  /// gets the color instead of setting it directly
+  Vec4uc getIndexColor (unsigned int _idx);
+
   /// creates a new node the stack (like glPushName)
   void pushIndex (unsigned int _idx);
 
@@ -90,7 +93,7 @@ public:
   void popIndex ();
 
   /// converts the given color to index values on the stack
-  std::vector<unsigned int> colorToStack (Vec3uc _rgb) const;
+  std::vector<unsigned int> colorToStack (Vec4uc _rgba) const;
 
   /// returns maximal available index count
   unsigned int freeIndicies () const;
@@ -115,6 +118,9 @@ private:
 
       /// sets the current color the given index (like glLoadName)
       bool setIndex (unsigned int _idx) const;
+
+      /// gets the color instead of setting it directly
+      bool getIndexColor (unsigned int _idx, Vec4uc &_rgba) const;
 
       /// creates a new node the stack (like glPushName)
       Node * pushIndex (unsigned int _idx);

@@ -389,7 +389,7 @@ public:
   void pick_pop_name ();
 
   /// converts the given color to index values on the stack (only used in color picking)
-  std::vector<unsigned int> pick_color_to_stack (Vec3uc _rgb) const;
+  std::vector<unsigned int> pick_color_to_stack (Vec4uc _rgba) const;
 
   /// returns maximal available index count (only used in color picking)
   unsigned int pick_free_indicies () const;
@@ -399,6 +399,9 @@ public:
 
   /// returns the current color picking index (can be used for caching)
   unsigned int pick_current_index () const;
+
+  /// Is color picking active?
+  bool color_picking () const;
 
 
 private: //--------------------------------------------------------------------
