@@ -863,6 +863,15 @@ void GLState::pick_set_name (unsigned int _idx)
 
 //-----------------------------------------------------------------------------
 
+Vec4uc GLState::pick_get_name_color (unsigned int _idx)
+{
+  if (colorPicking_)
+    return colorStack_.getIndexColor (_idx);
+  return Vec4uc (0, 0, 0, 0);
+}
+
+//-----------------------------------------------------------------------------
+
 void GLState::pick_push_name (unsigned int _idx)
 {
   colorStack_.pushIndex (_idx);
