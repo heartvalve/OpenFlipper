@@ -382,6 +382,9 @@ public:
   /// sets the current name/color
   void pick_set_name (unsigned int _idx);
 
+  /// get the current color for index
+  Vec4uc pick_get_name_color (unsigned int _idx);
+
   /// creates a new name the stack
   void pick_push_name (unsigned int _idx);
 
