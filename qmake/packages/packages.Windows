@@ -81,6 +81,28 @@ defineTest( openmesh ) {
   export(DEFINES)
 }
 
+
+defineTest( openmesh ) {
+  INCLUDEPATH += $${TOPDIR}/OpenMesh/src
+  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/lib
+
+  DEFINES *= INCLUDE_TEMPLATES
+  DEFINES *= _USE_MATH_DEFINES NOMINMAX
+
+  CONFIG( debug, debug|release ){
+    LIBS+= -L$${TOPDIR}/OpenMesh/lib -lOpenMeshCored
+    LIBS+= -L$${TOPDIR}/OpenMesh/lib -lOpenMeshToolsd
+  } else {
+    LIBS+= -L$${TOPDIR}/OpenMesh/lib -lOpenMeshCore
+    LIBS+= -L$${TOPDIR}/OpenMesh/lib -lOpenMeshTools
+  }
+
+  export(INCLUDEPATH)
+  export(DEFINES)
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+}
+
 defineTest( qwt ) {
 
   #######################################
