@@ -602,11 +602,13 @@ defineTest( acg ) {
   export(LIBS)
 }
 
+
+
+
 defineTest( openmesh ) {
   INCLUDEPATH += $${TOPDIR}/OpenMesh/src
 
-  QMAKE_LIBDIR += $${TOPDIR}/lib/
-  QMAKE_LIBDIR += $${TOPDIR}/lib/
+  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/lib
 
   CONFIG( debug, debug|release ){
     LIBS+= -Wl,-rpath=$${TOPDIR}/OpenMesh/lib -lOpenMeshCored

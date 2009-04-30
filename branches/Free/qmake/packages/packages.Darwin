@@ -595,6 +595,45 @@ defineTest( openmesh ) {
   export(LIBS)
 }
 
+defineTest( openmesh ) {
+  INCLUDEPATH += $${TOPDIR}/OpenMesh/src
+  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/lib
+
+  CONFIG( debug, debug|release ){
+    LIBS+= -lOpenMeshCored
+    LIBS+= -lOpenMeshToolsd
+  } else {
+    LIBS+= -lOpenMeshCore
+    LIBS+= -lOpenMeshTools
+  }
+
+  export(INCLUDEPATH)
+  export(QMAKE_LIBDIR)
+  export(LIBS)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 defineTest( physim2 ) {
     exists( $${TOPDIR}/PhySim ) {
         QMAKE_LIBDIR += $${TOPDIR}/PhySim/lib/$${BUILDDIRECTORY}
