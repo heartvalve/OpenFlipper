@@ -98,12 +98,12 @@ if (WIN32)
   if (EXISTS ${CMAKE_SOURCE_DIR}/WIN)
     file (GLOB _files "${CMAKE_SOURCE_DIR}/WIN/DLLs/DLLs 32 debug/*.dll")
     install(FILES ${_files}
-      DESTINATION ${OPENFLIPPER_LIBDIR}
+      DESTINATION ${ACG_PROJECT_LIBDIR}
       CONFIGURATIONS Debug
     )
     file (GLOB _files "${CMAKE_SOURCE_DIR}/WIN/DLLs/DLLs 32 release/*.dll")
     install (FILES ${_files}
-      DESTINATION ${OPENFLIPPER_LIBDIR}
+      DESTINATION ${ACG_PROJECT_LIBDIR}
       CONFIGURATIONS Release
     )
   endif ()
