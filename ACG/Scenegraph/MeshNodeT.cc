@@ -94,7 +94,7 @@ MeshNodeT(const Mesh&  _mesh,
   faceList_ = glGenLists (1);
   vertexList_ = glGenLists (1);
   edgeList_ = glGenLists (1);
-  anyList_ = glGenLists (1);
+  anyList_ = glGenLists (3);
 }
 
 
@@ -124,7 +124,7 @@ MeshNodeT<Mesh>::
     glDeleteLists (edgeList_, 1);
 
   if (anyList_)
-    glDeleteLists (anyList_, 1);
+    glDeleteLists (anyList_, 3);
 }
 
 
@@ -1265,12 +1265,14 @@ pick_vertices(GLState& _state, bool _front)
   if (vertexList_ && !updateVertexList_ && _state.pick_current_index () == vertexBaseIndex_)
   {
     glCallList (vertexList_);
+    if (_front)
+      glDepthFunc(depthFunc());
     return;
   }
 
   if (vertexList_)
   {
-    glNewList (vertexList_, GL_COMPILE_AND_EXECUTE);
+    glNewList (vertexList_, GL_COMPILE);
     updateVertexList_ = false;
     vertexBaseIndex_ = _state.pick_current_index ();
   }
@@ -1308,7 +1310,10 @@ pick_vertices(GLState& _state, bool _front)
   }
 
   if (vertexList_)
+  {
     glEndList ();
+    glCallList (vertexList_);
+  }
 
   if (_front)
     glDepthFunc(depthFunc());
@@ -1354,7 +1359,7 @@ pick_faces(GLState& _state)
 
   if (faceList_)
   {
-    glNewList (faceList_, GL_COMPILE_AND_EXECUTE);
+    glNewList (faceList_, GL_COMPILE);
     updateFaceList_ = false;
     faceBaseIndex_ = _state.pick_current_index ();
   }
@@ -1458,7 +1463,10 @@ pick_faces(GLState& _state)
   }
 
   if (faceList_)
+  {
     glEndList ();
+    glCallList (faceList_);
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -1506,12 +1514,14 @@ pick_edges(GLState& _state, bool _front)
   if (edgeList_ && !updateEdgeList_ && _state.pick_current_index () == edgeBaseIndex_)
   {
     glCallList (edgeList_);
+    if (_front)
+      glDepthFunc(depthFunc());
     return;
   }
 
   if (edgeList_)
   {
-    glNewList (edgeList_, GL_COMPILE_AND_EXECUTE);
+    glNewList (edgeList_, GL_COMPILE);
     updateEdgeList_ = false;
     edgeBaseIndex_ = _state.pick_current_index ();
   }
@@ -1536,7 +1546,7 @@ pick_edges(GLState& _state, bool _front)
     glVertexPointer (&pickVertexBuf_[0]);
     glColorPointer(&pickColorBuf_[0]);
 
-    glDrawArrays(GL_LINES, 0, mesh_.n_edges());
+    glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
 
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -1554,7 +1564,10 @@ pick_edges(GLState& _state, bool _front)
   }
 
   if (edgeList_)
+  {
     glEndList ();
+    glCallList (edgeList_);
+  }
 
   if (_front)
     glDepthFunc(depthFunc());
@@ -1584,12 +1597,14 @@ pick_any(GLState& _state)
   if (anyList_ && !updateAnyList_ && _state.pick_current_index () == anyBaseIndex_)
   {
     glCallList (anyList_);
+    glCallList (anyList_+1);
+    glCallList (anyList_+2);
     return;
   }
 
   if (anyList_)
   {
-    glNewList (anyList_, GL_COMPILE_AND_EXECUTE);
+    glNewList (anyList_, GL_COMPILE);
     updateAnyList_ = false;
     anyBaseIndex_ = _state.pick_current_index ();
   }
@@ -1668,6 +1683,12 @@ pick_any(GLState& _state)
 
     }
 
+    if (anyList_)
+    {
+      glEndList ();
+      glNewList (anyList_+1, GL_COMPILE);
+    }
+
     glDepthFunc(GL_LEQUAL);
 
     // edges
@@ -1684,7 +1705,13 @@ pick_any(GLState& _state)
     glVertexPointer (&pickVertexBuf_[0]);
     glColorPointer(&pickColorBuf_[0]);
 
-    glDrawArrays(GL_LINES, 0, mesh_.n_edges());
+    glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+
+    if (anyList_)
+    {
+      glEndList ();
+      glNewList (anyList_+2, GL_COMPILE);
+    }
 
     // vertices
     idx = 0;
@@ -1737,6 +1764,12 @@ pick_any(GLState& _state)
       }
     }
 
+    if (anyList_)
+    {
+      glEndList ();
+      glNewList (anyList_+1, GL_COMPILE);
+    }
+
     glDepthFunc(GL_LEQUAL);
 
     // edges
@@ -1747,6 +1780,12 @@ pick_any(GLState& _state)
       glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0))));
       glVertex(mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1))));
       glEnd();
+    }
+
+    if (anyList_)
+    {
+      glEndList ();
+      glNewList (anyList_+2, GL_COMPILE);
     }
 
     // vertices
@@ -1763,7 +1802,12 @@ pick_any(GLState& _state)
 
 
   if (anyList_)
+  {
     glEndList ();
+    glCallList (anyList_);
+    glCallList (anyList_+1);
+    glCallList (anyList_+2);
+  }
 }
 
 //----------------------------------------------------------------------------
