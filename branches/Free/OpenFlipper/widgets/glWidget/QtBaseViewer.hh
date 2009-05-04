@@ -531,12 +531,7 @@ private:
   // Base graphics widget layout
   QtGLViewerLayout* glBaseLayout_;
 
-  // rotate around x-axis
-  ACG::QtWidgets::QtWheel* wheelX_;
-  // rotate around y-axis
-  ACG::QtWidgets::QtWheel* wheelY_;
-  // translate along z-axis
-  ACG::QtWidgets::QtWheel* wheelZ_;
+
 
   // vector of current draw mode actions
   std::vector< QAction * > drawMenuActions_;
@@ -545,11 +540,36 @@ private:
   QTime redrawTime_;
 
   //===========================================================================
+  /** @name Wheels
+   * @{ */
+  //===========================================================================
+
+  public:
+    bool wheelsVisible();
+
+  public slots:
+    void slotShowWheels();
+    void slotHideWheels();
+
+  private:
+    // rotate around x-axis
+    ACG::QtWidgets::QtWheel* wheelX_;
+    // rotate around y-axis
+    ACG::QtWidgets::QtWheel* wheelY_;
+    // translate along z-axis
+    ACG::QtWidgets::QtWheel* wheelZ_;
+
+
+  /** @} */
+
+  //===========================================================================
   /** @name view handling
    * @{ */
   //===========================================================================
   signals:
     void viewUpdated();
+
+  /** @} */
 
   //===========================================================================
   /** @name Stereo

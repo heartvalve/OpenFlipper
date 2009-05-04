@@ -1144,6 +1144,10 @@ glViewer::createWidgets(QStatusBar* _sb)
   glBaseLayout_->addWheelY(wheelY);
   glBaseLayout_->addWheelZ(wheelZ);
 
+  connect(wheelX_,SIGNAL(hideWheel()),this,SLOT(slotHideWheels()));
+  connect(wheelY_,SIGNAL(hideWheel()),this,SLOT(slotHideWheels()));
+  connect(wheelZ_,SIGNAL(hideWheel()),this,SLOT(slotHideWheels()));
+
   setLayout(glBaseLayout_);
 }
 
@@ -1827,6 +1831,22 @@ void glViewer::snapshot()
    {
      statusbar_->showMessage(QString("could not save snapshot to ")+fname);
    }
+
+}
+
+void glViewer::slotHideWheels() {
+  wheelX_->hide();
+  wheelY_->hide();
+  wheelZ_->hide();
+}
+
+void glViewer::slotShowWheels() {
+  wheelX_->show();
+  wheelY_->show();
+  wheelZ_->show();
+}
+
+bool glViewer::wheelsVisible() {
 
 }
 
