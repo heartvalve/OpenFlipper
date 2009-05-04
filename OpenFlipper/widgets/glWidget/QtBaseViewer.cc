@@ -1847,7 +1847,8 @@ void glViewer::slotShowWheels() {
 }
 
 bool glViewer::wheelsVisible() {
-
+  // TODO: Return valid values
+  return true;
 }
 
 //=============================================================================
