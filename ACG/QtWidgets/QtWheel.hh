@@ -213,6 +213,9 @@ signals:
   /// Like gearUp() but the value of gear() halves.
   void gearDown();
 
+  /// Emitted when the wheel will be hidden by the context menu
+  void hideWheel();
+
 protected:
   /// reimplemented
   virtual void mousePressEvent(QMouseEvent*);
@@ -232,10 +235,14 @@ protected:
   /// reimplemented
   virtual void paintEvent(QPaintEvent*);
   /// reimplemented
-  virtual void drawContents(QPainter*) {}
+  virtual void drawContents(QPainter*) {};
+
 
   /// draw wheel to pixmap (double buffering)
   virtual void redrawPixmap();
+
+private slots:
+  void slotCustomContextMenuRequested ( const QPoint & pos );
 
 private:
 
