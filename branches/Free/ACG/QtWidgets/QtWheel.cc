@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -51,6 +51,7 @@
 
 #include <QEvent>
 #include <QPainter>
+#include <QMenu>
 #include <QPixmap>
 #include <QTimer>
 #include <QCursor>
@@ -68,31 +69,37 @@ namespace ACG {
 namespace QtWidgets {
 
 
-//== IMPLEMENTATION ========================================================== 
+//== IMPLEMENTATION ==========================================================
 
- 
+
 QtWheel::QtWheel(QWidget* _parent,
 	       const char* /* _name */ ,
 	       Orientation _orientation)
-  : QFrame(_parent) 
+  : QFrame(_parent)
 {
   angle_       = 0.0;
   lastAngle_   = 0.0;
   gear_        = 1.0;
   gearShift_   = 0;
   // size_ will be set by redrawPixmap()
-  
+
   ticks_       = 36;
   marker_      = false;
   orientation_ = _orientation;
   dragging_    = false;
   tracking_    = true;
-  
+
   palette_     = palette();
   palette_.setColor( QPalette::Dark,  QColor(0,0,0));
 
   setFrameStyle( QtWheel::Panel | QtWheel::Raised );
   setLineWidth(2);
+
+  setContextMenuPolicy ( Qt::CustomContextMenu );
+
+  connect (this, SIGNAL (customContextMenuRequested ( const QPoint & ) ),
+           this, SLOT( slotCustomContextMenuRequested ( const QPoint & ) ));
+
 }
 
 QtWheel::~QtWheel() {
@@ -100,8 +107,8 @@ QtWheel::~QtWheel() {
 
 //----------------------------------------------------------------------------
 
-void QtWheel::mousePressEvent(QMouseEvent* _e) 
-{ 
+void QtWheel::mousePressEvent(QMouseEvent* _e)
+{
   if (_e->button()==Qt::LeftButton) {
     pos_=_e->pos();
     dragging_=true;
@@ -109,36 +116,36 @@ void QtWheel::mousePressEvent(QMouseEvent* _e)
   }
 }
 
-void QtWheel::mouseReleaseEvent(QMouseEvent* _e) 
-{ 
-  if (_e->button()==Qt::LeftButton) 
-  { 
+void QtWheel::mouseReleaseEvent(QMouseEvent* _e)
+{
+  if (_e->button()==Qt::LeftButton)
+  {
     dragging_=false;
 
-//     turn(_e->pos()); 
+//     turn(_e->pos());
 //     emit angleChangedTo(angle_);
-//     emit angleChangedBy(angle_-lastAngle_); 
+//     emit angleChangedBy(angle_-lastAngle_);
   }
 }
 
 
-void QtWheel::mouseMoveEvent(QMouseEvent* _e) 
+void QtWheel::mouseMoveEvent(QMouseEvent* _e)
 {
-  if (_e->buttons()&Qt::LeftButton) 
+  if (_e->buttons()&Qt::LeftButton)
   {
     float dAngle=turn(_e->pos());
 
     if (tracking_ && dAngle!=0.0) { // 0.0 is explicitly returned
       lastAngle_=angle_-dAngle;
 
-      emit angleChangedTo(angle_); 
+      emit angleChangedTo(angle_);
       emit angleChangedBy(dAngle);
     }
   }
 }
 
 
-double QtWheel::turn(const QPoint& _pos) 
+double QtWheel::turn(const QPoint& _pos)
 {
   QPoint dPos=(_pos-pos_);
   pos_=_pos;
@@ -146,11 +153,11 @@ double QtWheel::turn(const QPoint& _pos)
   int d = orientation_== Horizontal ? dPos.x() : dPos.y();
 
   double dAngle=0.0;
-  
-  if (d!=0) { 
+
+  if (d!=0) {
     // full width/height = 180 deg for gear()==1
-    dAngle=double(d)/double(size_)*M_PI*gear_; 
-    angle_+=dAngle; 
+    dAngle=double(d)/double(size_)*M_PI*gear_;
+    angle_+=dAngle;
 
     redrawPixmap();
     repaint();
@@ -172,24 +179,24 @@ void QtWheel::mouseDoubleClickEvent(QMouseEvent* _e) {
 
     if (x<sz/2) {
       if (gearShift_<8) {
-	++gearShift_;
-	gear_*=2.0;
-      
-	redrawPixmap();
-	repaint(); 
-      
-	emit gearUp();
+        ++gearShift_;
+        gear_*=2.0;
+
+        redrawPixmap();
+        repaint();
+
+        emit gearUp();
       }
     }
     else {
       if (gearShift_>-8) {
-	--gearShift_;
-	gear_/=2.0;
-	
-	redrawPixmap();
-	repaint();
+        --gearShift_;
+        gear_/=2.0;
 
-	emit gearDown();
+        redrawPixmap();
+        repaint();
+
+        emit gearDown();
       }
     }
   }
@@ -197,16 +204,16 @@ void QtWheel::mouseDoubleClickEvent(QMouseEvent* _e) {
 
 //----------------------------------------------------------------------------
 
-void QtWheel::keyPressEvent(QKeyEvent* _e) { 
+void QtWheel::keyPressEvent(QKeyEvent* _e) {
 
   //
   // This does not work! Do we really need/want keyboard input???
   //
-  
-  if (dragging_)
-    return; 
 
-  double dAngle=0.0; 
+  if (dragging_)
+    return;
+
+  double dAngle=0.0;
 
   if (!_e->isAutoRepeat())
     lastAngle_=angle_;
@@ -236,20 +243,20 @@ void QtWheel::keyPressEvent(QKeyEvent* _e) {
   repaint();
 
   if (tracking_) {
-    emit angleChangedTo(angle_); 
+    emit angleChangedTo(angle_);
     emit angleChangedBy(angle_-lastAngle_);
   }
 }
 
-void QtWheel::keyReleaseEvent(QKeyEvent* _e) { 
+void QtWheel::keyReleaseEvent(QKeyEvent* _e) {
   switch (_e->key()) {
     case Qt::Key_Left:
-    case Qt::Key_Up: 
+    case Qt::Key_Up:
     case Qt::Key_Right:
     case Qt::Key_Down: {
       if (!tracking_) {
-	emit angleChangedTo(angle_); 
-	emit angleChangedBy(angle_-lastAngle_);
+        emit angleChangedTo(angle_);
+        emit angleChangedBy(angle_-lastAngle_);
       }
     };
     break;
@@ -262,10 +269,10 @@ void QtWheel::keyReleaseEvent(QKeyEvent* _e) {
 
 void QtWheel::resizeEvent(QResizeEvent* _e) {
   QFrame::resizeEvent(_e);
-  redrawPixmap();  
+  redrawPixmap();
 }
 
-void QtWheel::paintEvent(QPaintEvent* _e) { 
+void QtWheel::paintEvent(QPaintEvent* _e) {
   if (isVisible()) {
     QFrame::paintEvent(_e);
 
@@ -273,7 +280,7 @@ void QtWheel::paintEvent(QPaintEvent* _e) {
     QPainter painter(this);
     QRect r=contentsRect();
 
-    /// @todo: bitBlt(this,r.left(),r.top(),pixmap_); 
+    /// @todo: bitBlt(this,r.left(),r.top(),pixmap_);
     painter.drawPixmap( r.left(), r.top(), pixmap_ );
 
   }
@@ -281,46 +288,46 @@ void QtWheel::paintEvent(QPaintEvent* _e) {
 
 //----------------------------------------------------------------------------
 
-void QtWheel::redrawPixmap() { 
+void QtWheel::redrawPixmap() {
  QRect r=contentsRect();
- 
+
  if (r.width()<=0 || r.height()<=0) {
    pixmap_ = QPixmap( 0, 0 );
    return;
  }
- 
+
  if (pixmap_.size()!=r.size())
    pixmap_ = QPixmap(r.size());
 
   QPainter paint;
- 
+
   paint.begin( &pixmap_);
   pixmap_.fill( palette().background().color() );
 
   // coords of wheel frame
   QRect contents = contentsRect();
   contents.moveTopLeft(QPoint(0,0)); // transform to pixmap coord sys
-  
+
   QPen pen(Qt::black, 1);
   paint.setPen(pen);
-  
+
   if (orientation_ == Horizontal) {
- 
+
     shrinkRect(contents, 3, 2);
-    
-    // draw a black frame    
+
+    // draw a black frame
     paint.drawRect(contents);
     shrinkRect(contents, 1, 0);
-    paint.drawRect(contents);    
+    paint.drawRect(contents);
     shrinkRect(contents, 3, 2);
-             
-    int x0 = contents.left(); 
-    int y0 = contents.top();  
+
+    int x0 = contents.left();
+    int y0 = contents.top();
     int w0 = contents.width();
     int h0 = contents.height();
 
     size_=w0;
- 
+
     if (gearShift_>0) {
       QBrush b; b.setColor(QColor(Qt::red)); b.setStyle(Qt::SolidPattern);
       int w=std::min(4*gearShift_,w0-8);
@@ -331,32 +338,32 @@ void QtWheel::redrawPixmap() {
       int w=std::min(-4*gearShift_,w0-8); b.setStyle(Qt::SolidPattern);
       paint.fillRect(x0+w0-w-8,y0-1,w,h0+2,b);
     }
-    
-    // draw the wheel    
+
+    // draw the wheel
     double step = 2 * M_PI / (double) ticks_;
     for (int i = 0; i < ticks_; i++) {
       double x = sin(angle_ + i * step);
       double y = cos(angle_ + i * step);
       if (y>0) {
-	qDrawShadeLine(&paint,
-		       (int) (x0+(w0+x*w0)/2.0f), y0,
-		       (int) (x0+(w0+x*w0)/2.0f), y0+h0,
-		       palette_, false, 1, 1);
+        qDrawShadeLine( &paint,
+                        (int) (x0+(w0+x*w0)/2.0f), y0,
+                        (int) (x0+(w0+x*w0)/2.0f), y0+h0,
+                        palette_, false, 1, 1);
       }
     }
   }
 
   else if (orientation_ == Vertical) {
-   
+
     shrinkRect(contents, 2, 3);
-    
-    // draw a black frame    
+
+    // draw a black frame
     paint.drawRect(contents);
     shrinkRect(contents, 0, 1);
-    paint.drawRect(contents);    
+    paint.drawRect(contents);
     shrinkRect(contents, 2, 3);
-    
-    
+
+
     int x0 = contents.left();
     int y0 = contents.top();
     int w0 = contents.width();
@@ -374,17 +381,17 @@ void QtWheel::redrawPixmap() {
       int h=-std::min(4*gearShift_,h0-8);
       paint.fillRect(x0-1,y0+h0-h-8,w0+2,h,b);
     }
-    
-    // draw the wheel    
+
+    // draw the wheel
     double step = 2 * M_PI / (double) ticks_;
     for (int i = 0; i < ticks_; i++) {
       double x = sin(angle_ + i * step);
       double y = cos(angle_ + i * step);
       if (y>0) {
-	qDrawShadeLine(&paint,
-		       x0,    (int) (y0+(h0+x*h0)/2.0f),
-		       x0+w0, (int) (y0+(h0+x*h0)/2.0f),
-		       palette_, false, 1, 1);
+	     qDrawShadeLine( &paint,
+                        x0,    (int) (y0+(h0+x*h0)/2.0f),
+                        x0+w0, (int) (y0+(h0+x*h0)/2.0f),
+                        palette_, false, 1, 1);
       } // if y
     } // for ticks_
   } // if Vertical
@@ -402,26 +409,26 @@ void QtWheel::shrinkRect(QRect& _rect, int _dx, int _dy) {
 
 //-----------------------------------------------------------------------------
 
-QSizePolicy QtWheel::sizePolicy() const 
+QSizePolicy QtWheel::sizePolicy() const
 {
-  if (orientation_== Horizontal) 
+  if (orientation_== Horizontal)
     return QSizePolicy(QSizePolicy::Preferred,
 		       QSizePolicy::Minimum);
-  else 
+  else
     return QSizePolicy(QSizePolicy::Minimum,
 		       QSizePolicy::Preferred);
 }
 
 //-----------------------------------------------------------------------------
 
-QSize QtWheel::sizeHint() const 
+QSize QtWheel::sizeHint() const
 {
   if (orientation_==Horizontal)
     return QSize(120,20);
-  else 
+  else
     return QSize(20,120);
 }
-  
+
 //-----------------------------------------------------------------------------
 
 
@@ -431,6 +438,17 @@ double QtWheel::clip(double _angle) {
 
 double QtWheel::deg(double _angle) {
   return _angle*180.0/M_PI;
+}
+
+//-----------------------------------------------------------------------------
+
+void QtWheel::slotCustomContextMenuRequested ( const QPoint & pos ) {
+
+  QMenu* menu = new QMenu(this);
+  QAction *hide = menu->addAction("Hide wheel");
+  connect( hide, SIGNAL(triggered()) , this, SIGNAL(hideWheel()) );
+  menu->popup( mapToGlobal(pos) );
+
 }
 
 
