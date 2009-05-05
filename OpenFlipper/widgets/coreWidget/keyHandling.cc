@@ -464,12 +464,32 @@ void CoreWidget::registerCoreKeys() {
   emit registerKey(Qt::Key_Escape , Qt::NoModifier, "Switch to last action mode ( Move,Picking,Light or Info Mode)");
   emit registerKey(Qt::Key_Space  , Qt::NoModifier, "Toggle between multiview and single view");
 
+  if ( OpenFlipper::Options::isLinux() ) {
+    emit registerKey(Qt::Key_Meta , Qt::MetaModifier, "Use Navigation mode while key is pressed");
+    emit registerKey(Qt::Key_Meta , Qt::NoModifier, "Use Navigation mode while key is pressed");
+  } else {
+    emit registerKey(Qt::Key_Alt , Qt::AltModifier, "Use Navigation mode while key is pressed");
+  }
+
   emit registerKey(Qt::Key_Shift  , Qt::ShiftModifier, "Apply context menu action to all Viewers", true);
   emit registerKey(Qt::Key_Shift  , Qt::NoModifier, "Apply context menu action to all Viewers", true);
 }
 
 /// if a keyPressEvent belongs to the core this functions is called
 void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
+
+  if ( ( _e->key() == Qt::Key_Meta ) && OpenFlipper::Options::isLinux() ) {
+    if ( _e->type() == QEvent::KeyPress ) {
+      setActionMode( Viewer::ExamineMode );
+    }
+  }
+
+  if ( ( _e->key() == Qt::Key_Alt ) && ! OpenFlipper::Options::isLinux() ) {
+    if ( _e->type() == QEvent::KeyPress ) {
+      setActionMode( Viewer::ExamineMode );
+    }
+  }
+
 
   if (_e->modifiers() & Qt::ControlModifier ) {
     switch (_e->key()) {
@@ -538,6 +558,20 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 
 /// if a keyReleaseEvent belongs to the core this functions is called
 void CoreWidget::coreKeyReleaseEvent(QKeyEvent* _e){
+
+
+  if ( ( _e->key() == Qt::Key_Meta ) && OpenFlipper::Options::isLinux() ) {
+    if ( _e->type() == QEvent::KeyRelease ) {
+      setActionMode( lastActionMode() );
+    }
+  }
+
+  if ( ( _e->key() == Qt::Key_Alt ) && ! OpenFlipper::Options::isLinux() ) {
+    if ( _e->type() == QEvent::KeyRelease ) {
+      setActionMode( lastActionMode() );
+    }
+  }
+
 
   switch (_e->key()) {
     case Qt::Key_Shift :
