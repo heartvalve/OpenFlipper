@@ -267,7 +267,12 @@ void CoreWidget::applicationSnapshotDialog() {
   dialog.setAcceptMode(QFileDialog::AcceptSave);
   dialog.setWindowTitle("Save Snapshot");
 
-  if (dialog.exec()){
+  bool ok = dialog.exec();
+
+  std::cerr << "1" << std::endl;
+  dialog.hide();
+
+  if ( ok ){
     QString newName = dialog.selectedFiles()[0];
 
     if (newName != fi.path() + OpenFlipper::Options::dirSeparator() + suggest){
