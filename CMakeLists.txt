@@ -6,12 +6,16 @@ project (OpenFlipper)
 set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 # include our cmake files
-include (common)
+include (ACGCommon)
 
-get_version ()
+acg_get_version ()
 
 include (package)
-include (output)
+include (ACGOutput)
+
+acg_qt4 (REQUIRED 4.5)
+acg_openmp ()
+acg_ftgl ()
 
 # check for OpenGL, GLEW and GLUT as our required dependencies
 find_package (OpenGL)
@@ -30,7 +34,7 @@ if (NOT GLUT_FOUND)
 endif ()
 
 # start with an empty plugin list
-of_set (OPENFLIPPER_PLUGINS "")
+acg_set (OPENFLIPPER_PLUGINS "")
 
 # add the basic componenets
 add_subdirectory (OpenMesh/src/OpenMesh/Core)
@@ -40,11 +44,11 @@ add_subdirectory (OpenFlipper/PluginLib)
 add_subdirectory (OpenFlipper/CoreApp)
 
 # add plugins
-add_plugins ()
+of_add_plugins ()
 
 if (APPLE)
   # prepare bundle generation cmake file and add a build target for it
-  configure_file ("${CMAKE_SOURCE_DIR}/cmake/fixbundle.cmake.in"
+  configure_file ("${CMAKE_SOURCE_DIR}/OpenFlipper/cmake/fixbundle.cmake.in"
      "${CMAKE_BINARY_DIR}/fixbundle.cmake" @ONLY IMMEDIATE)
   add_custom_target (fixbundle ALL
     COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.cmake"
@@ -57,6 +61,6 @@ if (APPLE)
 endif ()
 
 # display results
-of_print_configure_header ("OpenFlipper")
+acg_print_configure_header ("OpenFlipper")
 of_print_plugin_stats ()
-of_print_configure_footer ()
+acg_print_configure_footer ()
