@@ -59,7 +59,10 @@ void CoreWidget::keyPressEvent(QKeyEvent* _e)
         return;
       }
 
-      //the key was specified through keyInterface
+      // =================================================================================
+      // Map event to the cores key and modifier.
+      // Call the core key handler with the mapped event.
+      // =================================================================================
       QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
                                              _e->text(), _e->isAutoRepeat(), _e->count() );
 
@@ -87,9 +90,17 @@ void CoreWidget::keyPressEvent(QKeyEvent* _e)
     KeyInterface* keyPlugin = qobject_cast< KeyInterface * >(plugin);
 
     if (keyPlugin){
+
+      // =================================================================================
+      // Map event to the plugins key and modifier.
+      // Call it with the mapped event.
+      // =================================================================================
       QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
                                              _e->text(), _e->isAutoRepeat(), _e->count() );
+
       keyPlugin->slotKeyEvent(mappedEvent);
+
+      delete mappedEvent ;
     }
 
     //if its not a multiUse key we are ready
@@ -117,8 +128,12 @@ void CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
     QObject* plugin = (*it).second.first;
     KeyBinding binding = getKeyBinding( plugin, (*it).second.second );
 
-    //check if its a core Key
     if (plugin == 0){
+
+      // =================================================================================
+      // Map event to the cores key and modifier.
+      // Call the core key handler with the mapped event.
+      // =================================================================================
       QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
                                              _e->text(), _e->isAutoRepeat(), _e->count() );
       coreKeyReleaseEvent(mappedEvent);
@@ -136,9 +151,18 @@ void CoreWidget::keyReleaseEvent(QKeyEvent* _e) {
     KeyInterface* keyPlugin = qobject_cast< KeyInterface * >(plugin);
 
     if (keyPlugin){
+
+      // =================================================================================
+      // Map event to the plugins key and modifier.
+      // Call the plugin with the mapped event.
+      // =================================================================================
+
       QKeyEvent* mappedEvent = new QKeyEvent(_e->type(),binding.key, binding.modifiers,
                                              _e->text(), _e->isAutoRepeat(), _e->count() );
+
       keyPlugin->slotKeyReleaseEvent(mappedEvent);
+
+      delete mappedEvent;
     }
 
     //if its not a multiUse key we are ready

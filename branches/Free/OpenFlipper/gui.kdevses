@@ -1,34 +1,10 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="9" >
-  <Doc0 NumberOfViews="1" URL="file:///data/home2/wilden/projects/OpenFlipper/Plugin-TextureControl/TextureControl.cc" >
-   <View0 Encoding="" line="1187" Type="Source" />
+ <DocsAndViews NumberOfDocuments="1" >
+  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Scissor/ScissorPlugin.hh" >
+   <View0 Encoding="" line="56" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///data/home2/wilden/projects/OpenFlipper/Plugin-TextureControl/TextureControl.hh" >
-   <View0 Encoding="" line="0" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///data/home2/wilden/projects/OpenFlipper/Plugin-TextureControl/textureProperties.cc" >
-   <View0 Encoding="" line="197" Type="Source" />
-  </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///data/home2/wilden/projects/OpenFlipper/Plugin-TextureControl/textureProperties.hh" >
-   <View0 Encoding="" line="73" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///data/home2/wilden/projects/OpenFlipper/Plugin-TextureControl/QwtFunctionPlot.cc" >
-   <View0 Encoding="" line="106" Type="Source" />
-  </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///data/home2/wilden/projects/OpenFlipper/Plugin-TextureControl/QwtFunctionPlot.hh" >
-   <View0 Encoding="" line="64" Type="Source" />
-  </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///data/home2/wilden/projects/OpenFlipper/Plugin-TextureControl/HistogramItem.hh" >
-   <View0 Encoding="" line="30" Type="Source" />
-  </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///data/home2/wilden/projects/OpenFlipper/Plugin-TextureControl/HistogramItem.cc" >
-   <View0 Encoding="" line="78" Type="Source" />
-  </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///data/home2/wilden/projects/OpenFlipper/OpenFlipper/BasePlugin/TextureInterface.hh" >
-   <View0 Encoding="" line="136" Type="Source" />
-  </Doc8>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
