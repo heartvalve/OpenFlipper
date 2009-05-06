@@ -535,7 +535,21 @@ void CoreWidget::slotCopyView( ) {
   examiner_widgets_[PluginFunctions::activeExaminer()]->actionCopyView();
 }
 
+void CoreWidget::slotCoordSysVisibility(bool _visible){
 
+  ACG::SceneGraph::BaseNode* root = PluginFunctions::getSceneGraphRootNode();
+  ACG::SceneGraph::BaseNode* coordSys = root->find("Core Coordsys Node");
+
+  if (coordSys == 0){
+    std::cerr << "CoordSys Node not found!" << std::endl;
+    return;
+  }
+
+  if (_visible)
+    coordSys->show();
+  else
+    coordSys->hide();
+}
 
 
 //=============================================================================
