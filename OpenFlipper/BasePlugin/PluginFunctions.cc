@@ -339,7 +339,7 @@ void actionMode ( Viewer::ActionMode _mode) {
 }
 
 void getCurrentViewImage(QImage& _image) {
-  examiner_widget_->copyToImage( _image );
+  viewer( activeExaminer() )->copyToImage( _image );
 }
 
 Viewer::ViewerProperties& viewerProperties(int _id) {
