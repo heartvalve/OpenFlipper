@@ -624,20 +624,16 @@ void Core::openIniFile( QString _filename,
         }
 
         bool flag;
-        if ( ini.get_entry( flag, sectionName , "target" ) ) {
+        if ( ini.get_entry( flag, sectionName , "target" ) )
           object->target(flag);
-          newActiveObject = true;
-        }
 
         if ( ini.get_entry( flag, sectionName , "source" ) )
           object->source(flag);
 
         emit iniLoad( ini,object->id() );
+
+        emit objectSelectionChanged( object->id() );
       }
-
-      if ( newActiveObject )
-        emit objectSelectionChanged(-1);
-
     }
 
   }
