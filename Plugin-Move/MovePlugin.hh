@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -83,7 +83,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action , ContextMenuType _type);
-    
+
     // BackupInterface
     void createBackup( int _id , QString _name );
 
@@ -303,7 +303,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     void slotSelectionModeChanged(QAction* _action);
 
 /** @} */
-    
+
   //===========================================================================
   /** @name Context Menu
    * @{ */
@@ -313,30 +313,30 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     /// Show properties of move manipulator in a dialog
     void showProps( );
-    
+
     /// Get properties dialog widget that is attached to BaseDataObject obj
     movePropsWidget* getDialogWidget(BaseObjectData* _obj);
-    
+
     /// Get parent properties dialog widget of QPushButton but
     movePropsWidget* getDialogFromButton(QPushButton* _but);
-    
+
     /** Override ContextMenuInterface slot in order to avoid appearance of
      * context menu entry when clicking on other nodes (other than manpipulator nodes)
-     */ 
+     */
     void slotUpdateContextMenuNode( int _nodeId );
-	
+
     private:
     /// Move context menu
     QMenu* contextMenu_;
-    
+
     /// List of properties dialogs (each corresponding to one manipulator)
     QList<movePropsWidget*> propsWindows_;
-    
+
     /// Context menu entry
     QAction* contextAction_;
 
 /** @} */
-	
+
 //===========================================================================
 /** @name Scriptable Functions
   * @{ */
@@ -392,6 +392,7 @@ public slots :
 
   private:
     QToolBar* toolbar_;
+    bool hide_;
 
 };
 

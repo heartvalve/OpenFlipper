@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -55,7 +55,7 @@
 
 
 /** \brief Default Constructor
- * 
+ *
  */
 MovePlugin::MovePlugin() :
  manMode_ (QtTranslationManipulatorNode::TranslationRotation)
@@ -68,6 +68,8 @@ MovePlugin::MovePlugin() :
 
     axisA_ = 0;
     axisB_ = 1;
+
+    hide_ = true;
 }
 
 
@@ -76,7 +78,7 @@ MovePlugin::MovePlugin() :
  *******************************************************************************/
 
 /** \brief Initialization of the plugin when it is loaded by the core
- * 
+ *
  */
 void MovePlugin::pluginsInitialized() {
 
@@ -95,14 +97,14 @@ void MovePlugin::pluginsInitialized() {
 
   //SCRIPTING SLOT DESCRIPTIONS
   setDescriptions();
-  
+
   // CONTEXT MENU
   contextAction_ = new QAction("Set properties", this);
   contextAction_->setToolTip("Set properties");
   contextAction_->setStatusTip( contextAction_->toolTip() );
 
   emit addContextMenuItem(contextAction_ , CONTEXTNODEMENU );
-  
+
   connect( contextAction_ , SIGNAL( triggered() ),
 	   this, SLOT(showProps()) );
 
@@ -166,7 +168,7 @@ bool MovePlugin::initializeToolbox(QWidget*& _widget)
  *******************************************************************************/
 
 /** \brief MouseWheel event occured
- * 
+ *
  * @param _event the event that occured
  */
 void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /*_mode*/)
@@ -181,7 +183,7 @@ void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /
 //------------------------------------------------------------------------------
 
 /** \brief MousePress event occured
- * 
+ *
  * @param _event the event that occured
  */
 void MovePlugin::slotMouseEvent( QMouseEvent* _event )
@@ -200,7 +202,7 @@ void MovePlugin::slotMouseEvent( QMouseEvent* _event )
     if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
         for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
               o_it != PluginFunctions::objectsEnd(); ++o_it)
-           if ( o_it->manipPlaced() ) 
+           if ( o_it->manipPlaced() )
                 o_it->manipulatorNode()->setMode (mode);
      }
   }
@@ -277,15 +279,17 @@ void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
  *******************************************************************************/
 
 /** \brief slot is called when the pickMode changed
- * 
+ *
  * @param _mode new pickMode
  */
 void MovePlugin::slotPickModeChanged( const std::string& _mode)
 {
-  showManipulators();
+	moveAction_->setChecked(_mode == "Move");
+	moveSelectionAction_->setChecked(_mode == "MoveSelection");
 
-  moveAction_->setChecked(_mode == "Move");
-  moveSelectionAction_->setChecked(_mode == "MoveSelection");
+	hide_ = !(_mode == "Move" || _mode == "MoveSelection");
+
+	showManipulators();
 }
 
 
@@ -294,7 +298,7 @@ void MovePlugin::slotPickModeChanged( const std::string& _mode)
  *******************************************************************************/
 
 /** \brief Move object with given transformation matrix
- * 
+ *
  * @param mat transformation matrix
  * @param _id id of the object
  */
@@ -330,13 +334,13 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
 //------------------------------------------------------------------------------
 
 /** \brief Move selection on an object with given transformation matrix
- * 
+ *
  * Which Selection (Vertex, Edge, Face) is used is determined by the
  * current SelectionMode in SelectionPlugin.
  * If the Plugin is unable to communicate with SelectionPlugin, Vertex Selection is used.
  *
- * @param mat 
- * @param _id 
+ * @param mat
+ * @param _id
  */
 void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id) {
 
@@ -354,15 +358,15 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id) {
 //------------------------------------------------------------------------------
 
 /** \brief Hide context menu entry when right clicking on node other than manipulator node
- * 
+ *
  * @param _nodeId Identifier of node that has been clicked
  */
 void MovePlugin::slotUpdateContextMenuNode( int _nodeId ) {
-    
+
     ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), _nodeId );
-    
+
     if (node == 0) return;
-    
+
     if(node->className() != "QtTranslationManipulatorNode") {
 	contextAction_->setVisible(false);
     }
@@ -374,7 +378,7 @@ void MovePlugin::slotUpdateContextMenuNode( int _nodeId ) {
 //------------------------------------------------------------------------------
 
 /** \brief move the object when its manipulator moves
- * 
+ *
  * @param _node the manipulator node
  * @param _event the mouse event
  */
@@ -426,7 +430,7 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
 //------------------------------------------------------------------------------
 
 /** \brief update object when its manipulator changes position
- * 
+ *
  * @param _node the manipulator node
  */
 void MovePlugin::ManipulatorPositionChanged(QtTranslationManipulatorNode* _node ) {
@@ -453,7 +457,7 @@ void MovePlugin::ManipulatorPositionChanged(QtTranslationManipulatorNode* _node 
 //------------------------------------------------------------------------------
 
 /** \brief Place and show the Manipulator
- * 
+ *
  * @param _event  mouseEvent that occured
  */
 void MovePlugin::placeManip(QMouseEvent * _event)
@@ -505,32 +509,35 @@ void MovePlugin::placeManip(QMouseEvent * _event)
 //------------------------------------------------------------------------------
 
 /** \brief Checks if the manipulators should be visible or not
- * 
+ *
  */
 void MovePlugin::showManipulators( )
 {
-   if ( toolboxActive_
-      || (PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" ) ) {
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-            o_it != PluginFunctions::objectsEnd(); ++o_it)
-         if ( o_it->manipPlaced() ) {
-              o_it->manipulatorNode()->show();
-              o_it->manipulatorNode()->apply_transformation( PluginFunctions::pickMode() == "Move" );
-         }
-   } else {
-      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-            o_it != PluginFunctions::objectsEnd(); ++o_it)
-         o_it->manipulatorNode()->hide();
-   }
+	if (!hide_ && (toolboxActive_ || (PluginFunctions::pickMode() == "Move")
+			|| (PluginFunctions::pickMode() == "MoveSelection"))) {
+		for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it
+				!= PluginFunctions::objectsEnd(); ++o_it)
 
-   emit updateView();
+			if (o_it->manipPlaced()) {
+				o_it->manipulatorNode()->show();
+				o_it->manipulatorNode()->apply_transformation(
+						PluginFunctions::pickMode() == "Move");
+			}
+	} else {
+		for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it
+				!= PluginFunctions::objectsEnd(); ++o_it)
+
+			o_it->manipulatorNode()->hide();
+	}
+
+	emit updateView();
 
 }
 
 //------------------------------------------------------------------------------
 
 /** \brief Get Dialog Widget that contains the button
- * 
+ *
  * @param _but Reference to QPushButton object that has been pressed
  */
 movePropsWidget* MovePlugin::getDialogFromButton(QPushButton* _but) {
@@ -541,16 +548,16 @@ movePropsWidget* MovePlugin::getDialogFromButton(QPushButton* _but) {
 //------------------------------------------------------------------------------
 
 /** \brief Position of manipulator in tab changed
- * 
+ *
  */
 void MovePlugin::slotSetPosition() {
-    
+
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
-    
+
     TriMesh::Point newpos;
-    
+
     bool ok = false;
     newpos[0] =  (pW->nposx->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate"); return; }
@@ -558,7 +565,7 @@ void MovePlugin::slotSetPosition() {
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
     newpos[2] =  (pW->nposz->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
-    
+
     BaseObjectData* object;
     if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
 	if (  object->manipulatorNode()->visible() )
@@ -572,19 +579,19 @@ void MovePlugin::slotSetPosition() {
 //------------------------------------------------------------------------------
 
 /** \brief Toggle the first axis for changing direction in tab
- * 
+ *
  */
 void MovePlugin::slotToggleAxisA() {
-    
+
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
 
     axisA_ = (axisA_ + 1) % 3;
-    
+
     if (axisA_ == axisB_)
 	axisA_ = (axisA_ + 1) % 3;
-    
+
     switch(axisA_){
 	case 0: pW->axisAButton->setText("X Direction"); break;
 	case 1: pW->axisAButton->setText("Y Direction"); break;
@@ -597,19 +604,19 @@ void MovePlugin::slotToggleAxisA() {
 //------------------------------------------------------------------------------
 
 /** \brief Toggle the second axis for changing direction in tab
- * 
+ *
  */
 void MovePlugin::slotToggleAxisB() {
-    
+
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
 
     axisB_ = (axisB_ + 1) % 3;
-    
+
     if (axisA_ == axisB_)
 	axisB_ = (axisB_ + 1) % 3;
-    
+
     switch(axisB_){
 	case 0: pW->axisBButton->setText("X Direction"); break;
 	case 1: pW->axisBButton->setText("Y Direction"); break;
@@ -622,10 +629,10 @@ void MovePlugin::slotToggleAxisB() {
 //------------------------------------------------------------------------------
 
 /** \brief Set Direction of manipulator in tab changed
- * 
+ *
  */
 void MovePlugin::slotSetDirection() {
-    
+
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
@@ -633,7 +640,7 @@ void MovePlugin::slotSetDirection() {
     ACG::Vec3d newdirA,newdirB;
     ACG::Vec3d dirX,dirY;
     ACG::Vec3d dirZ(0.0,0.0,0.0);
-    
+
     bool ok = false;
     newdirA[0] =  (pW->ndirAx->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
@@ -641,50 +648,50 @@ void MovePlugin::slotSetDirection() {
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
     newdirA[2] =  (pW->ndirAz->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
-    
+
     newdirB[0] =  (pW->ndirBx->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
     newdirB[1] =  (pW->ndirBy->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
     newdirB[2] =  (pW->ndirBz->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
-    
+
     bool xAxis = false;
     bool yAxis = false;
-    
+
     switch(axisA_){
 	case  0: dirX = newdirA; xAxis = true; break;
 	case  1: dirY = newdirA; yAxis = true; break;
 	default: dirZ = newdirA; break;
     }
-    
+
     switch(axisB_){
 	case  0: dirX = newdirB; xAxis = true; break;
 	case  1: dirY = newdirB; yAxis = true; break;
 	default: dirZ = newdirB; break;
     }
-    
+
     if (!xAxis)
 	dirX = dirY % dirZ;
-    
+
     if (!yAxis)
 	dirY = dirX % dirZ;
-    
-    
+
+
     if ( (dirX | dirY) != 0.0){
 	emit log(LOGERR,"The axes of the new direction have to be orthogonal");
 	return;
     }
-    
+
 //    // Apply to All Target Objects
 //     if ( pW->targetObjects->isChecked() ) {
 // 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ;
 //              o_it PluginFunctions::objectsEnd(); ++o_it){
-// 
+//
 // 	    o_it->manipulatorNode()->set_direction( dirX, dirY );
 // 	}
 //     }
-	
+
     BaseObjectData* object = pW->getBaseObjectData();
     if ( object != 0 ) {
         if (  object->manipulatorNode()->visible() ){
@@ -692,7 +699,7 @@ void MovePlugin::slotSetDirection() {
             object->manipulatorNode()->set_direction( dirX, dirY );
 	}
     } else return;
-    
+
     updateManipulatorDialog();
     emit updateView();
 }
@@ -701,16 +708,16 @@ void MovePlugin::slotSetDirection() {
 //------------------------------------------------------------------------------
 
 /** \brief perform a translation for Manipulator in tab
- * 
+ *
  */
 void MovePlugin::slotTranslation() {
-    
+
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
 
     ACG::Vec3d translation;
-    
+
     bool ok = false;
     translation[0] =  (pW->translationX->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
@@ -718,10 +725,10 @@ void MovePlugin::slotTranslation() {
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
     translation[2] =  (pW->translationZ->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
-    
+
 	// Apply to All Target Objects
 //     if ( pW->targetObjects->isChecked() ) {
-//     
+//
 // 	int manipcount = 0; // Check how many of the target meshes have an visible manipulator
 // 	int targets = 0;        // Count the number of target meshes
 // 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
@@ -730,39 +737,39 @@ void MovePlugin::slotTranslation() {
 // 		++ manipcount;
 // 	    }
 // 	}
-//     
+//
 // 	if (manipcount == 0 ) // No manipulator -> no translation
 // 	    return;
-//     
+//
 // 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
 // 		o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 // 	    if ( manipcount > 1 ) { // Use manipulator direction for each target mesh
 // 		if ( o_it->manipulatorNode()->hidden() )
 // 		    continue;
 // 	    }
-//     
+//
 // 	    translate( o_it->id() , translation );
-//     
+//
 // 	    o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() + translation  );
 // 	    emit createBackup(o_it->id(),"Translation");
 // 	    emit updatedObject(o_it->id());
 // 	}
-//     
+//
 //     }
-	
+
     BaseObjectData* object = pW->getBaseObjectData();
     if ( object != 0 ) {
 	if (  object->manipulatorNode()->visible() ){
 
         	translate( object->id() , translation );
-    
+
 		object->manipulatorNode()->set_center( object->manipulatorNode()->center() + translation  );
 		emit createBackup(object->id(),"Translation");
 		emit updatedObject(object->id());
 	}
     } else return;
 
-    
+
     updateManipulatorDialog();
     emit scriptInfo(QString("slotTranslation()"));
     emit updateView();
@@ -772,10 +779,10 @@ void MovePlugin::slotTranslation() {
 //------------------------------------------------------------------------------
 
 /** \brief Project the current manipulator onto the tangent plane of the object
- * 
+ *
  */
 void MovePlugin::slotProjectToTangentPlane() {
-    
+
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
@@ -794,34 +801,34 @@ void MovePlugin::slotProjectToTangentPlane() {
 //------------------------------------------------------------------------------
 
 /** \brief Move the current manipulator to the cog of the object
- * 
+ *
  */
 void MovePlugin::slotMoveManipToCOG() {
-    
+
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
-    
-    
+
+
 //     if ( pW->targetObjects->isChecked() ) {
 // 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 // 		if (  o_it->manipulatorNode()->hidden() )
 // 		continue;
-//     
+//
 // 		if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
 // 		o_it->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::triMesh(*o_it) ) );
 // 		else if ( o_it->dataType( DATA_POLY_MESH ) )
 // 		o_it->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::polyMesh(*o_it)) );
-//     
+//
 // 		updateManipulatorDialog();
 // 		o_it->manipulatorNode()->loadIdentity();
 // 	}
 //     } else {
-    
+
     BaseObjectData* object = pW->getBaseObjectData();
     if ( object != 0 ) {
 	if (  object->manipulatorNode()->visible() ){
-    
+
 	    if ( object->dataType( DATA_TRIANGLE_MESH ) )
 	    object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::triMesh(object)) );
 	    else if ( object->dataType( DATA_POLY_MESH ) )
@@ -839,17 +846,17 @@ void MovePlugin::slotMoveManipToCOG() {
 //------------------------------------------------------------------------------
 
 /** \brief Rotate Manipulator (with values from Tab)
- * 
+ *
  */
 void MovePlugin::slotRotate() {
-    
+
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
-    
+
     TriMesh::Point axis;
     double angle;
-    
+
     bool ok = false;
     axis[0] =  (pW->rotx->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
@@ -857,50 +864,50 @@ void MovePlugin::slotRotate() {
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
     axis[2] =  (pW->rotz->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
-    
+
     angle =  (pW->rotAngle->text()).toDouble(&ok);
     if ( !ok ) {  emit log(LOGERR,"Wrong Format for Angle"); return; }
-    
+
 //     if ( pW->targetObjects->isChecked() ) {
 // 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 // 		if (  o_it->manipulatorNode()->hidden() )
 // 		continue;
 // 		o_it->manipulatorNode()->rotate(  angle,axis);
-//     
+//
 // 		if (o_it->dataType( DATA_TRIANGLE_MESH ) )
 // 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
-//     
+//
 // 		if (o_it->dataType( DATA_POLY_MESH ) )
 // 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
-//     
+//
 // 		o_it->manipulatorNode()->loadIdentity();
 // 		updateManipulatorDialog();
-//     
+//
 // 		emit createBackup(o_it->id(),"Rotation");
 // 		emit updatedObject(o_it->id());
 // 	}
 //     } else {
-	
-    
+
+
     BaseObjectData* object = pW->getBaseObjectData();
     if ( object != 0 ) {
 	if (  object->manipulatorNode()->visible() ){
-    
+
 	    object->manipulatorNode()->rotate(angle,axis);
-    
+
 	    if (object->dataType( DATA_TRIANGLE_MESH ) )
 		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::triMesh(object)) );
-    
+
 	    if (object->dataType( DATA_POLY_MESH ) )
 		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::polyMesh(object)) );
-    
+
 	    updateManipulatorDialog();
-    
+
 	    emit createBackup(object->id(),"Rotation");
 	    emit updatedObject(object->id());
 	}
     }
-    
+
     emit scriptInfo(QString("slotRotate()"));
     emit updateView();
 }
@@ -909,17 +916,17 @@ void MovePlugin::slotRotate() {
 //------------------------------------------------------------------------------
 
 /** \brief Scale Manipulator (with values from Tab)
- * 
+ *
  */
 void MovePlugin::slotScale() {
-    
+
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
-    
-    
+
+
     TriMesh::Point scale;
-    
+
     bool ok = false;
     scale[0] =  (pW->scalex->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 1");  return; }
@@ -927,42 +934,42 @@ void MovePlugin::slotScale() {
     if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 2"); return; }
     scale[2] =  (pW->scalez->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 3"); return; }
-    
+
 //    if ( pW->targetObjects->isChecked() ) {
 // 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 // 		if (  o_it->manipulatorNode()->hidden() )
 // 		continue;
 // 		o_it->manipulatorNode()->scale(  scale);
-//     
+//
 // 		if (o_it->dataType( DATA_TRIANGLE_MESH ) )
 // 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
-//     
+//
 // 		if (o_it->dataType( DATA_POLY_MESH ) )
 // 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
-//     
+//
 // 		o_it->manipulatorNode()->loadIdentity();
 // 		updateManipulatorDialog();
-//     
+//
 // 		emit createBackup(o_it->id(),"Scaling");
 // 		emit updatedObject(o_it->id());
 // 	}
 //     } else {
-	
-	
+
+
     BaseObjectData* object = pW->getBaseObjectData();
     if ( object != 0 ) {
 	if (  object->manipulatorNode()->visible() ){
 
 	    object->manipulatorNode()->scale(  scale);
-    
+
 	    if (object->dataType( DATA_TRIANGLE_MESH ) )
 		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::triMesh(object)) );
-    
+
 	    if (object->dataType( DATA_POLY_MESH ) )
 		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::polyMesh(object)) );
-    
+
 	    updateManipulatorDialog();
-    
+
 	    emit createBackup(object->id(),"Scaling");
 	    emit updatedObject(object->id());
 	}
@@ -977,7 +984,7 @@ void MovePlugin::slotScale() {
 
 
 /** \brief Move currently active or first Mesh with its COG to the origin
- * 
+ *
  */
 void MovePlugin::slotMoveToOrigin() {
 
@@ -1018,7 +1025,7 @@ void MovePlugin::slotMoveToOrigin() {
 //------------------------------------------------------------------------------
 
 /** \brief Scale Boundingbox Diagonal to unit size
- * 
+ *
  */
 void MovePlugin::slotUnifyBoundingBoxDiagonal()
 {
@@ -1053,24 +1060,24 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
 //------------------------------------------------------------------------------
 
 /** \brief Update the Dialog with the last clicked manipulator
- * 
+ *
  */
 void MovePlugin::updateManipulatorDialog() {
-    
+
     BaseObjectData* object;
     if ( !PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
 	return;
     }
-    
+
     if ( object->manipulatorNode()->visible() ) {
-    
+
 	// Get properties widget that corresponds to
         // to the last manipulated object
         movePropsWidget* pW = getDialogWidget(object);
-    
+
         // If there's no properties dialog yet...
         if(pW == 0) return;
-    
+
 	const TriMesh::Point pos = object->manipulatorNode()->center();
 
 	QString num;
@@ -1093,18 +1100,18 @@ void MovePlugin::updateManipulatorDialog() {
 	num = QString::number(direction[0]); pW->dirzx->setText(num);
 	num = QString::number(direction[1]); pW->dirzy->setText(num);
 	num = QString::number(direction[2]); pW->dirzz->setText(num);
-	
+
     }
 }
 
 //------------------------------------------------------------------------------
 
 /** \brief Get pointer to corresponding dialog widget
- * 
+ *
  * @param _obj the object to which the dialog is attached
  */
 movePropsWidget* MovePlugin::getDialogWidget(BaseObjectData* _obj) {
-    
+
     for(QList<movePropsWidget*>::iterator it = propsWindows_.begin();
        it != propsWindows_.end(); it++) {
 	   if ((*it)->getBaseObjectData() == _obj)
@@ -1115,7 +1122,7 @@ movePropsWidget* MovePlugin::getDialogWidget(BaseObjectData* _obj) {
 //------------------------------------------------------------------------------
 
 /** \brief Called by Toolbar to enable move mode
- * 
+ *
  * @param _action the action that was triggered
  */
 void MovePlugin::slotSetMoveMode(QAction* _action) {
@@ -1164,7 +1171,7 @@ ACG::Matrix4x4d MovePlugin::getLastManipulatorMatrix(bool _reset) {
 //------------------------------------------------------------------------------
 
 /** \brief Transform a mesh with the given transformation matrix
- * 
+ *
  * @param _mat transformation matrix
  * @param _mesh the mesh
  */
@@ -1189,7 +1196,7 @@ void MovePlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
 #ifdef ENABLE_POLYLINE_SUPPORT
 
 /** \brief Transform a polyline with the given transformation matrix
- * 
+ *
  * @param _mat transformation matrix
  * @param _polyLine the polyline
  */
@@ -1208,7 +1215,7 @@ void MovePlugin::transformPolyLine( ACG::Matrix4x4d _mat , PolyLineT& _polyLine 
 //------------------------------------------------------------------------------
 
 /** \brief scale mesh to have a boundingboxdiagonal of one
- * 
+ *
  * @param _mesh the mesh
  */
 template< typename MeshT >
@@ -1245,7 +1252,7 @@ void MovePlugin::unifyBBDiag(MeshT& _mesh )
 //------------------------------------------------------------------------------
 
 /** \brief Connect to SelectionPlugin
- * 
+ *
  */
 void MovePlugin::connectSelectionActions(){
 
@@ -1257,16 +1264,16 @@ void MovePlugin::connectSelectionActions(){
 
     QToolBar* selToolBar = 0;
     emit getToolBar( "Selection", selToolBar );
-  
+
     if (selToolBar != 0){
 
       QActionGroup* actionGroup = 0;
-  
+
       for (int i=0; i < selToolBar->actions().count(); i++){
         if( selToolBar->actions().at(i)->text() == "Enable Vertex Selection"){
 
           actionGroup = selToolBar->actions().at(i)->actionGroup();
-          
+
           if ( selToolBar->actions().at(i)->isChecked() )
             selectionType_ = VERTEX;
 
@@ -1277,7 +1284,7 @@ void MovePlugin::connectSelectionActions(){
                 && (selToolBar->actions().at(i)->isChecked()) )
             selectionType_ = FACE;
       }
-  
+
       if (actionGroup != 0){
         connect( actionGroup, SIGNAL( triggered(QAction*) ), this, SLOT(slotSelectionModeChanged(QAction*)) );
         connected = true;
@@ -1293,7 +1300,7 @@ void MovePlugin::connectSelectionActions(){
 //------------------------------------------------------------------------------
 
 /** \brief The SelectionMode in SelectionPlugin Changed
- * 
+ *
  * @param _action the action on the Selection-Toolbar that was hit
  */
 void MovePlugin::slotSelectionModeChanged(QAction* _action){
