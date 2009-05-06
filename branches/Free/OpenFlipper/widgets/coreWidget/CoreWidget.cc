@@ -389,7 +389,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode1.png"), "");
   viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode2.png"), "");
 
-  viewmodeBox_->setIconSize(QSize(24,24));
+  viewmodeBox_->setIconSize(QSize(22,22));
 
   connect( viewmodeBox_,SIGNAL( activated(int) ), this, SLOT( setViewMode(int) ) );
 
