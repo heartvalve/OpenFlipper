@@ -64,6 +64,8 @@ void MovePlugin::showProps(){
     movePropsWidget* pW = new movePropsWidget(obj);
     pW->setWindowTitle(QString((mNode->name()).c_str()));
 
+    connect(pW->targetObjects,SIGNAL(stateChanged(int) ),this,SLOT(setAllTargets(int)));
+
     connect(pW->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));
     connect(pW->axisAButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisA()));
     connect(pW->axisBButton,SIGNAL(clicked() ),this,SLOT(slotToggleAxisB()));

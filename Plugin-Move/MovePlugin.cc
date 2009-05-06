@@ -70,6 +70,7 @@ MovePlugin::MovePlugin() :
     axisB_ = 1;
 
     hide_ = true;
+    allTargets_ = true;
 }
 
 
@@ -409,14 +410,19 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
     else
       moveSelection( mat, objectId );
 
-    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS ) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-      if ( ( o_it->id() != objectId ) && !o_it->manipulatorNode()->visible() ) { // If it has its own manipulator active, dont move it
-        if (PluginFunctions::pickMode() != "MoveSelection")
-          moveObject( mat,o_it->id() );
-        else
-          moveSelection( mat,o_it->id() );
-      }
-    }
+    if(allTargets_) {
+		for (PluginFunctions::ObjectIterator o_it(
+				PluginFunctions::TARGET_OBJECTS); o_it
+				!= PluginFunctions::objectsEnd(); ++o_it) {
+			if ((o_it->id() != objectId)
+					&& !o_it->manipulatorNode()->visible()) { // If it has its own manipulator active, dont move it
+				if (PluginFunctions::pickMode() != "MoveSelection")
+					moveObject(mat, o_it->id());
+				else
+					moveSelection(mat, o_it->id());
+			}
+		}
+	}
 
     lastActiveManipulator_ = objectId;
     updateManipulatorDialog();
@@ -726,41 +732,40 @@ void MovePlugin::slotTranslation() {
     translation[2] =  (pW->translationZ->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
 
-	// Apply to All Target Objects
-//     if ( pW->targetObjects->isChecked() ) {
+//	// Apply to All Target Objects
+//	if ( pW->targetObjects->isChecked() ) {
 //
-// 	int manipcount = 0; // Check how many of the target meshes have an visible manipulator
-// 	int targets = 0;        // Count the number of target meshes
-// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-// 	    ++targets;
-// 	    if ( ! o_it->manipulatorNode()->hidden() ) {
-// 		++ manipcount;
-// 	    }
-// 	}
+//		int manipcount = 0; // Check how many of the target meshes have an visible manipulator
+//		int targets = 0; // Count the number of target meshes
+//		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it) {
+//			++targets;
+//			if ( ! o_it->manipulatorNode()->hidden() ) {
+//				++ manipcount;
+//			}
+//		}
 //
-// 	if (manipcount == 0 ) // No manipulator -> no translation
-// 	    return;
+//		if (manipcount == 0 ) // No manipulator -> no translation
+//		return;
 //
-// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
-// 		o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-// 	    if ( manipcount > 1 ) { // Use manipulator direction for each target mesh
-// 		if ( o_it->manipulatorNode()->hidden() )
-// 		    continue;
-// 	    }
+//		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+//				o_it != PluginFunctions::objectsEnd(); ++o_it) {
+//			if ( manipcount > 1 ) { // Use manipulator direction for each target mesh
+//				if ( o_it->manipulatorNode()->hidden() )
+//				continue;
+//			}
 //
-// 	    translate( o_it->id() , translation );
+//			translate( o_it->id() , translation );
 //
-// 	    o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() + translation  );
-// 	    emit createBackup(o_it->id(),"Translation");
-// 	    emit updatedObject(o_it->id());
-// 	}
+//			o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() + translation );
+//			emit createBackup(o_it->id(),"Translation");
+//			emit updatedObject(o_it->id());
+//		}
 //
-//     }
+//	}
 
     BaseObjectData* object = pW->getBaseObjectData();
 	if (object != 0) {
-		if (object->manipulatorNode()->visible() &&
-				(object->target() || !pW->targetObjects->isChecked())) {
+		if (object->manipulatorNode()->visible()) {
 
 			translate(object->id(), translation);
 
@@ -1321,6 +1326,17 @@ void MovePlugin::slotSelectionModeChanged(QAction* _action){
     selectionType_ = EDGE;
   if (_action->text() == "Enable Face Selection")
     selectionType_ = FACE;
+}
+
+//------------------------------------------------------------------------------
+
+/** \brief Sets whether all targets should be affected or not
+ *
+ * @param _state Qt::CheckState of checkbox
+ */
+
+void MovePlugin::setAllTargets(int _state) {
+	allTargets_ = (_state == Qt::Checked);
 }
 
 Q_EXPORT_PLUGIN2( moveplugin , MovePlugin );

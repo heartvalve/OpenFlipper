@@ -302,6 +302,9 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     /// The SelectionMode changed in SelectionPlugin
     void slotSelectionModeChanged(QAction* _action);
 
+    /// Sets whether all targets should be affected or not
+    void setAllTargets(int _state);
+
 /** @} */
 
   //===========================================================================
@@ -393,6 +396,8 @@ public slots :
   private:
     QToolBar* toolbar_;
     bool hide_;
+
+    bool allTargets_;
 
 };
 
