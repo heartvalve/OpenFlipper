@@ -758,16 +758,20 @@ void MovePlugin::slotTranslation() {
 //     }
 
     BaseObjectData* object = pW->getBaseObjectData();
-    if ( object != 0 ) {
-	if (  object->manipulatorNode()->visible() ){
+	if (object != 0) {
+		if (object->manipulatorNode()->visible() &&
+				(object->target() || !pW->targetObjects->isChecked())) {
 
-        	translate( object->id() , translation );
+			translate(object->id(), translation);
 
-		object->manipulatorNode()->set_center( object->manipulatorNode()->center() + translation  );
-		emit createBackup(object->id(),"Translation");
-		emit updatedObject(object->id());
+			object->manipulatorNode()->set_center(
+					object->manipulatorNode()->center() + translation);
+			emit createBackup(object->id(), "Translation");
+			emit updatedObject(object->id());
+		}
+	} else {
+		return;
 	}
-    } else return;
 
 
     updateManipulatorDialog();
@@ -890,26 +894,29 @@ void MovePlugin::slotRotate() {
 
 
     BaseObjectData* object = pW->getBaseObjectData();
-    if ( object != 0 ) {
-	if (  object->manipulatorNode()->visible() ){
+	if (object != 0) {
+		if (object->manipulatorNode()->visible() && (object->target()
+				|| !pW->targetObjects->isChecked())) {
 
-	    object->manipulatorNode()->rotate(angle,axis);
+			object->manipulatorNode()->rotate(angle, axis);
 
-	    if (object->dataType( DATA_TRIANGLE_MESH ) )
-		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::triMesh(object)) );
+			if (object->dataType(DATA_TRIANGLE_MESH))
+				transformMesh(getLastManipulatorMatrix(true),
+						(*PluginFunctions::triMesh(object)));
 
-	    if (object->dataType( DATA_POLY_MESH ) )
-		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::polyMesh(object)) );
+			if (object->dataType(DATA_POLY_MESH))
+				transformMesh(getLastManipulatorMatrix(true),
+						(*PluginFunctions::polyMesh(object)));
 
-	    updateManipulatorDialog();
+			updateManipulatorDialog();
 
-	    emit createBackup(object->id(),"Rotation");
-	    emit updatedObject(object->id());
+			emit createBackup(object->id(), "Rotation");
+			emit updatedObject(object->id());
+		}
 	}
-    }
 
-    emit scriptInfo(QString("slotRotate()"));
-    emit updateView();
+	emit scriptInfo(QString("slotRotate()"));
+	emit updateView();
 }
 
 
@@ -957,23 +964,26 @@ void MovePlugin::slotScale() {
 
 
     BaseObjectData* object = pW->getBaseObjectData();
-    if ( object != 0 ) {
-	if (  object->manipulatorNode()->visible() ){
+	if (object != 0) {
+		if (object->manipulatorNode()->visible() && (object->target()
+				|| !pW->targetObjects->isChecked())) {
 
-	    object->manipulatorNode()->scale(  scale);
+			object->manipulatorNode()->scale(scale);
 
-	    if (object->dataType( DATA_TRIANGLE_MESH ) )
-		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::triMesh(object)) );
+			if (object->dataType(DATA_TRIANGLE_MESH))
+				transformMesh(getLastManipulatorMatrix(true),
+						(*PluginFunctions::triMesh(object)));
 
-	    if (object->dataType( DATA_POLY_MESH ) )
-		transformMesh(  getLastManipulatorMatrix(true) , (*PluginFunctions::polyMesh(object)) );
+			if (object->dataType(DATA_POLY_MESH))
+				transformMesh(getLastManipulatorMatrix(true),
+						(*PluginFunctions::polyMesh(object)));
 
-	    updateManipulatorDialog();
+			updateManipulatorDialog();
 
-	    emit createBackup(object->id(),"Scaling");
-	    emit updatedObject(object->id());
+			emit createBackup(object->id(), "Scaling");
+			emit updatedObject(object->id());
+		}
 	}
-    }
 
     emit scriptInfo(QString("slotScale()"));
     emit updateView();
