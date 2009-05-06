@@ -371,6 +371,30 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   connect( questionButton_,SIGNAL( clicked() ), this, SLOT( setQuestionMode() ) );
   viewerToolbar_->addWidget( questionButton_)->setText("Question");
 
+  viewmodeBox_ = new QComboBox( viewerToolbar_ );
+  viewmodeBox_->setMinimumSize( 32, 16 );
+  viewmodeBox_->setMaximumSize( 64, 32 );
+  viewmodeBox_->setToolTip("Switch <b>view mode</b>.");
+  viewmodeBox_->setWhatsThis(
+                  "Switch <b>view mode</b>.<br>"
+                  "Select the desired view mode. "
+                  "Possible modes are: "
+                  "<ul> "
+				  "<li>Single view mode</li>"
+				  "<li>Multi view mode (grid)</li>"
+				  "<li>Multi view mode (hsplit)</li>"
+				  "</ul>");
+
+  viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"singleviewmode.png"), "");
+  viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode1.png"), "");
+  viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode2.png"), "");
+
+  viewmodeBox_->setIconSize(QSize(24,24));
+
+  connect( viewmodeBox_,SIGNAL( activated(int) ), this, SLOT( setViewMode(int) ) );
+
+  viewerToolbar_->addWidget( viewmodeBox_ );
+
   viewerToolbar_->addSeparator();
 
   if (OpenFlipper::Options::stereo())
@@ -747,6 +771,47 @@ void CoreWidget::showOptionsWidget() {
 
 }
 
+void CoreWidget::nextViewMode() {
+
+	if (OpenFlipper::Options::multiView()) {
+		emit log("Switch MultiView mode");
+
+		switch (baseLayout_->mode()) {
+		case QtMultiViewLayout::SingleView:
+			baseLayout_->setMode(QtMultiViewLayout::Grid);
+			break;
+		case QtMultiViewLayout::Grid:
+			baseLayout_->setMode(QtMultiViewLayout::HSplit);
+			break;
+		case QtMultiViewLayout::HSplit:
+			baseLayout_->setMode(QtMultiViewLayout::SingleView);
+			PluginFunctions::setActiveExaminer(0);
+			break;
+		}
+	}
+}
+
+
+void
+CoreWidget::setViewMode(int _idx) {
+
+	if (OpenFlipper::Options::multiView()) {
+		emit log("Switch MultiView mode");
+
+		switch (_idx) {
+		case 0:
+			baseLayout_->setMode(QtMultiViewLayout::SingleView);
+			PluginFunctions::setActiveExaminer(0);
+			break;
+		case 1:
+			baseLayout_->setMode(QtMultiViewLayout::Grid);
+			break;
+		case 2:
+			baseLayout_->setMode(QtMultiViewLayout::HSplit);
+			break;
+		}
+	}
+}
 
 void
 CoreWidget::slotShowSceneGraphDialog()

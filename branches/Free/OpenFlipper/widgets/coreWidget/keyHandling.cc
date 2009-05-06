@@ -527,23 +527,7 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
       break;
 
     case Qt::Key_Space:
-      if ( OpenFlipper::Options::multiView() ) {
-        emit log( "Switch MultiView mode");
-
-        switch (baseLayout_->mode())
-        {
-          case QtMultiViewLayout::SingleView:
-            baseLayout_->setMode (QtMultiViewLayout::Grid);
-            break;
-          case QtMultiViewLayout::Grid:
-            baseLayout_->setMode (QtMultiViewLayout::HSplit);
-            break;
-          case QtMultiViewLayout::HSplit:
-            baseLayout_->setMode (QtMultiViewLayout::SingleView);
-            PluginFunctions::setActiveExaminer (0);
-            break;
-        }
-      }
+      nextViewMode();
       break;
 
     case Qt::Key_Shift :
