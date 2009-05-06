@@ -989,6 +989,49 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>targetObjects</tabstop>
+  <tabstop>posx</tabstop>
+  <tabstop>posy</tabstop>
+  <tabstop>posz</tabstop>
+  <tabstop>dirxx</tabstop>
+  <tabstop>dirxy</tabstop>
+  <tabstop>dirxz</tabstop>
+  <tabstop>diryx</tabstop>
+  <tabstop>diryy</tabstop>
+  <tabstop>diryz</tabstop>
+  <tabstop>dirzx</tabstop>
+  <tabstop>dirzy</tabstop>
+  <tabstop>dirzz</tabstop>
+  <tabstop>posButton</tabstop>
+  <tabstop>nposx</tabstop>
+  <tabstop>nposy</tabstop>
+  <tabstop>nposz</tabstop>
+  <tabstop>axisAButton</tabstop>
+  <tabstop>ndirAx</tabstop>
+  <tabstop>ndirAy</tabstop>
+  <tabstop>ndirAz</tabstop>
+  <tabstop>axisBButton</tabstop>
+  <tabstop>ndirBx</tabstop>
+  <tabstop>ndirBy</tabstop>
+  <tabstop>ndirBz</tabstop>
+  <tabstop>dirButton</tabstop>
+  <tabstop>transButton</tabstop>
+  <tabstop>translationX</tabstop>
+  <tabstop>translationY</tabstop>
+  <tabstop>translationZ</tabstop>
+  <tabstop>rotButton</tabstop>
+  <tabstop>rotx</tabstop>
+  <tabstop>roty</tabstop>
+  <tabstop>rotz</tabstop>
+  <tabstop>rotAngle</tabstop>
+  <tabstop>scaleButton</tabstop>
+  <tabstop>scalex</tabstop>
+  <tabstop>scaley</tabstop>
+  <tabstop>scalez</tabstop>
+  <tabstop>projectTangentButton</tabstop>
+  <tabstop>moveManipToCOG</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
