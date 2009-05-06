@@ -581,6 +581,9 @@ public:
     /// Set the snapShot name for all examiners
     void slotSnapshotName();
 
+    /// Hide coordinate systems in all viewers
+    void slotCoordSysVisibility(bool _visible);
+
   private :
     /** Update the contextmenu for the given position inside an examiner widget
      *

@@ -291,7 +291,7 @@ void CoreWidget::setupMenuBar()
   QAction* homeAction = new QAction("Restore Home View",viewMenu_);
   homeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"go-home.png") );
   homeAction->setCheckable( false );
-  homeAction->setToolTip("Restore <b>home</b> view.");
+  homeAction->setStatusTip("Restore <b>home</b> view.");
   homeAction->setWhatsThis( "Restore home view<br><br>"
                             "Resets the view to the home view");
   viewMenu_->addAction( homeAction );
@@ -301,7 +301,7 @@ void CoreWidget::setupMenuBar()
   QAction* setHomeAction = new QAction( "Set Home View" , viewMenu_ );
   setHomeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"set-home.png") );
   setHomeAction->setCheckable( false );
-  setHomeAction->setToolTip("Set <b>home</b> view");
+  setHomeAction->setStatusTip("Set <b>home</b> view");
   setHomeAction->setWhatsThis( "Store home view<br><br>"
                                "Stores the current view as the home view");
   viewMenu_->addAction( setHomeAction);
@@ -310,7 +310,7 @@ void CoreWidget::setupMenuBar()
   QAction* viewAllAction = new QAction( "View all", viewMenu_ );
   viewAllAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewall.png") );
   viewAllAction->setCheckable( false );
-  viewAllAction->setToolTip("View all.");
+  viewAllAction->setStatusTip("View all.");
   viewAllAction->setWhatsThis( "View all<br><br>"
                                "Move the objects in the scene so that"
                                " the whole scene is visible.");
@@ -322,7 +322,7 @@ void CoreWidget::setupMenuBar()
   QAction* snapShotAction = new QAction( "Viewer Snapshot", viewMenu_ );
   snapShotAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewerSnapshot.png") );
   snapShotAction->setCheckable( false );
-  snapShotAction->setToolTip("Take a snapshot from all viewers.");
+  snapShotAction->setStatusTip("Take a snapshot from all viewers.");
   snapShotAction->setWhatsThis( "Viewer Snapshot<br><br>"
                                "Take a snapshot of all viewers at once.");
   connect( snapShotAction,SIGNAL( triggered() ), this, SLOT( viewerSnapshotDialog() ) );
@@ -331,7 +331,7 @@ void CoreWidget::setupMenuBar()
   QAction* appSnapShotAction = new QAction( "Application Snapshot", viewMenu_ );
   appSnapShotAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
   appSnapShotAction->setCheckable( false );
-  appSnapShotAction->setToolTip("Take a snapshot from OpenFlipper.");
+  appSnapShotAction->setStatusTip("Take a snapshot from OpenFlipper.");
   appSnapShotAction->setWhatsThis( "Snapshot<br><br>"
                                "Take a snapshot from OpenFlipper.");
   connect( appSnapShotAction,SIGNAL( triggered() ), this, SLOT( applicationSnapshotDialog() ) );
@@ -340,13 +340,22 @@ void CoreWidget::setupMenuBar()
   perspectiveProjectionAction_ = new QAction( "Switch Viewers to Perspective Projection", viewMenu_ );;
   perspectiveProjectionAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
   perspectiveProjectionAction_->setCheckable( false );
-  perspectiveProjectionAction_->setToolTip(   "Switch to perspective projection mode.");
+  perspectiveProjectionAction_->setStatusTip(   "Switch to perspective projection mode.");
   perspectiveProjectionAction_->setWhatsThis( "Switch projection mode<br><br>"
                                               "Switch to <b>perspective</b> projection mode.");
   connect( perspectiveProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalPerspectiveProjection() ) );
   viewMenu_->addAction( perspectiveProjectionAction_);
 
 
+
+  viewMenu_->addSeparator();
+
+  QAction* coordSys = viewMenu_->addAction("Coordinate Systems");
+  coordSys->setCheckable(true);
+  coordSys->setChecked(true);
+  coordSys->setStatusTip("Toggle visibility of the coordinate systems");
+//   coordSys->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
+  connect(coordSys, SIGNAL(triggered(bool)), this, SLOT( slotCoordSysVisibility(bool) ) );
 
   viewMenu_->addSeparator();
 
