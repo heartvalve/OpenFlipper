@@ -116,6 +116,7 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
   }
 }
 
+
 glViewer* QtGLGraphicsScene::findView (const QPointF &_p, bool _setActive)
 {
   for (unsigned int i = 0; i < views_->size (); i++)
@@ -133,86 +134,17 @@ glViewer* QtGLGraphicsScene::findView (const QPointF &_p, bool _setActive)
   return NULL;
 }
 
-void QtGLGraphicsScene::mousePressEvent(QGraphicsSceneMouseEvent* _e)
-{
-  QGraphicsScene::mousePressEvent(_e);
-  if (_e->isAccepted())
-    return;
-  glViewer *v = findView (_e->scenePos(), true);
-  if (!v)
-    return;
-
-  QPoint p (_e->scenePos().x(), _e->scenePos().y());
-  QMouseEvent me(QEvent::MouseButtonPress ,p, _e->screenPos(), _e->button(),
-	         _e->buttons(), _e->modifiers());
-  v->glMousePressEvent(&me);
-  _e->accept();
-}
-
-void QtGLGraphicsScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e)
-{
-  QGraphicsScene::mouseDoubleClickEvent(_e);
-  if (_e->isAccepted())
-    return;
-  glViewer *v = findView (_e->scenePos(), true);
-  if (!v)
-    return;
-
-  QPoint p (_e->scenePos().x(), _e->scenePos().y());
-  QMouseEvent me(QEvent::MouseButtonDblClick ,p, _e->screenPos(), _e->button(),
-	         _e->buttons(), _e->modifiers());
-  v->glMouseDoubleClickEvent(&me);
-  _e->accept();
-}
-
-void QtGLGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent* _e)
-{
-  QGraphicsScene::mouseReleaseEvent(_e);
-  if (_e->isAccepted())
-    return;
-  glViewer *v = findView (_e->scenePos());
-  if (!v)
-    return;
-
-  QPointF f (v->mapFromScene (_e->scenePos()));
-  QPoint p (_e->scenePos().x(), _e->scenePos().y());
-  QMouseEvent me(QEvent::MouseButtonRelease ,p, _e->screenPos(), _e->button(),
-	         _e->buttons(), _e->modifiers());
-  v->glMouseReleaseEvent(&me);
-  _e->accept();
-}
-
 void QtGLGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
 {
   QGraphicsScene::mouseMoveEvent(_e);
   if (_e->isAccepted())
     return;
+
   glViewer *v = findView (_e->scenePos());
   if (!v)
     return;
 
-  QPoint p (_e->scenePos().x(), _e->scenePos().y());
-  QMouseEvent me(QEvent::MouseMove ,p, _e->screenPos(), _e->button(),
-	         _e->buttons(), _e->modifiers());
-  v->glMouseMoveEvent(&me);
-  _e->accept();
-}
-
-void QtGLGraphicsScene::wheelEvent(QGraphicsSceneWheelEvent* _e)
-{
-  QGraphicsScene::wheelEvent(_e);
-  if (_e->isAccepted())
-    return;
-
-  glViewer *v = findView (_e->scenePos(), true);
-  if (!v)
-    return;
-
-  QPoint p (_e->scenePos().x(), _e->scenePos().y());
-  QWheelEvent we(p, _e->screenPos(), _e->delta(), _e->buttons(),
-		 _e->modifiers(), _e->orientation());
-  v->glMouseWheelEvent(&we);
-  _e->accept();
+  v->mouseMoveEvent(_e);
 }
 
 
