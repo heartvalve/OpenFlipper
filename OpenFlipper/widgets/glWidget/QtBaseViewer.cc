@@ -117,11 +117,12 @@ static const char          VIEW_MAGIC[] =
 
 
 glViewer::glViewer( QtGLGraphicsScene* _scene,
-		              QGLWidget* _glWidget,
+                    QGLWidget* _glWidget,
                     Viewer::ViewerProperties& _properties,
-		              QGraphicsWidget* _parent,
-		              const char* /* _name */ ,
-		              QStatusBar *_statusBar) :
+                    unsigned int _id,
+                    QGraphicsWidget* _parent,
+                    const char* /* _name */ ,
+                    QStatusBar *_statusBar) :
   QGraphicsWidget(_parent),
   statusbar_(_statusBar),
   glareaGrabbed_(false),
@@ -129,6 +130,7 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   blending_(true),
   glScene_(_scene),
   glWidget_(_glWidget),
+  id_(_id),
   properties_(_properties),
   glstate_(0)
 {
@@ -1269,31 +1271,39 @@ void glViewer::contextMenuEvent(QGraphicsSceneContextMenuEvent* _e)
 
 //-----------------------------------------------------------------------------
 
-void glViewer::glMousePressEvent(QMouseEvent* _event)
+void glViewer::mousePressEvent(QGraphicsSceneMouseEvent* _e)
 {
+  QPoint p (_e->scenePos().x(), _e->scenePos().y());
+  QMouseEvent me(QEvent::MouseButtonPress ,p, _e->screenPos(), _e->button(),
+                 _e->buttons(), _e->modifiers());
+  _e->accept ();
+
+  PluginFunctions::setActiveExaminer (id_);
+  glScene_->update ();
+
   // right button pressed => popup menu (ignore here)
-  if (_event->button() != Qt::RightButton )
+  if (_e->button() != Qt::RightButton )
   {
     switch (PluginFunctions::actionMode())
     {
       case Viewer::ExamineMode:
-        if ((_event->modifiers() & Qt::ControlModifier)) // drag&drop
-          emit startDragEvent( _event );
+        if ((_e->modifiers() & Qt::ControlModifier)) // drag&drop
+          emit startDragEvent( &me );
         else
-          viewMouseEvent(_event); // examine
+          viewMouseEvent(&me); // examine
         break;
 
       case Viewer::LightMode:
-        lightMouseEvent(_event);
+        lightMouseEvent(&me);
         break;
 
       case Viewer::PickingMode: // give event to application
-        emit(signalMouseEvent(_event, PluginFunctions::pickMode() ));
-        emit(signalMouseEvent(_event));
+        emit(signalMouseEvent(&me, PluginFunctions::pickMode() ));
+        emit(signalMouseEvent(&me));
         break;
 
       case Viewer::QuestionMode: // give event to application
-        emit(signalMouseEventIdentify(_event));
+        emit(signalMouseEventIdentify(&me));
         break;
     }
   }
@@ -1303,25 +1313,33 @@ void glViewer::glMousePressEvent(QMouseEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void glViewer::glMouseDoubleClickEvent(QMouseEvent* _event)
+void glViewer::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e)
 {
+  QPoint p (_e->scenePos().x(), _e->scenePos().y());
+  QMouseEvent me(QEvent::MouseButtonDblClick ,p, _e->screenPos(), _e->button(),
+                 _e->buttons(), _e->modifiers());
+  _e->accept ();
+
+  PluginFunctions::setActiveExaminer (id_);
+  glScene_->update ();
+
   switch (PluginFunctions::actionMode())
   {
     case Viewer::ExamineMode:
-      viewMouseEvent(_event);
+      viewMouseEvent(&me);
       break;
 
     case Viewer::LightMode:
-      lightMouseEvent(_event);
+      lightMouseEvent(&me);
       break;
 
     case Viewer::PickingMode: // give event to application
-      emit(signalMouseEvent(_event, PluginFunctions::pickMode() ));
-      emit(signalMouseEvent(_event));
+      emit(signalMouseEvent(&me, PluginFunctions::pickMode() ));
+      emit(signalMouseEvent(&me));
       break;
 
     case Viewer::QuestionMode: // give event to application
-      emit(signalMouseEventIdentify(_event));
+      emit(signalMouseEventIdentify(&me));
       break;
   }
 }
@@ -1330,31 +1348,36 @@ void glViewer::glMouseDoubleClickEvent(QMouseEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void glViewer::glMouseMoveEvent(QMouseEvent* _event)
+void glViewer::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
 {
+  QPoint p (_e->scenePos().x(), _e->scenePos().y());
+  QMouseEvent me(QEvent::MouseMove ,p, _e->screenPos(), _e->button(),
+                 _e->buttons(), _e->modifiers());
+  _e->accept();
+
   switch ( PluginFunctions::actionMode() )
   {
     case Viewer::ExamineMode:
-      viewMouseEvent(_event);
+      viewMouseEvent(&me);
       break;
 
     case Viewer::LightMode:
-      lightMouseEvent(_event);
+      lightMouseEvent(&me);
       break;
 
     case Viewer::PickingMode:
       // give event to application
       // deliver mouse moves with no button down, if tracking is enabled,
-      if ((_event->buttons() & (Qt::LeftButton | Qt::MidButton | Qt::RightButton))
+      if ((_e->buttons() & (Qt::LeftButton | Qt::MidButton | Qt::RightButton))
           || trackMouse_)
       {
-        emit(signalMouseEvent(_event, PluginFunctions::pickMode() ));
-        emit(signalMouseEvent(_event));
+        emit(signalMouseEvent(&me, PluginFunctions::pickMode() ));
+        emit(signalMouseEvent(&me));
       }
       break;
 
     case Viewer::QuestionMode: // give event to application
-      emit(signalMouseEventIdentify(_event));
+      emit(signalMouseEventIdentify(&me));
       break;
 
     default: // avoid warning
@@ -1366,30 +1389,35 @@ void glViewer::glMouseMoveEvent(QMouseEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void glViewer::glMouseReleaseEvent(QMouseEvent* _event)
+void glViewer::mouseReleaseEvent(QGraphicsSceneMouseEvent* _e)
 {
+  QPoint p (_e->scenePos().x(), _e->scenePos().y());
+  QMouseEvent me(QEvent::MouseButtonRelease ,p, _e->screenPos(), _e->button(),
+                 _e->buttons(), _e->modifiers());
+  _e->accept();
+  
 //   if (_event->button() == Qt::RightButton )
 //     hidePopupMenus();
 
-  if (_event->button() != Qt::RightButton || (PluginFunctions::actionMode() == Viewer::PickingMode) )
+  if (_e->button() != Qt::RightButton || (PluginFunctions::actionMode() == Viewer::PickingMode) )
   {
     switch ( PluginFunctions::actionMode() )
     {
       case Viewer::ExamineMode:
-        viewMouseEvent(_event);
+        viewMouseEvent(&me);
         break;
 
       case Viewer::LightMode:
-        lightMouseEvent(_event);
+        lightMouseEvent(&me);
         break;
 
       case Viewer::PickingMode: // give event to application
-        emit(signalMouseEvent(_event, PluginFunctions::pickMode() ));
-        emit(signalMouseEvent(_event));
+        emit(signalMouseEvent(&me, PluginFunctions::pickMode() ));
+        emit(signalMouseEvent(&me));
         break;
 
       case Viewer::QuestionMode: // give event to application
-        emit(signalMouseEventIdentify(_event));
+        emit(signalMouseEventIdentify(&me));
         break;
 
       default: // avoid warning
@@ -1404,16 +1432,21 @@ void glViewer::glMouseReleaseEvent(QMouseEvent* _event)
 //-----------------------------------------------------------------------------
 
 
-void glViewer::glMouseWheelEvent(QWheelEvent* _event)
+void glViewer::wheelEvent(QGraphicsSceneWheelEvent* _e)
 {
+  QPoint p (_e->scenePos().x(), _e->scenePos().y());
+  QWheelEvent we(p, _e->screenPos(), _e->delta(), _e->buttons(),
+                 _e->modifiers(), _e->orientation());
+  _e->accept();
+
   switch ( PluginFunctions::actionMode() )
   {
     case Viewer::ExamineMode:
-      viewWheelEvent(_event);
+      viewWheelEvent(&we);
       break;
 
     case Viewer::PickingMode: // give event to application
-      emit(signalWheelEvent(_event, PluginFunctions::pickMode() ));
+      emit(signalWheelEvent(&we, PluginFunctions::pickMode() ));
       break;
 
     default: // avoid warning
@@ -1503,10 +1536,6 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
       if (_event->buttons() & (Qt::LeftButton | Qt::MidButton))
       {
         QPoint newPoint2D = pos;
-
-        if ( (newPoint2D.x()<0) || (newPoint2D.x() > (int)glWidth()) ||
-             (newPoint2D.y()<0) || (newPoint2D.y() > (int)glHeight()) )
-          return;
 
         double value_x, value_y;
         ACG::Vec3d  newPoint3D;

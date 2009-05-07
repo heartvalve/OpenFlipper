@@ -122,16 +122,18 @@ public:
     \param _parent parent widget
     \param _name name (qt internal, qt debugging)
     \param _properties viewerOptions controlled by PluginFunctions
+    \param _id examiner id
     \param _statusBar pointer to an existing status bar for this widget,
      if \c statusBar==0 then a \a private status bar will be created
     \param _format OpenGL context settings, will be passed to glarea()
   */
   glViewer( QtGLGraphicsScene* _scene,
-	    QGLWidget* _glWidget,
-       Viewer::ViewerProperties& _properties,
-	    QGraphicsWidget* _parent=0,
-	    const char* _name=0,
-	    QStatusBar *_statusBar=0);
+            QGLWidget* _glWidget,
+            Viewer::ViewerProperties& _properties,
+            unsigned int _id,
+            QGraphicsWidget* _parent=0,
+            const char* _name=0,
+            QStatusBar *_statusBar=0);
 
   /// Destructor.
   virtual ~glViewer();
@@ -392,15 +394,15 @@ protected:
   virtual void moveEvent (QGraphicsSceneMoveEvent * _e);
 
   /// handle mouse press events
-  virtual void glMousePressEvent(QMouseEvent* _event);
+  virtual void mousePressEvent(QGraphicsSceneMouseEvent* _event);
   /// handle mouse double click events
-  virtual void glMouseDoubleClickEvent(QMouseEvent* _event);
+  virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _event);
   /// handle mouse move events
-  virtual void glMouseMoveEvent(QMouseEvent* _event);
+  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* _event);
   /// handle mouse release events
-  virtual void glMouseReleaseEvent(QMouseEvent* _event);
+  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* _event);
   /// handle mouse wheel events
-  virtual void glMouseWheelEvent(QWheelEvent* _event);
+  virtual void wheelEvent(QGraphicsSceneWheelEvent* _event);
   /// handle mouse press events
   virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent* _e);
 
@@ -530,6 +532,9 @@ private:
 
   // Base graphics widget layout
   QtGLViewerLayout* glBaseLayout_;
+
+  // examiner id
+  unsigned int id_;
 
 
 

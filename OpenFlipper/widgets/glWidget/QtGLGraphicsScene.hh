@@ -75,11 +75,7 @@ protected:
 
   virtual void drawBackground(QPainter *_painter, const QRectF &_rect);
 
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent* _e);
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* _e);
-  virtual void wheelEvent(QGraphicsSceneWheelEvent* _e);
 
 private:
 
