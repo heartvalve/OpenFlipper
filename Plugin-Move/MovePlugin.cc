@@ -130,6 +130,57 @@ void MovePlugin::pluginsInitialized() {
   connect(toolBarActions_, SIGNAL(triggered(QAction*)), this, SLOT(slotSetMoveMode(QAction*)) );
 
   emit addToolbar(toolbar_);
+
+  pickToolbar_ = new QToolBar("Transform and Move");
+  pickToolBarActions_ = new QActionGroup(pickToolbar_);
+  pickToolBarActions_->setExclusive (false);
+
+  placeAction_ = new QAction(tr("Place manipulator"), pickToolBarActions_);
+  placeAction_->setStatusTip(tr("Place manipulator on object. <Doubleclick>"));
+  placeAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-place.png") );
+  placeAction_->setCheckable(true);
+  pickToolbar_->addAction(placeAction_);
+
+  pickToolbar_->addSeparator ();
+
+  ratateTranslateAction_ = new QAction(tr("Rotate/Translate object"), pickToolBarActions_);
+  ratateTranslateAction_->setStatusTip(tr("Rotate/Translate object."));
+  ratateTranslateAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-translaterotate.png") );
+  ratateTranslateAction_->setCheckable(true);
+  ratateTranslateAction_->setChecked(true);
+  pickToolbar_->addAction(ratateTranslateAction_);
+
+  resizeAction_ = new QAction(tr("Resize object"), pickToolBarActions_);
+  resizeAction_->setStatusTip(tr("Resize object. <Control>"));
+  resizeAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-resize.png") );
+  resizeAction_->setCheckable(true);
+  pickToolbar_->addAction(resizeAction_);
+
+  pickToolbar_->addSeparator ();
+
+  ratateManipAction_ = new QAction(tr("Rotate manipulator"), pickToolBarActions_);
+  ratateManipAction_->setStatusTip(tr("Rotate manipulator. <Shift>"));
+  ratateManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-maniprotate.png") );
+  ratateManipAction_->setCheckable(true);
+  pickToolbar_->addAction(ratateManipAction_);
+
+  smallerManipAction_ = new QAction(tr("Decrease size of manipulator"), pickToolBarActions_);
+  smallerManipAction_->setStatusTip(tr("Make manipulator smaller. <Mouse wheel up>"));
+  smallerManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-manipsmall.png") );
+  smallerManipAction_->setCheckable(false);
+  pickToolbar_->addAction(smallerManipAction_);
+
+  biggerManipAction_ = new QAction(tr("&Increase size of manipulator"), pickToolBarActions_);
+  biggerManipAction_->setStatusTip(tr("Make manipulator bigger. <Mouse wheel down>"));
+  biggerManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-manipbig.png") );
+  biggerManipAction_->setCheckable(false);
+  pickToolbar_->addAction(biggerManipAction_);
+
+  connect(pickToolBarActions_, SIGNAL(triggered(QAction*)), this, SLOT(slotPickToolbarAction(QAction*)) );
+
+  emit setPickModeToolbar ("Move", pickToolbar_);
+  emit setPickModeToolbar ("MoveSelection", pickToolbar_);
+
 }
 
 
@@ -189,32 +240,17 @@ void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /
  */
 void MovePlugin::slotMouseEvent( QMouseEvent* _event )
 {
-  QtTranslationManipulatorNode::ManipulatorMode mode;
-  if (_event->modifiers() & Qt::ControlModifier)
-    mode = QtTranslationManipulatorNode::Resize;
-  else if (_event->modifiers() & Qt::ShiftModifier)
-    mode = QtTranslationManipulatorNode::LocalRotation;
-  else
-    mode = QtTranslationManipulatorNode::TranslationRotation;
-
-  if (mode != manMode_)
-  {
-    manMode_ = mode;
-    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
-        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-              o_it != PluginFunctions::objectsEnd(); ++o_it)
-           if ( o_it->manipPlaced() )
-                o_it->manipulatorNode()->setMode (mode);
-     }
-  }
-
   if (((PluginFunctions::pickMode() == ("Move")) || (PluginFunctions::pickMode() == ("MoveSelection"))) &&
       PluginFunctions::actionMode() == Viewer::PickingMode) {
 
-    if (_event->type() == QEvent::MouseButtonDblClick) {
+    if (_event->type() == QEvent::MouseButtonDblClick ||
+        (_event->type() == QEvent::QEvent::MouseButtonPress &&
+         _event->button () == Qt::LeftButton &&
+         placeAction_->isChecked ())) {
 
       placeManip(_event);
       updateManipulatorDialog();
+      placeAction_->setChecked (false);
       return;
     }
 
@@ -234,45 +270,19 @@ void MovePlugin::slotMouseEvent( QMouseEvent* _event )
 
 void MovePlugin::slotKeyEvent (QKeyEvent* _event)
 {
-  QtTranslationManipulatorNode::ManipulatorMode mode;
   if (_event->key() == Qt::Key_Control)
-    mode = QtTranslationManipulatorNode::Resize;
+    setManipMode (QtTranslationManipulatorNode::Resize);
   else if (_event->key () == Qt::Key_Shift)
-    mode = QtTranslationManipulatorNode::LocalRotation;
-  else
-    mode = QtTranslationManipulatorNode::TranslationRotation;
-
-  if (mode != manMode_)
-  {
-    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
-      manMode_ = mode;
-      for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS);
-           o_it != PluginFunctions::objectsEnd(); ++o_it)
-        if (o_it->manipPlaced())
-            o_it->manipulatorNode()->setMode (mode);
-     }
-  }
+    setManipMode (QtTranslationManipulatorNode::LocalRotation);
 }
 
 //------------------------------------------------------------------------------
 
 void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
 {
-  QtTranslationManipulatorNode::ManipulatorMode mode = manMode_;
   if ((_event->key() == Qt::Key_Control && manMode_ == QtTranslationManipulatorNode::Resize) ||
       (_event->key() == Qt::Key_Shift && manMode_ == QtTranslationManipulatorNode::LocalRotation))
-    mode = QtTranslationManipulatorNode::TranslationRotation;
-
-  if (mode != manMode_)
-  {
-    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
-      manMode_ = mode;
-      for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS);
-           o_it != PluginFunctions::objectsEnd(); ++o_it)
-        if (o_it->manipPlaced())
-            o_it->manipulatorNode()->setMode (mode);
-     }
-  }
+    setManipMode (QtTranslationManipulatorNode::TranslationRotation);
 }
 
 /*******************************************************************************
@@ -354,6 +364,45 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id) {
 
   emit updatedObject(_id);
 //   emit createBackup(_id,"MoveSelection");
+}
+
+//------------------------------------------------------------------------------
+
+/** \brief Set the manipulator manipulation mode
+ *
+ * @param _mode Mode
+ */
+
+void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mode)
+{
+  if (_mode != manMode_)
+  {
+    manMode_ = _mode;
+    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
+        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
+              o_it != PluginFunctions::objectsEnd(); ++o_it)
+           if ( o_it->manipPlaced() )
+                o_it->manipulatorNode()->setMode (_mode);
+    }
+    switch (manMode_)
+    {
+      case QtTranslationManipulatorNode::Resize:
+        resizeAction_->setChecked (true);
+        ratateManipAction_->setChecked (false);
+        ratateTranslateAction_->setChecked (false);
+        break;
+      case QtTranslationManipulatorNode::LocalRotation:
+        resizeAction_->setChecked (false);
+        ratateManipAction_->setChecked (true);
+        ratateTranslateAction_->setChecked (false);
+        break;
+      case QtTranslationManipulatorNode::TranslationRotation:
+        resizeAction_->setChecked (false);
+        ratateManipAction_->setChecked (false);
+        ratateTranslateAction_->setChecked (true);
+        break;
+    }
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1157,6 +1206,48 @@ void MovePlugin::slotSetMoveMode(QAction* _action) {
     PluginFunctions::pickMode("MoveSelection");
 
     moveSelectionAction_->setChecked( true );
+  }
+}
+
+//------------------------------------------------------------------------------
+
+/** \brief Called by pick mode Toolbar
+ *
+ * @param _action the action that was triggered
+ */
+
+void MovePlugin::slotPickToolbarAction(QAction* _action)
+{
+
+  if (_action == ratateTranslateAction_)
+  {
+    setManipMode (QtTranslationManipulatorNode::TranslationRotation);
+  }
+
+  if (_action == ratateManipAction_)
+  {
+    setManipMode (QtTranslationManipulatorNode::LocalRotation);
+  }
+
+  if (_action == resizeAction_)
+  {
+    setManipMode(QtTranslationManipulatorNode::Resize);
+  }
+
+  if (_action == biggerManipAction_)
+  {
+    manip_size_modifier_ = manip_size_modifier_ + 0.1;
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+         o_it->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
+    emit visibilityChanged (-1);
+  }
+
+  if (_action == smallerManipAction_)
+  {
+    manip_size_modifier_ = manip_size_modifier_ - 0.1;
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+         o_it->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
+    emit visibilityChanged (-1);
   }
 }
 

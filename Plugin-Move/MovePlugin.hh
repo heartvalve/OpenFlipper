@@ -80,6 +80,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     void addPickMode( const std::string _mode );
     void addHiddenPickMode( const std::string _mode );
     void setPickModeMouseTracking (const std::string _mode, bool _mouseTracking);
+    void setPickModeToolbar (const std::string _mode, QToolBar * _toolbar);
 
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action , ContextMenuType _type);
@@ -217,6 +218,31 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 /** @} */
 
 //===========================================================================
+/** @name PickToolBar
+  * @{ */
+//===========================================================================
+
+  private :
+    QToolBar *pickToolbar_;
+
+    QAction* placeAction_;
+    QAction* ratateTranslateAction_;
+    QAction* ratateManipAction_;
+    QAction* resizeAction_;
+
+    QAction* biggerManipAction_;
+    QAction* smallerManipAction_;
+
+    QActionGroup* pickToolBarActions_;
+
+  private slots:
+
+    /// Called by pick Toolbar
+    void slotPickToolbarAction(QAction* _action);
+
+/** @} */
+
+//===========================================================================
 /** @name Manipulator Handling
   * @{ */
 //===========================================================================
@@ -280,6 +306,8 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     /// Holds the current manipulator mode
     QtTranslationManipulatorNode::ManipulatorMode manMode_;
+
+    void setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mode);
 
 /** @} */
 
