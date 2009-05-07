@@ -105,6 +105,9 @@ class DLLEXPORT QtMultiViewLayout : public QGraphicsLayout
     /// Sets space between items
     void setSpacing (unsigned int _s);
 
+    /// Sets primary element for SingleView and HSplit
+    void setPrimary (unsigned int _i);
+
 
     /// Pure virtual functions that have to be implemented
     virtual int count() const;
@@ -130,6 +133,9 @@ class DLLEXPORT QtMultiViewLayout : public QGraphicsLayout
 
     /// Items
     QGraphicsWidget *items_[4];
+
+    /// Primary element
+    unsigned int primary_;
 
 };
 

@@ -778,20 +778,22 @@ void CoreWidget::nextViewMode() {
 
 		switch (baseLayout_->mode()) {
 		case QtMultiViewLayout::SingleView:
+                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
 			baseLayout_->setMode(QtMultiViewLayout::Grid);
 
 			// Update combo box in the toolbar
 			viewmodeBox_->setCurrentIndex(1);
 			break;
 		case QtMultiViewLayout::Grid:
+                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
 			baseLayout_->setMode(QtMultiViewLayout::HSplit);
 
 			// Update combo box in the toolbar
 			viewmodeBox_->setCurrentIndex(2);
 			break;
 		case QtMultiViewLayout::HSplit:
+                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
 			baseLayout_->setMode(QtMultiViewLayout::SingleView);
-			PluginFunctions::setActiveExaminer(0);
 
 			// Update combo box in the toolbar
 			viewmodeBox_->setCurrentIndex(0);
@@ -809,13 +811,15 @@ CoreWidget::setViewMode(int _idx) {
 
 		switch (_idx) {
 		case 0:
+                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
 			baseLayout_->setMode(QtMultiViewLayout::SingleView);
-			PluginFunctions::setActiveExaminer(0);
 			break;
 		case 1:
+                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
 			baseLayout_->setMode(QtMultiViewLayout::Grid);
 			break;
 		case 2:
+                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
 			baseLayout_->setMode(QtMultiViewLayout::HSplit);
 			break;
 		}

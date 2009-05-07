@@ -50,7 +50,8 @@
 QtMultiViewLayout::QtMultiViewLayout (QGraphicsLayoutItem * _parent) :
   QGraphicsLayout (_parent),
   mode_ (SingleView),
-  spacing_ (2)
+  spacing_ (2),
+  primary_ (0)
 {
   items_[0] = 0;
   items_[1] = 0;
@@ -72,6 +73,16 @@ void QtMultiViewLayout::addItem (QGraphicsWidget *_item, unsigned int _pos)
 void QtMultiViewLayout::setMode (MultiViewMode _mode)
 {
   mode_ = _mode;
+  invalidate();
+}
+
+//-----------------------------------------------------------------------------
+
+void QtMultiViewLayout::setPrimary (unsigned int _i)
+{
+  if ((int) _i > count ())
+    return;
+  primary_ = _i;
   invalidate();
 }
 
@@ -136,32 +147,26 @@ void QtMultiViewLayout::reLayout ()
   MultiViewMode mode = mode_;
   QRectF r = contentsRect ();
 
-  if (!items_[0])
+  if (!items_[primary_])
     return;
   if (count() != 4)
     mode = SingleView;
 
   if (mode == SingleView)
   {
-    if (items_[1])
-      items_[1]->hide();
-    if (items_[2])
-      items_[2]->hide();
-    if (items_[3])
-      items_[3]->hide();
+    for (int i = 0; i < 4; i++)
+        items_[i]->hide();
+    items_[primary_]->show ();
   } else   {
-    if (items_[1])
-      items_[1]->show();
-    if (items_[2])
-      items_[2]->show();
-    if (items_[3])
-      items_[3]->show();
+    for (int i = 0; i < 4; i++)
+      if (items_[i])
+        items_[i]->show();
   }
 
   switch (mode)
   {
     case SingleView:
-      items_[0]->setGeometry (r);
+      items_[primary_]->setGeometry (r);
       break;
     case Grid:
       {
@@ -181,18 +186,23 @@ void QtMultiViewLayout::reLayout ()
       break;
     case HSplit:
       {
+        int order[4];
+        order[0] = primary_;
+        for (unsigned int i = 0, j = 1; i < 4; i++)
+          if (i != primary_)
+            order[j++] = i;
 	int width = (r.width() - spacing_) * 3 / 4;
 	int ewidth = r.width() - spacing_ - width;
 	int eheight = (r.height() - (spacing_ * 2)) / 3;
-	items_[0]->resize (width, r.height());
-	items_[1]->resize (ewidth, eheight);
-	items_[2]->resize (ewidth, eheight);
-	items_[3]->resize (ewidth, r.height() - ((eheight + spacing_) * 2));
-	items_[0]->setPos (r.topLeft());
-	items_[1]->setPos (r.x() + width + spacing_, r.y());
-	items_[2]->setPos (r.x() + width + spacing_, r.y() + eheight + spacing_);
-	items_[3]->setPos (r.x() + width + spacing_,
-			   r.y() + ((eheight + spacing_) * 2));
+	items_[order[0]]->resize (width, r.height());
+	items_[order[1]]->resize (ewidth, eheight);
+	items_[order[2]]->resize (ewidth, eheight);
+	items_[order[3]]->resize (ewidth, r.height() - ((eheight + spacing_) * 2));
+	items_[order[0]]->setPos (r.topLeft());
+	items_[order[1]]->setPos (r.x() + width + spacing_, r.y());
+	items_[order[2]]->setPos (r.x() + width + spacing_, r.y() + eheight + spacing_);
+	items_[order[3]]->setPos (r.x() + width + spacing_,
+			          r.y() + ((eheight + spacing_) * 2));
       }
       break;
   }
