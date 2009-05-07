@@ -62,16 +62,38 @@ namespace SceneGraph {
 
 //== IMPLEMENTATION ==========================================================
 
+// Node colors (normal, over, clicked, occluded normal, occluded over, occluded clicked)
 
-  const Vec4f origin_color (0.8, 0.8, 0.8, 1.0);
-  const Vec4f outer_ring_x_color (0.8, 0.0, 0.0, 1.0);
-  const Vec4f outer_ring_y_color (0.0, 0.8, 0.0, 1.0);
-  const Vec4f outer_ring_z_color (0.0, 0.0, 0.8, 1.0);
-  const Vec4f x_axis_color (1.0, 0.0, 0.0, 1.0);
-  const Vec4f y_axis_color (0.0, 1.0, 0.0, 1.0);
-  const Vec4f z_axis_color (0.2, 0.2, 1.0, 1.0);
-  const Vec4f select_color (1.0, 0.1, 0.1, 1.0);
-  const Vec4f nonactive_color (0.4, 0.4, 0.4, 0.9);
+const Vec4f colors[4][6] = {
+  // origin
+  {
+    // normal
+    Vec4f(0.2,0.2,0.2,1.0), Vec4f(0.5,0.5,0.5,1.0), Vec4f(0.8,0.8,0.8,1.0),
+    // occluded
+    Vec4f(0.2,0.2,0.2,0.2), Vec4f(0.5,0.5,0.5,0.4), Vec4f(0.8,0.8,0.8,0.6)
+  },
+  // X
+  {
+    // normal
+    Vec4f(0.2,0.0,0.0,1.0), Vec4f(0.5,0.0,0.0,1.0), Vec4f(0.8,0.0,0.0,1.0),
+    // occluded
+    Vec4f(0.3,0.1,0.1,0.2), Vec4f(0.5,0.2,0.2,0.4), Vec4f(0.8,0.4,0.4,0.6)
+  },
+  // Y
+  {
+    // normal
+    Vec4f(0.0,0.2,0.0,1.0), Vec4f(0.0,0.5,0.0,1.0), Vec4f(0.0,0.8,0.0,1.0),
+    // occluded
+    Vec4f(0.1,0.3,0.1,0.2), Vec4f(0.2,0.5,0.2,0.4), Vec4f(0.4,0.8,0.4,0.6)
+  },
+  // Z
+  {
+    // normal
+    Vec4f(0.0,0.0,0.2,1.0), Vec4f(0.0,0.0,0.5,1.0), Vec4f(0.0,0.0,0.8,1.0),
+    // occluded
+    Vec4f(0.1,0.1,0.3,0.2), Vec4f(0.2,0.2,0.5,0.4), Vec4f(0.4,0.4,0.8,0.6)
+  }
+};
 
 
 //----------------------------------------------------------------------------
@@ -184,22 +206,28 @@ TranslationManipulatorNode::update_rotation(GLState& _state){
 void TranslationManipulatorNode::updateTargetColors ()
 {
   // reset all color to default values
-  for (unsigned int i = 0; i < NumElements; i++)
-    element_[i].inactive_target_color_ = nonactive_color * 0.2;
-  element_[XRing].inactive_target_color_ = nonactive_color * 0.4;
-  element_[YRing].inactive_target_color_ = nonactive_color * 0.4;
-  element_[ZRing].inactive_target_color_ = nonactive_color * 0.4;
+  element_[Origin].active_target_color_ = colors[0][0];
+  element_[XAxis].active_target_color_ = colors[1][0];
+  element_[YAxis].active_target_color_ = colors[2][0];
+  element_[ZAxis].active_target_color_ = colors[3][0];
+  element_[XTop].active_target_color_ = colors[1][0];
+  element_[YTop].active_target_color_ = colors[2][0];
+  element_[ZTop].active_target_color_ = colors[3][0];
+  element_[XRing].active_target_color_ = colors[1][0];
+  element_[YRing].active_target_color_ = colors[2][0];
+  element_[ZRing].active_target_color_ = colors[3][0];
 
-  element_[Origin].active_target_color_ = origin_color * 0.2;
-  element_[XAxis].active_target_color_ = x_axis_color * 0.2;
-  element_[YAxis].active_target_color_ = y_axis_color * 0.2;
-  element_[ZAxis].active_target_color_ = z_axis_color * 0.2;
-  element_[XTop].active_target_color_ = x_axis_color * 0.2;
-  element_[YTop].active_target_color_ = y_axis_color * 0.2;
-  element_[ZTop].active_target_color_ = z_axis_color * 0.2;
-  element_[XRing].active_target_color_ = outer_ring_x_color * 0.4;
-  element_[YRing].active_target_color_ = outer_ring_y_color * 0.4;
-  element_[ZRing].active_target_color_ = outer_ring_z_color * 0.4;
+  element_[Origin].inactive_target_color_ = colors[0][3];
+  element_[XAxis].inactive_target_color_ = colors[1][3];
+  element_[YAxis].inactive_target_color_ = colors[2][3];
+  element_[ZAxis].inactive_target_color_ = colors[3][3];
+  element_[XTop].inactive_target_color_ = colors[1][3];
+  element_[YTop].inactive_target_color_ = colors[2][3];
+  element_[ZTop].inactive_target_color_ = colors[3][3];
+  element_[XRing].inactive_target_color_ = colors[1][3];
+  element_[YRing].inactive_target_color_ = colors[2][3];
+  element_[ZRing].inactive_target_color_ = colors[3][3];
+
 
   // blending is enabled for ring so we have to set alpha correctly
   element_[XRing].active_target_color_[3] = 1.0;
@@ -216,23 +244,21 @@ void TranslationManipulatorNode::updateTargetColors ()
 
   // set colors according to current (clicked/over/none) state
   if(element_[Origin].clicked_){
-    element_[Origin].active_target_color_ = origin_color;
-    element_[Origin].inactive_target_color_ = nonactive_color;
+    element_[Origin].active_target_color_ = colors[0][2];
+    element_[Origin].inactive_target_color_ = colors[0][5];
     for (unsigned int i = 1; i < NumElements - 3; i++)
     {
-      element_[i].active_target_color_ *= 2.0;
-      element_[i].active_target_color_ += origin_color * 0.4;
-      element_[Origin].inactive_target_color_ = nonactive_color;
+      element_[i].active_target_color_ = (colors[0][2] * 0.5) + (colors[((i-1)%3) + 1][2] * 0.5);
+      element_[i].inactive_target_color_ = (colors[0][5] * 0.5) + (colors[((i-1)%3) + 1][5] * 0.5);
     }
     return;
   } else if(element_[Origin].over_){
-    element_[Origin].active_target_color_ = origin_color * 0.8;
-    element_[Origin].inactive_target_color_ = nonactive_color * 0.8;
+    element_[Origin].active_target_color_ = colors[0][1];
+    element_[Origin].inactive_target_color_ = colors[0][4];
     for (unsigned int i = 1; i < NumElements - 3; i++)
     {
-      element_[i].active_target_color_ *= 2.0;
-      element_[i].active_target_color_ += origin_color * 0.2;
-      element_[Origin].inactive_target_color_ = nonactive_color;
+      element_[i].active_target_color_ = (colors[0][1] * 0.5) + (colors[((i-1)%3) + 1][1] * 0.5);
+      element_[i].inactive_target_color_ = (colors[0][4] * 0.5) + (colors[((i-1)%3) + 1][4] * 0.5);
     }
     return;
   }
@@ -240,32 +266,30 @@ void TranslationManipulatorNode::updateTargetColors ()
   for (unsigned int i = 0; i < 3; i++)
     if (element_[i + XTop].clicked_)
     {
-      element_[i + XTop].active_target_color_ *= 5.0;
-      element_[i + XTop].inactive_target_color_ = nonactive_color;
+      element_[i + XTop].active_target_color_ = colors[i+1][2];
+      element_[i + XTop].inactive_target_color_ = colors[i+1][5];
       if (mode_ != TranslationRotation)
       {
-        element_[i + XAxis].active_target_color_ *= 5.0;
-        element_[i + XAxis].inactive_target_color_ = nonactive_color;
+        element_[i + XAxis].active_target_color_ = colors[i+1][2];
+        element_[i + XAxis].inactive_target_color_ = colors[i+1][5];
       }
       if (mode_ != Resize) {
-        element_[i + XRing].active_target_color_ *= 2.5;
-        element_[i + XRing].active_target_color_[3] = 1.0;
-        element_[i + XRing].inactive_target_color_ = nonactive_color;
+        element_[i + XRing].active_target_color_ = colors[i+1][2];
+        element_[i + XRing].inactive_target_color_ = colors[i+1][5];
       }
       return;
     } else if (element_[i + XTop].over_)
     {
-      element_[i + XTop].active_target_color_ *= 4.0;
-      element_[i + XTop].inactive_target_color_ = nonactive_color;
+      element_[i + XTop].active_target_color_ = colors[i+1][1];
+      element_[i + XTop].inactive_target_color_ = colors[i+1][4];
       if (mode_ != TranslationRotation)
       {
-        element_[i + XAxis].active_target_color_ *= 4.0;
-        element_[i + XAxis].inactive_target_color_ = nonactive_color;
+        element_[i + XAxis].active_target_color_ = colors[i+1][1];
+        element_[i + XAxis].inactive_target_color_ = colors[i+1][4];
       }
       if (mode_ != Resize) {
-        element_[i + XRing].active_target_color_ *= 2.0;
-        element_[i + XRing].active_target_color_[3] = 1.0;
-        element_[i + XRing].inactive_target_color_ = nonactive_color;
+        element_[i + XRing].active_target_color_ = colors[i+1][1];
+        element_[i + XRing].inactive_target_color_ = colors[i+1][4];
       }
       return;
     }
@@ -273,26 +297,24 @@ void TranslationManipulatorNode::updateTargetColors ()
   for (unsigned int i = 0; i < 3; i++)
     if (element_[i + XAxis].clicked_)
     {
-      element_[i + XTop].active_target_color_ *= 5.0;
-      element_[i + XTop].inactive_target_color_ = nonactive_color;
-      element_[i + XAxis].active_target_color_ *= 5.0;
-      element_[i + XAxis].inactive_target_color_ = nonactive_color;
+      element_[i + XTop].active_target_color_ = colors[i+1][2];
+      element_[i + XTop].inactive_target_color_ = colors[i+1][5];
+      element_[i + XAxis].active_target_color_ = colors[i+1][2];
+      element_[i + XAxis].inactive_target_color_ = colors[i+1][5];
       if (mode_ == LocalRotation) {
-        element_[i + XRing].active_target_color_ *= 2.5;
-        element_[i + XRing].active_target_color_[3] = 1.0;
-        element_[i + XRing].inactive_target_color_ = nonactive_color;
+        element_[i + XRing].active_target_color_ = colors[i+1][2];
+        element_[i + XRing].inactive_target_color_ = colors[i+1][5];
       }
       return;
     } else if (element_[i + XAxis].over_)
     {
-      element_[i + XTop].active_target_color_ *= 4.0;
-      element_[i + XTop].inactive_target_color_ = nonactive_color;
-      element_[i + XAxis].active_target_color_ *= 4.0;
-      element_[i + XAxis].inactive_target_color_ = nonactive_color;
+      element_[i + XTop].active_target_color_ = colors[i+1][1];
+      element_[i + XTop].inactive_target_color_ = colors[i+1][4];
+      element_[i + XAxis].active_target_color_ = colors[i+1][1];
+      element_[i + XAxis].inactive_target_color_ = colors[i+1][4];
       if (mode_ == LocalRotation) {
-        element_[i + XRing].active_target_color_ *= 2.0;
-        element_[i + XRing].active_target_color_[3] = 1.0;
-        element_[i + XRing].inactive_target_color_ = nonactive_color;
+        element_[i + XRing].active_target_color_ = colors[i+1][1];
+        element_[i + XRing].inactive_target_color_ = colors[i+1][4];
       }
       return;
     }
@@ -301,15 +323,13 @@ void TranslationManipulatorNode::updateTargetColors ()
   for (unsigned int i = 0; i < 3; i++)
     if (element_[i + XRing].clicked_)
     {
-      element_[i + XRing].active_target_color_ *= 2.5;
-      element_[i + XRing].active_target_color_[3] = 1.0;
-      element_[i + XRing].inactive_target_color_ = nonactive_color;
+      element_[i + XRing].active_target_color_ = colors[i+1][2];
+      element_[i + XRing].inactive_target_color_ = colors[i+1][5];
       return;
     } else if (element_[i + XRing].over_)
     {
-      element_[i + XRing].active_target_color_ *= 2.0;
-      element_[i + XRing].active_target_color_[3] = 1.0;
-      element_[i + XRing].inactive_target_color_ = nonactive_color;
+      element_[i + XRing].active_target_color_ = colors[i+1][1];
+      element_[i + XRing].inactive_target_color_ = colors[i+1][4];
       return;
     }
 
