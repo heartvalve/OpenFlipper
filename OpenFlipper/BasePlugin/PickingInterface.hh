@@ -92,6 +92,23 @@ class PickingInterface {
       */
       virtual void setPickModeMouseTracking( const std::string /*_mode*/ , bool /*_mouseTracking*/ ) {};
 
+      /** \brief Set the additinal toolbar of the given PickMode
+       *
+       * Set the additional toolbar that should be shown in the pickMode
+       *
+       * @param _mode Identifier of Picking mode
+       * @param _toolbar the toolbar
+      */
+      virtual void setPickModeToolbar( const std::string /*_mode*/ , QToolBar * /*_toolbar*/ ) {};
+
+      /** \brief Removes the additinal toolbar of the given PickMode
+       *
+       * Set the additional toolbar that should be shown in the pickMode
+       *
+       * @param _mode Identifier of Picking mode
+      */
+      virtual void removePickModeToolbar( const std::string /*_mode*/ ) {};
+
       /**  \brief The pickingMode has changed
        *
        * This slot is called if the user changes the current picking mode

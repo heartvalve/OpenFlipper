@@ -456,6 +456,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   wsizes[1] = 240;
   toolSplitter_->setSizes(wsizes);
 
+  // ======================================================================
+  // Create pick ToolBar
+  // ======================================================================
+
+  pickToolbar_ = new QtPickToolbar (this, centerWidget_);
 
   // ======================================================================
   // Context menu setup
@@ -856,6 +861,7 @@ CoreWidget::sceneRectChanged(const QRectF &rect)
 {
   centerWidget_->setGeometry (rect);
   slidingLogger_->updateGeometry ();
+  pickToolbar_->updateGeometry ();
 }
 
 

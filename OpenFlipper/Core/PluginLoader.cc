@@ -738,11 +738,19 @@ void Core::loadPlugin(QString filename, bool silent){
           connect(plugin,SIGNAL(setPickModeCursor( const std::string ,QCursor)),
                   coreWidget_,SLOT(setPickModeCursor( const std::string ,QCursor)),Qt::DirectConnection);
 
-
       if ( checkSignal(plugin,"setPickModeMouseTracking(const std::string,bool)") )
         for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
           connect(plugin,SIGNAL(setPickModeMouseTracking( const std::string ,bool)),
                   coreWidget_,SLOT(setPickModeMouseTracking( const std::string ,bool)),Qt::DirectConnection);
+
+      if ( checkSignal(plugin,"setPickModeToolbar(const std::string,QToolBar*)") )
+        connect(plugin,SIGNAL(setPickModeToolbar (const std::string, QToolBar*)),
+                coreWidget_,SLOT(setPickModeToolbar (const std::string, QToolBar*)),Qt::DirectConnection);
+
+      if ( checkSignal(plugin,"removePickModeToolbar(const std::string)") )
+        connect(plugin,SIGNAL(removePickModeToolbar( const std::string)),
+                coreWidget_,SLOT(removePickModeToolbar( const std::string)),Qt::DirectConnection);
+
     }
 
     //Check if the plugin supports INI-Interface
