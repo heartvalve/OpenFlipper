@@ -63,6 +63,7 @@
 #include <OpenFlipper/widgets/glWidget/QtGLGraphicsView.hh>
 #include <OpenFlipper/widgets/glWidget/QtMultiViewLayout.hh>
 #include <OpenFlipper/widgets/glWidget/QtSlideWindow.hh>
+#include <OpenFlipper/widgets/glWidget/QtPickToolbar.hh>
 
 // QT INCLUDES
 #include <QMainWindow>
@@ -430,6 +431,9 @@ public:
 
     /// Toolbox scroll area
     QScrollArea* toolBoxScroll_;
+
+    /// Toolbar showed in pickmode
+    QtPickToolbar* pickToolbar_;
 
 
     // widget showing the scenegraph
@@ -952,6 +956,23 @@ public:
      */
     void setPickModeMouseTracking(const std::string& _name, bool _mouseTracking);
 
+    /** \brief Set the additinal toolbar of the given PickMode
+     *
+     * Set the additional toolbar that should be shown in the pickMode
+     *
+     * @param _mode Identifier of Picking mode
+     * @param _toolbar the toolbar
+     */
+    void setPickModeToolbar( const std::string _mode , QToolBar * _toolbar );
+
+    /** \brief Removes the additinal toolbar of the given PickMode
+     *
+     * Set the additional toolbar that should be shown in the pickMode
+     *
+     * @param _mode Identifier of Picking mode
+     */
+    void removePickModeToolbar( const std::string _mode );
+
     void actionPickMenu( QAction * _action );
 
   signals:
@@ -968,8 +989,8 @@ public:
     struct PickMode
     {
       /// Constructor
-      PickMode(const std::string& _n, bool _t, bool _v, QCursor _c) :
-               name(_n), tracking(_t), visible(_v), cursor(_c) {}
+      PickMode(const std::string& _n, bool _t, bool _v, QCursor _c, QToolBar *_tb = NULL) :
+               name(_n), tracking(_t), visible(_v), cursor(_c), toolbar(_tb) {}
 
       /// Name of the pickMode
       std::string  name;
@@ -985,6 +1006,10 @@ public:
       /** Cursor used in  this pickMode
        */
       QCursor      cursor;
+
+      /** Additinal toolbar showd in this pickMode
+       */
+      QToolBar *   toolbar;
     };
 
     /** Vector of all Picking modes

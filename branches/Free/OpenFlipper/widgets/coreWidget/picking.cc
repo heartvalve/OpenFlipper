@@ -105,6 +105,7 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
         case Viewer::ExamineMode:
         {
           examiner_widgets_[i]->setCursor(Qt::PointingHandCursor);
+          pickToolbar_->detachToolbar ();
           break;
         }
 
@@ -122,6 +123,10 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
           if (pick_mode_idx_ != -1) {
             examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking);
             examiner_widgets_[i]->setCursor(pick_modes_[pick_mode_idx_].cursor);
+            if (pick_modes_[pick_mode_idx_].toolbar)
+              pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar);
+            else
+              pickToolbar_->detachToolbar ();
           }
 
           break;
@@ -252,6 +257,11 @@ void CoreWidget::pickMode( int _id )
     pick_mode_idx_  = _id;
     pick_mode_name_ = pick_modes_[pick_mode_idx_].name;
 
+    if (pick_modes_[pick_mode_idx_].toolbar)
+      pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar);
+    else
+      pickToolbar_->detachToolbar ();
+
     // adjust mouse tracking
     if ( pickingMode() )
       for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
@@ -261,7 +271,6 @@ void CoreWidget::pickMode( int _id )
     if ( pickingMode() )
       for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
         examiner_widgets_[i]->setCursor( pick_modes_[pick_mode_idx_].cursor);
-      
 
     // emit signal
     emit(signalPickModeChanged(pick_mode_name_));
@@ -325,6 +334,33 @@ void CoreWidget::setPickModeMouseTracking(const std::string& _name, bool _mouseT
 
 //-----------------------------------------------------------------------------
 
+void CoreWidget::setPickModeToolbar( const std::string _mode , QToolBar * _toolbar )
+{
+  for (uint i=0; i < pick_modes_.size(); i++)
+    if ( pick_modes_[i].name == _mode ){
+      pick_modes_[i].toolbar = _toolbar;
+
+      if (pick_mode_name_ == _mode && pickingMode() )
+        pickToolbar_->attachToolbar (_toolbar);
+      break;
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+void CoreWidget::removePickModeToolbar( const std::string _mode )
+{
+  for (uint i=0; i < pick_modes_.size(); i++)
+    if ( pick_modes_[i].name == _mode ){
+      pick_modes_[i].toolbar = NULL;
+
+      if (pick_mode_name_ == _mode && pickingMode() )
+        pickToolbar_->detachToolbar ();
+      break;
+    }
+}
+
+//-----------------------------------------------------------------------------
 
 void CoreWidget::clearPickModes()
 {
