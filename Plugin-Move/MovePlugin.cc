@@ -250,7 +250,6 @@ void MovePlugin::slotMouseEvent( QMouseEvent* _event )
 
       placeManip(_event);
       updateManipulatorDialog();
-      placeAction_->setChecked (false);
       return;
     }
 
