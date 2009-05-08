@@ -35,6 +35,7 @@
 
 Texture::Texture() :
   name_("No Texture"),
+  visibleName_(""),
   filename_("Invalid"),
   id_(-1),
   glName_(0),
@@ -294,7 +295,7 @@ int TextureData::getTextureIndex(QString _textureName)
   // Search the list of textures if we have the texture
   int textureid = -1;
   for ( int i = 0 ; i < (int)textures_.size() ; ++i ) {
-    if ( textures_[i].name() == _textureName ) {
+    if ( (textures_[i].name() == _textureName) || (textures_[i].visibleName() == _textureName) ) {
       textureid = i;
       break;
     }

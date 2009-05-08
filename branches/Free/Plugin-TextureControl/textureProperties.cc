@@ -91,9 +91,17 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
   for (uint i=0; i < texData_->textures().size(); i++)
     if ( ! texData_->textures()[i].hidden() ) {
       if (  texData_->textures()[i].type() != MULTITEXTURE ) {
-        textureList->addTopLevelItem( new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].name() ) ) );
+         if ( !texData_->textures()[i].visibleName().isEmpty() )
+           textureList->addTopLevelItem( new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].visibleName() ) ) );
+         else
+           textureList->addTopLevelItem( new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].name() ) ) );
       } else {
-        QTreeWidgetItem* parent = new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].name() ) );
+        QTreeWidgetItem* parent = 0;
+        if ( !texData_->textures()[i].visibleName().isEmpty() )
+          parent = new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].visibleName() ) );
+        else
+          parent = new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].name() ) );
+
         textureList->addTopLevelItem( parent ) ;
         for ( int j = 0 ; j < texData_->textures()[i].multiTextureList.size() ; ++j )
           textureList->addTopLevelItem( new QTreeWidgetItem(parent, QStringList(texData_->textures()[i].multiTextureList[j] )) );
