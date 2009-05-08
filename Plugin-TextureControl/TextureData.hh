@@ -101,6 +101,9 @@ class Texture {
     void name( QString _name ) { name_ = _name; };
     QString name() { return name_; };
 
+    void visibleName( QString _name ) { visibleName_ = _name; };
+    QString visibleName() { return visibleName_; };
+
 
     void dimension( uint _dimension ) { dimension_ = _dimension; };
     uint dimension( ) { return dimension_; };
@@ -141,6 +144,9 @@ class Texture {
   private:
     /// Texture Name
     QString name_;
+
+    /// Name visible in the gui
+    QString visibleName_;
 
     /// Filename of the texture
     QString filename_;

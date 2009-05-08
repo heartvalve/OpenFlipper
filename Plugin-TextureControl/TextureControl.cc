@@ -667,6 +667,11 @@ bool TextureControlPlugin::parseMode( QString _mode, Texture& _texture ) {
         _texture.indexMappingProperty( value );
         changed = true;
       }
+    }else if ( sectionName == "visiblename" ) {
+      if ( value != _texture.visibleName() ) {
+        _texture.visibleName( value );
+        changed = true;
+      }
     } else if ( sectionName == "type" ) {
         if ( ( value == "halfedgebased" ) && ( _texture.type() != HALFEDGEBASED ) ) {
           _texture.type( HALFEDGEBASED );
@@ -766,6 +771,11 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
 
         if ( _mode.contains("type") && (texture.type() != localTex.type() ) ){
           localTex.type( texture.type() );
+          changed = true;
+        }
+
+        if ( _mode.contains("visiblename") && (texture.visibleName() != localTex.visibleName() ) ){
+          localTex.visibleName( texture.visibleName() );
           changed = true;
         }
 
@@ -1179,7 +1189,10 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
     if ( texData->textures()[i].hidden() )
       continue;
 
-    action = actionGroup->addAction( texData->textures()[i].name() );
+    if ( !texData->textures()[i].visibleName().isEmpty() )
+      action = actionGroup->addAction( texData->textures()[i].visibleName() );
+    else
+      action = actionGroup->addAction( texData->textures()[i].name() );
 
     action->setCheckable(true);
 
