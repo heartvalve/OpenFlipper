@@ -182,6 +182,12 @@ signals:
    /// Switch Texture Plugins to a given Mode
    void switchTexture( QString );
 
+   /// Change the image for a given texture
+   void textureChangeImage( QString _textureName , QImage& _image );
+
+   /// Change the image for a given texture
+   void textureChangeImage( QString _textureName , QImage& _image , int _id );
+
    /// If an ini File is opened, this signal is send to Plugins capable of handling ini files
    void iniLoad( INIFile&, int );
 
@@ -275,6 +281,12 @@ signals:
 
       /// Tells Plugins to switch to the given Texture
       void slotSwitchTexture( QString _textureName );
+
+      ///Called by plugins if texture image should be changed
+      void slotTextureChangeImage( QString _textureName , QImage& _image );
+
+      ///Called by plugins if texture image should be changed
+      void slotTextureChangeImage( QString _textureName , QImage& _image , int _id );
 
       /// Called if a backup is requested by the plugins
       void backupRequest( int _id , QString _name );

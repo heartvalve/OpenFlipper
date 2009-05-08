@@ -1,10 +1,25 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="1" >
-  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Scissor/ScissorPlugin.hh" >
-   <View0 Encoding="" line="56" Type="Source" />
+ <DocsAndViews NumberOfDocuments="6" >
+  <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/glWidget/QtBaseViewer.cc" >
+   <View0 Encoding="" line="52" Type="Source" />
   </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/CoreWidget.cc" >
+   <View0 Encoding="" line="93" Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Merge/MergePlugin.hh" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Merge/MergePluginT.cc" >
+   <View0 Encoding="" line="357" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/keyHandling.cc" >
+   <View0 Encoding="" line="164" Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TextureControl/TextureData.cc" >
+   <View0 Encoding="" line="61" Type="Source" />
+  </Doc5>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -26,8 +41,8 @@
    <subversion base="" />
   </kdevsubversion>
   <kdevvalgrind>
-   <executable path="" params="" />
-   <valgrind path="" params="" />
+   <executable path="/data/home1/moebius/projects/OpenFlipper/build-debug/Build/bin/OpenFlipper" params="" />
+   <valgrind path="/usr/bin/valgrind" params=" --tool=memcheck --leak-check=yes" />
    <calltree path="" params="" />
    <kcachegrind path="" />
   </kdevvalgrind>

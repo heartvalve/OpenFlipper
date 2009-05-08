@@ -856,6 +856,24 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(this   , SIGNAL(switchTexture(QString )),
                 plugin , SLOT(slotSwitchTexture(QString )),Qt::DirectConnection);
 
+
+
+      if ( checkSignal( plugin , "textureChangeImage(QString,QImage&,int)" ) )
+        connect(this   , SIGNAL(textureChangeImage(QString,QImage&,int)),
+                plugin , SLOT(slotTextureChangeImage(QString,QImage&,int)),Qt::DirectConnection);
+
+      if ( checkSlot( plugin , "slotTextureChangeImage(QString,QImage&,int)" ) )
+        connect(this   , SIGNAL(textureChangeImage(QString,QImage&,int)),
+                plugin , SLOT(slotTextureChangeImage(QString,QImage&,int)),Qt::DirectConnection);
+
+      if ( checkSignal( plugin , "textureChangeImage(QString,QImage&)" ) )
+        connect(this   , SIGNAL(textureChangeImage(QString,QImage&)),
+                plugin , SLOT(slotTextureChangeImage(QString,QImage&)),Qt::DirectConnection);
+
+      if ( checkSlot( plugin , "slotTextureChangeImage(QString,QImage&)" ) )
+        connect(this   , SIGNAL(textureChangeImage(QString,QImage&)),
+                plugin , SLOT(slotTextureChangeImage(QString,QImage&)),Qt::DirectConnection);
+
       if ( checkSignal( plugin , "addMultiTexture(QString,QString,QString,int,int&)" ) )
         connect(plugin   , SIGNAL(addMultiTexture(QString,QString,QString,int,int&) ),
                 this , SLOT(slotMultiTextureAdded(QString,QString,QString,int,int&) ),Qt::DirectConnection);
