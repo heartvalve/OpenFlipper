@@ -57,8 +57,10 @@ namespace SceneGraph {
 
 
 EnvMapNode::EnvMapNode( BaseNode*            _parent,
-			const std::string&   _name )
-  : TextureNode(_parent, _name)
+                        const std::string&   _name ,
+                        bool                _texture_repeat,
+                        GLint               _texture_filter)
+  : TextureNode(_parent, _name,_texture_repeat,_texture_filter)
 {}
 
 

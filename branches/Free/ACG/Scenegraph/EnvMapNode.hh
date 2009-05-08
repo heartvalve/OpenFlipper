@@ -68,7 +68,9 @@ public:
 
   /// Default constructor. Applies all properties.
   EnvMapNode( BaseNode*           _parent = 0,
-	      const std::string&  _name = "<EnvMapNode>" );
+	      const std::string&  _name = "<EnvMapNode>",
+              bool                _texture_repeat = true,
+              GLint               _texture_filter = GL_LINEAR );
 
   /// set class name
   ACG_CLASSNAME(EnvMapNode);
