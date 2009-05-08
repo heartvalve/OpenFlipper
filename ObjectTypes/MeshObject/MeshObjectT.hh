@@ -53,7 +53,7 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
 #include <ACG/Scenegraph/SeparatorNode.hh>
-#include <ACG/Scenegraph/TextureNode.hh>
+#include <ACG/Scenegraph/EnvMapNode.hh>
 #include <ACG/Scenegraph/ShaderNode.hh>
 #include <ACG/Scenegraph/StatusNodesT.hh>
 
@@ -168,7 +168,7 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
   public:
 
     /// Get the TextureNode of the current mesh
-    TextureNode* textureNode();
+    ACG::SceneGraph::EnvMapNode* textureNode();
 
     /// Return pointer to the shader node
     ACG::SceneGraph::ShaderNode* shaderNode();
@@ -214,7 +214,7 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     ACG::SceneGraph::TriStripNodeT<MeshT>*                     meshNode_;
 
     /// Scenegraph TextureNode
-    TextureNode*     textureNode_;
+    ACG::SceneGraph::EnvMapNode*     textureNode_;
 
     /// Scenegraph ShaderNode
     ACG::SceneGraph::ShaderNode*     shaderNode_;
