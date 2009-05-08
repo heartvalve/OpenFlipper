@@ -51,8 +51,8 @@ TextureData::TextureData() :
   nextInternalID_(1)
 {
   // map 0 to no texture
-  textureMap_[0]     = 0;
-  propertyMap_[0] = "No Texture";;
+  textureMap_[0]  = 0;
+  propertyMap_[0] = "No Texture";
 }
 
 //-----------------------------------------------------------------------------------
