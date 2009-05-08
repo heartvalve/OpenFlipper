@@ -103,6 +103,7 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   }
 
   texData->addTexture(_textureName,_filename,_dimension,glName);
+  texData->setImage(_textureName,textureImage);
   texData->texture(_textureName).disable();
 }
 
@@ -365,6 +366,81 @@ void TextureControlPlugin::fileOpened( int _id ) {
 
 }
 
+void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage& _image , int _id ) {
+
+  // ================================================================================
+  // Get the new object
+  // ================================================================================
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // ================================================================================
+  // Get Texture data for this object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+
+  if ( texData == 0 || ( !texData->textureExists(_textureName))  ) {
+    emit log(LOGERR,"Texture does not exist: " + _textureName + " (objectid=" + QString::number(_id) + ")");
+    return;
+  }
+
+  // ================================================================================
+  // Update the image
+  // ================================================================================
+  Texture& texture = texData->texture(_textureName);
+  texture.textureImage = _image;
+
+  // ================================================================================
+  // Flag dirty or update
+  // ================================================================================
+
+  // Only update if the texture is enabled
+  if ( texData->isEnabled(_textureName) )
+    emit updateTexture( _textureName, _id );
+  else
+    texture.setDirty();
+
+}
+
+void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage& _image ) {
+
+  // ================================================================================
+  // Update texture Image for global textures
+  // ================================================================================
+  if ( ! globalTextures_.textureExists(_textureName) ) {
+    emit log(LOGERR,"Global texture does not exist: " + _textureName);
+    return;
+  }
+
+  // ================================================================================
+  // Update the image in the global texture
+  // ================================================================================
+  Texture& texture = globalTextures_.texture(_textureName);
+  texture.textureImage = _image;
+
+  // ================================================================================
+  // check if the local textures need to be updated
+  // ================================================================================
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it){
+
+    TextureData* texData = dynamic_cast< TextureData* > ( o_it->objectData(TEXTUREDATA) );
+    if (texData != 0)
+      if ( texData->textureExists(_textureName) ){
+        Texture& localTex = texData->texture(_textureName);
+        localTex.textureImage = _image;
+
+        // Only update if the texture is enabled
+        if ( texData->isEnabled( _textureName ) )
+          emit updateTexture( _textureName, o_it->id() );
+        else
+          localTex.setDirty();
+      }
+  }
+
+}
+
 void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _identifier ) {
 
   // ================================================================================
@@ -405,12 +481,6 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
     return;
   }
 
-  QImage textureImage;
-
-  if ( !getImage( texData->texture(_textureName).filename(), textureImage) )
-    emit log(LOGERR, "Cannot update texture '" + texData->texture(_textureName).name() +
-                     "'. File not found '" + texData->texture(_textureName).filename() + "'");
-
   // ================================================================================
   // As the current texture is active, update it
   // ================================================================================
@@ -418,12 +488,12 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
     TriMesh* mesh = PluginFunctions::triMesh(obj);
     doUpdateTexture(texData->texture(_textureName), *mesh);
     PluginFunctions::triMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
-    PluginFunctions::triMeshObject(obj)->textureNode()->set_texture( textureImage );
+    PluginFunctions::triMeshObject(obj)->textureNode()->set_texture( texData->texture(_textureName).textureImage );
   } else if ( obj->dataType( DATA_POLY_MESH ) ) {
     PolyMesh* mesh = PluginFunctions::polyMesh(obj);
     doUpdateTexture(texData->texture(_textureName), *mesh);
     PluginFunctions::polyMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
-    PluginFunctions::polyMeshObject(obj)->textureNode()->set_texture( textureImage );
+    PluginFunctions::polyMeshObject(obj)->textureNode()->set_texture( texData->texture(_textureName).textureImage );
   }
 
   // ================================================================================
