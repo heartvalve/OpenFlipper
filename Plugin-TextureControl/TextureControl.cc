@@ -437,6 +437,12 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   switchDrawMode( texData->texture( _textureName ).type() );
 }
 
+void TextureControlPlugin::slotUpdateTexture( QString _textureName , int _identifier) {
+  if ( _textureName == "Reflection Lines" )
+    slotTextureUpdated( _textureName , _identifier );
+
+}
+
 template< typename MeshT >
 void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
 {
@@ -857,6 +863,8 @@ void TextureControlPlugin::pluginsInitialized() {
   emit addContextMenuItem(contextMenu_->menuAction() ,DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
   emit addContextMenuItem(contextMenu_->menuAction() ,DATA_POLY_MESH     , CONTEXTOBJECTMENU );
 
+
+  slotTextureAdded("Reflection Lines","reflection_map.png",2);
 }
 
 void TextureControlPlugin::slotSetTextureProperties() {

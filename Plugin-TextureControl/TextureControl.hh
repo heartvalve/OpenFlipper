@@ -101,6 +101,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void slotSetTextureMode(QString _textureName ,QString _mode);
     void slotSwitchTexture( QString _textureName, int _id );
     void slotSwitchTexture( QString _textureName );
+    void slotUpdateTexture( QString _textureName , int _identifier);
 
     // LoadSaveInterface
     void fileOpened( int _id );
