@@ -216,7 +216,7 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
   for ( TriMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it)
     _mesh->property(oldVertexCoords, v_it ) =  _mesh->texcoord2D( v_it );
 
-  slotTextureAdded("Original Per Vertex Texture Coords","",_objectId);
+  slotTextureAdded("Original Per Vertex Texture Coords","unknown.png",_objectId);
 
   // ================================================================================
   // Create a backup of the original per Face texture Coordinates
@@ -226,7 +226,7 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
   for ( TriMesh::HalfedgeIter he_it = _mesh->halfedges_begin(); he_it != _mesh->halfedges_end(); ++he_it)
     _mesh->property(oldHalfedgeCoords, he_it ) =  _mesh->texcoord2D( he_it );
 
-  slotTextureAdded("Original Per Face Texture Coords","",_objectId);
+  slotTextureAdded("Original Per Face Texture Coords","unknown.png",_objectId);
   slotSetTextureMode("Original Per Face Texture Coords","type=halfedgebased",_objectId);
 
   // ================================================================================
