@@ -222,8 +222,6 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
       indexLabel->setEnabled(true);
       indexBox->setEnabled(true);
       indexBox->clear();
-      std::cerr << "Property status: " << std::endl;
-
       indexBox->addItem("TODO");
       break;
     case HALFEDGEBASED:
@@ -234,6 +232,12 @@ void texturePropertiesWidget::textureChanged(QTreeWidgetItem* _item, int _column
       break;
     case VERTEXBASED:
       typeLabel->setText("Type:   VertexBased");
+      indexLabel->setEnabled(false);
+      indexBox->setEnabled(false);
+      indexBox->clear();
+      break;
+    case ENVIRONMENT:
+      typeLabel->setText("Type:   Environment Map");
       indexLabel->setEnabled(false);
       indexBox->setEnabled(false);
       indexBox->clear();
