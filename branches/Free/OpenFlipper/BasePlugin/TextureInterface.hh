@@ -156,6 +156,21 @@ class TextureInterface {
        */
       virtual void setTextureMode(QString /*_textureName*/ ,QString /*_mode*/, int /*_id*/ ) {};
 
+      /** \brief Change the texture image of a given texture
+       *
+       *  @param _textureName The name of the texture which should be changed
+       *  @param _image The new image for the texture
+       *  @param _id Id of the object where the texture should be changed
+       */
+      virtual void textureChangeImage( QString /*_textureName*/ , QImage& /*_image*/ , int /*_id*/ ) {};
+
+      /** \brief Change the texture image of a given global texture
+       *
+       *  @param _textureName The name of the texture which should be changed
+       *  @param _image The new image for the texture
+       */
+      virtual void textureChangeImage( QString /*_textureName*/ , QImage& /*_image*/ ) {};
+
    private slots :
       /** \brief update the texture with the given Name ( if this plugin provides this texture ) for all meshes
        *
@@ -248,6 +263,21 @@ class TextureInterface {
        *  @param _id id of an object
        */
       virtual void slotSetTextureMode(QString /*_textureName*/ ,QString /*_mode*/, int /*_id*/ ) {};
+
+      /** \brief Changes the texture image of a given texture
+       *
+       *  @param _textureName The name of the texture which should be changed
+       *  @param _image The new image for the texture
+       *  @param _id Id of the object where the texture should be changed
+       */
+      virtual void slotTextureChangeImage( QString /*_textureName*/ , QImage& /*_image*/ , int /*_id*/ ) {};
+
+      /** \brief Changes the texture image of a given global texture
+       *
+       *  @param _textureName The name of the texture which should be changed
+       *  @param _image The new image for the texture
+       */
+      virtual void slotTextureChangeImage( QString /*_textureName*/ , QImage& /*_image*/ ) {};
 
       /** \brief Texturemode for texture should be changed
        *

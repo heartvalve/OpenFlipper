@@ -259,6 +259,19 @@ void Core::slotSwitchTexture( QString _textureName ) {
   emit switchTexture(_textureName);
 }
 
+
+/** Called by plugins if texture image should be changed
+ */
+void Core::slotTextureChangeImage( QString _textureName , QImage& _image ) {
+  emit textureChangeImage( _textureName ,_image );
+}
+
+/** Called by plugins if texture image should be changed
+ */
+void Core::slotTextureChangeImage( QString _textureName , QImage& _image , int _id )  {
+  emit textureChangeImage( _textureName , _image , _id );
+}
+
 //========================================================================================
 // ===             Backup Communication                       ============================
 //========================================================================================
