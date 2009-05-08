@@ -674,6 +674,9 @@ bool TextureControlPlugin::parseMode( QString _mode, Texture& _texture ) {
         } else if ( (value == "vertexbased") && (_texture.type() != HALFEDGEBASED)  ) {
           _texture.type( VERTEXBASED );
           changed = true;
+        }  else if ( (value == "environmentmap") && (_texture.type() != ENVIRONMENT)  ) {
+          _texture.type( ENVIRONMENT );
+          changed = true;
         } else {
           emit log(LOGERR,"Unknown texture type : " + value + " for texture: " + _texture.name() );
         }
@@ -865,6 +868,7 @@ void TextureControlPlugin::pluginsInitialized() {
 
 
   slotTextureAdded("Reflection Lines","reflection_map.png",2);
+  slotSetTextureMode("Reflection Lines","type=environmentmap");
 }
 
 void TextureControlPlugin::slotSetTextureProperties() {
@@ -1031,7 +1035,8 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // ================================================================================
   if( obj->dataType( DATA_TRIANGLE_MESH ) ){
     if (!multiTextureMode) {
-      doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
+      if ( texData->texture(_textureName).type() != ENVIRONMENT)
+        doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
       PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name("No Texture Index");
       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
@@ -1047,7 +1052,8 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
 
   if ( obj->dataType( DATA_POLY_MESH ) ){
     if (!multiTextureMode) {
-      doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
+      if ( texData->texture(_textureName).type() != ENVIRONMENT)
+        doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
       PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name("No Texture Index");
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
@@ -1081,6 +1087,9 @@ void TextureControlPlugin::switchDrawMode( TextureType _type ) {
         textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED );
         textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED );
         break;
+      case ENVIRONMENT:
+        textureMode |= ( PluginFunctions::drawMode(j) == ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED );
+        break;
       case UNSET:
         emit log(LOGERR,"Switching drawmode for unknonw Texture Type!");
         break;
@@ -1095,6 +1104,9 @@ void TextureControlPlugin::switchDrawMode( TextureType _type ) {
         break;
       case VERTEXBASED:
         PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_TEXTURED_SHADED , PluginFunctions::ALL_VIEWERS);
+        break;
+      case ENVIRONMENT:
+        PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED , PluginFunctions::ALL_VIEWERS);
         break;
       case UNSET:
         emit log(LOGERR,"Switching drawmode for unknonw Texture Type!");
