@@ -493,7 +493,6 @@ bool TextureNode::activateTexture(GLuint _id)
   //==========================================================================
   if ( _id == 0 ) {
     search = 0;
-    std::cerr << " Texture Node activating zero texture" << std::endl;
   }
 
   //==========================================================================
