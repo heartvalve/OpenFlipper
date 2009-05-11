@@ -30,27 +30,11 @@
      <property name="title" >
       <string>Set Properties</string>
      </property>
-     <widget class="QCheckBox" name="targetObjects" >
-      <property name="geometry" >
-       <rect>
-        <x>10</x>
-        <y>40</y>
-        <width>330</width>
-        <height>26</height>
-       </rect>
-      </property>
-      <property name="text" >
-       <string>Apply Transformation to Target Objects</string>
-      </property>
-      <property name="checked" >
-       <bool>true</bool>
-      </property>
-     </widget>
      <widget class="QGroupBox" name="groupBox_4" >
       <property name="geometry" >
        <rect>
         <x>10</x>
-        <y>740</y>
+        <y>686</y>
         <width>308</width>
         <height>111</height>
        </rect>
@@ -79,7 +63,7 @@
       <property name="geometry" >
        <rect>
         <x>10</x>
-        <y>290</y>
+        <y>236</y>
         <width>308</width>
         <height>441</height>
        </rect>
@@ -678,7 +662,7 @@
       <property name="geometry" >
        <rect>
         <x>10</x>
-        <y>84</y>
+        <y>30</y>
         <width>308</width>
         <height>198</height>
        </rect>
@@ -990,7 +974,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>targetObjects</tabstop>
   <tabstop>posx</tabstop>
   <tabstop>posy</tabstop>
   <tabstop>posz</tabstop>
