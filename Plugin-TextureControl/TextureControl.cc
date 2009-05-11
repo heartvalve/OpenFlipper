@@ -404,11 +404,13 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
   // Flag dirty or update
   // ================================================================================
 
-  // Only update if the texture is enabled
-  if ( texData->isEnabled(_textureName) )
-    emit updateTexture( _textureName, _id );
-  else
-    texture.setDirty();
+  if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
+    PluginFunctions::triMeshObject(obj)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
+  } else if ( obj->dataType( DATA_POLY_MESH ) ) {
+    PluginFunctions::triMeshObject(obj)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
+  }
+
+  emit updateView();
 
 }
 
@@ -439,13 +441,15 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
         Texture& localTex = texData->texture(_textureName);
         localTex.textureImage = _image;
 
-        // Only update if the texture is enabled
-        if ( texData->isEnabled( _textureName ) )
-          emit updateTexture( _textureName, o_it->id() );
-        else
-          localTex.setDirty();
+          if( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
+            PluginFunctions::triMeshObject(o_it)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
+          } else if ( o_it->dataType( DATA_POLY_MESH ) ) {
+            PluginFunctions::triMeshObject(o_it)->textureNode()->set_texture( _image , texData->texture(_textureName).glName());
+          }
       }
   }
+
+  emit updateView();
 
 }
 
