@@ -58,7 +58,9 @@
  *
  */
 MovePlugin::MovePlugin() :
- manMode_ (QtTranslationManipulatorNode::TranslationRotation)
+ manMode_ (QtTranslationManipulatorNode::TranslationRotation),
+ contextAction_(0),
+ toAllTargets_(0)
 {
     manip_size_          = 1.0;
     manip_size_modifier_ = 1.0;
@@ -70,7 +72,7 @@ MovePlugin::MovePlugin() :
     axisB_ = 1;
 
     hide_ = true;
-    allTargets_ = true;
+    allTargets_ = false;
 }
 
 
@@ -100,11 +102,19 @@ void MovePlugin::pluginsInitialized() {
   setDescriptions();
 
   // CONTEXT MENU
+  toAllTargets_ = new QAction("Apply to all targets", this);
+  toAllTargets_->setCheckable(true);
+  toAllTargets_->setToolTip("Apply transformation to all target objects");
+  toAllTargets_->setStatusTip( toAllTargets_->toolTip() );
+
   contextAction_ = new QAction("Set properties", this);
   contextAction_->setToolTip("Set properties");
   contextAction_->setStatusTip( contextAction_->toolTip() );
 
+  emit addContextMenuItem(toAllTargets_ , CONTEXTNODEMENU );
   emit addContextMenuItem(contextAction_ , CONTEXTNODEMENU );
+
+  connect(toAllTargets_,SIGNAL(toggled(bool) ),this,SLOT(setAllTargets(bool)));
 
   connect( contextAction_ , SIGNAL( triggered() ),
 	   this, SLOT(showProps()) );
@@ -844,12 +854,12 @@ void MovePlugin::slotProjectToTangentPlane() {
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
 
-    if ( pW->targetObjects->isChecked() ) {
-	emit log(LOGWARN,"TODO Project for multiple targets");
-	return;
+    if ( allTargets_ ) {
+    	emit log(LOGWARN,"TODO Project for multiple targets");
+    	return;
     } else {
-	emit log(LOGWARN,"TODO Project for one target");
-	return;
+    	emit log(LOGWARN,"TODO Project for one target");
+    	return;
     }
 
 }
@@ -949,7 +959,7 @@ void MovePlugin::slotRotate() {
     BaseObjectData* object = pW->getBaseObjectData();
 	if (object != 0) {
 		if (object->manipulatorNode()->visible() && (object->target()
-				|| !pW->targetObjects->isChecked())) {
+				|| !allTargets_)) {
 
 			object->manipulatorNode()->rotate(angle, axis);
 
@@ -1019,7 +1029,7 @@ void MovePlugin::slotScale() {
     BaseObjectData* object = pW->getBaseObjectData();
 	if (object != 0) {
 		if (object->manipulatorNode()->visible() && (object->target()
-				|| !pW->targetObjects->isChecked())) {
+				|| !allTargets_)) {
 
 			object->manipulatorNode()->scale(scale);
 
@@ -1092,7 +1102,7 @@ void MovePlugin::slotMoveToOrigin() {
  */
 void MovePlugin::slotUnifyBoundingBoxDiagonal()
 {
-   if ( tool_->targetObjects->isChecked() ) {
+   if ( allTargets_ ) {
        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
             if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
               unifyBBDiag(*PluginFunctions::triMesh(*o_it));
@@ -1425,8 +1435,8 @@ void MovePlugin::slotSelectionModeChanged(QAction* _action){
  * @param _state Qt::CheckState of checkbox
  */
 
-void MovePlugin::setAllTargets(int _state) {
-	allTargets_ = (_state == Qt::Checked);
+void MovePlugin::setAllTargets(bool _state) {
+	allTargets_ = _state;
 }
 
 Q_EXPORT_PLUGIN2( moveplugin , MovePlugin );

@@ -331,7 +331,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     void slotSelectionModeChanged(QAction* _action);
 
     /// Sets whether all targets should be affected or not
-    void setAllTargets(int _state);
+    void setAllTargets(bool _state);
 
 /** @} */
 
@@ -365,6 +365,9 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     /// Context menu entry
     QAction* contextAction_;
+
+    /// Checked if transformation should be applied to all target objs
+    QAction* toAllTargets_;
 
 /** @} */
 
