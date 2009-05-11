@@ -859,16 +859,16 @@ void Core::loadPlugin(QString filename, bool silent){
 
 
       if ( checkSignal( plugin , "textureChangeImage(QString,QImage&,int)" ) )
-        connect(this   , SIGNAL(textureChangeImage(QString,QImage&,int)),
-                plugin , SLOT(slotTextureChangeImage(QString,QImage&,int)),Qt::DirectConnection);
+        connect(plugin   , SIGNAL(textureChangeImage(QString,QImage&,int)),
+                this , SLOT(slotTextureChangeImage(QString,QImage&,int)),Qt::DirectConnection);
 
       if ( checkSlot( plugin , "slotTextureChangeImage(QString,QImage&,int)" ) )
         connect(this   , SIGNAL(textureChangeImage(QString,QImage&,int)),
                 plugin , SLOT(slotTextureChangeImage(QString,QImage&,int)),Qt::DirectConnection);
 
       if ( checkSignal( plugin , "textureChangeImage(QString,QImage&)" ) )
-        connect(this   , SIGNAL(textureChangeImage(QString,QImage&)),
-                plugin , SLOT(slotTextureChangeImage(QString,QImage&)),Qt::DirectConnection);
+        connect(plugin   , SIGNAL(textureChangeImage(QString,QImage&)),
+                this , SLOT(slotTextureChangeImage(QString,QImage&)),Qt::DirectConnection);
 
       if ( checkSlot( plugin , "slotTextureChangeImage(QString,QImage&)" ) )
         connect(this   , SIGNAL(textureChangeImage(QString,QImage&)),
