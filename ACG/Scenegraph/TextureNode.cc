@@ -68,7 +68,8 @@ TextureNode::TextureNode( BaseNode*            _parent,
         tex_mode_( GL_MODULATE ),
         texture_filter_( _texture_filter ),
         activeTexture_(-1)
-{}
+{
+}
 
 
 //----------------------------------------------------------------------------
@@ -164,13 +165,13 @@ TextureNode::applyTextureParameters( int _id )
 
 //----------------------------------------------------------------------------
 
-void TextureNode::setTextureDataGL ( GLuint _textureId,
-                        GLenum _target,
-                        GLint _width ,
-                        GLint _height,
-                        GLenum _format ,
-                        GLenum _type,
-                        const void * _data)
+void TextureNode::setTextureDataGL (  GLuint _textureId,
+                                      GLenum _target,
+                                      GLint _width ,
+                                      GLint _height,
+                                      GLenum _format ,
+                                      GLenum _type,
+                                      const void * _data)
 {
   applyGLSettings();
 
@@ -217,6 +218,8 @@ void TextureNode::setTextureDataGL ( GLuint _textureId,
 void
 TextureNode::set_texture(const unsigned char * _image, int _width, int _height)
 {
+  checkEmpty();
+
   // enough texture mem?
   glTexImage2D( GL_PROXY_TEXTURE_2D, 0, GL_RGBA, _width, _height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0 );
   GLint width;
@@ -295,6 +298,7 @@ void TextureNode::checkEmpty() {
   if ( textures_.empty() ) {
     textures_.resize(1);
     activeTexture_ = 0;
+//     textures_[activeTexture_].id = 0;
     glGenTextures( 1, &(textures_[activeTexture_].id ) );
   }
 
@@ -331,6 +335,8 @@ bool TextureNode::read(const char* _filename, GLuint _id ) {
 
 void TextureNode::set_texture(const QImage& _image, GLuint _id) {
 
+  checkEmpty();
+
   if ( available(_id) != -1 ) {
     activeTexture_ = available(_id);
     set_texture(_image);
@@ -346,6 +352,8 @@ void TextureNode::set_texture(const QImage& _image, GLuint _id) {
 
 void TextureNode::set_texture(const float * _image, int _width, int _height, GLuint _id) {
 
+  checkEmpty();
+
   if ( available(_id) != -1 ) {
     activeTexture_ = available(_id);
     set_texture(_image,_width,_height);
@@ -359,6 +367,8 @@ void TextureNode::set_texture(const float * _image, int _width, int _height, GLu
 
 
 void TextureNode::set_texture(const unsigned char * _image, int _width, int _height, GLuint _id) {
+
+  checkEmpty();
 
   if ( available(_id) != -1 ) {
     activeTexture_ = available(_id);
@@ -377,6 +387,8 @@ void TextureNode::set_texture(const unsigned char * _image, int _width, int _hei
 GLuint
 TextureNode::add_texture(const QImage& _image)
 {
+  checkEmpty();
+
   // adjust texture size: 2^k * 2^l
   int tex_w, w( _image.width()  );
   int tex_h, h( _image.height() );
@@ -407,7 +419,7 @@ TextureNode::add_texture(const QImage& _image)
 
   activeTexture_ = textures_.size() - 1;
 
-   // Set the image
+  // Set the image
   setTextureDataGL(activeTexture_ ,GL_TEXTURE_2D,tex_w,tex_h,GL_RGBA,GL_UNSIGNED_BYTE,texture.bits());
 
   // return the id of the new texture
@@ -479,8 +491,10 @@ bool TextureNode::activateTexture(GLuint _id)
   //==========================================================================
   // If zero is given, unbind all textures
   //==========================================================================
-  if ( _id == 0 )
+  if ( _id == 0 ) {
     search = 0;
+    std::cerr << " Texture Node activating zero texture" << std::endl;
+  }
 
   //==========================================================================
   // Index has not been found ... No corresponding Texture in this node
