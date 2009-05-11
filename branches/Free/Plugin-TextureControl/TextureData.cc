@@ -183,8 +183,6 @@ bool TextureData::addMultiTexture( QString _textureName ) {
     return false;
   }
 
-  std::cerr << "TextureData::addMultiTexture" << std::endl;
-
   //generate texture object
   Texture tex;
   tex.id( nextInternalID_++ );

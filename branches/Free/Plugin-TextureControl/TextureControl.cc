@@ -78,7 +78,8 @@ void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _fil
   QImage textureImage;
 
   if ( !getImage(_filename,textureImage) )
-    emit log(LOGERR, "Cannot load texture '" + _textureName + "'. File not found '" + _filename + "'");
+    emit log(LOGERR, "slotTextureAdded : Cannot load texture '" + _textureName + "'. File not found '" + _filename + "'");
+
 
 
   // ================================================================================
@@ -217,7 +218,8 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
   for ( TriMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it)
     _mesh->property(oldVertexCoords, v_it ) =  _mesh->texcoord2D( v_it );
 
-  slotTextureAdded("Original Per Vertex Texture Coords","unknown.png",_objectId);
+  slotTextureAdded("Original Per Vertex Texture Coords","unknown.png",2,_objectId);
+  slotSetTextureMode("Original Per Face Texture Coords","type=vertexbased",_objectId);
 
   // ================================================================================
   // Create a backup of the original per Face texture Coordinates
@@ -227,7 +229,7 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
   for ( TriMesh::HalfedgeIter he_it = _mesh->halfedges_begin(); he_it != _mesh->halfedges_end(); ++he_it)
     _mesh->property(oldHalfedgeCoords, he_it ) =  _mesh->texcoord2D( he_it );
 
-  slotTextureAdded("Original Per Face Texture Coords","unknown.png",_objectId);
+  slotTextureAdded("Original Per Face Texture Coords","unknown.png",2,_objectId);
   slotSetTextureMode("Original Per Face Texture Coords","type=halfedgebased",_objectId);
 
   // ================================================================================
@@ -327,7 +329,6 @@ void TextureControlPlugin::fileOpened( int _id ) {
     // ================================================================================
     // Store texture information in objects metadata
     // ================================================================================
-
     if (glName != 0) {
       texData->addTexture(globalTextures_.textures()[i], glName);
       texData->setImage(globalTextures_.textures()[i].name(),textureImage);
@@ -482,18 +483,22 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   }
 
   // ================================================================================
-  // As the current texture is active, update it
+  // Enable the texture in texture node
   // ================================================================================
   if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
     TriMesh* mesh = PluginFunctions::triMesh(obj);
     doUpdateTexture(texData->texture(_textureName), *mesh);
+    // Texture has been bound to that object by slotAddTexture.. directly or by fileOpened from global texture
+    // Just activate it
+    PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture(texData->texture(_textureName).glName() );
     PluginFunctions::triMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
-    PluginFunctions::triMeshObject(obj)->textureNode()->set_texture( texData->texture(_textureName).textureImage );
   } else if ( obj->dataType( DATA_POLY_MESH ) ) {
     PolyMesh* mesh = PluginFunctions::polyMesh(obj);
     doUpdateTexture(texData->texture(_textureName), *mesh);
+    // Texture has been bound to that object by slotAddTexture.. directly or by fileOpened from global texture
+    // Just activate it
+    PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture(texData->texture(_textureName).glName() );
     PluginFunctions::polyMeshObject(obj)->textureNode()->set_repeat(texData->texture(_textureName).parameters.repeat);
-    PluginFunctions::polyMeshObject(obj)->textureNode()->set_texture( texData->texture(_textureName).textureImage );
   }
 
   // ================================================================================
@@ -1075,74 +1080,106 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   }
 
   // ================================================================================
-  // Enable the given texture exclusively or use multitexture setting
+  // Check on texture types
   // ================================================================================
-  bool multiTextureMode = ( texData->texture(_textureName).type() == MULTITEXTURE );
-  if ( !multiTextureMode ) {
-    if ( ! texData->enableTexture( _textureName , true ) ) {
-      emit log(LOGERR, "Failed to enabled Texture " + _textureName );
-      return;
+  QStringList textureList;
+  switch (texData->texture(_textureName).type()) {
+    // Handle MultiTextures first
+    // Enable all textures of a multitexture block and disable all others
+    case MULTITEXTURE:
+      // get the list of textures for this mode
+      textureList = texData->texture(_textureName).multiTextureList;
+
+      texData->enableTexture(_textureName, true);
+
+      for ( uint i = 0 ; i < texData->textures().size() ; ++i ) {
+        if ( textureList.contains( texData->textures()[i].name() ) || (texData->textures()[i].name() == _textureName) )
+          texData->enableTexture( texData->textures()[i].name() , false );
+        else
+          texData->disableTexture( texData->textures()[i].name() );
+      }
+      break;
+    // These textures are working on mesh properties and need to be copied on access.
+    // The actual drawing is performed if the plugin belonging to the texture updated it.
+    // otherwise it will be directly enabled by this function
+    case HALFEDGEBASED:
+    case VERTEXBASED:
+      // Enable the texture
+      if ( ! texData->enableTexture( _textureName , true ) )
+        emit log(LOGERR, "Failed to enabled VERTEXBASED or HALFEDGEBASED Texture " + _textureName );
+
+      // Check if dirty. If dirty, force plugin to update the texture otherwise we will just render it
+      if ( texData->texture( _textureName).dirty() ) {
+        // TODO: maybe introduce lock to prevent extra redraws if updating all objects
+        emit updateTexture( texData->texture( _textureName ).name() , obj->id() );
+
+        return;
+      }
+
+      // Copy the texture data to the global one
+      if( obj->dataType( DATA_TRIANGLE_MESH ) )
+        doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
+      else if( obj->dataType( DATA_POLY_MESH ) ) {
+       doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
+      } else {
+        emit log(LOGERR, "HALFEDGEBASED or VERTEXBASED type require poly or trimesh to work! Texture: " + _textureName );
+      }
+
+      break;
+    // Environment textures are static for now so directly enable it without an update
+    case ENVIRONMENT:
+      if ( ! texData->enableTexture( _textureName , true ) ) {
+        emit log(LOGERR, "Failed to enabled ENVIRONMENT Texture " + _textureName );
+        return;
+      }
+      break;
+    case UNSET:
+      emit log(LOGERR, "Texture Type is unset! This should never happen! " + _textureName );
+      break;
+  }
+
+  // ================================================================================
+  // Update texture mappings and activate the textures
+  // ================================================================================
+  if ( texData->texture(_textureName).type() == MULTITEXTURE ) {
+    if( obj->dataType( DATA_TRIANGLE_MESH ) ){
+      // Set the property map for mapping between faces and textures
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName).indexMappingProperty().toStdString() );
+      // Unbind all textures ( textures will be bound by textureNode later on
+      PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture(0);
+      // Set the mapping between texture ids in the index property and their gl Names
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
+      // Set map  between texture index and its coordinate property name
+      PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
+    } else if( obj->dataType( DATA_POLY_MESH ) ){
+      // Set the property map for mapping between faces and textures
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName).indexMappingProperty().toStdString() );
+      // Unbind all textures ( textures will be bound by textureNode later on
+      PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture(0);
+      // Set the mapping between texture ids in the index property and their gl Names
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
+      // Set map  between texture index and its coordinate property name
+      PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
+    } else {
+      emit log(LOGERR, "MultiTexture Error: Only supported on Tri or Poly Mesh for Texture: " + _textureName );
     }
   } else {
-    // get the list of textures for this mode
-    QStringList textureList = texData->texture(_textureName).multiTextureList;
-
-    texData->enableTexture(_textureName, true);
-
-    for ( uint i = 0 ; i < texData->textures().size() ; ++i ) {
-      if ( textureList.contains( texData->textures()[i].name() ) || (texData->textures()[i].name() == _textureName) )
-        texData->enableTexture( texData->textures()[i].name() , false );
-       else
-        texData->disableTexture( texData->textures()[i].name() );
-    }
-
-  }
-
-  // ================================================================================
-  // If texture is flagged dirty, update it ( this jumps to texture updated
-  // which will update the visualization )
-  // ================================================================================
-
-  if ( !multiTextureMode && texData->texture( _textureName).dirty() ) {
-
-    // TODO: maybe introduce lock to prevent extra redraws if updating all objects
-    emit updateTexture( texData->texture( _textureName ).name() , obj->id() );
-    return;
-  }
-
-  // ================================================================================
-  // Update texture map from meshNode and activate it
-  // ================================================================================
-  if( obj->dataType( DATA_TRIANGLE_MESH ) ){
-    if (!multiTextureMode) {
-      if ( texData->texture(_textureName).type() != ENVIRONMENT)
-        doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
+    if( obj->dataType( DATA_TRIANGLE_MESH ) ){
+      // Activate the requested texture in texture node
       PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
+      // Disable the mapping properties ( only for multi texture mode )
       PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name("No Texture Index");
       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
-    } else {
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName ).indexMappingProperty().toStdString() );
-      PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture(0);
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
-    }
-
-  }
-
-  if ( obj->dataType( DATA_POLY_MESH ) ){
-    if (!multiTextureMode) {
-      if ( texData->texture(_textureName).type() != ENVIRONMENT)
-        doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
+    } else if ( obj->dataType( DATA_POLY_MESH ) ){
+      // Activate the requested texture in texture node
       PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
+      // Disable the mapping properties ( only for multi texture mode )
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name("No Texture Index");
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName ).indexMappingProperty().toStdString() );
-      PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture(0);
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
+      emit log(LOGERR, "Texture Error ( mesh required) for Texture: " + _textureName );
     }
   }
 
@@ -1175,6 +1212,7 @@ void TextureControlPlugin::switchDrawMode( TextureType _type ) {
         break;
     }
   }
+
 
   if ( !textureMode ) {
     switch (_type) {
