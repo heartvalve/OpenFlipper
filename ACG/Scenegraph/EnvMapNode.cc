@@ -86,7 +86,8 @@ void EnvMapNode::enter(GLState& _state, unsigned int _drawmode)
     glEnable(GL_TEXTURE_GEN_S);
     glEnable(GL_TEXTURE_GEN_T);
     glEnable(GL_TEXTURE_2D);
-  }
+  } else
+    TextureNode::enter( _state, _drawmode);
 }
 
 
@@ -101,7 +102,8 @@ void EnvMapNode::leave(GLState& _state, unsigned int _drawmode)
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
     glDisable(GL_TEXTURE_2D);
-  }
+  } else
+    TextureNode::leave( _state, _drawmode);
 }
 
 void EnvMapNode::enterPick(GLState& /*_state*/ ,
