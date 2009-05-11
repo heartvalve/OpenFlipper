@@ -219,7 +219,7 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
     _mesh->property(oldVertexCoords, v_it ) =  _mesh->texcoord2D( v_it );
 
   slotTextureAdded("Original Per Vertex Texture Coords","unknown.png",2,_objectId);
-  slotSetTextureMode("Original Per Face Texture Coords","type=vertexbased",_objectId);
+  slotSetTextureMode("Original Per Vertex Texture Coords","type=vertexbased",_objectId);
 
   // ================================================================================
   // Create a backup of the original per Face texture Coordinates
@@ -250,11 +250,18 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
 
     // TODO : If only one Texture, use single Texturing mode
     if ( true ) {
+      std::cerr <<  "Size : " << _mesh->property(property).size() << std::endl;
       // Assume multiTexture Mode now and load the Textures
       for ( std::map< int, std::string >::iterator texture  = _mesh->property(property).begin();
                                                    texture != _mesh->property(property).end(); texture++ ) {
         int textureId = -1;
-        slotMultiTextureAdded("OBJ Data",QString(texture->second.c_str()) , QString(texture->second.c_str()), _objectId, textureId );
+        QFileInfo info(texture->second.c_str());
+        if ( info.exists() )
+          slotMultiTextureAdded("OBJ Data",QString(texture->second.c_str()) , QString(texture->second.c_str()), _objectId, textureId );
+        else {
+          emit log(LOGWARN,"Unable to load texture image " + QString(texture->second.c_str()));
+          slotMultiTextureAdded("OBJ Data","Unknown Texture image " + QString::number(textureId), "unknown.png", _objectId, textureId );
+        }
         newMapping[texture->first] = textureId;
       }
 
