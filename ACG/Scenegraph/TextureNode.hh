@@ -307,7 +307,7 @@ private:
    *
    * This index is an index to the textures_ vector! Not the GLuint!!
    */
-  int                 activeTexture_;
+  int activeTexture_;
 };
 
 
