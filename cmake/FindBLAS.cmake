@@ -13,7 +13,7 @@
 #  BLAS_DEFINITIONS - Compilation options to use BLAS
 #  BLAS_LINKER_FLAGS - Linker flags to use BLAS (excluding -l
 #    and -L).
-#  BLAS_LIBRARIES_DIR - Directories containing the BLAS libraries.
+#  BLAS_LIBRARY_DIR - Directories containing the BLAS libraries.
 #     May be null if BLAS_LIBRARIES contains libraries name using full path.
 #  BLAS_LIBRARIES - List of libraries to link against BLAS interface.
 #     May be null if the compiler supports auto-link (e.g. VC++).
@@ -23,7 +23,7 @@
 # This module was modified by CGAL team:
 # - find BLAS library shipped with TAUCS
 # - find libraries for a C++ compiler, instead of Fortran
-# - added BLAS_INCLUDE_DIR, BLAS_DEFINITIONS and BLAS_LIBRARIES_DIR
+# - added BLAS_INCLUDE_DIR, BLAS_DEFINITIONS and BLAS_LIBRARY_DIR
 # - removed BLAS95_LIBRARIES
 #
 # TODO (CGAL):
@@ -142,7 +142,7 @@ endmacro(check_fortran_libraries)
 #
 
 # Is it already configured?
-if (BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
+if (BLAS_LIBRARY_DIR OR BLAS_LIBRARIES)
 
   set(BLAS_FOUND TRUE)
 
@@ -153,7 +153,7 @@ else()
   set( BLAS_DEFINITIONS "" )
   set( BLAS_LINKER_FLAGS "" )
   set( BLAS_LIBRARIES "" )
-  set( BLAS_LIBRARIES_DIR "" )
+  set( BLAS_LIBRARY_DIR "" )
 
   # Look first for the TAUCS library distributed with CGAL in auxiliary/taucs.
   # Set CGAL_TAUCS_FOUND, CGAL_TAUCS_INCLUDE_DIR and CGAL_TAUCS_LIBRARIES_DIR.
@@ -165,7 +165,7 @@ else()
 
     # if VC++: done
     set( BLAS_INCLUDE_DIR    "${CGAL_TAUCS_INCLUDE_DIR}" )
-    set( BLAS_LIBRARIES_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" )
+    set( BLAS_LIBRARY_DIR  "${CGAL_TAUCS_LIBRARIES_DIR}" )
 
   else(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
@@ -402,7 +402,7 @@ else()
 
   endif(CGAL_TAUCS_FOUND AND CGAL_AUTO_LINK_ENABLED)
 
-  if(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
+  if(BLAS_LIBRARY_DIR OR BLAS_LIBRARIES)
     set(BLAS_FOUND TRUE)
   else()
     set(BLAS_FOUND FALSE)
@@ -429,17 +429,17 @@ else()
                           CACHE STRING "Linker flags to use BLAS" FORCE )
   set( BLAS_LIBRARIES     "${BLAS_LIBRARIES}" 
                           CACHE FILEPATH "BLAS libraries name" FORCE )
-  set( BLAS_LIBRARIES_DIR "${BLAS_LIBRARIES_DIR}" 
+  set( BLAS_LIBRARY_DIR "${BLAS_LIBRARY_DIR}"
                           CACHE PATH "Directories containing the BLAS libraries" FORCE )
 
   #message("DEBUG: BLAS_INCLUDE_DIR = ${BLAS_INCLUDE_DIR}")
   #message("DEBUG: BLAS_DEFINITIONS = ${BLAS_DEFINITIONS}")
   #message("DEBUG: BLAS_LINKER_FLAGS = ${BLAS_LINKER_FLAGS}")
   #message("DEBUG: BLAS_LIBRARIES = ${BLAS_LIBRARIES}")
-  #message("DEBUG: BLAS_LIBRARIES_DIR = ${BLAS_LIBRARIES_DIR}")
+  #message("DEBUG: BLAS_LIBRARY_DIR = ${BLAS_LIBRARY_DIR}")
   #message("DEBUG: BLAS_FOUND = ${BLAS_FOUND}")
 
-endif(BLAS_LIBRARIES_DIR OR BLAS_LIBRARIES)
+endif(BLAS_LIBRARY_DIR OR BLAS_LIBRARIES)
 
 if(BLAS_FOUND)
   set(BLAS_USE_FILE "CGAL_UseBLAS")
