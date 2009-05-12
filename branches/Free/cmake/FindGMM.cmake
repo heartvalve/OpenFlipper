@@ -18,7 +18,6 @@ FIND_PATH(GMM_INCLUDE_DIR NAMES gmm/gmm.h
                                  /usr/local/include
                                  ../../External/include
                                  ${module_file_path}/../../../External/include)
-MARK_AS_ADVANCED(GMM_INCLUDE_DIR)
 
 
 # Copy the results to the output variables.
