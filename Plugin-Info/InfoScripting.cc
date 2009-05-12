@@ -59,6 +59,15 @@ void InfoPlugin::setDescriptions(){
                           QString("ObjectId,VertexHandle").split(","),
                           QString("id of the object, handle of a vertex").split(","));
 
+  emit setSlotDescription("minEdgeLength(int)","Get the minimal edge length of an object",
+                          QStringList("ObjectId"), QStringList("id of the object"));
+
+  emit setSlotDescription("maxEdgeLength(int)","Get the maximal edge length of an object",
+                          QStringList("ObjectId"), QStringList("id of the object"));
+
+  emit setSlotDescription("meanEdgeLength(int)","Get the mean edge length of an object",
+                          QStringList("ObjectId"), QStringList("id of the object"));
+
 }
 
 
@@ -769,4 +778,53 @@ int InfoPlugin::vertexValence  (int _id, int _vertexHandle)
   }
 }
 
+//------------------------------------------------------------------------------
 
+/** \brief get minimal edge length for a given object
+ * 
+ * @param _id object id
+ * @return minimal edge length or -1 if an error occured
+ */
+double InfoPlugin::minEdgeLength(int _id)
+{
+  double min, max, mean;
+
+  if (getEdgeLengths (_id, min, max, mean))
+    return min;
+  else
+    return -1;
+}
+
+//------------------------------------------------------------------------------
+
+/** \brief get maximal edge length for a given object
+ * 
+ * @param _id object id
+ * @return maximal edge length or -1 if an error occured
+ */
+double InfoPlugin::maxEdgeLength(int _id)
+{
+  double min, max, mean;
+
+  if (getEdgeLengths (_id, min, max, mean))
+    return max;
+  else
+    return -1;
+}
+
+//------------------------------------------------------------------------------
+
+/** \brief get the mean edge length for a given object
+ * 
+ * @param _id object id
+ * @return mean edge length or -1 if an error occured
+ */
+double InfoPlugin::meanEdgeLength(int _id)
+{
+  double min, max, mean;
+
+  if (getEdgeLengths (_id, min, max, mean))
+    return mean;
+  else
+    return -1;
+}

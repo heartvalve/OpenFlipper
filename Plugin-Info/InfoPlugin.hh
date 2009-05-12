@@ -117,6 +117,13 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
     /// get vertex valence
     int vertexValence  (int _id, int _vertexHandle);
 
+    /// get the minimal edge length
+    double minEdgeLength(int _id);
+    /// get the maximal edge length
+    double maxEdgeLength(int _id);
+    /// get the mean edge length
+    double meanEdgeLength(int _id);
+
   public slots:
     QString version() { return QString("1.0"); };
 
@@ -131,6 +138,13 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
     /// Get closest edge index
     template< class MeshT >
     int getClosestEdge(MeshT* _mesh, int _face_idx);
+
+    /// Get edge lengths
+    template< class MeshT >
+    void getEdgeLengths(MeshT* _mesh, double &min, double &max, double &mean);
+
+    /// Get edge lengths
+    bool getEdgeLengths(int _id, double &min, double &max, double &mean);
     
     /// Mouse click hit point on face
     ACG::Vec3d hit_point_;
