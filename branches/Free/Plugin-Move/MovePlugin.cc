@@ -254,7 +254,7 @@ void MovePlugin::slotMouseEvent( QMouseEvent* _event )
       PluginFunctions::actionMode() == Viewer::PickingMode) {
 
     if (_event->type() == QEvent::MouseButtonDblClick ||
-        (_event->type() == QEvent::QEvent::MouseButtonPress &&
+        (_event->type() == QEvent::MouseButtonPress &&
          _event->button () == Qt::LeftButton &&
          placeAction_->isChecked ())) {
 
