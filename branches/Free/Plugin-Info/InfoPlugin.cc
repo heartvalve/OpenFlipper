@@ -471,6 +471,70 @@ InfoPlugin::
 
 //------------------------------------------------------------------------------
 
+template< class MeshT >
+void InfoPlugin::getEdgeLengths(MeshT* _mesh, double &min, double &max, double &mean)
+{
+  typename MeshT::ConstEdgeIter e_it(_mesh->edges_sbegin()),
+                                e_end(_mesh->edges_end());
+
+  min = FLT_MIN;
+  max = FLT_MAX;
+  mean = 0.0;
+  for (; e_it!=e_end; ++e_it)
+  {
+    typename MeshT::Scalar len = (_mesh->point(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 0))) -
+                                  _mesh->point(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 1)))).norm ();
+    if (len < min) min = len;
+    if (len > max) max = len;
+    mean += len;
+  }
+
+  mean /= _mesh->n_edges();
+}
+
+//------------------------------------------------------------------------------
+
+bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
+{
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(_id,object) )
+    return false;
+
+  if ( object == 0){
+    emit log(LOGERR, "Unable to get object");
+    return false;
+  }
+
+  if ( object->dataType(DATA_TRIANGLE_MESH) ) {
+    TriMesh* mesh = PluginFunctions::triMesh(object);
+
+    if ( mesh == 0 ) {
+      emit log(LOGERR,"Unable to get mesh");
+      return false;
+    }
+
+    getEdgeLengths (mesh, min, max, mean);
+    return true;
+
+  } else {
+    PolyMesh* mesh = PluginFunctions::polyMesh(object);
+
+    if ( mesh == 0 ) {
+      emit log(LOGERR,"Unable to get mesh");
+      return false;
+    }
+
+    getEdgeLengths (mesh, min, max, mean);
+    return true;
+  }
+
+  return false;
+}
+
+//------------------------------------------------------------------------------
+
+
+
 Q_EXPORT_PLUGIN2( InfoPlugin , InfoPlugin );
 
 
