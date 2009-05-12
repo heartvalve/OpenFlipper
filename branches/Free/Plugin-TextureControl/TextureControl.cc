@@ -210,6 +210,13 @@ void TextureControlPlugin::addedEmptyObject( int _id ) {
 template< typename MeshT >
 void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId ) {
 
+  // Get the new object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _objectId , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_objectId) );
+    return;
+  }
+
   // ================================================================================
   // Create a backup of the original per Vertex texture Coordinates
   // ================================================================================
@@ -250,14 +257,69 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
 
     // TODO : If only one Texture, use single Texturing mode
     if ( true ) {
+
       std::cerr <<  "Size : " << _mesh->property(property).size() << std::endl;
       // Assume multiTexture Mode now and load the Textures
       for ( std::map< int, std::string >::iterator texture  = _mesh->property(property).begin();
                                                    texture != _mesh->property(property).end(); texture++ ) {
         int textureId = -1;
-        QFileInfo info(texture->second.c_str());
+
+        std::cerr << "Generating Texture " << texture->second.c_str() << std::endl;
+        QString textureBlock = QString(texture->second.c_str());
+
+
+        QStringList options = textureBlock.split(" ",QString::SkipEmptyParts);
+
+        while ( options.size() > 1 ) {
+          if ( options[0] == "-blendu" ) {
+          } else if ( options[0] == "-blendu" ) {
+            options.pop_front();
+            options.pop_front();
+          } else if ( options[0] == "-blendv" ) {
+            options.pop_front();
+            options.pop_front();
+          } else if ( options[0] == "-cc" ) {
+            options.pop_front();
+            options.pop_front();
+          } else if ( options[0] == "-clamp" ) {
+            options.pop_front();
+            options.pop_front();
+          } else if ( options[0] == "-mm" ) {
+            options.pop_front();
+            options.pop_front();
+            options.pop_front();
+          } else if ( options[0] == "-o" ) {
+            options.pop_front();
+            options.pop_front();
+            options.pop_front();
+            options.pop_front();
+          } else if ( options[0] == "-s" ) {
+            options.pop_front();
+            options.pop_front();
+            options.pop_front();
+            options.pop_front();
+          } else if ( options[0] == "-t" ) {
+            options.pop_front();
+            options.pop_front();
+            options.pop_front();
+            options.pop_front();
+          } else if ( options[0] == "-texres" ) {
+            options.pop_front();
+            options.pop_front();
+          } else  {
+            break;
+          }
+        }
+
+        QString fullName = obj->path() + QDir::separator() + options.join(" ");
+
+        std::cerr << "rest " << fullName.toStdString() << std::endl;
+
+
+        //
+        QFileInfo info(fullName);
         if ( info.exists() )
-          slotMultiTextureAdded("OBJ Data",QString(texture->second.c_str()) , QString(texture->second.c_str()), _objectId, textureId );
+          slotMultiTextureAdded("OBJ Data",fullName , fullName, _objectId, textureId );
         else {
           emit log(LOGWARN,"Unable to load texture image " + QString(texture->second.c_str()));
           slotMultiTextureAdded("OBJ Data","Unknown Texture image " + QString::number(textureId), "unknown.png", _objectId, textureId );
