@@ -436,6 +436,14 @@ void helpDir(QDir _dir);
   DLLEXPORT
   bool restrictFrameRate( );
 
+  /// set wheel appearance setting
+  DLLEXPORT
+  void showWheelsAtStartup( bool _show );
+
+  /// get wheel appearance setting
+  DLLEXPORT
+  bool showWheelsAtStartup( );
+
   /// Store maxFrameRate setting
   DLLEXPORT
   void maxFrameRate( int _fps );

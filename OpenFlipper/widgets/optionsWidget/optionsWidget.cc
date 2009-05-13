@@ -140,6 +140,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   wZoomFactor->setText( QString::number(OpenFlipper::Options::wheelZoomFactor(), 'f') );
   wZoomFactorShift->setText( QString::number(OpenFlipper::Options::wheelZoomFactorShift(), 'f') );
 
+  wheelBox->setChecked( OpenFlipper::Options::showWheelsAtStartup() );
   restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
   FPS->setValue( OpenFlipper::Options::maxFrameRate() );
 
@@ -408,6 +409,8 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::wheelZoomFactorShift( wZoomFactorShift->text().toDouble() );
 
   OpenFlipper::Options::restrictFrameRate( restrictFPS->isChecked() );
+  OpenFlipper::Options::showWheelsAtStartup( wheelBox->isChecked() );
+
   OpenFlipper::Options::maxFrameRate( FPS->value() );
 
   OpenFlipper::Options::randomBaseColor( randomBaseColor->isChecked() );
