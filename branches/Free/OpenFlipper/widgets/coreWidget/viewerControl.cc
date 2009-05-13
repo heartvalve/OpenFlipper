@@ -104,6 +104,17 @@ void CoreWidget::slotContextHomeView() {
   examiner_widgets_[PluginFunctions::activeExaminer()]->home();
 }
 
+/// Show / hide wheels in examiner windows
+void CoreWidget::slotSwitchWheels(bool _state) {
+
+	std::vector< glViewer* >::iterator it
+		= examiner_widgets_.begin();
+
+	for(; it != examiner_widgets_.end(); it++) {
+
+		_state ? (*it)->slotShowWheels() : (*it)->slotHideWheels();
+	}
+}
 
 /// Set the viewer to home position
 void CoreWidget::slotGlobalHomeView() {

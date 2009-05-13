@@ -346,9 +346,16 @@ void CoreWidget::setupMenuBar()
   connect( perspectiveProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalPerspectiveProjection() ) );
   viewMenu_->addAction( perspectiveProjectionAction_);
 
-
-
   viewMenu_->addSeparator();
+
+  QAction* wheelSwitchAction = new QAction( "Show / hide wheels", viewMenu_ );
+  wheelSwitchAction->setCheckable( true );
+  wheelSwitchAction->setStatusTip("Show / hide navigation wheels in viewer widget.");
+  wheelSwitchAction->setWhatsThis( "Show / hide navigation wheels in viewer widget.<br><br>"
+                               " These wheels appear in the corners of the viewports. "
+							   " Use wheels to rotate scene.");
+  connect( wheelSwitchAction,SIGNAL( toggled(bool) ), this, SLOT( slotSwitchWheels(bool) ) );
+  viewMenu_->addAction( wheelSwitchAction);
 
   QAction* coordSys = viewMenu_->addAction("Coordinate Systems");
   coordSys->setCheckable(true);

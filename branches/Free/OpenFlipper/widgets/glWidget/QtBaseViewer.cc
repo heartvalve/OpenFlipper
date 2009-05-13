@@ -1128,6 +1128,8 @@ glViewer::createWidgets(QStatusBar* _sb)
   wheelX_->setToolTip("Rotate around <b>x-axis</b>.");
   wheelX_->setWhatsThis( "Rotate around <b>x-axis</b>.");
 
+  // Hide wheels per default
+  slotHideWheels();
 
   QGraphicsWidget *wheelX = glScene_->addWidget (wheelX_);
   QGraphicsWidget *wheelY = glScene_->addWidget (wheelY_);
@@ -1395,7 +1397,7 @@ void glViewer::mouseReleaseEvent(QGraphicsSceneMouseEvent* _e)
   QMouseEvent me(QEvent::MouseButtonRelease ,p, _e->screenPos(), _e->button(),
                  _e->buttons(), _e->modifiers());
   _e->accept();
-  
+
 //   if (_event->button() == Qt::RightButton )
 //     hidePopupMenus();
 
