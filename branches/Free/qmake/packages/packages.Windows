@@ -190,7 +190,7 @@ defineTest( gmm ) {
     error( ERROR: GMM not found or wrong path entry in OpenMesh\qmake\packages\packages.Windows! )
   }
 
-  INCLUDEPATH += $${GMM_PATH}\include\gmm
+  INCLUDEPATH += $${GMM_PATH}\include
   DEFINES *= _SCL_SECURE_NO_DEPRECATE
   export(DEFINES) 
   export(INCLUDEPATH)
