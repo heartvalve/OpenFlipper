@@ -104,6 +104,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // LoadSaveInterface
     void fileOpened(int _id);
     void addedEmptyObject(int _id);
+    void objectDeleted(int _id);
 
   public :
     /// Destructor
@@ -149,14 +150,14 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   private slots:
 
     /// Gets called when the data in the table has changed
-    void slotDataChanged ( BaseObject* _obj, int _column );
+    void slotDataChanged (int _id, int _column, const QVariant& _value);
 
-    void slotModelAboutToReset();
-
-    void slotModelResetComplete();
+    /// Gets called when an object was moved via drag n drop
+    void slotMoveBaseObject (int _id, int _newParentId);
 
   private:
-    std::map< BaseObject*, bool > isExpanded_;
+    void propagateDownwards(BaseObject* _obj, int _column );
+    void propagateUpwards(BaseObject* _obj, int _column );
 
 /** @} */
 

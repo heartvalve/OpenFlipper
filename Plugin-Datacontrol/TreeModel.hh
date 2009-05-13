@@ -29,9 +29,6 @@
 //
 //=============================================================================
 
-
-
-
 #ifndef TREEMODEL_H
 #define TREEMODEL_H
 
@@ -39,16 +36,17 @@
 #include <QModelIndex>
 #include <QVariant>
 
-#include <OpenFlipper/common/Types.hh>
-
-class TreeItem;
+#include "TreeItem.hh"
 
 class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 signals:
-   void dataChangedInside(BaseObject* _obj, int _column);
+   // the connected TreeView changed data
+   void dataChangedInside(int _id, int _column, const QVariant& _value);
+   // an object was moved via dragNdrop
+   void moveBaseObject(int _id, int _newParentId);
 
 public:
 
@@ -95,41 +93,50 @@ public:
 /** @} */
 
 //===========================================================================
-/** @name Internal DataStructure (the BaseObject Tree)
+/** @name Internal DataStructure (the TreeItem Tree)
   * @{ */
 //===========================================================================
 
 public:
 
-    /// Return the ModelIndex corresponding to a given BaseObject and Column
-    QModelIndex getModelIndex(BaseObject* _object, int _column );
+    /// Return the ModelIndex corresponding to a given TreeItem and Column
+    QModelIndex getModelIndex(TreeItem* _object, int _column );
 
     /// Check if the given item is the root item
-    bool isRoot(BaseObject* _item);
+    bool isRoot(TreeItem* _item);
 
     /// Get the name of a given object
-    bool getObjectName(BaseObject* _object , QString& _name);
+    bool getObjectName(TreeItem* _object , QString& _name);
+
+    /// Get the TreeItem corresponding to a given ModelIndex
+    TreeItem *getItem(const QModelIndex &index) const;
+
+    /// Get the name of a TreeItem corresponding to a given ModelIndex
+    QString itemName(const QModelIndex &index) const;
+
+    /// Get the id of a TreeItem corresponding to a given ModelIndex
+    int itemId(const QModelIndex &index) const;
+
 
     /// The object with the given id has been changed. Check if model also has to be changed
     void objectChanged(int id_);
 
-    /// Get the BaseObject corresponding to a given ModelIndex
-    BaseObject *getItem(const QModelIndex &index) const;
+    /// The object with the given id has been added. add it to the internal tree
+    void objectAdded(BaseObject* _object);
 
+    /// The object with the given id has been deleted. delete it from the internal tree
+    void objectDeleted(int id_);
+
+    /// move the item to a new parent
+    void moveItem(TreeItem* _item, TreeItem* _parent );
 private:
 
     /// Rootitem of the tree
-    BaseObject* rootItem_;
-    
-    /** Mapping of the group ids to their parent
-     * Use this to check if a group with the given id exists and which item 
-     * represents this group
-     */
-    std::map< int, TreeItem* > map_;
+    TreeItem* rootItem_;
 
-    
-    void propagateUpwards(BaseObject* _obj,   int _column );
-    void propagateDownwards(BaseObject* _obj, int _column );
+
+    void propagateUpwards(TreeItem* _obj,   int _column, bool _value );
+    void propagateDownwards(TreeItem* _obj, int _column );
 
 /** @} */
 

@@ -49,7 +49,7 @@
  */
 TreeModel::TreeModel( QObject *_parent) : QAbstractItemModel(_parent)
 {
-  rootItem_ = PluginFunctions::objectRoot();
+  rootItem_ = new TreeItem( -1, "ROOT", DATA_NONE, 0);
 }
 
 
@@ -94,7 +94,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
       return QVariant();
   
   // Get the corresponding tree item
-  BaseObject *item = static_cast<BaseObject*>(index.internalPointer());
+  TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
   
   if ( item == rootItem_ ) {
     std::cerr << "Root" << std::endl; 
@@ -123,7 +123,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         bool visibility = false;
         // visiblity group
         if (item->isGroup()){
-          QList< BaseObject* > children = item->getLeafs();
+          QList< TreeItem* > children = item->getLeafs();
           bool initRound = true;
           for (int i=0; i < children.size(); i++){
             if (initRound){
@@ -149,7 +149,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         bool source = false;
         // source group
         if (item->isGroup()){
-          QList< BaseObject* > children = item->getLeafs();
+          QList< TreeItem* > children = item->getLeafs();
           
           bool initRound = true;
           for (int i=0; i < children.size(); i++){
@@ -175,7 +175,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         bool target = false;
         // target group
         if (item->isGroup()){
-          QList< BaseObject* > children = item->getLeafs();
+          QList< TreeItem* > children = item->getLeafs();
 
           bool initRound = true;
           for (int i=0; i < children.size(); i++){
@@ -230,7 +230,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
       flags = Qt::ItemIsEnabled;
 
   // Get the corresponding tree item
-  BaseObject *item = static_cast<BaseObject*>(index.internalPointer());
+  TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
 
   if ( item->isGroup() )
     return flags | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
@@ -277,17 +277,17 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
  */
 QModelIndex TreeModel::index(int row, int column, const QModelIndex &_parent) const
 {
-    if (!hasIndex(row, column, _parent))
-        return QModelIndex();
+//     if (!hasIndex(row, column, _parent))
+//         return QModelIndex();
 
-    BaseObject *parentItem;
+    TreeItem *parentItem;
 
     if (!_parent.isValid())
         parentItem = rootItem_;
     else
-        parentItem = static_cast<BaseObject*>(_parent.internalPointer());
+        parentItem = static_cast<TreeItem*>(_parent.internalPointer());
 
-    BaseObject *childItem = parentItem->child(row);
+    TreeItem *childItem = parentItem->child(row);
     if (childItem)
         return createIndex(row, column, childItem);
     else
@@ -307,8 +307,8 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     if (!index.isValid())
         return QModelIndex();
 
-    BaseObject *childItem = static_cast<BaseObject*>(index.internalPointer());
-    BaseObject *parentItem = childItem->parent();
+    TreeItem *childItem = static_cast<TreeItem*>(index.internalPointer());
+    TreeItem *parentItem = childItem->parent();
 
     if (parentItem == rootItem_)
         return QModelIndex();
@@ -326,14 +326,14 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
  */
 int TreeModel::rowCount(const QModelIndex &_parent) const
 {
-    BaseObject *parentItem;
+    TreeItem *parentItem;
     if (_parent.column() > 0)
         return 0;
 
     if (!_parent.isValid())
         parentItem = rootItem_;
     else
-        parentItem = static_cast<BaseObject*>(_parent.internalPointer());
+        parentItem = static_cast<TreeItem*>(_parent.internalPointer());
 
     return parentItem->childCount();
 }
@@ -352,31 +352,169 @@ void TreeModel::objectChanged(int _id) {
     BaseObject* obj = 0;
     PluginFunctions::getObject(_id, obj);
 
-    QModelIndex name    = getModelIndex(obj,0);
-    QModelIndex visible = getModelIndex(obj,1);
-    QModelIndex source  = getModelIndex(obj,2);
-    QModelIndex target  = getModelIndex(obj,3);
+    TreeItem* item = rootItem_->childExists(_id);
 
-    if (obj != 0 ){
+    //if internal and external representation are both valid
+    if (obj != 0 && item != 0){
+      //update the name
+      if ( obj->name() != item->name() ){
 
-//       if ( name.isValid() )
-//         emit dataChanged( name, name);
-//       if ( visible.isValid() )
-//         emit dataChanged( visible, visible);
-//       if ( source.isValid() )
-//         emit dataChanged( source, source);
-//       if ( target.isValid() )
-//         emit dataChanged( target, target);
-emit dataChanged( QModelIndex(), QModelIndex() );
+        item->name( obj->name() );
+
+        QModelIndex index = getModelIndex(item,0);
+        if ( index.isValid() )
+          emit dataChanged( index, index);
+      }
+
+      //update visibility
+      if ( obj->visible() != item->visible() || obj->isGroup() ){
+
+        item->visible( obj->visible() );
+
+        QModelIndex index0 = getModelIndex(item,0);
+        QModelIndex index1 = getModelIndex(item,3);
+
+        if ( index0.isValid() && index1.isValid() ){
+          //the whole row has to be updated because of the grey background-color
+          emit dataChanged( index0, index1);
+          propagateUpwards(item->parent(), 1, obj->visible() );
+        }
+
+        if ( obj->isGroup() )
+          propagateDownwards(item, 1 );
+      }
+
+      //update source flag
+      if ( obj->source() != item->source() || obj->isGroup() ){
+
+        item->source( obj->source() );
+
+        QModelIndex index = getModelIndex(item,2);
+        if ( index.isValid() ){
+          emit dataChanged( index, index);
+          propagateUpwards(item->parent(), 2, false );
+        }
+
+        if ( obj->isGroup() )
+          propagateDownwards(item, 2 );
+      }
+
+      //update target flag
+      if ( obj->target() != item->target() || obj->isGroup() ){
+
+        item->target( obj->target() );
+
+        QModelIndex index = getModelIndex(item,3);
+        if ( index.isValid() ){
+          emit dataChanged( index, index);
+          propagateUpwards(item->parent(), 3, false );
+        }
+
+        if ( obj->isGroup() )
+          propagateDownwards(item, 3 );
+      }
+
+      //update parent
+      if ( obj->parent() == PluginFunctions::objectRoot() && isRoot( item->parent() ) ){
+        return;
+      }else if ( obj->parent() == PluginFunctions::objectRoot() && !isRoot( item->parent() ) ){
+        moveItem(item, rootItem_ );
+      }else if ( obj->parent()->id() != item->parent()->id() ){
+        TreeItem* parent = rootItem_->childExists( obj->parent()->id() );
+
+        if (parent != 0)
+          moveItem(item, parent );
+      }
     }
-
-    return;
   }
-
-  //otherwise reset the model
-  reset();
 }
 
+
+/** \brief The object with the given id has been added. add it to the internal tree
+ * 
+ * @param id_ id of the object
+ */
+void TreeModel::objectAdded(BaseObject* _object){
+
+  TreeItem* parent = 0;
+  //find the parent
+  if ( _object->parent() == PluginFunctions::objectRoot() )
+    parent = rootItem_;
+  else
+    parent = rootItem_->childExists( _object->parent()->id() );
+
+
+  if (parent != 0){
+    QModelIndex parentIndex = getModelIndex(parent, 0);
+
+    beginInsertRows(parentIndex, parent->childCount(), parent->childCount()); //insert at the bottom
+
+      TreeItem* item = new TreeItem( _object->id(), _object->name(), _object->dataType(), parent);
+
+      parent->appendChild( item );
+
+    endInsertRows();
+  }
+
+  objectChanged( _object->id() );
+}
+
+/** \brief The object with the given id has been deleted. delete it from the internal tree
+ * 
+ * @param id_ id of the object
+ */
+void TreeModel::objectDeleted(int _id){
+
+  TreeItem* item = rootItem_->childExists(_id);
+
+  if ( item != 0 && !isRoot(item) ){
+
+    QModelIndex itemIndex   = getModelIndex(item, 0);
+    QModelIndex parentIndex = itemIndex.parent();
+
+    beginRemoveRows( parentIndex, itemIndex.row(), itemIndex.row() );
+
+    item->parent()->removeChild(item);
+    item->deleteSubtree();
+
+    delete item;
+
+    endRemoveRows();
+  }
+}
+
+//******************************************************************************
+
+/** \brief move the item to a new parent
+ * 
+ * @param _item the item
+ * @param _parent new parent
+ */
+void TreeModel::moveItem(TreeItem* _item, TreeItem* _parent ){
+
+  std::cerr << "Move Item " << _item->name().toStdString() << " from " << _item->parent()->name().toStdString() << " to " << _parent->name().toStdString() << std::endl;
+
+  QModelIndex itemIndex   = getModelIndex(_item, 0);
+  QModelIndex oldParentIndex = itemIndex.parent();
+  QModelIndex newParentIndex = getModelIndex(_parent, 0);
+
+  //delete everything at the old location
+  beginRemoveRows( oldParentIndex, itemIndex.row(), itemIndex.row() );
+
+    _item->parent()->removeChild(_item);
+
+  endRemoveRows();
+
+  //insert it at the new location
+  beginInsertRows(newParentIndex, _parent->childCount(), _parent->childCount()); //insert at the bottom
+
+    _item->setParent( _parent );
+
+    _parent->appendChild( _item );
+
+  endInsertRows();
+
+}
 
 //******************************************************************************
 
@@ -385,15 +523,49 @@ emit dataChanged( QModelIndex(), QModelIndex() );
  * @param index a ModelIndex
  * @return item at given index
  */
-BaseObject* TreeModel::getItem(const QModelIndex &index) const
+TreeItem* TreeModel::getItem(const QModelIndex &index) const
 {
     if (index.isValid()) {
-        BaseObject *item = static_cast<BaseObject*>(index.internalPointer());
+        TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
         if (item) return item;
     }
     return rootItem_;
 }
 
+
+//******************************************************************************
+
+/** \brief Return item-name at given index
+ * 
+ * @param index a ModelIndex
+ * @return name of the item at given index
+ */
+QString TreeModel::itemName(const QModelIndex &index) const
+{
+    if (index.isValid()) {
+        TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+        if (item)
+          return item->name();
+    }
+    return "not found";
+}
+
+//******************************************************************************
+
+/** \brief Return item-id at given index
+ * 
+ * @param index a ModelIndex
+ * @return item-id at given index
+ */
+int TreeModel::itemId(const QModelIndex &index) const
+{
+    if (index.isValid()) {
+        TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
+        if (item)
+          return item->id();
+    }
+    return -1;
+}
 
 //******************************************************************************
 
@@ -405,90 +577,58 @@ BaseObject* TreeModel::getItem(const QModelIndex &index) const
  * @param _column a column
  * @return index of object and column
  */
-QModelIndex TreeModel::getModelIndex(BaseObject* _object, int _column ){
+QModelIndex TreeModel::getModelIndex(TreeItem* _object, int _column ){
 
-  for (int i=0; i < persistentIndexList().count(); i++){
-    BaseObject* tmp = static_cast<BaseObject*>(persistentIndexList().at(i).internalPointer());
-    if ( tmp == _object && persistentIndexList().at(i).column() == _column )
-      return persistentIndexList().at(i);
-  }
+  // root item gets an invalid QModelIndex
+  if ( _object == rootItem_ )
+    return QModelIndex();
 
-  return QModelIndex();
+  QModelIndex index = createIndex(_object->row(), _column, _object);
+
+  return index;
 }
 
 
 //******************************************************************************
 
 /** \brief Recursively update a column up to the root of the tree
- * 
- * @param _obj object to start with
+ *
+ * @param _item item to start with
  */
-void TreeModel::propagateUpwards(BaseObject* _obj, int _column ){
+void TreeModel::propagateUpwards(TreeItem* _item, int _column, bool _value ){
 
-  if ( isRoot(_obj) || (!_obj->isGroup()) )
+  if ( isRoot(_item) || (!_item->isGroup()) )
     return;
 
-  QList< BaseObject* > children = _obj->getLeafs();
-  bool changed = false;
-  bool value   = false;
+  if (_column == 1){ //visibility
+    _item->visible( _value );
 
-  switch ( _column ){
+    //the whole row has to be updated because of the grey background-color
+    QModelIndex index0 = getModelIndex(_item,0);
+    QModelIndex index1 = getModelIndex(_item,3);
 
-    case 1: //VISIBILTY
+    emit dataChanged( index0, index1);
 
-      for (int i=0; i < children.size(); i++)
-        value |= children[i]->visible();
+  } else {
 
-      _obj->visible( value );
-      changed = true;
-
-      break;
-
-    case 2: //SOURCE
-
-      for (int i=0; i < children.size(); i++)
-        value |= children[i]->source();
-
-      if (_obj->source() != value){
-
-        _obj->source( value );
-        changed = true;
-      }
-      break;
-
-    case 3: //TARGET
-
-      for (int i=0; i < children.size(); i++)
-        value |= children[i]->target();
-
-      if (_obj->target() != value){
-
-        _obj->target( value );
-        changed = true;
-      }
-      break;
-
-    default:
-      break;
+    QModelIndex index = getModelIndex(_item,_column);
+    emit dataChanged(index, index);
   }
 
-  if (changed && (!_obj->isGroup()) )
-    emit dataChangedInside(_obj, _column );
-
-  propagateUpwards( _obj->parent(), _column );
+  propagateUpwards( _item->parent(), _column, _value );
 }
 
 //******************************************************************************
 
 /** \brief Recursively update a column up to the root of the tree
- * 
- * @param _obj object to start with
+ *
+ * @param _item item to start with
  */
-void TreeModel::propagateDownwards(BaseObject* _obj, int _column ){
+void TreeModel::propagateDownwards(TreeItem* _item, int _column ){
 
-  for (int i=0; i < _obj->childCount(); i++){
+  for (int i=0; i < _item->childCount(); i++){
 
-    BaseObject* current = _obj->child(i);
+    TreeItem* current = _item->child(i);
 
     bool changed = false;
 
@@ -496,27 +636,27 @@ void TreeModel::propagateDownwards(BaseObject* _obj, int _column ){
 
       case 1: //VISIBILTY
 
-        if ( current->visible() != _obj->visible() ){
+        if ( current->visible() != _item->visible() ){
 
-          current->visible( _obj->visible() );
+          current->visible( _item->visible() );
           changed = true;
         }
         break;
 
       case 2: //SOURCE
 
-        if ( current->source() != _obj->source() ){
+        if ( current->source() != _item->source() ){
 
-          current->source( _obj->source() );
+          current->source( _item->source() );
           changed = true;
         }
         break;
 
       case 3: //TARGET
 
-        if ( current->target() != _obj->target() ){
+        if ( current->target() != _item->target() ){
 
-          current->target( _obj->target() );
+          current->target( _item->target() );
           changed = true;
         }
         break;
@@ -525,11 +665,13 @@ void TreeModel::propagateDownwards(BaseObject* _obj, int _column ){
         break;
     }
 
-    if ( current->isGroup() ){
-      propagateDownwards(current, _column);
+    if (changed){
+      QModelIndex index = getModelIndex(current,_column);
+      emit dataChanged(index, index);
+    }
 
-    } else if (changed)
-      emit dataChangedInside(current, _column );
+    if ( current->isGroup() )
+      propagateDownwards(current, _column);
   }
 }
 
@@ -544,127 +686,8 @@ void TreeModel::propagateDownwards(BaseObject* _obj, int _column ){
  */
 bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*role*/)
 {
-  BaseObject *item = getItem(index);
 
-  bool changed  = false;
-  bool newValue;
-
-  if ( item->isGroup() ) {
-    // Decide on column what to do with the value
-    switch ( index.column() ) {
-
-      // Name
-      case 0 :
-        if ( value.toString() == "" ) 
-          return false; 
-
-        if (item->name() != value.toString() ){
-          item->setName( value.toString() );
-          changed = true;
-        }
-        break;
-
-       // visible
-      case 1 :
-        item->visible( value.toBool() );
-        changed = true;
-
-        propagateDownwards( item, index.column() );
-        break;
-
-      // source
-      case 2 : 
-        item->source( value.toBool() );
-        changed = true;
-
-        propagateDownwards(item, index.column());
-        break;
-
-      //target
-      case 3 : 
-        item->target( value.toBool() );
-        changed = true;
-
-        propagateDownwards(item, index.column());
-        break;
-    }
-
-    if (changed)
-      emit dataChangedInside(item, index.column() );
-
-    return true; 
-  }
-
-  // <- Item is not a group
-
-  BaseObjectData* baseObject = 0;
-
-  // Decide on column what to do with the value ( abort if anything goes wrong)
-  switch ( index.column() ) {
-
-    // Name
-    case 0 :
-      if ( value.toString() == "" ) 
-        return false; 
-
-      if (item->name() != value.toString() ){
-        item->setName( value.toString() );
-        changed = true;
-      }
-      break;
-
-    // visible
-    case 1 : 
-
-      newValue = value.toBool();
-
-      baseObject = dynamic_cast< BaseObjectData* >(item);
-
-      if ( baseObject )
-        if ( item->visible() != newValue ){
-
-          baseObject->visible(newValue);
-          changed = true;
-
-          propagateUpwards( item->parent(), index.column() );
-        }
-
-      break;
-
-    // source
-    case 2 :
-
-      newValue = value.toBool();
-
-      if (item->source() != newValue){
-
-        item->source( newValue );
-        changed = true;
-
-        propagateUpwards( item->parent(), index.column() );
-      }
-      break;
-
-    //target
-    case 3 : 
-
-      newValue = value.toBool();
-
-      if (item->target() != newValue){
-
-        item->target( newValue );
-        changed = true;
-
-        propagateUpwards( item->parent(), index.column() );
-      }
-      break;
-
-    default:
-      break;
-  }
-
-  if (changed)
-    emit dataChangedInside(item, index.column() );
+  emit dataChangedInside( itemId(index), index.column(), value );
 
   return true;
 }
@@ -677,7 +700,7 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
  * @param _item the item to be checked
  * @return is it the root object?
  */
-bool TreeModel::isRoot(BaseObject * _item) {
+bool TreeModel::isRoot(TreeItem * _item) {
   return ( _item == rootItem_ ); 
 }
 
@@ -729,7 +752,7 @@ QMimeData* TreeModel::mimeData(const QModelIndexList& indexes) const
         if (index.isValid()) {
 
           if (!rows.contains( index.row() ) ){
-            BaseObject *item = getItem(index);
+            TreeItem *item = getItem(index);
             stream << item->id();
 
             rows.push_back( index.row() );
@@ -755,60 +778,40 @@ QMimeData* TreeModel::mimeData(const QModelIndexList& indexes) const
  */
 bool TreeModel::dropMimeData(const QMimeData *data,
      Qt::DropAction action, int /*row*/, int /*column*/, const QModelIndex &parent)
- {
-     if (action == Qt::IgnoreAction)
-         return true;
+{
+  if (action == Qt::IgnoreAction)
+      return true;
 
-     if (!data->hasFormat("DataControl/dragDrop"))
-         return false;
-
-     QByteArray encodedData = data->data("DataControl/dragDrop");
-     QDataStream stream(&encodedData, QIODevice::ReadOnly);
-
-     QVector< int > ids;
-
-     while (!stream.atEnd()) {
-       int id;
-       stream >> id;
-
-       ids.push_back( id ); 
-     }
-
-    if (ids.count() == 0)
+  if (!data->hasFormat("DataControl/dragDrop"))
       return false;
 
-      //get new parent
+  QByteArray encodedData = data->data("DataControl/dragDrop");
+  QDataStream stream(&encodedData, QIODevice::ReadOnly);
 
-      BaseObject *newParent = getItem(parent);
-  
-      if ( newParent == 0 || !newParent->isGroup() )
-        return false;
+  QVector< int > ids;
 
-      //and move all objects
-      for (int i = 0; i < ids.count(); i++){
- 
-        BaseObject* item = 0;
-        if (PluginFunctions::getObject(ids[i], item)){
-    
-          item->parent()->removeChild(item);
-  
-          //if parent was group and is empty now ->delete it
-          if ( !isRoot( item->parent() ) &&
-              item->parent()->isGroup() && item->parent()->childCount() == 0){
-  
-            // remove the parent itself from the parent
-            item->parent()->parent()->removeChild(item->parent());
-  
-            // delete it
-            delete item->parent();
-  
-          }
-  
-          item->setParent( newParent  );
-          newParent->appendChild( item );
-        }
-      }
+  while (!stream.atEnd()) {
+    int id;
+    stream >> id;
 
-  reset();
+    ids.push_back( id );
+  }
+
+  if (ids.count() == 0)
+    return false;
+
+  //get new parent
+  TreeItem *newParent = getItem(parent);
+
+  if ( newParent == 0 || !newParent->isGroup() )
+    return false;
+
+  //and move all objects
+  for (int i = 0; i < ids.count(); i++){
+    //tell the DataControlPlugin to move the corresponding BaseObject
+    emit moveBaseObject( ids[i], newParent->id()  );
+  }
+
   return true;
+
  }

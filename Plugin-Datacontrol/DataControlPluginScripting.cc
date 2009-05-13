@@ -468,7 +468,7 @@ void DataControlPlugin::showAll() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type); o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->show();
 
-    visibilityChanged( o_it->id() );
+    emit visibilityChanged( o_it->id() );
   }
 
   emit updateView();
