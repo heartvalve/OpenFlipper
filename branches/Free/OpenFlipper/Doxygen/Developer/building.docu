@@ -117,7 +117,7 @@
  * <li> Set the QTDIR Variable to your Qt Installation directory </li>
  * <li> Extract OpenFlipper source code. </li>
  * <li> Get all required libraries and install them ( including headers! ).</li>
- * <li> Open <code><b> OpenMesh\qmake\packages\packages.Windows </b></code> in a text editor and change header and library paths<br>
+ * <li> Open <code><b> OpenFlipper\qmake\packages\packages.Windows </b></code> in a text editor and change header and library paths<br>
  * such that they match the ones installed (see comments to find path entries).</li>
  * <li> Open Visual Studio 2008 and go to Tools->Visual Studio command prompt</li>
  * <li> Go to the toplevel OpenFlipper directory </li>
@@ -137,7 +137,7 @@
  * - Install required libraries (using a portage system like MacPorts is recommended)
  * - Download and extract OpenFlipper sources<br />
  * 	 (or download via svn:<code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code>)
- * - Adapt library and header paths in <code><b> $OpenFlipper/qmake/packages/packages.Darwin </b></code>
+ * - Adapt library and header paths in <code><b> OpenFlipper/qmake/packages/packages.Darwin </b></code>
  * - Go into OpenFlipper's root directory and type <code><b> qmake -spec macx-g++ </b></code>
  * - Type <code><b>make qmake_all</b></code> to build all Makefiles
  * - Now type <code><b>make release</b></code> to build OpenFlipper 
