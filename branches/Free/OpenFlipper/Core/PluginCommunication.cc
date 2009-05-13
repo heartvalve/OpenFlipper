@@ -104,6 +104,8 @@ void Core::slotVisibilityChanged( int _id ) {
 
   // tell plugins
   emit visibilityChanged( _id );
+
+  updateView();
 }
 
 /** This function is called if the active object has changed. The information is passed to all plugins.
