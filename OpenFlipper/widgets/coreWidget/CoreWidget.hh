@@ -582,6 +582,9 @@ public:
     /// Create a snapshot of the last active examiner
     void slotSnapshot();
 
+    /// Show / hide wheels
+    void slotSwitchWheels(bool _state);
+
     /// Set the snapShot name for all examiners
     void slotSnapshotName();
 
