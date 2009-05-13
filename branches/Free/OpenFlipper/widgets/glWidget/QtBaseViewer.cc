@@ -1128,8 +1128,11 @@ glViewer::createWidgets(QStatusBar* _sb)
   wheelX_->setToolTip("Rotate around <b>x-axis</b>.");
   wheelX_->setWhatsThis( "Rotate around <b>x-axis</b>.");
 
-  // Hide wheels per default
-  slotHideWheels();
+  // Hide or show wheels (depending on ini option)
+  if(!OpenFlipper::Options::showWheelsAtStartup()) {
+
+	  slotHideWheels();
+  }
 
   QGraphicsWidget *wheelX = glScene_->addWidget (wheelX_);
   QGraphicsWidget *wheelY = glScene_->addWidget (wheelY_);

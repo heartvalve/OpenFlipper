@@ -354,6 +354,9 @@ void CoreWidget::setupMenuBar()
   wheelSwitchAction->setWhatsThis( "Show / hide navigation wheels in viewer widget.<br><br>"
                                " These wheels appear in the corners of the viewports. "
 							   " Use wheels to rotate scene.");
+  if(OpenFlipper::Options::showWheelsAtStartup()) {
+	  wheelSwitchAction->setChecked(true);
+  }
   connect( wheelSwitchAction,SIGNAL( toggled(bool) ), this, SLOT( slotSwitchWheels(bool) ) );
   viewMenu_->addAction( wheelSwitchAction);
 

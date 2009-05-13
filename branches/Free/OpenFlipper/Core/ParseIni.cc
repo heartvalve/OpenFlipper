@@ -299,6 +299,13 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::restrictFrameRate(restrictFrameRate);
 
     //============================================================================
+    // Load showWheelsAtStartup
+    //============================================================================
+    bool showWheelsAtStartup = false;
+    if( _ini.get_entry(showWheelsAtStartup, "Options", "ShowWheelsAtStartup") )
+      OpenFlipper::Options::showWheelsAtStartup(showWheelsAtStartup);
+
+    //============================================================================
     // Load maxFrameRate
     //============================================================================
     int maxFrameRate = 35;
@@ -452,6 +459,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   _ini.add_entry("Options","WheelZoomFactorShift", OpenFlipper::Options::wheelZoomFactorShift() );
   // restrict Framerate
   _ini.add_entry("Options","RestrictFrameRate",OpenFlipper::Options::restrictFrameRate() );
+  // Show wheels on startup
+  _ini.add_entry("Options","ShowWheelsAtStartup",OpenFlipper::Options::showWheelsAtStartup() );
   // max Framerate
   _ini.add_entry("Options","MaxFrameRate",OpenFlipper::Options::maxFrameRate() );
 

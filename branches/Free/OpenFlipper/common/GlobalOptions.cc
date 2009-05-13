@@ -125,6 +125,9 @@ static double wheelZoomFactorShift_ = 0.2;
 /// Store the restrictFrameRate_ mode
 static bool restrictFrameRate_ = false;
 
+/// Store the wheel settings
+static bool showWheelsAtStartup_ = false;
+
 /// Store the maxFrameRate_ mode
 static int maxFrameRate_ = 35;
 
@@ -561,8 +564,16 @@ void restrictFrameRate( bool _enable ){
   restrictFrameRate_ = _enable;
 }
 
+void showWheelsAtStartup( bool _show ){
+  showWheelsAtStartup_ = _show;
+}
+
 bool restrictFrameRate( ){
   return restrictFrameRate_;
+}
+
+bool showWheelsAtStartup( ){
+  return showWheelsAtStartup_;
 }
 
 void maxFrameRate( int _fps ){
