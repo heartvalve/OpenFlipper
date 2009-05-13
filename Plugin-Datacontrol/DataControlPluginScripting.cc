@@ -166,6 +166,8 @@ void DataControlPlugin::hideObject( int objectId ) {
 
     emit visibilityChanged( object->id() );
   }
+
+  emit updateView();
 }
 
 
@@ -257,6 +259,8 @@ void DataControlPlugin::showObject( int objectId ) {
 
     emit visibilityChanged( object->id() );
   }
+
+  emit updateView();
 }
 
 
@@ -283,8 +287,9 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
 
   //check if all objects have the same parent
   //abort if the parents differ
-  bool target = (objs[0])->target();
-  bool source = (objs[0])->source();
+  bool visible = (objs[0])->visible();
+  bool target  = (objs[0])->target();
+  bool source  = (objs[0])->source();
 
   BaseObject* parent = (objs[0])->parent();
   for ( int i = 1 ; i < objs.size() ; ++i){
@@ -293,14 +298,17 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
       return;
     }
 
-    target |= (objs[i])->target();
-    source |= (objs[i])->source();
+    visible |= (objs[i])->visible();
+    target  |= (objs[i])->target();
+    source  |= (objs[i])->source();
   }
 
   //create new group
   if (parent == 0)
     parent = PluginFunctions::objectRoot();
+
   GroupObject* groupItem = new GroupObject( "newGroup", dynamic_cast< GroupObject* >(parent));
+
   //set groupName
   if (_groupName == "")
     groupItem->setName("newGroup " + QString::number(groupItem->id()));
@@ -309,22 +317,26 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
   parent->appendChild( dynamic_cast< BaseObject* >( groupItem ) );
   groupItem->setParent( parent );
 
+  emit emptyObjectAdded( groupItem->id() );
+
   //append new children to group
   for ( int i = 0 ; i < objs.size() ; ++i) {
     (objs[i])->parent()->removeChild( objs[i] );
     (objs[i])->setParent( dynamic_cast< BaseObject* >( groupItem )  );
     groupItem->appendChild( objs[i] );
+
+    //inform everyone that the parent changed
+    emit objectPropertiesChanged( (objs[i])->id() );
   }
 
   //update target/source state
+  groupItem->visible(visible);
   groupItem->target(target);
   groupItem->source(source);
 
   emit objectPropertiesChanged( groupItem->id() );
+  emit visibilityChanged ( groupItem->id() );
   emit objectSelectionChanged ( groupItem->id() );
-
-  //because the parent of all items in the group changed
-  emit objectPropertiesChanged( -1 );
 }
 
 

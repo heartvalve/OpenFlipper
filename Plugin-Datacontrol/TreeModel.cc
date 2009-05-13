@@ -514,6 +514,8 @@ void TreeModel::moveItem(TreeItem* _item, TreeItem* _parent ){
 
   endInsertRows();
 
+  if ( newParentIndex.isValid() )
+    dataChanged(newParentIndex, newParentIndex);
 }
 
 //******************************************************************************
