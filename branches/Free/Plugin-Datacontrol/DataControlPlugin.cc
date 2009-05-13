@@ -134,14 +134,11 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
    view_->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
 
-   connect( model_,SIGNAL(dataChangedInside(BaseObject*,int) ),
-            this,  SLOT(  slotDataChanged(BaseObject*,int)) );
+   connect( model_,SIGNAL(dataChangedInside(int,int,const QVariant&) ),
+            this,  SLOT(    slotDataChanged(int,int,const QVariant&)) );
 
-   connect( model_ , SIGNAL( modelAboutToBeReset() ),
-            this , SLOT(slotModelAboutToReset() ) );
-
-   connect( model_ , SIGNAL( modelReset() ),
-            this , SLOT( slotModelResetComplete() ) );
+   connect( model_,SIGNAL(   moveBaseObject(int,int) ),
+            this,  SLOT( slotMoveBaseObject(int,int) ) );
 
    connect( view_,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
             this,SLOT(slotCustomContextMenuRequested ( const QPoint & ) ));
@@ -199,6 +196,16 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
 
   model_->objectChanged( _identifier );
 
+  //check for changes in the tree
+  BaseObject* object = 0;
+
+  if ( PluginFunctions::getObject( _identifier, object) ){
+    propagateUpwards(object->parent(), 2); // 2 = source-target
+
+    if ( object->isGroup() )
+      propagateDownwards(object, 2); // 2 = source-target
+  }
+
   emit updateView();
 }
 
@@ -210,7 +217,19 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
  * @param _identifier id of an object
  */
 void DataControlPlugin::slotVisibilityChanged( int _identifier ){
+  //inform the model
   model_->objectChanged( _identifier );
+
+  //check for changes in the tree
+  BaseObject* obj = 0;
+
+  if ( PluginFunctions::getObject( _identifier, obj) ){
+    propagateUpwards(obj->parent(), 1); // 1 = visibilty
+
+    if ( obj->isGroup() )
+      propagateDownwards(obj, 1); // 1 = visibilty
+  }
+
 }
 
 
@@ -233,8 +252,6 @@ void DataControlPlugin::slotObjectPropertiesChanged( int _identifier ){
  */
 void DataControlPlugin::slotObjectUpdated( int _identifier ){
 
-  if (_identifier == -1)
-    model_->objectChanged( _identifier );
 }
 
 
@@ -244,8 +261,12 @@ void DataControlPlugin::slotObjectUpdated( int _identifier ){
  * 
  * @param _id id of an object
  */
-void DataControlPlugin::fileOpened(int){
-  model_->objectChanged(-1);
+void DataControlPlugin::fileOpened(int _id){
+
+  BaseObject* obj = 0;
+
+  if ( PluginFunctions::getObject(_id, obj) )
+    model_->objectAdded(obj);
 }
 
 
@@ -255,8 +276,18 @@ void DataControlPlugin::fileOpened(int){
  * 
  * @param _id id of an object
  */
-void DataControlPlugin::addedEmptyObject(int){
-  model_->objectChanged(-1);
+void DataControlPlugin::addedEmptyObject(int _id){
+  fileOpened(_id);
+}
+
+//******************************************************************************
+
+/** \brief an object was deleted. delete it internally
+ * 
+ * @param _id id of the object
+ */
+void DataControlPlugin::objectDeleted(int _id){
+  model_->objectDeleted(_id);
 }
 
 //******************************************************************************
@@ -294,94 +325,81 @@ void DataControlPlugin::slotKeyEvent( QKeyEvent* _event )
 /** \brief emit the right updates when the model changed
  *
  * @param topLeft index in the model
- * @param
+ * @param _column hmm
  */
-void DataControlPlugin::slotDataChanged ( BaseObject* _obj, int _column)
+void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& _value)
 {
 
-  if (_obj != 0){
-// std::cerr << "slotDataChanged obj " << _obj->id() << " column " << _column << std::endl;
-    switch ( _column ) {
-      // Name
-      case 0:
-        emit objectPropertiesChanged( _obj->id() );
-        view_->expandToDepth(0);
-        break;
+  //get the corresponding baseObject
+  BaseObject* obj = 0;
+  if ( !PluginFunctions::getObject( _id, obj) )
+    return;
 
-      // show/hide
-      case 1:
-        emit visibilityChanged( _obj->id() );
-        emit updateView();
-        break;
+  switch ( _column ) {
+    // Name
+    case 0:
+      obj->setName( _value.toString() );
+      emit objectPropertiesChanged( obj->id() );
+      break;
 
-      // source
-      case 2:
-        emit objectSelectionChanged( _obj->id() );
-        break;
+    // show/hide
+    case 1:
+      obj->visible( _value.toBool() );
+      emit visibilityChanged( obj->id() );
+      break;
 
-      // target
-      case 3:
-        emit objectSelectionChanged( _obj->id() );
-        break;
+    // source
+    case 2:
+      obj->source( _value.toBool() );
+      emit objectSelectionChanged( obj->id() );
+      break;
 
-      default:
-        break;
-    }
+    // target
+    case 3:
+      obj->target( _value.toBool() );
+      emit objectSelectionChanged( obj->id() );
+      break;
+
+    default:
+      break;
   }
 }
 
 
 //******************************************************************************
 
-/** \brief Store the expanded status of all objects when the model wants to reset
- *
+/** \brief Gets called when an object was moved via drag n drop
+ * 
+ * @param _id id of the object
+ * @param _parentId id of the new parent
  */
-void DataControlPlugin::slotModelAboutToReset(){
+void DataControlPlugin::slotMoveBaseObject(int _id, int _newParentId){
 
-  isExpanded_.clear();
+  BaseObject* obj = 0;
 
-  QVector< BaseObject* > stack;
+  if ( !PluginFunctions::getObject(_id, obj) )
+    return;
 
-  stack.push_back( PluginFunctions::objectRoot() );
+  BaseObject* parent = 0;
 
-  BaseObject* item;
+  if ( !PluginFunctions::getObject(_newParentId, parent) )
+    return;
 
+  BaseObject* oldParent = obj->parent();
 
-  do{ // Store the expanded state of all objects
+  //remove from old parent
+  oldParent->removeChild( obj );
 
-    item = stack.front();
+  //set new parent
+  obj->setParent( parent );
+  parent->appendChild( obj );
 
-    stack.pop_front();
+  // and inform everyone that the parent changed
+  emit objectPropertiesChanged( _id );
 
-    for(int i=0; i < item->childCount(); i++)
-      stack.push_back( item->child(i) );
-
-    isExpanded_[ item ] = view_->isExpanded( model_->getModelIndex(item, 0 ) );
-
-  } while ( !stack.isEmpty() );
-
-}
-
-
-//******************************************************************************
-
-/** \brief restore the expanded status of all objects after reset
- *
- */
-void DataControlPlugin::slotModelResetComplete(){
-
-  // first expandAll so that alle ModelIndices in the TreeModel are recreated
-  view_->expandAll();
-
-  // and then restore the expanded state
-  std::map< BaseObject*, bool>::iterator it;
-
-  for ( it=isExpanded_.begin() ; it != isExpanded_.end(); it++ ){
-    QModelIndex index = model_->getModelIndex( (*it).first, 0 );
-
-    if (index.isValid())
-      view_->setExpanded( index, (*it).second);
-  }
+  //if oldParent is an empty group -> delete it
+  if ( oldParent != PluginFunctions::objectRoot() && oldParent->childCount() == 0 )
+    emit deleteObject( oldParent->id() );
 }
 
 
@@ -406,6 +424,9 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
 
   // Get the primary group names to the file
   _ini.get_entry(rootGroup,"Groups","rootGroup");
+
+  //list of groups
+  QVector< BaseObject* > groups;
 
   // Go over one level of the groups
   while ( rootGroup.size() > 0 ) {
@@ -440,6 +461,16 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
 
       parentItem->appendChild(group);
       group->setParent(parentItem);
+
+      emit emptyObjectAdded( group->id() );
+
+      // in the groups vector we only need the lowest groups
+      // because they are used recursively
+      int p = groups.indexOf( group->parent() );
+      if ( p > -1 )
+        groups.remove( p );
+
+      groups.push_back( group );
     }
 
     // process children
@@ -449,11 +480,17 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
         childItem->parent()->removeChild(childItem);
         childItem->setParent(group);
         group->appendChild(childItem);
+
+        //inform everyone that the parent changed
+        emit objectPropertiesChanged( childItem->id() );
       }
     }
   }
 
-  emit updatedObject(-1);
+  for (int i=0; i < groups.count(); i++){
+    propagateUpwards( groups[i], 1);
+    propagateUpwards( groups[i], 2);
+  }
 }
 
 
@@ -525,6 +562,115 @@ void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
 
   // Write the primary group names to the file
   _ini.add_entry("Groups","rootGroup",rootGroup);
+}
+
+
+//******************************************************************************
+
+/** \brief Recursively update a column up to the root of the tree
+ * 
+ * @param _obj object to start with
+ */
+void DataControlPlugin::propagateUpwards(BaseObject* _obj, int _column ){
+
+  if ( _obj == PluginFunctions::objectRoot() || (!_obj->isGroup()) )
+    return;
+
+  QList< BaseObject* > children = _obj->getLeafs();
+  bool changed = false;
+  bool value    = false;
+  bool value2   = false;
+
+
+  switch ( _column ){
+
+    case 1: //VISIBILTY
+
+      for (int i=0; i < children.size(); i++)
+        value |= children[i]->visible();
+
+      _obj->visible( value );
+
+      changed = true;
+
+      break;
+
+    case 2: //SOURCE-TARGET
+
+      for (int i=0; i < children.size(); i++){
+        value  |= children[i]->source();
+        value2 |= children[i]->target();
+      }
+
+      if (_obj->source() != value){
+        _obj->source( value );
+        changed = true;
+      }
+
+      if (_obj->target() != value2){
+        _obj->target( value2 );
+        changed = true;
+      }
+
+      break;
+
+    default:
+      break;
+  }
+
+  if ( changed )
+    propagateUpwards( _obj->parent(), _column );
+}
+
+//******************************************************************************
+
+/** \brief Recursively update a column up to the root of the tree
+ * 
+ * @param _obj object to start with
+ */
+void DataControlPlugin::propagateDownwards(BaseObject* _obj, int _column ){
+
+  for (int i=0; i < _obj->childCount(); i++){
+
+    BaseObject* current = _obj->child(i);
+
+    bool changed = false;
+
+    switch ( _column ){
+
+      case 1: //VISIBILTY
+
+        if ( current->visible() != _obj->visible() ){
+
+          current->visible( _obj->visible() );
+
+          changed = true;
+        }
+        break;
+
+      case 2: //SOURCE-TARGET
+
+        if ( current->source() != _obj->source() ){
+          current->source( _obj->source() );
+          changed = true;
+        }
+
+        if ( current->target() != _obj->target() ){
+          current->target( _obj->target() );
+          changed = true;
+        }
+
+        break;
+
+      default:
+        break;
+    }
+
+    if ( changed && current->isGroup() ){
+      propagateDownwards(current, _column);
+
+    }
+  }
 }
 
 

@@ -50,6 +50,7 @@
  * 
  */
 void DataControlPlugin::slotPopupRemove (  ) {
+
   QItemSelectionModel* selection = view_->selectionModel();
 
   if (selection == 0) return;
@@ -65,10 +66,9 @@ void DataControlPlugin::slotPopupRemove (  ) {
 
   QString text;
 
-  for ( int i = 0 ; i < indexList.size() ; ++i) {
-    BaseObject* deleteItem = model_->getItem( indexList[i] );
-    text += deleteItem->name() + "\n";
-  }
+  for ( int i = 0 ; i < indexList.size() ; ++i)
+    text += model_->itemName( indexList[i] ) + "\n";
+
   msgBox.setDetailedText(text);
 
   if ( msgBox.exec() == QMessageBox::No)
@@ -76,24 +76,14 @@ void DataControlPlugin::slotPopupRemove (  ) {
 
   for ( int i = 0 ; i < indexList.size() ; ++i) {
 
-    BaseObject* deleteItem = model_->getItem( indexList[i] );
+    int id = model_->itemId( indexList[i] );
 
-    // Skip the root item
-    if ( model_->isRoot( deleteItem ) )
-      continue;
 
-    // remove the whole subtree below this item
-    deleteItem->deleteSubtree();
-
-    // remove the item itself from the parent
-    deleteItem->parent()->removeChild(deleteItem);
-
-    // delete it
-    delete deleteItem;
+    if ( id != -1 )
+      emit deleteObject( id );
   }
 
   emit updateView();
-  emit updatedObject(-1);
 }
 
 
@@ -108,20 +98,29 @@ void DataControlPlugin::slotUngroup (  ) {
   // Get all selected rows
   QModelIndexList indexList = selection->selectedRows ( 0 );
 
-  //remove complete group if selected item was a group
-  BaseObject* group = model_->getItem( indexList[0]);
+  //get the object
+  int id = model_->itemId( indexList[0] );
+  BaseObject* group = 0;
 
-  for (int i=0; i < group->childCount(); i++){
-    group->child(i)->setParent(group->parent());
-    group->parent()->appendChild( group->child(i) );
+  if ( id > 0 && PluginFunctions::getObject(id, group ) ){
+    //iterate over children
+    for (int i=group->childCount()-1; i >= 0; i--){
+      BaseObject* child = group->child(i);
+
+      // remove it from the old parent
+      group->removeChild( child );
+
+      // then change the parent
+      child->setParent(group->parent());
+      child->parent()->appendChild( child );
+
+      // and inform everyone that the parent changed
+      emit objectPropertiesChanged( child->id() );
+    }
+
+    //delete the group
+    emit deleteObject( group->id() );
   }
-
-  group->parent()->removeChild(group);
-
-  delete group;
-
-  //because the parent of all items in the group changed
-  emit objectPropertiesChanged( -1 );
 }
 
 
@@ -140,11 +139,14 @@ void DataControlPlugin::slotCopy() {
 
   for ( int i = 0 ; i < indexList.size() ; ++i) {
 
-    BaseObject* copyItem = model_->getItem( indexList[i] );
+    int id = model_->itemId( indexList[i] );
 
-    int newObject;
+    if ( id > 0){
 
-    emit copyObject( copyItem->id(), newObject );
+      int newObject;
+
+      emit copyObject( id, newObject );
+    }
 
   }
 
@@ -158,6 +160,7 @@ void DataControlPlugin::slotCopy() {
  * 
  */
 void DataControlPlugin::slotGroup() {
+
   QItemSelectionModel* selection = view_->selectionModel();
 
   // Get all selected rows
@@ -165,22 +168,39 @@ void DataControlPlugin::slotGroup() {
 
   //check if all objects have the same parent
   //abort if the parents differ
-  bool visible = (model_->getItem( indexList[0]))->visible();
-  bool target  = (model_->getItem( indexList[0]))->target();
-  bool source  = (model_->getItem( indexList[0]))->source();
 
-  BaseObject* parent = (model_->getItem( indexList[0]))->parent();
+  int id = model_->itemId( indexList[0] );
+  BaseObject* obj0 = 0;
+
+  if (id == -1 || !PluginFunctions::getObject(id, obj0) ){
+    std::cerr << "Group Objects: Unable to get object" << std::endl;
+    return;
+  }
+
+  bool visible = obj0->visible();
+  bool target  = obj0->target();
+  bool source  = obj0->source();
+
+  BaseObject* parent = obj0->parent();
+
   for ( int i = 1 ; i < indexList.size() ; ++i) {
-    BaseObject* item = model_->getItem( indexList[i] );
-    if (parent != item->parent()){
+
+    //get an object
+    id = model_->itemId( indexList[i] );
+    BaseObject* item = 0;
+
+    PluginFunctions::getObject(id, item );
+
+    //compare parent
+    if ( parent != item->parent() ){
       emit log("Cannot group Objects with different parents");
       return;
     }
 
     //remember if at least on child was target/source
-    visible |= (model_->getItem( indexList[i]))->visible();
-    target  |= (model_->getItem( indexList[i]))->target();
-    source  |= (model_->getItem( indexList[i]))->source();
+    visible |= item->visible();
+    target  |= item->target();
+    source  |= item->source();
   }
 
   //create new group
@@ -191,12 +211,24 @@ void DataControlPlugin::slotGroup() {
   parent->appendChild( dynamic_cast< BaseObject* >( groupItem ) );
   groupItem->setParent( parent );
 
+  emit emptyObjectAdded( groupItem->id() );
+
   //append new children to group
   for ( int i = 0 ; i < indexList.size() ; ++i) {
-    BaseObject* item = model_->getItem( indexList[i] );
+
+    //get an object
+    id = model_->itemId( indexList[i] );
+    BaseObject* item = 0;
+
+    PluginFunctions::getObject(id, item );
+
+    //and move it into the group
     item->parent()->removeChild(item);
     item->setParent( dynamic_cast< BaseObject* >( groupItem )  );
     groupItem->appendChild(item);
+
+    //inform everyone that the parent changed
+    emit objectPropertiesChanged( id );
   }
 
   //update target/source state
@@ -205,11 +237,8 @@ void DataControlPlugin::slotGroup() {
   groupItem->source(source);
 
   emit visibilityChanged( groupItem->id() );
-  emit objectPropertiesChanged( groupItem->id() );
+//   emit objectPropertiesChanged( groupItem->id() );
   emit objectSelectionChanged ( groupItem->id() );
-
-  //because the parent of all items in the group changed
-  emit objectPropertiesChanged( -1 );
 }
 
 
@@ -225,7 +254,7 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
   if (!popupIndex_.isValid())
     return;
 
-  BaseObject* item = model_->getItem(popupIndex_);
+  TreeItem* item = model_->getItem(popupIndex_);
 
 
   QItemSelectionModel* selection = view_->selectionModel();
@@ -402,14 +431,19 @@ void DataControlPlugin::slotRename(){
   QModelIndexList indexList = selection->selectedRows ( 0 );
   int selectedRows = indexList.size();
   if (selectedRows == 1){
-    BaseObject* item = model_->getItem( indexList[0]);
-    bool ok;
-    QString newName = QInputDialog::getText(0, tr("Rename"),
-                                            tr("Enter a new name:"), QLineEdit::Normal,
-                                            item->name(), &ok);
-    if (ok && !newName.isEmpty()){
-      item->setName(newName);
-      emit objectPropertiesChanged( item->id() );
+    int id = model_->itemId( indexList[0]);
+    BaseObject* item = 0;
+
+    if ( id != -1 && PluginFunctions::getObject(id,item) ){
+
+      bool ok;
+      QString newName = QInputDialog::getText(0, tr("Rename"),
+                                              tr("Enter a new name:"), QLineEdit::Normal,
+                                              item->name(), &ok);
+      if (ok && !newName.isEmpty()){
+        item->setName(newName);
+        emit objectPropertiesChanged( item->id() );
+      }
     }
   }
 }
@@ -443,8 +477,12 @@ void DataControlPlugin::slotMaterialProperties(){
     // Get all selected rows
     QModelIndexList indexList = selection->selectedRows ( 0 );
     int selectedRows = indexList.size();
-    if (selectedRows == 1)
-      item = model_->getItem( indexList[0] );
+    if (selectedRows == 1){
+      int id = model_->itemId( indexList[0] );
+
+      if ( id > 0 )
+        PluginFunctions::getObject(id,item);
+    }
   }
 
   if ( item != 0 ){
@@ -488,7 +526,11 @@ void DataControlPlugin::slotZoomTo(){
   QModelIndexList indexList = selection->selectedRows ( 0 );
   int selectedRows = indexList.size();
   if (selectedRows == 1){
-    BaseObject* item = model_->getItem( indexList[0]);
+    BaseObject* item = 0;
+    int id = model_->itemId( indexList[0]);
+
+    if (id == -1 || !PluginFunctions::getObject( id, item) )
+      return;
 
     if ( item->isGroup() ) {
       //zoom to all objects in this group
