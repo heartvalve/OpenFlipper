@@ -5,6 +5,42 @@
 
 #ADDLIBDEBUG = true
 
+# CGAL
+CGAL_PATH_INC		= C:\CGAL-3.4\include
+CGAL_PATH_LIB		= /usr/lib
+
+defineTest( cgal ) {
+
+	exists ( $${CGAL_PATH_INC} ) {
+		
+#		addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL ) {
+#			addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_Core ) {
+#				addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_ImageIO ) {
+#					addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_PDB ) {
+#						addLib ( /usr/lib $${CGAL_PATH_LIB}, CGAL_Qt4 ) {
+
+						        # disabled due to compiler errors with gmp
+  						        #INCLUDEPATH *= $${CGAL_PATH_INC}
+  						        #export(INCLUDEPATH)
+							DEFINES += CGAL_USE_F2C
+							export(DEFINES)
+						
+
+							return(true)
+#						}
+#					}
+#				}
+#			}
+#		}
+	} else {
+		message ( WARNING: cgal header files not found! )
+	}
+
+	return(false)
+}
+
+
+
 defineTest( glew ) {
 
   #######################################
@@ -33,7 +69,7 @@ defineTest( glut ) {
   ## Enter here the correct path to GLUT
   #######################################
 
-  GLUT_PATH = c:\glut
+  GLUT_PATH = C:\libs\glut-3.7
 
   #######################################
 
@@ -65,20 +101,26 @@ defineTest( acg ) {
 }
 
 defineTest( openmesh ) {
-  contains( OPENFLIPPER , OpenFlipper ){
-#    message(Using internal OpenMesh Library of OpenFlipper)
-    LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lCore
+  INCLUDEPATH += $${TOPDIR}/OpenMesh/src
+
+  QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/lib
+
+  CONFIG( debug, debug|release ){
+    LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lOpenMeshCored
+    LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lOpenMeshToolsd
   } else {
-    QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY}
-    LIBS+= -L$${TOPDIR}/OpenMesh/Core/lib/$${BUILDDIRECTORY} -lCore
-    export(QMAKE_LIBDIR)
+    LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lOpenMeshCore
+    LIBS+= -L$${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} -lOpenMeshTools
   }
+
+  QMAKE_LIBDIR += $${TOPDIR}/OpenFlipper/$${BUILDDIRECTORY} 
   
   DEFINES *= INCLUDE_TEMPLATES
   DEFINES *= _USE_MATH_DEFINES NOMINMAX
   
+  export(INCLUDEPATH)
+  export(QMAKE_LIBDIR)
   export(LIBS)
-  export(DEFINES)
 }
 
 
@@ -140,7 +182,7 @@ defineTest( gmm ) {
   ## Enter here the correct path to GMM
   #######################################
 
-  GMM_PATH = c:\gmm-3.0
+  GMM_PATH = C:\libs\gmm-3.0
 
   #######################################
 
