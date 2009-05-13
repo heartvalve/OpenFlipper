@@ -15,7 +15,7 @@ DEBUGADDLIB = true
 #################################################################################
 
 # gmm (where $${BASE_PATH} is the installation directory of ACG)
-GMM_PATH_INC 		= $${TOPDIR}/MacOS/Libs/gmm-3.1/include/gmm
+GMM_PATH_INC 		= $${TOPDIR}/MacOS/Libs/gmm-3.1/include
 
 # superlu
 SLU_PATH_INC 		= $${TOPDIR}/MacOS/Libs/SuperLU_3.0
