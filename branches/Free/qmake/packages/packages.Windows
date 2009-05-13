@@ -161,9 +161,11 @@ defineTest( qwt ) {
 
   !addLib( $${QWT_PATH}\lib , qwt5) {
     message (WARNING: QWT not found or wrong path entry in qmake\packages\packages.Windows!) 
+    return(false)
   } else {
     DEFINES *= USE_QWT
     export(DEFINES)
+    return(true)
   }
 
 }
