@@ -237,7 +237,7 @@ void DataControlPlugin::slotGroup() {
   groupItem->source(source);
 
   emit visibilityChanged( groupItem->id() );
-//   emit objectPropertiesChanged( groupItem->id() );
+  emit objectPropertiesChanged( groupItem->id() );
   emit objectSelectionChanged ( groupItem->id() );
 }
 
