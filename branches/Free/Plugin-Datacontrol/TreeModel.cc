@@ -492,8 +492,6 @@ void TreeModel::objectDeleted(int _id){
  */
 void TreeModel::moveItem(TreeItem* _item, TreeItem* _parent ){
 
-  std::cerr << "Move Item " << _item->name().toStdString() << " from " << _item->parent()->name().toStdString() << " to " << _parent->name().toStdString() << std::endl;
-
   QModelIndex itemIndex   = getModelIndex(_item, 0);
   QModelIndex oldParentIndex = itemIndex.parent();
   QModelIndex newParentIndex = getModelIndex(_parent, 0);
@@ -506,16 +504,12 @@ void TreeModel::moveItem(TreeItem* _item, TreeItem* _parent ){
   endRemoveRows();
 
   //insert it at the new location
-  beginInsertRows(newParentIndex, _parent->childCount(), _parent->childCount()); //insert at the bottom
-
+  beginInsertRows(newParentIndex, _parent->childCount(), _parent->childCount() ); //insert at the bottom
     _item->setParent( _parent );
-
     _parent->appendChild( _item );
-
   endInsertRows();
 
-  if ( newParentIndex.isValid() )
-    dataChanged(newParentIndex, newParentIndex);
+  emit layoutChanged();
 }
 
 //******************************************************************************
