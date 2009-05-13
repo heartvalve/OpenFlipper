@@ -760,9 +760,10 @@ void Core::setMaxFrameRate( int _rate ) {
 void
 Core::clearAll()
 {
-  objectRoot_->deleteSubtree();
+
+  slotDeleteAllObjects();
+
   emit allCleared();
-  emit signalObjectUpdated(-1);
 
   slotScriptInfo( "core" , "clearAll()"  );
 }
@@ -1245,9 +1246,12 @@ void Core::slotDeleteAllObjects( ){
 
   // Remember ids
   std::vector< int > ids;
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-    ids.push_back( o_it->id() );
+
+  BaseObject* current = objectRoot_->next();
+
+  while( current != objectRoot_ ){
+    ids.push_back( current->id() );
+    current = current->next();
   }
 
   // remove the whole subtree below the root
