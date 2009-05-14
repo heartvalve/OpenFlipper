@@ -22,7 +22,7 @@
 //== DEFINITION =========================================================
 
 /** These functions are required for Visual Studio to work around missing 
-    functions. Basic equivalent functions for doulbe exist in the float 
+    functions. Basic equivalent functions for double exist in the float 
     header but are named different. So this wrapper makes them standard compatible.
     */
 #ifdef WIN32
@@ -41,6 +41,11 @@
    } 
 
   }
+
+ double nearbyint(double x) {
+   return double(int( x + 0.5));
+ }
+
 #endif
 
 
