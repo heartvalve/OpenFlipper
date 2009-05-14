@@ -35,7 +35,7 @@
     </build>
     <make>
       <abortonerror>false</abortonerror>
-      <numberofjobs>4</numberofjobs>
+      <numberofjobs>16</numberofjobs>
       <prio>0</prio>
       <dontact>false</dontact>
       <makebin/>
