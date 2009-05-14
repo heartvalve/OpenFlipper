@@ -63,31 +63,25 @@
 void
 CoreWidget::
 slotLog(Logtype _type, QString _message) {
-
-  QColor textColor;
-
   switch (_type) {
     case LOGINFO:
-      textColor = QColor(0,160,0);
+      logWidget_->setTextColor(QColor(0,160,0));
       break;
     case LOGOUT:
-      textColor = QColor(0,0,0);
+      logWidget_->setTextColor(QColor(0,0,0));
       break;
     case LOGWARN:
-      textColor = QColor(160,160,0);
+      logWidget_->setTextColor(QColor(160,160,0));
       break;
     case LOGERR:
-      textColor = QColor(250,0,0);
+      logWidget_->setTextColor(QColor(250,0,0));
       break;
   }
 
-  logWidget_->setTextColor( textColor );
   logWidget_->append(_message);
 
   QScrollBar* bar = logWidget_->verticalScrollBar();
   bar->setValue(bar->maximum());
-
-  statusBar_->showMessage(_message,textColor, 4000);
 
   // Make shure, we see the message
 //   QApplication::processEvents();
