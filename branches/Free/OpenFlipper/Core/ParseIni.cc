@@ -553,6 +553,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     _ini.add_entry("Options" , "CustomAnaglyphRightEye", OpenFlipper::Options::anaglyphRightEyeColorMatrix() );
   }
 
+  emit saveOnExit(_ini);
+
   // _ini.add_entry("Options","Stereo",OpenFlipper::Options::stereo() );
 }
 

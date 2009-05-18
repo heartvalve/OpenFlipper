@@ -133,7 +133,7 @@ class INIInterface {
       virtual void loadIniFileOptionsLast( INIFile& /*_ini*/ ) {};
 
       /** \brief Save Plugin Options
-       *  When the core is a bout to save an ini file this slot will be
+       *  When the core is about to save an ini file this slot will be
        *  called once per Plugin.
        *  This Slot will be called after saving the core settings and
        *  before objects are saved to the file
@@ -141,6 +141,16 @@ class INIInterface {
        * @param _ini ini file
        */
       virtual void saveIniFileOptions( INIFile& /*_ini*/ ) {};
+
+      /** \brief Save per Plugin settings when application is about to quit
+       *
+       * Before the Core is closed, this slot will be called per plugin to
+       * save per plugin settings.
+       *
+       * @param _ini ini file
+       */
+      virtual void saveOnExit( INIFile& /*_ini*/ ) {};
+
 
    /** @} */
 
