@@ -748,7 +748,11 @@ void DataControlPlugin::updateBoundingBox(BaseObjectData* _obj)
  * @param _ini reference to ini file
  */
 void DataControlPlugin::saveOnExit(INIFile& _ini){
-
+  if ( !_ini.section_exists( "BoundingBox" ) )
+    _ini.add_section("BoundingBox");
+  _ini.add_entry("BoundingBox","notSelected",tool_->notSelected->isChecked ());
+  _ini.add_entry("BoundingBox","sourceSelected",tool_->sourceSelected->isChecked ());
+  _ini.add_entry("BoundingBox","targetSelected",tool_->targetSelected->isChecked ());
 }
 
 
