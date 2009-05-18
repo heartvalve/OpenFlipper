@@ -138,7 +138,7 @@ defineTest( superlu ) {
 
 	exists ( $${SLU_PATH_INC}/slu_Cnames.h ) {
 		addLib ( $${LIB_BASE} $${SLU_PATH_LIB}, superlu ) {
-  		
+
 			INCLUDEPATH *= $${SLU_PATH_INC}
 	  		export(INCLUDEPATH)
 
@@ -157,10 +157,10 @@ defineTest( taucs ) {
 	exists ( $${TAUCS_PATH_INC}/taucs.h ) {
 		exists ( $${TAUCS_PATH_LIB}/libtaucs.a ) {
                         addLib ( $${LIB_BASE} $${TAUCS_PATH_LIB}, metis )
-			
+
                             lapack()
 
-			
+
 			    LIBS *= $${TAUCS_PATH_LIB}/libtaucs.a
 			    export(LIBS)
 
@@ -191,7 +191,7 @@ defineTest( cgal ) {
   						        #export(INCLUDEPATH)
 							DEFINES += CGAL_USE_F2C
 							export(DEFINES)
-						
+
 
 							return(true)
 						}
@@ -264,7 +264,7 @@ defineTest( glew ) {
 
 	exists ( $${GLEW_PATH_INC}/glew.h ) {
 		addLib ( $${LIB_BASE} $${GLEW_PATH_LIB}, GLEW ) {
-  
+
 			INCLUDEPATH *= $${GLEW_PATH_INC}
   		export(INCLUDEPATH)
 
@@ -346,7 +346,7 @@ defineTest( ltilib ) {
 	} else {
 		message ( WARNING: ltilib header files not found! )
 	}
-	
+
 	return(false)
 }
 
@@ -359,7 +359,7 @@ defineTest( fftw ) {
   			INCLUDEPATH *= $${FFTW_PATH_INC}
   			export(INCLUDEPATH)
 
-				return(true)	
+				return(true)
 
 			}
 		}
@@ -384,7 +384,7 @@ defineTest( freetype ) {
 	} else {
 		message ( WARNING: freetype2 header files not found! )
 	}
-	
+
 	return(false)
 }
 
@@ -393,7 +393,7 @@ defineTest( ftgl ) {
 	freetype() {
 		exists ( $${FTGL_PATH_INC} ) {
 			addLib ( $${LIB_BASE} $${FTGL_PATH_LIB}, ftgl ) {
-  			
+
 				INCLUDEPATH *= $${FTGL_PATH_INC}
 				export(INCLUDEPATH)
   			DEFINES += USE_FTGL
@@ -406,7 +406,7 @@ defineTest( ftgl ) {
 		message ( WARNING: ftgl header files not found! )
 		}
 	}
-  		
+
   return(false)
 }
 
@@ -415,7 +415,7 @@ defineTest( png ) {
 
 	exists ( $${PNG_PATH_INC} ) {
 		addLib ( $${LIB_BASE} $${PNG_PATH_LIB}, png ) {
-  		
+
 			INCLUDEPATH *= $${PNG_PATH_INC}
 			export(INCLUDEPATH)
 
@@ -434,7 +434,7 @@ defineTest( netpbm ) {
 
 	exists ( $${NPBM_PATH_INC} ) {
 		addLib ( $${LIB_BASE} $${NPBM_PATH_LIB}, netpbm ) {
-  
+
 			INCLUDEPATH *= $${NPBM_PATH_INC}
   		export(INCLUDEPATH)
 
@@ -557,7 +557,7 @@ defineTest( usb ) {
 	} else {
 		message ( WARNING: usb header files not found! )
 	}
-	
+
 	return(false)
 }
 
@@ -607,6 +607,7 @@ defineTest( acg ) {
 
 defineTest( openmesh ) {
   INCLUDEPATH += $${TOPDIR}/OpenMesh/src
+  DEPENDPATH  += $${TOPDIR}/OpenMesh/src
 
   QMAKE_LIBDIR += $${TOPDIR}/OpenMesh/lib
 
