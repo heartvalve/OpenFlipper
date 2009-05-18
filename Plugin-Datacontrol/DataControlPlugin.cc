@@ -55,6 +55,12 @@
 
 //******************************************************************************
 
+const ACG::Vec4f base_color (0.0,0.0,0.5,1.0);
+const ACG::Vec4f source_color (0.5,0.0,0.0,1.0);
+const ACG::Vec4f target_color (0.0,0.5,0.2,1.0);
+
+//******************************************************************************
+
 /** \brief Plugin initialization
  *
  */
@@ -111,27 +117,16 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
    _widget = tool_;
    QSize size(300, 300);
    tool_->resize(size);
-   MeshDialogLayout_ = new QGridLayout( tool_);
 
    model_ = new TreeModel( );
 
-   view_ = new QTreeView(0);
-   view_->setModel(model_);
+   view_ = tool_->treeView;
 
-   view_->setMinimumHeight(400);
+   tool_->treeView->setModel(model_);
 
    view_->QTreeView::resizeColumnToContents(1);
    view_->QTreeView::resizeColumnToContents(2);
    view_->QTreeView::resizeColumnToContents(3);
-
-   view_->setContextMenuPolicy(Qt::CustomContextMenu);
-
-   view_->setDragEnabled(true);
-   view_->setAcceptDrops(true);
-   view_->setDropIndicatorShown(true);
-
-   view_->setSelectionBehavior(QAbstractItemView::SelectRows);
-   view_->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
 
    connect( model_,SIGNAL(dataChangedInside(int,int,const QVariant&) ),
@@ -143,10 +138,15 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
    connect( view_,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
             this,SLOT(slotCustomContextMenuRequested ( const QPoint & ) ));
 
+   connect( tool_->notSelected, SIGNAL(stateChanged ( int ) ),
+            this, SLOT (slotBoundingBoxChange ( ) ));
+   connect( tool_->sourceSelected, SIGNAL(stateChanged ( int ) ),
+            this, SLOT (slotBoundingBoxChange ( ) ));
+   connect( tool_->targetSelected, SIGNAL(stateChanged ( int ) ),
+            this, SLOT (slotBoundingBoxChange ( ) ));
 
-   MeshDialogLayout_->addWidget( view_ , 0,0  );
 
-   viewHeader_ = view_->header();
+   viewHeader_ = tool_->treeView->header();
    viewHeader_->setContextMenuPolicy(Qt::CustomContextMenu);
 
    // connect the slot for the context menu
@@ -168,6 +168,8 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
   BaseObjectData* obj = 0;
 
   if ( PluginFunctions::getObject( _identifier, obj) ){
+
+    updateBoundingBox (obj);
 
     if ( obj->target() ) {
       obj->materialNode()->disable_blending();
@@ -213,7 +215,7 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
 //******************************************************************************
 
 /** \brief Update the model if the visibility of an object changed
- * 
+ *
  * @param _identifier id of an object
  */
 void DataControlPlugin::slotVisibilityChanged( int _identifier ){
@@ -230,13 +232,18 @@ void DataControlPlugin::slotVisibilityChanged( int _identifier ){
       propagateDownwards(obj, 1); // 1 = visibilty
   }
 
+  BaseObjectData* object = 0;
+
+  if ( PluginFunctions::getObject( _identifier, object) )
+    updateBoundingBox (object);
+
 }
 
 
 //******************************************************************************
 
 /** \brief Update the model if properties of an object changed
- * 
+ *
  * @param _identifier id of an object
  */
 void DataControlPlugin::slotObjectPropertiesChanged( int _identifier ){
@@ -247,7 +254,7 @@ void DataControlPlugin::slotObjectPropertiesChanged( int _identifier ){
 //******************************************************************************
 
 /** \brief Update the model if an object was deleted
- * 
+ *
  * @param _identifier id of an object
  */
 void DataControlPlugin::slotObjectUpdated( int _identifier ){
@@ -258,7 +265,7 @@ void DataControlPlugin::slotObjectUpdated( int _identifier ){
 //******************************************************************************
 
 /** \brief Update the model if a file has been opened
- * 
+ *
  * @param _id id of an object
  */
 void DataControlPlugin::fileOpened(int _id){
@@ -273,7 +280,7 @@ void DataControlPlugin::fileOpened(int _id){
 //******************************************************************************
 
 /** \brief Update the model if an empty object has been added
- * 
+ *
  * @param _id id of an object
  */
 void DataControlPlugin::addedEmptyObject(int _id){
@@ -283,7 +290,7 @@ void DataControlPlugin::addedEmptyObject(int _id){
 //******************************************************************************
 
 /** \brief an object was deleted. delete it internally
- * 
+ *
  * @param _id id of the object
  */
 void DataControlPlugin::objectDeleted(int _id){
@@ -369,7 +376,7 @@ void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& 
 //******************************************************************************
 
 /** \brief Gets called when an object was moved via drag n drop
- * 
+ *
  * @param _id id of the object
  * @param _parentId id of the new parent
  */
@@ -410,6 +417,18 @@ void DataControlPlugin::slotMoveBaseObject(int _id, int _newParentId){
  * @param _ini an ini file
  */
 void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
+
+  if ( _ini.section_exists( "BoundingBox" ) )
+  {
+    bool value;
+    if (_ini.get_entry(value, "BoundingBox","notSelected"))
+      tool_->notSelected->setChecked (value);
+    if (_ini.get_entry(value, "BoundingBox","sourceSelected"))
+      tool_->sourceSelected->setChecked (value);
+    if (_ini.get_entry(value, "BoundingBox","targetSelected"))
+      tool_->targetSelected->setChecked (value);
+  }
+
   if ( !_ini.section_exists( "Groups" ) )
     return;
 
@@ -501,6 +520,7 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
  * @param _ini an ini file
  */
 void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
+
   if ( !_ini.section_exists( "Groups" ) )
     _ini.add_section("Groups");
 
@@ -562,13 +582,20 @@ void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
 
   // Write the primary group names to the file
   _ini.add_entry("Groups","rootGroup",rootGroup);
+
+  if ( !_ini.section_exists( "BoundingBox" ) )
+    _ini.add_section("BoundingBox");
+  _ini.add_entry("BoundingBox","notSelected",tool_->notSelected->isChecked ());
+  _ini.add_entry("BoundingBox","sourceSelected",tool_->sourceSelected->isChecked ());
+  _ini.add_entry("BoundingBox","targetSelected",tool_->targetSelected->isChecked ());
+
 }
 
 
 //******************************************************************************
 
 /** \brief Recursively update a column up to the root of the tree
- * 
+ *
  * @param _obj object to start with
  */
 void DataControlPlugin::propagateUpwards(BaseObject* _obj, int _column ){
@@ -625,7 +652,7 @@ void DataControlPlugin::propagateUpwards(BaseObject* _obj, int _column ){
 //******************************************************************************
 
 /** \brief Recursively update a column up to the root of the tree
- * 
+ *
  * @param _obj object to start with
  */
 void DataControlPlugin::propagateDownwards(BaseObject* _obj, int _column ){
@@ -671,6 +698,57 @@ void DataControlPlugin::propagateDownwards(BaseObject* _obj, int _column ){
 
     }
   }
+}
+
+//******************************************************************************
+
+/** \brief Bounding box visibility selection changed
+ */
+void DataControlPlugin::slotBoundingBoxChange( )
+{
+  for (PluginFunctions::ObjectIterator o_it; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+    updateBoundingBox (o_it);
+  }
+
+  emit updateView();
+}
+
+//******************************************************************************
+
+/** \brief Update state of bounding box node
+ *
+ * @param _obj object
+ */
+void DataControlPlugin::updateBoundingBox(BaseObjectData* _obj)
+{
+  if (tool_->notSelected->isChecked () ||
+      (_obj->source () && tool_->sourceSelected->isChecked ()) ||
+      (_obj->target () && tool_->targetSelected->isChecked ()))
+  {
+    _obj->boundingBoxNode()->set_status( ACG::SceneGraph::BaseNode::Active );
+
+    ACG::Vec4f color = base_color;
+
+    if (_obj->source () && tool_->sourceSelected->isChecked ())
+      color += source_color;
+
+    if (_obj->target () && tool_->targetSelected->isChecked ())
+      color += target_color;
+
+    _obj->boundingBoxNode()->set_base_color (color);
+  }
+  else
+    _obj->boundingBoxNode()->set_status( ACG::SceneGraph::TranslationManipulatorNode::HideNode );
+
+}
+
+//******************************************************************************
+/** \brief Save settings before application is closed
+ *
+ * @param _ini reference to ini file
+ */
+void DataControlPlugin::saveOnExit(INIFile& _ini){
+
 }
 
 
