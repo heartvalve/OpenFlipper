@@ -55,7 +55,8 @@ BaseObjectData::BaseObjectData(const BaseObjectData& _object)
     rootNode_(_object.rootNode_),
     separatorNode_(0),
     manipulatorNode_(0),
-    materialNode_(0)
+    materialNode_(0),
+    boundingBoxNode_(0)
 {
   // We have to create our own visualization nodes as we are a new object
   init();
@@ -68,7 +69,8 @@ BaseObjectData::BaseObjectData( SeparatorNode* _rootNode ) :
   rootNode_(_rootNode),
   separatorNode_(0),
   manipulatorNode_(0),
-  materialNode_(0)
+  materialNode_(0),
+  boundingBoxNode_(0)
 {
   init();
 }
@@ -91,7 +93,7 @@ void BaseObjectData::cleanup() {
     separatorNode_   = 0;
     manipulatorNode_ = 0;
     materialNode_    = 0;
-
+    boundingBoxNode_ = 0;
     additionalNodes_.clear();
   }
 
@@ -116,8 +118,13 @@ void BaseObjectData::init() {
   }
   else
     std::cerr << "Manipulator Node already exists. this should not happen!" << std::endl;
+  if ( boundingBoxNode_ == 0)
+  {
+    boundingBoxNode_      = new BoundingBoxNode(manipulatorNode(),  "New Bounding Box");
+    boundingBoxNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
+  }
   if ( materialNode_ == 0 )
-    materialNode_         = new MaterialNode(manipulatorNode(),  "New Material");
+    materialNode_         = new MaterialNode(boundingBoxNode(),  "New Material");
 }
 
 
@@ -139,6 +146,9 @@ void BaseObjectData::setName( QString _name ) {
 
   nodename = std::string("ManipulatorNode for object " + _name.toUtf8());
   manipulatorNode_->name( nodename );
+
+  nodename = std::string("BoundingBoxNode for object " + _name.toUtf8());
+  boundingBoxNode_->name( nodename );
 
   nodename = std::string(_name.toUtf8() + "'s Material" );
   materialNode_->name( nodename );
@@ -196,6 +206,11 @@ ACG::SceneGraph::ShaderNode* BaseObjectData::shaderNode() {
 MaterialNode* BaseObjectData::materialNode() {
   return materialNode_;
 }
+
+BoundingBoxNode* BaseObjectData::boundingBoxNode() {
+  return boundingBoxNode_;
+}
+
 
 void BaseObjectData::setBaseColor(ACG::Vec4f _color) {
   materialNode_->set_base_color(_color);
