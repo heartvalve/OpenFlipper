@@ -203,6 +203,9 @@ signals:
    /// This signal is used to tell the plugins to load their new status after objects are loaded
    void iniLoadOptionsLast(  INIFile& _ini );
 
+   /// This signal is emitted before the core deletes its data and exits
+   void saveOnExit( INIFile& _ini );
+
    /// Tell plugins to create a backup
    void createBackup( int _id , QString _name , int nextBackupId_);
 

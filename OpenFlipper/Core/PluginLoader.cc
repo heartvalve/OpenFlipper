@@ -770,6 +770,10 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(this    , SIGNAL(iniSaveOptions( INIFile& )),
                 plugin  , SLOT( saveIniFileOptions( INIFile& ) ),Qt::DirectConnection);
 
+      if ( checkSlot( plugin , "saveOnExit(INIFile&)" ) )
+        connect(this    , SIGNAL(saveOnExit( INIFile& )),
+                plugin  , SLOT( saveOnExit( INIFile& ) ),Qt::DirectConnection);
+
       if ( checkSlot( plugin , "loadIniFileOptions(INIFile&)" ) )
         connect(this    , SIGNAL(iniLoadOptions( INIFile& )),
                 plugin  , SLOT( loadIniFileOptions( INIFile& ) ),Qt::DirectConnection);
