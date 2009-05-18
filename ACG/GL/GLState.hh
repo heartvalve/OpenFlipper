@@ -83,7 +83,7 @@ class ACGDLLEXPORT GLState
 public:
 
   /// Default constructor
-  GLState();
+  GLState(bool _updateGL = true);
 
   /// destructor
   ~GLState() {}

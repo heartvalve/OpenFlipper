@@ -239,11 +239,9 @@ public:
 
   BoundingBoxAction() :
     bbMin_( FLT_MAX,  FLT_MAX,  FLT_MAX),
-    bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX)
-  {
-    state_.set_updateGL(false);
-    state_.reset_modelview();
-  }
+    bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX),
+    state_(false)
+  { }
 
   bool operator()(BaseNode* _node)
   {
