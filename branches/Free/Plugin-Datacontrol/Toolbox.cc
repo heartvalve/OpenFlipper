@@ -5,6 +5,7 @@
 DatacontrolToolboxWidget::DatacontrolToolboxWidget(QWidget* _parent)
     : QWidget(_parent)
 {
+  setupUi(this);
 }
 
 

@@ -100,6 +100,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // INIInterface
     void loadIniFileOptionsLast( INIFile& _ini );
     void saveIniFileOptions( INIFile& _ini );
+    void saveOnExit(INIFile& _ini );
 
     // LoadSaveInterface
     void fileOpened(int _id);
@@ -230,6 +231,23 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
       private :
         QAction* targetAction_;
         QAction* sourceAction_;
+
+/** @} */
+
+//===========================================================================
+/** @name Bounding box related slots/functions
+* @{ */
+//===========================================================================
+
+      private slots:
+
+        /// Bounding box selection changed
+        void slotBoundingBoxChange( );
+
+     private:
+
+        /// Updates bounding box
+        void updateBoundingBox(BaseObjectData* _obj);
 
 /** @} */
 
