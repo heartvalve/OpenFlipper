@@ -436,7 +436,8 @@ void TextureNode::enter(GLState& /* _state */ , unsigned int _drawmode)
                       DrawModes::SOLID_TEXTURED_SHADED |
                       DrawModes::SOLID_ENV_MAPPED |
                       DrawModes::SOLID_2DTEXTURED_FACE |
-                      DrawModes::SOLID_2DTEXTURED_FACE_SHADED ))
+                      DrawModes::SOLID_2DTEXTURED_FACE_SHADED |
+                      DrawModes::SOLID_SHADER))
    {
       glEnable( GL_TEXTURE_2D );
       if ( !textures_.empty() ) {
@@ -456,7 +457,8 @@ void TextureNode::leave(GLState& /* _state */ , unsigned int _drawmode)
                       DrawModes::SOLID_TEXTURED_SHADED |
                       DrawModes::SOLID_ENV_MAPPED |
                       DrawModes::SOLID_2DTEXTURED_FACE |
-                      DrawModes::SOLID_2DTEXTURED_FACE_SHADED ))
+                      DrawModes::SOLID_2DTEXTURED_FACE_SHADED |
+                      DrawModes::SOLID_SHADER))
    {
       glBindTexture( GL_TEXTURE_2D, 0 );
       glDisable( GL_TEXTURE_2D );
