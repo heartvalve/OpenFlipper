@@ -70,7 +70,7 @@ public:
   /// default constructor
   BoundingBoxNode( BaseNode*    _parent=0,
 	    std::string  _name="<BoundingBoxNode>" ) :
-    MaterialNode(_parent,
+       MaterialNode(_parent,
 		 _name,
 		 MaterialNode::BaseColor |
 		 MaterialNode::LineWidth)
@@ -79,7 +79,7 @@ public:
   }
 
   /// destructor
-  ~BoundingBoxNode() {}
+  virtual ~BoundingBoxNode();
 
   /// static name of this class
   ACG_CLASSNAME(BoundingBoxNode);
