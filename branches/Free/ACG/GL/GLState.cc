@@ -63,8 +63,8 @@ const float  GLState::default_shininess(100.0);
 //-----------------------------------------------------------------------------
 
 
-GLState::GLState()
-  : updateGL_(true),
+GLState::GLState(bool _updateGL)
+  : updateGL_(_updateGL),
     blending_(false),
     msSinceLastRedraw_ (1)
 {
