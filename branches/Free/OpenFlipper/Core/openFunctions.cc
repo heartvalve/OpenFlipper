@@ -45,13 +45,13 @@
 
 #include <time.h>
 
-void Core::resetScenegraph() {
+void Core::resetScenegraph(bool _updateCenter) {
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() ) {
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       // update scene graph (get new bounding box and set projection right, including near and far plane)
       PluginFunctions::viewerProperties(i).lockUpdate();
-      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_);
+      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_, _updateCenter);
       PluginFunctions::viewerProperties(i).unLockUpdate();
       coreWidget_->examiner_widgets_[i]->updateGL();
     }
@@ -231,8 +231,9 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
   if ( _id < 0 )
     _id = -1;
   else
-    if ( OpenFlipper::Options::gui() )
+    if ( OpenFlipper::Options::gui() ) {
       coreWidget_->addRecent(_filename,_type);
+    }
 }
 
 /// Slot gets called after a file-plugin has opened an object
@@ -292,7 +293,7 @@ void Core::slotObjectOpened ( int _id ) {
   // ================================================================================
   // Recompute bounding box and scenegraph info
   // ================================================================================
-  resetScenegraph();
+  resetScenegraph(true);
 
   // ================================================================================
   // Tell plugins, that a file has been opened

@@ -389,7 +389,7 @@ private:
   int loadObject ( QString _filename );
 
   /// Do a reset of the scenegraph (bounding box update,...)
-  void resetScenegraph();
+  void resetScenegraph(bool _updateCenter = false);
 
  public :
 
