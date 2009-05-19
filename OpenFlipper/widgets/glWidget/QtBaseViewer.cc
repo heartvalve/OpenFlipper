@@ -244,7 +244,7 @@ void glViewer::swapBuffers() {
 //-----------------------------------------------------------------------------
 
 
-void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, bool _updateCenter)
+void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
 {
 //   if (sceneGraphRoot_ == _root)
 //     return;
@@ -262,21 +262,11 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, bool _updateCenter)
 
     if ( ( bbmin[0] > bbmax[0] ) ||
          ( bbmin[1] > bbmax[1] ) ||
-         ( bbmin[2] > bbmax[2] )   ) {
-
-      setScenePos( 1.0 );
-
-      if(_updateCenter) {
-    	  setSceneCenter( ACG::Vec3d( 0.0,0.0,0.0 ) );
-      }
-    } else {
-
-      setScenePos( (bbmax - bbmin).norm() * 0.5 );
-
-      if(_updateCenter) {
-    	  setSceneCenter( (bbmin + bbmax)* 0.5);
-      }
-    }
+         ( bbmin[2] > bbmax[2] )   )
+      setScenePos( ACG::Vec3d( 0.0,0.0,0.0 ) , 1.0 );
+    else
+      setScenePos( ( bbmin + bbmax )        * 0.5,
+                   ( bbmax - bbmin ).norm() * 0.5 );
   }
 
   updateGL();
@@ -372,32 +362,21 @@ void glViewer::updateProjectionMatrix()
 //-----------------------------------------------------------------------------
 
 
-void glViewer::setScenePos(double _radius)
+void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius)
 {
-	scene_radius_ = trackball_radius_ = _radius;
+  scene_center_ = trackball_center_ = _center;
+  scene_radius_ = trackball_radius_ = _radius;
 
-	orthoWidth_ = 2.0 * scene_radius_;
-	near_ = 0.001 * scene_radius_;
-	far_ = 10.0 * scene_radius_;
+  orthoWidth_ = 2.0   * scene_radius_;
+  near_       = 0.001 * scene_radius_;
+  far_        = 10.0  * scene_radius_;
 
-	updateProjectionMatrix();
-	updateGL();
+  updateProjectionMatrix();
+  updateGL();
 }
 
 
 //----------------------------------------------------------------------------
-
-void glViewer::setSceneCenter(const ACG::Vec3d& _center)
-{
-	scene_center_ = trackball_center_ = _center;
-
-	updateProjectionMatrix();
-	updateGL();
-}
-
-
-//----------------------------------------------------------------------------
-
 
 
 void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
