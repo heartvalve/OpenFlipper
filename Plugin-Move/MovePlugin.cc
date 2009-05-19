@@ -482,8 +482,6 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
 		}
 	}
 
-    PluginFunctions::setSceneCenter(_node->center(), PluginFunctions::ALL_VIEWERS );
-
     lastActiveManipulator_ = objectId;
     updateManipulatorDialog();
   }
@@ -749,6 +747,15 @@ void MovePlugin::slotSetDirection() {
 	return;
     }
 
+//    // Apply to All Target Objects
+//     if ( pW->targetObjects->isChecked() ) {
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ;
+//              o_it PluginFunctions::objectsEnd(); ++o_it){
+//
+// 	    o_it->manipulatorNode()->set_direction( dirX, dirY );
+// 	}
+//     }
+
     BaseObjectData* object = pW->getBaseObjectData();
     if ( object != 0 ) {
         if (  object->manipulatorNode()->visible() ){
@@ -783,6 +790,37 @@ void MovePlugin::slotTranslation() {
     translation[2] =  (pW->translationZ->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
 
+//	// Apply to All Target Objects
+//	if ( pW->targetObjects->isChecked() ) {
+//
+//		int manipcount = 0; // Check how many of the target meshes have an visible manipulator
+//		int targets = 0; // Count the number of target meshes
+//		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it) {
+//			++targets;
+//			if ( ! o_it->manipulatorNode()->hidden() ) {
+//				++ manipcount;
+//			}
+//		}
+//
+//		if (manipcount == 0 ) // No manipulator -> no translation
+//		return;
+//
+//		for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+//				o_it != PluginFunctions::objectsEnd(); ++o_it) {
+//			if ( manipcount > 1 ) { // Use manipulator direction for each target mesh
+//				if ( o_it->manipulatorNode()->hidden() )
+//				continue;
+//			}
+//
+//			translate( o_it->id() , translation );
+//
+//			o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() + translation );
+//			emit createBackup(o_it->id(),"Translation");
+//			emit updatedObject(o_it->id());
+//		}
+//
+//	}
+
     BaseObjectData* object = pW->getBaseObjectData();
 	if (object != 0) {
 		if (object->manipulatorNode()->visible()) {
@@ -797,6 +835,7 @@ void MovePlugin::slotTranslation() {
 	} else {
 		return;
 	}
+
 
     updateManipulatorDialog();
     emit scriptInfo(QString("slotTranslation()"));
@@ -836,6 +875,22 @@ void MovePlugin::slotMoveManipToCOG() {
     QPushButton* but = dynamic_cast<QPushButton*>(QObject::sender());
     movePropsWidget* pW = getDialogFromButton(but);
     if(pW == 0) return;
+
+
+//     if ( pW->targetObjects->isChecked() ) {
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+// 		if (  o_it->manipulatorNode()->hidden() )
+// 		continue;
+//
+// 		if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
+// 		o_it->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::triMesh(*o_it) ) );
+// 		else if ( o_it->dataType( DATA_POLY_MESH ) )
+// 		o_it->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::polyMesh(*o_it)) );
+//
+// 		updateManipulatorDialog();
+// 		o_it->manipulatorNode()->loadIdentity();
+// 	}
+//     } else {
 
     BaseObjectData* object = pW->getBaseObjectData();
     if ( object != 0 ) {
@@ -879,6 +934,27 @@ void MovePlugin::slotRotate() {
 
     angle =  (pW->rotAngle->text()).toDouble(&ok);
     if ( !ok ) {  emit log(LOGERR,"Wrong Format for Angle"); return; }
+
+//     if ( pW->targetObjects->isChecked() ) {
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+// 		if (  o_it->manipulatorNode()->hidden() )
+// 		continue;
+// 		o_it->manipulatorNode()->rotate(  angle,axis);
+//
+// 		if (o_it->dataType( DATA_TRIANGLE_MESH ) )
+// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
+//
+// 		if (o_it->dataType( DATA_POLY_MESH ) )
+// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
+//
+// 		o_it->manipulatorNode()->loadIdentity();
+// 		updateManipulatorDialog();
+//
+// 		emit createBackup(o_it->id(),"Rotation");
+// 		emit updatedObject(o_it->id());
+// 	}
+//     } else {
+
 
     BaseObjectData* object = pW->getBaseObjectData();
 	if (object != 0) {
@@ -928,6 +1004,27 @@ void MovePlugin::slotScale() {
     if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 2"); return; }
     scale[2] =  (pW->scalez->text()).toDouble(&ok);
     if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 3"); return; }
+
+//    if ( pW->targetObjects->isChecked() ) {
+// 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+// 		if (  o_it->manipulatorNode()->hidden() )
+// 		continue;
+// 		o_it->manipulatorNode()->scale(  scale);
+//
+// 		if (o_it->dataType( DATA_TRIANGLE_MESH ) )
+// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::triMesh(*o_it)) );
+//
+// 		if (o_it->dataType( DATA_POLY_MESH ) )
+// 		transformMesh(  o_it->manipulatorNode()->matrix() , (*PluginFunctions::polyMesh(*o_it)) );
+//
+// 		o_it->manipulatorNode()->loadIdentity();
+// 		updateManipulatorDialog();
+//
+// 		emit createBackup(o_it->id(),"Scaling");
+// 		emit updatedObject(o_it->id());
+// 	}
+//     } else {
+
 
     BaseObjectData* object = pW->getBaseObjectData();
 	if (object != 0) {
