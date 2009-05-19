@@ -178,7 +178,7 @@ public:
       The \c sceneGraphToched() signal will be emitted (even if
       \c _root does not actually change).
   */
-  void sceneGraph(ACG::SceneGraph::BaseNode* _root, bool _updateCenter = false);
+  void sceneGraph(ACG::SceneGraph::BaseNode* _root);
 
 
    /// projection mode
@@ -193,16 +193,11 @@ public:
   ProjectionMode projectionMode() const { return projectionMode_; }
 
 
-  /** Sets the dimension of the whole scene.  It sets the eye point far
+  /** Sets the center and dimension of the whole scene.  This point is
+      used as fixpoint for rotations and to set the eye point far
       enough from the scene so that the whole scene is visible.
     */
-  void setScenePos( double _radius );
-
-  /** Sets the center of the whole scene.  This point is
-      used as fixpoint for rotation.
-    */
-  void setSceneCenter( const ACG::Vec3d& _center );
-
+  void setScenePos( const ACG::Vec3d& _center, double _radius );
   /** Get scene's center
       \see setScenePos()
   */

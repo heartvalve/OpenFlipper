@@ -263,24 +263,6 @@ Viewer::ActionMode actionMode();
 DLLEXPORT
 void allowRotation(bool _mode);
 
-/**
- * Set eye position of scene
- */
-DLLEXPORT
-void setScenePos(const double _radius, int _viewer );
-
-/**
- * Calculate and set eye position of scene
- */
-DLLEXPORT
-void setScenePos(int _viewer);
-
-/**
- * Set center of scene
- */
-DLLEXPORT
-void setSceneCenter(const ACG::Vec3d& _center, int _viewer );
-
 /** \brief Map coordinates of GL Widget to global coordinates
  *
  */

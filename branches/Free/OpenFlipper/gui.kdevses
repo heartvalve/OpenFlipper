@@ -1,7 +1,7 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="8" >
+ <DocsAndViews NumberOfDocuments="16" >
   <Doc0 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-TextureControl/TextureData.cc" >
    <View0 Encoding="" Type="Source" />
   </Doc0>
@@ -14,18 +14,42 @@
   <Doc3 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/ACG/Scenegraph/EnvMapNode.hh" >
    <View0 Encoding="" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/openFunctions.cc" >
-   <View0 Encoding="" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/Core.hh" >
+   <View0 Encoding="" line="206" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/Core.hh" >
-   <View0 Encoding="" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/ParseObj.cc" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/ParseObj.cc" >
-   <View0 Encoding="" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/BasePlugin/INIInterface.hh" >
+   <View0 Encoding="" line="143" Type="Source" />
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/glWidget/QtBaseViewer.cc" >
-   <View0 Encoding="" line="387" Type="Source" />
+  <Doc7 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Datacontrol/DataControlPlugin.hh" >
+   <View0 Encoding="" line="85" Type="Source" />
   </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/Plugin-Datacontrol/DataControlPlugin.cc" >
+   <View0 Encoding="" line="749" Type="Source" />
+  </Doc8>
+  <Doc9 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/PluginLoader.cc" >
+   <View0 Encoding="" line="772" Type="Source" />
+  </Doc9>
+  <Doc10 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/ParseIni.cc" >
+   <View0 Encoding="" line="553" Type="Source" />
+  </Doc10>
+  <Doc11 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/saveSettings.cc" >
+   <View0 Encoding="" line="217" Type="Source" />
+  </Doc11>
+  <Doc12 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/Core/Core.cc" >
+   <View0 Encoding="" line="865" Type="Source" />
+  </Doc12>
+  <Doc13 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/ContextMenu.cc" >
+   <View0 Encoding="" line="201" Type="Source" />
+  </Doc13>
+  <Doc14 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/glWidget/QtBaseViewer.cc" >
+   <View0 Encoding="" line="615" Type="Source" />
+  </Doc14>
+  <Doc15 NumberOfViews="1" URL="file:///data/home1/moebius/projects/OpenFlipper/OpenFlipper/widgets/coreWidget/MenuBar.cc" >
+   <View0 Encoding="" line="316" Type="Source" />
+  </Doc15>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

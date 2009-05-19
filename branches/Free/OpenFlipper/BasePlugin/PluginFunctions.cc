@@ -400,72 +400,29 @@ void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up , int _viewe
 }
 
 
-void setScenePos(const double _radius, int _viewer ) {
-
-	if (_viewer == ACTIVE_VIEWER) {
-
-		examiner_widgets_[activeExaminer_]->setScenePos(_radius);
-	}
-	else if (_viewer == ALL_VIEWERS) {
-
-		for (uint i = 0; i < examiner_widgets_.size(); ++i) {
-
-			examiner_widgets_[i]->setScenePos( _radius);
-		}
-	}
-	else if ((_viewer >= 0) && _viewer < (int) examiner_widgets_.size()) {
-
-		examiner_widgets_[_viewer]->setScenePos(_radius);
-	}
-	else {
-		std::cerr << "Requested illegal viewer for setScenePos!!" << std::endl;
-	}
-
-	examiner_widgets_[activeExaminer_];
+void setScenePos(const ACG::Vec3d& _center,const double _radius, int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->setScenePos( _center, _radius );
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->setScenePos( _center, _radius );
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->setScenePos( _center, _radius );
+  else
+    std::cerr << "Requested illegal viewer for setScenePos!!" << std::endl;
+  examiner_widgets_[activeExaminer_];
 }
 
-void setScenePos(int _viewer) {
-
-	if (_viewer == ACTIVE_VIEWER) {
-
-		examiner_widgets_[activeExaminer_]->setScenePos(examiner_widgets_[activeExaminer_]->scene_radius());
-	}
-	else if (_viewer == ALL_VIEWERS) {
-
-		for (uint i = 0; i < examiner_widgets_.size(); ++i) {
-
-			examiner_widgets_[i]->setScenePos(examiner_widgets_[i]->scene_radius());
-		}
-	}
-	else if ((_viewer >= 0) && _viewer < (int) examiner_widgets_.size()) {
-
-		examiner_widgets_[_viewer]->setScenePos(examiner_widgets_[_viewer]->scene_radius());
-	}
-	else {
-		std::cerr << "Requested illegal viewer for setScenePos!!" << std::endl;
-	}
-}
-
-void setSceneCenter(const ACG::Vec3d& _center, int _viewer ) {
-
-	if (_viewer == ACTIVE_VIEWER) {
-
-		examiner_widgets_[activeExaminer_]->setSceneCenter(_center);
-	}
-	else if (_viewer == ALL_VIEWERS) {
-
-		for (uint i = 0; i < examiner_widgets_.size(); ++i) {
-
-			examiner_widgets_[i]->setSceneCenter(_center);
-		}
-	}
-	else if ((_viewer >= 0) && _viewer < (int) examiner_widgets_.size()) {
-
-		examiner_widgets_[_viewer]->setSceneCenter(_center);
-	}
-	else {
-		std::cerr << "Requested illegal viewer for setSceneCenter!!" << std::endl;
-	}
+void setScenePos(const ACG::Vec3d& _center, int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->setScenePos( _center, examiner_widgets_[activeExaminer_]->scene_radius() );
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->setScenePos( _center, examiner_widgets_[i]->scene_radius() );
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->setScenePos( _center, examiner_widgets_[_viewer]->scene_radius() );
+  else
+    std::cerr << "Requested illegal viewer for setScenePos!!" << std::endl;
 }
 
 const ACG::Vec3d& sceneCenter( int _viewer ) {
