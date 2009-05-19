@@ -13,7 +13,7 @@ FIND_PATH(FTGL_INCLUDE_DIR NAMES FTGL/FTGL.h
                                  /usr/local/include
                                  ../../External/include
                                  ${module_file_path}/../../../External/include)
-MARK_AS_ADVANCED(FTGL_INCLUDE_DIR)
+#MARK_AS_ADVANCED(FTGL_INCLUDE_DIR)
 
 # Look for the library.
 FIND_LIBRARY(FTGL_LIBRARY NAMES ftgl ftgl_dynamic_MTD
@@ -23,7 +23,7 @@ FIND_LIBRARY(FTGL_LIBRARY NAMES ftgl ftgl_dynamic_MTD
                                 /usr/local/lib
                                 ../../External/lib
                                 ${module_file_path}/../../../External/lib)
-MARK_AS_ADVANCED(FTGL_LIBRARY)
+#MARK_AS_ADVANCED(FTGL_LIBRARY)
 
 IF( WIN32 AND PREFER_STATIC_LIBRARIES )
   SET( FTGL_STATIC_LIBRARY_NAME ftgl_static_MTD )
