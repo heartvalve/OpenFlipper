@@ -15,6 +15,7 @@ ENDIF (TAUCS_INCLUDE_DIR)
 # Look for the header file.
 FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
                       PATHS  /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/
+				     "c:\\libs\\taucs\\include"
                       )
 
 #
@@ -24,9 +25,15 @@ IF(TAUCS_INCLUDE_DIR )
   SET(TAUCS_FOUND 1)
   SET(TAUCS_INCLUDE_DIR ${TAUCS_INCLUDE_DIR})
 
-  FIND_LIBRARY( TAUCS_LIBRARY
+  IF(WIN32)
+	find_package(CGAL)
+  ELSE(WIN32)
+    FIND_LIBRARY( TAUCS_LIBRARY
                              NAMES taucs.a
-                             PATHS /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib )
+                             PATHS /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
+               )
+  ENDIF(WIN32)
+  
 ELSE(TAUCS_INCLUDE_DIR )
   SET(TAUCS_FOUND 0)
   SET(TAUCS_INCLUDE_DIR)
