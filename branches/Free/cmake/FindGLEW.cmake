@@ -19,8 +19,7 @@ if( WIN32 )
    if( MSVC71 )
        set( COMPILER_PATH "C:/Program\ Files/Microsoft\ Visual\ Studio\ .NET\ 2003/Vc7" )
    endif( MSVC71 )
-   FIND_PATH( GLEW_INCLUDE_DIR glew.h wglew.h
-		  PATH_SUFFIXES gl/ GL/ 
+   FIND_PATH( GLEW_INCLUDE_DIR gl/glew.h gl/wglew.h
               PATHS "c:/glew/include" "c:/libs/glew/include" ${COMPILER_PATH}/PlatformSDK/Include )
    SET( GLEW_NAMES glew32 )
    FIND_LIBRARY( GLEW_LIBRARY
