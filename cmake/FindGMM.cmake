@@ -16,6 +16,7 @@ GET_FILENAME_COMPONENT(module_file_path ${CMAKE_CURRENT_LIST_FILE} PATH )
 FIND_PATH(GMM_INCLUDE_DIR NAMES gmm/gmm.h 
                            PATHS /usr/include
                                  /usr/local/include
+                                 "c:\\libs\\gmm-3.0\\include"
                                  ../../External/include
                                  ${module_file_path}/../../../External/include)
 
