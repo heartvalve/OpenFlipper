@@ -43,6 +43,10 @@ add_subdirectory (ACG)
 add_subdirectory (OpenFlipper/PluginLib)
 add_subdirectory (OpenFlipper/CoreApp)
 
+if( EXISTS "${CMAKE_SOURCE_DIR}/PhySim/CMakeLists.txt" )
+	add_subdirectory (PhySim)
+endif()
+
 # add plugins
 of_add_plugins ()
 
