@@ -13,12 +13,22 @@ ENDIF (TAUCS_INCLUDE_DIR)
 
 
 # Look for the header file.
-FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
-                      PATHS  /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/
-				     "c:\\libs\\taucs\\include"
-                      )
+IF(WIN32)
+      find_package(CGAL)
+	if (NOT CGAL_FOUND)
+	  message(FATAL_ERROR "CGAL not found .. required to use taucs!")
+	endif()
+	 
+	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
+                PATHS  "${CGAL_TAUCS_DIR}/include" )
+ELSE(WIN32)
+	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
+                PATHS  /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/
+		     "c:\\libs\\taucs\\include"
+                )
 
 #
+ENDIF(WIN32)
 
 # Copy the results to the output variables.
 IF(TAUCS_INCLUDE_DIR )
