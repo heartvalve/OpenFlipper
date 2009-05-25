@@ -3,11 +3,21 @@ if (SUPERLU_INCLUDE_DIR)
   set(SUPERLU_FOUND TRUE)
 else (SUPERLU_INCLUDE_DIR)
 
-find_path(SUPERLU_INCLUDE_DIR NAMES supermatrix.h
+if (WIN32)
+   find_path(SUPERLU_INCLUDE_DIR NAMES supermatrix.h
+     PREFIXES SRC
+     PATHS
+     "C:\\libs\\SuperLU_3.0"
+     ${SUPERLU_INCLUDE_PATH}
+   )
+ELSE(WIN32)
+   find_path(SUPERLU_INCLUDE_DIR NAMES supermatrix.h
      PATHS
      /usr/include/superlu
      ${SUPERLU_INCLUDE_PATH}
    )
+
+ENDIF()
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(SUPERLU DEFAULT_MSG SUPERLU_INCLUDE_DIR )
