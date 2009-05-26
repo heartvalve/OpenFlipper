@@ -193,7 +193,7 @@ function (_build_openflipper_plugin plugin)
                           COMMAND ${CMAKE_COMMAND} -E
                           copy_if_different
                             ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/Plugin-${plugin}.dll
-                            ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_PLUGINDIR}
+                            ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_PLUGINDIR}/Plugin-${plugin}.dll
                           )
     elseif (APPLE) 
 
