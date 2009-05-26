@@ -1627,7 +1627,7 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
       if ( isRotating_ &&
       (_event->button() == Qt::LeftButton) &&
       (!(_event->buttons() & Qt::MidButton)) &&
-      (lastMoveTime_.elapsed() < 10) && properties_.animation() )
+      (lastMoveTime_.elapsed() < 50) && properties_.animation() )
         timer_->start(0);
       break;
     }
