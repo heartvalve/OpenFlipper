@@ -425,6 +425,7 @@ void Core::loadSettings(){
                             OpenFlipper::Options::currentDirStr(),
                             tr("INI files (*.ini);;OBJ files (*.obj )") );
 
+    fileDialog.setOption (QFileDialog::DontUseNativeDialog, true);
     fileDialog.setAcceptMode ( QFileDialog::AcceptOpen );
     fileDialog.setFileMode ( QFileDialog::AnyFile );
 

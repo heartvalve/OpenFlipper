@@ -56,6 +56,7 @@ void Core::saveSettings(){
                           OpenFlipper::Options::currentDirStr(),
                           tr("INI files (*.ini);;OBJ files (*.obj )") );
 
+  fileDialog.setOption (QFileDialog::DontUseNativeDialog, true);
   fileDialog.setAcceptMode ( QFileDialog::AcceptSave );
   fileDialog.setFileMode ( QFileDialog::AnyFile );
 
