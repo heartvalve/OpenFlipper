@@ -42,7 +42,7 @@
 
   }
 
- double nearbyint(double x) {
+ inline double nearbyint(double x) {
    return double(int( x + 0.5));
  }
 
