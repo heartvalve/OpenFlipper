@@ -79,8 +79,11 @@ if (APPLE)
       OpenFlipper PROPERTIES
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build"
       MACOSX_BUNDLE_INFO_STRING "ACG OpenFlipper"
-      MACOSX_BUNDLE_ICON_FILE "Icons/OpenFlipper_Icon.icns"
+      MACOSX_BUNDLE_ICON_FILE "OpenFlipper.icns"
    )
+   add_custom_command(TARGET OpenFlipper POST_BUILD                                                              
+     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../Icons/OpenFlipper_Icon.icns" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/OpenFlipper.icns"                         
+   )    
 endif ()
 
 
