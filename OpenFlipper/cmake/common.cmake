@@ -14,10 +14,10 @@ macro (acg_modify_project_dirs)
     endif ()
   elseif (APPLE)
     set (MAC_OPENFLIPPER_BASEDIR "OpenFlipper.app/Contents/Resources")
-    set (ACG_PROJECT_DATADIR "${MAC_ACG_PROJECT_BASEDIR}")
-    set (ACG_PROJECT_PLUGINDIR "${MAC_ACG_PROJECT_BASEDIR}/Plugins")
-    set (ACG_PROJECT_LIBDIR "${MAC_ACG_PROJECT_BASEDIR}/../MacOS")
-    set (ACG_PROJECT_BINDIR "${MAC_ACG_PROJECT_BASEDIR}/../MacOS")
+    set (ACG_PROJECT_DATADIR "${MAC_OPENFLIPPER_BASEDIR}")
+    set (ACG_PROJECT_PLUGINDIR "${MAC_OPENFLIPPER_BASEDIR}/Plugins")
+    set (ACG_PROJECT_LIBDIR "${MAC_OPENFLIPPER_BASEDIR}/../MacOS")
+    set (ACG_PROJECT_BINDIR "${MAC_OPENFLIPPER_BASEDIR}/../MacOS")
     add_definitions(
       -DOPENFLIPPER_APPDIR="../Resources"
       -DOPENFLIPPER_PLUGINDIR="Plugins"
