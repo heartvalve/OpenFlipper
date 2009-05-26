@@ -50,6 +50,7 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
     loadMode_(true),
     supportedTypes_(_supportedTypes)
 {
+  setOption (QFileDialog::DontUseNativeDialog, true);
 
   // Get our layout
   QGridLayout *gridLayout = (QGridLayout*)layout();
