@@ -23,11 +23,8 @@ IF(WIN32)
                 PATHS  "${CGAL_TAUCS_DIR}/include" )
 ELSE(WIN32)
 	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
-                PATHS  /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/
-		     "c:\\libs\\taucs\\include"
+                PATHS  /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include
                 )
-
-#
 ENDIF(WIN32)
 
 # Copy the results to the output variables.
@@ -39,8 +36,8 @@ IF(TAUCS_INCLUDE_DIR )
 	find_package(CGAL)
   ELSE(WIN32)
     FIND_LIBRARY( TAUCS_LIBRARY
-                             NAMES taucs.a
-                             PATHS /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
+                  NAMES taucs
+                  PATHS /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
                )
   ENDIF(WIN32)
   

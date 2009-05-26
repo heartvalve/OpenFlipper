@@ -21,7 +21,7 @@ if( WIN32 )
    message(STATUS ${CHOLMOD_LIBRARY})
 else( WIN32 )
    FIND_PATH( CHOLMOD_INCLUDE_DIRS cholmod.h
-              PATHS /usr/local/include /usr/include
+              PATHS /usr/local/include /usr/include /usr/include/suitesparse/
               PATH_SUFFIXES cholmod/ CHOLMOD/ )
    SET( CHOLMOD_NAMES cholmod CHOLMOD )
    FIND_LIBRARY( CHOLMOD_LIBRARY
