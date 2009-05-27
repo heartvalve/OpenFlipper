@@ -57,6 +57,7 @@
 #include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 
 #include <OpenFlipper/widgets/coreWidget/SideArea.hh>
+#include <OpenFlipper/widgets/coreWidget/ColorStatusBar.hh>
 
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <OpenFlipper/widgets/glWidget/QtGLGraphicsScene.hh>
@@ -765,7 +766,7 @@ public:
     void setupStatusBar();
 
   private :
-    QStatusBar* statusBar_;
+    ColorStatusBar* statusBar_;
 
     QLabel* statusIcon_;
 
