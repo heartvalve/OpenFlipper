@@ -59,8 +59,10 @@ void CoreWidget::statusMessage(QString _message, int _timeout) {
 
 void CoreWidget::setupStatusBar()
 {
-  statusBar_ = statusBar();
-  
+  statusBar_ = new ColorStatusBar();
+
+  setStatusBar( statusBar_ );
+
   QPixmap pix;
   pix.load(OpenFlipper::Options::iconDirStr() +
           OpenFlipper::Options::dirSeparator() + 
