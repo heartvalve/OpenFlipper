@@ -17,6 +17,10 @@ ELSE(WIN32)
      ${SUPERLU_INCLUDE_PATH}
    )
 
+   find_library( SUPERLU_LIBRARY 
+                 superlu
+                 PATHS /usr/lib )
+
 ENDIF()
 
 include(FindPackageHandleStandardArgs)
