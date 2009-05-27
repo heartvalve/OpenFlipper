@@ -37,6 +37,7 @@
 #include <ACG/GL/GLState.hh>
 #include <QStringList>
 #include <ACG/QtScenegraph/QtTranslationManipulatorNode.hh>
+#include <ACG/Scenegraph/PlaneNode.hh>
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
@@ -238,6 +239,10 @@ void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /
    manip_size_modifier_ = manip_size_modifier_ - (float)_event->delta() / 120.0 * 0.1;
    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
          o_it->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
+
+   for (uint i=0; i < additionalManipulators_.size(); i++)
+     (additionalManipulators_[i])->set_size(manip_size_ * manip_size_modifier_);
+
    emit visibilityChanged (-1);
 }
 
@@ -324,10 +329,8 @@ void MovePlugin::slotPickModeChanged( const std::string& _mode)
  */
 void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   BaseObjectData* object;
-  if ( ! PluginFunctions::getObject(_id,object) ) {
-    emit log(LOGERR,"moveObject called for not existing Object Id");
+  if ( ! PluginFunctions::getObject(_id,object) )
     return;
-  }
 
   switch ( object->dataType() ) {
     case DATA_TRIANGLE_MESH:
@@ -454,6 +457,11 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
 
     int objectId = _node->getIdentifier();
 
+    if (objectId == -1){
+      OpenFlipper::Options::redrawDisabled( false );
+      return;
+    }
+
     ACG::Matrix4x4d mat;
     mat.identity();
     mat = _node->matrix();
@@ -502,11 +510,14 @@ void MovePlugin::ManipulatorPositionChanged(QtTranslationManipulatorNode* _node 
   // Position has been changed of the manipulator by a direct function
   int objectId = _node->getIdentifier();
 
-  BaseObjectData* object;
-  PluginFunctions::getObject(objectId,object);
+  if ( objectId > 0 ){
 
-  // Assume that it has a good position now
-  object->manipPlaced( true );
+    BaseObjectData* object;
+    PluginFunctions::getObject(objectId,object);
+
+    // Assume that it has a good position now
+    object->manipPlaced( true );
+  }
 
   // Show manipulator only if in Move mode
   if ( PluginFunctions::pickMode() == "Move" )
@@ -560,7 +571,39 @@ void MovePlugin::placeManip(QMouseEvent * _event)
 
          emit updateView();
       } else {
-         emit log(LOGERR,"Picking ok, but Object was not found in the Object list");
+
+         ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), node_idx );
+
+         ACG::SceneGraph::PlaneNode* planeNode = dynamic_cast< ACG::SceneGraph::PlaneNode* > (node);
+
+         if (planeNode){
+
+            ACG::SceneGraph::QtTranslationManipulatorNode* manipNode = dynamic_cast< ACG::SceneGraph::QtTranslationManipulatorNode* > (node->parent());
+
+            if (manipNode != 0){
+
+              manipNode->loadIdentity();
+              manipNode->set_center(hitPoint);
+              manipNode->set_draw_cylinder(true);
+              manipNode->set_autosize(QtTranslationManipulatorNode::Once);
+              manipNode->set_size(manip_size_ * manip_size_modifier_);
+              manipNode->setMode (manMode_);
+              manipNode->show();
+
+              manipNode->apply_transformation( PluginFunctions::pickMode() == "Move" );
+
+              connect(manipNode , SIGNAL(manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)),
+                      this      , SLOT(  manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)));
+
+              connect(manipNode , SIGNAL(positionChanged(QtTranslationManipulatorNode*)),
+                      this      , SLOT(  ManipulatorPositionChanged(QtTranslationManipulatorNode*)));
+
+              additionalManipulators_.push_back( manipNode );
+            }
+
+         } else {
+           emit log(LOGERR,"Picking ok, but Object was not found in the Object list");
+         }
       }
 
    } else {
@@ -587,11 +630,35 @@ void MovePlugin::showManipulators( )
 				o_it->manipulatorNode()->apply_transformation(
 						PluginFunctions::pickMode() == "Move");
 			}
+
+      for (uint i=0; i < additionalManipulators_.size(); i++)
+        (additionalManipulators_[i])->show();
+
 	} else {
 		for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it
 				!= PluginFunctions::objectsEnd(); ++o_it)
 
 			o_it->manipulatorNode()->hide();
+
+    for (uint i=0; i < additionalManipulators_.size(); i++){
+      //apply the transformation for planeNode
+      ACG::SceneGraph::BaseNode* node = (additionalManipulators_[i])->find("Plane");
+
+      if (node){
+        ACG::SceneGraph::PlaneNode* plane = dynamic_cast< ACG::SceneGraph::PlaneNode* > (node);
+
+        if (plane){
+
+          plane->setPosition( plane->position(), plane->normal() );
+
+          (additionalManipulators_[i])->set_center( (additionalManipulators_[i])->matrix().transform_point( (additionalManipulators_[i])->center() ) );
+          (additionalManipulators_[i])->loadIdentity();
+          
+        }
+      }
+
+      (additionalManipulators_[i])->hide();
+    }
 	}
 
 	emit updateView();

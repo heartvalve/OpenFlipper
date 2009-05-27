@@ -430,6 +430,8 @@ public slots :
 
     bool allTargets_;
 
+    std::vector< ACG::SceneGraph::QtTranslationManipulatorNode* > additionalManipulators_;
+
 };
 
 #endif //MOVEPLUGIN_HH
