@@ -171,6 +171,9 @@ public:
     virtual void keyPressEvent (QKeyEvent* _e);
     virtual void keyReleaseEvent(QKeyEvent* _e);
 
+    // Filter alt key events under windows
+    //bool eventFilter(QObject *obj, QEvent *ev);
+
   signals :
 
     /** When this Signal is emitted when a Keyevent Event occures
