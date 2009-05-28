@@ -635,6 +635,39 @@ defineTest( physim2 ) {
   }
 }
 
+defineTest( petsc ) {
+        INCLUDEPATH *= /usr/include/petsc
+        export(INCLUDEPATH)
+        QMAKE_LIBDIR += /usr/lib
+        export(QMAKE_LIBDIR)
+        LIBS *= -Wl,-rpath=/usr/lib -lpetsc -lpetscmat -lpetscsnes -lpetscts -lpetscvec -lpetscksp -lpetscdm
+        export(LIBS)
+}
+
+defineTest( slepc ) {
+        INCLUDEPATH *= /usr/include/slepc
+        export(INCLUDEPATH)
+        QMAKE_LIBDIR += /usr/lib
+        export(QMAKE_LIBDIR)
+        LIBS *= -Wl,-rpath=/usr/lib -lslepc
+        export(LIBS)
+}
+
+defineTest( mpi ) {
+        INCLUDEPATH *= /usr/lib/openmpi/include
+        export(INCLUDEPATH)
+        QMAKE_LIBDIR += /usr/lib/openmpi/lib
+        export(QMAKE_LIBDIR)
+        LIBS *= -Wl,-rpath=/usr/lib/openmpi/lib -lmpi -lmpi_cxx -lmpi_f77
+        export(LIBS)
+}
+
+defineTest( gsl ) {
+        INCLUDEPATH *= /usr/include
+        export(INCLUDEPATH)
+        LIBS *= -Wl,-rpath=/usr/lib -lgsl
+        export(LIBS)
+}
 
 
 
