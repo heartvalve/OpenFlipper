@@ -28,6 +28,17 @@ IF(CGAL_INCLUDE_DIR )
   # Look for the taucs dir.
   FIND_PATH(CGAL_TAUCS_DIR NAMES include/taucs.h
                            PATHS ${CGAL_INCLUDE_DIR}/../auxiliary/taucs)
+
+  IF(WIN32)
+    include(CGAL_GeneratorSpecificSettings)
+    find_path(CGAL_LIBRARY_DIR 
+                NAMES "CGAL-${CGAL_TOOLSET}-mt.lib" "CGAL-${CGAL_TOOLSET}-mt-gd.lib"
+                PATHS "${CGAL_INCLUDE_DIR}/../lib"
+                DOC "Directory containing the CGAL library"
+               ) 
+  ENDIF(WIN32)
+ 
+
   add_definitions (-DCGAL_AUTOLINK)
 ELSE(CGAL_INCLUDE_DIR )
   SET(CGAL_FOUND 0)
