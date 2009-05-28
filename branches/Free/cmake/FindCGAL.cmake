@@ -16,6 +16,7 @@ FIND_PATH(CGAL_INCLUDE_DIR NAMES CGAL/auto_link/auto_link.h
                            PATHS ../../External/include
                                  "C:/Program Files/CGAL-3.4/include"
                                  "C:/Programme/CGAL-3.4/include"
+                                 "C:/libs/CGAL-3.4/include"
                                  ${module_file_path}/../../../External/include)
 MARK_AS_ADVANCED(CGAL_INCLUDE_DIR)
 
