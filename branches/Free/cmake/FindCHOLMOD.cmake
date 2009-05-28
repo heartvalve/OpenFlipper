@@ -13,12 +13,10 @@ ENDIF (CHOLMOD_INCLUDE_DIRS)
 
 if( WIN32 )
    FIND_PATH( CHOLMOD_INCLUDE_DIRS cholmod.h
-              PATHS "C:\\SuiteSparse\\CHOLMOD\\Include"  )
-   FIND_PATH( CHOLMOD_LIBRARY 
-		     libcholmod.a
-                 PATHS "C:\\SuiteSparse\\CHOLMOD\\Lib" )
-   SET( CHOLMOD_LIBRARY "${CHOLMOD_LIBRARY}/libcholmod.a" )
-   message(STATUS ${CHOLMOD_LIBRARY})
+              PATHS "C:\\libs\\SuiteSparse\\CHOLMOD\\Include"  )
+   FIND_LIBRARY( CHOLMOD_LIBRARY 
+		     cholmod
+                 PATHS "C:\\libs\\SuiteSparse\\CHOLMOD\\Lib" )
 else( WIN32 )
    FIND_PATH( CHOLMOD_INCLUDE_DIRS cholmod.h
               PATHS /usr/local/include /usr/include /usr/include/suitesparse/
