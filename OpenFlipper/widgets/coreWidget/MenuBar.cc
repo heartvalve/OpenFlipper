@@ -72,10 +72,32 @@ void CoreWidget::slotAddMenubarAction( QAction* _action , MenuActionType _type )
 
 
 //=============================================================================
-
+/*
+bool CoreWidget::eventFilter(QObject *obj, QEvent *event)
+ {
+     if (obj == menuBar() ) {
+       emit log(LOGERR,"Alt filter menubar " + QString::number(int(event->type())));
+         if (event->type() == QEvent::ShortcutOverride) {
+             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+             if ( (keyEvent->key() == Qt::Key_Alt ||
+                   keyEvent->key() == Qt::Key_Meta ) &&
+                   keyEvent->modifiers() == Qt::AltModifier )
+                   emit log(LOGERR,"Alt key press");
+             return obj->eventFilter(obj, event);
+         } else {
+             return obj->eventFilter(obj, event);
+         }
+     } else {
+         // pass the event on to the parent class
+         return QMainWindow::eventFilter(obj, event);
+     }
+ }*/
 
 void CoreWidget::setupMenuBar()
 {
+
+ // menuBar()->installEventFilter(this);
+
   // ======================================================================
   // File Menu
   // ======================================================================
