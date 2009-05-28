@@ -10,6 +10,11 @@ if (WIN32)
      "C:\\libs\\SuperLU_3.0"
      ${SUPERLU_INCLUDE_PATH}
    )
+
+   find_library( SUPERLU_LIBRARY 
+                 SuperLU
+                 PATHS "C:\\libs\\SuperLU_3.0\\lib" )
+
 ELSE(WIN32)
    find_path(SUPERLU_INCLUDE_DIR NAMES supermatrix.h
      PATHS
