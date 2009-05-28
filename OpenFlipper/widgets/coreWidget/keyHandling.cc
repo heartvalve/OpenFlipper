@@ -502,7 +502,7 @@ void CoreWidget::registerCoreKeys() {
 /// if a keyPressEvent belongs to the core this functions is called
 void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 
-  emit log(LOGERR,"Key Press");
+  //emit log(LOGERR,"Key Press");
 
   if ( ( _e->key() == Qt::Key_Meta ) && OpenFlipper::Options::isLinux() ) {
     if ( _e->type() == QEvent::KeyPress ) {
@@ -512,7 +512,7 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
 
   if ( ( _e->key() == Qt::Key_Alt ) && ! OpenFlipper::Options::isLinux() ) {
     if ( _e->type() == QEvent::KeyPress ) {
-      emit log(LOGERR,"Switch to examine mode");
+      //emit log(LOGERR,"Switch to examine mode");
       setActionMode( Viewer::ExamineMode );
     }
   }
@@ -577,12 +577,12 @@ void CoreWidget::coreKeyReleaseEvent(QKeyEvent* _e){
     }
   }
 
-  emit log(LOGERR,"Key release");
+  //emit log(LOGERR,"Key release");
 
   if ( ( _e->key() == Qt::Key_Alt ) && !OpenFlipper::Options::isLinux() ) {
-    emit log(LOGERR,"Key alt release");
+    //emit log(LOGERR,"Key alt release");
     if ( _e->type() == QEvent::KeyRelease ) {
-      emit log(LOGERR,"Key alt release toggle");
+      //emit log(LOGERR,"Key alt release toggle");
       setActionMode( lastActionMode() );
     }
   }
