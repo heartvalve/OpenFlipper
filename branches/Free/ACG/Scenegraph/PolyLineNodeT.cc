@@ -44,6 +44,7 @@
 
 #include "PolyLineNodeT.hh"
 #include "../GL/gl.hh"
+#include <ACG/Utils/VSToolsT.hh>
 #include <vector>
 
 //== NAMESPACES ===============================================================
@@ -52,13 +53,6 @@ namespace ACG {
 namespace SceneGraph {
 
 //== IMPLEMENTATION ==========================================================
-
-#ifdef WIN32
-	inline double round ( double _value ) {
-		return floor( _value + 0.5 );
-	}
-#endif
-
 
 template <class PolyLine>
 void
