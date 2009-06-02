@@ -994,27 +994,25 @@ void glViewer::moveEvent (QGraphicsSceneMoveEvent *)
 
 void glViewer::encodeView(QString& _view)
 {
+  // Get current matrices
   const ACG::GLMatrixd m = glstate_->modelview();
   const ACG::GLMatrixd p = glstate_->projection();
 
-  _view.sprintf("%s\n"
-                "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-                "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-                "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-                "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-                "%d %d %d %lf\n",
-                VIEW_MAGIC,
-                m(0,0), m(0,1), m(0,2), m(0,3),
-                m(1,0), m(1,1), m(1,2), m(1,3),
-                m(2,0), m(2,1), m(2,2), m(2,3),
-                m(3,0), m(3,1), m(3,2), m(3,3),
-                p(0,0), p(0,1), p(0,2), p(0,3),
-                p(1,0), p(1,1), p(1,2), p(1,3),
-                p(2,0), p(2,1), p(2,2), p(2,3),
-                p(3,0), p(3,1), p(3,2), p(3,3),
-                glWidth(), glHeight(),
-                projectionMode_,
-                orthoWidth_ );
+  // Add modelview matrix to output
+  _view += QString(VIEW_MAGIC) + "\n";
+  _view += QString::number(m(0,0)) + " " + QString::number(m(0,1)) + " " + QString::number(m(0,2)) + " " + QString::number(m(0,3)) + "\n";
+  _view += QString::number(m(1,0)) + " " + QString::number(m(1,1)) + " " + QString::number(m(1,2)) + " " + QString::number(m(1,3)) + "\n";
+  _view += QString::number(m(2,0)) + " " + QString::number(m(2,1)) + " " + QString::number(m(2,2)) + " " + QString::number(m(2,3)) + "\n";
+  _view += QString::number(m(3,0)) + " " + QString::number(m(3,1)) + " " + QString::number(m(3,2)) + " " + QString::number(m(3,3)) + "\n";
+
+  // Add projection matrix to output
+  _view += QString::number(p(0,0)) + " " + QString::number(p(0,1)) + " " + QString::number(p(0,2)) + " " + QString::number(p(0,3)) + "\n";
+  _view += QString::number(p(1,0)) + " " + QString::number(p(1,1)) + " " + QString::number(p(1,2)) + " " + QString::number(p(1,3)) + "\n";
+  _view += QString::number(p(2,0)) + " " + QString::number(p(2,1)) + " " + QString::number(p(2,2)) + " " + QString::number(p(2,3)) + "\n";
+  _view += QString::number(p(3,0)) + " " + QString::number(p(3,1)) + " " + QString::number(p(3,2)) + " " + QString::number(p(3,3)) + "\n";
+
+  // add gl width/height, current projection Mode and the ortho mode width to output
+  _view += QString::number(glWidth()) + " " +  QString::number(glHeight()) + " " + QString::number(projectionMode_) + " " + QString::number(orthoWidth_) + "\n";
 }
 
 
@@ -1026,34 +1024,71 @@ bool glViewer::decodeView(const QString& _view)
   if (_view.left(sizeof(VIEW_MAGIC)-1) != QString(VIEW_MAGIC))
     return false;
 
+  // Remove the magic from the string
+  QString temp = _view;
+  temp.remove(0,sizeof(VIEW_MAGIC));
 
+  //Split it into its components
+  QStringList split = temp.split(QRegExp("[\\n\\s]"),QString::SkipEmptyParts);
 
   ACG::GLMatrixd m, p;
   int            w, h, pMode;
 
-  sscanf( (_view.toAscii().data())+sizeof(VIEW_MAGIC)-1,
-	  "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-	  "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-	  "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-	  "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-	  "%d %d %d %lf\n",
-	  &m(0,0), &m(0,1), &m(0,2), &m(0,3),
-	  &m(1,0), &m(1,1), &m(1,2), &m(1,3),
-	  &m(2,0), &m(2,1), &m(2,2), &m(2,3),
-	  &m(3,0), &m(3,1), &m(3,2), &m(3,3),
-	  &p(0,0), &p(0,1), &p(0,2), &p(0,3),
-	  &p(1,0), &p(1,1), &p(1,2), &p(1,3),
-	  &p(2,0), &p(2,1), &p(2,2), &p(2,3),
-	  &p(3,0), &p(3,1), &p(3,2), &p(3,3),
-	  &w, &h,
-	  &pMode,
-	  &orthoWidth_ );
+  // Check if the number of components matches the expected size
+  if ( split.size() != 36 ) {
+    std::cerr << "Unable to paste view ... wrong parameter count!! is" <<  split.size()  << std::endl;
+    return false;
+  }
 
+  // Parse the components
+  bool ok = true;;
+
+  m(0,0) = split[0].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(0,1) = split[1].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(0,2) = split[2].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(0,3) = split[3].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(1,0) = split[4].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(1,1) = split[5].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(1,2) = split[6].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(1,3) = split[7].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(2,0) = split[8].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(2,1) = split[9].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(2,2) = split[10].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(2,3) = split[11].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(3,0) = split[12].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(3,1) = split[13].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(3,2) = split[14].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(3,3) = split[15].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(0,0) = split[16].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(0,1) = split[17].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(0,2) = split[18].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(0,3) = split[19].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(1,0) = split[20].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(1,1) = split[21].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(1,2) = split[22].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(1,3) = split[23].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(2,0) = split[24].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(2,1) = split[25].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(2,2) = split[26].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(2,3) = split[27].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(3,0) = split[28].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(3,1) = split[29].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(3,2) = split[30].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(3,3) = split[31].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+
+  w =  split[32].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  h =  split[33].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  pMode =  split[34].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  orthoWidth_ = split[35].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+
+  // Switch to our gl context
   makeCurrent();
 
+  // set projection mode
   if (projectionMode_ != (ProjectionMode)pMode)
     projectionMode((ProjectionMode)pMode);
 
+  // Apply new modelview matrix
   glstate_->set_modelview(m);
 
 
@@ -1067,9 +1102,7 @@ bool glViewer::decodeView(const QString& _view)
 //     updateGeometry();
 //   }
 
-
   updateGL();
-
 
   return true;
 }
