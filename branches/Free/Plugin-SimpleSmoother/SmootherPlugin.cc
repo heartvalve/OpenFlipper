@@ -67,79 +67,79 @@ bool SmootherPlugin::initializeToolbox(QWidget*& _widget)
    return true;
 }
 
-/** \brief 
- * 
+/** \brief
+ *
  */
 void SmootherPlugin::simpleLaplace() {
 
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    
+
     if ( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
-    
+
         // Get the mesh to work on
       TriMesh* mesh = PluginFunctions::triMesh(*o_it);
-      
+
       // Property for the active mesh to store original point positions
       OpenMesh::VPropHandleT< TriMesh::Point > origPositions;
-      
+
       // Add a property to the mesh to store original vertex positions
       mesh->add_property( origPositions, "SmootherPlugin_Original_Positions" );
-      
+
       for ( int i = 0 ; i < iterationsSpinbox_->value() ; ++i ) {
-      
+
           // Copy original positions to backup ( in Vertex property )
           TriMesh::VertexIter v_it, v_end=mesh->vertices_end();
           for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
             mesh->property( origPositions, v_it ) = mesh->point(v_it);
           }
-      
+
           // Do one smoothing step (For each point of the mesh ... )
           for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
-      
+
             TriMesh::Point point = TriMesh::Point(0.0,0.0,0.0);
-      
+
             // Flag, to skip boundary vertices
             bool skip = false;
-      
+
             // ( .. for each Outoing halfedge .. )
             TriMesh::VertexOHalfedgeIter voh_it(*mesh,v_it);
             for ( ; voh_it; ++voh_it ) {
                 // .. add the (original) position of the Neighbour ( end of the outgoing halfedge )
                 point += mesh->property( origPositions, mesh->to_vertex_handle(voh_it) );
-      
+
                 // Check if the current Halfedge is a boundary halfedge
                 // If it is, abort and keep the current vertex position
                 if ( mesh->is_boundary( voh_it.handle() ) ) {
                   skip = true;
                   break;
                 }
-      
+
             }
-      
+
             // Devide by the valence of the current vertex
             point /= mesh->valence( v_it );
-      
+
             if ( ! skip ) {
                 // Set new position for the mesh if its not on the boundary
                 mesh->point(v_it) = point;
             }
           }
-      
+
       }// Iterations end
-      
+
       // Remove the property
       mesh->remove_property( origPositions );
-      
+
       mesh->update_normals();
-      
+
       emit updatedObject( o_it->id() );
 
 
-   } else if ( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
+   } else if ( o_it->dataType( DATA_POLY_MESH ) ) {
 
        // Get the mesh to work on
-      PolyMesh* mesh = dynamic_cast< MeshObject< PolyMesh,DATA_POLY_MESH >* > (*o_it)->mesh();
+      PolyMesh* mesh = PluginFunctions::polyMesh(*o_it);
 
       // Property for the active mesh to store original point positions
       OpenMesh::VPropHandleT< TriMesh::Point > origPositions;
