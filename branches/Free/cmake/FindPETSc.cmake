@@ -38,7 +38,7 @@
 
 find_path (PETSC_DIR include/petsc.h
   HINTS ENV PETSC_DIR
-  PATHS /usr/lib/petsicdir/3.0.0
+  PATHS /usr/lib/petscdir/3.0.0
   DOC "PETSc Directory")
 
 
