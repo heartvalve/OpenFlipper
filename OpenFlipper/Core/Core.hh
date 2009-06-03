@@ -552,6 +552,9 @@ private:
    /// Read Options that needs the GUI to be set up completely
    void readGUIOptions(INIFile& _ini);
 
+   /// Read recent files from ini-file
+   void readRecentFiles(QString _filename);
+
    /// Get and set Application options from ini file
    void readApplicationOptions(INIFile& _ini);
 
