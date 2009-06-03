@@ -62,24 +62,19 @@ void SelectionPlugin::selectVertices( int objectId , idList _vertexList ) {
   if ( _vertexList.size() == 0 )
     return;
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::selectVertices(PluginFunctions::triMesh(object), _vertexList);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectVertices(PluginFunctions::polyMesh(object), _vertexList);
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::selectVertices( PluginFunctions::polyLine(object) , _vertexList );
-      break;
 #endif   
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::selectVertices( PluginFunctions::splineCurve(object) , _vertexList );
-      break;
 #endif            
-    default:
+  else {
       emit log(LOGERR,"selectAllVertices : Unsupported object Type" ); 
       return;
   }
@@ -108,24 +103,19 @@ void SelectionPlugin::unselectVertices( int objectId , idList _vertexList ) {
   if ( _vertexList.size() == 0 )
     return;
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::unselectVertices(PluginFunctions::triMesh(object), _vertexList);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::unselectVertices(PluginFunctions::polyMesh(object), _vertexList);
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::unselectVertices( PluginFunctions::polyLine(object) , _vertexList );
-      break;
 #endif        
 #ifdef ENABLE_BSPLINECURVE_SUPPORT      
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::unselectVertices( PluginFunctions::splineCurve(object) , _vertexList );
-      break;
 #endif            
-    default:
+  else {
       emit log(LOGERR,"unselectVertices : Unsupported object Type" ); 
       return;
   }
@@ -154,24 +144,19 @@ void SelectionPlugin::selectAllVertices( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::selectAllVertices(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectAllVertices(PluginFunctions::polyMesh(object));
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::selectAllVertices( PluginFunctions::polyLine(object) );
-      break;
 #endif           
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::selectAllVertices( PluginFunctions::splineCurve(object) );
-      break;
 #endif            
-    default:
+  else {
       emit log(LOGERR,"selectAllVertices : Unsupported object Type" ); 
       return;
   }
@@ -190,24 +175,19 @@ void SelectionPlugin::clearVertexSelection( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::clearVertexSelection(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::clearVertexSelection(PluginFunctions::polyMesh(object));
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::clearVertexSelection( PluginFunctions::polyLine(object) );
-      break;
 #endif           
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::clearVertexSelection( PluginFunctions::splineCurve(object) );
-      break;      
 #endif            
-    default:
+  else {
       emit log(LOGERR,"clearVertexSelection : Unsupported object Type" ); 
       return;
   }
@@ -226,24 +206,19 @@ void SelectionPlugin::invertVertexSelection( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::invertVertexSelection(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::invertVertexSelection(PluginFunctions::polyMesh(object));
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::invertVertexSelection( PluginFunctions::polyLine(object) );
-      break;
 #endif           
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::invertVertexSelection( PluginFunctions::splineCurve(object) );
-      break;   
 #endif                 
-    default:
+  else {
       emit log(LOGERR,"invertVertexSelection : Unsupported object Type" ); 
       return;
   }
@@ -262,14 +237,11 @@ void SelectionPlugin::selectBoundaryVertices( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::selectBoundaryVertices(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectBoundaryVertices(PluginFunctions::polyMesh(object));
-      break;
-    default:
+  else {
       emit log(LOGERR,"selectBoundaryVertices : Unsupported object Type" ); 
       return;
   }
@@ -288,14 +260,11 @@ void SelectionPlugin::selectClosestBoundaryVertices( int objectId, int VertexId 
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       closestBoundarySelection(PluginFunctions::triMesh(object), VertexId , VERTEX );
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       closestBoundarySelection(PluginFunctions::polyMesh(object), VertexId, VERTEX );
-      break;
-    default:
+  else {
       emit log(LOGERR,"selectClosestBoundaryVertices : Unsupported object Type" ); 
       return;
   }
@@ -314,14 +283,11 @@ void SelectionPlugin::shrinkVertexSelection( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::shrinkVertexSelection(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::shrinkVertexSelection(PluginFunctions::polyMesh(object));
-      break;
-    default:
+  else {
       emit log(LOGERR,"shrinkVertexSelection : Unsupported object Type" ); 
       return;
   }
@@ -340,14 +306,11 @@ void SelectionPlugin::growVertexSelection( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::growVertexSelection(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::growVertexSelection(PluginFunctions::polyMesh(object));
-      break;
-    default:
+  else {
       emit log(LOGERR,"growVertexSelection : Unsupported object Type" ); 
       return;
   }
@@ -368,24 +331,19 @@ idList SelectionPlugin::getVertexSelection( int objectId )
   
   emit scriptInfo( "getVertexSelection( ObjectId )" );
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       return MeshSelection::getVertexSelection(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getVertexSelection(PluginFunctions::polyMesh(object));
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       return PolyLineSelection::getVertexSelection( PluginFunctions::polyLine(object) );
-      break;
 #endif      
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       return BSplineCurveSelection::getVertexSelection(PluginFunctions::splineCurve(object));
-      break;
 #endif            
-    default:
+  else {
       emit log(LOGERR,"getVertexSelection : Unsupported object Type" ); 
       return idList(0);
   }
@@ -404,14 +362,11 @@ void SelectionPlugin::deleteSelection( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       deleteSelection(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       deleteSelection(PluginFunctions::polyMesh(object));
-      break;
-    default:
+  else {
       emit log(LOGERR,"deleteSelection : Unsupported object Type" ); 
       return;
   }
