@@ -12,12 +12,12 @@
 //  it under the terms of the GNU Lesser General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  OpenFlipper is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with OpenFlipper.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -32,12 +32,13 @@
 #include "MovePlugin.hh"
 
 #include "../OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include <ObjectTypes/PolyLine/PolyLine.hh>
 
 #include <MeshTools/MeshFunctions.hh>
 
 
 /** \brief Set Descriptions for Scripting Slots
- * 
+ *
  */
 void MovePlugin::setDescriptions(){
 
@@ -136,7 +137,7 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
 //------------------------------------------------------------------------------
 
 /** \brief translate a set of vertex handles
- * 
+ *
  * @param _objectId id of an object
  * @param _vHandles list of vertex handles
  * @param _vector translation vector
@@ -185,7 +186,7 @@ void MovePlugin::translate( int _objectId , idList _vHandles, Vector _vector ){
 //------------------------------------------------------------------------------
 
 /** \brief translate vertex selection
- * 
+ *
  * @param _objectId id of an object
  * @param _vector translation vector
  */
@@ -233,7 +234,7 @@ void MovePlugin::translateSelection( int _objectId , Vector _vector) {
 //------------------------------------------------------------------------------
 
 /** \brief tranform an object
- * 
+ *
  * @param _objectId object id
  * @param _matrix transformation matrix
  */
@@ -287,7 +288,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
 //------------------------------------------------------------------------------
 
 /** \brief Tranform a set of vertex handles
- * 
+ *
  * @param _objectId id of an object
  * @param _vHandles list of vertex handles
  * @param _matrix transformation matrix
@@ -346,7 +347,7 @@ void MovePlugin::transform( int _objectId , idList _vHandles, Matrix4x4 _matrix 
 //------------------------------------------------------------------------------
 
 /** \brief transform vertex selection
- * 
+ *
  * @param _objectId id of an object
  * @param _matrix transformation matrix
  */
@@ -404,7 +405,7 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
 //------------------------------------------------------------------------------
 
 /** \brief transform face selection
- * 
+ *
  * @param _objectId id of an object
  * @param _matrix transformation matrix
  */
@@ -486,7 +487,7 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
 //------------------------------------------------------------------------------
 
 /** \brief transform edge selection
- * 
+ *
  * @param _objectId id of an object
  * @param _matrix transformation matrix
  */
@@ -572,7 +573,7 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
 //------------------------------------------------------------------------------
 
 /** \brief set the position of the manipulator
- * 
+ *
  * @param _objectId id of an object
  * @param _position new position
  */
@@ -616,7 +617,7 @@ void MovePlugin::setManipulatorPosition( int _objectId , Vector _position ){
 //------------------------------------------------------------------------------
 
 /** \brief Get the position of the manipulator
- * 
+ *
  * @param _objectId id of an object
  * @return current manipulator position
  */
@@ -635,7 +636,7 @@ Vector MovePlugin::manipulatorPosition( int _objectId ){
 //------------------------------------------------------------------------------
 
 /** \brief set the direction of the manipulator
- * 
+ *
  * @param _objectId id of an object
  * @param _directionX vector for the X direction
  * @param _directionY vector for the Y direction
@@ -668,7 +669,7 @@ void MovePlugin::setManipulatorDirection( int _objectId , Vector _directionX, Ve
 //------------------------------------------------------------------------------
 
 /** \brief Get the x-direction of the manipulator
- * 
+ *
  * @param _objectId id of an object
  * @return x-direction of the manipulator
  */
@@ -687,7 +688,7 @@ Vector MovePlugin::manipulatorDirectionX( int _objectId ){
 //------------------------------------------------------------------------------
 
 /** \brief Get the y-direction of the manipulator
- * 
+ *
  * @param _objectId id of an object
  * @return y-direction of the manipulator
  */
@@ -706,7 +707,7 @@ Vector MovePlugin::manipulatorDirectionY( int _objectId ){
 //------------------------------------------------------------------------------
 
 /** \brief Get the z-direction of the manipulator
- * 
+ *
  * @param _objectId id of an object
  * @return z-direction of the manipulator
  */
