@@ -680,6 +680,17 @@ void TextureControlPlugin::computeValue(Texture& _texture, double _min, double _
          _value = clamp_min;
    }
 
+   // if all texCoords have the same value
+   if ( _min == _max ){
+
+      if ( ! repeat )
+        _value = 0.0;
+      else
+        _value = max_val;
+
+     return;
+   }
+
    // if the texture should not be repeated, scale to 0..1
    if ( ! repeat ) {
       if (! center ) {
@@ -693,8 +704,12 @@ void TextureControlPlugin::computeValue(Texture& _texture, double _min, double _
             _value /= ( _max * 2.0);
             _value += 0.5;
          } else {
-            _value /= ( _min * 2.0);
-            _value = 0.5 - _value;
+            if ( _min == 0.0 ){
+              _value = 0.0;
+            } else {
+              _value /= ( _min * 2.0);
+              _value = 0.5 - _value;
+            }
          }
       }
    } else {
