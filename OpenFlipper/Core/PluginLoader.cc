@@ -514,21 +514,6 @@ void Core::loadPlugin(QString filename, bool silent){
                 this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
     }
 
-    //Check if its a filePlugin
-    FileInterface* filePlugin = qobject_cast< FileInterface * >(plugin);
-    if ( filePlugin ){
-      supported = supported + "File ";
-
-      // Collect supported Data from file plugin
-      fileTypes ft;
-      ft.type = filePlugin->supportedType();
-      ft.loadFilters = filePlugin->getLoadFilters();
-      ft.saveFilters = filePlugin->getSaveFilters();
-      ft.plugin = filePlugin;
-
-      supportedTypes_.push_back(ft);
-    }
-
     GlobalAccessInterface* globalAccessPlugin = qobject_cast< GlobalAccessInterface * >(plugin);
     if ( globalAccessPlugin && OpenFlipper::Options::gui() ) {
       supported = supported + "!!GLOBAL ACCESS!! ";
@@ -1107,6 +1092,21 @@ void Core::loadPlugin(QString filename, bool silent){
     if ( basePlugin ) {
       if ( checkSlot(plugin,"initializePlugin()") )
          QMetaObject::invokeMethod(plugin, "initializePlugin",  Qt::DirectConnection);
+    }
+
+    //Check if its a filePlugin
+    FileInterface* filePlugin = qobject_cast< FileInterface * >(plugin);
+    if ( filePlugin ){
+      supported = supported + "File ";
+
+      // Collect supported Data from file plugin
+      fileTypes ft;
+      ft.type = filePlugin->supportedType();
+      ft.loadFilters = filePlugin->getLoadFilters();
+      ft.saveFilters = filePlugin->getSaveFilters();
+      ft.plugin = filePlugin;
+
+      supportedTypes_.push_back(ft);
     }
 
     emit log(LOGOUT,"=============================================================================================");
