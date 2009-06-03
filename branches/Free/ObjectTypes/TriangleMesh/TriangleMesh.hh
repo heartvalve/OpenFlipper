@@ -45,7 +45,7 @@
 #include <ObjectTypes/TriangleMesh/TriangleMeshTypes.hh>
 
 /// Typedef for a Meshobject containing a triangle mesh
-typedef MeshObject< TriMesh , DATA_TRIANGLE_MESH > TriMeshObject;
+typedef MeshObject< TriMesh , DATA_TRIANGLE_MESH_CONST_ID > TriMeshObject;
 
 #include <ObjectTypes/TriangleMesh/PluginFunctionsTriangleMesh.hh>
 

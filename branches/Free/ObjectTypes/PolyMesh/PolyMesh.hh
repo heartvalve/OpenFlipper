@@ -45,7 +45,7 @@
 #include <ObjectTypes/PolyMesh/PolyMeshTypes.hh>
 
 /// Typedef for a Meshobject containing a poly mesh
-typedef MeshObject< PolyMesh , DATA_POLY_MESH >    PolyMeshObject;
+typedef MeshObject< PolyMesh , DATA_POLY_MESH_CONST_ID >    PolyMeshObject;
 
 #include <ObjectTypes/PolyMesh/PluginFunctionsPolyMesh.hh>
 
