@@ -213,9 +213,6 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
   // Init state - changes when mode_ != POSITION
   Vec3d pos3D(0.0,0.0,0.0);
 
-  GLint stencil = 0;
-  glGetIntegerv(GL_STENCIL_BITS,   &stencil);
-
   if ( mode_ == SCREENPOS ) {
 
     int left, bottom, width, height;
@@ -247,35 +244,29 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     _state.set_modelview (modelview);
     _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
-    if (stencil > 0)
-    {
-      glEnable (GL_STENCIL_TEST);
-      // clear stencil buffer in desired area
-      glStencilOp (GL_ZERO, GL_KEEP, GL_KEEP);
-      glStencilFunc (GL_NEVER, 0, ~0);
-      drawClearArea(_state, false, GLMatrixd ());
-
-      // fill stencil with values
-      glStencilOp (GL_REPLACE, GL_REPLACE, GL_REPLACE);
-      glStencilFunc (GL_NEVER, 1, ~0);
-      drawCoordsys(_state);
-
-      // draw only to regions that have been marked
-      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);
-      glStencilFunc (GL_EQUAL, 1, ~0);
-    }
-
-    // clear depth buffer behind coordsys node
-    drawClearArea(_state, false, GLMatrixd (), 1.0);
+    glDepthRange (1.0, 1.0);
+    glDepthFunc (GL_ALWAYS);
 
     // Koordinatensystem zeichnen
     drawCoordsys(_state);
 
-    // make sure nothing can paint above coordsys node
-    drawClearArea(_state, false, GLMatrixd (), 0.0);
+    glDepthRange (0.0, 1.0);
+    glDepthFunc (GL_LESS);
 
-    if (stencil > 0)
-      glDisable (GL_STENCIL_TEST);
+    // Koordinatensystem zeichnen
+    drawCoordsys(_state);
+
+    // set depth buffer to 0 so tah nothing can paint over cordsys
+    glDepthRange (0.0, 0.0);
+    glDepthFunc (GL_ALWAYS);
+    glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+
+    // Koordinatensystem zeichnen
+    drawCoordsys(_state);
+
+    glDepthRange (0.0, 1.0);
+    glDepthFunc (GL_LESS);
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 
     // Projection reload
     _state.pop_projection_matrix();
@@ -291,33 +282,32 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
 
     _state.set_modelview (modelview);
 
-    if (stencil > 0)
-    {
-      glEnable (GL_STENCIL_TEST);
-      // clear stencil buffer in desired area
-      glStencilOp (GL_ZERO, GL_KEEP, GL_KEEP);
-      glStencilFunc (GL_NEVER, 0, ~0);
-      drawClearArea(_state, false, GLMatrixd ());
+    // clear depth buffer in coordsys region
+    glDepthRange (1.0, 1.0);
+    glDepthFunc (GL_ALWAYS);
 
-      // fill stencil with values
-      glStencilOp (GL_REPLACE, GL_REPLACE, GL_REPLACE);
-      glStencilFunc (GL_NEVER, 1, ~0);
-      drawCoordsys(_state);
-
-      // draw only to regions that have been marked
-      glStencilOp (GL_KEEP, GL_KEEP, GL_KEEP);
-      glStencilFunc (GL_EQUAL, 1, ~0);
-    }
-
-    // clear depth buffer behind coordsys node
-    drawClearArea(_state, false, GLMatrixd (), 1.0);
+    // Koordinatensystem zeichnen
     drawCoordsys(_state);
 
-    // make sure nothing can paint above coordsys node
-    drawClearArea(_state, false, GLMatrixd (), 0.0);
+    // draw coordsys in normal mode
+    glDepthRange (0.0, 1.0);
+    glDepthFunc (GL_LESS);
 
-    if (stencil > 0)
-      glDisable (GL_STENCIL_TEST);
+    // Koordinatensystem zeichnen
+    drawCoordsys(_state);
+
+    // set depth buffer to 0 so tah nothing can paint over cordsys
+    glDepthRange (0.0, 0.0);
+    glDepthFunc (GL_ALWAYS);
+    glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+
+    // Koordinatensystem zeichnen
+    drawCoordsys(_state);
+
+    // reset to default
+    glDepthRange (0.0, 1.0);
+    glDepthFunc (GL_LESS);
+    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 
   }
 
@@ -368,7 +358,6 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
     if ( mode_ == SCREENPOS ) {
 
-      
       int left, bottom, width, height;
       _state.get_viewport(left, bottom, width, height);
 
@@ -417,10 +406,13 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
       // clear depth buffer behind coordsys node
-      drawClearArea(_state, true, pickMat);
+      clearPickArea(_state, pickMat, true, 1.0);
 
       // Koordinatensystem zeichnen
       drawCoordsysPick(_state);
+
+      // set depth buffer to 0.0 so that nothing can paint above
+      clearPickArea(_state, pickMat, false, 0.0);
 
       glMatrixMode(GL_PROJECTION);
       glPopMatrix ();
@@ -448,8 +440,13 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       modelview(2,3) = 0.0;
 
       // clear depth buffer behind coordsys node
-      drawClearArea(_state, true, pickMat);
+      clearPickArea(_state, pickMat, true, 1.0);
+
+      // Koordinatensystem zeichnen
       drawCoordsysPick(_state);
+
+      // set depth buffer to 0.0 so that nothing can paint above
+      clearPickArea(_state, pickMat, false, 0.0);
     }
     // Reload old configuration
     _state.pop_modelview_matrix();
@@ -459,7 +456,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
 //----------------------------------------------------------------------------
 
-void CoordsysNode::drawClearArea(GLState&  _state, bool _pick, GLMatrixd _pickMatrix, GLfloat z)
+void CoordsysNode::clearPickArea(GLState&  _state, GLMatrixd _pickMatrix, bool _draw, GLfloat _depth)
 {
   std::vector<Vec2f> points;
   Vec2f center;
@@ -489,23 +486,21 @@ void CoordsysNode::drawClearArea(GLState&  _state, bool _pick, GLMatrixd _pickMa
 
   _state.push_projection_matrix();
   _state.reset_projection();
-  if (_pick)
-  {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix ();
-    glMultMatrixd(_pickMatrix.get_raw_data());
 
-    glMatrixMode(GL_MODELVIEW);
-  }
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix ();
+  glMultMatrixd(_pickMatrix.get_raw_data());
+  glMatrixMode(GL_MODELVIEW);
 
   _state.ortho (left, left + width, bottom, bottom + height, 0.0, 1.0);
 
   _state.push_modelview_matrix();
   _state.reset_modelview();
   glDepthFunc (GL_ALWAYS);
-  _state.translate (center[0], center[1], -z);
+  glDepthRange (_depth, _depth);
+  _state.translate (center[0], center[1], -0.5);
 
-  if (_pick)
+  if (_draw)
     _state.pick_set_name (0);
   else
     glColorMask(false, false, false, false);
@@ -517,14 +512,14 @@ void CoordsysNode::drawClearArea(GLState&  _state, bool _pick, GLMatrixd _pickMa
   _state.pop_modelview_matrix();
   _state.pop_projection_matrix();
 
-  if (!_pick)
+  glDepthRange (0.0, 1.0);
+
+  if (!_draw)
     glColorMask(true, true, true, true);
-  else
-  {
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix ();
-    glMatrixMode(GL_MODELVIEW);
-  }
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix ();
+  glMatrixMode(GL_MODELVIEW);
 
   gluDeleteQuadric(quadric);
 }
