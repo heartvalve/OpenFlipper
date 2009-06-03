@@ -649,8 +649,10 @@ defineTest( slepc ) {
         export(INCLUDEPATH)
         QMAKE_LIBDIR += /usr/lib
         export(QMAKE_LIBDIR)
+	DEFINES += WITH_SLEPC_3
         LIBS *= -Wl,-rpath=/usr/lib -lslepc
         export(LIBS)
+	export DEFINES
 }
 
 defineTest( mpi ) {
