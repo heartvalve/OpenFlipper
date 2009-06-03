@@ -8,7 +8,7 @@
 GET_FILENAME_COMPONENT(module_file_path ${CMAKE_CURRENT_LIST_FILE} PATH )
 
 # Look for the header file.
-FIND_PATH(FTGL_INCLUDE_DIR NAMES FTGL/FTGL.h 
+FIND_PATH(FTGL_INCLUDE_DIR NAMES FTGL/ftgl.h 
                            PATHS /usr/include
                                  /usr/local/include
                                  ../../External/include
