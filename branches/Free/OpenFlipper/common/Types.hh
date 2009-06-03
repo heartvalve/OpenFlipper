@@ -61,22 +61,26 @@
  */
 
 /// None of the other Objects
-const unsigned int DATA_NONE          = 0;
+#define DATA_NONE 0
 
 /// Items used for Grouping
-const unsigned int DATA_GROUP         = 1;
+#define DATA_GROUP 1
 
 /// Point based objects
-const unsigned int DATA_POINTS        = 2;
-
-/// PolyLine objects
-const unsigned int DATA_POLY_LINE     = 4;
+#define DATA_POINTS 2
 
 /// Triangle Mesh objects
-const unsigned int DATA_TRIANGLE_MESH = 8;
+#define DATA_TRIANGLE_MESH typeId("TriangleMesh")
+//#define DATA_TRIANGLE_MESH 4
+#define DATA_TRIANGLE_MESH_CONST_ID 4
 
 /// Poly Mesh Objects
-const unsigned int DATA_POLY_MESH     = 16;
+#define DATA_POLY_MESH typeId("PolyMesh")
+//#define DATA_POLY_MESH 8
+#define DATA_POLY_MESH_CONST_ID 8
+
+/// PolyLine objects
+const unsigned int DATA_POLY_LINE     = 16;
 
 /// BSpline objects
 const unsigned int DATA_BSPLINE_CURVE = 32;

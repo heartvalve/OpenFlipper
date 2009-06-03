@@ -99,29 +99,35 @@ void initialize() {
     stringToTypeInfo["Unknown"] = types.size();
     typeToTypeInfo[DATA_NONE]   = types.size();
     types.push_back( TypeInfo(DATA_NONE            ,"Unknown"        ,"Unknown.png") );
+
     stringToTypeInfo["Group"]  = types.size();
     typeToTypeInfo[DATA_GROUP] = types.size();
     types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"Unknown.png") );
+
     stringToTypeInfo["Points"]  = types.size();
     typeToTypeInfo[DATA_POINTS] = types.size();
     types.push_back( TypeInfo(DATA_POINTS          ,"Points"         ,"Unknown.png") );
 
+    stringToTypeInfo["TriangleMesh"]   = types.size();
+    typeToTypeInfo[DATA_TRIANGLE_MESH_CONST_ID] = types.size();
+    types.push_back( TypeInfo(DATA_TRIANGLE_MESH_CONST_ID   ,"TriangleMesh"   ,"TriangleType.png") );
+
+    stringToTypeInfo["PolyMesh"]   = types.size();
+    typeToTypeInfo[DATA_POLY_MESH_CONST_ID] = types.size();
+    types.push_back( TypeInfo(DATA_POLY_MESH_CONST_ID       ,"PolyMesh"       ,"PolyType.png") );
+
     stringToTypeInfo["PolyLine"]   = types.size();
     typeToTypeInfo[DATA_POLY_LINE] = types.size();
     types.push_back( TypeInfo(DATA_POLY_LINE       ,"PolyLine"       ,"PolyLineType.png") );
-    stringToTypeInfo["TriangleMesh"]   = types.size();
-    typeToTypeInfo[DATA_TRIANGLE_MESH] = types.size();
-    types.push_back( TypeInfo(DATA_TRIANGLE_MESH   ,"TriangleMesh"   ,"TriangleType.png") );
-    stringToTypeInfo["PolyMesh"]   = types.size();
-    typeToTypeInfo[DATA_POLY_MESH] = types.size();
-    types.push_back( TypeInfo(DATA_POLY_MESH       ,"PolyMesh"       ,"PolyType.png") );
 
     stringToTypeInfo["BSplineCurve"]   = types.size();
     typeToTypeInfo[DATA_BSPLINE_CURVE] = types.size();
     types.push_back( TypeInfo(DATA_BSPLINE_CURVE   ,"BSplineCurve"   ,"BSplineCurveType.png") );
+
     stringToTypeInfo["Volume"]  = types.size();
     typeToTypeInfo[DATA_VOLUME] = types.size();
     types.push_back( TypeInfo(DATA_VOLUME          ,"Volume"         ,"Unknown.png") );
+
     stringToTypeInfo["BSplineSurface"]   = types.size();
     typeToTypeInfo[DATA_BSPLINE_SURFACE] = types.size();
     types.push_back( TypeInfo(DATA_BSPLINE_SURFACE ,"BSplineSurface" ,"Unknown.png") );
@@ -129,9 +135,11 @@ void initialize() {
     stringToTypeInfo["Skeleton"]  = types.size();
     typeToTypeInfo[DATA_SKELETON] = types.size();
     types.push_back( TypeInfo(DATA_SKELETON        ,"Skeleton"       ,"Unknown.png") );
+
     stringToTypeInfo["GIS"]  = types.size();
     typeToTypeInfo[DATA_GIS] = types.size();
     types.push_back( TypeInfo(DATA_GIS             ,"GIS"            ,"Unknown.png") );
+
     stringToTypeInfo["All"]  = types.size();
     typeToTypeInfo[DATA_ALL] = types.size();
     types.push_back( TypeInfo(DATA_ALL             ,"All"            ,"Unknown.png") );
@@ -139,9 +147,9 @@ void initialize() {
     typeToString[DATA_NONE] = "Unknown";
     typeToString[DATA_GROUP] = "Group";
     typeToString[DATA_POINTS] = "Points";
+    typeToString[DATA_TRIANGLE_MESH_CONST_ID] = "TriangleMesh";
+    typeToString[DATA_POLY_MESH_CONST_ID] = "PolyMesh";
     typeToString[DATA_POLY_LINE] = "PolyLine";
-    typeToString[DATA_TRIANGLE_MESH] = "TriangleMesh";
-    typeToString[DATA_POLY_MESH] = "PolyMesh";
     typeToString[DATA_BSPLINE_CURVE] = "BSplineCurve";
     typeToString[DATA_VOLUME] = "Volume";
     typeToString[DATA_BSPLINE_SURFACE] = "BSplineSurface";
@@ -177,8 +185,10 @@ DataType typeId(QString _name) {
 
   if ( index != stringToTypeInfo.end() )
     return types[ index->second ].type;
-  else
+  else {
+    std::cerr << "Unknown Data type with name " << _name.toStdString() << std::endl;
     return -1;
+  }
 }
 
 /// Get the name of a type with given id
@@ -189,8 +199,10 @@ QString typeName(DataType _id) {
 
   if ( name != typeToString.end() )
     return name->second;
-  else
+  else {
+    std::cerr << "Unable to retrieve typeName for id " << _id << std::endl;
     return "Unknown";
+  }
 }
 
 /// Get the icon of a given dataType
