@@ -54,16 +54,13 @@ void SelectionPlugin::selectHandleVertices( int objectId , idList _vertexList ) 
   if ( _vertexList.size() == 0 )
     return;
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH ){
       MeshSelection::setArea(PluginFunctions::triMesh(object) , _vertexList , HANDLEAREA, true);
       update_regions( PluginFunctions::triMesh(object) );
-      break;
-    case DATA_POLY_MESH :
+  } else if ( object->dataType() == DATA_POLY_MESH ){
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , HANDLEAREA, true);
       update_regions( PluginFunctions::polyMesh(object) );
-      break;
-    default:
+  } else {
       emit log(LOGERR,"selectHandleVertices : Unsupported object Type" ); 
       return;
   }
@@ -92,14 +89,11 @@ void SelectionPlugin::unselectHandleVertices( int objectId , idList _vertexList 
   if ( _vertexList.size() == 0 )
     return;
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::setArea(PluginFunctions::triMesh(object) , _vertexList , HANDLEAREA, false);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , HANDLEAREA, false);
-      break;
-    default:
+  else {
       emit log(LOGERR,"unselectHandleVertices : Unsupported object Type" ); 
       return;
   }
@@ -125,14 +119,11 @@ void SelectionPlugin::clearHandleVertices( int objectId ) {
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::setArea(PluginFunctions::triMesh(object) , HANDLEAREA, false);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , HANDLEAREA, false);
-      break;
-    default:
+  else {
       emit log(LOGERR,"clearHandleVertices : Unsupported object Type" ); 
       return;
   }
@@ -150,14 +141,11 @@ void SelectionPlugin::setAllHandleVertices( int objectId  ) {
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::setArea(PluginFunctions::triMesh(object) , HANDLEAREA, true);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , HANDLEAREA, true);
-      break;
-    default:
+  else {
       emit log(LOGERR,"setAllHandleVertices : Unsupported object Type" ); 
       return;
   }
@@ -177,14 +165,11 @@ idList SelectionPlugin::getHandleVertices( int objectId  ) {
   
   emit scriptInfo( "getHandleVertices( ObjectId )" );  
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       return MeshSelection::getArea(PluginFunctions::triMesh(object) , HANDLEAREA);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getArea(PluginFunctions::polyMesh(object) , HANDLEAREA);
-      break;
-    default:
+  else {
       emit log(LOGERR,"getHandleVertices : Unsupported object Type" ); 
       return idList(0);;
   }

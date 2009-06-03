@@ -54,16 +54,13 @@ void SelectionPlugin::selectModelingVertices( int objectId , idList _vertexList 
   if ( _vertexList.size() == 0 )
     return;
 
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH :
+  if ( object->dataType() == DATA_TRIANGLE_MESH ){
       MeshSelection::setArea(PluginFunctions::triMesh(object) , _vertexList , AREA, true);
       update_regions( PluginFunctions::triMesh(object) );
-      break;
-    case DATA_POLY_MESH :
+  } else if ( object->dataType() == DATA_POLY_MESH ){
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , AREA, true);
       update_regions( PluginFunctions::polyMesh(object) );
-      break;
-    default:
+  } else {
       emit log(LOGERR,"selectModelingVertices : Unsupported object Type" );
       return;
   }
@@ -92,14 +89,11 @@ void SelectionPlugin::unselectModelingVertices( int objectId , idList _vertexLis
   if ( _vertexList.size() == 0 )
     return;
 
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH :
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::setArea(PluginFunctions::triMesh(object) , _vertexList , AREA, false);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , AREA, false);
-      break;
-    default:
+  else{
       emit log(LOGERR,"unselectModelingVertices : Unsupported object Type" );
       return;
   }
@@ -125,14 +119,11 @@ void SelectionPlugin::clearModelingVertices( int objectId ) {
     return;
   }
 
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH :
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::setArea(PluginFunctions::triMesh(object) , AREA, false);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , AREA, false);
-      break;
-    default:
+  else{
       emit log(LOGERR,"clearModelingVertices : Unsupported object Type" );
       return;
   }
@@ -150,14 +141,11 @@ void SelectionPlugin::setAllModelingVertices( int objectId  ) {
     return;
   }
 
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH :
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::setArea(PluginFunctions::triMesh(object) , AREA, true);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , AREA, true);
-      break;
-    default:
+  else{
       emit log(LOGERR,"setAllModelingVertices : Unsupported object Type" );
       return;
   }
@@ -176,14 +164,11 @@ idList SelectionPlugin::getModelingVertices( int objectId  ) {
 
   emit scriptInfo( "getModelingVertices( ObjectId )" );
 
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH :
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       return MeshSelection::getArea(PluginFunctions::triMesh(object) , AREA);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getArea(PluginFunctions::polyMesh(object) , AREA);
-      break;
-    default:
+  else{
       emit log(LOGERR,"getModelingVertices : Unsupported object Type" );
       return idList(0);
   }

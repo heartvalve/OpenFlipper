@@ -64,25 +64,20 @@ void SelectionPlugin::selectEdges( int objectId , idList _edgeList ) {
   
   if ( _edgeList.size() == 0 )
     return;
-  
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::selectEdges(PluginFunctions::triMesh(object), _edgeList);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectEdges(PluginFunctions::polyMesh(object), _edgeList);
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::selectEdges( PluginFunctions::polyLine(object) , _edgeList );
-      break;
 #endif      
-#ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::selectEdges( PluginFunctions::splineCurve(object) , _edgeList );
-      break;
 #endif      
-    default:
+  else{
       emit log(LOGERR,"selectEdges : Unsupported object Type" ); 
       return;
   }
@@ -111,24 +106,19 @@ void SelectionPlugin::unselectEdges( int objectId , idList _edgeList ) {
   if ( _edgeList.size() == 0 )
     return;
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::unselectEdges(PluginFunctions::triMesh(object), _edgeList);
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::unselectEdges(PluginFunctions::polyMesh(object), _edgeList);
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::unselectEdges( PluginFunctions::polyLine(object) , _edgeList );
-      break;
 #endif      
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::unselectEdges( PluginFunctions::splineCurve(object) , _edgeList );
-      break;
 #endif      
-    default:
+  else{
       emit log(LOGERR,"unselectEdges : Unsupported object Type" ); 
       return;
   }
@@ -155,24 +145,19 @@ void SelectionPlugin::selectAllEdges( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::selectAllEdges(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectAllEdges(PluginFunctions::polyMesh(object));
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::selectAllEdges( PluginFunctions::polyLine(object) );
-      break;
 #endif      
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::selectAllEdges( PluginFunctions::splineCurve(object) );
-      break;    
 #endif            
-    default:
+  else{
       emit log(LOGERR,"selectAllEdges : Unsupported object Type" ); 
       return;
   }
@@ -191,24 +176,19 @@ void SelectionPlugin::clearEdgeSelection( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::clearEdgeSelection(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::clearEdgeSelection(PluginFunctions::polyMesh(object));
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::clearEdgeSelection( PluginFunctions::polyLine(object) );
-      break;
 #endif      
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::clearEdgeSelection( PluginFunctions::splineCurve(object) );
-      break;
 #endif      
-    default:
+  else{
       emit log(LOGERR,"clearEdgeSelection : Unsupported object Type" ); 
       return;
   }
@@ -227,24 +207,19 @@ void SelectionPlugin::invertEdgeSelection( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::invertEdgeSelection(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::invertEdgeSelection(PluginFunctions::polyMesh(object));
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::invertEdgeSelection( PluginFunctions::polyLine(object) );
-      break;
 #endif      
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::invertEdgeSelection( PluginFunctions::splineCurve(object) );
-      break;
 #endif      
-    default:
+  else{
       emit log(LOGERR,"invertEdgeSelection : Unsupported object Type" ); 
       return;
   }
@@ -263,25 +238,20 @@ void SelectionPlugin::selectBoundaryEdges( int objectId )
     return;
   }
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       MeshSelection::selectBoundaryEdges(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectBoundaryEdges(PluginFunctions::polyMesh(object));
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       emit log(LOGERR,"selectBoundaryEdges : Not implemented on PolyLines" ); 
 //       PolyLineSelection::selectAllEdges( PluginFunctions::polyLine(object) );
-      break;
 #endif      
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       emit log(LOGERR,"selectBoundaryEdges : Not implemented on BSplineCurves" ); 
-      break;  
 #endif      
-    default:
+  else{
       emit log(LOGERR,"selectBoundaryEdges : Unsupported object Type" ); 
       return;
   }
@@ -302,24 +272,19 @@ idList SelectionPlugin::getEdgeSelection( int objectId )
   
   emit scriptInfo( "getEdgeSelection( ObjectId )" );
   
-  switch ( object->dataType( ) ) {
-    case DATA_TRIANGLE_MESH : 
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
       return MeshSelection::getEdgeSelection(PluginFunctions::triMesh(object));
-      break;
-    case DATA_POLY_MESH :
+  else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getEdgeSelection(PluginFunctions::polyMesh(object));
-      break;
 #ifdef ENABLE_POLYLINE_SUPPORT      
-    case DATA_POLY_LINE :
+  else if ( object->dataType() == DATA_POLY_LINE )
       return PolyLineSelection::getEdgeSelection( PluginFunctions::polyLine(object) );
-      break;
 #endif      
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-    case DATA_BSPLINE_CURVE :
+  else if ( object->dataType() == DATA_BSPLINE_CURVE )
       return BSplineCurveSelection::getEdgeSelection( PluginFunctions::splineCurve(object) );
-      break;    
 #endif        
-    default:
+  else{
       emit log(LOGERR,"getEdgeSelection : Unsupported object Type" ); 
       return idList(0);
   }
