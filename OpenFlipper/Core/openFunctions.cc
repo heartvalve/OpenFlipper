@@ -51,7 +51,7 @@ void Core::resetScenegraph() {
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       // update scene graph (get new bounding box and set projection right, including near and far plane)
       PluginFunctions::viewerProperties(i).lockUpdate();
-      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_);
+      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_, true);
       PluginFunctions::viewerProperties(i).unLockUpdate();
       coreWidget_->examiner_widgets_[i]->updateGL();
     }

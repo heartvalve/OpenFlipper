@@ -425,17 +425,39 @@ void setScenePos(const ACG::Vec3d& _center, int _viewer ) {
     std::cerr << "Requested illegal viewer for setScenePos!!" << std::endl;
 }
 
-const ACG::Vec3d& sceneCenter( int _viewer ) {
-  if ( _viewer == ACTIVE_VIEWER ) {
-    return examiner_widgets_[activeExaminer_]->scene_center();
-  } else if ( _viewer == ALL_VIEWERS )
-    std::cerr << "Please select viewer to get viewing direction!" << std::endl;
-  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
-    return examiner_widgets_[_viewer]->scene_center();
-  else
-    std::cerr << "Requested illegal viewer for sceneCenter!!" << std::endl;
+void setSceneCenter(const ACG::Vec3d& _center, int _viewer) {
 
-  return examiner_widgets_[activeExaminer_]->scene_center();
+	if (_viewer == ACTIVE_VIEWER) {
+
+		examiner_widgets_[activeExaminer_]->setSceneCenter(_center);
+	} else if (_viewer == ALL_VIEWERS) {
+
+		for (uint i = 0; i < examiner_widgets_.size(); ++i) {
+
+			examiner_widgets_[i]->setSceneCenter(_center);
+		}
+	} else if ((_viewer >= 0) && _viewer < (int) examiner_widgets_.size()) {
+
+		examiner_widgets_[_viewer]->setSceneCenter(_center);
+	} else {
+		std::cerr << "Requested illegal viewer for setSceneCenter!!"
+				<< std::endl;
+	}
+}
+
+const ACG::Vec3d& sceneCenter(int _viewer) {
+
+	if (_viewer == ACTIVE_VIEWER) {
+		return examiner_widgets_[activeExaminer_]->scene_center();
+	} else if (_viewer == ALL_VIEWERS)
+		std::cerr << "Please select viewer to get viewing direction!"
+				<< std::endl;
+	else if ((_viewer >= 0) && _viewer < (int) examiner_widgets_.size())
+		return examiner_widgets_[_viewer]->scene_center();
+	else
+		std::cerr << "Requested illegal viewer for sceneCenter!!" << std::endl;
+
+	return examiner_widgets_[activeExaminer_]->scene_center();
 }
 
 double sceneRadius() {

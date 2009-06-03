@@ -244,7 +244,7 @@ void glViewer::swapBuffers() {
 //-----------------------------------------------------------------------------
 
 
-void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
+void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _setCenter)
 {
 //   if (sceneGraphRoot_ == _root)
 //     return;
@@ -263,10 +263,11 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root)
     if ( ( bbmin[0] > bbmax[0] ) ||
          ( bbmin[1] > bbmax[1] ) ||
          ( bbmin[2] > bbmax[2] )   )
-      setScenePos( ACG::Vec3d( 0.0,0.0,0.0 ) , 1.0 );
+      setScenePos( ACG::Vec3d( 0.0,0.0,0.0 ) , 1.0, _setCenter );
     else
       setScenePos( ( bbmin + bbmax )        * 0.5,
-                   ( bbmax - bbmin ).norm() * 0.5 );
+                   ( bbmax - bbmin ).norm() * 0.5,
+                   _setCenter);
   }
 
   updateGL();
@@ -362,19 +363,28 @@ void glViewer::updateProjectionMatrix()
 //-----------------------------------------------------------------------------
 
 
-void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius)
+void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool _setCenter)
 {
-  scene_center_ = trackball_center_ = _center;
-  scene_radius_ = trackball_radius_ = _radius;
+	if(_setCenter) {
+		scene_center_ = trackball_center_ = _center;
+	}
 
-  orthoWidth_ = 2.0   * scene_radius_;
-  near_       = 0.001 * scene_radius_;
-  far_        = 10.0  * scene_radius_;
+	scene_radius_ = trackball_radius_ = _radius;
 
-  updateProjectionMatrix();
-  updateGL();
+	orthoWidth_ = 2.0   * scene_radius_;
+	near_       = 0.001 * scene_radius_;
+	far_        = 10.0  * scene_radius_;
+
+	updateProjectionMatrix();
+	updateGL();
 }
 
+//-----------------------------------------------------------------------------
+
+void glViewer::setSceneCenter( const ACG::Vec3d& _center ) {
+
+	scene_center_ = trackball_center_ = _center;
+}
 
 //----------------------------------------------------------------------------
 
@@ -587,17 +597,25 @@ void glViewer::home()
 
 void glViewer::viewAll()
 {
-  makeCurrent();
+	makeCurrent();
 
-  // move center (in camera coords) to origin and translate in -z dir
-  translate(-(glstate_->modelview().transform_point(scene_center_))
-	    - ACG::Vec3d(0.0, 0.0, 3.0*scene_radius_ ));
+	// update scene graph (get new bounding box and set projection right, including near and far plane)
+	properties_.lockUpdate();
 
-  orthoWidth_ = 1.1*scene_radius_;
-  double aspect = (double) glWidth() / (double) glHeight();
-  if (aspect > 1.0) orthoWidth_ *= aspect;
-  updateProjectionMatrix();
-  updateGL();
+	// move center (in camera coords) to origin and translate in -z dir
+	translate(-(glstate_->modelview().transform_point(scene_center_))
+			- ACG::Vec3d(0.0, 0.0, 3.0 * scene_radius_));
+
+	orthoWidth_ = 1.1 * scene_radius_;
+	double aspect = (double) glWidth() / (double) glHeight();
+	if (aspect > 1.0)
+		orthoWidth_ *= aspect;
+
+	sceneGraph(PluginFunctions::getSceneGraphRootNode(), true);
+
+	properties_.unLockUpdate();
+	updateProjectionMatrix();
+	updateGL();
 
 }
 
