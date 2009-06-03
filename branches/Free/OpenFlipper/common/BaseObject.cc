@@ -577,21 +577,7 @@ void BaseObject::dumpTree() {
   std::cerr << id();
 
   // Write the type of this Object
-  std::cerr << " and type ";
-  if ( dataType() == DATA_GROUP )
-    std::cerr << "Group" << std::endl;
-  else if ( dataType() == DATA_TRIANGLE_MESH )
-    std::cerr << "Triangle Mesh" << std::endl;
-  else if ( dataType() == DATA_POLY_MESH )
-    std::cerr << "Poly Mesh" << std::endl;
-  else if ( dataType() == DATA_POLY_LINE )
-    std::cerr << "Poly Line" << std::endl;
-  else if ( dataType() == DATA_POINTS )
-    std::cerr << "Points" << std::endl;
-  else if ( dataType() == DATA_VOLUME )
-    std::cerr << "Volume" << std::endl;
-  else
-    std::cerr << int( dataType() ) << std::endl;
+  std::cerr << " and type " << typeName(dataType()).toStdString()  <<  std::endl;
 
   // call function for all children of this node
   for ( int i = 0 ; i < childItems_.size(); ++i)
