@@ -59,9 +59,9 @@ FileTriangleMeshPlugin::FileTriangleMeshPlugin()
 /// Add an empty triangle mesh
 int FileTriangleMeshPlugin::addEmpty(  ){
     // new object data struct
-  MeshObject< TriMesh, DATA_TRIANGLE_MESH >* object;
+  TriMeshObject* object;
 
-  object = new MeshObject< TriMesh, DATA_TRIANGLE_MESH >( dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ) );
+  object = new TriMeshObject( dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ) );
 
   // Set pointers for tree structure
   object->setParent(PluginFunctions::objectRoot());
@@ -91,9 +91,9 @@ int FileTriangleMeshPlugin::addEmpty(  ){
 int FileTriangleMeshPlugin::loadObject(QString _filename){
 
   // new object data struct
-  MeshObject< TriMesh, DATA_TRIANGLE_MESH >* object;
+  TriMeshObject* object;
 
-  object = new MeshObject< TriMesh, DATA_TRIANGLE_MESH >( dynamic_cast < ACG::SceneGraph::SeparatorNode* >(PluginFunctions::getRootNode()) );
+  object = new TriMeshObject( dynamic_cast < ACG::SceneGraph::SeparatorNode* >(PluginFunctions::getRootNode()) );
 
 
   // Set pointers for tree structure
