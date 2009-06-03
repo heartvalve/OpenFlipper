@@ -332,21 +332,18 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   if ( ! PluginFunctions::getObject(_id,object) )
     return;
 
-  switch ( object->dataType() ) {
-    case DATA_TRIANGLE_MESH:
-      transformMesh(mat , *PluginFunctions::triMesh(object) );
-      break;
-    case DATA_POLY_MESH:
-      transformMesh(mat , *PluginFunctions::polyMesh(object) );
-      break;
-    case DATA_POLY_LINE:
-      #ifdef ENABLE_POLYLINE_SUPPORT
-      transformPolyLine(mat , *PluginFunctions::polyLine(object) );
-      #endif
-      break;
-    default:
-      emit log(LOGERR,"moveObject called for unsupported Object Type");
-      return;
+  if  ( object->dataType()  == DATA_TRIANGLE_MESH ) {
+    transformMesh(mat , *PluginFunctions::triMesh(object) );
+  } else  if  ( object->dataType()  == DATA_POLY_MESH ) {
+    transformMesh(mat , *PluginFunctions::polyMesh(object) );
+  #ifdef ENABLE_POLYLINE_SUPPORT
+  } else  if  ( object->dataType()  == DATA_POLY_LINE ) {
+    transformPolyLine(mat , *PluginFunctions::polyLine(object) );
+  #endif
+  } else {
+
+    emit log(LOGERR,"moveObject called for unsupported Object Type");
+    return;
   }
 
   emit updatedObject(_id);
@@ -653,7 +650,7 @@ void MovePlugin::showManipulators( )
 
           (additionalManipulators_[i])->set_center( (additionalManipulators_[i])->matrix().transform_point( (additionalManipulators_[i])->center() ) );
           (additionalManipulators_[i])->loadIdentity();
-          
+
         }
       }
 
