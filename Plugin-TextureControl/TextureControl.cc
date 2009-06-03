@@ -695,13 +695,13 @@ void TextureControlPlugin::computeValue(Texture& _texture, double _min, double _
    if ( ! repeat ) {
       if (! center ) {
         if ( scale) {
-          _value /= scaleFactor;
+          _value /= scaleFactor; //scaleFactor is != 0.0 (otherwise _min==_max)
           _value -= _min/scaleFactor;
         }
       } else {
          // the values above zero are mapped to 0.5..1 the negative ones to 0.5..0
          if (_value > 0.0) {
-            _value /= ( _max * 2.0);
+            _value /= ( _max * 2.0); //_max >= _value > 0.0
             _value += 0.5;
          } else {
             if ( _min == 0.0 ){
