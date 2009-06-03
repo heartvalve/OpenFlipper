@@ -66,27 +66,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
   // Parse standard options
   if ( _ini.section_exists("Options") ) {
 
-    // Load maxRecent Setting
-    int mrecent = 6;
-    if (_ini.get_entry(mrecent,"Options","MaxRecent"))
-      OpenFlipper::Options::maxRecent(mrecent);
-
-    for ( int j = mrecent-1 ; j >= 0; --j) {
-      QString file;
-      QString key = "recent" + QString::number(j);
-
-      if ( !_ini.get_entry( file , "Options" , key ) )
-        continue;
-
-      key = "type" + QString::number(j);
-      QString type;
-
-      if ( !_ini.get_entry( type , "Options" , key ) )
-        continue;
-
-      OpenFlipper::Options::addRecentFile(file, typeId(type) );
-    }
-
     // load ViewModes
     int viewModeCount;
     if (_ini.get_entry(viewModeCount,"Options","ViewModeCount") )
@@ -386,6 +365,45 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::updatePassword(updatePassword);
   }
 }
+
+void Core::readRecentFiles(QString _filename){
+
+  INIFile ini;
+
+  if ( ! ini.connect(_filename,false) ) {
+    emit log(LOGERR,"Failed to connect to ini file" + _filename);
+    return;
+  }
+
+  OpenFlipper::Options::loadingSettings(true);
+
+  // Load maxRecent Setting
+  int mrecent = 6;
+  if (ini.get_entry(mrecent,"Options","MaxRecent"))
+    OpenFlipper::Options::maxRecent(mrecent);
+
+  for ( int j = mrecent-1 ; j >= 0; --j) {
+    QString file;
+    QString key = "recent" + QString::number(j);
+
+    if ( !ini.get_entry( file , "Options" , key ) )
+      continue;
+
+    key = "type" + QString::number(j);
+    QString type;
+
+    if ( !ini.get_entry( type , "Options" , key ) )
+      continue;
+
+    OpenFlipper::Options::addRecentFile(file, typeId(type) );
+  }
+
+  ini.disconnect();
+
+  OpenFlipper::Options::loadingSettings(false);
+
+}
+
 
 /** Write the standard options to the given Ini File
 * @param _ini Inifile to use

@@ -475,6 +475,10 @@ Core::init() {
 
     // Load global ini files. Use only plugin global options from these files as the
     // rest has been loaded at the beginning.
+    readRecentFiles( optionFiles[i] );
+    if ( OpenFlipper::Options::gui() )
+      coreWidget_->updateRecent();
+
     openIniFile( optionFiles[i] ,false,true,false);
   }
 
