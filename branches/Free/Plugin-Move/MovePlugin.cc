@@ -454,11 +454,6 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
 
     int objectId = _node->getIdentifier();
 
-    if (objectId == -1){
-      OpenFlipper::Options::redrawDisabled( false );
-      return;
-    }
-
     ACG::Matrix4x4d mat;
     mat.identity();
     mat = _node->matrix();
@@ -486,6 +481,8 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
 			}
 		}
 	}
+
+    PluginFunctions::setSceneCenter(_node->center(), PluginFunctions::ALL_VIEWERS );
 
     lastActiveManipulator_ = objectId;
     updateManipulatorDialog();
