@@ -32,7 +32,9 @@
 #include "MovePlugin.hh"
 
 #include "../OpenFlipper/BasePlugin/PluginFunctions.hh"
+#ifdef ENABLE_POLYLINE_SUPPORT
 #include <ObjectTypes/PolyLine/PolyLine.hh>
+#endif
 
 #include <MeshTools/MeshFunctions.hh>
 
@@ -119,11 +121,17 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
     for (; v_it!=v_end; ++v_it)
       mesh.set_point(v_it,mesh.point(v_it) + _vector );
 
-  } else if ( object->dataType(DATA_POLY_LINE) ) {
-    std::cerr << "Todo : translate PolyLine" << std::endl;
-  } else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-    std::cerr << "Todo : translate BSplineCurve" << std::endl;
   }
+  #ifdef ENABLE_POLYLINE_SUPPORT
+    else if ( object->dataType(DATA_POLY_LINE) ) {
+      std::cerr << "Todo : translate PolyLine" << std::endl;
+    }
+  #endif
+  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+      std::cerr << "Todo : translate BSplineCurve" << std::endl;
+    }
+  #endif
 
   emit updatedObject(_objectId);
 
@@ -167,11 +175,17 @@ void MovePlugin::translate( int _objectId , idList _vHandles, Vector _vector ){
       mesh.set_point(vh  ,mesh.point( vh ) + _vector );
     }
 
-  } else if ( object->dataType(DATA_POLY_LINE) ) {
-    std::cerr << "Todo : translate PolyLine" << std::endl;
-  } else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-    std::cerr << "Todo : translate BSplineCurve" << std::endl;
   }
+  #ifdef ENABLE_POLYLINE_SUPPORT
+    else if ( object->dataType(DATA_POLY_LINE) ) {
+      std::cerr << "Todo : translate PolyLine" << std::endl;
+    }
+  #endif
+  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+      std::cerr << "Todo : translate BSplineCurve" << std::endl;
+    }
+  #endif
 
   emit updatedObject(_objectId);
 
@@ -216,11 +230,17 @@ void MovePlugin::translateSelection( int _objectId , Vector _vector) {
       if ( mesh.status(v_it).selected() )
         mesh.set_point(v_it,mesh.point(v_it) + _vector );
 
-  } else if ( object->dataType(DATA_POLY_LINE) ) {
-    std::cerr << "Todo : translate PolyLine" << std::endl;
-  } else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-    std::cerr << "Todo : translate BSplineCurve" << std::endl;
   }
+  #ifdef ENABLE_POLYLINE_SUPPORT
+    else if ( object->dataType(DATA_POLY_LINE) ) {
+      std::cerr << "Todo : translate PolyLine" << std::endl;
+    }
+  #endif
+  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+      std::cerr << "Todo : translate BSplineCurve" << std::endl;
+    }
+  #endif
 
   emit updatedObject(_objectId);
 
@@ -266,11 +286,17 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
       mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
     }
 
-  } else if ( object->dataType(DATA_POLY_LINE) ) {
-    std::cerr << "Todo : translate PolyLine" << std::endl;
-  } else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-    std::cerr << "Todo : translate BSplineCurve" << std::endl;
   }
+  #ifdef ENABLE_POLYLINE_SUPPORT
+    else if ( object->dataType(DATA_POLY_LINE) ) {
+      std::cerr << "Todo : transform PolyLine" << std::endl;
+    }
+  #endif
+  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+      std::cerr << "Todo : transform BSplineCurve" << std::endl;
+    }
+  #endif
 
   emit updatedObject(_objectId);
 
@@ -325,11 +351,17 @@ void MovePlugin::transform( int _objectId , idList _vHandles, Matrix4x4 _matrix 
       mesh.set_normal(vh, _matrix.transform_vector( mesh.normal(vh) ) );
     }
 
-  } else if ( object->dataType(DATA_POLY_LINE) ) {
-    std::cerr << "Todo : translate PolyLine" << std::endl;
-  } else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-    std::cerr << "Todo : translate BSplineCurve" << std::endl;
   }
+  #ifdef ENABLE_POLYLINE_SUPPORT
+    else if ( object->dataType(DATA_POLY_LINE) ) {
+      std::cerr << "Todo : transform PolyLine" << std::endl;
+    }
+  #endif
+  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+      std::cerr << "Todo : transform BSplineCurve" << std::endl;
+    }
+  #endif
 
   emit updatedObject(_objectId);
 
@@ -383,11 +415,17 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
 
-  } else if ( object->dataType(DATA_POLY_LINE) ) {
-    std::cerr << "Todo : translate PolyLine" << std::endl;
-  } else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-    std::cerr << "Todo : translate BSplineCurve" << std::endl;
   }
+  #ifdef ENABLE_POLYLINE_SUPPORT
+    else if ( object->dataType(DATA_POLY_LINE) ) {
+      std::cerr << "Todo : transform PolyLine" << std::endl;
+    }
+  #endif
+  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+      std::cerr << "Todo : transform BSplineCurve" << std::endl;
+    }
+  #endif
 
   emit updatedObject(_objectId);
 
@@ -465,11 +503,9 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
 
-  } else if ( object->dataType(DATA_POLY_LINE) ) {
-    std::cerr << "Todo : transform PolyLine" << std::endl;
-  } else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-    std::cerr << "Todo : transform BSplineCurve" << std::endl;
   }
+
+
 
   emit updatedObject(_objectId);
 
@@ -551,11 +587,17 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
 
-  } else if ( object->dataType(DATA_POLY_LINE) ) {
-    std::cerr << "Todo : transform PolyLine" << std::endl;
-  } else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
-    std::cerr << "Todo : transform BSplineCurve" << std::endl;
   }
+  #ifdef ENABLE_POLYLINE_SUPPORT
+    else if ( object->dataType(DATA_POLY_LINE) ) {
+      std::cerr << "Todo : transform PolyLine" << std::endl;
+    }
+  #endif
+  #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
+    else if ( object->dataType(DATA_BSPLINE_CURVE) ) {
+      std::cerr << "Todo : transform BSplineCurve" << std::endl;
+    }
+  #endif
 
   emit updatedObject(_objectId);
 
