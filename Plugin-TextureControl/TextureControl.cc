@@ -1075,6 +1075,14 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
     // Always mark texture as dirty
     _texData->texture( _textureName ).setDirty();
 
+
+    //switch back to the active texture to force rebind
+    for ( uint i=0; i < _texData->textures().size(); i++ )
+      if ( _texData->textures()[i].enabled() ){
+        doSwitchTexture( _texData->textures()[i].name(), _id);
+        break;
+      }
+
     emit updateView();
 
   } else {
