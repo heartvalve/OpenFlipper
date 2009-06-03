@@ -116,10 +116,6 @@ void initialize() {
     typeToTypeInfo[DATA_POLY_MESH_CONST_ID] = types.size();
     types.push_back( TypeInfo(DATA_POLY_MESH_CONST_ID       ,"PolyMesh"       ,"PolyType.png") );
 
-    stringToTypeInfo["PolyLine"]   = types.size();
-    typeToTypeInfo[DATA_POLY_LINE] = types.size();
-    types.push_back( TypeInfo(DATA_POLY_LINE       ,"PolyLine"       ,"PolyLineType.png") );
-
     stringToTypeInfo["BSplineCurve"]   = types.size();
     typeToTypeInfo[DATA_BSPLINE_CURVE] = types.size();
     types.push_back( TypeInfo(DATA_BSPLINE_CURVE   ,"BSplineCurve"   ,"BSplineCurveType.png") );
@@ -149,7 +145,6 @@ void initialize() {
     typeToString[DATA_POINTS] = "Points";
     typeToString[DATA_TRIANGLE_MESH_CONST_ID] = "TriangleMesh";
     typeToString[DATA_POLY_MESH_CONST_ID] = "PolyMesh";
-    typeToString[DATA_POLY_LINE] = "PolyLine";
     typeToString[DATA_BSPLINE_CURVE] = "BSplineCurve";
     typeToString[DATA_VOLUME] = "Volume";
     typeToString[DATA_BSPLINE_SURFACE] = "BSplineSurface";

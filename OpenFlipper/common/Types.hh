@@ -79,23 +79,20 @@
 //#define DATA_POLY_MESH 8
 #define DATA_POLY_MESH_CONST_ID 8
 
-/// PolyLine objects
-const unsigned int DATA_POLY_LINE     = 16;
-
 /// BSpline objects
-const unsigned int DATA_BSPLINE_CURVE = 32;
+const unsigned int DATA_BSPLINE_CURVE = 16;
 
 /// Volumetric objects
-const unsigned int DATA_VOLUME        = 64;
+const unsigned int DATA_VOLUME        = 32;
 
 /// BSpline Surface objects
-const unsigned int DATA_BSPLINE_SURFACE = 128;
+const unsigned int DATA_BSPLINE_SURFACE = 64;
 
 /// Skeletons
-const unsigned int DATA_SKELETON       = 256;
+const unsigned int DATA_SKELETON       = 128;
 
 /// Gis Data
-const unsigned int DATA_GIS            = 512;
+const unsigned int DATA_GIS            = 256;
 
 
 /// Identifier for all available objects
