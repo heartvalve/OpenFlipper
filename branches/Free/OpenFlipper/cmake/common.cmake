@@ -5,7 +5,7 @@ macro (acg_modify_project_dirs)
   if (WIN32)
     add_definitions(
       -D_USE_MATH_DEFINES -DNOMINMAX
-      -DOPENFLIPPER_APPDIR=".."
+      -DOPENFLIPPER_APPDIR="."
       -DOPENFLIPPER_PLUGINDIR="${ACG_PROJECT_PLUGINDIR}"
       -DOPENFLIPPER_DATADIR="${ACG_PROJECT_DATADIR}"
     )

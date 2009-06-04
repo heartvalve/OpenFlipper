@@ -98,12 +98,12 @@ if (WIN32)
   if (EXISTS ${CMAKE_SOURCE_DIR}/WIN)
     file (GLOB _files "${CMAKE_SOURCE_DIR}/WIN/DLLs/DLLs 32 debug/*.dll")
     install(FILES ${_files}
-      DESTINATION ${ACG_PROJECT_LIBDIR}
+      DESTINATION ${ACG_PROJECT_BINDIR}
       CONFIGURATIONS Debug
     )
     file (GLOB _files "${CMAKE_SOURCE_DIR}/WIN/DLLs/DLLs 32 release/*.dll")
     install (FILES ${_files}
-      DESTINATION ${ACG_PROJECT_LIBDIR}
+      DESTINATION ${ACG_PROJECT_BINDIR}
       CONFIGURATIONS Release
     )
   endif ()
@@ -114,7 +114,15 @@ elseif (APPLE)
 endif ()
 
 # has to be last
-include (InstallRequiredSystemLibraries)
+if (WIN32)
+  set (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP "true")
+  include (InstallRequiredSystemLibraries)
+  install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ${ACG_PROJECT_BINDIR})
+else ()
+  include (InstallRequiredSystemLibraries)
+endif ()
+
+
 include (CPack)
 
 if (NOT WIN32 AND NOT APPLE)
