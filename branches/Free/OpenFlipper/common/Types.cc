@@ -53,7 +53,7 @@
 /** This field defines the start id for custom datatypes. It starts high to avoid conflicts with previously
  * hardcoded versions.
  */
-static int nextTypeId_ = 2048;
+static int nextTypeId_ = 128;
 
 /// Variable used to automatically initialize the maps
 static bool initialized_ = false;
@@ -104,10 +104,6 @@ void initialize() {
     typeToTypeInfo[DATA_GROUP] = types.size();
     types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"Unknown.png") );
 
-    stringToTypeInfo["Points"]  = types.size();
-    typeToTypeInfo[DATA_POINTS] = types.size();
-    types.push_back( TypeInfo(DATA_POINTS          ,"Points"         ,"Unknown.png") );
-
     stringToTypeInfo["TriangleMesh"]   = types.size();
     typeToTypeInfo[DATA_TRIANGLE_MESH_CONST_ID] = types.size();
     types.push_back( TypeInfo(DATA_TRIANGLE_MESH_CONST_ID   ,"TriangleMesh"   ,"TriangleType.png") );
@@ -119,10 +115,6 @@ void initialize() {
     stringToTypeInfo["BSplineCurve"]   = types.size();
     typeToTypeInfo[DATA_BSPLINE_CURVE] = types.size();
     types.push_back( TypeInfo(DATA_BSPLINE_CURVE   ,"BSplineCurve"   ,"BSplineCurveType.png") );
-
-    stringToTypeInfo["Volume"]  = types.size();
-    typeToTypeInfo[DATA_VOLUME] = types.size();
-    types.push_back( TypeInfo(DATA_VOLUME          ,"Volume"         ,"Unknown.png") );
 
     stringToTypeInfo["BSplineSurface"]   = types.size();
     typeToTypeInfo[DATA_BSPLINE_SURFACE] = types.size();
@@ -142,11 +134,9 @@ void initialize() {
 
     typeToString[DATA_NONE] = "Unknown";
     typeToString[DATA_GROUP] = "Group";
-    typeToString[DATA_POINTS] = "Points";
     typeToString[DATA_TRIANGLE_MESH_CONST_ID] = "TriangleMesh";
     typeToString[DATA_POLY_MESH_CONST_ID] = "PolyMesh";
     typeToString[DATA_BSPLINE_CURVE] = "BSplineCurve";
-    typeToString[DATA_VOLUME] = "Volume";
     typeToString[DATA_BSPLINE_SURFACE] = "BSplineSurface";
     typeToString[DATA_SKELETON] = "Skeleton";
     typeToString[DATA_GIS] = "GIS";

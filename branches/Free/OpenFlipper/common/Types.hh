@@ -66,34 +66,25 @@
 /// Items used for Grouping
 #define DATA_GROUP 1
 
-/// Point based objects
-#define DATA_POINTS 2
-
 /// Triangle Mesh objects
 #define DATA_TRIANGLE_MESH typeId("TriangleMesh")
-//#define DATA_TRIANGLE_MESH 4
-#define DATA_TRIANGLE_MESH_CONST_ID 4
+#define DATA_TRIANGLE_MESH_CONST_ID 2
 
 /// Poly Mesh Objects
 #define DATA_POLY_MESH typeId("PolyMesh")
-//#define DATA_POLY_MESH 8
-#define DATA_POLY_MESH_CONST_ID 8
+#define DATA_POLY_MESH_CONST_ID 4
 
 /// BSpline objects
-const unsigned int DATA_BSPLINE_CURVE = 16;
-
-/// Volumetric objects
-const unsigned int DATA_VOLUME        = 32;
+const unsigned int DATA_BSPLINE_CURVE = 8;
 
 /// BSpline Surface objects
-const unsigned int DATA_BSPLINE_SURFACE = 64;
+const unsigned int DATA_BSPLINE_SURFACE = 16;
 
 /// Skeletons
-const unsigned int DATA_SKELETON       = 128;
+const unsigned int DATA_SKELETON       = 32;
 
 /// Gis Data
-const unsigned int DATA_GIS            = 256;
-
+const unsigned int DATA_GIS            = 64;
 
 /// Identifier for all available objects
 const unsigned int DATA_ALL           = UINT_MAX;
