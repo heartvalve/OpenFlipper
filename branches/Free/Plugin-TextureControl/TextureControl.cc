@@ -1362,8 +1362,10 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
   }
 
   //skip object if its not a mesh
-  if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH ) )
+  if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH ) ) {
+    contextMenu_->clear();
     return;
+  }
 
   // ================================================================================
   // Get objects texture data and verify that texture exists
