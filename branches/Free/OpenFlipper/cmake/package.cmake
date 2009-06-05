@@ -94,6 +94,13 @@ if (WIN32)
   # TODO: fillme
   # set (CPACK_NSIS_CONTACT "")
 
+  set (CPACK_NSIS_CREATE_ICONS
+       "CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\OpenFlipper.lnk\\\" \\\"$INSTDIR\\\\OpenFlipper.exe\\\""
+      )
+  set (CPACK_NSIS_DELETE_ICONS
+       "Delete \\\"$SMPROGRAMS\\\\$MUI_TEMP\\\\OpenFlipper.lnk\\\""
+      )
+
   # append dll's to installed package
   if (EXISTS ${CMAKE_SOURCE_DIR}/WIN)
     file (GLOB _files "${CMAKE_SOURCE_DIR}/WIN/DLLs/DLLs 32 debug/*.dll")
