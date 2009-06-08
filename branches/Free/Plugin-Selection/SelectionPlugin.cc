@@ -172,7 +172,9 @@ void SelectionPlugin::pluginsInitialized() {
 
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
+#ifdef ENABLE_POLYLINE_SUPPORT
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_LINE     , CONTEXTOBJECTMENU );
+#endif
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_BSPLINE_CURVE , CONTEXTOBJECTMENU );
 
   connect( contextMenu_ , SIGNAL( triggered(QAction*) ),

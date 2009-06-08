@@ -53,7 +53,7 @@ void SelectionPlugin::slotSelectAll()
   else 
     restriction = PluginFunctions::TARGET_OBJECTS;
   
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_POLY_LINE)) ; 
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_ALL)) ; 
         o_it != PluginFunctions::objectsEnd(); ++o_it)
     if ( o_it->visible() )
       selectAll( o_it->id() );
@@ -76,7 +76,7 @@ void SelectionPlugin::slotClearSelection()
     restriction = PluginFunctions::TARGET_OBJECTS;
   
   // process all meshes
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_POLY_LINE )) ; 
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_ALL )) ; 
         o_it != PluginFunctions::objectsEnd(); ++o_it)
     if ( o_it->visible() )
       clearSelection( o_it->id() );
@@ -98,7 +98,7 @@ void SelectionPlugin::slotInvertSelection() {
     restriction = PluginFunctions::TARGET_OBJECTS;
   
   // process all meshes
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_POLY_LINE )) ; 
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_ALL) ) ; 
         o_it != PluginFunctions::objectsEnd(); ++o_it) 
     if ( o_it->visible() )
       invertSelection( o_it->id() );
