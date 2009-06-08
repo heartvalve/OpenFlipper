@@ -1182,11 +1182,22 @@ void Core::setDescriptions(){
                           QString("Toolbox Entry name,Widget").split(","),
                           QString("Name of the new widget in the toolbox,Pointer to the new widget").split(","));
 
+  emit setSlotDescription("addViewMode(QString,QString)", "Add a new viewmode",
+                          QString("Name,Toolbox List").split(","),
+                          QString("Name of the new Viewmode, ; seperated list of toolboxes visible in this viewmode").split(","));
+
+}
+
+void Core::addViewMode(QString _modeName, QString _toolboxList) {
+
+  QStringList list = _toolboxList.split(";");
+  coreWidget_->slotAddViewMode(_modeName,list);
 }
 
 void Core::addToolbox(QString _name ,QWidget* _widget) {
   int id = -1;
 
+  // Find the plugin which added this Toolbox
   for ( uint i = 0 ; i < plugins.size(); ++i ) {
     if ( plugins[i].plugin == sender() ) {
       id = i;
@@ -1194,6 +1205,7 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
     }
   }
 
+  // Find the scripting plugin because we assign this toolBox to it as we did not find the original sender
   if ( id == -1 ) {
     for ( uint i = 0 ; i < plugins.size(); ++i ) {
       if ( plugins[i].name == "Scripting" ) {

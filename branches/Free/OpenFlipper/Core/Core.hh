@@ -375,6 +375,19 @@ public slots:
     /// write the current versions of all plugins to ini file
     void writeVersionNumbers(QString _filename);
 
+   //===========================================================================
+    /** @name Scripting functions for controlling view modes
+    * @{ */
+   //===========================================================================
+
+public slots:
+    /** \brief Scripting function to add a nev viewMode
+
+      @param _modeName Name of the new View Mode
+      @param _toolboxList ; seperated list of toolboxes in the view mode
+    */
+    void addViewMode(QString _modeName, QString _toolboxList);
+
     /** @} */
 
    //===========================================================================
