@@ -640,6 +640,10 @@ public:
     /// Draw Menu for per Viewer Draw Modes
     QMenu* viewerDrawMenu_;
 
+    /// Menu which holds the context menu entries for
+    /// the coordsys node if invisible
+    QMenu* coordSysMenu_;
+
   /** @} */
 
   //===========================================================================
