@@ -276,9 +276,18 @@ public:
   /// Setup the main menubar
   void setupMenuBar();
 
-  public:
-    QAction* startVideoCaptureAction_;
-    QAction* stopVideoCaptureAction_;
+   /** @} */
+
+  //===========================================================================
+  /** @name Video Capturing
+  * @{ */
+  //===========================================================================
+
+  signals:
+    void startVideoCapture(QString _baseName, int _fps, bool _captureViewers);
+    void stopVideoCapture();
+  private slots:
+    void startVideoCaptureDialog();
 
   /** @} */
 
@@ -286,6 +295,8 @@ public:
   /** @name Recent File Menu handling
    * @{ */
   //===========================================================================
+
+  public:
 
   /// Add a recent file and update menu
   void addRecent(QString _filename, DataType _type);

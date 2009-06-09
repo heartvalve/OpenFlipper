@@ -52,6 +52,8 @@
 #include <OpenFlipper/BasePlugin/KeyInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 
+#include <OpenFlipper/widgets/videoCaptureDialog/VideoCaptureDialog.hh>
+
 #define WIDGET_HEIGHT 800
 #define WIDGET_WIDTH  800
 
@@ -866,6 +868,16 @@ CoreWidget::sceneRectChanged(const QRectF &rect)
   pickToolbar_->updateGeometry ();
 }
 
+//-----------------------------------------------------------------------------
+
+void
+CoreWidget::startVideoCaptureDialog(){
+
+  VideoCaptureDialog* dialog = new VideoCaptureDialog();
+
+  connect(dialog, SIGNAL(startVideoCapture(QString,int,bool)), this, SIGNAL(startVideoCapture(QString,int,bool)) );
+  dialog->show();
+}
 
 
 

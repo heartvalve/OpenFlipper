@@ -48,18 +48,25 @@
 
 //-----------------------------------------------------------------------------
 
-void Core::slotStartVideoCapture() {
+void Core::startVideoCapture(QString _baseName, int _fps, bool _captureViewers) {
   connect( &videoTimer_ , SIGNAL(timeout()), this, SLOT( viewUpdated() ) ,Qt::DirectConnection );
   // set track auf true;
   videoTimer_.setSingleShot(false);
 
   // 25 fps
-  videoTimer_.start(40);
+  videoTimer_.start( 1000 / _fps);
 
   lastVideoTime_.start();
 
-  QString name = "/home/moebius/snaps/autosnapshot.jpg";
-  applicationSnapshotName(name);
+  QString name = _baseName;
+
+  if (_captureViewers){
+    applicationSnapshotName(name);
+    captureType_ = 1;
+  } else {
+    applicationSnapshotName(name);
+    captureType_ = 0;
+  }
 
   capture_ = true;
 }
@@ -74,11 +81,14 @@ void Core::captureVideo() {
 
   lastVideoTime_.restart();
 
-  applicationSnapshot();
+  if (captureType_ == 1)
+    viewerSnapshot();
+  else
+    applicationSnapshot();
 }
 
 
-void Core::slotStopVideoCapture() {
+void Core::stopVideoCapture() {
   videoTimer_.stop();
   capture_ = false;
 }

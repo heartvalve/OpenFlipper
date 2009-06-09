@@ -446,15 +446,19 @@ private:
     /// Function called for every frame when capturing video
     void captureVideo();
 
+  public slots:
+
     /// Start video capturing
-    void slotStartVideoCapture();
+    void startVideoCapture(QString _baseName, int _fps, bool _captureViewers);
 
     /// Stop video capturing
-    void slotStopVideoCapture();
+    void stopVideoCapture();
 
   private:
     QTimer videoTimer_;
     QTime  lastVideoTime_;
+
+    int captureType_;
 
     bool capture_;
 
