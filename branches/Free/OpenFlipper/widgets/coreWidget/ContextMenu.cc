@@ -263,7 +263,12 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
   ACG::SceneGraph::BaseNode* coordSys = root->find("Core Coordsys Node");
 
   if(!coordSys->visible()) {
-	  updatePopupMenuCoordsysNode(_menu, 0);
+
+	  if(!coordSysMenu_) {
+		  coordSysMenu_ = new QMenu("Coordinate System Options", _menu);
+		  updatePopupMenuCoordsysNode(coordSysMenu_, 0);
+	  }
+	  _menu->addMenu(coordSysMenu_);
   }
 
   // Tell Plugins to update their context Menu
