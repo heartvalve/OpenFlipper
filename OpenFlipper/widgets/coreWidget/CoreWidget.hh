@@ -286,6 +286,10 @@ public:
   signals:
     void startVideoCapture(QString _baseName, int _fps, bool _captureViewers);
     void stopVideoCapture();
+
+    void resizeViewers(int _width, int _height);
+    void resizeApplication(int _width, int _height);
+
   private slots:
     void startVideoCaptureDialog();
 
@@ -689,6 +693,7 @@ public:
 
     std::vector< StackWidgetInfo > stackWidgetList_;
 
+  public :
     /// Container widget for holding multiple views
     QStackedWidget* stackedWidget_;
 

@@ -370,7 +370,10 @@ public slots:
     void viewerSnapshot();
 
     /// resize the examinerViewer
-    void resizeViewer(int _width, int _height );
+    void resizeViewers(int _width, int _height );
+
+    /// resize the whole Application
+    void resizeApplication(int _width, int _height );
 
     /// write the current versions of all plugins to ini file
     void writeVersionNumbers(QString _filename);

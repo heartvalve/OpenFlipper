@@ -876,6 +876,9 @@ CoreWidget::startVideoCaptureDialog(){
   VideoCaptureDialog* dialog = new VideoCaptureDialog();
 
   connect(dialog, SIGNAL(startVideoCapture(QString,int,bool)), this, SIGNAL(startVideoCapture(QString,int,bool)) );
+  connect(dialog, SIGNAL(resizeViewers(int,int)), this, SIGNAL(resizeViewers(int,int)) );
+  connect(dialog, SIGNAL(resizeApplication(int,int)), this, SIGNAL(resizeApplication(int,int)) );
+
   dialog->show();
 }
 

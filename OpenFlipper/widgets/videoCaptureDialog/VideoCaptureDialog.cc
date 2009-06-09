@@ -24,6 +24,11 @@ void VideoCaptureDialog::slotStartVideoCapture()
     return;
   }
 
+  if ( captureViewers->isChecked() )
+    emit resizeViewers(videoWidth->value(), videoHeight->value());
+  else
+    emit resizeApplication(videoWidth->value(), videoHeight->value());
+
   emit startVideoCapture( filename->text(), fps->value(), captureViewers->isChecked() );
 
   accept();
