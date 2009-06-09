@@ -45,7 +45,7 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
-
+#include <OpenFlipper/widgets/snapshotDialog/SnapshotDialog.hh>
 
 
 //== IMPLEMENTATION ==========================================================
@@ -267,24 +267,18 @@ void CoreWidget::applicationSnapshotDialog() {
 
   suggest += format;
 
-  QFileDialog dialog(this);
-  dialog.setFileMode(QFileDialog::AnyFile);
-  dialog.setDefaultSuffix("png");
-  dialog.setNameFilter("Images (*.png *.ppm *.jpg)");
-  dialog.setFileMode(QFileDialog::AnyFile);
-  dialog.setConfirmOverwrite(true);
-  dialog.setDirectory( fi.path() );
-  dialog.selectFile( suggest );
-  dialog.setAcceptMode(QFileDialog::AcceptSave);
-  dialog.setWindowTitle("Save Snapshot");
+
+  SnapshotDialog dialog(suggest, false, this);
+
+  int w = width();
+  int h = height();
+
+  connect(&dialog, SIGNAL(resizeApplication(int,int)), this, SIGNAL(resizeApplication(int,int)) );
 
   bool ok = dialog.exec();
 
-  std::cerr << "1" << std::endl;
-  dialog.hide();
-
   if ( ok ){
-    QString newName = dialog.selectedFiles()[0];
+    QString newName = dialog.filename->text();
 
     if (newName != fi.path() + OpenFlipper::Options::dirSeparator() + suggest){
       snapshotName_ = newName;
@@ -297,6 +291,8 @@ void CoreWidget::applicationSnapshotDialog() {
     QPixmap pic = QPixmap::grabWindow( winId() );
 
     pic.save(newName);
+
+    emit resizeApplication(w,h);
   }
 }
 
@@ -352,19 +348,17 @@ void CoreWidget::viewerSnapshotDialog() {
 
   suggest += format;
 
-  QFileDialog dialog(this);
-  dialog.setFileMode(QFileDialog::AnyFile);
-  dialog.setDefaultSuffix("png");
-  dialog.setNameFilter("Images (*.png *.ppm *.jpg)");
-  dialog.setFileMode(QFileDialog::AnyFile);
-  dialog.setConfirmOverwrite(true);
-  dialog.setDirectory( fi.path() );
-  dialog.selectFile( suggest );
-  dialog.setAcceptMode(QFileDialog::AcceptSave);
-  dialog.setWindowTitle("Save Snapshot");
+  SnapshotDialog dialog(suggest, true, this);
 
-  if (dialog.exec()){
-    QString newName = dialog.selectedFiles()[0];
+  int w = glView_->width();
+  int h = glView_->height();
+
+  connect(&dialog, SIGNAL(resizeViewers(int,int)), this, SIGNAL(resizeViewers(int,int)) );
+
+  bool ok = dialog.exec();
+
+  if (ok){
+    QString newName = dialog.filename->text();
 
     if (newName != fi.path() + OpenFlipper::Options::dirSeparator() + suggest){
       snapshotName_ = newName;
@@ -438,6 +432,8 @@ void CoreWidget::viewerSnapshotDialog() {
       default: break;
 
     }
+
+    glView_->resize(w, h);
   }
 }
 

@@ -22,7 +22,7 @@ DIRECTORIES =   ../ ../Core ../Logging \
                             ../widgets/coreWidget ../widgets/helpWidget \
 			    ../widgets/loadWidget ../widgets/optionsWidget ../widgets/PluginDialog \
 			    ../widgets/viewModeWidget \
-			    ../widgets/videoCaptureDialog
+			    ../widgets/videoCaptureDialog ../widgets/snapshotDialog
 
 QMAKE_LIBDIR +=  $${TOPDIR}/OpenFlipper/PluginLib/lib/$${BUILDDIRECTORY}
 
