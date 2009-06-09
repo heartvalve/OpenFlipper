@@ -265,9 +265,10 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
   if(!coordSys->visible()) {
 
 	  if(!coordSysMenu_) {
-		  coordSysMenu_ = new QMenu("Coordinate System Options", _menu);
+		  coordSysMenu_ = new QMenu("Viewer Settings", _menu);
 		  updatePopupMenuCoordsysNode(coordSysMenu_, 0);
 	  }
+	  _menu->addSeparator();
 	  _menu->addMenu(coordSysMenu_);
   }
 
