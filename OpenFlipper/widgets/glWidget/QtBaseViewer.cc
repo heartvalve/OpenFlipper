@@ -104,6 +104,8 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <QGLFramebufferObject>
+
 //== NAMESPACES ===============================================================
 
 
@@ -430,7 +432,10 @@ glViewer::copyToImage( QImage& _image,
 		       unsigned int _w, unsigned int _h,
 			   GLenum /* _buffer */ )
 {
-  makeCurrent();
+
+//    qApp->processEvents();
+//    makeCurrent();
+
   _image = glWidget_->grabFrameBuffer(true).copy (_l, _t, _w, _h).convertToFormat (QImage::Format_RGB32);
 }
 
@@ -1867,17 +1872,36 @@ void glViewer::slotPropertiesUpdated() {
   updateGL();
 }
 
-void glViewer::snapshot(QImage& _image)
+void glViewer::snapshot(QImage& _image, bool _offScreenRendering)
 {
-   makeCurrent();
 
-   qApp->processEvents();
-   makeCurrent();
-   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   paintGL();
-   glFinish();
+  if ( _offScreenRendering ){
+    QGLFramebufferObject fb( glstate_->context_width(), glstate_->context_height(), QGLFramebufferObject::CombinedDepthStencil);
 
-   copyToImage(_image, scenePos().x(), scenePos().y(), glWidth(), glHeight(), GL_BACK);
+    if ( fb.isValid() ){
+
+      fb.bind();
+      qApp->processEvents();
+      makeCurrent();
+      glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      paintGL();
+      glFinish();
+
+      _image = fb.toImage().copy(scenePos().x(), scenePos().y(), glWidth(), glHeight());
+
+      return;
+    }
+  }
+
+  makeCurrent();
+
+  qApp->processEvents();
+  makeCurrent();
+  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  paintGL();
+  glFinish();
+
+  copyToImage(_image, scenePos().x(), scenePos().y(), glWidth(), glHeight(), GL_BACK);
 }
 
 void glViewer::snapshot()

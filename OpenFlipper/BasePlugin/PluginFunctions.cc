@@ -339,7 +339,7 @@ void actionMode ( Viewer::ActionMode _mode) {
 }
 
 void getCurrentViewImage(QImage& _image) {
-  viewer( activeExaminer() )->copyToImage( _image );
+  viewer( activeExaminer() )->snapshot( _image, true );
 }
 
 Viewer::ViewerProperties& viewerProperties(int _id) {

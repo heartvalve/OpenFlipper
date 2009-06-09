@@ -388,16 +388,19 @@ void CoreWidget::viewerSnapshotDialog() {
         examiner_widgets_[2]->snapshot(img2);
         examiner_widgets_[3]->snapshot(img3);
 
-        QImage finalImage(img0.width() + img1.width(), img0.height() + img2.height(), QImage::Format_ARGB32_Premultiplied);
+        QImage finalImage(img0.width() + img1.width()+2, img0.height() + img2.height()+2, QImage::Format_ARGB32_Premultiplied);
 
         QPainter painter(&finalImage);
+
+        painter.fillRect(0,0,finalImage.width(), finalImage.height(), QBrush(Qt::gray));
+
         painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
                           QRectF(           0,             0, img0.width(), img0.height()) );
-        painter.drawImage(QRectF(img0.width(),             0, img1.width(), img1.height()),img1,
+        painter.drawImage(QRectF(img0.width()+2,           0, img1.width(), img1.height()),img1,
                           QRectF(           0,             0, img1.width(), img1.height()) );
-        painter.drawImage(QRectF(           0, img0.height(), img2.width(), img2.height()),img2,
+        painter.drawImage(QRectF(          0,img0.height()+2, img2.width(), img2.height()),img2,
                           QRectF(           0,             0, img2.width(), img2.height()) );
-        painter.drawImage(QRectF(img0.width(), img0.height(), img3.width(), img3.height()),img3,
+        painter.drawImage(QRectF(img0.width()+2, img0.height()+2, img3.width(), img3.height()),img3,
                           QRectF(           0,             0, img3.width(), img3.height()) );
 
         finalImage.save(newName);
@@ -413,16 +416,19 @@ void CoreWidget::viewerSnapshotDialog() {
         examiner_widgets_[2]->snapshot(img2);
         examiner_widgets_[3]->snapshot(img3);
 
-        QImage finalImage(img0.width() + img1.width(), img0.height(), QImage::Format_ARGB32_Premultiplied);
+        QImage finalImage(img0.width() + img1.width() +2, img0.height(), QImage::Format_ARGB32_Premultiplied);
 
         QPainter painter(&finalImage);
+
+        painter.fillRect(0,0,finalImage.width(), finalImage.height(), QBrush(Qt::gray));
+
         painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
                           QRectF(           0,             0, img0.width(), img0.height()) );
-        painter.drawImage(QRectF(img0.width(),             0, img1.width(), img1.height()),img1,
+        painter.drawImage(QRectF(img0.width()+2,             0, img1.width(), img1.height()),img1,
                           QRectF(           0,             0, img1.width(), img1.height()) );
-        painter.drawImage(QRectF(img0.width(), img1.height(), img2.width(), img2.height()),img2,
+        painter.drawImage(QRectF(img0.width()+2, img1.height()+2, img2.width(), img2.height()),img2,
                           QRectF(           0,             0, img2.width(), img2.height()) );
-        painter.drawImage(QRectF(img0.width(), img1.height()+img2.height(), img3.width(),img3.height()),img3,
+        painter.drawImage(QRectF(img0.width()+2, img1.height()+img2.height()+4, img3.width(),img3.height()),img3,
                           QRectF(           0,             0, img3.width(), img3.height()) );
 
         finalImage.save(newName);
@@ -480,16 +486,19 @@ void CoreWidget::viewerSnapshot() {
       examiner_widgets_[2]->snapshot(img2);
       examiner_widgets_[3]->snapshot(img3);
 
-      QImage finalImage(img0.width() + img1.width(), img0.height() + img2.height(), QImage::Format_ARGB32_Premultiplied);
+      QImage finalImage(img0.width() + img1.width() + 2, img0.height() + img2.height() + 2, QImage::Format_ARGB32_Premultiplied);
 
       QPainter painter(&finalImage);
+
+      painter.fillRect(0,0,finalImage.width(), finalImage.height(), QBrush(Qt::gray));
+
       painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
                         QRectF(           0,             0, img0.width(), img0.height()) );
-      painter.drawImage(QRectF(img0.width(),             0, img1.width(), img1.height()),img1,
+      painter.drawImage(QRectF(img0.width()+2,           0, img1.width(), img1.height()),img1,
                         QRectF(           0,             0, img1.width(), img1.height()) );
-      painter.drawImage(QRectF(           0, img0.height(), img2.width(), img2.height()),img2,
+      painter.drawImage(QRectF(           0, img0.height()+2, img2.width(), img2.height()),img2,
                         QRectF(           0,             0, img2.width(), img2.height()) );
-      painter.drawImage(QRectF(img0.width(), img0.height(), img3.width(), img3.height()),img3,
+      painter.drawImage(QRectF(img0.width()+2, img0.height()+2, img3.width(), img3.height()),img3,
                         QRectF(           0,             0, img3.width(), img3.height()) );
 
       finalImage.save(suggest);
@@ -505,16 +514,19 @@ void CoreWidget::viewerSnapshot() {
       examiner_widgets_[2]->snapshot(img2);
       examiner_widgets_[3]->snapshot(img3);
 
-      QImage finalImage(img0.width() + img1.width(), img0.height(), QImage::Format_ARGB32_Premultiplied);
+      QImage finalImage(img0.width() + img1.width() + 2, img0.height(), QImage::Format_ARGB32_Premultiplied);
 
       QPainter painter(&finalImage);
+
+      painter.fillRect(0,0,finalImage.width(), finalImage.height(), QBrush(Qt::gray));
+
       painter.drawImage(QRectF(           0,             0, img0.width(), img0.height()),img0,
                         QRectF(           0,             0, img0.width(), img0.height()) );
-      painter.drawImage(QRectF(img0.width(),             0, img1.width(), img1.height()),img1,
+      painter.drawImage(QRectF(img0.width()+2,             0, img1.width(), img1.height()),img1,
                         QRectF(           0,             0, img1.width(), img1.height()) );
-      painter.drawImage(QRectF(img0.width(), img1.height(), img2.width(), img2.height()),img2,
+      painter.drawImage(QRectF(img0.width()+2, img1.height()+2, img2.width(), img2.height()),img2,
                         QRectF(           0,             0, img2.width(), img2.height()) );
-      painter.drawImage(QRectF(img0.width(), img1.height()+img2.height(), img3.width(),img3.height()),img3,
+      painter.drawImage(QRectF(img0.width()+2, img1.height()+img2.height()+4, img3.width(),img3.height()),img3,
                         QRectF(           0,             0, img3.width(), img3.height()) );
 
       finalImage.save(suggest);

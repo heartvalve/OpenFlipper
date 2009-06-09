@@ -695,7 +695,7 @@ private:
     virtual void snapshot();
 
     /// Take a snapshot and store it in the given image
-    virtual void snapshot(QImage& _image);
+    virtual void snapshot(QImage& _image, bool _offScreenRendering = false);
 
   /** @} */
 

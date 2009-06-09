@@ -1094,29 +1094,9 @@ void Core::resizeViewers(int _width, int _height ){
     lastWidth_  = coreWidget_->glView_->width();
     lastHeight_ = coreWidget_->glView_->height();
 
-    //now take the snapshot
-    switch ( coreWidget_->baseLayout_->mode() ){
 
-      case QtMultiViewLayout::SingleView:
-      {
-        //+4,+20 to to get the correct dimension when using snapshotFunction
-        coreWidget_->glView_->resize(_width+4, _height+20);
-        break;
-      }
-      case QtMultiViewLayout::Grid:
-      {
-        //+6,+22 to to get the correct dimension when using snapshotFunction
-        coreWidget_->glView_->resize(_width+6, _height+22);
-        break;
-      }
-      case QtMultiViewLayout::HSplit:
-      {
-        //+6,+20 to to get the correct dimension when using snapshotFunction
-        coreWidget_->glView_->resize(_width+6, _height+20);
-        break;
-      }
-      default: break;
-    }
+    //+4,+20 to to get the correct dimension when using snapshotFunction
+    coreWidget_->glView_->resize(_width+4, _height+20);
   }
 }
 
