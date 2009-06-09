@@ -551,10 +551,12 @@ void CoreWidget::slotCoordSysVisibility(bool _visible){
     return;
   }
 
-  if (_visible)
+  if (_visible) {
     coordSys->show();
-  else
+  }
+  else {
     coordSys->hide();
+  }
 }
 
 

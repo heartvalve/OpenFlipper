@@ -254,6 +254,18 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
   action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BackgroundColor.png") );
   connect(action, SIGNAL(triggered()), this, SLOT(slotSetContextBackgroundColor()) );
 
+  /*
+   * Show coordsys context menu of coordsys is
+   * invisible...
+   */
+
+  ACG::SceneGraph::BaseNode* root = PluginFunctions::getSceneGraphRootNode();
+  ACG::SceneGraph::BaseNode* coordSys = root->find("Core Coordsys Node");
+
+  if(!coordSys->visible()) {
+	  updatePopupMenuCoordsysNode(_menu, 0);
+  }
+
   // Tell Plugins to update their context Menu
   emit updateContextMenuBackground();
 
