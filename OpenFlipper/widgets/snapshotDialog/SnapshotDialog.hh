@@ -14,6 +14,7 @@ class SnapshotDialog : public QDialog, public Ui::SnapshotDialog
   private slots:
     void slotOk();
     void findFile();
+    void slotChangeResolution();
 
   signals:
     void resizeViewers(int _width, int _height);

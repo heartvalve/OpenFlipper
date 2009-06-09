@@ -16,7 +16,16 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, QWidget *
 
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()) );
   connect(findButton, SIGNAL(clicked()), this, SLOT(findFile()) );
+  connect(resButton,  SIGNAL(clicked()), this, SLOT(slotChangeResolution()) );
   connect(okButton,  SIGNAL(clicked()), this, SLOT(slotOk()) );
+}
+
+void SnapshotDialog::slotChangeResolution()
+{
+  if ( captureViewers_ )
+    emit resizeViewers(snapWidth->value(), snapHeight->value());
+  else
+    emit resizeApplication(snapWidth->value(), snapHeight->value());
 }
 
 void SnapshotDialog::slotOk()
