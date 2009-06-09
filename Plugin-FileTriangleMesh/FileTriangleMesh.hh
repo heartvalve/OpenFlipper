@@ -100,6 +100,8 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
   public slots:
     bool saveObject(int _id, QString _filename);
 
+    bool saveObject(int _id, QString _filename, bool _binary);
+
     int loadObject(QString _filename);
 
     int addNewTriangleMesh(  );
