@@ -255,7 +255,7 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
   connect(action, SIGNAL(triggered()), this, SLOT(slotSetContextBackgroundColor()) );
 
   /*
-   * Show coordsys context menu of coordsys is
+   * Show coordsys context menu of coordsys if
    * invisible...
    */
 
