@@ -1188,49 +1188,6 @@ void Core::setDescriptions(){
 
 }
 
-void Core::addViewMode(QString _modeName, QString _toolboxList) {
-
-  QStringList list = _toolboxList.split(";");
-  coreWidget_->slotAddViewMode(_modeName,list);
-}
-
-void Core::addToolbox(QString _name ,QWidget* _widget) {
-  int id = -1;
-
-  // Find the plugin which added this Toolbox
-  for ( uint i = 0 ; i < plugins.size(); ++i ) {
-    if ( plugins[i].plugin == sender() ) {
-      id = i;
-      break;
-    }
-  }
-
-  // Find the scripting plugin because we assign this toolBox to it as we did not find the original sender
-  if ( id == -1 ) {
-    for ( uint i = 0 ; i < plugins.size(); ++i ) {
-      if ( plugins[i].name == "Scripting" ) {
-        id = i;
-        break;
-      }
-    }
-
-
-    if ( id == -1 ) {
-      std::cerr << "Unknown sender plugin when adding Toolbox!" << std::endl;
-      return;
-    }
-  }
-
-  plugins[id].widgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
-
-  // add widget name to viewMode 'all'
-  if ( !viewModes_[0]->visibleWidgets.contains(_name) ){
-    viewModes_[0]->visibleWidgets << _name;
-    viewModes_[0]->visibleWidgets.sort();
-  }
-
-}
-
 void Core::slotDeleteObject( int _id ){
 
   if ( _id == -1 )
