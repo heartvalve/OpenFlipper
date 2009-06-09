@@ -465,6 +465,9 @@ private:
 
     bool capture_;
 
+    int lastWidth_;
+    int lastHeight_;
+
   /** @} */
   //===========================================================================
     /** @name Load / Save slots

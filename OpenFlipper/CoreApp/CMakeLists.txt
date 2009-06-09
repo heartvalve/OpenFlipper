@@ -34,6 +34,7 @@ set (directories
   ../widgets/PluginDialog
   ../widgets/viewModeWidget
   ../widgets/videoCaptureDialog
+  ../widgets/snapshotDialog
 )
 
 # collect all header,source and ui files

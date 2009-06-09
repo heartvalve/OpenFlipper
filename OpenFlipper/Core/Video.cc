@@ -91,6 +91,15 @@ void Core::captureVideo() {
 void Core::stopVideoCapture() {
   videoTimer_.stop();
   capture_ = false;
+
+  if ( OpenFlipper::Options::gui() ){
+
+    if (captureType_ == 1){
+      coreWidget_->glView_->resize(lastWidth_, lastHeight_);
+    } else {
+      coreWidget_->resize(lastWidth_, lastHeight_);
+    }
+  }
 }
 
 void Core::viewUpdated() {
