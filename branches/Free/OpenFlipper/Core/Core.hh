@@ -752,6 +752,9 @@ private:
      */
     void createWidget(QString _objectName, QString _uiFilename);
 
+    /// Set the active ViewMode
+    void setViewMode(QString _viewMode);
+
   private :
     /// Core scripting engine
     QScriptEngine scriptEngine_;
