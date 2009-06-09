@@ -170,8 +170,7 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
   PluginFunctions::getObject(_id,object);
 
   if (object  == 0){
-      emit log(LOGERR, "Unable to save " + object->path() + OpenFlipper::Options::dirSeparator() + object->name()
-                     + " (Could not get object)");
+      emit log(LOGERR, "Unable to save (Could not get object)");
       return false;
   }
 
@@ -219,6 +218,43 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
     }
   }else{
 
+    emit log(LOGERR, "Unable to save (object isn't a triangle mesh)");
+    return false;
+  }
+}
+
+/// Save object with given id
+bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename, bool _binary){
+
+  BaseObjectData* object;
+  PluginFunctions::getObject(_id,object);
+
+  if (object  == 0){
+      emit log(LOGERR, "Unable to save (Could not get object)");
+      return false;
+  }
+
+  std::string filename = std::string( _filename.toUtf8() );
+
+  if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
+    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
+    object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+
+    TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
+
+    OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
+
+    if ( _binary )
+      opt += OpenMesh::IO::Options::Binary;
+
+    if (OpenMesh::IO::write_mesh(*triObj->mesh(), filename.c_str(),opt) ){
+      emit log(LOGINFO, "Saved object to " + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      return true;
+    }else{
+      emit log(LOGERR, "Unable to save " + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      return false;
+    }
+  }else{
     emit log(LOGERR, "Unable to save (object isn't a triangle mesh)");
     return false;
   }
