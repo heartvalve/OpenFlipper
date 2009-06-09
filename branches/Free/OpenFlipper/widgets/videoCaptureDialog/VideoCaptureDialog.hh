@@ -14,5 +14,7 @@ class VideoCaptureDialog : public QDialog, public Ui::VideoCaptureDialog
 
   signals:
     void startVideoCapture(QString _baseName, int _fps, bool _captureViewers);
+    void resizeViewers(int _width, int _height);
+    void resizeApplication(int _width, int _height);
 };
 

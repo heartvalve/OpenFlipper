@@ -211,6 +211,9 @@ Core::init() {
     connect(coreWidget_, SIGNAL(recentOpen(QAction*)) , this, SLOT(slotRecentOpen(QAction*)));
     connect(coreWidget_, SIGNAL(exit())               , this, SLOT(slotExit()));
 
+
+    connect( coreWidget_, SIGNAL( resizeViewers(int,int) ), this, SLOT( resizeViewers(int,int) ) );
+    connect( coreWidget_, SIGNAL( resizeApplication(int,int) ), this, SLOT( resizeApplication(int,int) ) );
     connect( coreWidget_, SIGNAL( stopVideoCapture() ), this, SLOT( stopVideoCapture() ) );
     connect( coreWidget_, SIGNAL( startVideoCapture(QString,int,bool) ), this, SLOT( startVideoCapture(QString,int,bool) ) );
 
@@ -1085,11 +1088,17 @@ void Core::viewerSnapshot(){
     coreWidget_->viewerSnapshot();
 }
 
-void Core::resizeViewer(int _width, int _height ){
+void Core::resizeViewers(int _width, int _height ){
   if ( OpenFlipper::Options::gui() ){
-    //+40 / +20 corresponds to the bottom and right scrollbar
-    coreWidget_->examiner_widgets_[0]->resize(_width+40, _height+20);
+    //+6,+22 to to get the correct dimension when using snapshotFunction
+    coreWidget_->glView_->resize(_width+6, _height+22);
   }
+}
+
+void Core::resizeApplication(int _width, int _height ){
+ if ( OpenFlipper::Options::gui() ){
+    coreWidget_->resize(_width, _height);
+ }
 }
 
 void Core::writeVersionNumbers(QString _filename){
