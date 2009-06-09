@@ -268,7 +268,7 @@ void CoreWidget::applicationSnapshotDialog() {
   suggest += format;
 
 
-  SnapshotDialog dialog(suggest, false, this);
+  SnapshotDialog dialog(suggest, false, 0);
 
   int w = width();
   int h = height();
@@ -291,9 +291,9 @@ void CoreWidget::applicationSnapshotDialog() {
     QPixmap pic = QPixmap::grabWindow( winId() );
 
     pic.save(newName);
-
-    emit resizeApplication(w,h);
   }
+
+  emit resizeApplication(w,h);
 }
 
 ///Take a snapshot of the whole application
@@ -348,7 +348,7 @@ void CoreWidget::viewerSnapshotDialog() {
 
   suggest += format;
 
-  SnapshotDialog dialog(suggest, true, this);
+  SnapshotDialog dialog(suggest, true, 0);
 
   int w = glView_->width();
   int h = glView_->height();
@@ -432,9 +432,8 @@ void CoreWidget::viewerSnapshotDialog() {
       default: break;
 
     }
-
-    glView_->resize(w, h);
   }
+  glView_->resize(w, h);
 }
 
 ///Take a snapshot of all viewers

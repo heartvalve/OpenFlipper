@@ -11,6 +11,7 @@ class VideoCaptureDialog : public QDialog, public Ui::VideoCaptureDialog
   private slots:
     void slotStartVideoCapture();
     void findFile();
+    void slotChangeResolution();
 
   signals:
     void startVideoCapture(QString _baseName, int _fps, bool _captureViewers);

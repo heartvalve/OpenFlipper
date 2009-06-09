@@ -11,7 +11,16 @@ VideoCaptureDialog::VideoCaptureDialog(QWidget *parent) : QDialog(parent)
 
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()) );
   connect(findButton, SIGNAL(clicked()), this, SLOT(findFile()) );
+  connect(resButton,  SIGNAL(clicked()), this, SLOT(slotChangeResolution()) );
   connect(startButton,  SIGNAL(clicked()), this, SLOT(slotStartVideoCapture()) );
+}
+
+void VideoCaptureDialog::slotChangeResolution()
+{
+  if ( captureViewers->isChecked() )
+    emit resizeViewers(videoWidth->value(), videoHeight->value());
+  else
+    emit resizeApplication(videoWidth->value(), videoHeight->value());
 }
 
 void VideoCaptureDialog::slotStartVideoCapture()
