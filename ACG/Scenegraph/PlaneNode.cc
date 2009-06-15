@@ -59,7 +59,7 @@ unsigned int PlaneNode::availableDrawModes() const
 
 //----------------------------------------------------------------------------
 
-void PlaneNode::drawPlane( GLState&  _state) {
+void PlaneNode::drawPlane( GLState&  /*_state*/) {
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
