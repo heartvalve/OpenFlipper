@@ -85,7 +85,26 @@ void Core::commandLineScript(const char* _filename ) {
   commandLineScriptNames_.push_back(_filename);
 }
 
-void Core::slotCommandLineOpen() {
+void Core::slotExecuteAfterStartup() {
+
+  //check if we have scripting support:
+  bool scriptingSupport = false;
+  slotPluginExists("scripting",scriptingSupport);
+  if ( ! scriptingSupport ) {
+    emit log(LOGERR ,"No scripting support available, please check if we load a scripting plugin .. Skipping script execution on startup");
+  }
+
+  // Collect all script files from the scripting subdirectory and execute them if possible
+  if ( scriptingSupport ) {
+
+    QDir scriptDir = OpenFlipper::Options::scriptDir();
+    QStringList scriptFiles = scriptDir.entryList(QDir::Files,QDir::Name);
+
+    for ( int i = 0 ; i  < scriptFiles.size(); ++i )
+      emit executeFileScript(scriptDir.path() + QDir::separator() + scriptFiles[i]);
+
+  }
+
   for ( uint i = 0 ; i < commandLineFileNames_.size() ; ++i ) {
     if (commandLineFileNames_[i].second)
       loadObject(DATA_POLY_MESH, commandLineFileNames_[i].first);
@@ -93,17 +112,9 @@ void Core::slotCommandLineOpen() {
       loadObject(commandLineFileNames_[i].first);
   }
 
-  for ( uint i = 0 ; i < commandLineScriptNames_.size() ; ++i ) {
-    //check if we have scripting support:
-    bool ok = false;
-    slotPluginExists("scripting",ok);
-    if ( ! ok ) {
-      emit log(LOGERR ,"No scripting support available, please check if we load a scripting plugin");
-      return;
-    }
-
-    emit executeFileScript(commandLineScriptNames_[i]);
-  }
+  if ( scriptingSupport )
+    for ( uint i = 0 ; i < commandLineScriptNames_.size() ; ++i )
+      emit executeFileScript(commandLineScriptNames_[i]);
 
   if ( !OpenFlipper::Options::gui() && !OpenFlipper::Options::remoteControl())
     exitApplication();

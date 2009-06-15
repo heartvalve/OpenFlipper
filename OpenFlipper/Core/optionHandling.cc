@@ -221,6 +221,14 @@ void Core::setupOptions() {
   tempDir.cd("Textures");
   OpenFlipper::Options::textureDir(tempDir.absolutePath());
 
+  // Set the Path to the Scripts
+  tempDir = QDir(OpenFlipper::Options::applicationDir());
+  #ifdef OPENFLIPPER_DATADIR
+    tempDir.cd(OPENFLIPPER_DATADIR);
+  #endif
+  tempDir.cd("Scripts");
+  OpenFlipper::Options::scriptDir(tempDir.absolutePath());
+
   // Set the Path to the Icons
   tempDir = QDir(OpenFlipper::Options::applicationDir());
   #ifdef OPENFLIPPER_DATADIR
