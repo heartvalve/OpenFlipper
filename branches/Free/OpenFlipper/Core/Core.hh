@@ -418,7 +418,7 @@ private:
   private slots:
 
   /// Executed after loading core completly
-  void slotCommandLineOpen();
+  void slotExecuteAfterStartup();
 
   private:
     std::vector< std::pair < const char* , bool >  > commandLineFileNames_;

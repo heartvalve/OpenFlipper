@@ -528,7 +528,8 @@ Core::init() {
     scenegraphCheckTimer_->start ();
   }
 
-  QTimer::singleShot(100, this, SLOT(slotCommandLineOpen()));
+
+  QTimer::singleShot(100, this, SLOT(slotExecuteAfterStartup()));
 }
 
 
