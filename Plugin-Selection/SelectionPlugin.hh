@@ -467,6 +467,16 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// return a list of all selected faces
     idList getFaceSelection( int objectId );
 
+    /// save Selections into File
+    void saveSelections();
+
+    /// save Selection of one object
+    void saveSelection( int _objectId  , QString _filename);
+    void saveSelection( TriMesh&  _mesh, QString _filename);
+    void saveSelection( PolyMesh& _mesh, QString _filename);
+
+
+
   /** @} */
 
   //===========================================================================

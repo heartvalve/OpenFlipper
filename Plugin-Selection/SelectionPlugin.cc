@@ -38,6 +38,7 @@
 #include "SelectionPlugin.hh"
 
 #include <iostream>
+#include <fstream>
 #include <ACG/GL/GLState.hh>
 
 #include <ACG/Scenegraph/BaseNode.hh>
@@ -115,6 +116,9 @@ void SelectionPlugin::initializePlugin() {
   //different combinations of keyPresses
   emit registerKey(Qt::Key_Shift,   Qt::ShiftModifier | Qt::ControlModifier, "Source Deselection", true);
   emit registerKey(Qt::Key_Control, Qt::ShiftModifier | Qt::ControlModifier, "Source Deselection", true);
+
+  //register keys for the plugin
+  emit registerKey(Qt::Key_F8,      Qt::NoModifier, "Save Selections");
 }
 
 //***********************************************************************************
@@ -383,6 +387,8 @@ void SelectionPlugin::slotKeyEvent( QKeyEvent* _event ) {
         break;
     case Qt::Key_Delete :
         slotDeleteSelection();
+    case Qt::Key_F8 :
+        saveSelections();
     default:
     break;
   }
@@ -902,6 +908,176 @@ void SelectionPlugin::loadIniFile( INIFile& _ini, int _id )
   }
 
 };
+
+
+
+//******************************************************************************
+
+void SelectionPlugin::saveSelections()
+{
+  // process all target meshes
+  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS ,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+
+  for ( ; o_it != PluginFunctions::objectsEnd(); ++o_it)   
+  {
+    QString suggest = o_it->name() + ".sel";
+
+    QString filename = QFileDialog::getSaveFileName(0, tr("Save Selection"), suggest, tr("Selections (*.sel )"));
+
+    if (!filename.isEmpty())
+      saveSelection( o_it->id(), filename);
+  }
+  
+}
+
+//******************************************************************************
+
+void SelectionPlugin::saveSelection( int _objectId , QString _filename)
+{
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(_objectId,object) ) {
+    emit log(LOGERR,"saveSelection: unable to get object" ); 
+    return;
+  }
+
+  if( object->dataType( DATA_TRIANGLE_MESH))
+    saveSelection( *PluginFunctions::triMesh(object), _filename);
+  else
+    if( object->dataType( DATA_POLY_MESH))
+      saveSelection( *PluginFunctions::polyMesh(object), _filename);
+#ifdef ENABLE_POLYLINE_SUPPORT      
+    else 
+      if( object->dataType( DATA_POLY_LINE))
+	;
+#endif
+#ifdef ENABLE_BSPLINECURVE_SUPPORT   
+      else
+	if( object->dataType( DATA_BSPLINE_CURVE))
+	  ;
+#endif      
+	else
+	  emit log(LOGERR,"saveSelection : Unsupported object Type" ); 
+}
+
+
+//******************************************************************************
+
+
+void SelectionPlugin::saveSelection( TriMesh& _mesh, QString _filename)
+{
+  std::vector<int> vsel;
+  std::vector<int> esel;
+  std::vector<int> fsel;
+
+  // get vertex selections
+  TriMesh::VertexIter v_it  = _mesh.vertices_begin();
+  TriMesh::VertexIter v_end = _mesh.vertices_end();
+
+  for(; v_it != v_end; ++v_it)
+  {
+    if( _mesh.status(v_it.handle()).selected())
+      vsel.push_back( v_it.handle().idx());
+  }
+
+  // get edge selections
+  TriMesh::EdgeIter e_it  = _mesh.edges_begin();
+  TriMesh::EdgeIter e_end = _mesh.edges_end();
+
+  for(; e_it != e_end; ++e_it)
+  {
+    if( _mesh.status(e_it.handle()).selected())
+      esel.push_back( e_it.handle().idx());
+  }
+
+  // get face selections
+  TriMesh::FaceIter f_it  = _mesh.faces_begin();
+  TriMesh::FaceIter f_end = _mesh.faces_end();
+
+  for(; f_it != f_end; ++f_it)
+  {
+    if( _mesh.status(f_it.handle()).selected())
+      fsel.push_back( f_it.handle().idx());
+  }
+
+  std::ofstream fout( _filename.toAscii().data(), std::ios::out);
+
+  // write number of selected items
+  fout << vsel.size() << " " << esel.size() << " " << fsel.size() << std::endl;
+
+  // write vertex selections
+  for(unsigned int i=0; i<vsel.size(); ++i)
+    fout << vsel[i] << std::endl;
+
+  // write edge selections
+  for(unsigned int i=0; i<esel.size(); ++i)
+    fout << esel[i] << std::endl;
+
+  // write face selections
+  for(unsigned int i=0; i<fsel.size(); ++i)
+    fout << fsel[i] << std::endl;
+
+  fout.close();
+}
+
+
+//******************************************************************************
+
+
+void SelectionPlugin::saveSelection( PolyMesh& _mesh, QString _filename)
+{
+  std::vector<int> vsel;
+  std::vector<int> esel;
+  std::vector<int> fsel;
+
+  // get vertex selections
+  PolyMesh::VertexIter v_it  = _mesh.vertices_begin();
+  PolyMesh::VertexIter v_end = _mesh.vertices_end();
+
+  for(; v_it != v_end; ++v_it)
+  {
+    if( _mesh.status(v_it.handle()).selected())
+      vsel.push_back( v_it.handle().idx());
+  }
+
+  // get edge selections
+  PolyMesh::EdgeIter e_it  = _mesh.edges_begin();
+  PolyMesh::EdgeIter e_end = _mesh.edges_end();
+
+  for(; e_it != e_end; ++e_it)
+  {
+    if( _mesh.status(e_it.handle()).selected())
+      esel.push_back( e_it.handle().idx());
+  }
+
+  // get face selections
+  PolyMesh::FaceIter f_it  = _mesh.faces_begin();
+  PolyMesh::FaceIter f_end = _mesh.faces_end();
+
+  for(; f_it != f_end; ++f_it)
+  {
+    if( _mesh.status(f_it.handle()).selected())
+      fsel.push_back( f_it.handle().idx());
+  }
+
+  std::ofstream fout( _filename.toAscii().data(), std::ios::out);
+
+  // write number of selected items
+  fout << vsel.size() << " " << esel.size() << " " << fsel.size() << std::endl;
+
+  // write vertex selections
+  for(unsigned int i=0; i<vsel.size(); ++i)
+    fout << vsel[i] << std::endl;
+
+  // write edge selections
+  for(unsigned int i=0; i<esel.size(); ++i)
+    fout << esel[i] << std::endl;
+
+  // write face selections
+  for(unsigned int i=0; i<fsel.size(); ++i)
+    fout << fsel[i] << std::endl;
+
+  fout.close();
+}
 
 
 Q_EXPORT_PLUGIN2( selectionplugin , SelectionPlugin );
