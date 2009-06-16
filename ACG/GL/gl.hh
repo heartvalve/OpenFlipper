@@ -48,7 +48,7 @@
 
 #if defined(ARCH_DARWIN)
 
-  #include <glew.h>
+  #include <GL/glew.h>
   #include <glut.h>
   #include <OpenGL/gl.h>
   #include <OpenGL/glu.h>
