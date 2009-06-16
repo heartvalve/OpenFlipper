@@ -106,6 +106,14 @@ void Core::slotExecuteAfterStartup() {
   }
 
   for ( uint i = 0 ; i < commandLineFileNames_.size() ; ++i ) {
+
+    // Skip scripts here as they will be handled by a different function
+    QString tmp(commandLineFileNames_[i].first);
+    if ( tmp.endsWith("ofs") ) {
+      commandLineScriptNames_.push_back(commandLineFileNames_[i].first);
+      continue;
+    }
+
     if (commandLineFileNames_[i].second)
       loadObject(DATA_POLY_MESH, commandLineFileNames_[i].first);
     else
@@ -113,8 +121,12 @@ void Core::slotExecuteAfterStartup() {
   }
 
   if ( scriptingSupport )
-    for ( uint i = 0 ; i < commandLineScriptNames_.size() ; ++i )
-      emit executeFileScript(commandLineScriptNames_[i]);
+    for ( uint i = 0 ; i < commandLineScriptNames_.size() ; ++i ) {
+      // Add the full path to the script to set scripting dir right
+      QString tmp(commandLineScriptNames_[i]);
+      tmp = QDir::currentPath() + QDir::separator() + tmp;
+      emit executeFileScript(tmp);
+    }
 
   if ( !OpenFlipper::Options::gui() && !OpenFlipper::Options::remoteControl())
     exitApplication();
