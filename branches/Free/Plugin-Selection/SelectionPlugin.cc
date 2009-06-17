@@ -959,6 +959,25 @@ void SelectionPlugin::saveSelection( int _objectId , QString _filename)
 	  emit log(LOGERR,"saveSelection : Unsupported object Type" ); 
 }
 
+//******************************************************************************
+
+void SelectionPlugin::loadSelection( int _objectId  , QString _filename)
+{
+
+  if ( !_filename.isEmpty() ){
+
+    INIFile ini;
+
+    if ( ! ini.connect(_filename,false) ) {
+      emit log(LOGERR,"Failed to load Selection from file " + _filename);
+      return;
+    }
+
+    loadIniFile(ini, _objectId );
+
+    ini.disconnect();
+  }
+}
 
 //******************************************************************************
 
