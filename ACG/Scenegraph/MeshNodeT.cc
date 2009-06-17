@@ -1000,7 +1000,8 @@ draw_faces(FaceMode _mode)
 
         OpenMesh::FPropHandleT< int > texture_index_property;
         if ( !mesh_.get_property_handle(texture_index_property,indexPropertyName_) ) {
-          std::cerr << "Unable to get per face texture Index property named " << indexPropertyName_ << std::endl;
+          if( indexPropertyName_ != "No Texture Index")
+	    std::cerr << "Unable to get per face texture Index property named " << indexPropertyName_ << std::endl;
           if ( !mesh_.get_property_handle(texture_index_property,"f:textureindex") ) {
             std::cerr << "Unable to get standard per face texture Index property" << std::endl;
             texture_index_property.reset();
