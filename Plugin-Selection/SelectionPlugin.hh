@@ -472,6 +472,11 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     /// save Selection of one object
     void saveSelection( int _objectId  , QString _filename);
+
+    /// load Selection of one object
+    void loadSelection( int _objectId  , QString _filename);
+
+  private slots:
     void saveSelection( TriMesh&  _mesh, QString _filename);
     void saveSelection( PolyMesh& _mesh, QString _filename);
 
