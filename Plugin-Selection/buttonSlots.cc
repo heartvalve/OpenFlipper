@@ -180,9 +180,34 @@ void SelectionPlugin::slotGrowSelection() {
 void SelectionPlugin::slotLoadSelection(){
 
 
-  QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),"", tr("INI files (*.ini)"));
+  QString fileName = QFileDialog::getOpenFileName(0, tr("Open File"),"", tr("Selections (*.ini *.sel)"));
 
   if ( !fileName.isEmpty() ){
+
+    PluginFunctions::IteratorRestriction restriction;
+    if ( !tool_->restrictOnTargets->isChecked() )
+      restriction = PluginFunctions::ALL_OBJECTS;
+    else
+      restriction = PluginFunctions::TARGET_OBJECTS;
+
+    //first check if it's a Flipper Selection
+    QFile file(fileName);
+
+    if (file.open(QFile::ReadOnly)) {
+      QTextStream input(&file);
+
+      if ( input.readLine().contains("Selection") ) {
+
+        //load a Flipper Modeling Selection
+
+        for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
+          o_it != PluginFunctions::objectsEnd(); ++o_it)
+          if ( o_it->visible() )
+            loadFlipperModelingSelection(o_it->id(), fileName );
+
+        return;
+      }
+    }
 
     INIFile ini;
 
@@ -190,12 +215,6 @@ void SelectionPlugin::slotLoadSelection(){
       emit log(LOGERR,"Failed to load ini file " + fileName);
       return;
     }
-
-    PluginFunctions::IteratorRestriction restriction;
-    if ( !tool_->restrictOnTargets->isChecked() )
-      restriction = PluginFunctions::ALL_OBJECTS;
-    else 
-      restriction = PluginFunctions::TARGET_OBJECTS;
     
     for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
           o_it != PluginFunctions::objectsEnd(); ++o_it)
@@ -215,31 +234,64 @@ void SelectionPlugin::slotLoadSelection(){
   */
 void SelectionPlugin::slotSaveSelection(){
 
-  QString fileName = QFileDialog::getSaveFileName(0, tr("Save File"),"", tr("INI files (*.ini)"));
+  QStringList filters;
+  filters << "OpenFlipper Selection (*.ini)" << "Flipper Selection (*.sel)";
+
+  QFileDialog dialog(0);
+
+  dialog.setAcceptMode(QFileDialog::AcceptSave);
+  dialog.setNameFilters(filters);
+  dialog.setDefaultSuffix("ini");
+
+  if ( !dialog.exec() )
+    return;
+
+  QString fileName = dialog.selectedFiles()[0];
 
   if ( !fileName.isEmpty() ){
 
-    INIFile ini;
+    //write OpenFlipper Selection
+    if (dialog.selectedNameFilter() == filters[0] ){
 
-    if ( ! ini.connect(fileName,true) ) {
-      emit log(LOGERR,"Failed to save ini file " + fileName);
-      return;
-    }
+      INIFile ini;
 
-    PluginFunctions::IteratorRestriction restriction;
-    if ( !tool_->restrictOnTargets->isChecked() )
-      restriction = PluginFunctions::ALL_OBJECTS;
-    else 
-      restriction = PluginFunctions::TARGET_OBJECTS;
-    
-    for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
-          o_it != PluginFunctions::objectsEnd(); ++o_it)
-      if ( o_it->visible() ){
-
-        ini.add_section( o_it->name() );
-        saveIniFile(ini, o_it->id() );
+      if ( ! ini.connect(fileName,true) ) {
+        emit log(LOGERR,"Failed to save ini file " + fileName);
+        return;
       }
 
-    ini.disconnect();
+      PluginFunctions::IteratorRestriction restriction;
+      if ( !tool_->restrictOnTargets->isChecked() )
+        restriction = PluginFunctions::ALL_OBJECTS;
+      else
+        restriction = PluginFunctions::TARGET_OBJECTS;
+      
+      for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
+            o_it != PluginFunctions::objectsEnd(); ++o_it)
+        if ( o_it->visible() ){
+
+          ini.add_section( o_it->name() );
+          saveIniFile(ini, o_it->id() );
+        }
+
+      ini.disconnect();
+
+    } else {
+      // write Flipper Selection
+      bool saved = false;
+
+      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+            o_it != PluginFunctions::objectsEnd(); ++o_it)
+        if ( o_it->visible() ){
+
+          if ( !saved ){
+            saveFlipperModelingSelection(o_it->id(), fileName );
+            saved = true;
+          } else {
+            emit log(LOGWARN, "SaveSelection: Only selection of the first target was saved.");
+            return;
+          }
+        }
+    }
   }
 }

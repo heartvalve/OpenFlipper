@@ -398,6 +398,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Load a selection from an Flipper selection file for the given object
     void loadFlipperModelingSelection( int _objectId , QString _filename );
 
+    /// Save a selection in Flipper Selection Format
+    void saveFlipperModelingSelection( int _objectId , QString _filename );
+
     //==========================================
 
     /// Set vertices to be part of the modeling area
