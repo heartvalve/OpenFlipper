@@ -198,15 +198,33 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
 
     header = input.readLine();
 
-//     bool ok = false;
+    bool ok = false;
 
-//     uint vertexCount = header.toUInt(&ok);
-// 
-//     if ( !ok ) {
-//        emit log(LOGERR,"Unable to parse header. Cant get vertex count from string : " + header );
-//        return;
-//     }
+    uint vertexCount = header.toUInt(&ok);
 
+    if ( !ok ) {
+       emit log(LOGERR,"Unable to parse header. Cant get vertex count from string : " + header );
+       return;
+    }
+
+    //compare VertexCount
+    BaseObjectData* object;
+    if ( ! PluginFunctions::getObject(_objectId, object) ) {
+      emit log(LOGERR,"loadSelection : unable to get object" );
+      return;
+    }
+
+    if ( object->dataType() == DATA_TRIANGLE_MESH ){
+        if ( PluginFunctions::triMesh(object)->n_vertices() != vertexCount )
+          return;
+    } else if ( object->dataType() == DATA_POLY_MESH ){
+        if ( PluginFunctions::polyMesh(object)->n_vertices() != vertexCount )
+          return;
+    } else {
+      return;
+    }
+
+    //get selected handles
     idList handleVertices;
     idList modelingVertices;
 
@@ -239,6 +257,73 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
 
   } else
     emit log(LOGERR,"Unable to open selection file!");
-
-
 }
+
+//=========================================================
+
+void SelectionPlugin::saveFlipperModelingSelection( int _objectId , QString _filename ) {
+  QFile file(_filename);
+
+  if (file.open(QFile::WriteOnly)) {
+    QTextStream input(&file);
+
+    //get the object
+    BaseObjectData* object;
+    if ( ! PluginFunctions::getObject(_objectId,object) ) {
+      emit log(LOGERR,"saveFlipperModelingSelection : unable to get object" );
+      return;
+    }
+
+    if ( object->dataType() == DATA_TRIANGLE_MESH ) {
+      TriMesh* mesh = PluginFunctions::triMesh(object);
+
+      //header
+      input << "Selection" << endl;
+      input << mesh->n_vertices() << endl;
+
+      std::vector< int > modelingVertices = MeshSelection::getArea(mesh, AREA);
+      std::vector< int > handleVertices   = MeshSelection::getArea(mesh, HANDLEAREA);
+
+      std::vector< bool > modelingAll(mesh->n_vertices(), false);
+      std::vector< bool > handleAll(mesh->n_vertices(), false);
+
+      for (uint i=0; i < modelingVertices.size(); i++)
+        modelingAll[ modelingVertices[i] ] = true;
+
+      for (uint i=0; i < handleVertices.size(); i++)
+        handleAll[ handleVertices[i] ] = true;
+
+      for (uint i=0; i < mesh->n_vertices(); i++)
+        input << (int) modelingAll[i] << " " << (int) handleAll[i] << endl;
+
+    } else if ( object->dataType() == DATA_POLY_MESH){
+
+      PolyMesh* mesh = PluginFunctions::polyMesh(object);
+
+      //header
+      input << "Selection" << endl;
+      input << mesh->n_vertices() << endl;
+
+      std::vector< int > modelingVertices = MeshSelection::getArea(mesh, AREA);
+      std::vector< int > handleVertices   = MeshSelection::getArea(mesh, HANDLEAREA);
+
+      std::vector< bool > modelingAll(mesh->n_vertices(), false);
+      std::vector< bool > handleAll(mesh->n_vertices(), false);
+
+      for (uint i=0; i < modelingVertices.size(); i++)
+        modelingAll[ modelingVertices[i] ] = true;
+
+      for (uint i=0; i < handleVertices.size(); i++)
+        handleAll[ handleVertices[i] ] = true;
+
+      for (uint i=0; i < mesh->n_vertices(); i++)
+        input << (int) modelingAll[i] << " " << (int) handleAll[i] << endl;
+
+    } else {
+      emit log(LOGERR, "saveFlipperModelingSelection : Unsupported Type.");
+    }
+  } else
+    emit log(LOGERR,"Unable to open selection file!");
+}
+
+
