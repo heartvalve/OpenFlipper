@@ -1,164 +1,165 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>SelectionControls</class>
- <widget class="QWidget" name="SelectionControls" >
-  <property name="geometry" >
+ <widget class="QWidget" name="SelectionControls">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>267</width>
-    <height>659</height>
+    <width>397</width>
+    <height>934</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_4" >
-   <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
       <string> Selection Mode </string>
      </property>
-     <layout class="QFormLayout" name="formLayout" >
-      <item row="0" column="1" >
-       <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QPushButton" name="objectSelection" >
-          <property name="toolTip" >
+         <widget class="QPushButton" name="objectSelection">
+          <property name="toolTip">
            <string>Enable Object Selection</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>Enable Object Selection</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="iconSize" >
+          <property name="iconSize">
            <size>
             <width>32</width>
             <height>32</height>
            </size>
           </property>
-          <property name="checkable" >
+          <property name="checkable">
            <bool>true</bool>
           </property>
-          <property name="autoExclusive" >
+          <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="flat" >
+          <property name="flat">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="vertexSelection" >
-          <property name="toolTip" >
+         <widget class="QPushButton" name="vertexSelection">
+          <property name="toolTip">
            <string>Enable Vertex Selection</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>Enable Vertex Selection</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="iconSize" >
+          <property name="iconSize">
            <size>
             <width>32</width>
             <height>32</height>
            </size>
           </property>
-          <property name="checkable" >
+          <property name="checkable">
            <bool>true</bool>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
           </property>
-          <property name="autoExclusive" >
+          <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="flat" >
+          <property name="flat">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="edgeSelection" >
-          <property name="toolTip" >
+         <widget class="QPushButton" name="edgeSelection">
+          <property name="toolTip">
            <string>Enable Edge Selection</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>Enable Edge Selection</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="iconSize" >
+          <property name="iconSize">
            <size>
             <width>32</width>
             <height>32</height>
            </size>
           </property>
-          <property name="checkable" >
+          <property name="checkable">
            <bool>true</bool>
           </property>
-          <property name="autoExclusive" >
+          <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="flat" >
+          <property name="flat">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="faceSelection" >
-          <property name="toolTip" >
+         <widget class="QPushButton" name="faceSelection">
+          <property name="toolTip">
            <string>Enable Face Selection</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>Enable Face Selection</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string/>
           </property>
-          <property name="iconSize" >
+          <property name="iconSize">
            <size>
             <width>32</width>
             <height>32</height>
            </size>
           </property>
-          <property name="checkable" >
+          <property name="checkable">
            <bool>true</bool>
           </property>
-          <property name="autoExclusive" >
+          <property name="autoExclusive">
            <bool>true</bool>
           </property>
-          <property name="flat" >
+          <property name="flat">
            <bool>true</bool>
           </property>
          </widget>
         </item>
        </layout>
       </item>
-      <item row="1" column="1" >
-       <widget class="QPushButton" name="restrictOnTargets" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+      <item row="1" column="1">
+       <widget class="QPushButton" name="restrictOnTargets">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="toolTip" >
+        <property name="toolTip">
          <string>Restrict all selection methods in this toolbox to target objects</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Restrict all selection methods in this toolbox to target objects</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Select on target objects only</string>
         </property>
-        <property name="checkable" >
+        <property name="checkable">
          <bool>true</bool>
         </property>
-        <property name="checked" >
+        <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
@@ -166,139 +167,139 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
       <string> Selection </string>
      </property>
-     <layout class="QGridLayout" name="gridLayout" >
-      <item row="0" column="0" >
-       <widget class="QPushButton" name="selectAll" >
-        <property name="toolTip" >
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="selectAll">
+        <property name="toolTip">
          <string>Select all elements of each (target) object</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Select all elements of each (target) object</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Select All</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" >
-       <widget class="QPushButton" name="clearSelection" >
-        <property name="toolTip" >
+      <item row="0" column="1">
+       <widget class="QPushButton" name="clearSelection">
+        <property name="toolTip">
          <string>Clear the selection of each (target) object</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Clear the selection of each (target) object</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Clear</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QPushButton" name="growSelection" >
-        <property name="toolTip" >
+      <item row="1" column="0">
+       <widget class="QPushButton" name="growSelection">
+        <property name="toolTip">
          <string>Grow selection on all (target) objects</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Grow selection on all (target) objects</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Grow</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="QPushButton" name="shrinkSelection" >
-        <property name="toolTip" >
+      <item row="1" column="1">
+       <widget class="QPushButton" name="shrinkSelection">
+        <property name="toolTip">
          <string>Shrink selection on all (target) objects</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Shrink selection on all (target) objects</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Shrink</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0" >
-       <widget class="QPushButton" name="invertSelection" >
-        <property name="toolTip" >
+      <item row="2" column="0">
+       <widget class="QPushButton" name="invertSelection">
+        <property name="toolTip">
          <string>Invert selection on all (target) objects</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Invert selection on all (target) objects</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Invert</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" >
-       <widget class="QPushButton" name="selectBoundary" >
-        <property name="toolTip" >
+      <item row="2" column="1">
+       <widget class="QPushButton" name="selectBoundary">
+        <property name="toolTip">
          <string>Select Boundary on all (target) objects</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Select Boundary on all (target) objects</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Select Boundary</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0" >
-       <widget class="QPushButton" name="deleteSelection" >
-        <property name="toolTip" >
+      <item row="3" column="0">
+       <widget class="QPushButton" name="deleteSelection">
+        <property name="toolTip">
          <string>Delete selection on all (target) objects</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Delete selection on all (target) objects</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Delete</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0" >
-       <widget class="Line" name="line_2" >
-        <property name="orientation" >
+      <item row="4" column="0">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="4" column="1" >
-       <widget class="Line" name="line_3" >
-        <property name="orientation" >
+      <item row="4" column="1">
+       <widget class="Line" name="line_3">
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="5" column="0" >
-       <widget class="QPushButton" name="loadSelection" >
-        <property name="toolTip" >
+      <item row="5" column="0">
+       <widget class="QPushButton" name="loadSelection">
+        <property name="toolTip">
          <string>Load current selection from file</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Load current selection from file</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Load Selection</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="1" >
-       <widget class="QPushButton" name="saveSelection" >
-        <property name="toolTip" >
+      <item row="5" column="1">
+       <widget class="QPushButton" name="saveSelection">
+        <property name="toolTip">
          <string>Save current selection to file</string>
         </property>
-        <property name="statusTip" >
+        <property name="statusTip">
          <string>Save current selection to file</string>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Save Selection</string>
         </property>
        </widget>
@@ -306,61 +307,61 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_3" >
-     <property name="title" >
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
       <string> Mesh Properties </string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3" >
+     <layout class="QVBoxLayout" name="verticalLayout_5">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2" >
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLabel" name="label_3" >
-          <property name="text" >
+         <widget class="QLabel" name="label_3">
+          <property name="text">
            <string>Convert Selection to:</string>
           </property>
-          <property name="wordWrap" >
+          <property name="wordWrap">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2" >
+         <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QPushButton" name="setModelingArea" >
-            <property name="toolTip" >
+           <widget class="QPushButton" name="setModelingArea">
+            <property name="toolTip">
              <string>Convert the selection of all (target) objects to a modeling area</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>Convert the selection of all (target) objects to a modeling area</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Modeling Area</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="setHandleRegion" >
-            <property name="toolTip" >
+           <widget class="QPushButton" name="setHandleRegion">
+            <property name="toolTip">
              <string>Convert the selection of all (target) objects to a handle region</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>Convert the selection of all (target) objects to a handle region</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Handle Region</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="setFeatures" >
-            <property name="toolTip" >
+           <widget class="QPushButton" name="setFeatures">
+            <property name="toolTip">
              <string>Convert the selection of all (target) objects to a feature</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>Convert the selection of all (target) objects to a feature</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Feature</string>
             </property>
            </widget>
@@ -370,59 +371,205 @@
        </layout>
       </item>
       <item>
-       <widget class="Line" name="line" >
-        <property name="orientation" >
+       <widget class="Line" name="line">
+        <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" >
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="label_4" >
-          <property name="text" >
+         <widget class="QLabel" name="label_4">
+          <property name="text">
            <string>Clear Property:</string>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout" >
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QPushButton" name="clearModelingArea" >
-            <property name="toolTip" >
+           <widget class="QPushButton" name="clearModelingArea">
+            <property name="toolTip">
              <string>Clear the modeling area of all (target) objects</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>Clear the modeling area of all (target) objects</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Clear Modeling Area</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="clearHandleRegion" >
-            <property name="toolTip" >
+           <widget class="QPushButton" name="clearHandleRegion">
+            <property name="toolTip">
              <string>Clear the handle region of all (target) objects</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>Clear the handle region of all (target) objects</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Clear Handle Region</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="clearFeatures" >
-            <property name="toolTip" >
+           <widget class="QPushButton" name="clearFeatures">
+            <property name="toolTip">
              <string>Clear the features of all (target) objects</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>Clear the features of all (target) objects</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Clear Features</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Convert</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QComboBox" name="convertFrom">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>130</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>to</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QComboBox" name="convertTo">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>130</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="layoutDirection">
+                 <enum>Qt::LeftToRight</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="convertButton">
+            <property name="text">
+             <string>Convert</string>
             </property>
            </widget>
           </item>
@@ -433,15 +580,15 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+   <item row="3" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>159</height>
       </size>
      </property>
     </spacer>

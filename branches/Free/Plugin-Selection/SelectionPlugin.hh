@@ -336,6 +336,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Save the current selection
     void slotSaveSelection();
 
+    /// Convert selection types (modeling area, handle region or feature
+    void slotConvertSelectionType();
+
 
   /** @} */
 
@@ -483,7 +486,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void saveSelection( TriMesh&  _mesh, QString _filename);
     void saveSelection( PolyMesh& _mesh, QString _filename);
 
+    //======================================================
 
+    /// Convert selection types (modeling area, handle region or feature
+    void convertSelectionType(StatusBits from, StatusBits to);
 
   /** @} */
 
