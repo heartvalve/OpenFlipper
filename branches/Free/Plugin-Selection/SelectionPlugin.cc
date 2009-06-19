@@ -933,12 +933,12 @@ void SelectionPlugin::slotConvertSelectionType() {
 	if(tool_->convertFrom->currentText() == "Handle Region") {
 		from = HANDLEAREA;
 	}
-	// Feature yet to be implemented
+	// Feature still to be implemented
 
 	else if(tool_->convertTo->currentText() == "Handle Region") {
 		to = HANDLEAREA;
 	}
-	// Feature yet to be implemented
+	// Feature still to be implemented
 
 	convertSelectionType(from, to);
 }
