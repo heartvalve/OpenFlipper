@@ -230,7 +230,7 @@ void SelectionPlugin::pluginsInitialized() {
                               "<B>Sphere Selection</B><br>Select elements by painting with a sphere.", toolBarActions_ );
   paintSphereAction_->setCheckable( true );
   toolBar_->addAction( paintSphereAction_ );
-  boundaryAction_ = new QAction( QIcon(iconPath + "selection_boundary.png"), 
+  boundaryAction_ = new QAction( QIcon(iconPath + "selection_boundary.png"),
                               "<B>Closest Boundary</B><br>Select the closest boundary to a clicked point.", toolBarActions_ );
   boundaryAction_->setCheckable( true );
   toolBar_->addAction( boundaryAction_ );
@@ -322,6 +322,18 @@ bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
   tool_->vertexSelection->setIcon( QIcon(iconPath + "selection_vertex.png") );
   tool_->edgeSelection->setIcon( QIcon(iconPath + "selection_edge.png") );
   tool_->faceSelection->setIcon( QIcon(iconPath + "selection_face.png") );
+
+  // Set combo box entries for the different modes
+  tool_->convertFrom->addItem("Modeling Area");
+  tool_->convertFrom->addItem("Handle Region");
+  tool_->convertFrom->addItem("Feature");
+
+  tool_->convertTo->addItem("Modeling Area");
+  tool_->convertTo->addItem("Handle Region");
+  tool_->convertTo->addItem("Feature");
+
+  // Convert button
+  connect(tool_->convertButton, SIGNAL(clicked()), this, SLOT(slotConvertSelectionType()));
 
   connect (tool_->restrictOnTargets, SIGNAL(clicked()), this, SLOT(slotToggleSelectionRestriction()) );
 
@@ -741,7 +753,7 @@ void SelectionPlugin::slotDeleteSelection() {
 
 
 /** \brief Toggle the selection Restriction
- * 
+ *
  */
 void SelectionPlugin::slotToggleSelectionRestriction(){
   if ( tool_->restrictOnTargets->isChecked() )
@@ -909,7 +921,69 @@ void SelectionPlugin::loadIniFile( INIFile& _ini, int _id )
 
 };
 
+//******************************************************************************
 
+void SelectionPlugin::slotConvertSelectionType() {
+
+	StatusBits from, to;
+
+	// Default: Modeling Area
+	from = to = AREA;
+
+	if(tool_->convertFrom->currentText() == "Handle Region") {
+		from = HANDLEAREA;
+	}
+	// Feature yet to be implemented
+
+	else if(tool_->convertTo->currentText() == "Handle Region") {
+		to = HANDLEAREA;
+	}
+	// Feature yet to be implemented
+
+	convertSelectionType(from, to);
+}
+
+//******************************************************************************
+
+void SelectionPlugin::convertSelectionType(StatusBits from, StatusBits to) {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	if(from == AREA && to == HANDLEAREA) {
+
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+			idList list = getModelingVertices(o_it->id());
+			clearModelingVertices(o_it->id());
+			selectHandleVertices(o_it->id(), list);
+
+			o_it->update();
+		}
+	}
+	else if(from == HANDLEAREA && to == AREA) {
+
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+			idList list = getHandleVertices(o_it->id());
+			clearHandleVertices(o_it->id());
+			selectModelingVertices(o_it->id(), list);
+
+			o_it->update();
+		}
+	}
+
+	// NOTE: Feature conversion is still to be implemented
+
+	emit updateView();
+}
 
 //******************************************************************************
 
@@ -918,7 +992,7 @@ void SelectionPlugin::saveSelections()
   // process all target meshes
   PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS ,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 
-  for ( ; o_it != PluginFunctions::objectsEnd(); ++o_it)   
+  for ( ; o_it != PluginFunctions::objectsEnd(); ++o_it)
   {
     QString suggest = o_it->name() + ".sel";
 
@@ -927,7 +1001,7 @@ void SelectionPlugin::saveSelections()
     if (!filename.isEmpty())
       saveSelection( o_it->id(), filename);
   }
-  
+
 }
 
 //******************************************************************************
@@ -936,7 +1010,7 @@ void SelectionPlugin::saveSelection( int _objectId , QString _filename)
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"saveSelection: unable to get object" ); 
+    emit log(LOGERR,"saveSelection: unable to get object" );
     return;
   }
 
@@ -945,18 +1019,18 @@ void SelectionPlugin::saveSelection( int _objectId , QString _filename)
   else
     if( object->dataType( DATA_POLY_MESH))
       saveSelection( *PluginFunctions::polyMesh(object), _filename);
-#ifdef ENABLE_POLYLINE_SUPPORT      
-    else 
+#ifdef ENABLE_POLYLINE_SUPPORT
+    else
       if( object->dataType( DATA_POLY_LINE))
 	;
 #endif
-#ifdef ENABLE_BSPLINECURVE_SUPPORT   
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
       else
 	if( object->dataType( DATA_BSPLINE_CURVE))
 	  ;
-#endif      
+#endif
 	else
-	  emit log(LOGERR,"saveSelection : Unsupported object Type" ); 
+	  emit log(LOGERR,"saveSelection : Unsupported object Type" );
 }
 
 //******************************************************************************
