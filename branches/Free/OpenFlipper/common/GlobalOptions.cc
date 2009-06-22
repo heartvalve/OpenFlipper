@@ -107,7 +107,7 @@ static bool glStereo_ = true;
 static StereoMode stereoMode_ = OpenGL;
 
 /// get stereo eye distance (default = 7cm)
-static float eyeDistance_ = 0.07;
+static float eyeDistance_ = 0.07f;
 
 /// stereo focal distance relative to scene near plane (default = to center of scene)
 static float focalDistance_ = 0.5;
