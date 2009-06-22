@@ -101,7 +101,8 @@ void Core::slotExecuteAfterStartup() {
     QStringList scriptFiles = scriptDir.entryList(QDir::Files,QDir::Name);
 
     for ( int i = 0 ; i  < scriptFiles.size(); ++i )
-      emit executeFileScript(scriptDir.path() + QDir::separator() + scriptFiles[i]);
+      if ( scriptFiles[i].endsWith("ofs") )
+        emit executeFileScript(scriptDir.path() + QDir::separator() + scriptFiles[i]);
 
   }
 
