@@ -30,12 +30,12 @@
 
  namespace std {
 
-   inline bool isnan(double x)
+   inline int isnan(double x)
    {
      return _isnan(x);
    } 
 
-   inline bool isinf(double x)
+   inline int isinf(double x)
    {
      return !_finite(x);
    } 
