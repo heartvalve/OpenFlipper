@@ -5,7 +5,6 @@
 #  TAUCS_LIBRARIES    - List of libraries when using TAUCS.
 #  TAUCS_FOUND        - True if TAUCS found.
 
-MESSAGE(STATUS "TAUCS finder under DEVELOPMENT!!!")
 IF (TAUCS_INCLUDE_DIR)
   # Already in cache, be silent
   SET(TAUCS_FIND_QUIETLY TRUE)
