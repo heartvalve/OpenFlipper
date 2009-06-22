@@ -51,6 +51,7 @@ else( WIN32 )
 
    # if we found the library, add it to the defined libraries
    IF ( SUITESPARSE_LIBRARY_DIR )
+       list ( APPEND SUITESPARSE_LIBRARY_DIRS ${SUITESPARSE_LIBRARY_DIR} )
        FIND_LIBRARY( CHOLMOD_LIBRARY
                      NAMES cholmod CHOLMOD
                      PATHS ${SUITESPARSE_LIBRARY_DIR} )
