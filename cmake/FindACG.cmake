@@ -20,7 +20,6 @@ FIND_PATH(ACG_INCLUDE_DIR QtWidgets/QtBaseViewer.hh
                 )
 
 IF (ACG_INCLUDE_DIR )
-   MESSAGE(STATUS blubb)
    SET(ACG_FOUND TRUE)
    # TODO: Set correct library path!!
    #SET(ACG_LIBRARY_DIR "${ACG_INCLUDE_DIR}/../")
