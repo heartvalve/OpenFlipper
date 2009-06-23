@@ -9,13 +9,18 @@ FIND_PACKAGE(PETSC)
 
 find_path (SLEPC_INCLUDE_DIR slepc.h
   HINTS ENV SLEPC_INCLUDE_DIR
-  PATHS /usr/lib/slepcdir/3.0.0/include
+  PATHS /usr/lib/slepcdir/3.0.0/include "C:\\libs\\slepc-3.0.0-p4\\include"
   DOC "SLEPC Include Directory")
 
-
-find_library( SLEPC_LIBRARY slepc
-              PATHS /usr/lib
+IF ( WIN32 )
+find_library( SLEPC_LIBRARY libslepc.lib
+              PATHS "C:\\libs\\slepc-3.0.0-p4\\cygwin-c-opt\\lib"
             )
+ELSE( WIN32 )
+  find_library( SLEPC_LIBRARY slepc
+                PATHS /usr/lib 
+              )
+ENDIF( WIN32 )
 
 IF (SLEPC_INCLUDE_DIR AND SLEPC_LIBRARY)
   SET(SLEPC_FOUND TRUE)
