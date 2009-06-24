@@ -727,10 +727,8 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
     return;
 
   BaseObjectData* obj;
-  if (! PluginFunctions::getObject(  _identifier , obj ) ) {
-    emit log(LOGERR,"slotObjectUpdated: Unable to get Object for id " + QString::number(_identifier) );
+  if (! PluginFunctions::getObject(  _identifier , obj ) )
     return;
-  }
 
   //skip object if its not a mesh
   if( !obj->dataType( DATA_TRIANGLE_MESH ) && !obj->dataType( DATA_POLY_MESH ) )
