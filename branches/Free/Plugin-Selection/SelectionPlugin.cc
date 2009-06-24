@@ -325,27 +325,24 @@ bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
 
   // Set combo box entries for the different modes
   tool_->convertFrom->addItem("Modeling Area");
-  tool_->convertFrom->addItem("Handle Region");
-  tool_->convertFrom->addItem("Feature");
+  tool_->convertFrom->addItem("Handle Area");
+  tool_->convertFrom->addItem("Feature Area");
 
   tool_->convertTo->addItem("Modeling Area");
-  tool_->convertTo->addItem("Handle Region");
-  tool_->convertTo->addItem("Feature");
+  tool_->convertTo->addItem("Handle Area");
+  tool_->convertTo->addItem("Feature Area");
+
+  // Set combo box entries for the different selection types
+  tool_->convertFrom->addItem("Vertex Selection");
+  tool_->convertFrom->addItem("Edge Selection");
+  tool_->convertFrom->addItem("Face Selection");
+
+  tool_->convertTo->addItem("Vertex Selection");
+  tool_->convertTo->addItem("Edge Selection");
+  tool_->convertTo->addItem("Face Selection");
 
   // Convert button
   connect(tool_->convertButton, SIGNAL(clicked()), this, SLOT(slotConvertSelectionType()));
-
-  // Set combo box entries for the different selection types
-  tool_->convertSelectionFrom->addItem("Vertex Selection");
-  tool_->convertSelectionFrom->addItem("Edge Selection");
-  tool_->convertSelectionFrom->addItem("Face Selection");
-
-  tool_->convertSelectionTo->addItem("Vertex Selection");
-  tool_->convertSelectionTo->addItem("Edge Selection");
-  tool_->convertSelectionTo->addItem("Face Selection");
-
-  // Convert button
-  connect(tool_->convertSelectionButton, SIGNAL(clicked()), this, SLOT(slotConvertSelection()));
 
   connect (tool_->restrictOnTargets, SIGNAL(clicked()), this, SLOT(slotToggleSelectionRestriction()) );
 
@@ -364,11 +361,7 @@ bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
   connect( tool_->loadSelection, SIGNAL(clicked()), this,SLOT(slotLoadSelection()) );
   connect( tool_->saveSelection, SIGNAL(clicked()), this,SLOT(slotSaveSelection()) );
 
-  //Mesh Properties
-  connect( tool_->setModelingArea, SIGNAL(clicked()), this,SLOT(slotSetArea()) );
-  connect( tool_->setHandleRegion, SIGNAL(clicked()), this,SLOT(slotSetHandle()) );
-  connect( tool_->setFeatures,     SIGNAL(clicked()), this,SLOT(slotSetFeatures()) );
-
+  //Clear Mesh Properties
   connect( tool_->clearModelingArea, SIGNAL(clicked()), this,SLOT(slotClearArea()) );
   connect( tool_->clearHandleRegion, SIGNAL(clicked()), this,SLOT(slotClearHandle()));
   connect( tool_->clearFeatures,     SIGNAL(clicked()), this,SLOT(slotClearFeatures()));
@@ -605,12 +598,23 @@ void SelectionPlugin::slotSetArea() {
 
   for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
         o_it != PluginFunctions::objectsEnd(); ++o_it)   {
-    if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
-        set_area(PluginFunctions::triMesh(*o_it));
-    if ( o_it->dataType( DATA_POLY_MESH ) )
-        set_area(PluginFunctions::polyMesh(*o_it));
-    o_it->update();
-  }
+
+		// Add selection to existing modeling area
+		// if corresponding checkbox is checked
+		if (tool_->checkAddArea->checkState() == Qt::Checked) {
+			idList list = getModelingVertices(o_it->id());
+			selectVertices(o_it->id(), list);
+		}
+
+		if (o_it->dataType(DATA_TRIANGLE_MESH)) {
+			set_area(PluginFunctions::triMesh(*o_it));
+		}
+		if (o_it->dataType(DATA_POLY_MESH)) {
+			set_area(PluginFunctions::polyMesh(*o_it));
+		}
+
+		o_it->update();
+	}
 
   emit updateView();
 }
@@ -630,14 +634,22 @@ void SelectionPlugin::slotSetHandle() {
 
   for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
         o_it != PluginFunctions::objectsEnd(); ++o_it)   {
-    if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
-        set_handle(PluginFunctions::triMesh(*o_it));
-    if ( o_it->dataType( DATA_POLY_MESH ) )
-        set_handle(PluginFunctions::polyMesh(*o_it));
-    o_it->update();
-  }
 
-  emit updateView();
+		// Add selection to existing handle area
+		// if corresponding checkbox is checked
+		if (tool_->checkAddArea->checkState() == Qt::Checked) {
+			idList list = getHandleVertices(o_it->id());
+			selectVertices(o_it->id(), list);
+		}
+
+		if (o_it->dataType(DATA_TRIANGLE_MESH))
+			set_handle(PluginFunctions::triMesh(*o_it));
+		if (o_it->dataType(DATA_POLY_MESH))
+			set_handle(PluginFunctions::polyMesh(*o_it));
+		o_it->update();
+	}
+
+	emit updateView();
 }
 
 
@@ -647,22 +659,23 @@ void SelectionPlugin::slotSetHandle() {
 /** \brief convert current selection to feature
  */
 void SelectionPlugin::slotSetFeatures() {
-  PluginFunctions::IteratorRestriction restriction;
-  if ( !tool_->restrictOnTargets->isChecked() )
-    restriction = PluginFunctions::ALL_OBJECTS;
-  else
-    restriction = PluginFunctions::TARGET_OBJECTS;
+	PluginFunctions::IteratorRestriction restriction;
+	if (!tool_->restrictOnTargets->isChecked())
+		restriction = PluginFunctions::ALL_OBJECTS;
+	else
+		restriction = PluginFunctions::TARGET_OBJECTS;
 
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
-        o_it != PluginFunctions::objectsEnd(); ++o_it)   {
-    if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
-        set_features(PluginFunctions::triMesh(*o_it));
-    if ( o_it->dataType( DATA_POLY_MESH ) )
-        set_features(PluginFunctions::polyMesh(*o_it));
-    o_it->update();
-  }
+	for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH)); o_it
+			!= PluginFunctions::objectsEnd(); ++o_it) {
 
-  emit updateView();
+		if (o_it->dataType(DATA_TRIANGLE_MESH))
+			set_features(PluginFunctions::triMesh(*o_it));
+		if (o_it->dataType(DATA_POLY_MESH))
+			set_features(PluginFunctions::polyMesh(*o_it));
+		o_it->update();
+	}
+
+	emit updateView();
 }
 
 //******************************************************************************
@@ -937,57 +950,59 @@ void SelectionPlugin::loadIniFile( INIFile& _ini, int _id )
 
 void SelectionPlugin::slotConvertSelectionType() {
 
-	StatusBits from, to;
+	QString sfrom, sto;
 
-	// Default: Modeling Area
-	from = to = AREA;
+	sfrom = tool_->convertFrom->currentText();
+	sto = tool_->convertTo->currentText();
 
-	if(tool_->convertFrom->currentText() == tr("Handle Region")) {
-		from = HANDLEAREA;
+	// Clear selection after selection conversion
+	bool unselectAfter = tool_->checkSelectionConvert->checkState() == Qt::Checked;
+	// Clear area after area conversion
+	bool clearAfter = tool_->checkConvert->checkState() == Qt::Checked;
+
+	if(sfrom == tr("Vertex Selection") && sto == tr("Edge Selection")) {
+		convertVtoESelection(unselectAfter);
+	}
+	else if(sfrom == tr("Vertex Selection") && sto == tr("Face Selection")) {
+		convertVtoFSelection(unselectAfter);
+	}
+	else if(sfrom == tr("Edge Selection") && sto == tr("Vertex Selection")) {
+		convertEtoVSelection(unselectAfter);
+	}
+	else if(sfrom == tr("Edge Selection") && sto == tr("Face Selection")) {
+		convertEtoFSelection(unselectAfter);
+	}
+	else if(sfrom == tr("Face Selection") && sto == tr("Vertex Selection")) {
+		convertFtoVSelection(unselectAfter);
+	}
+	else if(sfrom == tr("Face Selection") && sto == tr("Edge Selection")) {
+		convertFtoESelection(unselectAfter);
+	}
+	else if(sfrom == tr("Modeling Area") && sto == tr("Handle Area")) {
+		StatusBits from = AREA;
+		StatusBits to = HANDLEAREA;
+		convertSelectionType(from, to, clearAfter);
+	}
+	else if(sfrom == tr("Handle Area") && sto == tr("Modeling Area")) {
+		StatusBits from = HANDLEAREA;
+		StatusBits to = AREA;
+		convertSelectionType(from, to, clearAfter);
+	}
+	else if(sfrom == tr("Vertex Selection") && sto == tr("Modeling Area")) {
+		slotSetArea();
+	}
+	else if(sfrom == tr("Vertex Selection") && sto == tr("Handle Area")) {
+		slotSetHandle();
+	}
+	else if(sfrom == tr("Vertex Selection") && sto == tr("Feature Area")) {
+		slotSetFeatures();
 	}
 	// Feature still to be implemented
-
-	else if(tool_->convertTo->currentText() == tr("Handle Region")) {
-		to = HANDLEAREA;
-	}
-	// Feature still to be implemented
-
-	convertSelectionType(from, to);
 }
 
 //******************************************************************************
 
-void SelectionPlugin::slotConvertSelection() {
-
-	QString from, to;
-
-	from = tool_->convertSelectionFrom->currentText();
-	to = tool_->convertSelectionTo->currentText();
-
-	if(from == tr("Vertex Selection") && to == tr("Edge Selection")) {
-		convertVtoESelection();
-	}
-	else if(from == tr("Vertex Selection") && to == tr("Face Selection")) {
-		convertVtoFSelection();
-	}
-	else if(from == tr("Edge Selection") && to == tr("Vertex Selection")) {
-		convertEtoVSelection();
-	}
-	else if(from == tr("Edge Selection") && to == tr("Face Selection")) {
-		convertEtoFSelection();
-	}
-	else if(from == tr("Face Selection") && to == tr("Vertex Selection")) {
-		convertFtoVSelection();
-	}
-	else if(from == tr("Face Selection") && to == tr("Edge Selection")) {
-		convertFtoESelection();
-	}
-}
-
-
-//******************************************************************************
-
-void SelectionPlugin::convertSelectionType(StatusBits from, StatusBits to) {
+void SelectionPlugin::convertSelectionType(StatusBits _from, StatusBits _to, bool _clearAfter) {
 
 	PluginFunctions::IteratorRestriction restriction;
 	if ( !tool_->restrictOnTargets->isChecked() ) {
@@ -997,25 +1012,39 @@ void SelectionPlugin::convertSelectionType(StatusBits from, StatusBits to) {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	if(from == AREA && to == HANDLEAREA) {
+	if(_from == AREA && _to == HANDLEAREA) {
 
 		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 
+			// Delete current handle region if
+			// checkbox "Add to area" is NOT checked
+			if (tool_->checkAddArea->checkState() != Qt::Checked &&
+					selectionType_ == VERTEX) {
+				clearHandleVertices(o_it->id());
+			}
+
 			idList list = getModelingVertices(o_it->id());
-			clearModelingVertices(o_it->id());
+			if(_clearAfter) { clearModelingVertices(o_it->id()); }
 			selectHandleVertices(o_it->id(), list);
 
 			o_it->update();
 		}
 	}
-	else if(from == HANDLEAREA && to == AREA) {
+	else if(_from == HANDLEAREA && _to == AREA) {
 
 		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 
+			// Delete current modeling area if
+			// checkbox "Add to area" is NOT checked
+			if (tool_->checkAddArea->checkState() != Qt::Checked &&
+					selectionType_ == VERTEX) {
+				clearModelingVertices(o_it->id());
+			}
+
 			idList list = getHandleVertices(o_it->id());
-			clearHandleVertices(o_it->id());
+			if(_clearAfter) { clearHandleVertices(o_it->id()); }
 			selectModelingVertices(o_it->id(), list);
 
 			o_it->update();

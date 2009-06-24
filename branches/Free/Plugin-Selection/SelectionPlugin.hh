@@ -339,9 +339,6 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Convert selection types (modeling area, handle region or feature)
     void slotConvertSelectionType();
 
-    /// Convert selection types (vertex, edge or face selection)
-    void slotConvertSelection();
-
 
   /** @} */
 
@@ -492,7 +489,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     //======================================================
 
     /// Convert selection types (modeling area, handle region or feature)
-    void convertSelectionType(StatusBits from, StatusBits to);
+    void convertSelectionType(StatusBits _from, StatusBits _to, bool _clearAfter);
 
     /// Convert selections (vertex, edge, face)
     void convertSelection();
