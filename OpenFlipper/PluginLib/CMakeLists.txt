@@ -34,7 +34,7 @@ endif ()
 
 # define core version
 add_definitions (
-    -DCORE_VERSION="${VERSION}"
+    -DCORE_VERSION="${OPENFLIPPER_VERSION}"
 )
 
 # collect all header,source and ui files
