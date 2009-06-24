@@ -336,8 +336,11 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Save the current selection
     void slotSaveSelection();
 
-    /// Convert selection types (modeling area, handle region or feature
+    /// Convert selection types (modeling area, handle region or feature)
     void slotConvertSelectionType();
+
+    /// Convert selection types (vertex, edge or face selection)
+    void slotConvertSelection();
 
 
   /** @} */
@@ -488,8 +491,35 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     //======================================================
 
-    /// Convert selection types (modeling area, handle region or feature
+    /// Convert selection types (modeling area, handle region or feature)
     void convertSelectionType(StatusBits from, StatusBits to);
+
+    /// Convert selections (vertex, edge, face)
+    void convertSelection();
+
+    /// Select for each selected vertex the incident edges and
+    /// unselect vertices after (if _unselectAfter = true)
+    void convertVtoESelection(bool _unselectAfter = true);
+
+    /// Select for each selected vertex the adjacent faces and
+    /// unselect vertices after (if _unselectAfter = true)
+    void convertVtoFSelection(bool _unselectAfter = true);
+
+    /// Select for each selected edge the adjacent vertices and
+    /// unselect the edges after (if _unselectAfter = true)
+    void convertEtoVSelection(bool _unselectAfter = true);
+
+    /// Select for each selected edge the two adjacent faces and
+    /// unselect the edges after (if _unselectAfter = true)
+    void convertEtoFSelection(bool _unselectAfter = true);
+
+    /// Select for each selected face the adjacent vertices and
+    /// unselect the face after (if _unselectAfter = true)
+    void convertFtoVSelection(bool _unselectAfter = true);
+
+    /// Select for each selected face the adjacent edges and
+    /// unselect the face after (if _unselectAfter = true)
+    void convertFtoESelection(bool _unselectAfter = true);
 
   /** @} */
 

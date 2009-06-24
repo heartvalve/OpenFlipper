@@ -271,7 +271,7 @@ void SelectionPlugin::pluginsInitialized() {
  *
  * @param _id object-id of changed object
  */
-void SelectionPlugin::slotObjectUpdated(int _id){
+void SelectionPlugin::slotObjectUpdated(int /*_id*/){
 #ifdef ENABLE_POLYLINE_SUPPORT
 
   if (waitingForPolyLineSelection_){
@@ -334,6 +334,18 @@ bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
 
   // Convert button
   connect(tool_->convertButton, SIGNAL(clicked()), this, SLOT(slotConvertSelectionType()));
+
+  // Set combo box entries for the different selection types
+  tool_->convertSelectionFrom->addItem("Vertex Selection");
+  tool_->convertSelectionFrom->addItem("Edge Selection");
+  tool_->convertSelectionFrom->addItem("Face Selection");
+
+  tool_->convertSelectionTo->addItem("Vertex Selection");
+  tool_->convertSelectionTo->addItem("Edge Selection");
+  tool_->convertSelectionTo->addItem("Face Selection");
+
+  // Convert button
+  connect(tool_->convertSelectionButton, SIGNAL(clicked()), this, SLOT(slotConvertSelection()));
 
   connect (tool_->restrictOnTargets, SIGNAL(clicked()), this, SLOT(slotToggleSelectionRestriction()) );
 
@@ -930,18 +942,48 @@ void SelectionPlugin::slotConvertSelectionType() {
 	// Default: Modeling Area
 	from = to = AREA;
 
-	if(tool_->convertFrom->currentText() == "Handle Region") {
+	if(tool_->convertFrom->currentText() == tr("Handle Region")) {
 		from = HANDLEAREA;
 	}
 	// Feature still to be implemented
 
-	else if(tool_->convertTo->currentText() == "Handle Region") {
+	else if(tool_->convertTo->currentText() == tr("Handle Region")) {
 		to = HANDLEAREA;
 	}
 	// Feature still to be implemented
 
 	convertSelectionType(from, to);
 }
+
+//******************************************************************************
+
+void SelectionPlugin::slotConvertSelection() {
+
+	QString from, to;
+
+	from = tool_->convertSelectionFrom->currentText();
+	to = tool_->convertSelectionTo->currentText();
+
+	if(from == tr("Vertex Selection") && to == tr("Edge Selection")) {
+		convertVtoESelection();
+	}
+	else if(from == tr("Vertex Selection") && to == tr("Face Selection")) {
+		convertVtoFSelection();
+	}
+	else if(from == tr("Edge Selection") && to == tr("Vertex Selection")) {
+		convertEtoVSelection();
+	}
+	else if(from == tr("Edge Selection") && to == tr("Face Selection")) {
+		convertEtoFSelection();
+	}
+	else if(from == tr("Face Selection") && to == tr("Vertex Selection")) {
+		convertFtoVSelection();
+	}
+	else if(from == tr("Face Selection") && to == tr("Edge Selection")) {
+		convertFtoESelection();
+	}
+}
+
 
 //******************************************************************************
 
@@ -981,6 +1023,182 @@ void SelectionPlugin::convertSelectionType(StatusBits from, StatusBits to) {
 	}
 
 	// NOTE: Feature conversion is still to be implemented
+
+	emit updateView();
+}
+
+//******************************************************************************
+
+void SelectionPlugin::convertVtoESelection(bool _unselectAfter) {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+		idList list = getVertexSelection(o_it->id());
+		if(_unselectAfter) { clearVertexSelection(o_it->id()); }
+
+		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
+			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::triMesh(o_it), list);
+		}
+		else if ( o_it->dataType() == DATA_POLY_MESH ) {
+			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(o_it), list);
+		}
+
+		o_it->update();
+	}
+
+	emit updateView();
+}
+
+void SelectionPlugin::convertVtoFSelection(bool _unselectAfter) {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+		idList list = getVertexSelection(o_it->id());
+		if(_unselectAfter) { clearVertexSelection(o_it->id()); }
+
+		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
+			MeshSelection::convertVertexToFaceSelection(PluginFunctions::triMesh(o_it), list);
+		}
+		else if ( o_it->dataType() == DATA_POLY_MESH ) {
+			MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(o_it), list);
+		}
+
+		o_it->update();
+	}
+
+	emit updateView();
+}
+
+void SelectionPlugin::convertEtoVSelection(bool _unselectAfter) {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+		idList list = getEdgeSelection(o_it->id());
+		if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
+
+		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
+			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::triMesh(o_it), list);
+		}
+		else if ( o_it->dataType() == DATA_POLY_MESH ) {
+			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::polyMesh(o_it), list);
+		}
+
+		o_it->update();
+	}
+
+	emit updateView();
+}
+
+void SelectionPlugin::convertEtoFSelection(bool _unselectAfter) {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+		idList list = getEdgeSelection(o_it->id());
+		if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
+
+		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
+			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::triMesh(o_it), list);
+		}
+		else if ( o_it->dataType() == DATA_POLY_MESH ) {
+			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::polyMesh(o_it), list);
+		}
+
+		o_it->update();
+	}
+
+	emit updateView();
+}
+
+void SelectionPlugin::convertFtoVSelection(bool _unselectAfter) {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+		idList list = getFaceSelection(o_it->id());
+		if(_unselectAfter) { clearFaceSelection(o_it->id()); }
+
+		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
+			MeshSelection::convertFaceToVertexSelection(PluginFunctions::triMesh(o_it), list);
+		}
+		else if ( o_it->dataType() == DATA_POLY_MESH ) {
+			MeshSelection::convertFaceToVertexSelection(PluginFunctions::polyMesh(o_it), list);
+		}
+
+		o_it->update();
+	}
+
+	emit updateView();
+}
+
+void SelectionPlugin::convertFtoESelection(bool _unselectAfter) {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+		idList list = getFaceSelection(o_it->id());
+		if(_unselectAfter) { clearFaceSelection(o_it->id()); }
+
+		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
+			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::triMesh(o_it), list);
+		}
+		else if ( o_it->dataType() == DATA_POLY_MESH ) {
+			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::polyMesh(o_it), list);
+		}
+
+		o_it->update();
+	}
 
 	emit updateView();
 }
