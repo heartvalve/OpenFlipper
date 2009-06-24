@@ -52,7 +52,7 @@ QScriptValue toScriptValueMatrix4x4(QScriptEngine *engine, const Matrix4x4 &s)
   QScriptValue obj = engine->newObject();
   for ( uint i = 0 ; i < 4 ; ++i )
     for ( uint j = 0 ; j < 4 ; ++j )
-      obj.setProperty(QString::number(j) + QString::number(i),QScriptValue(engine, s(j,i)) );
+      obj.setProperty(QString::number(i) + QString::number(j),QScriptValue(engine, s(i,j)) );
   return obj;
 }
 
@@ -60,7 +60,7 @@ void fromScriptValueMatrix4x4(const QScriptValue &obj, Matrix4x4 &s)
 {
   for ( uint i = 0 ; i < 4 ; ++i )
     for ( uint j = 0 ; j < 4 ; ++j )
-      s(j,i) = obj.property(QString::number(j) + QString::number(i)).toNumber();
+      s(i,j) = obj.property(QString::number(i) + QString::number(j)).toNumber();
 }
 
 QScriptValue createMatrix4x4(QScriptContext *context, QScriptEngine *engine)
@@ -74,7 +74,7 @@ QScriptValue createMatrix4x4(QScriptContext *context, QScriptEngine *engine)
   if (context->argumentCount() == 16) {     
     for ( uint i = 0 ; i < 4 ; ++i )
       for ( uint j = 0 ; j < 4 ; ++j )
-        s(j,i) = context->argument(i*4+j).toNumber();
+        s(i,j) = context->argument(i*4+j).toNumber();
   } else {
     for ( uint i = 0 ; i < 4 ; ++i )
       for ( uint j = 0 ; j < 4 ; ++j )
@@ -92,7 +92,7 @@ QScriptValue Matrix4x4ToString(QScriptContext *context, QScriptEngine *engine)
     for ( uint j = 0 ; j < 4 ; ++j ) {
       if ( i == 3 && j == 3  )
         break;
-      result = result + context->thisObject().property(QString::number(j) + QString::number(i)).toString() + " , ";
+      result = result + context->thisObject().property(QString::number(i) + QString::number(j)).toString() + " , ";
     }
     
   result = result + context->thisObject().property("33").toString() + " ) ";

@@ -57,7 +57,7 @@ QString prototypeMatrix4x4::toString() const {
   
   for ( uint i = 0 ; i < 4 ; ++i ) {
     for ( uint j = 0 ; j < 4 ; ++j ) {
-      result = result + thisObject().property(QString::number(j) + QString::number(i)).toString() + "  ";
+      result = result + thisObject().property(QString::number(i) + QString::number(j)).toString() + "  ";
     }
     
     //Dont add a newline at the end of the Matrix
