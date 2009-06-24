@@ -271,7 +271,7 @@ void SelectionPlugin::pluginsInitialized() {
  *
  * @param _id object-id of changed object
  */
-void SelectionPlugin::slotObjectUpdated(int /*_id*/){
+void SelectionPlugin::slotObjectUpdated(int _id){
 #ifdef ENABLE_POLYLINE_SUPPORT
 
   if (waitingForPolyLineSelection_){
