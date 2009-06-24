@@ -341,6 +341,11 @@ bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
   tool_->convertTo->addItem("Edge Selection");
   tool_->convertTo->addItem("Face Selection");
 
+  // Check checkboxes by default
+  tool_->checkAddArea->setChecked(true);
+  tool_->checkConvert->setChecked(true);
+  tool_->checkSelectionConvert->setChecked(true);
+
   // Convert button
   connect(tool_->convertButton, SIGNAL(clicked()), this, SLOT(slotConvertSelectionType()));
 
@@ -361,10 +366,14 @@ bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
   connect( tool_->loadSelection, SIGNAL(clicked()), this,SLOT(slotLoadSelection()) );
   connect( tool_->saveSelection, SIGNAL(clicked()), this,SLOT(slotSaveSelection()) );
 
-  //Clear Mesh Properties
+  // Clear Properties and Selections
   connect( tool_->clearModelingArea, SIGNAL(clicked()), this,SLOT(slotClearArea()) );
   connect( tool_->clearHandleRegion, SIGNAL(clicked()), this,SLOT(slotClearHandle()));
   connect( tool_->clearFeatures,     SIGNAL(clicked()), this,SLOT(slotClearFeatures()));
+
+  connect( tool_->clearVertexSelection, SIGNAL(clicked()), this,SLOT(slotClearAllVertexSelections()) );
+  connect( tool_->clearEdgeSelection, SIGNAL(clicked()), this,SLOT(slotClearAllEdgeSelections()));
+  connect( tool_->clearFaceSelection, SIGNAL(clicked()), this,SLOT(slotClearAllFaceSelections()));
 
   return true;
 }
@@ -1225,6 +1234,75 @@ void SelectionPlugin::convertFtoESelection(bool _unselectAfter) {
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
 			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::polyMesh(o_it), list);
 		}
+
+		o_it->update();
+	}
+
+	emit updateView();
+}
+
+//******************************************************************************
+
+void SelectionPlugin::slotClearAllVertexSelections() {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+		clearVertexSelection(o_it->id());
+
+		o_it->update();
+	}
+
+	emit updateView();
+}
+
+//******************************************************************************
+
+void SelectionPlugin::slotClearAllEdgeSelections() {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+		clearEdgeSelection(o_it->id());
+
+		o_it->update();
+	}
+
+	emit updateView();
+}
+
+//******************************************************************************
+
+void SelectionPlugin::slotClearAllFaceSelections() {
+
+	PluginFunctions::IteratorRestriction restriction;
+	if ( !tool_->restrictOnTargets->isChecked() ) {
+		restriction = PluginFunctions::ALL_OBJECTS;
+	}
+	else {
+		restriction = PluginFunctions::TARGET_OBJECTS;
+	}
+
+	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+
+		clearFaceSelection(o_it->id());
 
 		o_it->update();
 	}
