@@ -1,0 +1,352 @@
+// Create a new widget in scripting
+core.createWidget("MIQUIwidget",ScriptPath+"/Version1.ui");
+// hide to integrate into toolbar
+MIQUIwidget.hide();
+
+// add new drawmode with only this plugin visible
+core.addToolbox("MIQUI",MIQUIwidget)
+core.addViewMode("MIQ","MIQUI;DataControl;DirectionFields;PrincipalCurvature;MIQParameterize")
+core.setViewMode("MIQ")
+
+// function to get child from MIQUI widget
+function MW(_childname)
+{
+  return MIQUIwidget.findChild(_childname);
+}
+
+// initialize the "normal" values of the members (used for the interpolation speed<->quality
+var normal_setting = MW("miq_quality_horizontalSlider").value;
+
+// principal curvature variables
+var pc_geodesic = false;
+var pc_radius   = 5.0;
+var pc_hide     = true;
+
+// orientation field
+var of_dialog       = false;
+var of_filter       = 10.0;
+var of_filter2      = 88.0;
+var of_bmaxiter     = false;
+var of_imaxiter     = 100;
+var of_min_imaxiter = 10;
+var of_max_imaxiter = 10000;
+var of_bmaxtime     = true;
+var of_dmaxtime     = 60.0;
+var of_min_dmaxtime = 10;
+var of_max_dmaxtime = 60*60;
+var of_max_kring    = 10;
+//var of_radius_begin = 1;
+//var of_radius_end   = 5;
+var of_minmax_curv  = 1.000001;
+
+// parametrization
+var pa_edgelength   = 1.0;
+var pa_anisotropy   = 1.0;
+var pa_st_iters     = 5;
+var pa_st_maxiters  = 10;
+var pa_st_miniters  = 0;
+var pa_st_coeff     = 1.0;
+var pa_st_smoothitr = 10;
+var pa_st_update    = 5.0;
+var pa_regularize   = 0.0;
+var pa_extracteps   = 1e-9;
+var pa_dialog       = false;
+var pa_optimize     = true;
+
+  // principal curvatures
+  MW("exp_geodesic_radioButton").checked    = pc_geodesic;
+  MW("exp_radius_doubleSpinBox").value      = pc_radius;
+  MW("exp_hidecurvatures_checkBox").checked = pc_hide;
+
+  // orientation field
+  MW("exp_fielddialog_checkBox").checked   = of_dialog;
+  MW("miq_filter_horizontalSlider").value  = of_filter;
+  MW("exp_normfilter_doubleSpinBox").value = of_filter2;
+  MW("exp_maxiters_checkBox").checked      = of_bmaxiter;
+  MW("exp_maxtime_checkBox").checked       = of_bmaxtime;
+  MW("exp_maxkring_spinBox").value         = of_max_kring;
+  //MW("exp_radiusstart_spinBox").value      = of_radius_begin;
+  //MW("exp_radiusend_spinBox").value        = of_radius_end;
+  MW("exp_minmaxbeta_doubleSpinBox").value = of_minmax_curv;
+
+  // parametrization
+  MW("miq_edgelength_doubleSpinBox").value     = pa_edgelength;
+  MW("exp_anisotropy_doubleSpinBox").value     = pa_anisotropy;
+  MW("exp_stiff_maxiters_spinBox").value       = pa_st_maxiters;
+  MW("exp_stiff_iters_spinBox").value          = pa_st_iters;
+  MW("exp_stiff_coeff_doubleSpinBox").value    = pa_st_coeff;
+  MW("exp_stiff_smoothiters_spinBox").value    = pa_st_smoothitr;
+  MW("exp_stiff_update_doubleSpinBox").value   = pa_st_update;
+  MW("exp_regularization_doubleSpinBox").value = pa_regularize;
+  MW("exp_extracteps_doubleSpinBox").value     = pa_extracteps;
+  MW("exp_paramdialog_checkBox").checked       = pa_dialog;
+
+
+// initialize parameters
+MIQUIwidget.init_parameters = function()
+{
+
+
+  // check if less than normal (speed) or more than normal (quality)
+  var current_setting = MW("miq_quality_horizontalSlider").value;
+  if( current_setting <= normal_setting )
+  {
+    print(" We are in the high speed section!" );
+    var interpol_val_normal = (current_setting)/normal_setting;
+    var interpol_val_speed  = (normal_setting -  current_setting)/normal_setting;
+    print( interpol_val_normal);
+    print( interpol_val_speed );
+
+    // orientation field
+    MW("exp_maxiters_spinBox").value         = of_imaxiter*interpol_val_normal + of_min_imaxiter*interpol_val_speed;
+    MW("exp_maxtime_doubleSpinBox").value    = of_dmaxtime*interpol_val_normal + of_min_dmaxtime*interpol_val_speed;
+
+    // parametrization
+    MW("exp_stiff_iters_spinBox").value      = pa_st_iters*interpol_val_normal + pa_st_miniters*interpol_val_speed;
+ 
+  } 
+  else
+  {
+    print(" We are in the quality section!" );
+    var max_quality = MW("miq_quality_horizontalSlider").maximum;
+    var interpol_val_normal   = (max_quality - current_setting ) / (max_quality - normal_setting);
+    var interpol_val_quality  = (current_setting - normal_setting)/(max_quality - normal_setting);
+    print( interpol_val_normal);
+    print( interpol_val_quality );
+
+    // orientation field
+    MW("exp_maxiters_spinBox").value         = of_imaxiter*interpol_val_normal + of_max_imaxiter*interpol_val_quality;
+    MW("exp_maxtime_doubleSpinBox").value    = MIQUIwidget.interpolate_quadratic( normal_setting, current_setting, max_quality, of_dmaxtime, of_max_dmaxtime);
+    //of_dmaxtime*interpol_val_normal + of_max_dmaxtime*interpol_val_quality;
+
+    // parametrization
+    MW("exp_stiff_iters_spinBox").value      = pa_st_iters*interpol_val_normal + MW("exp_stiff_maxiters_spinBox").value*interpol_val_quality;
+
+  }
+}
+
+
+// set parameters of expert principal curvature
+MIQUIwidget.set_exp_pcurv_params = function()
+{
+  principalcurvature.slot_set_geodesic_mode( MW("exp_geodesic_radioButton").checked );
+  principalcurvature.slot_set_radius( MW("exp_radius_doubleSpinBox").value);
+  principalcurvature.slot_set_krings( (MW("exp_radius_doubleSpinBox").value + 0.5));
+}
+
+// set parameters of Principal Curvature Plugin
+MIQUIwidget.set_principal_curvature_params = function()
+{
+  var kring    = MW("miq_edgelength_doubleSpinBox").value / MW("miq_avgel_doubleSpinBox").value;
+  var minkring = 2.0;
+  if( kring < minkring )
+    MW("exp_radius_doubleSpinBox").value = minkring;
+  else
+    MW("exp_radius_doubleSpinBox").value = kring;
+
+  MIQUIwidget.set_exp_pcurv_params();
+}
+
+// set parameters of export orientation field
+MIQUIwidget.set_exp_orien_params = function()
+{
+  directionfields.slot_set_minmaxbeta      ( MW("exp_minmaxbeta_doubleSpinBox").value );
+  directionfields.slot_show_dialog(          MW("exp_fielddialog_checkBox").checked   );  
+  directionfields.slot_set_filter_threshold( MW("exp_normfilter_doubleSpinBox").value );
+  directionfields.slot_set_filter_threshold( MW("miq_filter_horizontalSlider").value  );
+
+  // local optimization parameters
+  directionfields.slot_set_opt_maxiters(     MW("exp_maxiters_spinBox").value      );
+  directionfields.slot_set_opt_maxtime (     MW("exp_maxtime_doubleSpinBox").value );
+  directionfields.slot_set_opt_kring   (     MW("exp_maxkring_spinBox").value      );
+
+
+ // directionfields.slot_set_anglefilter_threshold( MW("miq_filter_horizontalSlider").value );
+}
+
+// set parameters of Orientation Field Plugin
+MIQUIwidget.set_orientation_field_params = function()
+{
+  MIQUIwidget.set_exp_orien_params();
+}
+
+// set parameters of expert parametrization 
+MIQUIwidget.set_exp_param_params = function()
+{
+  miqparameterize.slot_set_edgelength( MW("miq_edgelength_doubleSpinBox").value );
+  miqparameterize.slot_set_anisotropy( MW("exp_anisotropy_doubleSpinBox").value );
+  miqparameterize.slot_set_weight_iters( MW("exp_stiff_iters_spinBox").value ); 
+  miqparameterize.slot_set_weight_linear( MW("exp_stiff_coeff_doubleSpinBox").value );
+  miqparameterize.slot_set_weight_smooth_iters( MW("exp_stiff_smoothiters_spinBox").value );
+  miqparameterize.slot_set_weight_max_update( MW("exp_stiff_update_doubleSpinBox").value );
+  miqparameterize.slot_set_regularization( MW("exp_regularization_doubleSpinBox").value );
+  miqparameterize.slot_set_extraction_eps( MW("exp_extracteps_doubleSpinBox").value );
+  miqparameterize.slot_set_show_settings( MW("exp_paramdialog_checkBox").checked );
+}
+
+// set parameters of MIQ Parametrization Plugin
+MIQUIwidget.set_parametrization_params = function()
+{
+  MIQUIwidget.set_exp_param_params();
+}
+
+// compute principal curvatures only using exp parameters, no automatic
+MIQUIwidget.comp_exp_pcurv = function()
+{
+  MIQUIwidget.set_exp_pcurv_params();
+  principalcurvature.slot_cmp_curvatures();
+  if( MW("exp_hidecurvatures_checkBox").checked )
+    principalcurvature.slot_hide_all();
+}
+
+MIQUIwidget.compute_principal_curvatures = function()
+{
+  MIQUIwidget.set_principal_curvature_params();
+
+  if( MW("exp_radius_doubleSpinBox").value > 0)
+    principalcurvature.slot_cmp_curvatures();
+
+  if( MW("exp_hidecurvatures_checkBox").checked )
+    principalcurvature.slot_hide_all();
+}
+
+MIQUIwidget.comp_exp_orien = function()
+{
+  MIQUIwidget.set_exp_orien_params();
+
+  directionfields.slot_clear_pjumps();
+  directionfields.slot_select_boundary();
+  directionfields.slot_filter_directions_new();
+  directionfields.slot_clear_singularities();
+  directionfields.slot_compute_mixed_integer();
+  directionfields.slot_grab_singularities();
+  //if( MW("exp_maxtime_doubleSpinBox").value != -1.0)
+  directionfields.slot_optimize_singularities_opt();
+  directionfields.slot_grab_singularities();
+}
+
+MIQUIwidget.compute_orientation_field = function()
+{
+  MIQUIwidget.comp_exp_orien();
+}
+
+MIQUIwidget.comp_exp_param = function()
+{
+  MIQUIwidget.set_exp_params();
+  miqparameterize.slotParameterize();
+  miqparameterize.slot_show_quad_texture();
+  if( pa_optimize)
+  {
+    miqparameterize.slot_clear_weighting();
+    miqparameterize.slot_iterate_weighting();
+  }
+}
+
+MIQUIwidget.compute_parametrization = function()
+{
+  miqparameterize.slotParameterize();
+  miqparameterize.slot_show_quad_texture();
+  if( pa_optimize)
+  {
+    miqparameterize.slot_clear_weighting();
+    miqparameterize.slot_iterate_weighting();
+  }
+}
+
+// compute parametrization
+MIQUIwidget.parametrize = function()
+{
+  // adapt parameter boxes to speed ratio
+
+  // set parameters
+  //MIQUIwidget.set_principal_curvature_params();
+  MIQUIwidget.set_orientation_field_params();
+  MIQUIwidget.set_parametrization_params();
+
+  // compute MIQ steps
+  //MIQUIwidget.compute_principal_curvatures();
+  MIQUIwidget.compute_orientation_field();
+  MIQUIwidget.compute_parametrization();
+}
+
+
+// extract quad mesh
+MIQUIwidget.extract = function()
+{
+  miqparameterize.slot_extract_quadmesh();
+}
+
+MIQUIwidget.select_feature_edges = function(_angle)
+{
+  directionfields.slot_select_feature_edges(_angle);
+}
+
+MIQUIwidget.toggle_features = function(_toggle)
+{
+  if(_toggle)
+    MIQUIwidget.select_feature_edges(MW("miq_features_horizontalSlider").value);
+  else
+    directionfields.slot_clear_all_edges();
+}
+
+MIQUIwidget.output_quality_setting = function(_value)
+{
+  print( _value );
+  MIQUIwidget.init_parameters();
+}
+
+MIQUIwidget.interpolate_quadratic = function( amin, aval, amax, omin, omax)
+{
+  var omid = omin + (omax-omin)*0.3;
+  var amid = (amin + amax)*0.5;
+  // interpolated answer (ordinate value)
+ var a =-(amin*omax-amax*omin-amid*omax+amid*omin-amin*omid+amax*omid)/(-amid*amin*amin+amid*amax*amax+amax*amin*amin-amin*amax*amax+amin*amid*amid-amax*amid*amid);
+ var b = (-amax*amax*omin+amax*amax*omid+amid*amid*omin-omax*amid*amid+omax*amin*amin-omid*amin*amin)/((amax-amid)*(-amax*amin+amax*amid+amin*amin-amid*amin));
+ var c = (amax*amax*amid*omin-amax*amax*amin*omid-amid*amid*amax*omin+omid*amax*amin*amin+amid*amid*amin*omax-omax*amid*amin*amin)/((amax-amid)*(-amax*amin+amax*amid+amin*amin-amid*amin))
+   return a*aval*aval+b*aval+c;
+}
+
+MIQUIwidget.filter_directions = function(_percentage)
+{
+  directionfields.slot_set_minmaxbeta( MW("exp_minmaxbeta_doubleSpinBox").value     );
+  directionfields.slot_set_filter_threshold(_percentage);
+  directionfields.slot_filter_directions_new();
+}
+
+MIQUIwidget.update_average_edgelength = function()
+{
+  var avgel = directionfields.slot_compute_avg_edge_length();
+  MW("miq_avgel_doubleSpinBox").value = avgel;
+}
+
+// returns if we are in the expert tab or not
+MIQUIwidget.in_exp_mode = function()
+{
+  return MIQUIwidget.tabWidget.currentIndex;
+}
+
+// connects
+// connect horizontal feature slider
+MW("miq_features_horizontalSlider").valueChanged.connect(MIQUIwidget,"select_feature_edges");
+MW("miq_features_checkBox").toggled.connect(MIQUIwidget,"toggle_features");
+MW("miq_filter_horizontalSlider").valueChanged.connect(MIQUIwidget,"filter_directions");
+
+// connect average edge length push button to function
+MW("miq_avgel_pushButton").clicked.connect(MIQUIwidget, "update_average_edgelength");
+
+// connect quality slider
+MW("miq_quality_horizontalSlider").valueChanged.connect(MIQUIwidget,"output_quality_setting");
+
+// connect push buttons
+MW("miq_parametrize_pushButton").clicked.connect(MIQUIwidget,"parametrize");
+MW("miq_extract_pushButton").clicked.connect(MIQUIwidget,"extract");
+MW("miq_pcurv_pushButton").clicked.connect(MIQUIwidget,"compute_principal_curvatures");
+
+// expert section push buttons
+MW("exp_pcurv_pushButton").clicked.connect(MIQUIwidget,"comp_exp_pcurv");
+MW("exp_param_pushButton").clicked.connect(MIQUIwidget,"comp_exp_param");
+MW("exp_orien_pushButton").clicked.connect(MIQUIwidget,"comp_exp_orien");
+
+
+// functions to always call
+MIQUIwidget.init_parameters();
