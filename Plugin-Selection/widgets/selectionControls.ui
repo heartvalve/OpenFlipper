@@ -588,7 +588,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Convert selection</string>
+           <string>Convert Selection</string>
           </property>
          </widget>
         </item>
