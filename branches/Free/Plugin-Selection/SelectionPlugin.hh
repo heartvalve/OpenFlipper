@@ -339,6 +339,17 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Convert selection types (modeling area, handle region or feature)
     void slotConvertSelectionType();
 
+    //==========================================
+
+    /// clear all vertex selections of every object
+    void slotClearAllVertexSelections();
+
+    /// clear all edge selections of every object
+    void slotClearAllEdgeSelections();
+
+    /// clear all face selections of every object
+    void slotClearAllFaceSelections();
+
 
   /** @} */
 
@@ -482,7 +493,8 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// load Selection of one object
     void loadSelection( int _objectId  , QString _filename);
 
-  private slots:
+    private slots:
+
     void saveSelection( TriMesh&  _mesh, QString _filename);
     void saveSelection( PolyMesh& _mesh, QString _filename);
 

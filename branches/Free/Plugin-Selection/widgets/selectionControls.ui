@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
-    <height>934</height>
+    <width>345</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -314,21 +314,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="1" column="0">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Clear Property:</string>
-          </property>
-         </widget>
-        </item>
         <item>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
@@ -353,7 +339,7 @@
              <string>Clear the handle region of all (target) objects</string>
             </property>
             <property name="text">
-             <string>Clear Handle Region</string>
+             <string>Clear Handle Area</string>
             </property>
            </widget>
           </item>
@@ -366,7 +352,50 @@
              <string>Clear the features of all (target) objects</string>
             </property>
             <property name="text">
-             <string>Clear Features</string>
+             <string>Clear Feature Area</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QPushButton" name="clearVertexSelection">
+            <property name="toolTip">
+             <string>Clear the modeling area of all (target) objects</string>
+            </property>
+            <property name="statusTip">
+             <string>Clear the modeling area of all (target) objects</string>
+            </property>
+            <property name="text">
+             <string>Clear Vertex Selection</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearEdgeSelection">
+            <property name="toolTip">
+             <string>Clear the handle region of all (target) objects</string>
+            </property>
+            <property name="statusTip">
+             <string>Clear the handle region of all (target) objects</string>
+            </property>
+            <property name="text">
+             <string>Clear Edge Selection</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearFaceSelection">
+            <property name="toolTip">
+             <string>Clear the features of all (target) objects</string>
+            </property>
+            <property name="statusTip">
+             <string>Clear the features of all (target) objects</string>
+            </property>
+            <property name="text">
+             <string>Clear Face Selection</string>
             </property>
            </widget>
           </item>
@@ -374,14 +403,14 @@
         </item>
        </layout>
       </item>
-      <item row="3" column="0">
+      <item row="2" column="0">
        <widget class="Line" name="line_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="3" column="0">
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
          <widget class="QLabel" name="label">
@@ -451,6 +480,12 @@
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
              </spacer>
             </item>
             <item>
@@ -470,6 +505,12 @@
              <spacer name="horizontalSpacer_3">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
               </property>
              </spacer>
             </item>
