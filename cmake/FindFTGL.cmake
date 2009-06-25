@@ -12,6 +12,7 @@ FIND_PATH(FTGL_INCLUDE_DIR NAMES FTGL/ftgl.h
                            PATHS /usr/include
                                  /usr/local/include
                                  ../../External/include
+                                 "C:\\libs\\ftgl\\ftgl"
                                  ${module_file_path}/../../../External/include)
 #MARK_AS_ADVANCED(FTGL_INCLUDE_DIR)
 
@@ -22,6 +23,7 @@ FIND_LIBRARY(FTGL_LIBRARY NAMES ftgl ftgl_dynamic_MTD
                                 /usr/lib
                                 /usr/local/lib
                                 ../../External/lib
+                                "C:\\libs\\ftgl\\msvc\\Build"
                                 ${module_file_path}/../../../External/lib)
 #MARK_AS_ADVANCED(FTGL_LIBRARY)
 
