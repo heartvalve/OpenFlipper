@@ -25,6 +25,8 @@ ELSE( NOT APPLE)
         	                   PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/CGAL-3.4/include"
                  )
 
+        SET( "CGAL_DIR ${CMAKE_SOURCE_DIR}/MacOS/Libs/CGAL-3.4" )
+
 ENDIF( NOT APPLE )
 
 
@@ -50,7 +52,6 @@ IF(CGAL_INCLUDE_DIR )
   ENDIF(WIN32)
 
   IF(APPLE)
-    include(CGAL_GeneratorSpecificSettings)
     find_path(CGAL_LIBRARY_DIR 
                 NAMES "libCGAL.dylib"
                 PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/CGAL-3.4/lib"
