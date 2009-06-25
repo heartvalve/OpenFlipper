@@ -73,7 +73,18 @@ else( WIN32 )
                      PATHS ${SUITESPARSE_LIBRARY_DIR} )
 
 	IF(APPLE)
-		list ( APPEND SUITESPARSE_LIBRARIES amd btf camd ccolamd colamd csparse cxsparse klu spqr umfpack metis )
+		list ( APPEND SUITESPARSE_LIBRARIES ${SUITESPARSE_LIBRARY_DIR}/libamd.a 
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libbtf.a
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libcamd.a
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libccolamd.a
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libcolamd.a
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libcsparse.a
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libcxsparse.a
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libklu.a
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libspqr.a
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libumfpack.a
+                                                    ${SUITESPARSE_LIBRARY_DIR}/libmetis.a
+			)
 	ENDIF(APPLE)
 
 
