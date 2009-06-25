@@ -36,18 +36,32 @@ if( WIN32 )
    ENDIF( SUITESPARSE_LIBRARY_DIRS )  
 
 else( WIN32 )
-   FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
-              PATHS /usr/local/include /usr/include /usr/include/suitesparse/
-              PATH_SUFFIXES cholmod/ CHOLMOD/ )
+   IF( APPLE)
+	   FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
+        	      PATHS  /opt/local/ufsparse )
+
+           FIND_PATH( SUITESPARSE_LIBRARY_DIR
+                      NAMES libcholmod.a 
+                      PATHS /opt/local/lib )
+
+   ELSE(APPLE)
+	   FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
+        	      PATHS /usr/local/include /usr/include /usr/include/suitesparse/ ${CMAKE_SOURCE_DIR}/MacOS/Libs/cholmod
+              	      PATH_SUFFIXES cholmod/ CHOLMOD/ )
+
+   	
+           FIND_PATH( SUITESPARSE_LIBRARY_DIR
+                      NAMES libcholmod.so 
+                      PATHS /usr/lib /usr/local/lib )
+
+
+   ENDIF(APPLE)
 
    # Add cholmod include directory to collection include directories
    IF ( CHOLMOD_INCLUDE_DIR )
 	list ( APPEND SUITESPARSE_INCLUDE_DIRS ${CHOLMOD_INCLUDE_DIR} )
    ENDIF( CHOLMOD_INCLUDE_DIR )
 
-   FIND_PATH( SUITESPARSE_LIBRARY_DIR
-              NAMES libcholmod.so 
-              PATHS /usr/lib /usr/local/lib )
 
    # if we found the library, add it to the defined libraries
    IF ( SUITESPARSE_LIBRARY_DIR )
