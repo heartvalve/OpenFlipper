@@ -42,6 +42,8 @@ include_directories (
   ${OPENGL_INCLUDE_DIR}
   ${GLEW_INCLUDE_DIR}
   ${GLUT_INCLUDE_DIR}
+  ${FREETYPE_INCLUDE_DIR_freetype2}
+  ${FREETYPE_INCLUDE_DIR_ft2build}
 )
 
 link_directories (
