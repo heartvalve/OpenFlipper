@@ -71,6 +71,12 @@ else( WIN32 )
        FIND_LIBRARY( CHOLMOD_LIBRARY
                      NAMES cholmod CHOLMOD
                      PATHS ${SUITESPARSE_LIBRARY_DIR} )
+
+	IF(APPLE)
+		list ( APPEND SUITESPARSE_LIBRARIES amd btf camd ccolamd colamd csparse cxsparse klu spqr umfpack metis )
+	ENDIF(APPLE)
+
+
 	list ( APPEND SUITESPARSE_LIBRARIES ${CHOLMOD_LIBRARY} )
    ENDIF( SUITESPARSE_LIBRARY_DIR )  
    
