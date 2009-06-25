@@ -21,9 +21,21 @@ IF(WIN32)
 	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
                 PATHS  "${CGAL_TAUCS_DIR}/include" )
 ELSE(WIN32)
+
+    IF(APPLE)
 	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
-                PATHS  /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include
-                )
+                  PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/taucs/src" 
+                 )
+
+    ELSE (APPLE)
+
+	FIND_PATH(TAUCS_INCLUDE_DIR NAMES taucs.h
+                  PATHS  /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2-gfortran/include
+                 )
+
+    ENDIF(APPLE)
+
+
 ENDIF(WIN32)
 
 # Copy the results to the output variables.
@@ -34,10 +46,17 @@ IF(TAUCS_INCLUDE_DIR )
   IF(WIN32)
 	find_package(CGAL)
   ELSE(WIN32)
-    FIND_LIBRARY( TAUCS_LIBRARY
-                  NAMES taucs
-                  PATHS /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
-               )
+    IF(APPLE)
+	    FIND_LIBRARY( TAUCS_LIBRARY
+        	          NAMES taucs
+                	  PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/taucs/lib/darwin9.0" 
+	               )	
+    ELSE (APPLE)
+ 	   FIND_LIBRARY( TAUCS_LIBRARY
+        	          NAMES taucs
+                	  PATHS /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
+	               )
+    ENDIF( APPLE)
   ENDIF(WIN32)
   
 ELSE(TAUCS_INCLUDE_DIR )
