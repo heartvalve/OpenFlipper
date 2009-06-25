@@ -11,13 +11,24 @@ ENDIF (CGAL_INCLUDE_DIR)
 
 GET_FILENAME_COMPONENT(module_file_path ${CMAKE_CURRENT_LIST_FILE} PATH )
 
-# Look for the header file.
-FIND_PATH(CGAL_INCLUDE_DIR NAMES CGAL/auto_link/auto_link.h
-                           PATHS ../../External/include
-                                 "C:/Program Files/CGAL-3.4/include"
-                                 "C:/Programme/CGAL-3.4/include"
-                                 "C:/libs/CGAL-3.4/include"
-                                 ${module_file_path}/../../../External/include)
+IF (NOT APPLE )
+	# Look for the header file.
+	FIND_PATH(CGAL_INCLUDE_DIR NAMES CGAL/auto_link/auto_link.h
+        	                   PATHS ../../External/include
+                	                 "C:/Program Files/CGAL-3.4/include"
+                        	         "C:/Programme/CGAL-3.4/include"
+                                	 "C:/libs/CGAL-3.4/include"
+	                                 ${module_file_path}/../../../External/include)
+ELSE( NOT APPLE)
+	# Look for the header file.
+	FIND_PATH(CGAL_INCLUDE_DIR NAMES CGAL/auto_link/auto_link.h
+        	                   PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/CGAL-3.4/include"
+                 )
+
+ENDIF( NOT APPLE )
+
+
+
 MARK_AS_ADVANCED(CGAL_INCLUDE_DIR)
 
 
