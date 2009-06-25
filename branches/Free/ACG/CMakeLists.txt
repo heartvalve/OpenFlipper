@@ -20,6 +20,19 @@ if (NOT GLUT_FOUND)
   message (FATAL_ERROR "GLUT not found!")
 endif ()
 
+
+find_package( Freetype) 
+if (NOT FREETYPE_FOUND)
+  message (MESSAGE "FREETYPE not found! Disabled ftgl support!")
+else (NOT FREETYPE_FOUND)
+
+  find_package (FTGL)
+  if (NOT FTGL_FOUND)
+    message (MESSAGE "FTGL not found! Disabled ftgl support!")
+  endif ()
+
+endif ()
+
 include_directories (
   ..
   ${CMAKE_SOURCE_DIR}/OpenMesh/src
