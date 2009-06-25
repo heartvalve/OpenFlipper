@@ -40,9 +40,19 @@ IF( QT4_FOUND )
 		IF( QWT_IS_VERSION_5 )
 		STRING(REGEX REPLACE ".*#define[\\t\\ ]+QWT_VERSION_STR[\\t\\ ]+\"([0-9]+\\.[0-9]+\\.[0-9]+)\".*" "\\1" Qwt_VERSION "${QWT_GLOBAL_H}")
 
-		# Find Qwt5 library linked to Qt4
-		FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS /usr/local/qwt/lib /usr/local/lib /usr/lib c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib c:\\qwt-5.2.0
- )
+		IF( NOT WIN32 )
+			# Find Qwt5 library linked to Qt4
+			FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS /usr/local/qwt/lib /usr/local/lib /usr/lib )
+		ELSE( NOT WIN32)
+			IF( CMAKE_BUILD_TYPE MATCHES Release )
+				# Find Qwt5 library linked to Qt4 Release Version
+				FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0")
+			ELSE()
+				# Find Qwt5 library linked to Qt4 Debug Version
+				FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5d PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0")
+			ENDIF()
+		ENDIF(NOT WIN32)
+
 		IF( UNIX AND NOT CYGWIN AND NOT APPLE)
 			IF( Qwt5_Qt4_TENTATIVE_LIBRARY )
 				#MESSAGE("Qwt5_Qt4_TENTATIVE_LIBRARY = ${Qwt5_Qt4_TENTATIVE_LIBRARY}")
