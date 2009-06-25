@@ -33,18 +33,31 @@ else (NOT FREETYPE_FOUND)
 
 endif ()
 
-include_directories (
-  ..
-  ${CMAKE_SOURCE_DIR}/OpenMesh/src
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/ShaderUtils
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${OPENGL_INCLUDE_DIR}
-  ${GLEW_INCLUDE_DIR}
-  ${GLUT_INCLUDE_DIR}
-  ${FREETYPE_INCLUDE_DIR_freetype2}
-  ${FREETYPE_INCLUDE_DIR_ft2build}
-)
+if(FTGL_FOUND)
+	include_directories (
+	  ..
+	  ${CMAKE_SOURCE_DIR}/OpenMesh/src
+	  ${CMAKE_CURRENT_SOURCE_DIR}
+	  ${CMAKE_CURRENT_SOURCE_DIR}/ShaderUtils
+	  ${CMAKE_CURRENT_BINARY_DIR}
+	  ${OPENGL_INCLUDE_DIR}
+	  ${GLEW_INCLUDE_DIR}
+	  ${GLUT_INCLUDE_DIR}
+	  ${FREETYPE_INCLUDE_DIR_freetype2}
+	  ${FREETYPE_INCLUDE_DIR_ft2build}
+	)
+else(FTGL_FOUND)
+	include_directories (
+	  ..
+	  ${CMAKE_SOURCE_DIR}/OpenMesh/src
+	  ${CMAKE_CURRENT_SOURCE_DIR}
+	  ${CMAKE_CURRENT_SOURCE_DIR}/ShaderUtils
+	  ${CMAKE_CURRENT_BINARY_DIR}
+	  ${OPENGL_INCLUDE_DIR}
+	  ${GLEW_INCLUDE_DIR}
+	  ${GLUT_INCLUDE_DIR}
+	)                                        
+endif(FTGL_FOUND)
 
 link_directories (
   ${GLEW_LIBRARY_DIR}
@@ -86,13 +99,24 @@ acg_qt4_automoc (moc_targets ${headers})
 
 acg_add_library (ACG SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
 
-target_link_libraries (ACG 
-  OpenMeshCore
-  OpenMeshTools
-  ${QT_LIBRARIES}
-  ${OPENGL_LIBRARIES}
-  ${GLEW_LIBRARY}
-  ${GLUT_LIBRARIES}
-  ${FTGL_LIBS}
-)
-
+if ( FTGL_FOUND )
+	target_link_libraries (ACG 
+	  OpenMeshCore
+	  OpenMeshTools
+	  ${QT_LIBRARIES}
+	  ${OPENGL_LIBRARIES}
+	  ${GLEW_LIBRARY}
+	  ${GLUT_LIBRARIES}
+	  ${FTGL_LIBS}
+	  ${FREETYPE_LIBRARIES}
+	)
+else( FTGL_FOUND )
+	target_link_libraries (ACG 
+	  OpenMeshCore
+	  OpenMeshTools
+	  ${QT_LIBRARIES}
+	  ${OPENGL_LIBRARIES}
+	  ${GLEW_LIBRARY}
+	  ${GLUT_LIBRARIES}
+	)
+endif( FTGL_FOUND )
