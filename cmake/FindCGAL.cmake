@@ -48,6 +48,18 @@ IF(CGAL_INCLUDE_DIR )
                 DOC "Directory containing the CGAL library"
                ) 
   ENDIF(WIN32)
+
+  IF(APPLE)
+    include(CGAL_GeneratorSpecificSettings)
+    find_path(CGAL_LIBRARY_DIR 
+                NAMES "libCGAL.dylib"
+                PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/CGAL-3.4/lib"
+                DOC "Directory containing the CGAL library"
+               ) 
+    list ( APPEND CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt4)
+  ENDIF(APPLE)
+
+
  
 
   add_definitions (-DCGAL_AUTOLINK)
