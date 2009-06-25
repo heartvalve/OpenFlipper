@@ -504,7 +504,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void convertSelectionType(StatusBits _from, StatusBits _to, bool _clearAfter);
 
     /// Convert selections (vertex, edge, face)
-    void convertSelection();
+//    void convertSelection();
 
     /// Select for each selected vertex the incident edges and
     /// unselect vertices after (if _unselectAfter = true)
