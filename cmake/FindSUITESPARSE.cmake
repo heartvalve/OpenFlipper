@@ -38,11 +38,13 @@ if( WIN32 )
 else( WIN32 )
    IF( APPLE)
 	   FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
-        	      PATHS  /opt/local/ufsparse )
+        	      PATHS  /opt/local/include/ufsparse )
 
            FIND_PATH( SUITESPARSE_LIBRARY_DIR
                       NAMES libcholmod.a 
                       PATHS /opt/local/lib )
+
+	  
 
    ELSE(APPLE)
 	   FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
