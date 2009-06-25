@@ -22,10 +22,8 @@ IF (NOT APPLE )
 ELSE( NOT APPLE)
 	# Look for the header file.
 	FIND_PATH(CGAL_INCLUDE_DIR NAMES CGAL/auto_link/auto_link.h
-        	                   PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/CGAL-3.4/include"
+        	                   PATHS "/opt/local/CGAL-3.4/include"
                  )
-
-        SET( "CGAL_DIR ${CMAKE_SOURCE_DIR}/MacOS/Libs/CGAL-3.4" )
 
 ENDIF( NOT APPLE )
 
@@ -54,16 +52,17 @@ IF(CGAL_INCLUDE_DIR )
   IF(APPLE)
     find_path(CGAL_LIBRARY_DIR 
                 NAMES "libCGAL.dylib"
-                PATHS "${CMAKE_SOURCE_DIR}/MacOS/Libs/CGAL-3.4/lib"
+                PATHS "/opt/local/CGAL-3.4/lib/"
                 DOC "Directory containing the CGAL library"
                ) 
     list ( APPEND CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt4)
+  ELSE( APPLE )
+    add_definitions (-DCGAL_AUTOLINK)
   ENDIF(APPLE)
 
 
  
 
-  add_definitions (-DCGAL_AUTOLINK)
 ELSE(CGAL_INCLUDE_DIR )
   SET(CGAL_FOUND 0)
   SET(CGAL_INCLUDE_DIR)
