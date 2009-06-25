@@ -231,8 +231,10 @@ int main(int argc,char *argv[]) {
   	set (PETSC_DEFINITIONS "-D__SDIR__=\"\"" CACHE STRING "PETSc definitions" FORCE)
   	# Sometimes this can be used to assist FindMPI.cmake
   	set (PETSC_MPIEXEC ${petsc_mpiexec} CACHE FILEPATH "Executable for running PETSc MPI programs" FORCE)
-  	#set (PETSC_INCLUDES ${petsc_includes_needed} CACHE STRING "PETSc include path" FORCE)
-  	set (PETSC_LIBRARIES ${PETSC_LIBRARIES_ALL} CACHE STRING "PETSc libraries" FORCE)
+      set (PETSC_INCLUDES "${PETSC_INCLUDE_CONF} ${PETSC_INCLUDE_DIR} " CACHE STRING "PETSc include path" FORCE)
+      set (PETSC_INCLUDE_DIRS "${PETSC_INCLUDE_CONF}" CACHE STRING "PETSc include paths" FORCE)
+      list (APPEND PETSC_INCLUDE_DIRS "${PETSC_INCLUDE_DIR}" )
+
   	set (PETSC_COMPILER ${petsc_cc} CACHE FILEPATH "PETSc compiler" FORCE)
   	# Note that we have forced values for all these choices.  If you
   	# change these, you are telling the system to trust you that they
@@ -253,5 +255,17 @@ else ( NOT WIN32 )
 	if ( PETSC_INCLUDE_DIR )
 		set( PETSC_FOUND TRUE)
       endif( PETSC_INCLUDE_DIR  )
-
+      set(PETSC_LIBRARIES  "" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.lib" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsccontrib.lib" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscdm.lib" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscksp.lib" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscmat.lib" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscsnes.lib" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscts.lib" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscvec.lib" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libf2clapack.lib" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libf2cblas.lib" )
+message(STATUS ${PETSC_LIBRARIES})
 endif ( NOT WIN32 )
+message(STATUS ${PETSC_LIBRARIES})
