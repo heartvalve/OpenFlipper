@@ -49,6 +49,7 @@
 #define TEXTUREDATA "TextureData"
 
 
+ 
 
 void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _filename , uint _dimension , int _id)
 {
@@ -190,7 +191,7 @@ void TextureControlPlugin::slotMultiTextureAdded( QString _textureGroup , QStrin
 bool TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
   QString loadFilename;
 
-  if ( _fileName.startsWith("/") || _fileName.startsWith(".") )
+  if ( _fileName.startsWith("/") || _fileName.startsWith(".") || _fileName.contains(":") )
     loadFilename = _fileName;
   else
     loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + _fileName;
