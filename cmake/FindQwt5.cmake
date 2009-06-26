@@ -29,7 +29,7 @@ ENDIF(NOT QT4_FOUND)
 IF( QT4_FOUND )
 	# Is Qwt5 installed? Look for header files
 	FIND_PATH( Qwt5_INCLUDE_DIR qwt.h 
-               PATHS ${QT_INCLUDE_DIR} /usr/local/qwt/include /usr/local/include /usr/include/qwt /usr/include c:\\Program\ Files\\qwt\\qwt-5.2.0 c:\\qwt-5.2.0
+               PATHS ${QT_INCLUDE_DIR} /usr/local/qwt/include /usr/local/include /usr/include/qwt /usr/include c:\\Program\ Files\\qwt\\qwt-5.2.0 c:\\qwt-5.2.0 C:\\libs\\qwt-5.2.0
                PATH_SUFFIXES qwt qwt5 qwt-qt4 qwt5-qt4 qwt-qt3 qwt5-qt3 include qwt/include qwt5/include qwt-qt4/include qwt5-qt4/include qwt-qt3/include qwt5-qt3/include ENV PATH)
 	
 	# Find Qwt version
@@ -46,10 +46,10 @@ IF( QT4_FOUND )
 		ELSE( NOT WIN32)
 			IF( CMAKE_BUILD_TYPE MATCHES Release )
 				# Find Qwt5 library linked to Qt4 Release Version
-				FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0")
+				FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
 			ELSE()
 				# Find Qwt5 library linked to Qt4 Debug Version
-				FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5d PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0")
+				FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5d PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
 			ENDIF()
 		ENDIF(NOT WIN32)
 
