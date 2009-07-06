@@ -9,6 +9,7 @@ set (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 include (ACGCommon)
 
 acg_get_version ()
+acg_get_version (OpenMesh)
 
 include (package)
 include (ACGOutput)
@@ -61,10 +62,11 @@ if (APPLE)
   add_dependencies (fixbundle OpenFlipper PluginLib ${OPENFLIPPER_PLUGINS})
 
   # install bundle
-  install (DIRECTORY ${CMAKE_BINARY_DIR}/Build/OpenFlipper.app DESTINATION .)
+  install (DIRECTORY ${CMAKE_BINARY_DIR}/Build/OpenFlipper.app DESTINATION .
+           USE_SOURCE_PERMISSIONS)
 endif ()
 
 # display results
-acg_print_configure_header ("OpenFlipper")
+acg_print_configure_header (OPENFLIPPER "OpenFlipper")
 of_print_plugin_stats ()
 acg_print_configure_footer ()
