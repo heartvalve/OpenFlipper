@@ -120,7 +120,7 @@ defineTest( qt ) {
 
 defineTest( gmm ) {
 
-	exists ( $${GMM_PATH_INC}/gmm.h ) {
+	exists ( $${GMM_PATH_INC}/gmm/gmm.h ) {
 
   	INCLUDEPATH += $${GMM_PATH_INC}
   	export(INCLUDEPATH)
