@@ -84,6 +84,10 @@ QDir iconDir();
 DLLEXPORT
 QDir fontsDir();
 
+/// Returns the Path to the main data directory
+DLLEXPORT
+QDir dataDir();
+
 /// Returns the base Path of the application
 DLLEXPORT
 QString applicationDirStr();
@@ -107,6 +111,10 @@ QString scriptDirStr();
 /// Returns the Path to the Icons
 DLLEXPORT
 QString iconDirStr();
+
+/// Returns the Path to the main data directory
+DLLEXPORT
+QString dataDirStr();
 
 /// Returns the OpenFlipper Icon
 DLLEXPORT
@@ -152,6 +160,10 @@ void fontsDir(QDir _dir);
 DLLEXPORT
 void helpDir(QDir _dir);
 
+/// Sets the Path to the data directory
+DLLEXPORT
+void dataDir(QDir _dir);
+
 /// Sets the base Path of the application
 DLLEXPORT
 bool applicationDir(QString _dir);
@@ -183,6 +195,10 @@ void fontsDir(QDir _dir);
 /// Sets the Path to the Help
 DLLEXPORT
 void helpDir(QDir _dir);
+
+/// Sets the Path to the data direcotry
+DLLEXPORT
+bool dataDir(QString _dir);
 
 
 //===========================================================================
