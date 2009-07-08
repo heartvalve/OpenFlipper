@@ -253,6 +253,13 @@ void Core::setupOptions() {
   tempDir.cd("Help");
   OpenFlipper::Options::helpDir(tempDir.absolutePath());
 
+  // Set the Path to the main data directory
+  tempDir = QDir(OpenFlipper::Options::applicationDir());
+  #ifdef OPENFLIPPER_DATADIR
+    tempDir.cd(OPENFLIPPER_DATADIR);
+  #endif
+  OpenFlipper::Options::dataDir(tempDir.absolutePath());
+
   QStringList optionFiles;
 
   // ==============================================================

@@ -79,6 +79,9 @@ static QDir fontsDir_;
 /// Stores the Path to the Help
 static QDir helpDir_;
 
+/// Stores the Path to the data directory
+static QDir dataDir_;
+
 /// Stores all available option files in the Order in which they should be used
 static QStringList optionFiles_;
 
@@ -285,6 +288,7 @@ QDir scriptDir()        { return scriptDir_; }
 QDir iconDir()          { return iconDir_;    }
 QDir fontsDir()         { return fontsDir_;   }
 QDir helpDir()         	{ return helpDir_;    }
+QDir dataDir()          { return dataDir_;    }
 QDir currentDir()       { return currentDir_; }
 QDir currentScriptDir() { return currentScriptDir_; }
 QDir currentTextureDir(){ return currentTextureDir_; }
@@ -298,6 +302,7 @@ QString scriptDirStr()         { return scriptDir_.absolutePath();        }
 QString iconDirStr()           { return iconDir_.absolutePath();           }
 QString fontsDirStr()          { return fontsDir_.absolutePath();          }
 QString helpDirStr()           { return helpDir_.absolutePath();          }
+QString dataDirStr()           { return dataDir_.absolutePath();          }
 QString currentDirStr()        { return currentDir_.absolutePath();        }
 QString currentScriptDirStr()  { return currentScriptDir_.absolutePath();  }
 QString currentTextureDirStr() { return currentTextureDir_.absolutePath(); }
@@ -312,6 +317,7 @@ void scriptDir(QDir _dir)            { scriptDir_         = _dir; }
 void iconDir(QDir _dir)              { iconDir_           = _dir; }
 void fontsDir(QDir _dir)             { fontsDir_          = _dir;}
 void helpDir(QDir _dir)              { helpDir_           = _dir;}
+void dataDir(QDir _dir)              { dataDir_           = _dir;}
 void configDir(QDir _dir)            { configDir_         = _dir; }
 void currentDir(QDir _dir)           { currentDir_        = _dir; }
 void currentScriptDir(QDir _dir)     { currentScriptDir_  = _dir; }
@@ -368,6 +374,15 @@ bool iconDir(QString      _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
     iconDir_ = tmp;
+    return true;
+  }
+  return false;
+}
+
+bool dataDir(QString      _dir) {
+  QDir tmp(_dir);
+  if (tmp.exists()) {
+    dataDir_ = tmp;
     return true;
   }
   return false;
