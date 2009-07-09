@@ -80,6 +80,8 @@ public slots:
   void showScriptWidget();
   void hideScriptWidget();
 
+  void showScriptInEditor (QString _code);
+
 /** @} */
 
 //===========================================================================
