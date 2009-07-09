@@ -28,9 +28,9 @@ void ScriptingPlugin::pluginsInitialized() {
   ///@todo register objectid variable
 
   // Scriping Menu
-  QMenu *scriptingMenu = new QMenu(tr("&Scripting"));
+  QMenu *scriptingMenu;
 
-  emit addMenubarAction(scriptingMenu->menuAction(), TOPLEVELMENU );
+  emit getMenubarMenu(tr("&Scripting"), scriptingMenu, true );
 
   QIcon icon;
   QAction* showWidget = scriptingMenu->addAction( "Show script editor" );
