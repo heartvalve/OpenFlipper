@@ -553,9 +553,12 @@ void Core::loadPlugin(QString filename, bool silent){
     if ( menubarPlugin && OpenFlipper::Options::gui() ) {
       supported = supported + "Menubar ";
 
-      if ( checkSignal(plugin,"addMenubarAction(QAction*,MenuActionType)") )
-        connect(plugin      , SIGNAL(addMenubarAction(QAction*,MenuActionType)),
-                coreWidget_ , SLOT(slotAddMenubarAction(QAction*,MenuActionType)),Qt::DirectConnection);
+      if ( checkSignal(plugin,"addMenubarAction(QAction*,QString)") )
+        connect(plugin      , SIGNAL(addMenubarAction(QAction*,QString)),
+                coreWidget_ , SLOT(slotAddMenubarAction(QAction*,QString)),Qt::DirectConnection);
+      if ( checkSignal(plugin,"getMenubarMenu (QString,QMenu*&,bool)") )
+        connect(plugin      , SIGNAL(getMenubarMenu (QString,QMenu*&,bool)),
+                coreWidget_ , SLOT(slotGetMenubarMenu (QString,QMenu*&,bool)),Qt::DirectConnection);
     }
 
     //Check if the plugin supports ContextMenuInterface
