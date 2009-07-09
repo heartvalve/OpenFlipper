@@ -50,24 +50,33 @@
 
 
 
-void CoreWidget::slotAddMenubarAction( QAction* _action , MenuActionType _type ) {
+void CoreWidget::slotAddMenubarAction( QAction* _action , QString _name ) {
 
-  switch (_type) {
-    case TOPLEVELMENU :
-      // Add it to the menubar as a top level Menu
-      menuBar()->insertAction(helpMenu_->menuAction() ,_action);
-      break;
-    case FILEMENU :
-      fileMenu_->insertSeparator(fileMenuEnd_);
-      fileMenu_->insertAction( fileMenuEnd_ , _action );
-      break;
-    case VIEWMENU :
-      viewMenu_->addAction( _action );
-      break;
-    case TOOLSMENU:
-      toolsMenu_->addAction( _action );
+  if (!menus_.contains (_name))
+    return;
+
+  if (_name == FILEMENU)
+  {
+    fileMenu_->insertSeparator(fileMenuEnd_);
+    fileMenu_->insertAction( fileMenuEnd_ , _action );
   }
+  else
+    menus_[_name]->addAction (_action);
+}
 
+//=============================================================================
+
+void CoreWidget::slotGetMenubarMenu (QString _name, QMenu *& _menu, bool _create)
+{
+  if (menus_.contains (_name))
+    _menu = menus_[_name];
+  else if (_create)
+  {
+    _menu = new QMenu(_name);
+    menus_[_name] = _menu;
+    menuBar()->insertAction(helpMenu_->menuAction() ,_menu->menuAction ());
+  } else
+    _menu = NULL;
 }
 
 
@@ -103,6 +112,7 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   fileMenu_ = new QMenu(tr("&File"));
   menuBar()->addMenu(fileMenu_ );
+  menus_[tr("&File")] = fileMenu_;
 
   //Clear all
   QAction* AC_clear_all = new QAction(tr("&Clear All"), this);;
@@ -206,6 +216,7 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   viewMenu_ = new QMenu(tr("&View"));
   menuBar()->addMenu(viewMenu_ );
+  menus_[tr("&View")] = viewMenu_;
 
   slotUpdateGlobalDrawMenu();
   viewMenu_->addMenu(globalDrawMenu_);
@@ -405,6 +416,7 @@ void CoreWidget::setupMenuBar()
 
   toolsMenu_ = new QMenu(tr("&Tools"));
   menuBar()->addMenu(toolsMenu_ );
+  menus_[tr("&Tools")] = toolsMenu_;
 
   QAction* sceneGraphAction = new QAction( "Show SceneGraph " ,toolsMenu_ );
   sceneGraphAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"scenegraph.png") );
@@ -441,6 +453,7 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   helpMenu_ = new QMenu(tr("&Help"));
   menuBar()->addMenu(helpMenu_);
+  menus_[tr("&Help")] = helpMenu_;
 
   //Open Help Browser
   QAction* AC_HelpBrowser = new QAction(tr("&Help"), this);

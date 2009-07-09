@@ -483,7 +483,8 @@ public:
   //===========================================================================
   private slots :
 
-    void slotAddMenubarAction( QAction* _action , MenuActionType _type );
+    void slotAddMenubarAction( QAction* _action , QString _name );
+    void slotGetMenubarMenu (QString _name, QMenu *& _menu, bool _create);
 
   private:
 
@@ -498,6 +499,9 @@ public:
 
     /// First entry after all relevant parts of the File Menu
     QAction* fileMenuEnd_;
+
+    /// All available menus
+    QMap<QString, QMenu *> menus_;
 
   /** @} */
 
