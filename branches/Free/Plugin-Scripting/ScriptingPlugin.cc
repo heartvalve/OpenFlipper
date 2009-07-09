@@ -452,5 +452,15 @@ void ScriptingPlugin::slotFunctionDoubleClicked(QListWidgetItem * _item)
   scriptWidget_->currentScript->insertPlainText( _item->text() );
 }
 
+void ScriptingPlugin::showScriptInEditor(QString _code)
+{
+  if ( OpenFlipper::Options::nogui() )
+    return;
+
+  showScriptWidget ();
+
+  scriptWidget_->currentScript->setText (_code);
+}
+
 Q_EXPORT_PLUGIN2( skriptingplugin , ScriptingPlugin );
 
