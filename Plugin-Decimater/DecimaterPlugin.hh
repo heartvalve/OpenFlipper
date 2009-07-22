@@ -116,7 +116,7 @@ private slots:
 //===========================================================================
 
 public slots:
-  void decimate(int _objID, QString _constraints, QString _values);
+  void decimate(int _objID, QVariantMap _constraints);
 
 public slots:
    QString version() { return QString("1.0"); };
