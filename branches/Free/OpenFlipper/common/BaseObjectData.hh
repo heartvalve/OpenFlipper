@@ -59,6 +59,7 @@
 #include <ACG/Scenegraph/ShaderNode.hh>
 #include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/BoundingBoxNode.hh>
+#include <ACG/Scenegraph/StencilRefNode.hh>
 #include <ACG/QtScenegraph/QtTranslationManipulatorNode.hh>
 
 //== TYPEDEFS =================================================================
@@ -74,6 +75,8 @@ typedef ACG::SceneGraph::SeparatorNode                    SeparatorNode;
 typedef ACG::SceneGraph::BaseNode                         BaseNode;
 /// Bounding box Node
 typedef ACG::SceneGraph::BoundingBoxNode                  BoundingBoxNode;
+/// Stencil reference Node
+typedef ACG::SceneGraph::StencilRefNode                   StencilRefNode;
 
 //== CLASS DEFINITION =========================================================
 
@@ -189,6 +192,9 @@ class DLLEXPORT BaseObjectData : public BaseObject
     /// get a pointer to the bounding box node
     BoundingBoxNode* boundingBoxNode();
 
+    /// get a pointer to the stencil reference node
+    StencilRefNode* stencilRefNode();
+
     /// Set the color of the object
     void setBaseColor(ACG::Vec4f _color);
 
@@ -220,6 +226,9 @@ class DLLEXPORT BaseObjectData : public BaseObject
 
     /// Bounding box node for the object
     BoundingBoxNode * boundingBoxNode_;
+
+    /// Stencil reference node for the object
+    StencilRefNode* stencilRefNode_;
 
   /** @} */
 
