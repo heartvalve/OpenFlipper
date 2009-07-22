@@ -56,7 +56,8 @@ BaseObjectData::BaseObjectData(const BaseObjectData& _object)
     separatorNode_(0),
     manipulatorNode_(0),
     materialNode_(0),
-    boundingBoxNode_(0)
+    boundingBoxNode_(0),
+    stencilRefNode_(0)
 {
   // We have to create our own visualization nodes as we are a new object
   init();
@@ -70,7 +71,8 @@ BaseObjectData::BaseObjectData( SeparatorNode* _rootNode ) :
   separatorNode_(0),
   manipulatorNode_(0),
   materialNode_(0),
-  boundingBoxNode_(0)
+  boundingBoxNode_(0),
+  stencilRefNode_(0)
 {
   init();
 }
@@ -125,6 +127,11 @@ void BaseObjectData::init() {
   }
   if ( materialNode_ == 0 )
     materialNode_         = new MaterialNode(boundingBoxNode(),  "New Material");
+  if ( stencilRefNode_ == 0 )
+  {
+    stencilRefNode_       = new StencilRefNode(materialNode(),  "New Material");
+    stencilRefNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
+  }
 }
 
 
@@ -152,6 +159,9 @@ void BaseObjectData::setName( QString _name ) {
 
   nodename = std::string(_name.toUtf8() + "'s Material" );
   materialNode_->name( nodename );
+
+  nodename = std::string("StencilRefNode for object " + _name.toUtf8());
+  stencilRefNode_->name( nodename );
 }
 
 
@@ -209,6 +219,10 @@ MaterialNode* BaseObjectData::materialNode() {
 
 BoundingBoxNode* BaseObjectData::boundingBoxNode() {
   return boundingBoxNode_;
+}
+
+StencilRefNode* BaseObjectData::stencilRefNode() {
+  return stencilRefNode_;
 }
 
 
