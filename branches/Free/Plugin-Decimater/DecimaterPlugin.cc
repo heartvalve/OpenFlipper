@@ -82,9 +82,9 @@ bool DecimaterPlugin::initializeToolbox(QWidget*& _widget)
  */
 void DecimaterPlugin::pluginsInitialized() {
 
-  emit setSlotDescription("decimate(int,QString,QString)","Decimate a given object",
-                          QString("objectId,constraints,values").split(","),
-                          QString("ID of an object; comma separated list of constraints (distance,normal_deviation,roundness,triangles); comma separated list of constraint values suited to 'constraints' parameter").split(";"));
+  emit setSlotDescription("decimate(int,Object)","Decimate a given object",
+                          QString("objectId,constraints").split(","),
+                          QString("ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,triangles)").split(";"));
 }
 
 
@@ -179,7 +179,7 @@ void DecimaterPlugin::slot_decimate()
  * @param _constraints A string containing a comma separated list of constraints (distance,normal_deviation,roundness,triangles)
  * @param _values a string containing a comma separated list of constraint values suited to the _constraints parameter
  */
-void DecimaterPlugin::decimate(int _objID, QString _constraints, QString _values){
+void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
 
 
   BaseObjectData* baseObjectData;
@@ -207,72 +207,52 @@ void DecimaterPlugin::decimate(int _objID, QString _constraints, QString _values
     //remove old constraints
     decimater->removeConstraints();
 
-    //and set new constraints
-    QStringList constraints = _constraints.toLower().split(",");
-    QStringList values      = _values.split(",");
-
     //distance constraint
-    if ( constraints.contains("distance") ){
+    if ( _constraints.contains("distance") ){
 
-      int i = constraints.indexOf("distance");
+      bool ok;
 
-      if ( i >= 0 && i < values.count() ){
-        bool ok;
+      double value = _constraints["distance"].toDouble(&ok);
 
-        double value = values[i].toDouble(&ok);
-
-        if (ok)
-          decimater->setDistanceConstraint( value );
-      }
+      if (ok)
+        decimater->setDistanceConstraint( value );
     }
 
     //normal deviation constraint
-    if ( constraints.contains("normal_deviation") ){
+    if ( _constraints.contains("normal_deviation") ){
 
-      int i = constraints.indexOf("normal_deviation");
+      bool ok;
 
-      if ( i >= 0 && i < values.count() ){
-        bool ok;
+      int value = _constraints["normal_deviation"].toInt(&ok);
 
-        int value = values[i].toInt(&ok);
-
-        if (ok)
-          decimater->setNormalDeviationConstraint( value );
-      }
+      if (ok)
+        decimater->setNormalDeviationConstraint( value );
     }
 
     //roundness constraint
-    if ( constraints.contains("roundness") ){
+    if ( _constraints.contains("roundness") ){
 
-      int i = constraints.indexOf("roundness");
+      bool ok;
 
-      if ( i >= 0 && i < values.count() ){
-        bool ok;
+      double value = _constraints["roundness"].toDouble(&ok);
 
-        double value = values[i].toDouble(&ok);
-
-        if (ok)
-          decimater->setRoundnessConstraint( value );
-      }
+      if (ok)
+        decimater->setRoundnessConstraint( value );
     }
 
     //triangleCount constraint
     bool triangleCount = false;
     int triangles = 0;
 
-    if ( constraints.contains("triangles") ){
+    if ( _constraints.contains("triangles") ){
 
-      int i = constraints.indexOf("triangles");
+      bool ok;
 
-      if ( i >= 0 && i < values.count() ){
-        bool ok;
+      int value = _constraints["triangles"].toInt(&ok);
 
-        int value = values[i].toInt(&ok);
-
-        if (ok){
-          triangleCount = true;
-          triangles = value;
-        }
+      if (ok){
+        triangleCount = true;
+        triangles = value;
       }
     }
 
