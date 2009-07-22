@@ -78,7 +78,17 @@ void Core::slotGetAllFilters ( QStringList& _list){
 }
 
 void Core::commandLineOpen(const char* _filename, bool asPolyMesh ){
-  commandLineFileNames_.push_back(std::pair< const char* , bool >(_filename,asPolyMesh));
+
+	QString file(_filename);
+
+	if ( !file.startsWith("/") && !file.contains(":") ) {
+
+		file = QDir::currentPath();
+		file += OpenFlipper::Options::dirSeparator();
+		file += _filename;
+	}
+
+	commandLineFileNames_.push_back(std::pair< std::string , bool >(file.toStdString(), asPolyMesh));
 }
 
 void Core::commandLineScript(const char* _filename ) {
@@ -109,22 +119,23 @@ void Core::slotExecuteAfterStartup() {
   for ( uint i = 0 ; i < commandLineFileNames_.size() ; ++i ) {
 
     // Skip scripts here as they will be handled by a different function
-    QString tmp(commandLineFileNames_[i].first);
+    QString tmp = QString::fromStdString(commandLineFileNames_[i].first);
     if ( tmp.endsWith("ofs") ) {
       commandLineScriptNames_.push_back(commandLineFileNames_[i].first);
       continue;
     }
 
     if (commandLineFileNames_[i].second)
-      loadObject(DATA_POLY_MESH, commandLineFileNames_[i].first);
-    else
-      loadObject(commandLineFileNames_[i].first);
+      loadObject(DATA_POLY_MESH, QString::fromStdString(commandLineFileNames_[i].first));
+    else {
+      loadObject(QString::fromStdString(commandLineFileNames_[i].first));
+    }
   }
 
   if ( scriptingSupport )
     for ( uint i = 0 ; i < commandLineScriptNames_.size() ; ++i ) {
       // Add the full path to the script to set scripting dir right
-      QString tmp(commandLineScriptNames_[i]);
+      QString tmp = QString::fromStdString(commandLineScriptNames_[i]);
       tmp = QDir::currentPath() + QDir::separator() + tmp;
       emit executeFileScript(tmp);
     }
@@ -135,6 +146,7 @@ void Core::slotExecuteAfterStartup() {
 
 /// Load object by guessing DataType depending on the files extension
 int Core::loadObject ( QString _filename ) {
+
   if (_filename.endsWith(".ini")) {
 
     // Load all information from the given ini file
