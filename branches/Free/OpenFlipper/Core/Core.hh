@@ -424,8 +424,8 @@ private:
   void slotExecuteAfterStartup();
 
   private:
-    std::vector< std::pair < const char* , bool >  > commandLineFileNames_;
-    std::vector< const char* > commandLineScriptNames_;
+    std::vector< std::pair < std::string , bool >  > commandLineFileNames_;
+    std::vector< std::string > commandLineScriptNames_;
 
   public:
 
