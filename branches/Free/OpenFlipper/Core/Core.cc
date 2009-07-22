@@ -1140,6 +1140,26 @@ INIFile ini;
   ini.disconnect();
 }
 
+QList<int> Core::objectList (QString _selection, QStringList _types)
+{
+  QList<int> rv;
+  unsigned int ids = 0;
+  PluginFunctions::IteratorRestriction selection = PluginFunctions::ALL_OBJECTS;
+ 
+  foreach (QString s, _types)
+    if (!s.isEmpty ())
+      ids = typeId (s);
+  if (_selection == "source")
+    selection = PluginFunctions::SOURCE_OBJECTS;
+  else if (_selection == "target")
+    selection = PluginFunctions::TARGET_OBJECTS;
+
+  for ( PluginFunctions::ObjectIterator o_it(selection, ids) ;
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)
+    rv.append (o_it->id ());
+  return rv;
+}
+
 /// set the descriptions for scriptable slots of the core
 void Core::setDescriptions(){
 
@@ -1203,6 +1223,9 @@ void Core::setDescriptions(){
                           QString("Name,Toolbox List").split(","),
                           QString("Name of the new Viewmode, ; seperated list of toolboxes visible in this viewmode").split(","));
 
+  emit setSlotDescription("objectList(QString,QStringList)", "Returns object list",
+                          QString("Selection type,Object types").split(","),
+                          QString("Type of object selection (all,source,target),Object type (All,PolyMesh,TriangleMesh,...)").split(";"));
 }
 
 void Core::slotDeleteObject( int _id ){
