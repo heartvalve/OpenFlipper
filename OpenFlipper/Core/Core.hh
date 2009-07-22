@@ -378,6 +378,9 @@ public slots:
     /// write the current versions of all plugins to ini file
     void writeVersionNumbers(QString _filename);
 
+    /// return the list of available object that has the given selection and type
+    QList<int> objectList (QString _selection, QStringList _types);
+
    //===========================================================================
     /** @name Scripting functions for controlling view modes
     * @{ */
