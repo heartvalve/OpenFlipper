@@ -63,16 +63,21 @@ BaseObjectIterator::BaseObjectIterator( IteratorRestriction _restriction , DataT
 
   while ( (currentPos != objectRoot()) ) {
 
-    // Return only target objects if requested
-    if ( (restriction_ == TARGET_OBJECTS) && (! currentPos->target() ) ) {
-      currentPos = currentPos->next();
-      continue;
-    }
+    // Return only selected objects if requested
+    if (!restriction_.isEmpty ()) {
+      bool found = false;
+      foreach (QString rest, restriction_)
+        if (currentPos->flags().contains(rest))
+        {
+          found = true;
+          break;
+        }
 
-    // Return only source objects if requested
-    if ( (restriction_ == SOURCE_OBJECTS) && (! currentPos->source() ) ) {
-      currentPos = currentPos->next();
-      continue;
+      if (!found)
+      {
+        currentPos = currentPos->next();
+        continue;
+      }
     }
 
     // Return only the right dataType
@@ -124,16 +129,21 @@ BaseObjectIterator& BaseObjectIterator::operator++() {
 
   while ( (currentPos != objectRoot() ) ) {
 
-    // Return only target objects if requested
-    if ( (restriction_ == TARGET_OBJECTS) && (! currentPos->target() ) ) {
-      currentPos = currentPos->next();
-      continue;
-    }
+    // Return only selected objects if requested
+    if (!restriction_.isEmpty ()) {
+      bool found = false;
+      foreach (QString rest, restriction_)
+        if (currentPos->flags().contains(rest))
+        {
+          found = true;
+          break;
+        }
 
-    // Return only source objects if requested
-    if ( (restriction_ == SOURCE_OBJECTS) && (! currentPos->source() ) ) {
-      currentPos = currentPos->next();
-      continue;
+      if (!found)
+      {
+        currentPos = currentPos->next();
+        continue;
+      }
     }
 
     // Return only the right dataType

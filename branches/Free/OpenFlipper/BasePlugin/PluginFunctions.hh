@@ -301,11 +301,11 @@ QPoint mapToLocal( const QPoint _point );
     * @{ */
 //=======================================
 
-enum IteratorRestriction {
-   ALL_OBJECTS,
-   TARGET_OBJECTS,
-   SOURCE_OBJECTS
-};
+typedef QStringList IteratorRestriction;
+
+const QStringList ALL_OBJECTS;
+const QStringList TARGET_OBJECTS ("target");
+const QStringList SOURCE_OBJECTS ("source");
 
 /** \brief Core Data Iterator
  *
