@@ -86,6 +86,19 @@ static SeparatorNode* sceneGraph_root_node_;
  */
 static Viewer::ViewerProperties dummyProperties;
 
+
+/** \brief DONT USE DIRECTLY!!
+ *
+ * This pointer is used internally
+ */
+static ViewObjectMarker* defaultMarker_ = 0;
+
+/** \brief DONT USE DIRECTLY!!
+ *
+ * This pointer is used internally
+ */
+static ViewObjectMarker* currentMarker_ = 0;
+
 void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
@@ -334,6 +347,8 @@ const std::string pickMode () {
 }
 
 void pickMode ( std::string _mode) {
+  // switch to default marker
+  setViewObjectMarker (defaultViewObjectMarker ());
   viewerProperties().pickMode(_mode);
 }
 
@@ -561,6 +576,27 @@ ACG::Vec3d upVector(int _viewer) {
     std::cerr << "Requested illegal viewer for up vector!!" << std::endl;
 
   return viewerProperties().glState().up();
+}
+
+
+void setViewObjectMarker(ViewObjectMarker * _marker)
+{
+  currentMarker_ = _marker;
+}
+
+ViewObjectMarker * currentViewObjectMarker()
+{
+  return currentMarker_;
+}
+
+void setDefaultViewObjectMarker(ViewObjectMarker * _marker)
+{
+  defaultMarker_ = _marker;
+}
+
+ViewObjectMarker * defaultViewObjectMarker()
+{
+  return defaultMarker_;
 }
 
 
