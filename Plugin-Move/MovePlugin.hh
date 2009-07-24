@@ -51,6 +51,7 @@
 
 #include "MoveToolbar.hh"
 #include "MoveProps.hh"
+#include "MoveObjectMarker.hh"
 
 enum SelectionType {VERTEX, EDGE, FACE };
 
@@ -301,6 +302,9 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     /// Move selection on an object with given id
     void moveSelection(ACG::Matrix4x4d mat, int _id);
+
+    /// Object marker to dimm Objects during manipulator transformation
+    MoveObjectMarker objectMarker_;
 
   private:
 
