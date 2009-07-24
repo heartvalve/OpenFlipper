@@ -54,6 +54,8 @@
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh>
 
+//== FORWARDDECLARATIONS ======================================================
+class ViewObjectMarker;
 
 /** The Namespace PluginFunctions contains functions for all plugins. These functions should be used to get the
  *  objects to work on or to set modes in the examiner widget. */
@@ -291,6 +293,28 @@ QPoint mapToGlobal( const QPoint _point );
  */
 DLLEXPORT
 QPoint mapToLocal( const QPoint _point );
+
+/** Set current ViewObjectMarker (will be reseted to default on pick mode change)
+ *
+ * @param _marker Object marker
+ */
+DLLEXPORT
+void setViewObjectMarker (ViewObjectMarker *_marker);
+
+/// Get the current ViewObjectMarker
+DLLEXPORT
+ViewObjectMarker* currentViewObjectMarker ();
+
+/** Set the default ViewObjectMarker
+ *
+ * @param _marker Object marker
+ */
+DLLEXPORT
+void setDefaultViewObjectMarker (ViewObjectMarker *_marker);
+
+/// Get the default ViewObjectMarker
+DLLEXPORT
+ViewObjectMarker* defaultViewObjectMarker ();
 
 /** @} */
 
