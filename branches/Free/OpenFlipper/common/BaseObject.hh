@@ -170,13 +170,16 @@ class DLLEXPORTONLY BaseObject {
   /** @} */
 
   //===========================================================================
-  /** @name Source/target handling
+  /** @name Flag handling (source, target, ...)
    * @{ */
   //===========================================================================
 
   public:
     /** Is this item selected as a target item?
-     */
+      * Most algorithms operate on target meshes. These meshes are also considered as active.
+      * Blending for inactive meshes is handled by DataControlPlugin so emit objectSelectionChanged
+      * if you changed this value.\n
+      */
     bool target();
 
     /** Set this item as a target
@@ -184,26 +187,33 @@ class DLLEXPORTONLY BaseObject {
     void target(bool _target);
 
     /** Is this item selected as a source item?
-     */
+      * Some algorithms use source meshes to define their input.
+      */
     bool source();
 
     /** Set this item as a source
      */
     void source(bool _source);
 
+    /** Get a custom flag of this item
+     */
+    bool flag(QString _flag);
+
+    /** Set a custom flag on this item
+     */
+    void setFlag(QString _flag, bool _set);
+
+    /** Get all flags of this item
+     */
+    QStringList flags();
+
   private:
 
-    /** Is this item selected as a target item?
-    * Most algorithms operate on target meshes. These meshes are also considered as active.
-    * Blending for inactive meshes is handled by DataControlPlugin so emit updated_objects
-     * if you changed this value.\n
-    */
-    bool target_;
+    /** Stores all item flags as strings. Source and target flags are represented
+      * as "source" and "target" strings.
+      */
+    QStringList flags_;
 
-    /** Is this item selected as a source item?
-     * Some algorithms use source meshes to define their input.
-     */
-    bool source_;
 
   /** @} */
 

@@ -59,8 +59,7 @@ BaseObject::BaseObject(const BaseObject& _object) {
   ++idGenerator;
   persistentId_ = _object.persistentId_;
   objectType_   = _object.objectType_;
-  target_ = _object.target_;
-  source_ = _object.source_;
+  flags_ = _object.flags_;
   visible_ = _object.visible_;
   parentItem_ = 0;
   childItems_.clear();
@@ -74,8 +73,7 @@ BaseObject::BaseObject(BaseObject* _parent) :
   id_(-1),
   persistentId_(-1),
   objectType_(DATA_NONE),
-  target_(false),
-  source_(false),
+  flags_(),
   visible_(true),
   parentItem_(_parent),
   name_("NONAME")
@@ -116,8 +114,8 @@ void BaseObject::cleanup() {
   persistentId_ = -1;
   objectType_ = DATA_NONE;
 
-  target_     = false;
-  source_     = false;
+  flags_.clear();
+
   visible_    = true;
   name_       = "NONAME";
 }
@@ -175,23 +173,47 @@ void BaseObject::printObjectInfo() {
 
 
 // ===============================================================================
-// source/target Handling
+// flag Handling
 // ===============================================================================
 
 bool BaseObject::target() {
-  return target_;
+  return flag("target");
 }
 
 void BaseObject::target(bool _target) {
-  target_= _target;
+  setFlag("target", _target);
 }
 
 bool BaseObject::source() {
-  return source_;
+  return flag("source");
 }
 
 void BaseObject::source(bool _source) {
-  source_ = _source;
+  setFlag("source", _source);
+}
+
+bool BaseObject::flag(QString _flag)
+{
+  return flags_.contains(_flag);
+}
+
+void BaseObject::setFlag(QString _flag, bool _set)
+{
+  if (flags_.contains(_flag))
+  {
+    if (!_set)
+      flags_.removeAll(_flag);
+  }
+  else
+  {
+    if (_set)
+      flags_ << _flag;
+  }
+}
+
+QStringList BaseObject::flags()
+{
+  return flags_;
 }
 
 // ===============================================================================
