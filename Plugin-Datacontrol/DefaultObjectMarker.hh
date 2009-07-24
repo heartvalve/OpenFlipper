@@ -41,7 +41,7 @@ class DefaultObjectMarker : public ViewObjectMarker
 {
   public:
 
-    bool stencilRefForObject (BaseObject *_obj, GLuint &_reference);
+    bool stencilRefForObject (BaseObjectData *_obj, GLuint &_reference);
 
     bool blendForStencilRefNumber (GLuint _reference, GLenum &_src, GLenum &_dst, ACG::Vec4f &_color);
 };
