@@ -98,6 +98,9 @@ void DataControlPlugin::pluginsInitialized() {
   connect (material, SIGNAL( triggered() ), this, SLOT ( slotMaterialProperties() ));
 
   emit addContextMenuItem(material , DATA_ALL , CONTEXTOBJECTMENU);
+
+  PluginFunctions::setDefaultViewObjectMarker (&objectMarker);
+  PluginFunctions::setViewObjectMarker (&objectMarker);
 }
 
 
@@ -167,34 +170,8 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
 
   BaseObjectData* obj = 0;
 
-  if ( PluginFunctions::getObject( _identifier, obj) ){
-
+  if ( PluginFunctions::getObject( _identifier, obj) )
     updateBoundingBox (obj);
-
-    if ( obj->target() ) {
-      obj->materialNode()->disable_blending();
-      OpenMesh::Vec4f base_color = obj->materialNode()->base_color();
-      base_color[3] = 1.0;
-      obj->materialNode()->set_base_color(base_color);
-      OpenMesh::Vec4f ambient_color = obj->materialNode()->ambient_color();
-      ambient_color[3] = 1.0;
-      obj->materialNode()->set_ambient_color(ambient_color);
-      OpenMesh::Vec4f diffuse_color = obj->materialNode()->diffuse_color();
-      diffuse_color[3] = 1.0;
-      obj->materialNode()->set_diffuse_color(diffuse_color);
-    }  else {
-      obj->materialNode()->enable_blending();
-      OpenMesh::Vec4f base_color = obj->materialNode()->base_color();
-      base_color[3] = 0.4;
-      obj->materialNode()->set_base_color(base_color);
-      OpenMesh::Vec4f ambient_color = obj->materialNode()->ambient_color();
-      ambient_color[3] = 0.4;
-      obj->materialNode()->set_ambient_color(ambient_color);
-      OpenMesh::Vec4f diffuse_color = obj->materialNode()->diffuse_color();
-      diffuse_color[3] = 0.4;
-      obj->materialNode()->set_diffuse_color(diffuse_color);
-    }
-  }
 
   model_->objectChanged( _identifier );
 
