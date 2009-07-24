@@ -72,7 +72,7 @@ public:
     @param _reference stencil reference for object painting
     @return should the reference be used
   */
-  virtual bool stencilRefForObject (BaseObject *_obj, GLuint &_reference) = 0;
+  virtual bool stencilRefForObject (BaseObjectData *_obj, GLuint &_reference) = 0;
 
   /** Per reference number blending values
     @param _reference stencil reference for blending

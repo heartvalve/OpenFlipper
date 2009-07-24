@@ -30,7 +30,7 @@
 //=============================================================================
 
 #include <OpenFlipper/common/Types.hh>
-#include <OpenFlipper/common/BaseObject.hh>
+#include <OpenFlipper/common/BaseObjectData.hh>
 #include "DefaultObjectMarker.hh"
 
 //******************************************************************************
@@ -41,7 +41,7 @@ const ACG::Vec4f source_target_color (0.6,1.0,1.0,1.0);
 
 //******************************************************************************
 
-bool DefaultObjectMarker::stencilRefForObject(BaseObject * _obj, GLuint & _reference)
+bool DefaultObjectMarker::stencilRefForObject(BaseObjectData * _obj, GLuint & _reference)
 {
   if (!_obj->target() && !_obj->source())
   {
