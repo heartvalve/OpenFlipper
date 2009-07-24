@@ -125,13 +125,13 @@ void BaseObjectData::init() {
     boundingBoxNode_      = new BoundingBoxNode(manipulatorNode(),  "New Bounding Box");
     boundingBoxNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
   }
-  if ( materialNode_ == 0 )
-    materialNode_         = new MaterialNode(boundingBoxNode(),  "New Material");
   if ( stencilRefNode_ == 0 )
   {
-    stencilRefNode_       = new StencilRefNode(materialNode(),  "New Material");
+    stencilRefNode_       = new StencilRefNode(boundingBoxNode(),  "New Stencil Reference");
     stencilRefNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
   }
+  if ( materialNode_ == 0 )
+    materialNode_         = new MaterialNode(stencilRefNode(),  "New Material");
 }
 
 
