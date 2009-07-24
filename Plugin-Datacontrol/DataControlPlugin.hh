@@ -48,6 +48,7 @@
 #include "Toolbox.hh"
 
 #include "TreeModel.hh"
+#include "DefaultObjectMarker.hh"
 
 
 /** Plugin for controlling the Object data structures (Show,hide Object, Target, Source selection
@@ -141,6 +142,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
 
     /// Pointer to the header to the view widget
     QHeaderView * viewHeader_;
+
+    /// Default marker to visualize "source" and "target" object flags
+    DefaultObjectMarker objectMarker;
 
 
 //===========================================================================
