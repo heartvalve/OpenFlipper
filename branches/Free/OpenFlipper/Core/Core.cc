@@ -1145,7 +1145,7 @@ QList<int> Core::objectList (QString _selection, QStringList _types)
   QList<int> rv;
   unsigned int ids = 0;
   PluginFunctions::IteratorRestriction selection = PluginFunctions::ALL_OBJECTS;
- 
+
   foreach (QString s, _types)
     if (!s.isEmpty ())
       ids = typeId (s);
@@ -1208,6 +1208,7 @@ void Core::setDescriptions(){
   emit setSlotDescription("saveSettings()", "Show the dialog to save the current setting. (only works if GUI is available)",QStringList(), QStringList());
   //load slots
   emit setSlotDescription("loadObject()", "Show the dialog to load an object. (only works if GUI is available)",QStringList(), QStringList());
+  emit setSlotDescription("getObjectId(QString)", "Return identifier of object with specified name. Returns -1 if object was not found.",QStringList(), QStringList());
   emit setSlotDescription("loadSettings()", "Show the dialog to load settings. (only works if GUI is available)",QStringList(), QStringList());
   emit setSlotDescription("loadSettings(QString)", "load settings from file.",QStringList(), QStringList());
 
