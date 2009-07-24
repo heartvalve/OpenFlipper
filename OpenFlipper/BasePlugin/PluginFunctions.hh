@@ -133,6 +133,11 @@ bool getObject(  const int _identifier , BaseObject*& _object );
 DLLEXPORT
 bool getObject(  const int _identifier , BaseObjectData*& _object );
 
+/** This functions returns the object's id with the given name.
+ */
+DLLEXPORT
+int getObjectId( const QString _name );
+
 /** \brief Check if an object with this identifier exists.
  *
  * Searches through the Data containers and checks if the object with the given identifier exists

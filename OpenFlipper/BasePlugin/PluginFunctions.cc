@@ -182,6 +182,14 @@ bool getObject(  const int _identifier , BaseObjectData*& _object ) {
   return ( _object != 0 );
 }
 
+int getObjectId( const QString _name ) {
+
+	if(_name.isEmpty()) return -1;
+
+	BaseObject* object = objectRoot_->childExists( _name );
+	return object->id();
+}
+
 // ===============================================================================
 // ===============================================================================
 

@@ -105,6 +105,13 @@ void Core::createWidget(QString _objectName, QString _uiFilename) {
 
 //-----------------------------------------------------------------------------
 
+int Core::getObjectId( const QString _name ) {
+
+	return PluginFunctions::getObjectId(_name);
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::setViewMode(QString _viewMode){
 
   if ( OpenFlipper::Options::gui() )

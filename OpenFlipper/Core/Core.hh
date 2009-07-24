@@ -508,6 +508,9 @@ private:
     /// Load status from file
     void loadSettings(QString _filename);
 
+    /// Get object id from filename
+    int getObjectId(QString _filename);
+
   /** @} */
 
   //===========================================================================
