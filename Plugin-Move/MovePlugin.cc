@@ -1166,12 +1166,12 @@ void MovePlugin::slotMoveToOrigin() {
  */
 void MovePlugin::slotUnifyBoundingBoxDiagonal()
 {
-   if ( allTargets_ ) {
+   if ( tool_->targetObjects->isChecked() ) {
        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
             if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
               unifyBBDiag(*PluginFunctions::triMesh(*o_it));
             else if ( o_it->dataType( DATA_POLY_MESH ) )
-             unifyBBDiag(*PluginFunctions::polyMesh(*o_it));
+              unifyBBDiag(*PluginFunctions::polyMesh(*o_it));
 
             emit updatedObject( o_it->id() );
 
@@ -1424,6 +1424,8 @@ void MovePlugin::unifyBBDiag(MeshT& _mesh )
 
      _mesh.point(v_it) = (_mesh.point(v_it) - bb_center) * scale + bb_center;
   }
+
+  _mesh.update_normals();
 
 }
 
