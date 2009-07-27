@@ -71,7 +71,7 @@
 #include "OpenFlipper/BasePlugin/FileInterface.hh"
 #include "OpenFlipper/BasePlugin/RPCInterface.hh"
 #include "OpenFlipper/BasePlugin/ScriptInterface.hh"
-// #include "OpenFlipper/BasePlugin/SecurityInterface.hh"
+#include "OpenFlipper/BasePlugin/SecurityInterface.hh"
 
 #include "OpenFlipper/INIFile/INIFile.hh"
 
@@ -402,26 +402,22 @@ void Core::loadPlugin(QString filename, bool silent){
         return;
       }
 
-//       //Check if it is a BasePlugin
-//       SecurityInterface * securePlugin = qobject_cast< SecurityInterface * >(plugin);
-//       if ( securePlugin ) {
-//         emit log(LOGINFO,"Plugin uses security interface. Trying to authenticate against plugin ...");
-//
-//         QMetaObject::invokeMethod(plugin,"authenticate" ) ;
-//
-//         std::cerr << "2" << std::endl;
-//
-//         securePlugin->authenticate();
-//
-//         if ( true )
-//
-//           emit log(LOGINFO,"... ok. Loading plugin ");
-//         else {
-//           emit log(LOGERR,"... failed. Plugin access denied.");
-//           emit log(LOGOUT,"=============================================================================================");
-//           return;
-//         }
-//       }
+      //Check if it is a BasePlugin
+      SecurityInterface * securePlugin = qobject_cast< SecurityInterface * >(plugin);
+      if ( securePlugin ) {
+        emit log(LOGINFO,"Plugin uses security interface. Trying to authenticate against plugin ...");
+
+        bool success = false;
+        QMetaObject::invokeMethod(plugin,"authenticate", Q_RETURN_ARG( bool , success ) ) ;
+
+        if ( success )
+          emit log(LOGINFO,"... ok. Loading plugin ");
+        else {
+          emit log(LOGERR,"... failed. Plugin access denied.");
+          emit log(LOGOUT,"=============================================================================================");
+          return;
+        }
+      }
 
 
       emit log(LOGOUT,"Plugin Desciption :\t\t " + basePlugin->description());
