@@ -129,7 +129,8 @@ glViewer::glViewer( QGraphicsScene* _scene,
   glScene_(_scene),
   glWidget_(_glWidget),
   properties_(_properties),
-  glstate_(0)
+  glstate_(0),
+  initialized_(false)
 {
 
   // widget stuff
@@ -898,6 +899,14 @@ void glViewer::initializeGL()
       (glewIsSupported("GL_ARB_texture_rectangle") ||
        glewIsSupported("GL_EXT_texture_rectangle") ||
        glewIsSupported("GL_NV_texture_rectangle"));
+
+  initialized_ = true;
+
+  if (sceneGraphRoot_)
+  {
+    sceneGraph(sceneGraphRoot_, true);
+    viewAll ();
+  }
 }
 
 
@@ -985,42 +994,8 @@ void glViewer::rotate_lights(ACG::Vec3d& _axis, double _angle)
 
 void glViewer::paintGL()
 {
-  static bool initialized = false;
-  if (!initialized)
-  {
-    // lock update
-    properties_.lockUpdate();
-
-    // init GL state
-    glstate_->initialize();
-
-    // initialize lights
-    light_matrix_.identity();
-
-    // scene pos and size
-    scene_center_ = trackball_center_ = ACG::Vec3d( 0.0, 0.0, 0.0 );
-    scene_radius_ = trackball_radius_ = 1.0;
-    orthoWidth_   = 2.0;
-
-    // modelview
-    glstate_->translate(0.0, 0.0, -3.0);
-    setHome();
-
-    // pixel transfer
-    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-    glPixelStorei(GL_PACK_SKIP_ROWS, 0);
-    glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-
-    // unlock update (we started locked)
-    properties_.unLockUpdate();
-
-    initialized = true;
-  }
+  if (!initialized_)
+    initializeGL ();
 
   if (!properties_.updateLocked())
   {
