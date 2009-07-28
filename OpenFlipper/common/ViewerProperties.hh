@@ -55,6 +55,9 @@
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <ACG/GL/GLState.hh>
 
+// forward declaration
+class ViewObjectMarker;
+
 namespace Viewer {
 
   /// How to react on mouse events?
@@ -325,6 +328,20 @@ namespace Viewer {
       /// Pointer to the glState of the Viewer
       ACG::GLState* glState_;
 
+    //===========================================================================
+
+    public slots:
+      /// set object marker for viewer
+      void objectMarker (ViewObjectMarker* _marker) { objectMarker_ = _marker; emit updated(); }
+
+      /// current object marker
+      ViewObjectMarker* objectMarker() { return objectMarker_; };
+
+    private:
+      ViewObjectMarker *objectMarker_;
+
+
+    //===========================================================================
 
     /** @} */
 
