@@ -93,8 +93,7 @@ namespace ACG {
     class QtWheel;
   }
 }
-class QtGLGraphicsScene;
-class QtGLGraphicsView;
+class QGraphicsScene;
 class QtGLViewerLayout;
 class QtShiftPopupMenu;
 
@@ -125,7 +124,7 @@ public:
      if \c statusBar==0 then a \a private status bar will be created
     \param _format OpenGL context settings, will be passed to glarea()
   */
-  glViewer( QtGLGraphicsScene* _scene,
+  glViewer( QGraphicsScene* _scene,
             QGLWidget* _glWidget,
             Viewer::ViewerProperties& _properties,
             QGraphicsWidget* _parent=0);
@@ -519,7 +518,7 @@ private:
   bool                         blending_;
 
   // graphics scene used to paint gl context and widgets
-  QtGLGraphicsScene* glScene_;
+  QGraphicsScene* glScene_;
 
   // gl widget used as drawing area to paint the graphics scene
   QGLWidget* glWidget_;

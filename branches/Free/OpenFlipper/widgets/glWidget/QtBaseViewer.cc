@@ -42,8 +42,6 @@
 //== INCLUDES =================================================================
 
 #include "QtBaseViewer.hh"
-#include "QtGLGraphicsScene.hh"
-#include "QtGLGraphicsView.hh"
 #include "QtGLViewerLayout.hh"
 #include <ACG/QtWidgets/QtWheel.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
@@ -85,6 +83,8 @@
 #include <QButtonGroup>
 #include <QToolBar>
 
+#include <QGraphicsView>
+#include <QGraphicsScene>
 #include <QGraphicsWidget>
 #include <QGraphicsGridLayout>
 #include <QGraphicsProxyWidget>
@@ -118,7 +118,7 @@ static const char          VIEW_MAGIC[] =
 //== IMPLEMENTATION ==========================================================
 
 
-glViewer::glViewer( QtGLGraphicsScene* _scene,
+glViewer::glViewer( QGraphicsScene* _scene,
                     QGLWidget* _glWidget,
                     Viewer::ViewerProperties& _properties,
                     QGraphicsWidget* _parent) :
