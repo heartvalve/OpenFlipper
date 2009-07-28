@@ -388,6 +388,7 @@ signals:
 protected:
 
   friend class QtGLGraphicsScene;
+  friend class SimpleGLGraphicsScene;
   friend class QtGLGraphicsView;
 
   /// initialize OpenGL states
