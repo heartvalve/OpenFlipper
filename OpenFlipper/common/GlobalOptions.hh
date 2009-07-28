@@ -68,6 +68,10 @@ QDir pluginDir();
 DLLEXPORT
 QDir textureDir();
 
+/// Returns the Path to the License files
+DLLEXPORT
+QDir licenseDir();
+
 /// Returns the Path to the Scripts
 DLLEXPORT
 QDir scriptDir();
@@ -103,6 +107,10 @@ QString shaderDirStr();
 /// Returns the Path to the Textures
 DLLEXPORT
 QString textureDirStr();
+
+/// Returns the Path to the License files
+DLLEXPORT
+QString licenseDirStr();
 
 /// Returns the Path to the Scripts
 DLLEXPORT
@@ -144,6 +152,10 @@ void shaderDir(QDir _dir);
 DLLEXPORT
 void textureDir(QDir _dir);
 
+/// Sets the Path to the Licenses
+DLLEXPORT
+void licenseDir(QDir _dir);
+
 /// Sets the Path to the Scripts
 DLLEXPORT
 void scriptDir( QDir _dir);
@@ -179,6 +191,10 @@ bool shaderDir(QString _dir);
 /// Sets the Path to the Textures
 DLLEXPORT
 bool textureDir(QString _dir);
+
+/// Sets the Path to the License files
+DLLEXPORT
+bool licenseDir(QString _dir);
 
 /// Sets the Path to the Scripts
 DLLEXPORT

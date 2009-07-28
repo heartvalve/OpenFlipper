@@ -245,6 +245,14 @@ void Core::setupOptions() {
   tempDir.cd("Fonts");
   OpenFlipper::Options::fontsDir(tempDir.absolutePath());
 
+  // Set the Path to the License files
+  tempDir = QDir(OpenFlipper::Options::applicationDir());
+  #ifdef OPENFLIPPER_DATADIR
+    tempDir.cd(OPENFLIPPER_DATADIR);
+  #endif
+  tempDir.cd("Licenses");
+  OpenFlipper::Options::licenseDir(tempDir.absolutePath());
+
   // Set the Path to the Help
   tempDir = QDir(OpenFlipper::Options::applicationDir());
   #ifdef OPENFLIPPER_DATADIR
