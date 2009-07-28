@@ -34,45 +34,43 @@ int main(int argc, char **argv)
   std::cerr << "Plugin Hash : " << pluginHash.toStdString() << std::endl;
   std::cerr << "macHash is  : " << macHash.toStdString()  << std::endl;
 
-  // Get the salts
-  QString saltPre;
-  ADD_SALT_PRE(saltPre);
-  QString saltPost;
-  ADD_SALT_POST(saltPost);
-
-  // Generate basic key
-  QString keyClear = coreHash + saltPre + pluginHash + saltPost + macHash;
-  std::cerr << "keyClear is: " << keyClear.toStdString() << std::endl;
-
-  QString keyHash = QCryptographicHash::hash ( keyClear.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-  std::cerr << "key is: " << keyHash.toStdString() << std::endl;
-
-  // generate license
-  QDate date = QDate::fromString(argv[2],Qt::ISODate);
-  QString license = keyHash + " " + date.toString(Qt::ISODate); 
 
   std::cerr << "Writing License file to output : " << name.toStdString() << std::endl;
   QFile outFile(name + ".lic");
-  
+
   if (!outFile.open(QIODevice::WriteOnly|QIODevice::Text)) {
     std::cerr << "Unable to open file " << std::endl;
     return 1;
   }
 
   QTextStream output(&outFile);
-  
-  output << license << " ";
 
-  std::cerr << "License : " << license.toStdString() << std::endl;
+  // Add basic hashes
+  output << name         << "\n";
+  output << coreHash     << "\n";
+  output << pluginHash   << "\n";
+  output << macHash      << "\n";
+
+  // Add expiryDate
+  QDate date = QDate::fromString(argv[2],Qt::ISODate);
+
+  output << date.toString(Qt::ISODate) << "\n";
+  
+  // Get the salts
+  QString saltPre;
+  ADD_SALT_PRE(saltPre);
+  QString saltPost;
+  ADD_SALT_POST(saltPost);
+
+  // Sign the license file
+  QString license = saltPre + name + coreHash + pluginHash + macHash + date.toString(Qt::ISODate) + saltPost;
 
   license = saltPre + license + saltPost;
   QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-
+  
   output << licenseHash;
 
   outFile.close();
-
-  
 
   return 0;
 

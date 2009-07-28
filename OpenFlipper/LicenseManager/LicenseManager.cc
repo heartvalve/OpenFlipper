@@ -35,6 +35,7 @@
 #include <QCryptographicHash>
 #include <QNetworkInterface>
 
+/*
 //
 // CpuIDSupported will return 0 if CPUID instruction is unavailable. Otherwise, it will return 
 // the maximum supported standard function.
@@ -141,7 +142,7 @@ unsigned int GenuineIntel(void)
            );
   #endif
 }
-
+*/
 
 
 LicenseManager::~LicenseManager() 
@@ -204,8 +205,6 @@ bool LicenseManager::authenticate() {
   // Compute hash of Plugin application
   // ===============================================================================================
 
-  std::cerr << "Filename of Plugin is: " << pluginFileName().toStdString() << std::endl;
-
   #ifdef WIN32
     QFile pluginFile(OpenFlipper::Options::pluginDirStr() + QDir::separator() + pluginFileName() + ".dll");
   #else
@@ -224,80 +223,73 @@ bool LicenseManager::authenticate() {
 
   QString pluginHash = QString(sha1sumPlugin.result().toHex());
 
-  std::cerr << "Core Hash : " << coreHash.toStdString() << std::endl;
-  std::cerr << "Plugin Hash : " << pluginHash.toStdString() << std::endl;
 
   QString mac;
 
   // Get all Network Interfaces
   QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
   foreach ( QNetworkInterface interface, interfaces ) {
-    std::cerr << "Name : " << interface.name().toStdString() << std::endl;
-    std::cerr << "Found Interface : " << interface.hardwareAddress().toStdString() << std::endl; 
     mac = mac + interface.hardwareAddress().remove(":");
   }
 
   QString macHash = QCryptographicHash::hash ( mac.toAscii()  , QCryptographicHash::Sha1 ).toHex();
 
-  std::cerr << "macHash is: " << macHash.toStdString()  << std::endl;
+//   std::cerr << "CPUID Supported : " << CpuIDSupported() << std::endl;
+//   std::cerr << "GenuineIntel    : " << GenuineIntel() << std::endl;
 
-  std::cerr << "CPUID Supported : " << CpuIDSupported() << std::endl;
-  std::cerr << "GenuineIntel    : " << GenuineIntel() << std::endl;
-
-  
   QString saltPre;
   ADD_SALT_PRE(saltPre);
 
   QString saltPost;
   ADD_SALT_POST(saltPost);
 
-  QString keyClear = coreHash + saltPre + pluginHash + saltPost + macHash;
-  std::cerr << "keyClear is: " << keyClear.toStdString() << std::endl;
-
-  QString keyHash = QCryptographicHash::hash ( keyClear.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-  std::cerr << "key is: " << keyHash.toStdString() << std::endl;
-
-  
-  QString licenseFileName = OpenFlipper::Options::licenseDirStr() + QDir::separator() + pluginFileName() + ".lic";
+    QString licenseFileName = OpenFlipper::Options::licenseDirStr() + QDir::separator() + pluginFileName() + ".lic";
   QFile file( licenseFileName );
 
   if (!file.open(QIODevice::ReadOnly|QIODevice::Text)) {
     std::cerr << "Unable to find license File " <<  licenseFileName.toStdString() << std::endl;
   } else {
     QString licenseContents = file.readAll();
-    QStringList elements = licenseContents.split(' ');
+    QStringList elements = licenseContents.split('\n');
+
     for ( int i = 0 ; i < elements.size(); ++i )
       elements[i] = elements[i].simplified();
-    
 
-    if ( elements.size() != 3 ) {
-      std::cerr << "Invalid License File! " << std::endl;
+    if ( elements.size() != 6 ) {
+      QString sizeMismatchMessage = "The license file for plugin \"" + name() + "\" is invalid!";
+      QMessageBox::critical(0,"License file size invalid",sizeMismatchMessage );
     } else {
-      QString license = saltPre + elements[0] + " " + elements[1] + saltPost;
+
+      // Check signature of license file
+      QString license = saltPre + elements[0] + elements[1] + elements[2] + elements[3] + elements[4] + saltPost;
+      license = saltPre + license + saltPost;
       QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+      
+      QDate currentDate = QDate::currentDate();
+      QDate expiryDate  = QDate::fromString(elements[4],Qt::ISODate);
 
-      if ( licenseHash == elements[2] ) {
-        std::cerr << "License Hash is correct" << std::endl;
-    
-        if ( keyHash == elements[0] ) {
-          std::cerr << "Key verified" << std::endl;
-          QDate currentDate = QDate::currentDate();
-          QDate expiryDate  = QDate::fromString(elements[1],Qt::ISODate);
-    
-          if ( currentDate < expiryDate ) {
-            std::cerr << "License is valid" << std::endl;
-            authenticated_ = true;
-          } else {
-            std::cerr << "License expired on " << elements[1].toStdString() << std::endl;
-          }
-        }
+      if ( licenseHash !=  elements[5] ) {
+        QString signatureMismatchMessage = "The license file signature for plugin \"" + name() + "\" is invalid!";
+        QMessageBox::critical(0,"License file signature invalid",signatureMismatchMessage );   
+      } else  if ( elements[0] != pluginFileName() ) {
+        QString nameMismatchMessage = "The license file contains plugin name\"" + elements[0] + "\" but this is plugin \"" + name() + "\"!";
+        QMessageBox::critical(0,"License invalid for this plugin",nameMismatchMessage );
+      } else if ( elements[1] != coreHash ) {
+        QString coreMismatchMessage = "The license file for plugin \"" + name() + "\" is invalid for the currently running OpenFlipper Core!";
+        QMessageBox::critical(0,"License invalid for current core",coreMismatchMessage );
+      } else if ( elements[2] != pluginHash ) {
+        QString pluginMismatchMessage = "The plugin \"" + name() + "\" is a different version than specified in license file!";
+        QMessageBox::critical(0,"License invalid for this plugin",pluginMismatchMessage );
+      } else if ( elements[3] != macHash ) {
+        QString hardwareMismatchMessage = "The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Hardware?)!";
+        QMessageBox::critical(0,"License invalid for current System",hardwareMismatchMessage );    
+      } else if ( currentDate > expiryDate ) {
+        QString expiredMessage = "The license for plugin \"" + name() + "\" has expired on " + elements[1] + "!";
+        QMessageBox::critical(0,"License expired",expiredMessage );
       } else {
-        std::cerr << "License Hash is invalid!! " << std::endl;
-
+        authenticated_ = true;
       }
-    
     }
-
   }
 
   if ( authenticated_ ) 
