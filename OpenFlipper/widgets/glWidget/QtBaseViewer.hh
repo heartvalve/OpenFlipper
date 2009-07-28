@@ -66,6 +66,7 @@
 #include <QMenu>
 #include <QToolBar>
 #include <QTime>
+#include <QTimer>
 #include <QGraphicsWidget>
 #include <QGraphicsSceneDragDropEvent>
 
@@ -364,6 +365,10 @@ signals:
   /// scene graph has changed
   void signalSceneGraphChanged(ACG::SceneGraph::BaseNode* _root);
 
+  /** Emitted if a (double) mouse click is performed in actionMode()==ExamineMode
+   */
+  void signalMouseEventClick ( QMouseEvent*, bool _double );
+
 
   signals:
 
@@ -372,6 +377,11 @@ signals:
    * global coords.
    */
   void signalCustomContextMenuRequested ( const QPoint & );
+
+  private slots:
+
+  /// Handle click timeout
+  void slotClickTimeout ();
 
 
 //----------------------------------------------------------- protected methods
@@ -785,6 +795,10 @@ private:
     double                       lastRotationAngle_;
     QTime                        lastMoveTime_;
     QTimer*                      timer_;
+
+    QTimer                       clickTimer_;
+    QTime                        clickTime_;
+    QMouseEvent                  clickEvent_;
 
     /** @} */
 
