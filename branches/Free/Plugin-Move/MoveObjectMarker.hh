@@ -33,7 +33,7 @@
 #ifndef MOVEOBJECTMARKER_HH
 #define MOVEOBJECTMARKER_HH
 
-#include <OpenFlipper/BasePlugin/ViewObjectMarker.hh>
+#include <OpenFlipper/common/ViewObjectMarker.hh>
 
 /** Object marker to dim all Objects during Maipulator transformation
 */
