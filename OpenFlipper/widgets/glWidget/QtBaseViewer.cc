@@ -122,7 +122,6 @@ static const char          VIEW_MAGIC[] =
 glViewer::glViewer( QtGLGraphicsScene* _scene,
                     QGLWidget* _glWidget,
                     Viewer::ViewerProperties& _properties,
-                    unsigned int _id,
                     QGraphicsWidget* _parent,
                     const char* /* _name */ ,
                     QStatusBar *_statusBar) :
@@ -133,7 +132,6 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
   blending_(true),
   glScene_(_scene),
   glWidget_(_glWidget),
-  id_(_id),
   properties_(_properties),
   glstate_(0)
 {
@@ -1444,7 +1442,7 @@ void glViewer::mousePressEvent(QGraphicsSceneMouseEvent* _e)
                  _e->buttons(), _e->modifiers());
   _e->accept ();
 
-  PluginFunctions::setActiveExaminer (id_);
+  emit signalMakeActive();
   glScene_->update ();
 
   // right button pressed => popup menu (ignore here)
@@ -1486,7 +1484,7 @@ void glViewer::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e)
                  _e->buttons(), _e->modifiers());
   _e->accept ();
 
-  PluginFunctions::setActiveExaminer (id_);
+  emit signalMakeActive();
   glScene_->update ();
 
   switch (properties_.actionMode())

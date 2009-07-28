@@ -122,7 +122,6 @@ public:
     \param _parent parent widget
     \param _name name (qt internal, qt debugging)
     \param _properties viewerOptions controlled by PluginFunctions
-    \param _id examiner id
     \param _statusBar pointer to an existing status bar for this widget,
      if \c statusBar==0 then a \a private status bar will be created
     \param _format OpenGL context settings, will be passed to glarea()
@@ -130,7 +129,6 @@ public:
   glViewer( QtGLGraphicsScene* _scene,
             QGLWidget* _glWidget,
             Viewer::ViewerProperties& _properties,
-            unsigned int _id,
             QGraphicsWidget* _parent=0,
             const char* _name=0,
             QStatusBar *_statusBar=0);
@@ -539,11 +537,6 @@ private:
   // Base graphics widget layout
   QtGLViewerLayout* glBaseLayout_;
 
-  // examiner id
-  unsigned int id_;
-
-
-
   // vector of current draw mode actions
   std::vector< QAction * > drawMenuActions_;
 
@@ -579,6 +572,9 @@ private:
   //===========================================================================
   signals:
     void viewUpdated();
+
+    /// make this widget active
+    void signalMakeActive ();
 
   /** @} */
 

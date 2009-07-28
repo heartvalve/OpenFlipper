@@ -226,7 +226,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     glViewer* examinerWidget = new glViewer(glScene_,
 					    glWidget_,
                                             PluginFunctions::viewerProperties(0),
-                                            0,
 					    centerWidget_,
                                             "Examiner Widget",
                                             statusBar_);
@@ -245,7 +244,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
       glViewer* newWidget = new glViewer(glScene_,
 					 glWidget_,
                                          PluginFunctions::viewerProperties(i),
-                                         i,
 					 centerWidget_,
 					 "Examiner Widget",
            statusBar_);
@@ -291,6 +289,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
             this, SLOT(dragEnterEvent(QDragEnterEvent* )));
     connect( examiner_widgets_[i], SIGNAL(dropEvent( QDropEvent*)),
             this, SLOT(dropEvent(QDropEvent* )));
+    connect (examiner_widgets_[i], SIGNAL(signalMakeActive ()),
+             this, SLOT(slotActivateExaminer()));
   }
 
 
@@ -884,6 +884,25 @@ CoreWidget::startVideoCaptureDialog(){
   dialog->show();
 }
 
+//-----------------------------------------------------------------------------
+
+void CoreWidget::slotActivateExaminer()
+{
+  glViewer* examiner = dynamic_cast<glViewer*>(QObject::sender());
+
+  if (!examiner)
+    return;
+
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
+
+    if (examiner == examiner_widgets_[i])
+    {
+      PluginFunctions::setActiveExaminer (i);
+      break;
+    }
+  }
+}
 
 
 //=============================================================================
+
