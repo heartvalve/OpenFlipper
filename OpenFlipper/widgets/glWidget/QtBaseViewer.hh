@@ -78,7 +78,6 @@
 
 class QPushButton;
 class QToolButton;
-class QStatusBar;
 class QSplitter;
 class QTimer;
 class QImage;
@@ -129,9 +128,7 @@ public:
   glViewer( QtGLGraphicsScene* _scene,
             QGLWidget* _glWidget,
             Viewer::ViewerProperties& _properties,
-            QGraphicsWidget* _parent=0,
-            const char* _name=0,
-            QStatusBar *_statusBar=0);
+            QGraphicsWidget* _parent=0);
 
   /// Destructor.
   virtual ~glViewer();
@@ -143,12 +140,6 @@ public:
   //------------------------------------------------------------- public methods
 
   virtual QSize sizeHint () const;
-
-  /** Set status bar.
-      Sets the \c QStatusBar widget that is used for information
-      output, e.g. the frame rate of the rotation animation.
-  */
-  void setStatusBar(QStatusBar* _sb);
 
   /// Makes this widget the current widget for OpenGL operations.
   virtual void makeCurrent();
@@ -163,6 +154,8 @@ public:
 
   signals :
     void functionMenuUpdate();
+
+    void statusMessage (const QString & message, int timeout = 0);
 
   public:
 
@@ -450,7 +443,7 @@ private:
   glViewer& operator=(const glViewer&);
 
   // create widgets
-  void createWidgets(QStatusBar* _sb);
+  void createWidgets();
 
   /* Recursively draws each node in the scene graph.
       Called by paintGL(). */
@@ -490,9 +483,6 @@ protected:
 
   // helper
   bool                         isRotating_;
-
-  // current status bar
-  QStatusBar* statusbar_;
 
 
 //---------------------------------------------------------------- private data

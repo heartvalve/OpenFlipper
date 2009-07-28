@@ -63,7 +63,6 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QLabel>
-#include <QStatusBar>
 #include <QImage>
 #include <QColorDialog>
 #include <QFileDialog>
@@ -122,11 +121,8 @@ static const char          VIEW_MAGIC[] =
 glViewer::glViewer( QtGLGraphicsScene* _scene,
                     QGLWidget* _glWidget,
                     Viewer::ViewerProperties& _properties,
-                    QGraphicsWidget* _parent,
-                    const char* /* _name */ ,
-                    QStatusBar *_statusBar) :
+                    QGraphicsWidget* _parent) :
   QGraphicsWidget(_parent),
-  statusbar_(_statusBar),
   glareaGrabbed_(false),
   projectionUpdateLocked_(false),
   blending_(true),
@@ -137,7 +133,7 @@ glViewer::glViewer( QtGLGraphicsScene* _scene,
 {
 
   // widget stuff
-  createWidgets(_statusBar);
+  createWidgets();
 
   // bind GL context to GL state class
   glstate_ = new ACG::GLState();
@@ -219,15 +215,6 @@ QSize
 glViewer::sizeHint() const
 {
   return QSize( 600, 600 );
-}
-
-
-//-----------------------------------------------------------------------------
-
-
-void glViewer::setStatusBar(QStatusBar* _sb)
-{
-  statusbar_ = _sb;
 }
 
 //-----------------------------------------------------------------------------
@@ -1257,10 +1244,8 @@ void glViewer::actionPasteView()
 //-----------------------------------------------------------------------------
 
 void
-glViewer::createWidgets(QStatusBar* _sb)
+glViewer::createWidgets()
 {
-  setStatusBar(_sb);
-
   // Construct GL context & widget
 
   wheelZ_=new ACG::QtWidgets::QtWheel( 0,"wheel-z",ACG::QtWidgets::QtWheel::Vertical);
@@ -1940,10 +1925,9 @@ void glViewer::slotAnimation()
   if (!properties_.updateLocked()) {
     msecs += frame_time_;
     if (count >= 10 && msecs >= 500) {
-      assert(statusbar_!=0);
       char s[100];
       sprintf( s, "%.3f fps", (1000.0 * count / (float)msecs) );
-      statusbar_->showMessage(s,2000);
+      emit statusMessage(s,2000);
       count = msecs = 0;
     }
     else
@@ -2034,14 +2018,13 @@ void glViewer::snapshot()
    bool rval=snapshot.save(fname,format.toUpper().toLatin1());
 
 
-   assert(statusbar_!=0);
    if (rval)
    {
-     statusbar_->showMessage(QString("snapshot: ")+fname,5000);
+     emit statusMessage (QString("snapshot: ")+fname,5000);
    }
    else
    {
-     statusbar_->showMessage(QString("could not save snapshot to ")+fname);
+     emit statusMessage (QString("could not save snapshot to ")+fname);
    }
 
 }
