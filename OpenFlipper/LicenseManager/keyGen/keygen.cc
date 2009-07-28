@@ -18,10 +18,10 @@ int main(int argc, char **argv)
   if (!file.open(QIODevice::ReadOnly|QIODevice::Text))
     std::cerr << "Unable to open file " << std::endl;
 
-  QString name       = file.readLine();
-  QString coreHash   = file.readLine();
-  QString pluginHash = file.readLine();
-  QString macHash    = file.readLine();
+  QString name       = file.readLine().simplified();
+  QString coreHash   = file.readLine().simplified();
+  QString pluginHash = file.readLine().simplified();
+  QString macHash    = file.readLine().simplified();
 
   std::cerr << "Generating key for Plugin : " << name.toStdString() << std::endl;
   QString saltPre;
@@ -30,7 +30,13 @@ int main(int argc, char **argv)
   QString saltPost;
   ADD_SALT_POST(saltPost);
 
+  std::cerr << "Core Hash : " << coreHash.toStdString() << std::endl;
+  std::cerr << "Plugin Hash : " << pluginHash.toStdString() << std::endl;
+
+  std::cerr << "macHash is: " << macHash.toStdString()  << std::endl;
+
   QString keyClear = coreHash + saltPre + pluginHash + saltPost + macHash;
+  std::cerr << "keyClear is: " << keyClear.toStdString() << std::endl;
 
   QString keyHash = QCryptographicHash::hash ( keyClear.toAscii()  , QCryptographicHash::Sha1 ).toHex();
   std::cerr << "key is: " << keyHash.toStdString() << std::endl;
