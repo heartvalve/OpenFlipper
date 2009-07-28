@@ -44,7 +44,12 @@
 #ifndef LICENSEMANAGER_HH
 #define LICENSEMANAGER_HH
 
-#include "OpenFlipper/BasePlugin/SecurityInterface.hh"
+#include <OpenFlipper/BasePlugin/SecurityInterface.hh>
+
+/** The salt file has to be provided for each plugin. It can be the same
+  for all plugins. See example for details on how this file has to be setup
+*/
+#include "salt.hh"
 
 class LicenseManager : public QObject, SecurityInterface  {
 
@@ -58,21 +63,43 @@ Q_INTERFACES(SecurityInterface)
 
   public :
 
+    /** This function is overloaded and will not allow to unblock signals
+        if the plugin is not authenticated
+    */
     void blockSignals( bool _state);
+    
+    /** Return if the plugin has successfully passed the authentication 
+    */
     bool authenticated();
 
-    virtual QString name() = 0;
-
   public slots:
+    /** Call this function for plugin authentication. If it returns true,
+        the authentication has been successfull. Otherwise the core will 
+        stop loading the plugin. Additionally the plugin will make itself
+        unusable by not allowing any signal slot connections.
+    */
     bool authenticate();
 
   private:
-    bool authenticated_;
+    /** This is used to get the plugins Name from derived classes
+        The glugin name is the usual name of the glugin
+    */
+    virtual QString name() = 0;
 
+    /** This function is special to the LicenseManager. It is used to
+        find the plugin when checking its hash value
+    */
     virtual QString pluginFileName();
+
+    /// This flag is true if authentication was successfull
+    bool authenticated_;
 
 
   protected :
+    /** This function is overloaded in the security interface. If the
+        plugin is not authenticated, all connections will be automatically
+        removed again.
+    */
     void connectNotify ( const char * /*signal*/ );
 
 };
