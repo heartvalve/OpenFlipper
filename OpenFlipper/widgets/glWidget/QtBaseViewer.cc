@@ -1450,7 +1450,7 @@ void glViewer::mousePressEvent(QGraphicsSceneMouseEvent* _e)
   // right button pressed => popup menu (ignore here)
   if (_e->button() != Qt::RightButton )
   {
-    switch (PluginFunctions::actionMode())
+    switch (properties_.actionMode())
     {
       case Viewer::ExamineMode:
         if ((_e->modifiers() & Qt::ControlModifier)) // drag&drop
@@ -1464,7 +1464,7 @@ void glViewer::mousePressEvent(QGraphicsSceneMouseEvent* _e)
         break;
 
       case Viewer::PickingMode: // give event to application
-        emit(signalMouseEvent(&me, PluginFunctions::pickMode() ));
+        emit(signalMouseEvent(&me, properties_.pickMode() ));
         emit(signalMouseEvent(&me));
         break;
 
@@ -1489,7 +1489,7 @@ void glViewer::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e)
   PluginFunctions::setActiveExaminer (id_);
   glScene_->update ();
 
-  switch (PluginFunctions::actionMode())
+  switch (properties_.actionMode())
   {
     case Viewer::ExamineMode:
       viewMouseEvent(&me);
@@ -1500,7 +1500,7 @@ void glViewer::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e)
       break;
 
     case Viewer::PickingMode: // give event to application
-      emit(signalMouseEvent(&me, PluginFunctions::pickMode() ));
+      emit(signalMouseEvent(&me, properties_.pickMode() ));
       emit(signalMouseEvent(&me));
       break;
 
@@ -1521,7 +1521,7 @@ void glViewer::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
                  _e->buttons(), _e->modifiers());
   _e->accept();
 
-  switch ( PluginFunctions::actionMode() )
+  switch ( properties_.actionMode() )
   {
     case Viewer::ExamineMode:
       viewMouseEvent(&me);
@@ -1537,7 +1537,7 @@ void glViewer::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
       if ((_e->buttons() & (Qt::LeftButton | Qt::MidButton | Qt::RightButton))
           || trackMouse_)
       {
-        emit(signalMouseEvent(&me, PluginFunctions::pickMode() ));
+        emit(signalMouseEvent(&me, properties_.pickMode() ));
         emit(signalMouseEvent(&me));
       }
       break;
@@ -1565,9 +1565,9 @@ void glViewer::mouseReleaseEvent(QGraphicsSceneMouseEvent* _e)
 //   if (_event->button() == Qt::RightButton )
 //     hidePopupMenus();
 
-  if (_e->button() != Qt::RightButton || (PluginFunctions::actionMode() == Viewer::PickingMode) )
+  if (_e->button() != Qt::RightButton || (properties_.actionMode() == Viewer::PickingMode) )
   {
-    switch ( PluginFunctions::actionMode() )
+    switch ( properties_.actionMode() )
     {
       case Viewer::ExamineMode:
         viewMouseEvent(&me);
@@ -1578,7 +1578,7 @@ void glViewer::mouseReleaseEvent(QGraphicsSceneMouseEvent* _e)
         break;
 
       case Viewer::PickingMode: // give event to application
-        emit(signalMouseEvent(&me, PluginFunctions::pickMode() ));
+        emit(signalMouseEvent(&me, properties_.pickMode() ));
         emit(signalMouseEvent(&me));
         break;
 
@@ -1605,14 +1605,14 @@ void glViewer::wheelEvent(QGraphicsSceneWheelEvent* _e)
                  _e->modifiers(), _e->orientation());
   _e->accept();
 
-  switch ( PluginFunctions::actionMode() )
+  switch ( properties_.actionMode() )
   {
     case Viewer::ExamineMode:
       viewWheelEvent(&we);
       break;
 
     case Viewer::PickingMode: // give event to application
-      emit(signalWheelEvent(&we, PluginFunctions::pickMode() ));
+      emit(signalWheelEvent(&we, properties_.pickMode() ));
       break;
 
     default: // avoid warning
