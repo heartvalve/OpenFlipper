@@ -249,10 +249,11 @@ bool LicenseManager::authenticate() {
   QString saltPost;
   ADD_SALT_POST(saltPost);
 
-  QString key = coreHash + saltPre + pluginHash + saltPost + macHash;
+  QString keyClear = coreHash + saltPre + pluginHash + saltPost + macHash;
+  std::cerr << "keyClear is: " << keyClear.toStdString() << std::endl;
 
-  std::cerr << "Key is: " << key.toStdString() << std::endl;
-
+  QString key = QCryptographicHash::hash ( keyClear.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+  std::cerr << "key is: " << key.toStdString() << std::endl;
 
   if ( authenticated_ ) 
     std::cerr << "Authentication succcessfull" << std::endl;
