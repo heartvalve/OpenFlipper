@@ -128,6 +128,7 @@ glViewer::glViewer( QGraphicsScene* _scene,
   blending_(true),
   glScene_(_scene),
   glWidget_(_glWidget),
+  clickEvent_(QEvent::MouseButtonPress, QPoint (), Qt::NoButton, Qt::NoButton, Qt::NoModifier),
   properties_(_properties),
   glstate_(0),
   initialized_(false)
@@ -196,6 +197,9 @@ glViewer::glViewer( QGraphicsScene* _scene,
   agTexture_[1] = 0;
   agProgram_ = 0;
   customAnaglyphSupported_ = false;
+
+  clickTimer_.setSingleShot (true);
+  connect (&clickTimer_, SIGNAL(timeout ()), this, SLOT(slotClickTimeout ()));
 }
 
 
@@ -1415,6 +1419,17 @@ void glViewer::mousePressEvent(QGraphicsSceneMouseEvent* _e)
           emit startDragEvent( &me );
         else
           viewMouseEvent(&me); // examine
+
+        if (clickTimer_.isActive ())
+        {
+          clickTime_ = QTime ();
+          clickTimer_.stop ();
+        }
+        else
+        {
+          clickTime_.start ();
+          clickEvent_ = me;
+        }
         break;
 
       case Viewer::LightMode:
@@ -1451,6 +1466,7 @@ void glViewer::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e)
   {
     case Viewer::ExamineMode:
       viewMouseEvent(&me);
+      emit signalMouseEventClick (&me, true);
       break;
 
     case Viewer::LightMode:
@@ -1529,6 +1545,24 @@ void glViewer::mouseReleaseEvent(QGraphicsSceneMouseEvent* _e)
     {
       case Viewer::ExamineMode:
         viewMouseEvent(&me);
+
+        if (!clickTime_.isNull ())
+        {
+          int elapsed = clickTime_.elapsed ();
+          QPoint diff = clickEvent_.pos () - me.pos ();
+
+          if (abs (diff.x ()) <= 1 && abs (diff.y ()) <= 1 && elapsed <= QApplication::doubleClickInterval () / 2)
+          {
+            clickTimer_.setSingleShot (true);
+            clickTimer_.setInterval (QApplication::doubleClickInterval () - elapsed);
+            clickTimer_.start ();
+          }
+          else
+          {
+            clickTime_ = QTime ();
+            clickTimer_.stop ();
+          }
+        }
         break;
 
       case Viewer::LightMode:
@@ -2019,6 +2053,11 @@ void glViewer::slotShowWheels() {
 bool glViewer::wheelsVisible() {
   // TODO: Return valid values
   return true;
+}
+
+void glViewer::slotClickTimeout()
+{
+  emit signalMouseEventClick (&clickEvent_, false);
 }
 
 //=============================================================================
