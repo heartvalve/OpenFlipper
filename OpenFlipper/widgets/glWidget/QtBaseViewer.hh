@@ -804,6 +804,9 @@ private:
     /// Gl State
     ACG::GLState                 *glstate_;
 
+    /// Have the viewer gl properties been initalized
+    bool initialized_;
+
   private slots:
     /** Called when properties for the viewer require a redraw
      * The slot will trigger the redraw after setting the right properties.
