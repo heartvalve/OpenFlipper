@@ -33,7 +33,7 @@
 #ifndef DEFAULTOBJECTMARKER_HH
 #define DEFAULTOBJECTMARKER_HH
 
-#include <OpenFlipper/BasePlugin/ViewObjectMarker.hh>
+#include <OpenFlipper/common/ViewObjectMarker.hh>
 
 /** Object marker to visualize "target" and "source" object flags
 */
