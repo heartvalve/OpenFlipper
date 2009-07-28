@@ -227,24 +227,46 @@ bool LicenseManager::authenticate() {
   std::cerr << "Core Hash : " << coreHash.toStdString() << std::endl;
   std::cerr << "Plugin Hash : " << pluginHash.toStdString() << std::endl;
 
+  QString mac;
 
   // Get all Network Interfaces
   QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
   foreach ( QNetworkInterface interface, interfaces ) {
     std::cerr << "Name : " << interface.name().toStdString() << std::endl;
     std::cerr << "Found Interface : " << interface.hardwareAddress().toStdString() << std::endl; 
+    mac = mac + interface.hardwareAddress().remove(":");
   }
 
+  QString macHash = QCryptographicHash::hash ( mac.toAscii()  , QCryptographicHash::Sha1 ).toHex();
 
   std::cerr << "CPUID Supported : " << CpuIDSupported() << std::endl;
   std::cerr << "GenuineIntel    : " << GenuineIntel() << std::endl;
+
+  
+  QString saltPre;
+  ADD_SALT_PRE(saltPre);
+
+  QString saltPost;
+  ADD_SALT_POST(saltPost);
+
+  QString key = coreHash + saltPre + pluginHash + saltPost + macHash;
+
+  std::cerr << "Key is: " << key.toStdString() << std::endl;
 
 
   if ( authenticated_ ) 
     std::cerr << "Authentication succcessfull" << std::endl;
   else {
-    QMessageBox::warning ( 0, "Plugin License check failed", "License check for plugin has failed. Please get a valid License!" );
+    QString text = "License check for plugin has failed.\n";
+    text += "Please get a valid License!\n";
+    text += "Send the following Information to contact@openflipper.org:\n";
+    text += pluginFileName() +"\n";
+    text += coreHash +"\n";
+    text += pluginHash +"\n";
+    text += macHash +"\n";
+    QMessageBox::warning ( 0, "Plugin License check failed",  text );
     std::cerr << "Authentication failed" << std::endl;
+    authenticated_ = false;
   }
 
 //   authenticated_ = true;
