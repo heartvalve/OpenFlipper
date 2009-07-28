@@ -226,9 +226,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     glViewer* examinerWidget = new glViewer(glScene_,
 					    glWidget_,
                                             PluginFunctions::viewerProperties(0),
-					    centerWidget_,
-                                            "Examiner Widget",
-                                            statusBar_);
+					    centerWidget_);
 
     examiner_widgets_.push_back(examinerWidget);
 
@@ -244,9 +242,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
       glViewer* newWidget = new glViewer(glScene_,
 					 glWidget_,
                                          PluginFunctions::viewerProperties(i),
-					 centerWidget_,
-					 "Examiner Widget",
-           statusBar_);
+					 centerWidget_);
 
       examiner_widgets_.push_back(newWidget);
 
@@ -291,6 +287,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
             this, SLOT(dropEvent(QDropEvent* )));
     connect (examiner_widgets_[i], SIGNAL(signalMakeActive ()),
              this, SLOT(slotActivateExaminer()));
+
+    connect (examiner_widgets_[i], SIGNAL(statusMessage(QString, int)),
+             statusBar_, SLOT(showMessage(const QString&, int)));
   }
 
 
