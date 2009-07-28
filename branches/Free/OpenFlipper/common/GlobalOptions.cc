@@ -64,6 +64,9 @@ static QDir shaderDir_;
 /// Stores the Path to the Textures
 static QDir textureDir_;
 
+/// Stores the Path to the Licenses
+static QDir licenseDir_;
+
 /// Stores the Path to the Scripts
 static QDir scriptDir_;
 
@@ -284,6 +287,7 @@ QDir configDir()        { return configDir_;  }
 QDir pluginDir()        { return pluginDir_;  }
 QDir shaderDir()        { return shaderDir_;  }
 QDir textureDir()       { return textureDir_; }
+QDir licenseDir()       { return licenseDir_; }
 QDir scriptDir()        { return scriptDir_; }
 QDir iconDir()          { return iconDir_;    }
 QDir fontsDir()         { return fontsDir_;   }
@@ -298,6 +302,7 @@ QString configDirStr()         { return configDir_.absolutePath();         }
 QString pluginDirStr()         { return pluginDir_.absolutePath();         }
 QString shaderDirStr()         { return shaderDir_.absolutePath();         }
 QString textureDirStr()        { return textureDir_.absolutePath();        }
+QString licenseDirStr()        { return licenseDir_.absolutePath();        }
 QString scriptDirStr()         { return scriptDir_.absolutePath();        }
 QString iconDirStr()           { return iconDir_.absolutePath();           }
 QString fontsDirStr()          { return fontsDir_.absolutePath();          }
@@ -313,6 +318,7 @@ void applicationDir(QDir _dir)       { applicationDir_    = _dir; }
 void pluginDir(QDir _dir)            { pluginDir_         = _dir; }
 void shaderDir(QDir _dir)            { shaderDir_         = _dir; }
 void textureDir(QDir _dir)           { textureDir_        = _dir; }
+void licenseDir(QDir _dir)           { licenseDir_        = _dir; }
 void scriptDir(QDir _dir)            { scriptDir_         = _dir; }
 void iconDir(QDir _dir)              { iconDir_           = _dir; }
 void fontsDir(QDir _dir)             { fontsDir_          = _dir;}
@@ -356,6 +362,15 @@ bool textureDir(QString     _dir) {
   QDir tmp(_dir);
   if (tmp.exists()) {
     textureDir_     = tmp;
+    return true;
+  }
+  return false;
+}
+
+bool licenseDir(QString     _dir) {
+  QDir tmp(_dir);
+  if (tmp.exists()) {
+    licenseDir_     = tmp;
     return true;
   }
   return false;
