@@ -239,6 +239,8 @@ bool LicenseManager::authenticate() {
 
   QString macHash = QCryptographicHash::hash ( mac.toAscii()  , QCryptographicHash::Sha1 ).toHex();
 
+  std::cerr << "macHash is: " << macHash.toStdString()  << std::endl;
+
   std::cerr << "CPUID Supported : " << CpuIDSupported() << std::endl;
   std::cerr << "GenuineIntel    : " << GenuineIntel() << std::endl;
 
@@ -252,8 +254,8 @@ bool LicenseManager::authenticate() {
   QString keyClear = coreHash + saltPre + pluginHash + saltPost + macHash;
   std::cerr << "keyClear is: " << keyClear.toStdString() << std::endl;
 
-  QString key = QCryptographicHash::hash ( keyClear.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-  std::cerr << "key is: " << key.toStdString() << std::endl;
+  QString keyHash = QCryptographicHash::hash ( keyClear.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+  std::cerr << "key is: " << keyHash.toStdString() << std::endl;
 
   if ( authenticated_ ) 
     std::cerr << "Authentication succcessfull" << std::endl;
