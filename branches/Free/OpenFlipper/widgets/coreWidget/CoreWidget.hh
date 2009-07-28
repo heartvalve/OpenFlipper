@@ -467,6 +467,11 @@ public:
     void slotShowSceneGraphDialog();
 
 
+   /** Makes the sender examiner active
+    */
+   void slotActivateExaminer ();
+
+
    /** Display a log message in the Mainwidget
     * @param _type Type of Message (OUT,WARN,ERR)
     * @param _message The message to be displayed
