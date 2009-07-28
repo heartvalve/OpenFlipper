@@ -257,8 +257,51 @@ bool LicenseManager::authenticate() {
   QString keyHash = QCryptographicHash::hash ( keyClear.toAscii()  , QCryptographicHash::Sha1 ).toHex();
   std::cerr << "key is: " << keyHash.toStdString() << std::endl;
 
+  
+  QString licenseFileName = OpenFlipper::Options::licenseDirStr() + QDir::separator() + pluginFileName() + ".lic";
+  QFile file( licenseFileName );
+
+  if (!file.open(QIODevice::ReadOnly|QIODevice::Text)) {
+    std::cerr << "Unable to find license File " <<  licenseFileName.toStdString() << std::endl;
+  } else {
+    QString licenseContents = file.readAll();
+    QStringList elements = licenseContents.split(' ');
+    for ( int i = 0 ; i < elements.size(); ++i )
+      elements[i] = elements[i].simplified();
+    
+
+    if ( elements.size() != 3 ) {
+      std::cerr << "Invalid License File! " << std::endl;
+    } else {
+      QString license = saltPre + elements[0] + " " + elements[1] + saltPost;
+      QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+
+      if ( licenseHash == elements[2] ) {
+        std::cerr << "License Hash is correct" << std::endl;
+    
+        if ( keyHash == elements[0] ) {
+          std::cerr << "Key verified" << std::endl;
+          QDate currentDate = QDate::currentDate();
+          QDate expiryDate  = QDate::fromString(elements[1],Qt::ISODate);
+    
+          if ( currentDate < expiryDate ) {
+            std::cerr << "License is valid" << std::endl;
+            authenticated_ = true;
+          } else {
+            std::cerr << "License expired on " << elements[1].toStdString() << std::endl;
+          }
+        }
+      } else {
+        std::cerr << "License Hash is invalid!! " << std::endl;
+
+      }
+    
+    }
+
+  }
+
   if ( authenticated_ ) 
-    std::cerr << "Authentication succcessfull" << std::endl;
+    std::cerr << "Authentication succcessfull for Plugin " << name().toStdString() << std::endl;
   else {
     QString text = "License check for plugin has failed.\n";
     text += "Please get a valid License!\n";
