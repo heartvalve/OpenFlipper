@@ -39,6 +39,7 @@
 //=============================================================================
 
 #include <OpenFlipper/common/Types.hh>
+#include <QGLWidget>
 
 #include "PluginFunctions.hh"
 #include "PluginFunctionsCore.hh"
@@ -98,6 +99,12 @@ static ViewObjectMarker* defaultMarker_ = 0;
  * This pointer is used internally
  */
 static ViewObjectMarker* currentMarker_ = 0;
+
+/** \brief DONT USE DIRECTLY!!
+ *
+ * This pointer is used internally
+ */
+static QGLWidget* shareGLWidget_ = 0;
 
 void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
@@ -359,6 +366,16 @@ Viewer::ActionMode actionMode() {
 void actionMode ( Viewer::ActionMode _mode) {
 
   viewerProperties().actionMode(_mode);
+}
+
+void shareGLWidget (QGLWidget *_widget)
+{
+  shareGLWidget_ = _widget;
+}
+
+QGLWidget *shareGLWidget ()
+{
+  return shareGLWidget_;
 }
 
 void getCurrentViewImage(QImage& _image) {

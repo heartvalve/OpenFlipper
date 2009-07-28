@@ -153,7 +153,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   delete test;
 
   glWidget_ = new QGLWidget(format,0);
-
+  PluginFunctions::shareGLWidget (glWidget_);
 
   glView_ = new QtGLGraphicsView(stackedWidget_);
   glScene_ = new QtGLGraphicsScene (&examiner_widgets_, baseLayout_);

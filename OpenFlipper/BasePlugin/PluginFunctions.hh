@@ -56,6 +56,7 @@
 
 //== FORWARDDECLARATIONS ======================================================
 class ViewObjectMarker;
+class QGLWidget;
 
 /** The Namespace PluginFunctions contains functions for all plugins. These functions should be used to get the
  *  objects to work on or to set modes in the examiner widget. */
@@ -274,6 +275,14 @@ void actionMode ( Viewer::ActionMode _mode);
 /// Get the current Action mode
 DLLEXPORT
 Viewer::ActionMode actionMode();
+
+/// Sets the main QGLWidget for gl data sharing.
+DLLEXPORT
+void shareGLWidget (QGLWidget* _widget);
+
+/// Returns the main QGLWidget for gl data sharing.
+DLLEXPORT
+QGLWidget* shareGLWidget ();
 
 /** Lock scene rotation via mouse
  *
