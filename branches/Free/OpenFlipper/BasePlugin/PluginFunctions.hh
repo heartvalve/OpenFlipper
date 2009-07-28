@@ -310,10 +310,6 @@ QPoint mapToLocal( const QPoint _point );
 DLLEXPORT
 void setViewObjectMarker (ViewObjectMarker *_marker);
 
-/// Get the current ViewObjectMarker
-DLLEXPORT
-ViewObjectMarker* currentViewObjectMarker ();
-
 /** Set the default ViewObjectMarker
  *
  * @param _marker Object marker

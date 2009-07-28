@@ -98,12 +98,6 @@ static ViewObjectMarker* defaultMarker_ = 0;
  *
  * This pointer is used internally
  */
-static ViewObjectMarker* currentMarker_ = 0;
-
-/** \brief DONT USE DIRECTLY!!
- *
- * This pointer is used internally
- */
 static QGLWidget* shareGLWidget_ = 0;
 
 void setDataRoot( BaseObject* _root ) {
@@ -595,15 +589,10 @@ ACG::Vec3d upVector(int _viewer) {
   return viewerProperties().glState().up();
 }
 
-
 void setViewObjectMarker(ViewObjectMarker * _marker)
 {
-  currentMarker_ = _marker;
-}
-
-ViewObjectMarker * currentViewObjectMarker()
-{
-  return currentMarker_;
+  for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+    PluginFunctions::viewerProperties(i).objectMarker(_marker);
 }
 
 void setDefaultViewObjectMarker(ViewObjectMarker * _marker)

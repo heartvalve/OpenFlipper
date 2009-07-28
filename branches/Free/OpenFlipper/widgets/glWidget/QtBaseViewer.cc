@@ -101,7 +101,7 @@
 #endif
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
-#include <OpenFlipper/BasePlugin/ViewObjectMarker.hh>
+#include <OpenFlipper/common/ViewObjectMarker.hh>
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
@@ -516,7 +516,7 @@ void glViewer::drawScene_mono()
   {
     if (! properties_.renderPicking() ) {
 
-      ViewObjectMarker *oM = PluginFunctions::currentViewObjectMarker ();
+      ViewObjectMarker *oM = properties_.objectMarker();
       GLuint refBits = 0;
       QSet<GLuint> references;
 
