@@ -43,7 +43,7 @@
 #define BACKGROUND_BLUE  0xff
 #define BACKGROUND_ALPHA 0xcf
 
-#define SLIDE_DURATION 1000
+#define SLIDE_DURATION 400
 
 
 //== INCLUDES =================================================================
