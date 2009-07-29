@@ -132,7 +132,10 @@ public:
 
   /// rotate vector
   Vec3 rotate(const Vec3& _v)
-  { return *this * _v * conjugate(); }
+  { 
+    Quaternion q = *this * Quaternion(_v) * conjugate();
+    return Vec3(q[1], q[2], q[3]);
+  }
 
 
   /// get rotation axis and angle (only valid for unit quaternions!)
