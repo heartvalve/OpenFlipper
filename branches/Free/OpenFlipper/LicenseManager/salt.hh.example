@@ -1,0 +1,49 @@
+/* Salt for security interface 
+*/
+
+#ifndef WIN32
+  #warning Using salt file for Plugin-X
+#else
+  #pragma message ( "Using salt file for Plugin-X" )
+#endif
+
+/** This Macro creates a salt for your plugin which is added to the 
+    license files. You have to keep this Salt 
+    !!!SECRET!!!, 
+    otherwise everybody can create licenses for your Plugin. The special 
+    form of this macro makes the salt string invisible inside the binary 
+    of the plugin so that it is not easy to recover from it.
+
+    Modify the Salts below to create your own plugin keys. Then
+    copy this file to any plugin which should use the license manager.
+
+    Additionally add the option 
+
+    LICENSEMANAGER 
+
+    to your CMakeLists generator (e.g.  openflipper_plugin (LICENSEMANAGER ) )
+    Additionally dont derive your Plugin from QObject but from LicenseManager
+    which has to be the first one in your class definition.
+
+    When the plugin is now build, an additional file
+*/
+
+/// Specify part your contact mail address
+#define CONTACTMAIL QString("contact@openflipper.org")
+
+/// Specify part one of your salt 
+#define ADD_SALT_PRE(s)                         \
+      s += char(80);                            \
+      s += char(114);                           \
+      s += char(110);                           \
+      s += char(43);                            \
+      s += char(82);
+
+/// Specify part two of your salt 
+#define ADD_SALT_POST(s)                        \
+       s += char(99);                           \
+       s += char(111);                          \
+       s += char(83);                           \
+       s += char(44);                           \
+       s += char(99);
+
