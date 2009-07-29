@@ -45,6 +45,29 @@ class BaseObject;
 /** \class ViewObjectMarker ViewObjectMarker.hh <OpenFlipper/BasePlugin/ViewObjectMarker.hh>
 
     Abstract base class to mark objects with help of the stencil buffer
+
+    This system allows to blend the rendered object with a color,
+    to visualize different object properties/states.
+
+    The ViewObjectMarker class can be activated for a examiner. The examiner will
+    then call stencilRefForObject for each object. If stencilRefForObject returns
+    "true" then the object _obj will be painted with the stencil buffer
+    reference _reference (has to be != 0).
+
+    There are 2 oparation modes
+
+    PerNumber:
+      The examiner will call blendForStencilRefNumber for each of the
+      returned references of stencilRefForObject to ask for the blend values.
+
+    PerBit:
+      The examiner will call blendForStencilRefNumberBit for each of the bits
+      in the returned references of stencilRefForObject to ask for the blend values.
+
+      PerBit handling allows to blend the object multiple times with different blend
+      values, to visualze multiple properties at once, but is limited to the number
+      of bits avaiable in the stencil buffer (usually 8).
+
  **/
 
 class DLLEXPORT ViewObjectMarker
