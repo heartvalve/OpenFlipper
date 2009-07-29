@@ -39,8 +39,15 @@ class DecimaterToolbarWidget : public QWidget, public Ui::DecimaterToolbar
 {
   Q_OBJECT
 
+  signals:
+    // emitted when the widget will get visible
+    void showing();
+
   public:
     DecimaterToolbarWidget(QWidget *parent = 0);
+
+  protected:
+    void showEvent (QShowEvent *_event);
 };
 
 #endif //DECIMATERTOOLBARWIDGET_HH
