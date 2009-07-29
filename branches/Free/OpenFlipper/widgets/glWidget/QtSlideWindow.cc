@@ -108,6 +108,8 @@ QtSlideWindow::QtSlideWindow(QString _name, QGraphicsItem *_parent) :
 
   hide ();
   connect (hideTimeLine_, SIGNAL(finished()), this, SLOT(timelineFinished()));
+
+  setAcceptsHoverEvents (true);
 }
 
 //-----------------------------------------------------------------------------
@@ -219,7 +221,7 @@ Qt::WindowFrameSection QtSlideWindow::windowFrameSectionAt(const QPointF &_pos) 
 
 void QtSlideWindow::hoverEnterEvent (QGraphicsSceneHoverEvent *)
 {
-  if (autohideButton_->isChecked ())
+  if (autohideButton_->isChecked () && hideTimeLine_->currentTime() != SLIDE_DURATION)
   {
     hideTimeLine_->setDirection (QTimeLine::Forward);
     if (hideTimeLine_->state () == QTimeLine::NotRunning)
@@ -238,7 +240,8 @@ void QtSlideWindow::hoverEnterEvent (QGraphicsSceneHoverEvent *)
 
 void QtSlideWindow::hoverLeaveEvent (QGraphicsSceneHoverEvent *)
 {
-  if (autohideButton_->isChecked ())
+  if (autohideButton_->isChecked () &&
+      (!scene ()->mouseGrabberItem () || !childItems ().contains (scene ()->mouseGrabberItem ())))
   {
     hideTimeLine_->setDirection (QTimeLine::Backward);
     if (hideTimeLine_->state () == QTimeLine::NotRunning)
