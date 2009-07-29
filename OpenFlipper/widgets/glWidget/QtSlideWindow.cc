@@ -400,6 +400,13 @@ void QtSlideWindow::restoreState (QSettings &_settings)
   {
     hideTimeLine_->setCurrentTime (SLIDE_DURATION);
     hideAnimation_->setStep (1.0);
+    if (!mainWidget_->isVisible ())
+    {
+      mainWidget_->setGeometry (tempWidget_->geometry ());
+      setWidget (mainWidget_);
+      setWindowFlags(Qt::Window | Qt::CustomizeWindowHint | Qt::WindowTitleHint);
+      show ();
+    }
   }
 
   if (dialog_)
