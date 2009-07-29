@@ -58,7 +58,10 @@ class glViewer;
 //== CLASS DEFINITION =========================================================
 
 
-/** simple scene graph viewer
+/** Simple scene graph viewer. Plugins can use this class to display the scenegraph
+  * in own widgets. SimpleViewer acts as a bridge between the normal Qt widget
+  * system and the QtGraphicsWidget based glViewer (OpenFlipper/widgets/glWidget/QtBaseViewer.hh).
+  * 
 */
 
 class DLLEXPORT SimpleViewer : public QGraphicsView
