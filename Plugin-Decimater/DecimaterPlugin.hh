@@ -42,6 +42,7 @@
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
 
@@ -55,13 +56,14 @@
 
 /** Plugin for Decimater Support
  */
-class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, BackupInterface
+class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, BackupInterface, RPCInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(ToolboxInterface)
   Q_INTERFACES(BackupInterface)
   Q_INTERFACES(LoggingInterface)
+  Q_INTERFACES(RPCInterface)
 
 signals:
 
@@ -75,9 +77,16 @@ signals:
   void log(Logtype _type, QString _message);
   void log(QString _message);
 
+  // RPC Interface
+  void pluginExists( QString _pluginName , bool& _exists  ) ;
+  void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
+
 private slots:
     // BaseInterface
     void pluginsInitialized();
+    
+    void slotObjectUpdated( int _identifier ); // BaseInterface
+    void slotObjectSelectionChanged( int _identifier ); // BaseInterface
 
 public :
 
@@ -109,6 +118,9 @@ private slots:
   /// roundness slider - spinbox sync
   void updateRoundness(int    _value);
   void updateRoundness(double _value);
+
+  /// update number of vertices information
+  void slotUpdateNumVertices();
 
 //===========================================================================
 /** @name Scripting Functions

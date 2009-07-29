@@ -74,6 +74,9 @@ bool DecimaterPlugin::initializeToolbox(QWidget*& _widget)
   connect(tool_->roundness,SIGNAL(valueChanged(double) ),this,SLOT(updateRoundness(double)) );
   connect(tool_->roundnessSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateRoundness(int)) );
 
+  // Force update if the Toolbox gets visible
+  connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumVertices() ) );
+
   return true;
 }
 
@@ -84,7 +87,7 @@ void DecimaterPlugin::pluginsInitialized() {
 
   emit setSlotDescription("decimate(int,Object)","Decimate a given object",
                           QString("objectId,constraints").split(","),
-                          QString("ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,triangles)").split(";"));
+                          QString("ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,vertices)").split(";"));
 }
 
 
@@ -156,8 +159,8 @@ void DecimaterPlugin::slot_decimate()
     }
 
     //decimate
-    if ( tool_->cbTriangles->isChecked() )
-      decimater->decimater()->decimate_to( tool_->triangleCount->value() );         // do decimation
+    if ( tool_->cbVertices->isChecked() )
+      decimater->decimater()->decimate_to( tool_->verticesCount->value() );         // do decimation
     else
       decimater->decimater()->decimate();         // do decimation
 
@@ -244,11 +247,11 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
     bool triangleCount = false;
     int triangles = 0;
 
-    if ( _constraints.contains("triangles") ){
+    if ( _constraints.contains("vertices") ){
 
       bool ok;
 
-      int value = _constraints["triangles"].toInt(&ok);
+      int value = _constraints["vertices"].toInt(&ok);
 
       if (ok){
         triangleCount = true;
@@ -281,5 +284,53 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
 
 //-----------------------------------------------------------------------------
 
-Q_EXPORT_PLUGIN2( DecimaterPlugin , DecimaterPlugin );
+void DecimaterPlugin::slotUpdateNumVertices()
+{
+  // Only update if tool is visible
+  if ( !tool_->isVisible() ) {
+    return;
+  }
+
+  int current = 0;
+  int div = 0;
+
+  bool ok;
+  emit functionExists( "info" , "vertexCount(int)", ok  ) ;
+  if (!ok)
+  {
+    tool_->currentNumVertices->setText ("<not available>");
+    return;
+  }
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType(DATA_TRIANGLE_MESH)) ;
+                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+
+
+    current += RPC::callFunctionValue<int>   ("info" , "vertexCount",o_it->id());
+    div++;
+  }
+
+  if (div <= 0)
+    tool_->currentNumVertices->setText ("<not available>");
+  else
+    tool_->currentNumVertices->setText (QString::number(current / div));
+}
+
+//-----------------------------------------------------------------------------
+
+void DecimaterPlugin::slotObjectSelectionChanged(int /*_identifier*/)
+{
+  slotUpdateNumVertices ();
+}
+
+//-----------------------------------------------------------------------------
+
+void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/)
+{
+  slotUpdateNumVertices ();
+}
+
+//-----------------------------------------------------------------------------
+
+Q_EXPORT_PLUGIN2(DecimaterPlugin , DecimaterPlugin );
 

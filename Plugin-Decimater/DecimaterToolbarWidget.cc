@@ -37,3 +37,9 @@ DecimaterToolbarWidget::DecimaterToolbarWidget(QWidget *parent)
 {
     setupUi(this);
 }
+
+void DecimaterToolbarWidget::showEvent (QShowEvent *_event)
+{
+  QWidget::showEvent ( _event );
+  emit showing();
+}
