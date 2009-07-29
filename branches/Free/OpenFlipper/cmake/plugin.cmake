@@ -121,8 +121,16 @@ macro (_plugin_licensemanagement)
 
   acg_append_files (keygen_hdr "*.hh" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager/keyGen")
   acg_append_files (keygen_src "*.cc" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager/keyGen")
+#  acg_append_files (keygen_ui "*.ui" "${CMAKE_SOURCE_DIR}/OpenFlipper/LicenseManager/keyGen")
+ 
+ 
+  acg_qt4_automoc (keygen_moc ${keygen_hdr})
 
-  add_executable (Plugin-${plugin}-keygen ${keygen_hdr} ${keygen_src})
+#  acg_qt4_autouic (keygen_uic ${keygen_ui})
+
+ #message(STATUS ${keygen_uic})
+
+  add_executable (Plugin-${plugin}-keygen ${keygen_hdr} ${keygen_src} ${keygen_moc})
 
   target_link_libraries (
     Plugin-${plugin}-keygen
