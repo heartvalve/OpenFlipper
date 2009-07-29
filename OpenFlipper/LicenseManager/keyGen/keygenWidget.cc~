@@ -1,0 +1,15 @@
+
+#include <QtGui>
+#include "keygenWidget.hh"
+
+MainWindow::MainWindow()
+{
+  textEdit_ = new QTextEdit();
+  setCentralWidget(textEdit_);
+
+  
+}
+
+MainWindow::~MainWindow() {
+
+}

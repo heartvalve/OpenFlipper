@@ -297,11 +297,16 @@ bool LicenseManager::authenticate() {
   else {
     QString text = "License check for plugin has failed.\n";
     text += "Please get a valid License!\n";
-    text += "Send the following Information to contact@openflipper.org:\n";
+    text += "Send the following Information to " + CONTACTMAIL + "\n\n";
     text += pluginFileName() +"\n";
     text += coreHash +"\n";
     text += pluginHash +"\n";
     text += macHash +"\n";
+
+    QString keyRequest = saltPre + pluginFileName() + coreHash+pluginHash+macHash +saltPost;
+    QString requestSig = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+    text += requestSig + "\n";
+
     QMessageBox::warning ( 0, "Plugin License check failed",  text );
     std::cerr << "Authentication failed" << std::endl;
     authenticated_ = false;
