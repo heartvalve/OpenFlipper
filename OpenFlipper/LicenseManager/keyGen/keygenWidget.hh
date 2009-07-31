@@ -3,19 +3,19 @@
 #ifndef KEYGENWINDOW_HH
 #define KEYGENWINDOW_HH
 
-#include <QMainWindow>
-#include <QTextEdit> 
+#include <ui_keygen.hh>
 
 
-class MainWindow : public QMainWindow
+class KeyGenWidget : public QMainWindow, public Ui::keyWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    MainWindow();
-    virtual ~MainWindow();
+  KeyGenWidget(QMainWindow *parent);
+  virtual ~KeyGenWidget();
 
-    QTextEdit* textEdit_;
+public slots:
+  void slotGenerateButton();
 
 };
 

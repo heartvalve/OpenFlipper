@@ -16,6 +16,7 @@ int main(int argc, char **argv)
   QString pluginHash;
   QString macHash;
   QString requestSig;
+  QString expiryDate;
 
   if (argc == 3) {
   
@@ -34,19 +35,25 @@ int main(int argc, char **argv)
     pluginHash = file.readLine().simplified();
     macHash    = file.readLine().simplified();
     requestSig = file.readLine().simplified();
+    expiryDate = argv[2];
 
     file.close();
 
   } else {
 
-    MainWindow* mainWindow = new MainWindow();
-    mainWindow->show();
+    KeyGenWidget* keyGenWidget = new KeyGenWidget(0);
 
+    // Automatically set expire date to current date + 1 Year
+    QDate today = QDate::currentDate();
+    keyGenWidget->expires->setDate(today.addYears(1));
+
+    // Show the widget
+    keyGenWidget->show();
     a.exec();
 
-    QString inputData = mainWindow->textEdit_->toPlainText();
 
-    QStringList data = inputData.split('\n');
+    QString inputData = keyGenWidget->requestData->toPlainText();
+    QStringList data = inputData.split('\n',QString::SkipEmptyParts);
     
     if ( data.size() != 5 ) {
       std::cerr << "Request data has to containe 5 lines!" << std::endl;
@@ -59,7 +66,9 @@ int main(int argc, char **argv)
     pluginHash = data[2].simplified();
     macHash    = data[3].simplified();
     requestSig = data[4].simplified();
-   
+
+    expiryDate = keyGenWidget->expires->date().toString(Qt::ISODate);
+    
   } 
 
   std::cerr << "Generating key for Plugin : " << name.toStdString()       << std::endl;
@@ -67,6 +76,7 @@ int main(int argc, char **argv)
   std::cerr << "Plugin Hash               : " << pluginHash.toStdString() << std::endl;
   std::cerr << "macHash is                : " << macHash.toStdString()    << std::endl;
   std::cerr << "requestSignature is       : " << requestSig.toStdString() << std::endl;
+  std::cerr << "expiryDate is             : " << expiryDate.toStdString() << std::endl;
 
   // Get the salts
   QString saltPre;
@@ -99,7 +109,7 @@ int main(int argc, char **argv)
   output << macHash      << "\n";
 
   // Add expiryDate
-  QDate date = QDate::fromString(argv[2],Qt::ISODate);
+  QDate date = QDate::fromString(expiryDate,Qt::ISODate);
 
   output << date.toString(Qt::ISODate) << "\n";
   
