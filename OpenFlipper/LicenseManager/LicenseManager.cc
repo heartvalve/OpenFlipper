@@ -262,7 +262,6 @@ bool LicenseManager::authenticate() {
 
       // Check signature of license file
       QString license = saltPre + elements[0] + elements[1] + elements[2] + elements[3] + elements[4] + saltPost;
-      license = saltPre + license + saltPost;
       QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
       
       QDate currentDate = QDate::currentDate();
