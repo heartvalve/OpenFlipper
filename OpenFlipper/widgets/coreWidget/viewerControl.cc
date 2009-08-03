@@ -178,6 +178,8 @@ void CoreWidget::slotLocalChangeAnimation(bool _animation){
 void CoreWidget::slotGlobalChangeBackFaceCulling(bool _backFaceCulling){
   for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     PluginFunctions::viewerProperties(i).backFaceCulling(_backFaceCulling);
+  
+  std::cerr << " Backface Culling " << std::endl;
 
 }
 

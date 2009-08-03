@@ -238,105 +238,34 @@ void CoreWidget::setupMenuBar()
   connect( orthogonalProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalOrthographicProjection() ) );
   renderingOptionsMenu->addAction( orthogonalProjectionAction_);
 
-  QAction* animation = renderingOptionsMenu->addAction("Animation");
-
-  uint enabledCount = 0;
-  uint disabledCount = 0;
-  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
-    if ( PluginFunctions::viewerProperties(i).animation() )
-      enabledCount++;
-    else
-      disabledCount++;
-  }
-
-  if ( enabledCount != 0 && disabledCount != 0 )
-    animation->setChecked(Qt::PartiallyChecked);
-  else if ( enabledCount == 4 )
-    animation->setChecked( Qt::Checked );
-  else
-    animation->setChecked( Qt::Unchecked );
-
-  animation->setToolTip("Animate rotation of objects");
-  animation->setCheckable( true );
-  animation->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"animation.png") );
-  connect(animation, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeAnimation(bool) ) );
-
+  // =====================
+  
+  globalAnimationAction_ = renderingOptionsMenu->addAction("Animation");
+  globalAnimationAction_->setCheckable( true );
+  globalAnimationAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"animation.png") );
+  connect(globalAnimationAction_, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeAnimation(bool) ) );
 
   //======================
 
-  QAction* backfaceCulling = renderingOptionsMenu->addAction("Backface Culling");
-
-  enabledCount  = 0;
-  disabledCount = 0;
-  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
-    if ( PluginFunctions::viewerProperties(i).backFaceCulling() )
-      enabledCount++;
-    else
-      disabledCount++;
-  }
-
-  backfaceCulling->setCheckable( true );  
-  if ( enabledCount != 0 && disabledCount != 0 )
-    backfaceCulling->setChecked(Qt::PartiallyChecked);
-  else if ( enabledCount == 4 )
-    backfaceCulling->setChecked( Qt::Checked );
-  else
-    backfaceCulling->setChecked( Qt::Unchecked );
-
-  backfaceCulling->setToolTip("Enable backface culling");
-  backfaceCulling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"backFaceCulling.png") );
-  connect(backfaceCulling, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeBackFaceCulling(bool) ) );
+  globalBackfaceCullingAction_ = renderingOptionsMenu->addAction("Backface Culling");
+  globalBackfaceCullingAction_->setCheckable( true );  
+  globalBackfaceCullingAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"backFaceCulling.png") );
+  connect(globalBackfaceCullingAction_, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeBackFaceCulling(bool) ) );
 
   //======================
 
-  QAction* twoSidedLighting = renderingOptionsMenu->addAction("Two-sided Lighting");
-
-  enabledCount  = 0;
-  disabledCount = 0;
-  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
-    if ( PluginFunctions::viewerProperties(i).twoSidedLighting() )
-      enabledCount++;
-    else
-      disabledCount++;
-  }
-
-  twoSidedLighting->setCheckable( true );
-  if ( enabledCount != 0 && disabledCount != 0 )
-    twoSidedLighting->setChecked(Qt::PartiallyChecked);
-  else if ( enabledCount == 4 )
-    twoSidedLighting->setChecked( Qt::Checked );
-  else
-    twoSidedLighting->setChecked( Qt::Unchecked );
-
-  twoSidedLighting->setToolTip("Enable two-sided lighting");
-  twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
-  connect(twoSidedLighting, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeTwoSidedLighting(bool) ) );
+  globalTwosidedLightingAction_ = renderingOptionsMenu->addAction("Two-sided Lighting");
+  globalTwosidedLightingAction_->setCheckable( true );
+  globalTwosidedLightingAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
+  connect(globalTwosidedLightingAction_, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeTwoSidedLighting(bool) ) );
   
   //======================
 
-  QAction* multisampling = renderingOptionsMenu->addAction("Multisampling");
-
-  enabledCount  = 0;
-  disabledCount = 0;
-  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
-    if ( PluginFunctions::viewerProperties(i).multisampling() )
-      enabledCount++;
-    else
-      disabledCount++;
-  }
-
-  multisampling->setCheckable( true );
-  if ( enabledCount != 0 && disabledCount != 0 )
-    multisampling->setChecked(Qt::PartiallyChecked);
-  else if ( enabledCount == 4 )
-    multisampling->setChecked( Qt::Checked );
-  else
-    multisampling->setChecked( Qt::Unchecked );
-
-  multisampling->setToolTip("Enable Multisampling");
+  globalMultisamplingAction_ = renderingOptionsMenu->addAction("Multisampling");
+  globalMultisamplingAction_->setCheckable( true );
 // TODO:Icon for multisampling  
-//   multisampling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
-  connect(multisampling, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeMultisampling(bool)) );  
+//   globalMultisamplingAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
+  connect(globalMultisamplingAction_, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeMultisampling(bool)) );  
 
   //============================================================================================================
   // Other toplevel actions
@@ -523,15 +452,126 @@ void CoreWidget::setupMenuBar()
   mainToolbar_->addSeparator();
   mainToolbar_->addAction(AC_load_ini);
   mainToolbar_->addAction(AC_save_ini);
-
 }
 
-void CoreWidget::slotUpdateMenuBar() {
-  
-}
 
 void CoreWidget::slotViewMenuAboutToShow() {
 
+  uint enabledCount  = 0;
+  uint disabledCount = 0;
+  
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).animation() )
+      enabledCount++;
+    else
+      disabledCount++;
+  }
+
+  if ( enabledCount != 0 && disabledCount != 0 ) {
+    globalAnimationAction_->setChecked(Qt::PartiallyChecked);
+    globalAnimationAction_->setToolTip(tr("Disable animation for all viewers"));  
+    globalAnimationAction_->setStatusTip(tr("Disable animation for all viewers"));  
+    globalAnimationAction_->setText(tr("Disable animation"));  
+  } else if ( enabledCount == 4 ) {
+    globalAnimationAction_->setChecked( Qt::Checked );
+    globalAnimationAction_->setToolTip(tr("Disable animation for all viewers"));  
+    globalAnimationAction_->setStatusTip(tr("Disable animation for all viewers"));  
+    globalAnimationAction_->setText(tr("Disable animation"));  
+  } else {
+    globalAnimationAction_->setChecked( Qt::Unchecked );
+    globalAnimationAction_->setToolTip(tr("Enable animation for all viewers"));  
+    globalAnimationAction_->setStatusTip(tr("Enable animation for all viewers"));  
+    globalAnimationAction_->setText(tr("Enable animation"));  
+  }
+  
+  //=============================================================================================================================
+  
+  enabledCount  = 0;
+  disabledCount = 0;  
+  
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).backFaceCulling() )
+      enabledCount++;
+    else
+      disabledCount++;
+  }
+  
+  if ( enabledCount != 0 && disabledCount != 0 ) {
+    globalBackfaceCullingAction_->setChecked(Qt::PartiallyChecked);
+    globalBackfaceCullingAction_->setToolTip(tr("Disable backface culling for all viewers"));  
+    globalBackfaceCullingAction_->setStatusTip(tr("Disable backface culling for all viewers"));  
+    globalBackfaceCullingAction_->setText(tr("Disable backface culling"));  
+  } else if ( enabledCount == 4 ) {
+    globalBackfaceCullingAction_->setChecked( Qt::Checked );
+    globalBackfaceCullingAction_->setToolTip(tr("Disable backface culling for all viewers"));  
+    globalBackfaceCullingAction_->setStatusTip(tr("Disable backface culling for all viewers"));  
+    globalBackfaceCullingAction_->setText(tr("Disable backface culling"));  
+  } else {
+    globalBackfaceCullingAction_->setChecked( Qt::Unchecked );
+    globalBackfaceCullingAction_->setToolTip(tr("Enable backface culling for all viewers"));  
+    globalBackfaceCullingAction_->setStatusTip(tr("Enable backface culling for all viewers"));  
+    globalBackfaceCullingAction_->setText(tr("Enable backface culling"));  
+  }
+
+  //=============================================================================================================================
+  
+  enabledCount  = 0;
+  disabledCount = 0;
+  
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).twoSidedLighting() )
+      enabledCount++;
+    else
+      disabledCount++;
+  }
+
+  if ( enabledCount != 0 && disabledCount != 0 ) {
+    globalTwosidedLightingAction_->setChecked(Qt::PartiallyChecked);
+    globalTwosidedLightingAction_->setToolTip(tr("Disable two-sided lighting for all viewers"));  
+    globalTwosidedLightingAction_->setStatusTip(tr("Disable two-sided lighting for all viewers"));  
+    globalTwosidedLightingAction_->setText(tr("Disable two-sided lighting"));  
+  } else if ( enabledCount == 4 ) {
+    globalTwosidedLightingAction_->setChecked( Qt::Checked );
+    globalTwosidedLightingAction_->setToolTip(tr("Disable two-sided lighting for all viewers"));  
+    globalTwosidedLightingAction_->setStatusTip(tr("Disable two-sided lighting for all viewers"));  
+    globalTwosidedLightingAction_->setText(tr("Disable two-sided lighting"));  
+  } else {
+    globalTwosidedLightingAction_->setChecked( Qt::Unchecked );
+    globalTwosidedLightingAction_->setToolTip(tr("Enable two-sided lighting for all viewers"));  
+    globalTwosidedLightingAction_->setStatusTip(tr("Enable two-sided lighting for all viewers"));  
+    globalTwosidedLightingAction_->setText(tr("Enable two-sided lighting"));      
+  }
+
+  //=============================================================================================================================
+  
+  enabledCount  = 0;
+  disabledCount = 0;
+  
+  
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).multisampling() )
+      enabledCount++;
+    else
+      disabledCount++;
+  }
+
+  if ( enabledCount != 0 && disabledCount != 0 ) {
+    globalMultisamplingAction_->setChecked(Qt::PartiallyChecked);
+    globalMultisamplingAction_->setToolTip(tr("Disable Multisampling for all viewers"));  
+    globalMultisamplingAction_->setStatusTip(tr("Disable Multisampling for all viewers"));  
+    globalMultisamplingAction_->setText(tr("Disable Multisampling"));
+  } else if ( enabledCount == 4 ) {
+    globalMultisamplingAction_->setChecked( Qt::Checked );
+    globalMultisamplingAction_->setToolTip(tr("Disable Multisampling for all viewers"));      
+    globalMultisamplingAction_->setStatusTip(tr("Disable Multisampling for all viewers"));      
+    globalMultisamplingAction_->setText(tr("Disable Multisampling"));
+  } else {
+    globalMultisamplingAction_->setChecked( Qt::Unchecked );
+    globalMultisamplingAction_->setToolTip(tr("Enable Multisampling for all viewers"));  
+    globalMultisamplingAction_->setStatusTip(tr("Enable Multisampling for all viewers"));  
+    globalMultisamplingAction_->setText(tr("&Enable Multisampling"));
+  }
+  
   uint perspectiveCount = 0;
   uint orthogonalCount = 0;
 
