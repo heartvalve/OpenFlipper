@@ -142,14 +142,8 @@ void MaterialNode::enter(GLState& _state, unsigned int  _drawmode  )
 
   if (applyProperties_ & MultiSampling)
   {
-    multiSampling_backup_ = glIsEnabled(GL_MULTISAMPLE);
-
-    if( multiSampling_) {
-      glEnable(GL_MULTISAMPLE);
-    } else {
-      glDisable(GL_MULTISAMPLE);
-    }
-
+    multiSampling_backup_ = _state.multisampling();
+    _state.set_multisampling( multiSampling_ );
   }
 
   if (applyProperties_ & AlphaTest)
@@ -280,15 +274,7 @@ void MaterialNode::leave(GLState& _state, unsigned int _drawmode )
   }
 
   if (applyProperties_ & MultiSampling)
-  {
-
-    if( multiSampling_backup_) {
-      glEnable(GL_MULTISAMPLE);
-    } else {
-      glDisable(GL_MULTISAMPLE);
-    }
-
-  }
+    _state.set_multisampling( multiSampling_backup_ );
 
   if (applyProperties_ & AlphaTest)
   {

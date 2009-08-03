@@ -370,6 +370,20 @@ public:
   void set_twosided_lighting(bool _b);
   /// get whether transparenet or solid objects should be drawn
   bool twosided_lighting() { return twosided_lighting_; }
+  
+  //--- Multi Sampling --------------------------------------------------------
+  
+  /// Enable or disable multisampling
+  void set_multisampling( bool _b );
+  
+  /// Get current multisampling state
+  bool multisampling(){ return multisampling_; };
+  
+  /// Disable multisampling globally
+  void allow_multisampling( bool _b ) { allow_multisampling_ = _b; };
+  
+  /// Check if Multisampling is globally disabled
+  bool multisampling_alloowed(){ return allow_multisampling_; };
 
   //--- picking ---------------------------------------------------------------
 
@@ -451,8 +465,12 @@ private: //--------------------------------------------------------------------
   // thickness
   float  point_size_, line_width_;
 
+  // lighting
   bool twosided_lighting_;
 
+  // Multisampling settings
+  bool multisampling_;
+  bool allow_multisampling_;
 
   // helper: should GL matrices be updated
   bool updateGL_;
