@@ -297,9 +297,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Create main Toolbar
   // ======================================================================
 
-  mainToolbar_ = new QToolBar("Main Toolbar");
-  mainToolbar_->setWindowTitle("Main Toolbar");
-  mainToolbar_->setObjectName("MainToolbar");
+  mainToolbar_ = new QToolBar(tr("Main Toolbar"));
+  mainToolbar_->setWindowTitle(tr("Main Toolbar"));
+  mainToolbar_->setObjectName(tr("MainToolbar"));
   slotAddToolbar(mainToolbar_);
 
   // ======================================================================
@@ -308,29 +308,29 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
 
   // Create the toolbar
-  viewerToolbar_ = new QToolBar( "Viewer Toolbar", this );
+  viewerToolbar_ = new QToolBar( tr("Viewer Toolbar" ), this );
   viewerToolbar_->setOrientation(Qt::Vertical);
   viewerToolbar_->setAllowedAreas(Qt::AllToolBarAreas);
   viewerToolbar_->setIconSize(QSize(20,20));
-  viewerToolbar_->setObjectName("ViewerToolbar");
+  viewerToolbar_->setObjectName(tr("ViewerToolbar"));
 
   moveButton_ = new QToolButton( viewerToolbar_ );
   moveButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"transform-move.png") );
   moveButton_->setMinimumSize( 16, 16 );
   moveButton_->setMaximumSize( 32, 32 );
-  moveButton_->setToolTip( "Switch to <b>move</b> mode." );
-  moveButton_->setWhatsThis(
+  moveButton_->setToolTip( tr("Switch to <b>move</b> mode.") );
+  moveButton_->setWhatsThis(tr(
                   "Switch to <b>move</b> mode.<br>"
                   "<ul><li><b>Rotate</b> using <b>left</b> mouse button.</li>"
                   "<li><b>Translate</b> using <b>middle</b> mouse button.</li>"
-                  "<li><b>Zoom</b> using <b>left+middle</b> mouse buttons.</li></ul>" );
+                  "<li><b>Zoom</b> using <b>left+middle</b> mouse buttons.</li></ul>" ));
 
   connect( moveButton_,SIGNAL( clicked() ), this, SLOT( setExamineMode() ) );
 /*
   connect( this, SIGNAL( actionModeChanged( Viewer::ActionMode ) ),
             this, SLOT(   slotActionModeChanged(Viewer::ActionMode) ) );*/
 
-  viewerToolbar_->addWidget( moveButton_ )->setText("Move");
+  viewerToolbar_->addWidget( moveButton_ )->setText(tr("Move"));
   moveButton_->setDown(true);
 
 
@@ -338,48 +338,48 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   lightButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-mode.png") );
   lightButton_->setMinimumSize( 16, 16 );
   lightButton_->setMaximumSize( 32, 32 );
-  lightButton_->setToolTip("Switch to <b>light</b> mode.");
-  lightButton_->setWhatsThis(
+  lightButton_->setToolTip(tr("Switch to <b>light</b> mode."));
+  lightButton_->setWhatsThis(tr(
                   "Switch to <b>light</b> mode.<br>"
-                  "Rotate lights using left mouse button.");
+                  "Rotate lights using left mouse button."));
 
   connect( lightButton_,SIGNAL( clicked() ), this, SLOT( setLightMode() ) );
-  viewerToolbar_->addWidget( lightButton_)->setText("Light");
+  viewerToolbar_->addWidget( lightButton_)->setText(tr("Light"));
 
 
   pickButton_ = new QToolButton( viewerToolbar_ );
   pickButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"pick.png") );
   pickButton_->setMinimumSize( 16, 16 );
   pickButton_->setMaximumSize( 32, 32 );
-  pickButton_->setToolTip("Switch to <b>picking</b> mode.");
-  pickButton_->setWhatsThis(
+  pickButton_->setToolTip(tr("Switch to <b>picking</b> mode."));
+  pickButton_->setWhatsThis(tr(
                   "Switch to <b>picking</b> mode.<br>"
                   "Use picking functions like flipping edges.<br>"
                   "To change the mode use the right click<br>"
-                  "context menu in the viewer.");
+                  "context menu in the viewer."));
   connect( pickButton_,SIGNAL( clicked() ), this, SLOT( setPickingMode() ) );
-  viewerToolbar_->addWidget( pickButton_)->setText("Pick");
+  viewerToolbar_->addWidget( pickButton_)->setText(tr("Pick"));
 
 
   questionButton_ = new QToolButton( viewerToolbar_ );
   questionButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-about.png") );
   questionButton_->setMinimumSize( 16, 16 );
   questionButton_->setMaximumSize( 32, 32 );
-  questionButton_->setToolTip("Switch to <b>identification</b> mode.");
-  questionButton_->setWhatsThis(
+  questionButton_->setToolTip(tr("Switch to <b>identification</b> mode."));
+  questionButton_->setWhatsThis(tr(
                   "Switch to <b>identification</b> mode.<br>"
                   "Use identification mode to get information "
                   "about objects. Click on an object and see "
                   "the log output for information about the "
-                  "object.");
+                  "object."));
   connect( questionButton_,SIGNAL( clicked() ), this, SLOT( setQuestionMode() ) );
-  viewerToolbar_->addWidget( questionButton_)->setText("Question");
+  viewerToolbar_->addWidget( questionButton_)->setText(tr("Question"));
 
   viewmodeBox_ = new QComboBox( viewerToolbar_ );
   viewmodeBox_->setMinimumSize( 32, 16 );
   viewmodeBox_->setMaximumSize( 64, 32 );
-  viewmodeBox_->setToolTip("Switch <b>view mode</b>.");
-  viewmodeBox_->setWhatsThis(
+  viewmodeBox_->setToolTip(tr("Switch <b>view mode</b>."));
+  viewmodeBox_->setWhatsThis(tr(
                   "Switch <b>view mode</b>.<br>"
                   "Select the desired view mode. "
                   "Possible modes are: "
@@ -387,7 +387,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 				  "<li>Single view mode</li>"
 				  "<li>Multi view mode (grid)</li>"
 				  "<li>Multi view mode (hsplit)</li>"
-				  "</ul>");
+				  "</ul>"));
 
   viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"singleviewmode.png"), "");
   viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode1.png"), "");
@@ -408,15 +408,15 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     stereoButton_->setMinimumSize( 16, 16 );
     stereoButton_->setMaximumSize( 32, 32 );
     stereoButton_->setCheckable( true );
-    stereoButton_->setToolTip( "Toggle stereo viewing");
-    stereoButton_->setWhatsThis(
+    stereoButton_->setToolTip(tr( "Toggle stereo viewing"));
+    stereoButton_->setWhatsThis(tr(
                   "Toggle stereo mode<br><br>"
                   "Use this button to switch between stereo "
                   "and mono view. To use this feature you need "
                   "a stereo capable graphics card and a stereo "
-                  "display/projection system.");
+                  "display/projection system."));
     connect( stereoButton_,SIGNAL( clicked() ), this , SLOT( slotToggleStereoMode() ) );
-    viewerToolbar_->addWidget( stereoButton_ )->setText( "Stereo");
+    viewerToolbar_->addWidget( stereoButton_ )->setText( tr("Stereo"));
   }
 
 
@@ -432,11 +432,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   toolBoxArea_ = new QWidget (toolSplitter_);
 
-  QGroupBox *gb = new QGroupBox ("ViewMode");
+  QGroupBox *gb = new QGroupBox (tr("ViewMode"));
 
   QHBoxLayout *hLayout = new QHBoxLayout;
 
-  QPushButton* vmButton = new QPushButton("Change View Mode");
+  QPushButton* vmButton = new QPushButton(tr("Change View Mode"));
   hLayout->addWidget (vmButton);
   gb->setLayout (hLayout);
 
@@ -476,13 +476,13 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   }
 
   contextMenu_ = new QMenu(this);
-  contextSelectionMenu_ = new QMenu("Selection",0);
+  contextSelectionMenu_ = new QMenu(tr("Selection"),0);
 
   setupMenuBar();
 
   updateRecent();
 
-  statusBar_->showMessage("Ready", 5000);
+  statusBar_->showMessage(tr("Ready"), 5000);
 
   registerCoreKeys();
 
@@ -783,7 +783,7 @@ void CoreWidget::showOptionsWidget() {
 void CoreWidget::nextViewMode() {
 
 	if (OpenFlipper::Options::multiView()) {
-		emit log("Switch MultiView mode");
+		emit log(tr("Switch MultiView mode"));
 
 		switch (baseLayout_->mode()) {
 		case QtMultiViewLayout::SingleView:
@@ -816,7 +816,7 @@ void
 CoreWidget::setViewMode(int _idx) {
 
 	if (OpenFlipper::Options::multiView()) {
-		emit log("Switch MultiView mode");
+		emit log(tr("Switch MultiView mode"));
 
 		switch (_idx) {
 		case 0:
