@@ -351,7 +351,7 @@ void CoreWidget::setupMenuBar()
   coordSys->setCheckable(true);
   coordSys->setChecked(true);
   coordSys->setStatusTip("Toggle visibility of the coordinate systems");
-//   coordSys->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
+  coordSys->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"coordsys.png") );
   connect(coordSys, SIGNAL(triggered(bool)), this, SLOT( slotCoordSysVisibility(bool) ) );
 
   viewMenu_->addSeparator();
