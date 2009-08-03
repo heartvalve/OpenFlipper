@@ -144,7 +144,7 @@ static int maxFrameRate_ = 35;
 static std::vector<uint> defaultDrawMode_ = std::vector<uint> (4, ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
 
 /// Store the defaultProjectionMode_ mode
-static std::vector<int> defaultProjectionMode_ = std::vector<int> (4, 0);
+static std::vector<int> defaultProjectionMode_ = std::vector<int> (4, 1);
 
 /// Store the defaultViewingDirection_ mode
 static std::vector<int> defaultViewingDirection_ = std::vector<int> (4, 0);
