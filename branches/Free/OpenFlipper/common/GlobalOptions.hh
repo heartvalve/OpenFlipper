@@ -500,13 +500,29 @@ bool dataDir(QString _dir);
   DLLEXPORT
   int maxFrameRate( );
 
-  /// Store standardDrawMode setting
+  /// Store defaultDrawMode setting
   DLLEXPORT
-  void standardDrawMode( uint _mode );
+  void defaultDrawMode( uint _mode, int _viewer );
 
-  /// get standardDrawMode setting
+  /// get defaultDrawMode setting
   DLLEXPORT
-  uint standardDrawMode( );
+  uint defaultDrawMode( int _viewer );
+
+  /// Store defaultProjectionMode setting
+  DLLEXPORT
+  void defaultProjectionMode( int _mode, int _viewer );
+
+  /// get defaultProjectionMode setting
+  DLLEXPORT
+  int defaultProjectionMode( int _viewer );
+
+  /// Store defaultViewingDirection setting
+  DLLEXPORT
+  void defaultViewingDirection( int _mode, int _viewer );
+
+  /// get defaultViewingDirection setting
+  DLLEXPORT
+  int defaultViewingDirection( int _viewer );
 
   /// Store disableRedraw setting
   DLLEXPORT

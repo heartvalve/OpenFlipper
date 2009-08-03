@@ -60,6 +60,14 @@ namespace PluginFunctions {
 const int ALL_VIEWERS   = -2;
 const int ACTIVE_VIEWER = -1;
 
+const int VIEW_FREE   = 0;
+const int VIEW_TOP    = 1;
+const int VIEW_BOTTOM = 2;
+const int VIEW_LEFT   = 3;
+const int VIEW_RIGHT  = 4;
+const int VIEW_FRONT  = 5;
+const int VIEW_BACK   = 6;
+
 //=======================================
 // Get/set status of viewers
     /** @name Viewer Status and properties
@@ -86,9 +94,23 @@ Viewer::ViewerProperties& viewerProperties(int _id = -1);
 /** Lock scene rotation via mouse
  *
  * @param _mode allow or disallow rotation
+ * @param _viewer Id of the viewer to use.
+ *                ALL_VIEWERS    will set all viewers (Default)
+ *                ACTIVE_VIEWER active viewer
+ *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-void allowRotation(bool _mode);
+void allowRotation(bool _mode, int _viewer = ACTIVE_VIEWER);
+
+/** is scene rotation locked
+ *
+ * @param _viewer Id of the viewer to use.
+ *                ALL_VIEWERS    will set all viewers (Default)
+ *                ACTIVE_VIEWER active viewer
+ *                0..3 Choose viewer explicitly
+ */
+DLLEXPORT
+bool allowRotation(int _viewer = ACTIVE_VIEWER);
 
 /** \brief Set current GL Context to main context
  */
@@ -203,6 +225,15 @@ void viewAll(int _viewer = ALL_VIEWERS);
 DLLEXPORT
 ACG::Vec3d viewingDirection(int _viewer = ALL_VIEWERS);
 
+/** \brief Check if the projection is orthographic
+ * @param _viewer Id of the viewer to use.
+ *                ALL_VIEWERS    will set all viewers (Default)
+ *                ACTIVE_VIEWER active viewer
+ *                0..3 Choose viewer explicitly
+ */
+DLLEXPORT
+bool isProjectionOrthographic( int _viewer = ACTIVE_VIEWER );
+
 /** \brief Get the current viewer position
  *
  * @param _viewer Id of the viewer to use.
@@ -267,6 +298,18 @@ unsigned int drawMode( int _viewer = ACTIVE_VIEWER );
  */
 DLLEXPORT
 void setBackColor( OpenMesh::Vec4f _color);
+
+/** \brief Set a fixed View for a viewer
+ *
+ *
+ * @param _mode id for the mode
+ * @param _viewer Id of the viewer to use.
+ *                ACTIVE_VIEWER active viewer
+ *                0..3 Choose viewer explicitly
+ */
+DLLEXPORT
+void setFixedView(int _mode, int _viewer = ACTIVE_VIEWER );
+
 
 /** @} */
 

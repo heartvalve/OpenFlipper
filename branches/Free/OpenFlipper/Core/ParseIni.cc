@@ -236,11 +236,22 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::defaultToolboxMode(toolboxMode);
 
     //============================================================================
-    // Load the drawmodes
+    // Load the viewer settings
     //============================================================================
     std::vector< QString > draw_modes;
-    if( _ini.get_entry(draw_modes, "Options", "StandardDrawModes") )
-      OpenFlipper::Options::standardDrawMode( ListToDrawMode(draw_modes) );
+    int mode;
+
+    for (int i=0; i < 4/*PluginFunctions::viewers()*/; i++ ){
+
+      if( _ini.get_entry(draw_modes, "Options", "DefaultDrawModes" + QString::number(i) ) )
+	OpenFlipper::Options::defaultDrawMode( ListToDrawMode(draw_modes), i );
+
+      if( _ini.get_entry(mode, "Options", "DefaultProjectionMode" + QString::number(i) ) )
+	OpenFlipper::Options::defaultProjectionMode( mode, i );
+
+      if( _ini.get_entry(mode, "Options", "DefaultViewingDirection" + QString::number(i) ) )
+	OpenFlipper::Options::defaultViewingDirection( mode, i );
+    }
 
     //============================================================================
     // Load logFile status
@@ -547,11 +558,20 @@ void Core::writeApplicationOptions(INIFile& _ini) {
                      (uint)PluginFunctions::viewerProperties(i).backgroundColorRgb() );
     }
     //============================================================================
-    // Save the current draw modes
+    // Save the current viewer properties
     //============================================================================
     std::vector< QString > draw_modes;
-    draw_modes = drawModeToList( OpenFlipper::Options::standardDrawMode() );
-    _ini.add_entry("Options","StandardDrawModes",draw_modes);
+    int mode;
+
+    for (int i=0; i < PluginFunctions::viewers(); i++ ){
+
+      draw_modes = drawModeToList( OpenFlipper::Options::defaultDrawMode(i) );
+      _ini.add_entry("Options","DefaultDrawModes" + QString::number(i), draw_modes);
+
+      _ini.add_entry("Options","DefaultProjectionMode" + QString::number(i), OpenFlipper::Options::defaultProjectionMode(i) );
+      _ini.add_entry("Options","DefaultViewingDirection" + QString::number(i), OpenFlipper::Options::defaultViewingDirection(i) );
+    }
+    
 
     _ini.add_entry("Options","LoggerState", OpenFlipper::Options::loggerState() );
     _ini.add_entry("Options","HideToolbox", OpenFlipper::Options::hideToolbox() );
@@ -679,7 +699,7 @@ void Core::openIniFile( QString _filename,
 
   if ( OpenFlipper::Options::gui() ){
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
-      PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::standardDrawMode() );
+      PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::defaultDrawMode(i) );
       coreWidget_->examiner_widgets_[i]->viewAll();
     }
 

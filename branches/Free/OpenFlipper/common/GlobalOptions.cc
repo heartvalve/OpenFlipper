@@ -119,8 +119,8 @@ static float eyeDistance_ = 0.07f;
 static float focalDistance_ = 0.5;
 
 /// vectroy containing left/right color matrices for custom anaglyph mode
-std::vector<float> anaglyphLeftEyeColors_ = std::vector<float> (9, 0.0);
-std::vector<float> anaglyphRightEyeColors_ = std::vector<float> (9, 0.0);
+static std::vector<float> anaglyphLeftEyeColors_ = std::vector<float> (9, 0.0);
+static std::vector<float> anaglyphRightEyeColors_ = std::vector<float> (9, 0.0);
 
 /// Store the synchronization mode
 static bool synchronization_ = false;
@@ -140,8 +140,14 @@ static bool showWheelsAtStartup_ = false;
 /// Store the maxFrameRate_ mode
 static int maxFrameRate_ = 35;
 
-/// Store the standardDrawMode_ mode
-static uint standardDrawMode_ = ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED;
+/// Store the defaultDrawMode_ mode
+static std::vector<uint> defaultDrawMode_ = std::vector<uint> (4, ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
+
+/// Store the defaultProjectionMode_ mode
+static std::vector<int> defaultProjectionMode_ = std::vector<int> (4, 0);
+
+/// Store the defaultViewingDirection_ mode
+static std::vector<int> defaultViewingDirection_ = std::vector<int> (4, 0);
 
 /// Store the disableRedraw_ mode
 static int redrawDisabled_ = 0;
@@ -629,12 +635,28 @@ int maxFrameRate(){
   return maxFrameRate_;
 }
 
-void standardDrawMode( uint _mode ){
-  standardDrawMode_ = _mode;
+void defaultDrawMode( uint _mode, int _viewer){
+  defaultDrawMode_[_viewer] = _mode;
 }
 
-uint standardDrawMode(){
-  return standardDrawMode_;
+uint defaultDrawMode(int _viewer){
+  return defaultDrawMode_[_viewer];
+}
+
+void defaultProjectionMode( int _mode, int _viewer){
+  defaultProjectionMode_[_viewer] = _mode;
+}
+
+int defaultProjectionMode(int _viewer){
+  return defaultProjectionMode_[_viewer];
+}
+
+void defaultViewingDirection( int _mode, int _viewer){
+  defaultViewingDirection_[_viewer] = _mode;
+}
+
+int defaultViewingDirection(int _viewer){
+  return defaultViewingDirection_[_viewer];
 }
 
 void redrawDisabled( bool disable ){

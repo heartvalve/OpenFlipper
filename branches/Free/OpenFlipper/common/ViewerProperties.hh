@@ -352,6 +352,15 @@ namespace Viewer {
     private:
       ViewObjectMarker *objectMarker_;
 
+    //===========================================================================
+
+    public:
+      int currentViewingDirection();
+
+      void currentViewingDirection(int _dir);
+
+    private:
+      int currentViewingDirection_;
 
     //===========================================================================
 

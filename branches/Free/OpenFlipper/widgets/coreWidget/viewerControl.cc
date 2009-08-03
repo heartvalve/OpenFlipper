@@ -582,5 +582,9 @@ if (_visible)
   
 }
 
+void CoreWidget::slotSetViewingDirection(QAction* _action) {
+
+  PluginFunctions::setFixedView( _action->data().toInt() );
+}
 
 //=============================================================================

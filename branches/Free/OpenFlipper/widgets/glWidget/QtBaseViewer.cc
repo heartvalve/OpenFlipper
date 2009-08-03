@@ -1727,7 +1727,7 @@ glViewer::viewMouseEvent(QMouseEvent* _event)
         }
 
         // move in x,y direction
-        else if (_event->buttons() & Qt::MidButton)
+        else if ( (_event->buttons() & Qt::MidButton) || (!allowRotation_ && (_event->buttons() & Qt::LeftButton)))
         {
           value_x = scene_radius_ * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
           value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();

@@ -89,6 +89,18 @@ void Core::applyOptions(){
       target = ACG::SceneGraph::PICK_ANYTHING;
     }
 
+    //set viewer properties
+    for (int i=0; i < PluginFunctions::viewers(); i++){
+
+      PluginFunctions::setDrawMode( OpenFlipper::Options::defaultDrawMode(i), i );
+      PluginFunctions::setFixedView(OpenFlipper::Options::defaultViewingDirection(i), i );
+
+      if ( OpenFlipper::Options::defaultProjectionMode(i) == 0 )
+	PluginFunctions::orthographicProjection(i);
+      else
+	PluginFunctions::perspectiveProjection(i);
+    }
+
     //set defaultBackgroundColor
     QColor c = OpenFlipper::Options::defaultBackgroundColor() ;
 
