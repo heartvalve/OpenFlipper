@@ -275,6 +275,7 @@ void CoreWidget::setupMenuBar()
       disabledCount++;
   }
 
+  backfaceCulling->setCheckable( true );  
   if ( enabledCount != 0 && disabledCount != 0 )
     backfaceCulling->setChecked(Qt::PartiallyChecked);
   else if ( enabledCount == 4 )
@@ -283,7 +284,6 @@ void CoreWidget::setupMenuBar()
     backfaceCulling->setChecked( Qt::Unchecked );
 
   backfaceCulling->setToolTip("Enable backface culling");
-  backfaceCulling->setCheckable( true );
   backfaceCulling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"backFaceCulling.png") );
   connect(backfaceCulling, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeBackFaceCulling(bool) ) );
 
@@ -300,6 +300,7 @@ void CoreWidget::setupMenuBar()
       disabledCount++;
   }
 
+  twoSidedLighting->setCheckable( true );
   if ( enabledCount != 0 && disabledCount != 0 )
     twoSidedLighting->setChecked(Qt::PartiallyChecked);
   else if ( enabledCount == 4 )
@@ -308,10 +309,34 @@ void CoreWidget::setupMenuBar()
     twoSidedLighting->setChecked( Qt::Unchecked );
 
   twoSidedLighting->setToolTip("Enable two-sided lighting");
-  twoSidedLighting->setCheckable( true );
   twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
-  twoSidedLighting->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
   connect(twoSidedLighting, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeTwoSidedLighting(bool) ) );
+  
+  //======================
+
+  QAction* multisampling = renderingOptionsMenu->addAction("Multisampling");
+
+  enabledCount  = 0;
+  disabledCount = 0;
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).multisampling() )
+      enabledCount++;
+    else
+      disabledCount++;
+  }
+
+  multisampling->setCheckable( true );
+  if ( enabledCount != 0 && disabledCount != 0 )
+    multisampling->setChecked(Qt::PartiallyChecked);
+  else if ( enabledCount == 4 )
+    multisampling->setChecked( Qt::Checked );
+  else
+    multisampling->setChecked( Qt::Unchecked );
+
+  multisampling->setToolTip("Enable Multisampling");
+// TODO:Icon for multisampling  
+//   multisampling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
+  connect(multisampling, SIGNAL(triggered(bool)), this , SLOT( slotGlobalChangeMultisampling(bool)) );  
 
   //============================================================================================================
   // Other toplevel actions
@@ -499,6 +524,10 @@ void CoreWidget::setupMenuBar()
   mainToolbar_->addAction(AC_load_ini);
   mainToolbar_->addAction(AC_save_ini);
 
+}
+
+void CoreWidget::slotUpdateMenuBar() {
+  
 }
 
 void CoreWidget::slotViewMenuAboutToShow() {

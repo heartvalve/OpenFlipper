@@ -58,6 +58,7 @@ namespace Viewer {
     locked_(0),
     backFaceCulling_(false),
     twoSidedLighting_(true),
+    multisampling_(true),
     animation_(false),
     glState_(0),
     objectMarker_(0)

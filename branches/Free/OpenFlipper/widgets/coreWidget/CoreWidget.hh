@@ -273,8 +273,13 @@ public:
 
   public:
 
-  /// Setup the main menubar
-  void setupMenuBar();
+    /// Setup the main menubar
+    void setupMenuBar();
+  
+  private slots:
+    
+    /// Update the menubat
+    void slotUpdateMenuBar();
 
    /** @} */
 
@@ -895,8 +900,15 @@ public:
 
     /// Set two sided lighting for active viewer
     void slotLocalChangeTwoSidedLighting(bool _lighting);
+    
+    
+    
+    /// Set Multisampling for all viewers
+    void slotGlobalChangeMultisampling(bool _lighting);
 
-
+    /// Set Multisampling for active viewer
+    void slotLocalChangeMultisampling(bool _lighting);
+    
   private :
     bool stereoActive_;
 

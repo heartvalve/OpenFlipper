@@ -1949,6 +1949,8 @@ void glViewer::applyProperties() {
   glstate_->set_twosided_lighting( properties_.twoSidedLighting() );
 
   glstate_->set_clear_color( properties_.backgroundColor() );
+  
+  glstate_->allow_multisampling( properties_.multisampling() );
 
   if (properties_.isCCWFront() )
     glFrontFace( GL_CCW );

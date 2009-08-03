@@ -165,6 +165,16 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
   twoSidedLighting->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
   connect(twoSidedLighting, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeTwoSidedLighting(bool) ) );
+  
+  //====================================================================================================
+
+  QAction* multisampling = renderingOptionsMenu->addAction("Multisampling");
+  multisampling->setToolTip("Enable Multisampling");
+  multisampling->setCheckable( true );
+// TODO:Add icon for multisampling  
+//   twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
+  multisampling->setChecked( PluginFunctions::viewerProperties().multisampling() );
+  connect(multisampling, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMultisampling(bool) ) );   
 
   //====================================================================================================
   // Other Toplevel Action
@@ -456,7 +466,7 @@ void CoreWidget::updatePopupMenu(const QPoint& _point) {
       break;
     case OBJECTCONTEXT:
       updatePopupMenuObject(contextMenu_ , object );
-//       return;
+      return;
       break;
     case COORDSYSCONTEXT:
       updatePopupMenuCoordsysNode(contextMenu_,target_idx);

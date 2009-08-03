@@ -198,6 +198,17 @@ void CoreWidget::slotLocalChangeTwoSidedLighting(bool _lighting) {
   PluginFunctions::viewerProperties().twoSidedLighting(_lighting);
 }
 
+/// Set Multisampling for all viewers
+void CoreWidget::slotGlobalChangeMultisampling(bool _multisampling) {
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    PluginFunctions::viewerProperties(i).multisampling( _multisampling );
+}
+
+/// Set Multisampling for active viewer
+void CoreWidget::slotLocalChangeMultisampling(bool _multisampling) {
+  PluginFunctions::viewerProperties().multisampling( _multisampling );
+}
+
 /// Take a snapshot of the current Viewer
 void CoreWidget::slotSnapshot() {
 
