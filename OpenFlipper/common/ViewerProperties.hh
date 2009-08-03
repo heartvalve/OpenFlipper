@@ -302,6 +302,18 @@ namespace Viewer {
 
     private:
       bool twoSidedLighting_;
+      
+    //===========================================================================
+
+    public slots:
+      /// set multisampling on/off
+      void multisampling(bool _state ) { multisampling_ = _state; emit updated(); }
+
+      /// is multisampling enabled?
+      bool multisampling() { return multisampling_; };
+
+    private:
+      bool multisampling_;      
 
     //===========================================================================
 
