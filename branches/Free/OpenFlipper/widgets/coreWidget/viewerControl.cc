@@ -576,12 +576,14 @@ void CoreWidget::slotCoordSysVisibility(bool _visible){
     return;
   }
 
-  if (_visible) {
+if (_visible) 
     coordSys->show();
-  }
-  else {
+  else 
     coordSys->hide();
-  }
+  
+  for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    examiner_widgets_[i]->updateGL();
+  
 }
 
 
