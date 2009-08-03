@@ -64,7 +64,9 @@ const float  GLState::default_shininess(100.0);
 
 
 GLState::GLState(bool _updateGL)
-  : updateGL_(_updateGL),
+  : multisampling_(false),
+    allow_multisampling_(true),
+    updateGL_(_updateGL),
     blending_(false),
     msSinceLastRedraw_ (1)
 {
@@ -105,8 +107,11 @@ void GLState::initialize()
   // thickness
   set_point_size(1.0f);
   set_line_width(1.0f);
+  
+  // multisampling
+  set_multisampling(true);
 
-
+  // lighting
   set_twosided_lighting(true);
 }
 
@@ -700,6 +705,35 @@ void GLState::set_twosided_lighting(bool _b)
 
 //-----------------------------------------------------------------------------
 
+void GLState::set_multisampling(bool _b)
+{
+  
+  multisampling_ = _b;
+
+  if (updateGL_)
+  {
+    makeCurrent();
+    if ( allow_multisampling_ ) {
+      
+      if ( _b ) 
+        glEnable( GL_MULTISAMPLE );
+      else      
+        glDisable( GL_MULTISAMPLE );
+      
+    } else {
+      
+      multisampling_ = false;
+      
+      if ( glIsEnabled( GL_MULTISAMPLE ) )
+        glDisable( GL_MULTISAMPLE );
+      
+    }
+  }
+    
+}
+
+
+//-----------------------------------------------------------------------------
 
 Vec3d GLState::eye() const
 {
