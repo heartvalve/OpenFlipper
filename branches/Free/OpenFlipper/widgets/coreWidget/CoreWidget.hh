@@ -276,11 +276,6 @@ public:
     /// Setup the main menubar
     void setupMenuBar();
   
-  private slots:
-    
-    /// Update the menubat
-    void slotUpdateMenuBar();
-
    /** @} */
 
   //===========================================================================
@@ -567,6 +562,18 @@ public:
 
     QAction* perspectiveProjectionAction_;
     QAction* orthogonalProjectionAction_;
+    
+    /// Action to globally set Animation
+    QAction* globalAnimationAction_;
+    
+    /// Action to globally set backface culling
+    QAction* globalBackfaceCullingAction_;
+    
+    /// Action to globally set Two-Sided lighting
+    QAction* globalTwosidedLightingAction_;    
+    
+    /// Action to globally set multisampling
+    QAction* globalMultisamplingAction_;    
 
     int activeDrawModes_;
 
