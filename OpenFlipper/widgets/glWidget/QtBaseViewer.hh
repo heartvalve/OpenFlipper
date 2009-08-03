@@ -769,7 +769,7 @@ private:
 
   /// Lock scene rotation
   void allowRotation( bool _mode ) { allowRotation_ = _mode; };
-
+  bool allowRotation() { return allowRotation_; };
 
   private slots:
 

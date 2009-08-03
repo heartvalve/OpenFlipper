@@ -112,7 +112,7 @@ void SimpleViewer::initialize (const QGLFormat & _format, QGLWidget *_shareWidge
 
   mainWidget_->sceneGraph (PluginFunctions::getSceneGraphRootNode (), true);
 
-  props_.drawMode (OpenFlipper::Options::standardDrawMode());
+  props_.drawMode (OpenFlipper::Options::defaultDrawMode(0));
 }
 
 void SimpleViewer::setActionMode(const Viewer::ActionMode _am)

@@ -46,6 +46,7 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
+#include "../../common/GlobalOptions.hh"
 
 //== IMPLEMENTATION ==========================================================
 
@@ -175,6 +176,78 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 //   twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
   multisampling->setChecked( PluginFunctions::viewerProperties().multisampling() );
   connect(multisampling, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMultisampling(bool) ) );   
+
+
+  //============================================================================================================
+  // Viewing Direction Menu
+  //============================================================================================================
+
+  QMenu* viewingDirectionMenu = new QMenu( tr("Viewing Direction"), _menu);
+//   viewingDirectionMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"renderingOptions.png"));
+  _menu->addMenu(viewingDirectionMenu);
+
+  QActionGroup* dirGroup = new QActionGroup(this);
+
+  QAction* viewAction;
+  // freeView
+  viewAction = new QAction( tr("Free View"), viewingDirectionMenu );
+//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setCheckable( true );
+  viewAction->setData( PluginFunctions::VIEW_FREE );
+  viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_FREE );
+  viewingDirectionMenu->addAction( viewAction );
+  dirGroup->addAction(viewAction);
+  viewingDirectionMenu->addSeparator();
+  // TOP
+  viewAction = new QAction( tr("Top View"), viewingDirectionMenu );
+//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setCheckable( true );
+  viewAction->setData( PluginFunctions::VIEW_TOP );
+  viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_TOP );
+  viewingDirectionMenu->addAction( viewAction );
+  dirGroup->addAction(viewAction);
+  // BOTTOM
+  viewAction = new QAction( tr("Bottom View"), viewingDirectionMenu );
+//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setCheckable( true );
+  viewAction->setData( PluginFunctions::VIEW_BOTTOM );
+  viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_BOTTOM );
+  viewingDirectionMenu->addAction( viewAction );
+  dirGroup->addAction(viewAction);
+  // LEFT
+  viewAction = new QAction( tr("Left View"), viewingDirectionMenu );
+//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setCheckable( true );
+  viewAction->setData( PluginFunctions::VIEW_LEFT );
+  viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_LEFT );
+  viewingDirectionMenu->addAction( viewAction );
+  dirGroup->addAction(viewAction);
+  // RIGHT
+  viewAction = new QAction( tr("Right View"), viewingDirectionMenu );
+//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setCheckable( true );
+  viewAction->setData( PluginFunctions::VIEW_RIGHT );
+  viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_RIGHT );
+  viewingDirectionMenu->addAction( viewAction );
+  dirGroup->addAction(viewAction);
+  // FRONT
+  viewAction = new QAction( tr("Front View"), viewingDirectionMenu );
+//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setCheckable( true );
+  viewAction->setData( PluginFunctions::VIEW_FRONT );
+  viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_FRONT );
+  viewingDirectionMenu->addAction( viewAction );
+  dirGroup->addAction(viewAction);
+  // BACK
+  viewAction = new QAction( tr("Back View"), viewingDirectionMenu );
+//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setCheckable( true );
+  viewAction->setData( PluginFunctions::VIEW_BACK );
+  viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_BACK );
+  viewingDirectionMenu->addAction( viewAction );
+  dirGroup->addAction(viewAction);
+
+  connect( dirGroup, SIGNAL(triggered(QAction*)), this, SLOT(slotSetViewingDirection(QAction*) ) );
 
   //====================================================================================================
   // Other Toplevel Action

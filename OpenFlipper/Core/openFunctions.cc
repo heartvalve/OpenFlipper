@@ -318,12 +318,20 @@ void Core::slotObjectOpened ( int _id ) {
   object->setBaseColor( colorV );
 
   // ================================================================================
-  // Set standard draw mode if this is the first opened object
+  // Set defaults for DrawMode, ViewingDirection and Projection if this is the first opened object
   // If a plugin changes the drawmode later, this setting will be overridden!
   // ================================================================================
   if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
-    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-      PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::standardDrawMode() );
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ){
+      PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::defaultDrawMode(i) );
+      
+      if ( OpenFlipper::Options::defaultProjectionMode(i) == 0 )
+	PluginFunctions::orthographicProjection(i);
+      else
+	PluginFunctions::perspectiveProjection(i);
+
+      PluginFunctions::setFixedView(OpenFlipper::Options::defaultViewingDirection(i), i );
+    }
 
   // ================================================================================
   // Recompute bounding box and scenegraph info

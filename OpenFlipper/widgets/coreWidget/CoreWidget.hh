@@ -885,6 +885,9 @@ public:
     void slotGlobalOrthographicProjection();
 
 
+    /// Change the Viewing direction from context-menu
+    void slotSetViewingDirection(QAction* _action);
+
 
     /// Set the animation Mode for all viewers
     void slotGlobalChangeAnimation(bool _animation);

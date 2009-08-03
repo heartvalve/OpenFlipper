@@ -91,6 +91,13 @@ private slots:
    ///restore keyBinding Presets
    void restoreKeyPresets();
 
+   /// update the dialog if the selected viewer changes
+   void updateViewerSettings(int _row);
+
+   /// remember user changes to viewer properties
+   void viewerSettingsChanged(QListWidgetItem* _item);
+   void viewerSettingsChanged(int _index);
+
 protected:
    void showEvent ( QShowEvent * event );
 
@@ -135,6 +142,13 @@ private:
       PLUGIN,
       WINDOWS_SETUP
    } downloadType;
+
+  // remember changes to viewer properties
+  std::vector< uint > defaultDrawModes_;
+  std::vector< int >  defaultProjectionMode_;
+  std::vector< int >  defaultViewingDirections_;
+
+  bool updatingViewerSettings_;
 
 private:
    /// Starts the download of the given file

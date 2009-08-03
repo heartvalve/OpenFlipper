@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>OptionsWidget</class>
- <widget class="QWidget" name="OptionsWidget" >
-  <property name="geometry" >
+ <widget class="QWidget" name="OptionsWidget">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,111 +10,111 @@
     <height>819</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Options</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_11" >
+  <layout class="QVBoxLayout" name="verticalLayout_11">
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="toolTip" >
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="toolTip">
       <string/>
      </property>
-     <property name="statusTip" >
+     <property name="statusTip">
       <string/>
      </property>
-     <property name="currentIndex" >
+     <property name="currentIndex">
       <number>2</number>
      </property>
-     <property name="usesScrollButtons" >
+     <property name="usesScrollButtons">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="general" >
-      <attribute name="title" >
+     <widget class="QWidget" name="general">
+      <attribute name="title">
        <string>General</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2" >
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QCheckBox" name="fullscreen" >
-         <property name="toolTip" >
+        <widget class="QCheckBox" name="fullscreen">
+         <property name="toolTip">
           <string>Display OpenFlipper in fullscreen mode</string>
          </property>
-         <property name="statusTip" >
+         <property name="statusTip">
           <string>Display OpenFlipper in fullscreen mode</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Show Fullscreen</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="splash" >
-         <property name="toolTip" >
+        <widget class="QCheckBox" name="splash">
+         <property name="toolTip">
           <string>Show splash screen on startup</string>
          </property>
-         <property name="statusTip" >
+         <property name="statusTip">
           <string>Show splash screen on startup</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Show Splash-Screen</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="toolbox" >
-         <property name="toolTip" >
+        <widget class="QCheckBox" name="toolbox">
+         <property name="toolTip">
           <string>Show the toolbox for plugin widgets</string>
          </property>
-         <property name="statusTip" >
+         <property name="statusTip">
           <string>Show the toolbox for plugin widgets</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Show Toolbox (CTRL+T)</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="Line" name="line" >
-         <property name="orientation" >
+        <widget class="Line" name="line">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="enableLogFile" >
-         <property name="toolTip" >
+        <widget class="QCheckBox" name="enableLogFile">
+         <property name="toolTip">
           <string>Enable the logfile</string>
          </property>
-         <property name="statusTip" >
+         <property name="statusTip">
           <string>Enable the logfile</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Logfile enabled</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_4" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
           <string>Logger (CTRL+L)</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_13" >
+         <layout class="QVBoxLayout" name="verticalLayout_13">
           <item>
-           <widget class="QRadioButton" name="loggerHidden" >
-            <property name="text" >
+           <widget class="QRadioButton" name="loggerHidden">
+            <property name="text">
              <string>Hidden</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="loggerNormal" >
-            <property name="text" >
+           <widget class="QRadioButton" name="loggerNormal">
+            <property name="text">
              <string>Normal</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="loggerInScene" >
-            <property name="text" >
+           <widget class="QRadioButton" name="loggerInScene">
+            <property name="text">
              <string>Embedded into GL scene</string>
             </property>
            </widget>
@@ -122,11 +123,11 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer" >
-         <property name="orientation" >
+        <spacer name="verticalSpacer">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>40</height>
@@ -136,101 +137,101 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="paths" >
-      <attribute name="title" >
+     <widget class="QWidget" name="paths">
+      <attribute name="title">
        <string>Paths</string>
       </attribute>
-      <layout class="QFormLayout" name="formLayout_2" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
           <string>Logfile:</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QLineEdit" name="logFile" >
-         <property name="toolTip" >
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="logFile">
+         <property name="toolTip">
           <string>filename (including path) of the logfile</string>
          </property>
-         <property name="statusTip" >
+         <property name="statusTip">
           <string>filename (including path) of the logfile</string>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="viewer" >
-      <attribute name="title" >
+     <widget class="QWidget" name="viewer">
+      <attribute name="title">
        <string>Viewer</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_9" >
+      <layout class="QVBoxLayout" name="verticalLayout_9">
        <item>
-        <widget class="QGroupBox" name="groupBox" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
           <string> Mouse Wheel </string>
          </property>
-         <property name="alignment" >
+         <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
          </property>
-         <property name="flat" >
+         <property name="flat">
           <bool>false</bool>
          </property>
-         <property name="checkable" >
+         <property name="checkable">
           <bool>false</bool>
          </property>
-         <layout class="QFormLayout" name="formLayout" >
-          <property name="fieldGrowthPolicy" >
+         <layout class="QFormLayout" name="formLayout">
+          <property name="fieldGrowthPolicy">
            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
           </property>
-          <item row="0" column="0" >
-           <widget class="QLabel" name="label_2" >
-            <property name="text" >
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
              <string>MouseWheel Zoom Sensitivity:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <widget class="QLineEdit" name="wZoomFactor" >
-            <property name="maximumSize" >
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="wZoomFactor">
+            <property name="maximumSize">
              <size>
               <width>100</width>
               <height>16777215</height>
              </size>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Set the factor to control the zooming with the mouse-wheel</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>Set the factor to control the zooming with the mouse-wheel</string>
             </property>
-            <property name="inputMask" >
+            <property name="inputMask">
              <string>9.99; </string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="label_3" >
-            <property name="text" >
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
              <string>MouseWheel Zoom Sensitivity (shift):</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
-           <widget class="QLineEdit" name="wZoomFactorShift" >
-            <property name="maximumSize" >
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="wZoomFactorShift">
+            <property name="maximumSize">
              <size>
               <width>100</width>
               <height>16777215</height>
              </size>
             </property>
-            <property name="toolTip" >
+            <property name="toolTip">
              <string>Set the factor to control the zooming with the mouse-wheel while the shift key is pressed</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>Set the factor to control the zooming with the mouse-wheel while the shift key is pressed</string>
             </property>
-            <property name="inputMask" >
+            <property name="inputMask">
              <string>9.99; </string>
             </property>
            </widget>
@@ -239,92 +240,32 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>General Viewer Settings</string>
          </property>
-         <property name="title" >
-          <string> DrawMode </string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_7" >
+         <layout class="QVBoxLayout" name="verticalLayout_8">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_8" >
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
-             <widget class="QLabel" name="label_7" >
-              <property name="toolTip" >
-               <string>This list shows the draw modes OpenFlipper uses at startup.
-You can select multiple modes at the same time.</string>
-              </property>
-              <property name="text" >
-               <string>Startup DrawModes:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QListWidget" name="availDrawModes" >
-              <property name="minimumSize" >
-               <size>
-                <width>0</width>
-                <height>300</height>
-               </size>
-              </property>
-              <property name="toolTip" >
-               <string>This list shows the draw modes OpenFlipper uses at startup.
-You can select multiple modes at the same time.</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_10" >
-         <property name="title" >
-          <string>Viewer controls</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_21" >
-          <item>
-           <widget class="QCheckBox" name="wheelBox" >
-            <property name="text" >
-             <string>Show wheels at startup</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_2" >
-         <property name="title" >
-          <string> Other </string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout" >
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2" >
-            <item>
-             <widget class="QCheckBox" name="restrictFPS" >
-              <property name="toolTip" >
+             <widget class="QCheckBox" name="restrictFPS">
+              <property name="toolTip">
                <string>restrict maximum framerate</string>
               </property>
-              <property name="statusTip" >
+              <property name="statusTip">
                <string>restrict maximum framerate</string>
               </property>
-              <property name="text" >
+              <property name="text">
                <string>Restrict Framerate</string>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_4" >
-              <property name="orientation" >
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>40</width>
                 <height>20</height>
@@ -333,27 +274,27 @@ You can select multiple modes at the same time.</string>
              </spacer>
             </item>
             <item>
-             <widget class="QSpinBox" name="FPS" >
-              <property name="enabled" >
+             <widget class="QSpinBox" name="FPS">
+              <property name="enabled">
                <bool>false</bool>
               </property>
-              <property name="toolTip" >
+              <property name="toolTip">
                <string>maximum framerate</string>
               </property>
-              <property name="statusTip" >
+              <property name="statusTip">
                <string>maximum framerate</string>
               </property>
-              <property name="minimum" >
+              <property name="minimum">
                <number>1</number>
               </property>
-              <property name="maximum" >
+              <property name="maximum">
                <number>200</number>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_8" >
-              <property name="text" >
+             <widget class="QLabel" name="label_8">
+              <property name="text">
                <string>FPS</string>
               </property>
              </widget>
@@ -361,27 +302,27 @@ You can select multiple modes at the same time.</string>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_6" >
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
             <item>
-             <widget class="QPushButton" name="backgroundButton" >
-              <property name="text" >
+             <widget class="QPushButton" name="backgroundButton">
+              <property name="text">
                <string>Default background color</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="baseColorButton" >
-              <property name="text" >
+             <widget class="QPushButton" name="baseColorButton">
+              <property name="text">
                <string>Default base color</string>
               </property>
              </widget>
             </item>
             <item>
-             <spacer name="horizontalSpacer_6" >
-              <property name="orientation" >
+             <spacer name="horizontalSpacer_6">
+              <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" stdset="0" >
+              <property name="sizeHint" stdset="0">
                <size>
                 <width>168</width>
                 <height>23</height>
@@ -392,45 +333,213 @@ You can select multiple modes at the same time.</string>
            </layout>
           </item>
           <item>
-           <widget class="QCheckBox" name="randomBaseColor" >
-            <property name="text" >
+           <widget class="QCheckBox" name="randomBaseColor">
+            <property name="text">
              <string>use random base color</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="wheelBox">
+            <property name="toolTip">
+             <string>Show wheels for zooming in the corners of viewers</string>
+            </property>
+            <property name="text">
+             <string>Show wheels</string>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Viewer Specific Settings</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_17">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_7">
+            <item>
+             <widget class="QLabel" name="label_17">
+              <property name="text">
+               <string>Viewer:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QListWidget" name="viewerList">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>150</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Line" name="line_3">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="toolTip">
+               <string>This list shows the draw modes OpenFlipper uses at startup.
+You can select multiple modes at the same time.</string>
+              </property>
+              <property name="text">
+               <string>DrawMode:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QListWidget" name="availDrawModes">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>300</height>
+               </size>
+              </property>
+              <property name="toolTip">
+               <string>This list shows the draw modes OpenFlipper uses at startup.
+You can select multiple modes at the same time.</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QFormLayout" name="formLayout_3">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_15">
+                <property name="text">
+                 <string>Projection:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="projectionBox">
+                <item>
+                 <property name="text">
+                  <string>Orthogonal</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Perspective</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_16">
+                <property name="text">
+                 <string>Viewing Direction:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QComboBox" name="directionBox">
+                <item>
+                 <property name="text">
+                  <string notr="true">Free View</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Top View</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Bottom View</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Left View</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Right View</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Front View</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Back View</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="stereo" >
-      <attribute name="title" >
+     <widget class="QWidget" name="stereo">
+      <attribute name="title">
        <string>Stereo</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_19" >
+      <layout class="QVBoxLayout" name="verticalLayout_19">
        <item>
-        <widget class="QGroupBox" name="groupBox_5" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox_5">
+         <property name="title">
           <string>Stereo Mode</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_14" >
+         <layout class="QVBoxLayout" name="verticalLayout_14">
           <item>
-           <widget class="QRadioButton" name="stereoOpengl" >
-            <property name="text" >
+           <widget class="QRadioButton" name="stereoOpengl">
+            <property name="text">
              <string>OpenGL stereo buffers</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="stereoAnaglyph" >
-            <property name="text" >
+           <widget class="QRadioButton" name="stereoAnaglyph">
+            <property name="text">
              <string>Red/Cyan Anaglyph</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="stereoCustomAnaglyph" >
-            <property name="text" >
+           <widget class="QRadioButton" name="stereoCustomAnaglyph">
+            <property name="text">
              <string>Custom Anaglyph</string>
             </property>
            </widget>
@@ -439,23 +548,23 @@ You can select multiple modes at the same time.</string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_7" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox_7">
+         <property name="title">
           <string>View properties</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_15" >
+         <layout class="QHBoxLayout" name="horizontalLayout_15">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_18" >
+           <layout class="QVBoxLayout" name="verticalLayout_18">
             <item>
-             <widget class="QLabel" name="label_11" >
-              <property name="text" >
+             <widget class="QLabel" name="label_11">
+              <property name="text">
                <string>Eye distance:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_12" >
-              <property name="text" >
+             <widget class="QLabel" name="label_12">
+              <property name="text">
                <string>Focal distance:</string>
               </property>
              </widget>
@@ -463,28 +572,28 @@ You can select multiple modes at the same time.</string>
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_20" >
+           <layout class="QVBoxLayout" name="verticalLayout_20">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_14" >
+             <layout class="QHBoxLayout" name="horizontalLayout_14">
               <item>
-               <widget class="QDoubleSpinBox" name="eyeDistance" >
-                <property name="decimals" >
+               <widget class="QDoubleSpinBox" name="eyeDistance">
+                <property name="decimals">
                  <number>4</number>
                 </property>
-                <property name="maximum" >
+                <property name="maximum">
                  <double>1.000000000000000</double>
                 </property>
-                <property name="singleStep" >
+                <property name="singleStep">
                  <double>0.010000000000000</double>
                 </property>
                </widget>
               </item>
               <item>
-               <spacer name="horizontalSpacer_8" >
-                <property name="orientation" >
+               <spacer name="horizontalSpacer_8">
+                <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" stdset="0" >
+                <property name="sizeHint" stdset="0">
                  <size>
                   <width>40</width>
                   <height>20</height>
@@ -495,48 +604,48 @@ You can select multiple modes at the same time.</string>
              </layout>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_16" >
+             <layout class="QHBoxLayout" name="horizontalLayout_16">
               <item>
-               <widget class="QLabel" name="label_13" >
-                <property name="font" >
+               <widget class="QLabel" name="label_13">
+                <property name="font">
                  <font>
                   <weight>75</weight>
                   <bold>true</bold>
                  </font>
                 </property>
-                <property name="text" >
+                <property name="text">
                  <string>Near</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QSlider" name="focalDistance" >
-                <property name="maximum" >
+               <widget class="QSlider" name="focalDistance">
+                <property name="maximum">
                  <number>1000</number>
                 </property>
-                <property name="singleStep" >
+                <property name="singleStep">
                  <number>10</number>
                 </property>
-                <property name="pageStep" >
+                <property name="pageStep">
                  <number>100</number>
                 </property>
-                <property name="value" >
+                <property name="value">
                  <number>50</number>
                 </property>
-                <property name="orientation" >
+                <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_14" >
-                <property name="font" >
+               <widget class="QLabel" name="label_14">
+                <property name="font">
                  <font>
                   <weight>75</weight>
                   <bold>true</bold>
                  </font>
                 </property>
-                <property name="text" >
+                <property name="text">
                  <string>Far</string>
                 </property>
                </widget>
@@ -549,174 +658,174 @@ You can select multiple modes at the same time.</string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_6" >
-         <property name="title" >
+        <widget class="QGroupBox" name="groupBox_6">
+         <property name="title">
           <string>Custom Anaglyph</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_17" >
+         <layout class="QVBoxLayout" name="verticalLayout_17">
           <item>
-           <widget class="QLabel" name="label_10" >
-            <property name="text" >
+           <widget class="QLabel" name="label_10">
+            <property name="text">
              <string>Result = (Left Color Matrix) * (Left eye pixel) + (Right Color Matrix) * (Right eye pixel)</string>
             </property>
-            <property name="textFormat" >
+            <property name="textFormat">
              <enum>Qt::RichText</enum>
             </property>
-            <property name="alignment" >
+            <property name="alignment">
              <set>Qt::AlignCenter</set>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_13" >
+           <layout class="QHBoxLayout" name="horizontalLayout_13">
             <item>
-             <widget class="QGroupBox" name="groupBox_8" >
-              <property name="title" >
+             <widget class="QGroupBox" name="groupBox_8">
+              <property name="title">
                <string>Left Color Matrix</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_15" >
+              <layout class="QVBoxLayout" name="verticalLayout_15">
                <item>
-                <layout class="QGridLayout" name="gridLayout" >
-                 <item row="0" column="0" >
-                  <widget class="QDoubleSpinBox" name="lcm0" >
-                   <property name="decimals" >
+                <layout class="QGridLayout" name="gridLayout">
+                 <item row="0" column="0">
+                  <widget class="QDoubleSpinBox" name="lcm0">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1" >
-                  <widget class="QDoubleSpinBox" name="lcm3" >
-                   <property name="decimals" >
+                 <item row="0" column="1">
+                  <widget class="QDoubleSpinBox" name="lcm3">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="2" >
-                  <widget class="QDoubleSpinBox" name="lcm6" >
-                   <property name="decimals" >
+                 <item row="0" column="2">
+                  <widget class="QDoubleSpinBox" name="lcm6">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0" >
-                  <widget class="QDoubleSpinBox" name="lcm1" >
-                   <property name="decimals" >
+                 <item row="1" column="0">
+                  <widget class="QDoubleSpinBox" name="lcm1">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1" >
-                  <widget class="QDoubleSpinBox" name="lcm4" >
-                   <property name="decimals" >
+                 <item row="1" column="1">
+                  <widget class="QDoubleSpinBox" name="lcm4">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="2" >
-                  <widget class="QDoubleSpinBox" name="lcm7" >
-                   <property name="decimals" >
+                 <item row="1" column="2">
+                  <widget class="QDoubleSpinBox" name="lcm7">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0" >
-                  <widget class="QDoubleSpinBox" name="lcm2" >
-                   <property name="decimals" >
+                 <item row="2" column="0">
+                  <widget class="QDoubleSpinBox" name="lcm2">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1" >
-                  <widget class="QDoubleSpinBox" name="lcm5" >
-                   <property name="decimals" >
+                 <item row="2" column="1">
+                  <widget class="QDoubleSpinBox" name="lcm5">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="2" >
-                  <widget class="QDoubleSpinBox" name="lcm8" >
-                   <property name="decimals" >
+                 <item row="2" column="2">
+                  <widget class="QDoubleSpinBox" name="lcm8">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
@@ -727,153 +836,153 @@ You can select multiple modes at the same time.</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_9" >
-              <property name="title" >
+             <widget class="QGroupBox" name="groupBox_9">
+              <property name="title">
                <string>Right Color Matrix</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_16" >
+              <layout class="QVBoxLayout" name="verticalLayout_16">
                <item>
-                <layout class="QGridLayout" name="gridLayout_2" >
-                 <item row="0" column="0" >
-                  <widget class="QDoubleSpinBox" name="rcm0" >
-                   <property name="decimals" >
+                <layout class="QGridLayout" name="gridLayout_2">
+                 <item row="0" column="0">
+                  <widget class="QDoubleSpinBox" name="rcm0">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1" >
-                  <widget class="QDoubleSpinBox" name="rcm3" >
-                   <property name="decimals" >
+                 <item row="0" column="1">
+                  <widget class="QDoubleSpinBox" name="rcm3">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="2" >
-                  <widget class="QDoubleSpinBox" name="rcm6" >
-                   <property name="decimals" >
+                 <item row="0" column="2">
+                  <widget class="QDoubleSpinBox" name="rcm6">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0" >
-                  <widget class="QDoubleSpinBox" name="rcm1" >
-                   <property name="decimals" >
+                 <item row="1" column="0">
+                  <widget class="QDoubleSpinBox" name="rcm1">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1" >
-                  <widget class="QDoubleSpinBox" name="rcm4" >
-                   <property name="decimals" >
+                 <item row="1" column="1">
+                  <widget class="QDoubleSpinBox" name="rcm4">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="2" >
-                  <widget class="QDoubleSpinBox" name="rcm7" >
-                   <property name="decimals" >
+                 <item row="1" column="2">
+                  <widget class="QDoubleSpinBox" name="rcm7">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0" >
-                  <widget class="QDoubleSpinBox" name="rcm2" >
-                   <property name="decimals" >
+                 <item row="2" column="0">
+                  <widget class="QDoubleSpinBox" name="rcm2">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="1" >
-                  <widget class="QDoubleSpinBox" name="rcm5" >
-                   <property name="decimals" >
+                 <item row="2" column="1">
+                  <widget class="QDoubleSpinBox" name="rcm5">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="2" >
-                  <widget class="QDoubleSpinBox" name="rcm8" >
-                   <property name="decimals" >
+                 <item row="2" column="2">
+                  <widget class="QDoubleSpinBox" name="rcm8">
+                   <property name="decimals">
                     <number>3</number>
                    </property>
-                   <property name="minimum" >
+                   <property name="minimum">
                     <double>-10.000000000000000</double>
                    </property>
-                   <property name="maximum" >
+                   <property name="maximum">
                     <double>10.000000000000000</double>
                    </property>
-                   <property name="singleStep" >
+                   <property name="singleStep">
                     <double>0.100000000000000</double>
                    </property>
                   </widget>
@@ -889,11 +998,11 @@ You can select multiple modes at the same time.</string>
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_2" >
-         <property name="orientation" >
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>374</height>
@@ -903,20 +1012,20 @@ You can select multiple modes at the same time.</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
        <string>Plugins</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_11" >
+      <layout class="QHBoxLayout" name="horizontalLayout_11">
        <item>
-        <widget class="QListWidget" name="pluginList" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Fixed" >
+        <widget class="QListWidget" name="pluginList">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="maximumSize" >
+         <property name="maximumSize">
           <size>
            <width>150</width>
            <height>16777215</height>
@@ -925,68 +1034,68 @@ You can select multiple modes at the same time.</string>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="pluginOptions" >
-         <property name="title" >
+        <widget class="QGroupBox" name="pluginOptions">
+         <property name="title">
           <string>Options</string>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="key" >
-      <attribute name="title" >
+     <widget class="QWidget" name="key">
+      <attribute name="title">
        <string>Key Bindings</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_12" >
+      <layout class="QVBoxLayout" name="verticalLayout_12">
        <item>
-        <widget class="QTreeWidget" name="keyTree" >
-         <property name="editTriggers" >
+        <widget class="QTreeWidget" name="keyTree">
+         <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
-         <property name="expandsOnDoubleClick" >
+         <property name="expandsOnDoubleClick">
           <bool>false</bool>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>1</string>
           </property>
          </column>
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="shortcutBox" >
-         <property name="enabled" >
+        <widget class="QGroupBox" name="shortcutBox">
+         <property name="enabled">
           <bool>false</bool>
          </property>
-         <property name="title" >
+         <property name="title">
           <string> Shortcut for selected action </string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_6" >
+         <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
-           <widget class="ShortcutButton" name="shortcutButton" >
-            <property name="text" >
+           <widget class="ShortcutButton" name="shortcutButton">
+            <property name="text">
              <string/>
             </property>
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_10" >
+           <layout class="QHBoxLayout" name="horizontalLayout_10">
             <item>
-             <widget class="QLabel" name="label_9" >
-              <property name="text" >
+             <widget class="QLabel" name="label_9">
+              <property name="text">
                <string>Default Shortcut:</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="defaultShortcut" >
-              <property name="font" >
+             <widget class="QLabel" name="defaultShortcut">
+              <property name="font">
                <font>
                 <weight>75</weight>
                 <bold>true</bold>
                </font>
               </property>
-              <property name="text" >
+              <property name="text">
                <string/>
               </property>
              </widget>
@@ -997,13 +1106,13 @@ You can select multiple modes at the same time.</string>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_12" >
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>
-          <spacer name="horizontalSpacer_7" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer_7">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>188</width>
              <height>23</height>
@@ -1012,14 +1121,14 @@ You can select multiple modes at the same time.</string>
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="presetsButton" >
-           <property name="toolTip" >
+          <widget class="QPushButton" name="presetsButton">
+           <property name="toolTip">
             <string>Restore default shortcuts</string>
            </property>
-           <property name="statusTip" >
+           <property name="statusTip">
             <string>Restore default shortcuts</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Restore Presets</string>
            </property>
           </widget>
@@ -1028,32 +1137,32 @@ You can select multiple modes at the same time.</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="Updates" >
-      <attribute name="title" >
+     <widget class="QWidget" name="Updates">
+      <attribute name="title">
        <string>Updates</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5" >
+      <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3" >
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3" >
+          <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QLabel" name="label_4" >
-             <property name="text" >
+            <widget class="QLabel" name="label_4">
+             <property name="text">
               <string>URL for updates</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_5" >
-             <property name="text" >
+            <widget class="QLabel" name="label_5">
+             <property name="text">
               <string>Username</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_6" >
-             <property name="text" >
+            <widget class="QLabel" name="label_6">
+             <property name="text">
               <string>Password</string>
              </property>
             </widget>
@@ -1061,34 +1170,34 @@ You can select multiple modes at the same time.</string>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4" >
+          <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="QLineEdit" name="updateURL" />
+            <widget class="QLineEdit" name="updateURL"/>
            </item>
            <item>
-            <widget class="QLineEdit" name="updateUser" />
+            <widget class="QLineEdit" name="updateUser"/>
            </item>
            <item>
-            <widget class="QLineEdit" name="updatePass" />
+            <widget class="QLineEdit" name="updatePass"/>
            </item>
           </layout>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_8" >
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4" >
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
-            <widget class="QPushButton" name="checkUpdateButton" >
-             <property name="text" >
+            <widget class="QPushButton" name="checkUpdateButton">
+             <property name="text">
               <string>Check</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="updateButton" >
-             <property name="text" >
+            <widget class="QPushButton" name="updateButton">
+             <property name="text">
               <string>Update</string>
              </property>
             </widget>
@@ -1096,11 +1205,11 @@ You can select multiple modes at the same time.</string>
           </layout>
          </item>
          <item>
-          <spacer name="horizontalSpacer_2" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>198</width>
              <height>27</height>
@@ -1111,20 +1220,20 @@ You can select multiple modes at the same time.</string>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5" >
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLabel" name="statusLabel" >
-           <property name="text" >
+          <widget class="QLabel" name="statusLabel">
+           <property name="text">
             <string>Check for Updates?</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_3" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>13</width>
              <height>17</height>
@@ -1135,9 +1244,9 @@ You can select multiple modes at the same time.</string>
         </layout>
        </item>
        <item>
-        <widget class="QTableWidget" name="updateList" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <widget class="QTableWidget" name="updateList">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -1146,37 +1255,37 @@ You can select multiple modes at the same time.</string>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="Debug" >
-      <attribute name="title" >
+     <widget class="QWidget" name="Debug">
+      <attribute name="title">
        <string>Debug</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_10" >
+      <layout class="QVBoxLayout" name="verticalLayout_10">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_7" >
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
-          <widget class="QCheckBox" name="slotDebugging" >
-           <property name="toolTip" >
-            <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+          <widget class="QCheckBox" name="slotDebugging">
+           <property name="toolTip">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:11pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Print information about plugins calling specific slots&lt;br />Currently supported slots:&lt;br />- updateView()&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">- updated_objects( id )&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Print information about plugins calling specific slots&lt;br /&gt;Currently supported slots:&lt;br /&gt;- updateView()&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- updated_objects( id )&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
-           <property name="statusTip" >
+           <property name="statusTip">
             <string>Print information about plugins calling specific slots</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Enable slot debugging</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer_5" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer_5">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>20</height>
@@ -1187,61 +1296,61 @@ p, li { white-space: pre-wrap; }
         </layout>
        </item>
        <item>
-        <widget class="Line" name="line_2" >
-         <property name="orientation" >
+        <widget class="Line" name="line_2">
+         <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_9" >
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <widget class="QCheckBox" name="renderPicking" >
-           <property name="toolTip" >
-            <string>&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
-&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+          <widget class="QCheckBox" name="renderPicking">
+           <property name="toolTip">
+            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Arial'; font-size:11pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Print information about plugins calling specific slots&lt;br />Currently supported slots:&lt;br />- updateView()&lt;/p>
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">- updated_objects( id )&lt;/p>&lt;/body>&lt;/html></string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Arial'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Print information about plugins calling specific slots&lt;br /&gt;Currently supported slots:&lt;br /&gt;- updateView()&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;- updated_objects( id )&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
-           <property name="statusTip" >
+           <property name="statusTip">
             <string>Print information about plugins calling specific slots</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>render picking</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="pickingRenderMode" >
+          <widget class="QComboBox" name="pickingRenderMode">
            <item>
-            <property name="text" >
+            <property name="text">
              <string>PICK_ANYTHING</string>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>PICK_VERTEX</string>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>PICK_EDGE</string>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>PICK_FACE</string>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>PICK_FRONT_VERTEX</string>
             </property>
            </item>
            <item>
-            <property name="text" >
+            <property name="text">
              <string>PICK_FRONT_EDGE</string>
             </property>
            </item>
@@ -1250,11 +1359,11 @@ p, li { white-space: pre-wrap; }
         </layout>
        </item>
        <item>
-        <spacer name="verticalSpacer_3" >
-         <property name="orientation" >
+        <spacer name="verticalSpacer_3">
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
            <height>340</height>
@@ -1267,20 +1376,20 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="applyButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="applyButton">
+       <property name="text">
         <string>&amp;Apply</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>188</width>
          <height>23</height>
@@ -1289,15 +1398,15 @@ p, li { white-space: pre-wrap; }
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="okButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="okButton">
+       <property name="text">
         <string>&amp;Ok</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
         <string>&amp;Cancel</string>
        </property>
       </widget>

@@ -38,8 +38,10 @@
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 #include <OpenFlipper/INIFile/INIFile.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #include <QColorDialog>
+#include <QMessageBox>
 
 OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyBinding>& _core, InverseKeyMap& _invKeys, QWidget *parent)
   : QWidget(parent),
@@ -56,7 +58,14 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect(checkUpdateButton,SIGNAL(clicked()),this,SLOT(slotCheckUpdates()));
   connect(updateButton,SIGNAL(clicked()),this,SLOT(slotGetUpdates()));
   updateButton->setEnabled(false);
+
+  // Viewer Settings
   connect( restrictFPS, SIGNAL(toggled(bool)), FPS, SLOT(setEnabled(bool)) );
+  connect( viewerList, SIGNAL(currentRowChanged(int)), this, SLOT(updateViewerSettings(int)) );
+  connect( availDrawModes, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(viewerSettingsChanged(QListWidgetItem*)) );
+  connect( projectionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(viewerSettingsChanged(int)));
+  connect( directionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(viewerSettingsChanged(int)));
+
   uint mode = 2;
   for (uint i=1; i < 22; i++) {
     std::vector< QString > dm = drawModeToDescriptions( mode );
@@ -66,16 +75,19 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 
       item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
 
-//       if (OpenFlipper::Options::standardDrawMode() )
-//         item->setCheckState(Qt::Checked);
-//       else
-        item->setCheckState(Qt::Unchecked);
+      item->setCheckState(Qt::Unchecked);
 
       availDrawModes->addItem( item );
     }
 
     mode = mode<<1;
+  }
 
+  for ( int i=0; i < PluginFunctions::viewers(); i++ ){
+    viewerList->addItem("Viewer " + QString::number(i+1) );
+    defaultDrawModes_.push_back( 0 );
+    defaultProjectionMode_.push_back( 0 );
+    defaultViewingDirections_.push_back( 0 );
   }
 
   pluginOptionsLayout = new QVBoxLayout;
@@ -121,6 +133,50 @@ void OptionsWidget::getBaseColor(){
   baseColorButton->setIcon( QIcon(color) );
 }
 
+void OptionsWidget::viewerSettingsChanged(QListWidgetItem* /*_item*/){
+  viewerSettingsChanged(0);
+};
+
+void OptionsWidget::viewerSettingsChanged(int /*_index*/){
+
+  if ( !updatingViewerSettings_ ){
+    //viewer defaults
+    std::vector< QString > mode;
+
+    for (int i=0; i < availDrawModes->count(); i++)
+      if (availDrawModes->item(i)->checkState() == Qt::Checked)
+	mode.push_back( availDrawModes->item(i)->text() );
+
+    defaultDrawModes_[         viewerList->currentRow() ] = descriptionsToDrawMode(mode);
+    defaultProjectionMode_[    viewerList->currentRow() ] = projectionBox->currentIndex();
+    defaultViewingDirections_[ viewerList->currentRow() ] = directionBox->currentIndex();
+  }
+};
+
+void OptionsWidget::updateViewerSettings(int _row){
+
+  updatingViewerSettings_ = true;
+
+  for (int i = 0 ; i < availDrawModes->count(); ++i )
+    availDrawModes->item( i )->setCheckState(Qt::Unchecked) ;
+
+  //Check the drawModes from StandardDrawMode
+  std::vector< QString > dm = drawModeToDescriptions( defaultDrawModes_[_row] );
+
+  for (uint i=0; i < dm.size(); i++){
+    if ( !dm.empty() ) {
+      QList< QListWidgetItem* > found = availDrawModes->findItems(dm[i],Qt::MatchExactly);
+      for(int k=0; k < found.count(); k++)
+        (found[k])->setCheckState(Qt::Checked);
+    }
+  }
+
+  projectionBox->setCurrentIndex( defaultProjectionMode_[_row] );
+  directionBox->setCurrentIndex(  defaultViewingDirections_[_row] );
+
+  updatingViewerSettings_ = false;
+}
+
 void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   //general
@@ -135,23 +191,6 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   //paths
   logFile->setText( OpenFlipper::Options::logFile() );
-
-  //viewer
-  wZoomFactor->setText( QString::number(OpenFlipper::Options::wheelZoomFactor(), 'f') );
-  wZoomFactorShift->setText( QString::number(OpenFlipper::Options::wheelZoomFactorShift(), 'f') );
-
-  wheelBox->setChecked( OpenFlipper::Options::showWheelsAtStartup() );
-  restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
-  FPS->setValue( OpenFlipper::Options::maxFrameRate() );
-
-  QPixmap color(16,16);
-  color.fill( OpenFlipper::Options::defaultBackgroundColor() );
-  backgroundButton->setIcon( QIcon(color) );
-
-  color.fill( OpenFlipper::Options::defaultBaseColor() );
-  baseColorButton->setIcon( QIcon(color) );
-
-  randomBaseColor->setChecked( OpenFlipper::Options::randomBaseColor() );
 
   //stereo
   stereoOpengl->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::OpenGL);
@@ -214,19 +253,34 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   connect(shortcutButton, SIGNAL(keyChanged()), this, SLOT(updateShortcut()) );
   connect(presetsButton, SIGNAL(clicked()), this, SLOT(restoreKeyPresets()) );
 
-  for (int i = 0 ; i < availDrawModes->count(); ++i )
-    availDrawModes->item( i )->setCheckState(Qt::Unchecked) ;
 
-  //Check the drawModes from StandardDrawMode
-  std::vector< QString > dm = drawModeToDescriptions( OpenFlipper::Options::standardDrawMode() );
+  //Init Viewer Settings
+  wZoomFactor->setText( QString::number(OpenFlipper::Options::wheelZoomFactor(), 'f') );
+  wZoomFactorShift->setText( QString::number(OpenFlipper::Options::wheelZoomFactorShift(), 'f') );
 
-  for (uint i=0; i < dm.size(); i++){
-    if ( !dm.empty() ) {
-      QList< QListWidgetItem* > found = availDrawModes->findItems(dm[i],Qt::MatchExactly);
-      for(int k=0; k < found.count(); k++)
-        (found[k])->setCheckState(Qt::Checked);
-    }
+  wheelBox->setChecked( OpenFlipper::Options::showWheelsAtStartup() );
+
+  restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
+  FPS->setValue( OpenFlipper::Options::maxFrameRate() );
+
+  QPixmap color(16,16);
+  color.fill( OpenFlipper::Options::defaultBackgroundColor() );
+  backgroundButton->setIcon( QIcon(color) );
+
+  color.fill( OpenFlipper::Options::defaultBaseColor() );
+  baseColorButton->setIcon( QIcon(color) );
+
+  randomBaseColor->setChecked( OpenFlipper::Options::randomBaseColor() );
+  
+  viewerList->setCurrentRow(0);
+
+  for ( int i=0; i < PluginFunctions::viewers(); i++ ){
+    defaultDrawModes_[i] = OpenFlipper::Options::defaultDrawMode(i);
+    defaultProjectionMode_[i] = OpenFlipper::Options::defaultProjectionMode(i);
+    defaultViewingDirections_[i] = OpenFlipper::Options::defaultViewingDirection(i);
   }
+
+  updateViewerSettings(0);
 
   updateVersionsTable();
 
@@ -462,14 +516,12 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::renderPicking(renderPicking->isChecked());
   OpenFlipper::Options::pickingRenderMode( pickingRenderMode->currentText() );
 
-  //standardDrawMode
-  std::vector< QString > mode;
-
-  for (int i=0; i < availDrawModes->count(); i++)
-    if (availDrawModes->item(i)->checkState() == Qt::Checked)
-      mode.push_back( availDrawModes->item(i)->text() );
-
-  OpenFlipper::Options::standardDrawMode( descriptionsToDrawMode(mode) );
+  //viewer defaults
+  for (int i=0; i < PluginFunctions::viewers(); i++){
+    OpenFlipper::Options::defaultDrawMode(         defaultDrawModes_[i],         i );
+    OpenFlipper::Options::defaultProjectionMode(   defaultProjectionMode_[i],    i );
+    OpenFlipper::Options::defaultViewingDirection( defaultViewingDirections_[i], i );
+  }
 
   applyShortcuts();
 

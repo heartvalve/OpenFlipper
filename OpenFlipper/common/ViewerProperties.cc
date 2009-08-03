@@ -99,5 +99,13 @@ namespace Viewer {
     emit setActionMode(_am);
   }
 
+  int ViewerProperties::currentViewingDirection(){
+    return currentViewingDirection_;
+  }
+
+  void ViewerProperties::currentViewingDirection(int _dir){
+    currentViewingDirection_ = _dir;
+  }
+
 }
 

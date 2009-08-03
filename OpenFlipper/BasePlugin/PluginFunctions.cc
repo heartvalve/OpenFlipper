@@ -249,6 +249,49 @@ void setBackColor( OpenMesh::Vec4f _color) {
     PluginFunctions::viewerProperties(i).backgroundColor(_color);
 }
 
+void setFixedView(int _mode, int _viewer ) {
+
+  if ( (_viewer != ACTIVE_VIEWER ) && ( ( _viewer < 0 ) || _viewer >= (int)examiner_widgets_.size()) ){
+    std::cerr << "Unable to set fixed view. Wrong viewer id (" << _viewer << ")" << std::endl;
+    return;
+  }
+
+  switch ( _mode ){
+    case VIEW_TOP : //TOP
+      PluginFunctions::viewingDirection( ACG::Vec3d(0.0, -1.0, 0.0), ACG::Vec3d(0.0, 0.0, -1.0), _viewer );
+      PluginFunctions::allowRotation(false, _viewer);
+      break;
+    case VIEW_BOTTOM : //BOTTOM
+      PluginFunctions::viewingDirection( ACG::Vec3d(0.0, 1.0, 0.0), ACG::Vec3d(0.0, 0.0, -1.0), _viewer );
+      PluginFunctions::allowRotation(false, _viewer);
+      break;
+    case VIEW_LEFT : //LEFT
+      PluginFunctions::viewingDirection( ACG::Vec3d(1.0, 0.0, 0.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
+      PluginFunctions::allowRotation(false, _viewer);
+      break;
+    case VIEW_RIGHT : //RIGHT
+      PluginFunctions::viewingDirection( ACG::Vec3d(-1.0, 0.0, 0.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
+      PluginFunctions::allowRotation(false, _viewer);
+      break;
+    case VIEW_FRONT : //FRONT
+      PluginFunctions::viewingDirection( ACG::Vec3d(0.0, 0.0, -1.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
+      PluginFunctions::allowRotation(false, _viewer);
+      break;
+    case VIEW_BACK : //BACK
+      PluginFunctions::viewingDirection( ACG::Vec3d(0.0, 0.0, 1.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
+      PluginFunctions::allowRotation(false, _viewer);
+      break;
+    default : //Free View
+      PluginFunctions::allowRotation(true, _viewer);
+      break;
+  }
+
+  if ( _viewer == ACTIVE_VIEWER )
+    viewerProperties(activeExaminer()).currentViewingDirection( _mode );
+  else
+    viewerProperties( _viewer ).currentViewingDirection( _mode );
+}
+
 QPoint mapToGlobal(const QPoint _point ) {
   return examiner_widgets_[activeExaminer_]->glMapToGlobal(_point);
 }
@@ -413,8 +456,27 @@ void orthographicProjection( int _viewer ) {
     std::cerr << "Requested illegal viewer for orthographicProjection()!!" << std::endl;
 }
 
-void allowRotation(bool _mode) {
-  examiner_widget_->allowRotation(_mode);
+void allowRotation(bool _mode, int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->allowRotation(_mode);
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->allowRotation(_mode);
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->allowRotation(_mode);
+  else
+    std::cerr << "Requested illegal viewer for allowRotation!!" << std::endl;
+}
+
+bool allowRotation( int _viewer ) {
+
+  if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    return examiner_widgets_[_viewer]->allowRotation();
+  else {
+
+    std::cerr << "Requested illegal viewer for isRotationAllowed!!" << std::endl;
+    return false;
+  }
 }
 
 void setMainGLContext() {
@@ -561,6 +623,21 @@ ACG::Vec3d viewingDirection(int _viewer) {
     std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
 
   return viewerProperties().glState().viewing_direction();
+}
+
+bool isProjectionOrthographic( int _viewer ) {
+
+  if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() ){
+
+    if ( examiner_widgets_[_viewer]->projectionMode() == 0) //ORTHOGRAPHIC_PROJECTION
+      return true;
+    else
+      return false;
+
+  } else
+    std::cerr << "Requested illegal viewer for isProjectionOrthographic!!" << std::endl;
+
+  return false;
 }
 
 ACG::Vec3d eyePos(int _viewer) {
