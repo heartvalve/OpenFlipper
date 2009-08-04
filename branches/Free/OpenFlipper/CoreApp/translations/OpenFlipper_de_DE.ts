@@ -16,7 +16,7 @@
     <message>
         <location filename="../../widgets/aboutWidget/aboutWidget.ui" line="35"/>
         <source>FreeFont</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../widgets/aboutWidget/aboutWidget.ui" line="53"/>
@@ -27,12 +27,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;The OpenFlipper project uses the FreeFont fonts for rendering.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;You can get the fonts from https://savannah.gnu.org/projects/freefont/&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;Das OpenFlipper Projekt benutzt FreeFont Schriften fürs zeichnen.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;;&quot;&gt;Sie können diese Schriften von https://savannah.gnu.org/projects/freefont/ herunterladen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../widgets/aboutWidget/aboutWidget.ui" line="67"/>
         <source>SimpleOpt</source>
-        <translation type="unfinished"></translation>
+        <translation>SimpleOpt</translation>
     </message>
     <message>
         <location filename="../../widgets/aboutWidget/aboutWidget.ui" line="85"/>
@@ -104,7 +110,7 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <location filename="../../Core/openFunctions.cc" line="470"/>
         <location filename="../../Core/saveSettings.cc" line="57"/>
         <source>INI files (*.ini);;OBJ files (*.obj )</source>
-        <translation type="unfinished"></translation>
+        <translation>INI Dateien (*.ini);;OBJ Dateien (*.obj )</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="55"/>
@@ -117,59 +123,59 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="185"/>
         <source>Viewing Direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachtungs Richtung</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="193"/>
         <source>Free View</source>
-        <translation type="unfinished"></translation>
+        <translation>Freies Betrachten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="202"/>
         <source>Top View</source>
-        <translation type="unfinished"></translation>
+        <translation>Draufsicht</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="210"/>
         <source>Bottom View</source>
-        <translation type="unfinished"></translation>
+        <translation>Boden</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="218"/>
         <source>Left View</source>
-        <translation type="unfinished"></translation>
+        <translation>Linke Seite</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="226"/>
         <source>Right View</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechte Seite</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="234"/>
         <source>Front View</source>
-        <translation type="unfinished"></translation>
+        <translation>Frontal Ansicht</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="242"/>
         <source>Back View</source>
-        <translation type="unfinished"></translation>
+        <translation>Rückansicht</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="335"/>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="336"/>
         <source>Set the background color for the current viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundfarbe in aktivem Betrachter ändern</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="300"/>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="301"/>
         <source>Main Toolbar</source>
-        <translation>Haupt Menüleiste</translation>
+        <translation>Haupt-Menüleiste</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="302"/>
         <source>MainToolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Haupt-Menüleiste</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="311"/>
@@ -179,7 +185,7 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="315"/>
         <source>ViewerToolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter-Menüleiste</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="321"/>
@@ -244,7 +250,7 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="381"/>
         <source>Switch &lt;b&gt;view mode&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter Modus ändern.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="382"/>
@@ -780,69 +786,69 @@ Soll die Datei überschrieben werden?</translation>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="85"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="88"/>
         <source>Enable the logfile</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabe Datei aktivieren</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="91"/>
         <source>Logfile enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabe Datei aktiviert</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="98"/>
         <source>Logger (CTRL+L)</source>
-        <translation type="unfinished"></translation>
+        <translation>Nachrichten Fenster (CTRL+L)</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="104"/>
         <source>Hidden</source>
-        <translation type="unfinished"></translation>
+        <translation>Versteckt</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="111"/>
         <source>Normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="118"/>
         <source>Embedded into GL scene</source>
-        <translation type="unfinished"></translation>
+        <translation>In die GL Szene eingebettet</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="142"/>
         <source>Paths</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfade</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="148"/>
         <source>Logfile:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabe Datei:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="155"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="158"/>
         <source>filename (including path) of the logfile</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateiname ( inklusive Pfad ) der Ausgabe Datei</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="166"/>
         <source>Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="172"/>
         <source> Mouse Wheel </source>
-        <translation type="unfinished"></translation>
+        <translation>Mausrad</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="190"/>
         <source>MouseWheel Zoom Sensitivity:</source>
-        <translation type="unfinished"></translation>
+        <translation>Mausrad vergrößerungs Empfindlichkeit:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="203"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="206"/>
         <source>Set the factor to control the zooming with the mouse-wheel</source>
-        <translation type="unfinished"></translation>
+        <translation>Faktor zur Kontrolle der vergrößerung über das Mausrad</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="209"/>
@@ -853,152 +859,153 @@ Soll die Datei überschrieben werden?</translation>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="216"/>
         <source>MouseWheel Zoom Sensitivity (shift):</source>
-        <translation type="unfinished"></translation>
+        <translation>Mausrad vergrößerungs Empfindlichkeit(shift):</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="229"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="232"/>
         <source>Set the factor to control the zooming with the mouse-wheel while the shift key is pressed</source>
-        <translation type="unfinished"></translation>
+        <translation>Faktor zur Kontrolle der vergrößerung über das Mausrad während shift gedrückt ist</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="245"/>
         <source>General Viewer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Generelle Betrachter Einstellungen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="253"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="256"/>
         <source>restrict maximum framerate</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Bildwiederholrate beschränken</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="259"/>
         <source>Restrict Framerate</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildwiederholrate beschränken</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="282"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="285"/>
         <source>maximum framerate</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale Bildwiederholrate</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="298"/>
         <source>FPS</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="309"/>
         <source>Default background color</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard Hintergrund Farbe</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="316"/>
         <source>Default base color</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard Grundfarbe</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="338"/>
         <source>use random base color</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutze zufällige Grundfarbe</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="345"/>
         <source>Show wheels for zooming in the corners of viewers</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Kontroll Räder an den Ecken der Betrachter</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="348"/>
         <source>Show wheels</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Räder</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="364"/>
         <source>Viewer Specific Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter spezifische Einstellungen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="372"/>
         <source>Viewer:</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="415"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="432"/>
         <source>This list shows the draw modes OpenFlipper uses at startup.
 You can select multiple modes at the same time.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Liste zeigt die Zeichenmodi die OpenFlipper beim Start verwendet.
+Es können mehrere gleichzeitig ausgewählt werden.</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="419"/>
         <source>DrawMode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeichen Modi:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="442"/>
         <source>Projection:</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektion:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="450"/>
         <source>Orthogonal</source>
-        <translation type="unfinished"></translation>
+        <translation>Senkrecht</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="455"/>
         <source>Perspective</source>
-        <translation type="unfinished"></translation>
+        <translation>Perspektivisch</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="463"/>
         <source>Viewing Direction:</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter Richtung:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="476"/>
         <source>Top View</source>
-        <translation type="unfinished"></translation>
+        <translation>Draufsicht</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="481"/>
         <source>Bottom View</source>
-        <translation type="unfinished"></translation>
+        <translation>Boden</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="486"/>
         <source>Left View</source>
-        <translation type="unfinished"></translation>
+        <translation>Linke Seite</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="491"/>
         <source>Right View</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechte Seite</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="496"/>
         <source>Front View</source>
-        <translation type="unfinished"></translation>
+        <translation>Frontal Ansicht</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="501"/>
         <source>Back View</source>
-        <translation type="unfinished"></translation>
+        <translation>Rückansicht</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="517"/>
         <source>Stereo</source>
-        <translation type="unfinished">Stereo</translation>
+        <translation>Stereo</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="523"/>
         <source>Stereo Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Stereo Modus</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="529"/>
         <source>OpenGL stereo buffers</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenGL Stereo Puffer</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="536"/>
@@ -1014,27 +1021,27 @@ You can select multiple modes at the same time.</source>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="553"/>
         <source>View properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter Eigenschaften</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="561"/>
         <source>Eye distance:</source>
-        <translation type="unfinished"></translation>
+        <translation>Augen Abstand:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="568"/>
         <source>Focal distance:</source>
-        <translation type="unfinished"></translation>
+        <translation>Fokal Distanz</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="617"/>
         <source>Near</source>
-        <translation type="unfinished"></translation>
+        <translation>Nah</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="649"/>
         <source>Far</source>
-        <translation type="unfinished"></translation>
+        <translation>Fern</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="669"/>
@@ -1059,12 +1066,12 @@ You can select multiple modes at the same time.</source>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1047"/>
         <source>Key Bindings</source>
-        <translation type="unfinished"></translation>
+        <translation>Tastatur Kürzel</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1060"/>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1071"/>
@@ -1090,7 +1097,7 @@ You can select multiple modes at the same time.</source>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1142"/>
         <source>Updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Updates</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1152"/>
@@ -1125,7 +1132,7 @@ You can select multiple modes at the same time.</source>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1260"/>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Debug</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1268"/>
@@ -1152,7 +1159,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1321"/>
         <source>render picking</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswahl (Picking) zeichnen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1329"/>
@@ -1187,17 +1194,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1383"/>
         <source>&amp;Apply</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Anwenden</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1403"/>
         <source>&amp;Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ok</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1410"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -1245,47 +1252,47 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.ui" line="17"/>
         <source>Take Snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>Foto erstellen</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.ui" line="25"/>
         <source>Output filename:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabe Dateiname:</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.ui" line="37"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.ui" line="48"/>
         <source> Resolution </source>
-        <translation type="unfinished"></translation>
+        <translation>Auflösung</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.ui" line="54"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite:</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.ui" line="74"/>
         <source>Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhe:</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.ui" line="107"/>
         <source>Change now</source>
-        <translation type="unfinished"></translation>
+        <translation>Jetzt ändern</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.ui" line="119"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.ui" line="139"/>
         <source>Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>Ok</translation>
     </message>
 </context>
 <context>
@@ -1293,77 +1300,77 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.cc" line="49"/>
         <source>Output File</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabe Dateiname</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.cc" line="51"/>
         <source>Images (*.jpg)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder (*.jpg)</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="17"/>
         <source>Start Video Capturing</source>
-        <translation type="unfinished"></translation>
+        <translation>Starte Video Aufzeichnung</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="25"/>
         <source>Output filename:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgabe Dateiname:</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="37"/>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="46"/>
         <source>Frames per second:</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder pro Sekunde:</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="68"/>
         <source> Capture Region </source>
-        <translation type="unfinished"></translation>
+        <translation>Aufnahme Region</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="74"/>
         <source>Viewers only</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur Betrachter</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="81"/>
         <source>Application</source>
-        <translation type="unfinished"></translation>
+        <translation>Anwendung</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="94"/>
         <source> Video Resolution </source>
-        <translation type="unfinished"></translation>
+        <translation>Video Auflösung</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="100"/>
         <source>Width:</source>
-        <translation type="unfinished"></translation>
+        <translation>Breite:</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="120"/>
         <source>Height:</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhe:</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="153"/>
         <source>Change now</source>
-        <translation type="unfinished"></translation>
+        <translation>Jetzt ändern</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="165"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.ui" line="185"/>
         <source>Start Capturing</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufnahme starten</translation>
     </message>
 </context>
 <context>
@@ -1371,22 +1378,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/addEmptyWidget/addEmpty.ui" line="13"/>
         <source>Add Empty Object</source>
-        <translation type="unfinished">Neues Objekt </translation>
+        <translation>Neues Objekt erstellen</translation>
     </message>
     <message>
         <location filename="../../widgets/addEmptyWidget/addEmpty.ui" line="21"/>
         <source>Datatype:</source>
-        <translation type="unfinished"></translation>
+        <translation>Datentyp:</translation>
     </message>
     <message>
         <location filename="../../widgets/addEmptyWidget/addEmpty.ui" line="68"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../widgets/addEmptyWidget/addEmpty.ui" line="88"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinzufügen</translation>
     </message>
 </context>
 <context>
@@ -1394,37 +1401,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="13"/>
         <source>Change View Mode</source>
-        <translation type="unfinished">Ansicht ändern</translation>
+        <translation>Ansicht ändern</translation>
     </message>
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="19"/>
         <source> View Modes </source>
-        <translation type="unfinished"></translation>
+        <translation>Ansichten</translation>
     </message>
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="32"/>
         <source>Remove Mode</source>
-        <translation type="unfinished">Ansicht entfernen</translation>
+        <translation>Ansicht entfernen</translation>
     </message>
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="42"/>
         <source>Tool Widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>Toolboxen</translation>
     </message>
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="123"/>
         <source>Save Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Zusammenstellung speichern</translation>
     </message>
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="137"/>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="157"/>
         <source>&amp;Ok</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ok</translation>
     </message>
 </context>
 <context>
@@ -1463,7 +1470,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="242"/>
         <source>Cannot Save ViewMode. Name already taken by a different mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Ansicht nicht speichern. Der Name ist bereits in Verwendung.</translation>
     </message>
 </context>
 </TS>
