@@ -84,6 +84,10 @@ QDir shaderDir();
 DLLEXPORT
 QDir iconDir();
 
+/// Returns the Path to the translation files
+DLLEXPORT
+QDir translationsDir();
+
 /// Returns the Path to Fonts
 DLLEXPORT
 QDir fontsDir();
@@ -128,6 +132,10 @@ QString dataDirStr();
 DLLEXPORT
 QIcon& OpenFlipperIcon();
 
+/// Returns the Path to the translation files
+DLLEXPORT
+QString translationsDirStr();
+
 /// Returns the Path to Fonts
 DLLEXPORT
 QString fontsDirStr();
@@ -163,6 +171,10 @@ void scriptDir( QDir _dir);
 /// Sets the Path to the Icons
 DLLEXPORT
 void iconDir(QDir _dir);
+
+/// Sets the Path to the translation files
+DLLEXPORT
+void translationsDir( QDir _dir);
 
 /// Sets the Path to the Fonts
 DLLEXPORT
@@ -203,6 +215,10 @@ bool scriptDir(QString _dir);
 /// Sets the Path to the Icons
 DLLEXPORT
 bool iconDir(QString _dir);
+
+/// Sets the Path to the translation files
+DLLEXPORT
+bool translationsDir(QString _dir);
 
 /// Sets the Path to the Fonts
 DLLEXPORT

@@ -76,6 +76,9 @@ static QDir iconDir_;
 /// Stores the OpenFlipper Icon
 static QIcon* OpenFlipperIcon_ = 0;
 
+/// Stores the Path to the translation files
+static QDir translationsDir_;
+
 /// Stores the Path to the Fonts
 static QDir fontsDir_;
 
@@ -296,6 +299,7 @@ QDir textureDir()       { return textureDir_; }
 QDir licenseDir()       { return licenseDir_; }
 QDir scriptDir()        { return scriptDir_; }
 QDir iconDir()          { return iconDir_;    }
+QDir translationsDir()  { return translationsDir_;   }
 QDir fontsDir()         { return fontsDir_;   }
 QDir helpDir()         	{ return helpDir_;    }
 QDir dataDir()          { return dataDir_;    }
@@ -309,11 +313,12 @@ QString pluginDirStr()         { return pluginDir_.absolutePath();         }
 QString shaderDirStr()         { return shaderDir_.absolutePath();         }
 QString textureDirStr()        { return textureDir_.absolutePath();        }
 QString licenseDirStr()        { return licenseDir_.absolutePath();        }
-QString scriptDirStr()         { return scriptDir_.absolutePath();        }
+QString scriptDirStr()         { return scriptDir_.absolutePath();         } 
 QString iconDirStr()           { return iconDir_.absolutePath();           }
+QString translationsDirStr()   { return translationsDir_.absolutePath();   }
 QString fontsDirStr()          { return fontsDir_.absolutePath();          }
-QString helpDirStr()           { return helpDir_.absolutePath();          }
-QString dataDirStr()           { return dataDir_.absolutePath();          }
+QString helpDirStr()           { return helpDir_.absolutePath();           }
+QString dataDirStr()           { return dataDir_.absolutePath();           }
 QString currentDirStr()        { return currentDir_.absolutePath();        }
 QString currentScriptDirStr()  { return currentScriptDir_.absolutePath();  }
 QString currentTextureDirStr() { return currentTextureDir_.absolutePath(); }
@@ -327,9 +332,10 @@ void textureDir(QDir _dir)           { textureDir_        = _dir; }
 void licenseDir(QDir _dir)           { licenseDir_        = _dir; }
 void scriptDir(QDir _dir)            { scriptDir_         = _dir; }
 void iconDir(QDir _dir)              { iconDir_           = _dir; }
-void fontsDir(QDir _dir)             { fontsDir_          = _dir;}
-void helpDir(QDir _dir)              { helpDir_           = _dir;}
-void dataDir(QDir _dir)              { dataDir_           = _dir;}
+void tanslationsDir(QDir _dir)       { translationsDir_   = _dir; }
+void fontsDir(QDir _dir)             { fontsDir_          = _dir; }
+void helpDir(QDir _dir)              { helpDir_           = _dir; }
+void dataDir(QDir _dir)              { dataDir_           = _dir; }
 void configDir(QDir _dir)            { configDir_         = _dir; }
 void currentDir(QDir _dir)           { currentDir_        = _dir; }
 void currentScriptDir(QDir _dir)     { currentScriptDir_  = _dir; }
@@ -419,6 +425,16 @@ QIcon& OpenFlipperIcon() {
   }
 
   return *OpenFlipperIcon_;
+}
+
+
+bool translationsDir(QString      _dir) {
+  QDir tmp(_dir);
+  if (tmp.exists()) {
+    translationsDir_ = tmp;
+    return true;
+  }
+  return false;
 }
 
 bool fontsDir(QString      _dir) {
