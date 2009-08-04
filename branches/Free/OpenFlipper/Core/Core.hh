@@ -903,6 +903,8 @@ private:
 
     /// If enabled, this timer will block screen refresh if done more then 30 times per second.
     QTimer* redrawTimer_;
+    
+    
 };
 
 /// Special print function for core logger
