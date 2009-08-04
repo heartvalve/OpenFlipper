@@ -223,7 +223,7 @@ function (_build_openflipper_plugin plugin)
       acg_list_filter (ui)
     endif ()
 
-    if (${${_PLUGIN}_LICENSEMANAGER})
+    if (${_PLUGIN}_LICENSEMANAGER)
       _plugin_licensemanagement ()
     endif ()
 
@@ -315,7 +315,7 @@ function (_build_openflipper_plugin plugin)
       endif ()
     endforeach ()
 
-    if (${${_PLUGIN}_TRANSLATION_LANGUAGES})
+    if ( ${_PLUGIN}_TRANSLATION_LANGUAGES)
       set (trans_files ${uic_targets})
       list (APPEND trans_files ${sources})
       list (APPEND trans_files ${headers})
