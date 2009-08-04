@@ -464,6 +464,8 @@ endfunction ()
 #generates qt translations
 function (acg_add_translations _target _languages _sources)
 
+  message(STATUS "Sources: ${_sources}")
+
   string (TOUPPER ${_target} _TARGET)
   # generate/use translation files
   # run with UPDATE_TRANSLATIONS set to on to build qm files
@@ -473,23 +475,30 @@ function (acg_add_translations _target _languages _sources)
   set (_ts_files)
 
   foreach (lang ${_languages})
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/translations/${_target}_${lang}.ts" OR UPDATE_TRANSLATIONS_${_TARGET})
-      list (APPEND _new_ts_files "${_target}_${lang}.ts")
+    if (NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/translations/${_target}_${lang}.ts" OR UPDATE_TRANSLATIONS_${_TARGET})
+      list (APPEND _new_ts_files "translations/${_target}_${lang}.ts")
     else ()
-      list (APPEND _ts_files "${_target}_${lang}.ts")
+      list (APPEND _ts_files "translations/${_target}_${lang}.ts")
     endif ()
   endforeach ()
 
+
+  message(STATUS "New TS: ${_new_ts_files}")
+
   set (_qm_files)
-  if (${_new_ts_files})
+  if ( _new_ts_files )
     qt4_create_translation(_qm_files ${_sources} ${_new_ts_files})
   endif ()
 
-  if (${_ts_files})
+  message(STATUS "ts: ${_ts_files}")
+
+  if ( _ts_files )
+    message(STATUS "Da")
     qt4_add_translation(_qm_files2 ${_ts_files})
     list (APPEND _qm_files ${_qm_files2})
   endif ()
 
+  message(STATUS "QM: ${_qm_files}")
 
   # create a target for the translation files ( and object files )
   # Use this target, to update only the translations
