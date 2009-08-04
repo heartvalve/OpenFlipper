@@ -329,8 +329,8 @@ int main(int argc, char **argv)
     
     // install translator for Core Application
     QTranslator myappTranslator;
-    std::cerr << "Loading own translations from: " << QString(OpenFlipper::Options::translationsDirStr() + QDir::separator() + "CoreApp_" + QLocale::system().name()).toStdString() << std::endl;
-    if ( myappTranslator.load(OpenFlipper::Options::translationsDirStr() + QDir::separator() + "CoreApp_" + QLocale::system().name()) )
+    std::cerr << "Loading own translations from: " << QString(OpenFlipper::Options::translationsDirStr() + QDir::separator() + "OpenFlipper_" + QLocale::system().name()).toStdString() << std::endl;
+    if ( myappTranslator.load(OpenFlipper::Options::translationsDirStr() + QDir::separator() + "OpenFlipper__" + QLocale::system().name()) )
       std::cerr << "Loaded" << std::endl;
     
     app.installTranslator(&myappTranslator);    
