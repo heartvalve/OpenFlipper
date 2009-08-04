@@ -1,0 +1,23 @@
+<!DOCTYPE QPH>
+<QPH sourcelanguage="en" language="de_DE">
+<phrase>
+    <source>Close</source>
+    <target>Schließen</target>
+</phrase>
+<phrase>
+    <source>File</source>
+    <target>Datei</target>
+</phrase>
+<phrase>
+    <source>View</source>
+    <target>Ansicht</target>
+</phrase>
+<phrase>
+    <source>Tools</source>
+    <target>Zubehör</target>
+</phrase>
+<phrase>
+    <source>Output filename:</source>
+    <target>Ausgabe Dateiname:</target>
+</phrase>
+</QPH>
