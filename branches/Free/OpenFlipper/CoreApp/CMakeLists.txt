@@ -11,8 +11,6 @@ include_directories (
   ${GLUT_INCLUDE_DIR}
 )
 
-set (COREAPP_FILES_TO_TRANSLATE )
-
 link_directories (
   ${GLEW_LIBRARY_DIR}
 )
@@ -90,6 +88,7 @@ if (APPLE)
      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../Icons/OpenFlipper_Icon.icns" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/OpenFlipper.icns"                         
    )    
 endif ()
+
 
 set (COREAPP_FILES_TO_TRANSLATE ${COREAPP_FILES_TO_TRANSLATE} ${sources} ${ui} ${headers})
 

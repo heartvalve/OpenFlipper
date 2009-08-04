@@ -110,12 +110,12 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   // File Menu
   // ======================================================================
-  fileMenu_ = new QMenu(tr("&File"));
+  fileMenu_ = new QMenu(tr("File"));
   menuBar()->addMenu(fileMenu_ );
-  menus_[tr("&File")] = fileMenu_;
+  menus_[tr("File")] = fileMenu_;
 
   //Clear all
-  QAction* AC_clear_all = new QAction(tr("&Clear All"), this);;
+  QAction* AC_clear_all = new QAction(tr("Clear All"), this);;
   AC_clear_all->setStatusTip(tr("Clear all Objects"));
   AC_clear_all->setWhatsThis("Close all open Objects");
   AC_clear_all->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-clear.png"));
@@ -125,8 +125,7 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addSeparator();
 
   //Load object
-  QAction* AC_Load = new QAction(tr("&Load Object"), this);
-//   AC_Load->setShortcut (Qt::CTRL + Qt::Key_O);
+  QAction* AC_Load = new QAction(tr("Load Object"), this);
   AC_Load->setStatusTip(tr("Load an object"));
   AC_Load->setWhatsThis("Load a new object");
   AC_Load->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open.png"));
@@ -135,7 +134,7 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addAction(AC_Load);
 
   //Add empty object
-  QAction* AC_AddEmpty = new QAction(tr("&Add Empty Object"), this);
+  QAction* AC_AddEmpty = new QAction(tr("Add Empty Object"), this);
   AC_AddEmpty->setStatusTip(tr("Add an empty object"));
   AC_AddEmpty->setWhatsThis("Creates a new empty object of a given type");
   AC_AddEmpty->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"add-empty-object.png"));
@@ -145,7 +144,7 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addSeparator();
 
   //Save object
-  QAction* AC_Save = new QAction(tr("&Save Object"), this);
+  QAction* AC_Save = new QAction(tr("Save Object"), this);
 //   AC_Save->setShortcut (Qt::CTRL + Qt::Key_S);
   AC_Save->setStatusTip(tr("Save currently selected objects"));
   AC_Save->setWhatsThis("Saves all currently selected objects");
@@ -154,7 +153,7 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addAction(AC_Save);
 
   //Save object to
-  QAction* AC_Save_to = new QAction(tr("&Save Object To"), this);
+  QAction* AC_Save_to = new QAction(tr("Save Object To"), this);
   AC_Save_to->setStatusTip(tr("Save current Object(s) To"));
   AC_Save_to->setWhatsThis("Saves all currently selected objects under a new name");
   AC_Save_to->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save-as.png"));
@@ -164,7 +163,7 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addSeparator();
 
   //Load ini
-  QAction* AC_load_ini = new QAction(tr("&Load Settings"), this);
+  QAction* AC_load_ini = new QAction(tr("Load Settings"), this);
   AC_load_ini->setStatusTip(tr("Load Settings from INI file"));
   AC_load_ini->setWhatsThis("Load a previous settings from file (objects,colors,...)");
   AC_load_ini->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"load-settings.png"));
@@ -172,7 +171,7 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addAction(AC_load_ini);
 
   //Save ini
-  QAction* AC_save_ini = new QAction(tr("&Save Settings"), this);
+  QAction* AC_save_ini = new QAction(tr("Save Settings"), this);
   AC_save_ini->setStatusTip(tr("Save current settings to INI file"));
   AC_save_ini->setWhatsThis("Save settings to file (objects,colors,...)");
   AC_save_ini->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"save-settings.png"));
@@ -182,7 +181,7 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addSeparator();
 
   //Options
-  QAction* AC_Options = new QAction(tr("&Options"), this);
+  QAction* AC_Options = new QAction(tr("Options"), this);
   AC_Options->setStatusTip(tr("Edit OpenFlipper Options"));
   AC_Options->setWhatsThis("Edit OpenFlipper Options");
   AC_Options->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"options.png"));
@@ -193,7 +192,7 @@ void CoreWidget::setupMenuBar()
   fileMenuEnd_ = fileMenu_->addSeparator();
 
   //Recent files
-  recentFilesMenu_ = new QMenu(tr("&Recent Files"));
+  recentFilesMenu_ = new QMenu(tr("Recent Files"));
   recentFilesMenu_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-open-recent.png"));
   recentFilesMenu_->setWhatsThis("Open recent files");
   connect(recentFilesMenu_,SIGNAL(triggered(QAction*)),this,SIGNAL(recentOpen(QAction*)));
@@ -202,7 +201,7 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addSeparator();
 
   //Main Application exit menu entry
-  QAction* AC_exit = new QAction(tr("&Exit"), this);;
+  QAction* AC_exit = new QAction(tr("Exit"), this);;
   AC_exit->setShortcut (Qt::CTRL + Qt::Key_Q);
   AC_exit->setStatusTip(tr("Exit Application"));
   recentFilesMenu_->setWhatsThis("Close OpenFlipper");
@@ -214,9 +213,9 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   // View Menu
   // ======================================================================
-  viewMenu_ = new QMenu(tr("&View"));
+  viewMenu_ = new QMenu(tr("View"));
   menuBar()->addMenu(viewMenu_ );
-  menus_[tr("&View")] = viewMenu_;
+  menus_[tr("View")] = viewMenu_;
 
   slotUpdateGlobalDrawMenu();
   viewMenu_->addMenu(globalDrawMenu_);
@@ -356,7 +355,7 @@ void CoreWidget::setupMenuBar()
 
   viewMenu_->addSeparator();
 
-  QAction* setGlobalBackgroundColor = new QAction(tr("&Set Background Color"), this);;
+  QAction* setGlobalBackgroundColor = new QAction(tr("Set Background Color"), this);;
   setGlobalBackgroundColor->setToolTip(tr("Set Background Color for all viewers"));
   setGlobalBackgroundColor->setStatusTip(tr("Set Background Color for all viewers"));
   setGlobalBackgroundColor->setWhatsThis("Set Background Color for all viewers");
@@ -368,9 +367,9 @@ void CoreWidget::setupMenuBar()
   // Tools Menu
   //===========================================================================================================================
 
-  toolsMenu_ = new QMenu(tr("&Tools"));
+  toolsMenu_ = new QMenu(tr("Tools"));
   menuBar()->addMenu(toolsMenu_ );
-  menus_[tr("&Tools")] = toolsMenu_;
+  menus_[tr("Tools")] = toolsMenu_;
 
   QAction* sceneGraphAction = new QAction( "Show SceneGraph " ,toolsMenu_ );
   sceneGraphAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"scenegraph.png") );
@@ -405,12 +404,12 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   // help Menu
   // ======================================================================
-  helpMenu_ = new QMenu(tr("&Help"));
+  helpMenu_ = new QMenu(tr("Help"));
   menuBar()->addMenu(helpMenu_);
-  menus_[tr("&Help")] = helpMenu_;
+  menus_[tr("Help")] = helpMenu_;
 
   //Open Help Browser
-  QAction* AC_HelpBrowser = new QAction(tr("&Help"), this);
+  QAction* AC_HelpBrowser = new QAction(tr("Help"), this);
   AC_HelpBrowser->setStatusTip(tr("Open Help Browser with Documentation"));
   AC_HelpBrowser->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png"));
   AC_HelpBrowser->setWhatsThis("Open the <b>Help Browser</b>");
@@ -426,7 +425,7 @@ void CoreWidget::setupMenuBar()
   helpMenu_->addSeparator();
 
   //show plugins
-  QAction* AC_Plugins = new QAction(tr("&Plugins"), this);
+  QAction* AC_Plugins = new QAction(tr("Plugins"), this);
   AC_Plugins->setStatusTip(tr("Show loaded plugins"));
   AC_Plugins->setWhatsThis("Show loaded plugins");
   AC_Plugins->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"network-connect.png"));
@@ -436,7 +435,7 @@ void CoreWidget::setupMenuBar()
   helpMenu_->addSeparator();
 
   //About Action
-  QAction* AC_About = new QAction(tr("&About"), this);
+  QAction* AC_About = new QAction(tr("About"), this);
   AC_About->setStatusTip(tr("About OpenFlipper"));
   AC_About->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-about.png"));
   AC_About->setWhatsThis("This entry shows information about <b>OpenFlipper</b>");
@@ -569,7 +568,7 @@ void CoreWidget::slotViewMenuAboutToShow() {
     globalMultisamplingAction_->setChecked( Qt::Unchecked );
     globalMultisamplingAction_->setToolTip(tr("Enable Multisampling for all viewers"));  
     globalMultisamplingAction_->setStatusTip(tr("Enable Multisampling for all viewers"));  
-    globalMultisamplingAction_->setText(tr("&Enable Multisampling"));
+    globalMultisamplingAction_->setText(tr("Enable Multisampling"));
   }
   
   uint perspectiveCount = 0;
