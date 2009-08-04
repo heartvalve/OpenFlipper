@@ -32,20 +32,6 @@ macro (acg_modify_project_dirs)
   endif ()
 endmacro ()
 
-# function to copy all translation files from one directory to the OpenFlipper translation directory
-# parameters: BuildTarget .. The command will be executed after the target is build
-function ( of_copy_translations _target) 
-  
-  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Translations )
-
-  add_custom_command (TARGET ${_target} POST_BUILD
-                      COMMAND ${CMAKE_COMMAND} -E
-                      copy_if_different
-                        ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/*.qm 
-                        ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Translations/ )
-  
-endfunction ()
-
 # search all plugins and add them to build
 function (of_add_plugins)
     file (

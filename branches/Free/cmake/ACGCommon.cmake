@@ -460,3 +460,55 @@ function (acg_add_library _target _libtype)
     endif ()
   endif ()
 endfunction ()
+
+#generates qt translations
+function (acg_add_translations _target _languages _sources)
+
+  string (TOUPPER ${_target} _TARGET)
+  # generate/use translation files
+  # run with UPDATE_TRANSLATIONS set to on to build qm files
+  option (UPDATE_TRANSLATIONS_${_TARGET} "Update source translation *.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
+
+  set (_new_ts_files)
+  set (_ts_files)
+
+  foreach (lang ${_languages})
+    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/translations/${_target}_${lang}.ts" OR UPDATE_TRANSLATIONS_${_TARGET})
+      list (APPEND _new_ts_files "${_target}_${lang}.ts")
+    else ()
+      list (APPEND _ts_files "${_target}_${lang}.ts")
+    endif ()
+  endforeach ()
+
+  set (_qm_files)
+  if (${_new_ts_files})
+    qt4_create_translation(_qm_files ${_sources} ${_new_ts_files})
+  endif ()
+
+  if (${_ts_files})
+    qt4_add_translation(_qm_files2 ${_ts_files})
+    list (APPEND _qm_files ${_qm_files2})
+  endif ()
+
+
+  # create a target for the translation files ( and object files )
+  # Use this target, to update only the translations
+  add_custom_target (translations_target_${_target} DEPENDS ${_qm_files})
+
+  # Build translations with the application
+  add_dependencies(${_target} translations_target_${_target} )
+
+  if (NOT EXISTS ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Translations)
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Translations )
+  endif ()
+
+  add_custom_command (TARGET translations_target_${_target} POST_BUILD
+                      COMMAND ${CMAKE_COMMAND} -E
+                      copy_if_different
+                        ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/*.qm
+                        ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Translations/ )
+
+  if (NOT ACG_PROJECT_MACOS_BUNDLE OR NOT APPLE)
+    install (FILES ${_qm_files} DESTINATION "${CMAKE_INSTALL_PREFIX}/Translations")
+  endif ()
+endfunction ()
