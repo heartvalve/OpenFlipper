@@ -67,7 +67,7 @@ bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
     // QTime time;
     // time.start ();
     int rv = pickColor (_pickTarget, _mousePos, _nodeIdx, _targetIdx, _hitPointPtr);
-std::cerr << "ColorPicking: " << rv << std::endl;
+
     // printf ("ColorPicking took %d msec\n",time.restart ());
     // rv = -1;
     // node = _nodeIdx;

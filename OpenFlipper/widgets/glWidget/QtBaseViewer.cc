@@ -364,7 +364,7 @@ void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool
 
 	scene_radius_ = trackball_radius_ = _radius;
 
-	orthoWidth_ = 2.0   * scene_radius_;
+// 	orthoWidth_ = 2.0   * scene_radius_;
 	near_       = 0.001 * scene_radius_;
 	far_        = 10.0  * scene_radius_;
 
