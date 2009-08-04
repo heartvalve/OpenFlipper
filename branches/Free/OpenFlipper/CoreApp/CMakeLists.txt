@@ -11,6 +11,8 @@ include_directories (
   ${GLUT_INCLUDE_DIR}
 )
 
+set (COREAPP_FILES_TO_TRANSLATE )
+
 link_directories (
   ${GLEW_LIBRARY_DIR}
 )
@@ -42,12 +44,27 @@ acg_append_files (headers "*.hh" ${directories})
 acg_append_files (sources "*.cc" ${directories})
 acg_append_files (ui "*.ui" ${directories})
 
+set (COREAPP_FILES_TO_TRANSLATE ${COREAPP_FILES_TO_TRANSLATE} ${sources} ${ui} ${headers})
+                                  
 # remove template cc files from source file list
 acg_drop_templates (sources)
 
 # genereate uic and moc targets
 acg_qt4_autouic (uic_targets ${ui})
 acg_qt4_automoc (moc_targets ${headers})
+
+
+# generate/use translation files
+# run with UPDATE_TRANSLATIONS set to on to build qm files
+option (UPDATE_TRANSLATIONS "Update source translation translations/CoreApp_de_DE.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
+if (UPDATE_TRANSLATIONS)
+  qt4_create_translation(QM_FILES ${COREAPP_FILES_TO_TRANSLATE} translations/CoreApp_de_DE.ts )
+else (UPDATE_TRANSLATIONS)
+  qt4_add_translation(QM_FILES translations/CoreApp_de_DE.ts )
+endif (UPDATE_TRANSLATIONS)
+
+
+add_custom_target (translations_target DEPENDS ${QM_FILES})
 
 if (WIN32)
   # add app icon rc file to windows build
@@ -60,6 +77,7 @@ elseif (APPLE)
 else ()
   acg_add_executable (OpenFlipper ${uic_targets} ${sources} ${headers} ${moc_targets})
 endif ()
+
 
 target_link_libraries (OpenFlipper
   OpenMeshCore
@@ -88,6 +106,8 @@ if (APPLE)
    )    
 endif ()
 
+# Copy all translation files after build
+of_copy_translations( OpenFlipper )
 
 # copy all needed files to "Build" directory to allow a direct execution from it
 # the copy_after_build macro (common.cmake) copies the whole directory without svn files
@@ -115,3 +135,5 @@ if (NOT APPLE)
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Docs" "${ACG_PROJECT_DATADIR}/Docs")
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Help" "${ACG_PROJECT_DATADIR}/Help")
 endif ()
+
+
