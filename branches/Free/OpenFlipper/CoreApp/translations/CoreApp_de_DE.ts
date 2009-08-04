@@ -164,7 +164,7 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="300"/>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="301"/>
         <source>Main Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Haupt Menüleiste</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="302"/>
@@ -174,7 +174,7 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="311"/>
         <source>Viewer Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter Werkzeugleiste</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="315"/>
@@ -184,27 +184,27 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="321"/>
         <source>Switch to &lt;b&gt;move&lt;/b&gt; mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>In den &lt;b&gt;Bewegungs&lt;/b&gt;-Modus wechseln.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="322"/>
         <source>Switch to &lt;b&gt;move&lt;/b&gt; mode.&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Rotate&lt;/b&gt; using &lt;b&gt;left&lt;/b&gt; mouse button.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Translate&lt;/b&gt; using &lt;b&gt;middle&lt;/b&gt; mouse button.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Zoom&lt;/b&gt; using &lt;b&gt;left+middle&lt;/b&gt; mouse buttons.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>In den &lt;b&gt;Bewegungs&lt;/b&gt;-Modus wechseln.&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Rotieren&lt;/b&gt; mit &lt;b&gt;linker&lt;/b&gt; Maustaste.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Verschieben&lt;/b&gt; mit &lt;b&gt;Mittlerer&lt;/b&gt; Maustaste.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Vergrößerung&lt;/b&gt; mit &lt;b&gt;Linker+Mittlerer&lt;/b&gt; Maustaste.&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="333"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Bewegen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="341"/>
         <source>Switch to &lt;b&gt;light&lt;/b&gt; mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>In den &lt;b&gt;Beleuchtungs&lt;/b&gt;-Modus wechseln.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="342"/>
         <source>Switch to &lt;b&gt;light&lt;/b&gt; mode.&lt;br&gt;Rotate lights using left mouse button.</source>
-        <translation type="unfinished"></translation>
+        <translation>In den &lt;b&gt;Beleuchtungs&lt;/b&gt;-Modus wechseln.&lt;br&gt;Lichter mit der linken Maustaste bewegen.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="347"/>
@@ -214,32 +214,32 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="354"/>
         <source>Switch to &lt;b&gt;picking&lt;/b&gt; mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>In den &lt;b&gt;Auswahl&lt;/b&gt;-Modus wechseln.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="355"/>
         <source>Switch to &lt;b&gt;picking&lt;/b&gt; mode.&lt;br&gt;Use picking functions like flipping edges.&lt;br&gt;To change the mode use the right click&lt;br&gt;context menu in the viewer.</source>
-        <translation type="unfinished"></translation>
+        <translation>In den &lt;b&gt;Auswahl&lt;/b&gt;-Modus wechseln. Zum benutzen von Auswahl Hilfsmitteln.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="361"/>
         <source>Pick</source>
-        <translation type="unfinished"></translation>
+        <translation>Auswählen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="368"/>
         <source>Switch to &lt;b&gt;identification&lt;/b&gt; mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>In den &lt;b&gt;Identifizierungs&lt;/b&gt;-Modus wechseln.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="369"/>
         <source>Switch to &lt;b&gt;identification&lt;/b&gt; mode.&lt;br&gt;Use identification mode to get information about objects. Click on an object and see the log output for information about the object.</source>
-        <translation type="unfinished"></translation>
+        <translation>In den &lt;b&gt;Identifizierungs&lt;/b&gt;-Modus wechseln.&lt;br&gt;Dieser Modus dient dazu Informationen über Objekten zu erhalten. Klicken sie auf ein Objekt um Informationen dazu im log zu erhalten.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="376"/>
         <source>Question</source>
-        <translation type="unfinished"></translation>
+        <translation>Informationen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="381"/>
