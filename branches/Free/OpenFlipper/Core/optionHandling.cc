@@ -95,10 +95,14 @@ void Core::applyOptions(){
       PluginFunctions::setDrawMode( OpenFlipper::Options::defaultDrawMode(i), i );
       PluginFunctions::setFixedView(OpenFlipper::Options::defaultViewingDirection(i), i );
 
-      if ( OpenFlipper::Options::defaultProjectionMode(i) == 0 )
-	PluginFunctions::orthographicProjection(i);
-      else
-	PluginFunctions::perspectiveProjection(i);
+      //only switch projection here if an object is opened
+      //this prevents problems when applying options on app start
+      if ( PluginFunctions::objectCount() > 0 ){ 
+	if ( OpenFlipper::Options::defaultProjectionMode(i) == 0 )
+	  PluginFunctions::orthographicProjection(i);
+	else
+	  PluginFunctions::perspectiveProjection(i);
+      }
     }
 
     //set defaultBackgroundColor
