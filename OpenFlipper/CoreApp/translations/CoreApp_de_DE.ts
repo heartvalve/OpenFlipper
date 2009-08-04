@@ -274,7 +274,7 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="439"/>
         <source>Change View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ansicht ändern</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="479"/>
@@ -928,7 +928,7 @@ You can select multiple modes at the same time.</source>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="517"/>
         <source>Stereo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stereo</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="523"/>
@@ -1334,7 +1334,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="13"/>
         <source>Change View Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ansicht ändern</translation>
     </message>
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="19"/>
@@ -1344,7 +1344,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="32"/>
         <source>Remove Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ansicht entfernen</translation>
     </message>
     <message>
         <location filename="../../widgets/viewModeWidget/viewMode.ui" line="42"/>
