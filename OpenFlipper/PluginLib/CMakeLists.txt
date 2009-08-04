@@ -55,25 +55,10 @@ acg_qt4_automoc (moc_targets ${headers})
 
 acg_add_library (PluginLib SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
 
-set (PLUGINLIB_FILES_TO_TRANSLATE ${PLUGINLIB_FILES_TO_TRANSLATE} ${sources} ${ui} ${headers})
-# generate/use translation files
-# run with UPDATE_TRANSLATIONS set to on to build qm files
-option (UPDATE_TRANSLATIONS "Update source translation translations/PluginLib_de_DE.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
-if (UPDATE_TRANSLATIONS)
-  qt4_create_translation(QM_FILES ${PLUGINLIB_FILES_TO_TRANSLATE} translations/PluginLib_de_DE.ts )
-else (UPDATE_TRANSLATIONS)
-  qt4_add_translation(QM_FILES translations/PluginLib_de_DE.ts )
-endif (UPDATE_TRANSLATIONS)
-
-# create a target for the translation files ( and object files )
-# Use this target, to update only the translations
-add_custom_target (translations_target_pluginlib DEPENDS ${QM_FILES})
-
-# Build translations with the application
-add_dependencies( PluginLib translations_target_pluginlib )
-
-# Copy all translation files after build
-of_copy_translations( PluginLib )
+set (trans_files ${sources})
+list (APPEND trans_files ${ui})
+list (APPEND trans_files ${headers})
+acg_add_translations (PluginLib "de_DE" "${trans_files}")
 
 target_link_libraries (PluginLib
   OpenMeshCore

@@ -10,6 +10,8 @@
 #                      [INCDIRS dir1 dir2 ...]
 #                      [ADDSRC file1 file2 ...]
 #                      [INSTALLDATA dir1 dir2 ...]
+#                      [TRANSLATION_LANGUAGES lang1 lang2 ...]
+#                      [TRANSLATION_ADDFILES file1 file2 ...]
 #                      [LICENSEMANAGER])
 #
 # DIRS        = additional directories with source files
@@ -22,6 +24,9 @@
 # INCDIRS     = additional include directories
 # ADDSRC      = additional source files
 # INSTALLDATA = directories that will be installed into the openflipper data directory
+#
+# TRANSLATION_LANGUAGES = language codes for translation
+# TRANSLATION_ADDFILES  = additional files that should be included into the translation files
 #
 # LICENSEMANAGER = Compile plugin with license management
 #
@@ -41,7 +46,7 @@ endmacro ()
 # parse plugin macro parameter
 macro (_get_plugin_parameters _prefix)
     set (_current_var _foo)
-    set (_supported_var DIRS DEPS OPTDEPS LDFLAGSADD CFLAGSADD LIBRARIES LIBDIRS INCDIRS ADDSRC INSTALLDATA)
+    set (_supported_var DIRS DEPS OPTDEPS LDFLAGSADD CFLAGSADD LIBRARIES LIBDIRS INCDIRS ADDSRC INSTALLDATA TRANSLATION_LANGUAGES TRANSLATION_ADDFILES)
     set (_supported_flags LICENSEMANAGER)
     foreach (_val ${_supported_var})
         set (${_prefix}_${_val})
@@ -309,6 +314,14 @@ function (_build_openflipper_plugin plugin)
         acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/${_dir}" "${ACG_PROJECT_DATADIR}/${_dir}")
       endif ()
     endforeach ()
+
+    if (${${_PLUGIN}_TRANSLATION_LANGUAGES})
+      set (trans_files ${uic_targets})
+      list (APPEND trans_files ${sources})
+      list (APPEND trans_files ${headers})
+      list (APPEND trans_files ${${_PLUGIN}_TRANSLATION_ADDFILES})
+      acg_add_translation(Plugin-${plugin} ${${_PLUGIN}_TRANSLATION_LANGUAGES} ${trans_files})
+    endif ()
 
   else ()
     message (STATUS "[WARNING] One or more dependencies for plugin ${plugin} not found. Skipping plugin.")

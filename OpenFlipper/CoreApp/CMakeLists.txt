@@ -89,28 +89,11 @@ if (APPLE)
    )    
 endif ()
 
-
-set (COREAPP_FILES_TO_TRANSLATE ${COREAPP_FILES_TO_TRANSLATE} ${sources} ${ui} ${headers})
-
-# generate/use translation files
-# run with UPDATE_TRANSLATIONS set to on to build qm files
-option (UPDATE_TRANSLATIONS "Update source translation translations/CoreApp_de_DE.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
-if (UPDATE_TRANSLATIONS)
-  qt4_create_translation(QM_FILES ${COREAPP_FILES_TO_TRANSLATE} translations/CoreApp_de_DE.ts )
-else (UPDATE_TRANSLATIONS)
-  qt4_add_translation(QM_FILES translations/CoreApp_de_DE.ts )
-endif (UPDATE_TRANSLATIONS)
-
-# create a target for the translation files ( and object files )
-# Use this target, to update only the translations
-add_custom_target (translations_target_core DEPENDS ${QM_FILES})
-
-# Build translations with the application
-add_dependencies(OpenFlipper translations_target_core )
-
-# Copy all translation files after build
-of_copy_translations( OpenFlipper )
-
+# Translations
+set (trans_files ${sources})
+list (APPEND trans_files ${ui})
+list (APPEND trans_files ${headers})
+acg_add_translations (OpenFlipper "de_DE" "${trans_files}")
 
 
 # copy all needed files to "Build" directory to allow a direct execution from it
