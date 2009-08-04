@@ -259,7 +259,7 @@ void Core::setupOptions() {
     tempDir.cd(OPENFLIPPER_DATADIR);
   #endif
   tempDir.cd("Translations");
-  OpenFlipper::Options::fontsDir(tempDir.absolutePath());  
+  OpenFlipper::Options::translationsDir(tempDir.absolutePath());  
 
   // Set the Path to the Fonts
   tempDir = QDir(OpenFlipper::Options::applicationDir());
