@@ -209,7 +209,7 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="347"/>
         <source>Light</source>
-        <translation>Licht</translation>
+        <translation>Beleuchtung</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="354"/>
@@ -274,7 +274,7 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="439"/>
         <source>Change View Mode</source>
-        <translation type="unfinished">Ansicht ändern</translation>
+        <translation>Ansicht ändern</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="479"/>
@@ -293,15 +293,12 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="113"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="115"/>
         <source>&amp;File</source>
-        <translation>Datei</translation>
+        <translation type="obsolete">Datei</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="118"/>
         <source>&amp;Clear All</source>
-        <translation>Alle löschen</translation>
+        <translation type="obsolete">Alle löschen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="119"/>
@@ -309,9 +306,8 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation>Alle Objekte löschen</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="128"/>
         <source>&amp;Load Object</source>
-        <translation>Lade Objekt</translation>
+        <translation type="obsolete">Lade Objekt</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="130"/>
@@ -319,19 +315,13 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation>Lade ein Objekt</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="138"/>
-        <source>&amp;Add Empty Object</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="139"/>
         <source>Add an empty object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="148"/>
         <source>&amp;Save Object</source>
-        <translation>Objekt &amp;Speichern</translation>
+        <translation type="obsolete">Objekt &amp;Speichern</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="150"/>
@@ -339,9 +329,8 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation>Speichere ausgewählte Objekte</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="157"/>
         <source>&amp;Save Object To</source>
-        <translation>&amp;Speichere Objekt unter</translation>
+        <translation type="obsolete">&amp;Speichere Objekt unter</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="158"/>
@@ -349,9 +338,8 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="167"/>
         <source>&amp;Load Settings</source>
-        <translation>&amp;Lade Einstellungen</translation>
+        <translation type="obsolete">&amp;Lade Einstellungen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="168"/>
@@ -359,9 +347,8 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation>Lade Einstellungen aus INI Datei</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="175"/>
         <source>&amp;Save Settings</source>
-        <translation>&amp;Speichere Einstellungen</translation>
+        <translation type="obsolete">&amp;Speichere Einstellungen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="176"/>
@@ -369,9 +356,8 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation>Speichere aktuelle Einstellungen in INI Datei</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="185"/>
         <source>&amp;Options</source>
-        <translation>Einstellungen</translation>
+        <translation type="obsolete">Einstellungen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="186"/>
@@ -379,14 +365,12 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation>OpenFlipper Einstellungen bearbeiten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="196"/>
         <source>&amp;Recent Files</source>
-        <translation>Zuletzt verwendete Dateien</translation>
+        <translation type="obsolete">Zuletzt verwendete Dateien</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="205"/>
         <source>&amp;Exit</source>
-        <translation>Beenden</translation>
+        <translation type="obsolete">Beenden</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="207"/>
@@ -394,15 +378,12 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation>Anwendung Beenden</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="217"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="219"/>
         <source>&amp;View</source>
-        <translation>Ansicht</translation>
+        <translation type="obsolete">Ansicht</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="359"/>
         <source>&amp;Set Background Color</source>
-        <translation>Hintergrundfarbe ändern</translation>
+        <translation type="obsolete">Hintergrundfarbe ändern</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="360"/>
@@ -411,17 +392,8 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation>Hintergrundfarbe in allen Betrachtern ändern</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="371"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="373"/>
-        <source>&amp;Tools</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="408"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="410"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="413"/>
         <source>&amp;Help</source>
-        <translation>&amp;Hilfe</translation>
+        <translation type="obsolete">&amp;Hilfe</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="414"/>
@@ -434,9 +406,8 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="429"/>
         <source>&amp;Plugins</source>
-        <translation>&amp;Plugins</translation>
+        <translation type="obsolete">&amp;Plugins</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="430"/>
@@ -444,8 +415,97 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <translation>Zeige geladene Plugins</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="439"/>
         <source>&amp;About</source>
+        <translation type="obsolete">Über OpenFlipper</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="113"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="115"/>
+        <source>File</source>
+        <translation>Datei</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="118"/>
+        <source>Clear All</source>
+        <translation>Alle Objekte löschen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="128"/>
+        <source>Load Object</source>
+        <translation>Lade Objekt</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="138"/>
+        <source>Add Empty Object</source>
+        <translation>Neues Objekt </translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="148"/>
+        <source>Save Object</source>
+        <translation>Objekt speichern</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="157"/>
+        <source>Save Object To</source>
+        <translation>Objekt speichern als</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="167"/>
+        <source>Load Settings</source>
+        <translation>Lade Einstellungen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="175"/>
+        <source>Save Settings</source>
+        <translation>Einstellungen speichern</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="185"/>
+        <source>Options</source>
+        <translation>Optionen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="196"/>
+        <source>Recent Files</source>
+        <translation>Zuletzt geöffnete Dateien</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="205"/>
+        <source>Exit</source>
+        <translation>Beenden</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="217"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="219"/>
+        <source>View</source>
+        <translation>Ansicht</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="359"/>
+        <source>Set Background Color</source>
+        <translation>Hintergrund Farbe</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="371"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="373"/>
+        <source>Tools</source>
+        <translation>Zubehör</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="408"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="410"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="413"/>
+        <source>Help</source>
+        <translation>Hilfe</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="429"/>
+        <source>Plugins</source>
+        <translation>Plugins</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="439"/>
+        <source>About</source>
         <translation>Über OpenFlipper</translation>
     </message>
     <message>
@@ -459,24 +519,24 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="477"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="478"/>
         <source>Disable animation for all viewers</source>
-        <translation>Animation für alle Betrachter deaktivieren</translation>
+        <translation>Animation für alle Betrachter ausschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="474"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="479"/>
         <source>Disable animation</source>
-        <translation>Animation deaktivieren</translation>
+        <translation>Animation einschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="482"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="483"/>
         <source>Enable animation for all viewers</source>
-        <translation>Animation für alle Betrachter aktivieren</translation>
+        <translation>Animation für alle Betrachter einschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="484"/>
         <source>Enable animation</source>
-        <translation>Animation aktivieren</translation>
+        <translation>Animation einschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="501"/>
@@ -484,24 +544,24 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="506"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="507"/>
         <source>Disable backface culling for all viewers</source>
-        <translation type="unfinished"></translation>
+        <translation>Backface culling für alle Betrachter ausschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="503"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="508"/>
         <source>Disable backface culling</source>
-        <translation type="unfinished"></translation>
+        <translation>Backface culling ausschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="511"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="512"/>
         <source>Enable backface culling for all viewers</source>
-        <translation type="unfinished"></translation>
+        <translation>Backface culling für alle Betrachter einschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="513"/>
         <source>Enable backface culling</source>
-        <translation type="unfinished"></translation>
+        <translation>Backface culling einschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="530"/>
@@ -509,24 +569,24 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="535"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="536"/>
         <source>Disable two-sided lighting for all viewers</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwei-Seitige Beleuchtung für alle Betrachter ausschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="532"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="537"/>
         <source>Disable two-sided lighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwei-Seitige Beleuchtung ausschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="540"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="541"/>
         <source>Enable two-sided lighting for all viewers</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwei-Seitige Beleuchtung für alle Betrachter einsschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="542"/>
         <source>Enable two-sided lighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwei-Seitige Beleuchtung einsschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="560"/>
@@ -534,24 +594,24 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="565"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="566"/>
         <source>Disable Multisampling for all viewers</source>
-        <translation type="unfinished"></translation>
+        <translation>Multi-Sampling für alle Betrachter ausschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="562"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="567"/>
         <source>Disable Multisampling</source>
-        <translation type="unfinished"></translation>
+        <translation>Multi-Sampling ausschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="570"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="571"/>
         <source>Enable Multisampling for all viewers</source>
-        <translation type="unfinished"></translation>
+        <translation>Multi-Sampling für alle Betrachter einschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="572"/>
-        <source>&amp;Enable Multisampling</source>
-        <translation type="unfinished"></translation>
+        <source>Enable Multisampling</source>
+        <translation>Multi-Sampling einschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/StackWidget.cc" line="139"/>
@@ -676,7 +736,7 @@ Soll die Datei überschrieben werden?</translation>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="14"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1039"/>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Optionen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="33"/>
@@ -994,7 +1054,7 @@ You can select multiple modes at the same time.</source>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1017"/>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plugins</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1047"/>
@@ -1157,7 +1217,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/PluginDialog/pluginDialog.ui" line="16"/>
         <source>Plugins</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Plugins</translation>
     </message>
     <message>
         <location filename="../../widgets/PluginDialog/pluginDialog.ui" line="56"/>
@@ -1311,7 +1371,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/addEmptyWidget/addEmpty.ui" line="13"/>
         <source>Add Empty Object</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Neues Objekt </translation>
     </message>
     <message>
         <location filename="../../widgets/addEmptyWidget/addEmpty.ui" line="21"/>
