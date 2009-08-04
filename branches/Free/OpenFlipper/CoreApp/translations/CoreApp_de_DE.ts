@@ -634,56 +634,56 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.cc" line="64"/>
         <source>Search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Such Ergebnisse</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="13"/>
         <source>OpenFlipper Help</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenFlipper Hilfe</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="50"/>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="53"/>
         <source>Go one page back.</source>
-        <translation type="unfinished"></translation>
+        <translation>Seite Zurück.</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="56"/>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation>Zurück</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="75"/>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="78"/>
         <source>Search help for specified item.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nach Hilfe für ein spezifisches Objekt suchen.</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="81"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Suche</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="100"/>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="103"/>
         <source>Go one page forward.</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine Seite vor.</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="106"/>
         <source>Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorwärts</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="125"/>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="128"/>
         <source>Open home site.</source>
-        <translation type="unfinished"></translation>
+        <translation>Startseite öffnen.</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="131"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>Startseite</translation>
     </message>
 </context>
 <context>
@@ -736,45 +736,45 @@ Soll die Datei überschrieben werden?</translation>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="14"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1039"/>
         <source>Options</source>
-        <translation type="unfinished">Optionen</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="33"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Allgemein</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="39"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="42"/>
         <source>Display OpenFlipper in fullscreen mode</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenFlipper in Vollbild anzeigen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="45"/>
         <source>Show Fullscreen</source>
-        <translation type="unfinished"></translation>
+        <translation>Vollbild</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="52"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="55"/>
         <source>Show splash screen on startup</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Splash Bildschirm</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="58"/>
         <source>Show Splash-Screen</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Splash</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="65"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="68"/>
         <source>Show the toolbox for plugin widgets</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Toolbox für Plugins</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="71"/>
         <source>Show Toolbox (CTRL+T)</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige Toolbox (CTRL+T)</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="85"/>
