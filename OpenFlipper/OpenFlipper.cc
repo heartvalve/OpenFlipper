@@ -344,7 +344,8 @@ int main(int argc, char **argv)
       /* Problem: glewInit failed, something is seriously wrong. */
       fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
     }
-
+    
+ 
     for ( int i = 0 ; i < args.FileCount(); ++i )
       w->commandLineOpen(args.File(i), openPolyMeshes);    
 
