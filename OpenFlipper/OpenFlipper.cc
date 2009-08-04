@@ -318,6 +318,23 @@ int main(int argc, char **argv)
     if ( !parseCommandLineOptions(args) )
       return 1;
 
+    // Install translator for qt internals
+    QTranslator qtTranslator;
+    std::cerr << "Loading qt translations from: " << QLibraryInfo::location(QLibraryInfo::TranslationsPath).toStdString() << std::endl;
+    if ( qtTranslator.load("qt_" + QLocale::system().name(),
+                          QLibraryInfo::location(QLibraryInfo::TranslationsPath)) )
+      std::cerr << "Loaded" << std::endl;
+    
+    app.installTranslator(&qtTranslator);
+    
+    // install translator for Core Application
+    QTranslator myappTranslator;
+    std::cerr << "Loading own translations from: " << QString(OpenFlipper::Options::translationsDirStr() + QDir::separator() + "CoreApp_" + QLocale::system().name()).toStdString() << std::endl;
+    if ( myappTranslator.load(OpenFlipper::Options::translationsDirStr() + QDir::separator() + "CoreApp_" + QLocale::system().name()) )
+      std::cerr << "Loaded" << std::endl;
+    
+    app.installTranslator(&myappTranslator);    
+    
     // After setting all Options from command line, build the real gui
     w->init();
 
@@ -329,7 +346,7 @@ int main(int argc, char **argv)
     }
 
     for ( int i = 0 ; i < args.FileCount(); ++i )
-      w->commandLineOpen(args.File(i), openPolyMeshes);
+      w->commandLineOpen(args.File(i), openPolyMeshes);    
 
     return app.exec();
 
