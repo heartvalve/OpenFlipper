@@ -264,6 +264,7 @@ void MovePlugin::slotMouseEvent( QMouseEvent* _event )
          placeAction_->isChecked ())) {
 
       placeManip(_event);
+      placeAction_->setChecked(false);
       updateManipulatorDialog();
       return;
     }
@@ -485,8 +486,6 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
 		}
 	}
 
-    PluginFunctions::setSceneCenter(_node->center(), PluginFunctions::ALL_VIEWERS );
-
     lastActiveManipulator_ = objectId;
     updateManipulatorDialog();
   }
@@ -617,6 +616,7 @@ void MovePlugin::placeManip(QMouseEvent * _event)
  */
 void MovePlugin::showManipulators( )
 {
+
 	if (!hide_ && (toolboxActive_ || (PluginFunctions::pickMode() == "Move")
 			|| (PluginFunctions::pickMode() == "MoveSelection"))) {
 		for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it
