@@ -53,7 +53,6 @@ acg_drop_templates (sources)
 acg_qt4_autouic (uic_targets ${ui})
 acg_qt4_automoc (moc_targets ${headers})
 
-
 # generate/use translation files
 # run with UPDATE_TRANSLATIONS set to on to build qm files
 option (UPDATE_TRANSLATIONS "Update source translation translations/CoreApp_de_DE.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
@@ -62,7 +61,6 @@ if (UPDATE_TRANSLATIONS)
 else (UPDATE_TRANSLATIONS)
   qt4_add_translation(QM_FILES translations/CoreApp_de_DE.ts )
 endif (UPDATE_TRANSLATIONS)
-
 
 add_custom_target (translations_target DEPENDS ${QM_FILES})
 
