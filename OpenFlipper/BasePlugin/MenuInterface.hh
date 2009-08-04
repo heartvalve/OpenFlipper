@@ -52,13 +52,13 @@
 typedef QString MenuActionType;
 
 /// The Menu will be added inside the File Menu
-#define FILEMENU tr("&File")
+#define FILEMENU tr("File")
 
 /// The Menu will be added inside the View Menu
-#define VIEWMENU tr("&View")
+#define VIEWMENU tr("View")
 
 /// The Menu will be added inside the Tools Menu
-#define TOOLSMENU tr("&Tools")
+#define TOOLSMENU tr("Tools")
 
 
 /** \brief Interface for all plugins which provide entries to the main menubar
