@@ -35,6 +35,9 @@ endmacro ()
 # function to copy all translation files from one directory to the OpenFlipper translation directory
 # parameters: BuildTarget .. The command will be executed after the target is build
 function ( of_copy_translations _target) 
+  
+  file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Translations )
+
   add_custom_command (TARGET ${_target} POST_BUILD
                       COMMAND ${CMAKE_COMMAND} -E
                       copy_if_different
