@@ -325,17 +325,19 @@ int main(int argc, char **argv)
 
     // Install translator for qt internals
     QTranslator qtTranslator;
-    std::cerr << "Loading qt translations from: " << QLibraryInfo::location(QLibraryInfo::TranslationsPath).toStdString() << std::endl;
-    if ( qtTranslator.load("qt_" + tLang,
-                          QLibraryInfo::location(QLibraryInfo::TranslationsPath)) )
-      std::cerr << "Loaded" << std::endl;
-    
+//     std::cerr << "Loading qt translations from: " << QLibraryInfo::location(QLibraryInfo::TranslationsPath).toStdString() << std::endl;
+//     if ( qtTranslator.load("qt_" + tLang, QLibraryInfo::location(QLibraryInfo::TranslationsPath)) )
+//       std::cerr << "Loaded" << std::endl;
+//     std::cerr << "Loading qt translations from: " << QLibraryInfo::location(QLibraryInfo::TranslationsPath).toStdString() << std::endl;
+    qtTranslator.load("qt_" + tLang, QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+//       std::cerr << "Loaded" << std::endl;
+
     app.installTranslator(&qtTranslator);
     
     // install translator for Core Application
     QString translationDir = OpenFlipper::Options::translationsDirStr() + QDir::separator();
 
-    std::cerr << "Loading own translations from: " << QString(translationDir + " (" + tLang + ")").toStdString() << std::endl;
+//     std::cerr << "Loading own translations from: " << QString(translationDir + " (" + tLang + ")").toStdString() << std::endl;
 
     QDir dir(translationDir);
     dir.setFilter(QDir::Files);
@@ -349,7 +351,7 @@ int main(int argc, char **argv)
         QTranslator* myAppTranslator = new QTranslator();
 
         if ( myAppTranslator->load( fileInfo.filePath() ) ){
-          std::cerr << "Loaded " << fileInfo.fileName().toStdString() << std::endl;
+//           std::cerr << "Loaded " << fileInfo.fileName().toStdString() << std::endl;
     
           app.installTranslator(myAppTranslator);
         }
