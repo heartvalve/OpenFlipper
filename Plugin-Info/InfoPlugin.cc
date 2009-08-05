@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -94,26 +94,26 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   int closest_e_idx = getClosestEdge(_mesh, _face);
 
   // ID
-  info_->id->setText( "<B>Object ID:</B> " + locale.toString(_id) );
+  info_->id->setText( tr("<B>Object ID:</B> ") + locale.toString(_id) );
   // Vertices
-  info_->vertices->setText( "<B>Vertices:</B> " + locale.toString( _mesh->n_vertices() ) );
+  info_->vertices->setText( tr("<B>Vertices:</B> ") + locale.toString( _mesh->n_vertices() ) );
   // Faces
-  info_->faces->setText( "<B>Faces:</B> " + locale.toString( _mesh->n_faces() ) );
+  info_->faces->setText( tr("<B>Faces:</B> ") + locale.toString( _mesh->n_faces() ) );
   // Edges
-  info_->edges->setText( "<B>Edges:</B> " + locale.toString( _mesh->n_edges() ) );
+  info_->edges->setText( tr("<B>Edges:</B> ") + locale.toString( _mesh->n_edges() ) );
   // Closest Vertex
-  info_->closestv->setText( "<B>Closest vertex:</B> " + locale.toString( closest_v_idx ) );
+  info_->closestv->setText( tr("<B>Closest vertex:</B> ") + locale.toString( closest_v_idx ) );
   // Closest Edge
-  info_->closeste->setText( "<B>Closest edge:</B> " + locale.toString( closest_e_idx ) );
+  info_->closeste->setText( tr("<B>Closest edge:</B> ") + locale.toString( closest_e_idx ) );
   // Picked Vertex
-  info_->pickedFace->setText( "<B>Picked face:</B> " + locale.toString( _face ) );
+  info_->pickedFace->setText( tr("<B>Picked face:</B> ") + locale.toString( _face ) );
   // Components
-  info_->components->setText( "<B>Components:</B> " + locale.toString(MeshInfo::componentCount(_mesh)));
+  info_->components->setText( tr("<B>Components:</B> ") + locale.toString(MeshInfo::componentCount(_mesh)));
   // Boundaries
-  info_->boundaries->setText( "<B>Boundaries:</B> " + locale.toString(MeshInfo::boundaryCount(_mesh)) );
+  info_->boundaries->setText( tr("<B>Boundaries:</B> ") + locale.toString(MeshInfo::boundaryCount(_mesh)) );
   // Genus
   int genus = 1 - (_mesh->n_vertices() - _mesh->n_edges() + _mesh->n_faces() ) / 2;
-  info_->genus->setText( "<B>Genus:</B> " + QString::number(genus) );
+  info_->genus->setText( tr("<B>Genus:</B> ") + QString::number(genus) );
 
   info_->table->clear();
 
@@ -122,27 +122,27 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
 
 
   QStringList headerdata;
-  headerdata << "Min" << "Mean" << "Max";
+  headerdata << tr("Min") << tr("Mean") << tr("Max");
 
   info_->table->setHorizontalHeaderLabels(headerdata);
 
   headerdata.clear();
-  headerdata << "X Coordinate" << "Y Coordinate" << "Z Coordinate" << "Vertex Valence" << "Edge Length" << "Aspect Ratio";
-  headerdata << "Inner Face Angles" << "Dihedral Angles";
+  headerdata << tr("X Coordinate") << tr("Y Coordinate") << tr("Z Coordinate") << tr("Vertex Valence") << tr("Edge Length") << tr("Aspect Ratio");
+  headerdata << tr("Inner Face Angles") << tr("Dihedral Angles");
 
   info_->table->setVerticalHeaderLabels(headerdata);
 
   //set tooltips
-  info_->table->verticalHeaderItem(0)->setToolTip("minimum, maximum and arithmetic mean of the vertex x-coordinates");
-  info_->table->verticalHeaderItem(1)->setToolTip("minimum, maximum and arithmetic mean of the vertex y-coordinates");
-  info_->table->verticalHeaderItem(2)->setToolTip("minimum, maximum and arithmetic mean of the vertex z-coordinates");
-  info_->table->verticalHeaderItem(3)->setToolTip("minimum, maximum and arithmetic mean of the vertex valences");
-  info_->table->verticalHeaderItem(4)->setToolTip("minimum, maximum and arithmetic mean of the edge lengthes");
-  info_->table->verticalHeaderItem(5)->setToolTip("minimum, maximum and arithmetic mean of the aspect ratio."
-                                                  " i.e. the ratio between longest and shortest edge in a triangle.");
-  info_->table->verticalHeaderItem(6)->setToolTip("minimum, maximum and arithmetic mean of the inner angles in a face.");
-  info_->table->verticalHeaderItem(7)->setToolTip("minimum, maximum and arithmetic mean of the dihedral angles"
-                                                  " i.e. the angles between neighboring faces.");
+  info_->table->verticalHeaderItem(0)->setToolTip(tr("minimum, maximum and arithmetic mean of the vertex x-coordinates"));
+  info_->table->verticalHeaderItem(1)->setToolTip(tr("minimum, maximum and arithmetic mean of the vertex y-coordinates"));
+  info_->table->verticalHeaderItem(2)->setToolTip(tr("minimum, maximum and arithmetic mean of the vertex z-coordinates"));
+  info_->table->verticalHeaderItem(3)->setToolTip(tr("minimum, maximum and arithmetic mean of the vertex valences"));
+  info_->table->verticalHeaderItem(4)->setToolTip(tr("minimum, maximum and arithmetic mean of the edge lengthes"));
+  info_->table->verticalHeaderItem(5)->setToolTip(tr("minimum, maximum and arithmetic mean of the aspect ratio."
+                                                     " i.e. the ratio between longest and shortest edge in a triangle."));
+  info_->table->verticalHeaderItem(6)->setToolTip(tr("minimum, maximum and arithmetic mean of the inner angles in a face."));
+  info_->table->verticalHeaderItem(7)->setToolTip(tr("minimum, maximum and arithmetic mean of the dihedral angles"
+                                                     " i.e. the angles between neighboring faces."));
 
   // Coordinates
   typename MeshT::VertexIter v_it;
@@ -318,13 +318,13 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   typename MeshT::FaceHandle fh = _mesh->face_handle(_face);
 
   headerdata.clear();
-  headerdata << "Bounding Box (Minimum)" << "Bounding Box (Maximum)" << "BoundingBox (Size)" << "Center of Gravity";
-  headerdata << "Picked Face Normal (Handle "+ QString::number(fh.idx()) +")";
+  headerdata << tr("Bounding Box (Minimum)") << tr("Bounding Box (Maximum)") << tr("BoundingBox (Size)") << tr("Center of Gravity");
+  headerdata << tr("Picked Face Normal (Handle %1 )" ).arg(fh.idx());
 
   typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(fh);
   int vertexCount = 0;
   while( fv_it ){
-    headerdata << "Adjacent Vertex (Handle " + QString::number(fv_it.handle().idx()) + ")";
+    headerdata << tr("Adjacent Vertex (Handle %1 )").arg(fv_it.handle().idx());
     ++fv_it;
     vertexCount++;
   }
@@ -333,13 +333,13 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face ) {
   info_->table3->setVerticalHeaderLabels(headerdata);
 
   //set tooltips
-  info_->table3->verticalHeaderItem(0)->setToolTip("minimum corner coordinates of the bounding box");
-  info_->table3->verticalHeaderItem(1)->setToolTip("maximum corner coordinates of the bounding box");
-  info_->table3->verticalHeaderItem(2)->setToolTip("diagonal size of the bounding box");
-  info_->table3->verticalHeaderItem(3)->setToolTip("coordinates of the center of gravity");
-  info_->table3->verticalHeaderItem(4)->setToolTip("direction of the face normal that was picked");
+  info_->table3->verticalHeaderItem(0)->setToolTip(tr("minimum corner coordinates of the bounding box"));
+  info_->table3->verticalHeaderItem(1)->setToolTip(tr("maximum corner coordinates of the bounding box"));
+  info_->table3->verticalHeaderItem(2)->setToolTip(tr("diagonal size of the bounding box"));
+  info_->table3->verticalHeaderItem(3)->setToolTip(tr("coordinates of the center of gravity"));
+  info_->table3->verticalHeaderItem(4)->setToolTip(tr("direction of the face normal that was picked"));
   for (int i=0; i < vertexCount; i++)
-    info_->table3->verticalHeaderItem(5 + i)->setToolTip("Coordinates of a vertex which is adjacent to the picked face");
+    info_->table3->verticalHeaderItem(5 + i)->setToolTip(tr("Coordinates of a vertex which is adjacent to the picked face"));
 
   //Calculate Bounding Box(min,max,cog)
   ACG::Vec3d min;
@@ -543,7 +543,7 @@ bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
     return false;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return false;
   }
 
@@ -551,7 +551,7 @@ bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR,tr("Unable to get mesh"));
       return false;
     }
 
@@ -562,7 +562,7 @@ bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR,tr("Unable to get mesh"));
       return false;
     }
 

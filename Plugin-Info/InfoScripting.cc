@@ -54,61 +54,61 @@
  */
 void InfoPlugin::setDescriptions(){
 
-  emit setSlotDescription("vertexCount(int)","get total number of vertices for a given object",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("vertexCount(int)",tr("get total number of vertices for a given object"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
-  emit setSlotDescription("edgeCount(int)","get total number of edges for a given object",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("edgeCount(int)",tr("get total number of edges for a given object"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
-  emit setSlotDescription("faceCount(int)","get total number of faces for a given object",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("faceCount(int)",tr("get total number of faces for a given object"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
-  emit setSlotDescription("boundaryCount(int)","get number of boundaries for a given object",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("boundaryCount(int)",tr("get number of boundaries for a given object"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
-  emit setSlotDescription("componentCount(int)","get number of components for a given object",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("componentCount(int)",tr("get number of components for a given object"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
-  emit setSlotDescription("genus(int)","get the genus of a given object",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("genus(int)",tr("get the genus of a given object"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
-  emit setSlotDescription("cog(int)","get the center of gravity for a given object",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("cog(int)",tr("get the center of gravity for a given object"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
-  emit setSlotDescription("boundingBoxMin(int)","get minimum point of the axis-aligned bounding box",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("boundingBoxMin(int)",tr("get minimum point of the axis-aligned bounding box"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
-  emit setSlotDescription("boundingBoxMax(int)","get maximum point of the axis-aligned bounding box",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("boundingBoxMax(int)",tr("get maximum point of the axis-aligned bounding box"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
-  emit setSlotDescription("boundingBoxSize(int)","get the size of the axis-aligned bounding box",
-                          QStringList("objectID"), QStringList("id of an object"));
+  emit setSlotDescription("boundingBoxSize(int)",tr("get the size of the axis-aligned bounding box"),
+                          QStringList(tr("objectID")), QStringList(tr("id of an object")));
 
 
-  emit setSlotDescription("edgeLength(int,int)","Get the length of an edge",
-                          QString("ObjectId,EdgeHandle").split(","),
-                          QString("id of the object, handle of an edge").split(","));
+  emit setSlotDescription("edgeLength(int,int)",tr("Get the length of an edge"),
+                          QString(tr("ObjectId,EdgeHandle")).split(","),
+                          QString(tr("id of the object, handle of an edge")).split(","));
 
-  emit setSlotDescription("faceArea(int,int)","Get the area of a face",
-                          QString("ObjectId,FaceHandle").split(","),
-                          QString("id of the object, handle of a face").split(","));
+  emit setSlotDescription("faceArea(int,int)",tr("Get the area of a face"),
+                          QString(tr("ObjectId,FaceHandle")).split(","),
+                          QString(tr("id of the object, handle of a face")).split(","));
 
-  emit setSlotDescription("aspectRatio(int,int)","Get the aspect ratio of a face",
-                          QString("ObjectId,FaceHandle").split(","),
-                          QString("id of the object, handle of a face").split(","));
+  emit setSlotDescription("aspectRatio(int,int)",tr("Get the aspect ratio of a face"),
+                          QString(tr("ObjectId,FaceHandle")).split(","),
+                          QString(tr("id of the object, handle of a face")).split(","));
 
-  emit setSlotDescription("vertexValence(int,int)","Get the valence of a vertex",
-                          QString("ObjectId,VertexHandle").split(","),
-                          QString("id of the object, handle of a vertex").split(","));
+  emit setSlotDescription("vertexValence(int,int)",tr("Get the valence of a vertex"),
+                          QString(tr("ObjectId,VertexHandle")).split(","),
+                          QString(tr("id of the object, handle of a vertex")).split(","));
 
-  emit setSlotDescription("minEdgeLength(int)","Get the minimal edge length of an object",
-                          QStringList("ObjectId"), QStringList("id of the object"));
+  emit setSlotDescription("minEdgeLength(int)",tr("Get the minimal edge length of an object"),
+                          QStringList(tr("ObjectId")), QStringList(tr("id of the object")));
 
-  emit setSlotDescription("maxEdgeLength(int)","Get the maximal edge length of an object",
-                          QStringList("ObjectId"), QStringList("id of the object"));
+  emit setSlotDescription("maxEdgeLength(int)",tr("Get the maximal edge length of an object"),
+                          QStringList(tr("ObjectId")), QStringList(tr("id of the object")));
 
-  emit setSlotDescription("meanEdgeLength(int)","Get the mean edge length of an object",
-                          QStringList("ObjectId"), QStringList("id of the object"));
+  emit setSlotDescription("meanEdgeLength(int)",tr("Get the mean edge length of an object"),
+                          QStringList(tr("ObjectId")), QStringList(tr("id of the object")));
 
 }
 
@@ -128,7 +128,7 @@ int InfoPlugin::vertexCount(int _id)
     return -1;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1;
   }
 
@@ -136,7 +136,7 @@ int InfoPlugin::vertexCount(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -146,7 +146,7 @@ int InfoPlugin::vertexCount(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -170,7 +170,7 @@ int InfoPlugin::edgeCount(int _id)
     return -1;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1;
   }
 
@@ -178,7 +178,7 @@ int InfoPlugin::edgeCount(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -188,7 +188,7 @@ int InfoPlugin::edgeCount(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -212,7 +212,7 @@ int InfoPlugin::faceCount(int _id)
     return -1;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1;
   }
 
@@ -220,7 +220,7 @@ int InfoPlugin::faceCount(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -230,7 +230,7 @@ int InfoPlugin::faceCount(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -254,7 +254,7 @@ int InfoPlugin::boundaryCount(int _id)
     return -1;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1;
   }
 
@@ -262,7 +262,7 @@ int InfoPlugin::boundaryCount(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -272,7 +272,7 @@ int InfoPlugin::boundaryCount(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -296,7 +296,7 @@ int InfoPlugin::componentCount(int _id)
     return -1;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1;
   }
 
@@ -304,7 +304,7 @@ int InfoPlugin::componentCount(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -314,7 +314,7 @@ int InfoPlugin::componentCount(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -338,7 +338,7 @@ int InfoPlugin::genus(int _id)
     return -1;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1;
   }
 
@@ -346,7 +346,7 @@ int InfoPlugin::genus(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 ///TODO this formula only works for closed objects: fix it
@@ -356,7 +356,7 @@ int InfoPlugin::genus(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
@@ -380,7 +380,7 @@ Vector InfoPlugin::cog(int _id)
     return Vector();
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return Vector();
   }
 
@@ -388,7 +388,7 @@ Vector InfoPlugin::cog(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return Vector();
     }
 
@@ -398,7 +398,7 @@ Vector InfoPlugin::cog(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return Vector();
     }
 
@@ -422,7 +422,7 @@ Vector InfoPlugin::boundingBoxMin(int _id)
     return Vector();
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return Vector();
   }
 
@@ -430,7 +430,7 @@ Vector InfoPlugin::boundingBoxMin(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return Vector();
     }
 
@@ -444,7 +444,7 @@ Vector InfoPlugin::boundingBoxMin(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return Vector();
     }
 
@@ -472,7 +472,7 @@ Vector InfoPlugin::boundingBoxMax(int _id)
     return Vector();
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return Vector();
   }
 
@@ -480,7 +480,7 @@ Vector InfoPlugin::boundingBoxMax(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return Vector();
     }
 
@@ -494,7 +494,7 @@ Vector InfoPlugin::boundingBoxMax(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return Vector();
     }
 
@@ -522,7 +522,7 @@ Vector InfoPlugin::boundingBoxSize(int _id)
     return Vector();
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return Vector();
   }
 
@@ -530,7 +530,7 @@ Vector InfoPlugin::boundingBoxSize(int _id)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return Vector();
     }
 
@@ -544,7 +544,7 @@ Vector InfoPlugin::boundingBoxSize(int _id)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return Vector();
     }
 
@@ -573,7 +573,7 @@ double InfoPlugin::edgeLength(int _id, int _edgeHandle)
     return -1.0;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1.0;
   }
 
@@ -581,14 +581,14 @@ double InfoPlugin::edgeLength(int _id, int _edgeHandle)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1.0;
     }
 
     TriMesh::EdgeHandle eh( _edgeHandle );
 
     if ( !eh.is_valid() ) {
-      emit log(LOGERR,"Unable to get edge handle");
+      emit log(LOGERR,tr("Unable to get edge handle"));
       return -1.0;
     }
 
@@ -602,14 +602,14 @@ double InfoPlugin::edgeLength(int _id, int _edgeHandle)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1.0;
     }
 
     PolyMesh::EdgeHandle eh( _edgeHandle );
 
     if ( !eh.is_valid() ) {
-      emit log(LOGERR,"Unable to get edge handle");
+      emit log(LOGERR,tr("Unable to get edge handle"));
       return -1.0;
     }
 
@@ -638,7 +638,7 @@ double InfoPlugin::faceArea(int _id, int _faceHandle)
     return -1.0;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1.0;
   }
 
@@ -646,14 +646,14 @@ double InfoPlugin::faceArea(int _id, int _faceHandle)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1.0;
     }
 
     TriMesh::FaceHandle fh( _faceHandle );
 
     if ( !fh.is_valid() ) {
-      emit log(LOGERR,"Unable to get face handle");
+      emit log(LOGERR,tr("Unable to get face handle"));
       return -1.0;
     }
 
@@ -671,14 +671,14 @@ double InfoPlugin::faceArea(int _id, int _faceHandle)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1.0;
     }
 
     PolyMesh::FaceHandle fh( _faceHandle );
 
     if ( !fh.is_valid() ) {
-      emit log(LOGERR,"Unable to get face handle");
+      emit log(LOGERR,tr("Unable to get face handle"));
       return -1.0;
     }
 
@@ -690,7 +690,7 @@ double InfoPlugin::faceArea(int _id, int _faceHandle)
       vertices.push_back( mesh->point( fv_it.handle() ) );
 
 ///TODO implement polygonArea
-  emit log(LOGERR,"Not implemented yet");
+  emit log(LOGERR,tr("Not implemented yet"));
   return -1.0;
 //     return ACG::Geometry::polygonArea( vertices );
   }
@@ -713,7 +713,7 @@ double InfoPlugin::aspectRatio(int _id, int _faceHandle)
     return -1.0;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1.0;
   }
 
@@ -721,14 +721,14 @@ double InfoPlugin::aspectRatio(int _id, int _faceHandle)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1.0;
     }
 
     TriMesh::FaceHandle fh( _faceHandle );
 
     if ( !fh.is_valid() ) {
-      emit log(LOGERR,"Unable to get face handle");
+      emit log(LOGERR,tr("Unable to get face handle"));
       return -1.0;
     }
 
@@ -744,7 +744,7 @@ double InfoPlugin::aspectRatio(int _id, int _faceHandle)
 
   } else {
 
-    emit log(LOGERR,"Aspect ratio can only be calculated for triangle meshes");
+    emit log(LOGERR,tr("Aspect ratio can only be calculated for triangle meshes"));
     return -1.0;
   }
 }
@@ -766,7 +766,7 @@ int InfoPlugin::vertexValence  (int _id, int _vertexHandle)
     return -1;
 
   if ( object == 0){
-    emit log(LOGERR, "Unable to get object");
+    emit log(LOGERR, tr("Unable to get object"));
     return -1;
   }
 
@@ -774,14 +774,14 @@ int InfoPlugin::vertexValence  (int _id, int _vertexHandle)
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
     TriMesh::VertexHandle vh( _vertexHandle );
 
     if ( !vh.is_valid() ) {
-      emit log(LOGERR,"Unable to get vertex handle");
+      emit log(LOGERR,tr("Unable to get vertex handle"));
       return -1;
     }
 
@@ -798,14 +798,14 @@ int InfoPlugin::vertexValence  (int _id, int _vertexHandle)
     PolyMesh* mesh = PluginFunctions::polyMesh(object);
 
     if ( mesh == 0 ) {
-      emit log(LOGERR,"Unable to get mesh");
+      emit log(LOGERR, tr("Unable to get mesh"));
       return -1;
     }
 
     PolyMesh::VertexHandle vh( _vertexHandle );
 
     if ( !vh.is_valid() ) {
-      emit log(LOGERR,"Unable to get vertex handle");
+      emit log(LOGERR,tr("Unable to get vertex handle"));
       return -1;
     }
 
