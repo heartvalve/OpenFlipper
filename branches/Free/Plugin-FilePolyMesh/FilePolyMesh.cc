@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -154,15 +154,15 @@ bool FilePolyMeshPlugin::saveObject(int _id, QString _filename){
     PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
 
     if (OpenMesh::IO::write_mesh(*polyObj->mesh(), filename.c_str()) ){
-      emit log(LOGINFO, "Saved object to " + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
       return true;
     }else{
-      emit log(LOGERR, "Unable to save " + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
       return false;
     }
   }else{
 
-    emit log(LOGERR, "Unable to save (object isn't a poly mesh)");
+    emit log(LOGERR, tr("Unable to save (object isn't a poly mesh)"));
     return false;
   }
 }
@@ -186,7 +186,7 @@ DataType  FilePolyMeshPlugin::supportedType() {
 void FilePolyMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
   BaseObjectData* baseObject;
   if ( !PluginFunctions::getObject(_id,baseObject) ) {
-    emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
+    emit log(LOGERR,tr("Cannot find object for id ") + QString::number(_id) + tr(" in saveFile") );
     return;
   }
 
@@ -226,7 +226,7 @@ void FilePolyMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
 void FilePolyMeshPlugin::saveIniFile( INIFile& _ini ,int _id) {
   BaseObjectData* baseObject;
   if ( !PluginFunctions::getObject(_id,baseObject) ) {
-    emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
+    emit log(LOGERR,tr("Cannot find object for id ") + QString::number(_id) + tr(" in saveFile") );
     return;
   }
 
