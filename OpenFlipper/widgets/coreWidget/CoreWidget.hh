@@ -548,12 +548,13 @@ public:
     /// Setup and update the global draw menu
     void slotUpdateGlobalDrawMenu();
 
-  private slots:
-	/// Switches over to the next view mode
-    void nextViewMode();
-
+  
     /// Change view mode that was selected in the combo box
     void setViewMode(int _idx);
+
+  private slots:
+    /// Switches over to the next view mode
+    void nextViewMode();
 
     /// Called when the global drawMode is selected
     void slotGlobalDrawMenu(QAction * _action);

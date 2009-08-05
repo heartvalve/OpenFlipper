@@ -377,6 +377,14 @@ bool dataDir(QString _dir);
   DLLEXPORT
   QString lang();
 
+  /// Returns the translation language (locale, de_DE, en_US)
+  DLLEXPORT
+  QString translation();
+
+  /// Set the translation language (locale, de_DE, en_US)
+  DLLEXPORT
+  void translation(QString _translation);
+
 /** @} */
 
 //===========================================================================
@@ -550,6 +558,14 @@ bool dataDir(QString _dir);
   /// get defaultViewingDirection setting
   DLLEXPORT
   int defaultViewingDirection( int _viewer );
+
+  /// Store defaultViewerLayout setting
+  DLLEXPORT
+  void defaultViewerLayout( int _layout );
+
+  /// get defaultViewerLayout setting
+  DLLEXPORT
+  int defaultViewerLayout();
 
   /// Store disableRedraw setting
   DLLEXPORT
