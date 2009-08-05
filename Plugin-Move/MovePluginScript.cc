@@ -55,49 +55,49 @@
  */
 void MovePlugin::setDescriptions(){
 
-  emit setSlotDescription("translate(int,Vector)","Translate object by given vector.",
-                          QString("objectId,Vector").split(","), QString("ID of an object, translation vector").split(","));
+  emit setSlotDescription("translate(int,Vector)",tr("Translate object by given vector."),
+                          QString(tr("objectId,Vector")).split(","), QString(tr("ID of an object, translation vector")).split(","));
 
-  emit setSlotDescription("translate(int,idList,Vector)","Translate vertices by given vector.",
-                          QString("objectId,VertexHandles,Vector").split(","),
-                          QString("ID of an object, List of vertex handles, translation vector").split(","));
+  emit setSlotDescription("translate(int,idList,Vector)",tr("Translate vertices by given vector."),
+                          QString(tr("objectId,VertexHandles,Vector")).split(","),
+                          QString(tr("ID of an object, List of vertex handles, translation vector")).split(","));
 
-  emit setSlotDescription("translateVertexSelection(int,Vector)","Translate current vertex selection of an object by given vector.",
-                          QString("objectId,Vector").split(","), QString("ID of an object, translation vector").split(","));
+  emit setSlotDescription("translateVertexSelection(int,Vector)",tr("Translate current vertex selection of an object by given vector."),
+                          QString(tr("objectId,Vector")).split(","), QString(tr("ID of an object, translation vector")).split(","));
 
-  emit setSlotDescription("translateFaceSelection(int,Vector)","Translate current face selection of an object by given vector.",
-                          QString("objectId,Vector").split(","), QString("ID of an object, translation vector").split(","));
+  emit setSlotDescription("translateFaceSelection(int,Vector)",tr("Translate current face selection of an object by given vector."),
+                          QString(tr("objectId,Vector")).split(","), QString(tr("ID of an object, translation vector")).split(","));
 
-  emit setSlotDescription("translateEdgeSelection(int,Vector)","Translate current edge selection of an object by given vector.",
-                          QString("objectId,Vector").split(","), QString("ID of an object, translation vector").split(","));
+  emit setSlotDescription("translateEdgeSelection(int,Vector)",tr("Translate current edge selection of an object by given vector."),
+                          QString(tr("objectId,Vector")).split(","), QString(tr("ID of an object, translation vector")).split(","));
 
-  emit setSlotDescription("transform(int,Matrix4x4)","transform object by given matrix.",
-                          QString("objectId,Matrix").split(","), QString("ID of an object, transformation matrix").split(","));
+  emit setSlotDescription("transform(int,Matrix4x4)",tr("transform object by given matrix."),
+                          QString(tr("objectId,Matrix")).split(","), QString(tr("ID of an object, transformation matrix")).split(","));
 
-  emit setSlotDescription("transform(int,idList,Matrix4x4)","transform vertices by given matrix.",
-                          QString("objectId,VertexHandles,Matrix").split(","),
-                          QString("ID of an object, List of vertex handles, transformation matrix").split(","));
+  emit setSlotDescription("transform(int,idList,Matrix4x4)",tr("transform vertices by given matrix."),
+                          QString(tr("objectId,VertexHandles,Matrix")).split(","),
+                          QString(tr("ID of an object, List of vertex handles, transformation matrix")).split(","));
 
-  emit setSlotDescription("transformSelection(int,Matrix4x4)","transform current selection of an object by given matrix.",
-                          QString("objectId,Matrix").split(","), QString("ID of an object, transformation matrix").split(","));
+  emit setSlotDescription("transformSelection(int,Matrix4x4)",tr("transform current selection of an object by given matrix."),
+                          QString(tr("objectId,Matrix")).split(","), QString(tr("ID of an object, transformation matrix")).split(","));
 
-  emit setSlotDescription("setManipulatorPosition(int,Vector)","Set the position of the manipulator.",
-                          QString("objectId,Position").split(","), QString("ID of an object, 3D point").split(","));
+  emit setSlotDescription("setManipulatorPosition(int,Vector)",tr("Set the position of the manipulator."),
+                          QString(tr("objectId,Position")).split(","), QString(tr("ID of an object, 3D point")).split(","));
 
-  emit setSlotDescription("setManipulatorDirection(int,Vector, Vector)","Set the direction of the manipulator.",
-                          QString("objectId,Direction, Direction").split(","), QString("ID of an object, x-direction, y-direction").split(","));
+  emit setSlotDescription("setManipulatorDirection(int,Vector, Vector)",tr("Set the direction of the manipulator."),
+                          QString(tr("objectId,Direction, Direction")).split(","), QString(tr("ID of an object, x-direction, y-direction")).split(","));
 
-  emit setSlotDescription("manipulatorPosition(int)","Returns the position of an object's manipulator.",
-                          QStringList("objectId"), QStringList("ID of an object"));
+  emit setSlotDescription("manipulatorPosition(int)",tr("Returns the position of an object's manipulator."),
+                          QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
-  emit setSlotDescription("manipulatorDirectionX(int)","Returns the x-direction of an object's manipulator.",
-                          QStringList("objectId"), QStringList("ID of an object"));
+  emit setSlotDescription("manipulatorDirectionX(int)",tr("Returns the x-direction of an object's manipulator."),
+                          QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
-  emit setSlotDescription("manipulatorDirectionY(int)","Returns the y-direction of an object's manipulator.",
-                          QStringList("objectId"), QStringList("ID of an object"));
+  emit setSlotDescription("manipulatorDirectionY(int)",tr("Returns the y-direction of an object's manipulator."),
+                          QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
-  emit setSlotDescription("manipulatorDirectionZ(int)","Returns the z-direction of an object's manipulator.",
-                          QStringList("objectId"), QStringList("ID of an object"));
+  emit setSlotDescription("manipulatorDirectionZ(int)",tr("Returns the z-direction of an object's manipulator."),
+                          QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 }
 
 
@@ -112,7 +112,7 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"translate : unable to get object" );
+    emit log(LOGERR,tr("translate : unable to get object") );
     return;
   }
 
@@ -164,7 +164,7 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
 void MovePlugin::translate( int _objectId , idList _vHandles, Vector _vector ){
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"translate : unable to get object" );
+    emit log(LOGERR,tr("translate : unable to get object") );
     return;
   }
 
@@ -219,7 +219,7 @@ void MovePlugin::translateSelection( int _objectId , Vector _vector) {
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"translate : unable to get object" );
+    emit log(LOGERR,tr("translate : unable to get object" ));
     return;
   }
 
@@ -273,7 +273,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"transform : unable to get object" );
+    emit log(LOGERR,tr("transform : unable to get object" ));
     return;
   }
 
@@ -334,7 +334,7 @@ void MovePlugin::transform( int _objectId , idList _vHandles, Matrix4x4 _matrix 
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"transform : unable to get object" );
+    emit log(LOGERR,tr("transform : unable to get object" ));
     return;
   }
 
@@ -398,7 +398,7 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"transform : unable to get object" );
+    emit log(LOGERR,tr("transform : unable to get object") );
     return;
   }
 
@@ -462,7 +462,7 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"transform : unable to get object" );
+    emit log(LOGERR,tr("transform : unable to get object") );
     return;
   }
 
@@ -542,7 +542,7 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"transform : unable to get object" );
+    emit log(LOGERR,tr("transform : unable to get object" ) );
     return;
   }
 
@@ -634,7 +634,7 @@ void MovePlugin::setManipulatorPosition( int _objectId , Vector _position ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"setManipulatorPosition : unable to get object" );
+    emit log(LOGERR,tr("setManipulatorPosition : unable to get object") );
     return;
   }
 
@@ -678,7 +678,7 @@ Vector MovePlugin::manipulatorPosition( int _objectId ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"manipulatorPosition : unable to get object" );
+    emit log(LOGERR,tr("manipulatorPosition : unable to get object" ));
     return Vector();
   }
 
@@ -698,12 +698,12 @@ void MovePlugin::setManipulatorDirection( int _objectId , Vector _directionX, Ve
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"setManipulatorDirection : unable to get object" );
+    emit log(LOGERR,tr("setManipulatorDirection : unable to get object") );
     return;
   }
 
   if ( !object->manipPlaced() ){
-    emit log(LOGERR,"setManipulatorDirection : manipulator position has to be set first" );
+    emit log(LOGERR,tr("setManipulatorDirection : manipulator position has to be set first" ));
     return;
   }
 
@@ -730,7 +730,7 @@ Vector MovePlugin::manipulatorDirectionX( int _objectId ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"manipulatorDirection : unable to get object" );
+    emit log(LOGERR,tr("manipulatorDirection : unable to get object" ));
     return Vector();
   }
 
@@ -749,7 +749,7 @@ Vector MovePlugin::manipulatorDirectionY( int _objectId ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"manipulatorDirection : unable to get object" );
+    emit log(LOGERR,tr("manipulatorDirection : unable to get object" ));
     return Vector();
   }
 
@@ -768,7 +768,7 @@ Vector MovePlugin::manipulatorDirectionZ( int _objectId ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"manipulatorDirection : unable to get object" );
+    emit log(LOGERR,tr("manipulatorDirection : unable to get object" ));
     return Vector();
   }
 

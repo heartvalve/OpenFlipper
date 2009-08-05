@@ -151,7 +151,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     QString name(){ return (QString("Move")); };
 
     /// Description of the Plugin
-    QString description() { return (QString("Moves Meshes with Manipulators")); };
+    QString description() { return (QString(tr("Moves Meshes with Manipulators"))); };
 
 //===========================================================================
 /** @name ToolBox

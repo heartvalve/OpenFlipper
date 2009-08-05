@@ -104,22 +104,22 @@ void MovePlugin::pluginsInitialized() {
   emit setPickModeMouseTracking ("MoveSelection", true);
 
   //KEYS
-  emit registerKey (Qt::Key_Shift, Qt::ShiftModifier, "Manipulator rotation", true);
-  emit registerKey (Qt::Key_Shift, Qt::NoModifier, "Manipulator rotation", true);
-  emit registerKey (Qt::Key_Control, Qt::ControlModifier, "Resize", true);
-  emit registerKey (Qt::Key_Control, Qt::NoModifier, "Resize", true);
+  emit registerKey (Qt::Key_Shift, Qt::ShiftModifier, tr("Manipulator rotation"), true);
+  emit registerKey (Qt::Key_Shift, Qt::NoModifier, tr("Manipulator rotation"), true);
+  emit registerKey (Qt::Key_Control, Qt::ControlModifier, tr("Resize"), true);
+  emit registerKey (Qt::Key_Control, Qt::NoModifier, tr("Resize"), true);
 
   //SCRIPTING SLOT DESCRIPTIONS
   setDescriptions();
 
   // CONTEXT MENU
-  toAllTargets_ = new QAction("Apply to all targets", this);
+  toAllTargets_ = new QAction(tr("Apply to all targets"), this);
   toAllTargets_->setCheckable(true);
-  toAllTargets_->setToolTip("Apply transformation to all target objects");
+  toAllTargets_->setToolTip(tr("Apply transformation to all target objects"));
   toAllTargets_->setStatusTip( toAllTargets_->toolTip() );
 
-  contextAction_ = new QAction("Set properties", this);
-  contextAction_->setToolTip("Set properties");
+  contextAction_ = new QAction(tr("Set properties"), this);
+  contextAction_->setToolTip(tr("Set properties"));
   contextAction_->setStatusTip( contextAction_->toolTip() );
 
   emit addContextMenuItem(toAllTargets_ , CONTEXTNODEMENU );
@@ -131,7 +131,7 @@ void MovePlugin::pluginsInitialized() {
 	   this, SLOT(showProps()) );
 
   //TOOLBAR
-  toolbar_ = new QToolBar("Transform and Move");
+  toolbar_ = new QToolBar(tr("Transform and Move"));
 
   toolBarActions_ = new QActionGroup(toolbar_);
 
@@ -152,7 +152,7 @@ void MovePlugin::pluginsInitialized() {
 
   emit addToolbar(toolbar_);
 
-  pickToolbar_ = new QToolBar("Transform and Move");
+  pickToolbar_ = new QToolBar(tr("Transform and Move"));
   pickToolBarActions_ = new QActionGroup(pickToolbar_);
   pickToolBarActions_->setExclusive (false);
 
@@ -350,7 +350,7 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   #endif
   } else {
 
-    emit log(LOGERR,"moveObject called for unsupported Object Type");
+    emit log(LOGERR,tr("moveObject called for unsupported Object Type"));
     return;
   }
 
@@ -550,7 +550,7 @@ void MovePlugin::placeManip(QMouseEvent * _event)
          object->manipPlaced( true );
 
          if ( !object->picked(node_idx) ) {
-            emit log(LOGWARN,"Picking failed");
+            emit log(LOGWARN,tr("Picking failed"));
          }
 
          object->manipulatorNode()->loadIdentity();
@@ -575,7 +575,7 @@ void MovePlugin::placeManip(QMouseEvent * _event)
       }
 
    } else {
-       emit log(LOGWARN,"Picking failed");
+       emit log(LOGWARN,tr("Picking failed"));
    }
 }
 
@@ -636,11 +636,11 @@ void MovePlugin::slotSetPosition() {
 
     bool ok = false;
     newpos[0] =  (pW->nposx->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for X Coordinate")); return; }
     newpos[1] =  (pW->nposy->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Y Coordinate")); return; }
     newpos[2] =  (pW->nposz->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
 
     BaseObjectData* object;
     if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
@@ -669,9 +669,9 @@ void MovePlugin::slotToggleAxisA() {
 	axisA_ = (axisA_ + 1) % 3;
 
     switch(axisA_){
-	case 0: pW->axisAButton->setText("X Direction"); break;
-	case 1: pW->axisAButton->setText("Y Direction"); break;
-	case 2: pW->axisAButton->setText("Z Direction"); break;
+	case 0: pW->axisAButton->setText(tr("X Direction")); break;
+	case 1: pW->axisAButton->setText(tr("Y Direction")); break;
+	case 2: pW->axisAButton->setText(tr("Z Direction")); break;
 	default: break;
     }
 }
@@ -694,9 +694,9 @@ void MovePlugin::slotToggleAxisB() {
 	axisB_ = (axisB_ + 1) % 3;
 
     switch(axisB_){
-	case 0: pW->axisBButton->setText("X Direction"); break;
-	case 1: pW->axisBButton->setText("Y Direction"); break;
-	case 2: pW->axisBButton->setText("Z Direction"); break;
+	case 0: pW->axisBButton->setText(tr("X Direction")); break;
+	case 1: pW->axisBButton->setText(tr("Y Direction")); break;
+	case 2: pW->axisBButton->setText(tr("Z Direction")); break;
 	default: break;
     }
 }
@@ -719,18 +719,18 @@ void MovePlugin::slotSetDirection() {
 
     bool ok = false;
     newdirA[0] =  (pW->ndirAx->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for X Coordinate"));  return; }
     newdirA[1] =  (pW->ndirAy->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Y Coordinate")); return; }
     newdirA[2] =  (pW->ndirAz->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
 
     newdirB[0] =  (pW->ndirBx->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for X Coordinate"));  return; }
     newdirB[1] =  (pW->ndirBy->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Y Coordinate")); return; }
     newdirB[2] =  (pW->ndirBz->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
 
     bool xAxis = false;
     bool yAxis = false;
@@ -755,7 +755,7 @@ void MovePlugin::slotSetDirection() {
 
 
     if ( (dirX | dirY) != 0.0){
-	emit log(LOGERR,"The axes of the new direction have to be orthogonal");
+	emit log(LOGERR,tr("The axes of the new direction have to be orthogonal"));
 	return;
     }
 
@@ -796,11 +796,11 @@ void MovePlugin::slotTranslation() {
 
     bool ok = false;
     translation[0] =  (pW->translationX->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for X Coordinate"));  return; }
     translation[1] =  (pW->translationY->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Y Coordinate")); return; }
     translation[2] =  (pW->translationZ->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
 
 //	// Apply to All Target Objects
 //	if ( pW->targetObjects->isChecked() ) {
@@ -867,10 +867,10 @@ void MovePlugin::slotProjectToTangentPlane() {
     if(pW == 0) return;
 
     if ( allTargets_ ) {
-    	emit log(LOGWARN,"TODO Project for multiple targets");
+    	emit log(LOGWARN,tr("TODO Project for multiple targets"));
     	return;
     } else {
-    	emit log(LOGWARN,"TODO Project for one target");
+    	emit log(LOGWARN,tr("TODO Project for one target"));
     	return;
     }
 
@@ -938,14 +938,14 @@ void MovePlugin::slotRotate() {
 
     bool ok = false;
     axis[0] =  (pW->rotx->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for X Coordinate");  return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for X Coordinate"));  return; }
     axis[1] =  (pW->roty->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Y Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Y Coordinate")); return; }
     axis[2] =  (pW->rotz->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for Z Coordinate"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for Z Coordinate")); return; }
 
     angle =  (pW->rotAngle->text()).toDouble(&ok);
-    if ( !ok ) {  emit log(LOGERR,"Wrong Format for Angle"); return; }
+    if ( !ok ) {  emit log(LOGERR,tr("Wrong Format for Angle")); return; }
 
 //     if ( pW->targetObjects->isChecked() ) {
 // 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
@@ -1011,11 +1011,11 @@ void MovePlugin::slotScale() {
 
     bool ok = false;
     scale[0] =  (pW->scalex->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 1");  return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for factor 1"));  return; }
     scale[1] =  (pW->scaley->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 2"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for factor 2")); return; }
     scale[2] =  (pW->scalez->text()).toDouble(&ok);
-    if ( !ok ) { emit log(LOGERR,"Wrong Format for factor 3"); return; }
+    if ( !ok ) { emit log(LOGERR,tr("Wrong Format for factor 3")); return; }
 
 //    if ( pW->targetObjects->isChecked() ) {
 // 	for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
@@ -1399,17 +1399,17 @@ void MovePlugin::connectSelectionActions(){
       QActionGroup* actionGroup = 0;
 
       for (int i=0; i < selToolBar->actions().count(); i++){
-        if( selToolBar->actions().at(i)->text() == "Enable Vertex Selection"){
+        if( selToolBar->actions().at(i)->text() == tr("Enable Vertex Selection") ){
 
           actionGroup = selToolBar->actions().at(i)->actionGroup();
 
           if ( selToolBar->actions().at(i)->isChecked() )
             selectionType_ = VERTEX;
 
-        } else if ( (selToolBar->actions().at(i)->text() == "Enable Edge Selection")
+        } else if ( (selToolBar->actions().at(i)->text() == tr("Enable Edge Selection") )
                 && (selToolBar->actions().at(i)->isChecked()) )
             selectionType_ = EDGE;
-        else if ( (selToolBar->actions().at(i)->text() == "Enable Face Selection")
+        else if ( (selToolBar->actions().at(i)->text() == tr("Enable Face Selection") )
                 && (selToolBar->actions().at(i)->isChecked()) )
             selectionType_ = FACE;
       }
@@ -1421,7 +1421,7 @@ void MovePlugin::connectSelectionActions(){
     }
 
     if (!connected)
-      emit log(LOGWARN, "Unable to connect to Selection-Plugin. MoveSelection will work on vertices only.");
+      emit log(LOGWARN, tr("Unable to connect to Selection-Plugin. MoveSelection will work on vertices only."));
   }
 }
 
@@ -1434,11 +1434,11 @@ void MovePlugin::connectSelectionActions(){
  */
 void MovePlugin::slotSelectionModeChanged(QAction* _action){
 
-  if (_action->text() == "Enable Vertex Selection")
+  if (_action->text() == tr("Enable Vertex Selection"))
     selectionType_ = VERTEX;
-  if (_action->text() == "Enable Edge Selection")
+  if (_action->text() == tr("Enable Edge Selection"))
     selectionType_ = EDGE;
-  if (_action->text() == "Enable Face Selection")
+  if (_action->text() == tr("Enable Face Selection"))
     selectionType_ = FACE;
 }
 
