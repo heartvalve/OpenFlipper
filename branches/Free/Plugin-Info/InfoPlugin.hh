@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -106,7 +106,7 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
       QString name(){ return (QString("Info")); };
 
       /// Description of the Plugin
-      QString description() { return (QString("Providing Information about Objects")); };
+      QString description() { return (QString(tr("Providing Information about Objects"))); };
 
   private :
     InfoDialog* info_;
