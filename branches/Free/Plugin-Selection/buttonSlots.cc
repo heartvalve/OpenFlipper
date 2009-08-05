@@ -222,7 +222,7 @@ void SelectionPlugin::slotLoadSelection(){
     INIFile ini;
 
     if ( ! ini.connect(fileName,false) ) {
-      emit log(LOGERR,"Failed to load ini file " + fileName);
+      emit log(LOGERR,tr("Failed to load ini file ") + fileName);
       return;
     }
     
@@ -266,7 +266,7 @@ void SelectionPlugin::slotSaveSelection(){
       INIFile ini;
 
       if ( ! ini.connect(fileName,true) ) {
-        emit log(LOGERR,"Failed to save ini file " + fileName);
+        emit log(LOGERR,tr("Failed to save ini file ") + fileName);
         return;
       }
 
@@ -298,7 +298,7 @@ void SelectionPlugin::slotSaveSelection(){
             saveFlipperModelingSelection(o_it->id(), fileName );
             saved = true;
           } else {
-            emit log(LOGWARN, "SaveSelection: Only selection of the first target was saved.");
+            emit log(LOGWARN, tr("SaveSelection: Only selection of the first target was saved."));
             return;
           }
         }

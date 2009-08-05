@@ -86,7 +86,7 @@ void SelectionPlugin::initializePlugin() {
     return;
 
   // create sphere for paint sphere selection
-  sphere_mat_node_  = new ACG::SceneGraph::MaterialNode(PluginFunctions::getRootNode(), "Sphere Color");
+  sphere_mat_node_  = new ACG::SceneGraph::MaterialNode(PluginFunctions::getRootNode(), tr("Sphere Color").toStdString());
   sphere_mat_node_->applyProperties( MaterialNode::Blending  |
                                      MaterialNode::Material  |
                                      MaterialNode::AlphaTest |
@@ -96,7 +96,7 @@ void SelectionPlugin::initializePlugin() {
   sphere_mat_node_->disable_alpha_test();
   sphere_mat_node_->enable_backface_culling();
 
-  sphere_node_ = new ACG::SceneGraph::GlutPrimitiveNode(ACG::SceneGraph::GlutPrimitiveNode::SPHERE, sphere_mat_node_, "Sphere");
+  sphere_node_ = new ACG::SceneGraph::GlutPrimitiveNode(ACG::SceneGraph::GlutPrimitiveNode::SPHERE, sphere_mat_node_, tr("Sphere").toStdString());
   sphere_node_->drawMode(ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
   sphere_node_->hide();
 
@@ -105,30 +105,30 @@ void SelectionPlugin::initializePlugin() {
   sphere_selection_ = false;
 
   line_node_ = new ACG::SceneGraph::LineNode (ACG::SceneGraph::LineNode::PolygonMode,
-                                              PluginFunctions::getRootNode(), "Lasso line");
+                                              PluginFunctions::getRootNode(), tr("Lasso line").toStdString());
   line_node_->set_line_width (2.0);
   line_node_->depthFunc (GL_ALWAYS);
   line_node_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);
   line_node_->hide();
 
   //register keys for the plugin
-  emit registerKey(Qt::Key_C,      Qt::NoModifier, "Clear Selection");
-  emit registerKey(Qt::Key_I,      Qt::NoModifier, "Invert Selection");
-  emit registerKey(Qt::Key_Delete, Qt::NoModifier, "Delete Selection");
+  emit registerKey(Qt::Key_C,      Qt::NoModifier, tr("Clear Selection"));
+  emit registerKey(Qt::Key_I,      Qt::NoModifier, tr("Invert Selection"));
+  emit registerKey(Qt::Key_Delete, Qt::NoModifier, tr("Delete Selection"));
 
   //the release event does not contain the modifier
-  emit registerKey(Qt::Key_Control, Qt::NoModifier, "Deselect instead of Select", true);
-  emit registerKey(Qt::Key_Shift,   Qt::NoModifier,   "Switch between source/target Selection", true);
+  emit registerKey(Qt::Key_Control, Qt::NoModifier, tr("Deselect instead of Select"), true);
+  emit registerKey(Qt::Key_Shift,   Qt::NoModifier,   tr("Switch between source/target Selection"), true);
   //the press event contains the modifier
-  emit registerKey(Qt::Key_Control, Qt::ControlModifier, "Deselect instead of Select", true);
-  emit registerKey(Qt::Key_Shift,   Qt::ShiftModifier,   "Switch between source/target Selection", true);
+  emit registerKey(Qt::Key_Control, Qt::ControlModifier, tr("Deselect instead of Select"), true);
+  emit registerKey(Qt::Key_Shift,   Qt::ShiftModifier,   tr("Switch between source/target Selection"), true);
 
   //different combinations of keyPresses
-  emit registerKey(Qt::Key_Shift,   Qt::ShiftModifier | Qt::ControlModifier, "Source Deselection", true);
-  emit registerKey(Qt::Key_Control, Qt::ShiftModifier | Qt::ControlModifier, "Source Deselection", true);
+  emit registerKey(Qt::Key_Shift,   Qt::ShiftModifier | Qt::ControlModifier, tr("Source Deselection"), true);
+  emit registerKey(Qt::Key_Control, Qt::ShiftModifier | Qt::ControlModifier, tr("Source Deselection"), true);
 
   //register keys for the plugin
-  emit registerKey(Qt::Key_F8,      Qt::NoModifier, "Save Selections");
+  emit registerKey(Qt::Key_F8,      Qt::NoModifier, tr("Save Selections"));
 }
 
 //***********************************************************************************
@@ -155,32 +155,32 @@ void SelectionPlugin::pluginsInitialized() {
   emit setPickModeCursor(SURFACE_LASSO_SELECTION, Qt::CrossCursor);
 
   // CONTEXT MENU
-  contextMenu_ = new QMenu("Select");
+  contextMenu_ = new QMenu(tr("Select"));
 
   QAction* lastAction;
 
-  lastAction = contextMenu_->addAction( "All" );
-  lastAction->setToolTip("Select all");
+  lastAction = contextMenu_->addAction( tr("All") );
+  lastAction->setToolTip(tr("Select all"));
   lastAction->setStatusTip( lastAction->toolTip() );
 
-  lastAction = contextMenu_->addAction( "Clear" );
-  lastAction->setToolTip("Clear selection");
+  lastAction = contextMenu_->addAction( tr("Clear") );
+  lastAction->setToolTip(tr("Clear selection"));
   lastAction->setStatusTip( lastAction->toolTip() );
 
-  lastAction = contextMenu_->addAction( "Invert" );
-  lastAction->setToolTip("Invert selection");
+  lastAction = contextMenu_->addAction( tr("Invert") );
+  lastAction->setToolTip(tr("Invert selection"));
   lastAction->setStatusTip( lastAction->toolTip() );
 
-  lastAction = contextMenu_->addAction( "Shrink" );
-  lastAction->setToolTip("Deselect the boundary of the current selection");
+  lastAction = contextMenu_->addAction( tr("Shrink") );
+  lastAction->setToolTip(tr("Deselect the boundary of the current selection"));
   lastAction->setStatusTip( lastAction->toolTip() );
 
-  lastAction = contextMenu_->addAction( "Grow" );
-  lastAction->setToolTip("Extend the selection at their boundary");
+  lastAction = contextMenu_->addAction( tr("Grow") );
+  lastAction->setToolTip(tr("Extend the selection at their boundary"));
   lastAction->setStatusTip( lastAction->toolTip() );
 
-  lastAction = contextMenu_->addAction( "Boundary" );
-  lastAction->setToolTip("Select the boundary of the object");
+  lastAction = contextMenu_->addAction( tr("Boundary") );
+  lastAction->setToolTip(tr("Select the boundary of the object"));
   lastAction->setStatusTip( lastAction->toolTip() );
 
 
@@ -197,7 +197,7 @@ void SelectionPlugin::pluginsInitialized() {
 
 
   // TOOLBAR
-  toolBar_ = new QToolBar("Selection");
+  toolBar_ = new QToolBar(tr("Selection"));
   emit addToolbar(toolBar_);
 
   // TOOLBAR - SELECTION TYPES
@@ -207,51 +207,51 @@ void SelectionPlugin::pluginsInitialized() {
 
   QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
 
-  objectAction_ = new QAction( QIcon(iconPath + "selection_object.png"), "Enable Object Selection", toolBarTypes_ );
+  objectAction_ = new QAction( QIcon(iconPath + "selection_object.png"), tr("Enable Object Selection"), toolBarTypes_ );
   objectAction_->setCheckable( true );
   objectAction_->setChecked( false );
   toolBar_->addAction( objectAction_ );
-  vertexAction_ = new QAction( QIcon(iconPath + "selection_vertex.png"), "Enable Vertex Selection", toolBarTypes_ );
+  vertexAction_ = new QAction( QIcon(iconPath + "selection_vertex.png"), tr("Enable Vertex Selection"), toolBarTypes_ );
   vertexAction_->setCheckable( true );
   vertexAction_->setChecked( true );
   toolBar_->addAction( vertexAction_ );
-  edgeAction_ = new QAction( QIcon(iconPath + "selection_edge.png"), "Enable Edge Selection", toolBarTypes_ );
+  edgeAction_ = new QAction( QIcon(iconPath + "selection_edge.png"), tr("Enable Edge Selection"), toolBarTypes_ );
   edgeAction_->setCheckable( true );
   toolBar_->addAction( edgeAction_ );
-  faceAction_ = new QAction( QIcon(iconPath + "selection_face.png"), "Enable Face Selection", toolBarTypes_ );
+  faceAction_ = new QAction( QIcon(iconPath + "selection_face.png"), tr("Enable Face Selection"), toolBarTypes_ );
   faceAction_->setCheckable( true );
   toolBar_->addAction( faceAction_ );
   toolBar_->addSeparator();
 
   // TOOLBAR - SELECTION ACTIONS
   toggleAction_ = new QAction( QIcon(iconPath + "selection_toggle.png"),
-                              "<B>Toggle Selection</B><br>Select or deselect clicked elements.", toolBarActions_ );
+                              tr("<B>Toggle Selection</B><br>Select or deselect clicked elements."), toolBarActions_ );
   toggleAction_->setCheckable( true );
   toolBar_->addAction( toggleAction_ );
   lassoAction_ = new QAction( QIcon(iconPath + "selection_lasso.png"),
-                              "<B>Lasso Selection</B><br>Draw a Lasso to select elements on the surface.", toolBarActions_ );
+                              tr("<B>Lasso Selection</B><br>Draw a Lasso to select elements on the surface."), toolBarActions_ );
   lassoAction_->setCheckable( true );
   toolBar_->addAction( lassoAction_ );
   volumeLassoAction_ = new QAction( QIcon(iconPath + "selection_lasso2.png"),
-                              "<B>Volume Lasso Selection</B><br>Draw a Lasso to select elements in the drawn volume.", toolBarActions_ );
+                              tr("<B>Volume Lasso Selection</B><br>Draw a Lasso to select elements in the drawn volume."), toolBarActions_ );
   volumeLassoAction_->setCheckable( true );
   toolBar_->addAction( volumeLassoAction_ );
   paintSphereAction_ = new QAction( QIcon(iconPath + "selection_paintSphere.png"),
-                              "<B>Sphere Selection</B><br>Select elements by painting with a sphere.", toolBarActions_ );
+                              tr("<B>Sphere Selection</B><br>Select elements by painting with a sphere."), toolBarActions_ );
   paintSphereAction_->setCheckable( true );
   toolBar_->addAction( paintSphereAction_ );
   boundaryAction_ = new QAction( QIcon(iconPath + "selection_boundary.png"),
-                              "<B>Closest Boundary</B><br>Select the closest boundary to a clicked point.", toolBarActions_ );
+                              tr("<B>Closest Boundary</B><br>Select the closest boundary to a clicked point."), toolBarActions_ );
   boundaryAction_->setCheckable( true );
   toolBar_->addAction( boundaryAction_ );
   #ifdef ENABLE_POLYLINE_SUPPORT
   surfaceLassoAction_ = new QAction( QIcon(iconPath + "surface-lasso.png"),
-                              "<B>Surface Lasso</B><br>Draw a Lasso on the surface.", toolBarActions_ );
+                              tr("<B>Surface Lasso</B><br>Draw a Lasso on the surface."), toolBarActions_ );
   surfaceLassoAction_->setCheckable( true );
   toolBar_->addAction( surfaceLassoAction_ );
   #endif
   connectedAction_ = new QAction( QIcon(iconPath + "selection_connected.png"),
-                               "<B>Connected Component</B><br>Select the connect component to a clicked element.", toolBarActions_ );
+                               tr("<B>Connected Component</B><br>Select the connect component to a clicked element."), toolBarActions_ );
   connectedAction_->setCheckable( true );
   toolBar_->addAction( connectedAction_ );
 
@@ -334,22 +334,22 @@ bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
   tool_->faceSelection->setIcon( QIcon(iconPath + "selection_face.png") );
 
   // Set combo box entries for the different modes
-  tool_->convertFrom->addItem("Modeling Area");
-  tool_->convertFrom->addItem("Handle Area");
-  tool_->convertFrom->addItem("Feature Area");
+  tool_->convertFrom->addItem(tr("Modeling Area"));
+  tool_->convertFrom->addItem(tr("Handle Area"));
+  tool_->convertFrom->addItem(tr("Feature Area"));
 
-  tool_->convertTo->addItem("Modeling Area");
-  tool_->convertTo->addItem("Handle Area");
-  tool_->convertTo->addItem("Feature Area");
+  tool_->convertTo->addItem(tr("Modeling Area"));
+  tool_->convertTo->addItem(tr("Handle Area"));
+  tool_->convertTo->addItem(tr("Feature Area"));
 
   // Set combo box entries for the different selection types
-  tool_->convertFrom->addItem("Vertex Selection");
-  tool_->convertFrom->addItem("Edge Selection");
-  tool_->convertFrom->addItem("Face Selection");
+  tool_->convertFrom->addItem(tr("Vertex Selection"));
+  tool_->convertFrom->addItem(tr("Edge Selection"));
+  tool_->convertFrom->addItem(tr("Face Selection"));
 
-  tool_->convertTo->addItem("Vertex Selection");
-  tool_->convertTo->addItem("Edge Selection");
-  tool_->convertTo->addItem("Face Selection");
+  tool_->convertTo->addItem(tr("Vertex Selection"));
+  tool_->convertTo->addItem(tr("Edge Selection"));
+  tool_->convertTo->addItem(tr("Face Selection"));
 
   // Check checkboxes by default
   tool_->checkAddArea->setChecked(true);
@@ -578,7 +578,7 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
   }else{
     //first check if a selection type was set
     if (selectionType_ == 0){
-      emit log(LOGERR,"Choose at least one selection type first.");
+      emit log(LOGERR,tr("Choose at least one selection type first."));
       _action->setChecked(false);
       return;
     }
@@ -801,9 +801,9 @@ void SelectionPlugin::slotDeleteSelection() {
  */
 void SelectionPlugin::slotToggleSelectionRestriction(){
   if ( tool_->restrictOnTargets->isChecked() )
-      tool_->restrictOnTargets->setText("Select on target objects only");
+      tool_->restrictOnTargets->setText(tr("Select on target objects only"));
   else
-      tool_->restrictOnTargets->setText("Select on all objects");
+      tool_->restrictOnTargets->setText(tr("Select on all objects"));
 }
 
 //******************************************************************************
@@ -817,7 +817,7 @@ void SelectionPlugin::saveIniFile( INIFile& _ini , int _id) {
 
    BaseObjectData* object;
    if ( !PluginFunctions::getObject(_id,object) ) {
-     emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
+     emit log(LOGERR,tr("Cannot find object for id ") + QString::number(_id) + tr(" in saveFile") );
      return;
    }
 
@@ -826,7 +826,7 @@ void SelectionPlugin::saveIniFile( INIFile& _ini , int _id) {
    // The objects section should already exist
    QString sectionName = object->name();
    if ( !_ini.section_exists( sectionName ) ) {
-     emit log(LOGERR,"Cannot find object section id " + QString::number(_id) + " in saveFile" );
+     emit log(LOGERR,tr("Cannot find object section id ") + QString::number(_id) + tr(" in saveFile") );
      return;
    }
 
@@ -854,7 +854,7 @@ void SelectionPlugin::loadIniFile( INIFile& _ini, int _id )
 
   BaseObjectData* object;
   if ( !PluginFunctions::getObject(_id,object) ) {
-    emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
+    emit log(LOGERR,tr("Cannot find object for id ") + QString::number(_id) + tr(" in saveFile") );
     return;
   }
 
@@ -1345,7 +1345,7 @@ void SelectionPlugin::saveSelection( int _objectId , QString _filename)
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
-    emit log(LOGERR,"saveSelection: unable to get object" );
+    emit log(LOGERR,tr("saveSelection: unable to get object") );
     return;
   }
 
@@ -1365,7 +1365,7 @@ void SelectionPlugin::saveSelection( int _objectId , QString _filename)
 	  ;
 #endif
 	else
-	  emit log(LOGERR,"saveSelection : Unsupported object Type" );
+	  emit log(LOGERR,tr("saveSelection : Unsupported object Type") );
 }
 
 //******************************************************************************
@@ -1378,7 +1378,7 @@ void SelectionPlugin::loadSelection( int _objectId  , QString _filename)
     INIFile ini;
 
     if ( ! ini.connect(_filename,false) ) {
-      emit log(LOGERR,"Failed to load Selection from file " + _filename);
+      emit log(LOGERR,tr("Failed to load Selection from file ") + _filename);
       return;
     }
 

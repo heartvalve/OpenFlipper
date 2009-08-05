@@ -58,17 +58,17 @@ void SelectionPlugin::selectionContextMenu(QAction* _action) {
   if ( ! PluginFunctions::getObject(objectId,object) )
     return;
   
-  if ( _action->text() == "All") 
+  if ( _action->text() == tr("All")) 
     selectAll( objectId );
-  else if ( _action->text() == "Clear")      
+  else if ( _action->text() == tr("Clear"))      
     clearSelection( objectId );
-  else if ( _action->text() == "Invert")
+  else if ( _action->text() == tr("Invert"))
     invertSelection( objectId );      
-  else if ( _action->text() == "Shrink")
+  else if ( _action->text() == tr("Shrink"))
     shrinkSelection( objectId );        
-  else if ( _action->text() == "Grow")
+  else if ( _action->text() == tr("Grow"))
     growSelection( objectId );          
-  else if ( _action->text() == "Boundary")
+  else if ( _action->text() == tr("Boundary"))
     selectBoundary( objectId );
 
   emit updatedObject(objectId);

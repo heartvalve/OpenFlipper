@@ -57,7 +57,7 @@
 void SelectionPlugin::selectHandleVertices( int objectId , idList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectHandleVertices : unable to get object" ); 
+    emit log(LOGERR,tr("selectHandleVertices : unable to get object") ); 
     return;
   }
   
@@ -71,7 +71,7 @@ void SelectionPlugin::selectHandleVertices( int objectId , idList _vertexList ) 
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , HANDLEAREA, true);
       update_regions( PluginFunctions::polyMesh(object) );
   } else {
-      emit log(LOGERR,"selectHandleVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectHandleVertices : Unsupported object Type") ); 
       return;
   }
   
@@ -92,7 +92,7 @@ void SelectionPlugin::selectHandleVertices( int objectId , idList _vertexList ) 
 void SelectionPlugin::unselectHandleVertices( int objectId , idList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"unselectHandleVertices : unable to get object" ); 
+    emit log(LOGERR,tr("unselectHandleVertices : unable to get object") ); 
     return;
   }
   
@@ -104,7 +104,7 @@ void SelectionPlugin::unselectHandleVertices( int objectId , idList _vertexList 
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , HANDLEAREA, false);
   else {
-      emit log(LOGERR,"unselectHandleVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("unselectHandleVertices : Unsupported object Type") ); 
       return;
   }
   
@@ -125,7 +125,7 @@ void SelectionPlugin::unselectHandleVertices( int objectId , idList _vertexList 
 void SelectionPlugin::clearHandleVertices( int objectId ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"clearHandleVertices : unable to get object" ); 
+    emit log(LOGERR,tr("clearHandleVertices : unable to get object") ); 
     return;
   }
   
@@ -134,7 +134,7 @@ void SelectionPlugin::clearHandleVertices( int objectId ) {
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , HANDLEAREA, false);
   else {
-      emit log(LOGERR,"clearHandleVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("clearHandleVertices : Unsupported object Type") ); 
       return;
   }
   
@@ -147,7 +147,7 @@ void SelectionPlugin::clearHandleVertices( int objectId ) {
 void SelectionPlugin::setAllHandleVertices( int objectId  ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"setAllHandleVertices : unable to get object" ); 
+    emit log(LOGERR,tr("setAllHandleVertices : unable to get object") ); 
     return;
   }
   
@@ -156,7 +156,7 @@ void SelectionPlugin::setAllHandleVertices( int objectId  ) {
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , HANDLEAREA, true);
   else {
-      emit log(LOGERR,"setAllHandleVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("setAllHandleVertices : Unsupported object Type") ); 
       return;
   }
   
@@ -169,7 +169,7 @@ void SelectionPlugin::setAllHandleVertices( int objectId  ) {
 idList SelectionPlugin::getHandleVertices( int objectId  ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"getHandleVertices : unable to get object" ); 
+    emit log(LOGERR,tr("getHandleVertices : unable to get object") ); 
     return idList(0);
   }
   
@@ -180,7 +180,7 @@ idList SelectionPlugin::getHandleVertices( int objectId  ) {
   else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getArea(PluginFunctions::polyMesh(object) , HANDLEAREA);
   else {
-      emit log(LOGERR,"getHandleVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("getHandleVertices : Unsupported object Type") ); 
       return idList(0);;
   }
   

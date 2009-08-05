@@ -403,9 +403,9 @@ void SelectionPlugin::closestBoundarySelection( MeshT* _mesh, int _vh, unsigned 
 
 
     }else
-      emit log(LOGERR, "Unable to find boundary.");
+      emit log(LOGERR, tr("Unable to find boundary."));
   }else
-    emit log(LOGERR, "Invalid vertex handle.");
+    emit log(LOGERR, tr("Invalid vertex handle."));
 }
 
 //***********************************************************************************

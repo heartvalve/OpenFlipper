@@ -57,7 +57,7 @@
 void SelectionPlugin::selectModelingVertices( int objectId , idList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectModelingVertices : unable to get object" );
+    emit log(LOGERR,tr("selectModelingVertices : unable to get object") );
     return;
   }
 
@@ -71,7 +71,7 @@ void SelectionPlugin::selectModelingVertices( int objectId , idList _vertexList 
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , AREA, true);
       update_regions( PluginFunctions::polyMesh(object) );
   } else {
-      emit log(LOGERR,"selectModelingVertices : Unsupported object Type" );
+      emit log(LOGERR,tr("selectModelingVertices : Unsupported object Type") );
       return;
   }
 
@@ -92,7 +92,7 @@ void SelectionPlugin::selectModelingVertices( int objectId , idList _vertexList 
 void SelectionPlugin::unselectModelingVertices( int objectId , idList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"unselectModelingVertices : unable to get object" );
+    emit log(LOGERR,tr("unselectModelingVertices : unable to get object") );
     return;
   }
 
@@ -104,7 +104,7 @@ void SelectionPlugin::unselectModelingVertices( int objectId , idList _vertexLis
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , AREA, false);
   else{
-      emit log(LOGERR,"unselectModelingVertices : Unsupported object Type" );
+      emit log(LOGERR,tr("unselectModelingVertices : Unsupported object Type") );
       return;
   }
 
@@ -125,7 +125,7 @@ void SelectionPlugin::unselectModelingVertices( int objectId , idList _vertexLis
 void SelectionPlugin::clearModelingVertices( int objectId ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"clearModelingVertices : unable to get object" );
+    emit log(LOGERR,tr("clearModelingVertices : unable to get object") );
     return;
   }
 
@@ -134,7 +134,7 @@ void SelectionPlugin::clearModelingVertices( int objectId ) {
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , AREA, false);
   else{
-      emit log(LOGERR,"clearModelingVertices : Unsupported object Type" );
+      emit log(LOGERR,tr("clearModelingVertices : Unsupported object Type") );
       return;
   }
 
@@ -147,7 +147,7 @@ void SelectionPlugin::clearModelingVertices( int objectId ) {
 void SelectionPlugin::setAllModelingVertices( int objectId  ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"setAllModelingVertices : unable to get object" );
+    emit log(LOGERR,tr("setAllModelingVertices : unable to get object") );
     return;
   }
 
@@ -156,7 +156,7 @@ void SelectionPlugin::setAllModelingVertices( int objectId  ) {
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , AREA, true);
   else{
-      emit log(LOGERR,"setAllModelingVertices : Unsupported object Type" );
+      emit log(LOGERR,tr("setAllModelingVertices : Unsupported object Type") );
       return;
   }
 
@@ -168,7 +168,7 @@ void SelectionPlugin::setAllModelingVertices( int objectId  ) {
 idList SelectionPlugin::getModelingVertices( int objectId  ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"getModelingVertices : unable to get object" );
+    emit log(LOGERR,tr("getModelingVertices : unable to get object") );
     return idList(0);
   }
 
@@ -179,7 +179,7 @@ idList SelectionPlugin::getModelingVertices( int objectId  ) {
   else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getArea(PluginFunctions::polyMesh(object) , AREA);
   else{
-      emit log(LOGERR,"getModelingVertices : Unsupported object Type" );
+      emit log(LOGERR,tr("getModelingVertices : Unsupported object Type") );
       return idList(0);
   }
 
@@ -192,7 +192,7 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
   QFile file(_filename);
 
   if ( ! file.exists() ) {
-    emit log(LOGERR,"Unable to find file : " + _filename );
+    emit log(LOGERR,tr("Unable to find file : ") + _filename );
     return;
   }
 
@@ -202,7 +202,7 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
     QString header = input.readLine();
 
     if ( !header.contains("Selection") ) {
-       emit log(LOGERR,"Wrong file header! should be Selection but is " + header );
+       emit log(LOGERR,tr("Wrong file header! should be Selection but is ") + header );
        return;
     }
 
@@ -213,14 +213,14 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
     uint vertexCount = header.toUInt(&ok);
 
     if ( !ok ) {
-       emit log(LOGERR,"Unable to parse header. Cant get vertex count from string : " + header );
+       emit log(LOGERR,tr("Unable to parse header. Cant get vertex count from string : ") + header );
        return;
     }
 
     //compare VertexCount
     BaseObjectData* object;
     if ( ! PluginFunctions::getObject(_objectId, object) ) {
-      emit log(LOGERR,"loadSelection : unable to get object" );
+      emit log(LOGERR,tr("loadSelection : unable to get object") );
       return;
     }
 
@@ -245,7 +245,7 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
       QStringList inputList = input.readLine().split(" ");
 
       if ( inputList.size() != 2 ) {
-        emit log(LOGERR,"Unable to parse entry at vertex index " + QString::number( vertexId ) );
+        emit log(LOGERR,tr("Unable to parse entry at vertex index ") + QString::number( vertexId ) );
         return;
       }
 
@@ -266,7 +266,7 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
     selectHandleVertices(_objectId,handleVertices);
 
   } else
-    emit log(LOGERR,"Unable to open selection file!");
+    emit log(LOGERR,tr("Unable to open selection file!"));
 }
 
 //=========================================================
@@ -280,7 +280,7 @@ void SelectionPlugin::saveFlipperModelingSelection( int _objectId , QString _fil
     //get the object
     BaseObjectData* object;
     if ( ! PluginFunctions::getObject(_objectId,object) ) {
-      emit log(LOGERR,"saveFlipperModelingSelection : unable to get object" );
+      emit log(LOGERR,tr("saveFlipperModelingSelection : unable to get object") );
       return;
     }
 
@@ -330,10 +330,10 @@ void SelectionPlugin::saveFlipperModelingSelection( int _objectId , QString _fil
         input << (int) modelingAll[i] << " " << (int) handleAll[i] << endl;
 
     } else {
-      emit log(LOGERR, "saveFlipperModelingSelection : Unsupported Type.");
+      emit log(LOGERR, tr("saveFlipperModelingSelection : Unsupported Type."));
     }
   } else
-    emit log(LOGERR,"Unable to open selection file!");
+    emit log(LOGERR,tr("Unable to open selection file!"));
 }
 
 
