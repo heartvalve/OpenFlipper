@@ -2052,15 +2052,37 @@ void glViewer::snapshot()
 }
 
 void glViewer::slotHideWheels() {
-  wheelX_->hide();
-  wheelY_->hide();
-  wheelZ_->hide();
+  if (isVisible())
+  {
+    wheelX_->hide();
+    wheelY_->hide();
+    wheelZ_->hide();
+  }
+  else
+  {
+    show ();
+    wheelX_->hide();
+    wheelY_->hide();
+    wheelZ_->hide();
+    hide ();
+  }
 }
 
 void glViewer::slotShowWheels() {
-  wheelX_->show();
-  wheelY_->show();
-  wheelZ_->show();
+  if (isVisible())
+  {
+    wheelX_->show();
+    wheelY_->show();
+    wheelZ_->show();
+  }
+  else
+  {
+    show ();
+    wheelX_->show();
+    wheelY_->show();
+    wheelZ_->show();
+    hide ();
+  }
 }
 
 bool glViewer::wheelsVisible() {
