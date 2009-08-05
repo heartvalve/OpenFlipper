@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -75,7 +75,7 @@ class LaplaceLengthPlugin : public QObject, BaseInterface, TextureInterface
     void computeLaplaceSquaredLength(MeshT* _mesh);
 
     QString name() { return (QString("LaplaceLengthPlugin")); };
-    QString description( ) { return (QString("Computes Laplace Vector length information")); };
+    QString description( ) { return (QString(tr("Computes Laplace Vector length information"))); };
 
   public slots:
     QString version() { return QString("1.0"); };
