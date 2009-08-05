@@ -385,29 +385,29 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   connect( questionButton_,SIGNAL( clicked() ), this, SLOT( setQuestionMode() ) );
   viewerToolbar_->addWidget( questionButton_)->setText(tr("Question"));
 
-  viewmodeBox_ = new QComboBox( viewerToolbar_ );
-  viewmodeBox_->setMinimumSize( 32, 16 );
-  viewmodeBox_->setMaximumSize( 64, 32 );
-  viewmodeBox_->setToolTip(tr("Switch <b>view mode</b>."));
-  viewmodeBox_->setWhatsThis(tr(
-                  "Switch <b>view mode</b>.<br>"
-                  "Select the desired view mode. "
-                  "Possible modes are: "
+  viewerLayoutBox_ = new QComboBox( viewerToolbar_ );
+  viewerLayoutBox_->setMinimumSize( 32, 16 );
+  viewerLayoutBox_->setMaximumSize( 64, 32 );
+  viewerLayoutBox_->setToolTip(tr("Switch <b>viewer layout</b>."));
+  viewerLayoutBox_->setWhatsThis(tr(
+                  "Switch <b>viewer layout</b>.<br>"
+                  "Select the desired viewer layout. "
+                  "Possible layouts are: "
                   "<ul> "
-				  "<li>Single view mode</li>"
-				  "<li>Multi view mode (grid)</li>"
-				  "<li>Multi view mode (hsplit)</li>"
+				  "<li>Single viewer</li>"
+				  "<li>Multiple viewers (grid)</li>"
+				  "<li>Multiple viewers (hsplit)</li>"
 				  "</ul>"));
 
-  viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"singleviewmode.png"), "");
-  viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode1.png"), "");
-  viewmodeBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode2.png"), "");
+  viewerLayoutBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"singleviewmode.png"), "");
+  viewerLayoutBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode1.png"), "");
+  viewerLayoutBox_->addItem(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiviewmode2.png"), "");
 
-  viewmodeBox_->setIconSize(QSize(22,22));
+  viewerLayoutBox_->setIconSize(QSize(22,22));
 
-  connect( viewmodeBox_,SIGNAL( activated(int) ), this, SLOT( setViewMode(int) ) );
+  connect( viewerLayoutBox_,SIGNAL( activated(int) ), this, SLOT( setViewerLayout(int) ) );
 
-  viewerToolbar_->addWidget( viewmodeBox_ );
+  viewerToolbar_->addWidget( viewerLayoutBox_ );
 
   viewerToolbar_->addSeparator();
 
@@ -796,10 +796,9 @@ void CoreWidget::showOptionsWidget() {
 
 }
 
-void CoreWidget::nextViewMode() {
+void CoreWidget::nextViewerLayout() {
 
 	if (OpenFlipper::Options::multiView()) {
-		emit log(tr("Switch MultiView mode"));
 
 		switch (baseLayout_->mode()) {
 		case QtMultiViewLayout::SingleView:
@@ -807,21 +806,21 @@ void CoreWidget::nextViewMode() {
 			baseLayout_->setMode(QtMultiViewLayout::Grid);
 
 			// Update combo box in the toolbar
-			viewmodeBox_->setCurrentIndex(1);
+			viewerLayoutBox_->setCurrentIndex(1);
 			break;
 		case QtMultiViewLayout::Grid:
                         baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
 			baseLayout_->setMode(QtMultiViewLayout::HSplit);
 
 			// Update combo box in the toolbar
-			viewmodeBox_->setCurrentIndex(2);
+			viewerLayoutBox_->setCurrentIndex(2);
 			break;
 		case QtMultiViewLayout::HSplit:
                         baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
 			baseLayout_->setMode(QtMultiViewLayout::SingleView);
 
 			// Update combo box in the toolbar
-			viewmodeBox_->setCurrentIndex(0);
+			viewerLayoutBox_->setCurrentIndex(0);
 			break;
 		}
 	}
@@ -829,10 +828,9 @@ void CoreWidget::nextViewMode() {
 
 
 void
-CoreWidget::setViewMode(int _idx) {
+CoreWidget::setViewerLayout(int _idx) {
 
 	if (OpenFlipper::Options::multiView()) {
-		emit log(tr("Switch MultiView mode"));
 
 		switch (_idx) {
 		case 0:
@@ -848,6 +846,8 @@ CoreWidget::setViewMode(int _idx) {
 			baseLayout_->setMode(QtMultiViewLayout::HSplit);
 			break;
 		}
+
+    viewerLayoutBox_->setCurrentIndex(_idx);
 	}
 }
 

@@ -596,7 +596,7 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
       break;
 
     case Qt::Key_Space:
-      nextViewMode();
+      nextViewerLayout();
       break;
 
     case Qt::Key_Shift :

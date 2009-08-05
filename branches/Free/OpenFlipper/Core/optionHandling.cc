@@ -117,7 +117,7 @@ void Core::applyOptions(){
     }
 
     if ( OpenFlipper::Options::multiView() )
-      coreWidget_->setViewMode( OpenFlipper::Options::defaultViewerLayout() );
+      coreWidget_->setViewerLayout( OpenFlipper::Options::defaultViewerLayout() );
 
     //set defaultBackgroundColor
     QColor c = OpenFlipper::Options::defaultBackgroundColor() ;
