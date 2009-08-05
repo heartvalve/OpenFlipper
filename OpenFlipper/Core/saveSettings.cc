@@ -75,37 +75,37 @@ void Core::saveSettings(){
 
   QGroupBox* optionsBox = new QGroupBox( &fileDialog ) ;
   optionsBox->setSizePolicy( QSizePolicy ( QSizePolicy::Expanding , QSizePolicy::Preferred ) );
-  optionsBox->setTitle("Options");
+  optionsBox->setTitle(tr("Options"));
   layout->addWidget( optionsBox, layout->rowCount() , 0 , 1,layout->columnCount() );
 
   QCheckBox *saveProgramSettings = new QCheckBox(optionsBox);
-  saveProgramSettings->setText("Save program settings");
-  saveProgramSettings->setToolTip("Save all current program settings to the file ( This will include view settings, colors,...) ");
+  saveProgramSettings->setText(tr("Save program settings"));
+  saveProgramSettings->setToolTip(tr("Save all current program settings to the file ( This will include view settings, colors,...) "));
   saveProgramSettings->setCheckState( Qt::Unchecked );
 
   QCheckBox *savePluginSettings = new QCheckBox(optionsBox);
-  savePluginSettings->setText("Save per Plugin Settings");
-  savePluginSettings->setToolTip("Plugins should add their current global settings to the file");
+  savePluginSettings->setText(tr("Save per Plugin Settings"));
+  savePluginSettings->setToolTip(tr("Plugins should add their current global settings to the file"));
   savePluginSettings->setCheckState( Qt::Checked );
 
   QCheckBox *saveObjectInfo = new QCheckBox(optionsBox);
-  saveObjectInfo->setText("Save open object information to the file");
-  saveObjectInfo->setToolTip("Save all open Objects and add them to the settings file ( they will be loaded if opening the settings file");
+  saveObjectInfo->setText(tr("Save open object information to the file"));
+  saveObjectInfo->setToolTip(tr("Save all open Objects and add them to the settings file ( they will be loaded if opening the settings file"));
   saveObjectInfo->setCheckState( Qt::Checked );
 
   QCheckBox *saveAllBox = new QCheckBox(optionsBox);
-  saveAllBox->setText("Save everything to same folder");
-  saveAllBox->setToolTip("Save all open files to the same folder as the ini file");
+  saveAllBox->setText(tr("Save everything to same folder"));
+  saveAllBox->setToolTip(tr("Save all open files to the same folder as the ini file"));
   saveAllBox->setCheckState( Qt::Checked );
 
   QCheckBox *askOverwrite = new QCheckBox(optionsBox);
-  askOverwrite->setText("Ask before overwriting files");
-  askOverwrite->setToolTip("If a file exists you will get asked what to do");
+  askOverwrite->setText(tr("Ask before overwriting files"));
+  askOverwrite->setToolTip(tr("If a file exists you will get asked what to do"));
   askOverwrite->setCheckState( Qt::Checked );
 
   QCheckBox *targetOnly = new QCheckBox(optionsBox);
-  targetOnly->setText("Save only target objects");
-  targetOnly->setToolTip("Only objects with target flag will be handled");
+  targetOnly->setText(tr("Save only target objects"));
+  targetOnly->setToolTip(tr("Only objects with target flag will be handled"));
   targetOnly->setCheckState( Qt::Unchecked );
 
   QBoxLayout* frameLayout = new QBoxLayout(QBoxLayout::TopToBottom,optionsBox);
@@ -140,7 +140,7 @@ void Core::saveSettings(){
   if ( !complete_name.endsWith(".ini", Qt::CaseInsensitive) && !complete_name.endsWith(".obj", Qt::CaseInsensitive) ){
 
     // If its unknown, get the type from the currently selected filter and add this extension to the filename
-    if ( fileDialog.selectedNameFilter().contains("INI files (*.ini)") )
+    if ( fileDialog.selectedNameFilter().contains(tr("INI files (*.ini)")) )
       complete_name += ".ini";
     else
       complete_name += ".obj";
@@ -157,7 +157,7 @@ void Core::saveSettings(){
   OpenFlipper::Options::savingSettings(true);
 
   if ( OpenFlipper::Options::gui() ) {
-    coreWidget_->statusMessage( "Saving Settings to " + complete_name + " ...");
+    coreWidget_->statusMessage( tr("Saving Settings to ") + complete_name + " ...");
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
@@ -245,7 +245,7 @@ void Core::saveSettings(){
   OpenFlipper::Options::savingSettings(false);
 
   if ( OpenFlipper::Options::gui() ) {
-    coreWidget_->statusMessage( "Saving Settings to " + complete_name + " ... Done", 4000);
+    coreWidget_->statusMessage( tr("Saving Settings to ") + complete_name + tr(" ... Done"), 4000);
     coreWidget_->setStatus(ApplicationStatus::READY );
   }
 

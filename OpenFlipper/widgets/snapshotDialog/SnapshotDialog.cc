@@ -75,7 +75,7 @@ void SnapshotDialog::slotOk()
 
   if (filename->text() == ""){
     QMessageBox msgBox;
-    msgBox.setText("The Filename is empty!");
+    msgBox.setText(tr("The Filename is empty!"));
     msgBox.exec();
     return;
   }
@@ -96,13 +96,13 @@ void SnapshotDialog::findFile()
   QFileDialog dialog(this);
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setDefaultSuffix("png");
-  dialog.setNameFilter("Images (*.png *.ppm *.jpg)");
+  dialog.setNameFilter(tr("Images (*.png *.ppm *.jpg)"));
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setConfirmOverwrite(true);
   dialog.setDirectory( fi.path() );
   dialog.selectFile( filename->text() );
   dialog.setAcceptMode(QFileDialog::AcceptSave);
-  dialog.setWindowTitle("Save Snapshot");
+  dialog.setWindowTitle(tr("Save Snapshot"));
 
   bool ok = dialog.exec();
 

@@ -213,7 +213,7 @@ Core::init() {
       splash_ = new QSplashScreen(splashPixmap);
       splash_->show();
 
-      splash_->showMessage("Initializing mainwindow" ,
+      splash_->showMessage(tr("Initializing mainwindow") ,
                           Qt::AlignBottom | Qt::AlignLeft , Qt::white);
       QApplication::processEvents();
     }
@@ -434,9 +434,9 @@ Core::init() {
                                                          );
 
   scriptEngine_.globalObject().setProperty("core", scriptInstance);
-  emit log(LOGOUT,"Core Scripting initialized with Name : core  ");
+  emit log(LOGOUT,tr("Core Scripting initialized with Name : core  "));
 
-  emit log(LOGOUT,"Available scripting functions :");
+  emit log(LOGOUT,tr("Available scripting functions :"));
 
   QScriptValueIterator it(scriptInstance);
   while (it.hasNext()) {
@@ -490,7 +490,7 @@ Core::init() {
   for ( int i = 0 ; i < (int)optionFiles.size(); ++i) {
 
     if ( OpenFlipper::Options::gui() && OpenFlipper::Options::splash() ) {
-      splash_->showMessage("Loading Configuration File " + QString::number(i) + "/"  + QString::number(optionFiles.size()) ,
+      splash_->showMessage(tr("Loading Configuration File ") + QString::number(i) + "/"  + QString::number(optionFiles.size()) ,
                            Qt::AlignBottom | Qt::AlignLeft , Qt::white);
       QApplication::processEvents();
     }
@@ -509,7 +509,7 @@ Core::init() {
   // ===============================================================================================
 
   if ( OpenFlipper::Options::lang().contains("UTF") || OpenFlipper::Options::lang().contains("utf") ) {
-    emit log(LOGWARN,"UTF8-Locale used!");
+    emit log(LOGWARN,tr("UTF8-Locale used!"));
 //     emit log(LOGWARN,"Only OFF files are fully supported with UTF8. Others might fail.");
 //     emit log(LOGWARN,"You can change your locale by :");
 //     emit log(LOGWARN,"export LANG=C");
@@ -595,7 +595,7 @@ Core::slotMouseEventIdentify( QMouseEvent* _event )
       if ( senderPointer == coreWidget_->examiner_widgets_[i] ) {
         examinerId = i;
         if ( OpenFlipper::Options::doSlotDebugging() )
-              emit log(LOGINFO,"slotMouseEventIdentify from examiner " + QString::number(i) );
+              emit log(LOGINFO,tr("slotMouseEventIdentify from examiner ") + QString::number(i) );
         break;
       }
     }
@@ -629,7 +629,7 @@ Core::slotMouseEvent( QMouseEvent* _event )
       if ( senderPointer == coreWidget_->examiner_widgets_[i] ) {
         examinerId = i;
         if ( OpenFlipper::Options::doSlotDebugging() ) {
-          QString message = "slotMouseEvent from examiner " + QString::number(i) + " with ";
+          QString message = tr("slotMouseEvent from examiner ") + QString::number(i) + " with ";
 
           if ( _event->type() == QEvent::MouseButtonRelease )
             message += " MouseButtonRelease";
@@ -640,7 +640,7 @@ Core::slotMouseEvent( QMouseEvent* _event )
           else if ( _event->type() == QEvent::MouseMove )
             message += " MouseMove";
           else
-            message += "unknown event type";
+            message += tr("unknown event type");
 
           emit log(LOGINFO,message );
         }
@@ -710,7 +710,7 @@ void Core::updateView() {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"updateView() called by " + QString( sender()->metaObject()->className() ) );
+        emit log(LOGINFO,tr("updateView() called by ") + QString( sender()->metaObject()->className() ) );
       }
     }
   }
@@ -727,7 +727,7 @@ void Core::updateView() {
       // redraw time not reached ... waiting for timer event for next redraw
       if ( redrawTimer_->isActive() ) {
         if ( OpenFlipper::Options::doSlotDebugging() )
-          emit log(LOGINFO,"Too early for redraw! Delaying request from " +
+          emit log(LOGINFO,tr("Too early for redraw! Delaying request from ") +
                            QString( sender()->metaObject()->className() ) );
         return;
       }
@@ -850,7 +850,7 @@ void Core::multiViewMode( int _mode ) {
       break;
 
     default:
-      emit log(LOGERR,"Requested illegal multiview mode!");
+      emit log(LOGERR,tr("Requested illegal multiview mode!"));
   }
 
 }
@@ -885,10 +885,10 @@ Core::writeOnExit() {
 
   INIFile ini;
   if ( ! ini.connect( inifile ,false) ) {
-    emit log(LOGERR,"Failed to connect to users ini file");
+    emit log(LOGERR,tr("Failed to connect to users ini file"));
 
     if ( ! ini.connect( inifile,true) ) {
-      emit log(LOGERR,"Can not create user ini file");
+      emit log(LOGERR,tr("Can not create user ini file"));
     } else {
       writeApplicationOptions(ini);
       ini.disconnect();
@@ -955,7 +955,7 @@ void Core::slotLogToFile(Logtype _type, QString _message){
     if ( logFile_->open(QFile::WriteOnly) ) {
         logStream_ = new QTextStream (logFile_);
     }else{
-      emit log(LOGERR, "Unable to open logfile!");
+      emit log(LOGERR, tr("Unable to open logfile!"));
       return;
     }
   }
@@ -1001,7 +1001,7 @@ void Core::slotSetSlotDescription(QString      _slotName,   QString _slotDescrip
       pluginInfo = &plugins[i];
 
     if (pluginInfo == 0){
-      emit log(LOGERR, "Unable to set slot-description. Plugin not found!");
+      emit log(LOGERR, tr("Unable to set slot-description. Plugin not found!"));
     return;
   }
 
@@ -1048,7 +1048,7 @@ void Core::slotGetDescription(QString      _function,   QString&     _fnDescript
       pluginInfo = &plugins[i];
 
   if (pluginInfo == 0){
-    emit log(LOGERR, "Unable to get slot-description. Plugin not found!");
+    emit log(LOGERR, tr("Unable to get slot-description. Plugin not found!"));
     return;
   }
 
@@ -1070,7 +1070,7 @@ void Core::snapshotBaseFileName(const QString& _fname, unsigned int _viewerId ){
 
   if ( OpenFlipper::Options::gui() ) {
     if ( _viewerId >= OpenFlipper::Options::examinerWidgets() ) {
-      emit log(LOGERR,"Unable to snapshotBaseFileName for viewer " + QString::number(_viewerId) );
+      emit log(LOGERR,tr("Unable to snapshotBaseFileName for viewer ") + QString::number(_viewerId) );
       return;
     }
 
@@ -1084,7 +1084,7 @@ void Core::snapshot( unsigned int _viewerId ){
 
   if ( OpenFlipper::Options::gui() ) {
     if ( _viewerId >= OpenFlipper::Options::examinerWidgets() ) {
-      emit log(LOGERR,"Unable to create snapshot for viewer " + QString::number(_viewerId) );
+      emit log(LOGERR,tr("Unable to create snapshot for viewer ") + QString::number(_viewerId) );
       return;
     }
     coreWidget_->examiner_widgets_[_viewerId]->snapshot();
@@ -1137,7 +1137,7 @@ void Core::writeVersionNumbers(QString _filename){
 INIFile ini;
 
   if ( ! ini.connect(_filename,true) ) {
-    emit log(LOGERR,"Failed to connect to _ini file" + _filename);
+    emit log(LOGERR,tr("Failed to connect to _ini file") + _filename);
       return;
   }
 
@@ -1187,67 +1187,67 @@ void Core::setDescriptions(){
   connect(this, SIGNAL(setSlotDescription(QString,QString,QStringList,QStringList)),
           this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
 
-  emit setSlotDescription("updateView()", "Redraw the contents of the viewer.", QStringList(), QStringList());
-  emit setSlotDescription("clearAll()", "Clear all data objects.", QStringList(), QStringList());
-  emit setSlotDescription("exitApplication()", "Quit OpenFlipper", QStringList(), QStringList());
-  emit setSlotDescription("fullscreen(bool)", "Enable or disable fullscreen mode",
-                           QStringList("enabled") ,
-                           QStringList("Enable or disable fullscreen mode"));
-  emit setSlotDescription("loggerState(int)", "Change the logger window state", QStringList("Change the logger window state"), QStringList());
-  emit setSlotDescription("showToolbox(bool)", "Show or hide toolbox", QStringList("Show or hide the toolbox"), QStringList());
-  emit setSlotDescription("multiViewMode(int)", "Switch MultiView Mode",
-                          QStringList("Mode"), QStringList("0: One Viewer\n 1: Grid \n 2: Horizontal split"));
+  emit setSlotDescription("updateView()", tr("Redraw the contents of the viewer."), QStringList(), QStringList());
+  emit setSlotDescription("clearAll()", tr("Clear all data objects."), QStringList(), QStringList());
+  emit setSlotDescription("exitApplication()", tr("Quit OpenFlipper"), QStringList(), QStringList());
+  emit setSlotDescription("fullscreen(bool)", tr("Enable or disable fullscreen mode"),
+                           QStringList(tr("enabled")) ,
+                           QStringList(tr("Enable or disable fullscreen mode")));
+  emit setSlotDescription("loggerState(int)", tr("Change the logger window state"), QStringList(tr("Change the logger window state")), QStringList());
+  emit setSlotDescription("showToolbox(bool)", tr("Show or hide toolbox"), QStringList(tr("Show or hide the toolbox")), QStringList());
+  emit setSlotDescription("multiViewMode(int)", tr("Switch MultiView Mode"),
+                          QStringList(tr("Mode")), QStringList(tr("0: One Viewer\n 1: Grid \n 2: Horizontal split")));
 
-  emit setSlotDescription("restrictFrameRate(bool)", "Restrict FrameRate to MaxFrameRate",
-                        QStringList("enabled"), QStringList("restriction switch"));
-  emit setSlotDescription("setMaxFrameRate(int)", "set the maximal framerate (automatically enables framerate restriction)",
-                        QStringList("frameRate"), QStringList("Maximum frameRate"));
-  emit setSlotDescription("snapshotBaseFileName(QString&)", "Set a filename for storing snapshots."
+  emit setSlotDescription("restrictFrameRate(bool)", tr("Restrict FrameRate to MaxFrameRate"),
+                        QStringList(tr("enabled")), QStringList(tr("restriction switch")));
+  emit setSlotDescription("setMaxFrameRate(int)", tr("set the maximal framerate (automatically enables framerate restriction)"),
+                        QStringList(tr("frameRate")), QStringList(tr("Maximum frameRate")));
+  emit setSlotDescription("snapshotBaseFileName(QString&)", tr("Set a filename for storing snapshots.")
                           , QStringList(), QStringList());
-  emit setSlotDescription("snapshot()", "Make a snapshot of the viewer. If no filename"
+  emit setSlotDescription("snapshot()", tr("Make a snapshot of the viewer. If no filename"
                           " was set using snapshotBaseFileName() the snapshot is stored"
                           " in snap.png in the current directory. For every snapshot"
-                          " a counter is added to the filename.", QStringList(), QStringList());
-  emit setSlotDescription("resizeViewer(int,int)", "Resize the viewer",
-                           QString("width,height").split(","),
-                           QString("new width for the viewer,new height for the viewer").split(","));
-  emit setSlotDescription("writeVersionNumbers(QString)", "write the current versions of all plugins to INI file",
-                           QStringList("filename"),
-                           QStringList("fullpath to a file where the versions should be written to."));
+                          " a counter is added to the filename."), QStringList(), QStringList());
+  emit setSlotDescription("resizeViewer(int,int)", tr("Resize the viewer"),
+                           QString(tr("width,height")).split(","),
+                           QString(tr("new width for the viewer,new height for the viewer")).split(","));
+  emit setSlotDescription("writeVersionNumbers(QString)", tr("write the current versions of all plugins to INI file"),
+                           QStringList(tr("filename")),
+                           QStringList(tr("fullpath to a file where the versions should be written to.")));
   //save slots
-  emit setSlotDescription("saveObject(int,QString)", "Save object to file. If the file exists it will be overwritten.",
-                           QString("object-id,filename").split(","),
-                           QString("id of the object, complete path and filename").split(","));
-  emit setSlotDescription("saveObjectTo(int,QString)", "Save object to file. The location can be chosen in a dialog. "
-                          "(only works if GUI is available)",
-                           QString("object-id,filename").split(","),
-                           QString("id of the object, initial filename for the dialog").split(","));
-  emit setSlotDescription("saveAllObjects()", "Saves all target objects. "
-                          "If no filename is available a dialog is shown. (only works if GUI is available)",QStringList(), QStringList());
-  emit setSlotDescription("saveAllObjectsTo()", "Saves all target objects. The locations can be chosen in dialogs. "
-                          "(only works if GUI is available)",QStringList(), QStringList());
-  emit setSlotDescription("saveSettings()", "Show the dialog to save the current setting. (only works if GUI is available)",QStringList(), QStringList());
+  emit setSlotDescription("saveObject(int,QString)", tr("Save object to file. If the file exists it will be overwritten."),
+                           QString(tr("object-id,filename")).split(","),
+                           QString(tr("id of the object, complete path and filename")).split(","));
+  emit setSlotDescription("saveObjectTo(int,QString)", tr("Save object to file. The location can be chosen in a dialog. "
+                          "(only works if GUI is available)"),
+                           QString(tr("object-id,filename")).split(","),
+                           QString(tr("id of the object, initial filename for the dialog")).split(","));
+  emit setSlotDescription("saveAllObjects()", tr("Saves all target objects. "
+                          "If no filename is available a dialog is shown. (only works if GUI is available)"),QStringList(), QStringList());
+  emit setSlotDescription("saveAllObjectsTo()", tr("Saves all target objects. The locations can be chosen in dialogs. "
+                          "(only works if GUI is available)"),QStringList(), QStringList());
+  emit setSlotDescription("saveSettings()", tr("Show the dialog to save the current setting. (only works if GUI is available)"),QStringList(), QStringList());
   //load slots
-  emit setSlotDescription("loadObject()", "Show the dialog to load an object. (only works if GUI is available)",QStringList(), QStringList());
-  emit setSlotDescription("getObjectId(QString)", "Return identifier of object with specified name. Returns -1 if object was not found.",QStringList(), QStringList());
-  emit setSlotDescription("loadSettings()", "Show the dialog to load settings. (only works if GUI is available)",QStringList(), QStringList());
-  emit setSlotDescription("loadSettings(QString)", "load settings from file.",QStringList(), QStringList());
+  emit setSlotDescription("loadObject()", tr("Show the dialog to load an object. (only works if GUI is available)"),QStringList(), QStringList());
+  emit setSlotDescription("getObjectId(QString)", tr("Return identifier of object with specified name. Returns -1 if object was not found."),QStringList(), QStringList());
+  emit setSlotDescription("loadSettings()", tr("Show the dialog to load settings. (only works if GUI is available)"),QStringList(), QStringList());
+  emit setSlotDescription("loadSettings(QString)", tr("load settings from file."),QStringList(), QStringList());
 
-  emit setSlotDescription("createWidget(QString,QString)", "Create a widget from an ui file",
-                          QString("Object name,ui file").split(","),
-                          QString("Name of the new widget in script,ui file to load").split(","));
+  emit setSlotDescription("createWidget(QString,QString)", tr("Create a widget from an ui file"),
+                          QString(tr("Object name,ui file")).split(","),
+                          QString(tr("Name of the new widget in script,ui file to load")).split(","));
 
-  emit setSlotDescription("addToolbox(QString,QWidget*)", "Add a widget as a toolbox",
-                          QString("Toolbox Entry name,Widget").split(","),
-                          QString("Name of the new widget in the toolbox,Pointer to the new widget").split(","));
+  emit setSlotDescription("addToolbox(QString,QWidget*)", tr("Add a widget as a toolbox"),
+                          QString(tr("Toolbox Entry name,Widget")).split(","),
+                          QString(tr("Name of the new widget in the toolbox,Pointer to the new widget")).split(","));
 
-  emit setSlotDescription("addViewMode(QString,QString)", "Add a new viewmode",
-                          QString("Name,Toolbox List").split(","),
-                          QString("Name of the new Viewmode, ; seperated list of toolboxes visible in this viewmode").split(","));
+  emit setSlotDescription("addViewMode(QString,QString)", tr("Add a new viewmode"),
+                          QString(tr("Name,Toolbox List")).split(","),
+                          QString(tr("Name of the new Viewmode, ; seperated list of toolboxes visible in this viewmode")).split(","));
 
-  emit setSlotDescription("objectList(QString,QStringList)", "Returns object list",
-                          QString("Selection type,Object types").split(","),
-                          QString("Type of object selection (all,source,target),Object type (All,PolyMesh,TriangleMesh,...)").split(";"));
+  emit setSlotDescription("objectList(QString,QStringList)", tr("Returns object list"),
+                          QString(tr("Selection type,Object types")).split(","),
+                          QString(tr("Type of object selection (all,source,target),Object type (All,PolyMesh,TriangleMesh,...)")).split(";"));
 }
 
 void Core::slotDeleteObject( int _id ){

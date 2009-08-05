@@ -82,7 +82,7 @@ void CoreWidget::startDrag ( QMouseEvent* _event )
   }
 
   if ( examinerId == -1 ) {
-    std::cerr << "startDrag in Core called by non examiner, stopping here" << std::endl;
+    emit log(LOGERR , tr("startDrag in Core called by non examiner, stopping here"));
     return;
   }
 
@@ -109,7 +109,7 @@ void CoreWidget::startDrag ( QMouseEvent* _event )
   }
 
   if ( objectId != -1 ) {
-    std::cerr << "dragEvent Picked Object" << std::endl;
+    emit log(LOGERR , tr("dragEvent Picked Object"));
   }
 
 
@@ -155,7 +155,7 @@ void CoreWidget::dropEvent ( QDropEvent* _event ) {
   }
 
   if ( examinerId == -1 ) {
-    std::cerr << "dropEvent in Core called by non examiner, stopping here" << std::endl;
+    emit log(LOGERR , tr("startDrag in Core called by non examiner, stopping here"));
     return;
   }
 

@@ -159,10 +159,10 @@ void Core::saveOptions(){
 
   INIFile ini;
   if ( ! ini.connect( inifile ,false) ) {
-    emit log(LOGERR,"Failed to connect to users ini file");
+    emit log(LOGERR,tr("Failed to connect to users ini file"));
 
     if ( ! ini.connect( inifile,true) ) {
-      emit log(LOGERR,"Can not create user ini file");
+      emit log(LOGERR,tr("Can not create user ini file"));
     } else {
       writeApplicationOptions(ini);
       ini.disconnect();
@@ -179,10 +179,10 @@ void Core::setupOptions() {
   QDir configDir = QDir::home();
 
   if ( ! configDir.cd(".OpenFlipper") ) {
-    emit log(LOGOUT,"Creating config Dir ~/.OpenFlipper");
+    emit log(LOGOUT,tr("Creating config Dir ~/.OpenFlipper"));
     configDir.mkdir(".OpenFlipper");
     if ( ! configDir.cd(".OpenFlipper") ) {
-      emit log(LOGERR,"Unable to create config dir ~/.OpenFlipper");
+      emit log(LOGERR,tr("Unable to create config dir ~/.OpenFlipper"));
       return;
     }
   }
@@ -341,7 +341,7 @@ void Core::setupOptions() {
     INIFile _ini;
 
     if ( ! _ini.connect(optionFiles[i],false) ) {
-      emit log(LOGERR,"Failed to connect to _ini file" + optionFiles[i]);
+      emit log(LOGERR,tr("Failed to connect to _ini file") + optionFiles[i]);
       continue;
     }
 
@@ -384,7 +384,7 @@ void Core::restoreKeyBindings(){
     INIFile _ini;
 
     if ( ! _ini.connect(optionFiles[i],false) ) {
-      emit log(LOGERR,"Failed to connect to _ini file" + optionFiles[i]);
+      emit log(LOGERR,tr("Failed to connect to _ini file") + optionFiles[i]);
       continue;
     }
 

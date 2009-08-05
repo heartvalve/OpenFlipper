@@ -60,7 +60,7 @@ KeyBinding CoreWidget::getKeyBinding(QObject* _plugin, int _keyIndex ){
       return plugins_[i].keys[_keyIndex];
   }
 
-  std::cerr << "ERROR: could not get KeyBinding\n";
+  emit log(LOGERR,tr("ERROR: could not get KeyBinding"));
   return KeyBinding();
 }
 
@@ -73,7 +73,7 @@ QString CoreWidget::getRPCName(QObject* _plugin ){
       return plugins_[i].rpcName;
   }
 
-  std::cerr << "ERROR: could not get rpcName\n";
+  emit log(LOGERR,tr("ERROR: could not get rpcname"));
   return "";
 }
 
@@ -243,7 +243,7 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
         }
 
   if (found && !multi)
-    emit log(LOGERR, "Key already registered by '" + name + "'");
+    emit log(LOGERR, tr("Key already registered by '") + name + "'");
 
   //check if its a key for the core
   if (sender() == this){
@@ -255,7 +255,7 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
     kb.slot = false;
 
     if (multi && !_multiUse)
-      emit log(LOGERR, "Key already registered by '" + name + "'. Forced registration as multiUse key.");
+      emit log(LOGERR, tr("Key already registered by '") + name + tr("'. Forced registration as multiUse key."));
 
     coreKeys_.push_back( kb );
 
@@ -272,7 +272,7 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
       pluginInfo = &plugins_[i];
 
   if (pluginInfo == 0){
-    emit log(LOGERR, "Unable to register key. Plugin not found!");
+    emit log(LOGERR, tr("Unable to register key. Plugin not found!"));
     return;
   }
 
@@ -284,7 +284,7 @@ void CoreWidget::slotRegisterKey(int _key, Qt::KeyboardModifiers _modifiers, QSt
   kb.slot = false;
 
   if (multi && !_multiUse)
-    emit log(LOGERR, "Key already registered by '" + name + "'. Forced registration as multiUse key.");
+    emit log(LOGERR, tr("Key already registered by '") + name + tr("'. Forced registration as multiUse key."));
 
   pluginInfo->keys.append( kb );
 
@@ -371,14 +371,14 @@ void CoreWidget::slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, Q
 
       if (!binding.multiUse){
         if (plugin == 0)
-          emit log(LOGERR, "Could not add key mapping. Key already assigned to the core.");
+          emit log(LOGERR, tr("Could not add key mapping. Key already assigned to the core."));
         else{
           BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugin);
 
           if (basePlugin)
-            emit log(LOGERR, "Could not add key mapping. Key already assigned to " + basePlugin->name() );
+            emit log(LOGERR, tr("Could not add key mapping. Key already assigned to ") + basePlugin->name() );
           else
-            emit log(LOGERR, "Could not add key mapping. Key already assigned to an unknown plugin.");
+            emit log(LOGERR, tr("Could not add key mapping. Key already assigned to an unknown plugin."));
         }
         return;
       }
@@ -390,7 +390,7 @@ void CoreWidget::slotAddKeyMapping(int _key, Qt::KeyboardModifiers _modifiers, Q
   //check if new binding doesn't allow multiUse but other assignments for the key exist
   if (!keyBinding.multiUse)
     if ( (replace && keys_.count(keyCombi) > 1)  || (!replace && keys_.count(keyCombi) > 0) ){
-      emit log(LOGERR, "Could not add (single usage) key mapping. Key already assigned.");
+      emit log(LOGERR, tr("Could not add (single usage) key mapping. Key already assigned."));
       return;
     }
 

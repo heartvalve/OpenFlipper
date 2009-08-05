@@ -111,7 +111,7 @@ void CoreWidget::updatePopupMenuNode(QMenu* _menu , ACG::SceneGraph::BaseNode* _
  */
 void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/) {
 //   std::cerr << "Coordsys part was : " << _part << std::endl;
-  QAction* typeEntry = new QAction("Viewer Settings",_menu);
+  QAction* typeEntry = new QAction(tr("Viewer Settings"),_menu);
   _menu->addAction( typeEntry );
   _menu->addSeparator();
 
@@ -125,34 +125,34 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   // RenderingOptions
   //====================================================================================================
 
-  QMenu* renderingOptionsMenu = new QMenu("Rendering Options",_menu);
+  QMenu* renderingOptionsMenu = new QMenu(tr("Rendering Options"),_menu);
   renderingOptionsMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"renderingOptions.png"));
   _menu->addMenu(renderingOptionsMenu);
 
   QAction* projectionAction = 0;
   if ( examiner_widgets_[PluginFunctions::activeExaminer() ]->projectionMode() == glViewer::PERSPECTIVE_PROJECTION ) {
-    projectionAction = new QAction( "Switch to Orthogonal Projection", renderingOptionsMenu );
+    projectionAction = new QAction( tr("Switch to Orthogonal Projection"), renderingOptionsMenu );
     projectionAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
-    projectionAction->setToolTip(   "Switch to perspective orthogonal mode.");
+    projectionAction->setToolTip(   tr("Switch to perspective orthogonal mode."));
   } else {
-    projectionAction = new QAction( "Switch to Perspective Projection", renderingOptionsMenu );
+    projectionAction = new QAction( tr("Switch to Perspective Projection"), renderingOptionsMenu );
     projectionAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
-    projectionAction->setToolTip(   "Switch to perspective projection mode.");
+    projectionAction->setToolTip(   tr("Switch to perspective projection mode."));
   }
 
   projectionAction->setCheckable( false );
-  projectionAction->setToolTip(   "Switch between <b>perspective</b> and "
-      "<b>parrallel</b> projection mode.");
-  projectionAction->setWhatsThis( "Switch projection modes<br><br>"
+  projectionAction->setToolTip(   tr("Switch between <b>perspective</b> and "
+      "<b>parrallel</b> projection mode."));
+  projectionAction->setWhatsThis( tr("Switch projection modes<br><br>"
       "Switch between <b>perspective</b> and "
-      "<b>parrallel</b> projection mode.");
+      "<b>parrallel</b> projection mode."));
   connect( projectionAction,SIGNAL( triggered() ), this, SLOT( slotContextSwitchProjection() ) );
   renderingOptionsMenu->addAction( projectionAction );
 
 
-  QAction* animation = renderingOptionsMenu->addAction("Animation");
+  QAction* animation = renderingOptionsMenu->addAction(tr("Animation"));
 
-  animation->setToolTip("Animate rotation of objects");
+  animation->setToolTip(tr("Animate rotation of objects"));
   animation->setCheckable( true );
   animation->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"animation.png") );
   animation->setChecked( PluginFunctions::viewerProperties(PluginFunctions::activeExaminer()).animation() );
@@ -161,8 +161,8 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 
   //====================================================================================================
 
-  QAction* backfaceCulling = renderingOptionsMenu->addAction("Backface Culling");
-  backfaceCulling->setToolTip("Enable backface culling");
+  QAction* backfaceCulling = renderingOptionsMenu->addAction(tr("Backface Culling"));
+  backfaceCulling->setToolTip(tr("Enable backface culling"));
   backfaceCulling->setCheckable( true );
   backfaceCulling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"backFaceCulling.png") );
   backfaceCulling->setChecked( PluginFunctions::viewerProperties().backFaceCulling() );
@@ -170,8 +170,8 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 
   //====================================================================================================
 
-  QAction* twoSidedLighting = renderingOptionsMenu->addAction("Two-sided Lighting");
-  twoSidedLighting->setToolTip("Enable two-sided lighting");
+  QAction* twoSidedLighting = renderingOptionsMenu->addAction(tr("Two-sided Lighting"));
+  twoSidedLighting->setToolTip(tr("Enable two-sided lighting"));
   twoSidedLighting->setCheckable( true );
   twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
   twoSidedLighting->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
@@ -179,8 +179,8 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   
   //====================================================================================================
 
-  QAction* multisampling = renderingOptionsMenu->addAction("Multisampling");
-  multisampling->setToolTip("Enable Multisampling");
+  QAction* multisampling = renderingOptionsMenu->addAction(tr("Multisampling"));
+  multisampling->setToolTip(tr("Enable Multisampling"));
   multisampling->setCheckable( true );
 // TODO:Add icon for multisampling  
 //   twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
@@ -267,31 +267,31 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 
   //====================================================================================================
 
-  QAction* homeAction = new QAction("Restore home view",_menu);
+  QAction* homeAction = new QAction(tr("Restore home view"),_menu);
   homeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"go-home.png") );
   homeAction->setCheckable( false );
-  homeAction->setToolTip("Restore <b>home</b> view.");
-  homeAction->setWhatsThis( "Restore home view<br><br>"
-                            "Resets the view to the home view");
+  homeAction->setToolTip(tr("Restore <b>home</b> view."));
+  homeAction->setWhatsThis( tr("Restore home view<br><br>"
+                            "Resets the view to the home view"));
   _menu->addAction( homeAction );
   connect( homeAction,SIGNAL( triggered() ), this, SLOT( slotContextHomeView() ) );
 
-  QAction* setHomeAction = new QAction( "Set Home View" , _menu );
+  QAction* setHomeAction = new QAction( tr("Set Home View") , _menu );
   setHomeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"set-home.png") );
   setHomeAction->setCheckable( false );
-  setHomeAction->setToolTip("Set <b>home</b> view");
-  setHomeAction->setWhatsThis( "Store home view<br><br>"
-                               "Stores the current view as the home view");
+  setHomeAction->setToolTip(tr("Set <b>home</b> view"));
+  setHomeAction->setWhatsThis( tr("Store home view<br><br>"
+                               "Stores the current view as the home view"));
   _menu->addAction( setHomeAction);
   connect( setHomeAction,SIGNAL( triggered() ), this, SLOT( slotContextSetHomeView() ) );
 
-  QAction* viewAllAction = new QAction( "View all", _menu );
+  QAction* viewAllAction = new QAction( tr("View all"), _menu );
   viewAllAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewall.png") );
   viewAllAction->setCheckable( false );
-  viewAllAction->setToolTip("View all.");
-  viewAllAction->setWhatsThis( "View all<br><br>"
-                               "Move the objects in the scene so that"
-                               " the whole scene is visible.");
+  viewAllAction->setToolTip(tr("View all."));
+  viewAllAction->setWhatsThis( tr("View all<br><br>"
+                                  "Move the objects in the scene so that"
+                                  " the whole scene is visible."));
   connect( viewAllAction,SIGNAL( triggered() ), this, SLOT( slotContextViewAll() ) );
   _menu->addAction( viewAllAction);
 
@@ -300,22 +300,22 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 
   //====================================================================================================
 
-  QAction* copyView = _menu->addAction("Copy View");
-  copyView->setToolTip("Copy current view to clipboard");
+  QAction* copyView = _menu->addAction(tr("Copy View"));
+  copyView->setToolTip(tr("Copy current view to clipboard"));
   copyView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png") );
   connect(copyView, SIGNAL(triggered()), this, SLOT(slotCopyView()) );
 
   //====================================================================================================
 
-  QAction* pasteView = _menu->addAction("Paste View");
-  pasteView->setToolTip("Paste current view from clipboard");
+  QAction* pasteView = _menu->addAction(tr("Paste View"));
+  pasteView->setToolTip(tr("Paste current view from clipboard"));
   pasteView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-paste.png") );
   connect(pasteView, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
 
   //====================================================================================================
 
-  QAction* snapshot = _menu->addAction("Snapshot");
-  snapshot->setToolTip("Make a snapshot");
+  QAction* snapshot = _menu->addAction(tr("Snapshot"));
+  snapshot->setToolTip(tr("Make a snapshot"));
   snapshot->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
   connect(snapshot, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
 
@@ -340,8 +340,8 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
 
   _menu->addSeparator();
 
-  QAction* action = _menu->addAction("Set Background Color");
-  action->setToolTip("Set the background color for the current viewer");
+  QAction* action = _menu->addAction(tr("Set Background Color"));
+  action->setToolTip(tr("Set the background color for the current viewer"));
   action->setStatusTip(tr("Set the background color for the current viewer"));
   action->setWhatsThis(tr("Set the background color for the current viewer"));
   action->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"BackgroundColor.png") );
@@ -358,7 +358,7 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
   if(!coordSys->visible()) {
 
 	  if(!coordSysMenu_) {
-		  coordSysMenu_ = new QMenu("Viewer Settings", _menu);
+		  coordSysMenu_ = new QMenu(tr("Viewer Settings"), _menu);
 		  updatePopupMenuCoordsysNode(coordSysMenu_, 0);
 	  }
 	  _menu->addSeparator();
@@ -396,7 +396,7 @@ void CoreWidget::updatePopupMenuObject(QMenu* _menu , BaseObjectData* _object ) 
 
   // Add picking Menu
   if (pickMenu_ != 0 && pickMenu_->actions().size() > 0) {
-    pickMenu_->setTitle("&Picking");
+    pickMenu_->setTitle(tr("&Picking"));
     contextMenu_->addMenu( pickMenu_ );
     pickMenu_->setTearOffEnabled(true);
   }
@@ -421,7 +421,7 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
       case CONTEXTOBJECTMENU:
         BaseObjectData* object;
         if ( !PluginFunctions::getObject(_id, object) ) {
-          emit log(LOGERR,"Cant get object for objectContextMenu");
+          emit log(LOGERR,tr("Cant get object for objectContextMenu"));
           continue;
         }
 
@@ -570,13 +570,13 @@ void CoreWidget::slotSnapshotName() {
   QString fname = PluginFunctions::viewerProperties().snapshotName();
 
   fname.replace('%', '$');
-  fname = QFileDialog::getSaveFileName ( 0, "Save snapshot name" );
+  fname = QFileDialog::getSaveFileName ( 0, tr("Save snapshot name") );
   if (!fname.isEmpty())
   {
     fname.replace('$', '%');
 
     PluginFunctions::viewerProperties().snapshotBaseFileName(fname);
-    QString msg="next snapshot: ";
+    QString msg=tr("next snapshot: ");
     statusBar()->showMessage(msg);
   }
 
@@ -620,7 +620,7 @@ void CoreWidget::slotUpdateViewerDrawMenu() {
 
     QIcon icon;
     icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
-    viewerDrawMenu_  = new QMenu("Set Draw Mode");
+    viewerDrawMenu_  = new QMenu(tr("Set Draw Mode"));
     viewerDrawMenu_->setTearOffEnabled(true);
     viewerDrawMenu_->setIcon(icon);
 

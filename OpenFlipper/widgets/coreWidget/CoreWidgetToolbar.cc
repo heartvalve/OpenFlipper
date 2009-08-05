@@ -64,7 +64,7 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
 
   for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
     if ( toolbars_[i]->windowTitle() == _toolbar->windowTitle() ) {
-      emit log(LOGERR,"slotAddToolbar: Toolbar already added to system: " + _toolbar->windowTitle() );
+      emit log(LOGERR,tr("slotAddToolbar: Toolbar already added to system: ") + _toolbar->windowTitle() );
       return;
     }
   }
@@ -87,7 +87,7 @@ void CoreWidget::getToolBar( QString _name, QToolBar*& _toolbar) {
 
   _toolbar = 0;
 
-  emit log(LOGERR,"getToolBar: Toolbar not found." );
+  emit log(LOGERR,tr("getToolBar: Toolbar not found.") );
 }
 
 void CoreWidget::slotRemoveToolbar(QToolBar* _toolbar) {
@@ -101,7 +101,7 @@ void CoreWidget::slotRemoveToolbar(QToolBar* _toolbar) {
 
   }
 
-  emit log(LOGERR,"Remove Toolbar: Toolbar not found." );
+  emit log(LOGERR,tr("Remove Toolbar: Toolbar not found.") );
 }
 
 

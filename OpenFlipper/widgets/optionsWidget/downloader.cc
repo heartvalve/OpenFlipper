@@ -88,7 +88,7 @@ void OptionsWidget::startDownload( QString _url ) {
     if (path.isEmpty())
       path = "/";
 
-    statusLabel->setText("Getting Versions file from Server");
+    statusLabel->setText(tr("Getting Versions file from Server"));
 
     progressDialog->setWindowTitle(tr("HTTP"));
     progressDialog->setLabelText(tr("Downloading %1.").arg(fileName));
@@ -162,7 +162,7 @@ void OptionsWidget::readResponseHeader(const QHttpResponseHeader &responseHeader
     QMessageBox::information(this, tr("HTTP"),
                               tr("Download failed: %1.")
                               .arg(responseHeader.reasonPhrase()));
-    statusLabel->setText("Download failed: " + responseHeader.reasonPhrase());
+    statusLabel->setText(tr("Download failed: ") + responseHeader.reasonPhrase());
     httpRequestAborted = true;
     progressDialog->hide();
     http->abort();

@@ -86,7 +86,7 @@ void Core::createWidget(QString _objectName, QString _uiFilename) {
   QFile uiFile(_uiFilename);
 
   if ( !uiFile.exists() ) {
-    emit log(LOGERR,"File does not exist : " + _uiFilename );
+    emit log(LOGERR,tr("File does not exist : ") + _uiFilename );
     return;
   }
 
@@ -95,14 +95,14 @@ void Core::createWidget(QString _objectName, QString _uiFilename) {
   uiFile.close();
 
   if ( ui == 0 ) {
-    emit log(LOGERR,"Unable to create QWidget from ui file for " + _objectName );
+    emit log(LOGERR,tr("Unable to create QWidget from ui file for ") + _objectName );
 	return;
   }
 
   QScriptValue scriptUi = scriptEngine_.newQObject(ui, QScriptEngine::ScriptOwnership);
 
   if ( !scriptUi.isValid() ) {
-    emit log(LOGERR,"Unable to generate script interface for " + _objectName );
+    emit log(LOGERR,tr("Unable to generate script interface for ") + _objectName );
 	return;
   }
 

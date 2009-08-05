@@ -103,7 +103,7 @@ void ShortcutButton::showCurrentShortcut()
   QString keyString;
 
   if (key_ == -1){
-    keyString = "unassigned";
+    keyString = tr("unassigned");
   }else if (key_ == Qt::Key_AltGr || key_ == Qt::Key_Alt || key_ == Qt::Key_Control || key_ == Qt::Key_Shift || key_ == Qt::Key_Meta){
     keyString = QKeySequence( modifiers_ ).toString();
     keyString = keyString.left(keyString.size()-1);

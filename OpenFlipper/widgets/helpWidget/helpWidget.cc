@@ -95,7 +95,7 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
 
     textWindow_ = new HelpBrowser(helpEngine_, this);
 
-    homeIndex_ = tabWidget_->addTab(textWindow_, "Home");
+    homeIndex_ = tabWidget_->addTab(textWindow_, tr("Home"));
 
     gridLayout_->addWidget(helpEngine_->contentWidget(), 1, 0);
     gridLayout_->addWidget(tabWidget_, 1, 1);
@@ -231,7 +231,7 @@ void HelpWidget::showResults(int /*_hits*/) {
 
 	searchWidget_->hide();
 
-	int resultsTabIndex_ = tabWidget_->addTab(searchEngine_->resultWidget(), "Results");
+	int resultsTabIndex_ = tabWidget_->addTab(searchEngine_->resultWidget(), tr("Results") );
 	tabWidget_->setCurrentIndex(resultsTabIndex_);
 }
 

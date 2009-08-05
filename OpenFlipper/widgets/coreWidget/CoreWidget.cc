@@ -191,7 +191,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Set up the logging window
   // ======================================================================
 
-  slidingLogger_ = new QtSlideWindow ("Log Viewer", centerWidget_);
+  slidingLogger_ = new QtSlideWindow (tr("Log Viewer"), centerWidget_);
   tempLogWidget = new QWidget;
 
   logWidget_ = new LoggerWidget(splitter_);

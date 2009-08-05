@@ -64,7 +64,7 @@ bool Core::saveObject( int _id, QString _filename ) {
     if (object->dataType() == supportedTypes_[i].type) {
 
       if ( OpenFlipper::Options::gui() ) {
-        coreWidget_->statusMessage( "Saving " + _filename + " ...");
+        coreWidget_->statusMessage( tr("Saving ") + _filename + " ...");
         if ( !OpenFlipper::Options::savingSettings() )
           coreWidget_->setStatus(ApplicationStatus::PROCESSING );
       }
@@ -74,9 +74,9 @@ bool Core::saveObject( int _id, QString _filename ) {
     
       if ( OpenFlipper::Options::gui() ) {
         if (ok)
-          coreWidget_->statusMessage( "Saving " + _filename + " ... done", 4000 );
+          coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... done"), 4000 );
         else
-          coreWidget_->statusMessage( "Saving " + _filename + " ... failed!", 4000 );
+          coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... failed!"), 4000 );
     
         if ( !OpenFlipper::Options::savingSettings() )
           coreWidget_->setStatus(ApplicationStatus::READY );
@@ -92,7 +92,7 @@ bool Core::saveObject( int _id, QString _filename ) {
 
   // no plugin found
   if ( OpenFlipper::Options::gui() )
-      coreWidget_->statusMessage( "Saving " + _filename + " ... failed!", 4000 );
+      coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... failed!"), 4000 );
 
   return false;
 }
@@ -120,7 +120,7 @@ bool Core::saveObjectTo( int _id, QString _filename ) {
     if (supportedTypes_.size() != 0)
       result = widget->showSave(_id,_filename);
     else
-      emit log(LOGERR,"Could not show 'save objects' dialog. Missing file-plugins.");
+      emit log(LOGERR,tr("Could not show 'save objects' dialog. Missing file-plugins."));
 
     widget->disconnect();
     delete widget;
@@ -168,7 +168,7 @@ void Core::saveAllObjectsTo(){
         saveObjectTo(o_it->id(),filename);
       }
     }else
-      emit log(LOGERR,"Could not show 'save objects' dialog. Missing file-plugins.");
+      emit log(LOGERR,tr("Could not show 'save objects' dialog. Missing file-plugins."));
   }
 }
 

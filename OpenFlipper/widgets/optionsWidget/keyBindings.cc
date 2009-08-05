@@ -107,7 +107,7 @@ void OptionsWidget::updateShortcut(){
         continue;
 
       if (key == myNewKey && ( !multiUse || !myMultiUse ) ){
-        QMessageBox::warning(this, "OpenFlipper", "Could not add Shortcut. Shortcut already assigned.", QMessageBox::Ok);
+        QMessageBox::warning(this, tr("OpenFlipper"), tr("Could not add Shortcut. Shortcut already assigned."), QMessageBox::Ok);
         return;
       }
     }
