@@ -69,7 +69,7 @@ void KeyGenWidget::slotGenerateButton() {
   QStringList data = inputData.split('\n',QString::SkipEmptyParts);
 
   if ( data.size() != 5) {
-    QMessageBox::critical(this,tr("Wrong request data","The request has to contain 5 lines of data"));
+    QMessageBox::critical(this,tr("Wrong request data"),tr("The request has to contain 5 lines of data"));
   } else {
 
     // Clean strings
@@ -98,7 +98,7 @@ void KeyGenWidget::slotGenerateButton() {
     QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
     
     if ( requestSig != requestSigCheck ) {
-      QMessageBox::critical(this,tr("Signature of request invalid","The signature of the request is not valid"));
+      QMessageBox::critical(this,tr("Signature of request invalid"),tr("The signature of the request is not valid"));
       return;
     }
 
@@ -106,7 +106,7 @@ void KeyGenWidget::slotGenerateButton() {
     QFile outFile(name + ".lic");
 
     if (!outFile.open(QIODevice::WriteOnly|QIODevice::Text)) {
-      QMessageBox::critical(this,tr("Unable to open file","Unable to Open output File"));
+      QMessageBox::critical(this,tr("Unable to open file"),tr("Unable to Open output File"));
       return;
     }
 
