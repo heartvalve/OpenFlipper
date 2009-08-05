@@ -169,8 +169,8 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     //Toolbox Interface
     bool initializeToolbox(QWidget*& _widget);
     //BaseInterface
-    QString name() { return (QString("Selections")); };
-    QString description( ) { return (QString("Allows to select parts of Objects")); };
+    QString name() { return (QString(tr("Selections"))); };
+    QString description( ) { return (QString(tr("Allows to select parts of Objects"))); };
 
     friend class SelectVolumeAction;
 

@@ -58,7 +58,7 @@
 void SelectionPlugin::selectFaces( int objectId , idList _faceList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectFaces : unable to get object" ); 
+    emit log(LOGERR,tr("selectFaces : unable to get object") ); 
     return;
   }
   
@@ -70,7 +70,7 @@ void SelectionPlugin::selectFaces( int objectId , idList _faceList ) {
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectFaces(PluginFunctions::polyMesh(object), _faceList);
   else{
-      emit log(LOGERR,"selectFaces : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectFaces : Unsupported object Type") ); 
       return;
   }
   
@@ -91,7 +91,7 @@ void SelectionPlugin::selectFaces( int objectId , idList _faceList ) {
 void SelectionPlugin::unselectFaces( int objectId , idList _faceList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"unselectFaces : unable to get object" ); 
+    emit log(LOGERR,tr("unselectFaces : unable to get object") ); 
     return;
   }
   
@@ -103,7 +103,7 @@ void SelectionPlugin::unselectFaces( int objectId , idList _faceList ) {
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::unselectFaces(PluginFunctions::polyMesh(object), _faceList);
   else{
-      emit log(LOGERR,"unselectFaces : Unsupported object Type" ); 
+      emit log(LOGERR,tr("unselectFaces : Unsupported object Type") ); 
       return;
   }
   
@@ -125,7 +125,7 @@ void SelectionPlugin::selectAllFaces( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectAllFaces : unable to get object" ); 
+    emit log(LOGERR,tr("selectAllFaces : unable to get object") ); 
     return;
   }
   
@@ -134,7 +134,7 @@ void SelectionPlugin::selectAllFaces( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectAllFaces(PluginFunctions::polyMesh(object));
   else{
-      emit log(LOGERR,"selectAllFaces : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectAllFaces : Unsupported object Type") ); 
       return;
   }
   
@@ -148,7 +148,7 @@ void SelectionPlugin::clearFaceSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"clearFaceSelection : unable to get object" ); 
+    emit log(LOGERR,tr("clearFaceSelection : unable to get object") ); 
     return;
   }
   
@@ -157,7 +157,7 @@ void SelectionPlugin::clearFaceSelection( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::clearFaceSelection(PluginFunctions::polyMesh(object));
   else{
-      emit log(LOGERR,"clearFaceSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("clearFaceSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -171,7 +171,7 @@ void SelectionPlugin::invertFaceSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"invertFaceSelection : unable to get object" ); 
+    emit log(LOGERR,tr("invertFaceSelection : unable to get object") ); 
     return;
   }
   
@@ -180,7 +180,7 @@ void SelectionPlugin::invertFaceSelection( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::invertFaceSelection(PluginFunctions::polyMesh(object));
   else{
-      emit log(LOGERR,"invertFaceSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("invertFaceSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -194,7 +194,7 @@ void SelectionPlugin::selectBoundaryFaces( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectBoundaryFaces : unable to get object" ); 
+    emit log(LOGERR,tr("selectBoundaryFaces : unable to get object") ); 
     return;
   }
   
@@ -203,7 +203,7 @@ void SelectionPlugin::selectBoundaryFaces( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectBoundaryFaces(PluginFunctions::polyMesh(object));
   else{
-      emit log(LOGERR,"selectBoundaryFaces : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectBoundaryFaces : Unsupported object Type") ); 
       return;
   }
   
@@ -218,7 +218,7 @@ void SelectionPlugin::shrinkFaceSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"shrinkFaceSelection : unable to get object" ); 
+    emit log(LOGERR,tr("shrinkFaceSelection : unable to get object") ); 
     return;
   }
   
@@ -227,7 +227,7 @@ void SelectionPlugin::shrinkFaceSelection( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::shrinkFaceSelection(PluginFunctions::polyMesh(object));
   else{
-      emit log(LOGERR,"shrinkFaceSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("shrinkFaceSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -241,7 +241,7 @@ void SelectionPlugin::growFaceSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"growFaceSelection : unable to get object" ); 
+    emit log(LOGERR,tr("growFaceSelection : unable to get object") ); 
     return;
   }
   
@@ -250,7 +250,7 @@ void SelectionPlugin::growFaceSelection( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::growFaceSelection(PluginFunctions::polyMesh(object));
   else{
-      emit log(LOGERR,"growFaceSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("growFaceSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -264,7 +264,7 @@ idList SelectionPlugin::getFaceSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"getFaceSelection : unable to get object" ); 
+    emit log(LOGERR,tr("getFaceSelection : unable to get object") ); 
     return idList(0);
   }
   
@@ -275,7 +275,7 @@ idList SelectionPlugin::getFaceSelection( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getFaceSelection(PluginFunctions::polyMesh(object));
   else{
-      emit log(LOGERR,"getFaceSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("getFaceSelection : Unsupported object Type") ); 
       return idList(0);
   }
   

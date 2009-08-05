@@ -119,7 +119,7 @@ void SelectionPlugin::toggleSelection(QMouseEvent* _event)
       }
       #endif
       else{
-        emit log(LOGERR,"toggleSelection : Unsupported dataType");
+        emit log(LOGERR,tr("toggleSelection : Unsupported dataType"));
       }
     }
   }
@@ -146,7 +146,7 @@ void SelectionPlugin::paintSphereSelection(QMouseEvent* _event) {
          if ( sphere_selection_ ) {
             sphere_selection_ = false;
             for ( uint i = 0 ; i < selection_changes_.size() ; ++ i ) {
-                emit createBackup(selection_changes_[i],"Sphere Paint Selection");
+                emit createBackup(selection_changes_[i],tr("Sphere Paint Selection"));
             }
             selection_changes_.clear();
          }
@@ -286,7 +286,7 @@ void SelectionPlugin::componentSelection(QMouseEvent* _event) {
          }
 
          object->update();
-         emit createBackup(object->id(),"Component Selection");
+         emit createBackup(object->id(),tr("Component Selection"));
       }
    }
 
@@ -359,7 +359,7 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
           PluginFunctions::actionMode( Viewer::ExamineMode );
 
         } else if ( object->dataType(DATA_POLY_MESH) ) {
-          emit log(LOGERR,"PolyLine on quad meshes not fully supported!! ");
+          emit log(LOGERR,tr("PolyLine on quad meshes not fully supported!! "));
           polyLineID_ = -1;
 
 		      //switch back to PolyLine drawing

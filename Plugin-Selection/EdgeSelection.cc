@@ -69,7 +69,7 @@
 void SelectionPlugin::selectEdges( int objectId , idList _edgeList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectEdges : unable to get object" ); 
+    emit log(LOGERR,tr("selectEdges : unable to get object") ); 
     return;
   }
   
@@ -89,7 +89,7 @@ void SelectionPlugin::selectEdges( int objectId , idList _edgeList ) {
       BSplineCurveSelection::selectEdges( PluginFunctions::splineCurve(object) , _edgeList );
 #endif      
   else{
-      emit log(LOGERR,"selectEdges : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectEdges : Unsupported object Type") ); 
       return;
   }
   
@@ -110,7 +110,7 @@ void SelectionPlugin::selectEdges( int objectId , idList _edgeList ) {
 void SelectionPlugin::unselectEdges( int objectId , idList _edgeList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"unselectEdges : unable to get object" ); 
+    emit log(LOGERR,tr("unselectEdges : unable to get object") ); 
     return;
   }
   
@@ -130,7 +130,7 @@ void SelectionPlugin::unselectEdges( int objectId , idList _edgeList ) {
       BSplineCurveSelection::unselectEdges( PluginFunctions::splineCurve(object) , _edgeList );
 #endif      
   else{
-      emit log(LOGERR,"unselectEdges : Unsupported object Type" ); 
+      emit log(LOGERR,tr("unselectEdges : Unsupported object Type") ); 
       return;
   }
   
@@ -152,7 +152,7 @@ void SelectionPlugin::selectAllEdges( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectAllVertices : unable to get object" ); 
+    emit log(LOGERR,tr("selectAllVertices : unable to get object") ); 
     return;
   }
   
@@ -169,7 +169,7 @@ void SelectionPlugin::selectAllEdges( int objectId )
       BSplineCurveSelection::selectAllEdges( PluginFunctions::splineCurve(object) );
 #endif            
   else{
-      emit log(LOGERR,"selectAllEdges : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectAllEdges : Unsupported object Type") ); 
       return;
   }
   
@@ -183,7 +183,7 @@ void SelectionPlugin::clearEdgeSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"clearEdgeSelection : unable to get object" ); 
+    emit log(LOGERR,tr("clearEdgeSelection : unable to get object") ); 
     return;
   }
   
@@ -200,7 +200,7 @@ void SelectionPlugin::clearEdgeSelection( int objectId )
       BSplineCurveSelection::clearEdgeSelection( PluginFunctions::splineCurve(object) );
 #endif      
   else{
-      emit log(LOGERR,"clearEdgeSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("clearEdgeSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -214,7 +214,7 @@ void SelectionPlugin::invertEdgeSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"invertEdgeSelection : unable to get object" ); 
+    emit log(LOGERR,tr("invertEdgeSelection : unable to get object") ); 
     return;
   }
   
@@ -231,7 +231,7 @@ void SelectionPlugin::invertEdgeSelection( int objectId )
       BSplineCurveSelection::invertEdgeSelection( PluginFunctions::splineCurve(object) );
 #endif      
   else{
-      emit log(LOGERR,"invertEdgeSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("invertEdgeSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -245,7 +245,7 @@ void SelectionPlugin::selectBoundaryEdges( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectBoundaryEdges : unable to get object" ); 
+    emit log(LOGERR,tr("selectBoundaryEdges : unable to get object") ); 
     return;
   }
   
@@ -255,15 +255,15 @@ void SelectionPlugin::selectBoundaryEdges( int objectId )
       MeshSelection::selectBoundaryEdges(PluginFunctions::polyMesh(object));
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
-      emit log(LOGERR,"selectBoundaryEdges : Not implemented on PolyLines" ); 
+      emit log(LOGERR,tr("selectBoundaryEdges : Not implemented on PolyLines") ); 
 //       PolyLineSelection::selectAllEdges( PluginFunctions::polyLine(object) );
 #endif      
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
   else if ( object->dataType() == DATA_BSPLINE_CURVE )
-      emit log(LOGERR,"selectBoundaryEdges : Not implemented on BSplineCurves" ); 
+      emit log(LOGERR,tr("selectBoundaryEdges : Not implemented on BSplineCurves") ); 
 #endif      
   else{
-      emit log(LOGERR,"selectBoundaryEdges : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectBoundaryEdges : Unsupported object Type") ); 
       return;
   }
   
@@ -277,7 +277,7 @@ idList SelectionPlugin::getEdgeSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"getEdgeSelection : unable to get object" ); 
+    emit log(LOGERR,tr("getEdgeSelection : unable to get object") ); 
     return idList(0);
   }
   
@@ -296,7 +296,7 @@ idList SelectionPlugin::getEdgeSelection( int objectId )
       return BSplineCurveSelection::getEdgeSelection( PluginFunctions::splineCurve(object) );
 #endif        
   else{
-      emit log(LOGERR,"getEdgeSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("getEdgeSelection : Unsupported object Type") ); 
       return idList(0);
   }
   

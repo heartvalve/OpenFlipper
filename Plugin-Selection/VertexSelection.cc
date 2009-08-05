@@ -65,7 +65,7 @@
 void SelectionPlugin::selectVertices( int objectId , idList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectVertices : unable to get object" ); 
+    emit log(LOGERR,tr("selectVertices : unable to get object") ); 
     return;
   }
   
@@ -85,7 +85,7 @@ void SelectionPlugin::selectVertices( int objectId , idList _vertexList ) {
       BSplineCurveSelection::selectVertices( PluginFunctions::splineCurve(object) , _vertexList );
 #endif            
   else {
-      emit log(LOGERR,"selectAllVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectAllVertices : Unsupported object Type") ); 
       return;
   }
   
@@ -106,7 +106,7 @@ void SelectionPlugin::selectVertices( int objectId , idList _vertexList ) {
 void SelectionPlugin::unselectVertices( int objectId , idList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"unselectVertices : unable to get object" ); 
+    emit log(LOGERR,tr("unselectVertices : unable to get object") ); 
     return;
   }
   
@@ -126,7 +126,7 @@ void SelectionPlugin::unselectVertices( int objectId , idList _vertexList ) {
       BSplineCurveSelection::unselectVertices( PluginFunctions::splineCurve(object) , _vertexList );
 #endif            
   else {
-      emit log(LOGERR,"unselectVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("unselectVertices : Unsupported object Type") ); 
       return;
   }
   
@@ -150,7 +150,7 @@ void SelectionPlugin::selectAllVertices( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectAllVertices : unable to get object" ); 
+    emit log(LOGERR,tr("selectAllVertices : unable to get object") ); 
     return;
   }
   
@@ -167,7 +167,7 @@ void SelectionPlugin::selectAllVertices( int objectId )
       BSplineCurveSelection::selectAllVertices( PluginFunctions::splineCurve(object) );
 #endif            
   else {
-      emit log(LOGERR,"selectAllVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectAllVertices : Unsupported object Type") ); 
       return;
   }
   
@@ -181,7 +181,7 @@ void SelectionPlugin::clearVertexSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"clearVertexSelection : unable to get object" ); 
+    emit log(LOGERR,tr("clearVertexSelection : unable to get object") ); 
     return;
   }
   
@@ -198,7 +198,7 @@ void SelectionPlugin::clearVertexSelection( int objectId )
       BSplineCurveSelection::clearVertexSelection( PluginFunctions::splineCurve(object) );
 #endif            
   else {
-      emit log(LOGERR,"clearVertexSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("clearVertexSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -212,7 +212,7 @@ void SelectionPlugin::invertVertexSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"invertVertexSelection : unable to get object" ); 
+    emit log(LOGERR,tr("invertVertexSelection : unable to get object") ); 
     return;
   }
   
@@ -229,7 +229,7 @@ void SelectionPlugin::invertVertexSelection( int objectId )
       BSplineCurveSelection::invertVertexSelection( PluginFunctions::splineCurve(object) );
 #endif                 
   else {
-      emit log(LOGERR,"invertVertexSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("invertVertexSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -243,7 +243,7 @@ void SelectionPlugin::selectBoundaryVertices( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectBoundaryVertices : unable to get object" ); 
+    emit log(LOGERR,tr("selectBoundaryVertices : unable to get object") ); 
     return;
   }
   
@@ -252,7 +252,7 @@ void SelectionPlugin::selectBoundaryVertices( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectBoundaryVertices(PluginFunctions::polyMesh(object));
   else {
-      emit log(LOGERR,"selectBoundaryVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectBoundaryVertices : Unsupported object Type") ); 
       return;
   }
   
@@ -266,7 +266,7 @@ void SelectionPlugin::selectClosestBoundaryVertices( int objectId, int VertexId 
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"selectClosestBoundaryVertices : unable to get object" ); 
+    emit log(LOGERR,tr("selectClosestBoundaryVertices : unable to get object") ); 
     return;
   }
   
@@ -275,7 +275,7 @@ void SelectionPlugin::selectClosestBoundaryVertices( int objectId, int VertexId 
   else if ( object->dataType() == DATA_POLY_MESH )
       closestBoundarySelection(PluginFunctions::polyMesh(object), VertexId, VERTEX );
   else {
-      emit log(LOGERR,"selectClosestBoundaryVertices : Unsupported object Type" ); 
+      emit log(LOGERR,tr("selectClosestBoundaryVertices : Unsupported object Type") ); 
       return;
   }
   
@@ -289,7 +289,7 @@ void SelectionPlugin::shrinkVertexSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"shrinkVertexSelection : unable to get object" ); 
+    emit log(LOGERR,tr("shrinkVertexSelection : unable to get object") ); 
     return;
   }
   
@@ -298,7 +298,7 @@ void SelectionPlugin::shrinkVertexSelection( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::shrinkVertexSelection(PluginFunctions::polyMesh(object));
   else {
-      emit log(LOGERR,"shrinkVertexSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("shrinkVertexSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -312,7 +312,7 @@ void SelectionPlugin::growVertexSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"growVertexSelection : unable to get object" ); 
+    emit log(LOGERR,tr("growVertexSelection : unable to get object") ); 
     return;
   }
   
@@ -321,7 +321,7 @@ void SelectionPlugin::growVertexSelection( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::growVertexSelection(PluginFunctions::polyMesh(object));
   else {
-      emit log(LOGERR,"growVertexSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("growVertexSelection : Unsupported object Type") ); 
       return;
   }
   
@@ -335,7 +335,7 @@ idList SelectionPlugin::getVertexSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"getVertexSelection : unable to get object" ); 
+    emit log(LOGERR,tr("getVertexSelection : unable to get object") ); 
     return idList(0);
   }
   
@@ -354,7 +354,7 @@ idList SelectionPlugin::getVertexSelection( int objectId )
       return BSplineCurveSelection::getVertexSelection(PluginFunctions::splineCurve(object));
 #endif            
   else {
-      emit log(LOGERR,"getVertexSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("getVertexSelection : Unsupported object Type") ); 
       return idList(0);
   }
   
@@ -368,7 +368,7 @@ void SelectionPlugin::deleteSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"deleteSelection : unable to get object" ); 
+    emit log(LOGERR,tr("deleteSelection : unable to get object") ); 
     return;
   }
   
@@ -377,7 +377,7 @@ void SelectionPlugin::deleteSelection( int objectId )
   else if ( object->dataType() == DATA_POLY_MESH )
       deleteSelection(PluginFunctions::polyMesh(object));
   else {
-      emit log(LOGERR,"deleteSelection : Unsupported object Type" ); 
+      emit log(LOGERR,tr("deleteSelection : Unsupported object Type") ); 
       return;
   }
   
