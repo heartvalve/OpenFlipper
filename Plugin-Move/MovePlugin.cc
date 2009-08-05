@@ -1084,7 +1084,7 @@ void MovePlugin::slotMoveToOrigin() {
     
     
     useCommonCOG =  ( button == QMessageBox::Yes );
-    double count = 0.0;
+    double vertexCount = 0.0;
 
     if ( useCommonCOG ) {
       
@@ -1092,18 +1092,18 @@ void MovePlugin::slotMoveToOrigin() {
       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
         if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
           TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
-          cog += MeshInfo::cog(mesh);
-          ++count;
+          cog += MeshInfo::cog(mesh) * double(mesh.n_vertices());
+          vertexCount += double(mesh.n_vertices());
         }
 
         if ( o_it->dataType( DATA_POLY_MESH )) {
           PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
-          cog += MeshInfo::cog(mesh);
-          ++count;
+          cog += MeshInfo::cog(mesh) * double(mesh.n_vertices());
+          vertexCount += double(mesh.n_vertices());
         }
       }
       
-      cog = cog / count;
+      cog = cog / vertexCount;
     }
     
   }
