@@ -333,13 +333,28 @@ int main(int argc, char **argv)
     app.installTranslator(&qtTranslator);
     
     // install translator for Core Application
-    QTranslator myappTranslator;
+    QString translationDir = OpenFlipper::Options::translationsDirStr() + QDir::separator();
 
-    std::cerr << "Loading own translations from: " << QString(OpenFlipper::Options::translationsDirStr() + QDir::separator() + "OpenFlipper_" + tLang).toStdString() << std::endl;
-    if ( myappTranslator.load(OpenFlipper::Options::translationsDirStr() + QDir::separator() + "OpenFlipper_" + tLang) )
-      std::cerr << "Loaded" << std::endl;
+    std::cerr << "Loading own translations from: " << QString(translationDir + " (" + tLang + ")").toStdString() << std::endl;
+
+    QDir dir(translationDir);
+    dir.setFilter(QDir::Files);
+
+    QFileInfoList list = dir.entryInfoList();
+
+    for (int i = 0; i < list.size(); ++i) {
+      QFileInfo fileInfo = list.at(i);
+
+      if ( fileInfo.baseName().contains(tLang) ){
+        QTranslator* myAppTranslator = new QTranslator();
+
+        if ( myAppTranslator->load( fileInfo.filePath() ) ){
+          std::cerr << "Loaded " << fileInfo.fileName().toStdString() << std::endl;
     
-    app.installTranslator(&myappTranslator);    
+          app.installTranslator(myAppTranslator);
+        }
+      }
+     }
     
     // After setting all Options from command line, build the real gui
     w->init();
