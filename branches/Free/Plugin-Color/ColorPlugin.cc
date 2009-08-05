@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -100,7 +100,7 @@ void ColorPlugin::pluginsInitialized()
 
   QAction* AC_set_Default_color = new QAction(tr("&Default colors"), this);
   AC_set_Default_color->setStatusTip(tr("Set Default Colors"));
-  AC_set_Default_color->setWhatsThis("Set colors to default colors");
+  AC_set_Default_color->setWhatsThis(tr("Set colors to default colors"));
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-default.png");
   AC_set_Default_color->setIcon(icon);
   connect(AC_set_Default_color, SIGNAL(triggered()), this, SLOT(setDefaultColor()));
@@ -108,7 +108,7 @@ void ColorPlugin::pluginsInitialized()
 
   QAction* AC_set_Presentation_color = new QAction(tr("&Presentation colors"), this);
   AC_set_Presentation_color->setStatusTip(tr("Set Presentation Colors"));
-  AC_set_Presentation_color->setWhatsThis("Set colors to presentation colors");
+  AC_set_Presentation_color->setWhatsThis(tr("Set colors to presentation colors"));
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-powerpoint.png");
   AC_set_Presentation_color->setIcon(icon);
   connect(AC_set_Presentation_color, SIGNAL(triggered()), this, SLOT(setPresentationColor()));
@@ -116,7 +116,7 @@ void ColorPlugin::pluginsInitialized()
 
   QAction* AC_set_Paper_color = new QAction(tr("&Paper colors"), this);
   AC_set_Paper_color->setStatusTip(tr("Set Paper Colors"));
-  AC_set_Paper_color->setWhatsThis("Set colors to colors for papers");
+  AC_set_Paper_color->setWhatsThis(tr("Set colors to colors for papers"));
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"color-paper.png");
   AC_set_Paper_color->setIcon(icon);
   connect(AC_set_Paper_color, SIGNAL(triggered()), this, SLOT(setPaperColor()));
@@ -126,7 +126,7 @@ void ColorPlugin::pluginsInitialized()
   // Create Tool bar with same contents
   // =============================================================================
 
-  QToolBar* toolbar = new QToolBar("Color Toolbar");
+  QToolBar* toolbar = new QToolBar(tr("Color Toolbar"));
   toolbar->hide();
   toolbar->addAction(AC_set_Default_color);
   toolbar->addAction(AC_set_Presentation_color);
@@ -147,7 +147,7 @@ void ColorPlugin::setDefaultColor() {
   // Give user feedback
   // =============================================================================
   emit scriptInfo( "setDefaultColor()" );
-  emit showStatusMessage( "Set to default Colors", 4000 );
+  emit showStatusMessage( tr("Set to default Colors"), 4000 );
 
   // =============================================================================
   // Define the new colors
@@ -190,7 +190,7 @@ void ColorPlugin::setPresentationColor() {
   // Give user feedback
   // =============================================================================
   emit scriptInfo( "setPresentationColor()" );
-  emit showStatusMessage( "Set to Presentation Colors", 4000 );
+  emit showStatusMessage( tr("Set to Presentation Colors"), 4000 );
 
   // =============================================================================
   // Define the new colors
@@ -233,7 +233,7 @@ void ColorPlugin::setPaperColor() {
   // Give user feedback
   // =============================================================================
   emit scriptInfo( "setPaperColor()" );
-  emit showStatusMessage( "Set to Paper Colors", 4000 );
+  emit showStatusMessage( tr("Set to Paper Colors"), 4000 );
 
   // =============================================================================
   // Define the new colors
@@ -273,7 +273,7 @@ void ColorPlugin::setPaperColor() {
  */
 void ColorPlugin::setBackgroundColor( Vector _color ) {
   emit scriptInfo( "setBackgroundColor()" );
-  emit showStatusMessage( "Set background color", 4000 );
+  emit showStatusMessage( tr("Set background color"), 4000 );
 
   ACG::Vec4f color;
   color[0] = _color[0];

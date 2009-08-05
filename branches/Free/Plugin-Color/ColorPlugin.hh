@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -62,14 +62,16 @@
 
 class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterface, ToolbarInterface, StatusbarInterface, OptionsInterface, INIInterface
 {
-Q_OBJECT
-Q_INTERFACES(BaseInterface)
-Q_INTERFACES(MenuInterface)
-Q_INTERFACES(ScriptInterface)
-Q_INTERFACES(ToolbarInterface)
-Q_INTERFACES(StatusbarInterface)
-Q_INTERFACES(OptionsInterface)
-Q_INTERFACES(INIInterface)
+  
+  Q_OBJECT
+
+  Q_INTERFACES(BaseInterface)
+  Q_INTERFACES(MenuInterface)
+  Q_INTERFACES(ScriptInterface)
+  Q_INTERFACES(ToolbarInterface)
+  Q_INTERFACES(StatusbarInterface)
+  Q_INTERFACES(OptionsInterface)
+  Q_INTERFACES(INIInterface)
 
   signals:
     // BaseInterface
@@ -107,7 +109,7 @@ Q_INTERFACES(INIInterface)
 
     // BaseInterface
     QString name() { return (QString("Color Plugin")); };
-    QString description( ) { return (QString("Sets the Default colors e.g. for slides, paper,... snapshots")); };
+    QString description( ) { return (tr("Sets the Default colors e.g. for slides, paper,... snapshots")); };
 
     /// Constructor
     ColorPlugin();
