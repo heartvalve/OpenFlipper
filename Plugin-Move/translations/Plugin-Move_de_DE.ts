@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="de_DE" sourcelanguage="en">
 <context>
     <name>MovePlugin</name>
     <message>
         <location filename="../MovePlugin.cc" line="107"/>
         <location filename="../MovePlugin.cc" line="108"/>
         <source>Manipulator rotation</source>
-        <translation type="unfinished"></translation>
+        <translation>Manipulator Rotation</translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="109"/>
         <location filename="../MovePlugin.cc" line="110"/>
         <source>Resize</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalieren</translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="116"/>
         <source>Apply to all targets</source>
-        <translation type="unfinished"></translation>
+        <translation>Auf alle Objekte anwenden</translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="118"/>
@@ -29,33 +29,33 @@
         <location filename="../MovePlugin.cc" line="121"/>
         <location filename="../MovePlugin.cc" line="122"/>
         <source>Set properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenschaften</translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="134"/>
         <location filename="../MovePlugin.cc" line="155"/>
         <source>Transform and Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformieren und verschieben</translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="138"/>
         <source>&amp;Move objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiebe Objekte</translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="140"/>
         <source>Move object in 3D.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiebe Objekte in 3D</translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="145"/>
         <source>Move selections on objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionen verschieben</translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="146"/>
         <source>Move selections in 3D.</source>
-        <translation type="unfinished"></translation>
+        <translation>Selektionen auf Objekten verschieben.</translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="159"/>
@@ -439,56 +439,56 @@
     <message>
         <location filename="../moveControls.ui" line="25"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <location filename="../moveControls.ui" line="31"/>
         <source>Apply Transformation to Target Objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Wende Transformationen auf Ziel Objekte an</translation>
     </message>
     <message>
         <location filename="../moveControls.ui" line="54"/>
         <source>Move</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschieben</translation>
     </message>
     <message>
         <location filename="../moveControls.ui" line="60"/>
         <location filename="../moveControls.ui" line="70"/>
         <source>Move COG to origin</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiebe Schwerpunkt in Ursprung</translation>
     </message>
     <message>
         <location filename="../moveControls.ui" line="63"/>
         <source>Move COG of selected objects to origin</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiebe Schwerpunkt aller selektierten Objeckte in den Ursprung</translation>
     </message>
     <message>
         <location filename="../moveControls.ui" line="66"/>
         <source>Moves the selected objects such that
 their center of gravity is at the origin.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiebe Schwerpunkt aller selektierten Objeckte in den Ursprung.</translation>
     </message>
     <message>
         <location filename="../moveControls.ui" line="78"/>
         <source>Transform</source>
-        <translation type="unfinished"></translation>
+        <translation>Transformieren</translation>
     </message>
     <message>
         <location filename="../moveControls.ui" line="84"/>
         <location filename="../moveControls.ui" line="87"/>
         <source>Normalize bounding box diagonal of objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisiere Bounding Box aller Objekte</translation>
     </message>
     <message>
         <location filename="../moveControls.ui" line="90"/>
         <source>Rescale objects such that its bounding box
 diagonal has length one.</source>
-        <translation type="unfinished"></translation>
+        <translation>Skaliere alle Objekte, so das ihre Bounding Box Diagonale die Länge 1 hat.</translation>
     </message>
     <message>
         <location filename="../moveControls.ui" line="94"/>
         <source>Unify Boundingbox Diagonal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normalisiere Bounding Box Diagonale</translation>
     </message>
 </context>
 <context>
@@ -496,32 +496,32 @@ diagonal has length one.</source>
     <message>
         <location filename="../setProps.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Dialog</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="32"/>
         <source>Set Properties</source>
-        <translation type="unfinished"></translation>
+        <translation>Eigenschaften</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="44"/>
         <source>Special operations for manipulators</source>
-        <translation type="unfinished"></translation>
+        <translation>Spezielle Operationen für Manipulatoren</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="50"/>
         <source>project to Tangent Plane</source>
-        <translation type="unfinished"></translation>
+        <translation>Projeziere auf Tangential Ebene</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="57"/>
         <source>Move to COG</source>
-        <translation type="unfinished"></translation>
+        <translation>verschiebe in Ursprung</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="73"/>
         <source>Set Values</source>
-        <translation type="unfinished"></translation>
+        <translation>Setze Werte</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="87"/>
@@ -530,7 +530,7 @@ diagonal has length one.</source>
         <location filename="../setProps.ui" line="485"/>
         <location filename="../setProps.ui" line="686"/>
         <source>&lt;font color=red&gt;X&lt;/font&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="103"/>
@@ -539,7 +539,7 @@ diagonal has length one.</source>
         <location filename="../setProps.ui" line="501"/>
         <location filename="../setProps.ui" line="702"/>
         <source>&lt;font color=green&gt;Y&lt;/font&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="119"/>
@@ -548,19 +548,19 @@ diagonal has length one.</source>
         <location filename="../setProps.ui" line="517"/>
         <location filename="../setProps.ui" line="718"/>
         <source>&lt;font color=blue&gt;Z&lt;/font&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="129"/>
         <location filename="../setProps.ui" line="132"/>
         <source>Set the position of the manipulator</source>
-        <translation type="unfinished"></translation>
+        <translation>Setze Position des Manipulators</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="135"/>
         <location filename="../setProps.ui" line="728"/>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation>Position</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="240"/>
@@ -568,78 +568,78 @@ diagonal has length one.</source>
         <location filename="../setProps.ui" line="292"/>
         <location filename="../setProps.ui" line="295"/>
         <source>Toggle the direction axis</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausrichtung der Achse ändern</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="246"/>
         <location filename="../setProps.ui" line="789"/>
         <source>X Direction</source>
-        <translation type="unfinished"></translation>
+        <translation>X Richtung</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="298"/>
         <location filename="../setProps.ui" line="850"/>
         <source>Y Direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Y Richtung</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="344"/>
         <location filename="../setProps.ui" line="347"/>
         <source>Set the directions of the manipulator</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausrichtung des Manipulators ändern</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="350"/>
         <source>Set Direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Richtung anwenden</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="416"/>
         <location filename="../setProps.ui" line="419"/>
         <source>Translate the manipulator</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschiebe den Manipulator</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="422"/>
         <source>Translate</source>
-        <translation type="unfinished"></translation>
+        <translation>Verschieben</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="527"/>
         <source>angle</source>
-        <translation type="unfinished"></translation>
+        <translation>Winkel</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="537"/>
         <location filename="../setProps.ui" line="540"/>
         <source>Rotate the manipulator</source>
-        <translation type="unfinished"></translation>
+        <translation>Manipulator rotieren</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="543"/>
         <source>Rotate</source>
-        <translation type="unfinished"></translation>
+        <translation>Rotieren</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="606"/>
         <location filename="../setProps.ui" line="609"/>
         <source>Scale the manipulator</source>
-        <translation type="unfinished"></translation>
+        <translation>Manipulator skalieren</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="612"/>
         <source>Scale</source>
-        <translation type="unfinished"></translation>
+        <translation>Skalieren</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="672"/>
         <source>Current Values</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuelle Werte</translation>
     </message>
     <message>
         <location filename="../setProps.ui" line="911"/>
         <source>Z Direction</source>
-        <translation type="unfinished"></translation>
+        <translation>Z Richtung</translation>
     </message>
 </context>
 </TS>
