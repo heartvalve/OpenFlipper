@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -114,7 +114,7 @@ public :
   QString name(){ return (QString("Decimater")); };
 
   /// Description of the Plugin
-  QString description() { return (QString("Mesh Decimation ...")); };
+  QString description() { return (QString(tr("Mesh Decimation ..."))); };
 
 private :
 

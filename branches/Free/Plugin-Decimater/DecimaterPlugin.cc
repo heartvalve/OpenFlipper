@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -96,9 +96,9 @@ bool DecimaterPlugin::initializeToolbox(QWidget*& _widget)
  */
 void DecimaterPlugin::pluginsInitialized() {
 
-  emit setSlotDescription("decimate(int,Object)","Decimate a given object",
-                          QString("objectId,constraints").split(","),
-                          QString("ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,vertices)").split(";"));
+  emit setSlotDescription("decimate(int,Object)",tr("Decimate a given object"),
+                          QString(tr("objectId,constraints")).split(","),
+                          QString(tr("ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,vertices)")).split(";"));
 }
 
 
@@ -140,7 +140,7 @@ void DecimaterPlugin::slot_decimate()
     TriMeshObject* object = PluginFunctions::triMeshObject(*o_it);
 
     if ( object == 0 )
-      emit log(LOGWARN , "Unable to get object");
+      emit log(LOGWARN , tr("Unable to get object"));
 
     DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( o_it->objectData(DECIMATER) );
 
@@ -165,7 +165,7 @@ void DecimaterPlugin::slot_decimate()
 
     //init the decimater
     if( ! decimater->decimater()->initialize() ){
-      emit log(LOGWARN, "Decimater could not be initialized");
+      emit log(LOGWARN, tr("Decimater could not be initialized"));
       continue;
     }
 
@@ -198,7 +198,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
 
   BaseObjectData* baseObjectData;
   if ( ! PluginFunctions::getObject(_objID,baseObjectData) ) {
-    emit log(LOGERR,"Unable to get Object");
+    emit log(LOGERR,tr("Unable to get Object"));
     return;
   }
 
@@ -206,7 +206,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
     TriMeshObject* object = PluginFunctions::triMeshObject(baseObjectData);
 
     if ( object == 0 ) {
-      emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
+      emit log(LOGWARN , tr("Unable to get object ( Only Triangle Meshes supported)"));
       return;
     }
 
@@ -272,7 +272,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
 
     //init the decimater
     if( ! decimater->decimater()->initialize() ){
-      emit log(LOGWARN, "Decimater could not be initialized");
+      emit log(LOGWARN, tr("Decimater could not be initialized"));
       return;
     }
 
@@ -287,7 +287,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
     object->update();
 
   } else {
-    emit log(LOGERR,"Unsupported object type for decimater");
+    emit log(LOGERR,tr("Unsupported object type for decimater"));
     return;
   }
 
