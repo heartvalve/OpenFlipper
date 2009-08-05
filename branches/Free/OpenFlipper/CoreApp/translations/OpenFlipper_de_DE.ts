@@ -87,7 +87,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../Core/PluginLoader.cc" line="172"/>
         <source>Failed to connect to ProgramOptions.ini file: </source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte nicht zur ProgramOptions.ini verbinden. Datei: </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="199"/>
@@ -112,7 +112,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../Core/PluginLoader.cc" line="240"/>
         <source>Load Plugin</source>
-        <translation>Lade Plugin</translation>
+        <translation>Lade Plugin </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="264"/>
@@ -165,7 +165,7 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="394"/>
         <source>A Plugin with the same name was already loaded from </source>
-        <translation type="unfinished"></translation>
+        <translation>Ein Plugin mit dem gleichen Name wurde bereits geladen von </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="395"/>
@@ -173,22 +173,25 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
 You can only load the new plugin if you unload the existing one first.
 
 Do you want to unload the existing plugin first?</source>
-        <translation type="unfinished"></translation>
+        <translation>
+Sie können das neue Plugin nur laden wenn Sie das bestehende vorher entladen.
+
+Wollen Sie das bestehende Plugin entladen?</translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="411"/>
         <source>OpenFlipper.ini prevented Plugin </source>
-        <translation type="unfinished"></translation>
+        <translation>OpenFlipper.ini verhinderte das laden von </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="411"/>
         <source> from being loaded! </source>
-        <translation type="unfinished"></translation>
+        <translation>!</translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="419"/>
         <source>Plugin uses security interface. Trying to authenticate against plugin ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Das Plugin nutzt die Sicherheitsschnittstelle. Authentifikation beim Plugin ...</translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="425"/>
@@ -331,7 +334,7 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/openFunctions.cc" line="491"/>
         <location filename="../../Core/saveSettings.cc" line="78"/>
         <source>Options</source>
-        <translation type="unfinished">Optionen</translation>
+        <translation>Optionen</translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="495"/>
@@ -341,27 +344,27 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/openFunctions.cc" line="496"/>
         <source>Load all current program settings from the file ( This will include view settings, colors,...) </source>
-        <translation type="unfinished"></translation>
+        <translation>Lade alle derzeitigen Programmeinstellungen aus der Datei (Dies beinhaltet Einstellungen für Ansicht, Farbe,...) </translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="500"/>
         <source>Load per Plugin Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Plugin Einstellungen</translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="501"/>
         <source>Plugins should load their current global settings from the file</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugins sollen ihre derzeitigen globalen Einstellungen aus der Datei laden</translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="505"/>
         <source>Load all objects defined in the file</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade alle in der Datei definierten Objekte</translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="506"/>
         <source>Load all objects which are defined in the file</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade alle in der Datei definierten Objekte</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="66"/>
@@ -371,67 +374,67 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/saveSettings.cc" line="82"/>
         <source>Save program settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Programmeinstellungen speichern</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="83"/>
         <source>Save all current program settings to the file ( This will include view settings, colors,...) </source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere alle derzeitigen Programmeinstellungen in die Datei (Dies beinhaltet Einstellungen für Ansicht, Farbe,...) </translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="87"/>
         <source>Save per Plugin Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere Plugin Einstellungen</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="88"/>
         <source>Plugins should add their current global settings to the file</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugins sollen ihre derzeitigen globalen Einstellungen in die Datei schreiben</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="92"/>
         <source>Save open object information to the file</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere Informationen offener Objekte in der Datei</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="93"/>
         <source>Save all open Objects and add them to the settings file ( they will be loaded if opening the settings file</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere alle offenen Objekte und füge sie zur Einstellungsdatei hinzu ( sie werden beim öffnen der Einstellungsdatei mitgeladen)</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="97"/>
         <source>Save everything to same folder</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere alles in den gleichen Ordner</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="98"/>
         <source>Save all open files to the same folder as the ini file</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere alle offenen Dateien in den Ordner der ini Datei</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="102"/>
         <source>Ask before overwriting files</source>
-        <translation type="unfinished"></translation>
+        <translation>Vor dem Überschreiben nachfragen</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="103"/>
         <source>If a file exists you will get asked what to do</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn eine Datei existiert werden sie gefragt was zu tun ist</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="107"/>
         <source>Save only target objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Speicher nur Ziel-Objekte</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="108"/>
         <source>Only objects with target flag will be handled</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur Objekte mit Ziel-Markierung werden behandelt</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="143"/>
         <source>INI files (*.ini)</source>
-        <translation type="unfinished"></translation>
+        <translation>INI Dateien (*.ini)</translation>
     </message>
     <message>
         <location filename="../../Core/saveSettings.cc" line="160"/>
@@ -453,12 +456,12 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/Core.cc" line="439"/>
         <location filename="../../Core/PluginLoader.cc" line="1009"/>
         <source>Available scripting functions :</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorhandene Script-Funktionen :</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="493"/>
         <source>Loading Configuration File </source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Konfigurationen </translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="512"/>
@@ -478,34 +481,34 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/Core.cc" line="643"/>
         <source>unknown event type</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Ereignistyp</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="713"/>
         <source>updateView() called by </source>
-        <translation type="unfinished"></translation>
+        <translation>updateView() aufgerufen von </translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="730"/>
         <source>Too early for redraw! Delaying request from </source>
-        <translation type="unfinished"></translation>
+        <translation>Zu früh für neuzeichnen! Verzögere Anfrage von </translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="853"/>
         <source>Requested illegal multiview mode!</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter multiView Mode angefordert!</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="888"/>
         <location filename="../../Core/optionHandling.cc" line="162"/>
         <source>Failed to connect to users ini file</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte nicht zur ini Datei des Benutzers verbinden</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="891"/>
         <location filename="../../Core/optionHandling.cc" line="165"/>
         <source>Can not create user ini file</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte die ini Datei des Benutzers nicht anlegen</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="958"/>
@@ -515,12 +518,12 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/Core.cc" line="1004"/>
         <source>Unable to set slot-description. Plugin not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte die Slot-Beschreibung nicht setzen. Plugin nicht gefunden!</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1051"/>
         <source>Unable to get slot-description. Plugin not found!</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte die Slot-Beschreibung nicht festellen. Plugin nicht gefunden!</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1073"/>
@@ -834,20 +837,20 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/ParseIni.cc" line="738"/>
         <location filename="../../Core/ParseIni.cc" line="799"/>
         <source>Saving ini File </source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere ini Datei </translation>
     </message>
     <message>
         <location filename="../../Core/ParseObj.cc" line="79"/>
         <location filename="../../Core/ParseObj.cc" line="171"/>
         <location filename="../../Core/ParseObj.cc" line="288"/>
         <source>Cannot open to obj file</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann obj Datei nicht öffnen: </translation>
     </message>
     <message>
         <location filename="../../Core/ParseObj.cc" line="85"/>
         <location filename="../../Core/ParseObj.cc" line="132"/>
         <source>Loading obj File </source>
-        <translation type="unfinished"></translation>
+        <translation>Lade obj Datei </translation>
     </message>
     <message>
         <location filename="../../Core/ParseObj.cc" line="132"/>
@@ -866,7 +869,7 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/ParseObj.cc" line="295"/>
         <location filename="../../Core/ParseObj.cc" line="330"/>
         <source>Saving obj File </source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere obj Datei: </translation>
     </message>
     <message>
         <location filename="../../Core/PluginCommunication.cc" line="78"/>
@@ -905,18 +908,18 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/RPC.cc" line="114"/>
         <source>Function </source>
-        <translation type="unfinished"></translation>
+        <translation>Funktion </translation>
     </message>
     <message>
         <location filename="../../Core/RPC.cc" line="114"/>
         <source> not found!</source>
-        <translation type="unfinished"></translation>
+        <translation> wurde nicht gefunden!</translation>
     </message>
     <message>
         <location filename="../../Core/RPC.cc" line="123"/>
         <location filename="../../Core/RPC.cc" line="138"/>
         <source>RPC failed with : </source>
-        <translation type="unfinished"></translation>
+        <translation>RPC schlug fehl : </translation>
     </message>
     <message>
         <location filename="../../Core/optionHandling.cc" line="182"/>
@@ -934,28 +937,28 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/saveFunctions.cc" line="79"/>
         <location filename="../../Core/saveFunctions.cc" line="95"/>
         <source>Saving </source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere </translation>
     </message>
     <message>
         <location filename="../../Core/saveFunctions.cc" line="123"/>
         <location filename="../../Core/saveFunctions.cc" line="171"/>
         <source>Could not show &apos;save objects&apos; dialog. Missing file-plugins.</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte &apos;Speichere Objekte&apos; Dialog nicht anzeigen. File-Plugins fehlen.</translation>
     </message>
     <message>
         <location filename="../../Core/scripting.cc" line="89"/>
         <source>File does not exist : </source>
-        <translation type="unfinished"></translation>
+        <translation>Datei existiert nicht : </translation>
     </message>
     <message>
         <location filename="../../Core/scripting.cc" line="98"/>
         <source>Unable to create QWidget from ui file for </source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte kein QWidget aus der ui Datei erzeugen. Objekt : </translation>
     </message>
     <message>
         <location filename="../../Core/scripting.cc" line="105"/>
         <source>Unable to generate script interface for </source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Skript-Schnittstelle nicht generieren. Objekt : </translation>
     </message>
 </context>
 <context>
@@ -996,12 +999,12 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="144"/>
         <source>Switch between &lt;b&gt;perspective&lt;/b&gt; and &lt;b&gt;parrallel&lt;/b&gt; projection mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wechseln zwischen &lt;b&gt;perspektivischem&lt;/b&gt; und &lt;b&gt;parrallelem&lt;/b&gt; Projektionsmodus.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="146"/>
         <source>Switch projection modes&lt;br&gt;&lt;br&gt;Switch between &lt;b&gt;perspective&lt;/b&gt; and &lt;b&gt;parrallel&lt;/b&gt; projection mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Projektionsmodus wechseln&lt;br&gt;&lt;br&gt;Wechseln zwischen &lt;b&gt;perspektivischem&lt;/b&gt; und &lt;b&gt;parrallelem&lt;/b&gt; Projektionsmodus.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="153"/>
@@ -1111,19 +1114,19 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="288"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="307"/>
         <source>View all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles zeigen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="291"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="310"/>
         <source>View all.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles zeigen.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="292"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="311"/>
         <source>View all&lt;br&gt;&lt;br&gt;Move the objects in the scene so that the whole scene is visible.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alles zeigen&lt;br&gt;&lt;br&gt;Bewege die Kamera so dass alle Objekte der Szene sichtbar sind.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="303"/>
@@ -1190,7 +1193,7 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="194"/>
         <source>Log Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Log-Betrachter</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="310"/>
