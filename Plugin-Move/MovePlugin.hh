@@ -295,6 +295,14 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     /// scale mesh to have a boundingboxdiagonal of one
     template< typename MeshT >
     void unifyBBDiag(MeshT& _mesh );
+    
+    /// get bounding box diagonal of a mesh
+    template< typename MeshT >
+    void getBB( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  );
+    
+    /// Scales object such that bounding box diagonal has unit length
+    template< typename MeshT >
+    void unifyBBDiag( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  );
 
     /// Size for the manipulators
     double manip_size_;

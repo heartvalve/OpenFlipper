@@ -300,6 +300,7 @@ void MovePlugin::slotKeyEvent (QKeyEvent* _event)
 
 #include <qt4/QtGui/QDialog>
 #include <qt4/QtGui/qmessagebox.h>
+#include "../ACG/Math/VectorT.hh"
 //------------------------------------------------------------------------------
 
 void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
@@ -1085,22 +1086,25 @@ void MovePlugin::slotMoveToOrigin() {
     useCommonCOG =  ( button == QMessageBox::Yes );
     double count = 0.0;
 
-    // Compute cog for all objects
-    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-      if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
-         TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
-         cog += MeshInfo::cog(mesh);
-         ++count;
-      }
+    if ( useCommonCOG ) {
+      
+      // Compute cog for all objects
+      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+        if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
+          TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
+          cog += MeshInfo::cog(mesh);
+          ++count;
+        }
 
-      if ( o_it->dataType( DATA_POLY_MESH )) {
-         PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
-         cog += MeshInfo::cog(mesh);
-         ++count;
+        if ( o_it->dataType( DATA_POLY_MESH )) {
+          PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
+          cog += MeshInfo::cog(mesh);
+          ++count;
+        }
       }
+      
+      cog = cog / count;
     }
-    
-    cog = cog / count;
     
   }
 
@@ -1149,13 +1153,56 @@ void MovePlugin::slotMoveToOrigin() {
  */
 void MovePlugin::slotUnifyBoundingBoxDiagonal()
 {
+  bool useCommonBB = false;
+  ACG::Vec3d bb_min = ACG::Vec3d(FLT_MAX,FLT_MAX,FLT_MAX);
+  ACG::Vec3d bb_max = ACG::Vec3d(FLT_MIN,FLT_MIN,FLT_MIN);
+  
+  if ( PluginFunctions::targetCount() > 1 ) {
+    QMessageBox::StandardButton button = QMessageBox::question( 0, tr("Use common BB?"), tr("Should the targets be scaled depending on their common Bounding Box?"),QMessageBox::Yes|QMessageBox::No);
+    
+    
+    useCommonBB =  ( button == QMessageBox::Yes );
+    double count = 0.0;
+
+    if ( useCommonBB ) {
+      
+      // Compute cog for all objects
+      for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+        ACG::Vec3d bb_min_tmp(0.0,0.0,0.0);
+        ACG::Vec3d bb_max_tmp(0.0,0.0,0.0);
+        
+        if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
+          TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
+          getBB(mesh,bb_min_tmp,bb_max_tmp);
+          bb_min.minimize(bb_min_tmp);
+          bb_max.maximize(bb_max_tmp);
+        }
+
+        if ( o_it->dataType( DATA_POLY_MESH )) {
+          PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
+          getBB(mesh,bb_min_tmp,bb_max_tmp);
+          bb_min.minimize(bb_min_tmp);
+          bb_max.maximize(bb_max_tmp);          
+        }
+      }
+    }
+    
+  }
+  
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+    if ( useCommonBB ) {
+      if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
+        unifyBBDiag(*PluginFunctions::triMesh(*o_it),bb_min,bb_max);
+      else if ( o_it->dataType( DATA_POLY_MESH ) )
+        unifyBBDiag(*PluginFunctions::polyMesh(*o_it),bb_min,bb_max);
+    } else {
       if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
         unifyBBDiag(*PluginFunctions::triMesh(*o_it));
       else if ( o_it->dataType( DATA_POLY_MESH ) )
-        unifyBBDiag(*PluginFunctions::polyMesh(*o_it));
+        unifyBBDiag(*PluginFunctions::polyMesh(*o_it)); 
+    }
 
-      emit updatedObject( o_it->id() );
+    emit updatedObject( o_it->id() );
 
   }
        
@@ -1393,6 +1440,57 @@ void MovePlugin::unifyBBDiag(MeshT& _mesh )
 
      _mesh.point(v_it) = (_mesh.point(v_it) - bb_center) * scale + bb_center;
   }
+
+  _mesh.update_normals();
+
+}
+
+/** \brief Get the bounding box of a mesh
+ *
+ * @param _mesh the mesh
+ * @param _bb_min Lower left corner of bounding box
+ * @param _bb_max Upper right corner of bounding box
+ */
+template< typename MeshT >
+void MovePlugin::getBB( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  )
+{
+  typename MeshT::VertexIter v_it  = _mesh.vertices_begin();
+  typename MeshT::VertexIter v_end = _mesh.vertices_end();
+
+  // no vertices?
+  if( v_it == v_end) return;
+
+  _bb_min = _mesh.point(v_it);
+  _bb_max = _mesh.point(v_it);
+
+  for(; v_it!=v_end; ++v_it)
+  {
+    _bb_min.minimize( _mesh.point(v_it));
+    _bb_max.maximize( _mesh.point(v_it));
+  }
+
+
+}
+
+/** \brief Scales object such that bounding box diagonal has unit length
+ *
+ * @param _mesh the mesh
+ * @param _bb_min Lower left corner of bounding box
+ * @param _bb_max Upper right corner of bounding box
+ */
+template< typename MeshT >
+void MovePlugin::unifyBBDiag( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  )
+{
+  
+  typename MeshT::VertexIter v_it  = _mesh.vertices_begin();
+  typename MeshT::VertexIter v_end = _mesh.vertices_end();
+
+  typename MeshT::Point bb_center =  0.5 * (_bb_min + _bb_max) ;
+
+  typename MeshT::Scalar scale = 1.0/(_bb_max-_bb_min).norm();
+
+  for( v_it ; v_it!=v_end; ++v_it)
+    _mesh.point(v_it) = (_mesh.point(v_it) - bb_center) * scale + bb_center;
 
   _mesh.update_normals();
 

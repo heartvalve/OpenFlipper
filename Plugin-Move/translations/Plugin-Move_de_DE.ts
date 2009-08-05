@@ -118,126 +118,136 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="355"/>
+        <location filename="../MovePlugin.cc" line="356"/>
         <source>moveObject called for unsupported Object Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="555"/>
-        <location filename="../MovePlugin.cc" line="580"/>
+        <location filename="../MovePlugin.cc" line="556"/>
+        <location filename="../MovePlugin.cc" line="581"/>
         <source>Picking failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="641"/>
-        <location filename="../MovePlugin.cc" line="724"/>
-        <location filename="../MovePlugin.cc" line="731"/>
-        <location filename="../MovePlugin.cc" line="801"/>
-        <location filename="../MovePlugin.cc" line="943"/>
+        <location filename="../MovePlugin.cc" line="642"/>
+        <location filename="../MovePlugin.cc" line="725"/>
+        <location filename="../MovePlugin.cc" line="732"/>
+        <location filename="../MovePlugin.cc" line="802"/>
+        <location filename="../MovePlugin.cc" line="944"/>
         <source>Wrong Format for X Coordinate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="643"/>
-        <location filename="../MovePlugin.cc" line="726"/>
-        <location filename="../MovePlugin.cc" line="733"/>
-        <location filename="../MovePlugin.cc" line="803"/>
-        <location filename="../MovePlugin.cc" line="945"/>
+        <location filename="../MovePlugin.cc" line="644"/>
+        <location filename="../MovePlugin.cc" line="727"/>
+        <location filename="../MovePlugin.cc" line="734"/>
+        <location filename="../MovePlugin.cc" line="804"/>
+        <location filename="../MovePlugin.cc" line="946"/>
         <source>Wrong Format for Y Coordinate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="645"/>
-        <location filename="../MovePlugin.cc" line="728"/>
-        <location filename="../MovePlugin.cc" line="735"/>
-        <location filename="../MovePlugin.cc" line="805"/>
-        <location filename="../MovePlugin.cc" line="947"/>
+        <location filename="../MovePlugin.cc" line="646"/>
+        <location filename="../MovePlugin.cc" line="729"/>
+        <location filename="../MovePlugin.cc" line="736"/>
+        <location filename="../MovePlugin.cc" line="806"/>
+        <location filename="../MovePlugin.cc" line="948"/>
         <source>Wrong Format for Z Coordinate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="674"/>
-        <location filename="../MovePlugin.cc" line="699"/>
+        <location filename="../MovePlugin.cc" line="675"/>
+        <location filename="../MovePlugin.cc" line="700"/>
         <source>X Direction</source>
         <translation type="unfinished">X Richtung</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="675"/>
-        <location filename="../MovePlugin.cc" line="700"/>
+        <location filename="../MovePlugin.cc" line="676"/>
+        <location filename="../MovePlugin.cc" line="701"/>
         <source>Y Direction</source>
         <translation type="unfinished">Y Richtung</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="676"/>
-        <location filename="../MovePlugin.cc" line="701"/>
+        <location filename="../MovePlugin.cc" line="677"/>
+        <location filename="../MovePlugin.cc" line="702"/>
         <source>Z Direction</source>
         <translation type="unfinished">Z Richtung</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="760"/>
+        <location filename="../MovePlugin.cc" line="761"/>
         <source>The axes of the new direction have to be orthogonal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="872"/>
+        <location filename="../MovePlugin.cc" line="873"/>
         <source>TODO Project for multiple targets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="875"/>
+        <location filename="../MovePlugin.cc" line="876"/>
         <source>TODO Project for one target</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="950"/>
+        <location filename="../MovePlugin.cc" line="951"/>
         <source>Wrong Format for Angle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1016"/>
+        <location filename="../MovePlugin.cc" line="1017"/>
         <source>Wrong Format for factor 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1018"/>
+        <location filename="../MovePlugin.cc" line="1019"/>
         <source>Wrong Format for factor 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1020"/>
+        <location filename="../MovePlugin.cc" line="1021"/>
         <source>Wrong Format for factor 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1082"/>
+        <location filename="../MovePlugin.cc" line="1083"/>
         <source>Use common COG?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1082"/>
-        <source>Should the targets be moved depending on their common cog or on their own?</source>
+        <location filename="../MovePlugin.cc" line="1083"/>
+        <source>Should the targets be moved depending on their common cog?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1423"/>
-        <location filename="../MovePlugin.cc" line="1458"/>
+        <location filename="../MovePlugin.cc" line="1161"/>
+        <source>Use common BB?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="1161"/>
+        <source>Should the targets be scaled depending on their common Bounding Box?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="1521"/>
+        <location filename="../MovePlugin.cc" line="1556"/>
         <source>Enable Vertex Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1430"/>
-        <location filename="../MovePlugin.cc" line="1460"/>
+        <location filename="../MovePlugin.cc" line="1528"/>
+        <location filename="../MovePlugin.cc" line="1558"/>
         <source>Enable Edge Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1433"/>
-        <location filename="../MovePlugin.cc" line="1462"/>
+        <location filename="../MovePlugin.cc" line="1531"/>
+        <location filename="../MovePlugin.cc" line="1560"/>
         <source>Enable Face Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1445"/>
+        <location filename="../MovePlugin.cc" line="1543"/>
         <source>Unable to connect to Selection-Plugin. MoveSelection will work on vertices only.</source>
         <translation type="unfinished"></translation>
     </message>
