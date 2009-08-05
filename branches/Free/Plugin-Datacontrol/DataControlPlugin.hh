@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -130,7 +130,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     QString name(){ return (QString("DataControl")); };
 
     /// Description of the Plugin
-    QString description() { return (QString("Manages Data Objects")); };
+    QString description() { return (QString(tr("Manages Data Objects"))); };
 
   private :
     /// Widget for Toolbox

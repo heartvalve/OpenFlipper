@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -71,7 +71,7 @@ void DataControlPlugin::slotPopupRemove (  ) {
 
 
   QMessageBox msgBox;
-  msgBox.setText("Do you really want to remove the selected objects?");
+  msgBox.setText(tr("Do you really want to remove the selected objects?"));
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   msgBox.setDefaultButton(QMessageBox::No);
 
@@ -204,7 +204,7 @@ void DataControlPlugin::slotGroup() {
 
     //compare parent
     if ( parent != item->parent() ){
-      emit log("Cannot group Objects with different parents");
+      emit log(tr("Cannot group Objects with different parents"));
       return;
     }
 
@@ -217,8 +217,8 @@ void DataControlPlugin::slotGroup() {
   //create new group
   if (parent == 0)
     parent = PluginFunctions::objectRoot();
-  GroupObject* groupItem = new GroupObject( "newGroup", dynamic_cast< GroupObject* >(parent));
-  groupItem->setName("newGroup " + QString::number(groupItem->id()));
+  GroupObject* groupItem = new GroupObject( tr("newGroup"), dynamic_cast< GroupObject* >(parent));
+  groupItem->setName(tr("newGroup ") + QString::number(groupItem->id()));
   parent->appendChild( dynamic_cast< BaseObject* >( groupItem ) );
   groupItem->setParent( parent );
 
@@ -281,40 +281,40 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
     action = menu.addAction("Copy",this,SLOT ( slotCopy() ));
     icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png");
     action->setIcon(icon);
-    menu.addAction("Group",this,SLOT ( slotGroup() ));
+    menu.addAction(tr("Group"),this,SLOT ( slotGroup() ));
     menu.addSeparator();
-    menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
+    menu.addAction(tr("Remove"),this,SLOT ( slotPopupRemove() ));
    }else
     // check if the item is a group item
     if ( item->isGroup() ) {
-      action = menu.addAction("Zoom to objects",this,SLOT ( slotZoomTo() ));
+      action = menu.addAction(tr("Zoom to objects"),this,SLOT ( slotZoomTo() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
       action->setIcon(icon);
-      menu.addAction("Ungroup",this,SLOT ( slotUngroup() ));
+      menu.addAction(tr("Ungroup"),this,SLOT ( slotUngroup() ));
       menu.addSeparator();
-      action = menu.addAction("Rename",this,SLOT ( slotRename() ));
+      action = menu.addAction(tr("Rename"),this,SLOT ( slotRename() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
       action->setIcon(icon);
       menu.addSeparator();
-      action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
+      action = menu.addAction(tr("Remove"),this,SLOT ( slotPopupRemove() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
       action->setIcon(icon);
     } else {
-      action = menu.addAction("Zoom to object",this,SLOT ( slotZoomTo() ));
+      action = menu.addAction(tr("Zoom to object"),this,SLOT ( slotZoomTo() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
       action->setIcon(icon);
-      action = menu.addAction("Copy",this,SLOT ( slotCopy() ));
+      action = menu.addAction(tr("Copy"),this,SLOT ( slotCopy() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png");
       action->setIcon(icon);
-      action = menu.addAction("Rename",this,SLOT ( slotRename() ));
+      action = menu.addAction(tr("Rename"),this,SLOT ( slotRename() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
       action->setIcon(icon);
-      action = menu.addAction("Material Properties",this,SLOT ( slotMaterialProperties() ));
+      action = menu.addAction(tr("Material Properties"),this,SLOT ( slotMaterialProperties() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
       action->setIcon(icon);
-      menu.addAction("Group",this,SLOT ( slotGroup() ));
+      menu.addAction(tr("Group"),this,SLOT ( slotGroup() ));
       menu.addSeparator();
-      action = menu.addAction("Remove",this,SLOT ( slotPopupRemove() ));
+      action = menu.addAction(tr("Remove"),this,SLOT ( slotPopupRemove() ));
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
       action->setIcon(icon);
     }
@@ -357,66 +357,66 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
     //Show / Hide
     case 1 :
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
-      action = menu.addAction(icon,"Show all",this,SLOT ( showAll() ));
+      action = menu.addAction(icon,tr("Show all"),this,SLOT ( showAll() ));
       action->setData( QVariant() );
 
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
-        action = menu.addAction(icon, "Show all of type '" + typeName(types[i]) + "'",this,SLOT ( showAll() ));
+        action = menu.addAction(icon, tr("Show all of type '") + typeName(types[i]) + "'",this,SLOT ( showAll() ));
         action->setData( QVariant( types[i] ) );
       }
 
       menu.addSeparator();
-      action = menu.addAction("Hide all",this,SLOT ( hideAll() ));
+      action = menu.addAction(tr("Hide all"),this,SLOT ( hideAll() ));
       action->setData( QVariant() );
 
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
-        action = menu.addAction("Hide all of type '" + typeName(types[i]) + "'",this,SLOT ( hideAll() ));
+        action = menu.addAction(tr("Hide all of type '") + typeName(types[i]) + "'",this,SLOT ( hideAll() ));
         action->setData( QVariant( types[i] ) );
       }
 
       break;
     // Source
     case 2 :
-      action = menu.addAction("Select all",this,SLOT ( setAllSource() ));
+      action = menu.addAction(tr("Select all"),this,SLOT ( setAllSource() ));
       action->setData( QVariant() );
 
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
-        action = menu.addAction(icon, "Select all of type '" + typeName(types[i]) + "'",this,SLOT ( setAllSource() ));
+        action = menu.addAction(icon, tr("Select all of type '") + typeName(types[i]) + "'",this,SLOT ( setAllSource() ));
         action->setData( QVariant( types[i] ) );
       }
 
       menu.addSeparator();
-      action = menu.addAction("Deselect all",this,SLOT ( clearAllSource() ));
+      action = menu.addAction(tr("Deselect all"),this,SLOT ( clearAllSource() ));
       action->setData( QVariant() );
 
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
-        action = menu.addAction(icon, "Deselect all of type '" + typeName(types[i]) + "'",this,SLOT ( clearAllSource() ));
+        action = menu.addAction(icon, tr("Deselect all of type '") + typeName(types[i]) + "'",this,SLOT ( clearAllSource() ));
         action->setData( QVariant( types[i] ) );
       }
 
       break;
     // Target
     case 3 :
-      action = menu.addAction("Select all",this,SLOT ( setAllTarget() ));
+      action = menu.addAction(tr("Select all"),this,SLOT ( setAllTarget() ));
       action->setData( QVariant() );
 
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
-        action = menu.addAction(icon, "Select all of type '" + typeName(types[i]) + "'",this,SLOT ( setAllTarget() ));
+        action = menu.addAction(icon, tr("Select all of type '") + typeName(types[i]) + "'",this,SLOT ( setAllTarget() ));
         action->setData( QVariant( types[i] ) );
       }
 
       menu.addSeparator();
-      action = menu.addAction("Deselect all",this,SLOT ( clearAllTarget() ));
+      action = menu.addAction(tr("Deselect all"),this,SLOT ( clearAllTarget() ));
       action->setData( QVariant() );
 
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
-        action = menu.addAction(icon, "Deselect all of type '" + typeName(types[i]) + "'",this,SLOT ( clearAllTarget() ));
+        action = menu.addAction(icon, tr("Deselect all of type '") + typeName(types[i]) + "'",this,SLOT ( clearAllTarget() ));
         action->setData( QVariant( types[i] ) );
       }
 

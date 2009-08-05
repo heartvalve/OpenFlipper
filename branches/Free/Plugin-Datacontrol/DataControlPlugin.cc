@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -105,7 +105,7 @@ void DataControlPlugin::pluginsInitialized() {
   emit addContextMenuItem(contextMenu->menuAction() , DATA_ALL , CONTEXTOBJECTMENU);
 
   QIcon icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
-  QAction* material = new QAction(icon, "Material Properties", 0);
+  QAction* material = new QAction(icon, tr("Material Properties"), 0);
   connect (material, SIGNAL( triggered() ), this, SLOT ( slotMaterialProperties() ));
 
   emit addContextMenuItem(material , DATA_ALL , CONTEXTOBJECTMENU);
