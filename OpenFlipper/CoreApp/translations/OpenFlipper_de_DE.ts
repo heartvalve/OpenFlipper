@@ -97,7 +97,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../Core/PluginLoader.cc" line="208"/>
         <source>Loading Plugin </source>
-        <translation>Lade Plugin</translation>
+        <translation>Lade Plugin </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="220"/>
