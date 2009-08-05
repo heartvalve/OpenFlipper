@@ -75,7 +75,7 @@ void ScriptingPlugin::pluginsInitialized() {
   emit getMenubarMenu(tr("&Scripting"), scriptingMenu, true );
 
   QIcon icon;
-  QAction* showWidget = scriptingMenu->addAction( "Show script editor" );
+  QAction* showWidget = scriptingMenu->addAction( tr("Show script editor") );
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"scriptEditor.png");
   showWidget->setIcon(icon);
   connect( showWidget, SIGNAL( triggered() ) ,
@@ -226,7 +226,7 @@ void ScriptingPlugin::slotExecuteScript( QString _script ) {
   if ( engine->hasUncaughtException() ) {
     QScriptValue result = engine->uncaughtException();
     QString exception = result.toString();
-    emit log( LOGERR , "Script execution failed with : " + exception );
+    emit log( LOGERR , tr("Script execution failed with : ") + exception );
   }
 
   /// Switch scripting mode off
@@ -252,7 +252,7 @@ void ScriptingPlugin::slotExecuteFileScript( QString _filename ) {
     slotExecuteScript(script);
 
   } else
-    emit log(LOGERR,"Unable to open script file!");
+    emit log(LOGERR,tr("Unable to open script file!"));
 }
 
 void ScriptingPlugin::slotExecuteScriptButton() {
@@ -324,11 +324,11 @@ void ScriptingPlugin::waitContinue( ) {
 
   QMessageBox box;
 
-  box.addButton("Continue",QMessageBox::AcceptRole);
-  box.setText("Script execution has been interrupted");
+  box.addButton(tr("Continue"),QMessageBox::AcceptRole);
+  box.setText(tr("Script execution has been interrupted"));
   box.setIcon(QMessageBox::Information);
   box.setWindowModality(Qt::NonModal);
-  box.setWindowTitle("Continue?");
+  box.setWindowTitle(tr("Continue?"));
   box.setWindowFlags( box.windowFlags() | Qt::WindowStaysOnTopHint);
   box.show();
 
@@ -344,11 +344,11 @@ void ScriptingPlugin::waitContinue( QString _msg, int _x, int _y ) {
   QMessageBox box;
 
 
-  box.addButton("Continue",QMessageBox::AcceptRole);
+  box.addButton(tr("Continue"),QMessageBox::AcceptRole);
   box.setText(_msg);
   box.setIcon(QMessageBox::Information);
   box.setWindowModality(Qt::NonModal);
-  box.setWindowTitle("Continue?");
+  box.setWindowTitle(tr("Continue?"));
   box.setWindowFlags( box.windowFlags() | Qt::WindowStaysOnTopHint);
   if(_x!=-1 && _y!=-1)
     box.move(_x,_y);
