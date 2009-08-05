@@ -82,7 +82,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../Core/PluginLoader.cc" line="164"/>
         <source>Additional Plugin from ini file : </source>
-        <translation type="unfinished"></translation>
+        <translation>Zusätzliches Plugin aus INI Datei : </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="172"/>
@@ -92,22 +92,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../Core/PluginLoader.cc" line="199"/>
         <source>Skipping Plugins :	 </source>
-        <translation type="unfinished"></translation>
+        <translation>Überspringe Plugins :	 </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="208"/>
         <source>Loading Plugin </source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Plugin</translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="220"/>
         <source>Loaded </source>
-        <translation type="unfinished"></translation>
+        <translation>Geladen</translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="220"/>
         <source> Plugin(s)</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="240"/>
@@ -129,33 +129,33 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="324"/>
         <source>Unloaded Plugin :		 </source>
-        <translation type="unfinished"></translation>
+        <translation>Plguin entladen:</translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="329"/>
         <source>Unable to unload plugin &apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Plugin nicht entladen &apos;</translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="329"/>
         <source>&apos; (plugin wasn&apos;t found)</source>
-        <translation type="unfinished"></translation>
+        <translation>&apos; ( Plugin nicht gefunden)</translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="372"/>
         <source>Found Plugin :		 </source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin gefunden :		 </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="372"/>
         <source> at </source>
-        <translation type="unfinished"></translation>
+        <translation> mit Namen </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="388"/>
         <location filename="../../Core/PluginLoader.cc" line="402"/>
         <source>			 Already loaded from </source>
-        <translation type="unfinished"></translation>
+        <translation>			 bereits geladen aus </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="393"/>
@@ -193,17 +193,17 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="425"/>
         <source>... ok. Loading plugin </source>
-        <translation type="unfinished"></translation>
+        <translation>... ok. Lade Plugin </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="427"/>
         <source>... failed. Plugin access denied.</source>
-        <translation type="unfinished"></translation>
+        <translation>... Fehlgeschlagen. zugriff auf Plugin verweigert.</translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="434"/>
         <source>Plugin Desciption :		 </source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin Beschreibung :		 </translation>
     </message>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="451"/>
@@ -253,7 +253,7 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/PluginLoader.cc" line="1125"/>
         <source>Error was : </source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler war: </translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="115"/>
@@ -270,14 +270,14 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/openFunctions.cc" line="201"/>
         <location filename="../../Core/openFunctions.cc" line="203"/>
         <source>Loading </source>
-        <translation type="unfinished"></translation>
+        <translation>Lade </translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="203"/>
         <location filename="../../Core/saveFunctions.cc" line="79"/>
         <location filename="../../Core/saveFunctions.cc" line="95"/>
         <source> ... failed!</source>
-        <translation type="unfinished"></translation>
+        <translation> ... Fehlgeschlagen!</translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="235"/>
@@ -298,13 +298,13 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/openFunctions.cc" line="290"/>
         <location filename="../../Core/openFunctions.cc" line="294"/>
         <source>slotObjectOpened( </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="393"/>
         <location filename="../../Core/openFunctions.cc" line="397"/>
         <source>slotEmptyObjectAdded( </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="440"/>
@@ -336,7 +336,7 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/openFunctions.cc" line="495"/>
         <source>Load program settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Programm Einstellungen</translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="496"/>
@@ -437,12 +437,12 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/saveSettings.cc" line="160"/>
         <location filename="../../Core/saveSettings.cc" line="248"/>
         <source>Saving Settings to </source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere Einstellungen unter </translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="216"/>
         <source>Initializing mainwindow</source>
-        <translation type="unfinished"></translation>
+        <translation>Initialisiere Hauptfenster</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="437"/>
@@ -468,12 +468,12 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/Core.cc" line="598"/>
         <source>slotMouseEventIdentify from examiner </source>
-        <translation type="unfinished"></translation>
+        <translation>slotMouseEventIdentify aus examiner </translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="632"/>
         <source>slotMouseEvent from examiner </source>
-        <translation type="unfinished"></translation>
+        <translation>slotMouseEvent aus examiner </translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="643"/>
@@ -510,7 +510,7 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/Core.cc" line="958"/>
         <source>Unable to open logfile!</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann log Datei nicht öffnen!</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1004"/>
@@ -538,34 +538,34 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/optionHandling.cc" line="344"/>
         <location filename="../../Core/optionHandling.cc" line="387"/>
         <source>Failed to connect to _ini file</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann nicht mit INI Datei verbinden</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1190"/>
         <source>Redraw the contents of the viewer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Inhalt des Betrachters neu zeichnen.</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1191"/>
         <source>Clear all data objects.</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Objekte löschen.</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1192"/>
         <source>Quit OpenFlipper</source>
-        <translation type="unfinished"></translation>
+        <translation>OpenFlipper beenden</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1193"/>
         <location filename="../../Core/Core.cc" line="1195"/>
         <source>Enable or disable fullscreen mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Vollbild Modus an oder abschalten</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1194"/>
         <location filename="../../Core/Core.cc" line="1202"/>
         <source>enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>eingeschaltet</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1196"/>
@@ -590,7 +590,7 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/Core.cc" line="1199"/>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modus</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1199"/>
@@ -657,7 +657,7 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../Core/Core.cc" line="1215"/>
         <source>filename</source>
-        <translation type="unfinished"></translation>
+        <translation>Dateiname</translation>
     </message>
     <message>
         <location filename="../../Core/Core.cc" line="1216"/>
@@ -828,7 +828,7 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/ParseIni.cc" line="799"/>
         <location filename="../../Core/saveSettings.cc" line="248"/>
         <source> ... Done</source>
-        <translation type="unfinished"></translation>
+        <translation> ... Fertig</translation>
     </message>
     <message>
         <location filename="../../Core/ParseIni.cc" line="738"/>
@@ -855,7 +855,7 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../Core/openFunctions.cc" line="201"/>
         <location filename="../../Core/saveFunctions.cc" line="77"/>
         <source> ... done</source>
-        <translation type="unfinished"></translation>
+        <translation> ... Fertig</translation>
     </message>
     <message>
         <location filename="../../Core/ParseObj.cc" line="252"/>
@@ -964,34 +964,34 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="114"/>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="361"/>
         <source>Viewer Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter Einstellungen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="128"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="238"/>
         <source>Rendering Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeichen Optionen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="134"/>
         <source>Switch to Orthogonal Projection</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu senkrechter Projektion wechseln</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="136"/>
         <source>Switch to perspective orthogonal mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu senkrechter Projektion wechseln.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="138"/>
         <source>Switch to Perspective Projection</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu perspektivischer Projektion wechseln</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="140"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="340"/>
         <source>Switch to perspective projection mode.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu perspektivischer Projektion wechseln.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="144"/>
@@ -1007,30 +1007,30 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="153"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="253"/>
         <source>Animation</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="155"/>
         <source>Animate rotation of objects</source>
-        <translation type="unfinished"></translation>
+        <translation>Animiere rotation von Objekten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="164"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="260"/>
         <source>Backface Culling</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="173"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="267"/>
         <source>Two-sided Lighting</source>
-        <translation type="unfinished"></translation>
+        <translation>Zwei-Seitige Beleuchtung</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="182"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="274"/>
         <source>Multisampling</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="195"/>
@@ -1075,13 +1075,13 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="270"/>
         <source>Restore home view</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard Ansicht herstellen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="273"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="291"/>
         <source>Restore &lt;b&gt;home&lt;/b&gt; view.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Standard&lt;/b&gt; Ansicht herstellen.</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="274"/>
@@ -1093,7 +1093,7 @@ Do you want to unload the existing plugin first?</source>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="279"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="298"/>
         <source>Set Home View</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard Ansicht setzen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="282"/>
@@ -1128,32 +1128,32 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="303"/>
         <source>Copy View</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachtungsrichtung kopieren</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="304"/>
         <source>Copy current view to clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Die aktuelle Betrachtungsrichtung in die Zwischenablage kopieren</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="310"/>
         <source>Paste View</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachtungsrichtung anwenden</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="311"/>
         <source>Paste current view from clipboard</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachtungsrichtung aus der Zwischenablage anwenden</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="317"/>
         <source>Snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildschirmfoto</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="318"/>
         <source>Make a snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>Bildschirmfoto erstellen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="344"/>
@@ -2062,7 +2062,7 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.cc" line="234"/>
         <source>Results</source>
-        <translation type="unfinished"></translation>
+        <translation>Resultate</translation>
     </message>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.ui" line="13"/>
@@ -2120,17 +2120,17 @@ Do you want to unload the existing plugin first?</source>
     <message>
         <location filename="../../widgets/loadWidget/loadWidget.cc" line="79"/>
         <source>Object type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt Typ:</translation>
     </message>
     <message>
         <location filename="../../widgets/loadWidget/loadWidget.cc" line="165"/>
         <source>Load Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Optionen</translation>
     </message>
     <message>
         <location filename="../../widgets/loadWidget/loadWidget.cc" line="199"/>
         <source>Save Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere Optionen</translation>
     </message>
     <message>
         <location filename="../../widgets/loadWidget/loadWidget.cc" line="290"/>
@@ -2147,12 +2147,12 @@ Soll die Datei überschrieben werden?</translation>
     <message>
         <location filename="../../widgets/loadWidget/loadWidget.cc" line="308"/>
         <source>Load Object</source>
-        <translation type="unfinished">Lade Objekt</translation>
+        <translation>Lade Objekt</translation>
     </message>
     <message>
         <location filename="../../widgets/loadWidget/loadWidget.cc" line="325"/>
         <source>Save Object</source>
-        <translation type="unfinished">Objekt speichern</translation>
+        <translation>Objekt speichern</translation>
     </message>
 </context>
 <context>
@@ -2160,7 +2160,7 @@ Soll die Datei überschrieben werden?</translation>
     <message>
         <location filename="../../widgets/optionsWidget/downloader.cc" line="91"/>
         <source>Getting Versions file from Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Versions Nummern vom Server beziehen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/downloader.cc" line="93"/>
@@ -2172,29 +2172,29 @@ Soll die Datei überschrieben werden?</translation>
     <message>
         <location filename="../../widgets/optionsWidget/downloader.cc" line="94"/>
         <source>Downloading %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade %1</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/downloader.cc" line="129"/>
         <location filename="../../widgets/optionsWidget/downloader.cc" line="131"/>
         <location filename="../../widgets/optionsWidget/downloader.cc" line="163"/>
         <source>Download failed: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Laden fehlgeschlagen %1</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/downloader.cc" line="135"/>
         <source>Downloaded %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Geladen %1</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/downloader.cc" line="165"/>
         <source>Download failed: </source>
-        <translation type="unfinished"></translation>
+        <translation>Download fehlgeschlagen:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/downloader.cc" line="174"/>
         <source>download canceled.</source>
-        <translation type="unfinished"></translation>
+        <translation>Download abgebrochen.</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="14"/>
@@ -2312,7 +2312,7 @@ Soll die Datei überschrieben werden?</translation>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="209"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="235"/>
         <source>9.99; </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="216"/>
@@ -2716,18 +2716,18 @@ p, li { white-space: pre-wrap; }
         <location filename="../../widgets/PluginDialog/PluginDialog.cc" line="132"/>
         <location filename="../../widgets/PluginDialog/PluginDialog.cc" line="139"/>
         <source>Prevent Plugin Loading</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin laden verhindern</translation>
     </message>
     <message>
         <location filename="../../widgets/PluginDialog/PluginDialog.cc" line="133"/>
         <location filename="../../widgets/PluginDialog/PluginDialog.cc" line="140"/>
         <source>Do you want to prevent OpenFlipper from loading this plugin on the next start?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten sie, dass OpenFlipper dieses Plugin beim nächsten Start nicht mehr lädt?</translation>
     </message>
     <message>
         <location filename="../../widgets/PluginDialog/pluginDialog.ui" line="16"/>
         <source>Plugins</source>
-        <translation type="unfinished">Plugins</translation>
+        <translation>Plugins</translation>
     </message>
     <message>
         <location filename="../../widgets/PluginDialog/pluginDialog.ui" line="56"/>
@@ -2755,7 +2755,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/optionsWidget/ShortcutButton.cc" line="106"/>
         <source>unassigned</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht zugewiesen</translation>
     </message>
 </context>
 <context>
@@ -2763,7 +2763,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/coreWidget/SideElement.cc" line="86"/>
         <source>Show as separate window.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige als separates Fenster.</translation>
     </message>
 </context>
 <context>
@@ -2816,17 +2816,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.cc" line="78"/>
         <source>The Filename is empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Dateiname ist leer!</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.cc" line="99"/>
         <source>Images (*.png *.ppm *.jpg)</source>
-        <translation type="unfinished"></translation>
+        <translation>Bilder (*.png *.ppm *.jpg)</translation>
     </message>
     <message>
         <location filename="../../widgets/snapshotDialog/SnapshotDialog.cc" line="105"/>
         <source>Save Snapshot</source>
-        <translation type="unfinished"></translation>
+        <translation>Speichere Foto</translation>
     </message>
 </context>
 <context>
@@ -2834,7 +2834,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.cc" line="73"/>
         <source>The Filename is empty!</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Dateiname ist leer!</translation>
     </message>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.cc" line="91"/>
