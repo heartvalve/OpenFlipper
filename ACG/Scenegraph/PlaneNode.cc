@@ -54,9 +54,23 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 
-void PlaneNode::boundingBox(Vec3f& /*_bbMin*/, Vec3f& /*_bbMax*/)
+void PlaneNode::boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
 {
-	//_bbMin.minimize( Vect3f  )
+
+  Vec3f pos = position_ - xDirection_*0.5 - yDirection_*0.5;
+
+  //add a little offset in normal direction
+  Vec3f pos0 = pos + normal_*0.1;
+  Vec3f pos1 = pos - normal_*0.1;
+
+  _bbMin.minimize( pos0 );
+  _bbMin.minimize( pos0 + xDirection_);
+  _bbMin.minimize( pos0 + yDirection_);
+  _bbMin.minimize( pos0 + xDirection_ + yDirection_);
+  _bbMax.maximize( pos1 );
+  _bbMax.maximize( pos1 + xDirection_);
+  _bbMax.maximize( pos1 + yDirection_);
+  _bbMax.maximize( pos1 + xDirection_ + yDirection_);
 }
 
 //----------------------------------------------------------------------------
@@ -74,24 +88,19 @@ void PlaneNode::drawPlane( GLState&  /*_state*/) {
 
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-  Vec3f u1 = width_  * 0.5f * u_;
-  Vec3f v1 = height_ * 0.5f * v_;
-  Vec3f a = u1;
-  Vec3f b = v1;
-  Vec3f c = -u1;
-  Vec3f d = -v1;
+  Vec3f origin(0.0, 0.0, 0.0);
+  Vec3f xy = xDirection_ + yDirection_;
 
   //first draw the lines
-
   glColor3f( 1.0, 1.0, 1.0 );
   glLineWidth(2.0);
 
   //draw the plane
   glBegin(GL_QUADS);
-    glVertex3fv( &a[0] );
-    glVertex3fv( &b[0] );
-    glVertex3fv( &c[0] );
-    glVertex3fv( &d[0] );
+    glVertex3fv( &origin[0] );
+    glVertex3fv( &xDirection_[0] );
+    glVertex3fv( &xy[0] );
+    glVertex3fv( &yDirection_[0] );
   glEnd();
 
 
@@ -108,10 +117,10 @@ void PlaneNode::drawPlane( GLState&  /*_state*/) {
 
   //draw the plane
   glBegin(GL_QUADS);
-    glVertex3fv( &a[0] );
-    glVertex3fv( &b[0] );
-    glVertex3fv( &c[0] );
-    glVertex3fv( &d[0] );
+    glVertex3fv( &origin[0] );
+    glVertex3fv( &xDirection_[0] );
+    glVertex3fv( &xy[0] );
+    glVertex3fv( &yDirection_[0] );
   glEnd();
 
   //finally the green back side
@@ -122,10 +131,10 @@ void PlaneNode::drawPlane( GLState&  /*_state*/) {
 
   //draw the plane
   glBegin(GL_QUADS);
-    glVertex3fv( &a[0] );
-    glVertex3fv( &b[0] );
-    glVertex3fv( &c[0] );
-    glVertex3fv( &d[0] );
+    glVertex3fv( &origin[0] );
+    glVertex3fv( &xDirection_[0] );
+    glVertex3fv( &xy[0] );
+    glVertex3fv( &yDirection_[0] );
   glEnd();
 
 }
@@ -137,19 +146,15 @@ void PlaneNode::drawPlanePick( GLState&  _state) {
   _state.pick_set_maximum(1);
   _state.pick_set_name(0);
 
-  Vec3f u1 = width_  * 0.5f * u_;
-  Vec3f v1 = height_ * 0.5f * v_;
-  Vec3f a = u1;
-  Vec3f b = v1;
-  Vec3f c = -u1;
-  Vec3f d = -v1;
+  Vec3f origin(0.0, 0.0, 0.0);
+  Vec3f xy = xDirection_ + yDirection_;
 
   //draw the plane
   glBegin(GL_QUADS);
-    glVertex3fv( &a[0] );
-    glVertex3fv( &b[0] );
-    glVertex3fv( &c[0] );
-    glVertex3fv( &d[0] );
+    glVertex3fv( &origin[0] );
+    glVertex3fv( &xDirection_[0] );
+    glVertex3fv( &xy[0] );
+    glVertex3fv( &yDirection_[0] );
   glEnd();
 }
 
@@ -165,7 +170,9 @@ void PlaneNode::draw(GLState&  _state  , unsigned int /*_drawMode*/)
   glColorMaterial ( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE ) ;
   glEnable(GL_COLOR_MATERIAL);
 
-  _state.translate(position_[0], position_[1], position_[2]);
+  Vec3f pos = position_ - xDirection_*0.5 - yDirection_*0.5;
+
+  _state.translate(pos[0], pos[1], pos[2]);
 
   drawPlane(_state);
 
@@ -178,6 +185,7 @@ void PlaneNode::draw(GLState&  _state  , unsigned int /*_drawMode*/)
 
 void PlaneNode::setPosition(const Vec3f& _position, const Vec3f& _normal)
 {
+
   //find a non zero component
   int comp = -1;
   for (int i=0; i < 2; i++)
@@ -192,13 +200,13 @@ void PlaneNode::setPosition(const Vec3f& _position, const Vec3f& _normal)
   }
 
   //compute orthogonal vectors in the plane
-  u_[comp] = (-_normal[ (comp + 1) % 3 ] - _normal[(comp + 2) % 3]) / _normal[comp];
-  u_[ (comp + 1) % 3 ] = 1;
-  u_[ (comp + 2) % 3 ] = 1;
-  u_ = u_.normalize();
+  xDirection_[comp] = (-_normal[ (comp + 1) % 3 ] - _normal[(comp + 2) % 3]) / _normal[comp];
+  xDirection_[ (comp + 1) % 3 ] = 1;
+  xDirection_[ (comp + 2) % 3 ] = 1;
+  xDirection_ = xDirection_.normalize();
 
-  v_ = u_ % _normal;
-  v_ = v_.normalize();
+  yDirection_ = xDirection_ % _normal;
+  yDirection_ = yDirection_.normalize();
 
   position_ = _position;
   normal_   = _normal;
@@ -206,10 +214,32 @@ void PlaneNode::setPosition(const Vec3f& _position, const Vec3f& _normal)
 
 //----------------------------------------------------------------
 
-void PlaneNode::setSize(double _width, double _height)
+
+void PlaneNode::setPosition(const Vec3f& _position, const Vec3f& _xDirection, const Vec3f& _yDirection)
 {
-  width_ = _width;
-  height_ = _height;
+  position_ = _position;
+  xDirection_ = _xDirection;
+  yDirection_ = _yDirection;
+  normal_ = (_xDirection % _yDirection).normalize();
+}
+
+//----------------------------------------------------------------
+
+void PlaneNode::transform(const ACG::Matrix4x4d& _mat)
+{
+  position_ = _mat.transform_point(position_);
+  xDirection_ = _mat.transform_vector(xDirection_);
+  yDirection_ = _mat.transform_vector(yDirection_);
+
+  normal_ = (xDirection_ % yDirection_).normalize();
+}
+
+//----------------------------------------------------------------
+
+void PlaneNode::setSize(double _xDirection, double _yDirection)
+{
+  xDirection_ = xDirection_.normalize() * _xDirection;
+  yDirection_ = yDirection_.normalize() * _yDirection;
 }
 
 //----------------------------------------------------------------
@@ -221,7 +251,9 @@ PlaneNode::pick(GLState& _state, PickTarget _target)
 
 	  _state.push_modelview_matrix();
 	  
-	  _state.translate(position_[0], position_[1], position_[2]);
+    Vec3f pos = position_ - xDirection_*0.5 - yDirection_*0.5;
+
+	  _state.translate(pos[0], pos[1], pos[2]);
 	  
 	  drawPlanePick(_state);
 	  
@@ -233,11 +265,6 @@ PlaneNode::pick(GLState& _state, PickTarget _target)
 
 Vec3f PlaneNode::position()
 {
-  TranslationManipulatorNode* manipNode = dynamic_cast< TranslationManipulatorNode* > (parent());
-
-  if (manipNode)
-    return manipNode->matrix().transform_point( position_ );
-  else
     return position_;
 }
 
@@ -245,26 +272,21 @@ Vec3f PlaneNode::position()
 
 Vec3f PlaneNode::normal()
 {
-  TranslationManipulatorNode* manipNode = dynamic_cast< TranslationManipulatorNode* > (parent());
-
-  if (manipNode)
-    return manipNode->matrix().transform_vector( normal_ );
-  else
     return normal_;
 }
 
 //----------------------------------------------------------------
 
-int PlaneNode::objectID()
+Vec3f PlaneNode::xDirection()
 {
-  return objectID_;
+  return xDirection_;
 }
 
 //----------------------------------------------------------------
 
-void PlaneNode::objectID(int _id)
+Vec3f PlaneNode::yDirection()
 {
-  objectID_ = _id;
+  return yDirection_;
 }
 
 //=============================================================================

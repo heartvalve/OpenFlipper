@@ -54,6 +54,7 @@
 #include "BaseNode.hh"
 #include "DrawModes.hh"
 #include <vector>
+#include "../Math/Matrix4x4T.hh"
 
 //== NAMESPACES ===============================================================
 
@@ -99,8 +100,14 @@ class ACGDLLEXPORT PlaneNode : public BaseNode
     /// set position
     void setPosition(const Vec3f& _position, const Vec3f& _normal);
 
+    /// set position
+    void setPosition(const Vec3f& _position, const Vec3f& _xDirection, const Vec3f& _yDirection);
+
+    /// tranform the plane with given matrix
+    void transform(const ACG::Matrix4x4d& _mat);
+
     /// set plane size
-    void setSize(double _width, double _height);
+    void setSize(double _xDirection, double _yDirection);
 
     void manipulatorVisible( bool _visible );
 
@@ -112,11 +119,11 @@ class ACGDLLEXPORT PlaneNode : public BaseNode
     /// get current normal
     Vec3f normal();
 
-    /// get id of the object on which the plane operates
-    int objectID();
+    /// local x direction
+    Vec3f xDirection();
 
-    /// set id of the object on which the plane operates
-    void objectID(int _id);
+    /// local y direction
+    Vec3f yDirection();
 
   private:
 
@@ -127,13 +134,8 @@ class ACGDLLEXPORT PlaneNode : public BaseNode
 
     Vec3f position_;
     Vec3f normal_;
-    Vec3f u_;
-    Vec3f v_;
-
-    float width_;
-    float height_;
-
-    int objectID_;
+    Vec3f xDirection_;
+    Vec3f yDirection_;
 };
 
 //=============================================================================
