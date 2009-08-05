@@ -535,7 +535,7 @@ public:
     QToolButton* pickButton_;
     QToolButton* questionButton_;
 
-    QComboBox* viewmodeBox_;
+    QComboBox* viewerLayoutBox_;
 
   /** @} */
 
@@ -549,12 +549,12 @@ public:
     void slotUpdateGlobalDrawMenu();
 
   
-    /// Change view mode that was selected in the combo box
-    void setViewMode(int _idx);
+    /// Change viewer layout that was selected in the combo box
+    void setViewerLayout(int _idx);
 
   private slots:
     /// Switches over to the next view mode
-    void nextViewMode();
+    void nextViewerLayout();
 
     /// Called when the global drawMode is selected
     void slotGlobalDrawMenu(QAction * _action);
