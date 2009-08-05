@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>moveControls</class>
- <widget class="QWidget" name="moveControls" >
-  <property name="geometry" >
+ <widget class="QWidget" name="moveControls">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,88 +10,78 @@
     <height>169</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="Preferred" hsizetype="Fixed" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="maximumSize" >
+  <property name="maximumSize">
    <size>
     <width>348</width>
     <height>16777215</height>
    </size>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_6" >
+  <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
-    <widget class="QCheckBox" name="targetObjects" >
-     <property name="text" >
-      <string>Apply Transformation to Target Objects</string>
-     </property>
-     <property name="checked" >
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="enabled">
       <bool>true</bool>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="enabled" >
-      <bool>true</bool>
-     </property>
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="currentIndex" >
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
        <string>Move</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3" >
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QPushButton" name="moveToOrigin" >
-         <property name="toolTip" >
+        <widget class="QPushButton" name="moveToOrigin">
+         <property name="toolTip">
           <string>Move COG to origin</string>
          </property>
-         <property name="statusTip" >
+         <property name="statusTip">
           <string>Move COG of selected objects to origin</string>
          </property>
-         <property name="whatsThis" >
+         <property name="whatsThis">
           <string>Moves the selected objects such that
 their center of gravity is at the origin.</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Move COG to origin</string>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="Transform" >
-      <attribute name="title" >
+     <widget class="QWidget" name="Transform">
+      <attribute name="title">
        <string>Transform</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2" >
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QPushButton" name="unifyBoundingBoxDiagonal" >
-         <property name="toolTip" >
+        <widget class="QPushButton" name="unifyBoundingBoxDiagonal">
+         <property name="toolTip">
           <string>Normalize bounding box diagonal of objects</string>
          </property>
-         <property name="statusTip" >
+         <property name="statusTip">
           <string>Normalize bounding box diagonal of objects</string>
          </property>
-         <property name="whatsThis" >
+         <property name="whatsThis">
           <string>Rescale objects such that its bounding box
 diagonal has length one.</string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>Unify Boundingbox Diagonal</string>
          </property>
         </widget>

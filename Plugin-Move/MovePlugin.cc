@@ -298,6 +298,8 @@ void MovePlugin::slotKeyEvent (QKeyEvent* _event)
     setManipMode (QtTranslationManipulatorNode::LocalRotation);
 }
 
+#include <qt4/QtGui/QDialog>
+#include <qt4/QtGui/qmessagebox.h>
 //------------------------------------------------------------------------------
 
 void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
@@ -1068,42 +1070,75 @@ void MovePlugin::slotScale() {
 //------------------------------------------------------------------------------
 
 
-/** \brief Move currently active or first Mesh with its COG to the origin
+/** \brief Move target Meshes cog to the origin
  *
  */
 void MovePlugin::slotMoveToOrigin() {
 
-   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+  bool useCommonCOG = false;
+  ACG::Vec3d cog = ACG::Vec3d(0.0,0.0,0.0);
+  
+  if ( PluginFunctions::targetCount() > 1 ) {
+    QMessageBox::StandardButton button = QMessageBox::question( 0, tr("Use common COG?"), tr("Should the targets be moved depending on their common cog?"),QMessageBox::Yes|QMessageBox::No);
+    
+    
+    useCommonCOG =  ( button == QMessageBox::Yes );
+    double count = 0.0;
+
+    // Compute cog for all objects
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
       if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
          TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
-         const TriMesh::Point cog = MeshInfo::cog(mesh);
-
-         for ( TriMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
-            mesh.set_point(v_it , ( mesh.point(v_it) ) - cog );
-
-         o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
+         cog += MeshInfo::cog(mesh);
+         ++count;
       }
 
       if ( o_it->dataType( DATA_POLY_MESH )) {
          PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
-         const PolyMesh::Point cog = MeshInfo::cog(mesh);
-
-         for ( PolyMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
-            mesh.set_point(v_it , ( mesh.point(v_it) ) - cog );
-
-         o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
-
+         cog += MeshInfo::cog(mesh);
+         ++count;
       }
+    }
+    
+    cog = cog / count;
+    
+  }
 
-      emit updatedObject( o_it->id() );
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+    if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
+        TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
+        
+        if ( !useCommonCOG ) 
+          cog = MeshInfo::cog(mesh);
 
-      updateManipulatorDialog();
-      o_it->manipulatorNode()->loadIdentity();
+        for ( TriMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
+          mesh.set_point(v_it , ( mesh.point(v_it) ) - cog );
 
-      emit createBackup(o_it->id(),"Move to origin");
-   }
+        o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
+    }
 
-   emit updateView();
+    if ( o_it->dataType( DATA_POLY_MESH )) {
+        PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
+        
+        if ( !useCommonCOG ) 
+          cog = MeshInfo::cog(mesh);
+
+        for ( PolyMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
+          mesh.set_point(v_it , ( mesh.point(v_it) ) - cog );
+
+        o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
+
+    }
+
+    emit updatedObject( o_it->id() );
+
+    updateManipulatorDialog();
+    o_it->manipulatorNode()->loadIdentity();
+
+    emit createBackup(o_it->id(),"Move to origin");
+  }
+
+  emit updateView();
 }
 
 
@@ -1114,31 +1149,17 @@ void MovePlugin::slotMoveToOrigin() {
  */
 void MovePlugin::slotUnifyBoundingBoxDiagonal()
 {
-   if ( tool_->targetObjects->isChecked() ) {
-       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-            if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
-              unifyBBDiag(*PluginFunctions::triMesh(*o_it));
-            else if ( o_it->dataType( DATA_POLY_MESH ) )
-              unifyBBDiag(*PluginFunctions::polyMesh(*o_it));
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+      if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
+        unifyBBDiag(*PluginFunctions::triMesh(*o_it));
+      else if ( o_it->dataType( DATA_POLY_MESH ) )
+        unifyBBDiag(*PluginFunctions::polyMesh(*o_it));
 
-            emit updatedObject( o_it->id() );
+      emit updatedObject( o_it->id() );
 
-       }
-   } else {
-      BaseObjectData* object;
-      if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
-         if (  object->manipulatorNode()->visible() ) {
-
-            if ( object->dataType( DATA_TRIANGLE_MESH ) )
-              unifyBBDiag(*PluginFunctions::triMesh(object));
-            else if ( object->dataType( DATA_POLY_MESH ) )
-             unifyBBDiag(*PluginFunctions::polyMesh(object));
-         }
-
-         emit updatedObject( object->id() );
-      }
-   }
-   emit updateView();
+  }
+       
+  emit updateView();
 }
 
 

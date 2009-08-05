@@ -118,23 +118,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="353"/>
+        <location filename="../MovePlugin.cc" line="355"/>
         <source>moveObject called for unsupported Object Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="553"/>
-        <location filename="../MovePlugin.cc" line="578"/>
+        <location filename="../MovePlugin.cc" line="555"/>
+        <location filename="../MovePlugin.cc" line="580"/>
         <source>Picking failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="639"/>
-        <location filename="../MovePlugin.cc" line="722"/>
-        <location filename="../MovePlugin.cc" line="729"/>
-        <location filename="../MovePlugin.cc" line="799"/>
-        <location filename="../MovePlugin.cc" line="941"/>
-        <source>Wrong Format for X Coordinate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -143,7 +134,7 @@
         <location filename="../MovePlugin.cc" line="731"/>
         <location filename="../MovePlugin.cc" line="801"/>
         <location filename="../MovePlugin.cc" line="943"/>
-        <source>Wrong Format for Y Coordinate</source>
+        <source>Wrong Format for X Coordinate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -152,82 +143,101 @@
         <location filename="../MovePlugin.cc" line="733"/>
         <location filename="../MovePlugin.cc" line="803"/>
         <location filename="../MovePlugin.cc" line="945"/>
+        <source>Wrong Format for Y Coordinate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="645"/>
+        <location filename="../MovePlugin.cc" line="728"/>
+        <location filename="../MovePlugin.cc" line="735"/>
+        <location filename="../MovePlugin.cc" line="805"/>
+        <location filename="../MovePlugin.cc" line="947"/>
         <source>Wrong Format for Z Coordinate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="672"/>
-        <location filename="../MovePlugin.cc" line="697"/>
-        <source>X Direction</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="673"/>
-        <location filename="../MovePlugin.cc" line="698"/>
-        <source>Y Direction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="674"/>
         <location filename="../MovePlugin.cc" line="699"/>
-        <source>Z Direction</source>
-        <translation type="unfinished"></translation>
+        <source>X Direction</source>
+        <translation type="unfinished">X Richtung</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="758"/>
+        <location filename="../MovePlugin.cc" line="675"/>
+        <location filename="../MovePlugin.cc" line="700"/>
+        <source>Y Direction</source>
+        <translation type="unfinished">Y Richtung</translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="676"/>
+        <location filename="../MovePlugin.cc" line="701"/>
+        <source>Z Direction</source>
+        <translation type="unfinished">Z Richtung</translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="760"/>
         <source>The axes of the new direction have to be orthogonal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="870"/>
+        <location filename="../MovePlugin.cc" line="872"/>
         <source>TODO Project for multiple targets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="873"/>
+        <location filename="../MovePlugin.cc" line="875"/>
         <source>TODO Project for one target</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="948"/>
+        <location filename="../MovePlugin.cc" line="950"/>
         <source>Wrong Format for Angle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1014"/>
+        <location filename="../MovePlugin.cc" line="1016"/>
         <source>Wrong Format for factor 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1016"/>
+        <location filename="../MovePlugin.cc" line="1018"/>
         <source>Wrong Format for factor 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1018"/>
+        <location filename="../MovePlugin.cc" line="1020"/>
         <source>Wrong Format for factor 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1402"/>
-        <location filename="../MovePlugin.cc" line="1437"/>
+        <location filename="../MovePlugin.cc" line="1082"/>
+        <source>Use common COG?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="1082"/>
+        <source>Should the targets be moved depending on their common cog or on their own?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="1423"/>
+        <location filename="../MovePlugin.cc" line="1458"/>
         <source>Enable Vertex Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1409"/>
-        <location filename="../MovePlugin.cc" line="1439"/>
+        <location filename="../MovePlugin.cc" line="1430"/>
+        <location filename="../MovePlugin.cc" line="1460"/>
         <source>Enable Edge Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1412"/>
-        <location filename="../MovePlugin.cc" line="1441"/>
+        <location filename="../MovePlugin.cc" line="1433"/>
+        <location filename="../MovePlugin.cc" line="1462"/>
         <source>Enable Face Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1424"/>
+        <location filename="../MovePlugin.cc" line="1445"/>
         <source>Unable to connect to Selection-Plugin. MoveSelection will work on vertices only.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -437,56 +447,55 @@
 <context>
     <name>moveControls</name>
     <message>
-        <location filename="../moveControls.ui" line="25"/>
+        <location filename="../moveControls.ui" line="26"/>
         <source>Form</source>
         <translation>Dialog</translation>
     </message>
     <message>
-        <location filename="../moveControls.ui" line="31"/>
         <source>Apply Transformation to Target Objects</source>
-        <translation>Wende Transformationen auf Ziel Objekte an</translation>
+        <translation type="obsolete">Wende Transformationen auf Ziel Objekte an</translation>
     </message>
     <message>
-        <location filename="../moveControls.ui" line="54"/>
+        <location filename="../moveControls.ui" line="45"/>
         <source>Move</source>
         <translation>Verschieben</translation>
     </message>
     <message>
-        <location filename="../moveControls.ui" line="60"/>
-        <location filename="../moveControls.ui" line="70"/>
+        <location filename="../moveControls.ui" line="51"/>
+        <location filename="../moveControls.ui" line="61"/>
         <source>Move COG to origin</source>
         <translation>Verschiebe Schwerpunkt in Ursprung</translation>
     </message>
     <message>
-        <location filename="../moveControls.ui" line="63"/>
+        <location filename="../moveControls.ui" line="54"/>
         <source>Move COG of selected objects to origin</source>
         <translation>Verschiebe Schwerpunkt aller selektierten Objeckte in den Ursprung</translation>
     </message>
     <message>
-        <location filename="../moveControls.ui" line="66"/>
+        <location filename="../moveControls.ui" line="57"/>
         <source>Moves the selected objects such that
 their center of gravity is at the origin.</source>
         <translation>Verschiebe Schwerpunkt aller selektierten Objeckte in den Ursprung.</translation>
     </message>
     <message>
-        <location filename="../moveControls.ui" line="78"/>
+        <location filename="../moveControls.ui" line="69"/>
         <source>Transform</source>
         <translation>Transformieren</translation>
     </message>
     <message>
-        <location filename="../moveControls.ui" line="84"/>
-        <location filename="../moveControls.ui" line="87"/>
+        <location filename="../moveControls.ui" line="75"/>
+        <location filename="../moveControls.ui" line="78"/>
         <source>Normalize bounding box diagonal of objects</source>
         <translation>Normalisiere Bounding Box aller Objekte</translation>
     </message>
     <message>
-        <location filename="../moveControls.ui" line="90"/>
+        <location filename="../moveControls.ui" line="81"/>
         <source>Rescale objects such that its bounding box
 diagonal has length one.</source>
         <translation>Skaliere alle Objekte, so das ihre Bounding Box Diagonale die Länge 1 hat.</translation>
     </message>
     <message>
-        <location filename="../moveControls.ui" line="94"/>
+        <location filename="../moveControls.ui" line="85"/>
         <source>Unify Boundingbox Diagonal</source>
         <translation>Normalisiere Bounding Box Diagonale</translation>
     </message>

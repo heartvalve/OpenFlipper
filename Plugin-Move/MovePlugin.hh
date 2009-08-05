@@ -192,7 +192,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     /// Scale (with values from Tab)
     void slotScale();
 
-    /// Move currently active or first Mesh with its COG to the origin
+    /// Move target Meshes cog to the origin
     void slotMoveToOrigin();
 
     /// Scale Boundingbox Diagonal to unit size
