@@ -69,7 +69,7 @@ class PrintPlugin : public QObject, BaseInterface, MenuInterface, KeyInterface
 
   public :
     QString name() { return (QString("Printing Plugin")); };
-    QString description( ) { return (QString("Print the current view")); };
+    QString description( ) { return (QString(tr("Print the current view"))); };
 
   public slots:
     void printView();
