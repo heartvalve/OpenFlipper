@@ -73,7 +73,7 @@ void PrintPlugin::printView () {
   QPrinter printer(QPrinter::HighResolution);
 
   QPrintDialog *dialog = new QPrintDialog(&printer);
-  dialog->setWindowTitle("Print Current View");
+  dialog->setWindowTitle(tr("Print Current View"));
   if (dialog->exec() != QDialog::Accepted)
       return;
 
