@@ -76,7 +76,7 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
   gridLayout->addWidget( typeBox_, gridLayout->rowCount() , 1 );
 
   // Add a nice label for it
-  QLabel* typeLabel = new QLabel("Object type:" , this);
+  QLabel* typeLabel = new QLabel(tr("Object type:") , this);
   gridLayout->addWidget( typeLabel, gridLayout->rowCount() -1 , 0 );
 
   // Add a frame to the right of the dialog
@@ -162,7 +162,7 @@ void LoadWidget::currentFilterChanged(QString _currentFilter){
 
 /// adjust load-filters to current datatype
 void LoadWidget::slotSetLoadFilters(int _typeIndex){
-  box_->setTitle("Load Options");
+  box_->setTitle(tr("Load Options"));
 
   for (int i=0; i < boxWidgets_.size(); i++){
     boxLayout_->removeWidget( boxWidgets_[i] );
@@ -196,7 +196,7 @@ void LoadWidget::slotSetLoadFilters(int _typeIndex){
 
 /// adjust save-filters to current datatype
 void LoadWidget::slotSetSaveFilters(int _typeIndex){
-  box_->setTitle("Save Options");
+  box_->setTitle(tr("Save Options"));
 
   for (int i=0; i < boxWidgets_.size(); i++){
     boxLayout_->removeWidget( boxWidgets_[i] );
@@ -305,7 +305,7 @@ void LoadWidget::saveFile(){
 /// show Widget for loading Files
 int LoadWidget::showLoad(){
   setAcceptMode ( QFileDialog::AcceptOpen );
-  setWindowTitle("Load Object");
+  setWindowTitle(tr("Load Object"));
   typeBox_->setEnabled(true);
   loadMode_ = true;
 
@@ -322,7 +322,7 @@ int LoadWidget::showLoad(){
 int LoadWidget::showSave(int _id, QString _filename){
   setAcceptMode ( QFileDialog::AcceptSave );
   setFileMode( QFileDialog::AnyFile );
-  setWindowTitle("Save Object");
+  setWindowTitle(tr("Save Object"));
   typeBox_->setEnabled(false);
   loadMode_ = false;
 

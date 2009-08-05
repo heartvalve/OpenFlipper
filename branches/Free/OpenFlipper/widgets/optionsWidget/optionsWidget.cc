@@ -628,17 +628,17 @@ void OptionsWidget::updateComponent() {
    std::cerr << targetName.toStdString() << std::endl;
 
    if ( ! sourceFileInfo.exists() ) {
-      statusLabel->setText("Download failed!");
+      statusLabel->setText(tr("Download failed!"));
       slotGetUpdates();
       return;
    } else {
       if ( ! targetFileInfo.exists() ) {
-         statusLabel->setText("plugin target does not exist");
+         statusLabel->setText(tr("plugin target does not exist"));
          slotGetUpdates();
          return;
       }
 
-      statusLabel->setText("Installing new file");
+      statusLabel->setText(tr("Installing new file"));
 
       // Remove the old plugin
       QFile targetFile(targetName);
@@ -651,7 +651,7 @@ void OptionsWidget::updateComponent() {
       QFile sourceFile(sourceName);
       sourceFile.remove();
 
-      statusLabel->setText("updated " + currentUpdateName_);
+      statusLabel->setText(tr("updated ") + currentUpdateName_);
    }
 
    slotGetUpdates();
@@ -700,7 +700,7 @@ void OptionsWidget::compareVersions() {
     return;
   }
 
-  statusLabel->setText("Checking for new versions");
+  statusLabel->setText(tr("Checking for new versions"));
 
   bool newerVersionsAvailable = false;
 
@@ -731,9 +731,9 @@ void OptionsWidget::compareVersions() {
   }
 
   if ( newerVersionsAvailable ) {
-    statusLabel->setText("Updates found");
+    statusLabel->setText(tr("Updates found"));
   } else {
-    statusLabel->setText("No updates found");
+    statusLabel->setText(tr("No updates found"));
   }
 
   ini.disconnect();

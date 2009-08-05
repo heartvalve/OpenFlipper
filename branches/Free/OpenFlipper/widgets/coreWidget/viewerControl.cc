@@ -67,10 +67,10 @@ void CoreWidget::slotToggleStereoMode()
   stereoActive_ = !stereoActive_;
 
   if ( stereoActive_ ) {
-    statusBar_->showMessage("Stereo enabled");
+    statusBar_->showMessage(tr("Stereo enabled"));
     stereoButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"stereo.png") );
   } else {
-    statusBar_->showMessage("Stereo disabled");
+    statusBar_->showMessage(tr("Stereo disabled"));
     stereoButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"mono.png") );
   }
 
@@ -185,8 +185,6 @@ void CoreWidget::slotGlobalChangeBackFaceCulling(bool _backFaceCulling){
   for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     PluginFunctions::viewerProperties(i).backFaceCulling(_backFaceCulling);
   
-  std::cerr << " Backface Culling " << std::endl;
-
 }
 
 /// Set Backface culling for active viewer
@@ -243,13 +241,13 @@ void CoreWidget::slotSnapshot() {
   QFileDialog dialog(this);
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setDefaultSuffix("png");
-  dialog.setNameFilter("Images (*.png *.ppm *.jpg)");
+  dialog.setNameFilter(tr("Images (*.png *.ppm *.jpg)"));
   dialog.setFileMode(QFileDialog::AnyFile);
   dialog.setConfirmOverwrite(true);
   dialog.setDirectory( fi.path() );
   dialog.selectFile( suggest );
   dialog.setAcceptMode(QFileDialog::AcceptSave);
-  dialog.setWindowTitle("Save Snapshot");
+  dialog.setWindowTitle(tr("Save Snapshot"));
 
  if (dialog.exec()){
      QString newName = dialog.selectedFiles()[0];
@@ -578,7 +576,7 @@ void CoreWidget::slotCoordSysVisibility(bool _visible){
   ACG::SceneGraph::BaseNode* coordSys = root->find("Core Coordsys Node");
 
   if (coordSys == 0){
-    std::cerr << "CoordSys Node not found!" << std::endl;
+    emit log( LOGERR, tr("CoordSys Node not found"));
     return;
   }
 

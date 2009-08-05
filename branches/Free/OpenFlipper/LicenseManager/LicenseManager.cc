@@ -268,7 +268,7 @@ bool LicenseManager::authenticate() {
 
     if ( elements.size() != 6 ) {
       QString sizeMismatchMessage = "The license file for plugin \"" + name() + "\" is invalid!";
-      QMessageBox::critical(0,"License file size invalid",sizeMismatchMessage );
+      QMessageBox::critical(0,tr("License file size invalid"),sizeMismatchMessage );
     } else {
 
       // Check signature of license file
@@ -279,23 +279,23 @@ bool LicenseManager::authenticate() {
       QDate expiryDate  = QDate::fromString(elements[4],Qt::ISODate);
 
       if ( licenseHash !=  elements[5] ) {
-        QString signatureMismatchMessage = "The license file signature for plugin \"" + name() + "\" is invalid!";
-        QMessageBox::critical(0,"License file signature invalid",signatureMismatchMessage );   
+        QString signatureMismatchMessage = tr("The license file signature for plugin \"") + name() + tr("\" is invalid!");
+        QMessageBox::critical(0,tr("License file signature invalid"),signatureMismatchMessage );   
       } else  if ( elements[0] != pluginFileName() ) {
-        QString nameMismatchMessage = "The license file contains plugin name\"" + elements[0] + "\" but this is plugin \"" + name() + "\"!";
-        QMessageBox::critical(0,"License invalid for this plugin",nameMismatchMessage );
+        QString nameMismatchMessage = tr("The license file contains plugin name\"") + elements[0] + tr("\" but this is plugin \"") + name() + "\"!";
+        QMessageBox::critical(0,tr("License invalid for this plugin"),nameMismatchMessage );
       } else if ( elements[1] != coreHash ) {
-        QString coreMismatchMessage = "The license file for plugin \"" + name() + "\" is invalid for the currently running OpenFlipper Core!";
-        QMessageBox::critical(0,"License invalid for current core",coreMismatchMessage );
+        QString coreMismatchMessage = tr("The license file for plugin \"") + name() + tr("\" is invalid for the currently running OpenFlipper Core!");
+        QMessageBox::critical(0,tr("License invalid for current core"),coreMismatchMessage );
       } else if ( elements[2] != pluginHash ) {
-        QString pluginMismatchMessage = "The plugin \"" + name() + "\" is a different version than specified in license file!";
-        QMessageBox::critical(0,"License invalid for this plugin",pluginMismatchMessage );
+        QString pluginMismatchMessage = tr("The plugin \"") + name() + tr("\" is a different version than specified in license file!");
+        QMessageBox::critical(0,tr("License invalid for this plugin"),pluginMismatchMessage );
       } else if ( elements[3] != macHash ) {
         QString hardwareMismatchMessage = "The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Hardware?)!";
-        QMessageBox::critical(0,"License invalid for current System",hardwareMismatchMessage );    
+        QMessageBox::critical(0,tr("License invalid for current System"),hardwareMismatchMessage );    
       } else if ( currentDate > expiryDate ) {
-        QString expiredMessage = "The license for plugin \"" + name() + "\" has expired on " + elements[1] + "!";
-        QMessageBox::critical(0,"License expired",expiredMessage );
+        QString expiredMessage = tr("The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!";
+        QMessageBox::critical(0,tr("License expired"),expiredMessage );
       } else {
         authenticated_ = true;
       }
@@ -305,9 +305,9 @@ bool LicenseManager::authenticate() {
   if ( authenticated_ ) 
     std::cerr << "Authentication succcessfull for Plugin " << name().toStdString() << std::endl;
   else {
-    QString text = "License check for plugin has failed.\n";
-    text += "Please get a valid License!\n";
-    text += "Send the following Information to " + CONTACTMAIL + "\n\n";
+    QString text = tr("License check for plugin has failed.\n");
+    text += tr("Please get a valid License!\n");
+    text += tr("Send the following Information to ") + CONTACTMAIL + "\n\n";
     text += pluginFileName() +"\n";
     text += coreHash +"\n";
     text += pluginHash +"\n";
@@ -317,7 +317,7 @@ bool LicenseManager::authenticate() {
     QString requestSig = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
     text += requestSig + "\n";
 
-    QMessageBox::warning ( 0, "Plugin License check failed",  text );
+    QMessageBox::warning ( 0, tr("Plugin License check failed"),  text );
     std::cerr << "Authentication failed" << std::endl;
     authenticated_ = false;
   }

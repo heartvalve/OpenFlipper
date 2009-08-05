@@ -72,7 +72,7 @@ SideElement::SideElement (SideArea *_parent, QWidget *_w, QString _name) :
 
   QHBoxLayout *hl = new QHBoxLayout;
 
-  SideElement::TopArea *tr = new SideElement::TopArea (this);
+  SideElement::TopArea *tra = new SideElement::TopArea (this);
 
   label_ = new QLabel (_name);
   label_->setFont (font);
@@ -83,13 +83,13 @@ SideElement::SideElement (SideArea *_parent, QWidget *_w, QString _name) :
   hl->addWidget (detachButton_);
 
   detachAction_ = new QAction (QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"button-detach.png"), "", this);
-  detachAction_->setToolTip ("Show as separate window.");
+  detachAction_->setToolTip( tr("Show as separate window.") );
   detachAction_->setCheckable (true);
   detachButton_->setDefaultAction (detachAction_);
 
   connect (detachAction_, SIGNAL (triggered (bool)), this, SLOT (detachPressed (bool)));
 
-  tr->setLayout (hl);
+  tra->setLayout (hl);
 
   QFrame *f = new QFrame ();
   f->setFrameShape (QFrame::HLine);
@@ -97,7 +97,7 @@ SideElement::SideElement (SideArea *_parent, QWidget *_w, QString _name) :
   mainLayout_ = new QVBoxLayout;
 
   mainLayout_->addWidget (f);
-  mainLayout_->addWidget (tr);
+  mainLayout_->addWidget (tra);
   mainLayout_->addWidget (_w);
   mainLayout_->setSpacing (0);
   mainLayout_->setContentsMargins (1,1,1,1);

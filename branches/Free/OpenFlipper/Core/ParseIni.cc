@@ -614,12 +614,12 @@ void Core::openIniFile( QString _filename,
   INIFile ini;
 
   if ( ! ini.connect(_filename,false) ) {
-    emit log(LOGERR,"Failed to connect to ini file" + _filename);
+    emit log(LOGERR,tr("Failed to connect to ini file") + _filename);
     return;
   }
 
   if ( OpenFlipper::Options::gui() ) {
-    coreWidget_->statusMessage( "Loading ini File " + _filename + " ...");
+    coreWidget_->statusMessage( tr("Loading ini File ") + _filename + " ...");
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
@@ -663,8 +663,8 @@ void Core::openIniFile( QString _filename,
 
         if ( ini.get_entry( tmpType, sectionName , "type"  )) {
           type = DataType(tmpType);
-          emit log(LOGWARN, "This ini file uses old int style ObjectType fields!" );
-          emit log(LOGWARN, "Please convert it to new format! ( ... just save it )" );
+          emit log(LOGWARN, tr("This ini file uses old int style ObjectType fields!") );
+          emit log(LOGWARN, tr("Please convert it to new format! ( ... just save it )") );
         } else {
 
           QString typeName="";
@@ -672,14 +672,14 @@ void Core::openIniFile( QString _filename,
           if ( ini.get_entry( typeName, sectionName , "type"  )) {
             type = typeId(typeName);
           } else
-            emit log(LOGWARN, "Unable to get DataType for object " +  sectionName + " assuming Triangle Mesh" );
+            emit log(LOGWARN, tr("Unable to get DataType for object ") +  sectionName + tr(" assuming Triangle Mesh") );
         }
 
         int newObjectId = loadObject(type, path);
 
         BaseObject* object = objectRoot_->childExists( newObjectId );
         if ( object == 0 )  {
-          emit log(LOGERR,"Unable to open Object " + path);
+          emit log(LOGERR,tr("Unable to open Object ") + path);
           continue;
         }
 
@@ -714,7 +714,7 @@ void Core::openIniFile( QString _filename,
       coreWidget_->examiner_widgets_[i]->viewAll();
     }
 
-    coreWidget_->statusMessage( "Loading ini File " + _filename + " ... Done", 4000);
+    coreWidget_->statusMessage( tr("Loading ini File ") + _filename + tr(" ... Done"), 4000);
     coreWidget_->setStatus(ApplicationStatus::READY );
   }
 
@@ -730,12 +730,12 @@ void Core::writeIniFile(QString _filename,
   INIFile ini;
 
   if ( ! ini.connect(_filename,true) ) {
-    emit log(LOGERR,"Failed to connect to _ini file" + _filename);
+    emit log(LOGERR,tr("Failed to connect to _ini file") + _filename);
       return;
   }
 
   if ( OpenFlipper::Options::gui() ) {
-    coreWidget_->statusMessage( "Saving ini File " + _filename + " ...");
+    coreWidget_->statusMessage( tr("Saving ini File ") + _filename + " ...");
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
@@ -796,7 +796,7 @@ void Core::writeIniFile(QString _filename,
   ini.disconnect();
 
   if ( OpenFlipper::Options::gui() ) {
-    coreWidget_->statusMessage( "Saving ini File " + _filename + " ... Done", 4000);
+    coreWidget_->statusMessage( tr("Saving ini File ") + _filename + tr(" ... Done"), 4000);
     coreWidget_->setStatus(ApplicationStatus::READY );
   }
 }

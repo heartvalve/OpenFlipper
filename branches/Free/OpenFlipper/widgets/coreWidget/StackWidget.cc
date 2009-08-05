@@ -84,7 +84,7 @@ void CoreWidget::slotAddStackWidget( QString _name, QWidget* _widget ) {
   slotGetStackWidget( _name, widget );
   
   if ( widget ) {
-    std::cerr << "Name already existing" << std::endl;
+    emit log(LOGERR,tr("Name already existing"));
     return; 
   }
   
@@ -108,7 +108,7 @@ void CoreWidget::slotUpdateStackWidget( QString _name, QWidget* _widget ) {
   }
   
   if ( oldWidget == 0 ) {
-    std::cerr << "Did not find widget to update stackwidget" << std::endl;
+    emit log(LOGERR,tr("Did not find widget to update stackwidget"));
     return; 
   }
   
@@ -135,7 +135,7 @@ void CoreWidget::slotViewMenuAction( QAction * _action) {
   }
   
   if ( widget == 0 ) {
-    std::cerr << "Cannot set Widget" << std::endl;
+    emit log(LOGERR,tr("Cannot set Widget"));
     return; 
   }
   

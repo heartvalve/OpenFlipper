@@ -75,11 +75,11 @@ void Core::slotObjectUpdated(int _identifier) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + " ) called by " +
+        emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + tr(" ) called by ") +
                  QString( sender()->metaObject()->className() ) );
       }
     } else {
-      emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + " ) called by Core" );
+      emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + tr(" ) called by Core") );
     }
   }
 
@@ -90,7 +90,7 @@ void Core::slotObjectUpdated(int _identifier) {
   BaseObject* object = 0;
   if ( _identifier != -1 ) {
     if ( !PluginFunctions::getObject(_identifier,object) ) {
-      emit log(LOGERR,"updated_objects called for non existing object with id : " + QString::number(_identifier) );
+      emit log(LOGERR,tr("updated_objects called for non existing object with id : ") + QString::number(_identifier) );
       return;
     }
   }
@@ -189,7 +189,7 @@ void Core::slotUpdateTexture( QString _name , int _identifier){
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"slotUpdateTexture( "  + _name + " , " + QString::number(_identifier) + " ) called by " +
+        emit log(LOGINFO,"slotUpdateTexture( "  + _name + " , " + QString::number(_identifier) + tr(" ) called by ") +
                  QString( sender()->metaObject()->className() ) );
       }
     }
@@ -218,7 +218,7 @@ void Core::slotSetTextureMode(QString _textureName, QString _mode, int _id) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"slotSetTextureMode( " + _textureName + " , " + _mode + " , " + QString::number(_id) + " ) called by " +
+        emit log(LOGINFO,"slotSetTextureMode( " + _textureName + " , " + _mode + " , " + QString::number(_id) + tr(" ) called by ") +
                  QString( sender()->metaObject()->className() ) );
       }
     }
@@ -235,7 +235,7 @@ void Core::slotSetTextureMode(QString _textureName ,QString _mode) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"slotSetTextureMode( " + _textureName + " , " + _mode + " ) called by " +
+        emit log(LOGINFO,"slotSetTextureMode( " + _textureName + " , " + _mode + tr(" ) called by ") +
                  QString( sender()->metaObject()->className() ) );
       }
     }
@@ -251,7 +251,7 @@ void Core::slotTextureUpdated( QString _textureName , int _identifier ) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"slotTextureUpdated( " + _textureName + " , " + QString::number(_identifier) + " ) called by " +
+        emit log(LOGINFO,"slotTextureUpdated( " + _textureName + " , " + QString::number(_identifier) + tr(" ) called by ") +
                  QString( sender()->metaObject()->className() ) );
       }
     }

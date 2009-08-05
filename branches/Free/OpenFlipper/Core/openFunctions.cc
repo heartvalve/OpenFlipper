@@ -112,7 +112,7 @@ void Core::slotExecuteAfterStartup() {
   bool scriptingSupport = false;
   slotPluginExists("scripting",scriptingSupport);
   if ( ! scriptingSupport ) {
-    emit log(LOGERR ,"No scripting support available, please check if we load a scripting plugin .. Skipping script execution on startup");
+    emit log(LOGERR ,tr("No scripting support available, please check if we load a scripting plugin .. Skipping script execution on startup"));
   }
 
   // Collect all script files from the scripting subdirectory and execute them if possible
@@ -169,7 +169,7 @@ int Core::loadObject ( QString _filename ) {
     return -2;
   } else
   if (_filename.endsWith(".ofs")) {
-     emit log(LOGINFO ,"Starting script execution of " + _filename);
+     emit log(LOGINFO ,tr("Starting script execution of ") + _filename);
      emit executeFileScript(_filename);
   } else
     return loadObject( DATA_TRIANGLE_MESH, _filename);
@@ -188,7 +188,7 @@ int Core::loadObject( DataType _type, QString _filename) {
 
 
       if ( OpenFlipper::Options::gui() ) {
-        coreWidget_->statusMessage( "Loading " + _filename + " ...");
+        coreWidget_->statusMessage( tr("Loading ") + _filename + " ...");
         if ( !OpenFlipper::Options::loadingSettings() )
           coreWidget_->setStatus(ApplicationStatus::PROCESSING );
       }
@@ -198,9 +198,9 @@ int Core::loadObject( DataType _type, QString _filename) {
 
       if ( OpenFlipper::Options::gui() ) {
         if ( id != -1 )
-          coreWidget_->statusMessage( "Loading " + _filename + " ... done", 4000 );
+          coreWidget_->statusMessage( tr("Loading ") + _filename + tr(" ... done"), 4000 );
         else
-          coreWidget_->statusMessage( "Loading " + _filename + " ... failed!", 4000 );
+          coreWidget_->statusMessage( tr("Loading ") + _filename + tr(" ... failed!"), 4000 );
 
         if ( !OpenFlipper::Options::loadingSettings() )
           coreWidget_->setStatus(ApplicationStatus::READY );
@@ -232,7 +232,7 @@ void Core::slotAddEmptyObject( DataType _type , int& _id ) {
 void Core::slotCopyObject( int _oldId , int& _newId ) {
 
   if ( _oldId == -1 ) {
-    emit log(LOGERR,"Requested copy for illegal Object id : " + QString::number(_oldId) );
+    emit log(LOGERR,tr("Requested copy for illegal Object id : ") + QString::number(_oldId) );
     _newId = -1;
     return;
   }
@@ -241,7 +241,7 @@ void Core::slotCopyObject( int _oldId , int& _newId ) {
   BaseObject* object = objectRoot_->childExists(_oldId);
 
   if ( !object ) {
-    emit log(LOGERR,"Requested copy for unknown Object id : " + QString::number(_oldId) );
+    emit log(LOGERR,tr("Requested copy for unknown Object id : ") + QString::number(_oldId) );
     _newId = -1;
     return ;
   }
@@ -250,7 +250,7 @@ void Core::slotCopyObject( int _oldId , int& _newId ) {
   BaseObject* copy = object->copy();
 
   if ( copy == 0 ) {
-    emit log(LOGERR,"Unable to create a copy of the object.");
+    emit log(LOGERR,tr("Unable to create a copy of the object."));
     return;
   }
 
@@ -287,11 +287,11 @@ void Core::slotObjectOpened ( int _id ) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"slotObjectOpened( " + QString::number(_id) + " ) called by " +
+        emit log(LOGINFO,tr("slotObjectOpened( ") + QString::number(_id) + tr(" ) called by ") +
                   QString( sender()->metaObject()->className() ) );
       }
     } else {
-      emit log(LOGINFO,"slotObjectOpened( " + QString::number(_id) + " ) called by Core" );
+      emit log(LOGINFO,tr("slotObjectOpened( ") + QString::number(_id) + tr(" ) called by Core") );
     }
   }
 
@@ -390,11 +390,11 @@ void Core::slotEmptyObjectAdded ( int _id ) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"slotEmptyObjectAdded( " + QString::number(_id) + " ) called by " +
+        emit log(LOGINFO,tr("slotEmptyObjectAdded( ") + QString::number(_id) + tr(" ) called by ") +
                   QString( sender()->metaObject()->className() ) );
       }
     } else {
-      emit log(LOGINFO,"slotEmptyObjectAdded( " + QString::number(_id) + " ) called by Core" );
+      emit log(LOGINFO,tr("slotEmptyObjectAdded( ") + QString::number(_id) + tr(" ) called by Core") );
     }
   }
 
@@ -437,7 +437,7 @@ void Core::slotAddEmptyObjectMenu() {
     }
     widget->show();
   }else
-    emit log(LOGERR,"Could not show 'add Empty' dialog. Missing file-plugins.");
+    emit log(LOGERR,tr("Could not show 'add Empty' dialog. Missing file-plugins."));
 }
 
 //========================================================================================
@@ -462,7 +462,7 @@ void Core::loadObject() {
       delete widget;
 
     }else
-      emit log(LOGERR,"Could not show 'load objects' dialog. Missing file-plugins.");
+      emit log(LOGERR,tr("Could not show 'load objects' dialog. Missing file-plugins."));
 
   }
 }
@@ -488,22 +488,22 @@ void Core::loadSettings(){
 
     QGroupBox* optionsBox = new QGroupBox( &fileDialog ) ;
     optionsBox->setSizePolicy( QSizePolicy ( QSizePolicy::Expanding , QSizePolicy::Preferred ) );
-    optionsBox->setTitle("Options");
+    optionsBox->setTitle(tr("Options"));
     layout->addWidget( optionsBox, layout->rowCount() , 0 , 1,layout->columnCount() );
 
     QCheckBox *loadProgramSettings = new QCheckBox(optionsBox);
-    loadProgramSettings->setText("Load program settings");
-    loadProgramSettings->setToolTip("Load all current program settings from the file ( This will include view settings, colors,...) ");
+    loadProgramSettings->setText(tr("Load program settings"));
+    loadProgramSettings->setToolTip(tr("Load all current program settings from the file ( This will include view settings, colors,...) "));
     loadProgramSettings->setCheckState( Qt::Unchecked );
 
     QCheckBox *loadPluginSettings = new QCheckBox(optionsBox);
-    loadPluginSettings->setText("Load per Plugin Settings");
-    loadPluginSettings->setToolTip("Plugins should load their current global settings from the file");
+    loadPluginSettings->setText(tr("Load per Plugin Settings"));
+    loadPluginSettings->setToolTip(tr("Plugins should load their current global settings from the file"));
     loadPluginSettings->setCheckState( Qt::Checked );
 
     QCheckBox *loadObjectInfo = new QCheckBox(optionsBox);
-    loadObjectInfo->setText("Load all objects defined in the file");
-    loadObjectInfo->setToolTip("Load all objects which are defined in the file");
+    loadObjectInfo->setText(tr("Load all objects defined in the file"));
+    loadObjectInfo->setToolTip(tr("Load all objects which are defined in the file"));
     loadObjectInfo->setCheckState( Qt::Checked );
 
     QBoxLayout* frameLayout = new QBoxLayout(QBoxLayout::TopToBottom,optionsBox);

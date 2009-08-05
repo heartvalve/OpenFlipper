@@ -1243,24 +1243,24 @@ glViewer::createWidgets()
   wheelZ_->setMaximumSize(wheelZ_->sizeHint());
   connect(wheelZ_,SIGNAL(angleChangedBy(double)),
 	  this,SLOT(slotWheelZ(double)));
-  wheelZ_->setToolTip( "Translate along <b>z-axis</b>.");
-  wheelZ_->setWhatsThis( "Translate along <b>z-axis</b>.");
+  wheelZ_->setToolTip( tr("Translate along <b>z-axis</b>."));
+  wheelZ_->setWhatsThis( tr("Translate along <b>z-axis</b>."));
 
   wheelY_=new ACG::QtWidgets::QtWheel( 0,"wheel-y",ACG::QtWidgets::QtWheel::Horizontal);
   wheelY_->setMinimumSize(wheelY_->sizeHint());
   wheelY_->setMaximumSize(wheelY_->sizeHint());
   connect(wheelY_,SIGNAL(angleChangedBy(double)),
           this,SLOT(slotWheelY(double)));
-  wheelY_->setToolTip("Rotate around <b>y-axis</b>.");
-  wheelY_->setWhatsThis( "Rotate around <b>y-axis</b>.");
+  wheelY_->setToolTip(tr("Rotate around <b>y-axis</b>."));
+  wheelY_->setWhatsThis( tr("Rotate around <b>y-axis</b>."));
 
-  wheelX_=new ACG::QtWidgets::QtWheel( 0,"wheel-x",ACG::QtWidgets::QtWheel::Vertical);
+  wheelX_=new ACG::QtWidgets::QtWheel( 0,"wheel-x" ,ACG::QtWidgets::QtWheel::Vertical);
   wheelX_->setMinimumSize(wheelX_->sizeHint());
   wheelX_->setMaximumSize(wheelX_->sizeHint());
   connect(wheelX_,SIGNAL(angleChangedBy(double)),
           this,SLOT(slotWheelX(double)));
-  wheelX_->setToolTip("Rotate around <b>x-axis</b>.");
-  wheelX_->setWhatsThis( "Rotate around <b>x-axis</b>.");
+  wheelX_->setToolTip(tr("Rotate around <b>x-axis</b>."));
+  wheelX_->setWhatsThis( tr("Rotate around <b>x-axis</b>."));
 
   // Hide or show wheels (depending on ini option)
   if(!OpenFlipper::Options::showWheelsAtStartup()) {
@@ -2042,11 +2042,11 @@ void glViewer::snapshot()
 
    if (rval)
    {
-     emit statusMessage (QString("snapshot: ")+fname,5000);
+     emit statusMessage (QString(tr("snapshot: "))+fname,5000);
    }
    else
    {
-     emit statusMessage (QString("could not save snapshot to ")+fname);
+     emit statusMessage (QString(tr("could not save snapshot to "))+fname);
    }
 
 }

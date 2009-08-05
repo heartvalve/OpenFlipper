@@ -70,7 +70,7 @@ void VideoCaptureDialog::slotStartVideoCapture()
 
   if (filename->text() == ""){
     QMessageBox msgBox;
-    msgBox.setText("The Filename is empty!");
+    msgBox.setText(tr("The Filename is empty!"));
     msgBox.exec();
     return;
   }

@@ -76,13 +76,13 @@ void Core::openObjFile(QString _filename)
 
   if (!in)
   {
-    emit log(LOGERR,"Cannot open to obj file" + _filename);
+    emit log(LOGERR,tr("Cannot open to obj file") + _filename);
     return;
   }
 
   if ( OpenFlipper::Options::gui() )
   {
-    coreWidget_->statusMessage( "Loading obj File " + _filename + " ...");
+    coreWidget_->statusMessage( tr("Loading obj File ") + _filename + " ...");
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
@@ -129,7 +129,7 @@ void Core::openObjFile(QString _filename)
 
   if ( OpenFlipper::Options::gui() )
   {
-    coreWidget_->statusMessage( "Loading obj File " + _filename + " ... done", 4000);
+    coreWidget_->statusMessage( tr("Loading obj File ") + _filename + tr(" ... done"), 4000);
     coreWidget_->setStatus(ApplicationStatus::READY );
   }
 
@@ -168,7 +168,7 @@ void Core::preprocessObjFile(QString _filename)
   std::fstream in(fname.c_str(), std::ios_base::in);
   if (!in)
   {
-    emit log(LOGERR,"Cannot open to obj file" + _filename);
+    emit log(LOGERR,tr("Cannot open to obj file") + _filename);
     return;
   }
 
@@ -249,7 +249,7 @@ void Core::preprocessObjFile(QString _filename)
   if (!typeFound)
   {
     dataType = DATA_TRIANGLE_MESH;
-    emit log(LOGWARN, "Unable to get DataType for object " +  _filename + " - assuming Triangle Mesh" );
+    emit log(LOGWARN, tr("Unable to get DataType for object ") +  _filename + tr(" - assuming Triangle Mesh") );
   }
 
 
@@ -269,7 +269,7 @@ void Core::preprocessObjFile(QString _filename)
 
   BaseObject* object = objectRoot_->childExists( newObjectId );
   if ( object == 0 )
-    emit log(LOGERR,"Unable to open Object " + path);
+    emit log(LOGERR,tr("Unable to open Object ") + path);
 
   if ( newActiveObject )
     emit objectSelectionChanged(-1);
@@ -285,14 +285,14 @@ void Core::writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly
   std::fstream out(fname.c_str(), std::ios_base::out);
   if (!out)
   {
-    emit log(LOGERR,"Cannot open to obj file" + _filename);
+    emit log(LOGERR,tr("Cannot open to obj file") + _filename);
     return;
   }
 
 
   if ( OpenFlipper::Options::gui() )
   {
-    coreWidget_->statusMessage( "Saving obj File " + _filename + " ...");
+    coreWidget_->statusMessage( tr("Saving obj File ") + _filename + " ...");
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
@@ -327,7 +327,7 @@ void Core::writeObjFile(QString _filename, bool _relativePaths, bool _targetOnly
 
   if ( OpenFlipper::Options::gui() )
   {
-    coreWidget_->statusMessage( "Saving obj File " + _filename + " ... done", 4000);
+    coreWidget_->statusMessage( tr("Saving obj File ") + _filename + tr(" ... done"), 4000);
     coreWidget_->setStatus(ApplicationStatus::READY );
   }
 

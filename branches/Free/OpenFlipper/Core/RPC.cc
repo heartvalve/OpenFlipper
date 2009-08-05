@@ -104,14 +104,14 @@ void Core::slotCall( QString _pluginName , QString _functionName , bool& _succes
 
   if ( plugin == -1 ) {
     _success = false;
-    emit log(LOGERR, "Unable to call function from Plugin : " + _pluginName + " ( Plugin not Found! )");
+    emit log(LOGERR, tr("Unable to call function from Plugin : ") + _pluginName + tr(" ( Plugin not Found! )"));
     return;
   }
 
   if ( !plugins[plugin].rpcFunctions.contains(_functionName) ) {
     _success = false;
-    emit log(LOGERR, "Unable to call function from Plugin : " + _pluginName);
-    emit log(LOGERR, "Function " + _functionName + " not found!");
+    emit log(LOGERR, tr("Unable to call function from Plugin : ") + _pluginName);
+    emit log(LOGERR, tr("Function ") + _functionName + tr(" not found!"));
     return;
   }
 
@@ -120,7 +120,7 @@ void Core::slotCall( QString _pluginName , QString _functionName , bool& _succes
     _success = false;
     QScriptValue result = scriptEngine_.uncaughtException();
     QString exception = result.toString();
-    emit log( LOGERR , "RPC failed with : " + exception );
+    emit log( LOGERR , tr("RPC failed with : ") + exception );
     return;
   }
 
@@ -135,7 +135,7 @@ void Core::slotCall( QString _expression , bool& _success  ) {
     _success = false;
     QScriptValue result = scriptEngine_.uncaughtException();
     QString exception = result.toString();
-    emit log( LOGERR , "RPC failed with : " + exception );
+    emit log( LOGERR , tr("RPC failed with : ") + exception );
     return;
   }
 
