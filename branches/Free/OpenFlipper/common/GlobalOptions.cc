@@ -163,6 +163,9 @@ static std::vector<int> defaultProjectionMode_ = std::vector<int> (4, 1);
 /// Store the defaultViewingDirection_ mode
 static std::vector<int> defaultViewingDirection_ = std::vector<int> (4, 0);
 
+/// Store the defaultViewer layout
+static int defaultViewerLayout_ = 0;
+
 /// Store the disableRedraw_ mode
 static int redrawDisabled_ = 0;
 
@@ -226,6 +229,9 @@ static QString logFile_;
 
 /// last used DataType
 static QString lastDataType_ = "Triangle Mesh";
+
+/// translation
+static QString translation_ = "en_US";
 
 /// Should backups be enabled
 static bool enableBackup_ = true;
@@ -292,6 +298,13 @@ QString lang() {
   return lang;
 }
 
+QString translation() {
+  return translation_;
+}
+
+void translation(QString _translation) {
+  translation_ = _translation;
+}
 
 QString dirSeparator() {
 //   if (windows_)
@@ -684,6 +697,14 @@ void defaultViewingDirection( int _mode, int _viewer){
 
 int defaultViewingDirection(int _viewer){
   return defaultViewingDirection_[_viewer];
+}
+
+void defaultViewerLayout( int _layout ){
+  defaultViewerLayout_ = _layout;
+}
+
+int defaultViewerLayout(){
+  return defaultViewerLayout_;
 }
 
 void redrawDisabled( bool disable ){

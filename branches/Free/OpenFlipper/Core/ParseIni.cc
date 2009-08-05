@@ -247,6 +247,20 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::defaultToolboxMode(toolboxMode);
 
     //============================================================================
+    // Load the setting for the translation language
+    //============================================================================
+    QString translation = false;
+    if ( _ini.get_entry( translation, "Options" , "Translation") )
+      OpenFlipper::Options::translation(translation);
+
+    //============================================================================
+    // Load the setting for the viewer layout
+    //============================================================================
+    int viewerLayout = 0;
+    if ( _ini.get_entry( viewerLayout, "Options" , "DefaultViewerLayout") )
+      OpenFlipper::Options::defaultViewerLayout(viewerLayout);
+
+    //============================================================================
     // Load the viewer settings
     //============================================================================
     std::vector< QString > draw_modes;
@@ -255,13 +269,13 @@ void Core::readApplicationOptions(INIFile& _ini) {
     for (int i=0; i < 4/*PluginFunctions::viewers()*/; i++ ){
 
       if( _ini.get_entry(draw_modes, "Options", "DefaultDrawModes" + QString::number(i) ) )
-	OpenFlipper::Options::defaultDrawMode( ListToDrawMode(draw_modes), i );
+        OpenFlipper::Options::defaultDrawMode( ListToDrawMode(draw_modes), i );
 
       if( _ini.get_entry(mode, "Options", "DefaultProjectionMode" + QString::number(i) ) )
-	OpenFlipper::Options::defaultProjectionMode( mode, i );
+        OpenFlipper::Options::defaultProjectionMode( mode, i );
 
       if( _ini.get_entry(mode, "Options", "DefaultViewingDirection" + QString::number(i) ) )
-	OpenFlipper::Options::defaultViewingDirection( mode, i );
+        OpenFlipper::Options::defaultViewingDirection( mode, i );
     }
 
     //============================================================================
@@ -553,6 +567,9 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   _ini.add_entry("Options","RandomBaseColor", OpenFlipper::Options::randomBaseColor() );
 
   if ( OpenFlipper::Options::gui() ) {
+
+    _ini.add_entry("Options","DefaultViewerLayout", OpenFlipper::Options::defaultViewerLayout() );
+    _ini.add_entry("Options","Translation", OpenFlipper::Options::translation() );
 
     _ini.add_entry("Options","MultiView", OpenFlipper::Options::multiView() );
     _ini.add_entry("Options","ViewerCount", OpenFlipper::Options::examinerWidgets() );

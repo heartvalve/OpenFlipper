@@ -109,12 +109,15 @@ void Core::applyOptions(){
       //only switch projection here if an object is opened
       //this prevents problems when applying options on app start
       if ( PluginFunctions::objectCount() > 0 ){ 
-	if ( OpenFlipper::Options::defaultProjectionMode(i) == 0 )
-	  PluginFunctions::orthographicProjection(i);
-	else
-	  PluginFunctions::perspectiveProjection(i);
+        if ( OpenFlipper::Options::defaultProjectionMode(i) == 0 )
+          PluginFunctions::orthographicProjection(i);
+        else
+          PluginFunctions::perspectiveProjection(i);
       }
     }
+
+    if ( OpenFlipper::Options::multiView() )
+      coreWidget_->setViewMode( OpenFlipper::Options::defaultViewerLayout() );
 
     //set defaultBackgroundColor
     QColor c = OpenFlipper::Options::defaultBackgroundColor() ;

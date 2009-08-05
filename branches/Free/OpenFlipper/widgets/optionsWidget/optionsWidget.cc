@@ -293,6 +293,15 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   updateViewerSettings(0);
 
+  viewerLayout->setCurrentIndex( OpenFlipper::Options::defaultViewerLayout() );
+  
+  if (OpenFlipper::Options::translation() == "en_US")
+    translation->setCurrentIndex(0);
+  else if (OpenFlipper::Options::translation() == "de_DE")
+    translation->setCurrentIndex(1);
+  else
+    translation->setCurrentIndex(2);
+
   updateVersionsTable();
 
 }
@@ -532,6 +541,14 @@ void OptionsWidget::slotApply() {
     OpenFlipper::Options::defaultDrawMode(         defaultDrawModes_[i],         i );
     OpenFlipper::Options::defaultProjectionMode(   defaultProjectionMode_[i],    i );
     OpenFlipper::Options::defaultViewingDirection( defaultViewingDirections_[i], i );
+  }
+
+  OpenFlipper::Options::defaultViewerLayout( viewerLayout->currentIndex() );
+
+  switch ( translation->currentIndex() ){
+    case 0 : OpenFlipper::Options::translation("en_US");  break;
+    case 1 : OpenFlipper::Options::translation("de_DE");  break;
+    default: OpenFlipper::Options::translation("locale"); break;
   }
 
   applyShortcuts();
