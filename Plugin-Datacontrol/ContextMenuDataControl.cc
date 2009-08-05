@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -104,10 +104,10 @@ void DataControlPlugin::slotUpdateContextMenu( int _objectId) {
   if ( ! PluginFunctions::getObject(_objectId,object) )
     return;
   
-  sourceAction_->setText( "Source" );
+  sourceAction_->setText( tr("Source" ));
   sourceAction_->setChecked( object->source() );
   
-  targetAction_->setText( "Target" );
+  targetAction_->setText( tr("Target" ));
   targetAction_->setChecked( object->target() );
 }
 

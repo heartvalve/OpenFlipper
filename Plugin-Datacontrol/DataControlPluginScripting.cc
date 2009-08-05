@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -52,59 +52,59 @@
 
 void DataControlPlugin::setDescriptions(){
 
-  emit setSlotDescription("getObject(QString)","Returns the id of an object with given name.",
-                          QStringList("Name"), QStringList("Name of an object"));
+  emit setSlotDescription("getObject(QString)",tr("Returns the id of an object with given name."),
+                          QStringList(tr("Name")), QStringList(tr("Name of an object")));
 
-  emit setSlotDescription("getObjectName(int)","Returns the name of an object with given id.",
-                          QStringList("objectId"), QStringList("ID of an object"));
+  emit setSlotDescription("getObjectName(int)",tr("Returns the name of an object with given id."),
+                          QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
-  emit setSlotDescription("hideObject(int)","Hide object with the given id.",
-                          QStringList("objectId"), QStringList("ID of an object"));
+  emit setSlotDescription("hideObject(int)",tr("Hide object with the given id."),
+                          QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
-  emit setSlotDescription("showObject(int)","Show object with the given id.",
-                          QStringList("objectId"), QStringList("ID of an object"));
+  emit setSlotDescription("showObject(int)",tr("Show object with the given id."),
+                          QStringList(tr("objectId")), QStringList(tr("ID of an object")));
 
-  emit setSlotDescription("setTarget(int,bool)","Set given object as target.",
-                          QString("ObjectId,Target").split(","),
-                          QString("id of the object, set object as target?").split(","));
+  emit setSlotDescription("setTarget(int,bool)",tr("Set given object as target."),
+                          QString(tr("ObjectId,Target")).split(","),
+                          QString(tr("id of the object, set object as target?")).split(","));
 
-  emit setSlotDescription("setSource(int,bool)","Set given object as source.",
-                          QString("ObjectId,Source").split(","),
-                          QString("id of the object, set object as source?").split(","));
+  emit setSlotDescription("setSource(int,bool)",tr("Set given object as source."),
+                          QString(tr("ObjectId,Source")).split(","),
+                          QString(tr("id of the object, set object as source?")).split(","));
 
-  emit setSlotDescription("setObjectName(int,QString)","Set name of given object.",
-                          QString("ObjectId,name").split(","),
-                          QString("id of the object, the new name").split(","));
+  emit setSlotDescription("setObjectName(int,QString)",tr("Set name of given object."),
+                          QString(tr("ObjectId,name")).split(","),
+                          QString(tr("id of the object, the new name")).split(","));
 
-  emit setSlotDescription("groupObjects(idList,QString)","Group given Objects together.",
-                          QString("objectIds,groupName").split(","),
-                          QString("List of objects that should be grouped., Name of the group.").split(","));
+  emit setSlotDescription("groupObjects(idList,QString)",tr("Group given Objects together."),
+                          QString(tr("objectIds,groupName")).split(","),
+                          QString(tr("List of objects that should be grouped., Name of the group.")).split(","));
 
-  emit setSlotDescription("groupObjects(idList)","Group given Objects together.",
-                          QStringList("objectIds"), QStringList("List of objects that should be grouped."));
+  emit setSlotDescription("groupObjects(idList)",tr("Group given Objects together."),
+                          QStringList(tr("objectIds")), QStringList(tr("List of objects that should be grouped.")));
 
-  emit setSlotDescription("objectDelete(int)","Delete an object",
-                          QStringList("objectId"), QStringList("Delete the given object."));
+  emit setSlotDescription("objectDelete(int)",tr("Delete an object"),
+                          QStringList(tr("objectId")), QStringList(tr("Delete the given object.")));
 
-  emit setSlotDescription("copyObject(int)","Create a copy of an object",
-                          QStringList("objectId"), QStringList("Object to copy."));
+  emit setSlotDescription("copyObject(int)",tr("Create a copy of an object"),
+                          QStringList(tr("objectId")), QStringList(tr("Object to copy.")));
 
-  emit setSlotDescription("setAllTarget()","Set All objects as targets",
+  emit setSlotDescription("setAllTarget()",tr("Set All objects as targets"),
                           QStringList(), QStringList());
 
-  emit setSlotDescription("setAllSource()","Set All objects as source",
+  emit setSlotDescription("setAllSource()",tr("Set All objects as source"),
                           QStringList(), QStringList());
 
-  emit setSlotDescription("clearAllTarget()","Clear targets",
+  emit setSlotDescription("clearAllTarget()",tr("Clear targets"),
                           QStringList(), QStringList());
 
-  emit setSlotDescription("clearAllSource()","Clear sources",
+  emit setSlotDescription("clearAllSource()",tr("Clear sources"),
                           QStringList(), QStringList());
 
-  emit setSlotDescription("showAll()","Show all objects",
+  emit setSlotDescription("showAll()",tr("Show all objects"),
                           QStringList(), QStringList());
 
-  emit setSlotDescription("hideAll()","Hide all objects",
+  emit setSlotDescription("hideAll()",tr("Hide all objects"),
                           QStringList(), QStringList());
 }
 
@@ -155,8 +155,8 @@ QString DataControlPlugin::getObjectName( int objectId ) {
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
-    emit log(LOGERR,"getObjectName : unable to get object" );
-    return QString("Unknown Object");
+    emit log(LOGERR,tr("getObjectName : unable to get object") );
+    return QString(tr("Unknown Object"));
   } else
     return  object->name() ;
 
@@ -292,7 +292,7 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
   }
 
   if (objs.size() == 0){
-    emit log("No objects to group.");
+    emit log(tr("No objects to group."));
     return;
   }
 
@@ -305,7 +305,7 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
   BaseObject* parent = (objs[0])->parent();
   for ( int i = 1 ; i < objs.size() ; ++i){
     if ( parent != (objs[i])->parent() ){
-      emit log("Cannot group Objects with different parents");
+      emit log(tr("Cannot group Objects with different parents"));
       return;
     }
 
@@ -322,7 +322,7 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
 
   //set groupName
   if (_groupName == "")
-    groupItem->setName("newGroup " + QString::number(groupItem->id()));
+    groupItem->setName(tr("newGroup ") + QString::number(groupItem->id()));
   else
     groupItem->setName( _groupName );
   parent->appendChild( dynamic_cast< BaseObject* >( groupItem ) );
