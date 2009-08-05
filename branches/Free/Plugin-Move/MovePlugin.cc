@@ -218,7 +218,7 @@ bool MovePlugin::initializeToolbox(QWidget*& _widget)
 {
    toolboxActive_ = false;
    tool_ = new moveToolbarWidget();
-   tool_ -> setMaximumWidth(300);
+//    tool_ -> setMaximumWidth(300);
    _widget = tool_;
 
    connect(tool_->moveToOrigin,SIGNAL(clicked() ),this,SLOT(slotMoveToOrigin()));
