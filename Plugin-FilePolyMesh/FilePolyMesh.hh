@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -92,7 +92,7 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
      ~FilePolyMeshPlugin() {};
 
      QString name() { return (QString("FilePolyMesh")); };
-     QString description( ) { return (QString("Load/Save Poly Meshes")); };
+     QString description( ) { return (QString(tr("Load/Save Poly Meshes"))); };
 
      int addEmpty( );
 
