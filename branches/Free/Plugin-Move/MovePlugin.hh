@@ -58,6 +58,7 @@
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
+#include <ObjectTypes/Plane/Plane.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
 #include "MoveToolbar.hh"

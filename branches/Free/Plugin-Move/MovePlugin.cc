@@ -351,6 +351,8 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   } else  if  ( object->dataType()  == DATA_POLY_LINE ) {
     transformPolyLine(mat , *PluginFunctions::polyLine(object) );
   #endif
+  } else  if  ( object->dataType()  == DATA_PLANE ) {
+    PluginFunctions::planeNode(object)->transform(mat);
   } else {
 
     emit log(LOGERR,tr("moveObject called for unsupported Object Type"));
@@ -1405,7 +1407,6 @@ void MovePlugin::transformPolyLine( ACG::Matrix4x4d _mat , PolyLineT& _polyLine 
 }
 
 #endif
-
 
 //------------------------------------------------------------------------------
 
