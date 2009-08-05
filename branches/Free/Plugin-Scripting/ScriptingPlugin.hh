@@ -97,8 +97,8 @@ public :
 
   ScriptingPlugin();
 
-  QString name() { return (QString("Scripting")); };
-  QString description( ) { return (QString("Provides Scripting for OpenFlipper")); };
+  QString name() { return (QString(tr("Scripting"))); };
+  QString description( ) { return (QString(tr("Provides Scripting for OpenFlipper"))); };
 
 private slots :
   void slotExecuteScriptButton();
