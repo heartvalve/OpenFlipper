@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -181,7 +181,7 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
   PluginFunctions::getObject(_id,object);
 
   if (object  == 0){
-      emit log(LOGERR, "Unable to save (Could not get object)");
+      emit log(LOGERR, tr("Unable to save (Could not get object)"));
       return false;
   }
 
@@ -221,15 +221,15 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename){
     }
 
     if (OpenMesh::IO::write_mesh(*triObj->mesh(), filename.c_str(),opt) ){
-      emit log(LOGINFO, "Saved object to " + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
       return true;
     }else{
-      emit log(LOGERR, "Unable to save " + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
       return false;
     }
   }else{
 
-    emit log(LOGERR, "Unable to save (object isn't a triangle mesh)");
+    emit log(LOGERR, tr("Unable to save (object isn't a triangle mesh)"));
     return false;
   }
 }
@@ -241,7 +241,7 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename, bool _binary
   PluginFunctions::getObject(_id,object);
 
   if (object  == 0){
-      emit log(LOGERR, "Unable to save (Could not get object)");
+      emit log(LOGERR, tr("Unable to save (Could not get object)"));
       return false;
   }
 
@@ -259,14 +259,14 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename, bool _binary
       opt += OpenMesh::IO::Options::Binary;
 
     if (OpenMesh::IO::write_mesh(*triObj->mesh(), filename.c_str(),opt) ){
-      emit log(LOGINFO, "Saved object to " + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
       return true;
     }else{
-      emit log(LOGERR, "Unable to save " + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
       return false;
     }
   }else{
-    emit log(LOGERR, "Unable to save (object isn't a triangle mesh)");
+    emit log(LOGERR, tr("Unable to save (object isn't a triangle mesh)"));
     return false;
   }
 }
@@ -290,7 +290,7 @@ DataType FileTriangleMeshPlugin::supportedType() {
 void FileTriangleMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
   BaseObjectData* baseObject;
   if ( !PluginFunctions::getObject(_id,baseObject) ) {
-    emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
+    emit log(LOGERR,tr("Cannot find object for id %1 in saveFile").arg(_id) );
     return;
   }
 
@@ -330,7 +330,7 @@ void FileTriangleMeshPlugin::loadIniFileLast( INIFile& _ini ,int _id ) {
 void FileTriangleMeshPlugin::saveIniFile( INIFile& _ini ,int _id) {
   BaseObjectData* baseObject;
   if ( !PluginFunctions::getObject(_id,baseObject) ) {
-    emit log(LOGERR,"Cannot find object for id " + QString::number(_id) + " in saveFile" );
+    emit log(LOGERR,tr("Cannot find object for id %1 in saveFile!").arg(_id) );
     return;
   }
 

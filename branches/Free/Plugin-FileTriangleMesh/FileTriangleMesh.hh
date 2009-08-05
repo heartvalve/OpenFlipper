@@ -34,7 +34,7 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
+ *   $Revision$                                                       *
  *   $Author$                                                      *
  *   $Date$                   *
  *                                                                           *
@@ -94,7 +94,7 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
      FileTriangleMeshPlugin();
 
      QString name() { return (QString("FileTriangleMesh")); };
-     QString description( ) { return (QString("Load/Save Triangle Meshes Meshes")); };
+     QString description( ) { return (QString(tr("Load/Save Triangle Meshes Meshes"))); };
 
      int addEmpty( );
 
