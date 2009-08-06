@@ -138,7 +138,7 @@ void initialize() {
 
     stringToTypeInfo["BSplineSurface"]   = types.size();
     typeToTypeInfo[DATA_BSPLINE_SURFACE] = types.size();
-    types.push_back( TypeInfo(DATA_BSPLINE_SURFACE ,"BSplineSurface" ,"Unknown.png", QCoreApplication::translate("Types","B_Spline Surface")) );
+    types.push_back( TypeInfo(DATA_BSPLINE_SURFACE ,"BSplineSurface" ,"Unknown.png", QCoreApplication::translate("Types","B-Spline Surface")) );
 
     stringToTypeInfo["GIS"]  = types.size();
     typeToTypeInfo[DATA_GIS] = types.size();
