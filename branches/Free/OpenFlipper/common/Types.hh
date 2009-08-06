@@ -91,9 +91,6 @@ const unsigned int DATA_BSPLINE_CURVE = 8;
 /// BSpline Surface objects
 const unsigned int DATA_BSPLINE_SURFACE = 16;
 
-/// Gis Data
-const unsigned int DATA_GIS            = 32;
-
 /// Identifier for all available objects
 const unsigned int DATA_ALL           = UINT_MAX;
 
