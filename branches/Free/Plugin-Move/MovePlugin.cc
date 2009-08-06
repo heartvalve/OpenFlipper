@@ -298,9 +298,6 @@ void MovePlugin::slotKeyEvent (QKeyEvent* _event)
     setManipMode (QtTranslationManipulatorNode::LocalRotation);
 }
 
-#include <qt4/QtGui/QDialog>
-#include <qt4/QtGui/qmessagebox.h>
-#include "../ACG/Math/VectorT.hh"
 //------------------------------------------------------------------------------
 
 void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
