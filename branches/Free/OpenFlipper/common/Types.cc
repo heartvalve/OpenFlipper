@@ -59,6 +59,7 @@
 
 #include "Types.hh"
 #include <map>
+#include <QCoreApplication>
 
 
 /** This field defines the start id for custom datatypes. It starts high to avoid conflicts with previously
@@ -85,11 +86,16 @@ class TypeInfo {
 
   public:
 
-  TypeInfo(DataType _type, QString _name, QString _iconName) :
+  TypeInfo(DataType _type, QString _name, QString _iconName, QString _readableName ) :
     type(_type),
     name(_name),
-    iconName(_iconName)
-  {}
+    iconName(_iconName),
+    readableName(_readableName)
+  {
+    // Use internal name if no external name is given
+    if ( _readableName == "" )
+      readableName = _name;
+  }
 
   /// The id of the datatype
   DataType type;
@@ -99,6 +105,9 @@ class TypeInfo {
 
   /// The icon of the datatype
   QString  iconName;
+  
+  /// Human readable name
+  QString readableName;  
 };
 
 static std::vector< TypeInfo > types;
@@ -109,39 +118,39 @@ void initialize() {
   if ( !initialized_ ) {
     stringToTypeInfo["Unknown"] = types.size();
     typeToTypeInfo[DATA_NONE]   = types.size();
-    types.push_back( TypeInfo(DATA_NONE            ,"Unknown"        ,"Unknown.png") );
+    types.push_back( TypeInfo(DATA_NONE            ,"Unknown"        ,"Unknown.png", QCoreApplication::translate("Types","Unknown")) );
 
     stringToTypeInfo["Group"]  = types.size();
     typeToTypeInfo[DATA_GROUP] = types.size();
-    types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"Unknown.png") );
+    types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"Unknown.png", QCoreApplication::translate("Types","Group")) );
 
     stringToTypeInfo["TriangleMesh"]   = types.size();
     typeToTypeInfo[DATA_TRIANGLE_MESH_CONST_ID] = types.size();
-    types.push_back( TypeInfo(DATA_TRIANGLE_MESH_CONST_ID   ,"TriangleMesh"   ,"TriangleType.png") );
+    types.push_back( TypeInfo(DATA_TRIANGLE_MESH_CONST_ID   ,"TriangleMesh"   ,"TriangleType.png", QCoreApplication::translate("Types","Triangle Mesh")) );
 
     stringToTypeInfo["PolyMesh"]   = types.size();
     typeToTypeInfo[DATA_POLY_MESH_CONST_ID] = types.size();
-    types.push_back( TypeInfo(DATA_POLY_MESH_CONST_ID       ,"PolyMesh"       ,"PolyType.png") );
+    types.push_back( TypeInfo(DATA_POLY_MESH_CONST_ID       ,"PolyMesh"       ,"PolyType.png", QCoreApplication::translate("Types","Poly Mesh")) );
 
     stringToTypeInfo["BSplineCurve"]   = types.size();
     typeToTypeInfo[DATA_BSPLINE_CURVE] = types.size();
-    types.push_back( TypeInfo(DATA_BSPLINE_CURVE   ,"BSplineCurve"   ,"BSplineCurveType.png") );
+    types.push_back( TypeInfo(DATA_BSPLINE_CURVE   ,"BSplineCurve"   ,"BSplineCurveType.png" , QCoreApplication::translate("Types","B-Spline Curve")) );
 
     stringToTypeInfo["BSplineSurface"]   = types.size();
     typeToTypeInfo[DATA_BSPLINE_SURFACE] = types.size();
-    types.push_back( TypeInfo(DATA_BSPLINE_SURFACE ,"BSplineSurface" ,"Unknown.png") );
+    types.push_back( TypeInfo(DATA_BSPLINE_SURFACE ,"BSplineSurface" ,"Unknown.png", QCoreApplication::translate("Types","B_Spline Surface")) );
 
     stringToTypeInfo["Skeleton"]  = types.size();
     typeToTypeInfo[DATA_SKELETON] = types.size();
-    types.push_back( TypeInfo(DATA_SKELETON        ,"Skeleton"       ,"Unknown.png") );
+    types.push_back( TypeInfo(DATA_SKELETON        ,"Skeleton"       ,"Unknown.png", QCoreApplication::translate("Types","Skeleton")) );
 
     stringToTypeInfo["GIS"]  = types.size();
     typeToTypeInfo[DATA_GIS] = types.size();
-    types.push_back( TypeInfo(DATA_GIS             ,"GIS"            ,"Unknown.png") );
+    types.push_back( TypeInfo(DATA_GIS             ,"GIS"            ,"Unknown.png", QCoreApplication::translate("Types","GIS Data")) );
 
     stringToTypeInfo["All"]  = types.size();
     typeToTypeInfo[DATA_ALL] = types.size();
-    types.push_back( TypeInfo(DATA_ALL             ,"All"            ,"Unknown.png") );
+    types.push_back( TypeInfo(DATA_ALL             ,"All"            ,"Unknown.png", QCoreApplication::translate("Types","All")) );
 
     typeToString[DATA_NONE] = "Unknown";
     typeToString[DATA_GROUP] = "Group";
@@ -158,14 +167,14 @@ void initialize() {
 }
 
 /// Adds a datatype and returns the id for the new type
-DataType addDataType(QString _name) {
+DataType addDataType(QString _name, QString _readableName) {
   initialize();
 
   int type = nextTypeId_;
 
   stringToTypeInfo[ _name ] = types.size();
   typeToTypeInfo[ type ] = types.size();
-  types.push_back( TypeInfo(type, _name, "Unknown.png") );
+  types.push_back( TypeInfo(type, _name, "Unknown.png", _readableName ));
 
   typeToString[type] = _name;
 
@@ -247,6 +256,66 @@ void setTypeIcon( QString  _name , QString _icon ) {
     types[ index->second ].iconName = _icon;
   else
     std::cerr << "Could not set icon for DataType. Type not found!" << std::endl;
+}
+
+
+
+
+/// Get DataType Human readable name ( this name might change. Use the typeName insted! )
+QString dataTypeName( DataType _id ) {
+  initialize();
+
+  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+
+  if ( index != typeToTypeInfo.end() )
+    return types[ index->second ].readableName ;
+  else
+    std::cerr << "Could not get human name for DataType. Type not found!" << std::endl;  
+  
+  return QString(QCoreApplication::translate("Types","Unknown Type"));
+}
+
+/// Get DataType Human readable name ( this name might change. Use the typeName insted! )
+QString dataTypeName( QString  _typeName ) {
+ initialize();
+
+  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _typeName );
+
+  if ( index != stringToTypeInfo.end() )
+    return types[ index->second ].readableName ;
+  else
+    std::cerr << "Could not get human name for DataType. Type not found!" << std::endl;  
+  
+  return QString(QCoreApplication::translate("Types","Unknown Type"));
+}
+
+
+
+/// Set the icon for a given dataType
+void setDataTypeName( DataType _id   , QString _name ) {
+  initialize();
+
+  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+
+  if ( index != typeToTypeInfo.end() )
+    types[ index->second ].readableName = _name;
+  else
+    std::cerr << "Could not set human name for DataType. Type not found!" << std::endl;  
+  
+}
+
+/// Set the icon for a given dataType
+void setDataTypeName( QString  _typeName , QString _name ) {
+  initialize();
+
+  std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _typeName );
+
+  if ( index != stringToTypeInfo.end() )
+    types[ index->second ].readableName = _name;
+  else
+    std::cerr << "Could not set human name for DataType. Type not found!" << std::endl;  
+  
+  
 }
 
 //=============================================================================
