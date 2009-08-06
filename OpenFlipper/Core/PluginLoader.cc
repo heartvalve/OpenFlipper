@@ -181,8 +181,7 @@ void Core::loadPlugins()
   QStringList otherPlugins;
   //plugin Liste sortieren
   for (int i=0; i < pluginlist.size(); i++)
-    if (pluginlist[i].contains("FilePolyLine") || pluginlist[i].contains("FileTriangleMesh") ||
-        pluginlist[i].contains("FilePolyMesh"))
+    if (pluginlist[i].contains("File") )
       filePlugins.push_back(pluginlist[i]);
     else if (pluginlist[i].contains("TextureControl"))
       textureControl.push_back(pluginlist[i]);
@@ -1103,6 +1102,7 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSlot(plugin,"initializePlugin()") )
          QMetaObject::invokeMethod(plugin, "initializePlugin",  Qt::DirectConnection);
     }
+
 
     //Check if its a filePlugin
     FileInterface* filePlugin = qobject_cast< FileInterface * >(plugin);
