@@ -127,11 +127,18 @@ Q_DECLARE_METATYPE(Matrix4x4);
 /// Vector Type containing the Data Objects
 typedef std::vector<BaseObjectData*> DataContainer;
 
-//== Functions for adding dataTypes =========================================================
+//================================================================================================
+/** @name Functions for adding dataTypes
+* @{ */
+//================================================================================================
 
-/// Adds a datatype and returns the id for the new type
+/** Adds a datatype and returns the id for the new type
+* 
+* @param _name Internal name for the new DataType
+* @param _readableName Human readable Name for this type ( Use tr to make it translatable )
+*/
 DLLEXPORT
-DataType addDataType(QString _name);
+DataType addDataType(QString _name, QString _readableName);
 
 /// Given a dataType Identifier string this function will return the id of the datatype
 DLLEXPORT
@@ -140,6 +147,32 @@ DataType typeId(QString _name);
 /// Get the name of a type with given id
 DLLEXPORT
 QString typeName(DataType _id);
+
+/** @} */
+
+//================================================================================================
+/** @name Datatype Name handling
+* @{ */
+//================================================================================================
+
+/// Get DataType Human readable name ( this name might change. Use the typeName insted! )
+DLLEXPORT
+QString dataTypeName( DataType _id );
+
+/// Get DataType Human readable name ( this name might change. Use the typeName insted! )
+DLLEXPORT
+QString dataTypeName( QString _typeName);
+
+/// Set DataType Human readable name
+DLLEXPORT
+void setDataTypeName( DataType _id, QString _name );
+
+/// Set DataType Human readable name
+DLLEXPORT
+void setDataTypeName( QString _typeName, QString _name );
+
+
+/** @} */
 
 //================================================================================================
 /** @name Datatype Icons
