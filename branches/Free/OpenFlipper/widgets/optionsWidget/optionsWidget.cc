@@ -295,6 +295,8 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   viewerLayout->setCurrentIndex( OpenFlipper::Options::defaultViewerLayout() );
   
+  gridVisible->setChecked (OpenFlipper::Options::gridVisible());
+
   if (OpenFlipper::Options::translation() == "en_US")
     translation->setCurrentIndex(0);
   else if (OpenFlipper::Options::translation() == "de_DE")
@@ -544,6 +546,7 @@ void OptionsWidget::slotApply() {
   }
 
   OpenFlipper::Options::defaultViewerLayout( viewerLayout->currentIndex() );
+  OpenFlipper::Options::gridVisible( gridVisible->isChecked() );
 
   switch ( translation->currentIndex() ){
     case 0 : OpenFlipper::Options::translation("en_US");  break;

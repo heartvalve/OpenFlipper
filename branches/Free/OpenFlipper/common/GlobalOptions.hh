@@ -583,6 +583,14 @@ bool dataDir(QString _dir);
   DLLEXPORT
   void drawModesInContextMenu(bool _show);
 
+  /// Get the flag if a grid should be drawn in every viewer
+  DLLEXPORT
+  bool gridVisible();
+
+  /// Set the flag if a grid should be drawn in every viewer
+  DLLEXPORT
+  void gridVisible(bool _visible);
+
 /** @} */
 
 //===========================================================================

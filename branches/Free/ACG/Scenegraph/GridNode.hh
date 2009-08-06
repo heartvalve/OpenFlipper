@@ -89,7 +89,6 @@ public:
   /// Destructor
   ~GridNode() {}
 
-
   /// implement className()
   ACG_CLASSNAME(GridNode);
   /// return available draw modes
@@ -102,8 +101,21 @@ public:
 
 private:
 
+  /// initial number of baseLines
   int horizontalLines_;
   int verticalLines_;
+
+  /// dimensions of the grid
+  float width_;
+  float height_;
+
+  /// bounding box
+  Vec3f bb_min_;
+  Vec3f bb_max_;
+
+  /// colors for the grid
+  Vec3f baseLineColor_;
+  Vec3f midLineColor_;
 
   bool ok_;
 };

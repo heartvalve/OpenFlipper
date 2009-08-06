@@ -103,6 +103,7 @@
 #include <OpenFlipper/Core/PluginInfo.hh>
 
 #include <ACG/Scenegraph/CoordsysNode.hh>
+#include <ACG/Scenegraph/GridNode.hh>
 
 //== CLASS DEFINITION =========================================================
 
@@ -578,6 +579,9 @@ private:
 
       /// Node for the coordinate system
       ACG::SceneGraph::CoordsysNode* coordsysNode_;
+
+      /// Node for the grid
+      ACG::SceneGraph::GridNode* gridNode_;
 
    /** @} */
 
