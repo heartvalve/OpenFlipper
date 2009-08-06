@@ -91,9 +91,6 @@ const unsigned int DATA_BSPLINE_CURVE = 8;
 /// BSpline Surface objects
 const unsigned int DATA_BSPLINE_SURFACE = 16;
 
-/// Skeletons
-const unsigned int DATA_SKELETON       = 32;
-
 /// Gis Data
 const unsigned int DATA_GIS            = 64;
 

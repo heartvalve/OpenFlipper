@@ -140,10 +140,6 @@ void initialize() {
     typeToTypeInfo[DATA_BSPLINE_SURFACE] = types.size();
     types.push_back( TypeInfo(DATA_BSPLINE_SURFACE ,"BSplineSurface" ,"Unknown.png", QCoreApplication::translate("Types","B_Spline Surface")) );
 
-    stringToTypeInfo["Skeleton"]  = types.size();
-    typeToTypeInfo[DATA_SKELETON] = types.size();
-    types.push_back( TypeInfo(DATA_SKELETON        ,"Skeleton"       ,"Unknown.png", QCoreApplication::translate("Types","Skeleton")) );
-
     stringToTypeInfo["GIS"]  = types.size();
     typeToTypeInfo[DATA_GIS] = types.size();
     types.push_back( TypeInfo(DATA_GIS             ,"GIS"            ,"Unknown.png", QCoreApplication::translate("Types","GIS Data")) );
@@ -158,7 +154,6 @@ void initialize() {
     typeToString[DATA_POLY_MESH_CONST_ID] = "PolyMesh";
     typeToString[DATA_BSPLINE_CURVE] = "BSplineCurve";
     typeToString[DATA_BSPLINE_SURFACE] = "BSplineSurface";
-    typeToString[DATA_SKELETON] = "Skeleton";
     typeToString[DATA_GIS] = "GIS";
     typeToString[DATA_ALL] = "All";
 
