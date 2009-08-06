@@ -172,6 +172,9 @@ static int redrawDisabled_ = 0;
 /// Set if a drawMode Menu should always be in the context menu
 static bool drawModesInContextMenu_ = true;
 
+/// Set if a grid should be drawn in every viewer
+static bool gridVisible_ = false;
+
 /// Store the toolbox gui Mode mode
 static bool hideToolbox_ = false;
 
@@ -729,6 +732,13 @@ void drawModesInContextMenu(bool _show) {
   drawModesInContextMenu_ = _show;
 }
 
+bool gridVisible() {
+  return gridVisible_;
+}
+
+void gridVisible(bool _visible) {
+  gridVisible_ = _visible;
+}
 
 void multiView( bool _multiView) {
   multiView_ = _multiView;

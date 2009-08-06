@@ -254,6 +254,13 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::translation(translation);
 
     //============================================================================
+    // Load the setting for the gridVisibility
+    //============================================================================
+    bool visible = false;
+    if ( _ini.get_entry( visible, "Options" , "GridVisible") )
+      OpenFlipper::Options::gridVisible(visible);
+
+    //============================================================================
     // Load the setting for the viewer layout
     //============================================================================
     int viewerLayout = 0;
@@ -570,6 +577,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
     _ini.add_entry("Options","DefaultViewerLayout", OpenFlipper::Options::defaultViewerLayout() );
     _ini.add_entry("Options","Translation", OpenFlipper::Options::translation() );
+    _ini.add_entry("Options","GridVisible", OpenFlipper::Options::gridVisible() );
 
     _ini.add_entry("Options","MultiView", OpenFlipper::Options::multiView() );
     _ini.add_entry("Options","ViewerCount", OpenFlipper::Options::examinerWidgets() );

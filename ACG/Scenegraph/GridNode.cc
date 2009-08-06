@@ -56,7 +56,7 @@
 #include "SceneGraph.hh"
 #include "../GL/gl.hh"
 #include <stdio.h>
-
+#include <math.h>
 
 //== NAMESPACES ===============================================================
 
@@ -71,9 +71,15 @@ namespace SceneGraph {
 GridNode::
 GridNode(BaseNode* _parent, const std::string& _name)
   : MaterialNode(_parent, _name),
-    horizontalLines_(10),
-    verticalLines_(10)
+    horizontalLines_(7),
+    verticalLines_(7),
+    width_(1500.0),
+    height_(1500.0)
 {
+  baseLineColor_ = Vec3f(0.5, 0.5, 0.5);
+  midLineColor_  = Vec3f(0.3, 0.3, 0.3);
+  bb_min_ = Vec3f(-0.5*width_, 0.0, -0.5*height_);
+  bb_max_ = Vec3f( 0.5*width_, 0.0,  0.5*height_);
 }
 
 
@@ -92,10 +98,10 @@ GridNode::availableDrawModes() const
 
 
 void
-GridNode::boundingBox(Vec3f& /*_bbMin*/, Vec3f& /*_bbMax*/)
+GridNode::boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
 {
-//   _bbMin.minimize(bb_min_);
-//   _bbMax.maximize(bb_max_);
+  _bbMin.minimize(bb_min_);
+  _bbMax.maximize(bb_max_);
 }
 
 
@@ -110,37 +116,126 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
   glDisable(GL_LIGHTING);
 
   glPushAttrib( GL_DEPTH_TEST );
-  glDisable( GL_DEPTH_TEST );
+  glEnable( GL_DEPTH_TEST );
 
-
+  glLineWidth(0.1);
   _state.push_modelview_matrix();
-  _state.reset_modelview();
 
-  _state.push_projection_matrix();
-  _state.reset_projection();
-  _state.ortho( 0.0, _state.viewport_width() ,0.0,_state.viewport_height(), -1.0 , 1.0 );
+  //first we calculate the hitpoint of the camera direction with the grid
+  GLMatrixd modelview = _state.modelview();
+
+  Vec3d viewDirection;
+  viewDirection[0] = -modelview(0,2);
+  viewDirection[1] = -modelview(1,2);
+  viewDirection[2] = -modelview(2,2);
+
+  Vec3f eye = (Vec3f) _state.inverse_modelview().transform_point(ACG::Vec3d(0.0, 0.0, 0.0));
+
+  double lambda = - (eye[1] / viewDirection[1]);
+
+  Vec3f hitPoint;
+  hitPoint[0] = eye[0] + lambda * viewDirection[0];
+  hitPoint[1] = 0;
+  hitPoint[2] = eye[2] + lambda * viewDirection[2];
+
+//   _state.translate(hitPoint[0], hitPoint[1], hitPoint[2]);
+//   glutSolidSphere(10.0, 10, 10 );
+//   _state.translate(-hitPoint[0], -hitPoint[1], -hitPoint[2]);
 
 
+  //the distance between camera and hitpoint defines a factor that controls
+  //how many lines are drawn
+  double distance = _state.modelview().transform_point( hitPoint ).norm();
 
+  int factor =  floor(2000.0 / distance) - 1;
+
+  int vertical = verticalLines_;
+  int horizontal = horizontalLines_;
+
+  if (factor > 0){
+    // 'factor' times split the grid (split every cell into 4 new cells)
+    int rest = 0;
+
+    for (int i=0; i < factor; i++)
+      rest -= floor( pow(2, i));
+
+    vertical = vertical * floor( pow(2,factor)) + rest;
+    horizontal = horizontal * floor( pow(2,factor)) + rest;
+
+    vertical = std::min(vertical, 65 );
+    horizontal = std::min(vertical, 65 );
+  }
+
+  //now start drawing
+  _state.translate(-0.5*width_, 0, -0.5*height_);
 
   glBegin(GL_LINES);
-    for ( int i = 1 ; i <  verticalLines_ ; ++i ) {
-      glVertex3f(_state.viewport_width() / verticalLines_ * i ,0.0,0.0);
-      glVertex3f(_state.viewport_width() / verticalLines_ * i ,_state.viewport_height(),0.0);
+
+    //red line (x-axis)
+    glColor3f( 0.7, 0.0, 0.0 );
+    glVertex3f(   0.0, 0.0, height_*0.5);
+    glVertex3f(width_, 0.0, height_*0.5);
+
+    //blue line (z-axis)
+    glColor3f( 0.0, 0.0, 0.7 );
+    glVertex3f(width_*0.5, 0.0,     0.0);
+    glVertex3f(width_*0.5, 0.0, height_);
+
+    //remaining vertical lines
+    for ( int i = 0 ; i <  vertical ; ++i ) {
+
+      //first draw a baseLine
+      glColor3fv( &baseLineColor_[0] );
+
+      double big  = width_ / (vertical-1) * i;
+      double next = width_ / (vertical-1) * (i+1);
+
+      glVertex3f( big, 0.0, 0.0);
+      glVertex3f( big, 0.0, height_);
+
+      if ( i+1 < vertical)
+        for (int j=1; j < 10; j++){
+
+          //then draw 9 darker lines in between
+          glColor3fv( &midLineColor_[0] );
+  
+          double small = big + (next - big) / 10.0 * j;
+          glVertex3f( small, 0.0, 0.0);
+          glVertex3f( small, 0.0, height_);
+        }
     }
 
-    for ( int i = 1 ; i <  horizontalLines_ ; ++i ) {
-      glVertex3f(0.0,0.0 + _state.viewport_height() / horizontalLines_ * i ,0.0);
-      glVertex3f(_state.viewport_width(),0.0 + _state.viewport_height() / horizontalLines_ * i,0.0);
-    }
+    //remaining horizontal lines
+    for ( int i = 0 ; i <  horizontal; ++i ) {
 
+      //first draw a baseline
+      glColor3fv( &baseLineColor_[0] );
+
+      double big  = width_ / (vertical-1) * i;
+      double next = width_ / (vertical-1) * (i+1);
+
+      glVertex3f(   0.0, 0.0, height_ / (horizontal-1) * i);
+      glVertex3f(width_, 0.0, height_ / (horizontal-1) * i);
+
+      if ( i+1 < vertical)
+        for (int j=1; j < 10; j++){
+
+          //then draw 9 darker lines in between
+          glColor3fv( &midLineColor_[0] );
+  
+          double small = big + (next - big) / 10.0 * j;
+          glVertex3f(   0.0, 0.0, small);
+          glVertex3f(width_, 0.0, small);
+        }   
+    }
   glEnd();
 
-  _state.pop_projection_matrix();
   _state.pop_modelview_matrix();
 
-   glPopAttrib( ); // ->Depth test
-   glPopAttrib( ); // ->Lighting
+  glLineWidth(1.0);
+
+  glPopAttrib( ); // ->Depth test
+  glPopAttrib( ); // ->Lighting
 }
 
 
