@@ -122,10 +122,10 @@ void Core::applyOptions(){
     if ( OpenFlipper::Options::multiView() )
       coreWidget_->setViewerLayout( OpenFlipper::Options::defaultViewerLayout() );
 
-    if ( OpenFlipper::Options::gridVisible() )
-      gridNode_->show();
-    else
-      gridNode_->hide();
+//     if ( OpenFlipper::Options::gridVisible() )
+//       gridNode_->show();
+//     else
+//       gridNode_->hide();
 
     //set defaultBackgroundColor
     QColor c = OpenFlipper::Options::defaultBackgroundColor() ;
