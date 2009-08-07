@@ -88,6 +88,9 @@ class DLLEXPORT CursorPainter : public QObject
     /// Enabled/Disables gl cursor painting
     void setEnabled (bool _enabled);
 
+    /// Enabled/Disables native cursors
+    void setForceNative (bool _enabled);
+
     /// Returns true if cursor painting is enabled and compatible cursor is set
     bool enabled ();
 
@@ -100,9 +103,11 @@ class DLLEXPORT CursorPainter : public QObject
   private:
     // Create a texture for the cursor
     void cursorToTexture ();
+    void cursorToCursor ();
 
   private:
     QCursor cursor_;
+    QCursor nativeCursor_;
     QPointF cursorPos_;
 
     bool initialized_;
@@ -111,6 +116,7 @@ class DLLEXPORT CursorPainter : public QObject
 
     bool enabled_;
     bool mouseIn_;
+    bool forceNative_;
 
     // x and y offset between click position and texture (hotspot)
     int xOff_;

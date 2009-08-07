@@ -60,6 +60,7 @@ CursorPainter::CursorPainter (QObject *_parent) :
   initialized_(false),
   enabled_(false),
   mouseIn_(false),
+  forceNative_(false),
   texture_(0),
   hasCursor_(false)
 {
@@ -79,11 +80,12 @@ CursorPainter::~CursorPainter ()
 
 void CursorPainter::setCursor (const QCursor &_cursor)
 {
-  cursor_ = _cursor;
+  nativeCursor_ = _cursor;
+  cursorToCursor ();
   cursorToTexture ();
-  if (!(initialized_ && enabled_ && hasCursor_))
+  if (!(initialized_ && enabled_ && hasCursor_) || forceNative_)
     foreach (glViewer *v, views_)
-      v->setCursor (cursor_);
+      v->setCursor ((forceNative_)? nativeCursor_ : cursor_);
 }
 
 //-----------------------------------------------------------------------------
@@ -106,7 +108,7 @@ void CursorPainter::initializeGL()
 
   cursorToTexture ();
 
-  if (enabled_ && hasCursor_)
+  if (enabled_ && hasCursor_ && !forceNative_)
   {
     foreach (glViewer *v, views_)
       v->setCursor (Qt::BlankCursor);
@@ -114,7 +116,7 @@ void CursorPainter::initializeGL()
   else
   {
     foreach (glViewer *v, views_)
-      v->setCursor (cursor_);
+      v->setCursor ((forceNative_)? nativeCursor_ : cursor_);
   }
 }
 
@@ -212,7 +214,7 @@ void CursorPainter::setEnabled(bool _enabled)
     else
     {
       foreach (glViewer *v, views_)
-        v->setCursor (cursor_);
+        v->setCursor ((forceNative_)? nativeCursor_ : cursor_);
     }
   }
 }
@@ -221,7 +223,7 @@ void CursorPainter::setEnabled(bool _enabled)
 
 bool CursorPainter::enabled()
 {
-  return initialized_ && enabled_ && hasCursor_ && mouseIn_;
+  return initialized_ && enabled_ && hasCursor_ && mouseIn_ && !forceNative_;
 }
 
 //-----------------------------------------------------------------------------
@@ -236,7 +238,7 @@ void CursorPainter::cursorToTexture()
 
   hasCursor_ = false;
 
-  switch (cursor_.shape())
+  switch (nativeCursor_.shape())
   {
     case Qt::ArrowCursor:
       cImg.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_arrow.png");
@@ -294,6 +296,51 @@ QRectF CursorPainter::cursorBoundingBox()
 
 //=============================================================================
 //=============================================================================
+
+void CursorPainter::setForceNative(bool _enabled)
+{
+  forceNative_ = _enabled;
+  if (!(initialized_ && enabled_ && hasCursor_) || forceNative_)
+  {
+    foreach (glViewer *v, views_)
+      v->setCursor ((forceNative_)? nativeCursor_ : cursor_);
+  }
+  else
+  {
+    foreach (glViewer *v, views_)
+        v->setCursor (Qt::BlankCursor);
+  }
+}
+
+void CursorPainter::cursorToCursor()
+{
+  QPixmap pix;
+
+  switch (nativeCursor_.shape())
+  {
+    case Qt::ArrowCursor:
+      pix.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_arrow.png");
+      if (!pix.isNull() && pix.width() == 32 && pix.height() == 32)
+      {
+        cursor_ = QCursor (pix, 0, 0);
+      }
+      else
+        cursor_ = nativeCursor_;
+      break;
+    case Qt::PointingHandCursor:
+      pix.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_hand.png");
+      if (!pix.isNull() && pix.width() == 32 && pix.height() == 32)
+      {
+        cursor_ = QCursor (pix, 7, 1);
+      }
+      else
+        cursor_ = nativeCursor_;
+      break;
+    default:
+      cursor_ = nativeCursor_;
+      return;
+  }
+}
 
 
 

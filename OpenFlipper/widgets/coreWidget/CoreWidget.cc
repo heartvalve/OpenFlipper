@@ -180,7 +180,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   // gl widget as parent to make sure that the CursorPainter will be deleted before
   cursorPainter_ = new CursorPainter (glWidget_);
-  cursorPainter_->setEnabled (OpenFlipper::Options::glMouse ());
+  cursorPainter_->setForceNative (!OpenFlipper::Options::glMouse ());
+  cursorPainter_->setEnabled (stereoActive_);
   glScene_->setCursorPainter (cursorPainter_);
 
   centerWidget_ = new QGraphicsWidget;
@@ -932,7 +933,7 @@ void CoreWidget::slotActivateExaminer()
 /// Use native or gl painted cursor
 void CoreWidget::setGlCursor ( bool _state )
 {
-  cursorPainter_->setEnabled (_state);
+  cursorPainter_->setForceNative (!_state);
 }
 
 //=============================================================================
