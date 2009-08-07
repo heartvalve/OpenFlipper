@@ -69,10 +69,12 @@ QtGLGraphicsScene::QtGLGraphicsScene(std::vector< glViewer *> *_views,
 				     QtMultiViewLayout *_layout) :
   QGraphicsScene (),
   views_(_views),
-  layout_(_layout)
+  layout_(_layout),
+  cursorPainter_(0)
 {
 }
 
+//-----------------------------------------------------------------------------
 
 void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
 {
@@ -91,7 +93,33 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
     {
       views_->at(i)->initializeGL ();
     }
+    if (cursorPainter_)
+      cursorPainter_->initializeGL ();
     initialized = true;
+  }
+
+  if (cursorPainter_ && cursorPainter_->enabled())
+  {
+    // avoid projection matrix stack overflow
+    GLdouble mat[16];
+    glGetDoublev(GL_PROJECTION_MATRIX, mat);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix ();
+
+    glPushAttrib (GL_ALL_ATTRIB_BITS);
+    for (unsigned int i = 0; i < views_->size (); i++)
+    {
+      if (views_->at(i)->isVisible())
+        views_->at(i)->updateCursorPosition(cursorPainter_->cursorPosition ());
+    }
+    glPopAttrib ();
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd (mat);
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix ();
+    glClear(GL_DEPTH_BUFFER_BIT);
   }
 
   _painter->setBackground(QApplication::palette().window());
@@ -127,6 +155,7 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
   }
 }
 
+//-----------------------------------------------------------------------------
 
 glViewer* QtGLGraphicsScene::findView (const QPointF &_p, bool _setActive)
 {
@@ -145,8 +174,12 @@ glViewer* QtGLGraphicsScene::findView (const QPointF &_p, bool _setActive)
   return NULL;
 }
 
+//-----------------------------------------------------------------------------
+
 void QtGLGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
 {
+  if (cursorPainter_)
+    cursorPainter_->updateCursorPosition (_e->scenePos ());
   QGraphicsScene::mouseMoveEvent(_e);
   if (_e->isAccepted())
     return;
@@ -156,8 +189,34 @@ void QtGLGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
     return;
 
   v->mouseMoveEvent(_e);
+
+  update ();
+}
+
+//-----------------------------------------------------------------------------
+
+void QtGLGraphicsScene::setCursorPainter(CursorPainter * _cursorPainter)
+{
+  cursorPainter_ = _cursorPainter;
+}
+
+//-----------------------------------------------------------------------------
+
+bool QtGLGraphicsScene::event(QEvent *_event)
+{
+  if (cursorPainter_ && _event->type() == QEvent::Enter)
+  {
+    cursorPainter_->setMouseIn (true);
+  }
+  else if (cursorPainter_ && _event->type() == QEvent::Leave)
+  {
+    cursorPainter_->setMouseIn (false);
+    update ();
+  }
+  return QGraphicsScene::event (_event);
 }
 
 
 //=============================================================================
 //=============================================================================
+

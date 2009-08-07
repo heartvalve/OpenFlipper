@@ -32,80 +32,93 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Author$                                                      *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
-
-
-
-#ifndef QTGLGRAPHICSSCENE_HH
-#define QTGLGRAPHICSSCENE_HH
-
-//=============================================================================
-//
-//  CLASS QtGLGraphicsScene - IMPLEMENTATION
-//
-//=============================================================================
+#ifndef CURSORPAINTER_HH
+#define CURSORPAINTER_HH
 
 //== INCLUDES =================================================================
 
+#include <QObject>
+#include <QCursor>
+#include <QVector>
+#include <QRectF>
+
+#include <ACG/GL/GLState.hh>
 #include <OpenFlipper/common/GlobalDefines.hh>
-#include <QGraphicsScene>
-#include <QGraphicsItem>
-#include "QtBaseViewer.hh"
-#include "CursorPainter.hh"
+
+//== NAMESPACES ===============================================================
 
 //== FORWARDDECLARATIONS ======================================================
 class glViewer;
-class QtMultiViewLayout;
-class CursorPainter;
-
-//== NAMESPACES ===============================================================
 
 //== CLASS DEFINITION =========================================================
 
 
-
-/** OpenGL drawing area and widget scene -- for \a internal use only.
-    The scene basically redirects calls to a
-    ACG::QtWidgets::glViewer, the corresponding virtual methods there
-    are prefixed with \c gl.
-    \sa ACG::QtWidgets::glViewer
+/** Class that paints the cursor using gl calls
 */
 
-class DLLEXPORT QtGLGraphicsScene : public QGraphicsScene
+class DLLEXPORT CursorPainter : public QObject
 {
-Q_OBJECT
+ Q_OBJECT
 
-public:
-  QtGLGraphicsScene(std::vector< glViewer *> *_views, QtMultiViewLayout *_layout);
+  public:
+    /// Constructor
+    CursorPainter (QObject *_parent = 0);
 
-  void setCursorPainter (CursorPainter *_cursorPainter);
-  
-protected:
+    /// Destructor
+    ~CursorPainter ();
 
-  virtual void drawBackground(QPainter *_painter, const QRectF &_rect);
+    /// Sets the current used cursor
+    void setCursor (const QCursor &_cursor);
 
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* _e);
+    /// Needs to be called after the gl context has been set up to initialize internal values
+    void initializeGL ();
 
-  // Catch enter and leave events for 3d cursor
-  virtual bool event (QEvent *_event);
+    /// Add a glViewer that will use this CursorPainter
+    void registerViewer (glViewer *_viewer);
 
-private:
+    /// Cursor painting function. The _state has to be setup that 0,0,0 is at the cursor position.
+    void paintCursor (ACG::GLState *_state);
 
-  glViewer* findView (const QPointF &_p, bool _setActive = false);
+    /// Sets the current cursor position
+    void updateCursorPosition (QPointF _scenePos);
 
-  std::vector< glViewer *> *views_;
-  QtMultiViewLayout *layout_;
+    /// Return the current cursor position
+    QPointF cursorPosition ();
 
-  CursorPainter *cursorPainter_;
+    /// Enabled/Disables gl cursor painting
+    void setEnabled (bool _enabled);
+
+    /// Returns true if cursor painting is enabled and compatible cursor is set
+    bool enabled ();
+
+    /// Inform the cursor painter about mouse enter / leave
+    void setMouseIn (bool _in);
+
+    /// Bounding box of the cursor
+    QRectF cursorBoundingBox ();
+
+  private:
+    // Create a texture for the cursor
+    void cursorToTexture ();
+
+  private:
+    QCursor cursor_;
+    QPointF cursorPos_;
+
+    bool initialized_;
+
+    QVector<glViewer *> views_;
+
+    bool enabled_;
+    bool mouseIn_;
+
+    // x and y offset between click position and texture (hotspot)
+    int xOff_;
+    int yOff_;
+    GLuint texture_;
+    bool hasCursor_;
 };
 
-#endif
-
 //=============================================================================
+#endif
 //=============================================================================

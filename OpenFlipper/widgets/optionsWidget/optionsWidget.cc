@@ -233,6 +233,10 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   rcm7->setValue (mat[7]);
   rcm8->setValue (mat[8]);
 
+  noMousePick->setChecked (!OpenFlipper::Options::stereoMousePick());
+
+  nativeMouse->setChecked (!OpenFlipper::Options::glMouse());
+
   // plugin options
   initPluginOptions();
 
@@ -502,6 +506,8 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::eyeDistance(eyeDistance->value ());
   OpenFlipper::Options::focalDistance((float)focalDistance->value () / 1000);
 
+  OpenFlipper::Options::stereoMousePick(!noMousePick->isChecked ());
+
   std::vector<float> mat (9, 0);
   mat[0] = lcm0->value ();
   mat[1] = lcm1->value ();
@@ -527,6 +533,8 @@ void OptionsWidget::slotApply() {
 
   OpenFlipper::Options::anaglyphRightEyeColorMatrix (mat);
 
+  OpenFlipper::Options::glMouse(!nativeMouse->isChecked ());
+  
   // updates
   OpenFlipper::Options::updateUrl( updateURL->text() );
   OpenFlipper::Options::updateUsername( updateUser->text() );

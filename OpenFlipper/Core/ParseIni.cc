@@ -205,6 +205,20 @@ void Core::readApplicationOptions(INIFile& _ini) {
     }
 
     //============================================================================
+    // Load stereo mouse picking behavior
+    //============================================================================
+    bool stereoMousePick = false;
+    if ( _ini.get_entry( stereoMousePick, "Options" , "StereoMousePick") )
+      OpenFlipper::Options::stereoMousePick(stereoMousePick);
+
+    //============================================================================
+    // Load gl mouse painting behavior
+    //============================================================================
+    bool glMouse = false;
+    if ( _ini.get_entry( glMouse, "Options" , "GlMouse") )
+      OpenFlipper::Options::glMouse(glMouse);
+
+    //============================================================================
     // Load the setting for the loger window
     //============================================================================
     int loggerState = 0;
@@ -625,6 +639,10 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
     _ini.add_entry("Options" , "CustomAnaglyphLeftEye", OpenFlipper::Options::anaglyphLeftEyeColorMatrix() );
     _ini.add_entry("Options" , "CustomAnaglyphRightEye", OpenFlipper::Options::anaglyphRightEyeColorMatrix() );
+
+    _ini.add_entry("Options", "StereoMousePick", OpenFlipper::Options::stereoMousePick() );
+
+    _ini.add_entry("Options", "GlMouse", OpenFlipper::Options::glMouse() );
   }
 
   emit saveOnExit(_ini);

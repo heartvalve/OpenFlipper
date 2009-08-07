@@ -56,6 +56,7 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
+#include <OpenFlipper/widgets/glWidget/CursorPainter.hh>
 
 //-----------------------------------------------------------------------------
 
@@ -102,6 +103,24 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
       }
     }
 
+    // update cursor
+    switch ( _am )
+    {
+      case Viewer::ExamineMode:
+      case Viewer::LightMode:
+        cursorPainter_->setCursor(Qt::PointingHandCursor);
+        break;
+      case Viewer::PickingMode:
+        cursorPainter_->setCursor(Qt::ArrowCursor);
+        if (pick_mode_idx_ != -1) {
+          cursorPainter_->setCursor(pick_modes_[pick_mode_idx_].cursor);
+        }
+        break;
+      case Viewer::QuestionMode:
+        cursorPainter_->setCursor(Qt::WhatsThisCursor);
+        break;
+    }
+
     //update Viewers
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
@@ -115,25 +134,14 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
       {
         case Viewer::ExamineMode:
         {
-          examiner_widgets_[i]->setCursor(Qt::PointingHandCursor);
           pickToolbar_->detachToolbar ();
           break;
         }
 
-
-        case Viewer::LightMode:
-        {
-          examiner_widgets_[i]->setCursor(Qt::PointingHandCursor);
-          break;
-        }
-
-
         case Viewer::PickingMode:
         {
-          examiner_widgets_[i]->setCursor(Qt::ArrowCursor);
           if (pick_mode_idx_ != -1) {
             examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking);
-            examiner_widgets_[i]->setCursor(pick_modes_[pick_mode_idx_].cursor);
             if (pick_modes_[pick_mode_idx_].toolbar)
               pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar);
             else
@@ -143,12 +151,9 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
           break;
         }
 
-
-        case Viewer::QuestionMode:
-        {
-          examiner_widgets_[i]->setCursor(Qt::WhatsThisCursor);
+        default:
           break;
-        }
+
       }
     }
 
@@ -280,8 +285,7 @@ void CoreWidget::pickMode( int _id )
 
     // adjust Cursor
     if ( pickingMode() )
-      for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-        examiner_widgets_[i]->setCursor( pick_modes_[pick_mode_idx_].cursor);
+        cursorPainter_->setCursor( pick_modes_[pick_mode_idx_].cursor);
 
     // emit signal
     emit(signalPickModeChanged(pick_mode_name_));
@@ -321,8 +325,7 @@ void CoreWidget::setPickModeCursor(const std::string& _name, QCursor _cursor)
 
       //switch cursor if pickMode is active
       if (pick_mode_name_ == _name && pickingMode() )
-        for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
-          examiner_widgets_[i]->setCursor(_cursor);
+          cursorPainter_->setCursor(_cursor);
       break;
     }
 }

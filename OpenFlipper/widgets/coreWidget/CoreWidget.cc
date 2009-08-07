@@ -64,6 +64,8 @@
 
 #include <OpenFlipper/widgets/videoCaptureDialog/VideoCaptureDialog.hh>
 
+#include <OpenFlipper/widgets/glWidget/CursorPainter.hh>
+
 #define WIDGET_HEIGHT 800
 #define WIDGET_WIDTH  800
 
@@ -86,6 +88,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   logWidget_(0),
   recentFilesMenu_(0),
   helpMenu_(0),
+  cursorPainter_(0),
   sceneGraphDialog_(0),
   fileMenu_(0),
   viewMenu_(0),
@@ -175,7 +178,10 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   glView_->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
   glView_->setScene(glScene_);
 
-
+  // gl widget as parent to make sure that the CursorPainter will be deleted before
+  cursorPainter_ = new CursorPainter (glWidget_);
+  cursorPainter_->setEnabled (OpenFlipper::Options::glMouse ());
+  glScene_->setCursorPainter (cursorPainter_);
 
   centerWidget_ = new QGraphicsWidget;
   glScene_->addItem(centerWidget_);
@@ -244,6 +250,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
     baseLayout_->addItem(examinerWidget, 0);
 
+    cursorPainter_->registerViewer (examinerWidget);
+
   } else {
 
 
@@ -270,6 +278,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     // Initialize all examiners
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
+      cursorPainter_->registerViewer (examiner_widgets_[i]);
     }
 
     baseLayout_->addItem(examiner_widgets_[0],0);
@@ -918,6 +927,13 @@ void CoreWidget::slotActivateExaminer()
   }
 }
 
+//-----------------------------------------------------------------------------
+
+/// Use native or gl painted cursor
+void CoreWidget::setGlCursor ( bool _state )
+{
+  cursorPainter_->setEnabled (_state);
+}
 
 //=============================================================================
 

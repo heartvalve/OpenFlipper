@@ -51,6 +51,7 @@
 
 //== INCLUDES =================================================================
 
+#include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 #include <QApplication>
@@ -60,6 +61,7 @@
 #include <QGraphicsSceneDragDropEvent>
 
 #include "simpleGLGraphicsScene.hh"
+#include "CursorPainter.hh"
 
 //== NAMESPACES ===============================================================
 
@@ -70,6 +72,8 @@ SimpleGLGraphicsScene::SimpleGLGraphicsScene () :
   view_(),
   initialized_(false)
 {
+  cursorPainter_ = new CursorPainter (this);
+  cursorPainter_->setEnabled (OpenFlipper::Options::glMouse ());
 }
 
 
@@ -89,9 +93,31 @@ void SimpleGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_re
     // initialize it first
     glewInit();
     view_->initializeGL();
+    cursorPainter_->initializeGL ();
     initialized_ = true;
   }
 
+  if (cursorPainter_->enabled())
+  {
+    // avoid projection matrix stack overflow
+    GLdouble mat[16];
+    glGetDoublev(GL_PROJECTION_MATRIX, mat);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix ();
+
+    glPushAttrib (GL_ALL_ATTRIB_BITS);
+    view_->updateCursorPosition(cursorPainter_->cursorPosition ());
+    glPopAttrib ();
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd (mat);
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix ();
+    glClear(GL_DEPTH_BUFFER_BIT);
+  }
+
+  
   _painter->setBackground(QApplication::palette().window());
   _painter->eraseRect(_rect);
 
@@ -101,17 +127,38 @@ void SimpleGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_re
 
 void SimpleGLGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
 {
+  cursorPainter_->updateCursorPosition (_e->scenePos ());
+
   QGraphicsScene::mouseMoveEvent(_e);
   if (_e->isAccepted())
     return;
 
   if (view_)
     view_->mouseMoveEvent(_e);
+
+  update ();
 }
 
 void SimpleGLGraphicsScene::setView(glViewer * _view)
 {
   view_ = _view;
+  cursorPainter_->registerViewer (view_);
+}
+
+//-----------------------------------------------------------------------------
+
+bool SimpleGLGraphicsScene::event(QEvent *_event)
+{
+  if (_event->type() == QEvent::Enter)
+  {
+    cursorPainter_->setMouseIn (true);
+  }
+  else if (_event->type() == QEvent::Leave)
+  {
+    cursorPainter_->setMouseIn (false);
+    update ();
+  }
+  return QGraphicsScene::event (_event);
 }
 
 //=============================================================================
