@@ -127,16 +127,12 @@ void SimpleGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_re
 
 void SimpleGLGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
 {
-  cursorPainter_->updateCursorPosition (_e->scenePos ());
-
   QGraphicsScene::mouseMoveEvent(_e);
   if (_e->isAccepted())
     return;
 
   if (view_)
     view_->mouseMoveEvent(_e);
-
-  update ();
 }
 
 void SimpleGLGraphicsScene::setView(glViewer * _view)
@@ -156,6 +152,12 @@ bool SimpleGLGraphicsScene::event(QEvent *_event)
   else if (_event->type() == QEvent::Leave)
   {
     cursorPainter_->setMouseIn (false);
+    update ();
+  }
+  else if (cursorPainter_ && _event->type() == QEvent::GraphicsSceneMouseMove)
+  {
+    QGraphicsSceneMouseEvent *e = static_cast<QGraphicsSceneMouseEvent*>(_event);
+    cursorPainter_->updateCursorPosition (e->scenePos ());
     update ();
   }
   return QGraphicsScene::event (_event);
