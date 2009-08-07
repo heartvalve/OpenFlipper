@@ -178,8 +178,6 @@ glViewer* QtGLGraphicsScene::findView (const QPointF &_p, bool _setActive)
 
 void QtGLGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
 {
-  if (cursorPainter_)
-    cursorPainter_->updateCursorPosition (_e->scenePos ());
   QGraphicsScene::mouseMoveEvent(_e);
   if (_e->isAccepted())
     return;
@@ -189,8 +187,6 @@ void QtGLGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
     return;
 
   v->mouseMoveEvent(_e);
-
-  update ();
 }
 
 //-----------------------------------------------------------------------------
@@ -213,6 +209,13 @@ bool QtGLGraphicsScene::event(QEvent *_event)
     cursorPainter_->setMouseIn (false);
     update ();
   }
+  else if (cursorPainter_ && _event->type() == QEvent::GraphicsSceneMouseMove)
+  {
+    QGraphicsSceneMouseEvent *e = static_cast<QGraphicsSceneMouseEvent*>(_event);
+    cursorPainter_->updateCursorPosition (e->scenePos ());
+    update ();
+  }
+
   return QGraphicsScene::event (_event);
 }
 
