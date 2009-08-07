@@ -98,16 +98,22 @@ public:
   /// drawing the primitive
   void draw(GLState& _state, unsigned int _drawMode);
 
+public:
+
+  /// GridSize
+  float gridSize();
+
+  void gridSize(float _size);
 
 private:
 
   /// initial number of baseLines
   int horizontalLines_;
   int verticalLines_;
+  int maxRefinement_;
 
   /// dimensions of the grid
-  float width_;
-  float height_;
+  float gridSize_;
 
   /// bounding box
   Vec3f bb_min_;
