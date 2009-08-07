@@ -56,6 +56,7 @@
 #include "CoreWidget.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/BasePlugin/MenuInterface.hh>
 
 //== IMPLEMENTATION ==========================================================
 
@@ -121,7 +122,7 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   // File Menu
   // ======================================================================
-  fileMenu_ = new QMenu(tr("File"));
+  fileMenu_ = new QMenu( FILEMENU );
   menuBar()->addMenu(fileMenu_ );
   menus_[tr("File")] = fileMenu_;
 
@@ -224,7 +225,7 @@ void CoreWidget::setupMenuBar()
   // ======================================================================
   // View Menu
   // ======================================================================
-  viewMenu_ = new QMenu(tr("View"));
+  viewMenu_ = new QMenu( VIEWMENU );
   menuBar()->addMenu(viewMenu_ );
   menus_[tr("View")] = viewMenu_;
 
@@ -378,7 +379,7 @@ void CoreWidget::setupMenuBar()
   // Tools Menu
   //===========================================================================================================================
 
-  toolsMenu_ = new QMenu(tr("Tools"));
+  toolsMenu_ = new QMenu( TOOLSMENU );
   menuBar()->addMenu(toolsMenu_ );
   menus_[tr("Tools")] = toolsMenu_;
 

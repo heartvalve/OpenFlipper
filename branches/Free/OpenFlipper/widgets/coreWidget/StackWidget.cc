@@ -147,7 +147,7 @@ void CoreWidget::slotUpdateStackMenu() {
   if ( stackWidgetList_.size() > 1 ) {
     
     if ( stackMenu_ == 0 ) {
-      stackMenu_ = new QMenu(tr("&Views"));
+      stackMenu_ = new QMenu(tr("Views"));
       menuBar()->addMenu(stackMenu_ );
     }
   
