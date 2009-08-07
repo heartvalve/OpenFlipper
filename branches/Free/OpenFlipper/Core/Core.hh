@@ -581,7 +581,7 @@ private:
       ACG::SceneGraph::CoordsysNode* coordsysNode_;
 
       /// Node for the grid
-      ACG::SceneGraph::GridNode* gridNode_;
+//       ACG::SceneGraph::GridNode* gridNode_;
 
    /** @} */
 

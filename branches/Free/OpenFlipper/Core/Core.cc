@@ -132,8 +132,8 @@ Core() :
   coordsysMaterialNode_ = new ACG::SceneGraph::MaterialNode(root_node_scenegraph_,"Coordsys Material Node");
   coordsysNode_ = new ACG::SceneGraph::CoordsysNode(coordsysMaterialNode_,"Core Coordsys Node");
   coordsysNode_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);
-  gridNode_ = new ACG::SceneGraph::GridNode(root_node_scenegraph_,"Grid Node");
-  gridNode_->hide();
+//   gridNode_ = new ACG::SceneGraph::GridNode(root_node_scenegraph_,"Grid Node");
+//   gridNode_->hide();
 
    // Add ViewMode All
   ViewMode* vm = new ViewMode();
