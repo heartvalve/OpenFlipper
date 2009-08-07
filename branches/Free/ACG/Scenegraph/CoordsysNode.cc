@@ -210,6 +210,9 @@ void
 CoordsysNode::
 draw(GLState&  _state  , unsigned int /*_drawMode*/)
 {
+  GLboolean colorMask[4];
+  glGetBooleanv (GL_COLOR_WRITEMASK, colorMask);
+  
   // Push Modelview-Matrix
   _state.push_modelview_matrix();
 
@@ -277,7 +280,7 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
 
     glDepthRange (0.0, 1.0);
     glDepthFunc (GL_LESS);
-    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+    glColorMask (colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
 
     // Projection reload
     _state.pop_projection_matrix();
@@ -318,7 +321,7 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     // reset to default
     glDepthRange (0.0, 1.0);
     glDepthFunc (GL_LESS);
-    glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
+    glColorMask (colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
 
   }
 
@@ -476,6 +479,9 @@ void CoordsysNode::clearPickArea(GLState&  _state, GLMatrixd _pickMatrix, bool _
   int left, bottom, width, height;
   _state.get_viewport(left, bottom, width, height);
 
+  GLboolean colorMask[4];
+  glGetBooleanv (GL_COLOR_WRITEMASK, colorMask);
+
   GLUquadricObj *quadric = gluNewQuadric();
 
   // respect sphere radius
@@ -526,7 +532,7 @@ void CoordsysNode::clearPickArea(GLState&  _state, GLMatrixd _pickMatrix, bool _
   glDepthRange (0.0, 1.0);
 
   if (!_draw)
-    glColorMask(true, true, true, true);
+    glColorMask (colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
 
   glMatrixMode(GL_PROJECTION);
   glPopMatrix ();
