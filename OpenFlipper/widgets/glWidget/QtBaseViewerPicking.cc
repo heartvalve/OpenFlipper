@@ -56,6 +56,8 @@
 #include "QtGLGraphicsScene.hh"
 #include "QtGLGraphicsView.hh"
 
+#include <QGLFramebufferObject>
+
 //== NAMESPACES ===============================================================
 
 //== IMPLEMENTATION ==========================================================
@@ -77,7 +79,11 @@ bool glViewer::pick( ACG::SceneGraph::PickTarget _pickTarget,
     // unsigned int node, target;
     // QTime time;
     // time.start ();
-    int rv = pickColor (_pickTarget, _mousePos, _nodeIdx, _targetIdx, _hitPointPtr);
+    int rv = pickFromCache (_pickTarget, _mousePos, _nodeIdx, _targetIdx, _hitPointPtr);
+
+    // cache will return -1 if a update is needed or caching is not supported
+    if (rv < 0)
+      rv = pickColor (_pickTarget, _mousePos, _nodeIdx, _targetIdx, _hitPointPtr);
 
     // printf ("ColorPicking took %d msec\n",time.restart ());
     // rv = -1;
@@ -109,11 +115,50 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
                 l = scenePos().x(),
                 b = scene()->height () - scenePos().y() - h,
                 x = _mousePos.x(),
-                y = scene()->height () - _mousePos.y();
+                y = scene()->height () - _mousePos.y(),
+                pW = 1,
+                pH = 1;
   GLubyte       pixels[9][4];
   GLfloat       depths[9];
   int           hit = -1;
+
+  // traversing order (center, top, bottom, ...)
   unsigned char order[9] = { 4, 7, 1, 3, 5, 0, 2, 6, 8 };
+
+  if (pickCacheSupported_)
+  {
+    // delete pick cache if the size changed
+    if (pickCache_ && pickCache_->size () != QSize (glWidth (), glHeight ()))
+    {
+      delete pickCache_;
+      pickCache_ = NULL;
+    }
+    // create a new pick cache frambuffer object
+    if (!pickCache_)
+    {
+      pickCache_ = new QGLFramebufferObject (glWidth (), glHeight (), QGLFramebufferObject::Depth);
+      if (!pickCache_->isValid ())
+      {
+        pickCacheSupported_ = false;
+        delete pickCache_;
+        pickCache_ = NULL;
+      }
+    }
+    if (pickCache_)
+    {
+      // the viewport for the framebuffer object
+      l = 0;
+      b = 0;
+      x = _mousePos.x() - scenePos().x();
+      y = glHeight() - (_mousePos.y() - scenePos().y());
+
+      // we can only pick inside of our window
+      if (x < 0 || y < 0 || x >= (int)glWidth() || y >= (int)glHeight())
+        return 0;
+
+      pickCache_->bind ();
+    }
+  }
 
   const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
   const ACG::GLMatrixd&  projection = properties_.glState().projection();
@@ -151,14 +196,58 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   properties_.glState().set_clear_color (clear_color);
 
   if (properties_.glState().pick_error ())
+  {
+    if (pickCache_ && pickCache_->isBound ())
+      pickCache_->release ();
     return -1;
+  }
 
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-  glReadPixels (x - 1, y - 1, 3, 3, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-  glReadPixels (x - 1, y - 1, 3, 3, GL_DEPTH_COMPONENT, GL_FLOAT, depths);
+  // we can only read inside our viewport
+  if (x + 1 < w)
+    pW++;
 
+  if (y + 1 < h)
+    pH++;
+
+  if (x > 0)
+  {
+    x--;
+    pW++;
+  }
+  if (y > 0)
+  {
+    y--;
+    pH++;
+  }
+
+  if (pH != 3 || pW != 3)
+  {
+    // initialize unused values with 0
+    for (int i = 0; i < 9; i++)
+    {
+      pixels[i][0] = 0;
+      pixels[i][1] = 0;
+      pixels[i][2] = 0;
+      pixels[i][3] = 0;
+      depths[i] = 0.0;
+    }
+  }
+
+  // read from framebuffer
+  glReadPixels (x, y, pW, pH, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+  glReadPixels (x, y, pW, pH, GL_DEPTH_COMPONENT, GL_FLOAT, depths);
+
+  // unbind pick cache
+  if (pickCache_ && pickCache_->isBound ())
+  {
+    pickCache_->release ();
+    updatePickCache_ = false;
+  }
+
+  // get first found pixel
   for (int i = 0; i < 9; i++)
   {
     if (hit < 0 && (pixels[order[i]][2] != 0 || pixels[order[i]][1] != 0 || pixels[order[i]][0] != 0 || pixels[order[i]][3] != 0))
@@ -189,7 +278,117 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
 
   if (_hitPointPtr)
   {
-    *_hitPointPtr = properties_.glState().unproject(ACG::Vec3d(x,y,depths[hit]));
+    *_hitPointPtr = properties_.glState().unproject (
+      ACG::Vec3d(_mousePos.x(), scene()->height () - _mousePos.y(),depths[hit]));
+  }
+
+  return 1;
+}
+
+//-----------------------------------------------------------------------------
+
+int glViewer::pickFromCache( ACG::SceneGraph::PickTarget _pickTarget,
+                             const QPoint&               _mousePos,
+                             unsigned int&               _nodeIdx,
+                             unsigned int&               _targetIdx,
+                             ACG::Vec3d*                 _hitPointPtr )
+{
+  // do we need an update?
+  if (!pickCacheSupported_ || updatePickCache_ || !pickCache_)
+    return -1;
+
+  GLint         x = _mousePos.x() - scenePos().x(),
+                y = glHeight() - (_mousePos.y() - scenePos().y()),
+                pW = 1,
+                pH = 1;
+  GLubyte       pixels[9][4];
+  GLfloat       depths[9];
+  int           hit = -1;
+
+  // traversing order (center, top, bottom, ...)
+  unsigned char order[9] = { 4, 7, 1, 3, 5, 0, 2, 6, 8 };
+
+  // can't pick outside
+  if (x < 0 || y < 0 || x >= (int)glWidth() || y >= (int)glHeight())
+    return 0;
+
+  // bind cache framebuffer object
+  pickCache_->bind ();
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  // we can only read inside our viewport
+  if (x + 1 < (int)glWidth ())
+    pW++;
+
+  if (y + 1 < (int)glHeight ())
+    pH++;
+
+  if (x > 0)
+  {
+    x--;
+    pW++;
+  }
+  if (y > 0)
+  {
+    y--;
+    pH++;
+  }
+
+  if (pH != 3 || pW != 3)
+  {
+    // initialize unused values with 0
+    for (int i = 0; i < 9; i++)
+    {
+      pixels[i][0] = 0;
+      pixels[i][1] = 0;
+      pixels[i][2] = 0;
+      pixels[i][3] = 0;
+      depths[i] = 0.0;
+    }
+  }
+
+  // read from framebuffer
+  glReadPixels (x, y, pW, pH, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+  glReadPixels (x, y, pW, pH, GL_DEPTH_COMPONENT, GL_FLOAT, depths);
+
+  // unbind
+  pickCache_->release ();
+
+  // get first found pixel
+  for (int i = 0; i < 9; i++)
+  {
+    if (hit < 0 && (pixels[order[i]][2] != 0 || pixels[order[i]][1] != 0 || pixels[order[i]][0] != 0 || pixels[order[i]][3] != 0))
+    {
+      hit = order[i];
+      break;
+    }
+  }
+
+  if (hit < 0)
+    return 0;
+
+
+  ACG::Vec4uc rgba;
+  rgba[0] = pixels[hit][0];
+  rgba[1] = pixels[hit][1];
+  rgba[2] = pixels[hit][2];
+  rgba[3] = pixels[hit][3];
+
+  std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgba);
+
+  // something wrong with the color stack ?
+  if (rv.size () < 2)
+    return -1;
+
+  _nodeIdx   = rv[1];
+  _targetIdx = rv[0];
+
+  if (_hitPointPtr)
+  {
+    *_hitPointPtr = properties_.glState().unproject(
+      ACG::Vec3d(_mousePos.x(), scene()->height () - _mousePos.y(),depths[hit]));
   }
 
   return 1;
