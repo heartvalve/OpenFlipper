@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
-    <height>808</height>
+    <width>670</width>
+    <height>863</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -392,6 +392,26 @@
             </property>
             <property name="text">
              <string>Show grid</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="nativeMouse">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Use native mouse painting</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="noMousePick">
+            <property name="toolTip">
+             <string/>
+            </property>
+            <property name="text">
+             <string>Don't pick mouse depth in stereo mode</string>
             </property>
            </widget>
           </item>
