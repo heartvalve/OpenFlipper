@@ -74,6 +74,8 @@ void CoreWidget::slotToggleStereoMode()
     stereoButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"mono.png") );
   }
 
+  cursorPainter_->setEnabled (stereoActive_);
+  
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     examiner_widgets_[i]->setStereoMode(stereoActive_);
 }
