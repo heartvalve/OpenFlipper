@@ -73,13 +73,13 @@ GridNode(BaseNode* _parent, const std::string& _name)
   : MaterialNode(_parent, _name),
     horizontalLines_(7),
     verticalLines_(7),
-    width_(1500.0),
-    height_(1500.0)
+    maxRefinement_(49),
+    gridSize_(1500.0)
 {
   baseLineColor_ = Vec3f(0.5, 0.5, 0.5);
   midLineColor_  = Vec3f(0.3, 0.3, 0.3);
-  bb_min_ = Vec3f(-0.5*width_, 0.0, -0.5*height_);
-  bb_max_ = Vec3f( 0.5*width_, 0.0,  0.5*height_);
+  bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
+  bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
 }
 
 
@@ -124,12 +124,8 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
   //first we calculate the hitpoint of the camera direction with the grid
   GLMatrixd modelview = _state.modelview();
 
-  Vec3d viewDirection;
-  viewDirection[0] = -modelview(0,2);
-  viewDirection[1] = -modelview(1,2);
-  viewDirection[2] = -modelview(2,2);
-
-  Vec3f eye = (Vec3f) _state.inverse_modelview().transform_point(ACG::Vec3d(0.0, 0.0, 0.0));
+  Vec3d viewDirection(0.0, 1.0, 0.0); // = _state.viewing_direction();
+  Vec3f eye = (Vec3f) _state.eye();
 
   double lambda = - (eye[1] / viewDirection[1]);
 
@@ -137,11 +133,6 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
   hitPoint[0] = eye[0] + lambda * viewDirection[0];
   hitPoint[1] = 0;
   hitPoint[2] = eye[2] + lambda * viewDirection[2];
-
-//   _state.translate(hitPoint[0], hitPoint[1], hitPoint[2]);
-//   glutSolidSphere(10.0, 10, 10 );
-//   _state.translate(-hitPoint[0], -hitPoint[1], -hitPoint[2]);
-
 
   //the distance between camera and hitpoint defines a factor that controls
   //how many lines are drawn
@@ -152,34 +143,38 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
   int vertical = verticalLines_;
   int horizontal = horizontalLines_;
 
-  if (factor > 0){
+  if (factor > 20){
+    vertical = maxRefinement_;
+    horizontal = maxRefinement_;
+
+  } else if (factor > 0){
     // 'factor' times split the grid (split every cell into 4 new cells)
     int rest = 0;
 
     for (int i=0; i < factor; i++)
       rest -= floor( pow(2, i));
 
-    vertical = vertical * floor( pow(2,factor)) + rest;
+    vertical   = vertical   * floor( pow(2,factor)) + rest;
     horizontal = horizontal * floor( pow(2,factor)) + rest;
 
-    vertical = std::min(vertical, 65 );
-    horizontal = std::min(vertical, 65 );
+    vertical   = std::min(vertical, maxRefinement_ );
+    horizontal = std::min(vertical, maxRefinement_ );
   }
 
   //now start drawing
-  _state.translate(-0.5*width_, 0, -0.5*height_);
+  _state.translate(-0.5*gridSize_, 0, -0.5*gridSize_);
 
   glBegin(GL_LINES);
 
     //red line (x-axis)
     glColor3f( 0.7, 0.0, 0.0 );
-    glVertex3f(   0.0, 0.0, height_*0.5);
-    glVertex3f(width_, 0.0, height_*0.5);
+    glVertex3f(   0.0, 0.0, gridSize_*0.5);
+    glVertex3f(gridSize_, 0.0, gridSize_*0.5);
 
     //blue line (z-axis)
     glColor3f( 0.0, 0.0, 0.7 );
-    glVertex3f(width_*0.5, 0.0,     0.0);
-    glVertex3f(width_*0.5, 0.0, height_);
+    glVertex3f(gridSize_*0.5, 0.0,     0.0);
+    glVertex3f(gridSize_*0.5, 0.0, gridSize_);
 
     //remaining vertical lines
     for ( int i = 0 ; i <  vertical ; ++i ) {
@@ -187,11 +182,11 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
       //first draw a baseLine
       glColor3fv( &baseLineColor_[0] );
 
-      double big  = width_ / (vertical-1) * i;
-      double next = width_ / (vertical-1) * (i+1);
+      double big  = gridSize_ / (vertical-1) * i;
+      double next = gridSize_ / (vertical-1) * (i+1);
 
       glVertex3f( big, 0.0, 0.0);
-      glVertex3f( big, 0.0, height_);
+      glVertex3f( big, 0.0, gridSize_);
 
       if ( i+1 < vertical)
         for (int j=1; j < 10; j++){
@@ -201,7 +196,7 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
   
           double small = big + (next - big) / 10.0 * j;
           glVertex3f( small, 0.0, 0.0);
-          glVertex3f( small, 0.0, height_);
+          glVertex3f( small, 0.0, gridSize_);
         }
     }
 
@@ -211,11 +206,11 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
       //first draw a baseline
       glColor3fv( &baseLineColor_[0] );
 
-      double big  = width_ / (vertical-1) * i;
-      double next = width_ / (vertical-1) * (i+1);
+      double big  = gridSize_ / (vertical-1) * i;
+      double next = gridSize_ / (vertical-1) * (i+1);
 
-      glVertex3f(   0.0, 0.0, height_ / (horizontal-1) * i);
-      glVertex3f(width_, 0.0, height_ / (horizontal-1) * i);
+      glVertex3f(   0.0, 0.0, gridSize_ / (horizontal-1) * i);
+      glVertex3f(gridSize_, 0.0, gridSize_ / (horizontal-1) * i);
 
       if ( i+1 < vertical)
         for (int j=1; j < 10; j++){
@@ -225,7 +220,7 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
   
           double small = big + (next - big) / 10.0 * j;
           glVertex3f(   0.0, 0.0, small);
-          glVertex3f(width_, 0.0, small);
+          glVertex3f(gridSize_, 0.0, small);
         }   
     }
   glEnd();
@@ -238,6 +233,22 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
   glPopAttrib( ); // ->Lighting
 }
 
+//-----------------------------------------------------------------------------
+
+void
+GridNode::gridSize(float _size){
+  gridSize_ = _size;
+
+  bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
+  bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
+}
+
+//-----------------------------------------------------------------------------
+
+float
+GridNode::gridSize(){
+  return gridSize_;
+}
 
 //=============================================================================
 } // namespace SceneGraph
