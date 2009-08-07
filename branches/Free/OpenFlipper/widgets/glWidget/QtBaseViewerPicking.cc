@@ -245,6 +245,7 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   {
     pickCache_->release ();
     updatePickCache_ = false;
+    pickCacheTarget_ = _pickTarget;
   }
 
   // get first found pixel
@@ -294,7 +295,8 @@ int glViewer::pickFromCache( ACG::SceneGraph::PickTarget _pickTarget,
                              ACG::Vec3d*                 _hitPointPtr )
 {
   // do we need an update?
-  if (!pickCacheSupported_ || updatePickCache_ || !pickCache_)
+  if (!pickCacheSupported_ || updatePickCache_ || !pickCache_ ||
+      pickCacheTarget_ != _pickTarget)
     return -1;
 
   GLint         x = _mousePos.x() - scenePos().x(),
