@@ -65,6 +65,9 @@ void SelectionPlugin::paintSphereSelection( MeshT* _mesh ,
   float sqr_radius = sphere_radius_*sphere_radius_;
   typename MeshT::FaceHandle hitface = _mesh->face_handle(_target_idx);
 
+  if ( !hitface.is_valid() )
+    return;
+
   // initialize everything
 
   if (selectionType_ & VERTEX){
@@ -421,6 +424,9 @@ void SelectionPlugin::toggleMeshSelection(MeshT* _mesh, uint _fh, ACG::Vec3d& _h
 {
 
   typename MeshT::FaceHandle fh = _mesh->face_handle(_fh);
+
+  if ( !fh.is_valid() )
+    return;
 
   //Vertex Selection
   if (selectionType_ & VERTEX){
