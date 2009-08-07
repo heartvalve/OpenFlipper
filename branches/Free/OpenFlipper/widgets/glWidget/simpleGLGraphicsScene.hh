@@ -59,6 +59,7 @@
 
 //== FORWARDDECLARATIONS ======================================================
 class glViewer;
+class CursorPainter;
 
 //== NAMESPACES ===============================================================
 
@@ -88,11 +89,16 @@ protected:
 
   virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* _e);
 
+  // Catch enter and leave events for 3d cursor
+  virtual bool event (QEvent *_event);
+
 private:
 
   glViewer *view_;
 
   bool initialized_;
+
+  CursorPainter *cursorPainter_;
 };
 
 #endif

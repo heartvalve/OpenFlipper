@@ -104,7 +104,6 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
                          unsigned int&               _targetIdx,
                          ACG::Vec3d*                 _hitPointPtr )
 {
-
   GLint         w = glWidth(),
                 h = glHeight(),
                 l = scenePos().x(),
@@ -133,6 +132,7 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   glMatrixMode(GL_MODELVIEW);
   glLoadMatrixd(modelview.get_raw_data());
   glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   properties_.glState().pick_init (true);

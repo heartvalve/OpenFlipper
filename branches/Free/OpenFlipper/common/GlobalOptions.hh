@@ -487,6 +487,14 @@ bool dataDir(QString _dir);
   DLLEXPORT
   std::vector<float> anaglyphRightEyeColorMatrix( );
 
+  /// Enables/Disables mouse cursor depth picking during stereo mode
+  DLLEXPORT
+  void stereoMousePick( bool _stereoPick );
+
+  /// mouse cursor depth picking during stereo mode
+  DLLEXPORT
+  bool stereoMousePick( );
+
   /// Store synchronization setting
   DLLEXPORT
   void synchronization( bool _synchronization );
@@ -590,6 +598,14 @@ bool dataDir(QString _dir);
   /// Set the flag if a grid should be drawn in every viewer
   DLLEXPORT
   void gridVisible(bool _visible);
+
+  /// Store Gl based cursor painting
+  DLLEXPORT
+  void glMouse( bool _glMouse );
+
+  /// Should the mouse cursor be painted with gl
+  DLLEXPORT
+  bool glMouse( );
 
 /** @} */
 

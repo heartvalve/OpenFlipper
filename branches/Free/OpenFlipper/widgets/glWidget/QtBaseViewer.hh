@@ -108,6 +108,7 @@ namespace ACG {
 class QGraphicsScene;
 class QtGLViewerLayout;
 class QtShiftPopupMenu;
+class CursorPainter;
 
 
 //== CLASS DEFINITION =========================================================
@@ -298,6 +299,12 @@ public:
 
   /// rotate the scene and update modelview matrix
   void rotate(const ACG::Vec3d& axis, double angle, const ACG::Vec3d& _center);
+
+  /// sets the current cursor painter
+  void setCursorPainter (CursorPainter *_cursorPainter);
+
+  /// will be called from CursorPainter to inform the viewer that the cursor position changed
+  void updateCursorPosition (QPointF _scenePos);
 
 //---------------------------------------------------------------- public slots
 public slots:
@@ -553,6 +560,15 @@ private:
 
   // Used to calculate the time passed between redraws
   QTime redrawTime_;
+
+  // Used to draw the current cursor in the scene
+  CursorPainter *cursorPainter_;
+
+  // position of the cursor picked into the scenegraph
+  ACG::Vec3d cursorPoint3D_;
+
+  // indicates that we successfully mapped the cursor into the scene
+  bool cursorPositionValid_;
 
   //===========================================================================
   /** @name Wheels

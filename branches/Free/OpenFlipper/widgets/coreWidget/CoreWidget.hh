@@ -344,6 +344,9 @@ public:
     /// Show or hide toolbox
     void showToolbox( bool _state );
 
+    /// Use native or gl painted cursor
+    void setGlCursor ( bool _state );
+
   private:
     OpenFlipper::Options::LoggerState loggerState_;
 
@@ -463,6 +466,9 @@ public:
 
     /// Toolbar showed in pickmode
     QtPickToolbar* pickToolbar_;
+
+    /// Cursor handling
+    CursorPainter* cursorPainter_;
 
 
     // widget showing the scenegraph
