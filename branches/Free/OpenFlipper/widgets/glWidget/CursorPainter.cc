@@ -204,7 +204,7 @@ void CursorPainter::setEnabled(bool _enabled)
 
   if (initialized_)
   {
-    if (_enabled)
+    if (_enabled && hasCursor_)
     {
       foreach (glViewer *v, views_)
         v->setCursor (Qt::BlankCursor);
