@@ -317,12 +317,30 @@ void MovePlugin::slotKeyReleaseEvent (QKeyEvent* _event)
  */
 void MovePlugin::slotPickModeChanged( const std::string& _mode)
 {
-	moveAction_->setChecked(_mode == "Move");
-	moveSelectionAction_->setChecked(_mode == "MoveSelection");
+  moveAction_->setChecked(_mode == "Move");
+  moveSelectionAction_->setChecked(_mode == "MoveSelection");
 
-	hide_ = !(_mode == "Move" || _mode == "MoveSelection");
+  hide_ = !(_mode == "Move" || _mode == "MoveSelection");
 
-	showManipulators();
+  showManipulators();
+
+  if (!hide_)
+  {
+    switch (manMode_)
+    {
+      case QtTranslationManipulatorNode::Resize:
+        PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+        break;
+      case QtTranslationManipulatorNode::LocalRotation:
+        PluginFunctions::setViewObjectMarker (&objectMarker_);
+        break;
+      case QtTranslationManipulatorNode::TranslationRotation:
+        PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+        break;
+    }
+  }
+  else
+    PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
 }
 
 
@@ -402,6 +420,19 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
               o_it != PluginFunctions::objectsEnd(); ++o_it)
            if ( o_it->manipPlaced() )
                 o_it->manipulatorNode()->setMode (_mode);
+      if (!hide_)
+        switch (manMode_)
+        {
+          case QtTranslationManipulatorNode::Resize:
+            PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+            break;
+          case QtTranslationManipulatorNode::LocalRotation:
+            PluginFunctions::setViewObjectMarker (&objectMarker_);
+            break;
+          case QtTranslationManipulatorNode::TranslationRotation:
+            PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+            break;
+        }
     }
     switch (manMode_)
     {
@@ -409,19 +440,16 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
         resizeAction_->setChecked (true);
         ratateManipAction_->setChecked (false);
         ratateTranslateAction_->setChecked (false);
-        PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
         break;
       case QtTranslationManipulatorNode::LocalRotation:
         resizeAction_->setChecked (false);
         ratateManipAction_->setChecked (true);
         ratateTranslateAction_->setChecked (false);
-        PluginFunctions::setViewObjectMarker (&objectMarker_);
         break;
       case QtTranslationManipulatorNode::TranslationRotation:
         resizeAction_->setChecked (false);
         ratateManipAction_->setChecked (false);
         ratateTranslateAction_->setChecked (true);
-        PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
         break;
     }
   }
