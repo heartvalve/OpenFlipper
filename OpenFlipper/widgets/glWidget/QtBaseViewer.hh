@@ -801,6 +801,9 @@ private:
     /// Should the pick cache be updated
     bool updatePickCache_;
 
+    /// Pick target stored in pick cache
+    ACG::SceneGraph::PickTarget pickCacheTarget_;
+
     /// Is pick caching supported
     bool pickCacheSupported_;
 
