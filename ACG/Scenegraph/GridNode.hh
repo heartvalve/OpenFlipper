@@ -97,7 +97,8 @@ public:
   void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
   /// drawing the primitive
   void draw(GLState& _state, unsigned int _drawMode);
-
+  /// don't pick me
+  void pick(GLState& _state, PickTarget _target);
 public:
 
   /// GridSize
