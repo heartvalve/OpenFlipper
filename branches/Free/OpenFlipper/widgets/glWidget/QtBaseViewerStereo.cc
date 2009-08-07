@@ -92,6 +92,8 @@ glViewer::setStereoMode(bool _b)
     glDrawBuffer(GL_BACK);
   }
 
+  updateProjectionMatrix ();
+
   updateGL();
 }
 

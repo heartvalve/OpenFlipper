@@ -94,6 +94,7 @@ class QSplitter;
 class QTimer;
 class QImage;
 class QSocketNotifier;
+class QGLFramebufferObject;
 
 
 //== NAMESPACES ===============================================================
@@ -784,6 +785,24 @@ private:
                  unsigned int& _nodeIdx,
                  unsigned int& _targetIdx,
                  ACG::Vec3d*   _hitPointPtr=0 );
+
+    /// pick from cache
+    int pickFromCache( ACG::SceneGraph::PickTarget _pickTarget,
+                       const QPoint& _mousePos,
+                       unsigned int& _nodeIdx,
+                       unsigned int& _targetIdx,
+                       ACG::Vec3d*   _hitPointPtr=0 );
+
+  private:
+
+    /// Framebuffer object that holds the pick cache
+    QGLFramebufferObject *pickCache_;
+
+    /// Should the pick cache be updated
+    bool updatePickCache_;
+
+    /// Is pick caching supported
+    bool pickCacheSupported_;
 
   /** @} */
 

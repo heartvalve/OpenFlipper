@@ -142,6 +142,9 @@ glViewer::glViewer( QGraphicsScene* _scene,
   glWidget_(_glWidget),
   cursorPainter_(0),
   cursorPositionValid_(false),
+  pickCache_(0),
+  updatePickCache_(true),
+  pickCacheSupported_(true),
   clickEvent_(QEvent::MouseButtonPress, QPoint (), Qt::NoButton, Qt::NoButton, Qt::NoModifier),
   properties_(_properties),
   glstate_(0),
@@ -339,30 +342,24 @@ void glViewer::updateProjectionMatrix()
 
   glstate_->reset_projection();
 
-  switch (projectionMode_)
+  // In scereo mode we have to use a perspective matrix
+  if (stereo_ || projectionMode_ == PERSPECTIVE_PROJECTION)
   {
-    case ORTHOGRAPHIC_PROJECTION:
-    {
-      double aspect;
+    glstate_->perspective(fovy_, (GLdouble) glWidth() / (GLdouble) glHeight(),
+                          near_, far_);
+  }
+  else
+  {
+    double aspect;
 
-      if (isVisible())
-        aspect = (double) glWidth() / (double) glHeight();
-      else
-	     aspect = 1.0;
+    if (isVisible())
+      aspect = (double) glWidth() / (double) glHeight();
+    else
+           aspect = 1.0;
 
-      glstate_->ortho( -orthoWidth_, orthoWidth_,
-		                 -orthoWidth_/aspect, orthoWidth_/aspect,
-		                 near_, far_ );
-      break;
-    }
-
-    case PERSPECTIVE_PROJECTION:
-    {
-      glstate_->perspective(fovy_,
-			                   (GLdouble) glWidth() / (GLdouble) glHeight(),
-			                   near_, far_);
-      break;
-    }
+    glstate_->ortho( -orthoWidth_, orthoWidth_,
+                     -orthoWidth_/aspect, orthoWidth_/aspect,
+                     near_, far_ );
   }
 }
 
@@ -452,6 +449,7 @@ void glViewer::updateGL()
 {
   if (!properties_.updateLocked() && isVisible() )
   {
+    updatePickCache_ = true;
     update();
 
     emit viewUpdated();
@@ -1905,26 +1903,19 @@ void glViewer::viewWheelEvent( QWheelEvent* _event)
   if (_event->modifiers() == Qt::ShiftModifier)
     factor = properties_.wheelZoomFactorShift();
 
-  switch (projectionMode())
+  if (projectionMode() == PERSPECTIVE_PROJECTION || stereo_)
   {
-    case PERSPECTIVE_PROJECTION:
-    {
-      double d = -(double)_event->delta() / 120.0 * 0.2 * factor * trackball_radius_/3;
-      translate( ACG::Vec3d(0.0, 0.0, d) );
-      updateGL();
-      break;
-    }
-
-    case ORTHOGRAPHIC_PROJECTION:
-    {
-      double d = (double)_event->delta() / 120.0 * 0.2 * factor * orthoWidth_;
-      orthoWidth_ += d;
-      updateProjectionMatrix();
-      updateGL();
-      break;
-    }
+    double d = -(double)_event->delta() / 120.0 * 0.2 * factor * trackball_radius_/3;
+    translate( ACG::Vec3d(0.0, 0.0, d) );
+    updateGL();
   }
-
+  else
+  {
+    double d = (double)_event->delta() / 120.0 * 0.2 * factor * orthoWidth_;
+    orthoWidth_ += d;
+    updateProjectionMatrix();
+    updateGL();
+  }
 
 }
 
