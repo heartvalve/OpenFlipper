@@ -305,7 +305,5 @@ idList SelectionPlugin::getEdgeSelection( int objectId )
 }
 
   
-  
-  
 
 

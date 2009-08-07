@@ -373,4 +373,39 @@ bool SelectionPlugin::deleteSelection(MeshT* _mesh) {
   return changed;
 }
 
+//-----------------------------------------------------------------------------
+
+/** \brief Colorize a selection
+ *
+ * @param _mesh a mesh
+ * @param _type selection type
+ * @param _red rgb color
+ * @param _green rgb color
+ * @param _blue rgb color
+ */
+template< typename MeshT >
+void SelectionPlugin::colorizeSelection(MeshT* _mesh, SelectionPrimitive _type, int _red, int _green, int _blue) {
+
+  typename MeshT::Color color;
+  color[0] = _red;
+  color[1] = _green;
+  color[2] = _blue;
+
+  if (_type & VERTEX){
+    typename MeshT::VertexIter v_it, v_end=_mesh->vertices_end();
+
+    for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
+      if ( _mesh->status(v_it).selected() )
+        _mesh->set_color(v_it, color);
+  }
+
+  if (_type & FACE){
+    typename MeshT::FaceIter f_it, f_end( _mesh->faces_end() );
+
+    for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
+      if ( _mesh->status(f_it).selected() )
+        _mesh->set_color(f_it, color);
+  }
+}
+
 

@@ -155,11 +155,10 @@ void SelectionPlugin::paintSphereSelection(QMouseEvent* _event) {
          /// Hide sphere, otherwise it might get picked
          sphere_node_->hide();
 
-         if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point)) {
+         if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(),node_idx, target_idx, &hit_point)) {
                BaseObjectData* object;
 
                if ( PluginFunctions::getPickedObject(node_idx, object) ) {
-
                   sphere_node_->show();
                   sphere_node_->set_position((ACG::Vec3f)hit_point);
                   sphere_node_->set_size(sphere_radius_);

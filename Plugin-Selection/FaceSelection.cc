@@ -280,7 +280,33 @@ idList SelectionPlugin::getFaceSelection( int objectId )
   }
   
 
-}  
+}
+
+//=========================================================
+
+/// colorize the face selection
+void SelectionPlugin::colorizeFaceSelection(int objectId, int r, int g, int b )
+{
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(objectId,object) ) {
+    emit log(LOGERR,"colorizeFaceSelection : unable to get object" );
+    return;
+  }
+  
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
+      colorizeSelection(PluginFunctions::triMesh(object), FACE, r, g, b);
+  else if ( object->dataType() == DATA_POLY_MESH )
+      colorizeSelection(PluginFunctions::polyMesh(object), FACE, r, g, b);
+  else {
+      emit log(LOGERR,"colorizeFaceSelection : Unsupported object Type" );
+      return;
+  }
+  
+  object->update();
+  emit scriptInfo( "colorizeFaceSelection( ObjectId, "
+                  + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + " )" );
+
+}
   
 
 

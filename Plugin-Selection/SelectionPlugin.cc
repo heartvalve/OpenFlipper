@@ -183,6 +183,9 @@ void SelectionPlugin::pluginsInitialized() {
   lastAction->setToolTip(tr("Select the boundary of the object"));
   lastAction->setStatusTip( lastAction->toolTip() );
 
+  lastAction = contextMenu_->addAction( "Colorize" );
+  lastAction->setToolTip("Change the color of selected elements.");
+  lastAction->setStatusTip( lastAction->toolTip() );
 
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
@@ -373,6 +376,8 @@ bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
 
   connect( tool_->deleteSelection,  SIGNAL(clicked()), this,SLOT(slotDeleteSelection()) );
 
+  connect( tool_->colorizeSelection,SIGNAL(clicked()), this,SLOT(slotColorizeSelection()) );
+
   connect( tool_->loadSelection, SIGNAL(clicked()), this,SLOT(slotLoadSelection()) );
   connect( tool_->saveSelection, SIGNAL(clicked()), this,SLOT(slotSaveSelection()) );
 
@@ -556,6 +561,7 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
     if ( objectAction_->isChecked() ){
       type = type | OBJECT;
 
+    if ( PluginFunctions::actionMode() == Viewer::ExamineMode )
       toolBarActionClicked( toggleAction_ ); //automatically switch to toggle
 
     }if ( vertexAction_->isChecked() )
@@ -576,6 +582,7 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
     connectedAction_->setEnabled( !objectAction_->isChecked() );
 
   }else{
+
     //first check if a selection type was set
     if (selectionType_ == 0){
       emit log(LOGERR,tr("Choose at least one selection type first."));

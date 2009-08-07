@@ -184,6 +184,26 @@ void SelectionPlugin::slotGrowSelection() {
 
 //-----------------------------------------------------------------------------
 
+/** \brief Colorize the selection of each (target) object
+ * 
+ */
+void SelectionPlugin::slotColorizeSelection() {
+  PluginFunctions::IteratorRestriction restriction;
+  if ( !tool_->restrictOnTargets->isChecked() )
+    restriction = PluginFunctions::ALL_OBJECTS;
+  else 
+    restriction = PluginFunctions::TARGET_OBJECTS;
+  
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ; 
+        o_it != PluginFunctions::objectsEnd(); ++o_it)
+    if ( o_it->visible() )
+      colorizeSelection( o_it->id() );
+  
+  emit updateView();
+}
+
+//-----------------------------------------------------------------------------
+
 /** \brief load a selection from ini file
   * 
   */

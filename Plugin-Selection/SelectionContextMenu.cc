@@ -43,6 +43,7 @@
 #include "SelectionPlugin.hh"
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <QColorDialog>
 
 //***********************************************************************************
 
@@ -70,6 +71,8 @@ void SelectionPlugin::selectionContextMenu(QAction* _action) {
     growSelection( objectId );          
   else if ( _action->text() == tr("Boundary"))
     selectBoundary( objectId );
+  else if ( _action->text() == "Colorize")
+    colorizeSelection( objectId );
 
   emit updatedObject(objectId);
 }
@@ -156,4 +159,25 @@ void SelectionPlugin::selectBoundary( int objectID ){
 
   if (selectionType_ & FACE)
     selectBoundaryFaces( objectID );
+}
+
+//***********************************************************************************
+
+void SelectionPlugin::colorizeSelection( int objectID ){
+
+  if (selectionType_ & EDGE){
+    emit log(LOGERR, "Edge coloring not supported.");
+    return;
+  }
+
+  QColor color = QColorDialog::getColor();
+
+  if ( color.isValid() ){
+
+    if (selectionType_ & VERTEX)
+      colorizeVertexSelection( objectID, color.red(), color.green(), color.blue() );
+
+    if (selectionType_ & FACE)
+      colorizeFaceSelection( objectID, color.red(), color.green(), color.blue() );
+  }
 }

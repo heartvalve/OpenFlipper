@@ -232,6 +232,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     template< typename MeshT >
     bool deleteSelection(MeshT* _mesh);
 
+    /// Colorize a selection
+    template< typename MeshT >
+    void colorizeSelection(MeshT* _mesh, SelectionPrimitive _type, int _red, int _green, int _blue);
+
     /// when SHIFT key is pressed do source-selection instead of target selection in object-mode
     bool sourceSelection_;
 
@@ -349,6 +353,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Convert selection types (modeling area, handle region or feature)
     void slotConvertSelectionType();
 
+    /// Colorize given selection
+    void slotColorizeSelection();
+
     //==========================================
 
     /// clear all vertex selections of every object
@@ -401,6 +408,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     /// delete vertices and faces that are currently selected
     void deleteSelection( int objectId );
+
+    /// colorize the vertex selection
+    void colorizeVertexSelection(int objectId, int r, int g, int b );
 
     //==========================================
 
@@ -493,6 +503,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     /// return a list of all selected faces
     idList getFaceSelection( int objectId );
+
+    /// colorize the face selection
+    void colorizeFaceSelection(int objectId, int r, int g, int b );
 
     /// save Selections into File
     void saveSelections();
@@ -653,6 +666,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     /// select the boundary of the giben object
     void selectBoundary ( int objectId );
+
+    /// choose a color and colorize the selection
+    void colorizeSelection(int objectId );
 
   /** @} */
 

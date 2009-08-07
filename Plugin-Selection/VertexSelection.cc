@@ -385,6 +385,30 @@ void SelectionPlugin::deleteSelection( int objectId )
   emit scriptInfo( "deleteSelection( ObjectId )" );
 }
 
-  
+//=========================================================
 
+/// colorize the vertex selection
+void SelectionPlugin::colorizeVertexSelection(int objectId, int r, int g, int b )
+{
+  BaseObjectData* object;
+  if ( ! PluginFunctions::getObject(objectId,object) ) {
+    emit log(LOGERR,"colorizeVertexSelection : unable to get object" );
+    return;
+  }
+  
+  if ( object->dataType() == DATA_TRIANGLE_MESH )
+      colorizeSelection(PluginFunctions::triMesh(object), VERTEX, r, g, b);
+  else if ( object->dataType() == DATA_POLY_MESH )
+      colorizeSelection(PluginFunctions::polyMesh(object), VERTEX, r, g, b);
+  else {
+      emit log(LOGERR,"colorizeVertexSelection : Unsupported object Type" );
+      return;
+  }
+  
+  object->update();
+  emit scriptInfo( "colorizeVertexSelection( ObjectId, "
+                  + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + " )" );
+
+}
+  
 
