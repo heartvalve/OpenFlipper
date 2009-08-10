@@ -85,12 +85,6 @@
 #define DATA_POLY_MESH typeId("PolyMesh")
 #define DATA_POLY_MESH_CONST_ID 4
 
-/// BSpline objects
-const unsigned int DATA_BSPLINE_CURVE = 8;
-
-/// BSpline Surface objects
-const unsigned int DATA_BSPLINE_SURFACE = 16;
-
 /// Identifier for all available objects
 const unsigned int DATA_ALL           = UINT_MAX;
 
