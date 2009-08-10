@@ -430,6 +430,8 @@ void SelectionPlugin::slotKeyEvent( QKeyEvent* _event ) {
         break;
     case Qt::Key_Delete :
         slotDeleteSelection();
+        return;
+        break;
     case Qt::Key_F8 :
         saveSelections();
     default:
