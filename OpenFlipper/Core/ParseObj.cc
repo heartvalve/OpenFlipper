@@ -230,13 +230,13 @@ void Core::preprocessObjFile(QString _filename)
           if (tmp == "curv")
           {
             nextLine = true;
-            dataType = DATA_BSPLINE_CURVE;
+            dataType = typeId("BSplineCurve");
             typeFound = true;
           }
           else if (tmp == "surf")
           {
             nextLine = true;
-            dataType = DATA_BSPLINE_SURFACE;
+            dataType = typeId("BSplineSurface");
             typeFound = true;
           }
         }
@@ -257,9 +257,9 @@ void Core::preprocessObjFile(QString _filename)
     std::cout << _filename.toStdString() << " is of type DATA_POLY_MESH" << std::endl;
   else if (dataType == DATA_TRIANGLE_MESH)
     std::cout << _filename.toStdString() << " is of type DATA_TRIANGLE_MESH" << std::endl;
-  else if  (dataType == DATA_BSPLINE_CURVE)
+  else if  (dataType == typeId("BSplineCurve"))
     std::cout << _filename.toStdString() << " is of type DATA_BSPLINE_CURVE" << std::endl;
-  else if  (dataType == DATA_BSPLINE_SURFACE)
+  else if  (dataType == typeId("BSplineSurface"))
     std::cout << _filename.toStdString() << " is of type DATA_BSPLINE_SURFACE" << std::endl;
   else
     std::cout << "no data type found " << std::endl;
