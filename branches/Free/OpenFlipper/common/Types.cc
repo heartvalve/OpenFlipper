@@ -132,14 +132,6 @@ void initialize() {
     typeToTypeInfo[DATA_POLY_MESH_CONST_ID] = types.size();
     types.push_back( TypeInfo(DATA_POLY_MESH_CONST_ID       ,"PolyMesh"       ,"PolyType.png", QCoreApplication::translate("Types","Poly Mesh")) );
 
-    stringToTypeInfo["BSplineCurve"]   = types.size();
-    typeToTypeInfo[DATA_BSPLINE_CURVE] = types.size();
-    types.push_back( TypeInfo(DATA_BSPLINE_CURVE   ,"BSplineCurve"   ,"BSplineCurveType.png" , QCoreApplication::translate("Types","B-Spline Curve")) );
-
-    stringToTypeInfo["BSplineSurface"]   = types.size();
-    typeToTypeInfo[DATA_BSPLINE_SURFACE] = types.size();
-    types.push_back( TypeInfo(DATA_BSPLINE_SURFACE ,"BSplineSurface" ,"Unknown.png", QCoreApplication::translate("Types","B-Spline Surface")) );
-
     stringToTypeInfo["All"]  = types.size();
     typeToTypeInfo[DATA_ALL] = types.size();
     types.push_back( TypeInfo(DATA_ALL             ,"All"            ,"Unknown.png", QCoreApplication::translate("Types","All")) );
@@ -148,8 +140,6 @@ void initialize() {
     typeToString[DATA_GROUP] = "Group";
     typeToString[DATA_TRIANGLE_MESH_CONST_ID] = "TriangleMesh";
     typeToString[DATA_POLY_MESH_CONST_ID] = "PolyMesh";
-    typeToString[DATA_BSPLINE_CURVE] = "BSplineCurve";
-    typeToString[DATA_BSPLINE_SURFACE] = "BSplineSurface";
     typeToString[DATA_ALL] = "All";
 
     initialized_ = true;
