@@ -240,7 +240,7 @@ function (_build_openflipper_plugin plugin)
     # append compiler and linker flags from plugin dependencies
     set_target_properties (
       Plugin-${plugin} PROPERTIES
-      COMPILE_FLAGS ""
+      COMPILE_FLAGS "${${_PLUGIN}_CFLAGSADD}"
       LINK_FLAGS "${${_PLUGIN}_LDFLAGSADD} ${${_PLUGIN}_DEPS_LINKER_FLAGS}"
     )
     
