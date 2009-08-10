@@ -57,6 +57,8 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include "OpenFlipper/INIFile/INIFile.hh"
+#include <OpenFlipper/common/Types.hh>
+
 
 #include <QFileDialog>
 
@@ -192,7 +194,7 @@ void SelectionPlugin::pluginsInitialized() {
 #ifdef ENABLE_POLYLINE_SUPPORT
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_LINE     , CONTEXTOBJECTMENU );
 #endif
-  emit addContextMenuItem(contextMenu_->menuAction() , DATA_BSPLINE_CURVE , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(contextMenu_->menuAction() , typeId("BSplineCurve") , CONTEXTOBJECTMENU );
 
   connect( contextMenu_ , SIGNAL( triggered(QAction*) ),
            this,          SLOT(selectionContextMenu(QAction*)) );
