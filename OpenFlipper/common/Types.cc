@@ -65,7 +65,7 @@
 /** This field defines the start id for custom datatypes. It starts high to avoid conflicts with previously
  * hardcoded versions.
  */
-static int nextTypeId_ = 128;
+static int nextTypeId_ = 8;
 
 /// Variable used to automatically initialize the maps
 static bool initialized_ = false;
