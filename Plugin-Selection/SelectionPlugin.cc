@@ -434,6 +434,8 @@ void SelectionPlugin::slotKeyEvent( QKeyEvent* _event ) {
         break;
     case Qt::Key_F8 :
         saveSelections();
+        return;
+        break;
     default:
     break;
   }
