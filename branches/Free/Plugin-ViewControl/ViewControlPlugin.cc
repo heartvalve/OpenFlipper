@@ -69,9 +69,9 @@ void ViewControlPlugin::pluginsInitialized() {
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
   viewControlMenu_->setIcon(icon);
 
-  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH     , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH         , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_BSPLINE_SURFACE   , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH      , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH          , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineSurface"), CONTEXTOBJECTMENU );
 
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 
