@@ -98,7 +98,7 @@ public:
   enum Side
   {
     FrontSide = 0,
-    BackSide  = 1,
+    BackSide  = 1
   };
 
   /// Default constructor. Applies all properties.
