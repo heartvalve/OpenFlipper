@@ -161,7 +161,7 @@ namespace Viewer {
       void wheelZoomFactor(double _factor) { wZoomFactor_ = _factor; };
 
       /// Set zoom factor when using mousewheel and pressing shift
-      void wheelZoomFactorShift(double _factor) { wZoomFactorShift_ = _factor; }; ;
+      void wheelZoomFactorShift(double _factor) { wZoomFactorShift_ = _factor; }; 
 
     private:
       double wZoomFactor_;
