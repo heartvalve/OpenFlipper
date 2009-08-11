@@ -112,9 +112,14 @@ public:
   */
   void pca(std::vector< VectorT >& _points , VectorT& _first , VectorT& _second , VectorT& _third);
 
+
+  std::vector<double>& getLastEigenValues();
+
   bool SymRightEigenproblem( Matrix &_mat_A, Matrix & _mat_VR,
                              std::vector< double > & _vec_EV );
 private:
+
+  std::vector<double> lastEigenValues_;
 
 };
 
