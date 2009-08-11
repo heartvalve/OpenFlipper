@@ -222,9 +222,22 @@ PCA< VectorT >::pca(std::vector< VectorT >& _points , VectorT& _first , VectorT&
   _first  = _first.normalize();
   _second = _second.normalize();
   _third  = _first % _second; 
+
+  //remember the eigenvalues
+  lastEigenValues_.clear();
+  lastEigenValues_.push_back( ew[maximum] );
+  lastEigenValues_.push_back( ew[middle] );
+  lastEigenValues_.push_back( ew[minimum] );
 }
 //-----------------------------------------------------------------------------
 
+template < typename VectorT >
+inline
+std::vector<double>&
+PCA< VectorT >::getLastEigenValues()
+{
+  return lastEigenValues_;
+}
 
 
 //=============================================================================
