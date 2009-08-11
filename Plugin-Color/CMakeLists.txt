@@ -1,2 +1,2 @@
 include (plugin)
-openflipper_plugin (LICENSEMANAGER TRANSLATION_LANGUAGES de_DE )
+openflipper_plugin ( TRANSLATION_LANGUAGES de_DE )
