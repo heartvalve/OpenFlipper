@@ -75,7 +75,7 @@ public:
     NONE     = 1,
     XY_PLANE = 2,
     YZ_PLANE = 3,
-    XZ_PLANE = 4,
+    XZ_PLANE = 4
   };
 
   SliceNode( BaseNode    * _parent = 0,
