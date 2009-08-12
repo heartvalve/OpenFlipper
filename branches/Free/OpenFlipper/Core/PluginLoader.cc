@@ -181,7 +181,7 @@ void Core::loadPlugins()
   QStringList otherPlugins;
   //plugin Liste sortieren
   for (int i=0; i < pluginlist.size(); i++)
-    if (pluginlist[i].contains("File") )
+    if (pluginlist[i].contains("Plugin-File") )
       filePlugins.push_back(pluginlist[i]);
     else if (pluginlist[i].contains("TextureControl"))
       textureControl.push_back(pluginlist[i]);
