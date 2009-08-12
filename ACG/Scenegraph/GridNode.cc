@@ -161,10 +161,10 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
     int rest = 0;
 
     for (int i=0; i < factor; i++)
-      rest -= floor( pow(2, i));
+      rest -= floor( pow(double(2.0), i));
 
-    vertical   = vertical   * floor( pow(2,factor)) + rest;
-    horizontal = horizontal * floor( pow(2,factor)) + rest;
+    vertical   = vertical   * floor( pow(double(2.0),factor)) + rest;
+    horizontal = horizontal * floor( pow(double(2.0),factor)) + rest;
 
     vertical   = std::min(vertical, maxRefinement_ );
     horizontal = std::min(vertical, maxRefinement_ );
@@ -203,9 +203,9 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
           //then draw 9 darker lines in between
           glColor3fv( &midLineColor_[0] );
   
-          double small = big + (next - big) / 10.0 * j;
-          glVertex3f( small, 0.0, 0.0);
-          glVertex3f( small, 0.0, gridSize_);
+          double smallPos = big + (next - big) / 10.0 * j;
+          glVertex3f( smallPos, 0.0, 0.0);
+          glVertex3f( smallPos, 0.0, gridSize_);
         }
     }
 
@@ -227,9 +227,9 @@ GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
           //then draw 9 darker lines in between
           glColor3fv( &midLineColor_[0] );
   
-          double small = big + (next - big) / 10.0 * j;
-          glVertex3f(   0.0, 0.0, small);
-          glVertex3f(gridSize_, 0.0, small);
+          double smallPos = big + (next - big) / 10.0 * j;
+          glVertex3f(   0.0, 0.0, smallPos);
+          glVertex3f(gridSize_, 0.0, smallPos);
         }   
     }
   glEnd();
