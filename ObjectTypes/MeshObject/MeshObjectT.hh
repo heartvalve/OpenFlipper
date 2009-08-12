@@ -203,7 +203,7 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     bool areasVisible();
 
     /// Get the Scenegraph Mesh Node
-    ACG::SceneGraph::TriStripNodeT<MeshT>* meshNode();;
+    ACG::SceneGraph::TriStripNodeT<MeshT>* meshNode();
 
     /// Get the BoundingBox of this object
     void boundingBox( ACG::Vec3f& _bbMin , typename ACG::Vec3f& _bbMax );
