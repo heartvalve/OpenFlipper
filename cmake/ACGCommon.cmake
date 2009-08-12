@@ -502,11 +502,14 @@ function (acg_add_translations _target _languages _sources)
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Translations )
   endif ()
 
-  add_custom_command (TARGET translations_target_${_target} POST_BUILD
-                      COMMAND ${CMAKE_COMMAND} -E
-                      copy_if_different
-                        ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/*.qm
-                        ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Translations/ )
+  foreach (_qm ${_qm_files})
+    get_filename_component (_qm_name "${_qm}" NAME)
+    add_custom_command (TARGET translations_target_${_target} POST_BUILD
+                        COMMAND ${CMAKE_COMMAND} -E
+                        copy_if_different
+                          ${_qm}
+                          ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Translations/${_qm_name})
+  endforeach ()
 
   if (NOT ACG_PROJECT_MACOS_BUNDLE OR NOT APPLE)
     install (FILES ${_qm_files} DESTINATION "${CMAKE_INSTALL_PREFIX}/Translations")
