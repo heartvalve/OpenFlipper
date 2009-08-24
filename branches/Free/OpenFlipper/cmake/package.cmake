@@ -113,6 +113,10 @@ if (WIN32)
       DESTINATION ${ACG_PROJECT_BINDIR}
       CONFIGURATIONS Release
     )
+    install (FILES "${CMAKE_SOURCE_DIR}/WIN/DLLs/Redistributables/Visual Studio 2008/vcredist_x86.exe"
+      DESTINATION ${ACG_PROJECT_BINDIR}
+    )
+    set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q:a'")
   endif ()
 elseif (APPLE)
   # apple Drag'n'Drop installer package
