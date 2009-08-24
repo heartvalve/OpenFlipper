@@ -96,7 +96,7 @@ bool DecimaterPlugin::initializeToolbox(QWidget*& _widget)
  */
 void DecimaterPlugin::pluginsInitialized() {
 
-  emit setSlotDescription("decimate(int,Object)",tr("Decimate a given object"),
+  emit setSlotDescription("decimate(int,QVariantMap)",tr("Decimate a given object"),
                           QString(tr("objectId,constraints")).split(","),
                           QString(tr("ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,vertices)")).split(";"));
 }
@@ -179,6 +179,7 @@ void DecimaterPlugin::slot_decimate()
     object->mesh()->update_normals();
     object->update();
 
+    emit updatedObject( o_it->id() );
   }
 
   emit updateView();
@@ -286,11 +287,14 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
     object->mesh()->update_normals();
     object->update();
 
+    emit updatedObject( baseObjectData->id() );
+
   } else {
     emit log(LOGERR,tr("Unsupported object type for decimater"));
     return;
   }
 
+  emit updateView();
 }
 
 //-----------------------------------------------------------------------------
