@@ -512,6 +512,6 @@ function (acg_add_translations _target _languages _sources)
   endforeach ()
 
   if (NOT ACG_PROJECT_MACOS_BUNDLE OR NOT APPLE)
-    install (FILES ${_qm_files} DESTINATION "${CMAKE_INSTALL_PREFIX}/Translations")
+    install (FILES ${_qm_files} DESTINATION "${ACG_PROJECT_DATADIR}/Translations")
   endif ()
 endfunction ()
