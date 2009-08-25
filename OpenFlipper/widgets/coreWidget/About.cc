@@ -123,6 +123,12 @@ void CoreWidget::showAboutWidget( ) {
     aboutWidget_->OpenFlipperAbout->append(glExtensions);
 
     aboutWidget_->OpenFlipperAbout->moveCursor(QTextCursor::Start);
+    
+    aboutWidget_->OpenFlipperAbout->append("\n");
+    aboutWidget_->OpenFlipperAbout->append(tr("Qt Version Info:"));
+    aboutWidget_->OpenFlipperAbout->append(tr("Currently used Version:\t") + qVersion() );
+    aboutWidget_->OpenFlipperAbout->append(tr("Link time Version:\t\t") + QT_VERSION_STR );
+    
 
 
   }
