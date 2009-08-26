@@ -60,7 +60,7 @@ class PrintPlugin : public QObject, BaseInterface, MenuInterface, KeyInterface
    Q_INTERFACES(KeyInterface)
 
    signals:
-     void addMenubarAction(QAction* _action, MenuActionType _type );
+     void addMenubarAction(QAction* _action, QString _type );
 
   private slots:
     void pluginsInitialized();
