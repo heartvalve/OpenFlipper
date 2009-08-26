@@ -12,11 +12,11 @@ IF (ACG_INCLUDE_DIRS)
   SET(ACG_FIND_QUIETLY TRUE)
 ENDIF (ACG_INCLUDE_DIRS)
 
-FIND_PATH(ACG_INCLUDE_DIR QtWidgets/QtBaseViewer.hh
+FIND_PATH(ACG_INCLUDE_DIR ACG/QtWidgets/QtBaseViewer.hh
 	  PATHS /usr/local/include 
                 /usr/include 
-                "${CMAKE_SOURCE_DIR}/ACG"
-                "${CMAKE_SOURCE_DIR}/../ACG"
+                "${CMAKE_SOURCE_DIR}/"
+                "${CMAKE_SOURCE_DIR}/../"
                 )
 
 IF (ACG_INCLUDE_DIR )
