@@ -396,34 +396,50 @@ public:
 
   //--- picking ---------------------------------------------------------------
 
-  /// initialize name/color picking stack
+  /** Follows the OpenGL selection buffer implementation (OpenGL Red Book Chapter 13)
+    * http://www.glprogramming.com/red/chapter13.html
+    *
+    * Color picking is another method to realize picking. This functions replace the original OpenGL
+    * functions, to allow the handling of selection buffer picking and color based picking with
+    * the same code.
+    */
+
+  /// initialize name/color picking stack (like glInitNames())
   void pick_init (bool _color);
 
   /// sets the maximum used name index at current stack position (only used in color picking)
+  /// A restriction inside the color picking implementation forces to set the maximum used 
+  /// number for the following pick_set_name calls between the two pick_push_name/pick_pop_name calls.
   bool pick_set_maximum (unsigned int _idx);
 
-  /// sets the current name/color
+  /// sets the current name/color (like glLoadName(_idx))
   void pick_set_name (unsigned int _idx);
 
-  /// get the current color for index
+  /// returns the color that will be used for index _idx during color picking if this index will be set
+  /// with pick_set_name. This can be used to generate color arrays instead of using direct gl calls
+  /// for each primitive
   Vec4uc pick_get_name_color (unsigned int _idx);
 
-  /// creates a new name the stack
+  /// creates a new name the stack (like glPushName())
   void pick_push_name (unsigned int _idx);
 
-  /// pops the current name from the stack
+  /// pops the current name from the stack (like glPopName())
   void pick_pop_name ();
 
   /// converts the given color to index values on the stack (only used in color picking)
+  /// This can be compared to the results of the selection buffer results
   std::vector<unsigned int> pick_color_to_stack (Vec4uc _rgba) const;
 
-  /// returns maximal available index count (only used in color picking)
+  /// returns the number of still available colors during color picking
   unsigned int pick_free_indicies () const;
 
   /// Did an error occur during picking (only used in color picking)
+  /// Mostly to small color depth or wrong handling of pick_set_maximum
   bool pick_error () const;
 
   /// returns the current color picking index (can be used for caching)
+  /// Is this value equal to a value used in a previous picking, then the same colors will be used.
+  /// In this case a previously calculated color array/display list can be reused.
   unsigned int pick_current_index () const;
 
   /// Is color picking active?
