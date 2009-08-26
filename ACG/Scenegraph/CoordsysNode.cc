@@ -245,10 +245,12 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     _state.push_modelview_matrix();
     _state.reset_modelview();
 
+    // get our desired coordsys position in scene coordinates
     pos3D = _state.unproject (Vec3d (posx, posy, 0.5));
     _state.pop_modelview_matrix();
 
     // reset scene translation
+    // we want only the scene rotation to rotate the coordsys
     GLMatrixd modelview = _state.modelview();
 
     modelview(0,3) = 0.0;
@@ -258,16 +260,17 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     _state.set_modelview (modelview);
     _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
+
+    // clear the depth buffer behind the coordsys
     glDepthRange (1.0, 1.0);
     glDepthFunc (GL_ALWAYS);
 
-    // Koordinatensystem zeichnen
     drawCoordsys(_state);
 
     glDepthRange (0.0, 1.0);
     glDepthFunc (GL_LESS);
 
-    // Koordinatensystem zeichnen
+    // draw coordsys
     drawCoordsys(_state);
 
     // set depth buffer to 0 so tah nothing can paint over cordsys
@@ -394,7 +397,9 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       // Projection reload
       _state.pop_projection_matrix();
 
-      // the only way to get the gl pick matrix again
+      // The selection buffer picking method might have set a 
+      // pick matrix that has been multiplied with the projection matrix.
+      // This is the only way to get the gl pick matrix again
       glMatrixMode(GL_PROJECTION);
 
       glPushMatrix ();
@@ -434,6 +439,9 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
     } else if (mode_ == POSITION) { /* mode_ == POSITION */
 
+      // The selection buffer picking method might have set a 
+      // pick matrix that has been multiplied with the projection matrix.
+      // This is the only way to get the gl pick matrix again
       glMatrixMode(GL_PROJECTION);
 
       glPushMatrix ();
@@ -506,6 +514,8 @@ void CoordsysNode::clearPickArea(GLState&  _state, GLMatrixd _pickMatrix, bool _
 
   glMatrixMode(GL_PROJECTION);
   glPushMatrix ();
+  // Use the pick matrix to make selection buffer based picking work
+  // with our own orthogonal projection
   glMultMatrixd(_pickMatrix.get_raw_data());
   glMatrixMode(GL_MODELVIEW);
 
