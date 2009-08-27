@@ -315,8 +315,10 @@ int main(int argc, char **argv)
     // create core ( this also reads the ini files )
     Core * w = new Core( );
 
-    if ( !parseCommandLineOptions(args) )
+    if ( !parseCommandLineOptions(args) ) {
+      delete w;
       return 1;
+    }
 
     QString tLang = OpenFlipper::Options::translation();
 
@@ -354,6 +356,8 @@ int main(int argc, char **argv)
 //           std::cerr << "Loaded " << fileInfo.fileName().toStdString() << std::endl;
     
           app.installTranslator(myAppTranslator);
+        } else {
+  	  delete myAppTranslator;
         }
       }
      }
@@ -381,8 +385,10 @@ int main(int argc, char **argv)
     // create widget ( this also reads the ini files )
     Core * w = new Core( );
 
-    if ( !parseCommandLineOptions(args) )
+    if ( !parseCommandLineOptions(args) ) {
+      delete w;
       return 1;
+    }
 
     // After setting all Options from command line, build the real gui
     w->init();
