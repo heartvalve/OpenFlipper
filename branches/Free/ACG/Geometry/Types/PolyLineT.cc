@@ -271,37 +271,37 @@ insert_point(int _idx, const Point& _p)
 
   // insert available properties
   if( vertex_normals_available() )
-    vnormals_.insert(points_.begin()+_idx, Point(0,0,0));
+    vnormals_.insert(vnormals_.begin()+_idx, Point(0,0,0));
 
   if( vertex_colors_available())
-    vcolors_.insert(points_.begin()+_idx, Point(1,0,1));
+    vcolors_.insert(vcolors_.begin()+_idx, Point(1,0,1));
 
   if( vertex_scalars_available())
-    vscalars_.insert(points_.begin()+_idx, 0.0 );
+    vscalars_.insert(vscalars_.begin()+_idx, 0.0 );
 
   if( vertex_selections_available())
-    vselections_.insert(points_.begin()+_idx, false);
+    vselections_.insert(vselections_.begin()+_idx, false);
 
   if( vertex_vhandles_available())
-    vvhandles_.insert(points_.begin()+_idx, -1);
+    vvhandles_.insert(vvhandles_.begin()+_idx, -1);
 
   if( vertex_ehandles_available())
-    vehandles_.insert(points_.begin()+_idx, -1);
+    vehandles_.insert(vehandles_.begin()+_idx, -1);
 
   if( vertex_fhandles_available())
-    vfhandles_.insert(points_.begin()+_idx, -1);
+    vfhandles_.insert(vfhandles_.begin()+_idx, -1);
 
   if( edge_normals_available())
-    enormals_.insert(points_.begin()+_idx, Point(0,0,0));
+    enormals_.insert(enormals_.begin()+_idx, Point(0,0,0));
 
   if( edge_colors_available())
-    ecolors_.insert(points_.begin()+_idx, Point(1,0,1));
+    ecolors_.insert(ecolors_.begin()+_idx, Point(1,0,1));
 
   if( edge_scalars_available())
-    escalars_.insert(points_.begin()+_idx, 0.0);
+    escalars_.insert(escalars_.begin()+_idx, 0.0);
 
   if( edge_selections_available())
-    eselections_.insert(points_.begin()+_idx, false);
+    eselections_.insert(eselections_.begin()+_idx, false);
 }
 
 
@@ -321,37 +321,37 @@ delete_point(int _idx)
 
   // delete available properties
   if( vertex_normals_available() )
-    vnormals_.erase(points_.begin()+_idx);
+    vnormals_.erase(vnormals_.begin()+_idx);
 
   if( vertex_colors_available())
-    vcolors_.erase(points_.begin()+_idx);
+    vcolors_.erase(vcolors_.begin()+_idx);
 
   if( vertex_scalars_available())
-    vscalars_.erase(points_.begin()+_idx);
+    vscalars_.erase(vscalars_.begin()+_idx);
 
   if( vertex_selections_available())
-    vselections_.erase(points_.begin()+_idx);
+    vselections_.erase(vselections_.begin()+_idx);
 
   if( vertex_vhandles_available())
-    vvhandles_.erase(points_.begin()+_idx);
+    vvhandles_.erase(vvhandles_.begin()+_idx);
 
   if( vertex_ehandles_available())
-    vehandles_.erase(points_.begin()+_idx);
+    vehandles_.erase(vehandles_.begin()+_idx);
 
   if( vertex_fhandles_available())
-    vfhandles_.erase(points_.begin()+_idx);
+    vfhandles_.erase(vfhandles_.begin()+_idx);
 
   if( edge_normals_available())
-    enormals_.erase(points_.begin()+_idx);
+    enormals_.erase(enormals_.begin()+_idx);
 
   if( edge_colors_available())
-    ecolors_.erase(points_.begin()+_idx);
+    ecolors_.erase(ecolors_.begin()+_idx);
 
   if( edge_scalars_available())
-    escalars_.erase(points_.begin()+_idx);
+    escalars_.erase(escalars_.begin()+_idx);
 
   if( edge_selections_available())
-    eselections_.erase(points_.begin()+_idx);
+    eselections_.erase(eselections_.begin()+_idx);
 }
 
 
