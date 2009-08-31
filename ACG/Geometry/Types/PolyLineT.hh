@@ -112,8 +112,16 @@ public:
   // resize current polyline
   void resize( unsigned int _n);
 
+
   // add a point
   void add_point(const Point& _p);
+
+  // insert _p at _idx into polyline
+  void insert_point(int _idx, const Point& _p);
+
+  // delete point at _idx
+  void delete_point(int _idx);
+
 
   // get a point of the polyline
         Point& point(unsigned int _i)       { return points_[_i];}
