@@ -213,7 +213,7 @@ private:
   bool hitSphere(GLState& _state, const Vec2i& _v2);
   bool hitOuterSphere(GLState& _state, const Vec2i& _v2);
 
-  void drawMaipulator (GLState& _state, bool _active);
+  void drawManipulator (GLState& _state, bool _active);
 
   void drawCircle(const float innerRadius, const float outerRadius);
 
@@ -260,6 +260,8 @@ private:
   bool               ignoreTime_;
 
   Vec2i              oldPoint2D_;
+  Vec3d				 draggingOrigin3D_;
+  bool				 dragging_;
 
   GLMatrixd          localTransformation_;
 

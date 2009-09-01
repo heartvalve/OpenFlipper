@@ -73,6 +73,10 @@ namespace SceneGraph {
 
 //== IMPLEMENTATION ==========================================================
 
+// How many pixels should the cursor be away from the dragging center
+// for the translation operation to affect the geometry's position
+#define SNAP_PIXEL_TOLERANCE 30
+
 // Node colors (normal, over, clicked, occluded normal, occluded over, occluded clicked)
 
 const Vec4f colors[4][6] = {
@@ -142,6 +146,7 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
     resize_current_ (0.0),
     mode_ (TranslationRotation),
     ignoreTime_ (false),
+    dragging_(false),
     auto_size_(TranslationManipulatorNode::Never),
     auto_size_length_(1.0)
 {
@@ -396,7 +401,7 @@ bool TranslationManipulatorNode::updateCurrentColors (GLState& _state)
 
 //----------------------------------------------------------------------------
 
-void TranslationManipulatorNode::drawMaipulator (GLState& _state, bool _active)
+void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
 {
   glPushAttrib(GL_ENABLE_BIT );
   glDisable( GL_CULL_FACE );
@@ -694,12 +699,12 @@ TranslationManipulatorNode::draw(GLState& _state, unsigned int /* _drawMode */ )
     glDepthMask(GL_FALSE);
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    drawMaipulator(_state, false);
+    drawManipulator(_state, false);
     glDisable (GL_BLEND);
 
     glDepthFunc(GL_LEQUAL);
     glDepthMask(GL_TRUE);
-    drawMaipulator(_state, true);
+    drawManipulator(_state, true);
 
     // Restore old attributes and modelview
     glPopAttrib();
@@ -754,6 +759,12 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
     {
       for (i = 0; i < NumElements; i++)
         element_[i].clicked_ = false;
+
+      // Start dragging process
+      if(!dragging_) {
+    	  draggingOrigin3D_ = center();
+    	  dragging_ = true;
+      }
 
       // hit origin ?
       if (mode_ != LocalRotation)
@@ -817,6 +828,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       any_top_clicked_    = false;
       outer_ring_clicked_ = false;
       ignoreTime_ = true;
+      dragging_ = false;
       break;
     }
 
@@ -913,22 +925,38 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       // If origin was clicked on
       if(element_[Origin].clicked_) {
 
-        // translate along screen plane ( unproject to get world coords for translation and apply them )
-        Vec3d d = _state.project(center());
-        Vec3d oldvec = _state.unproject(Vec3d(oldPoint2D_[0], (_state.context_height() - oldPoint2D_[1]), d[2]));
-        Vec3d newvec = _state.unproject(Vec3d(newPoint2D[0], (_state.context_height() - newPoint2D[1]), d[2]));
-        Vec3d ntrans = newvec - oldvec;
+    	// translate along screen plane ( unproject to get world coords for translation and apply them )
 
-        if (mode_ != Resize)
-          translate(ntrans);
-        else
-        {
-          double positive = -1;
-          if (newPoint2D[0] - oldPoint2D_[0] + oldPoint2D_[1] - newPoint2D[1] > 0)
-            positive = 1;
-          scale( 1.0 + ntrans.norm() * positive);
-        }
-      }
+		Vec3d d = _state.project(center());
+		Vec3d d_origin = _state.project(draggingOrigin3D_);
+
+		// Snap back to origin position if mouse cursor
+		// is near enough
+		if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE &&
+				abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
+		       && !(_event->modifiers() & Qt::AltModifier)) {
+			newPoint2D = oldPoint2D_;
+			Vec3d backtrans = draggingOrigin3D_ - center();
+			if (mode_ != Resize) {
+				translate(backtrans);
+			}
+		}
+
+		// translate along screen plane ( unproject to get world coords for translation and apply them )
+		Vec3d oldvec = _state.unproject(Vec3d(oldPoint2D_[0], (_state.context_height() - oldPoint2D_[1]), d[2]));
+		Vec3d newvec = _state.unproject(Vec3d(newPoint2D[0], (_state.context_height() - newPoint2D[1]), d[2]));
+		Vec3d ntrans = newvec - oldvec;
+
+		if (mode_ != Resize)
+			translate(ntrans);
+		else
+		{
+			double positive = -1;
+			if (newPoint2D[0] - oldPoint2D_[0] + oldPoint2D_[1] - newPoint2D[1] > 0)
+			positive = 1;
+			scale( 1.0 + ntrans.norm() * positive);
+		}
+	}
 
 
       // x axis clicked apply translation along axis
@@ -943,6 +971,19 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         // vector as translation
 
         Vec3d d = _state.project(center());
+		Vec3d d_origin = _state.project(draggingOrigin3D_);
+
+		// Snap back to origin position if mouse cursor
+		// is near enough
+		if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE &&
+				abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
+		       && !(_event->modifiers() & Qt::AltModifier)) {
+			newPoint2D = oldPoint2D_;
+			Vec3d backtrans = draggingOrigin3D_ - center();
+			if (mode_ != Resize) {
+				translate(backtrans);
+			}
+		}
         Vec3d oldvec = _state.unproject(Vec3d(oldPoint2D_[0], (_state.context_height() - oldPoint2D_[1]), d[2]));
         Vec3d newvec = _state.unproject(Vec3d(newPoint2D[0], (_state.context_height() - newPoint2D[1]), d[2]));
         Vec3d ntrans = newvec - oldvec;
@@ -992,6 +1033,19 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         // vector as translation
 
         Vec3d d = _state.project(center());
+		Vec3d d_origin = _state.project(draggingOrigin3D_);
+
+		// Snap back to origin position if mouse cursor
+		// is near enough
+		if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE &&
+				abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
+		       && !(_event->modifiers() & Qt::AltModifier)) {
+			newPoint2D = oldPoint2D_;
+			Vec3d backtrans = draggingOrigin3D_ - center();
+			if (mode_ != Resize) {
+				translate(backtrans);
+			}
+		}
         Vec3d oldvec = _state.unproject(Vec3d(oldPoint2D_[0], (_state.context_height() - oldPoint2D_[1]), d[2]));
         Vec3d newvec = _state.unproject(Vec3d(newPoint2D[0], (_state.context_height() - newPoint2D[1]), d[2]));
         Vec3d ntrans = newvec - oldvec;
@@ -1036,6 +1090,19 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         // vector as translation
 
         Vec3d d = _state.project(center());
+		Vec3d d_origin = _state.project(draggingOrigin3D_);
+
+		// Snap back to origin position if mouse cursor
+		// is near enough
+		if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE &&
+				abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
+		       && !(_event->modifiers() & Qt::AltModifier)) {
+			newPoint2D = oldPoint2D_;
+			Vec3d backtrans = draggingOrigin3D_ - center();
+			if (mode_ != Resize) {
+				translate(backtrans);
+			}
+		}
         Vec3d oldvec = _state.unproject(Vec3d(oldPoint2D_[0], (_state.context_height() - oldPoint2D_[1]), d[2]));
         Vec3d newvec = _state.unproject(Vec3d(newPoint2D[0], (_state.context_height() - newPoint2D[1]), d[2]));
         Vec3d ntrans = newvec - oldvec;
