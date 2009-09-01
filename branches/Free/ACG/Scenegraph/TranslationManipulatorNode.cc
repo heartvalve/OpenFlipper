@@ -934,7 +934,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 		// is near enough
 		if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE &&
 				abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
-		       && !(_event->modifiers() & Qt::AltModifier)) {
+		       && _event->modifiers() & Qt::AltModifier) {
 			newPoint2D = oldPoint2D_;
 			Vec3d backtrans = draggingOrigin3D_ - center();
 			if (mode_ != Resize) {
@@ -977,7 +977,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 		// is near enough
 		if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE &&
 				abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
-		       && !(_event->modifiers() & Qt::AltModifier)) {
+		       && _event->modifiers() & Qt::AltModifier) {
 			newPoint2D = oldPoint2D_;
 			Vec3d backtrans = draggingOrigin3D_ - center();
 			if (mode_ != Resize) {
@@ -1039,7 +1039,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 		// is near enough
 		if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE &&
 				abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
-		       && !(_event->modifiers() & Qt::AltModifier)) {
+		       && _event->modifiers() & Qt::AltModifier) {
 			newPoint2D = oldPoint2D_;
 			Vec3d backtrans = draggingOrigin3D_ - center();
 			if (mode_ != Resize) {
@@ -1096,7 +1096,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 		// is near enough
 		if (abs(d_origin[0] - newPoint2D[0]) < SNAP_PIXEL_TOLERANCE &&
 				abs(_state.context_height() - d_origin[1] - newPoint2D[1]) < SNAP_PIXEL_TOLERANCE
-		       && !(_event->modifiers() & Qt::AltModifier)) {
+		       && _event->modifiers() & Qt::AltModifier) {
 			newPoint2D = oldPoint2D_;
 			Vec3d backtrans = draggingOrigin3D_ - center();
 			if (mode_ != Resize) {
