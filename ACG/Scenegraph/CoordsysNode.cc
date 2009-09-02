@@ -230,12 +230,17 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
   if ( mode_ == SCREENPOS ) {
 
     int left, bottom, width, height;
+    double aspect = 1.0;
+
     _state.get_viewport(left, bottom, width, height);
+
+    if (width && height)
+      aspect = width / height;
 
     // Projection reset
     _state.push_projection_matrix();
     _state.reset_projection();
-    _state.perspective(45.0, _state.aspect(), 0.8, 20.0);
+    _state.perspective(45.0, aspect, 0.8, 20.0);
 
     float posx = left + width - 30.0 ;
     float posy = bottom + height - 30.0 ;
@@ -376,12 +381,17 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
     if ( mode_ == SCREENPOS ) {
 
       int left, bottom, width, height;
+      double aspect = 1.0;
+
       _state.get_viewport(left, bottom, width, height);
+
+      if (width && height)
+        aspect = width / height;
 
       // Projection reset
       _state.push_projection_matrix();
       _state.reset_projection();
-      _state.perspective(45.0, _state.aspect(), 0.8, 20.0);
+      _state.perspective(45.0, aspect, 0.8, 20.0);
 
       float posx = left + width - 30.0 ;
       float posy = bottom + height - 30.0 ;
