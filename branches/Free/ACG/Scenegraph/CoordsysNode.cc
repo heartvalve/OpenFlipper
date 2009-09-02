@@ -394,26 +394,6 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       pos3D = _state.unproject (Vec3d (posx, posy, 0.5));
       _state.pop_modelview_matrix();
 
-      // Projection reload
-      _state.pop_projection_matrix();
-
-      // The selection buffer picking method might have set a 
-      // pick matrix that has been multiplied with the projection matrix.
-      // This is the only way to get the gl pick matrix again
-      glMatrixMode(GL_PROJECTION);
-
-      glPushMatrix ();
-      glMultMatrixd( _state.inverse_projection().get_raw_data());
-
-      glGetDoublev(GL_PROJECTION_MATRIX, mat);
-
-      GLMatrixd pickMat (mat);
-
-      // add our matrix
-      gluPerspective(45.0, _state.aspect(), 0.8, 20.0);
-
-      glMatrixMode(GL_MODELVIEW);
-
       // reset scene translation
       GLMatrixd modelview = _state.modelview();
 
@@ -424,18 +404,51 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       _state.set_modelview (modelview);
       _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
 
-      // clear depth buffer behind coordsys node
-      clearPickArea(_state, pickMat, true, 1.0);
+      // We don't have access to the pick matrix used during selection buffer picking
+      // so we can't draw our pick area circle in this case
+      if (_state.color_picking ())
+      {
+        // clear depth buffer behind coordsys node
+        clearPickArea(_state, true, 1.0);
 
-      // Koordinatensystem zeichnen
-      drawCoordsysPick(_state);
+        // Koordinatensystem zeichnen
+        drawCoordsysPick(_state);
 
-      // set depth buffer to 0.0 so that nothing can paint above
-      clearPickArea(_state, pickMat, false, 0.0);
+        // set depth buffer to 0.0 so that nothing can paint above
+        clearPickArea(_state, false, 0.0);
+      }
+      else
+      {
+        // clear depth buffer in coordsys region
+        glDepthRange (1.0, 1.0);
+        glDepthFunc (GL_ALWAYS);
 
-      glMatrixMode(GL_PROJECTION);
-      glPopMatrix ();
-      glMatrixMode(GL_MODELVIEW);
+        // Koordinatensystem zeichnen
+        drawCoordsys(_state);
+
+        // draw coordsys in normal mode
+        glDepthRange (0.0, 1.0);
+        glDepthFunc (GL_LESS);
+
+        // Koordinatensystem zeichnen
+        drawCoordsys(_state);
+
+        // set depth buffer to 0 so tah nothing can paint over cordsys
+        glDepthRange (0.0, 0.0);
+        glDepthFunc (GL_ALWAYS);
+        glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+
+        // Koordinatensystem zeichnen
+        drawCoordsys(_state);
+
+        // reset to default
+        glDepthRange (0.0, 1.0);
+        glDepthFunc (GL_LESS);
+        glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+      }
+
+      // Projection reload
+      _state.pop_projection_matrix();
 
     } else if (mode_ == POSITION) { /* mode_ == POSITION */
 
@@ -461,14 +474,48 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       modelview(1,3) = 0.0;
       modelview(2,3) = 0.0;
 
-      // clear depth buffer behind coordsys node
-      clearPickArea(_state, pickMat, true, 1.0);
+      // We don't have access to the pick matrix used during selection buffer picking
+      // so we can't draw our pick area circle in this case
+      if (_state.color_picking ())
+      {
+        // clear depth buffer behind coordsys node
+        clearPickArea(_state, true, 1.0);
 
-      // Koordinatensystem zeichnen
-      drawCoordsysPick(_state);
+        // Koordinatensystem zeichnen
+        drawCoordsysPick(_state);
 
-      // set depth buffer to 0.0 so that nothing can paint above
-      clearPickArea(_state, pickMat, false, 0.0);
+        // set depth buffer to 0.0 so that nothing can paint above
+        clearPickArea(_state, false, 0.0);
+      }
+      else
+      {
+        // clear depth buffer in coordsys region
+        glDepthRange (1.0, 1.0);
+        glDepthFunc (GL_ALWAYS);
+
+        // Koordinatensystem zeichnen
+        drawCoordsys(_state);
+
+        // draw coordsys in normal mode
+        glDepthRange (0.0, 1.0);
+        glDepthFunc (GL_LESS);
+
+        // Koordinatensystem zeichnen
+        drawCoordsys(_state);
+
+        // set depth buffer to 0 so tah nothing can paint over cordsys
+        glDepthRange (0.0, 0.0);
+        glDepthFunc (GL_ALWAYS);
+        glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
+
+        // Koordinatensystem zeichnen
+        drawCoordsys(_state);
+
+        // reset to default
+        glDepthRange (0.0, 1.0);
+        glDepthFunc (GL_LESS);
+        glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+      }
     }
     // Reload old configuration
     _state.pop_modelview_matrix();
@@ -478,7 +525,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
 //----------------------------------------------------------------------------
 
-void CoordsysNode::clearPickArea(GLState&  _state, GLMatrixd _pickMatrix, bool _draw, GLfloat _depth)
+void CoordsysNode::clearPickArea(GLState&  _state, bool _draw, GLfloat _depth)
 {
   std::vector<Vec2f> points;
   Vec2f center;
@@ -512,13 +559,6 @@ void CoordsysNode::clearPickArea(GLState&  _state, GLMatrixd _pickMatrix, bool _
   _state.push_projection_matrix();
   _state.reset_projection();
 
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix ();
-  // Use the pick matrix to make selection buffer based picking work
-  // with our own orthogonal projection
-  glMultMatrixd(_pickMatrix.get_raw_data());
-  glMatrixMode(GL_MODELVIEW);
-
   _state.ortho (left, left + width, bottom, bottom + height, 0.0, 1.0);
 
   _state.push_modelview_matrix();
@@ -543,10 +583,6 @@ void CoordsysNode::clearPickArea(GLState&  _state, GLMatrixd _pickMatrix, bool _
 
   if (!_draw)
     glColorMask (colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
-
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix ();
-  glMatrixMode(GL_MODELVIEW);
 
   gluDeleteQuadric(quadric);
 }
