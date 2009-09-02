@@ -345,17 +345,24 @@ void glViewer::updateProjectionMatrix()
   // In scereo mode we have to use a perspective matrix
   if (stereo_ || projectionMode_ == PERSPECTIVE_PROJECTION)
   {
-    glstate_->perspective(fovy_, (GLdouble) glWidth() / (GLdouble) glHeight(),
+    double aspect;
+
+    if (isVisible() && glWidth() && glHeight())
+      aspect = (double) glWidth() / (double) glHeight();
+    else
+      aspect = 1.0;
+
+    glstate_->perspective(fovy_, (GLdouble) aspect,
                           near_, far_);
   }
   else
   {
     double aspect;
 
-    if (isVisible())
+    if (isVisible() && glWidth() && glHeight())
       aspect = (double) glWidth() / (double) glHeight();
     else
-           aspect = 1.0;
+      aspect = 1.0;
 
     glstate_->ortho( -orthoWidth_, orthoWidth_,
                      -orthoWidth_/aspect, orthoWidth_/aspect,
