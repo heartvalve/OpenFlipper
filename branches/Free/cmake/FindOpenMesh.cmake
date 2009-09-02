@@ -18,6 +18,7 @@ FIND_PATH(OPENMESH_INCLUDE_DIR OpenMesh/Core/Mesh/PolyMeshT.hh
                 "${CMAKE_SOURCE_DIR}/OpenMesh/src"
                 "${CMAKE_SOURCE_DIR}/../OpenMesh/src"
                 /ACG/acgdev/gcc-4.0-x86_64/OM2/OpenMesh-2.0/installed/include
+		    "C:\Program Files\OpenMesh 2.0"
                 )
 
 IF (OPENMESH_INCLUDE_DIR )
