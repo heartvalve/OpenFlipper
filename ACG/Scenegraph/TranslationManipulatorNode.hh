@@ -91,7 +91,8 @@ public:
   enum ManipulatorMode {
     TranslationRotation,
     LocalRotation,
-    Resize
+    Resize,
+    Place
   };
 
   /// Default constructor.
@@ -237,6 +238,9 @@ private:
   Vec3d              dirZ_;
 
   GLUquadricObj*     axis_;
+  GLUquadricObj*	 circle_;
+  GLUquadricObj*	 sphere_;
+
   double             manipulator_radius_;
   double             manipulator_height_;
   double             set_manipulator_radius_;

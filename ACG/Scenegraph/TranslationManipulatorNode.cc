@@ -133,6 +133,8 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
     dirY_(0.0,1.0,0.0),
     dirZ_(0.0,0.0,1.0),
     axis_(0),
+    circle_(0),
+    sphere_(0),
     manipulator_radius_(20.0),
     manipulator_height_(20),
     manipulator_slices_(10),
@@ -151,7 +153,12 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
     auto_size_length_(1.0)
 {
   localTransformation_.identity();
+
+  // Create quadrics
   axis_ = gluNewQuadric();
+  circle_ = gluNewQuadric();
+  sphere_ = gluNewQuadric();
+
   setTraverseMode( BaseNode::ChildrenFirst );
 
   updateTargetColors ();
@@ -166,11 +173,19 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
 
 //----------------------------------------------------------------------------
 
-TranslationManipulatorNode::
-~TranslationManipulatorNode()
-{
-  if (axis_)
-    gluDeleteQuadric(axis_);
+TranslationManipulatorNode::~TranslationManipulatorNode() {
+
+	if (axis_) {
+		gluDeleteQuadric(axis_);
+	}
+
+	if (circle_) {
+		gluDeleteQuadric(circle_);
+	}
+
+	if (sphere_) {
+		gluDeleteQuadric(sphere_);
+	}
 }
 
 
@@ -251,7 +266,7 @@ void TranslationManipulatorNode::updateTargetColors ()
   element_[ZRing].active_target_color_[3] = 1.0;
 
   // hide rings in resize mode
-  if (mode_ == Resize)
+  if (mode_ == Resize || mode_ == Place)
     for (unsigned int i = 0; i < 3; i++)
     {
       element_[XRing + i].active_target_color_[3] = 0.0;
@@ -596,7 +611,7 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
     _state.set_specular_color(element_[Origin].inactive_current_color_);
   }
 
-  gluSphere( gluNewQuadric(), manipulator_radius_*2, manipulator_slices_, manipulator_stacks_ );
+  gluSphere( sphere_, manipulator_radius_*2, manipulator_slices_, manipulator_stacks_ );
 
   //=================================================================================================
   // Outer-Rings
@@ -725,7 +740,7 @@ TranslationManipulatorNode::draw(GLState& _state, unsigned int /* _drawMode */ )
 void
 TranslationManipulatorNode::drawCircle(const float outerRadius, const float innerRadius)
 {
-  gluDisk(gluNewQuadric(), innerRadius, outerRadius, 30, 30);
+  gluDisk(circle_, innerRadius, outerRadius, 30, 30);
 }
 
 //----------------------------------------------------------------------------
@@ -822,8 +837,9 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
     case QEvent::MouseButtonRelease:
     {
 
-      for (i = 0; i < NumElements; i++)
+      for (i = 0; i < NumElements; i++) {
         element_[i].clicked_ = false;
+      }
       any_axis_clicked_   = false;
       any_top_clicked_    = false;
       outer_ring_clicked_ = false;
@@ -861,16 +877,22 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           element_[Origin].over_ = false;
 
         // over any top ?
-        any_top_over_ = mapToCylinderTop(_state, newPoint2D, new_axis_over, Over);
+        if(mode_ != Place) {
+        	any_top_over_ = mapToCylinderTop(_state, newPoint2D, new_axis_over, Over);
+        }
 
         // over any axis ?
-        any_axis_over_ = mapToCylinder(_state, newPoint2D, new_axis_over, Over);
+        if(mode_ != Place) {
+        	any_axis_over_ = mapToCylinder(_state, newPoint2D, new_axis_over, Over);
+        }
 
         // over one of the outer rings ?
-        if (mode_ != Resize)
+        if (mode_ != Resize) {
           outer_ring_over_ = mapToSphere(_state, newPoint2D, newPoint3D, Over);
-        else
+        }
+        else {
           outer_ring_over_ = false;
+        }
 
         // origin has been hit, ignore all other parts
         if (element_[Origin].over_) {
@@ -912,6 +934,8 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
             rot[i] = element_[XTop + i].clicked_ || element_[XRing + i].clicked_ || element_[XAxis + i].clicked_;
             trans[i] = false;
           }
+          break;
+        case Place:
           break;
         case Resize:
           for (i = 0; i < 3; i++)
@@ -1110,7 +1134,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
         // project to current direction
         ntrans       = ( ntrans | directionZ() ) * directionZ();
 
-        if (mode_ == Resize){
+        if (mode_ == Resize) {
           //scaling
           double positive = -1;
           if ( (directionZ() | ntrans) > 0 ) positive = 1;
@@ -1137,6 +1161,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
       // x top clicked: rotate around x axis
       if (rot[0]) {
+
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
 
@@ -1166,6 +1191,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       // y top clicked: rotate around y axis
       // or outer ring on zx axis has been clicked
       if (rot[1]) {
+
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
 
@@ -1189,6 +1215,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 
       // z top clicked: rotate around z axis
       if (rot[2]) {
+
         mapToCylinder(_state, oldPoint2D_, old_axis_hit);
         mapToCylinder(_state, newPoint2D,  new_axis_hit);
 
@@ -1691,7 +1718,6 @@ pick(GLState& _state, PickTarget _target)
 	manipulator_stacks_);
 
 	// Draw Top of z-axis
-
 	_state.translate(0.0, 0.0, manipulator_height_);
 	gluCylinder(axis_,
         manipulator_radius_*2,
@@ -1752,7 +1778,7 @@ pick(GLState& _state, PickTarget _target)
 	// Sphere
 	//=================================================================================================
 
-	gluSphere( gluNewQuadric(), manipulator_radius_*2, manipulator_slices_, manipulator_stacks_ );
+	gluSphere( sphere_, manipulator_radius_*2, manipulator_slices_, manipulator_stacks_ );
 
 	//=================================================================================================
 	// Outer-Spheres
