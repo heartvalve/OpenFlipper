@@ -86,6 +86,28 @@ MovePlugin::MovePlugin() :
     allTargets_ = false;
 }
 
+/** \brief Deconstructor
+ *
+ */
+MovePlugin::~MovePlugin() {
+
+	if(contextAction_) {
+		delete contextAction_;
+	}
+
+	if(toAllTargets_) {
+		delete toAllTargets_;
+	}
+
+	for(QList<movePropsWidget*>::iterator it = propsWindows_.begin();
+		it != propsWindows_.end(); ++it) {
+
+		if(*it) {
+			delete *it;
+		}
+	}
+}
+
 
 /*******************************************************************************
         BaseInterface implementation
@@ -164,12 +186,12 @@ void MovePlugin::pluginsInitialized() {
 
   pickToolbar_->addSeparator ();
 
-  ratateTranslateAction_ = new QAction(tr("Rotate/Translate object"), pickToolBarActions_);
-  ratateTranslateAction_->setStatusTip(tr("Rotate/Translate object."));
-  ratateTranslateAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-translaterotate.png") );
-  ratateTranslateAction_->setCheckable(true);
-  ratateTranslateAction_->setChecked(true);
-  pickToolbar_->addAction(ratateTranslateAction_);
+  rotateTranslateAction_ = new QAction(tr("Rotate/Translate object"), pickToolBarActions_);
+  rotateTranslateAction_->setStatusTip(tr("Rotate/Translate object."));
+  rotateTranslateAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-translaterotate.png") );
+  rotateTranslateAction_->setCheckable(true);
+  rotateTranslateAction_->setChecked(true);
+  pickToolbar_->addAction(rotateTranslateAction_);
 
   resizeAction_ = new QAction(tr("Resize object"), pickToolBarActions_);
   resizeAction_->setStatusTip(tr("Resize object. <Control>"));
@@ -179,11 +201,11 @@ void MovePlugin::pluginsInitialized() {
 
   pickToolbar_->addSeparator ();
 
-  ratateManipAction_ = new QAction(tr("Rotate manipulator"), pickToolBarActions_);
-  ratateManipAction_->setStatusTip(tr("Rotate manipulator. <Shift>"));
-  ratateManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-maniprotate.png") );
-  ratateManipAction_->setCheckable(true);
-  pickToolbar_->addAction(ratateManipAction_);
+  rotateManipAction_ = new QAction(tr("Rotate manipulator"), pickToolBarActions_);
+  rotateManipAction_->setStatusTip(tr("Rotate manipulator. <Shift>"));
+  rotateManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-maniprotate.png") );
+  rotateManipAction_->setCheckable(true);
+  pickToolbar_->addAction(rotateManipAction_);
 
   smallerManipAction_ = new QAction(tr("Decrease size of manipulator"), pickToolBarActions_);
   smallerManipAction_->setStatusTip(tr("Make manipulator smaller. <Mouse wheel up>"));
@@ -438,18 +460,18 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
     {
       case QtTranslationManipulatorNode::Resize:
         resizeAction_->setChecked (true);
-        ratateManipAction_->setChecked (false);
-        ratateTranslateAction_->setChecked (false);
+        rotateManipAction_->setChecked (false);
+        rotateTranslateAction_->setChecked (false);
         break;
       case QtTranslationManipulatorNode::LocalRotation:
         resizeAction_->setChecked (false);
-        ratateManipAction_->setChecked (true);
-        ratateTranslateAction_->setChecked (false);
+        rotateManipAction_->setChecked (true);
+        rotateTranslateAction_->setChecked (false);
         break;
       case QtTranslationManipulatorNode::TranslationRotation:
         resizeAction_->setChecked (false);
-        ratateManipAction_->setChecked (false);
-        ratateTranslateAction_->setChecked (true);
+        rotateManipAction_->setChecked (false);
+        rotateTranslateAction_->setChecked (true);
         break;
     }
   }
@@ -1105,16 +1127,16 @@ void MovePlugin::slotMoveToOrigin() {
 
   bool useCommonCOG = false;
   ACG::Vec3d cog = ACG::Vec3d(0.0,0.0,0.0);
-  
+
   if ( PluginFunctions::targetCount() > 1 ) {
     QMessageBox::StandardButton button = QMessageBox::question( 0, tr("Use common COG?"), tr("Should the targets be moved depending on their common cog?"),QMessageBox::Yes|QMessageBox::No);
-    
-    
+
+
     useCommonCOG =  ( button == QMessageBox::Yes );
     double vertexCount = 0.0;
 
     if ( useCommonCOG ) {
-      
+
       // Compute cog for all objects
       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
         if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
@@ -1129,17 +1151,17 @@ void MovePlugin::slotMoveToOrigin() {
           vertexCount += double(mesh.n_vertices());
         }
       }
-      
+
       cog = cog / vertexCount;
     }
-    
+
   }
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
         TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
-        
-        if ( !useCommonCOG ) 
+
+        if ( !useCommonCOG )
           cog = MeshInfo::cog(mesh);
 
         for ( TriMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
@@ -1150,8 +1172,8 @@ void MovePlugin::slotMoveToOrigin() {
 
     if ( o_it->dataType( DATA_POLY_MESH )) {
         PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
-        
-        if ( !useCommonCOG ) 
+
+        if ( !useCommonCOG )
           cog = MeshInfo::cog(mesh);
 
         for ( PolyMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
@@ -1183,21 +1205,21 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
   bool useCommonBB = false;
   ACG::Vec3d bb_min = ACG::Vec3d(FLT_MAX,FLT_MAX,FLT_MAX);
   ACG::Vec3d bb_max = ACG::Vec3d(FLT_MIN,FLT_MIN,FLT_MIN);
-  
+
   if ( PluginFunctions::targetCount() > 1 ) {
     QMessageBox::StandardButton button = QMessageBox::question( 0, tr("Use common BB?"), tr("Should the targets be scaled depending on their common Bounding Box?"),QMessageBox::Yes|QMessageBox::No);
-    
-    
+
+
     useCommonBB =  ( button == QMessageBox::Yes );
     double count = 0.0;
 
     if ( useCommonBB ) {
-      
+
       // Compute cog for all objects
       for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
         ACG::Vec3d bb_min_tmp(0.0,0.0,0.0);
         ACG::Vec3d bb_max_tmp(0.0,0.0,0.0);
-        
+
         if ( o_it->dataType( DATA_TRIANGLE_MESH )) {
           TriMesh& mesh = *PluginFunctions::triMesh(*o_it);
           getBB(mesh,bb_min_tmp,bb_max_tmp);
@@ -1209,13 +1231,13 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
           PolyMesh& mesh = *PluginFunctions::polyMesh(*o_it);
           getBB(mesh,bb_min_tmp,bb_max_tmp);
           bb_min.minimize(bb_min_tmp);
-          bb_max.maximize(bb_max_tmp);          
+          bb_max.maximize(bb_max_tmp);
         }
       }
     }
-    
+
   }
-  
+
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     if ( useCommonBB ) {
       if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
@@ -1226,13 +1248,13 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
       if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
         unifyBBDiag(*PluginFunctions::triMesh(*o_it));
       else if ( o_it->dataType( DATA_POLY_MESH ) )
-        unifyBBDiag(*PluginFunctions::polyMesh(*o_it)); 
+        unifyBBDiag(*PluginFunctions::polyMesh(*o_it));
     }
 
     emit updatedObject( o_it->id() );
 
   }
-       
+
   emit updateView();
 }
 
@@ -1335,12 +1357,12 @@ void MovePlugin::slotSetMoveMode(QAction* _action) {
 void MovePlugin::slotPickToolbarAction(QAction* _action)
 {
 
-  if (_action == ratateTranslateAction_)
+  if (_action == rotateTranslateAction_)
   {
     setManipMode (QtTranslationManipulatorNode::TranslationRotation);
   }
 
-  if (_action == ratateManipAction_)
+  if (_action == rotateManipAction_)
   {
     setManipMode (QtTranslationManipulatorNode::LocalRotation);
   }
@@ -1507,7 +1529,7 @@ void MovePlugin::getBB( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  
 template< typename MeshT >
 void MovePlugin::unifyBBDiag( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  )
 {
-  
+
   typename MeshT::VertexIter v_it  = _mesh.vertices_begin();
   typename MeshT::VertexIter v_end = _mesh.vertices_end();
 
