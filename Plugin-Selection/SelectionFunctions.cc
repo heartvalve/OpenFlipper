@@ -293,6 +293,67 @@ void SelectionPlugin::componentSelection(QMouseEvent* _event) {
 
 }
 
+//***********************************************************************************
+
+/** \brief FloodFill an area starting from the selected element
+ *
+ * @param _event mouse event that occurred
+ */
+void SelectionPlugin::floodFillSelection(QMouseEvent* _event)
+{
+
+  if ( _event->type()   != QEvent::MouseButtonPress ) return;
+  if ( _event->button() == Qt::RightButton ) return;
+
+   unsigned int node_idx, target_idx;
+   ACG::Vec3d   hit_point;
+
+
+   // pick Anything to find all possible objects
+   if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING,
+          _event->pos(),node_idx, target_idx, &hit_point))
+   {
+
+    BaseObjectData* object(0);
+    if(PluginFunctions::getPickedObject(node_idx, object))
+    {
+      // OBJECT SELECTION
+      if (selectionType_ & OBJECT)
+        return;
+
+      maxFloodFillAngle_ = tool_->maxFloodFillAngle->value();
+
+      // TRIANGLE MESHES
+      if (object->dataType() == DATA_TRIANGLE_MESH) {
+
+            if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
+
+              if ( PluginFunctions::getPickedObject(node_idx, object) )
+
+                if ( object->dataType(DATA_TRIANGLE_MESH) ){
+                  floodFillSelection(PluginFunctions::triMesh(object), target_idx);
+                  emit updatedObject(object->id());
+                }
+
+      // POLY MESHES
+      }else if (object->dataType() == DATA_POLY_MESH) {
+
+            if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
+
+              if ( PluginFunctions::getPickedObject(node_idx, object) )
+
+              if ( object->dataType(DATA_POLY_MESH) ) {
+                floodFillSelection(PluginFunctions::polyMesh(object), target_idx);
+                emit updatedObject(object->id());
+              }
+      }
+      else{
+        emit log(LOGERR,tr("floodFillSelection : Unsupported dataType"));
+      }
+    }
+  }
+}
+
 //-----------------------------------------------------------------------------
 
 #ifdef ENABLE_POLYLINE_SUPPORT

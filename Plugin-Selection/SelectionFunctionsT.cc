@@ -48,6 +48,9 @@
 
 #include <MeshTools/MeshNavigationT.hh>
 #include <MeshTools/MeshSelectionT.hh>
+#include <OpenMesh/Core/Geometry/MathDefs.hh>
+
+#include <math.h>
 
 //***********************************************************************************
 
@@ -536,6 +539,71 @@ void SelectionPlugin::componentSelection(MeshT* _mesh, uint _fh) {
 
       _mesh->status(ff_it).set_tagged(true);
       face_handles.push_back(ff_it.handle());
+    }
+  }
+
+  // now select all tagged primitives
+  for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
+      if (_mesh->status(f_it).tagged()){
+
+        if (selectionType_ & VERTEX)
+          for ( typename MeshT::FaceVertexIter fv_it(*_mesh,f_it) ; fv_it; ++fv_it )
+            _mesh->status(fv_it).set_selected( !deselection_ );
+
+        if (selectionType_ & EDGE)
+          for ( typename MeshT::FaceEdgeIter fe_it(*_mesh,f_it) ; fe_it; ++fe_it )
+            _mesh->status(fe_it).set_selected( !deselection_ );
+
+        if (selectionType_ & FACE)
+          _mesh->status(f_it).set_selected( !deselection_ );
+      }
+}
+
+//***********************************************************************************
+
+/** \brief Select all primitves of a planar region surrounding the faceHandle
+ *
+ * @param _mesh a mesh
+ * @param _fh handle of the face that was picked
+ */
+template< class MeshT >
+void SelectionPlugin::floodFillSelection(MeshT* _mesh, uint _fh) {
+
+  // reset tagged status
+  typename MeshT::FaceIter f_it, f_end(_mesh->faces_end());
+  for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
+      _mesh->status(f_it).set_tagged(false);
+
+  std::vector<typename MeshT::FaceHandle> face_handles;
+
+
+  typename MeshT::FaceHandle hitFace = typename MeshT::FaceHandle(_fh);
+  face_handles.reserve(50);
+  face_handles.push_back( hitFace );
+  _mesh->status(hitFace).set_tagged(true);
+
+  typename MeshT::Point n1 = _mesh->normal( hitFace );
+
+  double maxAngle = OpenMesh::deg_to_rad( maxFloodFillAngle_ );
+
+  while (!face_handles.empty()) {
+    typename MeshT::FaceHandle fh = face_handles.back();
+    face_handles.pop_back();
+
+    for (typename MeshT::FaceFaceIter ff_it(*_mesh,fh) ; ff_it ; ++ff_it ) {
+
+      // Check if already tagged
+      if ( _mesh->status(ff_it).tagged() )
+          continue;
+
+      typename MeshT::Point n2 = _mesh->normal( ff_it );
+
+      double angle = acos( n1 | n2 );
+
+      if ( angle <= maxAngle ){
+        _mesh->status(ff_it).set_tagged(true);
+        face_handles.push_back(ff_it.handle());
+      }
     }
   }
 

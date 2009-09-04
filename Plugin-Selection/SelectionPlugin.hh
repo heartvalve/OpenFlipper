@@ -90,6 +90,7 @@
 #define VOLUME_LASSO_SELECTION "Select (Volume Lasso)"
 #define SURFACE_LASSO_SELECTION "Select (Surface Lasso)"
 #define CONNECTED_COMPONENT_SELECTION "Select (Connected Component)"
+#define FLOOD_FILL_SELECTION "Select (Flood Fill)"
 
 enum SelectionPrimitive {
   VERTEX = 0x01,
@@ -194,6 +195,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     QAction* volumeLassoAction_;
     QAction* surfaceLassoAction_;
     QAction* connectedAction_;
+    QAction* floodFillAction_;
 
   private slots:
     /// Switch selection mode dependent which buttons are pressed in the toolbar
@@ -277,9 +279,16 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Select all primitves of connected component
     void componentSelection(QMouseEvent* _event);
 
+    /// Select all primitves on a (approx) planar region
+    void floodFillSelection(QMouseEvent* _event);
+
     /// Select all primitves of connected component
     template< class MeshT >
     void componentSelection(MeshT* _mesh, uint _fh);
+
+    /// Select all primitves of a planar region surrounding the faceHandle
+    template< class MeshT >
+    void floodFillSelection(MeshT* _mesh, uint _fh);
 
     /// Handle Mouse move event for lasso selection
     void handleLassoSelection(QMouseEvent* _event, bool _volume);
@@ -632,6 +641,16 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     /// closest boundary selection
     void closestBoundarySelection(QMouseEvent* _event);
+
+  /** @} */
+
+  //===========================================================================
+  /** @name Variables for FloodFill Selection
+  * @{ */
+  //===========================================================================
+
+  private:
+    double maxFloodFillAngle_;
 
   /** @} */
 
