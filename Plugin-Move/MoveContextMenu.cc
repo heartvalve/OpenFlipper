@@ -91,7 +91,7 @@ void MovePlugin::showProps(){
     BaseObjectData* object;
     if ( PluginFunctions::getObject(lastActiveManipulator_ , object) ) {
 	if (  object->manipulatorNode()->visible() ) {
-	    const TriMesh::Point pos = object->manipulatorNode()->center();
+	    const OpenMesh::Vec3d pos = object->manipulatorNode()->center();
 
 	    QString num;
 
@@ -99,7 +99,7 @@ void MovePlugin::showProps(){
 	    num = QString::number(pos[1]); pW->posy->setText(num);
 	    num = QString::number(pos[2]); pW->posz->setText(num);
 
-	    TriMesh::Point direction = object->manipulatorNode()->directionX();
+	    OpenMesh::Vec3d direction = object->manipulatorNode()->directionX();
 	    num = QString::number(direction[0]); pW->dirxx->setText(num);
 	    num = QString::number(direction[1]); pW->dirxy->setText(num);
 	    num = QString::number(direction[2]); pW->dirxz->setText(num);

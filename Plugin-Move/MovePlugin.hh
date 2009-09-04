@@ -143,7 +143,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     MovePlugin();
 
     /// Destructor
-    ~MovePlugin() {};
+    ~MovePlugin();
 
     /// Initialize the toolbar (create a widget in the right side toolbox)
     bool initializeToolbox(QWidget*& _widget);
@@ -239,8 +239,8 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     QToolBar *pickToolbar_;
 
     QAction* placeAction_;
-    QAction* ratateTranslateAction_;
-    QAction* ratateManipAction_;
+    QAction* rotateTranslateAction_;
+    QAction* rotateManipAction_;
     QAction* resizeAction_;
 
     QAction* biggerManipAction_;
@@ -296,11 +296,11 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     /// scale mesh to have a boundingboxdiagonal of one
     template< typename MeshT >
     void unifyBBDiag(MeshT& _mesh );
-    
+
     /// get bounding box diagonal of a mesh
     template< typename MeshT >
     void getBB( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  );
-    
+
     /// Scales object such that bounding box diagonal has unit length
     template< typename MeshT >
     void unifyBBDiag( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  );
@@ -381,9 +381,6 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     void slotUpdateContextMenuNode( int _nodeId );
 
     private:
-    /// Move context menu
-    QMenu* contextMenu_;
-
     /// List of properties dialogs (each corresponding to one manipulator)
     QList<movePropsWidget*> propsWindows_;
 
