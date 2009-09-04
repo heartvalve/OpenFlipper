@@ -151,6 +151,7 @@ void SelectionPlugin::pluginsInitialized() {
   emit addHiddenPickMode(VOLUME_LASSO_SELECTION);
   emit addHiddenPickMode(SURFACE_LASSO_SELECTION);
   emit addHiddenPickMode(CONNECTED_COMPONENT_SELECTION);
+  emit addHiddenPickMode(FLOOD_FILL_SELECTION);
 
   emit setPickModeMouseTracking(PAINT_SPHERE_SELECTION, true);
   emit setPickModeMouseTracking(LASSO_SELECTION, true);
@@ -258,7 +259,12 @@ void SelectionPlugin::pluginsInitialized() {
   connectedAction_ = new QAction( QIcon(iconPath + "selection_connected.png"),
                                tr("<B>Connected Component</B><br>Select the connect component to a clicked element."), toolBarActions_ );
   connectedAction_->setCheckable( true );
+
   toolBar_->addAction( connectedAction_ );
+  floodFillAction_ = new QAction( QIcon(iconPath + "selection_floodFill.png"),
+                               tr("<B>Flood Fill</B><br>Select a planar region surrounding the clicked element."), toolBarActions_ );
+  floodFillAction_->setCheckable( true );
+  toolBar_->addAction( floodFillAction_ );
 
   connect( toolBarActions_, SIGNAL( triggered(QAction*) ), this, SLOT(toolBarActionClicked(QAction*)) );
   connect( toolBarTypes_,   SIGNAL( triggered(QAction*) ), this, SLOT(toolBarActionClicked(QAction*)) );
@@ -477,7 +483,8 @@ void SelectionPlugin::slotMouseEvent( QMouseEvent* _event ) {
   if ( PluginFunctions::pickMode() == CLOSEST_BOUNDARY_SELECTION)    closestBoundarySelection(_event); else
   if ( PluginFunctions::pickMode() == LASSO_SELECTION)               handleLassoSelection(_event, false); else
   if ( PluginFunctions::pickMode() == VOLUME_LASSO_SELECTION)        handleLassoSelection(_event, true); else
-  if ( PluginFunctions::pickMode() == CONNECTED_COMPONENT_SELECTION) componentSelection(_event);
+  if ( PluginFunctions::pickMode() == CONNECTED_COMPONENT_SELECTION) componentSelection(_event); else
+  if ( PluginFunctions::pickMode() == FLOOD_FILL_SELECTION)          floodFillSelection(_event);
 #ifdef ENABLE_POLYLINE_SUPPORT
   else
   if ( PluginFunctions::pickMode() == SURFACE_LASSO_SELECTION)       surfaceLassoSelection(_event);
@@ -520,6 +527,7 @@ void SelectionPlugin::slotPickModeChanged( const std::string& _mode) {
   lassoAction_->setChecked(       _mode == LASSO_SELECTION );
   volumeLassoAction_->setChecked( _mode == VOLUME_LASSO_SELECTION );
   connectedAction_->setChecked(   _mode == CONNECTED_COMPONENT_SELECTION );
+  floodFillAction_->setChecked(   _mode == FLOOD_FILL_SELECTION );
 
    if ( _mode != PAINT_SPHERE_SELECTION && sphere_node_->visible() ){
       sphere_node_->hide();
@@ -610,6 +618,8 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
       PluginFunctions::pickMode( VOLUME_LASSO_SELECTION );
     else if (_action == connectedAction_)
       PluginFunctions::pickMode( CONNECTED_COMPONENT_SELECTION );
+    else if (_action == floodFillAction_)
+      PluginFunctions::pickMode( FLOOD_FILL_SELECTION );
     else if (_action == surfaceLassoAction_){
       waitingForPolyLineSelection_ = true;
       PluginFunctions::pickMode("PolyLine");
