@@ -267,6 +267,8 @@ private:
   Vec3d				 draggingOrigin3D_;
   bool				 dragging_;
 
+  Vec3d              currentScale_;
+
   GLMatrixd          localTransformation_;
 
   AutoSizeMode       auto_size_;
