@@ -11,9 +11,15 @@ if (WIN32)
      ${SUPERLU_INCLUDE_PATH}
    )
 
-   find_library( SUPERLU_LIBRARY 
-                 SuperLU
-                 PATHS "C:\\libs\\SuperLU_3.0\\lib" )
+   IF( CMAKE_BUILD_TYPE MATCHES Release )
+     find_library( SUPERLU_LIBRARY 
+                   SuperLU
+                   PATHS "C:\\libs\\SuperLU_3.0\\lib" )
+   ELSE()
+     find_library( SUPERLU_LIBRARY 
+                   SuperLUd
+                   PATHS "C:\\libs\\SuperLU_3.0\\lib" )
+   ENDIF()
 
 ELSEIF(APPLE)
 
