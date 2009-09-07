@@ -543,36 +543,30 @@ ManipulatorNode::mapToCylinder(GLState&       _state,
 //----------------------------------------------------------------------------
 
 
-void
-ManipulatorNode::
-pick(GLState& _state, PickTarget _target)
-{
-  if (_target == PICK_FACE ||
-      _target == PICK_ANYTHING)
-  {
-    if (draw_cylinder_)
-    {
-      // cylinder
-      _state.push_modelview_matrix();
-      setup_cylinder_system(_state);
-      glLoadName(1);
-      gluCylinder(cylinder_,
-		  cylinder_radius_,
-		  cylinder_radius_,
-		  cylinder_height_,
-		  cylinder_slices_,
-		  cylinder_stacks_);
-      _state.pop_modelview_matrix();
+void ManipulatorNode::pick(GLState& _state, PickTarget _target) {
+	if (_target == PICK_FACE || _target == PICK_ANYTHING) {
+		if (draw_cylinder_) {
 
+			_state.pick_set_maximum(2);
 
-      // sphere
-      _state.push_modelview_matrix();
-      setup_sphere_system(_state);
-      glLoadName(2);
-      glutSolidSphere(2*cylinder_radius_, 20, 20);
-      _state.pop_modelview_matrix();
-    }
-  }
+			// cylinder
+			_state.push_modelview_matrix();
+			setup_cylinder_system(_state);
+			//glLoadName(1);
+			_state.pick_set_name(0);
+			gluCylinder(cylinder_, cylinder_radius_, cylinder_radius_, cylinder_height_, cylinder_slices_,
+			        cylinder_stacks_);
+			_state.pop_modelview_matrix();
+
+			// sphere
+			_state.push_modelview_matrix();
+			setup_sphere_system(_state);
+			//glLoadName(2);
+			_state.pick_set_name(1);
+			glutSolidSphere(2* cylinder_radius_ , 20, 20);
+			_state.pop_modelview_matrix();
+		}
+	}
 }
 
 
