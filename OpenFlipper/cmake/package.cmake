@@ -125,11 +125,11 @@ elseif (APPLE)
 endif ()
 
 # has to be last
-if (WIN32)
-  set (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP "true")
-  include (InstallRequiredSystemLibraries)
-  install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ${ACG_PROJECT_BINDIR})
-else ()
+if ( NOT WIN32)
+#  set (CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP "true")
+#  include (InstallRequiredSystemLibraries)
+#  install (PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION ${ACG_PROJECT_BINDIR})
+#else ()
   include (InstallRequiredSystemLibraries)
 endif ()
 
