@@ -86,7 +86,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
 
         if ( !_ini.get_entry( entry , "Options" , key ) ) continue;
 
-        QStringList widgets = entry.split(" ");
+        QStringList widgets = entry.split(";");
         QString mode = widgets.first();
         widgets.removeFirst();
 
@@ -494,7 +494,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
         //store widgets
         for (int j=0; j < coreWidget_->viewModes_[i]->visibleWidgets.size(); j++)
-          entry += " " + coreWidget_->viewModes_[i]->visibleWidgets[j];
+          entry += ";" + coreWidget_->viewModes_[i]->visibleWidgets[j];
 
         entries.push_back(entry);
       }
