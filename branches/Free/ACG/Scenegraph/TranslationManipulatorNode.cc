@@ -828,6 +828,7 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
       }
 
       oldPoint2D_ = newPoint2D;
+      currentScale_ = Vec3d (1.0, 1.0, 1.0);
       ignoreTime_ = true;
       break;
     }
@@ -975,10 +976,19 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
 			translate(ntrans);
 		else
 		{
-			double positive = -1;
-			if (newPoint2D[0] - oldPoint2D_[0] + oldPoint2D_[1] - newPoint2D[1] > 0)
-			positive = 1;
-			scale( 1.0 + ntrans.norm() * positive);
+                  // revert last scale
+                  scale(Vec3d (1.0 / currentScale_[0], 1.0 / currentScale_[1], 1.0 / currentScale_[2]));
+		  double positive = -1;
+		  if (newPoint2D[0] - oldPoint2D_[0] + oldPoint2D_[1] - newPoint2D[1] > 0)
+		  positive = 1;
+
+                  Vec2d div = Vec2d (newPoint2D[0], newPoint2D[1]) - Vec2d (oldPoint2D_[0], oldPoint2D_[1]);
+
+                  double scaleValue = div.norm () * 3.0 / qMin (_state.context_height(), _state.context_width());
+                  scaleValue *= positive;
+                  currentScale_ += Vec3d(scaleValue, scaleValue, scaleValue);
+
+		  scale(currentScale_);
 		}
 	}
 
@@ -1020,26 +1030,34 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           double positive = -1;
           if ( (directionX() | ntrans) > 0 ) positive = 1;
 
-          //non-uniform
-//           Vec3d sfactor;
-//           sfactor[0] = 1.0;
-//           sfactor[1] = 1.0;
-//           sfactor[2] = 1.0;
+          if (currentScale_[0] < 0)
+            positive *= -1;
 
-          Vec3d xscale;
-          xscale[0] = positive * ntrans.norm();
-          xscale[1] = 0.0;
-          xscale[2] = 0.0;
+          Vec3d proj = _state.project(ntrans + oldvec);
 
+          Vec2d div = Vec2d (proj[0], proj[1]) - Vec2d (oldPoint2D_[0], (_state.context_height() - oldPoint2D_[1]));
+
+          double scaleValue = div.norm () * 3.0 / qMin (_state.context_height(), _state.context_width());
+          scaleValue *= positive;
+
+
+          // revert last scale
           GLMatrixd m = localTransformation_;
           GLMatrixd mi = localTransformation_;
           mi.invert ();
 
-          m.scale(Vec3d(1.0, 1.0, 1.0) + xscale);
+          m.scale(Vec3d (1.0 / currentScale_[0], 1.0 / currentScale_[1], 1.0 / currentScale_[2]));
           m *= mi;
 
           scale (m);
 
+          currentScale_ += Vec3d(scaleValue, 0.0, 0.0);
+
+          m = localTransformation_;
+          m.scale(currentScale_);
+          m *= mi;
+
+          scale(m);
         }else
           //translation
           translate(ntrans);
@@ -1082,20 +1100,33 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           double positive = -1;
           if ( (directionY() | ntrans) > 0 ) positive = 1;
 
-          //non-uniform
-          Vec3d yscale;
-          yscale[0] = 0.0;
-          yscale[1] = positive * ntrans.norm();
-          yscale[2] = 0.0;
+          if (currentScale_[1] < 0)
+            positive *= -1;
 
+          Vec3d proj = _state.project(ntrans + oldvec);
+
+          Vec2d div = Vec2d (proj[0], proj[1]) - Vec2d (oldPoint2D_[0], (_state.context_height() - oldPoint2D_[1]));
+
+          double scaleValue = div.norm () * 3.0 / qMin (_state.context_height(), _state.context_width());
+          scaleValue *= positive;
+
+          // revert last scale
           GLMatrixd m = localTransformation_;
           GLMatrixd mi = localTransformation_;
           mi.invert ();
 
-          m.scale(Vec3d(1.0, 1.0, 1.0) + yscale);
+          m.scale(Vec3d (1.0 / currentScale_[0], 1.0 / currentScale_[1], 1.0 / currentScale_[2]));
           m *= mi;
 
           scale (m);
+
+          currentScale_ += Vec3d(0.0, scaleValue, 0.0);
+
+          m = localTransformation_;
+          m.scale(currentScale_);
+          m *= mi;
+
+          scale(m);
 
         }else
           //translation
@@ -1139,20 +1170,33 @@ TranslationManipulatorNode::mouseEvent(GLState& _state, QMouseEvent* _event)
           double positive = -1;
           if ( (directionZ() | ntrans) > 0 ) positive = 1;
 
-          //non-uniform
-          Vec3d zscale;
-          zscale[0] = 0.0;
-          zscale[1] = 0.0;
-          zscale[2] = positive * ntrans.norm();
+          if (currentScale_[2] < 0)
+            positive *= -1;
 
+          Vec3d proj = _state.project(ntrans + oldvec);
+
+          Vec2d div = Vec2d (proj[0], proj[1]) - Vec2d (oldPoint2D_[0], (_state.context_height() - oldPoint2D_[1]));
+
+          double scaleValue = div.norm () * 3.0 / qMin (_state.context_height(), _state.context_width());
+          scaleValue *= positive;
+
+          // revert last scale
           GLMatrixd m = localTransformation_;
           GLMatrixd mi = localTransformation_;
           mi.invert ();
 
-          m.scale(Vec3d(1.0, 1.0, 1.0) + zscale);
+          m.scale(Vec3d (1.0 / currentScale_[0], 1.0 / currentScale_[1], 1.0 / currentScale_[2]));
           m *= mi;
 
           scale (m);
+
+          currentScale_ += Vec3d(0.0, 0.0, scaleValue);
+
+          m = localTransformation_;
+          m.scale(currentScale_);
+          m *= mi;
+
+          scale(m);
 
         }else
           //translation
