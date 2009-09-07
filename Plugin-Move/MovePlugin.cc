@@ -175,11 +175,13 @@ void MovePlugin::pluginsInitialized() {
   emit addToolbar(toolbar_);
 
   pickToolbar_ = new QToolBar(tr("Transform and Move"));
+  pickToolbar_->setAttribute(Qt::WA_AlwaysShowToolTips, true);
   pickToolBarActions_ = new QActionGroup(pickToolbar_);
   pickToolBarActions_->setExclusive (false);
 
   placeAction_ = new QAction(tr("Place manipulator"), pickToolBarActions_);
   placeAction_->setStatusTip(tr("Place manipulator on object. <Doubleclick>"));
+  placeAction_->setToolTip(tr("Place manipulator on object. <Doubleclick>"));
   placeAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-place.png") );
   placeAction_->setCheckable(true);
   pickToolbar_->addAction(placeAction_);
@@ -188,6 +190,7 @@ void MovePlugin::pluginsInitialized() {
 
   rotateTranslateAction_ = new QAction(tr("Rotate/Translate object"), pickToolBarActions_);
   rotateTranslateAction_->setStatusTip(tr("Rotate/Translate object."));
+  rotateTranslateAction_->setToolTip(tr("Rotate/Translate object."));
   rotateTranslateAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-translaterotate.png") );
   rotateTranslateAction_->setCheckable(true);
   rotateTranslateAction_->setChecked(true);
@@ -195,6 +198,7 @@ void MovePlugin::pluginsInitialized() {
 
   resizeAction_ = new QAction(tr("Resize object"), pickToolBarActions_);
   resizeAction_->setStatusTip(tr("Resize object. <Control>"));
+  resizeAction_->setToolTip(tr("Resize object. <Control>"));
   resizeAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-resize.png") );
   resizeAction_->setCheckable(true);
   pickToolbar_->addAction(resizeAction_);
@@ -203,18 +207,21 @@ void MovePlugin::pluginsInitialized() {
 
   rotateManipAction_ = new QAction(tr("Rotate manipulator"), pickToolBarActions_);
   rotateManipAction_->setStatusTip(tr("Rotate manipulator. <Shift>"));
+  rotateManipAction_->setToolTip(tr("Rotate manipulator. <Shift>"));
   rotateManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-maniprotate.png") );
   rotateManipAction_->setCheckable(true);
   pickToolbar_->addAction(rotateManipAction_);
 
   smallerManipAction_ = new QAction(tr("Decrease size of manipulator"), pickToolBarActions_);
   smallerManipAction_->setStatusTip(tr("Make manipulator smaller. <Mouse wheel up>"));
+  smallerManipAction_->setToolTip(tr("Make manipulator smaller. <Mouse wheel up>"));
   smallerManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-manipsmall.png") );
   smallerManipAction_->setCheckable(false);
   pickToolbar_->addAction(smallerManipAction_);
 
   biggerManipAction_ = new QAction(tr("&Increase size of manipulator"), pickToolBarActions_);
   biggerManipAction_->setStatusTip(tr("Make manipulator bigger. <Mouse wheel down>"));
+  biggerManipAction_->setToolTip(tr("Make manipulator bigger. <Mouse wheel down>"));
   biggerManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-manipbig.png") );
   biggerManipAction_->setCheckable(false);
   pickToolbar_->addAction(biggerManipAction_);
