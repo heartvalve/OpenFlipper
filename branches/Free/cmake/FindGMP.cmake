@@ -17,47 +17,47 @@ if (GMP_INCLUDE_DIR AND GMP_LIBRARY_DIR )
   
 else()  
   find_package(CGAL)
-	if (NOT CGAL_FOUND)
-	  message(FATAL_ERROR "CGAL not found .. required to use taucs!")
-	endif()
+  if (NOT CGAL_FOUND)
+    message(STATUS "CGAL not found .. required to use taucs!")
+    set(GMP_FOUND FALSE)
+  else ()
+    find_path(GMP_INCLUDE_DIR 
+              NAMES gmp.h
+              PATHS "${CGAL_INCLUDE_DIR}/../auxiliary/gmp/include"
+                  DOC "The directory containing the GMP header files"
+             )
 
-
-  find_path(GMP_INCLUDE_DIR 
-            NAMES gmp.h 
-            PATHS "${CGAL_INCLUDE_DIR}/../auxiliary/gmp/include" 
-  	        DOC "The directory containing the GMP header files"
-           )
-
-  if ( GMP_INCLUDE_DIR STREQUAL "${CMAKE_SOURCE_DIR}/auxiliary/gmp/include" )
-    cache_set( GMP_IN_CGAL_AUXILIARY TRUE )
-  endif()
-  
-  if ( CGAL_AUTO_LINK_ENABLED )
-  
-    find_path(GMP_LIBRARY_DIR 
-              NAMES "gmp-${CGAL_TOOLSET}-mt.lib" "gmp-${CGAL_TOOLSET}-mt-gd.lib"
-              PATHS "${CGAL_INCLUDE_DIR}/../auxiliary/gmp/lib"
-              DOC "Directory containing the GMP library"
-             ) 
-    
-  else()
-  
-    find_library(GMP_LIBRARIES NAMES gmp 
-                 PATHS ENV GMP_LIB_DIR
-                 DOC "Path to the GMP library"
-                )
-                
-    if ( GMP_LIBRARIES ) 
-      get_filename_component(GMP_LIBRARY_DIR ${GMP_LIBRARIES} PATH CACHE )
+    if ( GMP_INCLUDE_DIR STREQUAL "${CMAKE_SOURCE_DIR}/auxiliary/gmp/include" )
+      cache_set( GMP_IN_CGAL_AUXILIARY TRUE )
     endif()
     
-  endif()  
+    if ( CGAL_AUTO_LINK_ENABLED )
     
-  # Attempt to load a user-defined configuration for GMP if couldn't be found
-  if ( NOT GMP_INCLUDE_DIR OR NOT GMP_LIBRARY_DIR )
-    include( GMPConfig OPTIONAL )
+      find_path(GMP_LIBRARY_DIR 
+                NAMES "gmp-${CGAL_TOOLSET}-mt.lib" "gmp-${CGAL_TOOLSET}-mt-gd.lib"
+                PATHS "${CGAL_INCLUDE_DIR}/../auxiliary/gmp/lib"
+                DOC "Directory containing the GMP library"
+               )
+      
+    else()
+    
+      find_library(GMP_LIBRARIES NAMES gmp 
+                   PATHS ENV GMP_LIB_DIR
+                   DOC "Path to the GMP library"
+                  )
+                  
+      if ( GMP_LIBRARIES ) 
+        get_filename_component(GMP_LIBRARY_DIR ${GMP_LIBRARIES} PATH CACHE )
+      endif()
+      
+    endif()  
+      
+    # Attempt to load a user-defined configuration for GMP if couldn't be found
+    if ( NOT GMP_INCLUDE_DIR OR NOT GMP_LIBRARY_DIR )
+      include( GMPConfig OPTIONAL )
+    endif()
+    
+    find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_INCLUDE_DIR GMP_LIBRARY_DIR)
+
   endif()
-  
-  find_package_handle_standard_args(GMP "DEFAULT_MSG" GMP_INCLUDE_DIR GMP_LIBRARY_DIR)
-  
 endif()
