@@ -936,16 +936,16 @@ public:
     /// Set Multisampling for active viewer
     void slotLocalChangeMultisampling(bool _lighting);
     
-    /// When using ego-shooter mode move backward
+    /// When using first person mode move backward
     void moveBack();
     
-    /// When using ego-shooter mode move forward
+    /// When using first person mode move forward
     void moveForward();
     
-    /// When using ego-shooter mode strafe to the left
+    /// When using first person mode strafe to the left
     void strafeLeft();
     
-    /// When using ego-shooter mode strafe to the right
+    /// When using first person mode strafe to the right
     void strafeRight();
     
   private :
