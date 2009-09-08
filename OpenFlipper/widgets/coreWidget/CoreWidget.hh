@@ -285,7 +285,7 @@ public:
 
     /// Setup the main menubar
     void setupMenuBar();
-  
+
    /** @} */
 
   //===========================================================================
@@ -554,7 +554,7 @@ public:
     /// Setup and update the global draw menu
     void slotUpdateGlobalDrawMenu();
 
-  
+
     /// Change viewer layout that was selected in the combo box
     void setViewerLayout(int _idx);
 
@@ -579,18 +579,18 @@ public:
 
     QAction* perspectiveProjectionAction_;
     QAction* orthogonalProjectionAction_;
-    
+
     /// Action to globally set Animation
     QAction* globalAnimationAction_;
-    
+
     /// Action to globally set backface culling
     QAction* globalBackfaceCullingAction_;
-    
+
     /// Action to globally set Two-Sided lighting
-    QAction* globalTwosidedLightingAction_;    
-    
+    QAction* globalTwosidedLightingAction_;
+
     /// Action to globally set multisampling
-    QAction* globalMultisamplingAction_;    
+    QAction* globalMultisamplingAction_;
 
     int activeDrawModes_;
 
@@ -641,6 +641,9 @@ public:
 
     /// Show / hide wheels
     void slotSwitchWheels(bool _state);
+
+    /// Switch navigation mode
+    void slotSwitchNavigation(bool _egomode);
 
     /// Set the snapShot name for all examiners
     void slotSnapshotName();
@@ -927,15 +930,15 @@ public:
 
     /// Set two sided lighting for active viewer
     void slotLocalChangeTwoSidedLighting(bool _lighting);
-    
-    
-    
+
+
+
     /// Set Multisampling for all viewers
     void slotGlobalChangeMultisampling(bool _lighting);
 
     /// Set Multisampling for active viewer
     void slotLocalChangeMultisampling(bool _lighting);
-    
+
     /// When using first person mode move backward
     void moveBack();
     

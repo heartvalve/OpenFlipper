@@ -75,7 +75,7 @@ void CoreWidget::slotToggleStereoMode()
   }
 
   cursorPainter_->setEnabled (stereoActive_);
-  
+
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     examiner_widgets_[i]->setStereoMode(stereoActive_);
 }
@@ -120,8 +120,18 @@ void CoreWidget::slotContextHomeView() {
 void CoreWidget::slotSwitchWheels(bool _state) {
   std::vector< glViewer* >::iterator it = examiner_widgets_.begin();
 
-  for(; it != examiner_widgets_.end(); it++) 
+  for(; it != examiner_widgets_.end(); it++)
     _state ? (*it)->slotShowWheels() : (*it)->slotHideWheels();
+}
+
+/// Switch navigation mode
+void CoreWidget::slotSwitchNavigation(bool _egomode) {
+  std::vector< glViewer* >::iterator it = examiner_widgets_.begin();
+
+  for(; it != examiner_widgets_.end(); it++) {
+    _egomode ? (*it)->navigationMode(glViewer::EGOSHOOTER_NAVIGATION) :
+    	(*it)->navigationMode(glViewer::NORMAL_NAVIGATION);
+  }
 }
 
 /// Set the viewer to home position
@@ -186,7 +196,7 @@ void CoreWidget::slotLocalChangeAnimation(bool _animation){
 void CoreWidget::slotGlobalChangeBackFaceCulling(bool _backFaceCulling){
   for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     PluginFunctions::viewerProperties(i).backFaceCulling(_backFaceCulling);
-  
+
 }
 
 /// Set Backface culling for active viewer
@@ -582,14 +592,14 @@ void CoreWidget::slotCoordSysVisibility(bool _visible){
     return;
   }
 
-if (_visible) 
+if (_visible)
     coordSys->show();
-  else 
+  else
     coordSys->hide();
-  
+
   for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     examiner_widgets_[i]->updateGL();
-  
+
 }
 
 void CoreWidget::slotSetViewingDirection(QAction* _action) {

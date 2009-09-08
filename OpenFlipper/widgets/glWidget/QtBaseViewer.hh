@@ -71,6 +71,7 @@
 #include <QDragEnterEvent>
 #include <QMouseEvent>
 #include <QAction>
+#include <QKeyEvent>
 #include <QSize>
 #include <QMap>
 #include <QString>
@@ -191,11 +192,21 @@ public:
     PERSPECTIVE_PROJECTION   //!< perspective
   };
 
+  /// Navigation mode
+  enum NavigationMode {
+	  NORMAL_NAVIGATION, 	 //!< Normal mode
+	  EGOSHOOTER_NAVIGATION  //!< Egoshooter mode
+  };
+
   /// Changes the projection mode and updates the projection matrix.
   void projectionMode(ProjectionMode _p);
   /// get current projection mode
   ProjectionMode projectionMode() const { return projectionMode_; }
 
+  /// Changes the navigation mode
+  void navigationMode(NavigationMode _n);
+  /// get current navigation mode
+  NavigationMode navigationMode() const { return navigationMode_; }
 
   /** Sets the center and dimension of the whole scene.  This point is
       used as fixpoint for rotations and to set the eye point far
@@ -216,7 +227,6 @@ public:
       \see setScenePos()
   */
   double scene_radius() const { return scene_radius_; }
-
 
   /// set the viewing direction
   void viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up );
@@ -341,10 +351,13 @@ public slots:
   virtual void orthographicProjection();
   /// toggle projection mode
   virtual void toggleProjectionMode();
+  /// toggle navigation mode
+  virtual void toggleNavigationMode();
 
   signals:
 
     void projectionModeChanged( bool _ortho );
+    void navigationModeChanged( bool _normal );
 
   public slots:
 
@@ -437,6 +450,8 @@ protected:
   void viewMouseEvent( QMouseEvent* _event);
   /// specialized viewer: handle wheel events
   void viewWheelEvent(QWheelEvent* _event);
+  /// specialized viewer: hande key events
+  void viewKeyEvent( QKeyEvent* _event);
 
   /// optional: hande mouse events to rotate light
   void lightMouseEvent( QMouseEvent* /* _event */ );
@@ -533,6 +548,7 @@ private:
   // modi
   NormalsMode                  normalsMode_;
   ProjectionMode               projectionMode_;
+  NavigationMode			   navigationMode_;
 
 
   // helper
@@ -651,7 +667,7 @@ private:
      *
      * This function is called by the internal gl widget when receiving a key press event.
      */
-    virtual void keyPressEvent(QKeyEvent* _event) { _event->ignore(); };
+    virtual void keyPressEvent(QKeyEvent* _event);
 
     /** \brief Get keyRelease events from the glArea
      *
@@ -668,7 +684,7 @@ private:
      *
      * @return If the derived class handled the event it has to return true otherwise false
      */
-    virtual bool viewKeyPressEvent(QKeyEvent* /*_event*/) { return false; };
+    virtual bool viewKeyPressEvent(QKeyEvent* _event);
 
   /** @} */
 
@@ -833,6 +849,12 @@ private:
 
     /// virtual trackball: map 2D screen point to unit sphere
     bool mapToSphere(const QPoint& _p, ACG::Vec3d& _result) const;
+
+    /// Navigate through scene if ego-shooter mode has been selected
+    void treatEgoShooterNavigation( QMouseEvent* _event);
+
+    /// Navigate through scene if normal mode has been selected
+    void treatNormalNavigation( QMouseEvent* _event);
 
 
     // mouse interaction
