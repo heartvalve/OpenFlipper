@@ -169,6 +169,7 @@ glViewer::glViewer( QGraphicsScene* _scene,
 
   normalsMode_      = DONT_TOUCH_NORMALS;
   projectionMode_   = PERSPECTIVE_PROJECTION;
+  navigationMode_	= NORMAL_NAVIGATION;
 
 
   light_matrix_.identity();
@@ -330,6 +331,23 @@ void glViewer::projectionMode(ProjectionMode _p)
     emit projectionModeChanged( false );
 
   updateProjectionMatrix();
+}
+
+void glViewer::toggleNavigationMode()
+{
+  if (navigationMode_ == NORMAL_NAVIGATION)
+    navigationMode(EGOSHOOTER_NAVIGATION);
+  else
+    navigationMode(NORMAL_NAVIGATION);
+}
+
+
+void glViewer::navigationMode(NavigationMode _n)
+{
+  if ((navigationMode_ = _n) == NORMAL_NAVIGATION)
+    emit navigationModeChanged( true );
+  else
+    emit navigationModeChanged( false );
 }
 
 
@@ -1563,6 +1581,29 @@ void glViewer::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
   }
 }
 
+//----------------------------------------------------------------------------------
+
+void glViewer::keyPressEvent ( QKeyEvent* _event ) {
+
+	_event->accept();
+
+	switch (properties_.actionMode()) {
+	case Viewer::ExamineMode:
+		viewKeyEvent(_event);
+		break;
+	default: // avoid warning
+		break;
+	}
+}
+
+//----------------------------------------------------------------------------------
+
+bool glViewer::viewKeyPressEvent(QKeyEvent* _event) {
+
+	_event->accept();
+
+	return true;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -1682,157 +1723,207 @@ void glViewer::dropEvent(QGraphicsSceneDragDropEvent* _e)
 //-----------------------------------------------------------------------------
 
 
-void
-glViewer::viewMouseEvent(QMouseEvent* _event)
-{
-  QPointF f (mapFromScene(QPointF(_event->pos().x(), _event->pos().y())));
-  QPoint pos (f.x(), f.y());
+void glViewer::viewMouseEvent(QMouseEvent* _event) {
 
-  switch (_event->type())
-  {
-    case QEvent::MouseButtonPress:
-    {
-      // shift key -> set rotation center
-      if (_event->modifiers() & Qt::ShiftModifier)
-      {
-        ACG::Vec3d c;
-        if (fast_pick(pos, c))
-        {
-          trackball_center_ = c;
-          trackball_radius_ = std::max(scene_radius_, (c-glstate_->eye()).norm()*0.9f);
-        }
-      }
+	if (navigationMode_ == NORMAL_NAVIGATION) {
 
-      lastPoint_hitSphere_ = mapToSphere( lastPoint2D_= pos,
-                 lastPoint3D_ );
-      isRotating_ = true;
-      timer_->stop();
+		treatNormalNavigation(_event);
 
+	} else if (navigationMode_ == EGOSHOOTER_NAVIGATION) {
 
-      break;
-    }
-
-
-    case QEvent::MouseButtonDblClick:
-    {
-      if (allowRotation_)
-        flyTo(_event->pos(), _event->button()==Qt::MidButton);
-      break;
-    }
-
-
-    case QEvent::MouseMove:
-    {
-      double factor  = 1.0;
-
-      if (_event->modifiers() == Qt::ShiftModifier)
-        factor = properties_.wheelZoomFactorShift();
-
-      // mouse button should be pressed
-      if (_event->buttons() & (Qt::LeftButton | Qt::MidButton))
-      {
-        QPoint newPoint2D = pos;
-
-        double value_x, value_y;
-        ACG::Vec3d  newPoint3D;
-        bool   newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D );
-
-        makeCurrent();
-
-        // move in z direction
-        if ( (_event->buttons() & Qt::LeftButton) &&
-              (_event->buttons() & Qt::MidButton))
-        {
-          switch (projectionMode())
-          {
-            case PERSPECTIVE_PROJECTION:
-            {
-              value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 3.0 / (double) glHeight();
-              translate( ACG::Vec3d(0.0, 0.0, value_y * factor ) );
-              updateGL();
-              break;
-            }
-
-            case ORTHOGRAPHIC_PROJECTION:
-            {
-              value_y = ((newPoint2D.y() - lastPoint2D_.y())) * orthoWidth_ / (double) glHeight();
-              orthoWidth_ -= value_y  * factor;
-              updateProjectionMatrix();
-              updateGL();
-              break;
-            }
-          }
-        }
-
-        // move in x,y direction
-        else if ( (_event->buttons() & Qt::MidButton) || (!allowRotation_ && (_event->buttons() & Qt::LeftButton)))
-        {
-          value_x = scene_radius_ * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
-          value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();
-          translate( ACG::Vec3d(value_x  * factor , -value_y  * factor , 0.0) );
-        }
-
-        // rotate
-        else if (allowRotation_ && (_event->buttons() & Qt::LeftButton) )
-        {
-          ACG::Vec3d axis(1.0,0.0,0.0);
-          double angle(0.0);
-
-          if ( lastPoint_hitSphere_ ) {
-
-            if ( ( newPoint_hitSphere = mapToSphere( newPoint2D,
-                                newPoint3D ) ) ) {
-              axis = lastPoint3D_ % newPoint3D;
-              double cos_angle = ( lastPoint3D_ | newPoint3D );
-              if ( fabs(cos_angle) < 1.0 ) {
-                angle = acos( cos_angle ) * 180.0 / M_PI  * factor ;
-                angle *= 2.0; // inventor rotation
-              }
-            }
-
-            rotate(axis, angle);
-
-          }
-
-          lastRotationAxis_  = axis;
-          lastRotationAngle_ = angle;
-        }
-
-        lastPoint2D_ = newPoint2D;
-        lastPoint3D_ = newPoint3D;
-        lastPoint_hitSphere_ = newPoint_hitSphere;
-
-        updateGL();
-        lastMoveTime_.restart();
-      }
-      break;
-    }
-
-
-
-    case QEvent::MouseButtonRelease:
-    {
-      lastPoint_hitSphere_ = false;
-
-      // continue rotation ?
-      if ( isRotating_ &&
-      (_event->button() == Qt::LeftButton) &&
-      (!(_event->buttons() & Qt::MidButton)) &&
-      (lastMoveTime_.elapsed() < 50) && properties_.animation() )
-        timer_->start(0);
-      break;
-    }
-
-    default: // avoid warning
-      break;
-  }
-
-
+		treatEgoShooterNavigation(_event);
+	}
 }
 
+//----------------------------------------------------------------------------
+
+void glViewer::treatEgoShooterNavigation( QMouseEvent* _event) {
+
+	// Ego-shooter navigation mode is selected
+	QPointF f(mapFromScene(QPointF(_event->pos().x(), _event->pos().y())));
+	QPoint pos(f.x(), f.y());
+
+	switch (_event->type()) {
+
+	case QEvent::MouseButtonDblClick: {
+		if (allowRotation_)
+			flyTo(_event->pos(), _event->button() == Qt::MidButton);
+		break;
+	}
+
+	case QEvent::MouseMove: {
+
+		// Considering center point of screen as origin
+		QPoint newpos = QPoint(pos.x() - glWidth() / 2, glHeight() / 2 - pos.y());
+		QPoint oldpos = QPoint(lastPoint2D_.x() - glWidth() / 2, glHeight() / 2 - lastPoint2D_.y());
+
+		double x = 2.0 * newpos.x() / glWidth();
+		double y = 2.0 * newpos.y() / glHeight();
+
+		double xo = 2.0 * oldpos.x() / glWidth();
+		double yo = 2.0 * oldpos.y() / glHeight();
+
+		double diffx = xo - x;
+		double diffy = yo - y;
+
+		ACG::Vec3d yaxis(0.0, 1.0, 0.0);
+		ACG::Vec3d xaxis(1.0, 0.0, 0.0);
+
+		ACG::Vec3d eye = glstate_->modelview().transform_point(glstate_->eye());
+
+		glstate_->rotate(-diffx * 90, 0.0, 1.0, 0.0);
+		glstate_->rotate(diffy * 90, 1.0, 0.0, 0.0);
+
+		rotate(yaxis, -diffx * 90, glstate_->eye());
+		rotate(xaxis, diffy * 90, glstate_->eye());
+
+		lastPoint2D_ = pos;
+
+		updateGL();
+		lastMoveTime_.restart();
+
+		break;
+	}
+
+	default: // avoid warning
+		break;
+	}
+}
+
+//----------------------------------------------------------------------------
+
+void glViewer::treatNormalNavigation( QMouseEvent* _event ) {
+
+	// Normal navigation mode is selected
+	QPointF f(mapFromScene(QPointF(_event->pos().x(), _event->pos().y())));
+	QPoint pos(f.x(), f.y());
+
+	switch (_event->type()) {
+	case QEvent::MouseButtonPress: {
+		// shift key -> set rotation center
+		if (_event->modifiers() & Qt::ShiftModifier) {
+			ACG::Vec3d c;
+			if (fast_pick(pos, c)) {
+				trackball_center_ = c;
+				trackball_radius_ = std::max(scene_radius_, (c - glstate_->eye()).norm() * 0.9f);
+			}
+		}
+
+		lastPoint_hitSphere_ = mapToSphere(lastPoint2D_ = pos, lastPoint3D_);
+		isRotating_ = true;
+		timer_->stop();
+
+		break;
+	}
+
+	case QEvent::MouseButtonDblClick: {
+		if (allowRotation_)
+			flyTo(_event->pos(), _event->button() == Qt::MidButton);
+		break;
+	}
+
+	case QEvent::MouseMove: {
+		double factor = 1.0;
+
+		if (_event->modifiers() == Qt::ShiftModifier)
+			factor = properties_.wheelZoomFactorShift();
+
+		// mouse button should be pressed
+		if (_event->buttons() & (Qt::LeftButton | Qt::MidButton)) {
+			QPoint newPoint2D = pos;
+
+			double value_x, value_y;
+			ACG::Vec3d newPoint3D;
+			bool newPoint_hitSphere = mapToSphere(newPoint2D, newPoint3D);
+
+			makeCurrent();
+
+			// move in z direction
+			if ((_event->buttons() & Qt::LeftButton) && (_event->buttons() & Qt::MidButton)) {
+				switch (projectionMode()) {
+				case PERSPECTIVE_PROJECTION: {
+					value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 3.0 / (double) glHeight();
+					translate(ACG::Vec3d(0.0, 0.0, value_y * factor));
+					updateGL();
+					break;
+				}
+
+				case ORTHOGRAPHIC_PROJECTION: {
+					value_y = ((newPoint2D.y() - lastPoint2D_.y())) * orthoWidth_ / (double) glHeight();
+					orthoWidth_ -= value_y * factor;
+					updateProjectionMatrix();
+					updateGL();
+					break;
+				}
+				}
+			}
+
+			// move in x,y direction
+			else if ((_event->buttons() & Qt::MidButton) || (!allowRotation_ && (_event->buttons() & Qt::LeftButton))) {
+				value_x = scene_radius_ * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
+				value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();
+				translate(ACG::Vec3d(value_x * factor, -value_y * factor, 0.0));
+			}
+
+			// rotate
+			else if (allowRotation_ && (_event->buttons() & Qt::LeftButton)) {
+				ACG::Vec3d axis(1.0, 0.0, 0.0);
+				double angle(0.0);
+
+				if (lastPoint_hitSphere_) {
+
+					if ((newPoint_hitSphere = mapToSphere(newPoint2D, newPoint3D))) {
+						axis = lastPoint3D_ % newPoint3D;
+						double cos_angle = (lastPoint3D_ | newPoint3D);
+						if (fabs(cos_angle) < 1.0) {
+							angle = acos(cos_angle) * 180.0 / M_PI * factor;
+							angle *= 2.0; // inventor rotation
+						}
+					}
+
+					rotate(axis, angle);
+
+				}
+
+				lastRotationAxis_ = axis;
+				lastRotationAngle_ = angle;
+			}
+
+			lastPoint2D_ = newPoint2D;
+			lastPoint3D_ = newPoint3D;
+			lastPoint_hitSphere_ = newPoint_hitSphere;
+
+			updateGL();
+			lastMoveTime_.restart();
+		}
+		break;
+	}
+
+	case QEvent::MouseButtonRelease: {
+		lastPoint_hitSphere_ = false;
+
+		// continue rotation ?
+		if (isRotating_ && (_event->button() == Qt::LeftButton) && (!(_event->buttons() & Qt::MidButton))
+		        && (lastMoveTime_.elapsed() < 50) && properties_.animation())
+			timer_->start(0);
+		break;
+	}
+
+	default: // avoid warning
+		break;
+	}
+}
 
 //-----------------------------------------------------------------------------
 
+void glViewer::viewKeyEvent( QKeyEvent* _event) {
+
+	// Only react if in ego-shooter mode
+	if (navigationMode_ == EGOSHOOTER_NAVIGATION) {
+	}
+}
+
+//-----------------------------------------------------------------------------
 
 void
 glViewer::lightMouseEvent(QMouseEvent* _event)
@@ -1980,7 +2071,7 @@ void glViewer::applyProperties() {
   glstate_->set_twosided_lighting( properties_.twoSidedLighting() );
 
   glstate_->set_clear_color( properties_.backgroundColor() );
-  
+
   glstate_->allow_multisampling( properties_.multisampling() );
 
   if (properties_.isCCWFront() )
@@ -2152,7 +2243,7 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
   {
     glstate_->push_modelview_matrix ();
 
-    // reset modelview to ignore the view transformation 
+    // reset modelview to ignore the view transformation
     glstate_->reset_modelview ();
 
     // Project the depth value of the stereo mode zero paralax plane.
