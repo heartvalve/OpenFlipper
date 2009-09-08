@@ -1581,30 +1581,6 @@ void glViewer::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
   }
 }
 
-//----------------------------------------------------------------------------------
-
-void glViewer::keyPressEvent ( QKeyEvent* _event ) {
-
-	_event->accept();
-
-	switch (properties_.actionMode()) {
-	case Viewer::ExamineMode:
-		viewKeyEvent(_event);
-		break;
-	default: // avoid warning
-		break;
-	}
-}
-
-//----------------------------------------------------------------------------------
-
-bool glViewer::viewKeyPressEvent(QKeyEvent* _event) {
-
-	_event->accept();
-
-	return true;
-}
-
 //-----------------------------------------------------------------------------
 
 
@@ -1911,15 +1887,6 @@ void glViewer::treatNormalNavigation( QMouseEvent* _event ) {
 
 	default: // avoid warning
 		break;
-	}
-}
-
-//-----------------------------------------------------------------------------
-
-void glViewer::viewKeyEvent( QKeyEvent* _event) {
-
-	// Only react if in ego-shooter mode
-	if (navigationMode_ == EGOSHOOTER_NAVIGATION) {
 	}
 }
 

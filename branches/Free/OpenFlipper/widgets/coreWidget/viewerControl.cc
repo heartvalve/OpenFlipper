@@ -608,7 +608,7 @@ void CoreWidget::slotSetViewingDirection(QAction* _action) {
 }
 
 void CoreWidget::moveBack() {
-//    examiner_widgets_[PluginFunctions::activeExaminer()]->
+//  examiner_widgets_[PluginFunctions::activeExaminer()]->
   std::cerr << "move Back" << std::endl;
 }
     
