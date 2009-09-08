@@ -539,6 +539,13 @@ void CoreWidget::registerCoreKeys() {
 
   emit registerKey(Qt::Key_Shift  , Qt::ShiftModifier, "Apply context menu action to all Viewers", true);
   emit registerKey(Qt::Key_Shift  , Qt::NoModifier, "Apply context menu action to all Viewers", true);
+  
+  
+  emit registerKey(Qt::Key_A  , Qt::NoModifier, "First Person view strafe left");
+  emit registerKey(Qt::Key_D , Qt::NoModifier, "First Person view strafe right");
+  emit registerKey(Qt::Key_W    , Qt::NoModifier, "First Person view move forward");
+  emit registerKey(Qt::Key_S  , Qt::NoModifier, "First Person view move back");
+  
 }
 
 /// if a keyPressEvent belongs to the core this functions is called
@@ -587,6 +594,7 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
   }
 
   switch (_e->key()) {
+    
     case Qt::Key_Escape:
         setActionMode( lastActionMode() );
       break;
@@ -598,7 +606,23 @@ void CoreWidget::coreKeyPressEvent  (QKeyEvent* _e){
     case Qt::Key_Space:
       nextViewerLayout();
       break;
+      
+    case Qt::Key_A:
+      strafeLeft();
+      break;
+      
+    case Qt::Key_D:
+      strafeRight();
+      break;
+      
+    case Qt::Key_W:
+      moveForward();
+      break;      
 
+    case Qt::Key_S:
+      moveBack();
+      break;      
+      
     case Qt::Key_Shift :
       shiftPressed_ = true;
       break;

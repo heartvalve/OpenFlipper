@@ -597,4 +597,21 @@ void CoreWidget::slotSetViewingDirection(QAction* _action) {
   PluginFunctions::setFixedView( _action->data().toInt() );
 }
 
+void CoreWidget::moveBack() {
+//    examiner_widgets_[PluginFunctions::activeExaminer()]->
+  std::cerr << "move Back" << std::endl;
+}
+    
+void CoreWidget::moveForward() {
+  std::cerr << "move Forward" << std::endl;
+}
+    
+void CoreWidget::strafeLeft() {
+  std::cerr << "move Left" << std::endl;
+}
+    
+void CoreWidget::strafeRight() {
+  std::cerr << "move Right" << std::endl;
+}
+
 //=============================================================================
