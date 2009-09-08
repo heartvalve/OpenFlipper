@@ -65,7 +65,6 @@
 #include <QBoxLayout>
 #include <QtNetwork/QUdpSocket>
 #include <QWheelEvent>
-#include <QKeyEvent>
 #include <QDropEvent>
 #include <QContextMenuEvent>
 #include <QDragEnterEvent>
@@ -667,7 +666,7 @@ private:
      *
      * This function is called by the internal gl widget when receiving a key press event.
      */
-    virtual void keyPressEvent(QKeyEvent* _event);
+    virtual void keyPressEvent(QKeyEvent* _event) { _event->ignore(); };
 
     /** \brief Get keyRelease events from the glArea
      *
@@ -684,7 +683,7 @@ private:
      *
      * @return If the derived class handled the event it has to return true otherwise false
      */
-    virtual bool viewKeyPressEvent(QKeyEvent* _event);
+    virtual bool viewKeyPressEvent(QKeyEvent* /* _event */ ) { return false; }
 
   /** @} */
 
