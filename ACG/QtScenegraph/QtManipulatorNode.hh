@@ -125,6 +125,10 @@ class ACGDLLEXPORT QtManipulatorNode : public QObject , public ManipulatorNode
   void show() { ManipulatorNode::show(); emit visibilityChanged( this, visible() );  };
   void hide() { ManipulatorNode::hide(); emit visibilityChanged( this, visible() );  };
 
+  void rotate(double _angle, const Vec3d& _axis) { TransformNode::rotate(_angle, _axis); emit positionChanged( this ); };
+
+  void translate( double _s ) { ManipulatorNode::translate(_s); emit positionChanged( this ); };
+
   void set_center( const Vec3d& _c ) { ManipulatorNode::set_center(_c); emit positionChanged( this ); };
 
   private:
