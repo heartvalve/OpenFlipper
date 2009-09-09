@@ -47,18 +47,22 @@ IF(CGAL_INCLUDE_DIR )
                 PATHS "${CGAL_INCLUDE_DIR}/../lib"
                 DOC "Directory containing the CGAL library"
                ) 
-  ENDIF(WIN32)
-
-  IF(APPLE)
+    add_definitions (-DCGAL_AUTOLINK)
+  ELSEIF( APPLE)
     find_path(CGAL_LIBRARY_DIR 
                 NAMES "libCGAL.dylib"
                 PATHS "/opt/local/CGAL-3.4/lib/"
                 DOC "Directory containing the CGAL library"
                ) 
     list ( APPEND CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt4)
-  ELSE( APPLE )
-    add_definitions (-DCGAL_AUTOLINK)
-  ENDIF(APPLE)
+  ELSE( WIN32 )
+    find_path(CGAL_LIBRARY_DIR
+              NAMES "libCGAL.so"
+              PATHS "/usr/lib/"
+              DOC "Directory containing the CGAL library"
+             )
+    list ( APPEND CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt4)
+  ENDIF(WIN32)
 
 
  
