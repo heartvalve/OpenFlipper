@@ -2246,25 +2246,54 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
 
 void glViewer::moveForward() {
     if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
-        std::cerr << "Move forward" << std::endl;
+
+        ACG::Vec3d dir = glstate_->viewing_direction();
+
+        dir *= -0.1;
+
+        glstate_->translate(dir[0], dir[1], dir[2]);
+
+        updateGL();
+        lastMoveTime_.restart();
     }
 }
 
 void glViewer::moveBack() {
     if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
-        std::cerr << "Move back" << std::endl;
+        ACG::Vec3d dir = glstate_->viewing_direction();
+
+        dir *= 0.1;
+
+        glstate_->translate(dir[0], dir[1], dir[2]);
+
+        updateGL();
+        lastMoveTime_.restart();
     }
 }
 
 void glViewer::strafeLeft() {
     if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
-        std::cerr << "Strafe left" << std::endl;
+        ACG::Vec3d dir = glstate_->right();
+
+        dir *= 0.1;
+
+        glstate_->translate(dir[0], dir[1], dir[2]);
+
+        updateGL();
+        lastMoveTime_.restart();
     }
 }
 
 void glViewer::strafeRight() {
     if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
-        std::cerr << "Strafe right" << std::endl;
+        ACG::Vec3d dir = glstate_->right();
+
+        dir *= -0.1;
+
+        glstate_->translate(dir[0], dir[1], dir[2]);
+
+        updateGL();
+        lastMoveTime_.restart();
     }
 }
 
