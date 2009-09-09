@@ -235,7 +235,7 @@ draw(GLState&  _state  , unsigned int /*_drawMode*/)
     _state.get_viewport(left, bottom, width, height);
 
     if (width && height)
-      aspect = width / height;
+      aspect = (double)width / (double)height;
 
     // Projection reset
     _state.push_projection_matrix();
@@ -386,7 +386,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       _state.get_viewport(left, bottom, width, height);
 
       if (width && height)
-        aspect = width / height;
+        aspect = (double)width / (double)height;
 
       // Projection reset
       _state.push_projection_matrix();
