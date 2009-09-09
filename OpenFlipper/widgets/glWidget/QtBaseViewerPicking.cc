@@ -500,13 +500,49 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
                             const QRegion&                             _region,
                             QList<QPair<unsigned int, unsigned int> >& _list)
 {
+  QRect    rect = _region.boundingRect();
   GLint    w = glWidth(),
            h = glHeight(),
            l = scenePos().x(),
-           b = scene()->height () - scenePos().y() - h;
+           b = scene()->height () - scenePos().y() - h,
+           x = rect.x(),
+           y = scene()->height () - rect.bottom();
   GLubyte* buffer;
-  QRect    rect = _region.boundingRect();
 
+  if (pickCacheSupported_)
+  {
+    // delete pick cache if the size changed
+    if (pickCache_ && pickCache_->size () != QSize (glWidth (), glHeight ()))
+    {
+      delete pickCache_;
+      pickCache_ = NULL;
+    }
+    // create a new pick cache frambuffer object
+    if (!pickCache_)
+    {
+      pickCache_ = new QGLFramebufferObject (glWidth (), glHeight (), QGLFramebufferObject::Depth);
+      if (!pickCache_->isValid ())
+      {
+        pickCacheSupported_ = false;
+        delete pickCache_;
+        pickCache_ = NULL;
+      }
+    }
+    if (pickCache_)
+    {
+      // the viewport for the framebuffer object
+      l = 0;
+      b = 0;
+      x = rect.x() - scenePos().x();
+      y = glHeight() - (rect.bottom() - scenePos().y());
+
+      // we can only pick inside of our window
+      if (x < 0 || y < 0 || x >= (int)glWidth() || y >= (int)glHeight())
+        return 0;
+
+      pickCache_->bind ();
+    }
+  }
 
   const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
   const ACG::GLMatrixd&  projection = properties_.glState().projection();
@@ -545,14 +581,18 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
   properties_.glState().set_clear_color (clear_color);
 
   if (properties_.glState().pick_error ())
-    return false;
+  {
+    if (pickCache_ && pickCache_->isBound ())
+      pickCache_->release ();
+    return -1;
+  }
 
   buffer = new GLubyte[4 * rect.width() * rect.height()];
 
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-  glReadPixels (rect.x(), scene()->height () - rect.bottom() , rect.width(),
+  glReadPixels (x, y, rect.width(),
                 rect.height(), GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
   QSet<QPair<unsigned int, unsigned int> > found;
@@ -582,6 +622,14 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
 
   delete buffer;
   _list = found.toList();
+
+  // unbind pick cache
+  if (pickCache_ && pickCache_->isBound ())
+  {
+    pickCache_->release ();
+    updatePickCache_ = false;
+    pickCacheTarget_ = _pickTarget;
+  }
 
   return true;
 }
