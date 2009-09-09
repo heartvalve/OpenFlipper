@@ -519,8 +519,8 @@ void InfoPlugin::getEdgeLengths(MeshT* _mesh, double &min, double &max, double &
   typename MeshT::ConstEdgeIter e_it(_mesh->edges_sbegin()),
                                 e_end(_mesh->edges_end());
 
-  min = FLT_MIN;
-  max = FLT_MAX;
+  min = FLT_MAX;
+  max = FLT_MIN;
   mean = 0.0;
   for (; e_it!=e_end; ++e_it)
   {
