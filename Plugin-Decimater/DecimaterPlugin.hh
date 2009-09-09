@@ -130,6 +130,11 @@ private slots:
   void updateRoundness(int    _value);
   void updateRoundness(double _value);
 
+  /// slider / spinbox updates
+  void updateDistance ();
+  void updateNormalDev ();
+  void updateVertices ();
+
   /// update number of vertices information
   void slotUpdateNumVertices();
 

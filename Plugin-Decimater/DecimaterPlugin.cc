@@ -84,6 +84,11 @@ bool DecimaterPlugin::initializeToolbox(QWidget*& _widget)
 
   connect(tool_->roundness,SIGNAL(valueChanged(double) ),this,SLOT(updateRoundness(double)) );
   connect(tool_->roundnessSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateRoundness(int)) );
+  connect(tool_->distance,SIGNAL(valueChanged(double) ),this,SLOT(updateDistance()) );
+  connect(tool_->normalDeviation,SIGNAL(valueChanged(int) ),this,SLOT(updateNormalDev()) );
+  connect(tool_->normalDeviationSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateNormalDev()) );
+  connect(tool_->verticesCount,SIGNAL(valueChanged(int) ),this,SLOT(updateVertices()) );
+  connect(tool_->verticesCountSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateVertices()) );
 
   // Force update if the Toolbox gets visible
   connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumVertices() ) );
@@ -111,6 +116,7 @@ void DecimaterPlugin::pluginsInitialized() {
 void DecimaterPlugin::updateRoundness(int _value)
 {
   tool_->roundness->setValue( (double) _value / 100.0 );
+  tool_->cbRoundness->setChecked (true);
 }
 
 
@@ -123,6 +129,7 @@ void DecimaterPlugin::updateRoundness(int _value)
 void DecimaterPlugin::updateRoundness(double _value)
 {
   tool_->roundnessSlider->setValue( (int) (_value * 100) );
+  tool_->cbRoundness->setChecked (true);
 }
 
 //-----------------------------------------------------------------------------
@@ -343,6 +350,30 @@ void DecimaterPlugin::slotObjectSelectionChanged(int /*_identifier*/)
 void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/)
 {
   slotUpdateNumVertices ();
+}
+
+//-----------------------------------------------------------------------------
+
+// activate checkbox if value has changed
+void DecimaterPlugin::updateVertices()
+{
+  tool_->cbVertices->setChecked (true);
+}
+
+//-----------------------------------------------------------------------------
+
+// activate checkbox if value has changed
+void DecimaterPlugin::updateNormalDev()
+{
+  tool_->cbNormalDev->setChecked (true);
+}
+
+//-----------------------------------------------------------------------------
+
+// activate checkbox if value has changed
+void DecimaterPlugin::updateDistance()
+{
+  tool_->cbDistance->setChecked (true);
 }
 
 //-----------------------------------------------------------------------------
