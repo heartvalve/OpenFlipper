@@ -861,6 +861,7 @@ void glViewer::flyTo(const ACG::Vec3d&  _position,
       update();
       qApp->processEvents();
     }
+    updatePickCache_ = true;
   }
 
 
