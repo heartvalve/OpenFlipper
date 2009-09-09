@@ -1752,13 +1752,10 @@ void glViewer::treatFirstPersonNavigation( QMouseEvent* _event) {
 		double diffx = xo - x;
 		double diffy = yo - y;
 
-		ACG::Vec3d yaxis(0.0, 1.0, 0.0);
-		ACG::Vec3d xaxis(1.0, 0.0, 0.0);
+		ACG::Vec3d yaxis = glstate_->modelview().transform_vector(glstate_->up());
+		ACG::Vec3d xaxis = glstate_->modelview().transform_vector(glstate_->right());
 
-		ACG::Vec3d eye = glstate_->modelview().transform_point(glstate_->eye());
-
-		glstate_->rotate(-diffx * 90, 0.0, 1.0, 0.0);
-		glstate_->rotate(diffy * 90, 1.0, 0.0, 0.0);
+		ACG::Vec3d eye = glstate_->eye();
 
 		rotate(yaxis, -diffx * 90, glstate_->eye());
 		rotate(xaxis, diffy * 90, glstate_->eye());
