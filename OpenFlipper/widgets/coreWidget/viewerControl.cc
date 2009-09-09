@@ -129,7 +129,7 @@ void CoreWidget::slotSwitchNavigation(bool _egomode) {
   std::vector< glViewer* >::iterator it = examiner_widgets_.begin();
 
   for(; it != examiner_widgets_.end(); it++) {
-    _egomode ? (*it)->navigationMode(glViewer::EGOSHOOTER_NAVIGATION) :
+    _egomode ? (*it)->navigationMode(glViewer::FIRSTPERSON_NAVIGATION) :
     	(*it)->navigationMode(glViewer::NORMAL_NAVIGATION);
   }
 }
@@ -608,20 +608,19 @@ void CoreWidget::slotSetViewingDirection(QAction* _action) {
 }
 
 void CoreWidget::moveBack() {
-//  examiner_widgets_[PluginFunctions::activeExaminer()]->
-  std::cerr << "move Back" << std::endl;
+    examiner_widgets_[PluginFunctions::activeExaminer()]->moveBack();
 }
-    
+
 void CoreWidget::moveForward() {
-  std::cerr << "move Forward" << std::endl;
+    examiner_widgets_[PluginFunctions::activeExaminer()]->moveForward();
 }
-    
+
 void CoreWidget::strafeLeft() {
-  std::cerr << "move Left" << std::endl;
+    examiner_widgets_[PluginFunctions::activeExaminer()]->strafeLeft();
 }
-    
+
 void CoreWidget::strafeRight() {
-  std::cerr << "move Right" << std::endl;
+    examiner_widgets_[PluginFunctions::activeExaminer()]->strafeRight();
 }
 
 //=============================================================================

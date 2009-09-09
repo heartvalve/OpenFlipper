@@ -284,10 +284,10 @@ void CoreWidget::setupMenuBar()
 
   viewMenu_->addSeparator();
 
-  QAction* navigationSwitchAction = new QAction( tr("Ego-shooter Navigation"), viewMenu_ );
+  QAction* navigationSwitchAction = new QAction( tr("First-person Navigation"), viewMenu_ );
   navigationSwitchAction->setCheckable( true );
-  navigationSwitchAction->setStatusTip( tr("Switch between normal and ego-shooter navigation mode."));
-  navigationSwitchAction->setWhatsThis( tr("Switch between normal and ego-shooter navigation mode."));
+  navigationSwitchAction->setStatusTip( tr("Switch between normal and first-person navigation mode."));
+  navigationSwitchAction->setWhatsThis( tr("Switch between normal and first-person navigation mode."));
   navigationSwitchAction->setChecked( false );
 
   connect( navigationSwitchAction, SIGNAL( toggled(bool) ), this, SLOT( slotSwitchNavigation(bool) ) );

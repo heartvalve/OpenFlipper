@@ -194,7 +194,7 @@ public:
   /// Navigation mode
   enum NavigationMode {
 	  NORMAL_NAVIGATION, 	 //!< Normal mode
-	  EGOSHOOTER_NAVIGATION  //!< Egoshooter mode
+	  FIRSTPERSON_NAVIGATION  //!< First person mode
   };
 
   /// Changes the projection mode and updates the projection matrix.
@@ -315,6 +315,18 @@ public:
 
   /// will be called from CursorPainter to inform the viewer that the cursor position changed
   void updateCursorPosition (QPointF _scenePos);
+
+  /// First person navigation: Move forward
+  void moveForward();
+
+  /// First person navigation: Move back
+  void moveBack();
+
+  /// First person navigation: Strafe left
+  void strafeLeft();
+
+  /// First person navigation: Strafe Right
+  void strafeRight();
 
 //---------------------------------------------------------------- public slots
 public slots:
@@ -526,6 +538,7 @@ protected:
 
   // helper
   bool                         isRotating_;
+  bool                         lookAround_;
 
 
 //---------------------------------------------------------------- private data
@@ -849,8 +862,8 @@ private:
     /// virtual trackball: map 2D screen point to unit sphere
     bool mapToSphere(const QPoint& _p, ACG::Vec3d& _result) const;
 
-    /// Navigate through scene if ego-shooter mode has been selected
-    void treatEgoShooterNavigation( QMouseEvent* _event);
+    /// Navigate through scene if first person mode has been selected
+    void treatFirstPersonNavigation( QMouseEvent* _event);
 
     /// Navigate through scene if normal mode has been selected
     void treatNormalNavigation( QMouseEvent* _event);

@@ -161,6 +161,7 @@ glViewer::glViewer( QGraphicsScene* _scene,
   // state
   orthoWidth_       = 2.0;
   isRotating_       = false;
+  lookAround_       = false;
   near_             = 0.1;
   far_              = 100.0;
   fovy_             = 45.0;
@@ -336,7 +337,7 @@ void glViewer::projectionMode(ProjectionMode _p)
 void glViewer::toggleNavigationMode()
 {
   if (navigationMode_ == NORMAL_NAVIGATION)
-    navigationMode(EGOSHOOTER_NAVIGATION);
+    navigationMode(FIRSTPERSON_NAVIGATION);
   else
     navigationMode(NORMAL_NAVIGATION);
 }
@@ -1706,21 +1707,27 @@ void glViewer::viewMouseEvent(QMouseEvent* _event) {
 
 		treatNormalNavigation(_event);
 
-	} else if (navigationMode_ == EGOSHOOTER_NAVIGATION) {
+	} else if (navigationMode_ == FIRSTPERSON_NAVIGATION) {
 
-		treatEgoShooterNavigation(_event);
+		treatFirstPersonNavigation(_event);
 	}
 }
 
 //----------------------------------------------------------------------------
 
-void glViewer::treatEgoShooterNavigation( QMouseEvent* _event) {
+void glViewer::treatFirstPersonNavigation( QMouseEvent* _event) {
 
 	// Ego-shooter navigation mode is selected
 	QPointF f(mapFromScene(QPointF(_event->pos().x(), _event->pos().y())));
 	QPoint pos(f.x(), f.y());
 
 	switch (_event->type()) {
+
+	case QEvent::MouseButtonPress: {
+	    lastPoint2D_ = pos;
+	    lookAround_ = true;
+	    break;
+	}
 
 	case QEvent::MouseButtonDblClick: {
 		if (allowRotation_)
@@ -1729,6 +1736,8 @@ void glViewer::treatEgoShooterNavigation( QMouseEvent* _event) {
 	}
 
 	case QEvent::MouseMove: {
+
+	    if(!lookAround_) break;
 
 		// Considering center point of screen as origin
 		QPoint newpos = QPoint(pos.x() - glWidth() / 2, glHeight() / 2 - pos.y());
@@ -1761,6 +1770,11 @@ void glViewer::treatEgoShooterNavigation( QMouseEvent* _event) {
 
 		break;
 	}
+
+	case QEvent::MouseButtonRelease: {
+        lookAround_ = false;
+        break;
+    }
 
 	default: // avoid warning
 		break;
@@ -2225,6 +2239,33 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
     glstate_->pop_modelview_matrix ();
     cursorPositionValid_ = true;
   }
+}
+
+//-----------------------------------------------------------------------------
+
+
+void glViewer::moveForward() {
+    if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
+        std::cerr << "Move forward" << std::endl;
+    }
+}
+
+void glViewer::moveBack() {
+    if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
+        std::cerr << "Move back" << std::endl;
+    }
+}
+
+void glViewer::strafeLeft() {
+    if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
+        std::cerr << "Strafe left" << std::endl;
+    }
+}
+
+void glViewer::strafeRight() {
+    if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
+        std::cerr << "Strafe right" << std::endl;
+    }
 }
 
 //=============================================================================
