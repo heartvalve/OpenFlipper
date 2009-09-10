@@ -204,6 +204,18 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     /// Update the Dialog with the last clicked manipulator
     void updateManipulatorDialog();
 
+    /// Get closest vertex to hitpoint
+    template <typename MeshType>
+    OpenMesh::Vec3d getNearestVertex(MeshType* _mesh, uint _fh, OpenMesh::Vec3d& _hitPoint);
+
+    /// Get closest edge to hitpoint
+    template <typename MeshType>
+    OpenMesh::Vec3d getNearestEdge(MeshType* _mesh, uint _fh, OpenMesh::Vec3d& _hitPoint);
+
+    /// Get closest face to hitpoint
+    template <typename MeshType>
+    OpenMesh::Vec3d getNearestFace(MeshType* _mesh, uint _fh, OpenMesh::Vec3d& _hitPoint);
+
     /// True if the toolbox widget is active
     bool toolboxActive_;
 
@@ -236,7 +248,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 //===========================================================================
 
   private :
-    QToolBar *pickToolbar_;
+    QToolBar* pickToolbar_;
 
     QAction* placeAction_;
     QAction* rotateTranslateAction_;
@@ -245,6 +257,8 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     QAction* biggerManipAction_;
     QAction* smallerManipAction_;
+
+    QAction* placeAndSnapAction_;
 
     QActionGroup* pickToolBarActions_;
 
@@ -291,7 +305,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     void showManipulators( );
 
     /// Place and show the Manipulator
-    void placeManip(QMouseEvent * _event);
+    void placeManip(QMouseEvent * _event, bool _snap = false);
 
     /// scale mesh to have a boundingboxdiagonal of one
     template< typename MeshT >
@@ -443,14 +457,16 @@ public slots :
 /** @} */
 
   public slots:
-    QString version() { return QString("1.1"); };
+    QString version() { return QString("1.2"); };
 
   private:
     QToolBar* toolbar_;
+
     bool hide_;
 
     bool allTargets_;
 
+    bool placeMode_;
 };
 
 #endif //MOVEPLUGIN_HH
