@@ -163,6 +163,9 @@ signals:
 
    /// This signal is emitted if the object has been changed (source/target)
    void objectSelectionChanged( int );
+   
+   /// This signal is emitted if one of the viewers updated its view
+   void pluginViewChanged();
 
    /// The texture with the given name and filename has been added
    void addTexture( QString, QString , uint, int );

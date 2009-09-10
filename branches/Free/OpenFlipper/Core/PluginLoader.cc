@@ -482,6 +482,9 @@ void Core::loadPlugin(QString filename, bool silent){
 
       if ( checkSignal(plugin,"objectPropertiesChanged(int)"))
         connect(plugin,SIGNAL(objectPropertiesChanged(int)),this,SLOT(slotObjectPropertiesChanged(int)), Qt::DirectConnection);
+      
+      if ( checkSlot( plugin , "slotViewChanged()" ) )
+        connect(this,SIGNAL(pluginViewChanged()),plugin,SLOT(slotViewChanged()), Qt::DirectConnection);
 
       if ( checkSlot(plugin,"slotObjectPropertiesChanged(int)"))
         connect(this,SIGNAL(objectPropertiesChanged(int)),plugin,SLOT(slotObjectPropertiesChanged(int)), Qt::DirectConnection);

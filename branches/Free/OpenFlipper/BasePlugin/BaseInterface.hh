@@ -146,6 +146,7 @@ class BaseInterface {
       *
     */
     virtual void objectPropertiesChanged( int /*_identifier*/ ) {};
+    
 
   private slots:
 
@@ -195,6 +196,15 @@ class BaseInterface {
       *
     */
     virtual void slotObjectPropertiesChanged( int /*_identifier*/ ) {};
+    
+    /** \brief View has changed
+      *
+      * This slot is called when the view in one of the viewers changed
+      * ( Viewing direction/viewer position )
+      * !! Be carefull to not change the view in this slot !!
+      * !! This will of course lead to an endless loop !!
+    */
+    virtual void slotViewChanged() {};
 
   /** @} */
 

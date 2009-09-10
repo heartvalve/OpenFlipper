@@ -113,7 +113,8 @@ void Core::stopVideoCapture() {
   }
 }
 
-void Core::viewUpdated() {
+void Core::viewUpdated( ) {
+  
   if ( capture_ )
     captureVideo();
 }
