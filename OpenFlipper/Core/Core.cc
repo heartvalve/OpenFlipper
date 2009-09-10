@@ -480,6 +480,9 @@ Core::init() {
 
       connect( coreWidget_->examiner_widgets_[i], SIGNAL( viewUpdated() ),
                this, SLOT( viewUpdated()) ,Qt::DirectConnection);
+               
+      connect( coreWidget_->examiner_widgets_[i], SIGNAL( viewUpdated() ),
+               this, SIGNAL( pluginViewChanged() ) ,Qt::DirectConnection);               
     }
 
   }

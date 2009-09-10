@@ -1755,8 +1755,6 @@ void glViewer::treatFirstPersonNavigation( QMouseEvent* _event) {
 		ACG::Vec3d yaxis = glstate_->modelview().transform_vector(glstate_->up());
 		ACG::Vec3d xaxis = glstate_->modelview().transform_vector(glstate_->right());
 
-		ACG::Vec3d eye = glstate_->eye();
-
 		rotate(yaxis, -diffx * 90, glstate_->eye());
 		rotate(xaxis, diffy * 90, glstate_->eye());
 
