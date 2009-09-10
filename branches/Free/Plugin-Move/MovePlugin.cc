@@ -69,9 +69,11 @@
  *
  */
 MovePlugin::MovePlugin() :
- manMode_ (QtTranslationManipulatorNode::TranslationRotation),
- contextAction_(0),
- toAllTargets_(0)
+    placeAndSnapAction_(0),
+    manMode_(QtTranslationManipulatorNode::TranslationRotation),
+    contextAction_(0),
+    toAllTargets_(0),
+    placeMode_(false)
 {
     manip_size_          = 1.0;
     manip_size_modifier_ = 1.0;
@@ -212,6 +214,12 @@ void MovePlugin::pluginsInitialized() {
   rotateManipAction_->setCheckable(true);
   pickToolbar_->addAction(rotateManipAction_);
 
+  placeAndSnapAction_ = new QAction(tr("Locally translate manipulator"), pickToolBarActions_);
+  placeAndSnapAction_->setStatusTip(tr("Locally translate manipulator. Press and hold <Alt> for snapping."));
+  placeAndSnapAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-maniprotate.png") );
+  placeAndSnapAction_->setCheckable(true);
+  pickToolbar_->addAction(placeAndSnapAction_);
+
   smallerManipAction_ = new QAction(tr("Decrease size of manipulator"), pickToolBarActions_);
   smallerManipAction_->setStatusTip(tr("Make manipulator smaller. <Mouse wheel up>"));
   smallerManipAction_->setToolTip(tr("Make manipulator smaller. <Mouse wheel up>"));
@@ -289,30 +297,55 @@ void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /
  *
  * @param _event the event that occured
  */
-void MovePlugin::slotMouseEvent( QMouseEvent* _event )
-{
-  if (((PluginFunctions::pickMode() == ("Move")) || (PluginFunctions::pickMode() == ("MoveSelection"))) &&
-      PluginFunctions::actionMode() == Viewer::PickingMode) {
+void MovePlugin::slotMouseEvent(QMouseEvent* _event) {
+    if (((PluginFunctions::pickMode() == ("Move")) || (PluginFunctions::pickMode() == ("MoveSelection")))
+            && PluginFunctions::actionMode() == Viewer::PickingMode) {
 
-    if (_event->type() == QEvent::MouseButtonDblClick ||
-        (_event->type() == QEvent::MouseButtonPress &&
-         _event->button () == Qt::LeftButton &&
-         placeAction_->isChecked ())) {
+        if (_event->type() == QEvent::MouseButtonDblClick || (_event->type() == QEvent::MouseButtonPress
+                && _event->button() == Qt::LeftButton && (placeAction_->isChecked() || placeMode_))) {
 
-      placeManip(_event);
-      placeAction_->setChecked(false);
-      updateManipulatorDialog();
-      return;
+            placeManip(_event, (placeMode_ && (PluginFunctions::pickMode() == ("MoveSelection"))));
+            placeAction_->setChecked(false);
+            updateManipulatorDialog();
+
+            if (placeMode_) {
+                manMode_ = QtTranslationManipulatorNode::TranslationRotation;
+
+                for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it
+                        != PluginFunctions::objectsEnd(); ++o_it)
+                    if (o_it->manipPlaced())
+                        o_it->manipulatorNode()->setMode(manMode_);
+
+                resizeAction_->setChecked(false);
+                rotateManipAction_->setChecked(false);
+                rotateTranslateAction_->setChecked(true);
+                placeAndSnapAction_->setChecked(false);
+            }
+
+            placeMode_ = false;
+            return;
+
+        } else if (placeMode_) {
+
+            /*
+             * Move manipulator along with cursor if placeAndSnap mode
+             * is active. Snap to nearest geometry element (vertex, line, face center)
+             * depending on which selection type is active.
+             */
+
+            placeManip(_event, (PluginFunctions::pickMode() == ("MoveSelection")));
+            updateManipulatorDialog();
+            return;
+        }
+
+        // interaction
+        ACG::SceneGraph::MouseEventAction action(_event);
+        PluginFunctions::traverse(action);
+
+        if (_event->buttons() == Qt::LeftButton)
+            emit visibilityChanged(-1);
+
     }
-
-    // interaction
-    ACG::SceneGraph::MouseEventAction action(_event);
-    PluginFunctions::traverse(action);
-
-    if (_event->buttons() == Qt::LeftButton)
-      emit visibilityChanged (-1);
-
-  }
 }
 
 /*******************************************************************************
@@ -362,6 +395,9 @@ void MovePlugin::slotPickModeChanged( const std::string& _mode)
         break;
       case QtTranslationManipulatorNode::LocalRotation:
         PluginFunctions::setViewObjectMarker (&objectMarker_);
+        break;
+      case QtTranslationManipulatorNode::Place:
+        PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
         break;
       case QtTranslationManipulatorNode::TranslationRotation:
         PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
@@ -454,12 +490,19 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
         {
           case QtTranslationManipulatorNode::Resize:
             PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+            placeMode_ = false;
             break;
           case QtTranslationManipulatorNode::LocalRotation:
             PluginFunctions::setViewObjectMarker (&objectMarker_);
+            placeMode_ = false;
+            break;
+          case QtTranslationManipulatorNode::Place:
+            PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+            placeMode_ = true;
             break;
           case QtTranslationManipulatorNode::TranslationRotation:
             PluginFunctions::setViewObjectMarker (PluginFunctions::defaultViewObjectMarker ());
+            placeMode_ = false;
             break;
         }
     }
@@ -469,16 +512,25 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
         resizeAction_->setChecked (true);
         rotateManipAction_->setChecked (false);
         rotateTranslateAction_->setChecked (false);
+        placeAndSnapAction_->setChecked (false);
         break;
       case QtTranslationManipulatorNode::LocalRotation:
         resizeAction_->setChecked (false);
         rotateManipAction_->setChecked (true);
         rotateTranslateAction_->setChecked (false);
+        placeAndSnapAction_->setChecked (false);
         break;
       case QtTranslationManipulatorNode::TranslationRotation:
         resizeAction_->setChecked (false);
         rotateManipAction_->setChecked (false);
         rotateTranslateAction_->setChecked (true);
+        placeAndSnapAction_->setChecked (false);
+        break;
+      case QtTranslationManipulatorNode::Place:
+        resizeAction_->setChecked (false);
+        rotateManipAction_->setChecked (false);
+        rotateTranslateAction_->setChecked (false);
+        placeAndSnapAction_->setChecked (true);
         break;
     }
   }
@@ -490,17 +542,17 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
  *
  * @param _nodeId Identifier of node that has been clicked
  */
-void MovePlugin::slotUpdateContextMenuNode( int _nodeId ) {
+void MovePlugin::slotUpdateContextMenuNode(int _nodeId) {
 
-    ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), _nodeId );
+    ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node(PluginFunctions::getSceneGraphRootNode(), _nodeId);
 
-    if (node == 0) return;
+    if (node == 0)
+        return;
 
-    if(node->className() != "QtTranslationManipulatorNode") {
-	contextAction_->setVisible(false);
-    }
-    else {
-	contextAction_->setVisible(true);
+    if (node->className() != "QtTranslationManipulatorNode") {
+        contextAction_->setVisible(false);
+    } else {
+        contextAction_->setVisible(true);
     }
 }
 
@@ -520,7 +572,7 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
   OpenFlipper::Options::redrawDisabled( true );
 
   // Apply changes only on Release for moveMode and after every movement in MoveSelection Mode
-  if ( (_event->type() == QEvent::MouseButtonRelease) || (PluginFunctions::pickMode() == "MoveSelection") ) {
+  if ( ((_event->type() == QEvent::MouseButtonRelease) || (PluginFunctions::pickMode() == "MoveSelection")) && !placeMode_) {
 
     int objectId = _node->getIdentifier();
 
@@ -596,46 +648,83 @@ void MovePlugin::ManipulatorPositionChanged(QtTranslationManipulatorNode* _node 
  *
  * @param _event  mouseEvent that occured
  */
-void MovePlugin::placeManip(QMouseEvent * _event)
-{
-   unsigned int  node_idx, target_idx;
-   OpenMesh::Vec3d         hitPoint;
+void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
+    unsigned int node_idx, target_idx;
+    OpenMesh::Vec3d hitPoint;
+    BaseObjectData* object;
 
-   if ( PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING,_event->pos(), node_idx, target_idx,&hitPoint) ) {
+    bool successfullyPicked = false;
 
-      BaseObjectData* object;
+    /*
+     * Snap manipulator to nearest geometry
+     * element depending on which selection type is
+     * active.
+     */
+    if (_snap) {
+        successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx,
+                target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
 
-      if ( PluginFunctions::getPickedObject(node_idx, object) ) {
-         object->manipPlaced( true );
+        if(!successfullyPicked) {
+            //emit log(LOGWARN, tr("Picking failed"));
+            return;
+        }
 
-         if ( !object->picked(node_idx) ) {
-            emit log(LOGWARN,tr("Picking failed"));
-         }
+        if (selectionType_ == VERTEX) {
+            if ( object->dataType(DATA_TRIANGLE_MESH) ) {
+                hitPoint = getNearestVertex(PluginFunctions::triMesh(object), target_idx, hitPoint);
+            } else if ( object->dataType(DATA_POLY_MESH) ) {
+                hitPoint = getNearestVertex(PluginFunctions::polyMesh(object), target_idx, hitPoint);
+            }
+        } else if (selectionType_ == EDGE) {
+            if ( object->dataType(DATA_TRIANGLE_MESH) ) {
+                hitPoint = getNearestEdge(PluginFunctions::triMesh(object), target_idx, hitPoint);
+            } else if ( object->dataType(DATA_POLY_MESH) ) {
+                hitPoint = getNearestEdge(PluginFunctions::polyMesh(object), target_idx, hitPoint);
+            }
+        } else if (selectionType_ == FACE) {
+            if ( object->dataType(DATA_TRIANGLE_MESH) ) {
+                hitPoint = getNearestFace(PluginFunctions::triMesh(object), target_idx, hitPoint);
+            } else if ( object->dataType(DATA_POLY_MESH) ) {
+                hitPoint = getNearestFace(PluginFunctions::polyMesh(object), target_idx, hitPoint);
+            }
+        }
 
-         object->manipulatorNode()->loadIdentity();
-         object->manipulatorNode()->set_center(hitPoint);
-         object->manipulatorNode()->set_draw_cylinder(true);
-         object->manipulatorNode()->set_autosize(QtTranslationManipulatorNode::Once);
-         object->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
-         object->manipulatorNode()->setMode (manMode_);
-         object->manipulatorNode()->show();
+    } else {
+        successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx,
+                target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
+    }
 
-         object->manipulatorNode()->apply_transformation( PluginFunctions::pickMode() == "Move" );
+    if (successfullyPicked) {
 
-         connect(object->manipulatorNode() , SIGNAL(manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)),
-                 this                      , SLOT(  manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)));
+        object->manipPlaced(true);
 
-         connect(object->manipulatorNode() , SIGNAL(positionChanged(QtTranslationManipulatorNode*)),
-                 this                      , SLOT(  ManipulatorPositionChanged(QtTranslationManipulatorNode*)));
+        /*if (!object->picked(node_idx)) {
+            emit log(LOGWARN, tr("Picking failed"));
+        }*/
 
-         lastActiveManipulator_ = object->id();
+        object->manipulatorNode()->loadIdentity();
+        object->manipulatorNode()->set_center(hitPoint);
+        object->manipulatorNode()->set_draw_cylinder(true);
+        object->manipulatorNode()->set_autosize(QtTranslationManipulatorNode::Once);
+        object->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
+        object->manipulatorNode()->setMode(manMode_);
+        object->manipulatorNode()->show();
 
-         emit updateView();
-      }
+        object->manipulatorNode()->apply_transformation(PluginFunctions::pickMode() == "Move");
 
-   } else {
-       emit log(LOGWARN,tr("Picking failed"));
-   }
+        connect(object->manipulatorNode() , SIGNAL(manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)),
+                this , SLOT( manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)));
+
+        connect(object->manipulatorNode() , SIGNAL(positionChanged(QtTranslationManipulatorNode*)),
+                this , SLOT( ManipulatorPositionChanged(QtTranslationManipulatorNode*)));
+
+        lastActiveManipulator_ = object->id();
+
+        emit updateView();
+
+    } else {
+        //emit log(LOGWARN, tr("Picking failed"));
+    }
 }
 
 
@@ -1374,6 +1463,11 @@ void MovePlugin::slotPickToolbarAction(QAction* _action)
     setManipMode (QtTranslationManipulatorNode::LocalRotation);
   }
 
+  if (_action == placeAndSnapAction_)
+  {
+    setManipMode(QtTranslationManipulatorNode::Place);
+  }
+
   if (_action == resizeAction_)
   {
     setManipMode(QtTranslationManipulatorNode::Resize);
@@ -1625,6 +1719,111 @@ void MovePlugin::slotSelectionModeChanged(QAction* _action){
 
 void MovePlugin::setAllTargets(bool _state) {
 	allTargets_ = _state;
+}
+
+//--------------------------------------------------------------------------------
+
+/**
+ * \brief Get nearest vertex to hitPoint (use for snapping)
+ */
+template< typename MeshType >
+OpenMesh::Vec3d MovePlugin::getNearestVertex(MeshType* _mesh, uint _fh, OpenMesh::Vec3d &_hitPoint) {
+
+    typename MeshType::FaceHandle fh = _mesh->face_handle(_fh);
+
+    if ( !fh.is_valid() )
+        return OpenMesh::Vec3d(0.0, 0.0, 0.0);
+
+    typename MeshType::FaceVertexIter fv_it(*_mesh, fh);
+    typename MeshType::Point hitPointP = (typename MeshType::Point) _hitPoint;
+    typename MeshType::Scalar shortest_distance = (_mesh->point(fv_it.handle()) - hitPointP).sqrnorm();
+    typename MeshType::VertexHandle vh = fv_it.handle();
+
+    for (; fv_it; ++fv_it) {
+
+        typename MeshType::Scalar tmpdist =
+            (_mesh->point(fv_it.handle()) - hitPointP).sqrnorm();
+
+        if(tmpdist < shortest_distance) {
+            shortest_distance = tmpdist;
+            vh = fv_it.handle();
+        }
+    }
+
+    return (OpenMesh::Vec3d)_mesh->point(vh);
+}
+
+//--------------------------------------------------------------------------------
+
+/**
+ * \brief Get nearest edge to hitPoint (use for snapping)
+ */
+template< typename MeshType >
+OpenMesh::Vec3d MovePlugin::getNearestEdge(MeshType* _mesh, uint _fh, OpenMesh::Vec3d &_hitPoint) {
+
+    typename MeshType::FaceHandle fh = _mesh->face_handle(_fh);
+
+    if (!fh.is_valid())
+        return OpenMesh::Vec3d(0.0, 0.0, 0.0);
+
+    typename MeshType::FaceEdgeIter fe_it(*_mesh, fh);
+    typename MeshType::Point hitPointP = (typename MeshType::Point) _hitPoint;
+
+    typename MeshType::Point center;
+    typename MeshType::Scalar closest_dist(-1);
+
+    for (; fe_it; ++fe_it) {
+
+        typename MeshType::HalfedgeHandle heh0 = _mesh->halfedge_handle(fe_it.handle(), 0);
+        typename MeshType::HalfedgeHandle heh1 = _mesh->halfedge_handle(fe_it.handle(), 1);
+
+        typename MeshType::Point lp0 = _mesh->point(_mesh->to_vertex_handle(heh0));
+        typename MeshType::Point lp1 = _mesh->point(_mesh->to_vertex_handle(heh1));
+
+        double dist_new = ACG::Geometry::distPointLineSquared( hitPointP, lp0, lp1);
+
+        /*typename MeshType::Point b(hitPointP - lp0), a(((lp1 - lp0).sqrnorm()));
+        typename MeshType::Scalar d = b|a;
+        typename MeshType::Point x = lp0 + a * d;
+        double dist_new = (hitPointP - x).length();*/
+
+        if (dist_new < closest_dist || closest_dist == -1) {
+            // save closest Edge
+            closest_dist = dist_new;
+            center = lp0 + (lp1 - lp0) * .5;
+
+        }
+    }
+
+    return (OpenMesh::Vec3d)center;
+}
+
+//--------------------------------------------------------------------------------
+
+/**
+ * \brief Get nearest face center to hitPoint (use for snapping)
+ */
+template< typename MeshType >
+OpenMesh::Vec3d MovePlugin::getNearestFace(MeshType* _mesh, uint _fh, OpenMesh::Vec3d &_hitPoint) {
+
+    typename MeshType::FaceHandle fh = _mesh->face_handle(_fh);
+
+    if ( !fh.is_valid() )
+        return OpenMesh::Vec3d(0.0, 0.0, 0.0);
+
+    typename MeshType::FaceVertexIter fv_it(*_mesh, fh);
+    typename MeshType::Point hitPointP = (typename MeshType::Point) _hitPoint;
+
+    typename MeshType::Point cog;
+    uint count = 0;
+
+    for (; fv_it; ++fv_it) {
+
+        cog += _mesh->point(fv_it.handle());
+        ++count;
+    }
+
+    return (OpenMesh::Vec3d)cog/count;
 }
 
 Q_EXPORT_PLUGIN2( moveplugin , MovePlugin );
