@@ -145,6 +145,41 @@ unsigned int activeExaminer( ) {
   return activeExaminer_;
 }
 
+QString getEncodedExaminerView() {
+  return getEncodedExaminerView(activeExaminer());
+}
+
+/// Get the encoded view for the given
+QString getEncodedExaminerView(int _viewerId) {
+  
+  QString view;
+  
+  if ( _viewerId < 0 || _viewerId >= (int)examiner_widgets_.size() ) {
+     std::cerr << "Requested unknown viewer with id : " << _viewerId << std::endl;
+     examiner_widgets_[activeExaminer()]->encodeView ( view );
+     return view;
+  } 
+  
+  examiner_widgets_[_viewerId]->encodeView ( view );
+  return view;
+   
+}
+
+void setEncodedExaminerView( QString _view ) {
+  setEncodedExaminerView( activeExaminer() , _view );
+}
+
+void setEncodedExaminerView(int _viewerId , QString _view ) {
+  
+  if ( _viewerId < 0 || _viewerId >= (int)examiner_widgets_.size() ) {
+     std::cerr << "Requested unknown viewer with id : " << _viewerId << std::endl;
+     examiner_widgets_[activeExaminer()]->decodeView ( _view );
+  } 
+  
+  examiner_widgets_[_viewerId]->decodeView ( _view );
+}  
+  
+
 void setRootNode( SeparatorNode* _root_node ) {
    PluginFunctions::root_node_ = _root_node;
 }

@@ -197,6 +197,22 @@ void setActiveExaminer( const unsigned int _id );
 DLLEXPORT
 unsigned int activeExaminer();
 
+/// Get the encoded view for the active examiner
+DLLEXPORT
+QString getEncodedExaminerView();
+
+/// Get the encoded view for the given
+DLLEXPORT
+QString getEncodedExaminerView(int _viewerId);
+
+/// Set the encoded view for the active examiner
+DLLEXPORT
+void setEncodedExaminerView( QString _view );
+
+/// Set the encoded view for the given
+DLLEXPORT
+void setEncodedExaminerView(int _viewerId , QString _view );
+
 /**
  * Set center of scene
  */
