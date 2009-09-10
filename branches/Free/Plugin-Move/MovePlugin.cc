@@ -216,7 +216,7 @@ void MovePlugin::pluginsInitialized() {
 
   placeAndSnapAction_ = new QAction(tr("Locally translate manipulator"), pickToolBarActions_);
   placeAndSnapAction_->setStatusTip(tr("Locally translate manipulator. Press and hold <Alt> for snapping."));
-  placeAndSnapAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-maniprotate.png") );
+  placeAndSnapAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-placeandsnap.png") );
   placeAndSnapAction_->setCheckable(true);
   pickToolbar_->addAction(placeAndSnapAction_);
 
