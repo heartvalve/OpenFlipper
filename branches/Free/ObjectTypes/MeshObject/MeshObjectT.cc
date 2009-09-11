@@ -368,6 +368,7 @@
   void MeshObject< MeshT , objectDataType >::updateGeometry() {
     if ( meshNode_ )
       meshNode_->update_geometry();
+    invalidateTriangleBsp();
   }
 
   /** Updates the topology information in the mesh scenegraph node */
@@ -377,6 +378,7 @@
       meshNode_->update_topology();
       meshNode_->update_strips();
     }
+    invalidateTriangleBsp();
   }
 
   /** Updates the modeling regions scenegraph nodes */
@@ -640,6 +642,16 @@
      }
 
      return requestTriangleBsp();
+  }
+
+  template < class MeshT , DataType objectDataType >
+  void 
+  MeshObject< MeshT , objectDataType >::invalidateTriangleBsp() {
+     if ( triangle_bsp_ != 0 )
+     {
+       delete triangle_bsp_;
+       triangle_bsp_ = 0;
+     }
   }
 
 
