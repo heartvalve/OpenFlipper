@@ -292,7 +292,16 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
      * @todo : dont recreate but update the old one.
      * @return The new pointer to the bsp or Null if unsupported
      */
-    OMTriangleBSP* resetTriangleBsp();
+     void invalidateTriangleBsp();
+  
+    
+    /** Update the bsp for this object. Only supported for Triangle Meshes at the moment.
+     *
+     *
+     * @return Pointer to bsp or Null if unsupported for this type.
+     */
+     OMTriangleBSP* resetTriangleBsp();
+
 
   private :
     /// If requested a bsp is created for this object
