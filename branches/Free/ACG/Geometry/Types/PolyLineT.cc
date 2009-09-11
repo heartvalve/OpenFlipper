@@ -56,12 +56,17 @@
 
 #include <iostream>
 #include <fstream>
+#include <map>
 
 #include "PolyLineT.hh"
 #include "MeshEdgeSamplerT.hh"
 
 #include <float.h>
 #include <ACG/Geometry/Algorithms.hh>
+
+#ifdef USE_PHYSIM
+#include <PhySim/Meshes/ConstrainedDelaunayT.hh>
+#endif
 
 #ifndef WIN32
 #include <stdlib.h>
@@ -76,6 +81,30 @@
 namespace ACG {
 
 //== IMPLEMENTATION ==========================================================
+
+
+// comparison class for polyline_mesh_integration
+template <class MT>
+class Ecmp
+{
+public:
+  Ecmp( MT& _mesh, typename MT::Point _v) : mesh_(_mesh), v_(_v) {}
+  
+  bool operator()(const int& _vidx0, const int& _vidx1)
+  {
+    typename MT::Scalar d0 = (mesh_.point( mesh_.vertex_handle(_vidx0)) | v_);
+    typename MT::Scalar d1 = (mesh_.point( mesh_.vertex_handle(_vidx1)) | v_);
+    
+    return d0 < d1;
+  }
+  
+  
+  MT&                 mesh_;
+  typename MT::Point  v_;
+};
+
+
+//-----------------------------------------------------------------------------
 
 
 /// Constructor
@@ -1065,6 +1094,449 @@ resample_on_mesh_edges( MeshT& _mesh, SpatialSearchT * _ssearch)
   // overwrite polyline with result
   *this = new_pl;
 }
+
+
+//-----------------------------------------------------------------------------
+
+#ifdef USE_PHYSIM
+
+template <class PointT>
+template <class MeshT, class SpatialSearchT>
+void
+PolyLineT<PointT>::
+integrate_into_mesh( MeshT& _mesh, SpatialSearchT * _ssearch)
+{
+  if( is_closed() && points_.size() < 2)
+  {
+    std::cerr << "Warning: closed polyline with only one vertex!!!\n";
+    return;
+  }
+
+  // resample on mesh edges
+  resample_on_mesh_edges( _mesh, _ssearch);
+
+  //ToDo: Cleanup
+
+  if( !vertex_ehandles_available() ||
+      !vertex_fhandles_available()    )
+  {
+    std::cerr << "ERROR: PolyLine::integrate_into_mesh needs ehandles and fhandles!!!\n";
+    return;
+  }
+
+  //Add points, if polyline starts or ends near boundary
+  add_boundary_points(_mesh);
+
+  // build constrained delaunay problems
+  typedef std::pair<int,int>                                     FSegment;
+  typedef std::pair< std::vector< FSegment >, std::vector<int> > FData;
+  typedef std::map< int, FData >                                 FSPMap;
+  // for each face we need a list of segments(=constraints) and
+  // a list of interior vertices
+  FSPMap face_map;
+
+  typedef std::vector<int>       EData;
+  typedef std::map< int, EData > EVMap;
+  // for each edge we need a list of vertices lying on this edge
+  // this data has to be sorted !!!
+  EVMap edge_map;
+
+  // add vertices to mesh
+  std::vector<int> plvhs;
+  int last_eidx = -1;
+  int last_fidx = -1;
+  int last_vidx = -1;
+  int boundary_closed = is_closed();
+
+  for(unsigned int i=0; i<points_.size()+boundary_closed; ++i)
+  {
+    int vidx = 0;
+    int eidx = vertex_ehandle(i%points_.size());
+    int fidx = vertex_fhandle(i%points_.size());
+
+    // not last segment?
+    if( i < points_.size())
+    {
+      plvhs.push_back( _mesh.add_vertex( (typename MeshT::Point) points_[i]).idx());
+
+      vidx = plvhs.back();
+
+      // error checking
+      if( eidx != -1 && fidx != -1)
+	std::cerr << "ERROR: eidx and fidx are valid simultaneously, this shouldn't happen!!!!\n";
+
+      // add edge vertex reference
+      if( eidx != -1)
+	edge_map[eidx].push_back(vidx);
+      
+      // add inner face vertex reference
+      if( fidx != -1)
+	face_map[fidx].second.push_back( vidx );
+    }
+    else vidx = plvhs[0]; // take first vertex
+
+    // add segments as delaunay constraints
+    if( i>0 )
+    {
+      // inner vertex case
+      if( ( fidx != -1 && last_eidx != -1) ||
+	  ( eidx != -1 && last_fidx != -1) ||
+	  ( fidx != -1 && last_fidx != -1 && fidx == last_fidx) )
+      {
+	int valid_fidx = std::max(fidx, last_fidx);
+
+	face_map[valid_fidx].first.push_back( FSegment(vidx, last_vidx) );
+      }
+      else
+	if( eidx != -1 && last_eidx != -1)
+	{
+	  typename MeshT::EdgeHandle eh      = _mesh.edge_handle(      eidx );
+	  typename MeshT::HalfedgeHandle heh0= _mesh.halfedge_handle( eh, 0);
+	  typename MeshT::HalfedgeHandle heh1= _mesh.halfedge_handle( eh, 1);
+
+	  typename MeshT::FaceHandle fh0, fh1;
+	  // edge might be at boundary !
+	  if( !_mesh.is_boundary( heh0)) fh0 = _mesh.face_handle(heh0);
+	  else                           fh0 = _mesh.face_handle(heh1);
+	  if( !_mesh.is_boundary( heh1)) fh1 = _mesh.face_handle(heh1);
+	  else                           fh1 = _mesh.face_handle(heh0);
+
+	  std::pair<int,int> fhs( fh0.idx(), fh1.idx());
+
+	  typename MeshT::EdgeHandle     last_eh  = _mesh.edge_handle( last_eidx );
+	  typename MeshT::HalfedgeHandle last_heh0= _mesh.halfedge_handle( last_eh, 0);
+	  typename MeshT::HalfedgeHandle last_heh1= _mesh.halfedge_handle( last_eh, 1);
+
+	  typename MeshT::FaceHandle last_fh0, last_fh1;
+	  // edge might be at boundary !
+	  if( !_mesh.is_boundary( last_heh0)) last_fh0 = _mesh.face_handle(last_heh0);
+	  else                                last_fh0 = _mesh.face_handle(last_heh1);
+	  if( !_mesh.is_boundary( last_heh1)) last_fh1 = _mesh.face_handle(last_heh1);
+	  else                                last_fh1 = _mesh.face_handle(last_heh0);
+
+	  std::pair<int,int> last_fhs( last_fh0.idx(), last_fh1.idx());
+
+	  int common_fh = -1;
+
+	  if( fhs.first == last_fhs.first ||
+	      fhs.first == last_fhs.second   )
+	    common_fh = fhs.first;
+	  else
+	    if( fhs.second == last_fhs.first ||
+		fhs.second == last_fhs.second   )
+	      common_fh = fhs.second;
+	    else
+	    {
+	      std::cerr << "ERROR: Polyline::integrate_into_mesh no common facehandle!!!\n";
+	    }
+
+	  face_map[common_fh].first.push_back( FSegment(vidx, last_vidx));
+	}
+	else
+	{
+	  std::cerr << "ERROR: unhandled segment case!!!\n";
+	  std::cerr << "vidx: " << vidx << " / last " << last_vidx << std::endl;
+	  std::cerr << "fidx: " << fidx << " / last " << last_fidx << std::endl;
+	  std::cerr << "eidx: " << eidx << " / last " << last_eidx << std::endl;
+
+	}
+    }
+
+    // store data for next segment
+    last_eidx = eidx;
+    last_fidx = fidx;
+    last_vidx = vidx;
+  }
+
+  // sort edge vertices for halfedge_handle0
+  EVMap::iterator ev_it  = edge_map.begin();
+  for(; ev_it != edge_map.end(); ++ev_it)
+  {
+    typename MeshT::EdgeHandle eh = _mesh.edge_handle( ev_it->first );
+    typename MeshT::Point      p0 = _mesh.point( _mesh.to_vertex_handle( _mesh.halfedge_handle(eh,0)));
+    typename MeshT::Point      p1 = _mesh.point( _mesh.to_vertex_handle( _mesh.halfedge_handle(eh,1)));
+
+    std::sort( ev_it->second.begin(), ev_it->second.end(), Ecmp<MeshT>(_mesh, p0-p1 ));
+  }
+  
+  // setup edge constraints for faces
+  FSPMap::iterator fsp_it  = face_map.begin();
+  for(; fsp_it != face_map.end(); ++fsp_it)
+  {
+    typename MeshT::FaceHandle fh = _mesh.face_handle( fsp_it->first );
+    typename MeshT::FHIter  fh_it = _mesh.fh_iter(fh);
+    for(; fh_it; ++fh_it)
+    {
+      // get endpoints
+      typename MeshT::VertexHandle vh_start = _mesh.from_vertex_handle(fh_it.handle());
+      typename MeshT::VertexHandle vh_end   = _mesh.to_vertex_handle  (fh_it.handle());
+
+      typename MeshT::EdgeHandle eh = _mesh.edge_handle( fh_it.handle());
+
+      // add start vertex to face
+      fsp_it->second.second.push_back( vh_start.idx() );
+
+      // correct ordering? (for first halfedge)
+      std::vector<int> edge_ordered ( edge_map[ eh.idx()]);
+      if( fh_it.handle() != _mesh.halfedge_handle(eh, 0) )
+	std::reverse(edge_ordered.begin(), edge_ordered.end());
+      
+      int prev_idx = vh_start.idx();
+
+      std::vector<int>::iterator ev_it  = edge_ordered.begin();
+      std::vector<int>::iterator ev_end = edge_ordered.end();
+
+      for(; ev_it != ev_end; ++ev_it)
+      {
+	// add segment
+	fsp_it->second.first.push_back( FSegment(prev_idx, *ev_it) );
+
+	// add edge vertex to face
+	fsp_it->second.second.push_back( *ev_it );
+
+	prev_idx = *ev_it;
+      }
+      // add last segment
+      fsp_it->second.first.push_back( FSegment(prev_idx, vh_end.idx()) );
+    }
+  }
+
+  // update edge map for triangle consistency check
+  ev_it  = edge_map.begin();
+  for(; ev_it != edge_map.end(); ++ev_it)
+  {
+    typename MeshT::EdgeHandle     eh   = _mesh.edge_handle( ev_it->first );
+    typename MeshT::HalfedgeHandle heh0 = _mesh.halfedge_handle( eh, 0 );
+    typename MeshT::HalfedgeHandle heh1 = _mesh.halfedge_handle( eh, 1 );
+
+    edge_map[eh.idx()].push_back( _mesh.to_vertex_handle(heh0).idx());
+    edge_map[eh.idx()].push_back( _mesh.to_vertex_handle(heh1).idx());
+  }
+
+
+  // remove faces, solve cdelaunay, and insert new faces
+  ACG::ConstrainedDelaunayT<double> cdelaunay;
+  std::vector<int>                  orig_idx;
+  std::map<int,int>                 new_idx;
+  fsp_it  = face_map.begin();
+  for(; fsp_it != face_map.end(); ++fsp_it)
+  {
+    typename MeshT::FaceHandle fh = _mesh.face_handle( fsp_it->first );
+    int fidx = fh.idx();
+
+    // get edge handles for later consistency check
+    std::vector<int> ehs;
+    typename MeshT::FEIter fe_it = _mesh.fe_iter( fh );
+    for(; fe_it; ++fe_it)
+      ehs.push_back( fe_it.handle().idx());
+    
+    // set normal for delaunay problem
+    cdelaunay.clear();
+    cdelaunay.set_normal( _mesh.normal(fh) );
+
+    // add vertices of triangle cdelaunay problem
+    orig_idx.clear();
+    new_idx.clear();
+    std::vector<int>::iterator fv_it  = fsp_it->second.second.begin();
+    std::vector<int>::iterator fv_end = fsp_it->second.second.end();
+    for(; fv_it != fv_end; ++fv_it)
+    {
+      new_idx[*fv_it] = orig_idx.size();
+      orig_idx.push_back( *fv_it );
+      bool valid = cdelaunay.add_point((ACG::ConstrainedDelaunayT<double>::Vec3r) _mesh.point(_mesh.vertex_handle(*fv_it)));
+
+      if( !valid )
+      {
+	std::cerr << "ERROR: CGAL could not add point, aborting polyline integration...\n";
+	// remove valence 0 vertices
+	typename MeshT::VertexIter v_it  = _mesh.vertices_begin();
+	for(; v_it != _mesh.vertices_end(); ++v_it)
+	{
+	  if( !_mesh.valence(v_it.handle()))
+	    _mesh.delete_vertex(v_it.handle());
+	}
+	_mesh.garbage_collection();
+	_mesh.update_normals();
+
+	return;
+      }
+    }
+
+    // add constraints
+    std::vector<FSegment>::iterator fc_it  = fsp_it->second.first.begin();
+    std::vector<FSegment>::iterator fc_end = fsp_it->second.first.end();
+    for(; fc_it != fc_end; ++fc_it)
+    {
+      cdelaunay.add_constraint( new_idx[fc_it->first], new_idx[fc_it->second] );
+    }
+
+    // get new triangles and add them to _mesh
+    std::vector< std::vector< int> > tri_list;
+    cdelaunay.get_triangles( tri_list);
+
+    // delete old face
+    _mesh.delete_face(fh, false);
+
+    //    if( fsp_it == face_map.begin())
+    for(unsigned int i=0; i<tri_list.size(); ++i)
+    {
+      std::vector<typename MeshT::VertexHandle > tvhs;
+      for(unsigned int j=0; j<tri_list[i].size(); ++j)
+	tvhs.push_back( _mesh.vertex_handle( orig_idx[tri_list[i][j]]) );
+
+      // check if face has is valid = not all vertices on the same input triangle edge
+      bool face_valid = true;
+      for(unsigned int j=0; j<ehs.size(); ++j)
+      {
+	if( tvhs.size() == 3)
+	{
+	  // ede_map iterators
+	  std::vector<int>::iterator em_begin = edge_map[ehs[j]].begin();
+	  std::vector<int>::iterator em_end   = edge_map[ehs[j]].end();
+
+	  // all three vertices on same edge?
+	  if( std::find( em_begin, em_end, tvhs[0].idx()) != em_end &&
+	      std::find( em_begin, em_end, tvhs[1].idx()) != em_end &&
+	      std::find( em_begin, em_end, tvhs[2].idx()) != em_end   )
+	  {
+	    face_valid = false;
+	  }
+	}
+	else std::cerr << "ERROR: integrate polyline found triangle which has not 3 vertices...\n";
+      }
+
+
+      if( face_valid)
+	_mesh.add_face( tvhs );
+
+    }
+  }
+
+  //select polyline edges
+  for(unsigned int i=1; i<points_.size()+boundary_closed; ++i)
+  {
+    // get vertex handles of segment
+    typename MeshT::VertexHandle vh0 = _mesh.vertex_handle( plvhs[i-1] );
+    typename MeshT::VertexHandle vh1 = _mesh.vertex_handle( plvhs[i%points_.size()] );
+
+    // find connecting edge
+    bool found_edge = false;
+    typename MeshT::VOHIter voh_it = _mesh.voh_iter(vh0);
+    for(; voh_it; ++voh_it)
+      if( _mesh.to_vertex_handle(voh_it.handle()) == vh1)
+      {
+	_mesh.status( _mesh.edge_handle( voh_it.handle())).set_selected(true);
+	found_edge = true;
+      }
+
+    if( !found_edge )
+      std::cerr << "Warning: could not find polyline edge: " 
+		<< i-1 << " to " << i%points_.size() 
+		<< std::endl;
+  }
+
+  // clean up mesh
+  _mesh.garbage_collection();
+  _mesh.update_normals();
+}
+
+#endif
+
+//-----------------------------------------------------------------------------
+
+
+template <class PointT>
+template <class MeshT>
+void
+PolyLineT<PointT>::
+add_boundary_points(MeshT& _mesh)
+{
+  // face handles should be available
+  if( ! vertex_fhandles_available() ) return;
+
+  // polyline should have at least one point
+  if( points_.empty()) return;
+
+  if( !is_closed() )
+  {
+    // check first vertex
+    int fidx = vertex_fhandle(0);
+    if( fidx != -1)
+    {
+      typename MeshT::Point p = (typename MeshT::Point) (points_[0]);
+      
+      double                closest_dist = FLT_MAX;
+      typename MeshT::Point closest_boundary(0,0,0), pb(0,0,0);
+      int                   closest_eidx = -1;
+      typename MeshT::FHIter fh_it = _mesh.fh_iter( _mesh.face_handle(fidx));
+
+      for(; fh_it; ++fh_it)
+      {
+	if( _mesh.is_boundary( _mesh.opposite_halfedge_handle(fh_it.handle())))
+	{
+	  typename MeshT::Point v0 = _mesh.point(_mesh.to_vertex_handle  (fh_it.handle()));
+	  typename MeshT::Point v1 = _mesh.point(_mesh.from_vertex_handle(fh_it.handle()));
+
+	  double d = ACG::Geometry::distPointLineSquared(p, v0, v1, &pb);
+
+	  if( d < closest_dist)
+	  {
+	    closest_dist     = d;
+	    closest_boundary = pb;
+	    closest_eidx     = _mesh.edge_handle( fh_it.handle()).idx();
+	  }
+	}
+      }
+      
+      // if boundary point found, add it
+      if( closest_eidx != -1 )
+      {
+	insert_point( 0, closest_boundary);
+	vertex_ehandle(0) = closest_eidx;
+      }
+      
+    }
+
+    // check last vertex
+    int pvidx = points_.size()-1;
+    fidx  = vertex_fhandle(pvidx);
+    if( fidx != -1)
+    {
+      typename MeshT::Point p = (typename MeshT::Point) (points_[pvidx]);
+      
+      double                closest_dist = FLT_MAX;
+      typename MeshT::Point closest_boundary(0,0,0), pb(0,0,0);
+      int                   closest_eidx = -1;
+      typename MeshT::FHIter fh_it = _mesh.fh_iter( _mesh.face_handle(fidx));
+
+      for(; fh_it; ++fh_it)
+      {
+	if( _mesh.is_boundary( _mesh.opposite_halfedge_handle(fh_it.handle())))
+	{
+	  typename MeshT::Point v0 = _mesh.point(_mesh.to_vertex_handle  (fh_it.handle()));
+	  typename MeshT::Point v1 = _mesh.point(_mesh.from_vertex_handle(fh_it.handle()));
+
+	  double d = ACG::Geometry::distPointLineSquared(p, v0, v1, &pb);
+
+	  if( d < closest_dist)
+	  {
+	    closest_dist     = d;
+	    closest_boundary = pb;
+	    closest_eidx     = _mesh.edge_handle( fh_it.handle()).idx();
+	  }
+	}
+      }
+      
+      // if boundary point found, add it
+      if( closest_eidx != -1 )
+      {
+	add_point( closest_boundary);
+	vertex_ehandle( points_.size()-1 ) = closest_eidx;
+      }
+    }
+  }
+}
+
 
 //-----------------------------------------------------------------------------
 

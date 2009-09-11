@@ -188,6 +188,17 @@ public:
   template <class MeshT, class SpatialSearchT>
   void resample_on_mesh_edges( MeshT& _mesh, SpatialSearchT * _ssearch = 0);
 
+#ifdef USE_PHYSIM
+  // add projected polyline edges and vertices to mesh and select them
+  template <class MeshT, class SpatialSearchT>
+  void integrate_into_mesh( MeshT& _mesh, SpatialSearchT * _ssearch = 0);
+#endif
+
+  // for non-closed polylines add a sample at the boundary 
+  // if start or end vertex lie in a boundary face and facehandles are valid
+  template <class MeshT>
+  void add_boundary_points( MeshT& _mesh);
+
   // conversion methods PolyLine <-> LineNode
   template <class LineNodeT>
   LineNodeT* get_line_node( LineNodeT*& _line_node, int _mode = 0);
