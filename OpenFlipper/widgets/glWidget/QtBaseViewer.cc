@@ -1738,7 +1738,6 @@ void glViewer::viewMouseEvent(QMouseEvent* _event) {
 		treatFirstPersonNavigation(_event);
 	}
         
-        emit viewChanged();
 }
 
 //----------------------------------------------------------------------------
@@ -1791,6 +1790,8 @@ void glViewer::treatFirstPersonNavigation( QMouseEvent* _event) {
 		updateGL();
 		lastMoveTime_.restart();
 
+                emit viewChanged();
+                
 		break;
 	}
 
@@ -1859,6 +1860,7 @@ void glViewer::treatNormalNavigation( QMouseEvent* _event ) {
 					value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 3.0 / (double) glHeight();
 					translate(ACG::Vec3d(0.0, 0.0, value_y * factor));
 					updateGL();
+                                        emit viewChanged();
 					break;
 				}
 
@@ -1867,6 +1869,7 @@ void glViewer::treatNormalNavigation( QMouseEvent* _event ) {
 					orthoWidth_ -= value_y * factor;
 					updateProjectionMatrix();
 					updateGL();
+                                        emit viewChanged();
 					break;
 				}
 				}
@@ -1909,6 +1912,7 @@ void glViewer::treatNormalNavigation( QMouseEvent* _event ) {
 
 			updateGL();
 			lastMoveTime_.restart();
+                        emit viewChanged();
 		}
 		break;
 	}
