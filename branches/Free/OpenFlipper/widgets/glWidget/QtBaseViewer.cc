@@ -1731,18 +1731,18 @@ void glViewer::viewMouseEvent(QMouseEvent* _event) {
 
   if (navigationMode_ == NORMAL_NAVIGATION) {
 
-    treatNormalNavigation(_event);
+    handleNormalNavigation(_event);
 
   } else if (navigationMode_ == FIRSTPERSON_NAVIGATION) {
 
-    treatFirstPersonNavigation(_event);
+    handleFirstPersonNavigation(_event);
   }
 
 }
 
 //----------------------------------------------------------------------------
 
-void glViewer::treatFirstPersonNavigation( QMouseEvent* _event) {
+void glViewer::handleFirstPersonNavigation( QMouseEvent* _event) {
 
   // Ego-shooter navigation mode is selected
   QPointF f(mapFromScene(QPointF(_event->pos().x(), _event->pos().y())));
@@ -1807,7 +1807,7 @@ void glViewer::treatFirstPersonNavigation( QMouseEvent* _event) {
 
 //----------------------------------------------------------------------------
 
-  void glViewer::treatNormalNavigation( QMouseEvent* _event ) {
+void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
 
   // Normal navigation mode is selected
   QPointF f(mapFromScene(QPointF(_event->pos().x(), _event->pos().y())));

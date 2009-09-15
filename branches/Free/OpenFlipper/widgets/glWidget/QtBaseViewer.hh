@@ -867,10 +867,10 @@ private:
     bool mapToSphere(const QPoint& _p, ACG::Vec3d& _result) const;
 
     /// Navigate through scene if first person mode has been selected
-    void treatFirstPersonNavigation( QMouseEvent* _event);
+    void handleFirstPersonNavigation( QMouseEvent* _event);
 
     /// Navigate through scene if normal mode has been selected
-    void treatNormalNavigation( QMouseEvent* _event);
+    void handleNormalNavigation( QMouseEvent* _event);
 
 
     // mouse interaction
