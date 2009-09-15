@@ -627,7 +627,11 @@ private:
    * @{ */
   //===========================================================================
   signals:
+    /// This signal is emitted when the scene is repainted due to any event.
     void viewUpdated();
+    
+    /// This signal is emitted whenever the view is changed by the user
+    void viewChanged();
 
     /// make this widget active
     void signalMakeActive ();
