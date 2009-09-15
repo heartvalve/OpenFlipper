@@ -332,6 +332,8 @@ void glViewer::projectionMode(ProjectionMode _p)
     emit projectionModeChanged( false );
 
   updateProjectionMatrix();
+  
+  emit viewChanged();
 }
 
 void glViewer::toggleNavigationMode()
@@ -387,6 +389,7 @@ void glViewer::updateProjectionMatrix()
                      -orthoWidth_/aspect, orthoWidth_/aspect,
                      near_, far_ );
   }
+  
 }
 
 
@@ -407,6 +410,8 @@ void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool
 
 	updateProjectionMatrix();
 	updateGL();
+        
+        emit viewChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -426,6 +431,8 @@ void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
 
   glstate_->reset_modelview();
   glstate_->lookAt((ACG::Vec3d)eye, (ACG::Vec3d)scene_center_, (ACG::Vec3d)_up);
+  
+  emit viewChanged();
 }
 
 
@@ -738,6 +745,8 @@ void glViewer::home()
   trackball_radius_ = home_radius_;
   updateProjectionMatrix();
   updateGL();
+  
+  emit viewChanged();
 
 }
 
@@ -766,6 +775,8 @@ void glViewer::viewAll()
 	properties_.unLockUpdate();
 	updateProjectionMatrix();
 	updateGL();
+        
+        emit viewChanged();
 
 }
 
@@ -805,6 +816,8 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
 
       // Redraw scene
       updateGL();
+      
+      emit viewChanged();
     }
 
 
@@ -892,6 +905,8 @@ void glViewer::setView(const ACG::GLMatrixd& _modelview,
   makeCurrent();
   glstate_->set_modelview(_modelview, _inverse_modelview);
   updateGL();
+  
+  emit viewChanged();
 }
 
 
@@ -1122,6 +1137,8 @@ void glViewer::resizeEvent(QGraphicsSceneResizeEvent *)
 		     size().width (), size().height (),
 		     scene()->width (), scene()->height ());
   update();
+  
+  emit viewChanged();
 }
 
 void glViewer::moveEvent (QGraphicsSceneMoveEvent *)
@@ -1131,6 +1148,8 @@ void glViewer::moveEvent (QGraphicsSceneMoveEvent *)
 		     size().width (), size().height (),
 		     scene()->width (), scene()->height ());
   update();
+  
+  emit viewChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -1339,6 +1358,8 @@ void glViewer::translate(const ACG::Vec3d& _trans)
 {
   makeCurrent();
   glstate_->translate(_trans[0], _trans[1], _trans[2], ACG::MULT_FROM_LEFT);
+  
+  emit viewChanged();
 }
 
 
@@ -1364,6 +1385,8 @@ void glViewer::rotate(const ACG::Vec3d&  _axis,
   glstate_->translate(-t[0], -t[1], -t[2], ACG::MULT_FROM_LEFT);
   glstate_->rotate(_angle, _axis[0], _axis[1], _axis[2], ACG::MULT_FROM_LEFT);
   glstate_->translate( t[0],  t[1],  t[2], ACG::MULT_FROM_LEFT);
+  
+  emit viewChanged();
 }
 
 
@@ -1399,6 +1422,7 @@ void glViewer::slotWheelX(double _dAngle)
   rotate(ACG::Vec3d(1,0,0),ACG::QtWidgets::QtWheel::deg(ACG::QtWidgets::QtWheel::clip(_dAngle)));
   updateGL();
 
+  emit viewChanged();
 }
 
 void glViewer::slotWheelY(double _dAngle)
@@ -1406,6 +1430,7 @@ void glViewer::slotWheelY(double _dAngle)
   rotate(ACG::Vec3d(0,1,0),ACG::QtWidgets::QtWheel::deg(ACG::QtWidgets::QtWheel::clip(_dAngle)));
   updateGL();
 
+  emit viewChanged();
 }
 
 void glViewer::slotWheelZ(double _dist)
@@ -1414,6 +1439,7 @@ void glViewer::slotWheelZ(double _dist)
   translate(ACG::Vec3d(0,0,dz));
   updateGL();
 
+  emit viewChanged();
 }
 
 //-----------------------------------------------------------------------------
@@ -1711,6 +1737,8 @@ void glViewer::viewMouseEvent(QMouseEvent* _event) {
 
 		treatFirstPersonNavigation(_event);
 	}
+        
+        emit viewChanged();
 }
 
 //----------------------------------------------------------------------------
@@ -1992,6 +2020,7 @@ void glViewer::viewWheelEvent( QWheelEvent* _event)
     updateGL();
   }
 
+  emit viewChanged();
 }
 
 
@@ -2250,6 +2279,8 @@ void glViewer::moveForward() {
 
         updateGL();
         lastMoveTime_.restart();
+        
+        emit viewChanged();
     }
 }
 
@@ -2263,6 +2294,8 @@ void glViewer::moveBack() {
 
         updateGL();
         lastMoveTime_.restart();
+        
+        emit viewChanged();
     }
 }
 
@@ -2276,6 +2309,8 @@ void glViewer::strafeLeft() {
 
         updateGL();
         lastMoveTime_.restart();
+        
+        emit viewChanged();
     }
 }
 
@@ -2289,6 +2324,8 @@ void glViewer::strafeRight() {
 
         updateGL();
         lastMoveTime_.restart();
+        
+        emit viewChanged();
     }
 }
 
