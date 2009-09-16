@@ -111,6 +111,10 @@ static ViewObjectMarker* defaultMarker_ = 0;
  */
 static QGLWidget* shareGLWidget_ = 0;
 
+/** This is a unique id for the running OpenFlipper instance. Use it to identify yourself on the network
+*/
+static int viewerId_ = 0;
+
 void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
@@ -119,9 +123,18 @@ int viewers( ) {
   return examiner_widgets_.size();
 }
 
+int viewerId() {
+  return viewerId_;
+}
+
 void setViewers( std::vector< glViewer* > _viewerWidgets ) {
    PluginFunctions::examiner_widgets_ = _viewerWidgets;
    PluginFunctions::examiner_widget_ =  examiner_widgets_[0];
+
+   // Generate a (hopefully) unique viewer id
+   QTime time = QTime::currentTime();
+   qsrand( time.hour() * 10 + time.minute() * 100 + time.second() * 1000 + time.msec() * 10000  );
+   viewerId_ = qrand();
 }
 
 void setViewerProperties( std::vector< Viewer::ViewerProperties* > _viewerProperties ) {
