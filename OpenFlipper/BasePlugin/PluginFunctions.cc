@@ -606,6 +606,19 @@ double sceneRadius() {
    return examiner_widgets_[activeExaminer_]->scene_radius();
 }
 
+double sceneRadius( int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    return examiner_widgets_[activeExaminer_]->scene_radius();
+  } else if ( _viewer == ALL_VIEWERS )
+    std::cerr << "Illegal request for scene radius. Please select one viewer!" << std::endl;
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    return examiner_widgets_[_viewer]->scene_radius();
+  else
+    std::cerr << "Requested illegal viewer for translate!!" << std::endl;
+  
+  return -1;
+}
+
 void translate( const ACG::Vec3d &_vector , int _viewer ) {
   if ( _viewer == ACTIVE_VIEWER ) {
     examiner_widgets_[activeExaminer_]->translate(_vector);
