@@ -556,6 +556,15 @@ BaseObjectData* baseObjectData( BaseObject* _object );
 
 /** @} */
 
+
+/** \brief Return unique viewer id
+ *
+ * This function returns a id which is unique to all running Openflippers on that machine.
+ * This id changes when you restart the viewer!
+ */
+DLLEXPORT
+int viewerId();
+
 /// Get the root of the object structure
 DLLEXPORT
 BaseObject*& objectRoot();
