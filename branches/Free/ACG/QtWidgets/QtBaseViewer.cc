@@ -563,9 +563,15 @@ void QtBaseViewer::setScenePos(const Vec3d& _center, double _radius)
   scene_radius_ = trackball_radius_ = _radius;
 
   orthoWidth_ = 2.0   * scene_radius_;
-  near_       = 0.001 * scene_radius_;
-  far_        = 10.0  * scene_radius_;
-
+  
+  ACG::Vec3d c = glstate_->modelview().transform_point(scene_center_);
+  
+  // Set far plane
+  far_    = std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_));
+  
+  // Set near plane
+  near_   = std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_));
+  
   updateProjectionMatrix();
   updateGL();
 }
