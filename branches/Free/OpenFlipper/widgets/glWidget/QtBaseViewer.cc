@@ -170,7 +170,7 @@ glViewer::glViewer( QGraphicsScene* _scene,
 
   normalsMode_      = DONT_TOUCH_NORMALS;
   projectionMode_   = PERSPECTIVE_PROJECTION;
-  navigationMode_	= NORMAL_NAVIGATION;
+  navigationMode_   = NORMAL_NAVIGATION;
 
 
   light_matrix_.identity();
@@ -258,9 +258,6 @@ void glViewer::swapBuffers() {
 
 void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _setCenter)
 {
-//   if (sceneGraphRoot_ == _root)
-//     return;
-
   sceneGraphRoot_ = _root;
 
   if (sceneGraphRoot_ )
@@ -1138,9 +1135,9 @@ void glViewer::resizeEvent(QGraphicsSceneResizeEvent *)
 {
   updateProjectionMatrix();
   glstate_->viewport(scenePos().x(),
-		     scene()->height () - scenePos().y() - size().height (),
-		     size().width (), size().height (),
-		     scene()->width (), scene()->height ());
+                     scene()->height () - scenePos().y() - size().height (),
+                     size().width (), size().height (),
+                     scene()->width (), scene()->height ());
   update();
   
   emit viewChanged();
@@ -1149,9 +1146,9 @@ void glViewer::resizeEvent(QGraphicsSceneResizeEvent *)
 void glViewer::moveEvent (QGraphicsSceneMoveEvent *)
 {
   glstate_->viewport(scenePos().x(),
-		     scene()->height () - scenePos().y() - size().height (),
-		     size().width (), size().height (),
-		     scene()->width (), scene()->height ());
+                     scene()->height () - scenePos().y() - size().height (),
+                     size().width (), size().height (),
+                     scene()->width (), scene()->height ());
   update();
   
   emit viewChanged();
