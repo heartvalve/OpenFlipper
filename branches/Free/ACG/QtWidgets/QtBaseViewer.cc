@@ -208,6 +208,9 @@ QtBaseViewer::QtBaseViewer( QWidget* _parent,
   normalsMode_      = DONT_TOUCH_NORMALS;
   faceOrientation_  = CCW_ORIENTATION;
   projectionMode_   = PERSPECTIVE_PROJECTION;
+  navigationMode_   = NORMAL_NAVIGATION;
+  
+  
   backFaceCulling_  = false;
   twoSidedLighting_ = true;
   animation_        = false;
@@ -507,6 +510,8 @@ void QtBaseViewer::toggleProjectionMode()
 
   // sync
   emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
+  
+  emit viewChanged();
 
   updateGL();
 }
@@ -522,6 +527,23 @@ void QtBaseViewer::projectionMode(ProjectionMode _p)
   updateProjectionMatrix();
 }
 
+void QtBaseViewer::toggleNavigationMode()
+{
+  if (navigationMode_ == NORMAL_NAVIGATION)
+    navigationMode(FIRSTPERSON_NAVIGATION);
+  else
+    navigationMode(NORMAL_NAVIGATION);
+}
+
+
+void QtBaseViewer::navigationMode(NavigationMode _n)
+{
+  if ((navigationMode_ = _n) == NORMAL_NAVIGATION)
+    emit navigationModeChanged( true );
+  else
+    emit navigationModeChanged( false );
+}
+
 
 void QtBaseViewer::updateProjectionMatrix()
 {
@@ -532,50 +554,68 @@ void QtBaseViewer::updateProjectionMatrix()
 
   glstate_->reset_projection();
 
-  switch (projectionMode_)
+  // In scereo mode we have to use a perspective matrix
+  if (stereo_ || projectionMode_ == PERSPECTIVE_PROJECTION)
   {
-    case ORTHOGRAPHIC_PROJECTION:
-    {
-      double aspect = (double) glWidth() / (double) glHeight();
-      glstate_->ortho( -orthoWidth_, orthoWidth_,
-		       -orthoWidth_/aspect, orthoWidth_/aspect,
-		       near_, far_ );
-      break;
-    }
+    double aspect;
 
-    case PERSPECTIVE_PROJECTION:
-    {
-      glstate_->perspective(fovy_,
-			    (GLdouble) glWidth() / (GLdouble) glHeight(),
-			    near_, far_);
-      break;
-    }
+    if (isVisible() && glWidth() && glHeight())
+      aspect = (double) glWidth() / (double) glHeight();
+    else
+      aspect = 1.0;
+
+    glstate_->perspective(fovy_, (GLdouble) aspect,
+                          near_, far_);
   }
+  else
+  {
+    double aspect;
+
+    if (isVisible() && glWidth() && glHeight())
+      aspect = (double) glWidth() / (double) glHeight();
+    else
+      aspect = 1.0;
+
+    glstate_->ortho( -orthoWidth_, orthoWidth_,
+                     -orthoWidth_/aspect, orthoWidth_/aspect,
+                     near_, far_ );
+  }
+  
 }
 
 
 //-----------------------------------------------------------------------------
 
 
-void QtBaseViewer::setScenePos(const Vec3d& _center, double _radius)
+void QtBaseViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool _setCenter)
 {
-  scene_center_ = trackball_center_ = _center;
+  if(_setCenter) {
+    scene_center_ = trackball_center_ = _center;
+  }
+
   scene_radius_ = trackball_radius_ = _radius;
 
   orthoWidth_ = 2.0   * scene_radius_;
   
   ACG::Vec3d c = glstate_->modelview().transform_point(scene_center_);
-  
+
   // Set far plane
   far_    = std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_));
-  
+
   // Set near plane
   near_   = std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_));
-  
+
+
   updateProjectionMatrix();
   updateGL();
 }
 
+//-----------------------------------------------------------------------------
+
+void QtBaseViewer::setSceneCenter( const ACG::Vec3d& _center ) {
+
+	scene_center_ = trackball_center_ = _center;
+}
 
 //----------------------------------------------------------------------------
 
@@ -583,10 +623,12 @@ void QtBaseViewer::setScenePos(const Vec3d& _center, double _radius)
 void QtBaseViewer::viewingDirection( const Vec3d& _dir, const Vec3d& _up )
 {
   // calc eye point for this direction
-  Vec3d eye = scene_center_ - _dir*(3.0*scene_radius_);
+  ACG::Vec3d eye = scene_center_ - _dir*(3.0*scene_radius_);
 
   glstate_->reset_modelview();
-  glstate_->lookAt((Vec3d)eye, (Vec3d)scene_center_, (Vec3d)_up);
+  glstate_->lookAt((ACG::Vec3d)eye, (ACG::Vec3d)scene_center_, (ACG::Vec3d)_up);
+  
+  emit viewChanged();
 }
 
 
@@ -789,10 +831,19 @@ void QtBaseViewer::drawScene()
   timer.start();
 
 
-  // adjust clipping planes
-  Vec3d c = glstate_->modelview().transform_point(scene_center_);
-  near_   = std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_));
+  // *****************************************************************
+  // Adjust clipping planes
+  // *****************************************************************
+  // Far plane
+  ACG::Vec3d c = glstate_->modelview().transform_point(scene_center_);
+  
+  // Set far plane
   far_    = std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_));
+  
+  // Set near plane
+  near_   = std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_));
+  
+  
   updateProjectionMatrix();
 
   // store time since last repaint in gl state and restart timer
@@ -923,6 +974,8 @@ void QtBaseViewer::home()
 
   // sync
   emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
+  
+  emit viewChanged();
 }
 
 
@@ -945,6 +998,8 @@ void QtBaseViewer::viewAll()
 
   // sync
   emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
+  
+  emit viewChanged();
 }
 
 
@@ -987,6 +1042,8 @@ void QtBaseViewer::flyTo(const QPoint& _pos, bool _move_back)
 
     // sync with external viewer
     emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
+    
+    emit viewChanged();
   }
 }
 
@@ -1291,30 +1348,27 @@ void QtBaseViewer::resizeGL(int _w, int _h)
 
 //-----------------------------------------------------------------------------
 
-
 void QtBaseViewer::encodeView(QString& _view)
 {
-  const GLMatrixd m = glstate_->modelview();
-  const GLMatrixd p = glstate_->projection();
+  // Get current matrices
+  const ACG::GLMatrixd m = glstate_->modelview();
+  const ACG::GLMatrixd p = glstate_->projection();
 
-  _view.sprintf("%s\n"
-                "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-                "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-                "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-                "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-                "%d %d %d %lf\n",
-                VIEW_MAGIC,
-                m(0,0), m(0,1), m(0,2), m(0,3),
-                m(1,0), m(1,1), m(1,2), m(1,3),
-                m(2,0), m(2,1), m(2,2), m(2,3),
-                m(3,0), m(3,1), m(3,2), m(3,3),
-                p(0,0), p(0,1), p(0,2), p(0,3),
-                p(1,0), p(1,1), p(1,2), p(1,3),
-                p(2,0), p(2,1), p(2,2), p(2,3),
-                p(3,0), p(3,1), p(3,2), p(3,3),
-                glWidth(), glHeight(),
-                projectionMode_,
-                orthoWidth_ );
+  // Add modelview matrix to output
+  _view += QString(VIEW_MAGIC) + "\n";
+  _view += QString::number(m(0,0)) + " " + QString::number(m(0,1)) + " " + QString::number(m(0,2)) + " " + QString::number(m(0,3)) + "\n";
+  _view += QString::number(m(1,0)) + " " + QString::number(m(1,1)) + " " + QString::number(m(1,2)) + " " + QString::number(m(1,3)) + "\n";
+  _view += QString::number(m(2,0)) + " " + QString::number(m(2,1)) + " " + QString::number(m(2,2)) + " " + QString::number(m(2,3)) + "\n";
+  _view += QString::number(m(3,0)) + " " + QString::number(m(3,1)) + " " + QString::number(m(3,2)) + " " + QString::number(m(3,3)) + "\n";
+
+  // Add projection matrix to output
+  _view += QString::number(p(0,0)) + " " + QString::number(p(0,1)) + " " + QString::number(p(0,2)) + " " + QString::number(p(0,3)) + "\n";
+  _view += QString::number(p(1,0)) + " " + QString::number(p(1,1)) + " " + QString::number(p(1,2)) + " " + QString::number(p(1,3)) + "\n";
+  _view += QString::number(p(2,0)) + " " + QString::number(p(2,1)) + " " + QString::number(p(2,2)) + " " + QString::number(p(2,3)) + "\n";
+  _view += QString::number(p(3,0)) + " " + QString::number(p(3,1)) + " " + QString::number(p(3,2)) + " " + QString::number(p(3,3)) + "\n";
+
+  // add gl width/height, current projection Mode and the ortho mode width to output
+  _view += QString::number(glWidth()) + " " +  QString::number(glHeight()) + " " + QString::number(projectionMode_) + " " + QString::number(orthoWidth_) + "\n";
 }
 
 
@@ -1326,34 +1380,71 @@ bool QtBaseViewer::decodeView(const QString& _view)
   if (_view.left(sizeof(VIEW_MAGIC)-1) != QString(VIEW_MAGIC))
     return false;
 
+  // Remove the magic from the string
+  QString temp = _view;
+  temp.remove(0,sizeof(VIEW_MAGIC));
 
+  //Split it into its components
+  QStringList split = temp.split(QRegExp("[\\n\\s]"),QString::SkipEmptyParts);
 
-  GLMatrixd m, p;
-  int       w, h, pMode;
+  ACG::GLMatrixd m, p;
+  int            w, h, pMode;
 
-  sscanf( (_view.toAscii().data())+sizeof(VIEW_MAGIC)-1,
-	  "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-	  "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-	  "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-	  "%lf %lf %lf %lf\n%lf %lf %lf %lf\n"
-	  "%d %d %d %lf\n",
-	  &m(0,0), &m(0,1), &m(0,2), &m(0,3),
-	  &m(1,0), &m(1,1), &m(1,2), &m(1,3),
-	  &m(2,0), &m(2,1), &m(2,2), &m(2,3),
-	  &m(3,0), &m(3,1), &m(3,2), &m(3,3),
-	  &p(0,0), &p(0,1), &p(0,2), &p(0,3),
-	  &p(1,0), &p(1,1), &p(1,2), &p(1,3),
-	  &p(2,0), &p(2,1), &p(2,2), &p(2,3),
-	  &p(3,0), &p(3,1), &p(3,2), &p(3,3),
-	  &w, &h,
-	  &pMode,
-	  &orthoWidth_ );
+  // Check if the number of components matches the expected size
+  if ( split.size() != 36 ) {
+    std::cerr << "Unable to paste view ... wrong parameter count!! is" <<  split.size()  << std::endl;
+    return false;
+  }
 
+  // Parse the components
+  bool ok = true;;
+
+  m(0,0) = split[0].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(0,1) = split[1].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(0,2) = split[2].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(0,3) = split[3].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(1,0) = split[4].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(1,1) = split[5].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(1,2) = split[6].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(1,3) = split[7].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(2,0) = split[8].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(2,1) = split[9].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(2,2) = split[10].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(2,3) = split[11].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(3,0) = split[12].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(3,1) = split[13].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(3,2) = split[14].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  m(3,3) = split[15].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(0,0) = split[16].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(0,1) = split[17].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(0,2) = split[18].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(0,3) = split[19].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(1,0) = split[20].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(1,1) = split[21].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(1,2) = split[22].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(1,3) = split[23].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(2,0) = split[24].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(2,1) = split[25].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(2,2) = split[26].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(2,3) = split[27].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(3,0) = split[28].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(3,1) = split[29].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(3,2) = split[30].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  p(3,3) = split[31].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+
+  w =  split[32].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  h =  split[33].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  pMode =  split[34].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  orthoWidth_ = split[35].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+
+  // Switch to our gl context
   makeCurrent();
 
+  // set projection mode
   if (projectionMode_ != (ProjectionMode)pMode)
     projectionMode((ProjectionMode)pMode);
 
+  // Apply new modelview matrix
   glstate_->set_modelview(m);
 
 
@@ -2036,6 +2127,8 @@ void QtBaseViewer::slotWheelX(double _dAngle)
 
   // sync
   emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
+  
+  emit viewChanged();
 }
 
 void QtBaseViewer::slotWheelY(double _dAngle)
@@ -2045,6 +2138,8 @@ void QtBaseViewer::slotWheelY(double _dAngle)
 
   // sync
   emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
+  
+  emit viewChanged();
 }
 
 void QtBaseViewer::slotWheelZ(double _dist)
@@ -2055,6 +2150,8 @@ void QtBaseViewer::slotWheelZ(double _dist)
 
   // sync
   emit(signalSetView(glstate_->modelview(), glstate_->inverse_modelview()));
+  
+  emit viewChanged();
 }
 
 
@@ -2425,7 +2522,6 @@ void QtBaseViewer::updatePickMenu()
 	   this, SLOT( actionPickMenu( QAction * ) ));
 }
 
-
 //-----------------------------------------------------------------------------
 
 
@@ -2442,9 +2538,6 @@ void QtBaseViewer::actionPickMenu( QAction * _action )
   hidePopupMenus();
 }
 
-
-
-
 //-----------------------------------------------------------------------------
 
 QToolBar* QtBaseViewer::getToolBar() {
@@ -2454,6 +2547,66 @@ QToolBar* QtBaseViewer::getToolBar() {
 QToolBar* QtBaseViewer::removeToolBar() {
   glLayout_->removeWidget( buttonBar_ );
   return buttonBar_;
+}
+
+//-----------------------------------------------------------------------------
+
+
+void QtBaseViewer::moveForward() {
+  if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
+    
+    ACG::Vec3d dir = glstate_->viewing_direction();
+    
+    dir *= -0.1;
+    
+    glstate_->translate(dir[0], dir[1], dir[2]);
+    
+    updateGL();
+    
+    emit viewChanged();
+  }
+}
+
+void QtBaseViewer::moveBack() {
+  if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
+    ACG::Vec3d dir = glstate_->viewing_direction();
+    
+    dir *= 0.1;
+    
+    glstate_->translate(dir[0], dir[1], dir[2]);
+    
+    updateGL();
+    
+    emit viewChanged();
+  }
+}
+
+void QtBaseViewer::strafeLeft() {
+  if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
+    ACG::Vec3d dir = glstate_->right();
+    
+    dir *= 0.1;
+    
+    glstate_->translate(dir[0], dir[1], dir[2]);
+    
+    updateGL();
+    
+    emit viewChanged();
+  }
+}
+
+void QtBaseViewer::strafeRight() {
+  if(navigationMode_ ==  FIRSTPERSON_NAVIGATION) {
+    ACG::Vec3d dir = glstate_->right();
+    
+    dir *= -0.1;
+    
+    glstate_->translate(dir[0], dir[1], dir[2]);
+    
+    updateGL();
+    
+    emit viewChanged();
+  }
 }
 
 //=============================================================================

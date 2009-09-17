@@ -297,6 +297,11 @@ public:
   */
   void sceneGraph(SceneGraph::BaseNode* _root);
 
+  /// Navigation mode
+  enum NavigationMode {
+    NORMAL_NAVIGATION,     //!< Normal mode
+    FIRSTPERSON_NAVIGATION  //!< First person mode
+  };
 
    /// projection mode
   enum ProjectionMode {
@@ -309,30 +314,33 @@ public:
   /// get current projection mode
   ProjectionMode projectionMode() const { return projectionMode_; }
 
+  /// Changes the navigation mode
+  void navigationMode(NavigationMode _n);
+  /// get current navigation mode
+  NavigationMode navigationMode() const { return navigationMode_; }
 
   /** Sets the center and dimension of the whole scene.  This point is
-      used as fixpoint for rotations and to set the eye point far
-      enough from the scene so that the whole scene is visible.
-    */
-  void setScenePos( const Vec3d& _center, double _radius );
-  /** Get scene's center
-      \see setScenePos()
+  used as fixpoint for rotations and to set the eye point far
+  enough from the scene so that the whole scene is visible.
   */
-  const Vec3d& scene_center() const { return scene_center_; }
+  void setScenePos( const ACG::Vec3d& _center, double _radius, const bool _setCenter = true );
+
+  /**
+  * Set new center point of scene
+  */
+  void setSceneCenter( const ACG::Vec3d& _center );
+  
+  /** Get scene's center
+  \see setScenePos()
+  */
+  const ACG::Vec3d& scene_center() const { return scene_center_; }
   /** Get scene's radius
-      \see setScenePos()
+  \see setScenePos()
   */
   double scene_radius() const { return scene_radius_; }
-
-
+  
   /// set the viewing direction
-  void viewingDirection( const Vec3d& _dir, const Vec3d& _up );
-
-
-
-
-
-
+  void viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up );
 
   /// How to react on mouse events?
   enum ActionMode {
@@ -483,6 +491,18 @@ public:
 
   /// Returns a pointer to the toolbar and removes it from the default position in the examiner widget
   QToolBar* removeToolBar();
+  
+  /// First person navigation: Move forward
+  void moveForward();
+  
+  /// First person navigation: Move back
+  void moveBack();
+  
+  /// First person navigation: Strafe left
+  void strafeLeft();
+  
+  /// First person navigation: Strafe Right
+  void strafeRight();
 
 //---------------------------------------------------------------- public slots
 public slots:
@@ -531,7 +551,16 @@ public slots:
   virtual void orthographicProjection();
   /// toggle projection mode
   virtual void toggleProjectionMode();
+  /// toggle navigation mode
+  virtual void toggleNavigationMode();
+  
+  signals:
+    
+    void projectionModeChanged( bool _ortho );
+    void navigationModeChanged( bool _normal );  
 
+  public slots:
+    
   /// show scenegraph widget
   virtual void showSceneGraphDialog();
 
@@ -770,6 +799,8 @@ private:
   NormalsMode                  normalsMode_;
   FaceOrientation              faceOrientation_;
   ProjectionMode               projectionMode_;
+  NavigationMode               navigationMode_;
+  
   ActionMode                   actionMode_, lastActionMode_;
   bool                         backFaceCulling_;
   bool                         twoSidedLighting_;
@@ -861,6 +892,19 @@ private:
 
   // Used to calculate the time passed between redraws
   QTime redrawTime_;
+  
+  //===========================================================================
+  /** @name view handling
+  * @{ */
+  //===========================================================================
+  signals:
+    /// This signal is emitted when the scene is repainted due to any event.
+    void viewUpdated();
+    
+    /// This signal is emitted whenever the view is changed by the user
+    void viewChanged();  
+    
+  /** @} */    
 
   //===========================================================================
   /** @name Stereo
