@@ -560,7 +560,7 @@ private:
   // modi
   NormalsMode                  normalsMode_;
   ProjectionMode               projectionMode_;
-  NavigationMode			   navigationMode_;
+  NavigationMode               navigationMode_;
 
 
   // helper
