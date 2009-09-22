@@ -301,6 +301,9 @@ void CoreWidget::applicationSnapshotDialog() {
 
   int w = width();
   int h = height();
+  
+  dialog.snapWidth->setValue(w);
+  dialog.snapHeight->setValue(h);
 
   connect(&dialog, SIGNAL(resizeApplication(int,int)), this, SIGNAL(resizeApplication(int,int)) );
 
