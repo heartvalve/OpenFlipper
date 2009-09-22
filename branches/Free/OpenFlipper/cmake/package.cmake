@@ -86,10 +86,11 @@ if (WIN32)
     set ( WINDOWS_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\Icons\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
   ENDIF(NOT WINDOWS_INSTALLER_ICON )
 
-  #IF ( NOT WINDOWS_INSTALLER_IMAGE_ICON )
-  #  # option to set the used Icon for OpenFlipper
-  #  set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}\\\\OpenFlipper\\\\installer\\\\win\\\\installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon" )
-  #ENDIF(NOT WINDOWS_INSTALLER_IMAGE_ICON )
+  IF ( NOT WINDOWS_INSTALLER_IMAGE_ICON )
+    # option to set the used Icon for OpenFlipper
+    set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/installer/win/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
+  ENDIF(NOT WINDOWS_INSTALLER_IMAGE_ICON )
+  string(REGEX REPLACE "/" "\\\\\\\\" CLEAN_WINDOWS_INSTALLER_IMAGE_ICON "${WINDOWS_INSTALLER_IMAGE_ICON}"  )
 
   # window NSIS installer
   set (CPACK_GENERATOR "NSIS")
@@ -99,9 +100,8 @@ if (WIN32)
   set (CPACK_NSIS_MUI_ICON ${WINDOWS_INSTALLER_ICON} )
   # we need a real uninstaller icon here and we have to define both to make the installer icon work
   set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\OpenFlipper\\\\Icons\\\\OpenFlipper_Icon_128x128x32.ico")
-  set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}\\\\OpenFlipper\\\\installer\\\\win\\\\installer.bmp") 
-  
- 
+
+  set (CPACK_PACKAGE_ICON "${CLEAN_WINDOWS_INSTALLER_IMAGE_ICON}")
   set (CPACK_NSIS_HELP_LINK "http:\\\\www.openflipper.org")
   set (CPACK_NSIS_URL_INFO_ABOUT "http:\\\\www.openflipper.org")
 
