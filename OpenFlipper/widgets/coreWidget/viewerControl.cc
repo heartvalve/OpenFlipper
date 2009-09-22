@@ -384,6 +384,9 @@ void CoreWidget::viewerSnapshotDialog() {
 
   int w = glView_->width();
   int h = glView_->height();
+  
+  dialog.snapWidth->setValue(w);
+  dialog.snapHeight->setValue(h);
 
   connect(&dialog, SIGNAL(resizeViewers(int,int)), this, SIGNAL(resizeViewers(int,int)) );
 
