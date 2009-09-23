@@ -256,7 +256,7 @@ void glViewer::swapBuffers() {
 //-----------------------------------------------------------------------------
 
 
-void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _setCenter)
+void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTrackBall)
 {
   sceneGraphRoot_ = _root;
 
@@ -272,11 +272,11 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _setCente
     if ( ( bbmin[0] > bbmax[0] ) ||
          ( bbmin[1] > bbmax[1] ) ||
          ( bbmin[2] > bbmax[2] )   )
-      setScenePos( ACG::Vec3d( 0.0,0.0,0.0 ) , 1.0, _setCenter );
+      setScenePos( ACG::Vec3d( 0.0,0.0,0.0 ) , 1.0, _resetTrackBall );
     else
       setScenePos( ( bbmin + bbmax )        * 0.5,
                    ( bbmax - bbmin ).norm() * 0.5,
-                   _setCenter);
+                   _resetTrackBall);
   }
 
   updateGL();
@@ -329,7 +329,7 @@ void glViewer::projectionMode(ProjectionMode _p)
     emit projectionModeChanged( false );
 
   updateProjectionMatrix();
-  
+
   emit viewChanged();
 }
 
@@ -386,18 +386,20 @@ void glViewer::updateProjectionMatrix()
                      -orthoWidth_/aspect, orthoWidth_/aspect,
                      near_, far_ );
   }
-  
+
 }
 
 
 //-----------------------------------------------------------------------------
 
 
-void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool _setCenter)
+void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool _resetTrackBall)
 {
-  if(_setCenter) {
-    scene_center_ = trackball_center_ = _center;
+  if(_resetTrackBall) {
+    trackball_center_ = _center;
   }
+
+  scene_center_ = _center;
 
   scene_radius_ = trackball_radius_ = _radius;
 
@@ -433,7 +435,7 @@ void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
 
   glstate_->reset_modelview();
   glstate_->lookAt((ACG::Vec3d)eye, (ACG::Vec3d)scene_center_, (ACG::Vec3d)_up);
-  
+
   emit viewChanged();
 }
 
@@ -747,7 +749,7 @@ void glViewer::home()
   trackball_radius_ = home_radius_;
   updateProjectionMatrix();
   updateGL();
-  
+
   emit viewChanged();
 
 }
@@ -777,8 +779,8 @@ void glViewer::viewAll()
 	properties_.unLockUpdate();
 	updateProjectionMatrix();
 	updateGL();
-        
-        emit viewChanged();
+
+    emit viewChanged();
 
 }
 
@@ -818,7 +820,7 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
 
       // Redraw scene
       updateGL();
-      
+
       emit viewChanged();
     }
 
@@ -907,7 +909,7 @@ void glViewer::setView(const ACG::GLMatrixd& _modelview,
   makeCurrent();
   glstate_->set_modelview(_modelview, _inverse_modelview);
   updateGL();
-  
+
   emit viewChanged();
 }
 
@@ -1139,7 +1141,7 @@ void glViewer::resizeEvent(QGraphicsSceneResizeEvent *)
                      size().width (), size().height (),
                      scene()->width (), scene()->height ());
   update();
-  
+
   emit viewChanged();
 }
 
@@ -1150,7 +1152,7 @@ void glViewer::moveEvent (QGraphicsSceneMoveEvent *)
                      size().width (), size().height (),
                      scene()->width (), scene()->height ());
   update();
-  
+
   emit viewChanged();
 }
 
@@ -1360,7 +1362,7 @@ void glViewer::translate(const ACG::Vec3d& _trans)
 {
   makeCurrent();
   glstate_->translate(_trans[0], _trans[1], _trans[2], ACG::MULT_FROM_LEFT);
-  
+
   emit viewChanged();
 }
 
@@ -1387,7 +1389,7 @@ void glViewer::rotate(const ACG::Vec3d&  _axis,
   glstate_->translate(-t[0], -t[1], -t[2], ACG::MULT_FROM_LEFT);
   glstate_->rotate(_angle, _axis[0], _axis[1], _axis[2], ACG::MULT_FROM_LEFT);
   glstate_->translate( t[0],  t[1],  t[2], ACG::MULT_FROM_LEFT);
-  
+
   emit viewChanged();
 }
 
@@ -1793,7 +1795,7 @@ void glViewer::handleFirstPersonNavigation( QMouseEvent* _event) {
     lastMoveTime_.restart();
 
     emit viewChanged();
-    
+
     break;
   }
 
@@ -1816,7 +1818,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
   QPoint pos(f.x(), f.y());
 
   switch (_event->type()) {
-    
+
     case QEvent::MouseButtonPress: {
         // shift key -> set rotation center
         if (_event->modifiers() & Qt::ShiftModifier) {
@@ -2286,7 +2288,7 @@ void glViewer::moveForward() {
 
         updateGL();
         lastMoveTime_.restart();
-        
+
         emit viewChanged();
     }
 }
@@ -2301,7 +2303,7 @@ void glViewer::moveBack() {
 
         updateGL();
         lastMoveTime_.restart();
-        
+
         emit viewChanged();
     }
 }
@@ -2316,7 +2318,7 @@ void glViewer::strafeLeft() {
 
         updateGL();
         lastMoveTime_.restart();
-        
+
         emit viewChanged();
     }
 }
@@ -2331,7 +2333,7 @@ void glViewer::strafeRight() {
 
         updateGL();
         lastMoveTime_.restart();
-        
+
         emit viewChanged();
     }
 }
