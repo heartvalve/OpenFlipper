@@ -177,12 +177,11 @@ public:
 
   /** Set scene graph.
       Sets the scene graph to the the graph rooted at \c _root.
-      The available draw modes in the scene graph will be collected
-      and the popup menu will be updated.<br>
+      Recomputes Scene center and resets the trackball center if specified.
       The \c sceneGraphToched() signal will be emitted (even if
       \c _root does not actually change).
   */
-  void sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _setCenter = false);
+  void sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTrackBall = false);
 
 
    /// projection mode
@@ -211,7 +210,7 @@ public:
       used as fixpoint for rotations and to set the eye point far
       enough from the scene so that the whole scene is visible.
     */
-  void setScenePos( const ACG::Vec3d& _center, double _radius, const bool _setCenter = false );
+  void setScenePos( const ACG::Vec3d& _center, double _radius, const bool _resetTrackBall = false );
 
   /**
    * Set new center point of scene
@@ -629,7 +628,7 @@ private:
   signals:
     /// This signal is emitted when the scene is repainted due to any event.
     void viewUpdated();
-    
+
     /// This signal is emitted whenever the view is changed by the user
     void viewChanged();
 
