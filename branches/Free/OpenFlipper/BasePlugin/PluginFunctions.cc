@@ -164,18 +164,18 @@ QString getEncodedExaminerView() {
 
 /// Get the encoded view for the given
 QString getEncodedExaminerView(int _viewerId) {
-  
+
   QString view;
-  
+
   if ( _viewerId < 0 || _viewerId >= (int)examiner_widgets_.size() ) {
      std::cerr << "Requested unknown viewer with id : " << _viewerId << std::endl;
      examiner_widgets_[activeExaminer()]->encodeView ( view );
      return view;
-  } 
-  
+  }
+
   examiner_widgets_[_viewerId]->encodeView ( view );
   return view;
-   
+
 }
 
 void setEncodedExaminerView( QString _view ) {
@@ -183,15 +183,15 @@ void setEncodedExaminerView( QString _view ) {
 }
 
 void setEncodedExaminerView(int _viewerId , QString _view ) {
-  
+
   if ( _viewerId < 0 || _viewerId >= (int)examiner_widgets_.size() ) {
      std::cerr << "Requested unknown viewer with id : " << _viewerId << std::endl;
      examiner_widgets_[activeExaminer()]->decodeView ( _view );
-  } 
-  
+  }
+
   examiner_widgets_[_viewerId]->decodeView ( _view );
-}  
-  
+}
+
 
 void setRootNode( SeparatorNode* _root_node ) {
    PluginFunctions::root_node_ = _root_node;
@@ -554,7 +554,7 @@ void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up , int _viewe
     std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
 }
 
-
+//TODO: Make use of trackball center instead of scene center
 void setScenePos(const ACG::Vec3d& _center,const double _radius, int _viewer ) {
   if ( _viewer == ACTIVE_VIEWER ) {
     examiner_widgets_[activeExaminer_]->setScenePos( _center, _radius );
@@ -628,7 +628,7 @@ double sceneRadius( int _viewer ) {
     return examiner_widgets_[_viewer]->scene_radius();
   else
     std::cerr << "Requested illegal viewer for translate!!" << std::endl;
-  
+
   return -1;
 }
 
