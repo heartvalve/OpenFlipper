@@ -105,8 +105,8 @@ void Core::slotObjectUpdated(int _identifier) {
   OpenFlipper::Options::redrawDisabled(false);
 
 
-  // TODO: full reset is not required here. It should at least keep the scene center!
-  resetScenegraph();
+  // Reset scenegraph but keep scene center!
+  resetScenegraph(false);
 
   updateView();
 }

@@ -163,7 +163,7 @@ signals:
 
    /// This signal is emitted if the object has been changed (source/target)
    void objectSelectionChanged( int );
-   
+
    /// This signal is emitted if one of the viewers updated its view
    void pluginViewChanged();
 
@@ -422,8 +422,11 @@ private:
    */
   int loadObject ( QString _filename );
 
-  /// Do a reset of the scenegraph (bounding box update,...)
-  void resetScenegraph();
+  /** Do a reset of the scenegraph (bounding box update,...)
+   *
+   * @param _resetTrackBall Should the rotation center of the trackball be reset to the scene center?
+   */
+  void resetScenegraph( bool _resetTrackBall );
 
  public :
 
@@ -921,8 +924,8 @@ private:
 
     /// If enabled, this timer will block screen refresh if done more then 30 times per second.
     QTimer* redrawTimer_;
-    
-    
+
+
 };
 
 /// Special print function for core logger
