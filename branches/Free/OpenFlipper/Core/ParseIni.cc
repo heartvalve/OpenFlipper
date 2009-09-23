@@ -621,7 +621,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
       _ini.add_entry("Options","DefaultProjectionMode" + QString::number(i), OpenFlipper::Options::defaultProjectionMode(i) );
       _ini.add_entry("Options","DefaultViewingDirection" + QString::number(i), OpenFlipper::Options::defaultViewingDirection(i) );
     }
-    
+
 
     _ini.add_entry("Options","LoggerState", OpenFlipper::Options::loggerState() );
     _ini.add_entry("Options","HideToolbox", OpenFlipper::Options::hideToolbox() );
@@ -749,7 +749,8 @@ void Core::openIniFile( QString _filename,
 
   OpenFlipper::Options::loadingSettings(false);
 
-  resetScenegraph();
+  // Reset scenegraph and recompute scene center containing all new objects
+  resetScenegraph(true);
 
   if ( OpenFlipper::Options::gui() ){
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {

@@ -56,13 +56,13 @@
 
 #include <time.h>
 
-void Core::resetScenegraph() {
+void Core::resetScenegraph( bool _resetTrackBall  ) {
   if ( OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() ) {
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       // update scene graph (get new bounding box and set projection right, including near and far plane)
       PluginFunctions::viewerProperties(i).lockUpdate();
-      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_, true);
+      coreWidget_->examiner_widgets_[i]->sceneGraph(root_node_scenegraph_, _resetTrackBall );
       PluginFunctions::viewerProperties(i).unLockUpdate();
       coreWidget_->examiner_widgets_[i]->updateGL();
     }
@@ -335,7 +335,7 @@ void Core::slotObjectOpened ( int _id ) {
   if ( PluginFunctions::objectCount() == 1 && OpenFlipper::Options::gui() && !OpenFlipper::Options::loadingSettings() )
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ){
       PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::defaultDrawMode(i) );
-      
+
       if ( OpenFlipper::Options::defaultProjectionMode(i) == 0 )
 	PluginFunctions::orthographicProjection(i);
       else
@@ -346,8 +346,9 @@ void Core::slotObjectOpened ( int _id ) {
 
   // ================================================================================
   // Recompute bounding box and scenegraph info
+  // Reset scene center here to include new object
   // ================================================================================
-  resetScenegraph();
+  resetScenegraph(true);
 
   // ================================================================================
   // Tell plugins, that a file has been opened

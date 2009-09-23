@@ -125,7 +125,8 @@ void Core::openObjFile(QString _filename)
 
   OpenFlipper::Options::loadingSettings(false);
 
-  resetScenegraph();
+  // Reset scenegraph and recompute scene center containing all new objects
+  resetScenegraph( true );
 
   if ( OpenFlipper::Options::gui() )
   {
