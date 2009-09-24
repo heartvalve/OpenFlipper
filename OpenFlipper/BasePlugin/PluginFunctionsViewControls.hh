@@ -85,13 +85,13 @@ const int VIEW_BACK   = 6;
     * @{ */
 //=======================================
 
-/** Get the viewer properties
- * -1 will get the properties of the active Viewer which is the default
+/** \brief Get the viewer properties
+ *  Use this functions to get basic viewer properties such as backgroundcolor or rendering options.
+ *
+ * @param _id Which viewer should be used? ACTIVE_VIEWER will get the properties of the active Viewer which is the default
  */
 DLLEXPORT
-Viewer::ViewerProperties& viewerProperties(int _id = -1);
-
-
+Viewer::ViewerProperties& viewerProperties(int _id = ACTIVE_VIEWER );
 
 /** @} */
 
