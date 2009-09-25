@@ -160,7 +160,6 @@ void MovePlugin::pluginsInitialized() {
   toolBarActions_ = new QActionGroup(toolbar_);
 
   moveAction_ = new QAction(tr("Move objects"), toolBarActions_);
-  std::cerr << "Todo : Show all manipulators placed" << std::endl;
   moveAction_->setStatusTip(tr("Move object in 3D."));
   moveAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-objects.png") );
   moveAction_->setCheckable(true);
