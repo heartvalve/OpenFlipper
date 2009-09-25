@@ -234,6 +234,8 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     QAction* moveSelectionAction_;
 
     QActionGroup* toolBarActions_;
+    
+    QToolBar* toolbar_;
 
   private slots:
 
@@ -460,8 +462,6 @@ public slots :
     QString version() { return QString("1.2"); };
 
   private:
-    QToolBar* toolbar_;
-
     bool hide_;
 
     bool allTargets_;
