@@ -159,7 +159,7 @@ void MovePlugin::pluginsInitialized() {
 
   toolBarActions_ = new QActionGroup(toolbar_);
 
-  moveAction_ = new QAction(tr("&Move objects"), toolBarActions_);
+  moveAction_ = new QAction(tr("Move objects"), toolBarActions_);
   std::cerr << "Todo : Show all manipulators placed" << std::endl;
   moveAction_->setStatusTip(tr("Move object in 3D."));
   moveAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-objects.png") );
@@ -227,7 +227,7 @@ void MovePlugin::pluginsInitialized() {
   smallerManipAction_->setCheckable(false);
   pickToolbar_->addAction(smallerManipAction_);
 
-  biggerManipAction_ = new QAction(tr("&Increase size of manipulator"), pickToolBarActions_);
+  biggerManipAction_ = new QAction(tr("Increase size of manipulator"), pickToolBarActions_);
   biggerManipAction_->setStatusTip(tr("Make manipulator bigger. <Mouse wheel down>"));
   biggerManipAction_->setToolTip(tr("Make manipulator bigger. <Mouse wheel down>"));
   biggerManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-manipbig.png") );
