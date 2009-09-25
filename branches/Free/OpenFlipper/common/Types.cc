@@ -171,7 +171,9 @@ DataType typeId(QString _name) {
   if ( index != stringToTypeInfo.end() )
     return types[ index->second ].type;
   else {
-    std::cerr << "Unknown Data type with name " << _name.toStdString() << std::endl;
+    #ifdef DEBUG
+      std::cerr << "Unknown Data type with name " << _name.toStdString() << std::endl;
+    #endif
     return -1;
   }
 }
