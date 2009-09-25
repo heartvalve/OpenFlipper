@@ -352,22 +352,30 @@ defineTest( ltilib ) {
 
 defineTest( fftw ) {
 
-	exists ( $${FFTW_PATH_INC}/fftw.h ) {
-		addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3 ) {
-			addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3f ) {
+  exists ( $${FFTW_PATH_INC}/fftw3.h ) {
+    addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3 ) {
+      addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3l ) {
+	addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3f ) {
+	  addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3_threads ) {
+	    addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3l_threads ) {
+	      addLib ( $${LIB_BASE} $${FFTW_PATH_LIB}, fftw3f_threads ) {
 
-  			INCLUDEPATH *= $${FFTW_PATH_INC}
-  			export(INCLUDEPATH)
+		INCLUDEPATH *= $${FFTW_PATH_INC}
+		export(INCLUDEPATH)
 
-				return(true)
+		return(true)
 
-			}
-		}
-	} else {
-		message ( WARNING: fftw header files not found! )
+	      }
+	    }
+	  }
 	}
+      }
+    }
+  } else {
+    message ( WARNING: fftw header files not found! )
+  }
 
-	return(false)
+  return(false)
 }
 
 defineTest( freetype ) {
