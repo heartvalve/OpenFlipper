@@ -80,36 +80,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Core</name>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="164"/>
-        <source>Additional Plugin from ini file : </source>
-        <translation>Zusätzliches Plugin aus INI Datei : </translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="172"/>
-        <source>Failed to connect to ProgramOptions.ini file: </source>
-        <translation>Konnte nicht zur ProgramOptions.ini verbinden. Datei: </translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="198"/>
-        <source>Skipping Plugins :	 </source>
-        <translation>Überspringe Plugins :	 </translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="207"/>
-        <source>Loading Plugin </source>
-        <translation>Lade Plugin </translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="219"/>
-        <source>Loaded </source>
-        <translation>Geladen</translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="219"/>
-        <source> Plugin(s)</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="../../Core/PluginLoader.cc" line="239"/>
         <source>Load Plugin</source>
         <translation>Lade Plugin </translation>
@@ -127,134 +97,133 @@ Do you want to enable this plugin?</source>
 Wollen sie das Plugin dennoch aktivieren?</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="323"/>
-        <source>Unloaded Plugin :		 </source>
-        <translation>Plguin entladen:</translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="328"/>
-        <source>Unable to unload plugin &apos;</source>
-        <translation>Kann Plugin nicht entladen &apos;</translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="328"/>
-        <source>&apos; (plugin wasn&apos;t found)</source>
-        <translation>&apos; ( Plugin nicht gefunden)</translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="371"/>
-        <source>Found Plugin :		 </source>
-        <translation>Plugin gefunden :		 </translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="371"/>
-        <source> at </source>
-        <translation> mit Namen </translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="387"/>
-        <location filename="../../Core/PluginLoader.cc" line="401"/>
-        <source>			 Already loaded from </source>
-        <translation>			 bereits geladen aus </translation>
-    </message>
-    <message>
         <location filename="../../Core/PluginLoader.cc" line="392"/>
         <source>Plugin already loaded</source>
         <translation>Plugin bereits geladen</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="393"/>
-        <source>A Plugin with the same name was already loaded from </source>
-        <translation>Ein Plugin mit dem gleichen Name wurde bereits geladen von </translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="394"/>
-        <source>.
-You can only load the new plugin if you unload the existing one first.
-
-Do you want to unload the existing plugin first?</source>
-        <translation>
-Sie können das neue Plugin nur laden wenn Sie das bestehende vorher entladen.
-
-Wollen Sie das bestehende Plugin entladen?</translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="410"/>
-        <source>OpenFlipper.ini prevented Plugin </source>
-        <translation>OpenFlipper.ini verhinderte das laden von </translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="410"/>
-        <source> from being loaded! </source>
-        <translation>!</translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="418"/>
+        <location filename="../../Core/PluginLoader.cc" line="417"/>
         <source>Plugin uses security interface. Trying to authenticate against plugin ...</source>
         <translation>Das Plugin nutzt die Sicherheitsschnittstelle. Authentifikation beim Plugin ...</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="424"/>
+        <location filename="../../Core/PluginLoader.cc" line="423"/>
         <source>... ok. Loading plugin </source>
         <translation>... ok. Lade Plugin </translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="426"/>
+        <location filename="../../Core/PluginLoader.cc" line="425"/>
         <source>... failed. Plugin access denied.</source>
         <translation>... Fehlgeschlagen. zugriff auf Plugin verweigert.</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="433"/>
-        <source>Plugin Desciption :		 </source>
-        <translation>Plugin Beschreibung :		 </translation>
+        <location filename="../../Core/PluginLoader.cc" line="164"/>
+        <source>Additional Plugin from ini file: %1</source>
+        <translation>Zusätzliches Plugin aus INI Datei: %1</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="450"/>
+        <location filename="../../Core/PluginLoader.cc" line="172"/>
+        <source>Failed to connect to ProgramOptions.ini file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="198"/>
+        <source>Skipping Plugins :	 %1</source>
+        <translation>Überspringe Plugin:\t %1</translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="207"/>
+        <source>Loading Plugin %1/%2</source>
+        <translation>Lade Plugin %1/%2</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../../Core/PluginLoader.cc" line="219"/>
+        <source>Loaded %n Plugin(s)</source>
+        <translation>
+            <numerusform>%n Plugin geladen</numerusform>
+            <numerusform>%n Plugins geladen</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="323"/>
+        <source>Unloaded Plugin :		 %1</source>
+        <translation>Entladenes Plugin: \t\t %1</translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="328"/>
+        <source>Unable to unload plugin &apos;%1&apos; (plugin wasn&apos;t found)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="371"/>
+        <source>Found Plugin :		 %1 at %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="387"/>
+        <source>			 Already loaded from %1</source>
+        <translation>			 Bereits aus %1 geladen</translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="393"/>
+        <source>A Plugin with the same name was already loaded from %1.
+You can only load the new plugin if you unload the existing one first.
+
+Do you want to unload the existing plugin first?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="400"/>
+        <source>			 Already loaded from %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="409"/>
+        <source>OpenFlipper.ini prevented Plugin %1 from being loaded! </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="432"/>
+        <source>Plugin Desciption :	 %1 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="449"/>
         <source>Running in nogui mode which is unsupported by this plugin, skipping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="460"/>
+        <location filename="../../Core/PluginLoader.cc" line="459"/>
         <source>Plugin Uses old style updated_objects! Convert to updatedObject!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="466"/>
+        <location filename="../../Core/PluginLoader.cc" line="465"/>
         <source>Plugin Uses old style update_view! Convert to updateView!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="493"/>
+        <location filename="../../Core/PluginLoader.cc" line="492"/>
         <source>Signal visibilityChanged() now requires objectid or -1 as argument </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="502"/>
+        <location filename="../../Core/PluginLoader.cc" line="501"/>
         <source>Signal activeObjectChanged() is now objectSelectionChanged( int _objectId ) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="505"/>
+        <location filename="../../Core/PluginLoader.cc" line="504"/>
         <source>Slot slotActiveObjectChanged() is now slotObjectSelectionChanged( int _objectId ) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="1007"/>
-        <source>Registered scriping with name :	 </source>
+        <location filename="../../Core/PluginLoader.cc" line="1116"/>
+        <source>Unable to load Plugin :	 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="1095"/>
-        <source>Supported Interfaces :	 </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="1127"/>
-        <source>Unable to load Plugin :	 </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Core/PluginLoader.cc" line="1128"/>
+        <location filename="../../Core/PluginLoader.cc" line="1117"/>
         <source>Error was : </source>
         <translation>Fehler war: </translation>
     </message>
@@ -264,32 +233,39 @@ Wollen Sie das bestehende Plugin entladen?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="175"/>
-        <source>Starting script execution of </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Core/openFunctions.cc" line="194"/>
-        <location filename="../../Core/openFunctions.cc" line="204"/>
-        <location filename="../../Core/openFunctions.cc" line="206"/>
-        <source>Loading </source>
-        <translation>Lade </translation>
-    </message>
-    <message>
-        <location filename="../../Core/openFunctions.cc" line="206"/>
         <location filename="../../Core/saveFunctions.cc" line="79"/>
         <location filename="../../Core/saveFunctions.cc" line="95"/>
         <source> ... failed!</source>
         <translation> ... Fehlgeschlagen!</translation>
     </message>
     <message>
+        <location filename="../../Core/openFunctions.cc" line="175"/>
+        <source>Starting script execution of %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/openFunctions.cc" line="194"/>
+        <source>Loading %1 ... </source>
+        <translation>Lade %1 ... </translation>
+    </message>
+    <message>
+        <location filename="../../Core/openFunctions.cc" line="204"/>
+        <source>Loading %1 ... done</source>
+        <translation>Lade %1 ...  ok</translation>
+    </message>
+    <message>
+        <location filename="../../Core/openFunctions.cc" line="206"/>
+        <source>Loading %1 ... failed!</source>
+        <translation>Lade %1 ...  fehlgeschlagen!</translation>
+    </message>
+    <message>
         <location filename="../../Core/openFunctions.cc" line="238"/>
-        <source>Requested copy for illegal Object id : </source>
+        <source>Requested copy for illegal Object id: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../Core/openFunctions.cc" line="247"/>
-        <source>Requested copy for unknown Object id : </source>
+        <source>Requested copy for unknown Object id: %1 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -459,95 +435,84 @@ Should it be opened as a triangle mesh?</source>
         <translation>Initialisiere Hauptfenster</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="439"/>
-        <source>Core Scripting initialized with Name : core  </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Core/Core.cc" line="441"/>
-        <location filename="../../Core/PluginLoader.cc" line="1011"/>
-        <source>Available scripting functions :</source>
-        <translation>Vorhandene Script-Funktionen :</translation>
-    </message>
-    <message>
-        <location filename="../../Core/Core.cc" line="498"/>
+        <location filename="../../Core/Core.cc" line="492"/>
         <source>Loading Configuration File </source>
         <translation>Lade Konfigurationen </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="517"/>
+        <location filename="../../Core/Core.cc" line="511"/>
         <source>UTF8-Locale used!</source>
-        <translation type="unfinished"></translation>
+        <translation>UTF8-Locale wird benutzt!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="603"/>
+        <location filename="../../Core/Core.cc" line="597"/>
         <source>slotMouseEventIdentify from examiner </source>
         <translation>slotMouseEventIdentify aus examiner </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="637"/>
+        <location filename="../../Core/Core.cc" line="631"/>
         <source>slotMouseEvent from examiner </source>
         <translation>slotMouseEvent aus examiner </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="648"/>
+        <location filename="../../Core/Core.cc" line="642"/>
         <source>unknown event type</source>
         <translation>Unbekannter Ereignistyp</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="718"/>
+        <location filename="../../Core/Core.cc" line="712"/>
         <source>updateView() called by </source>
         <translation>updateView() aufgerufen von </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="735"/>
+        <location filename="../../Core/Core.cc" line="729"/>
         <source>Too early for redraw! Delaying request from </source>
         <translation>Zu früh für neuzeichnen! Verzögere Anfrage von </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="858"/>
+        <location filename="../../Core/Core.cc" line="852"/>
         <source>Requested illegal multiview mode!</source>
         <translation>Unbekannter multiView Mode angefordert!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="893"/>
+        <location filename="../../Core/Core.cc" line="887"/>
         <location filename="../../Core/optionHandling.cc" line="173"/>
         <source>Failed to connect to users ini file</source>
         <translation>Konnte nicht zur ini Datei des Benutzers verbinden</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="896"/>
+        <location filename="../../Core/Core.cc" line="890"/>
         <location filename="../../Core/optionHandling.cc" line="176"/>
         <source>Can not create user ini file</source>
         <translation>Konnte die ini Datei des Benutzers nicht anlegen</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="963"/>
+        <location filename="../../Core/Core.cc" line="957"/>
         <source>Unable to open logfile!</source>
         <translation>Kann log Datei nicht öffnen!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1009"/>
+        <location filename="../../Core/Core.cc" line="1003"/>
         <source>Unable to set slot-description. Plugin not found!</source>
         <translation>Konnte die Slot-Beschreibung nicht setzen. Plugin nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1056"/>
+        <location filename="../../Core/Core.cc" line="1050"/>
         <source>Unable to get slot-description. Plugin not found!</source>
         <translation>Konnte die Slot-Beschreibung nicht festellen. Plugin nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1078"/>
+        <location filename="../../Core/Core.cc" line="1072"/>
         <source>Unable to snapshotBaseFileName for viewer </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1092"/>
+        <location filename="../../Core/Core.cc" line="1086"/>
         <source>Unable to create snapshot for viewer </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1145"/>
+        <location filename="../../Core/Core.cc" line="1139"/>
         <location filename="../../Core/ParseIni.cc" line="777"/>
         <location filename="../../Core/optionHandling.cc" line="355"/>
         <location filename="../../Core/optionHandling.cc" line="398"/>
@@ -555,247 +520,247 @@ Should it be opened as a triangle mesh?</source>
         <translation>Kann nicht mit INI Datei verbinden</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1195"/>
+        <location filename="../../Core/Core.cc" line="1189"/>
         <source>Redraw the contents of the viewer.</source>
         <translation>Inhalt des Betrachters neu zeichnen.</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1196"/>
+        <location filename="../../Core/Core.cc" line="1190"/>
         <source>Clear all data objects.</source>
         <translation>Alle Objekte löschen.</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1197"/>
+        <location filename="../../Core/Core.cc" line="1191"/>
         <source>Quit OpenFlipper</source>
         <translation>OpenFlipper beenden</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1198"/>
-        <location filename="../../Core/Core.cc" line="1200"/>
+        <location filename="../../Core/Core.cc" line="1192"/>
+        <location filename="../../Core/Core.cc" line="1194"/>
         <source>Enable or disable fullscreen mode</source>
         <translation>Vollbild Modus an oder abschalten</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1199"/>
-        <location filename="../../Core/Core.cc" line="1207"/>
+        <location filename="../../Core/Core.cc" line="1193"/>
+        <location filename="../../Core/Core.cc" line="1201"/>
         <source>enabled</source>
         <translation>eingeschaltet</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1201"/>
+        <location filename="../../Core/Core.cc" line="1195"/>
         <source>Change the logger window state</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1202"/>
+        <location filename="../../Core/Core.cc" line="1196"/>
         <source>Show or hide toolbox</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1202"/>
+        <location filename="../../Core/Core.cc" line="1196"/>
         <source>Show or hide the toolbox</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1203"/>
+        <location filename="../../Core/Core.cc" line="1197"/>
         <source>Switch MultiView Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1204"/>
+        <location filename="../../Core/Core.cc" line="1198"/>
         <source>Mode</source>
         <translation>Modus</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1204"/>
+        <location filename="../../Core/Core.cc" line="1198"/>
         <source>0: One Viewer
  1: Grid 
  2: Horizontal split</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1206"/>
+        <location filename="../../Core/Core.cc" line="1200"/>
         <source>Restrict FrameRate to MaxFrameRate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1207"/>
+        <location filename="../../Core/Core.cc" line="1201"/>
         <source>restriction switch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1208"/>
+        <location filename="../../Core/Core.cc" line="1202"/>
         <source>set the maximal framerate (automatically enables framerate restriction)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1209"/>
+        <location filename="../../Core/Core.cc" line="1203"/>
         <source>frameRate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1209"/>
+        <location filename="../../Core/Core.cc" line="1203"/>
         <source>Maximum frameRate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1210"/>
+        <location filename="../../Core/Core.cc" line="1204"/>
         <source>Set a filename for storing snapshots.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1212"/>
+        <location filename="../../Core/Core.cc" line="1206"/>
         <source>Make a snapshot of the viewer. If no filename was set using snapshotBaseFileName() the snapshot is stored in snap.png in the current directory. For every snapshot a counter is added to the filename.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1216"/>
+        <location filename="../../Core/Core.cc" line="1210"/>
         <source>Resize the viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1217"/>
+        <location filename="../../Core/Core.cc" line="1211"/>
         <source>width,height</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1218"/>
+        <location filename="../../Core/Core.cc" line="1212"/>
         <source>new width for the viewer,new height for the viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1219"/>
+        <location filename="../../Core/Core.cc" line="1213"/>
         <source>write the current versions of all plugins to INI file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1220"/>
+        <location filename="../../Core/Core.cc" line="1214"/>
         <source>filename</source>
         <translation>Dateiname</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1221"/>
+        <location filename="../../Core/Core.cc" line="1215"/>
         <source>fullpath to a file where the versions should be written to.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1223"/>
+        <location filename="../../Core/Core.cc" line="1217"/>
         <source>Save object to file. If the file exists it will be overwritten.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1224"/>
-        <location filename="../../Core/Core.cc" line="1228"/>
+        <location filename="../../Core/Core.cc" line="1218"/>
+        <location filename="../../Core/Core.cc" line="1222"/>
         <source>object-id,filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1225"/>
+        <location filename="../../Core/Core.cc" line="1219"/>
         <source>id of the object, complete path and filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1226"/>
+        <location filename="../../Core/Core.cc" line="1220"/>
         <source>Save object to file. The location can be chosen in a dialog. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1229"/>
+        <location filename="../../Core/Core.cc" line="1223"/>
         <source>id of the object, initial filename for the dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1230"/>
+        <location filename="../../Core/Core.cc" line="1224"/>
         <source>Saves all target objects. If no filename is available a dialog is shown. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1232"/>
+        <location filename="../../Core/Core.cc" line="1226"/>
         <source>Saves all target objects. The locations can be chosen in dialogs. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1234"/>
+        <location filename="../../Core/Core.cc" line="1228"/>
         <source>Show the dialog to save the current setting. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1236"/>
+        <location filename="../../Core/Core.cc" line="1230"/>
         <source>Show the dialog to load an object. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1237"/>
+        <location filename="../../Core/Core.cc" line="1231"/>
         <source>Return identifier of object with specified name. Returns -1 if object was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1238"/>
+        <location filename="../../Core/Core.cc" line="1232"/>
         <source>Show the dialog to load settings. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1239"/>
+        <location filename="../../Core/Core.cc" line="1233"/>
         <source>load settings from file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1241"/>
+        <location filename="../../Core/Core.cc" line="1235"/>
         <source>Create a widget from an ui file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1242"/>
+        <location filename="../../Core/Core.cc" line="1236"/>
         <source>Object name,ui file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1243"/>
+        <location filename="../../Core/Core.cc" line="1237"/>
         <source>Name of the new widget in script,ui file to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1245"/>
+        <location filename="../../Core/Core.cc" line="1239"/>
         <source>Add a widget as a toolbox</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1246"/>
+        <location filename="../../Core/Core.cc" line="1240"/>
         <source>Toolbox Entry name,Widget</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1247"/>
+        <location filename="../../Core/Core.cc" line="1241"/>
         <source>Name of the new widget in the toolbox,Pointer to the new widget</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1249"/>
+        <location filename="../../Core/Core.cc" line="1243"/>
         <source>Add a new viewmode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1250"/>
+        <location filename="../../Core/Core.cc" line="1244"/>
         <source>Name,Toolbox List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1251"/>
+        <location filename="../../Core/Core.cc" line="1245"/>
         <source>Name of the new Viewmode, ; seperated list of toolboxes visible in this viewmode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1253"/>
+        <location filename="../../Core/Core.cc" line="1247"/>
         <source>Returns object list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1254"/>
+        <location filename="../../Core/Core.cc" line="1248"/>
         <source>Selection type,Object types</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1255"/>
+        <location filename="../../Core/Core.cc" line="1249"/>
         <source>Type of object selection (all,source,target),Object type (All,PolyMesh,TriangleMesh,...)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -866,7 +831,6 @@ Should it be opened as a triangle mesh?</source>
     <message>
         <location filename="../../Core/ParseObj.cc" line="133"/>
         <location filename="../../Core/ParseObj.cc" line="331"/>
-        <location filename="../../Core/openFunctions.cc" line="204"/>
         <location filename="../../Core/saveFunctions.cc" line="77"/>
         <source> ... done</source>
         <translation> ... Fertig</translation>
@@ -1298,10 +1262,6 @@ Should it be opened as a triangle mesh?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Switch &lt;b&gt;view mode&lt;/b&gt;.</source>
-        <translation type="obsolete">Betrachter Modus ändern.</translation>
-    </message>
-    <message>
         <location filename="../../widgets/coreWidget/CoreWidget.cc" line="431"/>
         <source>Toggle stereo viewing</source>
         <translation type="unfinished"></translation>
@@ -1337,21 +1297,9 @@ Should it be opened as a triangle mesh?</source>
         <translation>Bereit</translation>
     </message>
     <message>
-        <source>&amp;File</source>
-        <translation type="obsolete">Datei</translation>
-    </message>
-    <message>
-        <source>&amp;Clear All</source>
-        <translation type="obsolete">Alle löschen</translation>
-    </message>
-    <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="131"/>
         <source>Clear all Objects</source>
         <translation>Alle Objekte löschen</translation>
-    </message>
-    <message>
-        <source>&amp;Load Object</source>
-        <translation type="obsolete">Lade Objekt</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="141"/>
@@ -1364,17 +1312,9 @@ Should it be opened as a triangle mesh?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Save Object</source>
-        <translation type="obsolete">Objekt &amp;Speichern</translation>
-    </message>
-    <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="161"/>
         <source>Save currently selected objects</source>
         <translation>Speichere ausgewählte Objekte</translation>
-    </message>
-    <message>
-        <source>&amp;Save Object To</source>
-        <translation type="obsolete">&amp;Speichere Objekt unter</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="169"/>
@@ -1382,26 +1322,14 @@ Should it be opened as a triangle mesh?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Load Settings</source>
-        <translation type="obsolete">&amp;Lade Einstellungen</translation>
-    </message>
-    <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="179"/>
         <source>Load Settings from INI file</source>
         <translation>Lade Einstellungen aus INI Datei</translation>
     </message>
     <message>
-        <source>&amp;Save Settings</source>
-        <translation type="obsolete">&amp;Speichere Einstellungen</translation>
-    </message>
-    <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="187"/>
         <source>Save current settings to INI file</source>
         <translation>Speichere aktuelle Einstellungen in INI Datei</translation>
-    </message>
-    <message>
-        <source>&amp;Options</source>
-        <translation type="obsolete">Einstellungen</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="197"/>
@@ -1410,25 +1338,9 @@ Should it be opened as a triangle mesh?</source>
         <translation>OpenFlipper Einstellungen bearbeiten</translation>
     </message>
     <message>
-        <source>&amp;Recent Files</source>
-        <translation type="obsolete">Zuletzt verwendete Dateien</translation>
-    </message>
-    <message>
-        <source>&amp;Exit</source>
-        <translation type="obsolete">Beenden</translation>
-    </message>
-    <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="218"/>
         <source>Exit Application</source>
         <translation>Anwendung Beenden</translation>
-    </message>
-    <message>
-        <source>&amp;View</source>
-        <translation type="obsolete">Ansicht</translation>
-    </message>
-    <message>
-        <source>&amp;Set Background Color</source>
-        <translation type="obsolete">Hintergrundfarbe ändern</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="382"/>
@@ -1436,10 +1348,6 @@ Should it be opened as a triangle mesh?</source>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="384"/>
         <source>Set Background Color for all viewers</source>
         <translation>Hintergrundfarbe in allen Betrachtern ändern</translation>
-    </message>
-    <message>
-        <source>&amp;Help</source>
-        <translation type="obsolete">&amp;Hilfe</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="436"/>
@@ -1452,18 +1360,10 @@ Should it be opened as a triangle mesh?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Plugins</source>
-        <translation type="obsolete">&amp;Plugins</translation>
-    </message>
-    <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="452"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="453"/>
         <source>Show loaded plugins</source>
         <translation>Zeige geladene Plugins</translation>
-    </message>
-    <message>
-        <source>&amp;About</source>
-        <translation type="obsolete">Über OpenFlipper</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="127"/>
@@ -2025,15 +1925,18 @@ Should it be opened as a triangle mesh?</source>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/keyHandling.cc" line="246"/>
-        <location filename="../../widgets/coreWidget/keyHandling.cc" line="258"/>
-        <location filename="../../widgets/coreWidget/keyHandling.cc" line="287"/>
-        <source>Key already registered by &apos;</source>
+        <source>Key already registered by &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/keyHandling.cc" line="258"/>
         <location filename="../../widgets/coreWidget/keyHandling.cc" line="287"/>
-        <source>&apos;. Forced registration as multiUse key.</source>
+        <source>Key already registered by &apos;%1&apos;. Forced registration as multiUse key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/keyHandling.cc" line="379"/>
+        <source>Could not add key mapping. Key already assigned to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2044,11 +1947,6 @@ Should it be opened as a triangle mesh?</source>
     <message>
         <location filename="../../widgets/coreWidget/keyHandling.cc" line="374"/>
         <source>Could not add key mapping. Key already assigned to the core.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../widgets/coreWidget/keyHandling.cc" line="379"/>
-        <source>Could not add key mapping. Key already assigned to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2455,7 +2353,7 @@ Soll die Datei überschrieben werden?</translation>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="423"/>
         <source>Viewer Layout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Betrachter Ansicht:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="431"/>
@@ -2629,23 +2527,23 @@ Es können mehrere gleichzeitig ausgewählt werden.</translation>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1185"/>
         <source> Shortcut for selected action </source>
-        <translation type="unfinished"></translation>
+        <translation>Kürzel für ausgewählte Aktion </translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1200"/>
         <source>Default Shortcut:</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard Kürzel:</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1240"/>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1243"/>
         <source>Restore default shortcuts</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard Kürzel wieder herstellen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1246"/>
         <source>Restore Presets</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard wiederherstellen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1256"/>
@@ -2655,7 +2553,7 @@ Es können mehrere gleichzeitig ausgewählt werden.</translation>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1266"/>
         <source>URL for updates</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresse(URL) für Aktualisierungen</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1273"/>

@@ -436,9 +436,6 @@ Core::init() {
                                                          );
 
   scriptEngine_.globalObject().setProperty("core", scriptInstance);
-  emit log(LOGOUT,tr("Core Scripting initialized with Name : core  "));
-
-  emit log(LOGOUT,tr("Available scripting functions :"));
 
   QScriptValueIterator it(scriptInstance);
   while (it.hasNext()) {
@@ -450,10 +447,7 @@ Core::init() {
 
     scriptingFunctions_.push_back( "core." + it.name() );
 
-    emit log(LOGOUT,"\t" + it.name());
   }
-
-  emit log(LOGOUT,"=============================================================================================");
 
   loadPlugins();
 

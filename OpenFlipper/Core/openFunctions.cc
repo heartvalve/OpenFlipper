@@ -172,7 +172,7 @@ int Core::loadObject ( QString _filename ) {
     return -2;
   } else
   if (_filename.endsWith(".ofs")) {
-     emit log(LOGINFO ,tr("Starting script execution of ") + _filename);
+     emit log(LOGINFO ,tr("Starting script execution of %1.").arg( _filename)) ;
      emit executeFileScript(_filename);
   } else
     return loadObject( DATA_TRIANGLE_MESH, _filename);
@@ -191,7 +191,7 @@ int Core::loadObject( DataType _type, QString _filename) {
 
 
       if ( OpenFlipper::Options::gui() ) {
-        coreWidget_->statusMessage( tr("Loading ") + _filename + " ...");
+        coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
         if ( !OpenFlipper::Options::loadingSettings() )
           coreWidget_->setStatus(ApplicationStatus::PROCESSING );
       }
@@ -201,9 +201,9 @@ int Core::loadObject( DataType _type, QString _filename) {
 
       if ( OpenFlipper::Options::gui() ) {
         if ( id != -1 )
-          coreWidget_->statusMessage( tr("Loading ") + _filename + tr(" ... done"), 4000 );
+          coreWidget_->statusMessage( tr("Loading %1 ... done").arg(_filename), 4000 );
         else
-          coreWidget_->statusMessage( tr("Loading ") + _filename + tr(" ... failed!"), 4000 );
+          coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
 
         if ( !OpenFlipper::Options::loadingSettings() )
           coreWidget_->setStatus(ApplicationStatus::READY );
@@ -235,7 +235,7 @@ void Core::slotAddEmptyObject( DataType _type , int& _id ) {
 void Core::slotCopyObject( int _oldId , int& _newId ) {
 
   if ( _oldId == -1 ) {
-    emit log(LOGERR,tr("Requested copy for illegal Object id : ") + QString::number(_oldId) );
+    emit log(LOGERR,tr("Requested copy for illegal Object id: %1").arg(_oldId) );
     _newId = -1;
     return;
   }
@@ -244,7 +244,7 @@ void Core::slotCopyObject( int _oldId , int& _newId ) {
   BaseObject* object = objectRoot_->childExists(_oldId);
 
   if ( !object ) {
-    emit log(LOGERR,tr("Requested copy for unknown Object id : ") + QString::number(_oldId) );
+    emit log(LOGERR,tr("Requested copy for unknown Object id: %1 ").arg(_oldId) );
     _newId = -1;
     return ;
   }
