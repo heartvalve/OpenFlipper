@@ -121,120 +121,146 @@
     </message>
     <message>
         <location filename="../widgets/selectionControls.ui" line="257"/>
-        <location filename="../widgets/selectionControls.ui" line="260"/>
+        <source>Colorize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/selectionControls.ui" line="264"/>
+        <location filename="../widgets/selectionControls.ui" line="267"/>
         <source>Delete selection on all (target) objects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="263"/>
+        <location filename="../widgets/selectionControls.ui" line="270"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="284"/>
-        <location filename="../widgets/selectionControls.ui" line="287"/>
+        <location filename="../widgets/selectionControls.ui" line="291"/>
+        <location filename="../widgets/selectionControls.ui" line="294"/>
         <source>Load current selection from file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="290"/>
+        <location filename="../widgets/selectionControls.ui" line="297"/>
         <source>Load Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="297"/>
-        <location filename="../widgets/selectionControls.ui" line="300"/>
+        <location filename="../widgets/selectionControls.ui" line="304"/>
+        <location filename="../widgets/selectionControls.ui" line="307"/>
         <source>Save current selection to file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="303"/>
+        <location filename="../widgets/selectionControls.ui" line="310"/>
         <source>Save Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="313"/>
+        <location filename="../widgets/selectionControls.ui" line="320"/>
         <source> Mesh Properties </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="323"/>
-        <location filename="../widgets/selectionControls.ui" line="326"/>
-        <location filename="../widgets/selectionControls.ui" line="366"/>
-        <location filename="../widgets/selectionControls.ui" line="369"/>
+        <location filename="../widgets/selectionControls.ui" line="330"/>
+        <location filename="../widgets/selectionControls.ui" line="333"/>
+        <location filename="../widgets/selectionControls.ui" line="373"/>
+        <location filename="../widgets/selectionControls.ui" line="376"/>
         <source>Clear the modeling area of all (target) objects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="329"/>
+        <location filename="../widgets/selectionControls.ui" line="336"/>
         <source>Clear Modeling Area</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="336"/>
-        <location filename="../widgets/selectionControls.ui" line="339"/>
-        <location filename="../widgets/selectionControls.ui" line="379"/>
-        <location filename="../widgets/selectionControls.ui" line="382"/>
+        <location filename="../widgets/selectionControls.ui" line="343"/>
+        <location filename="../widgets/selectionControls.ui" line="346"/>
+        <location filename="../widgets/selectionControls.ui" line="386"/>
+        <location filename="../widgets/selectionControls.ui" line="389"/>
         <source>Clear the handle region of all (target) objects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="342"/>
+        <location filename="../widgets/selectionControls.ui" line="349"/>
         <source>Clear Handle Area</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="349"/>
-        <location filename="../widgets/selectionControls.ui" line="352"/>
-        <location filename="../widgets/selectionControls.ui" line="392"/>
-        <location filename="../widgets/selectionControls.ui" line="395"/>
+        <location filename="../widgets/selectionControls.ui" line="356"/>
+        <location filename="../widgets/selectionControls.ui" line="359"/>
+        <location filename="../widgets/selectionControls.ui" line="399"/>
+        <location filename="../widgets/selectionControls.ui" line="402"/>
         <source>Clear the features of all (target) objects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="355"/>
+        <location filename="../widgets/selectionControls.ui" line="362"/>
         <source>Clear Feature Area</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="372"/>
+        <location filename="../widgets/selectionControls.ui" line="379"/>
         <source>Clear Vertex Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="385"/>
+        <location filename="../widgets/selectionControls.ui" line="392"/>
         <source>Clear Edge Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="398"/>
+        <location filename="../widgets/selectionControls.ui" line="405"/>
         <source>Clear Face Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="424"/>
-        <location filename="../widgets/selectionControls.ui" line="562"/>
+        <location filename="../widgets/selectionControls.ui" line="431"/>
+        <location filename="../widgets/selectionControls.ui" line="569"/>
         <source>Convert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="431"/>
+        <location filename="../widgets/selectionControls.ui" line="438"/>
         <source>Add to existing area</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="438"/>
+        <location filename="../widgets/selectionControls.ui" line="445"/>
         <source>Clear source area after conversion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="448"/>
+        <location filename="../widgets/selectionControls.ui" line="455"/>
         <source>Clear source selection after conversion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgets/selectionControls.ui" line="500"/>
+        <location filename="../widgets/selectionControls.ui" line="507"/>
         <source>to</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/selectionControls.ui" line="583"/>
+        <source>Tool Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/selectionControls.ui" line="590"/>
+        <source>Flood Fill</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/selectionControls.ui" line="596"/>
+        <source>Maximum angle:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgets/selectionControls.ui" line="603"/>
+        <location filename="../widgets/selectionControls.ui" line="606"/>
+        <source>Maximum angle between faces that get flood filled</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -553,38 +579,38 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionContextMenu.cc" line="61"/>
-        <location filename="../SelectionPlugin.cc" line="162"/>
+        <location filename="../SelectionContextMenu.cc" line="62"/>
+        <location filename="../SelectionPlugin.cc" line="165"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionContextMenu.cc" line="63"/>
-        <location filename="../SelectionPlugin.cc" line="166"/>
+        <location filename="../SelectionContextMenu.cc" line="64"/>
+        <location filename="../SelectionPlugin.cc" line="169"/>
         <source>Clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionContextMenu.cc" line="65"/>
-        <location filename="../SelectionPlugin.cc" line="170"/>
+        <location filename="../SelectionContextMenu.cc" line="66"/>
+        <location filename="../SelectionPlugin.cc" line="173"/>
         <source>Invert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionContextMenu.cc" line="67"/>
-        <location filename="../SelectionPlugin.cc" line="174"/>
+        <location filename="../SelectionContextMenu.cc" line="68"/>
+        <location filename="../SelectionPlugin.cc" line="177"/>
         <source>Shrink</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionContextMenu.cc" line="69"/>
-        <location filename="../SelectionPlugin.cc" line="178"/>
+        <location filename="../SelectionContextMenu.cc" line="70"/>
+        <location filename="../SelectionPlugin.cc" line="181"/>
         <source>Grow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionContextMenu.cc" line="71"/>
-        <location filename="../SelectionPlugin.cc" line="182"/>
+        <location filename="../SelectionContextMenu.cc" line="72"/>
+        <location filename="../SelectionPlugin.cc" line="185"/>
         <source>Boundary</source>
         <translation type="unfinished"></translation>
     </message>
@@ -599,286 +625,296 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionFunctions.cc" line="289"/>
+        <location filename="../SelectionFunctions.cc" line="288"/>
         <source>Component Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionFunctions.cc" line="362"/>
+        <location filename="../SelectionFunctions.cc" line="351"/>
+        <source>floodFillSelection : Unsupported dataType</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SelectionFunctions.cc" line="422"/>
         <source>PolyLine on quad meshes not fully supported!! </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="89"/>
+        <location filename="../SelectionPlugin.cc" line="91"/>
         <source>Sphere Color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="99"/>
+        <location filename="../SelectionPlugin.cc" line="101"/>
         <source>Sphere</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="108"/>
+        <location filename="../SelectionPlugin.cc" line="110"/>
         <source>Lasso line</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="115"/>
+        <location filename="../SelectionPlugin.cc" line="117"/>
         <source>Clear Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="116"/>
+        <location filename="../SelectionPlugin.cc" line="118"/>
         <source>Invert Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="117"/>
+        <location filename="../SelectionPlugin.cc" line="119"/>
         <source>Delete Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="120"/>
-        <location filename="../SelectionPlugin.cc" line="123"/>
+        <location filename="../SelectionPlugin.cc" line="122"/>
+        <location filename="../SelectionPlugin.cc" line="125"/>
         <source>Deselect instead of Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="121"/>
-        <location filename="../SelectionPlugin.cc" line="124"/>
+        <location filename="../SelectionPlugin.cc" line="123"/>
+        <location filename="../SelectionPlugin.cc" line="126"/>
         <source>Switch between source/target Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="127"/>
-        <location filename="../SelectionPlugin.cc" line="128"/>
+        <location filename="../SelectionPlugin.cc" line="129"/>
+        <location filename="../SelectionPlugin.cc" line="130"/>
         <source>Source Deselection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="131"/>
+        <location filename="../SelectionPlugin.cc" line="133"/>
         <source>Save Selections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="158"/>
+        <location filename="../SelectionPlugin.cc" line="161"/>
         <source>Select</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="163"/>
+        <location filename="../SelectionPlugin.cc" line="166"/>
         <source>Select all</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="167"/>
+        <location filename="../SelectionPlugin.cc" line="170"/>
         <source>Clear selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="171"/>
+        <location filename="../SelectionPlugin.cc" line="174"/>
         <source>Invert selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="175"/>
+        <location filename="../SelectionPlugin.cc" line="178"/>
         <source>Deselect the boundary of the current selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="179"/>
+        <location filename="../SelectionPlugin.cc" line="182"/>
         <source>Extend the selection at their boundary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="183"/>
+        <location filename="../SelectionPlugin.cc" line="186"/>
         <source>Select the boundary of the object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="200"/>
+        <location filename="../SelectionPlugin.cc" line="206"/>
         <source>Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="210"/>
+        <location filename="../SelectionPlugin.cc" line="216"/>
         <source>Enable Object Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="214"/>
+        <location filename="../SelectionPlugin.cc" line="220"/>
         <source>Enable Vertex Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="218"/>
+        <location filename="../SelectionPlugin.cc" line="224"/>
         <source>Enable Edge Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="221"/>
+        <location filename="../SelectionPlugin.cc" line="227"/>
         <source>Enable Face Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="228"/>
+        <location filename="../SelectionPlugin.cc" line="234"/>
         <source>&lt;B&gt;Toggle Selection&lt;/B&gt;&lt;br&gt;Select or deselect clicked elements.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="232"/>
+        <location filename="../SelectionPlugin.cc" line="238"/>
         <source>&lt;B&gt;Lasso Selection&lt;/B&gt;&lt;br&gt;Draw a Lasso to select elements on the surface.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="236"/>
+        <location filename="../SelectionPlugin.cc" line="242"/>
         <source>&lt;B&gt;Volume Lasso Selection&lt;/B&gt;&lt;br&gt;Draw a Lasso to select elements in the drawn volume.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="240"/>
+        <location filename="../SelectionPlugin.cc" line="246"/>
         <source>&lt;B&gt;Sphere Selection&lt;/B&gt;&lt;br&gt;Select elements by painting with a sphere.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="244"/>
+        <location filename="../SelectionPlugin.cc" line="250"/>
         <source>&lt;B&gt;Closest Boundary&lt;/B&gt;&lt;br&gt;Select the closest boundary to a clicked point.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="249"/>
+        <location filename="../SelectionPlugin.cc" line="255"/>
         <source>&lt;B&gt;Surface Lasso&lt;/B&gt;&lt;br&gt;Draw a Lasso on the surface.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="254"/>
+        <location filename="../SelectionPlugin.cc" line="260"/>
         <source>&lt;B&gt;Connected Component&lt;/B&gt;&lt;br&gt;Select the connect component to a clicked element.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="337"/>
-        <location filename="../SelectionPlugin.cc" line="341"/>
-        <location filename="../SelectionPlugin.cc" line="1000"/>
-        <location filename="../SelectionPlugin.cc" line="1005"/>
-        <location filename="../SelectionPlugin.cc" line="1010"/>
-        <source>Modeling Area</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../SelectionPlugin.cc" line="338"/>
-        <location filename="../SelectionPlugin.cc" line="342"/>
-        <location filename="../SelectionPlugin.cc" line="1000"/>
-        <location filename="../SelectionPlugin.cc" line="1005"/>
-        <location filename="../SelectionPlugin.cc" line="1013"/>
-        <source>Handle Area</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../SelectionPlugin.cc" line="339"/>
-        <location filename="../SelectionPlugin.cc" line="343"/>
-        <location filename="../SelectionPlugin.cc" line="1016"/>
-        <source>Feature Area</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../SelectionPlugin.cc" line="346"/>
-        <location filename="../SelectionPlugin.cc" line="350"/>
-        <location filename="../SelectionPlugin.cc" line="982"/>
-        <location filename="../SelectionPlugin.cc" line="985"/>
-        <location filename="../SelectionPlugin.cc" line="988"/>
-        <location filename="../SelectionPlugin.cc" line="994"/>
-        <location filename="../SelectionPlugin.cc" line="1010"/>
-        <location filename="../SelectionPlugin.cc" line="1013"/>
-        <location filename="../SelectionPlugin.cc" line="1016"/>
-        <source>Vertex Selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../SelectionPlugin.cc" line="347"/>
-        <location filename="../SelectionPlugin.cc" line="351"/>
-        <location filename="../SelectionPlugin.cc" line="982"/>
-        <location filename="../SelectionPlugin.cc" line="988"/>
-        <location filename="../SelectionPlugin.cc" line="991"/>
-        <location filename="../SelectionPlugin.cc" line="997"/>
-        <source>Edge Selection</source>
+        <location filename="../SelectionPlugin.cc" line="265"/>
+        <source>&lt;B&gt;Flood Fill&lt;/B&gt;&lt;br&gt;Select a planar region surrounding the clicked element.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../SelectionPlugin.cc" line="348"/>
         <location filename="../SelectionPlugin.cc" line="352"/>
-        <location filename="../SelectionPlugin.cc" line="985"/>
-        <location filename="../SelectionPlugin.cc" line="991"/>
-        <location filename="../SelectionPlugin.cc" line="994"/>
-        <location filename="../SelectionPlugin.cc" line="997"/>
+        <location filename="../SelectionPlugin.cc" line="1023"/>
+        <location filename="../SelectionPlugin.cc" line="1028"/>
+        <location filename="../SelectionPlugin.cc" line="1033"/>
+        <source>Modeling Area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SelectionPlugin.cc" line="349"/>
+        <location filename="../SelectionPlugin.cc" line="353"/>
+        <location filename="../SelectionPlugin.cc" line="1023"/>
+        <location filename="../SelectionPlugin.cc" line="1028"/>
+        <location filename="../SelectionPlugin.cc" line="1036"/>
+        <source>Handle Area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SelectionPlugin.cc" line="350"/>
+        <location filename="../SelectionPlugin.cc" line="354"/>
+        <location filename="../SelectionPlugin.cc" line="1039"/>
+        <source>Feature Area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SelectionPlugin.cc" line="357"/>
+        <location filename="../SelectionPlugin.cc" line="361"/>
+        <location filename="../SelectionPlugin.cc" line="1005"/>
+        <location filename="../SelectionPlugin.cc" line="1008"/>
+        <location filename="../SelectionPlugin.cc" line="1011"/>
+        <location filename="../SelectionPlugin.cc" line="1017"/>
+        <location filename="../SelectionPlugin.cc" line="1033"/>
+        <location filename="../SelectionPlugin.cc" line="1036"/>
+        <location filename="../SelectionPlugin.cc" line="1039"/>
+        <source>Vertex Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SelectionPlugin.cc" line="358"/>
+        <location filename="../SelectionPlugin.cc" line="362"/>
+        <location filename="../SelectionPlugin.cc" line="1005"/>
+        <location filename="../SelectionPlugin.cc" line="1011"/>
+        <location filename="../SelectionPlugin.cc" line="1014"/>
+        <location filename="../SelectionPlugin.cc" line="1020"/>
+        <source>Edge Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SelectionPlugin.cc" line="359"/>
+        <location filename="../SelectionPlugin.cc" line="363"/>
+        <location filename="../SelectionPlugin.cc" line="1008"/>
+        <location filename="../SelectionPlugin.cc" line="1014"/>
+        <location filename="../SelectionPlugin.cc" line="1017"/>
+        <location filename="../SelectionPlugin.cc" line="1020"/>
         <source>Face Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="581"/>
+        <location filename="../SelectionPlugin.cc" line="602"/>
         <source>Choose at least one selection type first.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="804"/>
+        <location filename="../SelectionPlugin.cc" line="827"/>
         <source>Select on target objects only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="806"/>
+        <location filename="../SelectionPlugin.cc" line="829"/>
         <source>Select on all objects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="820"/>
-        <location filename="../SelectionPlugin.cc" line="857"/>
+        <location filename="../SelectionPlugin.cc" line="843"/>
+        <location filename="../SelectionPlugin.cc" line="880"/>
         <source>Cannot find object for id </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="820"/>
-        <location filename="../SelectionPlugin.cc" line="829"/>
-        <location filename="../SelectionPlugin.cc" line="857"/>
+        <location filename="../SelectionPlugin.cc" line="843"/>
+        <location filename="../SelectionPlugin.cc" line="852"/>
+        <location filename="../SelectionPlugin.cc" line="880"/>
         <source> in saveFile</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="829"/>
+        <location filename="../SelectionPlugin.cc" line="852"/>
         <source>Cannot find object section id </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="1334"/>
+        <location filename="../SelectionPlugin.cc" line="1357"/>
         <source>Save Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="1334"/>
+        <location filename="../SelectionPlugin.cc" line="1357"/>
         <source>Selections (*.sel )</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="1348"/>
+        <location filename="../SelectionPlugin.cc" line="1371"/>
         <source>saveSelection: unable to get object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="1368"/>
+        <location filename="../SelectionPlugin.cc" line="1391"/>
         <source>saveSelection : Unsupported object Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.cc" line="1381"/>
+        <location filename="../SelectionPlugin.cc" line="1404"/>
         <source>Failed to load Selection from file </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.hh" line="172"/>
+        <location filename="../SelectionPlugin.hh" line="173"/>
         <source>Selections</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SelectionPlugin.hh" line="173"/>
+        <location filename="../SelectionPlugin.hh" line="174"/>
         <source>Allows to select parts of Objects</source>
         <translation type="unfinished"></translation>
     </message>
@@ -984,27 +1020,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../buttonSlots.cc" line="193"/>
+        <location filename="../buttonSlots.cc" line="213"/>
         <source>Open File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../buttonSlots.cc" line="193"/>
+        <location filename="../buttonSlots.cc" line="213"/>
         <source>Selections (*.ini *.sel)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../buttonSlots.cc" line="225"/>
+        <location filename="../buttonSlots.cc" line="245"/>
         <source>Failed to load ini file </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../buttonSlots.cc" line="269"/>
+        <location filename="../buttonSlots.cc" line="289"/>
         <source>Failed to save ini file </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../buttonSlots.cc" line="301"/>
+        <location filename="../buttonSlots.cc" line="321"/>
         <source>SaveSelection: Only selection of the first target was saved.</source>
         <translation type="unfinished"></translation>
     </message>
