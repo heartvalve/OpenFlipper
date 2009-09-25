@@ -4,18 +4,6 @@
 <context>
     <name></name>
     <message>
-        <source>&amp;File</source>
-        <translation type="obsolete">Datei</translation>
-    </message>
-    <message>
-        <source>&amp;View</source>
-        <translation type="obsolete">Ansicht</translation>
-    </message>
-    <message>
-        <source>&amp;Tools</source>
-        <translation type="obsolete">Extras</translation>
-    </message>
-    <message>
         <location filename="../../BasePlugin/MenuInterface.hh" line="66"/>
         <source>File</source>
         <translation>Datei</translation>
@@ -55,32 +43,12 @@
     </message>
     <message>
         <location filename="../../common/Types.cc" line="137"/>
-        <source>B-Spline Curve</source>
-        <translation>B-Spline Kurve</translation>
-    </message>
-    <message>
-        <location filename="../../common/Types.cc" line="141"/>
-        <source>B_Spline Surface</source>
-        <translation>B-Spline Fläche</translation>
-    </message>
-    <message>
-        <location filename="../../common/Types.cc" line="145"/>
-        <source>Skeleton</source>
-        <translation>Skelett</translation>
-    </message>
-    <message>
-        <location filename="../../common/Types.cc" line="149"/>
-        <source>GIS Data</source>
-        <translation>GIS Daten</translation>
-    </message>
-    <message>
-        <location filename="../../common/Types.cc" line="153"/>
         <source>All</source>
         <translation>Alle</translation>
     </message>
     <message>
-        <location filename="../../common/Types.cc" line="275"/>
-        <location filename="../../common/Types.cc" line="289"/>
+        <location filename="../../common/Types.cc" line="255"/>
+        <location filename="../../common/Types.cc" line="269"/>
         <source>Unknown Type</source>
         <translation>Unbekannter Typ</translation>
     </message>
@@ -88,32 +56,32 @@
 <context>
     <name>glViewer</name>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1246"/>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1247"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1309"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1310"/>
         <source>Translate along &lt;b&gt;z-axis&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>In Richtung der &lt;b&gt;z-Achse&lt;/b&gt; verschieben.</translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1254"/>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1255"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1317"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1318"/>
         <source>Rotate around &lt;b&gt;y-axis&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um die &lt;b&gt;y-Achse&lt;/b&gt; rotieren.</translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1262"/>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1263"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1325"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="1326"/>
         <source>Rotate around &lt;b&gt;x-axis&lt;/b&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um die &lt;b&gt;x-Achse&lt;/b&gt; rotieren.</translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2045"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2171"/>
         <source>snapshot: </source>
-        <translation type="unfinished"></translation>
+        <translation>Schnappschuss: </translation>
     </message>
     <message>
-        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2049"/>
+        <location filename="../../widgets/glWidget/QtBaseViewer.cc" line="2175"/>
         <source>could not save snapshot to </source>
-        <translation type="unfinished"></translation>
+        <translation>Kann den Schnappschuss nicht speichern </translation>
     </message>
 </context>
 </TS>
