@@ -475,8 +475,7 @@ private: //--------------------------------------------------------------------
   int glwidth_, glheight_;
 
   // projection
-  double near_plane_, far_plane_, fovy_;
-  double aspect_;
+  double near_plane_, far_plane_;
 
   // colors & materials
   Vec4f   clear_color_,
