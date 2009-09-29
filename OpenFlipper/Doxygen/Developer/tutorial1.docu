@@ -65,18 +65,15 @@
  * This step is very easy, so let's start. In your plugin's root directory
  * create a CMakeLists.txt file.
  *
- * Our first line includes OpenFlipper's predefined cmake plugin functions. This allows us to simply call
+ * Our first line includes OpenFlipper's predefined cmake plugin functions. This allows us to simply call the
  * \c openflipper_plugin() macro in order to build our code as a plugin. Our project file then looks like this:
  *
  * CMakeLists.txt
  * \include example/CMakeLists.txt
  *
- * Note that you have several options that can be passed to the openflipper_plugin() function:
- * The usage of this function is:
- *
- * \include example/cmake_plugin_usage.txt
- *
- * See the cmake documentation for detailed information on the different parameters.
+ * Note that you have several options that can be passed to the openflipper_plugin() function,
+ * see \ref cmake_plugin for details. For our example project we just have to
+ * leave this line as it is.
  *
  * Now, when building OpenFlipper with cmake, your plugin should be found and built automatically.
  *

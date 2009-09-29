@@ -79,4 +79,27 @@
  * The created application bundle (that contains binaries, libs and shared files) is to be found in the <b>Build</b>
  * directory.
  *
+ * \section cmake_plugin Building OpenFlipper Plugins with CMake
+ *
+ * Building plugins with CMake is very simple. The OpenFlipper CMake build system
+ * expects a CMakeLists.txt file in each of the plugin's directories.
+ * So when developing a plugin, just make sure there is a CMakeLists.txt in
+ * your plugin's directory. In this file include the global file plugin.cmake
+ * which specifies the openflipper_plugin() function:
+ *
+ * <code>include(plugin)</code>
+ *
+ * You then have to add the following line which configures the build parameters
+ * of your plugin:
+ *
+ * <code>openflipper_plugin()</code>
+ *
+ * Note: There are several parameters that one can pass to this function.
+ * Usage:
+ *
+ * \include example/cmake_plugin_usage.txt
+ *
+ * For a detailed description of the parameters see the CMake documentation.
+ * For an example of how to build a simple plugin see \ref ex1.
+ *
  */
