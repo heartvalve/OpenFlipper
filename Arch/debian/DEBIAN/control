@@ -4,7 +4,7 @@ Section: graphics
 Priority: optional
 Architecture: all
 Essential: no
-Depends: freeglut3 , libftgl2 , libqt4-opengl ( >= 4.4), libqt4-webkit ( >= 4.4), libqt4-network ( >= 4.4), libqt4-script ( >= 4.4), libqt4-sql-sqlite ( >= 4.4), libqt4-help ( >= 4.4), libqt4-gui ( >= 4.4)
+Depends: freeglut3 , libftgl2 , libqt4-opengl ( >= 4.5), libqt4-webkit ( >= 4.5), libqt4-network ( >= 4.5), libqt4-script ( >= 4.5), libqt4-sql-sqlite ( >= 4.5), libqt4-help ( >= 4.5), libqt4-gui ( >= 4.5)
 Recommends:
 Suggests:
 Installed-Size:
