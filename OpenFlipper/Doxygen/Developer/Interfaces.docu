@@ -38,6 +38,11 @@
  * Provides a function to add toolbar buttons. ( ToolbarInterface )
  *
  *
+ * \section ContextMenu Context Menu Interface
+ * \image html ContextMenuInterface.png
+ * Add context menu entries in your plugin. ( ContextMenuInterface )
+ *
+ *
  * \section MenubarPlugin Menubar Interface
  * \image html MenubarInterface.png
  * Provides a function to create an entry in the menubar ( MenuInterface ).
