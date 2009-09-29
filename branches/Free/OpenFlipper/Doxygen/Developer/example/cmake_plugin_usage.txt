@@ -1,0 +1,27 @@
+openflipper_plugin ( [DIRS dir1 dir2 ...]
+                     [DEPS dep1 dep2 ...]
+                     [OPTDEPS dep1 dep2 ...]
+                     [LDFLAGSADD flag1 flag2 ...]
+                     [CFLAGSADD flag1 flag2 ...]
+                     [LIBRARIES lib1 lib2 ...]
+                     [LIBDIRS dir1 dir2 ...]
+                     [INCDIRS dir1 dir2 ...]
+                     [ADDSRC file1 file2 ...]
+                     [INSTALLDATA dir1 dir2 ...]
+                     [TRANSLATION_LANGUAGES lang1 lang2 ...]
+                     [TRANSLATION_ADDFILES file1 file2 ...]
+                     [LICENSEMANAGER])
+
+DIRS        = additional directories with source files
+DEPS        = required dependencies for find_package macro
+OPTDEPS     = optional dependencies for find_package macro
+LDFLAGSADD  = flags added to the link command
+CFLAGSADD   = flags added to the compile command
+LIBRARIES   = libraries added to link command
+LIBDIRS     = additional link directories
+INCDIRS     = additional include directories
+ADDSRC      = additional source files
+INSTALLDATA = directories that will be installed into the openflipper data directory
+TRANSLATION_LANGUAGES = language codes for translation
+TRANSLATION_ADDFILES  = additional files that should be included into the translation files
+LICENSEMANAGER = Compile plugin with license management
