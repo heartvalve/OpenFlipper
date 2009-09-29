@@ -338,10 +338,8 @@ void GLState::frustum( double _left, double _right,
 void GLState::perspective( double _fovY, double _aspect,
 			   double _n, double _f )
 {
-  fovy_       = _fovY;
   near_plane_ = _n;
   far_plane_  = _f;
-  aspect_ = _aspect;
 
   projection_.perspective(_fovY, _aspect, _n, _f);
   inverse_projection_.inverse_perspective(_fovY, _aspect, _n, _f);
