@@ -57,10 +57,34 @@
  * simplePlugin.cc
  * \include example/simplePlugin.cc
  *
- * \section ex1b How to build the plugin with qmake
+ *
+ * \section ex1c How to build the plugin with cmake (recommended)
  * 
- * The only thing that's still left to be created is our qmake project file
- * that is used to generate the Makefiles for the plugin. For general information on how to build
+ * The only thing that's still left to be created is our cmake project file
+ * that is used to generate the Makefiles for the plugin.
+ * This step is very easy, so let's start. In your plugin's root directory
+ * create a CMakeLists.txt file.
+ *
+ * Our first line includes OpenFlipper's predefined cmake plugin functions. This allows us to simply call
+ * \c openflipper_plugin() macro in order to build our code as a plugin. Our project file then looks like this:
+ *
+ * CMakeLists.txt
+ * \include example/CMakeLists.txt
+ *
+ * Note that you have several options that can be passed to the openflipper_plugin() function:
+ * The usage of this function is:
+ *
+ * \include example/cmake_plugin_usage.txt
+ *
+ * See the cmake documentation for detailed information on the different parameters.
+ *
+ * Now, when building OpenFlipper with cmake, your plugin should be found and built automatically.
+ *
+ * \section ex1b How to build the plugin with qmake (obsolete)
+ * 
+ * If you use QMake to generate your makefiles, you can drop the previous section.
+ * Note: Using QMake as build system has become obsolete since OpenFlipper 1.0 RC1.
+ * For general information on how to build
  * OpenFlipper with qmake see \ref buildingOpenFlipper.
  * So lets get started! First off we create a file \c Plugin-SimplePlugin.pro in the plugins's directory.
  * It is mandatory to name the project file after the project's directory.
