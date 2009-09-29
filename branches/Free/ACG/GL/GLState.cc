@@ -116,7 +116,7 @@ void GLState::initialize()
   // thickness
   set_point_size(1.0f);
   set_line_width(1.0f);
-  
+
   // multisampling
   set_multisampling(true);
 
@@ -716,31 +716,48 @@ void GLState::set_twosided_lighting(bool _b)
 
 void GLState::set_multisampling(bool _b)
 {
-  
+
   multisampling_ = _b;
 
   if (updateGL_)
   {
     makeCurrent();
     if ( allow_multisampling_ ) {
-      
-      if ( _b ) 
+
+      if ( _b )
         glEnable( GL_MULTISAMPLE );
-      else      
+      else
         glDisable( GL_MULTISAMPLE );
-      
+
     } else {
-      
+
       multisampling_ = false;
-      
+
       if ( glIsEnabled( GL_MULTISAMPLE ) )
         glDisable( GL_MULTISAMPLE );
-      
+
     }
   }
-    
+
 }
 
+//-----------------------------------------------------------------------------
+
+double GLState::fovy() const
+{
+    assert(projection_(0,0) != 0.0);
+
+    return atan(1.0/projection_(0,0))*2.0;
+}
+
+//-----------------------------------------------------------------------------
+
+double GLState::aspect() const
+{
+    assert(projection_(1,1) != 0.0);
+
+    return projection_(0,0) / projection_(1,1);
+}
 
 //-----------------------------------------------------------------------------
 

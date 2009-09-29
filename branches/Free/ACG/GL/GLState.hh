@@ -265,10 +265,10 @@ public:
   double far_plane() const { return far_plane_; }
 
   /// get field of view in y direction
-  double fovy() const { return fovy_; }
+  double fovy() const;
 
   /// get aspect ratio
-  double aspect() const { return aspect_; }
+  double aspect() const;
 
   /// get eye point
   Vec3d eye() const;
@@ -379,18 +379,18 @@ public:
   void set_twosided_lighting(bool _b);
   /// get whether transparenet or solid objects should be drawn
   bool twosided_lighting() { return twosided_lighting_; }
-  
+
   //--- Multi Sampling --------------------------------------------------------
-  
+
   /// Enable or disable multisampling
   void set_multisampling( bool _b );
-  
+
   /// Get current multisampling state
   bool multisampling(){ return multisampling_; };
-  
+
   /// Disable multisampling globally
   void allow_multisampling( bool _b ) { allow_multisampling_ = _b; };
-  
+
   /// Check if Multisampling is globally disabled
   bool multisampling_alloowed(){ return allow_multisampling_; };
 
@@ -408,7 +408,7 @@ public:
   void pick_init (bool _color);
 
   /// sets the maximum used name index at current stack position (only used in color picking)
-  /// A restriction inside the color picking implementation forces to set the maximum used 
+  /// A restriction inside the color picking implementation forces to set the maximum used
   /// number for the following pick_set_name calls between the two pick_push_name/pick_pop_name calls.
   bool pick_set_maximum (unsigned int _idx);
 
