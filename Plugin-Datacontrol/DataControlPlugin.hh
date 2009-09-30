@@ -90,16 +90,22 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // LoggingInterface
     void log(Logtype _type, QString _message);
     void log(QString _message);
+    
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action , ContextMenuType _type);
     void addContextMenuItem(QAction* _action , DataType _objectType , ContextMenuType _type );
+    
     // LoadSaveInterface
     void deleteObject( int _id );
     void emptyObjectAdded( int _id );
     void copyObject( int _oldId, int& _newId);
+    
+    // ToolboxInterface
+    void addToolbox( QString _name  , QWidget* _widget ); 
 
   private slots :
     // BaseInterface
+    void initializePlugin();
     void pluginsInitialized();
     void slotObjectUpdated          ( int _identifier );
     void slotVisibilityChanged      ( int _identifier );
@@ -122,9 +128,6 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   public :
     /// Destructor
     ~DataControlPlugin() {};
-
-    /// Initialize the ToolBox
-    bool initializeToolbox(QWidget*& _widget);
 
     /// Name of the Plugin
     QString name(){ return (QString("DataControl")); };
