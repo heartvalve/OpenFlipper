@@ -81,7 +81,6 @@
 #include "OpenFlipper/BasePlugin/TextureInterface.hh"
 #include "OpenFlipper/BasePlugin/MenuInterface.hh"
 #include "OpenFlipper/BasePlugin/INIInterface.hh"
-#include "OpenFlipper/BasePlugin/GlobalAccessInterface.hh"
 
 #include "OpenFlipper/INIFile/INIFile.hh"
 
