@@ -151,6 +151,31 @@ void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up  , int _view
 DLLEXPORT
 void setScenePos(const ACG::Vec3d& _center, const double _radius  , int _viewer = ALL_VIEWERS);
 
+/** \brief Set the trackball Center
+*
+* The scene is rotated around the trackball center when using the mouse 
+*
+* @param _center Center of the trackball
+* @param _viewer Id of the viewer to use.
+*                ALL_VIEWERS    will set all viewers (Default)
+*                ACTIVE_VIEWER active viewer
+*                0..3 Choose viewer explicitly
+*/
+void setTrackBallCenter(const ACG::Vec3d& _center, int _viewer );
+
+
+/** \brief Get the trackball Center
+*
+* The scene is rotated around the trackball center when using the mouse 
+*
+* @param _center Center of the trackball
+* @param _viewer Id of the viewer to use.
+*                ALL_VIEWERS    will set all viewers (Default)
+*                ACTIVE_VIEWER active viewer
+*                0..3 Choose viewer explicitly
+*/
+const ACG::Vec3d trackBallCenter(const ACG::Vec3d& _center, int _viewer );
+
 /** \brief Set the scene position
  *
  * Same as  setScenePos(const ACG::Vec3d& _center, double _radius) but reuses the current radius
