@@ -60,16 +60,19 @@ viewModeWidget::viewModeWidget(const QVector< ViewMode* >& _modes, QWidget *_par
 
   connect(viewModeList, SIGNAL(itemSelectionChanged()), this, SLOT(slotSetToolWidgets()));
 
-  connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
   
-  connect(saveButton, SIGNAL(clicked()), this, SLOT(slotSaveMode()));
-  connect(removeButton, SIGNAL(clicked()), this, SLOT(slotRemoveMode()));
+  
+  
+  
   connect(viewModeList, SIGNAL(currentTextChanged (QString)), this, SLOT(slotModeChanged(QString)) );
   connect(viewModeList, SIGNAL(clicked (QModelIndex)), this, SLOT(slotModeClicked(QModelIndex)) );
 
   
   
-  
+  // View Mode buttons
+  connect(removeButton, SIGNAL(clicked()), this, SLOT(slotRemoveMode()));
+  connect(copyButton, SIGNAL(clicked()), this, SLOT(slotCopyMode()));
+  connect(addButton, SIGNAL(clicked()), this, SLOT(slotAddMode()));
   
   // View Mode List context Menu
   viewModeList->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -114,9 +117,11 @@ viewModeWidget::viewModeWidget(const QVector< ViewMode* >& _modes, QWidget *_par
   downButton->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-down.png" ) );
   
   
-  // Geeral Buttons
+  // General Buttons
   // Apply currently configured Mode
   connect(okButton, SIGNAL(clicked()), this, SLOT(slotChangeView()));
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+  connect(saveButton, SIGNAL(clicked()), this, SLOT(slotSaveMode()));
 }
 
 
@@ -127,6 +132,14 @@ void viewModeWidget::slotRemoveMode(){
   emit removeMode( viewModeList->currentItem()->text() );
   QListWidgetItem* item =  viewModeList->takeItem( viewModeList->currentRow() );
   delete item;
+}
+
+void viewModeWidget::slotCopyMode(){
+  std::cerr << "Todo: Copy Mode" << std::endl;
+}
+
+void viewModeWidget::slotAddMode(){
+  std::cerr << "Todo: Add Mode" << std::endl;
 }
 
 // =======================================================================================================
