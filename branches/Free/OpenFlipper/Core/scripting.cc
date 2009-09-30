@@ -173,7 +173,7 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
     }
   }
 
-  plugins[id].widgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
+  plugins[id].toolboxWidgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
 
   // add widget name to viewMode 'all'
   if ( !viewModes_[0]->visibleToolboxes.contains(_name) ){

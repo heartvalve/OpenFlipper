@@ -72,6 +72,13 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
   _toolbar->setObjectName( _toolbar->windowTitle() );
   toolbars_.push_back( _toolbar );
   addToolBar( _toolbar );
+  
+  // add widget name to viewMode 'all'
+  if ( !viewModes_[0]->visibleToolbars.contains( _toolbar->windowTitle() ) ){
+    viewModes_[0]->visibleToolbars << _toolbar->windowTitle();
+    viewModes_[0]->visibleToolbars.sort();
+  }      
+  
 }
 
 void CoreWidget::getToolBar( QString _name, QToolBar*& _toolbar) {

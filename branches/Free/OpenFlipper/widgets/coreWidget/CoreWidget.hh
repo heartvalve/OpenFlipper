@@ -106,6 +106,10 @@ struct ViewMode{
   /// Name of the View Mode
   QString name;
   
+  /// Icon of the View Mode
+  /// TODO Specify size for Icons
+  QString icon;
+  
   /// Is this a user defined custom view mode or a plugin generated one
   bool custom;
   
@@ -404,9 +408,15 @@ public:
       
       /// Add or change Toolbars for a ViewMode (_custom == userdefined viewMode)
       void slotAddViewModeToolbars(QString _mode, bool _custom, QStringList _usedToolbars);
+      
+      /// Completly configure a view mode ( set toolbars, toolboxes ... )
+      void slotAddViewModeComplete(QString _mode , bool _custom, QStringList _toolboxes, QStringList _toolbars);
+      
+      /// Sets the Icon for a given View Mode
+      void slotSetViewModeIcon(QString _mode, QString _iconName);
 
       /// Slot for Changing visible toolWidgets
-      void slotChangeView(QString _mode, QStringList _toolWidgets);
+      void slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars);
 
     private slots:
       /// Remove viewMode
