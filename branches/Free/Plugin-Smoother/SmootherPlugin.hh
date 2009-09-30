@@ -95,6 +95,9 @@ signals:
   // LoggingInterface
   void log(Logtype _type, QString _message);
   void log(QString _message);
+  
+  // ToolboxInterface
+  void addToolbox( QString _name  , QWidget* _widget );   
 
 public :
 
@@ -104,9 +107,6 @@ public :
   /// default destructor
   ~SmootherPlugin() {};
 
-  /// Initialize the toolbar (create a widget in the right side toolbox)
-  bool initializeToolbox(QWidget*& _widget);
-
   /// Name of the Plugin
   QString name(){ return (QString("Smoother")); };
 
@@ -115,6 +115,8 @@ public :
 
 private slots:
 
+  void initializePlugin(); // BaseInterface
+  
   /// Second initialization stage
   void pluginsInitialized();
 
