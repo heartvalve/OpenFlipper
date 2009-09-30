@@ -120,15 +120,19 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void updateView();
     void updatedObject(int);
     void objectSelectionChanged(int);
+    
     //PickingInterface
     void addHiddenPickMode( const std::string _mode );
     void setPickModeMouseTracking( const std::string _mode, bool _mouseTracking);
     void setPickModeCursor( const std::string _mode, QCursor _cursor);
+    
     //BackupInterface
     void createBackup( int _id , QString _name );
+    
     //LoggingInterface
     void log(Logtype _type, QString _message);
     void log(QString _message);
+    
     //ScriptInterface
     void scriptInfo( QString _functionName );
 
@@ -138,6 +142,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     //KeyInterface
     void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
+
+    // ToolboxInterface
+    void addToolbox( QString _name  , QWidget* _widget ); 
+    
     //ToolbarInterface
     void addToolbar(QToolBar* _toolbar);
     void getToolBar(QString _name, QToolBar*& _toolbar);
@@ -146,17 +154,22 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void deleteObject( int _id );
 
   private slots:
+    
     //MouseInterface
     void slotMouseWheelEvent(QWheelEvent * _event, const std::string & _mode);
     void slotMouseEvent( QMouseEvent* _event );
+    
     //KeyInterface
     void slotKeyEvent( QKeyEvent* _event );
     void slotKeyReleaseEvent( QKeyEvent* _event );
+    
     //PickingInterface
     void slotPickModeChanged( const std::string& _mode);
+    
     //INIInterface
     void loadIniFile( INIFile& _ini , int _id);
     void saveIniFile( INIFile& _ini , int _id);
+    
     //BaseInterface
     void initializePlugin();
     void pluginsInitialized();

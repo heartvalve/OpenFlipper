@@ -86,6 +86,74 @@ void SelectionPlugin::initializePlugin() {
 
   if ( OpenFlipper::Options::nogui() )
     return;
+  
+  tool_ = new selectionToolbarWidget();
+  QSize size(300, 300);
+  tool_->resize(size);
+  
+  //Selection Mode
+  QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+  
+  tool_->objectSelection->setIcon( QIcon(iconPath + "selection_object.png") );
+  tool_->vertexSelection->setIcon( QIcon(iconPath + "selection_vertex.png") );
+  tool_->edgeSelection->setIcon( QIcon(iconPath + "selection_edge.png") );
+  tool_->faceSelection->setIcon( QIcon(iconPath + "selection_face.png") );
+  
+  // Set combo box entries for the different modes
+  tool_->convertFrom->addItem(tr("Modeling Area"));
+  tool_->convertFrom->addItem(tr("Handle Area"));
+  tool_->convertFrom->addItem(tr("Feature Area"));
+  
+  tool_->convertTo->addItem(tr("Modeling Area"));
+  tool_->convertTo->addItem(tr("Handle Area"));
+  tool_->convertTo->addItem(tr("Feature Area"));
+  
+  // Set combo box entries for the different selection types
+  tool_->convertFrom->addItem(tr("Vertex Selection"));
+  tool_->convertFrom->addItem(tr("Edge Selection"));
+  tool_->convertFrom->addItem(tr("Face Selection"));
+  
+  tool_->convertTo->addItem(tr("Vertex Selection"));
+  tool_->convertTo->addItem(tr("Edge Selection"));
+  tool_->convertTo->addItem(tr("Face Selection"));
+  
+  // Check checkboxes by default
+  tool_->checkAddArea->setChecked(true);
+  tool_->checkConvert->setChecked(true);
+  tool_->checkSelectionConvert->setChecked(true);
+  
+  // Convert button
+  connect(tool_->convertButton, SIGNAL(clicked()), this, SLOT(slotConvertSelectionType()));
+  
+  connect (tool_->restrictOnTargets, SIGNAL(clicked()), this, SLOT(slotToggleSelectionRestriction()) );
+  
+  //Selection Buttons
+  connect( tool_->selectAll,       SIGNAL(clicked()), this,SLOT(slotSelectAll()) );
+  connect( tool_->clearSelection,  SIGNAL(clicked()), this,SLOT(slotClearSelection()) );
+  
+  connect( tool_->growSelection,   SIGNAL(clicked()), this,SLOT(slotGrowSelection()) );
+  connect( tool_->shrinkSelection, SIGNAL(clicked()), this,SLOT(slotShrinkSelection()) );
+  
+  connect( tool_->invertSelection, SIGNAL(clicked()), this,SLOT(slotInvertSelection()) );
+  connect( tool_->selectBoundary,  SIGNAL(clicked()), this,SLOT(slotSelectBoundary()) );
+  
+  connect( tool_->deleteSelection,  SIGNAL(clicked()), this,SLOT(slotDeleteSelection()) );
+  
+  connect( tool_->colorizeSelection,SIGNAL(clicked()), this,SLOT(slotColorizeSelection()) );
+  
+  connect( tool_->loadSelection, SIGNAL(clicked()), this,SLOT(slotLoadSelection()) );
+  connect( tool_->saveSelection, SIGNAL(clicked()), this,SLOT(slotSaveSelection()) );
+  
+  // Clear Properties and Selections
+  connect( tool_->clearModelingArea, SIGNAL(clicked()), this,SLOT(slotClearArea()) );
+  connect( tool_->clearHandleRegion, SIGNAL(clicked()), this,SLOT(slotClearHandle()));
+  connect( tool_->clearFeatures,     SIGNAL(clicked()), this,SLOT(slotClearFeatures()));
+  
+  connect( tool_->clearVertexSelection, SIGNAL(clicked()), this,SLOT(slotClearAllVertexSelections()) );
+  connect( tool_->clearEdgeSelection, SIGNAL(clicked()), this,SLOT(slotClearAllEdgeSelections()));
+  connect( tool_->clearFaceSelection, SIGNAL(clicked()), this,SLOT(slotClearAllFaceSelections()));
+  
+  emit addToolbox("Selections",tool_);
 
   // create sphere for paint sphere selection
   sphere_mat_node_  = new ACG::SceneGraph::MaterialNode(PluginFunctions::getRootNode(), tr("Sphere Color").toStdString());
@@ -317,88 +385,6 @@ void SelectionPlugin::slotObjectUpdated(int _id){
     }
   }
 #endif
-}
-
-
-/*******************************************************************************
-        ToolboxInterface implementation
- *******************************************************************************/
-/** \brief Create the selection toolbox-widget and return a reference to it
- *
- * @param _widget A reference to the selection toolbox that we will return
- * @return return wether the widget was successfully generated
- */
-bool SelectionPlugin::initializeToolbox(QWidget*& _widget)
-{
-
-  tool_ = new selectionToolbarWidget();
-  _widget = tool_;
-  QSize size(300, 300);
-  tool_->resize(size);
-
-  //Selection Mode
-  QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
-
-  tool_->objectSelection->setIcon( QIcon(iconPath + "selection_object.png") );
-  tool_->vertexSelection->setIcon( QIcon(iconPath + "selection_vertex.png") );
-  tool_->edgeSelection->setIcon( QIcon(iconPath + "selection_edge.png") );
-  tool_->faceSelection->setIcon( QIcon(iconPath + "selection_face.png") );
-
-  // Set combo box entries for the different modes
-  tool_->convertFrom->addItem(tr("Modeling Area"));
-  tool_->convertFrom->addItem(tr("Handle Area"));
-  tool_->convertFrom->addItem(tr("Feature Area"));
-
-  tool_->convertTo->addItem(tr("Modeling Area"));
-  tool_->convertTo->addItem(tr("Handle Area"));
-  tool_->convertTo->addItem(tr("Feature Area"));
-
-  // Set combo box entries for the different selection types
-  tool_->convertFrom->addItem(tr("Vertex Selection"));
-  tool_->convertFrom->addItem(tr("Edge Selection"));
-  tool_->convertFrom->addItem(tr("Face Selection"));
-
-  tool_->convertTo->addItem(tr("Vertex Selection"));
-  tool_->convertTo->addItem(tr("Edge Selection"));
-  tool_->convertTo->addItem(tr("Face Selection"));
-
-  // Check checkboxes by default
-  tool_->checkAddArea->setChecked(true);
-  tool_->checkConvert->setChecked(true);
-  tool_->checkSelectionConvert->setChecked(true);
-
-  // Convert button
-  connect(tool_->convertButton, SIGNAL(clicked()), this, SLOT(slotConvertSelectionType()));
-
-  connect (tool_->restrictOnTargets, SIGNAL(clicked()), this, SLOT(slotToggleSelectionRestriction()) );
-
-  //Selection Buttons
-  connect( tool_->selectAll,       SIGNAL(clicked()), this,SLOT(slotSelectAll()) );
-  connect( tool_->clearSelection,  SIGNAL(clicked()), this,SLOT(slotClearSelection()) );
-
-  connect( tool_->growSelection,   SIGNAL(clicked()), this,SLOT(slotGrowSelection()) );
-  connect( tool_->shrinkSelection, SIGNAL(clicked()), this,SLOT(slotShrinkSelection()) );
-
-  connect( tool_->invertSelection, SIGNAL(clicked()), this,SLOT(slotInvertSelection()) );
-  connect( tool_->selectBoundary,  SIGNAL(clicked()), this,SLOT(slotSelectBoundary()) );
-
-  connect( tool_->deleteSelection,  SIGNAL(clicked()), this,SLOT(slotDeleteSelection()) );
-
-  connect( tool_->colorizeSelection,SIGNAL(clicked()), this,SLOT(slotColorizeSelection()) );
-
-  connect( tool_->loadSelection, SIGNAL(clicked()), this,SLOT(slotLoadSelection()) );
-  connect( tool_->saveSelection, SIGNAL(clicked()), this,SLOT(slotSaveSelection()) );
-
-  // Clear Properties and Selections
-  connect( tool_->clearModelingArea, SIGNAL(clicked()), this,SLOT(slotClearArea()) );
-  connect( tool_->clearHandleRegion, SIGNAL(clicked()), this,SLOT(slotClearHandle()));
-  connect( tool_->clearFeatures,     SIGNAL(clicked()), this,SLOT(slotClearFeatures()));
-
-  connect( tool_->clearVertexSelection, SIGNAL(clicked()), this,SLOT(slotClearAllVertexSelections()) );
-  connect( tool_->clearEdgeSelection, SIGNAL(clicked()), this,SLOT(slotClearAllEdgeSelections()));
-  connect( tool_->clearFaceSelection, SIGNAL(clicked()), this,SLOT(slotClearAllFaceSelections()));
-
-  return true;
 }
 
 
