@@ -312,10 +312,10 @@ void Core::unloadPlugin(QString name){
       name_nospace.remove(" ");
       if ( coreWidget_->viewModes_[0]->visibleToolboxes.contains(name_nospace) )
         coreWidget_->viewModes_[0]->visibleToolboxes.removeAt(coreWidget_->viewModes_[0]->visibleToolboxes.indexOf(name_nospace));
-      for ( uint j = 0 ; j < plugins[i].widgets.size() ; ++j )
-        if (plugins[i].widgets[j].second ){
-          plugins[i].widgets[j].second->setVisible(false);
-          delete plugins[i].widgets[j].second;
+      for ( uint j = 0 ; j < plugins[i].toolboxWidgets.size() ; ++j )
+        if (plugins[i].toolboxWidgets[j].second ){
+          plugins[i].toolboxWidgets[j].second->setVisible(false);
+          delete plugins[i].toolboxWidgets[j].second;
         }
 
       plugins.erase(plugins.begin() + i);
@@ -595,12 +595,12 @@ void Core::loadPlugin(QString filename, bool silent){
       QWidget* widget = 0;
       if ( toolboxPlugin->initializeToolbox( widget ) ) {
 
-            info.widgets.push_back( std::pair< QString,QWidget* >( info.name , widget) );
+            info.toolboxWidgets.push_back( std::pair< QString,QWidget* >( info.name , widget) );
 
             // add widget name to viewMode 'all'
             if ( !viewModes_[0]->visibleToolboxes.contains(info.name) ){
-              viewModes_[0]->visibleToolboxes << info.name;
-              viewModes_[0]->visibleToolboxes.sort();
+                  viewModes_[0]->visibleToolboxes << info.name;
+                  viewModes_[0]->visibleToolboxes.sort();
             }
       }
 
@@ -624,6 +624,10 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin, "defineViewModeToolbars(QString,QStringList)"))
         connect(plugin, SIGNAL( defineViewModeToolbars(QString, QStringList) ),
                 coreWidget_, SLOT( slotAddViewModeToolbars(QString, QStringList) ),Qt::DirectConnection );                
+                
+      if ( checkSignal(plugin, "defineViewModeIcon(QString,QString)"))
+        connect(plugin, SIGNAL( defineViewModeIcon(QString, QString) ),
+                coreWidget_, SLOT( slotSetViewModeIcon(QString, QString) ),Qt::DirectConnection );                          
                 
     }    
 
@@ -658,6 +662,7 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"getToolBar(QString,QToolBar*&)") )
         connect(plugin,SIGNAL(getToolBar(QString,QToolBar*&)),
                 coreWidget_,SLOT(getToolBar(QString,QToolBar*&)),Qt::DirectConnection);
+          
     }
 
     //Check if the plugin supports StatusBar-Interface

@@ -81,7 +81,8 @@ class PluginInfo{
      rpcFunctions.clear();
      slotInfos.clear();
      keys.clear();
-     widgets.clear();
+     toolboxWidgets.clear();
+     toolbars.clear();
      optionsWidget = 0;
   }
 
@@ -97,7 +98,8 @@ class PluginInfo{
      rpcFunctions = _i.rpcFunctions;
      slotInfos = _i.slotInfos;
      keys = _i.keys;
-     widgets = _i.widgets;
+     toolboxWidgets = _i.toolboxWidgets;
+     toolbars = _i.toolbars;
      optionsWidget = _i.optionsWidget;
   }
 
@@ -128,8 +130,11 @@ class PluginInfo{
   /// List of registered keys with description
   QList< KeyBinding > keys;
 
-  /// Pointer to plugins toolbar widget (if available)
-  std::vector< std::pair< QString , QWidget* > > widgets;
+  /// Pointer to plugins toolbox widget (if available)
+  std::vector< std::pair< QString , QWidget* > > toolboxWidgets;
+  
+  /// Pointer to plugins toolbox widget (if available)
+  std::vector< std::pair< QString , QToolBar* > > toolbars;
 
   /// Pointer to plugins options widget (if available)
   QWidget* optionsWidget;

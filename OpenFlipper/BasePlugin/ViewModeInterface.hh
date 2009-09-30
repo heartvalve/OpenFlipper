@@ -98,6 +98,15 @@ class ViewModeInterface {
     * @param _usedWidgets list of used toolbars 
     */
     virtual void defineViewModeToolbars(QString /*_mode*/, QStringList /*_usedToolbars*/){};    
+    
+    /** \brief Defines an Icon for a ViewMode
+    *
+    * With this function you can define an Icon associated with this view mode
+    * 
+    * @param _mode name of the ViewMode
+    * @param _iconName Name of the Icon used for this view mode
+    */
+    virtual void defineViewModeIcon(QString /*_mode*/, QString /*_iconName*/){};        
 
 };
 

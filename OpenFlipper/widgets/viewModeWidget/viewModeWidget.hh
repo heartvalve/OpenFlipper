@@ -56,27 +56,144 @@ class viewModeWidget : public QDialog, public Ui::viewMode
 {
   Q_OBJECT
   private:
+    // Vector holding list of all available modes
     const QVector< ViewMode* >& modes_;
   public:
     viewModeWidget(const QVector< ViewMode* >& _modes, QWidget *parent = 0 );
     void show(QString _lastMode);
-  signals:
-    void saveMode(QString _name, bool _custom, QStringList _toolWidgets);
-    void removeMode(QString _name);
-    void changeView(QString _mode, QStringList _toolWidgets);
   private slots:
-    void slotMoveUp();
-    void slotMoveDown();
-    void slotRemoveWidget();
-    void slotRemoveMode();
-    void slotChangeView();
+
     void slotModeChanged(QString _mode);
     void slotModeClicked(QModelIndex _id);
-    void slotSaveMode();
-    void slotSetToolWidgets();
-    /// Context Menus
-    void slotModeContextMenu ( const QPoint & _pos );
-    void slotToolContextMenu ( const QPoint & _pos );
+   
+    
+    // ============================================
+    // ViewMode Buttons
+    // ============================================   
+      /** \brief Button slot to remove the selected view mode
+      *
+      * This slot removes the currently selected view mode 
+      */    
+      void slotRemoveMode();
+    
+    
+    // ============================================
+    // ViewMode Context Menu
+    // ============================================
+      /** \brief Context Menu View Modes
+      *
+      * This slot shows the used toolbar Context Menu
+      */
+      void slotModeContextMenu ( const QPoint & _pos );
+    
+    // ============================================
+    // ToolBox and ToolBar Lists update functions
+    // ============================================
+      /** \brief Update list views
+      *
+      * This slot updates all list views depending on the currently selected view mode
+      */
+      void slotSetToolWidgets();
+ 
+    // ============================================
+    // ToolBar Views Context Menu
+    // ============================================
+      /** \brief Context Menu Used Toolbars
+      *
+      * This slot shows the used toolbar Context Menu
+      */
+      void slotUsedToolbarContextMenu ( const QPoint & _pos );  
+      
+      /** \brief Context Menu Available Toolbars
+      *
+      * This slot shows the available toolbar Context Menu
+      */
+      void slotAvailableToolbarContextMenu ( const QPoint & _pos );    
+    
+    // ============================================
+    // ToolBox Views Context Menu
+    // ============================================
+      /** \brief Context Menu Used Toolboxes
+      *
+      * This slot shows the used toolbox Context Menu
+      */
+      void slotUsedToolboxContextMenu ( const QPoint & _pos );  
+      
+      /** \brief Context Menu Available Toolboxes
+      *
+      * This slot shows the available toolbox Context Menu
+      */
+      void slotAvailableToolboxContextMenu ( const QPoint & _pos );
+  
+  
+    // ============================================
+    // ToolBar Buttons
+    // ============================================
+      /** \brief remove Toolbars from Mode
+      *
+      * This slot removes the selected toolbars from the current view Mode
+      */
+      void slotRightArrowToolbar();
+      
+      /** \brief add Toolbars to Mode
+      *
+      * This slot adds the selected toolbars to the current view Mode
+      */
+      void slotLeftArrowToolbar();
+    
+    // ============================================
+    //ToolBox Buttons
+    // ============================================
+      /** \brief remove Toolboxes from Mode
+      *
+      * This slot removes the selected widgets from the current view Mode
+      */
+      void slotRightArrowToolbox();
+      
+      /** \brief add Toolboxes to Mode
+      *
+      * This slot adds the selected widgets to the current view Mode
+      */
+      void slotLeftArrowToolbox();
+    
+      /** \brief Move Toolbox up
+      *
+      * This slot moves the widget upward in the list of used modes
+      */
+      void slotMoveUp();
+      
+      /** \brief Move Toolbox down
+      *
+      * This slot moves the widget downward in the list of used modes
+      */
+      void slotMoveDown();
+      
+      
+    // ============================================
+    // External Communication
+    // ============================================     
+    
+    private slots:
+      /// Slot for changing the current view to currently configured one
+      void slotChangeView();
+      
+      /** \brief Save the current view mode configuration
+      *
+      * Takes the given configuration and saves the mode
+      */
+      void slotSaveMode();
+    
+    signals:
+      /// Changes the view mode to the currently configured one
+      void changeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars);
+      
+      /// saves the given mode
+      void saveMode(QString _name, bool _custom, QStringList _toolboxWidgets, QStringList _toolbars);
+      
+      /// This signal is emitted to remove a mode
+      void removeMode(QString _name);
+      
+      
 };
 
 #endif //VIEWMODEWIDGET_HH

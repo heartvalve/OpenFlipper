@@ -91,22 +91,40 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, QStringList _usedWidget
 }
 
 void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringList _usedWidgets){
-  ViewMode* vm = new ViewMode();
-  vm->name = _mode;
-  vm->custom = _custom;
-  vm->visibleToolboxes = _usedWidgets;
-  if (_custom)
-    viewModes_.push_back(vm);
-  else{
-    //insert before custom viewModes
-    int i = viewModes_.size();
-    for (int k=0; k < viewModes_.size(); k++)
-      if (viewModes_[k]->custom == true){
-        i = k;
-        break;
-      }
-    viewModes_.insert(i,vm);
+  int id = -1;
+  
+  // Check if it already exists
+  for ( int i = 0 ; i < viewModes_.size(); i++) {
+    if ( viewModes_[i]->name == _mode ) {
+      id = i;
+      break;
+    }
   }
+  
+  ViewMode* vm = 0;
+  if ( id == -1 ) {
+    vm = new ViewMode();
+    vm->name = _mode;
+    vm->custom = _custom;
+    
+    if (_custom) {
+      viewModes_.push_back(vm);
+    } else {
+      //insert before custom viewModes
+      int i = viewModes_.size();
+      for (int k=0; k < viewModes_.size(); k++)
+        if (viewModes_[k]->custom == true){
+          i = k;
+          break;
+        }
+      viewModes_.insert(i,vm);
+    }    
+  } else {
+    vm = viewModes_[id];
+  }
+  
+  vm->visibleToolboxes = _usedWidgets;
+
   initViewModes();
 }
 
@@ -115,7 +133,46 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, QStringList _usedToolbar
 }
 
 void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringList _usedToolbars) {
-    std::cerr << "Todo: Implement Toolbar View Modes" << std::endl;
+  int id = -1;
+  
+  // Check if it already exists
+  for ( int i = 0 ; i < viewModes_.size(); i++) {
+    if ( viewModes_[i]->name == _mode ) {
+      id = i;
+      break;
+    }
+  }
+  
+  ViewMode* vm = 0;
+  if ( id == -1 ) {
+    vm = new ViewMode();
+    vm->name = _mode;
+    vm->custom = _custom;
+    
+    if (_custom) {
+      viewModes_.push_back(vm);
+    } else {
+      //insert before custom viewModes
+      int i = viewModes_.size();
+      for (int k=0; k < viewModes_.size(); k++)
+        if (viewModes_[k]->custom == true){
+          i = k;
+          break;
+        }
+        viewModes_.insert(i,vm);
+    }    
+  } else {
+    vm = viewModes_[id];
+  }
+  
+  vm->visibleToolbars = _usedToolbars;
+  
+  initViewModes();
+}
+
+/// Sets the Icon for a given View Mode
+void CoreWidget::slotSetViewModeIcon(QString _mode, QString _iconName) {
+  std::cerr << "Todo: Implement slotSetViewModeIcon" << std::endl;
 }
 
 /// Remove a viewMode
@@ -143,9 +200,13 @@ void CoreWidget::slotSetViewMode( QAction* action){
 
 /// Slot for setting the viewMode from menu
 void CoreWidget::setViewMode( QString _mode ){
-  slotChangeView(_mode, QStringList());
+  slotChangeView(_mode, QStringList(), QStringList());
 }
 
+void CoreWidget::slotAddViewModeComplete(QString _mode , bool _custom, QStringList _toolboxes, QStringList _toolbars) {
+  slotAddViewModeToolbars(_mode,_custom,_toolbars);
+  slotAddViewModeToolboxes(_mode,_custom,_toolboxes);
+}
 
 /// show dialog for changing ViewMode
 void CoreWidget::slotViewModeDialog(){
@@ -154,32 +215,36 @@ void CoreWidget::slotViewModeDialog(){
   if ( !widget ){
     widget = new viewModeWidget(viewModes_);
     widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
-    connect(widget, SIGNAL(changeView(QString, QStringList)), this, SLOT(slotChangeView(QString, QStringList)) );
-    connect(widget, SIGNAL(saveMode(QString, bool, QStringList)), this, SLOT(slotAddViewModeToolboxes(QString, bool, QStringList)) );
+    connect(widget, SIGNAL(changeView(QString, QStringList, QStringList)), this, SLOT(slotChangeView(QString, QStringList, QStringList)) );
+    connect(widget, SIGNAL(saveMode(QString, bool, QStringList, QStringList)), this, SLOT(slotAddViewModeComplete(QString, bool, QStringList, QStringList)) );
     connect(widget, SIGNAL(removeMode(QString)), this, SLOT(slotRemoveViewMode(QString)) );
   }
   widget->show( OpenFlipper::Options::defaultToolboxMode() );
 }
 
 /// Slot for Changing visible toolWidgets
-void CoreWidget::slotChangeView(QString _mode, QStringList _toolWidgets){
+void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars ){
 
   //try to find Widgets if they aren't given
-  if (_mode != "" && _toolWidgets.size() == 0)
+  if (_mode != "" && _toolboxWidgets.size() == 0)
     for (int i=0; i < viewModes_.size(); i++)
       if (viewModes_[i]->name == _mode)
-        _toolWidgets = viewModes_[i]->visibleToolboxes;
+        _toolboxWidgets = viewModes_[i]->visibleToolboxes;
 
   // remove all toolbox entries
   toolBox_->clear ();
 
   //find all widgets that should be visible
-  for (int i=0; i < _toolWidgets.size(); i++)
+  for (int i=0; i < _toolboxWidgets.size(); i++)
     for (uint p=0; p < plugins_.size(); p++){
-      for ( uint j = 0 ; j < plugins_[p].widgets.size(); ++j )
-        if (_toolWidgets[i] == plugins_[p].widgets[j].first )
-          toolBox_->addItem (plugins_[p].widgets[j].second, plugins_[p].widgets[j].first);
+      for ( uint j = 0 ; j < plugins_[p].toolboxWidgets.size(); ++j )
+        if (_toolboxWidgets[i] == plugins_[p].toolboxWidgets[j].first )
+          toolBox_->addItem (plugins_[p].toolboxWidgets[j].second, plugins_[p].toolboxWidgets[j].first);
     }
+    
+    
+    
+  std::cerr << "TODO: Use toolbars from View Mode! " << std::endl;
 
   if (_mode != "")
     OpenFlipper::Options::defaultToolboxMode(_mode);
