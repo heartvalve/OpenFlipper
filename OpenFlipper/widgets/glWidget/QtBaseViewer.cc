@@ -422,7 +422,14 @@ void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool
 
 void glViewer::setSceneCenter( const ACG::Vec3d& _center ) {
 
-	scene_center_ = trackball_center_ = _center;
+	scene_center_ = _center;
+}
+
+//-----------------------------------------------------------------------------
+
+void glViewer::setTrackBallCenter( const ACG::Vec3d& _center ) {
+  
+  trackball_center_ = _center;
 }
 
 //----------------------------------------------------------------------------

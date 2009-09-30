@@ -216,6 +216,18 @@ public:
    * Set new center point of scene
    */
   void setSceneCenter( const ACG::Vec3d& _center );
+  
+  /** \brief Set Trackball Center point of scene
+  *
+  * The scene is rotated around the trackball center when using the mouse
+  */
+  void setTrackBallCenter( const ACG::Vec3d& _center );
+  
+  /** \brief Get Trackball Center point of scene
+  *
+  * The scene is rotated around the trackball center when using the mouse
+  */
+  const ACG::Vec3d trackBallCenter( ) { return trackball_center_; };  
 
   /** Get scene's center
       \see setScenePos()

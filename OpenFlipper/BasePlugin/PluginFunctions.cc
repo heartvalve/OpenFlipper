@@ -554,7 +554,30 @@ void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up , int _viewe
     std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
 }
 
-//TODO: Make use of trackball center instead of scene center
+const ACG::Vec3d trackBallCenter(const ACG::Vec3d& _center, int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    return examiner_widgets_[activeExaminer_]->trackBallCenter();
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      return examiner_widgets_[i]->trackBallCenter(  );
+    else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+      return examiner_widgets_[_viewer]->trackBallCenter(  );
+    else
+      std::cerr << "Requested illegal viewer for setTrackBallCenter!!" << std::endl;
+}
+
+void setTrackBallCenter(const ACG::Vec3d& _center, int _viewer ) {
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->setTrackBallCenter( _center );
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->setTrackBallCenter( _center );
+    else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+      examiner_widgets_[_viewer]->setTrackBallCenter( _center );
+    else
+      std::cerr << "Requested illegal viewer for setTrackBallCenter!!" << std::endl;
+}
+
 void setScenePos(const ACG::Vec3d& _center,const double _radius, int _viewer ) {
   if ( _viewer == ACTIVE_VIEWER ) {
     examiner_widgets_[activeExaminer_]->setScenePos( _center, _radius );
@@ -565,7 +588,6 @@ void setScenePos(const ACG::Vec3d& _center,const double _radius, int _viewer ) {
     examiner_widgets_[_viewer]->setScenePos( _center, _radius );
   else
     std::cerr << "Requested illegal viewer for setScenePos!!" << std::endl;
-  examiner_widgets_[activeExaminer_];
 }
 
 void setScenePos(const ACG::Vec3d& _center, int _viewer ) {
