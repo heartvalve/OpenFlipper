@@ -81,37 +81,13 @@ class ToolboxInterface {
       /// Destructor
       virtual ~ToolboxInterface() {};
 
-      /**   \brief Initialize the Toolbar Widget
-       *
-       *  Initialize the toolbar (create a widget and return a pointer to it ) \n
-       * \n
-       *   Example : \n
-       *  _widget = new QWidget();  \n
-       *  \n
-       * In the widget you can add anything you want.
-       * @param _widget Pointer to the new Widget
-       * @return Return true if a widget has been created
-      */
-      virtual bool initializeToolbox(QWidget*& /*_widget*/) = 0;
-
     signals :
-
-       /** \brief Defines a new ViewMode for the Toolboxes
-       *
-       * Slot defines a new ViewMode e.g. a mode where only useful widgets
-       * are visible by default
-       * @param _mode name of the ViewMode
-       * @param _usedWidgets list of used Widgets names
-       */
-      virtual void defineViewModeToolboxes(QString& /*_mode*/, QStringList& /*_usedWidgets*/){};
-
-
+        
       /** \brief Add a toolbox widget to the gui with the given name
        *
        * This signal adds a toolbox widget to the toolbar on the right.
        */
       virtual void addToolbox( QString /* _name */ , QWidget* /*_widget*/ ) {};
-
 
 };
 
