@@ -77,6 +77,8 @@ void Core::readApplicationOptions(INIFile& _ini) {
   // Parse standard options
   if ( _ini.section_exists("Options") ) {
 
+    // TODO: Load View Mode Toolbars and Context Menu Items
+    
     // load ViewModes
     int viewModeCount;
     if (_ini.get_entry(viewModeCount,"Options","ViewModeCount") )
@@ -483,6 +485,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     _ini.add_entry( "Options" , key , type );
   }
 
+  // TODO: Save View Mode Toolbars and Context Menu Items
   // save ViewModes
   QVector< QString > entries;
   if ( OpenFlipper::Options::gui() )

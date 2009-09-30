@@ -1239,9 +1239,13 @@ void Core::setDescriptions(){
                           QString(tr("Toolbox Entry name,Widget")).split(","),
                           QString(tr("Name of the new widget in the toolbox,Pointer to the new widget")).split(","));
 
-  emit setSlotDescription("addViewMode(QString,QString)", tr("Add a new viewmode"),
+  emit setSlotDescription("addViewModeToolboxes(QString,QString)", tr("Set toolboxes for a viewmode"),
                           QString(tr("Name,Toolbox List")).split(","),
-                          QString(tr("Name of the new Viewmode, ; seperated list of toolboxes visible in this viewmode")).split(","));
+                          QString(tr("Name of the Viewmode, ; seperated list of toolboxes visible in this viewmode")).split(","));
+                          
+  emit setSlotDescription("addViewModeToolbars(QString,QString)", tr("Set toolbars for a viewmode"),
+                          QString(tr("Name,Toolbar List")).split(","),
+                          QString(tr("Name of the Viewmode, ; seperated list of toolbars visible in this viewmode")).split(","));                          
 
   emit setSlotDescription("objectList(QString,QStringList)", tr("Returns object list"),
                           QString(tr("Selection type,Object types")).split(","),

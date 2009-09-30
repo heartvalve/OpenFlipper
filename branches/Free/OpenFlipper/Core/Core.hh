@@ -402,12 +402,19 @@ public slots:
    //===========================================================================
 
 public slots:
-    /** \brief Scripting function to add a nev viewMode
+    /** \brief Scripting function to set toolboxes in a view mode
 
-      @param _modeName Name of the new View Mode
+      @param _modeName Name of the View Mode
       @param _toolboxList ; seperated list of toolboxes in the view mode
     */
-    void addViewMode(QString _modeName, QString _toolboxList);
+    void addViewModeToolboxes(QString _modeName, QString _toolboxList);
+    
+    /** \brief Scripting function to set toolbars in a view mode
+    
+    @param _modeName Name of the View Mode
+    @param _toolboxList ; seperated list of toolbars in the view mode
+    */
+    void addViewModeToolbars(QString _modeName, QString _toolbarList);
 
     /** @} */
 
