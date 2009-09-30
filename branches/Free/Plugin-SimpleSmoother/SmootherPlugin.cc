@@ -50,11 +50,10 @@
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
-bool SmootherPlugin::initializeToolbox(QWidget*& _widget)
+void SmootherPlugin::initializePlugin()
 {
    // Create the Toolbox Widget
    QWidget* toolBox = new QWidget();
-   _widget = toolBox;
 
    QGridLayout* layout = new QGridLayout(toolBox);
 
@@ -75,7 +74,7 @@ bool SmootherPlugin::initializeToolbox(QWidget*& _widget)
 
    connect( smoothButton, SIGNAL(clicked()), this, SLOT(simpleLaplace()) );
 
-   return true;
+   emit addToolbox( tr("Simple Smoother") , toolBox );
 }
 
 /** \brief

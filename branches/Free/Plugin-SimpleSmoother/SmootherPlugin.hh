@@ -66,11 +66,11 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
     //LoggingInterface
     void log(Logtype _type, QString _message);
     void log(QString _message);
+    
+    // ToolboxInterface
+    void addToolbox( QString _name  , QWidget* _widget );   
 
   public:
-
-    // ToolboxInterface
-    bool initializeToolbox(QWidget*& _widget);
 
     // BaseInterface
     QString name() { return (QString("Simple Smoother")); };
@@ -83,6 +83,9 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
 
    private slots:
     void simpleLaplace();
+    
+    void initializePlugin(); // BaseInterface
+    
 
    public slots:
       QString version() { return QString("1.0"); };
