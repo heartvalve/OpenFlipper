@@ -79,7 +79,7 @@ class ViewModeInterface {
 
   signals :
 
-    /** \brief Defines a new ViewMode for the Toolboxes
+    /** \brief Defines a ViewMode for the Toolboxes
     *
     * With this function you can define a set of toolboxes which should be visible 
     * for the specified view mode.
@@ -87,7 +87,17 @@ class ViewModeInterface {
     * @param _mode name of the ViewMode
     * @param _usedWidgets list of used Widgets names
     */
-    virtual void defineViewModeToolboxes(QString& /*_mode*/, QStringList& /*_usedWidgets*/){};
+    virtual void defineViewModeToolboxes(QString /*_mode*/, QStringList /*_usedWidgets*/){};
+    
+    /** \brief Defines a ViewMode for the Toolbars
+    *
+    * With this function you can define a set of toolbars which should be visible 
+    * for the specified view mode.
+    * 
+    * @param _mode name of the ViewMode
+    * @param _usedWidgets list of used toolbars 
+    */
+    virtual void defineViewModeToolbars(QString /*_mode*/, QStringList /*_usedToolbars*/){};    
 
 };
 
