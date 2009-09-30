@@ -217,7 +217,7 @@ void viewModeWidget::slotSetToolWidgets(){
     // find mode in modeVector modes_
     for (int i=0; i < modes_.size(); i++)
       if ( modes_[i]->name == (modeList->selectedItems()[m])->text() )
-        toolList->addItems(modes_[i]->visibleWidgets); //add corresponding widgets
+        toolList->addItems(modes_[i]->visibleToolboxes); //add corresponding widgets
 }
 
 /// Slot for changing View and closing widget

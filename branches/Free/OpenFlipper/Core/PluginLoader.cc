@@ -309,8 +309,8 @@ void Core::unloadPlugin(QString name){
       //remove toolbox widget
       QString name_nospace = name;
       name_nospace.remove(" ");
-      if ( coreWidget_->viewModes_[0]->visibleWidgets.contains(name_nospace) )
-        coreWidget_->viewModes_[0]->visibleWidgets.removeAt(coreWidget_->viewModes_[0]->visibleWidgets.indexOf(name_nospace));
+      if ( coreWidget_->viewModes_[0]->visibleToolboxes.contains(name_nospace) )
+        coreWidget_->viewModes_[0]->visibleToolboxes.removeAt(coreWidget_->viewModes_[0]->visibleToolboxes.indexOf(name_nospace));
       for ( uint j = 0 ; j < plugins[i].widgets.size() ; ++j )
         if (plugins[i].widgets[j].second ){
           plugins[i].widgets[j].second->setVisible(false);
@@ -597,9 +597,9 @@ void Core::loadPlugin(QString filename, bool silent){
             info.widgets.push_back( std::pair< QString,QWidget* >( info.name , widget) );
 
             // add widget name to viewMode 'all'
-            if ( !viewModes_[0]->visibleWidgets.contains(info.name) ){
-              viewModes_[0]->visibleWidgets << info.name;
-              viewModes_[0]->visibleWidgets.sort();
+            if ( !viewModes_[0]->visibleToolboxes.contains(info.name) ){
+              viewModes_[0]->visibleToolboxes << info.name;
+              viewModes_[0]->visibleToolboxes.sort();
             }
       }
 

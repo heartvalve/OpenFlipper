@@ -96,7 +96,7 @@ void CoreWidget::slotAddViewMode(QString _mode, bool _custom, QStringList _usedW
   ViewMode* vm = new ViewMode();
   vm->name = _mode;
   vm->custom = _custom;
-  vm->visibleWidgets = _usedWidgets;
+  vm->visibleToolboxes = _usedWidgets;
   if (_custom)
     viewModes_.push_back(vm);
   else{
@@ -162,7 +162,7 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolWidgets){
   if (_mode != "" && _toolWidgets.size() == 0)
     for (int i=0; i < viewModes_.size(); i++)
       if (viewModes_[i]->name == _mode)
-        _toolWidgets = viewModes_[i]->visibleWidgets;
+        _toolWidgets = viewModes_[i]->visibleToolboxes;
 
   // remove all toolbox entries
   toolBox_->clear ();

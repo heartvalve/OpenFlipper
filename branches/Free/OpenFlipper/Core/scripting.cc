@@ -168,9 +168,9 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
   plugins[id].widgets.push_back( std::pair< QString,QWidget* >( _name , _widget) );
 
   // add widget name to viewMode 'all'
-  if ( !viewModes_[0]->visibleWidgets.contains(_name) ){
-    viewModes_[0]->visibleWidgets << _name;
-    viewModes_[0]->visibleWidgets.sort();
+  if ( !viewModes_[0]->visibleToolboxes.contains(_name) ){
+    viewModes_[0]->visibleToolboxes << _name;
+    viewModes_[0]->visibleToolboxes.sort();
   }
 
   setViewMode( OpenFlipper::Options::defaultToolboxMode() );
