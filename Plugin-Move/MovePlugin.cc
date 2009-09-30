@@ -245,17 +245,10 @@ void MovePlugin::pluginsInitialized() {
         ToolBoxInterface implementation
  *******************************************************************************/
 
-/** \brief Create the move toolbox-widget and return a reference to it
- *
- * @param _widget A reference to the move toolbox that we will return
- * @return return wether the widget was successfully generated
- */
-bool MovePlugin::initializeToolbox(QWidget*& _widget)
+void MovePlugin::initializePlugin()
 {
    toolboxActive_ = false;
    tool_ = new moveToolbarWidget();
-//    tool_ -> setMaximumWidth(300);
-   _widget = tool_;
 
    connect(tool_->moveToOrigin,SIGNAL(clicked() ),this,SLOT(slotMoveToOrigin()));
 
@@ -268,7 +261,7 @@ bool MovePlugin::initializeToolbox(QWidget*& _widget)
 
    lastActiveManipulator_ = -1;
 
-   return true;
+   emit addToolbox( tr("Move") , tool_ );
 }
 
 
