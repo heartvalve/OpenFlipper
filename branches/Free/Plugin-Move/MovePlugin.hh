@@ -116,10 +116,14 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     // KeyInterface
     void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
+    
+    // ToolboxInterface
+    void addToolbox( QString _name  , QWidget* _widget ); 
 
   private slots :
 
     // BaseInterface
+    void initializePlugin();
     void pluginsInitialized();
 
     // MouseInterface
@@ -144,9 +148,6 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     /// Destructor
     ~MovePlugin();
-
-    /// Initialize the toolbar (create a widget in the right side toolbox)
-    bool initializeToolbox(QWidget*& _widget);
 
     /// Name of the Plugin
     QString name(){ return (QString("Move")); };
