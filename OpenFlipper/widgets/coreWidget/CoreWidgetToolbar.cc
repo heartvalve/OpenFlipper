@@ -61,7 +61,33 @@
 //== IMPLEMENTATION ==========================================================
 
 void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
-
+  
+  int id = -1;
+  
+  // Find the plugin which added this Toolbox
+  for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+    if ( plugins_[i].plugin == sender() ) {
+      id = i;
+      break;
+    }
+  }
+  
+  // Find the scripting plugin because we assign this toolBox to it as we did not find the original sender
+  if ( id == -1 ) {
+    for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+      if ( plugins_[i].name == "Scripting" ) {
+        id = i;
+        break;
+      }
+    }
+    
+    
+    if ( id == -1 ) {
+      std::cerr << "Unknown sender plugin when adding Toolbar!" << std::endl;
+      return;
+    }
+  }
+  
   for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
     if ( toolbars_[i]->windowTitle() == _toolbar->windowTitle() ) {
       emit log(LOGERR,tr("slotAddToolbar: Toolbar already added to system: ") + _toolbar->windowTitle() );
@@ -72,6 +98,8 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
   _toolbar->setObjectName( _toolbar->windowTitle() );
   toolbars_.push_back( _toolbar );
   addToolBar( _toolbar );
+  
+  plugins_[id].toolbars.push_back( std::pair< QString,QToolBar* >( _toolbar->windowTitle() , _toolbar) );
   
   // add widget name to viewMode 'all'
   if ( !viewModes_[0]->visibleToolbars.contains( _toolbar->windowTitle() ) ){

@@ -592,17 +592,6 @@ void Core::loadPlugin(QString filename, bool silent){
     if ( toolboxPlugin && OpenFlipper::Options::gui() ) {
       supported = supported + "Toolbox ";
 
-      QWidget* widget = 0;
-      if ( toolboxPlugin->initializeToolbox( widget ) ) {
-
-            info.toolboxWidgets.push_back( std::pair< QString,QWidget* >( info.name , widget) );
-
-            // add widget name to viewMode 'all'
-            if ( !viewModes_[0]->visibleToolboxes.contains(info.name) ){
-                  viewModes_[0]->visibleToolboxes << info.name;
-                  viewModes_[0]->visibleToolboxes.sort();
-            }
-      }
 
       if ( checkSignal(plugin, "addToolbox(QString,QWidget*)"))
         connect(plugin, SIGNAL( addToolbox(QString,QWidget*) ),
