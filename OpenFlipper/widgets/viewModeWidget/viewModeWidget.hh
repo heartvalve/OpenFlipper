@@ -75,6 +75,18 @@ class viewModeWidget : public QDialog, public Ui::viewMode
       * This slot removes the currently selected view mode 
       */    
       void slotRemoveMode();
+      
+      /** \brief Button slot to copy the selected view mode
+      *
+      * This slot copies the currently selected view mode 
+      */    
+      void slotCopyMode();
+      
+      /** \brief Button slot to add a new empty mode
+      *
+      * This slot creates an new empty view mode
+      */    
+      void slotAddMode();
     
     
     // ============================================
