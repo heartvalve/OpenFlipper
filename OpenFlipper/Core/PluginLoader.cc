@@ -617,10 +617,13 @@ void Core::loadPlugin(QString filename, bool silent){
     if ( viewModePlugin && OpenFlipper::Options::gui() ) {
       supported = supported + "ViewMode ";
       
-      std::cerr << "Defined by " << info.name.toStdString() << std::endl;; 
       if ( checkSignal(plugin, "defineViewModeToolboxes(QString,QStringList)"))
         connect(plugin, SIGNAL( defineViewModeToolboxes(QString, QStringList) ),
                 coreWidget_, SLOT( slotAddViewModeToolboxes(QString, QStringList) ),Qt::DirectConnection );
+                
+      if ( checkSignal(plugin, "defineViewModeToolbars(QString,QStringList)"))
+        connect(plugin, SIGNAL( defineViewModeToolbars(QString, QStringList) ),
+                coreWidget_, SLOT( slotAddViewModeToolbars(QString, QStringList) ),Qt::DirectConnection );                
                 
     }    
 

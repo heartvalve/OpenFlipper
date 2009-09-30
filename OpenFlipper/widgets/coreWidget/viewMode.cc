@@ -86,12 +86,10 @@ void CoreWidget::initViewModes(){
 
 }
 
-/// Add a new viewMode (non-custom)
 void CoreWidget::slotAddViewModeToolboxes(QString _mode, QStringList _usedWidgets){
   slotAddViewModeToolboxes(_mode, false, _usedWidgets);
 }
 
-/// Add a new viewMode
 void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringList _usedWidgets){
   ViewMode* vm = new ViewMode();
   vm->name = _mode;
@@ -110,6 +108,14 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringLi
     viewModes_.insert(i,vm);
   }
   initViewModes();
+}
+
+void CoreWidget::slotAddViewModeToolbars(QString _mode, QStringList _usedToolbars) {
+  slotAddViewModeToolbars(_mode,false,_usedToolbars);
+}
+
+void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringList _usedToolbars) {
+    std::cerr << "Todo: Implement Toolbar View Modes" << std::endl;
 }
 
 /// Remove a viewMode

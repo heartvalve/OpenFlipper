@@ -393,11 +393,17 @@ public:
       /// init ViewModes that were loaded via ini-file
       void initViewModes(  );
 
-      /// Add a new ViewMode (non-userdefined viewMode)
+      /// Add or change Toolboxes for a ViewMode (non-userdefined viewMode)
       void slotAddViewModeToolboxes(QString _mode, QStringList _usedWidgets);
 
-      /// Add a new ViewMode (_custom == userdefined viewMode)
+      /// Add or change Toolboxes for a ViewMode (_custom == userdefined viewMode)
       void slotAddViewModeToolboxes(QString _mode, bool _custom, QStringList _usedWidgets);
+      
+      /// Add or change Toolbars for a ViewMode (non-userdefined viewMode)
+      void slotAddViewModeToolbars(QString _mode, QStringList _usedToolbars); 
+      
+      /// Add or change Toolbars for a ViewMode (_custom == userdefined viewMode)
+      void slotAddViewModeToolbars(QString _mode, bool _custom, QStringList _usedToolbars);
 
       /// Slot for Changing visible toolWidgets
       void slotChangeView(QString _mode, QStringList _toolWidgets);
