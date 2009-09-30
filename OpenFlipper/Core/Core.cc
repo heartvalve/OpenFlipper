@@ -138,7 +138,7 @@ Core() :
   ViewMode* vm = new ViewMode();
   vm->name = "All";
   vm->custom = false;
-  vm->visibleWidgets = QStringList();
+  vm->visibleToolboxes = QStringList();
 
   viewModes_.push_front(vm);
 

@@ -97,11 +97,26 @@
 #include <OpenFlipper/INIFile/INIFile.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-
+/** \brief ViewMode struct
+* This struct contains a ViewMode and its status information such as used widgets,toolbars or context menus
+*
+*/
 struct ViewMode{
-      QString name;
-      bool custom; //is the mode defined by the user?
-      QStringList visibleWidgets;
+  
+  /// Name of the View Mode
+  QString name;
+  
+  /// Is this a user defined custom view mode or a plugin generated one
+  bool custom;
+  
+  /// List of Visible Toolboxes in this view mode
+  QStringList visibleToolboxes;
+  
+  /// List of Toolbars in this view mode
+  QStringList visibleToolbars;
+  
+  /// List of context Menus in this view mode
+  QStringList visibleContextMenus;
 };
 
 class StackWidgetInfo {

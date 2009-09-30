@@ -98,7 +98,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
           ViewMode* vm = new ViewMode();
           vm->name = mode;
           vm->custom = true;
-          vm->visibleWidgets = widgets;
+          vm->visibleToolboxes = widgets;
           viewModes_.push_back(vm);
         }
 
@@ -493,8 +493,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
         QString entry = coreWidget_->viewModes_[i]->name;
 
         //store widgets
-        for (int j=0; j < coreWidget_->viewModes_[i]->visibleWidgets.size(); j++)
-          entry += ";" + coreWidget_->viewModes_[i]->visibleWidgets[j];
+        for (int j=0; j < coreWidget_->viewModes_[i]->visibleToolboxes.size(); j++)
+          entry += ";" + coreWidget_->viewModes_[i]->visibleToolboxes[j];
 
         entries.push_back(entry);
       }
