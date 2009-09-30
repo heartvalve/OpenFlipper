@@ -117,18 +117,12 @@ void DataControlPlugin::pluginsInitialized() {
 
 //******************************************************************************
 
-/** \brief initialize the toolBox
- *
- * @param _widget a reference to the toolBox
- * @return returns if the toolbox was created successfully
- */
-bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
+void DataControlPlugin::initializePlugin()
 {
    locked = false;
    tool_ = new DatacontrolToolboxWidget();
    connect( tool_ , SIGNAL( keyEvent( QKeyEvent* ) ),
             this  , SLOT(slotKeyEvent ( QKeyEvent* ) ));
-   _widget = tool_;
    QSize size(300, 300);
    tool_->resize(size);
 
@@ -167,7 +161,7 @@ bool DataControlPlugin::initializeToolbox(QWidget*& _widget)
    connect( viewHeader_, SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
             this,        SLOT(slotHeaderCustomContextMenuRequested ( const QPoint & ) ));
 
-   return true;
+   emit addToolbox("Data Control", tool_);
 }
 
 
