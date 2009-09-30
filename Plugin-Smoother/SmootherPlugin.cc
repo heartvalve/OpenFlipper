@@ -67,24 +67,18 @@
 //== IMPLEMENTATION ==========================================================
 
 
-/** \brief Initialize the toolbox
- *
- * @param _widget reference to the toolbox
- * @return was the toolbox successfully created?
- */
-bool
+void
 SmootherPlugin::
-initializeToolbox(QWidget*& _widget)
+initializePlugin()
 {
   tool_ = new SmootherToolbarWidget();
-  _widget = tool_;
   QSize size(100, 100);
   tool_->resize(size);
 
   // connect signals->slots
-	connect(tool_->pB_smooth,SIGNAL(clicked() ),this,SLOT(slot_smooth()));
+  connect(tool_->pB_smooth,SIGNAL(clicked() ),this,SLOT(slot_smooth()));
 
-  return true;
+  emit addToolbox( tr("Smoother") , tool_ );
 }
 
 //-----------------------------------------------------------------------------
