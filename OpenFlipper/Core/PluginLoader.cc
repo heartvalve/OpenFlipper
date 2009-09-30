@@ -78,7 +78,6 @@
 #include "OpenFlipper/BasePlugin/LoadSaveInterface.hh"
 #include "OpenFlipper/BasePlugin/StatusbarInterface.hh"
 #include "OpenFlipper/BasePlugin/INIInterface.hh"
-#include "OpenFlipper/BasePlugin/GlobalAccessInterface.hh"
 #include "OpenFlipper/BasePlugin/FileInterface.hh"
 #include "OpenFlipper/BasePlugin/RPCInterface.hh"
 #include "OpenFlipper/BasePlugin/ScriptInterface.hh"
@@ -520,14 +519,6 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"setSlotDescription(QString,QString,QStringList,QStringList)") )
         connect(plugin, SIGNAL(setSlotDescription(QString,QString,QStringList,QStringList)),
                 this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
-    }
-
-    GlobalAccessInterface* globalAccessPlugin = qobject_cast< GlobalAccessInterface * >(plugin);
-    if ( globalAccessPlugin && OpenFlipper::Options::gui() ) {
-      supported = supported + "!!GLOBAL ACCESS!! ";
-
-      globalAccessPlugin->set_examiner( coreWidget_->examiner_widgets_[0] );
-
     }
 
     //Check if the plugin supports Logging
