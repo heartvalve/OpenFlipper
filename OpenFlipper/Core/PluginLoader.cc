@@ -75,6 +75,7 @@
 #include "OpenFlipper/BasePlugin/MenuInterface.hh"
 #include "OpenFlipper/BasePlugin/ContextMenuInterface.hh"
 #include "OpenFlipper/BasePlugin/ViewInterface.hh"
+#include "OpenFlipper/BasePlugin/ViewModeInterface.hh"
 #include "OpenFlipper/BasePlugin/LoadSaveInterface.hh"
 #include "OpenFlipper/BasePlugin/StatusbarInterface.hh"
 #include "OpenFlipper/BasePlugin/INIInterface.hh"
@@ -603,10 +604,6 @@ void Core::loadPlugin(QString filename, bool silent){
             }
       }
 
-      if ( checkSignal(plugin, "defineViewMode(QString,QStringList)"))
-        connect(plugin, SIGNAL( defineViewMode(QString, QStringList) ),
-                coreWidget_, SLOT( slotAddViewMode(QString, QStringList) ),Qt::DirectConnection );
-
       if ( checkSignal(plugin, "addToolbox(QString,QWidget*)"))
         connect(plugin, SIGNAL( addToolbox(QString,QWidget*) ),
                 this, SLOT( addToolbox(QString,QWidget*) ),Qt::DirectConnection );
@@ -614,6 +611,18 @@ void Core::loadPlugin(QString filename, bool silent){
 
 
     }
+    
+    //Check if the plugin supports ViewMode-Interface
+    ViewModeInterface* viewModePlugin = qobject_cast< ViewModeInterface * >(plugin);
+    if ( viewModePlugin && OpenFlipper::Options::gui() ) {
+      supported = supported + "ViewMode ";
+      
+      std::cerr << "Defined by " << info.name.toStdString() << std::endl;; 
+      if ( checkSignal(plugin, "defineViewModeToolboxes(QString,QStringList)"))
+        connect(plugin, SIGNAL( defineViewModeToolboxes(QString, QStringList) ),
+                coreWidget_, SLOT( slotAddViewModeToolboxes(QString, QStringList) ),Qt::DirectConnection );
+                
+    }    
 
     //Check if the plugin supports Options-Interface
     OptionsInterface* optionsPlugin = qobject_cast< OptionsInterface * >(plugin);

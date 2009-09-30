@@ -87,12 +87,12 @@ void CoreWidget::initViewModes(){
 }
 
 /// Add a new viewMode (non-custom)
-void CoreWidget::slotAddViewMode(QString _mode, QStringList _usedWidgets){
-  slotAddViewMode(_mode, false, _usedWidgets);
+void CoreWidget::slotAddViewModeToolboxes(QString _mode, QStringList _usedWidgets){
+  slotAddViewModeToolboxes(_mode, false, _usedWidgets);
 }
 
 /// Add a new viewMode
-void CoreWidget::slotAddViewMode(QString _mode, bool _custom, QStringList _usedWidgets){
+void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringList _usedWidgets){
   ViewMode* vm = new ViewMode();
   vm->name = _mode;
   vm->custom = _custom;
@@ -149,7 +149,7 @@ void CoreWidget::slotViewModeDialog(){
     widget = new viewModeWidget(viewModes_);
     widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
     connect(widget, SIGNAL(changeView(QString, QStringList)), this, SLOT(slotChangeView(QString, QStringList)) );
-    connect(widget, SIGNAL(saveMode(QString, bool, QStringList)), this, SLOT(slotAddViewMode(QString, bool, QStringList)) );
+    connect(widget, SIGNAL(saveMode(QString, bool, QStringList)), this, SLOT(slotAddViewModeToolboxes(QString, bool, QStringList)) );
     connect(widget, SIGNAL(removeMode(QString)), this, SLOT(slotRemoveViewMode(QString)) );
   }
   widget->show( OpenFlipper::Options::defaultToolboxMode() );

@@ -133,7 +133,7 @@ void Core::setViewMode(QString _viewMode){
 void Core::addViewMode(QString _modeName, QString _toolboxList) {
 
   QStringList list = _toolboxList.split(";");
-  coreWidget_->slotAddViewMode(_modeName,list);
+  coreWidget_->slotAddViewModeToolboxes(_modeName,list);
 }
 
 //-----------------------------------------------------------------------------

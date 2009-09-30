@@ -394,10 +394,10 @@ public:
       void initViewModes(  );
 
       /// Add a new ViewMode (non-userdefined viewMode)
-      void slotAddViewMode(QString _mode, QStringList _usedWidgets);
+      void slotAddViewModeToolboxes(QString _mode, QStringList _usedWidgets);
 
       /// Add a new ViewMode (_custom == userdefined viewMode)
-      void slotAddViewMode(QString _mode, bool _custom, QStringList _usedWidgets);
+      void slotAddViewModeToolboxes(QString _mode, bool _custom, QStringList _usedWidgets);
 
       /// Slot for Changing visible toolWidgets
       void slotChangeView(QString _mode, QStringList _toolWidgets);
