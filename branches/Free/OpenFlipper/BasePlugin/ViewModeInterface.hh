@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
- *   $Author$                                                      *
- *   $Date$                   *
+ *   $Revision: 6727 $                                                         *
+ *   $Author: moebius $                                                      *
+ *   $Date: 2009-08-05 08:03:50 +0200 (Mi, 05. Aug 2009) $                   *
  *                                                                           *
 \*===========================================================================*/
 
@@ -44,7 +44,7 @@
 
 
 //
-// C++ Interface: BasePlugin
+// C++ Interface: ViewModeInterface
 //
 // Description:
 //
@@ -52,69 +52,45 @@
 // Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
 //
 
-#ifndef TOOLBOXINTERFACE_HH
-#define TOOLBOXINTERFACE_HH
+#ifndef VIEWMODEINTERFACE_HH
+#define VIEWMODEINTERFACE_HH
 
  #include <QtGui>
  #include <QMenuBar>
  #include <QStringList>
- #include <OpenFlipper/common/Types.hh>
 
  /**
-  * \brief Plugins can add its own toolbox to the main widget's toolbox area by using this interface.
+  * \brief Define View Modes using this interface
   *
-  * This Interface should be used by plugins which will provide a toolbox widget.
-  * Each Plugin can create own Widgets in the Toolbox area as long as they use the returned widget as their parent.
-  * ToolboxInterface::initializeToolbox(QWidget*& _widget). You can create extra Signals and slots in your Plugin.
-  * These can be connected between your toolbox and your plugin. Signals and slots across plugins are currently
-  * not available but may be possible via an internal message system later.\n
+  * This Interface can be used to configure visible widgets in the viewer. A given
+  * view mode contains a list of toolbars, toolboxes and context menus which should
+  * be visible if the mode is active. Therefore you can define a subset of the
+  * full interface for special tasks.
   *
-  * See our tutorials \ref ex2 and \ref ex3 for an example of to add custom toolboxes to
-  * OpenFlipper.
   */
-class ToolboxInterface {
+class ViewModeInterface {
 
-   private slots :
+  private slots :
 
-   public :
+  public :
 
-      /// Destructor
-      virtual ~ToolboxInterface() {};
+    /// Destructor
+    virtual ~ViewModeInterface() {};
 
-      /**   \brief Initialize the Toolbar Widget
-       *
-       *  Initialize the toolbar (create a widget and return a pointer to it ) \n
-       * \n
-       *   Example : \n
-       *  _widget = new QWidget();  \n
-       *  \n
-       * In the widget you can add anything you want.
-       * @param _widget Pointer to the new Widget
-       * @return Return true if a widget has been created
-      */
-      virtual bool initializeToolbox(QWidget*& /*_widget*/) = 0;
+  signals :
 
-    signals :
-
-       /** \brief Defines a new ViewMode for the Toolboxes
-       *
-       * Slot defines a new ViewMode e.g. a mode where only useful widgets
-       * are visible by default
-       * @param _mode name of the ViewMode
-       * @param _usedWidgets list of used Widgets names
-       */
-      virtual void defineViewModeToolboxes(QString& /*_mode*/, QStringList& /*_usedWidgets*/){};
-
-
-      /** \brief Add a toolbox widget to the gui with the given name
-       *
-       * This signal adds a toolbox widget to the toolbar on the right.
-       */
-      virtual void addToolbox( QString /* _name */ , QWidget* /*_widget*/ ) {};
-
+    /** \brief Defines a new ViewMode for the Toolboxes
+    *
+    * With this function you can define a set of toolboxes which should be visible 
+    * for the specified view mode.
+    * 
+    * @param _mode name of the ViewMode
+    * @param _usedWidgets list of used Widgets names
+    */
+    virtual void defineViewModeToolboxes(QString& /*_mode*/, QStringList& /*_usedWidgets*/){};
 
 };
 
-Q_DECLARE_INTERFACE(ToolboxInterface,"OpenFlipper.ToolboxInterface/1.1")
+Q_DECLARE_INTERFACE(ViewModeInterface,"OpenFlipper.ViewModeInterface/1.0")
 
-#endif // TOOLBOXINTERFACE_HH
+#endif // VIEWMODEINTERFACE_HH
