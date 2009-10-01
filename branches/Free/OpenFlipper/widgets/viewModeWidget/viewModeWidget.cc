@@ -408,7 +408,53 @@ void viewModeWidget::slotChangeView(){
   if (viewModeList->selectedItems().size() > 0)
     mode = viewModeList->selectedItems()[0]->text();
   
-  std::cerr << "TODO: Ask for Save" << std::endl;
+  
+  // Check current configuration if it is a changed view mode
+  
+  // Search for current mode 
+  int id = -1;
+  if ( viewModeList->selectedItems().count() > 0) 
+    for (int i=0; i < modes_.size(); i++)
+      if (modes_[i]->name == viewModeList->currentItem()->text()){
+        id = i;
+        break;
+      }
+      
+  if ( id == -1 ) {
+    std::cerr << "Currently selected Mode not found?!" << std::endl; 
+    return;
+  }
+  
+  bool matching = true;
+  // Check if toolbox list matches:
+  if ( modes_[id]->visibleToolboxes.size() == toolboxes.size() ) {
+    for ( int i = 0 ; i < modes_[id]->visibleToolboxes.size(); ++i  ) 
+      if ( modes_[id]->visibleToolboxes[i] != toolboxes[i] )
+        matching = false;
+  } else {
+      matching = false;
+  }
+  
+  // Check if toolbar list matches:
+  if ( modes_[id]->visibleToolbars.size() == toolbars.size() ) {
+    for ( int i = 0 ; i < modes_[id]->visibleToolbars.size(); ++i  ) 
+      if ( modes_[id]->visibleToolbars[i] != toolbars[i] )
+        matching = false;
+  } else {
+    matching = false;
+  }
+  
+  if ( !matching ) {
+    int ret = QMessageBox::warning(this, 
+                                   tr("Mode has been changed!"),
+                                   tr("You changed the view mode configuration. Do you want to save it?"),
+                                   QMessageBox::Yes|QMessageBox::No,
+                                   QMessageBox::No);
+    if (ret == QMessageBox::Yes) 
+      slotSaveMode();
+    
+  }
+  
   emit changeView(mode,toolboxes,toolbars);
   close();
 }
@@ -425,7 +471,7 @@ void viewModeWidget::slotSaveMode(){
       }
   
   if ( id == -1 ) {
-    std::cerr << "Moded Not found in slotSaveMode" << std::endl;
+    std::cerr << "Mode Not found in slotSaveMode" << std::endl;
     return;
   }
   
