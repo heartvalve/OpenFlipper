@@ -44,6 +44,8 @@ class MouseAndKeyPlugin: public QObject,
 	void addHiddenPickMode(const std::string _mode);
 	//KeyInterface
 	void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
+        // ToolboxInterface
+        void addToolbox( QString _name  , QWidget* _widget );  
 
 	private slots:
 
@@ -56,8 +58,6 @@ class MouseAndKeyPlugin: public QObject,
 	void slotKeyEvent( QKeyEvent* _event );
 	//PickingInterface
 	void slotPickModeChanged( const std::string& _mode);
-	//ToolboxInterface
-	bool initializeToolbox(QWidget*& _widget);
 
 	public:
 
