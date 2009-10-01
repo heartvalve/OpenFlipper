@@ -91,9 +91,13 @@ signals:
   // RPC Interface
   void pluginExists( QString _pluginName , bool& _exists  ) ;
   void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
+  
+  // ToolboxInterface
+  void addToolbox( QString _name  , QWidget* _widget );   
 
 private slots:
     // BaseInterface
+    void initializePlugin();
     void pluginsInitialized();
     
     void slotObjectUpdated( int _identifier ); // BaseInterface
@@ -106,9 +110,6 @@ public :
 
   /// Default destructor
   ~DecimaterPlugin() {};
-
-  /// Initialize the toolbar (create a widget in the right side toolbox)
-  bool initializeToolbox(QWidget*& _widget);
 
   /// Name of the Plugin
   QString name(){ return (QString("Decimater")); };
