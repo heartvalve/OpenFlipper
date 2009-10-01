@@ -81,11 +81,6 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
       }
     }
     
-
-    // This only happens when the core adds a Toolbar 
-    if ( id == -1 ) 
-      return;
-    
   }
   
   for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
@@ -99,7 +94,8 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
   toolbars_.push_back( _toolbar );
   addToolBar( _toolbar );
   
-  plugins_[id].toolbars.push_back( std::pair< QString,QToolBar* >( _toolbar->windowTitle() , _toolbar) );
+  if ( id != -1 )
+    plugins_[id].toolbars.push_back( std::pair< QString,QToolBar* >( _toolbar->windowTitle() , _toolbar) );
   
   // add widget name to viewMode 'all'
   if ( !viewModes_[0]->visibleToolbars.contains( _toolbar->windowTitle() ) ){
