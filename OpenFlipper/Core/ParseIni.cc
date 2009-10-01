@@ -83,24 +83,38 @@ void Core::readApplicationOptions(INIFile& _ini) {
     int viewModeCount;
     if (_ini.get_entry(viewModeCount,"Options","ViewModeCount") )
       for (int i=0; i < viewModeCount; i++){
-        QString entry;
-        QString key = "ViewMode" + QString::number(i);
+        
+        QString entryToolbars;
+        QString entryToolboxes;
+        QString keyToolbars  = "ViewModeToolbars"  + QString::number(i);
+        QString keyToolboxes = "ViewModeToolboxes" + QString::number(i);
 
-        if ( !_ini.get_entry( entry , "Options" , key ) ) continue;
+        // Read the entries
+        if ( !_ini.get_entry( entryToolbars , "Options" , keyToolbars ) )   continue;
+        if ( !_ini.get_entry( entryToolboxes , "Options" , keyToolboxes ) ) continue;
 
-        QStringList widgets = entry.split(";");
-        QString mode = widgets.first();
-        widgets.removeFirst();
+        QStringList toolBars = entryToolbars.split(";");
+        QStringList toolBoxes = entryToolboxes.split(";");
+        
+        // Get Mode name ( prepended to all toolbox/toolbar lists
+        QString mode = toolBoxes.first();
+        
+        // Remove leading Modes
+        toolBoxes.removeFirst();
+        toolBars.removeFirst();
 
+        // Check if the mode already exists
         bool found = false;
         for (int i=0; i < viewModes_.size(); i++)
           if (viewModes_[i]->name == mode)
             found = true;
+          
         if (!found){
           ViewMode* vm = new ViewMode();
           vm->name = mode;
           vm->custom = true;
-          vm->visibleToolboxes = widgets;
+          vm->visibleToolbars  = toolBars;
+          vm->visibleToolboxes = toolBoxes;
           viewModes_.push_back(vm);
         }
 
@@ -487,25 +501,39 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
   // TODO: Save View Mode Toolbars and Context Menu Items
   // save ViewModes
-  QVector< QString > entries;
+  QVector< QString > toolboxes;
+  QVector< QString > toolbars;
+  
   if ( OpenFlipper::Options::gui() )
     for (int i=0; i < coreWidget_->viewModes_.size(); i++)
       if (coreWidget_->viewModes_[i]->custom){
 
         //store name
-        QString entry = coreWidget_->viewModes_[i]->name;
+        QString entryToolboxes = coreWidget_->viewModes_[i]->name;
 
         //store widgets
         for (int j=0; j < coreWidget_->viewModes_[i]->visibleToolboxes.size(); j++)
-          entry += ";" + coreWidget_->viewModes_[i]->visibleToolboxes[j];
+          entryToolboxes += ";" + coreWidget_->viewModes_[i]->visibleToolboxes[j];
 
-        entries.push_back(entry);
+        toolboxes.push_back(entryToolboxes);
+
+        //store name
+        QString entryToolbars = coreWidget_->viewModes_[i]->name;
+        
+        //store widgets
+        for (int j=0; j < coreWidget_->viewModes_[i]->visibleToolbars.size(); j++)
+          entryToolbars += ";" + coreWidget_->viewModes_[i]->visibleToolbars[j];
+        
+        toolbars.push_back(entryToolbars);
+        
       }
 
   //save viewmodes to ini
-  _ini.add_entry("Options","ViewModeCount" ,entries.size());
-  for (int i=0; i < entries.size(); i++)
-    _ini.add_entry("Options","ViewMode" + QString::number(i) ,entries[i]);
+  _ini.add_entry("Options","ViewModeCount" ,toolboxes.size());
+  for (int i=0; i < toolboxes.size(); i++) {
+    _ini.add_entry("Options","ViewModeToolboxes" + QString::number(i) ,toolboxes[i]);
+    _ini.add_entry("Options","ViewModeToolbars"  + QString::number(i) ,toolbars[i] );
+  }
 
   //save KeyBindings
   if ( OpenFlipper::Options::gui() )
