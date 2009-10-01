@@ -7,10 +7,9 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 /// init the Toolbox
-bool IsotropicRemesherPlugin::initializeToolbox(QWidget*& _widget) {
+void IsotropicRemesherPlugin::initializePlugin() {
   tool_ = new IsotropicRemesherToolBox();
 
-  _widget = tool_;
   QSize size(300, 300);
   tool_->resize(size);
 
@@ -20,7 +19,7 @@ bool IsotropicRemesherPlugin::initializeToolbox(QWidget*& _widget) {
   connect(tool_->maxEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMaxLength()) );
   connect(tool_->meanEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMeanLength()) );
 
-  return true;
+  emit addToolbox( tr("Isotropic Remesher") , tool_ );
 }
 
 

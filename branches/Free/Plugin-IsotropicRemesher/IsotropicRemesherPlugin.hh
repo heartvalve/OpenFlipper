@@ -22,31 +22,36 @@ Q_INTERFACES(ToolboxInterface)
 Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(RPCInterface)
 
-//BaseInterface
+
 signals:
+  
+  //BaseInterface
   void updateView();
   void updatedObject(int);
 
   void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                           QStringList _parameters, QStringList _descriptions);
 
-//LoggingInterface:
+  //LoggingInterface:
   void log( Logtype _type, QString _message );
   void log( QString _message );
 
-// RPC Interface
+  // RPC Interface
   void pluginExists( QString _pluginName , bool& _exists  ) ;
   void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
+  
+  // ToolboxInterface
+  void addToolbox( QString _name  , QWidget* _widget );   
 
 private slots:
 
+  // BaseInterface
+  void initializePlugin();  
   void pluginsInitialized(); // BaseInterface
 
 public :
 
   ~IsotropicRemesherPlugin() {};
-
-  bool initializeToolbox(QWidget*& _widget); // ToolboxInterface
 
   QString name() { return (QString("IsotropicRemesher")); };
   QString description( ) { return (QString("an isotropic remesher")); };
