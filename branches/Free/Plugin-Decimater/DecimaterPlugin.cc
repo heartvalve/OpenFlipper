@@ -67,15 +67,9 @@
 
 //== IMPLEMENTATION ==========================================================
 
-/** \brief Initialize the Toolbox
- *
- * @param _widget reference to the generated toolbox
- * @return return if the toolbox was generated successfully
- */
-bool DecimaterPlugin::initializeToolbox(QWidget*& _widget)
+void DecimaterPlugin::initializePlugin()
 {
   tool_ = new DecimaterToolbarWidget();
-  _widget = tool_;
   QSize size(100, 100);
   tool_->resize(size);
 
@@ -93,7 +87,7 @@ bool DecimaterPlugin::initializeToolbox(QWidget*& _widget)
   // Force update if the Toolbox gets visible
   connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumVertices() ) );
 
-  return true;
+  emit addToolbox( tr("Decimater") , tool_ );
 }
 
 /** \brief Initialization of the plugin when it is loaded by the core
