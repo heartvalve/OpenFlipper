@@ -898,6 +898,34 @@ private:
     QTime *redrawTime_;
 
   /** @} */
+  
+  
+  //===========================================================================
+  /** @name Process Interface and Controls
+  * @{ */
+  //===========================================================================
+  
+  private:
+    
+  private slots:
+
+    // A job has been started by a plugin
+    void slotStartJob( QString _jobId, QString _description , int _min , int _max );
+    
+    // A job state has been updated by a plugin
+    void slotSetJobState(QString _jobId, int _value );
+    
+    // A job state has been canceled by a plugin
+    void slotCancelJob(QString _jobId );
+    
+    // A job state has been finished by a plugin
+    void slotFinishJob(QString _jobId );
+    
+  signals:
+    
+    void jobCanceled( QString _jobId );
+    
+  /** @} */
 
   private :
 

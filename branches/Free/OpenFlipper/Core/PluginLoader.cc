@@ -74,6 +74,7 @@
 #include "OpenFlipper/BasePlugin/TextureInterface.hh"
 #include "OpenFlipper/BasePlugin/MenuInterface.hh"
 #include "OpenFlipper/BasePlugin/ContextMenuInterface.hh"
+#include "OpenFlipper/BasePlugin/ProcessInterface.hh"
 #include "OpenFlipper/BasePlugin/ViewInterface.hh"
 #include "OpenFlipper/BasePlugin/ViewModeInterface.hh"
 #include "OpenFlipper/BasePlugin/LoadSaveInterface.hh"
@@ -962,6 +963,42 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"updateStackWidget(QString,QWidget*)" ) )
         connect(plugin      , SIGNAL(updateStackWidget( QString , QWidget*)),
                 coreWidget_ , SLOT( slotUpdateStackWidget( QString , QWidget* ) ) ,Qt::DirectConnection );
+    }
+    
+    //Check if the plugin supports Process-Interface
+    ProcessInterface* processPlugin = qobject_cast< ProcessInterface * >(plugin);
+    if ( processPlugin ) {
+      supported = supported + "Process ";
+
+      
+      if ( checkSignal(plugin,"startJob(QString, QString,int,int)" ) )
+        connect(plugin      , SIGNAL(startJob(QString, QString,int,int)),
+                this , SLOT( slotStartJob(QString, QString,int,int) ) ,Qt::DirectConnection );
+      else
+        emit log(LOGERR,"Process Interface defined but no startJob signal found!");  
+                
+      if ( checkSignal(plugin,"setJobState(QString,int)" ) )
+        connect(plugin      , SIGNAL(setJobState(QString,int)),
+                this , SLOT( slotSetJobState(QString,int) ) ,Qt::DirectConnection );
+      else
+        emit log(LOGERR,"Process Interface defined but no setJobState signal found!");  
+                
+      if ( checkSignal(plugin,"cancelJob(QString)" ) )
+        connect(plugin      , SIGNAL(cancelJob(QString)),
+                this , SLOT( slotCancelJob(QString) ) ,Qt::DirectConnection );
+                
+      if ( checkSignal(plugin,"finishJob(QString)" ) )
+        connect(plugin      , SIGNAL(finishJob(QString)),
+                this , SLOT( slotFinishJob(QString) ) ,Qt::DirectConnection ); 
+      else
+        emit log(LOGERR,"Process Interface defined but no finishJob signal found!");                
+                
+                
+      if ( checkSlot(plugin,"canceledJob(QString)" ) ) 
+        connect(this ,   SIGNAL( jobCanceled( QString ) ) ,
+              plugin   , SLOT( canceledJob(QString) ),Qt::DirectConnection);                
+      else
+        emit log(LOGERR,"Process Interface defined but no cancel canceledJob slot found!");
     }
 
     //Check if the plugin supports RPC-Interface
