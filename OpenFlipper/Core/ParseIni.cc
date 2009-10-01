@@ -86,12 +86,16 @@ void Core::readApplicationOptions(INIFile& _ini) {
         
         QString entryToolbars;
         QString entryToolboxes;
+        QString entryIcon;
+        
         QString keyToolbars  = "ViewModeToolbars"  + QString::number(i);
         QString keyToolboxes = "ViewModeToolboxes" + QString::number(i);
+        QString keyIcon      = "ViewModeIcon"      + QString::number(i);
 
         // Read the entries
-        if ( !_ini.get_entry( entryToolbars , "Options" , keyToolbars ) )   continue;
+        if ( !_ini.get_entry( entryToolbars  , "Options" , keyToolbars ) )  continue;
         if ( !_ini.get_entry( entryToolboxes , "Options" , keyToolboxes ) ) continue;
+        if ( !_ini.get_entry( entryIcon      , "Options" , keyIcon ) )      continue;
 
         QStringList toolBars = entryToolbars.split(";");
         QStringList toolBoxes = entryToolboxes.split(";");
@@ -115,6 +119,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
           vm->custom = true;
           vm->visibleToolbars  = toolBars;
           vm->visibleToolboxes = toolBoxes;
+          vm->icon             = entryIcon;
           viewModes_.push_back(vm);
         }
 
@@ -503,6 +508,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   // save ViewModes
   QVector< QString > toolboxes;
   QVector< QString > toolbars;
+  QVector< QString > icons;
   
   if ( OpenFlipper::Options::gui() )
     for (int i=0; i < coreWidget_->viewModes_.size(); i++)
@@ -526,6 +532,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
         
         toolbars.push_back(entryToolbars);
         
+        icons.push_back(coreWidget_->viewModes_[i]->icon);
+        
       }
 
   //save viewmodes to ini
@@ -533,6 +541,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   for (int i=0; i < toolboxes.size(); i++) {
     _ini.add_entry("Options","ViewModeToolboxes" + QString::number(i) ,toolboxes[i]);
     _ini.add_entry("Options","ViewModeToolbars"  + QString::number(i) ,toolbars[i] );
+    _ini.add_entry("Options","ViewModeIcon"      + QString::number(i) ,icons[i] );
   }
 
   //save KeyBindings
