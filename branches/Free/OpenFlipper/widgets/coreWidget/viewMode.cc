@@ -226,10 +226,12 @@ void CoreWidget::slotViewModeDialog(){
 void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars ){
 
   //try to find Widgets if they aren't given
-  if (_mode != "" && _toolboxWidgets.size() == 0)
+  if (_mode != "" && _toolboxWidgets.size() == 0 && _toolbars.size() == 0)
     for (int i=0; i < viewModes_.size(); i++)
-      if (viewModes_[i]->name == _mode)
+      if (viewModes_[i]->name == _mode) {
         _toolboxWidgets = viewModes_[i]->visibleToolboxes;
+        _toolbars       = viewModes_[i]->visibleToolbars;
+      }
 
   // Remove all toolbox entries
   toolBox_->clear ();
