@@ -81,11 +81,11 @@ void CoreWidget::slotAddToolbar(QToolBar* _toolbar) {
       }
     }
     
-    
-    if ( id == -1 ) {
-      std::cerr << "Unknown sender plugin when adding Toolbar!" << std::endl;
+
+    // This only happens when the core adds a Toolbar 
+    if ( id == -1 ) 
       return;
-    }
+    
   }
   
   for ( uint i = 0 ; i < toolbars_.size(); ++i ) {
