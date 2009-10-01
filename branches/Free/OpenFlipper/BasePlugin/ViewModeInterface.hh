@@ -103,7 +103,8 @@ class ViewModeInterface {
     *
     * With this function you can define an Icon associated with this view mode
     * The Icon will be taken from the standard Icon path or in the OpenFlipper 
-    * home directory.
+    * home directory.\n
+    * The Icon should have a size of 150x150 pixels.
     * 
     * @param _mode name of the ViewMode
     * @param _iconName Name of the Icon used for this view mode
