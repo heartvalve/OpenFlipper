@@ -165,7 +165,7 @@ void viewModeWidget::slotCopyMode(){
   //check if name already exists
   for (int i=0; i < modes_.size(); i++)
     if (modes_[i]->name == name){
-      QMessageBox::warning(this, tr("Copy View Mode"), tr("Cannot Copy ViewMode. New Name already in use for a different mode."), QMessageBox::Ok);
+      QMessageBox::warning(this, tr("Copy View Mode"), tr("Cannot Copy ViewMode. \nNew Name already in use for a different mode."), QMessageBox::Ok);
       return;
     }
   
@@ -179,11 +179,41 @@ void viewModeWidget::slotCopyMode(){
   
   item->setForeground( QBrush(QColor(0,0,150) ) );
   
-  slotSetToolWidgets();
+  show(name);
 }
 
 void viewModeWidget::slotAddMode(){
-  std::cerr << "Todo: Add Mode" << std::endl;
+  
+ //ask for a name for the new viewmode as it is not a custom one
+  bool ok;
+  QString name = QInputDialog::getText(this, tr("Add View Mode"),
+                                             tr("Please enter a name for the new View Mode"), QLineEdit::Normal,
+                                                "", &ok);
+                     
+  // Check if valid                                                
+  if (!ok || name.isEmpty()) {
+    QMessageBox::warning(this, tr("Add View Mode"), tr("Please enter a Name"), QMessageBox::Ok);
+    return; 
+  }
+  
+  //check if name already exists
+  for (int i=0; i < modes_.size(); i++)
+    if (modes_[i]->name == name){
+      QMessageBox::warning(this, tr("Add View Mode"), tr("Cannot Add ViewMode. \nNew Name already in use for a different mode."), QMessageBox::Ok);
+      return;
+    }
+  
+  emit saveMode(name, true, QStringList(), QStringList());      
+  
+  QListWidgetItem *item = new QListWidgetItem(viewModeList);
+  item->setTextAlignment(Qt::AlignHCenter);
+  item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+  item->setIcon(QIcon(OpenFlipper::Options::iconDirStr() + QDir::separator () + "Unknown.png"));
+  item->setText(name);
+  
+  item->setForeground( QBrush(QColor(0,0,150) ) );
+  
+  show(name);
 }
 
 // =======================================================================================================
@@ -568,7 +598,7 @@ void viewModeWidget::slotSaveMode(){
     //check if name already exists
     for (int i=0; i < modes_.size(); i++)
       if (modes_[i]->name == name){
-        QMessageBox::warning(this, tr("Save View Mode"), tr("Cannot Save ViewMode. Name already taken by a different mode."), QMessageBox::Ok);
+        QMessageBox::warning(this, tr("Save View Mode"), tr("Cannot Save ViewMode.\nName already taken by a different mode."), QMessageBox::Ok);
         return;
       }
       
