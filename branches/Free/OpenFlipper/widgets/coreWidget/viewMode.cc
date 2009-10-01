@@ -231,7 +231,7 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
       if (viewModes_[i]->name == _mode)
         _toolboxWidgets = viewModes_[i]->visibleToolboxes;
 
-  // remove all toolbox entries
+  // Remove all toolbox entries
   toolBox_->clear ();
 
   //find all widgets that should be visible
@@ -241,11 +241,15 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
         if (_toolboxWidgets[i] == plugins_[p].toolboxWidgets[j].first )
           toolBox_->addItem (plugins_[p].toolboxWidgets[j].second, plugins_[p].toolboxWidgets[j].first);
     }
+        
+  //find all Toolbars that should be visible and hide the others
+  for (uint p=0; p < plugins_.size(); p++)
+    for ( uint j = 0 ; j < plugins_[p].toolbars.size(); ++j )
+      if (_toolbars.contains( plugins_[p].toolbars[j].first ) )
+        plugins_[p].toolbars[j].second->show();
+      else
+        plugins_[p].toolbars[j].second->hide();
     
-    
-    
-  std::cerr << "TODO: Use toolbars from View Mode! " << std::endl;
-
   if (_mode != "")
     OpenFlipper::Options::defaultToolboxMode(_mode);
 
