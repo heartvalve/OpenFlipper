@@ -127,7 +127,6 @@ void ColorPlugin::pluginsInitialized()
   // =============================================================================
 
   QToolBar* toolbar = new QToolBar(tr("Color Toolbar"));
-  toolbar->hide();
   toolbar->addAction(AC_set_Default_color);
   toolbar->addAction(AC_set_Presentation_color);
   toolbar->addAction(AC_set_Paper_color);
