@@ -234,6 +234,8 @@ void viewModeWidget::slotModeContextMenu ( const QPoint & _pos ){
         break;
       }
       
+    menu.addAction(tr("Copy Mode"), this, SLOT ( slotCopyMode() ));      
+      
     menu.exec(viewModeList->mapToGlobal( _pos) );
   }
 }

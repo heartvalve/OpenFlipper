@@ -45,6 +45,7 @@
 #include "CoreWidget.hh"
 
 #include <OpenFlipper/widgets/viewModeWidget/viewModeWidget.hh>
+#include <OpenFlipper/widgets/viewModeWidget/viewModeChangeWidget.hh>
 
 #include "OpenFlipper/common/GlobalOptions.hh"
 
@@ -263,6 +264,26 @@ void CoreWidget::slotViewModeDialog(){
     connect(widget, SIGNAL(removeMode(QString)), this, SLOT(slotRemoveViewMode(QString)) );
   }
   widget->show( OpenFlipper::Options::defaultToolboxMode() );
+}
+
+void CoreWidget::slotViewChangeDialog() {   
+  //init widget
+  static viewModeChangeWidget* modeChangeWidget = 0;
+  
+  if ( !modeChangeWidget ){
+    modeChangeWidget = new viewModeChangeWidget(viewModes_, this);
+    modeChangeWidget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
+    connect(modeChangeWidget, SIGNAL(changeView(QString, QStringList, QStringList)), this, SLOT(slotChangeView(QString, QStringList, QStringList)) );
+  }
+  
+  // Make it look like a dialog
+  modeChangeWidget->setWindowFlags(Qt::Popup);
+  modeChangeWidget->show( OpenFlipper::Options::defaultToolboxMode() );  
+  
+  // Move it to the position of the push button
+  QPoint posButton = vmChangeButton_->mapToGlobal(vmChangeButton_->pos());
+  modeChangeWidget->move( posButton);
+
 }
 
 /// Slot for Changing visible toolWidgets

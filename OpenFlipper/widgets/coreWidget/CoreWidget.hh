@@ -429,8 +429,11 @@ public:
       void slotSetViewMode( QAction* action);
 
 
-      /// Show a dialog in which the viewMode can be changed
+      /// Show a dialog in which the viewMode can be edited
       void slotViewModeDialog();
+      
+      /// Show a dialog in which the viewMode can be changed
+      void slotViewChangeDialog();
 
       /// Set the view Mode to the given Mode
     public slots :
@@ -488,6 +491,9 @@ public:
 
     /// Widget for toolBox
     QWidget* toolBoxArea_;
+    
+    /// Button to change viewModes
+    QPushButton* vmChangeButton_;
 
     /// Spliter between toplevel objects and toolbox
     QSplitter* toolSplitter_;
