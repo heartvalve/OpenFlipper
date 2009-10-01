@@ -103,9 +103,10 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringLi
   
   ViewMode* vm = 0;
   if ( id == -1 ) {
-    vm = new ViewMode();
-    vm->name = _mode;
+    vm         = new ViewMode();
+    vm->name   = _mode;
     vm->custom = _custom;
+    vm->icon   = "Unknown.png";
     
     if (_custom) {
       viewModes_.push_back(vm);
@@ -145,9 +146,10 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
   
   ViewMode* vm = 0;
   if ( id == -1 ) {
-    vm = new ViewMode();
-    vm->name = _mode;
+    vm         = new ViewMode();
+    vm->name   = _mode;
     vm->custom = _custom;
+    vm->icon   = "Unknown.png";
     
     if (_custom) {
       viewModes_.push_back(vm);
@@ -172,7 +174,48 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
 
 /// Sets the Icon for a given View Mode
 void CoreWidget::slotSetViewModeIcon(QString _mode, QString _iconName) {
-  std::cerr << "Todo: Implement slotSetViewModeIcon" << std::endl;
+  slotSetViewModeIcon(_mode,false,_iconName);
+}
+
+/// Sets the Icon for a given View Mode
+void CoreWidget::slotSetViewModeIcon(QString _mode, bool _custom, QString _iconName) {
+  
+  int id = -1;
+  
+  // Check if it already exists
+  for ( int i = 0 ; i < viewModes_.size(); i++) {
+    if ( viewModes_[i]->name == _mode ) {
+      id = i;
+      break;
+    }
+  }
+  
+  ViewMode* vm = 0;
+  if ( id == -1 ) {
+    vm         = new ViewMode();
+    vm->name   = _mode;
+    vm->custom = _custom;
+    vm->icon   = _iconName;
+    
+    if (_custom) {
+      viewModes_.push_back(vm);
+    } else {
+      //insert before custom viewModes
+      int i = viewModes_.size();
+      for (int k=0; k < viewModes_.size(); k++)
+        if (viewModes_[k]->custom == true){
+          i = k;
+          break;
+        }
+        viewModes_.insert(i,vm);
+    }    
+  } else {
+    vm = viewModes_[id];
+  }
+  
+  vm->icon = _iconName;
+  
+  initViewModes(); 
 }
 
 /// Remove a viewMode

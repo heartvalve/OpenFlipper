@@ -137,6 +137,7 @@ Core() :
    // Add ViewMode All
   ViewMode* vm = new ViewMode();
   vm->name = "All";
+  vm->icon = "Unknown.png";
   vm->custom = false;
   vm->visibleToolboxes = QStringList();
 
