@@ -970,8 +970,7 @@ void Core::loadPlugin(QString filename, bool silent){
     if ( processPlugin ) {
       supported = supported + "Process ";
 
-      
-      if ( checkSignal(plugin,"startJob(QString, QString,int,int)" ) )
+      if ( checkSignal(plugin,"startJob(QString,QString,int,int)" ) )
         connect(plugin      , SIGNAL(startJob(QString, QString,int,int)),
                 this , SLOT( slotStartJob(QString, QString,int,int) ) ,Qt::DirectConnection );
       else
