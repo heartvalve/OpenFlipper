@@ -412,8 +412,11 @@ public:
       /// Completly configure a view mode ( set toolbars, toolboxes ... )
       void slotAddViewModeComplete(QString _mode , bool _custom, QStringList _toolboxes, QStringList _toolbars);
       
-      /// Sets the Icon for a given View Mode
+      /// Sets the Icon for a given View Mode (non-userdefined viewMode)
       void slotSetViewModeIcon(QString _mode, QString _iconName);
+      
+      /// Sets the Icon for a given View Mode (_custom == userdefined viewMode)
+      void slotSetViewModeIcon(QString _mode, bool _custom, QString _iconName);
 
       /// Slot for Changing visible toolWidgets
       void slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars);

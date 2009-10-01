@@ -102,6 +102,8 @@ class ViewModeInterface {
     /** \brief Defines an Icon for a ViewMode
     *
     * With this function you can define an Icon associated with this view mode
+    * The Icon will be taken from the standard Icon path or in the OpenFlipper 
+    * home directory.
     * 
     * @param _mode name of the ViewMode
     * @param _iconName Name of the Icon used for this view mode

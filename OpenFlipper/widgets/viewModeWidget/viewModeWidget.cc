@@ -519,7 +519,8 @@ void viewModeWidget::show(QString _lastMode){
     QListWidgetItem *item = new QListWidgetItem(viewModeList);
     item->setTextAlignment(Qt::AlignHCenter);
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    item->setIcon(QIcon(OpenFlipper::Options::iconDirStr() + QDir::separator () + "Unknown.png"));
+    item->setIcon(QIcon(OpenFlipper::Options::iconDirStr() + QDir::separator () + modes_[i]->icon));
+    
     item->setText(modes_[i]->name);
     
     if (modes_[i]->custom)
