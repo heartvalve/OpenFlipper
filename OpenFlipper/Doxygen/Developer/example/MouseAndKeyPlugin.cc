@@ -54,6 +54,32 @@ void MouseAndKeyPlugin::initializePlugin() {
 	emit registerKey(Qt::Key_S,	Qt::NoModifier, "Rotate object up");
 	emit registerKey(Qt::Key_A,	Qt::NoModifier, "Rotate object left");
 	emit registerKey(Qt::Key_D,	Qt::NoModifier, "Rotate object right");
+        
+        tool_ = new QWidget();
+        QSize size(300, 300);
+        tool_->resize(size);
+        
+        // Create button that can be toggled
+        // to (de)activate plugin's picking mode
+        pickButton_ = new QPushButton(tr("Select object"));
+        pickButton_->setCheckable(true);
+        
+        // Create label
+        QLabel* label = new QLabel();
+        label->setText("(De)activate pick mode");
+        
+        // Set label to be above the button
+        QGridLayout* grid = new QGridLayout;
+        grid->addWidget(label, 0, 0);
+        grid->addWidget(pickButton_, 1, 0);
+        
+        tool_->setLayout(grid);
+        
+        // Connect button to slotButtonClicked()
+        connect( pickButton_, SIGNAL(clicked()), this, SLOT(slotButtonClicked()));
+        
+        // Add the Toolbox
+        emit addToolbox( tr("Mouse and Key") , tool_ );
 
 } // End initializePlugin
 
@@ -87,39 +113,6 @@ void MouseAndKeyPlugin::pluginsInitialized() {
 
 } // End pluginsInitialized
 
-/*
- * Initialize toolbox
- */
-bool MouseAndKeyPlugin::initializeToolbox(QWidget*& _widget)
-{
-
-  tool_ = new QWidget();
-  _widget = tool_;
-  QSize size(300, 300);
-  tool_->resize(size);
-
-  // Create button that can be toggled
-  // to (de)activate plugin's picking mode
-  pickButton_ = new QPushButton(tr("Select object"));
-  pickButton_->setCheckable(true);
-
-  // Create label
-  QLabel* label = new QLabel();
-  label->setText("(De)activate pick mode");
-
-  // Set label to be above the button
-  QGridLayout* grid = new QGridLayout;
-  grid->addWidget(label, 0, 0);
-  grid->addWidget(pickButton_, 1, 0);
-
-  tool_->setLayout(grid);
-
-  // Connect button to slotButtonClicked()
-  connect( pickButton_, SIGNAL(clicked()), this, SLOT(slotButtonClicked()));
-
-  return true;
-
-} // End initializeToolbox
 
 /*
  * Is called when button in toolbox has been clicked
