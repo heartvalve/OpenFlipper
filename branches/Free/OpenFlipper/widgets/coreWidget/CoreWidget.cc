@@ -456,11 +456,15 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   QHBoxLayout *hLayout = new QHBoxLayout;
 
-  QPushButton* vmButton = new QPushButton(tr("Change View Mode"));
-  hLayout->addWidget (vmButton);
+  vmChangeButton_ = new QPushButton(tr("Change View Mode"));
+  QPushButton* vmEditButton   = new QPushButton(tr("Edit View Modes"));
+  
+  hLayout->addWidget(vmChangeButton_);
+  hLayout->addWidget(vmEditButton);
   gb->setLayout (hLayout);
 
-  connect(vmButton, SIGNAL(clicked()), this, SLOT(slotViewModeDialog()));
+  connect(vmChangeButton_, SIGNAL(clicked()), this, SLOT(slotViewChangeDialog()));
+  connect(vmEditButton, SIGNAL(clicked()), this, SLOT(slotViewModeDialog()));
 
   toolBoxScroll_ = new QScrollArea ();
   toolBox_ = new SideArea ();
