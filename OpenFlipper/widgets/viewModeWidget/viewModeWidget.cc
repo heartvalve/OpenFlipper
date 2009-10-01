@@ -135,7 +135,51 @@ void viewModeWidget::slotRemoveMode(){
 }
 
 void viewModeWidget::slotCopyMode(){
-  std::cerr << "Todo: Copy Mode" << std::endl;
+  // Find currently selected Mode
+  // Search for current mode 
+  int id = -1;
+  if ( viewModeList->selectedItems().count() > 0) 
+    for (int i=0; i < modes_.size(); i++)
+      if (modes_[i]->name == viewModeList->currentItem()->text()){
+        id = i;
+        break;
+      }
+      
+  if ( id == -1 ) {
+    std::cerr << "Currently selected Mode not found?!" << std::endl; 
+    return;
+  }
+  
+  //ask for a name for the new viewmode as it is not a custom one
+  bool ok;
+  QString name = QInputDialog::getText(this, tr("Copy View Mode"),
+                                             tr("Please enter a name for the new View Mode"), QLineEdit::Normal,
+                                                "", &ok);
+                     
+  // Check if valid                                                
+  if (!ok || name.isEmpty()) {
+    QMessageBox::warning(this, tr("Copy View Mode"), tr("Please enter a Name"), QMessageBox::Ok);
+    return; 
+  }
+  
+  //check if name already exists
+  for (int i=0; i < modes_.size(); i++)
+    if (modes_[i]->name == name){
+      QMessageBox::warning(this, tr("Copy View Mode"), tr("Cannot Copy ViewMode. New Name already in use for a different mode."), QMessageBox::Ok);
+      return;
+    }
+  
+  emit saveMode(name, true, modes_[id]->visibleToolboxes, modes_[id]->visibleToolbars);      
+  
+  QListWidgetItem *item = new QListWidgetItem(viewModeList);
+  item->setTextAlignment(Qt::AlignHCenter);
+  item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+  item->setIcon(QIcon(OpenFlipper::Options::iconDirStr() + QDir::separator () + "Unknown.png"));
+  item->setText(name);
+  
+  item->setForeground( QBrush(QColor(0,0,150) ) );
+  
+  slotSetToolWidgets();
 }
 
 void viewModeWidget::slotAddMode(){
