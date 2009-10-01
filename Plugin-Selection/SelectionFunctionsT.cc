@@ -79,9 +79,6 @@ void SelectionPlugin::paintSphereSelection( MeshT* _mesh ,
       for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
         _mesh->status(v_it).set_tagged(false);
 
-    //tag vertices from hitface
-    for (typename MeshT::FaceVertexIter fv_it(*_mesh,hitface); fv_it; ++fv_it)
-      _mesh->status(fv_it).set_tagged(true);
   }
 
   if (selectionType_ & EDGE){
@@ -90,9 +87,6 @@ void SelectionPlugin::paintSphereSelection( MeshT* _mesh ,
       for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
         _mesh->status(e_it).set_tagged(false);
 
-    //tag edges from hitface
-    for (typename MeshT::FaceEdgeIter fe_it(*_mesh,hitface); fe_it; ++fe_it)
-      _mesh->status(fe_it).set_tagged(true);
   }
 
 
@@ -141,25 +135,16 @@ void SelectionPlugin::paintSphereSelection( MeshT* _mesh ,
 
           if ( (_mesh->point(vh) - _hitpoint).sqrnorm() <= sqr_radius ){
             vertex_handles.push_back( vh );
-
-            if (lastVertexInside)
-              edge_handles.push_back( _mesh->edge_handle( fh_it.handle() ) );
+            
+          if ( ( _mesh->point(_mesh->to_vertex_handle( fh_it.handle() ) ) -  _hitpoint).sqrnorm() <= sqr_radius )
+            edge_handles.push_back( _mesh->edge_handle( fh_it.handle() ) );
+              
 
             lastVertexInside = true;
           }else
             lastVertexInside = false;
 
           fVertices++;
-        }
-
-        //perhaps check the first edge again
-        if (lastVertexInside){
-          typename MeshT::FaceHalfedgeIter fh_it(*_mesh,ff_it);
-
-          typename MeshT::VertexHandle vh = _mesh->from_vertex_handle( fh_it.handle() );
-
-          if ( (_mesh->point(vh) - _hitpoint).sqrnorm() <= sqr_radius )
-              edge_handles.push_back( _mesh->edge_handle( fh_it.handle() ) );
         }
 
         //check what has to be tagged
