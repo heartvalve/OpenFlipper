@@ -21,11 +21,11 @@ void FilePlanePlugin::initializePlugin() {
 }
 
 QString FilePlanePlugin::getLoadFilters() {
-  return QString( "Plane files ( *.pla )" );
+  return QString( tr("Plane files ( *.pla )") );
 };
 
 QString FilePlanePlugin::getSaveFilters() {
-  return QString( "Plane files ( *.pla )" );
+  return QString( tr("Plane files ( *.pla )") );
 };
 
 DataType  FilePlanePlugin::supportedType() {
@@ -153,7 +153,7 @@ QString FilePlanePlugin::get_unique_name(PlaneObject* _object)
   {
     name_unique = true;
 
-    QString cur_name = QString("Plane " + QString::number( cur_idx ) + ".pla");
+    QString cur_name = QString(tr("Plane %1.pla").arg( cur_idx ));
 
     PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_PLANE );
     for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
@@ -167,7 +167,7 @@ QString FilePlanePlugin::get_unique_name(PlaneObject* _object)
     }
   }
 
-  return QString("Plane " + QString::number( cur_idx ) + ".pla");
+  return QString(tr("Plane %1.pla").arg( cur_idx ));
 }
 
 Q_EXPORT_PLUGIN2( fileplaneplugin , FilePlanePlugin );
