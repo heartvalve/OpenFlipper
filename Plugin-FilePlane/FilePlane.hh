@@ -45,7 +45,7 @@ class FilePlanePlugin : public QObject, BaseInterface, FileInterface, LoadSaveIn
      ~FilePlanePlugin() {};
 
      QString name() { return (QString("FilePlane")); };
-     QString description( ) { return (QString("Load/Save Planes")); };
+     QString description( ) { return (QString(tr("Load/Save Planes"))); };
 
      int addEmpty( );
 
