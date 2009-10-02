@@ -52,17 +52,17 @@ addEmptyWidget::addEmptyWidget(std::vector< DataType > _types , QStringList _typ
     typeNames_(_typeNames)
 {
   setupUi(this);
-  
+
   typeBox->setDuplicatesEnabled(false);
 
   for (int i=0; i < (int)types_.size(); i++)
     typeBox->addItem(typeNames_[i],QVariant(types_[i]));
-  
+
     //set last used DataType as currentItem
   for (int i=0; i < typeBox->count(); i++)
     if (typeBox->itemText(i) == OpenFlipper::Options::lastDataType())
       typeBox->setCurrentIndex(i);
-  
+
   connect(cancelButton,SIGNAL(clicked()),this,SLOT(close()));
   connect(addButton,SIGNAL(clicked()),this,SLOT(slotAddEmpty()));
 }
@@ -70,7 +70,7 @@ addEmptyWidget::addEmptyWidget(std::vector< DataType > _types , QStringList _typ
 void addEmptyWidget::slotAddEmpty(){
   int index = typeBox->currentIndex();
   int unused;
-  
+
   DataType type = (DataType) typeBox->itemData(index).toInt();
   for (int i=0; i < (int)types_.size(); i++)
     if (types_[i] == type){
@@ -79,6 +79,6 @@ void addEmptyWidget::slotAddEmpty(){
       this->close();
       return;
     }
-  emit chosen(DATA_NONE,unused);
+  emit chosen(DATA_UNKNOWN,unused);
   this->close();
 }

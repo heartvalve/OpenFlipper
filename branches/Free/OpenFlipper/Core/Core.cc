@@ -474,9 +474,9 @@ Core::init() {
 
       connect( coreWidget_->examiner_widgets_[i], SIGNAL( viewUpdated() ),
                this, SLOT( viewUpdated()) ,Qt::DirectConnection);
-               
+
       connect( coreWidget_->examiner_widgets_[i], SIGNAL( viewChanged() ),
-               this, SIGNAL( pluginViewChanged() ) ,Qt::DirectConnection);               
+               this, SIGNAL( pluginViewChanged() ) ,Qt::DirectConnection);
     }
 
   }
@@ -865,7 +865,7 @@ Core::slotRecentOpen(QAction* _action)
   QVector< OpenFlipper::Options::RecentFile > recentFiles = OpenFlipper::Options::recentFiles();
   for (int i = 0 ; i < recentFiles.size() ; ++i )
     if ( recentFiles[i].filename == _action->text() ){
-      if (recentFiles[i].type == DATA_NONE)
+      if (recentFiles[i].type == DATA_UNKNOWN)
         loadSettings( recentFiles[i].filename );
       else{
         OpenFlipper::Options::loadingRecentFile(true);
@@ -1243,10 +1243,10 @@ void Core::setDescriptions(){
   emit setSlotDescription("addViewModeToolboxes(QString,QString)", tr("Set toolboxes for a viewmode (This automatically adds the view mode if it does not exist)"),
                           QString(tr("Name,Toolbox List")).split(","),
                           QString(tr("Name of the Viewmode, ; seperated list of toolboxes visible in this viewmode")).split(","));
-                          
+
   emit setSlotDescription("addViewModeToolbars(QString,QString)", tr("Set toolbars for a viewmode (This automatically adds the view mode if it does not exist)"),
                           QString(tr("Name,Toolbar List")).split(","),
-                          QString(tr("Name of the Viewmode, ; seperated list of toolbars visible in this viewmode")).split(","));                          
+                          QString(tr("Name of the Viewmode, ; seperated list of toolbars visible in this viewmode")).split(","));
 
   emit setSlotDescription("objectList(QString,QStringList)", tr("Returns object list"),
                           QString(tr("Selection type,Object types")).split(","),
