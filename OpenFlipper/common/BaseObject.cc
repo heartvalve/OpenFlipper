@@ -83,7 +83,7 @@ BaseObject::BaseObject(const BaseObject& _object) {
 BaseObject::BaseObject(BaseObject* _parent) :
   id_(-1),
   persistentId_(-1),
-  objectType_(DATA_NONE),
+  objectType_(DATA_UNKNOWN),
   flags_(),
   visible_(true),
   parentItem_(_parent),
@@ -123,7 +123,7 @@ void BaseObject::persistentId( int _id ) {
 
 void BaseObject::cleanup() {
   persistentId_ = -1;
-  objectType_ = DATA_NONE;
+  objectType_ = DATA_UNKNOWN;
 
   flags_.clear();
 
@@ -148,7 +148,7 @@ DataType BaseObject::dataType() {
 }
 
 void BaseObject::setDataType(DataType _type) {
-  if ( objectType_ != DATA_NONE )
+  if ( objectType_ != DATA_UNKNOWN )
     std::cerr << "BaseObect : overwriting data type" << std::endl;
   objectType_ = _type;
 }

@@ -68,11 +68,11 @@
 /** \brief Predefined datatypes
  *
  * Here are several datatypes which have predefined ids. This might be changed to runtime added
- * datatypes in the futere.
+ * datatypes in the future.
  */
 
 /// None of the other Objects
-#define DATA_NONE 0
+#define DATA_UNKNOWN 0
 
 /// Items used for Grouping
 #define DATA_GROUP 1
@@ -121,7 +121,7 @@ typedef std::vector<BaseObjectData*> DataContainer;
 //================================================================================================
 
 /** Adds a datatype and returns the id for the new type
-* 
+*
 * @param _name Internal name for the new DataType
 * @param _readableName Human readable Name for this type ( Use tr to make it translatable )
 */

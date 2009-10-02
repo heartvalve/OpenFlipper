@@ -55,19 +55,19 @@
 //******************************************************************************
 
 /** \brief Constructor
- * 
+ *
  * @param _parent parent Object
  */
 TreeModel::TreeModel( QObject *_parent) : QAbstractItemModel(_parent)
 {
-  rootItem_ = new TreeItem( -1, "ROOT", DATA_NONE, 0);
+  rootItem_ = new TreeItem( -1, "ROOT", DATA_UNKNOWN, 0);
 }
 
 
 //******************************************************************************
 
 /** \brief Destructor
- * 
+ *
  */
 TreeModel::~TreeModel()
 {
@@ -78,7 +78,7 @@ TreeModel::~TreeModel()
 //******************************************************************************
 
 /** \brief Return the number of columns
- * 
+ *
  * @param unused
  * @return return always 4
  */
@@ -92,7 +92,7 @@ int TreeModel::columnCount(const QModelIndex &/*_parent*/) const
 //******************************************************************************
 
 /** \brief Returns the data stored under the given role for the item referred to by the index
- * 
+ *
  * @param index a ModelIndex that defines the item in the tree
  * @param role defines the kind of data requested
  * @return requested data
@@ -103,30 +103,30 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
   // Skip invalid requests
   if (!index.isValid())
       return QVariant();
-  
+
   // Get the corresponding tree item
   TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
-  
+
   if ( item == rootItem_ ) {
-    std::cerr << "Root" << std::endl; 
+    std::cerr << "Root" << std::endl;
   }
-    
+
   // Set the background color of the objects row
   if ( role == Qt::BackgroundRole ) {
     if ( !item->visible() ) {
-      return QVariant( QBrush(QColor(100,100,100) ) ); 
+      return QVariant( QBrush(QColor(100,100,100) ) );
     }
   }
 
   switch (index.column() ) {
     // Name
     case 0 :
-      
+
       if (role != Qt::DisplayRole && role != Qt::EditRole )
         return QVariant();
-      
+
       return QVariant(item->name());
-      
+
       break;
     // Visible
     case 1 :
@@ -146,13 +146,13 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         }else
           //visibility item
           visibility = item->visible();
-        if (visibility) 
+        if (visibility)
           return QVariant(Qt::Checked);
         else
           return QVariant(Qt::Unchecked);
       }
       return QVariant();
-      
+
       break;
     // Source
     case 2 :
@@ -161,7 +161,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         // source group
         if (item->isGroup()){
           QList< TreeItem* > children = item->getLeafs();
-          
+
           bool initRound = true;
           for (int i=0; i < children.size(); i++){
             if (initRound){
@@ -173,14 +173,14 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         }else
           //source item
           source = item->source();
-        if (source) 
+        if (source)
           return QVariant(Qt::Checked);
         else
           return QVariant(Qt::Unchecked);
       }
       return QVariant();
 
-    // Target    
+    // Target
     case 3 :
       if (role == Qt::CheckStateRole ) {
         bool target = false;
@@ -199,7 +199,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         }else
           //target item
           target = item->target();
-        if (target) 
+        if (target)
           return QVariant(Qt::Checked);
         else
           return QVariant(Qt::Unchecked);
@@ -207,7 +207,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
       return QVariant();
 
       break;
-      
+
     default:
       return QVariant();
   }
@@ -218,7 +218,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
 //******************************************************************************
 
 /** \brief Returns the item flags for the given index
- * 
+ *
  * @param index ModelIndex that defines an item in the tree
  * @return flags for the given ModelIndex
  */
@@ -230,7 +230,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     Qt::ItemFlags flags = 0;
 
     // Show/Source/Target
-    if ( ( index.column() == 1 ) || 
+    if ( ( index.column() == 1 ) ||
          ( index.column() == 2 ) ||
          ( index.column() == 3 ) )
       flags = Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
@@ -253,7 +253,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
 //******************************************************************************
 
 /** \brief Returns the data in the header
- * 
+ *
  * @param section the column in the header
  * @param orientation header orientation (only horizontal handled)
  * @param role the role that defines the type of data
@@ -263,7 +263,7 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
                                 int role) const
 {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
-      
+
       switch (section) {
         case 0 : return QVariant("Name");
         case 1 : return QVariant("Show");
@@ -280,8 +280,8 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
 //******************************************************************************
 
 /** \brief Returns the index of the item in the model specified by the given row, column and parent index.
- * 
- * @param row the row 
+ *
+ * @param row the row
  * @param column the column
  * @param _parent parent item
  * @return corresponding ModelIndex
@@ -309,7 +309,7 @@ QModelIndex TreeModel::index(int row, int column, const QModelIndex &_parent) co
 //******************************************************************************
 
 /** \brief Return index of parent item
- * 
+ *
  * @param index a ModelIndex
  * @return parent of the given ModelIndex
  */
@@ -331,7 +331,7 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
 //******************************************************************************
 
 /** \brief Returns the number of rows under given parent
- * 
+ *
  * @param _parent parent Item
  * @return number of rows that are children of given parent
  */
@@ -353,7 +353,7 @@ int TreeModel::rowCount(const QModelIndex &_parent) const
 //******************************************************************************
 
 /** \brief The object with the given id has been changed. Update the model.
- * 
+ *
  * @param _id  id of an object
  */
 void TreeModel::objectChanged(int _id) {
@@ -442,7 +442,7 @@ void TreeModel::objectChanged(int _id) {
 
 
 /** \brief The object with the given id has been added. add it to the internal tree
- * 
+ *
  * @param id_ id of the object
  */
 void TreeModel::objectAdded(BaseObject* _object){
@@ -471,7 +471,7 @@ void TreeModel::objectAdded(BaseObject* _object){
 }
 
 /** \brief The object with the given id has been deleted. delete it from the internal tree
- * 
+ *
  * @param id_ id of the object
  */
 void TreeModel::objectDeleted(int _id){
@@ -497,7 +497,7 @@ void TreeModel::objectDeleted(int _id){
 //******************************************************************************
 
 /** \brief move the item to a new parent
- * 
+ *
  * @param _item the item
  * @param _parent new parent
  */
@@ -526,7 +526,7 @@ void TreeModel::moveItem(TreeItem* _item, TreeItem* _parent ){
 //******************************************************************************
 
 /** \brief Return item at given index
- * 
+ *
  * @param index a ModelIndex
  * @return item at given index
  */
@@ -543,7 +543,7 @@ TreeItem* TreeModel::getItem(const QModelIndex &index) const
 //******************************************************************************
 
 /** \brief Return item-name at given index
- * 
+ *
  * @param index a ModelIndex
  * @return name of the item at given index
  */
@@ -560,7 +560,7 @@ QString TreeModel::itemName(const QModelIndex &index) const
 //******************************************************************************
 
 /** \brief Return item-id at given index
- * 
+ *
  * @param index a ModelIndex
  * @return item-id at given index
  */
@@ -685,7 +685,7 @@ void TreeModel::propagateDownwards(TreeItem* _item, int _column ){
 //******************************************************************************
 
 /** \brief Set Data at 'index' to 'value'
- * 
+ *
  * @param index a ModelIndex defining the positin in the model
  * @param value the new value
  * @param  unused
@@ -703,12 +703,12 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
 //******************************************************************************
 
 /** \brief return if an object is equal to the root object
- * 
+ *
  * @param _item the item to be checked
  * @return is it the root object?
  */
 bool TreeModel::isRoot(TreeItem * _item) {
-  return ( _item == rootItem_ ); 
+  return ( _item == rootItem_ );
 }
 
 /*******************************************************************************
@@ -716,7 +716,7 @@ bool TreeModel::isRoot(TreeItem * _item) {
  *******************************************************************************/
 
 /** \brief return the supported drop actions
- * 
+ *
  * @return drop actions
  */
 Qt::DropActions TreeModel::supportedDropActions() const
@@ -728,7 +728,7 @@ Qt::DropActions TreeModel::supportedDropActions() const
 //******************************************************************************
 
 /** \brief return the mimeType for drag & drop
- * 
+ *
  * @return the mimeType
  */
 QStringList TreeModel::mimeTypes() const
@@ -742,7 +742,7 @@ QStringList TreeModel::mimeTypes() const
 //******************************************************************************
 
 /** \brief generate mimeData for given ModelIndexes
- * 
+ *
  * @param indexes list of ModelIndexes
  * @return the mimeData
  */
@@ -775,12 +775,12 @@ QMimeData* TreeModel::mimeData(const QModelIndexList& indexes) const
 //******************************************************************************
 
 /** \brief this is called when mimeData is dropped
- * 
+ *
  * @param data the dropped data
  * @param action the definition of the dropAction which occured
  * @param unused
- * @param unused 
- * @param parent parent under which the drop occurred 
+ * @param unused
+ * @param parent parent under which the drop occurred
  * @return returns if the drop was sucessful
  */
 bool TreeModel::dropMimeData(const QMimeData *data,

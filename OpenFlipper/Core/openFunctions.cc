@@ -167,7 +167,7 @@ int Core::loadObject ( QString _filename ) {
     openIniFile(_filename,true,true,true);
 
     if ( OpenFlipper::Options::gui() )
-      coreWidget_->addRecent(_filename, DATA_NONE);
+      coreWidget_->addRecent(_filename, DATA_UNKNOWN);
 
     return -2;
   } else
@@ -183,7 +183,7 @@ int Core::loadObject ( QString _filename ) {
 /// Function for loading a given file
 int Core::loadObject( DataType _type, QString _filename) {
 
-  if (_type == DATA_NONE)
+  if (_type == DATA_UNKNOWN)
     return loadObject(_filename);
 
   for (int i=0; i < (int)supportedTypes_.size(); i++)
@@ -278,48 +278,48 @@ void Core::slotCopyObject( int _oldId , int& _newId ) {
 /// Slot for loading a given file
 void Core::slotLoad(QString _filename, DataType _type, int& _id) {
   _id = loadObject(_type,_filename);
-  
+
   // Check if it is a polymesh
   if ( _type == DATA_POLY_MESH ) {
-    
+
     PolyMeshObject* poly = 0;
     PluginFunctions::getObject(_id,poly);
-    
+
     if ( poly != 0 ) {
         PolyMesh& mesh = *poly->mesh();
-        
+
         bool isTriangleMesh = true;
-        
+
         for ( PolyMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end() ; ++f_it) {
-          
+
           // Count number of vertices for the current face
           uint count = 0;
-          for ( PolyMesh::FaceVertexIter fv_it( mesh,f_it); fv_it; ++fv_it ) 
+          for ( PolyMesh::FaceVertexIter fv_it( mesh,f_it); fv_it; ++fv_it )
             ++count;
-          
+
           // Check if it is a triangle. If not, this is really a poly mesh
           if ( count != 3 ) {
             isTriangleMesh = false;
             break;
           }
-          
+
         }
-        
+
         // Mesh loaded as polymesh is actually a triangle mesh. Ask the user to reload as triangle mesh or keep it as poly mesh.
         if ( isTriangleMesh ) {
-          QMessageBox::StandardButton result = QMessageBox::question ( 0, 
-                                                                      tr("TriMesh loaded as PolyMesh"), 
-                                                                      tr("You opened the mesh as a poly mesh but actually its a triangle mesh. \nShould it be opened as a triangle mesh?"), 
-                                                                      (QMessageBox::Yes | QMessageBox::No ), 
+          QMessageBox::StandardButton result = QMessageBox::question ( 0,
+                                                                      tr("TriMesh loaded as PolyMesh"),
+                                                                      tr("You opened the mesh as a poly mesh but actually its a triangle mesh. \nShould it be opened as a triangle mesh?"),
+                                                                      (QMessageBox::Yes | QMessageBox::No ),
                                                                       QMessageBox::Yes );
-          // User decided to reload as triangle mesh                                                                    
+          // User decided to reload as triangle mesh
           if ( result == QMessageBox::Yes ) {
             slotDeleteObject(_id);
             _id = loadObject(DATA_TRIANGLE_MESH ,_filename);
             _type = DATA_TRIANGLE_MESH;
           }
         }
-        
+
     }
   }
   if ( _id < 0 )
@@ -596,7 +596,7 @@ void Core::loadSettings(){
         applyOptions();
     }
 
-    coreWidget_->addRecent(complete_name, DATA_NONE);
+    coreWidget_->addRecent(complete_name, DATA_UNKNOWN);
   }
 }
 

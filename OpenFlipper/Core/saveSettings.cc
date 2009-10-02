@@ -251,6 +251,6 @@ void Core::saveSettings(){
 
   //add to recent files
   if ( OpenFlipper::Options::gui() )
-    coreWidget_->addRecent( complete_name, DATA_NONE );
+    coreWidget_->addRecent( complete_name, DATA_UNKNOWN );
 
 }
