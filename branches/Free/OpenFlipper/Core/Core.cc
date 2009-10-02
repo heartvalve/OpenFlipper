@@ -1163,7 +1163,7 @@ INIFile ini;
 QList<int> Core::objectList (QString _selection, QStringList _types)
 {
   QList<int> rv;
-  unsigned int ids = 0;
+  DataType ids = 0;
   PluginFunctions::IteratorRestriction selection = PluginFunctions::ALL_OBJECTS;
 
   foreach (QString s, _types)
