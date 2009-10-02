@@ -33,9 +33,12 @@
 #include "OpenFlipperThread.hh"
 #include <iostream>
 
+
 OpenFlipperThread::OpenFlipperThread( QString _jobId ) :
+  job_(0),
   jobId_(_jobId)
 {
+  startup_.lock();
   
 }
 
@@ -45,18 +48,29 @@ OpenFlipperThread::~OpenFlipperThread() {
 
 void OpenFlipperThread::run()
 {
-  std::cerr << "Start Function" << std::endl;
+  if ( job_ == 0 ) {
+    // Create a job wrapper to run a slot from within this thread
+    job_ = new OpenFlipperJob();
 
-  // This starts the function in our local thread if DirectConnection is used!
-  emit function();
+    // Connect the slot which should run in this thread. This has to be a DirectConnection !
+    // Otherwisse the slot will run inside its owner context which will be the main loop!!
+    connect(job_, SIGNAL(process()),this,SIGNAL(function() ),Qt::DirectConnection);
+    
+    // Connect the jobs finished function
+    connect(job_, SIGNAL(finished()),this,SLOT(slotJobFinished() ) );
+    
+    // connect the function to start the job
+    connect(this,SIGNAL(startProcessingInternal()),job_,SLOT(startJobProcessing()),Qt::QueuedConnection);
+  }
   
-  // Emit a message that our job is finished
-  emit finished(jobId_);
+  std::cerr << "Start Loop" << std::endl;
+
+  startup_.unlock();
   
-  std::cerr << "Done " << std::endl;
+  // Start event queue
+  exec();
   
-  // start event loop of thread
-  //   exec();
+  std::cerr << "End Loop" << std::endl;
 }
 
 void OpenFlipperThread::cancel() {
@@ -66,4 +80,35 @@ void OpenFlipperThread::cancel() {
 void OpenFlipperThread::slotCancel( QString _jobId) {
  if ( _jobId == jobId_ )
   cancel(); 
+}
+
+void OpenFlipperThread::slotJobFinished( ) {
+  emit finished( jobId_ );
+}
+
+
+void OpenFlipperThread::startProcessing() {
+  std::cerr << "Thread emit startProcessing" << std::endl;
+  
+  // Wait for thread to come up with event loop
+  startup_.lock();
+  
+  // Tell internal wrapper to start with the processing
+  emit startProcessingInternal();
+  
+  startup_.unlock();
+  std::cerr << "Thread emit startProcessing done" << std::endl;
+}
+
+
+void OpenFlipperJob::startJobProcessing() {
+  std::cerr << "job emit process" << std::endl;
+  // Actually start the process ( This function will block as it uses a direct connection )
+  // But it only blocks the current thread.
+  emit process(); 
+  
+  // Tell thread that the job is done.
+  emit finished();
+  
+  std::cerr << "job emit process done" << std::endl;
 }

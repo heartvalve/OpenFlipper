@@ -65,7 +65,8 @@
  * connect(thread,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                 // connect your threads finish info to the global one ( you can do the same for a local one ) \n
  * connect(thread,SIGNAL( function()), this,SLOT(testFunctionThread()),Qt::DirectConnection);   // You can directly give a slot of your app that gets called \n
  * emit startJob( name() + "1", "Description" , 0 , 100 , false);                               // Tell the core about your thread
- * thread->start();                                                                             // start execution
+ * thread->start();                                                                             // start thread
+ * thread->startProcessing();                                                                   // start processing
  */
 class ProcessInterface {
 
