@@ -58,29 +58,96 @@
 
 
 // A job has been started by a plugin
-void Core::slotStartJob( QString _jobId, QString _description , int _min , int _max ) {
-  std::cerr << "slotStartJob" << std::endl;
+void Core::slotStartJob( QString _jobId, QString _description , int _min , int _max, bool _blocking) {
+  std::cerr << "StartJob: " << _jobId.toStdString() << " " << _description.toStdString() << " " << _min << " " << _max  << " " << _blocking <<std::endl;
+  
+  JobInfo* info        = new JobInfo();
+  info->jobId          = _jobId;
+  info->description    = _description;
+  info->min            = _min;
+  info->max            = _max;
+  info->blocking       = _blocking;
+  info->progressDialog = new QProgressDialog(coreWidget_);
+  info->progressDialog->setLabelText(_description);
+  info->progressDialog->setMinimum(_min);
+  info->progressDialog->setMaximum(_max);
+  info->progressDialog->setValue(_min);
+  info->progressDialog->resize(300,130);
+  info->progressDialog->setMinimumDuration(1);
+  if ( _blocking )
+    info->progressDialog->setWindowModality(Qt::WindowModal);
+  
+  connect( info->progressDialog, SIGNAL(canceled()),
+           this,SLOT(slotJobCancelButtons()));
+  
+  currentJobs.push_back(info);
+  
+}
+
+//-----------------------------------------------------------------------------
+bool Core::getJob(QString _jobId, int& _index) {
+  
+  for ( int i = 0 ; i < currentJobs.size() ; ++i) {
+      if ( currentJobs[i]->jobId == _jobId ) {
+        _index = i;
+        return true;
+      }
+  }
+  
+  emit log(LOGERR,tr("Unable to find Job %1.").arg(_jobId));
+  _index = -1;
+  return false;
 }
 
 //-----------------------------------------------------------------------------
 
 // A job state has been updated by a plugin
 void Core::slotSetJobState(QString _jobId, int _value ) {
-  std::cerr << "slotSetJobState" << std::endl;
+  int id;
+  
+  if (  getJob(_jobId, id) ) {
+    currentJobs[id]->currentState = _value;
+    currentJobs[id]->progressDialog->setValue(_value);
+  }
 }
 
 //-----------------------------------------------------------------------------
 
 // A job state has been canceled by a plugin
 void Core::slotCancelJob(QString _jobId ) {
-  std::cerr << "slotCancelJob" << std::endl;
+  int id;
+  
+  if (  getJob(_jobId, id) ) {
+    currentJobs[id]->progressDialog->reset();
+    currentJobs[id]->progressDialog->hide();
+    delete currentJobs[id]->progressDialog;
+    currentJobs.removeAt(id);
+  }
 }
 
 //-----------------------------------------------------------------------------
 
 // A job state has been finished by a plugin
 void Core::slotFinishJob(QString _jobId ) {
-  std::cerr << "slotFinishJob" << std::endl;
+  int id;
+  
+  if (  getJob(_jobId, id) ) {
+    currentJobs[id]->progressDialog->reset();
+    currentJobs[id]->progressDialog->hide();
+    delete currentJobs[id]->progressDialog;
+    currentJobs.removeAt(id);
+  }
+}
+
+// The user canceled a job
+void Core::slotJobCancelButtons( ) {
+  for ( int i = 0 ; i < currentJobs.size() ; ++i) {
+    if ( currentJobs[i]->progressDialog == sender() ) {
+      QString id = currentJobs[i]->jobId;
+      slotCancelJob(id);
+      emit jobCanceled( id );
+    }
+  }
 }
 
 

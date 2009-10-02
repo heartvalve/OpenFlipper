@@ -20,6 +20,7 @@ set (directories
   ../BasePlugin 
   ../ACGHelper 
   ../common 
+  ../threads
   ../common/bsp  
   ../INIFile 
   ../widgets/glWidget

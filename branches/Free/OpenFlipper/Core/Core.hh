@@ -74,6 +74,7 @@
 
 #include <QDockWidget>
 #include <QVector>
+#include <QProgressDialog>
 
 #include <QtScript/QScriptEngine>
 #include <QtScript/QtScript>
@@ -104,6 +105,8 @@
 
 #include <ACG/Scenegraph/CoordsysNode.hh>
 #include <ACG/Scenegraph/GridNode.hh>
+
+#include <OpenFlipper/threads/JobInfo.hh>
 
 //== CLASS DEFINITION =========================================================
 
@@ -907,19 +910,27 @@ private:
   
   private:
     
+    QList< JobInfo* >  currentJobs;
+    
+    /// Find a job in the jobslist
+    bool getJob(QString _jobId, int& _index);
+    
   private slots:
 
-    // A job has been started by a plugin
-    void slotStartJob( QString _jobId, QString _description , int _min , int _max );
+    /// A job has been started by a plugin
+    void slotStartJob( QString _jobId, QString _description , int _min , int _max,bool _blocking );
     
-    // A job state has been updated by a plugin
+    /// A job state has been updated by a plugin
     void slotSetJobState(QString _jobId, int _value );
     
-    // A job state has been canceled by a plugin
+    /// A job state has been canceled by a plugin
     void slotCancelJob(QString _jobId );
     
-    // A job state has been finished by a plugin
+    /// A job state has been finished by a plugin
     void slotFinishJob(QString _jobId );
+    
+    /// Called by dialogs if cancel button is pressed
+    void slotJobCancelButtons();
     
   signals:
     
