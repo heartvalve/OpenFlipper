@@ -53,10 +53,19 @@
 #define PROCESSINTERFACE_HH
 
 #include <QtGui>
-#include <QProgressDialog>
+#include <OpenFlipper/threads/OpenFlipperThread.hh>
 
 
- /**
+ /** \brief Interface class controlling threadding in OpenFlipper
+ *
+ *
+ * Example:\n
+ * OpenFlipperThread* thread = new OpenFlipperThread(name() + "unique id");                     // Create your thread containing a unique id \n
+ * connect(thread,SIGNAL( state(QString, int)), this,SIGNAL(setJobState(QString, int)));        // connect your threads state info to the global one \n
+ * connect(thread,SIGNAL( finished(QString)), this,SIGNAL(finishJob(QString)));                 // connect your threads finish info to the global one ( you can do the same for a local one ) \n
+ * connect(thread,SIGNAL( function()), this,SLOT(testFunctionThread()),Qt::DirectConnection);   // You can directly give a slot of your app that gets called \n
+ * emit startJob( name() + "1", "Description" , 0 , 100 , false);                               // Tell the core about your thread
+ * thread->start();                                                                             // start execution
  */
 class ProcessInterface {
 
@@ -78,8 +87,10 @@ class ProcessInterface {
       *
       * min and max define the range your status values will be in.
       * 
+      * blocking will define, if user interaction with the core should still be possible
+      *
       */
-      virtual void startJob( QString /*_jobId*/, QString /*_description */, int /*_min*/ , int /*_max*/ ) {};
+      virtual void startJob( QString /*_jobId*/, QString /*_description */, int /*_min*/ , int /*_max*/ , bool /*_blocking */ = false) {};
 
       /** \brief update job state
       *
