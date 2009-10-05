@@ -47,6 +47,22 @@ acg_append_files (ui "*.ui" ${directories})
 acg_append_files_recursive (headers "*.hh" ${CMAKE_SOURCE_DIR}/ObjectTypes)
 acg_append_files_recursive (sources "*.cc" ${CMAKE_SOURCE_DIR}/ObjectTypes)
 
+set ( ADDITIONAL_PLUGINLIB_LIBS "")
+
+# search all ObjectTypes in the ObjectType directory for additional build information
+file (
+  GLOB _plugin_buildinfos
+  RELATIVE "${CMAKE_SOURCE_DIR}"
+  "${CMAKE_SOURCE_DIR}/ObjectTypes/*/CMakeLists.txt"
+)
+
+# add all found libs to the build
+foreach ( _buildInfo ${_plugin_buildinfos})
+  message(status "Getting info from ${CMAKE_SOURCE_DIR}/${_buildInfo}" )
+  include ("${CMAKE_SOURCE_DIR}/${_buildInfo}")
+endforeach ()
+  
+
 # remove template cc files from source file list
 acg_drop_templates (sources)
 
@@ -70,4 +86,5 @@ target_link_libraries (PluginLib
   ${GLEW_LIBRARY}
   ${GLUT_LIBRARIES}
   ${FTGL_LIBS}
+  ${ADDITIONAL_PLUGINLIB_LIBS}
 )
