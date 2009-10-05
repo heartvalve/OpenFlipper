@@ -43,7 +43,7 @@ OpenFlipperThread::OpenFlipperThread( QString _jobId ) :
 }
 
 OpenFlipperThread::~OpenFlipperThread() {
-  
+  std::cerr << "Destructor Thread" << std::endl;
 }
 
 void OpenFlipperThread::run()
@@ -63,14 +63,24 @@ void OpenFlipperThread::run()
     connect(this,SIGNAL(startProcessingInternal()),job_,SLOT(startJobProcessing()),Qt::QueuedConnection);
   }
   
-  std::cerr << "Start Loop" << std::endl;
+  std::cerr << "Start Event Loop" << std::endl;
 
   startup_.unlock();
   
   // Start event queue
   exec();
   
-  std::cerr << "End Loop" << std::endl;
+  std::cerr << "End Event Loop " << std::endl;
+  
+  
+// TODO: Self destuction sometimes does not work! 
+// Seems to be a race condition!!!
+
+//   std::cerr << "Delete thread Object " << std::endl;
+//   
+//   deleteLater();
+  
+//   std::cerr << "Deleted Thread Object" << std::endl;
 }
 
 void OpenFlipperThread::cancel() {
@@ -78,19 +88,23 @@ void OpenFlipperThread::cancel() {
 }
 
 void OpenFlipperThread::slotCancel( QString _jobId) {
+ std::cerr << "Thread : cancel received" << std::endl;
  if ( _jobId == jobId_ )
   cancel(); 
 }
 
 void OpenFlipperThread::slotJobFinished( ) {
   emit finished( jobId_ );
+  
+  quit();
+  
 }
 
 
 void OpenFlipperThread::startProcessing() {
   std::cerr << "Thread emit startProcessing" << std::endl;
   
-  // Wait for thread to come up with event loop
+  // Wait for thread to come up with event loop ... otherwise the signals might get lost
   startup_.lock();
   
   // Tell internal wrapper to start with the processing
@@ -100,9 +114,13 @@ void OpenFlipperThread::startProcessing() {
   std::cerr << "Thread emit startProcessing done" << std::endl;
 }
 
+OpenFlipperJob::~OpenFlipperJob() 
+{ 
+  std::cerr << "Destructor job called" << std::endl;
+}
 
 void OpenFlipperJob::startJobProcessing() {
-  std::cerr << "job emit process" << std::endl;
+  std::cerr << "job start process" << std::endl;
   // Actually start the process ( This function will block as it uses a direct connection )
   // But it only blocks the current thread.
   emit process(); 
@@ -110,5 +128,8 @@ void OpenFlipperJob::startJobProcessing() {
   // Tell thread that the job is done.
   emit finished();
   
-  std::cerr << "job emit process done" << std::endl;
+  // Cleanup this object
+  deleteLater();
+  
+  std::cerr << "processing done" << std::endl;
 }
