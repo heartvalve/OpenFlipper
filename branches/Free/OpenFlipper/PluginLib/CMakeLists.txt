@@ -56,13 +56,12 @@ file (
   "${CMAKE_SOURCE_DIR}/ObjectTypes/*/CMakeLists.txt"
 )
 
-# add all found libs to the build
+# include all cmake files fouund for objecttypes here
 foreach ( _buildInfo ${_plugin_buildinfos})
   message(status "Getting info from ${CMAKE_SOURCE_DIR}/${_buildInfo}" )
   include ("${CMAKE_SOURCE_DIR}/${_buildInfo}")
 endforeach ()
   
-
 # remove template cc files from source file list
 acg_drop_templates (sources)
 
