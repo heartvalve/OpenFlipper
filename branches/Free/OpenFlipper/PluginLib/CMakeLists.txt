@@ -58,7 +58,6 @@ file (
 
 # include all cmake files fouund for objecttypes here
 foreach ( _buildInfo ${_plugin_buildinfos})
-  message(status "Getting info from ${CMAKE_SOURCE_DIR}/${_buildInfo}" )
   include ("${CMAKE_SOURCE_DIR}/${_buildInfo}")
 endforeach ()
   
