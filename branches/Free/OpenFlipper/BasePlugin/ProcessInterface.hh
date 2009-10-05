@@ -55,6 +55,9 @@
 #include <QtGui>
 #include <OpenFlipper/threads/OpenFlipperThread.hh>
 
+#ifndef WIN32
+#warning Warning, process interface is under development and might change in future releases
+#endif
 
  /** \brief Interface class controlling threadding in OpenFlipper
  *
