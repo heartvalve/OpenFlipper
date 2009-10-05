@@ -447,13 +447,19 @@ void TreeModel::objectChanged(int _id) {
  */
 void TreeModel::objectAdded(BaseObject* _object){
 
+  // check if item already in model tree
+  // this function can be called by addEmpty and fileOpened
+  // both will be called by fileOpened such that the item
+  // already exists
+  if( rootItem_->childExists( _object->id() )) 
+    return;
+
   TreeItem* parent = 0;
   //find the parent
   if ( _object->parent() == PluginFunctions::objectRoot() )
     parent = rootItem_;
   else
     parent = rootItem_->childExists( _object->parent()->id() );
-
 
   if (parent != 0){
     QModelIndex parentIndex = getModelIndex(parent, 0);
