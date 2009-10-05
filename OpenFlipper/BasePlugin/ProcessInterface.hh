@@ -115,7 +115,7 @@ class ProcessInterface {
         * This function is called when the user cancels a job. 
         * The returned name is the name of the job which has been canceled
         */
-        virtual void canceledJob (QString /*_job */) = 0;      
+        virtual void canceledJob (QString /*_job */) {};      
       
 };
 
