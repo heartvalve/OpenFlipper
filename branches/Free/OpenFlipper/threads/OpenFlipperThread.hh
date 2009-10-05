@@ -194,7 +194,7 @@ class DLLEXPORT OpenFlipperJob : public QObject
   
   public:
     OpenFlipperJob() {}
-    ~OpenFlipperJob() {}
+    ~OpenFlipperJob();
   
   signals:
     /** \brief connection to actual processing function
