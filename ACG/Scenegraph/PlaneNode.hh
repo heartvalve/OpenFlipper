@@ -97,10 +97,11 @@ class ACGDLLEXPORT PlaneNode : public BaseNode
     /// draw Coordsys for object picking
     void pick(GLState& _state, PickTarget _target);
 
-    /// set position
+    /// set center position and normal of plane
     void setPosition(const Vec3f& _position, const Vec3f& _normal);
 
-    /// set position
+    /// set center position, local xdirection (multiplied with width)
+    /// and local ydirection (multiplied with height)
     void setPosition(const Vec3f& _position, const Vec3f& _xDirection, const Vec3f& _yDirection);
 
     /// tranform the plane with given matrix
@@ -113,16 +114,16 @@ class ACGDLLEXPORT PlaneNode : public BaseNode
 
     bool manipulatorVisible();
 
-    /// get current position
+    /// get center position of the plane
     Vec3f position();
 
     /// get current normal
     Vec3f normal();
 
-    /// local x direction
+    /// local x direction (multiplied with width)
     Vec3f xDirection();
 
-    /// local y direction
+    /// local y direction (multiplied with height)
     Vec3f yDirection();
 
   private:
