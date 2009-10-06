@@ -156,7 +156,8 @@ void SelectionPlugin::initializePlugin() {
   emit addToolbox("Selections",tool_);
 
   // create sphere for paint sphere selection
-  sphere_mat_node_  = new ACG::SceneGraph::MaterialNode(PluginFunctions::getRootNode(), tr("Sphere Color").toStdString());
+  sphere_mat_node_  = new ACG::SceneGraph::MaterialNode(0, tr("Selection Plugin: Selection Sphere Material").toStdString());
+  PluginFunctions::addGlobalNode(sphere_mat_node_);
   sphere_mat_node_->applyProperties( MaterialNode::Blending  |
                                      MaterialNode::Material  |
                                      MaterialNode::AlphaTest |
@@ -166,7 +167,7 @@ void SelectionPlugin::initializePlugin() {
   sphere_mat_node_->disable_alpha_test();
   sphere_mat_node_->enable_backface_culling();
 
-  sphere_node_ = new ACG::SceneGraph::GlutPrimitiveNode(ACG::SceneGraph::GlutPrimitiveNode::SPHERE, sphere_mat_node_, tr("Sphere").toStdString());
+  sphere_node_ = new ACG::SceneGraph::GlutPrimitiveNode(ACG::SceneGraph::GlutPrimitiveNode::SPHERE, sphere_mat_node_, tr("Selection Plugin: Selection Sphere").toStdString());
   sphere_node_->drawMode(ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
   sphere_node_->hide();
 
@@ -174,8 +175,8 @@ void SelectionPlugin::initializePlugin() {
 
   sphere_selection_ = false;
 
-  line_node_ = new ACG::SceneGraph::LineNode (ACG::SceneGraph::LineNode::PolygonMode,
-                                              PluginFunctions::getRootNode(), tr("Lasso line").toStdString());
+  line_node_ = new ACG::SceneGraph::LineNode (ACG::SceneGraph::LineNode::PolygonMode,0, tr("Selection Plugin: Lasso Selection Line").toStdString());
+  PluginFunctions::addGlobalNode(line_node_);                                              
   line_node_->set_line_width (2.0);
   line_node_->depthFunc (GL_ALWAYS);
   line_node_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);

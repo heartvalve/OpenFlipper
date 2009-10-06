@@ -124,7 +124,6 @@ void SelectionPlugin::paintSphereSelection( MeshT* _mesh ,
 
         // Check which points of the new face lie inside the sphere
         uint fVertices = 0;
-        bool lastVertexInside = false;
 
         std::vector<typename MeshT::VertexHandle>   vertex_handles;
         std::vector<typename MeshT::EdgeHandle>     edge_handles;
@@ -139,11 +138,8 @@ void SelectionPlugin::paintSphereSelection( MeshT* _mesh ,
           if ( ( _mesh->point(_mesh->to_vertex_handle( fh_it.handle() ) ) -  _hitpoint).sqrnorm() <= sqr_radius )
             edge_handles.push_back( _mesh->edge_handle( fh_it.handle() ) );
               
-
-            lastVertexInside = true;
-          }else
-            lastVertexInside = false;
-
+          } 
+          
           fVertices++;
         }
 
