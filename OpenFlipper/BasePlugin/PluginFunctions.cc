@@ -83,15 +83,20 @@ static unsigned int activeExaminer_ = 0;
 
 /** \brief DONT USE DIRECTLY!!
  *
- * The pointer to the beginning of the scenegraph nodes ( only visible part )
- * Between the actual root node ( sceneGraph_root_node_ ) and this node global nodes could be added
+ * The pointer to the beginning of the scenegraph nodes ( only the nodes belonging to objects )
+ * Between the actual root node ( sceneGraphRootNode_ ) and this node global nodes could be added
  * This pointer is internally used to access the scenegraphs root node
  */
-static SeparatorNode* root_node_;
+static SeparatorNode* dataRootNode_ = 0;
+
+/** This node is used to add nodes between the root node of the scenegraph and the objects separator node.
+* It is directly below the sceneGraphRootNode_
+*/
+static SeparatorNode* dataSeparatorNode_ = 0;
 
 /** \brief Scenegraph root node
  */
-static SeparatorNode* sceneGraph_root_node_;
+static SeparatorNode* sceneGraphRootNode_ = 0;
 
 /** \brief a dummy properties object returned as a reference if the real object does not exist
  *
@@ -192,13 +197,28 @@ void setEncodedExaminerView(int _viewerId , QString _view ) {
   examiner_widgets_[_viewerId]->decodeView ( _view );
 }
 
+void setDataSeparatorNodes( SeparatorNode* _dataSeparatorNode ) {
+  
+  // The function should only be called once by the core. 
 
-void setRootNode( SeparatorNode* _root_node ) {
-   PluginFunctions::root_node_ = _root_node;
+  // Set the separatorNode
+  PluginFunctions::dataSeparatorNode_ = _dataSeparatorNode;
+
+  
+  if ( PluginFunctions::dataSeparatorNode_->nChildren() != 1 ){
+    std::cerr << "Only one child allowed for dataSeparatorNode on initialization!" << std::endl;
+    std::cerr << "The Core has initialized the scenegraph in a strange way!" << std::endl;
+    ACG::SceneGraph::BaseNode* child = *(PluginFunctions::dataSeparatorNode_->childrenBegin());
+  }
+  
+  // Set the root node for the data objects
+  // which has to be a child of the dataSeparatorNode_
+  PluginFunctions::dataRootNode_ = dynamic_cast<ACG::SceneGraph::SeparatorNode*> (*(PluginFunctions::dataSeparatorNode_->childrenBegin()) );
+  
 }
 
 void setSceneGraphRootNode( SeparatorNode* _root_node ) {
-   PluginFunctions::sceneGraph_root_node_ = _root_node;
+   PluginFunctions::sceneGraphRootNode_ = _root_node;
 }
 
 bool getPickedObject(const unsigned int _node_idx , BaseObjectData*& _object) {
@@ -428,7 +448,7 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
 
 //Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
 void traverse( ACG::SceneGraph::MouseEventAction  &_action ) {
-   ACG::SceneGraph::traverse(sceneGraph_root_node_,
+   ACG::SceneGraph::traverse(sceneGraphRootNode_,
                              _action,viewerProperties().glState() );
 }
 
@@ -440,7 +460,7 @@ void traverse( const unsigned int _examiner, ACG::SceneGraph::MouseEventAction  
     return;
   }
 
-  ACG::SceneGraph::traverse(sceneGraph_root_node_, _action,viewerProperties(_examiner).glState() );
+  ACG::SceneGraph::traverse(sceneGraphRootNode_, _action,viewerProperties(_examiner).glState() );
 }
 
 
@@ -778,28 +798,32 @@ ViewObjectMarker * defaultViewObjectMarker()
 
 
 ACG::SceneGraph::BaseNode* getSceneGraphRootNode() {
-   return PluginFunctions::sceneGraph_root_node_;
+   return PluginFunctions::sceneGraphRootNode_;
 }
 
 ACG::SceneGraph::BaseNode* getRootNode() {
-   return PluginFunctions::root_node_;
-}
-
-void addNode(ACG::SceneGraph::BaseNode* _node){
-  if (PluginFunctions::root_node_)
-    _node->set_parent( PluginFunctions::root_node_ );
+  return PluginFunctions::dataRootNode_;
 }
 
 void addGlobalNode(ACG::SceneGraph::BaseNode* _node){
-  if (PluginFunctions::sceneGraph_root_node_){
-    //set node as new parent for root's children
-    while( PluginFunctions::sceneGraph_root_node_->nChildren() > 0 ){
-      ACG::SceneGraph::BaseNode* child = *(PluginFunctions::sceneGraph_root_node_->childrenBegin());
-      child->set_parent( _node );
-    }
+  if (PluginFunctions::sceneGraphRootNode_)
+    _node->set_parent( PluginFunctions::sceneGraphRootNode_ );
+}
 
-    _node->set_parent( PluginFunctions::sceneGraph_root_node_ );
+
+void addObjectRenderingNode(ACG::SceneGraph::BaseNode* _node){
+  if (PluginFunctions::sceneGraphRootNode_){
+    
+    // get the current parent Node 
+    ACG::SceneGraph::BaseNode* parent = dataRootNode_->parent();
+
+    // Move the node to the new parent
+    _node->set_parent(parent);
+    
+    // move dataRootNode_ to the new parent
+    dataRootNode_->set_parent(_node);
   }
+  
 }
 
 int objectCount() {
