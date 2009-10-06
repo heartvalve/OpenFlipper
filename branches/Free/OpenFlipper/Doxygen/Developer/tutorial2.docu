@@ -6,7 +6,7 @@
  *
  * \subsection ex2Header Definition of the header
  *
- * To start of we first have to add two additional header files. The first one is the \c ToolboxInterface.
+ * To start off we first have to add two additional header files. The first one is the \c ToolboxInterface.
  * We need this interface because we want to add a Toolbox to our plugin in order to be able to set parameters.
  * Additionally, we want to use the \c LoggingInterface so that we can inform the user of our plugin when something
  * went wrong.
@@ -45,14 +45,13 @@
  * \skipline void log(
  * \skipline void log(
  *
- *
- * The last Interface that's left over is the \c ToolboxInterface from which we are only implenting one function:
+ * The last Interface that's left over is the \c ToolboxInterface from which we are only implenting one signal:
  *
  * \dontinclude example/SmootherPlugin.hh
- * \skipline bool initializeToolbox
+ * \skipline void addToolbox( QString _name  , QWidget* _widget );
  *
- * As we will see later, this function is used to setup a ToolBox (i.e. a \c QWidget ) and return a reference of this
- * ToolBox to OpenFlipper so that it can be intergrated into the GUI.
+ * As we will see later, this function is used to add a ToolBox (i.e. a \c QWidget ) to
+ * the OpenFlipper user interface.
  *
  * As a last step we have to add to include additional class members to control the parameter for the smoothing and
  * to actually compute the smoothed mesh.
@@ -68,12 +67,13 @@
  *
  * \subsection ex2Implemenation1 Implemention of the GUI
  *
- * As we have already mentioned in \ref ex2Header, the ToolBox is generated inside the initializeToolbox() function.
- * So inside this function we begin with creating the elements of the ToolBox:
+ * As we have already mentioned in \ref ex2Header, the tool box is generated inside the pluginsInitialized() function
+ * and then added by the addToolbox() signal passing a reference to our toolbox.
+ * So we begin by creating the elements of the ToolBox:
  * 
  * \dontinclude example/SmootherPlugin.cc
  * \skipline QWidget
- * \until Iterations:");
+ * \until QLabel* label = new QLabel("Iterations:");
  *
  * Later, the smoothButton is used to start the mesh smoothing and the iterationsSpinbox_ allows the user to control
  * the number of smoothing iterations that should be performed.
@@ -87,12 +87,12 @@
  * Here, the SpacerItem, which is added last, only helps aligning the elements at the top of the toolbox.
  *
  * We have to connect the smoothButton to the simpleLaplace() slot of our class, so that after clicking
- * the button the slot is called. Finally, we return a reference to the new Toolbox by assigning it to _widget and
- * return true because we succesfully created the Toolbox.
+ * the button the slot is called.  Finally, when the tool box has been
+ * entirely created, we emit the signal to add the tool box to OpenFlipper:
  *
  * \dontinclude example/SmootherPlugin.cc
  * \skipline connect
- * \until true;
+ * \until emit addToolbox( tr("Smoother") , toolBox );
  *
  *
  * \subsection ex2Implemenation2 Implemention of the Smoother
@@ -147,6 +147,13 @@
  * \skipline  // Remove the propert
  * \until mesh->update_normals();
  *
+ * We now implement the same procedure for arbitrary polygonal meshes using the
+ * template types of OpenMesh. Starting at line (see \ref com_src_ex2 for the complete
+ * source code of this example plugin):
+ *
+ * \dontinclude example/SmootherPlugin.cc
+ * \skipline } else if ( o_it->dataType( DATA_POLY_MESH ) ) {
+ *
  * The next step is to tell the OpenFlipper core that our plugin has updated an object in the scene.
  * The affected object will then be redrawn. See \ref geometryData for information on how to handle geometry data in a plugin.
  *
@@ -171,6 +178,6 @@
  * SmootherPlugin.cc
  * \include example/SmootherPlugin.cc
  * 
- * We use the qmake project file presented in \ref ex1b to build this plugin.
- *
+ * We use the cmake project file presented in \ref ex1c to build this plugin.
+ * (Or you can also use the obsolete qmake project file presented in \ref ex1b.)
  */
