@@ -87,9 +87,9 @@ void setViewerProperties( std::vector< Viewer::ViewerProperties* > _viewerProper
 DLLEXPORT
 void setSceneGraphRootNode( SeparatorNode* _root_node );
 
-/// Set the internal data root node pointer ( DO NOT USE!! )
+/// Set the internal data root node pointers ( DO NOT USE!! )
 DLLEXPORT
-void setRootNode( SeparatorNode* _root_node );
+void setDataSeparatorNodes( SeparatorNode* _dataRootNode );
 
 /** @} */
 

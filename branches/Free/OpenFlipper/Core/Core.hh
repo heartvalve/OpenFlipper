@@ -587,8 +587,15 @@ private:
       /// Scenegraphs root node
       SeparatorNode* root_node_scenegraph_;
 
-      /// Data root node
-      SeparatorNode*  root_node_;
+      /// Separator Node holding all core scenegraph nodes
+      SeparatorNode* core_nodes_;
+      
+      
+      ///Toplevel Nodes for data objects
+      SeparatorNode* dataSeparatorNode_;
+      
+      /// Root Node for data objects
+      SeparatorNode*  dataRootNode_;
 
       /// Node for coordsys Material
       ACG::SceneGraph::MaterialNode* coordsysMaterialNode_;

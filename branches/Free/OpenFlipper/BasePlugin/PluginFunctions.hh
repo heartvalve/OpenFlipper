@@ -279,21 +279,38 @@ void pickMode ( std::string _mode);
 DLLEXPORT
 void getCurrentViewImage(QImage& _image);
 
-/// Get the root node
+/** \brief get scenegraph root node
+*
+* Get the real root node of the scenegraph.This node is the topmost
+* node of the scenegraph. Normally you do not need to use this node.
+* All objects should be added below the data root node which you can get
+* with getRootNode().
+*/
 DLLEXPORT
 ACG::SceneGraph::BaseNode* getSceneGraphRootNode();
 
-/// Get the root node
+/** \brief Get the root node for data objects
+*
+* Get the root node for the objects. This node is a separator node.
+* All nodes belonging to objects have to be placed below this node.
+* Add a separatornode for each object below this node! */
 DLLEXPORT
 ACG::SceneGraph::BaseNode* getRootNode();
 
 /// Add a node under the root node
 DLLEXPORT
-void addNode(ACG::SceneGraph::BaseNode* _node);
-
-/// Add a node between root node and its children
-DLLEXPORT
 void addGlobalNode(ACG::SceneGraph::BaseNode* _node);
+
+/** \brief Add scenegraph node modifing object rendering
+*
+* This function adds nodes in front of the object root node.
+* Therefore all objects renderings will be modified by the
+* state changes in the added node. This might be usefull for
+* adding for example a slicing node, which adds clipping planes
+* such that the objects will be sliced.
+*/
+DLLEXPORT
+void addObjectRenderingNode(ACG::SceneGraph::BaseNode* _node);
 
 /// Set the current Action Mode (PickMode,ExamineMode,...)
 DLLEXPORT

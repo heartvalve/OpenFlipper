@@ -127,11 +127,23 @@ Core() :
 
   //init nodes
   root_node_scenegraph_ = new ACG::SceneGraph::SeparatorNode(0, "SceneGraph Root Node");
-  root_node_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_, "Data Root Node");
-  coordsysMaterialNode_ = new ACG::SceneGraph::MaterialNode(root_node_scenegraph_,"Coordsys Material Node");
-  coordsysNode_ = new ACG::SceneGraph::CoordsysNode(coordsysMaterialNode_,"Core Coordsys Node");
+  
+  // This seperator will manage the cores nodes
+  core_nodes_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_, "Core Nodes");
+  
+  // Coordsys rendering nodes
+  coordsysMaterialNode_ = new ACG::SceneGraph::MaterialNode(core_nodes_,"Coordsys Material Node");
+  coordsysNode_ = new ACG::SceneGraph::CoordsysNode(coordsysMaterialNode_,"Core Coordsys Node");  
   coordsysNode_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);
-//   gridNode_ = new ACG::SceneGraph::GridNode(root_node_scenegraph_,"Grid Node");
+  
+  // seperator handling the nodes for data
+  dataSeparatorNode_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_, "Data Separator Root Node");
+  
+  // seperator handling the nodes for data
+  dataRootNode_      = new ACG::SceneGraph::SeparatorNode(dataSeparatorNode_, "Data Root Node");
+  
+  
+//   gridNode_ = new ACG::SceneGraph::GridNode(core_nodes_,"Grid Node");
 //   gridNode_->hide();
 
    // Add ViewMode All
@@ -184,7 +196,7 @@ void
 Core::init() {
 
   // Make root_node available to the plugins ( defined in PluginFunctions.hh)
-  PluginFunctions::setRootNode( root_node_ );
+  PluginFunctions::setDataSeparatorNodes( dataSeparatorNode_ );
 
   PluginFunctions::setSceneGraphRootNode( root_node_scenegraph_ );
 
