@@ -205,7 +205,7 @@ void PlaneNode::setPosition(const Vec3f& _position, const Vec3f& _normal)
   xDirection_[ (comp + 2) % 3 ] = 1;
   xDirection_ = xDirection_.normalize();
 
-  yDirection_ = xDirection_ % _normal;
+  yDirection_ = _normal % xDirection_;
   yDirection_ = yDirection_.normalize();
 
   position_ = _position;
