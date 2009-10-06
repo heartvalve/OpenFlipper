@@ -21,12 +21,11 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
     //LoggingInterface
     void log(Logtype _type, QString _message);
     void log(QString _message);
-    
+
     // ToolboxInterface
-    void addToolbox( QString _name  , QWidget* _widget );  
+    void addToolbox( QString _name, QWidget* _widget );
 
   public:
-
 
     // BaseInterface
     QString name() { return (QString("Simple Smoother")); };
@@ -38,11 +37,11 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
     QSpinBox* iterationsSpinbox_;
 
    private slots:
-     
+
     // BaseInterface
     void initializePlugin();
-     
-    
+
+
     void simpleLaplace();
 
    public slots:
