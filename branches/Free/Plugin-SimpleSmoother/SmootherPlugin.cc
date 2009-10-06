@@ -85,6 +85,8 @@ void SmootherPlugin::simpleLaplace() {
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
 
+    bool selectionExists = false;
+
     if ( o_it->dataType( DATA_TRIANGLE_MESH ) ) {
 
         // Get the mesh to work on
@@ -102,10 +104,16 @@ void SmootherPlugin::simpleLaplace() {
           TriMesh::VertexIter v_it, v_end=mesh->vertices_end();
           for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
             mesh->property( origPositions, v_it ) = mesh->point(v_it);
+            // See if at least one vertex has been selected
+            selectionExists |= mesh->status(v_it).selected();
           }
 
           // Do one smoothing step (For each point of the mesh ... )
           for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
+
+            if(selectionExists && mesh->status(v_it).selected() == false) {
+              continue;
+            }
 
             TriMesh::Point point = TriMesh::Point(0.0,0.0,0.0);
 
@@ -163,10 +171,16 @@ void SmootherPlugin::simpleLaplace() {
          PolyMesh::VertexIter v_it, v_end=mesh->vertices_end();
          for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
             mesh->property( origPositions, v_it ) = mesh->point(v_it);
+            // See if at least one vertex has been selected
+            selectionExists |= mesh->status(v_it).selected();
          }
 
          // Do one smoothing step (For each point of the mesh ... )
          for (v_it=mesh->vertices_begin(); v_it!=v_end; ++v_it) {
+
+            if(selectionExists && mesh->status(v_it).selected() == false) {
+              continue;
+            }
 
             PolyMesh::Point point = PolyMesh::Point(0.0,0.0,0.0);
 
