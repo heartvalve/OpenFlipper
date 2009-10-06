@@ -84,6 +84,8 @@ namespace SceneGraph {
 /// What target to use for picking
 enum PickTarget 
 {
+  /// picks faces (may not be implemented for all nodes)
+  PICK_CELL,
   /// picks faces (should be implemented for all nodes)
   PICK_FACE,
   /// picks edges (may not be implemented for all nodes)
