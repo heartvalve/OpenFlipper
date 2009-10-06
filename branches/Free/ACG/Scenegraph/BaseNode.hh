@@ -302,7 +302,14 @@ public:
   } 
   
 
+  /// Get the nodes parent node
   BaseNode* parent() { return parent_; }
+  
+  /** \brief Set the parent of this node.
+  *
+  * This function will remove this node from its original parents children, if the parent exists.
+  * And will add it to the new parents children. 
+  */
   void set_parent(BaseNode* _parent);
 
 
