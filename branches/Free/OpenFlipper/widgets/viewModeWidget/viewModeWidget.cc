@@ -226,18 +226,37 @@ void viewModeWidget::slotModeContextMenu ( const QPoint & _pos ){
     QMenu menu(0);
     
     menu.addAction(tr("Remove Mode"), this, SLOT ( slotRemoveMode() ));
+    menu.addAction(tr("Copy Mode"), this, SLOT ( slotCopyMode() ));      
+    menu.addAction(tr("Change Icon"), this, SLOT ( slotSetIcon() ));
     
     //check if mode is custom e.g. that it can be removed
     for (int i=0; i < modes_.size(); i++)
       if (modes_[i]->name == viewModeList->currentItem()->text()){
         menu.actions()[0]->setEnabled(modes_[i]->custom);
+        menu.actions()[2]->setEnabled(modes_[i]->custom);
         break;
       }
       
-    menu.addAction(tr("Copy Mode"), this, SLOT ( slotCopyMode() ));      
-      
     menu.exec(viewModeList->mapToGlobal( _pos) );
   }
+}
+
+void viewModeWidget::slotSetIcon() {
+  // Get the correct mode
+  int id = -1;
+  for (int i=0; i < modes_.size(); i++)
+    if (modes_[i]->name == viewModeList->currentItem()->text()){
+      id = i;
+      break;
+    }
+    
+  if ( id == -1) {
+    std::cerr << "Unable to find Mode viewModeWidget::slotSetIcon()" << std::endl;
+    return;
+  }
+  
+  
+  std::cerr << "Todo : implement change icon" << std::endl;
 }
 
 // =======================================================================================================
