@@ -196,7 +196,18 @@ void Core::setupOptions() {
       emit log(LOGERR,tr("Unable to create config dir ~/.OpenFlipper"));
       return;
     }
+    
   }
+  
+  // Create a local directory to cache icons
+  QDir iconCacheDir = configDir;
+
+  // Create a personal Icon cache dir to save for example user added icons
+  if ( ! iconCacheDir.exists("Icons") ){
+    configDir.mkdir("Icons");
+    emit log(LOGOUT,tr("Creating Icon Cache Dir ~/.OpenFlipper/Icons"));    
+  }
+  
   OpenFlipper::Options::configDir(configDir);
 
   // Remember the main application directory (assumed to be one above executable Path)

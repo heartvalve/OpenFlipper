@@ -87,6 +87,8 @@ class viewModeWidget : public QDialog, public Ui::viewMode
       * This slot creates an new empty view mode
       */    
       void slotAddMode();
+      
+
     
     
     // ============================================
@@ -97,6 +99,12 @@ class viewModeWidget : public QDialog, public Ui::viewMode
       * This slot shows the used toolbar Context Menu
       */
       void slotModeContextMenu ( const QPoint & _pos );
+      
+      /** \brief Context menu slot to change the icon for a view mode
+      *
+      * This slot asks the user to change the icon of the given view mode
+      */    
+      void slotSetIcon();      
     
     // ============================================
     // ToolBox and ToolBar Lists update functions
