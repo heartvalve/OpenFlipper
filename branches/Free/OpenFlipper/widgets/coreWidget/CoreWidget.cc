@@ -333,6 +333,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   viewerToolbar_->setAllowedAreas(Qt::AllToolBarAreas);
   viewerToolbar_->setIconSize(QSize(20,20));
   viewerToolbar_->setObjectName(tr("ViewerToolbar"));
+  
+  slotAddToolbar(viewerToolbar_);
 
   moveButton_ = new QToolButton( viewerToolbar_ );
   moveButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"transform-move.png") );
