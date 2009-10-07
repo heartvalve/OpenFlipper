@@ -100,7 +100,20 @@ void viewModeChangeWidget::show(QString _lastMode){
     QListWidgetItem *item = new QListWidgetItem(viewModeList);
     item->setTextAlignment(Qt::AlignHCenter);
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-    item->setIcon(QIcon(OpenFlipper::Options::iconDirStr() + QDir::separator () + modes_[i]->icon));
+    
+    QFile iconFile( OpenFlipper::Options::iconDirStr() + QDir::separator () + modes_[i]->icon  );
+    
+    if ( iconFile.exists() )
+      item->setIcon( QIcon(iconFile.fileName()) );
+    else {
+      iconFile.setFileName( OpenFlipper::Options::configDirStr() + QDir::separator() + "Icons" + QDir::separator() + modes_[i]->icon );
+      if ( iconFile.exists() )
+        item->setIcon( QIcon(iconFile.fileName()) );
+      else {
+        item->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + QDir::separator () + "Unknown.png")  );
+        std::cerr << "Unable to find icon file! " << iconFile.fileName().toStdString() <<  std::endl;
+      }
+    }
     
     item->setText(modes_[i]->name);
     
