@@ -332,7 +332,9 @@ class DLLEXPORT BaseObjectData : public BaseObject
 
     /** \brief remove an additional node from the object
     *
-    * If additional nodes are stored for this object, such a node can be removed using this function
+    * If additional nodes are stored for this object, such a node can be removed using this function.
+    * If this node has children, they will be removed from the scenegraph as well (and their
+    * memory is freed).
     *
     *  @param _node Needed for type specification
     *  @param _pluginName Name of the current plugin
