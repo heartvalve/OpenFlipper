@@ -116,6 +116,9 @@ void Core::slotVisibilityChanged( int _id ) {
   // tell plugins
   emit visibilityChanged( _id );
 
+  // Reset scenegraph but keep scene center!
+  resetScenegraph(false);
+  
   updateView();
 }
 
