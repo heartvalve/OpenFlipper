@@ -126,7 +126,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   //====================================================================================================
 
   QMenu* renderingOptionsMenu = new QMenu(tr("Rendering Options"),_menu);
-  renderingOptionsMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"renderingOptions.png"));
+  renderingOptionsMenu->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"core_renderingOptions.png") );
   _menu->addMenu(renderingOptionsMenu);
 
   QAction* projectionAction = 0;
