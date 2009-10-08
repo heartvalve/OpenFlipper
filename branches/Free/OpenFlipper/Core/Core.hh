@@ -553,9 +553,6 @@ private:
       /// Gets called by examiner widget when Wheel is moved in picking mode
       void slotWheelEvent( QWheelEvent * _event, const std::string & _mode);
 
-      /// The current Toolbox item has changed
-//       void slotToolboxSwitched(int _index);
-
       /// Slot adding empty object from Menu
       void slotAddEmptyObjectMenu();
 
