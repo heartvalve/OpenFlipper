@@ -286,6 +286,7 @@ void CoreWidget::setupMenuBar()
 
   QAction* navigationSwitchAction = new QAction( tr("First-person Navigation"), viewMenu_ );
   navigationSwitchAction->setCheckable( true );
+  navigationSwitchAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"core_firstPersonMode.png") );
   navigationSwitchAction->setStatusTip( tr("Switch between normal and first-person navigation mode."));
   navigationSwitchAction->setWhatsThis( tr("Switch between normal and first-person navigation mode."));
   navigationSwitchAction->setChecked( false );
