@@ -359,6 +359,7 @@ void CoreWidget::setupMenuBar()
   viewMenu_->addSeparator();
 
   QAction* wheelSwitchAction = new QAction( tr("Show / hide wheels"), viewMenu_ );
+  wheelSwitchAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"core_wheels.png") );
   wheelSwitchAction->setCheckable( true );
   wheelSwitchAction->setStatusTip( tr("Show / hide navigation wheels in viewer widget."));
   wheelSwitchAction->setWhatsThis( tr("Show / hide navigation wheels in viewer widget.<br><br>"
