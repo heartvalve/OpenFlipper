@@ -233,7 +233,6 @@ function (_build_openflipper_plugin plugin)
     acg_qt4_automoc (moc_targets ${headers})
     acg_qt4_autoqrc (qrc_targets ${qrc})
 
-    message(status "targets: ${qrc_targets} ")
     add_library (Plugin-${plugin} MODULE ${uic_targets} ${sources} ${headers} ${moc_targets} ${qrc_targets} ${${_PLUGIN}_ADDSRC})
 
     # add this plugin to build plugin list for dependency tracking
