@@ -282,6 +282,36 @@ macro (acg_qt4_autouic uic_SRCS)
   endforeach ()
 endmacro ()
 
+
+# generate qrc targets for sources in list
+macro (acg_qt4_autoqrc qrc_SRCS)
+
+  set (_matching_FILES )
+  foreach (_current_FILE ${ARGN})
+
+     get_filename_component (_abs_FILE ${_current_FILE} ABSOLUTE)
+
+     if ( EXISTS ${_abs_FILE} )
+
+        file (READ ${_abs_FILE} _contents)
+
+        get_filename_component (_abs_PATH ${_abs_FILE} PATH)
+
+        get_filename_component (_basename ${_current_FILE} NAME_WE)
+        set (_outfile ${CMAKE_CURRENT_BINARY_DIR}/qrc_${_basename}.cpp)
+        
+        add_custom_command (OUTPUT ${_outfile}
+            COMMAND ${QT_RCC_EXECUTABLE}
+            ARGS -o ${_outfile}  ${_abs_FILE}
+            DEPENDS ${_abs_FILE}) 
+
+        add_file_dependencies (${_source} ${_outfile})
+        set (${qrc_SRCS} ${${qrc_SRCS}} ${_outfile})
+
+     endif ()
+  endforeach ()
+endmacro ()
+
 # get all files in directory, but ignore svn
 macro (acg_get_files_in_dir ret dir)
   file (GLOB_RECURSE __files RELATIVE "${dir}" "${dir}/*")
