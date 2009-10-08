@@ -237,7 +237,7 @@ void CoreWidget::setupMenuBar()
   //============================================================================================================
 
   QMenu* renderingOptionsMenu = new QMenu(tr("Rendering Options"),viewMenu_);
-  renderingOptionsMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"renderingOptions.png"));
+  renderingOptionsMenu->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"core_renderingOptions.png") );
   viewMenu_->addMenu(renderingOptionsMenu);
 
   orthogonalProjectionAction_ = new QAction( tr("Switch Viewers to Orthogonal Projection"), renderingOptionsMenu );;
