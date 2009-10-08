@@ -112,7 +112,7 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
     InfoDialog* info_;
 
     template< class MeshT >
-    void printMeshInfo( MeshT* _mesh, int _id, unsigned int _face );
+    void printMeshInfo( MeshT* _mesh, int _id, unsigned int _face, ACG::Vec3d& _hitPoint );
 
 
 //===========================================================================
