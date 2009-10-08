@@ -1,5 +1,10 @@
 <RCC>
   <qresource prefix="info" >
+    <file>dialogIcons/info_aspect.png</file>
+    <file>dialogIcons/info_dihedral.png</file>
+    <file>dialogIcons/info_edge.png</file>
+    <file>dialogIcons/info_angle.png</file>
+    <file>dialogIcons/info_valence.png</file>
     <file>dialogIcons/info_boundaries.png</file>
     <file>dialogIcons/info_boundingbox.png</file>
     <file>dialogIcons/info_bracketA.png</file>

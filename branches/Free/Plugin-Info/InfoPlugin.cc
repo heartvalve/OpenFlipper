@@ -93,6 +93,13 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
   int closest_v_idx = getClosestVertex(_mesh, _face);
   int closest_e_idx = getClosestEdge(_mesh, _face);
 
+  QString name;
+
+  // name
+  BaseObject* obj = 0;
+  if ( PluginFunctions::getObject(_id, obj) )
+    info_->objName->setText( obj->name() );
+
   // ID
   info_->id->setText( locale.toString(_id) );
   // Vertices
@@ -114,31 +121,6 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
   // Genus
   int genus = 1 - (_mesh->n_vertices() - _mesh->n_edges() + _mesh->n_faces() ) / 2;
   info_->genus->setText( QString::number(genus) );
-
-  info_->table->clear();
-
-  info_->table->setColumnCount ( 3 );
-  info_->table->setRowCount ( 5 );
-
-
-  QStringList headerdata;
-  headerdata << tr("Minimum") << tr("Mean") << tr("Maximum");
-
-  info_->table->setHorizontalHeaderLabels(headerdata);
-
-  headerdata.clear();
-  headerdata << tr("Vertex Valence") << tr("Edge Length") << tr("Aspect Ratio") << tr("Inner Face Angles") << tr("Dihedral Angles");
-
-  info_->table->setVerticalHeaderLabels(headerdata);
-
-  //set tooltips
-  info_->table->verticalHeaderItem(0)->setToolTip(tr("minimum, maximum and arithmetic mean of the vertex valences"));
-  info_->table->verticalHeaderItem(1)->setToolTip(tr("minimum, maximum and arithmetic mean of the edge lengthes"));
-  info_->table->verticalHeaderItem(2)->setToolTip(tr("minimum, maximum and arithmetic mean of the aspect ratio."
-                                                     " i.e. the ratio between longest and shortest edge in a triangle."));
-  info_->table->verticalHeaderItem(3)->setToolTip(tr("minimum, maximum and arithmetic mean of the inner angles in a face."));
-  info_->table->verticalHeaderItem(4)->setToolTip(tr("minimum, maximum and arithmetic mean of the dihedral angles"
-                                                     " i.e. the angles between neighboring faces."));
 
   // Coordinates
   typename MeshT::VertexIter v_it;
@@ -195,14 +177,16 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
     sumV += valence;
   }
 
-  int row=0;
-  info_->table->setItem(row,0, new QTableWidgetItem( QString::number(minV) ) );
-  info_->table->setItem(row,1, new QTableWidgetItem( QString::number( sumV / (float)_mesh->n_vertices(),'f' )) );
-  info_->table->setItem(row,2, new QTableWidgetItem( QString::number(maxV) ) );
-  row++;
-  info_->table->setItem(row,0, new QTableWidgetItem( QString::number(minE,'f') ) );
-  info_->table->setItem(row,1, new QTableWidgetItem( QString::number( sumE / (_mesh->n_edges()*2),'f' )) );
-  info_->table->setItem(row,2, new QTableWidgetItem( QString::number(maxE,'f') ) );
+  
+  //valence
+  info_->valenceMin->setText( QString::number(minV) );
+  info_->valenceMean->setText( QString::number( sumV / (float)_mesh->n_vertices(),'f' ) );
+  info_->valenceMax->setText( QString::number(maxV) );
+
+  //edge length
+  info_->edgeMin->setText( QString::number(minE,'f') );
+  info_->edgeMean->setText( QString::number( sumE / (_mesh->n_edges()*2),'f' )  );
+  info_->edgeMax->setText( QString::number(maxE,'f') );
 
   //get aspect ratio
 
@@ -272,22 +256,17 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
     }
   }
 
-  row++;
-  info_->table->setItem(row,0, new QTableWidgetItem( QString::number(minA,'f') ) );
-  info_->table->setItem(row,1, new QTableWidgetItem( QString::number( sumA / _mesh->n_faces(),'f' )) );
-  info_->table->setItem(row,2, new QTableWidgetItem( QString::number(maxA,'f') ) );
-  row++;
-  info_->table->setItem(row,0, new QTableWidgetItem( QString::number(minI,'f') ) );
-  info_->table->setItem(row,1, new QTableWidgetItem( "-" ) );
-  info_->table->setItem(row,2, new QTableWidgetItem( QString::number(maxI,'f') ) );
-  row++;
+  info_->aspectMin->setText( QString::number(minA,'f') );
+  info_->aspectMean->setText( QString::number( sumA / _mesh->n_faces(),'f' ) );
+  info_->aspectMax->setText( QString::number(maxA,'f') );
 
-  info_->table->setItem(row,0, new QTableWidgetItem( QString::number(minD,'f') ) );
-  info_->table->setItem(row,1, new QTableWidgetItem( QString::number( sumD / (_mesh->n_faces()*3),'f' )) );
-  info_->table->setItem(row,2, new QTableWidgetItem( QString::number(maxD,'f') ) );
+  info_->angleMin->setText( QString::number(minI,'f') );
+  info_->angleMean->setText( "-" );
+  info_->angleMax->setText( QString::number(maxI,'f')  );
 
-  info_->table->resizeColumnsToContents();
-
+  info_->dihedralMin->setText( QString::number(minD,'f') );
+  info_->dihedralMean->setText( QString::number( sumD / (_mesh->n_faces()*3),'f' ) );
+  info_->dihedralMax->setText( QString::number(maxD,'f') );
 
   typename MeshT::FaceHandle fh = _mesh->face_handle(_face);
 
@@ -301,7 +280,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
   }
 
   while( fv_it ){
-    adjacentVertices += "," + QString::number( fv_it.handle().idx() );
+    adjacentVertices += "; " + QString::number( fv_it.handle().idx() );
     ++fv_it;
   }
 
