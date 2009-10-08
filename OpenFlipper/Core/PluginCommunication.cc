@@ -138,33 +138,6 @@ void Core::slotObjectPropertiesChanged( int _id )
   emit objectPropertiesChanged(_id);
 }
 
-//====================================================================================
-// ===             Toolbox handling                                   =================
-//=====================================================================================
-
- /** If the Toolbox is switched the toolboxActivated function of the each plugin that has a toolbox is called by this function.
-  */
-// void
-// Core::slotToolboxSwitched(int _index)
-// {
-//    // Check all plugins
-//    for ( uint i = 0 ; i < plugins.size(); ++i) {
-//       if (plugins[i].toolboxindex == -1)
-//          continue;
-//
-//       ToolboxInterface* toolboxPlugin = qobject_cast< ToolboxInterface * >(plugins[i].plugin);
-//       if (! toolboxPlugin)
-//          continue;
-//
-//       // Call the corresponding function of the plugins
-//       if ( _index == plugins[i].toolboxindex ) {
-//            toolboxPlugin->toolboxActivated(true);
-//       } else {
-//            toolboxPlugin->toolboxActivated(false);
-//       }
-//    }
-// }
-
 //========================================================================================
 // ===             Texture Communication                       ===========================
 //========================================================================================

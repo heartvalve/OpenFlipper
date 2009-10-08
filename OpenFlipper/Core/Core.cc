@@ -385,12 +385,11 @@ Core::init() {
   // connect signal to logger
   connect(this,SIGNAL(scriptLog(QString )),newlog,SLOT(slotLog(QString )),Qt::DirectConnection);
 
+  
   // ======================================================================
-  // This connection will tell the plugins, when their Toolbox is active
+  // Set up QtScript Environment
   // ======================================================================
-  ///@todo reimplement
-//   connect(module_list,SIGNAL(currentChanged(int)),this,SLOT(slotToolboxSwitched(int)));
-
+  
   // Set a reference to the scriptengine for simple rpc calls
   RPC::setScriptEngine(&scriptEngine_);
 
