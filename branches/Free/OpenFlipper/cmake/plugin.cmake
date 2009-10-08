@@ -212,6 +212,7 @@ function (_build_openflipper_plugin plugin)
     acg_append_files (sources "*.cc" ${directories})
     acg_append_files (sources "*.c" ${directories})
     acg_append_files (ui "*.ui" ${directories})
+    acg_append_files (qrc "*.qrc" ${directories})
 
     # remove template cc files from source file list
     acg_drop_templates (sources)
@@ -230,8 +231,10 @@ function (_build_openflipper_plugin plugin)
     # genereate uic and moc targets
     acg_qt4_autouic (uic_targets ${ui})
     acg_qt4_automoc (moc_targets ${headers})
+    acg_qt4_autoqrc (qrc_targets ${qrc})
 
-    add_library (Plugin-${plugin} MODULE ${uic_targets} ${sources} ${headers} ${moc_targets} ${${_PLUGIN}_ADDSRC})
+    message(status "targets: ${qrc_targets} ")
+    add_library (Plugin-${plugin} MODULE ${uic_targets} ${sources} ${headers} ${moc_targets} ${qrc_targets} ${${_PLUGIN}_ADDSRC})
 
     # add this plugin to build plugin list for dependency tracking
     acg_set (OPENFLIPPER_PLUGINS "${OPENFLIPPER_PLUGINS};Plugin-${plugin}")
