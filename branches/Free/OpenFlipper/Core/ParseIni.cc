@@ -651,7 +651,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     // Save the current viewer properties
     //============================================================================
     std::vector< QString > draw_modes;
-    int mode;
 
     for (int i=0; i < PluginFunctions::viewers(); i++ ){
 
