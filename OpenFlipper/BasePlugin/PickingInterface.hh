@@ -120,6 +120,8 @@ class PickingInterface {
       */
       virtual void removePickModeToolbar( const std::string /*_mode*/ ) {};
 
+     
+  private slots:
       /**  \brief The pickingMode has changed
        *
        * This slot is called if the user changes the current picking mode
