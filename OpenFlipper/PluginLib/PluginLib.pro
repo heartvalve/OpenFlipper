@@ -14,7 +14,9 @@ openmp()
 ftgl()
 
 DIRECTORIES = ../BasePlugin ../ACGHelper ../common ../common/bsp  ../INIFile $$files( $${TOPDIR}/ObjectTypes/* ) \
-              ../widgets/glWidget
+              ../widgets/glWidget \
+	      ../threads
+	      
 win32 {
 	DESTDIR = ../$${BUILDDIRECTORY}
 	DEFINES += PLUGINLIBDLL
