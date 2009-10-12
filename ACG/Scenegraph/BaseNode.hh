@@ -129,10 +129,15 @@ public:
   /// Destructor.
   virtual ~BaseNode();
 
-  /** Remove the while subtree below this node (including this node).
-      All node will be destucted, **/
+  /** \brief Delete the whole subtree of this node
+  *
+  * This function will remove the whole subtree below this node.
+  * All children in this nodes bubtree will be automatically removed from the tree
+  * and their destructor is called.
+  * The node itself will be removed from the list of its parents children.
+  * Afterwards it will also call its own destructor.
+  **/
   void delete_subtree();
-
 
 
   // --- basic interface ---
