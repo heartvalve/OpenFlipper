@@ -277,6 +277,17 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
   _nodeIdx   = rv[1];
   _targetIdx = rv[0];
 
+//   // Debug Code to visualize picking cache ( DO NOT REMOVE!!!! Jan )
+//   QImage murks(glWidth (),glHeight (),QImage::Format_ARGB32);
+//   murks = pickCache_->toImage();
+//   for ( int i = 0 ; i < glWidth() ; ++i ) 
+//     for ( int j = 0 ; j < glHeight() ; ++j )  {
+//       QColor bla (murks.pixel(i,j));
+//       bla.setAlpha(255);
+//       murks.setPixel(i,j,bla.rgba());
+//     }
+//   murks.save("murks.png");
+
   if (_hitPointPtr)
   {
     *_hitPointPtr = properties_.glState().unproject (
