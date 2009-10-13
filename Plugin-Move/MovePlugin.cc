@@ -704,6 +704,14 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
 
         object->manipulatorNode()->apply_transformation(PluginFunctions::pickMode() == "Move");
 
+        // Disconnect a previously connected Signal
+        disconnect(object->manipulatorNode() , SIGNAL(manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)),
+                   this , SLOT( manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)));
+                
+        disconnect(object->manipulatorNode() , SIGNAL(positionChanged(QtTranslationManipulatorNode*)),
+                  this , SLOT( ManipulatorPositionChanged(QtTranslationManipulatorNode*)));
+        
+        // Reconnect the signals.
         connect(object->manipulatorNode() , SIGNAL(manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)),
                 this , SLOT( manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)));
 
