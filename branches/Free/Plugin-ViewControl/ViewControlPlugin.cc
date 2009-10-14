@@ -71,6 +71,7 @@ void ViewControlPlugin::pluginsInitialized() {
 
   emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH      , CONTEXTOBJECTMENU );
   emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH          , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Volume")        , CONTEXTOBJECTMENU );
   emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineSurface"), CONTEXTOBJECTMENU );
 
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
@@ -779,7 +780,6 @@ void ViewControlPlugin::slotSetShader(){
 
       PluginFunctions::getObject( lastObjectId_, object );
       if ( object && object->shaderNode() ){
-
         if ( shaderWidget_->pickVertexShader->text() != "" &&
              shaderWidget_->pickFragmentShader->text() != "" &&
              QFile( shaderDir + pickVertexFile ).exists() &&
@@ -803,7 +803,18 @@ void ViewControlPlugin::slotSetShader(){
                 shaderWidget_->uniforms->setCurrentCell(u,0);
                 float value = shaderWidget_->uniforms->currentItem()->text().toFloat();
                 shader->setUniform(shaderList_[index].uniforms[u].toStdString().c_str(), value);
-              }
+              } else 
+              //vec3 uniforms
+              if (shaderList_[index].uniformTypes[u] == "vec3" ){
+                shaderWidget_->uniforms->setCurrentCell(u,0);
+                QStringList vecStr = shaderWidget_->uniforms->currentItem()->text().split(",");
+                if (vecStr.count() == 3){
+                  ACG::Vec3f value( vecStr[0].toFloat(), vecStr[1].toFloat(), vecStr[2].toFloat() );
+                  shader->setUniform(shaderList_[index].uniforms[u].toStdString().c_str(), value);
+                }
+              }else
+                std::cerr << "Error: handling of uniformType '" << shaderList_[index].uniformTypes[u].toStdString() << "' not yet implemented" << std::endl;
+
             }
 
             shader->disable();
@@ -908,6 +919,84 @@ void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
   }
 
   emit updateView();
+}
+
+//-----------------------------------------------------------------------------
+
+/// get information about available uniforms for a given shader
+bool ViewControlPlugin::getUniformInfo(QString _shader, QStringList& _uniforms,
+                                                        QStringList& _uniformTypes,
+                                                        QStringList& _uniformsDefault,
+                                                        QStringList& _uniformsMax,
+                                                        QStringList& _uniformsMin ){
+
+  for (uint i=0; i < shaderList_.size(); i++)
+    if ( shaderList_[i].name == _shader){
+
+      _uniforms        = shaderList_[i].uniforms;
+      _uniformTypes    = shaderList_[i].uniformTypes;
+      _uniformsDefault = shaderList_[i].uniformsDefault;
+      _uniformsMax     = shaderList_[i].uniformsMax;
+      _uniformsMin     = shaderList_[i].uniformsMin;
+
+      return true;
+    }
+
+  _uniforms        = QStringList();
+  _uniformTypes    = QStringList();
+  _uniformsDefault = QStringList();
+  _uniformsMax     = QStringList();
+  _uniformsMin     = QStringList();
+  return false;
+}
+
+//-----------------------------------------------------------------------------
+
+/// set the value of a uniform in a shader for a specific drawMode
+void ViewControlPlugin::setUniform(int _objID, unsigned int _drawMode, QString _shader, QString _uniform, QString _value ){
+
+      BaseObjectData* object = 0;
+
+      PluginFunctions::getObject( _objID, object );
+      if ( object && object->shaderNode() ){
+
+        for (uint i=0; i < shaderList_.size(); i++)
+          if ( shaderList_[i].name == _shader){
+
+            // set uniforms if available
+            if (shaderList_[i].hasUniforms){
+              GLSL::PtrProgram shader = object->shaderNode()->getShader( _drawMode );
+              if ( shader == 0 ) {
+                std::cerr << "Error: Unable to get shader for shader mode" << std::endl;
+              } else {
+                shader->use();
+
+                for (int u=0; u < shaderList_[i].uniforms.count(); u++){
+
+                  //only apply to uniform which was given as param
+                  if ( shaderList_[i].uniforms[u] != _uniform )
+                    continue;
+
+                  //float uniforms
+                  if (shaderList_[i].uniformTypes[u] == "float" )
+                    shader->setUniform(shaderList_[i].uniforms[u].toStdString().c_str(), _value.toFloat() );
+
+                  //vec3 uniforms
+                  else if (shaderList_[i].uniformTypes[u] == "vec3" ){
+                    QStringList vecStr = _value.split(",");
+                    if (vecStr.count() == 3){
+                      ACG::Vec3f value( vecStr[0].toFloat(), vecStr[1].toFloat(), vecStr[2].toFloat() );
+                      shader->setUniform(shaderList_[i].uniforms[u].toStdString().c_str(), value);
+                    }
+                  }else
+                    std::cerr << "Error: handling of uniformType '" << shaderList_[i].uniformTypes[u].toStdString() << "' not yet implemented" << std::endl;
+                }
+
+                shader->disable();
+              }
+            }
+          }
+      }
 }
 
 //-----------------------------------------------------------------------------
