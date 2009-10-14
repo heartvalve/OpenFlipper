@@ -200,13 +200,13 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     void setShader(int _id, QString _drawMode, QString _name );
 
     /// get information about available uniforms for a given shader
-    bool getUniformInfo(QString _shader, QStringList& _uniforms,
-                                         QStringList& _uniformTypes,
-                                         QStringList& _uniformsDefault,
-                                         QStringList& _uniformsMax,
-                                         QStringList& _uniformsMin );
+    QStringList getUniforms(QString _shader);
 
-    
+    QString getUniformType(QString _shader, QString _uniform );
+    QString getUniformDefault(QString _shader, QString _uniform );
+    QString getUniformMin(QString _shader, QString _uniform );
+    QString getUniformMax(QString _shader, QString _uniform );
+
     /// set the value of a uniform in a shader for a specific drawMode
     void setUniform(int _objID, unsigned int _drawMode, QString _shader, QString _uniform, QString _value );
 
