@@ -182,8 +182,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   QAction* multisampling = renderingOptionsMenu->addAction(tr("Multisampling"));
   multisampling->setToolTip(tr("Enable Multisampling"));
   multisampling->setCheckable( true );
-// TODO:Add icon for multisampling  
-//   twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
+  multisampling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiSampling.png") );
   multisampling->setChecked( PluginFunctions::viewerProperties().multisampling() );
   connect(multisampling, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMultisampling(bool) ) );   
 
