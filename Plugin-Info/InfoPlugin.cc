@@ -98,7 +98,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
   // name
   BaseObject* obj = 0;
   if ( PluginFunctions::getObject(_id, obj) )
-    info_->objName->setText( obj->name() );
+    info_->generalBox->setTitle( tr("General object information for %1").arg( obj->name() ) );
 
   // ID
   info_->id->setText( locale.toString(_id) );
