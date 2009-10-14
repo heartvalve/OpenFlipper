@@ -923,31 +923,64 @@ void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
 
 //-----------------------------------------------------------------------------
 
-/// get information about available uniforms for a given shader
-bool ViewControlPlugin::getUniformInfo(QString _shader, QStringList& _uniforms,
-                                                        QStringList& _uniformTypes,
-                                                        QStringList& _uniformsDefault,
-                                                        QStringList& _uniformsMax,
-                                                        QStringList& _uniformsMin ){
+QStringList ViewControlPlugin::getUniforms(QString _shader){
+  for (uint i=0; i < shaderList_.size(); i++)
+    if ( shaderList_[i].name == _shader)
+      return shaderList_[i].uniforms;
 
+  return QStringList();
+}
+
+QString ViewControlPlugin::getUniformType(QString _shader, QString _uniform ){
+  
   for (uint i=0; i < shaderList_.size(); i++)
     if ( shaderList_[i].name == _shader){
 
-      _uniforms        = shaderList_[i].uniforms;
-      _uniformTypes    = shaderList_[i].uniformTypes;
-      _uniformsDefault = shaderList_[i].uniformsDefault;
-      _uniformsMax     = shaderList_[i].uniformsMax;
-      _uniformsMin     = shaderList_[i].uniformsMin;
-
-      return true;
+      for (int u=0; u < shaderList_[i].uniforms.count(); u++)
+        if ( shaderList_[i].uniforms[u] == _uniform )
+          return shaderList_[i].uniformTypes[u];
     }
 
-  _uniforms        = QStringList();
-  _uniformTypes    = QStringList();
-  _uniformsDefault = QStringList();
-  _uniformsMax     = QStringList();
-  _uniformsMin     = QStringList();
-  return false;
+  return QString();
+}
+
+QString ViewControlPlugin::getUniformDefault(QString _shader, QString _uniform ){
+  
+  for (uint i=0; i < shaderList_.size(); i++)
+    if ( shaderList_[i].name == _shader){
+
+      for (int u=0; u < shaderList_[i].uniforms.count(); u++)
+        if ( shaderList_[i].uniforms[u] == _uniform )
+          return shaderList_[i].uniformsDefault[u];
+    }
+
+  return QString();
+}
+
+QString ViewControlPlugin::getUniformMin(QString _shader, QString _uniform ){
+  
+  for (uint i=0; i < shaderList_.size(); i++)
+    if ( shaderList_[i].name == _shader){
+
+      for (int u=0; u < shaderList_[i].uniforms.count(); u++)
+        if ( shaderList_[i].uniforms[u] == _uniform )
+          return shaderList_[i].uniformsMin[u];
+    }
+
+  return QString();
+}
+
+QString ViewControlPlugin::getUniformMax(QString _shader, QString _uniform ){
+  
+  for (uint i=0; i < shaderList_.size(); i++)
+    if ( shaderList_[i].name == _shader){
+
+      for (int u=0; u < shaderList_[i].uniforms.count(); u++)
+        if ( shaderList_[i].uniforms[u] == _uniform )
+          return shaderList_[i].uniformsMax[u];
+    }
+
+  return QString();
 }
 
 //-----------------------------------------------------------------------------
