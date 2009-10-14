@@ -107,6 +107,7 @@ int FilePlanePlugin::loadObject(QString _filename)
         }
       }
     }
+    emit updatedObject(obj->id() );
   }
 
   return id;
