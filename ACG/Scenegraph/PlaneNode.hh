@@ -91,10 +91,10 @@ class ACGDLLEXPORT PlaneNode : public BaseNode
     /// update bounding box
     void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
 
-    /// draw Coordsys
+    /// draw Plane
     void draw(GLState& _state, unsigned int _drawMode);
 
-    /// draw Coordsys for object picking
+    /// draw Plane for object picking
     void pick(GLState& _state, PickTarget _target);
 
     /// set center position and normal of plane
