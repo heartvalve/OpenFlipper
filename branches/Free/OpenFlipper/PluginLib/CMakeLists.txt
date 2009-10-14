@@ -1,5 +1,21 @@
 include (ACGCommon)
 
+
+set ( ADDITIONAL_PLUGINLIB_LIBS "")
+set ( ADDITIONAL_PLUGINLIB_INCS "")
+
+# search all ObjectTypes in the ObjectType directory for additional build information
+file (
+  GLOB _plugin_buildinfos
+  RELATIVE "${CMAKE_SOURCE_DIR}"
+  "${CMAKE_SOURCE_DIR}/ObjectTypes/*/CMakeLists.txt"
+)
+
+# include all cmake files fouund for objecttypes here
+foreach ( _buildInfo ${_plugin_buildinfos})
+  include ("${CMAKE_SOURCE_DIR}/${_buildInfo}")
+endforeach ()
+
 include_directories (
   ..
   ${CMAKE_SOURCE_DIR}/OpenMesh/src
@@ -9,6 +25,7 @@ include_directories (
   ${OPENGL_INCLUDE_DIR}
   ${GLEW_INCLUDE_DIR}
   ${GLUT_INCLUDE_DIR}
+  ${ADDITIONAL_PLUGINLIB_INCS}
 )
 
 link_directories (
@@ -47,20 +64,6 @@ acg_append_files (ui "*.ui" ${directories})
 acg_append_files_recursive (headers "*.hh" ${CMAKE_SOURCE_DIR}/ObjectTypes)
 acg_append_files_recursive (sources "*.cc" ${CMAKE_SOURCE_DIR}/ObjectTypes)
 
-set ( ADDITIONAL_PLUGINLIB_LIBS "")
-
-# search all ObjectTypes in the ObjectType directory for additional build information
-file (
-  GLOB _plugin_buildinfos
-  RELATIVE "${CMAKE_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/ObjectTypes/*/CMakeLists.txt"
-)
-
-# include all cmake files fouund for objecttypes here
-foreach ( _buildInfo ${_plugin_buildinfos})
-  include ("${CMAKE_SOURCE_DIR}/${_buildInfo}")
-endforeach ()
-  
 # remove template cc files from source file list
 acg_drop_templates (sources)
 
