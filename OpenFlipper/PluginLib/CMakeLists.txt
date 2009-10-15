@@ -74,7 +74,7 @@ acg_qt4_automoc (moc_targets ${headers})
 
 acg_add_library (PluginLib SHARED ${uic_targets} ${sources} ${headers} ${moc_targets})
 set_target_properties (
-  PluginLib PROPERTIES
+  PluginLib PROPERTIES 
   COMPILE_FLAGS ${ADDITIONAL_PLUGINLIB_COMPILER_FLAGS}
 )
 
