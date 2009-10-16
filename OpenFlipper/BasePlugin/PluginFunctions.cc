@@ -584,6 +584,8 @@ const ACG::Vec3d trackBallCenter(const ACG::Vec3d& _center, int _viewer ) {
       return examiner_widgets_[_viewer]->trackBallCenter(  );
     else
       std::cerr << "Requested illegal viewer for setTrackBallCenter!!" << std::endl;
+
+  return examiner_widgets_[activeExaminer_]->trackBallCenter();
 }
 
 void setTrackBallCenter(const ACG::Vec3d& _center, int _viewer ) {
