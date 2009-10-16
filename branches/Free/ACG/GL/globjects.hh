@@ -56,7 +56,7 @@
 //== INCLUDES =================================================================
 
 // GL
-#include <../GL/gl.hh>
+#include <ACG/GL/gl.hh>
 
 // C++
 #include <iostream>
