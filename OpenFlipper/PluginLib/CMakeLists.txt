@@ -4,6 +4,7 @@ include (ACGCommon)
 set ( ADDITIONAL_PLUGINLIB_LIBS "")
 set ( ADDITIONAL_PLUGINLIB_INCS "")
 set ( ADDITIONAL_PLUGINLIB_COMPILER_FLAGS "")
+set ( ADDITIONAL_PLUGINLIB_LINK_DIRS "")
 
 # search all ObjectTypes in the ObjectType directory for additional build information
 file (
@@ -31,6 +32,7 @@ include_directories (
 
 link_directories (
   ${GLEW_LIBRARY_DIR}
+  ${ADDITIONAL_PLUGINLIB_LINK_DIRS}
 )
 
 # source code directories
