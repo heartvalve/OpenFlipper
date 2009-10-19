@@ -47,46 +47,6 @@
 namespace PluginFunctions {
 
 // ===============================================================================
-// Get source planes
-// ===============================================================================
-
-
-bool getSourcePlanes( std::vector<PlaneNode*>& _planes  )
-{
-  _planes.clear();
-
-  for ( ObjectIterator o_it(PluginFunctions::SOURCE_OBJECTS,DATA_PLANE ) ;
-  o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    _planes.push_back ( PluginFunctions::planeNode( *o_it ) );
-    if( _planes.back() == NULL)
-      std::cerr << "ERROR: Plane - get_source_planes fatal error\n";
-  }
-
-  return (_planes.size() > 0 );
-}
-
-
-// ===============================================================================
-// Get target planes
-// ===============================================================================
-
-
-bool getTargetPlanes( std::vector<PlaneNode*>& _planes  )
-{
-  _planes.clear();
-
-  for ( ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_PLANE ) ;
-  o_it != PluginFunctions::objectsEnd(); ++o_it) {
-    _planes.push_back ( PluginFunctions::planeNode( *o_it ) );
-    if( _planes.back() == NULL)
-      std::cerr << "ERROR: Plane - getTargetPolylines fatal error\n";
-  }
-
-  return (_planes.size() > 0 );
-}
-
-
-// ===============================================================================
 // Get objects
 // ===============================================================================
 
