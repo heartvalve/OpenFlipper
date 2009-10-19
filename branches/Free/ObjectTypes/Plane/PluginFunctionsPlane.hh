@@ -52,24 +52,6 @@
 /** The Namespace PluginFunctions contains functions for all plugins. */
 namespace PluginFunctions {
 
-
-/** \brief Get a pointer to every Plane which is marked as a source.
- *
- * @param _planes ( vector returning the source planes )
- * @return false, if no plane is selected as source
-*/
-DLLEXPORT
-bool getSourcePlanes( std::vector<PlaneNode*>& _planes  );
-
-/** \brief Get a pointer to every Plane which is marked as a target.
- *
- * @param _planes ( vector returning the target planes )
- * @return false, if no plane is selected as target
-*/
-DLLEXPORT
-bool getTargetPlanes( std::vector<PlaneNode*>& _planes  );
-
-
 /** This functions returns the object with the given id if it is a PlaneObject.
  * See get_object(  int _identifier , BaseObject*& _object ) for more details.
  */
