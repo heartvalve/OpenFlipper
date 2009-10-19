@@ -138,6 +138,14 @@ TriMesh* triMesh( BaseObjectData* _object );
 DLLEXPORT
 TriMeshObject* triMeshObject( BaseObjectData* _object );
 
+/** \brief Get an TriMeshObject from the given id If possible
+*
+* @param _objectId Id of the requested Object. If the content is a volume, a
+*                  a TriMeshObject is returned. Otherwise a NULL pointer is returned.
+*/
+DLLEXPORT
+TriMeshObject* triMeshObject( int _objectId );
+
 /** @} */
 }
 
