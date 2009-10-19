@@ -139,6 +139,14 @@ PolyMesh* polyMesh( BaseObjectData* _object );
 DLLEXPORT
 PolyMeshObject* polyMeshObject( BaseObjectData* _object );
 
+/** \brief Get an PolyMeshObject from the given id If possible
+*
+* @param _objectId Id of the requested Object. If the content is a volume, a
+*                  a PolyMeshObject is returned. Otherwise a NULL pointer is returned.
+*/
+DLLEXPORT
+PolyMeshObject* polyMeshObject( int _objectId );
+
 /** @} */
 
 }
