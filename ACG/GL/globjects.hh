@@ -238,6 +238,8 @@ public:
   bool is_valid() const { return valid; }
 
   void gen() { glGenTextures(1, &texture); valid=true; }
+  
+  GLuint id() { return texture; }
 
 private:
 
