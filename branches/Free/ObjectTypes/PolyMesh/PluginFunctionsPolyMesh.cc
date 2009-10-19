@@ -135,4 +135,18 @@ PolyMeshObject* polyMeshObject( BaseObjectData* _object ) {
   return dynamic_cast< PolyMeshObject* >( _object );
 }
 
+PolyMeshObject* polyMeshObject( int _objectId ) {
+  if  (_objectId == -1)
+    return 0;
+  
+  BaseObject* object = objectRoot()->childExists( _objectId );
+  
+  if ( object == 0 )
+    return 0;
+  
+  PolyMeshObject* meshObject = dynamic_cast< PolyMeshObject* >(object);
+  
+  return meshObject;
+}
+
 }
