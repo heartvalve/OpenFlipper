@@ -142,4 +142,20 @@ TriMeshObject* triMeshObject( BaseObjectData* _object ) {
   return dynamic_cast< TriMeshObject* >( _object );
 }
 
+
+TriMeshObject* triMeshObject( int _objectId ) {
+  if  (_objectId == -1)
+    return 0;
+  
+  BaseObject* object = objectRoot()->childExists( _objectId );
+  
+  if ( object == 0 )
+    return 0;
+  
+  TriMeshObject* meshObject = dynamic_cast< TriMeshObject* >(object);
+  
+  return meshObject;
+}
+
+
 }
