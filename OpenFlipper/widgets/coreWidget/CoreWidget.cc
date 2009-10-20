@@ -81,6 +81,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   QMainWindow(),
   coreSlots_(_coreSlots),
   shiftPressed_(false),
+  fullscreenState_(0),
   viewModes_(_viewModes),
   viewModeButton_(0),
   viewModeMenu_(0),
@@ -533,7 +534,60 @@ CoreWidget::~CoreWidget() {
 void
 CoreWidget::toggleFullscreen() {
 
-  setWindowState( windowState() ^  Qt::WindowFullScreen);
+  switch (fullscreenState_){
+
+    case 0:
+      //switch to fullscreen
+      setWindowState( windowState() | Qt::WindowFullScreen);
+      break;
+
+    case 1:
+
+      //fullscreen without toolbars
+      if ( ! (windowState() & Qt::WindowFullScreen) )
+        setWindowState( windowState() | Qt::WindowFullScreen);
+
+      //hide plugin toolbars
+      for (uint p=0; p < plugins_.size(); p++)
+        for ( uint j = 0 ; j < plugins_[p].toolbars.size(); ++j )
+          plugins_[p].toolbars[j].second->hide();
+
+      //hide main toolbar
+      mainToolbar_->hide();
+
+      //hide viewer toolbar
+      viewerToolbar_->hide();
+
+      //hide the menubar
+      menuBar()->hide();
+
+      //hide the statusbar
+      statusBar()->hide();
+
+      //remove viewer frame
+      glView_->setFrameStyle(QFrame::NoFrame);
+
+      break;
+
+    default:
+      //disable fullscreen
+      if ( windowState() & Qt::WindowFullScreen )
+        setWindowState( windowState() ^  Qt::WindowFullScreen);
+
+      //show toolbars
+      setViewMode( OpenFlipper::Options::defaultToolboxMode() );
+
+      //show the menubar
+      menuBar()->show();
+
+      //show the statusbar
+      statusBar()->show();
+
+      //add viewer frame
+      glView_->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+  }
+
+  fullscreenState_ = (fullscreenState_ + 1) % 3;
 
   OpenFlipper::Options::fullScreen( bool( windowState() & Qt::WindowFullScreen) );
 
@@ -552,6 +606,8 @@ CoreWidget::setFullscreen(bool _state ) {
     if ( windowState() & Qt::WindowFullScreen )
       setWindowState( windowState() ^  Qt::WindowFullScreen);
   }
+
+  fullscreenState_ = (uint) _state;
 
   OpenFlipper::Options::fullScreen( bool( windowState() & Qt::WindowFullScreen) );
 
