@@ -60,11 +60,14 @@
 
 #include <QGLFramebufferObject>
 
+#include <ACG/ShaderUtils/GLSLShader.hh>
+
 
 //== NAMESPACES ===============================================================
 
 
 //== IMPLEMENTATION ==========================================================
+#include <qt4/QtCore/qdir.h>
 
 static const char* customAnaglyphProg = {
   "!!ARBfp1.0"
@@ -161,55 +164,135 @@ glViewer::drawScenePhilipsStereo()
   buffer->bind();
   
   drawScene_mono();
-  
-//   buffer->drawTexture(QRectF(0,0,1,1),buffer->texture());
-  QImage image = buffer->toImage();
-  image.save("test.jpg");
+//   
+// //   buffer->drawTexture(QRectF(0,0,1,1),buffer->texture());
+//   QImage image = buffer->toImage();
+//   image.save("test.jpg");
   buffer->release();
   
-//   glBindTexture(GL_TEXTURE_2D, buffer->texture());
-//   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-// //   glEnable(GL_TEXTURE_2D);
-//   glEnable(GL_BLEND);
-//   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//   glDisable(GL_DEPTH_TEST);
+  GLSL::PtrVertexShader   vertexShader;
+  GLSL::PtrFragmentShader fragmentShader;
+  GLSL::PtrProgram        program;
+  
+  QString vshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Vertex.glsl";
+  QString fshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Fragment.glsl";
+  
+  ////
+  vertexShader            = GLSL::loadVertexShader(  vshaderFile.toStdString().c_str() );
+  fragmentShader          = GLSL::loadFragmentShader( fshaderFile.toStdString().c_str() );
+  program                 = GLSL::PtrProgram(new GLSL::Program());
+  
+  if ( (vertexShader == 0)   ||
+       (fragmentShader == 0) ||
+       (program == 0) ) {
+    std::cerr << "Unable to load shaders for philips display rendering!";
+    return;
+  }
+  
+  program->attach(vertexShader);
+  program->attach(fragmentShader);
+  program->link();
+  
+  program->use();
+  
+  program->setUniform("Texture",0);
+  
+  
+  glBindTexture(GL_TEXTURE_2D, buffer->texture());
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  glDisable(GL_LIGHTING);
+  glDisable(GL_COLOR_MATERIAL);
+  glDisable(GL_DEPTH_TEST);
+
+  glstate_->push_projection_matrix();
+  glstate_->push_modelview_matrix();
+
+  glstate_->reset_projection();
+  glstate_->reset_modelview();
+
+  glstate_->ortho(0, 10, 0, 10, 0, 1);
+
+
+  glColor3f(1.0,1.0,1.0);
+  
+  //Draw a scene
+  glClearColor(.0, .0, .0, 0);
+  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+  glBegin(GL_POINTS);
+  glVertex2f( 2.5, 2.5);
+  glEnd();
+
+
+  glBegin(GL_QUADS);
+  glTexCoord2f(0.0f, 1.0f); glVertex2f( 0, 10);
+  glTexCoord2f(1.0f, 1.0f); glVertex2f( 5, 10);
+  glTexCoord2f(1.0f, 0.0f); glVertex2f( 5, 0);
+  glTexCoord2f(0.0f, 0.0f); glVertex2f( 0, 0);
+  glEnd();
+  
+  program->disable();
+  
+  glBindTexture(GL_TEXTURE_2D, 0);
+  
+  delete buffer;
+  
+  
 //   
-//   glColor3f(1.0,1.0,1.0);
+  
+
+//   
+//   glstate_->ortho(0,glstate_->viewport_width(),glstate_->viewport_height(),0,0,256);
+// //   glstate_->viewport(0,0,glstate_->viewport_width(),glstate_->viewport_height());
+//   
+//   
+//   glstate_->reset_modelview();
+// 
+//   glDisable( GL_DEPTH_TEST );
+//   glDisable( GL_LIGHTING );
+//   
 //   
 //   // draw into the GL widget
 //   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//   glMatrixMode(GL_PROJECTION);
-// //   glPushMatrix();
+// 
 //   
-//   glLoadIdentity();
-//   glOrtho(-1, 1, -1, 1, 10, 100);
-//   
-//   
-//   glMatrixMode(GL_MODELVIEW);
-// //   glPushMatrix();
-//   glLoadIdentity();
-// //   glViewport(0, 0, glWidth(), glHeight());
-//   
-//   
+//   glBegin(GL_POINTS);
+//   {
+//     glVertex2i( 55, 15);
+//     
+//     glVertex2i( 0, 15);
+//     
+//     glVertex2i( 1, 15);
+//     
+//     glVertex2i( 2, 15);
+//     
+//     glVertex2i( 0, 0 );
+//   }
+//     glEnd();
 //   
 //   glBegin(GL_QUADS);
 //   {
 //     
-//     glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  15.0f);
-//     glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  15.0f);
-//     glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  15.0f);
-//     glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  15.0f);
+//     glTexCoord2f(0.0f, 0.0f); glVertex2i( 0, 5);
+//     glTexCoord2f(1.0f, 0.0f); glVertex2i( 0, 0);
+//     glTexCoord2f(1.0f, 1.0f); glVertex2i( 5, 0);
+//     glTexCoord2f(0.0f, 1.0f); glVertex2i( 5, 5);
 //   
 //   }
 //   glEnd();
 //   
+  glstate_->pop_projection_matrix();
+  
+  glstate_->pop_modelview_matrix();
+  
+  
+//   
 //   glDisable(GL_TEXTURE_2D);
 //   
-//   
-// //   glPopMatrix();
-//   
-//   glMatrixMode(GL_PROJECTION);
-//   glPopMatrix();
   
 }
 
