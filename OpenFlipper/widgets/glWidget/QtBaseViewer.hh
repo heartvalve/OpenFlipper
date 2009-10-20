@@ -533,6 +533,9 @@ private:
 
   // helper called to cleanup custom anaglyph stereo
   void finiCustomAnaglyphStereo();
+  
+  // Draws the scene for a philips stereo display ( Header, left color image, right depth map )
+  void drawScenePhilipsStereo();
 
 //-------------------------------------------------------------- protected data
 protected:
