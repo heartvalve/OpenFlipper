@@ -728,7 +728,15 @@ glViewer::drawScene_stereo()
     // if somthing went wrong, fallback to normal anaglyph
     if (customAnaglyphSupported_)
       return;
+  } else if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::Philips )
+  {
+    drawScenePhilipsStereo ();
+    
+    return;
+    
   }
+  
+  
 
   drawScene_anaglyphStereo ();
 }

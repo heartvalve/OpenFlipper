@@ -207,6 +207,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   stereoOpengl->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::OpenGL);
   stereoAnaglyph->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphRedCyan);
   stereoCustomAnaglyph->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphCustom);
+  stereoPhilips->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::Philips);
 
   eyeDistance->setValue (OpenFlipper::Options::eyeDistance());
   focalDistance->setValue (OpenFlipper::Options::focalDistance() * 1000);
@@ -500,7 +501,9 @@ void OptionsWidget::slotApply() {
      OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphCustom);
   else if (stereoAnaglyph->isChecked ())
     OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphRedCyan);
-  else
+  else if (stereoPhilips->isChecked() )
+    OpenFlipper::Options::stereoMode(OpenFlipper::Options::Philips);
+  else 
     OpenFlipper::Options::stereoMode(OpenFlipper::Options::OpenGL);
 
   OpenFlipper::Options::eyeDistance(eyeDistance->value ());

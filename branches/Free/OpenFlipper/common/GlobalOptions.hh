@@ -436,7 +436,8 @@ bool dataDir(QString _dir);
   enum StereoMode {
     OpenGL,
     AnaglyphRedCyan,
-    AnaglyphCustom
+    AnaglyphCustom,
+    Philips
   };
 
   /// Store opengl stereo support setting

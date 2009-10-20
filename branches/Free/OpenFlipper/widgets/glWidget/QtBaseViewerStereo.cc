@@ -58,6 +58,8 @@
 
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <QGLFramebufferObject>
+
 
 //== NAMESPACES ===============================================================
 
@@ -147,6 +149,71 @@ glViewer::drawScene_glStereo()
   drawScene_mono();
   glDrawBuffer(GL_BACK);
 }
+
+
+void
+glViewer::drawScenePhilipsStereo()
+{
+  std::cerr << "Rendering into new buffer" << std::endl;
+
+  QGLFramebufferObject* buffer = new QGLFramebufferObject (glWidth (), glHeight (), QGLFramebufferObject::Depth);
+
+  buffer->bind();
+  
+  drawScene_mono();
+  
+//   buffer->drawTexture(QRectF(0,0,1,1),buffer->texture());
+  QImage image = buffer->toImage();
+  image.save("test.jpg");
+  buffer->release();
+  
+//   glBindTexture(GL_TEXTURE_2D, buffer->texture());
+//   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+// //   glEnable(GL_TEXTURE_2D);
+//   glEnable(GL_BLEND);
+//   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//   glDisable(GL_DEPTH_TEST);
+//   
+//   glColor3f(1.0,1.0,1.0);
+//   
+//   // draw into the GL widget
+//   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//   glMatrixMode(GL_PROJECTION);
+// //   glPushMatrix();
+//   
+//   glLoadIdentity();
+//   glOrtho(-1, 1, -1, 1, 10, 100);
+//   
+//   
+//   glMatrixMode(GL_MODELVIEW);
+// //   glPushMatrix();
+//   glLoadIdentity();
+// //   glViewport(0, 0, glWidth(), glHeight());
+//   
+//   
+//   
+//   glBegin(GL_QUADS);
+//   {
+//     
+//     glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0f, -1.0f,  15.0f);
+//     glTexCoord2f(1.0f, 0.0f); glVertex3f( 1.0f, -1.0f,  15.0f);
+//     glTexCoord2f(1.0f, 1.0f); glVertex3f( 1.0f,  1.0f,  15.0f);
+//     glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0f,  1.0f,  15.0f);
+//   
+//   }
+//   glEnd();
+//   
+//   glDisable(GL_TEXTURE_2D);
+//   
+//   
+// //   glPopMatrix();
+//   
+//   glMatrixMode(GL_PROJECTION);
+//   glPopMatrix();
+  
+}
+
+
 
 
 //-----------------------------------------------------------------------------
