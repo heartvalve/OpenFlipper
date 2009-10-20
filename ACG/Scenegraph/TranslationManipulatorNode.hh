@@ -120,7 +120,7 @@ public:
   bool draw_manipulator() const { return draw_manipulator_; }
 
   /// Set direction in world coordinates
-  void set_direction(Vec3d& _directionX, Vec3d& _directionY);
+  void set_direction(const Vec3d& _directionX, const Vec3d& _directionY);
 
   /// Get current direction of x-Axis in world coordinates
   Vec3d directionX() const;

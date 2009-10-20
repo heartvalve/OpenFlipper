@@ -1850,7 +1850,7 @@ pick(GLState& _state, PickTarget _target)
 //----------------------------------------------------------------------------
 
 void
-TranslationManipulatorNode::set_direction(Vec3d& _directionX, Vec3d& _directionY)
+TranslationManipulatorNode::set_direction(const Vec3d& _directionX, const Vec3d& _directionY)
 {
 
   localTransformation_.identity();
