@@ -369,6 +369,7 @@ public:
   private:
     OpenFlipper::Options::LoggerState loggerState_;
 
+    uint fullscreenState_;
 
   /** @} */
 
