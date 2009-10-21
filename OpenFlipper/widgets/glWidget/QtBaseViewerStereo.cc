@@ -63,6 +63,7 @@
 #include <ACG/ShaderUtils/GLSLShader.hh>
 #include <ACG/GL/globjects.hh>
 
+#include <ACG/ShaderUtils/gldebug.h>
 
 #include "crc32.hh"
 
@@ -159,6 +160,10 @@ glViewer::drawScene_glStereo()
 void
 glViewer::drawScenePhilipsStereo()
 {
+  
+  int vp_l, vp_b, vp_w, vp_h;
+  glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
+  
   // ======================================================================================================
   // creating a color texture
   // ======================================================================================================
@@ -170,7 +175,7 @@ glViewer::drawScenePhilipsStereo()
   GLenum texFormat         = GL_RGBA;
   GLenum texType           = GL_UNSIGNED_BYTE;
   GLenum texFilterMode     = GL_NEAREST;
-  glTexImage2D(texTarget, 0, texInternalFormat, glWidth(), glHeight(), 0, texFormat, texType, NULL);
+  glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
   
   glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
   glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
@@ -189,7 +194,7 @@ glViewer::drawScenePhilipsStereo()
   texFormat         = GL_DEPTH_STENCIL_EXT;
   texType           = GL_UNSIGNED_INT_24_8_EXT;
   texFilterMode     = GL_NEAREST;
-  glTexImage2D(texTarget, 0, texInternalFormat, glWidth(), glHeight(), 0, texFormat, texType, NULL);
+  glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
 
   glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
   glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
@@ -203,41 +208,56 @@ glViewer::drawScenePhilipsStereo()
   depthStencilTexture.disable();
   colorTexture.disable();
 
-  // ======================================================================================================
-  // creating the framebuffer object
-  // ======================================================================================================
-  GLuint frameBuffer_id;
-  glGenFramebuffersEXT(1, &frameBuffer_id);
-  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBuffer_id);
-
-  // ======================================================================================================
-  // connect a color texture
-  // ======================================================================================================
-  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colorTexture.id(), 0);
+//   // ======================================================================================================
+//   // creating the framebuffer object
+//   // ======================================================================================================
+//   GLuint frameBuffer_id;
+//   glGenFramebuffersEXT(1, &frameBuffer_id);
+//   glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBuffer_id);
+// 
+//   // ======================================================================================================
+//   // connect a color texture
+//   // ======================================================================================================
+//   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colorTexture.id(), 0);
+//   
+//   // ======================================================================================================
+//   // connect a depth stencil texture
+//   // ======================================================================================================
+//   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
+//   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
+// 
+//   glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
+//   glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
   
-  // ======================================================================================================
-  // connect a depth stencil texture
-  // ======================================================================================================
-  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
-  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
-
-  glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
-  glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
+  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
   
-  glClear(GL_DEPTH_BUFFER_BIT);
   // ======================================================================================================
   // Render the scene
   // ======================================================================================================
   drawScene_mono();
-
-  glDrawBuffer(GL_BACK);
-  glReadBuffer(GL_BACK);
+  colorTexture.enable();
+  colorTexture.bind();
   
-  // ======================================================================================================
-  // Disable and discard the framebuffer
-  // ======================================================================================================  
-  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-  glDeleteFramebuffersEXT(1, &frameBuffer_id);
+  glCopyTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
+  
+  colorTexture.disable();
+  
+  depthStencilTexture.enable();
+  depthStencilTexture.bind();
+  
+  glCopyTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
+  
+  depthStencilTexture.disable();
+  
+
+//   glDrawBuffer(GL_BACK);
+//   glReadBuffer(GL_BACK);
+  
+//   // ======================================================================================================
+//   // Disable and discard the framebuffer
+//   // ======================================================================================================  
+//   glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+//   glDeleteFramebuffersEXT(1, &frameBuffer_id);
   
 
   // ======================================================================================================
@@ -300,7 +320,7 @@ glViewer::drawScenePhilipsStereo()
   glstate_->reset_projection();
   glstate_->reset_modelview();
 
-  glstate_->ortho(0, glWidth(), 0, glHeight(), 0, 1);
+  glstate_->ortho(0, vp_w, 0, vp_h, 0, 1);
 
 
   // ======================================================================================================
@@ -318,9 +338,9 @@ glViewer::drawScenePhilipsStereo()
   // Render a simple quad (rest is done by shader)
   // ======================================================================================================
   glBegin(GL_QUADS);
-  glTexCoord2f(0.0f, 1.0f); glVertex2i( 0, glHeight());
-  glTexCoord2f(1.0f, 1.0f); glVertex2i( glWidth(), glHeight());
-  glTexCoord2f(1.0f, 0.0f); glVertex2i( glWidth(), 0);
+  glTexCoord2f(0.0f, 1.0f); glVertex2i( 0, vp_h);
+  glTexCoord2f(1.0f, 1.0f); glVertex2i( vp_w, vp_h);
+  glTexCoord2f(1.0f, 0.0f); glVertex2i( vp_w, 0);
   glTexCoord2f(0.0f, 0.0f); glVertex2i( 0, 0);
   glEnd();
   
