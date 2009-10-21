@@ -33,6 +33,8 @@
 
 #include "crc32.hh"
 
+#include <iostream>
+
 /*****************************************************************/
 /*                                                               */
 /* CRC LOOKUP TABLE                                              */
@@ -150,7 +152,7 @@ unsigned long crctable[256] =
 unsigned long CalcCRC32(unsigned char *p, unsigned long len)
 {
   unsigned long i;
-  unsigned long crc = 0;
+  unsigned int crc = 0;
 
   /* process each byte prior to checksum field */
   for (i = 0; i < len; i++)
