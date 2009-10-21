@@ -70,7 +70,6 @@
 
 
 //== IMPLEMENTATION ==========================================================
-#include <qt4/QtCore/qdir.h>
 
 static const char* customAnaglyphProg = {
   "!!ARBfp1.0"
@@ -199,6 +198,12 @@ glViewer::drawScenePhilipsStereo()
   glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
 
   // ======================================================================================================
+  // Disable textures
+  // ======================================================================================================
+  depthStencilTexture.disable();
+  colorTexture.disable();
+
+  // ======================================================================================================
   // creating the framebuffer object
   // ======================================================================================================
   GLuint frameBuffer_id;
@@ -216,17 +221,17 @@ glViewer::drawScenePhilipsStereo()
   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
 
+  glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
+  glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
   
+  glClear(GL_DEPTH_BUFFER_BIT);
   // ======================================================================================================
   // Render the scene
   // ======================================================================================================
   drawScene_mono();
-  
-  // ======================================================================================================
-  // Disable textures
-  // ======================================================================================================
-  depthStencilTexture.disable();
-  colorTexture.disable();
+
+  glDrawBuffer(GL_BACK);
+  glReadBuffer(GL_BACK);
   
   // ======================================================================================================
   // Disable and discard the framebuffer
@@ -266,9 +271,11 @@ glViewer::drawScenePhilipsStereo()
   // Bind textures to different texture units and tell shader where to find them
   // ======================================================================================================
   glActiveTextureARB(GL_TEXTURE0_ARB);
+  colorTexture.enable(); 
   colorTexture.bind(); 
   
   glActiveTextureARB(GL_TEXTURE1_ARB);
+  depthStencilTexture.enable();  
   depthStencilTexture.bind();  
   
   program->setUniform("ColorTexture",0);
