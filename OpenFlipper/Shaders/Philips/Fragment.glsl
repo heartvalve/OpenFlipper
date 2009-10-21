@@ -15,7 +15,11 @@ void main(void)
    gl_FragColor = texture2D( ColorTexture, gl_TexCoord[0].st );
  } else {
    gl_TexCoord[0].s = (gl_TexCoord[0].s - 0.5) * 2.0;
-   gl_FragColor = texture2D( DepthStencil, gl_TexCoord[0].st );
+   vec4 convert = texture2D( DepthStencil, gl_TexCoord[0].st );
+   
+   // This conversion is specified in the docs for a 42'' Display
+   convert.rgba = (-1960.37 *( 1.0 - (7.655192 / ( convert.r - 0.467481 + 7.655192)) ) + 127.5) / 255.0;
+   gl_FragColor = convert;
  }
 
 }
