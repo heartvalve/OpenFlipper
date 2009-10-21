@@ -61,6 +61,7 @@
 #include <QGLFramebufferObject>
 
 #include <ACG/ShaderUtils/GLSLShader.hh>
+#include <ACG/GL/globjects.hh>
 
 
 //== NAMESPACES ===============================================================
@@ -157,19 +158,84 @@ glViewer::drawScene_glStereo()
 void
 glViewer::drawScenePhilipsStereo()
 {
-  std::cerr << "Rendering into new buffer" << std::endl;
-
-  QGLFramebufferObject* buffer = new QGLFramebufferObject (glWidth (), glHeight (), QGLFramebufferObject::Depth);
-
-  buffer->bind();
+  // ======================================================================================================
+  // creating a color texture
+  // ======================================================================================================
+  ACG::Texture2D colorTexture;
+  colorTexture.enable();
+  colorTexture.bind();
+  GLenum texTarget         = GL_TEXTURE_2D;
+  GLenum texInternalFormat = GL_RGBA;
+  GLenum texFormat         = GL_RGBA;
+  GLenum texType           = GL_UNSIGNED_BYTE;
+  GLenum texFilterMode     = GL_NEAREST;
+  glTexImage2D(texTarget, 0, texInternalFormat, glWidth(), glHeight(), 0, texFormat, texType, NULL);
   
+  glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
+  glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
+  glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+  
+  // ======================================================================================================
+  // creating an 24-bit depth + 8-bit stencil texture
+  // ======================================================================================================
+  ACG::Texture2D depthStencilTexture;
+  depthStencilTexture.enable();
+  depthStencilTexture.bind();
+  texTarget         = GL_TEXTURE_2D;
+  texInternalFormat = GL_DEPTH24_STENCIL8_EXT;
+  texFormat         = GL_DEPTH_STENCIL_EXT;
+  texType           = GL_UNSIGNED_INT_24_8_EXT;
+  texFilterMode     = GL_NEAREST;
+  glTexImage2D(texTarget, 0, texInternalFormat, glWidth(), glHeight(), 0, texFormat, texType, NULL);
+
+  glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
+  glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
+  glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+
+  // ======================================================================================================
+  // creating the framebuffer object
+  // ======================================================================================================
+  GLuint frameBuffer_id;
+  glGenFramebuffersEXT(1, &frameBuffer_id);
+  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBuffer_id);
+
+  // ======================================================================================================
+  // connect a color texture
+  // ======================================================================================================
+  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colorTexture.id(), 0);
+  
+  // ======================================================================================================
+  // connect a depth stencil texture
+  // ======================================================================================================
+  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
+  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
+
+  
+  // ======================================================================================================
+  // Render the scene
+  // ======================================================================================================
   drawScene_mono();
-//   
-// //   buffer->drawTexture(QRectF(0,0,1,1),buffer->texture());
-//   QImage image = buffer->toImage();
-//   image.save("test.jpg");
-  buffer->release();
   
+  // ======================================================================================================
+  // Disable textures
+  // ======================================================================================================
+  depthStencilTexture.disable();
+  colorTexture.disable();
+  
+  // ======================================================================================================
+  // Disable and discard the framebuffer
+  // ======================================================================================================  
+  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+  glDeleteFramebuffersEXT(1, &frameBuffer_id);
+  
+
+  // ======================================================================================================
+  // Setup the shaders used to render color and depth info next to each other
+  // ======================================================================================================
   GLSL::PtrVertexShader   vertexShader;
   GLSL::PtrFragmentShader fragmentShader;
   GLSL::PtrProgram        program;
@@ -192,22 +258,33 @@ glViewer::drawScenePhilipsStereo()
   program->attach(vertexShader);
   program->attach(fragmentShader);
   program->link();
-  
   program->use();
-  
-  program->setUniform("Texture",0);
-  
-  
-  glBindTexture(GL_TEXTURE_2D, buffer->texture());
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+  // ======================================================================================================
+  // Bind textures to different texture units and tell shader where to find them
+  // ======================================================================================================
+  glActiveTextureARB(GL_TEXTURE0_ARB);
+  colorTexture.bind(); 
+  
+  glActiveTextureARB(GL_TEXTURE1_ARB);
+  depthStencilTexture.bind();  
+  
+  program->setUniform("ColorTexture",0);
+  program->setUniform("DepthStencil",1);
+  
+
+
+  // ======================================================================================================
+  // Render plain textured 
+  // ======================================================================================================
   glDisable(GL_LIGHTING);
   glDisable(GL_COLOR_MATERIAL);
   glDisable(GL_DEPTH_TEST);
 
+  
+  // ======================================================================================================
+  // Setup orthogonal projection
+  // ======================================================================================================
   glstate_->push_projection_matrix();
   glstate_->push_modelview_matrix();
 
@@ -217,36 +294,38 @@ glViewer::drawScenePhilipsStereo()
   glstate_->ortho(0, 10, 0, 10, 0, 1);
 
 
+  // ======================================================================================================
+  // Bind textures to different texture units and tell shader where to find them
+  // ======================================================================================================
   glColor3f(1.0,1.0,1.0);
   
-  //Draw a scene
+  // ======================================================================================================
+  // Clear buffers
+  // ======================================================================================================
   glClearColor(.0, .0, .0, 0);
   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-  glBegin(GL_POINTS);
-  glVertex2f( 2.5, 2.5);
-  glEnd();
-
-
+  // ======================================================================================================
+  // Render a simple quad (rest is done by shader)
+  // ======================================================================================================
   glBegin(GL_QUADS);
-  glTexCoord2f(0.0f, 1.0f); glVertex2f( 0, 10);
-  glTexCoord2f(1.0f, 1.0f); glVertex2f( 5, 10);
-  glTexCoord2f(1.0f, 0.0f); glVertex2f( 5, 0);
-  glTexCoord2f(0.0f, 0.0f); glVertex2f( 0, 0);
+  glTexCoord2f(0.0f, 1.0f); glVertex2i( 0, 10);
+  glTexCoord2f(1.0f, 1.0f); glVertex2i( 10, 10);
+  glTexCoord2f(1.0f, 0.0f); glVertex2i( 10, 0);
+  glTexCoord2f(0.0f, 0.0f); glVertex2i( 0, 0);
   glEnd();
   
   program->disable();
   
   glBindTexture(GL_TEXTURE_2D, 0);
   
-  delete buffer;
-  
-  
-//   
-  
+  // ======================================================================================================
+  // Cleanup (color and depth textures)  
+  // ======================================================================================================
+  depthStencilTexture.del();
+  colorTexture.del();
 
-//   
-//   glstate_->ortho(0,glstate_->viewport_width(),glstate_->viewport_height(),0,0,256);
+  //   glstate_->ortho(0,glstate_->viewport_width(),glstate_->viewport_height(),0,0,256);
 // //   glstate_->viewport(0,0,glstate_->viewport_width(),glstate_->viewport_height());
 //   
 //   
