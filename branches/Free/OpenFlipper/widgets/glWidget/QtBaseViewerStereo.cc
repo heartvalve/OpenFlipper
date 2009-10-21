@@ -207,34 +207,16 @@ glViewer::drawScenePhilipsStereo()
   // ======================================================================================================
   depthStencilTexture.disable();
   colorTexture.disable();
-
-//   // ======================================================================================================
-//   // creating the framebuffer object
-//   // ======================================================================================================
-//   GLuint frameBuffer_id;
-//   glGenFramebuffersEXT(1, &frameBuffer_id);
-//   glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, frameBuffer_id);
-// 
-//   // ======================================================================================================
-//   // connect a color texture
-//   // ======================================================================================================
-//   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, colorTexture.id(), 0);
-//   
-//   // ======================================================================================================
-//   // connect a depth stencil texture
-//   // ======================================================================================================
-//   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
-//   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, texTarget , depthStencilTexture.id(), 0);
-// 
-//   glDrawBuffer(GL_COLOR_ATTACHMENT0_EXT);
-//   glReadBuffer(GL_COLOR_ATTACHMENT0_EXT);
-  
-  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
   
   // ======================================================================================================
   // Render the scene
   // ======================================================================================================
+  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
   drawScene_mono();
+  
+  // ======================================================================================================
+  // Copy Scene to Textures
+  // ======================================================================================================
   colorTexture.enable();
   colorTexture.bind();
   
@@ -248,17 +230,6 @@ glViewer::drawScenePhilipsStereo()
   glCopyTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
   
   depthStencilTexture.disable();
-  
-
-//   glDrawBuffer(GL_BACK);
-//   glReadBuffer(GL_BACK);
-  
-//   // ======================================================================================================
-//   // Disable and discard the framebuffer
-//   // ======================================================================================================  
-//   glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-//   glDeleteFramebuffersEXT(1, &frameBuffer_id);
-  
 
   // ======================================================================================================
   // Setup the shaders used to render color and depth info next to each other
