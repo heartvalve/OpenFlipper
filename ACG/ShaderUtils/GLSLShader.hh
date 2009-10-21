@@ -170,10 +170,10 @@ namespace GLSL {
 
     //--------------------------------------------------------------------------
 
-    GLSL::StringList loadShader(const char *filename);
+    GLSL::StringList ACGDLLEXPORT loadShader(const char *filename);
 
-    GLSL::PtrVertexShader loadVertexShader(const char *name);
-    GLSL::PtrFragmentShader loadFragmentShader(const char *name);
+    GLSL::PtrVertexShader ACGDLLEXPORT loadVertexShader(const char *name);
+    GLSL::PtrFragmentShader ACGDLLEXPORT loadFragmentShader(const char *name);
 
 }
 
