@@ -327,53 +327,12 @@ glViewer::drawScenePhilipsStereo()
   depthStencilTexture.del();
   colorTexture.del();
 
-  //   glstate_->ortho(0,glstate_->viewport_width(),glstate_->viewport_height(),0,0,256);
-// //   glstate_->viewport(0,0,glstate_->viewport_width(),glstate_->viewport_height());
-//   
-//   
-//   glstate_->reset_modelview();
-// 
-//   glDisable( GL_DEPTH_TEST );
-//   glDisable( GL_LIGHTING );
-//   
-//   
-//   // draw into the GL widget
-//   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-// 
-//   
-//   glBegin(GL_POINTS);
-//   {
-//     glVertex2i( 55, 15);
-//     
-//     glVertex2i( 0, 15);
-//     
-//     glVertex2i( 1, 15);
-//     
-//     glVertex2i( 2, 15);
-//     
-//     glVertex2i( 0, 0 );
-//   }
-//     glEnd();
-//   
-//   glBegin(GL_QUADS);
-//   {
-//     
-//     glTexCoord2f(0.0f, 0.0f); glVertex2i( 0, 5);
-//     glTexCoord2f(1.0f, 0.0f); glVertex2i( 0, 0);
-//     glTexCoord2f(1.0f, 1.0f); glVertex2i( 5, 0);
-//     glTexCoord2f(0.0f, 1.0f); glVertex2i( 5, 5);
-//   
-//   }
-//   glEnd();
-//   
+  // ======================================================================================================
+  // Reset projection and modelview
+  // ======================================================================================================     
   glstate_->pop_projection_matrix();
-  
   glstate_->pop_modelview_matrix();
   
-  
-//   
-//   glDisable(GL_TEXTURE_2D);
-//   
   
   uchar *header = new uchar[ 6 ];
 
@@ -389,11 +348,11 @@ glViewer::drawScenePhilipsStereo()
 
   std::vector< uchar > bitVector;
 
-  for (uint i=1; i <= 6*8; i++)
-    bitVector.push_back( header & (1 << i );
-
-  for (uint i=1; i <= 32; i++)
-    bitVector.push_back( checksum & (1 << i );
+//   for (uint i=1; i <= 6*8; i++)
+//     bitVector.push_back( header & (1 << i );
+// 
+//   for (uint i=1; i <= 32; i++)
+//     bitVector.push_back( checksum & (1 << i );
 
 
   //render the header
