@@ -1,20 +1,22 @@
 
-uniform sampler2D       Texture;
+uniform sampler2D       ColorTexture;
+uniform sampler2D       DepthStencil;
 
 
 void main(void)
 {
+ 
+ // Left  side is the color image seen by the user
+ // Right side is the the depth map of the current view
+ // Texture coordinates have to be scaled
+ // and for the left image they also have to be shifted
+ if ( gl_TexCoord[0].s < 0.5 ) {
+   gl_TexCoord[0].s = gl_TexCoord[0].s * 2.0; 
+   gl_FragColor = texture2D( ColorTexture, gl_TexCoord[0].st );
+ } else {
+   gl_TexCoord[0].s = (gl_TexCoord[0].s - 0.5) * 2.0;
+   gl_FragColor = texture2D( DepthStencil, gl_TexCoord[0].st );
+ }
 
- vec4 depthColor;
- depthColor.x = texture2D( Texture, gl_TexCoord[0].st ).a;
- depthColor.y = depthColor.x;
- depthColor.z = depthColor.x;
- depthColor.a = 1.0;
-
-// gl_FragColor = depthColor;
- gl_FragColor = texture2D( Texture, gl_TexCoord[0].st );
-
- //gl_FragColor = gl_Color;
- //gl_FragColor = vec4(1.0,0.0,0.0,1.0);
 }
 
