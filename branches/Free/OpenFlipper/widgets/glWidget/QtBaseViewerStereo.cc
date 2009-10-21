@@ -64,6 +64,8 @@
 #include <ACG/GL/globjects.hh>
 
 
+#include "crc32.hh"
+
 //== NAMESPACES ===============================================================
 
 
@@ -373,6 +375,38 @@ glViewer::drawScenePhilipsStereo()
 //   glDisable(GL_TEXTURE_2D);
 //   
   
+  uchar *header = new uchar[ 6 ];
+
+  header[0] = 241; // Header_ID1 = 11110001
+  header[1] = 3;   // Hdr_Content_type (Game) = 00000011
+  header[2] = 64;  // Hdr_Factor
+  header[3] = 128; // Hdr_Offset_CC
+  header[4] = 0;   // Hdr_Factor_select(1) + Hdr_Offset_select(1) + reserved(6)
+  header[5] = 0;   // Reserved
+
+  //unsigned long has 32bit = 4Byte
+  unsigned long checksum = CalcCRC32(header, 6);
+
+  std::vector< uchar > bitVector;
+
+  for (uint i=1; i <= 6*8; i++)
+    bitVector.push_back( header & (1 << i );
+
+  for (uint i=1; i <= 32; i++)
+    bitVector.push_back( checksum & (1 << i );
+
+
+  //render the header
+  glBegin(GL_POINTS);
+  {
+    // header is 10 bytes long = 80bit
+    // one bit is stored per blue Color
+    for (uint i=0; i < 80; i++){
+      glColor3b(0,0,bitVector[i] * 255);
+      glVertex2i( 2*i, 0);
+    }
+  }
+
 }
 
 
