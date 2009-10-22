@@ -239,7 +239,7 @@ glViewer::drawScenePhilipsStereo()
   GLSL::PtrProgram        program;
   
   QString vshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Vertex.glsl";
-  QString fshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Fragment.glsl";
+  QString fshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Fragment42.glsl";
   
   ////
   vertexShader            = GLSL::loadVertexShader(  vshaderFile.toStdString().c_str() );
