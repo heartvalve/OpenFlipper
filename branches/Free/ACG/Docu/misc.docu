@@ -19,7 +19,7 @@ Please follow the naming conventions, if you extend the %ACG-code !
   \li Two trailing underscores for static member-variables: \c var__
 
 <b>Functions:</b>
-  \li Words are speparated by underscores: \c my_function()
+  \li Words are speparated by capital letter: \c myFunction()
 		 
 <b>Accessing members:</b>
   \li To get the member \c xxx_ use <tt> const& xxx() const </tt>
@@ -33,7 +33,7 @@ Please follow the naming conventions, if you extend the %ACG-code !
 
 /** \page compiling_ACG Compiling ACG
 
-Just use our tool \c acgmake.
+Use the cmake build tool.
 
 **/
 
