@@ -33,6 +33,8 @@
  *	- <b>General bugfixes</b>
  *		- Fixed bug where rotation center and scene center interfered
  *		- Fixed translation in plane object
+ *	- <b>Internal libs</b>
+ *		- Updated OpenMesh to RC4 
  *
  * - <b>OpenFlipper 1.0 RC4 ( 29.09.2009 ,7205)</b>
  *  	- Isotropic Remesher Plugin
