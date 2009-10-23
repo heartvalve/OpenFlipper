@@ -1,0 +1,8 @@
+/*! \page pluginExamples Programming examples for OpenFlipper plugins
+ *
+  *
+ *  - \subpage  ex1 "A simple Plugin"
+ *  - \subpage  ex2 "Implementing a mesh smoother plugin"
+ *  - \subpage  ex3 "Implementing mouse and keyboard interaction"
+ *  - \subpage  ex4 "Create documentation for a plugin"
+ */
