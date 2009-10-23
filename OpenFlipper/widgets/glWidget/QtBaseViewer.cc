@@ -168,7 +168,7 @@ glViewer::glViewer( QGraphicsScene* _scene,
 
   sceneGraphRoot_   = 0;
 
-  normalsMode_      = DONT_TOUCH_NORMALS;
+  normalsMode_      = NORMALIZE_NORMALS;
   projectionMode_   = PERSPECTIVE_PROJECTION;
   navigationMode_   = NORMAL_NAVIGATION;
 
