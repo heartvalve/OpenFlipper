@@ -275,11 +275,19 @@ void MovePlugin::initializePlugin()
  */
 void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /*_mode*/)
 {
-   manip_size_modifier_ = manip_size_modifier_ - (float)_event->delta() / 120.0 * 0.1;
-   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-         o_it->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
+  // Skip execution if this is not our pick mode
+  if((PluginFunctions::pickMode() != "Move" && PluginFunctions::pickMode() != "MoveSelection") || PluginFunctions::actionMode() != Viewer::PickingMode)
+    return;
+  
+  // compute the manipulator size modifier based on the mouse wheel change
+  manip_size_modifier_ = manip_size_modifier_ - (float)_event->delta() / 120.0 * 0.1;
+  
+  // Resize all manipulators based on the modifier on all objects
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+      o_it->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
 
-   emit visibilityChanged (-1);
+  // Redraw scene with updated manipulators
+  emit updateView();
 }
 
 
