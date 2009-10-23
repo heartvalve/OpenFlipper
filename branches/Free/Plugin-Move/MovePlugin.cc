@@ -1530,17 +1530,40 @@ ACG::Matrix4x4d MovePlugin::getLastManipulatorMatrix(bool _reset) {
  */
 template< typename MeshT >
 void MovePlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
-   typename MeshT::VertexIter v_it     = _mesh.vertices_begin();
-   typename MeshT::VertexIter v_end = _mesh.vertices_end();
-   for (; v_it!=v_end; ++v_it) {
-            _mesh.set_point(v_it,(typename MeshT::Point)_mat.transform_point((OpenMesh::Vec3d)(_mesh.point(v_it))));
-            _mesh.set_normal(v_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(v_it))));
-   }
+  // Get the inverse matrix of the transformation for the normals
+  ACG::Matrix4x4d invMat = _mat;
+  invMat.invert ();
 
-   typename MeshT::FaceIter f_it     = _mesh.faces_begin();
-   typename MeshT::FaceIter f_end = _mesh.faces_end();
-   for (; f_it != f_end; ++f_it)
-            _mesh.set_normal(f_it,(typename MeshT::Point)_mat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(f_it))));
+  typename MeshT::VertexIter v_it     = _mesh.vertices_begin();
+  typename MeshT::VertexIter v_end = _mesh.vertices_end();
+  for (; v_it!=v_end; ++v_it) {
+    
+    // transform the mesh vertex
+    _mesh.set_point(v_it,(typename MeshT::Point)_mat.transform_point((OpenMesh::Vec3d)(_mesh.point(v_it))));
+    
+    // transform the vertex normal
+    typename MeshT::Point n = (typename MeshT::Point)invMat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(v_it)));
+    
+    //re-normalize the vertex normal
+    if (n.length () != 0.0)
+        n *= (1.0/n.length ());
+    
+    _mesh.set_normal(v_it,n);
+  }
+
+  typename MeshT::FaceIter f_it     = _mesh.faces_begin();
+  typename MeshT::FaceIter f_end = _mesh.faces_end();
+  for (; f_it != f_end; ++f_it) {
+    
+    // transform the face normal
+    typename MeshT::Point n = (typename MeshT::Point)invMat.transform_vector((OpenMesh::Vec3d)(_mesh.normal(f_it)));
+    
+    //re-normalize the face normal
+    if (n.length () != 0.0)
+        n *= (1.0/n.length ());
+    
+    _mesh.set_normal(f_it,n);
+  }
 }
 
 
