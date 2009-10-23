@@ -1,5 +1,6 @@
 /*! \page pluginProgramming Plugin Programming
  *
+ * 
  * \section quickref Quick references:
  * - \ref plugin_sec
  * - \ref plugin_prog_sec
@@ -134,4 +135,9 @@
  * where \c _id as in the examples above is the object's identifier.
  *
  * Also see \ref BaseInterface.
+ *
+ * \section Related pages
+ *
+ * \subpage pluginExamples Programming examples for OpenFlipper plugins
+ * \subpage interfaces Plugin Interfaces
  */

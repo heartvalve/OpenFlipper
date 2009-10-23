@@ -1,0 +1,53 @@
+/*! \page changelog Changelog
+ *
+ * - OpenFlipper 1.0 RC5 ( , 7508 )
+ *	- <b>UI</b>
+ *		- Updated the view modes
+ *			- added toolbars to view modes
+ *			- New widget for configuring view modes
+ *		- First person navigation mode
+ *			- Added basic implementation for first person navigation in the scene (Keys wasd + mouse)
+ *	- <b>Rendering</b>
+ *		- Support stereo mode for  Philips 42-inch autostereoscopic 3D Displays
+ *	- <b>Plugin interface changes</b>
+ *		- Toolbox interface (Initialize_toolbox is removed. please add the code from this function to initialize plugin and emit addToolbox there)
+ *		- Removed global access header
+ *	- <b>Plugins</b>
+ *		- Plugin Info
+ *			- Updated Info plugin (new user interface and more info about meshes)
+ *		- Plugin Move
+ *			- Only scale manipulators if move plugin is active
+ *			- Fixed normal update in move plugin
+ *			- Fixed multiple connections in move plugin resulting in slow movement
+ *		- Plugin Datacontrol
+ *			- Fixed double entries in datacontrol
+ *	- <b>Internal changes</b>
+ *		- Changed ordering of main scenegraph nodes (and added pluginfunctions to add new nodes)
+ *	- <b>Documentation</b>
+ *		- refactor the documentation
+ *		- adjust to changes
+ *	- <b>Build system</b>
+ *		- Add cmake configurations for object types
+ *		- parse and integrate Qr resource files for plugins
+ *		- Added lib subdirectory which is automatically build when a cmakelists file exists
+ *	- <b>General bugfixes</b>
+ *		- Fixed bug where rotation center and scene center interfered
+ *		- Fixed translation in plane object
+ *
+ * - <b>OpenFlipper 1.0 RC4 ( 29.09.2009 ,7205)</b>
+ *  	- Isotropic Remesher Plugin
+ *  	- Latest OpenMesh Version
+ *  	- Bugfixes
+ *
+ *
+ *  - <b>OpenFlipper 1.0 RC3 ( 10.07.2009)</b>
+ *  	- Switch to cmake
+ *  	- Creation of Windows and MacOS Installer files
+ *  	- Bugfixes
+ *
+ * - <b>OpenFlipper 1.0 RC2 ( 19.04.2009)</b>
+ * 	- Cmake support added .. needs more testing
+ *
+ * - <b>OpenFlipper 1.0 RC1 ( 27.03.2009 )</b>
+ * 	- Initial Release
+ */
