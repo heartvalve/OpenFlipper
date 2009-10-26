@@ -727,9 +727,25 @@ void Core::openIniFile( QString _filename,
       for ( int i = 0 ; i < openFiles.size(); ++i ) {
 
         QString sectionName = openFiles[i];
+        
+        // Check if the string read is empty (e.g. colon at the end of the line ...)
+        // So skip trying to read files without a filename.
+        if ( sectionName.isEmpty() ) {
+          emit log(LOGWARN,tr("Warning from ini file parser: OpenFiles list contains empty string.") );
+          continue;
+        }
 
+        // Check if the specified section exists
+        if ( !ini.section_exists(sectionName) ) {
+          emit log(LOGERR,tr("Error parsing ini file. OpenFiles section %1 not found in File!").arg(sectionName));
+          continue;
+        }
+        
         QString path;
-        ini.get_entry( path, sectionName , "path" );
+        if ( !ini.get_entry( path, sectionName , "path" ) ) {
+          emit log(LOGERR,tr("Error parsing ini file. Section %1 contains no path description!").arg(sectionName));
+          continue;
+        }
 
         //check if path is relative
         if (path.startsWith( "." + OpenFlipper::Options::dirSeparator() )){
