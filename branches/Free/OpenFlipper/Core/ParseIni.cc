@@ -705,6 +705,7 @@ void Core::openIniFile( QString _filename,
     coreWidget_->setStatus(ApplicationStatus::BLOCKED );
   }
 
+  // Tell plugins that we are currently reading an ini file
   OpenFlipper::Options::loadingSettings(true);
 
   // Load Core settings only if requested
@@ -741,70 +742,83 @@ void Core::openIniFile( QString _filename,
           continue;
         }
         
+        // Get the path for the file which should be opened
         QString path;
         if ( !ini.get_entry( path, sectionName , "path" ) ) {
           emit log(LOGERR,tr("Error parsing ini file. Section %1 contains no path description!").arg(sectionName));
           continue;
         }
 
-        //check if path is relative
+        // Check if path is relative ( The path is considered to be relative if the first character is a ".")
         if (path.startsWith( "." + OpenFlipper::Options::dirSeparator() )){
-          //check if _filename contains a path
+          
+          // check if _filename contains a path by testing if it contains a directory separator
           if (_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2) != ""){
             path.remove(0,1); // remove .
             path = _filename.section(OpenFlipper::Options::dirSeparator(), 0, -2) + path;
           }
+          
         }
 
         int tmpType;
         DataType type = DATA_TRIANGLE_MESH;
 
+        // First check for old datatype style (Only numbers .. therefore not consistent for runtime added types)
         if ( ini.get_entry( tmpType, sectionName , "type"  )) {
           type = DataType(tmpType);
           emit log(LOGWARN, tr("This ini file uses old int style ObjectType fields!") );
           emit log(LOGWARN, tr("Please convert it to new format! ( ... just save it )") );
         } else {
 
+          // Read new style type. The type is represented by its name (as a QString)
           QString typeName="";
-
           if ( ini.get_entry( typeName, sectionName , "type"  )) {
             type = typeId(typeName);
           } else
-            emit log(LOGWARN, tr("Unable to get DataType for object ") +  sectionName + tr(" assuming Triangle Mesh") );
+            emit log(LOGWARN, tr("Unable to get DataType for object %1 assuming Triangle Mesh!").arg(sectionName) );
         }
 
+        // Now the object gets loaded based on the given datatype
         int newObjectId = loadObject(type, path);
 
+        // get the new object from the object tree ( If that fails, the object was not loaded correctly)
         BaseObject* object = objectRoot_->childExists( newObjectId );
         if ( object == 0 )  {
           emit log(LOGERR,tr("Unable to open Object ") + path);
           continue;
         }
 
+        // Read the target flag setting
         bool flag;
         if ( ini.get_entry( flag, sectionName , "target" ) )
           object->target(flag);
 
+        // Read the source flag setting
         if ( ini.get_entry( flag, sectionName , "source" ) )
           object->source(flag);
 
+        // Tell plugins to load their per object settings
         emit iniLoad( ini,object->id() );
 
+        // Tell plugins that the object selection changed
         emit objectSelectionChanged( object->id() );
       }
     }
 
   }
 
-  // Tell Plugins that all objects are
+  // Tell Plugins that all objects are loaded and they should read the remaining parts if necessary
   if ( _perPluginSettings )
     emit iniLoadOptionsLast( ini );
 
+  // close ini file
   ini.disconnect();
 
+  // As the reading has been completed, tell plugins that we do not read an ini file anymore.
   OpenFlipper::Options::loadingSettings(false);
 
-  // Reset scenegraph and recompute scene center containing all new objects
+  // Reset scenegraph and reset trackball center 
+  // This will also recompute the bounding boxes as well as the near and far plane
   resetScenegraph(true);
 
   if ( OpenFlipper::Options::gui() ){
