@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 RC5 ( , 7508 )</b>
+ * - <b>OpenFlipper 1.0 RC5 ( 10.26.2009, 7508 )</b>
  *	- <b>UI</b>
  *		- Updated the view modes
  *			- added toolbars to view modes
@@ -36,20 +36,20 @@
  *	- <b>Internal libs</b>
  *		- Updated OpenMesh to RC4 
  *
- * - <b>OpenFlipper 1.0 RC4 ( 29.09.2009 ,7205)</b>
+ * - <b>OpenFlipper 1.0 RC4 ( 09.29.2009 ,7205)</b>
  *  	- Isotropic Remesher Plugin
  *  	- Latest OpenMesh Version
  *  	- Bugfixes
  *
  *
- *  - <b>OpenFlipper 1.0 RC3 ( 10.07.2009)</b>
+ *  - <b>OpenFlipper 1.0 RC3 ( 07.10.2009)</b>
  *  	- Switch to cmake
  *  	- Creation of Windows and MacOS Installer files
  *  	- Bugfixes
  *
- * - <b>OpenFlipper 1.0 RC2 ( 19.04.2009)</b>
+ * - <b>OpenFlipper 1.0 RC2 ( 04.19.2009)</b>
  * 	- Cmake support added .. needs more testing
  *
- * - <b>OpenFlipper 1.0 RC1 ( 27.03.2009 )</b>
+ * - <b>OpenFlipper 1.0 RC1 ( 03.27.2009 )</b>
  * 	- Initial Release
  */
