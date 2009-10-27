@@ -9,7 +9,7 @@ FIND_PACKAGE(PETSC)
 
 find_path (SLEPC_INCLUDE_DIR slepc.h
   HINTS ENV SLEPC_INCLUDE_DIR
-  PATHS /usr/lib/slepcdir/3.0.0/include "C:\\libs\\slepc-3.0.0-p4\\include"
+  PATHS /usr/lib/slepcdir/3.0.0/include  /opt/local/lib/petsc "C:\\libs\\slepc-3.0.0-p4\\include"
   DOC "SLEPC Include Directory")
 
 IF ( WIN32 )
@@ -18,7 +18,8 @@ find_library( SLEPC_LIBRARY libslepc.lib
             )
 ELSE( WIN32 )
   find_library( SLEPC_LIBRARY slepc
-                PATHS /usr/lib 
+                PATHS /usr/lib
+                      /opt/local/lib/petsc/lib 
               )
 ENDIF( WIN32 )
 
