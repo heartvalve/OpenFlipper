@@ -25,7 +25,7 @@ IF (NOT APPLE )
 ELSE( NOT APPLE)
 	# Look for the header file.
 	FIND_PATH(CGAL_INCLUDE_DIR NAMES CGAL/auto_link/auto_link.h
-        	                   PATHS "/opt/local/CGAL-3.4/include"
+        	                   PATHS "/opt/local/include"
                  )
 
 ENDIF( NOT APPLE )
@@ -54,7 +54,7 @@ IF(CGAL_INCLUDE_DIR )
   ELSEIF( APPLE)
     find_path(CGAL_LIBRARY_DIR 
                 NAMES "libCGAL.dylib"
-                PATHS "/opt/local/CGAL-3.4/lib/"
+                PATHS "/opt/local/lib/"
                 DOC "Directory containing the CGAL library"
                ) 
     list ( APPEND CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt4)
