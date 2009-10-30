@@ -12,6 +12,8 @@ IF (ACG_INCLUDE_DIRS)
   SET(ACG_FIND_QUIETLY TRUE)
 ENDIF (ACG_INCLUDE_DIRS)
 
+#SET(ACG_LIBRARY_DIR "" CACHE INTERNAL "Path to ACG Library")
+
 FIND_PATH(ACG_INCLUDE_DIR ACG/QtWidgets/QtBaseViewer.hh
 	  PATHS /usr/local/include 
                 /usr/include 
@@ -21,10 +23,12 @@ FIND_PATH(ACG_INCLUDE_DIR ACG/QtWidgets/QtBaseViewer.hh
                 )
 
 IF (ACG_INCLUDE_DIR )
+
    SET(ACG_FOUND TRUE)
+
    # TODO: Set correct library path!!
-   #SET(ACG_LIBRARY_DIR "${ACG_INCLUDE_DIR}/../")
-   #SET(ACG_LIBRARY "OpenMeshCore OpenMeshTools")
+   SET(ACG_LIBRARY_DIR "${ACG_INCLUDE_DIR}/../lib/" CACHE PATH "Path to ACG Library")
+   SET(ACG_LIBRARY "ACG")
 ELSE (ACG_INCLUDE_DIR)
    SET(ACG_FOUND FALSE )
 ENDIF (ACG_INCLUDE_DIR )
