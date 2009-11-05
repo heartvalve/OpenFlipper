@@ -44,9 +44,19 @@ add_subdirectory (ACG)
 add_subdirectory (OpenFlipper/PluginLib)
 add_subdirectory (OpenFlipper/CoreApp)
 
-if( EXISTS "${CMAKE_SOURCE_DIR}/PhySim/CMakeLists.txt" )
-	add_subdirectory (PhySim)
-endif()
+
+# search all libs in the libs directory 
+file (
+  GLOB _local_libs_in
+  RELATIVE "${CMAKE_SOURCE_DIR}"
+        "${CMAKE_SOURCE_DIR}/libs/*/CMakeLists.txt"
+)
+
+# add all found libs to the build
+foreach (_localLib ${_local_libs_in})
+  get_filename_component (_local_lib_dir ${_localLib} PATH)
+  add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
+endforeach ()
 
 # add plugins
 of_add_plugins ()
