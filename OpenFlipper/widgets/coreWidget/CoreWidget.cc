@@ -526,9 +526,33 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   stereoSettingsWidget_ = new StereoSettingsWidget(this);
   // Make it look like a dialog
   stereoSettingsWidget_->setWindowFlags(Qt::Popup);
-  // Connect Ok button to local slot
-  connect(stereoSettingsWidget_->confirmButton, SIGNAL(pressed()),
+  // Connect combo boxes and sliders to local slots
+  connect(stereoSettingsWidget_->stereoOpengl, SIGNAL(clicked()),
           this, SLOT(slotApplyStereoSettings()));
+  connect(stereoSettingsWidget_->stereoAnaglyph, SIGNAL(clicked()),
+          this, SLOT(slotApplyStereoSettings()));
+  connect(stereoSettingsWidget_->stereoCustomAnaglyph, SIGNAL(clicked()),
+          this, SLOT(slotApplyStereoSettings()));
+  connect(stereoSettingsWidget_->stereoPhilips, SIGNAL(clicked()),
+          this, SLOT(slotApplyStereoSettings()));
+
+  connect(stereoSettingsWidget_->focalDistance, SIGNAL(valueChanged(int)),
+          this, SLOT(slotApplyStereoSettings(int)));
+  connect(stereoSettingsWidget_->eyeDistance, SIGNAL(editingFinished()),
+          this, SLOT(slotApplyStereoSettings()));
+
+  connect(stereoSettingsWidget_->headerContentType, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(slotApplyStereoSettings(int)));
+  connect(stereoSettingsWidget_->headerFactor, SIGNAL(valueChanged(int)),
+          this, SLOT(slotApplyStereoSettings(int)));
+  connect(stereoSettingsWidget_->headerOffsetCC, SIGNAL(valueChanged(int)),
+          this, SLOT(slotApplyStereoSettings(int)));
+  connect(stereoSettingsWidget_->headerSelect, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(slotApplyStereoSettings(int)));
+
+  // Close button
+  connect(stereoSettingsWidget_->closeButton, SIGNAL(clicked()),
+          stereoSettingsWidget_, SLOT(hide()));
 }
 
 

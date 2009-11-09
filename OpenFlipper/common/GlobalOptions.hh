@@ -496,6 +496,38 @@ bool dataDir(QString _dir);
   DLLEXPORT
   bool stereoMousePick( );
 
+  /// Store philips stereo header content type
+  DLLEXPORT
+  void stereoPhilipsContent( int _content );
+
+  /// get philips stereo header content type
+  DLLEXPORT
+  int stereoPhilipsContent( );
+
+  /// Store philips stereo header factor
+  DLLEXPORT
+  void stereoPhilipsFactor( int _factor );
+
+  /// get philips stereo header factor
+  DLLEXPORT
+  int stereoPhilipsFactor( );
+
+  /// Store philips stereo header offset cc
+  DLLEXPORT
+  void stereoPhilipsOffset( int _offset );
+
+  /// get philips stereo header offset cc
+  DLLEXPORT
+  int stereoPhilipsOffset( );
+
+  /// Store philips stereo header select
+  DLLEXPORT
+  void stereoPhilipsSelect( int _select );
+
+  /// get philips stereo header select
+  DLLEXPORT
+  int stereoPhilipsSelect( );
+
   /// Store synchronization setting
   DLLEXPORT
   void synchronization( bool _synchronization );

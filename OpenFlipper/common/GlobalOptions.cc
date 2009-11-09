@@ -139,6 +139,18 @@ static std::vector<float> anaglyphRightEyeColors_ = std::vector<float> (9, 0.0);
 /// mouse cursor depth picking in stereo mode
 static bool stereoMousePick_ = true;
 
+/// philips stereo header content type
+static int stereoPhilipsContentType_ = 3; // Game
+
+/// philips stereo header factor
+static int stereoPhilipsFactor_ = 64;
+
+/// philips stereo header offset
+static int stereoPhilipsOffset_ = 128;
+
+/// philips stereo header select
+static int stereoPhilipsSelect_ = 0; // Display's defaults
+
 /// Store the synchronization mode
 static bool synchronization_ = false;
 
@@ -346,7 +358,7 @@ QString pluginDirStr()         { return pluginDir_.absolutePath();         }
 QString shaderDirStr()         { return shaderDir_.absolutePath();         }
 QString textureDirStr()        { return textureDir_.absolutePath();        }
 QString licenseDirStr()        { return licenseDir_.absolutePath();        }
-QString scriptDirStr()         { return scriptDir_.absolutePath();         } 
+QString scriptDirStr()         { return scriptDir_.absolutePath();         }
 QString iconDirStr()           { return iconDir_.absolutePath();           }
 QString translationsDirStr()   { return translationsDir_.absolutePath();   }
 QString fontsDirStr()          { return fontsDir_.absolutePath();          }
@@ -637,6 +649,54 @@ void stereoMousePick( bool _stereoMousePick ) {
 /// mouse cursor depth picking during stereo mode
 bool stereoMousePick( ) {
   return stereoMousePick_;
+}
+
+/// Store philips stereo header content type
+void stereoPhilipsContent( int _content )
+{
+  stereoPhilipsContentType_ = _content;
+}
+
+/// get philips stereo header content type
+int stereoPhilipsContent( )
+{
+  return stereoPhilipsContentType_;
+}
+
+/// Store philips stereo header factor
+void stereoPhilipsFactor( int _factor )
+{
+  stereoPhilipsFactor_ = _factor;
+}
+
+/// get philips stereo header factor
+int stereoPhilipsFactor( )
+{
+  return stereoPhilipsFactor_;
+}
+
+/// Store philips stereo header offset
+void stereoPhilipsOffset( int _offset )
+{
+  stereoPhilipsOffset_ = _offset;
+}
+
+/// get philips stereo header offset
+int stereoPhilipsOffset( )
+{
+  return stereoPhilipsOffset_;
+}
+
+/// Store philips stereo header select
+void stereoPhilipsSelect( int _select )
+{
+  stereoPhilipsSelect_ = _select;
+}
+
+/// get philips stereo header select
+int stereoPhilipsSelect( )
+{
+  return stereoPhilipsSelect_;
 }
 
 /// Store synchronization mode setting
