@@ -372,5 +372,8 @@ void CoreWidget::slotApplyStereoSettings() {
     OpenFlipper::Options::focalDistance(
             (float)stereoSettingsWidget_->focalDistance->value() / 1000);
 
-    // TODO: We should force an update of the viewports here
+    // Update all views
+    for (unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i) {
+        examiner_widgets_[i]->updateGL();
+    }
 }
