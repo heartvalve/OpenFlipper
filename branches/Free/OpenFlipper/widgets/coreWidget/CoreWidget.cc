@@ -115,6 +115,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   snapshotCounter_(0),
   stackMenu_(0),
   helpWidget_(0),
+  stereoSettingsWidget_(0),
   aboutWidget_(0),
   optionsWidget_(0),
   plugins_(_plugins),
@@ -334,7 +335,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   viewerToolbar_->setAllowedAreas(Qt::AllToolBarAreas);
   viewerToolbar_->setIconSize(QSize(20,20));
   viewerToolbar_->setObjectName(tr("ViewerToolbar"));
-  
+
   slotAddToolbar(viewerToolbar_);
 
   moveButton_ = new QToolButton( viewerToolbar_ );
@@ -432,13 +433,17 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     stereoButton_->setMaximumSize( 32, 32 );
     stereoButton_->setCheckable( true );
     stereoButton_->setToolTip(tr( "Toggle stereo viewing"));
+    // We want a custom context menu
+    stereoButton_->setContextMenuPolicy(Qt::CustomContextMenu);
     stereoButton_->setWhatsThis(tr(
                   "Toggle stereo mode<br><br>"
                   "Use this button to switch between stereo "
                   "and mono view. To use this feature you need "
                   "a stereo capable graphics card and a stereo "
                   "display/projection system."));
-    connect( stereoButton_,SIGNAL( clicked() ), this , SLOT( slotToggleStereoMode() ) );
+    connect( stereoButton_, SIGNAL( clicked() ), this , SLOT( slotToggleStereoMode() ) );
+    // Custom context menu
+    connect( stereoButton_, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(stereoButtonContextMenu(const QPoint &)));
     viewerToolbar_->addWidget( stereoButton_ )->setText( tr("Stereo"));
   }
 
@@ -461,7 +466,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   vmChangeButton_ = new QPushButton(tr("Change View Mode"));
   QPushButton* vmEditButton   = new QPushButton(tr("Edit View Modes"));
-  
+
   hLayout->addWidget(vmChangeButton_);
   hLayout->addWidget(vmEditButton);
   gb->setLayout (hLayout);
@@ -517,6 +522,13 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
 
+  // Create stereo settings widget
+  stereoSettingsWidget_ = new StereoSettingsWidget(this);
+  // Make it look like a dialog
+  stereoSettingsWidget_->setWindowFlags(Qt::Popup);
+  // Connect Ok button to local slot
+  connect(stereoSettingsWidget_->confirmButton, SIGNAL(pressed()),
+          this, SLOT(slotApplyStereoSettings()));
 }
 
 
@@ -823,8 +835,8 @@ CoreWidget::updateRecent()
   QVector< OpenFlipper::Options::RecentFile > recentFiles = OpenFlipper::Options::recentFiles();
   for (int i = 0 ; i < recentFiles.size() ; ++i ) {
     QString path = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
-    
-    QFileInfo fi(recentFiles[i].filename); 
+
+    QFileInfo fi(recentFiles[i].filename);
 
     if (fi.suffix() == "ini")
       path += "Settings-Icon.png";

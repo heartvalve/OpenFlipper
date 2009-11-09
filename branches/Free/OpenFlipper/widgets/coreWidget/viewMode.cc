@@ -93,7 +93,7 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, QStringList _usedWidget
 
 void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringList _usedWidgets){
   int id = -1;
-  
+
   // Check if it already exists
   for ( int i = 0 ; i < viewModes_.size(); i++) {
     if ( viewModes_[i]->name == _mode ) {
@@ -101,14 +101,14 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringLi
       break;
     }
   }
-  
+
   ViewMode* vm = 0;
   if ( id == -1 ) {
     vm         = new ViewMode();
     vm->name   = _mode;
     vm->custom = _custom;
     vm->icon   = "Unknown.png";
-    
+
     if (_custom) {
       viewModes_.push_back(vm);
     } else {
@@ -120,11 +120,11 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringLi
           break;
         }
       viewModes_.insert(i,vm);
-    }    
+    }
   } else {
     vm = viewModes_[id];
   }
-  
+
   vm->visibleToolboxes = _usedWidgets;
 
   initViewModes();
@@ -136,7 +136,7 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, QStringList _usedToolbar
 
 void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringList _usedToolbars) {
   int id = -1;
-  
+
   // Check if it already exists
   for ( int i = 0 ; i < viewModes_.size(); i++) {
     if ( viewModes_[i]->name == _mode ) {
@@ -144,14 +144,14 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
       break;
     }
   }
-  
+
   ViewMode* vm = 0;
   if ( id == -1 ) {
     vm         = new ViewMode();
     vm->name   = _mode;
     vm->custom = _custom;
     vm->icon   = "Unknown.png";
-    
+
     if (_custom) {
       viewModes_.push_back(vm);
     } else {
@@ -163,13 +163,13 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
           break;
         }
         viewModes_.insert(i,vm);
-    }    
+    }
   } else {
     vm = viewModes_[id];
   }
-  
+
   vm->visibleToolbars = _usedToolbars;
-  
+
   initViewModes();
 }
 
@@ -180,9 +180,9 @@ void CoreWidget::slotSetViewModeIcon(QString _mode, QString _iconName) {
 
 /// Sets the Icon for a given View Mode
 void CoreWidget::slotSetViewModeIcon(QString _mode, bool _custom, QString _iconName) {
-  
+
   int id = -1;
-  
+
   // Check if it already exists
   for ( int i = 0 ; i < viewModes_.size(); i++) {
     if ( viewModes_[i]->name == _mode ) {
@@ -190,14 +190,14 @@ void CoreWidget::slotSetViewModeIcon(QString _mode, bool _custom, QString _iconN
       break;
     }
   }
-  
+
   ViewMode* vm = 0;
   if ( id == -1 ) {
     vm         = new ViewMode();
     vm->name   = _mode;
     vm->custom = _custom;
     vm->icon   = _iconName;
-    
+
     if (_custom) {
       viewModes_.push_back(vm);
     } else {
@@ -209,14 +209,14 @@ void CoreWidget::slotSetViewModeIcon(QString _mode, bool _custom, QString _iconN
           break;
         }
         viewModes_.insert(i,vm);
-    }    
+    }
   } else {
     vm = viewModes_[id];
   }
-  
+
   vm->icon = _iconName;
-  
-  initViewModes(); 
+
+  initViewModes();
 }
 
 /// Remove a viewMode
@@ -266,20 +266,20 @@ void CoreWidget::slotViewModeDialog(){
   widget->show( OpenFlipper::Options::defaultToolboxMode() );
 }
 
-void CoreWidget::slotViewChangeDialog() {   
+void CoreWidget::slotViewChangeDialog() {
   //init widget
   static viewModeChangeWidget* modeChangeWidget = 0;
-  
+
   if ( !modeChangeWidget ){
     modeChangeWidget = new viewModeChangeWidget(viewModes_, this);
     modeChangeWidget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
     connect(modeChangeWidget, SIGNAL(changeView(QString, QStringList, QStringList)), this, SLOT(slotChangeView(QString, QStringList, QStringList)) );
   }
-  
+
   // Make it look like a dialog
   modeChangeWidget->setWindowFlags(Qt::Popup);
-  modeChangeWidget->show( OpenFlipper::Options::defaultToolboxMode() );  
-  
+  modeChangeWidget->show( OpenFlipper::Options::defaultToolboxMode() );
+
   // Move it to the position of the push button
   QPoint posButton = vmChangeButton_->mapToGlobal(vmChangeButton_->pos());
   modeChangeWidget->move( posButton);
@@ -315,23 +315,62 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
         plugins_[p].toolbars[j].second->show();
       else
         plugins_[p].toolbars[j].second->hide();
-  
-      
-  // Check the Main Toolbar:      
+
+
+  // Check the Main Toolbar:
   if ( _toolbars.contains(tr("Main Toolbar")) )
     mainToolbar_->show();
   else
     mainToolbar_->hide();
-    
-  // Check the Main Toolbar:      
+
+  // Check the Main Toolbar:
   if ( _toolbars.contains(tr("Viewer Toolbar")) )
     viewerToolbar_->show();
   else
-    viewerToolbar_->hide();  
-  
-      
+    viewerToolbar_->hide();
+
+
   if (_mode != "")
     OpenFlipper::Options::defaultToolboxMode(_mode);
 
 }
 
+void CoreWidget::stereoButtonContextMenu(const QPoint& _pos) {
+
+    // Set values:
+    stereoSettingsWidget_->stereoOpengl->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::OpenGL);
+    stereoSettingsWidget_->stereoAnaglyph->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphRedCyan);
+    stereoSettingsWidget_->stereoCustomAnaglyph->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphCustom);
+    stereoSettingsWidget_->stereoPhilips->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::Philips);
+
+    stereoSettingsWidget_->eyeDistance->setValue(OpenFlipper::Options::eyeDistance());
+    stereoSettingsWidget_->focalDistance->setValue(OpenFlipper::Options::focalDistance() * 1000);
+
+    // Move widget to the position of the cursor
+    stereoSettingsWidget_->move(stereoButton_->mapToGlobal(_pos));
+    // Show widget
+    stereoSettingsWidget_->show();
+}
+
+void CoreWidget::slotApplyStereoSettings() {
+
+    // Hide widget
+    stereoSettingsWidget_->hide();
+
+    // Update values
+    if (stereoSettingsWidget_->stereoCustomAnaglyph->isChecked()) {
+        OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphCustom);
+    } else if (stereoSettingsWidget_->stereoAnaglyph->isChecked()) {
+        OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphRedCyan);
+    } else if (stereoSettingsWidget_->stereoPhilips->isChecked()) {
+        OpenFlipper::Options::stereoMode(OpenFlipper::Options::Philips);
+    } else {
+        OpenFlipper::Options::stereoMode(OpenFlipper::Options::OpenGL);
+    }
+
+    OpenFlipper::Options::eyeDistance(stereoSettingsWidget_->eyeDistance->value());
+    OpenFlipper::Options::focalDistance(
+            (float)stereoSettingsWidget_->focalDistance->value() / 1000);
+
+    // TODO: We should force an update of the viewports here
+}
