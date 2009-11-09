@@ -160,10 +160,10 @@ glViewer::drawScene_glStereo()
 void
 glViewer::drawScenePhilipsStereo()
 {
-  
+
   int vp_l, vp_b, vp_w, vp_h;
   glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
-  
+
   // ======================================================================================================
   // creating a color texture
   // ======================================================================================================
@@ -176,13 +176,13 @@ glViewer::drawScenePhilipsStereo()
   GLenum texType           = GL_UNSIGNED_BYTE;
   GLenum texFilterMode     = GL_NEAREST;
   glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
-  
+
   glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
   glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
   glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
-  
+
   // ======================================================================================================
   // creating an 24-bit depth + 8-bit stencil texture
   // ======================================================================================================
@@ -207,28 +207,28 @@ glViewer::drawScenePhilipsStereo()
   // ======================================================================================================
   depthStencilTexture.disable();
   colorTexture.disable();
-  
+
   // ======================================================================================================
   // Render the scene
   // ======================================================================================================
   glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
   drawScene_mono();
-  
+
   // ======================================================================================================
   // Copy Scene to Textures
   // ======================================================================================================
   colorTexture.enable();
   colorTexture.bind();
-  
+
   glCopyTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
-  
+
   colorTexture.disable();
-  
+
   depthStencilTexture.enable();
   depthStencilTexture.bind();
-  
+
   glCopyTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
-  
+
   depthStencilTexture.disable();
 
   // ======================================================================================================
@@ -237,22 +237,22 @@ glViewer::drawScenePhilipsStereo()
   GLSL::PtrVertexShader   vertexShader;
   GLSL::PtrFragmentShader fragmentShader;
   GLSL::PtrProgram        program;
-  
+
   QString vshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Vertex.glsl";
   QString fshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Fragment42.glsl";
-  
+
   ////
   vertexShader            = GLSL::loadVertexShader(  vshaderFile.toStdString().c_str() );
   fragmentShader          = GLSL::loadFragmentShader( fshaderFile.toStdString().c_str() );
   program                 = GLSL::PtrProgram(new GLSL::Program());
-  
+
   if ( (vertexShader == 0)   ||
        (fragmentShader == 0) ||
        (program == 0) ) {
     std::cerr << "Unable to load shaders for philips display rendering!";
     return;
   }
-  
+
   program->attach(vertexShader);
   program->attach(fragmentShader);
   program->link();
@@ -262,26 +262,26 @@ glViewer::drawScenePhilipsStereo()
   // Bind textures to different texture units and tell shader where to find them
   // ======================================================================================================
   glActiveTextureARB(GL_TEXTURE0_ARB);
-  colorTexture.enable(); 
-  colorTexture.bind(); 
-  
+  colorTexture.enable();
+  colorTexture.bind();
+
   glActiveTextureARB(GL_TEXTURE1_ARB);
-  depthStencilTexture.enable();  
-  depthStencilTexture.bind();  
-  
+  depthStencilTexture.enable();
+  depthStencilTexture.bind();
+
   program->setUniform("ColorTexture",0);
   program->setUniform("DepthStencil",1);
-  
+
 
 
   // ======================================================================================================
-  // Render plain textured 
+  // Render plain textured
   // ======================================================================================================
   glDisable(GL_LIGHTING);
   glDisable(GL_COLOR_MATERIAL);
   glDisable(GL_DEPTH_TEST);
 
-  
+
   // ======================================================================================================
   // Setup orthogonal projection
   // ======================================================================================================
@@ -298,7 +298,7 @@ glViewer::drawScenePhilipsStereo()
   // Bind textures to different texture units and tell shader where to find them
   // ======================================================================================================
   glColor3f(1.0,1.0,1.0);
-  
+
   // ======================================================================================================
   // Clear buffers
   // ======================================================================================================
@@ -314,13 +314,13 @@ glViewer::drawScenePhilipsStereo()
   glTexCoord2f(1.0f, 0.0f); glVertex2i( vp_w, 0);
   glTexCoord2f(0.0f, 0.0f); glVertex2i( 0, 0);
   glEnd();
-  
+
   program->disable();
-  
+
   glBindTexture(GL_TEXTURE_2D, 0);
-  
+
   // ======================================================================================================
-  // Cleanup (color and depth textures)  
+  // Cleanup (color and depth textures)
   // ======================================================================================================
   depthStencilTexture.del();
   colorTexture.del();
@@ -333,7 +333,7 @@ glViewer::drawScenePhilipsStereo()
   //   Header ID
   //   Basic identifier used by the display to verify the header
   header[0] = 241; // Header_ID1 = 11110001
-  
+
   //   Header content type
   //   This entry controls the displays internal rendering based on the input data specified here.
   //   There is no info about how this changes the rendering
@@ -344,8 +344,8 @@ glViewer::drawScenePhilipsStereo()
   //   3 Game
   //   4 CGI
   //   5 Still
-  header[1] = 3;   // Hdr_Content_type (Game) = 00000011 (Gaming Mode)
-  
+  header[1] = OpenFlipper::Options::stereoPhilipsContent();   // Hdr_Content_type (Game) = 00000011 (Gaming Mode)
+
   //   Header Factor
   //   Each 3D Display has a 'Display recommended depth value', which corresponds to an
   //   acceptable maximum depth factor value for that specific type of display. This value strongly
@@ -355,8 +355,8 @@ glViewer::drawScenePhilipsStereo()
   //   works on a linear scale and is multiplied with the factor controlled by the user in the Display
   //   Control Tool.
   //   Value range: 0-255 (default 64)
-  header[2] = 64;  // Hdr_Factor
-  
+  header[2] = OpenFlipper::Options::stereoPhilipsFactor();  // Hdr_Factor
+
   //   Header Offset CC
   //   Values in the Depth map equal to the header-offset value will be located on the plane of the
   //   display. All values in the disparity map with a higher value will de displayed in front of the
@@ -364,8 +364,8 @@ glViewer::drawScenePhilipsStereo()
   //   Offset_CC is the offset controlled by the Content Creator. In the system there is also an
   //   Offset_user present, which is controlled by the user using the Display Control Tool.
   //   Value Range: 0-255 (default 128)
-  header[3] = 128; // Hdr_Offset_CC
-  
+  header[3] = OpenFlipper::Options::stereoPhilipsOffset(); // Hdr_Offset_CC
+
   //   Header select
   //   When all select signals are low the rendering settings are set to optimal settings for the content
   //   type denoted by Hdr_content_type. By making select signals high the settings for Factor and
@@ -375,8 +375,8 @@ glViewer::drawScenePhilipsStereo()
   //   1 Use Header provided factor
   //   2 Use Header provided offset
   //   3 Use both factor and offset
-  header[4] = 0;   // Hdr_Factor_select(1) + Hdr_Offset_select(1) + reserved(6)
-  
+  header[4] = OpenFlipper::Options::stereoPhilipsSelect();   // Hdr_Factor_select(1) + Hdr_Offset_select(1) + reserved(6)
+
   //   Unused Header entry (leave at 0 !)
   header[5] = 0;   // Reserved
 
@@ -392,14 +392,14 @@ glViewer::drawScenePhilipsStereo()
 
   // For all bytes of the header
   for (int i = 0; i < 6; i++) {
-    
+
     // For each bit of a headers byte
     for ( int j = 7 ; j >= 0 ; --j ) {
-      
+
       // Red and Green component have to be 0
       bitVector.push_back(0);
       bitVector.push_back(0);
-      
+
       // If bit is set, the full component will be set to one otherwise zero
       // And the order of the bits has to be reversed!
       if ( header[i] & (1 << j ) ) {
@@ -407,32 +407,32 @@ glViewer::drawScenePhilipsStereo()
       } else {
         bitVector.push_back(0);
       }
-      
+
       // Only every second pixel is used for the header
       // Skip every odd one by filling in 0 for RGB
       bitVector.push_back(0);
       bitVector.push_back(0);
       bitVector.push_back(0);
-        
+
     }
-    
+
   }
 
-  // Append checksum to header. 
+  // Append checksum to header.
   // Reversed bit order!
   for (int i=31; i >= 0; i--) {
-    
+
     // Red and Green component have to be 0
     bitVector.push_back(0);
     bitVector.push_back(0);
-    
+
     if (  checksum & (1 << i ) )
       bitVector.push_back( 255 );
     else
       bitVector.push_back( 0 );
-    
+
     // Only every second pixel is used for the header
-    // Skip every odd one by filling in 0 for RGB    
+    // Skip every odd one by filling in 0 for RGB
     bitVector.push_back(0);
     bitVector.push_back(0);
     bitVector.push_back(0);
@@ -441,12 +441,12 @@ glViewer::drawScenePhilipsStereo()
 
   // Select the top left of the renderbuffer and
   // write complete header into these bits
-  glRasterPos2i (0,glHeight()-1); 
+  glRasterPos2i (0,glHeight()-1);
   glDrawPixels(bitVector.size()/3, 1,GL_RGB ,GL_UNSIGNED_BYTE , &bitVector[0]);
-  
+
   // ======================================================================================================
   // Reset projection and modelview
-  // ======================================================================================================     
+  // ======================================================================================================
   glstate_->pop_projection_matrix();
   glstate_->pop_modelview_matrix();
 
@@ -496,7 +496,7 @@ glViewer::drawScene_anaglyphStereo()
   drawScene_mono();
   glColorMask(GL_TRUE,GL_TRUE,GL_TRUE,GL_TRUE);
 
-  
+
   // right eye
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -692,7 +692,7 @@ glViewer::drawScene_customAnaglyphStereo()
 
   glBindProgramARB (GL_FRAGMENT_PROGRAM_ARB, 0);
   glDisable (GL_FRAGMENT_PROGRAM_ARB);
-  
+
   glActiveTexture (GL_TEXTURE1);
   glBindTexture (GL_TEXTURE_RECTANGLE_NV, 0);
   glDisable (GL_TEXTURE_RECTANGLE_NV);

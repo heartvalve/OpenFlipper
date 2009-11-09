@@ -811,7 +811,9 @@ public:
     void stereoButtonContextMenu(const QPoint& _pos);
 
     /// Is called if the user has changed stereo settings
-    void slotApplyStereoSettings();
+    /// Note: The parameter just makes sure, we can connect
+    /// all necessary signals to this slot. It has no use for now.
+    void slotApplyStereoSettings(int _tmpParam = 0);
 
 
   private:
