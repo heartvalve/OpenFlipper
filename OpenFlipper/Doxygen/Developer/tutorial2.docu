@@ -45,10 +45,10 @@
  * \skipline void log(
  * \skipline void log(
  *
- * The last Interface that's left over is the \c ToolboxInterface from which we are only implenting one signal:
+ * The last Interface that's left over is the \c ToolboxInterface from which we are only implementing one signal:
  *
  * \dontinclude example/SmootherPlugin.hh
- * \skipline void addToolbox( QString _name  , QWidget* _widget );
+ * \skipline void addToolbox( QString _name, QWidget* _widget );
  *
  * As we will see later, this function is used to add a ToolBox (i.e. a \c QWidget ) to
  * the OpenFlipper user interface.
