@@ -35,6 +35,7 @@ set (directories
   ../widgets/viewModeWidget
   ../widgets/videoCaptureDialog
   ../widgets/snapshotDialog
+  ../widgets/stereoSettingsWidget
 )
 
 # collect all header,source and ui files
