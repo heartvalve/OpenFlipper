@@ -89,6 +89,7 @@
 #include <OpenFlipper/widgets/loggerWidget/loggerWidget.hh>
 #include <OpenFlipper/widgets/optionsWidget/optionsWidget.hh>
 #include <OpenFlipper/widgets/helpWidget/helpWidget.hh>
+#include <OpenFlipper/widgets/stereoSettingsWidget/stereoSettingsWidget.hh>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
 
@@ -102,23 +103,23 @@
 *
 */
 struct ViewMode{
-  
+
   /// Name of the View Mode
   QString name;
-  
+
   /// Icon of the View Mode
   /// TODO Specify size for Icons
   QString icon;
-  
+
   /// Is this a user defined custom view mode or a plugin generated one
   bool custom;
-  
+
   /// List of Visible Toolboxes in this view mode
   QStringList visibleToolboxes;
-  
+
   /// List of Toolbars in this view mode
   QStringList visibleToolbars;
-  
+
   /// List of context Menus in this view mode
   QStringList visibleContextMenus;
 };
@@ -403,19 +404,19 @@ public:
 
       /// Add or change Toolboxes for a ViewMode (_custom == userdefined viewMode)
       void slotAddViewModeToolboxes(QString _mode, bool _custom, QStringList _usedWidgets);
-      
+
       /// Add or change Toolbars for a ViewMode (non-userdefined viewMode)
-      void slotAddViewModeToolbars(QString _mode, QStringList _usedToolbars); 
-      
+      void slotAddViewModeToolbars(QString _mode, QStringList _usedToolbars);
+
       /// Add or change Toolbars for a ViewMode (_custom == userdefined viewMode)
       void slotAddViewModeToolbars(QString _mode, bool _custom, QStringList _usedToolbars);
-      
+
       /// Completly configure a view mode ( set toolbars, toolboxes ... )
       void slotAddViewModeComplete(QString _mode , bool _custom, QStringList _toolboxes, QStringList _toolbars);
-      
+
       /// Sets the Icon for a given View Mode (non-userdefined viewMode)
       void slotSetViewModeIcon(QString _mode, QString _iconName);
-      
+
       /// Sets the Icon for a given View Mode (_custom == userdefined viewMode)
       void slotSetViewModeIcon(QString _mode, bool _custom, QString _iconName);
 
@@ -432,7 +433,7 @@ public:
 
       /// Show a dialog in which the viewMode can be edited
       void slotViewModeDialog();
-      
+
       /// Show a dialog in which the viewMode can be changed
       void slotViewChangeDialog();
 
@@ -492,7 +493,7 @@ public:
 
     /// Widget for toolBox
     QWidget* toolBoxArea_;
-    
+
     /// Button to change viewModes
     QPushButton* vmChangeButton_;
 
@@ -801,6 +802,25 @@ public:
   /** @} */
 
   //===========================================================================
+  /** @name Stereo View Mode
+  * @{ */
+  //===========================================================================
+
+  public slots:
+      /// Creates custom context menu for stereo viewer settings
+    void stereoButtonContextMenu(const QPoint& _pos);
+
+    /// Is called if the user has changed stereo settings
+    void slotApplyStereoSettings();
+
+
+  private:
+    /// Widget to change stereo settings
+    StereoSettingsWidget* stereoSettingsWidget_;
+
+  /** @} */
+
+  //===========================================================================
   /** @name About System
   * @{ */
   //===========================================================================
@@ -982,16 +1002,16 @@ public:
 
     /// When using first person mode move backward
     void moveBack();
-    
+
     /// When using first person mode move forward
     void moveForward();
-    
+
     /// When using first person mode strafe to the left
     void strafeLeft();
-    
+
     /// When using first person mode strafe to the right
     void strafeRight();
-    
+
   private :
     bool stereoActive_;
 
