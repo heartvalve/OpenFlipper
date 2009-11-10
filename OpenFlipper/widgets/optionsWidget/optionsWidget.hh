@@ -112,6 +112,10 @@ private slots:
    /// Switch between the stacked widgets of the stereo settings
    void switchStackedWidget();
 
+   /// Update the labels that show th current values of the sliders
+   /// Note: The parameter just makes sure the signal and slot can be connected
+   void updateSliderCounter(int _tmpParam);
+
 protected:
    void showEvent ( QShowEvent * event );
 

@@ -347,6 +347,12 @@ void CoreWidget::stereoButtonContextMenu(const QPoint& _pos) {
     stereoSettingsWidget_->focalDistance->setValue(OpenFlipper::Options::focalDistance() * 1000);
 
     // Philips stereo mode part
+
+    // Block signals such that slotApplyStereoSettings
+    // won't be called when setting the initial values here...
+    stereoSettingsWidget_->headerContentType->blockSignals(true);
+    stereoSettingsWidget_->headerSelect->blockSignals(true);
+
     stereoSettingsWidget_->headerContentType->setCurrentIndex(OpenFlipper::Options::stereoPhilipsContent());
     stereoSettingsWidget_->headerFactor->setValue(OpenFlipper::Options::stereoPhilipsFactor());
     stereoSettingsWidget_->headerOffsetCC->setValue(OpenFlipper::Options::stereoPhilipsOffset());
@@ -354,11 +360,9 @@ void CoreWidget::stereoButtonContextMenu(const QPoint& _pos) {
     stereoSettingsWidget_->offsetCounter->setNum(OpenFlipper::Options::stereoPhilipsOffset());
     stereoSettingsWidget_->headerSelect->setCurrentIndex(OpenFlipper::Options::stereoPhilipsSelect());
 
-//    // Default values are strange...
-//    std::cerr << "Content type: " << OpenFlipper::Options::stereoPhilipsContent() << std::endl;
-//    std::cerr << "Factor: " << OpenFlipper::Options::stereoPhilipsFactor() << std::endl;
-//    std::cerr << "Offset: " << OpenFlipper::Options::stereoPhilipsOffset() << std::endl;
-//    std::cerr << "Select: " << OpenFlipper::Options::stereoPhilipsSelect() << std::endl;
+    // Unblock signals
+    stereoSettingsWidget_->headerContentType->blockSignals(false);
+    stereoSettingsWidget_->headerSelect->blockSignals(false);
 
     // Show right stacked widget
     if (stereoSettingsWidget_->stereoPhilips->isChecked()) {
