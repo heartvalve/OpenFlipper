@@ -140,7 +140,7 @@ static std::vector<float> anaglyphRightEyeColors_ = std::vector<float> (9, 0.0);
 static bool stereoMousePick_ = true;
 
 /// philips stereo header content type
-static int stereoPhilipsContentType_ = 3; // Game
+static int stereoPhilipsContent_ = 3; // Game
 
 /// philips stereo header factor
 static int stereoPhilipsFactor_ = 64;
@@ -654,13 +654,13 @@ bool stereoMousePick( ) {
 /// Store philips stereo header content type
 void stereoPhilipsContent( int _content )
 {
-  stereoPhilipsContentType_ = _content;
+  stereoPhilipsContent_ = _content;
 }
 
 /// get philips stereo header content type
 int stereoPhilipsContent( )
 {
-  return stereoPhilipsContentType_;
+  return stereoPhilipsContent_;
 }
 
 /// Store philips stereo header factor

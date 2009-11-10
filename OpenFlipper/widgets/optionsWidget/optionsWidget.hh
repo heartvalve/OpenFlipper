@@ -109,6 +109,9 @@ private slots:
    void viewerSettingsChanged(QListWidgetItem* _item);
    void viewerSettingsChanged(int _index);
 
+   /// Switch between the stacked widgets of the stereo settings
+   void switchStackedWidget();
+
 protected:
    void showEvent ( QShowEvent * event );
 
