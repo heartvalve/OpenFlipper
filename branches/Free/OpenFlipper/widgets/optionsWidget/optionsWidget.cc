@@ -87,6 +87,11 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect(stereoPhilips, SIGNAL(clicked()),
           this, SLOT(switchStackedWidget()));
 
+  connect(headerFactor, SIGNAL(valueChanged(int)),
+          this, SLOT(updateSliderCounter(int)));
+  connect(headerOffsetCC, SIGNAL(valueChanged(int)),
+          this, SLOT(updateSliderCounter(int)));
+
   uint mode = 2;
   for (uint i=1; i < 22; i++) {
     std::vector< QString > dm = drawModeToDescriptions( mode );
@@ -186,6 +191,12 @@ void OptionsWidget::switchStackedWidget() {
     } else {
         stackedWidget->setCurrentIndex(0);
     }
+}
+
+void OptionsWidget::updateSliderCounter(int /*_tmpParam*/) {
+    // Update labels that display the current values
+    factorCounter->setNum(headerFactor->value());
+    offsetCounter->setNum(headerOffsetCC->value());
 }
 
 void OptionsWidget::updateViewerSettings(int _row){

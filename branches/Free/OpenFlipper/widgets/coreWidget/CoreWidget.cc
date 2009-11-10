@@ -536,17 +536,17 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   connect(stereoSettingsWidget_->stereoPhilips, SIGNAL(clicked()),
           this, SLOT(slotApplyStereoSettings()));
 
-  connect(stereoSettingsWidget_->focalDistance, SIGNAL(valueChanged(int)),
-          this, SLOT(slotApplyStereoSettings(int)));
+  connect(stereoSettingsWidget_->focalDistance, SIGNAL(sliderReleased()),
+          this, SLOT(slotApplyStereoSettings()));
   connect(stereoSettingsWidget_->eyeDistance, SIGNAL(editingFinished()),
           this, SLOT(slotApplyStereoSettings()));
 
   connect(stereoSettingsWidget_->headerContentType, SIGNAL(currentIndexChanged(int)),
           this, SLOT(slotApplyStereoSettings(int)));
-  connect(stereoSettingsWidget_->headerFactor, SIGNAL(valueChanged(int)),
-          this, SLOT(slotApplyStereoSettings(int)));
-  connect(stereoSettingsWidget_->headerOffsetCC, SIGNAL(valueChanged(int)),
-          this, SLOT(slotApplyStereoSettings(int)));
+  connect(stereoSettingsWidget_->headerFactor, SIGNAL(sliderReleased()),
+          this, SLOT(slotApplyStereoSettings()));
+  connect(stereoSettingsWidget_->headerOffsetCC, SIGNAL(sliderReleased()),
+          this, SLOT(slotApplyStereoSettings()));
   connect(stereoSettingsWidget_->headerSelect, SIGNAL(currentIndexChanged(int)),
           this, SLOT(slotApplyStereoSettings(int)));
 
