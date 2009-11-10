@@ -77,6 +77,16 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect( projectionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(viewerSettingsChanged(int)));
   connect( directionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(viewerSettingsChanged(int)));
 
+  // Switch stacked widget of stereo settings
+  connect(stereoOpengl, SIGNAL(clicked()),
+          this, SLOT(switchStackedWidget()));
+  connect(stereoAnaglyph, SIGNAL(clicked()),
+          this, SLOT(switchStackedWidget()));
+  connect(stereoCustomAnaglyph, SIGNAL(clicked()),
+          this, SLOT(switchStackedWidget()));
+  connect(stereoPhilips, SIGNAL(clicked()),
+          this, SLOT(switchStackedWidget()));
+
   uint mode = 2;
   for (uint i=1; i < 22; i++) {
     std::vector< QString > dm = drawModeToDescriptions( mode );
@@ -164,6 +174,20 @@ void OptionsWidget::viewerSettingsChanged(int /*_index*/){
   }
 };
 
+void OptionsWidget::switchStackedWidget() {
+
+    // Show right stacked widget of stereo settings
+    if (stereoCustomAnaglyph->isChecked()) {
+        stackedWidget->setCurrentIndex(0);
+    } else if (stereoAnaglyph->isChecked()) {
+        stackedWidget->setCurrentIndex(0);
+    } else if (stereoPhilips->isChecked()) {
+        stackedWidget->setCurrentIndex(1);
+    } else {
+        stackedWidget->setCurrentIndex(0);
+    }
+}
+
 void OptionsWidget::updateViewerSettings(int _row){
 
   updatingViewerSettings_ = true;
@@ -211,6 +235,14 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   eyeDistance->setValue (OpenFlipper::Options::eyeDistance());
   focalDistance->setValue (OpenFlipper::Options::focalDistance() * 1000);
+
+  // Philips stereo mode part
+  headerContentType->setCurrentIndex(OpenFlipper::Options::stereoPhilipsContent());
+  headerFactor->setValue(OpenFlipper::Options::stereoPhilipsFactor());
+  headerOffsetCC->setValue(OpenFlipper::Options::stereoPhilipsOffset());
+  factorCounter->setNum(OpenFlipper::Options::stereoPhilipsFactor());
+  offsetCounter->setNum(OpenFlipper::Options::stereoPhilipsOffset());
+  headerSelect->setCurrentIndex(OpenFlipper::Options::stereoPhilipsSelect());
 
   std::vector<float> mat = OpenFlipper::Options::anaglyphLeftEyeColorMatrix ();
   lcm0->setValue (mat[0]);
@@ -287,7 +319,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   baseColorButton->setIcon( QIcon(color) );
 
   randomBaseColor->setChecked( OpenFlipper::Options::randomBaseColor() );
-  
+
   viewerList->setCurrentRow(0);
 
   for ( int i=0; i < PluginFunctions::viewers(); i++ ){
@@ -299,7 +331,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   updateViewerSettings(0);
 
   viewerLayout->setCurrentIndex( OpenFlipper::Options::defaultViewerLayout() );
-  
+
   gridVisible->setChecked (OpenFlipper::Options::gridVisible());
 
   if (OpenFlipper::Options::translation() == "en_US")
@@ -503,13 +535,19 @@ void OptionsWidget::slotApply() {
     OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphRedCyan);
   else if (stereoPhilips->isChecked() )
     OpenFlipper::Options::stereoMode(OpenFlipper::Options::Philips);
-  else 
+  else
     OpenFlipper::Options::stereoMode(OpenFlipper::Options::OpenGL);
 
   OpenFlipper::Options::eyeDistance(eyeDistance->value ());
   OpenFlipper::Options::focalDistance((float)focalDistance->value () / 1000);
 
   OpenFlipper::Options::stereoMousePick(!noMousePick->isChecked ());
+
+  // Set option entries for philips stereo mode
+  OpenFlipper::Options::stereoPhilipsContent(headerContentType->currentIndex());
+  OpenFlipper::Options::stereoPhilipsFactor(headerFactor->value());
+  OpenFlipper::Options::stereoPhilipsOffset(headerOffsetCC->value());
+  OpenFlipper::Options::stereoPhilipsSelect(headerSelect->currentIndex());
 
   std::vector<float> mat (9, 0);
   mat[0] = lcm0->value ();
@@ -537,7 +575,7 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::anaglyphRightEyeColorMatrix (mat);
 
   OpenFlipper::Options::glMouse(!nativeMouse->isChecked ());
-  
+
   // updates
   OpenFlipper::Options::updateUrl( updateURL->text() );
   OpenFlipper::Options::updateUsername( updateUser->text() );

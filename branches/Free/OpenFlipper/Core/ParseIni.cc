@@ -78,16 +78,16 @@ void Core::readApplicationOptions(INIFile& _ini) {
   if ( _ini.section_exists("Options") ) {
 
     // TODO: Load View Mode Toolbars and Context Menu Items
-    
+
     // load ViewModes
     int viewModeCount;
     if (_ini.get_entry(viewModeCount,"Options","ViewModeCount") )
       for (int i=0; i < viewModeCount; i++){
-        
+
         QString entryToolbars;
         QString entryToolboxes;
         QString entryIcon;
-        
+
         QString keyToolbars  = "ViewModeToolbars"  + QString::number(i);
         QString keyToolboxes = "ViewModeToolboxes" + QString::number(i);
         QString keyIcon      = "ViewModeIcon"      + QString::number(i);
@@ -99,10 +99,10 @@ void Core::readApplicationOptions(INIFile& _ini) {
 
         QStringList toolBars = entryToolbars.split(";");
         QStringList toolBoxes = entryToolboxes.split(";");
-        
+
         // Get Mode name ( prepended to all toolbox/toolbar lists
         QString mode = toolBoxes.first();
-        
+
         // Remove leading Modes
         toolBoxes.removeFirst();
         toolBars.removeFirst();
@@ -112,7 +112,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
         for (int i=0; i < viewModes_.size(); i++)
           if (viewModes_[i]->name == mode)
             found = true;
-          
+
         if (!found){
           ViewMode* vm = new ViewMode();
           vm->name = mode;
@@ -195,6 +195,26 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::eyeDistance(val);
     if ( _ini.get_entry( val, "Options" , "FocalDistance") )
       OpenFlipper::Options::focalDistance(val);
+
+    //============================================================================
+    // Load philips stereo mode settings
+    //============================================================================
+
+    int philipsContent = 0;
+    if ( _ini.get_entry( philipsContent, "Options" , "PhilipsContent") )
+      OpenFlipper::Options::stereoPhilipsContent(philipsContent);
+
+    int philipsFactor = 0;
+    if ( _ini.get_entry( philipsFactor, "Options" , "PhilipsFactor") )
+      OpenFlipper::Options::stereoPhilipsFactor(philipsFactor);
+
+    int philipsOffset = 0;
+    if ( _ini.get_entry( philipsOffset, "Options" , "PhilipsOffset") )
+      OpenFlipper::Options::stereoPhilipsOffset(philipsOffset);
+
+    int philipsSelect = 0;
+    if ( _ini.get_entry( philipsSelect, "Options" , "PhilipsSelect") )
+      OpenFlipper::Options::stereoPhilipsSelect(philipsSelect);
 
     //============================================================================
     // Load the custom anaglyph stereo mode color matrices
@@ -509,7 +529,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   QVector< QString > toolboxes;
   QVector< QString > toolbars;
   QVector< QString > icons;
-  
+
   if ( OpenFlipper::Options::gui() )
     for (int i=0; i < coreWidget_->viewModes_.size(); i++)
       if (coreWidget_->viewModes_[i]->custom){
@@ -525,15 +545,15 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
         //store name
         QString entryToolbars = coreWidget_->viewModes_[i]->name;
-        
+
         //store widgets
         for (int j=0; j < coreWidget_->viewModes_[i]->visibleToolbars.size(); j++)
           entryToolbars += ";" + coreWidget_->viewModes_[i]->visibleToolbars[j];
-        
+
         toolbars.push_back(entryToolbars);
-        
+
         icons.push_back(coreWidget_->viewModes_[i]->icon);
-        
+
       }
 
   //save viewmodes to ini
@@ -671,7 +691,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     _ini.add_entry("Options","DefaultBackgroundColor", (uint)OpenFlipper::Options::defaultBackgroundColor().rgba ()  );
     _ini.add_entry("Options","DefaultBaseColor", (uint)OpenFlipper::Options::defaultBaseColor().rgba ()  );
 
-    _ini.add_entry("Options","StereoMode",OpenFlipper::Options::stereoMode() );
+    _ini.add_entry("Options", "StereoMode",OpenFlipper::Options::stereoMode() );
 
     _ini.add_entry("Options" , "EyeDistance", OpenFlipper::Options::eyeDistance());
     _ini.add_entry("Options" , "FocalDistance", OpenFlipper::Options::focalDistance());
@@ -680,6 +700,12 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     _ini.add_entry("Options" , "CustomAnaglyphRightEye", OpenFlipper::Options::anaglyphRightEyeColorMatrix() );
 
     _ini.add_entry("Options", "StereoMousePick", OpenFlipper::Options::stereoMousePick() );
+
+    // Philips stereo mode
+    _ini.add_entry("Options" , "PhilipsContent", OpenFlipper::Options::stereoPhilipsContent());
+    _ini.add_entry("Options" , "PhilipsFactor", OpenFlipper::Options::stereoPhilipsFactor());
+    _ini.add_entry("Options" , "PhilipsOffset", OpenFlipper::Options::stereoPhilipsOffset());
+    _ini.add_entry("Options" , "PhilipsSelect", OpenFlipper::Options::stereoPhilipsSelect());
 
     _ini.add_entry("Options", "GlMouse", OpenFlipper::Options::glMouse() );
   }
@@ -728,7 +754,7 @@ void Core::openIniFile( QString _filename,
       for ( int i = 0 ; i < openFiles.size(); ++i ) {
 
         QString sectionName = openFiles[i];
-        
+
         // Check if the string read is empty (e.g. colon at the end of the line ...)
         // So skip trying to read files without a filename.
         if ( sectionName.isEmpty() ) {
@@ -741,7 +767,7 @@ void Core::openIniFile( QString _filename,
           emit log(LOGERR,tr("Error parsing ini file. OpenFiles section %1 not found in File!").arg(sectionName));
           continue;
         }
-        
+
         // Get the path for the file which should be opened
         QString path;
         if ( !ini.get_entry( path, sectionName , "path" ) ) {
@@ -751,13 +777,13 @@ void Core::openIniFile( QString _filename,
 
         // Check if path is relative ( The path is considered to be relative if the first character is a ".")
         if (path.startsWith( "." + OpenFlipper::Options::dirSeparator() )){
-          
+
           // check if _filename contains a path by testing if it contains a directory separator
           if (_filename.section(OpenFlipper::Options::dirSeparator(), 0, -2) != ""){
             path.remove(0,1); // remove .
             path = _filename.section(OpenFlipper::Options::dirSeparator(), 0, -2) + path;
           }
-          
+
         }
 
         int tmpType;
@@ -817,7 +843,7 @@ void Core::openIniFile( QString _filename,
   // As the reading has been completed, tell plugins that we do not read an ini file anymore.
   OpenFlipper::Options::loadingSettings(false);
 
-  // Reset scenegraph and reset trackball center 
+  // Reset scenegraph and reset trackball center
   // This will also recompute the bounding boxes as well as the near and far plane
   resetScenegraph(true);
 
