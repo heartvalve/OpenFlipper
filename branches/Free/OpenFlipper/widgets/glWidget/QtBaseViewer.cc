@@ -142,6 +142,8 @@ glViewer::glViewer( QGraphicsScene* _scene,
   glWidget_(_glWidget),
   cursorPainter_(0),
   cursorPositionValid_(false),
+  pProgram_(0),
+  philipsStereoInitialized_(false),
   pickCache_(0),
   updatePickCache_(true),
   pickCacheSupported_(true),
@@ -428,7 +430,7 @@ void glViewer::setSceneCenter( const ACG::Vec3d& _center ) {
 //-----------------------------------------------------------------------------
 
 void glViewer::setTrackBallCenter( const ACG::Vec3d& _center ) {
-  
+
   trackball_center_ = _center;
 }
 
@@ -731,12 +733,12 @@ glViewer::drawScene_stereo()
   } else if (OpenFlipper::Options::stereoMode () == OpenFlipper::Options::Philips )
   {
     drawScenePhilipsStereo ();
-    
+
     return;
-    
+
   }
-  
-  
+
+
 
   drawScene_anaglyphStereo ();
 }

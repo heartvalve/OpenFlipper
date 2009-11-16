@@ -157,303 +157,349 @@ glViewer::drawScene_glStereo()
 }
 
 
-void
-glViewer::drawScenePhilipsStereo()
-{
+void glViewer::drawScenePhilipsStereo() {
 
-  int vp_l, vp_b, vp_w, vp_h;
-  glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
+    updateScenePhilipsStereo();
 
-  // ======================================================================================================
-  // creating a color texture
-  // ======================================================================================================
-  ACG::Texture2D colorTexture;
-  colorTexture.enable();
-  colorTexture.bind();
-  GLenum texTarget         = GL_TEXTURE_2D;
-  GLenum texInternalFormat = GL_RGBA;
-  GLenum texFormat         = GL_RGBA;
-  GLenum texType           = GL_UNSIGNED_BYTE;
-  GLenum texFilterMode     = GL_NEAREST;
-  glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
+    if (!philipsStereoInitialized_)
+        return;
 
-  glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
-  glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
-  glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+    int vp_l, vp_b, vp_w, vp_h;
+    glstate_->get_viewport(vp_l, vp_b, vp_w, vp_h);
 
-  // ======================================================================================================
-  // creating an 24-bit depth + 8-bit stencil texture
-  // ======================================================================================================
-  ACG::Texture2D depthStencilTexture;
-  depthStencilTexture.enable();
-  depthStencilTexture.bind();
-  texTarget         = GL_TEXTURE_2D;
-  texInternalFormat = GL_DEPTH24_STENCIL8_EXT;
-  texFormat         = GL_DEPTH_STENCIL_EXT;
-  texType           = GL_UNSIGNED_INT_24_8_EXT;
-  texFilterMode     = GL_NEAREST;
-  glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
+    // ======================================================================================================
+    // Disable textures
+    // ======================================================================================================
+    pDepthStencilTexture_.disable();
+    pColorTexture_.disable();
 
-  glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
-  glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
-  glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+    // ======================================================================================================
+    // Render the scene
+    // ======================================================================================================
+    glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    drawScene_mono();
 
-  // ======================================================================================================
-  // Disable textures
-  // ======================================================================================================
-  depthStencilTexture.disable();
-  colorTexture.disable();
+    // ======================================================================================================
+    // Copy Scene to Textures
+    // ======================================================================================================
+    pColorTexture_.enable();
+    pColorTexture_.bind();
 
-  // ======================================================================================================
-  // Render the scene
-  // ======================================================================================================
-  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
-  drawScene_mono();
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
 
-  // ======================================================================================================
-  // Copy Scene to Textures
-  // ======================================================================================================
-  colorTexture.enable();
-  colorTexture.bind();
+    pColorTexture_.disable();
 
-  glCopyTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
+    pDepthStencilTexture_.enable();
+    pDepthStencilTexture_.bind();
 
-  colorTexture.disable();
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
 
-  depthStencilTexture.enable();
-  depthStencilTexture.bind();
+    pDepthStencilTexture_.disable();
 
-  glCopyTexSubImage2D (GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
+    // Turn on shader program
+    pProgram_->use();
 
-  depthStencilTexture.disable();
+    // ======================================================================================================
+    // Bind textures to different texture units and tell shader where to find them
+    // ======================================================================================================
+    glActiveTextureARB(GL_TEXTURE0_ARB);
+    pColorTexture_.enable();
+    pColorTexture_.bind();
 
-  // ======================================================================================================
-  // Setup the shaders used to render color and depth info next to each other
-  // ======================================================================================================
-  GLSL::PtrVertexShader   vertexShader;
-  GLSL::PtrFragmentShader fragmentShader;
-  GLSL::PtrProgram        program;
+    glActiveTextureARB(GL_TEXTURE1_ARB);
+    pDepthStencilTexture_.enable();
+    pDepthStencilTexture_.bind();
 
-  QString vshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Vertex.glsl";
-  QString fshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Fragment42.glsl";
+    pProgram_->setUniform("ColorTexture", 0);
+    pProgram_->setUniform("DepthStencil", 1);
 
-  ////
-  vertexShader            = GLSL::loadVertexShader(  vshaderFile.toStdString().c_str() );
-  fragmentShader          = GLSL::loadFragmentShader( fshaderFile.toStdString().c_str() );
-  program                 = GLSL::PtrProgram(new GLSL::Program());
+    // ======================================================================================================
+    // Render plain textured
+    // ======================================================================================================
+    glDisable(GL_LIGHTING);
+    glDisable(GL_COLOR_MATERIAL);
+    glDisable(GL_DEPTH_TEST);
 
-  if ( (vertexShader == 0)   ||
-       (fragmentShader == 0) ||
-       (program == 0) ) {
-    std::cerr << "Unable to load shaders for philips display rendering!";
-    return;
-  }
+    // ======================================================================================================
+    // Setup orthogonal projection
+    // ======================================================================================================
+    glstate_->push_projection_matrix();
+    glstate_->push_modelview_matrix();
 
-  program->attach(vertexShader);
-  program->attach(fragmentShader);
-  program->link();
-  program->use();
+    glstate_->reset_projection();
+    glstate_->reset_modelview();
 
-  // ======================================================================================================
-  // Bind textures to different texture units and tell shader where to find them
-  // ======================================================================================================
-  glActiveTextureARB(GL_TEXTURE0_ARB);
-  colorTexture.enable();
-  colorTexture.bind();
+    glstate_->ortho(0, vp_w, 0, vp_h, 0, 1);
 
-  glActiveTextureARB(GL_TEXTURE1_ARB);
-  depthStencilTexture.enable();
-  depthStencilTexture.bind();
+    // ======================================================================================================
+    // Bind textures to different texture units and tell shader where to find them
+    // ======================================================================================================
+    glColor3f(1.0, 1.0, 1.0);
 
-  program->setUniform("ColorTexture",0);
-  program->setUniform("DepthStencil",1);
+    // ======================================================================================================
+    // Clear buffers
+    // ======================================================================================================
+    glClearColor(.0, .0, .0, 0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // ======================================================================================================
+    // Render a simple quad (rest is done by shader)
+    // ======================================================================================================
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2i(0, vp_h);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2i(vp_w, vp_h);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2i(vp_w, 0);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2i(0, 0);
+    glEnd();
 
+    pProgram_->disable();
 
-  // ======================================================================================================
-  // Render plain textured
-  // ======================================================================================================
-  glDisable(GL_LIGHTING);
-  glDisable(GL_COLOR_MATERIAL);
-  glDisable(GL_DEPTH_TEST);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
+    // ======================================================================================================
+    // Cleanup (color and depth textures)
+    // ======================================================================================================
+    pDepthStencilTexture_.del();
+    pColorTexture_.del();
 
-  // ======================================================================================================
-  // Setup orthogonal projection
-  // ======================================================================================================
-  glstate_->push_projection_matrix();
-  glstate_->push_modelview_matrix();
+    // ======================================================================================================
+    // Compute the header required for the display
+    // ======================================================================================================
+    uchar *header = new uchar[6];
 
-  glstate_->reset_projection();
-  glstate_->reset_modelview();
+    //   Header ID
+    //   Basic identifier used by the display to verify the header
+    header[0] = 241; // Header_ID1 = 11110001
 
-  glstate_->ortho(0, vp_w, 0, vp_h, 0, 1);
+    //   Header content type
+    //   This entry controls the displays internal rendering based on the input data specified here.
+    //   There is no info about how this changes the rendering
+    //   Possible values:
+    //   0 No Depth
+    //   1 Signage
+    //   2 Movie
+    //   3 Game
+    //   4 CGI
+    //   5 Still
+    header[1] = OpenFlipper::Options::stereoPhilipsContent(); // Hdr_Content_type (Game) = 00000011 (Gaming Mode)
 
+    //   Header Factor
+    //   Each 3D Display has a 'Display recommended depth value', which corresponds to an
+    //   acceptable maximum depth factor value for that specific type of display. This value strongly
+    //   depends on the lens design. The factor field in the header contains the percentage to be
+    //   used from the display recommended depth value. The value of 64 corresponds with the 100%
+    //   of the display recommended depth value. It is allowed to use values higher than 64. The factor
+    //   works on a linear scale and is multiplied with the factor controlled by the user in the Display
+    //   Control Tool.
+    //   Value range: 0-255 (default 64)
+    header[2] = OpenFlipper::Options::stereoPhilipsFactor(); // Hdr_Factor
 
-  // ======================================================================================================
-  // Bind textures to different texture units and tell shader where to find them
-  // ======================================================================================================
-  glColor3f(1.0,1.0,1.0);
+    //   Header Offset CC
+    //   Values in the Depth map equal to the header-offset value will be located on the plane of the
+    //   display. All values in the disparity map with a higher value will de displayed in front of the
+    //   display.
+    //   Offset_CC is the offset controlled by the Content Creator. In the system there is also an
+    //   Offset_user present, which is controlled by the user using the Display Control Tool.
+    //   Value Range: 0-255 (default 128)
+    header[3] = OpenFlipper::Options::stereoPhilipsOffset(); // Hdr_Offset_CC
 
-  // ======================================================================================================
-  // Clear buffers
-  // ======================================================================================================
-  glClearColor(.0, .0, .0, 0);
-  glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    //   Header select
+    //   When all select signals are low the rendering settings are set to optimal settings for the content
+    //   type denoted by Hdr_content_type. By making select signals high the settings for Factor and
+    //   Offset_cc can be controlled individually by the header.
+    //   Possible Values:
+    //   0 Use Displays defaults and automatic optimizations
+    //   1 Use Header provided factor
+    //   2 Use Header provided offset
+    //   3 Use both factor and offset
+    header[4] = OpenFlipper::Options::stereoPhilipsSelect(); // Hdr_Factor_select(1) + Hdr_Offset_select(1) + reserved(6)
 
-  // ======================================================================================================
-  // Render a simple quad (rest is done by shader)
-  // ======================================================================================================
-  glBegin(GL_QUADS);
-  glTexCoord2f(0.0f, 1.0f); glVertex2i( 0, vp_h);
-  glTexCoord2f(1.0f, 1.0f); glVertex2i( vp_w, vp_h);
-  glTexCoord2f(1.0f, 0.0f); glVertex2i( vp_w, 0);
-  glTexCoord2f(0.0f, 0.0f); glVertex2i( 0, 0);
-  glEnd();
+    //   Unused Header entry (leave at 0 !)
+    header[5] = 0; // Reserved
 
-  program->disable();
+    //   Header checksum.
+    //   The 4-byte EDC field H(6) − H(9) contains an Error Detection Code computed over the first 6
+    //   header bytes. This EDC uses the standard CRC-32 polynomial as defined in IEEE 802.3 and ITU-T
+    //   V.42. The initial value and final XOR value are both 0.
+    //   unsigned long has 32bit = 4Byte
+    unsigned long checksum = CalcCRC32(&header[0], 6);
 
-  glBindTexture(GL_TEXTURE_2D, 0);
+    //   Store the complete header in a bit vector
+    std::vector<uchar> bitVector;
 
-  // ======================================================================================================
-  // Cleanup (color and depth textures)
-  // ======================================================================================================
-  depthStencilTexture.del();
-  colorTexture.del();
+    // For all bytes of the header
+    for (int i = 0; i < 6; i++) {
 
-  // ======================================================================================================
-  // Compute the header required for the display
-  // ======================================================================================================
-  uchar *header = new uchar[ 6 ];
+        // For each bit of a headers byte
+        for (int j = 7; j >= 0; --j) {
 
-  //   Header ID
-  //   Basic identifier used by the display to verify the header
-  header[0] = 241; // Header_ID1 = 11110001
+            // Red and Green component have to be 0
+            bitVector.push_back(0);
+            bitVector.push_back(0);
 
-  //   Header content type
-  //   This entry controls the displays internal rendering based on the input data specified here.
-  //   There is no info about how this changes the rendering
-  //   Possible values:
-  //   0 No Depth
-  //   1 Signage
-  //   2 Movie
-  //   3 Game
-  //   4 CGI
-  //   5 Still
-  header[1] = OpenFlipper::Options::stereoPhilipsContent();   // Hdr_Content_type (Game) = 00000011 (Gaming Mode)
+            // If bit is set, the full component will be set to one otherwise zero
+            // And the order of the bits has to be reversed!
+            if (header[i] & (1 << j)) {
+                bitVector.push_back(255);
+            } else {
+                bitVector.push_back(0);
+            }
 
-  //   Header Factor
-  //   Each 3D Display has a 'Display recommended depth value', which corresponds to an
-  //   acceptable maximum depth factor value for that specific type of display. This value strongly
-  //   depends on the lens design. The factor field in the header contains the percentage to be
-  //   used from the display recommended depth value. The value of 64 corresponds with the 100%
-  //   of the display recommended depth value. It is allowed to use values higher than 64. The factor
-  //   works on a linear scale and is multiplied with the factor controlled by the user in the Display
-  //   Control Tool.
-  //   Value range: 0-255 (default 64)
-  header[2] = OpenFlipper::Options::stereoPhilipsFactor();  // Hdr_Factor
-
-  //   Header Offset CC
-  //   Values in the Depth map equal to the header-offset value will be located on the plane of the
-  //   display. All values in the disparity map with a higher value will de displayed in front of the
-  //   display.
-  //   Offset_CC is the offset controlled by the Content Creator. In the system there is also an
-  //   Offset_user present, which is controlled by the user using the Display Control Tool.
-  //   Value Range: 0-255 (default 128)
-  header[3] = OpenFlipper::Options::stereoPhilipsOffset(); // Hdr_Offset_CC
-
-  //   Header select
-  //   When all select signals are low the rendering settings are set to optimal settings for the content
-  //   type denoted by Hdr_content_type. By making select signals high the settings for Factor and
-  //   Offset_cc can be controlled individually by the header.
-  //   Possible Values:
-  //   0 Use Displays defaults and automatic optimizations
-  //   1 Use Header provided factor
-  //   2 Use Header provided offset
-  //   3 Use both factor and offset
-  header[4] = OpenFlipper::Options::stereoPhilipsSelect();   // Hdr_Factor_select(1) + Hdr_Offset_select(1) + reserved(6)
-
-  //   Unused Header entry (leave at 0 !)
-  header[5] = 0;   // Reserved
-
-  //   Header checksum.
-  //   The 4-byte EDC field H(6) − H(9) contains an Error Detection Code computed over the first 6
-  //   header bytes. This EDC uses the standard CRC-32 polynomial as defined in IEEE 802.3 and ITU-T
-  //   V.42. The initial value and final XOR value are both 0.
-  //   unsigned long has 32bit = 4Byte
-  unsigned long checksum = CalcCRC32(&header[0], 6);
-
-  //   Store the complete header in a bit vector
-  std::vector< uchar > bitVector;
-
-  // For all bytes of the header
-  for (int i = 0; i < 6; i++) {
-
-    // For each bit of a headers byte
-    for ( int j = 7 ; j >= 0 ; --j ) {
-
-      // Red and Green component have to be 0
-      bitVector.push_back(0);
-      bitVector.push_back(0);
-
-      // If bit is set, the full component will be set to one otherwise zero
-      // And the order of the bits has to be reversed!
-      if ( header[i] & (1 << j ) ) {
-        bitVector.push_back(255);
-      } else {
-        bitVector.push_back(0);
-      }
-
-      // Only every second pixel is used for the header
-      // Skip every odd one by filling in 0 for RGB
-      bitVector.push_back(0);
-      bitVector.push_back(0);
-      bitVector.push_back(0);
-
+            // Only every second pixel is used for the header
+            // Skip every odd one by filling in 0 for RGB
+            bitVector.push_back(0);
+            bitVector.push_back(0);
+            bitVector.push_back(0);
+        }
     }
 
-  }
+    // Append checksum to header.
+    // Reversed bit order!
+    for (int i = 31; i >= 0; i--) {
 
-  // Append checksum to header.
-  // Reversed bit order!
-  for (int i=31; i >= 0; i--) {
+        // Red and Green component have to be 0
+        bitVector.push_back(0);
+        bitVector.push_back(0);
 
-    // Red and Green component have to be 0
-    bitVector.push_back(0);
-    bitVector.push_back(0);
+        if (checksum & (1 << i))
+            bitVector.push_back(255);
+        else
+            bitVector.push_back(0);
 
-    if (  checksum & (1 << i ) )
-      bitVector.push_back( 255 );
-    else
-      bitVector.push_back( 0 );
+        // Only every second pixel is used for the header
+        // Skip every odd one by filling in 0 for RGB
+        bitVector.push_back(0);
+        bitVector.push_back(0);
+        bitVector.push_back(0);
+    }
 
-    // Only every second pixel is used for the header
-    // Skip every odd one by filling in 0 for RGB
-    bitVector.push_back(0);
-    bitVector.push_back(0);
-    bitVector.push_back(0);
-  }
+    // Select the top left of the renderbuffer and
+    // write complete header into these bits
+    glRasterPos2i(0, glHeight() - 1);
+    glDrawPixels(bitVector.size() / 3, 1, GL_RGB, GL_UNSIGNED_BYTE, &bitVector[0]);
 
-
-  // Select the top left of the renderbuffer and
-  // write complete header into these bits
-  glRasterPos2i (0,glHeight()-1);
-  glDrawPixels(bitVector.size()/3, 1,GL_RGB ,GL_UNSIGNED_BYTE , &bitVector[0]);
-
-  // ======================================================================================================
-  // Reset projection and modelview
-  // ======================================================================================================
-  glstate_->pop_projection_matrix();
-  glstate_->pop_modelview_matrix();
+    // ======================================================================================================
+    // Reset projection and modelview
+    // ======================================================================================================
+    glstate_->pop_projection_matrix();
+    glstate_->pop_modelview_matrix();
 
 }
 
+//-----------------------------------------------------------------------------
 
+void
+glViewer::updateScenePhilipsStereo()
+{
+     int vp_l, vp_b, vp_w, vp_h;
+     glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
 
+     // Does shader program exist?
+     if (!pProgram_) {
+        GLint errorPos;
+
+        // ======================================================================================================
+        // Setup the shaders used to render color and depth info next to each other
+        // ======================================================================================================
+        GLSL::PtrVertexShader vertexShader;
+        GLSL::PtrFragmentShader fragmentShader;
+
+        QString vshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Vertex.glsl";
+        QString fshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Fragment42.glsl";
+
+        vertexShader = GLSL::loadVertexShader(vshaderFile.toStdString().c_str());
+        fragmentShader = GLSL::loadFragmentShader(fshaderFile.toStdString().c_str());
+        pProgram_ = GLSL::PtrProgram(new GLSL::Program());
+
+        if ((vertexShader == 0) || (fragmentShader == 0) || (pProgram_ == 0)) {
+            std::cerr << "Unable to load shaders for philips display rendering!";
+            philipsStereoInitialized_ = false;
+            return;
+        }
+
+        pProgram_->attach(vertexShader);
+        pProgram_->attach(fragmentShader);
+        pProgram_->link();
+    }
+
+    // Does color texture exist?
+    if (!pColorTexture_.is_valid()) {
+        // ======================================================================================================
+        // creating a color texture
+        // ======================================================================================================
+
+        pColorTexture_.enable();
+        pColorTexture_.bind();
+        GLenum texTarget = GL_TEXTURE_2D;
+        GLenum texInternalFormat = GL_RGBA;
+        GLenum texFormat = GL_RGBA;
+        GLenum texType = GL_UNSIGNED_BYTE;
+        GLenum texFilterMode = GL_NEAREST;
+        glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
+
+        glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
+        glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
+        glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+
+        if(!pColorTexture_.is_valid()) {
+            philipsStereoInitialized_ = false;
+        }
+    }
+
+    // Does depth stencil texture exist?
+    if (!pDepthStencilTexture_.is_valid()) {
+        // ======================================================================================================
+        // creating an 24-bit depth + 8-bit stencil texture
+        // ======================================================================================================
+
+        pDepthStencilTexture_.enable();
+        pDepthStencilTexture_.bind();
+        GLenum texTarget = GL_TEXTURE_2D;
+        GLenum texInternalFormat = GL_DEPTH24_STENCIL8_EXT;
+        GLenum texFormat = GL_DEPTH_STENCIL_EXT;
+        GLenum texType = GL_UNSIGNED_INT_24_8_EXT;
+        GLenum texFilterMode = GL_NEAREST;
+        glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
+
+        glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
+        glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
+        glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+
+        if(!pDepthStencilTexture_.is_valid()) {
+            philipsStereoInitialized_ = false;
+        }
+    }
+
+    // Resize target textures
+    if (glstate_->viewport_width() != pTexWidth_ ||
+            glstate_->viewport_height() != pTexHeight_) {
+
+        // Color texture
+        pColorTexture_.bind();
+        glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
+                GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+        // Depth stencil texture
+        pDepthStencilTexture_.bind();
+        glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
+                GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+        glBindTexture(GL_TEXTURE_RECTANGLE_NV, 0);
+
+        pTexWidth_ = glstate_->viewport_width();
+        pTexHeight_ = glstate_->viewport_height();
+    }
+
+    philipsStereoInitialized_ = true;
+}
 
 //-----------------------------------------------------------------------------
 

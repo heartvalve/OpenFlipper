@@ -61,6 +61,9 @@
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
+#include <ACG/ShaderUtils/GLSLShader.hh>
+#include <ACG/GL/globjects.hh>
+
 #include <QtOpenGL/QGLFormat>
 #include <QBoxLayout>
 #include <QtNetwork/QUdpSocket>
@@ -216,18 +219,18 @@ public:
    * Set new center point of scene
    */
   void setSceneCenter( const ACG::Vec3d& _center );
-  
+
   /** \brief Set Trackball Center point of scene
   *
   * The scene is rotated around the trackball center when using the mouse
   */
   void setTrackBallCenter( const ACG::Vec3d& _center );
-  
+
   /** \brief Get Trackball Center point of scene
   *
   * The scene is rotated around the trackball center when using the mouse
   */
-  const ACG::Vec3d trackBallCenter( ) { return trackball_center_; };  
+  const ACG::Vec3d trackBallCenter( ) { return trackball_center_; };
 
   /** Get scene's center
       \see setScenePos()
@@ -533,9 +536,12 @@ private:
 
   // helper called to cleanup custom anaglyph stereo
   void finiCustomAnaglyphStereo();
-  
+
   // Draws the scene for a philips stereo display ( Header, left color image, right depth map )
   void drawScenePhilipsStereo();
+
+  // Updates the scene for a philips stereo display
+  void updateScenePhilipsStereo();
 
 //-------------------------------------------------------------- protected data
 protected:
@@ -673,6 +679,13 @@ private:
     GLuint agProgram_;
     bool   customAnaglyphSupported_;
 
+    // Philips stereo mode stuff
+    int     pTexWidth_;
+    int     pTexHeight_;
+    ACG::Texture2D pColorTexture_;
+    ACG::Texture2D pDepthStencilTexture_;
+    GLSL::PtrProgram pProgram_;
+    bool philipsStereoInitialized_;
 
   /** @} */
 
