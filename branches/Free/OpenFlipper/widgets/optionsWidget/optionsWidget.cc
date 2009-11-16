@@ -239,7 +239,14 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   logFile->setText( OpenFlipper::Options::logFile() );
 
   //stereo
-  stereoOpengl->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::OpenGL);
+
+  // Grey out OpenGL stereo mode option if not available
+  if(!OpenFlipper::Options::glStereo()) {
+      stereoOpengl->setDisabled(true);
+  } else {
+      stereoOpengl->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::OpenGL);
+  }
+
   stereoAnaglyph->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphRedCyan);
   stereoCustomAnaglyph->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphCustom);
   stereoPhilips->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::Philips);

@@ -337,8 +337,14 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
 
 void CoreWidget::stereoButtonContextMenu(const QPoint& _pos) {
 
-    // Set values:
-    stereoSettingsWidget_->stereoOpengl->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::OpenGL);
+    // Grey out OpenGL stereo mode option if not available
+    if(!OpenFlipper::Options::glStereo()) {
+        stereoSettingsWidget_->stereoOpengl->setDisabled(true);
+    } else {
+        stereoSettingsWidget_->stereoOpengl->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::OpenGL);
+    }
+
+    // Set values
     stereoSettingsWidget_->stereoAnaglyph->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphRedCyan);
     stereoSettingsWidget_->stereoCustomAnaglyph->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphCustom);
     stereoSettingsWidget_->stereoPhilips->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::Philips);
