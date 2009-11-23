@@ -337,8 +337,6 @@ public:
       // Get render pass
       BaseNode::RenderPassBitMask p = _node->renderPass();
 
-      std::cerr << "p = " << p << std::endl;
-
       // Convert render pass bit mask to
       // decimal value (0x001011 -> 4)
       // Note: Same as (int)log2(bitmask)
