@@ -94,14 +94,14 @@ struct enable_if<false, T> { };
 HAS_MEM_FUNC(enter)
 
 // if the enter function is implemented
-template<typename Action> 
+template<typename Action>
 typename enable_if<has_enter <Action, void (Action::*) (BaseNode *) >::value, void>::type
 if_has_enter(Action &_action, BaseNode *_node) {
   _action.enter (_node);
 }
 
 // if the enter function isn't implemented
-template<typename Action> 
+template<typename Action>
 typename enable_if<!has_enter <Action, void (Action::*) (BaseNode *) >::value, void>::type
 if_has_enter(Action &, BaseNode *) {
 }
@@ -109,14 +109,14 @@ if_has_enter(Action &, BaseNode *) {
 HAS_MEM_FUNC(leave)
 
 // if the enter function is implemented
-template<typename Action> 
+template<typename Action>
 typename enable_if<has_leave <Action, void (Action::*) (BaseNode *) >::value, void>::type
 if_has_leave(Action &_action, BaseNode *_node) {
   _action.leave (_node);
 }
 
 // if the enter function isn't implemented
-template<typename Action> 
+template<typename Action>
 typename enable_if<!has_enter <Action, void (Action::*) (BaseNode *) >::value, void>::type
 if_has_leave(Action &, BaseNode *) {
 }
@@ -146,7 +146,7 @@ traverse( BaseNode* _node, Action& _action )
       {
         // Executes this nodes enter function (if available)
         if_has_enter (_action, _node);
-        
+
         // Test rendering order. If NodeFirst, execute this node and the children later.
         if (_node->traverseMode() & BaseNode::NodeFirst)
           process_children &= _action(_node);
@@ -154,33 +154,33 @@ traverse( BaseNode* _node, Action& _action )
 
       if (process_children)
       {
-        
+
         BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
-        
+
         // Process all children which are not second pass
         for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
           if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
             traverse(*cIt, _action);
-        
+
         // Process all children which are second pass
         for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
           if ((*cIt)->traverseMode() & BaseNode::SecondPass)
             traverse(*cIt, _action);
-          
+
       }
 
       // If the node is not hidden
       if (_node->status() != BaseNode::HideNode)
       {
-        
+
         // If the children had to be rendered first, we now render the node afterwards
         if (_node->traverseMode() & BaseNode::ChildrenFirst)
           _action(_node);
-        
+
         // Call the leave function of the node.
         if_has_leave (_action, _node);
       }
-      
+
     }
   }
 }
@@ -308,6 +308,55 @@ private:
 
   Vec3f        bbMin_, bbMax_;
   GLState      state_;
+};
+
+
+//-----------------------------------------------------------------------------
+
+
+/** Get the maximum number of render passes that will be used
+    to render the scene graph. renderPass() returns a bit mask
+    of length 32 that holds 1 at position i if the node will be i-th
+    drawn in the i-th render pass.
+
+    So if renderPass() == 0x00...001011, the node will be drawn
+    during render pass 1, 2 and 4.
+
+    \note This class implements an action that should be used as a
+    parameter for the traverse() functions.
+**/
+class RenderPassInfoAction
+{
+public:
+
+  RenderPassInfoAction() :
+  passes_(0u) {}
+
+  bool operator()(BaseNode* _node) {
+
+      // Get render pass
+      BaseNode::RenderPassBitMask p = _node->renderPass();
+
+      std::cerr << "p = " << p << std::endl;
+
+      // Convert render pass bit mask to
+      // decimal value (0x001011 -> 4)
+      // Note: Same as (int)log2(bitmask)
+      unsigned int c = 0;
+      while(p != 0u) {
+          p = p >> 1;
+          ++c;
+      }
+      passes_ = c > passes_ ? c : passes_;
+
+      return true;
+  }
+
+  unsigned int getNumRenderPasses() const { return passes_; }
+
+private:
+
+  unsigned int passes_;
 };
 
 
@@ -526,7 +575,7 @@ public:
     if (_node->drawMode() == DrawModes::DEFAULT)
         _node->enterPick(state_, pickTarget_, drawmode_);
       else
-        _node->enterPick(state_, pickTarget_, _node->drawMode());    
+        _node->enterPick(state_, pickTarget_, _node->drawMode());
   }
 
   void leave(BaseNode* _node)

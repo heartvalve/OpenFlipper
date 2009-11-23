@@ -73,7 +73,8 @@ unsigned int BaseNode::last_id_used__ = 0;
 
 BaseNode::
 BaseNode(BaseNode* _parent, std::string _name)
-  : parent_(_parent),
+  : renderPass_(1u),
+    parent_(_parent),
     name_(_name),
     status_(Active),
     drawMode_(DrawModes::DEFAULT),
@@ -94,7 +95,8 @@ BaseNode(BaseNode* _parent, std::string _name)
 
 BaseNode::
 BaseNode(BaseNode* _parent, BaseNode* _child, std::string _name)
-  : parent_(_parent),
+  : renderPass_(1u),
+    parent_(_parent),
     name_(_name),
     status_(Active),
     drawMode_(DrawModes::DEFAULT)
@@ -181,6 +183,46 @@ BaseNode::leavePick(GLState& _state, PickTarget /*_target*/, unsigned int _drawM
 {
   leave (_state, _drawMode);
 }
+
+//----------------------------------------------------------------------------
+
+bool BaseNode::isInRenderPass(const unsigned int _i) const {
+    assert(_i != 0);
+
+    if (_i == 0)
+        std::cerr << "Error: Render passes start with 1!" << std::endl;
+
+    return ((1 << (_i == 0 ? 0 : _i - 1)) & renderPass_) != 0;
+}
+
+//----------------------------------------------------------------------------
+
+void BaseNode::addToRenderPass(const unsigned int _i) {
+    assert(_i != 0);
+
+    if (_i == 0)
+        std::cerr << "Error: Render passes start with 1!" << std::endl;
+
+    if(!isInRenderPass(_i)) {
+        renderPass_ += (1 << (_i == 0 ? 0 : _i - 1));
+    }
+}
+
+//----------------------------------------------------------------------------
+
+void BaseNode::removeFromRenderPass(const unsigned int _i) {
+    assert(_i != 0);
+
+    if (_i == 0)
+        std::cerr << "Error: Render passes start with 1!" << std::endl;
+
+    if(isInRenderPass(_i)) {
+        renderPass_ -= (1 << (_i == 0 ? 0 : _i - 1));
+    }
+}
+
+//----------------------------------------------------------------------------
+
 
 //=============================================================================
 } // namespace SceneGraph
