@@ -82,10 +82,8 @@ namespace SceneGraph {
 
 
 /// What target to use for picking
-enum PickTarget 
+enum PickTarget
 {
-  /// picks faces (may not be implemented for all nodes)
-  PICK_CELL,
   /// picks faces (should be implemented for all nodes)
   PICK_FACE,
   /// picks edges (may not be implemented for all nodes)
@@ -112,10 +110,10 @@ enum PickTarget
 /** \class BaseNode BaseNode.hh <ACG/Scenegraph/BaseNode.hh>
 
     This is the base for all scenegraph nodes. All virtual functions
-    should be reimplemented when inheriting from this class.  
+    should be reimplemented when inheriting from this class.
 **/
 
-class ACGDLLEXPORT BaseNode 
+class ACGDLLEXPORT BaseNode
 {
 public:
 
@@ -125,19 +123,14 @@ public:
 
   /// Put this node between _parent and _child
   BaseNode(BaseNode* _parent, BaseNode* _child, std::string _name="<unknown>");
- 
+
   /// Destructor.
   virtual ~BaseNode();
 
-  /** \brief Delete the whole subtree of this node
-  *
-  * This function will remove the whole subtree below this node.
-  * All children in this nodes bubtree will be automatically removed from the tree
-  * and their destructor is called.
-  * The node itself will be removed from the list of its parents children.
-  * Afterwards it will also call its own destructor.
-  **/
+  /** Remove the while subtree below this node (including this node).
+      All node will be destucted, **/
   void delete_subtree();
+
 
 
   // --- basic interface ---
@@ -151,7 +144,7 @@ public:
 
   /** Compute the bounding box of this node and update the values
       _bbMin and _bbMax accordingly. Do not initialize _bbMin and
-      _bbMax since they may already store values of previous nodes' 
+      _bbMax since they may already store values of previous nodes'
       bounding box computation.
   */
   virtual void boundingBox(Vec3f& /* _bbMin */, Vec3f& /*_bbMax*/ ) {}
@@ -159,8 +152,8 @@ public:
   /** This function is called when traversing the scene graph and
       arriving at this node. It can be used to store GL states that
       will be changed in order to restore then in the leave()
-      function.  
-      \see MaterialNode 
+      function.
+      \see MaterialNode
   */
   virtual void enter(GLState& /*_state */, unsigned int /*_drawMode*/ ) {}
 
@@ -168,7 +161,7 @@ public:
   virtual void draw(GLState& /* _state */, unsigned int /* _drawMode */)  {}
 
   /** The leave function is used to restore GL states the have been changed.
-      This function must restore the status before enter() ! 
+      This function must restore the status before enter() !
   */
   virtual void leave(GLState& /* _state */, unsigned int /* _drawMode */) {}
 
@@ -179,7 +172,7 @@ public:
   */
   virtual void enterPick(GLState& _state , PickTarget _target,
                          unsigned int _drawMode );
-  
+
   /** Draw the node using the GL picking name stack. The node's ID
       will already be on the name stack, so only names identifing e.g. faces
       should be used ( by glLoadName() ).
@@ -192,16 +185,16 @@ public:
   */
   virtual void leavePick(GLState& _state, PickTarget _target,
                          unsigned int _drawMode );
-  
+
   /** Enable or Disable picking for this node
    *  ( default: enabled )
    */
   void enablePicking(bool _enable) { pickingEnabled_ = _enable; };
-  
-  /** Check if picking is enabled for this node 
+
+  /** Check if picking is enabled for this node
    */
   bool pickingEnabled() { return pickingEnabled_; };
-  
+
   /// Handle mouse event (some interaction, e.g. modeling)
   virtual void mouseEvent(GLState& /* _state */, QMouseEvent* /* _event */ ) {}
 
@@ -239,7 +232,7 @@ public:
   ChildIter childrenEnd() { return children_.end(); }
   /// Same but \c const
   ConstChildIter childrenEnd() const { return children_.end(); }
-  
+
   /// Returns: reverse begin-iterator of children
   ChildRIter childrenRBegin() { return children_.rbegin(); }
   /// Same but const
@@ -252,11 +245,11 @@ public:
 
 
 
-  
+
   // --- insert / remove ---
 
   /// Insert _node at the end of the list of children.
-  void push_back(BaseNode* _node) 
+  void push_back(BaseNode* _node)
   {
     if (_node)
     {
@@ -268,11 +261,11 @@ public:
   /** Remove child node at position _pos.
       This _pos \a must \a be \a reachable from childrenBegin().<br>
       This method has no effect if called with childrenEnd() as parameter.  */
-  void remove(ChildIter _pos) 
+  void remove(ChildIter _pos)
   {
     if (_pos == childrenEnd()) return;
     //(*_pos)->parent_=0;
-    children_.erase(_pos); 
+    children_.erase(_pos);
   }
 
   /// number of children
@@ -284,15 +277,15 @@ public:
       position.<br>
       Returns childrenEnd() if no appropriate node is found.
    */
-  ChildIter find(BaseNode* _node) 
+  ChildIter find(BaseNode* _node)
   {
     ChildIter i=std::find(children_.begin(),children_.end(),_node);
     return i;
-  } 
+  }
 
 
   /** Find a node of a given name */
-  
+
   BaseNode * find( const std::string & _name )
   {
     if ( name() == _name )
@@ -306,23 +299,16 @@ public:
     }
 
     return 0;
-  } 
-  
+  }
 
-  /// Get the nodes parent node
+
   BaseNode* parent() { return parent_; }
-  
-  /** \brief Set the parent of this node.
-  *
-  * This function will remove this node from its original parents children, if the parent exists.
-  * And will add it to the new parents children. 
-  */
   void set_parent(BaseNode* _parent);
 
 
   // --- status info ---
 
-  
+
   /// Status modi
   enum StatusMode
   {
@@ -351,22 +337,22 @@ public:
 
   /// Returns: name of node (needs not be unique)
   std::string name() const { return name_; }
-  /// rename a node 
+  /// rename a node
   void name(const std::string& _name) { name_ = _name; }
 
-  
+
   /** Get unique ID of node. IDs are always positive and may be used
       e.g. for picking.
     */
   unsigned int id() const { return id_; }
-  
+
 
 
   //--- draw mode ---
 
   /// Return the own draw modes of this node
   unsigned int drawMode() const { return drawMode_; }
-  /** Set this node's own draw mode. It will be used for drawing instead of 
+  /** Set this node's own draw mode. It will be used for drawing instead of
       the the global draw mode. */
   void drawMode(unsigned int _drawMode) { drawMode_ = _drawMode; }
 
@@ -388,15 +374,60 @@ public:
 
   /// Set traverse mode for node
   void setTraverseMode(unsigned int _mode) { traverseMode_ = _mode; }
-  
-private:  
+
+  //===========================================================================
+  /** @name Render pass controls
+   * @{ */
+  //===========================================================================
+
+public:
+
+  /// Render pass bit mask type
+  typedef unsigned int RenderPassBitMask;
+
+  /** Get render pass bit mask
+   */
+  RenderPassBitMask renderPass() const { return renderPass_; }
+
+  /** Set render pass bit mask of passes in which the node will be drawn
+   *
+   * @param _renderPass A bitmask coding for the render passes (1-indexed)
+   */
+  void setRenderPass(const RenderPassBitMask _renderPass) { renderPass_ = _renderPass; }
+
+  /** Will node be drawn in _i-th pass? _i is decimal and 1-indexed.
+   *
+   * @param
+   */
+  bool isInRenderPass(const unsigned int _i) const;
+
+  /** Add node to render pass _i (decimal, 1-indexed)
+   *
+   * @param _i Render pass (1-indexed!)
+   */
+  void addToRenderPass(const unsigned int _i);
+
+  /** Remove node from render pass _i (decimal, 1-indexed)
+   *
+   * @param _i Render pass (1-indexed!)
+   */
+  void removeFromRenderPass(const unsigned int _i);
+
+private:
+
+  /// render pass bit mask (1-indexed)
+  RenderPassBitMask renderPass_;
+
+  /** @} */
+
+private:
 
   /// Copy constructor. Disabled.
   BaseNode(const BaseNode&);
   /// Assigment operator. Disabled.
   void operator=(const BaseNode&);
 
-  
+
   /// pointer to parent node
   BaseNode* parent_;
 
@@ -405,9 +436,9 @@ private:
 
   /// node status()
   StatusMode status_;
-  
+
   /// list of children
-  std::list<BaseNode*> children_; 
+  std::list<BaseNode*> children_;
 
   /// used to provide unique IDs to nodes
   static unsigned int last_id_used__;
@@ -420,7 +451,7 @@ private:
 
   /// depth func
   GLenum depth_func_;
-  
+
   /** Flag indicating if picking should be done for this object
    * This flag has to be checked by your node if you implement picking
    */
