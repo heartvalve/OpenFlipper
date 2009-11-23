@@ -137,33 +137,50 @@ traverse( BaseNode* _node, Action& _action )
     BaseNode::StatusMode status(_node->status());
     bool process_children(status != BaseNode::HideChildren);
 
+    // If the subtree is hidden, ignore this node and its children while rendering
     if (status != BaseNode::HideSubtree)
     {
 
+      // If the node itself is hidden, ignore it but continue with its children
       if (_node->status() != BaseNode::HideNode)
       {
+        // Executes this nodes enter function (if available)
         if_has_enter (_action, _node);
+        
+        // Test rendering order. If NodeFirst, execute this node and the children later.
         if (_node->traverseMode() & BaseNode::NodeFirst)
           process_children &= _action(_node);
       }
 
       if (process_children)
       {
+        
         BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
+        
+        // Process all children which are not second pass
         for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
           if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
             traverse(*cIt, _action);
+        
+        // Process all children which are second pass
         for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
           if ((*cIt)->traverseMode() & BaseNode::SecondPass)
             traverse(*cIt, _action);
+          
       }
 
+      // If the node is not hidden
       if (_node->status() != BaseNode::HideNode)
       {
+        
+        // If the children had to be rendered first, we now render the node afterwards
         if (_node->traverseMode() & BaseNode::ChildrenFirst)
           _action(_node);
+        
+        // Call the leave function of the node.
         if_has_leave (_action, _node);
       }
+      
     }
   }
 }
