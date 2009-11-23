@@ -65,6 +65,9 @@ IF(CGAL_INCLUDE_DIR )
               DOC "Directory containing the CGAL library"
              )
     list ( APPEND CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt4)
+
+    # This is needed to link correctly against lapack
+    add_definitions (-DCGAL_USE_F2C)
   ENDIF(WIN32)
 
 
