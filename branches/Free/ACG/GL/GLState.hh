@@ -366,10 +366,24 @@ public:
   float line_width() const { return line_width_; }
 
 
+  //--- render passes ---------------------------------------------------------
 
+public:
+  /// get current render pass counter
+  unsigned int render_pass() const { return render_pass_; }
+
+  /// reset render pass counter
+  void reset_render_pass() { render_pass_ = 0; }
+
+  /// increment render pass counter
+  void next_render_pass() { ++render_pass_; }
+
+private:
+  unsigned int render_pass_;
 
   //--- misc ------------------------------------------------------------------
 
+public:
   /// set whether transparent or solid objects should be drawn
   void set_blending(bool _b) { blending_ = _b; }
   /// get whether transparenet or solid objects should be drawn
