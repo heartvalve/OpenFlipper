@@ -365,21 +365,37 @@ public:
   /// get line width
   float line_width() const { return line_width_; }
 
-
-  //--- render passes ---------------------------------------------------------
+  //===========================================================================
+  /** @name Render pass controls
+   * @{ */
+  //===========================================================================
 
 public:
   /// get current render pass counter
   unsigned int render_pass() const { return render_pass_; }
 
   /// reset render pass counter
-  void reset_render_pass() { render_pass_ = 0; }
+  void reset_render_pass() { render_pass_ = 1; }
 
   /// increment render pass counter
   void next_render_pass() { ++render_pass_; }
 
+  /// get maximum number of render passes
+  unsigned int max_render_passes() const { return max_render_passes_; }
+
+  /// set maximum number of render passes
+  void set_max_render_passes(const unsigned int _max) { max_render_passes_ = _max; }
+
 private:
+  /// holds the current render pass number (1-indexed)
+  /// this has to be set externally
   unsigned int render_pass_;
+
+  /// holds the maximum render pass number
+  /// this has to be set externally
+  unsigned int max_render_passes_;
+
+  /** @} */
 
   //--- misc ------------------------------------------------------------------
 
