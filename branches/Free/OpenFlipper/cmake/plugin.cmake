@@ -210,6 +210,7 @@ function (_build_openflipper_plugin plugin)
     # collect all header,source and ui files
     acg_append_files (headers "*.hh" ${directories})
     acg_append_files (sources "*.cc" ${directories})
+    acg_append_files (sources "*.cpp" ${directories})
     acg_append_files (sources "*.c" ${directories})
     acg_append_files (ui "*.ui" ${directories})
     acg_append_files (qrc "*.qrc" ${directories})
