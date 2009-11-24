@@ -15,7 +15,7 @@ FIND_PATH( PCRE_INCLUDE_DIR pcre.h
            PATHS "/usr/include" )
 
  FIND_LIBRARY( PCRE_LIBRARY
-               NAMES pcre
+               NAMES pcrecpp
                PATHS /lib /usr/lib /usr/local/lib )
 
 
