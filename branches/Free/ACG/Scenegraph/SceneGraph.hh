@@ -185,6 +185,70 @@ traverse( BaseNode* _node, Action& _action )
   }
 }
 
+//---------------------------------------------------------------------------------
+
+/** Traverse the scenegraph starting at the node \c _node and apply
+    the action \c _action to each node. This traversal function will call the
+    enter/leave functions of the action if they have been implemented.
+    This function traverses the scene graph multiple times if multipass
+    rendering is turned on. GLState holds attributes to control
+    render passes. Attention: Render passes are 1-indexed.
+**/
+template <class Action>
+void
+traverse_multipass ( BaseNode* _node, Action& _action, unsigned int _pass )
+{
+    // Process node if it exists
+    if (_node) {
+        BaseNode::StatusMode status(_node->status());
+        bool process_children(status != BaseNode::HideChildren);
+
+        // If the subtree is hidden, ignore this node and its children while rendering
+        if (status != BaseNode::HideSubtree) {
+
+            // If the node itself is hidden or the node should not be drawn
+            // in the current render pass, ignore it but continue with its children
+            if (_node->status() != BaseNode::HideNode && _node->isInRenderPass(_pass)) {
+
+                // Executes this nodes enter function (if available)
+                if_has_enter(_action, _node);
+
+                // Test rendering order. If NodeFirst, execute this node and the children later.
+                if (_node->traverseMode() & BaseNode::NodeFirst)
+                    process_children &= _action(_node);
+            }
+
+            if (process_children) {
+
+                BaseNode::ChildIter cIt, cEnd(_node->childrenEnd());
+
+                // Process all children
+                for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+                    if (~(*cIt)->traverseMode() & BaseNode::SecondPass)
+                        traverse_multipass(*cIt, _action, _pass);
+
+                // Process all children which are second pass
+                for (cIt = _node->childrenBegin(); cIt != cEnd; ++cIt)
+                    if ((*cIt)->traverseMode() & BaseNode::SecondPass)
+                        traverse_multipass(*cIt, _action, _pass);
+
+            }
+
+            // If the node is not hidden and node should be drawn in current render pass
+            if (_node->status() != BaseNode::HideNode && _node->isInRenderPass(_pass)) {
+
+                // If the children had to be rendered first, we now render the node afterwards
+                if (_node->traverseMode() & BaseNode::ChildrenFirst)
+                    _action(_node);
+
+                // Call the leave function of the node.
+                if_has_leave(_action, _node);
+            }
+
+        } // if (status != BaseNode::HideSubtree)
+    } // if(node_)
+}
+
 //----------------------------------------------------------------------------
 
 /** This is a meta action class that is used to wrap an action from the
@@ -247,12 +311,50 @@ traverse( BaseNode*     _node,
 	  GLState&      _state,
 	  unsigned int  _drawmode=DrawModes::DEFAULT)
 {
-  MetaAction<Action> action (_action, _state, _drawmode);
-  traverse (_node, action);
+    MetaAction<Action> action (_action, _state, _drawmode);
+    traverse(_node, action);
 }
 
 //----------------------------------------------------------------------------
 
+/** Traverse the scenegraph starting at the node \c _node and apply
+    the action \c action to each node. When arriving at a node, its
+    BaseNode::enter() function is called, then \c _action is applied
+    and the node's children are traversed. After that the
+    BaseNode::leave() method is called. Do this in multiple passes.
+
+    \see ACG::SceneGraph::BaseNode
+**/
+
+template <class Action>
+void
+traverse_multipass( BaseNode*     _node,
+      Action&       _action,
+      GLState&      _state,
+      unsigned int  _drawmode=DrawModes::DEFAULT)
+{
+    MetaAction<Action> action (_action, _state, _drawmode);
+
+    // Reset render pass counter
+    _state.reset_render_pass();
+
+    // Get max render passes
+    unsigned int max_passes = _state.max_render_passes();
+
+    // Render all passes
+    for(unsigned int pass = 1; pass <= max_passes; ++pass) {
+
+        // Traverse scenegraph
+        traverse_multipass (_node, action, pass);
+        // Increment render pass counter by 1
+        _state.next_render_pass();
+    }
+
+    // Reset render pass counter
+    _state.reset_render_pass();
+}
+
+//--------------------------------------------------------------------------------
 
 /** Collect bounding box information from all nodes, using the
     BaseNode::boundingBox() method. The result can be accessed by
