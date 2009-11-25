@@ -130,6 +130,26 @@ void Core::setViewMode(QString _viewMode){
 
 //-----------------------------------------------------------------------------
 
+void Core::setViewModeIcon(QString _mode, QString _iconName){
+
+  if ( OpenFlipper::Options::gui() ){
+
+    QFile file(_iconName);
+    QFileInfo fileInfo(file);
+  
+    if ( ! file.exists() ){
+      emit log(LOGERR, tr("Icon not found (%1)").arg(_iconName) );
+      return;
+    }
+
+    file.copy(OpenFlipper::Options::configDirStr() + QDir::separator() + "Icons" + QDir::separator() + "viewMode_" + fileInfo.fileName() );
+
+    coreWidget_->slotSetViewModeIcon( _mode, "viewMode_" + fileInfo.fileName() );
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::addViewModeToolboxes(QString _modeName, QString _toolboxList) {
 
   QStringList list = _toolboxList.split(";");

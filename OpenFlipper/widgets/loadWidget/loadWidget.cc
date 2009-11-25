@@ -53,8 +53,12 @@
 #include <QDir>
 #include <QDebug>
 
+#include <QHBoxLayout>
 
- #include <QHBoxLayout>
+#include "FileOptionsDialog.hh"
+
+#include <OpenFlipper/INIFile/INIFile.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent)
   : QFileDialog(parent),
@@ -67,40 +71,15 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
   QGridLayout *gridLayout = (QGridLayout*)layout();
 
   //supported Types
-  typeBox_ = new QComboBox(this);
-  typeBox_->setDuplicatesEnabled(false);
-  for (int i=0; i < (int)supportedTypes_.size(); i++)
-    typeBox_->addItem(supportedTypes_[i].plugin->typeName(),QVariant(supportedTypes_[i].type));
+  optionsBox_ = new QCheckBox(tr("use defaults"), this);
+  optionsBox_->setChecked(true);
 
-  // add the type box to the bottom
-  gridLayout->addWidget( typeBox_, gridLayout->rowCount() , 1 );
+  // add the options box to the bottom
+  gridLayout->addWidget( optionsBox_, gridLayout->rowCount() , 1 );
 
-  // Add a nice label for it
-  QLabel* typeLabel = new QLabel(tr("Object type:") , this);
+  // Add a very nice label for it
+  QLabel* typeLabel = new QLabel(tr("Options:") , this);
   gridLayout->addWidget( typeLabel, gridLayout->rowCount() -1 , 0 );
-
-  // Add a frame to the right of the dialog
-  box_ = new QGroupBox( this ) ;
-  box_->setFlat ( false );
-  box_->setSizePolicy( QSizePolicy ( QSizePolicy::Preferred , QSizePolicy::Expanding ) );
-  gridLayout->addWidget( box_, 0 , gridLayout->columnCount(),gridLayout->rowCount(),1 );
-
-  //init layout for the frame
-  boxLayout_ = new QHBoxLayout();
-  box_->setLayout(boxLayout_);
-
-  //set last used DataType as currentItem
-  for (int i=0; i < typeBox_->count(); i++){
-    if (typeBox_->itemText(i) == OpenFlipper::Options::lastDataType()){
-      typeBox_->setCurrentIndex(i);
-      if (loadMode_)
-        slotSetLoadFilters(i);
-      else
-        slotSetSaveFilters(i);
-    }
-  }
-
-  connect(this, SIGNAL(filterSelected(QString)), this, SLOT(currentFilterChanged(QString)));
 
   //overwrite dialog shouldn't be handled by the qfiledialog
   setConfirmOverwrite(false);
@@ -111,123 +90,99 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
 /// Desctructor
 LoadWidget::~LoadWidget()
 {
-  // remove the optionWidgets so they don't get destroyed
-  // (the fileplugins control the optionWidgets)
-  for (int i=0; i < boxWidgets_.size(); i++){
-    boxLayout_->removeWidget( boxWidgets_[i] );
-    boxWidgets_[i]->setParent(0);
-  }
-}
 
-/// adjust the loadWidget / saveWidget when the selected nameFilter changed
-void LoadWidget::currentFilterChanged(QString _currentFilter){
-
-  for (int i=0; i < boxWidgets_.size(); i++){
-    boxLayout_->removeWidget( boxWidgets_[i] );
-    boxWidgets_[i]->setParent(0);
-  }
-
-  boxWidgets_.clear();
-
-  const DataType type = (DataType) typeBox_->itemData( typeBox_->currentIndex() ).toInt();
-
-  if ( loadMode_ ){
-  for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if (supportedTypes_[i].type == type){
-      //add Widget for new Filter
-      QWidget* nuWidget = 0;
-      nuWidget = supportedTypes_[i].plugin->loadOptionsWidget(_currentFilter);
-
-      if (nuWidget != 0){
-        boxLayout_->addWidget( nuWidget );
-        boxWidgets_.push_back( nuWidget );
-        box_->show();
-      }
-    }
-  }else{
-    for (int i=0; i < (int)supportedTypes_.size(); i++)
-      if (supportedTypes_[i].type == type){
-        //add Widget for new Filter
-        QWidget* nuWidget = 0;
-        nuWidget = supportedTypes_[i].plugin->saveOptionsWidget(_currentFilter);
-
-        if (nuWidget != 0){
-          boxLayout_->addWidget( nuWidget );
-          boxWidgets_.push_back( nuWidget );
-          box_->show();
-        }
-      }
-  }
 }
 
 /// adjust load-filters to current datatype
-void LoadWidget::slotSetLoadFilters(int _typeIndex){
-  box_->setTitle(tr("Load Options"));
+void LoadWidget::slotSetLoadFilters(){
 
-  for (int i=0; i < boxWidgets_.size(); i++){
-    boxLayout_->removeWidget( boxWidgets_[i] );
-    boxWidgets_[i]->setParent(0);
-  }
+  QStringList allFilters;
 
-  boxWidgets_.clear();
-
-  const DataType type = (DataType) typeBox_->itemData(_typeIndex).toInt();
-  for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if (supportedTypes_[i].type == type){
-      QStringList filters = supportedTypes_[i].loadFilters.split(";;");
-      for (int f=0; f < filters.size(); f++)
-        if (filters[f].trimmed() == "") filters.removeAt(f);
-      setNameFilters(filters);
-
-      //add Widget for new Filter
-      QWidget* nuWidget = 0;
-      nuWidget = supportedTypes_[i].plugin->loadOptionsWidget("");
-
-      if ( nuWidget != 0 ) {
-        boxLayout_->addWidget( nuWidget );
-        boxWidgets_.push_back( nuWidget );
-        box_->show();
-      }
+  //TODO All files filter
+  
+  for (int i=0; i < (int)supportedTypes_.size(); i++){
+    QStringList filters = supportedTypes_[i].loadFilters.split(";;");
+    for (int f=filters.size()-1; f >= 0;  f--){
+      if (filters[f].trimmed() == "") { filters.removeAt(f); continue; }
+      if (filters[f].contains( tr("All files") ) ) filters.removeAt(f);
     }
 
-  if (box_->children().count() == 1) //only the layout is left
-    box_->hide();
+    allFilters.append( filters );
+  }
+
+  allFilters.removeDuplicates();
+  allFilters.sort();
+
+  QStringList allExt;
+  
+  //get all possible extensions
+  for (int i=0; i < allFilters.size(); i++){
+     QString ext = allFilters[i].section("(",1).section(")",0,0);
+     allExt.append( ext.split(" ") );
+  }
+
+  for (int f=allExt.size()-1; f >= 0;  f--)
+    if (allExt[f].trimmed() == "") allExt.removeAt(f);
+  
+  allExt.removeDuplicates();
+  allExt.sort();
+  
+  QString allFiles = tr("All Files (");
+  
+  for (int i=0; i < allExt.size(); i++)
+    allFiles += " " + allExt[i];
+  
+  allFiles += " )";
+
+  allFilters.push_front(allFiles);
+  
+  setNameFilters(allFilters);
 }
 
 /// adjust save-filters to current datatype
-void LoadWidget::slotSetSaveFilters(int _typeIndex){
-  box_->setTitle(tr("Save Options"));
+void LoadWidget::slotSetSaveFilters(DataType _type){
 
-  for (int i=0; i < boxWidgets_.size(); i++){
-    boxLayout_->removeWidget( boxWidgets_[i] );
-    boxWidgets_[i]->setParent(0);
-  }
+  QStringList allFilters;
 
-  boxWidgets_.clear();
-
-  const DataType type = (DataType) typeBox_->itemData(_typeIndex).toInt();
   for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if (supportedTypes_[i].type == type){
+    if (supportedTypes_[i].type == _type){
       QStringList filters = supportedTypes_[i].saveFilters.split(";;");
-      for (int f=0; f < filters.size(); f++)
-        if (filters[f].trimmed() == "") filters.removeAt(f);
-      setNameFilters(filters);
-
-      //add Widget for new Filter
-      QWidget* nuWidget = 0;
-      nuWidget = supportedTypes_[i].plugin->saveOptionsWidget("");
-
-      if ( nuWidget != 0 ) {
-        boxLayout_->addWidget( nuWidget );
-        boxWidgets_.push_back( nuWidget );
-        box_->show();
+      for (int f=filters.size()-1; f >= 0;  f--){
+        if (filters[f].trimmed() == "") { filters.removeAt(f); continue; }
+        if (filters[f].contains( tr("All files") ) ) filters.removeAt(f);
       }
+
+      allFilters.append( filters );
     }
 
-  if (box_->children().count() == 1) //only the layout is left
-    box_->hide();
-}
+  allFilters.removeDuplicates();
+  allFilters.sort();
 
+  QStringList allExt;
+  
+  //get all possible extensions
+  for (int i=0; i < allFilters.size(); i++){
+     QString ext = allFilters[i].section("(",1).section(")",0,0);
+     allExt.append( ext.split(" ") );
+  }
+
+  for (int f=allExt.size()-1; f >= 0;  f--)
+    if (allExt[f].trimmed() == "") allExt.removeAt(f);
+  
+  allExt.removeDuplicates();
+  allExt.sort();
+  
+  QString allFiles = tr("All Files (");
+  
+  for (int i=0; i < allExt.size(); i++)
+    allFiles += " " + allExt[i];
+  
+  allFiles += " )";
+
+  allFilters.push_front(allFiles);
+  
+  setNameFilters(allFilters);
+}
 
 
 /// find suitable plugin for loading current file
@@ -238,8 +193,44 @@ void LoadWidget::loadFile(){
 
   bool success = false;
 
-  //iterate over selection
+  //get all extensions
+  QStringList ext;
+
+  for (int i=0; i < files.size(); i++)
+    ext.push_back( QFileInfo(files[i]).suffix() );
+  
+   
+  //find plugins that can handle the current extensions
+  pluginForExtension_.clear();
+  
+  for (int i=0; i < ext.size(); i++){
+    for (uint t=0; t < supportedTypes_.size(); t++){
+      
+      QString filters = supportedTypes_[t].loadFilters;  
+      
+      if (filters.contains(ext[i])){
+        pluginForExtension_[ ext[i] ] = t;
+        break;
+      }
+    }
+  }
+  
+  getPluginForExtensionINI(ext);
+  
+  // display options for all dataTypes
+  if ( !optionsBox_->isChecked() ){
+
+    FileOptionsDialog options(supportedTypes_,ext, loadMode_);
+
+    connect(&options, SIGNAL(setPluginForExtension(QString,int)), this, SLOT(slotSetPluginForExtension(QString,int)) );
+
+    if ( !options.exec() )
+      return;
+  }
+
+  //load the selected files
   for (int i=0; i < files.size(); i++){
+    
     QFileInfo fi(files[i]);
     QString filename = fi.absoluteFilePath();
     OpenFlipper::Options::currentDir(fi.absolutePath());
@@ -249,16 +240,12 @@ void LoadWidget::loadFile(){
     QString ext = fi.suffix();
 
     //emit load signal
-    DataType type = (DataType) typeBox_->itemData(typeBox_->currentIndex()).toInt();
-    int unused;
-    emit load(filename, type, unused);
-    success = true;
+    if ( pluginForExtension_.find( fi.suffix() ) != pluginForExtension_.end() ){
+
+      emit load(filename, pluginForExtension_[ fi.suffix() ]);
+      success = true;
+    }
   }
-
-
-
-  if (success) //at least one item was loaded successfully
-    OpenFlipper::Options::lastDataType(typeBox_->currentText());
 }
 
 /// find suitable plugin for saving current file
@@ -285,18 +272,44 @@ void LoadWidget::saveFile(){
     filename += ext;
   }
 
-  QFile f(filename);
+  QFile      f(filename);
+  QFileInfo fi(filename);
+   
+  //find plugin that can handle the current extension
+  pluginForExtension_.clear();
+  
+  for (uint t=0; t < supportedTypes_.size(); t++){
+
+    QString filters = supportedTypes_[t].loadFilters;  
+
+    if (filters.contains( fi.suffix() )){
+      pluginForExtension_[ fi.suffix() ] = t;
+      break;
+    }
+  }
+  
+  getPluginForExtensionINI(QStringList(fi.suffix()));
+  
+  // display options for all dataTypes
+  if ( !optionsBox_->isChecked() ){
+
+    FileOptionsDialog options(supportedTypes_,QStringList(fi.suffix()), loadMode_);
+
+    connect(&options, SIGNAL(setPluginForExtension(QString,int)), this, SLOT(slotSetPluginForExtension(QString,int)) );
+
+    if ( !options.exec() )
+      return;
+  }
+
   if (f.exists()){ //check for extension
     int ret = QMessageBox::warning(this, tr("File exists"),tr("This file already exists.\n"
         "Do you want to overwrite the file?"),QMessageBox::Yes|QMessageBox::No,QMessageBox::No);
     if (ret == QMessageBox::No)
       return; //abort if users doesn't want to overwrite
   }
-  QFileInfo fi(filename);
-  QString ext = fi.suffix();
 
-  emit save(id_,filename);
-  OpenFlipper::Options::lastDataType(typeBox_->currentText());
+  if ( pluginForExtension_.find( fi.suffix() ) != pluginForExtension_.end() )
+    emit save(id_,filename, pluginForExtension_[fi.suffix()] );
 
   OpenFlipper::Options::currentDir(fi.absolutePath());
 
@@ -306,14 +319,11 @@ void LoadWidget::saveFile(){
 int LoadWidget::showLoad(){
   setAcceptMode ( QFileDialog::AcceptOpen );
   setWindowTitle(tr("Load Object"));
-  typeBox_->setEnabled(true);
   loadMode_ = true;
 
   setFileMode(QFileDialog::ExistingFiles);
-  disconnect(typeBox_, SIGNAL(activated(int)), 0, 0);
-  connect(typeBox_,SIGNAL(activated(int)),this,SLOT(slotSetLoadFilters(int)));
 
-  slotSetLoadFilters(typeBox_->currentIndex());
+  slotSetLoadFilters();
 
   return this->exec();
 }
@@ -323,7 +333,6 @@ int LoadWidget::showSave(int _id, QString _filename){
   setAcceptMode ( QFileDialog::AcceptSave );
   setFileMode( QFileDialog::AnyFile );
   setWindowTitle(tr("Save Object"));
-  typeBox_->setEnabled(false);
   loadMode_ = false;
 
   id_ = _id;
@@ -332,25 +341,20 @@ int LoadWidget::showSave(int _id, QString _filename){
   BaseObjectData* object;
   PluginFunctions::getObject(_id,object);
 
+  //check if we can save this dataType
   bool typeFound = false;
-  for (int i=0; i < typeBox_->count(); i++){
-    DataType type = (DataType) typeBox_->itemData(i).toInt();
-    if (object->dataType(type)){
-      typeBox_->setCurrentIndex(i);
-      slotSetSaveFilters(i);
+  
+  for (int i=0; i < (int)supportedTypes_.size(); i++)
+    if ( object->dataType( supportedTypes_[i].type ) )
       typeFound = true;
-    }
-  }
+
 
   if (!typeFound){
     std::cerr << "No suitable plugin for saving this dataType." << std::endl;
     return QDialog::Rejected;
   }
 
-  disconnect(typeBox_, SIGNAL(activated(int)), 0, 0);
-  connect(typeBox_,SIGNAL(activated(int)),this,SLOT(slotSetSaveFilters(int)));
-
-  slotSetSaveFilters(typeBox_->currentIndex());
+  slotSetSaveFilters( object->dataType() );
 
   //display correct path/name
   QFileInfo fi(_filename);
@@ -394,3 +398,38 @@ void LoadWidget::accept() {
 
   QFileDialog::accept();
 }
+
+void LoadWidget::slotSetPluginForExtension(QString _extension, int _pluginId ){
+  pluginForExtension_[ _extension ] = _pluginId;
+}
+
+
+void LoadWidget::getPluginForExtensionINI(QStringList _extensions){
+    
+  QString filename = OpenFlipper::Options::configDirStr() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini";
+  
+  INIFile ini;
+  
+  if ( ! ini.connect(filename,false) ) {
+    std::cerr << (tr("Failed to connect to ini file %1").arg(filename)).toStdString() << std::endl;
+    return;
+  }
+
+  for (int i=0; i < _extensions.count(); i++){
+    QString pluginName;
+    
+    if ( ini.get_entry(pluginName, "Options" , "Extension_" + _extensions[i] ) ){
+      
+      for (uint t=0; t < supportedTypes_.size(); t++)
+        if ( supportedTypes_[t].name == pluginName ){
+          pluginForExtension_[ _extensions[i] ] = t;
+          break;
+        }
+    }
+  }
+  
+  // close ini file
+  ini.disconnect();
+}
+
+

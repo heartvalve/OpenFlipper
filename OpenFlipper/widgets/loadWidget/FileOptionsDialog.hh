@@ -32,65 +32,33 @@
  *                                                                           *
 \*===========================================================================*/
 
-/*===========================================================================*\
- *                                                                           *
- *   $Revision$                                                         *
- *   $Author$                                                      *
- *   $Date$                   *
- *                                                                           *
-\*===========================================================================*/
-
-
-
-
 #include <QtGui>
-#include <QDirModel>
 
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/Core/Core.hh>
-#include <map>
 
-class LoadWidget : public QFileDialog
+class FileOptionsDialog : public QDialog
 {
   Q_OBJECT
   public:
-    LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent = 0 );
-    ~LoadWidget();
-
-  signals:
-    void load(QString _filename, int _pluginID);
-    void save(int _id, QString _filename, int _pluginID);
+    FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QStringList _extensions, bool _loadMode, QWidget *parent = 0 );
+    ~FileOptionsDialog();
     
-  private slots:
-    void slotSetPluginForExtension(QString _extension, int _pluginId );
-    void slotSetLoadFilters();
-    void slotSetSaveFilters(DataType _type);
-
   private:
-    int id_;
-    bool loadMode_;
-    QStringList lastPaths;
+    QStringList ext_;
     std::vector<fileTypes>& supportedTypes_;
     
-    void getPluginForExtensionINI(QStringList _extensions);
-    
-  public:
-    int showLoad();
-    int showSave(int _id, QString _filename);
-    
-  public slots :
-    virtual void accept();
-    
-  private :
-    void loadFile();
-    void saveFile();
-    
-    /// checkbox for option displaying
-    QCheckBox* optionsBox_;
+    QTabWidget tabs_;
 
-    std::map< QString, int > pluginForExtension_;
+  private slots:
+    void slotPluginChanged(QString _name);
+    void slotMakeDefault();
+
+  signals:
+    void setPluginForExtension(QString _extension, int _pluginId );
     
-    bool step_;
+  private:
+    bool loadMode_;
     
+    QVector< QComboBox* > boxes_;
 };
-

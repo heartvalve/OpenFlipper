@@ -99,6 +99,42 @@ bool Core::saveObject( int _id, QString _filename ) {
 
 //-----------------------------------------------------------------------------------------------------
 
+/// Save an object
+/// get object with given id, find a plugin to save dataType, save!
+/// (existing files will be overwritten)
+void Core::saveObject( int _id, QString _filename, int _pluginID ) {
+  BaseObjectData* object;
+  PluginFunctions::getObject(_id,object);
+
+
+  if ( OpenFlipper::Options::gui() ) {
+    coreWidget_->statusMessage( tr("Saving ") + _filename + " ...");
+    if ( !OpenFlipper::Options::savingSettings() )
+      coreWidget_->setStatus(ApplicationStatus::PROCESSING );
+  }
+
+  //save object
+  bool ok = supportedTypes_[_pluginID].plugin->saveObject(_id,_filename);
+
+  if ( OpenFlipper::Options::gui() ) {
+    if (ok)
+      coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... done"), 4000 );
+    else
+      coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... failed!"), 4000 );
+
+    if ( !OpenFlipper::Options::savingSettings() )
+      coreWidget_->setStatus(ApplicationStatus::READY );
+  }
+
+  //add to recent files
+  if (ok && !OpenFlipper::Options::savingSettings()
+          &&  OpenFlipper::Options::gui() )
+    coreWidget_->addRecent( _filename, object->dataType() );
+
+}
+
+//-----------------------------------------------------------------------------------------------------
+
 /// Save an object to a new location
 /// Show the save-widget to determine a filename, the widget calls slotSave to save the object
 bool Core::saveObjectTo( int _id, QString _filename ) {
@@ -114,8 +150,8 @@ bool Core::saveObjectTo( int _id, QString _filename ) {
     LoadWidget* widget = new LoadWidget(supportedTypes_);
     widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
 
-    connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
-    connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
+    connect(widget,SIGNAL(load(QString, int)),this,SLOT(slotLoad(QString, int)));
+    connect(widget,SIGNAL(save(int, QString, int)),this,SLOT(saveObject(int, QString, int)));
   
     if (supportedTypes_.size() != 0)
       result = widget->showSave(_id,_filename);
