@@ -717,7 +717,14 @@ public:
     pickTarget_(_target),
     drawmode_(_drawmode) {}
 
+  /** Action applied to the node
+  */
   bool operator()(BaseNode* _node);
+  
+  /** Action applied to the node
+   *  Convenience operator which is used to handle calls with internal/external stack with the same operator
+   */
+  bool operator()(BaseNode* _node, GLState& _state);
 
   void enter(BaseNode* _node)
   {
