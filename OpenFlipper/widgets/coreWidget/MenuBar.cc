@@ -647,6 +647,7 @@ void CoreWidget::slotUpdateGlobalDrawMenu() {
   }
 
   // Collect available draw Modes
+  // Single pass action, draw modes independent from multipass rendering
   ACG::SceneGraph::CollectDrawModesAction actionAvailable;
   ACG::SceneGraph::traverse( PluginFunctions::getRootNode() , actionAvailable);
   availableGlobalDrawModes_ = actionAvailable.drawModes();
