@@ -391,46 +391,112 @@ public:
 
   //===========================================================================
   /** @name Render pass controls
-   * @{ */
+  *  The render pass controls are only used during multipass traversal. There
+  *  are two types of multipass controls. One type controls if the enter and
+  *  leave functions of the nodes are used (RenderStatusPass) or if the actual 
+  *  draw function is called (RenderDrawPass). The bitmasks define if the functions
+  *  are called by the traverse_multipass operation. The bitmask are initialized
+  *  to run in the first path.
+  * @{ */
   //===========================================================================
 
 public:
-
-  /// Render pass bit mask type
-  typedef unsigned int RenderPassBitMask;
-
-  /** Get render pass bit mask
-   */
-  RenderPassBitMask renderPass() const { return renderPass_; }
-
-  /** Set render pass bit mask of passes in which the node will be drawn
-   *
-   * @param _renderPass A bitmask coding for the render passes (1-indexed)
-   */
-  void setRenderPass(const RenderPassBitMask _renderPass) { renderPass_ = _renderPass; }
-
-  /** Will node be drawn in _i-th pass? _i is decimal and 1-indexed.
-   *
-   * @param
-   */
-  bool isInRenderPass(const unsigned int _i) const;
-
-  /** Add node to render pass _i (decimal, 1-indexed)
-   *
-   * @param _i Render pass (1-indexed!)
-   */
-  void addToRenderPass(const unsigned int _i);
-
-  /** Remove node from render pass _i (decimal, 1-indexed)
-   *
-   * @param _i Render pass (1-indexed!)
-   */
-  void removeFromRenderPass(const unsigned int _i);
+  
+  /// Multipass pass bit mask type
+  typedef unsigned int MultipassBitMask;
+  
+  static const unsigned int ALLPASSES = UINT_MAX;
+  
+  /** \brief Get the current multipass settings for the nodes status functions
+  *
+  * Get a bitmask defining in which traverse pass the enter and leave nodes are used. (1-indexed)
+  *
+  * @return Bitmask defining in which traverse pass the enter and leave nodes are used 
+  */
+  MultipassBitMask multipassStatus() const {return multipassStatus_;};
+  
+  
+  /** \brief Set multipass settings for the nodes status functions
+  *
+  * Set a bitmask defining in which traverse pass the enter and leave nodes are used. (1-indexed)
+  * Set to ALLPASSES if you want to render in all passes  
+  *
+  * @param _passStatus Bitmask defining in which traverse pass the enter and leave nodes are used 
+  */
+  void setMultipassStatus(const MultipassBitMask _passStatus) { multipassStatus_ = _passStatus; };
+  
+  /** \brief Set multipass status to traverse in a specific pass
+  *
+  * Change multipass setting for the nodes status functions. The node will
+  * call its enter and leave functions in the given pass if its set active
+  *
+  * @param _i Pass in which the node should be rendered
+  * @param _active Activate or deactivate in this pass?
+  */
+  void multipassStatusSetActive(const unsigned int _i, bool _active);
+ 
+  /** \brief Get multipass status to traverse in a specific pass
+  *
+  * Check multipass setting for the nodes status functions if they should
+  * be called in the given render pass.
+  *
+  * @param _i Check this pass if the nodes enter/leave functions are active
+  */  
+  bool multipassStatusActive(const unsigned int _i) const;  
+  
+  
+  
+  /** \brief Get the current multipass settings for the node
+  *
+  * Get a bitmask defining in which traverse path an action is applied to the node. (1-indexed)
+  *
+  * @return Bitmask defining in which traverse passes an action is applied to the node.
+  */
+  MultipassBitMask multipassNode() const {return multipassNode_;};  
+  
+  
+  
+  /** \brief Set multipass settings for the node
+  *
+  * Set a bitmask defining in which traverse path an action is applied to the node. (1-indexed)
+  * Set to ALLPASSES if you want to render in all passes  
+  *
+  * @param _passNode Bitmask defining in which traverse passes an action is applied to the node.
+  */
+  void setMultipassNode(const MultipassBitMask _passNode) { multipassNode_ = _passNode; };  
+  
+  /** \brief Set Node status to traverse in a specific pass
+  *
+  * Change multipass setting for the node. An action will be
+  * applied to this node in the given pass.
+  *
+  * @param _i      Pass in which the node should be rendered
+  * @param _active Enable or disable node in this pass?
+  */
+  void multipassNodeSetActive(const unsigned int _i , bool _active);
+  
+  /** \brief Get Node status to traverse in a specific pass
+  *
+  * Check multipass setting for the node if an action will be
+  * applied in the given pass.
+  *
+  * @param _i Check this pass if an action will be applied to the node.
+  */  
+  bool multipassNodeActive(const unsigned int _i) const;  
 
 private:
 
-  /// render pass bit mask (1-indexed)
-  RenderPassBitMask renderPass_;
+  /** multi pass bit mask (1-indexed)
+  * Defines in which multipass runs the enter and leave functions should be called.
+  * (Only applies during multipass traversal!)
+  */
+  MultipassBitMask multipassStatus_;
+  
+  /** multi pass bit mask (1-indexed)
+  * Defines in which multipass runs an action should be applied to the node.
+  * (Only applies during multipass traversal!)
+  */  
+  MultipassBitMask multipassNode_;
 
   /** @} */
 

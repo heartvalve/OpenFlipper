@@ -208,10 +208,11 @@ traverse_multipass ( BaseNode* _node, Action& _action, unsigned int _pass )
 
             // If the node itself is hidden or the node should not be drawn
             // in the current render pass, ignore it but continue with its children
-            if (_node->status() != BaseNode::HideNode && _node->isInRenderPass(_pass)) {
+            if (_node->status() != BaseNode::HideNode && _node->multipassNodeActive(_pass)) {
 
-                // Executes this nodes enter function (if available)
-                if_has_enter(_action, _node);
+                // Executes this nodes enter function (if available and active in multipass)
+                if ( _node->multipassStatusActive(_pass) )
+                  if_has_enter(_action, _node);
 
                 // Test rendering order. If NodeFirst, execute this node and the children later.
                 if (_node->traverseMode() & BaseNode::NodeFirst)
@@ -235,14 +236,15 @@ traverse_multipass ( BaseNode* _node, Action& _action, unsigned int _pass )
             }
 
             // If the node is not hidden and node should be drawn in current render pass
-            if (_node->status() != BaseNode::HideNode && _node->isInRenderPass(_pass)) {
+            if (_node->status() != BaseNode::HideNode && _node->multipassNodeActive(_pass)) {
 
                 // If the children had to be rendered first, we now render the node afterwards
                 if (_node->traverseMode() & BaseNode::ChildrenFirst)
                     _action(_node);
 
-                // Call the leave function of the node.
-                if_has_leave(_action, _node);
+                // Call the leave function of the node (if available and active in multipass).
+                if ( _node->multipassStatusActive(_pass) )
+                  if_has_leave(_action, _node);
             }
 
         } // if (status != BaseNode::HideSubtree)
@@ -322,6 +324,12 @@ traverse( BaseNode*     _node,
     BaseNode::enter() function is called, then \c _action is applied
     and the node's children are traversed. After that the
     BaseNode::leave() method is called. Do this in multiple passes.
+    
+    <b>You have to initialize glstate before doing this:</b>\n
+    In the state you give here use GLState::set_max_render_passes to
+    set the maximum number of renderpasses that should be performed.
+    This is not computed here, as the number only changes if the scenegraph
+    is changed and not for all render calls.
 
     \see ACG::SceneGraph::BaseNode
 **/
@@ -417,9 +425,9 @@ private:
 
 
 /** Get the maximum number of render passes that will be used
-    to render the scene graph. renderPass() returns a bit mask
-    of length 32 that holds 1 at position i if the node will be i-th
-    drawn in the i-th render pass.
+    to render the scene graph. multipassStatus() and multipassNode return
+    a bit mask of length 32 that holds 1 at position i if the node will be 
+    i-th drawn in the i-th render pass.
 
     So if renderPass() == 0x00...001011, the node will be drawn
     during render pass 1, 2 and 4.
@@ -436,18 +444,37 @@ public:
 
   bool operator()(BaseNode* _node) {
 
-      // Get render pass
-      BaseNode::RenderPassBitMask p = _node->renderPass();
+      // Get status pass 
+      BaseNode::MultipassBitMask statusPass = _node->multipassStatus();
 
-      // Convert render pass bit mask to
-      // decimal value (0x001011 -> 4)
-      // Note: Same as (int)log2(bitmask)
-      unsigned int c = 0;
-      while(p != 0u) {
-          p = p >> 1;
+      // Ignore if set to ALLPASSES as we want to get the real maximum pass number
+      if ( statusPass != BaseNode::ALLPASSES) {
+        // Convert render pass bit mask to
+        // decimal value (0x001011 -> 4)
+        // Note: Same as (int)log2(bitmask)
+        unsigned int c = 0;
+        while(statusPass != 0u) {
+          statusPass = statusPass >> 1;
           ++c;
+        }
+        passes_ = c > passes_ ? c : passes_;
       }
-      passes_ = c > passes_ ? c : passes_;
+      
+      // Get Node pass 
+      BaseNode::MultipassBitMask nodePass = _node->multipassNode();
+      
+      // Ignore if set to ALLPASSES as we want to get the real maximum pass number
+      if ( nodePass != BaseNode::ALLPASSES) {
+        // Convert render pass bit mask to
+        // decimal value (0x001011 -> 4)
+        // Note: Same as (int)log2(bitmask)
+        unsigned int c = 0;
+        while(nodePass != 0u) {
+          nodePass = nodePass >> 1;
+          ++c;
+        }
+        passes_ = c > passes_ ? c : passes_;
+      }
 
       return true;
   }
