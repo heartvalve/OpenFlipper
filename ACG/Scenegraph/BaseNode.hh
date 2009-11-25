@@ -396,7 +396,8 @@ public:
   *  leave functions of the nodes are used (RenderStatusPass) or if the actual 
   *  draw function is called (RenderDrawPass). The bitmasks define if the functions
   *  are called by the traverse_multipass operation. The bitmask are initialized
-  *  to run in the first path.
+  *  to run in the first path.\n
+  *
   * @{ */
   //===========================================================================
 
@@ -405,7 +406,8 @@ public:
   /// Multipass pass bit mask type
   typedef unsigned int MultipassBitMask;
   
-  static const unsigned int ALLPASSES = UINT_MAX;
+  /// This constant should be used to enable rendering of a node in all passes
+  static const unsigned int ALLPASSES = 0;
   
   /** \brief Get the current multipass settings for the nodes status functions
   *

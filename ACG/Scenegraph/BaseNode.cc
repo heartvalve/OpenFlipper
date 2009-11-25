@@ -73,7 +73,7 @@ unsigned int BaseNode::last_id_used__ = 0;
 
 BaseNode::
 BaseNode(BaseNode* _parent, std::string _name)
-  : multipassStatus_(1u),
+  : multipassStatus_(0u),
     multipassNode_(1u),
     parent_(_parent),
     name_(_name),
@@ -194,12 +194,10 @@ void BaseNode::multipassStatusSetActive(const unsigned int _i, bool _active) {
   if (_i == 0)
     std::cerr << "Error: Render passes start with 1!" << std::endl;
   
-  if(!multipassStatusActive(_i)) {
-    if ( _active ) 
-      multipassStatus_ |=  (1 << (_i == 0 ? 0 : _i - 1));
-    else
-      multipassStatus_ &=  ~(1 << (_i == 0 ? 0 : _i - 1));
-  }  
+  if ( _active ) 
+    multipassStatus_ |=  (1 << (_i == 0 ? 0 : _i - 1));
+  else
+    multipassStatus_ &=  ~(1 << (_i == 0 ? 0 : _i - 1));
 }
 
 //----------------------------------------------------------------------------
@@ -210,7 +208,10 @@ bool BaseNode::multipassStatusActive(const unsigned int _i) const {
   if (_i == 0)
     std::cerr << "Error: Render passes start with 1!" << std::endl;
   
-  return ((1 << (_i == 0 ? 0 : _i - 1)) & multipassStatus_) != 0;
+  if ( multipassStatus_ == ALLPASSES )
+    return true;
+  else  
+    return ((1 << (_i == 0 ? 0 : _i - 1)) & multipassStatus_) != 0;
 }
 
 //----------------------------------------------------------------------------
@@ -221,12 +222,11 @@ void BaseNode::multipassNodeSetActive(const unsigned int _i , bool _active) {
   if (_i == 0)
     std::cerr << "Error: Render passes start with 1!" << std::endl;
   
-  if(!multipassNodeActive(_i)) {
-    if ( _active ) 
-      multipassNode_ |=  (1 << (_i == 0 ? 0 : _i - 1));
-    else
-      multipassNode_ &=  ~(1 << (_i == 0 ? 0 : _i - 1));
-  } 
+  if ( _active ) 
+    multipassNode_ |=  (1 << (_i == 0 ? 0 : _i - 1));
+  else
+    multipassNode_ &=  ~(1 << (_i == 0 ? 0 : _i - 1));
+
 }
 
 //----------------------------------------------------------------------------
@@ -237,7 +237,10 @@ bool BaseNode::multipassNodeActive(const unsigned int _i) const {
   if (_i == 0)
     std::cerr << "Error: Render passes start with 1!" << std::endl;
   
-  return ((1 << (_i == 0 ? 0 : _i - 1)) & multipassNode_) != 0;
+  if ( multipassNode_ == ALLPASSES )
+    return true;
+  else  
+    return ((1 << (_i == 0 ? 0 : _i - 1)) & multipassNode_) != 0;
 }
 
 //=============================================================================
