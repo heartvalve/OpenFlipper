@@ -769,8 +769,11 @@ void Core::updateView() {
 void Core::checkScenegraphDirty() {
   if ( true )
   {
+    // This is a single pass traversal as we only need to check if there is still one node dirty in the graph
     ACG::SceneGraph::CheckDirtyAction action;
     ACG::SceneGraph::traverse( root_node_scenegraph_, action );
+    
+    // If the scenegraph is dirty, we have to redraw
     if ( action.isDirty () )
       emit updateView ();
   }

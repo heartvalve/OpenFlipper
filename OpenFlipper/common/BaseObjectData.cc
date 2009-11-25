@@ -251,6 +251,7 @@ void BaseObjectData::manipPlaced( bool _placed ) {
 
 void BaseObjectData::getBoundingBox(ACG::Vec3d& bbmin, ACG::Vec3d& bbmax){
 
+  // Single pass action, as the bounding box is not influenced by multipass traversal
   ACG::SceneGraph::BoundingBoxAction act;
   ACG::SceneGraph::traverse(separatorNode_, act);
 
