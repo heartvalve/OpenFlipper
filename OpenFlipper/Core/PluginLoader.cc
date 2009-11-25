@@ -1141,8 +1141,6 @@ void Core::loadPlugin(QString filename, bool silent){
       ft.saveFilters = filePlugin->getSaveFilters();
       ft.plugin = filePlugin;
       
-      std::cerr << ft.type << std::endl;
-
       supportedTypes_.push_back(ft);
     }
 
