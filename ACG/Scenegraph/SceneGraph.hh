@@ -431,12 +431,14 @@ private:
     \note This class implements an action that should be used as a
     parameter for the traverse() functions.
 **/
-class RenderPassInfoAction
+class MultiPassInfoAction
 {
 public:
 
-  RenderPassInfoAction() :
-  passes_(0u) {}
+  MultiPassInfoAction() :
+    statusPasses_(0u),
+    nodePasses_(0u)
+  {}
 
   bool operator()(BaseNode* _node) {
 
@@ -453,8 +455,9 @@ public:
           statusPass = statusPass >> 1;
           ++c;
         }
-        passes_ = c > passes_ ? c : passes_;
+        statusPasses_ = c > statusPasses_ ? c : statusPasses_;
       }
+      
       
       // Get Node pass 
       BaseNode::MultipassBitMask nodePass = _node->multipassNode();
@@ -469,17 +472,40 @@ public:
           nodePass = nodePass >> 1;
           ++c;
         }
-        passes_ = c > passes_ ? c : passes_;
+        nodePasses_ = c > nodePasses_ ? c : nodePasses_;
       }
 
       return true;
   }
 
-  unsigned int getNumRenderPasses() const { return passes_ == 0 ? 1 : passes_; }
+  /** \brief Get the number of required traverse passes from Scenegraph
+  *
+  * This number is the maximum of status and node passes required.
+  */
+  unsigned int getMaxPasses() const { 
+    unsigned int maxpasses = std::max(statusPasses_,nodePasses_);
+    
+    // if maxpasses is 0 we have all nodes in ALLPASSES mode so we render only once
+    return maxpasses == 0 ? 1 : maxpasses; 
+  }
+
+  /** \brief Get the number of required status traversals from Scenegraph
+  *
+  * This number is the number of requried status passes required.
+  */
+  unsigned int getStatusPasses() { return statusPasses_ == 0 ? 1 : statusPasses_; };
+  
+  /** \brief Get the number of required node traversals from Scenegraph
+  *
+  * This number is the of required node passes.
+  */
+  unsigned int getNodePasses() { return nodePasses_ == 0 ? 1 : nodePasses_; };
 
 private:
 
-  unsigned int passes_;
+  unsigned int statusPasses_;
+  unsigned int nodePasses_;
+  
 };
 
 
