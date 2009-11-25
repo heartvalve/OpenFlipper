@@ -111,6 +111,7 @@
 //== CLASS DEFINITION =========================================================
 
 struct fileTypes {
+  QString name;
   DataType type;
   QString loadFilters;
   QString saveFilters;
@@ -315,6 +316,9 @@ signals:
       /// A plugin wants to load a given file
       void slotLoad(QString _filename, DataType _type, int& _id);
 
+      /// the load widget wants to load a given file
+      void slotLoad(QString _filename, int _pluginID);
+      
       /// Called when a file has been opened
       void slotObjectOpened ( int _id );
 
@@ -511,6 +515,8 @@ private:
       * @param _id id of the object
       */
     bool saveObject( int _id, QString _filename );
+    
+    void saveObject( int _id, QString _filename, int _pluginID );
 
     /** Show dialog for saving an object to a new location
       * @param _id id of the object
@@ -805,6 +811,9 @@ private:
 
     /// Set the active ViewMode
     void setViewMode(QString _viewMode);
+
+    /// Set the icon of a viewMode
+    void setViewModeIcon(QString _mode, QString _iconName);
 
   private :
     /// Core scripting engine

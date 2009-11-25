@@ -275,6 +275,81 @@ void Core::slotCopyObject( int _oldId , int& _newId ) {
 
 }
 
+/// Function for loading a given file
+void Core::slotLoad(QString _filename, int _pluginID) {
+
+  if ( OpenFlipper::Options::gui() ) {
+    coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
+    if ( !OpenFlipper::Options::loadingSettings() )
+      coreWidget_->setStatus(ApplicationStatus::PROCESSING );
+  }
+
+  //load file
+  int id = supportedTypes_[_pluginID].plugin->loadObject(_filename);
+
+  if ( OpenFlipper::Options::gui() ) {
+    if ( id != -1 )
+      coreWidget_->statusMessage( tr("Loading %1 ... done").arg(_filename), 4000 );
+    else
+      coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
+
+    if ( !OpenFlipper::Options::loadingSettings() )
+      coreWidget_->setStatus(ApplicationStatus::READY );
+  }
+
+  BaseObjectData* object;
+  PluginFunctions::getObject(id,object);
+
+  DataType type = object->dataType();
+  
+  // Check if it is a polymesh
+  if ( object != 0 && type == DATA_POLY_MESH ) {
+
+    PolyMeshObject* poly = 0;
+    PluginFunctions::getObject(id,poly);
+
+    if ( poly != 0 ) {
+        PolyMesh& mesh = *poly->mesh();
+
+        bool isTriangleMesh = true;
+
+        for ( PolyMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end() ; ++f_it) {
+
+          // Count number of vertices for the current face
+          uint count = 0;
+          for ( PolyMesh::FaceVertexIter fv_it( mesh,f_it); fv_it; ++fv_it )
+            ++count;
+
+          // Check if it is a triangle. If not, this is really a poly mesh
+          if ( count != 3 ) {
+            isTriangleMesh = false;
+            break;
+          }
+
+        }
+
+        // Mesh loaded as polymesh is actually a triangle mesh. Ask the user to reload as triangle mesh or keep it as poly mesh.
+        if ( isTriangleMesh ) {
+          QMessageBox::StandardButton result = QMessageBox::question ( 0,
+                                                                      tr("TriMesh loaded as PolyMesh"),
+                                                                      tr("You opened the mesh as a poly mesh but actually its a triangle mesh. \nShould it be opened as a triangle mesh?"),
+                                                                      (QMessageBox::Yes | QMessageBox::No ),
+                                                                      QMessageBox::Yes );
+          // User decided to reload as triangle mesh
+          if ( result == QMessageBox::Yes ) {
+            slotDeleteObject(id);
+            id = loadObject(DATA_TRIANGLE_MESH ,_filename);
+            type = DATA_TRIANGLE_MESH;
+          }
+        }
+
+    }
+  }
+  if ( id >= 0 )
+    if ( OpenFlipper::Options::gui() )
+      coreWidget_->addRecent(_filename, type);
+}
+
 /// Slot for loading a given file
 void Core::slotLoad(QString _filename, DataType _type, int& _id) {
   _id = loadObject(_type,_filename);
@@ -499,8 +574,8 @@ void Core::loadObject() {
 
     if (supportedTypes_.size() != 0){
       LoadWidget* widget = new LoadWidget(supportedTypes_);
-      connect(widget,SIGNAL(load(QString, DataType, int&)),this,SLOT(slotLoad(QString, DataType, int&)));
-      connect(widget,SIGNAL(save(int, QString)),this,SLOT(saveObject(int, QString)));
+      connect(widget,SIGNAL(load(QString, int)),this,SLOT(slotLoad(QString, int)));
+      connect(widget,SIGNAL(save(int, QString, int)),this,SLOT(saveObject(int, QString, int)));
 
       widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
 

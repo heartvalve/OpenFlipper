@@ -1136,6 +1136,7 @@ void Core::loadPlugin(QString filename, bool silent){
 
       // Collect supported Data from file plugin
       fileTypes ft;
+      ft.name = basePlugin->name();
       ft.type = filePlugin->supportedType();
       ft.loadFilters = filePlugin->getLoadFilters();
       ft.saveFilters = filePlugin->getSaveFilters();
