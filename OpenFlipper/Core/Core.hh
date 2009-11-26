@@ -450,7 +450,13 @@ private:
 
  public :
 
-  /// Load an object from the commandline on application start
+  /** \brief Load an object from the commandline on application start
+  *
+  * This function is called before the event queue is executed. The filename and parameters
+  * are stored. After the event queue is started, all files in this list will be opened.
+  * This is necessary as the event queue has to run to schedule the events emitted 
+  * during open operations.
+  */
   void commandLineOpen(const char* _filename, bool asPolyMesh );
 
   /// Execute a script from the command Line
