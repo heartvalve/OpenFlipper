@@ -744,25 +744,23 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
 void MovePlugin::showManipulators( )
 {
 
-	if (!hide_ && (toolboxActive_ || (PluginFunctions::pickMode() == "Move")
-			|| (PluginFunctions::pickMode() == "MoveSelection"))) {
-		for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it
-				!= PluginFunctions::objectsEnd(); ++o_it)
+  if (!hide_ && (toolboxActive_ || (PluginFunctions::pickMode() == "Move") || (PluginFunctions::pickMode() == "MoveSelection"))) {
+    
+    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it)
+      if (o_it->manipPlaced()) {
+        o_it->manipulatorNode()->show();
+        o_it->manipulatorNode()->apply_transformation( PluginFunctions::pickMode() == "Move" );
+        emit visibilityChanged(o_it->id());
+      }
 
-			if (o_it->manipPlaced()) {
-				o_it->manipulatorNode()->show();
-				o_it->manipulatorNode()->apply_transformation(
-						PluginFunctions::pickMode() == "Move");
-			}
+  } else {
+    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+      o_it->manipulatorNode()->hide();
+      emit visibilityChanged(o_it->id());
+    }
+  }
 
-	} else {
-		for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it
-				!= PluginFunctions::objectsEnd(); ++o_it)
-
-			o_it->manipulatorNode()->hide();
-	}
-
-	emit updateView();
+  emit updateView();
 
 }
 
