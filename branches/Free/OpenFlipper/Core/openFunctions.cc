@@ -241,8 +241,10 @@ int Core::loadObject( DataType _type, QString _filename) {
   return -1; //no plugin found
 }
 
-/// Function for adding an empty object of given DataType
+
 int Core::addEmptyObject( DataType _type ) {
+  /** \todo Iterate over all plugins but check with bitmask! for a supporting plugin
+  */
   for (int i=0; i < (int)supportedTypes_.size(); i++)
     if (supportedTypes_[i].type == _type)
       return supportedTypes_[i].plugin->addEmpty();
