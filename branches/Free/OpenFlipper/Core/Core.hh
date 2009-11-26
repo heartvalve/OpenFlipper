@@ -325,7 +325,13 @@ signals:
       /// Called when an empty object has been Added
       void slotEmptyObjectAdded ( int _id );
 
-      /// Called when a plugin requests a list of file-filters
+      /** \brief Called when a plugin requests a list of file-filters
+      *
+      * This function collects all available load filters from the file Plugins.
+      * It is normally called via the Load/Save interface ( LoadSaveInterface ).
+      *
+      * @param _list Returns a list of all available file load filters
+      */ 
       void slotGetAllFilters ( QStringList& _list);
 
       /// Called when a plugin wants to delete an object
