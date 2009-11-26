@@ -177,9 +177,14 @@ void Core::slotExecuteAfterStartup() {
     exitApplication();
 }
 
-/// Load object by guessing DataType depending on the files extension
-int Core::loadObject ( QString _filename ) {
 
+int Core::loadObject ( QString _filename ) {
+  /** \todo Check if this function is ok. It should check all plugins for the given files and do not depend
+            on Triangle meshes only! 
+            Rewrite function to get the plugin only and then open the file. So iterate over all plugins and find the
+            matching ones. open it with this plugin.
+  */
+  
   if (_filename.endsWith(".ini")) {
 
     // Load all information from the given ini file
@@ -201,6 +206,9 @@ int Core::loadObject ( QString _filename ) {
 
 /// Function for loading a given file
 int Core::loadObject( DataType _type, QString _filename) {
+  /** \todo this function has to be checked. test for the plugin which can handle 
+            the given file and then use it. 
+  */
 
   if (_type == DATA_UNKNOWN)
     return loadObject(_filename);

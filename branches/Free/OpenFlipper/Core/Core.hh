@@ -436,7 +436,11 @@ public slots:
     * @{ */
    //===========================================================================
 private:
-  /** Load a new Object ( this may also be an ini file )
+  /** \brief Load a new Object ( this may also be an ini or ofs file )
+   *
+   * This function tries to get the type of data to be loaded from the filename 
+   * and then load the file.
+   *
    *  @param _filename Filename of the data
    *  @return id of object otherwise -1
    */
@@ -499,7 +503,11 @@ private:
   */
   int addEmptyObject( DataType _type );
 
-  /** Load object of the given Type with given filename
+  /** \brief Load object of the given Type with given filename
+   *
+   * This function should not be used anymore. \n
+   * The extension is now used to check for the plugin handling the given types.
+   *
    * @return id of the new object or -1 if unsupported
    */
   int loadObject( DataType _type, QString _filename);
