@@ -477,13 +477,19 @@ private:
 
   private slots:
 
-  /** Executed after loading core completly
+  /** \brief Executed after loading core completly to load files from commandline
   *
+  * This slot is automatically called after application startup. All files from the commandline
+  * will be loaded by this slot. This is required as the core and the event queue need to be running
+  * to emit the required signals to the plugins.
   */
   void slotExecuteAfterStartup();
 
   private:
+    /// Vector storing filenames from commandline to be opened after application startup (objects)
     std::vector< std::pair < std::string , bool >  > commandLineFileNames_;
+    
+    /// Vector storing filenames from commandline to be opened after application startup (script files)
     std::vector< std::string > commandLineScriptNames_;
 
   public:
