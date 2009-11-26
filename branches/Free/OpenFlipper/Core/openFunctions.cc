@@ -84,6 +84,7 @@ void Core::resetScenegraph( bool _resetTrackBall  ) {
 
 void Core::slotGetAllFilters ( QStringList& _list){
 
+  // Iterate over all types
   for (int i=0; i < (int)supportedTypes_.size(); i++){
     QString f = supportedTypes_[i].plugin->getLoadFilters();
     f = f.section(")",0,0).section("(",1,1).trimmed();
@@ -93,16 +94,17 @@ void Core::slotGetAllFilters ( QStringList& _list){
 
 void Core::commandLineOpen(const char* _filename, bool asPolyMesh ){
 
-	QString file(_filename);
+  QString file(_filename);
 
-	if ( !file.startsWith("/") && !file.contains(":") ) {
+  // Modify filename to containe full paths
+  if ( !file.startsWith("/") && !file.contains(":") ) {
+    file = QDir::currentPath();
+    file += OpenFlipper::Options::dirSeparator();
+    file += _filename;
+  }
 
-		file = QDir::currentPath();
-		file += OpenFlipper::Options::dirSeparator();
-		file += _filename;
-	}
-
-	commandLineFileNames_.push_back(std::pair< std::string , bool >(file.toStdString(), asPolyMesh));
+  // Add to the open list
+  commandLineFileNames_.push_back(std::pair< std::string , bool >(file.toStdString(), asPolyMesh));
 }
 
 void Core::commandLineScript(const char* _filename ) {
