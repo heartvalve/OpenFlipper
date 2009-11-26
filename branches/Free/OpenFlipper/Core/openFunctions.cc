@@ -333,6 +333,7 @@ void Core::slotLoad(QString _filename, int _pluginID) {
   
   // Check if it is a polymesh
   if ( object != 0 && type == DATA_POLY_MESH ) {
+    /// \todo Move this code to polymesh plugin and do the check there!
 
     PolyMeshObject* poly = 0;
     PluginFunctions::getObject(id,poly);
@@ -390,6 +391,7 @@ void Core::slotLoad(QString _filename, DataType _type, int& _id) {
     PluginFunctions::getObject(_id,poly);
 
     if ( poly != 0 ) {
+        /// \todo Move this code to polymesh plugin and do the check there!
         PolyMesh& mesh = *poly->mesh();
 
         bool isTriangleMesh = true;
