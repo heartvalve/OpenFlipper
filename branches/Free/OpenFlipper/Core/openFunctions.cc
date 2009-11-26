@@ -92,11 +92,11 @@ void Core::slotGetAllFilters ( QStringList& _list){
   }
 }
 
-void Core::commandLineOpen(const char* _filename, bool asPolyMesh ){
+void Core::commandLineOpen(const char* _filename, bool _asPolyMesh ){
 
   QString file(_filename);
 
-  // Modify filename to containe full paths
+  // Modify filename to contain full paths if they were given as relative paths
   if ( !file.startsWith("/") && !file.contains(":") ) {
     file = QDir::currentPath();
     file += OpenFlipper::Options::dirSeparator();
@@ -104,11 +104,22 @@ void Core::commandLineOpen(const char* _filename, bool asPolyMesh ){
   }
 
   // Add to the open list
-  commandLineFileNames_.push_back(std::pair< std::string , bool >(file.toStdString(), asPolyMesh));
+  commandLineFileNames_.push_back(std::pair< std::string , bool >(file.toStdString(), _asPolyMesh));
 }
 
 void Core::commandLineScript(const char* _filename ) {
-  commandLineScriptNames_.push_back(_filename);
+
+  QString file(_filename);
+  
+  // Modify filename to contain full paths if they were given as relative paths
+  if ( !file.startsWith("/") && !file.contains(":") ) {
+    file = QDir::currentPath();
+    file += OpenFlipper::Options::dirSeparator();
+    file += _filename;
+  }
+  
+  // Add to the open list
+  commandLineScriptNames_.push_back(file.toStdString());
 }
 
 void Core::slotExecuteAfterStartup() {
@@ -150,10 +161,7 @@ void Core::slotExecuteAfterStartup() {
 
   if ( scriptingSupport )
     for ( uint i = 0 ; i < commandLineScriptNames_.size() ; ++i ) {
-      // Add the full path to the script to set scripting dir right
-      QString tmp = QString::fromStdString(commandLineScriptNames_[i]);
-      tmp = QDir::currentPath() + QDir::separator() + tmp;
-      emit executeFileScript(tmp);
+      emit executeFileScript(QString::fromStdString(commandLineScriptNames_[i]));
     }
 
   if ( !OpenFlipper::Options::gui() && !OpenFlipper::Options::remoteControl())

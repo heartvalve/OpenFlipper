@@ -456,15 +456,30 @@ private:
   * are stored. After the event queue is started, all files in this list will be opened.
   * This is necessary as the event queue has to run to schedule the events emitted 
   * during open operations.
+  *
+  * @param _filename filename of the file to be opened. If it does not contain a full path,
+  *                  the current path will be prepended.
+  * @param _asPolyMesh Load as a polymesh ( yes/no)
   */
-  void commandLineOpen(const char* _filename, bool asPolyMesh );
+  void commandLineOpen(const char* _filename, bool _asPolyMesh );
 
-  /// Execute a script from the command Line
+  /** \brief Load a script from the commandline on application start
+  *
+  * This function is called before the event queue is executed. The filename 
+  * is stored. After the event queue is started, all files in this list will be opened.
+  * This is necessary as the event queue has to run to schedule the events emitted 
+  * during open operations.
+  *
+  * @param _filename filename of the script to be opened. If it does not contain a full path,
+  *                  the current path will be prepended.
+  */
   void commandLineScript(const char* _filename );
 
   private slots:
 
-  /// Executed after loading core completly
+  /** Executed after loading core completly
+  *
+  */
   void slotExecuteAfterStartup();
 
   private:
