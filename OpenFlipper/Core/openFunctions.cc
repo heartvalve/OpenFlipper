@@ -131,18 +131,23 @@ void Core::slotExecuteAfterStartup() {
     emit log(LOGERR ,tr("No scripting support available, please check if we load a scripting plugin .. Skipping script execution on startup"));
   }
 
-  // Collect all script files from the scripting subdirectory and execute them if possible
+  // Collect all script files from the scripting subdirectory and execute them if possible.
+  // You can use this directory to execute scipts that modify for example modify the ui at
+  // every startup.
   if ( scriptingSupport ) {
 
+    // Get the files in the directory
     QDir scriptDir = OpenFlipper::Options::scriptDir();
     QStringList scriptFiles = scriptDir.entryList(QDir::Files,QDir::Name);
 
+    // Execute all files ending with ofs
     for ( int i = 0 ; i  < scriptFiles.size(); ++i )
       if ( scriptFiles[i].endsWith("ofs") )
         emit executeFileScript(scriptDir.path() + QDir::separator() + scriptFiles[i]);
 
   }
 
+  // Open all files given at the commandline
   for ( uint i = 0 ; i < commandLineFileNames_.size() ; ++i ) {
 
     // Skip scripts here as they will be handled by a different function
@@ -152,6 +157,7 @@ void Core::slotExecuteAfterStartup() {
       continue;
     }
 
+    // If the file was given with the polymesh option, open them as polymeshes.
     if (commandLineFileNames_[i].second)
       loadObject(DATA_POLY_MESH, QString::fromStdString(commandLineFileNames_[i].first));
     else {
@@ -159,11 +165,14 @@ void Core::slotExecuteAfterStartup() {
     }
   }
 
+  // If we have scripting support, execute the scripts given at the commandline.
   if ( scriptingSupport )
     for ( uint i = 0 ; i < commandLineScriptNames_.size() ; ++i ) {
       emit executeFileScript(QString::fromStdString(commandLineScriptNames_[i]));
     }
 
+  // If we don't have a gui and we are not under remote control,
+  // exit the application as there would be no way to execute further commands
   if ( !OpenFlipper::Options::gui() && !OpenFlipper::Options::remoteControl())
     exitApplication();
 }
