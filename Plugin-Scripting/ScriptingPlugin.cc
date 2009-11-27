@@ -366,21 +366,36 @@ void ScriptingPlugin::slotLoadScript(){
 
   if (filename == "")
     return;
+  
+  slotLoadScript(filename);
+}
 
-  scriptWidget_->currentScript->clear();
-
-  QFile data(filename);
-  if (data.open(QFile::ReadOnly)) {
-    QTextStream input(&data);
-    do {
-      scriptWidget_->currentScript->append(input.readLine());
-    } while (!input.atEnd());
-
- }
-  lastFile_ = filename;
-  OpenFlipper::Options::currentScriptDir( QFileInfo(filename).absolutePath() );
-
-  scriptWidget_->actionSave_Script->setEnabled( false );
+void ScriptingPlugin::slotLoadScript( QString _filename ) {
+  
+  if (_filename == "")
+      return;
+    
+  // Check if we are in gui mode. Otherwise just ignore this call
+  if ( OpenFlipper::Options::gui() ) {
+    scriptWidget_->currentScript->clear();
+  
+    QFile data(_filename);
+    
+    if (data.open(QFile::ReadOnly)) {
+      QTextStream input(&data);
+      do {
+        scriptWidget_->currentScript->append(input.readLine());
+      } while (!input.atEnd());
+      
+      lastFile_ = _filename;
+      OpenFlipper::Options::currentScriptDir( QFileInfo(_filename).absolutePath() );
+      
+      scriptWidget_->actionSave_Script->setEnabled( false );
+      
+      scriptWidget_->show();
+    }
+  }
+  
 }
 
 void ScriptingPlugin::slotSaveScript(){

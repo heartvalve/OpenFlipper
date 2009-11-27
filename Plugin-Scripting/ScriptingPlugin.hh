@@ -124,6 +124,14 @@ public slots:
 
   void showScriptInEditor (QString _code);
 
+  /** \brief Load Script into gui from file
+  *
+  * Loads a script from the given file and loads it into the widget.
+  *
+  * @param _filename Filename of script to load, including full path.
+  */
+  void slotLoadScript( QString _filename );
+  
 /** @} */
 
 //===========================================================================
