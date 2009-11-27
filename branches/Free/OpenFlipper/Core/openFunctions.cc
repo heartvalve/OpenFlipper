@@ -325,56 +325,71 @@ void Core::slotLoad(QString _filename, int _pluginID) {
     if ( !OpenFlipper::Options::loadingSettings() )
       coreWidget_->setStatus(ApplicationStatus::READY );
   }
-
-  BaseObjectData* object;
-  PluginFunctions::getObject(id,object);
-
-  DataType type = object->dataType();
   
-  // Check if it is a polymesh
-  if ( object != 0 && type == DATA_POLY_MESH ) {
+  // Initialize as unknown type
+  DataType type = DATA_UNKNOWN;
+
+  // An object has been added. Get it and do some processing!
+  if ( id > 0 ) {
     /// \todo Move this code to polymesh plugin and do the check there!
+    
+    BaseObjectData* object;
+    PluginFunctions::getObject(id,object);
 
-    PolyMeshObject* poly = 0;
-    PluginFunctions::getObject(id,poly);
+    if ( !object ) {
+      emit log(LOGERR,tr("Object id returned but no object with this id has been found! Error in one of the file plugins!"));
+      return;
+    }
+    
+    // Get the objects type
+    type = object->dataType();
+    
+    // Check if it is a polymesh
+    if ( object != 0 && type == DATA_POLY_MESH ) {
 
-    if ( poly != 0 ) {
-        PolyMesh& mesh = *poly->mesh();
+      PolyMeshObject* poly = 0;
+      PluginFunctions::getObject(id,poly);
 
-        bool isTriangleMesh = true;
+      if ( poly != 0 ) {
+          PolyMesh& mesh = *poly->mesh();
 
-        for ( PolyMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end() ; ++f_it) {
+          bool isTriangleMesh = true;
 
-          // Count number of vertices for the current face
-          uint count = 0;
-          for ( PolyMesh::FaceVertexIter fv_it( mesh,f_it); fv_it; ++fv_it )
-            ++count;
+          for ( PolyMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end() ; ++f_it) {
 
-          // Check if it is a triangle. If not, this is really a poly mesh
-          if ( count != 3 ) {
-            isTriangleMesh = false;
-            break;
+            // Count number of vertices for the current face
+            uint count = 0;
+            for ( PolyMesh::FaceVertexIter fv_it( mesh,f_it); fv_it; ++fv_it )
+              ++count;
+
+            // Check if it is a triangle. If not, this is really a poly mesh
+            if ( count != 3 ) {
+              isTriangleMesh = false;
+              break;
+            }
+
           }
 
-        }
-
-        // Mesh loaded as polymesh is actually a triangle mesh. Ask the user to reload as triangle mesh or keep it as poly mesh.
-        if ( isTriangleMesh ) {
-          QMessageBox::StandardButton result = QMessageBox::question ( 0,
-                                                                      tr("TriMesh loaded as PolyMesh"),
-                                                                      tr("You opened the mesh as a poly mesh but actually its a triangle mesh. \nShould it be opened as a triangle mesh?"),
-                                                                      (QMessageBox::Yes | QMessageBox::No ),
-                                                                      QMessageBox::Yes );
-          // User decided to reload as triangle mesh
-          if ( result == QMessageBox::Yes ) {
-            slotDeleteObject(id);
-            id = loadObject(DATA_TRIANGLE_MESH ,_filename);
-            type = DATA_TRIANGLE_MESH;
+          // Mesh loaded as polymesh is actually a triangle mesh. Ask the user to reload as triangle mesh or keep it as poly mesh.
+          if ( isTriangleMesh ) {
+            QMessageBox::StandardButton result = QMessageBox::question ( 0,
+                                                                        tr("TriMesh loaded as PolyMesh"),
+                                                                        tr("You opened the mesh as a poly mesh but actually its a triangle mesh. \nShould it be opened as a triangle mesh?"),
+                                                                        (QMessageBox::Yes | QMessageBox::No ),
+                                                                        QMessageBox::Yes );
+            // User decided to reload as triangle mesh
+            if ( result == QMessageBox::Yes ) {
+              slotDeleteObject(id);
+              id = loadObject(DATA_TRIANGLE_MESH ,_filename);
+              type = DATA_TRIANGLE_MESH;
+            }
           }
-        }
 
+      }
     }
   }
+  
+  // If the id was greater than zero, add the file to the recent files.
   if ( id >= 0 )
     if ( OpenFlipper::Options::gui() )
       coreWidget_->addRecent(_filename, type);
