@@ -148,7 +148,11 @@ public slots:
        *
        * The Core will call this slot if you should load a file. The core will
        * check if you support the given file type depending on the provided
-       * filters and dataTypes ( see supportedType and getLoadFilters )
+       * filters and dataTypes ( see supportedType and getLoadFilters )\n
+       *
+       * if you just opened a file and did not create any object, return 0 here,
+       * telling the core that it was successfully loaded but no new object 
+       * has been created!
        */
       virtual int loadObject(QString /*_filename*/) = 0;
 
