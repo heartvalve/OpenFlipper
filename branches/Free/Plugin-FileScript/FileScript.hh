@@ -43,8 +43,6 @@ class FileScriptPlugin : public QObject, BaseInterface, FileInterface, LoadSaveI
      QString name() { return (QString("FileScript")); };
      QString description( ) { return (QString(tr("Load Scripts"))); };
 
-     QString typeName() { return (QString("Script")); };
-
      DataType supportedType();
 
      QString getSaveFilters();
