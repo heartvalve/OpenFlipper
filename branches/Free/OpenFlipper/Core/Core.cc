@@ -181,6 +181,9 @@ Core() :
 
   // set discriptions for scriptable slots
   setDescriptions();
+  
+  // Initialize the build in dataTypes
+  initializeTypes();
 }
 
 /** \brief Second initialization stage

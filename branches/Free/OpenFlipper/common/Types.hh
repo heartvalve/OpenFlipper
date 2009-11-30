@@ -181,13 +181,21 @@ void setDataTypeName( QString _typeName, QString _name );
 * @{ */
 //================================================================================================
 
-/// Get an icon for a given DataType
+/// Get a string with the filename of the icon for the DataType name
 DLLEXPORT
-QString typeIcon(QString  _name);
+QString typeIconName(QString  _name);
 
-/// Get an icon for a given DataType
+/// Get a string with the filename of the icon for the DataType
 DLLEXPORT
-QString typeIcon(DataType _id);
+QString typeIconName(DataType _id);
+
+/** \brief Get an QIcon associated with the given datatype
+* 
+* The icons are loaded once when set and then the reference is returned here.
+* This reduces the time when frequently requesting the icons (e.g. DataControl)
+*/
+DLLEXPORT
+QIcon& typeIcon(DataType _id);
 
 /// Set an Icon for a given DataType
 DLLEXPORT

@@ -84,6 +84,7 @@ void Core::resetScenegraph( bool _resetTrackBall  ) {
 
 void Core::slotGetAllFilters ( QStringList& _list){
 
+  /// \todo check why the supported Type is used here!
   // Iterate over all types
   for (int i=0; i < (int)supportedTypes_.size(); i++){
     QString f = supportedTypes_[i].plugin->getLoadFilters();
@@ -243,10 +244,10 @@ int Core::loadObject( DataType _type, QString _filename) {
 
 
 int Core::addEmptyObject( DataType _type ) {
-  /** \todo Iterate over all plugins but check with bitmask! for a supporting plugin
-  */
+  // Iterate over all plugins. The first plugin supporting the addEmpty function for the
+  // specified type will be used to create the new object.
   for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if (supportedTypes_[i].type == _type)
+    if ( supportedTypes_[i].type & _type )
       return supportedTypes_[i].plugin->addEmpty();
   return -1; //no plugin found
 }

@@ -60,15 +60,13 @@
 #include "Types.hh"
 #include <map>
 #include <QCoreApplication>
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 
 /** This field defines the start id for custom datatypes. It starts high to avoid conflicts with previously
  * hardcoded versions.
  */
 static int nextTypeId_ = 8;
-
-/// Variable used to automatically initialize the maps
-static bool initialized_ = false;
 
 /** This map maps an dataType id to an typeName
  */
@@ -105,51 +103,55 @@ class TypeInfo {
 
   /// The icon of the datatype
   QString  iconName;
+  
+  QIcon    icon;
 
   /// Human readable name
   QString readableName;
 };
 
+static QIcon dummyIcon;
+
 static std::vector< TypeInfo > types;
 
 //== Functions =========================================================
 
-void initialize() {
-  if ( !initialized_ ) {
-    stringToTypeInfo["Unknown"] = types.size();
-    typeToTypeInfo[DATA_UNKNOWN]   = types.size();
-    types.push_back( TypeInfo(DATA_UNKNOWN            ,"Unknown"        ,"Unknown.png", QCoreApplication::translate("Types","Unknown")) );
+void initializeTypes() {
+  stringToTypeInfo["Unknown"] = types.size();
+  typeToTypeInfo[DATA_UNKNOWN]   = types.size();
+  types.push_back( TypeInfo(DATA_UNKNOWN            ,"Unknown"        ,"Unknown.png", QCoreApplication::translate("Types","Unknown")) );
 
-    stringToTypeInfo["Group"]  = types.size();
-    typeToTypeInfo[DATA_GROUP] = types.size();
-    types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"Unknown.png", QCoreApplication::translate("Types","Group")) );
+  stringToTypeInfo["Group"]  = types.size();
+  typeToTypeInfo[DATA_GROUP] = types.size();
+  types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"Unknown.png", QCoreApplication::translate("Types","Group")) );
 
-    stringToTypeInfo["TriangleMesh"]   = types.size();
-    typeToTypeInfo[DATA_TRIANGLE_MESH_CONST_ID] = types.size();
-    types.push_back( TypeInfo(DATA_TRIANGLE_MESH_CONST_ID   ,"TriangleMesh"   ,"TriangleType.png", QCoreApplication::translate("Types","Triangle Mesh")) );
+  stringToTypeInfo["TriangleMesh"]   = types.size();
+  typeToTypeInfo[DATA_TRIANGLE_MESH_CONST_ID] = types.size();
+  types.push_back( TypeInfo(DATA_TRIANGLE_MESH_CONST_ID   ,"TriangleMesh"   ,"TriangleType.png", QCoreApplication::translate("Types","Triangle Mesh")) );
+  
+  stringToTypeInfo["PolyMesh"]   = types.size();
+  typeToTypeInfo[DATA_POLY_MESH_CONST_ID] = types.size();
+  types.push_back( TypeInfo(DATA_POLY_MESH_CONST_ID       ,"PolyMesh"       ,"PolyType.png", QCoreApplication::translate("Types","Poly Mesh")) );
 
-    stringToTypeInfo["PolyMesh"]   = types.size();
-    typeToTypeInfo[DATA_POLY_MESH_CONST_ID] = types.size();
-    types.push_back( TypeInfo(DATA_POLY_MESH_CONST_ID       ,"PolyMesh"       ,"PolyType.png", QCoreApplication::translate("Types","Poly Mesh")) );
+  stringToTypeInfo["All"]  = types.size();
+  typeToTypeInfo[DATA_ALL] = types.size();
+  types.push_back( TypeInfo(DATA_ALL             ,"All"            ,"Unknown.png", QCoreApplication::translate("Types","All")) );
 
-    stringToTypeInfo["All"]  = types.size();
-    typeToTypeInfo[DATA_ALL] = types.size();
-    types.push_back( TypeInfo(DATA_ALL             ,"All"            ,"Unknown.png", QCoreApplication::translate("Types","All")) );
+  typeToString[DATA_UNKNOWN] = "Unknown";
+  typeToString[DATA_GROUP] = "Group";
+  typeToString[DATA_TRIANGLE_MESH_CONST_ID] = "TriangleMesh";
+  typeToString[DATA_POLY_MESH_CONST_ID] = "PolyMesh";
+  typeToString[DATA_ALL] = "All";
+  
+  // Preload the static icons
+  setTypeIcon(DATA_TRIANGLE_MESH_CONST_ID,"TriangleType.png");
+  setTypeIcon(DATA_POLY_MESH_CONST_ID,"PolyType.png");
 
-    typeToString[DATA_UNKNOWN] = "Unknown";
-    typeToString[DATA_GROUP] = "Group";
-    typeToString[DATA_TRIANGLE_MESH_CONST_ID] = "TriangleMesh";
-    typeToString[DATA_POLY_MESH_CONST_ID] = "PolyMesh";
-    typeToString[DATA_ALL] = "All";
-
-    initialized_ = true;
-  }
 }
 
 /// Adds a datatype and returns the id for the new type
 DataType addDataType(QString _name, QString _readableName) {
-  initialize();
-
+  
   int type = nextTypeId_;
 
   stringToTypeInfo[ _name ] = types.size();
@@ -164,7 +166,6 @@ DataType addDataType(QString _name, QString _readableName) {
 
 /// Get the id of a type with given name
 DataType typeId(QString _name) {
-  initialize();
 
   std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
 
@@ -180,17 +181,19 @@ DataType typeId(QString _name) {
 
 /// Get the name of a type with given id
 QString typeName(DataType _id) {
-  initialize();
 
   std::map<unsigned int, QString>::iterator name = typeToString.find(_id);
 
   if ( name != typeToString.end() )
     return name->second;
   else {
+    #ifdef DEBUG
     std::cerr << "Unable to retrieve typeName for id " << _id << std::endl;
+    #endif
     return "Unknown";
   }
 }
+
 
 /// Return the number of registered types
 uint typeCount() {
@@ -198,8 +201,7 @@ uint typeCount() {
 }
 
 /// Get the icon of a given dataType
-QString typeIcon(QString  _name) {
-  initialize();
+QString typeIconName(QString  _name) {
 
   std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
 
@@ -210,8 +212,7 @@ QString typeIcon(QString  _name) {
 }
 
 /// get the icon of a given dataType
-QString typeIcon(DataType _id) {
-  initialize();
+QString typeIconName(DataType _id) {
 
   std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
 
@@ -221,27 +222,38 @@ QString typeIcon(DataType _id) {
     return "Unknown.png";
 }
 
+/// get the icon of a given dataType
+QIcon& typeIcon(DataType _id) {
+  
+  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  
+  if ( index != typeToTypeInfo.end() )
+    return types[ index->second ].icon;
+  else
+    return dummyIcon;
+}
+
 /// Set the icon for a given dataType
 void setTypeIcon( DataType _id   , QString _icon ) {
-  initialize();
 
   std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
 
-  if ( index != typeToTypeInfo.end() )
+  if ( index != typeToTypeInfo.end() ) {
     types[ index->second ].iconName = _icon;
-  else
+    types[ index->second ].icon = QIcon( OpenFlipper::Options::iconDirStr() + QDir::separator() + _icon );
+  } else
     std::cerr << "Could not set icon for DataType. Type not found!" << std::endl;
 }
 
 /// Set the icon for a given dataType
 void setTypeIcon( QString  _name , QString _icon ) {
-  initialize();
 
   std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _name );
 
-  if ( index != stringToTypeInfo.end() )
+  if ( index != stringToTypeInfo.end() ) {
     types[ index->second ].iconName = _icon;
-  else
+    types[ index->second ].icon = QIcon( OpenFlipper::Options::iconDirStr() + QDir::separator() + _icon );
+  } else
     std::cerr << "Could not set icon for DataType. Type not found!" << std::endl;
 }
 
@@ -250,7 +262,6 @@ void setTypeIcon( QString  _name , QString _icon ) {
 
 /// Get DataType Human readable name ( this name might change. Use the typeName insted! )
 QString dataTypeName( DataType _id ) {
-  initialize();
 
   std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
 
@@ -264,7 +275,6 @@ QString dataTypeName( DataType _id ) {
 
 /// Get DataType Human readable name ( this name might change. Use the typeName insted! )
 QString dataTypeName( QString  _typeName ) {
- initialize();
 
   std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _typeName );
 
@@ -280,7 +290,6 @@ QString dataTypeName( QString  _typeName ) {
 
 /// Set the icon for a given dataType
 void setDataTypeName( DataType _id   , QString _name ) {
-  initialize();
 
   std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
 
@@ -292,7 +301,6 @@ void setDataTypeName( DataType _id   , QString _name ) {
 
 /// Set the icon for a given dataType
 void setDataTypeName( QString  _typeName , QString _name ) {
-  initialize();
 
   std::map<QString, unsigned int>::iterator index = stringToTypeInfo.find( _typeName );
 

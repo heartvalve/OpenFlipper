@@ -61,7 +61,7 @@
 //== INCLUDES =================================================================
 
 
-#include "OpenFlipper/common/Types.hh"
+#include "OpenFlipper/common/TypesInternal.hh"
 
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>
 
