@@ -192,6 +192,11 @@ QString typeName(DataType _id) {
   }
 }
 
+/// Return the number of registered types
+uint typeCount() {
+  return types.size();
+}
+
 /// Get the icon of a given dataType
 QString typeIcon(QString  _name) {
   initialize();
