@@ -71,9 +71,13 @@ void CoreWidget::showAboutWidget( ) {
     aboutWidget_ = new AboutWidget( this );
     aboutWidget_->OpenFlipperAbout->append(tr("OpenFlipper Core Version: ") + OpenFlipper::Options::coreVersion() ) ;
 
+    // =====================================================================================
+    // Directory info
+    // =====================================================================================
     aboutWidget_->OpenFlipperAbout->append("\n");
     aboutWidget_->OpenFlipperAbout->append(tr("OpenFlipper Directories:"));
-    // Set the Path to the shaders
+    
+    // Get the dataDir
     QDir tempDir = QDir(OpenFlipper::Options::applicationDir());
     #ifdef OPENFLIPPER_DATADIR
       tempDir.cd(OPENFLIPPER_DATADIR);
@@ -86,6 +90,9 @@ void CoreWidget::showAboutWidget( ) {
     aboutWidget_->OpenFlipperAbout->append("Fonts:\t" + OpenFlipper::Options::fontsDirStr() );
     aboutWidget_->OpenFlipperAbout->append("Help:\t" + OpenFlipper::Options::helpDirStr() );
 
+    // =====================================================================================
+    // OpenGL Renderer/Vendor and version info
+    // =====================================================================================    
     aboutWidget_->OpenFlipperAbout->append("\n");
     aboutWidget_->OpenFlipperAbout->append(tr("OpenGL Specific Info:"));
 
@@ -118,18 +125,44 @@ void CoreWidget::showAboutWidget( ) {
 
 
 
+    // =====================================================================================
+    // OpenGL Extensions
+    // =====================================================================================
     aboutWidget_->OpenFlipperAbout->append(tr("Supported Extensions:"));
     QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
     aboutWidget_->OpenFlipperAbout->append(glExtensions);
 
     aboutWidget_->OpenFlipperAbout->moveCursor(QTextCursor::Start);
     
+    // =====================================================================================
+    // Qt information
+    // =====================================================================================
+    
     aboutWidget_->OpenFlipperAbout->append("\n");
     aboutWidget_->OpenFlipperAbout->append(tr("Qt Version Info:"));
     aboutWidget_->OpenFlipperAbout->append(tr("Currently used Version:\t") + qVersion() );
     aboutWidget_->OpenFlipperAbout->append(tr("Link time Version:\t\t") + QT_VERSION_STR );
     
+    // =====================================================================================
+    // List the currently registered data types
+    // =====================================================================================
+    aboutWidget_->OpenFlipperAbout->append("\n");
+    aboutWidget_->OpenFlipperAbout->append(tr("Registered data types:"));
 
+    QString types;
+
+    // Iterate over all Types known to the core
+    // Start at 1:
+    // 0 type is defined as DATA_UNKNOWN
+    DataType currentType = 1;
+    for ( uint i = 0 ; i < typeCount() - 2  ; ++i) {
+      types += typeName( currentType ) + " ";
+      
+      // Advance to next type ( Indices are bits so multiply by to to get next bit)
+      currentType *= 2;
+    }
+    
+    aboutWidget_->OpenFlipperAbout->append( types );
 
   }
 
