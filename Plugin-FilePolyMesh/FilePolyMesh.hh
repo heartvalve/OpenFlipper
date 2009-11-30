@@ -96,8 +96,6 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
 
      int addEmpty( );
 
-     QString typeName() { return (QString("Poly Mesh")); };
-
      DataType supportedType();
 
      QString getSaveFilters();

@@ -49,8 +49,6 @@ class FilePlanePlugin : public QObject, BaseInterface, FileInterface, LoadSaveIn
 
      int addEmpty( );
 
-     QString typeName() { return (QString("Plane")); };
-
      DataType supportedType();
 
      QString getSaveFilters();
