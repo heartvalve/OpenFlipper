@@ -49,7 +49,7 @@
 
 
 #include <OpenFlipper/common/Types.hh>
-#include "../OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 
 //******************************************************************************
@@ -117,10 +117,17 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
       return QVariant( QBrush(QColor(100,100,100) ) );
     }
   }
+  
+
 
   switch (index.column() ) {
     // Name
     case 0 :
+
+      // If we are setting the name, also add the icon
+      if ( role == Qt::DecorationRole ) {
+        return QVariant( typeIcon(item->dataType()) );
+      }
 
       if (role != Qt::DisplayRole && role != Qt::EditRole )
         return QVariant();
