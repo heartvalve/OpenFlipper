@@ -34,8 +34,8 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
- *   $Author$                                                      *
+ *   $Revision$                                                       *
+ *   $Author$                                                       *
  *   $Date$                   *
  *                                                                           *
 \*===========================================================================*/
@@ -84,6 +84,7 @@
 #include "OpenFlipper/BasePlugin/RPCInterface.hh"
 #include "OpenFlipper/BasePlugin/ScriptInterface.hh"
 #include "OpenFlipper/BasePlugin/SecurityInterface.hh"
+#include "OpenFlipper/BasePlugin/TypeInterface.hh"
 
 #include "OpenFlipper/INIFile/INIFile.hh"
 
@@ -177,19 +178,27 @@ void Core::loadPlugins()
 
 
   // Sort plugins to load FilePlugins first
+  QStringList typePlugins;
   QStringList filePlugins;
   QStringList textureControl;
   QStringList otherPlugins;
   //plugin Liste sortieren
   for (int i=0; i < pluginlist.size(); i++)
-    if (pluginlist[i].contains("Plugin-File") )
+    if (pluginlist[i].contains("Plugin-Type") )
+      typePlugins.push_back(pluginlist[i]);
+    else if (pluginlist[i].contains("Plugin-File") )
       filePlugins.push_back(pluginlist[i]);
     else if (pluginlist[i].contains("TextureControl"))
       textureControl.push_back(pluginlist[i]);
     else
       otherPlugins.push_back(pluginlist[i]);
 
-  pluginlist = filePlugins << textureControl << otherPlugins;
+  // This is the order in which plugins have to be loaded:
+  // First load all type Plugins to register the dataTypes to the core
+  // Than load the file plugins to load objects 
+  // Next is textureControl to control texture based properties
+  // Than load everything else.
+  pluginlist = typePlugins << filePlugins << textureControl << otherPlugins;
 
   // Remove Whitespace from beginning and end of Plugin Names
   for ( int i = 0 ; i < dontLoadPlugins_.size() ; ++i )
@@ -521,6 +530,13 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"setSlotDescription(QString,QString,QStringList,QStringList)") )
         connect(plugin, SIGNAL(setSlotDescription(QString,QString,QStringList,QStringList)),
                 this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
+    }
+    
+    //Check if the plugin is a typePlugin
+    TypeInterface* typePlugin = qobject_cast< TypeInterface * >(plugin);
+    if ( typePlugin ) {
+      // The only purpose of typePlugins is to register the types before all other Plugins are loaded
+      typePlugin->registerType();
     }
 
     //Check if the plugin supports Logging
