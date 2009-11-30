@@ -105,10 +105,6 @@ class FileInterface {
 
 public:
 
-  /** Return the name of your supported type (e.g. "Triangle Mesh"
-   */
-  virtual QString typeName() = 0;
-
   /** \brief Return your supported object type( e.g. DATA_TRIANGLE_MESH )
    *
    * If you support multiple datatypes you can use the bitwise or to combine them here.
