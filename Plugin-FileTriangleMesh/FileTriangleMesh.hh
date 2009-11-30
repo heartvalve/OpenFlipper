@@ -98,8 +98,6 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
 
      int addEmpty( );
 
-     QString typeName() { return (QString("Triangle Mesh")); };
-
      DataType supportedType();
 
      QString getSaveFilters();
