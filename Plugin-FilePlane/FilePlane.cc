@@ -16,8 +16,6 @@
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
 void FilePlanePlugin::initializePlugin() {
-  addDataType("Plane",tr("Plane"));
-  setTypeIcon( "Plane", "PlaneType.png");
 }
 
 QString FilePlanePlugin::getLoadFilters() {
