@@ -591,22 +591,53 @@ void Core::slotEmptyObjectAdded ( int _id ) {
 
 /// Opens AddEmpty-Object widget
 void Core::slotAddEmptyObjectMenu() {
-  if (supportedTypes_.size() != 0){
-    static addEmptyWidget* widget = 0;
-    if ( !widget ){
-      std::vector< DataType > types;
-      QStringList typeNames;
-      for (int i=0; i < (int)supportedTypes_.size(); i++) {
-        types.push_back(supportedTypes_[i].type);
-        typeNames.push_back(supportedTypes_[i].plugin->typeName());
+  std::vector< DataType > types;
+  QStringList             typeNames;
+  
+  DataType currentType = 2;
+  
+  // Iterate over all Types known to the core
+  // Start at 2:
+  // 0 type is defined as DATA_UNKNOWN
+  // 1 type is defined as DATA_GROUP
+  // Therefore we have two types less then reported
+  // 
+  for ( uint i = 0 ; i < typeCount() - 2  ; ++i) {
+    
+    // iterate over all support types (created from plugins on load.
+    // Check if a plugin supports addEmpty for the current type.
+    // Only if the type is supported, add it to the addEmpty Dialog
+    for ( uint j = 0 ; j < supportedTypes_.size(); j++) {
+      
+      // Check if a plugin supports the current Type
+      if ( supportedTypes_[j].type & currentType ) {
+        types.push_back(currentType);
+        typeNames.push_back( typeName( currentType ) );
+        
+        // Stop here as we need only one plugin supporting addEmpty for a given type
+        break;
       }
+    }
+    
+    // Advance to next type ( Indices are bits so multiply by to to get next bit)
+    currentType *= 2;
+  }
+  
+  static addEmptyWidget* widget = 0;
+  
+  if (supportedTypes_.size() != 0) {
+    
+    if ( !widget ){
       widget = new addEmptyWidget(types,typeNames);
       widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
       connect(widget,SIGNAL(chosen(DataType, int&)),this,SLOT(slotAddEmptyObject(DataType, int&)));
     }
+    
     widget->show();
-  }else
-    emit log(LOGERR,tr("Could not show 'add Empty' dialog. Missing file-plugins."));
+    
+  } else
+    emit log(LOGERR,tr("Could not show 'add Empty' dialog. Missing file-plugins ?"));
+  
 }
 
 //========================================================================================

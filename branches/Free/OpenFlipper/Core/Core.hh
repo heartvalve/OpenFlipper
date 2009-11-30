@@ -600,7 +600,10 @@ private:
       /// Gets called by examiner widget when Wheel is moved in picking mode
       void slotWheelEvent( QWheelEvent * _event, const std::string & _mode);
 
-      /// Slot adding empty object from Menu
+      /** \brief Open the add Empty dialog
+      *
+      * This slot shows the addEmpty dialog which is used to add empty objects of supported dataTypes
+      */
       void slotAddEmptyObjectMenu();
 
       /// Slot adding empty object of a given type
@@ -1002,9 +1005,6 @@ private:
 
   /// File-Plugins
   std::vector<fileTypes> supportedTypes_;
-
-  /// addEmpty Widget
-//   addEmptyWidget* addEmptyWidget_;
 
   private :
     ///Pointer to the data rootNode;
