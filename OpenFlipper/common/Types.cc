@@ -123,7 +123,7 @@ void initializeTypes() {
 
   stringToTypeInfo["Group"]  = types.size();
   typeToTypeInfo[DATA_GROUP] = types.size();
-  types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"Unknown.png", QCoreApplication::translate("Types","Group")) );
+  types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"group.png", QCoreApplication::translate("Types","Group")) );
 
   stringToTypeInfo["TriangleMesh"]   = types.size();
   typeToTypeInfo[DATA_TRIANGLE_MESH_CONST_ID] = types.size();
@@ -144,6 +144,7 @@ void initializeTypes() {
   typeToString[DATA_ALL] = "All";
   
   // Preload the static icons
+  setTypeIcon(DATA_GROUP,"group.png");
   setTypeIcon(DATA_TRIANGLE_MESH_CONST_ID,"TriangleType.png");
   setTypeIcon(DATA_POLY_MESH_CONST_ID,"PolyType.png");
 
