@@ -132,9 +132,23 @@ DataType addDataType(QString _name, QString _readableName);
 DLLEXPORT
 DataType typeId(QString _name);
 
-/// Get the name of a type with given id
+/** \brief Get the name of a type with given id
+*
+* The ids are organized in a bitfield. So use either the macro for getting the type id or
+* use the id directly (they have to be power of 2! ... Bitfield)
+*/
 DLLEXPORT
 QString typeName(DataType _id);
+
+/** \brief Get the number of registered types
+*
+* This function will return the number of types registered to the core. You can use it to
+* iterate over all types. 
+*
+* \Note Remember that the types are organized in a bitfield!
+*/
+DLLEXPORT 
+uint typeCount();
 
 /** @} */
 
