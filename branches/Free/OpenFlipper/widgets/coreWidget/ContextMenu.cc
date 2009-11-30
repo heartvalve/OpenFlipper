@@ -382,7 +382,7 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
 void CoreWidget::updatePopupMenuObject(QMenu* _menu , BaseObjectData* _object ) {
 
   QAction* typeEntry = new QAction( typeName(_object->dataType()) ,_menu);
-  typeEntry->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+ typeIcon(_object->dataType()) ));
+  typeEntry->setIcon(typeIcon(_object->dataType()));
   _menu->addAction( typeEntry );
 
   _menu->addSeparator( );
