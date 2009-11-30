@@ -858,16 +858,14 @@ CoreWidget::updateRecent()
 
   QVector< OpenFlipper::Options::RecentFile > recentFiles = OpenFlipper::Options::recentFiles();
   for (int i = 0 ; i < recentFiles.size() ; ++i ) {
-    QString path = OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator();
 
     QFileInfo fi(recentFiles[i].filename);
 
     if (fi.suffix() == "ini")
-      path += "Settings-Icon.png";
+      recentFilesMenu_->addAction(QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator()+"Settings-Icon.png"), recentFiles[i].filename);
     else
-      path += typeIcon( recentFiles[i].type );
+      recentFilesMenu_->addAction(typeIcon( recentFiles[i].type ), recentFiles[i].filename);
 
-    recentFilesMenu_->addAction(QIcon(path), recentFiles[i].filename);
   }
 
 }
