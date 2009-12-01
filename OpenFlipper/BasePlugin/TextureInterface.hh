@@ -94,15 +94,18 @@ class TextureInterface {
       /** \brief Emit this Signal if you want to add a texture for a multitexturing mode
        *
        *  Emit this signal if a texture should be added to a multitexturing mode.
+       *
        *  The first parameter defines a texturegroup which collects all textures
-       *  that should be painted in the multitexturing mode.
-       *  The second parameter defines the single textures name.
+       *  that should be painted in the multitexturing mode. This group does not
+       *  have to exist on the first call but will be created automatically.
+       *
+       *  The second parameter defines the single textures name used in the gui.
        *
        *  @param _textureGroup Multitexturing group using this texture
        *  @param _name         Name of the property which contains the tex coords (double or vec2d)
        *  @param _filename     Filename of the texture (either local in OpenFlippers texture dir or global ( "./Textures/<name>")
        *  @param _id           Id of the object which should use that texture
-       *  @param _textureId    The new id of the texture( This id is object related!!)
+       *  @param _textureId    The new internal id of the texture( This id is object related!!). Use this id in your mesh as the texture index (Use mesh->set_texture_index on the face using this texture).
        */
       virtual void addMultiTexture( QString /*_textureGroup*/ , QString /*_name*/ , QString /*_filename*/ , int /*_id*/ , int& /*_textureId*/ ) {};
 
