@@ -56,6 +56,16 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
     }
   }
   
+  //force TriangleMesh as initial value if available
+  for (int i=0; i < boxes_.count(); i++){
+    
+    for (int t=0; t < (boxes_[i])->count(); t++)
+      if ( (boxes_[i])->itemText(t).contains("TriangleMesh") ){
+        (boxes_[i])->setCurrentIndex(t);
+        break;
+      }
+  }
+  
   //load defaults from ini file
   QString filename = OpenFlipper::Options::configDirStr() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini";
   
@@ -69,7 +79,7 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
   for (int i=0; i < boxes_.count(); i++){
      QString pluginName;
     
-    if ( ini.get_entry(pluginName, "Options" , "Extension_" + _extensions[i] ) ){
+    if ( ini.get_entry(pluginName, "LoadSave" , "Extension_" + _extensions[i] ) ){
       
       for (int t=0; t < (boxes_[i])->count(); t++)
         if ( (boxes_[i])->itemText(t) == pluginName ){
@@ -176,7 +186,9 @@ void FileOptionsDialog::slotMakeDefault(){
   }
 
   for (int i=0; i < boxes_.count(); i++)
-    ini.add_entry("Options","Extension_" + (boxes_[i])->accessibleName(), boxes_[i]->currentText() );
+    ini.add_entry("LoadSave","Extension_" + (boxes_[i])->accessibleName(), boxes_[i]->currentText() );
+  
+  ini.add_entry("LoadSave","MakeDefault", true );
   
   // close ini file
   ini.disconnect();
