@@ -53,8 +53,6 @@
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
 
-#include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
-
 class TypePlanePlugin : public QObject, BaseInterface, TypeInterface
 {
    Q_OBJECT
