@@ -61,6 +61,14 @@
 
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
+#include <QMessageBox>
+
+/// Constructor
+FilePolyMeshPlugin::FilePolyMeshPlugin()
+  : loadOptions_(0),
+    triMeshHandling_(0)
+{
+}
 
 /// Add an empty poly-mesh
 int FilePolyMeshPlugin::addEmpty( ){
@@ -125,6 +133,117 @@ int FilePolyMeshPlugin::loadObject(QString _filename){
     std::cerr << "Plugin FilePolyMesh : Read error for Poly Mesh\n";
     emit deleteObject( object->id() );
     return -1;
+    
+  } else {
+    
+    int triMeshControl = 1; // 1 == keep polyMesh .. do nothing
+    
+    if ( OpenFlipper::Options::gui() ){
+      if ( triMeshHandling_ != 0 ){
+        triMeshControl = triMeshHandling_->currentIndex();
+      }else
+        triMeshControl = 0;
+    }
+    
+    //check if it's actually a triangle mesh
+    if (triMeshControl != 1){ // 1 == do nothing
+    
+      PolyMesh& mesh = *( object->mesh() );
+      
+      bool isTriangleMesh = true;
+      
+      for ( PolyMesh::FaceIter f_it = mesh.faces_begin(); f_it != mesh.faces_end() ; ++f_it) {
+
+        // Count number of vertices for the current face
+        uint count = 0;
+        for ( PolyMesh::FaceVertexIter fv_it( mesh,f_it); fv_it; ++fv_it )
+          ++count;
+
+        // Check if it is a triangle. If not, this is really a poly mesh
+        if ( count != 3 ) {
+          isTriangleMesh = false;
+          break;
+        }
+
+      }
+
+      // Mesh loaded as polymesh is actually a triangle mesh. Ask the user to reload as triangle mesh or keep it as poly mesh.
+      if ( isTriangleMesh )
+        
+        if ( triMeshControl == 0){ //ask what to do
+        
+          QMessageBox::StandardButton result = QMessageBox::question ( 0,
+                                                                      tr("TriMesh loaded as PolyMesh"),
+                                                                      tr("You opened the mesh as a poly mesh but actually its a triangle mesh. \nShould it be opened as a triangle mesh?"),
+                                                                      (QMessageBox::Yes | QMessageBox::No ),
+                                                                      QMessageBox::Yes );
+          // User decided to reload as triangle mesh
+          if ( result == QMessageBox::No )
+            isTriangleMesh = false;
+        }
+      
+      if ( isTriangleMesh ){
+        std::cerr << "Plugin FilePolyMesh : Reloading mesh as Triangle Mesh\n";
+
+        
+        bool pluginAvailable = false;
+        
+        emit pluginExists("filetrianglemesh",pluginAvailable);
+        
+        if (pluginAvailable){
+          
+          emit deleteObject( object->id() );
+          
+          return RPC::callFunctionValue<int>("filetrianglemesh","loadObject",_filename);
+        }
+      }
+    }
+  }
+
+  object->mesh()->update_normals();
+
+  object->update();
+
+  object->show();
+
+  emit log(LOGINFO,object->getObjectinfo());
+
+  emit openedFile( object->id() );
+
+  return object->id();
+}
+
+/// load a poly-mesh with given filename
+int FilePolyMeshPlugin::loadPolyMeshObject(QString _filename){
+
+  // new object data struct
+  PolyMeshObject* object;
+
+  object = new PolyMeshObject( dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ) );
+
+  // Set pointers for tree structure
+  object->setParent(PluginFunctions::objectRoot());
+  PluginFunctions::objectRoot()->appendChild(object);
+
+  if (PluginFunctions::objectCount() == 1 )
+    object->target(true);
+
+  object->setFromFileName(_filename);
+
+  // call the local function to update names
+  QFileInfo f(_filename);
+  object->setName( f.fileName() );
+
+  std::string filename = std::string( _filename.toUtf8() );
+
+  // load file
+  bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename );
+  if (!ok)
+  {
+    std::cerr << "Plugin FilePolyMesh : Read error for Poly Mesh\n";
+    emit deleteObject( object->id() );
+    return -1;
+    
   }
 
   object->mesh()->update_normals();
@@ -259,6 +378,38 @@ void FilePolyMeshPlugin::saveIniFile( INIFile& _ini ,int _id) {
                     "LineWidth" ,
                     object->materialNode()->line_width());
   }
+}
+
+QWidget* FilePolyMeshPlugin::saveOptionsWidget(QString _currentFilter) {
+
+  return 0;
+}
+
+QWidget* FilePolyMeshPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
+
+  if (loadOptions_ == 0){
+    //generate widget
+    loadOptions_ = new QWidget();
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->setAlignment(Qt::AlignTop);
+
+    
+    QLabel* label = new QLabel(tr("If PolyMesh is a Triangle Mesh:"));
+    
+    layout->addWidget(label);
+    
+    triMeshHandling_ = new QComboBox();
+    triMeshHandling_->addItem( tr("Ask") );
+    triMeshHandling_->addItem( tr("Open as PolyMesh") );
+    triMeshHandling_->addItem( tr("Open as TriangleMesh") );
+
+    layout->addWidget(triMeshHandling_);
+    
+    loadOptions_->setLayout(layout);
+
+  }
+
+  return loadOptions_;
 }
 
 

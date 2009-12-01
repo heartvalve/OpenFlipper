@@ -56,10 +56,11 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 
-class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, INIInterface
+class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, INIInterface, RPCInterface
 {
    Q_OBJECT
    Q_INTERFACES(FileInterface)
@@ -68,6 +69,7 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(ScriptInterface)
    Q_INTERFACES(INIInterface)
+   Q_INTERFACES(RPCInterface)
 
   signals:
     void openedFile( int _id );
@@ -79,6 +81,10 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
 
     void emptyObjectAdded( int _id );
     void deleteObject( int _id );
+    
+    //RPCInterface
+    void pluginExists( QString _pluginName , bool& _exists  );
+    
   private slots:
     void fileOpened( int /*_id*/ ){};
 
@@ -89,6 +95,7 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
 
   public :
 
+      FilePolyMeshPlugin();
      ~FilePolyMeshPlugin() {};
 
      QString name() { return (QString("FilePolyMesh")); };
@@ -101,12 +108,22 @@ class FilePolyMeshPlugin : public QObject, BaseInterface, FileInterface, LoadSav
      QString getSaveFilters();
      QString getLoadFilters();
 
-     QWidget* saveOptionsWidget(QString /*_currentFilter*/) { return 0; };
-     QWidget* loadOptionsWidget(QString /*_currentFilter*/) { return 0; };
+     QWidget* saveOptionsWidget(QString /*_currentFilter*/);
+     QWidget* loadOptionsWidget(QString /*_currentFilter*/);
 
+  private:
+    //Option Widgets
+    QWidget*   loadOptions_;
+    QComboBox* triMeshHandling_;
+     
   public slots:
 
+    // this loader loads a polymesh and perhaps converts it to triangle mesh
+    // depending on user configurations
     int loadObject(QString _filename);
+    
+    //this loader always loads a polymesh
+    int loadPolyMeshObject(QString _filename);
 
     bool saveObject(int _id, QString _filename);
 
