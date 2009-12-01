@@ -969,6 +969,12 @@ DLLEXPORT
 bool renderPicking( );
 
 /** @} */
+
+/// Internal function called by the core to connect to the program options
+DLLEXPORT 
+bool initializeSettings();
+
+
 }
 }
 

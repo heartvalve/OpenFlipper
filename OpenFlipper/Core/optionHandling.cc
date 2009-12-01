@@ -186,6 +186,9 @@ void Core::saveOptions(){
 
 void Core::setupOptions() {
 
+  // initialize the Settings:
+  OpenFlipper::Options::initializeSettings();
+  
   // Get the Main config dir in the home directory and possibly create it
   QDir configDir = QDir::home();
 
