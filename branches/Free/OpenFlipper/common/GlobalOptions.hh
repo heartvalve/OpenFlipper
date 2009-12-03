@@ -72,26 +72,27 @@
 
 /** \brief QSettings object containing all program settings of OpenFlipper.
 *
-* To get the settings use: 
-* OpenFlipperSettings().value("<Key>").toDouble();
+* To get the settings use:\n
+* OpenFlipperSettings().value("<Key>").toDouble();\n
 * OpenFlipperSettings().value("<Key>").toBool();
 *
-* To change settings do:
-* OpenFlipperSettings().setValue("<Key>",<Value>);
-* For detailed info about the values see the documentation of QSettings and the QVariant.
+* To change settings do:\n
+* OpenFlipperSettings().setValue("<Key>","<Value>");\n
+* For detailed info about the values see the documentation of QSettings and the QVariant.\n
+*
+* <b>For each of your plugins, the key has to start with your plugin name!!!</b>
 *
 * The following entries are available through the settings:
 *
-* General Stereo Settings:\n
-* * Core/Stereo/EyeDistance   \t  Distance between eyes. Defaults to 7 cm (double)\n
-* * Core/Stereo/FocalDistance \t  Focal distance. Defaults to center of scene (double)\n
-*
+* <b>General Stereo Settings<b>\n
+* * Core/Stereo/EyeDistance    Distance between eyes. Defaults to 7 cm (double)\n
+* * Core/Stereo/FocalDistance  Focal distance. Defaults to center of scene (double)\n
 * \n
-* Philips stereo display settings:\n
-* * Core/Stereo/Philips/Content \t Philips stereo header content type (int)
-* * Core/Stereo/Philips/Factor  \t Philips stereo header factor (int)
-* * Core/Stereo/Philips/Offset  \t Philips stereo header offset cc (int)
-* * Core/Stereo/Philips/Select  \t Philips stereo header select (int)
+* <b>Philips stereo display settings<b>\n
+* * Core/Stereo/Philips/Content  Philips stereo header content type (int)\n
+* * Core/Stereo/Philips/Factor   Philips stereo header factor (int)\n
+* * Core/Stereo/Philips/Offset   Philips stereo header offset cc (int)\n
+* * Core/Stereo/Philips/Select   Philips stereo header select (int)\n
 * \n
 * Anaglyph stereo mode settings:\n
 */
