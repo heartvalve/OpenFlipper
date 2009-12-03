@@ -135,8 +135,8 @@ void Core::applyOptions(){
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       //wheel zoom factor
-      PluginFunctions::viewerProperties(i).wheelZoomFactor(OpenFlipper::Options::wheelZoomFactor());
-      PluginFunctions::viewerProperties(i).wheelZoomFactorShift(OpenFlipper::Options::wheelZoomFactorShift());
+      PluginFunctions::viewerProperties(i).wheelZoomFactor( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactor").toDouble() );
+      PluginFunctions::viewerProperties(i).wheelZoomFactorShift( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift").toDouble() );
 
       // Picking Debugger
       PluginFunctions::viewerProperties(i).renderPicking(OpenFlipper::Options::renderPicking(), target );

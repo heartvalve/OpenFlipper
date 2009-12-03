@@ -325,32 +325,11 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::logFile(logFile);
 
     //============================================================================
-    // Load the WheelZoomFactor setting
-    //============================================================================
-    double wheelZoomFactor = 1.0;
-    if ( _ini.get_entry( wheelZoomFactor, "Options" , "WheelZoomFactor") )
-      OpenFlipper::Options::wheelZoomFactor(wheelZoomFactor);
-
-    //============================================================================
-    // Load the WheelZoomFactorShift setting
-    //============================================================================
-    double wheelZoomFactorShift = 0.2;
-    if ( _ini.get_entry( wheelZoomFactorShift, "Options" , "WheelZoomFactorShift" ) )
-      OpenFlipper::Options::wheelZoomFactorShift(wheelZoomFactorShift);
-
-    //============================================================================
     // Load restrictFrameRate
     //============================================================================
     bool restrictFrameRate = false;
     if( _ini.get_entry(restrictFrameRate, "Options", "RestrictFrameRate") )
       OpenFlipper::Options::restrictFrameRate(restrictFrameRate);
-
-    //============================================================================
-    // Load showWheelsAtStartup
-    //============================================================================
-    bool showWheelsAtStartup = false;
-    if( _ini.get_entry(showWheelsAtStartup, "Options", "ShowWheelsAtStartup") )
-      OpenFlipper::Options::showWheelsAtStartup(showWheelsAtStartup);
 
     //============================================================================
     // Load maxFrameRate
@@ -560,12 +539,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   //============================================================================
   // other
   //============================================================================
-  _ini.add_entry("Options","WheelZoomFactor", OpenFlipper::Options::wheelZoomFactor() );
-  _ini.add_entry("Options","WheelZoomFactorShift", OpenFlipper::Options::wheelZoomFactorShift() );
   // restrict Framerate
   _ini.add_entry("Options","RestrictFrameRate",OpenFlipper::Options::restrictFrameRate() );
-  // Show wheels on startup
-  _ini.add_entry("Options","ShowWheelsAtStartup",OpenFlipper::Options::showWheelsAtStartup() );
   // max Framerate
   _ini.add_entry("Options","MaxFrameRate",OpenFlipper::Options::maxFrameRate() );
 

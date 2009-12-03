@@ -84,6 +84,13 @@
 *
 * The following entries are available through the settings:
 *
+* <b>User Interface Settings</b>
+* * Core/Gui/glViewer/showControlWheels  This setting controls if the control wheels should be visible in the glViewer (bool)
+*
+* <b>Mouse Controls<b>\n
+* * Core/Mouse/Wheel/ZoomFactor       Zoom factor used when turning the mouse wheel (double)\n
+* * Core/Mouse/Wheel/ZoomFactorShift  Zoom factor used when turning the mouse wheel while shift is pressed (makes zoom slower while shift is pressed)  (double)\n
+*
 * <b>General Stereo Settings<b>\n
 * * Core/Stereo/EyeDistance    Distance between eyes. Defaults to 7 cm (double)\n
 * * Core/Stereo/FocalDistance  Focal distance. Defaults to center of scene (double)\n
@@ -99,7 +106,6 @@
 QSettings& OpenFlipperSettings();
 
 /** @} */
-
 
 namespace OpenFlipper {
 namespace Options {
@@ -436,22 +442,6 @@ QString helpDirStr();
   DLLEXPORT
   bool synchronization( );
 
-  /// Store wheelZoomFactor setting
-  DLLEXPORT
-  void wheelZoomFactor( double _factor );
-
-  /// get wheelZoomFactor setting
-  DLLEXPORT
-  double wheelZoomFactor( );
-
-  /// Store wheelZoomFactorShift setting
-  DLLEXPORT
-  void wheelZoomFactorShift( double _factor );
-
-  /// get wheelZoomFactorShift setting
-  DLLEXPORT
-  double wheelZoomFactorShift( );
-
   /// Store restrictFrameRate setting
   DLLEXPORT
   void restrictFrameRate( bool _enable );
@@ -459,14 +449,6 @@ QString helpDirStr();
   /// get restrictFrameRate setting
   DLLEXPORT
   bool restrictFrameRate( );
-
-  /// set wheel appearance setting
-  DLLEXPORT
-  void showWheelsAtStartup( bool _show );
-
-  /// get wheel appearance setting
-  DLLEXPORT
-  bool showWheelsAtStartup( );
 
   /// Store maxFrameRate setting
   DLLEXPORT
