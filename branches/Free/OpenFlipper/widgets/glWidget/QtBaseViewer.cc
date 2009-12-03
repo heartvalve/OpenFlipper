@@ -264,7 +264,16 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTra
 
   if (sceneGraphRoot_ )
   {
+    
+    // set max number of render pass
+    // Single pass action, this info is static during multipass
+    ACG::SceneGraph::MultiPassInfoAction info_act;
+    ACG::SceneGraph::traverse(sceneGraphRoot_, info_act);
+    
+    glstate_->set_max_render_passes(info_act.getMaxPasses());
+    
     // get scene size
+    // Single pass action, as the bounding box is not influenced by multipass traversal
     ACG::SceneGraph::BoundingBoxAction act;
     ACG::SceneGraph::traverse(sceneGraphRoot_, act);
 
@@ -596,12 +605,12 @@ void glViewer::drawScene_mono()
       }
 
       ACG::SceneGraph::DrawAction action( properties_.drawMode() , false);
-      ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, properties_.drawMode() );
+      ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode() );
 
       if( blending_ )
       {
         ACG::SceneGraph::DrawAction action(properties_.drawMode(), true);
-        ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, properties_.drawMode());
+        ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode());
       }
 
       if (oM)
@@ -689,7 +698,7 @@ void glViewer::drawScene_mono()
       // do the picking
       glstate_->pick_init (true);
       ACG::SceneGraph::PickAction action(*glstate_, properties_.renderPickingMode(), properties_.drawMode());
-      ACG::SceneGraph::traverse(sceneGraphRoot_, action);
+      ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action,*glstate_);
 
       glEnable(GL_LIGHTING);
       glEnable(GL_BLEND);
@@ -1343,10 +1352,8 @@ glViewer::createWidgets()
   wheelX_->setWhatsThis( tr("Rotate around <b>x-axis</b>."));
 
   // Hide or show wheels (depending on ini option)
-  if(!OpenFlipper::Options::showWheelsAtStartup()) {
-
-	  slotHideWheels();
-  }
+  if( ! OpenFlipperSettings().value("Core/Gui/glViewer/showControlWheels").toBool() ) 
+    slotHideWheels();
 
   QGraphicsWidget *wheelX = glScene_->addWidget (wheelX_);
   QGraphicsWidget *wheelY = glScene_->addWidget (wheelY_);
@@ -2280,7 +2287,7 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
 
     // Project the depth value of the stereo mode zero paralax plane.
     // We need to use this depth to to get the cursor exactly on zero paralax plane in stereo mode
-    double zerop = near_ + ((far_ - near_) * OpenFlipper::Options::focalDistance ());
+    double zerop = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalLength").toDouble() );
     ACG::Vec3d zerod = glstate_->project (ACG::Vec3d (0.0, 0.0, -zerop));
 
     // unproject the cursor into the scene

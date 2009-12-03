@@ -321,10 +321,10 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
 
   //Init Viewer Settings
-  wZoomFactor->setText( QString::number(OpenFlipper::Options::wheelZoomFactor(), 'f') );
-  wZoomFactorShift->setText( QString::number(OpenFlipper::Options::wheelZoomFactorShift(), 'f') );
+  wZoomFactor->setText( QString::number(OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactor").toDouble(), 'f') );
+  wZoomFactorShift->setText( QString::number(OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift").toDouble(), 'f') );
 
-  wheelBox->setChecked( OpenFlipper::Options::showWheelsAtStartup() );
+  wheelBox->setChecked( OpenFlipperSettings().value("Core/Gui/glViewer/showControlWheels").toBool() );
 
   restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
   FPS->setValue( OpenFlipper::Options::maxFrameRate() );
@@ -536,11 +536,11 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::logFile( logFile->text() );
 
   //viewer
-  OpenFlipper::Options::wheelZoomFactor( wZoomFactor->text().toDouble() );
-  OpenFlipper::Options::wheelZoomFactorShift( wZoomFactorShift->text().toDouble() );
+  OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactor", wZoomFactor->text().toDouble());
+  OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactorShift", wZoomFactorShift->text().toDouble());
 
   OpenFlipper::Options::restrictFrameRate( restrictFPS->isChecked() );
-  OpenFlipper::Options::showWheelsAtStartup( wheelBox->isChecked() );
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/showControlWheels", wheelBox->isChecked() );
 
   OpenFlipper::Options::maxFrameRate( FPS->value() );
 

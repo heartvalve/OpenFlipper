@@ -142,17 +142,8 @@ static bool stereoMousePick_ = true;
 /// Store the synchronization mode
 static bool synchronization_ = false;
 
-/// Store the wheelZoomFactor mode
-static double wheelZoomFactor_ = 1.0;
-
-/// Store the wheelZoomFactorShift mode
-static double wheelZoomFactorShift_ = 0.2;
-
 /// Store the restrictFrameRate_ mode
 static bool restrictFrameRate_ = false;
-
-/// Store the wheel settings
-static bool showWheelsAtStartup_ = false;
 
 /// Store the maxFrameRate_ mode
 static int maxFrameRate_ = 35;
@@ -528,40 +519,12 @@ bool synchronization( ) {
   return synchronization_;
 }
 
-/// Store wheelZoomFactor setting
-void wheelZoomFactor( double _factor ) {
-  wheelZoomFactor_ = _factor;
-}
-
-/// get wheelZoomFactor setting
-double wheelZoomFactor( ) {
-  return wheelZoomFactor_;
-}
-
-/// Store wheelZoomFactorShift setting
-void wheelZoomFactorShift( double _factor ) {
-  wheelZoomFactorShift_ = _factor;
-}
-
-/// get wheelZoomFactorShift setting
-double wheelZoomFactorShift( ) {
-  return wheelZoomFactorShift_;
-}
-
 void restrictFrameRate( bool _enable ){
   restrictFrameRate_ = _enable;
 }
 
-void showWheelsAtStartup( bool _show ){
-  showWheelsAtStartup_ = _show;
-}
-
 bool restrictFrameRate( ){
   return restrictFrameRate_;
-}
-
-bool showWheelsAtStartup( ){
-  return showWheelsAtStartup_;
 }
 
 void maxFrameRate( int _fps ){
@@ -1043,8 +1006,21 @@ bool initializeSettings() {
   //==================================================================================================
   // Initialize with default values if not already set
   //==================================================================================================  
+
+  // User Interface Settings
+  if ( ! settings_->contains("Core/Gui/glViewer/showControlWheels") )
+    settings_->setValue("Core/Gui/glViewer/showControlWheels",false);  
   
-  // Stereo defaults
+  
+  // Mouse Controls
+  if ( ! settings_->contains("Core/Mouse/Wheel/ZoomFactor") )
+    settings_->setValue("Core/Mouse/Wheel/ZoomFactor",1.0);
+  
+  if ( ! settings_->contains("Core/Mouse/Wheel/ZoomFactorShift") )
+    settings_->setValue("Core/Mouse/Wheel/ZoomFactorShift",0.2);
+  
+  
+  // General Stereo Settings
   if ( ! settings_->contains("Core/Stereo/FocalLength") )
     settings_->setValue("Core/Stereo/FocalLength",0.5);
   
@@ -1052,7 +1028,7 @@ bool initializeSettings() {
     settings_->setValue("Core/Stereo/EyeDistance",0.07);
   
   
-  // Philips Stereo
+  // Philips stereo display settings
   if ( ! settings_->contains("Core/Stereo/Philips/Content") )
     settings_->setValue("Core/Stereo/Philips/Content",3);
   
