@@ -85,7 +85,8 @@
 * The following entries are available through the settings:
 *
 * <b>User Interface Settings</b>
-* * Core/Gui/glViewer/showControlWheels  This setting controls if the control wheels should be visible in the glViewer (bool)
+* * Core/Gui/glViewer/defaultBackgroundColor This controls the default background color of the glViewer (QColor)
+* * Core/Gui/glViewer/showControlWheels      This setting controls if the control wheels should be visible in the glViewer (bool)
 *
 * <b>Mouse Controls<b>\n
 * * Core/Mouse/Wheel/ZoomFactor       Zoom factor used when turning the mouse wheel (double)\n
@@ -595,14 +596,6 @@ QString helpDirStr();
   /// Display splash screen?
   DLLEXPORT
   bool splash( );
-
-  /// Default background color
-  DLLEXPORT
-  void defaultBackgroundColor( QColor _color );
-
-  /// Default background color
-  DLLEXPORT
-  QColor defaultBackgroundColor();
 
   /// Default base color
   DLLEXPORT

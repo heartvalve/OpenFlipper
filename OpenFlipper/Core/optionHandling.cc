@@ -131,7 +131,7 @@ void Core::applyOptions(){
 //       gridNode_->hide();
 
     //set defaultBackgroundColor
-    QColor c = OpenFlipper::Options::defaultBackgroundColor() ;
+    QColor c =  OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       //wheel zoom factor

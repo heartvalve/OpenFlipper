@@ -140,12 +140,12 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 }
 
 void OptionsWidget::getBackgroundColor(){
-  QColor newColor = QColorDialog::getColor ( OpenFlipper::Options::defaultBackgroundColor() );
+  QColor newColor = QColorDialog::getColor ( OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>() );
 
-  OpenFlipper::Options::defaultBackgroundColor( newColor) ;
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/defaultBackgroundColor", newColor);
 
   QPixmap color(16,16);
-  color.fill( OpenFlipper::Options::defaultBackgroundColor() );
+  color.fill( OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>() );
   backgroundButton->setIcon( QIcon(color) );
 }
 
@@ -330,7 +330,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   FPS->setValue( OpenFlipper::Options::maxFrameRate() );
 
   QPixmap color(16,16);
-  color.fill( OpenFlipper::Options::defaultBackgroundColor() );
+  color.fill( OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>() );
   backgroundButton->setIcon( QIcon(color) );
 
   color.fill( OpenFlipper::Options::defaultBaseColor() );

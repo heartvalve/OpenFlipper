@@ -251,13 +251,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::fullScreen(fullScreen);
 
     //============================================================================
-    // Load the setting for the background color option
-    //============================================================================
-    uint backgroundColor = 0;
-    if ( _ini.get_entry( backgroundColor, "Options" , "DefaultBackgroundColor") )
-      OpenFlipper::Options::defaultBackgroundColor(QRgb(backgroundColor));
-
-    //============================================================================
     // Load the setting for the object color option
     //============================================================================
     uint baseColor = 0;
@@ -633,7 +626,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     // check if we are in fullscreen mode:
     _ini.add_entry("Options","FullScreen", OpenFlipper::Options::fullScreen() );
 
-    _ini.add_entry("Options","DefaultBackgroundColor", (uint)OpenFlipper::Options::defaultBackgroundColor().rgba ()  );
     _ini.add_entry("Options","DefaultBaseColor", (uint)OpenFlipper::Options::defaultBaseColor().rgba ()  );
 
     _ini.add_entry("Options", "StereoMode",OpenFlipper::Options::stereoMode() );

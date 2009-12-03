@@ -385,7 +385,7 @@ void Core::slotObjectOpened ( int _id ) {
       //init random seed
       srand ( time(NULL) );
 
-      QColor bckgrnd = OpenFlipper::Options::defaultBackgroundColor();
+      QColor bckgrnd = OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
       int diff;
 
       do{
