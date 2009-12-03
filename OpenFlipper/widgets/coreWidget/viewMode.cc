@@ -349,8 +349,8 @@ void CoreWidget::stereoButtonContextMenu(const QPoint& _pos) {
     stereoSettingsWidget_->stereoCustomAnaglyph->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphCustom);
     stereoSettingsWidget_->stereoPhilips->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::Philips);
 
-    stereoSettingsWidget_->eyeDistance->setValue(OpenFlipper::Options::eyeDistance());
-    stereoSettingsWidget_->focalDistance->setValue(OpenFlipper::Options::focalDistance() * 1000);
+    stereoSettingsWidget_->eyeDistance->setValue( OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble() );
+    stereoSettingsWidget_->focalDistance->setValue( OpenFlipperSettings().value("Core/Stereo/FocalLength").toDouble() * 1000);
 
     // Philips stereo mode part
 
@@ -359,12 +359,12 @@ void CoreWidget::stereoButtonContextMenu(const QPoint& _pos) {
     stereoSettingsWidget_->headerContentType->blockSignals(true);
     stereoSettingsWidget_->headerSelect->blockSignals(true);
 
-    stereoSettingsWidget_->headerContentType->setCurrentIndex(OpenFlipper::Options::stereoPhilipsContent());
-    stereoSettingsWidget_->headerFactor->setValue(OpenFlipper::Options::stereoPhilipsFactor());
-    stereoSettingsWidget_->headerOffsetCC->setValue(OpenFlipper::Options::stereoPhilipsOffset());
-    stereoSettingsWidget_->factorCounter->setNum(OpenFlipper::Options::stereoPhilipsFactor());
-    stereoSettingsWidget_->offsetCounter->setNum(OpenFlipper::Options::stereoPhilipsOffset());
-    stereoSettingsWidget_->headerSelect->setCurrentIndex(OpenFlipper::Options::stereoPhilipsSelect());
+    stereoSettingsWidget_->headerContentType->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Content").toInt());
+    stereoSettingsWidget_->headerFactor->setValue(OpenFlipperSettings().value("Core/Stereo/Philips/Factor").toInt());
+    stereoSettingsWidget_->headerOffsetCC->setValue(OpenFlipperSettings().value("Core/Stereo/Philips/Offset").toInt());
+    stereoSettingsWidget_->factorCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Factor").toInt());
+    stereoSettingsWidget_->offsetCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Offset").toInt());
+    stereoSettingsWidget_->headerSelect->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Select").toInt());
 
     // Unblock signals
     stereoSettingsWidget_->headerContentType->blockSignals(false);
@@ -403,18 +403,18 @@ void CoreWidget::slotApplyStereoSettings(int /*_tmpParam*/) {
     }
 
     // Save everything
-    OpenFlipper::Options::eyeDistance(stereoSettingsWidget_->eyeDistance->value());
-    OpenFlipper::Options::focalDistance((float) stereoSettingsWidget_->focalDistance->value() / 1000);
+    OpenFlipperSettings().setValue("Core/Stereo/EyeDistance",stereoSettingsWidget_->eyeDistance->value());
+    OpenFlipperSettings().setValue("Core/Stereo/FocalLength",double(stereoSettingsWidget_->focalDistance->value()/1000.0));
 
     // Update labels that display the current values
     stereoSettingsWidget_->factorCounter->setNum(stereoSettingsWidget_->headerFactor->value());
     stereoSettingsWidget_->offsetCounter->setNum(stereoSettingsWidget_->headerOffsetCC->value());
 
     // Set option entries
-    OpenFlipper::Options::stereoPhilipsContent(stereoSettingsWidget_->headerContentType->currentIndex());
-    OpenFlipper::Options::stereoPhilipsFactor(stereoSettingsWidget_->headerFactor->value());
-    OpenFlipper::Options::stereoPhilipsOffset(stereoSettingsWidget_->headerOffsetCC->value());
-    OpenFlipper::Options::stereoPhilipsSelect(stereoSettingsWidget_->headerSelect->currentIndex());
+    OpenFlipperSettings().setValue("Core/Stereo/Philips/Content",stereoSettingsWidget_->headerContentType->currentIndex());
+    OpenFlipperSettings().setValue("Core/Stereo/Philips/Factor",stereoSettingsWidget_->headerFactor->value());
+    OpenFlipperSettings().setValue("Core/Stereo/Philips/Offset",stereoSettingsWidget_->headerOffsetCC->value());
+    OpenFlipperSettings().setValue("Core/Stereo/Philips/Select",stereoSettingsWidget_->headerSelect->currentIndex());
 
     // Update all views
     for (unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i) {
