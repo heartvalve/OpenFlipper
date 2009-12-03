@@ -191,9 +191,6 @@ static QString title_ = "OpenFlipper v?";
 /// Show a splash screen on init?
 static bool splash_ = true;
 
-/// default background color for the viewer
-static QColor defaultBackgroundColor_ = QColor("black");
-
 /// default base color
 static QColor defaultBaseColor_ = QColor("white");
 
@@ -679,14 +676,6 @@ bool splash( ) {
   return splash_;
 }
 
-void defaultBackgroundColor( QColor _color ) {
-  defaultBackgroundColor_ = _color;
-}
-
-QColor defaultBackgroundColor() {
-  return defaultBackgroundColor_;
-}
-
 void defaultBaseColor( QColor _color ) {
   defaultBaseColor_ = _color;
 }
@@ -866,8 +855,6 @@ bool renderPicking( ) {
 
 bool initializeSettings() {
   
-  std::cerr << "Initialize settings" << std::endl;
-  
   //==================================================================================================
   // Get the Main config dir in the home directory and possibly create it
   //==================================================================================================
@@ -1008,6 +995,9 @@ bool initializeSettings() {
   //==================================================================================================  
 
   // User Interface Settings
+  if ( ! settings_->contains("Core/Gui/glViewer/defaultBackgroundColor") )
+    settings_->setValue("Core/Gui/glViewer/defaultBackgroundColor",QColor("black"));  
+  
   if ( ! settings_->contains("Core/Gui/glViewer/showControlWheels") )
     settings_->setValue("Core/Gui/glViewer/showControlWheels",false);  
   

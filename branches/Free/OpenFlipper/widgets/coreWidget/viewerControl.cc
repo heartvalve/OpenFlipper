@@ -93,7 +93,7 @@ void CoreWidget::slotSetGlobalBackgroundColor() {
                                                                       ((double) c.blueF())  ,
                                                                         1.0));
 
-  OpenFlipper::Options::defaultBackgroundColor( c );
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/defaultBackgroundColor",c);
 
 }
 
