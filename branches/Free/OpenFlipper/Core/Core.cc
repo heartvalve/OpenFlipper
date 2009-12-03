@@ -949,6 +949,7 @@ void Core::slotExit() {
   if (logFile_)
     logFile_->close();
 
+  OpenFlipper::Options::closeSettings();
   qApp->quit();
 }
 

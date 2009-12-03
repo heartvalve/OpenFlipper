@@ -63,6 +63,42 @@
 #include <QStringList>
 #include <QColor>
 #include <QIcon>
+#include <QSettings>
+
+//===========================================================================
+/** @name Persistent settings
+* @{ */
+//===========================================================================
+
+/** \brief QSettings object containing all program settings of OpenFlipper.
+*
+* To get the settings use: 
+* OpenFlipperSettings().value("<Key>").toDouble();
+* OpenFlipperSettings().value("<Key>").toBool();
+*
+* To change settings do:
+* OpenFlipperSettings().setValue("<Key>",<Value>);
+* For detailed info about the values see the documentation of QSettings and the QVariant.
+*
+* The following entries are available through the settings:
+*
+* General Stereo Settings:\n
+* * Core/Stereo/EyeDistance   \t  Distance between eyes. Defaults to 7 cm (double)\n
+* * Core/Stereo/FocalDistance \t  Focal distance. Defaults to center of scene (double)\n
+*
+* \n
+* Philips stereo display settings:\n
+* * Core/Stereo/Philips/Content \t Philips stereo header content type (int)
+* * Core/Stereo/Philips/Factor  \t Philips stereo header factor (int)
+* * Core/Stereo/Philips/Offset  \t Philips stereo header offset cc (int)
+* * Core/Stereo/Philips/Select  \t Philips stereo header select (int)
+* \n
+* Anaglyph stereo mode settings:\n
+*/
+QSettings& OpenFlipperSettings();
+
+/** @} */
+
 
 namespace OpenFlipper {
 namespace Options {
@@ -154,95 +190,6 @@ QString fontsDirStr();
 /// Returns the Path to Help
 DLLEXPORT
 QString helpDirStr();
-
-/// Sets the base Path of the application
-DLLEXPORT
-void applicationDir(QDir _dir);
-
-/// Sets the Path to the Plugins
-DLLEXPORT
-void pluginDir(QDir _dir);
-
-/// Sets the Path to the shaders
-DLLEXPORT
-void shaderDir(QDir _dir);
-
-/// Sets the Path to the Textures
-DLLEXPORT
-void textureDir(QDir _dir);
-
-/// Sets the Path to the Licenses
-DLLEXPORT
-void licenseDir(QDir _dir);
-
-/// Sets the Path to the Scripts
-DLLEXPORT
-void scriptDir( QDir _dir);
-
-/// Sets the Path to the Icons
-DLLEXPORT
-void iconDir(QDir _dir);
-
-/// Sets the Path to the translation files
-DLLEXPORT
-void translationsDir( QDir _dir);
-
-/// Sets the Path to the Fonts
-DLLEXPORT
-void fontsDir(QDir _dir);
-
-/// Sets the Path to the Help
-DLLEXPORT
-void helpDir(QDir _dir);
-
-/// Sets the Path to the data directory
-DLLEXPORT
-void dataDir(QDir _dir);
-
-/// Sets the base Path of the application
-DLLEXPORT
-bool applicationDir(QString _dir);
-
-/// Sets the Path to the Plugins
-DLLEXPORT
-bool pluginDir(QString _dir);
-
-/// Sets the Path to the shaders
-DLLEXPORT
-bool shaderDir(QString _dir);
-
-/// Sets the Path to the Textures
-DLLEXPORT
-bool textureDir(QString _dir);
-
-/// Sets the Path to the License files
-DLLEXPORT
-bool licenseDir(QString _dir);
-
-/// Sets the Path to the Scripts
-DLLEXPORT
-bool scriptDir(QString _dir);
-
-/// Sets the Path to the Icons
-DLLEXPORT
-bool iconDir(QString _dir);
-
-/// Sets the Path to the translation files
-DLLEXPORT
-bool translationsDir(QString _dir);
-
-/// Sets the Path to the Fonts
-DLLEXPORT
-void fontsDir(QDir _dir);
-
-/// Sets the Path to the Help
-DLLEXPORT
-void helpDir(QDir _dir);
-
-/// Sets the Path to the data direcotry
-DLLEXPORT
-bool dataDir(QString _dir);
-
 
 //===========================================================================
 /** @name Option files / paths
@@ -456,22 +403,6 @@ bool dataDir(QString _dir);
   DLLEXPORT
   StereoMode stereoMode( );
 
-  /// Store stereo eye distance
-  DLLEXPORT
-  void eyeDistance( float _eye );
-
-  /// get stereo eye distance
-  DLLEXPORT
-  float eyeDistance( );
-
-  /// Store stereo focal distance relative to scene near plane
-  DLLEXPORT
-  void focalDistance( float _focal );
-
-  /// get stereo focal distance relative to scene near plane
-  DLLEXPORT
-  float focalDistance( );
-
   /// Store the 3x3 left eye color matrix values for custom anaglyph stereo mode
   DLLEXPORT
   void anaglyphLeftEyeColorMatrix( std::vector<float> _mat );
@@ -495,38 +426,6 @@ bool dataDir(QString _dir);
   /// mouse cursor depth picking during stereo mode
   DLLEXPORT
   bool stereoMousePick( );
-
-  /// Store philips stereo header content type
-  DLLEXPORT
-  void stereoPhilipsContent( int _content );
-
-  /// get philips stereo header content type
-  DLLEXPORT
-  int stereoPhilipsContent( );
-
-  /// Store philips stereo header factor
-  DLLEXPORT
-  void stereoPhilipsFactor( int _factor );
-
-  /// get philips stereo header factor
-  DLLEXPORT
-  int stereoPhilipsFactor( );
-
-  /// Store philips stereo header offset cc
-  DLLEXPORT
-  void stereoPhilipsOffset( int _offset );
-
-  /// get philips stereo header offset cc
-  DLLEXPORT
-  int stereoPhilipsOffset( );
-
-  /// Store philips stereo header select
-  DLLEXPORT
-  void stereoPhilipsSelect( int _select );
-
-  /// get philips stereo header select
-  DLLEXPORT
-  int stereoPhilipsSelect( );
 
   /// Store synchronization setting
   DLLEXPORT
@@ -974,6 +873,9 @@ bool renderPicking( );
 DLLEXPORT 
 bool initializeSettings();
 
+/// Internal function called by the core to write the program options on exit
+DLLEXPORT 
+void closeSettings();
 
 }
 }

@@ -55,10 +55,16 @@
 #include <stdlib.h>
 #include <iostream>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <QDir>
+#include <QCoreApplication>
+#include <Plugin-SpaceNavigator/libspnav/spnav_magellan.h>
 
 
 namespace OpenFlipper {
 namespace Options {
+  
+/// Pointer to the internal settings object storing OpenFlippers program options ( and the pplugins Options)  
+static QSettings* settings_ = 0;  
 
 /// Stores the base Path of the application
 static QDir applicationDir_;
@@ -126,30 +132,12 @@ static bool glStereo_ = true;
 /// Stereo mode
 static StereoMode stereoMode_ = OpenGL;
 
-/// get stereo eye distance (default = 7cm)
-static float eyeDistance_ = 0.07f;
-
-/// stereo focal distance relative to scene near plane (default = to center of scene)
-static float focalDistance_ = 0.5;
-
 /// vectroy containing left/right color matrices for custom anaglyph mode
 static std::vector<float> anaglyphLeftEyeColors_ = std::vector<float> (9, 0.0);
 static std::vector<float> anaglyphRightEyeColors_ = std::vector<float> (9, 0.0);
 
 /// mouse cursor depth picking in stereo mode
 static bool stereoMousePick_ = true;
-
-/// philips stereo header content type
-static int stereoPhilipsContent_ = 3; // Game
-
-/// philips stereo header factor
-static int stereoPhilipsFactor_ = 64;
-
-/// philips stereo header offset
-static int stereoPhilipsOffset_ = 128;
-
-/// philips stereo header select
-static int stereoPhilipsSelect_ = 0; // Display's defaults
 
 /// Store the synchronization mode
 static bool synchronization_ = false;
@@ -370,95 +358,7 @@ QString currentTextureDirStr() { return currentTextureDir_.absolutePath(); }
 
 QStringList optionFiles()   { return optionFiles_; }
 
-void applicationDir(QDir _dir)       { applicationDir_    = _dir; }
-void pluginDir(QDir _dir)            { pluginDir_         = _dir; }
-void shaderDir(QDir _dir)            { shaderDir_         = _dir; }
-void textureDir(QDir _dir)           { textureDir_        = _dir; }
-void licenseDir(QDir _dir)           { licenseDir_        = _dir; }
-void scriptDir(QDir _dir)            { scriptDir_         = _dir; }
-void iconDir(QDir _dir)              { iconDir_           = _dir; }
-void tanslationsDir(QDir _dir)       { translationsDir_   = _dir; }
-void fontsDir(QDir _dir)             { fontsDir_          = _dir; }
-void helpDir(QDir _dir)              { helpDir_           = _dir; }
-void dataDir(QDir _dir)              { dataDir_           = _dir; }
-void configDir(QDir _dir)            { configDir_         = _dir; }
-void currentDir(QDir _dir)           { currentDir_        = _dir; }
-void currentScriptDir(QDir _dir)     { currentScriptDir_  = _dir; }
-void currentTextureDir(QDir _dir)    { currentTextureDir_ = _dir; }
-
 void optionFiles(QStringList _list) { optionFiles_ = _list; }
-
-bool applicationDir(QString _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    applicationDir_ = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool pluginDir(QString      _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    pluginDir_      = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool shaderDir(QString _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    shaderDir_ = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool textureDir(QString     _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    textureDir_     = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool licenseDir(QString     _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    licenseDir_     = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool scriptDir(QString     _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    scriptDir_     = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool iconDir(QString      _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    iconDir_ = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool dataDir(QString      _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    dataDir_ = tmp;
-    return true;
-  }
-  return false;
-}
 
 QIcon& OpenFlipperIcon() {
 
@@ -472,41 +372,8 @@ QIcon& OpenFlipperIcon() {
   return *OpenFlipperIcon_;
 }
 
-
-bool translationsDir(QString      _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    translationsDir_ = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool fontsDir(QString      _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    fontsDir_      = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool helpDir(QString      _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    helpDir_      = tmp;
-    return true;
-  }
-  return false;
-}
-
-bool configDir(QString      _dir) {
-  QDir tmp(_dir);
-  if (tmp.exists()) {
-    configDir_      = tmp;
-    return true;
-  }
-  return false;
+void currentDir(QDir      _dir) {
+  currentDir_ = _dir;
 }
 
 bool currentDir(QString      _dir) {
@@ -517,6 +384,7 @@ bool currentDir(QString      _dir) {
   }
   return false;
 }
+
 
 bool currentScriptDir(QString _dir) {
   QDir tmp(_dir);
@@ -591,28 +459,27 @@ StereoMode stereoMode( ) {
   return stereoMode_;
 }
 
-/// Store stereo eye distance
-void eyeDistance( float _eye )
-{
-  eyeDistance_ = _eye;
+/// get stereo eye distance (default = 7cm)
+void eyeDistance( double _eye ) {
+  settings_->setValue("Core/Stereo/EyeDistance",_eye);
 }
 
 /// get stereo eye distance
-float eyeDistance( )
+double eyeDistance( )
 {
-  return eyeDistance_;
+  return settings_->value("Core/Stereo/EyeDistance",0.07f).toDouble();
 }
 
 /// Store stereo focal distance relative to scene near plane
 void focalDistance( float _focal )
 {
-  focalDistance_ = _focal;
+  settings_->setValue("Core/Stereo/FocalDistance",_focal);
 }
 
 /// get stereo focal distance relative to scene near plane
 float focalDistance( )
 {
-  return focalDistance_;
+  return settings_->value("Core/Stereo/FocalDistance",0.5f).toDouble();
 }
 
 /// Store the 3x3 left eye color matrix values for custom anaglyph stereo mode
@@ -649,54 +516,6 @@ void stereoMousePick( bool _stereoMousePick ) {
 /// mouse cursor depth picking during stereo mode
 bool stereoMousePick( ) {
   return stereoMousePick_;
-}
-
-/// Store philips stereo header content type
-void stereoPhilipsContent( int _content )
-{
-  stereoPhilipsContent_ = _content;
-}
-
-/// get philips stereo header content type
-int stereoPhilipsContent( )
-{
-  return stereoPhilipsContent_;
-}
-
-/// Store philips stereo header factor
-void stereoPhilipsFactor( int _factor )
-{
-  stereoPhilipsFactor_ = _factor;
-}
-
-/// get philips stereo header factor
-int stereoPhilipsFactor( )
-{
-  return stereoPhilipsFactor_;
-}
-
-/// Store philips stereo header offset
-void stereoPhilipsOffset( int _offset )
-{
-  stereoPhilipsOffset_ = _offset;
-}
-
-/// get philips stereo header offset
-int stereoPhilipsOffset( )
-{
-  return stereoPhilipsOffset_;
-}
-
-/// Store philips stereo header select
-void stereoPhilipsSelect( int _select )
-{
-  stereoPhilipsSelect_ = _select;
-}
-
-/// get philips stereo header select
-int stereoPhilipsSelect( )
-{
-  return stereoPhilipsSelect_;
 }
 
 /// Store synchronization mode setting
@@ -1082,14 +901,191 @@ bool renderPicking( ) {
   return renderPicking_;
 }
 
-/// Internal function called by the core to connect to the program options
-DLLEXPORT 
 bool initializeSettings() {
+  
+  std::cerr << "Initialize settings" << std::endl;
+  
+  //==================================================================================================
+  // Get the Main config dir in the home directory and possibly create it
+  //==================================================================================================
+  configDir_ = QDir::home();
+  if ( ! configDir_.cd(".OpenFlipper") ) {
+    std::cerr << "Creating config Dir ~/.OpenFlipper" << std::endl;;
+    configDir_.mkdir(".OpenFlipper");
+    if ( ! configDir_.cd(".OpenFlipper") ) {
+      std::cerr << "Unable to create config dir ~/.OpenFlipper" << std::endl;
+      return false;
+    }
+  }
+  
+  //==================================================================================================
+  // Setup settings. 
+  //==================================================================================================
+  // This has to be done as early as possible to set the program options right
+  
+  // Force ini format on all platforms
+  QSettings::setDefaultFormat ( QSettings::IniFormat );
+  
+  // Force settings to be stored in the OpenFlipper config directory
+  QSettings::setPath( QSettings::IniFormat, QSettings::UserScope , configDir_.absolutePath() );
+
+  // Finally attach the settings object.
+  settings_ = new QSettings(QSettings::IniFormat, QSettings::UserScope, "ACG","OpenFlipper");
+
+  //==================================================================================================
+  // Now create special directories in th OpenFlipper config dir
+  //==================================================================================================
+  
+  // Create a personal Icon cache dir to save for example user added icons
+  if ( ! configDir_.exists("Icons") ){
+    configDir_.mkdir("Icons");
+    std::cerr << "Creating Icon Cache Dir ~/.OpenFlipper/Icons" << std::endl;    
+  }
+  
+  //==================================================================================================
+  // Setup main application dir
+  //==================================================================================================
+
+  // Remember the main application directory (assumed to be one above executable Path)
+  applicationDir_ =  QCoreApplication::applicationDirPath();
+
+  /// \todo remove the else branch here which is only used by qmake
+  #ifdef OPENFLIPPER_APPDIR
+    // When using cmake, we get the absolute path to the Application directory via a define
+    applicationDir_.cd(OPENFLIPPER_APPDIR);
+  #else
+    // For qmake the path of the application will be one directory up.
+    // Remove this as we will remove qmake support!
+    applicationDir_.cd(".." + OpenFlipper::Options::dirSeparator() );
+  #endif
+  
+  //==================================================================================================
+  // Setup directory containing plugins
+  //==================================================================================================
+   
+  // start at application directory 
+  pluginDir_ = applicationDir_;
+  
+  /// \todo remove the qmake specific else branch here!
+  #ifdef OPENFLIPPER_PLUGINDIR
+    // cmake style: Path is directly given from define!
+    pluginDir_.cd(OPENFLIPPER_PLUGINDIR);
+  #else
+     // qmake stuff. Remove when removing qmake!
+     pluginDir_.cd("Plugins");
+
+    #if defined(WIN32)
+      pluginDir_.cd("Windows");
+    #elif defined(ARCH_DARWIN)
+      pluginDir_.cd("Darwin");
+    #else
+      pluginDir_.cd("Linux");
+    #endif
+
+    if ( OpenFlipper::Options::is64bit() )
+      pluginDir_.cd("64");
+    else
+      pluginDir_.cd("32");
+
+    #ifdef WIN32
+      #ifndef NDEBUG
+        #define DEBUG
+      #endif
+    #endif
+
+    #ifdef DEBUG
+      pluginDir_.cd("Debug");
+    #else
+      pluginDir_.cd("Release");
+    #endif
+  #endif
+  
+  dataDir_ = OpenFlipper::Options::applicationDir();
+  #ifdef OPENFLIPPER_DATADIR
+    dataDir_.cd(OPENFLIPPER_DATADIR);
+  #else
+    dataDir_ = OpenFlipper::Options::applicationDir();
+  #endif
+  
+  // Set the Path to the Shaders
+  shaderDir_ = dataDir_;
+  shaderDir_.cd("Shaders");
+  
+  // Set the Path to the textures
+  textureDir_ = dataDir_;
+  textureDir_.cd("Textures");
+
+  // Set the Path to the Scripts
+  scriptDir_ = dataDir_;
+  scriptDir_.cd("Scripts");
+  
+  
+  // Set the Path to the Icons
+  iconDir_ = dataDir_;
+  iconDir_.cd("Icons");
+  
+  // Set the Path to the translations
+  translationsDir_ = dataDir_;
+  translationsDir_.cd("Translations");
+  
+  // Set the Path to the Fonts
+  fontsDir_ = dataDir_;
+  fontsDir_.cd("Fonts");
+  
+  // Set the Path to the License files
+  licenseDir_ = dataDir_;
+  licenseDir_.cd("Licenses");
+  
+  // Set the Path to the Help
+  helpDir_ = dataDir_;
+  helpDir_.cd("Help");
+  
+  //==================================================================================================
+  // Initialize with default values if not already set
+  //==================================================================================================  
+  
+  // Stereo defaults
+  if ( ! settings_->contains("Core/Stereo/FocalLength") )
+    settings_->setValue("Core/Stereo/FocalLength",0.5);
+  
+  if ( ! settings_->contains("Core/Stereo/EyeDistance") )
+    settings_->setValue("Core/Stereo/EyeDistance",0.07);
+  
+  
+  // Philips Stereo
+  if ( ! settings_->contains("Core/Stereo/Philips/Content") )
+    settings_->setValue("Core/Stereo/Philips/Content",3);
+  
+  if ( ! settings_->contains("Core/Stereo/Philips/Factor") )
+    settings_->setValue("Core/Stereo/Philips/Factor",64);
+  
+  if ( ! settings_->contains("Core/Stereo/Philips/Offset") )
+    settings_->setValue("Core/Stereo/Philips/Offset",128);
+  
+  if ( ! settings_->contains("Core/Stereo/Philips/Select") )
+    settings_->setValue("Core/Stereo/Philips/Select",0);
+    
+  return true;
   
 }
 
-
+void closeSettings() {
+  
+  // Delete the settings object. This will flush all data to the disk.
+  delete settings_;
 }
+ 
+}
+}
+
+QSettings& OpenFlipperSettings() {
+  // Empty standard settings object if the right settings are not available!
+  static QSettings emptySettings;
+  
+  if ( OpenFlipper::Options::settings_ )
+    return *OpenFlipper::Options::settings_;
+  else
+    return emptySettings;
 }
 
 //=============================================================================

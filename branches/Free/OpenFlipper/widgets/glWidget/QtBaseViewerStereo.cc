@@ -119,7 +119,7 @@ glViewer::drawScene_glStereo()
 
   radians = fovy_ * 0.5 / 180.0 * M_PI;
   wd2     = near_ * tan(radians);
-  zerop   = near_ + ((far_ - near_) * OpenFlipper::Options::focalDistance ());
+  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance").toDouble() );
   ndfl    = near_ / zerop ;
   xrange  = a * wd2 * 2 * zerop / near_;
 
@@ -128,7 +128,7 @@ glViewer::drawScene_glStereo()
   t =  wd2;
   b = -wd2;
 
-  double offset  = 0.5 * OpenFlipper::Options::eyeDistance () * xrange;
+  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble()  * xrange;
   double offset2 = offset * ndfl;
 
   // left eye
@@ -285,7 +285,7 @@ void glViewer::drawScenePhilipsStereo() {
     //   3 Game
     //   4 CGI
     //   5 Still
-    header[1] = OpenFlipper::Options::stereoPhilipsContent(); // Hdr_Content_type (Game) = 00000011 (Gaming Mode)
+    header[1] = OpenFlipperSettings().value("Core/Stereo/Philips/Content").toInt(); // Hdr_Content_type (Game) = 00000011 (Gaming Mode)
 
     //   Header Factor
     //   Each 3D Display has a 'Display recommended depth value', which corresponds to an
@@ -296,7 +296,7 @@ void glViewer::drawScenePhilipsStereo() {
     //   works on a linear scale and is multiplied with the factor controlled by the user in the Display
     //   Control Tool.
     //   Value range: 0-255 (default 64)
-    header[2] = OpenFlipper::Options::stereoPhilipsFactor(); // Hdr_Factor
+    header[2] = OpenFlipperSettings().value("Core/Stereo/Philips/Factor").toInt(); // Hdr_Factor
 
     //   Header Offset CC
     //   Values in the Depth map equal to the header-offset value will be located on the plane of the
@@ -305,7 +305,7 @@ void glViewer::drawScenePhilipsStereo() {
     //   Offset_CC is the offset controlled by the Content Creator. In the system there is also an
     //   Offset_user present, which is controlled by the user using the Display Control Tool.
     //   Value Range: 0-255 (default 128)
-    header[3] = OpenFlipper::Options::stereoPhilipsOffset(); // Hdr_Offset_CC
+    header[3] = OpenFlipperSettings().value("Core/Stereo/Philips/Offset").toInt(); // Hdr_Offset_CC
 
     //   Header select
     //   When all select signals are low the rendering settings are set to optimal settings for the content
@@ -316,7 +316,7 @@ void glViewer::drawScenePhilipsStereo() {
     //   1 Use Header provided factor
     //   2 Use Header provided offset
     //   3 Use both factor and offset
-    header[4] = OpenFlipper::Options::stereoPhilipsSelect(); // Hdr_Factor_select(1) + Hdr_Offset_select(1) + reserved(6)
+    header[4] = OpenFlipperSettings().value("Core/Stereo/Philips/Select").toInt(); // Hdr_Factor_select(1) + Hdr_Offset_select(1) + reserved(6)
 
     //   Unused Header entry (leave at 0 !)
     header[5] = 0; // Reserved
@@ -515,7 +515,7 @@ glViewer::drawScene_anaglyphStereo()
 
   radians = fovy_ * 0.5 / 180.0 * M_PI;
   wd2     = near_ * tan(radians);
-  zerop   = near_ + ((far_ - near_) * OpenFlipper::Options::focalDistance ());
+  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance").toDouble() );
   ndfl    = near_ / zerop ;
   xrange  = a * wd2 * 2 * zerop / near_;
 
@@ -524,7 +524,7 @@ glViewer::drawScene_anaglyphStereo()
   t =  wd2;
   b = -wd2;
 
-  double offset  = 0.5 * OpenFlipper::Options::eyeDistance () * xrange;
+  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble() * xrange;
   double offset2 = offset * ndfl;
 
   // left eye
@@ -646,7 +646,7 @@ glViewer::drawScene_customAnaglyphStereo()
 
   radians = fovy_ * 0.5 / 180.0 * M_PI;
   wd2     = near_ * tan(radians);
-  zerop   = near_ + ((far_ - near_) * OpenFlipper::Options::focalDistance ());
+  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance").toDouble() );
   ndfl    = near_ / zerop ;
   xrange  = a * wd2 * 2 * zerop / near_;
 
@@ -655,7 +655,7 @@ glViewer::drawScene_customAnaglyphStereo()
   t =  wd2;
   b = -wd2;
 
-  double offset  = 0.5 * OpenFlipper::Options::eyeDistance () * xrange;
+  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble() * xrange;
   double offset2 = offset * ndfl;
 
   int vp_l, vp_b, vp_w, vp_h;

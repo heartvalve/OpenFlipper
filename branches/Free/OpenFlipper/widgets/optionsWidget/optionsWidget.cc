@@ -251,16 +251,16 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   stereoCustomAnaglyph->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::AnaglyphCustom);
   stereoPhilips->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::Philips);
 
-  eyeDistance->setValue (OpenFlipper::Options::eyeDistance());
-  focalDistance->setValue (OpenFlipper::Options::focalDistance() * 1000);
+  eyeDistance->setValue ( OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble() );
+  focalDistance->setValue ( OpenFlipperSettings().value("Core/Stereo/FocalLength").toDouble()  * 1000);
 
   // Philips stereo mode part
-  headerContentType->setCurrentIndex(OpenFlipper::Options::stereoPhilipsContent());
-  headerFactor->setValue(OpenFlipper::Options::stereoPhilipsFactor());
-  headerOffsetCC->setValue(OpenFlipper::Options::stereoPhilipsOffset());
-  factorCounter->setNum(OpenFlipper::Options::stereoPhilipsFactor());
-  offsetCounter->setNum(OpenFlipper::Options::stereoPhilipsOffset());
-  headerSelect->setCurrentIndex(OpenFlipper::Options::stereoPhilipsSelect());
+  headerContentType->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Content").toInt());
+  headerFactor->setValue(OpenFlipperSettings().value("Core/Stereo/Philips/Factor").toInt());
+  headerOffsetCC->setValue(OpenFlipperSettings().value("Core/Stereo/Philips/Offset").toInt());
+  factorCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Factor").toInt());
+  offsetCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Offset").toInt());
+  headerSelect->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Select").toInt());
 
   std::vector<float> mat = OpenFlipper::Options::anaglyphLeftEyeColorMatrix ();
   lcm0->setValue (mat[0]);
@@ -556,17 +556,18 @@ void OptionsWidget::slotApply() {
   else
     OpenFlipper::Options::stereoMode(OpenFlipper::Options::OpenGL);
 
-  OpenFlipper::Options::eyeDistance(eyeDistance->value ());
-  OpenFlipper::Options::focalDistance((float)focalDistance->value () / 1000);
+  OpenFlipperSettings().setValue("Core/Stereo/EyeDistance",eyeDistance->value ());
+  OpenFlipperSettings().setValue("Core/Stereo/FocalLength",double(focalDistance->value() ) / 1000.0);
 
   OpenFlipper::Options::stereoMousePick(!noMousePick->isChecked ());
 
   // Set option entries for philips stereo mode
-  OpenFlipper::Options::stereoPhilipsContent(headerContentType->currentIndex());
-  OpenFlipper::Options::stereoPhilipsFactor(headerFactor->value());
-  OpenFlipper::Options::stereoPhilipsOffset(headerOffsetCC->value());
-  OpenFlipper::Options::stereoPhilipsSelect(headerSelect->currentIndex());
-
+  // Set option entries
+  OpenFlipperSettings().setValue("Core/Stereo/Philips/Content",headerContentType->currentIndex());
+  OpenFlipperSettings().setValue("Core/Stereo/Philips/Factor",headerFactor->value());
+  OpenFlipperSettings().setValue("Core/Stereo/Philips/Offset",headerOffsetCC->value());
+  OpenFlipperSettings().setValue("Core/Stereo/Philips/Select",headerSelect->currentIndex());
+  
   std::vector<float> mat (9, 0);
   mat[0] = lcm0->value ();
   mat[1] = lcm1->value ();

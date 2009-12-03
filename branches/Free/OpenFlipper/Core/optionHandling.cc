@@ -57,9 +57,12 @@
 // -------------------- ACG
 #include <ACG/Scenegraph/DrawModes.hh>
 
-#include "OpenFlipper/INIFile/INIFile.hh"
-#include "OpenFlipper/common/GlobalOptions.hh"
+#include <OpenFlipper/INIFile/INIFile.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+
+#include <QCoreApplication>
+
 
 //== IMPLEMENTATION ==========================================================
 
@@ -188,145 +191,6 @@ void Core::setupOptions() {
 
   // initialize the Settings:
   OpenFlipper::Options::initializeSettings();
-  
-  // Get the Main config dir in the home directory and possibly create it
-  QDir configDir = QDir::home();
-
-  if ( ! configDir.cd(".OpenFlipper") ) {
-    emit log(LOGOUT,tr("Creating config Dir ~/.OpenFlipper"));
-    configDir.mkdir(".OpenFlipper");
-    if ( ! configDir.cd(".OpenFlipper") ) {
-      emit log(LOGERR,tr("Unable to create config dir ~/.OpenFlipper"));
-      return;
-    }
-    
-  }
-  
-  // Create a local directory to cache icons
-  QDir iconCacheDir = configDir;
-
-  // Create a personal Icon cache dir to save for example user added icons
-  if ( ! iconCacheDir.exists("Icons") ){
-    configDir.mkdir("Icons");
-    emit log(LOGOUT,tr("Creating Icon Cache Dir ~/.OpenFlipper/Icons"));    
-  }
-  
-  OpenFlipper::Options::configDir(configDir);
-
-  // Remember the main application directory (assumed to be one above executable Path)
-  QDir tempDir = QDir(qApp->applicationDirPath());
-  #ifdef OPENFLIPPER_APPDIR
-    tempDir.cd(OPENFLIPPER_APPDIR);
-  #else
-    tempDir.cd(".." + OpenFlipper::Options::dirSeparator() );
-  #endif
-  OpenFlipper::Options::applicationDir(tempDir.absolutePath());
-
-  // Set the standard path to the plugins
-  #ifdef OPENFLIPPER_PLUGINDIR
-    tempDir.cd(OPENFLIPPER_PLUGINDIR);
-  #else
-    tempDir.cd("Plugins");
-
-    #if defined(WIN32)
-      tempDir.cd("Windows");
-    #elif defined(ARCH_DARWIN)
-      tempDir.cd("Darwin");
-    #else
-      tempDir.cd("Linux");
-    #endif
-
-    if ( OpenFlipper::Options::is64bit() )
-      tempDir.cd("64");
-    else
-      tempDir.cd("32");
-
-    #ifdef WIN32
-        #ifndef NDEBUG
-          #define DEBUG
-        #endif
-    #endif
-
-    #ifdef DEBUG
-            tempDir.cd("Debug");
-    #else
-            tempDir.cd("Release");
-    #endif
-  #endif
-
-  OpenFlipper::Options::pluginDir(tempDir.absolutePath());
-
-  // Set the Path to the shaders
-  tempDir = QDir(OpenFlipper::Options::applicationDir());
-  #ifdef OPENFLIPPER_DATADIR
-    tempDir.cd(OPENFLIPPER_DATADIR);
-  #endif
-  tempDir.cd("Shaders");
-  OpenFlipper::Options::shaderDir(tempDir.absolutePath());
-
-
-  // Set the Path to the textures
-  tempDir = QDir(OpenFlipper::Options::applicationDir());
-  #ifdef OPENFLIPPER_DATADIR
-    tempDir.cd(OPENFLIPPER_DATADIR);
-  #endif
-  tempDir.cd("Textures");
-  OpenFlipper::Options::textureDir(tempDir.absolutePath());
-
-  // Set the Path to the Scripts
-  tempDir = QDir(OpenFlipper::Options::applicationDir());
-  #ifdef OPENFLIPPER_DATADIR
-    tempDir.cd(OPENFLIPPER_DATADIR);
-  #endif
-  tempDir.cd("Scripts");
-  OpenFlipper::Options::scriptDir(tempDir.absolutePath());
-
-  // Set the Path to the Icons
-  tempDir = QDir(OpenFlipper::Options::applicationDir());
-  #ifdef OPENFLIPPER_DATADIR
-    tempDir.cd(OPENFLIPPER_DATADIR);
-  #endif
-  tempDir.cd("Icons");
-  OpenFlipper::Options::iconDir(tempDir.absolutePath());
-  
-  // Set the Path to the translations
-  tempDir = QDir(OpenFlipper::Options::applicationDir());
-  #ifdef OPENFLIPPER_DATADIR
-    tempDir.cd(OPENFLIPPER_DATADIR);
-  #endif
-  tempDir.cd("Translations");
-  OpenFlipper::Options::translationsDir(tempDir.absolutePath());  
-
-  // Set the Path to the Fonts
-  tempDir = QDir(OpenFlipper::Options::applicationDir());
-  #ifdef OPENFLIPPER_DATADIR
-    tempDir.cd(OPENFLIPPER_DATADIR);
-  #endif
-  tempDir.cd("Fonts");
-  OpenFlipper::Options::fontsDir(tempDir.absolutePath());
-
-  // Set the Path to the License files
-  tempDir = QDir(OpenFlipper::Options::applicationDir());
-  #ifdef OPENFLIPPER_DATADIR
-    tempDir.cd(OPENFLIPPER_DATADIR);
-  #endif
-  tempDir.cd("Licenses");
-  OpenFlipper::Options::licenseDir(tempDir.absolutePath());
-
-  // Set the Path to the Help
-  tempDir = QDir(OpenFlipper::Options::applicationDir());
-  #ifdef OPENFLIPPER_DATADIR
-    tempDir.cd(OPENFLIPPER_DATADIR);
-  #endif
-  tempDir.cd("Help");
-  OpenFlipper::Options::helpDir(tempDir.absolutePath());
-
-  // Set the Path to the main data directory
-  tempDir = QDir(OpenFlipper::Options::applicationDir());
-  #ifdef OPENFLIPPER_DATADIR
-    tempDir.cd(OPENFLIPPER_DATADIR);
-  #endif
-  OpenFlipper::Options::dataDir(tempDir.absolutePath());
 
   QStringList optionFiles;
 
