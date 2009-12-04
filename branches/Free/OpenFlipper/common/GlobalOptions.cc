@@ -57,7 +57,6 @@
 #include <ACG/Scenegraph/DrawModes.hh>
 #include <QDir>
 #include <QCoreApplication>
-#include <Plugin-SpaceNavigator/libspnav/spnav_magellan.h>
 
 
 namespace OpenFlipper {
