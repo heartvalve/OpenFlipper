@@ -58,6 +58,7 @@
 //== INCLUDES =================================================================
 
 #include "Types.hh"
+#include "TypesInternal.hh"
 #include <map>
 #include <QCoreApplication>
 #include <OpenFlipper/common/GlobalOptions.hh>

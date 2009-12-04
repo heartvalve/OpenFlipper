@@ -60,6 +60,7 @@
 #include <OpenFlipper/INIFile/INIFile.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include "OpenFlipper/common/TypesInternal.hh"
 
 #include <QCoreApplication>
 
