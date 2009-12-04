@@ -104,6 +104,7 @@
 * \n
 * Anaglyph stereo mode settings:\n
 */
+DLLEXPORT
 QSettings& OpenFlipperSettings();
 
 /** @} */
