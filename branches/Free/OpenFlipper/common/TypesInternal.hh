@@ -60,6 +60,7 @@
 #define TYPESINTERNAL_HH
 
 
+
 //== INCLUDES =================================================================
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/common/Types.hh>
