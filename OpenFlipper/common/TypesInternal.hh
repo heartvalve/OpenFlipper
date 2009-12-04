@@ -61,9 +61,10 @@
 
 
 //== INCLUDES =================================================================
-
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/common/Types.hh>
 
+DLLEXPORT
 void initializeTypes();
 
 //=============================================================================
