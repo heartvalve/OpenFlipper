@@ -113,8 +113,12 @@ private slots:
    void switchStackedWidget();
 
    /// Update the labels that show th current values of the sliders
-   /// Note: The parameter just makes sure the signal and slot can be connected
-   void updateSliderCounter(int _tmpParam);
+   void updateSliderCounter();
+   
+   /// This function is called to update stereo settings for real-time preview
+   /// Note: The parameter only makes sure that the signals can be connected
+   /// to this slot.
+   void slotPreviewStereoSettings(int _tmpParam = 0);
 
 protected:
    void showEvent ( QShowEvent * event );

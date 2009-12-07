@@ -350,7 +350,7 @@ void CoreWidget::stereoButtonContextMenu(const QPoint& _pos) {
     stereoSettingsWidget_->stereoPhilips->setChecked(OpenFlipper::Options::stereoMode() == OpenFlipper::Options::Philips);
 
     stereoSettingsWidget_->eyeDistance->setValue( OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble() );
-    stereoSettingsWidget_->focalDistance->setValue( OpenFlipperSettings().value("Core/Stereo/FocalLength").toDouble() * 1000);
+    stereoSettingsWidget_->focalDistance->setValue( OpenFlipperSettings().value("Core/Stereo/FocalDistance").toDouble() * 1000);
 
     // Philips stereo mode part
 
@@ -404,7 +404,7 @@ void CoreWidget::slotApplyStereoSettings(int /*_tmpParam*/) {
 
     // Save everything
     OpenFlipperSettings().setValue("Core/Stereo/EyeDistance",stereoSettingsWidget_->eyeDistance->value());
-    OpenFlipperSettings().setValue("Core/Stereo/FocalLength",double(stereoSettingsWidget_->focalDistance->value()/1000.0));
+    OpenFlipperSettings().setValue("Core/Stereo/FocalDistance",double(stereoSettingsWidget_->focalDistance->value()/1000.0));
 
     // Update labels that display the current values
     stereoSettingsWidget_->factorCounter->setNum(stereoSettingsWidget_->headerFactor->value());

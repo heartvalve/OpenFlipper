@@ -86,11 +86,20 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
           this, SLOT(switchStackedWidget()));
   connect(stereoPhilips, SIGNAL(clicked()),
           this, SLOT(switchStackedWidget()));
+  
+  connect(focalDistance, SIGNAL(sliderReleased()),
+          this, SLOT(slotPreviewStereoSettings()));
+  connect(eyeDistance, SIGNAL(editingFinished()),
+          this, SLOT(slotPreviewStereoSettings()));
 
-  connect(headerFactor, SIGNAL(valueChanged(int)),
-          this, SLOT(updateSliderCounter(int)));
-  connect(headerOffsetCC, SIGNAL(valueChanged(int)),
-          this, SLOT(updateSliderCounter(int)));
+  connect(headerContentType, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(slotPreviewStereoSettings(int)));
+  connect(headerFactor, SIGNAL(sliderReleased()),
+          this, SLOT(updateSliderCounter()));
+  connect(headerOffsetCC, SIGNAL(sliderReleased()),
+          this, SLOT(updateSliderCounter()));
+  connect(headerSelect, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(slotPreviewStereoSettings(int)));
 
   uint mode = 2;
   for (uint i=1; i < 22; i++) {
@@ -191,12 +200,9 @@ void OptionsWidget::switchStackedWidget() {
     } else {
         stackedWidget->setCurrentIndex(0);
     }
-}
-
-void OptionsWidget::updateSliderCounter(int /*_tmpParam*/) {
-    // Update labels that display the current values
-    factorCounter->setNum(headerFactor->value());
-    offsetCounter->setNum(headerOffsetCC->value());
+    
+    // Preview new settings
+    slotPreviewStereoSettings();
 }
 
 void OptionsWidget::updateViewerSettings(int _row){
@@ -252,8 +258,13 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   stereoPhilips->setChecked (OpenFlipper::Options::stereoMode() == OpenFlipper::Options::Philips);
 
   eyeDistance->setValue ( OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble() );
-  focalDistance->setValue ( OpenFlipperSettings().value("Core/Stereo/FocalLength").toDouble()  * 1000);
+  focalDistance->setValue ( OpenFlipperSettings().value("Core/Stereo/FocalDistance").toDouble()  * 1000);
 
+  // Block signals such that slotApplyStereoSettings
+  // won't be called when setting the initial values here...
+  headerContentType->blockSignals(true);
+  headerSelect->blockSignals(true);
+  
   // Philips stereo mode part
   headerContentType->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Content").toInt());
   headerFactor->setValue(OpenFlipperSettings().value("Core/Stereo/Philips/Factor").toInt());
@@ -261,6 +272,17 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   factorCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Factor").toInt());
   offsetCounter->setNum(OpenFlipperSettings().value("Core/Stereo/Philips/Offset").toInt());
   headerSelect->setCurrentIndex(OpenFlipperSettings().value("Core/Stereo/Philips/Select").toInt());
+  
+  // Unblock signals
+  headerContentType->blockSignals(false);
+  headerSelect->blockSignals(false);
+  
+  // Show right stacked widget
+  if (stereoPhilips->isChecked()) {
+      stackedWidget->setCurrentIndex(1);
+  } else {
+      stackedWidget->setCurrentIndex(0);
+  }
 
   std::vector<float> mat = OpenFlipper::Options::anaglyphLeftEyeColorMatrix ();
   lcm0->setValue (mat[0]);
@@ -557,7 +579,7 @@ void OptionsWidget::slotApply() {
     OpenFlipper::Options::stereoMode(OpenFlipper::Options::OpenGL);
 
   OpenFlipperSettings().setValue("Core/Stereo/EyeDistance",eyeDistance->value ());
-  OpenFlipperSettings().setValue("Core/Stereo/FocalLength",double(focalDistance->value() ) / 1000.0);
+  OpenFlipperSettings().setValue("Core/Stereo/FocalDistance",double(focalDistance->value() / 1000.0));
 
   OpenFlipper::Options::stereoMousePick(!noMousePick->isChecked ());
 
@@ -827,4 +849,38 @@ void OptionsWidget::compareVersions() {
   ini.disconnect();
 
   updateVersionsTable();
+}
+
+void OptionsWidget::updateSliderCounter() {
+    // Update labels that display the current values
+    factorCounter->setNum(headerFactor->value());
+    offsetCounter->setNum(headerOffsetCC->value());
+    
+    // Preview settings
+    slotPreviewStereoSettings();
+}
+
+void OptionsWidget::slotPreviewStereoSettings(int /*_tmpParam*/) {
+    
+  if (stereoCustomAnaglyph->isChecked ())
+     OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphCustom);
+  else if (stereoAnaglyph->isChecked ())
+    OpenFlipper::Options::stereoMode(OpenFlipper::Options::AnaglyphRedCyan);
+  else if (stereoPhilips->isChecked() )
+    OpenFlipper::Options::stereoMode(OpenFlipper::Options::Philips);
+  else
+    OpenFlipper::Options::stereoMode(OpenFlipper::Options::OpenGL);
+
+  OpenFlipperSettings().setValue("Core/Stereo/EyeDistance", eyeDistance->value());
+  OpenFlipperSettings().setValue("Core/Stereo/FocalDistance", double(focalDistance->value() / 1000.0));
+
+  // Set option entries for philips stereo mode
+  // Set option entries
+  OpenFlipperSettings().setValue("Core/Stereo/Philips/Content", headerContentType->currentIndex());
+  OpenFlipperSettings().setValue("Core/Stereo/Philips/Factor", headerFactor->value());
+  OpenFlipperSettings().setValue("Core/Stereo/Philips/Offset", headerOffsetCC->value());
+  OpenFlipperSettings().setValue("Core/Stereo/Philips/Select", headerSelect->currentIndex());
+  
+  // Update all views
+ emit applyOptions();
 }
