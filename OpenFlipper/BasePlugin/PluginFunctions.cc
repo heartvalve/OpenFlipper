@@ -61,7 +61,7 @@ namespace PluginFunctions {
   *
   * This Pointer will be used to access the data trees root in the plugin. Never use it directly as
  *  the internal Structure will change. Use the Access functions instead */
-static BaseObject* objectRoot_;
+static BaseObject* objectRoot_ = 0;
 
 /** \brief DONT USE DIRECTLY!!
  *
