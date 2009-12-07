@@ -28,6 +28,7 @@ PlaneObject::PlaneObject( SeparatorNode* _rootNode ) :
   planeNode_(NULL)
 {
   setDataType(DATA_PLANE);
+  setTypeIcon(DATA_PLANE,"PlaneType.png");
   init();
 }
 
@@ -72,6 +73,7 @@ void PlaneObject::cleanup() {
   planeNode_   = NULL;
 
   setDataType(DATA_PLANE);
+  setTypeIcon(DATA_PLANE,"PlaneType.png");
 
   init();
 
