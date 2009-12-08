@@ -121,6 +121,7 @@ Core() :
   QObject(),
   capture_(false),
   nextBackupId_(0),
+  objectRoot_(0),
   coreWidget_(0)
 {
 
@@ -586,8 +587,11 @@ Core::~Core()
           QMetaObject::invokeMethod(plugins[i].plugin, "exit",  Qt::DirectConnection);
   }
 
-  objectRoot_->deleteSubtree();
-  delete objectRoot_;
+  // Delete the objectRoot if it was constructed
+  if ( objectRoot_ != 0 ) {
+    objectRoot_->deleteSubtree();
+    delete objectRoot_;
+  }
 
   // Clean up loggers
   for ( uint i = 0 ; i < loggers_.size(); ++i )
