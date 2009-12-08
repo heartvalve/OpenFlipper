@@ -110,14 +110,30 @@ BaseObject::BaseObject(BaseObject* _parent) :
   id_ = idGenerator;
   ++ idGenerator;
   
-  // If the pointer is 0 then we are creating the objectroot
   if ( PluginFunctions::objectRoot() ) {
-    setParent(PluginFunctions::objectRoot());
-    PluginFunctions::objectRoot()->appendChild(this);
+    PluginFunctions::objectRoot()->dumpTree();
+  }
+  
+  // If the pointer is 0 then something went wrong
+  if ( _parent ) {
+    std::cerr << "Appending child to parent" << std::endl;
+    _parent->appendChild(this);
+  } else {
+    
+    std::cerr << "_parent == 0 when creating a BaseObject with name " << std::endl;
+    
+    if ( PluginFunctions::objectRoot() ) {
+      std::cerr << "Parent is 0 , objectroot not, adding to objectRoot!" << std::endl;
+      setParent(PluginFunctions::objectRoot());
+      PluginFunctions::objectRoot()->appendChild(this);
+    }
+    
+    
   }
   
   objectManager_.objectCreated(id());
 }
+
 
 BaseObject::~BaseObject() {
 
@@ -270,8 +286,8 @@ void BaseObject::visible(bool _visible) {
   // Only do something if this is really a change
   if (  visible_ != _visible ) {
     visible_ = _visible;
-    emit visibilityChanged( id() );
   }
+  emit visibilityChanged( id() );
 }
 
 // ===============================================================================
