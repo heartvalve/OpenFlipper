@@ -48,6 +48,7 @@
 
 const ACG::Vec4f base_color (0.6,0.6,0.6,1.0);
 const ACG::Vec4f source_color (0.6,0.6,1.0,1.0);
+const ACG::Vec4f target_color (1.0,1.0,1.0,1.0);
 const ACG::Vec4f source_target_color (0.6,1.0,1.0,1.0);
 
 //******************************************************************************
@@ -64,9 +65,14 @@ bool DefaultObjectMarker::stencilRefForObject(BaseObjectData * _obj, GLuint & _r
     _reference = 2;
     return true;
   }
-  else if (_obj->target() && _obj->source())
+  else if (_obj->target() && !_obj->source())
   {
     _reference = 3;
+    return true;
+  }
+  else if (_obj->target() && _obj->source())
+  {
+    _reference = 4;
     return true;
   }
 
@@ -87,6 +93,9 @@ bool DefaultObjectMarker::blendForStencilRefNumber(GLuint _reference, GLenum & _
       _color = source_color;
       return true;
     case 3:
+      _color = target_color;
+      return true;
+    case 4:
       _color = source_target_color;
       return true;
     default:
