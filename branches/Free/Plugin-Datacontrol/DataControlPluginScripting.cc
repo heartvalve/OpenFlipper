@@ -191,8 +191,6 @@ void DataControlPlugin::setTarget( int objectId, bool _target ) {
   BaseObjectData* object;
   if ( PluginFunctions::getObject(objectId,object) ){
     object->target( _target );
-
-    emit objectSelectionChanged( object->id() );
   }
 }
 
@@ -209,8 +207,6 @@ void DataControlPlugin::setSource( int objectId, bool _source ) {
   BaseObjectData* object;
   if ( PluginFunctions::getObject(objectId,object) ){
     object->source( _source );
-
-    emit objectSelectionChanged( object->id() );
   }
 
 }
@@ -340,7 +336,6 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
   groupItem->source(source);
 
   emit objectPropertiesChanged( groupItem->id() );
-  emit objectSelectionChanged ( groupItem->id() );
 }
 
 
@@ -362,8 +357,6 @@ void DataControlPlugin::setAllTarget() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->target(true);
-
-    emit objectSelectionChanged( o_it->id() );
   }
 }
 
@@ -386,8 +379,6 @@ void DataControlPlugin::setAllSource() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->source(true);
-
-    emit objectSelectionChanged( o_it->id() );
   }
 }
 
@@ -410,8 +401,6 @@ void DataControlPlugin::clearAllTarget() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->target(false);
-
-    emit objectSelectionChanged( o_it->id() );
   }
 }
 
@@ -434,8 +423,6 @@ void DataControlPlugin::clearAllSource() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->source(false);
-
-    emit objectSelectionChanged( o_it->id() );
   }
 }
 

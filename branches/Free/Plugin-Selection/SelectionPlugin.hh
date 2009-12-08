@@ -119,7 +119,6 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     //BaseInterface
     void updateView();
     void updatedObject(int);
-    void objectSelectionChanged(int);
     
     //PickingInterface
     void addHiddenPickMode( const std::string _mode );
