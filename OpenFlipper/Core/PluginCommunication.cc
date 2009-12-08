@@ -279,21 +279,23 @@ void Core::backupRequest( int _id , QString _name ) {
 void Core::newObject(int _objectId) {
 //  std::cerr << "newObject" << std::endl;
    
-  BaseObjectData* baseObjectData = 0;
-  PluginFunctions::getObject(_objectId,baseObjectData);
-   
-  // Try to get the BaseObjectData because only then we have visibility info
-  if ( baseObjectData ) {
+//   BaseObjectData* baseObjectData = 0;
+//   PluginFunctions::getObject(_objectId,baseObjectData);
+//    
+//   // Try to get the BaseObjectData because only then we have visibility info
+//   if ( baseObjectData ) {
 //     std::cerr << "Connecting BaseObjectData" << std::endl;
-//     connect( baseObjectData, SIGNAL(visibilityChanged(int)),this,SLOT(test(int)) );
-//   
-  }
+//     connect( baseObjectData, SIGNAL(visibilityChanged(int)),this,SLOT(slotObjectSelectionChanged(int)) );
+//     return;
+//   }
+
    
    BaseObject* baseObject = 0;
    PluginFunctions::getObject(_objectId,baseObject);
    
    if ( baseObject ) {
-//     std::cerr << "Base Object specific connects" << std::endl;
+    std::cerr << "Base Object specific connects" << std::endl;
+    connect( baseObject, SIGNAL(visibilityChanged(int)),this,SLOT(slotObjectSelectionChanged(int)) );
 //     connect( baseObject, SIGNAL(objectSelectionChanged(int)),this,SLOT(slotObjectSelectionChanged(int)) );
    }
    

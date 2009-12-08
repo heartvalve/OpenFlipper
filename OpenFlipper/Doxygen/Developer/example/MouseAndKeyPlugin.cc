@@ -324,9 +324,6 @@ void MouseAndKeyPlugin::contextMenuItemSelected(QAction* _action) {
 	// Hide object
 	obj->hide();
 
-	// Tell core that object's visibility has changed
-	visibilityChanged(objectId);
-
 } // End contextMenuItemSelected
 
 Q_EXPORT_PLUGIN2( mouseandkeyplugin , MouseAndKeyPlugin );

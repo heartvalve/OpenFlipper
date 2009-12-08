@@ -32,7 +32,6 @@ class MouseAndKeyPlugin: public QObject,
 	//BaseInterface
 	void updateView();
 	void updatedObject(int _id);
-	void visibilityChanged(int _id);
 	//LoggingInterface
 	void log(Logtype _type, QString _message);
 	void log(QString _message);
