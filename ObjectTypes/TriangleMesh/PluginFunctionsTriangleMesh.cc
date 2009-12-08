@@ -84,8 +84,10 @@ bool getTargetMeshes( std::vector<TriMesh*>& _meshes  ) {
 
 bool getObject(  int _identifier , TriMeshObject*& _object ) {
 
-  if ( _identifier == -1 )
+  if ( _identifier == -1 ) {
+    _object = 0;
     return false;
+  }
 
   BaseObject* object = objectRoot()->childExists( _identifier );
   _object = dynamic_cast< TriMeshObject* >(object);
@@ -98,8 +100,10 @@ bool getObject(  int _identifier , TriMeshObject*& _object ) {
 
 bool getMesh(  int _identifier , TriMesh*& _mesh ) {
 
-  if ( _identifier == -1 )
+  if ( _identifier == -1 ) {
+    _mesh = 0;
     return false;
+  }
 
   BaseObject* object = objectRoot()->childExists( _identifier );
 
@@ -123,6 +127,7 @@ bool getMesh(  int _identifier , TriMesh*& _mesh ) {
 // ===============================================================================
 
 TriMesh* triMesh( BaseObjectData* _object ) {
+  
   if ( _object == 0 )
     return 0;
 
@@ -130,7 +135,7 @@ TriMesh* triMesh( BaseObjectData* _object ) {
     TriMeshObject* object = dynamic_cast< TriMeshObject* >(_object);
     return object->mesh();
   } else
-    return NULL;
+    return 0;
 }
 
 TriMeshObject* triMeshObject( BaseObjectData* _object ) {
@@ -138,7 +143,7 @@ TriMeshObject* triMeshObject( BaseObjectData* _object ) {
     return 0;
 
   if ( ! _object->dataType(DATA_TRIANGLE_MESH) )
-    return NULL;
+    return 0;
   return dynamic_cast< TriMeshObject* >( _object );
 }
 

@@ -86,8 +86,10 @@ bool getTargetMeshes( std::vector<PolyMesh*>& _meshes  ) {
 
 bool getObject(  int _identifier , PolyMeshObject*& _object ) {
 
-  if ( _identifier == -1 )
+  if ( _identifier == -1 ) {
+    _object = 0;
     return false;
+  }
 
   BaseObject* object = objectRoot()->childExists( _identifier );
   _object = dynamic_cast< PolyMeshObject* >(object);
@@ -96,8 +98,10 @@ bool getObject(  int _identifier , PolyMeshObject*& _object ) {
 
 bool getMesh(  int _identifier , PolyMesh*& _mesh ) {
 
-  if ( _identifier == -1 )
+  if ( _identifier == -1 ) {
+    _mesh = 0;
     return false;
+  }
 
   BaseObject* object = objectRoot()->childExists( _identifier );
 
@@ -108,14 +112,17 @@ bool getMesh(  int _identifier , PolyMesh*& _mesh ) {
   PolyMeshObject* polyMeshObject = dynamic_cast< PolyMeshObject* > (object);
 
   // Object is not a triangle mesh
-  if ( polyMeshObject == 0)
+  if ( polyMeshObject == 0) {
+    _mesh = 0;
     return false;
+  }
 
   _mesh = polyMeshObject->mesh();
   return true;
 }
 
 PolyMesh* polyMesh( BaseObjectData* _object ) {
+  
   if ( _object == 0 )
     return 0;
 
@@ -127,6 +134,7 @@ PolyMesh* polyMesh( BaseObjectData* _object ) {
 }
 
 PolyMeshObject* polyMeshObject( BaseObjectData* _object ) {
+  
   if ( _object == 0 )
     return 0;
 
@@ -136,6 +144,7 @@ PolyMeshObject* polyMeshObject( BaseObjectData* _object ) {
 }
 
 PolyMeshObject* polyMeshObject( int _objectId ) {
+  
   if  (_objectId == -1)
     return 0;
   
