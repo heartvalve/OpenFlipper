@@ -51,8 +51,11 @@ namespace PluginFunctions {
 // ===============================================================================
 
 bool getObject(  int _identifier , PlaneObject*& _object ) {
-  if  (_identifier == -1)
+  
+  if ( _identifier == -1 ) {
+    _object = 0;
     return false;
+  }
 
   BaseObject* object = objectRoot()->childExists( _identifier );
   _object = dynamic_cast< PlaneObject* >(object);
@@ -65,17 +68,18 @@ bool getObject(  int _identifier , PlaneObject*& _object ) {
 // ===============================================================================
 
 PlaneNode* planeNode( BaseObjectData* _object ) {
+  
   if ( _object->dataType(DATA_PLANE) ) {
     PlaneObject* object = dynamic_cast< PlaneObject* >(_object);
     return object->planeNode();
   } else
-    return NULL;
+    return 0;
 }
 
 
 PlaneObject* planeObject( BaseObjectData* _object ) {
   if ( ! _object->dataType(DATA_PLANE) )
-    return NULL;
+    return 0;
   return dynamic_cast< PlaneObject* >( _object );
 }
 
