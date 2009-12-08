@@ -78,10 +78,6 @@ int FilePolyMeshPlugin::addEmpty( ){
 
   object = new PolyMeshObject( dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ) );
 
-  // Set pointers for tree structure
-  object->setParent(PluginFunctions::objectRoot());
-  PluginFunctions::objectRoot()->appendChild(object);
-
   if (PluginFunctions::targetCount() == 0 )
     object->target(true);
 
@@ -110,10 +106,6 @@ int FilePolyMeshPlugin::loadObject(QString _filename){
   PolyMeshObject* object;
 
   object = new PolyMeshObject( dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ) );
-
-  // Set pointers for tree structure
-  object->setParent(PluginFunctions::objectRoot());
-  PluginFunctions::objectRoot()->appendChild(object);
 
   if (PluginFunctions::objectCount() == 1 )
     object->target(true);
