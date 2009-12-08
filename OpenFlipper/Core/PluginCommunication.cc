@@ -282,13 +282,15 @@ void Core::newObject(int _objectId) {
    PluginFunctions::getObject(_objectId,baseObject);
    
    if ( baseObject ) {
-    connect( baseObject, SIGNAL(visibilityChanged(int)),     this, SLOT(slotObjectSelectionChanged(int)) );
+    connect( baseObject, SIGNAL(visibilityChanged(int)),     this, SLOT(slotVisibilityChanged(int))) ;
     connect( baseObject, SIGNAL(objectSelectionChanged(int)),this, SLOT(slotObjectSelectionChanged(int)) );
    } else {
      emit log(LOGERR,tr("newObject received from objectManager with invalid id! This should not happen. The new Object will not work correctly!"));
    }
    
 }
+
+
 
 
 
