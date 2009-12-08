@@ -94,6 +94,7 @@ BaseObject::BaseObject(const BaseObject& _object) :
     PluginFunctions::objectRoot()->appendChild(this);
   }
   
+  objectManager_.objectCreated(id());
 }
 
 BaseObject::BaseObject(BaseObject* _parent) :
@@ -115,6 +116,7 @@ BaseObject::BaseObject(BaseObject* _parent) :
     PluginFunctions::objectRoot()->appendChild(this);
   }
   
+  objectManager_.objectCreated(id());
 }
 
 BaseObject::~BaseObject() {

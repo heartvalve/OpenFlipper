@@ -73,6 +73,8 @@ BaseObjectData::BaseObjectData(const BaseObjectData& _object)
 {
   // We have to create our own visualization nodes as we are a new object
   init();
+  
+  getObjectManager()->objectCreated(id());
 }
 
 BaseObjectData::BaseObjectData( SeparatorNode* _rootNode ) :
@@ -87,6 +89,8 @@ BaseObjectData::BaseObjectData( SeparatorNode* _rootNode ) :
   stencilRefNode_(0)
 {
   init();
+  
+  getObjectManager()->objectCreated(id());
 }
 
 BaseObjectData::~BaseObjectData() {
