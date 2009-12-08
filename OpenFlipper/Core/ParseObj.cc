@@ -144,8 +144,6 @@ void Core::openObjFile(QString _filename)
 
 void Core::preprocessObjFile(QString _filename)
 {
-  bool newActiveObject = false;
-
   std::cout << "[preprocessObjFile] filename: " << _filename.toStdString() << std::endl;
 
   QString path = _filename;
@@ -272,8 +270,6 @@ void Core::preprocessObjFile(QString _filename)
   if ( object == 0 )
     emit log(LOGERR,tr("Unable to open Object ") + path);
 
-  if ( newActiveObject )
-    emit objectSelectionChanged(-1);
 }
 
 //-----------------------------------------------------------------------------
