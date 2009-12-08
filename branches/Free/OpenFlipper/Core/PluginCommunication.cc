@@ -271,7 +271,13 @@ void Core::backupRequest( int _id , QString _name ) {
   ++nextBackupId_;
 }
 
+//========================================================================================
+// ===            Object Manager                              ============================
+//========================================================================================
 
+/// This slot is called by the object manager when a new object is created
+void Core::newObject(int _objectId) {
+}
 
 
 

@@ -991,7 +991,19 @@ private:
     void jobCanceled( QString _jobId );
     
   /** @} */
+  
+  //===========================================================================
+  /** @name Object Manager
+  * @{ */
+  //===========================================================================
 
+  private slots:
+    
+    /// This slot is called by the object manager when a new object is created
+    void newObject(int _objectId);
+    
+  /** @} */
+  
   private :
 
   /// Id for the next backup

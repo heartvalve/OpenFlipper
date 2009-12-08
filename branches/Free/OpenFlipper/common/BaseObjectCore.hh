@@ -60,6 +60,22 @@
 
 #include <OpenFlipper/common/BaseObject.hh>
 
+class ObjectManager : public QObject {
+  
+  Q_OBJECT
+  
+  signals:
+    void newObject( int _objectId );
+    
+  public: 
+    ObjectManager();
+    ~ObjectManager();
+    
+    void objectCreated( int _objectId );
+};
+
+ObjectManager* getObjectManager();
+
 //=============================================================================
 #endif // BASEOBJECTCORE_HH defined
 //=============================================================================
