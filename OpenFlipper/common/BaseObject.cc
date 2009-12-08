@@ -61,6 +61,10 @@
 
 //== TYPEDEFS =================================================================
 
+//== Variables =================================================================
+
+static ObjectManager objectManager_;
+
 //== CLASS DEFINITION =========================================================
 
 /** This counter is used to provide unique object ids. Every time a object is created
@@ -696,6 +700,23 @@ deleteData() {
 
 }
 
+
+
+ObjectManager::ObjectManager() {
+}
+
+ObjectManager::~ObjectManager() {
+  
+}
+    
+void ObjectManager::objectCreated(int _objectId) 
+{
+  emit newObject(_objectId);
+}
+
+ObjectManager* getObjectManager() {
+  return &objectManager_;
+}
 
 
 

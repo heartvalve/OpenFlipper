@@ -210,7 +210,9 @@ Core::init() {
   // Initialize the first object as the root Object for the object tree
   objectRoot_ =  dynamic_cast< BaseObject* > ( new GroupObject("ObjectRoot") );
   PluginFunctions::setDataRoot( objectRoot_ );
-
+  
+  // Bring up the object manager ( has to be done after the rootobject is created)
+  connect(getObjectManager(),SIGNAL(newObject(int)), this ,SLOT(newObject(int)));
 
   if ( OpenFlipper::Options::gui() ) {
 
