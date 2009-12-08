@@ -123,15 +123,14 @@ class BaseInterface {
       */
     virtual void updatedObject(int ) {};
 
-    /** \brief An object has been shown or hidden
+    /** \brief A scenegraph node has been shown or hidden
       *
-      *  Emit this Signal, if you changed the visibility of an object.
+      *  Emit this Signal, if you changed the visibility of a scenegraph node directly (not via object->show/hide).
       *  This is required to reset the near and far plane for the viewers to provide
-      *  an optimal view. Use the id of the object you show or hide as a parameter.
-      *  Otherwise use -1 if you dont have the id.
+      *  an optimal view. Use the id of the object the node is attached to or -1 if it is not connected to an object.
       *
       */
-    virtual void visibilityChanged( int /*_identifier*/ ) {};
+    virtual void nodeVisibilityChanged( int /*_identifier*/ ) {};
 
     /**  \brief The object selection has been changed by this plugin
       *

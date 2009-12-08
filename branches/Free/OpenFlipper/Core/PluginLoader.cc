@@ -501,8 +501,15 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"visibilityChanged()" ) )
         emit log (LOGERR,tr("Signal visibilityChanged() now requires objectid or -1 as argument " ));
 
-      if ( checkSignal(plugin,"visibilityChanged(int)") )
-        connect(plugin,SIGNAL(visibilityChanged(int)),this,SLOT(slotVisibilityChanged(int)), Qt::DirectConnection);
+      if ( checkSignal(plugin,"visibilityChanged(int)") ) {
+        emit log (LOGERR,tr("Signal visibilityChanged(int) is deprecated! " ));
+        emit log (LOGERR,tr("If an object changes its visibility, it will call the required functions automatically." ));
+        emit log (LOGERR,tr("If you change a scenegraph node, call nodeVisibilityChanged(int). See docu of this function for details." ));
+      }
+      
+      if ( checkSignal(plugin,"nodeVisibilityChanged(int)") )
+        connect(plugin,SIGNAL(nodeVisibilityChanged(int)),this,SLOT(slotVisibilityChanged(int)), Qt::DirectConnection);
+      
 
       if ( checkSlot(plugin,"slotVisibilityChanged(int)") )
         connect(this,SIGNAL(visibilityChanged(int)),plugin,SLOT(slotVisibilityChanged(int)), Qt::DirectConnection);
