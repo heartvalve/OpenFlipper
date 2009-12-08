@@ -190,6 +190,9 @@ class DLLEXPORTONLY BaseObject : public QObject {
    * @{ */
   //===========================================================================
 
+  signals:
+    void objectSelectionChanged(int _objectId);
+    
   public:
     /** Is this item selected as a target item?
       * Most algorithms operate on target meshes. These meshes are also considered as active.
@@ -237,6 +240,15 @@ class DLLEXPORTONLY BaseObject : public QObject {
   /** @name Object visualization
    * @{ */
   //===========================================================================
+  
+  signals:
+    /** This slot is emitted when the visibility of the object gets changed.
+    *
+    * The signal is normally handled by the core to tell the plugins that an object changed its visibility
+    *
+    */
+    void visibilityChanged(int _objectId);
+
 
   public :
     /// return if object is visible

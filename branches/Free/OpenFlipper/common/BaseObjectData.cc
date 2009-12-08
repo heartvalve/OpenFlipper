@@ -196,11 +196,15 @@ void BaseObjectData::path(QString _path ) {
 void BaseObjectData::show() {
   separatorNode_->set_status( ACG::SceneGraph::BaseNode::Active  );
   visible_ = true;
+  
+  emit visibilityChanged( id() );
 }
 
 void BaseObjectData::hide() {
   separatorNode_->set_status( ACG::SceneGraph::BaseNode::HideSubtree );
   visible_ = false;
+  
+  emit visibilityChanged( id() );
 }
 
 bool BaseObjectData::visible(){
@@ -215,6 +219,8 @@ void BaseObjectData::visible(bool _visible) {
     separatorNode_->set_status( ACG::SceneGraph::BaseNode::HideSubtree );
 
   visible_ = _visible;
+  
+  emit visibilityChanged( id() );
 }
 
 SeparatorNode* BaseObjectData::baseNode() {
