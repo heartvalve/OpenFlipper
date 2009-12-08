@@ -219,6 +219,7 @@ bool BaseObject::target() {
 
 void BaseObject::target(bool _target) {
   setFlag("target", _target);
+  emit objectSelectionChanged(id());
 }
 
 bool BaseObject::source() {
@@ -227,6 +228,7 @@ bool BaseObject::source() {
 
 void BaseObject::source(bool _source) {
   setFlag("source", _source);
+  emit objectSelectionChanged(id());
 }
 
 bool BaseObject::flag(QString _flag)
@@ -246,6 +248,7 @@ void BaseObject::setFlag(QString _flag, bool _set)
     if (_set)
       flags_ << _flag;
   }
+  emit objectSelectionChanged(id());
 }
 
 QStringList BaseObject::flags()
@@ -263,6 +266,7 @@ bool BaseObject::visible() {
 
 void BaseObject::visible(bool _visible) {
   visible_ = _visible;
+  emit visibilityChanged( id() );
 }
 
 // ===============================================================================
