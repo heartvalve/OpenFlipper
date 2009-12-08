@@ -132,13 +132,6 @@ class BaseInterface {
       */
     virtual void nodeVisibilityChanged( int /*_identifier*/ ) {};
 
-    /**  \brief The object selection has been changed by this plugin
-      *
-      *   This signal is used to tell the other plugins that the object selection (source/target) has been changed.\n
-      *
-    */
-    virtual void objectSelectionChanged( int /*_identifier*/ ) {};
-
     /**  \brief Object properties have been changed
       *
       *   This signal is used to tell the other plugins that the object properties (e.g. name ) have changed

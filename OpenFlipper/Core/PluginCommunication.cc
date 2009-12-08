@@ -277,29 +277,17 @@ void Core::backupRequest( int _id , QString _name ) {
 
 /// This slot is called by the object manager when a new object is created
 void Core::newObject(int _objectId) {
-//  std::cerr << "newObject" << std::endl;
-   
-//   BaseObjectData* baseObjectData = 0;
-//   PluginFunctions::getObject(_objectId,baseObjectData);
-//    
-//   // Try to get the BaseObjectData because only then we have visibility info
-//   if ( baseObjectData ) {
-//     std::cerr << "Connecting BaseObjectData" << std::endl;
-//     connect( baseObjectData, SIGNAL(visibilityChanged(int)),this,SLOT(slotObjectSelectionChanged(int)) );
-//     return;
-//   }
-
-   
+  
    BaseObject* baseObject = 0;
    PluginFunctions::getObject(_objectId,baseObject);
    
    if ( baseObject ) {
-    std::cerr << "Base Object specific connects" << std::endl;
-    connect( baseObject, SIGNAL(visibilityChanged(int)),this,SLOT(slotObjectSelectionChanged(int)) );
-//     connect( baseObject, SIGNAL(objectSelectionChanged(int)),this,SLOT(slotObjectSelectionChanged(int)) );
+    connect( baseObject, SIGNAL(visibilityChanged(int)),     this, SLOT(slotObjectSelectionChanged(int)) );
+    connect( baseObject, SIGNAL(objectSelectionChanged(int)),this, SLOT(slotObjectSelectionChanged(int)) );
+   } else {
+     emit log(LOGERR,tr("newObject received from objectManager with invalid id! This should not happen. The new Object will not work correctly!"));
    }
    
-//   std::cerr << "Core Objectmanager" << std::endl;
 }
 
 

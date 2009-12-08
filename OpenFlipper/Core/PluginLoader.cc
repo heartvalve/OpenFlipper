@@ -524,8 +524,10 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(this,SIGNAL(allCleared()),plugin,SLOT(slotAllCleared()));
 
 
-      if ( checkSignal(plugin,"objectSelectionChanged(int)") )
-        connect(plugin,SIGNAL(objectSelectionChanged(int)),this,SLOT(slotObjectSelectionChanged(int) ));
+      if ( checkSignal(plugin,"objectSelectionChanged(int)") ) {
+        emit log (LOGERR,tr("Signal objectSelectionChanged(in) is deprecated!") );
+        emit log (LOGERR,tr("If the selection for an object is changed, the core will emit the required signals itself!") );
+      }
 
       if ( checkSlot( plugin , "slotObjectSelectionChanged(int)" ) )
         connect(this,SIGNAL(objectSelectionChanged(int)),plugin,SLOT(slotObjectSelectionChanged(int) ));
