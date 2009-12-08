@@ -87,7 +87,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     // BaseInterface
     void updateView();
     void updatedObject(int);
-    void visibilityChanged(int);
+    void nodeVisibilityChanged(int);
 
     // PickingInterface
     void addPickMode( const std::string _mode );

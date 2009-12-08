@@ -343,7 +343,7 @@ void MovePlugin::slotMouseEvent(QMouseEvent* _event) {
         PluginFunctions::traverse(action);
 
         if (_event->buttons() == Qt::LeftButton)
-            emit visibilityChanged(-1);
+          emit nodeVisibilityChanged(-1);
 
     }
 }
@@ -750,13 +750,13 @@ void MovePlugin::showManipulators( )
       if (o_it->manipPlaced()) {
         o_it->manipulatorNode()->show();
         o_it->manipulatorNode()->apply_transformation( PluginFunctions::pickMode() == "Move" );
-        emit visibilityChanged(o_it->id());
+        emit nodeVisibilityChanged(o_it->id());
       }
 
   } else {
     for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it)  {
       o_it->manipulatorNode()->hide();
-      emit visibilityChanged(o_it->id());
+      emit nodeVisibilityChanged(o_it->id());
     }
   }
 
@@ -1484,7 +1484,7 @@ void MovePlugin::slotPickToolbarAction(QAction* _action)
     manip_size_modifier_ = manip_size_modifier_ + 0.1;
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
          o_it->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
-    emit visibilityChanged (-1);
+    emit nodeVisibilityChanged (-1);
   }
 
   if (_action == smallerManipAction_)
@@ -1492,7 +1492,7 @@ void MovePlugin::slotPickToolbarAction(QAction* _action)
     manip_size_modifier_ = manip_size_modifier_ - 0.1;
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
          o_it->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
-    emit visibilityChanged (-1);
+    emit nodeVisibilityChanged (-1);
   }
 }
 

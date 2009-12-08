@@ -247,7 +247,6 @@ void DataControlPlugin::slotGroup() {
   groupItem->target(target);
   groupItem->source(source);
 
-  emit visibilityChanged( groupItem->id() );
   emit objectPropertiesChanged( groupItem->id() );
   emit objectSelectionChanged ( groupItem->id() );
 }
@@ -558,7 +557,6 @@ void DataControlPlugin::slotZoomTo(){
 
           if ( !child->visible() ){
             child->show();
-            emit visibilityChanged( child->id() );
           }
 
           ACG::Vec3d cur_min;
@@ -596,7 +594,6 @@ void DataControlPlugin::slotZoomTo(){
 
       if ( !obj->visible() ){
         obj->show();
-        emit visibilityChanged( obj->id() );
       }
 
       if (obj){
