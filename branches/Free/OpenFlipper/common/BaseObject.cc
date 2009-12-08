@@ -55,6 +55,8 @@
 //== INCLUDES =================================================================
 
 #include "Types.hh"
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+
 
 //== TYPEDEFS =================================================================
 
@@ -78,6 +80,13 @@ BaseObject::BaseObject(const BaseObject& _object) {
 
   ///@todo Maybe copy per Object Data
   dataMap_.clear();
+  
+  // If the pointer is 0 then we are creating the objectroot
+  if ( PluginFunctions::objectRoot() ) {
+    setParent(PluginFunctions::objectRoot());
+    PluginFunctions::objectRoot()->appendChild(this);
+  }
+  
 }
 
 BaseObject::BaseObject(BaseObject* _parent) :
@@ -91,6 +100,13 @@ BaseObject::BaseObject(BaseObject* _parent) :
 {
   id_ = idGenerator;
   ++ idGenerator;
+  
+  // If the pointer is 0 then we are creating the objectroot
+  if ( PluginFunctions::objectRoot() ) {
+    setParent(PluginFunctions::objectRoot());
+    PluginFunctions::objectRoot()->appendChild(this);
+  }
+  
 }
 
 BaseObject::~BaseObject() {

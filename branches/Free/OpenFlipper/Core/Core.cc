@@ -122,6 +122,7 @@ Core() :
   nextBackupId_(0),
   coreWidget_(0)
 {
+
   //init logFile
   logStream_ = 0;
   logFile_ = 0;

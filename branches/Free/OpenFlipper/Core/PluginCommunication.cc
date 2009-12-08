@@ -129,6 +129,7 @@ void Core::slotObjectSelectionChanged( int _id )
   // just inform the plugins as we dont do anything else
   emit objectSelectionChanged(_id);
 
+  
 //   std::cerr << "objectSelection changed triggers updatedObjects for now" << std::endl;
 //   emit updatedObject(_id);
 }
