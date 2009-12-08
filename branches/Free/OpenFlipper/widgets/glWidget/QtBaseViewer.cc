@@ -605,12 +605,12 @@ void glViewer::drawScene_mono()
       }
 
       ACG::SceneGraph::DrawAction action( properties_.drawMode() , false);
-      ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode() );
+      ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, properties_.drawMode() );
 
       if( blending_ )
       {
         ACG::SceneGraph::DrawAction action(properties_.drawMode(), true);
-        ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode());
+        ACG::SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, properties_.drawMode());
       }
 
       if (oM)
@@ -698,7 +698,7 @@ void glViewer::drawScene_mono()
       // do the picking
       glstate_->pick_init (true);
       ACG::SceneGraph::PickAction action(*glstate_, properties_.renderPickingMode(), properties_.drawMode());
-      ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action,*glstate_);
+      ACG::SceneGraph::traverse(sceneGraphRoot_, action,*glstate_);
 
       glEnable(GL_LIGHTING);
       glEnable(GL_BLEND);
