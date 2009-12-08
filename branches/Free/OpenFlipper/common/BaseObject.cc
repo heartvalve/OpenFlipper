@@ -363,7 +363,10 @@ void BaseObject::setParent(BaseObject* _parent) {
 
 void BaseObject::appendChild(BaseObject *item)
 {
+  if ( !childItems_.contains(item) )
     childItems_.append(item);
+  else 
+    std::cerr << "Warning! Trying to append a child twice! Remove the append calls from your File plugin!" << std::endl;
 }
 
 BaseObject *BaseObject::child(int row)
