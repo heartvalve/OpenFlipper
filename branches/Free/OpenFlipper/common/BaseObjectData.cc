@@ -190,17 +190,21 @@ void BaseObjectData::path(QString _path ) {
 // ===============================================================================
 
 void BaseObjectData::show() {
-  separatorNode_->set_status( ACG::SceneGraph::BaseNode::Active  );
-  visible_ = true;
-  
-  emit visibilityChanged( id() );
+  if ( !visible_ ) {
+    separatorNode_->set_status( ACG::SceneGraph::BaseNode::Active  );
+    visible_ = true;
+    
+    emit visibilityChanged( id() );
+  }
 }
 
 void BaseObjectData::hide() {
-  separatorNode_->set_status( ACG::SceneGraph::BaseNode::HideSubtree );
-  visible_ = false;
-  
-  emit visibilityChanged( id() );
+  if ( visible_ ) {
+    separatorNode_->set_status( ACG::SceneGraph::BaseNode::HideSubtree );
+    visible_ = false;
+    
+    emit visibilityChanged( id() );
+  }
 }
 
 bool BaseObjectData::visible(){
@@ -209,14 +213,17 @@ bool BaseObjectData::visible(){
 
 void BaseObjectData::visible(bool _visible) {
 
-  if (_visible)
-    separatorNode_->set_status( ACG::SceneGraph::BaseNode::Active  );
-  else
-    separatorNode_->set_status( ACG::SceneGraph::BaseNode::HideSubtree );
+  if ( visible_ != _visible ) {
+    
+    if (_visible)
+      separatorNode_->set_status( ACG::SceneGraph::BaseNode::Active  );
+    else
+      separatorNode_->set_status( ACG::SceneGraph::BaseNode::HideSubtree );
 
-  visible_ = _visible;
-  
-  emit visibilityChanged( id() );
+    visible_ = _visible;
+    
+    emit visibilityChanged( id() );
+  }
 }
 
 SeparatorNode* BaseObjectData::baseNode() {
