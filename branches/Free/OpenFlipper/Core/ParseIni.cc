@@ -754,8 +754,6 @@ void Core::openIniFile( QString _filename,
         // Tell plugins to load their per object settings
         emit iniLoad( ini,object->id() );
 
-        // Tell plugins that the object selection changed
-        emit objectSelectionChanged( object->id() );
       }
     }
 
