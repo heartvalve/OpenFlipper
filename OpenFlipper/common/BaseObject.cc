@@ -116,18 +116,15 @@ BaseObject::BaseObject(BaseObject* _parent) :
   
   // If the pointer is 0 then something went wrong
   if ( _parent ) {
-    std::cerr << "Appending child to parent" << std::endl;
+    
     _parent->appendChild(this);
+    
   } else {
     
-    std::cerr << "_parent == 0 when creating a BaseObject with name " << std::endl;
-    
     if ( PluginFunctions::objectRoot() ) {
-      std::cerr << "Parent is 0 , objectroot not, adding to objectRoot!" << std::endl;
       setParent(PluginFunctions::objectRoot());
       PluginFunctions::objectRoot()->appendChild(this);
     }
-    
     
   }
   
