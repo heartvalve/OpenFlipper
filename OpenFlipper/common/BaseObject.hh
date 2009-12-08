@@ -61,6 +61,8 @@
 //== INCLUDES =================================================================
 
 #include <OpenFlipper/common/GlobalDefines.hh>
+#include <OpenFlipper/common/DataTypes.hh>
+#include <QObject>
 #include <QString>
 #include <QList>
 #include <QStringList>
@@ -77,7 +79,10 @@
  * This is the basic Data class providing the functions common to all objects.
  * If the Datacontrol Plugin is available, a Tree structure will be generated allowing groups of objects.
  */
-class DLLEXPORTONLY BaseObject {
+class DLLEXPORTONLY BaseObject : public QObject {
+  
+  Q_OBJECT 
+  
   friend class BaseObjectData;
 
   public :

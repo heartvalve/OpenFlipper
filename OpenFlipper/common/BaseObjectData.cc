@@ -54,6 +54,7 @@
 #include "Types.hh"
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
+#include <OpenFlipper/common/BaseObjectCore.hh>
 
 //== TYPEDEFS =================================================================
 

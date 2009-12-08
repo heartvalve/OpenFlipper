@@ -62,6 +62,7 @@
 //== INCLUDES =================================================================
 
 #include <OpenFlipper/common/GlobalDefines.hh>
+#include <OpenFlipper/common/BaseObject.hh>
 #include <QList>
 
 //== TYPEDEFS =================================================================

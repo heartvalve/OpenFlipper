@@ -58,154 +58,16 @@
 #ifndef TYPES_HH
 #define TYPES_HH
 
-#include <OpenFlipper/common/GlobalDefines.hh>
-#include <limits.h>
-#include <QIcon>
 
-
-//== Global Typedefs  =================================================================
-
-/** \brief Predefined datatypes
- *
- * Here are several datatypes which have predefined ids. This might be changed to runtime added
- * datatypes in the future.
- */
-
-/// None of the other Objects
-#define DATA_UNKNOWN 0
-
-/// Items used for Grouping
-#define DATA_GROUP 1
-
-/// Triangle Mesh objects
-#define DATA_TRIANGLE_MESH typeId("TriangleMesh")
-#define DATA_TRIANGLE_MESH_CONST_ID 2
-
-/// Poly Mesh Objects
-#define DATA_POLY_MESH typeId("PolyMesh")
-#define DATA_POLY_MESH_CONST_ID 4
-
-/// Identifier for all available objects
-const unsigned int DATA_ALL           = UINT_MAX;
-
-typedef unsigned int DataType;
-
-// TODO: Make types runtime addable
 
 //== INCLUDES =================================================================
+
+// This include defines all required datatype handling functions
+#include <OpenFlipper/common/DataTypes.hh>
 
 #include "BaseObject.hh"
 #include "GroupObject.hh"
 #include "BaseObjectData.hh"
-
-//== TYPEDEFS =================================================================
-
-/// Standard Type for 3d Vector used for scripting
-typedef ACG::Vec3d Vector;
-/// Standard Type for id Lists used for scripting
-typedef std::vector< int > idList;
-/// Standard Type for a 4x4 Matrix used for scripting
-typedef ACG::Matrix4x4d Matrix4x4;
-
-Q_DECLARE_METATYPE(idList);
-Q_DECLARE_METATYPE(QVector< int >);
-Q_DECLARE_METATYPE(Vector);
-Q_DECLARE_METATYPE(Matrix4x4);
-
-/// Vector Type containing the Data Objects
-typedef std::vector<BaseObjectData*> DataContainer;
-
-//================================================================================================
-/** @name Functions for adding dataTypes
-* @{ */
-//================================================================================================
-
-/** Adds a datatype and returns the id for the new type
-*
-* @param _name Internal name for the new DataType
-* @param _readableName Human readable Name for this type ( Use tr to make it translatable )
-*/
-DLLEXPORT
-DataType addDataType(QString _name, QString _readableName);
-
-/// Given a dataType Identifier string this function will return the id of the datatype
-DLLEXPORT
-DataType typeId(QString _name);
-
-/** \brief Get the name of a type with given id
-*
-* The ids are organized in a bitfield. So use either the macro for getting the type id or
-* use the id directly (they have to be power of 2! ... Bitfield)
-*/
-DLLEXPORT
-QString typeName(DataType _id);
-
-/** \brief Get the number of registered types
-*
-* This function will return the number of types registered to the core. You can use it to
-* iterate over all types. 
-*
-* \Note Remember that the types are organized in a bitfield!
-*/
-DLLEXPORT 
-uint typeCount();
-
-/** @} */
-
-//================================================================================================
-/** @name Datatype Name handling
-* @{ */
-//================================================================================================
-
-/// Get DataType Human readable name ( this name might change. Use the typeName insted! )
-DLLEXPORT
-QString dataTypeName( DataType _id );
-
-/// Get DataType Human readable name ( this name might change. Use the typeName insted! )
-DLLEXPORT
-QString dataTypeName( QString _typeName);
-
-/// Set DataType Human readable name
-DLLEXPORT
-void setDataTypeName( DataType _id, QString _name );
-
-/// Set DataType Human readable name
-DLLEXPORT
-void setDataTypeName( QString _typeName, QString _name );
-
-
-/** @} */
-
-//================================================================================================
-/** @name Datatype Icons
-* @{ */
-//================================================================================================
-
-/// Get a string with the filename of the icon for the DataType name
-DLLEXPORT
-QString typeIconName(QString  _name);
-
-/// Get a string with the filename of the icon for the DataType
-DLLEXPORT
-QString typeIconName(DataType _id);
-
-/** \brief Get an QIcon associated with the given datatype
-* 
-* The icons are loaded once when set and then the reference is returned here.
-* This reduces the time when frequently requesting the icons (e.g. DataControl)
-*/
-DLLEXPORT
-QIcon& typeIcon(DataType _id);
-
-/// Set an Icon for a given DataType
-DLLEXPORT
-void setTypeIcon( DataType _id   , QString _icon);
-
-/// Set an Icon for a given DataType
-DLLEXPORT
-void setTypeIcon( QString  _name , QString _icon );
-
-/** @} */
 
 
 //=============================================================================

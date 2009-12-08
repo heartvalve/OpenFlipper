@@ -63,7 +63,8 @@
 //== INCLUDES =================================================================
 
 #include <OpenFlipper/common/GlobalDefines.hh>
-#include "BaseObject.hh"
+#include <OpenFlipper/common/BaseObject.hh>
+#include <QObject>
 #include <vector>
 #include <ACG/Scenegraph/MaterialNode.hh>
 #include <ACG/Scenegraph/SeparatorNode.hh>
@@ -96,6 +97,8 @@ typedef ACG::SceneGraph::StencilRefNode                   StencilRefNode;
  */
 class DLLEXPORT BaseObjectData : public BaseObject
 {
+  Q_OBJECT
+  
   public:
 
     /** \brief copy constructor
