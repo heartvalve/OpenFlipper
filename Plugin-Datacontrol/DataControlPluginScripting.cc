@@ -174,11 +174,8 @@ void DataControlPlugin::hideObject( int objectId ) {
   BaseObjectData* object;
   if ( PluginFunctions::getObject(objectId,object) ){
     object->hide();
-
-    emit visibilityChanged( object->id() );
   }
 
-  emit updateView();
 }
 
 
@@ -267,11 +264,8 @@ void DataControlPlugin::showObject( int objectId ) {
   BaseObjectData* object;
   if ( PluginFunctions::getObject(objectId,object) ){
     object->show();
-
-    emit visibilityChanged( object->id() );
   }
 
-  emit updateView();
 }
 
 
@@ -346,7 +340,6 @@ void DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
   groupItem->source(source);
 
   emit objectPropertiesChanged( groupItem->id() );
-  emit visibilityChanged ( groupItem->id() );
   emit objectSelectionChanged ( groupItem->id() );
 }
 
@@ -465,11 +458,8 @@ void DataControlPlugin::hideAll() {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,type) ;
                                     o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->hide();
-
-    emit visibilityChanged( o_it->id() );
   }
 
-  emit updateView();
 }
 
 
@@ -490,9 +480,6 @@ void DataControlPlugin::showAll() {
 
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, type); o_it != PluginFunctions::objectsEnd(); ++o_it){
     o_it->show();
-
-    emit visibilityChanged( o_it->id() );
   }
 
-  emit updateView();
 }

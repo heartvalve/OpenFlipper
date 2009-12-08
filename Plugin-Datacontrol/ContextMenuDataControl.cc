@@ -74,9 +74,6 @@ void DataControlPlugin::slotContextMenuHide( ) {
     return;
   
   object->hide();
-  
-  emit visibilityChanged(objectId);
-  emit updateView();
 }
 
 

@@ -80,7 +80,6 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // BaseInterface
     void updateView();
     void updatedObject(int);
-    void visibilityChanged(int);
     void objectSelectionChanged(int);
     void objectPropertiesChanged(int);
 

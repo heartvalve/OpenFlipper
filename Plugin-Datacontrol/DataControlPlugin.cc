@@ -334,7 +334,6 @@ void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& 
     // show/hide
     case 1:
       obj->visible( _value.toBool() );
-      emit visibilityChanged( obj->id() );
       break;
 
     // source
