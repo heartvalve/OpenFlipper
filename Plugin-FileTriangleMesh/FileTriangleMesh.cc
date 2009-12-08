@@ -74,10 +74,6 @@ int FileTriangleMeshPlugin::addEmpty(  ){
 
   object = new TriMeshObject( dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ) );
 
-  // Set pointers for tree structure
-  object->setParent(PluginFunctions::objectRoot());
-  PluginFunctions::objectRoot()->appendChild(object);
-
   if (PluginFunctions::targetCount() == 1 )
     object->target(true);
 
@@ -105,11 +101,6 @@ int FileTriangleMeshPlugin::loadObject(QString _filename){
   TriMeshObject* object;
 
   object = new TriMeshObject( dynamic_cast < ACG::SceneGraph::SeparatorNode* >(PluginFunctions::getRootNode()) );
-
-
-  // Set pointers for tree structure
-  object->setParent(PluginFunctions::objectRoot());
-  PluginFunctions::objectRoot()->appendChild(object);
 
   if (PluginFunctions::objectCount() == 1 )
     object->target(true);
