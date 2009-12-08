@@ -85,16 +85,20 @@ StencilRefNode::StencilRefNode (BaseNode*          _parent,
 
 void StencilRefNode::enter(GLState& _state, unsigned int _drawmode)
 {
-  glPushAttrib (GL_STENCIL_BUFFER_BIT);
-  glStencilFunc (GL_ALWAYS, reference_, ~0);
-  glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
+  if(visible()) {
+    glPushAttrib (GL_STENCIL_BUFFER_BIT);
+    glStencilFunc (GL_ALWAYS, reference_, ~0);
+    glStencilOp (GL_KEEP, GL_KEEP, GL_REPLACE);
+  }
 }
 
 //----------------------------------------------------------------------------
 
 void StencilRefNode::leave(GLState& _state, unsigned int _drawmode)
 {
-  glPopAttrib ();
+  if(visible()) {
+    glPopAttrib ();
+  }
 }
 
 //----------------------------------------------------------------------------
