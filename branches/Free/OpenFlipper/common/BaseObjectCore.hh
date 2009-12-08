@@ -34,9 +34,9 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision: 7673 $                                                         *
+ *   $Revision: 6727 $                                                         *
  *   $Author: moebius $                                                      *
- *   $Date: 2009-11-30 12:45:38 +0100 (Mo, 30. Nov 2009) $                   *
+ *   $Date: 2009-08-05 08:03:50 +0200 (Mi, 05. Aug 2009) $                   *
  *                                                                           *
 \*===========================================================================*/
 
@@ -50,25 +50,16 @@
 //=============================================================================
 
 /**
- * \file TypesInternal.hh
- * This File contains the functions for internal communication between types and
- * the core. Do not use in Plugins!!!
+ * \file BaseObjectCore.hh
+ * This File contains the Basic object handling only used by the Core
  */
 
 
-#ifndef TYPESINTERNAL_HH
-#define TYPESINTERNAL_HH
+#ifndef BASEOBJECTCORE_HH
+#define BASEOBJECTCORE_HH
 
-
-//== INCLUDES =================================================================
-
-#include <OpenFlipper/common/Types.hh>
-
-/// Vector Type containing the Data Objects
-typedef std::vector<BaseObjectData*> DataContainer;
-
-void initializeTypes();
+#include <OpenFlipper/common/BaseObject.hh>
 
 //=============================================================================
-#endif // TYPESINTERNAL_HH defined
+#endif // BASEOBJECTCORE_HH defined
 //=============================================================================

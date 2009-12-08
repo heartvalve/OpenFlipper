@@ -54,6 +54,7 @@
 
 //== INCLUDES =================================================================
 
+#include "BaseObjectCore.hh"
 #include "Types.hh"
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
@@ -67,7 +68,9 @@
  */
 static int idGenerator = 1;
 
-BaseObject::BaseObject(const BaseObject& _object) {
+BaseObject::BaseObject(const BaseObject& _object) :
+  QObject() 
+{
   id_           = idGenerator;
   ++idGenerator;
   persistentId_ = _object.persistentId_;
@@ -90,6 +93,7 @@ BaseObject::BaseObject(const BaseObject& _object) {
 }
 
 BaseObject::BaseObject(BaseObject* _parent) :
+  QObject() ,
   id_(-1),
   persistentId_(-1),
   objectType_(DATA_UNKNOWN),
