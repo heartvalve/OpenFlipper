@@ -88,10 +88,14 @@ class DLLEXPORTONLY BaseObject : public QObject {
   public :
 
     /** Creates a copy of this Object. Currently it will not have any per Object data attached.
-     *  Its also not attached to the object tree. This has to be done by using setParent.
+     *  Its automatically attached to the objectRoot.
      */
     BaseObject(const BaseObject& _object);
 
+    /** Creates a new object. If the parent is 0 and the objectroot does not exist, it will have no parent.
+    * If the objectroot exists and parent is 0, it will be appended to the objectroot.
+    * If a parent is given, it is appended to this object.
+    */
     BaseObject( BaseObject *_parent = 0);
 
     virtual ~BaseObject();
