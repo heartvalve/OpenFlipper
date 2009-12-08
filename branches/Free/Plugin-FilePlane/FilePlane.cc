@@ -39,10 +39,6 @@ int FilePlanePlugin::addEmpty( ){
   if ( PluginFunctions::objectCount() == 1 )
     object->target(true);
 
-  // Set pointers for tree structure
-  object->setParent(PluginFunctions::objectRoot());
-  PluginFunctions::objectRoot()->appendChild(object);
-
   if (PluginFunctions::targetCount() == 0 )
     object->target(true);
 
