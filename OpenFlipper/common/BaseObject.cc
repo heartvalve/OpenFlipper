@@ -265,8 +265,11 @@ bool BaseObject::visible() {
 }
 
 void BaseObject::visible(bool _visible) {
-  visible_ = _visible;
-  emit visibilityChanged( id() );
+  // Only do something if this is really a change
+  if (  visible_ != _visible ) {
+    visible_ = _visible;
+    emit visibilityChanged( id() );
+  }
 }
 
 // ===============================================================================
