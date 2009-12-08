@@ -248,7 +248,6 @@ void DataControlPlugin::slotGroup() {
   groupItem->source(source);
 
   emit objectPropertiesChanged( groupItem->id() );
-  emit objectSelectionChanged ( groupItem->id() );
 }
 
 

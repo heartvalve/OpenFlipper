@@ -339,13 +339,11 @@ void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& 
     // source
     case 2:
       obj->source( _value.toBool() );
-      emit objectSelectionChanged( obj->id() );
       break;
 
     // target
     case 3:
       obj->target( _value.toBool() );
-      emit objectSelectionChanged( obj->id() );
       break;
 
     default:
