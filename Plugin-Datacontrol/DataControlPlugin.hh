@@ -244,6 +244,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
 
         /// Source Selection
         void slotContextMenuSource( );
+        
+        /// Remove Selected Item
+        void slotContextMenuRemove( );
 
         /// Update the context Menus for the given id
         void slotUpdateContextMenu( int _objectId);
@@ -251,6 +254,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
       private :
         QAction* targetAction_;
         QAction* sourceAction_;
+        QAction* removeAction_;
 
 /** @} */
 
