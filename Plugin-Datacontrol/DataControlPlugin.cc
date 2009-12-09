@@ -162,6 +162,9 @@ void DataControlPlugin::initializePlugin()
             this,        SLOT(slotHeaderCustomContextMenuRequested ( const QPoint & ) ));
 
    emit addToolbox("Data Control", tool_);
+   
+   onlyDown_ = 0;
+   onlyUp_   = 0;
 }
 
 
@@ -172,25 +175,44 @@ void DataControlPlugin::initializePlugin()
  */
 void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
 {
-
+  
   BaseObjectData* obj = 0;
 
   if ( PluginFunctions::getObject( _identifier, obj) )
     updateBoundingBox (obj);
 
-  model_->objectChanged( _identifier );
+  // if onlyUp_ > 0 --> _identifier is a group and the selection
+  // does not have to be applied
+  if (onlyUp_ == 0)
+    model_->objectChanged( _identifier );
 
+  
   //check for changes in the tree
   BaseObject* object = 0;
 
   if ( PluginFunctions::getObject( _identifier, object) ){
-    propagateUpwards(object->parent(), 2); // 2 = source-target
+    
+      // if we are allowed to propagate up
+      if ( onlyDown_ == 0 ){
+  
+        onlyUp_++;
+    
+        propagateUpwards(object->parent(), 2); // 2 = source-target
 
-    if ( object->isGroup() )
-      propagateDownwards(object, 2); // 2 = source-target
+        onlyUp_--;
+      }
+    
+      // if we are allowed to propagate down
+      if ( onlyUp_ == 0 ){
+
+        onlyDown_++;
+
+        if ( object->isGroup() )
+          propagateDownwards(object, 2); // 2 = source-target
+      
+        onlyDown_--;
+      }
   }
-
-  emit updateView();
 }
 
 
@@ -201,17 +223,40 @@ void DataControlPlugin::slotObjectSelectionChanged( int _identifier )
  * @param _identifier id of an object
  */
 void DataControlPlugin::slotVisibilityChanged( int _identifier ){
-  //inform the model
-  model_->objectChanged( _identifier );
+
+  // if onlyUp_ > 0 --> _identifier is a group and the selection
+  // does not have to be applied
+  if (onlyUp_ == 0){
+    //inform the model
+    model_->objectChanged( _identifier );
+  }
 
   //check for changes in the tree
   BaseObject* obj = 0;
 
   if ( PluginFunctions::getObject( _identifier, obj) ){
-    propagateUpwards(obj->parent(), 1); // 1 = visibilty
 
-    if ( obj->isGroup() )
-      propagateDownwards(obj, 1); // 1 = visibilty
+    // if we are allowed to propagate up
+    if ( onlyDown_ == 0 ){
+    
+      onlyUp_++;
+
+      propagateUpwards(obj->parent(), 1); // 1 = visibilty
+
+      onlyUp_--;  
+
+    }
+
+    // if we are allowed to propagate down
+    if ( onlyUp_ == 0 ){
+
+      onlyDown_++;
+      
+      if ( obj->isGroup() )
+        propagateDownwards(obj, 1); // 1 = visibilty
+
+      onlyDown_--;
+    }
   }
 
   BaseObjectData* object = 0;
@@ -323,7 +368,7 @@ void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& 
   BaseObject* obj = 0;
   if ( !PluginFunctions::getObject( _id, obj) )
     return;
-
+  
   switch ( _column ) {
     // Name
     case 0:
@@ -457,9 +502,6 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
 
       group = dynamic_cast< BaseObject* >( new GroupObject( current, dynamic_cast< GroupObject* >(parentItem ) ) );
 
-      parentItem->appendChild(group);
-      group->setParent(parentItem);
-
       emit emptyObjectAdded( group->id() );
 
       // in the groups vector we only need the lowest groups
@@ -579,6 +621,7 @@ void DataControlPlugin::saveIniFileOptions( INIFile& _ini ) {
  */
 void DataControlPlugin::propagateUpwards(BaseObject* _obj, int _column ){
 
+  
   if ( _obj == PluginFunctions::objectRoot() || (!_obj->isGroup()) )
     return;
 
