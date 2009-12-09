@@ -89,6 +89,16 @@ void DataControlPlugin::slotContextMenuSource( ) {
   object->source( sourceAction_->isChecked() );
 }
 
+void DataControlPlugin::slotContextMenuRemove( ) {
+  QVariant contextObject = sourceAction_->data();
+  int objectId = contextObject.toInt();
+  
+  if ( objectId == -1)
+    return;
+  
+  emit deleteObject( objectId );
+}
+
 void DataControlPlugin::slotUpdateContextMenu( int _objectId) {
   if ( _objectId == -1)
     return;

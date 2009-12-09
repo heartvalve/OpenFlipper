@@ -80,31 +80,44 @@ void DataControlPlugin::pluginsInitialized() {
   //set the slot descriptions
   setDescriptions();
 
-  QMenu* contextMenu = new QMenu("Object selection");
+  QMenu* contextMenu = new QMenu("Object");
 
   //Target Objects
-  QAction* hideAction = new QAction(tr("&Hide"), this);
+  QIcon icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-hide-object.png");
+  QAction* hideAction = new QAction(icon, tr("&Hide"), this);
   hideAction->setStatusTip(tr("Hide object"));
   connect(hideAction, SIGNAL(triggered()), this, SLOT(slotContextMenuHide()) );
   contextMenu->addAction(hideAction);
 
   //Target Objects
-  targetAction_ = new QAction(tr("&target"), this);
+  icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-target-object.png");
+  targetAction_ = new QAction(icon, tr("&Target"), this);
   targetAction_->setCheckable(true);
   targetAction_->setStatusTip(tr("Set object as target"));
   connect(targetAction_, SIGNAL(triggered()), this, SLOT(slotContextMenuTarget()) );
   contextMenu->addAction(targetAction_);
 
   //Source Objects
-  sourceAction_ = new QAction(tr("&source"), this);
+  icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-source-object.png");
+  sourceAction_ = new QAction(icon, tr("&Source"), this);
   sourceAction_->setCheckable(true);
   sourceAction_->setStatusTip(tr("Set object as source"));
   connect(sourceAction_, SIGNAL(triggered()), this, SLOT(slotContextMenuSource()) );
   contextMenu->addAction(sourceAction_);
 
+  contextMenu->addSeparator();
+  
+  //Remove Objects
+  icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
+  removeAction_ = new QAction(icon, tr("&Remove"), this);
+  removeAction_->setCheckable(false);
+  removeAction_->setStatusTip(tr("Remove object"));
+  connect(removeAction_, SIGNAL(triggered()), this, SLOT(slotContextMenuRemove()) );
+  contextMenu->addAction(removeAction_);
+  
   emit addContextMenuItem(contextMenu->menuAction() , DATA_ALL , CONTEXTOBJECTMENU);
 
-  QIcon icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
+  icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
   QAction* material = new QAction(icon, tr("Material Properties"), 0);
   connect (material, SIGNAL( triggered() ), this, SLOT ( slotMaterialProperties() ));
 
