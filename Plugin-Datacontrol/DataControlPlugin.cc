@@ -539,11 +539,6 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
       }
     }
   }
-
-  for (int i=0; i < groups.count(); i++){
-    propagateUpwards( groups[i], 1);
-    propagateUpwards( groups[i], 2);
-  }
 }
 
 
