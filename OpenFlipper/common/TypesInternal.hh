@@ -63,10 +63,12 @@
 //== INCLUDES =================================================================
 
 #include <OpenFlipper/common/Types.hh>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 /// Vector Type containing the Data Objects
 typedef std::vector<BaseObjectData*> DataContainer;
 
+DLLEXPORT
 void initializeTypes();
 
 //=============================================================================

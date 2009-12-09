@@ -58,9 +58,10 @@
 #ifndef BASEOBJECTCORE_HH
 #define BASEOBJECTCORE_HH
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/common/BaseObject.hh>
 
-class ObjectManager : public QObject {
+class DLLEXPORT ObjectManager : public QObject {
   
   Q_OBJECT
   
@@ -74,6 +75,7 @@ class ObjectManager : public QObject {
     void objectCreated( int _objectId );
 };
 
+DLLEXPORT
 ObjectManager* getObjectManager();
 
 //=============================================================================
