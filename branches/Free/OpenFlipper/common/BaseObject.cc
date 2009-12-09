@@ -110,10 +110,6 @@ BaseObject::BaseObject(BaseObject* _parent) :
   id_ = idGenerator;
   ++ idGenerator;
   
-  if ( PluginFunctions::objectRoot() ) {
-    PluginFunctions::objectRoot()->dumpTree();
-  }
-  
   // If the pointer is 0 then something went wrong
   if ( _parent ) {
     
