@@ -249,11 +249,14 @@ bool BaseObject::flag(QString _flag)
 
 void BaseObject::setFlag(QString _flag, bool _set)
 {
+  bool emitted = false;
+  
   if (flags_.contains(_flag))
   {
     if (!_set) {
       flags_.removeAll(_flag);
       emit objectSelectionChanged(id());
+      emitted = true;
     }
   }
   else
@@ -261,9 +264,13 @@ void BaseObject::setFlag(QString _flag, bool _set)
     if (_set) {
       flags_ << _flag;
       emit objectSelectionChanged(id());
+      emitted = true;
     }
   }
   
+  //always emit if its a group
+  if ( !emitted && isGroup() )
+    emit objectSelectionChanged(id());
 }
 
 QStringList BaseObject::flags()
@@ -283,8 +290,15 @@ void BaseObject::visible(bool _visible) {
   // Only do something if this is really a change
   if (  visible_ != _visible ) {
     visible_ = _visible;
+    
+    emit visibilityChanged( id() );
+    
+  } else {
+    
+    //always emit if its a group
+    if ( isGroup() )
+      emit visibilityChanged( id() );
   }
-  emit visibilityChanged( id() );
 }
 
 // ===============================================================================

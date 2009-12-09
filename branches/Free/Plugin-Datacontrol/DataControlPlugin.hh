@@ -176,6 +176,10 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     void propagateDownwards(BaseObject* _obj, int _column );
     void propagateUpwards(BaseObject* _obj, int _column );
 
+    //variables to restrict propagation direction
+    int onlyDown_;
+    int onlyUp_;
+    
 /** @} */
 
 //===========================================================================

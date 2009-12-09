@@ -379,9 +379,12 @@ void TreeModel::objectChanged(int _id) {
 
         item->name( obj->name() );
 
-        QModelIndex index = getModelIndex(item,0);
-        if ( index.isValid() )
-          emit dataChanged( index, index);
+        //TODO actually we do not need to update the whole row but single column somehow doesn't work
+        QModelIndex index0 = getModelIndex(item,0);
+        QModelIndex index1 = getModelIndex(item,3);
+
+        if ( index0.isValid() && index1.isValid() )
+          emit dataChanged( index0, index1);
       }
 
       //update visibility
@@ -407,9 +410,13 @@ void TreeModel::objectChanged(int _id) {
 
         item->source( obj->source() );
 
-        QModelIndex index = getModelIndex(item,2);
-        if ( index.isValid() ){
-          emit dataChanged( index, index);
+        //TODO actually we do not need to update the whole row but single column somehow doesn't work
+        QModelIndex index0 = getModelIndex(item,0);
+        QModelIndex index1 = getModelIndex(item,3);
+
+        if ( index0.isValid() && index1.isValid() ){
+          //the whole row has to be updated because of the grey background-color
+          emit dataChanged( index0, index1);
           propagateUpwards(item->parent(), 2, false );
         }
 
@@ -422,9 +429,13 @@ void TreeModel::objectChanged(int _id) {
 
         item->target( obj->target() );
 
-        QModelIndex index = getModelIndex(item,3);
-        if ( index.isValid() ){
-          emit dataChanged( index, index);
+        //TODO actually we do not need to update the whole row but single column somehow doesn't work
+        QModelIndex index0 = getModelIndex(item,0);
+        QModelIndex index1 = getModelIndex(item,3);
+
+        if ( index0.isValid() && index1.isValid() ){
+          //the whole row has to be updated because of the grey background-color
+          emit dataChanged( index0, index1);
           propagateUpwards(item->parent(), 3, false );
         }
 
@@ -709,6 +720,7 @@ bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int /*r
 
   emit dataChangedInside( itemId(index), index.column(), value );
 
+  
   return true;
 }
 
