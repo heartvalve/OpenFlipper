@@ -178,10 +178,10 @@ class DLLEXPORT BaseObjectData : public BaseObject
     void hide();
 
     /// return visiblity
-    bool visible();
+    virtual bool visible();
 
     /// Sets visiblity of the whole Scenegraph subtree of this node
-    void visible(bool _visible);
+    virtual void visible(bool _visible);
 
     /** get the base node of this object (Use this node to add custom Nodes to the Object
      * which should not be transformed with the manipulator of the Object)
