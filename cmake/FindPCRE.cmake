@@ -12,11 +12,19 @@ IF (PCRE_INCLUDE_DIRS)
 ENDIF (PCRE_INCLUDE_DIRS)
 
 FIND_PATH( PCRE_INCLUDE_DIR pcre.h
-           PATHS "/usr/include" )
+           PATHS "/usr/include" "C:/libs/PCRE/include")
+
+if( WIN32 )
+
+ FIND_LIBRARY( PCRE_LIBRARY
+               NAMES pcrecpp.lib
+               PATHS "C:/libs/PCRE/lib")
+else (WIN32)
 
  FIND_LIBRARY( PCRE_LIBRARY
                NAMES pcrecpp
                PATHS /lib /usr/lib /usr/local/lib )
+endif( WIN32)
 
 
 IF (PCRE_INCLUDE_DIR AND PCRE_LIBRARY)
