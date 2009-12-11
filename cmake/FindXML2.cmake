@@ -11,12 +11,21 @@ IF (XML2_INCLUDE_DIRS)
   SET(XML2_FIND_QUIETLY TRUE)
 ENDIF (XML2_INCLUDE_DIRS)
 
-FIND_PATH( XML2_INCLUDE_DIR libxml/xmlreader.h
-           PATHS "/usr/include/libxml2" )
+ # Find the headers
+ FIND_PATH( XML2_INCLUDE_DIR libxml/xmlversion.h
+            PATHS /usr/include/libxml2 "C:/libs/libxml2/include/libxml2"  )
+
+if( WIN32 )
+ FIND_LIBRARY( XML2_LIBRARY
+               NAMES libxml2.lib
+               PATHS "C:/libs/libxml2/lib" )  
+
+else (WIN32)
 
  FIND_LIBRARY( XML2_LIBRARY
                NAMES xml2
                PATHS /usr/lib /usr/local/lib )
+endif( WIN32)
 
 
 IF (XML2_INCLUDE_DIR AND XML2_LIBRARY)
