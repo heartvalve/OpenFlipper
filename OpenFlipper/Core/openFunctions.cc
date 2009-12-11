@@ -246,10 +246,22 @@ int Core::loadObject( DataType _type, QString _filename) {
 int Core::addEmptyObject( DataType _type ) {
   // Iterate over all plugins. The first plugin supporting the addEmpty function for the
   // specified type will be used to create the new object.
+  
+  int retCode = -1;
+  
+  // Type plugins
+  for (int i=0; i < (int)supportedDataTypes_.size(); i++)
+    if ( supportedDataTypes_[i].type & _type )
+      retCode = supportedDataTypes_[i].plugin->addEmpty();
+  
+  if(retCode != -1) return retCode;
+    
+  // File plugins
   for (int i=0; i < (int)supportedTypes_.size(); i++)
     if ( supportedTypes_[i].type & _type )
-      return supportedTypes_[i].plugin->addEmpty();
-  return -1; //no plugin found
+      retCode = supportedTypes_[i].plugin->addEmpty();
+  
+  return retCode; // -1 if no plugin found
 }
 
 //========================================================================================
@@ -514,18 +526,45 @@ void Core::slotAddEmptyObjectMenu() {
   // 
   for ( uint i = 0 ; i < typeCount() - 2  ; ++i) {
     
-    // iterate over all support types (created from plugins on load.
+    // Iterate over all supported types (created from plugins on load)
     // Check if a plugin supports addEmpty for the current type.
     // Only if the type is supported, add it to the addEmpty Dialog
-    for ( uint j = 0 ; j < supportedTypes_.size(); j++) {
+    
+    // typePlugin
+    for ( uint j = 0 ; j < supportedDataTypes_.size(); j++) {
       
-      // Check if a plugin supports the current Type
-      if ( supportedTypes_[j].type & currentType ) {
+      // Check if a plugin supports the current type
+      if ( supportedDataTypes_[j].type & currentType ) {
         types.push_back(currentType);
         typeNames.push_back( typeName( currentType ) );
         
         // Stop here as we need only one plugin supporting addEmpty for a given type
         break;
+      }
+    }
+    
+    // filePlugin
+    for ( uint j = 0 ; j < supportedTypes_.size(); j++) {
+      
+      // Check if a plugin supports the current Type
+      if ( supportedTypes_[j].type & currentType ) {
+	
+	// Avoid duplicates
+	bool duplicate = false;
+	for(std::vector< DataType >::iterator it = types.begin(); it != types.end(); ++it) {
+	  if(*it == currentType) {
+	    duplicate = true;
+	    break;
+	  }
+	}
+	  
+	if(!duplicate) {
+	  types.push_back(currentType);
+	  typeNames.push_back( typeName( currentType ) );
+        
+	  // Stop here as we need only one plugin supporting addEmpty for a given type
+	  break;
+	}
       }
     }
     

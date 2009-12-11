@@ -91,6 +91,7 @@
 // Required Interface definition ( Some variables were defined there )
 #include "OpenFlipper/BasePlugin/BaseInterface.hh"
 #include "OpenFlipper/BasePlugin/FileInterface.hh"
+#include "OpenFlipper/BasePlugin/TypeInterface.hh"
 #include "OpenFlipper/BasePlugin/MenuInterface.hh"
 #include "OpenFlipper/BasePlugin/ContextMenuInterface.hh"
 
@@ -113,6 +114,12 @@ struct fileTypes {
   QString loadFilters;
   QString saveFilters;
   FileInterface* plugin;
+};
+
+struct dataTypes {
+  QString name;
+  DataType type;
+  TypeInterface* plugin;
 };
 
 /** Core Widget of the Application
@@ -1014,6 +1021,9 @@ private:
 
   /// File-Plugins
   std::vector<fileTypes> supportedTypes_;
+  
+  /// Type-Plugins
+  std::vector<dataTypes> supportedDataTypes_;
 
   private :
     ///Pointer to the data rootNode;
