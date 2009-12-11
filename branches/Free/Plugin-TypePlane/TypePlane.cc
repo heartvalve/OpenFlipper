@@ -41,11 +41,9 @@
 \*===========================================================================*/
 
 
-
-
 #include "TypePlane.hh"
 
-
+#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
 TypePlanePlugin::TypePlanePlugin() {
   
@@ -55,6 +53,61 @@ bool TypePlanePlugin::registerType() {
   addDataType("Plane",tr("Plane"));
   setTypeIcon( "Plane", "PlaneType.png");
   return true;
+}
+
+int TypePlanePlugin::addEmpty( DataType _type ){
+    
+  // new object data struct
+  PlaneObject * object = new PlaneObject(dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ));
+
+  if ( PluginFunctions::objectCount() == 1 )
+    object->target(true);
+
+  if (PluginFunctions::targetCount() == 0 )
+    object->target(true);
+
+  QString name = get_unique_name(object);
+
+  // call the local function to update names
+  QFileInfo f(name);
+  object->setName( f.fileName() );
+
+  object->update();
+
+  object->show();
+
+  emit log(LOGINFO, object->getObjectinfo());
+
+  emit emptyObjectAdded (object->id() );
+
+  return object->id();
+}
+
+QString TypePlanePlugin::get_unique_name(PlaneObject* _object)
+{
+  bool name_unique = false;
+
+  int cur_idx = _object->id();
+
+  while(!name_unique)
+  {
+    name_unique = true;
+
+    QString cur_name = QString(tr("Plane %1.pla").arg( cur_idx ));
+
+    PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_PLANE );
+    for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
+    {
+      if( o_it->name() == cur_name)
+      {
+        name_unique = false;
+        cur_idx += 10;
+        break;
+      }
+    }
+  }
+
+  return QString(tr("Plane %1.pla").arg( cur_idx ));
 }
 
 Q_EXPORT_PLUGIN2( typeplaneplugin , TypePlanePlugin );
