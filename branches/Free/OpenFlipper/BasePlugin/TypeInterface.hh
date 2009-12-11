@@ -61,6 +61,22 @@ class TypeInterface {
     virtual ~TypeInterface() {};  
 
     virtual bool registerType() = 0;
+    
+    /** \brief Create an empty object
+       *
+       * When this slot is called you have to create an object of your supported type.
+       * @param _type Data type of object that will be created
+       * @return Id of the new Object
+       */
+    virtual int addEmpty() = 0;
+    
+    /** \brief Return your supported object type( e.g. DATA_TRIANGLE_MESH )
+    *
+    * If you support multiple datatypes you can use the bitwise or to combine them here.
+    * The function is used from addEmpty to check if your plugin can create an object of
+    * a given dataType.
+    */
+    virtual DataType supportedType() = 0;
 };
 
 Q_DECLARE_INTERFACE(TypeInterface,"OpenFlipper.TypeInterface/1.0")
