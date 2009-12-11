@@ -13,7 +13,7 @@ ENDIF (XML2_INCLUDE_DIRS)
 
  # Find the headers
  FIND_PATH( XML2_INCLUDE_DIR libxml/xmlversion.h
-            PATHS /usr/include/libxml2 "C:/libs/libxml2/include/libxml2"  )
+            PATHS /usr/include/libxml2 "C:/libs/libxml2/include"  )
 
 if( WIN32 )
  FIND_LIBRARY( XML2_LIBRARY
