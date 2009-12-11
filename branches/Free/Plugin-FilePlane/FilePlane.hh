@@ -39,6 +39,9 @@ class FilePlanePlugin : public QObject, BaseInterface, FileInterface, LoadSaveIn
     void noguiSupported( ) {} ;
 
     void initializePlugin();
+    
+    // Deprecated!
+    int addEmpty() { return -1; };
 
   public :
 
@@ -46,8 +49,6 @@ class FilePlanePlugin : public QObject, BaseInterface, FileInterface, LoadSaveIn
 
      QString name() { return (QString("FilePlane")); };
      QString description( ) { return (QString(tr("Load/Save Planes"))); };
-
-     int addEmpty( );
 
      DataType supportedType();
 

@@ -31,43 +31,14 @@ DataType  FilePlanePlugin::supportedType() {
   return type;
 }
 
-
-int FilePlanePlugin::addEmpty( ){
-  // new object data struct
-  PlaneObject * object = new PlaneObject(dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ));
-
-  if ( PluginFunctions::objectCount() == 1 )
-    object->target(true);
-
-  if (PluginFunctions::targetCount() == 0 )
-    object->target(true);
-
-  QString name = get_unique_name(object);
-
-  // call the local function to update names
-  QFileInfo f(name);
-  object->setName( f.fileName() );
-
-  object->update();
-
-  object->show();
-
-  emit log(LOGINFO,object->getObjectinfo());
-
-  emit emptyObjectAdded (object->id() );
-
-  return object->id();
-}
-
 int FilePlanePlugin::loadObject(QString _filename)
 {
-  int id = addEmpty();
+  int id = -1;
+  emit addEmptyObject( DATA_PLANE, id );
 
-  BaseObjectData*     obj(0);
-  if(PluginFunctions::getObject( id, obj))
-  {
-    PlaneObject* plane = PluginFunctions::planeObject(obj);
-
+  PlaneObject* plane = 0;
+  if(PluginFunctions::getObject( id, plane))
+  {    
     if( plane )
     {
 
@@ -97,11 +68,11 @@ int FilePlanePlugin::loadObject(QString _filename)
 
           plane->planeNode()->setPosition(position, xDirection, yDirection);
 
-          obj->setFromFileName(_filename);
+          plane->setFromFileName(_filename);
         }
       }
     }
-    emit updatedObject(obj->id() );
+    emit updatedObject( plane->id() );
   }
 
   return id;
