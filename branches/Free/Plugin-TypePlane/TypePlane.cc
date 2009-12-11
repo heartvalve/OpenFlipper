@@ -55,7 +55,7 @@ bool TypePlanePlugin::registerType() {
   return true;
 }
 
-int TypePlanePlugin::addEmpty( DataType _type ){
+int TypePlanePlugin::addEmpty(){
     
   // new object data struct
   PlaneObject * object = new PlaneObject(dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ));
