@@ -540,13 +540,6 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(plugin, SIGNAL(setSlotDescription(QString,QString,QStringList,QStringList)),
                 this,   SLOT(slotSetSlotDescription(QString,QString,QStringList,QStringList)) );
     }
-    
-    //Check if the plugin is a typePlugin
-    TypeInterface* typePlugin = qobject_cast< TypeInterface * >(plugin);
-    if ( typePlugin ) {
-      // The only purpose of typePlugins is to register the types before all other Plugins are loaded
-      typePlugin->registerType();
-    }
 
     //Check if the plugin supports Logging
     LoggingInterface* logPlugin = qobject_cast< LoggingInterface * >(plugin);
@@ -1168,6 +1161,24 @@ void Core::loadPlugin(QString filename, bool silent){
       ft.plugin = filePlugin;
       
       supportedTypes_.push_back(ft);
+    }
+    
+    //Check if it's a typePlugin
+    TypeInterface* typePlugin = qobject_cast< TypeInterface * >(plugin);
+    if ( typePlugin ){
+      supported = supported + "Type ";
+      
+      // Call register type
+      typePlugin->registerType();
+
+      // Collect supported Data from type plugin
+      dataTypes dt;
+      dt.name = basePlugin->name();
+      dt.type = typePlugin->supportedType();
+      dt.plugin = typePlugin;
+      
+      // Add type info
+      supportedDataTypes_.push_back(dt);
     }
 
     emit log(LOGOUT,"=============================================================================================");
