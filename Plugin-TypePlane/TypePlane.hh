@@ -91,7 +91,7 @@ class TypePlanePlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     QString version() { return QString("1.0"); };
     
     // Type Interface
-    int addEmpty( DataType _type );
+    int addEmpty();
     DataType supportedType() { return DATA_PLANE; }; 
     
   private:
