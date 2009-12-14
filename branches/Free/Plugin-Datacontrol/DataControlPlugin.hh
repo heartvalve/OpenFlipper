@@ -333,7 +333,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         *
         * @return object id of new group or -1 if failed
         */
-        int groupObjects(idList _objectIDs, QString _groupName = "");
+        int groupObjects(IdList _objectIDs, QString _groupName = "");
 
 /** @} */
 
