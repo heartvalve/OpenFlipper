@@ -329,8 +329,11 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         /// Hides all objects
         void hideAll();
 
-        /// Group objects together
-        void groupObjects(idList _objectIDs, QString _groupName = "");
+        /** Group objects together
+        *
+        * @return object id of new group or -1 if failed
+        */
+        int groupObjects(idList _objectIDs, QString _groupName = "");
 
 /** @} */
 
