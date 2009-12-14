@@ -49,7 +49,6 @@
 #include <QObject>
 
 #include <OpenFlipper/common/Types.hh>
-#include <ObjectTypes/Plane/Plane.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
