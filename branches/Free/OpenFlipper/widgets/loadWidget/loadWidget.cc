@@ -145,13 +145,13 @@ void LoadWidget::slotSetSaveFilters(DataType _type){
   QStringList allFilters;
 
   for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if (supportedTypes_[i].type == _type){
+    if (supportedTypes_[i].type & _type){
       QStringList filters = supportedTypes_[i].saveFilters.split(";;");
       for (int f=filters.size()-1; f >= 0;  f--){
         if (filters[f].trimmed() == "") { filters.removeAt(f); continue; }
         if (filters[f].contains( tr("All files") ) ) filters.removeAt(f);
       }
-
+      
       allFilters.append( filters );
     }
 
