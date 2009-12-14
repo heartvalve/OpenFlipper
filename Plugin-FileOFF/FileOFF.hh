@@ -12,7 +12,6 @@
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
-#include <ObjectTypes/Plane/Plane.hh>
 
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
