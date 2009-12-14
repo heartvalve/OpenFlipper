@@ -1179,6 +1179,11 @@ void Core::loadPlugin(QString filename, bool silent){
       
       // Add type info
       supportedDataTypes_.push_back(dt);
+      
+      // Connect signals
+      if ( checkSignal(plugin,"emptyObjectAdded(int)" ) )
+        connect(plugin , SIGNAL( emptyObjectAdded( int ) ) ,
+                this   , SLOT( slotEmptyObjectAdded ( int ) ),Qt::DirectConnection);
     }
 
     emit log(LOGOUT,"=============================================================================================");
