@@ -107,8 +107,10 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
     switch ( _am )
     {
       case Viewer::ExamineMode:
-      case Viewer::LightMode:
         cursorPainter_->setCursor(Qt::PointingHandCursor);
+        break;
+      case Viewer::LightMode:
+        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_light.png"  )));
         break;
       case Viewer::PickingMode:
         cursorPainter_->setCursor(Qt::ArrowCursor);
