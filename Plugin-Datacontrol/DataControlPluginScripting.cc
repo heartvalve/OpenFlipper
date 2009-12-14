@@ -272,7 +272,7 @@ void DataControlPlugin::showObject( int objectId ) {
  * @param _objectIDs list of object ids
  * @param _groupName the name of the new group
  */
-int DataControlPlugin::groupObjects(idList _objectIDs, QString _groupName) {
+int DataControlPlugin::groupObjects(IdList _objectIDs, QString _groupName) {
   QVector< BaseObject* > objs;
 
   // Try to get all objects given in list
