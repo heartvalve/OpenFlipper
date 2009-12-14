@@ -246,7 +246,7 @@ void CursorPainter::cursorToTexture()
       yOff_ = 0;
       break;
     case Qt::PointingHandCursor:
-      cImg.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_hand.png");
+      cImg.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_move.png");
       xOff_ = 7;
       yOff_ = 1;
       break;
@@ -328,7 +328,7 @@ void CursorPainter::cursorToCursor()
         cursor_ = nativeCursor_;
       break;
     case Qt::PointingHandCursor:
-      pix.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_hand.png");
+      pix.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_move.png");
       if (!pix.isNull() && pix.width() == 32 && pix.height() == 32)
       {
         cursor_ = QCursor (pix, 7, 1);
