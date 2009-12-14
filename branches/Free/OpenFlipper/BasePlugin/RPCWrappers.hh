@@ -103,19 +103,19 @@ void callFunction( QString _plugin, QString _functionName, T0 _t0) {
   std::vector< QScriptValue > parameters;
 //   QVariant bla = qVariantFromValue(_t0);
 //
-//   idList list = qVariantValue<idList>( bla ) ;
+//   IdList list = qVariantValue<IdList>( bla ) ;
 //   std::cerr << "iDList size:" <<  list.size() << std::endl;;
 //   std::cerr << list[0] << std::endl;
 //   std::cerr << list[1] << std::endl;
-//   std::cerr << "Type id is : " << QMetaType::type("idList") << std::endl;
+//   std::cerr << "Type id is : " << QMetaType::type("IdList") << std::endl;
 //   engine->globalObject().setProperty("ParameterData22",engine->toScriptValue(list));
 /*
   QVariant blubb = engine->globalObject().property("ParameterData22").toVariant();
-  idList list1 = qVariantValue<idList>( blubb ) ;
+  IdList list1 = qVariantValue<IdList>( blubb ) ;
   std::cerr << "iDList1 size:" <<  list1.size() << std::endl;;
   std::cerr << list1[0] << std::endl;
   std::cerr << list1[1] << std::endl;
-  std::cerr << "Type id is : " << QMetaType::type("idList") << std::endl;*/
+  std::cerr << "Type id is : " << QMetaType::type("IdList") << std::endl;*/
 
 
   parameters.push_back( engine->toScriptValue(_t0) );
