@@ -246,8 +246,8 @@ QString FileTriangleMeshPlugin::getLoadFilters() {
   QString filters = QString( OpenMesh::IO::IOManager().qt_read_filters().c_str() );
   
   // Remove support for OFF-files since they are now handled by a separate plugin
-  //filters.replace(";;Object File Format ( *.off )", "");
-  //filters.replace("*.off", "");
+  filters.replace(";;Object File Format ( *.off )", "");
+  filters.replace("*.off", "");
   
   return filters;
 };
@@ -258,8 +258,8 @@ QString FileTriangleMeshPlugin::getSaveFilters() {
   QString filters = QString( OpenMesh::IO::IOManager().qt_write_filters().c_str() );
   
   // Remove support for OFF-files since they are now handled by a separate plugin
-  //filters.replace(";;no description ( *.off )", "");
-  //filters.replace("*.off", "");
+  filters.replace(";;no description ( *.off )", "");
+  filters.replace("*.off", "");
   
   return filters;
 };
