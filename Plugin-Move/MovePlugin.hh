@@ -420,7 +420,7 @@ public slots :
   void translate( int _objectId , Vector _vector );
 
   /// translate given vertices by a vector
-  void translate( int _objectId , idList _vHandles, Vector _vector );
+  void translate( int _objectId , IdList _vHandles, Vector _vector );
 
   /// translate current selection of an Object by a given vector
   void translateSelection( int _objectId , Vector _vector );
@@ -429,7 +429,7 @@ public slots :
   void transform( int _objectId , Matrix4x4 _matrix );
 
   /// transform given vertices by a matrix
-  void transform( int _objectId , idList _vHandles, Matrix4x4 _matrix );
+  void transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix );
 
   /// transform current selection of an Object by a given matrix
   void transformVertexSelection( int _objectId , Matrix4x4 _matrix );
