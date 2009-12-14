@@ -432,8 +432,8 @@ Core::init() {
 //   scriptEngine_.globalObject().setProperty("ObjectId", ctor);
 
 
-  // Register idList Type to scripting Engine
-  qScriptRegisterSequenceMetaType< idList >(&scriptEngine_);
+  // Register IdList Type to scripting Engine
+  qScriptRegisterSequenceMetaType< IdList >(&scriptEngine_);
 
   qScriptRegisterSequenceMetaType< QVector< int > >(&scriptEngine_);
 

@@ -49,17 +49,17 @@
 #include <QtScript/QtScript>
 
 //===========================================================================
-/** @name Script Wrappers for idList Type ( standard vector of ints )
+/** @name Script Wrappers for IdList Type ( standard vector of ints )
   * @{ */
 //===========================================================================
 
-/// Convert idList to scriptvalue
-QScriptValue toScriptValueIdList(QScriptEngine *engine, const idList &s);
+/// Convert IdList to scriptvalue
+QScriptValue toScriptValueIdList(QScriptEngine *engine, const IdList &s);
 
-/// Convert scriptvalue to idList
-void fromScriptValueIdList(const QScriptValue &obj, idList &s);
+/// Convert scriptvalue to IdList
+void fromScriptValueIdList(const QScriptValue &obj, IdList &s);
 
-/// Create an empty idList in Scripting environment
+/// Create an empty IdList in Scripting environment
 QScriptValue createIdList(QScriptContext *, QScriptEngine *engine);
 
 QScriptValue idListToString(QScriptContext *context, QScriptEngine *engine);

@@ -44,7 +44,7 @@
 
 //=============================================================================
 //
-//  Wrapper for idList ( std::vector< int > ) - IMPLEMENTATION
+//  Wrapper for IdList ( std::vector< int > ) - IMPLEMENTATION
 //
 //=============================================================================
 
@@ -55,7 +55,7 @@
 
 //== IMPLEMENTATION ==========================================================
 
-QScriptValue toScriptValueIdList(QScriptEngine *engine, const idList &s)
+QScriptValue toScriptValueIdList(QScriptEngine *engine, const IdList &s)
 {
   QScriptValue obj = engine->newObject();
   obj.setProperty("size", QScriptValue(engine, (int)s.size() ));
@@ -65,7 +65,7 @@ QScriptValue toScriptValueIdList(QScriptEngine *engine, const idList &s)
   return obj;
 }
 
-void fromScriptValueIdList(const QScriptValue &obj, idList &s)
+void fromScriptValueIdList(const QScriptValue &obj, IdList &s)
 {
   int size = obj.property("size").toNumber();
 
@@ -75,7 +75,7 @@ void fromScriptValueIdList(const QScriptValue &obj, idList &s)
 
 QScriptValue createIdList(QScriptContext *context, QScriptEngine *engine)
 {
-  idList s;
+  IdList s;
 
   QScriptValue callee = context->callee();
 
