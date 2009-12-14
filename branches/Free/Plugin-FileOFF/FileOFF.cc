@@ -18,7 +18,8 @@
 /// Constructor
 FileOFFPlugin::FileOFFPlugin()
 : loadOptions_(0),
-triMeshHandling_(0) {
+  saveOptions_(0),
+  triMeshHandling_(0) {
 }
 
 //-----------------------------------------------------------------------------------------------------

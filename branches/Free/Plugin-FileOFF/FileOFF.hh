@@ -85,10 +85,9 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
   private :
     
     //Option Widgets
-    QWidget*   loadOptions_;
-    QComboBox* triMeshHandling_;
-    
+    QWidget* loadOptions_;
     QWidget* saveOptions_;
+    
     QCheckBox* saveBinary_;
     QCheckBox* saveVertexColor_;
     QCheckBox* saveFaceColor_;
@@ -96,6 +95,7 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox* saveNormals_;
     QCheckBox* saveTexCoords_;
 
+    QComboBox* triMeshHandling_;
     QCheckBox* loadVertexColor_;
     QCheckBox* loadFaceColor_;
     QCheckBox* loadAlpha_;
