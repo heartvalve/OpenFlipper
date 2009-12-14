@@ -66,7 +66,7 @@
 //==== Edge selections
 //=========================================================
 
-void SelectionPlugin::selectEdges( int objectId , idList _edgeList ) {
+void SelectionPlugin::selectEdges( int objectId , IdList _edgeList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("selectEdges : unable to get object") ); 
@@ -107,7 +107,7 @@ void SelectionPlugin::selectEdges( int objectId , idList _edgeList ) {
 
 //=========================================================
 
-void SelectionPlugin::unselectEdges( int objectId , idList _edgeList ) {
+void SelectionPlugin::unselectEdges( int objectId , IdList _edgeList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("unselectEdges : unable to get object") ); 
@@ -273,12 +273,12 @@ void SelectionPlugin::selectBoundaryEdges( int objectId )
 
 //=========================================================
 
-idList SelectionPlugin::getEdgeSelection( int objectId )
+IdList SelectionPlugin::getEdgeSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("getEdgeSelection : unable to get object") ); 
-    return idList(0);
+    return IdList(0);
   }
   
   emit scriptInfo( "getEdgeSelection( ObjectId )" );
@@ -297,10 +297,10 @@ idList SelectionPlugin::getEdgeSelection( int objectId )
 #endif        
   else{
       emit log(LOGERR,tr("getEdgeSelection : Unsupported object Type") ); 
-      return idList(0);
+      return IdList(0);
   }
   
-  return idList(0);
+  return IdList(0);
   
 }
 

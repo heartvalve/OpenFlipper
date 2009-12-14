@@ -397,10 +397,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
   public slots:
 
     /// select given vertices
-    void selectVertices( int objectId , idList _vertexList );
+    void selectVertices( int objectId , IdList _vertexList );
 
     /// unselect given vertices
-    void unselectVertices( int objectId , idList _vertexList );
+    void unselectVertices( int objectId , IdList _vertexList );
 
     /// Select all Vertices
     void selectAllVertices( int objectId );
@@ -424,7 +424,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void growVertexSelection( int objectId );
 
     /// return a list of all selected vertices
-    idList getVertexSelection( int objectId );
+    IdList getVertexSelection( int objectId );
 
     /// delete vertices and faces that are currently selected
     void deleteSelection( int objectId );
@@ -435,10 +435,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     //==========================================
 
     /// Set vertices to be part of the handle area
-    void selectHandleVertices( int objectId , idList _vertexList );
+    void selectHandleVertices( int objectId , IdList _vertexList );
 
     /// Remove vertices from handle area
-    void unselectHandleVertices( int objectId , idList _vertexList );
+    void unselectHandleVertices( int objectId , IdList _vertexList );
 
     /// Clear handle Area
     void clearHandleVertices( int objectId  );
@@ -447,7 +447,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void setAllHandleVertices( int objectId );
 
     /// Get a list of all handle vertices
-    idList getHandleVertices( int objectId );
+    IdList getHandleVertices( int objectId );
 
     /// Load a selection from an Flipper selection file for the given object
     void loadFlipperModelingSelection( int _objectId , QString _filename );
@@ -458,10 +458,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     //==========================================
 
     /// Set vertices to be part of the modeling area
-    void selectModelingVertices( int objectId , idList _vertexList );
+    void selectModelingVertices( int objectId , IdList _vertexList );
 
     /// Remove vertices from modeling area
-    void unselectModelingVertices( int objectId , idList _vertexList );
+    void unselectModelingVertices( int objectId , IdList _vertexList );
 
     /// Clear Modeling Area
     void clearModelingVertices( int objectId  );
@@ -470,15 +470,15 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void setAllModelingVertices( int objectId );
 
     /// Get a list of all modeling vertices
-    idList getModelingVertices( int objectId );
+    IdList getModelingVertices( int objectId );
 
     //==========================================
 
     /// Select given Edges
-    void selectEdges( int objectId , idList _vertexList );
+    void selectEdges( int objectId , IdList _vertexList );
 
     /// Unselect given Edges
-    void unselectEdges( int objectId , idList _vertexList );
+    void unselectEdges( int objectId , IdList _vertexList );
 
     /// Select all Edges
     void selectAllEdges( int objectId );
@@ -493,15 +493,15 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void selectBoundaryEdges( int objectId );
 
     /// return a list of all selected edges
-    idList getEdgeSelection( int objectId );
+    IdList getEdgeSelection( int objectId );
 
     //==========================================
 
     /// Select given faces
-    void selectFaces( int objectId , idList _facesList );
+    void selectFaces( int objectId , IdList _facesList );
 
     /// Unselect given faces
-    void unselectFaces( int objectId , idList _facesList );
+    void unselectFaces( int objectId , IdList _facesList );
 
     /// Select all faces
     void selectAllFaces( int objectId );
@@ -522,7 +522,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void growFaceSelection( int objectId );
 
     /// return a list of all selected faces
-    idList getFaceSelection( int objectId );
+    IdList getFaceSelection( int objectId );
 
     /// colorize the face selection
     void colorizeFaceSelection(int objectId, int r, int g, int b );
