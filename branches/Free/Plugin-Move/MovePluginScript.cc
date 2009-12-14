@@ -161,7 +161,7 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
  * @param _vHandles list of vertex handles
  * @param _vector translation vector
  */
-void MovePlugin::translate( int _objectId , idList _vHandles, Vector _vector ){
+void MovePlugin::translate( int _objectId , IdList _vHandles, Vector _vector ){
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
     emit log(LOGERR,tr("translate : unable to get object") );
@@ -330,7 +330,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
  * @param _vHandles list of vertex handles
  * @param _matrix transformation matrix
  */
-void MovePlugin::transform( int _objectId , idList _vHandles, Matrix4x4 _matrix ){
+void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix ){
 
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(_objectId,object) ) {
