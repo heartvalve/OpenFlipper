@@ -55,7 +55,7 @@
 //==== Face selections
 //=========================================================
 
-void SelectionPlugin::selectFaces( int objectId , idList _faceList ) {
+void SelectionPlugin::selectFaces( int objectId , IdList _faceList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("selectFaces : unable to get object") ); 
@@ -88,7 +88,7 @@ void SelectionPlugin::selectFaces( int objectId , idList _faceList ) {
 
 //=========================================================
 
-void SelectionPlugin::unselectFaces( int objectId , idList _faceList ) {
+void SelectionPlugin::unselectFaces( int objectId , IdList _faceList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("unselectFaces : unable to get object") ); 
@@ -260,12 +260,12 @@ void SelectionPlugin::growFaceSelection( int objectId )
   
 //=========================================================
 
-idList SelectionPlugin::getFaceSelection( int objectId )
+IdList SelectionPlugin::getFaceSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("getFaceSelection : unable to get object") ); 
-    return idList(0);
+    return IdList(0);
   }
   
   emit scriptInfo( "getFaceSelection( ObjectId )" );
@@ -276,7 +276,7 @@ idList SelectionPlugin::getFaceSelection( int objectId )
       return MeshSelection::getFaceSelection(PluginFunctions::polyMesh(object));
   else{
       emit log(LOGERR,tr("getFaceSelection : Unsupported object Type") ); 
-      return idList(0);
+      return IdList(0);
   }
   
 

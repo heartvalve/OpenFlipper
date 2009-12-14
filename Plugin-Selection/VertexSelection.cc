@@ -62,7 +62,7 @@
 //==== Vertex selections
 //=========================================================
 
-void SelectionPlugin::selectVertices( int objectId , idList _vertexList ) {
+void SelectionPlugin::selectVertices( int objectId , IdList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("selectVertices : unable to get object") ); 
@@ -103,7 +103,7 @@ void SelectionPlugin::selectVertices( int objectId , idList _vertexList ) {
 
 //=========================================================
 
-void SelectionPlugin::unselectVertices( int objectId , idList _vertexList ) {
+void SelectionPlugin::unselectVertices( int objectId , IdList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("unselectVertices : unable to get object") ); 
@@ -331,12 +331,12 @@ void SelectionPlugin::growVertexSelection( int objectId )
 
 //=========================================================
 
-idList SelectionPlugin::getVertexSelection( int objectId )
+IdList SelectionPlugin::getVertexSelection( int objectId )
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("getVertexSelection : unable to get object") ); 
-    return idList(0);
+    return IdList(0);
   }
   
   emit scriptInfo( "getVertexSelection( ObjectId )" );
@@ -355,10 +355,10 @@ idList SelectionPlugin::getVertexSelection( int objectId )
 #endif            
   else {
       emit log(LOGERR,tr("getVertexSelection : Unsupported object Type") ); 
-      return idList(0);
+      return IdList(0);
   }
   
-  return idList(0);
+  return IdList(0);
 
 }
 

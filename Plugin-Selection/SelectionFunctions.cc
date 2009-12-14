@@ -586,7 +586,7 @@ void SelectionPlugin::handleLassoSelection(QMouseEvent* _event, bool _volume) {
 void SelectionPlugin::forEachObject(QList<QPair<unsigned int, unsigned int> > &_list, SelectionPrimitive _type)
 {
   QSet <unsigned int> objects;
-  idList              elements;
+  IdList              elements;
   BaseObjectData*     object(0);
 
   for (QList<QPair<unsigned int, unsigned int> >::iterator it = _list.begin();

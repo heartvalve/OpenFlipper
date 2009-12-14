@@ -631,7 +631,7 @@ void SelectionPlugin::slotSetArea() {
 		// Add selection to existing modeling area
 		// if corresponding checkbox is checked
 		if (tool_->checkAddArea->checkState() == Qt::Checked) {
-			idList list = getModelingVertices(o_it->id());
+			IdList list = getModelingVertices(o_it->id());
 			selectVertices(o_it->id(), list);
 		}
 
@@ -667,7 +667,7 @@ void SelectionPlugin::slotSetHandle() {
 		// Add selection to existing handle area
 		// if corresponding checkbox is checked
 		if (tool_->checkAddArea->checkState() == Qt::Checked) {
-			idList list = getHandleVertices(o_it->id());
+			IdList list = getHandleVertices(o_it->id());
 			selectVertices(o_it->id(), list);
 		}
 
@@ -1053,7 +1053,7 @@ void SelectionPlugin::convertSelectionType(StatusBits _from, StatusBits _to, boo
 				clearHandleVertices(o_it->id());
 			}
 
-			idList list = getModelingVertices(o_it->id());
+			IdList list = getModelingVertices(o_it->id());
 			if(_clearAfter) { clearModelingVertices(o_it->id()); }
 			selectHandleVertices(o_it->id(), list);
 
@@ -1072,7 +1072,7 @@ void SelectionPlugin::convertSelectionType(StatusBits _from, StatusBits _to, boo
 				clearModelingVertices(o_it->id());
 			}
 
-			idList list = getHandleVertices(o_it->id());
+			IdList list = getHandleVertices(o_it->id());
 			if(_clearAfter) { clearHandleVertices(o_it->id()); }
 			selectModelingVertices(o_it->id(), list);
 
@@ -1100,7 +1100,7 @@ void SelectionPlugin::convertVtoESelection(bool _unselectAfter) {
 	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 
-		idList list = getVertexSelection(o_it->id());
+		IdList list = getVertexSelection(o_it->id());
 		if(_unselectAfter) { clearVertexSelection(o_it->id()); }
 
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
@@ -1129,7 +1129,7 @@ void SelectionPlugin::convertVtoFSelection(bool _unselectAfter) {
 	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 
-		idList list = getVertexSelection(o_it->id());
+		IdList list = getVertexSelection(o_it->id());
 		if(_unselectAfter) { clearVertexSelection(o_it->id()); }
 
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
@@ -1158,7 +1158,7 @@ void SelectionPlugin::convertEtoVSelection(bool _unselectAfter) {
 	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 
-		idList list = getEdgeSelection(o_it->id());
+		IdList list = getEdgeSelection(o_it->id());
 		if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
 
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
@@ -1187,7 +1187,7 @@ void SelectionPlugin::convertEtoFSelection(bool _unselectAfter) {
 	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 
-		idList list = getEdgeSelection(o_it->id());
+		IdList list = getEdgeSelection(o_it->id());
 		if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
 
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
@@ -1216,7 +1216,7 @@ void SelectionPlugin::convertFtoVSelection(bool _unselectAfter) {
 	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 
-		idList list = getFaceSelection(o_it->id());
+		IdList list = getFaceSelection(o_it->id());
 		if(_unselectAfter) { clearFaceSelection(o_it->id()); }
 
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
@@ -1245,7 +1245,7 @@ void SelectionPlugin::convertFtoESelection(bool _unselectAfter) {
 	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 
-		idList list = getFaceSelection(o_it->id());
+		IdList list = getFaceSelection(o_it->id());
 		if(_unselectAfter) { clearFaceSelection(o_it->id()); }
 
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {

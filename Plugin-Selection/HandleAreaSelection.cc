@@ -54,7 +54,7 @@
 //==== Modeling Area selections
 //=========================================================
 
-void SelectionPlugin::selectHandleVertices( int objectId , idList _vertexList ) {
+void SelectionPlugin::selectHandleVertices( int objectId , IdList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("selectHandleVertices : unable to get object") ); 
@@ -89,7 +89,7 @@ void SelectionPlugin::selectHandleVertices( int objectId , idList _vertexList ) 
 
 //=========================================================
 
-void SelectionPlugin::unselectHandleVertices( int objectId , idList _vertexList ) {
+void SelectionPlugin::unselectHandleVertices( int objectId , IdList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("unselectHandleVertices : unable to get object") ); 
@@ -166,11 +166,11 @@ void SelectionPlugin::setAllHandleVertices( int objectId  ) {
 
 //=========================================================
 
-idList SelectionPlugin::getHandleVertices( int objectId  ) {
+IdList SelectionPlugin::getHandleVertices( int objectId  ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("getHandleVertices : unable to get object") ); 
-    return idList(0);
+    return IdList(0);
   }
   
   emit scriptInfo( "getHandleVertices( ObjectId )" );  
@@ -181,9 +181,9 @@ idList SelectionPlugin::getHandleVertices( int objectId  ) {
       return MeshSelection::getArea(PluginFunctions::polyMesh(object) , HANDLEAREA);
   else {
       emit log(LOGERR,tr("getHandleVertices : Unsupported object Type") ); 
-      return idList(0);;
+      return IdList(0);;
   }
   
-  return idList(0);
+  return IdList(0);
 }
 

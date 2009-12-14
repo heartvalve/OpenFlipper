@@ -54,7 +54,7 @@
 //==== Modeling Area selections
 //=========================================================
 
-void SelectionPlugin::selectModelingVertices( int objectId , idList _vertexList ) {
+void SelectionPlugin::selectModelingVertices( int objectId , IdList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("selectModelingVertices : unable to get object") );
@@ -89,7 +89,7 @@ void SelectionPlugin::selectModelingVertices( int objectId , idList _vertexList 
 
 //=========================================================
 
-void SelectionPlugin::unselectModelingVertices( int objectId , idList _vertexList ) {
+void SelectionPlugin::unselectModelingVertices( int objectId , IdList _vertexList ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("unselectModelingVertices : unable to get object") );
@@ -165,11 +165,11 @@ void SelectionPlugin::setAllModelingVertices( int objectId  ) {
 }
 
 //=========================================================
-idList SelectionPlugin::getModelingVertices( int objectId  ) {
+IdList SelectionPlugin::getModelingVertices( int objectId  ) {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) {
     emit log(LOGERR,tr("getModelingVertices : unable to get object") );
-    return idList(0);
+    return IdList(0);
   }
 
   emit scriptInfo( "getModelingVertices( ObjectId )" );
@@ -180,10 +180,10 @@ idList SelectionPlugin::getModelingVertices( int objectId  ) {
       return MeshSelection::getArea(PluginFunctions::polyMesh(object) , AREA);
   else{
       emit log(LOGERR,tr("getModelingVertices : Unsupported object Type") );
-      return idList(0);
+      return IdList(0);
   }
 
-  return idList(0);
+  return IdList(0);
 }
 
 //=========================================================
@@ -235,8 +235,8 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
     }
 
     //get selected handles
-    idList handleVertices;
-    idList modelingVertices;
+    IdList handleVertices;
+    IdList modelingVertices;
 
     uint vertexId = 0;
 
