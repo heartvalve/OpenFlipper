@@ -140,7 +140,7 @@ public slots:
        * \todo Add an addEmpty function with a given type as an attribute. The plugin should then create only an
        * empty object of the given type. It can be assumed that there is only one type given at a time.
        */
-      virtual int addEmpty() { return -1 };
+      virtual int addEmpty() { return -1; };
       
       /** \brief Load an object from the given file
        *
