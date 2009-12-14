@@ -96,7 +96,8 @@ class FileTriangleMeshPlugin : public QObject, BaseInterface, FileInterface, Loa
      QString name() { return (QString("FileTriangleMesh")); };
      QString description( ) { return (QString(tr("Load/Save Triangle Meshes Meshes"))); };
 
-     int addEmpty( );
+     // Deprecated
+     int addEmpty( ) { return -1; };
 
      DataType supportedType();
 

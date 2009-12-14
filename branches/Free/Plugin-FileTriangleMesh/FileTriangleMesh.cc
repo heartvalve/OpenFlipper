@@ -67,103 +67,81 @@ FileTriangleMeshPlugin::FileTriangleMeshPlugin()
   loadOptions_(0){
 }
 
-/// Add an empty triangle mesh
-int FileTriangleMeshPlugin::addEmpty(  ){
-    // new object data struct
-  TriMeshObject* object;
-
-  object = new TriMeshObject( dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ) );
-
-  if (PluginFunctions::targetCount() == 1 )
-    object->target(true);
-
-  QString name = "TriangleMesh " + QString::number( object->id() ) + ".off";
-
-  // call the local function to update names
-  QFileInfo f(name);
-  object->setName( f.fileName() );
-
-  object->update();
-
-  object->show();
-
-  emit log(LOGINFO,object->getObjectinfo());
-
-  emit emptyObjectAdded (object->id() );
-
-  return object->id();
-}
-
 /// load a triangle-mesh with given filename
-int FileTriangleMeshPlugin::loadObject(QString _filename){
+int FileTriangleMeshPlugin::loadObject(QString _filename) {
 
-  // new object data struct
-  TriMeshObject* object;
-
-  object = new TriMeshObject( dynamic_cast < ACG::SceneGraph::SeparatorNode* >(PluginFunctions::getRootNode()) );
-
-  if (PluginFunctions::objectCount() == 1 )
-    object->target(true);
-
-  object->setFromFileName(_filename);
-
-  // call the local function to update names
-  QFileInfo f(_filename);
-  object->setName( f.fileName() );
-
-  std::string filename = std::string( _filename.toUtf8() );
-
-  //set options
-  OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
-
-  if ( !OpenFlipper::Options::loadingSettings() &&
-       !OpenFlipper::Options::loadingRecentFile() && loadOptions_ != 0){
-
-    if (loadVertexColor_->isChecked())
-      opt += OpenMesh::IO::Options::VertexColor;
-
-    if (loadFaceColor_->isChecked())
-      opt += OpenMesh::IO::Options::FaceColor;
-
-    //ColorAlpha is only checked when loading binary off's
-    if (loadAlpha_->isChecked())
-      opt += OpenMesh::IO::Options::ColorAlpha;
-
-    if (loadNormals_->isChecked())
-      opt += OpenMesh::IO::Options::VertexNormal;
-
-    if (loadTexCoords_->isChecked())
-      opt += OpenMesh::IO::Options::VertexTexCoord;
-
-  }else{
-    //let openmesh try to read everything it can
-    opt += OpenMesh::IO::Options::VertexColor;
-    opt += OpenMesh::IO::Options::FaceColor;
-    opt += OpenMesh::IO::Options::VertexNormal;
-    opt += OpenMesh::IO::Options::VertexTexCoord;
-  }
-
-
-  // load file
-  bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename, opt );
-  if (!ok)
-  {
-    std::cerr << "Plugin FileTriangleMesh : Read error for Triangle Mesh\n";
-    emit deleteObject( object->id() );
-    return -1;
-  }
-
-  object->mesh()->update_normals();
-
-  object->update();
-
-  object->show();
-
-  emit log(LOGINFO,object->getObjectinfo());
-
-  emit openedFile( object->id() );
-
-  return object->id();
+    int id = -1;
+    emit addEmptyObject(DATA_TRIANGLE_MESH, id);
+    
+    TriMeshObject* object(0);
+    if(PluginFunctions::getObject( id, object)) {
+        
+        if ( PluginFunctions::objectCount() == 1 )
+            object->target(true);
+        
+        object->setFromFileName(_filename);
+        
+        // call the local function to update names
+        QFileInfo f(_filename);
+        object->setName( f.fileName() );
+        
+        std::string filename = std::string( _filename.toUtf8() );
+        
+        //set options
+        OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
+        
+        if ( !OpenFlipper::Options::loadingSettings() &&
+            !OpenFlipper::Options::loadingRecentFile() && loadOptions_ != 0){
+            
+            if (loadVertexColor_->isChecked())
+                opt += OpenMesh::IO::Options::VertexColor;
+            
+            if (loadFaceColor_->isChecked())
+                opt += OpenMesh::IO::Options::FaceColor;
+            
+            //ColorAlpha is only checked when loading binary off's
+            if (loadAlpha_->isChecked())
+                opt += OpenMesh::IO::Options::ColorAlpha;
+            
+            if (loadNormals_->isChecked())
+                opt += OpenMesh::IO::Options::VertexNormal;
+            
+            if (loadTexCoords_->isChecked())
+                opt += OpenMesh::IO::Options::VertexTexCoord;
+            
+        } else {
+            //let openmesh try to read everything it can
+            opt += OpenMesh::IO::Options::VertexColor;
+            opt += OpenMesh::IO::Options::FaceColor;
+            opt += OpenMesh::IO::Options::VertexNormal;
+            opt += OpenMesh::IO::Options::VertexTexCoord;
+        }
+           
+        // load file
+        bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename, opt );
+        if (!ok)
+        {
+            std::cerr << "Plugin FileTriangleMesh : Read error for Triangle Mesh\n";
+            emit deleteObject( object->id() );
+            return -1;
+        }
+        
+        object->mesh()->update_normals();
+        
+        object->update();
+        
+        object->show();
+        
+        emit log(LOGINFO,object->getObjectinfo());
+        
+        emit openedFile( object->id() );
+        
+        return object->id();
+        
+    } else {
+        emit log(LOGERR,"Error : Could not create new triangle mesh object.");
+        return -1;
+    }
 }
 
 /// Save object with given id
@@ -264,12 +242,26 @@ bool FileTriangleMeshPlugin::saveObject(int _id, QString _filename, bool _binary
 
 ///return file-extension filters for loading objects
 QString FileTriangleMeshPlugin::getLoadFilters() {
-  return QString( OpenMesh::IO::IOManager().qt_read_filters().c_str() );
+  
+  QString filters = QString( OpenMesh::IO::IOManager().qt_read_filters().c_str() );
+  
+  // Remove support for OFF-files since they are now handled by a separate plugin
+  filters.replace(";;Object File Format ( *.off )", "");
+  filters.replace("*.off", "");
+  
+  return filters;
 };
 
 ///return file-extension filters for saving objects
 QString FileTriangleMeshPlugin::getSaveFilters() {
-  return QString( OpenMesh::IO::IOManager().qt_write_filters().c_str() );
+  
+  QString filters = QString( OpenMesh::IO::IOManager().qt_write_filters().c_str() );
+  
+  // Remove support for OFF-files since they are now handled by a separate plugin
+  filters.replace(";;no description ( *.off )", "");
+  filters.replace("*.off", "");
+  
+  return filters;
 };
 
 ///return supported DataType
