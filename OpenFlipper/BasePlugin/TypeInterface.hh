@@ -55,10 +55,19 @@
 
 class TypeInterface {
 
+  signals:
+    
+    /** \brief Emit this signal if an empty object has been created
+       * @param _id Id of the added object
+       */
+      virtual void emptyObjectAdded( int /*_id*/ ) {};
+  
   public:
 
     /// Destructor
-    virtual ~TypeInterface() {};  
+    virtual ~TypeInterface() {};
+    
+  public slots:
 
     virtual bool registerType() = 0;
     
