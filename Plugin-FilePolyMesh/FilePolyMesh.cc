@@ -274,6 +274,10 @@ QString FilePolyMeshPlugin::getLoadFilters() {
   filters.replace(";;PLY polygon file format ( *.ply )", "");
   filters.replace("*.ply", "");
   
+  // Remove support for OM-files since they are now handled by a separate plugin
+  filters.replace(";;OpenMesh File Format ( *.om )", "");
+  filters.replace("*.om", "");
+  
   return filters;
 }
 
@@ -294,7 +298,11 @@ QString FilePolyMeshPlugin::getSaveFilters() {
   // Remove support for PLY-files since they are now handled by a separate plugin
   filters.replace(";;PLY polygon file format ( *.ply )", "");
   filters.replace("*.ply", "");
-
+  
+  // Remove support for OM-files since they are now handled by a separate plugin
+  filters.replace(";;OpenMesh Format ( *.om )", "");
+  filters.replace("*.om", "");
+  
   return filters;
 }
 
