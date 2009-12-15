@@ -386,7 +386,6 @@ void DataControlPlugin::slotDataChanged ( int _id, int _column, const QVariant& 
     // Name
     case 0:
       obj->setName( _value.toString() );
-      emit objectPropertiesChanged( obj->id() );
       break;
 
     // show/hide
@@ -431,15 +430,8 @@ void DataControlPlugin::slotMoveBaseObject(int _id, int _newParentId){
 
   BaseObject* oldParent = obj->parent();
 
-  //remove from old parent
-  oldParent->removeChild( obj );
-
   //set new parent
   obj->setParent( parent );
-  parent->appendChild( obj );
-
-  // and inform everyone that the parent changed
-  emit objectPropertiesChanged( _id );
 
   //if oldParent is an empty group -> delete it
   if ( oldParent != PluginFunctions::objectRoot() && oldParent->childCount() == 0 )
@@ -530,12 +522,7 @@ void DataControlPlugin::loadIniFileOptionsLast( INIFile& _ini ) {
     for ( int i = 0 ; i < elementChildren.size() ; ++i ) {
       BaseObject* childItem =  PluginFunctions::objectRoot()->childExists( elementChildren[i] );
       if ( childItem ) {
-        childItem->parent()->removeChild(childItem);
         childItem->setParent(group);
-        group->appendChild(childItem);
-
-        //inform everyone that the parent changed
-        emit objectPropertiesChanged( childItem->id() );
       }
     }
   }

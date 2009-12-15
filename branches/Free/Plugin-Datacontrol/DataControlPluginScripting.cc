@@ -224,8 +224,6 @@ void DataControlPlugin::setObjectName( int objectId, QString _name ) {
   BaseObjectData* object;
   if ( PluginFunctions::getObject(objectId,object) ){
     object->setName( _name );
-
-    emit objectPropertiesChanged( object->id() );
   }
 }
 
@@ -324,20 +322,13 @@ int DataControlPlugin::groupObjects(IdList _objectIDs, QString _groupName) {
 
   //append new children to group
   for ( int i = 0 ; i < objs.size() ; ++i) {
-    (objs[i])->parent()->removeChild( objs[i] );
     (objs[i])->setParent( dynamic_cast< BaseObject* >( groupItem )  );
-    groupItem->appendChild( objs[i] );
-
-    //inform everyone that the parent changed
-    emit objectPropertiesChanged( (objs[i])->id() );
   }
 
   //update target/source state
   groupItem->visible(visible);
   groupItem->target(target);
   groupItem->source(source);
-
-  emit objectPropertiesChanged( groupItem->id() );
   
   return groupItem->id();
 }
