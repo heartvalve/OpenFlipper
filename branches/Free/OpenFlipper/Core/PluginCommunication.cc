@@ -136,6 +136,15 @@ void Core::slotObjectSelectionChanged( int _id )
 
 void Core::slotObjectPropertiesChanged( int _id )
 {
+//   std::cerr << "Object Properties changed " << _id << std::endl;
+//   
+//   BaseObject* baseObject = 0;
+//   PluginFunctions::getObject(_id,baseObject);
+//   
+//   if ( baseObject ) {
+//      baseObject->dumpTree();
+//   }
+//   
   emit objectPropertiesChanged(_id);
 }
 
@@ -282,8 +291,9 @@ void Core::newObject(int _objectId) {
    PluginFunctions::getObject(_objectId,baseObject);
    
    if ( baseObject ) {
-    connect( baseObject, SIGNAL(visibilityChanged(int)),     this, SLOT(slotVisibilityChanged(int)), Qt::DirectConnection) ;
-    connect( baseObject, SIGNAL(objectSelectionChanged(int)),this, SLOT(slotObjectSelectionChanged(int)), Qt::DirectConnection );
+    connect( baseObject, SIGNAL(visibilityChanged(int)),       this, SLOT(slotVisibilityChanged(int)),       Qt::DirectConnection) ;
+    connect( baseObject, SIGNAL(objectSelectionChanged(int)),  this, SLOT(slotObjectSelectionChanged(int)),  Qt::DirectConnection );
+    connect( baseObject, SIGNAL(objectPropertiesChanged(int)), this, SLOT(slotObjectPropertiesChanged(int)), Qt::DirectConnection );
    } else {
      emit log(LOGERR,tr("newObject received from objectManager with invalid id! This should not happen. The new Object will not work correctly!"));
    }

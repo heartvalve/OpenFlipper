@@ -489,8 +489,12 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
 
 
-      if ( checkSignal(plugin,"objectPropertiesChanged(int)"))
-        connect(plugin,SIGNAL(objectPropertiesChanged(int)),this,SLOT(slotObjectPropertiesChanged(int)), Qt::DirectConnection);
+      if ( checkSignal(plugin,"objectPropertiesChanged(int)")) {
+        emit log (LOGERR,tr("Signal objectPropertiesChanged(int) is deprecated. " ));
+        emit log (LOGERR,tr("The signal will be automatically emitted by the object that has been changed and the core will deliver it to the plugins!. "));
+        emit log (LOGERR,tr("Please remove this signal from your plugins!. "));
+//         connect(plugin,SIGNAL(objectPropertiesChanged(int)),this,SLOT(slotObjectPropertiesChanged(int)), Qt::DirectConnection);
+      }
       
       if ( checkSlot( plugin , "slotViewChanged()" ) )
         connect(this,SIGNAL(pluginViewChanged()),plugin,SLOT(slotViewChanged()), Qt::DirectConnection);
