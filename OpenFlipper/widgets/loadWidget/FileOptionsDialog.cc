@@ -119,13 +119,11 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
 
   //add buttons at bottom
   QPushButton* cancel = new QPushButton(tr("&Cancel"));
-  QPushButton* makeDef = new QPushButton(tr("Make &Default"));
   QPushButton* ok = new QPushButton(tr("&Ok"));
   
   QHBoxLayout* buttonLayout = new QHBoxLayout;
   
   buttonLayout->addWidget(cancel);
-  buttonLayout->addWidget(makeDef);
   buttonLayout->addStretch();
   buttonLayout->addWidget(ok);
 
@@ -138,7 +136,6 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
   
   connect( cancel, SIGNAL(clicked()), this, SLOT(reject()) );
   connect(     ok, SIGNAL(clicked()), this, SLOT(accept()) );
-  connect(makeDef, SIGNAL(clicked()), this, SLOT(slotMakeDefault()) );
 }
 
 FileOptionsDialog::~FileOptionsDialog()
@@ -171,28 +168,6 @@ void FileOptionsDialog::slotPluginChanged(QString _name){
       emit setPluginForExtension(box->accessibleName(), t ); //accessibleName contains the extension
       break;
     }
-}
-
-
-void FileOptionsDialog::slotMakeDefault(){
-  
-  QString filename = OpenFlipper::Options::configDirStr() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini";
-  
-  INIFile ini;
-  
-  if ( ! ini.connect(filename,false) ) {
-    std::cerr << (tr("Failed to connect to ini file %1").arg(filename)).toStdString() << std::endl;
-    return;
-  }
-
-  for (int i=0; i < boxes_.count(); i++)
-    ini.add_entry("LoadSave","Extension_" + (boxes_[i])->accessibleName(), boxes_[i]->currentText() );
-  
-  ini.add_entry("LoadSave","MakeDefault", true );
-  
-  // close ini file
-  ini.disconnect();
-
 }
 
 

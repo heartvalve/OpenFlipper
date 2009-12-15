@@ -52,7 +52,6 @@ class FileOptionsDialog : public QDialog
 
   private slots:
     void slotPluginChanged(QString _name);
-    void slotMakeDefault();
 
   signals:
     void setPluginForExtension(QString _extension, int _pluginId );
