@@ -47,8 +47,12 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     void initializePlugin();
     
-    // Deprecated!
-    int addEmpty() { return -1; };
+    
+    /// Slot called when user wants to save the given Load options as default
+    void slotLoadDefault();
+    
+    /// Slot called when user wants to save the given Save options as default
+    void slotSaveDefault();
 
   public :
     
@@ -88,19 +92,22 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QWidget* loadOptions_;
     QWidget* saveOptions_;
     
-    QCheckBox* saveBinary_;
-    QCheckBox* saveVertexColor_;
-    QCheckBox* saveFaceColor_;
-    QCheckBox* saveAlpha_;
-    QCheckBox* saveNormals_;
-    QCheckBox* saveTexCoords_;
+    QCheckBox*   saveBinary_;
+    QCheckBox*   saveVertexColor_;
+    QCheckBox*   saveFaceColor_;
+    QCheckBox*   saveAlpha_;
+    QCheckBox*   saveNormals_;
+    QCheckBox*   saveTexCoords_;
+    QPushButton* saveDefaultButton_;
+    
 
-    QComboBox* triMeshHandling_;
-    QCheckBox* loadVertexColor_;
-    QCheckBox* loadFaceColor_;
-    QCheckBox* loadAlpha_;
-    QCheckBox* loadNormals_;
-    QCheckBox* loadTexCoords_;
+    QComboBox*   triMeshHandling_;
+    QCheckBox*   loadVertexColor_;
+    QCheckBox*   loadFaceColor_;
+    QCheckBox*   loadAlpha_;
+    QCheckBox*   loadNormals_;
+    QCheckBox*   loadTexCoords_;
+    QPushButton* loadDefaultButton_;
 };
 
 #endif //FILEOFFPLUGIN_HH

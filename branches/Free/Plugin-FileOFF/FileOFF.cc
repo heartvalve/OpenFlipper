@@ -2,6 +2,7 @@
 #include <QtGui>
 #include <QFileInfo>
 #include <QSettings>
+#include <QPushButton>
 
 #include "FileOFF.hh"
 
@@ -361,10 +362,8 @@ QWidget* FileOFFPlugin::saveOptionsWidget(QString _currentFilter) {
         QVBoxLayout* layout = new QVBoxLayout();
         layout->setAlignment(Qt::AlignTop);
         
-        if( ! _currentFilter.contains("Wavefront") ){ //dont add 'save binary' for obj
-            saveBinary_ = new QCheckBox("Save Binary");
-            layout->addWidget(saveBinary_);
-        }
+        saveBinary_ = new QCheckBox("Save Binary");
+        layout->addWidget(saveBinary_);
         
         saveVertexColor_ = new QCheckBox("Save Vertex Colors");
         layout->addWidget(saveVertexColor_);
@@ -381,21 +380,21 @@ QWidget* FileOFFPlugin::saveOptionsWidget(QString _currentFilter) {
         saveTexCoords_ = new QCheckBox("Save TexCoords");
         layout->addWidget(saveTexCoords_);
         
+        saveDefaultButton_ = new QPushButton("Make Default");
+        layout->addWidget(saveDefaultButton_);       
+        
         saveOptions_->setLayout(layout);
-    } else {
-        //adjust widget
-        if( _currentFilter.contains("Wavefront") ) //dont add 'save binary' for obj
-            saveBinary_->setVisible( false );
-        else
-            saveBinary_->setVisible( true );
-    }
+        
+        connect(saveDefaultButton_, SIGNAL(clicked()), this, SLOT(slotSaveDefault()));
+        
+    } 
     
-    saveBinary_->setChecked( Qt::Unchecked );
-    saveVertexColor_->setChecked( Qt::Unchecked );
-    saveFaceColor_->setChecked( Qt::Unchecked );
-    saveAlpha_->setChecked( Qt::Unchecked );
-    saveNormals_->setChecked( Qt::Unchecked );
-    saveTexCoords_->setChecked( Qt::Unchecked );
+    saveBinary_->setChecked( OpenFlipperSettings().value("FileOff/Save/Binary",true).toBool() );
+    saveVertexColor_->setChecked( OpenFlipperSettings().value("FileOff/Save/VertexColor",true).toBool() );
+    saveFaceColor_->setChecked( OpenFlipperSettings().value("FileOff/Save/FaceColor",true).toBool() );
+    saveAlpha_->setChecked( OpenFlipperSettings().value("FileOff/Save/Alpha",true).toBool() );
+    saveNormals_->setChecked( OpenFlipperSettings().value("FileOff/Save/Normals",true).toBool() );
+    saveTexCoords_->setChecked( OpenFlipperSettings().value("FileOff/Save/TexCoords",true).toBool() );
     
     return saveOptions_;
 }
@@ -413,6 +412,12 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         QLabel* label = new QLabel(tr("If PolyMesh is a Triangle Mesh:"));
         
         layout->addWidget(label);
+        
+        /// \todo : possible options ?:
+        // Triangle Mesh in File -> Load as Triangle Mesh
+        // Triangle Mesh in File -> Load as Poly Mesh
+        // Poly Mesh in File     -> Load as Triangle Mesh
+        // Poly Mesh in File     -> Load as Poly Mesh
         
         triMeshHandling_ = new QComboBox();
         triMeshHandling_->addItem( tr("Ask") );
@@ -435,17 +440,44 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         
         loadTexCoords_ = new QCheckBox("Load TexCoords");
         layout->addWidget(loadTexCoords_);
+ 
+        loadDefaultButton_ = new QPushButton("Make Default");
+        layout->addWidget(loadDefaultButton_);
         
         loadOptions_->setLayout(layout);
+        
+        connect(loadDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadDefault()));
     }
     
-    loadVertexColor_->setChecked( Qt::Checked );
-    loadFaceColor_->setChecked( Qt::Checked );
-    loadAlpha_->setChecked( Qt::Checked );
-    loadNormals_->setChecked( Qt::Checked );
-    loadTexCoords_->setChecked( Qt::Checked );
+    triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FileOff/Load/TriMeshHandling",2).toInt() );
+    
+    loadVertexColor_->setChecked( OpenFlipperSettings().value("FileOff/Load/VertexColor",true).toBool() );
+    loadFaceColor_->setChecked( OpenFlipperSettings().value("FileOff/Load/FaceColor",true).toBool()  );
+    loadAlpha_->setChecked( OpenFlipperSettings().value("FileOff/Load/Alpha",true).toBool()  );
+    loadNormals_->setChecked( OpenFlipperSettings().value("FileOff/Load/Normals",true).toBool()  );
+    loadTexCoords_->setChecked( OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool()  );
     
     return loadOptions_;
+}
+
+void FileOFFPlugin::slotLoadDefault() {
+  OpenFlipperSettings().setValue( "FileOff/Load/VertexColor", loadVertexColor_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Load/FaceColor",   loadFaceColor_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Load/Alpha",       loadAlpha_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Load/Normals",     loadNormals_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Load/TexCoords",   loadTexCoords_->isChecked()  );
+
+  OpenFlipperSettings().setValue("FileOff/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
+}
+
+
+void FileOFFPlugin::slotSaveDefault() {
+  OpenFlipperSettings().setValue( "FileOff/Save/Binary",      saveBinary_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Save/VertexColor", saveVertexColor_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Save/FaceColor",   saveFaceColor_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Save/Alpha",       saveAlpha_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Save/Normals",     saveNormals_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Save/TexCoords",   saveTexCoords_->isChecked()  );
 }
 
 Q_EXPORT_PLUGIN2( fileoffplugin , FileOFFPlugin );
