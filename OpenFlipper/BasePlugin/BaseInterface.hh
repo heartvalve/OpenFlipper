@@ -131,15 +131,7 @@ class BaseInterface {
       *
       */
     virtual void nodeVisibilityChanged( int /*_identifier*/ ) {};
-
-    /**  \brief Object properties have been changed
-      *
-      *   This signal is used to tell the other plugins that the object properties (e.g. name ) have changed
-      *
-    */
-    virtual void objectPropertiesChanged( int /*_identifier*/ ) {};
-    
-
+   
   private slots:
 
     /**  \brief An object has been updated by another plugin

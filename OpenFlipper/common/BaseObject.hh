@@ -325,6 +325,8 @@ class DLLEXPORTONLY BaseObject : public QObject {
     * @{ */
     //===========================================================================
 
+  public:
+    
     /// get the row of this item from the parent
     int row() const;
 
@@ -340,7 +342,9 @@ class DLLEXPORTONLY BaseObject : public QObject {
     /** @name Tree : Children
     * @{ */
     //===========================================================================
-
+    
+  public:
+    
     /// Check if the element exists in the subtree of this element
     BaseObject* childExists(int _objectId);
 
@@ -372,6 +376,8 @@ class DLLEXPORTONLY BaseObject : public QObject {
     * @{ */
     //===========================================================================
 
+  public:
+    
     /** Return the primary group of this object or -1 if ungrouped.
      * As this is a tree structure this returns the first group of this object.
      * Groups of groups are only suppurted via the other functions.
@@ -410,6 +416,13 @@ class DLLEXPORTONLY BaseObject : public QObject {
     * @{ */
     //===========================================================================
 
+  signals:
+    /** This signal is emitted when properties of the object have been changed like its name
+    * or the parent changed
+    */
+    void objectPropertiesChanged(int _objectId);
+
+  public:
     /// return the name of the object. The name defaults to NONAME if unset.
     QString name( );
 
