@@ -118,15 +118,8 @@ void DataControlPlugin::slotUngroup (  ) {
     for (int i=group->childCount()-1; i >= 0; i--){
       BaseObject* child = group->child(i);
 
-      // remove it from the old parent
-      group->removeChild( child );
-
       // then change the parent
       child->setParent(group->parent());
-      child->parent()->appendChild( child );
-
-      // and inform everyone that the parent changed
-      emit objectPropertiesChanged( child->id() );
     }
 
     //delete the group
@@ -234,20 +227,13 @@ void DataControlPlugin::slotGroup() {
     PluginFunctions::getObject(id, item );
 
     //and move it into the group
-    item->parent()->removeChild(item);
     item->setParent( dynamic_cast< BaseObject* >( groupItem )  );
-    groupItem->appendChild(item);
-
-    //inform everyone that the parent changed
-    emit objectPropertiesChanged( id );
   }
 
   //update target/source state
   groupItem->visible(visible);
   groupItem->target(target);
   groupItem->source(source);
-
-  emit objectPropertiesChanged( groupItem->id() );
 }
 
 
@@ -451,7 +437,6 @@ void DataControlPlugin::slotRename(){
                                               item->name(), &ok);
       if (ok && !newName.isEmpty()){
         item->setName(newName);
-        emit objectPropertiesChanged( item->id() );
       }
     }
   }
