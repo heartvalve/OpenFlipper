@@ -255,6 +255,10 @@ QString FileTriangleMeshPlugin::getLoadFilters() {
   filters.replace("*.stlb", "");
   filters.replace("*.stl", "");
   
+  // Remove support for PLY-files since they are now handled by a separate plugin
+  filters.replace(";;PLY polygon file format ( *.ply )", "");
+  filters.replace("*.ply", "");
+  
   return filters;
 };
 
@@ -271,6 +275,10 @@ QString FileTriangleMeshPlugin::getSaveFilters() {
   filters.replace(";;Stereolithography Format ( *.stla *.stlb )", "");
   filters.replace("*.stla", "");
   filters.replace("*.stlb", "");
+  
+  // Remove support for PLY-files since they are now handled by a separate plugin
+  filters.replace(";;PLY polygon file format ( *.ply )", "");
+  filters.replace("*.ply", "");
   
   return filters;
 };
