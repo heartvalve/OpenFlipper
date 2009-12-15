@@ -131,7 +131,7 @@ void Core::slotObjectSelectionChanged( int _id )
 
   
 //   std::cerr << "objectSelection changed triggers updatedObjects for now" << std::endl;
-//   emit updatedObject(_id);
+  updateView();
 }
 
 void Core::slotObjectPropertiesChanged( int _id )
