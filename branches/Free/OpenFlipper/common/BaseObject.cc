@@ -412,12 +412,12 @@ BaseObject* BaseObject::parent()
 /// Set the parent pointer
 void BaseObject::setParent(BaseObject* _parent) {
   // remove this child from the old parents list
-  if ( parentItem_ != 0 ) 
+  if ( parentItem_ != 0 ) {
     parentItem_->removeChild(this);
-  
-  // Add as child of new parent
-  if ( _parent != 0 ) 
-   _parent->appendChild(this);
+   
+    if ( !_parent->childItems_.contains(this) )
+      _parent->appendChild(this);
+  }
   
   // Store new parent
   parentItem_ = _parent;
