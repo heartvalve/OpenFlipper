@@ -249,6 +249,12 @@ QString FileTriangleMeshPlugin::getLoadFilters() {
   filters.replace(";;Object File Format ( *.off )", "");
   filters.replace("*.off", "");
   
+  // Remove support for STL-files since they are now handled by a separate plugin
+  filters.replace(";;Stereolithography Interface Format ( *.stl *.stla *.stlb )", "");
+  filters.replace("*.stla", "");
+  filters.replace("*.stlb", "");
+  filters.replace("*.stl", "");
+  
   return filters;
 };
 
@@ -260,6 +266,11 @@ QString FileTriangleMeshPlugin::getSaveFilters() {
   // Remove support for OFF-files since they are now handled by a separate plugin
   filters.replace(";;no description ( *.off )", "");
   filters.replace("*.off", "");
+  
+  // Remove support for STL-files since they are now handled by a separate plugin
+  filters.replace(";;Stereolithography Format ( *.stla *.stlb )", "");
+  filters.replace("*.stla", "");
+  filters.replace("*.stlb", "");
   
   return filters;
 };
