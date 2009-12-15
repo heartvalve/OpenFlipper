@@ -129,22 +129,11 @@ void Core::slotObjectSelectionChanged( int _id )
   // just inform the plugins as we dont do anything else
   emit objectSelectionChanged(_id);
 
-  
-//   std::cerr << "objectSelection changed triggers updatedObjects for now" << std::endl;
   updateView();
 }
 
 void Core::slotObjectPropertiesChanged( int _id )
 {
-//   std::cerr << "Object Properties changed " << _id << std::endl;
-//   
-//   BaseObject* baseObject = 0;
-//   PluginFunctions::getObject(_id,baseObject);
-//   
-//   if ( baseObject ) {
-//      baseObject->dumpTree();
-//   }
-//   
   emit objectPropertiesChanged(_id);
 }
 
