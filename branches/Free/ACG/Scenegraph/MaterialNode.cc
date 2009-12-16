@@ -56,6 +56,7 @@
 #include "MaterialNode.hh"
 #include "DrawModes.hh"
 
+#include <cstdio>
 
 //== NAMESPACES ===============================================================
 
