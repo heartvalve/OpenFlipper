@@ -333,6 +333,12 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         * @return object id of new group or -1 if failed
         */
         int groupObjects(IdList _objectIDs, QString _groupName = "");
+        
+        /** remove an object from its group and place it at the toplevel group
+        *
+        * @return successfull
+        */
+        bool unGroupObject(int _id);
 
 /** @} */
 

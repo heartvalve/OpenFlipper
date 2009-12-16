@@ -82,6 +82,9 @@ void DataControlPlugin::setDescriptions(){
 
   emit setSlotDescription("groupObjects(idList)",tr("Group given Objects together."),
                           QStringList(tr("objectIds")), QStringList(tr("List of objects that should be grouped.")));
+                          
+  emit setSlotDescription("unGroupObject(int)",tr("Remove the given object from its group and append to root node."),
+                          QStringList(tr("ObjectId")), QStringList(tr("Object to be removed from group.")));                          
 
   emit setSlotDescription("objectDelete(int)",tr("Delete an object"),
                           QStringList(tr("objectId")), QStringList(tr("Delete the given object.")));
@@ -331,6 +334,21 @@ int DataControlPlugin::groupObjects(IdList _objectIDs, QString _groupName) {
   groupItem->source(source);
   
   return groupItem->id();
+}
+
+bool DataControlPlugin::unGroupObject(int _id) {
+  BaseObject* obj = 0;
+  
+  PluginFunctions::getObject(_id,obj);
+ 
+  if ( obj ) {
+    obj->setParent( PluginFunctions::objectRoot() );
+    return true;
+  } else {
+    emit log( LOGERR, tr( "Unable to get Object with id %1 for ungrouping").arg(_id) );
+    return false;
+  }
+ 
 }
 
 
