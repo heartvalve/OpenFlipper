@@ -53,7 +53,7 @@ IF(TAUCS_INCLUDE_DIR )
 	               )	
     ELSE (APPLE)
  	   FIND_LIBRARY( TAUCS_LIBRARY
-        	          NAMES taucs
+        	          NAMES taucs 
                 	  PATHS /ACG/acgdev/gcc-4.3-x86_64/taucs-2.2.new/lib
 	               )
     ENDIF( APPLE)
@@ -78,5 +78,6 @@ ELSE (NOT TAUCS_FOUND)
   IF(NOT TAUCS_FIND_QUIETLY)
     MESSAGE(STATUS "Looking for TAUCS - found")
   ENDIF(NOT TAUCS_FIND_QUIETLY)
+  SET(TAUCS_LIBRARY "${TAUCS_LIBRARY};metis")
 ENDIF(NOT TAUCS_FOUND)
 
