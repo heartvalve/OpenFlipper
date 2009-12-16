@@ -301,10 +301,6 @@ void Core::slotCopyObject( int _oldId , int& _newId ) {
 
   // Integrate into object tree
   copy->setParent( object->parent() );
-  if ( object->parent() )
-    object->parent()->appendChild(copy);
-  else
-    std::cerr << "Unable to add copy to object list" << std::endl;
 
   // return the new id
   _newId = copy->id();
