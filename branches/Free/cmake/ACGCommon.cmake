@@ -81,6 +81,15 @@ else ()
   set (ACG_PROJECT_BINDIR "bin")
 endif ()
 
+if( NOT APPLE )
+  # check 64 bit
+  if( CMAKE_SIZEOF_VOID_P MATCHES 4 )
+    set( HAVE_64_BIT 0 )
+  else( CMAKE_SIZEOF_VOID_P MATCHES 4 )
+    set( HAVE_64_BIT 1 )
+  endif( CMAKE_SIZEOF_VOID_P MATCHES 4 )
+endif (  NOT APPLE )
+
 # allow a project to modify the directories
 if (COMMAND acg_modify_project_dirs)
   acg_modify_project_dirs ()
@@ -107,6 +116,7 @@ macro (acg_set_target_props target)
       SKIP_BUILD_RPATH 0
     )
   elseif (NOT APPLE)
+
     set_target_properties (
       ${target} PROPERTIES
       INSTALL_RPATH "$ORIGIN/../lib/${CMAKE_PROJECT_NAME}"
@@ -115,6 +125,33 @@ macro (acg_set_target_props target)
       RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_BINDIR}"
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_LIBDIR}"
     )
+
+    # prepare for cross compiling
+    if ( HAVE_64_BIT )
+      if ( NOT CROSS_COMPILE_32)
+        # Already in cache, be silent
+        set( CROSS_COMPILE_32 false CACHE BOOL "Compile for 32-bit architecture")
+      endif( NOT  CROSS_COMPILE_32 )
+
+      if ( CROSS_COMPILE_32 )
+        add_definitions( -m32 )
+        set_target_properties( ${target} PROPERTIES LINK_FLAGS -m32  )
+      endif ( CROSS_COMPILE_32 )
+
+    else ( HAVE_64_BIT )
+
+      if ( NOT CROSS_COMPILE_64)
+        # Already in cache, be silent
+        set( CROSS_COMPILE_64 false CACHE BOOL "Compile for 64-bit architecture")
+      endif( NOT  CROSS_COMPILE_64 )
+
+      if ( CROSS_COMPILE_64 )
+        add_definitions( -m64 )
+        set_target_properties( ${target} PROPERTIES LINK_FLAGS -m64  )
+      endif ( CROSS_COMPILE_64 )
+
+    endif( HAVE_64_BIT )
+
   endif ()
 endmacro ()
 
@@ -489,6 +526,7 @@ function (acg_add_library _target _libtype)
       install (TARGETS ${_target} DESTINATION ${ACG_PROJECT_PLUGINDIR})
     endif ()
   endif ()
+
 endfunction ()
 
 #generates qt translations
