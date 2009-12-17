@@ -81,9 +81,14 @@ class DLLEXPORT PerObjectData {
   public :
     /// You have to provide your own constructor for your object
     PerObjectData();
+    
+    /** \brief Copy Constructor
+    * You have to reimplement this copy constructor for your object to get copied by the core. Otherwise, 
+    * per Object data will not be copied when the core creates a copy of your object.
+    */
+    PerObjectData(const PerObjectData& _b );
 
     virtual ~PerObjectData();
-
 };
 
 
