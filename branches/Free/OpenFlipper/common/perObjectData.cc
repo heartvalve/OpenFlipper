@@ -57,6 +57,11 @@ PerObjectData()
 
 
 PerObjectData::
+PerObjectData(const PerObjectData& _b ) {
+    std::cerr << "Please implement a copy constructor for your perObjectData!"
+}
+
+PerObjectData::
 ~PerObjectData()
 {
 }
