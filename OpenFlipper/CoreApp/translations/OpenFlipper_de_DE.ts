@@ -80,64 +80,64 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Core</name>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="239"/>
+        <location filename="../../Core/PluginLoader.cc" line="249"/>
         <source>Load Plugin</source>
         <translation>Lade Plugin </translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="263"/>
+        <location filename="../../Core/PluginLoader.cc" line="273"/>
         <source>Plugin Loading Prevention</source>
         <translation>Plugin deaktivierung</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="264"/>
+        <location filename="../../Core/PluginLoader.cc" line="274"/>
         <source>OpenFlipper is currently configured to prevent loading this plugin.
 Do you want to enable this plugin?</source>
         <translation>OpenFlipper ist konfiguriert dieses Plugin nicht zu laden.
 Wollen sie das Plugin dennoch aktivieren?</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="392"/>
+        <location filename="../../Core/PluginLoader.cc" line="402"/>
         <source>Plugin already loaded</source>
         <translation>Plugin bereits geladen</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="417"/>
+        <location filename="../../Core/PluginLoader.cc" line="427"/>
         <source>Plugin uses security interface. Trying to authenticate against plugin ...</source>
         <translation>Das Plugin nutzt die Sicherheitsschnittstelle. Authentifikation beim Plugin ...</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="423"/>
+        <location filename="../../Core/PluginLoader.cc" line="433"/>
         <source>... ok. Loading plugin </source>
         <translation>... ok. Lade Plugin </translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="425"/>
+        <location filename="../../Core/PluginLoader.cc" line="435"/>
         <source>... failed. Plugin access denied.</source>
         <translation>... Fehlgeschlagen. zugriff auf Plugin verweigert.</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="164"/>
+        <location filename="../../Core/PluginLoader.cc" line="166"/>
         <source>Additional Plugin from ini file: %1</source>
         <translation>Zusätzliches Plugin aus INI Datei: %1</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="172"/>
+        <location filename="../../Core/PluginLoader.cc" line="174"/>
         <source>Failed to connect to ProgramOptions.ini file: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="198"/>
+        <location filename="../../Core/PluginLoader.cc" line="208"/>
         <source>Skipping Plugins :	 %1</source>
         <translation>Überspringe Plugin:\t %1</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="207"/>
+        <location filename="../../Core/PluginLoader.cc" line="217"/>
         <source>Loading Plugin %1/%2</source>
         <translation>Lade Plugin %1/%2</translation>
     </message>
     <message numerus="yes">
-        <location filename="../../Core/PluginLoader.cc" line="219"/>
+        <location filename="../../Core/PluginLoader.cc" line="229"/>
         <source>Loaded %n Plugin(s)</source>
         <translation>
             <numerusform>%n Plugin geladen</numerusform>
@@ -145,27 +145,27 @@ Wollen sie das Plugin dennoch aktivieren?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="323"/>
+        <location filename="../../Core/PluginLoader.cc" line="333"/>
         <source>Unloaded Plugin :		 %1</source>
         <translation>Entladenes Plugin: \t\t %1</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="328"/>
+        <location filename="../../Core/PluginLoader.cc" line="338"/>
         <source>Unable to unload plugin &apos;%1&apos; (plugin wasn&apos;t found)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="371"/>
+        <location filename="../../Core/PluginLoader.cc" line="381"/>
         <source>Found Plugin :		 %1 at %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="387"/>
+        <location filename="../../Core/PluginLoader.cc" line="397"/>
         <source>			 Already loaded from %1</source>
         <translation>			 Bereits aus %1 geladen</translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="393"/>
+        <location filename="../../Core/PluginLoader.cc" line="403"/>
         <source>A Plugin with the same name was already loaded from %1.
 You can only load the new plugin if you unload the existing one first.
 
@@ -173,183 +173,221 @@ Do you want to unload the existing plugin first?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="400"/>
+        <location filename="../../Core/PluginLoader.cc" line="410"/>
         <source>			 Already loaded from %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="409"/>
+        <location filename="../../Core/PluginLoader.cc" line="419"/>
         <source>OpenFlipper.ini prevented Plugin %1 from being loaded! </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="432"/>
+        <location filename="../../Core/PluginLoader.cc" line="442"/>
         <source>Plugin Desciption :	 %1 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="449"/>
+        <location filename="../../Core/PluginLoader.cc" line="459"/>
         <source>Running in nogui mode which is unsupported by this plugin, skipping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="459"/>
+        <location filename="../../Core/PluginLoader.cc" line="469"/>
         <source>Plugin Uses old style updated_objects! Convert to updatedObject!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="465"/>
+        <location filename="../../Core/PluginLoader.cc" line="475"/>
         <source>Plugin Uses old style update_view! Convert to updateView!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="492"/>
+        <location filename="../../Core/PluginLoader.cc" line="493"/>
+        <source>Signal objectPropertiesChanged(int) is deprecated. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="494"/>
+        <source>The signal will be automatically emitted by the object that has been changed and the core will deliver it to the plugins!. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="495"/>
+        <source>Please remove this signal from your plugins!. </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="506"/>
         <source>Signal visibilityChanged() now requires objectid or -1 as argument </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="501"/>
+        <location filename="../../Core/PluginLoader.cc" line="509"/>
+        <source>Signal visibilityChanged(int) is deprecated! </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="510"/>
+        <source>If an object changes its visibility, it will call the required functions automatically.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="511"/>
+        <source>If you change a scenegraph node, call nodeVisibilityChanged(int). See docu of this function for details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="522"/>
         <source>Signal activeObjectChanged() is now objectSelectionChanged( int _objectId ) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="504"/>
+        <location filename="../../Core/PluginLoader.cc" line="525"/>
         <source>Slot slotActiveObjectChanged() is now slotObjectSelectionChanged( int _objectId ) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="1116"/>
+        <location filename="../../Core/PluginLoader.cc" line="532"/>
+        <source>Signal objectSelectionChanged(in) is deprecated!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="533"/>
+        <source>If the selection for an object is changed, the core will emit the required signals itself!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginLoader.cc" line="1195"/>
         <source>Unable to load Plugin :	 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/PluginLoader.cc" line="1117"/>
+        <location filename="../../Core/PluginLoader.cc" line="1196"/>
         <source>Error was : </source>
         <translation>Fehler war: </translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="118"/>
+        <location filename="../../Core/openFunctions.cc" line="132"/>
         <source>No scripting support available, please check if we load a scripting plugin .. Skipping script execution on startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../Core/saveFunctions.cc" line="79"/>
         <location filename="../../Core/saveFunctions.cc" line="95"/>
+        <location filename="../../Core/saveFunctions.cc" line="123"/>
         <source> ... failed!</source>
         <translation> ... Fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="175"/>
+        <location filename="../../Core/openFunctions.cc" line="200"/>
         <source>Starting script execution of %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="194"/>
+        <location filename="../../Core/openFunctions.cc" line="222"/>
+        <location filename="../../Core/openFunctions.cc" line="320"/>
         <source>Loading %1 ... </source>
         <translation>Lade %1 ... </translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="204"/>
+        <location filename="../../Core/openFunctions.cc" line="232"/>
+        <location filename="../../Core/openFunctions.cc" line="330"/>
         <source>Loading %1 ... done</source>
         <translation>Lade %1 ...  ok</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="206"/>
+        <location filename="../../Core/openFunctions.cc" line="234"/>
+        <location filename="../../Core/openFunctions.cc" line="332"/>
         <source>Loading %1 ... failed!</source>
         <translation>Lade %1 ...  fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="238"/>
+        <location filename="../../Core/openFunctions.cc" line="280"/>
         <source>Requested copy for illegal Object id: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="247"/>
+        <location filename="../../Core/openFunctions.cc" line="289"/>
         <source>Requested copy for unknown Object id: %1 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="256"/>
+        <location filename="../../Core/openFunctions.cc" line="298"/>
         <source>Unable to create a copy of the object.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="311"/>
-        <source>TriMesh loaded as PolyMesh</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Core/openFunctions.cc" line="312"/>
-        <source>You opened the mesh as a poly mesh but actually its a triangle mesh. 
-Should it be opened as a triangle mesh?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Core/openFunctions.cc" line="337"/>
-        <location filename="../../Core/openFunctions.cc" line="341"/>
+        <location filename="../../Core/openFunctions.cc" line="378"/>
+        <location filename="../../Core/openFunctions.cc" line="382"/>
         <source>slotObjectOpened( </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="441"/>
-        <location filename="../../Core/openFunctions.cc" line="445"/>
+        <location filename="../../Core/openFunctions.cc" line="487"/>
+        <location filename="../../Core/openFunctions.cc" line="491"/>
         <source>slotEmptyObjectAdded( </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="488"/>
-        <source>Could not show &apos;add Empty&apos; dialog. Missing file-plugins.</source>
+        <location filename="../../Core/openFunctions.cc" line="348"/>
+        <source>Object id returned but no object with this id has been found! Error in one of the file plugins!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="513"/>
+        <location filename="../../Core/openFunctions.cc" line="590"/>
+        <source>Could not show &apos;add Empty&apos; dialog. Missing file-plugins ?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/openFunctions.cc" line="616"/>
         <source>Could not show &apos;load objects&apos; dialog. Missing file-plugins.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="527"/>
+        <location filename="../../Core/openFunctions.cc" line="630"/>
         <source>Load Settings</source>
         <translation>Lade Einstellungen</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="529"/>
+        <location filename="../../Core/openFunctions.cc" line="632"/>
         <location filename="../../Core/saveSettings.cc" line="68"/>
         <source>INI files (*.ini);;OBJ files (*.obj )</source>
         <translation>INI Dateien (*.ini);;OBJ Dateien (*.obj )</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="539"/>
+        <location filename="../../Core/openFunctions.cc" line="642"/>
         <location filename="../../Core/saveSettings.cc" line="78"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="543"/>
+        <location filename="../../Core/openFunctions.cc" line="646"/>
         <source>Load program settings</source>
         <translation>Lade Programm Einstellungen</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="544"/>
+        <location filename="../../Core/openFunctions.cc" line="647"/>
         <source>Load all current program settings from the file ( This will include view settings, colors,...) </source>
         <translation>Lade alle derzeitigen Programmeinstellungen aus der Datei (Dies beinhaltet Einstellungen für Ansicht, Farbe,...) </translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="548"/>
+        <location filename="../../Core/openFunctions.cc" line="651"/>
         <source>Load per Plugin Settings</source>
         <translation>Lade Plugin Einstellungen</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="549"/>
+        <location filename="../../Core/openFunctions.cc" line="652"/>
         <source>Plugins should load their current global settings from the file</source>
         <translation>Plugins sollen ihre derzeitigen globalen Einstellungen aus der Datei laden</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="553"/>
+        <location filename="../../Core/openFunctions.cc" line="656"/>
         <source>Load all objects defined in the file</source>
         <translation>Lade alle in der Datei definierten Objekte</translation>
     </message>
     <message>
-        <location filename="../../Core/openFunctions.cc" line="554"/>
+        <location filename="../../Core/openFunctions.cc" line="657"/>
         <source>Load all objects which are defined in the file</source>
         <translation>Lade alle in der Datei definierten Objekte</translation>
     </message>
@@ -430,395 +468,424 @@ Should it be opened as a triangle mesh?</source>
         <translation>Speichere Einstellungen unter </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="218"/>
+        <location filename="../../Core/Core.cc" line="240"/>
         <source>Initializing mainwindow</source>
         <translation>Initialisiere Hauptfenster</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="492"/>
+        <location filename="../../Core/Core.cc" line="513"/>
         <source>Loading Configuration File </source>
         <translation>Lade Konfigurationen </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="511"/>
+        <location filename="../../Core/Core.cc" line="532"/>
         <source>UTF8-Locale used!</source>
         <translation>UTF8-Locale wird benutzt!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="597"/>
+        <location filename="../../Core/Core.cc" line="621"/>
         <source>slotMouseEventIdentify from examiner </source>
         <translation>slotMouseEventIdentify aus examiner </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="631"/>
+        <location filename="../../Core/Core.cc" line="655"/>
         <source>slotMouseEvent from examiner </source>
         <translation>slotMouseEvent aus examiner </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="642"/>
+        <location filename="../../Core/Core.cc" line="666"/>
         <source>unknown event type</source>
         <translation>Unbekannter Ereignistyp</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="712"/>
+        <location filename="../../Core/Core.cc" line="736"/>
         <source>updateView() called by </source>
         <translation>updateView() aufgerufen von </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="729"/>
+        <location filename="../../Core/Core.cc" line="753"/>
         <source>Too early for redraw! Delaying request from </source>
         <translation>Zu früh für neuzeichnen! Verzögere Anfrage von </translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="852"/>
+        <location filename="../../Core/Core.cc" line="879"/>
         <source>Requested illegal multiview mode!</source>
         <translation>Unbekannter multiView Mode angefordert!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="887"/>
-        <location filename="../../Core/optionHandling.cc" line="173"/>
+        <location filename="../../Core/Core.cc" line="914"/>
+        <location filename="../../Core/optionHandling.cc" line="176"/>
         <source>Failed to connect to users ini file</source>
         <translation>Konnte nicht zur ini Datei des Benutzers verbinden</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="890"/>
-        <location filename="../../Core/optionHandling.cc" line="176"/>
+        <location filename="../../Core/Core.cc" line="917"/>
+        <location filename="../../Core/optionHandling.cc" line="179"/>
         <source>Can not create user ini file</source>
         <translation>Konnte die ini Datei des Benutzers nicht anlegen</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="957"/>
+        <location filename="../../Core/Core.cc" line="985"/>
         <source>Unable to open logfile!</source>
         <translation>Kann log Datei nicht öffnen!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1003"/>
+        <location filename="../../Core/Core.cc" line="1031"/>
         <source>Unable to set slot-description. Plugin not found!</source>
         <translation>Konnte die Slot-Beschreibung nicht setzen. Plugin nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1050"/>
+        <location filename="../../Core/Core.cc" line="1078"/>
         <source>Unable to get slot-description. Plugin not found!</source>
         <translation>Konnte die Slot-Beschreibung nicht festellen. Plugin nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1072"/>
+        <location filename="../../Core/Core.cc" line="1100"/>
         <source>Unable to snapshotBaseFileName for viewer </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1086"/>
+        <location filename="../../Core/Core.cc" line="1114"/>
         <source>Unable to create snapshot for viewer </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1139"/>
-        <location filename="../../Core/ParseIni.cc" line="777"/>
-        <location filename="../../Core/optionHandling.cc" line="355"/>
-        <location filename="../../Core/optionHandling.cc" line="398"/>
+        <location filename="../../Core/Core.cc" line="1167"/>
+        <location filename="../../Core/ParseIni.cc" line="798"/>
+        <location filename="../../Core/optionHandling.cc" line="233"/>
+        <location filename="../../Core/optionHandling.cc" line="276"/>
         <source>Failed to connect to _ini file</source>
         <translation>Kann nicht mit INI Datei verbinden</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1189"/>
+        <location filename="../../Core/Core.cc" line="1217"/>
         <source>Redraw the contents of the viewer.</source>
         <translation>Inhalt des Betrachters neu zeichnen.</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1190"/>
+        <location filename="../../Core/Core.cc" line="1218"/>
         <source>Clear all data objects.</source>
         <translation>Alle Objekte löschen.</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1191"/>
+        <location filename="../../Core/Core.cc" line="1219"/>
         <source>Quit OpenFlipper</source>
         <translation>OpenFlipper beenden</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1192"/>
-        <location filename="../../Core/Core.cc" line="1194"/>
+        <location filename="../../Core/Core.cc" line="1220"/>
+        <location filename="../../Core/Core.cc" line="1222"/>
         <source>Enable or disable fullscreen mode</source>
         <translation>Vollbild Modus an oder abschalten</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1193"/>
-        <location filename="../../Core/Core.cc" line="1201"/>
+        <location filename="../../Core/Core.cc" line="1221"/>
+        <location filename="../../Core/Core.cc" line="1229"/>
         <source>enabled</source>
         <translation>eingeschaltet</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1195"/>
+        <location filename="../../Core/Core.cc" line="1223"/>
         <source>Change the logger window state</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1196"/>
+        <location filename="../../Core/Core.cc" line="1224"/>
         <source>Show or hide toolbox</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1196"/>
+        <location filename="../../Core/Core.cc" line="1224"/>
         <source>Show or hide the toolbox</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1197"/>
+        <location filename="../../Core/Core.cc" line="1225"/>
         <source>Switch MultiView Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1198"/>
+        <location filename="../../Core/Core.cc" line="1226"/>
         <source>Mode</source>
         <translation>Modus</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1198"/>
+        <location filename="../../Core/Core.cc" line="1226"/>
         <source>0: One Viewer
  1: Grid 
  2: Horizontal split</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1200"/>
+        <location filename="../../Core/Core.cc" line="1228"/>
         <source>Restrict FrameRate to MaxFrameRate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1201"/>
+        <location filename="../../Core/Core.cc" line="1229"/>
         <source>restriction switch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1202"/>
+        <location filename="../../Core/Core.cc" line="1230"/>
         <source>set the maximal framerate (automatically enables framerate restriction)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1203"/>
+        <location filename="../../Core/Core.cc" line="1231"/>
         <source>frameRate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1203"/>
+        <location filename="../../Core/Core.cc" line="1231"/>
         <source>Maximum frameRate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1204"/>
+        <location filename="../../Core/Core.cc" line="1232"/>
         <source>Set a filename for storing snapshots.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1206"/>
+        <location filename="../../Core/Core.cc" line="1234"/>
         <source>Make a snapshot of the viewer. If no filename was set using snapshotBaseFileName() the snapshot is stored in snap.png in the current directory. For every snapshot a counter is added to the filename.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1210"/>
+        <location filename="../../Core/Core.cc" line="1238"/>
         <source>Resize the viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1211"/>
+        <location filename="../../Core/Core.cc" line="1239"/>
         <source>width,height</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1212"/>
+        <location filename="../../Core/Core.cc" line="1240"/>
         <source>new width for the viewer,new height for the viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1213"/>
+        <location filename="../../Core/Core.cc" line="1241"/>
         <source>write the current versions of all plugins to INI file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1214"/>
+        <location filename="../../Core/Core.cc" line="1242"/>
         <source>filename</source>
         <translation>Dateiname</translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1215"/>
+        <location filename="../../Core/Core.cc" line="1243"/>
         <source>fullpath to a file where the versions should be written to.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1217"/>
+        <location filename="../../Core/Core.cc" line="1245"/>
         <source>Save object to file. If the file exists it will be overwritten.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1218"/>
-        <location filename="../../Core/Core.cc" line="1222"/>
+        <location filename="../../Core/Core.cc" line="1246"/>
+        <location filename="../../Core/Core.cc" line="1250"/>
         <source>object-id,filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1219"/>
+        <location filename="../../Core/Core.cc" line="1247"/>
         <source>id of the object, complete path and filename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1220"/>
+        <location filename="../../Core/Core.cc" line="1248"/>
         <source>Save object to file. The location can be chosen in a dialog. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1223"/>
+        <location filename="../../Core/Core.cc" line="1251"/>
         <source>id of the object, initial filename for the dialog</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1224"/>
+        <location filename="../../Core/Core.cc" line="1252"/>
         <source>Saves all target objects. If no filename is available a dialog is shown. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1226"/>
+        <location filename="../../Core/Core.cc" line="1254"/>
         <source>Saves all target objects. The locations can be chosen in dialogs. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1228"/>
+        <location filename="../../Core/Core.cc" line="1256"/>
         <source>Show the dialog to save the current setting. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1230"/>
+        <location filename="../../Core/Core.cc" line="1258"/>
         <source>Show the dialog to load an object. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1231"/>
+        <location filename="../../Core/Core.cc" line="1259"/>
         <source>Return identifier of object with specified name. Returns -1 if object was not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1232"/>
+        <location filename="../../Core/Core.cc" line="1260"/>
         <source>Show the dialog to load settings. (only works if GUI is available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1233"/>
+        <location filename="../../Core/Core.cc" line="1261"/>
         <source>load settings from file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1235"/>
+        <location filename="../../Core/Core.cc" line="1263"/>
         <source>Create a widget from an ui file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1236"/>
+        <location filename="../../Core/Core.cc" line="1264"/>
         <source>Object name,ui file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1237"/>
+        <location filename="../../Core/Core.cc" line="1265"/>
         <source>Name of the new widget in script,ui file to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1239"/>
+        <location filename="../../Core/Core.cc" line="1267"/>
         <source>Add a widget as a toolbox</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1240"/>
+        <location filename="../../Core/Core.cc" line="1268"/>
         <source>Toolbox Entry name,Widget</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1241"/>
+        <location filename="../../Core/Core.cc" line="1269"/>
         <source>Name of the new widget in the toolbox,Pointer to the new widget</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1243"/>
-        <source>Add a new viewmode</source>
+        <location filename="../../Core/Core.cc" line="1271"/>
+        <source>Set toolboxes for a viewmode (This automatically adds the view mode if it does not exist)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1244"/>
+        <location filename="../../Core/Core.cc" line="1273"/>
+        <source>Name of the Viewmode, ; seperated list of toolboxes visible in this viewmode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/Core.cc" line="1275"/>
+        <source>Set toolbars for a viewmode (This automatically adds the view mode if it does not exist)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/Core.cc" line="1276"/>
+        <source>Name,Toolbar List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/Core.cc" line="1277"/>
+        <source>Name of the Viewmode, ; seperated list of toolbars visible in this viewmode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/Core.cc" line="1272"/>
         <source>Name,Toolbox List</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1245"/>
-        <source>Name of the new Viewmode, ; seperated list of toolboxes visible in this viewmode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Core/Core.cc" line="1247"/>
+        <location filename="../../Core/Core.cc" line="1279"/>
         <source>Returns object list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1248"/>
+        <location filename="../../Core/Core.cc" line="1280"/>
         <source>Selection type,Object types</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/Core.cc" line="1249"/>
+        <location filename="../../Core/Core.cc" line="1281"/>
         <source>Type of object selection (all,source,target),Object type (All,PolyMesh,TriangleMesh,...)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/ParseIni.cc" line="660"/>
+        <location filename="../../Core/ParseIni.cc" line="653"/>
         <source>Failed to connect to ini file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/ParseIni.cc" line="665"/>
-        <location filename="../../Core/ParseIni.cc" line="761"/>
+        <location filename="../../Core/ParseIni.cc" line="658"/>
+        <location filename="../../Core/ParseIni.cc" line="782"/>
         <source>Loading ini File </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/ParseIni.cc" line="709"/>
+        <location filename="../../Core/ParseIni.cc" line="689"/>
+        <source>Warning from ini file parser: OpenFiles list contains empty string.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/ParseIni.cc" line="695"/>
+        <source>Error parsing ini file. OpenFiles section %1 not found in File!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/ParseIni.cc" line="702"/>
+        <source>Error parsing ini file. Section %1 contains no path description!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/ParseIni.cc" line="723"/>
         <source>This ini file uses old int style ObjectType fields!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/ParseIni.cc" line="710"/>
+        <location filename="../../Core/ParseIni.cc" line="724"/>
         <source>Please convert it to new format! ( ... just save it )</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/ParseIni.cc" line="718"/>
-        <location filename="../../Core/ParseObj.cc" line="253"/>
+        <location filename="../../Core/ParseIni.cc" line="732"/>
+        <source>Unable to get DataType for object %1 assuming Triangle Mesh!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/ParseObj.cc" line="251"/>
         <source>Unable to get DataType for object </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/ParseIni.cc" line="718"/>
-        <source> assuming Triangle Mesh</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Core/ParseIni.cc" line="725"/>
-        <location filename="../../Core/ParseObj.cc" line="273"/>
+        <location filename="../../Core/ParseIni.cc" line="741"/>
+        <location filename="../../Core/ParseObj.cc" line="271"/>
         <source>Unable to open Object </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/ParseIni.cc" line="761"/>
-        <location filename="../../Core/ParseIni.cc" line="843"/>
+        <location filename="../../Core/ParseIni.cc" line="782"/>
+        <location filename="../../Core/ParseIni.cc" line="864"/>
         <location filename="../../Core/saveSettings.cc" line="248"/>
         <source> ... Done</source>
         <translation> ... Fertig</translation>
     </message>
     <message>
-        <location filename="../../Core/ParseIni.cc" line="782"/>
-        <location filename="../../Core/ParseIni.cc" line="843"/>
+        <location filename="../../Core/ParseIni.cc" line="803"/>
+        <location filename="../../Core/ParseIni.cc" line="864"/>
         <source>Saving ini File </source>
         <translation>Speichere ini Datei </translation>
     </message>
     <message>
         <location filename="../../Core/ParseObj.cc" line="79"/>
-        <location filename="../../Core/ParseObj.cc" line="172"/>
-        <location filename="../../Core/ParseObj.cc" line="289"/>
+        <location filename="../../Core/ParseObj.cc" line="170"/>
+        <location filename="../../Core/ParseObj.cc" line="285"/>
         <source>Cannot open to obj file</source>
         <translation>Kann obj Datei nicht öffnen: </translation>
     </message>
@@ -830,43 +897,49 @@ Should it be opened as a triangle mesh?</source>
     </message>
     <message>
         <location filename="../../Core/ParseObj.cc" line="133"/>
-        <location filename="../../Core/ParseObj.cc" line="331"/>
+        <location filename="../../Core/ParseObj.cc" line="327"/>
         <location filename="../../Core/saveFunctions.cc" line="77"/>
+        <location filename="../../Core/saveFunctions.cc" line="121"/>
         <source> ... done</source>
         <translation> ... Fertig</translation>
     </message>
     <message>
-        <location filename="../../Core/ParseObj.cc" line="253"/>
+        <location filename="../../Core/ParseObj.cc" line="251"/>
         <source> - assuming Triangle Mesh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Core/ParseObj.cc" line="296"/>
-        <location filename="../../Core/ParseObj.cc" line="331"/>
+        <location filename="../../Core/ParseObj.cc" line="292"/>
+        <location filename="../../Core/ParseObj.cc" line="327"/>
         <source>Saving obj File </source>
         <translation>Speichere obj Datei </translation>
     </message>
     <message>
         <location filename="../../Core/PluginCommunication.cc" line="78"/>
-        <location filename="../../Core/PluginCommunication.cc" line="192"/>
-        <location filename="../../Core/PluginCommunication.cc" line="221"/>
-        <location filename="../../Core/PluginCommunication.cc" line="238"/>
-        <location filename="../../Core/PluginCommunication.cc" line="254"/>
-        <location filename="../../Core/openFunctions.cc" line="337"/>
-        <location filename="../../Core/openFunctions.cc" line="441"/>
+        <location filename="../../Core/PluginCommunication.cc" line="167"/>
+        <location filename="../../Core/PluginCommunication.cc" line="196"/>
+        <location filename="../../Core/PluginCommunication.cc" line="213"/>
+        <location filename="../../Core/PluginCommunication.cc" line="229"/>
+        <location filename="../../Core/openFunctions.cc" line="378"/>
+        <location filename="../../Core/openFunctions.cc" line="487"/>
         <source> ) called by </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../Core/PluginCommunication.cc" line="82"/>
-        <location filename="../../Core/openFunctions.cc" line="341"/>
-        <location filename="../../Core/openFunctions.cc" line="445"/>
+        <location filename="../../Core/openFunctions.cc" line="382"/>
+        <location filename="../../Core/openFunctions.cc" line="491"/>
         <source> ) called by Core</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../Core/PluginCommunication.cc" line="93"/>
         <source>updated_objects called for non existing object with id : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/PluginCommunication.cc" line="287"/>
+        <source>newObject received from objectManager with invalid id! This should not happen. The new Object will not work correctly!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -897,26 +970,27 @@ Should it be opened as a triangle mesh?</source>
         <translation>RPC schlug fehl : </translation>
     </message>
     <message>
-        <location filename="../../Core/optionHandling.cc" line="193"/>
         <source>Creating config Dir ~/.OpenFlipper</source>
-        <translation>Erstelle Konfigurationsverzeichnis ~/.OpenFlipper</translation>
+        <translation type="obsolete">Erstelle Konfigurationsverzeichnis ~/.OpenFlipper</translation>
     </message>
     <message>
-        <location filename="../../Core/optionHandling.cc" line="196"/>
         <source>Unable to create config dir ~/.OpenFlipper</source>
-        <translation>Kann Konfigurationsverzeichnis ~/.OpenFlipper nicht erstellen</translation>
+        <translation type="obsolete">Kann Konfigurationsverzeichnis ~/.OpenFlipper nicht erstellen</translation>
     </message>
     <message>
         <location filename="../../Core/saveFunctions.cc" line="67"/>
         <location filename="../../Core/saveFunctions.cc" line="77"/>
         <location filename="../../Core/saveFunctions.cc" line="79"/>
         <location filename="../../Core/saveFunctions.cc" line="95"/>
+        <location filename="../../Core/saveFunctions.cc" line="111"/>
+        <location filename="../../Core/saveFunctions.cc" line="121"/>
+        <location filename="../../Core/saveFunctions.cc" line="123"/>
         <source>Saving </source>
         <translation>Speichere </translation>
     </message>
     <message>
-        <location filename="../../Core/saveFunctions.cc" line="123"/>
-        <location filename="../../Core/saveFunctions.cc" line="171"/>
+        <location filename="../../Core/saveFunctions.cc" line="159"/>
+        <location filename="../../Core/saveFunctions.cc" line="207"/>
         <source>Could not show &apos;save objects&apos; dialog. Missing file-plugins.</source>
         <translation>Konnte &apos;Speichere Objekte&apos; Dialog nicht anzeigen. File-Plugins fehlen.</translation>
     </message>
@@ -935,12 +1009,22 @@ Should it be opened as a triangle mesh?</source>
         <source>Unable to generate script interface for </source>
         <translation>Konnte Skript-Schnittstelle nicht generieren. Objekt : </translation>
     </message>
+    <message>
+        <location filename="../../Core/scripting.cc" line="141"/>
+        <source>Icon not found (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Core/process.cc" line="97"/>
+        <source>Unable to find Job %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CoreWidget</name>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="114"/>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="361"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="360"/>
         <source>Viewer Settings</source>
         <translation>Betrachter Einstellungen</translation>
     </message>
@@ -967,7 +1051,7 @@ Should it be opened as a triangle mesh?</source>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="140"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="352"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="353"/>
         <source>Switch to perspective projection mode.</source>
         <translation>Zu perspektivischer Projektion wechseln.</translation>
     </message>
@@ -1011,288 +1095,295 @@ Should it be opened as a triangle mesh?</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="195"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="194"/>
         <source>Viewing Direction</source>
         <translation>Betrachtungs Richtung</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="203"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="202"/>
         <source>Free View</source>
         <translation>Freies Betrachten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="212"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="211"/>
         <source>Top View</source>
         <translation>Draufsicht</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="220"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="219"/>
         <source>Bottom View</source>
         <translation>Boden</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="228"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="227"/>
         <source>Left View</source>
         <translation>Linke Seite</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="236"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="235"/>
         <source>Right View</source>
         <translation>Rechte Seite</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="244"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="243"/>
         <source>Front View</source>
         <translation>Frontal Ansicht</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="252"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="251"/>
         <source>Back View</source>
         <translation>Rückansicht</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="270"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="269"/>
         <source>Restore home view</source>
         <translation>Standard Ansicht herstellen</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="273"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="303"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="272"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="304"/>
         <source>Restore &lt;b&gt;home&lt;/b&gt; view.</source>
         <translation>&lt;b&gt;Standard&lt;/b&gt; Ansicht herstellen.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="274"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="304"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="273"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="305"/>
         <source>Restore home view&lt;br&gt;&lt;br&gt;Resets the view to the home view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="279"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="310"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="278"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="311"/>
         <source>Set Home View</source>
         <translation>Standard Ansicht setzen</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="282"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="313"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="281"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="314"/>
         <source>Set &lt;b&gt;home&lt;/b&gt; view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="283"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="314"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="282"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="315"/>
         <source>Store home view&lt;br&gt;&lt;br&gt;Stores the current view as the home view</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="288"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="319"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="287"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="320"/>
         <source>View all</source>
         <translation>Alles zeigen</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="291"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="322"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="290"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="323"/>
         <source>View all.</source>
         <translation>Alles zeigen.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="292"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="323"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="291"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="324"/>
         <source>View all&lt;br&gt;&lt;br&gt;Move the objects in the scene so that the whole scene is visible.</source>
         <translation>Alles zeigen&lt;br&gt;&lt;br&gt;Bewege die Kamera so dass alle Objekte der Szene sichtbar sind.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="303"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="302"/>
         <source>Copy View</source>
         <translation>Betrachtungsrichtung kopieren</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="304"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="303"/>
         <source>Copy current view to clipboard</source>
         <translation>Die aktuelle Betrachtungsrichtung in die Zwischenablage kopieren</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="310"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="309"/>
         <source>Paste View</source>
         <translation>Betrachtungsrichtung anwenden</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="311"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="310"/>
         <source>Paste current view from clipboard</source>
         <translation>Betrachtungsrichtung aus der Zwischenablage anwenden</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="317"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="316"/>
         <source>Snapshot</source>
         <translation>Bildschirmfoto</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="318"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="317"/>
         <source>Make a snapshot</source>
         <translation>Bildschirmfoto erstellen</translation>
     </message>
     <message>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="343"/>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="344"/>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="345"/>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="346"/>
         <source>Set the background color for the current viewer</source>
         <translation>Hintergrundfarbe in aktivem Betrachter ändern</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="399"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="398"/>
         <source>&amp;Picking</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="424"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="423"/>
         <source>Cant get object for objectContextMenu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="573"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="572"/>
         <source>Save snapshot name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="579"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="578"/>
         <source>next snapshot: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="623"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="622"/>
         <source>Set Draw Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="201"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="203"/>
         <source>Log Viewer</source>
         <translation>Log-Betrachter</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="320"/>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="321"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="322"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="323"/>
+        <location filename="../../widgets/coreWidget/viewMode.cc" line="321"/>
         <source>Main Toolbar</source>
         <translation>Haupt-Menüleiste</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="322"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="324"/>
         <source>MainToolbar</source>
         <translation>Haupt-Menüleiste</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="331"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="333"/>
+        <location filename="../../widgets/coreWidget/viewMode.cc" line="327"/>
         <source>Viewer Toolbar</source>
         <translation>Betrachter Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="335"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="337"/>
         <source>ViewerToolbar</source>
         <translation>Betrachter-Menüleiste</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="341"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="345"/>
         <source>Switch to &lt;b&gt;move&lt;/b&gt; mode.</source>
         <translation>In den &lt;b&gt;Bewegungs&lt;/b&gt;-Modus wechseln.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="342"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="346"/>
         <source>Switch to &lt;b&gt;move&lt;/b&gt; mode.&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Rotate&lt;/b&gt; using &lt;b&gt;left&lt;/b&gt; mouse button.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Translate&lt;/b&gt; using &lt;b&gt;middle&lt;/b&gt; mouse button.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Zoom&lt;/b&gt; using &lt;b&gt;left+middle&lt;/b&gt; mouse buttons.&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>In den &lt;b&gt;Bewegungs&lt;/b&gt;-Modus wechseln.&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Rotieren&lt;/b&gt; mit &lt;b&gt;linker&lt;/b&gt; Maustaste.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Verschieben&lt;/b&gt; mit &lt;b&gt;Mittlerer&lt;/b&gt; Maustaste.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Vergrößerung&lt;/b&gt; mit &lt;b&gt;Linker+Mittlerer&lt;/b&gt; Maustaste.&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="353"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="357"/>
         <source>Move</source>
         <translation>Bewegen</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="361"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="365"/>
         <source>Switch to &lt;b&gt;light&lt;/b&gt; mode.</source>
         <translation>In den &lt;b&gt;Beleuchtungs&lt;/b&gt;-Modus wechseln.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="362"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="366"/>
         <source>Switch to &lt;b&gt;light&lt;/b&gt; mode.&lt;br&gt;Rotate lights using left mouse button.</source>
         <translation>In den &lt;b&gt;Beleuchtungs&lt;/b&gt;-Modus wechseln.&lt;br&gt;Lichter mit der linken Maustaste bewegen.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="367"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="371"/>
         <source>Light</source>
         <translation>Beleuchtung</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="374"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="378"/>
         <source>Switch to &lt;b&gt;picking&lt;/b&gt; mode.</source>
         <translation>In den &lt;b&gt;Auswahl&lt;/b&gt;-Modus wechseln.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="375"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="379"/>
         <source>Switch to &lt;b&gt;picking&lt;/b&gt; mode.&lt;br&gt;Use picking functions like flipping edges.&lt;br&gt;To change the mode use the right click&lt;br&gt;context menu in the viewer.</source>
         <translation>In den &lt;b&gt;Auswahl&lt;/b&gt;-Modus wechseln. Zum benutzen von Auswahl Hilfsmitteln.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="381"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="385"/>
         <source>Pick</source>
         <translation>Auswählen</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="388"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="392"/>
         <source>Switch to &lt;b&gt;identification&lt;/b&gt; mode.</source>
         <translation>In den &lt;b&gt;Identifizierungs&lt;/b&gt;-Modus wechseln.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="389"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="393"/>
         <source>Switch to &lt;b&gt;identification&lt;/b&gt; mode.&lt;br&gt;Use identification mode to get information about objects. Click on an object and see the log output for information about the object.</source>
         <translation>In den &lt;b&gt;Identifizierungs&lt;/b&gt;-Modus wechseln.&lt;br&gt;Dieser Modus dient dazu Informationen über Objekten zu erhalten. Klicken sie auf ein Objekt um Informationen dazu im log zu erhalten.</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="396"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="400"/>
         <source>Question</source>
         <translation>Informationen</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="401"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="405"/>
         <source>Switch &lt;b&gt;viewer layout&lt;/b&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="402"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="406"/>
         <source>Switch &lt;b&gt;viewer layout&lt;/b&gt;.&lt;br&gt;Select the desired viewer layout. Possible layouts are: &lt;ul&gt; &lt;li&gt;Single viewer&lt;/li&gt;&lt;li&gt;Multiple viewers (grid)&lt;/li&gt;&lt;li&gt;Multiple viewers (hsplit)&lt;/li&gt;&lt;/ul&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="431"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="435"/>
         <source>Toggle stereo viewing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="432"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="438"/>
         <source>Toggle stereo mode&lt;br&gt;&lt;br&gt;Use this button to switch between stereo and mono view. To use this feature you need a stereo capable graphics card and a stereo display/projection system.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="439"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="447"/>
         <source>Stereo</source>
         <translation>Stereo</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="455"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="463"/>
         <source>ViewMode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="459"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="467"/>
         <source>Change View Mode</source>
         <translation>Ansicht ändern</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="499"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="468"/>
+        <source>Edit View Modes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="511"/>
         <source>Selection</source>
         <translation>Auswahl</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="505"/>
+        <location filename="../../widgets/coreWidget/CoreWidget.cc" line="517"/>
         <source>Ready</source>
         <translation>Bereit</translation>
     </message>
@@ -1343,25 +1434,25 @@ Should it be opened as a triangle mesh?</source>
         <translation>Anwendung Beenden</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="382"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="383"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="384"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="385"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="386"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="387"/>
         <source>Set Background Color for all viewers</source>
         <translation>Hintergrundfarbe in allen Betrachtern ändern</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="436"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="439"/>
         <source>Open Help Browser with Documentation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="444"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="447"/>
         <source>Enter What&apos;s this Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="452"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="453"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="455"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="456"/>
         <source>Show loaded plugins</source>
         <translation>Zeige geladene Plugins</translation>
     </message>
@@ -1491,289 +1582,289 @@ Should it be opened as a triangle mesh?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="289"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="290"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="291"/>
         <source>Switch between normal and first-person navigation mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="300"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="301"/>
         <source>Restore Home View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="331"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="332"/>
         <source>Viewer Snapshot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="334"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="335"/>
         <source>Take a snapshot from all viewers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="335"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="336"/>
         <source>Viewer Snapshot&lt;br&gt;&lt;br&gt;Take a snapshot of all viewers at once.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="340"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="341"/>
         <source>Application Snapshot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="343"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="344"/>
         <source>Take a snapshot from OpenFlipper.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="344"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="345"/>
         <source>Snapshot&lt;br&gt;&lt;br&gt;Take a snapshot from OpenFlipper.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="349"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="350"/>
         <source>Switch Viewers to Perspective Projection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="353"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="354"/>
         <source>Switch projection mode&lt;br&gt;&lt;br&gt;Switch to &lt;b&gt;perspective&lt;/b&gt; projection mode.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="360"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="361"/>
         <source>Show / hide wheels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="362"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="364"/>
         <source>Show / hide navigation wheels in viewer widget.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="363"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="365"/>
         <source>Show / hide navigation wheels in viewer widget.&lt;br&gt;&lt;br&gt; These wheels appear in the corners of the viewports.  Use wheels to rotate and scale scene.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="372"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="375"/>
         <source>Coordinate Systems</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="375"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="378"/>
         <source>Toggle visibility of the coordinate systems</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="640"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="643"/>
         <source>Set Global DrawMode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="343"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="381"/>
+        <location filename="../../widgets/coreWidget/ContextMenu.cc" line="342"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="384"/>
         <source>Set Background Color</source>
         <translation>Hintergrund Farbe</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="395"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="398"/>
         <source>Tools</source>
         <translation>Zubehör</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="397"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="400"/>
         <source>Show SceneGraph </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="400"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="403"/>
         <source>Show scene graph viewer.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="401"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="404"/>
         <source>Toggle scene graph viewer&lt;br&gt;&lt;br&gt;The scene graph viewer enables you to examine the displayed scene graph and to modify certain nodes.&lt;br&gt;&lt;br&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="410"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="413"/>
         <source>Start Video Capture </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="413"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="416"/>
         <source>Start video capturing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="414"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="417"/>
         <source>Start to capture a video sequence of the user actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="418"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="421"/>
         <source>Stop Video Capture </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="421"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="424"/>
         <source>Stop video capturing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="422"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="425"/>
         <source>Stop Video capturing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="430"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="432"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="433"/>
         <location filename="../../widgets/coreWidget/MenuBar.cc" line="435"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="438"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="438"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="441"/>
         <source>Open the &lt;b&gt;Help Browser&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="445"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="448"/>
         <source>Get information about a specific Button/Widget/...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="451"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="454"/>
         <source>Plugins</source>
         <translation>Plugins</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="461"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="464"/>
         <source>About</source>
         <translation>Über OpenFlipper</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="462"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="465"/>
         <source>About OpenFlipper</source>
         <translation>Über OpenFlipper</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="464"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="467"/>
         <source>This entry shows information about &lt;b&gt;OpenFlipper&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="494"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="495"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="499"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="500"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="497"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="498"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="502"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="503"/>
         <source>Disable animation for all viewers</source>
         <translation>Animation für alle Betrachter ausschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="496"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="501"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="499"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="504"/>
         <source>Disable animation</source>
         <translation>Animation einschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="504"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="505"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="507"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="508"/>
         <source>Enable animation for all viewers</source>
         <translation>Animation für alle Betrachter einschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="506"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="509"/>
         <source>Enable animation</source>
         <translation>Animation einschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="523"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="524"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="528"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="529"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="526"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="527"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="531"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="532"/>
         <source>Disable backface culling for all viewers</source>
         <translation>Backface culling für alle Betrachter ausschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="525"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="530"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="528"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="533"/>
         <source>Disable backface culling</source>
         <translation>Backface culling ausschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="533"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="534"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="536"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="537"/>
         <source>Enable backface culling for all viewers</source>
         <translation>Backface culling für alle Betrachter einschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="165"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="535"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="538"/>
         <source>Enable backface culling</source>
         <translation>Backface culling einschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="552"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="553"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="557"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="558"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="555"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="556"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="560"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="561"/>
         <source>Disable two-sided lighting for all viewers</source>
         <translation>Zwei-Seitige Beleuchtung für alle Betrachter ausschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="554"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="559"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="557"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="562"/>
         <source>Disable two-sided lighting</source>
         <translation>Zwei-Seitige Beleuchtung ausschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="562"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="563"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="565"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="566"/>
         <source>Enable two-sided lighting for all viewers</source>
         <translation>Zwei-Seitige Beleuchtung für alle Betrachter einsschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="174"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="564"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="567"/>
         <source>Enable two-sided lighting</source>
         <translation>Zwei-Seitige Beleuchtung einsschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="582"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="583"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="587"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="588"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="585"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="586"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="590"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="591"/>
         <source>Disable Multisampling for all viewers</source>
         <translation>Multi-Sampling für alle Betrachter ausschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="584"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="589"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="587"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="592"/>
         <source>Disable Multisampling</source>
         <translation>Multi-Sampling ausschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="592"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="593"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="595"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="596"/>
         <source>Enable Multisampling for all viewers</source>
         <translation>Multi-Sampling für alle Betrachter einschalten</translation>
     </message>
     <message>
         <location filename="../../widgets/coreWidget/ContextMenu.cc" line="183"/>
-        <location filename="../../widgets/coreWidget/MenuBar.cc" line="594"/>
+        <location filename="../../widgets/coreWidget/MenuBar.cc" line="597"/>
         <source>Enable Multisampling</source>
         <translation>Multi-Sampling einschalten</translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/viewMode.cc" line="57"/>
+        <location filename="../../widgets/coreWidget/viewMode.cc" line="58"/>
         <source>View Modes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/viewMode.cc" line="78"/>
+        <location filename="../../widgets/coreWidget/viewMode.cc" line="79"/>
         <source>Change ViewMode</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1783,102 +1874,107 @@ Should it be opened as a triangle mesh?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="75"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="78"/>
         <source>OpenFlipper Directories:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="90"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="97"/>
         <source>OpenGL Specific Info:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="94"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="101"/>
         <source>Vendor:	</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="96"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="103"/>
         <source>Renderer:	</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="101"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="108"/>
         <source>Version:	3.0 or higher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="103"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="110"/>
         <source>Version:	2.1 or higher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="105"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="112"/>
         <source>Version:	2.0 or higher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="107"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="114"/>
         <source>Version:	1.5 or higher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="109"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="116"/>
         <source>Version:	1.4 or higher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="111"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="118"/>
         <source>Version:	1.3 or higher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="113"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="120"/>
         <source>Version:	1.2 or higher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="115"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="122"/>
         <source>Version:	1.1 or higher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="117"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="124"/>
         <source>Version:	UNKNOWN!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="121"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="131"/>
         <source>Supported Extensions:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="128"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="142"/>
         <source>Qt Version Info:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="129"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="143"/>
         <source>Currently used Version:	</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/About.cc" line="130"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="144"/>
         <source>Link time Version:		</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidgetToolbar.cc" line="67"/>
+        <location filename="../../widgets/coreWidget/About.cc" line="150"/>
+        <source>Registered data types:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/coreWidget/CoreWidgetToolbar.cc" line="88"/>
         <source>slotAddToolbar: Toolbar already added to system: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidgetToolbar.cc" line="90"/>
+        <location filename="../../widgets/coreWidget/CoreWidgetToolbar.cc" line="121"/>
         <source>getToolBar: Toolbar not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/coreWidget/CoreWidgetToolbar.cc" line="104"/>
+        <location filename="../../widgets/coreWidget/CoreWidgetToolbar.cc" line="135"/>
         <source>Remove Toolbar: Toolbar not found.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1986,6 +2082,34 @@ Should it be opened as a triangle mesh?</source>
     </message>
 </context>
 <context>
+    <name>FileOptionsDialog</name>
+    <message>
+        <location filename="../../widgets/loadWidget/FileOptionsDialog.cc" line="45"/>
+        <source>For *.%1 use plugin </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/loadWidget/FileOptionsDialog.cc" line="75"/>
+        <source>Failed to connect to ini file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/loadWidget/FileOptionsDialog.cc" line="96"/>
+        <source>Extensions with multiple plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/loadWidget/FileOptionsDialog.cc" line="121"/>
+        <source>&amp;Cancel</source>
+        <translation type="unfinished">Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/loadWidget/FileOptionsDialog.cc" line="122"/>
+        <source>&amp;Ok</source>
+        <translation type="unfinished">&amp;Ok</translation>
+    </message>
+</context>
+<context>
     <name>HelpWidget</name>
     <message>
         <location filename="../../widgets/helpWidget/helpWidget.cc" line="107"/>
@@ -2051,41 +2175,66 @@ Should it be opened as a triangle mesh?</source>
 <context>
     <name>LoadWidget</name>
     <message>
-        <location filename="../../widgets/loadWidget/loadWidget.cc" line="79"/>
         <source>Object type:</source>
-        <translation>Objekt Typ:</translation>
+        <translation type="obsolete">Objekt Typ:</translation>
     </message>
     <message>
-        <location filename="../../widgets/loadWidget/loadWidget.cc" line="165"/>
         <source>Load Options</source>
-        <translation>Lade Optionen</translation>
+        <translation type="obsolete">Lade Optionen</translation>
     </message>
     <message>
-        <location filename="../../widgets/loadWidget/loadWidget.cc" line="199"/>
         <source>Save Options</source>
-        <translation>Speichere Optionen</translation>
+        <translation type="obsolete">Speichere Optionen</translation>
     </message>
     <message>
-        <location filename="../../widgets/loadWidget/loadWidget.cc" line="290"/>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="74"/>
+        <source>use defaults</source>
+        <translation>Benutze Standardeinstellungen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="81"/>
+        <source>Options:</source>
+        <translation>Optionen:</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="107"/>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="152"/>
+        <source>All files</source>
+        <translation>Alle Dateien</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="130"/>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="175"/>
+        <source>All Files (</source>
+        <translation>Alle Dateien (</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="305"/>
         <source>File exists</source>
         <translation>Datei existiert</translation>
     </message>
     <message>
-        <location filename="../../widgets/loadWidget/loadWidget.cc" line="290"/>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="305"/>
         <source>This file already exists.
 Do you want to overwrite the file?</source>
         <translation>Diese Datei existiert bereits
 Soll die Datei überschrieben werden?</translation>
     </message>
     <message>
-        <location filename="../../widgets/loadWidget/loadWidget.cc" line="308"/>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="321"/>
         <source>Load Object</source>
         <translation>Lade Objekt</translation>
     </message>
     <message>
-        <location filename="../../widgets/loadWidget/loadWidget.cc" line="325"/>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="335"/>
         <source>Save Object</source>
         <translation>Objekt speichern</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="414"/>
+        <location filename="../../widgets/loadWidget/loadWidget.cc" line="435"/>
+        <source>Failed to connect to ini file %1</source>
+        <translation>Kann ini Datei %1 nicht öffenen</translation>
     </message>
 </context>
 <context>
@@ -2131,7 +2280,7 @@ Soll die Datei überschrieben werden?</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="14"/>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1153"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1369"/>
         <source>Options</source>
         <translation>Optionen</translation>
     </message>
@@ -2348,7 +2497,7 @@ Soll die Datei überschrieben werden?</translation>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="414"/>
         <source>Don&apos;t pick mouse depth in stereo mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Tiefe der Maus im Stereomodus nicht picken</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="423"/>
@@ -2461,133 +2610,219 @@ Es können mehrere gleichzeitig ausgewählt werden.</translation>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="650"/>
         <source>Red/Cyan Anaglyph</source>
-        <translation type="unfinished"></translation>
+        <translation>Rot/Zyan Anaglyph</translation>
     </message>
     <message>
         <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="657"/>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="777"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="993"/>
         <source>Custom Anaglyph</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerdefiniertes Anaglyph</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="667"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="664"/>
+        <source>Philips Stereo Mode (For 3D autostereoscopic displays)</source>
+        <translation>Philips Stereo Modus ( Für autostereoskopische Bildschirme)</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="684"/>
         <source>View properties</source>
         <translation>Betrachter Eigenschaften</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="675"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="692"/>
         <source>Eye distance:</source>
         <translation>Augen Abstand:</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="682"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="699"/>
         <source>Focal distance:</source>
         <translation>Fokal Distanz:</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="731"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="748"/>
         <source>Near</source>
         <translation>Nah</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="763"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="780"/>
         <source>Far</source>
         <translation>Fern</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="783"/>
-        <source>Result = (Left Color Matrix) * (Left eye pixel) + (Right Color Matrix) * (Right eye pixel)</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="802"/>
+        <source>Philips Stereo properties</source>
+        <translation>Philips Stereo Einstellungen</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="798"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="817"/>
+        <source>Header Content type</source>
+        <translation>Header Anzeige Typ</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="825"/>
+        <source>No depth</source>
+        <translation>Keine Tiefe</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="830"/>
+        <source>Signage</source>
+        <translation>Vorzeichen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="835"/>
+        <source>Movie</source>
+        <translation>Film</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="840"/>
+        <source>Game</source>
+        <translation>Spiel</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="845"/>
+        <source>CGI</source>
+        <translation>Computer generierte Grafik</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="850"/>
+        <source>Still</source>
+        <translation>Still</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="858"/>
+        <source>Header factor</source>
+        <translation>Header Faktor</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="865"/>
+        <source>Header Offset CC</source>
+        <translation>Header Versatz</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="872"/>
+        <source>Header Select</source>
+        <translation>Header Auswahl</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="880"/>
+        <source>Automatic optimizations</source>
+        <translation>Automatische Optimierungen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="885"/>
+        <source>Header provided factor</source>
+        <translation>Benutze Faktor</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="890"/>
+        <source>Header provided offset</source>
+        <translation>Benutze Versatz</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="895"/>
+        <source>Header provided factor and offset</source>
+        <translation>Benutze Versatz und Faktor</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="920"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="962"/>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="999"/>
+        <source>Result = (Left Color Matrix) * (Left eye pixel) + (Right Color Matrix) * (Right eye pixel)</source>
+        <translation>Resultat = (Linke Farb Matrix) * (Linkes Auge Bildpunkt) + (Rechte Farb Matrix) * (Rechtes Auge Bildpunkt)</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1014"/>
         <source>Left Color Matrix</source>
         <translation>Linke Farb Matrix</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="955"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1171"/>
         <source>Right Color Matrix</source>
         <translation>Rechte Farb Matrix</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1131"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1347"/>
         <source>Plugins</source>
         <translation>Plugins</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1161"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1377"/>
         <source>Key Bindings</source>
         <translation>Tastatur Kürzel</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1174"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1390"/>
         <source>1</source>
         <translation>1</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1185"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1401"/>
         <source> Shortcut for selected action </source>
         <translation>Kürzel für ausgewählte Aktion </translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1200"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1416"/>
         <source>Default Shortcut:</source>
         <translation>Standard Kürzel:</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1240"/>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1243"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1456"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1459"/>
         <source>Restore default shortcuts</source>
         <translation>Standard Kürzel wieder herstellen</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1246"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1462"/>
         <source>Restore Presets</source>
         <translation>Standard wiederherstellen</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1256"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1472"/>
         <source>Updates</source>
         <translation>Updates</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1266"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1482"/>
         <source>URL for updates</source>
         <translation>Adresse(URL) für Aktualisierungen</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1273"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1489"/>
         <source>Username</source>
         <translation>Benutzername</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1280"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1496"/>
         <source>Password</source>
         <translation>Passwort</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1308"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1524"/>
         <source>Check</source>
         <translation>Überprüfen</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1315"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1531"/>
         <source>Update</source>
         <translation>Aktualisieren</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1341"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1557"/>
         <source>Check for Updates?</source>
         <translation>Nach Aktualisierungen suchen?</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1374"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1590"/>
         <source>Debug</source>
         <translation>Debug</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1382"/>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1424"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1598"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1640"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -2597,63 +2832,63 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1390"/>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1432"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1606"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1648"/>
         <source>Print information about plugins calling specific slots</source>
-        <translation type="unfinished"></translation>
+        <translation>Informationen über von Plugins aufgerufene Slots ausgeben</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1393"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1609"/>
         <source>Enable slot debugging</source>
-        <translation type="unfinished"></translation>
+        <translation>Slot debugging aktivieren</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1435"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1651"/>
         <source>render picking</source>
         <translation>Auswahl (Picking) zeichnen</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1443"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1659"/>
         <source>PICK_ANYTHING</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1448"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1664"/>
         <source>PICK_VERTEX</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1453"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1669"/>
         <source>PICK_EDGE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1458"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1674"/>
         <source>PICK_FACE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1463"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1679"/>
         <source>PICK_FRONT_VERTEX</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1468"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1684"/>
         <source>PICK_FRONT_EDGE</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1497"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1713"/>
         <source>&amp;Apply</source>
         <translation>&amp;Anwenden</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1517"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1733"/>
         <source>&amp;Ok</source>
         <translation>&amp;Ok</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1524"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.ui" line="1740"/>
         <source>&amp;Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -2665,40 +2900,40 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../../widgets/optionsWidget/keyBindings.cc" line="110"/>
         <source>Could not add Shortcut. Shortcut already assigned.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Abkürzung nicht hinzufügen. Bereits anderweitig verwendet.</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="659"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="741"/>
         <source>Download failed!</source>
         <translation>Herunterladen fehlgeschlagen!</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="664"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="746"/>
         <source>plugin target does not exist</source>
-        <translation type="unfinished"></translation>
+        <translation>Plugin ziel existiert nicht</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="669"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="751"/>
         <source>Installing new file</source>
         <translation>Installiere neue Datei</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="682"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="764"/>
         <source>updated </source>
-        <translation type="unfinished"></translation>
+        <translation>aktualisiert</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="731"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="813"/>
         <source>Checking for new versions</source>
         <translation>Suche nach neuen Versionen</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="762"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="844"/>
         <source>Updates found</source>
         <translation>Aktualisierungen gefunden</translation>
     </message>
     <message>
-        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="764"/>
+        <location filename="../../widgets/optionsWidget/optionsWidget.cc" line="846"/>
         <source>No updates found</source>
         <translation>Keine Aktualisierungen gefunden</translation>
     </message>
@@ -2823,6 +3058,150 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>StereoSettingsWidget</name>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="14"/>
+        <source>Stereo Settings</source>
+        <translation>Stereo Einstellungen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="20"/>
+        <source>Stereo Mode</source>
+        <translation>Stereo ModusStereo Modus</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="26"/>
+        <source>OpenGL stereo buffers</source>
+        <translation>OpenGL Stereo Puffer</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="33"/>
+        <source>Red/Cyan Anaglyph</source>
+        <translation>Rot/Zyan Anaglyph</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="40"/>
+        <source>Custom Anaglyph</source>
+        <translation>Benutzerdefiniertes Anaglyph</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="47"/>
+        <source>Philips Stereo Mode (For 3D autostereoscopic displays)</source>
+        <translation>Philips Stereo Modus ( Für autostereoskopische Bildschirme)</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="67"/>
+        <source>View properties</source>
+        <translation>Betrachter Eigenschaften</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="75"/>
+        <source>Eye distance:</source>
+        <translation>Augen Abstand:</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="82"/>
+        <source>Focal distance:</source>
+        <translation>Fokal Distanz:</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="131"/>
+        <source>Near</source>
+        <translation>Nah</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="163"/>
+        <source>Far</source>
+        <translation>Fern</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="185"/>
+        <source>Philips Stereo properties</source>
+        <translation>Philips Stereo Einstellungen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="200"/>
+        <source>Header Content type</source>
+        <translation>Header Anzeige Typ</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="208"/>
+        <source>No depth</source>
+        <translation>Keine Tiefe</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="213"/>
+        <source>Signage</source>
+        <translation>Vorzeichen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="218"/>
+        <source>Movie</source>
+        <translation>Film</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="223"/>
+        <source>Game</source>
+        <translation>Spiel</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="228"/>
+        <source>CGI</source>
+        <translation>Computer generiertes Bild</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="233"/>
+        <source>Still</source>
+        <translation>Still</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="241"/>
+        <source>Header factor</source>
+        <translation>Header Faktor</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="248"/>
+        <source>Header Offset CC</source>
+        <translation>Header Versatz</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="255"/>
+        <source>Header Select</source>
+        <translation>Header Auswahl</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="263"/>
+        <source>Automatic optimizations</source>
+        <translation>Automatische Optimierungen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="268"/>
+        <source>Header provided factor</source>
+        <translation>Benutze Faktor</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="273"/>
+        <source>Header provided offset</source>
+        <translation>Benutze Versatz</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="278"/>
+        <source>Header provided factor and offset</source>
+        <translation>Benutze Versatz und Faktor</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="303"/>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="345"/>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/stereoSettingsWidget/stereoSettingsWidget.ui" line="394"/>
+        <source>Close</source>
+        <translation>Schließen</translation>
+    </message>
+</context>
+<context>
     <name>VideoCaptureDialog</name>
     <message>
         <location filename="../../widgets/videoCaptureDialog/VideoCaptureDialog.cc" line="73"/>
@@ -2906,6 +3285,14 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>ViewModeChangeDialog</name>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeChange.ui" line="20"/>
+        <source>Choose View Mode</source>
+        <translation>Ansichts Modus auswählen</translation>
+    </message>
+</context>
+<context>
     <name>addEmpty</name>
     <message>
         <location filename="../../widgets/addEmptyWidget/addEmpty.ui" line="13"/>
@@ -2931,37 +3318,72 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>viewMode</name>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="13"/>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="14"/>
         <source>Change View Mode</source>
         <translation>Ansicht ändern</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="19"/>
         <source> View Modes </source>
-        <translation>Ansichten</translation>
+        <translation type="obsolete">Ansichten</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="32"/>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="83"/>
         <source>Remove Mode</source>
         <translation>Ansicht entfernen</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="42"/>
         <source>Tool Widgets</source>
-        <translation>Toolboxen</translation>
+        <translation type="obsolete">Toolboxen</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="123"/>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="383"/>
         <source>Save Configuration</source>
         <translation>Zusammenstellung speichern</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="137"/>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="363"/>
         <source>&amp;Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="157"/>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="44"/>
+        <source>View Modes</source>
+        <translation>Ansichten</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="90"/>
+        <source>Copy Mode</source>
+        <translation>Modus kopieren</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="97"/>
+        <source>Add Mode</source>
+        <translation>Modus hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="119"/>
+        <source>Toolboxes</source>
+        <translation>Werkzeugboxen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="127"/>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="278"/>
+        <source>Visible</source>
+        <translation>Sichtbar</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="250"/>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="338"/>
+        <source>Available</source>
+        <translation>Verfügbar</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="272"/>
+        <source>Toolbars</source>
+        <translation>Werkzeugleisten</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewMode.ui" line="403"/>
         <source>&amp;Ok</source>
         <translation>&amp;Ok</translation>
     </message>
@@ -2969,40 +3391,154 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>viewModeWidget</name>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="173"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="156"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="162"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="169"/>
+        <source>Copy View Mode</source>
+        <translation>Modus kopieren</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="157"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="191"/>
+        <source>Please enter a name for the new View Mode</source>
+        <translation>Geben Sie einen Namen für die neue Ansicht an</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="162"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="196"/>
+        <source>Please enter a Name</source>
+        <translation>Geben sie einen Namen an</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="169"/>
+        <source>Cannot Copy ViewMode. 
+New Name already in use for a different mode.</source>
+        <translation>Kann Modus nicht kopieren. 
+Der angegebene Name wird bereits verwendet.</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="190"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="196"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="203"/>
+        <source>Add View Mode</source>
+        <translation>Modus hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="203"/>
+        <source>Cannot Add ViewMode. 
+New Name already in use for a different mode.</source>
+        <translation>Kann nuen Modus nicht hinzufügen. 
+Der angegebene Name wird bereits verwendet.</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="229"/>
         <source>Remove Mode</source>
         <translation>Ansicht entfernen</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="194"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="230"/>
+        <source>Copy Mode</source>
+        <translation>Modus kopieren</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="231"/>
+        <source>Change Icon</source>
+        <translation>Symbol ändern</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="260"/>
+        <source>Select Image for view Mode ( best size : 150x150px )</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="260"/>
+        <source>Images (*.png *.xpm *.jpg)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="341"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="379"/>
+        <source>Remove</source>
+        <translation>Entfernen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="355"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="393"/>
+        <source>Add</source>
+        <translation>Hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="373"/>
         <source>Move up</source>
         <translation>Nach oben</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="195"/>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="374"/>
         <source>Move down</source>
         <translation>Nach unten</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="199"/>
-        <source>Remove Widget</source>
-        <translation>Widget entfernen</translation>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="558"/>
+        <source>Mode has been changed!</source>
+        <translation>Modus wurde geändert!</translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="242"/>
-        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="253"/>
-        <source>Change View Mode</source>
-        <translation>Ansicht ändern</translation>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="559"/>
+        <source>You changed the view mode configuration. Do you want to save it?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="243"/>
-        <source>Enter a name for the new ViewMode:</source>
-        <translation>Geben Sie einen Namen für die neue Ansicht an:</translation>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="599"/>
+        <source>You cannot change predefined modes.
+Please enter a new Name for the mode.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="253"/>
-        <source>Cannot Save ViewMode. Name already taken by a different mode.</source>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="608"/>
+        <source>View Mode exists</source>
+        <translation>Modus existiert bereits</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="609"/>
+        <source>View Mode already exists. Do you want to overwrite it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="613"/>
+        <source>New name for view mode:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="623"/>
+        <source>Save view Mode</source>
+        <translation>Modus speichern</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="636"/>
+        <source>Save View Mode</source>
+        <translation>Modus speichern</translation>
+    </message>
+    <message>
+        <location filename="../../widgets/viewModeWidget/viewModeWidget.cc" line="636"/>
+        <source>Cannot Save ViewMode.
+Name already taken by a different mode.</source>
         <translation>Kann Ansicht nicht speichern. Der Name ist bereits in Verwendung.</translation>
+    </message>
+    <message>
+        <source>Remove Widget</source>
+        <translation type="obsolete">Widget entfernen</translation>
+    </message>
+    <message>
+        <source>Change View Mode</source>
+        <translation type="obsolete">Ansicht ändern</translation>
+    </message>
+    <message>
+        <source>Enter a name for the new ViewMode:</source>
+        <translation type="obsolete">Geben Sie einen Namen für die neue Ansicht an:</translation>
+    </message>
+    <message>
+        <source>Cannot Save ViewMode. Name already taken by a different mode.</source>
+        <translation type="obsolete">Kann Ansicht nicht speichern. Der Name ist bereits in Verwendung.</translation>
     </message>
 </context>
 </TS>
