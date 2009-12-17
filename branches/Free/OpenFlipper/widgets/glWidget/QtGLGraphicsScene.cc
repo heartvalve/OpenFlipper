@@ -78,10 +78,23 @@ QtGLGraphicsScene::QtGLGraphicsScene(std::vector< glViewer *> *_views,
 
 void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
 {
-  if (_painter->paintEngine()->type() != QPaintEngine::OpenGL) {
-    std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
-    return;
-  }
+  // Check for switch in qt4.6 to OpenGL2
+  #if QT_VERSION >= 0x040600
+    if (_painter->paintEngine()->type() != QPaintEngine::OpenGL && _painter->paintEngine()->type() != QPaintEngine::OpenGL2 ) {
+      std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
+      return;
+    }
+  #else
+    if (_painter->paintEngine()->type() != QPaintEngine::OpenGL ) {
+      std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
+      return;
+    }
+  #endif
+
+  #if QT_VERSION >= 0x040600
+//     #warning untested! 
+//     _painter->beginNativePainting();
+  #endif
 
   static bool initialized = false;
   if (!initialized)
@@ -131,6 +144,10 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
       views_->at(i)->paintGL();
   }
 
+  #if QT_VERSION >= 0x040600
+//   #warning untested! 
+//     _painter->endNativePainting();
+  #endif
 
   if (layout_->mode() != QtMultiViewLayout::SingleView)
   {
