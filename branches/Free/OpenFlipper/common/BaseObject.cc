@@ -85,8 +85,22 @@ BaseObject::BaseObject(const BaseObject& _object) :
   childItems_.clear();
   name_ = "Copy of " + _object.name_;
 
-  ///@todo Maybe copy per Object Data
   dataMap_.clear();
+  
+  // Iterate over all per Object datas and try to copy them
+  QMap< QString, PerObjectData* >::const_iterator mapIter = _object.dataMap_.begin();  
+  while ( mapIter != _object.dataMap_.end() ) {
+    // Try to get a copy of the object.
+    PerObjectData* copiedData = mapIter.value()->copyPerObjectData();
+    
+    if ( copiedData ) {
+      dataMap_.insert(mapIter.key(),copiedData);
+    } else {
+      std::cerr << "Failed to copy per Object Data: " << mapIter.key().toStdString() << std::endl;
+    }
+    
+    mapIter++;
+  }
   
   // If the pointer is 0 then we are creating the objectroot
   if ( PluginFunctions::objectRoot() ) {
