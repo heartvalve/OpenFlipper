@@ -45,6 +45,8 @@
 
 #include "perObjectData.hh"
 
+#include <iostream>
+
 //== TYPEDEFS =================================================================
 
 
@@ -56,9 +58,12 @@ PerObjectData()
 }
 
 
+PerObjectData*
 PerObjectData::
-PerObjectData(const PerObjectData& _b ) {
-    std::cerr << "Please implement a copy constructor for your perObjectData!"
+copyPerObjectData( ) 
+{
+  std::cerr << "Please implement a copy constructor for your perObjectData!" << std::endl;
+  return 0;
 }
 
 PerObjectData::
