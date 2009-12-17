@@ -74,7 +74,7 @@ void DecimaterPlugin::initializePlugin()
   tool_->resize(size);
 
   // connect signals->slots
-	connect(tool_->pbDecimate,SIGNAL(clicked() ),this,SLOT(slot_decimate()));
+  connect(tool_->pbDecimate,SIGNAL(clicked() ),this,SLOT(slot_decimate()));
 
   connect(tool_->roundness,SIGNAL(valueChanged(double) ),this,SLOT(updateRoundness(double)) );
   connect(tool_->roundnessSlider,SIGNAL(valueChanged(int) ),this,SLOT(updateRoundness(int)) );
@@ -307,7 +307,7 @@ void DecimaterPlugin::slotUpdateNumVertices()
     return;
   }
 
-  int current = 0;
+  int max = 0;
   int div = 0;
 
   bool ok;
@@ -322,14 +322,18 @@ void DecimaterPlugin::slotUpdateNumVertices()
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
 
-    current += RPC::callFunctionValue<int>   ("info" , "vertexCount",o_it->id());
+    max = std::max( RPC::callFunctionValue<int>   ("info" , "vertexCount",o_it->id()) , max );
     div++;
   }
 
   if (div <= 0)
     tool_->currentNumVertices->setText ("<not available>");
-  else
-    tool_->currentNumVertices->setText (QString::number(current / div));
+  else {
+    tool_->currentNumVertices->setText (QString::number(max));
+    tool_->verticesCount->setMaximum(max);
+    tool_->verticesCountSlider->setMaximum(max);
+    tool_->verticesCount->setValue(max);
+  }
 }
 
 //-----------------------------------------------------------------------------
