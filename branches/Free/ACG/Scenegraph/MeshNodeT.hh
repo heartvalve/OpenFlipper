@@ -104,7 +104,7 @@ public:
   /// return available draw modes
   unsigned int availableDrawModes() const;
   /// update bounding box
-  void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
+  void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
   /// drawing
   void draw(GLState& _state, unsigned int _drawMode);
   /// picking
@@ -253,8 +253,8 @@ private:
   std::vector< ACG::Vec4uc > pickColorBuf_;
 
   // bounding box
-  Vec3f bbMin_;
-  Vec3f bbMax_;
+  Vec3d bbMin_;
+  Vec3d bbMax_;
 };
 
 

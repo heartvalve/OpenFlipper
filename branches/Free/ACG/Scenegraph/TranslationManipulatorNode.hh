@@ -161,7 +161,7 @@ public:
   virtual void mouseEvent(GLState& _state, QMouseEvent* _event);
 
   /// bounding box of node
-  void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
+  void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
 
   /// set current operation mode
   void setMode (ManipulatorMode _mode);
@@ -238,8 +238,8 @@ private:
   Vec3d              dirZ_;
 
   GLUquadricObj*     axis_;
-  GLUquadricObj*	 circle_;
-  GLUquadricObj*	 sphere_;
+  GLUquadricObj*     circle_;
+  GLUquadricObj*     sphere_;
 
   double             manipulator_radius_;
   double             manipulator_height_;
@@ -264,8 +264,8 @@ private:
   bool               ignoreTime_;
 
   Vec2i              oldPoint2D_;
-  Vec3d				 draggingOrigin3D_;
-  bool				 dragging_;
+  Vec3d              draggingOrigin3D_;
+  bool               dragging_;
 
   Vec3d              currentScale_;
 

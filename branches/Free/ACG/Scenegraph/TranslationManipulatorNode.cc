@@ -167,6 +167,13 @@ TranslationManipulatorNode( BaseNode* _parent, const std::string& _name )
     element_[i].active_current_color_ = element_[i].active_target_color_;
     element_[i].inactive_current_color_ = element_[i].inactive_target_color_;
   }
+/*  
+  setMultipassNode(0);
+  multipassNodeSetActive(2,true);
+  
+  setMultipassStatus(0);
+  multipassStatusSetActive(1,true);
+  multipassStatusSetActive(2,true);*/
 
 }
 
@@ -1949,15 +1956,15 @@ void TranslationManipulatorNode::updateSize (GLState& _state)
 //----------------------------------------------------------------------------
 
 
-void TranslationManipulatorNode::boundingBox( Vec3f & _bbMin, Vec3f & _bbMax )
+void TranslationManipulatorNode::boundingBox( Vec3d & _bbMin, Vec3d & _bbMax )
 {
   if (!draw_manipulator_)
     return;
 
   float r = 2 * manipulator_height_;
 
-  _bbMin.minimize(Vec3f(-r,-r,-r));
-  _bbMax.maximize(Vec3f(r,r,r));
+  _bbMin.minimize(Vec3d(-r,-r,-r));
+  _bbMax.maximize(Vec3d(r,r,r));
 }
 
 //----------------------------------------------------------------------------

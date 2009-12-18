@@ -106,7 +106,7 @@ public:
   unsigned int availableDrawModes() const;
 
   /// update bounding box
-  void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
+  void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
 
   /// draw points and normals
   void draw(GLState& _state, unsigned int _drawMode);

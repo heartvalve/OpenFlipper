@@ -92,7 +92,7 @@ public:
 
   unsigned int availableDrawModes() const;
 
-  void boundingBox( Vec3f & _bbMin, Vec3f & _bbMax );
+  void boundingBox( Vec3d & _bbMin, Vec3d & _bbMax );
 
   void draw( GLState& _state, unsigned int _drawMode );
   void draw_frame() const;
@@ -110,8 +110,8 @@ public:
 
 private:
 
-  Vec3f        visible_min_;
-  Vec3f        visible_max_;
+  Vec3d        visible_min_;
+  Vec3d        visible_max_;
 
   Vec3f        texture_min_;
   Vec3f        texture_max_;

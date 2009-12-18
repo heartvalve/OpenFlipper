@@ -68,7 +68,7 @@ namespace SceneGraph {
 
 void
 CoordsysNode::
-boundingBox(Vec3f& /*_bbMin*/, Vec3f& /*_bbMax*/)
+boundingBox(Vec3d& /*_bbMin*/, Vec3d& /*_bbMax*/)
 {
 	//_bbMin.minimize( Vect3f  )
 }

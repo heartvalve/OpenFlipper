@@ -67,7 +67,7 @@ namespace SceneGraph {
 
 void
 GlutPrimitiveNode::
-boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
+boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
   if (_bbMin[0] > -size_)  _bbMin[0] = -size_;
   if (_bbMin[1] > -size_)  _bbMin[1] = -size_;

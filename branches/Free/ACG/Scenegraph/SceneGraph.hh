@@ -379,8 +379,8 @@ public:
 
   bool operator()(BaseNode* _node)
   {
-    Vec3f bbMin( FLT_MAX,  FLT_MAX,  FLT_MAX);
-    Vec3f bbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+    Vec3d bbMin( FLT_MAX,  FLT_MAX,  FLT_MAX);
+    Vec3d bbMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
     _node->boundingBox(bbMin, bbMax);
 
     if ((bbMin[0] > bbMax[0]) ||
@@ -406,13 +406,13 @@ public:
   }
 
   /// Returns minimum point of the bounding box
-  const Vec3f& bbMin() const { return bbMin_; }
+  const Vec3d& bbMin() const { return bbMin_; }
   /// Returns maximum point of the bounding box
-  const Vec3f& bbMax() const { return bbMax_; }
+  const Vec3d& bbMax() const { return bbMax_; }
 
 private:
 
-  Vec3f        bbMin_, bbMax_;
+  Vec3d        bbMin_, bbMax_;
   GLState      state_;
 };
 

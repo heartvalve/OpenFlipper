@@ -65,14 +65,23 @@ namespace SceneGraph {
 
 void
 LineNode::
-boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
+boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
+  Vec3f bbMin(FLT_MAX,FLT_MAX,FLT_MAX);
+  Vec3f bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+  
   ConstPointIter p_it=points_.begin(), p_end=points_.end();
   for (; p_it!=p_end; ++p_it)
   {
-    _bbMin.minimize(*p_it);
-    _bbMax.maximize(*p_it);
+      bbMax.maximize(*p_it);
+      bbMin.minimize(*p_it);
   }
+  
+  Vec3d bbMind = ACG::Vec3d(bbMin);
+  Vec3d bbMaxd = ACG::Vec3d(bbMax);
+  
+  _bbMin.minimize(bbMind);
+  _bbMax.maximize(bbMaxd);
 }
 
 

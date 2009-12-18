@@ -86,16 +86,24 @@ QuadNode::~QuadNode()
 
 
 void
-QuadNode::boundingBox( Vec3f & _bbMin, Vec3f & _bbMax )
+QuadNode::boundingBox( Vec3d & _bbMin, Vec3d & _bbMax )
 {
-  PointVector::const_iterator p_it  = point_.begin(),
-                              p_end = point_.end();
-
+  Vec3f bbMin(FLT_MAX,FLT_MAX,FLT_MAX);
+  Vec3f bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+  
+  PointVector::const_iterator p_it  = point_.begin(), p_end = point_.end();
+  
   for ( ; p_it != p_end; ++p_it )
   {
-    _bbMin.minimize( *p_it );
-    _bbMax.maximize( *p_it );
+    bbMin.minimize( *p_it );
+    bbMax.maximize( *p_it );
   }
+  
+  Vec3d bbMind = ACG::Vec3d(bbMin);
+  Vec3d bbMaxd = ACG::Vec3d(bbMax);
+  
+  _bbMin.minimize(bbMind);
+  _bbMax.maximize(bbMaxd);    
 }
 
 
