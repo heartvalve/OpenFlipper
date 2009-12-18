@@ -206,7 +206,7 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     ACG::SceneGraph::TriStripNodeT<MeshT>* meshNode();
 
     /// Get the BoundingBox of this object
-    void boundingBox( ACG::Vec3f& _bbMin , typename ACG::Vec3f& _bbMax );
+    void boundingBox( ACG::Vec3d& _bbMin , typename ACG::Vec3d& _bbMax );
 
   private :
     /// Status Node for a mesh, visualizing the selection state of a mesh
