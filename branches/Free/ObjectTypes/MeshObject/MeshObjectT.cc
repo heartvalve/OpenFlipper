@@ -484,10 +484,10 @@
   /** Get the Bounding box size of this object
    */
   template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::boundingBox( ACG::Vec3f& _bbMin , ACG::Vec3f& _bbMax ) {
+  void MeshObject< MeshT , objectDataType >::boundingBox( ACG::Vec3d& _bbMin , ACG::Vec3d& _bbMax ) {
     if ( meshNode_ ) {
-      _bbMin = ACG::Vec3f(FLT_MAX, FLT_MAX, FLT_MAX);
-      _bbMax = ACG::Vec3f(FLT_MIN, FLT_MIN, FLT_MIN);
+      _bbMin = ACG::Vec3d(FLT_MAX, FLT_MAX, FLT_MAX);
+      _bbMax = ACG::Vec3d(FLT_MIN, FLT_MIN, FLT_MIN);
       meshNode_->boundingBox(_bbMin,_bbMax);
     } else {
       std::cerr << "Error: Bounding box computation via Scenegraph not available without gui" << std::endl;
