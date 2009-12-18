@@ -400,7 +400,6 @@ glViewer::updateScenePhilipsStereo()
 
      // Does shader program exist?
      if (!pProgram_) {
-        GLint errorPos;
 
         // ======================================================================================================
         // Setup the shaders used to render color and depth info next to each other
