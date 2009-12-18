@@ -95,7 +95,7 @@ SliceNode::view_frame( bool _view_frame )
 
 
 void
-SliceNode::boundingBox( Vec3f & _bbMin, Vec3f & _bbMax )
+SliceNode::boundingBox( Vec3d & _bbMin, Vec3d & _bbMax )
 {
   _bbMin.minimize( visible_min_ );
   _bbMax.maximize( visible_max_ );

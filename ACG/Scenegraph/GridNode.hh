@@ -94,7 +94,7 @@ public:
   /// return available draw modes
   unsigned int availableDrawModes() const;
   /// update bounding box
-  void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
+  void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
   /// drawing the primitive
   void draw(GLState& _state, unsigned int _drawMode);
   /// don't pick me
@@ -117,8 +117,8 @@ private:
   float gridSize_;
 
   /// bounding box
-  Vec3f bb_min_;
-  Vec3f bb_max_;
+  Vec3d bb_min_;
+  Vec3d bb_max_;
 
   /// colors for the grid
   Vec3f baseLineColor_;

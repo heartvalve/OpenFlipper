@@ -68,13 +68,23 @@ namespace SceneGraph {
 
 void
 OBJNode::
-boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
+boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
+  Vec3f bbMin(FLT_MAX,FLT_MAX,FLT_MAX);
+  Vec3f bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+  
   for(unsigned int i=0; i<vertices_.size(); ++i)
   {
-    _bbMin.minimize(vertices_[i]);
-    _bbMax.maximize(vertices_[i]);
+    bbMin.minimize(vertices_[i]);
+    bbMax.maximize(vertices_[i]);
   }
+  
+  Vec3d bbMind = ACG::Vec3d(bbMin);
+  Vec3d bbMaxd = ACG::Vec3d(bbMax);
+  
+  _bbMin.minimize(bbMind);
+  _bbMax.maximize(bbMaxd);  
+
 }
 
 

@@ -68,12 +68,12 @@ namespace SceneGraph {
 template <class PolyLine>
 void
 PolyLineNodeT<PolyLine>::
-boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
+boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
   for (unsigned int i=0; i< polyline_.n_vertices(); ++i)
   {
-    _bbMin.minimize((Vec3f)polyline_.point(i));
-    _bbMax.maximize((Vec3f)polyline_.point(i));
+    _bbMin.minimize(polyline_.point(i));
+    _bbMax.maximize(polyline_.point(i));
   }
 }
 

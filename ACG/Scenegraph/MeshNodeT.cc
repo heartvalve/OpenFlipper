@@ -145,7 +145,7 @@ MeshNodeT<Mesh>::
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
+boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
   _bbMin.minimize(bbMin_);
   _bbMax.maximize(bbMax_);
@@ -389,15 +389,15 @@ update_geometry()
   updateEdgeList_ = true;
   updateAnyList_ = true;
 
-  bbMin_ = Vec3f(FLT_MAX,  FLT_MAX,  FLT_MAX);
-  bbMax_ = Vec3f(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+  bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
+  bbMax_ = Vec3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
   typename Mesh::ConstVertexIter  v_it(mesh_.vertices_begin()),
                                   v_end(mesh_.vertices_end());
 
   for (; v_it!=v_end; ++v_it)
   {
-    bbMin_.minimize((Vec3f)mesh_.point(v_it));
-    bbMax_.maximize((Vec3f)mesh_.point(v_it));
+    bbMin_.minimize(mesh_.point(v_it));
+    bbMax_.maximize(mesh_.point(v_it));
   }
 
   if (GLEW_ARB_vertex_buffer_object) {

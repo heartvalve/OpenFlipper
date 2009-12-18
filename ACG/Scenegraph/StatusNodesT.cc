@@ -92,7 +92,7 @@ StatusNodeT( const Mesh&         _mesh,
 template <class Mesh, class Mod>
 void
 StatusNodeT<Mesh, Mod>::
-boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
+boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
   _bbMin.minimize(bbMin_);
   _bbMax.maximize(bbMax_);
@@ -121,8 +121,8 @@ void
 StatusNodeT<Mesh, Mod>::
 update_cache()
 {
-  bbMin_ = Vec3f(FLT_MAX,  FLT_MAX,  FLT_MAX);
-  bbMax_ = Vec3f(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+  bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
+  bbMax_ = Vec3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
   typename Mesh::ConstVertexIter  v_it(mesh_.vertices_sbegin()),
                                   v_end(mesh_.vertices_end());
@@ -134,8 +134,8 @@ update_cache()
     {
       v_cache_.push_back(v_it.handle().idx());
     }
-    bbMin_.minimize((Vec3f)mesh_.point(v_it));
-    bbMax_.maximize((Vec3f)mesh_.point(v_it));
+    bbMin_.minimize(mesh_.point(v_it));
+    bbMax_.maximize(mesh_.point(v_it));
   }
 
 

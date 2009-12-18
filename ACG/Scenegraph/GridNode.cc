@@ -98,7 +98,7 @@ GridNode::availableDrawModes() const
 
 
 void
-GridNode::boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
+GridNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
   _bbMin.minimize(bb_min_);
   _bbMax.maximize(bb_max_);

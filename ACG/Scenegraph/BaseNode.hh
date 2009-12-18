@@ -154,7 +154,7 @@ public:
       _bbMax since they may already store values of previous nodes' 
       bounding box computation.
   */
-  virtual void boundingBox(Vec3f& /* _bbMin */, Vec3f& /*_bbMax*/ ) {}
+  virtual void boundingBox(Vec3d& /* _bbMin */, Vec3d& /*_bbMax*/ ) {}
 
   /** This function is called when traversing the scene graph and
       arriving at this node. It can be used to store GL states that

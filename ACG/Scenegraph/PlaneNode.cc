@@ -54,23 +54,26 @@ namespace SceneGraph {
 //== IMPLEMENTATION ==========================================================
 
 
-void PlaneNode::boundingBox(Vec3f& _bbMin, Vec3f& _bbMax)
+void PlaneNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
 
   Vec3f pos = position_ - xDirection_*0.5 - yDirection_*0.5;
 
   //add a little offset in normal direction
-  Vec3f pos0 = pos + normal_*0.1;
-  Vec3f pos1 = pos - normal_*0.1;
+  Vec3d pos0 = ACG::Vec3d( pos + normal_*0.1 );
+  Vec3d pos1 = ACG::Vec3d( pos - normal_*0.1 );
+  
+  Vec3d xDird = ACG::Vec3d( xDirection_ );
+  Vec3d yDird = ACG::Vec3d( yDirection_ );
 
   _bbMin.minimize( pos0 );
-  _bbMin.minimize( pos0 + xDirection_);
-  _bbMin.minimize( pos0 + yDirection_);
-  _bbMin.minimize( pos0 + xDirection_ + yDirection_);
+  _bbMin.minimize( pos0 + xDird);
+  _bbMin.minimize( pos0 + yDird);
+  _bbMin.minimize( pos0 + xDird + yDird);
   _bbMax.maximize( pos1 );
-  _bbMax.maximize( pos1 + xDirection_);
-  _bbMax.maximize( pos1 + yDirection_);
-  _bbMax.maximize( pos1 + xDirection_ + yDirection_);
+  _bbMax.maximize( pos1 + xDird);
+  _bbMax.maximize( pos1 + yDird);
+  _bbMax.maximize( pos1 + xDird + yDird);
 }
 
 //----------------------------------------------------------------------------

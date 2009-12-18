@@ -95,7 +95,7 @@ public:
   /// return available draw modes
   unsigned int availableDrawModes() const;
   /// update bounding box
-  void boundingBox(Vec3f& _bbMin, Vec3f& _bbMax);
+  void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
   /// drawing the primitive
   void draw(GLState& _state, unsigned int _drawMode);
 
@@ -105,9 +105,9 @@ public:
   /// set bounding box
   void set_bounding_box(const Vec3f& _bb_min, const Vec3f& _bb_max);
   /// get bounding box
-  const Vec3f& bb_min() const { return bb_min_; }
+  const Vec3d& bb_min() const { return bb_min_; }
   /// get bounding box
-  const Vec3f& bb_max() const { return bb_max_; }
+  const Vec3d& bb_max() const { return bb_max_; }
 
 
   /// get x-plane container
@@ -160,7 +160,7 @@ private:
 
 
   // extend of bounding box
-  Vec3f bb_min_, bb_max_;
+  Vec3d bb_min_, bb_max_;
 
   // planes in x-, y-, z-direction
   std::vector<float>  x_planes_, y_planes_, z_planes_;
