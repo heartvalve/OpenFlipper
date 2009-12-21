@@ -856,7 +856,7 @@ void SelectionPlugin::createMeshFromSelection(QMouseEvent * _event)
         ACG::Vec3d*      sourcePoint3D = 0;
         
         if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE,
-            _event->pos(),
+                                            _event->pos(),
                                             node_idx,
                                             target_idx,
                                             sourcePoint3D))
