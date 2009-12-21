@@ -112,6 +112,10 @@ public:
     Z = sin_theta * _axis[2];
   }
 
+  /// construct from rotation matrix (only valid for rotation matrices!)
+  QuaternionT(const Matrix& _rot)
+  { init_from_matrix( _rot); }
+  
 
   /// identity rotation
   void identity() { W=1.0; X=Y=Z=0.0; }
@@ -215,6 +219,98 @@ public:
     m(2,0) =  Y; m(2,1) = -Z; m(2,2) =  W; m(2,3) =  X;
     m(3,0) =  Z; m(3,1) =  Y; m(3,2) = -X; m(3,3) =  W;
     return m;
+  }
+
+
+  /// get quaternion from rotation matrix
+  template<class MatrixT>
+  void init_from_matrix( const MatrixT& _rot)
+  {
+    Scalar trace = _rot(0,0) + _rot(1,1) + _rot(2,2); 
+    if( trace > 0.0 ) 
+    {
+      Scalar s = 0.5 / sqrt(trace + 1.0);
+      W = 0.25 / s;
+      X = ( _rot(2,1) - _rot(1,2) ) * s;
+      Y = ( _rot(0,2) - _rot(2,0) ) * s;
+      Z = ( _rot(1,0) - _rot(0,1) ) * s;
+    } 
+    else
+    {
+      if ( _rot(0,0) > _rot(1,1) && _rot(0,0) > _rot(2,2) )
+      {
+	Scalar s = 2.0 * sqrt( 1.0 + _rot(0,0) - _rot(1,1) - _rot(2,2));
+	W = (_rot(2,1) - _rot(1,2) ) / s;
+	X = 0.25 * s;
+	Y = (_rot(0,1) + _rot(1,0) ) / s;
+	Z = (_rot(0,2) + _rot(2,0) ) / s;
+      } 
+      else 
+	if (_rot(1,1) > _rot(2,2))
+	{
+	  Scalar s = 2.0 * sqrt( 1.0 + _rot(1,1) - _rot(0,0) - _rot(2,2));
+	  W = (_rot(0,2) - _rot(2,0) ) / s;
+	  X = (_rot(0,1) + _rot(1,0) ) / s;
+	  Y = 0.25 * s;
+	  Z = (_rot(1,2) + _rot(2,1) ) / s;
+	} 
+	else
+	{
+	  Scalar s = 2.0 * sqrt( 1.0 + _rot(2,2) - _rot(0,0) - _rot(1,1) );
+	  W = (_rot(1,0) - _rot(0,1) ) / s;
+	  X = (_rot(0,2) + _rot(2,0) ) / s;
+	  Y = (_rot(1,2) + _rot(2,1) ) / s;
+	  Z = 0.25 * s;
+	}
+    }
+  }
+
+
+  /// quaternion exponential (for unit quaternions)
+  void exponential()
+  {
+    Vec3   n(X,Y,Z);
+    Scalar theta( n.norm());
+    Scalar sin_theta = sin(theta);
+    Scalar cos_theta = cos(theta);
+
+    if( theta > 1e-6 )
+      n *= sin_theta/theta;
+    else
+      n = Vec3(0,0,0);
+
+    W = cos_theta;
+    X = n[0];
+    Y = n[1];
+    Z = n[2];
+  }
+
+
+  /// quaternion logarithm (for unit quaternions)
+  void logarithm()
+  {
+    if( W > 1.0 || W < -1.0)
+    {
+      std::cerr << "Warning: invalid input to quaternion logarithm W should lie within [-1,1]: " 
+		<< W << std::endl;
+    }
+    else
+    {
+      Scalar theta_half = acos(W);
+
+      Vec3   n(X,Y,Z);
+      Scalar n_norm( n.norm());
+
+      if( n_norm > 1e-6 )
+	n *= theta_half/n_norm;
+      else
+	n = Vec3(0,0,0);
+
+      W = 0;
+      X = n[0];
+      Y = n[1];
+      Z = n[2];
+    }
   }
 
 
