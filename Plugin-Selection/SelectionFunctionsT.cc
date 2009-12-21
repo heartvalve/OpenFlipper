@@ -667,3 +667,80 @@ bool SelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _state, QRegio
   return rv;
 }
 
+//***********************************************************************************
+
+/** \brief Create a new mesh from the selection
+*
+* @param _mesh a mesh
+* @param _newMesh the resulting mesh containing only the selected elements
+*/
+
+template< class MeshT >
+void SelectionPlugin::createMeshFromSelection( MeshT& _mesh, MeshT& _newMesh){
+    
+    OpenMesh::VPropHandleT< typename MeshT::VertexHandle > copyHandle;
+    _mesh.add_property(copyHandle,"copyHandle Property" );
+    
+    //first copy vertices
+    typename MeshT::VertexIter v_it, v_end = _mesh.vertices_end();
+    for( v_it = _mesh.vertices_begin(); v_it != v_end; ++v_it ){
+        
+        bool copy = false;
+        
+        //if the vertex belongs to the selection copy it
+        if ( selectionType_ == VERTEX )
+            copy = _mesh.status( v_it.handle() ).selected();
+        else if (selectionType_ & EDGE){
+            
+            for ( typename MeshT::VertexOHalfedgeIter voh_it(_mesh, v_it); voh_it; ++voh_it)
+                if ( _mesh.status( _mesh.edge_handle(voh_it.handle()) ).selected() ){
+                    copy = true;
+                    break;
+                }
+                
+        } else if (selectionType_ & FACE){
+            for ( typename MeshT::VertexFaceIter vf_it(_mesh, v_it); vf_it; ++vf_it)
+                if ( _mesh.status( vf_it.handle() ).selected() ){
+                    copy = true;
+                    break;
+                }
+        }
+        
+        //copy it
+        if ( copy ){
+            
+            typename MeshT::VertexHandle newVH = _newMesh.add_vertex(  _mesh.point(v_it) );
+            
+            _mesh.property( copyHandle, v_it ) = newVH;
+            
+        } else {
+            _mesh.property( copyHandle, v_it ) = typename MeshT::VertexHandle(-1);
+        }
+    }
+    
+    //now check all faces
+    //if all vertices of the face exist in the new mesh -> copy it
+    typename MeshT::FaceIter f_it, f_end = _mesh.faces_end();
+    for( f_it = _mesh.faces_begin(); f_it != f_end; ++f_it ){
+        
+        std::vector< typename MeshT::VertexHandle > v;
+        
+        bool skip = false;
+        
+        for (typename MeshT::FaceVertexIter fv_it(_mesh, f_it); fv_it; ++fv_it)
+            if ( _mesh.property(copyHandle, fv_it).is_valid() )
+                v.push_back( _mesh.property(copyHandle, fv_it) );
+            else{
+                skip = true;
+                break;
+            }
+            
+            if (!skip)
+                _newMesh.add_face( v );
+    }
+    
+    _newMesh.update_normals();
+    
+    _mesh.remove_property( copyHandle );
+}
+

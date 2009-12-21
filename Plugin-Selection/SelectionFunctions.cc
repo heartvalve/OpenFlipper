@@ -634,6 +634,96 @@ void SelectionPlugin::forEachObject(QList<QPair<unsigned int, unsigned int> > &_
   }
 }
 
+/// Create a mesh containing the selection of the given mesh
+int SelectionPlugin::createMeshFromSelection( int _objectId ){
+        
+    // get object
+    BaseObjectData *obj = 0;
+    PluginFunctions::getObject(_objectId, obj);
+    
+    if (obj == 0){
+        emit log(LOGERR, tr("Unable to get object"));
+        return -1;
+    }
+    
+    if ( obj->dataType(DATA_TRIANGLE_MESH) ) {
+        TriMesh* mesh = PluginFunctions::triMesh(obj);
+        
+        if ( mesh == 0 ) {
+            emit log(LOGERR, tr("Unable to get mesh"));
+            return -1;
+        }
+        
+        //add an empty mesh
+        int id = -1;
+        emit addEmptyObject(DATA_TRIANGLE_MESH, id);
+        
+        if (id == -1){
+            emit log(LOGERR, tr("Unable to add empty object"));
+            return -1;
+        }
+        
+        BaseObjectData *newObj;
+        PluginFunctions::getObject(id, newObj);
+        
+        TriMesh* newMesh = PluginFunctions::triMesh(newObj);
+        
+        if ( newMesh == 0 ) {
+            emit log(LOGERR, tr("Unable to get mesh"));
+            return -1;
+        }
+        
+        //fill the empty mesh with the selection
+        createMeshFromSelection( *mesh, *newMesh);
+        
+        emit updatedObject(_objectId);
+        emit updatedObject(id);
+        
+        return id;
+        
+    } else if( obj->dataType(DATA_POLY_MESH) ) {
+        PolyMesh* mesh = PluginFunctions::polyMesh(obj);
+        
+        if ( mesh == 0 ) {
+            emit log(LOGERR, tr("Unable to get mesh"));
+            return -1;
+        }
+        
+        //add an empty mesh
+        int id;
+        emit addEmptyObject(DATA_POLY_MESH, id);
+        
+        if (id == -1){
+            emit log(LOGERR, tr("Unable to add empty object"));
+            return -1;
+        }
+        
+        BaseObjectData *newObj;
+        PluginFunctions::getObject(id, newObj);
+        
+        PolyMesh* newMesh = PluginFunctions::polyMesh(newObj);
+        
+        if ( newMesh == 0 ) {
+            emit log(LOGERR, tr("Unable to get mesh"));
+            return -1;
+        }
+        
+        //fill the empty mesh with the selection
+        createMeshFromSelection( *mesh, *newMesh);
+        
+        emit updatedObject(_objectId);
+        emit updatedObject(id);
+        
+        return id;
+        
+    }else {
+        emit log(LOGERR, tr("DataType not supported"));
+        return -1;
+    }
+    
+}
+
+
 /// Traverse the scenegraph and call the selection function for nodes
 bool SelectVolumeAction::operator()(BaseNode* _node, ACG::GLState& _state)
 {

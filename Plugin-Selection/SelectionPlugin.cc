@@ -59,7 +59,6 @@
 #include "OpenFlipper/INIFile/INIFile.hh"
 #include <OpenFlipper/common/Types.hh>
 
-
 #include <QFileDialog>
 
 /** \brief Default Constructor
@@ -221,6 +220,8 @@ void SelectionPlugin::pluginsInitialized() {
   emit addHiddenPickMode(SURFACE_LASSO_SELECTION);
   emit addHiddenPickMode(CONNECTED_COMPONENT_SELECTION);
   emit addHiddenPickMode(FLOOD_FILL_SELECTION);
+  
+  emit addPickMode(CREATEMESH);
 
   emit setPickModeMouseTracking(PAINT_SPHERE_SELECTION, true);
   emit setPickModeMouseTracking(LASSO_SELECTION, true);
@@ -334,6 +335,16 @@ void SelectionPlugin::pluginsInitialized() {
                                tr("<B>Flood Fill</B><br>Select a planar region surrounding the clicked element."), toolBarActions_ );
   floodFillAction_->setCheckable( true );
   toolBar_->addAction( floodFillAction_ );
+  
+  //createMeshFromSelection
+  createMeshFromSelAction_ = new QAction(tr("&Create Mesh from selection"), toolBarActions_);
+  createMeshFromSelAction_->setCheckable( true );
+  createMeshFromSelAction_->setStatusTip(tr("Create a mesh from the current selection of a target object"));
+  createMeshFromSelAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"scissor_createMeshSelection.png") );
+  
+  connect(createMeshFromSelAction_, SIGNAL(triggered()), this, SLOT(slotCreateMeshFromSelection()) );
+  
+  toolBar_->addAction( createMeshFromSelAction_ );
 
   connect( toolBarActions_, SIGNAL( triggered(QAction*) ), this, SLOT(toolBarActionClicked(QAction*)) );
   connect( toolBarTypes_,   SIGNAL( triggered(QAction*) ), this, SLOT(toolBarActionClicked(QAction*)) );
@@ -471,7 +482,8 @@ void SelectionPlugin::slotMouseEvent( QMouseEvent* _event ) {
   if ( PluginFunctions::pickMode() == LASSO_SELECTION)               handleLassoSelection(_event, false); else
   if ( PluginFunctions::pickMode() == VOLUME_LASSO_SELECTION)        handleLassoSelection(_event, true); else
   if ( PluginFunctions::pickMode() == CONNECTED_COMPONENT_SELECTION) componentSelection(_event); else
-  if ( PluginFunctions::pickMode() == FLOOD_FILL_SELECTION)          floodFillSelection(_event);
+  if ( PluginFunctions::pickMode() == FLOOD_FILL_SELECTION)          floodFillSelection(_event); else
+  if ( PluginFunctions::pickMode() == CREATEMESH )                   createMeshFromSelection( _event );
 #ifdef ENABLE_POLYLINE_SUPPORT
   else
   if ( PluginFunctions::pickMode() == SURFACE_LASSO_SELECTION)       surfaceLassoSelection(_event);
@@ -515,6 +527,7 @@ void SelectionPlugin::slotPickModeChanged( const std::string& _mode) {
   volumeLassoAction_->setChecked( _mode == VOLUME_LASSO_SELECTION );
   connectedAction_->setChecked(   _mode == CONNECTED_COMPONENT_SELECTION );
   floodFillAction_->setChecked(   _mode == FLOOD_FILL_SELECTION );
+  createMeshFromSelAction_->setChecked(_mode == CREATEMESH );
 
    if ( _mode != PAINT_SPHERE_SELECTION && sphere_node_->visible() ){
       sphere_node_->hide();
@@ -607,6 +620,8 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
       PluginFunctions::pickMode( CONNECTED_COMPONENT_SELECTION );
     else if (_action == floodFillAction_)
       PluginFunctions::pickMode( FLOOD_FILL_SELECTION );
+    else if (_action == createMeshFromSelAction_)
+         PluginFunctions::pickMode( CREATEMESH );
     else if (_action == surfaceLassoAction_){
       waitingForPolyLineSelection_ = true;
       PluginFunctions::pickMode("PolyLine");
@@ -814,6 +829,43 @@ void SelectionPlugin::slotToggleSelectionRestriction(){
       tool_->restrictOnTargets->setText(tr("Select on target objects only"));
   else
       tool_->restrictOnTargets->setText(tr("Select on all objects"));
+}
+
+//******************************************************************************
+
+/** \brief CreateMeshFromSelection Button
+*
+*/
+void SelectionPlugin::slotCreateMeshFromSelection( )
+{
+    PluginFunctions::actionMode( Viewer::PickingMode );
+    PluginFunctions::pickMode( CREATEMESH );
+}
+
+//******************************************************************************
+
+/** \brief Create Mesh from Selection (triggered by pickMode)
+*
+* @param _event the mouse event that occured
+*/
+void SelectionPlugin::createMeshFromSelection(QMouseEvent * _event)
+{
+    if (_event->type() == QEvent::MouseButtonPress )
+    {
+        unsigned int     node_idx, target_idx;
+        ACG::Vec3d*      sourcePoint3D = 0;
+        
+        if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE,
+            _event->pos(),
+                                            node_idx,
+                                            target_idx,
+                                            sourcePoint3D))
+        {
+            BaseObjectData *obj;
+            PluginFunctions::getPickedObject(node_idx, obj);
+            createMeshFromSelection( obj->id() );
+        }
+    }
 }
 
 //******************************************************************************
