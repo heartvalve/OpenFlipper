@@ -82,7 +82,6 @@
 
 #include <QGroupBox>
 
-
 #define TOGGLE_SELECTION "Select (Toggle)"
 #define PAINT_SPHERE_SELECTION "Select (Paint Sphere)"
 #define CLOSEST_BOUNDARY_SELECTION "Select (Closest Boundary)"
@@ -91,6 +90,7 @@
 #define SURFACE_LASSO_SELECTION "Select (Surface Lasso)"
 #define CONNECTED_COMPONENT_SELECTION "Select (Connected Component)"
 #define FLOOD_FILL_SELECTION "Select (Flood Fill)"
+#define CREATEMESH "Create Mesh from Selection"
 
 enum SelectionPrimitive {
   VERTEX = 0x01,
@@ -122,6 +122,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     
     //PickingInterface
     void addHiddenPickMode( const std::string _mode );
+    void addPickMode( const std::string _mode );
     void setPickModeMouseTracking( const std::string _mode, bool _mouseTracking);
     void setPickModeCursor( const std::string _mode, QCursor _cursor);
     
@@ -151,6 +152,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     //LoadSaveInterface
     void deleteObject( int _id );
+    void addEmptyObject( DataType _type, int& _id);
 
   private slots:
     
@@ -207,12 +209,19 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     QAction* surfaceLassoAction_;
     QAction* connectedAction_;
     QAction* floodFillAction_;
+    QAction* createMeshFromSelAction_;
 
   private slots:
     /// Switch selection mode dependent which buttons are pressed in the toolbar
     void toolBarActionClicked(QAction* _action);
 
   private :
+      
+//===========================================================================
+/** @name Template Functions
+* @{ */
+//===========================================================================
+      
     /// Update face selection to correspond to the vertex selection
     template< typename MeshType >
     void update_regions(MeshType* _mesh);
@@ -248,6 +257,14 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Colorize a selection
     template< typename MeshT >
     void colorizeSelection(MeshT* _mesh, SelectionPrimitive _type, int _red, int _green, int _blue);
+    
+    //=================================================================
+    
+    /// Create a new mesh from the selection
+    template< class MeshT >
+    void createMeshFromSelection( MeshT& _mesh, MeshT& _newMesh);
+    
+/** @} */
 
     /// when SHIFT key is pressed do source-selection instead of target selection in object-mode
     bool sourceSelection_;
@@ -535,6 +552,11 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     /// load Selection of one object
     void loadSelection( int _objectId  , QString _filename);
+    
+    //=====================================================
+    
+    /// Create a mesh containing the selection of the given mesh
+    int createMeshFromSelection( int _objectId );
 
     private slots:
 
@@ -572,6 +594,14 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Select for each selected face the adjacent edges and
     /// unselect the face after (if _unselectAfter = true)
     void convertFtoESelection(bool _unselectAfter = true);
+    
+    //==========================================================
+    
+    /// Create Mesh from Selection Button
+    void slotCreateMeshFromSelection();
+    
+    /// Create mesh from selection of picked object
+    void createMeshFromSelection(QMouseEvent* _event);
 
   /** @} */
 
