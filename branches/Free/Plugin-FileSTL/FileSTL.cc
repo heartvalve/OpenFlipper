@@ -70,7 +70,7 @@ int FileSTLPlugin::loadObject(QString _filename) {
         bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename );
         if (!ok)
         {
-            std::cerr << "Plugin FileSTL : Read error for Poly Mesh\n";
+            std::cerr << "Plugin FileSTL : Read error for stl mesh.\n";
             emit deleteObject( object->id() );
             return -1;
             
@@ -89,7 +89,7 @@ int FileSTLPlugin::loadObject(QString _filename) {
         return object->id();
         
     } else {
-        emit log(LOGERR,"Error : Could not create new poly mesh object.");
+        emit log(LOGERR,"Error : Could not create new triangle mesh object.");
         return -1;
     }
 };
