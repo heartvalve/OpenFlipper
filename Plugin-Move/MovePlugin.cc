@@ -145,6 +145,7 @@ void MovePlugin::pluginsInitialized() {
   contextAction_ = new QAction(tr("Set properties"), this);
   contextAction_->setToolTip(tr("Set properties"));
   contextAction_->setStatusTip( contextAction_->toolTip() );
+  contextAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-properties.png") );
   
   contextActionHide_ = new QAction(tr("Hide Manipulator"), this);
   contextActionHide_->setToolTip(tr("Hide Manipulator"));
