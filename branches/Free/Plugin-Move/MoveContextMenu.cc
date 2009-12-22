@@ -48,19 +48,54 @@
 //***********************************************************************************
 
 void MovePlugin::hideManipulator() {
-//   contextActionHide_
+  
+  QVariant contextObject = contextActionHide_->data();
+  int nodeId = contextObject.toInt();
+  
+  if ( nodeId == -1)
+    return;
+  
+  // Get Node
+  ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), nodeId );
+  
+  ACG::SceneGraph::QtTranslationManipulatorNode* mNode;
+  mNode = dynamic_cast<ACG::SceneGraph::QtTranslationManipulatorNode*>(node);
+  
+  if(mNode == 0) {
+    // Not a manipulator node
+    return;
+  }
+
+  int objectId = mNode->getIdentifier();
+
+  BaseObjectData* obj;
+  if ( ! PluginFunctions::getObject(objectId,obj) )
+    return;
+  
+  // Disconnect its signals to the plugin
+  disconnect(obj->manipulatorNode() , SIGNAL(manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)),
+             this , SLOT( manipulatorMoved(QtTranslationManipulatorNode*,QMouseEvent*)));
+             
+  disconnect(obj->manipulatorNode() , SIGNAL(positionChanged(QtTranslationManipulatorNode*)),
+             this , SLOT( ManipulatorPositionChanged(QtTranslationManipulatorNode*)));    
+  
+  obj->manipPlaced(false);
+  mNode->hide();
+  
+  emit nodeVisibilityChanged(obj->id());
+  
 }
 
 void MovePlugin::showProps(){
 
     QVariant contextObject = contextAction_->data();
-    int objectId = contextObject.toInt();
+    int nodeId = contextObject.toInt();
 
-    if ( objectId == -1)
+    if ( nodeId == -1)
 	return;
 
     // Get Node
-    ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), objectId );
+    ACG::SceneGraph::BaseNode* node = ACG::SceneGraph::find_node( PluginFunctions::getSceneGraphRootNode(), nodeId );
 
     ACG::SceneGraph::QtTranslationManipulatorNode* mNode;
     mNode = dynamic_cast<ACG::SceneGraph::QtTranslationManipulatorNode*>(node);
@@ -70,13 +105,20 @@ void MovePlugin::showProps(){
 	return;
     }
 
-    int meshID = mNode->getIdentifier();
+    int objectId = mNode->getIdentifier();
 
     BaseObjectData* obj;
-    if ( ! PluginFunctions::getObject(meshID,obj) )
+    if ( ! PluginFunctions::getObject(objectId,obj) )
         return;
 
-    movePropsWidget* pW = new movePropsWidget(obj->id());
+    // Check if the widget has been created and show it.
+    movePropsWidget* pW = getDialogWidget(obj);
+    if ( pW != 0 ) {
+      pW->show();
+      return;
+    }
+    
+    pW = new movePropsWidget(obj->id());
     pW->setWindowTitle(QString((mNode->name()).c_str()));
 
     connect(pW->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));
