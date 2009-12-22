@@ -146,17 +146,18 @@ void MovePlugin::pluginsInitialized() {
   contextAction_->setToolTip(tr("Set properties"));
   contextAction_->setStatusTip( contextAction_->toolTip() );
   
-//   contextActionHide_ = new QAction(tr("Hide Manipulator"), this);
-//   contextActionHide_->setToolTip(tr("Hide Manipulator"));
-//   contextActionHide_->setStatusTip( contextActionHide_->toolTip() );
+  contextActionHide_ = new QAction(tr("Hide Manipulator"), this);
+  contextActionHide_->setToolTip(tr("Hide Manipulator"));
+  contextActionHide_->setStatusTip( contextActionHide_->toolTip() );
+  contextActionHide_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-hide.png") );
 
   emit addContextMenuItem(toAllTargets_      , CONTEXTNODEMENU );
   emit addContextMenuItem(contextAction_     , CONTEXTNODEMENU );
-//   emit addContextMenuItem(contextActionHide_ , CONTEXTNODEMENU );
+  emit addContextMenuItem(contextActionHide_ , CONTEXTNODEMENU );
 
   connect( toAllTargets_  ,     SIGNAL(toggled(bool) ), this, SLOT(setAllTargets(bool)));
   connect( contextAction_ ,     SIGNAL( triggered() ),  this, SLOT(showProps()) );
-//   connect( contextActionHide_ , SIGNAL( triggered() ),  this, SLOT(hideManipulator()) );
+  connect( contextActionHide_ , SIGNAL( triggered() ),  this, SLOT(hideManipulator()) );
 
   //TOOLBAR
   toolbar_ = new QToolBar(tr("Transform and Move"));
