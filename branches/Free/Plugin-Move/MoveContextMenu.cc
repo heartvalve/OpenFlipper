@@ -47,6 +47,10 @@
 
 //***********************************************************************************
 
+void MovePlugin::hideManipulator() {
+//   contextActionHide_
+}
+
 void MovePlugin::showProps(){
 
     QVariant contextObject = contextAction_->data();
@@ -72,7 +76,7 @@ void MovePlugin::showProps(){
     if ( ! PluginFunctions::getObject(meshID,obj) )
         return;
 
-    movePropsWidget* pW = new movePropsWidget(obj);
+    movePropsWidget* pW = new movePropsWidget(obj->id());
     pW->setWindowTitle(QString((mNode->name()).c_str()));
 
     connect(pW->posButton,SIGNAL(clicked() ),this,SLOT(slotSetPosition()));

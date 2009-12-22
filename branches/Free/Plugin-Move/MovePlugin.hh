@@ -383,8 +383,11 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     private slots:
 
-    /// Show properties of move manipulator in a dialog
+    /// Show properties of move manipulator in a dialog ( Called via context for picking. Get the picked id from the Qvariant attached to the connected action)
     void showProps( );
+    
+    /// Hide the manipulator( Called via context for picking. Get the picked id from the Qvariant attached to the connected action)
+    void hideManipulator();
 
     /// Get properties dialog widget that is attached to BaseDataObject obj
     movePropsWidget* getDialogWidget(BaseObjectData* _obj);
@@ -401,8 +404,11 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     /// List of properties dialogs (each corresponding to one manipulator)
     QList<movePropsWidget*> propsWindows_;
 
-    /// Context menu entry
+    /// Context menu entry for showing per manipulator settings
     QAction* contextAction_;
+    
+    /// Context menu entry to hide a manipulator
+    QAction* contextActionHide_;
 
     /// Checked if transformation should be applied to all target objs
     QAction* toAllTargets_;

@@ -50,13 +50,13 @@ class movePropsWidget : public QWidget, public Ui::setProps
   Q_OBJECT
 
   public:
-    movePropsWidget(BaseObjectData* obj, QWidget *parent = 0);
+    movePropsWidget(int obj, QWidget *parent = 0);
     
-    BaseObjectData* getBaseObjectData() { return obd; };
+    int getBaseObjectDataId() { return obj_; };
     
   private:
     
-   BaseObjectData* obd;
-	
+    int obj_;
+    
 };
 
