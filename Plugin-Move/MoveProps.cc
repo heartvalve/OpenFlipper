@@ -43,8 +43,8 @@
 #include "MoveProps.hh"
 #include <QtGui>
 
-movePropsWidget::movePropsWidget(BaseObjectData* obj, QWidget *parent)
-    : QWidget(parent), obd(obj)
+movePropsWidget::movePropsWidget(int obj, QWidget *parent)
+    : QWidget(parent), obj_(obj)
 {
     setupUi(this);
 }

@@ -145,14 +145,18 @@ void MovePlugin::pluginsInitialized() {
   contextAction_ = new QAction(tr("Set properties"), this);
   contextAction_->setToolTip(tr("Set properties"));
   contextAction_->setStatusTip( contextAction_->toolTip() );
+  
+//   contextActionHide_ = new QAction(tr("Hide Manipulator"), this);
+//   contextActionHide_->setToolTip(tr("Hide Manipulator"));
+//   contextActionHide_->setStatusTip( contextActionHide_->toolTip() );
 
-  emit addContextMenuItem(toAllTargets_ , CONTEXTNODEMENU );
-  emit addContextMenuItem(contextAction_ , CONTEXTNODEMENU );
+  emit addContextMenuItem(toAllTargets_      , CONTEXTNODEMENU );
+  emit addContextMenuItem(contextAction_     , CONTEXTNODEMENU );
+//   emit addContextMenuItem(contextActionHide_ , CONTEXTNODEMENU );
 
-  connect(toAllTargets_,SIGNAL(toggled(bool) ),this,SLOT(setAllTargets(bool)));
-
-  connect( contextAction_ , SIGNAL( triggered() ),
-	   this, SLOT(showProps()) );
+  connect( toAllTargets_  ,     SIGNAL(toggled(bool) ), this, SLOT(setAllTargets(bool)));
+  connect( contextAction_ ,     SIGNAL( triggered() ),  this, SLOT(showProps()) );
+//   connect( contextActionHide_ , SIGNAL( triggered() ),  this, SLOT(hideManipulator()) );
 
   //TOOLBAR
   toolbar_ = new QToolBar(tr("Transform and Move"));
@@ -922,7 +926,9 @@ void MovePlugin::slotSetDirection() {
 // 	}
 //     }
 
-    BaseObjectData* object = pW->getBaseObjectData();
+    
+    BaseObjectData* object = 0;
+    PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
     if ( object != 0 ) {
         if (  object->manipulatorNode()->visible() ){
 
@@ -987,7 +993,9 @@ void MovePlugin::slotTranslation() {
 //
 //	}
 
-    BaseObjectData* object = pW->getBaseObjectData();
+        BaseObjectData* object = 0;
+        PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
+
 	if (object != 0) {
 		if (object->manipulatorNode()->visible()) {
 
@@ -1058,7 +1066,8 @@ void MovePlugin::slotMoveManipToCOG() {
 // 	}
 //     } else {
 
-    BaseObjectData* object = pW->getBaseObjectData();
+    BaseObjectData* object = 0;
+    PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
     if ( object != 0 ) {
 	if (  object->manipulatorNode()->visible() ){
 
@@ -1122,7 +1131,8 @@ void MovePlugin::slotRotate() {
 //     } else {
 
 
-    BaseObjectData* object = pW->getBaseObjectData();
+        BaseObjectData* object = 0;
+        PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
 	if (object != 0) {
 		if (object->manipulatorNode()->visible() && (object->target()
 				|| !allTargets_)) {
@@ -1192,7 +1202,8 @@ void MovePlugin::slotScale() {
 //     } else {
 
 
-    BaseObjectData* object = pW->getBaseObjectData();
+        BaseObjectData* object = 0;
+        PluginFunctions::getObject(pW->getBaseObjectDataId(),object);
 	if (object != 0) {
 		if (object->manipulatorNode()->visible() && (object->target()
 				|| !allTargets_)) {
@@ -1418,7 +1429,7 @@ movePropsWidget* MovePlugin::getDialogWidget(BaseObjectData* _obj) {
 
     for(QList<movePropsWidget*>::iterator it = propsWindows_.begin();
        it != propsWindows_.end(); it++) {
-	   if ((*it)->getBaseObjectData() == _obj)
+	   if ( (*it)->getBaseObjectDataId() == _obj->id() )
 	       return *it;
        }
     return 0;
