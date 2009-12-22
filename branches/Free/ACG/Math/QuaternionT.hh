@@ -113,7 +113,8 @@ public:
   }
 
   /// construct from rotation matrix (only valid for rotation matrices!)
-  QuaternionT(const Matrix& _rot)
+  template <class MatrixT>
+  QuaternionT(const MatrixT& _rot)
   { init_from_matrix( _rot); }
   
 
@@ -267,7 +268,7 @@ public:
 
 
   /// quaternion exponential (for unit quaternions)
-  void exponential()
+  Quaternion exponential() const
   {
     Vec3   n(X,Y,Z);
     Scalar theta( n.norm());
@@ -279,15 +280,12 @@ public:
     else
       n = Vec3(0,0,0);
 
-    W = cos_theta;
-    X = n[0];
-    Y = n[1];
-    Z = n[2];
+    return Quaternion( cos_theta, n[0], n[1], n[2]);
   }
 
 
   /// quaternion logarithm (for unit quaternions)
-  void logarithm()
+  Quaternion logarithm() const
   {
     if( W > 1.0 || W < -1.0)
     {
@@ -306,10 +304,7 @@ public:
       else
 	n = Vec3(0,0,0);
 
-      W = 0;
-      X = n[0];
-      Y = n[1];
-      Z = n[2];
+      return Quaternion( 0, n[0], n[1], n[2]);
     }
   }
 
