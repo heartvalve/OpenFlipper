@@ -287,25 +287,22 @@ public:
   /// quaternion logarithm (for unit quaternions)
   Quaternion logarithm() const
   {
-    if( W > 1.0 || W < -1.0)
-    {
-      std::cerr << "Warning: invalid input to quaternion logarithm W should lie within [-1,1]: " 
-		<< W << std::endl;
-    }
+    // clamp to valid input
+    double w = W;
+    if( w > 1.0) w = 1.0;
+    else if( w < -1.0) w = -1.0;
+
+    Scalar theta_half = acos(w);
+
+    Vec3   n(X,Y,Z);
+    Scalar n_norm( n.norm());
+    
+    if( n_norm > 1e-6 )
+      n *= theta_half/n_norm;
     else
-    {
-      Scalar theta_half = acos(W);
+      n = Vec3(0,0,0);
 
-      Vec3   n(X,Y,Z);
-      Scalar n_norm( n.norm());
-
-      if( n_norm > 1e-6 )
-	n *= theta_half/n_norm;
-      else
-	n = Vec3(0,0,0);
-
-      return Quaternion( 0, n[0], n[1], n[2]);
-    }
+    return Quaternion( 0, n[0], n[1], n[2]);
   }
 
 
