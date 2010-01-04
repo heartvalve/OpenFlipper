@@ -15,6 +15,7 @@ ENDIF (OPENMESH_INCLUDE_DIRS)
 FIND_PATH(OPENMESH_INCLUDE_DIR OpenMesh/Core/Mesh/PolyMeshT.hh
 	  PATHS /usr/local/include 
                 /usr/include 
+                /usr/local/OpenMesh-2.0rc4/include
                 "${CMAKE_SOURCE_DIR}/OpenMesh/src"
                 "${CMAKE_SOURCE_DIR}/../OpenMesh/src"
                 /ACG/acgdev/gcc-4.0-x86_64/OM2/OpenMesh-2.0/installed/include
@@ -23,7 +24,11 @@ FIND_PATH(OPENMESH_INCLUDE_DIR OpenMesh/Core/Mesh/PolyMeshT.hh
 
 IF (OPENMESH_INCLUDE_DIR )
    SET(OPENMESH_FOUND TRUE)
+IF (WIN32)
+   SET(OPENMESH_LIBRARY_DIR "${OPENMESH_INCLUDE_DIR}/../lib")
+ELSE (WIN32)
    SET(OPENMESH_LIBRARY_DIR "${OPENMESH_INCLUDE_DIR}/../lib/OpenMesh")
+ENDIF (WIN32)
    SET(OPENMESH_LIBRARY "OpenMeshCore;OpenMeshTools")
 ELSE (OPENMESH_INCLUDE_DIR)
    SET(OPENMESH_FOUND FALSE )
