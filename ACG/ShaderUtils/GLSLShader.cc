@@ -87,7 +87,9 @@ namespace GLSL {
         : m_shaderId(0)
     {
         this->m_shaderId = glCreateShader(shaderType);
-        assert(this->m_shaderId && "could not create shader");
+        if ( this->m_shaderId == 0 ) {
+          std::cerr << "could not create shader" << std::endl;
+        }
     }
 
     /** \brief Deletes the shader object.
@@ -103,7 +105,10 @@ namespace GLSL {
      */
     void Shader::setSource(StringList source)
     {
-        assert(this->m_shaderId && "shader not initialized");
+        if ( this->m_shaderId == 0 ) {
+          std::cerr << "shader not initialized" << std::endl;
+          return;
+        }
 
         const char **stringArray = new const char*[source.size()];
 
@@ -125,7 +130,10 @@ namespace GLSL {
      */
     bool Shader::compile()
     {
-        assert(this->m_shaderId && "shader not initialized");
+        if ( this->m_shaderId == 0 ) {
+          std::cerr << "shader not initialized" << std::endl;
+          return false;
+        }
 
         glCompileShader(this->m_shaderId);
 
@@ -169,7 +177,12 @@ namespace GLSL {
     Program::Program()
     {
         this->m_programId = glCreateProgram();
-        assert(this->m_programId && "could not create GLSL program");
+        
+        if ( this->m_programId == 0 ) {
+          std::cerr << "could not create GLSL program" << std::endl;
+          return;
+        }
+
     }
 
     /** \brief Deletes the GLSL program object and frees the linked shader objects.
@@ -188,8 +201,15 @@ namespace GLSL {
     void
     Program::attach(PtrConstShader shader)
     {
-        assert(this->m_programId && "attach invalid program");
-        assert(shader->m_shaderId && "attach invalid shader");
+        if ( this->m_programId == 0 ) {
+          std::cerr << "attach invalid program" << std::endl;
+          return;
+        }
+        
+        if ( shader->m_shaderId == 0 ) {
+          std::cerr << "attach invalid shader" << std::endl;
+          return;
+        }
 
         glAttachShader(this->m_programId, shader->m_shaderId);
         m_linkedShaders.push_back(shader);
@@ -199,8 +219,15 @@ namespace GLSL {
      */
     void Program::detach(PtrConstShader shader)
     {
-        assert(this->m_programId && "detach invalid program");
-        assert(shader->m_shaderId && "detach invalid shader");
+        if ( this->m_programId == 0 ) {
+          std::cerr << "detach invalid program" << std::endl;
+          return;
+        }
+        
+        if ( shader->m_shaderId == 0 ) {
+          std::cerr << "detach invalid shader" << std::endl;
+          return;
+        }
 
         glDetachShader(this->m_programId, shader->m_shaderId);
         m_linkedShaders.remove(shader);
