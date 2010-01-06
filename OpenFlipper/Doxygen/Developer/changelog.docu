@@ -1,5 +1,55 @@
 /*! \page changelog Changelog
  *
+ * - <b>OpenFlipper 1.0 RC6 ( ? , 8086 )</b>
+ *      - <b>Core</b>
+ *              - Splitted File Plugins ( Now there are type plugins loaded first to register types and the file plugins to load data)
+ *                      - Moved loading code from OpenMesh to file plugins to support multiple data types
+ *              - Changed handling of ObjectSelectionChanged
+ *              - Updated internal types handling (directly initialized by core now) 
+ *              - Handle object tree integration for BaseObjects automatically (No longer necessary to call the setParent Function)
+ *              - selectionChanged, visibilityChanged and objectPropertiesChanged are now handled internally. If One of these changes, the signals
+ *                will be emitted by the core and passed to the plugins.
+ *              - Basic implementation to copy per Object data along with copied object
+ *      - <b>Plugin interface changes</b>
+ *              - Changed PluginFunctions to return 0 object for identifier -1
+ *              - Provide a QSettings interface to store per Plugin settings (called OpenFlipperSettings in globaloptions)
+ *              - Core manages objectSelectionChanged, visibilityChanged and objectPropertiesChanged. (Do not emit these signals in your plugin anymore)
+ *              - Added TypeInterface to register types from plugins (These plugins will be loaded first!)
+ *              - Renamed type idList to IdList
+ *      - <b>DataTypes</b> 
+ *              - Added Plane Datatype and plugin
+ *      - <b>Internal changes</b>
+ *              - Updated internal types handling (directly initialized by core now) 
+ *      - <b>UI</b>
+ *              - Updated cursors (new cursors for some modes)
+ *              - Updated Icons 
+ *                      - New Icons for Object Types (Group,Plane Icon)
+ *                      - Icons for Datacontrol Context Menu
+ *     - <b>Plugins</b>
+ *             - Plugin Datacontrol
+ *                     - Some gui reworks
+ *                     - Use new signal processing correctly
+ *                     - RPC Function for grouping now returns the id of the group
+ *                     - RPC Function to ungroup
+ *             - Plugin Decimater
+ *                     - Enable Normal deviation constraint by default
+ *                     - Correctly set maximum for sliders
+ *             - Plugin Selection
+ *                     - Create mesh from selection added
+ *             - Plugin Move
+ *                     - Added function to hide Manipulators
+ *                     - Added some Icons
+ *     - <b>ACG</b>
+ *             - Switched Bounding Box action to doubles
+ *             - added Quaternion exponential, logarithm and from_rotation_matrix construction
+ *             - Removed assertions in GLSL Shader Utils and replaced them by warnings (To support graphics cards without shaders)
+ *     - <b>Build system</b>
+ *             - Finder for libpre
+ *             - Finder for libxml2
+ *             - Updated OpenMesh Finder
+ *             - New Option to enable stl vector checking
+ *             - First tests to enable cross compiling
+ *
  * - <b>OpenFlipper 1.0 RC5 ( 10.26.2009, 7508 )</b>
  *	- <b>UI</b>
  *		- Updated the view modes
@@ -21,7 +71,7 @@
  *			- Fixed multiple connections in move plugin resulting in slow movement
  *		- Plugin Datacontrol
  *			- Fixed double entries in datacontrol
- *	- <b>Internal changes</b>
+ *      - <b>Internal changes</b>
  *		- Changed ordering of main scenegraph nodes (and added pluginfunctions to add new nodes)
  *	- <b>Documentation</b>
  *		- refactor the documentation
