@@ -66,7 +66,6 @@ class PluginDialog : public QDialog, public Ui::PluginDialog
 
   signals:
     void unloadPlugin(QString _name);
-    void dontLoadPlugins(QStringList _dontLoad);
     void loadPlugin();
 };
 

@@ -118,64 +118,41 @@ void Core::loadPlugins()
   //try to load plugins from new location
   QDir tempDir = QDir(OpenFlipper::Options::pluginDir());
 
-  QStringList filters;
-
-
-  filters << "*.dll";
-  filters << "*.dylib";
-  filters << "*.so";
-
-
+  // Possible Plugin extensions
+  QStringList filter;
+  if ( OpenFlipper::Options::isWindows() )
+    filter << "*.dll";
+  else if ( OpenFlipper::Options::isDarwin() )
+    filter << "*.dylib";
+  else
+    filter << "*.so";
+  
   // Get all files in the Plugin dir
-  QStringList pluginlist = tempDir.entryList(filters,QDir::Files);
+  QStringList pluginlist = tempDir.entryList(filter,QDir::Files);
 
-  for (int i=0; i < pluginlist.size(); i++)
+  // Convert local file path to absolute path
+  for (int i=0; i < pluginlist.size(); i++) {
      pluginlist[i] = tempDir.absoluteFilePath(pluginlist[i]);
-
-  // Get all config files to be used
-  QStringList configFiles = OpenFlipper::Options::optionFiles();
-
-  QStringList iniPlugins;
-  for ( int fileCount = 0 ; fileCount < (int)configFiles.size() ; ++fileCount) {
-    INIFile ini;
-
-    if (  ini.connect(configFiles[fileCount],false) ) {
-
-      // get all Plugin Names which will not be loaded
-      QString dontLoadString;
-      if (ini.get_entry( dontLoadString,"Plugins","DontLoad" ) ) {
-        dontLoadPlugins_ = dontLoadPlugins_ + dontLoadString.split(";",QString::SkipEmptyParts);
-      }
-
-      std::vector< QString > loadKeys;
-
-      if ( OpenFlipper::Options::is64bit() )
-        loadKeys.push_back("Load64");
-
-      if ( OpenFlipper::Options::is32bit() )
-        loadKeys.push_back("Load32");
-
-      loadKeys.push_back("Load");
-
-      for ( uint keyit = 0 ; keyit < loadKeys.size() ; ++ keyit) {
-        //Load additional Plugins given by ini file
-        std::vector< QString > additionalPlugins;
-        if (ini.get_entry( additionalPlugins,"Plugins",loadKeys[keyit] ) ) {
-          for ( uint i = 0 ; i < additionalPlugins.size(); ++i) {
-            iniPlugins << additionalPlugins[i];
-              emit log(LOGOUT,tr("Additional Plugin from ini file: %1").arg( additionalPlugins[i] ) );
-          }
-        }
-      }
-
-      ini.disconnect();
-
-   } else
-      emit log(LOGWARN,tr("Failed to connect to ProgramOptions.ini file: %1").arg( configFiles[fileCount]) );
   }
 
-  pluginlist = iniPlugins << pluginlist;
-
+  // get all Plugin Names which will not be loaded
+  QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
+  
+  // Output info about additional plugins
+  for ( int i = 0 ; i < dontLoadPlugins.size(); ++i) 
+    emit log(LOGOUT,tr("dontLoadPlugins Plugin from ini file: %1").arg( dontLoadPlugins[i] ) );
+  
+  // get all Plugins which should be loaded in addition to the standard plugins 
+  QStringList additionalPlugins = OpenFlipperSettings().value("PluginControl/AdditionalPlugins").toStringList();
+  
+  // Output info about additional plugins
+  for ( int i = 0 ; i < additionalPlugins.size(); ++i) 
+    emit log(LOGOUT,tr("Additional Plugin from ini file: %1").arg( additionalPlugins[i] ) );
+  
+  // Prepend the additional Plugins to the plugin list
+  pluginlist = additionalPlugins << pluginlist;
+  
+  for (int i=0; i < pluginlist.size(); i++) 
 
   // Sort plugins to load FilePlugins first
   QStringList typePlugins;
@@ -200,15 +177,10 @@ void Core::loadPlugins()
   // Than load everything else.
   pluginlist = typePlugins << filePlugins << textureControl << otherPlugins;
 
-  // Remove Whitespace from beginning and end of Plugin Names
-  for ( int i = 0 ; i < dontLoadPlugins_.size() ; ++i )
-    dontLoadPlugins_[i] = dontLoadPlugins_[i].trimmed();
-
-  for ( int i = 0 ; i < dontLoadPlugins_.size(); ++i )
-    emit log(LOGWARN,tr("Skipping Plugins :\t %1").arg( dontLoadPlugins_[i] ) );
+  for ( int i = 0 ; i < dontLoadPlugins.size(); ++i )
+    emit log(LOGWARN,tr("Skipping Plugins :\t %1").arg( dontLoadPlugins[i] ) );
 
   emit log(LOGOUT,"=============================================================================================");
-
 
   // Try to load each file as a plugin
   for ( int i = 0 ; i < pluginlist.size() ; ++i) {
@@ -236,7 +208,7 @@ void Core::slotLoadPlugin(){
   if ( OpenFlipper::Options::nogui() )
     return;
 
-
+  // Setup filters for possible plugin extensions
   QString filter;
   if ( OpenFlipper::Options::isWindows() )
     filter = "Plugins (*.dll)";
@@ -245,7 +217,7 @@ void Core::slotLoadPlugin(){
   else
     filter = "Plugins (*.so)";
 
-
+  // Ask the user to select the file to load
   QString filename = ACG::getOpenFileName(coreWidget_,tr("Load Plugin"),filter,OpenFlipper::Options::currentDirStr());
 
   if (filename.isEmpty())
@@ -253,7 +225,6 @@ void Core::slotLoadPlugin(){
 
   // get the plugin name
   // and check if Plugin is in the dontLoad List
-
   QPluginLoader loader( filename );
   QObject *plugin = loader.instance();
   QString name;
@@ -268,17 +239,20 @@ void Core::slotLoadPlugin(){
       return;
   }else
     return;
+  
+  QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
 
-  if (dontLoadPlugins_.contains(name)){
+  if (dontLoadPlugins.contains(name)){
       int ret = QMessageBox::question(0, tr("Plugin Loading Prevention"),
                    tr("OpenFlipper is currently configured to prevent loading this plugin.\n"
                       "Do you want to enable this plugin?"),
                    QMessageBox::Yes | QMessageBox::No,
                    QMessageBox::Yes);
-      if (ret == QMessageBox::Yes)
-        dontLoadPlugins_.removeAll(name);
-      else
-        return;
+      if (ret == QMessageBox::Yes) {
+        dontLoadPlugins.removeAll(name);
+        OpenFlipperSettings().setValue("PluginControl/DontLoadNames",dontLoadPlugins);
+      } else
+         return;
   }
   loadPlugin(filename,false);
 }
@@ -297,7 +271,6 @@ void Core::slotShowPlugins(){
 
       //connect signals
       connect(dialog, SIGNAL(unloadPlugin(QString)), this, SLOT(unloadPlugin(QString)));
-      connect(dialog, SIGNAL(dontLoadPlugins(QStringList)), this, SLOT(dontLoadPlugins(QStringList)));
       connect(dialog, SIGNAL( loadPlugin() ), this, SLOT( slotLoadPlugin() ));
 
       //if a plugin was deleted/loaded the dialog returns 0 and it needs to be loaded again
@@ -336,14 +309,6 @@ void Core::unloadPlugin(QString name){
     }
 
     log(LOGERR, tr("Unable to unload plugin '%1' (plugin wasn't found)").arg(name));
-}
-
-/** @brief prevent OpenFlipper from loading plugins on the next start (slot)
- *  @param _plugins semicolon separated string with plugin names
- */
-void Core::dontLoadPlugins(QStringList _plugins){
-  for (int i=0; i < _plugins.size(); i++)
-    dontLoadPlugins_ << _plugins[i];
 }
 
 /** @brief Load a Plugin with given filename
@@ -415,7 +380,9 @@ void Core::loadPlugin(QString filename, bool silent){
         }
       }
 
-      if ( dontLoadPlugins_.contains(basePlugin->name(), Qt::CaseInsensitive) ) {
+      QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
+      
+      if ( dontLoadPlugins.contains(basePlugin->name(), Qt::CaseInsensitive) ) {
         emit log(LOGWARN,tr("OpenFlipper.ini prevented Plugin %1 from being loaded! ").arg( basePlugin->name() ));
         emit log(LOGOUT,"=============================================================================================");
         return;
