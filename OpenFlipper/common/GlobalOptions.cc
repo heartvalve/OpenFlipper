@@ -58,9 +58,24 @@
 #include <QDir>
 #include <QCoreApplication>
 
+#if defined(__GNUC__)
+ #if defined(__GNUC_PATCHLEVEL__)
+  #define __GNUC_VERSION__ (  __GNUC__ * 10000 \
+                            + __GNUC_MINOR__ * 100 \
+                            + __GNUC_PATCHLEVEL__)
+ #else
+  #define __GNUC_VERSION__ (  __GNUC__ * 10000 \
+                            + __GNUC_MINOR__ * 100)
+  #endif
+#endif
+
+
 
 namespace OpenFlipper {
 namespace Options {
+
+/// This Variable will hold special compiler information
+static QString compilerInfo_ = "";
   
 /// Pointer to the internal settings object storing OpenFlippers program options ( and the pplugins Options)  
 static QSettings* settings_ = 0;  
@@ -795,6 +810,17 @@ bool renderPicking( ) {
 
 bool initializeSettings() {
   
+  #if defined(__GNUC__)
+    compilerInfo_ = "Gnu CC";
+  #else 
+    #if defined (_MSC_FULL_VER)
+      compilerInfo_ = "MSVC";  
+    #else 
+      compilerInfo_ = "Unknown";
+    #endif
+  #endif
+  
+  
   //==================================================================================================
   // Get the Main config dir in the home directory and possibly create it
   //==================================================================================================
@@ -980,6 +1006,10 @@ void closeSettings() {
   // Delete the settings object. This will flush all data to the disk.
   delete settings_;
 }
+
+QString compilerInfo() {
+  return compilerInfo_;
+}
  
 }
 }
@@ -993,6 +1023,8 @@ QSettings& OpenFlipperSettings() {
   else
     return emptySettings;
 }
+
+
 
 //=============================================================================
 
