@@ -231,7 +231,7 @@ Core::init() {
     redrawTime_ = new QTime();
     redrawTime_->start ();
 
-    if ( OpenFlipper::Options::splash() ) {
+    if ( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       QPixmap splashPixmap(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "splash.png");
 
       splash_ = new QSplashScreen(splashPixmap);
@@ -509,7 +509,7 @@ Core::init() {
   QStringList optionFiles = OpenFlipper::Options::optionFiles();
   for ( int i = 0 ; i < (int)optionFiles.size(); ++i) {
 
-    if ( OpenFlipper::Options::gui() && OpenFlipper::Options::splash() ) {
+    if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       splash_->showMessage(tr("Loading Configuration File ") + QString::number(i) + "/"  + QString::number(optionFiles.size()) ,
                            Qt::AlignBottom | Qt::AlignLeft , Qt::white);
       QApplication::processEvents();
@@ -560,7 +560,7 @@ Core::init() {
     coreWidget_->toolBox_->restoreState (windowStates);
     windowStates.endGroup ();
 
-    if ( OpenFlipper::Options::splash() ) {
+    if ( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       splash_->finish(coreWidget_);
     }
 
