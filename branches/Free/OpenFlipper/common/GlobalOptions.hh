@@ -784,6 +784,10 @@ QString updatePassword( );
 DLLEXPORT
 QString coreVersion();
 
+/// Information about the used compiler
+DLLEXPORT
+QString compilerInfo();
+
 /** @} */
 
 //===========================================================================

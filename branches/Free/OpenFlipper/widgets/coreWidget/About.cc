@@ -144,6 +144,13 @@ void CoreWidget::showAboutWidget( ) {
     aboutWidget_->OpenFlipperAbout->append(tr("Link time Version:\t\t") + QT_VERSION_STR );
     
     // =====================================================================================
+    // Compiler information
+    // =====================================================================================    
+    aboutWidget_->OpenFlipperAbout->append("\n");
+    aboutWidget_->OpenFlipperAbout->append(tr("Compiler Version Info:"));
+    aboutWidget_->OpenFlipperAbout->append( OpenFlipper::Options::compilerInfo() );
+    
+    // =====================================================================================
     // List the currently registered data types
     // =====================================================================================
     aboutWidget_->OpenFlipperAbout->append("\n");
