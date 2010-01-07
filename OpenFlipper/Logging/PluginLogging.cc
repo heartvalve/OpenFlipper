@@ -51,10 +51,10 @@
 
 //== INCLUDES =================================================================
 
-// -------------------- mview
+
 #include "Logging.hh"
-// -------------------- ACG
-#include "OpenFlipper/common/GlobalOptions.hh"
+
+#include <QStringList>
 
 //== IMPLEMENTATION ========================================================== 
 

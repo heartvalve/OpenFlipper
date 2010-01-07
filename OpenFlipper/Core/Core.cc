@@ -128,7 +128,6 @@ Core() :
   //init logFile
   logStream_ = 0;
   logFile_ = 0;
-  OpenFlipper::Options::logFileEnabled(true);
 
   //init nodes
   root_node_scenegraph_ = new ACG::SceneGraph::SeparatorNode(0, "SceneGraph Root Node");
@@ -966,22 +965,24 @@ void Core::slotExit() {
 /// log to file
 void Core::slotLogToFile(Logtype _type, QString _message){
 
-  if (!OpenFlipper::Options::logFileEnabled())
+  if (!OpenFlipperSettings().value("Core/Log/logFileEnabled",true).toBool() )
     return;
 
   if (logStream_ == 0){
     //check if a logfile has been specified and if the path is valid
 
-    QFileInfo fi( OpenFlipper::Options::logFile() );
+    QString fileName = OpenFlipperSettings().value("Core/Log/logFile","").toString();
+    QFileInfo fi( fileName );
 
-    if (OpenFlipper::Options::logFile() == "" || !fi.dir().exists() )
-        OpenFlipper::Options::logFile(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-                                                  OpenFlipper::Options::dirSeparator() +  "OpenFlipper.log");
+    if ( fileName == "" || !fi.dir().exists() ) {
+      OpenFlipperSettings().setValue("Core/Log/logFile", QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
+                                                         OpenFlipper::Options::dirSeparator() +  "OpenFlipper.log");
+    }
 
-    logFile_ = new QFile( OpenFlipper::Options::logFile() );
+    logFile_ = new QFile( OpenFlipperSettings().value("Core/Log/logFile").toString() );
     if ( logFile_->open(QFile::WriteOnly) ) {
         logStream_ = new QTextStream (logFile_);
-    }else{
+    } else {
       emit log(LOGERR, tr("Unable to open logfile!"));
       return;
     }

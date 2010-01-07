@@ -151,7 +151,7 @@ void Core::applyOptions(){
     //setup logFile
     if (logFile_ != 0){
 
-      if (OpenFlipper::Options::logFile() != logFile_->fileName() ){
+      if (  OpenFlipperSettings().value("Core/Log/logFile").toString() != logFile_->fileName() ){
         logFile_->close();
         delete logFile_;
         logFile_ = 0;

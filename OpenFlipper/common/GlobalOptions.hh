@@ -89,6 +89,10 @@
 * * Core/Gui/glViewer/showControlWheels      This setting controls if the control wheels should be visible in the glViewer (bool)
 * * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)
 *
+* <b>Log Settings</b>
+* * Core/Log/Logfile                          This is the location of the log file
+* * Core/Log/logFileEnabled                   This controls, if logging to file is enabled
+* 
 * <b>Mouse Controls<b>\n
 * * Core/Mouse/Wheel/ZoomFactor       Zoom factor used when turning the mouse wheel (double)\n
 * * Core/Mouse/Wheel/ZoomFactorShift  Zoom factor used when turning the mouse wheel while shift is pressed (makes zoom slower while shift is pressed)  (double)\n
@@ -650,22 +654,6 @@ QString helpDirStr();
   /// Give extra debug information
   DLLEXPORT
   void debug(bool _debug );
-
-  /// enable logging to file
-  DLLEXPORT
-  void logFileEnabled(bool _enable );
-
-  /// is logging to file enabled?
-  DLLEXPORT
-  bool logFileEnabled();
-
-  /// logfile location (path + filename)
-  DLLEXPORT
-  void logFile(QString _filename);
-
-  /// logfile location (path + filename)
-  DLLEXPORT
-  QString logFile();
 
 /** @} */
 
