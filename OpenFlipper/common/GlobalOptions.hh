@@ -87,6 +87,8 @@
 * <b>User Interface Settings</b>
 * * Core/Gui/glViewer/defaultBackgroundColor This controls the default background color of the glViewer (QColor)
 * * Core/Gui/glViewer/showControlWheels      This setting controls if the control wheels should be visible in the glViewer (bool)
+* * Core/Gui/glViewer/glMouse                This setting controls if the mouse is rendered in OpenGL or in the window manager
+* * Core/Gui/glViewer/stereoMousePick        This setting controls if the mouse depth is picked in stereo mode
 * * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)
 *
 * <b>Log Settings</b>
@@ -433,14 +435,6 @@ QString helpDirStr();
   DLLEXPORT
   std::vector<float> anaglyphRightEyeColorMatrix( );
 
-  /// Enables/Disables mouse cursor depth picking during stereo mode
-  DLLEXPORT
-  void stereoMousePick( bool _stereoPick );
-
-  /// mouse cursor depth picking during stereo mode
-  DLLEXPORT
-  bool stereoMousePick( );
-
   /// Store synchronization setting
   DLLEXPORT
   void synchronization( bool _synchronization );
@@ -520,14 +514,6 @@ QString helpDirStr();
   /// Set the flag if a grid should be drawn in every viewer
   DLLEXPORT
   void gridVisible(bool _visible);
-
-  /// Store Gl based cursor painting
-  DLLEXPORT
-  void glMouse( bool _glMouse );
-
-  /// Should the mouse cursor be painted with gl
-  DLLEXPORT
-  bool glMouse( );
 
 /** @} */
 

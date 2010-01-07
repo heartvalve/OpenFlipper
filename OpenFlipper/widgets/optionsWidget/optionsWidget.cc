@@ -306,9 +306,8 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   rcm7->setValue (mat[7]);
   rcm8->setValue (mat[8]);
 
-  noMousePick->setChecked (!OpenFlipper::Options::stereoMousePick());
-
-  nativeMouse->setChecked (!OpenFlipper::Options::glMouse());
+  noMousePick->setChecked ( !OpenFlipperSettings().value("Core/Gui/glViewer/stereoMousePick",true).toBool() );
+  nativeMouse->setChecked ( !OpenFlipperSettings().value("Core/Gui/glViewer/glMouse",true).toBool() );
 
   // plugin options
   initPluginOptions();
@@ -580,8 +579,6 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/Stereo/EyeDistance",eyeDistance->value ());
   OpenFlipperSettings().setValue("Core/Stereo/FocalDistance",double(focalDistance->value() / 1000.0));
 
-  OpenFlipper::Options::stereoMousePick(!noMousePick->isChecked ());
-
   // Set option entries for philips stereo mode
   // Set option entries
   OpenFlipperSettings().setValue("Core/Stereo/Philips/Content",headerContentType->currentIndex());
@@ -613,8 +610,9 @@ void OptionsWidget::slotApply() {
   mat[8] = rcm8->value ();
 
   OpenFlipper::Options::anaglyphRightEyeColorMatrix (mat);
-
-  OpenFlipper::Options::glMouse(!nativeMouse->isChecked ());
+  
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/stereoMousePick",!noMousePick->isChecked ());
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/glMouse",!nativeMouse->isChecked ());
 
   // updates
   OpenFlipper::Options::updateUrl( updateURL->text() );

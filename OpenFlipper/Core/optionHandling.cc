@@ -86,8 +86,8 @@ void Core::applyOptions(){
     coreWidget_->showLogger( OpenFlipper::Options::loggerState() );
 
     // gl mouse cursor
-    coreWidget_->setGlCursor( OpenFlipper::Options::glMouse() );
-
+    coreWidget_->setGlCursor( OpenFlipperSettings().value("Core/Gui/glViewer/glMouse",true).toBool() );
+    
     // Prepare Picking Debugger Flag
     ACG::SceneGraph::PickTarget target;
     if ( OpenFlipper::Options::pickingRenderMode() == "PICK_ANYHING") {
