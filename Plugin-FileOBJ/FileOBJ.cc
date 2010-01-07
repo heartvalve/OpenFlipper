@@ -289,15 +289,15 @@ void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
   }
   
   //force gui settings
-  if ( OpenFlipper::Options::gui() ){
+  if ( OpenFlipper::Options::gui() && loadOptions_ != 0 ){
     
-    if (loadFaceColor_ && !loadFaceColor_->isChecked() )
+    if ( !loadFaceColor_->isChecked() )
       _importer.objectOptions()[ _importer.currentObject() ] |= OBJImporter::FORCE_NOCOLOR;
     
-    if (loadNormals_ && !loadNormals_->isChecked() )
+    if ( !loadNormals_->isChecked() )
       _importer.objectOptions()[ _importer.currentObject() ] |= OBJImporter::FORCE_NONORMALS;
     
-    if (loadTexCoords_ && !loadTexCoords_->isChecked() )
+    if ( !loadTexCoords_->isChecked() )
       _importer.objectOptions()[ _importer.currentObject() ] |= OBJImporter::FORCE_NOTEXTURES;
   }
   
