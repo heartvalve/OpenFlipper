@@ -426,6 +426,16 @@ void CoreWidget::setupMenuBar()
 
   toolsMenu_->addAction( stopVideoCaptureAction);
   connect(stopVideoCaptureAction, SIGNAL(triggered()), this, SIGNAL(stopVideoCapture()) );
+  
+  toolsMenu_->addSeparator();
+  
+  //show plugins
+  QAction* AC_Plugins = new QAction(tr("Plugins"), this);
+  AC_Plugins->setStatusTip(tr("Show loaded plugins"));
+  AC_Plugins->setWhatsThis(tr("Show loaded plugins"));
+  AC_Plugins->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"network-connect.png"));
+  connect(AC_Plugins, SIGNAL(triggered()), this, SIGNAL(showPlugins()));
+  toolsMenu_->addAction(AC_Plugins);
 
   // ======================================================================
   // help Menu
@@ -447,16 +457,6 @@ void CoreWidget::setupMenuBar()
   AC_Whats_this->setStatusTip(tr("Enter What's this Mode"));
   AC_Whats_this->setWhatsThis(tr("Get information about a specific Button/Widget/..."));
   helpMenu_->addAction(AC_Whats_this);
-
-  helpMenu_->addSeparator();
-
-  //show plugins
-  QAction* AC_Plugins = new QAction(tr("Plugins"), this);
-  AC_Plugins->setStatusTip(tr("Show loaded plugins"));
-  AC_Plugins->setWhatsThis(tr("Show loaded plugins"));
-  AC_Plugins->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"network-connect.png"));
-  connect(AC_Plugins, SIGNAL(triggered()), this, SIGNAL(showPlugins()));
-  helpMenu_->addAction(AC_Plugins);
 
   helpMenu_->addSeparator();
 

@@ -146,8 +146,9 @@ void Core::loadPlugins()
   QStringList additionalPlugins = OpenFlipperSettings().value("PluginControl/AdditionalPlugins").toStringList();
   
   // Output info about additional plugins
-  for ( int i = 0 ; i < additionalPlugins.size(); ++i)
+  for ( int i = 0 ; i < additionalPlugins.size(); ++i) {
     emit log(LOGOUT,tr("Additional Plugin from file: %1").arg( additionalPlugins[i] ) );
+  }
   
   // Prepend the additional Plugins to the plugin list
   pluginlist = additionalPlugins << pluginlist;
