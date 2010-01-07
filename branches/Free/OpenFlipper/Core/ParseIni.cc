@@ -131,13 +131,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::lastDataType(type);
 
     //============================================================================
-    // Splash Screen
-    //============================================================================
-    bool splash;
-    if( _ini.get_entry(splash, "Options", "Splash") )
-      OpenFlipper::Options::splash(splash);
-
-    //============================================================================
     // Load the startup dir for file dialogs
     //============================================================================
     QString startup_dir;
@@ -509,11 +502,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   //save KeyBindings
   if ( OpenFlipper::Options::gui() )
     coreWidget_->saveKeyBindings(_ini);
-
-  //============================================================================
-  // Splash Screen
-  //============================================================================
-  _ini.add_entry( "Options" , "Splash" , OpenFlipper::Options::splash() );
 
   //write default dataType to INI
   _ini.add_entry( "Options" , "default_DataType" , OpenFlipper::Options::lastDataType() );

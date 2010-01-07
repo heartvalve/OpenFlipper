@@ -87,6 +87,7 @@
 * <b>User Interface Settings</b>
 * * Core/Gui/glViewer/defaultBackgroundColor This controls the default background color of the glViewer (QColor)
 * * Core/Gui/glViewer/showControlWheels      This setting controls if the control wheels should be visible in the glViewer (bool)
+* * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)
 *
 * <b>Mouse Controls<b>\n
 * * Core/Mouse/Wheel/ZoomFactor       Zoom factor used when turning the mouse wheel (double)\n
@@ -589,14 +590,6 @@ QString helpDirStr();
   /// Set title of the main window
   DLLEXPORT
   void windowTitle( QString _titel );
-
-  /// Display splash screen?
-  DLLEXPORT
-  void splash( bool _splash );
-
-  /// Display splash screen?
-  DLLEXPORT
-  bool splash( );
 
   /// Default base color
   DLLEXPORT

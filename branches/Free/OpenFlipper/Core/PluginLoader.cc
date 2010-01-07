@@ -184,7 +184,7 @@ void Core::loadPlugins()
   // Try to load each file as a plugin
   for ( int i = 0 ; i < pluginlist.size() ; ++i) {
 
-    if ( OpenFlipper::Options::gui() && OpenFlipper::Options::splash() ) {
+    if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
       splashMessage_ = tr("Loading Plugin %1/%2").arg(i).arg(pluginlist.size()) ;
       splash_->showMessage( splashMessage_ , Qt::AlignBottom | Qt::AlignLeft , Qt::white);
       QApplication::processEvents();
@@ -359,7 +359,7 @@ void Core::loadPlugin(QString filename, bool silent){
     if ( basePlugin ) {
       emit log(LOGOUT,tr("Found Plugin :\t\t %1 at %2.").arg(basePlugin->name()).arg( filename));
 
-      if ( OpenFlipper::Options::gui() && OpenFlipper::Options::splash() ) {
+      if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
         splashMessage_ = splashMessage_ + " " + basePlugin->name() ;
         splash_->showMessage( splashMessage_ , Qt::AlignBottom | Qt::AlignLeft , Qt::white);
         QApplication::processEvents();

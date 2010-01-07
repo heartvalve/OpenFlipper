@@ -187,9 +187,6 @@ static QString defaultToolboxMode_ = "";
 
 static QString title_ = "OpenFlipper v?";
 
-/// Show a splash screen on init?
-static bool splash_ = true;
-
 /// default base color
 static QColor defaultBaseColor_ = QColor("white");
 
@@ -665,14 +662,6 @@ QString windowTitle( ) {
 
 void windowTitle( QString _titel ) {
   title_ = _titel;
-}
-
-void splash( bool _splash ) {
-  splash_ = _splash;
-}
-
-bool splash( ) {
-  return splash_;
 }
 
 void defaultBaseColor( QColor _color ) {

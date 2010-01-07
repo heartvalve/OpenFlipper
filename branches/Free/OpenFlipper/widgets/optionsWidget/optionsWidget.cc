@@ -233,7 +233,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   //general
   fullscreen->setChecked( OpenFlipper::Options::fullScreen() );
-  splash->setChecked( OpenFlipper::Options::splash() );
+  splash->setChecked( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() );
   toolbox->setChecked( !OpenFlipper::Options::hideToolbox() );
 
   loggerHidden->setChecked( OpenFlipper::Options::loggerState() == OpenFlipper::Options::Hidden);
@@ -544,7 +544,7 @@ void OptionsWidget::slotApply() {
 
   //general
   OpenFlipper::Options::fullScreen( fullscreen->isChecked() );
-  OpenFlipper::Options::splash( splash->isChecked() );
+  OpenFlipperSettings().setValue("Core/Gui/splash",splash->isChecked());
   OpenFlipper::Options::hideToolbox( !toolbox->isChecked() );
   if (loggerHidden->isChecked())
     OpenFlipper::Options::loggerState( OpenFlipper::Options::Hidden );

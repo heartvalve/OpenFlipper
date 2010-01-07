@@ -243,7 +243,7 @@ bool parseCommandLineOptions(CSimpleOpt& args){
             openPolyMeshes = true;
             break;
         case OPT_NOSPLASH:
-            OpenFlipper::Options::splash(false);
+            OpenFlipperSettings().setValue("Core/Gui/splash",false);
             break;
         case OPT_REMOTE:
             OpenFlipper::Options::remoteControl(true);
