@@ -555,21 +555,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   _ini.add_entry("Options","UpdateUsername",OpenFlipper::Options::updateUsername() );
   _ini.add_entry("Options","UpdatePassword",OpenFlipper::Options::updatePassword() );
 
-  //============================================================================
-  //dontLoad Plugins
-  //============================================================================
-  QString dontLoad;
-  for (int i=0; i < dontLoadPlugins_.size(); i++)
-    if (!dontLoad.contains(dontLoadPlugins_[i].trimmed() + ";"))
-      dontLoad += dontLoadPlugins_[i].trimmed() + ";";
-
   if ( !_ini.section_exists("Plugins") )
     _ini.add_section("Plugins");
-
-  //write dontLoad Plugins
-  _ini.add_entry("Plugins","DontLoad", dontLoad);
-
-
 
   if ( !_ini.section_exists("Options") )
     _ini.add_section("Options");

@@ -121,8 +121,9 @@ int PluginDialog::exec()
 void PluginDialog::slotUnload()
 {
   int buttonState = QMessageBox::No;
-  QStringList dontLoad;
 
+  bool yesToAll = false;
+  
   for (int i=0; i < list->selectedItems().size(); i++){
 
     QString name = plugins_[ list->row( list->selectedItems()[i] ) ].rpcName;
@@ -142,16 +143,18 @@ void PluginDialog::slotUnload()
                    QMessageBox::No);
     }
 
-  if (buttonState == QMessageBox::Yes || buttonState == QMessageBox::YesToAll)
-    dontLoad << name;
+    // Store the new setting
+    if (buttonState == QMessageBox::Yes || buttonState == QMessageBox::YesToAll) {
+      QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
+      if ( !dontLoadPlugins.contains(name) ){
+        dontLoadPlugins << name;
+        OpenFlipperSettings().setValue("PluginControl/DontLoadNames",dontLoadPlugins);
+      }
+    }
 
     //unload plugin
     emit unloadPlugin(name);
   }
-
-  //prevent OpenFlipper from loading the plugin on the next start
-  if (!dontLoad.isEmpty())
-    emit dontLoadPlugins(dontLoad);
 
   reject();
 }

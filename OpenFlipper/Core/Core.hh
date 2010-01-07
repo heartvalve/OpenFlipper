@@ -804,9 +804,6 @@ private:
     /// List of all loaded plugins
     std::vector<PluginInfo> plugins;
 
-    /// List of Plugins that should not be loaded
-    QStringList dontLoadPlugins_;
-
     /// Index of Plugins toolbox widget
     int toolboxindex_;
 
@@ -821,9 +818,6 @@ private:
 
     /// Function for unloading Plugins
     void unloadPlugin(QString name);
-
-    /// Dont Load the given _plugins on next startup
-    void dontLoadPlugins(QStringList _plugins);
 
     /// Load Plugins from menu
     void slotLoadPlugin();
