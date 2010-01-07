@@ -135,9 +135,6 @@ static StereoMode stereoMode_ = OpenGL;
 static std::vector<float> anaglyphLeftEyeColors_ = std::vector<float> (9, 0.0);
 static std::vector<float> anaglyphRightEyeColors_ = std::vector<float> (9, 0.0);
 
-/// mouse cursor depth picking in stereo mode
-static bool stereoMousePick_ = true;
-
 /// Store the synchronization mode
 static bool synchronization_ = false;
 
@@ -167,9 +164,6 @@ static bool drawModesInContextMenu_ = true;
 
 /// Set if a grid should be drawn in every viewer
 static bool gridVisible_ = false;
-
-/// Should OpenGL be used to draw the mouse cursor
-static bool glMouse_ = true;
 
 /// Store the toolbox gui Mode mode
 static bool hideToolbox_ = false;
@@ -486,16 +480,6 @@ std::vector<float> anaglyphRightEyeColorMatrix( )
   return anaglyphRightEyeColors_;
 }
 
-/// Enables/Disables mouse cursor depth picking during stereo mode
-void stereoMousePick( bool _stereoMousePick ) {
-  stereoMousePick_ = _stereoMousePick;
-}
-
-/// mouse cursor depth picking during stereo mode
-bool stereoMousePick( ) {
-  return stereoMousePick_;
-}
-
 /// Store synchronization mode setting
 void synchronization( bool _synchronization ) {
   synchronization_ = _synchronization;
@@ -597,16 +581,6 @@ unsigned int examinerWidgets() {
     return 4;
   else
     return 1;
-}
-
-/// Store Gl based cursor painting
-void glMouse( bool _glMouse ) {
-  glMouse_ = _glMouse;
-}
-
-/// Should the mouse cursor be painted with gl
-bool glMouse( ) {
-  return glMouse_;
 }
 
 /// Set to current

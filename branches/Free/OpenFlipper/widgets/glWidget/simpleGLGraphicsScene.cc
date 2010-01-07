@@ -73,7 +73,7 @@ SimpleGLGraphicsScene::SimpleGLGraphicsScene () :
   initialized_(false)
 {
   cursorPainter_ = new CursorPainter (this);
-  cursorPainter_->setEnabled (OpenFlipper::Options::glMouse ());
+  cursorPainter_->setEnabled( OpenFlipperSettings().value("Core/Gui/glViewer/glMouse",true).toBool() );
 }
 
 

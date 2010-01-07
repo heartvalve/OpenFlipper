@@ -2270,7 +2270,7 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
     cursorPositionValid_ = false;
   }
   // only do real pick in stereo mode
-  else if (stereo_ && OpenFlipper::Options::stereoMousePick() &&
+  else if (stereo_ && OpenFlipperSettings().value("Core/Gui/glViewer/stereoMousePick",true).toBool() &&
            pick (ACG::SceneGraph::PICK_ANYTHING, _scenePos.toPoint(), nodeIdx, targetIdx, &tmp))
   {
     // the point we get back will contain the view transformation and we have to revert it
