@@ -146,14 +146,12 @@ void Core::loadPlugins()
   QStringList additionalPlugins = OpenFlipperSettings().value("PluginControl/AdditionalPlugins").toStringList();
   
   // Output info about additional plugins
-  for ( int i = 0 ; i < additionalPlugins.size(); ++i) 
-    emit log(LOGOUT,tr("Additional Plugin from ini file: %1").arg( additionalPlugins[i] ) );
+  for ( int i = 0 ; i < additionalPlugins.size(); ++i)
+    emit log(LOGOUT,tr("Additional Plugin from file: %1").arg( additionalPlugins[i] ) );
   
   // Prepend the additional Plugins to the plugin list
   pluginlist = additionalPlugins << pluginlist;
   
-  for (int i=0; i < pluginlist.size(); i++) 
-
   // Sort plugins to load FilePlugins first
   QStringList typePlugins;
   QStringList filePlugins;
@@ -239,13 +237,13 @@ void Core::slotLoadPlugin(){
       return;
   }else
     return;
-  
-  QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
 
+  // Ask if the plugin is on the block list
+  QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
   if (dontLoadPlugins.contains(name)){
       int ret = QMessageBox::question(0, tr("Plugin Loading Prevention"),
                    tr("OpenFlipper is currently configured to prevent loading this plugin.\n"
-                      "Do you want to enable this plugin?"),
+                      "Do you want to enable this plugin permanently?"),
                    QMessageBox::Yes | QMessageBox::No,
                    QMessageBox::Yes);
       if (ret == QMessageBox::Yes) {
@@ -254,6 +252,21 @@ void Core::slotLoadPlugin(){
       } else
          return;
   }
+  
+  // check if the plugin is not on the additional plugin list
+  QStringList additionalPlugins = OpenFlipperSettings().value("PluginControl/AdditionalPlugins").toStringList();
+  if (!additionalPlugins.contains(name)){
+    int ret = QMessageBox::question(0, tr("Plugin Loading ..."),
+                                       tr("Should OpenFlipper load this plugin on next startup?"),
+                                    QMessageBox::Yes | QMessageBox::No,
+                                    QMessageBox::Yes);
+    if (ret == QMessageBox::Yes) {
+      additionalPlugins << filename;
+      std::cerr << "Added: " << filename.toStdString() << std::endl;
+      OpenFlipperSettings().setValue("PluginControl/AdditionalPlugins",additionalPlugins);
+    }
+  }
+  
   loadPlugin(filename,false);
 }
 
