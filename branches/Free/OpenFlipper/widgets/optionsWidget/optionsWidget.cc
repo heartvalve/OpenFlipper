@@ -239,10 +239,10 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   loggerHidden->setChecked( OpenFlipper::Options::loggerState() == OpenFlipper::Options::Hidden);
   loggerNormal->setChecked( OpenFlipper::Options::loggerState() == OpenFlipper::Options::Normal);
   loggerInScene->setChecked( OpenFlipper::Options::loggerState() == OpenFlipper::Options::InScene);
-  enableLogFile->setChecked( OpenFlipper::Options::logFileEnabled() );
+  enableLogFile->setChecked( OpenFlipperSettings().value("Core/Log/logFileEnabled",true).toBool() );
 
   //paths
-  logFile->setText( OpenFlipper::Options::logFile() );
+  logFile->setText( OpenFlipperSettings().value("Core/Log/logFile").toString()  );
 
   //stereo
 
@@ -552,10 +552,9 @@ void OptionsWidget::slotApply() {
     OpenFlipper::Options::loggerState( OpenFlipper::Options::InScene );
   else
     OpenFlipper::Options::loggerState( OpenFlipper::Options::Normal );
-  OpenFlipper::Options::logFileEnabled( enableLogFile->isChecked() );
-
-  //paths
-  OpenFlipper::Options::logFile( logFile->text() );
+  
+  OpenFlipperSettings().setValue("Core/Log/logFileEnabled",enableLogFile->isChecked());
+  OpenFlipperSettings().setValue("Core/Log/logFile",logFile->text());
 
   //viewer
   OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactor", wZoomFactor->text().toDouble());
