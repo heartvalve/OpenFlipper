@@ -58,17 +58,8 @@
 #include <QDir>
 #include <QCoreApplication>
 
-#if defined(__GNUC__)
- #if defined(__GNUC_PATCHLEVEL__)
-  #define __GNUC_VERSION__ (  __GNUC__ * 10000 \
-                            + __GNUC_MINOR__ * 100 \
-                            + __GNUC_PATCHLEVEL__)
- #else
-  #define __GNUC_VERSION__ (  __GNUC__ * 10000 \
-                            + __GNUC_MINOR__ * 100)
-  #endif
-#endif
-
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x) 
 
 
 namespace OpenFlipper {
@@ -811,7 +802,10 @@ bool renderPicking( ) {
 bool initializeSettings() {
   
   #if defined(__GNUC__)
-    compilerInfo_ = "Gnu CC";
+    compilerInfo_ = "Gnu CC: " + QString(  TOSTRING(__GNUC__) ) + "." + QString(  TOSTRING(__GNUC_MINOR__) ) ;
+    #if defined(__GNUC_PATCHLEVEL__)
+      compilerInfo_ += "." + QString(  TOSTRING(__GNUC_PATCHLEVEL__) );
+    #endif
   #else 
     #if defined (_MSC_FULL_VER)
       compilerInfo_ = "MSVC";  
