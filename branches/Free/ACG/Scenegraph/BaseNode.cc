@@ -73,8 +73,8 @@ unsigned int BaseNode::last_id_used__ = 0;
 
 BaseNode::
 BaseNode(BaseNode* _parent, std::string _name)
-  : multipassStatus_(0u),
-    multipassNode_(1u),
+  : multipassStatus_(ALLPASSES),
+    multipassNode_(PASS_1),
     parent_(_parent),
     name_(_name),
     status_(Active),
@@ -96,8 +96,8 @@ BaseNode(BaseNode* _parent, std::string _name)
 
 BaseNode::
 BaseNode(BaseNode* _parent, BaseNode* _child, std::string _name)
-  : multipassStatus_(1u),
-    multipassNode_(1u),
+  : multipassStatus_(ALLPASSES),
+    multipassNode_(PASS_1),
     parent_(_parent),
     name_(_name),
     status_(Active),
@@ -189,58 +189,67 @@ BaseNode::leavePick(GLState& _state, PickTarget /*_target*/, unsigned int _drawM
 //----------------------------------------------------------------------------
 
 void BaseNode::multipassStatusSetActive(const unsigned int _i, bool _active) {
-  assert(_i != 0);
+
+  if ( _i == NOPASS ) {
+    multipassStatus_ = NOPASS;
+  } else if ( _i == ALLPASSES ) {
+    if ( _active )
+      multipassStatus_ = ALLPASSES;
+    else
+      multipassStatus_ = NOPASS;  
+  } else {
+    if ( _active ) 
+      multipassStatus_ |=  (1 << (_i == 0 ? 0 : _i - 1));
+    else
+      multipassStatus_ &=  ~(1 << (_i == 0 ? 0 : _i - 1));
+  }
   
-  if (_i == 0)
-    std::cerr << "Error: Render passes start with 1!" << std::endl;
-  
-  if ( _active ) 
-    multipassStatus_ |=  (1 << (_i == 0 ? 0 : _i - 1));
-  else
-    multipassStatus_ &=  ~(1 << (_i == 0 ? 0 : _i - 1));
 }
 
 //----------------------------------------------------------------------------
 
 bool BaseNode::multipassStatusActive(const unsigned int _i) const {
-  assert(_i != 0);
-  
-  if (_i == 0)
-    std::cerr << "Error: Render passes start with 1!" << std::endl;
-  
-  if ( multipassStatus_ == ALLPASSES )
+
+  if ( multipassStatus_ == NOPASS )
+    return false;
+  else if ( multipassStatus_ & ALLPASSES )
     return true;
   else  
     return ((1 << (_i == 0 ? 0 : _i - 1)) & multipassStatus_) != 0;
+  
 }
 
 //----------------------------------------------------------------------------
 
 void BaseNode::multipassNodeSetActive(const unsigned int _i , bool _active) {
-  assert(_i != 0);
   
-  if (_i == 0)
-    std::cerr << "Error: Render passes start with 1!" << std::endl;
+  if ( _i == NOPASS ) {
+    multipassNode_ = NOPASS;
+  } else if ( _i == ALLPASSES ) {
+    if ( _active )
+      multipassNode_ = ALLPASSES;
+    else
+      multipassNode_ = NOPASS;  
+  } else {
+    if ( _active ) 
+      multipassNode_ |=  (1 << (_i == 0 ? 0 : _i - 1));
+    else
+      multipassNode_ &=  ~(1 << (_i == 0 ? 0 : _i - 1));
+  }
   
-  if ( _active ) 
-    multipassNode_ |=  (1 << (_i == 0 ? 0 : _i - 1));
-  else
-    multipassNode_ &=  ~(1 << (_i == 0 ? 0 : _i - 1));
-
 }
 
 //----------------------------------------------------------------------------
 
 bool BaseNode::multipassNodeActive(const unsigned int _i) const {
-  assert(_i != 0);
   
-  if (_i == 0)
-    std::cerr << "Error: Render passes start with 1!" << std::endl;
-  
-  if ( multipassNode_ == ALLPASSES )
+  if ( multipassNode_ == NOPASS )
+    return false;
+  else if ( multipassNode_ & ALLPASSES )
     return true;
   else  
     return ((1 << (_i == 0 ? 0 : _i - 1)) & multipassNode_) != 0;
+  
 }
 
 //=============================================================================

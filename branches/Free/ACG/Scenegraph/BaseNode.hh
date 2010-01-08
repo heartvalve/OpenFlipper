@@ -406,12 +406,25 @@ public:
   /// Multipass pass bit mask type
   typedef unsigned int MultipassBitMask;
   
-  /// This constant should be used to enable rendering of a node in all passes
-  static const unsigned int ALLPASSES = 0;
+
+  /// This enum should be used to enable rendering of a node in different
+  enum PASSES {
+    NOPASS = 0,
+    ALLPASSES = 1 << 0,
+    PASS_1    = 1 << 1,
+    PASS_2    = 1 << 2,
+    PASS_3    = 1 << 3,
+    PASS_4    = 1 << 4,
+    PASS_5    = 1 << 5,
+    PASS_6    = 1 << 6,
+    PASS_7    = 1 << 7,
+    PASS_8    = 1 << 8
+  };
   
   /** \brief Get the current multipass settings for the nodes status functions
   *
-  * Get a bitmask defining in which traverse pass the enter and leave nodes are used. (1-indexed)
+  * Get a bitmask defining in which traverse pass the enter and leave nodes are used. Use
+  * the PASSES enum above to control multipass rendering!
   *
   * @return Bitmask defining in which traverse pass the enter and leave nodes are used 
   */
@@ -420,7 +433,9 @@ public:
   
   /** \brief Set multipass settings for the nodes status functions
   *
-  * Set a bitmask defining in which traverse pass the enter and leave nodes are used. (1-indexed)
+  * Set a bitmask defining in which traverse pass the enter and leave nodes are used. Use
+  * the PASSES enum above to control multipass rendering!
+  *
   * Set to ALLPASSES if you want to render in all passes  
   *
   * @param _passStatus Bitmask defining in which traverse pass the enter and leave nodes are used 
@@ -430,7 +445,8 @@ public:
   /** \brief Set multipass status to traverse in a specific pass
   *
   * Change multipass setting for the nodes status functions. The node will
-  * call its enter and leave functions in the given pass if its set active
+  * call its enter and leave functions in the given pass if its set active.
+  * Use the PASSES enum above to control multipass rendering!
   *
   * @param _i Pass in which the node should be rendered
   * @param _active Activate or deactivate in this pass?
@@ -440,7 +456,8 @@ public:
   /** \brief Get multipass status to traverse in a specific pass
   *
   * Check multipass setting for the nodes status functions if they should
-  * be called in the given render pass.
+  * be called in the given render pass. 
+  * Use the PASSES enum above to control multipass rendering!
   *
   * @param _i Check this pass if the nodes enter/leave functions are active
   */  
@@ -451,6 +468,7 @@ public:
   /** \brief Get the current multipass settings for the node
   *
   * Get a bitmask defining in which traverse path an action is applied to the node. (1-indexed)
+  * Use the PASSES enum above to control multipass rendering!
   *
   * @return Bitmask defining in which traverse passes an action is applied to the node.
   */
@@ -461,7 +479,8 @@ public:
   /** \brief Set multipass settings for the node
   *
   * Set a bitmask defining in which traverse path an action is applied to the node. (1-indexed)
-  * Set to ALLPASSES if you want to render in all passes  
+  * Set to ALLPASSES if you want to render in all passes.
+  * Use the PASSES enum above to control multipass rendering!
   *
   * @param _passNode Bitmask defining in which traverse passes an action is applied to the node.
   */
@@ -471,6 +490,7 @@ public:
   *
   * Change multipass setting for the node. An action will be
   * applied to this node in the given pass.
+  * Use the PASSES enum above to control multipass rendering!
   *
   * @param _i      Pass in which the node should be rendered
   * @param _active Enable or disable node in this pass?
@@ -481,6 +501,7 @@ public:
   *
   * Check multipass setting for the node if an action will be
   * applied in the given pass.
+  * Use the PASSES enum above to control multipass rendering!
   *
   * @param _i Check this pass if an action will be applied to the node.
   */  

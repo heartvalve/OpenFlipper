@@ -346,7 +346,7 @@ traverse_multipass( BaseNode*     _node,
     unsigned int max_passes = _state.max_render_passes();
 
     // Render all passes
-    for(unsigned int pass = 1; pass <= max_passes; ++pass) {
+    for(unsigned int pass = BaseNode::PASS_1; pass <= (BaseNode::PASS_1 + max_passes); ++pass) {
 
         // Traverse scenegraph
         traverse_multipass (_node, action, pass);
@@ -436,8 +436,8 @@ class MultiPassInfoAction
 public:
 
   MultiPassInfoAction() :
-    statusPasses_(0u),
-    nodePasses_(0u)
+    statusPasses_(BaseNode::ALLPASSES),
+    nodePasses_(BaseNode::ALLPASSES)
   {}
 
   bool operator()(BaseNode* _node) {
@@ -451,7 +451,11 @@ public:
         // decimal value (0x001011 -> 4)
         // Note: Same as (int)log2(bitmask)
         unsigned int c = 0;
-        while(statusPass != 0u) {
+        
+        // Skip the first one as this is the ALLPASSES flag
+        statusPass = statusPass >> 1;
+        
+        while( statusPass != 0u ) {
           statusPass = statusPass >> 1;
           ++c;
         }
@@ -468,6 +472,10 @@ public:
         // decimal value (0x001011 -> 4)
         // Note: Same as (int)log2(bitmask)
         unsigned int c = 0;
+        
+        // Skip the first one as this is the ALLPASSES flag
+        nodePass = nodePass >> 1;
+        
         while(nodePass != 0u) {
           nodePass = nodePass >> 1;
           ++c;
