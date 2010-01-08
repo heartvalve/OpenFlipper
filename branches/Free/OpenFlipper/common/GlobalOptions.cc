@@ -808,7 +808,7 @@ bool initializeSettings() {
     #endif
   #else 
     #if defined (_MSC_FULL_VER)
-      compilerInfo_ = "MSVC";  
+    compilerInfo_ = "MSVC: " + QString(  TOSTRING(_MSC_FULL_VER) );  
     #else 
       compilerInfo_ = "Unknown";
     #endif
