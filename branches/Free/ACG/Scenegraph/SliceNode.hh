@@ -79,14 +79,14 @@ public:
   };
 
   SliceNode( BaseNode    * _parent = 0,
-	     std::string   _name   = "<SliceNode>" );
+             std::string   _name   = "<SliceNode>" );
 
   virtual ~SliceNode();
 
   void set_visible_box( const Vec3f & _bmin,
-			const Vec3f & _bmax );
+                        const Vec3f & _bmax );
   void set_texture_box( const Vec3f & _bmin,
-			const Vec3f & _bmax );
+                        const Vec3f & _bmax );
 
   ACG_CLASSNAME( SliceNode );
 
