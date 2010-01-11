@@ -903,13 +903,17 @@ public:
   /** @name Drag and Drop
    * @{ */
   //===========================================================================
+  
+  signals:
+    void dragOpenFile(QString _filename);
+  
   private slots:
     void startDrag( QMouseEvent* _event );
 
     void dragEnterEvent(QDragEnterEvent* _event);
 
     void dropEvent( QDropEvent* _event );
-
+    
   /** @} */
 
   private :

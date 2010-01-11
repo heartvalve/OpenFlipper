@@ -439,7 +439,7 @@ public slots:
     /** @name Basic functions
     * @{ */
    //===========================================================================
-private:
+private slots:
   /** \brief Load a new Object ( this may also be an ini or ofs file )
    *
    * This function tries to get the type of data to be loaded from the filename 
