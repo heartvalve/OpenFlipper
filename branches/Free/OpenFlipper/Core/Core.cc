@@ -260,6 +260,7 @@ Core::init() {
     connect( coreWidget_, SIGNAL( resizeApplication(int,int) ), this, SLOT( resizeApplication(int,int) ) );
     connect( coreWidget_, SIGNAL( stopVideoCapture() ), this, SLOT( stopVideoCapture() ) );
     connect( coreWidget_, SIGNAL( startVideoCapture(QString,int,bool) ), this, SLOT( startVideoCapture(QString,int,bool) ) );
+    connect( coreWidget_, SIGNAL( dragOpenFile(QString)), this, SLOT(loadObject(QString)));
 
     connect(coreWidget_, SIGNAL(showPlugins())       , this, SLOT(slotShowPlugins()));
 
