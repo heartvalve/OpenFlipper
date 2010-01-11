@@ -173,12 +173,13 @@ void CoreWidget::dropEvent ( QDropEvent* _event ) {
     }
     
     // Dropped file information
-    if ( view.left ( 4 ) == QString("file://") ) {
+    if ( view.left ( 7 ) == QString("file://") ) {
       _event->acceptProposedAction();
       emit dragOpenFile(view.remove(0,7));
       return;
     } 
-    
+     
+     
     std::cerr << "Skipped unknown drop event : " << view.toStdString() << std::endl;
 
   }
