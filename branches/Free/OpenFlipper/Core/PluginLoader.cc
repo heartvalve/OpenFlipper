@@ -1144,6 +1144,7 @@ void Core::loadPlugin(QString filename, bool silent){
       ft.loadFilters = filePlugin->getLoadFilters();
       ft.saveFilters = filePlugin->getSaveFilters();
       ft.plugin = filePlugin;
+      ft.object = plugin;
       
       supportedTypes_.push_back(ft);
     }
