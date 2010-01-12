@@ -1477,10 +1477,13 @@ void glViewer::grabGLArea()
 {
   glareaGrabbed_ = true;
 
-  if (cursorPainter_)
+  if (cursorPainter_) {
     cursorPainter_->setCursor(Qt::BlankCursor);
-  else
+    std::cerr << "grabGLArea: Blanking cursorpainter  cursor" << std::endl; 
+  } else {
     setCursor(Qt::BlankCursor);
+    std::cerr << "grabGLArea: Blanking qt cursor" << std::endl;
+  }
   grabMouse();
   grabKeyboard();
 }
@@ -1492,10 +1495,13 @@ void glViewer::releaseGLArea()
   ungrabMouse();
   ungrabKeyboard();
 
-  if (cursorPainter_)
+  if (cursorPainter_) {
     cursorPainter_->setCursor(Qt::ArrowCursor);
-  else
+    std::cerr << "grabGLArea: Setting cursorPainter cursor to arrow" << std::endl;
+  } else {
     setCursor(Qt::ArrowCursor);
+    std::cerr << "grabGLArea: Setting qt cursor to arrow" << std::endl;
+  }
 }
 
 
