@@ -91,9 +91,14 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
     }
   #endif
 
+  // Initialize background first
+  _painter->setBackground(QApplication::palette().window());
+  _painter->eraseRect(_rect);
+
+  // From now on we do OpenGL direct painting on the scene
   #if QT_VERSION >= 0x040600
-//     #warning untested! 
-//     _painter->beginNativePainting();
+    // Tell Qt that we directly use OpenGL
+    _painter->beginNativePainting();
   #endif
 
   static bool initialized = false;
@@ -111,6 +116,7 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
     initialized = true;
   }
 
+  // Update the cursor position in all viewers
   if (cursorPainter_ && cursorPainter_->enabled())
   {
     // avoid projection matrix stack overflow
@@ -132,12 +138,12 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
     glLoadMatrixd (mat);
     glMatrixMode(GL_MODELVIEW);
     glPopMatrix ();
-    glClear(GL_DEPTH_BUFFER_BIT);
   }
 
-  _painter->setBackground(QApplication::palette().window());
-  _painter->eraseRect(_rect);
+  // Clear the depth buffer (This is required since QT4.6 Otherwise we get an emtpty scene!
+  glClear(GL_DEPTH_BUFFER_BIT);
 
+  // Paint the viewers
   for (unsigned int i = 0; i < views_->size (); i++)
   {
     if (views_->at(i)->isVisible())
@@ -145,10 +151,11 @@ void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
   }
 
   #if QT_VERSION >= 0x040600
-//   #warning untested! 
-//     _painter->endNativePainting();
+    // The rest is painting through QT again. 
+    _painter->endNativePainting();
   #endif
 
+  // Draw red box around active examiner
   if (layout_->mode() != QtMultiViewLayout::SingleView)
   {
     glViewer *v = views_->at(PluginFunctions::activeExaminer());
