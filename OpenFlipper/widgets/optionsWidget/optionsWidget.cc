@@ -307,7 +307,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   rcm8->setValue (mat[8]);
 
   noMousePick->setChecked ( !OpenFlipperSettings().value("Core/Gui/glViewer/stereoMousePick",true).toBool() );
-  nativeMouse->setChecked ( !OpenFlipperSettings().value("Core/Gui/glViewer/glMouse",true).toBool() );
+  nativeMouse->setChecked ( OpenFlipperSettings().value("Core/Gui/glViewer/nativeMouse",false).toBool() );
 
   // plugin options
   initPluginOptions();
@@ -612,7 +612,7 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::anaglyphRightEyeColorMatrix (mat);
   
   OpenFlipperSettings().setValue("Core/Gui/glViewer/stereoMousePick",!noMousePick->isChecked ());
-  OpenFlipperSettings().setValue("Core/Gui/glViewer/glMouse",!nativeMouse->isChecked ());
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/nativeMouse",nativeMouse->isChecked ());
 
   // updates
   OpenFlipper::Options::updateUrl( updateURL->text() );
