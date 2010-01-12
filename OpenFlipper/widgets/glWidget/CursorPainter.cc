@@ -243,7 +243,7 @@ void CursorPainter::cursorToTexture()
 
   hasCursor_ = false;
 
-  ///\todo Handle whats this cursor! And possibly switch all cursors to bitmap cursors!
+  ///\todo Possibly switch all cursors to bitmap cursors and check there Hotspots!!
   switch (nativeCursor_.shape())
   {
     case Qt::ArrowCursor:
