@@ -199,24 +199,16 @@ int Core::loadObject ( QString _filename ) {
   if (_filename.endsWith(".ofs")) {
      emit log(LOGINFO ,tr("Starting script execution of %1.").arg( _filename)) ;
      emit executeFileScript(_filename);
-  } else
-    return loadObject( DATA_TRIANGLE_MESH, _filename);
+  } else {
+    
+    QFileInfo fi(_filename);
+    
+    for (int i=0; i < (int)supportedTypes_.size(); i++){
 
-  return -1;
-}
-
-/// Function for loading a given file
-int Core::loadObject( DataType _type, QString _filename) {
-  /** \todo this function has to be checked. test for the plugin which can handle 
-            the given file and then use it. 
-  */
-
-  if (_type == DATA_UNKNOWN)
-    return loadObject(_filename);
-
-  for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if (supportedTypes_[i].type == _type) {
-
+      QString filters = supportedTypes_[i].plugin->getLoadFilters();
+      //check extension
+      if ( ! filters.contains( "*." + fi.completeSuffix() ) )
+        continue;
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
@@ -239,6 +231,62 @@ int Core::loadObject( DataType _type, QString _filename) {
 
       return id;
     }
+  }
+
+  emit log(LOGERR, tr("Unable to load object (type unknown). No suitable plugin found!") );
+
+  return -1;
+}
+
+/// Function for loading a given file
+int Core::loadObject( DataType _type, QString _filename) {
+  /** \todo this function has to be checked. test for the plugin which can handle 
+            the given file and then use it. 
+  */
+
+  if (_type == DATA_UNKNOWN)
+    return loadObject(_filename);
+
+  QFileInfo fi(_filename);
+  
+  for (int i=0; i < (int)supportedTypes_.size(); i++)
+    if (supportedTypes_[i].type & _type || supportedTypes_[i].type == _type) {
+
+      QString filters = supportedTypes_[i].plugin->getLoadFilters();
+      //check extension
+      if ( ! filters.contains( "*." + fi.completeSuffix() ) )
+        continue;
+        
+      
+      if ( OpenFlipper::Options::gui() ) {
+        coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
+        if ( !OpenFlipper::Options::loadingSettings() )
+          coreWidget_->setStatus(ApplicationStatus::PROCESSING );
+      }
+
+      int id = -1;
+
+      //load file
+      if ( checkSlot( supportedTypes_[i].object , "loadObject(QString,DataType)" ) )
+        id = supportedTypes_[i].plugin->loadObject(_filename, _type);
+      else
+        id = supportedTypes_[i].plugin->loadObject(_filename);
+
+      if ( OpenFlipper::Options::gui() ) {
+        if ( id != -1 )
+          coreWidget_->statusMessage( tr("Loading %1 ... done").arg(_filename), 4000 );
+        else
+          coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
+
+        if ( !OpenFlipper::Options::loadingSettings() )
+          coreWidget_->setStatus(ApplicationStatus::READY );
+      }
+
+      return id;
+    }
+    
+  emit log(LOGERR, tr("Unable to load object. No suitable plugin found!") );
+    
   return -1; //no plugin found
 }
 
@@ -343,14 +391,31 @@ void Core::slotLoad(QString _filename, int _pluginID) {
 
     BaseObjectData* object;
     PluginFunctions::getObject(id,object);
-
+    
     if ( !object ) {
-      emit log(LOGERR,tr("Object id returned but no object with this id has been found! Error in one of the file plugins!"));
-      return;
+
+      BaseObject* baseObj = 0;
+      GroupObject* group = 0;
+      
+      PluginFunctions::getObject(id,baseObj);
+      
+      if (baseObj){
+
+        group = dynamic_cast< GroupObject* > (baseObj);
+
+        if (group)
+          type = DATA_UNKNOWN;
+      }
+      
+      if ( group == 0 ){
+        emit log(LOGERR,tr("Object id returned but no object with this id has been found! Error in one of the file plugins!"));
+        return;
+      }
     }
     
     // Get the objects type
-    type = object->dataType();
+    if (object)
+      type = object->dataType();
   }
   
   // If the id was greater than zero, add the file to the recent files.
@@ -425,9 +490,9 @@ void Core::slotObjectOpened ( int _id ) {
       PluginFunctions::viewerProperties(i).drawMode( OpenFlipper::Options::defaultDrawMode(i) );
 
       if ( OpenFlipper::Options::defaultProjectionMode(i) == 0 )
-	PluginFunctions::orthographicProjection(i);
+        PluginFunctions::orthographicProjection(i);
       else
-	PluginFunctions::perspectiveProjection(i);
+        PluginFunctions::perspectiveProjection(i);
 
       PluginFunctions::setFixedView(OpenFlipper::Options::defaultViewingDirection(i), i );
     }
@@ -694,7 +759,7 @@ void Core::loadSettings(){
       if ( loadProgramSettings->isChecked() )
         applyOptions();
     } else if ( complete_name.endsWith("obj") ) {
-      openObjFile(complete_name);
+      loadObject(complete_name);
       if ( loadProgramSettings->isChecked() )
         applyOptions();
     }
@@ -717,7 +782,7 @@ void Core::loadSettings(QString _filename){
     openIniFile(_filename,true,true,true);
     applyOptions();
   } else if ( _filename.endsWith("obj") ) {
-    openObjFile(_filename);
+    loadObject(_filename);
     applyOptions();
   }
 

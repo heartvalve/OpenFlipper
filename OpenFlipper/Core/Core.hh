@@ -114,6 +114,7 @@ struct fileTypes {
   QString loadFilters;
   QString saveFilters;
   FileInterface* plugin;
+  QObject* object;
 };
 
 struct dataTypes {

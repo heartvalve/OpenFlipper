@@ -892,14 +892,10 @@ Core::slotRecentOpen(QAction* _action)
   QVector< OpenFlipper::Options::RecentFile > recentFiles = OpenFlipper::Options::recentFiles();
   for (int i = 0 ; i < recentFiles.size() ; ++i )
     if ( recentFiles[i].filename == _action->text() ){
-      if (recentFiles[i].type == DATA_UNKNOWN)
-        loadSettings( recentFiles[i].filename );
-      else{
         OpenFlipper::Options::loadingRecentFile(true);
         loadObject(recentFiles[i].type, recentFiles[i].filename);
         OpenFlipper::Options::loadingRecentFile(false);
-      }
-      break;
+        return;
     }
 }
 
