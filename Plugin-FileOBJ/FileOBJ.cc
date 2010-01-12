@@ -89,6 +89,15 @@ QString FileOBJPlugin::getSaveFilters() {
 
 DataType  FileOBJPlugin::supportedType() {
     DataType type = DATA_POLY_MESH | DATA_TRIANGLE_MESH;
+    
+    #ifdef ENABLE_BSPLINECURVE_SUPPORT
+      type |= DATA_BSPLINE_CURVE;
+    #endif
+
+    #ifdef ENABLE_BSPLINESURFACE_SUPPORT
+      type |= DATA_BSPLINE_SURFACE;
+    #endif
+
     return type;
 }
 
@@ -125,7 +134,7 @@ bool FileOBJPlugin::readMaterial(QString _filename, OBJImporter& _importer)
   std::fstream matStream( _filename.toStdString().c_str(), std::ios_base::in );
 
   if ( !matStream ){
-    emit log(LOGERR, tr("readMaterial : cannot not open file %1").arg(_filename) );
+    emit log(LOGERR, tr("readMaterial : cannot open file %1").arg(_filename) );
     return false;
   }
 
@@ -288,6 +297,46 @@ void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
     }
   }
   
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+  
+  else if ( _importer.isCurve( _importer.currentObject()+1 )  ){
+  
+    int id = -1;
+    emit addEmptyObject(DATA_BSPLINE_CURVE, id);
+    
+    BaseObjectData* object(0);
+    
+    if(PluginFunctions::getObject( id, object)){
+      
+      _importer.addObject( object );
+
+      object->path( _importer.path() );
+      object->setName( _name );
+    }
+  }
+  
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+  
+  else if ( _importer.isSurface( _importer.currentObject()+1 )  ){
+  
+    int id = -1;
+    emit addEmptyObject(DATA_BSPLINE_SURFACE, id);
+    
+    BaseObjectData* object(0);
+    
+    if(PluginFunctions::getObject( id, object)){
+      
+      _importer.addObject( object );
+
+      object->path( _importer.path() );
+      object->setName( _name );
+    }
+  }
+  
+#endif
+  
   //force gui settings
   if ( OpenFlipper::Options::gui() && loadOptions_ != 0 ){
     
@@ -430,7 +479,6 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
   }
 }
 
-
 void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 {
  
@@ -441,24 +489,32 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
   std::fstream input( _filename.toStdString().c_str(), std::ios_base::in );
 
   if ( !input.is_open() || !input.good() ){
-    emit log(LOGERR, tr("readOBJFile : cannot not open file %1").arg(_filename) );
+    emit log(LOGERR, tr("readOBJFile : cannot open file %1").arg(_filename) );
     return;
   }
 
+  QString currentFileName = QFileInfo(_filename).fileName() ;
+
+  ReaderMode mode = NONE;
+
   std::string line;
   std::string keyWrd;
+  std::string nextKeyWrd = "";
 
-  float                  x, y, z, u, v;
+  float x, y, z, u, v;
+  int   deg, index;
+  double knot;
 
   std::vector<VertexHandle> vhandles;
   std::vector<int>          face_texcoords;
   std::string               matname;
 
+  std::vector< int > cpIndices;
+  std::vector< double > knotsU,knotsV;
+  
   int faceCount = 0;
 
   _importer.setPath( path );
-  
-  addNewObject(_importer, QFileInfo(_filename).fileName() );
   
   while( input && !input.eof() )
   {
@@ -478,10 +534,17 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
     std::stringstream stream(line);
 
-    stream >> keyWrd;
+    //unless the keyWrd for the new line is not determined by the previous line
+    //read it from stream
+    if (nextKeyWrd == "")
+      stream >> keyWrd;
+    else {
+      keyWrd = nextKeyWrd;
+      nextKeyWrd = "";
+    }
 
     // material file
-    if (keyWrd == "mtllib")
+    if (mode == NONE && keyWrd == "mtllib")
     {
       std::string matString;
 
@@ -496,7 +559,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     }
 
     // usemtl
-    else if (keyWrd == "usemtl")
+    else if (mode == NONE && keyWrd == "usemtl")
     {
       stream >> matname;
       if ( _importer.materials().find(matname)==_importer.materials().end() )
@@ -508,13 +571,18 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         
         Material& mat = _importer.materials()[matname];
     
-        if ( mat.has_map_Kd() )
+        if ( mat.has_map_Kd() ){
+          //add object if not already there
+          if (_importer.currentObject() == -1)
+            addNewObject(_importer, currentFileName ); 
+
           _importer.useMaterial( matname );
+        }
       }
     }
 
     // vertex
-    else if (keyWrd == "v")
+    else if (mode == NONE && keyWrd == "v")
     {
       stream >> x; stream >> y; stream >> z;
 
@@ -523,7 +591,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     }
 
     // texture coord
-    else if (keyWrd == "vt")
+    else if (mode == NONE && keyWrd == "vt")
     {
       stream >> u; stream >> v;
 
@@ -540,7 +608,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
 
     // normal
-    else if (keyWrd == "vn")
+    else if (mode == NONE && keyWrd == "vn")
     {
       stream >> x; stream >> y; stream >> z;
 
@@ -548,9 +616,23 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         _importer.addNormal( OpenMesh::Vec3f(x,y,z) );
       }
     }
+    
+    // degree (for curves)
+    else if (mode == NONE && keyWrd == "deg")
+    {
+      stream >> deg;
+
+      if ( !stream.fail() )
+        _importer.setDegreeU( deg );
+
+      stream >> deg;
+
+      if ( !stream.fail() )
+        _importer.setDegreeV( deg );
+    }
 
     // group
-    else if (keyWrd == "g"){
+    else if (mode == NONE && keyWrd == "g"){
       
       std::string groupName;
       std::getline(stream,groupName);
@@ -558,16 +640,17 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       if ( faceCount > 0 )
         addNewObject( _importer, QString(groupName.c_str()) );
       else
-        _importer.setObjectName( _importer.currentObject(), QString(groupName.c_str()) );
+        currentFileName = QString(groupName.c_str());
 
       //since obj-groups are used, all new objects will be grouped together in OpenFlipper
-      _importer.setGroup( QFileInfo(_filename).fileName() );
+      if ( _importer.objectOptions().size() > 1 )
+        _importer.setGroup( QFileInfo(_filename).fileName() );
 
       faceCount = 0;
     }
 
     // face
-    else if (keyWrd == "f")
+    else if (mode == NONE && keyWrd == "f")
     {
 
       int component(0), nV(0);
@@ -576,6 +659,10 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       vhandles.clear();
       face_texcoords.clear();
 
+      //add object if not already there
+      if (_importer.currentObject() == -1)
+          addNewObject(_importer, currentFileName );
+      
       // read full line after detecting a face
       std::string faceLine;
       std::getline(stream,faceLine);
@@ -692,7 +779,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
 
       if( !vhandles.empty() ){
-
+        
         if ( face_texcoords.size() > 0 )
           //if we have texCoords add face+texCoords
           _importer.addFace(vhandles, face_texcoords );
@@ -708,20 +795,245 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       //if polygons get triangulated this can be more than one face
       _importer.addMaterial( matname );
     }
+    
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+    // param
+    else if ( (mode == CURVE && keyWrd == "parm") || (mode == CURVE && keyWrd == "parm_add") ){
+
+      //get curve knots
+      std::string paramLine;
+      std::string tmp;
+      
+      std::getline(stream, paramLine);
+      
+      // value may contain a / as line separator
+      if ( QString( paramLine.c_str() ).endsWith("\\")){
+        paramLine = paramLine.substr(0, paramLine.length()-1);
+        nextKeyWrd = "parm_add";
+      }
+      
+      std::stringstream lineData( paramLine );
+
+      if ( keyWrd != "parm_add")
+        lineData >> tmp; //push the first u out
+
+      // work on the line until nothing left to read
+      while ( !lineData.eof() && !lineData.fail() )
+      {
+      
+        lineData >> knot;
+
+        if ( !lineData.fail() )
+          knotsU.push_back( knot );
+      }
+    }
+
+    // curve
+    else if ( (mode == NONE && keyWrd == "curv") || (mode == CURVE && keyWrd == "curv_add") ){
+
+      mode = CURVE;
+      
+      if ( keyWrd == "curv" )
+        addNewObject(_importer, QFileInfo(_filename).fileName() );
+      
+      //get curve control points
+      std::string curveLine;
+      std::string tmp;
+      
+      std::getline(stream, curveLine);
+      
+      // value may contain a / as line separator
+      if ( QString( curveLine.c_str() ).endsWith("\\")){
+        curveLine = curveLine.substr(0, curveLine.length()-1);
+        nextKeyWrd = "curv_add";
+      }
+
+      std::stringstream lineData( curveLine );
+
+      // work on the line until nothing left to read
+      while ( !lineData.eof() && !lineData.fail() )
+      {
+        lineData >> index;
+
+        if ( !lineData.fail() )
+          cpIndices.push_back( index -1 );
+      }
+    }
+    
+    // end
+    else if (mode == CURVE && keyWrd == "end"){
+      
+      if ( _importer.isCurve( _importer.currentObject() ) ){
+
+        // remove first two entries since they are the first and last knot
+        cpIndices.erase(cpIndices.begin());
+        cpIndices.erase(cpIndices.begin());
+      
+        // set up the spline curve
+        _importer.currentCurve()->set_degree( _importer.degreeU() );
+        _importer.currentCurve()->autocompute_knotvector(false);
+
+        // add the control points
+        std::vector< ACG::Vec3d > controlPolygon;
+        
+        for (uint i = 0; i < cpIndices.size(); ++i)
+          controlPolygon.push_back( (ACG::Vec3d) _importer.vertex( cpIndices[i] ) );
+
+        _importer.currentCurve()->set_control_polygon( controlPolygon );
+
+        _importer.currentCurve()->set_knots(knotsU);
+      }
+      
+      cpIndices.clear();
+      knotsU.clear();
+      
+      mode = NONE;
+    }
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+    // param
+    else if ( (mode == SURFACE && keyWrd == "parm") || (mode == SURFACE && keyWrd == "parm_add") ){
+
+      //get surface knots
+      std::string paramLine;
+      std::string tmp;
+      
+      std::getline(stream, paramLine);
+      
+      // value may contain a / as line separator
+      if ( QString( paramLine.c_str() ).endsWith("\\")){
+        paramLine = paramLine.substr(0, paramLine.length()-1);
+        nextKeyWrd = "parm_add";
+      }
+      
+      std::stringstream lineData( paramLine );
+
+      if ( keyWrd == "parm_add_u")
+        tmp = "u";
+      else if ( keyWrd == "parm_add_v")
+        tmp = "v";
+      else
+        lineData >> tmp; //get the direction (u or v)
+
+      std::vector< double >* knots;
+      
+      //Decide if these are knots in U or V direction
+      if (tmp == "u")
+        knots = &knotsU;
+      else
+        knots = &knotsV;
+
+      if (nextKeyWrd != "")
+        nextKeyWrd += "_" + tmp;
+
+      // work on the line until nothing left to read
+      while ( !lineData.eof() && !lineData.fail() )
+      {
+      
+        lineData >> knot;
+
+        if ( !lineData.fail() )
+          knots->push_back( knot );
+      }
+    }
+
+    // surface
+    else if ( (mode == NONE && keyWrd == "surf") || (mode == SURFACE && keyWrd == "surf_add") ){
+
+      mode = SURFACE;
+      
+      if ( keyWrd == "surf" )
+        addNewObject(_importer, QFileInfo(_filename).fileName() );
+      
+      //get surface control points
+      std::string surfLine;
+      std::string tmp;
+      
+      std::getline(stream, surfLine);
+      
+      // value may contain a / as line separator
+      if ( QString( surfLine.c_str() ).endsWith("\\")){
+        surfLine = surfLine.substr(0, surfLine.length()-1);
+        nextKeyWrd = "surf_add";
+      }
+
+      std::stringstream lineData( surfLine );
+
+      // work on the line until nothing left to read
+      while ( !lineData.eof() && !lineData.fail() )
+      {
+        lineData >> index;
+
+        if ( !lineData.fail() )
+          cpIndices.push_back( index -1 );
+      }
+    }
+    
+    // end
+    else if (mode == SURFACE && keyWrd == "end"){
+      
+      if ( _importer.isSurface( _importer.currentObject() ) ){
+
+        // remove first 4 entries since they are the first and last knot (for both direction)
+        cpIndices.erase(cpIndices.begin());
+        cpIndices.erase(cpIndices.begin());
+        cpIndices.erase(cpIndices.begin());
+        cpIndices.erase(cpIndices.begin());
+
+        // set up the spline surface
+        _importer.currentSurface()->set_degree( _importer.degreeU(), _importer.degreeV() );
+
+        // compute number of control points in m and in n direction
+        int dimU = knotsU.size() - _importer.degreeU() - 1;
+        int dimV = knotsV.size() - _importer.degreeV() - 1;
+        
+        // add the control points
+        std::vector< ACG::Vec3d > controlPolygon;
+        
+        int cnt = 0;
+        
+        for (int i = 0; i < dimU; ++i)
+        {
+          controlPolygon.clear();
+          
+          for (int j = 0; j < dimV; ++j){
+            
+            controlPolygon.push_back( (ACG::Vec3d) _importer.vertex( cpIndices[cnt] ) );
+            ++cnt;
+          }
+
+          _importer.currentSurface()->add_vector_m(controlPolygon);
+        }
+
+        _importer.currentSurface()->set_knots_m(knotsU);
+        _importer.currentSurface()->set_knots_n(knotsV);
+      }
+      
+      cpIndices.clear();
+      knotsU.clear();
+      knotsV.clear();
+      
+      mode = NONE;
+    }
+#endif
+
   }
 }
 
 
-void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer)
+void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStringList& _includes)
 {
   //setup filestream
   
   std::fstream input( _filename.toStdString().c_str(), std::ios_base::in );
 
   if ( !input.is_open() || !input.good() ){
-    emit log(LOGERR, tr("readOBJFile : cannot not open file %1").arg(_filename) );
+    emit log(LOGERR, tr("readOBJFile : cannot open file %1").arg(_filename) );
     return;
   }
+
+  ReaderMode mode = NONE;
 
   std::string line;
   std::string keyWrd;
@@ -753,8 +1065,31 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer)
 
     stream >> keyWrd;
 
+    //call - included obj files
+    if (mode == NONE && keyWrd == "call"){
+
+      std::string include;
+      std::getline(stream,include);
+      
+      //replace relative path
+      QString includeStr = QString( include.c_str() ).trimmed();
+      
+      if ( !includeStr.isEmpty() ){
+
+        if (includeStr[0] == '.'){
+          includeStr = includeStr.right( includeStr.length()-1 );
+        
+          QFileInfo fi(_filename);
+          
+          includeStr = fi.path() + QDir::separator() + includeStr;
+        }
+        
+        _includes.append( includeStr );
+      }
+    }
+    
     // group
-    if (keyWrd == "g"){
+    else if (mode == NONE && keyWrd == "g"){
       if ( faceCount > 0 ){
         //give options to importer and reinitialize
         //for next object
@@ -767,7 +1102,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer)
       }
     }
     // face
-    else if (keyWrd == "f"){
+    else if (mode == NONE && keyWrd == "f"){
 
       faceCount++;
       
@@ -792,11 +1127,74 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer)
       if( verticesPerFace > 3 )
         options = OBJImporter::POLYMESH;
     }
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+
+    // curve
+    if (mode == NONE && keyWrd == "curv"){
+
+      mode = CURVE;
+      
+      if ( faceCount > 0 ){
+        //give options to importer and reinitialize
+        //for next object
+        if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
+        if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
+
+        _importer.addObjectOptions( options );
+      }
+      
+      options = OBJImporter::CURVE;
+    }
+    
+    // end
+    else if (mode == CURVE && keyWrd == "end"){
+      
+      mode = NONE;
+      
+      _importer.addObjectOptions( options );
+      options = OBJImporter::TRIMESH;
+      faceCount = 0;
+    }
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+
+    // surface
+    if (mode == NONE && keyWrd == "surf"){
+
+      mode = SURFACE;
+      
+      if ( faceCount > 0 ){
+        //give options to importer and reinitialize
+        //for next object
+        if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
+        if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
+
+        _importer.addObjectOptions( options );
+      }
+      
+      options = OBJImporter::SURFACE;
+    }
+    
+    // end
+    else if (mode == SURFACE && keyWrd == "end"){
+      
+      mode = NONE;
+      
+      _importer.addObjectOptions( options );
+      options = OBJImporter::TRIMESH;
+      faceCount = 0;
+    }
+#endif
+
   }
   
-  if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
-  if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
-  _importer.addObjectOptions( options );
+  if (faceCount > 0){
+    if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
+    if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
+    _importer.addObjectOptions( options );
+  }
   
   if (TriMeshCount == 0 && PolyMeshCount == 0)
     return;
@@ -852,8 +1250,43 @@ int FileOBJPlugin::loadObject(QString _filename) {
   
   OBJImporter importer;
   
+  //for recursive obj's only the first obj locks/unlocks the loadingSettings Option
+  bool topLevelObj = false;
+  
+  //included filenames
+  QStringList includes;
+  
   //preprocess file and store types in ObjectOptions
-  checkTypes( _filename, importer );
+  checkTypes( _filename, importer, includes );
+  
+  IdList objIDs;
+  
+  if ( !OpenFlipper::Options::loadingSettings() ){
+    OpenFlipper::Options::loadingSettings(true);
+    topLevelObj = true;
+  }
+  
+  //load included obj files
+  for (int i=0; i < includes.size(); i++){
+    
+    int id = loadObject( includes[i] );
+   
+    if (id != -1)
+      objIDs.push_back( id );
+  }
+  
+  //add a group if we have includes
+  if (includes.size() > 0)
+    importer.setGroup( QFileInfo(_filename).fileName() );
+  
+  //check if something was found
+  if ( importer.objectOptions().size() == 0 && objIDs.size() == 0 ){
+    
+    if ( topLevelObj )
+      OpenFlipper::Options::loadingSettings(false);
+    
+    return -1;
+  }
   
   //then parse the obj
   readOBJFile( _filename, importer );
@@ -868,8 +1301,6 @@ int FileOBJPlugin::loadObject(QString _filename) {
     
     if ( dataControlExists ){
     
-      IdList objIDs;
-    
       for(uint i=0; i < importer.objectCount(); i++)
         objIDs.push_back( importer.object(i)->id() );
     
@@ -882,7 +1313,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
   for(uint i=0; i < importer.objectCount(); i++){
     
     BaseObject* object = importer.object(i);
-    
+
     //remember the id of the first opened object
     if ( i == 0 && importer.group() == "" )
       returnID = object->id();
@@ -915,6 +1346,24 @@ int FileOBJPlugin::loadObject(QString _filename) {
       triMeshObj->show();
     }
     
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+    //handle new BSplineCurves
+    BSplineCurveObject* bscObj = dynamic_cast< BSplineCurveObject* > (object);
+    
+    if ( bscObj ){
+      bscObj->setFromFileName(_filename);
+      bscObj->splineCurveNode()->updateGeometry();
+    }
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+    //handle new BSplineCurves
+    BSplineSurfaceObject* bssObj = dynamic_cast< BSplineSurfaceObject* > (object);
+    
+    if ( bssObj )
+      bssObj->setFromFileName(_filename);
+#endif
+
     //general stuff
     emit log(LOGINFO,object->getObjectinfo());
     emit openedFile( object->id() );
@@ -940,26 +1389,22 @@ int FileOBJPlugin::loadObject(QString _filename) {
   forceTriangleMesh_ = false;
   forcePolyMesh_     = false;
   
+  if ( topLevelObj )
+    OpenFlipper::Options::loadingSettings(false);
+  
   return returnID;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-/// load a triangle-mesh with given filename
-int FileOBJPlugin::loadTriMeshObject(QString _filename){
+/// load a obj and force mesh datatype
+int FileOBJPlugin::loadObject(QString _filename, DataType _type){
   
-  forceTriangleMesh_ = true;
-  
-  return loadObject(_filename);
-}
+  if ( _type == DATA_TRIANGLE_MESH )
+    forceTriangleMesh_ = true;
+  else if ( _type == DATA_POLY_MESH )
+    forcePolyMesh_ = true;
 
-//-----------------------------------------------------------------------------------------------------
-
-/// load a poly-mesh with given filename
-int FileOBJPlugin::loadPolyMeshObject(QString _filename){
-  
-  forcePolyMesh_     = true;
-  
   return loadObject(_filename);
 }
 
@@ -1037,7 +1482,53 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
       objStream.close();
       return false;
     }
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+  } else if ( object->dataType( DATA_BSPLINE_CURVE ) ) {
+
+    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
+    object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+
+    BSplineCurveObject* bscObj = dynamic_cast<BSplineCurveObject* >( object );
+
+
+    if ( writeCurve( objStream, _filename, bscObj->splineCurve()) ) {
+      
+      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      objStream.close();
+      return true;
+        
+    } else {
     
+      emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      objStream.close();
+      return false;
+    }
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+  } else if ( object->dataType( DATA_BSPLINE_SURFACE ) ) {
+
+    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
+    object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+
+    BSplineSurfaceObject* bssObj = dynamic_cast<BSplineSurfaceObject* >( object );
+
+
+    if ( writeSurface( objStream, _filename, bssObj->splineSurface()) ) {
+      
+      emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+      objStream.close();
+      return true;
+        
+    } else {
+    
+      emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+      objStream.close();
+      return false;
+    }
+#endif
+
   } else {
     
     emit log(LOGERR, tr("Unable to save (object is not a compatible mesh type)"));

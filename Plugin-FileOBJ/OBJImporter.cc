@@ -19,6 +19,15 @@ VertexHandle OBJImporter::addVertex(const Vec3f& _point){
   return vertices_.size()-1;
 }
 
+/// get vertex with given index
+Vec3f OBJImporter::vertex(uint _index){
+  
+  if ( vertices_.size() > _index )
+    return vertices_[ _index ];
+  else
+    return Vec3f();
+}
+
 //-----------------------------------------------------------------------------
 
 /// add texture coordinates
@@ -39,12 +48,49 @@ int OBJImporter::addNormal(const Vec3f& _normal){
 
 //-----------------------------------------------------------------------------
 
+/// set degree U direction
+void OBJImporter::setDegreeU(int _degree){
+  degreeU_ = _degree;
+}
+
+//-----------------------------------------------------------------------------
+
+/// set degree V direction
+void OBJImporter::setDegreeV(int _degree){
+  degreeV_ = _degree;
+}
+
+
+//-----------------------------------------------------------------------------
+
+/// get current degree
+int OBJImporter::degreeU(){
+  return degreeU_;
+}
+
+//-----------------------------------------------------------------------------
+
+/// get current degree
+int OBJImporter::degreeV(){
+  return degreeV_;
+}
+
+//-----------------------------------------------------------------------------
+
 /// add a mesh
 void OBJImporter::addObject( BaseObject* _object ){
 
   PolyMeshObject* polyMeshObj = dynamic_cast< PolyMeshObject* > (_object);
   TriMeshObject*  triMeshObj  = dynamic_cast< TriMeshObject*  > (_object);
   
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+  BSplineCurveObject* curveObject = dynamic_cast< BSplineCurveObject*  > (_object);
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+  BSplineSurfaceObject* surfaceObject = dynamic_cast< BSplineSurfaceObject*  > (_object);
+#endif
+
   if ( polyMeshObj ){
 
     polyMeshes_.push_back( polyMeshObj->mesh() );
@@ -55,7 +101,25 @@ void OBJImporter::addObject( BaseObject* _object ){
     triMeshes_.push_back( triMeshObj->mesh() );
     objects_.push_back( _object );
     
-  } else {
+  }
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+  else if ( curveObject ){
+    
+    curves_.push_back( curveObject->splineCurve() );
+    objects_.push_back( _object );  
+  }
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+  else if ( surfaceObject ){
+    
+    surfaces_.push_back( surfaceObject->splineSurface() );
+    objects_.push_back( _object );  
+  }
+#endif
+
+  else {
     std::cerr << "Error: Cannot add object. Type is unknown!" << std::endl;
   }
 }
@@ -89,11 +153,37 @@ TriMesh* OBJImporter::currentTriMesh(){
 
 //-----------------------------------------------------------------------------
 
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+
+BSplineCurve* OBJImporter::currentCurve(){
+  if (curves_.size() == 0)
+    return 0;
+  else
+    return curves_.back();
+}
+  
+#endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+
+BSplineSurface* OBJImporter::currentSurface(){
+  if (surfaces_.size() == 0)
+    return 0;
+  else
+    return surfaces_.back();
+}
+  
+#endif
+
+//-----------------------------------------------------------------------------
+
 /// check if the vertex of a face is already added to the mesh. if not add it.
 void OBJImporter::checkExistance(VertexHandle _vh){
 
   if ( isTriangleMesh( currentObject() ) ){
-  
+
     //handle triangle meshes
     if ( !currentTriMesh() ) return;
     
@@ -110,7 +200,7 @@ void OBJImporter::checkExistance(VertexHandle _vh){
 
     //handle poly meshes
     if ( !currentPolyMesh() ) return;
-    
+
     if ( _vh >= (int)vertices_.size() ){
       std::cerr << "Error: Vertex ID too large" << std::endl;
       return;
@@ -217,7 +307,7 @@ void OBJImporter::addFace(const VHandles& _indices){
         vertices.push_back( vertexMapTri_[ _indices[i] ] );
 
       }else{
-        std::cerr << "Error: cannot add face. undefined index." << std::endl;
+        std::cerr << "Error: cannot add face. undefined index (" <<  _indices[i] << ")" << std::endl;
         return;
       }
     }
@@ -239,13 +329,13 @@ void OBJImporter::addFace(const VHandles& _indices){
     std::vector< PolyMesh::VertexHandle > vertices;
     
     for (uint i=0; i < _indices.size(); i++){
-
+      
       if ( vertexMapPoly_.find( _indices[i] ) != vertexMapPoly_.end() ){
     
         vertices.push_back( vertexMapPoly_[ _indices[i] ] );
 
       }else{
-        std::cerr << "Error: cannot add face. undefined index." << std::endl;
+        std::cerr << "Error: cannot add face. undefined index (" <<  _indices[i] << ")" << std::endl;
         return;
       }
     }
@@ -277,7 +367,7 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
         vertices.push_back( vertexMapTri_[ _indices[i] ] );
 
       }else{
-        std::cerr << "Error: cannot add face. undefined index." << std::endl;
+        std::cerr << "Error: cannot add face. undefined index (" <<  _indices[i] << ")" << std::endl;
         return;
       }
     }
@@ -499,6 +589,18 @@ bool OBJImporter::isTriangleMesh(int _objectID){
 
 bool OBJImporter::isPolyMesh(int _objectID){
   return objectOptions_[ _objectID ] & POLYMESH;
+}
+
+//-----------------------------------------------------------------------------
+
+bool OBJImporter::isCurve(int _objectID){
+  return objectOptions_[ _objectID ] & CURVE;
+}
+
+//-----------------------------------------------------------------------------
+
+bool OBJImporter::isSurface(int _objectID){
+  return objectOptions_[ _objectID ] & SURFACE;
 }
 
 //-----------------------------------------------------------------------------

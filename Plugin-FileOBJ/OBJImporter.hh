@@ -57,6 +57,15 @@
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <OpenFlipper/common/BaseObject.hh>
 
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+#include <ObjectTypes/BSplineCurve/BSplineCurve.hh>
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+#include <ObjectTypes/BSplineSurface/BSplineSurface.hh>
+#endif
+
 #include "Material.hh"
 
 //=== IMPLEMENTATION ==========================================================
@@ -80,13 +89,15 @@ class OBJImporter
       NONE             = 0,
       TRIMESH          = 1,
       POLYMESH         = 1 << 1,
-      NORMALS          = 1 << 2,
-      TEXCOORDS        = 1 << 3,
-      FACECOLOR        = 1 << 4,
-      TEXTURE          = 1 << 5,
-      FORCE_NOCOLOR    = 1 << 6,
-      FORCE_NONORMALS  = 1 << 7,
-      FORCE_NOTEXTURES = 1 << 8
+      CURVE            = 1 << 2,
+      SURFACE          = 1 << 3,
+      NORMALS          = 1 << 4,
+      TEXCOORDS        = 1 << 5,
+      FACECOLOR        = 1 << 6,
+      TEXTURE          = 1 << 7,
+      FORCE_NOCOLOR    = 1 << 8,
+      FORCE_NONORMALS  = 1 << 9,
+      FORCE_NOTEXTURES = 1 << 10
     };
     
     typedef uint ObjectOptions;
@@ -97,11 +108,22 @@ class OBJImporter
     /// add a vertex with coordinate \c _point
     VertexHandle addVertex(const Vec3f& _point);
 
+    /// get vertex with given index
+    Vec3f vertex(uint _index);
+    
     /// add texture coordinates
     int addTexCoord(const Vec2f& _coord);
     
     /// add a normal
     int addNormal(const Vec3f& _normal);
+    
+    /// set degree
+    void setDegreeU(int _degree);
+    void setDegreeV(int _degree);
+    
+    /// get current degree
+    int degreeU();
+    int degreeV();
     
     /// add an object
     void addObject( BaseObject* _object );
@@ -114,6 +136,14 @@ class OBJImporter
     
     /// get a pointer to the active triMesh
     TriMesh* currentTriMesh();
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+    BSplineCurve* currentCurve();
+#endif
+
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+    BSplineSurface* currentSurface();
+#endif
 
     /// check if the vertex of a face is already added to the mesh. if not add it.
     void checkExistance(VertexHandle _vh);
@@ -139,6 +169,8 @@ class OBJImporter
     bool hasTextureCoords(int _objectID);
     bool isTriangleMesh(int _objectID);
     bool isPolyMesh(int _objectID);
+    bool isCurve(int _objectID);
+    bool isSurface(int _objectID);
 
     /// Global Properties
     uint n_vertices();
@@ -189,6 +221,9 @@ class OBJImporter
     std::vector< Vec3f > normals_;
     std::vector< Vec2f > texCoords_;
     
+    int degreeU_;
+    int degreeV_;
+    
     MaterialList materials_;
     
     QString path_;
@@ -208,6 +243,14 @@ class OBJImporter
     
     std::vector< TriMesh* > triMeshes_;
     
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+    std::vector< BSplineCurve* > curves_;
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+    std::vector< BSplineSurface* > surfaces_;
+#endif
+
     //object data
     std::vector< BaseObject* > objects_;
     std::vector< ObjectOptions > objectOptions_;

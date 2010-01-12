@@ -60,8 +60,22 @@
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+#include <ObjectTypes/BSplineCurve/BSplineCurve.hh>
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+#include <ObjectTypes/BSplineSurface/BSplineSurface.hh>
+#endif
 
 #include "OBJImporter.hh"
+
+enum ReaderMode
+{
+  NONE    = 0,
+  CURVE   = 1,
+  SURFACE = 1 << 1
+};
 
 class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface,
     LoggingInterface, ScriptInterface, INIInterface, StatusbarInterface, RPCInterface, TextureInterface
@@ -138,19 +152,16 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     /// Loads Object and converts it to a triangle mesh if possible
     int loadObject(QString _filename);
 
-    bool saveObject(int _id, QString _filename);
+    /// load object and force type
+    int loadObject(QString _filename, DataType _type);
     
-    /// Loads a triangle mesh
-    int loadTriMeshObject(QString _filename);
-
-    /// Loads a poly mesh
-    int loadPolyMeshObject(QString _filename);
+    bool saveObject(int _id, QString _filename);
     
     QString version() { return QString("1.0"); }; 
   
   private:
     /// Reader functions
-    void checkTypes(QString _filename, OBJImporter& _importer);
+    void checkTypes(QString _filename, OBJImporter& _importer, QStringList& _includes);
     
     bool readMaterial(QString _filename, OBJImporter& _importer);
     void readOBJFile(QString _filename, OBJImporter& _importer);
@@ -170,6 +181,15 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     template< class MeshT >
     bool writeMesh(std::ostream& _out, QString _filename, MeshT& _mesh );
+    
+    #ifdef ENABLE_BSPLINECURVE_SUPPORT
+    bool writeCurve(std::ostream& _out, QString _filename, BSplineCurve* _curve );
+    #endif
+
+    #ifdef ENABLE_BSPLINESURFACE_SUPPORT
+    bool writeSurface(std::ostream& _out, QString _filename, BSplineSurface* _surface );
+    #endif
+    
     
   private:
     
