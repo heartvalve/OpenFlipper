@@ -179,7 +179,7 @@ void CoreWidget::dropEvent ( QDropEvent* _event ) {
       return;
     } 
      
-    emit log(LOGERR , tr("Unknown drop event! Unable to handle the dropped data!"));
+    emit log(LOGERR , tr("Unknown drop event! Unable to handle the dropped data! Received data: %1").arg(view));
      
   }
 

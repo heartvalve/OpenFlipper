@@ -1027,9 +1027,9 @@ void CoreWidget::slotActivateExaminer()
 //-----------------------------------------------------------------------------
 
 /// Use native or gl painted cursor
-void CoreWidget::setGlCursor ( bool _state )
+void CoreWidget::setForceNativeCursor ( bool _state )
 {
-  cursorPainter_->setForceNative (!_state);
+  cursorPainter_->setForceNative (_state);
 }
 
 //=============================================================================

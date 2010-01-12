@@ -83,9 +83,10 @@ void CursorPainter::setCursor (const QCursor &_cursor)
   nativeCursor_ = _cursor;
   cursorToCursor ();
   cursorToTexture ();
-  if (!(initialized_ && enabled_ && hasCursor_) || forceNative_)
+  if (!(initialized_ && enabled_ && hasCursor_) || forceNative_) {
     foreach (glViewer *v, views_)
       v->setCursor ((forceNative_)? nativeCursor_ : cursor_);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -112,11 +113,13 @@ void CursorPainter::initializeGL()
   {
     foreach (glViewer *v, views_)
       v->setCursor (Qt::BlankCursor);
+    
   }
   else
   {
     foreach (glViewer *v, views_)
       v->setCursor ((forceNative_)? nativeCursor_ : cursor_);
+    
   }
 }
 
@@ -216,7 +219,7 @@ void CursorPainter::setEnabled(bool _enabled)
       foreach (glViewer *v, views_)
         v->setCursor ((forceNative_)? nativeCursor_ : cursor_);
     }
-  }
+  } 
 }
 
 //-----------------------------------------------------------------------------
@@ -230,14 +233,17 @@ bool CursorPainter::enabled()
 
 void CursorPainter::cursorToTexture()
 {
-  if (!initialized_)
+  
+  if (!initialized_) {
     return;
+  }
 
   unsigned char buf[4096];
   QImage cImg;
 
   hasCursor_ = false;
 
+  ///\todo Handle whats this cursor! And possibly switch all cursors to bitmap cursors!
   switch (nativeCursor_.shape())
   {
     case Qt::ArrowCursor:
@@ -250,12 +256,20 @@ void CursorPainter::cursorToTexture()
       xOff_ = 7;
       yOff_ = 1;
       break;
-    default:
+    case Qt::BitmapCursor: 
+      xOff_ = nativeCursor_.hotSpot().x();
+      yOff_ = nativeCursor_.hotSpot().y();
+      cImg = QImage(( nativeCursor_.pixmap().toImage() ) );
+      break;
+    default: 
+      std::cerr << "cursorToTexture: Unknown cursor shape!" << nativeCursor_.shape() << std::endl;
       return;
   }
 
-  if (cImg.width () != 32 || cImg.height () != 32)
+  if (cImg.width () != 32 || cImg.height () != 32) {
+    std::cerr << "cursorToTexture: Dimension error" << nativeCursor_.shape() << std::endl;
     return;
+  }
 
   // convert ARGB QImage to RGBA for gl
   int index = 0;
@@ -300,10 +314,12 @@ QRectF CursorPainter::cursorBoundingBox()
 void CursorPainter::setForceNative(bool _enabled)
 {
   forceNative_ = _enabled;
+  
   if (!(initialized_ && enabled_ && hasCursor_) || forceNative_)
   {
     foreach (glViewer *v, views_)
       v->setCursor ((forceNative_)? nativeCursor_ : cursor_);
+    
   }
   else
   {

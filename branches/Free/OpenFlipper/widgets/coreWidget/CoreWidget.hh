@@ -365,7 +365,7 @@ public:
     void showToolbox( bool _state );
 
     /// Use native or gl painted cursor
-    void setGlCursor ( bool _state );
+    void setForceNativeCursor ( bool _state );
 
   private:
     OpenFlipper::Options::LoggerState loggerState_;
