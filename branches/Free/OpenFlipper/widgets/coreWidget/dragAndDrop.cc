@@ -179,9 +179,8 @@ void CoreWidget::dropEvent ( QDropEvent* _event ) {
       return;
     } 
      
+    emit log(LOGERR , tr("Unknown drop event! Unable to handle the dropped data!"));
      
-    std::cerr << "Skipped unknown drop event : " << view.toStdString() << std::endl;
-
   }
 
 
