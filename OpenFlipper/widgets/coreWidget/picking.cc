@@ -119,7 +119,7 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
         }
         break;
       case Viewer::QuestionMode:
-        cursorPainter_->setCursor(Qt::WhatsThisCursor);
+        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_whatsthis.png"  )));
         break;
     }
 

@@ -256,10 +256,15 @@ void CursorPainter::cursorToTexture()
       xOff_ = 7;
       yOff_ = 1;
       break;
+    case Qt::WhatsThisCursor:       
+      cImg.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_whatsthis.png");
+      xOff_ = 7;
+      yOff_ = 1;
+      break;      
     case Qt::BitmapCursor: 
+      cImg = QImage(( nativeCursor_.pixmap().toImage() ) );
       xOff_ = nativeCursor_.hotSpot().x();
       yOff_ = nativeCursor_.hotSpot().y();
-      cImg = QImage(( nativeCursor_.pixmap().toImage() ) );
       break;
     default: 
       std::cerr << "cursorToTexture: Unknown cursor shape!" << nativeCursor_.shape() << std::endl;
