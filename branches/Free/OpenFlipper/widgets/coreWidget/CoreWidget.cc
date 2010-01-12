@@ -182,7 +182,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   // gl widget as parent to make sure that the CursorPainter will be deleted before
   cursorPainter_ = new CursorPainter (glWidget_);
-  cursorPainter_->setForceNative (!OpenFlipperSettings().value("Core/Gui/glViewer/glMouse",true).toBool() );
+  cursorPainter_->setForceNative (OpenFlipperSettings().value("Core/Gui/glViewer/nativeMouse",false).toBool() );
   cursorPainter_->setEnabled (stereoActive_);
   glScene_->setCursorPainter (cursorPainter_);
 
