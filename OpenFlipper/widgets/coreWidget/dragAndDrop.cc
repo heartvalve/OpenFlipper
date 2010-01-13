@@ -161,6 +161,16 @@ void CoreWidget::dropEvent ( QDropEvent* _event ) {
 
   PluginFunctions::setActiveExaminer(examinerId);
 
+  if ( _event->mimeData()->hasUrls() ) {
+    QList<QUrl> urls = _event->mimeData()->urls();
+    for ( int j = 0 ; j < urls.size() ; ++j ) {
+      emit log(LOGWARN , tr("Dropped URL: %1").arg(urls[j].toLocalFile()));
+      emit dragOpenFile(urls[j].toLocalFile());
+    }
+
+    return;
+  }
+
   if ( _event->mimeData()->hasFormat ( "text/plain" ) ) {
 
     QString view ( _event->mimeData()->text() );
@@ -176,12 +186,14 @@ void CoreWidget::dropEvent ( QDropEvent* _event ) {
     if ( view.left ( 7 ) == QString("file://") ) {
       _event->acceptProposedAction();
       emit dragOpenFile(view.remove(0,7));
+      
       return;
     } 
-     
+
     emit log(LOGERR , tr("Unknown drop event! Unable to handle the dropped data! Received data: %1").arg(view));
-     
   }
+
+  emit log(LOGERR , tr("Unknown drop event!"));
 
 
 }
