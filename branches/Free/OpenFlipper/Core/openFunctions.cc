@@ -694,7 +694,7 @@ void Core::loadSettings(){
     QFileDialog fileDialog( coreWidget_,
                             tr("Load Settings"),
                             OpenFlipper::Options::currentDirStr(),
-                            tr("INI files (*.ini);;OBJ files (*.obj )") );
+                            tr("INI files (*.ini)") );
 
     fileDialog.setOption (QFileDialog::DontUseNativeDialog, true);
     fileDialog.setAcceptMode ( QFileDialog::AcceptOpen );
@@ -758,12 +758,8 @@ void Core::loadSettings(){
                    loadObjectInfo->isChecked());
       if ( loadProgramSettings->isChecked() )
         applyOptions();
-    } else if ( complete_name.endsWith("obj") ) {
-      loadObject(complete_name);
-      if ( loadProgramSettings->isChecked() )
-        applyOptions();
-    }
-
+    } 
+    
     coreWidget_->addRecent(complete_name, DATA_UNKNOWN);
   }
 }

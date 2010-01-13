@@ -706,12 +706,6 @@ private slots:
                      bool    _perPluginSettings,
                      bool    _loadObjects );
 
-   /// Open an obj file and load everything in it ( Application/File Options )
-   void openObjFile(QString _filename);
-
-   /// Preprocesses obj file to find out which data type it stores
-   void preprocessObjFile(QString _filename);
-
   private:
 
    /** \brief Write current status to ini file (Application and File Options)
@@ -743,6 +737,7 @@ private slots:
 
    /** @} */
 
+   
   //===========================================================================
   /** @name Logging
   * @{ */
