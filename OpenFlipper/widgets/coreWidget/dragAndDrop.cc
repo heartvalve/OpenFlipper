@@ -182,6 +182,7 @@ void CoreWidget::dropEvent ( QDropEvent* _event ) {
       return;
     }
     
+    ///\todo This is deprecated as its now handled by the url code above which should be used. Normally this code is not reached at all now.
     // Dropped file information
     if ( view.left ( 7 ) == QString("file://") ) {
       _event->acceptProposedAction();
