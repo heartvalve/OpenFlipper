@@ -76,31 +76,17 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
     switch (_am)
     {
       case Viewer::ExamineMode:
-      {
         moveButton_->setDown(true);
         break;
-      }
-
-
       case Viewer::LightMode:
-      {
         lightButton_->setDown(true);
         break;
-      }
-
-
       case Viewer::PickingMode:
-      {
         pickButton_->setDown(true);
         break;
-      }
-
-
       case Viewer::QuestionMode:
-      {
         questionButton_->setDown(true);
         break;
-      }
     }
 
     // update cursor
@@ -113,7 +99,7 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
         cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_light.png"  )));
         break;
       case Viewer::PickingMode:
-        cursorPainter_->setCursor(Qt::ArrowCursor);
+        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_arrow.png"  )));
         if (pick_mode_idx_ != -1) {
           cursorPainter_->setCursor(pick_modes_[pick_mode_idx_].cursor);
         }
@@ -128,34 +114,27 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
 
       examiner_widgets_[i]->sceneGraph( PluginFunctions::getSceneGraphRootNode() );
-
       examiner_widgets_[i]->trackMouse(false);
 
 
       switch ( _am )
       {
         case Viewer::ExamineMode:
-        {
           pickToolbar_->detachToolbar ();
           break;
-        }
-
         case Viewer::PickingMode:
-        {
           if (pick_mode_idx_ != -1) {
             examiner_widgets_[i]->trackMouse(pick_modes_[pick_mode_idx_].tracking);
+            
+            // Show the pickMode Toolbar for this picking mode if it is set
             if (pick_modes_[pick_mode_idx_].toolbar)
               pickToolbar_->attachToolbar (pick_modes_[pick_mode_idx_].toolbar);
             else
               pickToolbar_->detachToolbar ();
           }
-
           break;
-        }
-
         default:
           break;
-
       }
     }
 
@@ -164,7 +143,6 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
       emit(signalPickModeChanged(pick_mode_name_));
     else
       emit(signalPickModeChanged(""));
-
   }
 }
 
