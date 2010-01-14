@@ -54,6 +54,8 @@
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
+#include <ObjectTypes/PolyVolMesh/PolyVolMesh.hh>
+#include <ObjectTypes/TetMeshCGAL/TetMeshCGAL.hh>
 #include "shaderWidget.hh"
 
 struct ShaderInfo {
