@@ -74,6 +74,8 @@ TriStripNodeT(Mesh&        _mesh,
   vertexBufferInitialized_(false),
   normal_buffer_(0),
   normalBufferInitialized_(false),
+  color_buffer_(0),
+  colorBufferInitialized_(false),
   enabled_arrays_(0)
 {
   /// \todo : Handle vbo not supported
@@ -93,6 +95,9 @@ TriStripNodeT<Mesh>::
   
   if (normal_buffer_)
     glDeleteBuffersARB(1, &normal_buffer_);  
+  
+  if (color_buffer_)
+    glDeleteBuffersARB(1, &color_buffer_);    
   
 }
 
@@ -158,8 +163,6 @@ draw(GLState& _state, unsigned int _drawMode) {
     draw_vertices();
   }
   
-  
-  
   enable_arrays(0);
   
   /// \todo Whats this? Why is this set here and why isnt it set to the one before entering the function?
@@ -171,7 +174,9 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 draw_vertices() {
-  std::cerr << "Draw_vertices" << std::endl;
+  if ( !vertexBufferInitialized_ )
+    std::cerr << "Error! Uninitialized vertex buffer in draw call! " << std::endl;
+
   glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
 }
 
@@ -195,17 +200,18 @@ enable_arrays(unsigned int _arrays) {
       
       // Enable the vertex buffer
       enabled_arrays_ |= VERTEX_ARRAY;
-      glEnableClientState(GL_VERTEX_ARRAY);
    
       // Bind the Vertex buffer
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertex_buffer_);
       
       // As we ensure that buffers are converted to float before using them, use Float here
       glVertexPointer(3, GL_FLOAT, 0, 0);
+      glEnableClientState(GL_VERTEX_ARRAY);
       
-      std::cerr << "GL vertex array ok" << std::endl;
+      std::cerr << "GL enable vertex array ok" << std::endl;
     }
   } else if (enabled_arrays_ & VERTEX_ARRAY) {
+    std::cerr << "Disable Vertex array" << std::endl;
     // Disable the Vertex array
     enabled_arrays_ &= ~VERTEX_ARRAY;
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -225,14 +231,17 @@ enable_arrays(unsigned int _arrays) {
     // Check if its already enabled
     if (!(enabled_arrays_ & NORMAL_ARRAY)) {
       enabled_arrays_ |= NORMAL_ARRAY;
-      glEnableClientState(GL_NORMAL_ARRAY);
       
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
       
       // As we ensure that buffers are converted to float before using them, use Float here
       glNormalPointer(GL_FLOAT, 0 , 0);
+      
+      glEnableClientState(GL_NORMAL_ARRAY);
+      std::cerr << "Enable normal array ok" << std::endl;
     }
   } else if (enabled_arrays_ & NORMAL_ARRAY) {
+    std::cerr << "Disable normal array" << std::endl;
     // Disable Normal array
     enabled_arrays_ &= ~NORMAL_ARRAY;
     glDisableClientState(GL_NORMAL_ARRAY);
@@ -252,14 +261,20 @@ enable_arrays(unsigned int _arrays) {
     if (!(enabled_arrays_ & COLOR_ARRAY)) {
       std::cerr << "Enable color array ok" << std::endl;
       enabled_arrays_ |= COLOR_ARRAY;
+      
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, color_buffer_);
+      
+      glColorPointer(3, GL_UNSIGNED_BYTE , 0 , 0);
+      
       glEnableClientState(GL_COLOR_ARRAY);
-      glColorPointer(mesh_.vertex_colors());
+      
     }
   } else if (enabled_arrays_ & COLOR_ARRAY) {
+    std::cerr << "Disable Color array" << std::endl;
     // Disable Color array
     enabled_arrays_ &= ~COLOR_ARRAY;
     glDisableClientState(GL_COLOR_ARRAY);
-  }
+  } 
   
   //===================================================================
   // Check for OpenGL Errors
@@ -408,7 +423,9 @@ update_geometry() {
   // Generate normal buffer
   // ==========================================================================
   
+  // Allocate it if required
   if (!normal_buffer_)  glGenBuffersARB(1,  (GLuint*)  &normal_buffer_);
+  
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
   normalBufferInitialized_ = false;
   
@@ -440,7 +457,49 @@ update_geometry() {
     }
     
   }
-  
+
+  // ==========================================================================
+  // Generate color buffer
+  // ==========================================================================
+
+  // Allocate it if required
+  if (!color_buffer_)  glGenBuffersARB(1,  (GLuint*)  &color_buffer_);
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, color_buffer_);
+  colorBufferInitialized_ = false;
+
+  /// \todo Convert from other types in openmesh to the right representation in the node
+  // Check if using floats otherwise convert to internal float array
+  if ( sizeof(ColorScalar) == 1) {
+    
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                    3 * mesh_.n_vertices() * sizeof(ColorScalar),
+                    mesh_.vertex_colors(),
+                    GL_STATIC_DRAW_ARB);
+                    
+                    colorBufferInitialized_ = true;
+                    
+  } else {
+   std::cerr << "Invalid color format!" << std::endl; 
+  }/*else {
+    normals_.clear();
+    typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
+    v_end(mesh_.vertices_end());
+    
+    for ( ; v_it != v_end ; ++v_it )
+      normals_.push_back( ACG::Vec3f(mesh_.normal(v_it)) );
+    
+    if ( !normals_.empty() ) {
+      
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                      3 * mesh_.n_vertices() * sizeof(float),
+                      &normals_[0],
+                      GL_STATIC_DRAW_ARB);
+                      normalBufferInitialized_ = true;
+    }
+    
+  }*/
+
   // ==========================================================================
   // unbind all buffers
   // ==========================================================================

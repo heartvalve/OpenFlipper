@@ -183,6 +183,8 @@ private:
   typedef typename Point::value_type   PointScalar;
   typedef typename Mesh::Normal        Normal;
   typedef typename Normal::value_type  NormalScalar;
+  typedef typename Mesh::Color         Color;
+  typedef typename Color::value_type   ColorScalar;
   
 //===========================================================================
 /** @name Mesh Handling
@@ -267,9 +269,13 @@ private:
 
 private:
   
-
+  /// color buffer
+  GLuint color_buffer_;
   
-/** @} */
+  /// normal buffer initialization flag
+  bool colorBufferInitialized_;
+  
+  /** @} */
     
 //===========================================================================
 /** @name Array control functions
