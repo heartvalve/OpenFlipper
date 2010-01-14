@@ -91,8 +91,8 @@ TriStripNodeT<Mesh>::
   if (vertex_buffer_)
     glDeleteBuffersARB(1, &vertex_buffer_);
   
-  if (vertex_buffer_)
-    glDeleteBuffersARB(1, &vertex_buffer_);  
+  if (normal_buffer_)
+    glDeleteBuffersARB(1, &normal_buffer_);  
   
 }
 
@@ -100,7 +100,6 @@ template<class Mesh>
 unsigned int
 TriStripNodeT<Mesh>::
 availableDrawModes() const {
-  std::cerr << "Draw modes" << std::endl;
   unsigned int drawModes(0);
   
   drawModes |= DrawModes::POINTS;
@@ -110,6 +109,11 @@ availableDrawModes() const {
     drawModes |= DrawModes::POINTS_SHADED;
   }
   
+  if (mesh_.has_vertex_colors())
+  {
+    drawModes |= DrawModes::POINTS_COLORED;
+  }
+  
   return drawModes;
 }
 
@@ -117,7 +121,6 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
-  std::cerr << "Bounding Box" << std::endl;
   _bbMin.minimize(bbMin_);
   _bbMax.maximize(bbMax_);
 }
@@ -130,22 +133,25 @@ draw(GLState& _state, unsigned int _drawMode) {
   /// \todo Whats this? Why is this set here
   glDepthFunc(depthFunc());
 
-  std::cerr << "Draw : " << _drawMode << std::endl;
-  std::cerr << "Points has : " << DrawModes::POINTS << std::endl;
-
   if (_drawMode & DrawModes::POINTS)
   {
-    std::cerr << "Draw points" << std::endl;
     enable_arrays(VERTEX_ARRAY);
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     draw_vertices();
   }
   
+  if ( ( _drawMode & DrawModes::POINTS_COLORED ) && mesh_.has_vertex_colors())
+  {
+    std::cerr << "Points colored" << std::endl;
+    enable_arrays(VERTEX_ARRAY | COLOR_ARRAY);
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    draw_vertices();
+  }
   
   if ( ( _drawMode & DrawModes::POINTS_SHADED ) && mesh_.has_vertex_normals())
   {
-    std::cerr << "Draw points shaded " << std::endl;
     enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
     glEnable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
@@ -174,10 +180,6 @@ void
 TriStripNodeT<Mesh>::
 enable_arrays(unsigned int _arrays) {
   
-  std::cerr << "EnableArrays" << std::endl;
-
-
-  
   //===================================================================
   // Vertex Array
   //===================================================================
@@ -200,8 +202,10 @@ enable_arrays(unsigned int _arrays) {
       
       // As we ensure that buffers are converted to float before using them, use Float here
       glVertexPointer(3, GL_FLOAT, 0, 0);
+      
+      std::cerr << "GL vertex array ok" << std::endl;
     }
-  }  else if (enabled_arrays_ & VERTEX_ARRAY) {
+  } else if (enabled_arrays_ & VERTEX_ARRAY) {
     // Disable the Vertex array
     enabled_arrays_ &= ~VERTEX_ARRAY;
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -228,15 +232,39 @@ enable_arrays(unsigned int _arrays) {
       // As we ensure that buffers are converted to float before using them, use Float here
       glNormalPointer(GL_FLOAT, 0 , 0);
     }
-  }
-  else if (enabled_arrays_ & NORMAL_ARRAY) {
+  } else if (enabled_arrays_ & NORMAL_ARRAY) {
     // Disable Normal array
     enabled_arrays_ &= ~NORMAL_ARRAY;
     glDisableClientState(GL_NORMAL_ARRAY);
-  }  
+  } 
   
+  //===================================================================
+  // Color Array
+  //===================================================================  
   
+  /// \todo This is different to normal and vertex buffer since it uses openmesh colors directly! Check for different color representations in OpenMesh!
+  // Check if we should enable the color array
+  if (_arrays & COLOR_ARRAY)  {
+    
+    std::cerr << "Enable color array" << std::endl;
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & COLOR_ARRAY)) {
+      std::cerr << "Enable color array ok" << std::endl;
+      enabled_arrays_ |= COLOR_ARRAY;
+      glEnableClientState(GL_COLOR_ARRAY);
+      glColorPointer(mesh_.vertex_colors());
+    }
+  } else if (enabled_arrays_ & COLOR_ARRAY) {
+    // Disable Color array
+    enabled_arrays_ &= ~COLOR_ARRAY;
+    glDisableClientState(GL_COLOR_ARRAY);
+  }
   
+  //===================================================================
+  // Check for OpenGL Errors
+  //===================================================================    
+  glCheckErrors();
 }
 
 template<class Mesh>
@@ -289,6 +317,7 @@ void
 TriStripNodeT<Mesh>::
 pick_vertices(GLState& _state, bool _front)
 {
+  
 }
 
 template<class Mesh>

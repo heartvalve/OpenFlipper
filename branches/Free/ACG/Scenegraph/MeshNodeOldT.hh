@@ -151,7 +151,7 @@ protected:
   enum ArrayType
   {
     NONE                    = 0,
-    COLOR_ARRAY             = 4,
+    
     TEXTURE_COORD_1D_ARRAY  = 8,
     TEXTURE_COORD_2D_ARRAY  = 16,
     TEXTURE_COORD_3D_ARRAY  = 32
