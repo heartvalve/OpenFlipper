@@ -93,19 +93,19 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
     switch ( _am )
     {
       case Viewer::ExamineMode:
-        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_move.png"  )));
+        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_move.png"  ) ,0,0 ));
         break;
       case Viewer::LightMode:
-        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_light.png"  )));
+        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_light.png"  ) ,0,0 ));
         break;
       case Viewer::PickingMode:
-        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_arrow.png"  )));
+        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_arrow.png"  ) ,0,0 ));
         if (pick_mode_idx_ != -1) {
           cursorPainter_->setCursor(pick_modes_[pick_mode_idx_].cursor);
         }
         break;
       case Viewer::QuestionMode:
-        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_whatsthis.png"  )));
+        cursorPainter_->setCursor(QCursor( QPixmap( OpenFlipper::Options::iconDirStr() + QDir::separator() + "cursor_whatsthis.png"  ) ,0,0 ));
         break;
     }
 

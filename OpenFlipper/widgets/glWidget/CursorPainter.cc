@@ -263,6 +263,7 @@ void CursorPainter::cursorToTexture()
       // Get the image of the cursor
       cImg = QImage(( nativeCursor_.pixmap().toImage() ) );
       
+      
       // get the hotspot from the cursor
       xOff_ = nativeCursor_.hotSpot().x();
       yOff_ = nativeCursor_.hotSpot().y();
@@ -271,7 +272,7 @@ void CursorPainter::cursorToTexture()
       std::cerr << "cursorToTexture: Unknown cursor shape!" << nativeCursor_.shape() << std::endl;
       return;
   }
-
+  
   // Check if the cursor dimension is matching our requirements
   if (cImg.width () != 32 || cImg.height () != 32) {
     std::cerr << "cursorToTexture: Dimension error" << nativeCursor_.shape() << std::endl;
@@ -354,7 +355,7 @@ void CursorPainter::cursorToCursor()
       pix.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_move.png");
       if (!pix.isNull() && pix.width() == 32 && pix.height() == 32)
       {
-        cursor_ = QCursor (pix, 7, 1);
+        cursor_ = QCursor (pix, 0, 0);
       }
       else
         cursor_ = nativeCursor_;
