@@ -101,26 +101,6 @@ public:
   ACG_CLASSNAME(MeshNode);
 
 
-  /// return available draw modes
-  unsigned int availableDrawModes() const;
-  /// update bounding box
-  void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
-  /// drawing
-  void draw(GLState& _state, unsigned int _drawMode);
-  /// picking
-  void pick(GLState& _state, PickTarget _target);
-
-
-  /// get mesh
-  const Mesh& mesh() const { return mesh_; }
-
-
-  /// update geometry buffers (vertex buffer objects)
-  void update_geometry();
-  /** update face indices (only for triangle meshes).  will be
-      overridden by TriStripNodeT. */
-  virtual void update_topology();
-
   /** \brief Setup a mapping between internal texture ids on the mesh and the ids for the loaded textures in opengl
    *
    * @param _map maps between an int index stored in the Mesh describing which texture to use for a face,
@@ -164,15 +144,6 @@ protected:
   // draw polygons. to be overridden by TriStripNodeT
   virtual void draw_faces(FaceMode _mode);
 
-  // pick vertices
-  void pick_vertices(GLState& _state, bool _front = false);
-  // pick polygons. to be overridden by TriMeshNodeT
-  void pick_faces(GLState& _state);
-  // pick edges
-  void pick_edges(GLState& _state, bool _front = false);
-  // pick anything
-  void pick_any(GLState& _state);
-
   // update pick buffer sizes
   void update_pick_buffers ();
 
@@ -180,8 +151,6 @@ protected:
   enum ArrayType
   {
     NONE                    = 0,
-    VERTEX_ARRAY            = 1,
-    NORMAL_ARRAY            = 2,
     COLOR_ARRAY             = 4,
     TEXTURE_COORD_1D_ARRAY  = 8,
     TEXTURE_COORD_2D_ARRAY  = 16,
@@ -192,22 +161,16 @@ protected:
 
 
   // vertex buffer objects
-  unsigned int  face_index_buffer_, vertex_buffer_, normal_buffer_;
+  unsigned int  face_index_buffer_;
 
   // index list for fast rendering (will be accessed by TriStripNodeT
   std::vector<unsigned int>  indices_;
 
 private:
-
-  bool vertexBufferInitialized_;
-  bool normalBufferInitialized_;
+  
   bool faceIndexBufferInitialized_;
 
-  // Internal buffer used when rendering non float vertex coordinates
-  std::vector< ACG::Vec3f > vertices_;
 
-  // Internal buffer used when rendering non float normals
-  std::vector< ACG::Vec3f > normals_;
 
   // Mapping of mesh face texture indices to gltexture id ( has to be provided externally )
   std::map< int, GLuint>* textureMap_;
@@ -241,9 +204,6 @@ private:
   std::vector< ACG::Vec3f > pickVertexBuf_;
   std::vector< ACG::Vec4uc > pickColorBuf_;
 
-  // bounding box
-  Vec3d bbMin_;
-  Vec3d bbMax_;
 };
 
 

@@ -72,6 +72,8 @@ TriStripNodeT(Mesh&        _mesh,
   mesh_(_mesh),
   vertex_buffer_(0),
   vertexBufferInitialized_(false),
+  normal_buffer_(0),
+  normalBufferInitialized_(false),
   enabled_arrays_(0)
 {
   /// \todo : Handle vbo not supported
@@ -87,7 +89,10 @@ TriStripNodeT<Mesh>::
 {
   // Delete all allocated buffers
   if (vertex_buffer_)
-    glDeleteBuffersARB(1, (GLuint*) &vertex_buffer_);
+    glDeleteBuffersARB(1, &vertex_buffer_);
+  
+  if (vertex_buffer_)
+    glDeleteBuffersARB(1, &vertex_buffer_);  
   
 }
 
@@ -99,6 +104,11 @@ availableDrawModes() const {
   unsigned int drawModes(0);
   
   drawModes |= DrawModes::POINTS;
+  
+  if (mesh_.has_vertex_normals())
+  {
+    drawModes |= DrawModes::POINTS_SHADED;
+  }
   
   return drawModes;
 }
@@ -132,6 +142,18 @@ draw(GLState& _state, unsigned int _drawMode) {
     draw_vertices();
   }
   
+  
+  if ( ( _drawMode & DrawModes::POINTS_SHADED ) && mesh_.has_vertex_normals())
+  {
+    std::cerr << "Draw points shaded " << std::endl;
+    enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
+    glEnable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    draw_vertices();
+  }
+  
+  
+  
   enable_arrays(0);
   
   /// \todo Whats this? Why is this set here and why isnt it set to the one before entering the function?
@@ -154,16 +176,20 @@ enable_arrays(unsigned int _arrays) {
   
   std::cerr << "EnableArrays" << std::endl;
 
-  if ( !vertexBufferInitialized_ )
-    std::cerr << "Error! Uninitialized vertex buffer! " << std::endl;
+
+  
+  //===================================================================
+  // Vertex Array
+  //===================================================================
   
   // Check if we should enable the vertex array
   if (_arrays & VERTEX_ARRAY) {
     
+    if ( !vertexBufferInitialized_ )
+      std::cerr << "Error! Uninitialized vertex buffer! " << std::endl;
+    
     // Check if its already enabled
     if (!(enabled_arrays_ & VERTEX_ARRAY)) {
-      
-      std::cerr << "Enable vertex array" << std::endl;
       
       // Enable the vertex buffer
       enabled_arrays_ |= VERTEX_ARRAY;
@@ -181,13 +207,109 @@ enable_arrays(unsigned int _arrays) {
     glDisableClientState(GL_VERTEX_ARRAY);
   }
   
+  
+  //===================================================================
+  // Normal Array
+  //===================================================================
+  
+  // Check if we should enable the normal array
+  if (_arrays & NORMAL_ARRAY) {
+    
+    if ( !normalBufferInitialized_ )
+      std::cerr << "Error! Uninitialized normal buffer! " << std::endl;
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & NORMAL_ARRAY)) {
+      enabled_arrays_ |= NORMAL_ARRAY;
+      glEnableClientState(GL_NORMAL_ARRAY);
+      
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
+      
+      // As we ensure that buffers are converted to float before using them, use Float here
+      glNormalPointer(GL_FLOAT, 0 , 0);
+    }
+  }
+  else if (enabled_arrays_ & NORMAL_ARRAY) {
+    // Disable Normal array
+    enabled_arrays_ &= ~NORMAL_ARRAY;
+    glDisableClientState(GL_NORMAL_ARRAY);
+  }  
+  
+  
+  
 }
 
 template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 pick(GLState& _state, PickTarget _target) {
-  
+  switch (_target)
+  {
+    case PICK_VERTEX:
+    {
+      pick_vertices(_state);
+      break;
+    }
+    case PICK_FRONT_VERTEX:
+    {
+      pick_vertices(_state, true);
+      break;
+    }
+    
+    case PICK_ANYTHING:
+    {
+      pick_any(_state);
+      break;
+    }
+    case PICK_FACE:
+    {
+      pick_faces(_state);
+      break;
+    }
+    
+    case PICK_EDGE:
+    {
+      pick_edges(_state);
+      break;
+    }
+    
+    case PICK_FRONT_EDGE:
+    {
+      pick_edges(_state, true);
+      break;
+    }
+    
+    default:
+      break;
+  }
+}
+
+template<class Mesh>
+void
+TriStripNodeT<Mesh>::
+pick_vertices(GLState& _state, bool _front)
+{
+}
+
+template<class Mesh>
+void
+TriStripNodeT<Mesh>::
+pick_faces(GLState& _state)
+{
+}
+
+template<class Mesh>
+void
+TriStripNodeT<Mesh>::
+pick_edges(GLState& _state, bool _front)
+{
+}
+
+template<class Mesh>
+void
+TriStripNodeT<Mesh>::
+pick_any(GLState& _state)
+{
 }
 
 template<class Mesh>
@@ -195,6 +317,14 @@ void
 TriStripNodeT<Mesh>::
 update_geometry() {
   std::cerr << "Update geometry" << std::endl;
+  
+  /// \todo check the following statements. If only geometry changed, the normals,vertices have to be updated nothing else!
+  /*
+  updateFaceList_ = true;
+  updateVertexList_ = true;
+  updateEdgeList_ = true;
+  updateAnyList_ = true;
+  */
   
   // First of all, we update the bounding box:
   bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
@@ -220,16 +350,13 @@ update_geometry() {
   
   //Check if using floats otherwise convert to internal float array
   if ( sizeof(PointScalar) == 4 ) {
-    
     glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                     3 * mesh_.n_vertices() * sizeof(PointScalar),
                     mesh_.points(),
                     GL_STATIC_DRAW_ARB);
                     
                     vertexBufferInitialized_ = true;
-                    
   } else {
-    
     vertices_.clear();
     typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
     v_end(mesh_.vertices_end());
@@ -249,7 +376,45 @@ update_geometry() {
   }
   
   // ==========================================================================
+  // Generate normal buffer
+  // ==========================================================================
+  
+  if (!normal_buffer_)  glGenBuffersARB(1,  (GLuint*)  &normal_buffer_);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
+  normalBufferInitialized_ = false;
+  
+  // Check if using floats otherwise convert to internal float array
+  if ( sizeof(NormalScalar) == 4) {
+    
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                    3 * mesh_.n_vertices() * sizeof(NormalScalar),
+                    mesh_.vertex_normals(),
+                    GL_STATIC_DRAW_ARB);
+                    
+                    normalBufferInitialized_ = true;
+                    
+  } else {
+    normals_.clear();
+    typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
+    v_end(mesh_.vertices_end());
+    
+    for ( ; v_it != v_end ; ++v_it )
+      normals_.push_back( ACG::Vec3f(mesh_.normal(v_it)) );
+    
+    if ( !normals_.empty() ) {
+      
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                      3 * mesh_.n_vertices() * sizeof(float),
+                      &normals_[0],
+                      GL_STATIC_DRAW_ARB);
+                      normalBufferInitialized_ = true;
+    }
+    
+  }
+  
+  // ==========================================================================
   // unbind all buffers
+  // ==========================================================================
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
   
 }
