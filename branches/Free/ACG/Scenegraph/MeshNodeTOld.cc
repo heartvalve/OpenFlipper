@@ -137,20 +137,6 @@ MeshNodeT<Mesh>::
 
 //----------------------------------------------------------------------------
 
-
-template<class Mesh>
-void
-MeshNodeT<Mesh>::
-boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
-{
-  _bbMin.minimize(bbMin_);
-  _bbMax.maximize(bbMax_);
-}
-
-
-//----------------------------------------------------------------------------
-
-
 template<class Mesh>
 unsigned int
 MeshNodeT<Mesh>::
@@ -792,8 +778,7 @@ draw(GLState& _state, unsigned int _drawMode)
   }
 
 
-  enable_arrays(0);
-  glDepthFunc(GL_LESS);
+
 }
 
 

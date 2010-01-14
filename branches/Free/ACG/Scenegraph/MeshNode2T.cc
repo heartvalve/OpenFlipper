@@ -67,7 +67,8 @@ template<class Mesh>
 TriStripNodeT<Mesh>::
 TriStripNodeT(Mesh&        _mesh,
               BaseNode*    _parent,
-              std::string  _name ):
+              std::string  _name ): 
+  BaseNode(_parent, _name),
   mesh_(_mesh),
   vertex_buffer_(0),
   vertexBufferInitialized_(false),
@@ -94,6 +95,7 @@ template<class Mesh>
 unsigned int
 TriStripNodeT<Mesh>::
 availableDrawModes() const {
+  std::cerr << "Draw modes" << std::endl;
   unsigned int drawModes(0);
   
   drawModes |= DrawModes::POINTS;
@@ -105,23 +107,35 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
-  
+  std::cerr << "Bounding Box" << std::endl;
+  _bbMin.minimize(bbMin_);
+  _bbMax.maximize(bbMax_);
 }
 
 template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 draw(GLState& _state, unsigned int _drawMode) {
+  
+  /// \todo Whats this? Why is this set here
   glDepthFunc(depthFunc());
 
+  std::cerr << "Draw : " << _drawMode << std::endl;
+  std::cerr << "Points has : " << DrawModes::POINTS << std::endl;
 
   if (_drawMode & DrawModes::POINTS)
   {
+    std::cerr << "Draw points" << std::endl;
     enable_arrays(VERTEX_ARRAY);
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     draw_vertices();
   }
+  
+  enable_arrays(0);
+  
+  /// \todo Whats this? Why is this set here and why isnt it set to the one before entering the function?
+  glDepthFunc(GL_LESS);
   
 }
 
@@ -129,6 +143,7 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 draw_vertices() {
+  std::cerr << "Draw_vertices" << std::endl;
   glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
 }
 
@@ -136,6 +151,8 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 enable_arrays(unsigned int _arrays) {
+  
+  std::cerr << "EnableArrays" << std::endl;
 
   if ( !vertexBufferInitialized_ )
     std::cerr << "Error! Uninitialized vertex buffer! " << std::endl;
@@ -145,6 +162,8 @@ enable_arrays(unsigned int _arrays) {
     
     // Check if its already enabled
     if (!(enabled_arrays_ & VERTEX_ARRAY)) {
+      
+      std::cerr << "Enable vertex array" << std::endl;
       
       // Enable the vertex buffer
       enabled_arrays_ |= VERTEX_ARRAY;
@@ -175,6 +194,7 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 update_geometry() {
+  std::cerr << "Update geometry" << std::endl;
   
   // First of all, we update the bounding box:
   bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
@@ -238,7 +258,7 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 update_topology() {
-  
+  std::cerr << "Update topology" << std::endl;
 }
               
 //=============================================================================
