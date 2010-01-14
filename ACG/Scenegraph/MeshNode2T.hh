@@ -159,19 +159,6 @@ public:
   virtual ~TriStripNodeT();
   
   
-  /** \brief return available draw modes 
-  *
-  * The drawmodes are constructed based on the mesh properties and the hardware capabilities
-  * of the system.
-  */
-  unsigned int availableDrawModes() const;
-  
-  /** \brief Draws the object in picking mode
-  *
-  */
-  void pick(GLState& _state, PickTarget _target);
-  
-  
   /** \brief the geometry of the mesh has changed
   *
   * call this function if you changed the geometry of the mesh.
@@ -256,6 +243,24 @@ private:
 /** @} */
 
 //===========================================================================
+/** @name Normal Buffer
+* @{ */
+//===========================================================================
+
+private:
+  
+  /// Normal buffer
+  GLuint normal_buffer_;
+  
+  /// normal buffer initialization flag
+  bool normalBufferInitialized_;
+  
+  /// Internal buffer used when rendering non float normals
+  std::vector< ACG::Vec3f > normals_;
+
+/** @} */
+    
+//===========================================================================
 /** @name Array control functions
 * @{ */
 //===========================================================================
@@ -275,7 +280,8 @@ private:
   enum ArrayType
   {
     NONE                    = 0,
-    VERTEX_ARRAY            = 1
+    VERTEX_ARRAY            = 1,
+    NORMAL_ARRAY            = 2
   };
   
   /// which arrays are currently enabled?
@@ -293,22 +299,59 @@ public:
   */
   void draw(GLState& _state, unsigned int _drawMode);
   
-  /// draws all vertices of the mesh
+  /** \brief draws all vertices of the mesh
+  *
+  */
   void draw_vertices();
+  
+  /** \brief return available draw modes 
+  *
+  * The drawmodes are constructed based on the mesh properties and the hardware capabilities
+  * of the system.
+  */
+  unsigned int availableDrawModes() const;
 
 private:
   
 
 /** @} */
 
+//===========================================================================
+/** @name picking functions
+* @{ */
+//===========================================================================
+public:
+  /** \brief Draws the object in picking mode
+  *
+  */
+  void pick(GLState& _state, PickTarget _target);
+  
+private:
+
+  /** \brief Renders picking for vertices
+  *
+  */
+  void pick_vertices(GLState& _state, bool _front = false);
+  
+  /** \brief Renders picking for faces
+  *
+  */
+  void pick_faces(GLState& _state);
+  
+  /** \brief Renders picking for edges
+  *
+  */
+  void pick_edges(GLState& _state, bool _front = false);
+  
+  /** \brief Renders picking for all primitives
+  *
+  */
+  void pick_any(GLState& _state);
 
 
-
-
-
-
-
-
+  
+  
+  
   /// \todo Remove all these functions afterwards!
   
   public:

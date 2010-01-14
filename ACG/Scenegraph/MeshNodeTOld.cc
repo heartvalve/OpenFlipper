@@ -80,10 +80,7 @@ MeshNodeT(const Mesh&  _mesh,
 	  std::string  _name)
   : BaseNode(_parent, _name),
     mesh_(_mesh),
-    enabled_arrays_(0),
     face_index_buffer_(0),
-    normal_buffer_(0),
-    normalBufferInitialized_(false),
     faceIndexBufferInitialized_(false),
     textureMap_(0),
     propertyMap_(0),
@@ -115,9 +112,6 @@ MeshNodeT<Mesh>::
 ~MeshNodeT()
 {
 
-  if (normal_buffer_)
-    glDeleteBuffersARB(1, (GLuint*)  &normal_buffer_);
-
   if (face_index_buffer_)
     glDeleteBuffersARB(1, (GLuint*)  &face_index_buffer_ );
 
@@ -144,14 +138,12 @@ availableDrawModes() const
 {
   unsigned int drawModes(0);
 
-  drawModes |= DrawModes::POINTS;
   drawModes |= DrawModes::WIREFRAME;
   drawModes |= DrawModes::HIDDENLINE;
   drawModes |= DrawModes::SOLID_SHADER;
 
   if (mesh_.has_vertex_normals())
   {
-    drawModes |= DrawModes::POINTS_SHADED;
     drawModes |= DrawModes::SOLID_SMOOTH_SHADED;
     drawModes |= DrawModes::SOLID_PHONG_SHADED;
   }
@@ -226,34 +218,6 @@ enable_arrays(unsigned int _arrays)
   if (!use_vbo && vertex_buffer_)
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
-
-  if (_arrays & NORMAL_ARRAY)
-  {
-    if (!(enabled_arrays_ & NORMAL_ARRAY))
-    {
-      enabled_arrays_ |= NORMAL_ARRAY;
-      glEnableClientState(GL_NORMAL_ARRAY);
-
-      if (use_vbo)
-      {
-         glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
-
-         // As we ensure that buffers are converted to float before using them, use Float here
-         glNormalPointer(GL_FLOAT, 0 , 0);
-      }
-      else
-      {
-         glNormalPointer(mesh_.vertex_normals());
-      }
-    }
-  }
-  else if (enabled_arrays_ & NORMAL_ARRAY)
-  {
-    enabled_arrays_ &= ~NORMAL_ARRAY;
-    glDisableClientState(GL_NORMAL_ARRAY);
-  }
-
-
   if (_arrays & COLOR_ARRAY)
   {
     if (!(enabled_arrays_ & COLOR_ARRAY))
@@ -320,72 +284,6 @@ enable_arrays(unsigned int _arrays)
 
   glCheckErrors();
 }
-
-
-//----------------------------------------------------------------------------
-
-
-template<class Mesh>
-void
-MeshNodeT<Mesh>::
-update_geometry()
-{
-  updateFaceList_ = true;
-  updateVertexList_ = true;
-  updateEdgeList_ = true;
-  updateAnyList_ = true;
-
-  }
-
-  if (GLEW_ARB_vertex_buffer_object) {
-    typedef typename Mesh::Point         Point;
-    typedef typename Point::value_type   PointScalar;
-    typedef typename Mesh::Normal        Normal;
-    typedef typename Normal::value_type  NormalScalar;
-
-   //===================================================================
-    // Generate a normal buffer on the GPU
-    //===================================================================
-
-    if (!normal_buffer_)  glGenBuffersARB(1,  (GLuint*)  &normal_buffer_);
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
-    normalBufferInitialized_ = false;
-
-    // Check if using floats otherwise convert to internal float array
-    if ( sizeof(NormalScalar) == 4) {
-
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                      3 * mesh_.n_vertices() * sizeof(NormalScalar),
-                      mesh_.vertex_normals(),
-                      GL_STATIC_DRAW_ARB);
-
-      normalBufferInitialized_ = true;
-
-    } else {
-      normals_.clear();
-      typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
-                                     v_end(mesh_.vertices_end());
-
-      for ( ; v_it != v_end ; ++v_it )
-        normals_.push_back( ACG::Vec3f(mesh_.normal(v_it)) );
-
-	  if ( !normals_.empty() ) {
-
-         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                         3 * mesh_.n_vertices() * sizeof(float),
-						       &normals_[0],
-						       GL_STATIC_DRAW_ARB);
-                         normalBufferInitialized_ = true;
-     }
-
-    }
-
-    // unbind buffers
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-
-  } else omlog() << "MeshNodeT: VBO not supported on this machine\n";
-}
-
 
 //----------------------------------------------------------------------------
 
@@ -465,28 +363,10 @@ draw(GLState& _state, unsigned int _drawMode)
   glDepthFunc(depthFunc());
 
 
-  if (_drawMode & DrawModes::POINTS)
-  {
-    enable_arrays(VERTEX_ARRAY);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    draw_vertices();
-  }
-
-
   if ( ( _drawMode & DrawModes::POINTS_COLORED ) && mesh_.has_vertex_colors())
   {
     enable_arrays(VERTEX_ARRAY | COLOR_ARRAY);
     glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    draw_vertices();
-  }
-
-
-  if ( ( _drawMode & DrawModes::POINTS_SHADED ) && mesh_.has_vertex_normals())
-  {
-    enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
-    glEnable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     draw_vertices();
   }
@@ -1061,56 +941,6 @@ draw_faces(FaceMode _mode)
       }
       break;
     }
-  }
-}
-
-
-//----------------------------------------------------------------------------
-
-
-template<class Mesh>
-void
-MeshNodeT<Mesh>::
-pick(GLState& _state, PickTarget _target)
-{
-  switch (_target)
-  {
-    case PICK_VERTEX:
-    {
-      pick_vertices(_state);
-      break;
-    }
-    case PICK_FRONT_VERTEX:
-    {
-      pick_vertices(_state, true);
-      break;
-    }
-
-    case PICK_ANYTHING:
-    {
-      pick_any(_state);
-      break;
-    }
-    case PICK_FACE:
-    {
-      pick_faces(_state);
-      break;
-    }
-
-    case PICK_EDGE:
-    {
-      pick_edges(_state);
-      break;
-    }
-
-    case PICK_FRONT_EDGE:
-    {
-      pick_edges(_state, true);
-      break;
-    }
-
-    default:
-      break;
   }
 }
 
