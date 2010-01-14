@@ -259,6 +259,17 @@ private:
   std::vector< ACG::Vec3f > normals_;
 
 /** @} */
+  
+//===========================================================================
+/** @name Color buffer
+* @{ */
+//===========================================================================  
+
+private:
+  
+
+  
+/** @} */
     
 //===========================================================================
 /** @name Array control functions
@@ -281,7 +292,8 @@ private:
   {
     NONE                    = 0,
     VERTEX_ARRAY            = 1,
-    NORMAL_ARRAY            = 2
+    NORMAL_ARRAY            = 2,
+    COLOR_ARRAY             = 4
   };
   
   /// which arrays are currently enabled?

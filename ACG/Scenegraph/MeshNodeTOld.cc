@@ -150,7 +150,6 @@ availableDrawModes() const
 
   if (mesh_.has_vertex_colors())
   {
-    drawModes |= DrawModes::POINTS_COLORED;
     drawModes |= DrawModes::SOLID_POINTS_COLORED;
   }
 
@@ -217,22 +216,6 @@ enable_arrays(unsigned int _arrays)
   // unbind VBO buffers
   if (!use_vbo && vertex_buffer_)
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-
-  if (_arrays & COLOR_ARRAY)
-  {
-    if (!(enabled_arrays_ & COLOR_ARRAY))
-    {
-      enabled_arrays_ |= COLOR_ARRAY;
-      glEnableClientState(GL_COLOR_ARRAY);
-      glColorPointer(mesh_.vertex_colors());
-    }
-  }
-  else if (enabled_arrays_ & COLOR_ARRAY)
-  {
-    enabled_arrays_ &= ~COLOR_ARRAY;
-    glDisableClientState(GL_COLOR_ARRAY);
-  }
-
 
   if (_arrays & TEXTURE_COORD_1D_ARRAY)
   {
@@ -361,16 +344,6 @@ MeshNodeT<Mesh>::
 draw(GLState& _state, unsigned int _drawMode)
 {
   glDepthFunc(depthFunc());
-
-
-  if ( ( _drawMode & DrawModes::POINTS_COLORED ) && mesh_.has_vertex_colors())
-  {
-    enable_arrays(VERTEX_ARRAY | COLOR_ARRAY);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    draw_vertices();
-  }
-
 
   if (_drawMode & DrawModes::WIREFRAME)
   {
