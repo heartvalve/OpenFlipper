@@ -243,26 +243,27 @@ void CursorPainter::cursorToTexture()
 
   hasCursor_ = false;
 
+  // Initialize hotspot with default position in the upper left corner of the cursor
+  xOff_ = 0;
+  yOff_ = 0;
+  
   ///\todo Possibly switch all cursors to bitmap cursors and check there Hotspots!!
   switch (nativeCursor_.shape())
   {
     case Qt::ArrowCursor:
       cImg.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_arrow.png");
-      xOff_ = 0;
-      yOff_ = 0;
       break;
     case Qt::PointingHandCursor:
       cImg.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_move.png");
-      xOff_ = 7;
-      yOff_ = 1;
       break;
     case Qt::WhatsThisCursor:       
       cImg.load (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"cursor_whatsthis.png");
-      xOff_ = 7;
-      yOff_ = 1;
       break;      
     case Qt::BitmapCursor: 
+      // Get the image of the cursor
       cImg = QImage(( nativeCursor_.pixmap().toImage() ) );
+      
+      // get the hotspot from the cursor
       xOff_ = nativeCursor_.hotSpot().x();
       yOff_ = nativeCursor_.hotSpot().y();
       break;
@@ -271,6 +272,7 @@ void CursorPainter::cursorToTexture()
       return;
   }
 
+  // Check if the cursor dimension is matching our requirements
   if (cImg.width () != 32 || cImg.height () != 32) {
     std::cerr << "cursorToTexture: Dimension error" << nativeCursor_.shape() << std::endl;
     return;
