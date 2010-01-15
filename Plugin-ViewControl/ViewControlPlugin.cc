@@ -71,8 +71,8 @@ void ViewControlPlugin::pluginsInitialized() {
 
   emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH      , CONTEXTOBJECTMENU );
   emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH          , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_MESH_POLYVOL       , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TET_MESH_CGAL      , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("PolyVolMesh")   , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TetMeshCGAL")   , CONTEXTOBJECTMENU );
   emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Volume")        , CONTEXTOBJECTMENU );
   emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineSurface"), CONTEXTOBJECTMENU );
 
