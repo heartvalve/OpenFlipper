@@ -60,6 +60,7 @@
 #include <OpenMesh/Tools/Utils/StripifierT.hh>
 
 #include "BaseNode.hh"
+#include <vector>
 
 //== NAMESPACES ===============================================================
 
@@ -249,7 +250,17 @@ private:
 * @{ */
 //===========================================================================
 
+public:
+  /// Returns if the normal array is currently activated
+  bool normalsEnabled() { return enableNormals_; };
+  
+  /// Enable or disable the use of the normal array
+  void enableNormals(bool _enable) { enableNormals_ = _enable; };
+
 private:
+  
+  /// Flag if normals should be used
+  bool enableNormals_;
   
   /// Normal buffer
   GLuint normal_buffer_;
@@ -266,8 +277,16 @@ private:
 /** @name Color buffer
 * @{ */
 //===========================================================================  
+public:
+  /// Returns if the color array is currently activated
+  bool colorsEnabled() { return enableColors_; };
+  
+  /// Enable or disable the use of color array
+  void enableColors(bool _enable) { enableColors_ = _enable; };
 
 private:
+  
+  bool enableColors_;
   
   /// color buffer
   GLuint color_buffer_;
@@ -277,6 +296,20 @@ private:
   
   /** @} */
     
+//===========================================================================
+/** @name Line buffer
+* @{ */
+//===========================================================================    
+private:
+  /// Vector storing vertices for rendering all edges in the mesh
+  std::vector< unsigned int > lineIndices_;
+  
+  /// Index buffer for lines
+  GLuint line_buffer_;
+  
+  /// lineIndexBuffer initialization flag
+  bool lineBufferInitialized_;
+  
 //===========================================================================
 /** @name Array control functions
 * @{ */
@@ -299,7 +332,8 @@ private:
     NONE                    = 0,
     VERTEX_ARRAY            = 1,
     NORMAL_ARRAY            = 2,
-    COLOR_ARRAY             = 4
+    COLOR_ARRAY             = 4,
+    LINE_INDEX_ARRAY        = 8
   };
   
   /// which arrays are currently enabled?
@@ -321,6 +355,11 @@ public:
   *
   */
   void draw_vertices();
+  
+  /** \brief draws all edges of the mesh
+  *
+  */
+  void draw_lines();
   
   /** \brief return available draw modes 
   *
