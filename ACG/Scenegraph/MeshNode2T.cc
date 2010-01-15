@@ -149,44 +149,43 @@ draw(GLState& _state, unsigned int _drawMode) {
 
   unsigned int arrays = VERTEX_ARRAY;
   
-  if (_drawMode & DrawModes::POINTS)
-  {
-    enable_arrays(arrays);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    draw_vertices();
-  }
+  glPushAttrib(GL_ENABLE_BIT);
   
-  if ( ( _drawMode & DrawModes::POINTS_COLORED ) && mesh_.has_vertex_colors())
-  {
-    std::cerr << "Points colored" << std::endl;
+  if ( (_drawMode & DrawModes::POINTS) || (_drawMode & DrawModes::POINTS_COLORED) || (_drawMode & DrawModes::POINTS_SHADED )  ) {
     
-    arrays = VERTEX_ARRAY;
+    glShadeModel(GL_FLAT);
     
-    if ( enableColors_ )
+    if ( _drawMode & DrawModes::POINTS_SHADED  ) {
+      glEnable(GL_LIGHTING);
+    } else
+      glDisable(GL_LIGHTING);
+  
+    // Use Colors in this mode if allowed
+    if ( enableColors_ && (_drawMode & DrawModes::POINTS_COLORED) )
       arrays |= COLOR_ARRAY;
-      
-    enable_arrays(arrays);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    draw_vertices();
-  }
-  
-  if ( ( _drawMode & DrawModes::POINTS_SHADED ) && mesh_.has_vertex_normals())
-  {
-    arrays = VERTEX_ARRAY;
     
-    if ( enableNormals_ )
+    // Use Normals in this mode if allowed
+    if ( enableNormals_ && (_drawMode & DrawModes::POINTS_SHADED ) ) {
       arrays |= NORMAL_ARRAY;
+      
+      // If we have colors and lighting with normals, we have to use colormaterial
+      if ( (arrays & COLOR_ARRAY) )
+        glEnable(GL_COLOR_MATERIAL);
+      else 
+        glDisable(GL_COLOR_MATERIAL);
+    }
     
-    enable_arrays( arrays );
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
+    // Bring the arrays online
+    enable_arrays(arrays);
+    
+    // Draw vertices
     draw_vertices();
   }
   
   if (_drawMode & DrawModes::WIREFRAME)
   {
+    arrays = VERTEX_ARRAY;
+    
 //     glPushAttrib(GL_ENABLE_BIT);
     
 //     glDisable( GL_CULL_FACE );
@@ -210,6 +209,7 @@ draw(GLState& _state, unsigned int _drawMode) {
   /// \todo Whats this? Why is this set here and why isnt it set to the one before entering the function?
   glDepthFunc(GL_LESS);
   
+  glPopAttrib();
 }
 
 template<class Mesh>
