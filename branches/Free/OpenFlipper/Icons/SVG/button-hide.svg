@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="48px"
+   height="48px"
+   id="svg2816"
+   version="1.1"
+   inkscape:version="0.47pre4 r22446"
+   sodipodi:docname="drawing.svg"
+   inkscape:export-filename="/home/jim/projects/OpenFlipper/build/Build/share/OpenFlipper/Icons/button-hide.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs2818">
+    <linearGradient
+       id="linearGradient3607">
+      <stop
+         style="stop-color:#787878;stop-opacity:1;"
+         offset="0"
+         id="stop3609" />
+      <stop
+         style="stop-color:#606060;stop-opacity:0.55686277;"
+         offset="1"
+         id="stop3611" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3597">
+      <stop
+         style="stop-color:#838383;stop-opacity:0.59607846;"
+         offset="0"
+         id="stop3599" />
+      <stop
+         style="stop-color:#c7c7c7;stop-opacity:0.615942;"
+         offset="1"
+         id="stop3601" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 24 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="48 : 24 : 1"
+       inkscape:persp3d-origin="24 : 16 : 1"
+       id="perspective2824" />
+    <inkscape:perspective
+       id="perspective2838"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3597"
+       id="radialGradient3605"
+       cx="23.976189"
+       cy="24.128906"
+       fx="23.976189"
+       fy="24.128906"
+       r="21.540363"
+       gradientTransform="matrix(0.64832685,0,0,0.69267921,7.3826123,7.6296002)"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3607"
+       id="radialGradient3613"
+       cx="23.976189"
+       cy="24.128906"
+       fx="23.976189"
+       fy="24.128906"
+       r="21.540363"
+       gradientTransform="matrix(0.64832685,0,0,0.69267921,7.3826123,7.6296002)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="7"
+     inkscape:cx="20.501931"
+     inkscape:cy="25.809151"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     inkscape:window-width="931"
+     inkscape:window-height="750"
+     inkscape:window-x="149"
+     inkscape:window-y="160"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata2821">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <text
+       xml:space="preserve"
+       style="font-size:57.54672623px;font-style:normal;font-weight:normal;fill:url(#radialGradient3605);fill-opacity:1;stroke:url(#radialGradient3613);stroke-width:0.97249031;stroke-miterlimit:4;stroke-dasharray:none;font-family:Bitstream Vera Sans"
+       x="8.5403404"
+       y="39.263756"
+       id="text2826"><tspan
+         sodipodi:role="line"
+         id="tspan2828"
+         x="8.5403404"
+         y="39.263756"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;fill:url(#radialGradient3605);fill-opacity:1;stroke:url(#radialGradient3613);stroke-width:0.97249031;stroke-miterlimit:4;stroke-dasharray:none;font-family:Arial;-inkscape-font-specification:Arial Bold">x</tspan></text>
+  </g>
+</svg>

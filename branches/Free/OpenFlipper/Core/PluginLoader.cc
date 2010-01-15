@@ -179,7 +179,7 @@ void Core::loadPlugins()
   for ( int i = 0 ; i < dontLoadPlugins.size(); ++i )
     emit log(LOGWARN,tr("Skipping Plugins :\t %1").arg( dontLoadPlugins[i] ) );
 
-  emit log(LOGOUT,"=============================================================================================");
+  emit log(LOGOUT,"================================================================================");
 
   // Try to load each file as a plugin
   for ( int i = 0 ; i < pluginlist.size() ; ++i) {
@@ -357,7 +357,8 @@ void Core::loadPlugin(QString filename, bool silent){
     // Check if it is a BasePlugin
     BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugin);
     if ( basePlugin ) {
-      emit log(LOGOUT,tr("Found Plugin :\t\t %1 at %2.").arg(basePlugin->name()).arg( filename));
+      emit log(LOGOUT,tr("Found Plugin : \t %1").arg(basePlugin->name()) );
+      emit log(LOGOUT,tr("Location : \t %2").arg(filename) );
 
       if ( OpenFlipper::Options::gui() && OpenFlipperSettings().value("Core/Gui/splash",true).toBool() ) {
         splashMessage_ = splashMessage_ + " " + basePlugin->name() ;
@@ -374,7 +375,7 @@ void Core::loadPlugin(QString filename, bool silent){
           if (plugins[k].name == name_nospace){
             if (silent || OpenFlipper::Options::nogui() ){ //dont load the plugin
               emit log(LOGWARN, tr("\t\t\t Already loaded from %1").arg( plugins[k].path) );
-              emit log(LOGOUT,"=============================================================================================");
+              emit log(LOGOUT,"================================================================================");
               return;
           }else{ //ask the user
             int ret = QMessageBox::question(coreWidget_,
@@ -387,7 +388,7 @@ void Core::loadPlugin(QString filename, bool silent){
               unloadPlugin(plugins[k].name);
             else{
               emit log(LOGWARN, tr("\t\t\t Already loaded from %1.").arg( plugins[k].path));
-              emit log(LOGOUT,"=============================================================================================");
+              emit log(LOGOUT,"================================================================================");
               return;
             }
           }
@@ -398,7 +399,7 @@ void Core::loadPlugin(QString filename, bool silent){
       
       if ( dontLoadPlugins.contains(basePlugin->name(), Qt::CaseInsensitive) ) {
         emit log(LOGWARN,tr("OpenFlipper.ini prevented Plugin %1 from being loaded! ").arg( basePlugin->name() ));
-        emit log(LOGOUT,"=============================================================================================");
+        emit log(LOGOUT,"================================================================================");
         return;
       }
 
@@ -414,7 +415,7 @@ void Core::loadPlugin(QString filename, bool silent){
           emit log(LOGINFO,tr("... ok. Loading plugin "));
         else {
           emit log(LOGERR,tr("... failed. Plugin access denied."));
-          emit log(LOGOUT,"=============================================================================================");
+          emit log(LOGOUT,"================================================================================");
           return;
         }
       }
@@ -438,7 +439,7 @@ void Core::loadPlugin(QString filename, bool silent){
 
         if ( ! checkSlot( plugin , "noguiSupported()" ) ) {
           emit log(LOGWARN,tr("Running in nogui mode which is unsupported by this plugin, skipping") );
-          emit log(LOGOUT,"=============================================================================================");
+          emit log(LOGOUT,"================================================================================");
           return;
         }
 
@@ -448,13 +449,13 @@ void Core::loadPlugin(QString filename, bool silent){
       // Check for baseInterface of old style!
       if ( checkSignal(plugin,"updated_objects(int)") ) {
         log(LOGERR,tr("Plugin Uses old style updated_objects! Convert to updatedObject!"));
-        emit log(LOGOUT,"=============================================================================================");
+        emit log(LOGOUT,"================================================================================");
         return;
       }
 
       if ( checkSignal(plugin,"update_view()") ) {
         log(LOGERR,tr("Plugin Uses old style update_view! Convert to updateView!"));
-        emit log(LOGOUT,"=============================================================================================");
+        emit log(LOGOUT,"================================================================================");
         return;
       }
 
@@ -1172,11 +1173,11 @@ void Core::loadPlugin(QString filename, bool silent){
                 this   , SLOT( slotEmptyObjectAdded ( int ) ),Qt::DirectConnection);
     }
 
-    emit log(LOGOUT,"=============================================================================================");
+    emit log(LOGOUT,"================================================================================");
   } else {
     emit log(LOGERR,tr("Unable to load Plugin :\t %1").arg( filename ) );
     emit log(LOGERR,tr("Error was : ") + loader.errorString() );
-    emit log(LOGOUT,"=============================================================================================");
+    emit log(LOGOUT,"================================================================================");
   }
 
 

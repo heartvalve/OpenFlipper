@@ -110,7 +110,7 @@ class SideElement : public QWidget
 
     /// Called on mouse press
     void labelPress ();
-
+    
   private slots:
 
     /// Called if the detach button was pressed
@@ -142,7 +142,7 @@ class SideElement : public QWidget
     // detach button & action
     QToolButton *detachButton_;
     QAction *detachAction_;
-
+    
     // dialog for detached widget
     QDialog *dialog_;
 };

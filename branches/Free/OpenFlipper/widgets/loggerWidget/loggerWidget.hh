@@ -48,25 +48,68 @@
 
 #include <QtGui>
 
+#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
+
 /** \brief Implementation of the logger Widget
  *
  * This class adds some special features to the textedit for the log window
  */
-class LoggerWidget : public QTextEdit
+class LoggerWidget : public QWidget
 {
 
-Q_OBJECT
+  Q_OBJECT
 
-public:
-  LoggerWidget( QWidget *parent = 0 );
+  public:
+    LoggerWidget( QWidget *parent = 0 );
 
-protected:
+    /** \brief Append a new logmessage to log viewer
+    *
+    * Display log message of given logtype
+    */
+    void append(QString _text, Logtype _type);
+    
+  protected:
 
-  /** \brief Grab key events before TextEdit
-   *
-   * This function grabs all key events and passes them back to the core to handle them correctly
-   */
-  void keyPressEvent (QKeyEvent * _event );
+    /** \brief Grab key events
+    *
+    * This function grabs all key events and passes them back to the core to handle them correctly
+    */
+    void keyPressEvent (QKeyEvent * _event );
+    
+    /** \brief Show context menu
+    *
+    * This function shows the context menu
+    */
+    void contextMenuEvent ( QContextMenuEvent * event );
+  
+  private:
+    
+    QListWidget* list_;
+    
+    //scrolling with list_'s scrollbar doesn't work correctly
+    //use separate scrollbar as workaround
+    QScrollBar* scrollBar_;
+    bool blockNext_;
+    
+    QPushButton* allButton_;
+    QPushButton* infoButton_;
+    QPushButton* warnButton_;
+    QPushButton* errorButton_;
+    
+    QPushButton* clearButton_;
+    
+    QMenu* context_;
+    
+  private slots:
+    /// update the list if a button was pressed
+    void updateList();
+    
+    /// workaround for scrolling
+    void scrollTo(int _pos);
+    /// map scroll position of list to scrollbar position
+    void mapScrollPosition(int _pos);
+    ///copy Selected rows to clipboard
+    void copySelected();
 };
 
 #endif //LOGGERWIDGET_HH

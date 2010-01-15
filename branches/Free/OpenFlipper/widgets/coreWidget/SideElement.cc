@@ -78,15 +78,21 @@ SideElement::SideElement (SideArea *_parent, QWidget *_w, QString _name) :
   label_->setFont (font);
 
   detachButton_ = new QToolButton ();
+  detachButton_->setAutoRaise(true);
   hl->addWidget (label_);
   hl->addStretch (1);
   hl->addWidget (detachButton_);
 
-  detachAction_ = new QAction (QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"button-detach.png"), "", this);
-  detachAction_->setToolTip( tr("Show as separate window.") );
+  
+  QIcon detachIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"button-detach.png");
+  detachIcon.addPixmap(QPixmap(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"button-detach_over.png"), QIcon::Active);
+  detachIcon.addPixmap(QPixmap(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"button-detach_over.png"), QIcon::Selected);
+  
+  detachAction_ = new QAction ( detachIcon, "", this);
+  detachAction_->setToolTip( tr("Show as separate window") );
   detachAction_->setCheckable (true);
   detachButton_->setDefaultAction (detachAction_);
-
+ 
   connect (detachAction_, SIGNAL (triggered (bool)), this, SLOT (detachPressed (bool)));
 
   tra->setLayout (hl);
@@ -147,6 +153,7 @@ void SideElement::detachPressed (bool checked_)
     mainLayout_->removeWidget (widget_);
     dialog_ = new QDialog(0, Qt::Window);
     dialog_->setWindowTitle (name_);
+    dialog_->setWindowIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"button-detach.png"));
     dialog_->setLayout (new QVBoxLayout);
     dialog_->resize (widget_->size ());
     if (window ())
