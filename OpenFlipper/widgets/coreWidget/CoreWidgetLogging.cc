@@ -92,11 +92,7 @@ slotLog(Logtype _type, QString _message) {
       break;
   }
 
-  logWidget_->setTextColor( textColor );
-  logWidget_->append(_message);
-
-  QScrollBar* bar = logWidget_->verticalScrollBar();
-  bar->setValue(bar->maximum());
+  logWidget_->append(_message, _type);
 
   if (_type == LOGERR)
     statusBar_->showMessage(_message,textColor, 4000);

@@ -204,10 +204,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   tempLogWidget = new QWidget;
 
   logWidget_ = new LoggerWidget(splitter_);
-  logWidget_->setReadOnly(true);
   logWidget_->setSizePolicy( QSizePolicy ( QSizePolicy::Preferred , QSizePolicy::Preferred ) );
   logWidget_->resize( splitter_->width() ,240);
-  logWidget_->setLineWrapMode( QTextEdit::NoWrap );
 
   originalLoggerSize_ = 0;
   loggerState_ = OpenFlipper::Options::Normal;
