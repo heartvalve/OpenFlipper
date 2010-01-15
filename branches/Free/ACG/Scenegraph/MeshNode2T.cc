@@ -72,10 +72,14 @@ TriStripNodeT(Mesh&        _mesh,
   mesh_(_mesh),
   vertex_buffer_(0),
   vertexBufferInitialized_(false),
+  enableNormals_(true),
   normal_buffer_(0),
   normalBufferInitialized_(false),
+  enableColors_(true),
   color_buffer_(0),
   colorBufferInitialized_(false),
+  line_buffer_(0),
+  lineBufferInitialized_(false),
   enabled_arrays_(0)
 {
   /// \todo : Handle vbo not supported
@@ -99,6 +103,9 @@ TriStripNodeT<Mesh>::
   if (color_buffer_)
     glDeleteBuffersARB(1, &color_buffer_);    
   
+  if (line_buffer_)
+    glDeleteBuffersARB(1, &line_buffer_);     
+  
 }
 
 template<class Mesh>
@@ -107,7 +114,9 @@ TriStripNodeT<Mesh>::
 availableDrawModes() const {
   unsigned int drawModes(0);
   
+  // We can always render points and a wireframe.
   drawModes |= DrawModes::POINTS;
+  drawModes |= DrawModes::WIREFRAME;
   
   if (mesh_.has_vertex_normals())
   {
@@ -138,9 +147,11 @@ draw(GLState& _state, unsigned int _drawMode) {
   /// \todo Whats this? Why is this set here
   glDepthFunc(depthFunc());
 
+  unsigned int arrays = VERTEX_ARRAY;
+  
   if (_drawMode & DrawModes::POINTS)
   {
-    enable_arrays(VERTEX_ARRAY);
+    enable_arrays(arrays);
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     draw_vertices();
@@ -149,7 +160,13 @@ draw(GLState& _state, unsigned int _drawMode) {
   if ( ( _drawMode & DrawModes::POINTS_COLORED ) && mesh_.has_vertex_colors())
   {
     std::cerr << "Points colored" << std::endl;
-    enable_arrays(VERTEX_ARRAY | COLOR_ARRAY);
+    
+    arrays = VERTEX_ARRAY;
+    
+    if ( enableColors_ )
+      arrays |= COLOR_ARRAY;
+      
+    enable_arrays(arrays);
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     draw_vertices();
@@ -157,13 +174,38 @@ draw(GLState& _state, unsigned int _drawMode) {
   
   if ( ( _drawMode & DrawModes::POINTS_SHADED ) && mesh_.has_vertex_normals())
   {
-    enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
+    arrays = VERTEX_ARRAY;
+    
+    if ( enableNormals_ )
+      arrays |= NORMAL_ARRAY;
+    
+    enable_arrays( arrays );
     glEnable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
     draw_vertices();
   }
   
+  if (_drawMode & DrawModes::WIREFRAME)
+  {
+//     glPushAttrib(GL_ENABLE_BIT);
+    
+//     glDisable( GL_CULL_FACE );
+    
+    enable_arrays(VERTEX_ARRAY | LINE_INDEX_ARRAY);
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+//     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    draw_lines();
+//     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    
+//     glPopAttrib();
+  }
+  
   enable_arrays(0);
+  
+  // Unbind all remaining buffers
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB , 0 );
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB , 0 );
   
   /// \todo Whats this? Why is this set here and why isnt it set to the one before entering the function?
   glDepthFunc(GL_LESS);
@@ -178,6 +220,16 @@ draw_vertices() {
     std::cerr << "Error! Uninitialized vertex buffer in draw call! " << std::endl;
 
   glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
+}
+
+template<class Mesh>
+void
+TriStripNodeT<Mesh>::
+draw_lines() {
+  if ( !lineBufferInitialized_ )
+    std::cerr << "Error! Uninitialized Line buffer in draw call! " << std::endl;
+  
+  glDrawElements(GL_LINES, mesh_.n_edges() * 2, GL_UNSIGNED_INT, 0 );
 }
 
 template<class Mesh>
@@ -208,10 +260,8 @@ enable_arrays(unsigned int _arrays) {
       glVertexPointer(3, GL_FLOAT, 0, 0);
       glEnableClientState(GL_VERTEX_ARRAY);
       
-      std::cerr << "GL enable vertex array ok" << std::endl;
     }
   } else if (enabled_arrays_ & VERTEX_ARRAY) {
-    std::cerr << "Disable Vertex array" << std::endl;
     // Disable the Vertex array
     enabled_arrays_ &= ~VERTEX_ARRAY;
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -238,10 +288,8 @@ enable_arrays(unsigned int _arrays) {
       glNormalPointer(GL_FLOAT, 0 , 0);
       
       glEnableClientState(GL_NORMAL_ARRAY);
-      std::cerr << "Enable normal array ok" << std::endl;
     }
   } else if (enabled_arrays_ & NORMAL_ARRAY) {
-    std::cerr << "Disable normal array" << std::endl;
     // Disable Normal array
     enabled_arrays_ &= ~NORMAL_ARRAY;
     glDisableClientState(GL_NORMAL_ARRAY);
@@ -255,11 +303,8 @@ enable_arrays(unsigned int _arrays) {
   // Check if we should enable the color array
   if (_arrays & COLOR_ARRAY)  {
     
-    std::cerr << "Enable color array" << std::endl;
-    
     // Check if its already enabled
     if (!(enabled_arrays_ & COLOR_ARRAY)) {
-      std::cerr << "Enable color array ok" << std::endl;
       enabled_arrays_ |= COLOR_ARRAY;
       
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, color_buffer_);
@@ -270,10 +315,29 @@ enable_arrays(unsigned int _arrays) {
       
     }
   } else if (enabled_arrays_ & COLOR_ARRAY) {
-    std::cerr << "Disable Color array" << std::endl;
     // Disable Color array
     enabled_arrays_ &= ~COLOR_ARRAY;
     glDisableClientState(GL_COLOR_ARRAY);
+  } 
+  
+  //===================================================================
+  // Line Index Array
+  //===================================================================  
+  
+  // Check if we should enable the color array
+  if (_arrays & LINE_INDEX_ARRAY)  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & LINE_INDEX_ARRAY)) {
+      enabled_arrays_ |= LINE_INDEX_ARRAY;
+      
+      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, line_buffer_);
+      
+    }
+  } else if (enabled_arrays_ & LINE_INDEX_ARRAY) {
+    // Disable Color array
+    enabled_arrays_ &= ~LINE_INDEX_ARRAY;
+   
   } 
   
   //===================================================================
@@ -512,6 +576,36 @@ void
 TriStripNodeT<Mesh>::
 update_topology() {
   std::cerr << "Update topology" << std::endl;
+  
+  // ==========================================================================
+  // Generate a buffer for rendering all lines
+  // ==========================================================================
+  lineIndices_.clear();
+  
+  typename Mesh::ConstEdgeIter e_it(mesh_.edges_begin()),
+  e_end(mesh_.edges_end());
+  
+  for ( ; e_it != e_end ; ++e_it ) {
+    lineIndices_.push_back( mesh_.from_vertex_handle(mesh_.halfedge_handle(e_it,0)).idx() );
+    lineIndices_.push_back( mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it,0)).idx()  );
+  }
+  
+  // Allocate it if required
+  if (!line_buffer_)  glGenBuffersARB(1,  (GLuint*) &line_buffer_);
+  
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, line_buffer_);
+  lineBufferInitialized_ = false;
+  
+  // Copy the buffer to the graphics card
+  glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
+                  mesh_.n_edges() * sizeof(unsigned int) * 2,
+                  &lineIndices_[0],
+                  GL_STATIC_DRAW_ARB);
+
+  /// \todo: clear lineIndeices (swap vector!)
+  
+  lineBufferInitialized_ = true;
+  
 }
               
 //=============================================================================
