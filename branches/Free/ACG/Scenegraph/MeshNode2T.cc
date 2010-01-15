@@ -361,6 +361,7 @@ enable_arrays(unsigned int _arrays) {
   } else if (enabled_arrays_ & LINE_INDEX_ARRAY) {
     // Disable Color array
     enabled_arrays_ &= ~LINE_INDEX_ARRAY;
+    glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
   } 
   
   //===================================================================
