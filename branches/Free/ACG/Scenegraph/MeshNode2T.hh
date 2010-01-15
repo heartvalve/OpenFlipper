@@ -57,10 +57,10 @@
 //== INCLUDES =================================================================
 
 
-#include <OpenMesh/Tools/Utils/StripifierT.hh>
 
 #include "BaseNode.hh"
 #include <vector>
+#include <ACG/Scenegraph/StripProcessorT.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -202,7 +202,19 @@ private:
   /// The mesh this node works on
   Mesh& mesh_;  
   
-  /** @} */  
+/** @} */  
+  
+//===========================================================================
+/** @name Strip generation and handling
+* @{ */
+//===========================================================================  
+public:
+//   void update_strips();
+
+private:
+  StripProcessorT<Mesh> stripProcessor_;
+
+/** @} */  
 
 //===========================================================================
 /** @name Bounding Box
@@ -235,7 +247,7 @@ private:
 private:
   
   /// Vertex buffer
-  GLuint vertex_buffer_;
+  GLuint vertexBuffer_;
   
   /// Vertex buffer initialization flag
   bool   vertexBufferInitialized_;  
@@ -263,10 +275,10 @@ private:
   bool enableNormals_;
   
   /// Normal buffer
-  GLuint normal_buffer_;
+  GLuint normalVertexBuffer_;
   
   /// normal buffer initialization flag
-  bool normalBufferInitialized_;
+  bool normalVertexBufferInitialized_;
   
   /// Internal buffer used when rendering non float normals
   std::vector< ACG::Vec3f > normals_;
@@ -289,10 +301,10 @@ private:
   bool enableColors_;
   
   /// color buffer
-  GLuint color_buffer_;
+  GLuint colorVertexbuffer_;
   
   /// normal buffer initialization flag
-  bool colorBufferInitialized_;
+  bool colorVertexBufferInitialized_;
   
   /** @} */
     
@@ -305,10 +317,10 @@ private:
   std::vector< unsigned int > lineIndices_;
   
   /// Index buffer for lines
-  GLuint line_buffer_;
+  GLuint lineIndexBuffer_;
   
   /// lineIndexBuffer initialization flag
-  bool lineBufferInitialized_;
+  bool lineIndexBufferInitialized_;
   
 //===========================================================================
 /** @name Array control functions
@@ -331,8 +343,8 @@ private:
   {
     NONE                    = 0,
     VERTEX_ARRAY            = 1,
-    NORMAL_ARRAY            = 2,
-    COLOR_ARRAY             = 4,
+    NORMAL_VERTEX_ARRAY     = 2,
+    COLOR_VERTEX_ARRAY      = 4,
     LINE_INDEX_ARRAY        = 8
   };
   
@@ -351,15 +363,24 @@ public:
   */
   void draw(GLState& _state, unsigned int _drawMode);
   
+private:
+  // types
+  enum FaceMode {  PER_VERTEX };
+  
   /** \brief draws all vertices of the mesh
   *
   */
-  void draw_vertices();
+  inline void draw_vertices();
   
   /** \brief draws all edges of the mesh
   *
   */
-  void draw_lines();
+  inline void draw_lines();
+  
+  /** \brief draws all faces of the mesh 
+  *
+  */
+  void draw_faces(FaceMode _mode);
   
   /** \brief return available draw modes 
   *
@@ -412,7 +433,6 @@ private:
   /// \todo Remove all these functions afterwards!
   
   public:
-    void update_strips() {};
     void set_texture_map( std::map< int, GLuint>* _map){  };
     void set_property_map( std::map< int, std::string>* _map){ };
     void set_default_halfedge_textcoord_property( std::string _default_halfedge_textcoord_property ) {};
