@@ -345,22 +345,6 @@ draw(GLState& _state, unsigned int _drawMode)
 {
   glDepthFunc(depthFunc());
 
-  if (_drawMode & DrawModes::WIREFRAME)
-  {
-    glPushAttrib(GL_ENABLE_BIT);
-
-    glDisable( GL_CULL_FACE );
-
-    enable_arrays(VERTEX_ARRAY);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    draw_faces(PER_VERTEX);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-    glPopAttrib();
-  }
-
 
   if (_drawMode & DrawModes::HIDDENLINE)
   {
@@ -398,15 +382,8 @@ draw(GLState& _state, unsigned int _drawMode)
   }
 
 
-  if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals())
-  {
-    enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
-    glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
-    glDepthRange(0.0, 1.0);
-  }
+//   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals())
+
 
   if ( ( _drawMode & DrawModes::SOLID_PHONG_SHADED ) && mesh_.has_vertex_normals() )
   {

@@ -70,16 +70,17 @@ TriStripNodeT(Mesh&        _mesh,
               std::string  _name ): 
   BaseNode(_parent, _name),
   mesh_(_mesh),
-  vertex_buffer_(0),
+  stripProcessor_(_mesh),
+  vertexBuffer_(0),
   vertexBufferInitialized_(false),
   enableNormals_(true),
-  normal_buffer_(0),
-  normalBufferInitialized_(false),
+  normalVertexBuffer_(0),
+  normalVertexBufferInitialized_(false),
   enableColors_(true),
-  color_buffer_(0),
-  colorBufferInitialized_(false),
-  line_buffer_(0),
-  lineBufferInitialized_(false),
+  colorVertexbuffer_(0),
+  colorVertexBufferInitialized_(false),
+  lineIndexBuffer_(0),
+  lineIndexBufferInitialized_(false),
   enabled_arrays_(0)
 {
   /// \todo : Handle vbo not supported
@@ -94,17 +95,17 @@ TriStripNodeT<Mesh>::
 ~MeshNodeT()
 {
   // Delete all allocated buffers
-  if (vertex_buffer_)
-    glDeleteBuffersARB(1, &vertex_buffer_);
+  if (vertexBuffer_)
+    glDeleteBuffersARB(1, &vertexBuffer_);
   
-  if (normal_buffer_)
-    glDeleteBuffersARB(1, &normal_buffer_);  
+  if (normalVertexBuffer_)
+    glDeleteBuffersARB(1, &normalVertexBuffer_);  
   
-  if (color_buffer_)
-    glDeleteBuffersARB(1, &color_buffer_);    
+  if (colorVertexbuffer_)
+    glDeleteBuffersARB(1, &colorVertexbuffer_);    
   
-  if (line_buffer_)
-    glDeleteBuffersARB(1, &line_buffer_);     
+  if (lineIndexBuffer_)
+    glDeleteBuffersARB(1, &lineIndexBuffer_);     
   
 }
 
@@ -120,7 +121,8 @@ availableDrawModes() const {
   
   if (mesh_.has_vertex_normals())
   {
-    drawModes |= DrawModes::POINTS_SHADED;
+    drawModes |= DrawModes::POINTS_SHADED;  
+    drawModes |= DrawModes::SOLID_SMOOTH_SHADED;
   }
   
   if (mesh_.has_vertex_colors())
@@ -150,7 +152,7 @@ draw(GLState& _state, unsigned int _drawMode) {
   unsigned int arrays = VERTEX_ARRAY;
   
   glPushAttrib(GL_ENABLE_BIT);
-  
+ 
   if ( (_drawMode & DrawModes::POINTS) || (_drawMode & DrawModes::POINTS_COLORED) || (_drawMode & DrawModes::POINTS_SHADED )  ) {
     
     glShadeModel(GL_FLAT);
@@ -162,14 +164,14 @@ draw(GLState& _state, unsigned int _drawMode) {
   
     // Use Colors in this mode if allowed
     if ( enableColors_ && (_drawMode & DrawModes::POINTS_COLORED) )
-      arrays |= COLOR_ARRAY;
+      arrays |= COLOR_VERTEX_ARRAY;
     
     // Use Normals in this mode if allowed
     if ( enableNormals_ && (_drawMode & DrawModes::POINTS_SHADED ) ) {
-      arrays |= NORMAL_ARRAY;
+      arrays |= NORMAL_VERTEX_ARRAY;
       
       // If we have colors and lighting with normals, we have to use colormaterial
-      if ( (arrays & COLOR_ARRAY) )
+      if ( (arrays & COLOR_VERTEX_ARRAY) )
         glEnable(GL_COLOR_MATERIAL);
       else 
         glDisable(GL_COLOR_MATERIAL);
@@ -182,22 +184,24 @@ draw(GLState& _state, unsigned int _drawMode) {
     draw_vertices();
   }
   
+  
+  /// \todo We can render also wireframe shaded and with vertex colors
   if (_drawMode & DrawModes::WIREFRAME)
   {
-    arrays = VERTEX_ARRAY;
-    
-//     glPushAttrib(GL_ENABLE_BIT);
-    
-//     glDisable( GL_CULL_FACE );
-    
-    enable_arrays(VERTEX_ARRAY | LINE_INDEX_ARRAY);
+    enable_arrays( VERTEX_ARRAY | LINE_INDEX_ARRAY );
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
-//     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     draw_lines();
-//     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    
-//     glPopAttrib();
+  }
+  
+  if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals() )
+  {
+    enable_arrays( VERTEX_ARRAY | NORMAL_VERTEX_ARRAY );
+    glEnable(GL_LIGHTING);
+    glShadeModel(GL_SMOOTH);
+    glDepthRange(0.01, 1.0);
+    draw_faces(PER_VERTEX);
+    glDepthRange(0.0, 1.0);
   }
   
   enable_arrays(0);
@@ -226,10 +230,32 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 draw_lines() {
-  if ( !lineBufferInitialized_ )
+  if ( !lineIndexBufferInitialized_ )
     std::cerr << "Error! Uninitialized Line buffer in draw call! " << std::endl;
   
   glDrawElements(GL_LINES, mesh_.n_edges() * 2, GL_UNSIGNED_INT, 0 );
+}
+
+template<class Mesh>
+void
+TriStripNodeT<Mesh>::
+draw_faces(FaceMode _mode) {
+  if ( stripProcessor_.is_valid() ) {
+    if ( _mode == PER_VERTEX ) {
+      typename StripProcessorT<Mesh>::StripsIterator strip_it   = stripProcessor_.begin();
+      typename StripProcessorT<Mesh>::StripsIterator strip_last = stripProcessor_.end();
+      
+      for (; strip_it!=strip_last; ++strip_it) {
+        glDrawElements(GL_TRIANGLE_STRIP,
+                       strip_it->indexArray.size(),
+                       GL_UNSIGNED_INT,
+                        &(strip_it->indexArray)[0]  );
+      }
+      
+    }
+  } else {
+    std::cerr << "Error in draw Faces! No strip data available!" << std::endl;
+  }
 }
 
 template<class Mesh>
@@ -254,12 +280,11 @@ enable_arrays(unsigned int _arrays) {
       enabled_arrays_ |= VERTEX_ARRAY;
    
       // Bind the Vertex buffer
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertex_buffer_);
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffer_);
       
       // As we ensure that buffers are converted to float before using them, use Float here
       glVertexPointer(3, GL_FLOAT, 0, 0);
       glEnableClientState(GL_VERTEX_ARRAY);
-      
     }
   } else if (enabled_arrays_ & VERTEX_ARRAY) {
     // Disable the Vertex array
@@ -273,25 +298,25 @@ enable_arrays(unsigned int _arrays) {
   //===================================================================
   
   // Check if we should enable the normal array
-  if (_arrays & NORMAL_ARRAY) {
+  if (_arrays & NORMAL_VERTEX_ARRAY) {
     
-    if ( !normalBufferInitialized_ )
+    if ( !normalVertexBufferInitialized_ )
       std::cerr << "Error! Uninitialized normal buffer! " << std::endl;
     
     // Check if its already enabled
-    if (!(enabled_arrays_ & NORMAL_ARRAY)) {
-      enabled_arrays_ |= NORMAL_ARRAY;
+    if (!(enabled_arrays_ & NORMAL_VERTEX_ARRAY)) {
+      enabled_arrays_ |= NORMAL_VERTEX_ARRAY;
       
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalVertexBuffer_);
       
       // As we ensure that buffers are converted to float before using them, use Float here
       glNormalPointer(GL_FLOAT, 0 , 0);
       
       glEnableClientState(GL_NORMAL_ARRAY);
     }
-  } else if (enabled_arrays_ & NORMAL_ARRAY) {
+  } else if (enabled_arrays_ & NORMAL_VERTEX_ARRAY) {
     // Disable Normal array
-    enabled_arrays_ &= ~NORMAL_ARRAY;
+    enabled_arrays_ &= ~NORMAL_VERTEX_ARRAY;
     glDisableClientState(GL_NORMAL_ARRAY);
   } 
   
@@ -301,22 +326,22 @@ enable_arrays(unsigned int _arrays) {
   
   /// \todo This is different to normal and vertex buffer since it uses openmesh colors directly! Check for different color representations in OpenMesh!
   // Check if we should enable the color array
-  if (_arrays & COLOR_ARRAY)  {
+  if (_arrays & COLOR_VERTEX_ARRAY)  {
     
     // Check if its already enabled
-    if (!(enabled_arrays_ & COLOR_ARRAY)) {
-      enabled_arrays_ |= COLOR_ARRAY;
+    if (!(enabled_arrays_ & COLOR_VERTEX_ARRAY)) {
+      enabled_arrays_ |= COLOR_VERTEX_ARRAY;
       
-      glBindBufferARB(GL_ARRAY_BUFFER_ARB, color_buffer_);
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorVertexbuffer_);
       
       glColorPointer(3, GL_UNSIGNED_BYTE , 0 , 0);
       
       glEnableClientState(GL_COLOR_ARRAY);
       
     }
-  } else if (enabled_arrays_ & COLOR_ARRAY) {
+  } else if (enabled_arrays_ & COLOR_VERTEX_ARRAY) {
     // Disable Color array
-    enabled_arrays_ &= ~COLOR_ARRAY;
+    enabled_arrays_ &= ~COLOR_VERTEX_ARRAY;
     glDisableClientState(GL_COLOR_ARRAY);
   } 
   
@@ -331,13 +356,11 @@ enable_arrays(unsigned int _arrays) {
     if (!(enabled_arrays_ & LINE_INDEX_ARRAY)) {
       enabled_arrays_ |= LINE_INDEX_ARRAY;
       
-      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, line_buffer_);
-      
+      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, lineIndexBuffer_);
     }
   } else if (enabled_arrays_ & LINE_INDEX_ARRAY) {
     // Disable Color array
     enabled_arrays_ &= ~LINE_INDEX_ARRAY;
-   
   } 
   
   //===================================================================
@@ -451,9 +474,9 @@ update_geometry() {
   //===================================================================
   
   // Allocate it if required
-  if (!vertex_buffer_)  glGenBuffersARB(1,  (GLuint*) &vertex_buffer_);
+  if (!vertexBuffer_)  glGenBuffersARB(1,  (GLuint*) &vertexBuffer_);
   
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertex_buffer_);
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, vertexBuffer_);
   vertexBufferInitialized_ = false;
   
   //Check if using floats otherwise convert to internal float array
@@ -488,10 +511,10 @@ update_geometry() {
   // ==========================================================================
   
   // Allocate it if required
-  if (!normal_buffer_)  glGenBuffersARB(1,  (GLuint*)  &normal_buffer_);
+  if (!normalVertexBuffer_)  glGenBuffersARB(1,  (GLuint*)  &normalVertexBuffer_);
   
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, normal_buffer_);
-  normalBufferInitialized_ = false;
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, normalVertexBuffer_);
+  normalVertexBufferInitialized_ = false;
   
   // Check if using floats otherwise convert to internal float array
   if ( sizeof(NormalScalar) == 4) {
@@ -501,7 +524,7 @@ update_geometry() {
                     mesh_.vertex_normals(),
                     GL_STATIC_DRAW_ARB);
                     
-                    normalBufferInitialized_ = true;
+                    normalVertexBufferInitialized_ = true;
                     
   } else {
     normals_.clear();
@@ -517,7 +540,7 @@ update_geometry() {
                       3 * mesh_.n_vertices() * sizeof(float),
                       &normals_[0],
                       GL_STATIC_DRAW_ARB);
-                      normalBufferInitialized_ = true;
+                      normalVertexBufferInitialized_ = true;
     }
     
   }
@@ -527,10 +550,10 @@ update_geometry() {
   // ==========================================================================
 
   // Allocate it if required
-  if (!color_buffer_)  glGenBuffersARB(1,  (GLuint*)  &color_buffer_);
+  if (!colorVertexbuffer_)  glGenBuffersARB(1,  (GLuint*)  &colorVertexbuffer_);
 
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, color_buffer_);
-  colorBufferInitialized_ = false;
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorVertexbuffer_);
+  colorVertexBufferInitialized_ = false;
 
   /// \todo Convert from other types in openmesh to the right representation in the node
   // Check if using floats otherwise convert to internal float array
@@ -541,7 +564,7 @@ update_geometry() {
                     mesh_.vertex_colors(),
                     GL_STATIC_DRAW_ARB);
                     
-                    colorBufferInitialized_ = true;
+                    colorVertexBufferInitialized_ = true;
                     
   } else {
    std::cerr << "Invalid color format!" << std::endl; 
@@ -559,7 +582,7 @@ update_geometry() {
                       3 * mesh_.n_vertices() * sizeof(float),
                       &normals_[0],
                       GL_STATIC_DRAW_ARB);
-                      normalBufferInitialized_ = true;
+                      normalVertexBufferInitialized_ = true;
     }
     
   }*/
@@ -578,6 +601,12 @@ update_topology() {
   std::cerr << "Update topology" << std::endl;
   
   // ==========================================================================
+  // Clear the strips and regenerate them!
+  // ==========================================================================
+  stripProcessor_.clear();
+  stripProcessor_.stripify();
+  
+  // ==========================================================================
   // Generate a buffer for rendering all lines
   // ==========================================================================
   lineIndices_.clear();
@@ -591,10 +620,10 @@ update_topology() {
   }
   
   // Allocate it if required
-  if (!line_buffer_)  glGenBuffersARB(1,  (GLuint*) &line_buffer_);
+  if (!lineIndexBuffer_)  glGenBuffersARB(1,  (GLuint*) &lineIndexBuffer_);
   
-  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, line_buffer_);
-  lineBufferInitialized_ = false;
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, lineIndexBuffer_);
+  lineIndexBufferInitialized_ = false;
   
   // Copy the buffer to the graphics card
   glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
@@ -604,8 +633,10 @@ update_topology() {
 
   /// \todo: clear lineIndeices (swap vector!)
   
-  lineBufferInitialized_ = true;
-  
+  lineIndexBufferInitialized_ = true;
+ 
+  // Unbind the buffer after the work has been done
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
               
 //=============================================================================
