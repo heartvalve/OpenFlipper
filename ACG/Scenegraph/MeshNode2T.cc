@@ -87,16 +87,20 @@ TriStripNodeT(Mesh&        _mesh,
   vertexPickingList_(0),
   updateEdgePickingList_(true),
   edgePickingBaseIndex_(0),
-  edgePickingList_(0)
-  
+  edgePickingList_(0),
+  updateFacePickingList_(true),
+  facePickingBaseIndex_(0),
+  facePickingList_(0)  
 {
+  
   /// \todo : Handle vbo not supported
   if ( ! GLEW_ARB_vertex_buffer_object ) {
     std::cerr << "Error! Vertex buffer objects are not supported! The meshNode will not work without them!" << std::endl;
   }
   
-  vertexPickingList_ = glGenLists (1);
-  edgePickingList_   = glGenLists (1);
+  vertexPickingList_ = glGenLists(1);
+  edgePickingList_   = glGenLists(1);
+  facePickingList_   = glGenLists(1);
 
 }  
 
@@ -287,7 +291,6 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 draw_vertices() {
-  std::cerr << "Draw vertices" << std::endl;
   if ( !vertexBufferInitialized_ )
     std::cerr << "Error! Uninitialized vertex buffer in draw call! " << std::endl;
 
@@ -308,7 +311,6 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 draw_faces(FaceMode _mode) {
-  std::cerr << "Draw Faces" << std::endl;
   
   if ( stripProcessor_.isValid() ) {
     if ( _mode == PER_VERTEX ) {
@@ -505,7 +507,6 @@ pick_vertices(GLState& _state, bool _front)
   }
   
   if (_front) {
-    std::cerr << "Draw mesh to hide non-front vertices" << std::endl;
     enable_arrays(VERTEX_ARRAY);
     
     Vec4f  clear_color = _state.clear_color();
@@ -530,7 +531,6 @@ pick_vertices(GLState& _state, bool _front)
   
   
   if (vertexPickingList_ && !updateVertexPickingList_ && _state.pick_current_index () == vertexPickingBaseIndex_) {
-    std::cerr << "Call list" << std::endl;
     glCallList (vertexPickingList_);
     if (_front)
       glDepthFunc(depthFunc());
@@ -538,15 +538,12 @@ pick_vertices(GLState& _state, bool _front)
   }
   
   if (vertexPickingList_) {
-    std::cerr << "Generate list" << std::endl;
     glNewList (vertexPickingList_, GL_COMPILE);
     updateVertexPickingList_ = false;
     vertexPickingBaseIndex_ = _state.pick_current_index ();
   }
   
   if (_state.color_picking ()) {
-    std::cerr << "Do color picking" << std::endl;
-    
     stripProcessor_.updatePickingVertices(_state);
     
     enable_arrays(VERTEX_ARRAY);
@@ -569,7 +566,6 @@ pick_vertices(GLState& _state, bool _front)
     std::cerr << "Fallback not available!" << std::endl;
   
   if (vertexPickingList_) {
-    std::cerr << "Finish and render list" << std::endl;
     glEndList ();
     glCallList (vertexPickingList_);
   }
@@ -581,25 +577,16 @@ pick_vertices(GLState& _state, bool _front)
 template<class Mesh>
 void
 TriStripNodeT<Mesh>::
-pick_faces(GLState& _state)
-{
-}
-
-template<class Mesh>
-void
-TriStripNodeT<Mesh>::
 pick_edges(GLState& _state, bool _front)
 {
 
-  if (!_state.pick_set_maximum (mesh_.n_edges()))
-  {
+  if (!_state.pick_set_maximum (mesh_.n_edges())) {
     omerr() << "MeshNode::pick_edges: color range too small, "
     << "picking failed\n";
     return;
   }
   
-  if (_front)
-  {
+  if (_front) {
     enable_arrays(VERTEX_ARRAY);
     
     Vec4f  clear_color = _state.clear_color();
@@ -622,25 +609,20 @@ pick_edges(GLState& _state, bool _front)
     enable_arrays(0);
   }
   
-  if (edgePickingList_ && !updateEdgePickingList_ && _state.pick_current_index () == edgePickingBaseIndex_)
-  {
+  if (edgePickingList_ && !updateEdgePickingList_ && _state.pick_current_index () == edgePickingBaseIndex_) {
     glCallList (edgePickingList_);
     if (_front)
       glDepthFunc(depthFunc());
     return;
   }
   
-  if (edgePickingList_)
-  {
+  if (edgePickingList_) {
     glNewList (edgePickingList_, GL_COMPILE);
     updateEdgePickingList_ = false;
     edgePickingBaseIndex_ = _state.pick_current_index ();
   }
   
-  if (_state.color_picking ())
-  {
-    std::cerr << "Do color picking" << std::endl;
-    
+  if (_state.color_picking ()) {
     stripProcessor_.updatePickingEdges(_state);
     
     // For this version we load the colors directly not from vbo
@@ -656,20 +638,78 @@ pick_edges(GLState& _state, bool _front)
     
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
-  }
-  else
-  {
+  } else {
     std::cerr << "No fallback!" << std::endl;
   }
   
-  if (edgePickingList_)
-  {
+  if (edgePickingList_) {
     glEndList ();
     glCallList (edgePickingList_);
   }
   
   if (_front)
     glDepthFunc(depthFunc());
+}
+
+template<class Mesh>
+void
+TriStripNodeT<Mesh>::
+pick_faces(GLState& _state)
+{
+  typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
+  f_end(mesh_.faces_end());
+  typename Mesh::ConstFaceVertexIter  fv_it;
+  
+  
+  if ( mesh_.n_faces() > 0 ) {
+    if (!_state.pick_set_maximum (mesh_.n_faces())) {
+      omerr() << "MeshNode::pick_faces: color range too small, "
+      << "picking failed\n";
+      return;
+    }
+  } else {
+    if (!_state.pick_set_maximum (1)) {
+      omerr() << "Strange pickSetMAximum failed for index 1 in MeshNode\n";
+      return;
+    }
+  }
+  
+  if (facePickingList_ && !updateFacePickingList_ && _state.pick_current_index () == facePickingBaseIndex_) {
+    glCallList (facePickingList_);
+    return;
+  }
+  
+  if (facePickingList_) {
+    glNewList (facePickingList_, GL_COMPILE);
+    updateFacePickingList_ = false;
+    facePickingBaseIndex_ = _state.pick_current_index ();
+  }
+  
+  if (_state.color_picking ()) {
+
+    stripProcessor_.updatePickingFaces(_state);
+    
+    // For this version we load the colors directly not from vbo
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    
+    glVertexPointer (stripProcessor_.pickFaceVertexBuffer());
+    glColorPointer(stripProcessor_.pickFaceColorBuffer());
+    
+    glDrawArrays(GL_TRIANGLES, 0, mesh_.n_edges() * 3);
+    
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    
+  } else
+    std::cerr << "No fallback!" << std::endl;
+  
+  if (facePickingList_) {
+    glEndList ();
+    glCallList (facePickingList_);
+  }
 }
 
 template<class Mesh>
@@ -843,7 +883,7 @@ update_topology() {
   stripProcessor_.clear();
   stripProcessor_.stripify();
   
-  std::cerr << "Created " << stripProcessor_.nStrips() << " strips\n" << std::endl;
+//   std::cerr << "Created " << stripProcessor_.nStrips() << " strips\n" << std::endl;
   
   // ==========================================================================
   // Generate a buffer for rendering all lines

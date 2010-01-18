@@ -233,6 +233,46 @@ private:
     
     
 /** @} */  
+
+//===========================================================================
+/** @name Face picking functions
+* @{ */
+//===========================================================================    
+
+public:
+  
+  /// Call this function to update the color picking array
+  void updatePickingFaces(ACG::GLState& _state );    
+  
+  /** \brief get a pointer to the per face picking color buffer
+  *
+  * This function will return a pointer to the first element of the picking buffer.
+  * Use updatePickingFaces to update the buffer before you render it via
+  * glColorPointer.
+  */
+  ACG::Vec4uc * pickFaceColorBuffer(){ return &(pickFaceColorBuf_)[0]; };
+  
+  /** \brief get a pointer to the per edge picking vertex buffer
+  *
+  * This function will return a pointer to the first element of the picking buffer.
+  * Use updatePickingEdges to update the buffer before you render it via
+  * glColorPointer.
+  */
+  ACG::Vec3f * pickFaceVertexBuffer(){ return &(pickFaceVertexBuf_)[0]; };    
+  
+private:  
+  
+  /// Call this function to update the color picking arrays
+  void updatePickingFacesTrimesh(ACG::GLState& _state );
+  
+  /// Call this function to update the color picking arrays
+  void updatePickingFacesPolymesh(ACG::GLState& _state );
+  
+  std::vector< ACG::Vec4uc > pickFaceColorBuf_;
+  std::vector< ACG::Vec3f >  pickFaceVertexBuf_;
+  
+  
+  /** @} */  
 };
 
 

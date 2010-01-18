@@ -450,6 +450,7 @@ private:
   /// Flag indicating if the edge picking display list has to be updates
   bool updateEdgePickingList_;
   
+  /// Index of the first edge in edgepicking
   unsigned int edgePickingBaseIndex_;
   
   /// Dispplay list for rendering edge picking
@@ -469,6 +470,14 @@ private:
   */
   void pick_faces(GLState& _state);
   
+  /// Flag indicating if the edge picking display list has to be updates
+  bool updateFacePickingList_;
+  
+  /// Index of the first face in facepicking
+  unsigned int facePickingBaseIndex_;  
+  
+  /// Dispplay list for rendering edge picking
+  GLuint facePickingList_;
 
 /** @} */
   
