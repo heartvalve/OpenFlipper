@@ -435,7 +435,7 @@ pick_vertices(GLState& _state, bool _front)
 {
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
   v_end(mesh_.vertices_end());
-  GLuint                         idx(0);
+  
   
   if (!_state.pick_set_maximum (mesh_.n_vertices())) {
     omerr() << "MeshNode::pick_vertices: color range too small, "
@@ -486,54 +486,26 @@ pick_vertices(GLState& _state, bool _front)
   if (_state.color_picking ()) {
     std::cerr << "Do color picking" << std::endl;
     
-    unsigned int nfv = 0;
-    if (mesh_.is_trimesh())
-      nfv = mesh_.n_faces() * 3;
-    else
-    {
-      // count number of vertices we need for faces in our buffer
-      typename Mesh::ConstFaceIter    f_it(mesh_.faces_sbegin()),
-      f_end(mesh_.faces_end());
-      typename Mesh::ConstFaceVertexIter  fv_it;
-      for (; f_it!=f_end; ++f_it)
-      {
-        for (fv_it=mesh_.cfv_iter(f_it); fv_it; ++fv_it)
-          nfv++;
-      }
-    }
+    stripProcessor_.update_picking_vertices(_state);
     
-    pickColorBuf_.resize (qMax (mesh_.n_vertices(), qMax (mesh_.n_edges() * 2, nfv)));
-    
-    for (; v_it!=v_end; ++v_it, ++idx) {
-      pickColorBuf_[idx] = _state.pick_get_name_color (idx);
-    }
-    
-    std::cerr << "Pickcolorbuffer has " << pickColorBuf_.size() << " entries" << std::endl;
-
     enable_arrays(VERTEX_ARRAY);
     
     // For this version we load the colors directly not from vbo
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    glColorPointer(&(pickColorBuf_)[0]);
-    
-    
+    glColorPointer( stripProcessor_.pickColorBuffer() );   
     glEnableClientState(GL_COLOR_ARRAY);    
     
+    // Draw color picking
     glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
     
+    // Disable color array
     glDisableClientState(GL_COLOR_ARRAY);
     
+    // disable all other arrays
     enable_arrays(0);
     
-  } else {
-    std::cerr << "Fallback" << std::endl;
-    for (; v_it!=v_end; ++v_it, ++idx) {
-      _state.pick_set_name (idx);
-      glBegin(GL_POINTS);
-      glVertex(mesh_.point(v_it));
-      glEnd();
-    }
-  }
+  } else 
+    std::cerr << "Fallback not available!" << std::endl;
   
   if (vertexList_) {
     std::cerr << "Finish and render list" << std::endl;
