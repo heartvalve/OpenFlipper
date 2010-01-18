@@ -170,8 +170,11 @@ private:
   
 public:
   
-  /// Call this function to update the color picking array
-  void updatePickingVertices(ACG::GLState& _state );    
+  /** Call this function to update the color picking array
+  * The _offsett value can be used to shift the color in the resulting arrays.
+  * pick Any uses the offset to generate arrays for picking everything.
+  */
+  void updatePickingVertices(ACG::GLState& _state , uint _offset = 0);    
   
   /** \brief get a pointer to the per vertex picking color buffer
   *
@@ -184,10 +187,10 @@ public:
 private:  
   
   /// Call this function to update the color picking array
-  void updatePickingVerticesTrimesh(ACG::GLState& _state );
+  void updatePickingVerticesTrimesh(ACG::GLState& _state , uint _offset = 0);
   
   /// Call this function to update the color picking array
-  void updatePickingVerticesPolymesh(ACG::GLState& _state );
+  void updatePickingVerticesPolymesh(ACG::GLState& _state , uint _offset = 0);
   
   std::vector< ACG::Vec4uc > pickVertexColorBuf_;
   
@@ -201,8 +204,11 @@ private:
 
   public:
     
-    /// Call this function to update the color picking array
-    void updatePickingEdges(ACG::GLState& _state );    
+    /** Call this function to update the color picking array
+    * The _offsett value can be used to shift the color in the resulting arrays.
+    * pick Any uses the offset to generate arrays for picking everything.
+    */
+    void updatePickingEdges(ACG::GLState& _state , uint _offset = 0 );    
     
     /** \brief get a pointer to the per edge picking color buffer
     *
@@ -222,11 +228,11 @@ private:
     
   private:  
     
-    /// Call this function to update the color picking arrays
-    void updatePickingEdgesTrimesh(ACG::GLState& _state );
+    /// Call this function to update the color picking array
+    void updatePickingEdgesTrimesh(ACG::GLState& _state , uint _offset = 0);
     
-    /// Call this function to update the color picking arrays
-    void updatePickingEdgesPolymesh(ACG::GLState& _state );
+    /// Call this function to update the color picking array
+    void updatePickingEdgesPolymesh(ACG::GLState& _state , uint _offset = 0);
     
     std::vector< ACG::Vec4uc > pickEdgeColorBuf_;
     std::vector< ACG::Vec3f >  pickEdgeVertexBuf_;
@@ -262,17 +268,60 @@ public:
   
 private:  
   
-  /// Call this function to update the color picking arrays
+  /// Call this function to update the color picking array
   void updatePickingFacesTrimesh(ACG::GLState& _state );
   
-  /// Call this function to update the color picking arrays
+  /// Call this function to update the color picking array
   void updatePickingFacesPolymesh(ACG::GLState& _state );
   
   std::vector< ACG::Vec4uc > pickFaceColorBuf_;
   std::vector< ACG::Vec3f >  pickFaceVertexBuf_;
   
   
-  /** @} */  
+/** @} */  
+  
+  //===========================================================================
+  /** @name Any picking functions
+  * @{ */
+  //===========================================================================    
+  
+public:
+  
+  /** \brief Call this function to update the color picking array
+  *
+  * This function calls the updatePickingVertices, updatePickingEdges, updatePickingVertices
+  * functions with an appropriate offset so that the standard arrays will be updated.
+  */
+  void updatePickingAny(ACG::GLState& _state );    
+  
+  /** \brief get a pointer to the any picking color buffer
+  *
+  * This function will return a pointer to the first element of the picking buffer.
+  * Use updatePickingAny to update the buffer before you render it via
+  * glColorPointer.
+  */
+  ACG::Vec4uc * pickAnyColorBuffer(){ return &(pickAnyColorBuf_)[0]; };
+  
+  /** \brief get a pointer to the any picking vertex buffer
+  *
+  * This function will return a pointer to the first element of the picking buffer.
+  * Use updatePickingAny to update the buffer before you render it via
+  * glColorPointer.
+  */
+  ACG::Vec3f * pickAnyVertexBuffer(){ return &(pickAnyVertexBuf_)[0]; };    
+  
+private:  
+  
+  /// Call this function to update the color picking array
+  void updatePickingAnyTrimesh(ACG::GLState& _state );
+  
+  /// Call this function to update the color picking array
+  void updatePickingAnyPolymesh(ACG::GLState& _state );
+  
+  std::vector< ACG::Vec4uc > pickAnyColorBuf_;
+  std::vector< ACG::Vec3f >  pickAnyVertexBuf_;
+  
+/** @} */    
 };
 
 

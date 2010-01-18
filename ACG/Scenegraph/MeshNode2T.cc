@@ -90,7 +90,10 @@ TriStripNodeT(Mesh&        _mesh,
   edgePickingList_(0),
   updateFacePickingList_(true),
   facePickingBaseIndex_(0),
-  facePickingList_(0)  
+  facePickingList_(0),
+  updateAnyPickingList_(true),
+  anyPickingBaseIndex_(0),
+  anyPickingList_(0)  
 {
   
   /// \todo : Handle vbo not supported
@@ -98,9 +101,11 @@ TriStripNodeT(Mesh&        _mesh,
     std::cerr << "Error! Vertex buffer objects are not supported! The meshNode will not work without them!" << std::endl;
   }
   
+  
   vertexPickingList_ = glGenLists(1);
   edgePickingList_   = glGenLists(1);
   facePickingList_   = glGenLists(1);
+  anyPickingList_    = glGenLists(3);
 
 }  
 
@@ -120,6 +125,18 @@ TriStripNodeT<Mesh>::
   
   if (lineIndexBuffer_)
     glDeleteBuffersARB(1, &lineIndexBuffer_);     
+  
+  if (vertexPickingList_)
+    glDeleteLists (vertexPickingList_, 1);
+  
+  if (edgePickingList_)
+    glDeleteLists (edgePickingList_, 1);
+  
+  if (facePickingList_)
+    glDeleteLists (facePickingList_, 1);
+  
+  if (anyPickingList_)
+    glDeleteLists (anyPickingList_, 3);
   
 }
 
@@ -279,7 +296,6 @@ draw(GLState& _state, unsigned int _drawMode) {
   
   // Unbind all remaining buffers
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB , 0 );
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB , 0 );
   
   /// \todo Whats this? Why is this set here and why isnt it set to the one before entering the function?
   glDepthFunc(GL_LESS);
@@ -440,6 +456,9 @@ enable_arrays(unsigned int _arrays) {
     glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
   } 
   
+  if ( _arrays == 0 ) 
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  
   //===================================================================
   // Check for OpenGL Errors
   //===================================================================    
@@ -501,8 +520,7 @@ pick_vertices(GLState& _state, bool _front)
   
   
   if (!_state.pick_set_maximum (mesh_.n_vertices())) {
-    omerr() << "MeshNode::pick_vertices: color range too small, "
-    << "picking failed\n";
+    omerr() << "MeshNode::pick_vertices: color range too small, " << "picking failed\n";
     return;
   }
   
@@ -563,7 +581,7 @@ pick_vertices(GLState& _state, bool _front)
     enable_arrays(0);
     
   } else 
-    std::cerr << "Fallback not available!" << std::endl;
+    std::cerr << "Fallback not available pick_vertices!" << std::endl;
   
   if (vertexPickingList_) {
     glEndList ();
@@ -581,8 +599,7 @@ pick_edges(GLState& _state, bool _front)
 {
 
   if (!_state.pick_set_maximum (mesh_.n_edges())) {
-    omerr() << "MeshNode::pick_edges: color range too small, "
-    << "picking failed\n";
+    omerr() << "MeshNode::pick_edges: color range too small, " << "picking failed\n";
     return;
   }
   
@@ -606,6 +623,7 @@ pick_edges(GLState& _state, bool _front)
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
+    // disable all other arrays
     enable_arrays(0);
   }
   
@@ -638,8 +656,12 @@ pick_edges(GLState& _state, bool _front)
     
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
+
+    // disable all other arrays
+    enable_arrays(0);
+    
   } else {
-    std::cerr << "No fallback!" << std::endl;
+    std::cerr << "No fallback pick_edges!" << std::endl;
   }
   
   if (edgePickingList_) {
@@ -663,8 +685,7 @@ pick_faces(GLState& _state)
   
   if ( mesh_.n_faces() > 0 ) {
     if (!_state.pick_set_maximum (mesh_.n_faces())) {
-      omerr() << "MeshNode::pick_faces: color range too small, "
-      << "picking failed\n";
+      omerr() << "MeshNode::pick_faces: color range too small, " << "picking failed\n";
       return;
     }
   } else {
@@ -682,7 +703,7 @@ pick_faces(GLState& _state)
   if (facePickingList_) {
     glNewList (facePickingList_, GL_COMPILE);
     updateFacePickingList_ = false;
-    facePickingBaseIndex_ = _state.pick_current_index ();
+    facePickingBaseIndex_ = _state.pick_current_index();
   }
   
   if (_state.color_picking ()) {
@@ -698,13 +719,16 @@ pick_faces(GLState& _state)
     glVertexPointer (stripProcessor_.pickFaceVertexBuffer());
     glColorPointer(stripProcessor_.pickFaceColorBuffer());
     
-    glDrawArrays(GL_TRIANGLES, 0, mesh_.n_edges() * 3);
+    glDrawArrays(GL_TRIANGLES, 0, mesh_.n_faces() * 3);
     
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     
+    // disable all other arrays
+    enable_arrays(0);
+    
   } else
-    std::cerr << "No fallback!" << std::endl;
+    std::cerr << "No fallback pick_faces!" << std::endl;
   
   if (facePickingList_) {
     glEndList ();
@@ -717,6 +741,98 @@ void
 TriStripNodeT<Mesh>::
 pick_any(GLState& _state)
 {
+  
+  unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
+  
+  // nothing to pick ?
+  if (numElements <= 0) {
+    std::cerr << "Number of elements : 0 " << std::endl;
+    return;
+  }
+  
+  if (!_state.pick_set_maximum (numElements))
+  {
+    omerr() << "MeshNode::pick_any: color range too small, " << "picking failed\n";
+    return;
+  }
+  
+  if (anyPickingList_ && !updateAnyPickingList_ && _state.pick_current_index () == anyPickingBaseIndex_)
+  {
+    glCallList (anyPickingList_);
+    glCallList (anyPickingList_+1);
+    glCallList (anyPickingList_+2);
+    return;
+  }
+  
+  if (anyPickingList_)
+  {
+    glNewList (anyPickingList_, GL_COMPILE);
+    updateAnyPickingList_ = false;
+    anyPickingBaseIndex_ = _state.pick_current_index ();
+  }
+  
+  if (_state.color_picking ())
+  {
+    stripProcessor_.updatePickingAny(_state);
+    
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    
+    glVertexPointer (stripProcessor_.pickFaceVertexBuffer());
+    glColorPointer(stripProcessor_.pickFaceColorBuffer());
+    
+    glDrawArrays(GL_TRIANGLES, 0, mesh_.n_faces() * 3);
+    
+    
+    if (anyPickingList_)
+    {
+      glEndList ();
+      glNewList (anyPickingList_+1, GL_COMPILE);
+    }
+    
+    glDepthFunc(GL_LEQUAL);
+    
+    glVertexPointer (stripProcessor_.pickEdgeVertexBuffer());
+    glColorPointer(stripProcessor_.pickEdgeColorBuffer());
+    
+    glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+    
+    if (anyPickingList_)
+    {
+      glEndList ();
+      glNewList (anyPickingList_+2, GL_COMPILE);
+    }
+    
+    enable_arrays(VERTEX_ARRAY);
+    
+    // For this version we load the colors directly not from vbo
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    glColorPointer( stripProcessor_.pickVertexColorBuffer() );   
+    glEnableClientState(GL_COLOR_ARRAY);    
+    
+    // Draw color picking
+    glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
+    
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    
+    glDepthFunc(depthFunc());
+    
+    // disable all other arrays
+    enable_arrays(0);
+  }
+  
+  
+  if (anyPickingList_)
+  {
+    glEndList ();
+    glCallList (anyPickingList_);
+    glCallList (anyPickingList_+1);
+    glCallList (anyPickingList_+2);
+  }
+
+glCheckErrors();
 }
 
 template<class Mesh>
@@ -733,6 +849,8 @@ update_geometry() {
   
   updateVertexPickingList_ = true;
   updateEdgePickingList_   = true;
+  updateFacePickingList_   = true;
+  updateAnyPickingList_    = true;
   
   // First of all, we update the bounding box:
   bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
