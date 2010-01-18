@@ -287,6 +287,23 @@ build_strip(typename Mesh::HalfedgeHandle _start_hh,
   std::copy(strip.begin(), strip.end(), std::back_inserter(_strip.indexArray));
 }
 
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+update_picking_vertices(ACG::GLState& _state ) {
+  std::cerr << "StripProcessor update_picking_vertices" << std::endl;
+  
+  GLuint                         idx(0);
+  
+  pickVertexColorBuf_.resize( mesh_.n_vertices() );
+  
+  typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()), v_end(mesh_.vertices_end());
+  for (; v_it!=v_end; ++v_it, ++idx) 
+    pickVertexColorBuf_[idx] = _state.pick_get_name_color(idx);
+  
+  
+}
+
 
 //=============================================================================
 } // namespace SceneGraph

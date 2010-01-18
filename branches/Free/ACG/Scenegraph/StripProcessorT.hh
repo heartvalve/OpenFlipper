@@ -54,6 +54,7 @@
 
 #include <vector>
 #include <OpenMesh/Core/Utils/Property.hh>
+#include <ACG/GL/GLState.hh>
 
 
 //== FORWARDDECLARATIONS ======================================================
@@ -129,6 +130,8 @@ private:
 
   /// this method does the main work
   void build_strips();
+  
+ 
 
   /// This method generates strips for triangle meshes
   void build_strips_triMesh();
@@ -159,6 +162,24 @@ private:
   Mesh&                          mesh_;
   Strips                         strips_;
   OpenMesh::FPropHandleT<bool>   processed_, used_;
+  
+//===========================================================================
+/** @name vertex picking functions
+* @{ */
+//===========================================================================    
+  
+public:
+  
+  /// Call this function to update the color picking arrays
+  void update_picking_vertices(ACG::GLState& _state );    
+  
+  ACG::Vec4uc * pickColorBuffer(){ return &(pickVertexColorBuf_)[0]; };
+  
+private:  
+  std::vector< ACG::Vec4uc > pickVertexColorBuf_;
+  
+
+/** @} */  
 };
 
 
