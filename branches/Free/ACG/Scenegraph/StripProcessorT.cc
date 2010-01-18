@@ -361,6 +361,50 @@ updatePickingEdgesPolymesh(ACG::GLState& _state ) {
   std::cerr << "StripProcessor updatePickingEdgesPolymesh polymesh not yet implemented!" << std::endl;
 }
 
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingFaces(ACG::GLState& _state ) {
+  if ( mesh_.is_trimesh() )
+    updatePickingFacesTrimesh(_state);
+  else
+    updatePickingFacesPolymesh(_state);
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingFacesTrimesh(ACG::GLState& _state ) {
+  
+  pickFaceColorBuf_.resize(mesh_.n_edges() * 3);
+  pickFaceVertexBuf_.resize(mesh_.n_edges() * 3);
+  
+  int idx(0);
+  
+  typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
+  f_end(mesh_.faces_end());
+  typename Mesh::ConstFaceVertexIter  fv_it;
+  
+  for (; f_it!=f_end; ++f_it)
+  {
+    pickFaceColorBuf_[idx]    = _state.pick_get_name_color (f_it.handle().idx());
+    pickFaceColorBuf_[idx+1]  = _state.pick_get_name_color (f_it.handle().idx());
+    pickFaceColorBuf_[idx+2]  = _state.pick_get_name_color (f_it.handle().idx());
+    pickFaceVertexBuf_[idx]   = mesh_.point(fv_it=mesh_.cfv_iter(f_it));
+    pickFaceVertexBuf_[idx+1] = mesh_.point(++fv_it);
+    pickFaceVertexBuf_[idx+2] = mesh_.point(++fv_it);
+    idx += 3;
+  }
+  
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingFacesPolymesh(ACG::GLState& _state ) {
+  std::cerr << "StripProcessor updatePickingFacesPolymesh polymesh not yet implemented!" << std::endl;
+}
+
 
 //=============================================================================
 } // namespace SceneGraph
