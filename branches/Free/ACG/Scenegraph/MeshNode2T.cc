@@ -249,7 +249,7 @@ TriStripNodeT<Mesh>::
 draw_faces(FaceMode _mode) {
   std::cerr << "Draw Faces" << std::endl;
   
-  if ( stripProcessor_.is_valid() ) {
+  if ( stripProcessor_.isValid() ) {
     if ( _mode == PER_VERTEX ) {
       typename StripProcessorT<Mesh>::StripsIterator strip_it   = stripProcessor_.begin();
       typename StripProcessorT<Mesh>::StripsIterator strip_last = stripProcessor_.end();
@@ -486,13 +486,13 @@ pick_vertices(GLState& _state, bool _front)
   if (_state.color_picking ()) {
     std::cerr << "Do color picking" << std::endl;
     
-    stripProcessor_.update_picking_vertices(_state);
+    stripProcessor_.updatePickingVertices(_state);
     
     enable_arrays(VERTEX_ARRAY);
     
     // For this version we load the colors directly not from vbo
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    glColorPointer( stripProcessor_.pickColorBuffer() );   
+    glColorPointer( stripProcessor_.pickVertexColorBuffer() );   
     glEnableClientState(GL_COLOR_ARRAY);    
     
     // Draw color picking
@@ -701,7 +701,7 @@ update_topology() {
   stripProcessor_.clear();
   stripProcessor_.stripify();
   
-  std::cerr << "Created " << stripProcessor_.n_strips() << " strips\n" << std::endl;
+  std::cerr << "Created " << stripProcessor_.nStrips() << " strips\n" << std::endl;
   
   // ==========================================================================
   // Generate a buffer for rendering all lines

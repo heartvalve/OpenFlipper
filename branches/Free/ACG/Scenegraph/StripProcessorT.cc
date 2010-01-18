@@ -87,14 +87,14 @@ stripify()
 
   // build strips
   clear();
-  build_strips();
+  buildStrips();
 
   // postprocess:  remove properties
   mesh_.remove_property(processed_);
   mesh_.remove_property(used_);
   mesh_.release_face_status();
 
-  return n_strips();
+  return nStrips();
 }
 
 
@@ -103,18 +103,18 @@ stripify()
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-build_strips()
+buildStrips()
 {
   if ( mesh_.is_trimesh() )
-    build_strips_triMesh();
+    buildStripsTriMesh();
   else
-    build_strips_polyMesh();
+    buildStripsPolyMesh();
 }
 
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-build_strips_polyMesh()
+buildStripsPolyMesh()
 {
   std::cerr << "Error! Strip processor not implemented for poly meshes!" << std::endl;
 }
@@ -122,7 +122,7 @@ build_strips_polyMesh()
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-build_strips_triMesh()
+buildStripsTriMesh()
 {
   Strip                           experiments[3];
   typename Mesh::HalfedgeHandle   h[3];
@@ -170,7 +170,7 @@ build_strips_triMesh()
     best_length = best_idx = 0;
     for (unsigned int i=0; i<3; ++i)
     {
-      build_strip(h[i], experiments[i], faces[i]);
+      buildStrip(h[i], experiments[i], faces[i]);
       if ((length = experiments[i].indexArray.size()) > best_length)
       {
         best_length = length;
@@ -203,7 +203,7 @@ build_strips_triMesh()
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-build_strip(typename Mesh::HalfedgeHandle _start_hh,
+buildStrip(typename Mesh::HalfedgeHandle _start_hh,
             Strip& _strip,
             FaceHandles& _faces)
 {
@@ -290,18 +290,36 @@ build_strip(typename Mesh::HalfedgeHandle _start_hh,
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-update_picking_vertices(ACG::GLState& _state ) {
+updatePickingVerticesTrimesh(ACG::GLState& _state ) {
   std::cerr << "StripProcessor update_picking_vertices" << std::endl;
   
   GLuint                         idx(0);
   
+  // Adjust size of the color buffer to the number of vertices in the mesh
   pickVertexColorBuf_.resize( mesh_.n_vertices() );
   
+  // Get the right picking colors from the gl state and add them per vertex to the color buffer
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()), v_end(mesh_.vertices_end());
   for (; v_it!=v_end; ++v_it, ++idx) 
     pickVertexColorBuf_[idx] = _state.pick_get_name_color(idx);
   
-  
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingVerticesPolymesh(ACG::GLState& _state ) {
+  std::cerr << "StripProcessor update_picking_vertices polymesh not yet implemented!" << std::endl;
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingVertices(ACG::GLState& _state ) {
+  if ( mesh_.is_trimesh() )
+    updatePickingVerticesTrimesh(_state);
+  else
+    updatePickingVerticesPolymesh(_state);
 }
 
 

@@ -113,10 +113,10 @@ public:
   void clear() { Strips().swap(strips_); }
 
   /// returns number of strips
-  unsigned int n_strips() const { return strips_.size(); }
+  unsigned int nStrips() const { return strips_.size(); }
 
   /// are strips computed?
-  bool is_valid() const { return !strips_.empty(); }
+  bool isValid() const { return !strips_.empty(); }
 
   /// Access strips
   StripsIterator begin() const { return strips_.begin(); }
@@ -129,22 +129,22 @@ private:
   typedef std::vector<typename Mesh::FaceHandle>  FaceHandles;
 
   /// this method does the main work
-  void build_strips();
+  void buildStrips();
   
  
 
   /// This method generates strips for triangle meshes
-  void build_strips_triMesh();
+  void buildStripsTriMesh();
   
   /** This method generates strips for polyMeshes meshes
   *
   * The strips generated in this function are triangle strips. The function
   * takes arbitrary polygons as input and triangulates them.
   */
-  void build_strips_polyMesh();
+  void buildStripsPolyMesh();
 
   /// build a strip from a given halfedge (in both directions)
-  void build_strip(typename Mesh::HalfedgeHandle _start_hh,
+  void buildStrip(typename Mesh::HalfedgeHandle _start_hh,
 		   Strip& _strip,
 		   FaceHandles& _faces);
 
@@ -171,11 +171,24 @@ private:
 public:
   
   /// Call this function to update the color picking arrays
-  void update_picking_vertices(ACG::GLState& _state );    
+  void updatePickingVertices(ACG::GLState& _state );    
   
-  ACG::Vec4uc * pickColorBuffer(){ return &(pickVertexColorBuf_)[0]; };
+  /** \brief get a pointer to the per vertex picking color buffer
+  *
+  * This function will return a pointer to the first element of the picking buffer.
+  * Use update_picking_vertices to update the buffer before you render it via
+  * glColorPointer.
+  */
+  ACG::Vec4uc * pickVertexColorBuffer(){ return &(pickVertexColorBuf_)[0]; };
   
 private:  
+  
+  /// Call this function to update the color picking arrays
+  void updatePickingVerticesTrimesh(ACG::GLState& _state );
+  
+  /// Call this function to update the color picking arrays
+  void updatePickingVerticesPolymesh(ACG::GLState& _state );
+  
   std::vector< ACG::Vec4uc > pickVertexColorBuf_;
   
 
