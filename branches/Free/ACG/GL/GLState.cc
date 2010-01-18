@@ -122,6 +122,12 @@ void GLState::initialize()
   // multisampling
   set_multisampling(true);
 
+  // Get max number of texture units
+  GLint value;
+  glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &value);
+  
+  num_texture_units_ = value;
+  
   // lighting
   set_twosided_lighting(true);
 }
