@@ -121,6 +121,9 @@ int FilePLYPlugin::loadObject(QString _filename) {
             
             // Check if it is a triangle. If not, this is really a poly mesh
             if ( count != 3 ) {
+                
+                emit openedFile( objectId );
+                
                 return objectId;
             }
         }
@@ -142,6 +145,9 @@ int FilePLYPlugin::loadObject(QString _filename) {
             
             // Check if it is a triangle. If not, this is really a poly mesh
             if ( count != 3 ) {
+                
+                emit openedFile( objectId );
+                
                 return objectId;
             }
         }
@@ -154,22 +160,38 @@ int FilePLYPlugin::loadObject(QString _filename) {
                                                                      
         // User decided to reload as triangle mesh
         if ( result == QMessageBox::No ) {
+            
+            emit openedFile( objectId );
+            
             return objectId;
         }
                                                                      
     } else if (triMeshControl == 2) {
         // If always open as PolyMesh is selected
         
-        return loadPolyMeshObject(_filename);
+        objectId = loadPolyMeshObject(_filename);
+        
+        emit openedFile( objectId );
+        
+        return objectId;
     } else {
         // If always open as TriMesh is selected
         
-        return loadTriMeshObject(_filename);
+        objectId = loadTriMeshObject(_filename);
+        
+        emit openedFile( objectId );
+        
+        return objectId;
     }
     
     // Load object as triangle mesh
     if(objectId != -1) emit deleteObject(objectId);
-    return loadTriMeshObject(_filename);
+    
+    objectId = loadTriMeshObject(_filename);
+    
+    emit openedFile( objectId );
+    
+    return objectId;
 };
 
 //-----------------------------------------------------------------------------------------------------
@@ -238,8 +260,6 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename){
         object->show();
         
         emit log(LOGINFO,object->getObjectinfo());
-        
-        emit openedFile( object->id() );
         
         return object->id();
         
@@ -316,8 +336,6 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename){
         object->show();
         
         emit log(LOGINFO,object->getObjectinfo());
-        
-        emit openedFile( object->id() );
         
         return object->id();
         
