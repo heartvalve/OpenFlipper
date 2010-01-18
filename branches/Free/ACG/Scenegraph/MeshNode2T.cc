@@ -84,7 +84,10 @@ TriStripNodeT(Mesh&        _mesh,
   enabled_arrays_(0),
   updateVertexPickingList_(true),
   vertexPickingBaseIndex_(0),
-  vertexList_(0)
+  vertexPickingList_(0),
+  updateEdgePickingList_(true),
+  edgePickingBaseIndex_(0),
+  edgePickingList_(0)
   
 {
   /// \todo : Handle vbo not supported
@@ -92,7 +95,8 @@ TriStripNodeT(Mesh&        _mesh,
     std::cerr << "Error! Vertex buffer objects are not supported! The meshNode will not work without them!" << std::endl;
   }
   
-  vertexList_ = glGenLists (1);
+  vertexPickingList_ = glGenLists (1);
+  edgePickingList_   = glGenLists (1);
 
 }  
 
@@ -525,17 +529,17 @@ pick_vertices(GLState& _state, bool _front)
   }
   
   
-  if (vertexList_ && !updateVertexPickingList_ && _state.pick_current_index () == vertexPickingBaseIndex_) {
+  if (vertexPickingList_ && !updateVertexPickingList_ && _state.pick_current_index () == vertexPickingBaseIndex_) {
     std::cerr << "Call list" << std::endl;
-    glCallList (vertexList_);
+    glCallList (vertexPickingList_);
     if (_front)
       glDepthFunc(depthFunc());
     return;
   }
   
-  if (vertexList_) {
+  if (vertexPickingList_) {
     std::cerr << "Generate list" << std::endl;
-    glNewList (vertexList_, GL_COMPILE);
+    glNewList (vertexPickingList_, GL_COMPILE);
     updateVertexPickingList_ = false;
     vertexPickingBaseIndex_ = _state.pick_current_index ();
   }
@@ -564,10 +568,10 @@ pick_vertices(GLState& _state, bool _front)
   } else 
     std::cerr << "Fallback not available!" << std::endl;
   
-  if (vertexList_) {
+  if (vertexPickingList_) {
     std::cerr << "Finish and render list" << std::endl;
     glEndList ();
-    glCallList (vertexList_);
+    glCallList (vertexPickingList_);
   }
   
   if (_front)
@@ -586,6 +590,86 @@ void
 TriStripNodeT<Mesh>::
 pick_edges(GLState& _state, bool _front)
 {
+
+  if (!_state.pick_set_maximum (mesh_.n_edges()))
+  {
+    omerr() << "MeshNode::pick_edges: color range too small, "
+    << "picking failed\n";
+    return;
+  }
+  
+  if (_front)
+  {
+    enable_arrays(VERTEX_ARRAY);
+    
+    Vec4f  clear_color = _state.clear_color();
+    Vec4f  base_color  = _state.base_color();
+    clear_color[3] = 1.0;
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    _state.set_base_color(clear_color);
+    
+    glDepthRange(0.01, 1.0);
+    draw_faces(PER_VERTEX);
+    glDepthRange(0.0, 1.0);
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDepthFunc(GL_LEQUAL);
+    _state.set_base_color(base_color);
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    
+    enable_arrays(0);
+  }
+  
+  if (edgePickingList_ && !updateEdgePickingList_ && _state.pick_current_index () == edgePickingBaseIndex_)
+  {
+    glCallList (edgePickingList_);
+    if (_front)
+      glDepthFunc(depthFunc());
+    return;
+  }
+  
+  if (edgePickingList_)
+  {
+    glNewList (edgePickingList_, GL_COMPILE);
+    updateEdgePickingList_ = false;
+    edgePickingBaseIndex_ = _state.pick_current_index ();
+  }
+  
+  if (_state.color_picking ())
+  {
+    std::cerr << "Do color picking" << std::endl;
+    
+    stripProcessor_.updatePickingEdges(_state);
+    
+    // For this version we load the colors directly not from vbo
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    
+    glVertexPointer (stripProcessor_.pickEdgeVertexBuffer());
+    glColorPointer(stripProcessor_.pickEdgeColorBuffer());
+    
+    glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+    
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+  }
+  else
+  {
+    std::cerr << "No fallback!" << std::endl;
+  }
+  
+  if (edgePickingList_)
+  {
+    glEndList ();
+    glCallList (edgePickingList_);
+  }
+  
+  if (_front)
+    glDepthFunc(depthFunc());
 }
 
 template<class Mesh>
@@ -604,10 +688,11 @@ update_geometry() {
   /// \todo check the following statements. If only geometry changed, the normals,vertices have to be updated nothing else!
   /*
   updateFaceList_ = true;
-  updateVertexList_ = true;
-  updateEdgeList_ = true;
   updateAnyList_ = true;
   */
+  
+  updateVertexPickingList_ = true;
+  updateEdgePickingList_   = true;
   
   // First of all, we update the bounding box:
   bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
@@ -785,7 +870,7 @@ update_topology() {
                   &lineIndices_[0],
                   GL_STATIC_DRAW_ARB);
 
-  /// \todo: clear lineIndeices (swap vector!)
+  /// \todo: clear lineIndices (swap vector!)
   
   lineIndexBufferInitialized_ = true;
  

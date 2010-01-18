@@ -423,27 +423,54 @@ private:
   */
   void pick_vertices(GLState& _state, bool _front = false);
   
-  
+  /// Flag indicating if the vertex picking display list has to be updates
   bool updateVertexPickingList_;  
-  
+
+  /// Index of the first vertex in vertexpicking
   unsigned int vertexPickingBaseIndex_;
   
-  std::vector< ACG::Vec4uc > pickColorBuf_;
-  
-  GLuint vertexList_;
+  /// Dispplay list for rendering vertex picking
+  GLuint vertexPickingList_;
   
 /** @} */
   
+
+//===========================================================================
+/** @name edge picking functions
+* @{ */
+//=========================================================================== 
+
+
+private:
+  /** \brief Renders picking for edges
+  *
+  */
+  void pick_edges(GLState& _state, bool _front = false);  
+  
+  /// Flag indicating if the edge picking display list has to be updates
+  bool updateEdgePickingList_;
+  
+  unsigned int edgePickingBaseIndex_;
+  
+  /// Dispplay list for rendering edge picking
+  GLuint edgePickingList_;
+
+/** @} */
+
+//===========================================================================
+/** @name face picking functions
+* @{ */
+//=========================================================================== 
+
+
 private:  
   /** \brief Renders picking for faces
   *
   */
   void pick_faces(GLState& _state);
   
-  /** \brief Renders picking for edges
-  *
-  */
-  void pick_edges(GLState& _state, bool _front = false);
+
+/** @} */
   
 
   

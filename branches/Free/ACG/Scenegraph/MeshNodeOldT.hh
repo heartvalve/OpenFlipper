@@ -187,7 +187,7 @@ private:
   // display Lists used for picking
   GLuint faceList_;
 
-  GLuint edgeList_;
+  
   GLuint anyList_;
 
   // do we need to update our display lists?
