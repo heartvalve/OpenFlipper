@@ -81,12 +81,18 @@ TriStripNodeT(Mesh&        _mesh,
   colorVertexBufferInitialized_(false),
   lineIndexBuffer_(0),
   lineIndexBufferInitialized_(false),
-  enabled_arrays_(0)
+  enabled_arrays_(0),
+  updateVertexPickingList_(true),
+  vertexPickingBaseIndex_(0),
+  vertexList_(0)
+  
 {
   /// \todo : Handle vbo not supported
   if ( ! GLEW_ARB_vertex_buffer_object ) {
     std::cerr << "Error! Vertex buffer objects are not supported! The meshNode will not work without them!" << std::endl;
   }
+  
+  vertexList_ = glGenLists (1);
 
 }  
 
@@ -220,6 +226,7 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 draw_vertices() {
+  std::cerr << "Draw vertices" << std::endl;
   if ( !vertexBufferInitialized_ )
     std::cerr << "Error! Uninitialized vertex buffer in draw call! " << std::endl;
 
@@ -240,6 +247,8 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 draw_faces(FaceMode _mode) {
+  std::cerr << "Draw Faces" << std::endl;
+  
   if ( stripProcessor_.is_valid() ) {
     if ( _mode == PER_VERTEX ) {
       typename StripProcessorT<Mesh>::StripsIterator strip_it   = stripProcessor_.begin();
@@ -262,6 +271,10 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 enable_arrays(unsigned int _arrays) {
+  
+  // Unbind everything to ensure sane settings
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
   
   //===================================================================
   // Vertex Array
@@ -420,7 +433,116 @@ void
 TriStripNodeT<Mesh>::
 pick_vertices(GLState& _state, bool _front)
 {
+  typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
+  v_end(mesh_.vertices_end());
+  GLuint                         idx(0);
   
+  if (!_state.pick_set_maximum (mesh_.n_vertices())) {
+    omerr() << "MeshNode::pick_vertices: color range too small, "
+    << "picking failed\n";
+    return;
+  }
+  
+  if (_front) {
+    std::cerr << "Draw mesh to hide non-front vertices" << std::endl;
+    enable_arrays(VERTEX_ARRAY);
+    
+    Vec4f  clear_color = _state.clear_color();
+    Vec4f  base_color  = _state.base_color();
+    clear_color[3] = 1.0;
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    _state.set_base_color(clear_color);
+    
+    glDepthRange(0.01, 1.0);
+    draw_faces(PER_VERTEX);
+    glDepthRange(0.0, 1.0);
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDepthFunc(GL_LEQUAL);
+    _state.set_base_color(base_color);
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    
+    enable_arrays(0);
+  }
+  
+  
+  if (vertexList_ && !updateVertexPickingList_ && _state.pick_current_index () == vertexPickingBaseIndex_) {
+    std::cerr << "Call list" << std::endl;
+    glCallList (vertexList_);
+    if (_front)
+      glDepthFunc(depthFunc());
+    return;
+  }
+  
+  if (vertexList_) {
+    std::cerr << "Generate list" << std::endl;
+    glNewList (vertexList_, GL_COMPILE);
+    updateVertexPickingList_ = false;
+    vertexPickingBaseIndex_ = _state.pick_current_index ();
+  }
+  
+  if (_state.color_picking ()) {
+    std::cerr << "Do color picking" << std::endl;
+    
+    unsigned int nfv = 0;
+    if (mesh_.is_trimesh())
+      nfv = mesh_.n_faces() * 3;
+    else
+    {
+      // count number of vertices we need for faces in our buffer
+      typename Mesh::ConstFaceIter    f_it(mesh_.faces_sbegin()),
+      f_end(mesh_.faces_end());
+      typename Mesh::ConstFaceVertexIter  fv_it;
+      for (; f_it!=f_end; ++f_it)
+      {
+        for (fv_it=mesh_.cfv_iter(f_it); fv_it; ++fv_it)
+          nfv++;
+      }
+    }
+    
+    pickVertexBuf_.resize (qMax (mesh_.n_vertices(), qMax (mesh_.n_edges() * 2, nfv)));
+    pickColorBuf_.resize (qMax (mesh_.n_vertices(), qMax (mesh_.n_edges() * 2, nfv)));
+    
+    for (; v_it!=v_end; ++v_it, ++idx) {
+      pickColorBuf_[idx] = _state.pick_get_name_color (idx);
+      pickVertexBuf_[idx] = mesh_.point(v_it);
+    }
+    
+    std::cerr << "Pickvertexbuffer has " << pickVertexBuf_.size() << " entries" << std::endl;
+    std::cerr << "Pickcolorbuffer has " << pickColorBuf_.size() << " entries" << std::endl;
+
+    
+    glVertexPointer (&(pickVertexBuf_)[0]);
+    glColorPointer(&(pickColorBuf_)[0]);
+    
+    
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);    
+    
+    glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
+    
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+  } else {
+    std::cerr << "Fallback" << std::endl;
+    for (; v_it!=v_end; ++v_it, ++idx) {
+      _state.pick_set_name (idx);
+      glBegin(GL_POINTS);
+      glVertex(mesh_.point(v_it));
+      glEnd();
+    }
+  }
+  
+  if (vertexList_) {
+    std::cerr << "Finish and render list" << std::endl;
+    glEndList ();
+    glCallList (vertexList_);
+  }
+  
+  if (_front)
+    glDepthFunc(depthFunc());
 }
 
 template<class Mesh>
@@ -606,6 +728,8 @@ update_topology() {
   // ==========================================================================
   stripProcessor_.clear();
   stripProcessor_.stripify();
+  
+  std::cerr << "Created " << stripProcessor_.n_strips() << " strips\n" << std::endl;
   
   // ==========================================================================
   // Generate a buffer for rendering all lines

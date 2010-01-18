@@ -186,23 +186,23 @@ private:
 
   // display Lists used for picking
   GLuint faceList_;
-  GLuint vertexList_;
+
   GLuint edgeList_;
   GLuint anyList_;
 
   // do we need to update our display lists?
   bool updateFaceList_;
-  bool updateVertexList_;
+
   bool updateEdgeList_;
   bool updateAnyList_;
+  
   unsigned int faceBaseIndex_;
-  unsigned int vertexBaseIndex_;
   unsigned int edgeBaseIndex_;
   unsigned int anyBaseIndex_;
 
   // buffers for draw arrays during picking
-  std::vector< ACG::Vec3f > pickVertexBuf_;
-  std::vector< ACG::Vec4uc > pickColorBuf_;
+
+
 
 };
 
