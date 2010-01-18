@@ -432,8 +432,6 @@ private:
   
   GLuint vertexList_;
   
-  std::vector< ACG::Vec3f > pickVertexBuf_;
-
 /** @} */
   
 private:  

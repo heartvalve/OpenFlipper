@@ -502,29 +502,29 @@ pick_vertices(GLState& _state, bool _front)
       }
     }
     
-    pickVertexBuf_.resize (qMax (mesh_.n_vertices(), qMax (mesh_.n_edges() * 2, nfv)));
     pickColorBuf_.resize (qMax (mesh_.n_vertices(), qMax (mesh_.n_edges() * 2, nfv)));
     
     for (; v_it!=v_end; ++v_it, ++idx) {
       pickColorBuf_[idx] = _state.pick_get_name_color (idx);
-      pickVertexBuf_[idx] = mesh_.point(v_it);
     }
     
-    std::cerr << "Pickvertexbuffer has " << pickVertexBuf_.size() << " entries" << std::endl;
     std::cerr << "Pickcolorbuffer has " << pickColorBuf_.size() << " entries" << std::endl;
 
+    enable_arrays(VERTEX_ARRAY);
     
-    glVertexPointer (&(pickVertexBuf_)[0]);
+    // For this version we load the colors directly not from vbo
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
     glColorPointer(&(pickColorBuf_)[0]);
     
     
-    glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);    
     
     glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
     
     glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    
+    enable_arrays(0);
+    
   } else {
     std::cerr << "Fallback" << std::endl;
     for (; v_it!=v_end; ++v_it, ++idx) {
