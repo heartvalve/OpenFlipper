@@ -138,8 +138,6 @@ availableDrawModes() const
 {
   unsigned int drawModes(0);
 
-  drawModes |= DrawModes::WIREFRAME;
-  drawModes |= DrawModes::HIDDENLINE;
   drawModes |= DrawModes::SOLID_SHADER;
 
   if (mesh_.has_vertex_normals())
@@ -346,30 +344,7 @@ draw(GLState& _state, unsigned int _drawMode)
   glDepthFunc(depthFunc());
 
 
-  if (_drawMode & DrawModes::HIDDENLINE)
-  {
-    enable_arrays(VERTEX_ARRAY);
-
-    Vec4f  clear_color = _state.clear_color();
-    Vec4f  base_color  = _state.base_color();
-    clear_color[3] = 1.0;
-
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    _state.set_base_color(clear_color);
-
-    glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
-    glDepthRange(0.0, 1.0);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDepthFunc(GL_LEQUAL);
-    _state.set_base_color(base_color);
-    draw_faces(PER_VERTEX);
-    glDepthFunc(depthFunc());
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  }
+  
 
 
   if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) && mesh_.has_face_normals())
