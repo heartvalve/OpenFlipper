@@ -309,7 +309,7 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 updatePickingVerticesPolymesh(ACG::GLState& _state ) {
-  std::cerr << "StripProcessor update_picking_vertices polymesh not yet implemented!" << std::endl;
+  std::cerr << "StripProcessor updatePickingVerticesPolymesh polymesh not yet implemented!" << std::endl;
 }
 
 template <class Mesh>
@@ -320,6 +320,45 @@ updatePickingVertices(ACG::GLState& _state ) {
     updatePickingVerticesTrimesh(_state);
   else
     updatePickingVerticesPolymesh(_state);
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingEdges(ACG::GLState& _state ) {
+  if ( mesh_.is_trimesh() )
+    updatePickingEdgesTrimesh(_state);
+  else
+    updatePickingEdgesPolymesh(_state);
+}
+    
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingEdgesTrimesh(ACG::GLState& _state ) {
+  
+  pickEdgeColorBuf_.resize(mesh_.n_edges() * 2);
+  pickEdgeVertexBuf_.resize(mesh_.n_edges() * 2);
+  
+  int idx(0);
+  
+  typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
+  for (; e_it!=e_end; ++e_it)
+  {
+    pickEdgeColorBuf_[idx]    = _state.pick_get_name_color (e_it.handle().idx());
+    pickEdgeColorBuf_[idx+1]  = _state.pick_get_name_color (e_it.handle().idx());
+    pickEdgeVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0)));
+    pickEdgeVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1)));
+    idx += 2;
+  }
+  
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingEdgesPolymesh(ACG::GLState& _state ) {
+  std::cerr << "StripProcessor updatePickingEdgesPolymesh polymesh not yet implemented!" << std::endl;
 }
 
 
