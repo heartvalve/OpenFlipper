@@ -123,6 +123,7 @@ availableDrawModes() const {
   
   // We can always render points and a wireframe.
   drawModes |= DrawModes::POINTS;
+  drawModes |= DrawModes::HIDDENLINE;
   drawModes |= DrawModes::WIREFRAME;
   
   if (mesh_.has_vertex_normals())
@@ -208,6 +209,35 @@ draw(GLState& _state, unsigned int _drawMode) {
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
+  }
+  
+  if (_drawMode & DrawModes::HIDDENLINE)
+  {
+    enable_arrays(VERTEX_ARRAY);
+    
+    // First:
+    // Render all faces in background color to initialize z-buffer
+    Vec4f  clear_color = _state.clear_color();
+    Vec4f  base_color  = _state.base_color();
+    clear_color[3] = 1.0;
+    
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    _state.set_base_color(clear_color);
+    
+    glDepthRange(0.01, 1.0);
+    draw_faces(PER_VERTEX);
+    glDepthRange(0.0, 1.0);
+    
+    // Second
+    // Render the lines. All lines not on the front will be skipped in z-test
+    enable_arrays(VERTEX_ARRAY|LINE_INDEX_ARRAY);
+    glDepthFunc(GL_LEQUAL);
+    _state.set_base_color(base_color);
+    draw_lines();
+    glDepthFunc(depthFunc());
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
   
   enable_arrays(0);
