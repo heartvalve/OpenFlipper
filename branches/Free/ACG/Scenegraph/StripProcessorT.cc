@@ -290,8 +290,18 @@ buildStrip(typename Mesh::HalfedgeHandle _start_hh,
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-updatePickingVerticesTrimesh(ACG::GLState& _state ) {
-  std::cerr << "StripProcessor update_picking_vertices" << std::endl;
+updatePickingVertices(ACG::GLState&  _state, uint _offset) {
+  if ( mesh_.is_trimesh() )
+    updatePickingVerticesTrimesh(_state, _offset );
+  else
+    updatePickingVerticesPolymesh(_state, _offset);
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingVerticesTrimesh(ACG::GLState& _state , uint _offset) {
+  std::cerr << "StripProcessor updatePickingVerticesTrimesh with offset : " << _offset << std::endl;
   
   GLuint                         idx(0);
   
@@ -301,41 +311,32 @@ updatePickingVerticesTrimesh(ACG::GLState& _state ) {
   // Get the right picking colors from the gl state and add them per vertex to the color buffer
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()), v_end(mesh_.vertices_end());
   for (; v_it!=v_end; ++v_it, ++idx) 
-    pickVertexColorBuf_[idx] = _state.pick_get_name_color(idx);
+    pickVertexColorBuf_[idx] = _state.pick_get_name_color(idx + _offset);
   
 }
 
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-updatePickingVerticesPolymesh(ACG::GLState& _state ) {
+updatePickingVerticesPolymesh(ACG::GLState& _state,  uint _offset) {
   std::cerr << "StripProcessor updatePickingVerticesPolymesh polymesh not yet implemented!" << std::endl;
 }
 
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-updatePickingVertices(ACG::GLState& _state ) {
+updatePickingEdges(ACG::GLState& _state,  uint _offset ) {
   if ( mesh_.is_trimesh() )
-    updatePickingVerticesTrimesh(_state);
+    updatePickingEdgesTrimesh(_state, _offset);
   else
-    updatePickingVerticesPolymesh(_state);
-}
-
-template <class Mesh>
-void
-StripProcessorT<Mesh>::
-updatePickingEdges(ACG::GLState& _state ) {
-  if ( mesh_.is_trimesh() )
-    updatePickingEdgesTrimesh(_state);
-  else
-    updatePickingEdgesPolymesh(_state);
+    updatePickingEdgesPolymesh(_state, _offset);
 }
     
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-updatePickingEdgesTrimesh(ACG::GLState& _state ) {
+updatePickingEdgesTrimesh(ACG::GLState& _state, uint _offset) {
+  std::cerr << "StripProcessor updatePickingEdgesTrimesh with offset : " << _offset << std::endl;
   
   pickEdgeColorBuf_.resize(mesh_.n_edges() * 2);
   pickEdgeVertexBuf_.resize(mesh_.n_edges() * 2);
@@ -345,8 +346,8 @@ updatePickingEdgesTrimesh(ACG::GLState& _state ) {
   typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
   for (; e_it!=e_end; ++e_it)
   {
-    pickEdgeColorBuf_[idx]    = _state.pick_get_name_color (e_it.handle().idx());
-    pickEdgeColorBuf_[idx+1]  = _state.pick_get_name_color (e_it.handle().idx());
+    pickEdgeColorBuf_[idx]    = _state.pick_get_name_color (e_it.handle().idx() + _offset);
+    pickEdgeColorBuf_[idx+1]  = _state.pick_get_name_color (e_it.handle().idx() + _offset);
     pickEdgeVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0)));
     pickEdgeVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1)));
     idx += 2;
@@ -357,7 +358,7 @@ updatePickingEdgesTrimesh(ACG::GLState& _state ) {
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-updatePickingEdgesPolymesh(ACG::GLState& _state ) {
+updatePickingEdgesPolymesh(ACG::GLState& _state , uint _offset) {
   std::cerr << "StripProcessor updatePickingEdgesPolymesh polymesh not yet implemented!" << std::endl;
 }
 
@@ -376,13 +377,14 @@ void
 StripProcessorT<Mesh>::
 updatePickingFacesTrimesh(ACG::GLState& _state ) {
   
-  pickFaceColorBuf_.resize(mesh_.n_edges() * 3);
-  pickFaceVertexBuf_.resize(mesh_.n_edges() * 3);
+  std::cerr << "StripProcessor updatePickingFacesTrimesh "<< std::endl;
+  
+  pickFaceColorBuf_.resize(mesh_.n_faces() * 3);
+  pickFaceVertexBuf_.resize(mesh_.n_faces() * 3);
   
   int idx(0);
   
-  typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
-  f_end(mesh_.faces_end());
+  typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()), f_end(mesh_.faces_end());
   typename Mesh::ConstFaceVertexIter  fv_it;
   
   for (; f_it!=f_end; ++f_it)
@@ -403,6 +405,33 @@ void
 StripProcessorT<Mesh>::
 updatePickingFacesPolymesh(ACG::GLState& _state ) {
   std::cerr << "StripProcessor updatePickingFacesPolymesh polymesh not yet implemented!" << std::endl;
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingAny(ACG::GLState& _state ) {
+  if ( mesh_.is_trimesh() )
+    updatePickingAnyTrimesh(_state);
+  else
+    updatePickingAnyPolymesh(_state);
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingAnyTrimesh(ACG::GLState& _state ) {
+  std::cerr << "Update any lists" << std::endl;
+  updatePickingFaces(_state);
+  updatePickingEdges(_state,mesh_.n_faces());
+  updatePickingVertices(_state,mesh_.n_faces() + mesh_.n_edges());
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePickingAnyPolymesh(ACG::GLState& _state ) {
+  std::cerr << "StripProcessor updatePickingAnyPolymesh polymesh not yet implemented!" << std::endl;
 }
 
 

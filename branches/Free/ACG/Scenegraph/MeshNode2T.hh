@@ -403,11 +403,6 @@ public:
   *
   */
   void pick(GLState& _state, PickTarget _target);
-  
-  /** \brief Renders picking for all primitives
-  *
-  */
-  void pick_any(GLState& _state);  
 
 /** @} */
 
@@ -479,6 +474,29 @@ private:
   /// Dispplay list for rendering edge picking
   GLuint facePickingList_;
 
+/** @} */
+
+//===========================================================================
+/** @name anything picking functions
+* @{ */
+//=========================================================================== 
+  
+private:  
+  
+  /** \brief Renders picking for all primitives
+  *
+  */
+  void pick_any(GLState& _state);  
+  
+  /// Flag indicating if the any picking display list has to be updates
+  bool updateAnyPickingList_;
+  
+  /// Index of the first face in anypicking
+  unsigned int anyPickingBaseIndex_;    
+  
+  /// Dispplay list for rendering general picking
+  GLuint anyPickingList_;  
+  
 /** @} */
   
 
