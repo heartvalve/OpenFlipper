@@ -395,7 +395,7 @@ private:
 /** @} */
 
 //===========================================================================
-/** @name picking functions
+/** @name general picking functions
 * @{ */
 //===========================================================================
 public:
@@ -404,6 +404,18 @@ public:
   */
   void pick(GLState& _state, PickTarget _target);
   
+  /** \brief Renders picking for all primitives
+  *
+  */
+  void pick_any(GLState& _state);  
+
+/** @} */
+
+//===========================================================================
+/** @name vertex picking functions
+* @{ */
+//===========================================================================  
+  
 private:
 
   /** \brief Renders picking for vertices
@@ -411,6 +423,20 @@ private:
   */
   void pick_vertices(GLState& _state, bool _front = false);
   
+  
+  bool updateVertexPickingList_;  
+  
+  unsigned int vertexPickingBaseIndex_;
+  
+  std::vector< ACG::Vec4uc > pickColorBuf_;
+  
+  GLuint vertexList_;
+  
+  std::vector< ACG::Vec3f > pickVertexBuf_;
+
+/** @} */
+  
+private:  
   /** \brief Renders picking for faces
   *
   */
@@ -421,14 +447,7 @@ private:
   */
   void pick_edges(GLState& _state, bool _front = false);
   
-  /** \brief Renders picking for all primitives
-  *
-  */
-  void pick_any(GLState& _state);
 
-
-  
-  
   
   /// \todo Remove all these functions afterwards!
   
