@@ -422,7 +422,10 @@ public:
   void allow_multisampling( bool _b ) { allow_multisampling_ = _b; };
 
   /// Check if Multisampling is globally disabled
-  bool multisampling_alloowed(){ return allow_multisampling_; };
+  bool multisampling_allowed(){ return allow_multisampling_; };
+  
+  /// Get max number of available texture units
+  int max_texture_units() const { return num_texture_units_; }
 
   //--- picking ---------------------------------------------------------------
 
@@ -525,7 +528,9 @@ private: //--------------------------------------------------------------------
   // Multisampling settings
   bool multisampling_;
   bool allow_multisampling_;
-
+  
+  int num_texture_units_;
+  
   // helper: should GL matrices be updated
   bool updateGL_;
 
