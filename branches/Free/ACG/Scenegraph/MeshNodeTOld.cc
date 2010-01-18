@@ -140,17 +140,6 @@ availableDrawModes() const
 
   drawModes |= DrawModes::SOLID_SHADER;
 
-  if (mesh_.has_vertex_normals())
-  {
-    drawModes |= DrawModes::SOLID_SMOOTH_SHADED;
-    drawModes |= DrawModes::SOLID_PHONG_SHADED;
-  }
-
-  if (mesh_.has_vertex_colors())
-  {
-    drawModes |= DrawModes::SOLID_POINTS_COLORED;
-  }
-
   if (mesh_.has_face_normals())
     drawModes |= DrawModes::SOLID_FLAT_SHADED;
 
@@ -343,10 +332,6 @@ draw(GLState& _state, unsigned int _drawMode)
 {
   glDepthFunc(depthFunc());
 
-
-  
-
-
   if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) && mesh_.has_face_normals())
   {
     glEnable(GL_LIGHTING);
@@ -356,34 +341,8 @@ draw(GLState& _state, unsigned int _drawMode)
     glDepthRange(0.0, 1.0);
   }
 
-
 //   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals())
-
-
-  if ( ( _drawMode & DrawModes::SOLID_PHONG_SHADED ) && mesh_.has_vertex_normals() )
-  {
-//     if ( parent() != 0 ) {
-//       if ( parent()->className() == "ShaderNode" ) {
-//
-//         ShaderNode* node = dynamic_cast< ShaderNode* > ( parent() );
-//
-//         GLSL::PtrProgram program = node->getShader( DrawModes::SOLID_PHONG_SHADED );
-//
-//         // Enable own Phong shader
-//         program->use();
-
-        enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
-        glEnable(GL_LIGHTING);
-        glShadeModel(GL_SMOOTH);
-        glDepthRange(0.01, 1.0);
-        draw_faces(PER_VERTEX);
-        glDepthRange(0.0, 1.0);
-
-        //disable own Phong shader
-//         program->disable();
-//       }
-//     }
-  }
+//   if ( ( _drawMode & DrawModes::SOLID_PHONG_SHADED ) && mesh_.has_vertex_normals() )
 
   if ( ( _drawMode & DrawModes::SOLID_ENV_MAPPED ) && mesh_.has_vertex_normals())
   {
