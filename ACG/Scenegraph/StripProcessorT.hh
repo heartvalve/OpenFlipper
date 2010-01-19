@@ -54,8 +54,9 @@
 
 #include <vector>
 #include <OpenMesh/Core/Utils/Property.hh>
-#include <ACG/GL/GLState.hh>
+#include <OpenMesh/Core/IO/MeshIO.hh>
 
+#include <ACG/GL/GLState.hh>
 
 //== FORWARDDECLARATIONS ======================================================
 
@@ -94,11 +95,14 @@ template <class Mesh>
 class StripProcessorT
 {
 public:
-
+    
   typedef unsigned int                      Index;
   typedef std::vector<Strip>                Strips;
   typedef typename Strips::const_iterator   StripsIterator;
-
+  typedef typename Mesh::FaceHandle         FaceHandle;
+  typedef std::pair<unsigned int, FaceHandle> HandleMap;
+  typedef std::vector<HandleMap>            FaceMap;
+  
 
   /// Default constructor
   StripProcessorT(Mesh& _mesh);
@@ -130,8 +134,6 @@ private:
 
   /// this method does the main work
   void buildStrips();
-  
- 
 
   /// This method generates strips for triangle meshes
   void buildStripsTriMesh();
@@ -142,11 +144,21 @@ private:
   * takes arbitrary polygons as input and triangulates them.
   */
   void buildStripsPolyMesh();
-
-  /// build a strip from a given halfedge (in both directions)
-  void buildStrip(typename Mesh::HalfedgeHandle _start_hh,
+ 
+  
+  /// build a strip from a given halfedge (in both directions) of a triangle mesh
+  void buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
 		   Strip& _strip,
 		   FaceHandles& _faces);
+           
+  /// build a strip from a given halfedge (in both directions) of a polymesh
+  void buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
+           Strip& _strip,
+           FaceHandles& _faces,
+           FaceMap& _faceMap);
+           
+  /// Test whether face is convex
+  void convexityTest(FaceHandle _fh);
 
   OpenMesh::FPropHandleT<bool>::reference  processed(typename Mesh::FaceHandle _fh) {
     return mesh_.property(processed_, _fh);
@@ -162,6 +174,11 @@ private:
   Mesh&                          mesh_;
   Strips                         strips_;
   OpenMesh::FPropHandleT<bool>   processed_, used_;
+  
+  // In case triangulation is needed
+  bool                           triangulated_;
+  std::vector<FaceMap>           faceMaps_;
+  
   
 //===========================================================================
 /** @name vertex picking functions
