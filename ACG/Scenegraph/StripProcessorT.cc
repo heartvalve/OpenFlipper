@@ -672,6 +672,8 @@ updatePickingFacesPolymesh(ACG::GLState& _state ) {
           pickFaceColorBuf_[ bufferIndex + 1 ] = pickColor;
           pickFaceColorBuf_[ bufferIndex + 2 ] = pickColor;
           
+          std::cerr << "Color : " << pickColor[0] << " "   << pickColor[1] << " " << pickColor[2] << " " <<  pickColor[3] << std::endl;
+          
           // Cant render triangle strips as we need one color per face and this means duplicating vertices
           pickFaceVertexBuf_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
           pickFaceVertexBuf_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));

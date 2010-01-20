@@ -779,8 +779,8 @@ pick_any(GLState& _state)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     
-    glVertexPointer (stripProcessor_.pickFaceVertexBuffer());
-    glColorPointer(stripProcessor_.pickFaceColorBuffer());
+    glVertexPointer( stripProcessor_.pickFaceVertexBuffer() );
+    glColorPointer(  stripProcessor_.pickFaceColorBuffer()  );
     
     glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.pickFaceBufferSize() );
     
