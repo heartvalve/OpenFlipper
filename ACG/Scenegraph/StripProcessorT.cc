@@ -322,11 +322,9 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
     // Init strip
     strip.push_back(mesh_.from_vertex_handle(_start_hh).idx());
     strip.push_back(mesh_.to_vertex_handle(_start_hh).idx());
-
-    // Store reference to current face handle (Needed for color picking arrays)
-    faceMap.push_back(mesh_.face_handle(_start_hh));
-    faceMap.push_back(mesh_.face_handle(_start_hh));
     
+    // Don't update face map here! See below why
+
     // Walk along the strip: 1st direction
     // We construct the strip by using alternating vertices
     // of each side.
@@ -391,15 +389,15 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
        
     }
     
+    // Be carefull with the map. As we run in the opposite direction now,
+    // we have to finish the map at the end of the strip
+    
     // Walk along the strip: 2nd direction
     // We construct the strip by using alternating vertices
     // of each side.
     hh_left = hh_right = mesh_.opposite_halfedge_handle(_start_hh);
     
     while(true) {
-      //fh = mesh_.face_handle(hh_left);
-      //if(!mesh_.is_valid_handle(fh)) break;
-
       // Boundary check as the first might be at the boundary
       if(mesh_.is_boundary(hh_left)) break;
 
@@ -461,6 +459,10 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
       }
      
     }
+    
+    // Finish the map ( As this is the start of the strip now, this data will be ignored!
+    faceMap.push_front(mesh_.face_handle(0));
+    faceMap.push_front(mesh_.face_handle(0));    
     
     // copy final strip to _strip
     _strip.indexArray.clear();
@@ -671,8 +673,6 @@ updatePickingFacesPolymesh(ACG::GLState& _state ) {
           pickFaceColorBuf_[ bufferIndex + 0 ] = pickColor;
           pickFaceColorBuf_[ bufferIndex + 1 ] = pickColor;
           pickFaceColorBuf_[ bufferIndex + 2 ] = pickColor;
-          
-          std::cerr << "Color : " << pickColor[0] << " "   << pickColor[1] << " " << pickColor[2] << " " <<  pickColor[3] << std::endl;
           
           // Cant render triangle strips as we need one color per face and this means duplicating vertices
           pickFaceVertexBuf_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
