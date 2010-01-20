@@ -80,27 +80,14 @@ MeshNodeT(const Mesh&  _mesh,
 	  std::string  _name)
   : BaseNode(_parent, _name),
     mesh_(_mesh),
-    face_index_buffer_(0),
-    faceIndexBufferInitialized_(false),
     textureMap_(0),
     propertyMap_(0),
     default_halfedge_textcoord_property_("h:texcoords2D"),
     indexPropertyName_("f:textureindex"),
-    updateFaceList_(true),
-    updateVertexList_(true),
-    updateEdgeList_(true),
-    updateAnyList_(true),
-    faceBaseIndex_(0),
-    vertexBaseIndex_(0),
-    edgeBaseIndex_(0),
-    anyBaseIndex_(0),
     bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
     bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX)
 {
-  faceList_ = glGenLists (1);
-  vertexList_ = glGenLists (1);
-  edgeList_ = glGenLists (1);
-  anyList_ = glGenLists (3);
+
 }
 
 
@@ -112,20 +99,6 @@ MeshNodeT<Mesh>::
 ~MeshNodeT()
 {
 
-  if (face_index_buffer_)
-    glDeleteBuffersARB(1, (GLuint*)  &face_index_buffer_ );
-
-  if (faceList_)
-    glDeleteLists (faceList_, 1);
-
-  if (vertexList_)
-    glDeleteLists (vertexList_, 1);
-
-  if (edgeList_)
-    glDeleteLists (edgeList_, 1);
-
-  if (anyList_)
-    glDeleteLists (anyList_, 3);
 }
 
 
@@ -253,72 +226,6 @@ enable_arrays(unsigned int _arrays)
 
 
   glCheckErrors();
-}
-
-//----------------------------------------------------------------------------
-
-
-template<class Mesh>
-void
-MeshNodeT<Mesh>::
-update_topology()
-{
-  updateFaceList_ = true;
-  updateVertexList_ = true;
-
-  if (mesh_.is_trimesh())
-  {
-    typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
-                                        f_end(mesh_.faces_end());
-    typename Mesh::ConstFaceVertexIter  fv_it;
-
-    try
-    {
-      indices_.clear();
-      std::vector<unsigned int>().swap(indices_);
-      indices_.reserve(mesh_.n_faces()*3);
-
-      for (; f_it!=f_end; ++f_it)
-      {
-	     indices_.push_back((fv_it=mesh_.cfv_iter(f_it)).handle().idx());
-	     indices_.push_back((++fv_it).handle().idx());
-	     indices_.push_back((++fv_it).handle().idx());
-      }
-    }
-    catch (...)
-    {
-      indices_.clear();
-      std::vector<unsigned int>().swap(indices_);
-      omerr() << "Topology caching failed\n";
-    }
-
-    //===================================================================
-    // Generate an index buffer on the GPU
-    //===================================================================
-    faceIndexBufferInitialized_ = false;
-
-    if ( GLEW_ARB_vertex_buffer_object && !indices_.empty() ) {
-
-      // generate buffer
-      if (!face_index_buffer_)  glGenBuffersARB(1,  (GLuint*)  &face_index_buffer_);
-
-      // index buffer
-      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, face_index_buffer_);
-
-      glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
-                      indices_.size() * sizeof(unsigned int),
-                      &indices_[0],
-                      GL_STATIC_DRAW_ARB);
-
-      faceIndexBufferInitialized_ = true;
-
-      // unbind buffer
-      glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-
-    }
-
-  }
-
 }
 
 
@@ -765,66 +672,6 @@ draw_faces(FaceMode _mode)
       break;
     }
 
-
-    case PER_VERTEX:
-    {
-      if (mesh_.is_trimesh())
-      {
-        // try cached triangle indices
-        if (!indices_.empty())
-        {
-
-          // If we have an index buffer on the GPU, use it
-          if ( faceIndexBufferInitialized_  ) {
-
-            // As we have a list of all faces on the GPU bind it
-            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,face_index_buffer_);
-
-            // Draw it
-            glDrawElements(GL_TRIANGLES,
-                           indices_.size(),
-                           GL_UNSIGNED_INT,
-                           0);
-
-            // And unbind it again
-            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,0);
-
-          } else {
-
-            glDrawElements(GL_TRIANGLES,
-                           indices_.size(),
-                           GL_UNSIGNED_INT,
-                           &indices_[0]);
-          }
-
-
-        }
-
-        // otherwise use immediate mode
-        else
-        {
-          glBegin(GL_TRIANGLES);
-          for (; f_it!=f_end; ++f_it)
-          {
-            glArrayElement((fv_it=mesh_.cfv_iter(f_it)).handle().idx());
-            glArrayElement((++fv_it).handle().idx());
-            glArrayElement((++fv_it).handle().idx());
-          }
-          glEnd();
-        }
-      }
-      else
-      {
-        for (; f_it!=f_end; ++f_it)
-        {
-          glBegin(GL_POLYGON);
-          for (fv_it=mesh_.cfv_iter(f_it.handle()); fv_it; ++fv_it)
-            glArrayElement(fv_it.handle().idx());
-          glEnd();
-        }
-      }
-      break;
-    }
   }
 }
 
