@@ -719,7 +719,7 @@ pick_faces(GLState& _state)
     glVertexPointer (stripProcessor_.pickFaceVertexBuffer());
     glColorPointer(stripProcessor_.pickFaceColorBuffer());
     
-    glDrawArrays(GL_TRIANGLES, 0, mesh_.n_faces() * 3);
+    glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.pickFaceBufferSize() );
     
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -782,7 +782,7 @@ pick_any(GLState& _state)
     glVertexPointer (stripProcessor_.pickFaceVertexBuffer());
     glColorPointer(stripProcessor_.pickFaceColorBuffer());
     
-    glDrawArrays(GL_TRIANGLES, 0, mesh_.n_faces() * 3);
+    glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.pickFaceBufferSize() );
     
     
     if (anyPickingList_)
