@@ -100,8 +100,7 @@ public:
   typedef std::vector<Strip>                Strips;
   typedef typename Strips::const_iterator   StripsIterator;
   typedef typename Mesh::FaceHandle         FaceHandle;
-  typedef std::pair<unsigned int, FaceHandle> HandleMap;
-  typedef std::vector<HandleMap>            FaceMap;
+  typedef std::vector<FaceHandle>           FaceMap;
   
 
   /// Default constructor
@@ -153,9 +152,9 @@ private:
            
   /// build a strip from a given halfedge (in both directions) of a polymesh
   void buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
-           Strip& _strip,
-           FaceHandles& _faces,
-           FaceMap& _faceMap);
+                          Strip& _strip,
+                          FaceHandles& _faces,
+                          FaceMap& _faceMap);
            
   /// Test whether face is convex
   void convexityTest(FaceHandle _fh);
@@ -203,12 +202,7 @@ public:
   
 private:  
   
-  /// Call this function to update the color picking array
-  void updatePickingVerticesTrimesh(ACG::GLState& _state , uint _offset = 0);
-  
-  /// Call this function to update the color picking array
-  void updatePickingVerticesPolymesh(ACG::GLState& _state , uint _offset = 0);
-  
+  /// The color buffer used for vertex picking
   std::vector< ACG::Vec4uc > pickVertexColorBuf_;
   
 
@@ -245,12 +239,6 @@ private:
     
   private:  
     
-    /// Call this function to update the color picking array
-    void updatePickingEdgesTrimesh(ACG::GLState& _state , uint _offset = 0);
-    
-    /// Call this function to update the color picking array
-    void updatePickingEdgesPolymesh(ACG::GLState& _state , uint _offset = 0);
-    
     std::vector< ACG::Vec4uc > pickEdgeColorBuf_;
     std::vector< ACG::Vec3f >  pickEdgeVertexBuf_;
     
@@ -282,6 +270,10 @@ public:
   * glColorPointer.
   */
   ACG::Vec3f * pickFaceVertexBuffer(){ return &(pickFaceVertexBuf_)[0]; };    
+  
+  /** \brief Get the number of elements in the face picking buffers
+  */
+  unsigned int pickFaceBufferSize(){ return  pickFaceVertexBuf_.size(); };
   
 private:  
   
