@@ -653,7 +653,6 @@ updatePickingFacesPolymesh(ACG::GLState& _state ) {
     
     // 3 vertices per face.
     pickFaceColorBuf_.resize(n_faces * 3);
-    pickFaceVertexBuf_.resize(n_faces * 3);
     
     // Index to the current buffer position
     unsigned int bufferIndex = 0;
@@ -674,11 +673,6 @@ updatePickingFacesPolymesh(ACG::GLState& _state ) {
           pickFaceColorBuf_[ bufferIndex + 1 ] = pickColor;
           pickFaceColorBuf_[ bufferIndex + 2 ] = pickColor;
           
-          // Cant render triangle strips as we need one color per face and this means duplicating vertices
-          pickFaceVertexBuf_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
-          pickFaceVertexBuf_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
-          pickFaceVertexBuf_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
-          
           bufferIndex += 3;
         }
     }
@@ -688,30 +682,50 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 updatePickingAny(ACG::GLState& _state ) {
-  if ( mesh_.is_trimesh() )
-    updatePickingAnyTrimesh(_state);
-  else
-    updatePickingAnyPolymesh(_state);
-}
-
-template <class Mesh>
-void
-StripProcessorT<Mesh>::
-updatePickingAnyTrimesh(ACG::GLState& _state ) {
+  // Update the per Face buffer
+  updatePerFaceBuffer();
   updatePickingFaces(_state);
   updatePickingEdges(_state,mesh_.n_faces());
   updatePickingVertices(_state,mesh_.n_faces() + mesh_.n_edges());
+  
 }
 
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-updatePickingAnyPolymesh(ACG::GLState& _state ) {
-    updatePickingFaces(_state);
-    updatePickingEdges(_state,mesh_.n_faces());
-    updatePickingVertices(_state,mesh_.n_faces() + mesh_.n_edges());
-}
+updatePerFaceBuffer() {
+  // Get total number of triangles
+  // Each strip has two vertices more than triangles
+  unsigned int n_faces = 0;
+  for(StripsIterator it = strips_.begin(); it != strips_.end(); ++it) 
+    n_faces += (*it).indexArray.size() - 2;
+  
+  // 3 vertices per face.
+  perFaceBuffer_.resize(n_faces * 3);
+  
+  // Index to the current buffer position
+  unsigned int bufferIndex = 0;
+  
+  // Process all strips
+  for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
+    
+    // process all faces in the strip
+    // The strip contains 2 faces less then number of vertices in the strip.
+    // As we need seperate faces during rendering, the strips are splitted into triangles
+    // The last vertex of each triangle defines the picking color for the last face.
+    // The handles and indices are collected during the strip generation.
+    for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
 
+      // Cant render triangle strips as we need one color per face and this means duplicating vertices
+      perFaceBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+      perFaceBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+      perFaceBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+      
+      bufferIndex += 3;
+    }
+  } 
+  
+}
 
 //=============================================================================
 } // namespace SceneGraph
