@@ -158,6 +158,9 @@ availableDrawModes() const {
     drawModes |= DrawModes::SOLID_PHONG_SHADED;
   }
   
+  if (mesh_.has_face_normals())
+    drawModes |= DrawModes::SOLID_FLAT_SHADED;
+  
   if (mesh_.has_vertex_colors())
   {
     drawModes |= DrawModes::POINTS_COLORED;
@@ -256,6 +259,17 @@ draw(GLState& _state, unsigned int _drawMode) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
   
+  if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) && mesh_.has_face_normals())
+  {
+    glEnable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    glDepthRange(0.01, 1.0);
+    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_NORMAL_ARRAY);
+    draw_faces(PER_FACE);
+    glDepthRange(0.0, 1.0);
+  }
+  
+  
   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals() )
   {
     enable_arrays( VERTEX_ARRAY | NORMAL_VERTEX_ARRAY );
@@ -329,18 +343,21 @@ TriStripNodeT<Mesh>::
 draw_faces(FaceMode _mode) {
   
   if ( stripProcessor_.isValid() ) {
-    if ( _mode == PER_VERTEX ) {
+    if (_mode == PER_VERTEX) {
       typename StripProcessorT<Mesh>::StripsIterator strip_it   = stripProcessor_.begin();
       typename StripProcessorT<Mesh>::StripsIterator strip_last = stripProcessor_.end();
       
       for (; strip_it!=strip_last; ++strip_it) {
         glDrawElements(GL_TRIANGLE_STRIP,
-                       strip_it->indexArray.size(),
-                       GL_UNSIGNED_INT,
+                      strip_it->indexArray.size(),
+                      GL_UNSIGNED_INT,
                         &(strip_it->indexArray)[0]  );
       }
-      
+    } else if ( _mode ==  PER_FACE ) {
+      glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
+      std::cerr << "per Face" << std::endl;
     }
+    
   } else {
     std::cerr << "Error in draw Faces! No strip data available!" << std::endl;
   }
@@ -413,7 +430,7 @@ enable_arrays(unsigned int _arrays) {
   } 
   
   //===================================================================
-  // Color Array
+  // per Vertex Color Array
   //===================================================================  
   
   /// \todo This is different to normal and vertex buffer since it uses openmesh colors directly! Check for different color representations in OpenMesh!
@@ -435,6 +452,54 @@ enable_arrays(unsigned int _arrays) {
     // Disable Color array
     enabled_arrays_ &= ~COLOR_VERTEX_ARRAY;
     glDisableClientState(GL_COLOR_ARRAY);
+  } 
+  
+  //===================================================================
+  // per Face Vertex Array
+  //===================================================================  
+  
+  // Check if we should enable the per face vertex array
+  if (_arrays & PER_FACE_VERTEX_ARRAY)  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & PER_FACE_VERTEX_ARRAY)) {
+      enabled_arrays_ |= PER_FACE_VERTEX_ARRAY;
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      glVertexPointer( stripProcessor_.perFaceVertexBuffer() );   
+      
+      glEnableClientState(GL_VERTEX_ARRAY);
+      
+    }
+  } else if (enabled_arrays_ & PER_FACE_VERTEX_ARRAY) {
+    // Disable Vertex array
+    enabled_arrays_ &= ~PER_FACE_VERTEX_ARRAY;
+    glDisableClientState(GL_VERTEX_ARRAY);
+  } 
+
+  //===================================================================
+  // per Face Normal Array
+  //===================================================================  
+
+  // Check if we should enable the per face normal array
+  if (mesh_.has_face_normals() && (_arrays & PER_FACE_NORMAL_ARRAY) )  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & PER_FACE_NORMAL_ARRAY)) {
+      enabled_arrays_ |= PER_FACE_NORMAL_ARRAY;
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      glNormalPointer( stripProcessor_.perFaceNormalBuffer() );   
+      
+      glEnableClientState(GL_NORMAL_ARRAY);
+      
+    }
+  } else if (enabled_arrays_ & PER_FACE_NORMAL_ARRAY) {
+    // Disable Normal array
+    enabled_arrays_ &= ~PER_FACE_NORMAL_ARRAY;
+    glDisableClientState(GL_NORMAL_ARRAY);
   } 
   
   //===================================================================
@@ -719,7 +784,7 @@ pick_faces(GLState& _state)
     glVertexPointer (stripProcessor_.perFaceVertexBuffer());
     glColorPointer(stripProcessor_.pickFaceColorBuffer());
     
-    glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.pickFaceBufferSize() );
+    glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
     
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -782,7 +847,7 @@ pick_any(GLState& _state)
     glVertexPointer( stripProcessor_.perFaceVertexBuffer() );
     glColorPointer(  stripProcessor_.pickFaceColorBuffer()  );
     
-    glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.pickFaceBufferSize() );
+    glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
     
     
     if (anyPickingList_)

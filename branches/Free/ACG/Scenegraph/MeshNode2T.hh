@@ -345,7 +345,9 @@ private:
     VERTEX_ARRAY            = 1,
     NORMAL_VERTEX_ARRAY     = 2,
     COLOR_VERTEX_ARRAY      = 4,
-    LINE_INDEX_ARRAY        = 8
+    LINE_INDEX_ARRAY        = 8,
+    PER_FACE_VERTEX_ARRAY   = 16,
+    PER_FACE_NORMAL_ARRAY   = 32
   };
   
   /// which arrays are currently enabled?
@@ -365,7 +367,7 @@ public:
   
 private:
   // types
-  enum FaceMode {  PER_VERTEX };
+  enum FaceMode {  PER_VERTEX, PER_FACE };
   
   /** \brief draws all vertices of the mesh
   *

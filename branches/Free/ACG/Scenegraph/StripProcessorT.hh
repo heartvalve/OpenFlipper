@@ -184,25 +184,36 @@ private:
 //===========================================================================      
 
 public:
-  /** \brief Update the per face buffer. 
+  /** \brief Update all per face buffers 
   *
-  * The buffer contains triangles
+  * The updated buffers are: per face vertex buffer, per face normal buffer (3 equal normals per face)
   */
-  void updatePerFaceVertexBuffer();
+  void updatePerFaceBuffers();
   
   /** \brief get a pointer to the per face vertex buffer
   *
   * This function will return a pointer to the first element of the per face vertex buffer.
-  * Use updatePerFaceBuffer to update the buffer before you render it via
+  * Use updatePerFaceBuffers to update the buffer before you render it via
   * glColorPointer. 
   */
   ACG::Vec3f * perFaceVertexBuffer() { return &(perFaceVertexBuffer_)[0]; };
   
+  /** \brief get a pointer to the per face normal buffer
+  *
+  * This function will return a pointer to the first element of the per face normal buffer.
+  * Use updatePerFaceBuffers to update the buffer before you render it via
+  * glColorPointer. The buffer contains 3 equal normals per face.
+  */  
+  ACG::Vec3f * perFaceNormalBuffer() { return &(perFaceNormalBuffer_)[0]; };
   
+  /** \brief Get the number of elements in the face picking buffers
+  */
+  unsigned int perFaceVertexBufferSize(){ return  perFaceVertexBuffer_.size(); };
 
 private:
   /// Buffer holding vertices for per face rendering
   std::vector< ACG::Vec3f >  perFaceVertexBuffer_;
+  std::vector< ACG::Vec3f >  perFaceNormalBuffer_;
   
 /** @} */  
 
@@ -290,17 +301,7 @@ public:
   */
   ACG::Vec4uc * pickFaceColorBuffer(){ return &(pickFaceColorBuf_)[0]; };
   
-  /** \brief get a pointer to the per edge picking vertex buffer
-  *
-  * This function will return a pointer to the first element of the picking buffer.
-  * Use updatePickingEdges to update the buffer before you render it via
-  * glColorPointer.
-  */
-  ACG::Vec3f * pickFaceVertexBuffer(){ return &(pickFaceVertexBuf_)[0]; };    
-  
-  /** \brief Get the number of elements in the face picking buffers
-  */
-  unsigned int pickFaceBufferSize(){ return  pickFaceVertexBuf_.size(); };
+
   
 private:  
   
@@ -311,8 +312,6 @@ private:
   void updatePickingFacesPolymesh(ACG::GLState& _state );
   
   std::vector< ACG::Vec4uc > pickFaceColorBuf_;
-  std::vector< ACG::Vec3f >  pickFaceVertexBuf_;
-  
   
 /** @} */  
   
