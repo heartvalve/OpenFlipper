@@ -113,9 +113,6 @@ availableDrawModes() const
 
   drawModes |= DrawModes::SOLID_SHADER;
 
-  if (mesh_.has_face_normals())
-    drawModes |= DrawModes::SOLID_FLAT_SHADED;
-
   if (mesh_.has_face_colors())
   {
     drawModes |= DrawModes::SOLID_FACES_COLORED;
@@ -239,14 +236,6 @@ draw(GLState& _state, unsigned int _drawMode)
 {
   glDepthFunc(depthFunc());
 
-  if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) && mesh_.has_face_normals())
-  {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
-    draw_faces(FACE_NORMALS);
-    glDepthRange(0.0, 1.0);
-  }
 
 //   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals())
 //   if ( ( _drawMode & DrawModes::SOLID_PHONG_SHADED ) && mesh_.has_vertex_normals() )

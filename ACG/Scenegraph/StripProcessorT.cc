@@ -607,6 +607,11 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 updatePickingFaces(ACG::GLState& _state ) {
+  
+  // Update the per face buffers
+  updatePerFaceBuffers();
+  
+  // Update the per face color picking arrays
   if ( mesh_.is_trimesh() )
     updatePickingFacesTrimesh(_state);
   else
@@ -619,7 +624,6 @@ StripProcessorT<Mesh>::
 updatePickingFacesTrimesh(ACG::GLState& _state ) {
 
   pickFaceColorBuf_.resize(mesh_.n_faces() * 3);
-  pickFaceVertexBuf_.resize(mesh_.n_faces() * 3);
   
   int idx = 0;
   
@@ -632,9 +636,6 @@ updatePickingFacesTrimesh(ACG::GLState& _state ) {
     pickFaceColorBuf_[idx]    = pickColor;
     pickFaceColorBuf_[idx+1]  = pickColor;
     pickFaceColorBuf_[idx+2]  = pickColor;
-    pickFaceVertexBuf_[idx]   = mesh_.point(fv_it=mesh_.cfv_iter(f_it));
-    pickFaceVertexBuf_[idx+1] = mesh_.point(++fv_it);
-    pickFaceVertexBuf_[idx+2] = mesh_.point(++fv_it);
     idx += 3;
   }
   
@@ -644,7 +645,7 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 updatePickingFacesPolymesh(ACG::GLState& _state ) {
-
+  
     // Get total number of triangles
     // Each strip has two vertices more than triangles
     unsigned int n_faces = 0;
@@ -682,49 +683,121 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 updatePickingAny(ACG::GLState& _state ) {
-  // Update the per Face buffer
-  updatePerFaceVertexBuffer();
   updatePickingFaces(_state);
   updatePickingEdges(_state,mesh_.n_faces());
   updatePickingVertices(_state,mesh_.n_faces() + mesh_.n_edges());
-  
 }
 
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-updatePerFaceVertexBuffer() {
-  // Get total number of triangles
-  // Each strip has two vertices more than triangles
+updatePerFaceBuffers() {
+  
   unsigned int n_faces = 0;
-  for(StripsIterator it = strips_.begin(); it != strips_.end(); ++it) 
-    n_faces += (*it).indexArray.size() - 2;
+  
+  // Get total number of triangles to render
+  if ( mesh_.is_trimesh()) {
+    // For tri meshes we now the correct number of triangles
+    n_faces = mesh_.n_faces();
+  } else {
+    // For the polyMeshes we have to count the faces in all strips
+    // Each strip has two vertices more than triangles
+    for(StripsIterator it = strips_.begin(); it != strips_.end(); ++it) 
+      n_faces += (*it).indexArray.size() - 2;
+  }
   
   // 3 vertices per face.
   perFaceVertexBuffer_.resize(n_faces * 3);
-  
+
   // Index to the current buffer position
   unsigned int bufferIndex = 0;
   
-  // Process all strips
-  for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
+  if ( mesh_.is_trimesh()) {
     
-    // process all faces in the strip
-    // The strip contains 2 faces less then number of vertices in the strip.
-    // As we need seperate faces during rendering, the strips are splitted into triangles
-    // The last vertex of each triangle defines the picking color for the last face.
-    // The handles and indices are collected during the strip generation.
-    for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
-
-      // Cant render triangle strips as we need one color per face and this means duplicating vertices
-      perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
-      perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
-      perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
-      
-      bufferIndex += 3;
+    if ( mesh_.has_face_normals() ) {
+      perFaceNormalBuffer_.resize(n_faces * 3);
+    } else {
+      perFaceNormalBuffer_.clear();
     }
-  } 
-  
+    
+    typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()), f_end(mesh_.faces_end());
+    typename Mesh::ConstFaceVertexIter  fv_it;
+
+    if (  mesh_.has_face_normals() ) {
+      for (; f_it!=f_end; ++f_it) {
+        const Vec3d normal = mesh_.normal(f_it);
+        perFaceVertexBuffer_[ bufferIndex ]     = mesh_.point(fv_it=mesh_.cfv_iter(f_it));
+        perFaceNormalBuffer_[ bufferIndex ]     = normal;
+        perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(++fv_it);
+        perFaceNormalBuffer_[ bufferIndex + 1 ] = normal;
+        perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(++fv_it);
+        perFaceNormalBuffer_[ bufferIndex + 2 ] = normal;
+        bufferIndex += 3;
+      }
+    } else {
+      for (; f_it!=f_end; ++f_it) {
+        perFaceVertexBuffer_[ bufferIndex ]   = mesh_.point(fv_it=mesh_.cfv_iter(f_it));
+        perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(++fv_it);
+        perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(++fv_it);
+        bufferIndex += 3;
+      }
+    }
+    
+  } else {
+    std::cerr << "Todo! implement face normals" << std::endl;
+    
+    if ( mesh_.has_face_normals() ) {
+      perFaceNormalBuffer_.resize(n_faces * 3);
+    } else {
+      perFaceNormalBuffer_.clear();
+    }
+    
+    if (  mesh_.has_face_normals() ) {
+    
+      // Process all strips
+      for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
+        
+        // process all faces in the strip
+        // The strip contains 2 faces less then number of vertices in the strip.
+        // As we need seperate faces during rendering, the strips are splitted into triangles
+        // The last vertex of each triangle defines the picking color for the last face.
+        // The handles and indices are collected during the strip generation.
+        for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
+          const Vec3d normal = mesh_.normal( faceMaps_[i][ stripIndex ] );
+          
+          perFaceNormalBuffer_[ bufferIndex + 0 ] = normal;
+          perFaceNormalBuffer_[ bufferIndex + 1 ] = normal;
+          perFaceNormalBuffer_[ bufferIndex + 2 ] = normal;
+          
+          // Cant render triangle strips as we need one color per face and this means duplicating vertices
+          perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+          perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+          perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+          
+          bufferIndex += 3;
+        }
+      } 
+    } else {
+      // Process all strips
+      for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
+        
+        // process all faces in the strip
+        // The strip contains 2 faces less then number of vertices in the strip.
+        // As we need seperate faces during rendering, the strips are splitted into triangles
+        // The last vertex of each triangle defines the picking color for the last face.
+        // The handles and indices are collected during the strip generation.
+        for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
+          
+          // Cant render triangle strips as we need one color per face and this means duplicating vertices
+          perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+          perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+          perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+          
+          bufferIndex += 3;
+        }
+      } 
+    }
+  }
 }
 
 //=============================================================================
