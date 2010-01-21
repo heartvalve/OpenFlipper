@@ -355,7 +355,6 @@ draw_faces(FaceMode _mode) {
       }
     } else if ( _mode ==  PER_FACE ) {
       glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
-      std::cerr << "per Face" << std::endl;
     }
     
   } else {
