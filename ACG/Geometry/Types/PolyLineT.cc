@@ -66,6 +66,7 @@
 
 #ifdef USE_PHYSIM
 #include <PhySim/Meshes/ConstrainedDelaunayT.hh>
+#include <PhySim/Meshes/MeshEdgeSamplerCGALT.hh>
 #endif
 
 #ifndef WIN32
@@ -1004,7 +1005,11 @@ resample_on_mesh_edges( MeshT& _mesh, SpatialSearchT * _ssearch)
   if( new_pl.vertex_ehandles_available())
     new_pl.vertex_ehandle(0) = -1;
 
+#ifdef USE_PHYSIM
+  MeshEdgeSamplerCGALT<MeshT, Point> mesampler( _mesh );
+#else
   MeshEdgeSamplerT<MeshT, Point> mesampler( _mesh );
+#endif
 
   for(unsigned int i=1; i<n_vertices(); ++i)
   {
