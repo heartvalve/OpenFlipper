@@ -516,11 +516,11 @@ void convertEdgeToFaceSelection(MeshT* _mesh, std::vector< int >& _edges) {
 
 template< typename MeshT >
 inline
-void selectFaces(MeshT* _mesh, std::vector< int >& _faces) {
+void selectFaces(MeshT* _mesh, IdList& _faces) {
   const int n_faces = (int)_mesh->n_faces();
 
   for ( uint i = 0 ; i < _faces.size() ; ++i )
-    if ( (_faces[i] > 0) && ( _faces[i] < n_faces ) )  {
+    if ( (_faces[i] >= 0) && ( _faces[i] < n_faces ) )  {
       typename MeshT::FaceHandle fh(_faces[i]);
       _mesh->status(fh).set_selected(true);
     }
@@ -530,11 +530,11 @@ void selectFaces(MeshT* _mesh, std::vector< int >& _faces) {
 
 template< typename MeshT >
 inline
-void unselectFaces(MeshT* _mesh, std::vector< int >& _faces) {
+void unselectFaces(MeshT* _mesh, IdList& _faces) {
   const int n_faces = (int)_mesh->n_faces();
 
   for ( uint i = 0 ; i < _faces.size() ; ++i )
-    if ( (_faces[i] > 0) && ( _faces[i] < n_faces ) )  {
+    if ( (_faces[i] >= 0) && ( _faces[i] < n_faces ) )  {
       typename MeshT::FaceHandle fh(_faces[i]);
       _mesh->status(fh).set_selected(false);
     }
