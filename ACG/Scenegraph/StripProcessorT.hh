@@ -177,8 +177,33 @@ private:
   // In case triangulation is needed
   bool                           triangulated_;
   std::vector<FaceMap>           faceMaps_;
+
+//===========================================================================
+/** @name Per face drawing arrays handling
+* @{ */
+//===========================================================================      
+
+public:
+  /** \brief Update the per face buffer. 
+  *
+  * The buffer contains triangles
+  */
+  void updatePerFaceBuffer();
   
+  /** \brief get a pointer to the per face vertex buffer
+  *
+  * This function will return a pointer to the first element of the per face vertex buffer.
+  * Use updatePerFaceBuffer to update the buffer before you render it via
+  * glColorPointer. 
+  */
+  ACG::Vec3f * perFaceBuffer() { return &(perFaceBuffer_)[0]; };
+
+private:
+  /// Buffer holding vertices for per face rendering
+  std::vector< ACG::Vec3f >  perFaceBuffer_;
   
+/** @} */  
+
 //===========================================================================
 /** @name vertex picking functions
 * @{ */
@@ -311,24 +336,9 @@ public:
   */
   ACG::Vec4uc * pickAnyColorBuffer(){ return &(pickAnyColorBuf_)[0]; };
   
-  /** \brief get a pointer to the any picking vertex buffer
-  *
-  * This function will return a pointer to the first element of the picking buffer.
-  * Use updatePickingAny to update the buffer before you render it via
-  * glColorPointer.
-  */
-  ACG::Vec3f * pickAnyVertexBuffer(){ return &(pickAnyVertexBuf_)[0]; };    
-  
 private:  
   
-  /// Call this function to update the color picking array
-  void updatePickingAnyTrimesh(ACG::GLState& _state );
-  
-  /// Call this function to update the color picking array
-  void updatePickingAnyPolymesh(ACG::GLState& _state );
-  
   std::vector< ACG::Vec4uc > pickAnyColorBuf_;
-  std::vector< ACG::Vec3f >  pickAnyVertexBuf_;
   
 /** @} */    
 };
