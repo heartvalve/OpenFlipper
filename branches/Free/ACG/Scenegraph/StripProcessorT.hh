@@ -188,7 +188,7 @@ public:
   *
   * The buffer contains triangles
   */
-  void updatePerFaceBuffer();
+  void updatePerFaceVertexBuffer();
   
   /** \brief get a pointer to the per face vertex buffer
   *
@@ -196,11 +196,13 @@ public:
   * Use updatePerFaceBuffer to update the buffer before you render it via
   * glColorPointer. 
   */
-  ACG::Vec3f * perFaceBuffer() { return &(perFaceBuffer_)[0]; };
+  ACG::Vec3f * perFaceVertexBuffer() { return &(perFaceVertexBuffer_)[0]; };
+  
+  
 
 private:
   /// Buffer holding vertices for per face rendering
-  std::vector< ACG::Vec3f >  perFaceBuffer_;
+  std::vector< ACG::Vec3f >  perFaceVertexBuffer_;
   
 /** @} */  
 

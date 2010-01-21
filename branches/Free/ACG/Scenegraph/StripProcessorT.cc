@@ -683,7 +683,7 @@ void
 StripProcessorT<Mesh>::
 updatePickingAny(ACG::GLState& _state ) {
   // Update the per Face buffer
-  updatePerFaceBuffer();
+  updatePerFaceVertexBuffer();
   updatePickingFaces(_state);
   updatePickingEdges(_state,mesh_.n_faces());
   updatePickingVertices(_state,mesh_.n_faces() + mesh_.n_edges());
@@ -693,7 +693,7 @@ updatePickingAny(ACG::GLState& _state ) {
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-updatePerFaceBuffer() {
+updatePerFaceVertexBuffer() {
   // Get total number of triangles
   // Each strip has two vertices more than triangles
   unsigned int n_faces = 0;
@@ -701,7 +701,7 @@ updatePerFaceBuffer() {
     n_faces += (*it).indexArray.size() - 2;
   
   // 3 vertices per face.
-  perFaceBuffer_.resize(n_faces * 3);
+  perFaceVertexBuffer_.resize(n_faces * 3);
   
   // Index to the current buffer position
   unsigned int bufferIndex = 0;
@@ -717,9 +717,9 @@ updatePerFaceBuffer() {
     for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
 
       // Cant render triangle strips as we need one color per face and this means duplicating vertices
-      perFaceBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
-      perFaceBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
-      perFaceBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+      perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+      perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+      perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
       
       bufferIndex += 3;
     }
