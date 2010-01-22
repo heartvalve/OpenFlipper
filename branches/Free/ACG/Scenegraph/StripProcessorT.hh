@@ -184,19 +184,13 @@ private:
 //===========================================================================      
 
 public:
-  /** \brief Update all per face buffers 
-  *
-  * The updated buffers are: per face vertex buffer, per face normal buffer (3 equal normals per face)
-  */
-  void updatePerFaceBuffers();
-  
   /** \brief get a pointer to the per face vertex buffer
   *
   * This function will return a pointer to the first element of the per face vertex buffer.
   * Use updatePerFaceBuffers to update the buffer before you render it via
   * glColorPointer. 
   */
-  ACG::Vec3f * perFaceVertexBuffer() { return &(perFaceVertexBuffer_)[0]; };
+  ACG::Vec3f * perFaceVertexBuffer();
   
   /** \brief get a pointer to the per face normal buffer
   *
@@ -204,16 +198,40 @@ public:
   * Use updatePerFaceBuffers to update the buffer before you render it via
   * glColorPointer. The buffer contains 3 equal normals per face.
   */  
-  ACG::Vec3f * perFaceNormalBuffer() { return &(perFaceNormalBuffer_)[0]; };
+  ACG::Vec3f * perFaceNormalBuffer();
+  
+  /** \brief get a pointer to the per face color buffer
+  *
+  * This function will return a pointer to the first element of the per face color buffer.
+  * Use updatePerFaceBuffers to update the buffer before you render it via
+  * glColorPointer. The buffer contains 3 equal normals per face.
+  */  
+  ACG::Vec3f * perFaceColorBuffer();  
   
   /** \brief Get the number of elements in the face picking buffers
   */
-  unsigned int perFaceVertexBufferSize(){ return  perFaceVertexBuffer_.size(); };
+  unsigned int perFaceVertexBufferSize(){ return perFaceVertexBuffer_.size(); };
 
+  /** \brief Update of the buffers
+  *
+  * This function will set all per face buffers to invalid and will force an update
+  * whe they are requested
+  */
+  void invalidatePerFaceBuffers(){ updatePerFaceBuffers_ = true; };
+  
 private:
+  /** \brief Update all per face buffers 
+  *
+  * The updated buffers are: per face vertex buffer, per face normal buffer (3 equal normals per face), per face color buffer (3 equal colors per face)
+  */
+  void updatePerFaceBuffers();
+  
   /// Buffer holding vertices for per face rendering
   std::vector< ACG::Vec3f >  perFaceVertexBuffer_;
+  std::vector< ACG::Vec3f >  perFaceColorBuffer_;
   std::vector< ACG::Vec3f >  perFaceNormalBuffer_;
+
+  bool updatePerFaceBuffers_;
   
 /** @} */  
 
