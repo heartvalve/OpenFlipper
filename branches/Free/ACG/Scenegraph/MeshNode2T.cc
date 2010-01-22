@@ -480,6 +480,7 @@ enable_arrays(unsigned int _arrays) {
       
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorVertexbuffer_);
       
+      // Explicitly give the pointer as we uploaded the data ourself!
       glColorPointer(3, GL_UNSIGNED_BYTE , 0 , 0);
       
       glEnableClientState(GL_COLOR_ARRAY);
@@ -1079,7 +1080,7 @@ update_geometry() {
   /// \todo Convert from other types in openmesh to the right representation in the node
   // Check if using floats otherwise convert to internal float array
   if ( sizeof(ColorScalar) == 1) {
-    
+    ///\todo this is wrong! Correctly detect type of colors and convert if necessary before uploading
     glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                     3 * mesh_.n_vertices() * sizeof(ColorScalar),
                     mesh_.vertex_colors(),
