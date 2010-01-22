@@ -306,6 +306,9 @@ private:
   /// normal buffer initialization flag
   bool colorVertexBufferInitialized_;
   
+  /// Internal buffer used when rendering non Vec4f colors
+  std::vector< ACG::Vec4f > colors_;
+  
   /** @} */
     
 //===========================================================================
