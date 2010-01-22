@@ -302,9 +302,11 @@ void SelectionPlugin::colorizeFaceSelection(int objectId, int r, int g, int b )
       return;
   }
   
-  object->update();
+  
   emit scriptInfo( "colorizeFaceSelection( ObjectId, "
                   + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + " )" );
+                  
+  emit updatedObject(objectId);
 
 }
   
