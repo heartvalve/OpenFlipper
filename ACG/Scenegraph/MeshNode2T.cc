@@ -1071,6 +1071,7 @@ update_geometry() {
                       
       // As we uploaded the data to the graphics card, we can clear it in the main memory                      
       normals_.clear();
+      std::vector< ACG::Vec3f >().swap(normals_);
     }
     
   }
@@ -1117,6 +1118,7 @@ update_geometry() {
       
       // As we uploaded the data to the graphics card, we can clear it in the main memory                      
       colors_.clear();
+      std::vector< ACG::Vec4f >().swap(colors_);
     }
     
   }
