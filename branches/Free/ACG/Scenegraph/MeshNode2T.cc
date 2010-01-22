@@ -481,7 +481,7 @@ enable_arrays(unsigned int _arrays) {
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorVertexbuffer_);
       
       // Explicitly give the pointer as we uploaded the data ourself!
-      glColorPointer(3, GL_UNSIGNED_BYTE , 0 , 0);
+      glColorPointer(4, GL_FLOAT , 0 , 0);
       
       glEnableClientState(GL_COLOR_ARRAY);
       
@@ -1049,20 +1049,28 @@ update_geometry() {
                     normalVertexBufferInitialized_ = true;
                     
   } else {
+    // Clear local conversion array
     normals_.clear();
-    typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
-    v_end(mesh_.vertices_end());
-    
-    for ( ; v_it != v_end ; ++v_it )
+
+    // Preallocate memory for efficiency
+    normals_.reserve( mesh_.n_vertices() );
+
+    // Convert data to the desired format
+    typename Mesh::ConstVertexIter v_end(mesh_.vertices_end());
+    for ( typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()) ; v_it != v_end ; ++v_it )
       normals_.push_back( ACG::Vec3f(mesh_.normal(v_it)) );
     
     if ( !normals_.empty() ) {
       
+      // Upload to graphics card
       glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                       3 * mesh_.n_vertices() * sizeof(float),
                       &normals_[0],
                       GL_STATIC_DRAW_ARB);
                       normalVertexBufferInitialized_ = true;
+                      
+      // As we uploaded the data to the graphics card, we can clear it in the main memory                      
+      normals_.clear();
     }
     
   }
@@ -1077,37 +1085,41 @@ update_geometry() {
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorVertexbuffer_);
   colorVertexBufferInitialized_ = false;
 
-  /// \todo Convert from other types in openmesh to the right representation in the node
-  // Check if using floats otherwise convert to internal float array
-  if ( sizeof(ColorScalar) == 1) {
-    ///\todo this is wrong! Correctly detect type of colors and convert if necessary before uploading
+  // Colors consist of 4 scalars (RGBA) with type float -> direct upload!
+  if ( sizeof(ColorScalar) == 4 && mesh_.vertex_colors()->dim() == 4 ) {
     glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                    3 * mesh_.n_vertices() * sizeof(ColorScalar),
+                    4 * mesh_.n_vertices() * sizeof(ColorScalar),
                     mesh_.vertex_colors(),
                     GL_STATIC_DRAW_ARB);
                     
-                    colorVertexBufferInitialized_ = true;
-                    
+    colorVertexBufferInitialized_ = true;
   } else {
-   std::cerr << "Invalid color format!" << std::endl; 
-  }/*else {
-    normals_.clear();
-    typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
-    v_end(mesh_.vertices_end());
+    // Format mismatch -> conversion
     
-    for ( ; v_it != v_end ; ++v_it )
-      normals_.push_back( ACG::Vec3f(mesh_.normal(v_it)) );
+    // Clear the local color conversion array
+    colors_.clear();
     
-    if ( !normals_.empty() ) {
-      
+    // Preallocate memory for efficiency
+    colors_.reserve( mesh_.n_vertices() );
+    
+    // Convert data to the desired format
+    typename Mesh::ConstVertexIter v_end(mesh_.vertices_end());
+    for ( typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()) ; v_it != v_end ; ++v_it )
+      colors_.push_back( OpenMesh::color_cast<Vec4f>(mesh_.color(v_it)) );
+    
+    if ( !colors_.empty() ) {
+      // Upload to graphics card
       glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                      3 * mesh_.n_vertices() * sizeof(float),
-                      &normals_[0],
+                      4 * mesh_.n_vertices() * sizeof(float),
+                      &colors_[0],
                       GL_STATIC_DRAW_ARB);
-                      normalVertexBufferInitialized_ = true;
+                      colorVertexBufferInitialized_ = true;
+      
+      // As we uploaded the data to the graphics card, we can clear it in the main memory                      
+      colors_.clear();
     }
     
-  }*/
+  }
 
   // ==========================================================================
   // unbind all buffers
