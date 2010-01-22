@@ -64,7 +64,9 @@ template <class Mesh>
 StripProcessorT<Mesh>::
 StripProcessorT(Mesh& _mesh) :
 mesh_(_mesh),
-triangulated_(false) {
+triangulated_(false),
+updatePerFaceBuffers_(true)
+{
 
 }
 
@@ -608,8 +610,8 @@ void
 StripProcessorT<Mesh>::
 updatePickingFaces(ACG::GLState& _state ) {
   
-  // Update the per face buffers
-  updatePerFaceBuffers();
+  // Update the per face buffers 
+ updatePerFaceBuffers();
   
   // Update the per face color picking arrays
   if ( mesh_.is_trimesh() )
@@ -695,6 +697,10 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 updatePerFaceBuffers() {
+
+  // Only update buffers if they are invalid
+  if (!updatePerFaceBuffers_) 
+    return;
   
   unsigned int n_faces = 0;
   
@@ -717,33 +723,42 @@ updatePerFaceBuffers() {
   
   if ( mesh_.is_trimesh()) {
     
-    if ( mesh_.has_face_normals() ) {
+    if ( mesh_.has_face_normals() ) 
       perFaceNormalBuffer_.resize(n_faces * 3);
-    } else {
+    else
       perFaceNormalBuffer_.clear();
-    }
+ 
+    if ( mesh_.has_face_colors() ) 
+      perFaceColorBuffer_.resize(n_faces * 3);
+    else
+      perFaceColorBuffer_.clear();    
+    
     
     typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()), f_end(mesh_.faces_end());
     typename Mesh::ConstFaceVertexIter  fv_it;
 
-    if (  mesh_.has_face_normals() ) {
-      for (; f_it!=f_end; ++f_it) {
+    
+    for (; f_it!=f_end; ++f_it) {
+      perFaceVertexBuffer_[ bufferIndex ]     = mesh_.point(fv_it=mesh_.cfv_iter(f_it));
+      perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(++fv_it);
+      perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(++fv_it);
+      
+      
+      if (  mesh_.has_face_normals() ) {
         const Vec3d normal = mesh_.normal(f_it);
-        perFaceVertexBuffer_[ bufferIndex ]     = mesh_.point(fv_it=mesh_.cfv_iter(f_it));
         perFaceNormalBuffer_[ bufferIndex ]     = normal;
-        perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(++fv_it);
         perFaceNormalBuffer_[ bufferIndex + 1 ] = normal;
-        perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(++fv_it);
         perFaceNormalBuffer_[ bufferIndex + 2 ] = normal;
-        bufferIndex += 3;
       }
-    } else {
-      for (; f_it!=f_end; ++f_it) {
-        perFaceVertexBuffer_[ bufferIndex ]   = mesh_.point(fv_it=mesh_.cfv_iter(f_it));
-        perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(++fv_it);
-        perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(++fv_it);
-        bufferIndex += 3;
+      
+      if (  mesh_.has_face_colors() ) {
+        const Vec3uc color = mesh_.color(f_it);
+        perFaceColorBuffer_[ bufferIndex ]     = color;
+        perFaceColorBuffer_[ bufferIndex + 1 ] = color;
+        perFaceColorBuffer_[ bufferIndex + 2 ] = color;
       }
+      
+      bufferIndex += 3;
     }
     
   } else {
@@ -754,79 +769,93 @@ updatePerFaceBuffers() {
       perFaceNormalBuffer_.clear();
     }
     
-    if (  mesh_.has_face_normals() ) {
+    if ( mesh_.has_face_colors() ) {
+      perFaceColorBuffer_.resize(n_faces * 3);
+    } else {
+      perFaceColorBuffer_.clear();
+    }
     
-      // Process all strips
-      for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
+    // Process all strips
+    for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
+      // The order of the vertices in the strip is alternating so we have to alter the directions as well
+      // or we get backfacing triangles although they are frontfacing
+      bool swap = true;
+      
+      // process all faces in the strip
+      // The strip contains 2 faces less then number of vertices in the strip.
+      // As we need seperate faces during rendering, the strips are splitted into triangles
+      // The last vertex of each triangle defines the color and the normal for the last face.
+      // Handles and indices are collected during the strip generation.
+      for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
         
-        // The order of the vertices in the strip is alternating so we have to alter the directions as well
-        // or we get backfacing triangles although they are frontfacing
-        bool swap = true;
         
-        // process all faces in the strip
-        // The strip contains 2 faces less then number of vertices in the strip.
-        // As we need seperate faces during rendering, the strips are splitted into triangles
-        // The last vertex of each triangle defines the picking color for the last face.
-        // The handles and indices are collected during the strip generation.
-        for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
+        if (  mesh_.has_face_normals() ) {
           const Vec3d normal = mesh_.normal( faceMaps_[i][ stripIndex ] );
-          
           perFaceNormalBuffer_[ bufferIndex + 0 ] = normal;
           perFaceNormalBuffer_[ bufferIndex + 1 ] = normal;
           perFaceNormalBuffer_[ bufferIndex + 2 ] = normal;
-        
-          if ( swap ) {
-            // Cant render triangle strips as we need one color per face and this means duplicating vertices
-            perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
-            perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
-            perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
-            swap = false;
-          } else {
-            // Cant render triangle strips as we need one color per face and this means duplicating vertices
-            perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
-            perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
-            perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
-            swap = true;
-          }
-          
-          bufferIndex += 3;
         }
-      } 
-    } else {
-      // Process all strips
-      for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
-        
-        // The order of the vertices in the strip is alternating so we have to alter the directions as well
-        // or we get backfacing triangles although they are frontfacing
-        bool swap = true;
-        
-        // process all faces in the strip
-        // The strip contains 2 faces less then number of vertices in the strip.
-        // As we need seperate faces during rendering, the strips are splitted into triangles
-        // The last vertex of each triangle defines the picking color for the last face.
-        // The handles and indices are collected during the strip generation.
-        for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
-          
-          if ( swap ) {
-            // Cant render triangle strips as we need one color per face and this means duplicating vertices
-            perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
-            perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
-            perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
-            swap = false;
-          } else {
-            // Cant render triangle strips as we need one color per face and this means duplicating vertices
-            perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
-            perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
-            perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
-            swap = true;
-          }
-          
-          bufferIndex += 3;
+      
+        if (  mesh_.has_face_colors() ) {
+          const Vec3uc color = mesh_.color( faceMaps_[i][ stripIndex ] );
+          perFaceColorBuffer_[ bufferIndex + 0 ] = color;
+          perFaceColorBuffer_[ bufferIndex + 1 ] = color;
+          perFaceColorBuffer_[ bufferIndex + 2 ] = color;
         }
-      } 
-    }
+      
+        if ( swap ) {
+          // Cant render triangle strips as we need one color per face and this means duplicating vertices
+          perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+          perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+          perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+          swap = false;
+        } else {
+          // Cant render triangle strips as we need one color per face and this means duplicating vertices
+          perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+          perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+          perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+          swap = true;
+        }
+        
+        bufferIndex += 3;
+      }
+    } 
   }
+  
+  updatePerFaceBuffers_ = false;
 }
+
+
+template <class Mesh>
+ACG::Vec3f * 
+StripProcessorT<Mesh>::
+perFaceVertexBuffer() { 
+  // Force update of the buffers if required
+  if (updatePerFaceBuffers_)
+    updatePerFaceBuffers();
+  return &(perFaceVertexBuffer_)[0]; 
+};
+
+template <class Mesh>
+ACG::Vec3f * 
+StripProcessorT<Mesh>::
+perFaceNormalBuffer() { 
+  // Force update of the buffers if required
+  if (updatePerFaceBuffers_)
+    updatePerFaceBuffers();
+  return &(perFaceNormalBuffer_)[0]; 
+};
+
+template <class Mesh>
+ACG::Vec3f * 
+StripProcessorT<Mesh>::
+perFaceColorBuffer() { 
+  // Force update of the buffers if required
+  if (updatePerFaceBuffers_)
+    updatePerFaceBuffers();
+  
+  return &(perFaceColorBuffer_)[0]; 
+};  
 
 //=============================================================================
 } // namespace SceneGraph

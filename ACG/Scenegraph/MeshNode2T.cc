@@ -166,6 +166,13 @@ availableDrawModes() const {
     drawModes |= DrawModes::POINTS_COLORED;
   }
   
+  if (mesh_.has_face_colors()) {
+    drawModes |= DrawModes::SOLID_FACES_COLORED;
+    
+    if( mesh_.has_face_normals() )
+      drawModes |= DrawModes::SOLID_FACES_COLORED_FLAT_SHADED;
+  }
+  
   return drawModes;
 }
 
@@ -305,6 +312,37 @@ draw(GLState& _state, unsigned int _drawMode) {
     //       }
     //     }
   }
+  
+  
+  if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED )&& mesh_.has_face_colors())
+  {
+    Vec4f base_color_backup = _state.base_color();
+    
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    glDepthRange(0.01, 1.0);
+    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY);    
+    draw_faces(PER_FACE);
+    glDepthRange(0.0, 1.0);
+    
+    _state.set_base_color(base_color_backup);
+  }
+  
+  
+  if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED ) && mesh_.has_face_colors() && mesh_.has_face_normals())
+  {
+    Vec4f base_color_backup = _state.base_color();
+    glEnable(GL_LIGHTING);
+    
+    glShadeModel(GL_FLAT);
+    glDepthRange(0.01, 1.0);
+    enable_arrays(PER_FACE_VERTEX_ARRAY | PER_FACE_COLOR_ARRAY | PER_FACE_NORMAL_ARRAY );
+    draw_faces(PER_FACE);
+    glDepthRange(0.0, 1.0);
+    
+    _state.set_base_color(base_color_backup);
+  }
+  
   
   enable_arrays(0);
   
@@ -500,6 +538,30 @@ enable_arrays(unsigned int _arrays) {
     enabled_arrays_ &= ~PER_FACE_NORMAL_ARRAY;
     glDisableClientState(GL_NORMAL_ARRAY);
   } 
+  
+  //===================================================================
+  // per Face Color Array
+  //===================================================================  
+  
+  // Check if we should enable the per face color array
+  if (mesh_.has_face_colors() && (_arrays & PER_FACE_COLOR_ARRAY) )  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & PER_FACE_COLOR_ARRAY)) {
+      enabled_arrays_ |= PER_FACE_COLOR_ARRAY;
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      glColorPointer( stripProcessor_.perFaceColorBuffer() );   
+      
+      glEnableClientState(GL_COLOR_ARRAY);
+      
+    }
+  } else if (enabled_arrays_ & PER_FACE_COLOR_ARRAY) {
+    // Disable Normal array
+    enabled_arrays_ &= ~PER_FACE_COLOR_ARRAY;
+    glDisableClientState(GL_COLOR_ARRAY);
+  }   
   
   //===================================================================
   // Line Index Array
@@ -1064,6 +1126,9 @@ update_topology() {
   // ==========================================================================
   stripProcessor_.clear();
   stripProcessor_.stripify();
+  
+  // Set per face arrays to invalid as they have to be regenerated
+  stripProcessor_.invalidatePerFaceBuffers();
   
 //   std::cerr << "Created " << stripProcessor_.nStrips() << " strips\n" << std::endl;
   

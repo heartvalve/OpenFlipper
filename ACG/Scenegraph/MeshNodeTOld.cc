@@ -113,14 +113,6 @@ availableDrawModes() const
 
   drawModes |= DrawModes::SOLID_SHADER;
 
-  if (mesh_.has_face_colors())
-  {
-    drawModes |= DrawModes::SOLID_FACES_COLORED;
-
-    if( mesh_.has_face_normals() )
-	   drawModes |= DrawModes::SOLID_FACES_COLORED_FLAT_SHADED;
-  }
-
   if (mesh_.has_vertex_texcoords1D())
   {
     drawModes |= DrawModes::SOLID_1DTEXTURED;
@@ -164,15 +156,6 @@ void
 MeshNodeT<Mesh>::
 enable_arrays(unsigned int _arrays)
 {
-  bool use_vbo =
-    ((_arrays == VERTEX_ARRAY || _arrays == (VERTEX_ARRAY | NORMAL_ARRAY)) &&
-     (vertexBufferInitialized_ && normalBufferInitialized_) ) ;
-//   omlog() << "Use VBO: " << use_vbo << std::endl;
-
-
-  // unbind VBO buffers
-  if (!use_vbo && vertex_buffer_)
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
   if (_arrays & TEXTURE_COORD_1D_ARRAY)
   {
@@ -249,50 +232,6 @@ draw(GLState& _state, unsigned int _drawMode)
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
   }
-
-
-  if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED )&& mesh_.has_face_colors())
-  {
-    Vec4f base_color_backup = _state.base_color();
-
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
-    draw_faces(FACE_COLORS);
-    glDepthRange(0.0, 1.0);
-
-    _state.set_base_color(base_color_backup);
-  }
-
-
-  if ( ( _drawMode & DrawModes::SOLID_FACES_COLORED_FLAT_SHADED ) && mesh_.has_face_colors() && mesh_.has_face_normals())
-  {
-    Vec4f base_color_backup = _state.base_color();
-    glEnable(GL_LIGHTING);
-
-    glShadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
-    draw_faces(FACE_NORMALS_COLORS);
-    glDepthRange(0.0, 1.0);
-
-    _state.set_base_color(base_color_backup);
-  }
-
-
-  if ( ( _drawMode & DrawModes::SOLID_POINTS_COLORED ) && mesh_.has_vertex_colors())
-  {
-    Vec4f base_color_backup = _state.base_color();
-
-    enable_arrays(VERTEX_ARRAY | COLOR_ARRAY);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
-    glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
-    glDepthRange(0.0, 1.0);
-
-    _state.set_base_color(base_color_backup);
-  }
-
 
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED ) && mesh_.has_vertex_texcoords2D())
   {

@@ -347,7 +347,8 @@ private:
     COLOR_VERTEX_ARRAY      = 4,
     LINE_INDEX_ARRAY        = 8,
     PER_FACE_VERTEX_ARRAY   = 16,
-    PER_FACE_NORMAL_ARRAY   = 32
+    PER_FACE_NORMAL_ARRAY   = 32,
+    PER_FACE_COLOR_ARRAY    = 64
   };
   
   /// which arrays are currently enabled?
