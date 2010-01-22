@@ -52,6 +52,8 @@
 #include <list>
 #include <iostream>
 
+#include <OpenMesh/Core/Utils/color_cast.hh>
+
 //== NAMESPACES ===============================================================
 
 
@@ -752,7 +754,7 @@ updatePerFaceBuffers() {
       }
       
       if (  mesh_.has_face_colors() ) {
-        const Vec3uc color = mesh_.color(f_it);
+        const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(f_it) ) ;
         perFaceColorBuffer_[ bufferIndex ]     = color;
         perFaceColorBuffer_[ bufferIndex + 1 ] = color;
         perFaceColorBuffer_[ bufferIndex + 2 ] = color;
@@ -797,7 +799,7 @@ updatePerFaceBuffers() {
         }
       
         if (  mesh_.has_face_colors() ) {
-          const Vec3uc color = mesh_.color( faceMaps_[i][ stripIndex ] );
+          const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color( faceMaps_[i][ stripIndex ] ) );
           perFaceColorBuffer_[ bufferIndex + 0 ] = color;
           perFaceColorBuffer_[ bufferIndex + 1 ] = color;
           perFaceColorBuffer_[ bufferIndex + 2 ] = color;
@@ -847,7 +849,7 @@ perFaceNormalBuffer() {
 };
 
 template <class Mesh>
-ACG::Vec3f * 
+ACG::Vec4f * 
 StripProcessorT<Mesh>::
 perFaceColorBuffer() { 
   // Force update of the buffers if required

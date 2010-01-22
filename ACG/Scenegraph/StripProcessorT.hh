@@ -206,7 +206,7 @@ public:
   * Use updatePerFaceBuffers to update the buffer before you render it via
   * glColorPointer. The buffer contains 3 equal normals per face.
   */  
-  ACG::Vec3f * perFaceColorBuffer();  
+  ACG::Vec4f * perFaceColorBuffer();  
   
   /** \brief Get the number of elements in the face picking buffers
   */
@@ -228,7 +228,7 @@ private:
   
   /// Buffer holding vertices for per face rendering
   std::vector< ACG::Vec3f >  perFaceVertexBuffer_;
-  std::vector< ACG::Vec3f >  perFaceColorBuffer_;
+  std::vector< ACG::Vec4f >  perFaceColorBuffer_;
   std::vector< ACG::Vec3f >  perFaceNormalBuffer_;
 
   bool updatePerFaceBuffers_;
