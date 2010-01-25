@@ -72,11 +72,14 @@
   }
 
  inline double nearbyint(double x) {
-   return double(int( x + 0.5));
+   if( x >= 0.0 )
+     return int( x + 0.5 );
+   else
+     return int( x - 0.5 );
  }
 
  inline double round ( double _value ) {
-   return floor( _value + 0.5 );
+   return nearbyint(_value);
  }
 
 
