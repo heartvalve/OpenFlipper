@@ -48,12 +48,15 @@
 #include "FileOFF.hh"
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <ACG/GL/GLState.hh>
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include "OpenFlipper/common/GlobalOptions.hh"
 
 #include <OpenMesh/Core/IO/IOManager.hh>
+#include <OpenMesh/Core/Utils/color_cast.hh>
 
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
@@ -61,12 +64,53 @@
 FileOFFPlugin::FileOFFPlugin()
 : loadOptions_(0),
   saveOptions_(0),
-  triMeshHandling_(0) {
+  saveBinary_(0),
+  saveVertexColor_(0),
+  saveFaceColor_(0),
+  saveAlpha_(0),
+  saveNormals_(0),
+  saveTexCoords_(0),
+  saveDefaultButton_(0),
+  triMeshHandling_(0),
+  loadVertexColor_(0),
+  loadFaceColor_(0),
+  loadAlpha_(0),
+  loadNormals_(0),
+  loadTexCoords_(0),
+  loadDefaultButton_(0),
+  userReadOptions_(0),
+  userWriteOptions_(0) {
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 void FileOFFPlugin::initializePlugin() {
+    
+    // Initialize standard options that can then be changed in the file dialogs
+    if(OpenFlipperSettings().value("FileOff/Load/VertexColor",true).toBool())
+        userReadOptions_ |= OFFImporter::VERTEXCOLOR;
+    if(OpenFlipperSettings().value("FileOff/Load/FaceColor",true).toBool())
+        userReadOptions_ |= OFFImporter::FACECOLOR;
+    if(OpenFlipperSettings().value("FileOff/Load/Alpha",true).toBool())
+        userReadOptions_ |= OFFImporter::COLORALPHA;
+    if(OpenFlipperSettings().value("FileOff/Load/Normal",true).toBool())
+        userReadOptions_ |= OFFImporter::VERTEXNORMAL;
+    if(OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool())
+        userReadOptions_ |= OFFImporter::VERTEXTEXCOORDS;
+    
+    if(OpenFlipperSettings().value("FileOff/Save/Binary",true).toBool())
+        userWriteOptions_ |= OFFImporter::BINARY;
+    if(OpenFlipperSettings().value("FileOff/Save/VertexColor",true).toBool())
+        userWriteOptions_ |= OFFImporter::VERTEXCOLOR;
+    if(OpenFlipperSettings().value("FileOff/Save/FaceColor",true).toBool())
+        userWriteOptions_ |= OFFImporter::FACECOLOR;
+    if(OpenFlipperSettings().value("FileOff/Save/Alpha",true).toBool())
+        userWriteOptions_ |= OFFImporter::COLORALPHA;
+    if(OpenFlipperSettings().value("FileOff/Save/Normal",true).toBool())
+        userWriteOptions_ |= OFFImporter::VERTEXNORMAL;
+    if(OpenFlipperSettings().value("FileOff/Save/TexCoords",true).toBool())
+        userWriteOptions_ |= OFFImporter::VERTEXTEXCOORDS;
+    
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -83,15 +127,303 @@ QString FileOFFPlugin::getSaveFilters() {
 
 //-----------------------------------------------------------------------------------------------------
 
-DataType  FileOFFPlugin::supportedType() {
+DataType FileOFFPlugin::supportedType() {
     DataType type = DATA_POLY_MESH | DATA_TRIANGLE_MESH;
     return type;
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-int FileOFFPlugin::loadObject(QString _filename) {
+void FileOFFPlugin::trimString( std::string& _string) {
+    // Trim Both leading and trailing spaces
+    
+    size_t start = _string.find_first_not_of(" \t\r\n");
+    size_t end   = _string.find_last_not_of(" \t\r\n");
+    
+    if(( std::string::npos == start ) || ( std::string::npos == end))
+        _string = "";
+    else
+        _string = _string.substr( start, end-start+1 );
+}
 
+//-----------------------------------------------------------------------------------------------------
+
+void FileOFFPlugin::updateUserOptions() {
+    
+    // If the options dialog has not been initialized, keep
+    // the initial values
+    
+    // Load options
+    if(loadVertexColor_) {
+        if(loadVertexColor_->isChecked()) userReadOptions_ |= OFFImporter::VERTEXCOLOR;
+        else { if(userReadOptions_ & OFFImporter::VERTEXCOLOR) userReadOptions_ -= OFFImporter::VERTEXCOLOR; }
+    }
+    if(loadFaceColor_) {
+        if(loadFaceColor_->isChecked()) userReadOptions_ |= OFFImporter::FACECOLOR;
+        else { if(userReadOptions_ & OFFImporter::FACECOLOR) userReadOptions_ -= OFFImporter::FACECOLOR; }
+    }
+    if(loadAlpha_) {
+        if(loadAlpha_->isChecked()) userReadOptions_ |= OFFImporter::COLORALPHA;
+        else { if(userReadOptions_ & OFFImporter::COLORALPHA) userReadOptions_ -= OFFImporter::COLORALPHA; }
+    }
+    if(loadNormals_) {
+        if(loadNormals_->isChecked()) userReadOptions_ |= OFFImporter::VERTEXNORMAL;
+        else { if(userReadOptions_ & OFFImporter::VERTEXNORMAL) userReadOptions_ -= OFFImporter::VERTEXNORMAL; }
+    }
+    if(loadTexCoords_) {
+        if(loadTexCoords_->isChecked()) userReadOptions_ |= OFFImporter::VERTEXTEXCOORDS;
+        else { if(userReadOptions_ & OFFImporter::VERTEXTEXCOORDS) userReadOptions_ -= OFFImporter::VERTEXTEXCOORDS; }
+    }
+    
+    // Save options
+    if(saveBinary_) {
+        if(saveBinary_->isChecked()) userWriteOptions_ |= OFFImporter::BINARY;
+        else { if(userWriteOptions_ & OFFImporter::BINARY) userWriteOptions_ -= OFFImporter::BINARY; }
+    }
+    if(saveVertexColor_) {
+        if(saveVertexColor_->isChecked()) userWriteOptions_ |= OFFImporter::VERTEXCOLOR;
+        else { if(userWriteOptions_ & OFFImporter::VERTEXCOLOR) userWriteOptions_ -= OFFImporter::VERTEXCOLOR; }
+    }
+    if(saveFaceColor_) {
+        if(saveFaceColor_->isChecked()) userWriteOptions_ |= OFFImporter::FACECOLOR;
+        else { if(userWriteOptions_ & OFFImporter::FACECOLOR) userWriteOptions_ -= OFFImporter::FACECOLOR; }
+    }
+    if(saveAlpha_) {
+        if(saveAlpha_->isChecked()) userWriteOptions_ |= OFFImporter::COLORALPHA;
+        else { if(userWriteOptions_ & OFFImporter::COLORALPHA) userWriteOptions_ -= OFFImporter::COLORALPHA; }
+    }
+    if(saveNormals_) {
+        if(saveNormals_->isChecked()) userWriteOptions_ |= OFFImporter::VERTEXNORMAL;
+        else { if(userWriteOptions_ & OFFImporter::VERTEXNORMAL) userWriteOptions_ -= OFFImporter::VERTEXNORMAL; }
+    }
+    if(saveTexCoords_) {
+        if(saveTexCoords_->isChecked()) userWriteOptions_ |= OFFImporter::VERTEXTEXCOORDS;
+        else { if(userWriteOptions_ & OFFImporter::VERTEXTEXCOORDS) userWriteOptions_ -= OFFImporter::VERTEXTEXCOORDS; }
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
+    
+    /* Constitution of an OFF-file
+       ==================================================================
+       [ST] [C] [N] [4][n]OFF [BINARY] # comment
+       nV nF nE # number of vertices, faces and edges (edges are skipped)
+       v[0] v[1] v[2] [n[0] n[1] n[2]] [c[0] c[1] c[1]] [t[0] t[0]]
+       ...
+       faceValence vIdx[0] ... vIdx[faceValence-1] colorspec
+       ...
+       ==================================================================
+    */
+    
+    const unsigned int LINE_LEN = 4096;
+    
+    std::ifstream ifs(_filename.toStdString().c_str());
+    
+    if (!ifs.is_open() | !ifs.good()) {
+        
+        emit log(LOGERR, tr("Error: Could not read file options of specified OFF-file! Aborting."));
+        return false;
+    }
+    
+    // read 1st line
+    char line[LINE_LEN], *p;
+    ifs.getline(line, LINE_LEN);
+    p = line;
+    
+    int remainingChars = ifs.gcount();
+
+    // check header: [ST][C][N][4][n]OFF BINARY
+    while(remainingChars > 0) {
+    
+        if ( ( remainingChars > 1 ) && ( p[0] == 'S' && p[1] == 'T') ) {
+            _importer.addOption(OFFImporter::VERTEXTEXCOORDS);
+            p += 2;
+            remainingChars -= 2;
+        } else if ( ( remainingChars > 0 ) && ( p[0] == 'C') ) {
+            _importer.addOption(OFFImporter::VERTEXCOLOR);
+            ++p;
+            --remainingChars;
+        } else if ( ( remainingChars > 0 ) && ( p[0] == 'N') ) {
+            _importer.addOption(OFFImporter::VERTEXNORMAL);
+            ++p;
+            --remainingChars;
+        } else if ( ( remainingChars > 0 ) && (p[0] == '3' ) ) {
+            ++p;
+            --remainingChars;
+        } else if ( ( remainingChars > 0 ) && (p[0] == '4' ) ) {
+            // TODO: Implement homogeneous coordinates
+            std::cerr << "Error: Homogeneous coordinates are currently not supported!" << std::endl;
+            ifs.close();
+            return false;
+            ++p;
+            --remainingChars;
+        } else if ( ( remainingChars > 0 ) && (p[0] == 'n' ) ) {
+            // TODO: Implement any space dimension
+            std::cerr << "Error: n-dimensional coordinates are currently not supported!" << std::endl;
+            ifs.close();
+            return false;
+            ++p;
+            --remainingChars;
+        } else if ( ( remainingChars >= 3 ) && (p[0] == 'O' && p[1] == 'F' && p[2] == 'F') ) {
+            // Skip "OFF " (plus space):
+            p += 4;
+            remainingChars -= 4;
+        } else if ( ( remainingChars >= 6 ) && ( strncmp(p, "BINARY", 6) == 0 ) ) {
+            _importer.addOption(OFFImporter::BINARY);
+            p += 6;
+            remainingChars -= 6;
+        } else if ( ( remainingChars > 0 ) && ( p[0] == '#' ) ) {
+            // Skip the rest of the line since it's a comment
+            remainingChars = 0;
+        } else {
+            // Skip unknown character or space
+            ++p;
+            --remainingChars;
+        }
+    }
+    
+    // Now extract data type by iterating over
+    // the face valences
+    
+    unsigned int nV, nF, dummy_uint;
+    float dummy_f;
+    unsigned int vertexCount = 0;
+    unsigned int tmp_count = 0;
+    std::string trash;
+    std::string str;
+    std::istringstream sstr;
+       
+    if(_importer.isBinary()) {
+        // Parse BINARY file
+        
+        // + #Vertices, #Faces, #Edges
+        readValue(ifs, nV);
+        readValue(ifs, nF);
+        readValue(ifs, dummy_uint);
+        
+        for (uint i=0; i<nV && !ifs.eof(); ++i) {
+            // Skip vertices
+            for(int i = 0; i < 3; ++i) readValue(ifs, dummy_f);
+            
+            if ( _importer.hasVertexNormals() ) {
+                for(int i = 0; i < 3; ++i) readValue(ifs, dummy_f);
+            }
+            
+            if ( _importer.hasVertexColors() ) {
+                for(int i = 0; i < 3; ++i) readValue(ifs, dummy_f);
+            }
+            
+            if ( _importer.hasTextureCoords() ) {
+                for(int i = 0; i < 2; ++i) readValue(ifs, dummy_f);
+            }
+        }
+        for (uint i=0; i<nF && !ifs.eof(); ++i) {
+            // Get valence of current face
+            readValue(ifs, tmp_count);
+            if(tmp_count > vertexCount) vertexCount = tmp_count;
+            
+            // Skip the rest
+            
+            // Vertex indices
+            for(uint i = 0; i < tmp_count; ++i) readValue(ifs, dummy_uint);
+            
+            // Get number of color components
+            readValue(ifs, tmp_count);
+            
+            if(!_importer.hasFaceColors() && tmp_count > 0) {
+                _importer.addOption(OFFImporter::FACECOLOR);
+            }
+            
+            // Face color
+            for (uint i = 0; i < tmp_count; ++i) {
+                readValue(ifs, dummy_f);
+            }
+        }
+        
+    } else {
+        // Parse ASCII file
+        
+        // Get whole line since there could be comments in it
+        std::getline(ifs, str);
+        sstr.str(str);
+        
+        // + #Vertices, #Faces, #Edges
+        sstr >> nV;
+        sstr >> nF;
+        sstr >> dummy_uint;
+        
+        // Skip vertices
+        for(unsigned int i = 0; i < nV; ++i) {
+            std::getline(ifs, trash);
+        }
+        
+        trash = "";
+        
+        // Count vertices per face
+        for(unsigned int i = 0; i < nF; ++i) {
+            sstr.clear();
+            std::getline(ifs, trash);
+            trimString(trash);
+            sstr.str(trash);
+            
+            sstr >> tmp_count;
+            
+            if(tmp_count > vertexCount) vertexCount = tmp_count;
+            
+            // Skip vertex indices
+            for(uint i = 0; i < tmp_count; ++i) {
+                sstr >> dummy_uint;
+            }
+            
+            // Look if there's at least one face color specified
+            // Note: Comments should not be here, so don't treat them
+            if(!_importer.hasFaceColors()) {
+                if(!sstr.eof()) {
+                    _importer.addOption(OFFImporter::FACECOLOR);
+                }
+            }
+        }
+    }
+    
+    ifs.close();
+    
+    if(vertexCount == 3) {
+        _importer.addOption(OFFImporter::TRIMESH);
+        _importer.removeOption(OFFImporter::POLYMESH);
+    } else if (vertexCount == 0) {
+        return false;
+    } else {
+        _importer.addOption(OFFImporter::POLYMESH);
+        _importer.removeOption(OFFImporter::TRIMESH);
+    }
+    
+    return true;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
+    
+    if(!readFileOptions(_filename, _importer)) {
+        return false;
+    }
+    
+    // Let's see if the user has specified some options
+    updateUserOptions();
+    
+    std::ifstream ifile(_filename.toStdString().c_str(), (_importer.isBinary() ? std::ios::binary | std::ios::in
+    : std::ios::in) );
+    
+    if (!ifile.is_open() || !ifile.good())
+    {
+        emit log(LOGERR, tr("Cannot open OFF file for reading!"));
+        return false;
+    }
+    
+    assert(ifile);
+    
     int triMeshControl = 0; // 0 == Auto-Detect
     
     if ( OpenFlipper::Options::gui() ){
@@ -102,253 +434,460 @@ int FileOFFPlugin::loadObject(QString _filename) {
         }
     }
     
-    int objectId = -1;
+    DataType type;
     
     if(triMeshControl == 0) {
-        // If Auto-Detect is selected (triMeshControl == 0)
-        objectId = loadPolyMeshObject(_filename);
-        
-        PolyMeshObject *object = 0;
-        if(!PluginFunctions::getObject(objectId, object))
-            return -1;
-        
-        for ( PolyMesh::FaceIter f_it = object->mesh()->faces_begin(); f_it != object->mesh()->faces_end() ; ++f_it) {
-            
-            // Count number of vertices for the current face
-            uint count = 0;
-            for ( PolyMesh::FaceVertexIter fv_it( *(object->mesh()),f_it); fv_it; ++fv_it )
-                ++count;
-            
-            // Check if it is a triangle. If not, this is really a poly mesh
-            if ( count != 3 ) {
-                
-                emit openedFile( objectId );
-                
-                return objectId;
-            }
-        }
-        
-    } else if (triMeshControl == 1) {
-        // If 'ask' is selected -> show dialog
-        objectId = loadPolyMeshObject(_filename);
-        
-        PolyMeshObject *object = 0;
-        if(!PluginFunctions::getObject(objectId, object))
-            return -1;
-        
-        for ( PolyMesh::FaceIter f_it = object->mesh()->faces_begin(); f_it != object->mesh()->faces_end() ; ++f_it) {
-            
-            // Count number of vertices for the current face
-            uint count = 0;
-            for ( PolyMesh::FaceVertexIter fv_it( *(object->mesh()),f_it); fv_it; ++fv_it )
-                ++count;
-            
-            // Check if it is a triangle. If not, this is really a poly mesh
-            if ( count != 3 ) {
-                
-                emit openedFile( objectId );
-                
-                return objectId;
-            }
-        }
-        
-        QMessageBox::StandardButton result = QMessageBox::question ( 0,
-            tr("TriMesh loaded as PolyMesh"),
-            tr("You opened the mesh as a poly mesh but it's actually a triangle mesh. \nShould it be opened as a triangle mesh?"),
-            (QMessageBox::Yes | QMessageBox::No ),
-            QMessageBox::Yes );
-                                                                     
-        // User decided not to reload as triangle mesh
-        if ( result == QMessageBox::No ) {
-            
-            emit openedFile( objectId );
-            
-            return objectId;
-        }
-        
-    } else if (triMeshControl == 2) {
-        // If always open as PolyMesh is selected
-        
-        objectId = loadPolyMeshObject(_filename);
-        
-        emit openedFile( objectId );
-        
-        return objectId;
+        // Auto-detect
+        type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
+    } else if(triMeshControl == 1) {
+        // Asking does not have any benefits here since
+        // the mesh file has not been loaded.
+        // Switch over to auto-detect
+        type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
+    } else if(triMeshControl == 2) {
+        // Always load as PolyMesh
+        type = DATA_POLY_MESH;
     } else {
-        // If always open as TriMesh is selected
-        
-        objectId = loadTriMeshObject(_filename);
-        
-        emit openedFile( objectId );
-        
-        return objectId;
+        // Always load as TriangleMesh
+        type = DATA_TRIANGLE_MESH;
     }
     
-    // Load object as triangle mesh
-    if(objectId != -1) emit deleteObject(objectId);
-    
-    objectId = loadTriMeshObject(_filename);
-    
-    emit openedFile( objectId );
-    
-    return objectId;
-};
-
-//-----------------------------------------------------------------------------------------------------
-
-/// load a triangle-mesh with given filename
-int FileOFFPlugin::loadTriMeshObject(QString _filename){
-
-    int id = -1;
-    emit addEmptyObject(DATA_TRIANGLE_MESH, id);
-    
-    TriMeshObject* object(0);
-    if(PluginFunctions::getObject( id, object)) {
-        
-        if ( PluginFunctions::objectCount() == 1 )
-            object->target(true);
-        
-        object->setFromFileName(_filename);
-        
-        // call the local function to update names
-        QFileInfo f(_filename);
-        object->setName( f.fileName() );
-        
-        std::string filename = std::string( _filename.toUtf8() );
-        
-        //set options
-        OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
-        
-        if ( !OpenFlipper::Options::loadingSettings() &&
-            !OpenFlipper::Options::loadingRecentFile() && loadOptions_ != 0){
-            
-            if (loadVertexColor_->isChecked())
-                opt += OpenMesh::IO::Options::VertexColor;
-            
-            if (loadFaceColor_->isChecked())
-                opt += OpenMesh::IO::Options::FaceColor;
-            
-            //ColorAlpha is only checked if loading binary off's
-            if (loadAlpha_->isChecked())
-                opt += OpenMesh::IO::Options::ColorAlpha;
-            
-            if (loadNormals_->isChecked())
-                opt += OpenMesh::IO::Options::VertexNormal;
-            
-            if (loadTexCoords_->isChecked())
-                opt += OpenMesh::IO::Options::VertexTexCoord;
-            
-        }else{
-            //let openmesh try to read everything it can
-            opt += OpenMesh::IO::Options::VertexColor;
-            opt += OpenMesh::IO::Options::FaceColor;
-            opt += OpenMesh::IO::Options::VertexNormal;
-            opt += OpenMesh::IO::Options::VertexTexCoord;
-        }
-        
-        // load file
-        bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename, opt );
-        if (!ok)
-        {
-            std::cerr << "Plugin FileOFF : Read error for Triangle Mesh\n";
-            emit deleteObject( object->id() );
-            return -1;
-        }
-        
-        object->mesh()->update_normals();
-        
-        object->update();
-        
-        object->show();
-        
-        emit log(LOGINFO,object->getObjectinfo());
-        
-        return object->id();
-        
-    } else {
-        emit log(LOGERR,"Error : Could not create new triangle mesh object.");
-        return -1;
-    }
+    return _importer.isBinary() ? parseBinary(ifile, _importer, type) : parseASCII(ifile, _importer, type);
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-/// load a poly-mesh with given filename
-int FileOFFPlugin::loadPolyMeshObject(QString _filename){
-
-    int id = -1;
-    emit addEmptyObject(DATA_POLY_MESH, id);
+bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataType _type) {
     
-    PolyMeshObject* object(0);
-    if(PluginFunctions::getObject( id, object)) {
+    unsigned int                idx;
+    unsigned int                nV, nF, dummy;
+    OpenMesh::Vec3f             v, n;
+    OpenMesh::Vec2f             t;
+    OpenMesh::Vec3i             c3;
+    OpenMesh::Vec3f             c3f;
+    OpenMesh::Vec4i             c4;
+    OpenMesh::Vec4f             c4f;
+    std::vector<VertexHandle>   vhandles;
+    VertexHandle                vh;
+    FaceHandle                  fh;
+    
+    int objectId = -1;
+    emit addEmptyObject(_type, objectId);
+    
+    BaseObject* object(0);
+    if(!PluginFunctions::getObject( objectId, object )) {
+        emit log(LOGERR, tr("Could not create new object!"));
+        return false;
+    }
+    
+    // Set initial object
+    _importer.addObject(object);
+    
+    std::string line;
+    std::istringstream sstr;
+    
+    // read header line
+    std::getline(_in, line);
+    
+    // + #Vertices, #Faces, #Edges
+    // Note: We use a stringstream because there
+    // could be comments in the line
+    std::getline(_in, line);
+    sstr.str(line);
+    sstr >> nV;
+    sstr >> nF;
+    sstr >> dummy;
+    
+    // read vertices: coord [hcoord] [normal] [color] [texcoord]
+    for (uint i=0; i<nV && !_in.eof(); ++i) {
         
-        if (PluginFunctions::objectCount() == 1 )
-            object->target(true);
+        // Always read VERTEX
+        _in >> v[0] >> v[1] >> v[2];
         
-        object->setFromFileName(_filename);
+        vh = _importer.addVertex(v);
         
-        // call the local function to update names
-        QFileInfo f(_filename);
-        object->setName( f.fileName() );
+        // perhaps read NORMAL
+        if ( _importer.hasVertexNormals() ){
+            
+            _in >> n[0] >> n[1] >> n[2];
+            
+            if(userReadOptions_ & OFFImporter::VERTEXNORMAL) {
+                int nid = _importer.addNormal(n);
+                _importer.setNormal(vh, nid);
+            }
+        }
         
-        std::string filename = std::string( _filename.toUtf8() );
+        sstr.clear();
+        std::getline(_in, line);
+        sstr.str(line);
         
-        //set options
-        OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
+        int colorType = getColorType(line, _importer.hasTextureCoords() );
         
-        if ( !OpenFlipper::Options::loadingSettings() &&
-            !OpenFlipper::Options::loadingRecentFile() && loadOptions_ != 0){
+        //perhaps read COLOR
+        if ( _importer.hasVertexColors() ){
             
-            if (loadVertexColor_->isChecked())
-                opt += OpenMesh::IO::Options::VertexColor;
+            std::string trash;
             
-            if (loadFaceColor_->isChecked())
-                opt += OpenMesh::IO::Options::FaceColor;
+            switch (colorType){
+                case 0 : break; //no color
+                case 1 : sstr >> trash; break; //one int (isn't handled atm)
+                case 2 : sstr >> trash; sstr >> trash; break; //corrupt format (ignore)
+                    // rgb int
+                case 3 : sstr >> c3[0];  sstr >> c3[1];  sstr >> c3[2];
+                if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
+                    int cidx = _importer.addColor( OpenMesh::Vec3uc( c3 ) );
+                    _importer.setVertexColor(vh, cidx);
+                }
+                break;
+                // rgba int
+                case 4 : sstr >> c4[0];  sstr >> c4[1];  sstr >> c4[2]; sstr >> c4[3];
+                if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
+                    int cidx = _importer.addColor( OpenMesh::Vec4uc( c4 ) );
+                    _importer.setVertexColor(vh, cidx);
+                    _importer.addOption(OFFImporter::COLORALPHA);
+                }
+                break;
+                // rgb floats
+                case 5 : sstr >> c3f[0];  sstr >> c3f[1];  sstr >> c3f[2];
+                if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
+                    int cidx = _importer.addColor( OpenMesh::color_cast<OpenMesh::Vec3uc, OpenMesh::Vec3f>(c3f) );
+                    _importer.setVertexColor(vh, cidx);
+                    std::cerr << "Read color" <<  c3f << std::endl;
+                }
+                break;
+                // rgba floats
+                case 6 : sstr >> c4f[0];  sstr >> c4f[1];  sstr >> c4f[2]; sstr >> c4f[3];
+                if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
+                    int cidx = _importer.addColor( OpenMesh::color_cast<OpenMesh::Vec4uc, OpenMesh::Vec4f>(c4f) );
+                    _importer.setVertexColor(vh, cidx);
+                    _importer.addOption(OFFImporter::COLORALPHA);
+                }
+                break;
+                
+                default:
+                    std::cerr << "Error in file format (colorType = " << colorType << ")\n";
+            }
+        }
+        
+        //perhaps read TEXTURE COORDS
+        if ( _importer.hasTextureCoords() ){
+            sstr >> t[0]; sstr >> t[1];
+            if ( userReadOptions_ & OFFImporter::VERTEXTEXCOORDS ) {
+                int tcidx = _importer.addTexCoord(t);
+                _importer.setVertexTexCoord(vh, tcidx);
+            }
+        }
+    }
+    
+    // faces
+    // #N <v1> <v2> .. <v(n-1)> [color spec]
+    for (uint i=0; i<nF; ++i)
+    {
+        // nV = number of Vertices for current face
+        _in >> nV;
+        
+        vhandles.clear();
+        for (uint i=0; i<nV; ++i) {
+            _in >> idx;
+            vhandles.push_back(VertexHandle(idx));
+        }
+        
+        fh = _importer.addFace(vhandles);
+        
+        //perhaps read face COLOR
+        if ( _importer.hasFaceColors() ){
             
-            // ColorAlpha is only checked if loading binary off's
-            if (loadAlpha_->isChecked())
-                opt += OpenMesh::IO::Options::ColorAlpha;
+            //take the rest of the line and check how colors are defined
+            sstr.clear();
+            std::getline(_in, line);
+            sstr.str(line);
             
-            if (loadNormals_->isChecked())
-                opt += OpenMesh::IO::Options::VertexNormal;
+            int colorType = getColorType(line, false);
             
-            if (loadTexCoords_->isChecked())
-                opt += OpenMesh::IO::Options::VertexTexCoord;
+            std::string trash;
             
+            switch (colorType){
+                case 0 : break; //no color
+                case 1 : sstr >> trash; break; //one int (isn't handled atm)
+                case 2 : sstr >> trash; sstr >> trash; break; //corrupt format (ignore)
+                    // rgb int
+                case 3 : sstr >> c3[0];  sstr >> c3[1];  sstr >> c3[2];
+                if ( userReadOptions_ & OFFImporter::FACECOLOR ) {
+                    int cidx = _importer.addColor( OpenMesh::Vec3uc( c3 ) );
+                    _importer.setFaceColor(fh, cidx);
+                }
+                break;
+                // rgba int
+                case 4 : sstr >> c4[0];  sstr >> c4[1];  sstr >> c4[2]; sstr >> c4[3];
+                if ( userReadOptions_ & OFFImporter::FACECOLOR ) {
+                    int cidx = _importer.addColor( OpenMesh::Vec4uc( c4 ) );
+                    _importer.setFaceColor(fh, cidx);
+                    _importer.addOption(OFFImporter::COLORALPHA);
+                }
+                break;
+                // rgb floats
+                case 5 : sstr >> c3f[0];  sstr >> c3f[1];  sstr >> c3f[2];
+                if ( userReadOptions_ & OFFImporter::FACECOLOR ) {
+                    int cidx = _importer.addColor( OpenMesh::color_cast<OpenMesh::Vec3uc, OpenMesh::Vec3f>(c3f) );
+                    _importer.setFaceColor(fh, cidx);
+                }
+                break;
+                // rgba floats
+                case 6 : sstr >> c4f[0];  sstr >> c4f[1];  sstr >> c4f[2]; sstr >> c4f[3];
+                if ( userReadOptions_ & OFFImporter::FACECOLOR ) {
+                    int cidx = _importer.addColor( OpenMesh::color_cast<OpenMesh::Vec4uc, OpenMesh::Vec4f>(c4f) );
+                    _importer.setFaceColor(fh, cidx);
+                    _importer.addOption(OFFImporter::COLORALPHA);
+                }
+                break;
+                
+                default:
+                    std::cerr << "Error in file format (colorType = " << colorType << ")\n";
+            }
+        }
+    }
+    
+    // File was successfully parsed.
+    return true;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+int FileOFFPlugin::getColorType(std::string& _line, bool _texCoordsAvailable) const {
+    /*
+    0 : no Color
+    1 : one int (e.g colormap index)
+    2 : two items (error!)
+    3 : 3 ints
+    4 : 4 ints
+    5 : 3 floats
+    6 : 4 floats
+    */
+        
+    // Check if we have any additional information here
+    if ( _line.size() < 1 )
+        return 0;
+    
+    //first remove spaces at start/end of the line
+    while (std::isspace(_line[0]))
+        _line = _line.substr(1);
+    while (std::isspace(_line[ _line.length()-1 ]))
+        _line = _line.substr(0, _line.length()-1);
+    
+    //count the remaining items in the line
+    size_t found;
+    int count = 0;
+    
+    found=_line.find_first_of(" ");
+    while (found!=std::string::npos){
+        count++;
+        found=_line.find_first_of(" ",found+1);
+    }
+    
+    if (!_line.empty()) count++;
+    
+    if (_texCoordsAvailable) count -= 2;
+    
+    if (count == 3 || count == 4){
+        //get first item
+        found = _line.find(" ");
+        std::string c1 = _line.substr (0,found);
+        
+        if (c1.find(".") != std::string::npos){
+   if (count == 3)
+       count = 5;
+   else
+       count = 6;
+   }
+    }
+    return count;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataType _type) {
+    
+    unsigned int                idx;
+    unsigned int                nV, nF, dummy;
+    float                       dummy_f;
+    OpenMesh::Vec3f             v, n;
+    OpenMesh::Vec3f             c;
+    float                       alpha;
+    OpenMesh::Vec2f             t;
+    std::vector<VertexHandle>   vhandles;
+    VertexHandle                vh;
+    FaceHandle                  fh;
+    
+    int objectId = -1;
+    emit addEmptyObject(_type, objectId);
+        
+    BaseObject* object(0);
+    if(!PluginFunctions::getObject( objectId, object )) {
+        emit log(LOGERR, tr("Could not create new object!"));
+        return false;
+    }
+    
+    // Set initial object
+    _importer.addObject(object);
+    
+    // read header line
+    std::string header;
+    std::getline(_in,header);
+    
+    // + #Vertices, #Faces, #Edges
+    readValue(_in, nV);
+    readValue(_in, nF);
+    readValue(_in, dummy);
+    
+    // read vertices: coord [hcoord] [normal] [color] [texcoord]
+    for (uint i=0; i<nV && !_in.eof(); ++i)
+    {
+        // Always read Vertex
+        readValue(_in, v[0]);
+        readValue(_in, v[1]);
+        readValue(_in, v[2]);
+        
+        vh = _importer.addVertex(v);
+        
+        if ( _importer.hasVertexNormals() ) {
+            readValue(_in, n[0]);
+            readValue(_in, n[1]);
+            readValue(_in, n[2]);
+            
+            if ( userReadOptions_ & OFFImporter::VERTEXNORMAL ) {
+                int nidx = _importer.addNormal(n);
+                _importer.setNormal(vh, nidx);
+            }
+        }
+        
+        if ( _importer.hasVertexColors() ) {
+            // Vertex colors are always without alpha
+            readValue(_in, c[0]);
+            readValue(_in, c[1]);
+            readValue(_in, c[2]);
+                
+            if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
+                int cidx = _importer.addColor( OpenMesh::color_cast<OpenMesh::Vec3uc, OpenMesh::Vec3f>(c) );
+                _importer.setVertexColor(vh, cidx);
+            }
+        }
+
+        if ( _importer.hasTextureCoords() ) {
+            readValue(_in, t[0]);
+            readValue(_in, t[1]);
+            
+            if ( userReadOptions_ & OFFImporter::VERTEXTEXCOORDS ) {
+                int tcidx = _importer.addTexCoord(t);
+                _importer.setVertexTexCoord(vh, tcidx);
+            }
+        }
+    }
+    
+    // faces
+    // #N <v1> <v2> .. <v(n-1)> [color spec]
+    for (uint i = 0; i<nF && !_in.eof(); ++i)
+    {
+        readValue(_in, nV);
+        
+        vhandles.clear();
+        for (uint j = 0; j < nV; ++j) {
+            readValue(_in, idx);
+            vhandles.push_back(VertexHandle(idx));
+        }
+                
+        fh = _importer.addFace(vhandles);
+
+        // nV now holds the number of color components
+        readValue(_in, nV);
+        
+        // valid face color:
+        if ( nV == 3 || nV == 4 ) {
+            
+            // Read standard rgb color
+            for(uint k = 0; k < 3; ++k) {
+                readValue(_in, c[k]);
+                --nV;
+            }
+            
+            // Color has additional alpha value
+            if(nV == 1) {
+                readValue(_in, alpha);
+            }
+            
+            if(userReadOptions_ & OFFImporter::FACECOLOR) {
+                if(userReadOptions_ & OFFImporter::COLORALPHA) {
+                    int cidx = _importer.addColor(OpenMesh::color_cast<OpenMesh::Vec4uc, OpenMesh::Vec4f>(OpenMesh::Vec4f(c[0], c[1], c[2], alpha)));
+                    _importer.setFaceColor( fh,  cidx );
+                    _importer.addOption(OFFImporter::COLORALPHA);
+                } else {
+                    int cidx = _importer.addColor(OpenMesh::color_cast<OpenMesh::Vec3uc, OpenMesh::Vec3f>(c));
+                    _importer.setFaceColor( fh,  cidx );
+                }
+            }
         } else {
-            
-            // Let openmesh try to read everything it can
-            opt += OpenMesh::IO::Options::VertexColor;
-            opt += OpenMesh::IO::Options::FaceColor;
-            opt += OpenMesh::IO::Options::VertexNormal;
-            opt += OpenMesh::IO::Options::VertexTexCoord;
+            // Skip face colors since they are not in a supported format
+            for(uint i = 0; i < nV; ++i) {
+                readValue(_in, dummy_f);
+            }
         }
-        
-        // load file
-        bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename, opt );
-        if (!ok)
-        {
-            std::cerr << "Plugin FileOFF : Read error for Poly Mesh\n";
-            emit deleteObject( object->id() );
-            return -1;
-            
-        }
-        
-        object->mesh()->update_normals();
-        
-        object->update();
-        
-        object->show();
-        
-        emit log(LOGINFO,object->getObjectinfo());
-        
-        return object->id();
-        
-    } else {
-        emit log(LOGERR,"Error : Could not create new poly mesh object.");
-        return -1;
     }
+    
+    // File was successfully parsed.
+    return true;
 }
+
+//-----------------------------------------------------------------------------------------------------
+
+int FileOFFPlugin::loadObject(QString _filename) {
+
+    OFFImporter importer;
+    
+    // Parse file
+    readOFFFile( _filename, importer );
+    
+    BaseObject* object = importer.getObject();
+    
+    if(!object) return -1;
+    
+    // Handle new PolyMeshes
+    PolyMeshObject* polyMeshObj = dynamic_cast< PolyMeshObject* > (object);
+    
+    if ( polyMeshObj ){
+        
+        if ( !importer.hasVertexNormals() )
+            polyMeshObj->mesh()->update_normals();
+        else
+            polyMeshObj->mesh()->update_face_normals();
+        
+        polyMeshObj->update();
+        polyMeshObj->show();
+    }
+    
+    // Handle new TriMeshes
+    TriMeshObject* triMeshObj = dynamic_cast< TriMeshObject* > (object);
+    
+    if ( triMeshObj ){
+        
+        if ( !importer.hasVertexNormals() || userReadOptions_ & OFFImporter::FORCE_NONORMALS )
+            triMeshObj->mesh()->update_normals();
+        else
+            triMeshObj->mesh()->update_face_normals();
+        
+        
+        
+        triMeshObj->update();
+        triMeshObj->show();
+    }
+    
+    //general stuff
+    emit log( LOGINFO, object->getObjectinfo() );
+    emit openedFile( object->id() );
+    
+    // Update viewport
+    PluginFunctions::viewAll();
+    
+    return object->id();
+};
 
 //-----------------------------------------------------------------------------------------------------
 
@@ -359,6 +898,17 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
     
     std::string filename = std::string( _filename.toUtf8() );
     
+    std::fstream ofs( filename.c_str(), std::ios_base::out );
+    
+    if (!ofs) {
+        
+        emit log(LOGERR, tr("saveObject : Cannot not open file %1 for writing!").arg(_filename) );
+        return false;
+    }
+    
+    // Get user specified options
+    updateUserOptions();
+    
     if ( object->dataType( DATA_POLY_MESH ) ) {
         
         object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
@@ -366,11 +916,13 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
         
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
         
-        if (OpenMesh::IO::write_mesh(*polyObj->mesh(), filename.c_str()) ){
+        if (writeMesh(ofs, *polyObj->mesh())){
             emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            ofs.close();
             return true;
         }else{
             emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+            ofs.close();
             return false;
         }
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
@@ -379,43 +931,19 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
         object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
         
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
-        
-        OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
-        
-        if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0){
-            
-            if (saveBinary_->isChecked())
-                opt += OpenMesh::IO::Options::Binary;
-            
-            if (saveVertexColor_->isChecked()){
-                opt += OpenMesh::IO::Options::VertexColor;
-            }
-            
-            if (saveFaceColor_->isChecked()){
-                opt += OpenMesh::IO::Options::FaceColor;
-            }
-            
-            if (saveAlpha_->isChecked()){
-                opt += OpenMesh::IO::Options::ColorAlpha;
-            }
-            
-            if (saveNormals_->isChecked())
-                opt += OpenMesh::IO::Options::VertexNormal;
-            
-            if (saveTexCoords_->isChecked())
-                opt += OpenMesh::IO::Options::VertexTexCoord;
-            
-        }
-        
-        if (OpenMesh::IO::write_mesh(*triObj->mesh(), filename.c_str(),opt) ) {
+                
+        if (writeMesh(ofs, *triObj->mesh())) {
             emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            ofs.close();
             return true;
         } else {
             emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+            ofs.close();
             return false;
         }
     } else {
         emit log(LOGERR, tr("Unable to save (object is not a compatible mesh type)"));
+        ofs.close();
         return false;
     }
 }
