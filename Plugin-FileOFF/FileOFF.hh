@@ -196,13 +196,15 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     void trimString( std::string& _string);
     
-    // Writer functions
+    /// Writer function
     template< class MeshT >
     bool writeMesh(std::ostream& _out, MeshT& _mesh );
     
+    /// Write binary mesh data to file
     template< class MeshT >
     bool writeBinaryData(std::ostream& _out, MeshT& _mesh );
     
+    /// Write ASCII mesh data to file
     template< class MeshT >
     bool writeASCIIData(std::ostream& _out, MeshT& _mesh );
     

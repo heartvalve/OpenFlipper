@@ -90,6 +90,8 @@ bool FileOFFPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
         }
         
         // Write vertex colors
+        // Note: Vertex colors always have only three components.
+        // This has to be determined since it can not be read dynamically in binary files.
         if(_mesh.has_vertex_colors() && (userWriteOptions_ & OFFImporter::VERTEXCOLOR)) {
             c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(vit.handle()));
             _out.precision(6);
@@ -172,6 +174,8 @@ bool FileOFFPlugin::writeBinaryData(std::ostream& _out, MeshT& _mesh ){
         }
         
         // Write vertex colors
+        // Note: Vertex colors always have only three components.
+        // This has to be determined since it can not be read dynamically in binary files.
         if(_mesh.has_vertex_colors() && (userWriteOptions_ & OFFImporter::VERTEXCOLOR)) {
             c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color(vit.handle()));
             writeValue(_out, c[0]);
