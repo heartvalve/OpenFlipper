@@ -535,14 +535,14 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                     // rgb int
                 case 3 : sstr >> c3[0];  sstr >> c3[1];  sstr >> c3[2];
                 if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color, OpenMesh::Vec3i>( c3 ) );
+                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>( c3 ) );
                     _importer.setVertexColor(vh, cidx);
                 }
                 break;
                 // rgba int
                 case 4 : sstr >> c4[0];  sstr >> c4[1];  sstr >> c4[2]; sstr >> c4[3];
                 if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color, OpenMesh::Vec4i>( c4 ) );
+                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>( c4 ) );
                     _importer.setVertexColor(vh, cidx);
                     _importer.addOption(OFFImporter::COLORALPHA);
                 }
@@ -550,7 +550,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                 // rgb floats
                 case 5 : sstr >> c3f[0];  sstr >> c3f[1];  sstr >> c3f[2];
                 if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color, OpenMesh::Vec3f>(c3f) );
+                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>(c3f) );
                     _importer.setVertexColor(vh, cidx);
                     std::cerr << "Read color" <<  c3f << std::endl;
                 }
@@ -558,7 +558,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                 // rgba floats
                 case 6 : sstr >> c4f[0];  sstr >> c4f[1];  sstr >> c4f[2]; sstr >> c4f[3];
                 if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color, OpenMesh::Vec4f>(c4f) );
+                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>(c4f) );
                     _importer.setVertexColor(vh, cidx);
                     _importer.addOption(OFFImporter::COLORALPHA);
                 }
@@ -613,14 +613,14 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                     // rgb int
                 case 3 : sstr >> c3[0];  sstr >> c3[1];  sstr >> c3[2];
                 if ( userReadOptions_ & OFFImporter::FACECOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color, OpenMesh::Vec3i>( c3 ) );
+                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>( c3 ) );
                     _importer.setFaceColor(fh, cidx);
                 }
                 break;
                 // rgba int
                 case 4 : sstr >> c4[0];  sstr >> c4[1];  sstr >> c4[2]; sstr >> c4[3];
                 if ( userReadOptions_ & OFFImporter::FACECOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color, OpenMesh::Vec4i>( c4 ) );
+                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>( c4 ) );
                     _importer.setFaceColor(fh, cidx);
                     _importer.addOption(OFFImporter::COLORALPHA);
                 }
@@ -628,14 +628,14 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                 // rgb floats
                 case 5 : sstr >> c3f[0];  sstr >> c3f[1];  sstr >> c3f[2];
                 if ( userReadOptions_ & OFFImporter::FACECOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color, OpenMesh::Vec3f>(c3f) );
+                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>(c3f) );
                     _importer.setFaceColor(fh, cidx);
                 }
                 break;
                 // rgba floats
                 case 6 : sstr >> c4f[0];  sstr >> c4f[1];  sstr >> c4f[2]; sstr >> c4f[3];
                 if ( userReadOptions_ & OFFImporter::FACECOLOR ) {
-                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color, OpenMesh::Vec4f>(c4f) );
+                    int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>(c4f) );
                     _importer.setFaceColor(fh, cidx);
                     _importer.addOption(OFFImporter::COLORALPHA);
                 }
