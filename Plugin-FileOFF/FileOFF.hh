@@ -53,13 +53,19 @@
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
-#include <OpenFlipper/BasePlugin/RPCInterface.hh>
+#include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+// Binary file support
+#include <OpenMesh/Core/IO/SR_store.hh>
+#include <limits>
+
+#include "OFFImporter.hh"
+
 class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface,
-    LoggingInterface, ScriptInterface, INIInterface
+    LoggingInterface, ScriptInterface, INIInterface, StatusbarInterface
 {
    Q_OBJECT
    Q_INTERFACES(FileInterface)
@@ -68,6 +74,7 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(ScriptInterface)
    Q_INTERFACES(INIInterface)
+   Q_INTERFACES(StatusbarInterface)
 
   signals:
     void openedFile( int _id );
@@ -80,6 +87,10 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     void emptyObjectAdded( int _id );
     void deleteObject( int _id );
+    
+    // StatusbarInterface
+    void showStatusMessage(QString _message, int _timeout = 0);
+    void setStatus( ApplicationStatus::applicationStatus _status);
 
   private slots:
 
@@ -117,18 +128,83 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     /// Loads Object and converts it to a triangle mesh if possible
     int loadObject(QString _filename);
-    
-    /// Always loads mesh as polymesh
-    int loadPolyMeshObject(QString _filename);
-    
-    /// Loads a triangle mesh
-    int loadTriMeshObject(QString _filename);
 
     bool saveObject(int _id, QString _filename);
 
-    QString version() { return QString("1.0"); };
+    QString version() { return QString("1.1"); };
 
-  private :
+  private:
+    
+    /// Before Parsing the actual file, read all features supported
+    bool readFileOptions(QString _filename, OFFImporter& _importer);
+      
+    /// Read OFF file and parse it
+    bool readOFFFile(QString _filename, OFFImporter& _importer);
+      
+    /// Parse ascii OFF file
+    bool parseASCII(std::istream& _in, OFFImporter& _importer, DataType _type);
+     
+    /// Parse binary OFF file
+    bool parseBinary(std::istream& _in, OFFImporter& _importer, DataType _type);
+    
+    /// Get color type
+    int getColorType(std::string& _line, bool _texCoordsAvailable) const;
+    
+    /// Update user options depending on which options have been selected
+    /// on the load dialog
+    void updateUserOptions();
+    
+    // Binary reader and writer helpers
+    void readValue(std::istream& _in, float& _value) const {
+        float tmp;
+        
+        OpenMesh::IO::restore( _in , tmp, false ); //assuming LSB byte order
+        _value = tmp;
+    }
+    
+    void readValue(std::istream& _in, int& _value) const {
+        int32_t tmp;
+        
+        OpenMesh::IO::restore( _in , tmp, false ); //assuming LSB byte order
+        _value = tmp;
+    }
+    
+    void readValue(std::istream& _in, unsigned int& _value) const {
+        uint32_t tmp;
+        
+        OpenMesh::IO::restore( _in , tmp, false ); //assuming LSB byte order
+        _value = tmp;
+    }
+    
+    void writeValue(std::ostream& _out, int value) const {
+        
+        uint32_t tmp = value;
+        OpenMesh::IO::store(_out, tmp, false);
+    }
+    
+    void writeValue(std::ostream& _out, unsigned int value) const {
+        
+        uint32_t tmp = value;
+        OpenMesh::IO::store(_out, tmp, false);
+    }
+    
+    void writeValue(std::ostream& _out, float value) const {
+        
+        float tmp = value;
+        OpenMesh::IO::store(_out, tmp, false);
+    }
+    
+    void trimString( std::string& _string);
+    
+    // Writer functions
+    template< class MeshT >
+    bool writeMesh(std::ostream& _out, MeshT& _mesh );
+    
+    template< class MeshT >
+    bool writeBinaryData(std::ostream& _out, MeshT& _mesh );
+    
+    template< class MeshT >
+    bool writeASCIIData(std::ostream& _out, MeshT& _mesh );
     
     //Option Widgets
     QWidget* loadOptions_;
@@ -150,6 +226,14 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox*   loadNormals_;
     QCheckBox*   loadTexCoords_;
     QPushButton* loadDefaultButton_;
+    
+    unsigned int userReadOptions_;
+    unsigned int userWriteOptions_;
 };
+
+#if defined(INCLUDE_TEMPLATES) && !defined(FILEOFFPLUGIN_C)
+#define FILEOFFPLUGIN_TEMPLATES
+#include "FileOFFT.cc"
+#endif
 
 #endif //FILEOFFPLUGIN_HH
