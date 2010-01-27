@@ -163,14 +163,14 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     }
     
     void readValue(std::istream& _in, int& _value) const {
-        int32_t tmp;
+        OpenMesh::IO::int32_t tmp;
         
         OpenMesh::IO::restore( _in , tmp, false ); //assuming LSB byte order
         _value = tmp;
     }
     
     void readValue(std::istream& _in, unsigned int& _value) const {
-        uint32_t tmp;
+        OpenMesh::IO::uint32_t tmp;
         
         OpenMesh::IO::restore( _in , tmp, false ); //assuming LSB byte order
         _value = tmp;
@@ -178,13 +178,13 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     void writeValue(std::ostream& _out, int value) const {
         
-        uint32_t tmp = value;
+        OpenMesh::IO::uint32_t tmp = value;
         OpenMesh::IO::store(_out, tmp, false);
     }
     
     void writeValue(std::ostream& _out, unsigned int value) const {
         
-        uint32_t tmp = value;
+        OpenMesh::IO::uint32_t tmp = value;
         OpenMesh::IO::store(_out, tmp, false);
     }
     
