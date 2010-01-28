@@ -72,7 +72,7 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
 
   //supported Types
   optionsBox_ = new QCheckBox(tr("use defaults"), this);
-  optionsBox_->setChecked( defaultsSaved() );
+  optionsBox_->setChecked( OpenFlipperSettings().value("Core/File/UseDefaults",false).toBool() );
   
   // add the options box to the bottom
   gridLayout->addWidget( optionsBox_, gridLayout->rowCount() , 1 );
@@ -401,28 +401,6 @@ void LoadWidget::accept() {
 
 void LoadWidget::slotSetPluginForExtension(QString _extension, int _pluginId ){
   pluginForExtension_[ _extension ] = _pluginId;
-}
-
-
-bool LoadWidget::defaultsSaved(){
-    
-  QString filename = OpenFlipper::Options::configDirStr() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini";
-  
-  INIFile ini;
-  
-  if ( ! ini.connect(filename,false) ) {
-    std::cerr << (tr("Failed to connect to ini file %1").arg(filename)).toStdString() << std::endl;
-    return false;
-  }
-  
-  bool makeDefault = false;
-  
-  ini.get_entry(makeDefault, "LoadSave" , "MakeDefault" );
-
-  // close ini file
-  ini.disconnect();
-  
-  return makeDefault;
 }
 
 void LoadWidget::getPluginForExtensionINI(QStringList _extensions){

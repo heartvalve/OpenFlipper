@@ -69,28 +69,27 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
   //load defaults from ini file
   QString filename = OpenFlipper::Options::configDirStr() + OpenFlipper::Options::dirSeparator() + "OpenFlipper.ini";
   
+  /// \todo  Move to OpenFlipperSettings
   INIFile ini;
-  
-  if ( ! ini.connect(filename,false) ) {
-    std::cerr << (tr("Failed to connect to ini file %1").arg(filename)).toStdString() << std::endl;
-    return;
-  }
-
-  for (int i=0; i < boxes_.count(); i++){
-     QString pluginName;
-    
-    if ( ini.get_entry(pluginName, "LoadSave" , "Extension_" + _extensions[i] ) ){
+  if ( ini.connect(filename,false) ) {
+    for (int i=0; i < boxes_.count(); i++){
+      QString pluginName;
       
-      for (int t=0; t < (boxes_[i])->count(); t++)
-        if ( (boxes_[i])->itemText(t) == pluginName ){
-          (boxes_[i])->setCurrentIndex(t);
-          break;
-        }
+      if ( ini.get_entry(pluginName, "LoadSave" , "Extension_" + _extensions[i] ) ){
+        
+        for (int t=0; t < (boxes_[i])->count(); t++)
+          if ( (boxes_[i])->itemText(t) == pluginName ){
+            (boxes_[i])->setCurrentIndex(t);
+            break;
+          }
+      }
     }
-  }
 
-  // close ini file
-  ini.disconnect();
+    // close ini file
+    ini.disconnect();
+  } else {
+    std::cerr << (tr("Failed to connect to ini file %1").arg(filename)).toStdString() << std::endl;
+  }
   
 
   QGroupBox* group = new QGroupBox(tr("Extensions with multiple plugins"));
