@@ -73,7 +73,6 @@ class LoadWidget : public QFileDialog
     std::vector<fileTypes>& supportedTypes_;
     
     void getPluginForExtensionINI(QStringList _extensions);
-    bool defaultsSaved();
     
   public:
     int showLoad();
