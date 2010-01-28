@@ -545,6 +545,8 @@ void FileOMPlugin::slotSaveDefault() {
     OpenFlipperSettings().setValue( "FileOM/Save/VertexColor", saveVertexColor_->isChecked()  );
     OpenFlipperSettings().setValue( "FileOM/Save/FaceColor",   saveFaceColor_->isChecked()  );
     OpenFlipperSettings().setValue( "FileOM/Save/FaceNormal",   saveFaceNormal_->isChecked()  );
+    
+    OpenFlipperSettings().setValue( "Core/File/UseDefaults", true );
   
 }
 

@@ -1638,6 +1638,9 @@ void FileOBJPlugin::slotSaveDefault() {
   OpenFlipperSettings().setValue( "FileObj/Save/FaceColor",   saveFaceColor_->isChecked()  );
   OpenFlipperSettings().setValue( "FileObj/Save/Normals",     saveNormals_->isChecked()  );
   OpenFlipperSettings().setValue( "FileObj/Save/Textures",   saveTexCoords_->isChecked()  );
+  
+  
+  OpenFlipperSettings().setValue( "Core/File/UseDefaults", true );
 }
 
 Q_EXPORT_PLUGIN2( fileobjplugin , FileOBJPlugin );
