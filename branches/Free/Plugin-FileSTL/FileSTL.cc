@@ -190,6 +190,8 @@ void FileSTLPlugin::slotLoadDefault() {
 
 void FileSTLPlugin::slotSaveDefault() {
     OpenFlipperSettings().setValue( "FileSTL/Save/Binary",      saveBinary_->isChecked()  );
+    
+    OpenFlipperSettings().setValue( "Core/File/UseDefaults", true );
 }
 
 Q_EXPORT_PLUGIN2( filestlplugin , FileSTLPlugin );

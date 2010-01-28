@@ -524,6 +524,8 @@ void FilePLYPlugin::slotSaveDefault() {
     OpenFlipperSettings().setValue( "FilePLY/Save/TexCoords",   saveVertexTexCoord_->isChecked()  );
     OpenFlipperSettings().setValue( "FilePLY/Save/VertexColor", saveVertexColor_->isChecked()  );
     OpenFlipperSettings().setValue( "FilePLY/Save/FaceColor",   saveFaceColor_->isChecked()  );
+    
+    OpenFlipperSettings().setValue( "Core/File/UseDefaults", true );
   
 }
 
