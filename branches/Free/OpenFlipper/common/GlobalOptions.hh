@@ -92,7 +92,7 @@
 * * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)
 *
 * <b>File Handling</b>
-* * Core/File/UseDefaults                    Use the defaults saved in the file plugins
+* * Core/File/UseLoadDefaults                Use the defaults saved in the file plugins
 *
 * <b>Log Settings</b>
 * * Core/Log/Logfile                          This is the location of the log file
