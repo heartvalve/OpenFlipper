@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 RC6 ( ? , 8086 )</b>
+ * - <b>OpenFlipper 1.0 RC6 ( ? , 8331 )</b>
  *      - <b>Core</b>
  *              - Splitted File Plugins ( Now there are type plugins loaded first to register types and the file plugins to load data)
  *                      - Moved loading code from OpenMesh to file plugins to support multiple data types
@@ -10,6 +10,8 @@
  *              - selectionChanged, visibilityChanged and objectPropertiesChanged are now handled internally. If One of these changes, the signals
  *                will be emitted by the core and passed to the plugins.
  *              - Basic implementation to copy per Object data along with copied object
+ *	        - Implemented drag and drop for files to OpenFlipper
+ *              - Fixes for building with QT 4.6
  *      - <b>Plugin interface changes</b>
  *              - Changed PluginFunctions to return 0 object for identifier -1
  *              - Provide a QSettings interface to store per Plugin settings (called OpenFlipperSettings in globaloptions)
@@ -22,10 +24,17 @@
  *              - Updated internal types handling (directly initialized by core now) 
  *      - <b>UI</b>
  *              - Updated cursors (new cursors for some modes)
+ *              - Fixed hotspot of some cursors
  *              - Updated Icons 
  *                      - New Icons for Object Types (Group,Plane Icon)
  *                      - Icons for Datacontrol Context Menu
+ *              - Updated About dialog to include used compiler for OpenFlipper
+ *              - Improved logger widget with filtering option
+ *     - <b>GL Handling</b>
+ *              - Function to get maximum texture units
  *     - <b>Plugins</b>
+ *             - File Plugins
+ *             	       - New OBJ and OFF readers/writers which are independent of OpenMesh now
  *             - Plugin Datacontrol
  *                     - Some gui reworks
  *                     - Use new signal processing correctly
