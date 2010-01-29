@@ -183,15 +183,13 @@ QWidget* FileSTLPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
 //-----------------------------------------------------------------------------------------------------
 
 void FileSTLPlugin::slotLoadDefault() {
-    
+  OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );    
 }
 
 //-----------------------------------------------------------------------------------------------------
 
 void FileSTLPlugin::slotSaveDefault() {
     OpenFlipperSettings().setValue( "FileSTL/Save/Binary",      saveBinary_->isChecked()  );
-    
-    OpenFlipperSettings().setValue( "Core/File/UseDefaults", true );
 }
 
 Q_EXPORT_PLUGIN2( filestlplugin , FileSTLPlugin );

@@ -1091,6 +1091,8 @@ void FileOFFPlugin::slotLoadDefault() {
   OpenFlipperSettings().setValue( "FileOff/Load/TexCoords",   loadTexCoords_->isChecked()  );
 
   OpenFlipperSettings().setValue("FileOff/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
+  
+  OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
 }
 
 
@@ -1101,8 +1103,6 @@ void FileOFFPlugin::slotSaveDefault() {
   OpenFlipperSettings().setValue( "FileOff/Save/Alpha",       saveAlpha_->isChecked()  );
   OpenFlipperSettings().setValue( "FileOff/Save/Normals",     saveNormals_->isChecked()  );
   OpenFlipperSettings().setValue( "FileOff/Save/TexCoords",   saveTexCoords_->isChecked()  );
-  
-  OpenFlipperSettings().setValue( "Core/File/UseDefaults", true );
 }
 
 Q_EXPORT_PLUGIN2( fileoffplugin , FileOFFPlugin );
