@@ -542,6 +542,8 @@ void FileOMPlugin::slotLoadDefault() {
     OpenFlipperSettings().setValue( "FileOM/Load/FaceNormal",   loadFaceNormal_->isChecked()  );
 
     OpenFlipperSettings().setValue( "FileOM/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
+    
+    OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
 }
 
 
@@ -553,9 +555,6 @@ void FileOMPlugin::slotSaveDefault() {
     OpenFlipperSettings().setValue( "FileOM/Save/VertexColor", saveVertexColor_->isChecked()  );
     OpenFlipperSettings().setValue( "FileOM/Save/FaceColor",   saveFaceColor_->isChecked()  );
     OpenFlipperSettings().setValue( "FileOM/Save/FaceNormal",   saveFaceNormal_->isChecked()  );
-    
-    OpenFlipperSettings().setValue( "Core/File/UseDefaults", true );
-  
 }
 
 Q_EXPORT_PLUGIN2( fileomplugin , FileOMPlugin );

@@ -1640,8 +1640,9 @@ void FileOBJPlugin::slotLoadDefault() {
   OpenFlipperSettings().setValue( "FileObj/Load/FaceColor",   loadFaceColor_->isChecked()  );
   OpenFlipperSettings().setValue( "FileObj/Load/Normals",     loadNormals_->isChecked()  );
   OpenFlipperSettings().setValue( "FileObj/Load/Textures",   loadTexCoords_->isChecked()  );
-
   OpenFlipperSettings().setValue("FileObj/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
+  
+  OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
 }
 
 
@@ -1650,8 +1651,6 @@ void FileOBJPlugin::slotSaveDefault() {
   OpenFlipperSettings().setValue( "FileObj/Save/Normals",     saveNormals_->isChecked()  );
   OpenFlipperSettings().setValue( "FileObj/Save/Textures",   saveTexCoords_->isChecked()  );
   
-  
-  OpenFlipperSettings().setValue( "Core/File/UseDefaults", true );
 }
 
 Q_EXPORT_PLUGIN2( fileobjplugin , FileOBJPlugin );

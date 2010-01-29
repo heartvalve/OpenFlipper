@@ -521,6 +521,8 @@ void FilePLYPlugin::slotLoadDefault() {
     OpenFlipperSettings().setValue( "FilePLY/Load/FaceColor",   loadFaceColor_->isChecked()  );
 
     OpenFlipperSettings().setValue( "FilePLY/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
+    
+    OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
 }
 
 
@@ -531,8 +533,6 @@ void FilePLYPlugin::slotSaveDefault() {
     OpenFlipperSettings().setValue( "FilePLY/Save/TexCoords",   saveVertexTexCoord_->isChecked()  );
     OpenFlipperSettings().setValue( "FilePLY/Save/VertexColor", saveVertexColor_->isChecked()  );
     OpenFlipperSettings().setValue( "FilePLY/Save/FaceColor",   saveFaceColor_->isChecked()  );
-    
-    OpenFlipperSettings().setValue( "Core/File/UseDefaults", true );
   
 }
 
