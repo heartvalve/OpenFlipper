@@ -72,7 +72,7 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
 
   //supported Types
   optionsBox_ = new QCheckBox(tr("use defaults"), this);
-  optionsBox_->setChecked( OpenFlipperSettings().value("Core/File/UseDefaults",false).toBool() );
+  optionsBox_->setChecked( OpenFlipperSettings().value("Core/File/UseLoadDefaults",false).toBool() );
   
   // add the options box to the bottom
   gridLayout->addWidget( optionsBox_, gridLayout->rowCount() , 1 );
