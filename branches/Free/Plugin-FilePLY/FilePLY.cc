@@ -57,6 +57,12 @@
 
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
+// Defines for the type handling drop down box
+#define TYPEAUTODETECT 0
+#define TYPEASK        1
+#define TYPEPOLY       2
+#define TYPETRIANGLE   3
+
 /// Constructor
 FilePLYPlugin::FilePLYPlugin()
 : loadOptions_(0),
@@ -92,19 +98,19 @@ DataType  FilePLYPlugin::supportedType() {
 
 int FilePLYPlugin::loadObject(QString _filename) {
 
-    int triMeshControl = 0; // 0 == Auto-Detect
+    int triMeshControl = TYPEAUTODETECT; // 0 == Auto-Detect
     
     if ( OpenFlipper::Options::gui() ){
         if ( triMeshHandling_ != 0 ){
-            triMeshControl = triMeshHandling_->currentIndex();
+          triMeshControl = triMeshHandling_->currentIndex();
         } else {
-            triMeshControl = 0;
+          triMeshControl = TYPEAUTODETECT;
         }
     }
     
     int objectId = -1;
     
-    if(triMeshControl == 0) {
+    if(triMeshControl == TYPEAUTODETECT) {
         // If Auto-Detect is selected (triMeshControl == 0)
         objectId = loadPolyMeshObject(_filename);
         
@@ -128,7 +134,8 @@ int FilePLYPlugin::loadObject(QString _filename) {
             }
         }
         
-    } else if (triMeshControl == 1) {
+    } else if (triMeshControl == TYPEASK) {
+      ///\todo Really ask, what should be done! Not only if a triangle mesh is loaded as poly mesh! Ask what should be loaded!
         // If Ask is selected -> show dialog
         objectId = loadPolyMeshObject(_filename);
         
@@ -166,7 +173,7 @@ int FilePLYPlugin::loadObject(QString _filename) {
             return objectId;
         }
                                                                      
-    } else if (triMeshControl == 2) {
+    } else if (triMeshControl == TYPEPOLY) {
         // If always open as PolyMesh is selected
         
         objectId = loadPolyMeshObject(_filename);
@@ -494,7 +501,7 @@ QWidget* FilePLYPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         connect(loadDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadDefault()));
         
         
-        triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FilePLY/Load/TriMeshHandling",2).toInt() );
+        triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FilePLY/Load/TriMeshHandling",TYPEAUTODETECT).toInt() );
         
         loadVertexNormal_->setChecked( OpenFlipperSettings().value("FilePLY/Load/Normals",true).toBool()  );
         loadVertexTexCoord_->setChecked( OpenFlipperSettings().value("FilePLY/Load/TexCoords",true).toBool()  );

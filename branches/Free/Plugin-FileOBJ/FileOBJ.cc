@@ -58,6 +58,12 @@
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
+// Defines for the type handling drop down box
+#define TYPEAUTODETECT 0
+#define TYPEASK        1
+#define TYPEPOLY       2
+#define TYPETRIANGLE   3
+
 /// Constructor
 FileOBJPlugin::FileOBJPlugin()
 : loadOptions_(0),
@@ -1209,6 +1215,8 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     return;
   }
 
+  // If we do not have a gui, we will always use the last default
+  // If we need a gui and the triMeshHandling box is not generated (==0) we also use the last default
   if ( OpenFlipper::Options::gui() && triMeshHandling_ != 0 ){
     
     QMessageBox msgBox;
@@ -1217,8 +1225,10 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
     QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
     
     switch( triMeshHandling_->currentIndex() ){
-      case 0: //ask
-
+      case TYPEAUTODETECT : //Detect
+        break;
+        
+      case TYPEASK: //ask
         msgBox.setWindowTitle( tr("Mesh types in file") );
         msgBox.setText( tr("You are about to open a file containing one or more mesh types. \n\n Which mesh type should be used?") );
         msgBox.setDefaultButton( detectButton );
@@ -1231,13 +1241,14 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
         break;
 
-      case 1: //Detect
-        break;
-      case 2: //trimesh
-        _importer.forceMeshType( OBJImporter::TRIMESH ); break;
-      case 3: //polyMesh
+      case TYPEPOLY       : //polyMesh
         _importer.forceMeshType( OBJImporter::POLYMESH ); break;
+
+      case TYPETRIANGLE   : //trimesh
+        _importer.forceMeshType( OBJImporter::TRIMESH ); break;
+        
       default: break;
+      
     }
 
   }
@@ -1591,8 +1602,8 @@ QWidget* FileOBJPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         layout->addWidget(label);
         
         triMeshHandling_ = new QComboBox();
-        triMeshHandling_->addItem( tr("Ask") );
         triMeshHandling_->addItem( tr("Detect correct type") );
+        triMeshHandling_->addItem( tr("Ask") );        
         triMeshHandling_->addItem( tr("Open as PolyMesh") );
         triMeshHandling_->addItem( tr("Open as TriangleMesh") );
         
@@ -1615,7 +1626,7 @@ QWidget* FileOBJPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         connect(loadDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadDefault()));
         
         
-        triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FileObj/Load/TriMeshHandling",2).toInt() );
+        triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FileObj/Load/TriMeshHandling",TYPEAUTODETECT).toInt() );
         
         loadFaceColor_->setChecked( OpenFlipperSettings().value("FileObj/Load/FaceColor",true).toBool()  );
         loadNormals_->setChecked( OpenFlipperSettings().value("FileObj/Load/Normals",true).toBool()  );

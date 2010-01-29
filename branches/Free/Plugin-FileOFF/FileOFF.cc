@@ -60,6 +60,12 @@
 
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
+// Defines for the type handling drop down box
+#define TYPEAUTODETECT 0
+#define TYPEASK        1
+#define TYPEPOLY       2
+#define TYPETRIANGLE   3
+
 /// Constructor
 FileOFFPlugin::FileOFFPlugin()
 : loadOptions_(0),
@@ -406,53 +412,78 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
 
 bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
     
-    if(!readFileOptions(_filename, _importer)) {
-        return false;
-    }
-    
-    // Let's see if the user has specified some options
-    updateUserOptions();
-    
-    std::ifstream ifile(_filename.toStdString().c_str(), (_importer.isBinary() ? std::ios::binary | std::ios::in
-    : std::ios::in) );
-    
-    if (!ifile.is_open() || !ifile.good())
-    {
-        emit log(LOGERR, tr("Cannot open OFF file for reading!"));
-        return false;
-    }
-    
-    assert(ifile);
-    
-    int triMeshControl = 0; // 0 == Auto-Detect
-    
-    if ( OpenFlipper::Options::gui() ){
-        if ( triMeshHandling_ != 0 ){
-            triMeshControl = triMeshHandling_->currentIndex();
-        } else {
-            triMeshControl = 0;
-        }
-    }
-    
-    DataType type;
-    
-    if(triMeshControl == 0) {
-        // Auto-detect
-        type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
-    } else if(triMeshControl == 1) {
-        // Asking does not have any benefits here since
-        // the mesh file has not been loaded.
-        // Switch over to auto-detect
-        type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
-    } else if(triMeshControl == 2) {
-        // Always load as PolyMesh
-        type = DATA_POLY_MESH;
-    } else {
-        // Always load as TriangleMesh
+  if(!readFileOptions(_filename, _importer)) {
+      return false;
+  }
+
+  // Let's see if the user has specified some options
+  updateUserOptions();
+
+  std::ifstream ifile(_filename.toStdString().c_str(), (_importer.isBinary() ? std::ios::binary | std::ios::in
+  : std::ios::in) );
+
+  if (!ifile.is_open() || !ifile.good())
+  {
+      emit log(LOGERR, tr("Cannot open OFF file for reading!"));
+      return false;
+  }
+
+  assert(ifile);
+
+  int triMeshControl = TYPEAUTODETECT; // 0 == Auto-Detect
+
+  if ( OpenFlipper::Options::gui() ){
+      if ( triMeshHandling_ != 0 ){
+          triMeshControl = triMeshHandling_->currentIndex();
+      } else {
+          triMeshControl = TYPEAUTODETECT;
+      }
+  }
+
+  QMessageBox msgBox;
+  QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
+  QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
+  QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
+
+  DataType type;
+
+  switch (triMeshControl) {
+    case  TYPEAUTODETECT:
+      // Auto-detect
+      type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
+      break;
+      
+    case TYPEASK:
+      msgBox.setWindowTitle( tr("Mesh types in file") );
+      msgBox.setText( tr("You are about to open a file containing one or more mesh types. \n\n Which mesh type should be used?") );
+      msgBox.setDefaultButton( detectButton );
+      msgBox.exec();
+      
+      if (msgBox.clickedButton() == triButton)
         type = DATA_TRIANGLE_MESH;
-    }
-    
-    return _importer.isBinary() ? parseBinary(ifile, _importer, type) : parseASCII(ifile, _importer, type);
+      else if (msgBox.clickedButton() == polyButton)
+        type = DATA_POLY_MESH;
+      else
+        type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
+      
+      break;
+      
+    case TYPEPOLY:
+      // Always load as PolyMesh
+      type = DATA_POLY_MESH;
+      break;
+      
+    case TYPETRIANGLE:
+      // Always load as TriangleMesh
+      type = DATA_TRIANGLE_MESH;
+      break;
+      
+    default:
+      break;
+      
+  }
+
+  return _importer.isBinary() ? parseBinary(ifile, _importer, type) : parseASCII(ifile, _importer, type);
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -1040,7 +1071,7 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         connect(loadDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadDefault()));
         
         
-        triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FileOff/Load/TriMeshHandling",2).toInt() );
+        triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FileOff/Load/TriMeshHandling",TYPEAUTODETECT ).toInt() );
         
         loadVertexColor_->setChecked( OpenFlipperSettings().value("FileOff/Load/VertexColor",true).toBool() );
         loadFaceColor_->setChecked( OpenFlipperSettings().value("FileOff/Load/FaceColor",true).toBool()  );
