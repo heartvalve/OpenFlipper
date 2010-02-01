@@ -512,10 +512,8 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     }
     
     // Set object's name to match file name
-    QStringList filename = _objectName.split("/");
-    if(filename.size() > 0) {
-        object->setName(filename.at(filename.size()-1));
-    }
+    QFileInfo f(_objectName);
+    object->setName(f.fileName());
     
     // Set initial object
     _importer.addObject(object);
@@ -765,10 +763,8 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
     }
     
     // Set object's name to match file name
-    QStringList filename = _objectName.split("/");
-    if(filename.size() > 0) {
-        object->setName(filename.at(filename.size()-1));
-    }
+    QFileInfo f(_objectName);
+    object->setName(f.fileName());
     
     // Set initial object
     _importer.addObject(object);
