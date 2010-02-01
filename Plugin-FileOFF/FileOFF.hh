@@ -142,10 +142,10 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     bool readOFFFile(QString _filename, OFFImporter& _importer);
       
     /// Parse ascii OFF file
-    bool parseASCII(std::istream& _in, OFFImporter& _importer, DataType _type);
+    bool parseASCII(std::istream& _in, OFFImporter& _importer, DataType _type, QString& _objectName);
      
     /// Parse binary OFF file
-    bool parseBinary(std::istream& _in, OFFImporter& _importer, DataType _type);
+    bool parseBinary(std::istream& _in, OFFImporter& _importer, DataType _type, QString& _objectName);
     
     /// Get color type
     int getColorType(std::string& _line, bool _texCoordsAvailable) const;
