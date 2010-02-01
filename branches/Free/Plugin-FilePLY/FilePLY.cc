@@ -128,16 +128,23 @@ int FilePLYPlugin::loadObject(QString _filename) {
             // Check if it is a triangle. If not, this is really a poly mesh
             if ( count != 3 ) {
                 
-                emit openedFile( objectId );
+                PolyMeshObject* object(0);
+                if(PluginFunctions::getObject( objectId, object )) {
+                    
+                    object->show();
+                    emit log(LOGINFO,object->getObjectinfo());
+                    emit openedFile( objectId );
+                }
                 
                 return objectId;
             }
         }
         
-    } else if (triMeshControl == TYPEASK) {
-      ///\todo Really ask, what should be done! Not only if a triangle mesh is loaded as poly mesh! Ask what should be loaded!
+    } else if (triMeshControl == TYPEASK) {      
         // If Ask is selected -> show dialog
         objectId = loadPolyMeshObject(_filename);
+        
+        bool triMesh = false;
         
         PolyMeshObject *object = 0;
         if(!PluginFunctions::getObject(objectId, object))
@@ -151,25 +158,31 @@ int FilePLYPlugin::loadObject(QString _filename) {
                 ++count;
             
             // Check if it is a triangle. If not, this is really a poly mesh
-            if ( count != 3 ) {
-                
-                emit openedFile( objectId );
-                
-                return objectId;
+            if ( count == 3 ) {
+                triMesh = true;
             }
         }
         
-        QMessageBox::StandardButton result = QMessageBox::question ( 0,
-            tr("TriMesh loaded as PolyMesh"),
-            tr("You opened the mesh as a poly mesh but actually its a triangle mesh. \nShould it be opened as a triangle mesh?"),
-            (QMessageBox::Yes | QMessageBox::No ),
-            QMessageBox::Yes );
-                                                                     
-        // User decided to reload as triangle mesh
-        if ( result == QMessageBox::No ) {
+        QMessageBox msgBox;
+        QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
+        QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
+        QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
+        
+        msgBox.setWindowTitle( tr("Mesh types in file") );
+        msgBox.setText( tr("You are about to open a file containing one or more mesh types. \n\n Which mesh type should be used?") );
+        msgBox.setDefaultButton( detectButton );
+        msgBox.exec();
+        
+        if ((msgBox.clickedButton() == polyButton) ||
+            (msgBox.clickedButton() == detectButton && !triMesh)) {
             
-            emit openedFile( objectId );
-            
+            PolyMeshObject* object(0);
+            if(PluginFunctions::getObject( objectId, object )) {
+                
+                object->show();
+                emit log(LOGINFO,object->getObjectinfo());
+                emit openedFile( objectId );
+            }
             return objectId;
         }
                                                                      
@@ -178,7 +191,13 @@ int FilePLYPlugin::loadObject(QString _filename) {
         
         objectId = loadPolyMeshObject(_filename);
         
-        emit openedFile( objectId );
+        PolyMeshObject* object(0);
+        if(PluginFunctions::getObject( objectId, object )) {
+            
+            object->show();
+            emit log(LOGINFO,object->getObjectinfo());
+            emit openedFile( objectId );
+        }
         
         return objectId;
     } else {
@@ -186,7 +205,13 @@ int FilePLYPlugin::loadObject(QString _filename) {
         
         objectId = loadTriMeshObject(_filename);
         
-        emit openedFile( objectId );
+        TriMeshObject* object(0);
+        if(PluginFunctions::getObject( objectId, object )) {
+            
+            object->show();
+            emit log(LOGINFO,object->getObjectinfo());
+            emit openedFile( objectId );
+        }
         
         return objectId;
     }
@@ -196,7 +221,13 @@ int FilePLYPlugin::loadObject(QString _filename) {
     
     objectId = loadTriMeshObject(_filename);
     
-    emit openedFile( objectId );
+    TriMeshObject* object(0);
+    if(PluginFunctions::getObject( objectId, object )) {
+        
+        object->show();
+        emit log(LOGINFO,object->getObjectinfo());
+        emit openedFile( objectId );
+    }
     
     return objectId;
 };
@@ -263,10 +294,6 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename){
         object->mesh()->update_normals();
         
         object->update();
-        
-        object->show();
-        
-        emit log(LOGINFO,object->getObjectinfo());
         
         return object->id();
         
@@ -339,10 +366,6 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename){
         object->mesh()->update_normals();
         
         object->update();
-        
-        object->show();
-        
-        emit log(LOGINFO,object->getObjectinfo());
         
         return object->id();
         
