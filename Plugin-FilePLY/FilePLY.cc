@@ -144,7 +144,7 @@ int FilePLYPlugin::loadObject(QString _filename) {
         // If Ask is selected -> show dialog
         objectId = loadPolyMeshObject(_filename);
         
-        bool triMesh = false;
+        bool triMesh = true;
         
         PolyMeshObject *object = 0;
         if(!PluginFunctions::getObject(objectId, object))
@@ -158,9 +158,12 @@ int FilePLYPlugin::loadObject(QString _filename) {
                 ++count;
             
             // Check if it is a triangle. If not, this is really a poly mesh
-            if ( count == 3 ) {
-                triMesh = true;
+            if ( count != 3 ) {
+                triMesh = false;
+                break;
             }
+            
+            if(triMesh == false) break;
         }
         
         QMessageBox msgBox;
