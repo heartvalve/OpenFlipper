@@ -445,7 +445,7 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
   QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
   QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
 
-  DataType type;
+  DataType type = DATA_TRIANGLE_MESH;
 
   switch (triMeshControl) {
     case  TYPEAUTODETECT:
@@ -483,12 +483,12 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
       
   }
 
-  return _importer.isBinary() ? parseBinary(ifile, _importer, type) : parseASCII(ifile, _importer, type);
+  return _importer.isBinary() ? parseBinary(ifile, _importer, type, _filename) : parseASCII(ifile, _importer, type, _filename);
 }
 
 //-----------------------------------------------------------------------------------------------------
 
-bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataType _type) {
+bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataType _type, QString& _objectName) {
     
     unsigned int                idx;
     unsigned int                nV, nF, dummy;
@@ -509,6 +509,12 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     if(!PluginFunctions::getObject( objectId, object )) {
         emit log(LOGERR, tr("Could not create new object!"));
         return false;
+    }
+    
+    // Set object's name to match file name
+    QStringList filename = _objectName.split("/");
+    if(filename.size() > 0) {
+        object->setName(filename.at(filename.size()-1));
     }
     
     // Set initial object
@@ -736,14 +742,14 @@ int FileOFFPlugin::getColorType(std::string& _line, bool _texCoordsAvailable) co
 
 //-----------------------------------------------------------------------------------------------------
 
-bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataType _type) {
+bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataType _type, QString& _objectName) {
     
     unsigned int                idx;
     unsigned int                nV, nF, dummy;
     float                       dummy_f;
     OpenMesh::Vec3f             v, n;
     OpenMesh::Vec3f             c;
-    float                       alpha;
+    float                       alpha = 1.0f;
     OpenMesh::Vec2f             t;
     std::vector<VertexHandle>   vhandles;
     VertexHandle                vh;
@@ -756,6 +762,12 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
     if(!PluginFunctions::getObject( objectId, object )) {
         emit log(LOGERR, tr("Could not create new object!"));
         return false;
+    }
+    
+    // Set object's name to match file name
+    QStringList filename = _objectName.split("/");
+    if(filename.size() > 0) {
+        object->setName(filename.at(filename.size()-1));
     }
     
     // Set initial object
