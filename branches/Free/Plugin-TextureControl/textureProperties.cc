@@ -99,13 +99,24 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
 
   textureList->clear();
 
+  QTreeWidgetItem* activeItem = 0;
+  
   for (uint i=0; i < texData_->textures().size(); i++)
     if ( ! texData_->textures()[i].hidden() ) {
       if (  texData_->textures()[i].type() != MULTITEXTURE ) {
-         if ( !texData_->textures()[i].visibleName().isEmpty() )
-           textureList->addTopLevelItem( new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].visibleName() ) ) );
-         else
-           textureList->addTopLevelItem( new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].name() ) ) );
+        
+        QTreeWidgetItem* item = 0;
+        
+        if ( !texData_->textures()[i].visibleName().isEmpty() )
+          item = new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].visibleName() ) );
+        else
+          item = new QTreeWidgetItem((QTreeWidget*)0, QStringList( texData_->textures()[i].name() ) );
+        
+        textureList->addTopLevelItem( item );
+        
+        if (texData_->textures()[i].enabled())
+          activeItem = item;
+         
       } else {
         QTreeWidgetItem* parent = 0;
         if ( !texData_->textures()[i].visibleName().isEmpty() )
@@ -116,6 +127,9 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
         textureList->addTopLevelItem( parent ) ;
         for ( int j = 0 ; j < texData_->textures()[i].multiTextureList.size() ; ++j )
           textureList->addTopLevelItem( new QTreeWidgetItem(parent, QStringList(texData_->textures()[i].multiTextureList[j] )) );
+        
+        if (texData_->textures()[i].enabled())
+          activeItem = parent;
       }
     }
 
@@ -133,9 +147,16 @@ void texturePropertiesWidget::show(TextureData* _texData, int _id, QString _name
 
   propChanged_ = false;
 
-  textureList->setCurrentItem( textureList->topLevelItem(0) );
-  textureChanged( textureList->topLevelItem(0), 0 );
-
+  if (activeItem == 0){
+    
+    textureList->setCurrentItem( textureList->topLevelItem(0) );
+    textureChanged( textureList->topLevelItem(0), 0 );
+    
+  } else {
+    textureList->setCurrentItem( activeItem );
+    textureChanged( activeItem, 0 );
+  }
+  
   QDialog::show();
 }
 
