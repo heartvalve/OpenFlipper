@@ -67,7 +67,9 @@ StripProcessorT<Mesh>::
 StripProcessorT(Mesh& _mesh) :
 mesh_(_mesh),
 triangulated_(false),
-updatePerFaceBuffers_(true)
+updatePerEdgeBuffers_(true),
+updatePerFaceBuffers_(true),
+indexPropertyName_("f:textureindex")
 {
 
 }
@@ -328,6 +330,19 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
     strip.push_back(mesh_.to_vertex_handle(_start_hh).idx());
     
     // Don't update face map here! See below why
+    
+    
+    // Check if we have to take care of textures
+    // If this property is not available, we do not have texture info and will therefore 
+    // skip texture handling in strip generation
+    bool textureHandling = false;
+    OpenMesh::FPropHandleT< int > texture_index_property;
+    if ( mesh_.get_property_handle(texture_index_property,indexPropertyName_)  ) {
+      std::cerr << "Texture index property found!" << std::endl;
+      textureHandling = true;
+    } else {
+      std::cerr << "No textures" << std::endl;
+    }
 
     // Walk along the strip: 1st direction
     // We construct the strip by using alternating vertices
@@ -588,8 +603,11 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 updatePickingEdges(ACG::GLState& _state,  uint _offset ) {
+  
+  updatePerEdgeBuffers();
+  
   pickEdgeColorBuf_.resize(mesh_.n_edges() * 2);
-  pickEdgeVertexBuf_.resize(mesh_.n_edges() * 2);
+  
   
   int idx = 0;
   
@@ -600,9 +618,7 @@ updatePickingEdges(ACG::GLState& _state,  uint _offset ) {
     
     pickEdgeColorBuf_[idx]    = pickColor;
     pickEdgeColorBuf_[idx+1]  = pickColor;
-    
-    pickEdgeVertexBuf_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0)));
-    pickEdgeVertexBuf_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1)));
+
     idx += 2;
   }
 }
@@ -693,6 +709,63 @@ updatePickingAny(ACG::GLState& _state ) {
   updatePickingFaces(_state);
   updatePickingEdges(_state,mesh_.n_faces());
   updatePickingVertices(_state,mesh_.n_faces() + mesh_.n_edges());
+}
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePerEdgeBuffers() {
+  // Only update buffers if they are invalid
+  if (!updatePerEdgeBuffers_) 
+    return;
+  
+  perEdgeVertexBuffer_.resize(mesh_.n_edges() * 2);
+  
+  if ( mesh_.has_edge_colors() ) {
+    perEdgeColorBuffer_.resize(mesh_.n_edges() * 2);
+    std::cerr << "Per Edge color buffer generated" << std::endl;
+  } else
+    perEdgeColorBuffer_.clear();    
+  
+  unsigned int idx = 0;
+  
+  typename Mesh::ConstEdgeIter  e_it(mesh_.edges_sbegin()), e_end(mesh_.edges_end());
+  for (; e_it!=e_end; ++e_it) {
+    
+    perEdgeVertexBuffer_[idx]   = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 0)));
+    perEdgeVertexBuffer_[idx+1] = mesh_.point(mesh_.to_vertex_handle(mesh_.halfedge_handle(e_it, 1)));
+    
+    if (  mesh_.has_edge_colors() ) {
+      const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(e_it) ) ;
+      perEdgeColorBuffer_[ idx ]     = color;
+      perEdgeColorBuffer_[ idx + 1 ] = color;
+    }
+    
+    idx += 2;
+  }
+  
+  updatePerEdgeBuffers_ = false;
+  
+}
+
+template <class Mesh>
+ACG::Vec3f * 
+StripProcessorT<Mesh>::
+perEdgeVertexBuffer() { 
+  // Force update of the buffers if required
+  if (updatePerEdgeBuffers_)
+    updatePerEdgeBuffers();
+  return &(perEdgeVertexBuffer_)[0]; 
+}
+
+template <class Mesh>
+ACG::Vec4f * 
+StripProcessorT<Mesh>::
+perEdgeColorBuffer() { 
+  // Force update of the buffers if required
+  if (updatePerEdgeBuffers_)
+    updatePerEdgeBuffers();
+  return &(perEdgeColorBuffer_)[0]; 
 }
 
 template <class Mesh>

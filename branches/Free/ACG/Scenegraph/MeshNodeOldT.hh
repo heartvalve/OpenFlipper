@@ -181,8 +181,7 @@ private:
   // Property name of the per face texture coordinates
   std::string default_halfedge_textcoord_property_;
 
-  // Property name of the per face texture index.
-  std::string indexPropertyName_;
+
 
   // display Lists used for picking
   GLuint faceList_;

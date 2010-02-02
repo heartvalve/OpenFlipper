@@ -369,10 +369,22 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 draw_lines() {
-  if ( !lineIndexBufferInitialized_ )
-    std::cerr << "Error! Uninitialized Line buffer in draw call! " << std::endl;
+
+  if ( enabled_arrays_ & LINE_INDEX_ARRAY )
+    
+    // Check if array is set up correctly
+    if ( lineIndexBufferInitialized_ )
+      glDrawElements(GL_LINES, mesh_.n_edges() * 2, GL_UNSIGNED_INT, 0 );
+    else
+      std::cerr << "Error! Uninitialized Line buffer in draw call! " << std::endl;
+    
+  // If we are rendering per edge per vertex attributes, we need to use a seperated vertex buffer!
+  else if ( enabled_arrays_ & PER_EDGE_VERTEX_ARRAY )
+    glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
   
-  glDrawElements(GL_LINES, mesh_.n_edges() * 2, GL_UNSIGNED_INT, 0 );
+  // Something went wrong here!
+  else
+    std::cerr << "Unable to Draw! array configuration is invalid!!" << std::endl;
 }
 
 template<class Mesh>
@@ -444,7 +456,7 @@ enable_arrays(unsigned int _arrays) {
   //===================================================================
   
   // Check if we should enable the normal array
-  if (_arrays & NORMAL_VERTEX_ARRAY) {
+  if ( mesh_.has_vertex_normals() && ( _arrays & NORMAL_VERTEX_ARRAY ) ) {
     
     if ( !normalVertexBufferInitialized_ )
       std::cerr << "Error! Uninitialized normal buffer! " << std::endl;
@@ -472,7 +484,7 @@ enable_arrays(unsigned int _arrays) {
   
   /// \todo This is different to normal and vertex buffer since it uses openmesh colors directly! Check for different color representations in OpenMesh!
   // Check if we should enable the color array
-  if (_arrays & COLOR_VERTEX_ARRAY)  {
+  if ( mesh_.has_vertex_colors() && ( _arrays & COLOR_VERTEX_ARRAY ))  {
     
     // Check if its already enabled
     if (!(enabled_arrays_ & COLOR_VERTEX_ARRAY)) {
@@ -491,6 +503,54 @@ enable_arrays(unsigned int _arrays) {
     enabled_arrays_ &= ~COLOR_VERTEX_ARRAY;
     glDisableClientState(GL_COLOR_ARRAY);
   } 
+  
+  //===================================================================
+  // per Edge Vertex Array
+  //===================================================================  
+  
+  // Check if we should enable the per face vertex array
+  if (_arrays & PER_EDGE_VERTEX_ARRAY)  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & PER_EDGE_VERTEX_ARRAY)) {
+      enabled_arrays_ |= PER_EDGE_VERTEX_ARRAY;
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      glVertexPointer( stripProcessor_.perEdgeVertexBuffer() );   
+      
+      glEnableClientState(GL_VERTEX_ARRAY);
+      
+    }
+  } else if (enabled_arrays_ & PER_EDGE_VERTEX_ARRAY) {
+    // Disable Vertex array
+    enabled_arrays_ &= ~PER_EDGE_VERTEX_ARRAY;
+    glDisableClientState(GL_VERTEX_ARRAY);
+  } 
+  
+  //===================================================================
+  // per Edge Color Array
+  //===================================================================  
+  
+  // Check if we should enable the per face vertex array
+  if ( mesh_.has_edge_colors()  && ( _arrays & PER_EDGE_COLOR_ARRAY) )  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & PER_EDGE_COLOR_ARRAY)) {
+      enabled_arrays_ |= PER_EDGE_COLOR_ARRAY;
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      glColorPointer( stripProcessor_.perEdgeColorBuffer() );   
+      
+      glEnableClientState(GL_COLOR_ARRAY);
+      
+    }
+  } else if (enabled_arrays_ & PER_EDGE_COLOR_ARRAY) {
+    // Disable Vertex array
+    enabled_arrays_ &= ~PER_EDGE_COLOR_ARRAY;
+    glDisableClientState(GL_COLOR_ARRAY);
+  }   
   
   //===================================================================
   // per Face Vertex Array
@@ -776,7 +836,7 @@ pick_edges(GLState& _state, bool _front)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     
-    glVertexPointer (stripProcessor_.pickEdgeVertexBuffer());
+    glVertexPointer (stripProcessor_.perEdgeVertexBuffer());
     glColorPointer(stripProcessor_.pickEdgeColorBuffer());
     
     glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
@@ -920,7 +980,7 @@ pick_any(GLState& _state)
     
     glDepthFunc(GL_LEQUAL);
     
-    glVertexPointer (stripProcessor_.pickEdgeVertexBuffer());
+    glVertexPointer (stripProcessor_.perEdgeVertexBuffer());
     glColorPointer(stripProcessor_.pickEdgeColorBuffer());
     
     glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
@@ -1144,6 +1204,9 @@ update_topology() {
   
   // Set per face arrays to invalid as they have to be regenerated
   stripProcessor_.invalidatePerFaceBuffers();
+  
+  // Set per edge arrays to invalid as they have to be regenerated
+  stripProcessor_.invalidatePerEdgeBuffers();
   
 //   std::cerr << "Created " << stripProcessor_.nStrips() << " strips\n" << std::endl;
   
