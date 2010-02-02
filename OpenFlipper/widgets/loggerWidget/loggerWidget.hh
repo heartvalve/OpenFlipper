@@ -81,6 +81,12 @@ class LoggerWidget : public QWidget
     * This function shows the context menu
     */
     void contextMenuEvent ( QContextMenuEvent * event );
+    
+    /** \brief Called when the widget is shown
+    *
+    * Function scrolls to bottom if the object gets visible
+    */
+    void showEvent ( QShowEvent * event );
   
   private:
     
