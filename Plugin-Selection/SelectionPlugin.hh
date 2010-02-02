@@ -748,6 +748,10 @@ public:
   SelectVolumeAction(QRegion *_region, SelectionPlugin *_plugin) :
     region_(_region), plugin_(_plugin) {}
 
+  void enter (BaseNode* /*_node*/) {};
+  
+  void leave (BaseNode* /*_node*/) {};
+
   bool operator()(BaseNode* _node, ACG::GLState& _state);
 
 private:
