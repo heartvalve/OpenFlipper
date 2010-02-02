@@ -511,6 +511,9 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
 
     /// return a list of all selected edges
     IdList getEdgeSelection( int objectId );
+    
+    /// colorize the edge selection
+    void colorizeEdgeSelection(int objectId, int r, int g, int b );
 
     //==========================================
 
