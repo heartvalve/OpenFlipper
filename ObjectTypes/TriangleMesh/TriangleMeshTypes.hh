@@ -62,10 +62,6 @@
 
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 
-
-#include <ACG/Scenegraph/TriStripNodeT.hh>
-
-
 //== TYPEDEFS =================================================================
    
 /** Traits for the Meshes ( Use request ... calls to add other standard properties or add them in the via add_property.. )\n
