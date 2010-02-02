@@ -285,6 +285,11 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename){
             
         }
         
+        /// \todo only request if needed
+        object->mesh()->request_vertex_texcoords2D();
+        object->mesh()->request_halfedge_texcoords2D();
+        object->mesh()->request_face_texture_index();
+        
         // load file
         bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename, opt );
         if (!ok)
@@ -355,6 +360,11 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename){
             opt += OpenMesh::IO::Options::FaceColor;
             
         }
+        
+        /// \todo only request if needed
+        object->mesh()->request_vertex_texcoords2D();
+        object->mesh()->request_halfedge_texcoords2D();
+        object->mesh()->request_face_texture_index();
         
         // load file
         bool ok = OpenMesh::IO::read_mesh( (*object->mesh()) , filename, opt );

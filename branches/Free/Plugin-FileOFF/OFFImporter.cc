@@ -122,6 +122,10 @@ void OFFImporter::setVertexTexCoord(VertexHandle _vh, int _texCoordID){
     
     if ( _texCoordID < (int) texCoords_.size() ){
     
+      //perhaps request texCoords for the mesh
+      if ( !triMesh()->has_vertex_texcoords2D() )
+        triMesh()->request_vertex_texcoords2D();
+      
       if ( vertexMapTri_.find( _vh ) != vertexMapTri_.end() )
       triMesh()->set_texcoord2D( vertexMapTri_[_vh], texCoords_[ _texCoordID ] );
       objectOptions_ |= VERTEXTEXCOORDS;
@@ -137,6 +141,10 @@ void OFFImporter::setVertexTexCoord(VertexHandle _vh, int _texCoordID){
     
     if ( _texCoordID < (int) texCoords_.size() ){
     
+      //perhaps request texCoords for the mesh
+      if ( !polyMesh()->has_vertex_texcoords2D() )
+        polyMesh()->request_vertex_texcoords2D();
+      
       if ( vertexMapPoly_.find( _vh ) != vertexMapPoly_.end() )
       polyMesh()->set_texcoord2D( vertexMapPoly_[_vh], texCoords_[ _texCoordID ] ); 
       objectOptions_ |= VERTEXTEXCOORDS;
