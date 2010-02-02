@@ -3,6 +3,12 @@
 # This is a library
 ################################################################################
 
+message("==========================================================")
+message("The qmake build system in OpenFlipper is deprecated!")
+message("Please use cmake which is the recommended build system now.")
+message("Qmake support will be removed in the next Release!")
+message("==========================================================")
+
 
 ################################################################################
 # Needed Qt packages and build plugin
