@@ -1376,7 +1376,6 @@ int FileOBJPlugin::loadObject(QString _filename) {
 #endif
 
     //general stuff
-    emit log(LOGINFO,object->getObjectinfo());
     emit openedFile( object->id() );
     
     //textures
