@@ -233,7 +233,7 @@ void LoadWidget::loadFile(){
     
     QFileInfo fi(files[i]);
     QString filename = fi.absoluteFilePath();
-    OpenFlipperSettings().setValue("Core/CurrentDir", filename);
+    OpenFlipperSettings().setValue("Core/CurrentDir", fi.absolutePath());
     QFile file(filename);
 
     if (fi.isDir() || !file.exists()) continue; //do nothing if its a not a valid file
