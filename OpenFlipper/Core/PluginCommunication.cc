@@ -146,6 +146,17 @@ void Core::slotObjectPropertiesChanged( int _id )
  * See in the documentation of the texture plugin interfaces for further detail.
 */
 void Core::slotAddTexture( QString _textureName , QString _filename, uint _dimension, int _id) {
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"addTexture( " + _textureName + "," + _filename + ","  +  QString::number(_dimension) + ", " + QString::number(_id) +  tr(" ) called by ") +
+        QString( sender()->metaObject()->className() ) );
+      }
+    } else {
+      emit log(LOGINFO,"addTexture( " + _textureName + "," + _filename + "," +  QString::number(_dimension) + ", " + QString::number(_id) +  tr(" ) called by Core") );
+    }
+  }
+  
   emit addTexture(_textureName , _filename,_dimension,_id);
 }
 
@@ -153,6 +164,18 @@ void Core::slotAddTexture( QString _textureName , QString _filename, uint _dimen
  * See in the documentation of the texture plugin interfaces for further detail.
 */
 void Core::slotAddTexture( QString _textureName , QString _filename, uint _dimension) {
+  
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"slotAddTexture( " + _textureName + "," + _filename + ","  +  QString::number(_dimension)  +  tr(" ) called by ") +
+        QString( sender()->metaObject()->className() ) );
+      }
+    } else {
+      emit log(LOGINFO,"slotAddTexture( " + _textureName + "," + _filename + "," +", " +  QString::number(_dimension) + tr(" ) called by Core") );
+    }
+  }
+  
   emit addTexture(_textureName , _filename,_dimension);
 }
 
@@ -175,6 +198,18 @@ void Core::slotUpdateTexture( QString _name , int _identifier){
 
 
 void Core::slotMultiTextureAdded( QString _textureGroup , QString _name , QString _filename , int _id , int& _textureId ) {
+  
+  if ( OpenFlipper::Options::doSlotDebugging() ) {
+    if ( sender() != 0 ) {
+      if ( sender()->metaObject() != 0 ) {
+        emit log(LOGINFO,"slotMultiTextureAdded( " + _textureGroup + ", " + _name + "," + _filename + ","  + QString::number(_id) + tr(" ) called by ") +
+        QString( sender()->metaObject()->className() ) );
+      }
+    } else {
+      emit log(LOGINFO,"slotMultiTextureAdded( " + _textureGroup + ", " + _name + "," + _filename + ","  + QString::number(_id) + tr(" ) called by Core") );
+    }
+  }
+  
   emit addMultiTexture( _textureGroup , _name , _filename , _id , _textureId  );
 }
 
