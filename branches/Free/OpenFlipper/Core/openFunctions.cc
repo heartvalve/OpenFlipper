@@ -707,7 +707,7 @@ void Core::loadSettings(){
 
     QFileDialog fileDialog( coreWidget_,
                             tr("Load Settings"),
-                            OpenFlipper::Options::currentDirStr(),
+                            OpenFlipperSettings().value("Core/CurrentDir").toString(),
                             tr("INI files (*.ini)") );
 
     fileDialog.setOption (QFileDialog::DontUseNativeDialog, true);
@@ -763,7 +763,7 @@ void Core::loadSettings(){
 
 
     QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
-    OpenFlipper::Options::currentDir(newpath);
+    OpenFlipperSettings().setValue("Core/CurrentDir", newpath);
 
     if ( complete_name.endsWith("ini") ) {
       openIniFile( complete_name,
@@ -785,7 +785,7 @@ void Core::loadSettings(QString _filename){
     return;
 
   QString newpath = _filename.section(OpenFlipper::Options::dirSeparator(),0,-2);
-  OpenFlipper::Options::currentDir(newpath);
+  OpenFlipperSettings().setValue("Core/CurrentDir", newpath);
 
   if ( _filename.endsWith("ini") ) {
     // Loaded function for recent files. Load everything.

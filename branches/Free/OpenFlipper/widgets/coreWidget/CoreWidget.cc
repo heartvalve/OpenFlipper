@@ -510,8 +510,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   setupMenuBar();
 
-  updateRecent();
-
   statusBar_->showMessage(tr("Ready"), 5000);
 
   registerCoreKeys();
@@ -854,15 +852,17 @@ CoreWidget::updateRecent()
 
   recentFilesMenu_->clear();
 
-  QVector< OpenFlipper::Options::RecentFile > recentFiles = OpenFlipper::Options::recentFiles();
+  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles").toStringList();
+  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes").toStringList();
+
   for (int i = 0 ; i < recentFiles.size() ; ++i ) {
 
-    QFileInfo fi(recentFiles[i].filename);
+    QFileInfo fi(recentFiles[i]);
 
     if (fi.suffix() == "ini")
-      recentFilesMenu_->addAction(QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator()+"Settings-Icon.png"), recentFiles[i].filename);
+      recentFilesMenu_->addAction(QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator()+"Settings-Icon.png"), recentFiles[i]);
     else
-      recentFilesMenu_->addAction(typeIcon( recentFiles[i].type ), recentFiles[i].filename);
+      recentFilesMenu_->addAction(typeIcon( typeId(recentTypes[i]) ), recentFiles[i]);
 
   }
 

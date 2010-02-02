@@ -135,7 +135,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     QString startup_dir;
     if( _ini.get_entry(startup_dir, "Options", "StartupDir") )
-      OpenFlipper::Options::currentDir(startup_dir);
+      OpenFlipperSettings().setValue("Core/CurrentDir", startup_dir );
 
     //============================================================================
     // Load the default script directory
@@ -383,9 +383,9 @@ void Core::readRecentFiles(QString _filename){
   OpenFlipper::Options::loadingSettings(true);
 
   // Load maxRecent Setting
-  int mrecent = 6;
+  int mrecent = 10;
   if (ini.get_entry(mrecent,"Options","MaxRecent"))
-    OpenFlipper::Options::maxRecent(mrecent);
+    OpenFlipperSettings().setValue("Core/File/MaxRecent", mrecent);
 
   for ( int j = mrecent-1 ; j >= 0; --j) {
     QString file;
@@ -416,18 +416,20 @@ void Core::readRecentFiles(QString _filename){
 void Core::writeApplicationOptions(INIFile& _ini) {
 
   // Write maximum recent file count to ini
-  _ini.add_entry("Options","MaxRecent",OpenFlipper::Options::maxRecent());
+  _ini.add_entry("Options","MaxRecent", OpenFlipperSettings().value("Core/File/MaxRecent",10).toInt() );
 
   // Write list of recent files to ini
-  QVector< OpenFlipper::Options::RecentFile > recentFiles = OpenFlipper::Options::recentFiles();
+  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles").toStringList();
+  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes").toStringList();
+  
   for ( int j = 0 ; j < recentFiles.size(); ++j) {
     // Save filename
     QString key = "recent" + QString::number(j);
-    QString filename = recentFiles[j].filename;
+    QString filename = recentFiles[j];
     _ini.add_entry( "Options" , key , filename );
     // Save DataType
     key = "type" + QString::number(j);
-    QString type = typeName( recentFiles[j].type );
+    QString type = recentTypes[j];
     _ini.add_entry( "Options" , key , type );
   }
 
@@ -513,7 +515,7 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   if ( !_ini.section_exists("Options") )
     _ini.add_section("Options");
 
-  QString dir = OpenFlipper::Options::currentDirStr().toUtf8();
+  QString dir = OpenFlipperSettings().value("Core/CurrentDir").toString().toUtf8();
   _ini.add_entry("Options","StartupDir",dir);
 
   QString scriptDir = OpenFlipper::Options::currentScriptDirStr().toUtf8();

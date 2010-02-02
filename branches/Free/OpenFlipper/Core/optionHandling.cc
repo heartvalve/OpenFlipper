@@ -218,8 +218,7 @@ void Core::setupOptions() {
   OpenFlipper::Options::currentTextureDir(OpenFlipper::Options::textureDirStr());
 
   // Default to home directory
-  OpenFlipper::Options::currentDir( QDir::home() );
-
+  OpenFlipperSettings().setValue("Core/CurrentDir", QDir::homePath() );
 
   // ==============================================================
   // Load Application options from all files available

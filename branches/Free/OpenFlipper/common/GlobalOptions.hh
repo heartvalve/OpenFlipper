@@ -93,6 +93,9 @@
 *
 * <b>File Handling</b>
 * * Core/CurrentDir                          The current Directory of the Application
+* * Core/File/RecentFiles                    List of Recent Files
+* * Core/File/RecentTypes                    DataTypes of Recent Files
+* * Core/File/MaxRecent                      Maximum entries in recent File list
 * * Core/File/UseLoadDefaults                Use the defaults saved in the file plugins
 *
 * <b>Log Settings</b>
@@ -246,22 +249,6 @@ QString helpDirStr();
 /** @name current status
 * @{ */
 //===========================================================================
-
-  /// return the current directory
-  DLLEXPORT
-  QString currentDirStr();
-
-  /// return the current directory
-  DLLEXPORT
-  QDir currentDir();
-
-  /// Sets the Path to the current directory
-  DLLEXPORT
-  void currentDir(QDir _dir);
-
-  /// Sets the Path to the current directory
-  DLLEXPORT
-  bool currentDir(QString _dir);
 
   /// return the current script-directory
   DLLEXPORT

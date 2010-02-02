@@ -217,7 +217,7 @@ void Core::slotLoadPlugin(){
     filter = "Plugins (*.so)";
 
   // Ask the user to select the file to load
-  QString filename = ACG::getOpenFileName(coreWidget_,tr("Load Plugin"),filter,OpenFlipper::Options::currentDirStr());
+  QString filename = ACG::getOpenFileName(coreWidget_,tr("Load Plugin"),filter, OpenFlipperSettings().value("Core/CurrentDir").toString() );
 
   if (filename.isEmpty())
     return;
