@@ -216,7 +216,7 @@ bool TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
 }
 
 void TextureControlPlugin::addedEmptyObject( int _id ) {
-  fileOpened(_id);
+//   fileOpened(_id);
 }
 
 template< typename MeshT >
@@ -225,7 +225,6 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
   // Get the new object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _objectId , obj ) ) {
-    emit log(LOGERR,"Unable to get Object for id " + QString::number(_objectId) );
     return;
   }
 
@@ -233,7 +232,9 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
   // Create a backup of the original per Vertex texture Coordinates
   // ================================================================================
   OpenMesh::VPropHandleT< typename MeshT::TexCoord2D > oldVertexCoords;
-  _mesh->add_property(oldVertexCoords,"Original Per Vertex Texture Coords");
+  if ( !_mesh->get_property_handle(oldVertexCoords,"Original Per Vertex Texture Coords") )
+    _mesh->add_property(oldVertexCoords,"Original Per Vertex Texture Coords");
+  
   for ( TriMesh::VertexIter v_it = _mesh->vertices_begin(); v_it != _mesh->vertices_end(); ++v_it)
     _mesh->property(oldVertexCoords, v_it ) =  _mesh->texcoord2D( v_it );
 
@@ -244,7 +245,9 @@ void TextureControlPlugin::handleFileOpenTextures( MeshT*& _mesh , int _objectId
   // Create a backup of the original per Face texture Coordinates
   // ================================================================================
   OpenMesh::HPropHandleT< typename MeshT::TexCoord2D > oldHalfedgeCoords;
-  _mesh->add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
+  if ( !_mesh->get_property_handle(oldHalfedgeCoords,"Original Per Face Texture Coords") )
+    _mesh->add_property(oldHalfedgeCoords,"Original Per Face Texture Coords");
+  
   for ( TriMesh::HalfedgeIter he_it = _mesh->halfedges_begin(); he_it != _mesh->halfedges_end(); ++he_it)
     _mesh->property(oldHalfedgeCoords, he_it ) =  _mesh->texcoord2D( he_it );
 
