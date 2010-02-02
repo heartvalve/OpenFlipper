@@ -58,7 +58,7 @@ bool TypeTriangleMeshPlugin::registerType() {
 int TypeTriangleMeshPlugin::addEmpty(){
     
   // new object data struct
-  TriMeshObject * object = new TriMeshObject(dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ),typeId("TriangleMesh"));
+  TriMeshObject * object = new TriMeshObject( typeId("TriangleMesh") );
 
   if ( PluginFunctions::objectCount() == 1 )
     object->target(true);

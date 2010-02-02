@@ -108,7 +108,7 @@ class DLLEXPORT BaseObjectData : public BaseObject
     BaseObjectData(const BaseObjectData& _object);
 
     /// constructor
-    BaseObjectData(SeparatorNode* _rootNode);
+    BaseObjectData();
 
     ///destructor
     virtual ~BaseObjectData();

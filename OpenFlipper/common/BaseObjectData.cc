@@ -52,9 +52,12 @@
 //== INCLUDES =================================================================
 
 #include "Types.hh"
-#include <OpenFlipper/common/GlobalOptions.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <OpenFlipper/common/BaseObjectCore.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <QDir>
+
+
 
 //== TYPEDEFS =================================================================
 
@@ -75,11 +78,11 @@ BaseObjectData::BaseObjectData(const BaseObjectData& _object)
   init();
 }
 
-BaseObjectData::BaseObjectData( SeparatorNode* _rootNode ) :
+BaseObjectData::BaseObjectData() :
   BaseObject(),
   path_("."),
   manipPlaced_(false),
-  rootNode_(_rootNode),
+  rootNode_( dynamic_cast< ACG::SceneGraph::SeparatorNode* > (PluginFunctions::getRootNode()) ),
   separatorNode_(0),
   manipulatorNode_(0),
   materialNode_(0),
@@ -153,8 +156,8 @@ void BaseObjectData::init() {
 
 void BaseObjectData::setFromFileName(QString _filename ) {
   QString str = _filename;
-  path_ = str.section(OpenFlipper::Options::dirSeparator(),0,-2);
-  setName(str.section(OpenFlipper::Options::dirSeparator(),-1));
+  path_ = str.section(QDir::separator() ,0,-2);
+  setName(str.section(QDir::separator(),-1));
 }
 
 void BaseObjectData::setName( QString _name ) {

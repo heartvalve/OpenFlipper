@@ -93,8 +93,8 @@
   *  objectDataType has to match the one of MeshT ( see Types.hh::DataType )
   */
   template < class MeshT  >
-  MeshObject< MeshT >::MeshObject( SeparatorNode* _rootNode, DataType _typeId ) :
-    BaseObjectData(_rootNode ),
+  MeshObject< MeshT >::MeshObject( DataType _typeId ) :
+    BaseObjectData(),
     mesh_(0),
     statusNode_(0),
     areaNode_(0),

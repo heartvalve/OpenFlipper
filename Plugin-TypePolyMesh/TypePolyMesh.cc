@@ -59,7 +59,7 @@ bool TypePolyMeshPlugin::registerType() {
 int TypePolyMeshPlugin::addEmpty(){
     
   // new object data struct
-  PolyMeshObject * object = new PolyMeshObject(dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode()) , typeId("PolyMesh") );
+  PolyMeshObject * object = new PolyMeshObject( typeId("PolyMesh") );
 
   if ( PluginFunctions::objectCount() == 1 )
     object->target(true);
