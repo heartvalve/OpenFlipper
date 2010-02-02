@@ -67,7 +67,7 @@
 /** This field defines the start id for custom datatypes. It starts high to avoid conflicts with previously
  * hardcoded versions.
  */
-static int nextTypeId_ = 8;
+static int nextTypeId_ = 2;
 
 /** This map maps an dataType id to an typeName
  */
@@ -126,29 +126,16 @@ void initializeTypes() {
   typeToTypeInfo[DATA_GROUP] = types.size();
   types.push_back( TypeInfo(DATA_GROUP           ,"Group"          ,"group.png", QCoreApplication::translate("Types","Group")) );
 
-  stringToTypeInfo["TriangleMesh"]   = types.size();
-  typeToTypeInfo[DATA_TRIANGLE_MESH_CONST_ID] = types.size();
-  types.push_back( TypeInfo(DATA_TRIANGLE_MESH_CONST_ID   ,"TriangleMesh"   ,"TriangleType.png", QCoreApplication::translate("Types","Triangle Mesh")) );
-  
-  stringToTypeInfo["PolyMesh"]   = types.size();
-  typeToTypeInfo[DATA_POLY_MESH_CONST_ID] = types.size();
-  types.push_back( TypeInfo(DATA_POLY_MESH_CONST_ID       ,"PolyMesh"       ,"PolyType.png", QCoreApplication::translate("Types","Poly Mesh")) );
-
   stringToTypeInfo["All"]  = types.size();
   typeToTypeInfo[DATA_ALL] = types.size();
   types.push_back( TypeInfo(DATA_ALL             ,"All"            ,"Unknown.png", QCoreApplication::translate("Types","All")) );
 
   typeToString[DATA_UNKNOWN] = "Unknown";
   typeToString[DATA_GROUP] = "Group";
-  typeToString[DATA_TRIANGLE_MESH_CONST_ID] = "TriangleMesh";
-  typeToString[DATA_POLY_MESH_CONST_ID] = "PolyMesh";
   typeToString[DATA_ALL] = "All";
   
   // Preload the static icons
   setTypeIcon(DATA_GROUP,"group.png");
-  setTypeIcon(DATA_TRIANGLE_MESH_CONST_ID,"TriangleType.png");
-  setTypeIcon(DATA_POLY_MESH_CONST_ID,"PolyType.png");
-
 }
 
 /// Adds a datatype and returns the id for the new type

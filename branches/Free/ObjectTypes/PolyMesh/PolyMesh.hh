@@ -52,11 +52,12 @@
 
 //== INCLUDES =================================================================
 
+#define DATA_POLY_MESH typeId("PolyMesh")
 #include <ObjectTypes/MeshObject/MeshObjectT.hh>
 #include <ObjectTypes/PolyMesh/PolyMeshTypes.hh>
 
 /// Typedef for a Meshobject containing a poly mesh
-typedef MeshObject< PolyMesh , DATA_POLY_MESH_CONST_ID >    PolyMeshObject;
+typedef MeshObject< PolyMesh >    PolyMeshObject;
 
 #include <ObjectTypes/PolyMesh/PluginFunctionsPolyMesh.hh>
 

@@ -52,11 +52,12 @@
 
 //== INCLUDES =================================================================
 
+#define DATA_TRIANGLE_MESH typeId("TriangleMesh")
 #include <ObjectTypes/MeshObject/MeshObjectT.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMeshTypes.hh>
 
 /// Typedef for a Meshobject containing a triangle mesh
-typedef MeshObject< TriMesh , DATA_TRIANGLE_MESH_CONST_ID > TriMeshObject;
+typedef MeshObject< TriMesh > TriMeshObject;
 
 #include <ObjectTypes/TriangleMesh/PluginFunctionsTriangleMesh.hh>
 

@@ -100,7 +100,7 @@ typedef ACG::SceneGraph::TextureNode                      TextureNode;
 
 /** This class provides the functionality for all kind of meshes for the framework
  */
-template < class MeshT, DataType objectDataType >
+template < class MeshT >
 class DLLEXPORTONLY MeshObject : public BaseObjectData {
   public:
 
@@ -110,8 +110,15 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
      */
     MeshObject(const MeshObject& _object);
 
-    /// constructor
-    MeshObject(SeparatorNode* _rootNode);
+    /** \brief Constructor
+    *
+    * This is the standard constructor for MeshObjects. As triangle and Poly Meshes are handled by this class, the 
+    * typeId is passed to the MeshObject to specify it. 
+    *
+    * @param _rootNode This is the root Node, where the MeshObject will be added.
+    * @param _typeId   This is the type Id the Object will use. Should be typeId("TriangleMesh") or typeId("PolyMesh")
+    */
+    MeshObject(SeparatorNode* _rootNode, DataType _typeId);
 
     /// destructor
     virtual ~MeshObject();

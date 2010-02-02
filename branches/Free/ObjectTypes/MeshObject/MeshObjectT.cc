@@ -64,8 +64,8 @@
 
   //== CLASS DEFINITION =========================================================
 
-  template < class MeshT , DataType objectDataType >
-  MeshObject< MeshT , objectDataType >::MeshObject(const MeshObject& _object) :
+  template < class MeshT  >
+  MeshObject< MeshT >::MeshObject(const MeshObject& _object) :
       BaseObjectData(_object),
       statusNode_(0),
       areaNode_(0),
@@ -78,6 +78,7 @@
   {
     init(_object.mesh_);
 
+    
     setName( name() );
 
 //     textures_     = _object.textures_;
@@ -91,8 +92,8 @@
   *  PluginFunctions::addTriMesh or PluginFunctions::addPolyMesh instead. The
   *  objectDataType has to match the one of MeshT ( see Types.hh::DataType )
   */
-  template < class MeshT , DataType objectDataType >
-  MeshObject< MeshT , objectDataType >::MeshObject( SeparatorNode* _rootNode ) :
+  template < class MeshT  >
+  MeshObject< MeshT >::MeshObject( SeparatorNode* _rootNode, DataType _typeId ) :
     BaseObjectData(_rootNode ),
     mesh_(0),
     statusNode_(0),
@@ -104,15 +105,15 @@
     shaderNode_(0),
     triangle_bsp_(0)
   {
-    setDataType(objectDataType);
+    setDataType(_typeId);
     init();
   }
 
   /** Destructor for Mesh Objects. The destructor deletes the mesh and all
   *  Scenegraph nodes associated with the mesh or the object.
   */
-  template < class MeshT , DataType objectDataType >
-  MeshObject< MeshT , objectDataType >::~MeshObject()
+  template < class MeshT  >
+  MeshObject< MeshT >::~MeshObject()
   {
     // Delete the data attached to this object ( this will remove all perObject data)
     // Not the best way to do it but it will work.
@@ -145,8 +146,8 @@
   /** Cleanup Function for Mesh Objects. Deletes the contents of the whole object and
   * calls MeshObject::init afterwards.
   */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::cleanup() {
+  template < class MeshT  >
+  void MeshObject< MeshT >::cleanup() {
     // Delete the Mesh only, if this object contains a mesh
     if ( mesh_ != NULL)  {
       delete mesh_;
@@ -169,8 +170,6 @@
     shaderNode_  = 0;
     meshNode_    = 0;
 
-    setDataType(objectDataType);
-
     init();
 
   }
@@ -178,8 +177,8 @@
   /** This function initalizes the mesh object. It creates the scenegraph nodes,
   *  the mesh and requests all required properties for the mesh.
   */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::init(MeshT* _mesh) {
+  template < class MeshT  >
+  void MeshObject< MeshT >::init(MeshT* _mesh) {
 
     if ( _mesh == 0 )
       mesh_ = new MeshT();
@@ -294,8 +293,8 @@
   /** Set the name of an object. All Scenegraph nodes are renamed too. It also calls
   * BaseObjectData::setName.
   */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::setName( QString _name ) {
+  template < class MeshT  >
+  void MeshObject< MeshT >::setName( QString _name ) {
     BaseObjectData::setName(_name);
 
     // No update when gui is not active
@@ -331,8 +330,8 @@
   /** Get a pointer to the objects mesh.
   * @return Pointer to the mesh
   */
-  template < class MeshT , DataType objectDataType >
-  MeshT* MeshObject< MeshT , objectDataType >::mesh() {
+  template < class MeshT  >
+  MeshT* MeshObject< MeshT >::mesh() {
     return mesh_;
   }
 
@@ -340,8 +339,8 @@
   *  MeshObject::updateTopology, MeshObject::updateSelection and
   *  MeshObject::updateModelingRegions.
   */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::update() {
+  template < class MeshT  >
+  void MeshObject< MeshT >::update() {
 
     // No update necessary if no gui
     if ( OpenFlipper::Options::nogui() )
@@ -357,23 +356,23 @@
   }
 
   /** Updates the selection scenegraph nodes */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::updateSelection() {
+  template < class MeshT  >
+  void MeshObject< MeshT >::updateSelection() {
     if ( statusNode_ )
       statusNode_->update_cache();
   }
 
   /** Updates the geometry information in the mesh scenegraph node */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::updateGeometry() {
+  template < class MeshT  >
+  void MeshObject< MeshT >::updateGeometry() {
     if ( meshNode_ )
       meshNode_->update_geometry();
     invalidateTriangleBsp();
   }
 
   /** Updates the topology information in the mesh scenegraph node */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::updateTopology() {
+  template < class MeshT  >
+  void MeshObject< MeshT >::updateTopology() {
     if ( meshNode_ ) {
       meshNode_->update_topology();
       meshNode_->update_strips();
@@ -382,8 +381,8 @@
   }
 
   /** Updates the modeling regions scenegraph nodes */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::updateModelingRegions() {
+  template < class MeshT  >
+  void MeshObject< MeshT >::updateModelingRegions() {
     if ( areaNode_ && handleNode_ ) {
       areaNode_->update_cache();
       handleNode_->update_cache();
@@ -391,16 +390,16 @@
   }
 
   /** Updates the modeling regions scenegraph nodes */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::updateFeatures() {
+  template < class MeshT  >
+  void MeshObject< MeshT >::updateFeatures() {
     if ( featureNode_ )
       featureNode_->update_cache();
   }
 
 
-  template < class MeshT , DataType objectDataType >
-  BaseObject* MeshObject< MeshT , objectDataType >::copy() {
-    MeshObject< MeshT , objectDataType >* object = new MeshObject< MeshT , objectDataType >(*this);
+  template < class MeshT  >
+  BaseObject* MeshObject< MeshT >::copy() {
+    MeshObject< MeshT >* object = new MeshObject< MeshT >(*this );
     return dynamic_cast< BaseObject* >(object);
   }
 
@@ -410,23 +409,23 @@
   /** Returns a pointer to the texture node
   * @return Pointer to the texture node
   */
-  template < class MeshT , DataType objectDataType >
-  ACG::SceneGraph::EnvMapNode* MeshObject< MeshT , objectDataType >::textureNode() {
+  template < class MeshT  >
+  ACG::SceneGraph::EnvMapNode* MeshObject< MeshT >::textureNode() {
     return textureNode_;
   }
 
   /** Returns a pointer to the shader node
   * @return Pointer to the shader node
   */
-  template < class MeshT , DataType objectDataType >
-  ACG::SceneGraph::ShaderNode* MeshObject< MeshT , objectDataType >::shaderNode() {
+  template < class MeshT  >
+  ACG::SceneGraph::ShaderNode* MeshObject< MeshT >::shaderNode() {
     return shaderNode_;
   }
 
   /** Shows or hides the selections on the object
    */
-  template < class MeshT , DataType objectDataType >
-  void  MeshObject< MeshT , objectDataType >::hideSelection( bool _hide ) {
+  template < class MeshT  >
+  void  MeshObject< MeshT >::hideSelection( bool _hide ) {
 
     if ( _hide ) {
       statusNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
@@ -436,8 +435,8 @@
 
   }
 
-  template < class MeshT , DataType objectDataType >
-  void  MeshObject< MeshT , objectDataType >::hideFeatures( bool _hide ) {
+  template < class MeshT  >
+  void  MeshObject< MeshT >::hideFeatures( bool _hide ) {
     if ( _hide ) {
       featureNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
     } else {
@@ -445,15 +444,15 @@
     }
   }
 
-  template < class MeshT , DataType objectDataType >
-  bool  MeshObject< MeshT , objectDataType >::featuresVisible( ) {
+  template < class MeshT  >
+  bool  MeshObject< MeshT >::featuresVisible( ) {
     return ( featureNode_->status() == ACG::SceneGraph::BaseNode::Active );
   }
 
   /** Shows or hides the areas on the object
    */
-  template < class MeshT , DataType objectDataType >
-  void  MeshObject< MeshT , objectDataType >::hideAreas( bool _hide ) {
+  template < class MeshT  >
+  void  MeshObject< MeshT >::hideAreas( bool _hide ) {
     if ( _hide ) {
       areaNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
       handleNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
@@ -463,28 +462,28 @@
     }
   }
 
-  template < class MeshT , DataType objectDataType >
-  bool MeshObject< MeshT , objectDataType >::selectionVisible() {
+  template < class MeshT  >
+  bool MeshObject< MeshT >::selectionVisible() {
     return ( statusNode_->status() == ACG::SceneGraph::BaseNode::Active );
   }
 
-  template < class MeshT , DataType objectDataType >
-  bool MeshObject< MeshT , objectDataType >::areasVisible() {
+  template < class MeshT  >
+  bool MeshObject< MeshT >::areasVisible() {
     return ( areaNode_->status() == ACG::SceneGraph::BaseNode::Active );
   }
 
   /** Returns a pointer to the mesh node
   * @return Pointer to the mesh node
   */
-  template < class MeshT , DataType objectDataType >
-  ACG::SceneGraph::TriStripNodeT<MeshT>* MeshObject< MeshT , objectDataType >::meshNode() {
+  template < class MeshT  >
+  ACG::SceneGraph::TriStripNodeT<MeshT>* MeshObject< MeshT >::meshNode() {
     return meshNode_;
   }
 
   /** Get the Bounding box size of this object
    */
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::boundingBox( ACG::Vec3d& _bbMin , ACG::Vec3d& _bbMax ) {
+  template < class MeshT  >
+  void MeshObject< MeshT >::boundingBox( ACG::Vec3d& _bbMin , ACG::Vec3d& _bbMax ) {
     if ( meshNode_ ) {
       _bbMin = ACG::Vec3d(FLT_MAX, FLT_MAX, FLT_MAX);
       _bbMax = ACG::Vec3d(FLT_MIN, FLT_MIN, FLT_MIN);
@@ -503,8 +502,8 @@
   *
   * @param _filename Full path of the file to load.
   */
-  template < class MeshT , DataType objectDataType >
-  bool MeshObject< MeshT , objectDataType >::loadMesh(QString _filename) {
+  template < class MeshT  >
+  bool MeshObject< MeshT >::loadMesh(QString _filename) {
 
     setFromFileName(_filename);
 
@@ -517,9 +516,9 @@
     bool ok = OpenMesh::IO::read_mesh( (*mesh()) , filename );
     if (!ok)
     {
-      if ( dataType() == DATA_TRIANGLE_MESH )
+      if ( dataType() == typeid("TriangleMesh") )
         std::cerr << "Main Application : Read error for Triangle Mesh at "<< filename << std::endl;
-      if ( dataType() == DATA_POLY_MESH )
+      if ( dataType() == typeid("PolyMesh") )
         std::cerr << "Main Application : Read error for Poly Mesh\n";
       return false;
     }
@@ -542,17 +541,17 @@
   *
   * @return String containing the object information
   */
-  template < class MeshT , DataType objectDataType >
-  QString MeshObject< MeshT , objectDataType >::getObjectinfo() {
+  template < class MeshT  >
+  QString MeshObject< MeshT >::getObjectinfo() {
     QString output;
 
     output += "========================================================================\n";
     output += BaseObjectData::getObjectinfo();
 
-    if ( dataType( DATA_TRIANGLE_MESH ) )
+    if ( dataType( typeId("TriangleMesh") ) )
       output += "Object Contains Triangle Mesh : ";
 
-    if ( dataType( DATA_POLY_MESH ) )
+    if ( dataType( typeId("PolyMesh") ) )
       output += "Object Contains Poly Mesh : ";
 
     output += QString::number( mesh()->n_vertices() ) + " vertices, ";
@@ -573,14 +572,14 @@
   * @param _node_idx Index of the picked mesh node
   * @return bool if the meshNode of this object is the picking target.
   */
-  template < class MeshT , DataType objectDataType >
-  bool MeshObject< MeshT , objectDataType >::picked( uint _node_idx ) {
+  template < class MeshT  >
+  bool MeshObject< MeshT >::picked( uint _node_idx ) {
     return ( _node_idx == meshNode_->id() );
   }
 
 
-  template < class MeshT , DataType objectDataType >
-  void MeshObject< MeshT , objectDataType >::enablePicking( bool _enable ) {
+  template < class MeshT  >
+  void MeshObject< MeshT >::enablePicking( bool _enable ) {
     if ( OpenFlipper::Options::nogui())
       return;
 
@@ -592,8 +591,8 @@
     shaderNode_->enablePicking( _enable );
   }
 
-  template < class MeshT , DataType objectDataType >
-  bool MeshObject< MeshT , objectDataType >::pickingEnabled() {
+  template < class MeshT  >
+  bool MeshObject< MeshT >::pickingEnabled() {
     return meshNode_->pickingEnabled();
   }
 
@@ -601,11 +600,11 @@
   // Octree
   // ===============================================================================
 
-  template < class MeshT , DataType objectDataType >
-  typename MeshObject< MeshT , objectDataType >::OMTriangleBSP*
-  MeshObject< MeshT , objectDataType >::requestTriangleBsp() {
+  template < class MeshT  >
+  typename MeshObject< MeshT >::OMTriangleBSP*
+  MeshObject< MeshT >::requestTriangleBsp() {
 
-    if ( ! dataType( DATA_TRIANGLE_MESH) ) {
+    if ( ! dataType( typeId("TriangleMesh") ) ) {
       std::cerr << "Bsps are only supported for triangle meshes." << std::endl;
       return 0;
     }
@@ -632,9 +631,9 @@
     return triangle_bsp_;
   }
 
-  template < class MeshT , DataType objectDataType >
-  typename MeshObject< MeshT , objectDataType >::OMTriangleBSP*
-  MeshObject< MeshT , objectDataType >::resetTriangleBsp() {
+  template < class MeshT  >
+  typename MeshObject< MeshT >::OMTriangleBSP*
+  MeshObject< MeshT >::resetTriangleBsp() {
      if ( triangle_bsp_ != 0 )
      {
        delete triangle_bsp_;
@@ -644,9 +643,9 @@
      return requestTriangleBsp();
   }
 
-  template < class MeshT , DataType objectDataType >
+  template < class MeshT  >
   void 
-  MeshObject< MeshT , objectDataType >::invalidateTriangleBsp() {
+  MeshObject< MeshT >::invalidateTriangleBsp() {
      if ( triangle_bsp_ != 0 )
      {
        delete triangle_bsp_;

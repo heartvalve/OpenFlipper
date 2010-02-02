@@ -650,7 +650,7 @@ void Core::openIniFile( QString _filename,
         }
 
         int tmpType;
-        DataType type = DATA_TRIANGLE_MESH;
+        DataType type = typeId("TriangleMesh");
 
         // First check for old datatype style (Only numbers .. therefore not consistent for runtime added types)
         if ( ini.get_entry( tmpType, sectionName , "type"  )) {
