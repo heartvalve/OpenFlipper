@@ -23,8 +23,8 @@
 *  You dont need to create an object of this type manually. Use
 *  PluginFunctions::addPlane instead. ( see Types.hh::DataType )
 */
-PlaneObject::PlaneObject( SeparatorNode* _rootNode ) :
-  BaseObjectData(_rootNode ),
+PlaneObject::PlaneObject( ) :
+  BaseObjectData( ),
   planeNode_(NULL)
 {
   setDataType(DATA_PLANE);

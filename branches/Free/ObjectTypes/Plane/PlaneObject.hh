@@ -31,7 +31,7 @@ class DLLEXPORT PlaneObject : public BaseObjectData {
 
   public: 
     /// constructor
-    PlaneObject(SeparatorNode* _rootNode);
+    PlaneObject();
     
     /** \brief copy constructor
      *

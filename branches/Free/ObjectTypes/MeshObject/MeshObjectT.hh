@@ -115,10 +115,9 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     * This is the standard constructor for MeshObjects. As triangle and Poly Meshes are handled by this class, the 
     * typeId is passed to the MeshObject to specify it. 
     *
-    * @param _rootNode This is the root Node, where the MeshObject will be added.
     * @param _typeId   This is the type Id the Object will use. Should be typeId("TriangleMesh") or typeId("PolyMesh")
     */
-    MeshObject(SeparatorNode* _rootNode, DataType _typeId);
+    MeshObject(DataType _typeId);
 
     /// destructor
     virtual ~MeshObject();
