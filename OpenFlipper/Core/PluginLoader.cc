@@ -927,10 +927,12 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(plugin , SIGNAL( copyObject( int, int& )) ,
                 this   , SLOT( slotCopyObject( int, int&) ),Qt::DirectConnection);
 
+      // Plugins to core
       if ( checkSignal(plugin,"emptyObjectAdded(int)" ) )
         connect(plugin , SIGNAL( emptyObjectAdded( int ) ) ,
                 this   , SLOT( slotEmptyObjectAdded ( int ) ),Qt::DirectConnection);
 
+      // core to plugins
       if ( checkSlot(plugin,"addedEmptyObject(int)" ) )
         connect(this ,   SIGNAL( emptyObjectAdded( int ) ) ,
                 plugin   , SLOT( addedEmptyObject( int ) ),Qt::DirectConnection);
@@ -1167,8 +1169,8 @@ void Core::loadPlugin(QString filename, bool silent){
       // Add type info
       supportedDataTypes_.push_back(dt);
       
-      // Connect signals
-      if ( checkSignal(plugin,"emptyObjectAdded(int)" ) )
+      // Connect signals ( But only if we not already connected in in the loadsave interface )
+      if ( !LoadSavePlugin && checkSignal(plugin,"emptyObjectAdded(int)" ) )
         connect(plugin , SIGNAL( emptyObjectAdded( int ) ) ,
                 this   , SLOT( slotEmptyObjectAdded ( int ) ),Qt::DirectConnection);
     }
