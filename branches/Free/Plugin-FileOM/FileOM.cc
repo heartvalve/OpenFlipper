@@ -132,7 +132,6 @@ int FileOMPlugin::loadObject(QString _filename) {
                 if(PluginFunctions::getObject( objectId, object )) {
                     
                     object->show();
-                    emit log(LOGINFO,object->getObjectinfo());
                     emit openedFile( objectId );
                 }
                 
@@ -184,7 +183,6 @@ int FileOMPlugin::loadObject(QString _filename) {
             if(PluginFunctions::getObject( objectId, object )) {
             
                 object->show();
-                emit log(LOGINFO,object->getObjectinfo());
                 emit openedFile( objectId );
             }
             return objectId;
@@ -199,7 +197,6 @@ int FileOMPlugin::loadObject(QString _filename) {
         if(PluginFunctions::getObject( objectId, object )) {
             
             object->show();
-            emit log(LOGINFO,object->getObjectinfo());
             emit openedFile( objectId );
         }
         
@@ -213,7 +210,6 @@ int FileOMPlugin::loadObject(QString _filename) {
         if(PluginFunctions::getObject( objectId, object )) {
             
             object->show();
-            emit log(LOGINFO,object->getObjectinfo());
             emit openedFile( objectId );
         }
         
@@ -229,7 +225,6 @@ int FileOMPlugin::loadObject(QString _filename) {
     if(PluginFunctions::getObject( objectId, object )) {
         
         object->show();
-        emit log(LOGINFO,object->getObjectinfo());
         emit openedFile( objectId );
     }
     

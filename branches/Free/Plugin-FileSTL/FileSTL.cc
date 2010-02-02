@@ -123,8 +123,6 @@ int FileSTLPlugin::loadObject(QString _filename) {
         
         object->show();
         
-        emit log(LOGINFO,object->getObjectinfo());
-        
         emit openedFile( object->id() );
         
         return object->id();

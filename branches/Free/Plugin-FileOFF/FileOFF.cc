@@ -919,7 +919,6 @@ int FileOFFPlugin::loadObject(QString _filename) {
     }
     
     //general stuff
-    emit log( LOGINFO, object->getObjectinfo() );
     emit openedFile( object->id() );
     
     // Update viewport
