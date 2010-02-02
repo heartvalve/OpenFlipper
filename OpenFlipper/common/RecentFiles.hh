@@ -66,12 +66,6 @@
 namespace OpenFlipper {
 namespace Options {
   
-/// struct storing infos about recent files
-struct RecentFile{
-  QString filename;
-  DataType type;
-};
-   
 
 //===========================================================================
 /** @name Recent Files
@@ -81,22 +75,6 @@ struct RecentFile{
   /// Add a file to the recent files list ( removes one, if list grows to larger then maxRecent )
   DLLEXPORT
   void addRecentFile(QString _file, DataType _type);
-  
-  /// Return the list of recent files
-  DLLEXPORT
-  QVector< RecentFile > recentFiles();
-  
-  /// Set the list of recent files
-  DLLEXPORT
-  void recentFiles(QVector< RecentFile > _list );
-  
-  /// Get the maximum number of recent files kept in the list
-  DLLEXPORT
-  int maxRecent();
-  
-  /// Set the maximum number of recent files kept in the list
-  DLLEXPORT
-  void maxRecent(int _max);
     
 /** @} */      
   

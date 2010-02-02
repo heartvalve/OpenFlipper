@@ -64,7 +64,7 @@ void Core::saveSettings(){
 
   QFileDialog fileDialog( coreWidget_,
                           tr("Save Settings"),
-                          OpenFlipper::Options::currentDirStr(),
+                          OpenFlipperSettings().value("Core/CurrentDir").toString(),
                           tr("INI files (*.ini);;OBJ files (*.obj )") );
 
   fileDialog.setOption (QFileDialog::DontUseNativeDialog, true);
@@ -149,7 +149,7 @@ void Core::saveSettings(){
 
   // Get the chosen directory and remember it.
   QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
-  OpenFlipper::Options::currentDir(newpath);
+  OpenFlipperSettings().setValue("Core/CurrentDir", newpath);
 
   // ========================================================================================
   // update status information

@@ -889,11 +889,13 @@ void Core::multiViewMode( int _mode ) {
 void
 Core::slotRecentOpen(QAction* _action)
 {
-  QVector< OpenFlipper::Options::RecentFile > recentFiles = OpenFlipper::Options::recentFiles();
+  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles").toStringList();
+  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes").toStringList();
+  
   for (int i = 0 ; i < recentFiles.size() ; ++i )
-    if ( recentFiles[i].filename == _action->text() ){
+    if ( recentFiles[i] == _action->text() ){
         OpenFlipper::Options::loadingRecentFile(true);
-        loadObject(recentFiles[i].type, recentFiles[i].filename);
+        loadObject(typeId(recentTypes[i]), recentFiles[i]);
         OpenFlipper::Options::loadingRecentFile(false);
         return;
     }

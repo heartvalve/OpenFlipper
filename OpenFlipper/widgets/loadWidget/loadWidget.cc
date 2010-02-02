@@ -84,7 +84,7 @@ LoadWidget::LoadWidget(std::vector<fileTypes>& _supportedTypes , QWidget *parent
   //overwrite dialog shouldn't be handled by the qfiledialog
   setConfirmOverwrite(false);
 
-  setDirectory(OpenFlipper::Options::currentDirStr());
+  setDirectory( OpenFlipperSettings().value("Core/CurrentDir").toString() );
 }
 
 /// Desctructor
@@ -233,7 +233,7 @@ void LoadWidget::loadFile(){
     
     QFileInfo fi(files[i]);
     QString filename = fi.absoluteFilePath();
-    OpenFlipper::Options::currentDir(fi.absolutePath());
+    OpenFlipperSettings().setValue("Core/CurrentDir", filename);
     QFile file(filename);
 
     if (fi.isDir() || !file.exists()) continue; //do nothing if its a not a valid file
@@ -311,8 +311,7 @@ void LoadWidget::saveFile(){
   if ( pluginForExtension_.find( fi.suffix() ) != pluginForExtension_.end() )
     emit save(id_,filename, pluginForExtension_[fi.suffix()] );
 
-  OpenFlipper::Options::currentDir(fi.absolutePath());
-
+  OpenFlipperSettings().setValue("Core/CurrentDir", fi.absolutePath() );
 }
 
 /// show Widget for loading Files

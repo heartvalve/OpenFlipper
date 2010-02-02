@@ -53,41 +53,39 @@
 
 #include "RecentFiles.hh"
 
+#include <OpenFlipper/common/GlobalOptions.hh>
+#include <OpenFlipper/common/Types.hh>
 
 namespace OpenFlipper {
 namespace Options {
   
 
-/// List of recently opened files
-static QVector<RecentFile> recentFiles_;
-
-/// Maximum number of recent files
-static int maxRecent_ = 6;
-
-int  maxRecent()      { return maxRecent_;  }
-
-QVector<RecentFile> recentFiles()   { return recentFiles_;            }
-
-void maxRecent(int _max)             { maxRecent_      = _max; }
-void recentFiles(QVector<RecentFile> _list ) { recentFiles_    = _list;}
-
-
-
 void addRecentFile(QString _file, DataType _type) {
+  
+  
+  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles").toStringList();
+  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes").toStringList();
+  
+  QString type = typeName(_type);
+  
   // Check if file already in recent list
-  for ( int i = 0 ; i < recentFiles_.size() ; ++i)
-    if ( _file == recentFiles_[i].filename && _type == recentFiles_[i].type )
-      recentFiles_.remove(i);
+  for ( int i = 0 ; i < recentFiles.size() ; ++i)
+    if ( _file == recentFiles[i] && type == recentTypes[i] ){
+      recentFiles.removeAt(i);
+      recentTypes.removeAt(i);
+    }
   
   // Erase if too many files in list
-  if ( recentFiles_.size() >= maxRecent_ ) {
-    recentFiles_.pop_back();
+  if ( recentFiles.size() >= OpenFlipperSettings().value("Core/File/MaxRecent").toInt() ) {
+    recentFiles.pop_back();
+    recentTypes.pop_back();
   }
+
+  recentFiles.push_front(_file);
+  recentTypes.push_front(type);
   
-  RecentFile recent;
-  recent.filename = _file;
-  recent.type = _type;
-  recentFiles_.push_front(recent);
+  OpenFlipperSettings().setValue("Core/File/RecentFiles", recentFiles);
+  OpenFlipperSettings().setValue("Core/File/RecentTypes", recentTypes); 
 }
 
 }
