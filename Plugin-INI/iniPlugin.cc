@@ -97,3 +97,5 @@ void INIPlugin::saveIniFile( INIFile& _ini, int _id) {
         emit log(LOGERR, tr("The specified data type is not supported, yet. Aborting!"));
     }
 }
+
+Q_EXPORT_PLUGIN2( iniplugin , INIPlugin );
