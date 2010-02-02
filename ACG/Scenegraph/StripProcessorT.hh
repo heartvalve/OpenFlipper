@@ -179,6 +179,47 @@ private:
   std::vector<FaceMap>           faceMaps_;
 
 //===========================================================================
+/** @name Per edge drawing arrays handling
+* @{ */
+//===========================================================================    
+public:  
+  /** \brief get a pointer to the per edge vertex buffer
+  *
+  * This function will return a pointer to the first element of the vertex buffer.
+  */
+  ACG::Vec3f * perEdgeVertexBuffer();   
+
+  /** \brief get a pointer to the per edge color buffer
+  *
+  * This function will return a pointer to the first element of the color buffer.
+  */
+  ACG::Vec4f * perEdgeColorBuffer();   
+  
+  /** \brief Update of the buffers
+  *
+  * This function will set all per edge buffers to invalid and will force an update
+  * whe they are requested
+  */
+  void invalidatePerEdgeBuffers(){ updatePerEdgeBuffers_ = true; };
+  
+private:
+  /** \brief Update all per edge drawing buffer
+  *n
+  * The updated buffers are: per edge vertex buffer ( 2 vertices per edge )
+  */
+  void updatePerEdgeBuffers();  
+  
+  /// Per Edge vertex buffer (glLines)
+  std::vector< ACG::Vec3f >  perEdgeVertexBuffer_;
+  
+  /// Per Edge color buffer 
+  std::vector< ACG::Vec4f >  perEdgeColorBuffer_;
+  
+  /// This flag controls if an update is really necessary
+  bool updatePerEdgeBuffers_;
+/** @} */    
+  
+//===========================================================================
 /** @name Per face drawing arrays handling
 * @{ */
 //===========================================================================      
@@ -231,6 +272,7 @@ private:
   std::vector< ACG::Vec4f >  perFaceColorBuffer_;
   std::vector< ACG::Vec3f >  perFaceNormalBuffer_;
 
+  /// This flag controls if an update is really necessary
   bool updatePerFaceBuffers_;
   
 /** @} */  
@@ -285,18 +327,11 @@ private:
     */
     ACG::Vec4uc * pickEdgeColorBuffer(){ return &(pickEdgeColorBuf_)[0]; };
     
-    /** \brief get a pointer to the per edge picking vertex buffer
-    *
-    * This function will return a pointer to the first element of the picking buffer.
-    * Use updatePickingEdges to update the buffer before you render it via
-    * glColorPointer.
-    */
-    ACG::Vec3f * pickEdgeVertexBuffer(){ return &(pickEdgeVertexBuf_)[0]; };    
+ 
     
   private:  
     
     std::vector< ACG::Vec4uc > pickEdgeColorBuf_;
-    std::vector< ACG::Vec3f >  pickEdgeVertexBuf_;
     
     
 /** @} */  
@@ -359,7 +394,25 @@ private:
   
   std::vector< ACG::Vec4uc > pickAnyColorBuf_;
   
-/** @} */    
+/** @} */  
+
+//===========================================================================
+/** @name Texture handling
+* @{ */
+//===========================================================================    
+
+private:
+  /** \brief Property name of the per face texture index.
+  *
+  * This name is used by the mesh for texture index specification.
+  * If this is empty, Then it is assumed that there is one or no active
+  * texture. This means that the generated strips will be independent of texture 
+  * information.
+  */
+  std::string indexPropertyName_;
+
+/** @} */  
+
 };
 
 

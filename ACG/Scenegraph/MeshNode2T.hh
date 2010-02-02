@@ -349,9 +349,11 @@ private:
     NORMAL_VERTEX_ARRAY     = 2,
     COLOR_VERTEX_ARRAY      = 4,
     LINE_INDEX_ARRAY        = 8,
-    PER_FACE_VERTEX_ARRAY   = 16,
-    PER_FACE_NORMAL_ARRAY   = 32,
-    PER_FACE_COLOR_ARRAY    = 64
+    PER_EDGE_VERTEX_ARRAY   = 16,
+    PER_EDGE_COLOR_ARRAY    = 32,
+    PER_FACE_VERTEX_ARRAY   = 64,
+    PER_FACE_NORMAL_ARRAY   = 128,
+    PER_FACE_COLOR_ARRAY    = 256
   };
   
   /// which arrays are currently enabled?
