@@ -655,7 +655,6 @@ void TextureControlPlugin::slotObjectUpdated(int _identifier)
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0){
-    std::cerr << "slotObjectUpdated: Texture data not found!" << std::endl;
     return;
   }
 
