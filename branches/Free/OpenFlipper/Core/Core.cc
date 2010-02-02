@@ -896,6 +896,7 @@ Core::slotRecentOpen(QAction* _action)
     if ( recentFiles[i] == _action->text() ){
         OpenFlipper::Options::loadingRecentFile(true);
         loadObject(typeId(recentTypes[i]), recentFiles[i]);
+        coreWidget_->addRecent(recentFiles[i],typeId(recentTypes[i]) );
         OpenFlipper::Options::loadingRecentFile(false);
         return;
     }

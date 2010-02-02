@@ -538,14 +538,6 @@ void Core::slotObjectOpened ( int _id ) {
   QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();
   BaseObject* object2;
   PluginFunctions::getObject(_id,object2);
-  
-  /**
-    * \todo This is wrong here. If a core adds any object, this has already been called! 
-    * If a plugin does that, its also wrong as this adds the name of the object rather than the filename!
-    *
-    */
-  if ( OpenFlipper::Options::gui() )
-    coreWidget_->addRecent( filename, object2->dataType() );
 
   // ================================================================================
   // if this is the first object opend, reset the global view
