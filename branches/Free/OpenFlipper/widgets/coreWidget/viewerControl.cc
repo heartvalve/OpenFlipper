@@ -278,13 +278,16 @@ void CoreWidget::slotSnapshot() {
 void CoreWidget::applicationSnapshotDialog() {
 
   QFileInfo fi(snapshotName_);
+  
+  if (snapshotName_ == "")
+    fi.setFile( OpenFlipperSettings().value("Core/CurrentDir").toString() + QDir::separator() + "snap.png" );
 
   // Add leading zeros
   QString number = QString::number(snapshotCounter_);
   while ( number.size() < 7 )
     number = "0" + number;
 
-  QString suggest = fi.baseName() + "." + number + ".";
+  QString suggest = fi.path() + QDir::separator() + fi.baseName() + "." + number + ".";
 
   QString format="png";
 
@@ -312,9 +315,12 @@ void CoreWidget::applicationSnapshotDialog() {
   if ( ok ){
     QString newName = dialog.filename->text();
 
-    if (newName != fi.path() + OpenFlipper::Options::dirSeparator() + suggest){
+    if (newName != suggest){
+      
+      OpenFlipperSettings().setValue("Core/CurrentDir", QFileInfo(newName).absolutePath() );
+      
       snapshotName_ = newName;
-      snapshotCounter_ = 0;
+      snapshotCounter_ = 1;
     }else
       snapshotCounter_++;
 
@@ -362,13 +368,16 @@ void CoreWidget::applicationSnapshot() {
 void CoreWidget::viewerSnapshotDialog() {
 
   QFileInfo fi(snapshotName_);
+  
+  if (snapshotName_ == "")
+    fi.setFile( OpenFlipperSettings().value("Core/CurrentDir").toString() + QDir::separator() + "snap.png" );
 
   // Add leading zeros
   QString number = QString::number(snapshotCounter_);
   while ( number.size() < 7 )
     number = "0" + number;
 
-  QString suggest = fi.baseName() + "." + number + ".";
+  QString suggest = fi.path() + QDir::separator() + fi.baseName() + "." + number + ".";
 
   QString format="png";
 
@@ -395,9 +404,13 @@ void CoreWidget::viewerSnapshotDialog() {
   if (ok){
     QString newName = dialog.filename->text();
 
-    if (newName != fi.path() + OpenFlipper::Options::dirSeparator() + suggest){
+    if (newName != suggest){
+      
+      OpenFlipperSettings().setValue("Core/CurrentDir", QFileInfo(newName).absolutePath() );
+      
       snapshotName_ = newName;
-      snapshotCounter_ = 0;
+      snapshotCounter_ = 1;
+      
     }else
       snapshotCounter_++;
 
