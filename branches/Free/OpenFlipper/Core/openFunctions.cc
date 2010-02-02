@@ -307,7 +307,7 @@ int Core::addEmptyObject( DataType _type ) {
   // File plugins
   for (int i=0; i < (int)supportedTypes_.size(); i++)
     if ( supportedTypes_[i].type & _type ) {
-      emit log(LOGERR, tr("File Plugins are not allowed to create empty objects anymore! ") );
+      emit log(LOGERR, tr("File Plugins are not allowed to create empty objects anymore! Use the addEmpty call instead!") );
       retCode = supportedTypes_[i].plugin->addEmpty();
     }
   
@@ -320,6 +320,9 @@ int Core::addEmptyObject( DataType _type ) {
 
 /// Slot for adding an empty object of given DataType
 void Core::slotAddEmptyObject( DataType _type , int& _id ) {
+  
+  _id = addEmptyObject( _type );
+  
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
@@ -330,8 +333,6 @@ void Core::slotAddEmptyObject( DataType _type , int& _id ) {
       emit log(LOGINFO,"slotAddEmptyObject( " + QString::number(_type) + ","  + QString::number(_id) +  tr(" ) called by Core") );
     }
   }
-  
-  _id = addEmptyObject( _type );
 }
 
 /// Slot creating a copy of an existing object
