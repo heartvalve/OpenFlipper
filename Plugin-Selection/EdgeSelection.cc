@@ -304,6 +304,32 @@ IdList SelectionPlugin::getEdgeSelection( int objectId )
   
 }
 
+//=========================================================
+
+/// colorize the edge selection
+void SelectionPlugin::colorizeEdgeSelection(int objectId, int r, int g, int b )
+{
+    BaseObjectData* object;
+    if ( ! PluginFunctions::getObject(objectId,object) ) {
+        emit log(LOGERR,"colorizeEdgeSelection : unable to get object" );
+        return;
+    }
+    
+    if ( object->dataType() == DATA_TRIANGLE_MESH )
+        colorizeSelection(PluginFunctions::triMesh(object), EDGE, r, g, b);
+    else if ( object->dataType() == DATA_POLY_MESH )
+        colorizeSelection(PluginFunctions::polyMesh(object), EDGE, r, g, b);
+    else {
+        emit log(LOGERR,"colorizeEdgeSelection : Unsupported object Type" );
+        return;
+    }
+    
+    emit scriptInfo( "colorizeEdgeSelection( ObjectId, "
+    + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + " )" );
+    
+    emit updatedObject(objectId);
+}
+
   
 
 

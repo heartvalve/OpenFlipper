@@ -165,11 +165,6 @@ void SelectionPlugin::selectBoundary( int objectID ){
 
 void SelectionPlugin::colorizeSelection( int objectID ){
 
-  if (selectionType_ & EDGE){
-    emit log(LOGERR, "Edge coloring not supported.");
-    return;
-  }
-
   QColor color = QColorDialog::getColor();
 
   if ( color.isValid() ){
@@ -179,5 +174,8 @@ void SelectionPlugin::colorizeSelection( int objectID ){
 
     if (selectionType_ & FACE)
       colorizeFaceSelection( objectID, color.red(), color.green(), color.blue() );
+    
+    if (selectionType_ & EDGE)
+        colorizeEdgeSelection( objectID, color.red(), color.green(), color.blue() );
   }
 }

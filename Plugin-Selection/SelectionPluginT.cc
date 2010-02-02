@@ -406,6 +406,18 @@ void SelectionPlugin::colorizeSelection(MeshT* _mesh, SelectionPrimitive _type, 
       if ( _mesh->status(f_it).selected() )
         _mesh->set_color(f_it, color);
   }
+  
+  if (_type & EDGE){
+      typename MeshT::EdgeIter e_it, e_end( _mesh->edges_end() );
+      
+      // Request edge color attribute
+      if( !_mesh->has_edge_colors() )
+          _mesh->request_edge_colors();
+      
+      for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
+          if ( _mesh->status(e_it).selected() )
+              _mesh->set_color(e_it, color);
+  }
 }
 
 
