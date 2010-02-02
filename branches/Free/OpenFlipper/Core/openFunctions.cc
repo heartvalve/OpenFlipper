@@ -521,6 +521,11 @@ void Core::slotObjectOpened ( int _id ) {
   // Tell plugins, that a file has been opened
   // ================================================================================
   emit openedFile( _id );
+  
+  // ================================================================================
+  // Print Info to logger
+  // ================================================================================
+  emit log( LOGINFO ,object->getObjectinfo() );
 
   // ================================================================================
   // Tell plugins, that the Object is updated and the active object has changed
