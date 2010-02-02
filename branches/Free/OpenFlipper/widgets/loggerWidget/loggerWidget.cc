@@ -167,9 +167,11 @@ void LoggerWidget::scrollTo(int _pos){
 /// Append a new logmessage to log viewer
 void LoggerWidget::append(QString _text, Logtype _type){
   
+  QTime time;
+  time.start();
   
   list_->addItem(_text);
-  
+
   QListWidgetItem* item = list_->item( list_->count()-1 );
   
   if ( allButton_->isChecked() )
@@ -203,8 +205,10 @@ void LoggerWidget::append(QString _text, Logtype _type){
         item->setHidden(false);
       break;
   }
-  
-  list_->scrollToBottom();
+
+  if ( !isHidden() )
+    list_->scrollToBottom();
+
 }
 
 //-------------------------------------------------------------------------------------
@@ -237,6 +241,11 @@ void LoggerWidget::updateList(){
         list_->item( i )->setHidden(true);
   }
   
+  list_->scrollToBottom();
+}
+
+//-------------------------------------------------------------------------------------
+void LoggerWidget::showEvent ( QShowEvent * event ) {
   list_->scrollToBottom();
 }
 
