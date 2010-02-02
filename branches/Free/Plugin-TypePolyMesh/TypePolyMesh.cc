@@ -77,8 +77,6 @@ int TypePolyMeshPlugin::addEmpty(){
 
   object->show();
 
-  emit log(LOGINFO, object->getObjectinfo());
-
   emit emptyObjectAdded (object->id() );
 
   return object->id();
