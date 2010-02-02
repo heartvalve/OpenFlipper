@@ -172,7 +172,6 @@ void BaseObject::persistentId( int _id ) {
 
 void BaseObject::cleanup() {
   persistentId_ = -1;
-  objectType_ = DATA_UNKNOWN;
 
   flags_.clear();
 

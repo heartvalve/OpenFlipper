@@ -83,14 +83,6 @@
 /// Items used for Grouping
 #define DATA_GROUP 1
 
-/// Triangle Mesh objects
-#define DATA_TRIANGLE_MESH typeId("TriangleMesh")
-#define DATA_TRIANGLE_MESH_CONST_ID 2
-
-/// Poly Mesh Objects
-#define DATA_POLY_MESH typeId("PolyMesh")
-#define DATA_POLY_MESH_CONST_ID 4
-
 /// Identifier for all available objects
 const unsigned int DATA_ALL           = UINT_MAX;
 

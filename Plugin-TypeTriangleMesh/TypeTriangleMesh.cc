@@ -50,19 +50,15 @@ TypeTriangleMeshPlugin::TypeTriangleMeshPlugin() {
 }
 
 bool TypeTriangleMeshPlugin::registerType() {
-    
-  // Type is stored as constant in core at the moment!
-  // TODO: Change this in future releases
-  
-  //addDataType("TriangleMesh",tr("TriangleMesh"));
-  //setTypeIcon( "TriangleMesh", "TriangleType.png");
+  addDataType("TriangleMesh",tr("TriangleMesh"));
+  setTypeIcon( "TriangleMesh", "TriangleType.png");
   return true;
 }
 
 int TypeTriangleMeshPlugin::addEmpty(){
     
   // new object data struct
-  TriMeshObject * object = new TriMeshObject(dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ));
+  TriMeshObject * object = new TriMeshObject(dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ),typeId("TriangleMesh"));
 
   if ( PluginFunctions::objectCount() == 1 )
     object->target(true);

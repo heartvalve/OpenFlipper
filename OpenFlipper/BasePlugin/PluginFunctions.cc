@@ -302,7 +302,7 @@ bool getAllMeshes( std::vector<int>& _identifiers  ) {
   _identifiers.clear();
 
   // find changed manipulator
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_TRIANGLE_MESH) ;
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,typeId("TriangleMesh")) ;
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     _identifiers.push_back( o_it->id() );
   }
@@ -894,7 +894,7 @@ void get_all_objects( std::vector < BaseObjectData*>& _objects ) {
    _objects.clear();
 
   // find changed manipulator
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_TRIANGLE_MESH) ;
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS,DATA_ALL) ;
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
     _objects.push_back( *o_it );
   }

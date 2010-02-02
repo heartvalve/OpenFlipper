@@ -51,18 +51,15 @@ TypePolyMeshPlugin::TypePolyMeshPlugin() {
 
 bool TypePolyMeshPlugin::registerType() {
     
-  // Type is stored as constant in core at the moment!
-  // TODO: Change this in future releases
-  
-  //addDataType("PolyMesh",tr("PolyMesh"));
-  //setTypeIcon( "PolyMesh", "PolyType.png");
+  addDataType("PolyMesh",tr("PolyMesh"));
+  setTypeIcon( "PolyMesh", "PolyType.png");
   return true;
 }
 
 int TypePolyMeshPlugin::addEmpty(){
     
   // new object data struct
-  PolyMeshObject * object = new PolyMeshObject(dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode() ));
+  PolyMeshObject * object = new PolyMeshObject(dynamic_cast < ACG::SceneGraph::SeparatorNode* >( PluginFunctions::getRootNode()) , typeId("PolyMesh") );
 
   if ( PluginFunctions::objectCount() == 1 )
     object->target(true);
