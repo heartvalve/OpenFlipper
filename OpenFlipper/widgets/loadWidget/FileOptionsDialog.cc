@@ -135,6 +135,7 @@ FileOptionsDialog::FileOptionsDialog(std::vector<fileTypes>& _supportedTypes, QS
   
   connect( cancel, SIGNAL(clicked()), this, SLOT(reject()) );
   connect(     ok, SIGNAL(clicked()), this, SLOT(accept()) );
+  
 }
 
 FileOptionsDialog::~FileOptionsDialog()
@@ -156,6 +157,14 @@ FileOptionsDialog::~FileOptionsDialog()
     if (widget != 0)
       widget->setParent(0);
   }
+}
+
+int FileOptionsDialog::exec(){
+  
+  if ( tabs_.count() == 0 && boxes_.count() == 0 )
+    return QDialog::Accepted;
+  else
+    return QDialog::exec();
 }
 
 void FileOptionsDialog::slotPluginChanged(QString _name){

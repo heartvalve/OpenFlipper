@@ -56,6 +56,9 @@ class FileOptionsDialog : public QDialog
   signals:
     void setPluginForExtension(QString _extension, int _pluginId );
     
+  public slots:
+    int exec();
+    
   private:
     bool loadMode_;
     
