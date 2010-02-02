@@ -74,7 +74,9 @@ struct PolyTraits : public OpenMesh::DefaultTraits
   typedef OpenMesh::Vec3d Point;
   /// Use double precision Normals
   typedef OpenMesh::Vec3d Normal;
-
+  
+  /// Use double precision rgba Color
+//   typedef OpenMesh::Vec4f Color;
 };
 
 /// Simple Name for Mesh
