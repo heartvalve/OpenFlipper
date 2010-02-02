@@ -504,12 +504,10 @@ void OBJImporter::addMaterial(std::string _materialName){
       for (uint i=0; i < addedFacesTri_.size(); i++){
       
         if ( mat.has_Kd() ) {
-          Vec3uc color = OpenMesh::color_cast<Vec3uc, Vec3f>(mat.Kd());
-
           bool colorAllowed = ! ( objectOptions_[ currentObject() ] & FORCE_NOCOLOR );
           
           if ( currentTriMesh()->has_face_colors() && colorAllowed ){
-            currentTriMesh()->set_color(addedFacesTri_[i], color);
+            currentTriMesh()->set_color(addedFacesTri_[i], OpenMesh::color_cast< TriMesh::Color >(mat.Kd() ) );
             objectOptions_[ currentObject() ] |= FACECOLOR;
           }
         }
@@ -554,12 +552,10 @@ void OBJImporter::addMaterial(std::string _materialName){
       }
       
       if ( mat.has_Kd() ) {
-        Vec3uc color = OpenMesh::color_cast<Vec3uc, Vec3f>(mat.Kd());
-
         bool colorAllowed = ! ( objectOptions_[ currentObject() ] & FORCE_NOCOLOR );
         
         if ( currentPolyMesh()->has_face_colors() && colorAllowed ){
-          currentPolyMesh()->set_color(addedFacePoly_, color);
+          currentPolyMesh()->set_color(addedFacePoly_, OpenMesh::color_cast< PolyMesh::Color >(mat.Kd() ));
           objectOptions_[ currentObject() ] |= FACECOLOR;
         }
       }
