@@ -223,8 +223,13 @@ void OBJImporter::setVertexTexCoord(VertexHandle _vh, int _texCoordID){
     
     if ( _texCoordID < (int) texCoords_.size() ){
     
+      //perhaps request texCoords for the mesh
+      if ( !currentTriMesh()->has_vertex_texcoords2D() )
+        currentTriMesh()->request_vertex_texcoords2D();
+      
+      //set the texCoords
       if ( vertexMapTri_.find( _vh ) != vertexMapTri_.end() )
-      currentTriMesh()->set_texcoord2D( vertexMapTri_[_vh], texCoords_[ _texCoordID ] ); 
+        currentTriMesh()->set_texcoord2D( vertexMapTri_[_vh], texCoords_[ _texCoordID ] ); 
 
     }else{
       std::cerr << "Error: TexCoord ID too large" << std::endl;
@@ -236,9 +241,14 @@ void OBJImporter::setVertexTexCoord(VertexHandle _vh, int _texCoordID){
     if ( !currentPolyMesh() ) return;
     
     if ( _texCoordID < (int) texCoords_.size() ){
-    
+
+      //perhaps request texCoords for the mesh
+      if ( !currentPolyMesh()->has_vertex_texcoords2D() )
+        currentPolyMesh()->request_vertex_texcoords2D();
+      
+      //set the texCoords
       if ( vertexMapPoly_.find( _vh ) != vertexMapPoly_.end() )
-      currentPolyMesh()->set_texcoord2D( vertexMapPoly_[_vh], texCoords_[ _texCoordID ] ); 
+        currentPolyMesh()->set_texcoord2D( vertexMapPoly_[_vh], texCoords_[ _texCoordID ] ); 
 
     }else{
       std::cerr << "Error: TexCoord ID too large" << std::endl;
@@ -381,6 +391,11 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
       addedFacesTri_.push_back( TriMesh::FaceHandle(n_faces+i) );
 
     
+    
+    //perhaps request texCoords for the mesh
+    if ( !currentTriMesh()->has_halfedge_texcoords2D() )
+      currentTriMesh()->request_halfedge_texcoords2D();
+    
     //now add texCoords
   
     // get first halfedge handle
@@ -395,10 +410,9 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     {
       if ( _face_texcoords[i] < (int)texCoords_.size() ){
 
-        if ( currentTriMesh()->has_halfedge_texcoords2D() ){
-          PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<TriMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
-          currentTriMesh()->set_texcoord2D(cur_heh, tex);
-        }
+        PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<TriMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
+        currentTriMesh()->set_texcoord2D(cur_heh, tex);
+
         cur_heh = currentTriMesh()->next_halfedge_handle(cur_heh);
 
       }else
@@ -429,6 +443,10 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     
     addedFacePoly_ = currentPolyMesh()->add_face( vertices ); 
     
+    //perhaps request texCoords for the mesh
+    if ( !currentPolyMesh()->has_halfedge_texcoords2D() )
+      currentPolyMesh()->request_halfedge_texcoords2D();
+    
     //now add texCoords
   
     // get first halfedge handle
@@ -443,10 +461,9 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     {
       if ( _face_texcoords[i] < (int)texCoords_.size() ){
 
-        if ( currentPolyMesh()->has_halfedge_texcoords2D() ){
-          PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<PolyMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
-          currentPolyMesh()->set_texcoord2D(cur_heh, tex);
-        }
+        PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<PolyMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
+        currentPolyMesh()->set_texcoord2D(cur_heh, tex);
+
         cur_heh = currentPolyMesh()->next_halfedge_handle(cur_heh);
 
       }else

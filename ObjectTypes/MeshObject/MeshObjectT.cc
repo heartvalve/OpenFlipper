@@ -193,9 +193,9 @@
     mesh_->request_edge_status();
     mesh_->request_vertex_colors();
     mesh_->request_face_colors();
-    mesh_->request_vertex_texcoords2D();
-    mesh_->request_halfedge_texcoords2D();
-    mesh_->request_face_texture_index();
+//     mesh_->request_vertex_texcoords2D();
+//     mesh_->request_halfedge_texcoords2D();
+//     mesh_->request_face_texture_index();
 
 
     // Only initialize scenegraph nodes when we initialized a gui!!
