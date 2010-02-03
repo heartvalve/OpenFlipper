@@ -50,7 +50,8 @@
 #include <math.h>
 
 LoggerWidget::LoggerWidget( QWidget *parent)
-  : QWidget(parent)
+  : QWidget(parent),
+  newData_(true)
 {
   QVBoxLayout* vlayout  = new QVBoxLayout();
   QHBoxLayout* hlayout  = new QHBoxLayout();
@@ -84,6 +85,11 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   
   connect (scrollBar_, SIGNAL(valueChanged(int)), this, SLOT(scrollTo(int)));
   connect (list_->verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(mapScrollPosition(int)));
+  connect (&loggerUpdateTimer_, SIGNAL(timeout ()), this, SLOT(slotScrollUpdate()));
+  
+  // Single shot timer every 500 msecs
+  loggerUpdateTimer_.setSingleShot(true);
+  loggerUpdateTimer_.setInterval(500);
   
   hlayout2->addWidget(list_);
   hlayout2->addWidget(scrollBar_);
@@ -166,10 +172,7 @@ void LoggerWidget::scrollTo(int _pos){
 
 /// Append a new logmessage to log viewer
 void LoggerWidget::append(QString _text, Logtype _type){
-  
-  QTime time;
-  time.start();
-  
+ 
   list_->addItem(_text);
 
   QListWidgetItem* item = list_->item( list_->count()-1 );
@@ -205,10 +208,46 @@ void LoggerWidget::append(QString _text, Logtype _type){
         item->setHidden(false);
       break;
   }
+  
+  // If the logger is hidden, we just ignore the update ... done by showEvent later
+  if ( isHidden() ) 
+    return;
 
-  if ( !isHidden() )
+  // Remember that we have new logs to show
+  newData_ = true;
+  
+  // Check if we already have a running timer.
+  // If so, the timeout of that timer will trigger the redraw.
+  // Otherwise, we redraw and start the timer to block concurrent redraws.
+  // Only if new data is available, the redraw at the timers timeout will be done.
+  if ( ! loggerUpdateTimer_.isActive() ) {
+    // Update the logger
     list_->scrollToBottom();
+    
+    // Remember that there is no new data now.
+    // This might change again on a call to this function, while the timer is active.
+    newData_ = false;
+    
+    // start the timer
+    loggerUpdateTimer_.start();
+  } 
+  
+}
 
+//-------------------------------------------------------------------------------------
+
+void LoggerWidget::slotScrollUpdate() {
+  
+  // If the logger is hidden, we just ignore this event
+  if ( isHidden() ) 
+    return;
+  
+  // If there is data to show, do it.
+  if ( newData_ ) {
+    list_->scrollToBottom();
+    newData_ = false;
+  }
+  
 }
 
 //-------------------------------------------------------------------------------------
