@@ -70,6 +70,11 @@ void SelectionPlugin::selectModelingVertices( int objectId , IdList _vertexList 
   } else if ( object->dataType() == DATA_POLY_MESH ){
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , AREA, true);
       update_regions( PluginFunctions::polyMesh(object) );
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  } else if ( object->dataType() == DATA_TSPLINE_MESH ){
+      MeshSelection::setArea(PluginFunctions::tsplineMesh(object) , _vertexList , AREA, true);
+      update_regions( PluginFunctions::tsplineMesh(object) );
+#endif
   } else {
       emit log(LOGERR,tr("selectModelingVertices : Unsupported object Type") );
       return;
@@ -103,6 +108,10 @@ void SelectionPlugin::unselectModelingVertices( int objectId , IdList _vertexLis
       MeshSelection::setArea(PluginFunctions::triMesh(object) , _vertexList , AREA, false);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , AREA, false);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::setArea(PluginFunctions::tsplineMesh(object) , _vertexList , AREA, false);
+#endif
   else{
       emit log(LOGERR,tr("unselectModelingVertices : Unsupported object Type") );
       return;
@@ -133,6 +142,10 @@ void SelectionPlugin::clearModelingVertices( int objectId ) {
       MeshSelection::setArea(PluginFunctions::triMesh(object) , AREA, false);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , AREA, false);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::setArea(PluginFunctions::tsplineMesh(object) , AREA, false);
+#endif
   else{
       emit log(LOGERR,tr("clearModelingVertices : Unsupported object Type") );
       return;
@@ -155,6 +168,10 @@ void SelectionPlugin::setAllModelingVertices( int objectId  ) {
       MeshSelection::setArea(PluginFunctions::triMesh(object) , AREA, true);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , AREA, true);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::setArea(PluginFunctions::tsplineMesh(object) , AREA, true);
+#endif
   else{
       emit log(LOGERR,tr("setAllModelingVertices : Unsupported object Type") );
       return;
@@ -178,6 +195,10 @@ IdList SelectionPlugin::getModelingVertices( int objectId  ) {
       return MeshSelection::getArea(PluginFunctions::triMesh(object) , AREA);
   else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getArea(PluginFunctions::polyMesh(object) , AREA);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      return MeshSelection::getArea(PluginFunctions::tsplineMesh(object) , AREA);
+#endif
   else{
       emit log(LOGERR,tr("getModelingVertices : Unsupported object Type") );
       return IdList(0);
@@ -230,6 +251,11 @@ void SelectionPlugin::loadFlipperModelingSelection( int _objectId , QString _fil
     } else if ( object->dataType() == DATA_POLY_MESH ){
         if ( PluginFunctions::polyMesh(object)->n_vertices() != vertexCount )
           return;
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+    } else if ( object->dataType() == DATA_TSPLINE_MESH ){
+        if ( PluginFunctions::tsplineMesh(object)->n_vertices() != vertexCount )
+          return;
+#endif
     } else {
       return;
     }
@@ -329,6 +355,31 @@ void SelectionPlugin::saveFlipperModelingSelection( int _objectId , QString _fil
       for (uint i=0; i < mesh->n_vertices(); i++)
         input << (int) modelingAll[i] << " " << (int) handleAll[i] << endl;
 
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+    } else if ( object->dataType() == DATA_TSPLINE_MESH){
+
+      TSplineMesh* mesh = PluginFunctions::tsplineMesh(object);
+
+      //header
+      input << "Selection" << endl;
+      input << mesh->n_vertices() << endl;
+
+      std::vector< int > modelingVertices = MeshSelection::getArea(mesh, AREA);
+      std::vector< int > handleVertices   = MeshSelection::getArea(mesh, HANDLEAREA);
+
+      std::vector< bool > modelingAll(mesh->n_vertices(), false);
+      std::vector< bool > handleAll(mesh->n_vertices(), false);
+
+      for (uint i=0; i < modelingVertices.size(); i++)
+        modelingAll[ modelingVertices[i] ] = true;
+
+      for (uint i=0; i < handleVertices.size(); i++)
+        handleAll[ handleVertices[i] ] = true;
+
+      for (uint i=0; i < mesh->n_vertices(); i++)
+        input << (int) modelingAll[i] << " " << (int) handleAll[i] << endl;
+
+#endif
     } else {
       emit log(LOGERR, tr("saveFlipperModelingSelection : Unsupported Type."));
     }

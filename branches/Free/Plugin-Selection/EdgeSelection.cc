@@ -80,6 +80,11 @@ void SelectionPlugin::selectEdges( int objectId , IdList _edgeList ) {
       MeshSelection::selectEdges(PluginFunctions::triMesh(object), _edgeList);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectEdges(PluginFunctions::polyMesh(object), _edgeList);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::selectEdges(PluginFunctions::tsplineMesh(object), _edgeList);
+#endif
+
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::selectEdges( PluginFunctions::polyLine(object) , _edgeList );
@@ -121,6 +126,10 @@ void SelectionPlugin::unselectEdges( int objectId , IdList _edgeList ) {
       MeshSelection::unselectEdges(PluginFunctions::triMesh(object), _edgeList);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::unselectEdges(PluginFunctions::polyMesh(object), _edgeList);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::unselectEdges(PluginFunctions::tsplineMesh(object), _edgeList);
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::unselectEdges( PluginFunctions::polyLine(object) , _edgeList );
@@ -160,6 +169,10 @@ void SelectionPlugin::selectAllEdges( int objectId )
       MeshSelection::selectAllEdges(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectAllEdges(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::selectAllEdges(PluginFunctions::tsplineMesh(object));
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::selectAllEdges( PluginFunctions::polyLine(object) );
@@ -191,6 +204,10 @@ void SelectionPlugin::clearEdgeSelection( int objectId )
       MeshSelection::clearEdgeSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::clearEdgeSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::clearEdgeSelection(PluginFunctions::tsplineMesh(object));
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::clearEdgeSelection( PluginFunctions::polyLine(object) );
@@ -222,6 +239,10 @@ void SelectionPlugin::invertEdgeSelection( int objectId )
       MeshSelection::invertEdgeSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::invertEdgeSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::invertEdgeSelection(PluginFunctions::tsplineMesh(object));
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::invertEdgeSelection( PluginFunctions::polyLine(object) );
@@ -253,6 +274,10 @@ void SelectionPlugin::selectBoundaryEdges( int objectId )
       MeshSelection::selectBoundaryEdges(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectBoundaryEdges(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::selectBoundaryEdges(PluginFunctions::tsplineMesh(object));
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       emit log(LOGERR,tr("selectBoundaryEdges : Not implemented on PolyLines") ); 
@@ -287,6 +312,10 @@ IdList SelectionPlugin::getEdgeSelection( int objectId )
       return MeshSelection::getEdgeSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getEdgeSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      return MeshSelection::getEdgeSelection(PluginFunctions::tsplineMesh(object));
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       return PolyLineSelection::getEdgeSelection( PluginFunctions::polyLine(object) );
@@ -319,6 +348,10 @@ void SelectionPlugin::colorizeEdgeSelection(int objectId, int r, int g, int b )
         colorizeSelection(PluginFunctions::triMesh(object), EDGE, r, g, b);
     else if ( object->dataType() == DATA_POLY_MESH )
         colorizeSelection(PluginFunctions::polyMesh(object), EDGE, r, g, b);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+    else if ( object->dataType() == DATA_TSPLINE_MESH )
+        colorizeSelection(PluginFunctions::tsplineMesh(object), EDGE, r, g, b);
+#endif
     else {
         emit log(LOGERR,"colorizeEdgeSelection : Unsupported object Type" );
         return;

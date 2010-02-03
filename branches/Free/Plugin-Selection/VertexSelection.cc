@@ -76,6 +76,10 @@ void SelectionPlugin::selectVertices( int objectId , IdList _vertexList ) {
       MeshSelection::selectVertices(PluginFunctions::triMesh(object), _vertexList);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectVertices(PluginFunctions::polyMesh(object), _vertexList);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::selectVertices(PluginFunctions::tsplineMesh(object), _vertexList);
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::selectVertices( PluginFunctions::polyLine(object) , _vertexList );
@@ -117,6 +121,10 @@ void SelectionPlugin::unselectVertices( int objectId , IdList _vertexList ) {
       MeshSelection::unselectVertices(PluginFunctions::triMesh(object), _vertexList);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::unselectVertices(PluginFunctions::polyMesh(object), _vertexList);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::unselectVertices(PluginFunctions::tsplineMesh(object), _vertexList);
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::unselectVertices( PluginFunctions::polyLine(object) , _vertexList );
@@ -158,6 +166,10 @@ void SelectionPlugin::selectAllVertices( int objectId )
       MeshSelection::selectAllVertices(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectAllVertices(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::selectAllVertices(PluginFunctions::tsplineMesh(object));
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::selectAllVertices( PluginFunctions::polyLine(object) );
@@ -189,6 +201,10 @@ void SelectionPlugin::clearVertexSelection( int objectId )
       MeshSelection::clearVertexSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::clearVertexSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::clearVertexSelection(PluginFunctions::tsplineMesh(object));
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::clearVertexSelection( PluginFunctions::polyLine(object) );
@@ -220,6 +236,10 @@ void SelectionPlugin::invertVertexSelection( int objectId )
       MeshSelection::invertVertexSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::invertVertexSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::invertVertexSelection(PluginFunctions::tsplineMesh(object));
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       PolyLineSelection::invertVertexSelection( PluginFunctions::polyLine(object) );
@@ -251,6 +271,10 @@ void SelectionPlugin::selectBoundaryVertices( int objectId )
       MeshSelection::selectBoundaryVertices(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectBoundaryVertices(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::selectBoundaryVertices(PluginFunctions::tsplineMesh(object));
+#endif
   else {
       emit log(LOGERR,tr("selectBoundaryVertices : Unsupported object Type") ); 
       return;
@@ -274,6 +298,10 @@ void SelectionPlugin::selectClosestBoundaryVertices( int objectId, int VertexId 
       closestBoundarySelection(PluginFunctions::triMesh(object), VertexId , VERTEX );
   else if ( object->dataType() == DATA_POLY_MESH )
       closestBoundarySelection(PluginFunctions::polyMesh(object), VertexId, VERTEX );
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      closestBoundarySelection(PluginFunctions::tsplineMesh(object), VertexId, VERTEX );
+#endif
   else {
       emit log(LOGERR,tr("selectClosestBoundaryVertices : Unsupported object Type") ); 
       return;
@@ -297,6 +325,10 @@ void SelectionPlugin::shrinkVertexSelection( int objectId )
       MeshSelection::shrinkVertexSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::shrinkVertexSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::shrinkVertexSelection(PluginFunctions::tsplineMesh(object));
+#endif
   else {
       emit log(LOGERR,tr("shrinkVertexSelection : Unsupported object Type") ); 
       return;
@@ -320,6 +352,10 @@ void SelectionPlugin::growVertexSelection( int objectId )
       MeshSelection::growVertexSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::growVertexSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::growVertexSelection(PluginFunctions::tsplineMesh(object));
+#endif
   else {
       emit log(LOGERR,tr("growVertexSelection : Unsupported object Type") ); 
       return;
@@ -345,6 +381,10 @@ IdList SelectionPlugin::getVertexSelection( int objectId )
       return MeshSelection::getVertexSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getVertexSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      return MeshSelection::getVertexSelection(PluginFunctions::tsplineMesh(object));
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT      
   else if ( object->dataType() == DATA_POLY_LINE )
       return PolyLineSelection::getVertexSelection( PluginFunctions::polyLine(object) );
@@ -376,6 +416,10 @@ void SelectionPlugin::deleteSelection( int objectId )
       deleteSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       deleteSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      deleteSelection(PluginFunctions::tsplineMesh(object));
+#endif
   else {
       emit log(LOGERR,tr("deleteSelection : Unsupported object Type") ); 
       return;
@@ -400,6 +444,10 @@ void SelectionPlugin::colorizeVertexSelection(int objectId, int r, int g, int b 
       colorizeSelection(PluginFunctions::triMesh(object), VERTEX, r, g, b);
   else if ( object->dataType() == DATA_POLY_MESH )
       colorizeSelection(PluginFunctions::polyMesh(object), VERTEX, r, g, b);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      colorizeSelection(PluginFunctions::tsplineMesh(object), VERTEX, r, g, b);
+#endif
   else {
       emit log(LOGERR,"colorizeVertexSelection : Unsupported object Type" );
       return;

@@ -70,6 +70,11 @@ void SelectionPlugin::selectHandleVertices( int objectId , IdList _vertexList ) 
   } else if ( object->dataType() == DATA_POLY_MESH ){
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , HANDLEAREA, true);
       update_regions( PluginFunctions::polyMesh(object) );
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  } else if ( object->dataType() == DATA_TSPLINE_MESH ){
+      MeshSelection::setArea(PluginFunctions::tsplineMesh(object) , _vertexList , HANDLEAREA, true);
+      update_regions( PluginFunctions::tsplineMesh(object) );
+#endif
   } else {
       emit log(LOGERR,tr("selectHandleVertices : Unsupported object Type") ); 
       return;
@@ -103,6 +108,10 @@ void SelectionPlugin::unselectHandleVertices( int objectId , IdList _vertexList 
       MeshSelection::setArea(PluginFunctions::triMesh(object) , _vertexList , HANDLEAREA, false);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , _vertexList , HANDLEAREA, false);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::setArea(PluginFunctions::tsplineMesh(object) , _vertexList , HANDLEAREA, false);
+#endif
   else {
       emit log(LOGERR,tr("unselectHandleVertices : Unsupported object Type") ); 
       return;
@@ -133,6 +142,10 @@ void SelectionPlugin::clearHandleVertices( int objectId ) {
       MeshSelection::setArea(PluginFunctions::triMesh(object) , HANDLEAREA, false);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , HANDLEAREA, false);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::setArea(PluginFunctions::tsplineMesh(object) , HANDLEAREA, false);
+#endif
   else {
       emit log(LOGERR,tr("clearHandleVertices : Unsupported object Type") ); 
       return;
@@ -155,6 +168,10 @@ void SelectionPlugin::setAllHandleVertices( int objectId  ) {
       MeshSelection::setArea(PluginFunctions::triMesh(object) , HANDLEAREA, true);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::setArea(PluginFunctions::polyMesh(object) , HANDLEAREA, true);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::setArea(PluginFunctions::tsplineMesh(object) , HANDLEAREA, true);
+#endif
   else {
       emit log(LOGERR,tr("setAllHandleVertices : Unsupported object Type") ); 
       return;
@@ -179,6 +196,10 @@ IdList SelectionPlugin::getHandleVertices( int objectId  ) {
       return MeshSelection::getArea(PluginFunctions::triMesh(object) , HANDLEAREA);
   else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getArea(PluginFunctions::polyMesh(object) , HANDLEAREA);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      return MeshSelection::getArea(PluginFunctions::tsplineMesh(object) , HANDLEAREA);
+#endif
   else {
       emit log(LOGERR,tr("getHandleVertices : Unsupported object Type") ); 
       return IdList(0);;
