@@ -125,15 +125,6 @@ public:
   void set_default_halfedge_textcoord_property( std::string _default_halfedge_textcoord_property )
     { default_halfedge_textcoord_property_ = _default_halfedge_textcoord_property; };
 
-  /** \brief Property to use when switching between multiple textures
-   *
-   * The given mesh property has to contain an int index of textures to use per face.
-   * If it is not given, the default face_texture_index property of OpenMesh will be used.
-   * If there is no texture map given via set_texture_map, texture switching will be disabled and
-   * only the currently bound texture will be used.
-   */
-  void set_index_property_name( std::string _index_property_name) { indexPropertyName_ = _index_property_name; };
-
 protected:
 
 

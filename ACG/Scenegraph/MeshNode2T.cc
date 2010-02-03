@@ -93,7 +93,8 @@ TriStripNodeT(Mesh&        _mesh,
   facePickingList_(0),
   updateAnyPickingList_(true),
   anyPickingBaseIndex_(0),
-  anyPickingList_(0)  
+  anyPickingList_(0),
+  indexPropertyName_("f:textureindex")
 {
   
   /// \todo : Handle vbo not supported
@@ -1242,6 +1243,14 @@ update_topology() {
   // Unbind the buffer after the work has been done
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 }
+
+template<class Mesh>
+void
+TriStripNodeT<Mesh>::
+setIndexPropertyName( std::string _index_property_name ) { 
+  indexPropertyName_ = _index_property_name; 
+  stripProcessor_.setIndexPropertyName(indexPropertyName_);
+};
               
 //=============================================================================
 } // namespace SceneGraph

@@ -401,6 +401,15 @@ private:
 * @{ */
 //===========================================================================    
 
+public:
+  /** \brief set the name of the property used for texture index specification
+  *
+  * The given property name will define a texture index. The strip processor checks this
+  * property and generates strips which contain only the same index. If the property is not
+  * found, strips will be independend of this property
+  */
+  void setIndexPropertyName( std::string _index_property_name );
+
 private:
   /** \brief Property name of the per face texture index.
   *

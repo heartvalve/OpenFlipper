@@ -82,70 +82,6 @@ template <class Mesh>
 class TriStripNodeT  : public BaseNode
 {
 public:
-
-//   typedef OpenMesh::StripifierT<Mesh>  MyStripifier;
-//   typedef MeshNodeT<Mesh>              Base;
-//   typedef typename Base::FaceMode      FaceMode;
-// 
-// 
-//   /// Default constructor
-//   TriStripNodeT(Mesh&        _mesh,
-// 		BaseNode*    _parent=0,
-// 		std::string  _name="<TriStripNodeT>" )
-//     : Base(_mesh, _parent, _name),
-//       strips_(_mesh)
-//   {}
-// 
-// 
-//   /// Destructor
-//   ~TriStripNodeT() {}
-// 
-// 
-//   ACG_CLASSNAME(TriStripNodeT);
-// 
-// 
-//   /// build triangle strips, delete face indices
-//   void update_strips()
-//   {
-//     std::vector<unsigned int>().swap(Base::indices_);
-//     strips_.stripify();
-//   }
-// 
-// 
-//   /// build face indices, delete strips
-//   virtual void update_topology()
-//   {
-//     strips_.clear();
-//     Base::update_topology();
-//   }
-// 
-// 
-// 
-// private:
-// 
-//   virtual void draw_faces(FaceMode _mode)
-//   {
-//     if (Base::mesh_.is_trimesh()  &&
-// 	     _mode == Base::PER_VERTEX &&
-// 	     strips_.is_valid())
-//     {
-//       typename MyStripifier::StripsIterator strip_it   = strips_.begin();
-//       typename MyStripifier::StripsIterator strip_last = strips_.end();
-// 
-//       for (; strip_it!=strip_last; ++strip_it)
-// 	          glDrawElements(GL_TRIANGLE_STRIP,
-// 		       strip_it->size(),
-// 		       GL_UNSIGNED_INT,
-// 		       &(*strip_it)[0] );
-//     }
-//     else Base::draw_faces(_mode);
-//   }
-// 
-// 
-//   MyStripifier  strips_;
-
-
-
   ACG_CLASSNAME(MeshNode);
 
   /** \brief Default constructor
@@ -508,6 +444,33 @@ private:
 /** @} */
   
 
+//===========================================================================
+/** @name Texture handling
+* @{ */
+//=========================================================================== 
+public:
+  /** \brief set the name of the property used for texture index specification
+  *
+  * The given property name will define a texture index. This index is used to make
+  * a lookup in the texture correspondence map containing for each index the gluint
+  * for the texture to be used. A zero in the property means, that no texture will be bound for the 
+  * face.
+  * If you define a non existing name here, texture switching will be disabled and it
+  * is assumed that a texture is bound already.
+  *
+  *\todo Remove the external texture loading and do it here.
+  *
+  */
+  
+  void setIndexPropertyName( std::string _index_property_name );
+  
+private:
+  
+  std::string indexPropertyName_;
+
+  
+
+/** @} */
   
   /// \todo Remove all these functions afterwards!
   
@@ -515,7 +478,7 @@ private:
     void set_texture_map( std::map< int, GLuint>* _map){  };
     void set_property_map( std::map< int, std::string>* _map){ };
     void set_default_halfedge_textcoord_property( std::string _default_halfedge_textcoord_property ) {};
-    void set_index_property_name( std::string _index_property_name) {  };
+    
     
 
 };

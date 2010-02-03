@@ -83,7 +83,6 @@ MeshNodeT(const Mesh&  _mesh,
     textureMap_(0),
     propertyMap_(0),
     default_halfedge_textcoord_property_("h:texcoords2D"),
-    indexPropertyName_("f:textureindex"),
     bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
     bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX)
 {
