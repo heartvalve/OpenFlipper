@@ -135,8 +135,9 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
     for (; v_it!=v_end; ++v_it)
       mesh.set_point(v_it,mesh.point(v_it) + _vector );
 
+  }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-  } else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+  else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
     TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
@@ -198,8 +199,9 @@ void MovePlugin::translate( int _objectId , IdList _vHandles, Vector _vector ){
       PolyMesh::VertexHandle vh( _vHandles[i] );
       mesh.set_point(vh  ,mesh.point( vh ) + _vector );
     }
+  }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-  } else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
 
@@ -207,9 +209,9 @@ void MovePlugin::translate( int _objectId , IdList _vHandles, Vector _vector ){
       TSplineMesh::VertexHandle vh( _vHandles[i] );
       mesh.set_point(vh  ,mesh.point( vh ) + _vector );
     }
+   }
 #endif
 
-  }
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
       std::cerr << "Todo : translate PolyLine" << std::endl;
@@ -263,8 +265,9 @@ void MovePlugin::translateSelection( int _objectId , Vector _vector) {
     for (; v_it!=v_end; ++v_it)
       if ( mesh.status(v_it).selected() )
         mesh.set_point(v_it,mesh.point(v_it) + _vector );
+  }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-  } else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+  else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
     TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
@@ -272,9 +275,9 @@ void MovePlugin::translateSelection( int _objectId , Vector _vector) {
     for (; v_it!=v_end; ++v_it)
       if ( mesh.status(v_it).selected() )
         mesh.set_point(v_it,mesh.point(v_it) + _vector );
-#endif
-
   }
+#endif
+  
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
       std::cerr << "Todo : translate PolyLine" << std::endl;
@@ -329,8 +332,9 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
       mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
       mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
     }
+  }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-  } else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
     TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
@@ -339,9 +343,9 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
       mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
       mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
     }
+  }
 #endif
 
-  }
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
       std::cerr << "Todo : transform PolyLine" << std::endl;
@@ -405,8 +409,9 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
       mesh.set_point (vh, _matrix.transform_point ( mesh.point(vh) ) );
       mesh.set_normal(vh, _matrix.transform_vector( mesh.normal(vh) ) );
     }
+  }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-  } else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
     TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
@@ -417,9 +422,9 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
       mesh.set_point (vh, _matrix.transform_point ( mesh.point(vh) ) );
       mesh.set_normal(vh, _matrix.transform_vector( mesh.normal(vh) ) );
     }
+   }
 #endif
 
-  }
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
       std::cerr << "Todo : transform PolyLine" << std::endl;
@@ -482,8 +487,9 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
+  }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-  } else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+   else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
     TSplineMesh::VertexIter v_it  = mesh.vertices_begin();
@@ -494,9 +500,9 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
+   }
 #endif
-
-  }
+  
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
       std::cerr << "Todo : transform PolyLine" << std::endl;
@@ -583,8 +589,9 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
+  }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-  } else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+  else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
 
@@ -607,10 +614,8 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
-#endif
-
   }
-
+#endif
 
 
   emit updatedObject(_objectId);
@@ -692,8 +697,9 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
+  }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-  } else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+  else if ( object->dataType( DATA_TSPLINE_MESH ) ) {
 
     TSplineMesh&  mesh  = (*PluginFunctions::tsplineMesh(object));
 
@@ -718,9 +724,9 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
         mesh.set_point (v_it, _matrix.transform_point ( mesh.point(v_it) ) );
         mesh.set_normal(v_it, _matrix.transform_vector( mesh.normal(v_it) ) );
       }
-#endif
-
   }
+#endif
+  
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
       std::cerr << "Todo : transform PolyLine" << std::endl;
