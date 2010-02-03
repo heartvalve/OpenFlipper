@@ -40,7 +40,8 @@
  *                                                                           *
 \*===========================================================================*/
 
-
+#ifndef STATUSNODEMODS_HH
+#define STATUSNODEMODS_HH
 
 
 
@@ -170,4 +171,6 @@ template< class MeshT >
   }
 
 };
+
+#endif
 
