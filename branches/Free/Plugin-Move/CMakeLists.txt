@@ -1,2 +1,7 @@
 include (plugin)
-openflipper_plugin ( TRANSLATION_LANGUAGES de_DE INSTALLDATA Icons  )
+
+if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/TSplineMesh)
+  add_definitions (-DENABLE_TSPLINEMESH_SUPPORT)
+endif ()
+
+openflipper_plugin ( TSplineMesh TRANSLATION_LANGUAGES de_DE INSTALLDATA Icons  )

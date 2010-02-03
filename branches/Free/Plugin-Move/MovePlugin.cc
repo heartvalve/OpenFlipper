@@ -63,6 +63,9 @@
 #include <ObjectTypes/PolyLine/PolyLine.hh>
 #endif
 
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+#include <ObjectTypes/TSplineMesh/TSplineMesh.hh>
+#endif
 
 
 /** \brief Default Constructor
@@ -433,6 +436,10 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
     transformMesh(mat , *PluginFunctions::triMesh(object) );
   } else  if  ( object->dataType()  == DATA_POLY_MESH ) {
     transformMesh(mat , *PluginFunctions::polyMesh(object) );
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  } else  if  ( object->dataType()  == DATA_TSPLINE_MESH ) {
+    transformMesh(mat , *PluginFunctions::tsplineMesh(object) );
+#endif
   #ifdef ENABLE_POLYLINE_SUPPORT
   } else  if  ( object->dataType()  == DATA_POLY_LINE ) {
     transformPolyLine(mat , *PluginFunctions::polyLine(object) );
@@ -680,18 +687,30 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
                 hitPoint = getNearestVertex(PluginFunctions::triMesh(object), target_idx, hitPoint);
             } else if ( object->dataType(DATA_POLY_MESH) ) {
                 hitPoint = getNearestVertex(PluginFunctions::polyMesh(object), target_idx, hitPoint);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+            } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
+                hitPoint = getNearestVertex(PluginFunctions::tsplineMesh(object), target_idx, hitPoint);
+#endif
             }
         } else if (selectionType_ == EDGE) {
             if ( object->dataType(DATA_TRIANGLE_MESH) ) {
                 hitPoint = getNearestEdge(PluginFunctions::triMesh(object), target_idx, hitPoint);
             } else if ( object->dataType(DATA_POLY_MESH) ) {
                 hitPoint = getNearestEdge(PluginFunctions::polyMesh(object), target_idx, hitPoint);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+            } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
+                hitPoint = getNearestEdge(PluginFunctions::tsplineMesh(object), target_idx, hitPoint);
+#endif
             }
         } else if (selectionType_ == FACE) {
             if ( object->dataType(DATA_TRIANGLE_MESH) ) {
                 hitPoint = getNearestFace(PluginFunctions::triMesh(object), target_idx, hitPoint);
             } else if ( object->dataType(DATA_POLY_MESH) ) {
                 hitPoint = getNearestFace(PluginFunctions::polyMesh(object), target_idx, hitPoint);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+            } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
+                hitPoint = getNearestFace(PluginFunctions::tsplineMesh(object), target_idx, hitPoint);
+#endif
             }
         }
 
@@ -1077,6 +1096,10 @@ void MovePlugin::slotMoveManipToCOG() {
 	    object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::triMesh(object)) );
 	    else if ( object->dataType( DATA_POLY_MESH ) )
 	    object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::polyMesh(object)) );
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+	    else if ( object->dataType( DATA_TSPLINE_MESH ) )
+	    object->manipulatorNode()->set_center( MeshInfo::cog(*PluginFunctions::tsplineMesh(object)) );
+#endif
 
 	    updateManipulatorDialog();
 	    object->manipulatorNode()->loadIdentity();
@@ -1148,6 +1171,11 @@ void MovePlugin::slotRotate() {
 			if (object->dataType(DATA_POLY_MESH))
 				transformMesh(getLastManipulatorMatrix(true),
 						(*PluginFunctions::polyMesh(object)));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+			if (object->dataType(DATA_TSPLINE_MESH))
+				transformMesh(getLastManipulatorMatrix(true),
+						(*PluginFunctions::tsplineMesh(object)));
+#endif
 
 			updateManipulatorDialog();
 
@@ -1219,6 +1247,11 @@ void MovePlugin::slotScale() {
 			if (object->dataType(DATA_POLY_MESH))
 				transformMesh(getLastManipulatorMatrix(true),
 						(*PluginFunctions::polyMesh(object)));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+			if (object->dataType(DATA_TSPLINE_MESH))
+				transformMesh(getLastManipulatorMatrix(true),
+						(*PluginFunctions::tsplineMesh(object)));
+#endif
 
 			updateManipulatorDialog();
 
@@ -1265,6 +1298,14 @@ void MovePlugin::slotMoveToOrigin() {
           cog += MeshInfo::cog(mesh) * double(mesh.n_vertices());
           vertexCount += double(mesh.n_vertices());
         }
+
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+        if ( o_it->dataType( DATA_TSPLINE_MESH )) {
+          TSplineMesh& mesh = *PluginFunctions::tsplineMesh(*o_it);
+          cog += MeshInfo::cog(mesh) * double(mesh.n_vertices());
+          vertexCount += double(mesh.n_vertices());
+        }
+#endif
       }
 
       cog = cog / vertexCount;
@@ -1298,6 +1339,20 @@ void MovePlugin::slotMoveToOrigin() {
 
     }
 
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+    if ( o_it->dataType( DATA_TSPLINE_MESH )) {
+        TSplineMesh& mesh = *PluginFunctions::tsplineMesh(*o_it);
+
+        if ( !useCommonCOG )
+          cog = MeshInfo::cog(mesh);
+
+        for ( TSplineMesh::VertexIter v_it = mesh.vertices_begin(); v_it != mesh.vertices_end() ; ++v_it)
+          mesh.set_point(v_it , ( mesh.point(v_it) ) - cog );
+
+        o_it->manipulatorNode()->set_center( o_it->manipulatorNode()->center() - cog );
+
+    }
+#endif
     emit updatedObject( o_it->id() );
 
     updateManipulatorDialog();
@@ -1348,6 +1403,14 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
           bb_min.minimize(bb_min_tmp);
           bb_max.maximize(bb_max_tmp);
         }
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+        if ( o_it->dataType( DATA_TSPLINE_MESH )) {
+          TSplineMesh& mesh = *PluginFunctions::tsplineMesh(*o_it);
+          getBB(mesh,bb_min_tmp,bb_max_tmp);
+          bb_min.minimize(bb_min_tmp);
+          bb_max.maximize(bb_max_tmp);
+        }
+#endif
       }
     }
 
@@ -1359,11 +1422,19 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
         unifyBBDiag(*PluginFunctions::triMesh(*o_it),bb_min,bb_max);
       else if ( o_it->dataType( DATA_POLY_MESH ) )
         unifyBBDiag(*PluginFunctions::polyMesh(*o_it),bb_min,bb_max);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+      else if ( o_it->dataType( DATA_TSPLINE_MESH ) )
+        unifyBBDiag(*PluginFunctions::tsplineMesh(*o_it),bb_min,bb_max);
+#endif
     } else {
       if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
         unifyBBDiag(*PluginFunctions::triMesh(*o_it));
       else if ( o_it->dataType( DATA_POLY_MESH ) )
         unifyBBDiag(*PluginFunctions::polyMesh(*o_it));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+      else if ( o_it->dataType( DATA_TSPLINE_MESH ) )
+        unifyBBDiag(*PluginFunctions::tsplineMesh(*o_it));
+#endif
     }
 
     emit updatedObject( o_it->id() );
