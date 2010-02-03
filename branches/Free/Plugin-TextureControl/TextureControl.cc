@@ -1153,7 +1153,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   if ( texData->texture(_textureName).type() == MULTITEXTURE ) {
     if( obj->dataType( DATA_TRIANGLE_MESH ) ){
       // Set the property map for mapping between faces and textures
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName).indexMappingProperty().toStdString() );
+      PluginFunctions::triMeshObject(obj)->meshNode()->setIndexPropertyName( texData->texture( _textureName).indexMappingProperty().toStdString() );
       // Unbind all textures ( textures will be bound by textureNode later on
       PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture(0);
       // Set the mapping between texture ids in the index property and their gl Names
@@ -1162,7 +1162,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else if( obj->dataType( DATA_POLY_MESH ) ){
       // Set the property map for mapping between faces and textures
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name( texData->texture( _textureName).indexMappingProperty().toStdString() );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->setIndexPropertyName( texData->texture( _textureName).indexMappingProperty().toStdString() );
       // Unbind all textures ( textures will be bound by textureNode later on
       PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture(0);
       // Set the mapping between texture ids in the index property and their gl Names
@@ -1177,14 +1177,14 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       // Activate the requested texture in texture node
       PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
       // Disable the mapping properties ( only for multi texture mode )
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_index_property_name("No Texture Index");
+      PluginFunctions::triMeshObject(obj)->meshNode()->setIndexPropertyName("No Texture Index");
       PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else if ( obj->dataType( DATA_POLY_MESH ) ){
       // Activate the requested texture in texture node
       PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
       // Disable the mapping properties ( only for multi texture mode )
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_index_property_name("No Texture Index");
+      PluginFunctions::polyMeshObject(obj)->meshNode()->setIndexPropertyName("No Texture Index");
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
       PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
     } else {
