@@ -272,20 +272,16 @@ class MetaAction
 
     void enter (BaseNode *_node)
     {
-      /*unsigned int drawmode = ((_node->drawMode() == DrawModes::DEFAULT) ?
+      unsigned int drawmode = ((_node->drawMode() == DrawModes::DEFAULT) ?
                                drawmode_ : _node->drawMode());
-      _node->enter(state_, drawmode);*/
-      
-      action_.enter( _node );
+      _node->enter(state_, drawmode);
     }
 
     void leave (BaseNode *_node)
     {
-      /*unsigned int drawmode = ((_node->drawMode() == DrawModes::DEFAULT) ?
+      unsigned int drawmode = ((_node->drawMode() == DrawModes::DEFAULT) ?
                                drawmode_ : _node->drawMode());
-      _node->leave(state_, drawmode);*/
-      
-      action_.leave( _node );
+      _node->leave(state_, drawmode);
     }
 
   private:
@@ -489,10 +485,6 @@ public:
 
       return true;
   }
-  
-  void enter (BaseNode* /*_node*/) {};
-  
-  void leave (BaseNode* /*_node*/) {};
 
   /** \brief Get the number of required traverse passes from Scenegraph
   *
@@ -553,10 +545,6 @@ public:
     }
     return true;
   }
-  
-  void enter (BaseNode* /*_node*/) {};
-  
-  void leave (BaseNode* /*_node*/) {};
 
   /// Get the pointer of the node (is 0 if node was not found)
   BaseNode*  node_ptr() { return node_ptr_; }
@@ -597,10 +585,6 @@ public:
     drawModes_ |= _node->availableDrawModes();
     return true;
   }
-  
-  void enter (BaseNode* /*_node*/) {};
-  
-  void leave (BaseNode* /*_node*/) {};
 
   /// Get the collected draw modes
   unsigned int drawModes() const { return drawModes_; }
@@ -632,10 +616,6 @@ public:
     drawMode_ |= _node->drawMode();
     return true;
   }
-  
-  void enter (BaseNode* /*_node*/) {};
-  
-  void leave (BaseNode* /*_node*/) {};
 
   /// Get the collected draw modes
   unsigned int drawMode() const { return drawMode_; }
@@ -677,10 +657,6 @@ public:
 
     return true;
   }
-  
-  void enter (BaseNode* /*_node*/) {};
-  
-  void leave (BaseNode* /*_node*/) {};
 
 private:
   unsigned int newModes_;
@@ -721,10 +697,6 @@ public:
     return true;
   }
 
-  void enter (BaseNode* /*_node*/) {};
-
-  void leave (BaseNode* /*_node*/) {};
-
 private:
 
   unsigned int drawMode_;
@@ -751,7 +723,7 @@ public:
   PickAction(GLState &_state, PickTarget _target, unsigned int _drawmode) :
     state_(_state),
     pickTarget_(_target),
-    drawmode_(_drawmode) {};
+    drawmode_(_drawmode) {}
 
   /** Action applied to the node
   */
@@ -808,10 +780,6 @@ public:
     _node->mouseEvent(_state, event_);
     return true;
   }
-  
-  void enter (BaseNode* /*_node*/) {};
-  
-  void leave (BaseNode* /*_node*/) {};
 
 private:
 
@@ -841,10 +809,6 @@ public:
     // don't traverse children if current node is _dirty
     return !dirty_;
   }
-  
-  void enter (BaseNode* /*_node*/) {};
-  
-  void leave (BaseNode* /*_node*/) {};
 
   bool isDirty() const { return dirty_; };
 
