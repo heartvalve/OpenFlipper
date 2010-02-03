@@ -999,6 +999,9 @@ private slots:
     /// This slot is called by the object manager when a new object is created
     void newObject(int _objectId);
     
+    /// This slot is called by the object manager when an object is deleted
+    void deletedObject(int _objectId);    
+    
   /** @} */
   
   private :
