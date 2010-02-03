@@ -261,6 +261,8 @@ buildStripsTriMesh()
       processed(f_it) = used(f_it) = false;
   }
 
+  /// \todo check for texture index here
+
   for (f_it=mesh_.faces_begin(); true; )
   {
     // find start face
@@ -931,6 +933,18 @@ perFaceColorBuffer() {
   
   return &(perFaceColorBuffer_)[0]; 
 };  
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+setIndexPropertyName( std::string _index_property_name ) { 
+  indexPropertyName_ = _index_property_name; 
+  
+  std::cerr << "setIndexPropertyName " << _index_property_name << std::endl;
+  
+  // mark the buffers as invalid as we have a new per face index array
+  invalidatePerFaceBuffers();
+};
 
 //=============================================================================
 } // namespace SceneGraph
