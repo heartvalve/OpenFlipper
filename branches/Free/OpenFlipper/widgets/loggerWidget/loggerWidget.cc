@@ -230,17 +230,13 @@ void LoggerWidget::append(QString _text, Logtype _type){
     
     // start the timer
     loggerUpdateTimer_.start();
-  } 
+  }
   
 }
 
 //-------------------------------------------------------------------------------------
 
 void LoggerWidget::slotScrollUpdate() {
-  
-  // If the logger is hidden, we just ignore this event
-  if ( isHidden() ) 
-    return;
   
   // If there is data to show, do it.
   if ( newData_ ) {
