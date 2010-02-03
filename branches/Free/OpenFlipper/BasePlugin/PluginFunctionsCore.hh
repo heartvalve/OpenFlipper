@@ -93,6 +93,29 @@ void setDataSeparatorNodes( SeparatorNode* _dataRootNode );
 
 /** @} */
 
+//=======================================
+// Handle object count internally
+/** @name Internal Counters
+* @{ */
+//=======================================
+/// Decrease the number of current Object
+DLLEXPORT
+void increaseObjectCount();
+
+/// Increase the number of current Object
+DLLEXPORT
+void decreaseObjectCount();
+
+/// Decrease the number of current Object
+DLLEXPORT
+void increaseTargetCount();
+
+/// Increase the number of current Object
+DLLEXPORT
+void decreaseTargetCount();
+
+/** @} */
+
 }
 
 #endif //PLUGINFUNCTIONSCORE_HH

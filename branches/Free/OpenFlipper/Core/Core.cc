@@ -213,6 +213,8 @@ Core::init() {
   
   // Bring up the object manager ( has to be done after the rootobject is created)
   connect(getObjectManager(),SIGNAL(newObject(int)), this ,SLOT(newObject(int)));
+  
+  connect(getObjectManager(),SIGNAL(deletedObject(int)), this ,SLOT(deletedObject(int)));
 
   if ( OpenFlipper::Options::gui() ) {
 

@@ -557,6 +557,7 @@ void Core::slotObjectOpened ( int _id ) {
 
  /// Slot gets called after a file-plugin has opened an object
 void Core::slotEmptyObjectAdded ( int _id ) {
+
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
@@ -572,6 +573,7 @@ void Core::slotEmptyObjectAdded ( int _id ) {
   BaseObjectData* object;
   PluginFunctions::getObject(_id,object);
 
+  
   emit emptyObjectAdded( _id );
 
   // Tell the Plugins that the Object List and the active object have changed

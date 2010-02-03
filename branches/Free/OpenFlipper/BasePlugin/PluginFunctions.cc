@@ -120,6 +120,12 @@ static QGLWidget* shareGLWidget_ = 0;
 */
 static int viewerId_ = 0;
 
+/// Number of currently open objects
+static int objectCounter_ = 0;
+
+/// Number of current target objects
+static int targetCounter_ = 0;
+
 void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
@@ -832,30 +838,13 @@ void addObjectRenderingNode(ACG::SceneGraph::BaseNode* _node){
 }
 
 int objectCount() {
-
-  int count = 0;
-
-  // find changed manipulator
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-    ++count;
-  }
-
-  return ( count );
-
+  return(objectCounter_);
 }
 
+
+
 int targetCount() {
-
-  int count = 0;
-
-  // find changed manipulator
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ;
-                                        o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-    ++count;
-  }
-
-  return ( count );
+  return ( targetCounter_ );
 }
 
 int sourceCount() {
@@ -923,6 +912,30 @@ BaseObjectData* baseObjectData( BaseObject* _object ){
 // ===============================================================================
 BaseObject*& objectRoot() {
   return (objectRoot_);
+}
+
+void increaseObjectCount() {
+  objectCounter_++;
+}
+
+// Increase the number of current Object
+void decreaseObjectCount() {
+  objectCounter_--;
+  
+  if ( objectCounter_ < 0 )
+    std::cerr << "Deleted more objects than created!!!" << std::endl;
+}
+
+void increaseTargetCount() {
+  targetCounter_++;
+}
+
+// Increase the number of current Object
+void decreaseTargetCount() {
+  targetCounter_--;
+  
+  if ( targetCounter_ < 0 )
+    std::cerr << "target object counter underflow!!!" << std::endl;
 }
 
 }
