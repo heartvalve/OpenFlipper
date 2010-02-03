@@ -106,6 +106,11 @@ class LoggerWidget : public QWidget
     
     QMenu* context_;
     
+    QTimer loggerUpdateTimer_;
+    
+    // true if new data is available
+    bool newData_;
+    
   private slots:
     /// update the list if a button was pressed
     void updateList();
@@ -114,8 +119,11 @@ class LoggerWidget : public QWidget
     void scrollTo(int _pos);
     /// map scroll position of list to scrollbar position
     void mapScrollPosition(int _pos);
-    ///copy Selected rows to clipboard
+    /// copy Selected rows to clipboard
     void copySelected();
+    
+    /// Called when we want to scroll to the bottom
+    void slotScrollUpdate();
 };
 
 #endif //LOGGERWIDGET_HH
