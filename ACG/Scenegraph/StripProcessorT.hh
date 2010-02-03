@@ -408,17 +408,18 @@ public:
   * property and generates strips which contain only the same index. If the property is not
   * found, strips will be independend of this property
   */
-  void setIndexPropertyName( std::string _index_property_name );
+  void setIndexPropertyName( std::string _indexPropertyName );
 
 private:
-  /** \brief Property name of the per face texture index.
+  
+  /** \brief Property for the per face texture index.
   *
-  * This name is used by the mesh for texture index specification.
-  * If this is empty, Then it is assumed that there is one or no active
+  * This property is used by the mesh for texture index specification.
+  * If this is invalid, then it is assumed that there is one or no active
   * texture. This means that the generated strips will be independent of texture 
   * information.
-  */
-  std::string indexPropertyName_;
+  */  
+  OpenMesh::FPropHandleT< int > textureIndexProperty_;
 
 /** @} */  
 
