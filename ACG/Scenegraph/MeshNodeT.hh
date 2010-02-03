@@ -152,7 +152,7 @@ public:
    * If there is no texture map given via set_texture_map, texture switching will be disabled and
    * only the currently bound texture will be used.
    */
-  void set_index_property_name( std::string _index_property_name) { indexPropertyName_ = _index_property_name; };
+  void setIndexPropertyName( std::string _index_property_name) { indexPropertyName_ = _index_property_name; };
 
 protected:
 
