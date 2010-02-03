@@ -69,7 +69,7 @@ mesh_(_mesh),
 triangulated_(false),
 updatePerEdgeBuffers_(true),
 updatePerFaceBuffers_(true),
-indexPropertyName_("f:textureindex")
+textureIndexProperty_(-1)
 {
 
 }
@@ -261,7 +261,18 @@ buildStripsTriMesh()
       processed(f_it) = used(f_it) = false;
   }
 
-  /// \todo check for texture index here
+  // Check if we have to take care of textures
+  // If this property is not available, we do not have texture info and will therefore 
+  // skip texture handling in strip generation
+  bool textureHandling = false;
+  if ( textureIndexProperty_.is_valid() ) {
+    std::cerr << "Stripprocessor ; Handle Textures trimesh" << std::endl;
+    textureHandling = true;
+  } else {
+    std::cerr << "Stripprocessor ; No Textures trimesh" << std::endl;
+  }
+
+  /// \todo Implement texture processing here
 
   for (f_it=mesh_.faces_begin(); true; )
   {
@@ -331,20 +342,18 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
     strip.push_back(mesh_.from_vertex_handle(_start_hh).idx());
     strip.push_back(mesh_.to_vertex_handle(_start_hh).idx());
     
-    // Don't update face map here! See below why
-    
-    
     // Check if we have to take care of textures
     // If this property is not available, we do not have texture info and will therefore 
     // skip texture handling in strip generation
     bool textureHandling = false;
-    OpenMesh::FPropHandleT< int > texture_index_property;
-    if ( mesh_.get_property_handle(texture_index_property,indexPropertyName_)  ) {
-      std::cerr << "Texture index property found!" << std::endl;
+    if ( textureIndexProperty_.is_valid() ) {
+      std::cerr << "Stripprocessor ; Handle Textures polymesh" << std::endl;
       textureHandling = true;
     } else {
-      std::cerr << "No textures" << std::endl;
+      std::cerr << "Stripprocessor ; No Textures polymesh" << std::endl;
     }
+    
+    /// \todo Implement texture processing here
 
     // Walk along the strip: 1st direction
     // We construct the strip by using alternating vertices
@@ -937,10 +946,12 @@ perFaceColorBuffer() {
 template <class Mesh>
 void
 StripProcessorT<Mesh>::
-setIndexPropertyName( std::string _index_property_name ) { 
-  indexPropertyName_ = _index_property_name; 
+setIndexPropertyName( std::string _indexPropertyName ) { 
   
-  std::cerr << "setIndexPropertyName " << _index_property_name << std::endl;
+  if ( !mesh_.get_property_handle(textureIndexProperty_,_indexPropertyName) )  {
+    textureIndexProperty_.invalidate();
+    std::cerr << "StripProcessor: Unable to get per face texture Index property named " << _indexPropertyName << std::endl;
+  }
   
   // mark the buffers as invalid as we have a new per face index array
   invalidatePerFaceBuffers();
