@@ -56,6 +56,7 @@
 
 #include "BaseObjectCore.hh"
 #include "Types.hh"
+#include <OpenFlipper/BasePlugin/PluginFunctionsCore.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 
@@ -106,6 +107,7 @@ BaseObject::BaseObject(const BaseObject& _object) :
   if ( PluginFunctions::objectRoot() ) {
     setParent(PluginFunctions::objectRoot());
     PluginFunctions::objectRoot()->appendChild(this);
+    PluginFunctions::increaseObjectCount();
   }
   
   objectManager_.objectCreated(id());
@@ -124,16 +126,18 @@ BaseObject::BaseObject(BaseObject* _parent) :
   id_ = idGenerator;
   ++ idGenerator;
   
-  // If the pointer is 0 then something went wrong
+  // If the pointer is 0 then something went wrong or we are the root node
   if ( _parent ) {
     
     _parent->appendChild(this);
+    PluginFunctions::increaseObjectCount();
     
   } else {
     
     if ( PluginFunctions::objectRoot() ) {
       setParent(PluginFunctions::objectRoot());
       PluginFunctions::objectRoot()->appendChild(this);
+      PluginFunctions::increaseObjectCount();
     }
     
   }
@@ -145,6 +149,10 @@ BaseObject::BaseObject(BaseObject* _parent) :
 BaseObject::~BaseObject() {
 
   deleteData();
+  
+  PluginFunctions::decreaseObjectCount();
+  
+  objectManager_.objectDeleted(id());
 
 }
 
@@ -240,7 +248,16 @@ bool BaseObject::target() {
 }
 
 void BaseObject::target(bool _target) {
+  if ( target() != _target ) {
+    
+    if ( _target )
+      PluginFunctions::increaseTargetCount();
+    else
+      PluginFunctions::decreaseTargetCount();
+  }
+  
   setFlag("target", _target);
+  
 }
 
 bool BaseObject::source() {
@@ -248,7 +265,9 @@ bool BaseObject::source() {
 }
 
 void BaseObject::source(bool _source) {
-  setFlag("source", _source);
+  if ( source() != _source ) {
+    setFlag("source", _source);
+  }
 }
 
 bool BaseObject::flag(QString _flag)
@@ -775,6 +794,12 @@ void ObjectManager::objectCreated(int _objectId)
 {
   emit newObject(_objectId);
 }
+
+void ObjectManager::objectDeleted(int _objectId) 
+{
+  emit deletedObject(_objectId);
+}
+
 
 ObjectManager* getObjectManager() {
   return &objectManager_;

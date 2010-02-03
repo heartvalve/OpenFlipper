@@ -60,7 +60,7 @@
 #include "OpenFlipper/BasePlugin/ToolboxInterface.hh"
 #include "OpenFlipper/BasePlugin/TextureInterface.hh"
 
-#include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include "OpenFlipper/BasePlugin/PluginFunctionsCore.hh"
 
 //== IMPLEMENTATION ==========================================================
 
@@ -326,19 +326,6 @@ void Core::newObject(int _objectId) {
 
 /// This slot is called by the object manager when a object is deleted
 void Core::deletedObject(int _objectId) {
-  
-//   BaseObject* baseObject = 0;
-//   PluginFunctions::getObject(_objectId,baseObject);
-//   
-//   if ( baseObject ) {
-//     connect( baseObject, SIGNAL(visibilityChanged(int)),       this, SLOT(slotVisibilityChanged(int)),       Qt::DirectConnection) ;
-//     connect( baseObject, SIGNAL(objectSelectionChanged(int)),  this, SLOT(slotObjectSelectionChanged(int)),  Qt::DirectConnection );
-//     connect( baseObject, SIGNAL(objectPropertiesChanged(int)), this, SLOT(slotObjectPropertiesChanged(int)), Qt::DirectConnection );
-//   } else {
-//     emit log(LOGERR,tr("newObject received from objectManager with invalid id! This should not happen. The new Object will not work correctly!"));
-//   }
-//   
-  emit log(LOGERR,tr("deletedObject received from objectManager!"));
 }
 
 

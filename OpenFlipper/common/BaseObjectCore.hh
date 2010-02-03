@@ -68,11 +68,17 @@ class DLLEXPORT ObjectManager : public QObject {
   signals:
     void newObject( int _objectId );
     
+    void deletedObject( int _objectId );
+    
   public: 
     ObjectManager();
     ~ObjectManager();
     
+    // called when an object has been created
     void objectCreated( int _objectId );
+    
+    // called when an object has been deleted
+    void objectDeleted( int _objectId );
 };
 
 DLLEXPORT
