@@ -262,6 +262,9 @@ void SelectionPlugin::pluginsInitialized() {
 
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_TRIANGLE_MESH , CONTEXTOBJECTMENU );
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_MESH     , CONTEXTOBJECTMENU );
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  emit addContextMenuItem(contextMenu_->menuAction() , DATA_TSPLINE_MESH  , CONTEXTOBJECTMENU );
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_LINE     , CONTEXTOBJECTMENU );
 #endif
@@ -640,8 +643,15 @@ void SelectionPlugin::slotSetArea() {
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
 
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH)) ;
+        o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
   for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
         o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+
 
 		// Add selection to existing modeling area
 		// if corresponding checkbox is checked
@@ -656,6 +666,12 @@ void SelectionPlugin::slotSetArea() {
 		if (o_it->dataType(DATA_POLY_MESH)) {
 			set_area(PluginFunctions::polyMesh(*o_it));
 		}
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		if (o_it->dataType(DATA_TSPLINE_MESH)) {
+			set_area(PluginFunctions::tsplineMesh(*o_it));
+		}
+#endif
+
 
 		o_it->update();
 	}
@@ -676,8 +692,14 @@ void SelectionPlugin::slotSetHandle() {
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
 
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
   for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
         o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH )) ;
+        o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 		// Add selection to existing handle area
 		// if corresponding checkbox is checked
@@ -690,6 +712,10 @@ void SelectionPlugin::slotSetHandle() {
 			set_handle(PluginFunctions::triMesh(*o_it));
 		if (o_it->dataType(DATA_POLY_MESH))
 			set_handle(PluginFunctions::polyMesh(*o_it));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		if (o_it->dataType(DATA_TSPLINE_MESH))
+			set_handle(PluginFunctions::tsplineMesh(*o_it));
+#endif
 		o_it->update();
 	}
 
@@ -709,13 +735,24 @@ void SelectionPlugin::slotSetFeatures() {
 	else
 		restriction = PluginFunctions::TARGET_OBJECTS;
 
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
 	for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH)); o_it
 			!= PluginFunctions::objectsEnd(); ++o_it) {
+#endif
 
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+	for (PluginFunctions::ObjectIterator o_it(restriction, DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH )); o_it
+			!= PluginFunctions::objectsEnd(); ++o_it) {
+#endif
 		if (o_it->dataType(DATA_TRIANGLE_MESH))
 			set_features(PluginFunctions::triMesh(*o_it));
 		if (o_it->dataType(DATA_POLY_MESH))
 			set_features(PluginFunctions::polyMesh(*o_it));
+
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		if (o_it->dataType(DATA_TSPLINE_MESH))
+			set_features(PluginFunctions::tsplineMesh(*o_it));
+#endif
 		o_it->update();
 	}
 
@@ -734,12 +771,22 @@ void SelectionPlugin::slotClearHandle() {
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
 
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
   for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
         o_it != PluginFunctions::objectsEnd(); ++o_it) {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH )) ;
+        o_it != PluginFunctions::objectsEnd(); ++o_it) {
+#endif
     if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
         clear_handle(PluginFunctions::triMesh(*o_it));
     if ( o_it->dataType( DATA_POLY_MESH ) )
         clear_handle(PluginFunctions::polyMesh(*o_it));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+    if ( o_it->dataType( DATA_TSPLINE_MESH ) )
+        clear_handle(PluginFunctions::tsplineMesh(*o_it));
+#endif
     o_it->update();
   }
 
@@ -758,12 +805,22 @@ void SelectionPlugin::slotClearArea() {
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
 
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
   for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
         o_it != PluginFunctions::objectsEnd(); ++o_it) {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH )) ;
+        o_it != PluginFunctions::objectsEnd(); ++o_it) {
+#endif
     if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
         clear_area(PluginFunctions::triMesh(*o_it));
     if ( o_it->dataType( DATA_POLY_MESH ) )
         clear_area(PluginFunctions::polyMesh(*o_it));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+    if ( o_it->dataType( DATA_TSPLINE_MESH ) )
+        clear_area(PluginFunctions::tsplineMesh(*o_it));
+#endif
     o_it->update();
   }
 
@@ -782,12 +839,22 @@ void SelectionPlugin::slotClearFeatures() {
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
 
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
   for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
         o_it != PluginFunctions::objectsEnd(); ++o_it) {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH )) ;
+        o_it != PluginFunctions::objectsEnd(); ++o_it) {
+#endif
     if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
         clear_features(PluginFunctions::triMesh(*o_it));
     if ( o_it->dataType( DATA_POLY_MESH ) )
         clear_features(PluginFunctions::polyMesh(*o_it));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+    if ( o_it->dataType( DATA_TSPLINE_MESH ) )
+        clear_features(PluginFunctions::tsplineMesh(*o_it));
+#endif
     o_it->update();
   }
 
@@ -805,14 +872,24 @@ void SelectionPlugin::slotDeleteSelection() {
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
 
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
   for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
-        o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+        o_it != PluginFunctions::objectsEnd(); ++o_it) {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH )) ;
+        o_it != PluginFunctions::objectsEnd(); ++o_it) {
+#endif
     if ( o_it->visible() ){
       bool changed = false;
       if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
           changed = changed || deleteSelection(PluginFunctions::triMesh(*o_it));
       if ( o_it->dataType( DATA_POLY_MESH ) )
           changed = changed || deleteSelection(PluginFunctions::polyMesh(*o_it));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+      if ( o_it->dataType( DATA_TSPLINE_MESH ) )
+          changed = changed || deleteSelection(PluginFunctions::tsplineMesh(*o_it));
+#endif
       o_it->update();
       emit updatedObject(o_it->id());
     }
@@ -900,6 +977,13 @@ void SelectionPlugin::saveIniFile( INIFile& _ini , int _id) {
     _ini.add_entry(sectionName , "HandleRegion"   , getHandleVertices  ( object->id() ) );
     _ini.add_entry(sectionName , "ModelingRegion" , getModelingVertices( object->id() ) );
   }
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  if ( object->dataType( DATA_TSPLINE_MESH )) {
+    _ini.add_entry(sectionName , "FaceSelection"  , getFaceSelection   ( object->id() ) );
+    _ini.add_entry(sectionName , "HandleRegion"   , getHandleVertices  ( object->id() ) );
+    _ini.add_entry(sectionName , "ModelingRegion" , getModelingVertices( object->id() ) );
+  }
+#endif
 
 }
 
@@ -948,6 +1032,11 @@ void SelectionPlugin::loadIniFile( INIFile& _ini, int _id )
     if ( object->dataType( DATA_POLY_MESH ) ) {
       update_regions(PluginFunctions::polyMesh(object));
     }
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+    if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+      update_regions(PluginFunctions::tsplineMesh(object));
+    }
+#endif
 
     updated_modeling_regions = true;
   }
@@ -971,6 +1060,11 @@ void SelectionPlugin::loadIniFile( INIFile& _ini, int _id )
     if ( object->dataType( DATA_POLY_MESH ) ) {
       update_regions(PluginFunctions::polyMesh(object));
     }
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+    if ( object->dataType( DATA_TSPLINE_MESH ) ) {
+      update_regions(PluginFunctions::tsplineMesh(object));
+    }
+#endif
 
     updated_modeling_regions = true;
   }
@@ -1095,8 +1189,14 @@ void SelectionPlugin::convertSelectionType(StatusBits _from, StatusBits _to, boo
 
 	if(_from == AREA && _to == HANDLEAREA) {
 
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
 		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 			// Delete current handle region if
 			// checkbox "Add to area" is NOT checked
@@ -1114,8 +1214,14 @@ void SelectionPlugin::convertSelectionType(StatusBits _from, StatusBits _to, boo
 	}
 	else if(_from == HANDLEAREA && _to == AREA) {
 
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
 		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 			// Delete current modeling area if
 			// checkbox "Add to area" is NOT checked
@@ -1149,8 +1255,14 @@ void SelectionPlugin::convertVtoESelection(bool _unselectAfter) {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 		IdList list = getVertexSelection(o_it->id());
 		if(_unselectAfter) { clearVertexSelection(o_it->id()); }
@@ -1161,6 +1273,11 @@ void SelectionPlugin::convertVtoESelection(bool _unselectAfter) {
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
 			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(o_it), list);
 		}
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
+			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::tsplineMesh(o_it), list);
+		}
+#endif
 
 		o_it->update();
 	}
@@ -1178,8 +1295,14 @@ void SelectionPlugin::convertVtoFSelection(bool _unselectAfter) {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 		IdList list = getVertexSelection(o_it->id());
 		if(_unselectAfter) { clearVertexSelection(o_it->id()); }
@@ -1190,6 +1313,11 @@ void SelectionPlugin::convertVtoFSelection(bool _unselectAfter) {
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
 			MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(o_it), list);
 		}
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
+			MeshSelection::convertVertexToFaceSelection(PluginFunctions::tsplineMesh(o_it), list);
+		}
+#endif
 
 		o_it->update();
 	}
@@ -1207,8 +1335,14 @@ void SelectionPlugin::convertEtoVSelection(bool _unselectAfter) {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 		IdList list = getEdgeSelection(o_it->id());
 		if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
@@ -1219,6 +1353,11 @@ void SelectionPlugin::convertEtoVSelection(bool _unselectAfter) {
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
 			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::polyMesh(o_it), list);
 		}
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
+			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::tsplineMesh(o_it), list);
+		}
+#endif
 
 		o_it->update();
 	}
@@ -1236,8 +1375,14 @@ void SelectionPlugin::convertEtoFSelection(bool _unselectAfter) {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 		IdList list = getEdgeSelection(o_it->id());
 		if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
@@ -1248,6 +1393,11 @@ void SelectionPlugin::convertEtoFSelection(bool _unselectAfter) {
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
 			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::polyMesh(o_it), list);
 		}
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
+			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::tsplineMesh(o_it), list);
+		}
+#endif
 
 		o_it->update();
 	}
@@ -1265,8 +1415,14 @@ void SelectionPlugin::convertFtoVSelection(bool _unselectAfter) {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 		IdList list = getFaceSelection(o_it->id());
 		if(_unselectAfter) { clearFaceSelection(o_it->id()); }
@@ -1277,6 +1433,11 @@ void SelectionPlugin::convertFtoVSelection(bool _unselectAfter) {
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
 			MeshSelection::convertFaceToVertexSelection(PluginFunctions::polyMesh(o_it), list);
 		}
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
+			MeshSelection::convertFaceToVertexSelection(PluginFunctions::tsplineMesh(o_it), list);
+		}
+#endif
 
 		o_it->update();
 	}
@@ -1294,8 +1455,14 @@ void SelectionPlugin::convertFtoESelection(bool _unselectAfter) {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 		IdList list = getFaceSelection(o_it->id());
 		if(_unselectAfter) { clearFaceSelection(o_it->id()); }
@@ -1306,6 +1473,11 @@ void SelectionPlugin::convertFtoESelection(bool _unselectAfter) {
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
 			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::polyMesh(o_it), list);
 		}
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
+			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::tsplineMesh(o_it), list);
+		}
+#endif
 
 		o_it->update();
 	}
@@ -1325,8 +1497,16 @@ void SelectionPlugin::slotClearAllVertexSelections() {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+  std::cerr << "clearing vertex selections!" << std::endl;
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+      std::cerr << "CLEAR VERTEX TSPLINES !" << std::endl;
+#endif
 
 		clearVertexSelection(o_it->id());
 
@@ -1348,8 +1528,14 @@ void SelectionPlugin::slotClearAllEdgeSelections() {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 		clearEdgeSelection(o_it->id());
 
@@ -1371,8 +1557,14 @@ void SelectionPlugin::slotClearAllFaceSelections() {
 		restriction = PluginFunctions::TARGET_OBJECTS;
 	}
 
-	for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-		o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
 
 		clearFaceSelection(o_it->id());
 
@@ -1386,11 +1578,17 @@ void SelectionPlugin::slotClearAllFaceSelections() {
 
 void SelectionPlugin::saveSelections()
 {
+	PluginFunctions::IteratorRestriction restriction;
+  restriction = PluginFunctions::TARGET_OBJECTS;
   // process all target meshes
-  PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS ,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
-
-  for ( ; o_it != PluginFunctions::objectsEnd(); ++o_it)
-  {
+  #ifndef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+		for ( PluginFunctions::ObjectIterator o_it(restriction, DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH ));
+			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+#endif
     QString suggest = o_it->name() + ".sel";
 
     QString filename = QFileDialog::getSaveFileName(0, tr("Save Selection"), suggest, tr("Selections (*.sel )"));
@@ -1416,6 +1614,11 @@ void SelectionPlugin::saveSelection( int _objectId , QString _filename)
   else
     if( object->dataType( DATA_POLY_MESH))
       saveSelection( *PluginFunctions::polyMesh(object), _filename);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else
+    if( object->dataType( DATA_TSPLINE_MESH))
+      saveSelection( *PluginFunctions::tsplineMesh(object), _filename);
+#endif
 #ifdef ENABLE_POLYLINE_SUPPORT
     else
       if( object->dataType( DATA_POLY_LINE))

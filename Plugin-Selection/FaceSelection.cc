@@ -69,6 +69,10 @@ void SelectionPlugin::selectFaces( int objectId , IdList _faceList ) {
       MeshSelection::selectFaces(PluginFunctions::triMesh(object), _faceList);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectFaces(PluginFunctions::polyMesh(object), _faceList);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::selectFaces(PluginFunctions::tsplineMesh(object), _faceList);
+#endif
   else{
       emit log(LOGERR,tr("selectFaces : Unsupported object Type") ); 
       return;
@@ -102,6 +106,10 @@ void SelectionPlugin::unselectFaces( int objectId , IdList _faceList ) {
       MeshSelection::unselectFaces(PluginFunctions::triMesh(object), _faceList);
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::unselectFaces(PluginFunctions::polyMesh(object), _faceList);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::unselectFaces(PluginFunctions::tsplineMesh(object), _faceList);
+#endif
   else{
       emit log(LOGERR,tr("unselectFaces : Unsupported object Type") ); 
       return;
@@ -133,6 +141,10 @@ void SelectionPlugin::selectAllFaces( int objectId )
       MeshSelection::selectAllFaces(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectAllFaces(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::selectAllFaces(PluginFunctions::tsplineMesh(object));
+#endif
   else{
       emit log(LOGERR,tr("selectAllFaces : Unsupported object Type") ); 
       return;
@@ -156,6 +168,10 @@ void SelectionPlugin::clearFaceSelection( int objectId )
       MeshSelection::clearFaceSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::clearFaceSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::clearFaceSelection(PluginFunctions::tsplineMesh(object));
+#endif
   else{
       emit log(LOGERR,tr("clearFaceSelection : Unsupported object Type") ); 
       return;
@@ -179,6 +195,10 @@ void SelectionPlugin::invertFaceSelection( int objectId )
       MeshSelection::invertFaceSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::invertFaceSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::invertFaceSelection(PluginFunctions::tsplineMesh(object));
+#endif
   else{
       emit log(LOGERR,tr("invertFaceSelection : Unsupported object Type") ); 
       return;
@@ -202,6 +222,10 @@ void SelectionPlugin::selectBoundaryFaces( int objectId )
       MeshSelection::selectBoundaryFaces(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::selectBoundaryFaces(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::selectBoundaryFaces(PluginFunctions::tsplineMesh(object));
+#endif
   else{
       emit log(LOGERR,tr("selectBoundaryFaces : Unsupported object Type") ); 
       return;
@@ -226,6 +250,10 @@ void SelectionPlugin::shrinkFaceSelection( int objectId )
       MeshSelection::shrinkFaceSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::shrinkFaceSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::shrinkFaceSelection(PluginFunctions::tsplineMesh(object));
+#endif
   else{
       emit log(LOGERR,tr("shrinkFaceSelection : Unsupported object Type") ); 
       return;
@@ -249,6 +277,10 @@ void SelectionPlugin::growFaceSelection( int objectId )
       MeshSelection::growFaceSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       MeshSelection::growFaceSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      MeshSelection::growFaceSelection(PluginFunctions::tsplineMesh(object));
+#endif
   else{
       emit log(LOGERR,tr("growFaceSelection : Unsupported object Type") ); 
       return;
@@ -274,6 +306,10 @@ IdList SelectionPlugin::getFaceSelection( int objectId )
       return MeshSelection::getFaceSelection(PluginFunctions::triMesh(object));
   else if ( object->dataType() == DATA_POLY_MESH )
       return MeshSelection::getFaceSelection(PluginFunctions::polyMesh(object));
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      return MeshSelection::getFaceSelection(PluginFunctions::tsplineMesh(object));
+#endif
   else{
       emit log(LOGERR,tr("getFaceSelection : Unsupported object Type") ); 
       return IdList(0);
@@ -297,6 +333,10 @@ void SelectionPlugin::colorizeFaceSelection(int objectId, int r, int g, int b )
       colorizeSelection(PluginFunctions::triMesh(object), FACE, r, g, b);
   else if ( object->dataType() == DATA_POLY_MESH )
       colorizeSelection(PluginFunctions::polyMesh(object), FACE, r, g, b);
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+  else if ( object->dataType() == DATA_TSPLINE_MESH )
+      colorizeSelection(PluginFunctions::tsplineMesh(object), FACE, r, g, b);
+#endif
   else {
       emit log(LOGERR,"colorizeFaceSelection : Unsupported object Type" );
       return;

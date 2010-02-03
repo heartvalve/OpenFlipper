@@ -68,6 +68,10 @@
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#ifdef ENABLE_TSPLINEMESH_SUPPORT
+#include <ObjectTypes/TSplineMesh/TSplineMesh.hh>
+#endif
+
 #ifdef ENABLE_POLYLINE_SUPPORT
 #include <ObjectTypes/PolyLine/PolyLine.hh>
 #endif
