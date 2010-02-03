@@ -82,6 +82,8 @@ public:
   */
   std::vector< unsigned int > indexArray;
   
+  /// This contains the texture index used for rendering this strip
+  int textureIndex;
   
 };
 
