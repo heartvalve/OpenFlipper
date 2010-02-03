@@ -261,19 +261,6 @@ buildStripsTriMesh()
       processed(f_it) = used(f_it) = false;
   }
 
-  // Check if we have to take care of textures
-  // If this property is not available, we do not have texture info and will therefore 
-  // skip texture handling in strip generation
-  bool textureHandling = false;
-  if ( textureIndexProperty_.is_valid() ) {
-    std::cerr << "Stripprocessor ; Handle Textures trimesh" << std::endl;
-    textureHandling = true;
-  } else {
-    std::cerr << "Stripprocessor ; No Textures trimesh" << std::endl;
-  }
-
-  /// \todo Implement texture processing here
-
   for (f_it=mesh_.faces_begin(); true; )
   {
     // find start face
@@ -347,8 +334,9 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
     // skip texture handling in strip generation
     bool textureHandling = false;
     if ( textureIndexProperty_.is_valid() ) {
-      std::cerr << "Stripprocessor ; Handle Textures polymesh" << std::endl;
       textureHandling = true;
+      _strip.textureIndex = mesh_.property(textureIndexProperty_,mesh_.face_handle(_start_hh));
+      std::cerr << "Stripprocessor ; Handle Textures polymesh got index for starting face: " << _strip.textureIndex << std::endl;
     } else {
       std::cerr << "Stripprocessor ; No Textures polymesh" << std::endl;
     }
@@ -529,6 +517,20 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
   strip.push_back(mesh_.from_vertex_handle(_start_hh).idx());
   strip.push_back(mesh_.to_vertex_handle(_start_hh).idx());
 
+  
+  // Check if we have to take care of textures
+  // If this property is not available, we do not have texture info and will therefore 
+  // skip texture handling in strip generation
+  bool textureHandling = false;
+  if ( textureIndexProperty_.is_valid() ) {
+    textureHandling = true;
+    _strip.textureIndex = mesh_.property(textureIndexProperty_,mesh_.face_handle(_start_hh));
+    std::cerr << "Stripprocessor ; Handle Textures trimesh got index for starting face: " << _strip.textureIndex << std::endl;
+  } else {
+    std::cerr << "Stripprocessor ; No Textures trimesh" << std::endl;
+  }
+  
+  /// \todo Implement texture processing here
 
   // walk along the strip: 1st direction
   hh = mesh_.prev_halfedge_handle(mesh_.opposite_halfedge_handle(_start_hh));
