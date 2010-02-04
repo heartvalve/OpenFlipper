@@ -57,7 +57,7 @@ IF(CGAL_INCLUDE_DIR )
                 PATHS "/opt/local/lib/"
                 DOC "Directory containing the CGAL library"
                ) 
-    list ( APPEND CGAL_LIBRARIES ${CGAL_LIBRARY_DIR}/libCGAL.dylib ${CGAL_LIBRARY_DIR}/libCGAL_Core.dylib ${CGAL_LIBRARY_DIR}/libCGAL_ImageIO.dylib ${CGAL_LIBRARY_DIR}/libCGAL_PDB.dylib )
+    list ( APPEND CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO  CGAL_PDB )
   ELSE( WIN32 )
     find_path(CGAL_LIBRARY_DIR
               NAMES "libCGAL.so"
