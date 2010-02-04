@@ -120,14 +120,6 @@ availableDrawModes() const
       drawModes |= DrawModes::SOLID_1DTEXTURED_SHADED;
   }
 
-  if (mesh_.has_vertex_texcoords2D())
-  {
-    drawModes |= DrawModes::SOLID_TEXTURED;
-
-    if (mesh_.has_vertex_normals())
-      drawModes |= DrawModes::SOLID_TEXTURED_SHADED;
-  }
-
   if (mesh_.has_vertex_texcoords3D())
   {
     drawModes |= DrawModes::SOLID_3DTEXTURED;
@@ -218,10 +210,6 @@ draw(GLState& _state, unsigned int _drawMode)
 {
   glDepthFunc(depthFunc());
 
-
-//   if ( ( _drawMode & DrawModes::SOLID_SMOOTH_SHADED ) && mesh_.has_vertex_normals())
-//   if ( ( _drawMode & DrawModes::SOLID_PHONG_SHADED ) && mesh_.has_vertex_normals() )
-
   if ( ( _drawMode & DrawModes::SOLID_ENV_MAPPED ) && mesh_.has_vertex_normals())
   {
     enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);
@@ -231,19 +219,6 @@ draw(GLState& _state, unsigned int _drawMode)
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
   }
-
-  if ( ( _drawMode & DrawModes::SOLID_TEXTURED ) && mesh_.has_vertex_texcoords2D())
-  {
-    enable_arrays(VERTEX_ARRAY | TEXTURE_COORD_2D_ARRAY);
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
-    glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
-  }
-
 
   if ( ( _drawMode & DrawModes::SOLID_TEXTURED_SHADED ) && mesh_.has_vertex_texcoords2D() && mesh_.has_vertex_normals())
   {

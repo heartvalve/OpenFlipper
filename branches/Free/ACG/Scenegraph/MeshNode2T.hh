@@ -246,6 +246,23 @@ private:
   std::vector< ACG::Vec4f > colors_;
   
   /** @} */
+  
+//===========================================================================
+/** @name Texcoord buffer
+* @{ */
+//===========================================================================  
+public:
+  /// Returns if the per vertex Texture coordinates array is currently activated
+  bool texCoordEnabled() { return enableTexCoords_; };
+  
+  /// Enable or disable the use of the  per vertex Texture coordinates array
+  void enableTexCoords(bool _enable) { enableTexCoords_ = _enable; };
+  
+private:
+  
+  bool enableTexCoords_;
+  
+  /** @} */  
     
 //===========================================================================
 /** @name Line buffer
@@ -280,16 +297,18 @@ private:
   /// Enum controlling which array should be used for rendering
   enum ArrayType
   {
-    NONE                    = 0,
-    VERTEX_ARRAY            = 1,
-    NORMAL_VERTEX_ARRAY     = 2,
-    COLOR_VERTEX_ARRAY      = 4,
-    LINE_INDEX_ARRAY        = 8,
-    PER_EDGE_VERTEX_ARRAY   = 16,
-    PER_EDGE_COLOR_ARRAY    = 32,
-    PER_FACE_VERTEX_ARRAY   = 64,
-    PER_FACE_NORMAL_ARRAY   = 128,
-    PER_FACE_COLOR_ARRAY    = 256
+    NONE                      = 0,
+    VERTEX_ARRAY              = 1,
+    NORMAL_VERTEX_ARRAY       = 2,
+    COLOR_VERTEX_ARRAY        = 4,
+    TEXCOORD_VERTEX_ARRAY     = 8,
+    LINE_INDEX_ARRAY          = 16,
+    PER_EDGE_VERTEX_ARRAY     = 32,
+    PER_EDGE_COLOR_ARRAY      = 64,
+    PER_FACE_VERTEX_ARRAY     = 128,
+    PER_FACE_NORMAL_ARRAY     = 256,
+    PER_FACE_COLOR_ARRAY      = 512,
+    PER_FACE_TEXCOORD_ARRAY   = 1024
   };
   
   /// which arrays are currently enabled?
