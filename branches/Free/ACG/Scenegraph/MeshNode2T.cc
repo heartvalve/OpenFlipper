@@ -93,8 +93,7 @@ TriStripNodeT(Mesh&        _mesh,
   facePickingList_(0),
   updateAnyPickingList_(true),
   anyPickingBaseIndex_(0),
-  anyPickingList_(0),
-  indexPropertyName_("f:textureindex")
+  anyPickingList_(0)
 {
   
   /// \todo : Handle vbo not supported
@@ -1247,11 +1246,17 @@ update_topology() {
 template<class Mesh>
 void
 TriStripNodeT<Mesh>::
-setIndexPropertyName( std::string _index_property_name ) { 
-  indexPropertyName_ = _index_property_name; 
-  stripProcessor_.setIndexPropertyName(indexPropertyName_);
+setIndexPropertyName( std::string _indexPropertyName ) { 
+  stripProcessor_.setIndexPropertyName(_indexPropertyName);
 };
-              
+
+template<class Mesh>
+void
+TriStripNodeT<Mesh>::
+setHalfedgeTextcoordPropertyName( std::string _halfedgeTextcoordPropertyName ){ 
+  stripProcessor_.setPerFaceTextureCoordinatePropertyName(_halfedgeTextcoordPropertyName);
+};
+
 //=============================================================================
 } // namespace SceneGraph
 } // namespace ACG
