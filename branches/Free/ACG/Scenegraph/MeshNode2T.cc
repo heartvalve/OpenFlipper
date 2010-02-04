@@ -177,8 +177,8 @@ availableDrawModes() const {
   if ( mesh_.has_vertex_texcoords2D() ) {
     drawModes |= DrawModes::SOLID_TEXTURED;
     
-//     if (mesh_.has_vertex_normals())
-//       drawModes |= DrawModes::SOLID_TEXTURED_SHADED; 
+    if (mesh_.has_vertex_normals())
+      drawModes |= DrawModes::SOLID_TEXTURED_SHADED; 
   }
   
   return drawModes;
@@ -352,13 +352,25 @@ draw(GLState& _state, unsigned int _drawMode) {
   }
   
   
-  if ( ( _drawMode & DrawModes::SOLID_TEXTURED ) && mesh_.has_vertex_texcoords2D())
+  if ( ( _drawMode & DrawModes::SOLID_TEXTURED )  && mesh_.has_vertex_texcoords2D())
   {
     ///\todo enableTexCoords_
     enable_arrays(VERTEX_ARRAY | TEXCOORD_VERTEX_ARRAY );
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glShadeModel(GL_FLAT);
+    glDepthRange(0.01, 1.0);
+    draw_faces(PER_VERTEX);
+    glDepthRange(0.0, 1.0);
+    glDisable(GL_TEXTURE_2D);
+  }
+  
+  if ( ( _drawMode & DrawModes::SOLID_TEXTURED_SHADED ) && mesh_.has_vertex_texcoords2D() && mesh_.has_vertex_normals())
+  {
+    enable_arrays(VERTEX_ARRAY | NORMAL_VERTEX_ARRAY | TEXCOORD_VERTEX_ARRAY);
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
+    glShadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
@@ -421,6 +433,9 @@ draw_faces(FaceMode _mode) {
       typename StripProcessorT<Mesh>::StripsIterator strip_last = stripProcessor_.end();
       
       for (; strip_it!=strip_last; ++strip_it) {
+        if ( stripProcessor_.perFaceTextureIndexAvailable() )
+          std::cerr << "Todo : Set right texture before rendering this stip,Check for bound Arrays!" << std::endl;
+        
         glDrawElements(GL_TRIANGLE_STRIP,
                       strip_it->indexArray.size(),
                       GL_UNSIGNED_INT,
