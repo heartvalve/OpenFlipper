@@ -115,13 +115,16 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
   double max,min;
   computeMinMaxScalar(_texture, _mesh, _texProp, min, max);
 
+  if ( !_mesh.has_vertex_texcoords2D() )
+    _mesh.request_vertex_texcoords2D();
+  
   for ( typename MeshT::VertexIter v_it = _mesh.vertices_begin(); v_it != _mesh.vertices_end(); ++v_it) {
     // Get the value of the property
     double value = _mesh.property(_texProp, v_it);
 
     // Mangle it with the predefined user options
     computeValue(_texture, min, max, value);
-
+    
     // Write result to the openmesh texture coordinates ( 2d accessing the diagonal of a 2d texture)
     _mesh.set_texcoord2D( v_it, ACG::Vec2f(float(value), float(value) ) );
   }
@@ -134,6 +137,9 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
   double max,min;
   computeMinMaxScalar(_texture, _mesh, _texProp, min, max);
 
+  if ( !_mesh.has_vertex_texcoords2D() )
+    _mesh.request_vertex_texcoords2D();
+  
   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
 
     // Get the value of the property
