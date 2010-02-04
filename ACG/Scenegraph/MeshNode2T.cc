@@ -79,6 +79,7 @@ TriStripNodeT(Mesh&        _mesh,
   enableColors_(true),
   colorVertexbuffer_(0),
   colorVertexBufferInitialized_(false),
+  enableTexCoords_(true),
   lineIndexBuffer_(0),
   lineIndexBufferInitialized_(false),
   enabled_arrays_(0),
@@ -171,6 +172,13 @@ availableDrawModes() const {
     
     if( mesh_.has_face_normals() )
       drawModes |= DrawModes::SOLID_FACES_COLORED_FLAT_SHADED;
+  }
+  
+  if ( mesh_.has_vertex_texcoords2D() ) {
+    drawModes |= DrawModes::SOLID_TEXTURED;
+    
+//     if (mesh_.has_vertex_normals())
+//       drawModes |= DrawModes::SOLID_TEXTURED_SHADED; 
   }
   
   return drawModes;
@@ -344,6 +352,19 @@ draw(GLState& _state, unsigned int _drawMode) {
   }
   
   
+  if ( ( _drawMode & DrawModes::SOLID_TEXTURED ) && mesh_.has_vertex_texcoords2D())
+  {
+    ///\todo enableTexCoords_
+    enable_arrays(VERTEX_ARRAY | TEXCOORD_VERTEX_ARRAY );
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    glDepthRange(0.01, 1.0);
+    draw_faces(PER_VERTEX);
+    glDepthRange(0.0, 1.0);
+    glDisable(GL_TEXTURE_2D);
+  }
+  
   enable_arrays(0);
   
   // Unbind all remaining buffers
@@ -393,6 +414,8 @@ TriStripNodeT<Mesh>::
 draw_faces(FaceMode _mode) {
   
   if ( stripProcessor_.isValid() ) {
+    
+    // If we have all properties per Vertex, we can render with index array from triangle strips!
     if (_mode == PER_VERTEX) {
       typename StripProcessorT<Mesh>::StripsIterator strip_it   = stripProcessor_.begin();
       typename StripProcessorT<Mesh>::StripsIterator strip_last = stripProcessor_.end();
@@ -404,6 +427,7 @@ draw_faces(FaceMode _mode) {
                         &(strip_it->indexArray)[0]  );
       }
     } else if ( _mode ==  PER_FACE ) {
+      // We need per face attributes so we have to use seperate vertices per face
       glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
     }
     
@@ -503,6 +527,31 @@ enable_arrays(unsigned int _arrays) {
     enabled_arrays_ &= ~COLOR_VERTEX_ARRAY;
     glDisableClientState(GL_COLOR_ARRAY);
   } 
+  
+  //===================================================================
+  // per Vertex Texture coordinate Array
+  //===================================================================  
+  
+  // Check if we should enable the color array
+  if ( mesh_.has_vertex_texcoords2D() && ( _arrays & TEXCOORD_VERTEX_ARRAY ))  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & TEXCOORD_VERTEX_ARRAY)) {
+      enabled_arrays_ |= TEXCOORD_VERTEX_ARRAY;
+      
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      
+      // Explicitly give the pointer as we uploaded the data ourself!
+      glTexCoordPointer(2, GL_FLOAT , 0 , mesh_.texcoords2D() );
+      
+      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+      
+    }
+  } else if (enabled_arrays_ & TEXCOORD_VERTEX_ARRAY) {
+    // Disable TexCoord array
+    enabled_arrays_ &= ~TEXCOORD_VERTEX_ARRAY;
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  }   
   
   //===================================================================
   // per Edge Vertex Array
@@ -1182,7 +1231,7 @@ update_geometry() {
     }
     
   }
-
+  
   // ==========================================================================
   // unbind all buffers
   // ==========================================================================
