@@ -11,9 +11,32 @@ include_directories (
   ${GLUT_INCLUDE_DIR}
 )
 
-link_directories (
-  ${GLEW_LIBRARY_DIR}
-)
+# Linking for apple is special here as the linker pulls in the dependencies, we have to set them like in PluginLib!
+if( APPLE )
+
+  # search all ObjectTypes in the ObjectType directory for additional build information
+  file (
+     GLOB _plugin_buildinfos
+     RELATIVE "${CMAKE_SOURCE_DIR}"
+     "${CMAKE_SOURCE_DIR}/ObjectTypes/*/CMakeLists.txt"
+  )
+
+
+  # include all cmake files fouund for objecttypes here
+  foreach ( _buildInfo ${_plugin_buildinfos})
+    include ("${CMAKE_SOURCE_DIR}/${_buildInfo}")
+  endforeach ()
+
+  link_directories (
+    ${GLEW_LIBRARY_DIR}
+    ${ADDITIONAL_PLUGINLIB_LINK_DIRS}
+  )
+
+else (APPLE)
+   link_directories (
+      ${GLEW_LIBRARY_DIR}
+   )
+endif(APPLE)
 
 # source code directories
 set (directories 
