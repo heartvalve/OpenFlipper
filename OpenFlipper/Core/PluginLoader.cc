@@ -123,7 +123,8 @@ void Core::loadPlugins()
   if ( OpenFlipper::Options::isWindows() )
     filter << "*.dll";
   else if ( OpenFlipper::Options::isDarwin() )
-    filter << "*.dylib";
+    filter << "*.so";
+//    filter << "*.dylib";
   else
     filter << "*.so";
   
@@ -212,7 +213,8 @@ void Core::slotLoadPlugin(){
   if ( OpenFlipper::Options::isWindows() )
     filter = "Plugins (*.dll)";
   else if ( OpenFlipper::Options::isDarwin() )
-    filter = "Plugins (*.dylib)";
+    // filter = "Plugins (*.dylib)";
+    filter = "Plugins (*.so)";
   else
     filter = "Plugins (*.so)";
 
