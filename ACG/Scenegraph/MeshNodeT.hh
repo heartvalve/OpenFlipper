@@ -142,7 +142,7 @@ public:
    * Property has to be Mesh::TexCoord2D as a halfedge property describing vertex coordinates for
    * to Vertex per face. Defaults to h:texcoords2D
    */
-  void set_default_halfedge_textcoord_property( std::string _default_halfedge_textcoord_property )
+  void setHalfedgeTextcoordPropertyName( std::string _default_halfedge_textcoord_property )
     { default_halfedge_textcoord_property_ = _default_halfedge_textcoord_property; };
 
   /** \brief Property to use when switching between multiple textures

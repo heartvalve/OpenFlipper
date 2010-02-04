@@ -399,7 +399,7 @@ private:
 /** @} */  
 
 //===========================================================================
-/** @name Texture handling
+/** @name Per face Texture handling
 * @{ */
 //===========================================================================    
 
@@ -411,6 +411,37 @@ public:
   * found, strips will be independend of this property
   */
   void setIndexPropertyName( std::string _indexPropertyName );
+  
+  /** \brief set the name of the property used for texture coordinate
+  *
+  * The given property name will define per face Texture coordinates. This property has to be a
+  * halfedge property. The coordinate on each edge is the texture coordinate of the to vertex.
+  * If this property is not available, textures will not be processed by the strip processor.
+  */
+  void setPerFaceTextureCoordinatePropertyName( std::string _perFaceTextureCoordinatePropertyName );
+  
+  /** \brief Check if per Face Texture coordinates are available
+  *
+  * If this function returns true, a per face per vertex texture array is available
+  */
+  bool perFaceTextureCoordinateAvailable()  {
+    return ( perFaceTextureCoordinateProperty_.is_valid() );
+  }  
+  
+  /** \brief Check if textureindicies are available
+  *
+  * If this function returns true, the strip processor will respect textures during strip generation.
+  * Each returned strip has than an index that has to be used as a texture index during strip rendering.
+  */
+  bool perFaceTextureIndexAvailable() {
+    return ( textureIndexProperty_.is_valid() );
+  }
+  
+  /** \brief get a pointer to the per face per vertex texture coor buffer
+  *
+  * This function will return a pointer to the first element of the buffer.
+  */
+  ACG::Vec2f * perFacePerVertexTextureCoordBuffer(){ return &(perFaceTextureCoordArray_)[0]; };
 
 private:
   
@@ -422,6 +453,15 @@ private:
   * information.
   */  
   OpenMesh::FPropHandleT< int > textureIndexProperty_;
+
+  /** \brief Property for the per face texture coordinates.
+  *
+  * This property is used by the mesh for texture coordinate specification.
+  * If this is invalid, then the strip processor will ignore per face textures during processing.
+  */  
+  OpenMesh::HPropHandleT< typename Mesh::TexCoord2D > perFaceTextureCoordinateProperty_;
+  
+  std::vector< ACG::Vec2f >  perFaceTextureCoordArray_;
 
 /** @} */  
 

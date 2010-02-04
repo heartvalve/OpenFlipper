@@ -462,12 +462,17 @@ public:
   *
   */
   
-  void setIndexPropertyName( std::string _index_property_name );
+  void setIndexPropertyName( std::string _indexPropertyName );
+  
+  
+  /** \brief Set the name of the per face texture coordinate property
+  *
+  * Set this property for per face per vertex texture coordinates. Additionally you have to set
+  * the IndexPropertyName to make texturing with multiple textures work.
+  */
+  void setHalfedgeTextcoordPropertyName( std::string _halfedgeTextcoordPropertyName );
   
 private:
-  
-  std::string indexPropertyName_;
-
   
 
 /** @} */
@@ -477,7 +482,7 @@ private:
   public:
     void set_texture_map( std::map< int, GLuint>* _map){  };
     void set_property_map( std::map< int, std::string>* _map){ };
-    void set_default_halfedge_textcoord_property( std::string _default_halfedge_textcoord_property ) {};
+    
     
     
 
