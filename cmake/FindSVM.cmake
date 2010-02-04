@@ -16,7 +16,7 @@ FIND_PATH( SVM_INCLUDE_DIR libsvm/svm.h
 
 FIND_LIBRARY( SVM_LIBRARY
               NAMES svm
-              PATHS /lib /usr/lib /usr/local/lib )
+              PATHS /lib /usr/lib /usr/local/lib /opt/local/lib )
 
 
 IF (SVM_INCLUDE_DIR AND SVM_LIBRARY)
