@@ -220,18 +220,6 @@ draw(GLState& _state, unsigned int _drawMode)
     glDepthRange(0.0, 1.0);
   }
 
-  if ( ( _drawMode & DrawModes::SOLID_TEXTURED_SHADED ) && mesh_.has_vertex_texcoords2D() && mesh_.has_vertex_normals())
-  {
-    enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY | TEXTURE_COORD_2D_ARRAY);
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
-    glDepthRange(0.01, 1.0);
-    draw_faces(PER_VERTEX);
-    glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
-  }
-
 
   if ( ( _drawMode & DrawModes::SOLID_1DTEXTURED ) && mesh_.has_vertex_texcoords1D())
   {
