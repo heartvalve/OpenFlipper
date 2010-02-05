@@ -149,8 +149,8 @@ private:
   
   /// build a strip from a given halfedge (in both directions) of a triangle mesh
   void buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
-		   Strip& _strip,
-		   FaceHandles& _faces);
+                         Strip& _strip,
+                         FaceHandles& _faces);
            
   /// build a strip from a given halfedge (in both directions) of a polymesh
   void buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
@@ -176,8 +176,7 @@ private:
   Strips                         strips_;
   OpenMesh::FPropHandleT<bool>   processed_, used_;
   
-  // In case triangulation is needed
-  bool                           triangulated_;
+  // This map contains for each vertex in the strips a handle to the face it closes
   std::vector<FaceMap>           faceMaps_;
 
 //===========================================================================
