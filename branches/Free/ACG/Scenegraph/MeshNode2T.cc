@@ -967,8 +967,8 @@ pick_faces(GLState& _state)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     
-    glVertexPointer (stripProcessor_.perFaceVertexBuffer());
-    glColorPointer(stripProcessor_.pickFaceColorBuffer());
+    glVertexPointer( stripProcessor_.perFaceVertexBuffer() );
+    glColorPointer(  stripProcessor_.pickFaceColorBuffer() );
     
     glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
     
@@ -1015,23 +1015,24 @@ pick_any(GLState& _state)
     return;
   }
   
-  if (anyPickingList_)
-  {
+  if (anyPickingList_) {
     glNewList (anyPickingList_, GL_COMPILE);
     updateAnyPickingList_ = false;
     anyPickingBaseIndex_ = _state.pick_current_index ();
   }
   
-  if (_state.color_picking ())
-  {
+  if (_state.color_picking ()) {
+    
     stripProcessor_.updatePickingAny(_state);
     
+    // For this version we load the colors directly not from vbo
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+    
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     
     glVertexPointer( stripProcessor_.perFaceVertexBuffer() );
-    glColorPointer(  stripProcessor_.pickFaceColorBuffer()  );
+    glColorPointer(  stripProcessor_.pickFaceColorBuffer() );
     
     glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
     
@@ -1293,15 +1294,17 @@ update_topology() {
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, lineIndexBuffer_);
   lineIndexBufferInitialized_ = false;
   
-  // Copy the buffer to the graphics card
-  glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
-                  mesh_.n_edges() * sizeof(unsigned int) * 2,
-                  &lineIndices_[0],
-                  GL_STATIC_DRAW_ARB);
+  if ( !lineIndices_.empty() ) {
+    // Copy the buffer to the graphics card
+    glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB,
+                    mesh_.n_edges() * sizeof(unsigned int) * 2,
+                    &lineIndices_[0],
+                    GL_STATIC_DRAW_ARB);
 
-  /// \todo: clear lineIndices (swap vector!)
-  
-  lineIndexBufferInitialized_ = true;
+    /// \todo: clear lineIndices (swap vector!)
+    
+    lineIndexBufferInitialized_ = true;
+  }
  
   // Unbind the buffer after the work has been done
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
