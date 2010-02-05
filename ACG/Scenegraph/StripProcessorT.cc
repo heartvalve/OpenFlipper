@@ -145,11 +145,25 @@ void
 StripProcessorT<Mesh>::
 buildStrips()
 {
+  // init faces to be un-processed and un-used
+  // deleted or hidden faces are marked processed
+  if (mesh_.has_face_status()) {
+    for (typename Mesh::FaceIter f_it=mesh_.faces_begin(); f_it != mesh_.faces_end(); ++f_it)
+      if (mesh_.status(f_it).hidden() || mesh_.status(f_it).deleted())
+        processed(f_it) = used(f_it) = true;
+      else
+        processed(f_it) = used(f_it) = false;
+  } else {
+    for (typename Mesh::FaceIter f_it=mesh_.faces_begin(); f_it != mesh_.faces_end() ; ++f_it)
+      processed(f_it) = used(f_it) = false;
+  }
+  
   if ( mesh_.is_trimesh() ) {
     buildStripsTriMesh();
   } else {
     buildStripsPolyMesh();
   }
+  
 }
 
 template <class Mesh>
@@ -168,19 +182,6 @@ buildStripsPolyMesh() {
     std::vector<FaceMap>                          faceMap;
     
     faceMaps_.clear();
-    
-    // init faces to be un-processed and un-used
-    // deleted or hidden faces are marked processed
-    if (mesh_.has_face_status()) {
-      for (f_it=mesh_.faces_begin(); f_it!=f_end; ++f_it)
-        if (mesh_.status(f_it).hidden() || mesh_.status(f_it).deleted())
-          processed(f_it) = used(f_it) = true;
-        else
-          processed(f_it) = used(f_it) = false;
-    } else {
-      for (f_it=mesh_.faces_begin(); f_it!=f_end; ++f_it)
-        processed(f_it) = used(f_it) = false;
-    }
 
     uint k = 0;
     for (f_it=mesh_.faces_begin(); true; ) {
@@ -246,21 +247,7 @@ buildStripsTriMesh()
   typename Mesh::FaceIter         f_it, f_end=mesh_.faces_end();
 
 
-  // init faces to be un-processed and un-used
-  // deleted or hidden faces are marked processed
-  if (mesh_.has_face_status())
-  {
-    for (f_it=mesh_.faces_begin(); f_it!=f_end; ++f_it)
-      if (mesh_.status(f_it).hidden() || mesh_.status(f_it).deleted())
-        processed(f_it) = used(f_it) = true;
-      else
-        processed(f_it) = used(f_it) = false;
-  }
-  else
-  {
-    for (f_it=mesh_.faces_begin(); f_it!=f_end; ++f_it)
-      processed(f_it) = used(f_it) = false;
-  }
+
 
   for (f_it=mesh_.faces_begin(); true; )
   {
