@@ -245,7 +245,9 @@ buildStripsTriMesh()
   FaceHandles                     faces[3];
   typename FaceHandles::iterator  fh_it, fh_end;
   typename Mesh::FaceIter         f_it, f_end=mesh_.faces_end();
-
+  std::vector<FaceMap>                          faceMap;
+  
+  faceMaps_.clear();
 
   for (f_it=mesh_.faces_begin(); true; )
   {
@@ -260,13 +262,15 @@ buildStripsTriMesh()
     h[0] = mesh_.halfedge_handle(f_it.handle());
     h[1] = mesh_.next_halfedge_handle(h[0]);
     h[2] = mesh_.next_halfedge_handle(h[1]);
-
+    
+    faceMap.clear();
+    faceMap.resize(3);
 
     // build 3 strips, take best one
     best_length = best_idx = 0;
     for (unsigned int i=0; i<3; ++i)
     {
-      buildStripTriMesh(h[i], experiments[i], faces[i]);
+      buildStripTriMesh(h[i], experiments[i], faces[i],faceMap[i]);
       if ((length = experiments[i].indexArray.size()) > best_length)
       {
         best_length = length;
@@ -285,10 +289,9 @@ buildStripsTriMesh()
     for (; fh_it!=fh_end; ++fh_it)
       processed(*fh_it) = true;
 
-
-
     // add best strip to strip-list
     strips_.push_back(experiments[best_idx]);
+    faceMaps_.push_back(faceMap[best_idx]);
   }
 }
 
@@ -482,7 +485,6 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
     _strip.indexArray.reserve(strip.size());
     std::copy(strip.begin(), strip.end(), std::back_inserter(_strip.indexArray));
     
-    
     _faceMap.clear();
     _faceMap.reserve(strip.size());
     std::copy(faceMap.begin(), faceMap.end(), std::back_inserter(_faceMap));
@@ -497,11 +499,14 @@ void
 StripProcessorT<Mesh>::
 buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
             Strip& _strip,
-            FaceHandles& _faces)
+            FaceHandles& _faces,
+            FaceMap&    _faceMap)
 {   
   std::list<unsigned int>  strip;
   typename Mesh::HalfedgeHandle   hh;
   typename Mesh::FaceHandle       fh;
+  
+  std::list<typename Mesh::FaceHandle > faceMap;
 
 
   // reset face list
@@ -542,6 +547,7 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
     _faces.push_back(fh);
     used(fh) = true;
     strip.push_back(mesh_.to_vertex_handle(hh).idx());
+    faceMap.push_back(mesh_.face_handle(hh));
 
     // go left
     hh = mesh_.opposite_halfedge_handle(hh);
@@ -556,6 +562,7 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
     _faces.push_back(fh);
     used(fh) = true;
     strip.push_back(mesh_.to_vertex_handle(hh).idx());
+    faceMap.push_back(mesh_.face_handle(hh));
   }
 
 
@@ -578,6 +585,7 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
     _faces.push_back(fh);
     used(fh) = true;
     strip.push_front(mesh_.to_vertex_handle(hh).idx());
+    faceMap.push_front(mesh_.face_handle(hh));
     flip = true;
 
     // go left
@@ -593,15 +601,26 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
     _faces.push_back(fh);
     used(fh) = true;
     strip.push_front(mesh_.to_vertex_handle(hh).idx());
+    faceMap.push_front(mesh_.face_handle(hh));
     flip = false;
   }
 
-  if (flip) strip.push_front(strip.front());
+  if (flip) {
+    strip.push_front(strip.front());
+    faceMap.push_front(mesh_.face_handle(hh));
+  }
+  
+  faceMap.push_front(mesh_.face_handle(hh));
+  faceMap.push_front(mesh_.face_handle(hh));
 
   // copy final strip to _strip
   _strip.indexArray.clear();
   _strip.indexArray.reserve(strip.size());
   std::copy(strip.begin(), strip.end(), std::back_inserter(_strip.indexArray));
+  
+  _faceMap.clear();
+  _faceMap.reserve(strip.size());
+  std::copy(faceMap.begin(), faceMap.end(), std::back_inserter(_faceMap));
 }
 
 template <class Mesh>
@@ -649,78 +668,41 @@ void
 StripProcessorT<Mesh>::
 updatePickingFaces(ACG::GLState& _state ) {
   
-  // Update the per face buffers 
- updatePerFaceBuffers();
+  // Get total number of triangles
+  // Each strip has two vertices more than triangles
+  unsigned int n_faces = 0;
+  for(StripsIterator it = strips_.begin(); it != strips_.end(); ++it) 
+    n_faces += (*it).indexArray.size() - 2;
   
-  // Update the per face color picking arrays
-  if ( mesh_.is_trimesh() )
-    updatePickingFacesTrimesh(_state);
-  else
-    updatePickingFacesPolymesh(_state);
-}
-
-template <class Mesh>
-void
-StripProcessorT<Mesh>::
-updatePickingFacesTrimesh(ACG::GLState& _state ) {
-
-  pickFaceColorBuf_.resize(mesh_.n_faces() * 3);
+  // 3 vertices per face.
+  pickFaceColorBuf_.resize(n_faces * 3);
   
-  int idx = 0;
+  // Index to the current buffer position
+  unsigned int bufferIndex = 0;
   
-  typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()), f_end(mesh_.faces_end());
-  typename Mesh::ConstFaceVertexIter  fv_it;
-  
-  for (; f_it!=f_end; ++f_it) {
-    const Vec4uc pickColor =  _state.pick_get_name_color (f_it.handle().idx());
+  // Process all strips
+  for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
     
-    pickFaceColorBuf_[idx]    = pickColor;
-    pickFaceColorBuf_[idx+1]  = pickColor;
-    pickFaceColorBuf_[idx+2]  = pickColor;
-    idx += 3;
+    // The order of the vertices in the strip is alternating but as the last vertex still defines
+    // points to the associated face, we dont need to swap here!
+    
+    // process all faces in the strip
+    // The strip contains 2 faces less then number of vertices in the strip.
+    // As we need seperate faces during rendering, the strips are splitted into triangles
+    // The last vertex of each triangle defines the picking color for the last face.
+    // The handles and indices are collected during the strip generation.
+    for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
+      
+      // We have to provide a vertex color for each of the vertices as we need flat shading!
+      const Vec4uc pickColor = _state.pick_get_name_color ( faceMaps_[i][ stripIndex ].idx() );
+      pickFaceColorBuf_[ bufferIndex + 0 ] = pickColor;
+      pickFaceColorBuf_[ bufferIndex + 1 ] = pickColor;
+      pickFaceColorBuf_[ bufferIndex + 2 ] = pickColor;
+      
+      bufferIndex += 3;
+    }
   }
   
-}
-
-template <class Mesh>
-void
-StripProcessorT<Mesh>::
-updatePickingFacesPolymesh(ACG::GLState& _state ) {
-  
-    // Get total number of triangles
-    // Each strip has two vertices more than triangles
-    unsigned int n_faces = 0;
-    for(StripsIterator it = strips_.begin(); it != strips_.end(); ++it) 
-        n_faces += (*it).indexArray.size() - 2;
-    
-    // 3 vertices per face.
-    pickFaceColorBuf_.resize(n_faces * 3);
-    
-    // Index to the current buffer position
-    unsigned int bufferIndex = 0;
-    
-    // Process all strips
-    for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
-      
-      // The order of the vertices in the strip is alternating but as the last vertex still defines
-      // points to the associated face, we dont need to swap here!
-      
-      // process all faces in the strip
-      // The strip contains 2 faces less then number of vertices in the strip.
-      // As we need seperate faces during rendering, the strips are splitted into triangles
-      // The last vertex of each triangle defines the picking color for the last face.
-      // The handles and indices are collected during the strip generation.
-      for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
-        
-        // We have to provide a vertex color for each of the vertices as we need flat shading!
-        const Vec4uc pickColor = _state.pick_get_name_color ( faceMaps_[i][ stripIndex ].idx() );
-        pickFaceColorBuf_[ bufferIndex + 0 ] = pickColor;
-        pickFaceColorBuf_[ bufferIndex + 1 ] = pickColor;
-        pickFaceColorBuf_[ bufferIndex + 2 ] = pickColor;
-        
-        bufferIndex += 3;
-      }
-    }
 }
 
 template <class Mesh>
@@ -799,17 +781,11 @@ updatePerFaceBuffers() {
     return;
   
   unsigned int n_faces = 0;
-  
-  // Get total number of triangles to render
-  if ( mesh_.is_trimesh()) {
-    // For tri meshes we now the correct number of triangles
-    n_faces = mesh_.n_faces();
-  } else {
-    // For the polyMeshes we have to count the faces in all strips
-    // Each strip has two vertices more than triangles
-    for(StripsIterator it = strips_.begin(); it != strips_.end(); ++it) 
-      n_faces += (*it).indexArray.size() - 2;
-  }
+
+  // For the polyMeshes we have to count the faces in all strips
+  // Each strip has two vertices more than triangles
+  for(StripsIterator it = strips_.begin(); it != strips_.end(); ++it) 
+    n_faces += (*it).indexArray.size() - 2;
   
   // 3 vertices per face.
   perFaceVertexBuffer_.resize(n_faces * 3);
@@ -831,136 +807,96 @@ updatePerFaceBuffers() {
     perFaceTextureCoordArray_.resize(n_faces * 3);
   else
     perFaceTextureCoordArray_.clear();   
-  
-  if ( mesh_.is_trimesh()) {
-    
-    typename Mesh::ConstFaceIter          f_it(mesh_.faces_sbegin()), f_end(mesh_.faces_end());
-    typename Mesh::ConstFaceHalfedgeIter  fhe_it;
 
+  // Process all strips
+  for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
+    // The order of the vertices in the strip is alternating so we have to alter the directions as well
+    // or we get backfacing triangles although they are frontfacing
+    bool swap = true;
     
-    for (; f_it!=f_end; ++f_it) {
-      if ( perFaceTextureCoordinateAvailable() ) {
-        perFaceVertexBuffer_[ bufferIndex ]          = mesh_.point(mesh_.to_vertex_handle(fhe_it=mesh_.cfh_iter(f_it)));
-        perFaceTextureCoordArray_[ bufferIndex ]     = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
-        perFaceVertexBuffer_[ bufferIndex + 1 ]      = mesh_.point(mesh_.to_vertex_handle(++fhe_it));
-        perFaceTextureCoordArray_[ bufferIndex + 1 ] = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
-        perFaceVertexBuffer_[ bufferIndex + 2 ]      = mesh_.point(mesh_.to_vertex_handle(++fhe_it));  
-        perFaceTextureCoordArray_[ bufferIndex + 2 ] = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
-      } else {
-        perFaceVertexBuffer_[ bufferIndex ]          = mesh_.point(mesh_.to_vertex_handle(fhe_it=mesh_.cfh_iter(f_it)));
-        perFaceVertexBuffer_[ bufferIndex + 1 ]      = mesh_.point(mesh_.to_vertex_handle(++fhe_it));
-        perFaceVertexBuffer_[ bufferIndex + 2 ]      = mesh_.point(mesh_.to_vertex_handle(++fhe_it));  
-      }
+    // process all faces in the strip
+    // The strip contains 2 faces less then number of vertices in the strip.
+    // As we need seperate faces during rendering, the strips are splitted into triangles
+    // The last vertex of each triangle defines the color and the normal for the last face.
+    // Handles and indices are collected during the strip generation.
+    for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
+      
       
       if (  mesh_.has_face_normals() ) {
-        const Vec3d normal = mesh_.normal(f_it);
-        perFaceNormalBuffer_[ bufferIndex ]     = normal;
+        const Vec3d normal = mesh_.normal( faceMaps_[i][ stripIndex ] );
+        perFaceNormalBuffer_[ bufferIndex + 0 ] = normal;
         perFaceNormalBuffer_[ bufferIndex + 1 ] = normal;
         perFaceNormalBuffer_[ bufferIndex + 2 ] = normal;
       }
-      
+    
       if (  mesh_.has_face_colors() ) {
-        const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(f_it) ) ;
-        perFaceColorBuffer_[ bufferIndex ]     = color;
+        const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color( faceMaps_[i][ stripIndex ] ) );
+        perFaceColorBuffer_[ bufferIndex + 0 ] = color;
         perFaceColorBuffer_[ bufferIndex + 1 ] = color;
         perFaceColorBuffer_[ bufferIndex + 2 ] = color;
+      }
+    
+      if ( swap ) {
+        // Cant render triangle strips as we need one color per face and this means duplicating vertices
+        perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+        perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+        perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+        
+        if ( perFaceTextureCoordinateAvailable() ) {
+          typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(faceMaps_[i][ stripIndex ]));
+          
+          for ( ; fhe_it ; ++fhe_it ) {
+            typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
+            const Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
+            
+            if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
+              perFaceTextureCoordArray_[ bufferIndex + 0 ]  = texcoord; 
+              continue;
+            } else if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ) == cvh ) {
+              perFaceTextureCoordArray_[ bufferIndex + 1 ]  = texcoord; 
+              continue;
+            } else if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ) == cvh ) {
+              perFaceTextureCoordArray_[ bufferIndex + 2 ]  = texcoord; 
+              continue;
+            }
+          }
+          
+        }
+        
+        swap = false;
+      } else {
+        // Cant render triangle strips as we need one color per face and this means duplicating vertices
+        perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+        perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+        perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+        
+        if ( perFaceTextureCoordinateAvailable() ) {
+          typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(faceMaps_[i][ stripIndex ]));
+          
+          for ( ; fhe_it ; ++fhe_it ) {
+            typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
+            const Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
+            
+            if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
+              perFaceTextureCoordArray_[ bufferIndex + 2 ]  = texcoord; 
+              continue;
+            } else if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ) == cvh ) {
+              perFaceTextureCoordArray_[ bufferIndex + 1 ]  = texcoord; 
+              continue;
+            } else if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ) == cvh ) {
+              perFaceTextureCoordArray_[ bufferIndex + 0 ]  = texcoord; 
+              continue;
+            }
+          }
+          
+        }
+        
+        swap = true;
       }
       
       bufferIndex += 3;
     }
-    
-  } else {
-    
-    // Process all strips
-    for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
-      // The order of the vertices in the strip is alternating so we have to alter the directions as well
-      // or we get backfacing triangles although they are frontfacing
-      bool swap = true;
-      
-      // process all faces in the strip
-      // The strip contains 2 faces less then number of vertices in the strip.
-      // As we need seperate faces during rendering, the strips are splitted into triangles
-      // The last vertex of each triangle defines the color and the normal for the last face.
-      // Handles and indices are collected during the strip generation.
-      for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
-        
-        
-        if (  mesh_.has_face_normals() ) {
-          const Vec3d normal = mesh_.normal( faceMaps_[i][ stripIndex ] );
-          perFaceNormalBuffer_[ bufferIndex + 0 ] = normal;
-          perFaceNormalBuffer_[ bufferIndex + 1 ] = normal;
-          perFaceNormalBuffer_[ bufferIndex + 2 ] = normal;
-        }
-      
-        if (  mesh_.has_face_colors() ) {
-          const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color( faceMaps_[i][ stripIndex ] ) );
-          perFaceColorBuffer_[ bufferIndex + 0 ] = color;
-          perFaceColorBuffer_[ bufferIndex + 1 ] = color;
-          perFaceColorBuffer_[ bufferIndex + 2 ] = color;
-        }
-      
-        if ( swap ) {
-          // Cant render triangle strips as we need one color per face and this means duplicating vertices
-          perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
-          perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
-          perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
-          
-          if ( perFaceTextureCoordinateAvailable() ) {
-            typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(faceMaps_[i][ stripIndex ]));
-            
-            for ( ; fhe_it ; ++fhe_it ) {
-              typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
-              const Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
-              
-              if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
-                perFaceTextureCoordArray_[ bufferIndex + 0 ]  = texcoord; 
-                continue;
-              } else if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ) == cvh ) {
-                perFaceTextureCoordArray_[ bufferIndex + 1 ]  = texcoord; 
-                continue;
-              } else if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ) == cvh ) {
-                perFaceTextureCoordArray_[ bufferIndex + 2 ]  = texcoord; 
-                continue;
-              }
-            }
-            
-          }
-          
-          swap = false;
-        } else {
-          // Cant render triangle strips as we need one color per face and this means duplicating vertices
-          perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
-          perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
-          perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
-          
-          if ( perFaceTextureCoordinateAvailable() ) {
-            typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(faceMaps_[i][ stripIndex ]));
-            
-            for ( ; fhe_it ; ++fhe_it ) {
-              typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
-              const Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
-              
-              if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
-                perFaceTextureCoordArray_[ bufferIndex + 2 ]  = texcoord; 
-                continue;
-              } else if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ) == cvh ) {
-                perFaceTextureCoordArray_[ bufferIndex + 1 ]  = texcoord; 
-                continue;
-              } else if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ) == cvh ) {
-                perFaceTextureCoordArray_[ bufferIndex + 0 ]  = texcoord; 
-                continue;
-              }
-            }
-            
-          }
-          
-          swap = true;
-        }
-        
-        bufferIndex += 3;
-      }
-    } 
-  }
+  } 
   
   updatePerFaceBuffers_ = false;
 }
