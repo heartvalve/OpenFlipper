@@ -66,7 +66,6 @@ template <class Mesh>
 StripProcessorT<Mesh>::
 StripProcessorT(Mesh& _mesh) :
 mesh_(_mesh),
-triangulated_(false),
 updatePerEdgeBuffers_(true),
 updatePerFaceBuffers_(true),
 textureIndexProperty_(-1),
@@ -217,6 +216,7 @@ buildStripsPolyMesh() {
             best_idx    = i;
         }
         
+        // unset the used flag for the following experiments
         for (fh_it=faces[i].begin(), fh_end=faces[i].end(); fh_it!=fh_end; ++fh_it)
             used(*fh_it) = false;
       }
@@ -245,8 +245,6 @@ buildStripsTriMesh()
   FaceHandles                     faces[3];
   typename FaceHandles::iterator  fh_it, fh_end;
   typename Mesh::FaceIter         f_it, f_end=mesh_.faces_end();
-
-
 
 
   for (f_it=mesh_.faces_begin(); true; )
