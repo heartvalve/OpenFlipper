@@ -398,7 +398,8 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
     if(vertexCount == 3) {
         _importer.addOption(OFFImporter::TRIMESH);
         _importer.removeOption(OFFImporter::POLYMESH);
-    } else if (vertexCount == 0) {
+    } else if (vertexCount == 0 && nF != 0) {
+        // Something went wrong
         return false;
     } else {
         _importer.addOption(OFFImporter::POLYMESH);
