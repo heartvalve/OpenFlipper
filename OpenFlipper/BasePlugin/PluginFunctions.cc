@@ -126,6 +126,9 @@ static int objectCounter_ = 0;
 /// Number of current target objects
 static int targetCounter_ = 0;
 
+/// Map that holds the object handles
+static std::map<int, BaseObject*> objectMap_;
+
 void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
@@ -267,7 +270,15 @@ bool getObject(  const int _identifier , BaseObject*& _object ) {
   if ( _identifier == -1 )
     return false;
 
-  _object = objectRoot_->childExists( _identifier );
+  // Obsolete:
+  //_object = objectRoot_->childExists( _identifier );
+  
+  // Search for specified object in object map:
+  std::map<int, BaseObject*>::iterator it;
+  it = objectMap_.find(_identifier);
+  // Get object
+  _object = (it != objectMap_.end() ? it->second : 0);
+  
   return ( _object != 0 );
 }
 
@@ -276,7 +287,14 @@ bool getObject(  const int _identifier , BaseObjectData*& _object ) {
   if ( _identifier == -1 )
     return false;
 
-  BaseObject* object = objectRoot_->childExists( _identifier );
+  // Obsolete: BaseObject* object = objectRoot_->childExists( _identifier );
+  
+  // Search for specified object in object map:
+  std::map<int, BaseObject*>::iterator it;
+  it = objectMap_.find(_identifier);
+  // Get object
+  BaseObject* object = (it != objectMap_.end() ? it->second : 0);
+  
   _object = dynamic_cast< BaseObjectData* >(object);
   return ( _object != 0 );
 }
@@ -938,4 +956,33 @@ void decreaseTargetCount() {
     std::cerr << "target object counter underflow!!!" << std::endl;
 }
 
+// ===============================================================================
+// Add an object to the internal object map
+// ===============================================================================
+void addObjectToMap(int _objectId, BaseObject* _object) {
+    
+    // Look if object's id already exists in map
+    std::map<int, BaseObject*>::iterator it;
+    it = objectMap_.find(_objectId);
+    // If so return
+    if(it != objectMap_.end()) return;
+    
+    // Add new object to map
+    objectMap_.insert(std::pair<int, BaseObject*>(_objectId, _object));
 }
+
+// ===============================================================================
+// Remove an object from the internal object map
+// ===============================================================================
+void removeObjectFromMap(int _objectId) {
+    
+    // Look if object exists in map
+    std::map<int, BaseObject*>::iterator it;
+    it = objectMap_.find(_objectId);
+    
+    // Erase entry
+    if(it != objectMap_.end()) objectMap_.erase(it);
+}
+
+
+} // End namespace PluginFunctions

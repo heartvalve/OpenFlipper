@@ -110,6 +110,9 @@ BaseObject::BaseObject(const BaseObject& _object) :
     PluginFunctions::increaseObjectCount();
   }
   
+  // Add object to object container
+  PluginFunctions::addObjectToMap( id(), this );
+  
   objectManager_.objectCreated(id());
 }
 
@@ -141,6 +144,9 @@ BaseObject::BaseObject(BaseObject* _parent) :
     }
     
   }
+  
+  // Add object to object container
+  PluginFunctions::addObjectToMap( id(), this );
   
   objectManager_.objectCreated(id());
 }
@@ -797,6 +803,9 @@ void ObjectManager::objectCreated(int _objectId)
 
 void ObjectManager::objectDeleted(int _objectId) 
 {
+  // Remove deleted object from object container
+  PluginFunctions::removeObjectFromMap( _objectId );
+    
   emit deletedObject(_objectId);
 }
 
