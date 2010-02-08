@@ -101,15 +101,6 @@ public:
   ACG_CLASSNAME(MeshNode);
 
 
-  /** \brief Setup a mapping between internal texture ids on the mesh and the ids for the loaded textures in opengl
-   *
-   * @param _map maps between an int index stored in the Mesh describing which texture to use for a face,
-   *             and the GluInt name of the texture bound by the TextureNode. \n
-   *             If such a map is not available ( =0 ), assume TextureNode has already bound a texture
-   *             And render without switching textures
-   */
-  void set_texture_map( std::map< int, GLuint>* _map){ textureMap_ = _map; };
-
   /** \brief Setup a mapping between internal texture ids on the mesh and the properties containing texture coordinates
    *
    * @param _map maps between an int index stored in the Mesh describing which texture to use
@@ -163,8 +154,7 @@ private:
 
 
 
-  // Mapping of mesh face texture indices to gltexture id ( has to be provided externally )
-  std::map< int, GLuint>* textureMap_;
+
 
   // Mapping of mesh face texture indices to coordinate property names ( has to be provided externally )
   std::map< int, std::string>* propertyMap_;

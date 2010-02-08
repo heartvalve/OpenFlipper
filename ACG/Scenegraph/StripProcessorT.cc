@@ -66,6 +66,7 @@ template <class Mesh>
 StripProcessorT<Mesh>::
 StripProcessorT(Mesh& _mesh) :
 mesh_(_mesh),
+stripsValid_(false),
 updatePerEdgeBuffers_(true),
 updatePerFaceBuffers_(true),
 textureIndexProperty_(-1),
@@ -119,6 +120,11 @@ unsigned int
 StripProcessorT<Mesh>::
 stripify()
 {
+  if ( stripsValid_)
+    return nStrips();
+  
+  std::cerr << "Updating strips" << std::endl;
+  
   // preprocess:  add new properties
   mesh_.add_property( processed_ );
   mesh_.add_property( used_ );
@@ -133,6 +139,8 @@ stripify()
   mesh_.remove_property(used_);
   mesh_.release_face_status();
 
+  stripsValid_ = true;
+  
   return nStrips();
 }
 
@@ -525,7 +533,12 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
   if ( perFaceTextureIndexAvailable() ) {
     textureHandling = true;
     _strip.textureIndex = mesh_.property(textureIndexProperty_,mesh_.face_handle(_start_hh));
-  } 
+    std::cerr << "recorded strip texture : " << _strip.textureIndex << std::endl;
+  } else {
+    // Set to no texture!
+    // This is not really necessary but cleans up for debugging
+    _strip.textureIndex = 0; 
+  }
   
   /// \todo Implement texture processing here
 
@@ -607,11 +620,13 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
 
   if (flip) {
     strip.push_front(strip.front());
-    faceMap.push_front(mesh_.face_handle(hh));
+    faceMap.push_front(mesh_.face_handle(0));
   }
   
-  faceMap.push_front(mesh_.face_handle(hh));
-  faceMap.push_front(mesh_.face_handle(hh));
+  // Add two empty faces at the front. They will not be used to render anything as only the third one defines the 
+  // face properties in the strip.
+  faceMap.push_front(mesh_.face_handle(0));
+  faceMap.push_front(mesh_.face_handle(0));
 
   // copy final strip to _strip
   _strip.indexArray.clear();
@@ -709,6 +724,9 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 updatePickingAny(ACG::GLState& _state ) {
+  // Update strip information if necessary
+  stripify();
+  
   updatePickingFaces(_state);
   updatePickingEdges(_state,mesh_.n_faces());
   updatePickingVertices(_state,mesh_.n_faces() + mesh_.n_edges());
@@ -775,6 +793,8 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 updatePerFaceBuffers() {
+  
+  stripify();
 
   // Only update buffers if they are invalid
   if (!updatePerFaceBuffers_) 
@@ -808,8 +828,19 @@ updatePerFaceBuffers() {
   else
     perFaceTextureCoordArray_.clear();   
 
+  textureRenderData_.clear();
+  
+  if ( perFaceTextureIndexAvailable() )
+    textureRenderData_.reserve( strips_.size() );
+  
   // Process all strips
   for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
+    // Record strip information
+    if ( perFaceTextureIndexAvailable() ) {
+      textureRenderData_.push_back( TextureRenderInfo(strips_[i].textureIndex , strips_[ i ].indexArray.size() -2 ,bufferIndex) );
+      std::cerr << "Strip " << i << " texture " << strips_[i].textureIndex << " faces : " << strips_[ i ].indexArray.size() -2 << std::endl;
+    }
+    
     // The order of the vertices in the strip is alternating so we have to alter the directions as well
     // or we get backfacing triangles although they are frontfacing
     bool swap = true;
@@ -820,7 +851,6 @@ updatePerFaceBuffers() {
     // The last vertex of each triangle defines the color and the normal for the last face.
     // Handles and indices are collected during the strip generation.
     for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
-      
       
       if (  mesh_.has_face_normals() ) {
         const Vec3d normal = mesh_.normal( faceMaps_[i][ stripIndex ] );
@@ -847,7 +877,7 @@ updatePerFaceBuffers() {
           
           for ( ; fhe_it ; ++fhe_it ) {
             typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
-            const Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
+            Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
             
             if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
               perFaceTextureCoordArray_[ bufferIndex + 0 ]  = texcoord; 
@@ -906,9 +936,11 @@ template <class Mesh>
 ACG::Vec3f * 
 StripProcessorT<Mesh>::
 perFaceVertexBuffer() { 
+  
   // Force update of the buffers if required
   if (updatePerFaceBuffers_)
     updatePerFaceBuffers();
+  
   return &(perFaceVertexBuffer_)[0]; 
 };
 
@@ -919,6 +951,7 @@ perFaceNormalBuffer() {
   // Force update of the buffers if required
   if (updatePerFaceBuffers_)
     updatePerFaceBuffers();
+  
   return &(perFaceNormalBuffer_)[0]; 
 };
 
@@ -958,6 +991,9 @@ setIndexPropertyName( std::string _indexPropertyName ) {
     textureIndexProperty_.invalidate();
     std::cerr << "StripProcessor: Unable to get per face texture Index property named " << _indexPropertyName << std::endl;
   }
+  
+  // mark strips as invalid ( have to be regenerated to collect texture index information)
+  stripsValid_ = false;
   
   // mark the buffers as invalid as we have a new per face index array
   invalidatePerFaceBuffers();
