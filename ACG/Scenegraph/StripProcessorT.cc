@@ -123,8 +123,6 @@ stripify()
   if ( stripsValid_)
     return nStrips();
   
-  std::cerr << "Updating strips" << std::endl;
-  
   // preprocess:  add new properties
   mesh_.add_property( processed_ );
   mesh_.add_property( used_ );
@@ -533,7 +531,6 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
   if ( perFaceTextureIndexAvailable() ) {
     textureHandling = true;
     _strip.textureIndex = mesh_.property(textureIndexProperty_,mesh_.face_handle(_start_hh));
-    std::cerr << "recorded strip texture : " << _strip.textureIndex << std::endl;
   } else {
     // Set to no texture!
     // This is not really necessary but cleans up for debugging
@@ -838,7 +835,6 @@ updatePerFaceBuffers() {
     // Record strip information
     if ( perFaceTextureIndexAvailable() ) {
       textureRenderData_.push_back( TextureRenderInfo(strips_[i].textureIndex , strips_[ i ].indexArray.size() -2 ,bufferIndex) );
-      std::cerr << "Strip " << i << " texture " << strips_[i].textureIndex << " faces : " << strips_[ i ].indexArray.size() -2 << std::endl;
     }
     
     // The order of the vertices in the strip is alternating so we have to alter the directions as well
@@ -971,8 +967,6 @@ void
 StripProcessorT<Mesh>::
 setPerFaceTextureCoordinatePropertyName( std::string _perFaceTextureCoordinatePropertyName ) {
   
-  std::cerr << "perFaceTextureCoordName: " << _perFaceTextureCoordinatePropertyName << std::endl;
-  
   if ( !mesh_.get_property_handle(perFaceTextureCoordinateProperty_,_perFaceTextureCoordinatePropertyName) )  {
     perFaceTextureCoordinateProperty_.invalidate();
     std::cerr << "StripProcessor: Unable to get per face texture coordinate property named " << _perFaceTextureCoordinatePropertyName << std::endl;
@@ -986,7 +980,6 @@ template <class Mesh>
 void
 StripProcessorT<Mesh>::
 setIndexPropertyName( std::string _indexPropertyName ) { 
-  std::cerr << "IndexPropertyName: " << _indexPropertyName << std::endl;
   if ( !mesh_.get_property_handle(textureIndexProperty_,_indexPropertyName) )  {
     textureIndexProperty_.invalidate();
     std::cerr << "StripProcessor: Unable to get per face texture Index property named " << _indexPropertyName << std::endl;
