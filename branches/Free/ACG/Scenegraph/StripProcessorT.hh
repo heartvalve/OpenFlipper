@@ -87,6 +87,22 @@ public:
   
 };
 
+class TextureRenderInfo {
+  public:
+  TextureRenderInfo(int _textureId,int _faceCount,int _startOffset):
+  textureId(_textureId),
+  faceCount(_faceCount),
+  startOffset(_startOffset)
+  {};
+  
+  /// Id of the texture to be rendered
+  int textureId;
+  /// Number of faces in the render step for this texture
+  int faceCount;
+  /// Start offset in the face buffer
+  int startOffset;
+};
+
 
 
 /** \class StripProcessorT StripProcessorT.hh <ACG/SceneGraph/StripProcessorT.hh>
@@ -120,9 +136,6 @@ public:
   /// returns number of strips
   unsigned int nStrips() const { return strips_.size(); }
 
-  /// are strips computed?
-  bool isValid() const { return !strips_.empty(); }
-
   /// Access strips
   StripsIterator begin() const { return strips_.begin(); }
   /// Access strips
@@ -131,34 +144,8 @@ public:
 
 private:
 
-  typedef std::vector<typename Mesh::FaceHandle>  FaceHandles;
-
-  /// this method does the main work
-  void buildStrips();
-
-  /// This method generates strips for triangle meshes
-  void buildStripsTriMesh();
   
-  /** This method generates strips for polyMeshes meshes
-  *
-  * The strips generated in this function are triangle strips. The function
-  * takes arbitrary polygons as input and triangulates them.
-  */
-  void buildStripsPolyMesh();
- 
-  
-  /// build a strip from a given halfedge (in both directions) of a triangle mesh
-  void buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
-                         Strip& _strip,
-                         FaceHandles& _faces,
-                         FaceMap&    _faceMap);
-           
-  /// build a strip from a given halfedge (in both directions) of a polymesh
-  void buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
-                          Strip& _strip,
-                          FaceHandles& _faces,
-                          FaceMap& _faceMap);
-           
+
   /// Test whether face is convex
   void convexityTest(FaceHandle _fh);
 
@@ -180,6 +167,55 @@ private:
   // This map contains for each vertex in the strips a handle to the face it closes
   std::vector<FaceMap>           faceMaps_;
 
+  
+  
+//===========================================================================
+/** @name Strip generation
+* @{ */
+//===========================================================================    
+public:
+  
+/** \brief Force a strip update 
+*
+*
+*/
+void invalidateStrips() { stripsValid_ = false; };
+  
+private:  
+  
+typedef std::vector<typename Mesh::FaceHandle>  FaceHandles;
+
+/// This flag shows if the strips have to be regenerated
+bool stripsValid_;  
+
+/// this method does the main work
+void buildStrips();
+
+/// This method generates strips for triangle meshes
+void buildStripsTriMesh();
+
+/** This method generates strips for polyMeshes meshes
+*
+* The strips generated in this function are triangle strips. The function
+* takes arbitrary polygons as input and triangulates them.
+*/
+void buildStripsPolyMesh();
+
+
+/// build a strip from a given halfedge (in both directions) of a triangle mesh
+void buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
+                        Strip& _strip,
+                        FaceHandles& _faces,
+                        FaceMap&    _faceMap);
+                        
+/// build a strip from a given halfedge (in both directions) of a polymesh
+void buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
+                        Strip& _strip,
+                        FaceHandles& _faces,
+                        FaceMap& _faceMap);
+                                                 
+/** @} */      
+  
 //===========================================================================
 /** @name Per edge drawing arrays handling
 * @{ */
@@ -219,6 +255,7 @@ private:
   
   /// This flag controls if an update is really necessary
   bool updatePerEdgeBuffers_;
+
 /** @} */    
   
 //===========================================================================
@@ -442,6 +479,15 @@ public:
   * This function will return a pointer to the first element of the buffer.
   */
   ACG::Vec2f * perFacePerVertexTextureCoordBuffer(){ return &(perFaceTextureCoordArray_)[0]; };
+  
+  /** \brief get rendering information for texture data
+  *
+  * This function returns a pointer to the texture render data produced by the stripprocessor
+  * each pair defines a texture index and te number of faces which have to be rendered for this 
+  * texture before switching to the next one.
+  *
+  */
+  std::vector< TextureRenderInfo >* textureRenderData(){ return &textureRenderData_; };
 
 private:
   
@@ -462,6 +508,8 @@ private:
   OpenMesh::HPropHandleT< typename Mesh::TexCoord2D > perFaceTextureCoordinateProperty_;
   
   std::vector< ACG::Vec2f >  perFaceTextureCoordArray_;
+  
+  std::vector< TextureRenderInfo > textureRenderData_;
 
 /** @} */  
 

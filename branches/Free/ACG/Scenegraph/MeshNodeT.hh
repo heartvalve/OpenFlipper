@@ -128,7 +128,7 @@ public:
    *             If such a map is not available ( =0 ), assume TextureNode has already bound a texture
    *             And render without switching textures
    */
-  void set_texture_map( std::map< int, GLuint>* _map){ textureMap_ = _map; };
+  void setTextureMap( std::map< int, GLuint>* _map){ textureMap_ = _map; };
 
   /** \brief Setup a mapping between internal texture ids on the mesh and the properties containing texture coordinates
    *

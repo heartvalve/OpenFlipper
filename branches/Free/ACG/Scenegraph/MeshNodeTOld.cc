@@ -128,12 +128,7 @@ availableDrawModes() const
       drawModes |= DrawModes::SOLID_3DTEXTURED_SHADED;
   }
 
-  if (mesh_.has_halfedge_texcoords2D())
-  {
-    drawModes |= DrawModes::SOLID_2DTEXTURED_FACE;
-    if (mesh_.has_face_normals())
-      drawModes |= DrawModes::SOLID_2DTEXTURED_FACE_SHADED;
-  }
+
 
   return drawModes;
 }
@@ -295,33 +290,7 @@ draw(GLState& _state, unsigned int _drawMode)
     glDisable(GL_TEXTURE_3D);
   }
 
-  // Textured by using coordinates stored in halfedges
-  // TODO: Check not only mesh_.has_halfedge_texcoords2D but check if custom property is available
-  if ( ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE ) && mesh_.has_halfedge_texcoords2D())
-  {
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
-    draw_faces(FACE_HALFEDGE_TEXTURED);
-    glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
-  }
 
-  // Textured by using coordinates stored in halfedges
-  // TODO: Check not only mesh_.has_halfedge_texcoords2D but check if custom property is available
-  if ( ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED ) && mesh_.has_halfedge_texcoords2D() && mesh_.has_face_normals())
-  {
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_LIGHTING);
-
-    glShadeModel(GL_FLAT);
-    glDepthRange(0.01, 1.0);
-    draw_faces(FACE_HALFEDGE_TEXTURED);
-    glDepthRange(0.0, 1.0);
-    glDisable(GL_TEXTURE_2D);
-
-  }
 
   // If in shader mode, just draw, as the shader has to be set by a shadernode above this node
   if ( (_drawMode & DrawModes::SOLID_SHADER )  ) {
