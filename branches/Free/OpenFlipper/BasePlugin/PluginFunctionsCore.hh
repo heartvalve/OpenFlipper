@@ -116,6 +116,22 @@ void decreaseTargetCount();
 
 /** @} */
 
+//=======================================
+// Object container functions
+/** @name Internal object handle container
+* @{ */
+//=======================================
+
+/// Add object to internal object map
+DLLEXPORT
+void addObjectToMap(int _objectId, BaseObject* _object);
+
+/// Remove object from internal object map
+DLLEXPORT
+void removeObjectFromMap(int _objectId);
+
+/** @} */
+
 }
 
 #endif //PLUGINFUNCTIONSCORE_HH
