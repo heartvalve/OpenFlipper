@@ -328,13 +328,11 @@ void TextureControlPlugin::fileOpened( int _id ) {
     // Update texture mapping in meshNode
     // ================================================================================
     if( obj->dataType( DATA_TRIANGLE_MESH ) ){
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
+      PluginFunctions::triMeshObject(obj)->meshNode()->setTextureMap( 0 );
     }
 
     if ( obj->dataType( DATA_POLY_MESH ) ){
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap( 0 );
     }
 
   }
@@ -1157,18 +1155,23 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       // Unbind all textures ( textures will be bound by textureNode later on
       PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture(0);
       // Set the mapping between texture ids in the index property and their gl Names
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-      // Set map  between texture index and its coordinate property name
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
+      PluginFunctions::triMeshObject(obj)->meshNode()->setTextureMap( texData->textureMap() );
+      
+      if (PluginFunctions::triMeshObject(obj)->mesh()->has_halfedge_texcoords2D())
+        PluginFunctions::triMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("h:texcoords2D");
+        
+      
     } else if( obj->dataType( DATA_POLY_MESH ) ){
       // Set the property map for mapping between faces and textures
       PluginFunctions::polyMeshObject(obj)->meshNode()->setIndexPropertyName( texData->texture( _textureName).indexMappingProperty().toStdString() );
       // Unbind all textures ( textures will be bound by textureNode later on
       PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture(0);
       // Set the mapping between texture ids in the index property and their gl Names
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( texData->textureMap() );
-      // Set map  between texture index and its coordinate property name
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap( texData->textureMap() );
+      
+      if (PluginFunctions::polyMeshObject(obj)->mesh()->has_halfedge_texcoords2D())
+        PluginFunctions::polyMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("h:texcoords2D");      
+      
     } else {
       emit log(LOGERR, "MultiTexture Error: Only supported on Tri or Poly Mesh for Texture: " + _textureName );
     }
@@ -1178,15 +1181,13 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       PluginFunctions::triMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
       // Disable the mapping properties ( only for multi texture mode )
       PluginFunctions::triMeshObject(obj)->meshNode()->setIndexPropertyName("No Texture Index");
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_texture_map( 0 );
-      PluginFunctions::triMeshObject(obj)->meshNode()->set_property_map( 0 );
+      PluginFunctions::triMeshObject(obj)->meshNode()->setTextureMap( 0 );
     } else if ( obj->dataType( DATA_POLY_MESH ) ){
       // Activate the requested texture in texture node
       PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
       // Disable the mapping properties ( only for multi texture mode )
       PluginFunctions::polyMeshObject(obj)->meshNode()->setIndexPropertyName("No Texture Index");
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_texture_map( 0 );
-      PluginFunctions::polyMeshObject(obj)->meshNode()->set_property_map( 0 );
+      PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap( 0 );
     } else {
       emit log(LOGERR, "Texture Error ( mesh required) for Texture: " + _textureName );
     }
