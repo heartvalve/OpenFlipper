@@ -77,6 +77,8 @@ struct PolyTraits : public OpenMesh::DefaultTraits
   
   /// Use double precision rgba Color
 //   typedef OpenMesh::Vec4f Color;
+  /// Use double precision rgba Color
+//   typedef OpenMesh::Vec4f Color;
 };
 
 /// Simple Name for Mesh
