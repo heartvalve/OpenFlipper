@@ -76,7 +76,7 @@ void addRecentFile(QString _file, DataType _type) {
     }
   
   // Erase if too many files in list
-  if ( recentFiles.size() >= OpenFlipperSettings().value("Core/File/MaxRecent").toInt() ) {
+  if ( recentFiles.size() >= OpenFlipperSettings().value("Core/File/MaxRecent",10).toInt() ) {
     recentFiles.pop_back();
     recentTypes.pop_back();
   }
