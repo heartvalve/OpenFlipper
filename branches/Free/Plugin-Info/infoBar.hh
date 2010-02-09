@@ -34,104 +34,24 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
- *   $Author$                                                      *
- *   $Date$                   *
+ *   $Revision: 83 $                                                         *
+ *   $Author: moebius $                                                      *
+ *   $Date: 2009-02-27 17:31:45 +0100 (Fr, 27. Feb 2009) $                   *
  *                                                                           *
 \*===========================================================================*/
 
+#include "ui_infoBar.hh"
+#include <QtGui>
 
-
-
-//=============================================================================
-//
-//  CLASS CoreWidget - IMPLEMENTATION
-//
-//=============================================================================
-
-
-//== INCLUDES =================================================================
-
-// -------------------- mview
-#include "CoreWidget.hh"
-#include <OpenFlipper/common/GlobalOptions.hh>
-
-//== IMPLEMENTATION ========================================================== 
-
-
-
-void CoreWidget::statusMessage(QString _message, int _timeout) {
-  statusBar_->showMessage(_message,_timeout);
-}
-
-
-//=============================================================================
-
-
-void CoreWidget::setupStatusBar()
+class InfoBar : public QWidget, public Ui::InfoBar
 {
-  statusBar_ = new ColorStatusBar();
+  Q_OBJECT
 
-  setStatusBar( statusBar_ );
+  public:
+    InfoBar(QWidget *parent = 0);
+    
+    void showCounts();
+    void hideCounts();
+    void showTargetCount(int _count);
+};
 
-  QPixmap pix;
-  pix.load(OpenFlipper::Options::iconDirStr() +
-          OpenFlipper::Options::dirSeparator() + 
-          "status_green.png");
-  
-  
-  statusIcon_ = new QLabel();
-  statusIcon_->setPixmap(pix.scaled(12,12,Qt::KeepAspectRatio,Qt::SmoothTransformation));
-  
-  statusBar_->addPermanentWidget(statusIcon_);
-}
-
-//=============================================================================
-
-void CoreWidget::clearStatusMessage()
-{
-  statusBar_->clearMessage();
-}
-
-//=============================================================================
-
-void CoreWidget::setStatus( ApplicationStatus::applicationStatus _status)
-{
-  QPixmap pix;
-
-  switch (_status) {
-    case ApplicationStatus::READY :
-      pix.load(OpenFlipper::Options::iconDirStr() +
-          OpenFlipper::Options::dirSeparator() + 
-          "status_green.png");
-      break;
-    case ApplicationStatus::PROCESSING :
-      pix.load(OpenFlipper::Options::iconDirStr() +
-          OpenFlipper::Options::dirSeparator() + 
-          "status_yellow.png");
-      break;
-    case ApplicationStatus::BLOCKED :
-      pix.load(OpenFlipper::Options::iconDirStr() +
-          OpenFlipper::Options::dirSeparator() + 
-          "status_red.png");
-      break;
-  }
-  
-  statusIcon_->setPixmap(pix.scaled(12,12,Qt::KeepAspectRatio,Qt::SmoothTransformation));
-  
-//   QApplication::processEvents();
-  
-}
-
-void CoreWidget::addWidgetToStatusbar(QWidget* _widget){
-
-  statusBar_->addPermanentWidget(_widget);
-
-  statusBar_->removeWidget(statusIcon_);
-  statusBar_->addPermanentWidget(statusIcon_);
-  statusIcon_->show();
-  
-  
-}
-
-//=============================================================================

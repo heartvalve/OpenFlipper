@@ -678,7 +678,9 @@ void Core::loadPlugin(QString filename, bool silent){
       if ( checkSignal(plugin,"clearStatusMessage()") )
         connect(plugin,SIGNAL(clearStatusMessage()),
                 coreWidget_,SLOT(clearStatusMessage()));
-
+                
+      if ( checkSignal(plugin,"addWidgetToStatusbar(QWidget*)") )
+        connect(plugin,SIGNAL(addWidgetToStatusbar(QWidget*)), coreWidget_,SLOT(addWidgetToStatusbar(QWidget*)));
     }
 
     //Check if the plugin supports Key-Interface

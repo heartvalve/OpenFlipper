@@ -75,6 +75,11 @@ void InfoPlugin::pluginsInitialized() {
   //set the slot descriptions
   setDescriptions();
 
+  infoBar_ = new InfoBar();
+  
+  emit addWidgetToStatusbar(infoBar_);
+  infoBar_->hideCounts();
+  
   // Initialize hit point
   hit_point_ = ACG::Vec3d(0.0, 0.0, 0.0);
 }
@@ -516,7 +521,61 @@ bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
 
 //------------------------------------------------------------------------------
 
+void InfoPlugin::slotObjectUpdated( int _identifier ){
 
+  if ( (PluginFunctions::objectCount() == 1) || (PluginFunctions::targetCount() == 1) ){
+    
+    bool found = false;
+    
+    PluginFunctions::IteratorRestriction restriction;
+    
+    if ( PluginFunctions::targetCount() == 1 )
+      restriction = PluginFunctions::TARGET_OBJECTS;
+    else
+      restriction = PluginFunctions::ALL_OBJECTS;
+    
+    
+    for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
+      o_it != PluginFunctions::objectsEnd(); ++o_it)   {
+      
+      if (o_it->dataType(DATA_TRIANGLE_MESH)){
+        
+        TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+      
+        infoBar_->vertices->setText( QLocale::system().toString( mesh->n_vertices() ) );
+        infoBar_->edges->setText( QLocale::system().toString( mesh->n_edges() ) );
+        infoBar_->faces->setText( QLocale::system().toString( mesh->n_faces() ) );
+      }
+      
+      if (o_it->dataType(DATA_POLY_MESH)){
+        
+        PolyMesh* mesh = PluginFunctions::polyMesh(*o_it);
+      
+        infoBar_->vertices->setText( QLocale::system().toString( mesh->n_vertices() ) );
+        infoBar_->edges->setText( QLocale::system().toString( mesh->n_edges() ) );
+        infoBar_->faces->setText( QLocale::system().toString( mesh->n_faces() ) );
+    
+      }
+      found = true;
+    }
+    
+    if (found) 
+      infoBar_->showCounts();
+    else
+      infoBar_->hideCounts();
+  } else {
+    if ( PluginFunctions::targetCount() > 0 )
+      infoBar_->showTargetCount( PluginFunctions::targetCount() );
+    else
+      infoBar_->hideCounts();
+  }
+}
+
+//------------------------------------------------------------------------------
+
+void InfoPlugin::slotObjectSelectionChanged( int _identifier ){
+  slotObjectUpdated( _identifier );
+}
 
 Q_EXPORT_PLUGIN2( InfoPlugin , InfoPlugin );
 

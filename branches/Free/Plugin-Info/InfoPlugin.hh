@@ -57,24 +57,27 @@
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/MouseInterface.hh>
 
+#include <OpenFlipper/BasePlugin/StatusbarInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
 #include "infoDialog.hh"
+#include "infoBar.hh"
 
 //== CLASS DEFINITION =========================================================
 
 
 /** Plugin for Info Support
  */
-class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterface
+class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterface, StatusbarInterface
 {
   Q_OBJECT
       Q_INTERFACES(BaseInterface)
       Q_INTERFACES(MouseInterface)
       Q_INTERFACES(LoggingInterface)
+      Q_INTERFACES(StatusbarInterface)
 
 
   signals:
@@ -86,14 +89,20 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
     void log(Logtype _type, QString _message);
     void log(QString _message);
 
-
+    // StatusbarInterface
+    void addWidgetToStatusbar(QWidget* _widget);
+    
   private slots :
     // BaseInterface
     void pluginsInitialized();
-
+    void slotObjectUpdated( int _identifier );
+    void slotObjectSelectionChanged( int _identifier );
+    
     // MouseInterface
     void slotMouseEventIdentify( QMouseEvent* _event );
 
+    
+    
   public :
 
   // default constructor
@@ -111,6 +120,8 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
   private :
     InfoDialog* info_;
 
+    InfoBar* infoBar_;
+    
     template< class MeshT >
     void printMeshInfo( MeshT* _mesh, int _id, unsigned int _face, ACG::Vec3d& _hitPoint );
 
