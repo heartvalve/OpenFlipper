@@ -28,15 +28,17 @@ void OFFImporter::addObject( BaseObject* _object ){
     
     if ( polyMeshObj ){
         
-        polyMesh_ = polyMeshObj->mesh();
-        object_ = _object;
-        objectOptions_ |= POLYMESH;
-        
+      polyMesh_ = polyMeshObj->mesh();
+      object_ = _object;
+      objectOptions_ |= POLYMESH;
+      objectOptions_ &= ~TRIMESH;
+
     } else if ( triMeshObj ){
-        
-        triMesh_ = triMeshObj->mesh();
-        object_ = _object;
-        objectOptions_ |= TRIMESH;
+      
+      triMesh_ = triMeshObj->mesh();
+      object_ = _object;
+      objectOptions_ |= TRIMESH;
+      objectOptions_ &= ~POLYMESH;
         
     } else {
         std::cerr << "Error: Cannot add object. Type is unknown!" << std::endl;
