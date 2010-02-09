@@ -169,6 +169,11 @@ buildStrips()
     buildStripsPolyMesh();
   }
   
+  // In this case, we have to sort the array to have all strips with the same texture in one block (reduce texture switching)
+  if ( perFaceTextureCoordinateAvailable() ) {
+    std::sort(strips_.begin(),strips_.end(),&stripTextureCompare);
+  }
+  
 }
 
 template <class Mesh>
@@ -184,10 +189,7 @@ buildStripsPolyMesh() {
     std::vector< FaceHandles >                    faces;       // Lists of faces.
     typename FaceHandles::iterator                fh_it, fh_end;
     typename Mesh::FaceIter                       f_it, f_end=mesh_.faces_end();
-    std::vector<FaceMap>                          faceMap;
     
-    faceMaps_.clear();
-
     uint k = 0;
     for (f_it=mesh_.faces_begin(); true; ) {
 
@@ -202,8 +204,6 @@ buildStripsPolyMesh() {
       // Number of experiments equals number of edges of the face
       experiments.clear();
       experiments.resize( mesh_.valence(f_it) );
-      faceMap.clear();
-      faceMap.resize(mesh_.valence(f_it));
       faces.clear();
       faces.resize(mesh_.valence(f_it));
       
@@ -216,7 +216,7 @@ buildStripsPolyMesh() {
       best_length = best_idx = 0;
       for (unsigned int i = 0; i < mesh_.valence(f_it) ; ++i)
       {
-        buildStripPolyMesh(h[i], experiments[i], faces[i], faceMap[i]);
+        buildStripPolyMesh(h[i], experiments[i], faces[i]);
         if ((length = experiments[i].indexArray.size()) > best_length) {
             best_length = length;
             best_idx    = i;
@@ -236,7 +236,6 @@ buildStripsPolyMesh() {
       
       // add best strip to strip-list
       strips_.push_back(experiments[best_idx]);
-      faceMaps_.push_back(faceMap[best_idx]);
     }
 }
 
@@ -251,10 +250,7 @@ buildStripsTriMesh()
   FaceHandles                     faces[3];
   typename FaceHandles::iterator  fh_it, fh_end;
   typename Mesh::FaceIter         f_it, f_end=mesh_.faces_end();
-  std::vector<FaceMap>                          faceMap;
   
-  faceMaps_.clear();
-
   for (f_it=mesh_.faces_begin(); true; )
   {
     // find start face
@@ -268,15 +264,12 @@ buildStripsTriMesh()
     h[0] = mesh_.halfedge_handle(f_it.handle());
     h[1] = mesh_.next_halfedge_handle(h[0]);
     h[2] = mesh_.next_halfedge_handle(h[1]);
-    
-    faceMap.clear();
-    faceMap.resize(3);
 
     // build 3 strips, take best one
     best_length = best_idx = 0;
     for (unsigned int i=0; i<3; ++i)
     {
-      buildStripTriMesh(h[i], experiments[i], faces[i],faceMap[i]);
+      buildStripTriMesh(h[i], experiments[i], faces[i]);
       if ((length = experiments[i].indexArray.size()) > best_length)
       {
         best_length = length;
@@ -297,7 +290,6 @@ buildStripsTriMesh()
 
     // add best strip to strip-list
     strips_.push_back(experiments[best_idx]);
-    faceMaps_.push_back(faceMap[best_idx]);
   }
 }
 
@@ -309,8 +301,7 @@ void
 StripProcessorT<Mesh>::
 buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
                   Strip& _strip,
-                  FaceHandles& _faces,
-                  FaceMap&    _faceMap) {
+                  FaceHandles& _faces) {
     
     std::list<unsigned int>               strip;
     std::list<typename Mesh::FaceHandle > faceMap;
@@ -491,9 +482,9 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
     _strip.indexArray.reserve(strip.size());
     std::copy(strip.begin(), strip.end(), std::back_inserter(_strip.indexArray));
     
-    _faceMap.clear();
-    _faceMap.reserve(strip.size());
-    std::copy(faceMap.begin(), faceMap.end(), std::back_inserter(_faceMap));
+    _strip.faceMap.clear();
+    _strip.faceMap.reserve(strip.size());
+    std::copy(faceMap.begin(), faceMap.end(), std::back_inserter(_strip.faceMap));
 }
 
 
@@ -505,8 +496,7 @@ void
 StripProcessorT<Mesh>::
 buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
             Strip& _strip,
-            FaceHandles& _faces,
-            FaceMap&    _faceMap)
+            FaceHandles& _faces)
 {   
   std::list<unsigned int>  strip;
   typename Mesh::HalfedgeHandle   hh;
@@ -630,9 +620,9 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
   _strip.indexArray.reserve(strip.size());
   std::copy(strip.begin(), strip.end(), std::back_inserter(_strip.indexArray));
   
-  _faceMap.clear();
-  _faceMap.reserve(strip.size());
-  std::copy(faceMap.begin(), faceMap.end(), std::back_inserter(_faceMap));
+  _strip.faceMap.clear();
+  _strip.faceMap.reserve(strip.size());
+  std::copy(faceMap.begin(), faceMap.end(), std::back_inserter(_strip.faceMap));
 }
 
 template <class Mesh>
@@ -706,7 +696,7 @@ updatePickingFaces(ACG::GLState& _state ) {
     for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
       
       // We have to provide a vertex color for each of the vertices as we need flat shading!
-      const Vec4uc pickColor = _state.pick_get_name_color ( faceMaps_[i][ stripIndex ].idx() );
+      const Vec4uc pickColor = _state.pick_get_name_color ( strips_[ i ].faceMap[ stripIndex ].idx() );
       pickFaceColorBuf_[ bufferIndex + 0 ] = pickColor;
       pickFaceColorBuf_[ bufferIndex + 1 ] = pickColor;
       pickFaceColorBuf_[ bufferIndex + 2 ] = pickColor;
@@ -849,14 +839,14 @@ updatePerFaceBuffers() {
     for (unsigned int stripIndex = 2 ; stripIndex <  strips_[ i ].indexArray.size() ; ++stripIndex) {
       
       if (  mesh_.has_face_normals() ) {
-        const Vec3d normal = mesh_.normal( faceMaps_[i][ stripIndex ] );
+        const Vec3d normal = mesh_.normal( strips_[ i ].faceMap[ stripIndex ] );
         perFaceNormalBuffer_[ bufferIndex + 0 ] = normal;
         perFaceNormalBuffer_[ bufferIndex + 1 ] = normal;
         perFaceNormalBuffer_[ bufferIndex + 2 ] = normal;
       }
     
       if (  mesh_.has_face_colors() ) {
-        const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color( faceMaps_[i][ stripIndex ] ) );
+        const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color( strips_[ i ].faceMap[ stripIndex ] ) );
         perFaceColorBuffer_[ bufferIndex + 0 ] = color;
         perFaceColorBuffer_[ bufferIndex + 1 ] = color;
         perFaceColorBuffer_[ bufferIndex + 2 ] = color;
@@ -869,7 +859,7 @@ updatePerFaceBuffers() {
         perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
         
         if ( perFaceTextureCoordinateAvailable() ) {
-          typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(faceMaps_[i][ stripIndex ]));
+          typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(strips_[ i ].faceMap[ stripIndex ]));
           
           for ( ; fhe_it ; ++fhe_it ) {
             typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
@@ -897,7 +887,7 @@ updatePerFaceBuffers() {
         perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
         
         if ( perFaceTextureCoordinateAvailable() ) {
-          typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(faceMaps_[i][ stripIndex ]));
+          typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(strips_[ i ].faceMap[ stripIndex ]));
           
           for ( ; fhe_it ; ++fhe_it ) {
             typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);

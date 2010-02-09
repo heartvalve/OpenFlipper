@@ -82,10 +82,16 @@ public:
   */
   std::vector< unsigned int > indexArray;
   
+  /// This map contains for each vertex in the strips a handle to the face it closes
+  std::vector< OpenMesh::FaceHandle > faceMap;
+  
   /// This contains the texture index used for rendering this strip
   int textureIndex;
   
 };
+
+/// Compare function for sorting Strips depending on their texture index
+bool stripTextureCompare(const Strip& i,const Strip& j);
 
 class TextureRenderInfo {
   public:
@@ -118,8 +124,6 @@ public:
   typedef std::vector<Strip>                Strips;
   typedef typename Strips::const_iterator   StripsIterator;
   typedef typename Mesh::FaceHandle         FaceHandle;
-  typedef std::vector<FaceHandle>           FaceMap;
-  
 
   /// Default constructor
   StripProcessorT(Mesh& _mesh);
@@ -164,11 +168,6 @@ private:
   Strips                         strips_;
   OpenMesh::FPropHandleT<bool>   processed_, used_;
   
-  // This map contains for each vertex in the strips a handle to the face it closes
-  std::vector<FaceMap>           faceMaps_;
-
-  
-  
 //===========================================================================
 /** @name Strip generation
 * @{ */
@@ -205,14 +204,12 @@ void buildStripsPolyMesh();
 /// build a strip from a given halfedge (in both directions) of a triangle mesh
 void buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
                         Strip& _strip,
-                        FaceHandles& _faces,
-                        FaceMap&    _faceMap);
+                        FaceHandles& _faces);
                         
 /// build a strip from a given halfedge (in both directions) of a polymesh
 void buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
                         Strip& _strip,
-                        FaceHandles& _faces,
-                        FaceMap& _faceMap);
+                        FaceHandles& _faces);
                                                  
 /** @} */      
   
