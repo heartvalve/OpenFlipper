@@ -889,6 +889,8 @@ public:
 
     void setStatus( ApplicationStatus::applicationStatus _status);
 
+    void addWidgetToStatusbar(QWidget* _widget);
+    
   private:
     void setupStatusBar();
 

@@ -96,6 +96,11 @@ class StatusbarInterface {
        */
       void clearStatusMessage() {};
       
+      /** \brief Add a widget on the right side of the statusBar
+       * 
+       */
+      void addWidgetToStatusbar(QWidget* _widget) {};
+      
 };
 
 Q_DECLARE_INTERFACE(StatusbarInterface,"OpenFlipper.StatusbarInterface/1.0")

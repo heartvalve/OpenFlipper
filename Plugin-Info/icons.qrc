@@ -1,6 +1,9 @@
 <RCC>
   <qresource prefix="info" >
+    <file>dialogIcons/bar_face.png</file>
+    <file>dialogIcons/bar_edge.png</file>
     <file>dialogIcons/info_aspect.png</file>
+    <file>dialogIcons/bar_vertex.png</file>
     <file>dialogIcons/info_dihedral.png</file>
     <file>dialogIcons/info_edge.png</file>
     <file>dialogIcons/info_angle.png</file>
