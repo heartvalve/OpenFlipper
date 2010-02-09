@@ -413,6 +413,11 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
 
 bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
     
+  if ( !QFile(_filename).exists() ){
+    emit log(LOGERR, tr("Unable to load OFF file. File not found!")); 
+    return false;
+  }
+  
   if(!readFileOptions(_filename, _importer)) {
       return false;
   }
