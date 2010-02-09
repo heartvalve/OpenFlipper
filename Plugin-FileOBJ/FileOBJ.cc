@@ -1272,11 +1272,6 @@ int FileOBJPlugin::loadObject(QString _filename) {
   
   IdList objIDs;
   
-//   if ( !OpenFlipper::Options::loadingSettings() ){
-//     OpenFlipper::Options::loadingSettings(true);
-//     topLevelObj = true;
-//   }
-  
   //load included obj files
   for (int i=0; i < includes.size(); i++){
     
@@ -1293,8 +1288,8 @@ int FileOBJPlugin::loadObject(QString _filename) {
   //check if something was found
   if ( importer.objectOptions().size() == 0 && objIDs.size() == 0 ){
     
-//     if ( topLevelObj )
-//       OpenFlipper::Options::loadingSettings(false);
+    forceTriangleMesh_ = false;
+    forcePolyMesh_     = false;
     
     return -1;
   }
