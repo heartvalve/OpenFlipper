@@ -129,6 +129,9 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     /// Loads Object and converts it to a triangle mesh if possible
     int loadObject(QString _filename);
 
+    /// Loads Object with given datatype
+    int loadObject(QString _filename, DataType _type);
+    
     bool saveObject(int _id, QString _filename);
 
     QString version() { return QString("1.1"); };
@@ -231,6 +234,9 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     unsigned int userReadOptions_;
     unsigned int userWriteOptions_;
+    
+    bool forceTriangleMesh_;
+    bool forcePolyMesh_;
 };
 
 #if defined(INCLUDE_TEMPLATES) && !defined(FILEOFFPLUGIN_C)

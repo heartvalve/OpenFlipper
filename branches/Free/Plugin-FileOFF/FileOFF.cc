@@ -446,6 +446,12 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
       }
   }
 
+  if ( forceTriangleMesh_ )
+    triMeshControl = TYPETRIANGLE;
+
+  if ( forcePolyMesh_ )
+    triMeshControl = TYPEPOLY;
+
   QMessageBox msgBox;
   QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
   QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
@@ -892,7 +898,13 @@ int FileOFFPlugin::loadObject(QString _filename) {
     
     BaseObject* object = importer.getObject();
     
-    if(!object) return -1;
+    if(!object){
+      
+      forceTriangleMesh_ = false;
+      forcePolyMesh_     = false;
+      
+      return -1;
+    }
     
     // Handle new PolyMeshes
     PolyMeshObject* polyMeshObj = dynamic_cast< PolyMeshObject* > (object);
@@ -930,8 +942,24 @@ int FileOFFPlugin::loadObject(QString _filename) {
     // Update viewport
     PluginFunctions::viewAll();
     
+    forceTriangleMesh_ = false;
+    forcePolyMesh_     = false;
+    
     return object->id();
-};
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+int FileOFFPlugin::loadObject(QString _filename, DataType _type) {
+  
+  if ( _type == DATA_TRIANGLE_MESH )
+    forceTriangleMesh_ = true;
+  else if ( _type == DATA_POLY_MESH )
+    forcePolyMesh_ = true;
+
+  return loadObject(_filename);
+  
+}
 
 //-----------------------------------------------------------------------------------------------------
 
