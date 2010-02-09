@@ -97,6 +97,7 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
     void pluginsInitialized();
     void slotObjectUpdated( int _identifier );
     void slotObjectSelectionChanged( int _identifier );
+    void slotAllCleared();
     
     // MouseInterface
     void slotMouseEventIdentify( QMouseEvent* _event );

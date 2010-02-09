@@ -577,6 +577,12 @@ void InfoPlugin::slotObjectSelectionChanged( int _identifier ){
   slotObjectUpdated( _identifier );
 }
 
+//------------------------------------------------------------------------------
+
+void InfoPlugin::slotAllCleared(){
+  infoBar_->hideCounts();
+}
+
 Q_EXPORT_PLUGIN2( InfoPlugin , InfoPlugin );
 
 
