@@ -85,7 +85,7 @@
 * To overcome this Problem, we reimplement a wrapper arround the int and provide additional
 * functionality such as returning the name of the type directly
 */ 
-class DataType  {
+class DLLEXPORT DataType  {
   public:
     DataType();
     DataType(const unsigned int& _i);
