@@ -71,7 +71,7 @@ static int nextTypeId_ = 2;
 
 /** This map maps an dataType id to an typeName
  */
-static std::map< unsigned int, QString > typeToString;
+static std::map< DataType, QString > typeToString;
 
 /** This map maps an dataType name to its id in the types vector
  */
@@ -79,7 +79,7 @@ static std::map< QString , unsigned int > stringToTypeInfo;
 
 /** This map maps an dataType id to its id in the types vector
  */
-static std::map< unsigned int , unsigned int > typeToTypeInfo;
+static std::map< DataType , unsigned int > typeToTypeInfo;
 
 class TypeInfo {
 
@@ -117,9 +117,17 @@ static std::vector< TypeInfo > types;
 
 //== Functions =========================================================
 
+std::ostream &operator<<(std::ostream &stream, DataType type)
+{
+  stream << type.value() ;
+  
+  return stream;
+}
+
 void initializeTypes() {
   stringToTypeInfo["Unknown"] = types.size();
-  typeToTypeInfo[DATA_UNKNOWN]   = types.size();
+  DataType test(DATA_UNKNOWN);
+  typeToTypeInfo[test]   = types.size();
   types.push_back( TypeInfo(DATA_UNKNOWN            ,"Unknown"        ,"Unknown.png", QCoreApplication::translate("Types","Unknown")) );
 
   stringToTypeInfo["Group"]  = types.size();
@@ -171,7 +179,7 @@ DataType typeId(QString _name) {
 /// Get the name of a type with given id
 QString typeName(DataType _id) {
 
-  std::map<unsigned int, QString>::iterator name = typeToString.find(_id);
+  std::map<DataType, QString>::iterator name = typeToString.find(_id);
 
   if ( name != typeToString.end() )
     return name->second;
@@ -203,7 +211,7 @@ QString typeIconName(QString  _name) {
 /// get the icon of a given dataType
 QString typeIconName(DataType _id) {
 
-  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
 
   if ( index != typeToTypeInfo.end() )
     return types[ index->second ].iconName;
@@ -214,7 +222,7 @@ QString typeIconName(DataType _id) {
 /// get the icon of a given dataType
 QIcon& typeIcon(DataType _id) {
   
-  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
   
   if ( index != typeToTypeInfo.end() )
     return types[ index->second ].icon;
@@ -225,7 +233,7 @@ QIcon& typeIcon(DataType _id) {
 /// Set the icon for a given dataType
 void setTypeIcon( DataType _id   , QString _icon ) {
 
-  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
 
   if ( index != typeToTypeInfo.end() ) {
     types[ index->second ].iconName = _icon;
@@ -252,7 +260,7 @@ void setTypeIcon( QString  _name , QString _icon ) {
 /// Get DataType Human readable name ( this name might change. Use the typeName insted! )
 QString dataTypeName( DataType _id ) {
 
-  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
 
   if ( index != typeToTypeInfo.end() )
     return types[ index->second ].readableName ;
@@ -280,7 +288,7 @@ QString dataTypeName( QString  _typeName ) {
 /// Set the icon for a given dataType
 void setDataTypeName( DataType _id   , QString _name ) {
 
-  std::map<unsigned int, unsigned int>::iterator index = typeToTypeInfo.find(_id);
+  std::map<DataType, unsigned int>::iterator index = typeToTypeInfo.find(_id);
 
   if ( index != typeToTypeInfo.end() )
     types[ index->second ].readableName = _name;
@@ -298,6 +306,90 @@ void setDataTypeName( QString  _typeName , QString _name ) {
   else
     std::cerr << "Could not set human name for DataType. Type not found!" << std::endl;
 }
+
+
+DataType::DataType():
+  field(0)
+{
+};
+
+DataType::DataType(const unsigned int& _i):
+  field(_i)
+{
+};
+
+//===========================================
+
+bool DataType::operator!=( const unsigned int& _i ) { 
+  return (_i != field); 
+}
+
+bool DataType::operator!=( const DataType& _i ) {
+  return (field != _i.field); 
+}    
+
+//===========================================
+
+bool DataType::operator==( const unsigned int& _i ) {
+  return (_i == field); 
+}
+
+bool DataType::operator==(  const DataType& _i ) {
+  return (_i.field == field); 
+}
+
+//===========================================
+
+bool DataType::operator=( const unsigned int& _i ) {
+  return (field = _i); 
+}
+
+bool DataType::operator=( const DataType& _i ) {
+  return (field = _i.field); 
+}    
+
+//===========================================
+
+bool DataType::operator<( const unsigned int& _i ) {
+  return (field < _i); 
+}
+
+bool DataType::operator<( const DataType& _i ) const {
+  return (field < _i.field); 
+}
+
+//===========================================
+
+bool DataType::operator&( const unsigned int& _i ) {
+  return (field & _i); 
+}
+
+bool DataType::operator&( const DataType& _i ) const {
+  return (field & _i.field); 
+}    
+
+//===========================================
+
+DataType DataType::operator|( const DataType& _i ) const {
+  return (field | _i.field); 
+}    
+
+//===========================================
+
+bool DataType::operator++(int _unused) {
+  return (field *= 2); 
+}  
+
+//===========================================
+
+unsigned int DataType::value() const {
+  return( field );
+}
+
+QString DataType::name() {
+  return typeName(field);
+}
+
 
 //=============================================================================
 //=============================================================================

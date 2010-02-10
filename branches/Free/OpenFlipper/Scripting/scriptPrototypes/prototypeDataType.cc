@@ -47,15 +47,11 @@
 prototypeDataType::prototypeDataType(QObject *parent ) :
     QObject(parent)
 {
-  std::cerr << "Prototype cnstructor" << std::endl;
 }
 
 QString prototypeDataType::toString() const {
 
   DataType s = thisObject().property("type").toNumber();
-
-  std::cerr << "Prototype to String " << s << std::endl;
-  std::cerr << "String is : " << typeName(s).toStdString() << std::endl;
   
   return typeName(s);
 }

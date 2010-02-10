@@ -347,7 +347,7 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
         action = menu.addAction(icon, tr("Show all of type '") + dataTypeName(types[i]) + "'",this,SLOT ( showAll() ));
-        action->setData( QVariant( types[i] ) );
+        action->setData( QVariant( types[i].value() ) );
       }
 
       menu.addSeparator();
@@ -357,7 +357,7 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
         action = menu.addAction(tr("Hide all of type '") + dataTypeName(types[i]) + "'",this,SLOT ( hideAll() ));
-        action->setData( QVariant( types[i] ) );
+        action->setData( QVariant( types[i].value() ) );
       }
 
       break;
@@ -369,7 +369,7 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
         action = menu.addAction(icon, tr("Select all of type '") + dataTypeName(types[i]) + "'",this,SLOT ( setAllSource() ));
-        action->setData( QVariant( types[i] ) );
+        action->setData( QVariant( types[i].value() ) );
       }
 
       menu.addSeparator();
@@ -379,7 +379,7 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
         action = menu.addAction(icon, tr("Deselect all of type '") + dataTypeName(types[i]) + "'",this,SLOT ( clearAllSource() ));
-        action->setData( QVariant( types[i] ) );
+        action->setData( QVariant( types[i].value() ) );
       }
 
       break;
@@ -391,7 +391,7 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
         action = menu.addAction(icon, tr("Select all of type '") + dataTypeName(types[i]) + "'",this,SLOT ( setAllTarget() ));
-        action->setData( QVariant( types[i] ) );
+        action->setData( QVariant( types[i].value() ) );
       }
 
       menu.addSeparator();
@@ -401,7 +401,7 @@ void DataControlPlugin::slotHeaderCustomContextMenuRequested ( const QPoint & _p
       if (types.count() > 1)
       for (int i=0; i < types.count(); i++){
         action = menu.addAction(icon, tr("Deselect all of type '") + dataTypeName(types[i]) + "'",this,SLOT ( clearAllTarget() ));
-        action->setData( QVariant( types[i] ) );
+        action->setData( QVariant( types[i].value() ) );
       }
 
       break;

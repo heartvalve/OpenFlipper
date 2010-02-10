@@ -166,7 +166,7 @@ void CoreWidget::showAboutWidget( ) {
       types += typeName( currentType ) + " ";
       
       // Advance to next type ( Indices are bits so multiply by to to get next bit)
-      currentType *= 2;
+      currentType++;
     }
     
     aboutWidget_->OpenFlipperAbout->append( types );

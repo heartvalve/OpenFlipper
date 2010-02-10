@@ -89,7 +89,7 @@ void Core::slotGetAllFilters ( QStringList& _list){
   for (int i=0; i < (int)supportedTypes_.size(); i++){
     QString f = supportedTypes_[i].plugin->getLoadFilters();
     f = f.section(")",0,0).section("(",1,1).trimmed();
-    _list << (QString::number(supportedTypes_[i].plugin->supportedType()) + " " + f);
+    _list << (QString::number(supportedTypes_[i].plugin->supportedType().value()) + " " + f);
   }
 }
 
@@ -326,11 +326,11 @@ void Core::slotAddEmptyObject( DataType _type , int& _id ) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"slotAddEmptyObject( " + QString::number(_type) + "," + QString::number(_id) +  tr(" ) called by ") +
+        emit log(LOGINFO,"slotAddEmptyObject( " + _type.name() + "," + QString::number(_id) +  tr(" ) called by ") +
         QString( sender()->metaObject()->className() ) );
       }
     } else {
-      emit log(LOGINFO,"slotAddEmptyObject( " + QString::number(_type) + ","  + QString::number(_id) +  tr(" ) called by Core") );
+      emit log(LOGINFO,"slotAddEmptyObject( " + _type.name() + ","  + QString::number(_id) +  tr(" ) called by Core") );
     }
   }
 }
@@ -649,7 +649,7 @@ void Core::slotAddEmptyObjectMenu() {
     }
     
     // Advance to next type ( Indices are bits so multiply by to to get next bit)
-    currentType *= 2;
+    currentType++;
   }
   
   static addEmptyWidget* widget = 0;
