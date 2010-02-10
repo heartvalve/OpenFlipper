@@ -77,16 +77,61 @@
 * datatypes in the future.
 */
 
-/// None of the other Objects
-#define DATA_UNKNOWN 0
+/** \brief the internal DataType class
+*
+* Normally we could use an unsigned int here. But QT cant register an 
+* typedef unsigned int DataType as DataType and will recognize it as unsigned int and
+* therefore DataType will still be unknown to QtScript.
+* To overcome this Problem, we reimplement a wrapper arround the int and provide additional
+* functionality such as returning the name of the type directly
+*/ 
+class DataType  {
+  public:
+    DataType();
+    DataType(const unsigned int& _i);
+    
+    bool operator!=( const unsigned int& _i );
+    bool operator!=( const DataType& _i );
+    
+    bool operator==( const unsigned int& _i );
+    bool operator==(  const DataType& _i );
+    
+    bool operator=( const unsigned int& _i );
+    bool operator=( const DataType& _i );
+    
+    bool operator<( const unsigned int& _i );
+    bool operator<( const DataType& _i ) const;
+    
+    bool operator&( const unsigned int& _i );
+    bool operator&( const DataType& _i ) const;
+ 
+    DataType operator|( const DataType& _i ) const;
 
-/// Items used for Grouping
-#define DATA_GROUP 1
+    bool operator++(int _unused);
+ 
+    /** return the internal representation of the type which is an unsigned int at the moment.
+    *
+    * You should avoid using this directly as the internal representation might change in the future
+    */
+    unsigned int value() const;
+      
+    /// Return the name of this type as text
+    QString name();
+ 
+  private:
+    unsigned int field;
+};
 
 /// Identifier for all available objects
-const unsigned int DATA_ALL           = UINT_MAX;
+const DataType DATA_ALL(UINT_MAX);
 
-typedef unsigned int DataType;
+/// None of the other Objects
+const DataType DATA_UNKNOWN(0);
+
+/// Items used for Grouping
+const DataType DATA_GROUP(1);
+
+std::ostream &operator<<(std::ostream &stream, DataType type);
 
 
 //== TYPEDEFS =================================================================

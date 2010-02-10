@@ -58,22 +58,17 @@
 QScriptValue toScriptValueDataType(QScriptEngine *engine, const DataType &s)
 {
   QScriptValue obj = engine->newObject();
-  obj.setProperty("type", QScriptValue(engine, s ));
-  std::cerr << "toScriptValueDataType " << s << std::endl;
+  obj.setProperty("type", QScriptValue(engine, s.value() ));
   return obj;
 }
 
 void fromScriptValueDataType(const QScriptValue &obj, DataType &s)
 {
   s = obj.property("type").toNumber();
-
-  std::cerr << "fromScriptValueDataType " << s << std::endl;
 }
 
 QScriptValue createDataType(QScriptContext *context, QScriptEngine *engine)
 {
-  std::cerr << "createDataType " << std::endl;
-  
   DataType s;
   
   QScriptValue callee = context->callee();
@@ -86,18 +81,12 @@ QScriptValue createDataType(QScriptContext *context, QScriptEngine *engine)
     s = DATA_UNKNOWN;
   }
 
-
-  std::cerr << "s set to " << s << std::endl;
-  
   return engine->toScriptValue( s );
 }
 
 QScriptValue DataTypeToString(QScriptContext *context, QScriptEngine *engine)
 {
   DataType s = context->thisObject().property("type").toNumber();
-
-  std::cerr << "DataTypeToString " << s << std::endl;
-  std::cerr << "DataTypeToString " << typeName(s).toStdString() << std::endl;
   
   return QScriptValue(engine, typeName(s) );
 }

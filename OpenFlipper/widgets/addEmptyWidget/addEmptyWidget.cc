@@ -56,7 +56,7 @@ addEmptyWidget::addEmptyWidget(std::vector< DataType > _types , QStringList _typ
   typeBox->setDuplicatesEnabled(false);
 
   for (int i=0; i < (int)types_.size(); i++)
-    typeBox->addItem(typeNames_[i],QVariant(types_[i]));
+    typeBox->addItem(typeNames_[i],QVariant(types_[i].value()));
 
     //set last used DataType as currentItem
   for (int i=0; i < typeBox->count(); i++)

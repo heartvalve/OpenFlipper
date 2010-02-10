@@ -413,41 +413,43 @@ Core::init() {
   printFunction.setProperty("textedit",scriptEngine_.newQObject(this));
   scriptEngine_.globalObject().setProperty("print", printFunction);
 
-  // Register Vector Type to ScriptEngine ( is Vec3d )
-  qScriptRegisterMetaType(&scriptEngine_,
-                          toScriptValueVector,
-                          fromScriptValueVector,
-                          scriptEngine_.newQObject(&vec3dPrototype_));
-
-  // set a constructor to allow creation via Vector(x,y,z)
-  QScriptValue ctor = scriptEngine_.newFunction(createVector);
-  scriptEngine_.globalObject().setProperty("Vector", ctor);
-
-
-//    // Register ObjectId Type to ScriptEngine ( is int )
-//   qScriptRegisterMetaType(&scriptEngine_,
-//                           toScriptValueObjectId,
-//                           fromScriptValueObjectId);
-//
-//   // set a constructor to allow creation via Vector(x,y,z)
-//   ctor = scriptEngine_.newFunction(createObjectId);
-//   scriptEngine_.globalObject().setProperty("ObjectId", ctor);
 
 
   // Register IdList Type to scripting Engine
   qScriptRegisterSequenceMetaType< IdList >(&scriptEngine_);
   
+  // Register Vector of ints Type to scripting Engine
   qScriptRegisterSequenceMetaType< QVector< int > >(&scriptEngine_);
+  
+  //==========================================================================
+  // Register the 3d Vector Type to the core ( is Vec3d )
+  //==========================================================================
+  qScriptRegisterMetaType(&scriptEngine_,
+                          toScriptValueVector,
+                          fromScriptValueVector,
+                          scriptEngine_.newQObject(&vec3dPrototype_));
+                          
+  // set a constructor to allow creation via Vector(x,y,z)
+  QScriptValue ctor = scriptEngine_.newFunction(createVector);
+  scriptEngine_.globalObject().setProperty("Vector", ctor);
+                          
+  //==========================================================================
+  // Register the DataType Class to the core
+  //==========================================================================
 
   // Register DataType in QScriptEngine
-  qScriptRegisterMetaType(&scriptEngine_,
+  qScriptRegisterMetaType<DataType>(&scriptEngine_,
                           toScriptValueDataType,
                           fromScriptValueDataType,
                           scriptEngine_.newQObject(&DataTypePrototype_));
                           
   // set a constructor to allow creation via DataType(uint)
-  QScriptValue dataType = scriptEngine_.newFunction(createDataType);
-  scriptEngine_.globalObject().setProperty("DataType", dataType);                          
+  QScriptValue dataTypector = scriptEngine_.newFunction(createDataType);
+  scriptEngine_.globalObject().setProperty("DataType", dataTypector);     
+  
+  //==========================================================================
+  // Register the Matrix Class to the core
+  //==========================================================================
 
   // Register Matrix Type to scripting Engine ( is ACG::Matrix4x4d )
   qScriptRegisterMetaType(&scriptEngine_,
@@ -459,7 +461,10 @@ Core::init() {
   QScriptValue matrix4x4ctor = scriptEngine_.newFunction(createMatrix4x4);
   scriptEngine_.globalObject().setProperty("Matrix4x4", matrix4x4ctor);
 
-  // Collect Core scripting information
+  //==========================================================================
+  //  Collect Core scripting information
+  //==========================================================================
+
   QScriptValue scriptInstance = scriptEngine_.newQObject(this,
                                                          QScriptEngine::QtOwnership,
                                                          QScriptEngine::ExcludeChildObjects |
