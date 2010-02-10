@@ -34,8 +34,8 @@
 
 /*===========================================================================*\
  *                                                                           *             
- *   $Revision: 137 $                                                         *
- *   $Date: 2009-06-04 10:46:29 +0200 (Do, 04. Jun 2009) $                   *
+ *   $Revision$                                                         *
+ *   $Date$                   *
  *                                                                           *
 \*===========================================================================*/
 
@@ -361,7 +361,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
           // Test if polygon is convex (only for testing purposes a.t.m.)
           convexityTest(fh);
           
-          continue;
+//           continue;
       } 
       
       // Go left
@@ -391,7 +391,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         // Test if polygon is convex (only for testing purposes a.t.m.)
         convexityTest(fh);
         
-        continue;
+//         continue;
       }
        
     }
@@ -436,7 +436,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         // Test if polygon is convex (only for testing purposes a.t.m.)
         convexityTest(fh);
         
-        continue;
+//         continue;
         
       }
       
