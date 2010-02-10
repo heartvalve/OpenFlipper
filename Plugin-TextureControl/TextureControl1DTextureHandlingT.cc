@@ -137,8 +137,8 @@ void TextureControlPlugin::copyTexture ( Texture& _texture , MeshT& _mesh, OpenM
   double max,min;
   computeMinMaxScalar(_texture, _mesh, _texProp, min, max);
 
-  if ( !_mesh.has_vertex_texcoords2D() )
-    _mesh.request_vertex_texcoords2D();
+  if ( !_mesh.has_halfedge_texcoords2D() )
+    _mesh.request_halfedge_texcoords2D();
   
   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
 
