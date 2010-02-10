@@ -76,8 +76,18 @@ QScriptValue createDataType(QScriptContext *context, QScriptEngine *engine)
   // If arguments are given, use them for initialization otherwise
   // initialize with 0
   if (context->argumentCount() == 1) {     
-    s = context->argument(0).toNumber();
+    QVariant argument = context->argument(0).toVariant();
+    bool ok;
+    
+    // Try if we can convert a given uint here
+    s = argument.toUInt(&ok);
+    
+    // If not, we get a String and should therefore try to resolve it via the Typename
+    if (! ok )
+      s = typeId(argument.toString());
+
   } else {
+    // Basic construction without an Argument! Set to Unknown
     s = DATA_UNKNOWN;
   }
 
