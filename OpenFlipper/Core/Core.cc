@@ -436,9 +436,18 @@ Core::init() {
 
   // Register IdList Type to scripting Engine
   qScriptRegisterSequenceMetaType< IdList >(&scriptEngine_);
-
+  
   qScriptRegisterSequenceMetaType< QVector< int > >(&scriptEngine_);
 
+  // Register DataType in QScriptEngine
+  qScriptRegisterMetaType(&scriptEngine_,
+                          toScriptValueDataType,
+                          fromScriptValueDataType,
+                          scriptEngine_.newQObject(&DataTypePrototype_));
+                          
+  // set a constructor to allow creation via DataType(uint)
+  QScriptValue dataType = scriptEngine_.newFunction(createDataType);
+  scriptEngine_.globalObject().setProperty("DataType", dataType);                          
 
   // Register Matrix Type to scripting Engine ( is ACG::Matrix4x4d )
   qScriptRegisterMetaType(&scriptEngine_,
