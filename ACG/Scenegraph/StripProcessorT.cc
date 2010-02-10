@@ -816,7 +816,9 @@ updatePerFaceBuffers() {
     perFaceTextureCoordArray_.clear();   
 
   textureRenderData_.clear();
-  textureRenderData_.reserve( strips_.size() );
+  
+  if ( perFaceTextureIndexAvailable )
+    textureRenderData_.reserve( strips_.size() );
   
   // Process all strips
   for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
@@ -825,8 +827,6 @@ updatePerFaceBuffers() {
     // Or store a simple strip info with texture 0
     if ( perFaceTextureIndexAvailable() ) {
       textureRenderData_.push_back( TextureRenderInfo(strips_[i].textureIndex , strips_[ i ].indexArray.size() -2 ,bufferIndex) );
-    } else {
-      textureRenderData_.push_back( TextureRenderInfo(0 , strips_[ i ].indexArray.size() -2 ,bufferIndex) ) ;
     }
     
     // The order of the vertices in the strip is alternating so we have to alter the directions as well
@@ -866,7 +866,7 @@ updatePerFaceBuffers() {
           for ( ; fhe_it ; ++fhe_it ) {
             typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
             Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
-	    std::cerr << "Added texcoord " << texcoord << std::endl;
+	    
             
             if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
               perFaceTextureCoordArray_[ bufferIndex + 0 ]  = texcoord; 
