@@ -170,7 +170,7 @@ buildStrips()
   }
   
   // In this case, we have to sort the array to have all strips with the same texture in one block (reduce texture switching)
-  if ( perFaceTextureCoordinateAvailable() ) {
+  if ( perFaceTextureIndexAvailable() ) {
     std::sort(strips_.begin(),strips_.end(),&stripTextureCompare);
   }
   
@@ -816,9 +816,7 @@ updatePerFaceBuffers() {
     perFaceTextureCoordArray_.clear();   
 
   textureRenderData_.clear();
-  
-  if ( perFaceTextureIndexAvailable() )
-    textureRenderData_.reserve( strips_.size() );
+  textureRenderData_.reserve( strips_.size() );
   
   // Process all strips
   for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
@@ -868,6 +866,7 @@ updatePerFaceBuffers() {
           for ( ; fhe_it ; ++fhe_it ) {
             typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
             Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
+	    std::cerr << "Added texcoord " << texcoord << std::endl;
             
             if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
               perFaceTextureCoordArray_[ bufferIndex + 0 ]  = texcoord; 

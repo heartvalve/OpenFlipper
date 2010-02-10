@@ -96,6 +96,7 @@ TriStripNodeT(Mesh&        _mesh,
   anyPickingBaseIndex_(0),
   anyPickingList_(0),
   perFaceTextureIndexAvailable_(false),
+  perFaceTextureCoordsAvailable_(false),
   textureMap_(0)
 {
   
@@ -183,7 +184,7 @@ availableDrawModes() const {
       drawModes |= DrawModes::SOLID_TEXTURED_SHADED; 
   }
   
-  if ( perFaceTextureIndexAvailable_ ) {
+  if ( perFaceTextureCoordsAvailable_ ) {
     drawModes |= DrawModes::SOLID_2DTEXTURED_FACE;
     
     if (mesh_.has_face_normals())
@@ -1417,6 +1418,13 @@ void
 TriStripNodeT<Mesh>::
 setHalfedgeTextcoordPropertyName( std::string _halfedgeTextcoordPropertyName ){ 
   stripProcessor_.setPerFaceTextureCoordinatePropertyName(_halfedgeTextcoordPropertyName);
+  
+  perFaceTextureCoordsAvailable_ = stripProcessor_.perFaceTextureCoordinateAvailable();
+  
+  if (perFaceTextureCoordsAvailable_ )
+    std::cerr << "perFaceTextureCoordsAvailable_" << std::endl;
+  else
+    std::cerr << "perFaceTextureCoordsAvailable_ not available" << std::endl;
 };
 
 //=============================================================================
