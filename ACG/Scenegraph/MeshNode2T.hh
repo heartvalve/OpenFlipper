@@ -507,6 +507,9 @@ private:
   /// This flag indicates if we have a per Face texture index property
   bool perFaceTextureIndexAvailable_;
   
+  /// This flag indicates if we have a per Face texture coordinate property
+  bool perFaceTextureCoordsAvailable_;
+  
   /// Mapping of mesh face texture indices to gltexture id ( has to be provided externally )
   std::map< int, GLuint>* textureMap_;
 
