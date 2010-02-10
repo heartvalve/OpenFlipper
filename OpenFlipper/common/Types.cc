@@ -370,6 +370,16 @@ bool DataType::operator&( const DataType& _i ) const {
 
 //===========================================
 
+DataType DataType::operator|=( const unsigned int& _i ) {
+  return (field |= _i); 
+}
+
+DataType DataType::operator|=( const DataType& _i )  {
+  return ( field |= _i.field); 
+}
+
+//===========================================
+
 DataType DataType::operator|( const DataType& _i ) const {
   return (field | _i.field); 
 }    
