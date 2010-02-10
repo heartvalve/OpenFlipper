@@ -92,7 +92,7 @@ void QtBaseViewer::snapshot()
 
    QFileInfo fi(snapshotName_);
 
-   QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_) + ".";
+   QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(snapshotCounter_).rightJustified(5, '0') + ".";
 
    QString format="png";
 
