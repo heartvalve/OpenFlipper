@@ -99,6 +99,7 @@ typedef std::vector< int > IdList;
 typedef ACG::Matrix4x4d Matrix4x4;
 
 Q_DECLARE_METATYPE(IdList);
+Q_DECLARE_METATYPE(DataType);
 Q_DECLARE_METATYPE(QVector< int >);
 Q_DECLARE_METATYPE(Vector);
 Q_DECLARE_METATYPE(Matrix4x4);
