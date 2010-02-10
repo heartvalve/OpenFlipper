@@ -64,7 +64,7 @@ template< typename MeshT >
 void TextureControlPlugin::copyTexture ( Texture& /*_texture*/, MeshT& _mesh, OpenMesh::HPropHandleT< OpenMesh::Vec2d > _texProp )
 {
   if ( !_mesh.has_halfedge_texcoords2D() )
-    _mesh.request_halfedge_texcoords2D(();
+    _mesh.request_halfedge_texcoords2D();
   
   for ( typename MeshT::HalfedgeIter h_it = _mesh.halfedges_begin(); h_it != _mesh.halfedges_end(); ++h_it) {
 
