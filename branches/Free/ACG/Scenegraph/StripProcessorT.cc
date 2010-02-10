@@ -361,7 +361,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
           // Test if polygon is convex (only for testing purposes a.t.m.)
           convexityTest(fh);
           
-//           continue;
+          continue;
       } 
       
       // Go left
@@ -391,7 +391,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         // Test if polygon is convex (only for testing purposes a.t.m.)
         convexityTest(fh);
         
-//         continue;
+        continue;
       }
        
     }
@@ -436,7 +436,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         // Test if polygon is convex (only for testing purposes a.t.m.)
         convexityTest(fh);
         
-//         continue;
+        continue;
         
       }
       
@@ -822,9 +822,13 @@ updatePerFaceBuffers() {
   
   // Process all strips
   for ( unsigned int i = 0 ; i < strips_.size() ; ++i ) {
+    
     // Record strip information
+    // Or store a simple strip info with texture 0
     if ( perFaceTextureIndexAvailable() ) {
       textureRenderData_.push_back( TextureRenderInfo(strips_[i].textureIndex , strips_[ i ].indexArray.size() -2 ,bufferIndex) );
+    } else {
+      textureRenderData_.push_back( TextureRenderInfo(0 , strips_[ i ].indexArray.size() -2 ,bufferIndex) ) ;
     }
     
     // The order of the vertices in the strip is alternating so we have to alter the directions as well
