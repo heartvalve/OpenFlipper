@@ -817,7 +817,7 @@ updatePerFaceBuffers() {
 
   textureRenderData_.clear();
   
-  if ( perFaceTextureIndexAvailable )
+  if ( perFaceTextureIndexAvailable() )
     textureRenderData_.reserve( strips_.size() );
   
   // Process all strips
@@ -867,7 +867,6 @@ updatePerFaceBuffers() {
             typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
             Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
 	    
-            
             if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
               perFaceTextureCoordArray_[ bufferIndex + 0 ]  = texcoord; 
               continue;
