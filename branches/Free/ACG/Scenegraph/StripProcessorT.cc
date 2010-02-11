@@ -351,17 +351,17 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
           // Go over to next face via the exit halfedge
           hh_left = hh_right = mesh_.opposite_halfedge_handle(mesh_.next_halfedge_handle(hh_left));
           
+          // Test if polygon is convex (only for testing purposes a.t.m.)
+          convexityTest(fh);
+          
           if(mesh_.is_boundary(hh_left)) break;
           fh = mesh_.face_handle(hh_left);
           if (processed(fh) || used(fh)) break;
           
           // texture check
           if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) )  break;
-          
-          // Test if polygon is convex (only for testing purposes a.t.m.)
-          convexityTest(fh);
-          
-          continue;
+
+//           continue;
       } 
       
       // Go left
@@ -381,17 +381,16 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         // Go over to next face via the exit halfedge
         hh_left = hh_right = mesh_.opposite_halfedge_handle(mesh_.next_halfedge_handle(hh_left));
         
+        // Test if polygon is convex (only for testing purposes a.t.m.)
+        convexityTest(fh);
+        
         if(mesh_.is_boundary(hh_left)) break;
         fh = mesh_.face_handle(hh_left);
         if (processed(fh) || used(fh)) break;
         
         // texture check
         if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) ) break;
-        
-        // Test if polygon is convex (only for testing purposes a.t.m.)
-        convexityTest(fh);
-        
-        continue;
+
       }
        
     }
@@ -404,6 +403,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
     // of each side.
     hh_left = hh_right = mesh_.opposite_halfedge_handle(_start_hh);
     
+    bool flip(false);
     while(true) {
       // Boundary check as the first might be at the boundary
       if(mesh_.is_boundary(hh_left)) break;
@@ -414,6 +414,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
       // Add vertex to triangle strip
       strip.push_front(mesh_.from_vertex_handle(hh_right).idx());
       faceMap.push_front(mesh_.face_handle(hh_right));
+      flip = !flip;
       
       // Test if we're at the very last halfedge of the polygon
       if(mesh_.to_vertex_handle(mesh_.next_halfedge_handle(hh_left)) == mesh_.from_vertex_handle(hh_right)) {
@@ -436,7 +437,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         // Test if polygon is convex (only for testing purposes a.t.m.)
         convexityTest(fh);
         
-        continue;
+//         continue;
         
       }
       
@@ -446,6 +447,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
       // Add vertex to triangle strip
       strip.push_front( mesh_.to_vertex_handle(hh_left).idx() );
       faceMap.push_front( mesh_.face_handle(hh_left) );
+      flip = !flip;
       
       // Test if we're at the very last halfedge of the polygon
       if(mesh_.to_vertex_handle(mesh_.next_halfedge_handle(hh_left)) == mesh_.from_vertex_handle(hh_right)) {
@@ -467,10 +469,13 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         
         // Test if polygon is convex (only for testing purposes a.t.m.)
         convexityTest(fh);
-        
-        continue;
       }
      
+    }
+    
+    if ( flip ) {
+      strip.push_front(strip.front());
+      faceMap.push_front(mesh_.face_handle(0));
     }
     
     // Finish the map ( As this is the start of the strip now, this data will be ignored!
