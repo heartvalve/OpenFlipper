@@ -216,7 +216,76 @@ bool TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
 }
 
 void TextureControlPlugin::addedEmptyObject( int _id ) {
-//   fileOpened(_id);
+  
+  // Get the new object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+    return;
+  }
+  
+  // Check if we support this kind of data
+  if ( !obj->dataType(DATA_TRIANGLE_MESH) && !obj->dataType(DATA_POLY_MESH) ) {
+    return;
+  }
+  
+  // Get Texture data for this object or create one if it does not exist
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0){
+    texData = new TextureData();
+    obj->setObjectData(TEXTUREDATA, texData);
+  }
+  
+  // Iterate over all available global textures and add them to the object
+  for ( uint i = 0 ; i < globalTextures_.textures().size() ; ++i) {
+    
+    // ================================================================================
+    // Get the image file
+    // ================================================================================
+    
+    QImage textureImage;
+    
+    if ( !getImage(globalTextures_.textures()[i].filename(),textureImage) )
+      emit log(LOGERR, "Cannot load global texture '" + globalTextures_.textures()[i].name() +
+      "'. File not found '" + globalTextures_.textures()[i].filename() + "'");
+    
+    // ================================================================================
+    // Add the texture to the texture node and get the corresponding id
+    // ================================================================================
+    GLuint glName = 0;
+    
+    //inform textureNode about the new texture
+    if( obj->dataType( DATA_TRIANGLE_MESH ) )
+      glName = PluginFunctions::triMeshObject(obj)->textureNode()->add_texture(textureImage);
+    
+    if ( obj->dataType( DATA_POLY_MESH ) )
+      glName = PluginFunctions::polyMeshObject(obj)->textureNode()->add_texture(textureImage);
+    
+    // ================================================================================
+    // Store texture information in objects metadata
+    // ================================================================================
+    if (glName != 0) {
+      texData->addTexture(globalTextures_.textures()[i], glName);
+      texData->setImage(globalTextures_.textures()[i].name(),textureImage);
+    }
+    else {
+      emit log(LOGERR,"Unable to bind Texture");
+      continue;
+    }
+    
+    
+    // ================================================================================
+    // Update texture mapping in meshNode
+    // ================================================================================
+    if( obj->dataType( DATA_TRIANGLE_MESH ) ){
+      PluginFunctions::triMeshObject(obj)->meshNode()->setTextureMap( 0 );
+    }
+    
+    if ( obj->dataType( DATA_POLY_MESH ) ){
+      PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap( 0 );
+    }
+    
+  }
 }
 
 template< typename MeshT >
@@ -282,59 +351,8 @@ void TextureControlPlugin::fileOpened( int _id ) {
   // Get Texture data for this object or create one if it does not exist
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0){
-    texData = new TextureData();
-    obj->setObjectData(TEXTUREDATA, texData);
-  }
-
-  // Iterate over all available global textures and add them to the object
-  for ( uint i = 0 ; i < globalTextures_.textures().size() ; ++i) {
-
-    // ================================================================================
-    // Get the image file
-    // ================================================================================
-
-    QImage textureImage;
-
-    if ( !getImage(globalTextures_.textures()[i].filename(),textureImage) )
-    emit log(LOGERR, "Cannot load global texture '" + globalTextures_.textures()[i].name() +
-                     "'. File not found '" + globalTextures_.textures()[i].filename() + "'");
-
-    // ================================================================================
-    // Add the texture to the texture node and get the corresponding id
-    // ================================================================================
-    GLuint glName = 0;
-
-    //inform textureNode about the new texture
-    if( obj->dataType( DATA_TRIANGLE_MESH ) )
-      glName = PluginFunctions::triMeshObject(obj)->textureNode()->add_texture(textureImage);
-
-    if ( obj->dataType( DATA_POLY_MESH ) )
-      glName = PluginFunctions::polyMeshObject(obj)->textureNode()->add_texture(textureImage);
-
-    // ================================================================================
-    // Store texture information in objects metadata
-    // ================================================================================
-    if (glName != 0) {
-      texData->addTexture(globalTextures_.textures()[i], glName);
-      texData->setImage(globalTextures_.textures()[i].name(),textureImage);
-    }
-    else {
-      emit log(LOGERR,"Unable to bind Texture");
-      continue;
-    }
-
-
-    // ================================================================================
-    // Update texture mapping in meshNode
-    // ================================================================================
-    if( obj->dataType( DATA_TRIANGLE_MESH ) ){
-      PluginFunctions::triMeshObject(obj)->meshNode()->setTextureMap( 0 );
-    }
-
-    if ( obj->dataType( DATA_POLY_MESH ) ){
-      PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap( 0 );
-    }
-
+    emit log(LOGERR,tr("fileOpened: Unable to get texture object data for id %1.").arg(_id) );
+    return;
   }
 
   // Check if the file contains a texture map, store original textures and handle them before adding global textures
@@ -449,7 +467,7 @@ void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _ident
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0){
-    std::cerr << "Texture data not found!" << std::endl;
+    emit log(LOGERR,tr("slotTextureUpdated: Texture data not found: Object %1" ).arg(_identifier) );
     return;
   }
 
@@ -513,8 +531,8 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
     if (_texture.dimension() == 1) {
 
       OpenMesh::HPropHandleT< double > texture;
-	  if ( ! _mesh.get_property_handle(texture, _texture.name().toStdString() ) ) {
-        emit log(LOGERR,"Unable to get property " + _texture.name() );
+      if ( ! _mesh.get_property_handle(texture, _texture.name().toStdString() ) ) {
+        emit log(LOGERR,tr("HALFEDGEBASED dimension 1: Unable to get property %1").arg(_texture.name()) );
         return;
       }
 
@@ -523,8 +541,8 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
     } else if ( _texture.dimension() == 2 ) {
 
       OpenMesh::HPropHandleT< OpenMesh::Vec2d > texture2D;
-	  if ( ! _mesh.get_property_handle( texture2D, _texture.name().toStdString() ) ) {
-        emit log(LOGERR,"Unable to get property " + _texture.name() );
+      if ( ! _mesh.get_property_handle( texture2D, _texture.name().toStdString() ) ) {
+        emit log(LOGERR,tr("HALFEDGEBASED dimension 2: Unable to get property %1").arg(_texture.name()) );
         return;
       }
 
@@ -536,8 +554,8 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
     if ( _texture.dimension() == 1 ) {
 
       OpenMesh::VPropHandleT< double > texture;
-	  if ( ! _mesh.get_property_handle(texture,_texture.name().toStdString() ) ) {
-        emit log(LOGERR,"Unable to get property " + _texture.name() );
+      if ( ! _mesh.get_property_handle(texture,_texture.name().toStdString() ) ) {
+        emit log(LOGERR,tr("VERTEXBASED dimension 1: Unable to get property %1").arg(_texture.name()) );
         return;
       }
 
@@ -546,8 +564,8 @@ void TextureControlPlugin::doUpdateTexture ( Texture& _texture, MeshT& _mesh )
       } else if ( _texture.dimension() == 2 ) {
 
         OpenMesh::VPropHandleT< OpenMesh::Vec2d >  texture2D;
-		  if ( ! _mesh.get_property_handle(texture2D,_texture.name().toStdString() ) ) {
-          emit log(LOGERR,"Unable to get property " + _texture.name() );
+        if ( ! _mesh.get_property_handle(texture2D,_texture.name().toStdString() ) ) {
+          emit log(LOGERR,tr("VERTEXBASED dimension 2: Unable to get property %1").arg(_texture.name()) );
           return;
         }
 
@@ -1074,7 +1092,7 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
-    std::cerr << "Object has no texture data" << std::endl;
+    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
     return;
   }
 
@@ -1115,21 +1133,19 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       if ( ! texData->enableTexture( _textureName , true ) )
         emit log(LOGERR, "Failed to enabled VERTEXBASED or HALFEDGEBASED Texture " + _textureName );
 
-      // Check if dirty. If dirty, force plugin to update the texture otherwise we will just render it
+      // Check if dirty. If dirty, force plugin to update the texture otherwise we will copy it to our buffers and render it
       if ( texData->texture( _textureName).dirty() ) {
         // TODO: maybe introduce lock to prevent extra redraws if updating all objects
         emit updateTexture( texData->texture( _textureName ).name() , obj->id() );
-
-        return;
-      }
-
-      // Copy the texture data to the global one
-      if( obj->dataType( DATA_TRIANGLE_MESH ) )
-        doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
-      else if( obj->dataType( DATA_POLY_MESH ) ) {
-       doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
       } else {
-        emit log(LOGERR, "HALFEDGEBASED or VERTEXBASED type require poly or trimesh to work! Texture: " + _textureName );
+        // Copy the texture data to the global one
+        if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
+          doUpdateTexture(texData->texture(_textureName), *PluginFunctions::triMeshObject(obj)->mesh());
+        } else if( obj->dataType( DATA_POLY_MESH ) ) {
+          doUpdateTexture(texData->texture(_textureName), *PluginFunctions::polyMeshObject(obj)->mesh());
+        } else {
+          emit log(LOGERR, "HALFEDGEBASED or VERTEXBASED type require poly or trimesh to work! Texture: " + _textureName );
+        }
       }
 
       break;
@@ -1182,12 +1198,28 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       // Disable the mapping properties ( only for multi texture mode )
       PluginFunctions::triMeshObject(obj)->meshNode()->setIndexPropertyName("No Texture Index");
       PluginFunctions::triMeshObject(obj)->meshNode()->setTextureMap( 0 );
+      
+      if ( texData->texture(_textureName).type() == HALFEDGEBASED ) {
+        // We set it to the standard name here, as we copy user texture coordinates to the global representation
+        PluginFunctions::triMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("h:texcoords2D");      
+      } else {
+        PluginFunctions::triMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("No Texture");      
+      }
+       
     } else if ( obj->dataType( DATA_POLY_MESH ) ){
       // Activate the requested texture in texture node
       PluginFunctions::polyMeshObject(obj)->textureNode()->activateTexture( texData->texture( _textureName ).glName() );
       // Disable the mapping properties ( only for multi texture mode )
       PluginFunctions::polyMeshObject(obj)->meshNode()->setIndexPropertyName("No Texture Index");
       PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap( 0 );
+      
+      if ( texData->texture(_textureName).type() == HALFEDGEBASED ) {
+        // We set it to the standard name here, as we copy user texture coordinates to the global representation
+        PluginFunctions::triMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("h:texcoords2D");      
+      } else {
+        PluginFunctions::triMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("No Texture");      
+      }
+      
     } else {
       emit log(LOGERR, "Texture Error ( mesh required) for Texture: " + _textureName );
     }
@@ -1286,7 +1318,7 @@ void TextureControlPlugin::slotUpdateContextMenu( int _objectId ) {
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0){
-    std::cerr << "TextureControlPlugin::slotUpdateContextMenu: Texture data not found!" << std::endl;
+    emit log(LOGERR,tr("slotUpdateContextMenu: Texture data not found! Object %1 ").arg(_objectId) );
     return;
   }
 
@@ -1372,7 +1404,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
-    std::cerr << "Object has no texture data" << std::endl;
+    emit log(LOGERR,tr("getCoordinates1D: Object  %1 has no texture data ").arg(_id) );
     return;
   }
 
@@ -1395,7 +1427,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
     TriMesh* mesh = PluginFunctions::triMesh(obj);
 
     if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) ){
-      std::cerr << "Texture Property not found: " << _textureName.toStdString() << std::endl;
+      emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
       return;
     }
 
@@ -1406,7 +1438,7 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
     PolyMesh* mesh = PluginFunctions::polyMesh(obj);
 
     if ( !mesh->get_property_handle(coordProp, _textureName.toStdString() ) ){
-      std::cerr << "Texture Property not found: " << _textureName.toStdString() << std::endl;
+      emit log(LOGERR,tr("getCoordinates1D: Texture Property not found: Object %1 , TextureName %2").arg(_id).arg(_textureName) );
       return;
     }
 
