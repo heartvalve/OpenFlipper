@@ -808,11 +808,11 @@ void Core::loadPlugin(QString filename, bool silent){
 
       if ( checkSignal(plugin,"updateTexture(QString,int)") )
         connect(plugin , SIGNAL(updateTexture( QString ,int )),
-                this   , SLOT(slotUpdateTexture(QString , int)));
+                this   , SLOT(slotUpdateTexture(QString , int)),Qt::DirectConnection);
 
       if ( checkSlot( plugin , "slotUpdateTexture(QString,int)" ) )
         connect(this   , SIGNAL(updateTexture(QString ,int)),
-                plugin , SLOT(slotUpdateTexture(QString,int )));
+                plugin , SLOT(slotUpdateTexture(QString,int )),Qt::DirectConnection);
 
       if ( checkSignal(plugin,"updateAllTextures()") )
         connect(plugin , SIGNAL(updateAllTextures()),
@@ -824,11 +824,11 @@ void Core::loadPlugin(QString filename, bool silent){
 
       if ( checkSignal(plugin,"updatedTextures(QString,int)") )
         connect(plugin , SIGNAL(updatedTextures( QString , int )),
-                this   , SLOT(slotTextureUpdated( QString, int ) ));
+                this   , SLOT(slotTextureUpdated( QString, int ) ),Qt::DirectConnection);
 
       if ( checkSlot( plugin , "slotTextureUpdated(QString,int)" ) )
         connect(this   , SIGNAL(updatedTextures( QString , int )),
-                plugin , SLOT(slotTextureUpdated( QString, int ) ));
+                plugin , SLOT(slotTextureUpdated( QString, int ) ),Qt::DirectConnection);
 
       if ( checkSignal(plugin,"setTextureMode(QString,QString,int)") )
         connect(plugin , SIGNAL(setTextureMode(QString, QString, int )),
