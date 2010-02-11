@@ -773,12 +773,10 @@ enable_arrays(unsigned int _arrays) {
       // For this version we load the colors directly not from vbo
       glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
       glTexCoordPointer( stripProcessor_.perFacePerVertexTextureCoordBuffer() );   
-      std::cerr << "Bound Texture Coordinate Array" << std::endl;
       glEnableClientState(GL_TEXTURE_COORD_ARRAY );
     }
   } else if (enabled_arrays_ & PER_FACE_TEXCOORD_ARRAY) {
     // Disable Texture Coordinate array
-    std::cerr << "UnBound Texture Coordinate Array" << std::endl;
     enabled_arrays_ &= ~PER_FACE_TEXCOORD_ARRAY;
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   }   
