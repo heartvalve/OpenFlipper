@@ -840,7 +840,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       mode = CURVE;
       
       if ( keyWrd == "curv" )
-        addNewObject(_importer, QFileInfo(_filename).fileName() );
+        addNewObject(_importer, currentFileName );
       
       //get curve control points
       std::string curveLine;
@@ -853,9 +853,16 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         curveLine = curveLine.substr(0, curveLine.length()-1);
         nextKeyWrd = "curv_add";
       }
-
+      
       std::stringstream lineData( curveLine );
-
+      
+      // Read knots at the beginning before the indices
+      if ( keyWrd == "curv" ) {
+        double trash;
+        lineData >> trash;
+        lineData >> trash;
+      }
+      
       // work on the line until nothing left to read
       while ( !lineData.eof() && !lineData.fail() )
       {
@@ -870,11 +877,6 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     else if (mode == CURVE && keyWrd == "end"){
       
       if ( _importer.isCurve( _importer.currentObject() ) ){
-
-        // remove first two entries since they are the first and last knot
-        cpIndices.erase(cpIndices.begin());
-        cpIndices.erase(cpIndices.begin());
-      
         // set up the spline curve
         _importer.currentCurve()->set_degree( _importer.degreeU() );
         _importer.currentCurve()->autocompute_knotvector(false);
@@ -950,7 +952,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       mode = SURFACE;
       
       if ( keyWrd == "surf" )
-        addNewObject(_importer, QFileInfo(_filename).fileName() );
+        addNewObject(_importer, currentFileName );
       
       //get surface control points
       std::string surfLine;
@@ -1357,7 +1359,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
     BSplineCurveObject* bscObj = dynamic_cast< BSplineCurveObject* > (object);
     
     if ( bscObj ){
-      bscObj->setFromFileName(_filename);
+//       bscObj->setFromFileName(_filename); // this overwrites tha curve name read from the obj file
       bscObj->splineCurveNode()->updateGeometry();
     }
 #endif
@@ -1366,8 +1368,8 @@ int FileOBJPlugin::loadObject(QString _filename) {
     //handle new BSplineCurves
     BSplineSurfaceObject* bssObj = dynamic_cast< BSplineSurfaceObject* > (object);
     
-    if ( bssObj )
-      bssObj->setFromFileName(_filename);
+//     if ( bssObj )
+//       bssObj->setFromFileName(_filename); // this overwrites tha curve name read from the obj file
 #endif
 
     //general stuff
