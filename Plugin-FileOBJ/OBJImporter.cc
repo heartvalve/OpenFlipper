@@ -449,25 +449,27 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     
     //now add texCoords
   
-    // get first halfedge handle
-    PolyMesh::HalfedgeHandle cur_heh = currentPolyMesh()->halfedge_handle( addedFacePoly_ );
-    PolyMesh::HalfedgeHandle end_heh = currentPolyMesh()->prev_halfedge_handle(cur_heh);
+    if ( addedFacePoly_.is_valid() ) {
+      // get first halfedge handle
+      PolyMesh::HalfedgeHandle cur_heh = currentPolyMesh()->halfedge_handle( addedFacePoly_ );
+      PolyMesh::HalfedgeHandle end_heh = currentPolyMesh()->prev_halfedge_handle(cur_heh);
 
-    // find start heh
-    while( currentPolyMesh()->to_vertex_handle(cur_heh) != vertices[0] && cur_heh != end_heh )
-      cur_heh = currentPolyMesh()->next_halfedge_handle( cur_heh);
+      // find start heh
+      while( currentPolyMesh()->to_vertex_handle(cur_heh) != vertices[0] && cur_heh != end_heh )
+        cur_heh = currentPolyMesh()->next_halfedge_handle( cur_heh);
 
-    for(unsigned int i=0; i<_face_texcoords.size(); ++i)
-    {
-      if ( _face_texcoords[i] < (int)texCoords_.size() ){
+      for(unsigned int i=0; i<_face_texcoords.size(); ++i)
+      {
+        if ( _face_texcoords[i] < (int)texCoords_.size() ){
 
-        PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<PolyMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
-        currentPolyMesh()->set_texcoord2D(cur_heh, tex);
+          PolyMesh::TexCoord2D tex = OpenMesh::vector_cast<PolyMesh::TexCoord2D>( texCoords_[ _face_texcoords[i] ] );
+          currentPolyMesh()->set_texcoord2D(cur_heh, tex);
 
-        cur_heh = currentPolyMesh()->next_halfedge_handle(cur_heh);
+          cur_heh = currentPolyMesh()->next_halfedge_handle(cur_heh);
 
-      }else
-        std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
+        }else
+          std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
+      }
     }
   }
 }
@@ -554,7 +556,7 @@ void OBJImporter::addMaterial(std::string _materialName){
       if ( mat.has_Kd() ) {
         bool colorAllowed = ! ( objectOptions_[ currentObject() ] & FORCE_NOCOLOR );
         
-        if ( currentPolyMesh()->has_face_colors() && colorAllowed ){
+        if ( currentPolyMesh()->has_face_colors() && colorAllowed && addedFacePoly_.is_valid()  ){
           currentPolyMesh()->set_color(addedFacePoly_, OpenMesh::color_cast< PolyMesh::Color >(mat.Kd() ));
           objectOptions_[ currentObject() ] |= FACECOLOR;
         }
@@ -565,12 +567,12 @@ void OBJImporter::addMaterial(std::string _materialName){
       // Set the texture index in the face index property
       if ( mat.has_map_Kd() ) {
 
-        if ( hasTexture( currentObject() ) && textureAllowed )
+        if ( hasTexture( currentObject() ) && textureAllowed && addedFacePoly_.is_valid())
           currentPolyMesh()->property(indexProperty, addedFacePoly_) = mat.map_Kd_index();
         
       } else {
         // If we don't have the info, set it to no texture
-        if ( hasTexture( currentObject() ) && textureAllowed )
+        if ( hasTexture( currentObject() ) && textureAllowed && addedFacePoly_.is_valid())
           currentPolyMesh()->property(indexProperty, addedFacePoly_) = 0;
       }
     }
