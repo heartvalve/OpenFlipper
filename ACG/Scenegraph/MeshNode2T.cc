@@ -513,8 +513,6 @@ draw_faces(FaceMode _mode) {
       }
       
     } else {
-      std::cerr << "Draw Full per face buffer" << std::endl;
-      
       // We need per face attributes so we have to use seperate vertices per face
       glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
     }
@@ -1420,11 +1418,6 @@ setHalfedgeTextcoordPropertyName( std::string _halfedgeTextcoordPropertyName ){
   stripProcessor_.setPerFaceTextureCoordinatePropertyName(_halfedgeTextcoordPropertyName);
   
   perFaceTextureCoordsAvailable_ = stripProcessor_.perFaceTextureCoordinateAvailable();
-  
-  if (perFaceTextureCoordsAvailable_ )
-    std::cerr << "perFaceTextureCoordsAvailable_" << std::endl;
-  else
-    std::cerr << "perFaceTextureCoordsAvailable_ not available" << std::endl;
 };
 
 //=============================================================================
