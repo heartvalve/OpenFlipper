@@ -1182,8 +1182,6 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 update_geometry() {
-  std::cerr << "Update geometry" << std::endl;
-  
   /// \todo check the following statements. If only geometry changed, the normals,vertices have to be updated nothing else!
   /*
   updateFaceList_ = true;
@@ -1350,8 +1348,6 @@ template<class Mesh>
 void
 TriStripNodeT<Mesh>::
 update_topology() {
-  std::cerr << "Update topology" << std::endl;
-  
   // ==========================================================================
   // Clear the strips and regenerate them!
   // ==========================================================================
@@ -1392,7 +1388,7 @@ update_topology() {
                     &lineIndices_[0],
                     GL_STATIC_DRAW_ARB);
 
-    /// \todo: clear lineIndices (swap vector!)
+    std::vector< unsigned int >().swap(lineIndices_);
     
     lineIndexBufferInitialized_ = true;
   }
