@@ -131,7 +131,7 @@ bool FilePlanePlugin::saveObject(int _id, QString _filename)
     {
 
       obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-      obj->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+      obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
 
       QSettings settings(_filename, QSettings::IniFormat);
       settings.beginGroup("PLANE");
