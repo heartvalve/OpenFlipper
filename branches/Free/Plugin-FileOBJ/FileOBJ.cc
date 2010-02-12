@@ -282,7 +282,7 @@ void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
       
       _importer.addObject( object );
 
-      object->path( _importer.path() );
+      object->setPath( _importer.path() );
       object->setName( _name );
     }
   
@@ -298,7 +298,7 @@ void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
       
       _importer.addObject( object );
 
-      object->path( _importer.path() );
+      object->setPath( _importer.path() );
       object->setName( _name );
     }
   }
@@ -316,7 +316,7 @@ void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
       
       _importer.addObject( object );
 
-      object->path( _importer.path() );
+      object->setPath( _importer.path() );
       object->setName( _name );
     }
   }
@@ -336,7 +336,7 @@ void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
       
       _importer.addObject( object );
 
-      object->path( _importer.path() );
+      object->setPath( _importer.path() );
       object->setName( _name );
     }
   }
@@ -1359,9 +1359,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
     BSplineCurveObject* bscObj = dynamic_cast< BSplineCurveObject* > (object);
     
     if ( bscObj ){
-//       bscObj->setFromFileName(_filename); // this overwrites the curve name read from the obj file
-      // set the path only
-      bscObj->path( _filename.section(QDir::separator() ,0,-2) );
+      bscObj->setPath( _filename.section(QDir::separator() ,0,-2) );
       bscObj->splineCurveNode()->updateGeometry();
     }
 #endif
@@ -1371,8 +1369,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
     BSplineSurfaceObject* bssObj = dynamic_cast< BSplineSurfaceObject* > (object);
     
     if ( bssObj )
-      bssObj->path( _filename.section(QDir::separator() ,0,-2) );
-//       bssObj->setFromFileName(_filename); // this overwrites tha curve name read from the obj file
+      bssObj->setPath( _filename.section(QDir::separator() ,0,-2) );
 #endif
 
     //general stuff
@@ -1454,7 +1451,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
   if ( object->dataType( DATA_POLY_MESH ) ) {
 
     object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
 
     PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
 
@@ -1475,7 +1472,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
   } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
 
     object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
 
     TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
 
@@ -1497,7 +1494,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
   } else if ( object->dataType( DATA_BSPLINE_CURVE ) ) {
 
     object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
 
     BSplineCurveObject* bscObj = dynamic_cast<BSplineCurveObject* >( object );
 
@@ -1520,7 +1517,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
   } else if ( object->dataType( DATA_BSPLINE_SURFACE ) ) {
 
     object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-    object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
 
     BSplineSurfaceObject* bssObj = dynamic_cast<BSplineSurfaceObject* >( object );
 
