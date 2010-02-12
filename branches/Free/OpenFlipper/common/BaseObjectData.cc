@@ -184,7 +184,7 @@ QString BaseObjectData::path(){
   return path_;
 }
 
-void BaseObjectData::path(QString _path ) {
+void BaseObjectData::setPath(QString _path ) {
   path_ = _path;
 }
 
