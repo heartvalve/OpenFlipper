@@ -129,11 +129,11 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
 
     /** Active draw Modes for the last clicked object and its children
      */
-    unsigned int activeDrawModes_;
+    ACG::SceneGraph::DrawModes::DrawMode activeDrawModes_;
 
     /** Available draw Modes for the last clicked object and its children
      */
-    unsigned int availDrawModes_;
+    ACG::SceneGraph::DrawModes::DrawMode availDrawModes_;
 
     ShaderWidget* shaderWidget_;
 
@@ -208,7 +208,7 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     QString getUniformMax(QString _shader, QString _uniform );
 
     /// set the value of a uniform in a shader for a specific drawMode
-    void setUniform(int _objID, unsigned int _drawMode, QString _shader, QString _uniform, QString _value );
+    void setUniform(int _objID, ACG::SceneGraph::DrawModes::DrawMode _drawMode, QString _shader, QString _uniform, QString _value );
 
 
     /// Set the viewing direction
