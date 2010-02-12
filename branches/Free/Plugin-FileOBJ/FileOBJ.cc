@@ -1359,7 +1359,9 @@ int FileOBJPlugin::loadObject(QString _filename) {
     BSplineCurveObject* bscObj = dynamic_cast< BSplineCurveObject* > (object);
     
     if ( bscObj ){
-//       bscObj->setFromFileName(_filename); // this overwrites tha curve name read from the obj file
+//       bscObj->setFromFileName(_filename); // this overwrites the curve name read from the obj file
+      // set the path only
+      bscObj->path( _filename.section(QDir::separator() ,0,-2) );
       bscObj->splineCurveNode()->updateGeometry();
     }
 #endif
@@ -1368,7 +1370,8 @@ int FileOBJPlugin::loadObject(QString _filename) {
     //handle new BSplineCurves
     BSplineSurfaceObject* bssObj = dynamic_cast< BSplineSurfaceObject* > (object);
     
-//     if ( bssObj )
+    if ( bssObj )
+      bssObj->path( _filename.section(QDir::separator() ,0,-2) );
 //       bssObj->setFromFileName(_filename); // this overwrites tha curve name read from the obj file
 #endif
 
