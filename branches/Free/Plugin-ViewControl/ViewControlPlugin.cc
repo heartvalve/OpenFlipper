@@ -523,17 +523,17 @@ void ViewControlPlugin::slotUpdateContextMenu( int _objectId ){
   ACG::SceneGraph::traverse( object->baseNode() , actionActive);
   activeDrawModes_ = actionActive.drawMode();
 
-  std::vector< unsigned int > availDrawModeIds;
-  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availDrawModes_ );
+  std::vector< ACG::SceneGraph::DrawModes::DrawMode > availDrawModeIds;
+  availDrawModeIds =  availDrawModes_.getAtomicDrawModes();
 
   for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
   {
-    unsigned int id    = availDrawModeIds[i];
-    std::string  descr = ACG::SceneGraph::DrawModes::description( id );
+    ACG::SceneGraph::DrawModes::DrawMode id    = availDrawModeIds[i];
+    std::string  descr = id.description();
 
     QAction * action = new QAction( descr.c_str(), drawGroup );
     action->setCheckable( true );
-    action->setChecked( ACG::SceneGraph::DrawModes::containsId( activeDrawModes_, id ) );
+    action->setChecked( activeDrawModes_.containsAtomicDrawMode(id) );
   }
 
   viewControlMenu_->addActions( drawGroup->actions() );
@@ -548,12 +548,12 @@ void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
   //======================================================================================
   // Get the mode toggled
   //======================================================================================
-  unsigned int mode = 0;
-  std::vector< unsigned int > availDrawModeIds;
-  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availDrawModes_ );
+  ACG::SceneGraph::DrawModes::DrawMode mode(0);
+  std::vector< ACG::SceneGraph::DrawModes::DrawMode > availDrawModeIds;
+  availDrawModeIds = availDrawModes_.getAtomicDrawModes();
   for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
   {
-    QString descr = QString( ACG::SceneGraph::DrawModes::description( availDrawModeIds[i] ).c_str() );
+    QString descr = QString( availDrawModeIds[i].description().c_str() );
 
     if ( descr == _action->text() ) {
       mode = availDrawModeIds[i];
@@ -642,12 +642,12 @@ void ViewControlPlugin::slotShaderClicked( QListWidgetItem * _item ){
    //update drawMode checkStates
    shaderWidget_->drawModes->clear();
 
-   std::vector< unsigned int > availDrawModeIds;
-   availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availDrawModes_ );
+   std::vector< ACG::SceneGraph::DrawModes::DrawMode > availDrawModeIds;
+   availDrawModeIds = availDrawModes_.getAtomicDrawModes( );
 
    for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
    {
-      unsigned int id    = availDrawModeIds[i];
+     ACG::SceneGraph::DrawModes::DrawMode id    = availDrawModeIds[i];
 
 
       std::vector< QString > dm = drawModeToDescriptions( id );
@@ -866,7 +866,7 @@ void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _vertexSha
 
       object->shaderNode()->setShaderDir( (vertexFile.absolutePath() + OpenFlipper::Options::dirSeparator()).toStdString() );
 
-      object->shaderNode()->setShader(ListToDrawMode( mode ), vertexFile.fileName().toStdString(),
+      object->shaderNode()->setShader(listToDrawMode( mode ), vertexFile.fileName().toStdString(),
                                       fragmentFile.fileName().toStdString(),
                                       pickVertexFile.fileName().toStdString(),
                                       pickFragmentFile.fileName().toStdString());
@@ -875,7 +875,7 @@ void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _vertexSha
     {
       object->shaderNode()->setShaderDir( (vertexFile.absolutePath() + OpenFlipper::Options::dirSeparator()).toStdString() );
 
-      object->shaderNode()->setShader(ListToDrawMode( mode ), vertexFile.fileName().toStdString(),
+      object->shaderNode()->setShader(listToDrawMode( mode ), vertexFile.fileName().toStdString(),
                                       fragmentFile.fileName().toStdString());
     }
   }
@@ -914,7 +914,7 @@ void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
 
     object->shaderNode()->setShaderDir( (shaderList_[index].directory + OpenFlipper::Options::dirSeparator()).toStdString() );
 
-    object->shaderNode()->setShader(ListToDrawMode( mode ), shaderList_[index].vertexShader.toStdString(),
+    object->shaderNode()->setShader(listToDrawMode( mode ), shaderList_[index].vertexShader.toStdString(),
                                     shaderList_[index].fragmentShader.toStdString(),
                                     shaderList_[index].pickVertexShader.toStdString(),
                                     shaderList_[index].pickFragmentShader.toStdString());
@@ -988,7 +988,7 @@ QString ViewControlPlugin::getUniformMax(QString _shader, QString _uniform ){
 //-----------------------------------------------------------------------------
 
 /// set the value of a uniform in a shader for a specific drawMode
-void ViewControlPlugin::setUniform(int _objID, unsigned int _drawMode, QString _shader, QString _uniform, QString _value ){
+void ViewControlPlugin::setUniform(int _objID, ACG::SceneGraph::DrawModes::DrawMode _drawMode, QString _shader, QString _uniform, QString _value ){
 
       BaseObjectData* object = 0;
 
@@ -1080,7 +1080,7 @@ ViewControlPlugin::setDrawMode(QString _mode, int _viewer)
   for ( int i = 0 ; i < list.size() ; ++i )
     drawModeList.push_back(list[i]);
 
-  unsigned int mode = ListToDrawMode(drawModeList);
+  ACG::SceneGraph::DrawModes::DrawMode mode = listToDrawMode(drawModeList);
 
   PluginFunctions::setDrawMode( mode , _viewer );
   emit updateView();
