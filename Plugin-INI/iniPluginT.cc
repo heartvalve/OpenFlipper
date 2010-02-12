@@ -9,10 +9,10 @@ void INIPlugin::parseIniFileT(INIFile& _ini, MeshObject* _object) {
     if ( _object ) {
         std::vector< QString > draw_modes;
         if( _ini.get_entry(draw_modes, _object->name(), "MaterialDrawMode") )
-            _object->materialNode()->drawMode( ListToDrawMode(draw_modes) );
+            _object->materialNode()->drawMode( listToDrawMode(draw_modes) );
         
         if( _ini.get_entry(draw_modes, _object->name(), "MeshDrawMode") )
-            _object->meshNode()->drawMode( ListToDrawMode(draw_modes) );
+            _object->meshNode()->drawMode( listToDrawMode(draw_modes) );
         
         ACG::Vec4f col(0.0,0.0,0.0,0.0);
         
