@@ -151,7 +151,7 @@ static bool restrictFrameRate_ = false;
 static int maxFrameRate_ = 35;
 
 /// Store the defaultDrawMode_ mode
-static std::vector<uint> defaultDrawMode_ = std::vector<uint> (4, ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
+static std::vector<ACG::SceneGraph::DrawModes::DrawMode> defaultDrawMode_ = std::vector<ACG::SceneGraph::DrawModes::DrawMode> (4, ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
 
 /// Store the defaultProjectionMode_ mode
 static std::vector<int> defaultProjectionMode_ = std::vector<int> (4, 1);
@@ -512,11 +512,11 @@ int maxFrameRate(){
   return maxFrameRate_;
 }
 
-void defaultDrawMode( uint _mode, int _viewer){
+void defaultDrawMode( ACG::SceneGraph::DrawModes::DrawMode _mode, int _viewer){
   defaultDrawMode_[_viewer] = _mode;
 }
 
-uint defaultDrawMode(int _viewer){
+ACG::SceneGraph::DrawModes::DrawMode defaultDrawMode(int _viewer){
   return defaultDrawMode_[_viewer];
 }
 

@@ -95,6 +95,8 @@
 
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
+#include <ACG/Scenegraph/DrawModes.hh>
+
 #include <OpenFlipper/INIFile/INIFile.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
@@ -634,9 +636,9 @@ public:
     /// Action to globally set multisampling
     QAction* globalMultisamplingAction_;
 
-    int activeDrawModes_;
+    ACG::SceneGraph::DrawModes::DrawMode activeDrawModes_;
 
-    int availableGlobalDrawModes_;
+    ACG::SceneGraph::DrawModes::DrawMode availableGlobalDrawModes_;
 
   /** @} */
 

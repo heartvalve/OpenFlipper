@@ -61,6 +61,7 @@
 #include <OpenFlipper/common/Types.hh>
 
 #include <ACG/Scenegraph/SceneGraph.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/GL/GLState.hh>
 #include <OpenFlipper/common/ViewerProperties.hh>
 
@@ -324,7 +325,7 @@ void perspectiveProjection( int _viewer = ALL_VIEWERS );
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-void setDrawMode( const unsigned int _mode , int _viewer = ALL_VIEWERS);
+void setDrawMode( const ACG::SceneGraph::DrawModes::DrawMode _mode , int _viewer = ALL_VIEWERS);
 
 /** \brief Get the current draw Mode of a Viewer
  *
@@ -334,7 +335,7 @@ void setDrawMode( const unsigned int _mode , int _viewer = ALL_VIEWERS);
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-unsigned int drawMode( int _viewer = ACTIVE_VIEWER );
+ACG::SceneGraph::DrawModes::DrawMode drawMode( int _viewer = ACTIVE_VIEWER );
 
 
 /** \brief Set the background color of the examiner widget.
