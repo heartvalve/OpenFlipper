@@ -154,7 +154,7 @@ class DLLEXPORT BaseObjectData : public BaseObject
     QString path();
 
     /// set the path to the object.
-    void path(QString _path);
+    void setPath(QString _path);
 
   private:
 
