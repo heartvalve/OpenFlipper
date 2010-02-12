@@ -110,12 +110,12 @@ QuadNode::boundingBox( Vec3d & _bbMin, Vec3d & _bbMax )
 //----------------------------------------------------------------------------
 
   
-unsigned int 
+DrawModes::DrawMode
 QuadNode::
 availableDrawModes() const
 {
-  unsigned int drawModes(0);
-  
+  DrawModes::DrawMode drawModes(DrawModes::NONE);
+
   drawModes |= DrawModes::WIREFRAME;
   drawModes |= DrawModes::HIDDENLINE;
   drawModes |= DrawModes::SOLID_FLAT_SHADED;
@@ -130,7 +130,7 @@ availableDrawModes() const
 
 void
 QuadNode::
-draw(GLState& /* _state */ , unsigned int _drawMode)
+draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 {
   glDepthFunc(depthFunc());
 

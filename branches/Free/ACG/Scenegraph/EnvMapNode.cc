@@ -78,7 +78,7 @@ EnvMapNode::EnvMapNode( BaseNode*            _parent,
 //----------------------------------------------------------------------------
 
 
-unsigned int EnvMapNode::availableDrawModes() const
+DrawModes::DrawMode EnvMapNode::availableDrawModes() const
 {
   return ACG::SceneGraph::DrawModes::SOLID_ENV_MAPPED;
 }
@@ -87,7 +87,7 @@ unsigned int EnvMapNode::availableDrawModes() const
 //----------------------------------------------------------------------------
 
 
-void EnvMapNode::enter(GLState& _state, unsigned int _drawmode)
+void EnvMapNode::enter(GLState& _state, DrawModes::DrawMode _drawmode)
 {
   if (_drawmode==DrawModes::SOLID_ENV_MAPPED)
   {
@@ -105,7 +105,7 @@ void EnvMapNode::enter(GLState& _state, unsigned int _drawmode)
 //----------------------------------------------------------------------------
 
 
-void EnvMapNode::leave(GLState& _state, unsigned int _drawmode)
+void EnvMapNode::leave(GLState& _state, DrawModes::DrawMode _drawmode)
 {
   if (_drawmode==DrawModes::SOLID_ENV_MAPPED)
   {
@@ -119,13 +119,13 @@ void EnvMapNode::leave(GLState& _state, unsigned int _drawmode)
 
 void EnvMapNode::enterPick(GLState& /*_state*/ ,
                            PickTarget /*_target*/,
-                           unsigned int /*_drawMode*/ ) {
+                           DrawModes::DrawMode /*_drawMode*/ ) {
 
 }
 
 void EnvMapNode::leavePick(GLState& /*_state*/,
                            PickTarget /*_target*/,
-                           unsigned int /*_drawMode*/ ) {
+                           DrawModes::DrawMode /*_drawMode*/ ) {
 }
 
 

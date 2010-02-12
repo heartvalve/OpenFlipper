@@ -686,7 +686,7 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
 
 
 void
-TranslationManipulatorNode::draw(GLState& _state, unsigned int /* _drawMode */ )
+TranslationManipulatorNode::draw(GLState& _state, DrawModes::DrawMode /* _drawMode */ )
 {
    if (draw_manipulator_) {
 
@@ -753,7 +753,7 @@ TranslationManipulatorNode::drawCircle(const float outerRadius, const float inne
 //----------------------------------------------------------------------------
 
 // void
-// TranslationManipulatorNode::leave(GLState& _state, unsigned int /* _drawMode */ )
+// TranslationManipulatorNode::leave(GLState& _state, DrawModes::DrawMode /* _drawMode */ )
 // {
 
 // }

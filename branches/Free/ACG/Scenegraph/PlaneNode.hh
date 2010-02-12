@@ -86,13 +86,13 @@ class ACGDLLEXPORT PlaneNode : public BaseNode
     ACG_CLASSNAME(PlaneNode);
 
     /// return available draw modes
-    unsigned int availableDrawModes() const;
+    DrawModes::DrawMode availableDrawModes() const;
 
     /// update bounding box
     void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
 
     /// draw Plane
-    void draw(GLState& _state, unsigned int _drawMode);
+    void draw(GLState& _state, DrawModes::DrawMode _drawMode);
 
     /// draw Plane for object picking
     void pick(GLState& _state, PickTarget _target);

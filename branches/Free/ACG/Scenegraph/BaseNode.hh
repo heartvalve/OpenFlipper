@@ -69,6 +69,7 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <ACG/Scenegraph/DrawModes.hh>
 
 
 //== NAMESPACES ===============================================================
@@ -147,7 +148,7 @@ public:
 
   /** Return a list of available draw modes for this node: should be OR'ed
       from the items of the enum DrawModeIDs. */
-  virtual unsigned int availableDrawModes() const { return 0; }
+  virtual DrawModes::DrawMode availableDrawModes() const { return DrawModes::NONE; }
 
   /** Compute the bounding box of this node and update the values
       _bbMin and _bbMax accordingly. Do not initialize _bbMin and
@@ -162,15 +163,15 @@ public:
       function.  
       \see MaterialNode 
   */
-  virtual void enter(GLState& /*_state */, unsigned int /*_drawMode*/ ) {}
+  virtual void enter(GLState& /*_state */, DrawModes::DrawMode /*_drawMode*/ ) {}
 
   /** Draw this node using the draw modes _drawMode */
-  virtual void draw(GLState& /* _state */, unsigned int /* _drawMode */)  {}
+  virtual void draw(GLState& /* _state */, DrawModes::DrawMode /* _drawMode */)  {}
 
   /** The leave function is used to restore GL states the have been changed.
       This function must restore the status before enter() ! 
   */
-  virtual void leave(GLState& /* _state */, unsigned int /* _drawMode */) {}
+  virtual void leave(GLState& /* _state */, DrawModes::DrawMode /* _drawMode */) {}
 
   /** This function is called when traversing the scene graph during picking
       and arriving at this node. It can be used to store GL states that
@@ -178,7 +179,7 @@ public:
       function. Its default implementation will call the enter() function.
   */
   virtual void enterPick(GLState& _state , PickTarget _target,
-                         unsigned int _drawMode );
+                         DrawModes::DrawMode _drawMode );
   
   /** Draw the node using the GL picking name stack. The node's ID
       will already be on the name stack, so only names identifing e.g. faces
@@ -191,7 +192,7 @@ public:
       Its default implementation will call the leave() function.
   */
   virtual void leavePick(GLState& _state, PickTarget _target,
-                         unsigned int _drawMode );
+                         DrawModes::DrawMode _drawMode );
   
   /** Enable or Disable picking for this node
    *  ( default: enabled )
@@ -365,10 +366,10 @@ public:
   //--- draw mode ---
 
   /// Return the own draw modes of this node
-  unsigned int drawMode() const { return drawMode_; }
+  DrawModes::DrawMode drawMode() const { return drawMode_; }
   /** Set this node's own draw mode. It will be used for drawing instead of 
       the the global draw mode. */
-  void drawMode(unsigned int _drawMode) { drawMode_ = _drawMode; }
+  void drawMode(DrawModes::DrawMode _drawMode) { drawMode_ = _drawMode; }
 
   //--- traverse type ---
 
@@ -550,7 +551,7 @@ private:
   unsigned int id_;
 
   /// private draw mode
-  unsigned int drawMode_;
+  DrawModes::DrawMode drawMode_;
 
   /// depth func
   GLenum depth_func_;

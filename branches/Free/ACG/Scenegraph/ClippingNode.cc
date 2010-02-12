@@ -133,7 +133,7 @@ ClippingNode::set_offset(float _offset)
 //----------------------------------------------------------------------------
   
 
-void ClippingNode::enter(GLState& /* _state */ , unsigned int /* _drawmode */ ) 
+void ClippingNode::enter(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode */ ) 
 {
   // one clipping plane
   if (slice_width_ == 0.0)
@@ -157,7 +157,7 @@ void ClippingNode::enter(GLState& /* _state */ , unsigned int /* _drawmode */ )
 //----------------------------------------------------------------------------
 
 
-void ClippingNode::leave(GLState& /* _state */ , unsigned int /* _drawmode */ )
+void ClippingNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode */ )
 {
   glDisable(GL_CLIP_PLANE0);
   if (slice_width_ > 0.0)

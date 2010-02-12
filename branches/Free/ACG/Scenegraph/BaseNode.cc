@@ -173,7 +173,7 @@ BaseNode::delete_subtree()
 //----------------------------------------------------------------------------
 
 void
-BaseNode::enterPick(GLState& _state, PickTarget /*_target*/, unsigned int _drawMode)
+BaseNode::enterPick(GLState& _state, PickTarget /*_target*/, DrawModes::DrawMode _drawMode)
 {
   enter (_state, _drawMode);
 }
@@ -181,7 +181,7 @@ BaseNode::enterPick(GLState& _state, PickTarget /*_target*/, unsigned int _drawM
 //----------------------------------------------------------------------------
 
 void
-BaseNode::leavePick(GLState& _state, PickTarget /*_target*/, unsigned int _drawMode)
+BaseNode::leavePick(GLState& _state, PickTarget /*_target*/, DrawModes::DrawMode _drawMode)
 {
   leave (_state, _drawMode);
 }

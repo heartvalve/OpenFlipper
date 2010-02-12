@@ -79,10 +79,10 @@ public:
   ACG_CLASSNAME(QuadNode);
 
 
-  unsigned int availableDrawModes() const;
+  DrawModes::DrawMode  availableDrawModes() const;
 
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
-  void draw(GLState& _state, unsigned int _drawMode);
+  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
   void pick(GLState& _state, PickTarget _target);
 
   void add_quad( const ACG::Vec3f & _p0,

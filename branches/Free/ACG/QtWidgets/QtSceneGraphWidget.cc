@@ -92,16 +92,6 @@ namespace QtWidgets {
 
 //== IMPLEMENTATION ========================================================== 
 
-
-enum PopupMenuItems 
-{
-  M_Options = SceneGraph::DrawModes::UNUSED+1
-};
-
-
-//-----------------------------------------------------------------------------
-
-
 QtSceneGraphWidget::
 QtSceneGraphWidget( QWidget              * _parent, 
 		    SceneGraph::BaseNode * _rootNode ) :
@@ -289,25 +279,23 @@ slotItemPressed( QTreeWidgetItem * _item,
 	connect( modeGroup, SIGNAL( triggered( QAction * ) ),
 		 this, SLOT( slotModeMenu( QAction * ) ) );
 
-	unsigned int availDrawModes( node->availableDrawModes() );
+        ACG::SceneGraph::DrawModes::DrawMode availDrawModes( node->availableDrawModes() );
 	availDrawModes |= SceneGraph::DrawModes::DEFAULT;
 	
-	unsigned int currentDrawMode( node->drawMode() );
+        ACG::SceneGraph::DrawModes::DrawMode currentDrawMode( node->drawMode() );
 
-	std::vector< unsigned int > available_modes
-	  ( SceneGraph::DrawModes::getDrawModeIDs( availDrawModes ) );
+        std::vector< ACG::SceneGraph::DrawModes::DrawMode > available_modes( availDrawModes.getAtomicDrawModes() );
 
 	
 	for ( unsigned int i = 0; i < available_modes.size(); ++i )
 	{
-	  unsigned int id    = available_modes[i];
-	  std::string  descr = SceneGraph::DrawModes::description( id );
+          ACG::SceneGraph::DrawModes::DrawMode id    = available_modes[i];
+          std::string  descr = id.description();
 
 	  QAction * action = new QAction( descr.c_str(), modeGroup );
 	  action->setCheckable( true );
-	  action->setChecked
-	    ( SceneGraph::DrawModes::containsId( currentDrawMode, id ) );
-	  action->setData( QVariant( id ) );
+          action->setChecked ( currentDrawMode.containsAtomicDrawMode(id ) ) ;
+	  action->setData( QVariant( id.getIndex() ) );
 	}
 
 	modeMenu_->addActions( modeGroup->actions() );
@@ -446,14 +434,8 @@ void QtSceneGraphWidget::slotEditCoordinateFrame()
 
 void QtSceneGraphWidget::slotModeMenu( QAction * _action )
 {
-  unsigned int id = _action->data().toUInt();
+  SceneGraph::DrawModes::DrawMode new_drawmode( _action->data().toUInt());
 
-  //    int old_drawmode = curItem_->node()->drawMode();
-  int new_drawmode = id;
-  
-  // 	if (shiftPressed_) 
-  // 	  new_drawmode ^= (old_drawmode & 0xFFFE);
-  
   curItem_->node()->drawMode( new_drawmode );
   curItem_->update();
   emit signalNodeChanged( curItem_->node() );
@@ -552,7 +534,7 @@ QtSceneGraphWidget::Item::update()
     case BaseNode::HideSubtree:   setText( 2, "HideSubtree");  break;
   }
 
-  setText( 3, SceneGraph::DrawModes::description(node_->drawMode()).c_str());
+  setText( 3, node_->drawMode().description().c_str());
 }
 
 

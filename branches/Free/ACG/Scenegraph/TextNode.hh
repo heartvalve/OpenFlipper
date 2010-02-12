@@ -111,13 +111,13 @@ public:
   ACG_CLASSNAME(TextNode);
 
   /// return available draw modes
-  unsigned int availableDrawModes() const;
+  DrawModes::DrawMode  availableDrawModes() const;
 
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
 
   /// draw Text
-  void draw(GLState& _state, unsigned int _drawMode);
+  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
 
   /** Set the rendering mode ( see TextNode::TextMode )
    */

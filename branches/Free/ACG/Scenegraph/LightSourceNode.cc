@@ -77,7 +77,7 @@ LightSourceNode::LightSourceNode( BaseNode*            _parent,
     
 //----------------------------------------------------------------------------
 
-void LightSourceNode::enter(GLState& _state, unsigned int /* _drawmode */ ) 
+void LightSourceNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ ) 
 {
   // save old lights
   for(unsigned int i=0; i<lightsSave_.size(); i++)
@@ -116,7 +116,7 @@ void LightSourceNode::enter(GLState& _state, unsigned int /* _drawmode */ )
 //----------------------------------------------------------------------------
 
 
-void LightSourceNode::leave(GLState& /* _state */ , unsigned int /* _drawmode*/ )
+void LightSourceNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode*/ )
 {
   // restore old enabled lights
   for(unsigned int i=0; i<lights_.size(); i++)

@@ -93,11 +93,11 @@ public:
   /// implement className()
   ACG_CLASSNAME(CoordFrameNode);
   /// return available draw modes
-  unsigned int availableDrawModes() const;
+  DrawModes::DrawMode  availableDrawModes() const;
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
   /// drawing the primitive
-  void draw(GLState& _state, unsigned int _drawMode);
+  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
 
 
   /// update bounding box (compute in from BB of children)

@@ -121,13 +121,13 @@ public:
   ACG_CLASSNAME(LineNode);
 
   /// return available draw modes
-  unsigned int availableDrawModes() const;
+  DrawModes::DrawMode  availableDrawModes() const;
 
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
 
   /// draw lines and normals
-  void draw(GLState& _state, unsigned int _drawMode);
+  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
 
 
 

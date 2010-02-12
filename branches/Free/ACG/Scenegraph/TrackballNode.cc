@@ -72,7 +72,7 @@ namespace SceneGraph {
 
 
 void
-TrackballNode::draw(GLState& /* _state */ , unsigned int /* _drawMode */ )
+TrackballNode::draw(GLState& /* _state */ , DrawModes::DrawMode /* _drawMode */ )
 {
   // draw the trackball
   if (drawTrackball_) 

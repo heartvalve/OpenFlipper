@@ -91,7 +91,7 @@ boundingBox(Vec3d& /*_bbMin*/, Vec3d& /*_bbMax*/)
 //----------------------------------------------------------------------------
 
 
-unsigned int
+DrawModes::DrawMode
 TextNode::
 availableDrawModes() const
 {
@@ -106,7 +106,7 @@ availableDrawModes() const
 
 void
 TextNode::
-draw(GLState& /* _state */ , unsigned int /*_drawMode*/)
+draw(GLState& /* _state */ , DrawModes::DrawMode /*_drawMode*/)
 {
   glRasterPos3f(0.0f, 0.0f, 0.0f);
 

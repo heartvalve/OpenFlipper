@@ -103,13 +103,13 @@ public:
   ACG_CLASSNAME(PointNode);
 
   /// return available draw modes
-  unsigned int availableDrawModes() const;
+  DrawModes::DrawMode availableDrawModes() const;
 
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
 
   /// draw points and normals
-  void draw(GLState& _state, unsigned int _drawMode);
+  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
 
   /// reserve mem for _np points and _nn normals
   void reserve(unsigned int _np, unsigned int _nn, unsigned int _nc) {

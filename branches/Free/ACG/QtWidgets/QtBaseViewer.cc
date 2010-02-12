@@ -1469,7 +1469,7 @@ bool QtBaseViewer::decodeView(const QString& _view)
 
 void QtBaseViewer::actionDrawMenu( QAction * _action )
 {
-  unsigned int mode( _action->data().toUInt() );
+  SceneGraph::DrawModes::DrawMode mode( _action->data().toUInt() );
 
   // combine draw modes
   if (qApp->keyboardModifiers() & Qt::ShiftModifier)
@@ -1491,7 +1491,7 @@ void QtBaseViewer::actionDrawMenu( QAction * _action )
 	 aIter != aEnd;
 	 ++aIter )
     {
-      if( (*aIter)->data().toUInt() != mode )
+      if( SceneGraph::DrawModes::DrawMode((*aIter)->data().toUInt()) != mode )
 	  (*aIter)->setChecked( false );
     }
 
@@ -1941,19 +1941,19 @@ void QtBaseViewer::updatePopupMenu()
 
   drawMenuActions_.clear();
 
-  std::vector< unsigned int > draw_mode_id;
+  std::vector< SceneGraph::DrawModes::DrawMode > draw_mode_id;
 
-  draw_mode_id = SceneGraph::DrawModes::getDrawModeIDs( availDrawModes_ );
+  draw_mode_id = availDrawModes_.getAtomicDrawModes();
 
   for ( unsigned int i = 0; i < draw_mode_id.size(); ++i )
   {
-    unsigned int id    = draw_mode_id[i];
-    std::string  descr = SceneGraph::DrawModes::description( id );
+    SceneGraph::DrawModes::DrawMode id    = draw_mode_id[i];
+    std::string  descr = id.description();
 
     QAction * action = new QAction( descr.c_str(), drawGroup );
-    action->setData( QVariant( id ) );
+    action->setData( QVariant( id.getIndex() ) );
     action->setCheckable( true );
-    action->setChecked( SceneGraph::DrawModes::containsId( curDrawMode_, id ) );
+    action->setChecked( curDrawMode_.containsAtomicDrawMode(id) );
     drawMenuActions_.push_back( action );
   }
 

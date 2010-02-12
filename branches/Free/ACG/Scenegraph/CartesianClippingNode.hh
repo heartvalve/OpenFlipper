@@ -87,10 +87,10 @@ public:
   ACG_CLASSNAME(CartesianClippingNode);
 
   /// begin clipping
-  void enter( GLState & _state, unsigned int _drawmode );
+  void enter( GLState & _state, DrawModes::DrawMode _drawmode );
 
   /// stop clipping
-  void leave( GLState & _state, unsigned int _drawmode );
+  void leave( GLState & _state, DrawModes::DrawMode _drawmode );
 
   /// set position
   void set_cursor( const Vec3f & _pos );

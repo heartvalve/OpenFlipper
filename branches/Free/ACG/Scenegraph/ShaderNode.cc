@@ -75,21 +75,17 @@ ShaderNode::ShaderNode( BaseNode*            _parent,
 }
 
 ShaderNode::~ShaderNode() {
-  if ( shaderDir_ != "" ) {
-
-    for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
-      if ( shaders[i].initialized ) {
-
-        if ( shaders[i].program != 0 )
-           delete shaders[i].program;
-
-         if ( shaders[i].vertexShader != 0 )
-           delete shaders[i].vertexShader;
-
-         if ( shaders[i].fragmentShader != 0 )
-           delete shaders[i].fragmentShader;
-      }
-
+  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
+    if ( it->second.initialized ) {
+      
+      if ( it->second.program != 0 )
+        delete it->second.program;
+      
+      if ( it->second.vertexShader != 0 )
+        delete it->second.vertexShader;
+      
+      if ( it->second.fragmentShader != 0 )
+        delete it->second.fragmentShader;
     }
   }
 }
@@ -97,142 +93,126 @@ ShaderNode::~ShaderNode() {
 //----------------------------------------------------------------------------
 bool
 ShaderNode::
-hasShader( unsigned int _drawmode, bool _pick ) {
-
-  unsigned int mode = _drawmode;
-  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
-    if (mode & 1) {
-      if (_pick)
-        return pickShaders[i].initialized;
-      else
-        return shaders[i].initialized;
-    }
-
-    mode >>= 1;
+hasShader( DrawModes::DrawMode _drawmode, bool _pick ) {
+  
+  if ( !_drawmode.isAtomic() ) {
+    std::cerr << "hasShader: Error, draw mode not atomic!" << std::endl;
+    return false;
   }
-  return false;
+  
+  std::map<unsigned int,ShaderInfo>::iterator it;
+  
+  if ( _pick ) {
+    it = pickShaders.find(_drawmode.getIndex());
+    if ( it == pickShaders.end() )
+      return false;
+  } else {
+    it = shaders.find(_drawmode.getIndex());
+    if ( it == shaders.end() )
+      return false;
+  }
+  
+  return it->second.initialized;
 }
 
 //----------------------------------------------------------------------------
 
 
 void
-ShaderNode::enter(GLState& /*_state*/, unsigned int _drawmode  )
+ShaderNode::enter(GLState& /*_state*/, DrawModes::DrawMode _drawmode  )
 {
-  unsigned int mode = _drawmode;
-  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
-    if (mode & 1) {
-      if ( shaders[i].initialized ) {
-        shaders[i].program->use();
-      }
+  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
+    if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) {
+      it->second.program->use();
     }
-
-    mode >>= 1;
   }
 }
 
 //----------------------------------------------------------------------------
 
 void
-ShaderNode::enterPick(GLState& /*_state*/, PickTarget /*_target*/, unsigned int _drawmode  )
+ShaderNode::enterPick(GLState& /*_state*/, PickTarget /*_target*/, DrawModes::DrawMode _drawmode  )
 {
-  unsigned int mode = _drawmode;
-  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
-    if (mode & 1) {
-      if ( pickShaders[i].initialized ) {
-        pickShaders[i].program->use();
-     }
+  for ( std::map<unsigned int,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it) {
+    if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) {
+      it->second.program->use();
     }
-
-    mode >>= 1;
-  }
+  }  
 }
 
 //----------------------------------------------------------------------------
 std::string
-ShaderNode::vertexShaderName(unsigned int _drawmode, bool _pick) {
-  unsigned int mode = _drawmode;
-  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
-    if (mode & 1) {
-      if (_pick)
-      {
-        if ( pickShaders[i].initialized ) {
-          return pickShaders[i].vertexShaderFile;
-        }
-      }
-      else
-      {
-        if ( shaders[i].initialized ) {
-          return shaders[i].vertexShaderFile;
-        }
-      }
-    }
-
-    mode >>= 1;
+ShaderNode::vertexShaderName(DrawModes::DrawMode _drawmode, bool _pick) {
+  
+  if ( !_drawmode.isAtomic() ) {
+    std::cerr << "vertexShaderName: Error, draw mode not atomic!" << std::endl;
+    return false;
   }
-
-  return std::string("");
+  
+  std::map<unsigned int,ShaderInfo>::iterator it;
+  
+  if ( _pick ) {
+    it = pickShaders.find(_drawmode.getIndex());
+    if ( it == pickShaders.end() )
+      return  std::string("");
+  } else {
+    it = shaders.find(_drawmode.getIndex());
+    if ( it == shaders.end() )
+      return  std::string("");
+  }
+  
+  if ( it->second.initialized )
+    return it->second.vertexShaderFile;
+  
+  return  std::string("");
 }
 
 //----------------------------------------------------------------------------
 std::string
-ShaderNode::fragmentShaderName(unsigned int _drawmode, bool _pick) {
-  unsigned int mode = _drawmode;
-  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
-    if (mode & 1) {
-      if (_pick)
-      {
-        if ( pickShaders[i].initialized ) {
-          return pickShaders[i].fragmentShaderFile;
-        }
-      }
-      else
-      {
-        if ( shaders[i].initialized ) {
-          return shaders[i].fragmentShaderFile;
-        }
-      }
-    }
-
-    mode >>= 1;
+ShaderNode::fragmentShaderName(DrawModes::DrawMode _drawmode, bool _pick) {
+  
+  if ( !_drawmode.isAtomic() ) {
+    std::cerr << "fragmentShaderName: Error, draw mode not atomic!" << std::endl;
+    return false;
   }
-
-  return std::string("");
+  
+  std::map<unsigned int,ShaderInfo>::iterator it;
+  
+  if ( _pick ) {
+    it = pickShaders.find(_drawmode.getIndex());
+    if ( it == pickShaders.end() )
+      return  std::string("");
+  } else {
+    it = shaders.find(_drawmode.getIndex());
+    if ( it == shaders.end() )
+      return  std::string("");
+  }
+  
+  if ( it->second.initialized )
+    return it->second.fragmentShaderFile;
+  
+  return  std::string("");
 }
 
 
 //----------------------------------------------------------------------------
 
 
-void ShaderNode::leave(GLState& /*_state*/, unsigned int _drawmode )
+void ShaderNode::leave(GLState& /*_state*/, DrawModes::DrawMode _drawmode )
 {
-  unsigned int mode = _drawmode;
-  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
-    if (mode & 1) {
-      if ( shaders[i].initialized ) {
-        shaders[i].program->disable();
-      }
-    }
-
-    mode >>= 1;
-  }
+  for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) 
+    if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) 
+      it->second.program->disable();
 }
 
 //----------------------------------------------------------------------------
 
 
-void ShaderNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, unsigned int _drawmode )
+void ShaderNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, DrawModes::DrawMode _drawmode )
 {
-  unsigned int mode = _drawmode;
-  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
-    if (mode & 1) {
-      if ( pickShaders[i].initialized ) {
-        pickShaders[i].program->disable();
-      }
-    }
-
-    mode >>= 1;
-  }
+  for ( std::map<unsigned int,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it) 
+    if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) 
+      it->second.program->disable();
 }
 
 //----------------------------------------------------------------------------
@@ -240,30 +220,40 @@ void ShaderNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, unsigned
 /// Get the shader for the given drawMode
 GLSL::PtrProgram
 ShaderNode::
-getShader( unsigned int _drawmode, bool _pick ) {
-  unsigned int mode = _drawmode;
-  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
-    if (mode & 1) {
-      if (_pick)
-      {
-        if ( pickShaders[i].initialized ) {
-          return pickShaders[i].program;
-        }
-      }
-      else
-      {
-        if ( shaders[i].initialized ) {
-          return shaders[i].program;
-        }
-      }
-    }
-
-    mode >>= 1;
-
+getShader( DrawModes::DrawMode _drawmode, bool _pick ) {
+  
+  if ( !_drawmode.isAtomic() ) {
+    std::cerr << "getShader: Error, draw mode not atomic!" << std::endl;
+    return false;
+  }
+  
+  std::map<unsigned int,ShaderInfo>::iterator it;
+  
+  if ( _pick ) {
+    it = pickShaders.find(_drawmode.getIndex());
+    
+    if ( it == pickShaders.end() )
+      return  0;
+    
+    if ( it->second.initialized )
+      return it->second.program;
+    else 
+      return 0;
+    
+  } else {
+    it = shaders.find(_drawmode.getIndex());
+    
+    if ( it == shaders.end() )
+      return  0;
+    
+    if ( it->second.initialized )
+      return it->second.program;
+    else 
+      return 0;
   }
 
   // No shader found for this mode
-  return 0;
+  return  0;
 }
 
 //----------------------------------------------------------------------------
@@ -271,12 +261,13 @@ getShader( unsigned int _drawmode, bool _pick ) {
 
 void
 ShaderNode::
-setShader( unsigned int _drawmode ,
+setShader( DrawModes::DrawMode _drawmode ,
            std::string _vertexShader,
            std::string _fragmentShader,
            std::string _pickVertexShader,
            std::string _pickFragmentShader) {
 
+  std::cerr << "ShaderNode setShader " << _drawmode.description() <<  std::endl;
   // OpenGl 2.0 is needed for GLSL support
   if (!glewIsSupported("GL_VERSION_2_0")) {
     std::cerr << "No shader support... unable to load shaders!" << std::endl;
@@ -289,98 +280,93 @@ setShader( unsigned int _drawmode ,
     return;
   }
 
-  unsigned int mode = _drawmode;
-  for (size_t i = 0; i < sizeof(unsigned int)*8 ;  ++i) {
+  unsigned int index = _drawmode.getIndex();
+  
+  // Cleanup old shaders for this mode, if they exist
+  if ( shaders[index].initialized ) {
+    if ( shaders[index].program != 0 )
+      delete shaders[index].program;
 
-    if (mode & 1) {
+    if ( shaders[index].vertexShader != 0 )
+      delete shaders[index].vertexShader;
 
-      if ( shaders[i].initialized ) {
-        if ( shaders[i].program != 0 )
-           delete shaders[i].program;
+    if ( shaders[index].fragmentShader != 0 )
+      delete shaders[index].fragmentShader;
 
-         if ( shaders[i].vertexShader != 0 )
-           delete shaders[i].vertexShader;
-
-         if ( shaders[i].fragmentShader != 0 )
-           delete shaders[i].fragmentShader;
-
-         shaders[i].initialized    = false;
-      }
-
-      shaders[i].vertexShaderFile   = shaderDir_ + _vertexShader;
-      shaders[i].fragmentShaderFile = shaderDir_ + _fragmentShader;
-
-      const char* vertexShaderFilePath   = shaders[i].vertexShaderFile.c_str();
-      const char* fragmentShaderFilePath = shaders[i].fragmentShaderFile.c_str();
-      shaders[i].vertexShader            = GLSL::loadVertexShader(vertexShaderFilePath);
-      shaders[i].fragmentShader          = GLSL::loadFragmentShader(fragmentShaderFilePath);
-      shaders[i].program                 = GLSL::PtrProgram(new GLSL::Program());
-
-      if ( (shaders[i].vertexShader == 0) ||
-           (shaders[i].fragmentShader == 0) ||
-           (shaders[i].program == 0) ) {
-        std::cerr << "Unable to load shaders" << shaders[i].vertexShaderFile <<
-                     " or " << shaders[i].fragmentShaderFile << std::endl;
-        shaders[i].vertexShader   = 0;
-        shaders[i].fragmentShader = 0;
-        shaders[i].program        = 0;
-        shaders[i].initialized    = false;
-        return;
-      }
-
-      shaders[i].program->attach(shaders[i].vertexShader);
-      shaders[i].program->attach(shaders[i].fragmentShader);
-      shaders[i].program->link();
-
-      shaders[i].initialized = true;
-
-      if ( pickShaders[i].initialized ) {
-        if ( pickShaders[i].program != 0 )
-           delete pickShaders[i].program;
-
-         if ( pickShaders[i].vertexShader != 0 )
-           delete pickShaders[i].vertexShader;
-
-         if ( pickShaders[i].fragmentShader != 0 )
-           delete pickShaders[i].fragmentShader;
-
-         pickShaders[i].initialized    = false;
-      }
-
-      if (_pickVertexShader.length () > 0 && _pickFragmentShader.length () > 0)
-      {
-        pickShaders[i].vertexShaderFile   = shaderDir_ + _pickVertexShader;
-        pickShaders[i].fragmentShaderFile = shaderDir_ + _pickFragmentShader;
-
-        const char* vertexShaderFilePath   = pickShaders[i].vertexShaderFile.c_str();
-        const char* fragmentShaderFilePath = pickShaders[i].fragmentShaderFile.c_str();
-        pickShaders[i].vertexShader        = GLSL::loadVertexShader(vertexShaderFilePath);
-        pickShaders[i].fragmentShader      = GLSL::loadFragmentShader(fragmentShaderFilePath);
-        pickShaders[i].program             = GLSL::PtrProgram(new GLSL::Program());
-
-        if ( (pickShaders[i].vertexShader == 0) ||
-             (pickShaders[i].fragmentShader == 0) ||
-             (pickShaders[i].program == 0) ) {
-          std::cerr << "Unable to load pick shaders" << pickShaders[i].vertexShaderFile <<
-                       " or " << pickShaders[i].fragmentShaderFile << std::endl;
-          pickShaders[i].vertexShader   = 0;
-          pickShaders[i].fragmentShader = 0;
-          pickShaders[i].program        = 0;
-          pickShaders[i].initialized    = false;
-          return;
-        }
-
-        pickShaders[i].program->attach(pickShaders[i].vertexShader);
-        pickShaders[i].program->attach(pickShaders[i].fragmentShader);
-        pickShaders[i].program->link();
-
-        pickShaders[i].initialized = true;
-      }
-    }
-
-    mode >>= 1;
+    shaders[index].initialized    = false;
   }
 
+  shaders[index].vertexShaderFile   = shaderDir_ + _vertexShader;
+  shaders[index].fragmentShaderFile = shaderDir_ + _fragmentShader;
+
+  const char* vertexShaderFilePath   = shaders[index].vertexShaderFile.c_str();
+  const char* fragmentShaderFilePath = shaders[index].fragmentShaderFile.c_str();
+  shaders[index].vertexShader            = GLSL::loadVertexShader(vertexShaderFilePath);
+  shaders[index].fragmentShader          = GLSL::loadFragmentShader(fragmentShaderFilePath);
+  shaders[index].program                 = GLSL::PtrProgram(new GLSL::Program());
+
+  if ( (shaders[index].vertexShader == 0) ||
+        (shaders[index].fragmentShader == 0) ||
+        (shaders[index].program == 0) ) {
+    std::cerr << "Unable to load shaders" << shaders[index].vertexShaderFile <<
+                  " or " << shaders[index].fragmentShaderFile << std::endl;
+    shaders[index].vertexShader   = 0;
+    shaders[index].fragmentShader = 0;
+    shaders[index].program        = 0;
+    shaders[index].initialized    = false;
+    return;
+  }
+
+  shaders[index].program->attach(shaders[index].vertexShader);
+  shaders[index].program->attach(shaders[index].fragmentShader);
+  shaders[index].program->link();
+
+  shaders[index].initialized = true;
+
+  
+  // Cleanup old shaders for this mode, if they exist
+  if ( pickShaders[index].initialized ) {
+    if ( pickShaders[index].program != 0 )
+        delete pickShaders[index].program;
+
+    if ( pickShaders[index].vertexShader != 0 )
+      delete pickShaders[index].vertexShader;
+
+    if ( pickShaders[index].fragmentShader != 0 )
+      delete pickShaders[index].fragmentShader;
+
+    pickShaders[index].initialized    = false;
+  }
+
+  if (_pickVertexShader.length () > 0 && _pickFragmentShader.length () > 0)
+  {
+    pickShaders[index].vertexShaderFile   = shaderDir_ + _pickVertexShader;
+    pickShaders[index].fragmentShaderFile = shaderDir_ + _pickFragmentShader;
+
+    const char* vertexShaderFilePath   = pickShaders[index].vertexShaderFile.c_str();
+    const char* fragmentShaderFilePath = pickShaders[index].fragmentShaderFile.c_str();
+    pickShaders[index].vertexShader        = GLSL::loadVertexShader(vertexShaderFilePath);
+    pickShaders[index].fragmentShader      = GLSL::loadFragmentShader(fragmentShaderFilePath);
+    pickShaders[index].program             = GLSL::PtrProgram(new GLSL::Program());
+
+    if ( (pickShaders[index].vertexShader == 0) ||
+          (pickShaders[index].fragmentShader == 0) ||
+          (pickShaders[index].program == 0) ) {
+      std::cerr << "Unable to load pick shaders" << pickShaders[index].vertexShaderFile <<
+                    " or " << pickShaders[index].fragmentShaderFile << std::endl;
+      pickShaders[index].vertexShader   = 0;
+      pickShaders[index].fragmentShader = 0;
+      pickShaders[index].program        = 0;
+      pickShaders[index].initialized    = false;
+      return;
+    }
+
+    pickShaders[index].program->attach(pickShaders[index].vertexShader);
+    pickShaders[index].program->attach(pickShaders[index].fragmentShader);
+    pickShaders[index].program->link();
+
+    pickShaders[index].initialized = true;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -391,12 +377,12 @@ setShaderDir( std::string _shaderDir) {
   shaderDir_ = _shaderDir;
 }
 
-unsigned int
+DrawModes::DrawMode
 ShaderNode::
 availableDrawModes() const
 {
 
-  unsigned int drawModes(0);
+  DrawModes::DrawMode drawModes(DrawModes::NONE);
 
   drawModes |= DrawModes::SOLID_PHONG_SHADED;
   drawModes |= DrawModes::SOLID_SHADER;

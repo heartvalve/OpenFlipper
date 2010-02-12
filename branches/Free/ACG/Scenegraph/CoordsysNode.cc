@@ -77,7 +77,7 @@ boundingBox(Vec3d& /*_bbMin*/, Vec3d& /*_bbMax*/)
 //----------------------------------------------------------------------------
 
 
-unsigned int
+DrawModes::DrawMode
 CoordsysNode::
 availableDrawModes() const
 {
@@ -208,7 +208,7 @@ CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
 void
 CoordsysNode::
-draw(GLState&  _state  , unsigned int /*_drawMode*/)
+draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
 {
   GLboolean colorMask[4];
   glGetBooleanv (GL_COLOR_WRITEMASK, colorMask);

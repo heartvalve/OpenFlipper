@@ -324,7 +324,7 @@ public:
   /** \brief Draws the object
   *
   */
-  void draw(GLState& _state, unsigned int _drawMode);
+  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
   
 private:
   // types
@@ -350,7 +350,7 @@ private:
   * The drawmodes are constructed based on the mesh properties and the hardware capabilities
   * of the system.
   */
-  unsigned int availableDrawModes() const;
+  ACG::SceneGraph::DrawModes::DrawMode  availableDrawModes() const;
 
 private:
   
