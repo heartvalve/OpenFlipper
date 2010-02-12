@@ -403,7 +403,7 @@ QPoint mapToLocal( const QPoint _point ) {
   return examiner_widgets_[activeExaminer_]->glMapFromGlobal(_point);
 }
 
-void setDrawMode( const unsigned int _mode , int _viewer) {
+void setDrawMode( const ACG::SceneGraph::DrawModes::DrawMode _mode , int _viewer) {
 
   if ( _viewer == ACTIVE_VIEWER )
     viewerProperties(activeExaminer()).drawMode(_mode);
@@ -422,7 +422,7 @@ void setDrawMode( const unsigned int _mode , int _viewer) {
  * The DrawModes are defined at ACG/Scenegraph/DrawModes.hh \n
  * They can be combined.
  */
-unsigned int drawMode( int _viewer ) {
+ACG::SceneGraph::DrawModes::DrawMode drawMode( int _viewer ) {
   if ( _viewer == ACTIVE_VIEWER ) {
     return viewerProperties(activeExaminer()).drawMode();
   } else if ( _viewer == ALL_VIEWERS )

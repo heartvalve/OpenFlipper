@@ -58,7 +58,7 @@
 //== CLASS DEFINITION =========================================================
 
 /// Convert a drawmode to a vector of QStrings
-std::vector< QString > drawModeToList(unsigned int _drawMode) {
+std::vector< QString > drawModeToList(ACG::SceneGraph::DrawModes::DrawMode _drawMode) {
   std::vector< QString > draw_modes;
   
   if ( _drawMode & ACG::SceneGraph::DrawModes::DEFAULT )
@@ -112,9 +112,9 @@ std::vector< QString > drawModeToList(unsigned int _drawMode) {
 }
 
 /// Convert a vector of QStrings to a draw mode
-unsigned int ListToDrawMode ( std::vector< QString > _draw_modes ) {
+ACG::SceneGraph::DrawModes::DrawMode listToDrawMode( std::vector< QString > _draw_modes ) {
     
-  unsigned int drawMode = 0 ;
+  ACG::SceneGraph::DrawModes::DrawMode drawMode( ACG::SceneGraph::DrawModes::NONE );
   
   for ( uint i = 0 ; i < _draw_modes.size() ; ++i ) {
     if( _draw_modes[i] == "DEFAULT" ) {
@@ -169,9 +169,9 @@ unsigned int ListToDrawMode ( std::vector< QString > _draw_modes ) {
 }
 
 /// Convert a vector of DrawMode-Descriptions to a draw mode
-unsigned int descriptionsToDrawMode ( std::vector< QString > _draw_modes ) {
+ACG::SceneGraph::DrawModes::DrawMode descriptionsToDrawMode ( std::vector< QString > _draw_modes ) {
     
-  unsigned int drawMode = 0 ;
+  ACG::SceneGraph::DrawModes::DrawMode drawMode( ACG::SceneGraph::DrawModes::NONE );
   
   for ( uint i = 0 ; i < _draw_modes.size() ; ++i ) {
     if( _draw_modes[i] == "Default" ) {
@@ -226,7 +226,7 @@ unsigned int descriptionsToDrawMode ( std::vector< QString > _draw_modes ) {
 }
 
 /// Convert a drawmode to a vector of QStrings
-std::vector< QString > drawModeToDescriptions(unsigned int _drawMode) {
+std::vector< QString > drawModeToDescriptions(ACG::SceneGraph::DrawModes::DrawMode _drawMode) {
   std::vector< QString > draw_modes;
   
   if ( _drawMode & ACG::SceneGraph::DrawModes::DEFAULT )

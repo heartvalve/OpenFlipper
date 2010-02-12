@@ -59,6 +59,7 @@
 #define OPTIONS_HH
 
 #include <OpenFlipper/common/GlobalDefines.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
 #include <QDir>
 #include <QStringList>
 #include <QColor>
@@ -452,11 +453,11 @@ QString helpDirStr();
 
   /// Store defaultDrawMode setting
   DLLEXPORT
-  void defaultDrawMode( uint _mode, int _viewer );
+  void defaultDrawMode( ACG::SceneGraph::DrawModes::DrawMode _mode, int _viewer );
 
   /// get defaultDrawMode setting
   DLLEXPORT
-  uint defaultDrawMode( int _viewer );
+  ACG::SceneGraph::DrawModes::DrawMode defaultDrawMode( int _viewer );
 
   /// Store defaultProjectionMode setting
   DLLEXPORT

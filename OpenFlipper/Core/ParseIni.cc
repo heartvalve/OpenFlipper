@@ -273,7 +273,7 @@ void Core::readApplicationOptions(INIFile& _ini) {
     for (int i=0; i < 4/*PluginFunctions::viewers()*/; i++ ){
 
       if( _ini.get_entry(draw_modes, "Options", "DefaultDrawModes" + QString::number(i) ) )
-        OpenFlipper::Options::defaultDrawMode( ListToDrawMode(draw_modes), i );
+        OpenFlipper::Options::defaultDrawMode( listToDrawMode(draw_modes), i );
 
       if( _ini.get_entry(mode, "Options", "DefaultProjectionMode" + QString::number(i) ) )
         OpenFlipper::Options::defaultProjectionMode( mode, i );

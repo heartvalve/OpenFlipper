@@ -634,22 +634,22 @@ void CoreWidget::slotUpdateViewerDrawMenu() {
 
   // Get currently active drawModes (first viewer only )
   // TODO: create combination from all viewers!
-  int activeDrawModes = PluginFunctions::drawMode();
+  ACG::SceneGraph::DrawModes::DrawMode activeDrawModes = PluginFunctions::drawMode();
 
   // Convert to ids
-  std::vector< unsigned int > availDrawModeIds;
-  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableGlobalDrawModes_ );
+  std::vector< ACG::SceneGraph::DrawModes::DrawMode > availDrawModeIds;
+  availDrawModeIds = availableGlobalDrawModes_.getAtomicDrawModes() ;
 
   viewerDrawMenu_->clear();
 
   for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
   {
-    unsigned int id    = availDrawModeIds[i];
-    std::string  descr = ACG::SceneGraph::DrawModes::description( id );
+    ACG::SceneGraph::DrawModes::DrawMode id    = availDrawModeIds[i];
+    std::string  descr =  id.description();
 
     QAction * action = new QAction( descr.c_str(), drawGroupViewer_ );
     action->setCheckable( true );
-    action->setChecked( ACG::SceneGraph::DrawModes::containsId( activeDrawModes, id ) );
+    action->setChecked(  activeDrawModes.containsAtomicDrawMode(id) );
   }
 
   viewerDrawMenu_->addActions( drawGroupViewer_->actions() );
@@ -661,12 +661,12 @@ void CoreWidget::slotViewerDrawMenu(QAction * _action) {
   //======================================================================================
   // Get the mode toggled
   //======================================================================================
-  unsigned int mode = 0;
-  std::vector< unsigned int > availDrawModeIds;
-  availDrawModeIds = ACG::SceneGraph::DrawModes::getDrawModeIDs( availableGlobalDrawModes_ );
+  ACG::SceneGraph::DrawModes::DrawMode mode = 0;
+  std::vector< ACG::SceneGraph::DrawModes::DrawMode > availDrawModeIds;
+  availDrawModeIds = availableGlobalDrawModes_.getAtomicDrawModes();
   for ( unsigned int i = 0; i < availDrawModeIds.size(); ++i )
   {
-    QString descr = QString( ACG::SceneGraph::DrawModes::description( availDrawModeIds[i] ).c_str() );
+    QString descr = QString(  availDrawModeIds[i].description().c_str() );
 
     if ( descr == _action->text() ) {
       mode = availDrawModeIds[i];

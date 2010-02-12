@@ -65,17 +65,29 @@
 
 //== CLASS DEFINITION =========================================================
 
+/** \brief convert a drawMode to a List of the drawmode names
+*
+*/
 DLLEXPORT
-std::vector< QString > drawModeToList(unsigned int _drawMode);
+std::vector< QString > drawModeToList(ACG::SceneGraph::DrawModes::DrawMode _drawMode);
 
+/** \brief convert a drawMode name list to a drawmode
+*
+*/
 DLLEXPORT
-unsigned int ListToDrawMode ( std::vector< QString > _draw_modes );
+ACG::SceneGraph::DrawModes::DrawMode listToDrawMode ( std::vector< QString > _draw_modes );
 
+/** \brief convert a drawMode to a List of the drawmode readable descriptions
+*
+*/
 DLLEXPORT
-std::vector< QString > drawModeToDescriptions(unsigned int _drawMode);
+std::vector< QString > drawModeToDescriptions(ACG::SceneGraph::DrawModes::DrawMode _drawMode);
 
+/** \brief convert a  List of the drawmode readable descriptions to a drawMode
+*
+*/
 DLLEXPORT
-unsigned int descriptionsToDrawMode ( std::vector< QString > _draw_modes );
+ACG::SceneGraph::DrawModes::DrawMode descriptionsToDrawMode ( std::vector< QString > _draw_modes );
 
 //=============================================================================
 #endif // DRAWMODECONVERTER_HH defined

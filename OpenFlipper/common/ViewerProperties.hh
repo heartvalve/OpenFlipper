@@ -64,6 +64,7 @@
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <ACG/Math/VectorT.hh>
 #include <ACG/Scenegraph/SceneGraph.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
 #include <ACG/GL/GLState.hh>
 
 // forward declaration
@@ -100,14 +101,14 @@ namespace Viewer {
 
     public:
       /// set draw mode (No test if this mode is available!)
-      void drawMode(unsigned int _mode) { currentDrawMode_ = _mode; emit updated(); };
+      void drawMode(ACG::SceneGraph::DrawModes::DrawMode _mode) { currentDrawMode_ = _mode; emit updated(); };
       
       /// get current draw mode
-      unsigned int drawMode() { return currentDrawMode_; };
+      ACG::SceneGraph::DrawModes::DrawMode drawMode() { return currentDrawMode_; };
       
     private:
       
-      unsigned int currentDrawMode_;
+      ACG::SceneGraph::DrawModes::DrawMode currentDrawMode_;
 
     /** @} */
       
