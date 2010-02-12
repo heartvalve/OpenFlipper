@@ -86,7 +86,9 @@ enum StatusBits {
 
 
 #include <OpenFlipper/common/BaseObjectData.hh>
+//#include <ACG/Scenegraph/MeshNode2T.hh>
 #include <ACG/Scenegraph/TriStripNodeT.hh>
+
 
 
 
