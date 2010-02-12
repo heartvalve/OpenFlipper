@@ -63,7 +63,7 @@ namespace SceneGraph {
 
 //== IMPLEMENTATION ==========================================================
 
-unsigned int
+DrawModes::DrawMode
 BoundingBoxNode::
 availableDrawModes() const
 {
@@ -79,7 +79,7 @@ BoundingBoxNode::~BoundingBoxNode() {
 
 void
 BoundingBoxNode::
-draw(GLState& /* _state */ , unsigned int _drawMode)
+draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 {
 
   ACG::SceneGraph::BoundingBoxAction act;

@@ -67,7 +67,7 @@ CartesianClippingNode::CartesianClippingNode( BaseNode*           _parent,
 
 
 void
-CartesianClippingNode::enter( GLState & _state, unsigned int /* _drawmode */ )
+CartesianClippingNode::enter( GLState & _state, DrawModes::DrawMode /* _drawmode */ )
 {
   Vec3d eye = _state.eye();
 
@@ -146,7 +146,7 @@ CartesianClippingNode::enter( GLState & _state, unsigned int /* _drawmode */ )
 
 
 void
-CartesianClippingNode::leave( GLState & /* _state */ , unsigned int /* _drawmode */ )
+CartesianClippingNode::leave( GLState & /* _state */ , DrawModes::DrawMode /* _drawmode */ )
 {
   glDisable( GL_CLIP_PLANE0 );
   glDisable( GL_CLIP_PLANE1 );

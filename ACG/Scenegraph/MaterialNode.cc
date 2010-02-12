@@ -95,7 +95,7 @@ MaterialNode::MaterialNode( BaseNode*            _parent,
 //----------------------------------------------------------------------------
 
 
-void MaterialNode::enter(GLState& _state, unsigned int  _drawmode  )
+void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
 {
   if (applyProperties_ & BaseColor)
   {
@@ -227,20 +227,20 @@ void MaterialNode::enter(GLState& _state, unsigned int  _drawmode  )
 
 void MaterialNode::enterPick(GLState& /*_state*/ ,
                              PickTarget /*_target*/,
-                             unsigned int /*_drawMode*/ ) {
+                             DrawModes::DrawMode /*_drawMode*/ ) {
 
 }
 
 void MaterialNode::leavePick(GLState& /*_state*/,
                             PickTarget /*_target*/,
-                            unsigned int /*_drawMode*/ ) {
+                             DrawModes::DrawMode /*_drawMode*/ ) {
 }
 
 
 //----------------------------------------------------------------------------
 
 
-void MaterialNode::leave(GLState& _state, unsigned int _drawmode )
+void MaterialNode::leave(GLState& _state, DrawModes::DrawMode _drawmode )
 {
   if (applyProperties_ & BaseColor)
   {

@@ -88,7 +88,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 //----------------------------------------------------------------------------
 
   
-unsigned int 
+  DrawModes::DrawMode 
 PointNode::
 availableDrawModes() const
 {
@@ -103,7 +103,7 @@ availableDrawModes() const
 
 void
 PointNode::
-draw(GLState& /* _state */ , unsigned int _drawMode)
+draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 {
   glDepthFunc(depthFunc());
 

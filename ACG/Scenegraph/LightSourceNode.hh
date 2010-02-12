@@ -137,9 +137,9 @@ public:
   ACG_CLASSNAME(LightSourceNode);
 
   /// set current Light Sources
-  void enter(GLState& _state, unsigned int _drawmode);
+  void enter(GLState& _state, DrawModes::DrawMode _drawmode);
   /// restores original Light Sources
-  void leave(GLState& _state, unsigned int _drawmode);
+  void leave(GLState& _state, DrawModes::DrawMode _drawmode);
 
   /// enable LightSource _nr
   void enable(GLenum _nr)

@@ -86,7 +86,7 @@ GridNode(BaseNode* _parent, const std::string& _name)
 //-----------------------------------------------------------------------------
 
 
-unsigned int
+DrawModes::DrawMode
 GridNode::availableDrawModes() const
 {
   return ( DrawModes::WIREFRAME           |
@@ -118,7 +118,7 @@ GridNode::pick(GLState& _state, PickTarget _target)
 
 
 void
-GridNode::draw(GLState&  _state  , unsigned int /* _drawMode */ )
+GridNode::draw(GLState&  _state  , DrawModes::DrawMode /* _drawMode */ )
 {
 
   glPushAttrib( GL_LIGHTING_BIT ); // STACK_ATTRIBUTES <- LIGHTING_ATTRIBUTE

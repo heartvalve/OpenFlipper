@@ -82,7 +82,7 @@ CoordFrameNode(BaseNode* _parent, const std::string& _name)
 //-----------------------------------------------------------------------------
 
 
-unsigned int 
+DrawModes::DrawMode
 CoordFrameNode::availableDrawModes() const
 {
   return ( DrawModes::WIREFRAME           |
@@ -105,7 +105,7 @@ CoordFrameNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 
 
 void 
-CoordFrameNode::draw(GLState& /* _state */ , unsigned int /* _drawMode */ )
+CoordFrameNode::draw(GLState& /* _state */ , DrawModes::DrawMode /* _drawMode */ )
 {
   // draw bounding box
 

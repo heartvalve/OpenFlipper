@@ -149,10 +149,10 @@ public:
   }
 
   /// draw the cylinder (if enabled)
-  void draw(GLState& _state, unsigned int _drawMode);
+  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
 
   /// leave node
-  // void leave(GLState& _state, unsigned int _drawMode);
+  // void leave(GLState& _state, DrawModes::DrawMode _drawMode);
 
   /// picking
   void pick(GLState& _state, PickTarget _target);

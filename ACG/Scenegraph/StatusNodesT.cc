@@ -103,7 +103,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 
 
 template <class Mesh, class Mod>
-unsigned int
+DrawModes::DrawMode
 StatusNodeT<Mesh, Mod>::
 availableDrawModes() const
 {
@@ -184,7 +184,7 @@ update_cache()
 template <class Mesh, class Mod>
 void
 StatusNodeT<Mesh, Mod>::
-draw(GLState& /* _state */ , unsigned int _drawMode)
+draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 {
   bool shaded = (_drawMode & ( DrawModes::SOLID_FLAT_SHADED |
 			       DrawModes::SOLID_SMOOTH_SHADED |

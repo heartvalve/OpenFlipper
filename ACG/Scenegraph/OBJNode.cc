@@ -91,7 +91,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 //----------------------------------------------------------------------------
 
   
-unsigned int 
+  DrawModes::DrawMode 
 OBJNode::
 availableDrawModes() const
 {
@@ -108,7 +108,7 @@ availableDrawModes() const
 
 void
 OBJNode::
-draw(GLState& _state, unsigned int _drawMode)
+draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
   if (_drawMode & DrawModes::POINTS)
   {

@@ -96,7 +96,7 @@ availableDrawModes() const
 template <class PolyLine>
 void
 PolyLineNodeT<PolyLine>::
-draw(GLState& /*_state*/, unsigned int _drawMode)
+draw(GLState& /*_state*/, DrawModes::DrawMode _drawMode)
 {
   glDepthFunc(depthFunc());
 

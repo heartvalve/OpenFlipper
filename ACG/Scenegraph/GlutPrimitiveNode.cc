@@ -81,7 +81,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 //----------------------------------------------------------------------------
 
   
-unsigned int 
+DrawModes::DrawMode
 GlutPrimitiveNode::
 availableDrawModes() const
 {
@@ -98,7 +98,7 @@ availableDrawModes() const
 
 void
 GlutPrimitiveNode::
-draw(GLState& _state, unsigned int _drawMode)
+draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
   glDepthFunc(depthFunc());
   glPushMatrix();

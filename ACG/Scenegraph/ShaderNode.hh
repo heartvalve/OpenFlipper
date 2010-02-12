@@ -59,6 +59,7 @@
 #include <string>
 
 #include "../ShaderUtils/GLSLShader.hh"
+#include <ACG/Scenegraph/DrawModes.hh>
 
 //== NAMESPACES ===============================================================
 
@@ -91,14 +92,14 @@ public:
   ACG_CLASSNAME(ShaderNode);
 
   /// set shader
-  void enter(GLState& /*_state*/, unsigned int _drawmode);
+  void enter(GLState& /*_state*/, DrawModes::DrawMode _drawmode);
   /// disable shader
-  void leave(GLState& /*_state*/, unsigned int _drawmode);
+  void leave(GLState& /*_state*/, DrawModes::DrawMode _drawmode);
 
   /// set shader
-  void enterPick(GLState& /*_state*/, PickTarget _target, unsigned int _drawmode);
+  void enterPick(GLState& /*_state*/, PickTarget _target, DrawModes::DrawMode _drawmode);
   /// disable shader
-  void leavePick(GLState& /*_state*/, PickTarget _target, unsigned int _drawmode);
+  void leavePick(GLState& /*_state*/, PickTarget _target, DrawModes::DrawMode _drawmode);
 
 
   /// Sets the shader dir.
@@ -106,9 +107,9 @@ public:
 
   std::string shaderDir() { return shaderDir_; };
 
-  std::string vertexShaderName(unsigned int _drawmode, bool _pick = false);
+  std::string vertexShaderName(DrawModes::DrawMode _drawmode, bool _pick = false);
 
-  std::string fragmentShaderName(unsigned int _drawmode, bool _pick = false);
+  std::string fragmentShaderName(DrawModes::DrawMode _drawmode, bool _pick = false);
 
 
   /** Sets a Shader for this draw Mode
@@ -116,20 +117,20 @@ public:
    * @param _vertexShader filename of the Vertex Shader within the shader directory
    * @param _fragmentShader filename of the Fragment Shader within the shader directory
   */
-  void setShader( unsigned int _drawmode ,
+  void setShader( DrawModes::DrawMode _drawmode ,
                   std::string _vertexShader,
                   std::string _fragmentShader,
                   std::string _pickVertexShader = "",
                   std::string _pickFragmentShader = "");
 
   /// Get the shader for the given drawMode
-  GLSL::PtrProgram getShader( unsigned int _drawmode, bool _pick = false);
+  GLSL::PtrProgram getShader( DrawModes::DrawMode _drawmode, bool _pick = false);
 
   /// Check if a shader is available for the given drawMode
-  bool hasShader( unsigned int _drawmode, bool _pick = false);
+  bool hasShader( DrawModes::DrawMode _drawmode, bool _pick = false);
 
   /// return available draw modes
-  unsigned int availableDrawModes() const;
+  DrawModes::DrawMode availableDrawModes() const;
 
 private :
   // Path to the shaders ( if set ). If empty shaders will not be used.
@@ -159,8 +160,8 @@ private :
     bool                    initialized;
   };
 
-  ShaderInfo shaders[32];
-  ShaderInfo pickShaders[32];
+  std::map< unsigned int, ShaderInfo> shaders;
+  std::map< unsigned int, ShaderInfo> pickShaders;
 };
 
 

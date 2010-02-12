@@ -145,10 +145,10 @@ TriStripNodeT<Mesh>::
 }
 
 template<class Mesh>
-unsigned int
+DrawModes::DrawMode
 TriStripNodeT<Mesh>::
 availableDrawModes() const {
-  unsigned int drawModes(0);
+  DrawModes::DrawMode drawModes(0);
   
   // We can always render points and a wireframe.
   drawModes |= DrawModes::POINTS;
@@ -205,7 +205,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
 template<class Mesh>
 void
 TriStripNodeT<Mesh>::
-draw(GLState& _state, unsigned int _drawMode) {
+draw(GLState& _state, DrawModes::DrawMode _drawMode) {
   
   /// \todo Whats this? Why is this set here
   glDepthFunc(depthFunc());

@@ -74,12 +74,12 @@ QtShaderDialog::QtShaderDialog( QWidget                * _parent,
 {
   ui_.setupUi( this );
   
-  unsigned int drawmode = ACG::SceneGraph::DrawModes::DEFAULT;
+  ACG::SceneGraph::DrawModes::DrawMode drawmode = ACG::SceneGraph::DrawModes::DEFAULT;
   
   while ( drawmode != ACG::SceneGraph::DrawModes::UNUSED )
   {
-    ui_.drawModeBox->addItem( QString(ACG::SceneGraph::DrawModes::description(drawmode).c_str() ));
-    drawmode *= 2 ;
+    ui_.drawModeBox->addItem( QString( drawmode.description().c_str() ) );
+    ++drawmode ;
   }
   
   ui_.shaderDir->setText( QString(_node->shaderDir().c_str()) );

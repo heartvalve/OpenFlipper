@@ -85,10 +85,10 @@ public:
 		    unsigned char * _data );
 
   /// set texture
-  void enter( GLState& _state, unsigned int _drawmode );
+  void enter( GLState& _state, DrawModes::DrawMode _drawmode );
 
   /// restores original texture (or no-texture)
-  void leave( GLState& _state, unsigned int _drawmode );
+  void leave( GLState& _state, DrawModes::DrawMode _drawmode );
 
 
   void set_texture_mode( GLenum _mode )

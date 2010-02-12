@@ -78,7 +78,8 @@ void PlaneNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 
 //----------------------------------------------------------------------------
 
-unsigned int PlaneNode::availableDrawModes() const
+DrawModes::DrawMode
+PlaneNode::availableDrawModes() const
 {
   return ( DrawModes::POINTS |
 	        DrawModes::POINTS_SHADED |
@@ -163,7 +164,7 @@ void PlaneNode::drawPlanePick( GLState&  _state) {
 
 //----------------------------------------------------------------
 
-void PlaneNode::draw(GLState&  _state  , unsigned int /*_drawMode*/)
+void PlaneNode::draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
 {
 
   _state.push_modelview_matrix();

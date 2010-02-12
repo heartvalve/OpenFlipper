@@ -90,11 +90,11 @@ public:
 
   ACG_CLASSNAME( SliceNode );
 
-  unsigned int availableDrawModes() const;
+  DrawModes::DrawMode availableDrawModes() const;
 
   void boundingBox( Vec3d & _bbMin, Vec3d & _bbMax );
 
-  void draw( GLState& _state, unsigned int _drawMode );
+  void draw( GLState& _state, DrawModes::DrawMode _drawMode );
   void draw_frame() const;
   void draw_planes() const;
 

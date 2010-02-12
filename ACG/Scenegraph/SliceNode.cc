@@ -103,7 +103,7 @@ SliceNode::boundingBox( Vec3d & _bbMin, Vec3d & _bbMax )
 //----------------------------------------------------------------------------
 
   
-unsigned int 
+DrawModes::DrawMode 
 SliceNode::availableDrawModes() const
 {
   return 0;
@@ -119,7 +119,7 @@ SliceNode::availableDrawModes() const
 
 
 void
-SliceNode::draw( GLState & /* _state */ , unsigned int /* _drawMode */ )
+SliceNode::draw( GLState & /* _state */ , DrawModes::DrawMode /* _drawMode */ )
 {
   
   if ( is_enabled( NONE ) )

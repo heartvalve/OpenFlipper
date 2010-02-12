@@ -160,7 +160,7 @@ unsigned int
 MeshNodeT<Mesh>::
 availableDrawModes() const
 {
-  unsigned int drawModes(0);
+  DrawModes::DrawMode drawModes(DrawModes::NONE);
 
   drawModes |= DrawModes::POINTS;
   drawModes |= DrawModes::WIREFRAME;
@@ -562,7 +562,7 @@ update_topology()
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-draw(GLState& _state, unsigned int _drawMode)
+draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
   glDepthFunc(depthFunc());
 

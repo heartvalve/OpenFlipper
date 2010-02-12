@@ -56,6 +56,7 @@
 
 #include "../GL/GLState.hh"
 #include "../Scenegraph/SceneGraph.hh"
+#include "../Scenegraph/DrawModes.hh"
 
 #include <QtOpenGL/QGLFormat>
 #include <QBoxLayout>
@@ -442,14 +443,14 @@ public:
 
 
   /// set draw mode (No test if this mode is available!)
-  void drawMode(unsigned int _mode)
+  void drawMode(ACG::SceneGraph::DrawModes::DrawMode _mode)
   {
     curDrawMode_=_mode;
     updatePopupMenu();
   }
 
   /// get current draw mode
-  unsigned int drawMode() { return curDrawMode_; }
+  ACG::SceneGraph::DrawModes::DrawMode drawMode() { return curDrawMode_; }
 
   /// convert current view to text representation
   void encodeView(QString& _view);
@@ -820,8 +821,8 @@ private:
   // scenegraph stuff
   SceneGraph::BaseNode*        sceneGraphRoot_;
 
-  unsigned int                 curDrawMode_,
-                               availDrawModes_;
+  ACG::SceneGraph::DrawModes::DrawMode curDrawMode_,
+                                       availDrawModes_;
 
   bool                         updateLocked_;
   bool                         projectionUpdateLocked_;

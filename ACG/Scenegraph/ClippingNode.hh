@@ -96,10 +96,10 @@ public:
   ACG_CLASSNAME(ClippingNode);
 
   /// set texture
-  void enter(GLState& _state, unsigned int _drawmode);
+  void enter(GLState& _state, DrawModes::DrawMode _drawmode);
 
   /// restores original texture (or no-texture)
-  void leave(GLState& _state, unsigned int _drawmode);
+  void leave(GLState& _state, DrawModes::DrawMode _drawmode);
 
   /// set position and normal of plane
   void set_plane(const Vec3f& _position, const Vec3f& _normal, float _eps=0.0);

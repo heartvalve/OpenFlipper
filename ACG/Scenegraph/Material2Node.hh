@@ -118,9 +118,9 @@ public:
 
 
   /// set current GL-color and GL-material
-  void enter(GLState& _state, unsigned int _drawmode);
+  void enter(GLState& _state, DrawModes::DrawMode _drawmode);
   /// restores original GL-color and GL-material
-  void leave(GLState& _state, unsigned int _drawmode);
+  void leave(GLState& _state, DrawModes::DrawMode _drawmode);
 
   
   /// get properties that will be applied (OR'ed ApplyProperties)

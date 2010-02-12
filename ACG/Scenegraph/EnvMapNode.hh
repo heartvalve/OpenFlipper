@@ -87,21 +87,21 @@ public:
   ACG_CLASSNAME(EnvMapNode);
 
   /// add env mapping
-  unsigned int availableDrawModes() const;
+  DrawModes::DrawMode  availableDrawModes() const;
 
   /// set texture
-  void enter(GLState& _state, unsigned int _drawmode);
+  void enter(GLState& _state, DrawModes::DrawMode _drawmode);
 
   /// restores original texture (or no-texture)
-  void leave(GLState& _state, unsigned int _drawmode);
+  void leave(GLState& _state, DrawModes::DrawMode _drawmode);
 
   /** \brief Do nothing in picking
    */
-  void enterPick(GLState& _state, PickTarget _target, unsigned int _drawMode );
+  void enterPick(GLState& _state, PickTarget _target, DrawModes::DrawMode _drawMode );
 
   /** \brief Do nothing in picking
    */
-  void leavePick(GLState& _state, PickTarget _target, unsigned int _drawMode );
+  void leavePick(GLState& _state, PickTarget _target, DrawModes::DrawMode _drawMode );
 };
 
 

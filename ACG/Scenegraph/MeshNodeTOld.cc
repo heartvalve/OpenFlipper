@@ -104,11 +104,11 @@ MeshNodeT<Mesh>::
 //----------------------------------------------------------------------------
 
 template<class Mesh>
-unsigned int
+DrawModes::DrawMode
 MeshNodeT<Mesh>::
 availableDrawModes() const
 {
-  unsigned int drawModes(0);
+  DrawModes::DrawMode drawModes(DrawModes::NONE);
 
   drawModes |= DrawModes::SOLID_SHADER;
 
@@ -201,7 +201,7 @@ enable_arrays(unsigned int _arrays)
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-draw(GLState& _state, unsigned int _drawMode)
+draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
   glDepthFunc(depthFunc());
 

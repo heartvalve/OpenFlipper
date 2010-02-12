@@ -258,10 +258,10 @@ template <class Action>
 class MetaAction
 {
   public:
-    MetaAction (Action & _action, GLState& _state, unsigned int _drawmode) :
+    MetaAction (Action & _action, GLState& _state, DrawModes::DrawMode _drawMode) :
       action_(_action),
       state_(_state),
-      drawmode_(_drawmode)
+      drawMode_(_drawMode)
     {
     }
 
@@ -272,22 +272,24 @@ class MetaAction
 
     void enter (BaseNode *_node)
     {
-      unsigned int drawmode = ((_node->drawMode() == DrawModes::DEFAULT) ?
-                               drawmode_ : _node->drawMode());
-      _node->enter(state_, drawmode);
+      if ( _node->drawMode() == DrawModes::DEFAULT )
+        _node->enter(state_, drawMode_);  
+      else
+        _node->enter(state_,  _node->drawMode());
     }
 
     void leave (BaseNode *_node)
     {
-      unsigned int drawmode = ((_node->drawMode() == DrawModes::DEFAULT) ?
-                               drawmode_ : _node->drawMode());
-      _node->leave(state_, drawmode);
+      if ( _node->drawMode() == DrawModes::DEFAULT )
+        _node->leave(state_, drawMode_);  
+      else
+        _node->leave(state_,  _node->drawMode());
     }
 
   private:
     Action  &action_;
     GLState &state_;
-    unsigned int drawmode_;
+    DrawModes::DrawMode drawMode_;
 
 };
 
@@ -304,10 +306,10 @@ class MetaAction
 
 template <class Action>
 void
-traverse( BaseNode*     _node,
-	  Action&       _action,
-	  GLState&      _state,
-	  unsigned int  _drawmode=DrawModes::DEFAULT)
+traverse( BaseNode*           _node,
+	  Action&             _action,
+	  GLState&            _state,
+          DrawModes::DrawMode _drawmode=DrawModes::DEFAULT)
 {
     MetaAction<Action> action (_action, _state, _drawmode);
     traverse(_node, action);
@@ -332,10 +334,10 @@ traverse( BaseNode*     _node,
 
 template <class Action>
 void
-traverse_multipass( BaseNode*     _node,
-      Action&       _action,
-      GLState&      _state,
-      unsigned int  _drawmode=DrawModes::DEFAULT)
+traverse_multipass( BaseNode*           _node,
+                    Action&             _action,
+                    GLState&            _state,
+                    DrawModes::DrawMode _drawmode=DrawModes::DEFAULT)
 {
     MetaAction<Action> action (_action, _state, _drawmode);
 
@@ -578,7 +580,7 @@ class CollectDrawModesAction
 {
 public:
 
-  CollectDrawModesAction() : drawModes_(0) {}
+  CollectDrawModesAction() : drawModes_(DrawModes::NONE) {}
 
   bool operator()(BaseNode* _node)
   {
@@ -587,11 +589,11 @@ public:
   }
 
   /// Get the collected draw modes
-  unsigned int drawModes() const { return drawModes_; }
+  DrawModes::DrawMode drawModes() const { return drawModes_; }
 
 private:
 
-  unsigned int drawModes_;
+  DrawModes::DrawMode drawModes_;
 };
 
 //----------------------------------------------------------------------------
@@ -609,7 +611,7 @@ class CollectActiveDrawModesAction
 {
 public:
 
-  CollectActiveDrawModesAction() : drawMode_(0) {}
+  CollectActiveDrawModesAction() : drawMode_(DrawModes::NONE) {}
 
   bool operator()(BaseNode* _node)
   {
@@ -618,11 +620,11 @@ public:
   }
 
   /// Get the collected draw modes
-  unsigned int drawMode() const { return drawMode_; }
+  DrawModes::DrawMode drawMode() const { return drawMode_; }
 
 private:
 
-  unsigned int drawMode_;
+  DrawModes::DrawMode drawMode_;
 };
 
 //----------------------------------------------------------------------------
@@ -641,14 +643,14 @@ class SetDrawModesAction
 {
 public:
 
-  SetDrawModesAction(unsigned int _mode) : newModes_(_mode) {}
+  SetDrawModesAction(DrawModes::DrawMode _mode) : newModes_(_mode) {}
 
   bool operator()(BaseNode* _node)
   {
     if ( newModes_ == DrawModes::DEFAULT )
       _node->drawMode( DrawModes::DEFAULT );
 
-    unsigned int availableModes = _node->availableDrawModes();
+    DrawModes::DrawMode availableModes = _node->availableDrawModes();
 
     if ( availableModes & newModes_ )
       _node->drawMode( availableModes & newModes_ );
@@ -659,7 +661,7 @@ public:
   }
 
 private:
-  unsigned int newModes_;
+  DrawModes::DrawMode newModes_;
 };
 
 
@@ -680,7 +682,7 @@ class DrawAction
 public:
 
   /// Constructor: draws the scenegraph using _drawMode
-  DrawAction(unsigned int _drawMode, bool _blending)
+  DrawAction(DrawModes::DrawMode _drawMode, bool _blending)
     : drawMode_(_drawMode), blending_(_blending) {}
 
   bool operator()(BaseNode* _node, GLState& _state)
@@ -699,8 +701,8 @@ public:
 
 private:
 
-  unsigned int drawMode_;
-  bool         blending_;
+  DrawModes::DrawMode drawMode_;
+  bool                blending_;
 };
 
 
@@ -720,7 +722,7 @@ class ACGDLLEXPORT PickAction
 public:
 
   /// constructor: what picking target to use
-  PickAction(GLState &_state, PickTarget _target, unsigned int _drawmode) :
+  PickAction(GLState &_state, PickTarget _target, DrawModes::DrawMode _drawmode) :
     state_(_state),
     pickTarget_(_target),
     drawmode_(_drawmode) {}
@@ -752,9 +754,9 @@ public:
 
 private:
 
-  GLState      &state_;
-  PickTarget   pickTarget_;
-  unsigned int drawmode_;
+  GLState             &state_;
+  PickTarget          pickTarget_;
+  DrawModes::DrawMode drawmode_;
 };
 
 
