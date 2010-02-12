@@ -404,7 +404,7 @@ bool FileOMPlugin::saveObject(int _id, QString _filename)
     if ( object->dataType( DATA_POLY_MESH ) ) {
         
         object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-        object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+        object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
         
         PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
         
@@ -418,7 +418,7 @@ bool FileOMPlugin::saveObject(int _id, QString _filename)
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
         
         object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-        object->path(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+        object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
         
         TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
         
