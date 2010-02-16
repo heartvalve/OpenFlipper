@@ -437,7 +437,7 @@ void
 TriStripNodeT<Mesh>::
 draw_vertices() {
   if ( !vertexBufferInitialized_ )
-    std::cerr << "Error! Uninitialized vertex buffer in draw call! " << std::endl;
+    return;
 
   glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
 }
@@ -452,8 +452,8 @@ draw_lines() {
     // Check if array is set up correctly
     if ( lineIndexBufferInitialized_ )
       glDrawElements(GL_LINES, mesh_.n_edges() * 2, GL_UNSIGNED_INT, 0 );
-    else
-      std::cerr << "Error! Uninitialized Line buffer in draw call! " << std::endl;
+    else 
+      return;
     
   // If we are rendering per edge per vertex attributes, we need to use a seperated vertex buffer!
   else if ( enabled_arrays_ & PER_EDGE_VERTEX_ARRAY )
@@ -534,10 +534,7 @@ enable_arrays(unsigned int _arrays) {
   //===================================================================
   
   // Check if we should enable the vertex array
-  if (_arrays & VERTEX_ARRAY) {
-    
-    if ( !vertexBufferInitialized_ )
-      std::cerr << "Error! Uninitialized vertex buffer! " << std::endl;
+  if ( (_arrays & VERTEX_ARRAY ) && vertexBufferInitialized_ ) {
     
     // Check if its already enabled
     if (!(enabled_arrays_ & VERTEX_ARRAY)) {
@@ -564,10 +561,7 @@ enable_arrays(unsigned int _arrays) {
   //===================================================================
   
   // Check if we should enable the normal array
-  if ( mesh_.has_vertex_normals() && ( _arrays & NORMAL_VERTEX_ARRAY ) ) {
-    
-    if ( !normalVertexBufferInitialized_ )
-      std::cerr << "Error! Uninitialized normal buffer! " << std::endl;
+  if ( mesh_.has_vertex_normals() && ( _arrays & NORMAL_VERTEX_ARRAY ) && normalVertexBufferInitialized_ ) {
     
     // Check if its already enabled
     if (!(enabled_arrays_ & NORMAL_VERTEX_ARRAY)) {
