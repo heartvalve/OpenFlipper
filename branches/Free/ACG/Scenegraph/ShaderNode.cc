@@ -267,7 +267,6 @@ setShader( DrawModes::DrawMode _drawmode ,
            std::string _pickVertexShader,
            std::string _pickFragmentShader) {
 
-  std::cerr << "ShaderNode setShader " << _drawmode.description() <<  std::endl;
   // OpenGl 2.0 is needed for GLSL support
   if (!glewIsSupported("GL_VERSION_2_0")) {
     std::cerr << "No shader support... unable to load shaders!" << std::endl;
