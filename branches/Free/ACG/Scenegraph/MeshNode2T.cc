@@ -148,7 +148,7 @@ template<class Mesh>
 DrawModes::DrawMode
 TriStripNodeT<Mesh>::
 availableDrawModes() const {
-  DrawModes::DrawMode drawModes(0);
+  DrawModes::DrawMode drawModes(DrawModes::NONE);
   
   // We can always render points and a wireframe.
   drawModes |= DrawModes::POINTS;
