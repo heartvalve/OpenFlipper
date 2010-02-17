@@ -158,6 +158,9 @@ BaseObject::~BaseObject() {
   
   PluginFunctions::decreaseObjectCount();
   
+  if ( target() )
+    PluginFunctions::decreaseTargetCount();
+  
   objectManager_.objectDeleted(id());
 
 }
