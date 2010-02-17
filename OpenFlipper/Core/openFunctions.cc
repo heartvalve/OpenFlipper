@@ -418,7 +418,7 @@ void Core::slotLoad(QString _filename, int _pluginID) {
         group = dynamic_cast< GroupObject* > (baseObj);
 
         if (group)
-          type = DATA_UNKNOWN;
+          type = DATA_GROUP;
       }
       
       if ( group == 0 ){
