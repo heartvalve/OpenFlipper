@@ -101,7 +101,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   connect(headerSelect, SIGNAL(currentIndexChanged(int)),
           this, SLOT(slotPreviewStereoSettings(int)));
 
-  uint mode = 2;
+  ACG::SceneGraph::DrawModes::ModeFlagSet mode(2);
   for (uint i=1; i < 22; i++) {
     std::vector< QString > dm = drawModeToDescriptions( mode );
 
@@ -120,7 +120,7 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 
   for ( int i=0; i < PluginFunctions::viewers(); i++ ){
     viewerList->addItem("Viewer " + QString::number(i+1) );
-    defaultDrawModes_.push_back( 0 );
+    defaultDrawModes_.push_back( ACG::SceneGraph::DrawModes::DEFAULT );
     defaultProjectionMode_.push_back( 0 );
     defaultViewingDirections_.push_back( 0 );
   }

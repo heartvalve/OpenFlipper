@@ -52,6 +52,7 @@
 #include <QtNetwork>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
+#include <ACG/Scenegraph/DrawModes.hh>
 
 //map for keyBindings
 typedef std::multimap< std::pair< QObject*, int >, std::pair< int, Qt::KeyboardModifiers > > InverseKeyMap;
@@ -166,7 +167,7 @@ private:
    } downloadType;
 
   // remember changes to viewer properties
-  std::vector< uint > defaultDrawModes_;
+  std::vector< ACG::SceneGraph::DrawModes::DrawMode > defaultDrawModes_;
   std::vector< int >  defaultProjectionMode_;
   std::vector< int >  defaultViewingDirections_;
 
