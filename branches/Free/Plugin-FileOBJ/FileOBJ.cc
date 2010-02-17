@@ -94,7 +94,7 @@ QString FileOBJPlugin::getSaveFilters() {
 //-----------------------------------------------------------------------------------------------------
 
 DataType  FileOBJPlugin::supportedType() {
-    DataType type = DATA_POLY_MESH | DATA_TRIANGLE_MESH;
+    DataType type = DATA_POLY_MESH | DATA_TRIANGLE_MESH | DATA_GROUP;
     
     #ifdef ENABLE_BSPLINECURVE_SUPPORT
       type |= DATA_BSPLINE_CURVE;
