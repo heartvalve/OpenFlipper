@@ -35,10 +35,10 @@
 #ifndef OPENFLIPPERJOBINFO_HH
 #define OPENFLIPPERJOBINFO_HH
 
-#include <QProgressDialog>
-
 #include <OpenFlipper/common/GlobalDefines.hh>
 
+#include <QString>
+ 
 /** \brief Job Information class
 *
 * This class stores information about currently running tasks in OpenFlipper
@@ -48,13 +48,12 @@ class DLLEXPORT JobInfo {
     JobInfo();
     
   public:
-    QString jobId;
+    QString id;
     QString description;
-    int currentState;
-    int min;
-    int max;
+    int currentStep;
+    int minSteps;
+    int maxSteps;
     bool blocking;
-    QProgressDialog* progressDialog;
 };
 
 

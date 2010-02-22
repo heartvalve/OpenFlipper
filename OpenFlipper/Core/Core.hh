@@ -99,6 +99,9 @@
 
 #include <OpenFlipper/widgets/coreWidget/CoreWidget.hh>
 
+// Process manager widget
+#include <OpenFlipper/widgets/processManagerWidget/processManagerWidget.hh>
+
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 #include <OpenFlipper/Core/PluginInfo.hh>
@@ -968,6 +971,8 @@ private slots:
     
     QList< JobInfo* >  currentJobs;
     
+    ProcessManagerWidget* processManager_;
+    
     /// Find a job in the jobslist
     bool getJob(QString _jobId, int& _index);
     
@@ -979,6 +984,12 @@ private slots:
     /// A job state has been updated by a plugin
     void slotSetJobState(QString _jobId, int _value );
     
+    /// A job's widget caption has been updated by a plugin
+    void slotSetJobName(QString _jobId, QString _name );
+    
+    /// A job's widget's status text has been updated by a plugin
+    void slotSetJobDescription(QString _jobId, QString _text );
+    
     /// A job state has been canceled by a plugin
     void slotCancelJob(QString _jobId );
     
@@ -986,7 +997,7 @@ private slots:
     void slotFinishJob(QString _jobId );
     
     /// Called by dialogs if cancel button is pressed
-    void slotJobCancelButtons();
+    void slotJobCancelRequested(QString _jobId);
     
   signals:
     

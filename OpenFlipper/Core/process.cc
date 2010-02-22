@@ -61,34 +61,36 @@
 void Core::slotStartJob( QString _jobId, QString _description , int _min , int _max, bool _blocking) {
   std::cerr << "StartJob: " << _jobId.toStdString() << " " << _description.toStdString() << " " << _min << " " << _max  << " " << _blocking <<std::endl;
   
-  JobInfo* info        = new JobInfo();
-  info->jobId          = _jobId;
-  info->description    = _description;
-  info->min            = _min;
-  info->max            = _max;
-  info->blocking       = _blocking;
-  info->progressDialog = new QProgressDialog(coreWidget_);
-  info->progressDialog->setLabelText(_description);
-  info->progressDialog->setMinimum(_min);
-  info->progressDialog->setMaximum(_max);
-  info->progressDialog->setValue(_min);
-  info->progressDialog->resize(300,130);
-  info->progressDialog->setMinimumDuration(1);
-  if ( _blocking )
-    info->progressDialog->setWindowModality(Qt::WindowModal);
+  // Create process manager window if it has not been created before
+  if(!processManager_) {
+      processManager_ = new ProcessManagerWidget();
+      
+      // Connect cancel buttons to local slot for further treatment
+      connect(processManager_, SIGNAL(cancelJobRequested(QString)),
+              this,            SLOT(slotJobCancelRequested(QString)));
+  }
+  // Add new item
+  processManager_->addJob(_jobId, _description, _min, _max);
   
-  connect( info->progressDialog, SIGNAL(canceled()),
-           this,SLOT(slotJobCancelButtons()));
+  // Show window
+  processManager_->show();
+  
+  JobInfo* info        = new JobInfo();
+  info->id             = _jobId;
+  info->description    = _description;
+  info->currentStep    =  0;
+  info->minSteps       = _min;
+  info->maxSteps       = _max;
+  info->blocking       = _blocking;
   
   currentJobs.push_back(info);
-  
 }
 
 //-----------------------------------------------------------------------------
 bool Core::getJob(QString _jobId, int& _index) {
   
   for ( int i = 0 ; i < currentJobs.size() ; ++i) {
-      if ( currentJobs[i]->jobId == _jobId ) {
+      if ( currentJobs[i]->id == _jobId ) {
         _index = i;
         return true;
       }
@@ -106,9 +108,32 @@ void Core::slotSetJobState(QString _jobId, int _value ) {
   int id;
   
   if (  getJob(_jobId, id) ) {
-    currentJobs[id]->currentState = _value;
-    currentJobs[id]->progressDialog->setValue(_value);
+    currentJobs[id]->currentStep = _value;
+    processManager_->updateStatus(_jobId, _value);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+// A job's caption has been updated by a plugin
+void Core::slotSetJobName(QString _jobId, QString _name ) {
+    int id;
+    
+    if (  getJob(_jobId, id) ) {
+        currentJobs[id]->id = _name;
+        processManager_->setJobName(_jobId, _name);
+    }
+}
+//-----------------------------------------------------------------------------
+
+// A job's widget's status text has been updated by a plugin
+void Core::slotSetJobDescription(QString _jobId, QString _text ) {
+    int id;
+    
+    if (  getJob(_jobId, id) ) {
+        currentJobs[id]->description = _text;
+        processManager_->setJobDescription(_jobId, _text);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -118,9 +143,7 @@ void Core::slotCancelJob(QString _jobId ) {
   int id;
   
   if (  getJob(_jobId, id) ) {
-    currentJobs[id]->progressDialog->reset();
-    currentJobs[id]->progressDialog->hide();
-    delete currentJobs[id]->progressDialog;
+    processManager_->removeJob(_jobId);
     currentJobs.removeAt(id);
   }
 }
@@ -132,25 +155,18 @@ void Core::slotFinishJob(QString _jobId ) {
   int id;
   
   if (  getJob(_jobId, id) ) {
-    currentJobs[id]->progressDialog->reset();
-    currentJobs[id]->progressDialog->hide();
-    delete currentJobs[id]->progressDialog;
+    processManager_->removeJob(_jobId);
     currentJobs.removeAt(id);
   }
 }
 
-// The user canceled a job
-void Core::slotJobCancelButtons( ) {
-  for ( int i = 0 ; i < currentJobs.size() ; ++i) {
-    if ( currentJobs[i]->progressDialog == sender() ) {
-      QString id = currentJobs[i]->jobId;
-      slotCancelJob(id);
-      emit jobCanceled( id );
-    }
-  }
+//-----------------------------------------------------------------------------
+
+// A job has shall be canceled since the user pushed
+// the cancel button
+void Core::slotJobCancelRequested(QString /*_jobId*/) {
+    
+    // Cancel job still to be implemented...
 }
-
-
-
 
 //=============================================================================

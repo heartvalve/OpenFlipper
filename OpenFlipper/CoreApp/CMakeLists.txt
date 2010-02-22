@@ -52,6 +52,7 @@ set (directories
   ../widgets/loggerWidget
   ../widgets/coreWidget 
   ../widgets/helpWidget
+  ../widgets/processManagerWidget
   ../widgets/loadWidget
   ../widgets/optionsWidget
   ../widgets/PluginDialog

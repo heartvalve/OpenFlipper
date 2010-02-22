@@ -37,11 +37,8 @@
 
 #include <QThread>
 #include <QMutex>
-#include <QProgressDialog>
 
 #include <OpenFlipper/common/GlobalDefines.hh>
-
-
 
 class OpenFlipperJob;
 

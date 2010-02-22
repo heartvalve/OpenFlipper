@@ -990,7 +990,19 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(plugin      , SIGNAL(setJobState(QString,int)),
                 this , SLOT( slotSetJobState(QString,int) ) ,Qt::DirectConnection );
       else
-        emit log(LOGERR,"Process Interface defined but no setJobState signal found!");  
+        emit log(LOGERR,"Process Interface defined but no setJobState signal found!");
+      
+      if ( checkSignal(plugin,"setJobName(QString,QString)" ) )
+        connect(plugin ,      SIGNAL(setJobName(QString, QString)),
+                this , SLOT( slotSetJobName(QString, QString) ) ,Qt::DirectConnection );
+      else
+        emit log(LOGERR,"Process Interface defined but no setJobName signal found!");
+      
+      if ( checkSignal(plugin,"setJobDescription(QString,QString)" ) )
+        connect(plugin ,      SIGNAL(setJobDescription(QString, QString)),
+                this , SLOT( slotSetJobDescription(QString, QString) ) ,Qt::DirectConnection );
+      else
+        emit log(LOGERR,"Process Interface defined but no setJobDescription signal found!");  
                 
       if ( checkSignal(plugin,"cancelJob(QString)" ) )
         connect(plugin      , SIGNAL(cancelJob(QString)),
