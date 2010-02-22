@@ -136,11 +136,12 @@ void ProcessManagerWidget::addJob(QString _id, QString _description,
     
     QTableWidgetItem* name      = new QTableWidgetItem(_id);
     QTableWidgetItem* desc      = new QTableWidgetItem(_description);
-    JobCancelButton* button     = new JobCancelButton("Cancel", _id);
-    QProgressBar* progressBar   = new QProgressBar();
+    JobCancelButton* button     = new JobCancelButton("Cancel", _id, this->processList);
+    QProgressBar* progressBar   = new QProgressBar(this->processList);
     progressBar->setMaximum(_maxSteps);
     progressBar->setMinimum(_minSteps);
     progressBar->setValue(0);
+    progressBar->setTextVisible(true);
     
     // Connect cancel button to event handler
     connect(button, SIGNAL(pressed()), this, SLOT(cancelButtonPressed()));
@@ -197,12 +198,6 @@ void ProcessManagerWidget::removeJob(QString _id) {
     if(!found) return;
     
     this->processList->removeRow(job.row);
-    
-    // Delete widget items
-    delete job.id;
-    delete job.description;
-    delete job.progress;
-    delete job.button;
     
     // Remove from local map
     processMap_.erase(_id);
