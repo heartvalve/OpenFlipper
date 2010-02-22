@@ -120,6 +120,7 @@ Core::
 Core() :
   QObject(),
   capture_(false),
+  processManager_(0),
   nextBackupId_(0),
   objectRoot_(0),
   coreWidget_(0)

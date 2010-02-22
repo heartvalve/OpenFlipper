@@ -35,12 +35,11 @@
 
 
 JobInfo::JobInfo() :
-  jobId(""),
+  id(""),
   description(""),
-  currentState(0),
-  min(0),
-  max(100),
-  blocking(false),
-  progressDialog(0)
+  currentStep(0),
+  minSteps(0),
+  maxSteps(100),
+  blocking(false)
 {
 }

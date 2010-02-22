@@ -104,6 +104,22 @@ class ProcessInterface {
       */
       virtual void setJobState(QString /*_jobId*/, int /*_value*/ ) {};
       
+      /** \brief update job's name
+      *
+      * Emit this signal to tell the core to change a job's name.
+      *
+      * _caption The new name of the job
+      */
+      virtual void setJobName(QString /*_jobId*/, QString /*_name*/ ) {};
+      
+      /** \brief update job's description text
+      *
+      * Emit this signal to tell the core to change a job's widget's description.
+      *
+      * _text The text of the job's description
+      */
+      virtual void setJobDescription(QString /*_jobId*/, QString /*_text*/ ) {};
+      
       /** \brief Cancel your job
       */
       virtual void cancelJob(QString /*_jobId*/ ) {};
