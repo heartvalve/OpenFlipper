@@ -38,6 +38,7 @@
 #include <OpenFlipper/common/GlobalDefines.hh>
 
 #include <QString>
+#include <QWidget>
  
 /** \brief Job Information class
 *
@@ -54,6 +55,7 @@ class DLLEXPORT JobInfo {
     int minSteps;
     int maxSteps;
     bool blocking;
+    QWidget* blockingWidget;
 };
 
 
