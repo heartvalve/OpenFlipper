@@ -82,7 +82,7 @@ void Core::slotStartJob( QString _jobId, QString _description , int _min , int _
 	  BlockingWidget* widget = new BlockingWidget(_jobId, _description,
 			  _min, _max);
 
-	  // Connect cancel buttons to local slot for further treatment
+	  // Connect cancel button to local slot for further treatment
 	  connect(widget, 	SIGNAL(cancelRequested(QString)),
 	  		  this,     SLOT(slotJobCancelRequested(QString)));
 
@@ -239,8 +239,7 @@ void Core::slotFinishJob(QString _jobId ) {
 
 //-----------------------------------------------------------------------------
 
-// A job has shall be canceled since the user pushed
-// the cancel button
+// A job will be canceled by user request
 void Core::slotJobCancelRequested(QString /*_jobId*/) {
     
     // Cancel job still to be implemented...
