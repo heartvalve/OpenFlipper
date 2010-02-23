@@ -163,7 +163,7 @@ bool FileOBJPlugin::readMaterial(QString _filename, OBJImporter& _importer)
 
     stream >> keyWrd;
 
-    if( ( isspace(line[0]) && line[0] != 0x09 /*tab*/ ) || line[0] == '#' )
+    if( ( isspace(line[0]) && line[0] != '\t' ) || line[0] == '#' )
     {
       if (insideDefintion && !matName.empty() && mat.is_valid())
       {
