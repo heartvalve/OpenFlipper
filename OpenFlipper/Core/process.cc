@@ -54,27 +54,16 @@
 
 #include "Core.hh"
 
+#include <OpenFlipper/widgets/processManagerWidget/BlockingWidget.hh>
+
 //== IMPLEMENTATION ==========================================================
 
 
 // A job has been started by a plugin
 void Core::slotStartJob( QString _jobId, QString _description , int _min , int _max, bool _blocking) {
   std::cerr << "StartJob: " << _jobId.toStdString() << " " << _description.toStdString() << " " << _min << " " << _max  << " " << _blocking <<std::endl;
-  
-  // Create process manager window if it has not been created before
-  if(!processManager_) {
-      processManager_ = new ProcessManagerWidget();
-      
-      // Connect cancel buttons to local slot for further treatment
-      connect(processManager_, SIGNAL(cancelJobRequested(QString)),
-              this,            SLOT(slotJobCancelRequested(QString)));
-  }
-  // Add new item
-  processManager_->addJob(_jobId, _description, _min, _max);
-  
-  // Show window
-  processManager_->show();
-  
+
+  // Create job information
   JobInfo* info        = new JobInfo();
   info->id             = _jobId;
   info->description    = _description;
@@ -82,8 +71,42 @@ void Core::slotStartJob( QString _jobId, QString _description , int _min , int _
   info->minSteps       = _min;
   info->maxSteps       = _max;
   info->blocking       = _blocking;
-  
+
+  // Add job to local job list
   currentJobs.push_back(info);
+
+  // Don't show process status in process manager
+  // if blocking is enabled
+  if(_blocking) {
+	  // Create blocking widget
+	  BlockingWidget* widget = new BlockingWidget(_jobId, _description,
+			  _min, _max);
+
+	  // Connect cancel buttons to local slot for further treatment
+	  connect(widget, 	SIGNAL(cancelRequested(QString)),
+	  		  this,     SLOT(slotJobCancelRequested(QString)));
+
+	  info->blockingWidget = widget;
+
+	  // Show blocking widget
+	  widget->show();
+
+  } else {
+	  // Create process manager window if it has not been created before
+	  if(!processManager_) {
+		  processManager_ = new ProcessManagerWidget();
+      
+		  // Connect cancel buttons to local slot for further treatment
+		  connect(processManager_, SIGNAL(cancelJobRequested(QString)),
+				  this,            SLOT(slotJobCancelRequested(QString)));
+	  }
+
+	  // Add new item
+	  processManager_->addJob(_jobId, _description, _min, _max);
+
+	  // Show window
+	  processManager_->show();
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -109,7 +132,17 @@ void Core::slotSetJobState(QString _jobId, int _value ) {
   
   if (  getJob(_jobId, id) ) {
     currentJobs[id]->currentStep = _value;
-    processManager_->updateStatus(_jobId, _value);
+
+    // Update gui
+    if(!currentJobs[id]->blocking)
+    	processManager_->updateStatus(_jobId, _value);
+    else {
+    	BlockingWidget* w = 0;
+    	w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+    	if(w != 0) {
+    		w->updateStatus(_value);
+    	}
+    }
   }
 }
 
@@ -121,7 +154,17 @@ void Core::slotSetJobName(QString _jobId, QString _name ) {
     
     if (  getJob(_jobId, id) ) {
         currentJobs[id]->id = _name;
-        processManager_->setJobName(_jobId, _name);
+
+        // Update gui
+        if(!currentJobs[id]->blocking)
+        	processManager_->setJobName(_jobId, _name);
+        else {
+           	BlockingWidget* w = 0;
+           	w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+           	if(w != 0) {
+           		w->setJobId(_name);
+           	}
+        }
     }
 }
 //-----------------------------------------------------------------------------
@@ -132,7 +175,17 @@ void Core::slotSetJobDescription(QString _jobId, QString _text ) {
     
     if (  getJob(_jobId, id) ) {
         currentJobs[id]->description = _text;
-        processManager_->setJobDescription(_jobId, _text);
+
+        // Update gui
+        if(!currentJobs[id]->blocking)
+        	processManager_->setJobDescription(_jobId, _text);
+        else {
+           	BlockingWidget* w = 0;
+           	w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+            if(w != 0) {
+            	w->setJobDescription(_text);
+            }
+        }
     }
 }
 
@@ -143,8 +196,20 @@ void Core::slotCancelJob(QString _jobId ) {
   int id;
   
   if (  getJob(_jobId, id) ) {
-    processManager_->removeJob(_jobId);
-    currentJobs.removeAt(id);
+
+	// Update gui
+	if(!currentJobs[id]->blocking)
+		processManager_->removeJob(_jobId);
+	else {
+		BlockingWidget* w = 0;
+		w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+		if(w != 0) {
+			w->hide();
+			delete w;
+		}
+	}
+
+	currentJobs.removeAt(id);
   }
 }
 
@@ -155,7 +220,19 @@ void Core::slotFinishJob(QString _jobId ) {
   int id;
   
   if (  getJob(_jobId, id) ) {
-    processManager_->removeJob(_jobId);
+
+	// Update gui
+	if(!currentJobs[id]->blocking)
+		processManager_->removeJob(_jobId);
+	else {
+		BlockingWidget* w = 0;
+		w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
+		if(w != 0) {
+			w->hide();
+			delete w;
+		}
+	}
+
     currentJobs.removeAt(id);
   }
 }
@@ -167,6 +244,7 @@ void Core::slotFinishJob(QString _jobId ) {
 void Core::slotJobCancelRequested(QString /*_jobId*/) {
     
     // Cancel job still to be implemented...
+	std::cerr << "Cancel requested!" << std::endl;
 }
 
 //=============================================================================

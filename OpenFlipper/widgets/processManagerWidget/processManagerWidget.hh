@@ -69,7 +69,7 @@ public:
     // Set job's id
     void setJobId(const QString& _jobId) { jobId_ = _jobId; };
     
-    // Set job's id
+    // Get job's id
     QString jobId() { return jobId_; }
 
 private:
@@ -89,11 +89,6 @@ class ProcessManagerWidget : public QWidget, public Ui::ProcessManagerWidget
     ProcessManagerWidget(QWidget* parent = 0) : QWidget(parent) {
         
         setupUi(this);
-
-        /*itemModel_ = new ProcessItemModel();
-        
-        // set model
-        this->processList->setModel(itemModel_);*/
     };
 
     virtual ~ProcessManagerWidget() {};

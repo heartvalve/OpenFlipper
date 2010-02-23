@@ -40,6 +40,7 @@ JobInfo::JobInfo() :
   currentStep(0),
   minSteps(0),
   maxSteps(100),
-  blocking(false)
+  blocking(false),
+  blockingWidget(0)
 {
 }
