@@ -982,35 +982,35 @@ void Core::loadPlugin(QString filename, bool silent){
 
       if ( checkSignal(plugin,"startJob(QString,QString,int,int,bool)" ) )
         connect(plugin      , SIGNAL(startJob(QString, QString,int,int,bool)),
-                this , SLOT( slotStartJob(QString, QString,int,int,bool) ) ,Qt::DirectConnection );
+                this , SLOT( slotStartJob(QString, QString,int,int,bool) ), Qt::DirectConnection );
       else
         emit log(LOGERR,"Process Interface defined but no startJob signal found!");  
                 
       if ( checkSignal(plugin,"setJobState(QString,int)" ) )
         connect(plugin      , SIGNAL(setJobState(QString,int)),
-                this , SLOT( slotSetJobState(QString,int) ) ,Qt::DirectConnection );
+                this , SLOT( slotSetJobState(QString,int) ), Qt::QueuedConnection );
       else
         emit log(LOGERR,"Process Interface defined but no setJobState signal found!");
       
       if ( checkSignal(plugin,"setJobName(QString,QString)" ) )
         connect(plugin ,      SIGNAL(setJobName(QString, QString)),
-                this , SLOT( slotSetJobName(QString, QString) ) ,Qt::DirectConnection );
+                this , SLOT( slotSetJobName(QString, QString) ), Qt::QueuedConnection );
       else
         emit log(LOGERR,"Process Interface defined but no setJobName signal found!");
       
       if ( checkSignal(plugin,"setJobDescription(QString,QString)" ) )
         connect(plugin ,      SIGNAL(setJobDescription(QString, QString)),
-                this , SLOT( slotSetJobDescription(QString, QString) ) ,Qt::DirectConnection );
+                this , SLOT( slotSetJobDescription(QString, QString) ), Qt::QueuedConnection );
       else
         emit log(LOGERR,"Process Interface defined but no setJobDescription signal found!");  
                 
       if ( checkSignal(plugin,"cancelJob(QString)" ) )
         connect(plugin      , SIGNAL(cancelJob(QString)),
-                this , SLOT( slotCancelJob(QString) ) ,Qt::DirectConnection );
+                this , SLOT( slotCancelJob(QString) ), Qt::QueuedConnection );
                 
       if ( checkSignal(plugin,"finishJob(QString)" ) )
         connect(plugin      , SIGNAL(finishJob(QString)),
-                this , SLOT( slotFinishJob(QString) ) ,Qt::DirectConnection ); 
+                this , SLOT( slotFinishJob(QString) ), Qt::DirectConnection );
       else
         emit log(LOGERR,"Process Interface defined but no finishJob signal found!");                
                 
