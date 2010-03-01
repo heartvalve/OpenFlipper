@@ -242,7 +242,7 @@
 
     shaderNode_  = new ACG::SceneGraph::ShaderNode(textureNode() , "NEW ShaderNode for ");
 
-    meshNode_    = new ACG::SceneGraph::TriStripNodeT<MeshT>(*mesh_, shaderNode_, "NEW MeshNode");
+    meshNode_    = new ACG::SceneGraph::MeshNodeT<MeshT>(*mesh_, shaderNode_, "NEW MeshNode");
 
     QString shaderDir = OpenFlipper::Options::shaderDirStr() +
                         OpenFlipper::Options::dirSeparator();
@@ -375,7 +375,7 @@
   void MeshObject< MeshT >::updateTopology() {
     if ( meshNode_ ) {
       meshNode_->update_topology();
-      meshNode_->update_strips();
+//       meshNode_->update_strips();
     }
     invalidateTriangleBsp();
   }
@@ -476,7 +476,7 @@
   * @return Pointer to the mesh node
   */
   template < class MeshT  >
-  ACG::SceneGraph::TriStripNodeT<MeshT>* MeshObject< MeshT >::meshNode() {
+  ACG::SceneGraph::MeshNodeT<MeshT>* MeshObject< MeshT >::meshNode() {
     return meshNode_;
   }
 
