@@ -87,7 +87,7 @@ namespace DrawModes {
 
   typedef std::bitset<64> ModeFlagSet;
 
-  class DrawMode {
+  class ACGDLLEXPORT DrawMode {
     public:
       
       DrawMode(); 

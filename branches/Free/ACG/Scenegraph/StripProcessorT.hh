@@ -56,6 +56,8 @@
 #include <OpenMesh/Core/Utils/Property.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
+#include "../Config/ACGDefines.hh"
+
 #include <ACG/GL/GLState.hh>
 
 //== FORWARDDECLARATIONS ======================================================
@@ -72,7 +74,7 @@ namespace SceneGraph {
 /** \brief class for managing a single triangle strip.
 *
 */
-class Strip {
+class ACGDLLEXPORT Strip {
   
 public:
     
@@ -91,9 +93,9 @@ public:
 };
 
 /// Compare function for sorting Strips depending on their texture index
-bool stripTextureCompare(const Strip& i,const Strip& j);
+bool ACGDLLEXPORT stripTextureCompare(const Strip& i,const Strip& j);
 
-class TextureRenderInfo {
+class ACGDLLEXPORT TextureRenderInfo {
   public:
   TextureRenderInfo(int _textureId,int _faceCount,int _startOffset):
   textureId(_textureId),
