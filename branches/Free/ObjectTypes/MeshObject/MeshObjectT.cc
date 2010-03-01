@@ -373,10 +373,8 @@
   /** Updates the topology information in the mesh scenegraph node */
   template < class MeshT  >
   void MeshObject< MeshT >::updateTopology() {
-    if ( meshNode_ ) {
+    if ( meshNode_ ) 
       meshNode_->update_topology();
-//       meshNode_->update_strips();
-    }
     invalidateTriangleBsp();
   }
 
