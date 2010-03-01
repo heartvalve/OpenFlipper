@@ -11,8 +11,8 @@
  * <ul>
  * <li> Qt >= 4.5 ( http://www.qtsoftware.com/downloads )</li>
  * <li> OpenGL    ( http://www.opengl.org )</li>
- * <li> GLUT        ( http://glew.sourceforge.net )</li>
- * <li> GLEW       ( http://www.opengl.org/resources/libraries/glut/ )</li>
+ * <li> GLUT        ( http://www.opengl.org/resources/libraries/glut/ )</li>
+ * <li> GLEW       ( http://glew.sourceforge.net )</li>
  * <li> freetype2 ( optional http://www.freetype.org/freetype2/index.html )</li>
  * <li> ftgl           ( optional http://sourceforge.net/projects/ftgl/)</li>
  * </ul> 
@@ -55,14 +55,18 @@
  * <li> Get and Install Qt ( >= 4.5 ) </li>
  * <li> Set the QTDIR Variable to your Qt Installation directory </li>
  * <li> Extract OpenFlipper source code. </li>
- * <li> Get all required libraries and install them ( including headers! ).</li>
+ * <li> Get all required libraries and install them ( including headers! ). Note for some glut packages:
+ * Make sure the glut.h header file is in a "GL" subdirectory. CMake won't compile OpenFlipper otherwise. </li>
  * <li> Get cmake for windows from http://www.cmake.org/cmake/resources/software.html <li>
- * <li> Start the cmake gui and open the OpenFlipper toplevel directory </li>
- * <li> Choose a build directory</li>
- * <li> Click on configure .... If any libraries are left unconfigured, you can adjust the path in the ui. Rerun configure until everything is configured correctly</li>
+ * <li> Start the cmake gui and select the OpenFlipper toplevel directory as source directory </li>
+ * <li> Choose a build directory (e.g. create a directory called \c build in OpenFlipper's root dir)</li>
+ * <li> Click on configure and chose a generator for Visual Studio (according to your Visual Studio version)....
+ * If the configuration fails because of libraries and/or headers which have not been found,
+ * you can adjust the path in cmake-gui manually.  Note that some build variables are only visible in Advanced Mode.
+ * You can change view modes of cmake-gui via the select box on the top. Rerun configure until everything is configured correctly </li>
  * <li> Click generate to create the visual studio project files </li>
- * <li> You can now find a Visual Studio solution file in the <b>build</b> directory you chose in cmake </li>
- * <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file. </li>
+ * <li> You can now find a Visual Studio solution file (OpenFlipper.sln) in the <b>build</b> directory you chose in cmake </li>
+ * <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file by starting Build Solution. </li>
  * </ul> 
  *
  * \subsection cmake_bmacos Building OpenFlipper under MacOS X
