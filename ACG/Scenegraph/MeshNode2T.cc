@@ -64,8 +64,8 @@ namespace SceneGraph {
 #include "MeshNode2T.hh"
 
 template<class Mesh>
-TriStripNodeT<Mesh>::
-TriStripNodeT(Mesh&        _mesh,
+MeshNodeT<Mesh>::
+MeshNodeT(Mesh&        _mesh,
               BaseNode*    _parent,
               std::string  _name ): 
   BaseNode(_parent, _name),
@@ -114,7 +114,7 @@ TriStripNodeT(Mesh&        _mesh,
 }  
 
 template<class Mesh>
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 ~MeshNodeT()
 {
   // Delete all allocated buffers
@@ -146,7 +146,7 @@ TriStripNodeT<Mesh>::
 
 template<class Mesh>
 DrawModes::DrawMode
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 availableDrawModes() const {
   DrawModes::DrawMode drawModes(DrawModes::NONE);
   
@@ -196,7 +196,7 @@ availableDrawModes() const {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
   _bbMin.minimize(bbMin_);
   _bbMax.maximize(bbMax_);
@@ -204,7 +204,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 draw(GLState& _state, DrawModes::DrawMode _drawMode) {
   
   /// \todo Whats this? Why is this set here
@@ -434,7 +434,7 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 draw_vertices() {
   if ( !vertexBufferInitialized_ )
     return;
@@ -444,7 +444,7 @@ draw_vertices() {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 draw_lines() {
 
   if ( enabled_arrays_ & LINE_INDEX_ARRAY )
@@ -466,7 +466,7 @@ draw_lines() {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 draw_faces(FaceMode _mode) {
   
   // If we have all properties per Vertex, we can render with index array from triangle strips!
@@ -522,7 +522,7 @@ draw_faces(FaceMode _mode) {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 enable_arrays(unsigned int _arrays) {
   
   // Unbind everything to ensure sane settings
@@ -803,7 +803,7 @@ enable_arrays(unsigned int _arrays) {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 pick(GLState& _state, PickTarget _target) {
   switch (_target)
   {
@@ -848,7 +848,7 @@ pick(GLState& _state, PickTarget _target) {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 pick_vertices(GLState& _state, bool _front)
 {
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
@@ -930,7 +930,7 @@ pick_vertices(GLState& _state, bool _front)
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 pick_edges(GLState& _state, bool _front)
 {
 
@@ -1011,7 +1011,7 @@ pick_edges(GLState& _state, bool _front)
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 pick_faces(GLState& _state)
 {
   typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
@@ -1074,7 +1074,7 @@ pick_faces(GLState& _state)
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 pick_any(GLState& _state)
 {
   
@@ -1174,7 +1174,7 @@ glCheckErrors();
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 update_geometry() {
   /// \todo check the following statements. If only geometry changed, the normals,vertices have to be updated nothing else!
   /*
@@ -1340,7 +1340,7 @@ update_geometry() {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 update_topology() {
   // ==========================================================================
   // Clear the strips and regenerate them!
@@ -1393,7 +1393,7 @@ update_topology() {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 setIndexPropertyName( std::string _indexPropertyName ) { 
   stripProcessor_.setIndexPropertyName(_indexPropertyName);
   
@@ -1403,7 +1403,7 @@ setIndexPropertyName( std::string _indexPropertyName ) {
 
 template<class Mesh>
 void
-TriStripNodeT<Mesh>::
+MeshNodeT<Mesh>::
 setHalfedgeTextcoordPropertyName( std::string _halfedgeTextcoordPropertyName ){ 
   stripProcessor_.setPerFaceTextureCoordinatePropertyName(_halfedgeTextcoordPropertyName);
   

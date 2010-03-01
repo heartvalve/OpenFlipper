@@ -45,7 +45,7 @@
 
 //=============================================================================
 //
-//  CLASS TriStripNodeT
+//  CLASS MeshNodeT
 //
 //=============================================================================
 
@@ -73,13 +73,13 @@ namespace SceneGraph {
 
 
 
-/** \class TriStripNodeT TriStripNodeT.hh <ACG/Scenegraph/TriStripNodeT.hh>
+/** \class MeshNodeT MeshNodeT.hh <ACG/Scenegraph/MeshNodeT.hh>
 
     This node draws a mesh using triangle strips.
 */
 
 template <class Mesh>
-class TriStripNodeT  : public BaseNode
+class MeshNodeT  : public BaseNode
 {
 public:
   ACG_CLASSNAME(MeshNode);
@@ -88,12 +88,12 @@ public:
   *     
   * The constructor needs a mesh on which this node will work.
   */
-  TriStripNodeT(Mesh&        _mesh,
-             BaseNode*    _parent=0,
-             std::string  _name="<MeshNode>" );
+  MeshNodeT(Mesh&        _mesh,
+            BaseNode*    _parent=0,
+            std::string  _name="<MeshNode>" );
 
   /// Destructor
-  virtual ~TriStripNodeT();
+  virtual ~MeshNodeT();
   
   
   /** \brief the geometry of the mesh has changed
