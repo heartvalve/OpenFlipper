@@ -51,7 +51,7 @@
  * \subsection cmake_bwin Building OpenFlipper under Windows
  *
  * <ul>
- * <li> Get Visual Studio 2008 </li>
+ * <li> Get Visual Studio >= 2008 </li>
  * <li> Get and Install Qt ( >= 4.5 ) </li>
  * <li> Set the QTDIR Variable to your Qt Installation directory </li>
  * <li> Extract OpenFlipper source code. </li>
