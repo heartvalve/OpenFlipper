@@ -44,13 +44,13 @@ IF( QT4_FOUND )
 			# Find Qwt5 library linked to Qt4
 			FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS /usr/local/qwt/lib /usr/local/lib /usr/lib )
 		ELSE( NOT WIN32)
-			IF( CMAKE_BUILD_TYPE MATCHES Release )
-				# Find Qwt5 library linked to Qt4 Release Version
-				FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
-			ELSE()
-				# Find Qwt5 library linked to Qt4 Debug Version
-				FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5d PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
-			ENDIF()
+			 # Find Qwt5 library linked to Qt4 Release Version
+                 FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
+			 # Find Qwt5 library linked to Qt4 Debug Version
+		      FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG NAMES qwt5d PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
+
+                 set ( Qwt5_Qt4_TENTATIVE_LIBRARY "optimized;${Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE};debug;${Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG}")
+			
 		ENDIF(NOT WIN32)
 
 		IF( UNIX AND NOT CYGWIN AND NOT APPLE)
