@@ -72,6 +72,11 @@ namespace ACG
 #include "../Config/ACGDefines.hh"
 #include <bitset>
 
+// Avoid compiler warning in MSC
+#if defined (_MSC_VER)
+#   pragma warning (disable:4251)
+#endif
+
 //== NAMESPACES ===============================================================
 
 
