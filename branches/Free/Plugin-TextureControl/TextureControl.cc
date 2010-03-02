@@ -1213,11 +1213,12 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
       PluginFunctions::polyMeshObject(obj)->meshNode()->setIndexPropertyName("No Texture Index");
       PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap( 0 );
       
+      
       if ( texData->texture(_textureName).type() == HALFEDGEBASED ) {
         // We set it to the standard name here, as we copy user texture coordinates to the global representation
-        PluginFunctions::triMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("h:texcoords2D");      
+        PluginFunctions::polyMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("h:texcoords2D");      
       } else {
-        PluginFunctions::triMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("No Texture");      
+        PluginFunctions::polyMeshObject(obj)->meshNode()->setHalfedgeTextcoordPropertyName("No Texture");      
       }
       
     } else {
