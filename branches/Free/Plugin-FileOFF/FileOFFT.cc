@@ -8,14 +8,6 @@
 
 template< class MeshT >
 bool FileOFFPlugin::writeMesh(std::ostream& _out, MeshT& _mesh ){
-    
-    unsigned int i, j, nV, nF, idx;
-    Vec3f v, n;
-    Vec2f t;
-    typename MeshT::VertexHandle vh;
-    std::vector<typename MeshT::VertexHandle> vhandles;
-    OpenMesh::Vec3f c;
-    float alpha;
         
     /*****************
     * HEADER
