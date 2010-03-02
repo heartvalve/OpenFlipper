@@ -147,12 +147,26 @@ inline
 void convertVertexToEdgeSelection(MeshT* _mesh, std::vector< int >& _vertices);
 
 /**
+ * For each selected vertex select all incident edges
+ */
+template< typename MeshT >
+inline
+void convertVertexToEdgeSelection(MeshT* _mesh);
+
+/**
  * Select for each vertex in _vertices all adjacent faces
  * @param _vertices List of vertices to be converted
  */
 template< typename MeshT >
 inline
 void convertVertexToFaceSelection(MeshT* _mesh, std::vector< int >& _vertices);
+
+/**
+ * For each selected vertex select all adjacent faces
+ */
+template< typename MeshT >
+inline
+void convertVertexToFaceSelection(MeshT* _mesh);
 
 /** @} */
 
@@ -247,6 +261,13 @@ inline
 void convertEdgeToVertexSelection(MeshT* _mesh, std::vector< int >& _edges);
 
 /**
+ * For each selected edge select all incident vertices
+ */
+template< typename MeshT >
+inline
+void convertEdgeToVertexSelection(MeshT* _mesh);
+
+/**
  * Select for each edge in _edges all adjacent faces
  * @param _edges List of edges to be converted
  */
@@ -254,6 +275,12 @@ template< typename MeshT >
 inline
 void convertEdgeToFaceSelection(MeshT* _mesh, std::vector< int >& _edges);
 
+/**
+ * For each selected edge select all adjacent faces
+ */
+template< typename MeshT >
+inline
+void convertEdgeToFaceSelection(MeshT* _mesh);
 
 /** @} */
 
@@ -329,12 +356,18 @@ inline
 void convertFaceToVertexSelection(MeshT* _mesh, std::vector< int >& _faces);
 
 /**
- * Select for each face in _faces all adjacent edges
- * @param _faces List of faces to be converted
+ * For each selected face select all adjacent vertices
  */
 template< typename MeshT >
 inline
-void convertFaceToEdgeSelection(MeshT* _mesh, std::vector< int >& _faces);
+void convertFaceToVertexSelection(MeshT* _mesh);
+
+/**
+ * For each selected face select all adjacent edges
+ */
+template< typename MeshT >
+inline
+void convertFaceToEdgeSelection(MeshT* _mesh);
 /** @} */
 
 //=============================================================================

@@ -1264,20 +1264,19 @@ void SelectionPlugin::convertVtoESelection(bool _unselectAfter) {
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 #endif
 
-		IdList list = getVertexSelection(o_it->id());
-		if(_unselectAfter) { clearVertexSelection(o_it->id()); }
-
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
-			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::triMesh(o_it), list);
+			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::triMesh(o_it));
 		}
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
-			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(o_it), list);
+			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::polyMesh(o_it));
 		}
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
-			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::tsplineMesh(o_it), list);
+			MeshSelection::convertVertexToEdgeSelection(PluginFunctions::tsplineMesh(o_it));
 		}
 #endif
+
+    if(_unselectAfter) { clearVertexSelection(o_it->id()); }
 
 		o_it->update();
 	}
@@ -1304,20 +1303,19 @@ void SelectionPlugin::convertVtoFSelection(bool _unselectAfter) {
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 #endif
 
-		IdList list = getVertexSelection(o_it->id());
-		if(_unselectAfter) { clearVertexSelection(o_it->id()); }
-
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
-			MeshSelection::convertVertexToFaceSelection(PluginFunctions::triMesh(o_it), list);
+			MeshSelection::convertVertexToFaceSelection(PluginFunctions::triMesh(o_it));
 		}
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
-			MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(o_it), list);
+			MeshSelection::convertVertexToFaceSelection(PluginFunctions::polyMesh(o_it));
 		}
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
-			MeshSelection::convertVertexToFaceSelection(PluginFunctions::tsplineMesh(o_it), list);
+			MeshSelection::convertVertexToFaceSelection(PluginFunctions::tsplineMesh(o_it));
 		}
 #endif
+
+    if(_unselectAfter) { clearVertexSelection(o_it->id()); }
 
 		o_it->update();
 	}
@@ -1344,20 +1342,19 @@ void SelectionPlugin::convertEtoVSelection(bool _unselectAfter) {
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 #endif
 
-		IdList list = getEdgeSelection(o_it->id());
-		if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
-
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
-			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::triMesh(o_it), list);
+			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::triMesh(o_it));
 		}
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
-			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::polyMesh(o_it), list);
+			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::polyMesh(o_it));
 		}
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
-			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::tsplineMesh(o_it), list);
+			MeshSelection::convertEdgeToVertexSelection(PluginFunctions::tsplineMesh(o_it));
 		}
 #endif
+
+    if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
 
 		o_it->update();
 	}
@@ -1384,20 +1381,19 @@ void SelectionPlugin::convertEtoFSelection(bool _unselectAfter) {
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 #endif
 
-		IdList list = getEdgeSelection(o_it->id());
-		if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
-
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
-			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::triMesh(o_it), list);
+			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::triMesh(o_it));
 		}
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
-			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::polyMesh(o_it), list);
+			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::polyMesh(o_it));
 		}
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
-			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::tsplineMesh(o_it), list);
+			MeshSelection::convertEdgeToFaceSelection(PluginFunctions::tsplineMesh(o_it));
 		}
 #endif
+
+    if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
 
 		o_it->update();
 	}
@@ -1424,21 +1420,20 @@ void SelectionPlugin::convertFtoVSelection(bool _unselectAfter) {
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 #endif
 
-		IdList list = getFaceSelection(o_it->id());
-		if(_unselectAfter) { clearFaceSelection(o_it->id()); }
-
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
-			MeshSelection::convertFaceToVertexSelection(PluginFunctions::triMesh(o_it), list);
+			MeshSelection::convertFaceToVertexSelection(PluginFunctions::triMesh(o_it));
 		}
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
-			MeshSelection::convertFaceToVertexSelection(PluginFunctions::polyMesh(o_it), list);
+			MeshSelection::convertFaceToVertexSelection(PluginFunctions::polyMesh(o_it));
 		}
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
-			MeshSelection::convertFaceToVertexSelection(PluginFunctions::tsplineMesh(o_it), list);
+			MeshSelection::convertFaceToVertexSelection(PluginFunctions::tsplineMesh(o_it));
 		}
 #endif
 
+    if(_unselectAfter) { clearFaceSelection(o_it->id()); }
+    
 		o_it->update();
 	}
 
@@ -1464,21 +1459,20 @@ void SelectionPlugin::convertFtoESelection(bool _unselectAfter) {
 			o_it != PluginFunctions::objectsEnd(); ++o_it)   {
 #endif
 
-		IdList list = getFaceSelection(o_it->id());
-		if(_unselectAfter) { clearFaceSelection(o_it->id()); }
-
 		if ( o_it->dataType() == DATA_TRIANGLE_MESH ) {
-			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::triMesh(o_it), list);
+			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::triMesh(o_it));
 		}
 		else if ( o_it->dataType() == DATA_POLY_MESH ) {
-			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::polyMesh(o_it), list);
+			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::polyMesh(o_it));
 		}
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 		else if ( o_it->dataType() == DATA_TSPLINE_MESH ) {
-			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::tsplineMesh(o_it), list);
+			MeshSelection::convertFaceToEdgeSelection(PluginFunctions::tsplineMesh(o_it));
 		}
 #endif
 
+    if(_unselectAfter) { clearFaceSelection(o_it->id()); }
+    
 		o_it->update();
 	}
 

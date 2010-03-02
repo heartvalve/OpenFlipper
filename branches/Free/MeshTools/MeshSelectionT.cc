@@ -273,15 +273,32 @@ template< typename MeshT >
 inline
 void convertVertexToEdgeSelection(MeshT* _mesh, std::vector< int >& _vertices) {
 
-	for (std::vector<int>::iterator v = _vertices.begin(); v != _vertices.end(); ++v) {
+  for (std::vector<int>::iterator v = _vertices.begin(); v != _vertices.end(); ++v) {
 
-		typename MeshT::VertexHandle vh(*v);
-		typename MeshT::VertexEdgeIter e_iter = _mesh->ve_iter(vh);
+    typename MeshT::VertexHandle vh(*v);
+    typename MeshT::VertexEdgeIter e_iter = _mesh->ve_iter(vh);
 
-		for (; e_iter; ++e_iter) {
-			_mesh->status(e_iter).set_selected(true);
-		}
-	}
+    for (; e_iter; ++e_iter) {
+      _mesh->status(e_iter).set_selected(true);
+    }
+  }
+}
+
+template< typename MeshT >
+inline
+void convertVertexToEdgeSelection(MeshT* _mesh) {
+
+  typename MeshT::VertexIter v_it, v_end = _mesh->vertices_end();
+  
+  for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it)
+
+    if ( _mesh->status( v_it ).selected() ){
+
+      typename MeshT::VertexEdgeIter e_iter = _mesh->ve_iter(v_it);
+
+      for (; e_iter; ++e_iter)
+        _mesh->status(e_iter).set_selected(true);
+    }
 }
 
 template< typename MeshT >
@@ -297,6 +314,23 @@ void convertVertexToFaceSelection(MeshT* _mesh, std::vector< int >& _vertices) {
 			_mesh->status(f_iter).set_selected(true);
 		}
 	}
+}
+
+template< typename MeshT >
+inline
+void convertVertexToFaceSelection(MeshT* _mesh) {
+
+  typename MeshT::VertexIter v_it, v_end = _mesh->vertices_end();
+  
+  for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it)
+
+    if ( _mesh->status( v_it ).selected() ){
+
+      typename MeshT::VertexFaceIter f_iter = _mesh->vf_iter(v_it);
+
+      for (; f_iter; ++f_iter)
+        _mesh->status(f_iter).set_selected(true);
+    }
 }
 
 //=========================================================
@@ -493,6 +527,24 @@ void convertEdgeToVertexSelection(MeshT* _mesh, std::vector< int >& _edges) {
 
 template< typename MeshT >
 inline
+void convertEdgeToVertexSelection(MeshT* _mesh) {
+
+  for ( typename MeshT::EdgeIter e_it= _mesh->edges_begin() ; e_it != _mesh->edges_end() ; ++e_it )
+    
+    if ( _mesh->status(e_it).selected() ){
+
+      typename MeshT::HalfedgeHandle heh0 = _mesh->halfedge_handle(e_it.handle(), 0);
+
+      typename MeshT::VertexHandle vh0 = _mesh->to_vertex_handle(heh0);
+      typename MeshT::VertexHandle vh1 = _mesh->from_vertex_handle(heh0);
+
+      _mesh->status(vh0).set_selected(true);
+      _mesh->status(vh1).set_selected(true);
+    }
+}
+
+template< typename MeshT >
+inline
 void convertEdgeToFaceSelection(MeshT* _mesh, std::vector< int >& _edges) {
 
 	for (std::vector<int>::iterator e = _edges.begin(); e != _edges.end(); ++e) {
@@ -509,6 +561,25 @@ void convertEdgeToFaceSelection(MeshT* _mesh, std::vector< int >& _edges) {
 	}
 }
 
+template< typename MeshT >
+inline
+void convertEdgeToFaceSelection(MeshT* _mesh) {
+
+  for ( typename MeshT::EdgeIter e_it= _mesh->edges_begin() ; e_it != _mesh->edges_end() ; ++e_it )
+    
+    if ( _mesh->status(e_it).selected() ){
+
+      
+      typename MeshT::HalfedgeHandle heh0 = _mesh->halfedge_handle(e_it.handle(), 0);
+      typename MeshT::HalfedgeHandle heh1 = _mesh->halfedge_handle(e_it.handle(), 1);
+
+      typename MeshT::FaceHandle fh0 = _mesh->face_handle(heh0);
+      typename MeshT::FaceHandle fh1 = _mesh->face_handle(heh1);
+
+      _mesh->status(fh0).set_selected(true);
+      _mesh->status(fh1).set_selected(true);
+    }
+}
 
 //=========================================================
 //== Face Selection =======================================
@@ -709,6 +780,21 @@ void convertFaceToVertexSelection(MeshT* _mesh, std::vector< int >& _faces) {
 
 template< typename MeshT >
 inline
+void convertFaceToVertexSelection(MeshT* _mesh) {
+
+  for ( typename MeshT::FaceIter f_it= _mesh->faces_begin() ; f_it != _mesh->faces_end() ; ++f_it )
+    
+    if ( _mesh->status(f_it).selected() ){
+
+      typename MeshT::FaceVertexIter v_iter = _mesh->fv_iter(f_it);
+
+      for (; v_iter; ++v_iter)
+        _mesh->status(v_iter).set_selected(true);
+    }
+}
+
+template< typename MeshT >
+inline
 void convertFaceToEdgeSelection(MeshT* _mesh, std::vector< int >& _faces) {
 
 	for (std::vector<int>::iterator f = _faces.begin(); f != _faces.end(); ++f) {
@@ -721,6 +807,21 @@ void convertFaceToEdgeSelection(MeshT* _mesh, std::vector< int >& _faces) {
 			_mesh->status(e_iter).set_selected(true);
 		}
 	}
+}
+
+template< typename MeshT >
+inline
+void convertFaceToEdgeSelection(MeshT* _mesh) {
+
+  for ( typename MeshT::FaceIter f_it= _mesh->faces_begin() ; f_it != _mesh->faces_end() ; ++f_it )
+    
+    if ( _mesh->status(f_it).selected() ){
+
+      typename MeshT::FaceEdgeIter e_iter = _mesh->fe_iter(f_it);
+
+      for (; e_iter; ++e_iter)
+        _mesh->status(e_iter).set_selected(true);
+    }
 }
 
 //=============================================================================
