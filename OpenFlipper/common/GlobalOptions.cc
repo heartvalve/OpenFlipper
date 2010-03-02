@@ -175,7 +175,7 @@ static bool gridVisible_ = false;
 static bool hideToolbox_ = false;
 
 /// Store the logger gui Mode mode
-static LoggerState loggerState_ = Normal;
+static LoggerState loggerState_ = InScene;
 
 /// Store if we should go into multiview Mode
 static bool multiView_ = true;
