@@ -736,7 +736,6 @@ updatePerEdgeBuffers() {
   
   if ( mesh_.has_edge_colors() ) {
     perEdgeColorBuffer_.resize(mesh_.n_edges() * 2);
-    std::cerr << "Per Edge color buffer generated" << std::endl;
   } else
     perEdgeColorBuffer_.clear();    
   
