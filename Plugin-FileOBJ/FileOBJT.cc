@@ -71,7 +71,7 @@ bool FileOBJPlugin::writeMaterial(QString _filename, MeshT& _mesh )
 template< class MeshT >
 bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mesh ){
   
-  unsigned int i, j, nV, nF, idx;
+  unsigned int i, nV, idx;
   Vec3f v, n;
   Vec2f t;
   typename MeshT::VertexHandle vh;
