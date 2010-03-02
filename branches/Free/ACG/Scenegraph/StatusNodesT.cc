@@ -255,9 +255,15 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
     }
     else
     {
-      glDepthRange(0.01, 1.0);
+      
+      glPushAttrib( GL_ENABLE_BIT );
+
+      glEnable(GL_POLYGON_OFFSET_FILL);
+
+      glPolygonOffset(0.001, 0.0);
       draw_faces(smooth);
-      glDepthRange(0.0, 1.0);
+
+      glPopAttrib();
     }
   }
 
