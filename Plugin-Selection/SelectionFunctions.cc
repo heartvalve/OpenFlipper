@@ -192,18 +192,20 @@ void SelectionPlugin::paintSphereSelection(QMouseEvent* _event) {
 
                     if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH) ) {
                       paintSphereSelection(PluginFunctions::triMesh(object), target_idx, hit_point);
+                      object->update();
                     }
 
                     if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH) ) {
                       paintSphereSelection(PluginFunctions::polyMesh(object), target_idx, hit_point);
+                      object->update();
                     }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
                     if ( object->picked(node_idx) && object->dataType(DATA_TSPLINE_MESH) ) {
                       paintSphereSelection(PluginFunctions::tsplineMesh(object), target_idx, hit_point);
+                      object->update();
                     }
 #endif
-                    object->update();
-
+                    
                   }
 
                   bool found = false;
