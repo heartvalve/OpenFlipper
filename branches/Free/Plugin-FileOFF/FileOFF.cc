@@ -83,6 +83,7 @@ FileOFFPlugin::FileOFFPlugin()
   loadAlpha_(0),
   loadNormals_(0),
   loadTexCoords_(0),
+  loadSkipColorDetection_(0),
   loadDefaultButton_(0),
   userReadOptions_(0),
   userWriteOptions_(0) {
@@ -103,6 +104,8 @@ void FileOFFPlugin::initializePlugin() {
         userReadOptions_ |= OFFImporter::VERTEXNORMAL;
     if(OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool())
         userReadOptions_ |= OFFImporter::VERTEXTEXCOORDS;
+    if(OpenFlipperSettings().value("FileOff/Load/SkipColorCompDetection",true).toBool())
+        userReadOptions_ |= OFFImporter::SKIPCOLORDET;
     
     if(OpenFlipperSettings().value("FileOff/Save/Binary",true).toBool())
         userWriteOptions_ |= OFFImporter::BINARY;
@@ -179,6 +182,10 @@ void FileOFFPlugin::updateUserOptions() {
     if(loadTexCoords_) {
         if(loadTexCoords_->isChecked()) userReadOptions_ |= OFFImporter::VERTEXTEXCOORDS;
         else { if(userReadOptions_ & OFFImporter::VERTEXTEXCOORDS) userReadOptions_ -= OFFImporter::VERTEXTEXCOORDS; }
+    }
+    if(loadSkipColorDetection_) {
+        if(loadSkipColorDetection_->isChecked()) userReadOptions_ |= OFFImporter::SKIPCOLORDET;
+        else { if(userReadOptions_ & OFFImporter::SKIPCOLORDET) userReadOptions_ -= OFFImporter::SKIPCOLORDET; }
     }
     
     // Save options
@@ -848,8 +855,16 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
                 
         fh = _importer.addFace(vhandles);
 
-        // nV now holds the number of color components
-        readValue(_in, nV);
+        if ( userReadOptions_ & OFFImporter::SKIPCOLORDET ) {
+            // Some binary files that were created via an OFF writer
+            // that doesn't comply with the OFF specification
+            // don't specify the number of color components before
+            // the face specs. We offer the option to skip this.
+            nV = 0;
+        } else {
+            // nV now holds the number of color components
+            readValue(_in, nV);
+        }
         
         // valid face color:
         if ( nV == 3 || nV == 4 ) {
@@ -1103,6 +1118,9 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         
         loadTexCoords_ = new QCheckBox("Load TexCoords");
         layout->addWidget(loadTexCoords_);
+        
+        loadSkipColorDetection_ = new QCheckBox("Skip color component detection (deprecated)");
+        layout->addWidget(loadSkipColorDetection_);
  
         loadDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(loadDefaultButton_);
@@ -1111,7 +1129,6 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         
         connect(loadDefaultButton_, SIGNAL(clicked()), this, SLOT(slotLoadDefault()));
         
-        
         triMeshHandling_->setCurrentIndex(OpenFlipperSettings().value("FileOff/Load/TriMeshHandling",TYPEAUTODETECT ).toInt() );
         
         loadVertexColor_->setChecked( OpenFlipperSettings().value("FileOff/Load/VertexColor",true).toBool() );
@@ -1119,6 +1136,7 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         loadAlpha_->setChecked( OpenFlipperSettings().value("FileOff/Load/Alpha",true).toBool()  );
         loadNormals_->setChecked( OpenFlipperSettings().value("FileOff/Load/Normals",true).toBool()  );
         loadTexCoords_->setChecked( OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool()  );
+        loadSkipColorDetection_->setChecked( OpenFlipperSettings().value("FileOff/Load/SkipColorCompDetection",true).toBool()  );
     }
     
     return loadOptions_;
@@ -1130,6 +1148,7 @@ void FileOFFPlugin::slotLoadDefault() {
   OpenFlipperSettings().setValue( "FileOff/Load/Alpha",       loadAlpha_->isChecked()  );
   OpenFlipperSettings().setValue( "FileOff/Load/Normals",     loadNormals_->isChecked()  );
   OpenFlipperSettings().setValue( "FileOff/Load/TexCoords",   loadTexCoords_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileOff/Load/ColorCompDetection",   loadSkipColorDetection_->isChecked()  );
 
   OpenFlipperSettings().setValue("FileOff/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
   
