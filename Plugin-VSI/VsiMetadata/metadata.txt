@@ -1,0 +1,253 @@
+Visual scripting interface xml metadata description
+===============================
+
+The visual scripting plugin will parse all *.xml files in the [DATADIR]/VsiMetadata directory.
+
+
+
+<OpenFlipper> : Root node for all files
+----------------------------------------
+Attributes: None
+Child nodes: <element> (subnodes)
+
+
+
+<element> : Node to describe elements in the visual scripting interface
+-----------------------------------------------------------------------
+Attributes: 
+	name (string)(required): unique internal name for the element (only letters and underscores are allowed)
+Child nodes:
+	<short> (string): Short description of the element (fallback to name attribute if not set)
+	<long> (string): Long description of the element for tool tips etc. (fallback to <short> if not set>
+	<category> (string): Category of the element. All elements with the same category will be displayed in one tab of the element toolbox of the visual script editor
+	<dataflow> (bool): If set to true then the element will have DataFlow input /output points. This is important for all elements where the execution order matters because they change/depend on some internal state. (Highly recommended for elements with functions)
+	<precode> (string): Code that will be added once to the top of the script, if the element is used once or multiple times in the script (Use full for shared global variables)
+	<code> (string): Code that will be added for this element to the script (see detailed description below)
+	<inputs> (subnodes): Inputs of the element (contains one or more <input> nodes)
+	<outputs> (subnodes): Outputs of the element (contains one or more <output> nodes)
+	<functions> (subnodes): Functions of the element (contains one or more <function> nodes)
+
+
+
+<input> : Describes an input of an element / function
+-----------------------------------------------------
+Attributes: 
+	name (string)(required): internal input name (only letters and underscores are allowed)
+	type (string)(required): type name. It can be an already supported type name or a new one. New types  can only be connected to outputs of the same type, and will not have a create or runtime configuration dialog.
+	external (bool)(optional): If set to "false", this input will not have a visible connection point and will only be configurable with the type configuration widget
+	user (bool)(optional): If set to "false", this input won't be configurable with the type configuration widget during script creation
+	runtime (bool)(optional): If set to "false", this input won't provide a configuration widget during script execution
+	optional (bool)(optional):  If set to "true", this input will be marked as optional.
+Child nodes:
+	<short> (string): Short description of the input (fallback to name attribute if not set)
+	<long> (string): Long description of the input for tool tips etc. (fallback to <short> if not set>
+	<***> (string): Type specific hint elements (see below)
+
+<output> : Describes an output of an element / function
+-------------------------------------------------------
+Attributes: 
+	name (string)(required): internal output name (only letters and underscores are allowed)
+	type (string)(required): type name. It can be an already supported type name or a new one. New types  can only be connected to inputs of the same type.
+Child nodes:
+	<short> (string): Short description of the output (fallback to name attribute if not set)
+	<long> (string): Long description of the output for tool tips etc. (fallback to <short> if not set>
+
+
+<function> : Describes an user editable function in the visual script
+---------------------------------------------------------------------
+Attributes: 
+	name (string)(required): internal input name (only letters and underscores are allowed)
+Child nodes:
+	<short> (string): Short description of the function (fallback to name attribute if not set)
+	<long> (string): Long description of the function for tool tips etc. (fallback to <short> if not set>
+	<inputs> (subnodes): Inputs (parameters) of the function (contains one or more <input> nodes like element inputs without the external, user, runtime, and optional attributes and type specific hint nodes)
+	<outputs> (subnodes): Outputs of the function (contains one or more <output> nodes like element outputs)
+
+
+Code segment:
+=============
+
+The visual scripting interface will replace following code segments with thier corresponding configuration
+
+[input="foo"] : will be replaced with the value (constant or output of other element) of the input with the name attribute "foo"
+[output="foo"] : will be replaced with the variable name to store the output with the name attribute "foo"
+[is_set="foo"] : will be set to "true" or "false" according to the state of the optional input "foo"
+[is_connected="foo"] : will be set to "true" or "false" according to the state of the output "foo"
+[function="foo"]: will be replaced with the generated function name for the function "foo"
+
+Function inputs have to be passed as parameters to the with [function="foo"] accessible function name in the definition order inside of the function <inputs> node
+Function outputs will be returned by the function of form of an object with the output names as properties
+
+Type specific hints:
+====================
+
+Each type can define hint nodes that will control the behavior of its configuration widget. Each type can also support multiple alternative names that also can control the behavior of its configuration widget.
+
+"Number" (Integer, Float)
+-----------------------------------
+Hints:
+	<min> (float): minimum allowed value
+	<max> (float): maximum allowed value
+	<precision> (float): precision of the number (=1 for Integer, =0.001 for Float)
+	<default> (float): default value
+
+"Bool"
+------
+Hints:
+	<default> (string): default value ("true" or "false")
+
+"String"
+--------
+Hints:
+	<default> (string): default value
+
+
+"Filename" (Directory)
+----------------------
+Hints:
+	<default> (string): default value
+	<filter> (string): file filter (See QFileDialog)
+            <mode> (string): File open or save dialog ("Open" or "Save")
+	<default_suffix> (string): automatically append this suffix (See QFileDialog)
+
+"Selection"
+-----------
+Hints: (stringlist = , seperated strings)
+	<multiple> (bool): multiple selection allowed
+	<names> (stringlist): names of the elements
+	<descriptions> (stringlist): Descriptions for the name elements
+	<default> (string/stringlist): default value 
+
+"Vec3D" (Vector, Vec3d, vec3d)
+------------------------------
+Hints:
+	<default> (floatlist): default value. 3 comma separated floats
+
+"Matrix4x4" (Matrix)
+--------------------
+Hints:
+	<default> (floatlist): default value. 16 comma separated floats
+
+"ObjectId" 
+--------------------
+Hints:
+        <flags> (stringlist): Flags that have to be set on object to be displayed ("source","target",...)
+        <types> (stringlist): Type list of displayed object types (see OpenFlipper/common/Types.(hh|cc) for type names)
+                              "Group" has to be explicitly set for group support.
+
+Examples:
+=========
+
+Multiple outputs:
+-----------------
+
+<element name="math">
+    <category>Arithmetic</category>
+    <short>Simple Math</short>
+    <long>Adds, Subtracts, Multiplies and Devides two values</long>
+    <inputs>
+      <input name="a" type="Number">
+        <short>A</short>
+        <precision>0.000001</precision>
+      </input>
+      <input name="b" type="Number">
+        <short>B</short>
+        <precision>0.000001</precision>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="add" type="Number">
+        <short>A + B</short>
+      </output>
+      <output name="sub" type="Number">
+        <short>A - B</short>
+      </output>
+      <output name="mul" type="Number">
+        <short>A * B</short>
+      </output>
+      <output name="div" type="Number">
+        <short>A / B</short>
+      </output>
+    </outputs>
+    <code>
+      [output="add"] = [input="a"] + [input="b"];
+      [output="sub"] = [input="a"] - [input="b"];
+      [output="mul"] = [input="a"] * [input="b"];
+      [output="div"] = [input="a"] / [input="b"];
+    </code>
+  </element>
+
+Selection types, functions, optional input:
+-------------------------------------------
+
+<element name="object_iterator">
+    <category>Conditions and Loops</category>
+    <short>Object Iterator</short>
+    <long>Iterate over all objects that match the given inputs</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="selection" type="Selection" external="false" runtime="false">
+        <short>Object Selection</short>
+        <default>all</default>
+        <names>all,source,target</names>
+        <descriptions>All,Source,Target</descriptions>
+      </input>
+      <input name="types" type="Selection" external="false" runtime="false">
+        <short>Object Type</short>
+        <multiple>true</multiple>
+        <default>All</default>
+        <names>All,TriangleMesh,PolyMesh,Group,BSplineCurve,BSplineSurface,Skeleton,GIS</names>
+        <descriptions>All,Triangle mesh,Polygon mesh,Group,B-Spline curve,B-Spline surface,Skeleton,GIS</descriptions>
+      </input>
+      <input name="custom_type" type="String" external="false" runtime="false" optional="">
+        <short>Custom Object Type</short>
+        <long>Additional custom object type</long>
+        <default></default>
+      </input>
+    </inputs>
+    <functions>
+      <function name="content">
+        <short>Content</short>
+        <inputs>
+          <input name="obj" type="ObjectId">
+            <short>Object id</short>
+          </input>
+        </inputs>
+      </function>
+    </functions>
+    <code>
+      var types = [input="types"].split(",");
+      if ([is_set="custom_type"])
+        types = types.concat([input="custom_type"]);
+      var ids = core.objectList ([input="selection"], types);
+      for (var i in ids)
+        [function="content"] (ids[i]);
+    </code>
+  </element>
+
+Function with output:
+---------------------
+
+ <element name="while">
+    <category>Conditions and Loops</category>
+    <short>While loop</short>
+    <long>While loop implementation</long>
+    <dataflow>true</dataflow>
+    <functions>
+      <function name="condition">
+        <short>Condition</short>
+        <outputs>
+          <output name="out" type="Bool">
+            <short>Loop condition</short>
+          </output>
+        </outputs>
+      </function>
+      <function name="content">
+        <short>Content</short>
+      </function>
+    </functions>
+    <code>
+      while ([function="test"]().out)
+        [function="content"]()
+    </code>
+  </element>

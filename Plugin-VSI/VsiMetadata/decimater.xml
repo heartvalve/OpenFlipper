@@ -1,0 +1,52 @@
+<OpenFlipper>  
+  <element name="decimater_decimate">
+    <category>Algorithms</category>
+    <short>Decimater</short>
+    <long>Decimate a given object</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+      <input name="vertices" type="Number" optional="true">
+        <short>Number of Vertices</short>
+        <long>Desired resulting number of vertices</long>
+        <min>1</min>
+        <max>5000000</max>
+        <precision>1</precision>
+      </input>
+      <input name="distance" type="Number" optional="true">
+        <short>Distance</short>
+        <precision>0.001</precision>
+      </input>
+      <input name="normal_deviation" type="Number" optional="true">
+        <short>Normal deviation</short>
+        <min>0</min>
+        <max>180</max>
+        <precision>1</precision>
+      </input>
+      <input name="roundness" type="Number" optional="true">
+        <short>Roundness</short>
+        <min>0</min>
+        <max>1</max>
+        <precision>0.01</precision>
+      </input>
+    </inputs>
+    <precode>
+      var decimater_constraints
+    </precode>
+    <code>
+      decimater_constraints = new Object ();
+      if ([is_set="vertices"])
+        decimater_constraints["vertices"] = [input="vertices"];
+      if ([is_set="distance"])
+        decimater_constraints["distance"] = [input="distance"];
+      if ([is_set="normal_deviation"])
+        decimater_constraints["normal_deviation"] = [input="normal_deviation"];
+      if ([is_set="roundness"])
+        decimater_constraints["roundness"] = [input="roundness"];
+      decimater.decimate ([input="obj"],decimater_constraints);
+    </code>
+  </element>
+</OpenFlipper>

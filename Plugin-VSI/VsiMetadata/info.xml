@@ -1,0 +1,125 @@
+<OpenFlipper>
+  <element name="info_vertexCount">
+    <category>Object Info</category>
+    <short>Element Count</short>
+    <long>Returns the number of vertices, edges, faces, boundaries, components.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="nVert" type="Number">
+        <short>Number of vertices</short>
+        <long>Number of vertices of the given object</long>
+      </output>
+      <output name="nEdge" type="Number">
+        <short>Number of edges</short>
+        <long>Number of edges of the given object</long>
+      </output>
+      <output name="nFace" type="Number">
+        <short>Number of faces</short>
+        <long>Number of faces of the given object</long>
+      </output>
+      <output name="nBound" type="Number">
+        <short>Number of boundaries</short>
+        <long>Number of boundaries of the given object</long>
+      </output>
+      <output name="nComp" type="Number">
+        <short>Number of components</short>
+        <long>Number of components of the given object</long>
+      </output>
+    </outputs>
+    <code>
+      if ([is_connected="nVert"])
+        [output="nVert"] = info.vertexCount([input="obj"]);
+      if ([is_connected="nEdge"])
+        [output="nEdge"] = info.edgeCount([input="obj"]);
+      if ([is_connected="nFace"])
+        [output="nFace"] = info.faceCount([input="obj"]);
+      if ([is_connected="nBound"])
+        [output="nBound"] = info.boundaryCount([input="obj"]);
+      if ([is_connected="nComp"])
+        [output="nComp"] = info.componentCount([input="obj"]);
+    </code>
+  </element>
+
+  <element name="info_edgeLength">
+    <category>Object Info</category>
+    <short>Edge Lengths</short>
+    <long>Returns the edge lengths of an object</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="minEdgeLength" type="Number">
+        <short>Minimal edge lenght</short>
+        <long>Minimal edge lenght of the given object</long>
+      </output>
+      <output name="maxEdgeLength" type="Number">
+        <short>Maximal edge lenght</short>
+        <long>Maximal edge lenght of the given object</long>
+      </output>
+      <output name="meanEdgeLength" type="Number">
+        <short>Mean edge lenght</short>
+        <long>Mean edge lenght of the given object</long>
+      </output>
+    </outputs>
+    <code>
+      if ([is_connected="minEdgeLength"])
+        [output="minEdgeLength"] = info.minEdgeLength([input="obj"]);
+      if ([is_connected="maxEdgeLength"])
+        [output="maxEdgeLength"] = info.maxEdgeLength([input="obj"]);
+      if ([is_connected="meanEdgeLength"])
+        [output="meanEdgeLength"] = info.meanEdgeLength([input="obj"]);
+    </code>
+  </element>
+
+  <element name="info_bBox">
+    <category>Object Info</category>
+    <short>Bounding box</short>
+    <long>Returns the boundding box of an object</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="min" type="Vector">
+        <short>Minumum bounding box point</short>
+        <long>Minumum bounding box point of the given object</long>
+      </output>
+      <output name="max" type="Vector">
+        <short>Maximum bounding box point</short>
+        <long>Maximum bounding box point of the given object</long>
+      </output>
+      <output name="size" type="Vector">
+        <short>Bounding box size</short>
+        <long>Size of the bounding box of the given object</long>
+      </output>
+      <output name="cog" type="Vector">
+        <short>Center of gravity</short>
+        <long>Center of gravity of the given object</long>
+      </output>
+    </outputs>
+    <code>
+      if ([is_connected="min"])
+        [output="min"] = info.boundingBoxMin([input="obj"]);
+      if ([is_connected="max"])
+        [output="max"] = info.boundingBoxMax([input="obj"]);
+      if ([is_connected="size"])
+        [output="size"] = info.boundingBoxSize([input="obj"]);
+      if ([is_connected="cog"])
+        [output="cog"] = info.cog([input="obj"]);
+    </code>
+  </element>
+
+</OpenFlipper>

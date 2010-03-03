@@ -1,0 +1,113 @@
+<OpenFlipper>
+  <element name="tests">
+    <category>Boolean operations</category>
+    <short>Comparisons</short>
+    <inputs>
+      <input name="a" type="Number">
+        <short>A</short>
+        <precision>0.000001</precision>
+      </input>
+      <input name="b" type="Number">
+        <short>B</short>
+        <precision>0.000001</precision>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="bigger" type="Bool">
+        <short>A > B</short>
+      </output>
+      <output name="biggerorequal" type="Bool">
+        <short>A >= B</short>
+      </output>
+      <output name="equal" type="Bool">
+        <short>A = B</short>
+      </output>
+      <output name="notequal" type="Bool">
+        <short>A != B</short>
+      </output>
+    </outputs>
+    <code>
+      if ([is_connected="bigger"])
+        [output="bigger"] = [input="a"] > [input="b"];
+      if ([is_connected="biggerorequal"])
+        [output="biggerorequal"] = [input="a"] >= [input="b"];
+      if ([is_connected="equal"])
+        [output="equal"] = [input="a"] == [input="b"];
+      if ([is_connected="notequal"])
+        [output="notequal"] = [input="a"] != [input="b"];
+    </code>
+  </element>
+
+   <element name="not">
+   <category>Boolean operations</category>
+   <short>Not</short>
+    <inputs>
+      <input name="a" type="Bool">
+        <short>A</short>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="nota" type="Bool">
+        <short>NOT A</short>
+      </output>
+    </outputs>
+    <code>
+      [output="nota"] = !([input="a"]);
+    </code>
+   </element>
+
+  <element name="boolop">
+    <category>Boolean operations</category>
+    <short>Boolean operations</short>
+    <inputs>
+      <input name="a" type="Bool">
+        <short>A</short>
+      </input>
+      <input name="b" type="Bool">
+        <short>B</short>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="and" type="Bool">
+        <short>A AND B</short>
+      </output>
+      <output name="or" type="Bool">
+        <short>A OR B</short>
+      </output>
+    </outputs>
+    <code>
+      if ([is_connected="and"])
+        [output="and"] = [input="a"] &amp;&amp; [input="b"];
+      if ([is_connected="or"])
+        [output="or"] = [input="a"] || [input="b"];
+    </code>
+  </element>
+
+  <element name="inputselect">
+    <category>Boolean operations</category>
+    <short>Input select</short>
+    <inputs>
+      <input name="select" type="Bool">
+        <short>Select</short>
+      </input>
+      <input name="a" type="Any">
+        <short>A</short>
+      </input>
+      <input name="b" type="Any">
+        <short>B</short>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="rv" type="Any">
+        <short>A OR B</short>
+        <long>"A" if "Select" is true, "B" else.</long>
+      </output>
+    </outputs>
+    <code>
+      if ([input="select"])
+        [output="rv"] = [input="a"];
+      else
+        [output="rv"] = [input="b"];
+    </code>
+  </element>
+</OpenFlipper>

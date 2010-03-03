@@ -1,0 +1,65 @@
+<OpenFlipper>
+  <element name="object_iterator">
+    <category>Conditions and Loops</category>
+    <short>Object Iterator</short>
+    <long>Iterate over all objects that match the given inputs</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="selection" type="Selection" external="false" runtime="false">
+        <short>Object Selection</short>
+        <default>all</default>
+        <names>all,source,target</names>
+        <descriptions>All,Source,Target</descriptions>
+      </input>
+      <input name="types" type="Selection" external="false" runtime="false">
+        <short>Object Type</short>
+        <multiple>true</multiple>
+        <default>All</default>
+        <names>All,TriangleMesh,PolyMesh,Group,BSplineCurve,BSplineSurface,Skeleton,GIS</names>
+        <descriptions>All,Triangle mesh,Polygon mesh,Group,B-Spline curve,B-Spline surface,Skeleton,GIS</descriptions>
+      </input>
+      <input name="custom_type" type="String" external="false" runtime="false" optional="">
+        <short>Custom Object Type</short>
+        <long>Additional custom object type</long>
+        <default></default>
+      </input>
+    </inputs>
+    <functions>
+      <function name="content">
+        <short>Content</short>
+        <inputs>
+          <input name="obj" type="ObjectId">
+            <short>Object id</short>
+          </input>
+        </inputs>
+      </function>
+    </functions>
+    <code>
+      var types = [input="types"].split(",");
+      if ([is_set="custom_type"])
+        types = types.concat([input="custom_type"]);
+      var ids = core.objectList ([input="selection"], types);
+      for (var i in ids)
+        [function="content"] (ids[i]);
+    </code>
+  </element>
+  <element name="constant_object">
+    <category>Constants</category>
+    <short>Constant object id</short>
+    <inputs>
+      <input name="in" type="ObjectId" external="false">
+        <short>Object id</short>
+        <default>0</default>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="out" type="ObjectId">
+        <short>Configured Value</short>
+        <long>This element returns the configured value</long>
+      </output>
+    </outputs>
+    <code>
+      [output="out"] = [input="in"];
+    </code>
+  </element>
+</OpenFlipper>

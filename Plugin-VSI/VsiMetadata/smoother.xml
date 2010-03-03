@@ -1,0 +1,43 @@
+<OpenFlipper>
+    <element name="smooth_smooth">
+    <category>Algorithms</category>
+    <short>Object smoother</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+      <input name="iterations" type="Number" external="false">
+        <short>Number of iterations</short>
+        <long>Desired number of smoothing iterations</long>
+        <min>1</min>
+        <max>100</max>
+        <precision>1</precision>
+      </input>
+      <input name="direction" type="Selection" external="false">
+        <short>Smoothing direction</short>
+        <multiple>true</multiple>
+        <default>tangential</default>
+        <names>tangential,normal</names>
+        <descriptions>Tangential,Normal</descriptions>
+      </input>
+      <input name="continuity" type="Selection" external="false">
+        <short>Smoothing continuity</short>
+        <default>C1</default>
+        <names>C1,C2</names>
+        <descriptions>C1,C2</descriptions>
+      </input>
+      <input name="maxDistance" type="Number" external="false">
+        <short>Maximal distance</short>
+        <long>Maximal distance the smoothed mesh is allowed to differ from the original (0.0 = no restriction).</long>
+        <min>0.0</min>
+        <max>1000000000</max>
+        <precision>0.000001</precision>
+      </input>
+    </inputs>
+    <code>
+      smoother.smooth ([input="obj"], [input="iterations"], [input="direction"], [input="continuity"], [input="maxDistance"]);
+    </code>
+  </element>
+</OpenFlipper>

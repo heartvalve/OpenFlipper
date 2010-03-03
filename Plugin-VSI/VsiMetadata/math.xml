@@ -1,0 +1,292 @@
+<OpenFlipper>
+   <element name="math">
+    <category>Math</category>
+    <short>Simple Math</short>
+    <long>Adds, Subtracts, Multiplies and Devides two values</long>
+    <inputs>
+      <input name="a" type="Number">
+        <short>A</short>
+        <precision>0.000001</precision>
+      </input>
+      <input name="b" type="Number">
+        <short>B</short>
+        <precision>0.000001</precision>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="add" type="Number">
+        <short>A + B</short>
+      </output>
+      <output name="sub" type="Number">
+        <short>A - B</short>
+      </output>
+      <output name="mul" type="Number">
+        <short>A * B</short>
+      </output>
+      <output name="div" type="Number">
+        <short>A / B</short>
+      </output>
+      <output name="pow" type="Number">
+        <short>A^B</short>
+        <long>The value of A raised to the power of B.</long>
+      </output>
+    </outputs>
+    <code>
+      if ([is_connected="add"])
+        [output="add"] = [input="a"] + [input="b"];
+      if ([is_connected="sub"])
+        [output="sub"] = [input="a"] - [input="b"];
+      if ([is_connected="mul"])
+        [output="mul"] = [input="a"] * [input="b"];
+      if ([is_connected="div"])
+        [output="div"] = [input="a"] / [input="b"];
+      if ([is_connected="pow"])
+        [output="pow"] = Math.pow ([input="a"],[input="b"]);
+    </code>
+  </element>
+  <element name="minmax">
+    <category>Math</category>
+    <short>Minimum / Maximum</short>
+    <long>Minimum / Maximum of two values.</long>
+    <inputs>
+      <input name="a" type="Number">
+        <short>A</short>
+        <precision>0.000001</precision>
+      </input>
+      <input name="b" type="Number">
+        <short>B</short>
+        <precision>0.000001</precision>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="min" type="Number">
+        <short>min (A, B)</short>
+        <long>Returns the lesser of a and b.</long>
+      </output>
+      <output name="max" type="Number">
+        <short>max (A, B)</short>
+        <long>Returns the larger of a and b.</long>
+      </output>
+    </outputs>
+    <code>
+      if ([is_connected="min"])
+        [output="min"] = Math.min ([input="a"], [input="b"]);
+      if ([is_connected="max"])
+        [output="max"] = Math.max ([input="a"], [input="b"]);
+    </code>
+  </element>
+  <element name="round">
+    <category>Math</category>
+    <short>Rounding</short>
+    <long>Rounding and absolute values.</long>
+    <inputs>
+      <input name="x" type="Number">
+        <short>X</short>
+        <precision>0.000001</precision>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="abs" type="Number">
+        <short>abs (X)</short>
+        <long>Returns absolute value of X.</long>
+      </output>
+      <output name="round" type="Number">
+        <short>round (X)</short>
+        <long>Rounds X up or down to the nearest integer. It rounds .5 up.</long>
+      </output>
+      <output name="floor" type="Number">
+        <short>floor (X)</short>
+        <long>Returns the largest integer less than or equal to X. (round down)</long>
+      </output>
+      <output name="ceil" type="Number">
+        <short>ceil (X)</short>
+        <long>Returns the smallest integer greater than or equal to X. (round up).</long>
+      </output>
+    </outputs>
+    <code>
+      if ([is_connected="abs"])
+        [output="abs"] = Math.abs ([input="x"]);
+      if ([is_connected="round"])
+        [output="round"] = Math.round ([input="x"]);
+      if ([is_connected="floor"])
+        [output="floor"] = Math.floor ([input="x"]);
+      if ([is_connected="ceil"])
+        [output="ceil"] = Math.ceil ([input="x"]);
+    </code>
+  </element>
+  <element name="random">
+    <category>Math</category>
+    <short>Random number</short>
+    <long>Returns a pseudorandom number between 0 and 1.</long>
+    <outputs>
+      <output name="random" type="Number">
+        <short>Random number</short>
+        <long>Returns a pseudorandom number between 0 and 1.</long>
+      </output>
+    </outputs>
+    <code>
+      [output="random"] = Math.random ();
+    </code>
+  </element>
+  <element name="trig">
+    <category>Math</category>
+    <short>Trigonometry</short>
+    <long>Trigonometric functions</long>
+    <inputs>
+      <input name="x" type="Number">
+        <short>X</short>
+        <precision>0.000001</precision>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="sin" type="Number">
+        <short>Sine</short>
+        <long>  Returns the Sin of X, where X is in radians.</long>
+      </output>
+      <output name="cos" type="Number">
+        <short>Cosine</short>
+        <long>  Returns cosine of X, where X is in radians.</long>
+      </output>
+      <output name="tan" type="Number">
+        <short>Tangent</short>
+        <long>Returns the Tan of X, where X is in radians.</long>
+      </output>
+      <output name="asin" type="Number">
+        <short>Arc sine</short>
+        <long>Returns arc sine of X in radians.</long>
+      </output>
+      <output name="acos" type="Number">
+        <short>Arc cosine</short>
+        <long>Returns arc cosine of X in radians.</long>
+      </output>
+      <output name="atan" type="Number">
+        <short>Arc Tangent</short>
+        <long>Returns arc tan of X in radians.</long>
+      </output>
+      <output name="deg2rad" type="Number">
+        <short>Degrees to radians</short>
+        <long>Converts degrees to radians.</long>
+      </output>
+      <output name="rad2deg" type="Number">
+        <short>Radians to degrees</short>
+        <long>Converts radians to degrees.</long>
+      </output>
+    </outputs>
+    <code>
+      if ([is_connected="sin"])
+        [output="sin"] = Math.sin([input="x"]);
+      if ([is_connected="cos"])
+        [output="cos"] = Math.cos([input="x"]);
+      if ([is_connected="tan"])
+        [output="tan"] = Math.tan([input="x"]);
+      if ([is_connected="asin"])
+        [output="asin"] = Math.asin([input="x"]);
+      if ([is_connected="acos"])
+        [output="acos"] = Math.acos([input="x"]);
+      if ([is_connected="atan"])
+        [output="atan"] = Math.atan([input="x"]);
+      if ([is_connected="deg2rad"])
+        [output="deg2rad"] = [input="x"] * (Math.PI / 180.0);
+      if ([is_connected="rad2deg"])
+        [output="rad2deg"] = [input="x"] * (180.0 / Math.PI);
+    </code>
+  </element>
+  <element name="logarithm">
+    <category>Math</category>
+    <short>Logarithm</short>
+    <inputs>
+      <input name="x" type="Number">
+        <short>X</short>
+        <precision>0.000001</precision>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="ln" type="Number">
+        <short>ln (X)</short>
+        <long>Returns the natural logarithm (base E) of x.</long>
+      </output>
+      <output name="exp" type="Number">
+        <short>exp (X)</short>
+        <long>Returns E^X.</long>
+      </output>
+
+    </outputs>
+    <code>
+      if ([is_connected="ln"])
+        [output="ln"] = Math.log([input="x"]);
+      if ([is_connected="exp"])
+        [output="exp"] = Math.exp([input="x"]);
+    </code>
+  </element>
+  
+  <element name="constant">
+    <category>Constants</category>
+    <short>Constant number</short>
+    <long>Constant number</long>
+    <inputs>
+      <input name="c" type="Number" external="false">
+        <short>Constant value</short>
+        <long>Constant value</long>
+        <default>0</default>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="out" type="Number">
+        <short>Configured Value</short>
+        <long>This element returns the configured value</long>
+      </output>
+    </outputs>
+    <code>
+      [output="out"] = [input="c"];
+    </code>
+  </element>
+  <element name="math_constant">
+    <category>Constants</category>
+    <short>Math constants</short>
+    <long>Mathematical constants</long>
+    <outputs>
+      <output name="e" type="Number">
+        <short>E</short>
+        <long>The constant of E, the base of natural logarithms.</long>
+      </output>
+      <output name="ln2" type="Number">
+        <short>ln (2)</short>
+        <long>The natural logarithm of 2</long>
+      </output>
+      <output name="ln10" type="Number">
+        <short>ln (10)</short>
+        <long>The natural logarithm of 10</long>
+      </output>
+      <output name="log2E" type="Number">
+        <short>log2 (E)</short>
+        <long>Base 2 logarithm of E.</long>
+      </output>
+      <output name="log10E" type="Number">
+        <short>log10 (E)</short>
+        <long>Base 10 logarithm of E.</long>
+      </output>
+      <output name="pi" type="Number">
+        <short>PI</short>
+        <long>Returns PI.</long>
+      </output>
+      <output name="sqrt1_2" type="Number">
+        <short>sqrt (0.5)</short>
+        <long>Square root of 1/2.</long>
+      </output>
+      <output name="sqrt2" type="Number">
+        <short>sqrt (2)</short>
+        <long>Square root of 2.</long>
+      </output>
+    </outputs>
+    <code>
+      [output="e"] = Math.E;
+      [output="ln2"] = Math.LN2;
+      [output="ln10"] = Math.LN10;
+      [output="log2E"] = Math.LOG2E;
+      [output="log10E"] = Math.LOG10E;
+      [output="pi"] = Math.PI;
+      [output="sqrt1_2"] = Math.SQRT1_2;
+      [output="sqrt2"] = Math.SQRT2;
+    </code>
+  </element>
+</OpenFlipper>
