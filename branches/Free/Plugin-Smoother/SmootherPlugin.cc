@@ -111,6 +111,8 @@ void
 SmootherPlugin::
 slot_smooth()
 {
+  bool found = false;
+  
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
@@ -120,6 +122,8 @@ slot_smooth()
       emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
       continue;
     }
+
+    found = true;
 
     SmootherObject* data = dynamic_cast< SmootherObject* > ( o_it->objectData(SMOOTHER) );
 
@@ -170,6 +174,9 @@ slot_smooth()
 
     emit updatedObject( o_it->id() );
   }
+
+  if ( !found )
+    emit log(LOGERR , tr("Unable to smooth. No triangle mesh selected as target!") );
 
 }
 
