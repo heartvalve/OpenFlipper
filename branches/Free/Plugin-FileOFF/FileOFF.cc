@@ -86,7 +86,9 @@ FileOFFPlugin::FileOFFPlugin()
   loadSkipColorDetection_(0),
   loadDefaultButton_(0),
   userReadOptions_(0),
-  userWriteOptions_(0) {
+  userWriteOptions_(0),
+  forceTriangleMesh_(false),
+  forcePolyMesh_(false){
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -966,6 +968,9 @@ int FileOFFPlugin::loadObject(QString _filename) {
 //-----------------------------------------------------------------------------------------------------
 
 int FileOFFPlugin::loadObject(QString _filename, DataType _type) {
+  
+  forceTriangleMesh_ = false;
+  forcePolyMesh_     = false;
   
   if ( _type == DATA_TRIANGLE_MESH )
     forceTriangleMesh_ = true;
