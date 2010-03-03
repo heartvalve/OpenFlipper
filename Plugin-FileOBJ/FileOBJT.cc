@@ -83,6 +83,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   bool optionVertexNormals   = false;
   bool optionVertexTexCoords = false;
   bool optionColorAlpha      = false;
+  bool hasVertexTexCoords    = false;
   
   QFileInfo fi(_filename);
   
@@ -92,10 +93,8 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
     optionVertexNormals   = saveNormals_->isChecked();
     optionVertexTexCoords = saveTexCoords_->isChecked();
     optionColorAlpha      = saveAlpha_->isChecked();
-    
   }
 
-  
   //create material file if needed
   if ( optionFaceColors ){
     
@@ -103,6 +102,9 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
 
     useMatrial = writeMaterial(matFile, _mesh);
   }
+
+  if ( _mesh.has_vertex_texcoords2D() )
+    hasVertexTexCoords = true;
 
   // header
   _out << "# " << _mesh.n_vertices() << " vertices, ";
@@ -118,14 +120,16 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
     vh = typename MeshT::VertexHandle(i);
     v  = _mesh.point(vh);
     n  = _mesh.normal(vh);
-    t  = _mesh.texcoord2D(vh);
+    
+    if ( hasVertexTexCoords )
+      t  = _mesh.texcoord2D(vh);
 
     _out << "v " << v[0] <<" "<< v[1] <<" "<< v[2] << std::endl;
 
     if ( optionVertexNormals )
       _out << "vn " << n[0] <<" "<< n[1] <<" "<< n[2] << std::endl;
 
-    if ( optionVertexTexCoords )
+    if ( optionVertexTexCoords && hasVertexTexCoords )
       _out << "vt " << t[0] <<" "<< t[1] << std::endl;
   }
 
