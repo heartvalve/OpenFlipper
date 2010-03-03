@@ -1,0 +1,102 @@
+<OpenFlipper>
+ 
+  <element name="message_box">
+    <category>Widgets</category>
+    <short>Message box</short>
+    <long>Shows a message box</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="message" type="String" external="false" runtime="false">
+        <short>Displayed message</short>
+        <long>Displayed message. $1, $2 and $3 will be raplaced with the inputs.</long>
+        <default>Values: $1 $2 $3</default>
+      </input>
+      <input name="in1" type="Any" optional="true">
+        <short>$1 input</short>
+        <long>$1 in the message will be replaced with this input</long>
+      </input>
+      <input name="in2" type="Any" optional="true">
+        <short>$2 input</short>
+        <long>$2 in the message will be replaced with this input</long>
+      </input>
+      <input name="in3" type="Any" optional="true">
+        <short>$3 input</short>
+        <long>$3 in the message will be replaced with this input</long>
+      </input>
+    </inputs>
+    <code>
+      var message = [input="message"];
+
+      message = message.replace(/\$1/g, [input="in1"]);
+      message = message.replace(/\$2/g, [input="in2"]);
+      message = message.replace(/\$3/g, [input="in3"]);
+
+      visualscripting.messageBox (message);
+    </code>
+  </element>
+
+  <element name="question_box">
+    <category>Widgets</category>
+    <short>Yes/No box</short>
+    <long>Shows a message box with Yes and No buttons</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="message" type="String" external="false" runtime="false">
+        <short>Displayed message</short>
+        <long>Displayed message</long>
+        <default>Question?</default>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="ret" type="Bool">
+        <short>Pressed button</short>
+        <long>Pressed button. "true" on Yes and "false" on No</long>
+      </output>
+    </outputs>
+    <code>
+      [output="ret"] = visualscripting.questionBox ([input="message"]);
+    </code>
+  </element>
+
+  <element name="question_box_with_inputs">
+    <category>Widgets</category>
+    <short>Yes/No with Inputs</short>
+    <long>Shows a message box with Yes and No buttons</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="message" type="String" external="false" runtime="false">
+        <short>Displayed message</short>
+        <long>Displayed message. $1, $2 and $3 will be raplaced with the inputs.</long>
+        <default>Question? $1 $2 $3</default>
+      </input>
+      <input name="in1" type="Any" optional="true">
+        <short>$1 input</short>
+        <long>$1 in the message will be replaced with this input</long>
+      </input>
+      <input name="in2" type="Any" optional="true">
+        <short>$2 input</short>
+        <long>$2 in the message will be replaced with this input</long>
+      </input>
+      <input name="in3" type="Any" optional="true">
+        <short>$3 input</short>
+        <long>$3 in the message will be replaced with this input</long>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="ret" type="Bool">
+        <short>Pressed button</short>
+        <long>Pressed button. "true" on Yes and "false" on No</long>
+      </output>
+    </outputs>
+    <code>
+      var message = [input="message"];
+
+      message = message.replace(/\$1/g, [input="in1"]);
+      message = message.replace(/\$2/g, [input="in2"]);
+      message = message.replace(/\$3/g, [input="in3"]);
+
+      [output="ret"] = visualscripting.questionBox (message);
+    </code>
+  </element>
+
+</OpenFlipper>

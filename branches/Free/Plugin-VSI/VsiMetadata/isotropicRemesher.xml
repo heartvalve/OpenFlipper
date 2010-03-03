@@ -1,0 +1,24 @@
+<OpenFlipper>
+  <element name="isotropicremesher_remesh">
+    <category>Algorithms</category>
+    <short>Isotropic Remeshing</short>
+    <long>Isotropic Remeshing</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+      <input name="eLength" type="Number">
+        <short>Target edge length</short>
+        <long>Desired resulting edge length</long>
+        <min>0.0</min>
+        <max>1000</max>
+        <precision>0.0001</precision>
+      </input>
+    </inputs>
+    <code>
+      isotropicremesher.isotropicRemesh([input="obj"],[input="eLength"]);
+    </code>
+  </element>
+</OpenFlipper>

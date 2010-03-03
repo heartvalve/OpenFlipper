@@ -1,0 +1,51 @@
+<OpenFlipper>
+    <element name="while">
+    <category>Conditions and Loops</category>
+    <short>While loop</short>
+    <long>While loop implementation</long>
+    <dataflow>true</dataflow>
+    <functions>
+      <function name="condition">
+        <short>Condition</short>
+        <outputs>
+          <output name="out" type="Bool">
+            <short>Loop condition</short>
+          </output>
+        </outputs>
+      </function>
+      <function name="content">
+        <short>Content</short>
+      </function>
+    </functions>
+    <code>
+      while ([function="test"]().out)
+        [function="content"]()
+    </code>
+  </element>
+
+  <element name="if">
+    <category>Conditions and Loops</category>
+    <short>IF</short>
+    <long>IF condition</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="test" type="Bool" user="false">
+        <short>Test</short>
+      </input>
+    </inputs>
+    <functions>
+      <function name="true">
+        <short>"true" case</short>
+      </function>
+      <function name="content">
+        <short>"false" case</short>
+      </function>
+    </functions>
+    <code>
+      if ([input="test"])
+        [function="true"]();
+      else
+        [function="false"]();
+    </code>
+  </element>
+</OpenFlipper>
