@@ -332,7 +332,9 @@ void DecimaterPlugin::slotUpdateNumVertices()
     tool_->currentNumVertices->setText (QString::number(max));
     tool_->verticesCount->setMaximum(max);
     tool_->verticesCountSlider->setMaximum(max);
-    tool_->verticesCount->setValue(max);
+    
+    if ( tool_->verticesCount->value() < 2 )
+      tool_->verticesCount->setValue( max / 2 );
   }
 }
 
