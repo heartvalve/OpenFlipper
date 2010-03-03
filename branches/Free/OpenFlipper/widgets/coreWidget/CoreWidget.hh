@@ -369,10 +369,14 @@ public:
     /// Use native or gl painted cursor
     void setForceNativeCursor ( bool _state );
 
+    QSize defaultIconSize();
+
   private:
     OpenFlipper::Options::LoggerState loggerState_;
 
     uint fullscreenState_;
+    
+    QSize defaultIconSize_;
 
   /** @} */
 
