@@ -85,6 +85,13 @@ void Core::applyOptions(){
     // Logger
     coreWidget_->showLogger( OpenFlipper::Options::loggerState() );
 
+    // Toolbar Size
+    switch ( OpenFlipperSettings().value("Core/Toolbar/iconSize",0).toInt() ){
+      case 1  : coreWidget_->setIconSize( QSize(16,16) );break;
+      case 2  : coreWidget_->setIconSize( QSize(32,32) );break;
+      default : coreWidget_->setIconSize( coreWidget_->defaultIconSize() );
+    }
+
     // gl mouse cursor
     coreWidget_->setForceNativeCursor( OpenFlipperSettings().value("Core/Gui/glViewer/nativeMouse",false).toBool() );
     

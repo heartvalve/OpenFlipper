@@ -135,5 +135,8 @@ void CoreWidget::slotRemoveToolbar(QToolBar* _toolbar) {
   emit log(LOGERR,tr("Remove Toolbar: Toolbar not found.") );
 }
 
+QSize CoreWidget::defaultIconSize(){
+  return defaultIconSize_;
+}
 
 //=============================================================================

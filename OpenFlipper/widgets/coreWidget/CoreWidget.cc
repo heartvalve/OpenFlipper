@@ -128,6 +128,8 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 {
   setupStatusBar();
 
+  defaultIconSize_ = iconSize();
+
   toolSplitter_ = new QSplitter(Qt::Horizontal,this);
 
   setCentralWidget(toolSplitter_);

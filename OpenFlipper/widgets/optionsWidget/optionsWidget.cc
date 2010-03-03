@@ -236,6 +236,16 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   splash->setChecked( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() );
   toolbox->setChecked( !OpenFlipper::Options::hideToolbox() );
 
+  iconSmall->setChecked(false);
+  iconNormal->setChecked(false);
+  iconDefault->setChecked(false);
+  
+  switch ( OpenFlipperSettings().value("Core/Toolbar/iconSize",0).toInt() ){
+    case 1  : iconSmall->setChecked(true); break;
+    case 2  : iconNormal->setChecked(true); break;
+    default : iconDefault->setChecked(true);
+  }
+  
   loggerHidden->setChecked( OpenFlipper::Options::loggerState() == OpenFlipper::Options::Hidden);
   loggerNormal->setChecked( OpenFlipper::Options::loggerState() == OpenFlipper::Options::Normal);
   loggerInScene->setChecked( OpenFlipper::Options::loggerState() == OpenFlipper::Options::InScene);
@@ -555,6 +565,13 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/Log/logFileEnabled",enableLogFile->isChecked());
   OpenFlipperSettings().setValue("Core/Log/logFile",logFile->text());
 
+  if ( iconDefault->isChecked() )
+    OpenFlipperSettings().setValue("Core/Toolbar/iconSize", 0);
+  else if ( iconSmall->isChecked() )
+    OpenFlipperSettings().setValue("Core/Toolbar/iconSize", 1);
+  else if ( iconNormal->isChecked() )
+    OpenFlipperSettings().setValue("Core/Toolbar/iconSize", 2);
+  
   //viewer
   OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactor", wZoomFactor->text().toDouble());
   OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactorShift", wZoomFactorShift->text().toDouble());
