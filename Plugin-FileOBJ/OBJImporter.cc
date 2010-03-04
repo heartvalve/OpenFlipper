@@ -96,10 +96,14 @@ void OBJImporter::addObject( BaseObject* _object ){
     polyMeshes_.push_back( polyMeshObj->mesh() );
     objects_.push_back( _object );
 
+    addUsedVertices();
+    
   } else if ( triMeshObj ){
     
     triMeshes_.push_back( triMeshObj->mesh() );
     objects_.push_back( _object );
+    
+    addUsedVertices();
     
   }
 
@@ -179,35 +183,47 @@ BSplineSurface* OBJImporter::currentSurface(){
 
 //-----------------------------------------------------------------------------
 
-/// check if the vertex of a face is already added to the mesh. if not add it.
-void OBJImporter::checkExistance(VertexHandle _vh){
+/// add all vertices that are used to the mesh (in correct order)
+void OBJImporter::addUsedVertices(){
 
+  
   if ( isTriangleMesh( currentObject() ) ){
 
     //handle triangle meshes
     if ( !currentTriMesh() ) return;
     
-    if ( _vh >= (int)vertices_.size() ){
-      std::cerr << "Error: Vertex ID too large" << std::endl;
-      return;
-    }
+    //add all vertices to the mesh
+    std::set<VertexHandle>::iterator it;
 
-    if ( vertexMapTri_.find( _vh ) == vertexMapTri_.end() )
-      vertexMapTri_[ _vh ] = currentTriMesh()->add_vertex( (TriMesh::Point) vertices_[_vh] );
+    for ( it=usedVertices_[ currentObject() ].begin() ; it != usedVertices_[ currentObject() ].end(); it++ ){
   
-  
+      if ( *it >= (int)vertices_.size() ){
+        std::cerr << "Error: Vertex ID too large" << std::endl;
+        continue;
+      }
+
+      if ( vertexMapTri_.find( *it ) == vertexMapTri_.end() )
+        vertexMapTri_[ *it ] = currentTriMesh()->add_vertex( (TriMesh::Point) vertices_[*it] );
+    }
+      
   } else if ( isPolyMesh( currentObject() ) ){
 
     //handle poly meshes
     if ( !currentPolyMesh() ) return;
 
-    if ( _vh >= (int)vertices_.size() ){
-      std::cerr << "Error: Vertex ID too large" << std::endl;
-      return;
-    }
+    //add all vertices to the mesh
+    std::set<VertexHandle>::iterator it;
 
-    if ( vertexMapPoly_.find( _vh ) == vertexMapPoly_.end() )
-      vertexMapPoly_[ _vh ] = currentPolyMesh()->add_vertex( (PolyMesh::Point) vertices_[_vh] );
+    for ( it=usedVertices_[ currentObject() ].begin() ; it != usedVertices_[ currentObject() ].end(); it++ ){
+        
+      if ( *it >= (int)vertices_.size() ){
+        std::cerr << "Error: Vertex ID too large" << std::endl;
+        return;
+      }
+
+      if ( vertexMapPoly_.find( *it ) == vertexMapPoly_.end() )
+        vertexMapPoly_[ *it ] = currentPolyMesh()->add_vertex( (PolyMesh::Point) vertices_[*it] );
+    }
   }
 }
 
@@ -760,6 +776,15 @@ void OBJImporter::useMaterial( std::string _materialName ){
   usedMaterials_[ currentObject() ].push_back( _materialName );
   
   objectOptions_[ currentObject() ] |= TEXTURE;
+}
+
+///used vertices
+void OBJImporter::useVertex(VertexHandle _vertex){
+
+  while( (int)usedVertices_.size() - 1 < (int) objectOptions_.size() )
+    usedVertices_.push_back( std::set<VertexHandle>() );
+
+  usedVertices_[ objectOptions_.size() ].insert( _vertex );
 }
 
 //-----------------------------------------------------------------------------
