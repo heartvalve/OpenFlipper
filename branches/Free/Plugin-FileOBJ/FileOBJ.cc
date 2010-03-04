@@ -1035,9 +1035,10 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
   std::string line;
   std::string keyWrd;
+  std::string nextKeyWrd = "";
   
   float x, y, z;
-  
+  int index;
   int faceCount = 0;
   
   int PolyMeshCount = 0;
@@ -1063,7 +1064,14 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
     std::stringstream stream(line);
 
-    stream >> keyWrd;
+    //unless the keyWrd for the new line is not determined by the previous line
+    //read it from stream
+    if (nextKeyWrd == "")
+      stream >> keyWrd;
+    else {
+      keyWrd = nextKeyWrd;
+      nextKeyWrd = "";
+    }
 
     //call - included obj files
     if (mode == NONE && keyWrd == "call"){
