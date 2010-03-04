@@ -587,15 +587,6 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       }
     }
 
-    // vertex
-    else if (mode == NONE && keyWrd == "v")
-    {
-      stream >> x; stream >> y; stream >> z;
-
-      if ( !stream.fail() )
-        _importer.addVertex( OpenMesh::Vec3f(x,y,z) );
-    }
-
     // texture coord
     else if (mode == NONE && keyWrd == "vt")
     {
@@ -738,7 +729,6 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
               // Obj counts from 1 and not zero .. array counts from zero therefore -1
               vhandles.push_back( value-1 );
-              _importer.checkExistance( value -1 );
               break;
 
             case 1: // texture coord
@@ -1029,7 +1019,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
   }
 }
 
-
+///check file types and read general info like vertices
 void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStringList& _includes)
 {
   //setup filestream
@@ -1045,6 +1035,8 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 
   std::string line;
   std::string keyWrd;
+  
+  float x, y, z;
   
   int faceCount = 0;
   
@@ -1095,7 +1087,16 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         _includes.append( includeStr );
       }
     }
-    
+
+    // vertex
+    else if (mode == NONE && keyWrd == "v")
+    {
+      stream >> x; stream >> y; stream >> z;
+
+      if ( !stream.fail() )
+        _importer.addVertex( OpenMesh::Vec3f(x,y,z) );
+    }
+
     // group
     else if (mode == NONE && keyWrd == "g"){
       if ( faceCount > 0 ){
@@ -1115,7 +1116,8 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
       faceCount++;
       
       int verticesPerFace = 0;
-
+      int value;
+      
       // read full line after detecting a face
       std::string faceLine;
       std::getline(stream,faceLine);
@@ -1129,6 +1131,44 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
         lineData >> vertex;
 
         verticesPerFace++;
+        
+        
+        //get the vertex component (vertex/texCoord/normal)
+        size_t found=vertex.find("/");
+
+        // parts are seperated by '/' So if no '/' found its the last component
+        if( found != std::string::npos ){
+
+          // read the index value
+          std::stringstream tmp( vertex.substr(0,found) );
+
+          // Read current value
+          tmp >> value;
+          
+          if ( tmp.fail() )
+            emit log(LOGERR, tr("readOBJFile : Error reading vertex index!"));
+
+        } else {
+
+          // last component of the vertex, read it.
+          std::stringstream tmp( vertex );
+          tmp >> value;
+
+          if ( tmp.fail() )
+            emit log(LOGERR, tr("readOBJFile : Error reading vertex index!"));
+        }
+
+
+        if ( value < 0 ) {
+          // Calculation of index :
+          // -1 is the last vertex in the list
+          // As obj counts from 1 and not zero add +1
+          value = _importer.n_vertices() + value + 1;
+        }
+
+        // Obj counts from 1 and not zero .. array counts from zero therefore -1
+        // the importer has to know which vertices are used by the object for correct vertex order
+        _importer.useVertex( value -1 );
       }
 
 
@@ -1139,20 +1179,56 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 #ifdef ENABLE_BSPLINECURVE_SUPPORT
 
     // curve
-    if (mode == NONE && keyWrd == "curv"){
-
+    if ( (mode == NONE && keyWrd == "curv") || (mode == CURVE && keyWrd == "curv_add") ){
+      
       mode = CURVE;
       
-      if ( faceCount > 0 ){
-        //give options to importer and reinitialize
-        //for next object
-        if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
-        if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
+      if ( keyWrd == "curv" ){
+        
+        if ( faceCount > 0 ){
+          //give options to importer and reinitialize
+          //for next object
+          if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
+          if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
-        _importer.addObjectOptions( options );
+          _importer.addObjectOptions( options );
+        }
+
+        options = OBJImporter::CURVE;
       }
       
-      options = OBJImporter::CURVE;
+      //get curve control points
+      std::string curveLine;
+      std::string tmp;
+      
+      std::getline(stream, curveLine);
+      
+      // value may contain a / as line separator
+      if ( QString( curveLine.c_str() ).endsWith("\\")){
+        curveLine = curveLine.substr(0, curveLine.length()-1);
+        nextKeyWrd = "curv_add";
+      }
+      
+      std::stringstream lineData( curveLine );
+      
+      // Read knots at the beginning before the indices
+      if ( keyWrd == "curv" ) {
+        double trash;
+        lineData >> trash;
+        lineData >> trash;
+      }
+      
+      // work on the line until nothing left to read
+      while ( !lineData.eof() && !lineData.fail() )
+      {
+        lineData >> index;
+
+        if ( !lineData.fail() ){
+          // the importer has to know which vertices are used by the object for correct vertex order
+          _importer.useVertex( index -1 );
+        }
+      }
+      
     }
     
     // end
@@ -1169,20 +1245,48 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT
 
     // surface
-    if (mode == NONE && keyWrd == "surf"){
+    if ( (mode == NONE && keyWrd == "surf") || (mode == SURFACE && keyWrd == "surf_add") ){
 
       mode = SURFACE;
       
-      if ( faceCount > 0 ){
-        //give options to importer and reinitialize
-        //for next object
-        if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
-        if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
+      if ( keyWrd == "surf" ){
+        
+        if ( faceCount > 0 ){
+          //give options to importer and reinitialize
+          //for next object
+          if ( options & OBJImporter::TRIMESH  ) TriMeshCount++;
+          if ( options & OBJImporter::POLYMESH ) PolyMeshCount++;
 
-        _importer.addObjectOptions( options );
+          _importer.addObjectOptions( options );
+        }
+      
+        options = OBJImporter::SURFACE;        
       }
       
-      options = OBJImporter::SURFACE;
+      //get surface control points
+      std::string surfLine;
+      std::string tmp;
+      
+      std::getline(stream, surfLine);
+      
+      // value may contain a / as line separator
+      if ( QString( surfLine.c_str() ).endsWith("\\")){
+        surfLine = surfLine.substr(0, surfLine.length()-1);
+        nextKeyWrd = "surf_add";
+      }
+
+      std::stringstream lineData( surfLine );
+
+      // work on the line until nothing left to read
+      while ( !lineData.eof() && !lineData.fail() )
+      {
+        lineData >> index;
+
+        if ( !lineData.fail() ){
+          // the importer has to know which vertices are used by the object for correct vertex order
+          _importer.useVertex( index -1 );
+        }
+      }
     }
     
     // end

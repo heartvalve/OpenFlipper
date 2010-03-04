@@ -145,8 +145,8 @@ class OBJImporter
     BSplineSurface* currentSurface();
 #endif
 
-    /// check if the vertex of a face is already added to the mesh. if not add it.
-    void checkExistance(VertexHandle _vh);
+    /// add all vertices that are used to the mesh (in correct order)
+    void addUsedVertices();
     
     /// set vertex texture coordinate
     void setVertexTexCoord(VertexHandle _vh, int _texCoordID);
@@ -192,6 +192,9 @@ class OBJImporter
     /// used materials
     const std::vector<std::string> usedMaterials(uint _objectID);
     void useMaterial( std::string _materialName );
+    
+    ///used vertices
+    void useVertex(VertexHandle _vertex);
     
     /// Path of the OBJ file
     QString path();
@@ -257,6 +260,10 @@ class OBJImporter
     
     // for each object a vector of materialNames
     std::vector< std::vector< std::string > > usedMaterials_;
+    
+    // for each object a vector of vertex indices
+    // this ensures that a vertex defined first gets a lower index
+    std::vector< std::set< VertexHandle > > usedVertices_;
 
 };
 
