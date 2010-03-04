@@ -1075,7 +1075,7 @@ QWidget* FileOFFPlugin::saveOptionsWidget(QString _currentFilter) {
         
         connect(saveDefaultButton_, SIGNAL(clicked()), this, SLOT(slotSaveDefault()));
         
-        saveBinary_->setChecked( OpenFlipperSettings().value("FileOff/Save/Binary",true).toBool() );
+        saveBinary_->setChecked( OpenFlipperSettings().value("FileOff/Save/Binary",false).toBool() );
         saveVertexColor_->setChecked( OpenFlipperSettings().value("FileOff/Save/VertexColor",true).toBool() );
         saveFaceColor_->setChecked( OpenFlipperSettings().value("FileOff/Save/FaceColor",true).toBool() );
         saveAlpha_->setChecked( OpenFlipperSettings().value("FileOff/Save/Alpha",true).toBool() );
@@ -1141,8 +1141,10 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         loadAlpha_->setChecked( OpenFlipperSettings().value("FileOff/Load/Alpha",true).toBool()  );
         loadNormals_->setChecked( OpenFlipperSettings().value("FileOff/Load/Normals",true).toBool()  );
         loadTexCoords_->setChecked( OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool()  );
-        loadSkipColorDetection_->setChecked( OpenFlipperSettings().value("FileOff/Load/SkipColorCompDetection",true).toBool()  );
+        loadSkipColorDetection_->setChecked( OpenFlipperSettings().value("FileOff/Load/SkipColorCompDetection",false).toBool()  );
     }
+    
+    
     
     return loadOptions_;
 }
