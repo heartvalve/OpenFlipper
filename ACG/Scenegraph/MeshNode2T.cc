@@ -168,6 +168,7 @@ availableDrawModes() const {
   if (mesh_.has_vertex_colors())
   {
     drawModes |= DrawModes::POINTS_COLORED;
+    drawModes |= DrawModes::SOLID_POINTS_COLORED;
   }
   
   if (mesh_.has_face_colors()) {
@@ -282,6 +283,16 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
     draw_lines();
     glDepthFunc(depthFunc());
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  }
+  
+  if ( ( _drawMode & DrawModes::SOLID_POINTS_COLORED ) && mesh_.has_vertex_colors() )
+  {
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_SMOOTH);
+    glDepthRange(0.01, 1.0);
+    enable_arrays( VERTEX_ARRAY | COLOR_VERTEX_ARRAY );
+    draw_faces(PER_VERTEX);
+    glDepthRange(0.0, 1.0);
   }
   
   if ( ( _drawMode & DrawModes::SOLID_FLAT_SHADED ) && mesh_.has_face_normals())
