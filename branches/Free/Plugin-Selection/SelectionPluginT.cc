@@ -394,6 +394,10 @@ void SelectionPlugin::colorizeSelection(MeshT* _mesh, SelectionPrimitive _type, 
   if (_type & VERTEX){
     typename MeshT::VertexIter v_it, v_end=_mesh->vertices_end();
 
+    // Request vertex color attribute
+    if( !_mesh->has_vertex_colors() )
+        _mesh->request_vertex_colors();
+
     for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
       if ( _mesh->status(v_it).selected() )
         _mesh->set_color(v_it, color);
@@ -401,6 +405,10 @@ void SelectionPlugin::colorizeSelection(MeshT* _mesh, SelectionPrimitive _type, 
 
   if (_type & FACE){
     typename MeshT::FaceIter f_it, f_end( _mesh->faces_end() );
+
+    // Request face color attribute
+    if( !_mesh->has_face_colors() )
+        _mesh->request_face_colors();
 
     for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
       if ( _mesh->status(f_it).selected() )
