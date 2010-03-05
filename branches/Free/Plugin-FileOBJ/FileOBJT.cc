@@ -73,7 +73,7 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   
   unsigned int i, nV, idx;
   Vec3f v, n;
-  Vec2f t;
+  Vec2f t(0.0f,0.0f);
   typename MeshT::VertexHandle vh;
   std::vector<typename MeshT::VertexHandle> vhandles;
   bool useMatrial = false;
