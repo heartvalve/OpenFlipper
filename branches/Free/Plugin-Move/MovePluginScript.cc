@@ -149,7 +149,11 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
 #endif
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
-      std::cerr << "Todo : translate PolyLine" << std::endl;
+      
+      PolyLine& line = (* PluginFunctions::polyLine(object) );
+      
+      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+        line.point(i) = line.point(i)  + _vector; 
     }
   #endif
   #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
@@ -214,7 +218,14 @@ void MovePlugin::translate( int _objectId , IdList _vHandles, Vector _vector ){
 
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
-      std::cerr << "Todo : translate PolyLine" << std::endl;
+      
+      PolyLine& line = (* PluginFunctions::polyLine(object) );
+      
+      const int max = line.n_vertices();
+      
+      for ( unsigned int i = 0 ; i < _vHandles.size(); ++i ) 
+        if ( (_vHandles[i] > 0) && ( _vHandles[i] < max ) )
+          line.point( _vHandles[i] ) = line.point( _vHandles[i] )  + _vector; 
     }
   #endif
   #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
@@ -280,7 +291,12 @@ void MovePlugin::translateSelection( int _objectId , Vector _vector) {
   
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
-      std::cerr << "Todo : translate PolyLine" << std::endl;
+      
+      PolyLine& line = (* PluginFunctions::polyLine(object) );
+      
+      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+        if ( line.vertex_selection(i) )
+          line.point(i) = line.point(i)  + _vector; 
     }
   #endif
   #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
@@ -348,7 +364,11 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
 
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
-      std::cerr << "Todo : transform PolyLine" << std::endl;
+      
+      PolyLine& line = (* PluginFunctions::polyLine(object) );
+      
+      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+        line.point(i) = _matrix.transform_point( line.point(i) ); 
     }
   #endif
   #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
@@ -427,7 +447,15 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
 
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
-      std::cerr << "Todo : transform PolyLine" << std::endl;
+      
+      PolyLine& line = (* PluginFunctions::polyLine(object) );
+      
+      const int max = line.n_vertices();
+      
+      for ( unsigned int i = 0 ; i < _vHandles.size(); ++i ) 
+        if ( (_vHandles[i] > 0) && ( _vHandles[i] < max ) )
+          line.point( _vHandles[i] ) = _matrix.transform_point( line.point( _vHandles[i] ) ); 
+      
     }
   #endif
   #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
@@ -505,7 +533,12 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
   
   #ifdef ENABLE_POLYLINE_SUPPORT
     else if ( object->dataType(DATA_POLY_LINE) ) {
-      std::cerr << "Todo : transform PolyLine" << std::endl;
+      
+      PolyLine& line = (* PluginFunctions::polyLine(object) );
+      
+      for ( int i = 0 ; i < (int)line.n_vertices(); ++i )
+        if ( line.vertex_selection(i) )
+          line.point(i) = _matrix.transform_point( line.point(i) ); 
     }
   #endif
   #ifdef ENABLE_BSPLINE_CURVE_SUPPORT
