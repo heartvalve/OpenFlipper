@@ -449,6 +449,9 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   } else {
 
     emit log(LOGERR,tr("moveObject called for unsupported Object Type"));
+    
+    std::cerr << "type was : " << object->dataType() << std::endl;
+    std::cerr << "polyline : " << DATA_POLY_LINE << std::endl;
     return;
   }
 
@@ -754,6 +757,17 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
         lastActiveManipulator_ = object->id();
 
         emit updateView();
+       
+        bool found = false;
+        
+        for (uint i=0; i < activeManipulators_.size(); i++)
+          if ( activeManipulators_[i] == object->id() ){
+            found = true;
+            break;
+          }
+        
+        if ( !found )
+          activeManipulators_.push_back( object->id() );
 
     } else {
         //emit log(LOGWARN, tr("Picking failed"));
@@ -769,25 +783,33 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
 void MovePlugin::showManipulators( )
 {
 
-  #ifdef ENABLE_TSPLINEMESH_SUPPORT
-    DataType types = DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH);
-  #else
-    DataType types = DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH);
-  #endif
-
   if (!hide_ && (toolboxActive_ || (PluginFunctions::pickMode() == "Move") || (PluginFunctions::pickMode() == "MoveSelection"))) {
     
-    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, types); o_it != PluginFunctions::objectsEnd(); ++o_it)
-      if (o_it->manipPlaced()) {
-        o_it->manipulatorNode()->show();
-        o_it->manipulatorNode()->apply_transformation( PluginFunctions::pickMode() == "Move" );
-        emit nodeVisibilityChanged(o_it->id());
+    for (uint i=0; i < activeManipulators_.size(); i++){
+      
+      BaseObjectData* obj = 0;
+      
+      PluginFunctions::getObject( activeManipulators_[i], obj );
+      
+      if (obj != 0 && obj->manipPlaced()) {
+        obj->manipulatorNode()->show();
+        obj->manipulatorNode()->apply_transformation( PluginFunctions::pickMode() == "Move" );
+        emit nodeVisibilityChanged(obj->id());
       }
+    }
 
   } else {
-    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, types); o_it != PluginFunctions::objectsEnd(); ++o_it)  {
-      o_it->manipulatorNode()->hide();
-      emit nodeVisibilityChanged(o_it->id());
+    
+    for (uint i=0; i < activeManipulators_.size(); i++){
+      
+      BaseObjectData* obj = 0;
+      
+      PluginFunctions::getObject( activeManipulators_[i], obj );
+      
+      if ( obj != 0 ) {
+        obj->manipulatorNode()->hide();
+        emit nodeVisibilityChanged(obj->id());
+      }
     }
   }
 
@@ -1943,6 +1965,19 @@ OpenMesh::Vec3d MovePlugin::getNearestFace(MeshType* _mesh, uint _fh, OpenMesh::
     }
 
     return (OpenMesh::Vec3d)cog/count;
+}
+
+void MovePlugin::slotAllCleared(){
+  activeManipulators_.clear();
+}
+    
+void MovePlugin::objectDeleted( int _id ){
+  
+  for (uint i=0; i < activeManipulators_.size(); i++)
+    if ( activeManipulators_[i] == _id ){
+      activeManipulators_.erase( activeManipulators_.begin() + i  );
+      return;
+    }
 }
 
 Q_EXPORT_PLUGIN2( moveplugin , MovePlugin );

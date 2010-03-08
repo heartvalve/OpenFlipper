@@ -56,6 +56,7 @@
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/Plane/Plane.hh>
@@ -69,7 +70,7 @@ enum SelectionType {VERTEX, EDGE, FACE };
 
 /** Plugin for moving objects and selections
 */
-class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface,ToolbarInterface, ContextMenuInterface
+class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface,ToolbarInterface, ContextMenuInterface, LoadSaveInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -82,6 +83,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
   Q_INTERFACES(ContextMenuInterface)
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(ToolbarInterface)
+  Q_INTERFACES(LoadSaveInterface)
 
   signals:
     // BaseInterface
@@ -125,6 +127,11 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     // BaseInterface
     void initializePlugin();
     void pluginsInitialized();
+    
+    void slotAllCleared();
+    
+    // LoadSaveInterface
+    void objectDeleted( int _id );
 
     // MouseInterface
     void slotMouseWheelEvent(QWheelEvent * _event, const std::string & _mode);
@@ -276,6 +283,10 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 /** @name Manipulator Handling
   * @{ */
 //===========================================================================
+
+  private:
+    //object ids of all objects with active Manipulator
+    std::vector< int > activeManipulators_;
 
   private slots:
 
