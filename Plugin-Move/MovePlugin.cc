@@ -769,9 +769,15 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
 void MovePlugin::showManipulators( )
 {
 
+  #ifdef ENABLE_TSPLINEMESH_SUPPORT
+    DataType types = DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH);
+  #else
+    DataType types = DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH);
+  #endif
+
   if (!hide_ && (toolboxActive_ || (PluginFunctions::pickMode() == "Move") || (PluginFunctions::pickMode() == "MoveSelection"))) {
     
-    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it)
+    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, types); o_it != PluginFunctions::objectsEnd(); ++o_it)
       if (o_it->manipPlaced()) {
         o_it->manipulatorNode()->show();
         o_it->manipulatorNode()->apply_transformation( PluginFunctions::pickMode() == "Move" );
@@ -779,7 +785,7 @@ void MovePlugin::showManipulators( )
       }
 
   } else {
-    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS); o_it != PluginFunctions::objectsEnd(); ++o_it)  {
+    for (PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, types); o_it != PluginFunctions::objectsEnd(); ++o_it)  {
       o_it->manipulatorNode()->hide();
       emit nodeVisibilityChanged(o_it->id());
     }
