@@ -343,7 +343,7 @@ void SelectionPlugin::pluginsInitialized() {
   createMeshFromSelAction_ = new QAction(tr("&Create Mesh from selection"), toolBarActions_);
   createMeshFromSelAction_->setCheckable( true );
   createMeshFromSelAction_->setStatusTip(tr("Create a mesh from the current selection of a target object"));
-  createMeshFromSelAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"scissor_createMeshSelection.png") );
+  createMeshFromSelAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"selection_createMeshSelection.png") );
   
   connect(createMeshFromSelAction_, SIGNAL(triggered()), this, SLOT(slotCreateMeshFromSelection()) );
   
