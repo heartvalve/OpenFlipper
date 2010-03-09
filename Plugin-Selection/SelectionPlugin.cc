@@ -375,30 +375,31 @@ void SelectionPlugin::pluginsInitialized() {
  *
  * @param _id object-id of changed object
  */
-void SelectionPlugin::slotObjectUpdated(int _id){
+void SelectionPlugin::slotObjectUpdated(int _id, const UpdateType _type){
 #ifdef ENABLE_POLYLINE_SUPPORT
 
-  if (waitingForPolyLineSelection_){
-
-    //is object a polyLine?
-    BaseObjectData *obj;
-    PluginFunctions::getObject(_id, obj);
-    // get polyline object
-    PolyLineObject* pline  = PluginFunctions::polyLineObject(obj);
-    if (pline){
-      if (polyLineID_ == -1){
-        polyLineID_ = _id;
-      }else if (polyLineID_ != _id){
-        //the user added a second polyline so delete the first
-        emit deleteObject(polyLineID_);
-        polyLineID_ = _id;
-      }
-      if (pline->line()->is_closed()){
-        PluginFunctions::pickMode(SURFACE_LASSO_SELECTION);
-        waitingForPolyLineSelection_ = false;
+  if (waitingForPolyLineSelection_)
+    if ( _type == UPDATE_ALL || _type == UPDATE_GEOMETRY ){
+    
+      //is object a polyLine?
+      BaseObjectData *obj;
+      PluginFunctions::getObject(_id, obj);
+      // get polyline object
+      PolyLineObject* pline  = PluginFunctions::polyLineObject(obj);
+      if (pline){
+        if (polyLineID_ == -1){
+          polyLineID_ = _id;
+        }else if (polyLineID_ != _id){
+          //the user added a second polyline so delete the first
+          emit deleteObject(polyLineID_);
+          polyLineID_ = _id;
+        }
+        if (pline->line()->is_closed()){
+          PluginFunctions::pickMode(SURFACE_LASSO_SELECTION);
+          waitingForPolyLineSelection_ = false;
+        }
       }
     }
-  }
 #endif
 }
 
@@ -673,7 +674,7 @@ void SelectionPlugin::slotSetArea() {
 #endif
 
 
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_ALL);
 	}
 
   emit updateView();
@@ -716,7 +717,7 @@ void SelectionPlugin::slotSetHandle() {
 		if (o_it->dataType(DATA_TSPLINE_MESH))
 			set_handle(PluginFunctions::tsplineMesh(*o_it));
 #endif
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_ALL);
 	}
 
 	emit updateView();
@@ -753,7 +754,7 @@ void SelectionPlugin::slotSetFeatures() {
 		if (o_it->dataType(DATA_TSPLINE_MESH))
 			set_features(PluginFunctions::tsplineMesh(*o_it));
 #endif
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_ALL);
 	}
 
 	emit updateView();
@@ -787,7 +788,7 @@ void SelectionPlugin::slotClearHandle() {
     if ( o_it->dataType( DATA_TSPLINE_MESH ) )
         clear_handle(PluginFunctions::tsplineMesh(*o_it));
 #endif
-    o_it->update();
+    emit updatedObject(o_it->id(), UPDATE_ALL);
   }
 
   emit updateView();
@@ -821,7 +822,7 @@ void SelectionPlugin::slotClearArea() {
     if ( o_it->dataType( DATA_TSPLINE_MESH ) )
         clear_area(PluginFunctions::tsplineMesh(*o_it));
 #endif
-    o_it->update();
+    emit updatedObject(o_it->id(), UPDATE_ALL);
   }
 
   emit updateView();
@@ -855,7 +856,7 @@ void SelectionPlugin::slotClearFeatures() {
     if ( o_it->dataType( DATA_TSPLINE_MESH ) )
         clear_features(PluginFunctions::tsplineMesh(*o_it));
 #endif
-    o_it->update();
+    emit updatedObject(o_it->id(), UPDATE_ALL);
   }
 
   emit updateView();
@@ -890,8 +891,7 @@ void SelectionPlugin::slotDeleteSelection() {
       if ( o_it->dataType( DATA_TSPLINE_MESH ) )
           changed = changed || deleteSelection(PluginFunctions::tsplineMesh(*o_it));
 #endif
-      o_it->update();
-      emit updatedObject(o_it->id());
+      emit updatedObject(o_it->id(), UPDATE_ALL);
     }
   }
   emit updateView();
@@ -1114,8 +1114,14 @@ void SelectionPlugin::loadIniFile( INIFile& _ini, int _id )
     updated_selection = true;
   }
 
-  if ( updated_selection || updated_modeling_regions ) {
-    object->update();
+  if ( updated_modeling_regions ) {
+    
+    emit updatedObject(object->id(), UPDATE_ALL);
+    emit updateView();
+    
+  } else if ( updated_selection ) {
+
+    emit updatedObject(object->id(), UPDATE_SELECTION);
     emit updateView();
   }
 
@@ -1209,7 +1215,7 @@ void SelectionPlugin::convertSelectionType(StatusBits _from, StatusBits _to, boo
 			if(_clearAfter) { clearModelingVertices(o_it->id()); }
 			selectHandleVertices(o_it->id(), list);
 
-			o_it->update();
+			emit updatedObject(o_it->id(), UPDATE_ALL);
 		}
 	}
 	else if(_from == HANDLEAREA && _to == AREA) {
@@ -1234,7 +1240,7 @@ void SelectionPlugin::convertSelectionType(StatusBits _from, StatusBits _to, boo
 			if(_clearAfter) { clearHandleVertices(o_it->id()); }
 			selectModelingVertices(o_it->id(), list);
 
-			o_it->update();
+			emit updatedObject(o_it->id(), UPDATE_ALL);
 		}
 	}
 
@@ -1278,7 +1284,7 @@ void SelectionPlugin::convertVtoESelection(bool _unselectAfter) {
 
     if(_unselectAfter) { clearVertexSelection(o_it->id()); }
 
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -1317,7 +1323,7 @@ void SelectionPlugin::convertVtoFSelection(bool _unselectAfter) {
 
     if(_unselectAfter) { clearVertexSelection(o_it->id()); }
 
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -1356,7 +1362,7 @@ void SelectionPlugin::convertEtoVSelection(bool _unselectAfter) {
 
     if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
 
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -1395,7 +1401,7 @@ void SelectionPlugin::convertEtoFSelection(bool _unselectAfter) {
 
     if(_unselectAfter) { clearEdgeSelection(o_it->id()); }
 
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -1434,7 +1440,7 @@ void SelectionPlugin::convertFtoVSelection(bool _unselectAfter) {
 
     if(_unselectAfter) { clearFaceSelection(o_it->id()); }
     
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -1473,7 +1479,7 @@ void SelectionPlugin::convertFtoESelection(bool _unselectAfter) {
 
     if(_unselectAfter) { clearFaceSelection(o_it->id()); }
     
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -1504,7 +1510,7 @@ void SelectionPlugin::slotClearAllVertexSelections() {
 
 		clearVertexSelection(o_it->id());
 
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -1533,7 +1539,7 @@ void SelectionPlugin::slotClearAllEdgeSelections() {
 
 		clearEdgeSelection(o_it->id());
 
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -1562,7 +1568,7 @@ void SelectionPlugin::slotClearAllFaceSelections() {
 
 		clearFaceSelection(o_it->id());
 
-		o_it->update();
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();

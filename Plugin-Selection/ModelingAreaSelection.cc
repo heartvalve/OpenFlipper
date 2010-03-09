@@ -88,7 +88,7 @@ void SelectionPlugin::selectModelingVertices( int objectId , IdList _vertexList 
 
   selection += " ] )";
 
-  object->update();
+  emit updatedObject(object->id(), UPDATE_ALL);
   emit scriptInfo( selection );
 }
 
@@ -125,7 +125,7 @@ void SelectionPlugin::unselectModelingVertices( int objectId , IdList _vertexLis
 
   selection += " ] )";
 
-  object->update();
+  emit updatedObject(object->id(), UPDATE_ALL);
   emit scriptInfo( selection );
 }
 
@@ -151,7 +151,7 @@ void SelectionPlugin::clearModelingVertices( int objectId ) {
       return;
   }
 
-  object->update();
+  emit updatedObject(object->id(), UPDATE_ALL);
   emit scriptInfo( "clearModelingVertices( ObjectId )" );
 }
 
@@ -177,7 +177,7 @@ void SelectionPlugin::setAllModelingVertices( int objectId  ) {
       return;
   }
 
-  object->update();
+  emit updatedObject(object->id(), UPDATE_ALL);
   emit scriptInfo( "setAllModelingVertices( ObjectId )" );
 }
 

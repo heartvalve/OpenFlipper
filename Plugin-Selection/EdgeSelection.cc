@@ -106,7 +106,7 @@ void SelectionPlugin::selectEdges( int objectId , IdList _edgeList ) {
   
   selection += " ] )";
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION );
   emit scriptInfo( selection );
 }
 
@@ -151,7 +151,7 @@ void SelectionPlugin::unselectEdges( int objectId , IdList _edgeList ) {
   
   selection += " ] )";
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( selection );
 }
 
@@ -186,7 +186,7 @@ void SelectionPlugin::selectAllEdges( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "selectAllEdges( ObjectId )" );
 }
 
@@ -221,7 +221,7 @@ void SelectionPlugin::clearEdgeSelection( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "clearEdgeSelection( ObjectId )" );
 }
 
@@ -256,7 +256,7 @@ void SelectionPlugin::invertEdgeSelection( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "invertEdgeSelection( ObjectId )" );
 }
 
@@ -292,7 +292,7 @@ void SelectionPlugin::selectBoundaryEdges( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "selectBoundaryEdges( ObjectId )" );
 }
 
@@ -360,7 +360,7 @@ void SelectionPlugin::colorizeEdgeSelection(int objectId, int r, int g, int b )
     emit scriptInfo( "colorizeEdgeSelection( ObjectId, "
     + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + " )" );
     
-    emit updatedObject(objectId);
+    emit updatedObject(object->id(), UPDATE_ALL);
 }
 
   

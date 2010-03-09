@@ -84,7 +84,7 @@ void SelectionPlugin::toggleSelection(QMouseEvent* _event)
 
                 if ( object->dataType(DATA_TRIANGLE_MESH) ){
                   toggleMeshSelection(PluginFunctions::triMesh(object), target_idx, hit_point);
-                  emit updatedObject(object->id());
+                  emit updatedObject(object->id(), UPDATE_SELECTION);
                 }
 
       // POLY MESHES
@@ -96,7 +96,7 @@ void SelectionPlugin::toggleSelection(QMouseEvent* _event)
 
               if ( object->dataType(DATA_POLY_MESH) ) {
                 toggleMeshSelection(PluginFunctions::polyMesh(object), target_idx, hit_point);
-                emit updatedObject(object->id());
+                emit updatedObject(object->id(), UPDATE_SELECTION);;
               }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
       }else if (object->dataType() == DATA_TSPLINE_MESH) {
@@ -107,7 +107,7 @@ void SelectionPlugin::toggleSelection(QMouseEvent* _event)
 
               if ( object->dataType(DATA_TSPLINE_MESH) ) {
                 toggleMeshSelection(PluginFunctions::tsplineMesh(object), target_idx, hit_point);
-                emit updatedObject(object->id());
+                emit updatedObject(object->id(), UPDATE_SELECTION);
               }
 #endif
       }
@@ -115,14 +115,14 @@ void SelectionPlugin::toggleSelection(QMouseEvent* _event)
       // POLYLINES
       else if (object->dataType() == DATA_POLY_LINE){
             togglePolyLineSelection(_event);
-            emit updatedObject(object->id());
+            emit updatedObject(object->id(), UPDATE_SELECTION);
       }
       #endif
       #ifdef ENABLE_BSPLINECURVE_SUPPORT
       // BSPLINECURVE
       else if (object->dataType() == DATA_BSPLINE_CURVE){
             toggleBSplineCurveSelection(_event);
-            emit updatedObject(object->id());
+            emit updatedObject(object->id(), UPDATE_SELECTION);
       }
       #endif
       else{
@@ -192,17 +192,17 @@ void SelectionPlugin::paintSphereSelection(QMouseEvent* _event) {
 
                     if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH) ) {
                       paintSphereSelection(PluginFunctions::triMesh(object), target_idx, hit_point);
-                      object->update();
+                      emit updatedObject(object->id(), UPDATE_SELECTION);
                     }
 
                     if ( object->picked(node_idx) && object->dataType(DATA_POLY_MESH) ) {
                       paintSphereSelection(PluginFunctions::polyMesh(object), target_idx, hit_point);
-                      object->update();
+                      emit updatedObject(object->id(), UPDATE_SELECTION);
                     }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
                     if ( object->picked(node_idx) && object->dataType(DATA_TSPLINE_MESH) ) {
                       paintSphereSelection(PluginFunctions::tsplineMesh(object), target_idx, hit_point);
-                      object->update();
+                      emit updatedObject(object->id(), UPDATE_SELECTION);
                     }
 #endif
                     
@@ -250,8 +250,7 @@ void SelectionPlugin::closestBoundarySelection(QMouseEvent* _event){
 
           closestBoundarySelection(m, vh.idx(), selectionType_);
 
-          emit updatedObject(-1);
-          PluginFunctions::triMeshObject(object)->updateSelection();
+          emit updatedObject(object->id(), UPDATE_SELECTION);
 
         } else if ( object->dataType(DATA_POLY_MESH) ) {
 
@@ -260,8 +259,8 @@ void SelectionPlugin::closestBoundarySelection(QMouseEvent* _event){
 
           closestBoundarySelection(m, vh.idx(), selectionType_ );
 
-          emit updatedObject(-1);
-          PluginFunctions::polyMeshObject(object)->updateSelection();
+          emit updatedObject(object->id(), UPDATE_SELECTION);
+
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
         } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
 
@@ -270,8 +269,8 @@ void SelectionPlugin::closestBoundarySelection(QMouseEvent* _event){
 
           closestBoundarySelection(m, vh.idx(), selectionType_ );
 
-          emit updatedObject(-1);
-          PluginFunctions::tsplineMeshObject(object)->updateSelection();
+          emit updatedObject(object->id(), UPDATE_SELECTION);
+
 #endif
         }
         emit updateView();
@@ -313,7 +312,7 @@ void SelectionPlugin::componentSelection(QMouseEvent* _event) {
          }
 #endif
 
-         object->update();
+         emit updatedObject(object->id(), UPDATE_SELECTION);
          emit createBackup(object->id(),tr("Component Selection"));
       }
    }
@@ -361,7 +360,7 @@ void SelectionPlugin::floodFillSelection(QMouseEvent* _event)
 
                 if ( object->dataType(DATA_TRIANGLE_MESH) ){
                   floodFillSelection(PluginFunctions::triMesh(object), target_idx);
-                  emit updatedObject(object->id());
+                  emit updatedObject(object->id(), UPDATE_SELECTION);
                 }
 
       // POLY MESHES
@@ -373,7 +372,7 @@ void SelectionPlugin::floodFillSelection(QMouseEvent* _event)
 
               if ( object->dataType(DATA_POLY_MESH) ) {
                 floodFillSelection(PluginFunctions::polyMesh(object), target_idx);
-                emit updatedObject(object->id());
+                emit updatedObject(object->id(), UPDATE_SELECTION);
               }
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
       }else if (object->dataType() == DATA_TSPLINE_MESH) {
@@ -384,7 +383,7 @@ void SelectionPlugin::floodFillSelection(QMouseEvent* _event)
 
               if ( object->dataType(DATA_TSPLINE_MESH) ) {
                 floodFillSelection(PluginFunctions::tsplineMesh(object), target_idx);
-                emit updatedObject(object->id());
+                emit updatedObject(object->id(), UPDATE_SELECTION);
               }
 #endif
       }
@@ -445,9 +444,8 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
 
           emit deleteObject(polyLineID_);
 
-          emit updatedObject(-1);
+          emit updatedObject(object->id(), UPDATE_SELECTION);
 
-          PluginFunctions::triMeshObject(object)->updateSelection();
           emit updateView();
 
           polyLineID_ = -1;
@@ -734,8 +732,8 @@ int SelectionPlugin::createMeshFromSelection( int _objectId ){
         //fill the empty mesh with the selection
         createMeshFromSelection( *mesh, *newMesh);
         
-        emit updatedObject(_objectId);
-        emit updatedObject(id);
+        
+        emit updatedObject(id, UPDATE_ALL);
         
         return id;
         
@@ -769,8 +767,7 @@ int SelectionPlugin::createMeshFromSelection( int _objectId ){
         //fill the empty mesh with the selection
         createMeshFromSelection( *mesh, *newMesh);
         
-        emit updatedObject(_objectId);
-        emit updatedObject(id);
+        emit updatedObject(id, UPDATE_ALL);
         
         return id;
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
@@ -804,8 +801,7 @@ int SelectionPlugin::createMeshFromSelection( int _objectId ){
         //fill the empty mesh with the selection
         createMeshFromSelection( *mesh, *newMesh);
         
-        emit updatedObject(_objectId);
-        emit updatedObject(id);
+        emit updatedObject(id, UPDATE_ALL);
         
         return id;
 #endif
@@ -850,7 +846,7 @@ bool SelectVolumeAction::operator()(BaseNode* _node, ACG::GLState& _state)
       }
 
     } else if (selected)
-      emit plugin_->updatedObject( object->id() );
+      emit plugin_->updatedObject( object->id(), UPDATE_SELECTION );
   }
   return true;
 }

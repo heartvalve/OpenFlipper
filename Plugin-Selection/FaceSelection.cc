@@ -86,7 +86,7 @@ void SelectionPlugin::selectFaces( int objectId , IdList _faceList ) {
   
   selection += " ] )";
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( selection );
 }
 
@@ -123,7 +123,7 @@ void SelectionPlugin::unselectFaces( int objectId , IdList _faceList ) {
   
   selection += " ] )";
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( selection );
 }
 
@@ -150,7 +150,7 @@ void SelectionPlugin::selectAllFaces( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "selectAllFaces( ObjectId )" );
 }
 
@@ -177,7 +177,7 @@ void SelectionPlugin::clearFaceSelection( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "clearFaceSelection( ObjectId )" );
 }
 
@@ -204,7 +204,7 @@ void SelectionPlugin::invertFaceSelection( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "invertFaceSelection( ObjectId )" );
 }
 
@@ -231,7 +231,7 @@ void SelectionPlugin::selectBoundaryFaces( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "selectBoundaryFaces( ObjectId )" );
 }
 
@@ -259,7 +259,7 @@ void SelectionPlugin::shrinkFaceSelection( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "shrinkFaceSelection( ObjectId )" );
 }
 
@@ -286,7 +286,7 @@ void SelectionPlugin::growFaceSelection( int objectId )
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_SELECTION);
   emit scriptInfo( "growFaceSelection( ObjectId )" );
 }
   
@@ -346,7 +346,7 @@ void SelectionPlugin::colorizeFaceSelection(int objectId, int r, int g, int b )
   emit scriptInfo( "colorizeFaceSelection( ObjectId, "
                   + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + " )" );
                   
-  emit updatedObject(objectId);
+  emit updatedObject(objectId, UPDATE_ALL);
 
 }
   

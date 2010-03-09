@@ -74,7 +74,7 @@ void SelectionPlugin::selectionContextMenu(QAction* _action) {
   else if ( _action->text() == "Colorize")
     colorizeSelection( objectId );
 
-  emit updatedObject(objectId);
+  emit updatedObject(object->id(), UPDATE_ALL);
 }
 
 //***********************************************************************************
