@@ -340,7 +340,7 @@
   *  MeshObject::updateModelingRegions.
   */
   template < class MeshT  >
-  void MeshObject< MeshT >::update() {
+  void MeshObject< MeshT >::update(UpdateType _type) {
 
     // No update necessary if no gui
     if ( OpenFlipper::Options::nogui() )
@@ -348,11 +348,22 @@
 
     PluginFunctions::setMainGLContext();
 
-    updateGeometry();
-    updateTopology();
-    updateSelection();
-    updateFeatures();
-    updateModelingRegions();
+//     std::cerr << "Mesh Update: " << updateTypeName(_type).toStdString() << std::endl;
+    
+    if ( _type == UPDATE_ALL ){
+      updateGeometry();
+      updateTopology();
+      updateSelection();
+      updateFeatures();
+      updateModelingRegions(); 
+      
+    } else if ( _type == UPDATE_GEOMETRY )
+      updateGeometry();
+    else if ( _type == UPDATE_TOPOLOGY )
+      updateTopology();
+    else if ( _type == UPDATE_SELECTION )
+      updateSelection();
+    
   }
 
   /** Updates the selection scenegraph nodes */

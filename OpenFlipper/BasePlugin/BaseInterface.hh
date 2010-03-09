@@ -123,6 +123,18 @@ class BaseInterface {
       */
     virtual void updatedObject(int ) {};
 
+    /** \brief An object has been changed or added by this plugin
+      *
+      *  Emit this Signal, if you updated any part of an object.\n
+      *  If you changed the element itself (geometry, topology,..) you also have to emit this signal.\n
+      *  Dont emit this Signal in BaseInterface::slotObjectUpdated() as this causes an endless Loop!!
+      *  Give the id of the new object as parameter or -1 if you updated all objects or deleted an object.
+      *
+      * @param _identifier id of the object or -1 if refering to all or deleted objects.
+      * @param _type the type states which part of the object (topology, selection, ..) has to be updated
+      */
+    virtual void updatedObject(int /*_identifier*/, const UpdateType /*_type*/) {};
+    
     /** \brief A scenegraph node has been shown or hidden
       *
       *  Emit this Signal, if you changed the visibility of a scenegraph node directly (not via object->show/hide).
@@ -145,6 +157,19 @@ class BaseInterface {
       *  @param _identifier Identifier of the updated/new object or -1 if one is deleted.
     */
     virtual void slotObjectUpdated( int /*_identifier*/ ) {};
+
+    /**  \brief An object has been updated by another plugin
+      *
+      *   This slot is called by the main aplication if the number or status of existing objects changed or if
+      *   an existing object has been changed. This could mean, that objects are added or deleted
+      *   or that an existing object with the given id has been modified.
+      *   If you store local information about one of these Objects, you should check if its still valid!\n
+      *   Dont emit BaseInterface::updatedObject(int) in this slot as this causes an endless Loop!!
+      *   You dont need to call updateView as the core triggers a redraw itself.
+      *  @param _identifier Identifier of the updated/new object or -1 if one is deleted.
+      *  @param _type the type states which part of the object (topology, selection, ..) had been updated
+    */
+    virtual void slotObjectUpdated( int /*_identifier*/, const UpdateType /*_type*/ ) {};
 
     /**  \brief Called if the whole scene is cleared
       *

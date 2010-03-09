@@ -71,15 +71,15 @@
 /** This function is called by a plugin if it changed something in the object list (source,target,...). The information is passed to all plugins.
  * @param _identifier Id of the updated object
  */
-void Core::slotObjectUpdated(int _identifier) {
+void Core::slotObjectUpdated(int _identifier, UpdateType _type) {
   if ( OpenFlipper::Options::doSlotDebugging() ) {
     if ( sender() != 0 ) {
       if ( sender()->metaObject() != 0 ) {
-        emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + tr(" ) called by ") +
-                 QString( sender()->metaObject()->className() ) );
+        emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + ", " + updateTypeName(_type)
+                 + tr(" ) called by ") + QString( sender()->metaObject()->className() ) );
       }
     } else {
-      emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + tr(" ) called by Core") );
+      emit log(LOGINFO,"updatedObject( " + QString::number(_identifier) + ", " + updateTypeName(_type) + tr(" ) called by Core") );
     }
   }
 
@@ -99,7 +99,7 @@ void Core::slotObjectUpdated(int _identifier) {
   emit signalObjectUpdated(_identifier);
 
   if ( object != 0 )
-    object->update();
+    object->update(_type);
 
   // Reenable redraws
   OpenFlipper::Options::redrawDisabled(false);

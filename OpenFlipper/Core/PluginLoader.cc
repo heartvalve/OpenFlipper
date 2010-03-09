@@ -356,6 +356,8 @@ void Core::loadPlugin(QString filename, bool silent){
     PluginInfo info;
     QString supported;
 
+    emit log(LOGOUT,tr("Location : \t %2").arg(filename) );
+    
     // Check if it is a BasePlugin
     BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugin);
     if ( basePlugin ) {
@@ -465,13 +467,37 @@ void Core::loadPlugin(QString filename, bool silent){
         connect(plugin,SIGNAL(updateView()),this,SLOT(updateView()));
 
 
+      if ( checkSignal(plugin,"updatedObject(int)") && checkSignal(plugin,"updatedObject(int,const UpdateType)") ){
+        
+        log(LOGERR,tr("Plugin uses deprecated and(!) new updatedObject. Only new updatedObject will be active."));
+        connect(plugin,SIGNAL(updatedObject(int,const UpdateType)),this,SLOT(slotObjectUpdated(int,const UpdateType)), Qt::DirectConnection);
+        
+      } else {
 
-      if ( checkSignal(plugin,"updatedObject(int)") )
-        connect(plugin,SIGNAL(updatedObject(int)),this,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
+        if ( checkSignal(plugin,"updatedObject(int)") ){
+          log(LOGWARN,tr("Plugin uses deprecated updatedObject."));
+          connect(plugin,SIGNAL(updatedObject(int)),this,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
+        }
 
-      if ( checkSlot( plugin , "slotObjectUpdated(int)" ) )
+        if ( checkSignal(plugin,"updatedObject(int,const UpdateType)") )
+          connect(plugin,SIGNAL(updatedObject(int,const UpdateType)),this,SLOT(slotObjectUpdated(int,const UpdateType)), Qt::DirectConnection);
+      }
+
+      if ( checkSlot( plugin , "slotObjectUpdated(int)" ) && checkSlot( plugin , "slotObjectUpdated(int,const UpdateType)" ) ){
+        
+        log(LOGERR,tr("Plugin uses deprecated and(!) new slotObjectUpdated. Only new slotObjectUpdated will be active."));
         connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
+      
+      } else {
 
+        if ( checkSlot( plugin , "slotObjectUpdated(int)" ) ){
+          log(LOGWARN,tr("Plugin uses deprecated slotObjectUpdated."));
+          connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
+        }
+
+        if ( checkSlot( plugin , "slotObjectUpdated(int,const UpdateType)" ) )
+          connect(this,SIGNAL(signalObjectUpdated(int,const UpdateType)),plugin,SLOT(slotObjectUpdated(int,const UpdateType)), Qt::DirectConnection);
+      }
 
       if ( checkSignal(plugin,"objectPropertiesChanged(int)")) {
         emit log (LOGERR,tr("Signal objectPropertiesChanged(int) is deprecated. " ));
