@@ -122,7 +122,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
   signals:
     //BaseInterface
     void updateView();
-    void updatedObject(int);
+    void updatedObject(int, const UpdateType);
     
     //PickingInterface
     void addHiddenPickMode( const std::string _mode );
@@ -178,7 +178,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     //BaseInterface
     void initializePlugin();
     void pluginsInitialized();
-    void slotObjectUpdated(int _id);
+    void slotObjectUpdated(int _id, const UpdateType _type);
     void noguiSupported( ) {} ;
 
   public :

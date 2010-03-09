@@ -88,7 +88,7 @@ void SelectionPlugin::selectHandleVertices( int objectId , IdList _vertexList ) 
   
   selection += " ] )";
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_ALL);
   emit scriptInfo( selection );
 }
 
@@ -125,7 +125,7 @@ void SelectionPlugin::unselectHandleVertices( int objectId , IdList _vertexList 
   
   selection += " ] )";
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_ALL);
   emit scriptInfo( selection );
 }
 
@@ -151,7 +151,7 @@ void SelectionPlugin::clearHandleVertices( int objectId ) {
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_ALL);
   emit scriptInfo( "clearHandleVertices( ObjectId )" );
 }
 
@@ -177,7 +177,7 @@ void SelectionPlugin::setAllHandleVertices( int objectId  ) {
       return;
   }
   
-  object->update();
+  emit updatedObject(object->id(), UPDATE_ALL);
   emit scriptInfo( "setAllHandleVertices( ObjectId )" );
 }
 
