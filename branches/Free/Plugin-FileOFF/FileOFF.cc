@@ -837,14 +837,16 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
         }
     }
     
+    int pos = 0;
+    int nB = 0;
+    
     // faces
     // #N <v1> <v2> .. <v(n-1)> [color spec]
     for (uint i = 0; i<nF && !_in.eof(); ++i)
     {
         // Get bytes to be read from this point on
-        uint nB = 0;
         if(i == 0) {
-            int pos = _in.tellg();
+            pos = _in.tellg();
             _in.seekg(0, std::ios::end);
             nB = _in.tellg();
             nB -= pos;
@@ -860,14 +862,10 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
         // the bytes to be read from this point on (nB)
         // equal (nF + nF*nV)*4 (each line of [nV V_1 ... V..nV]).
         // If not, we have more bytes to be read than
-        // actual face definitions (note: this is not entirely
-        // reliable since face valences theoretically can vary
-        // within a mesh). So if we have at least nF additional bytes
+        // actual face definitions.
+        // So if we have at least nF additional bytes
         // we can read the number of color components after each face
         // definition.
-        // IMPORTANT: THIS ASSUMES THE FACE VALENCE TO BE
-        // CONSTANT THROUGHOUT THE MESH! IT WON'T WORK FOR
-        // MESHES CONTAINING ARBITRARY FACE VALENCES.
         if(i == 0) {
             // Always make sure that we only deal with
             // integers and floats/doubles
@@ -878,19 +876,22 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
                 
                 nB -= nF + nF*nV;
                 
-                if(nB == 0) {
+                if(nB <= 0) {
                     // We don't have additional color components
-                    readColorComp_ = false;
-                } else if (nB < nF) {
-                    // Not enough additional elements to read
-                    // This should actually never happen...
+                    // Case nB < 0: Face valence is not constant
+                    // throughout the mesh
                     readColorComp_ = false;
                 } else {
-                    // nb >= nF -> Read color components
-                    readColorComp_ = true;
+                    // Not enough additional elements to read
+                    // This should actually never happen...
+                    // or nB >= nF -> perform extended
+                    // face color component test
+                    readColorComp_ = extendedFaceColorTest(_in, nV, nF, nB);
                 }
             }
         }
+        
+        
         
         vhandles.clear();
         for (uint j = 0; j < nV; ++j) {
@@ -944,6 +945,57 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
     }
     
     // File was successfully parsed.
+    return true;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+bool FileOFFPlugin::extendedFaceColorTest(std::istream& _in, uint _nV, uint _nF, int _nB) const {
+    
+    // Perform the extended and even more reliable color
+    // component test. Read an integer n (starting with the face
+    // valence) and skip n*4 bytes. Repeat this nF times.
+    // After this we have two cases:
+    //
+    // Case 1: The file contains face color components
+    // and we interpreted the number of face components as face
+    // valence which results in a bunch of bytes that still are to be read
+    // after nF cycles.
+    //
+    // Case 2: The mesh has varying face valences and has
+    // therefor been wrongly detected as containing face color components.
+    // If this has happened, the following test will result in
+    // no bytes to be left for reading after nF reading cycles.
+
+    uint nV = _nV;
+    uint dummy = 0;
+
+    // Get current file pointer
+    int pos = _in.tellg();
+    
+    for(uint k = 0; k < _nF; ++k) {
+        // Remember: The first nV has already been read
+        if(k != 0)
+            readValue(_in, nV);
+        
+        // Skip the following nV values
+        for(uint z = 0; z < nV; ++z) {
+            readValue(_in, dummy);
+        }
+    }
+    
+    // Get position after all the reading has been done
+    int currPos = _in.tellg();
+    
+    // Reset read pointer to where we were
+    _in.seekg(pos);
+    
+    if(_nB - currPos == 0) {
+        // No additional face colors have been specified
+        return false;
+    }
+    
+    // We actually have face colors
     return true;
 }
 
