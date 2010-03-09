@@ -230,7 +230,6 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox*   loadAlpha_;
     QCheckBox*   loadNormals_;
     QCheckBox*   loadTexCoords_;
-    QCheckBox*   loadSkipColorDetection_;
     QPushButton* loadDefaultButton_;
     
     unsigned int userReadOptions_;
@@ -238,6 +237,7 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     bool forceTriangleMesh_;
     bool forcePolyMesh_;
+    bool readColorComp_;
 };
 
 #if defined(INCLUDE_TEMPLATES) && !defined(FILEOFFPLUGIN_C)

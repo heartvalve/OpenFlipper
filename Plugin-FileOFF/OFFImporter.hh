@@ -85,8 +85,7 @@ class OFFImporter
       COLORALPHA       = 1 << 7,
       FORCE_NOCOLOR    = 1 << 8,
       FORCE_NONORMALS  = 1 << 9,
-      FORCE_NOTEXTURES = 1 << 10,
-      SKIPCOLORDET     = 1 << 11
+      FORCE_NOTEXTURES = 1 << 10
     };
     
     typedef uint ObjectOptions;
