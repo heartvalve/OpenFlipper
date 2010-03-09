@@ -157,6 +157,9 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     /// on the load dialog
     void updateUserOptions();
     
+    /// Test if there are face color components (_nV is the initial face valence)
+    bool extendedFaceColorTest(std::istream& _in, uint _nV, uint _nF, int _nB) const;
+    
     // Binary reader and writer helpers
     void readValue(std::istream& _in, float& _value) const {
         float tmp;
