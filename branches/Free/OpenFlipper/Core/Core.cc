@@ -189,6 +189,9 @@ Core() :
   
   // Initialize the build in dataTypes
   initializeTypes();
+  
+  // Initialize the build in updateTypes
+  initializeUpdateTypes();
 }
 
 /** \brief Second initialization stage

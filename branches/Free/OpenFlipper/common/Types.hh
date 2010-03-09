@@ -65,6 +65,9 @@
 // This include defines all required datatype handling functions
 #include <OpenFlipper/common/DataTypes.hh>
 
+// This include defines all functions for handling updateTypes
+#include <OpenFlipper/common/UpdateType.hh>
+
 #include "BaseObject.hh"
 #include "GroupObject.hh"
 #include "BaseObjectData.hh"

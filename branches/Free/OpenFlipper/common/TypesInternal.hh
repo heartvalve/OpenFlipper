@@ -71,6 +71,9 @@ typedef std::vector<BaseObjectData*> DataContainer;
 DLLEXPORT
 void initializeTypes();
 
+DLLEXPORT
+void initializeUpdateTypes();
+
 //=============================================================================
 #endif // TYPESINTERNAL_HH defined
 //=============================================================================

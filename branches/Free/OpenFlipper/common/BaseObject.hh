@@ -62,6 +62,7 @@
 
 #include <OpenFlipper/common/GlobalDefines.hh>
 #include <OpenFlipper/common/DataTypes.hh>
+#include <OpenFlipper/common/UpdateType.hh>
 #include <QObject>
 #include <QString>
 #include <QList>
@@ -282,7 +283,7 @@ class DLLEXPORTONLY BaseObject : public QObject {
      * the corresponding scenegraph nodes or trigger other data handling which has to be done
      * when the object changes.
      */
-    virtual void update();
+    virtual void update(UpdateType _type = UPDATE_ALL);
 
     /// Debugging function, writing the subtree to output
     void dumpTree();

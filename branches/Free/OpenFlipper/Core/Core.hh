@@ -166,6 +166,9 @@ signals:
    /// When this Signal is emitted all Plugins are informed that the object list changed
    void signalObjectUpdated(int);
 
+   /// When this Signal is emitted all Plugins are informed that some type of update was performed on an object
+   void signalObjectUpdated(int, const UpdateType);
+   
    /// When this Signal is emitted when a Wheel Event occures
    void PluginWheelEvent(QWheelEvent * , const std::string & );
 
@@ -267,7 +270,7 @@ signals:
       /** Called by the plugins if they changed something in the object list (deleted, added,...)
        * @param _identifier Id of the object
        */
-      void slotObjectUpdated(int _identifier);
+      void slotObjectUpdated(int _identifier, const UpdateType _type = UPDATE_ALL);
 
       /// Called when a plugin changes the visibility of an object
       void slotVisibilityChanged(int _id);

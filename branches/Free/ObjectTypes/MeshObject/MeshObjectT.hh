@@ -150,7 +150,7 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     MeshT* mesh();
 
     /// Update the whole Object (Selection,Topology,...)
-    virtual void update();
+    virtual void update(UpdateType _type = UPDATE_ALL);
 
     /// Call this function to update the modeling regions
     void updateSelection();
