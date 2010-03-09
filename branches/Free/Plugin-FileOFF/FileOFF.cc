@@ -858,11 +858,11 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
         // we check, if there could possibly be colors
         // after the face specs by checking if
         // the bytes to be read from this point on (nB)
-        // equal (nF + nF*nV)*4 (for each line of [nV V_1 ... V..nV].
+        // equal (nF + nF*nV)*4 (each line of [nV V_1 ... V..nV]).
         // If not, we have more bytes to be read than
         // actual face definitions (note: this is not entirely
         // reliable since face valences theoretically can vary
-        // per face). So if we have at least nF additional bytes
+        // within a mesh). So if we have at least nF additional bytes
         // we can read the number of color components after each face
         // definition.
         // IMPORTANT: THIS ASSUMES THE FACE VALENCE TO BE
@@ -904,7 +904,7 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
             // Some binary files that were created via an OFF writer
             // that doesn't comply with the OFF specification
             // don't specify the number of color components before
-            // the face specs. We offer the option to skip this.
+            // the face specs.
             nV = 0;
         } else {
             // nV now holds the number of color components
