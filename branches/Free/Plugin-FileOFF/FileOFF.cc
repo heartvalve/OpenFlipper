@@ -83,12 +83,12 @@ FileOFFPlugin::FileOFFPlugin()
   loadAlpha_(0),
   loadNormals_(0),
   loadTexCoords_(0),
-  loadSkipColorDetection_(0),
   loadDefaultButton_(0),
   userReadOptions_(0),
   userWriteOptions_(0),
   forceTriangleMesh_(false),
-  forcePolyMesh_(false){
+  forcePolyMesh_(false),
+  readColorComp_(false) {
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -106,8 +106,6 @@ void FileOFFPlugin::initializePlugin() {
         userReadOptions_ |= OFFImporter::VERTEXNORMAL;
     if(OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool())
         userReadOptions_ |= OFFImporter::VERTEXTEXCOORDS;
-    if(OpenFlipperSettings().value("FileOff/Load/SkipColorCompDetection",true).toBool())
-        userReadOptions_ |= OFFImporter::SKIPCOLORDET;
     
     if(OpenFlipperSettings().value("FileOff/Save/Binary",true).toBool())
         userWriteOptions_ |= OFFImporter::BINARY;
@@ -184,10 +182,6 @@ void FileOFFPlugin::updateUserOptions() {
     if(loadTexCoords_) {
         if(loadTexCoords_->isChecked()) userReadOptions_ |= OFFImporter::VERTEXTEXCOORDS;
         else { if(userReadOptions_ & OFFImporter::VERTEXTEXCOORDS) userReadOptions_ -= OFFImporter::VERTEXTEXCOORDS; }
-    }
-    if(loadSkipColorDetection_) {
-        if(loadSkipColorDetection_->isChecked()) userReadOptions_ |= OFFImporter::SKIPCOLORDET;
-        else { if(userReadOptions_ & OFFImporter::SKIPCOLORDET) userReadOptions_ -= OFFImporter::SKIPCOLORDET; }
     }
     
     // Save options
@@ -847,7 +841,56 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
     // #N <v1> <v2> .. <v(n-1)> [color spec]
     for (uint i = 0; i<nF && !_in.eof(); ++i)
     {
+        // Get bytes to be read from this point on
+        uint nB = 0;
+        if(i == 0) {
+            int pos = _in.tellg();
+            _in.seekg(0, std::ios::end);
+            nB = _in.tellg();
+            nB -= pos;
+            _in.seekg(pos);
+            // nB now holds the total number of bytes to be read
+        }
+        
         readValue(_in, nV);
+        
+        // Now that we have the initial face valence
+        // we check, if there could possibly be colors
+        // after the face specs by checking if
+        // the bytes to be read from this point on (nB)
+        // equal (nF + nF*nV)*4 (for each line of [nV V_1 ... V..nV].
+        // If not, we have more bytes to be read than
+        // actual face definitions (note: this is not entirely
+        // reliable since face valences theoretically can vary
+        // per face). So if we have at least nF additional bytes
+        // we can read the number of color components after each face
+        // definition.
+        // IMPORTANT: THIS ASSUMES THE FACE VALENCE TO BE
+        // CONSTANT THROUGHOUT THE MESH! IT WON'T WORK FOR
+        // MESHES CONTAINING ARBITRARY FACE VALENCES.
+        if(i == 0) {
+            // Always make sure that we only deal with
+            // integers and floats/doubles
+            if(nB % 4 == 0) {
+                // Cut down number of bytes to number
+                // of elements to be read
+                nB /= 4;
+                
+                nB -= nF + nF*nV;
+                
+                if(nB == 0) {
+                    // We don't have additional color components
+                    readColorComp_ = false;
+                } else if (nB < nF) {
+                    // Not enough additional elements to read
+                    // This should actually never happen...
+                    readColorComp_ = false;
+                } else {
+                    // nb >= nF -> Read color components
+                    readColorComp_ = true;
+                }
+            }
+        }
         
         vhandles.clear();
         for (uint j = 0; j < nV; ++j) {
@@ -857,7 +900,7 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
                 
         fh = _importer.addFace(vhandles);
 
-        if ( userReadOptions_ & OFFImporter::SKIPCOLORDET ) {
+        if ( !readColorComp_ ) {
             // Some binary files that were created via an OFF writer
             // that doesn't comply with the OFF specification
             // don't specify the number of color components before
@@ -1123,9 +1166,6 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         
         loadTexCoords_ = new QCheckBox("Load TexCoords");
         layout->addWidget(loadTexCoords_);
-        
-        loadSkipColorDetection_ = new QCheckBox("Skip color component detection (deprecated)");
-        layout->addWidget(loadSkipColorDetection_);
  
         loadDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(loadDefaultButton_);
@@ -1141,7 +1181,6 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         loadAlpha_->setChecked( OpenFlipperSettings().value("FileOff/Load/Alpha",true).toBool()  );
         loadNormals_->setChecked( OpenFlipperSettings().value("FileOff/Load/Normals",true).toBool()  );
         loadTexCoords_->setChecked( OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool()  );
-        loadSkipColorDetection_->setChecked( OpenFlipperSettings().value("FileOff/Load/SkipColorCompDetection",false).toBool()  );
     }
     
     
@@ -1155,7 +1194,6 @@ void FileOFFPlugin::slotLoadDefault() {
   OpenFlipperSettings().setValue( "FileOff/Load/Alpha",       loadAlpha_->isChecked()  );
   OpenFlipperSettings().setValue( "FileOff/Load/Normals",     loadNormals_->isChecked()  );
   OpenFlipperSettings().setValue( "FileOff/Load/TexCoords",   loadTexCoords_->isChecked()  );
-  OpenFlipperSettings().setValue( "FileOff/Load/ColorCompDetection",   loadSkipColorDetection_->isChecked()  );
 
   OpenFlipperSettings().setValue("FileOff/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
   
