@@ -449,9 +449,6 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   } else {
 
     emit log(LOGERR,tr("moveObject called for unsupported Object Type"));
-    
-    std::cerr << "type was : " << object->dataType() << std::endl;
-    std::cerr << "polyline : " << DATA_POLY_LINE << std::endl;
     return;
   }
 
