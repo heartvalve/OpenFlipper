@@ -100,7 +100,7 @@
  * \subsection updatingObjects Updating objects
  *
  * Once your plugin has manipulated object data we have to inform OpenFlipper's core about the changes.
- * When doing this, OpenFlipper distinguishes between five fundamental types of changes:
+ * When doing this, OpenFlipper distinguishes between five basic types of changes:
  *
  * - Object selections
  * - Visibility
