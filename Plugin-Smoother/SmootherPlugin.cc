@@ -172,7 +172,7 @@ slot_smooth()
     if (mesh != 0)
       mesh->garbage_collection();
 
-    emit updatedObject( o_it->id() );
+    emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
   }
 
   if ( !found )
@@ -252,7 +252,7 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
       mesh->update_normals();
     }
 
-    emit updatedObject( object->id() );
+    emit updatedObject( object->id(), UPDATE_GEOMETRY );
 
 
   } else {
