@@ -86,7 +86,7 @@ void SelectionPlugin::selectFaces( int objectId , IdList _faceList ) {
   
   selection += " ] )";
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
   emit scriptInfo( selection );
 }
 
@@ -123,7 +123,7 @@ void SelectionPlugin::unselectFaces( int objectId , IdList _faceList ) {
   
   selection += " ] )";
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
   emit scriptInfo( selection );
 }
 
@@ -150,7 +150,7 @@ void SelectionPlugin::selectAllFaces( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
   emit scriptInfo( "selectAllFaces( ObjectId )" );
 }
 
@@ -177,7 +177,7 @@ void SelectionPlugin::clearFaceSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
   emit scriptInfo( "clearFaceSelection( ObjectId )" );
 }
 
@@ -204,7 +204,7 @@ void SelectionPlugin::invertFaceSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
   emit scriptInfo( "invertFaceSelection( ObjectId )" );
 }
 
@@ -231,7 +231,7 @@ void SelectionPlugin::selectBoundaryFaces( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
   emit scriptInfo( "selectBoundaryFaces( ObjectId )" );
 }
 
@@ -259,7 +259,7 @@ void SelectionPlugin::shrinkFaceSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
   emit scriptInfo( "shrinkFaceSelection( ObjectId )" );
 }
 
@@ -286,7 +286,7 @@ void SelectionPlugin::growFaceSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_FACES);
   emit scriptInfo( "growFaceSelection( ObjectId )" );
 }
   

@@ -106,7 +106,7 @@ void SelectionPlugin::selectEdges( int objectId , IdList _edgeList ) {
   
   selection += " ] )";
   
-  emit updatedObject(object->id(), UPDATE_SELECTION );
+  emit updatedObject(object->id(), UPDATE_SELECTION_EDGES );
   emit scriptInfo( selection );
 }
 
@@ -151,7 +151,7 @@ void SelectionPlugin::unselectEdges( int objectId , IdList _edgeList ) {
   
   selection += " ] )";
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
   emit scriptInfo( selection );
 }
 
@@ -186,7 +186,7 @@ void SelectionPlugin::selectAllEdges( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
   emit scriptInfo( "selectAllEdges( ObjectId )" );
 }
 
@@ -221,7 +221,7 @@ void SelectionPlugin::clearEdgeSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
   emit scriptInfo( "clearEdgeSelection( ObjectId )" );
 }
 
@@ -256,7 +256,7 @@ void SelectionPlugin::invertEdgeSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
   emit scriptInfo( "invertEdgeSelection( ObjectId )" );
 }
 
@@ -292,7 +292,7 @@ void SelectionPlugin::selectBoundaryEdges( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_EDGES);
   emit scriptInfo( "selectBoundaryEdges( ObjectId )" );
 }
 
