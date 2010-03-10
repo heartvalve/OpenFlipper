@@ -650,8 +650,11 @@ void TextureControlPlugin::computeValue(Texture& _texture, double _min, double _
    }
 }
 
-void TextureControlPlugin::slotObjectUpdated(int _identifier)
-{
+void TextureControlPlugin::slotObjectUpdated(int _identifier, UpdateType _type)
+{  
+    if( !_type.contains(UPDATE_ALL) && !_type.contains(UPDATE_GEOMETRY) && !_type.contains(UPDATE_TOPOLOGY) )
+        return;
+    
   // ================================================================================
   // Get updated object
   // ================================================================================
