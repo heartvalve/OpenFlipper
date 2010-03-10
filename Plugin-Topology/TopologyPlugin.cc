@@ -466,7 +466,7 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
             m.update_normals();
 
             object->update();
-            emit updatedObject(object->id());
+            emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
             emit createBackup(object->id(),"Split Face");
          }
@@ -521,7 +521,7 @@ void TopologyPlugin::delete_face(QMouseEvent* _event) {
          }
 
          object->update();
-         emit updatedObject(object->id());
+         emit updatedObject(object->id(), UPDATE_TOPOLOGY);
          emit updateView();
          emit createBackup(object->id(),"Delete Face");
       } else return;
@@ -579,7 +579,7 @@ void TopologyPlugin::flip_edge(QMouseEvent* _event) {
             emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
 
             object->update();
-            emit updatedObject(object->id());
+            emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
             emit createBackup(object->id(),"Edge Flip");
          }
@@ -651,7 +651,7 @@ void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
             emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
 
             object->update();
-            emit updatedObject(object->id());
+            emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
             emit createBackup(object->id(),"Edge Collapse");
          }
@@ -712,7 +712,7 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
             emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
 
             object->update();
-            emit updatedObject(object->id());
+            emit updatedObject(object->id(), UPDATE_TOPOLGY);
             emit updateView();
             emit createBackup(object->id(),"Edge Split");
          }
