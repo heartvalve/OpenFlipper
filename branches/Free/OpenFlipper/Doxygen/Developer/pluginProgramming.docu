@@ -100,19 +100,39 @@
  * \subsection updatingObjects Updating objects
  *
  * Once your plugin has manipulated object data we have to inform OpenFlipper's core about the changes.
- * When doing this, OpenFlipper distinguishes between four fundamental types of changes:
+ * When doing this, OpenFlipper distinguishes between five fundamental types of changes:
  *
- * - Changing geometry
- * - Changing object properties
- * - Changing object's visibility
- * - Changing selection type
+ * - Object selections
+ * - Visibility
+ * - Geometry
+ * - Topology
+ * - Selections (Vertices, Edges, Faces)
  *
  * When changing geometry, OpenFlipper's core will be forced to redraw the object that has been
  * changed by emitting signal
  *
- * \ref BaseInterface::updatedObject(int _id)
+ * \ref BaseInterface::updatedObject(int _id, UpdateType _type)
  *
- * where \c _id is the object's id.
+ * where \c _id is the object's id and _type is the type of changes that have been made.
+ * Note: UpdateType offers the following values
+ *
+ * - UPDATE_ALL
+ * - UPDATE_OBJECT_SELECTION
+ * - UPDATE_VISIBILITY
+ * - UPDATE_GEOMETRY
+ * - UPDATE_TOPOLOGY
+ * - UPDATE_SELECTION (ALL THREE KINDS)
+ * - UPDATE_SELECTION_VERTICES
+ * - UPDATE_SELECTION_EDGES
+ * - UPDATE_SELECTION_FACES
+ * - UPDATE_UNUSED
+ *
+ * If the second parameter of this signal is not specified, it will fall back
+ * to the default value UPDATE_ALL for compatibility reasons which actually updates
+ * each of the types. Unless it is really necessary this should generally be avoided
+ * since it consumes a lot of computation time.
+ *
+ * See \ref BaseInterface for more information.
  *
  * When changing object properties it won't be necessary to redraw the scene
  * since it can be expensive in computation power. In this case, one should emit
