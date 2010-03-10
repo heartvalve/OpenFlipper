@@ -1198,6 +1198,13 @@ update_geometry() {
   updateFacePickingList_   = true;
   updateAnyPickingList_    = true;
   
+  
+  // Set per face arrays to invalid as they have to be regenerated
+  stripProcessor_.invalidatePerFaceBuffers();
+  
+  // Set per edge arrays to invalid as they have to be regenerated
+  stripProcessor_.invalidatePerEdgeBuffers();
+  
   // First of all, we update the bounding box:
   bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
   bbMax_ = Vec3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
