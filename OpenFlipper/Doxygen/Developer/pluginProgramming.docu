@@ -132,6 +132,10 @@
  * each of the types. Unless it is really necessary this should generally be avoided
  * since it consumes a lot of computation time.
  *
+ * Additionally, when overriding the slot BaseInterface::slotObjectUpdated(int, const UpdateType),
+ * a plugin receives the updated object's id (first parameter) and the type
+ * of changes (second parameter).
+ *
  * See \ref BaseInterface for more information.
  *
  * When changing object properties it won't be necessary to redraw the scene
