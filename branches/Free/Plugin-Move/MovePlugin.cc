@@ -452,7 +452,7 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
     return;
   }
 
-  emit updatedObject(_id);
+  emit updatedObject(_id, UPDATE_GEOMETRY);
   emit createBackup(_id,"Move");
 }
 
@@ -477,7 +477,7 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id) {
   else if (selectionType_ == EDGE)
     transformEdgeSelection( _id , mat );
 
-  emit updatedObject(_id);
+  emit updatedObject(_id, UPDATE_GEOMETRY);
 //   emit createBackup(_id,"MoveSelection");
 }
 
@@ -1050,7 +1050,7 @@ void MovePlugin::slotTranslation() {
 			object->manipulatorNode()->set_center(
 					object->manipulatorNode()->center() + translation);
 			emit createBackup(object->id(), "Translation");
-			emit updatedObject(object->id());
+			emit updatedObject(object->id(), UPDATE_GEOMETRY);
 		}
 	} else {
 		return;
@@ -1205,7 +1205,7 @@ void MovePlugin::slotRotate() {
 			updateManipulatorDialog();
 
 			emit createBackup(object->id(), "Rotation");
-			emit updatedObject(object->id());
+			emit updatedObject(object->id(), UPDATE_GEOMETRY);
 		}
 	}
 
@@ -1281,7 +1281,7 @@ void MovePlugin::slotScale() {
 			updateManipulatorDialog();
 
 			emit createBackup(object->id(), "Scaling");
-			emit updatedObject(object->id());
+			emit updatedObject(object->id(), UPDATE_GEOMETRY);
 		}
 	}
 
@@ -1378,7 +1378,7 @@ void MovePlugin::slotMoveToOrigin() {
 
     }
 #endif
-    emit updatedObject( o_it->id() );
+    emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
 
     updateManipulatorDialog();
     o_it->manipulatorNode()->loadIdentity();
@@ -1462,7 +1462,7 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
 #endif
     }
 
-    emit updatedObject( o_it->id() );
+    emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
 
   }
 
