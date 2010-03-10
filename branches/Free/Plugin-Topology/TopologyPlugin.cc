@@ -712,7 +712,7 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
             emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
 
             object->update();
-            emit updatedObject(object->id(), UPDATE_TOPOLGY);
+            emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
             emit createBackup(object->id(),"Edge Split");
          }
