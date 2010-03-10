@@ -348,21 +348,20 @@
 
     PluginFunctions::setMainGLContext();
 
-//     std::cerr << "Mesh Update: " << updateTypeName(_type).toStdString() << std::endl;
-    
-    if ( _type == UPDATE_ALL ){
+    if ( _type.contains(UPDATE_ALL) ){
       updateGeometry();
       updateTopology();
       updateSelection();
       updateFeatures();
       updateModelingRegions(); 
-      
-    } else if ( _type == UPDATE_GEOMETRY )
+    } else if ( _type.contains(UPDATE_GEOMETRY) ) {
       updateGeometry();
-    else if ( _type == UPDATE_TOPOLOGY )
+    } else if ( _type.contains(UPDATE_TOPOLOGY) ) {
       updateTopology();
-    else if ( _type == UPDATE_SELECTION )
+    } else if ( _type.contains(UPDATE_SELECTION) ) {
       updateSelection();
+    }
+    
     
   }
 
