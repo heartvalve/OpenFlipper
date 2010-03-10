@@ -101,7 +101,7 @@ void SelectionPlugin::selectVertices( int objectId , IdList _vertexList ) {
   
   selection += " ] )";
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( selection );
 }
 
@@ -146,7 +146,7 @@ void SelectionPlugin::unselectVertices( int objectId , IdList _vertexList ) {
   
   selection += " ] )";
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( selection );
 }
 
@@ -183,7 +183,7 @@ void SelectionPlugin::selectAllVertices( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( "selectAllVertices( ObjectId )" );
 }
 
@@ -218,7 +218,7 @@ void SelectionPlugin::clearVertexSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( "clearVertexSelection( ObjectId )" );
 }
 
@@ -253,7 +253,7 @@ void SelectionPlugin::invertVertexSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( "invertVertexSelection( ObjectId )" );
 }
 
@@ -280,7 +280,7 @@ void SelectionPlugin::selectBoundaryVertices( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( "selectBoundaryVertices( ObjectId )" );
 }
 
@@ -307,7 +307,7 @@ void SelectionPlugin::selectClosestBoundaryVertices( int objectId, int VertexId 
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( "selectClosestBoundaryVertices( ObjectId , VertexId )" );
 }
 
@@ -334,7 +334,7 @@ void SelectionPlugin::shrinkVertexSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( "shrinkVertexSelection( ObjectId )" );
 }
 
@@ -361,7 +361,7 @@ void SelectionPlugin::growVertexSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( "growVertexSelection( ObjectId )" );
 }
 
@@ -425,7 +425,7 @@ void SelectionPlugin::deleteSelection( int objectId )
       return;
   }
   
-  emit updatedObject(object->id(), UPDATE_SELECTION);
+  emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( "deleteSelection( ObjectId )" );
 }
 
