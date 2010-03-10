@@ -5,10 +5,6 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 
-/** This field defines the start id for custom updatetypes.
- */
-static unsigned int nextUpdateTypeId_ = 16;
-
 /** This map maps an updateType id to an typeName
  */
 static std::map< UpdateType, QString > updateTypeToString;
@@ -20,6 +16,51 @@ static std::map< QString , unsigned int > stringToUpdateTypeInfo;
 /** This map maps an updateType id to its id in the types vector
  */
 static std::map< UpdateType , unsigned int > updateTypeToTypeInfo;
+
+/** This field defines the start id for custom updatetypes.
+*/
+static UpdateType firstFreeID_(UPDATE_UNUSED);
+
+UpdateType::UpdateType(const UpdateType& _type) 
+:type_(_type.type_)
+{
+  
+}
+
+UpdateType::UpdateType(UpdateTypeSet _set)
+: type_(_set)
+{
+  
+}
+
+bool UpdateType::operator==(const UpdateType& _type) const {
+  return ((type_ & _type.type_).any());
+};
+
+/// Check if this update contains the given UpdateType
+bool UpdateType::contains( const UpdateType& _type ) {
+  // Catch the specialization of updates
+  if ( _type == UPDATE_SELECTION ) {
+    if ( type_ == UPDATE_SELECTION_VERTICES.type_ || type_ == UPDATE_SELECTION_EDGES.type_ || type_ == UPDATE_SELECTION_FACES.type_ )
+      return true;
+  }  
+  
+  return ((type_ & _type.type_).any());
+}
+
+UpdateType& UpdateType::operator++() {
+  if ( type_.count() != 1 ) {
+    std::cerr << "Operator ++ for UpdateType which is not atomic!!" << std::endl;
+  }
+  
+  type_ << 1;
+  
+  return (*this);
+}
+
+bool UpdateType::operator<( const UpdateType& _i ) const {
+  return (type_.to_ulong() < _i.type_.to_ulong()); 
+}
 
 class UpdateTypeInfo {
 
@@ -73,14 +114,29 @@ void initializeUpdateTypes() {
   stringToUpdateTypeInfo["Selection"]      = updateTypes.size();
   updateTypeToTypeInfo[UPDATE_SELECTION]   = updateTypes.size();
   updateTypes.push_back( UpdateTypeInfo(UPDATE_SELECTION, "Selection", true) );
+  
+  stringToUpdateTypeInfo["VertexSelection"]      = updateTypes.size();
+  updateTypeToTypeInfo[UPDATE_SELECTION_VERTICES]   = updateTypes.size();
+  updateTypes.push_back( UpdateTypeInfo(UPDATE_SELECTION_VERTICES, "VertexSelection", true) );
+  
+  stringToUpdateTypeInfo["EdgeSelection"]      = updateTypes.size();
+  updateTypeToTypeInfo[UPDATE_SELECTION_EDGES]   = updateTypes.size();
+  updateTypes.push_back( UpdateTypeInfo(UPDATE_SELECTION_EDGES, "EdgeSelection", true) );
+  
+  stringToUpdateTypeInfo["FaceSelection"]      = updateTypes.size();
+  updateTypeToTypeInfo[UPDATE_SELECTION_FACES]   = updateTypes.size();
+  updateTypes.push_back( UpdateTypeInfo(UPDATE_SELECTION_FACES, "FaceSelection", true) );
 
   
-  updateTypeToString[UPDATE_ALL]              = "All";
-  updateTypeToString[UPDATE_OBJECT_SELECTION] = "ObjectSelection";
-  updateTypeToString[UPDATE_VISIBILITY]       = "Visibility";
-  updateTypeToString[UPDATE_GEOMETRY]         = "Geometry";
-  updateTypeToString[UPDATE_TOPOLOGY]         = "Topology";
-  updateTypeToString[UPDATE_SELECTION]        = "Selection";
+  updateTypeToString[UPDATE_ALL]                = "All";
+  updateTypeToString[UPDATE_OBJECT_SELECTION]   = "ObjectSelection";
+  updateTypeToString[UPDATE_VISIBILITY]         = "Visibility";
+  updateTypeToString[UPDATE_GEOMETRY]           = "Geometry";
+  updateTypeToString[UPDATE_TOPOLOGY]           = "Topology";
+  updateTypeToString[UPDATE_SELECTION]          = "Selection";
+  updateTypeToString[UPDATE_SELECTION_VERTICES] = "VertexSelection";
+  updateTypeToString[UPDATE_SELECTION_EDGES]    = "EdgeSelection";
+  updateTypeToString[UPDATE_SELECTION_FACES]    = "FaceSelection";
 }
 
 /// Adds a updateType and returns the id for the new type
@@ -93,7 +149,7 @@ UpdateType addUpdateType(QString _name, bool _resetNeeded) {
     return updateTypes[ index->second ].type;
   else {
   
-    unsigned int type = nextUpdateTypeId_;
+    UpdateType type = firstFreeID_;
 
     stringToUpdateTypeInfo[ _name ] = updateTypes.size();
     updateTypeToTypeInfo[ type ] = updateTypes.size();
@@ -101,7 +157,7 @@ UpdateType addUpdateType(QString _name, bool _resetNeeded) {
 
     updateTypeToString[type] = _name;
 
-    nextUpdateTypeId_ *= 2;
+    ++firstFreeID_;
     return( type );
   }
 }
@@ -130,7 +186,7 @@ QString updateTypeName(UpdateType _id) {
     return name->second;
   else {
     #ifdef DEBUG
-    std::cerr << "Unable to retrieve updateTypeName for id " << _id << std::endl;
+    std::cerr << "Unable to retrieve updateTypeName" << std::endl;
     #endif
     return "Unknown";
   }
