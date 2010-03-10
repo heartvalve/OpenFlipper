@@ -357,6 +357,7 @@
     } else if ( _type.contains(UPDATE_GEOMETRY) ) {
       updateGeometry();
     } else if ( _type.contains(UPDATE_TOPOLOGY) ) {
+      updateGeometry();
       updateTopology();
     } else if ( _type.contains(UPDATE_SELECTION) ) {
       updateSelection();
