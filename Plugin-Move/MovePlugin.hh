@@ -88,7 +88,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
   signals:
     // BaseInterface
     void updateView();
-    void updatedObject(int);
+    void updatedObject(int, UpdateType _type);
     void nodeVisibilityChanged(int);
 
     // PickingInterface

@@ -162,7 +162,7 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
     }
   #endif
 
-  emit updatedObject(_objectId);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   emit scriptInfo( "translate( ObjectId , Vector(" +
                    QString::number( _vector[0] ) + " , " +
@@ -234,7 +234,7 @@ void MovePlugin::translate( int _objectId , IdList _vHandles, Vector _vector ){
     }
   #endif
 
-  emit updatedObject(_objectId);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   emit scriptInfo( "translate( ObjectId , Vector(" +
                    QString::number( _vector[0] ) + " , " +
@@ -305,7 +305,7 @@ void MovePlugin::translateSelection( int _objectId , Vector _vector) {
     }
   #endif
 
-  emit updatedObject(_objectId);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   emit scriptInfo( "translate( ObjectId , Vector(" +
                    QString::number( _vector[0] ) + " , " +
@@ -377,7 +377,7 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
     }
   #endif
 
-  emit updatedObject(_objectId);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   QString matString;
   for (int i=0; i < 4; i++)
@@ -464,7 +464,7 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
     }
   #endif
 
-  emit updatedObject(_objectId);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   QString matString;
   for (int i=0; i < 4; i++)
@@ -547,7 +547,7 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
     }
   #endif
 
-  emit updatedObject(_objectId);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   QString matString;
   for (int i=0; i < 4; i++)
@@ -651,7 +651,7 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
 #endif
 
 
-  emit updatedObject(_objectId);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   QString matString;
   for (int i=0; i < 4; i++)
@@ -771,7 +771,7 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
     }
   #endif
 
-  emit updatedObject(_objectId);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
 
   QString matString;
   for (int i=0; i < 4; i++)
