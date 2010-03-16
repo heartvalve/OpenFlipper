@@ -81,8 +81,19 @@ void IsotropicRemesher< MeshT >::splitLongEdges( MeshT& _mesh, const double _max
       const typename MeshT::Point midPoint = _mesh.point(v0) + ( 0.5 * vec );
 
       //split at midpoint
-      _mesh.split(e_it, midPoint);
-
+      typename MeshT::VertexHandle vh = _mesh.add_vertex( midPoint );
+      
+      bool hadFeature = _mesh.status(e_it).feature();
+      
+      _mesh.split(e_it, vh);
+      
+      if ( hadFeature ){
+        
+        typename MeshT::VOHIter vh_it;
+        for (vh_it = _mesh.voh_iter(vh); vh_it; ++vh_it)
+          if ( _mesh.to_vertex_handle(vh_it.handle()) == v0 || _mesh.to_vertex_handle(vh_it.handle()) == v1 )
+            _mesh.status( _mesh.edge_handle( vh_it.handle() ) ).set_feature( true ); 
+      }
     }
   }
 }
@@ -136,8 +147,10 @@ void IsotropicRemesher< MeshT >::collapseShortEdges( MeshT& _mesh, const double 
     
           bool collapse_ok = true;
     
-          for(typename MeshT::CVVIter vv_it = _mesh.vv_iter(v0); vv_it; ++vv_it)
-            if ( ( B - _mesh.point(vv_it) ).sqrnorm() > _maxEdgeLengthSqr ){
+          for(typename MeshT::VOHIter vh_it = _mesh.voh_iter(v0); vh_it; ++vh_it)
+            if ( (( B - _mesh.point( _mesh.to_vertex_handle(vh_it.handle()) ) ).sqrnorm() > _maxEdgeLengthSqr )
+                 || ( _mesh.status( _mesh.edge_handle( vh_it.handle() ) ).feature())
+                 || ( _mesh.is_boundary( _mesh.edge_handle( vh_it.handle() ) ) )){
               collapse_ok = false;
               break;
             }
@@ -147,7 +160,7 @@ void IsotropicRemesher< MeshT >::collapseShortEdges( MeshT& _mesh, const double 
 
             finished = false;
           }
-         
+
         } 
     }
 
@@ -168,6 +181,8 @@ void IsotropicRemesher< MeshT >::equalizeValences( MeshT& _mesh )
   for (e_it = _mesh.edges_sbegin(); e_it != e_end; ++e_it){
 
     if ( !_mesh.is_flip_ok(e_it) ) continue;
+    if ( _mesh.status( e_it ).feature() ) continue;
+    
 
     const typename MeshT::HalfedgeHandle & h0 = _mesh.halfedge_handle( e_it, 0 );
     const typename MeshT::HalfedgeHandle & h1 = _mesh.halfedge_handle( e_it, 1 );
@@ -222,6 +237,19 @@ bool IsotropicRemesher< MeshT >::isBoundary( MeshT& _mesh, const typename MeshT:
   return false;
 }
 
+template< class MeshT > 
+inline
+bool IsotropicRemesher< MeshT >::isFeature( MeshT& _mesh, const typename MeshT::VertexHandle& _vh ){
+
+  typename MeshT::ConstVertexOHalfedgeIter voh_it;
+
+  for (voh_it = _mesh.voh_iter( _vh ); voh_it; ++voh_it )
+    if ( _mesh.status( _mesh.edge_handle( voh_it.handle() ) ).feature() )
+      return true;
+
+  return false;
+}
+
 template< class MeshT >
 void IsotropicRemesher< MeshT >::tangentialRelaxation( MeshT& _mesh )
 {
@@ -255,7 +283,7 @@ void IsotropicRemesher< MeshT >::tangentialRelaxation( MeshT& _mesh )
 
   //move to new position
   for (v_it = _mesh.vertices_sbegin(); v_it != v_end; ++v_it){
-    if ( !isBoundary(_mesh, v_it) )
+    if ( !isBoundary(_mesh, v_it) && !isFeature(_mesh, v_it) )
       _mesh.set_point(v_it,  _mesh.property(q, v_it) + (_mesh.normal(v_it)| (_mesh.point(v_it) - _mesh.property(q, v_it) ) ) * _mesh.normal(v_it));
   }
 
@@ -353,6 +381,7 @@ void IsotropicRemesher< MeshT >::projectToSurface( MeshT& _mesh, MeshT& _origina
   for (v_it = _mesh.vertices_begin(); v_it != v_end; ++v_it){
 
     if (isBoundary(_mesh, v_it)) continue;
+    if ( isFeature(_mesh, v_it)) continue;
 
     typename MeshT::Point p = _mesh.point(v_it);
     typename MeshT::FaceHandle fhNear;
