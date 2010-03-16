@@ -107,9 +107,20 @@ public:
   *
   * call this function if you changed the topology of the mesh.
   * All buffers related to the topology will be updated.
+  *
+  * this also triggers an update for the colors
   */
   void update_topology();  
 
+  /** \brief the colors of the mesh have changed
+  *
+  * call this function if you changed the colors of the mesh.
+  * All buffers related to the color will be updated.
+  *
+  * if you also updated the topology, the color is updated automatically
+  */
+  void update_color();
+  
 private:
 
   /** Typedefs of the mesh representation

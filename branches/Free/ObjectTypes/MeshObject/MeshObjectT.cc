@@ -348,22 +348,22 @@
 
     PluginFunctions::setMainGLContext();
 
-    if ( _type.contains(UPDATE_ALL) ){
+    if ( _type.contains(UPDATE_ALL) || _type.contains(UPDATE_TOPOLOGY) ){
       updateGeometry();
+      updateColor();
       updateTopology();
       updateSelection();
       updateFeatures();
-      updateModelingRegions(); 
+      updateModelingRegions();
     } else if ( _type.contains(UPDATE_GEOMETRY) ) {
       updateGeometry();
-    } else if ( _type.contains(UPDATE_TOPOLOGY) ) {
-      updateGeometry();
-      updateTopology();
     } else if ( _type.contains(UPDATE_SELECTION) ) {
       updateSelection();
+      updateFeatures();
+      updateModelingRegions();
+    } else if ( _type.contains(UPDATE_COLOR) ) {
+      updateColor();
     }
-    
-    
   }
 
   /** Updates the selection scenegraph nodes */
@@ -379,6 +379,13 @@
     if ( meshNode_ )
       meshNode_->update_geometry();
     invalidateTriangleBsp();
+  }
+
+  /** Updates the color information in the mesh scenegraph node */
+  template < class MeshT  >
+  void MeshObject< MeshT >::updateColor() {
+    if ( meshNode_ )
+      meshNode_->update_color();
   }
 
   /** Updates the topology information in the mesh scenegraph node */

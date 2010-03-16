@@ -164,6 +164,9 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
     /// Update Geometry of all data structures
     void updateGeometry();
 
+    /// Update Colors of all data structures
+    void updateColor();
+    
     /// Update Topology of all data structures
     void updateTopology();
 

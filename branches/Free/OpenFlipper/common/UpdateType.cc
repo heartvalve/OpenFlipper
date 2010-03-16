@@ -127,6 +127,9 @@ void initializeUpdateTypes() {
   updateTypeToTypeInfo[UPDATE_SELECTION_FACES]   = updateTypes.size();
   updateTypes.push_back( UpdateTypeInfo(UPDATE_SELECTION_FACES, "FaceSelection", true) );
 
+  stringToUpdateTypeInfo["Color"]      = updateTypes.size();
+  updateTypeToTypeInfo[UPDATE_COLOR]   = updateTypes.size();
+  updateTypes.push_back( UpdateTypeInfo(UPDATE_COLOR, "Color", true) );
   
   updateTypeToString[UPDATE_ALL]                = "All";
   updateTypeToString[UPDATE_OBJECT_SELECTION]   = "ObjectSelection";
@@ -137,6 +140,7 @@ void initializeUpdateTypes() {
   updateTypeToString[UPDATE_SELECTION_VERTICES] = "VertexSelection";
   updateTypeToString[UPDATE_SELECTION_EDGES]    = "EdgeSelection";
   updateTypeToString[UPDATE_SELECTION_FACES]    = "FaceSelection";
+  updateTypeToString[UPDATE_COLOR]              = "Color";
 }
 
 /// Adds a updateType and returns the id for the new type

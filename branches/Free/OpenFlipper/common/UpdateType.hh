@@ -80,8 +80,14 @@ const UpdateType UPDATE_SELECTION_EDGES( UpdateTypeSet(1) << 7 );
 */
 const UpdateType UPDATE_SELECTION_FACES( UpdateTypeSet(1) << 8 );
 
+/** \brief Colors have changed
+*
+* Update the colors. This does not have to be called when topology is also updated
+*/
+const UpdateType UPDATE_COLOR( UpdateTypeSet(1) << 9 );
+
 /// marks the last used ID
-const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 9 );
+const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 10 );
 
 //=====================================================================================
 // FUNCTIONS
