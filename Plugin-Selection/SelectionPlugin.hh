@@ -234,14 +234,26 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     template< typename MeshType >
     void set_area(  MeshType* _mesh);
 
+    /// Use given selectiontype as Modifyable area vertices
+    template< typename MeshType >
+    void set_area( MeshType* _mesh, unsigned char _selectionType);
+    
     /// Use current selection to mark Vertices as Handle vertices
     template< typename MeshType >
     void set_handle(MeshType* _mesh);
 
+    /// Use given selectiontype to mark Vertices as Handle vertices
+    template< typename MeshType >
+    void set_handle(MeshType* _mesh, unsigned char _selectionType);
+    
     /// convert current selection to features
     template< typename MeshType >
     void set_features(MeshType* _mesh);
 
+    /// convert given selectionType to features
+    template< typename MeshType >
+    void set_features(MeshType* _mesh, unsigned char _selectionType);
+    
     /// Clear Handle vertices
     template< typename MeshType >
     void clear_handle(MeshType* _mesh);
@@ -333,13 +345,13 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
   private slots:
 
     /// Use current selection to set Area bits
-    void slotSetArea();
+    void slotSetArea(unsigned char _selectionType);
 
     /// Use current selection to set Handle bits
-    void slotSetHandle();
+    void slotSetHandle(unsigned char _selectionType);
 
     /// convert current selection to feature
-    void slotSetFeatures();
+    void slotSetFeatures(unsigned char _selectionType);
 
     /// Clear Handle Bits
     void slotClearHandle();
