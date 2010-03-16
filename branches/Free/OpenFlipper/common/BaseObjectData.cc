@@ -233,6 +233,10 @@ SeparatorNode* BaseObjectData::baseNode() {
   return separatorNode_;
 }
 
+BaseNode* BaseObjectData::primaryNode() {
+  return separatorNode_;
+}
+
 QtTranslationManipulatorNode* BaseObjectData::manipulatorNode() {
   return manipulatorNode_;
 }
