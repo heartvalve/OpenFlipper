@@ -103,10 +103,7 @@ bool FileOFFPlugin::writeASCIIData(std::ostream& _out, MeshT& _mesh ) {
     
     // Write face data
     for(; fit != end_fit; ++fit) {
-        
-        // Skip degenerate faces
-        if(_mesh.valence(fit.handle()) <= 2) continue;
-        
+      
         _out << "\n";
         
         // Write face valence
