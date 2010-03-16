@@ -1301,53 +1301,6 @@ update_geometry() {
     }
     
   }
-
-  // ==========================================================================
-  // Generate color buffer
-  // ==========================================================================
-
-  // Allocate it if required
-  if (!colorVertexbuffer_)  glGenBuffersARB(1,  (GLuint*)  &colorVertexbuffer_);
-
-  glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorVertexbuffer_);
-  colorVertexBufferInitialized_ = false;
-
-  // Colors consist of 4 scalars (RGBA) with type float -> direct upload!
-  if ( sizeof(ColorScalar) == 4 && mesh_.vertex_colors()->dim() == 4 ) {
-    glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                    4 * mesh_.n_vertices() * sizeof(ColorScalar),
-                    mesh_.vertex_colors(),
-                    GL_STATIC_DRAW_ARB);
-                    
-    colorVertexBufferInitialized_ = true;
-  } else {
-    // Format mismatch -> conversion
-    
-    // Clear the local color conversion array
-    colors_.clear();
-    
-    // Preallocate memory for efficiency
-    colors_.reserve( mesh_.n_vertices() );
-    
-    // Convert data to the desired format
-    typename Mesh::ConstVertexIter v_end(mesh_.vertices_end());
-    for ( typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()) ; v_it != v_end ; ++v_it )
-      colors_.push_back( OpenMesh::color_cast<Vec4f>(mesh_.color(v_it)) );
-    
-    if ( !colors_.empty() ) {
-      // Upload to graphics card
-      glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                      4 * mesh_.n_vertices() * sizeof(float),
-                      &colors_[0],
-                      GL_STATIC_DRAW_ARB);
-                      colorVertexBufferInitialized_ = true;
-      
-      // As we uploaded the data to the graphics card, we can clear it in the main memory                      
-      colors_.clear();
-      std::vector< ACG::Vec4f >().swap(colors_);
-    }
-    
-  }
   
   // ==========================================================================
   // unbind all buffers
@@ -1407,6 +1360,66 @@ update_topology() {
  
   // Unbind the buffer after the work has been done
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
+}
+
+
+template<class Mesh>
+void
+MeshNodeT<Mesh>::
+update_color() {
+
+  // ==========================================================================
+  // Generate color buffer
+  // ==========================================================================
+
+  // Allocate it if required
+  if (!colorVertexbuffer_)  glGenBuffersARB(1,  (GLuint*)  &colorVertexbuffer_);
+
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, colorVertexbuffer_);
+  colorVertexBufferInitialized_ = false;
+
+  // Colors consist of 4 scalars (RGBA) with type float -> direct upload!
+  if ( sizeof(ColorScalar) == 4 && mesh_.vertex_colors()->dim() == 4 ) {
+    glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                    4 * mesh_.n_vertices() * sizeof(ColorScalar),
+                    mesh_.vertex_colors(),
+                    GL_STATIC_DRAW_ARB);
+                    
+    colorVertexBufferInitialized_ = true;
+  } else {
+    // Format mismatch -> conversion
+    
+    // Clear the local color conversion array
+    colors_.clear();
+    
+    // Preallocate memory for efficiency
+    colors_.reserve( mesh_.n_vertices() );
+    
+    // Convert data to the desired format
+    typename Mesh::ConstVertexIter v_end(mesh_.vertices_end());
+    for ( typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()) ; v_it != v_end ; ++v_it )
+      colors_.push_back( OpenMesh::color_cast<Vec4f>(mesh_.color(v_it)) );
+    
+    if ( !colors_.empty() ) {
+      // Upload to graphics card
+      glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                      4 * mesh_.n_vertices() * sizeof(float),
+                      &colors_[0],
+                      GL_STATIC_DRAW_ARB);
+                      colorVertexBufferInitialized_ = true;
+      
+      // As we uploaded the data to the graphics card, we can clear it in the main memory                      
+      colors_.clear();
+      std::vector< ACG::Vec4f >().swap(colors_);
+    }
+    
+  }
+  
+  // ==========================================================================
+  // unbind all buffers
+  // ==========================================================================
+  glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+  
 }
 
 template<class Mesh>
