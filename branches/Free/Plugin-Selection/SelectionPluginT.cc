@@ -154,6 +154,69 @@ void SelectionPlugin::set_area(  MeshType* _mesh)
   update_regions(_mesh);
 }
 
+//-----------------------------------------------------------------------------
+
+/** \brief Set current selection as area-region for a mesh
+ *
+ * @param _mesh a mesh
+ */
+template< typename MeshType >
+void SelectionPlugin::set_area(  MeshType* _mesh, unsigned char _selectionType)
+{
+
+  if (_selectionType & VERTEX){
+    typename MeshType::VertexIter v_it, v_end=_mesh->vertices_end();
+
+    for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it) {
+      _mesh->status(v_it).change_bit(AREA,  _mesh->status(v_it).selected());
+      _mesh->status(v_it).set_selected(false);
+    }
+  } else {
+
+    //reset tagged status
+    typename MeshType::VertexIter v_it, v_end( _mesh->vertices_end() );
+      for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
+        _mesh->status(v_it).set_tagged(false);
+
+    if (_selectionType & EDGE){
+      typename MeshType::EdgeIter e_it, e_end( _mesh->edges_end() );
+
+      for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it){
+        if ( _mesh->status(e_it).selected() ){
+
+        typename MeshType::HalfedgeHandle h0 = _mesh->halfedge_handle(e_it,0);
+
+          _mesh->status( _mesh->from_vertex_handle(h0) ).set_tagged(true);
+          _mesh->status( _mesh->to_vertex_handle(h0)   ).set_tagged(true);
+          _mesh->status(e_it).set_selected(false);
+        }
+      }
+    }
+
+    if (_selectionType & FACE){
+      typename MeshType::FaceIter f_it, f_end( _mesh->faces_end() );
+
+      for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it){
+        if ( _mesh->status(f_it).selected() ){
+
+          for (typename MeshType::FaceVertexIter fv_it(*_mesh,f_it) ; fv_it; ++fv_it ){
+
+            _mesh->status( fv_it ).set_tagged(true);
+            _mesh->status(f_it).set_selected(false);
+          }
+        }
+      }
+    }
+
+    //set area bit for tagged handles
+    for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it) {
+      _mesh->status(v_it).change_bit(AREA,  _mesh->status(v_it).tagged());
+      _mesh->status(v_it).set_selected(false);
+    }
+
+  }
+  update_regions(_mesh);
+}
 
 //-----------------------------------------------------------------------------
 
@@ -219,6 +282,70 @@ void SelectionPlugin::set_handle(MeshType* _mesh)
   update_regions(_mesh);
 }
 
+//-----------------------------------------------------------------------------
+
+/** \brief Set current selection as handle-region for a mesh
+ *
+ * @param _mesh a mesh
+ */
+template< typename MeshType >
+void SelectionPlugin::set_handle(MeshType* _mesh, unsigned char _selectionType)
+{
+
+  if (_selectionType & VERTEX){
+    typename MeshType::VertexIter v_it, v_end=_mesh->vertices_end();
+
+    for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it) {
+      _mesh->status(v_it).change_bit(HANDLEAREA,  _mesh->status(v_it).selected());
+      _mesh->status(v_it).set_selected(false);
+    }
+  } else {
+
+    //reset tagged status
+    typename MeshType::VertexIter v_it, v_end( _mesh->vertices_end() );
+      for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
+        _mesh->status(v_it).set_tagged(false);
+
+    if (_selectionType & EDGE){
+      typename MeshType::EdgeIter e_it, e_end( _mesh->edges_end() );
+
+      for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it){
+        if ( _mesh->status(e_it).selected() ){
+
+        typename MeshType::HalfedgeHandle h0 = _mesh->halfedge_handle(e_it,0);
+
+          _mesh->status( _mesh->from_vertex_handle(h0) ).set_tagged(true);
+          _mesh->status( _mesh->to_vertex_handle(h0)   ).set_tagged(true);
+          _mesh->status(e_it).set_selected(false);
+        }
+      }
+    }
+
+    if (_selectionType & FACE){
+      typename MeshType::FaceIter f_it, f_end( _mesh->faces_end() );
+
+      for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it){
+        if ( _mesh->status(f_it).selected() ){
+
+          for (typename MeshType::FaceVertexIter fv_it(*_mesh,f_it) ; fv_it; ++fv_it ){
+
+            _mesh->status( fv_it ).set_tagged(true);
+            _mesh->status(f_it).set_selected(false);
+          }
+        }
+      }
+    }
+
+    //set area bit for tagged handles
+    for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it) {
+      _mesh->status(v_it).change_bit(HANDLEAREA,  _mesh->status(v_it).tagged());
+      _mesh->status(v_it).set_selected(false);
+    }
+
+  }
+  update_regions(_mesh);
+}
+
 /** \brief Set current selection as feature for a mesh
  *
  * @param _mesh a mesh
@@ -248,6 +375,45 @@ void SelectionPlugin::set_features(MeshType* _mesh)
   }
 
   if (selectionType_ & FACE){
+    typename MeshType::FaceIter f_it, f_end( _mesh->faces_end() );
+
+    for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
+      if ( _mesh->status(f_it).selected() ){
+        _mesh->status(f_it).set_feature( _mesh->status(f_it).selected() );
+        _mesh->status(f_it).set_selected( false );
+      }
+  }
+}
+
+/** \brief Set current selection as feature for a mesh
+ *
+ * @param _mesh a mesh
+ */
+template< typename MeshType >
+void SelectionPlugin::set_features(MeshType* _mesh, unsigned char _selectionType)
+{
+
+  if (_selectionType & VERTEX){
+    typename MeshType::VertexIter v_it, v_end=_mesh->vertices_end();
+
+    for (v_it=_mesh->vertices_begin(); v_it!=v_end; ++v_it)
+      if ( _mesh->status(v_it).selected() ){
+       _mesh->status(v_it).set_feature( _mesh->status(v_it).selected() );
+       _mesh->status(v_it).set_selected( false );
+      }
+  }
+
+  if (_selectionType & EDGE){
+    typename MeshType::EdgeIter e_it, e_end( _mesh->edges_end() );
+
+    for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
+      if ( _mesh->status(e_it).selected() ){
+        _mesh->status(e_it).set_feature( _mesh->status(e_it).selected() );
+        _mesh->status(e_it).set_selected( false );
+      }
+  }
+
+  if (_selectionType & FACE){
     typename MeshType::FaceIter f_it, f_end( _mesh->faces_end() );
 
     for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)

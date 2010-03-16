@@ -637,7 +637,7 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
 
 /** \brief Use current selection to set AREA bits
  */
-void SelectionPlugin::slotSetArea() {
+void SelectionPlugin::slotSetArea(unsigned char _selectionType) {
   PluginFunctions::IteratorRestriction restriction;
   if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
@@ -662,19 +662,19 @@ void SelectionPlugin::slotSetArea() {
 		}
 
 		if (o_it->dataType(DATA_TRIANGLE_MESH)) {
-			set_area(PluginFunctions::triMesh(*o_it));
+			set_area(PluginFunctions::triMesh(*o_it), _selectionType);
 		}
 		if (o_it->dataType(DATA_POLY_MESH)) {
-			set_area(PluginFunctions::polyMesh(*o_it));
+			set_area(PluginFunctions::polyMesh(*o_it), _selectionType);
 		}
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 		if (o_it->dataType(DATA_TSPLINE_MESH)) {
-			set_area(PluginFunctions::tsplineMesh(*o_it));
+			set_area(PluginFunctions::tsplineMesh(*o_it), _selectionType);
 		}
 #endif
 
 
-		emit updatedObject(o_it->id(), UPDATE_ALL);
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
   emit updateView();
@@ -686,7 +686,7 @@ void SelectionPlugin::slotSetArea() {
 
 /** \brief Use current selection to set HANDLE bits
  */
-void SelectionPlugin::slotSetHandle() {
+void SelectionPlugin::slotSetHandle(unsigned char _selectionType) {
   PluginFunctions::IteratorRestriction restriction;
   if ( !tool_->restrictOnTargets->isChecked() )
     restriction = PluginFunctions::ALL_OBJECTS;
@@ -710,14 +710,14 @@ void SelectionPlugin::slotSetHandle() {
 		}
 
 		if (o_it->dataType(DATA_TRIANGLE_MESH))
-			set_handle(PluginFunctions::triMesh(*o_it));
+			set_handle(PluginFunctions::triMesh(*o_it), _selectionType);
 		if (o_it->dataType(DATA_POLY_MESH))
-			set_handle(PluginFunctions::polyMesh(*o_it));
+			set_handle(PluginFunctions::polyMesh(*o_it), _selectionType);
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 		if (o_it->dataType(DATA_TSPLINE_MESH))
-			set_handle(PluginFunctions::tsplineMesh(*o_it));
+			set_handle(PluginFunctions::tsplineMesh(*o_it), _selectionType);
 #endif
-		emit updatedObject(o_it->id(), UPDATE_ALL);
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -729,7 +729,7 @@ void SelectionPlugin::slotSetHandle() {
 
 /** \brief convert current selection to feature
  */
-void SelectionPlugin::slotSetFeatures() {
+void SelectionPlugin::slotSetFeatures(unsigned char _selectionType) {
 	PluginFunctions::IteratorRestriction restriction;
 	if (!tool_->restrictOnTargets->isChecked())
 		restriction = PluginFunctions::ALL_OBJECTS;
@@ -746,15 +746,15 @@ void SelectionPlugin::slotSetFeatures() {
 			!= PluginFunctions::objectsEnd(); ++o_it) {
 #endif
 		if (o_it->dataType(DATA_TRIANGLE_MESH))
-			set_features(PluginFunctions::triMesh(*o_it));
+			set_features(PluginFunctions::triMesh(*o_it), _selectionType);
 		if (o_it->dataType(DATA_POLY_MESH))
-			set_features(PluginFunctions::polyMesh(*o_it));
+			set_features(PluginFunctions::polyMesh(*o_it), _selectionType);
 
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 		if (o_it->dataType(DATA_TSPLINE_MESH))
-			set_features(PluginFunctions::tsplineMesh(*o_it));
+			set_features(PluginFunctions::tsplineMesh(*o_it), _selectionType);
 #endif
-		emit updatedObject(o_it->id(), UPDATE_ALL);
+		emit updatedObject(o_it->id(), UPDATE_SELECTION);
 	}
 
 	emit updateView();
@@ -1170,14 +1170,32 @@ void SelectionPlugin::slotConvertSelectionType() {
 		convertSelectionType(from, to, clearAfter);
 	}
 	else if(sfrom == tr("Vertex Selection") && sto == tr("Modeling Area")) {
-		slotSetArea();
+		slotSetArea( VERTEX );
 	}
 	else if(sfrom == tr("Vertex Selection") && sto == tr("Handle Area")) {
-		slotSetHandle();
+		slotSetHandle( VERTEX );
 	}
 	else if(sfrom == tr("Vertex Selection") && sto == tr("Feature Area")) {
-		slotSetFeatures();
+		slotSetFeatures( VERTEX );
 	}
+  else if(sfrom == tr("Edge Selection") && sto == tr("Modeling Area")) {
+    slotSetArea( EDGE );
+  }
+  else if(sfrom == tr("Edge Selection") && sto == tr("Handle Area")) {
+    slotSetHandle( EDGE );
+  }
+  else if(sfrom == tr("Edge Selection") && sto == tr("Feature Area")) {
+    slotSetFeatures( EDGE );
+  }
+  else if(sfrom == tr("Face Selection") && sto == tr("Modeling Area")) {
+    slotSetArea( FACE );
+  }
+  else if(sfrom == tr("Face Selection") && sto == tr("Handle Area")) {
+    slotSetHandle( FACE );
+  }
+  else if(sfrom == tr("Face Selection") && sto == tr("Feature Area")) {
+    slotSetFeatures( FACE );
+  }
 	// Feature still to be implemented
 }
 
