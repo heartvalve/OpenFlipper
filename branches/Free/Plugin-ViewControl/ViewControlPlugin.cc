@@ -582,7 +582,7 @@ void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
   // Set draw Modes for this object
   ACG::SceneGraph::SetDrawModesAction actionActive( activeDrawModes_ );
   if ( object )
-    ACG::SceneGraph::traverse( object->baseNode() , actionActive);
+    ACG::SceneGraph::traverse( object->primaryNode() , actionActive);
   else
     PluginFunctions::setDrawMode( activeDrawModes_ , PluginFunctions::activeExaminer() );
 
