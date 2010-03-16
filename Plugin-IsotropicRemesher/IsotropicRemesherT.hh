@@ -40,6 +40,9 @@ private:
 
   inline
   bool isBoundary( MeshT& _mesh, const typename MeshT::VertexHandle& _vh);
+  
+  inline
+  bool isFeature( MeshT& _mesh, const typename MeshT::VertexHandle& _vh);
 };
 
 //=============================================================================
