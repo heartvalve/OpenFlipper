@@ -216,6 +216,8 @@ class DLLEXPORTONLY MeshObject : public BaseObjectData {
 
     /// Get the BoundingBox of this object
     void boundingBox( ACG::Vec3d& _bbMin , typename ACG::Vec3d& _bbMax );
+    
+    BaseNode* primaryNode();
 
   private :
     /// Status Node for a mesh, visualizing the selection state of a mesh
