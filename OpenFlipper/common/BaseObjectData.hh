@@ -188,6 +188,10 @@ class DLLEXPORT BaseObjectData : public BaseObject
      */
     SeparatorNode* baseNode();
 
+    /** get the primary node of this object (Use this node to change drawModes)
+     */
+    virtual BaseNode* primaryNode();
+    
     /** get the ManipulatorNode node of this object (Use this node to add custom Nodes to the Object
      * which should be transformed with the manipulator of the Object)
      */
