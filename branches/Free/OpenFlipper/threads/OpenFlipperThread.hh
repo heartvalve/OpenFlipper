@@ -47,7 +47,7 @@
     reimplement this class. Just connect the signals
     for the thread to work properly.
 
-    The following example shows a simple example
+    The following code fragment shows a simple example
     of how to use this class from within a plugin:
 
 \code
