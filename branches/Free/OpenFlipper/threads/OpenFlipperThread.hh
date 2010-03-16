@@ -30,8 +30,6 @@
 //=============================================================================
 
 
-
-
 #ifndef OPENFLIPPERTHREAD_HH
 #define OPENFLIPPERTHREAD_HH
 
@@ -39,6 +37,37 @@
 #include <QMutex>
 
 #include <OpenFlipper/common/GlobalDefines.hh>
+
+/**
+\class OpenFlipperThread
+
+    Instanciate this class in order to provide a thread
+    to a plugin. Unless you don't need a specialized
+    run() or cancel() function, it won't be necessary to
+    reimplement this class. Just connect the signals
+    for the thread to work properly.
+
+    The following example shows a simple example
+    of how to use this class from within a plugin:
+
+\code
+OpenFlipperThread* myThread = new OpenFlipperThread("MyPluginsThread");
+
+// Connect the appropriate signals
+connect(myThread, SIGNAL(state(QString, int)), this, SIGNAL(setJobState(QString, int)));
+connect(myThread, SIGNAL(finished(QString)),   this, SIGNAL(finishJob(QString)));
+connect(myThread, SIGNAL(function()),          this, SLOT(myPluginsThreadFunction()), Qt::DirectConnection);
+
+// Tell core about my thread
+emit startJob( "MyPluginsThread", "Thread Description" , 0 , 100 , true);
+
+// Start internal QThread
+myThread->start();
+
+// Start actual processing of job
+myThread->startProcessing();
+\endcode
+*/
 
 class OpenFlipperJob;
 
@@ -58,8 +87,8 @@ class DLLEXPORT OpenFlipperThread : public QThread
     
     /** \brief Main processing
     *
-    * Connect a function to the function() signal ( DirectConnection!!! )
-    * Or reimplement this function
+    * Either reimplement this function or connect the function()
+    * signal.
     */
     virtual void run();
     
