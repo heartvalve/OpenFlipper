@@ -360,7 +360,7 @@ void SelectionPlugin::colorizeEdgeSelection(int objectId, int r, int g, int b )
     emit scriptInfo( "colorizeEdgeSelection( ObjectId, "
     + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + " )" );
     
-    emit updatedObject(object->id(), UPDATE_ALL);
+    emit updatedObject(object->id(), UPDATE_COLOR);
 }
 
   

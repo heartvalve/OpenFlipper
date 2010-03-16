@@ -456,7 +456,7 @@ void SelectionPlugin::colorizeVertexSelection(int objectId, int r, int g, int b 
   emit scriptInfo( "colorizeVertexSelection( ObjectId, "
                   + QString::number(r) + ", " + QString::number(g) + ", " + QString::number(b) + " )" );
 
-  emit updatedObject(objectId, UPDATE_ALL);
+  emit updatedObject(objectId, UPDATE_COLOR);
 }
   
 
