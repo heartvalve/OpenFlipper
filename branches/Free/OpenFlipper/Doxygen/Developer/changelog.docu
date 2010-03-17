@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 RC6 ( ? , 8331 )</b>
+ * - <b>OpenFlipper 1.0 RC6 ( ? , 8741 )</b>
  *      - <b>Core</b>
  *              - Splitted File Plugins ( Now there are type plugins loaded first to register types and the file plugins to load data)
  *                      - Moved loading code from OpenMesh to file plugins to support multiple data types
@@ -12,14 +12,20 @@
  *              - Basic implementation to copy per Object data along with copied object
  *	        - Implemented drag and drop for files to OpenFlipper
  *              - Fixes for building with QT 4.6
+ *              - Added a map to find objects in the objectTree (large speedup when handling multiple objects)
+ *              - Internal counters for targets, sources and objects avoiding iterations across all objects ( another speedup)
  *      - <b>Plugin interface changes</b>
  *              - Changed PluginFunctions to return 0 object for identifier -1
  *              - Provide a QSettings interface to store per Plugin settings (called OpenFlipperSettings in globaloptions)
  *              - Core manages objectSelectionChanged, visibilityChanged and objectPropertiesChanged. (Do not emit these signals in your plugin anymore)
  *              - Added TypeInterface to register types from plugins (These plugins will be loaded first!)
+ *              - Improvements to status bar interface (now accepts arbitrary widgets)
  *              - Renamed type idList to IdList
+ *              - Process manager added
+ *              - Updated updateObject functionality which can specify the type of updates now
  *      - <b>DataTypes</b> 
  *              - Added Plane Datatype and plugin
+ *              - Rewrote the mesh rendering node (now handling textures for poly meshes)
  *      - <b>Internal changes</b>
  *              - Updated internal types handling (directly initialized by core now) 
  *      - <b>UI</b>
@@ -30,11 +36,21 @@
  *                      - Icons for Datacontrol Context Menu
  *              - Updated About dialog to include used compiler for OpenFlipper
  *              - Improved logger widget with filtering option
+ *     - <b> Scripting </b>
+ *              - Implimented new datatype representation which is also available in scripting now
  *     - <b>GL Handling</b>
  *              - Function to get maximum texture units
  *     - <b>Plugins</b>
  *             - File Plugins
  *             	       - New OBJ and OFF readers/writers which are independent of OpenMesh now
+ *                     - OBJ groups
+ *                     - Fixed errors reading OBJ files containing tabs
+ *                     - Basic support for splines and spline surfaces in OBJ files
+ *                     - Support for binary OFF files not following the specification ( without face color index )
+ *		       - Choose between opening meshes as triangle or poly mesh
+ *                     - Added a default loading dialog
+ *             - Plugin Info
+ *                     - Shows number of primitives for open objects in the status bar
  *             - Plugin Datacontrol
  *                     - Some gui reworks
  *                     - Use new signal processing correctly
@@ -43,15 +59,23 @@
  *             - Plugin Decimater
  *                     - Enable Normal deviation constraint by default
  *                     - Correctly set maximum for sliders
+ *             - Plugin IsoTropic Remesher
+ *                     - respect boundaries and edge features
  *             - Plugin Selection
  *                     - Create mesh from selection added
  *             - Plugin Move
  *                     - Added function to hide Manipulators
  *                     - Added some Icons
+ *                     - Fixed iterator bug causing slow operations
+ *             - Plugin ViewControl
+ *                     - Don't set draw mode for all nodes
+ *             - Plugin VSI
+ *                     - New Plugin to create scripts via a visual scripting interface
  *     - <b>ACG</b>
  *             - Switched Bounding Box action to doubles
  *             - added Quaternion exponential, logarithm and from_rotation_matrix construction
  *             - Removed assertions in GLSL Shader Utils and replaced them by warnings (To support graphics cards without shaders)
+ *             - Reimplementation of the drawmode which is now a separate class
  *     - <b>Build system</b>
  *             - Finder for libpre
  *             - Finder for libxml2
