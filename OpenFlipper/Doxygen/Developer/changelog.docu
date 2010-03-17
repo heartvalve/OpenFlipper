@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 RC6 ( ? , 8741 )</b>
+ * - <b>OpenFlipper 1.0 RC6 ( 2010/03/17 , 8742 )</b>
  *      - <b>Core</b>
  *              - Splitted File Plugins ( Now there are type plugins loaded first to register types and the file plugins to load data)
  *                      - Moved loading code from OpenMesh to file plugins to support multiple data types
