@@ -262,8 +262,8 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
             ++p;
             --remainingChars;
         } else if ( ( remainingChars > 0 ) && (p[0] == '4' ) ) {
-            // TODO: Implement homogeneous coordinates
-            std::cerr << "Error: Homogeneous coordinates are currently not supported!" << std::endl;
+            // TODO: Implement extended coordinates
+            std::cerr << "Error: Extended coordinates are currently not supported!" << std::endl;
             ifs.close();
             return false;
             ++p;
@@ -602,7 +602,6 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
                 if ( userReadOptions_ & OFFImporter::VERTEXCOLOR ) {
                     int cidx = _importer.addColor( OpenMesh::color_cast<PolyMesh::Color>(c3f) );
                     _importer.setVertexColor(vh, cidx);
-                    std::cerr << "Read color" <<  c3f << std::endl;
                 }
                 break;
                 // rgba floats
@@ -635,6 +634,15 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     {
         // nV = number of Vertices for current face
         _in >> nV;
+        
+        // If number of faces < 3, we have a degenerated face
+        // which we don't allow and thus skip
+        if (nV < 3) {
+            // Read the rest of the line and dump it
+            std::getline(_in, line);
+            // Proceed reading
+            continue;
+        }
         
         vhandles.clear();
         for (uint i=0; i<nV; ++i) {
@@ -891,8 +899,27 @@ bool FileOFFPlugin::parseBinary(std::istream& _in, OFFImporter& _importer, DataT
             }
         }
         
+        // Check if the face has at least valence 3
+        // if not, skip the current face
+        if (nV < 3) {
+            // Read in following vertex indices and dump them
+            for (uint j = 0; j < nV; ++j) {
+                readValue(_in, dummy);
+            }
+            // Read in color components if available
+            // and dump them
+            if (readColorComp_) {
+                // Number of color components
+                readValue(_in, nV);
+                for (uint j = 0; j < nV; ++j) {
+                    readValue(_in, dummy_f);
+                }
+            }
+            // Proceed reading
+            continue;
+        }
         
-        
+        // Read vertex indices of current face
         vhandles.clear();
         for (uint j = 0; j < nV; ++j) {
             readValue(_in, idx);
