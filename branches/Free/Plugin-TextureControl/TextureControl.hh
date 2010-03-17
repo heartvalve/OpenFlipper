@@ -100,7 +100,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
 
     // BaseInterface
     void pluginsInitialized();
-    void slotObjectUpdated(int _identifier, UpdateType _type);
+    void slotObjectUpdated(int _identifier, const UpdateType _type);
 
     // TextureInterface
     void slotUpdateAllTextures( );
