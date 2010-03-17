@@ -3,7 +3,7 @@
 	<docFiles>
         	<register>
 	     		<file>developer.qch</file>
-			<file>user.qch</file>
+			    <file>user.qch</file>
          	</register>
      	</docFiles>
 </QHelpCollectionProject>
