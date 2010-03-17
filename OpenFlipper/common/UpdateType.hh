@@ -2,12 +2,13 @@
 #ifndef UPDATETYPE_HH
 #define UPDATETYPE_HH
 
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include <bitset>
 
 typedef std::bitset<64> UpdateTypeSet;
 
 // TYPE
-class UpdateType {
+class DLLEXPORT UpdateType {
   public:
     UpdateType(const UpdateType& _type);
     
