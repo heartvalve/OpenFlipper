@@ -262,19 +262,15 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
             ++p;
             --remainingChars;
         } else if ( ( remainingChars > 0 ) && (p[0] == '4' ) ) {
-            // TODO: Implement extended coordinates
+            /// \TODO: Implement extended coordinates
             std::cerr << "Error: Extended coordinates are currently not supported!" << std::endl;
             ifs.close();
             return false;
-            ++p;
-            --remainingChars;
         } else if ( ( remainingChars > 0 ) && (p[0] == 'n' ) ) {
-            // TODO: Implement any space dimension
+            /// \TODO: Implement any space dimension
             std::cerr << "Error: n-dimensional coordinates are currently not supported!" << std::endl;
             ifs.close();
             return false;
-            ++p;
-            --remainingChars;
         } else if ( ( remainingChars >= 3 ) && (p[0] == 'O' && p[1] == 'F' && p[2] == 'F') ) {
             // Skip "OFF " (plus space):
             p += 4;
