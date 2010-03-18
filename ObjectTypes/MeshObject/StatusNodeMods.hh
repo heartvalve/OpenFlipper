@@ -43,7 +43,24 @@
 #ifndef STATUSNODEMODS_HH
 #define STATUSNODEMODS_HH
 
+//=============================================================================
+//
+//  Mesh Attribute bits for the Status Nodes
+//
+//=============================================================================
 
+/** \brief Additional Node status Bits for Mesh
+*
+* These status bits define special Attributes on the mesh. The are used to define the handle area
+* and modeling areas. 
+*
+*/
+enum StatusBits {
+  /// Modifyable area
+  AREA      = OpenMesh::Attributes::UNUSED << 1,
+  /// Handle Area
+  HANDLEAREA = OpenMesh::Attributes::UNUSED << 2
+};
 
 //=============================================================================
 //
