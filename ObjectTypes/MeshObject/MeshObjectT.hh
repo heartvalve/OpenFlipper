@@ -70,6 +70,14 @@
 
 #include <OpenFlipper/common/GlobalDefines.hh>
 
+/// Additional Node status Bits for Mesh
+enum StatusBits {
+   /// Modifyable area
+   AREA      = OpenMesh::Attributes::UNUSED << 1,
+   /// Handle Area
+   HANDLEAREA = OpenMesh::Attributes::UNUSED << 2
+};
+
 #include <ObjectTypes/MeshObject/StatusNodeMods.hh>
 #include <OpenFlipper/common/BaseObjectData.hh>
 

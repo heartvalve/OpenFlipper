@@ -44,21 +44,12 @@
 #define STATUSNODEMODS_HH
 
 
-/// Additional Node status Bits for Mesh
-enum StatusBits {
-  /// Modifyable area
-  AREA      = OpenMesh::Attributes::UNUSED << 1,
-  /// Handle Area
-  HANDLEAREA = OpenMesh::Attributes::UNUSED << 2
-};
 
 //=============================================================================
 //
 //  Mods for the Status Nodes
 //
 //=============================================================================
-
-
 
 /** Structure used in the Status Nodes to show if an area is marked as a modeling area
  */
