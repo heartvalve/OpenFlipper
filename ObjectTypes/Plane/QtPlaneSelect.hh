@@ -4,6 +4,8 @@
 #include <ACG/GL/GLState.hh>
 #include <ACG/Math/VectorT.hh>
 
+#include <OpenFlipper/common/GlobalDefines.hh>
+
 #include <ACG/Scenegraph/TransformNode.hh>
 #include <ACG/Scenegraph/LineNode.hh>
 
@@ -13,7 +15,7 @@
 
 #include <list>
 
-class QtPlaneSelect : public QObject
+class DLLEXPORT QtPlaneSelect : public QObject
 {
     Q_OBJECT
 
