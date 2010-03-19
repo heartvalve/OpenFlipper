@@ -109,6 +109,8 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringLi
     vm->custom = _custom;
     vm->icon   = "Unknown.png";
 
+    vm->visibleToolbars = QString("Main Toolbar;Viewer Toolbar").split(";");
+    
     if (_custom) {
       viewModes_.push_back(vm);
     } else {
@@ -121,6 +123,7 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringLi
         }
       viewModes_.insert(i,vm);
     }
+
   } else {
     vm = viewModes_[id];
   }
@@ -167,7 +170,15 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
   } else {
     vm = viewModes_[id];
   }
-
+  
+  // Always add the viewer Toolbar
+  if ( ! _usedToolbars.contains("Viewer Toolbar") )
+  _usedToolbars.prepend("Viewer Toolbar");
+  
+  // Always add the main Toolbar
+  if ( ! _usedToolbars.contains("Main Toolbar") )
+    _usedToolbars.prepend("Main Toolbar");
+  
   vm->visibleToolbars = _usedToolbars;
 
   initViewModes();
@@ -296,7 +307,7 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
         _toolboxWidgets = viewModes_[i]->visibleToolboxes;
         _toolbars       = viewModes_[i]->visibleToolbars;
       }
-
+  
   // Remove all toolbox entries
   toolBox_->clear ();
 
