@@ -1117,7 +1117,7 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
               
     if ( checkSignal(plugin,"finishJob(QString)" ) )
       connect(plugin      , SIGNAL(finishJob(QString)),
-              this , SLOT( slotFinishJob(QString) ), Qt::DirectConnection );
+              this , SLOT( slotFinishJob(QString) ), Qt::QueuedConnection );
     else
       emit log(LOGERR,"Process Interface defined but no finishJob signal found!");                
               
