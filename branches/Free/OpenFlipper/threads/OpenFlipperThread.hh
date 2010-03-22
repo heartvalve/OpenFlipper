@@ -46,26 +46,53 @@
     run() or cancel() function, it won't be necessary to
     reimplement this class. Just connect the signals
     for the thread to work properly.
+        
+    Note: Updating GUI elements of the main window from
+    within a thread which is not the main thread can
+    cause unexpected crashes to OpenFlipper. This introduces
+    some major limitations to the usage of threads
+    in plugins. These include avoiding the creation
+    of new objects and generally every function that
+    produces logging messages.
 
     The following code fragment shows a simple example
     of how to use this class from within a plugin:
 
 \code
-OpenFlipperThread* myThread = new OpenFlipperThread("MyPluginsThread");
+void MyPlugin::launchThread() {
 
-// Connect the appropriate signals
-connect(myThread, SIGNAL(state(QString, int)), this, SIGNAL(setJobState(QString, int)));
-connect(myThread, SIGNAL(finished(QString)),   this, SIGNAL(finishJob(QString)));
-connect(myThread, SIGNAL(function()),          this, SLOT(myPluginsThreadFunction()), Qt::DirectConnection);
+    OpenFlipperThread* myThread = new OpenFlipperThread("MyPluginsThread");
 
-// Tell core about my thread
-emit startJob( "MyPluginsThread", "Thread Description" , 0 , 100 , true);
+    // Connect the appropriate signals
+    connect(myThread, SIGNAL(function()), this, SLOT(myPluginsThreadFunction()), Qt::DirectConnection);
 
-// Start internal QThread
-myThread->start();
+    // Tell core about my thread
+    // Note: The last parameter determines whether the thread should be blocking
+    emit startJob( "MyPluginsThread", "Thread Description" , 0 , 100 , true);
 
-// Start actual processing of job
-myThread->startProcessing();
+    // Start internal QThread
+    myThread->start();
+
+    // Start actual processing of job
+    myThread->startProcessing();
+
+}
+
+void MyPlugin::myPluginsThreadFunction() {
+   
+   emit setJobState("MyPluginsThread", 0);
+   
+   // Do something...
+   for(int i = 0; i < 100; ++i) {
+   
+       // Do something...
+       
+       // Update process' progress bar status
+       emit setJobState("MyPluginsThread", i);
+   }
+   
+   emit finishJob("MyPluginsThread");
+}
 \endcode
 */
 
