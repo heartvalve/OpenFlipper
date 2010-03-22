@@ -27,6 +27,8 @@ public:
 			progress_(0),
 			cancelButton_(0) {
 
+        // Block all other windows of application
+        setWindowModality(Qt::ApplicationModal);
 		setWindowTitle(_jobId);
 		// Set window size
 		QSize size(300, 150);
