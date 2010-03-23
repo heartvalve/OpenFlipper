@@ -751,18 +751,18 @@ void GLState::set_multisampling(bool _b)
 
 double GLState::fovy() const
 {
-    assert(projection_(0,0) != 0.0);
+    assert(projection_(1,1) != 0.0);
 
-    return atan(1.0/projection_(0,0))*2.0;
+    return atan(1.0/projection_(1,1))*2.0;
 }
 
 //-----------------------------------------------------------------------------
 
 double GLState::aspect() const
 {
-    assert(projection_(1,1) != 0.0);
+    assert(projection_(0,0) != 0.0);
 
-    return projection_(0,0) / projection_(1,1);
+    return projection_(1,1) / projection_(0,0);
 }
 
 //-----------------------------------------------------------------------------
