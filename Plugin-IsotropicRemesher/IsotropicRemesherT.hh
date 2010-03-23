@@ -1,5 +1,6 @@
 #ifndef ISOTROPICREMESHER_HH
 #define ISOTROPICREMESHER_HH
+#include "ProgressEmitter.hh"
 
 
 template< class MeshT >
@@ -7,7 +8,7 @@ class IsotropicRemesher{
 
 public:
 
-  IsotropicRemesher()  {};
+  IsotropicRemesher(ProgressEmitter* _prgEmt = NULL) : prgEmt_(_prgEmt)  {};
   ~IsotropicRemesher() {};
 
   void remesh( MeshT& _mesh, const double _targetEdgeLength );
@@ -43,6 +44,9 @@ private:
   
   inline
   bool isFeature( MeshT& _mesh, const typename MeshT::VertexHandle& _vh);
+  
+  private:
+    ProgressEmitter* prgEmt_;
 };
 
 //=============================================================================
