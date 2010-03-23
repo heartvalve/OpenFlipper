@@ -85,6 +85,29 @@ namespace ACG {
 
     \note This class needs an OpenGL context. This is currently
     given in a QGLContext.
+    
+    \section pMatrix The projection matrix
+    
+    The GLState class stores its own projection matrix which is of type
+    GLMatrixT. Creating a viewing frustum of a perspective projection
+    will result in the following projection matrix:
+    
+    \image html pmatrix.png
+    
+    Where n is the orthogonal distance from the viewing plane (near plane)
+    to the eye position, f is the orthogonal distance from the back clipping plane
+    (far plane) to the eye position, l, r, t, b are scalars indicating the left, right,
+    top and bottom coordinates of the viewing plane (so in fact we have a rectangle between
+    the points (b,l) and (t,r)) and phi is the opening angle (field of view), also
+    see figure 1.
+    
+    \image html projection.png "Figure 1. A schematic illustration of a viewing frustum"
+    
+    Some useful values that can directly be computed out of the projection matrix:
+    
+    \image html pfovy.png "Computing the fovy out of the projection matrix"
+    
+    \image html paspect.png "Computing the aspect out of the projection matrix"
 **/
 
 class ACGDLLEXPORT GLState
