@@ -1,0 +1,25 @@
+\documentclass{minimal}
+
+\usepackage{amsmath}
+
+\begin{document}
+
+\[
+P_p = 
+\begin{pmatrix}
+\frac{2n}{r-l} & 0 & \frac{r+l}{r-l} & 0 \\
+0 & \frac{2n}{t-b} & \frac{t+b}{t-b} & 0 \\
+0 & 0 & -\frac{(f+n)}{f-n} & -\frac{2 f n}{f-n} \\
+0 & 0 & -1 & 0
+\end{pmatrix}
+\]
+
+\[
+\varphi_{\textrm{fovy}} = 2 \cdot \tan^{-1}(\frac{1}{P_p(1,1)})
+\]
+
+\[
+a = \frac{w}{h} = \frac{r-l}{t-b} = \frac{(r-l)2n}{(t-b)2n} = \frac{\frac{2n}{t-b}}{\frac{2n}{r-l}} = \frac{P_p(1,1)}{P_p(0,0)}
+\]
+
+\end{document}
