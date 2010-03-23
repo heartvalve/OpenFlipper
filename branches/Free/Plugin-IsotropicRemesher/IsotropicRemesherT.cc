@@ -19,17 +19,32 @@ void IsotropicRemesher< MeshT >::remesh( MeshT& _mesh, const double _targetEdgeL
   OpenMeshTriangleBSPT< MeshT >* triangleBSP = getTriangleBSP(meshCopy);
 
   for (int i=0; i < 10; i++){
-
+    if (prgEmt_)
+      prgEmt_->sendProgressSignal(10*i + 0);
 // std::cerr << "Iteration = " << i << std::endl;
     splitLongEdges(_mesh, high);
+    if (prgEmt_)
+      prgEmt_->sendProgressSignal(10*i + 2);
+    
 // std::cerr << "collapse" << std::endl;
     collapseShortEdges(_mesh, low, high);
+    if (prgEmt_)
+      prgEmt_->sendProgressSignal(10*i + 4);
+    
 // std::cerr << "equal" << std::endl;
     equalizeValences(_mesh);
+    if (prgEmt_)
+      prgEmt_->sendProgressSignal(10*i + 6);
+    
 // std::cerr << "relax" << std::endl;
     tangentialRelaxation(_mesh);
+    if (prgEmt_)
+      prgEmt_->sendProgressSignal(10*i + 8);
+    
 // std::cerr << "project" << std::endl;
     projectToSurface(_mesh, meshCopy, triangleBSP);
+    if (prgEmt_)
+      prgEmt_->sendProgressSignal(10*i + 10);
   }
 
   delete triangleBSP;
