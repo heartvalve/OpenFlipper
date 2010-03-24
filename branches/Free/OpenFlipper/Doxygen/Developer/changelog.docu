@@ -1,5 +1,20 @@
 /*! \page changelog Changelog
  *
+ * - <b>OpenFlipper 1.0 ( ? , 8813 )</b>
+ *      - <b>Core</b>
+ *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
+ *          - Bugfix for Processmanager when using blocking mode for new threads
+ *      - <b>UI</b>
+ *              - Improved mouse interaction(translation with middle mouse button is done in world coordinates now)
+ *      - <b>ACG</b>
+ *          - Bugfix for glstate functions returning fovy and aspect ratio
+ *      - <b>Plugins</b>
+ *              - IsoTropic Remesher
+ *                      - Process indicator added
+ *      - <b>Documentation</b>
+ *              - Added docs for the glstate to describe internal projection matrix construction and parameters
+ *              - Improved Documentation for the process manager
+ *
  * - <b>OpenFlipper 1.0 RC6 ( 2010/03/17 , 8742 )</b>
  *      - <b>Core</b>
  *          - Splitted File Plugins ( Now there are type plugins loaded first to register types and the file plugins to load data)
