@@ -1850,20 +1850,29 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
   switch (_event->type()) {
 
     case QEvent::MouseButtonPress: {
-        // shift key -> set rotation center
-        if (_event->modifiers() & Qt::ShiftModifier) {
-            ACG::Vec3d c;
-            if (fast_pick(pos, c)) {
-                trackball_center_ = c;
-                trackball_radius_ = std::max(scene_radius_, (c - glstate_->eye()).norm() * 0.9f);
-            }
-        }
+      
+      // Get the depth at the current mouse position ( projected )
+      // This is used to do the translation in world coordinates
+      GLfloat       depth[1];
+      GLint x2d = f.x() - scenePos().x();
+      GLint y2d = glHeight() - (f.y() - scenePos().y());
+      glReadPixels (x2d, y2d, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, depth); 
+      startDepth_ = depth[0];
+      
+      // shift key -> set rotation center
+      if (_event->modifiers() & Qt::ShiftModifier) {
+          ACG::Vec3d c;
+          if (fast_pick(pos, c)) {
+              trackball_center_ = c;
+              trackball_radius_ = std::max(scene_radius_, (c - glstate_->eye()).norm() * 0.9f);
+          }
+      }
 
-        lastPoint_hitSphere_ = mapToSphere(lastPoint2D_ = pos, lastPoint3D_);
-        isRotating_ = true;
-        timer_->stop();
+      lastPoint_hitSphere_ = mapToSphere(lastPoint2D_ = pos, lastPoint3D_);
+      isRotating_ = true;
+      timer_->stop();
 
-        break;
+      break;
     }
 
     case QEvent::MouseButtonDblClick: {
@@ -1912,13 +1921,40 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
 
         // move in x,y direction
         else if ((_event->buttons() & Qt::MidButton) || (!allowRotation_ && (_event->buttons() & Qt::LeftButton))) {
+          
+          ACG::Vec3d translation;
+          
+          // if start depth is 1, no object was hit when starting translation
+          if ( startDepth_ == 1 ) {
+            
             value_x = scene_radius_ * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
             value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();
-            translate(ACG::Vec3d(value_x * factor, -value_y * factor, 0.0));
-        }
+            translation = ACG::Vec3d(value_x * factor, -value_y * factor, 0.0);
+            
+          } else {
+            // Get the new mouse position in GL coordinates
+            GLint x2dEnd = newPoint2D.x() - scenePos().x();
+            GLint y2dEnd = glHeight() - (newPoint2D.y() - scenePos().y());
+            
+            // Get the last mouse position in GL coordinates
+            GLint x2dStart = lastPoint2D_.x() - scenePos().x();
+            GLint y2dStart = glHeight() - (lastPoint2D_.y() - scenePos().y());
+            
+            // unproject both to get translation vector
+            ACG::Vec3d projectedStart(float(x2dStart),float(y2dStart),startDepth_);
+            ACG::Vec3d projectedEnd(float(x2dEnd),float(y2dEnd),startDepth_);
+            ACG::Vec3d unprojectedStart = glstate_->unproject(projectedStart);
+            ACG::Vec3d unprojectedEnd   = glstate_->unproject(projectedEnd);
+
+            // calculate the difference and transform it with the modelview to get the right translation
+            translation = unprojectedEnd - unprojectedStart;
+            translation = glstate_->modelview().transform_vector(translation);
+          }
+          
+          translate(translation);
 
         // rotate
-        else if (allowRotation_ && (_event->buttons() & Qt::LeftButton)) {
+        } else if (allowRotation_ && (_event->buttons() & Qt::LeftButton)) {
             ACG::Vec3d axis(1.0, 0.0, 0.0);
             double angle(0.0);
 

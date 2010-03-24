@@ -885,8 +885,17 @@ private:
 
   protected:
 
-    // mouse interaction
+    /** \brief mouse interaction position
+    *
+    * This variable stores the last mouse position during mouse interaction.
+    */
     QPoint   lastPoint2D_;
+    
+    /** \brief mouse interaction depth
+    *
+    * This variable stores the depth when the user started a mouse interaction.
+    */
+    float startDepth_;
 
   private:
 
