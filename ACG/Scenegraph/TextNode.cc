@@ -72,13 +72,17 @@ namespace SceneGraph {
 TextNode::
 ~TextNode()
 {
-	if ( textMode_ == SCREEN_ALIGNED ) {
-		if(font_ != 0)
-			delete reinterpret_cast<FTGLPixmapFont*>(font_);
-	}else if ( textMode_ == OBJECT_ALIGNED ) {
-		if(font_ != 0)
-			delete reinterpret_cast<FTGLPolygonFont*>(font_);
-	}
+  if ( textMode_ == SCREEN_ALIGNED ) {
+    
+    if(font_ != 0)
+      delete reinterpret_cast<FTGLPixmapFont*>(font_);
+    
+  } else if ( textMode_ == OBJECT_ALIGNED ) {
+    
+    if(font_ != 0)
+      delete reinterpret_cast<FTGLPolygonFont*>(font_);
+    
+  }
 }
 
 void
@@ -96,8 +100,8 @@ TextNode::
 availableDrawModes() const
 {
   return ( DrawModes::POINTS |
-	        DrawModes::POINTS_SHADED |
-	        DrawModes::POINTS_COLORED );
+           DrawModes::POINTS_SHADED |
+           DrawModes::POINTS_COLORED );
 }
 
 
@@ -111,16 +115,17 @@ draw(GLState& /* _state */ , DrawModes::DrawMode /*_drawMode*/)
   glRasterPos3f(0.0f, 0.0f, 0.0f);
 
   if ( textMode_ == SCREEN_ALIGNED ) {
-	if(font_ == 0)
-	  return;
-	reinterpret_cast<FTGLPixmapFont*>(font_)->Render(text_.c_str());
+    if(font_ == 0)
+      return;
+    reinterpret_cast<FTGLPixmapFont*>(font_)->Render(text_.c_str());
   }
 
   if ( textMode_ == OBJECT_ALIGNED ) {
     glScalef(0.1,0.1,0.1);
 
     if(font_ == 0)
-    	return;
+      return;
+    
     reinterpret_cast<FTGLPolygonFont*>(font_)->Render(text_.c_str());
 
     glScalef(10.0,10.0,10.0);
@@ -134,31 +139,36 @@ draw(GLState& /* _state */ , DrawModes::DrawMode /*_drawMode*/)
 
 void
 TextNode::
-UpdateFont()
-{
-	if ( textMode_ == SCREEN_ALIGNED ) {
-		if(font_ != 0)
-			delete reinterpret_cast<FTGLPixmapFont*>(font_);
-		font_ = reinterpret_cast<void*>(new FTGLPixmapFont(fontFile_.c_str()));
-		reinterpret_cast<FTGLPixmapFont*>(font_)->FaceSize(size_);
-		if(reinterpret_cast<FTGLPixmapFont*>(font_)->Error())
-		{
-			std::cerr << "Unable to find font: " << fontFile_.c_str() << std::endl;
-			delete reinterpret_cast<FTGLPixmapFont*>(font_);
-			font_ = 0;
-		}
-	}else if ( textMode_ == OBJECT_ALIGNED ) {
-		if(font_ != 0)
-			delete reinterpret_cast<FTGLPolygonFont*>(font_);
-		font_ = reinterpret_cast<void*>(new FTGLPolygonFont(fontFile_.c_str()));
-		reinterpret_cast<FTGLPolygonFont*>(font_)->FaceSize(size_);
-		if(reinterpret_cast<FTGLPolygonFont*>(font_)->Error())
-		{
-			std::cerr << "Unable to find font: " << fontFile_.c_str() << std::endl;
-			delete reinterpret_cast<FTGLPolygonFont*>(font_);
-			font_ = 0;
-		}
-	}
+UpdateFont() {
+  if ( textMode_ == SCREEN_ALIGNED ) {
+    
+    if(font_ != 0)
+      delete reinterpret_cast<FTGLPixmapFont*>(font_);
+    
+    font_ = reinterpret_cast<void*>(new FTGLPixmapFont(fontFile_.c_str()));
+    reinterpret_cast<FTGLPixmapFont*>(font_)->FaceSize(size_);
+    
+    if(reinterpret_cast<FTGLPixmapFont*>(font_)->Error()) {
+      std::cerr << "Unable to find font: " << fontFile_.c_str() << std::endl;
+      delete reinterpret_cast<FTGLPixmapFont*>(font_);
+      font_ = 0;
+    }
+    
+  } else if ( textMode_ == OBJECT_ALIGNED ) {
+    
+    if(font_ != 0)
+      delete reinterpret_cast<FTGLPolygonFont*>(font_);
+    
+    font_ = reinterpret_cast<void*>(new FTGLPolygonFont(fontFile_.c_str()));
+    reinterpret_cast<FTGLPolygonFont*>(font_)->FaceSize(size_);
+    
+    if(reinterpret_cast<FTGLPolygonFont*>(font_)->Error()) {
+      std::cerr << "Unable to find font: " << fontFile_.c_str() << std::endl;
+      delete reinterpret_cast<FTGLPolygonFont*>(font_);
+      font_ = 0;
+    }
+          
+  }
 }
 
 //=============================================================================
