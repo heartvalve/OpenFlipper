@@ -91,7 +91,7 @@ if (petsc_conf_base AND NOT petsc_config_current)
   set (ENV{PETSC_DIR} ${PETSC_DIR})
   set (ENV{PETSC_ARCH} ${PETSC_ARCH})
 
-  IF (NOT WIN32)
+  IF (NOT WIN32 AND NOT APPLE)
   	# A temporary makefile to probe the PETSc configuration
   	set (petsc_config_makefile ${PROJECT_BINARY_DIR}/Makefile.petsc)
   	file (WRITE ${petsc_config_makefile}
@@ -173,7 +173,7 @@ int main(int argc,char *argv[]) {
   	petsc_join (SNES KSP)
   	petsc_join (TS   SNES)
   	petsc_join (ALL  TS)
-  ENDIF(NOT WIN32)
+  ENDIF(NOT WIN32 AND NOT APPLE)
 
   MESSAGE(STATUS "Pos 1")
 
@@ -181,7 +181,7 @@ int main(int argc,char *argv[]) {
   find_path (PETSC_INCLUDE_CONF petscconf.h HINTS "${PETSC_DIR}" PATH_SUFFIXES "${PETSC_ARCH}/include" "bmake/${PETSC_ARCH}" NO_DEFAULT_PATH)
   mark_as_advanced (PETSC_INCLUDE_DIR PETSC_INCLUDE_CONF)
 
-  IF (NOT WIN32)
+  IF (NOT WIN32 AND NOT APPLE)
    	set (petsc_includes_minimal ${PETSC_INCLUDE_CONF} ${PETSC_INCLUDE_DIR})
 
   	petsc_test_runs ("${petsc_includes_minimal}" "${PETSC_LIBRARIES_TS}" petsc_works_minimal)
@@ -227,7 +227,7 @@ int main(int argc,char *argv[]) {
   	# work.  It is likely that you will end up with a broken build.
   	mark_as_advanced (PETSC_INCLUDES PETSC_LIBRARIES PETSC_COMPILER PETSC_DEFINITIONS PETSC_MPIEXEC PETSC_EXECUTABLE_RUNS)
 
-  ELSE (NOT WIN32)
+  ELSE (NOT WIN32 AND NOT APPLE)
     	# We do an out-of-source build so __FILE__ will be an absolute path, hence __SDIR__ is superfluous
   	set (PETSC_DEFINITIONS "-D__SDIR__=\"\"" CACHE STRING "PETSc definitions" FORCE)
   	# Sometimes this can be used to assist FindMPI.cmake
@@ -241,19 +241,15 @@ int main(int argc,char *argv[]) {
   	# change these, you are telling the system to trust you that they
   	# work.  It is likely that you will end up with a broken build.
   	mark_as_advanced (PETSC_INCLUDES PETSC_LIBRARIES PETSC_COMPILER PETSC_DEFINITIONS PETSC_MPIEXEC PETSC_EXECUTABLE_RUNS)   
-  ENDIF(NOT WIN32)
+  ENDIF(NOT WIN32 AND NOT APPLE)
 
   message(STATUS "Libraries for PETSC : ${PETSC_LIBRARIES}")
 endif (petsc_conf_base AND NOT petsc_config_current)
 
-
-if ( NOT WIN32 )
-	include (FindPackageHandleStandardArgs)
-		find_package_handle_standard_args (PETSc
-  			"PETSc could not be found.  Be sure to set PETSC_DIR and PETSC_ARCH."
-  			PETSC_INCLUDES PETSC_LIBRARIES PETSC_EXECUTABLE_RUNS)
-else ( NOT WIN32 )
-	if ( PETSC_INCLUDE_DIR )
+if ( WIN32 )
+#windows
+      message(Adding Libraries)
+      if ( PETSC_INCLUDE_DIR )
 		set( PETSC_FOUND TRUE)
       endif( PETSC_INCLUDE_DIR  )
       set(PETSC_LIBRARIES  "" )
@@ -267,6 +263,35 @@ else ( NOT WIN32 )
   	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscvec.lib" )
   	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libf2clapack.lib" )
   	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libf2cblas.lib" )
-message(STATUS ${PETSC_LIBRARIES})
-endif ( NOT WIN32 )
+         
+      message(STATUS "Libraries are: ${PETSC_LIBRARIES}")
+elseif ( APPLE )
+#apple
+      message(Adding Libraries)
+      if ( PETSC_INCLUDE_DIR )
+		set( PETSC_FOUND TRUE)
+      endif( PETSC_INCLUDE_DIR  )
+      set(PETSC_LIBRARIES  "" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsc.a" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetsccontrib.a" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscdm.a" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscksp.a" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscmat.a" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscsnes.a" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscts.a" )
+  	list (APPEND PETSC_LIBRARIES "${PETSC_DIR}/${PETSC_ARCH}/lib/libpetscvec.a" )
+  	list (APPEND PETSC_LIBRARIES "/usr/X11/lib/libX11.dylib" )
+         
+      message(STATUS "Libraries are: ${PETSC_LIBRARIES}")
+else (APPLE)
+# All other systems
+	include (FindPackageHandleStandardArgs)
+		find_package_handle_standard_args (PETSc
+  			"PETSc could not be found.  Be sure to set PETSC_DIR and PETSC_ARCH."
+  			PETSC_INCLUDES PETSC_LIBRARIES PETSC_EXECUTABLE_RUNS)
+endif ( WIN32 )
+
+
+
+
 message(STATUS ${PETSC_LIBRARIES})
