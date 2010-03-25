@@ -58,6 +58,9 @@ IF(CGAL_INCLUDE_DIR )
                 DOC "Directory containing the CGAL library"
                ) 
     list ( APPEND CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO  CGAL_PDB )
+    set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -frounding-math")
+    set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -frounding-math")
+
   ELSE( WIN32 )
     find_path(CGAL_LIBRARY_DIR
               NAMES "libCGAL.so"
@@ -65,6 +68,9 @@ IF(CGAL_INCLUDE_DIR )
               DOC "Directory containing the CGAL library"
              )
     list ( APPEND CGAL_LIBRARIES CGAL CGAL_Core CGAL_ImageIO CGAL_PDB CGAL_Qt4)
+    set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -frounding-math")
+    set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -frounding-math")
+
 
     # This is needed to link correctly against lapack
     add_definitions (-DCGAL_USE_F2C)
