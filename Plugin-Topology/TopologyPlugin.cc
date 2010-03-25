@@ -249,7 +249,7 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
                    ( addFaceVertices_[i].second == newVertex.second ) ) {
                 addFaceVertices_.erase(addFaceVertices_.begin()+i);
                 m.status(closest).set_selected(false);
-                object->update();
+                emit updatedObject(object->id(),UPDATE_SELECTION);
                 emit updateView();
                 return;
               }
@@ -261,7 +261,7 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
 
             // We need 3 in the list to proceed
             if ( addFaceVertices_.size() < 3 ) {
-              object->update();
+              emit updatedObject(object->id(),UPDATE_SELECTION);
               emit updateView();
               return;
             }
@@ -306,6 +306,9 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
             if ( !fh.is_valid() ) {
               fh = m.add_face(vh2,vh1,vh0);
             }
+            
+            emit updatedObject(object->id(),UPDATE_ALL);
+            emit updateView();
 
             // reenable output if it was enabled
             if (errlog)
@@ -351,7 +354,7 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
                       ( addFaceVertices_[i].second == newVertex.second ) ) {
                   addFaceVertices_.erase(addFaceVertices_.begin()+i);
                   m.status(closest).set_selected(false);
-                  object->update();
+                  emit updatedObject(object->id(),UPDATE_SELECTION);
                   emit updateView();
                   return;
                 }
@@ -364,7 +367,7 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
 
             // We need at least 3 in the list to proceed
             if ( (addFaceVertices_.size() < 3) || (_event->type() != QEvent::MouseButtonDblClick) ) {
-              object->update();
+              emit updatedObject(object->id(),UPDATE_SELECTION);
               emit updateView();
               return;
             }
@@ -414,9 +417,13 @@ void TopologyPlugin::add_face(QMouseEvent* _event) {
                 rvhs.push_back( vhs.back() );
                 vhs.pop_back();
               }
-
+              
               fh = m.add_face(rvhs);
+              
             }
+            
+            emit updatedObject(object->id(),UPDATE_ALL);
+            emit updateView();
 
             // reenable output if it was enabled
             if (errlog)
