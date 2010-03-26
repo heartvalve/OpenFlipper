@@ -85,25 +85,26 @@
 *
 * The following entries are available through the settings:
 *
-* <b>User Interface Settings</b>
-* * Core/Gui/glViewer/defaultBackgroundColor This controls the default background color of the glViewer (QColor)
-* * Core/Gui/glViewer/showControlWheels      This setting controls if the control wheels should be visible in the glViewer (bool)
-* * Core/Gui/glViewer/glMouse                This setting controls if the mouse is rendered in OpenGL or in the window manager
-* * Core/Gui/glViewer/stereoMousePick        This setting controls if the mouse depth is picked in stereo mode
-* * Core/Gui/glViewer/restrictFrameRate      This setting controls if the maximum frame rate should be restricted (bool)
-* * Core/Gui/glViewer/maxFrameRate           If restrictFrameRate is set to yes, this setting controls the maximum frameRate used (unsigned int)
-* * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)
+* <b>User Interface Settings</b>\n
+* * Core/Gui/glViewer/defaultBackgroundColor This controls the default background color of the glViewer (QColor)\n
+* * Core/Gui/glViewer/showControlWheels      This setting controls if the control wheels should be visible in the glViewer (bool)\n
+* * Core/Gui/glViewer/glMouse                This setting controls if the mouse is rendered in OpenGL or in the window manager(bool)\n
+* * Core/Gui/glViewer/stereoMousePick        This setting controls if the mouse depth is picked in stereo mode(bool)\n
+* * Core/Gui/glViewer/restrictFrameRate      This setting controls if the maximum frame rate should be restricted (bool)\n
+* * Core/Gui/glViewer/maxFrameRate           If restrictFrameRate is set to yes, this setting controls the maximum frameRate used (unsigned int)\n
+* * Core/Gui/LogWindow/LogWindowMode         Log Window Mode .. 0 InScene, 1 Window, 2 Hidden (int)\n
+* * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)\n
 *
-* <b>File Handling</b>
-* * Core/CurrentDir                          The current Directory of the Application
-* * Core/File/RecentFiles                    List of Recent Files
-* * Core/File/RecentTypes                    DataTypes of Recent Files
-* * Core/File/MaxRecent                      Maximum entries in recent File list
-* * Core/File/UseLoadDefaults                Use the defaults saved in the file plugins
+* <b>File Handling</b>\n
+* * Core/CurrentDir                          The current Directory of the Application \n
+* * Core/File/RecentFiles                    List of Recent Files \n
+* * Core/File/RecentTypes                    DataTypes of Recent Files \n
+* * Core/File/MaxRecent                      Maximum entries in recent File list \n
+* * Core/File/UseLoadDefaults                Use the defaults saved in the file plugins \n
 *
-* <b>Log Settings</b>
-* * Core/Log/Logfile                          This is the location of the log file
-* * Core/Log/logFileEnabled                   This controls, if logging to file is enabled
+* <b>Log Settings</b>\n
+* * Core/Log/Logfile                          This is the location of the log file \n
+* * Core/Log/logFileEnabled                   This controls, if logging to file is enabled(bool)\n
 * 
 * <b>Mouse Controls<b>\n
 * * Core/Mouse/Wheel/ZoomFactor       Zoom factor used when turning the mouse wheel (double)\n
