@@ -144,12 +144,6 @@ static std::vector<float> anaglyphRightEyeColors_ = std::vector<float> (9, 0.0);
 /// Store the synchronization mode
 static bool synchronization_ = false;
 
-/// Store the restrictFrameRate_ mode
-static bool restrictFrameRate_ = false;
-
-/// Store the maxFrameRate_ mode
-static int maxFrameRate_ = 35;
-
 /// Store the defaultDrawMode_ mode
 static std::vector<ACG::SceneGraph::DrawModes::DrawMode> defaultDrawMode_ = std::vector<ACG::SceneGraph::DrawModes::DrawMode> (4, ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
 
@@ -231,12 +225,6 @@ static bool loadingRecentFile_ = false;
 
 /// Currently saving Settings?
 static bool savingSettings_ = false;
-
-/// Enable picking renderer?
-static bool renderPicking_ = false;
-
-/// picking Renderer Mode
-static QString pickingRenderMode_ = "PICK_ANYTHING";
 
 static int* argc_;
 
@@ -494,22 +482,6 @@ void synchronization( bool _synchronization ) {
 /// get current synchronization setting
 bool synchronization( ) {
   return synchronization_;
-}
-
-void restrictFrameRate( bool _enable ){
-  restrictFrameRate_ = _enable;
-}
-
-bool restrictFrameRate( ){
-  return restrictFrameRate_;
-}
-
-void maxFrameRate( int _fps ){
-  maxFrameRate_ = _fps;
-}
-
-int maxFrameRate(){
-  return maxFrameRate_;
 }
 
 void defaultDrawMode( ACG::SceneGraph::DrawModes::DrawMode _mode, int _viewer){
@@ -781,22 +753,6 @@ QString coreVersion() {
 	#define CORE_VERSION "1.0.0RC2"
   #endif
   return QString(CORE_VERSION);
-}
-
-void pickingRenderMode( QString _target ) {
-  pickingRenderMode_ = _target;
-}
-
-QString pickingRenderMode( ) {
-  return pickingRenderMode_;
-}
-
-void renderPicking(bool _enable) {
-  renderPicking_ = _enable;
-}
-
-bool renderPicking( ) {
-  return renderPicking_;
 }
 
 bool initializeSettings() {
