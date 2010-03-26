@@ -77,7 +77,7 @@ void Core::applyOptions(){
     if (OpenFlipper::Options::defaultToolboxMode() != "")
       coreWidget_->slotChangeView(OpenFlipper::Options::defaultToolboxMode(), QStringList(), QStringList());
     //Set Fullscreen
-    if ( OpenFlipper::Options::fullScreen() )
+    if ( OpenFlipperSettings().value("Core/Gui/fullscreen",false).toBool() )
       coreWidget_->setWindowState( coreWidget_->windowState() | Qt::WindowFullScreen);
     else
       coreWidget_->setWindowState( (coreWidget_->windowState() | Qt::WindowFullScreen) ^ Qt::WindowFullScreen);
@@ -134,7 +134,7 @@ void Core::applyOptions(){
       }
     }
 
-    if ( OpenFlipper::Options::multiView() )
+    if ( OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() )
       coreWidget_->setViewerLayout( OpenFlipper::Options::defaultViewerLayout() );
 
 //     if ( OpenFlipper::Options::gridVisible() )
@@ -155,10 +155,8 @@ void Core::applyOptions(){
     }
 
     //hideToolbox
-    if (OpenFlipper::Options::hideToolbox()) {
-
+    if ( OpenFlipperSettings().value("Core/Gui/ToolBoxes/hidden",false).toBool() ) 
       coreWidget_->showToolbox (false);
-    }
 
     //setup logFile
     if (logFile_ != 0){

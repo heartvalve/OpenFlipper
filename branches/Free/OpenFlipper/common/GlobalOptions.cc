@@ -162,15 +162,6 @@ static bool drawModesInContextMenu_ = true;
 /// Set if a grid should be drawn in every viewer
 static bool gridVisible_ = false;
 
-/// Store the toolbox gui Mode mode
-static bool hideToolbox_ = false;
-
-/// Store if we should go into multiview Mode
-static bool multiView_ = true;
-
-/// Start in Fullscreen Mode?
-static bool fullScreen_ = false;
-
 static QString defaultToolboxMode_ = "";
 
 static QString title_ = "OpenFlipper v?";
@@ -530,16 +521,8 @@ void gridVisible(bool _visible) {
   gridVisible_ = _visible;
 }
 
-void multiView( bool _multiView) {
-  multiView_ = _multiView;
-}
-
-bool multiView() {
-  return multiView_;
-}
-
 unsigned int examinerWidgets() {
-  if ( multiView_)
+  if ( OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() )
     return 4;
   else
     return 1;
@@ -553,26 +536,6 @@ void loggerState( LoggerState _state) {
 /// Current state of the logging window?
 LoggerState loggerState( ) {
   return static_cast<OpenFlipper::Options::LoggerState> (OpenFlipperSettings().value("Core/Gui/LogWindow/LogWindowMode",0).toInt() );
-}
-
-/// Set if we start the toolbox widget closed
-void hideToolbox( bool _hide) {
-  hideToolbox_ = _hide;
-}
-
-/// Start the toolbox widget closed?
-bool hideToolbox( ) {
-  return hideToolbox_;
-}
-
-/// Start fullscreen Mode?
-void fullScreen( bool _fs ) {
-  fullScreen_ = _fs;
-}
-
-/// Start fullscreen Mode?
-bool fullScreen( ) {
-  return fullScreen_;
 }
 
 /// Which mode should be the default for the toolbar?

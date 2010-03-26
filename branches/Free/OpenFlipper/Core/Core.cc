@@ -879,7 +879,7 @@ void Core::showToolbox( bool _state ) {
 }
 
 void Core::multiViewMode( int _mode ) {
-  if ( !OpenFlipper::Options::gui() || !OpenFlipper::Options::multiView() )
+  if ( !OpenFlipper::Options::gui() || !OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() )
     return;
 
   switch (_mode)

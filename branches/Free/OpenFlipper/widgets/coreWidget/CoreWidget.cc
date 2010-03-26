@@ -240,7 +240,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   // Create examiner
   // ======================================================================
 
-  if ( !OpenFlipper::Options::multiView() ) {
+  if ( !OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() ) {
 
     glViewer* examinerWidget = new glViewer(glScene_,
 					    glWidget_,
@@ -622,8 +622,8 @@ CoreWidget::toggleFullscreen() {
   }
 
   fullscreenState_ = (fullscreenState_ + 1) % 3;
-
-  OpenFlipper::Options::fullScreen( bool( windowState() & Qt::WindowFullScreen) );
+  
+  OpenFlipperSettings().setValue("Core/Gui/fullscreen", bool( windowState() & Qt::WindowFullScreen) );
 
   show();
 }
@@ -643,7 +643,7 @@ CoreWidget::setFullscreen(bool _state ) {
 
   fullscreenState_ = (uint) _state;
 
-  OpenFlipper::Options::fullScreen( bool( windowState() & Qt::WindowFullScreen) );
+  OpenFlipperSettings().setValue("Core/Gui/fullscreen", bool( windowState() & Qt::WindowFullScreen) );
 
   show();
 }
@@ -802,7 +802,7 @@ void
 CoreWidget::toggleToolbox() {
 
   //toggle
-  showToolbox( OpenFlipper::Options::hideToolbox() );
+  showToolbox( OpenFlipperSettings().value("Core/Gui/ToolBoxes/hidden",false).toBool() );
 }
 
 //-----------------------------------------------------------------------------
@@ -813,9 +813,9 @@ void
 CoreWidget::showToolbox( bool _state ) {
 
   //toggle
-  OpenFlipper::Options::hideToolbox( !_state );
+  OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/hidden",!_state);
 
-  if ( OpenFlipper::Options::hideToolbox() ){
+  if ( OpenFlipperSettings().value("Core/Gui/ToolBoxes/hidden",false).toBool() ){
 
     //hide ViewMode Selection Widget
     toolBoxArea_->setVisible(false);
@@ -904,57 +904,57 @@ void CoreWidget::showOptionsWidget() {
 
 void CoreWidget::nextViewerLayout() {
 
-	if (OpenFlipper::Options::multiView()) {
+  if ( OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() ) {
 
-		switch (baseLayout_->mode()) {
-		case QtMultiViewLayout::SingleView:
-                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-			baseLayout_->setMode(QtMultiViewLayout::Grid);
+    switch (baseLayout_->mode()) {
+      case QtMultiViewLayout::SingleView:
+              baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+              baseLayout_->setMode(QtMultiViewLayout::Grid);
 
-			// Update combo box in the toolbar
-			viewerLayoutBox_->setCurrentIndex(1);
-			break;
-		case QtMultiViewLayout::Grid:
-                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-			baseLayout_->setMode(QtMultiViewLayout::HSplit);
+              // Update combo box in the toolbar
+              viewerLayoutBox_->setCurrentIndex(1);
+              break;
+      case QtMultiViewLayout::Grid:
+              baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+              baseLayout_->setMode(QtMultiViewLayout::HSplit);
 
-			// Update combo box in the toolbar
-			viewerLayoutBox_->setCurrentIndex(2);
-			break;
-		case QtMultiViewLayout::HSplit:
-                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-			baseLayout_->setMode(QtMultiViewLayout::SingleView);
+              // Update combo box in the toolbar
+              viewerLayoutBox_->setCurrentIndex(2);
+              break;
+      case QtMultiViewLayout::HSplit:
+              baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+              baseLayout_->setMode(QtMultiViewLayout::SingleView);
 
-			// Update combo box in the toolbar
-			viewerLayoutBox_->setCurrentIndex(0);
-			break;
-		}
-	}
+              // Update combo box in the toolbar
+              viewerLayoutBox_->setCurrentIndex(0);
+              break;
+      }
+  }
 }
 
 
 void
 CoreWidget::setViewerLayout(int _idx) {
 
-	if (OpenFlipper::Options::multiView()) {
+  if ( OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() ) {
 
-		switch (_idx) {
-		case 0:
-                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-			baseLayout_->setMode(QtMultiViewLayout::SingleView);
-			break;
-		case 1:
-                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-			baseLayout_->setMode(QtMultiViewLayout::Grid);
-			break;
-		case 2:
-                        baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
-			baseLayout_->setMode(QtMultiViewLayout::HSplit);
-			break;
-		}
+  switch (_idx) {
+    case 0:
+            baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+            baseLayout_->setMode(QtMultiViewLayout::SingleView);
+            break;
+    case 1:
+            baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+            baseLayout_->setMode(QtMultiViewLayout::Grid);
+            break;
+    case 2:
+            baseLayout_->setPrimary (PluginFunctions::activeExaminer ());
+            baseLayout_->setMode(QtMultiViewLayout::HSplit);
+            break;
+  }
 
     viewerLayoutBox_->setCurrentIndex(_idx);
-	}
+  }
 }
 
 void

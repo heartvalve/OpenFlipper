@@ -232,10 +232,10 @@ void OptionsWidget::updateViewerSettings(int _row){
 void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   //general
-  fullscreen->setChecked( OpenFlipper::Options::fullScreen() );
+  fullscreen->setChecked( OpenFlipperSettings().value("Core/Gui/fullscreen",false).toBool() );
   splash->setChecked( OpenFlipperSettings().value("Core/Gui/splash",true).toBool() );
-  toolbox->setChecked( !OpenFlipper::Options::hideToolbox() );
-
+  toolbox->setChecked( !OpenFlipperSettings().value("Core/Gui/ToolBoxes/hidden",false).toBool() );
+  
   iconSmall->setChecked(false);
   iconNormal->setChecked(false);
   iconDefault->setChecked(false);
@@ -552,9 +552,10 @@ void OptionsWidget::slotShowPluginOptions(const QString& _pluginName ){
 void OptionsWidget::slotApply() {
 
   //general
-  OpenFlipper::Options::fullScreen( fullscreen->isChecked() );
+  OpenFlipperSettings().setValue("Core/Gui/fullscreen",fullscreen->isChecked());
   OpenFlipperSettings().setValue("Core/Gui/splash",splash->isChecked());
-  OpenFlipper::Options::hideToolbox( !toolbox->isChecked() );
+  OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/hidden",!toolbox->isChecked());
+  
   if (loggerHidden->isChecked())
     OpenFlipper::Options::loggerState( OpenFlipper::Options::Hidden );
   else if (loggerInScene->isChecked())

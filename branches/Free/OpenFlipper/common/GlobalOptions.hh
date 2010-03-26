@@ -92,8 +92,11 @@
 * * Core/Gui/glViewer/stereoMousePick        This setting controls if the mouse depth is picked in stereo mode(bool)\n
 * * Core/Gui/glViewer/restrictFrameRate      This setting controls if the maximum frame rate should be restricted (bool)\n
 * * Core/Gui/glViewer/maxFrameRate           If restrictFrameRate is set to yes, this setting controls the maximum frameRate used (unsigned int)\n
+* * Core/Gui/glViewer/useMultipleViewers     Use only one viewer or automatically generate multiple viewers (bool)\n
+* * Core/Gui/ToolBoxes/hidden                Hide the toolbox sidebar (bool)\n
 * * Core/Gui/LogWindow/LogWindowMode         Log Window Mode .. 0 InScene, 1 Window, 2 Hidden (int)\n
 * * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)\n
+* * Core/Gui/fullscreen                      Show OpenFlipper in Fullscreen Mode(bool)\n
 *
 * <b>File Handling</b>\n
 * * Core/CurrentDir                          The current Directory of the Application \n
@@ -485,14 +488,6 @@ QString helpDirStr();
 * @{ */
 //===========================================================================
 
-  /// Use multiview Mode?
-  DLLEXPORT
-  void multiView( bool _multiView);
-
-  /// Use multiview Mode?
-  DLLEXPORT
-  bool multiView();
-
   /// Number of examiner widgets
   DLLEXPORT
   unsigned int examinerWidgets();
@@ -511,22 +506,6 @@ QString helpDirStr();
   /// What is the current state of the logging widget?
   DLLEXPORT
   LoggerState loggerState( );
-
-  /// Set if we start the toolbox widget closed
-  DLLEXPORT
-  void hideToolbox( bool _hide);
-
-  /// Start the toolbox widget closed?
-  DLLEXPORT
-  bool hideToolbox( );
-
-  /// Start fullscreen Mode?
-  DLLEXPORT
-  void fullScreen( bool _fs );
-
-  /// Start fullscreen Mode?
-  DLLEXPORT
-  bool fullScreen( );
 
   /// Which mode should be the default for the toolbar?
   DLLEXPORT
