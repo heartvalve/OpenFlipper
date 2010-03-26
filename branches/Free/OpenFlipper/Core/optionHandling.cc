@@ -105,6 +105,8 @@ void Core::applyOptions(){
       target = ACG::SceneGraph::PICK_VERTEX;
     } else if ( pickRenderMode == "PICK_EDGE") {
       target = ACG::SceneGraph::PICK_EDGE;
+    } else if ( pickRenderMode == "PICK_SPLINE") {
+      target = ACG::SceneGraph::PICK_SPLINE;
     } else if ( pickRenderMode == "PICK_FACE") {
       target = ACG::SceneGraph::PICK_FACE;
     } else if ( pickRenderMode == "PICK_FRONT_VERTEX") {
