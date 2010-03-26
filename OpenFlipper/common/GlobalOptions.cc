@@ -122,9 +122,6 @@ static QDir currentScriptDir_;
 /// Current texture directory of the application
 static QDir currentTextureDir_;
 
-/// Experience level of the user
-static Experience experienceLevel_ = NOVICE;
-
 /// Show gui or not?
 static bool nogui_ = false;
 
@@ -365,16 +362,6 @@ bool currentTextureDir(QString _dir) {
     return true;
   }
   return false;
-}
-
-/// Get experience level
-Experience getExperience() {
-  return experienceLevel_;
-}
-
-/// Set experience level
-void setExperience( Experience _exp) {
-  experienceLevel_ = _exp;
 }
 
 /// Store if a gui should be visible or not
