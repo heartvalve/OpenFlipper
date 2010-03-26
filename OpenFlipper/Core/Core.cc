@@ -585,7 +585,7 @@ Core::init() {
     }
 
     // start checking for scenegraph changes
-    scenegraphCheckTimer_->setInterval (1000 / OpenFlipper::Options::maxFrameRate());
+    scenegraphCheckTimer_->setInterval (1000 / OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() );
     scenegraphCheckTimer_->start ();
   }
 
@@ -760,12 +760,12 @@ void Core::updateView() {
 
   if ( !OpenFlipper::Options::gui() )
     return;
-
-  if ( OpenFlipper::Options::restrictFrameRate() ) {
+  
+  if ( OpenFlipperSettings().value("Core/Gui/glViewer/restrictFrameRate",false).toBool() ) {
 
     int elapsed = redrawTime_->elapsed ();
 
-    if ( elapsed < 1000 / OpenFlipper::Options::maxFrameRate() )
+    if ( elapsed < 1000 / OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() )
     {
       // redraw time not reached ... waiting for timer event for next redraw
       if ( redrawTimer_->isActive() ) {
@@ -776,7 +776,7 @@ void Core::updateView() {
       }
 
       // Start the timer
-      redrawTimer_->start( (1000 / OpenFlipper::Options::maxFrameRate()) - elapsed);
+      redrawTimer_->start( (1000 / OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() ) - elapsed);
       return;
     }
     else if ( redrawTimer_->isActive() )
@@ -815,17 +815,17 @@ void Core::checkScenegraphDirty() {
 //-----------------------------------------------------------------------------
 
 void Core::restrictFrameRate( bool _enable ) {
-  OpenFlipper::Options::restrictFrameRate( _enable );
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/restrictFrameRate",_enable); 
 }
 
 //-----------------------------------------------------------------------------
 
 void Core::setMaxFrameRate( int _rate ) {
-  OpenFlipper::Options::maxFrameRate( _rate );
-  OpenFlipper::Options::restrictFrameRate( true );
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/maxFrameRate",_rate);
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/restrictFrameRate",true); 
 
   // update Timer to new framerate
-  scenegraphCheckTimer_->setInterval (1000 / OpenFlipper::Options::maxFrameRate());
+  scenegraphCheckTimer_->setInterval (1000 / OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() );
 }
 
 //-----------------------------------------------------------------------------

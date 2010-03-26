@@ -90,6 +90,8 @@
 * * Core/Gui/glViewer/showControlWheels      This setting controls if the control wheels should be visible in the glViewer (bool)
 * * Core/Gui/glViewer/glMouse                This setting controls if the mouse is rendered in OpenGL or in the window manager
 * * Core/Gui/glViewer/stereoMousePick        This setting controls if the mouse depth is picked in stereo mode
+* * Core/Gui/glViewer/restrictFrameRate      This setting controls if the maximum frame rate should be restricted (bool)
+* * Core/Gui/glViewer/maxFrameRate           If restrictFrameRate is set to yes, this setting controls the maximum frameRate used (unsigned int)
 * * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)
 *
 * <b>File Handling</b>
@@ -118,8 +120,8 @@
 * * Core/Stereo/Philips/Select   Philips stereo header select (int)\n
 * \n
 * <b>Rendering debugger Settings<b>\n
-* * Core/Debug/Picking/RenderPicking  Enable picking rendering\n
-* * Core/Debug/Picking/RenderPickingMode  The Mode used for picking rendering\n
+* * Core/Debug/Picking/RenderPicking      Enable picking rendering (bool)\n
+* * Core/Debug/Picking/RenderPickingMode  The Mode used for picking rendering(QString) \n
 * \n
 * Anaglyph stereo mode settings:\n
 */
@@ -438,22 +440,6 @@ QString helpDirStr();
   /// get current synchronization setting
   DLLEXPORT
   bool synchronization( );
-
-  /// Store restrictFrameRate setting
-  DLLEXPORT
-  void restrictFrameRate( bool _enable );
-
-  /// get restrictFrameRate setting
-  DLLEXPORT
-  bool restrictFrameRate( );
-
-  /// Store maxFrameRate setting
-  DLLEXPORT
-  void maxFrameRate( int _fps );
-
-  /// get maxFrameRate setting
-  DLLEXPORT
-  int maxFrameRate( );
 
   /// Store defaultDrawMode setting
   DLLEXPORT

@@ -283,20 +283,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
     }
 
     //============================================================================
-    // Load restrictFrameRate
-    //============================================================================
-    bool restrictFrameRate = false;
-    if( _ini.get_entry(restrictFrameRate, "Options", "RestrictFrameRate") )
-      OpenFlipper::Options::restrictFrameRate(restrictFrameRate);
-
-    //============================================================================
-    // Load maxFrameRate
-    //============================================================================
-    int maxFrameRate = 35;
-    if( _ini.get_entry(maxFrameRate, "Options", "MaxFrameRate") )
-      OpenFlipper::Options::maxFrameRate(maxFrameRate);
-
-    //============================================================================
     // Load slotDebugging state
     //============================================================================
     bool doSlotDebugging = false;
@@ -471,14 +457,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
 
   //write default ToolboxMode
   _ini.add_entry("Options","DefaultToolboxMode",OpenFlipper::Options::defaultToolboxMode() );
-
-  //============================================================================
-  // other
-  //============================================================================
-  // restrict Framerate
-  _ini.add_entry("Options","RestrictFrameRate",OpenFlipper::Options::restrictFrameRate() );
-  // max Framerate
-  _ini.add_entry("Options","MaxFrameRate",OpenFlipper::Options::maxFrameRate() );
 
   //============================================================================
   // Debugging

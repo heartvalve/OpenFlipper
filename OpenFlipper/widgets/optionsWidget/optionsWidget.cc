@@ -357,8 +357,8 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   wheelBox->setChecked( OpenFlipperSettings().value("Core/Gui/glViewer/showControlWheels").toBool() );
 
-  restrictFPS->setChecked( OpenFlipper::Options::restrictFrameRate() );
-  FPS->setValue( OpenFlipper::Options::maxFrameRate() );
+  restrictFPS->setChecked( OpenFlipperSettings().value("Core/Gui/glViewer/restrictFrameRate",false).toBool() );
+  FPS->setValue( OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() );
 
   QPixmap color(16,16);
   color.fill( OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>() );
@@ -576,10 +576,10 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactor", wZoomFactor->text().toDouble());
   OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactorShift", wZoomFactorShift->text().toDouble());
 
-  OpenFlipper::Options::restrictFrameRate( restrictFPS->isChecked() );
   OpenFlipperSettings().setValue("Core/Gui/glViewer/showControlWheels", wheelBox->isChecked() );
 
-  OpenFlipper::Options::maxFrameRate( FPS->value() );
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/restrictFrameRate", restrictFPS->isChecked());
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/maxFrameRate", FPS->value() );
 
   OpenFlipper::Options::randomBaseColor( randomBaseColor->isChecked() );
 
