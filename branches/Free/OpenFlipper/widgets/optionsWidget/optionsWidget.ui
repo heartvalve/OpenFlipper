@@ -1709,6 +1709,11 @@ p, li { white-space: pre-wrap; }
            </item>
            <item>
             <property name="text">
+             <string>PICK_SPLINE</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>PICK_FRONT_VERTEX</string>
             </property>
            </item>
