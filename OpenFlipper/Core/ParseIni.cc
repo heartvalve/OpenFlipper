@@ -209,20 +209,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
     }
 
     //============================================================================
-    // Load the setting for the toolbox window
-    //============================================================================
-    bool hideToolbox = false;
-    if ( _ini.get_entry( hideToolbox, "Options" , "HideToolbox") )
-      OpenFlipper::Options::hideToolbox(hideToolbox);
-
-    //============================================================================
-    // Load the setting for the fullscreen option
-    //============================================================================
-    bool fullScreen = false;
-    if ( _ini.get_entry( fullScreen, "Options" , "FullScreen") )
-      OpenFlipper::Options::fullScreen(fullScreen);
-
-    //============================================================================
     // Load the setting for the object color option
     //============================================================================
     uint baseColor = 0;
@@ -285,10 +271,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     // ViewerProperties
     //============================================================================
-
-    bool multiView = false;
-    if( _ini.get_entry(multiView, "Options", "MultiView") )
-      OpenFlipper::Options::multiView(multiView);
 
     uint viewerCount = 0;
     if( _ini.get_entry(viewerCount, "Options", "ViewerCount") ){
@@ -486,7 +468,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     _ini.add_entry("Options","Translation", OpenFlipper::Options::translation() );
     _ini.add_entry("Options","GridVisible", OpenFlipper::Options::gridVisible() );
 
-    _ini.add_entry("Options","MultiView", OpenFlipper::Options::multiView() );
     _ini.add_entry("Options","ViewerCount", OpenFlipper::Options::examinerWidgets() );
 
     if ( !_ini.section_exists("ViewerProperties") )
@@ -513,12 +494,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
       _ini.add_entry("Options","DefaultProjectionMode" + QString::number(i), OpenFlipper::Options::defaultProjectionMode(i) );
       _ini.add_entry("Options","DefaultViewingDirection" + QString::number(i), OpenFlipper::Options::defaultViewingDirection(i) );
     }
-
-
-    _ini.add_entry("Options","HideToolbox", OpenFlipper::Options::hideToolbox() );
-
-    // check if we are in fullscreen mode:
-    _ini.add_entry("Options","FullScreen", OpenFlipper::Options::fullScreen() );
 
     _ini.add_entry("Options","DefaultBaseColor", (uint)OpenFlipper::Options::defaultBaseColor().rgba ()  );
 

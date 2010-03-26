@@ -231,13 +231,13 @@ bool parseCommandLineOptions(CSimpleOpt& args){
             OpenFlipper::Options::stereo(false);
             break;
         case OPT_HIDDDEN_TOOLBOX:
-            OpenFlipper::Options::hideToolbox(true);
+            OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/hidden",true);
             break;
         case OPT_HIDDDEN_LOGGER:
             OpenFlipper::Options::loggerState(OpenFlipper::Options::Hidden);
             break;
         case OPT_FULLSCREEN:
-            OpenFlipper::Options::fullScreen(true);
+            OpenFlipperSettings().setValue("Core/Gui/fullscreen",false);
             break;
         case OPT_LOAD_POLYMESHES:
             openPolyMeshes = true;
