@@ -304,17 +304,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
       OpenFlipper::Options::doSlotDebugging(doSlotDebugging);
 
     //============================================================================
-    // Load Picking debugger state
-    //============================================================================
-    bool renderPicking = false;
-    if( _ini.get_entry(renderPicking, "Options", "RenderPicking") )
-      OpenFlipper::Options::renderPicking(renderPicking);
-
-    QString pickingRenderMode = "";
-    if( _ini.get_entry(renderPicking, "Options", "PickingRenderMode") )
-      OpenFlipper::Options::pickingRenderMode(pickingRenderMode);
-
-    //============================================================================
     // ViewerProperties
     //============================================================================
 
@@ -495,12 +484,6 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   // Debugging
   //============================================================================
   _ini.add_entry("Options","SlotDebugging",OpenFlipper::Options::doSlotDebugging() );
-
-  //============================================================================
-  // Write Picking debugger state
-  //============================================================================
-  _ini.add_entry("Options","RenderPicking",OpenFlipper::Options::renderPicking() );
-  _ini.add_entry("Options","PickingRenderMode",OpenFlipper::Options::pickingRenderMode() );
 
   //============================================================================
   // Update information

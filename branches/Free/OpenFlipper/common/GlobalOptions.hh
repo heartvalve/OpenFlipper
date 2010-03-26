@@ -117,6 +117,10 @@
 * * Core/Stereo/Philips/Offset   Philips stereo header offset cc (int)\n
 * * Core/Stereo/Philips/Select   Philips stereo header select (int)\n
 * \n
+* <b>Rendering debugger Settings<b>\n
+* * Core/Debug/Picking/RenderPicking  Enable picking rendering\n
+* * Core/Debug/Picking/RenderPickingMode  The Mode used for picking rendering\n
+* \n
 * Anaglyph stereo mode settings:\n
 */
 DLLEXPORT
@@ -782,32 +786,6 @@ QString compilerInfo();
 
 /** @} */
 
-//===========================================================================
-/** @name Picking Debugger
- * @{ */
-//===========================================================================
-
-/** Set rendering Mode for Picking Debugger
- */
-DLLEXPORT
-void pickingRenderMode( QString _target );
-
-/** Get rendering Mode for Picking Debugger
- */
-DLLEXPORT
-QString pickingRenderMode( );
-
-/** Enable/Disable Picking Debugger
- */
-DLLEXPORT
-void renderPicking(bool _enable);
-
-/** Get Picking Debugger state
- */
-DLLEXPORT
-bool renderPicking( );
-
-/** @} */
 
 /// Internal function called by the core to connect to the program options
 DLLEXPORT 
