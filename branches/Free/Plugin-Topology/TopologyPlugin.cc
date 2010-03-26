@@ -182,7 +182,6 @@ void TopologyPlugin::clearAddFaceVertices() {
       TriMesh::VertexHandle vh = m->vertex_handle( addFaceVertices_[i].second );
       if ( vh.is_valid()) {
         m->status(vh).set_selected(false);
-        object->update();
       }
     }
 
@@ -191,10 +190,10 @@ void TopologyPlugin::clearAddFaceVertices() {
       PolyMesh::VertexHandle vh = m->vertex_handle( addFaceVertices_[i].second );
       if ( vh.is_valid()) {
         m->status(vh).set_selected(false);
-        object->update();
       }
     }
-
+    
+    emit updatedObject(object->id(),UPDATE_SELECTION);
   }
 
   addFaceVertices_.clear();
@@ -472,7 +471,6 @@ void TopologyPlugin::split_face(QMouseEvent* _event) {
             m.split(fh,vh);
             m.update_normals();
 
-            object->update();
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
             emit createBackup(object->id(),"Split Face");
@@ -527,7 +525,6 @@ void TopologyPlugin::delete_face(QMouseEvent* _event) {
             m.garbage_collection();
          }
 
-         object->update();
          emit updatedObject(object->id(), UPDATE_TOPOLOGY);
          emit updateView();
          emit createBackup(object->id(),"Delete Face");
@@ -585,7 +582,6 @@ void TopologyPlugin::flip_edge(QMouseEvent* _event) {
 
             emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
 
-            object->update();
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
             emit createBackup(object->id(),"Edge Flip");
@@ -657,7 +653,6 @@ void TopologyPlugin::collapse_edge(QMouseEvent* _event) {
 
             emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
 
-            object->update();
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
             emit createBackup(object->id(),"Edge Collapse");
@@ -718,7 +713,6 @@ void TopologyPlugin::split_edge(QMouseEvent* _event) {
 
             emit log(LOGOUT,"Picked Edge " + QString::number(closest_edge.idx()));
 
-            object->update();
             emit updatedObject(object->id(), UPDATE_TOPOLOGY);
             emit updateView();
             emit createBackup(object->id(),"Edge Split");
