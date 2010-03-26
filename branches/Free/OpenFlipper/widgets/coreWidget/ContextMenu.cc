@@ -484,8 +484,6 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
   
   QStringList visible = viewModes_[id]->visibleContextMenus;
   visible.replaceInStrings(QRegExp(".*>"), "");
-  for (int i=0; i < visible.size(); i++)
-    std::cout << visible.at(i).toStdString() << std::endl;
   
   while (it.hasNext()) {
      it.next();
