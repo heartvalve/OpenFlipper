@@ -264,8 +264,6 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
 DLLEXPORT
 void traverse( ACG::SceneGraph::MouseEventAction  &_action );
 
-/// Execute Scenegraph traversal with action and a specified examiner
-void traverse(  const unsigned int _examiner, ACG::SceneGraph::MouseEventAction  &_action );
 
 /// Get the current Picking mode
 DLLEXPORT

@@ -474,22 +474,8 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
 void traverse( ACG::SceneGraph::MouseEventAction  &_action ) {
   // Single pass action, as the mouse action will only update the graph.
   // If its changed, it will be set to dirty and an automatic redraw is triggered.
-  ACG::SceneGraph::traverse(sceneGraphRootNode_, _action,viewerProperties().glState() );
+  ACG::SceneGraph::traverse(sceneGraphRootNode_, _action );
 }
-
-//Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
-void traverse( const unsigned int _examiner, ACG::SceneGraph::MouseEventAction  &_action ) {
-
-  if ( _examiner >= examiner_widgets_.size() ) {
-    std::cerr << "Wrong examiner id" << std::endl;
-    return;
-  }
-
-  // Single pass action, as the mouse action will only update the graph.
-  // If its changed, it will be set to dirty and an automatic redraw is triggered.
-  ACG::SceneGraph::traverse(sceneGraphRootNode_, _action,viewerProperties(_examiner).glState() );
-}
-
 
 const std::string pickMode () {
   // No seperate draw modes available all should have the same so take first

@@ -870,13 +870,13 @@ void QtBaseViewer::drawScene_mono()
   if (sceneGraphRoot_)
   {
     if (! renderPicking_ ) {
-      SceneGraph::DrawAction action(curDrawMode_, false);
-      SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, curDrawMode_);
+      SceneGraph::DrawAction action(curDrawMode_, *glstate_ , false);
+      SceneGraph::traverse(sceneGraphRoot_, action);
 
       if( blending_ )
       {
-        SceneGraph::DrawAction action(curDrawMode_, true);
-        SceneGraph::traverse(sceneGraphRoot_, action, *glstate_, curDrawMode_);
+        SceneGraph::DrawAction action(curDrawMode_, *glstate_, true);
+        SceneGraph::traverse(sceneGraphRoot_, action);
       }
     } else {
 
