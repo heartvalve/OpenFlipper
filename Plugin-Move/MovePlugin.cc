@@ -348,7 +348,7 @@ void MovePlugin::slotMouseEvent(QMouseEvent* _event) {
         }
 
         // interaction
-        ACG::SceneGraph::MouseEventAction action(_event);
+        ACG::SceneGraph::MouseEventAction action(_event,PluginFunctions::viewerProperties().glState());
         PluginFunctions::traverse(action);
 
         if (_event->buttons() == Qt::LeftButton)

@@ -604,12 +604,12 @@ void glViewer::drawScene_mono()
         }
       }
 
-      ACG::SceneGraph::DrawAction action( properties_.drawMode() , false);
+      ACG::SceneGraph::DrawAction action( properties_.drawMode(), *glstate_ , false);
       ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode() );
 
       if( blending_ )
       {
-        ACG::SceneGraph::DrawAction action(properties_.drawMode(), true);
+        ACG::SceneGraph::DrawAction action(properties_.drawMode(), *glstate_, true);
         ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action, *glstate_, properties_.drawMode());
       }
 

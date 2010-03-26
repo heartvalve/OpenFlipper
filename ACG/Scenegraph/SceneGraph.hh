@@ -192,12 +192,17 @@ traverse( BaseNode* _node, Action& _action )
     enter/leave functions of the action if they have been implemented.
     This function traverses the scene graph multiple times if multipass
     rendering is turned on. GLState holds attributes to control
-    render passes. Attention: Render passes are 1-indexed.
+    render passes. Attention: Render passes are 1-indexed.\n
+    
+    !!! You should ot use this function directly. Use the traverse_multipass function
+    which controls the glstate too. This function will also manage the passes for you!!!
+    
 **/
 template <class Action>
 void
 traverse_multipass ( BaseNode* _node, Action& _action, const unsigned int& _pass )
 {
+  
     // Process node if it exists
     if (_node) {
         BaseNode::StatusMode status(_node->status());
@@ -207,8 +212,9 @@ traverse_multipass ( BaseNode* _node, Action& _action, const unsigned int& _pass
         if (status != BaseNode::HideSubtree) {
 
             // Executes this nodes enter function (if available and active in multipass)
-            if ( _node->multipassStatusActive(_pass) )
+            if ( _node->multipassStatusActive(_pass) ) {
               if_has_enter(_action, _node);
+            }
 
             // If the node itself is hidden, don't call the action on it.
             // Additionally check if rendering order is node first. otherwise, we will call it after the children.
@@ -247,73 +253,6 @@ traverse_multipass ( BaseNode* _node, Action& _action, const unsigned int& _pass
     } // if(node_)
 }
 
-//----------------------------------------------------------------------------
-
-/** This is a meta action class that is used to wrap an action from the
-    traverse( BaseNode*, Action&, GLState&, unsigned int) into the
-    traverse( BaseNode*, Action&) function
-**/
-
-template <class Action>
-class MetaAction
-{
-  public:
-    MetaAction (Action & _action, GLState& _state, DrawModes::DrawMode _drawMode) :
-      action_(_action),
-      state_(_state),
-      drawMode_(_drawMode)
-    {
-    }
-
-    bool operator()(BaseNode* _node)
-    {
-      return action_(_node, state_);
-    }
-
-    void enter (BaseNode *_node)
-    {
-      if ( _node->drawMode() == DrawModes::DEFAULT )
-        _node->enter(state_, drawMode_);  
-      else
-        _node->enter(state_,  _node->drawMode());
-    }
-
-    void leave (BaseNode *_node)
-    {
-      if ( _node->drawMode() == DrawModes::DEFAULT )
-        _node->leave(state_, drawMode_);  
-      else
-        _node->leave(state_,  _node->drawMode());
-    }
-
-  private:
-    Action  &action_;
-    GLState &state_;
-    DrawModes::DrawMode drawMode_;
-
-};
-
-//----------------------------------------------------------------------------
-
-/** Traverse the scenegraph starting at the node \c _node and apply
-    the action \c action to each node. When arriving at a node, its
-    BaseNode::enter() function is called, then \c _action is applied
-    and the node's children are traversed. After that the
-    BaseNode::leave() method is called.
-
-    \see ACG::SceneGraph::BaseNode
-**/
-
-template <class Action>
-void
-traverse( BaseNode*           _node,
-	  Action&             _action,
-	  GLState&            _state,
-          DrawModes::DrawMode _drawmode=DrawModes::DEFAULT)
-{
-    MetaAction<Action> action (_action, _state, _drawmode);
-    traverse(_node, action);
-}
 
 //----------------------------------------------------------------------------
 
@@ -339,8 +278,6 @@ traverse_multipass( BaseNode*           _node,
                     GLState&            _state,
                     DrawModes::DrawMode _drawmode=DrawModes::DEFAULT)
 {
-    MetaAction<Action> action (_action, _state, _drawmode);
-
     // Reset render pass counter
     _state.reset_render_pass();
 
@@ -351,7 +288,7 @@ traverse_multipass( BaseNode*           _node,
     for(unsigned int pass = BaseNode::PASS_1; pass <= (BaseNode::PASS_1 + max_passes); ++pass) {
 
         // Traverse scenegraph
-        traverse_multipass (_node, action, pass);
+        traverse_multipass (_node, _action, pass);
         // Increment render pass counter by 1
         _state.next_render_pass();
     }
@@ -682,25 +619,44 @@ class DrawAction
 public:
 
   /// Constructor: draws the scenegraph using _drawMode
-  DrawAction(DrawModes::DrawMode _drawMode, bool _blending)
-    : drawMode_(_drawMode), blending_(_blending) {}
+  DrawAction(DrawModes::DrawMode _drawMode, GLState& _state, bool _blending) : 
+     state_(_state),
+     drawMode_(_drawMode), 
+     blending_(_blending) {}
 
-  bool operator()(BaseNode* _node, GLState& _state)
+  bool operator()( BaseNode* _node )
   {
     // draw only if Material status == DrawAction status
-    if(_state.blending() == blending_)
+    if(state_.blending() == blending_)
     {
       _node->setDirty (false);
       if (_node->drawMode() == DrawModes::DEFAULT)
-	_node->draw(_state, drawMode_);
+        _node->draw(state_, drawMode_);
       else
-	_node->draw(_state, _node->drawMode());
+        _node->draw(state_, _node->drawMode());
     }
     return true;
+  }
+  
+  void enter(BaseNode* _node)
+  {
+    if (_node->drawMode() == DrawModes::DEFAULT)
+      _node->enter(state_, drawMode_);
+    else
+      _node->enter(state_, _node->drawMode());
+  }
+  
+  void leave(BaseNode* _node)
+  {
+    if (_node->drawMode() == DrawModes::DEFAULT)
+      _node->leave(state_, drawMode_);
+    else
+      _node->leave(state_, _node->drawMode());
   }
 
 private:
 
+  GLState&            state_;
   DrawModes::DrawMode drawMode_;
   bool                blending_;
 };
@@ -775,16 +731,18 @@ class MouseEventAction
 public:
 
 
-  MouseEventAction(QMouseEvent* _event) : event_(_event) {}
+  MouseEventAction(QMouseEvent* _event, GLState& _state) : 
+    state_(_state),
+    event_(_event) {}
 
-  bool operator()(BaseNode* _node, GLState& _state)
+  bool operator()(BaseNode* _node )
   {
-    _node->mouseEvent(_state, event_);
+    _node->mouseEvent(state_, event_);
     return true;
   }
 
 private:
-
+  GLState&     state_;
   QMouseEvent* event_;
 };
 

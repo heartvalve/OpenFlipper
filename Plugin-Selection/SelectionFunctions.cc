@@ -298,6 +298,7 @@ void SelectionPlugin::componentSelection(QMouseEvent* _event) {
       if ( PluginFunctions::getPickedObject(node_idx, object) ) {
          if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH) ){
 
+#include <../OpenFlipper/Plugin-Selection/SelectionPlugin.hh>
             componentSelection(PluginFunctions::triMesh(object), target_idx);
          }
 
@@ -560,8 +561,8 @@ void SelectionPlugin::handleLassoSelection(QMouseEvent* _event, bool _volume) {
             bool         updateGL = state.updateGL ();
             state.set_updateGL (false);
 
-            SelectVolumeAction action(&region, this);
-            ACG::SceneGraph::traverse (PluginFunctions::getRootNode(), action, state);
+            SelectVolumeAction action(&region, this, state);
+            ACG::SceneGraph::traverse (PluginFunctions::getRootNode(), action );
 
             state.set_updateGL (updateGL);
           }
@@ -814,7 +815,7 @@ int SelectionPlugin::createMeshFromSelection( int _objectId ){
 
 
 /// Traverse the scenegraph and call the selection function for nodes
-bool SelectVolumeAction::operator()(BaseNode* _node, ACG::GLState& _state)
+bool SelectVolumeAction::operator()(BaseNode* _node)
 {
   BaseObjectData *object = 0;
   if (PluginFunctions::getPickedObject(_node->id (), object))
@@ -823,17 +824,17 @@ bool SelectVolumeAction::operator()(BaseNode* _node, ACG::GLState& _state)
     if ( object->dataType(DATA_TRIANGLE_MESH) ) {
 
       TriMesh* m = PluginFunctions::triMesh(object);
-      selected = plugin_->volumeSelection (m, _state, region_);
+      selected = plugin_->volumeSelection (m, state_, region_);
 
     } else if ( object->dataType(DATA_POLY_MESH) ) {
 
       PolyMesh* m = PluginFunctions::polyMesh(object);
-      selected = plugin_->volumeSelection (m, _state, region_);
+      selected = plugin_->volumeSelection (m, state_, region_);
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
     } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
 
       TSplineMesh* m = PluginFunctions::tsplineMesh(object);
-      selected = plugin_->volumeSelection (m, _state, region_);
+      selected = plugin_->volumeSelection (m, state_, region_);
 #endif
     }
 
