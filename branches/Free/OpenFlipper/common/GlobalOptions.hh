@@ -350,26 +350,6 @@ QString helpDirStr();
 /** @} */
 
 //===========================================================================
-/** @name Experience level  of user
-* @{ */
-//===========================================================================
-  enum Experience {
-    NOVICE,
-    ADVANCED,
-    EXPERT
-  };
-
-  /// Get experience level
-  DLLEXPORT
-  Experience getExperience();
-
-  /// Set experience level
-  DLLEXPORT
-  void setExperience( Experience _exp );
-
-/** @} */
-
-//===========================================================================
 /** @name Visualization Control
 * @{ */
 //===========================================================================
