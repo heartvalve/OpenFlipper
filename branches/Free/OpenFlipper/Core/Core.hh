@@ -441,6 +441,13 @@ public slots:
     @param _toolboxList ; seperated list of toolbars in the view mode
     */
     void addViewModeToolbars(QString _modeName, QString _toolbarList);
+    
+    /** \brief Scripting function to set context menus in a view mode
+    
+    @param _modeName Name of the View Mode
+    @param _toolboxList ; seperated list of context menus in the view mode
+    */
+    void addViewModeContextMenus(QString _modeName, QString _contextMenuList);
 
     /** @} */
 

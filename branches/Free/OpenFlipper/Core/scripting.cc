@@ -166,6 +166,14 @@ void Core::addViewModeToolbars(QString _modeName, QString _toolbarList) {
 
 //-----------------------------------------------------------------------------
 
+void Core::addViewModeContextMenus(QString _modeName, QString _contextMenuList) {
+  
+  QStringList list = _contextMenuList.split(";");
+  coreWidget_->slotAddViewModeContextMenus(_modeName,list);
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::addToolbox(QString _name ,QWidget* _widget) {
   int id = -1;
 
@@ -201,7 +209,7 @@ void Core::addToolbox(QString _name ,QWidget* _widget) {
     viewModes_[0]->visibleToolboxes.sort();
   }
 
-  setViewMode( OpenFlipper::Options::defaultToolboxMode() );
+  setViewMode( OpenFlipper::Options::currentViewMode() );
 }
 
 //=============================================================================

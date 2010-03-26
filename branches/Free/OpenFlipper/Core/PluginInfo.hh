@@ -83,6 +83,7 @@ class PluginInfo{
      keys.clear();
      toolboxWidgets.clear();
      toolbars.clear();
+     contextMenus.clear();
      optionsWidget = 0;
   }
 
@@ -100,6 +101,7 @@ class PluginInfo{
      keys = _i.keys;
      toolboxWidgets = _i.toolboxWidgets;
      toolbars = _i.toolbars;
+     contextMenus = _i.contextMenus;
      optionsWidget = _i.optionsWidget;
   }
 
@@ -133,8 +135,11 @@ class PluginInfo{
   /// Pointer to plugins toolbox widget (if available)
   std::vector< std::pair< QString , QWidget* > > toolboxWidgets;
   
-  /// Pointer to plugins toolbox widget (if available)
+  /// Pointer to plugins toolbars (if available)
   std::vector< std::pair< QString , QToolBar* > > toolbars;
+  
+  /// Pointer to plugins context menus (if available)
+  std::vector< std::pair< QString , QAction* > > contextMenus;
 
   /// Pointer to plugins options widget (if available)
   QWidget* optionsWidget;

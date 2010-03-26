@@ -70,7 +70,7 @@ class viewModeChangeWidget : public QDialog, public Ui::ViewModeChangeDialog
     
   signals:
     /// Changes the view mode to the currently configured one
-    void changeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars);    
+    void changeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus);    
    
 };
 

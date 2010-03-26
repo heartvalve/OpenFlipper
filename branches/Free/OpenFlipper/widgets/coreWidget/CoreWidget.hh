@@ -417,8 +417,14 @@ public:
       /// Add or change Toolbars for a ViewMode (_custom == userdefined viewMode)
       void slotAddViewModeToolbars(QString _mode, bool _custom, QStringList _usedToolbars);
 
-      /// Completly configure a view mode ( set toolbars, toolboxes ... )
-      void slotAddViewModeComplete(QString _mode , bool _custom, QStringList _toolboxes, QStringList _toolbars);
+      /// Add or change Toolbars for a ViewMode (non-userdefined viewMode)
+      void slotAddViewModeContextMenus(QString _mode, QStringList _usedToolbars);
+
+      /// Add or change Toolbars for a ViewMode (_custom == userdefined viewMode)
+      void slotAddViewModeContextMenus(QString _mode, bool _custom, QStringList _usedToolbars);
+
+      /// Completly configure a view mode ( set toolbars, toolboxes, context menus, ... )
+      void slotAddViewModeComplete(QString _mode , bool _custom, QStringList _toolboxes, QStringList _toolbars, QStringList _contextmenus);
 
       /// Sets the Icon for a given View Mode (non-userdefined viewMode)
       void slotSetViewModeIcon(QString _mode, QString _iconName);
@@ -427,7 +433,7 @@ public:
       void slotSetViewModeIcon(QString _mode, bool _custom, QString _iconName);
 
       /// Slot for Changing visible toolWidgets
-      void slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars);
+      void slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus);
 
     private slots:
       /// Remove viewMode
@@ -671,6 +677,9 @@ public:
 
     /// called by plugins to add a real context menu item depending on DataType
     void slotAddContextItem( QAction* _entry , DataType _dataType ,ContextMenuType type_);
+    
+    /// called by slotAddContextItem to add the item to the view mode
+    void slotAddContextItemToViewMode( QAction* _entry );
 
     /// Paste the view to the last active examiner
     void slotPasteView( );

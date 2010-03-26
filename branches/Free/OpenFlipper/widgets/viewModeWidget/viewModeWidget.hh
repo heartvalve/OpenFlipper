@@ -61,6 +61,7 @@ class viewModeWidget : public QDialog, public Ui::viewMode
   public:
     viewModeWidget(const QVector< ViewMode* >& _modes, QWidget *parent = 0 );
     void show(QString _lastMode);
+    //void toolbarList(Qt::ContextMenuPolicy arg1);
   private slots:
 
     void slotModeChanged(QString _mode);
@@ -113,7 +114,7 @@ class viewModeWidget : public QDialog, public Ui::viewMode
       *
       * This slot updates all list views depending on the currently selected view mode
       */
-      void slotSetToolWidgets();
+      void slotSetAllWidgets();
  
     // ============================================
     // ToolBar Views Context Menu
@@ -143,7 +144,22 @@ class viewModeWidget : public QDialog, public Ui::viewMode
       *
       * This slot shows the available toolbox Context Menu
       */
-      void slotAvailableToolboxContextMenu ( const QPoint & _pos );
+      void slotAvailableToolboxContextMenu ( const QPoint & _pos ); 
+    
+    // ============================================
+    // ContextMenu Views Context Menu
+    // ============================================
+      /** \brief Context Menu Used ContextMenus
+      *
+      * This slot shows the used ContextMenu Context Menu
+      */
+      void slotUsedContextMenuContextMenu ( const QPoint & _pos );  
+      
+      /** \brief Context Menu Available ContextMenus
+      *
+      * This slot shows the available ContextMenu Context Menu
+      */
+      void slotAvailableContextMenuContextMenu ( const QPoint & _pos );
   
   
     // ============================================
@@ -180,13 +196,40 @@ class viewModeWidget : public QDialog, public Ui::viewMode
       *
       * This slot moves the widget upward in the list of used modes
       */
-      void slotMoveUp();
+      void slotMoveToolboxUp();
       
       /** \brief Move Toolbox down
       *
       * This slot moves the widget downward in the list of used modes
       */
-      void slotMoveDown();
+      void slotMoveToolboxDown();
+      
+    // ============================================
+    //ContextMenu Buttons
+    // ============================================
+    /** \brief remove ContextMenu from Mode
+      *
+      * This slot removes the selected widgets from the current view Mode
+      */
+      void slotRightArrowContextMenu();
+      
+      /** \brief add ContextMenu to Mode
+      *
+      * This slot adds the selected widgets to the current view Mode
+      */
+      void slotLeftArrowContextMenu();
+    
+      /** \brief Move ContextMenu up
+      *
+      * This slot moves the widget upward in the list of used modes
+      */
+      void slotMoveContextMenuUp();
+      
+      /** \brief Move Toolbox down
+      *
+      * This slot moves the widget downward in the list of used modes
+      */
+      void slotMoveContextMenuDown();
       
       
     // ============================================
@@ -205,10 +248,10 @@ class viewModeWidget : public QDialog, public Ui::viewMode
     
     signals:
       /// Changes the view mode to the currently configured one
-      void changeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars);
+      void changeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus);
       
       /// saves the given mode
-      void saveMode(QString _name, bool _custom, QStringList _toolboxWidgets, QStringList _toolbars);
+      void saveMode(QString _name, bool _custom, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus);
       
       /// This signal is emitted to remove a mode
       void removeMode(QString _name);

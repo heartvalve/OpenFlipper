@@ -85,7 +85,7 @@ void viewModeChangeWidget::slotModeClicked(QModelIndex _idx ){
   }
 
   
-  emit changeView(modes_[id]->name,modes_[id]->visibleToolboxes,modes_[id]->visibleToolbars);
+  emit changeView(modes_[id]->name,modes_[id]->visibleToolboxes,modes_[id]->visibleToolbars,modes_[id]->visibleContextMenus);
   close();
 }
 

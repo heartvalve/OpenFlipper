@@ -59,7 +59,7 @@ viewModeWidget::viewModeWidget(const QVector< ViewMode* >& _modes, QWidget *_par
   setupUi(this);
 
 
-  connect(viewModeList, SIGNAL(itemSelectionChanged()), this, SLOT(slotSetToolWidgets()));
+  connect(viewModeList, SIGNAL(itemSelectionChanged()), this, SLOT(slotSetAllWidgets()));
 
   
   
@@ -81,7 +81,7 @@ viewModeWidget::viewModeWidget(const QVector< ViewMode* >& _modes, QWidget *_par
           this         ,SLOT(slotModeContextMenu ( const QPoint & ) ));
   
   
-  // Context Menus Toolbars
+  // Context Menus for Toolbars
   toolbarList->setContextMenuPolicy(Qt::CustomContextMenu);
   availableToolbars->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(toolbarList ,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
@@ -90,32 +90,54 @@ viewModeWidget::viewModeWidget(const QVector< ViewMode* >& _modes, QWidget *_par
           this        ,SLOT(slotAvailableToolbarContextMenu ( const QPoint & ) )); 
   
   
-  // Context Menus Toolboxes
+  // Context Menus for Toolboxes
   toolboxList->setContextMenuPolicy(Qt::CustomContextMenu);
   availableToolboxes->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(toolboxList ,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
           this        ,SLOT(slotUsedToolboxContextMenu ( const QPoint & ) )); 
   connect(availableToolboxes ,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
-          this        ,SLOT(slotAvailableToolboxContextMenu ( const QPoint & ) )); 
+          this        ,SLOT(slotAvailableToolboxContextMenu ( const QPoint & ) ));
+
+
+  // Context Menus for Context Menus
+  contextMenuList->setContextMenuPolicy(Qt::CustomContextMenu);
+  availableContextMenus->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(contextMenuList ,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
+          this        ,SLOT(slotUsedContextMenuContextMenu ( const QPoint & ) )); 
+  connect(availableContextMenus ,SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
+          this        ,SLOT(slotAvailableContextMenuContextMenu ( const QPoint & ) )); 
           
   
-  // Toolbar Buttons to add remove toolbars to the given Mode
+  // Toolbar Buttons to add and remove toolbars in the given Mode
   connect(rightArrowToolbar, SIGNAL(clicked()), this, SLOT(slotRightArrowToolbar()) );
   rightArrowToolbar->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-right.png" ) );
   connect(leftArrowToolbar, SIGNAL(clicked()), this, SLOT(slotLeftArrowToolbar()) );
   leftArrowToolbar->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-left.png" ) );
   
   
-  // Toolbar Buttons to add remove toolbars to the given Mode
+  // Toolbox Buttons to add, remove and order toolboxes in the given Mode
   connect(rightArrowToolbox, SIGNAL(clicked()), this, SLOT(slotRightArrowToolbox()) );
   rightArrowToolbox->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-right.png" ) );
   connect(leftArrowToolbox, SIGNAL(clicked()), this, SLOT(slotLeftArrowToolbox()) );
   leftArrowToolbox->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-left.png" ) );  
   
-  connect(upButton, SIGNAL(clicked()), this, SLOT(slotMoveUp()) );
-  upButton->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-up.png" ) );
-  connect(downButton, SIGNAL(clicked()), this, SLOT(slotMoveDown()) );
-  downButton->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-down.png" ) );
+  connect(upButtonToolbox, SIGNAL(clicked()), this, SLOT(slotMoveToolboxUp()) );
+  upButtonToolbox->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-up.png" ) );
+  connect(downButtonToolbox, SIGNAL(clicked()), this, SLOT(slotMoveToolboxDown()) );
+  downButtonToolbox->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-down.png" ) );
+  
+  
+  // ContextMenu Buttons to add, remove and order ContextMenus in the given Mode
+  connect(rightArrowContextMenu, SIGNAL(clicked()), this, SLOT(slotRightArrowContextMenu()) );
+  rightArrowContextMenu->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-right.png" ) );
+  connect(leftArrowContextMenu, SIGNAL(clicked()), this, SLOT(slotLeftArrowContextMenu()) );
+  leftArrowContextMenu->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-left.png" ) );  
+  
+  connect(upButtonContextMenu, SIGNAL(clicked()), this, SLOT(slotMoveContextMenuUp()) );
+  upButtonContextMenu->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-up.png" ) );
+  connect(downButtonContextMenu, SIGNAL(clicked()), this, SLOT(slotMoveContextMenuDown()) );
+  downButtonContextMenu->setIcon( QIcon(OpenFlipper::Options::iconDirStr() + OpenFlipper::Options::dirSeparator() + "arrow-down.png" ) );
+  
   
   
   // General Buttons
@@ -170,7 +192,7 @@ void viewModeWidget::slotCopyMode(){
       return;
     }
   
-  emit saveMode(name, true, modes_[id]->visibleToolboxes, modes_[id]->visibleToolbars);      
+  emit saveMode(name, true, modes_[id]->visibleToolboxes, modes_[id]->visibleToolbars, modes_[id]->visibleContextMenus);      
   
   QListWidgetItem *item = new QListWidgetItem(viewModeList);
   item->setTextAlignment(Qt::AlignHCenter);
@@ -204,7 +226,7 @@ void viewModeWidget::slotAddMode(){
       return;
     }
   
-  emit saveMode(name, true, QStringList(), QStringList());      
+  emit saveMode(name, true, QStringList(), QStringList(), modes_[0]->visibleContextMenus);      
   
   QListWidgetItem *item = new QListWidgetItem(viewModeList);
   item->setTextAlignment(Qt::AlignHCenter);
@@ -276,14 +298,17 @@ void viewModeWidget::slotSetIcon() {
 // =======================================================================================================
 // ToolBox and ToolBar Lists update functions
 // =======================================================================================================
-void viewModeWidget::slotSetToolWidgets(){
+void viewModeWidget::slotSetAllWidgets(){
   toolboxList->clear();
   toolbarList->clear();
+  contextMenuList->clear();
   availableToolboxes->clear();
   availableToolbars->clear();
+  availableContextMenus->clear();
   
   QStringList toolboxes;
   QStringList toolbars;
+  QStringList contextmenus;
   
   //iterate over all selected modes
   for (int m=0; m < viewModeList->selectedItems().size(); m++)
@@ -293,8 +318,10 @@ void viewModeWidget::slotSetToolWidgets(){
       if ( modes_[i]->name == (viewModeList->selectedItems()[m])->text() ) {
         toolboxes = modes_[i]->visibleToolboxes;
         toolbars = modes_[i]->visibleToolbars;
+	contextmenus = modes_[i]->visibleContextMenus;
         toolboxList->addItems(toolboxes); //add corresponding widgets
         toolbarList->addItems(toolbars);
+	contextMenuList->addItems(contextmenus);
         break;
       }
       
@@ -302,9 +329,11 @@ void viewModeWidget::slotSetToolWidgets(){
       if ( !modes_.empty() ) {
         QStringList allToolboxes = modes_[0]->visibleToolboxes;
         QStringList allToolbars  = modes_[0]->visibleToolbars;
+        QStringList allContextMenus  = modes_[0]->visibleContextMenus;
         
         QStringList availableToolboxList;
         QStringList availableToolbarList;
+        QStringList availableContextMenuList;
         
         for ( int i = 0; i < allToolboxes.size(); ++i ) {
           if ( ! toolboxes.contains(allToolboxes[i]) ) 
@@ -316,8 +345,14 @@ void viewModeWidget::slotSetToolWidgets(){
             availableToolbarList.push_back(allToolbars[i]);
         }
         
+        for ( int i = 0; i < allContextMenus.size(); ++i ) {
+          if ( ! contextmenus.contains(allContextMenus[i]) ) 
+            availableContextMenuList.push_back(allContextMenus[i]);
+        }
+        
         availableToolboxes->addItems(availableToolboxList);
         availableToolbars->addItems(availableToolbarList);
+        availableContextMenus->addItems(availableContextMenuList);
         
       } else {
         std::cerr << "Mode not found!" << std::endl;
@@ -330,7 +365,7 @@ void viewModeWidget::slotSetToolWidgets(){
 // ToolBar Context Menus Buttons
 // =======================================================================================================
 
-/// opens custom context menu in used toolbox-List
+/// opens custom context menu in used toolbar-List
 void viewModeWidget::slotUsedToolbarContextMenu ( const QPoint & _pos ){
   
   if (toolboxList->itemAt(_pos)){
@@ -344,7 +379,7 @@ void viewModeWidget::slotUsedToolbarContextMenu ( const QPoint & _pos ){
   }
 }
 
-/// opens custom context menu in available toolbox-List
+/// opens custom context menu in available toolbar-List
 void viewModeWidget::slotAvailableToolbarContextMenu ( const QPoint & _pos ){
   
   if (availableToolbars->itemAt(_pos)){
@@ -370,8 +405,8 @@ void viewModeWidget::slotUsedToolboxContextMenu ( const QPoint & _pos ){
     QMenu menu(0);
     
     if (toolboxList->selectedItems().count() == 1){
-      menu.addAction(tr("Move up"), this, SLOT ( slotMoveUp() ));
-      menu.addAction(tr("Move down"), this, SLOT ( slotMoveDown() ));
+      menu.addAction(tr("Move up"), this, SLOT ( slotMoveToolboxUp() ));
+      menu.addAction(tr("Move down"), this, SLOT ( slotMoveToolboxDown() ));
       menu.addSeparator();
     }
     
@@ -396,6 +431,43 @@ void viewModeWidget::slotAvailableToolboxContextMenu ( const QPoint & _pos ){
   }
 }
 
+// =======================================================================================================
+// ContextMenu Context Menus Buttons
+// =======================================================================================================
+
+/// opens custom context menu in used contextmenu-List
+void viewModeWidget::slotUsedContextMenuContextMenu ( const QPoint & _pos ){
+  
+  if (contextMenuList->itemAt(_pos)){
+    
+    QMenu menu(0);
+    
+    if (contextMenuList->selectedItems().count() == 1){
+      menu.addAction(tr("Move up"), this, SLOT ( slotMoveContextMenuUp() ));
+      menu.addAction(tr("Move down"), this, SLOT ( slotMoveContextMenuDown() ));
+      menu.addSeparator();
+    }
+    
+    if ( contextMenuList->selectedItems().count() != 0 )
+      menu.addAction(tr("Remove"), this, SLOT ( slotRightArrowContextMenu() ));
+    
+    menu.exec(contextMenuList->mapToGlobal( _pos) );
+  }
+}
+
+/// opens custom context menu in available contextmenu-List
+void viewModeWidget::slotAvailableContextMenuContextMenu ( const QPoint & _pos ){
+  
+  if (availableContextMenus->itemAt(_pos)){
+    
+    QMenu menu(0);
+    
+    if ( availableContextMenus->selectedItems().count() != 0 )
+      menu.addAction(tr("Add"), this, SLOT ( slotLeftArrowContextMenu() ));
+    
+    menu.exec(availableContextMenus->mapToGlobal( _pos) );
+  }
+}
 
 // =======================================================================================================
 // ToolBar Buttons
@@ -439,7 +511,7 @@ void viewModeWidget::slotLeftArrowToolbox() {
 
 
 /// Move Widget up in the list
-void viewModeWidget::slotMoveUp(){
+void viewModeWidget::slotMoveToolboxUp(){
   if (toolboxList->selectedItems().count() == 1){
     if (toolboxList->currentRow() == 0) return;
     //extract a list of all items
@@ -466,8 +538,8 @@ void viewModeWidget::slotMoveUp(){
   }
 }
 
-/// Move widget do in the list
-void viewModeWidget::slotMoveDown(){
+/// Move widget down in the list
+void viewModeWidget::slotMoveToolboxDown(){
   if (toolboxList->selectedItems().count() == 1){
     if (toolboxList->currentRow() == toolboxList->count()-1) return;
     //extract a list of all items
@@ -494,6 +566,83 @@ void viewModeWidget::slotMoveDown(){
   }
 }
 
+// =======================================================================================================
+// ContextMenu Buttons
+// =======================================================================================================
+
+void viewModeWidget::slotRightArrowContextMenu() {
+  QList<QListWidgetItem *> selectedItems = contextMenuList->selectedItems ();
+  for ( int i = 0 ; i < selectedItems.size(); ++i ) 
+    availableContextMenus->addItem(selectedItems[i]->text());
+  
+  qDeleteAll(selectedItems);
+}
+
+void viewModeWidget::slotLeftArrowContextMenu() {
+  QList<QListWidgetItem *> selectedItems = availableContextMenus->selectedItems ();
+  for ( int i = 0 ; i < selectedItems.size(); ++i ) 
+    contextMenuList->addItem(selectedItems[i]->text());
+  
+  qDeleteAll(selectedItems);
+}
+
+
+/// Move Widget up in the list
+void viewModeWidget::slotMoveContextMenuUp(){
+  if (contextMenuList->selectedItems().count() == 1){
+    if (contextMenuList->currentRow() == 0) return;
+    //extract a list of all items
+    QString item = contextMenuList->currentItem()->text();
+    int oldRow = contextMenuList->currentRow();
+    QStringList widgets;
+    for (int i=0; i < contextMenuList->count(); i++)
+      widgets << contextMenuList->item(i)->text();
+    
+    //reorder items
+    QString last = widgets[0];
+    for (int i=1; i < widgets.size(); i++){
+      if (widgets[i] == item){
+        widgets[i] = last;
+        widgets[i-1] = item;
+      }
+      last = widgets[i];
+    }
+    // set new list as elements for the toolboxList
+    contextMenuList->clear();
+    contextMenuList->addItems(widgets);
+    //highlight active item
+    contextMenuList->setCurrentRow(oldRow-1);
+  }
+}
+
+/// Move widget down in the list
+void viewModeWidget::slotMoveContextMenuDown(){
+  if (contextMenuList->selectedItems().count() == 1){
+    if (contextMenuList->currentRow() == contextMenuList->count()-1) return;
+    //extract a list of all items
+    QString item = contextMenuList->currentItem()->text();
+    int oldRow = contextMenuList->currentRow();
+    QStringList widgets;
+    for (int i=0; i < contextMenuList->count(); i++)
+      widgets << contextMenuList->item(i)->text();
+    
+    //reorder items
+    QString last = widgets[widgets.size()-1];
+    for (int i=widgets.size()-2; i >= 0; i--){
+      if (widgets[i] == item){
+        widgets[i] = last;
+        widgets[i+1] = item;
+      }
+      last = widgets[i];
+    }
+    // set new list as elements for the toolboxList
+    contextMenuList->clear();
+    contextMenuList->addItems(widgets);
+    //highlight active item
+    contextMenuList->setCurrentRow(oldRow+1);
+  }
+}
+
 
 
 // =======================================================================================================
@@ -511,6 +660,11 @@ void viewModeWidget::slotChangeView(){
   QStringList toolbars;
   for (int i=0; i < toolbarList->count(); i++)
     toolbars << toolbarList->item(i)->text();
+  
+  //get context menus
+  QStringList contextmenus;
+  for (int i=0; i < contextMenuList->count(); i++)
+    contextmenus << contextMenuList->item(i)->text();
   
   //get mode
   QString mode = "";
@@ -553,6 +707,15 @@ void viewModeWidget::slotChangeView(){
     matching = false;
   }
   
+  // Check if context menu list matches:
+  if ( modes_[id]->visibleContextMenus.size() == contextmenus.size() ) {
+    for ( int i = 0 ; i < modes_[id]->visibleContextMenus.size(); ++i  ) 
+      if ( modes_[id]->visibleContextMenus[i] != contextmenus[i] )
+        matching = false;
+  } else {
+    matching = false;
+  }
+  
   if ( !matching ) {
     int ret = QMessageBox::warning(this, 
                                    tr("Mode has been changed!"),
@@ -564,7 +727,7 @@ void viewModeWidget::slotChangeView(){
     
   }
   
-  emit changeView(mode,toolboxes,toolbars);
+  emit changeView(mode,toolboxes,toolbars,contextmenus);
   close();
 }
 
@@ -593,6 +756,11 @@ void viewModeWidget::slotSaveMode(){
   QStringList toolbars;
   for (int i=0; i < toolbarList->count(); i++)
     toolbars << toolbarList->item(i)->text();
+  
+  // Get Context Menus
+  QStringList contextmenus;
+  for (int i=0; i < contextMenuList->count(); i++)
+    contextmenus << contextMenuList->item(i)->text();
    
   bool  createNewMode = false;
 
@@ -637,13 +805,14 @@ void viewModeWidget::slotSaveMode(){
         return;
       }
       
-    emit saveMode(name, true, toolboxes, toolbars);
+    emit saveMode(name, true, toolboxes, toolbars, contextmenus);
     show(name);      
   } else {
-    emit saveMode(modes_[id]->name, true, toolboxes, toolbars);
+    emit saveMode(modes_[id]->name, true, toolboxes, toolbars, contextmenus);
     show(modes_[id]->name);    
   }
   
+  slotModeChanged(QString());
 }  
 
 

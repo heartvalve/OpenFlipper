@@ -609,7 +609,7 @@ CoreWidget::toggleFullscreen() {
         setWindowState( windowState() ^  Qt::WindowFullScreen);
 
       //show toolbars
-      setViewMode( OpenFlipper::Options::defaultToolboxMode() );
+      setViewMode( OpenFlipper::Options::currentViewMode() );
 
       //show the menubar
       menuBar()->show();
@@ -822,10 +822,10 @@ CoreWidget::showToolbox( bool _state ) {
 
   }else{
     //reset last ViewMode
-    if (OpenFlipper::Options::defaultToolboxMode().trimmed() == "")
+    if (OpenFlipper::Options::currentViewMode().trimmed() == "")
       setViewMode("All");
     else
-      setViewMode( OpenFlipper::Options::defaultToolboxMode() );
+      setViewMode( OpenFlipper::Options::currentViewMode() );
     toolBoxArea_->setVisible(true);
   }
 }
