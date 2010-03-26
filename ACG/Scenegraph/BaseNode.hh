@@ -99,7 +99,10 @@ enum PickTarget
   /// picks only visible front edges (may not be implemented for all nodes)
   PICK_FRONT_EDGE,
   /// picks only visible front verices (may not be implemented for all nodes)
-  PICK_FRONT_VERTEX
+  PICK_FRONT_VERTEX,
+
+  /// Pick spline curve or surface (picks u or u,v coords respectively)
+  PICK_SPLINE
 };
 
 
