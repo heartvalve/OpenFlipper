@@ -95,21 +95,24 @@ void Core::applyOptions(){
     // gl mouse cursor
     coreWidget_->setForceNativeCursor( OpenFlipperSettings().value("Core/Gui/glViewer/nativeMouse",false).toBool() );
     
+    QString pickRenderMode =  OpenFlipperSettings().value("Core/Debug/Picking/RenderPickingMode",QString("PICK_ANYTHING")).toString();
+    
     // Prepare Picking Debugger Flag
     ACG::SceneGraph::PickTarget target;
-    if ( OpenFlipper::Options::pickingRenderMode() == "PICK_ANYHING") {
+    if ( pickRenderMode == "PICK_ANYTHING") {
       target = ACG::SceneGraph::PICK_ANYTHING;
-    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_VERTEX") {
+    } else if ( pickRenderMode == "PICK_VERTEX") {
       target = ACG::SceneGraph::PICK_VERTEX;
-    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_EDGE") {
+    } else if ( pickRenderMode == "PICK_EDGE") {
       target = ACG::SceneGraph::PICK_EDGE;
-    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_FACE") {
+    } else if ( pickRenderMode == "PICK_FACE") {
       target = ACG::SceneGraph::PICK_FACE;
-    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_FRONT_VERTEX") {
+    } else if ( pickRenderMode == "PICK_FRONT_VERTEX") {
       target = ACG::SceneGraph::PICK_FRONT_VERTEX;
-    } else if ( OpenFlipper::Options::pickingRenderMode() == "PICK_FRONT_EDGE") {
+    } else if ( pickRenderMode == "PICK_FRONT_EDGE") {
       target = ACG::SceneGraph::PICK_FRONT_EDGE;
     } else {
+      std::cerr << "Error : optionHandling unable to find pick mode!!! " << pickRenderMode.toStdString() << std::endl;
       target = ACG::SceneGraph::PICK_ANYTHING;
     }
 
@@ -146,7 +149,7 @@ void Core::applyOptions(){
       PluginFunctions::viewerProperties(i).wheelZoomFactorShift( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift").toDouble() );
 
       // Picking Debugger
-      PluginFunctions::viewerProperties(i).renderPicking(OpenFlipper::Options::renderPicking(), target );
+      PluginFunctions::viewerProperties(i).renderPicking( OpenFlipperSettings().value("Core/Debug/Picking/RenderPicking",false).toBool() , target );
     }
 
     //hideToolbox
