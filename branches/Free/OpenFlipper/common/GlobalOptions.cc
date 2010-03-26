@@ -168,9 +168,6 @@ static bool gridVisible_ = false;
 /// Store the toolbox gui Mode mode
 static bool hideToolbox_ = false;
 
-/// Store the logger gui Mode mode
-static LoggerState loggerState_ = InScene;
-
 /// Store if we should go into multiview Mode
 static bool multiView_ = true;
 
@@ -563,12 +560,12 @@ unsigned int examinerWidgets() {
 
 /// Set to current
 void loggerState( LoggerState _state) {
-  loggerState_ = _state;
+  OpenFlipperSettings().setValue("Core/Gui/LogWindow/LogWindowMode",_state);
 }
 
 /// Current state of the logging window?
 LoggerState loggerState( ) {
-  return loggerState_;
+  return static_cast<OpenFlipper::Options::LoggerState> (OpenFlipperSettings().value("Core/Gui/LogWindow/LogWindowMode",0).toInt() );
 }
 
 /// Set if we start the toolbox widget closed
