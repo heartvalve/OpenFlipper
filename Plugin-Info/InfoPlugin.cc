@@ -124,7 +124,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
   // Boundaries
   info_->boundaries->setText( locale.toString(MeshInfo::boundaryCount(_mesh)) );
   // Genus
-  int genus = 1 - (_mesh->n_vertices() - _mesh->n_edges() + _mesh->n_faces() ) / 2;
+  int genus = (2 - _mesh->n_vertices() + _mesh->n_edges() - _mesh->n_faces()) / 2;
   info_->genus->setText( QString::number(genus) );
 
   // Coordinates
