@@ -162,7 +162,8 @@ static bool drawModesInContextMenu_ = true;
 /// Set if a grid should be drawn in every viewer
 static bool gridVisible_ = false;
 
-static QString defaultToolboxMode_ = "";
+/// Current view mode
+static QString currentViewMode_ = "";
 
 static QString title_ = "OpenFlipper v?";
 
@@ -538,14 +539,14 @@ LoggerState loggerState( ) {
   return static_cast<OpenFlipper::Options::LoggerState> (OpenFlipperSettings().value("Core/Gui/LogWindow/LogWindowMode",0).toInt() );
 }
 
-/// Which mode should be the default for the toolbar?
-QString defaultToolboxMode( ) {
-  return defaultToolboxMode_;
+/// Which mode should is currently selected?
+QString currentViewMode( ) {
+  return currentViewMode_;
 }
 
-/// Which mode should be the default for the toolbar?
-void defaultToolboxMode( QString _mode ) {
-  defaultToolboxMode_ = _mode;
+/// Which view mode is currently selected?
+void currentViewMode( QString _mode ) {
+  currentViewMode_ = _mode;
 }
 
 

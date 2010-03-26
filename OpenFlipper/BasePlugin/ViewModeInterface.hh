@@ -99,6 +99,16 @@ class ViewModeInterface {
     */
     virtual void defineViewModeToolbars(QString /*_mode*/, QStringList /*_usedToolbars*/){};    
     
+    /** \brief Defines a ViewMode for the Toolbars
+    *
+    * With this function you can define a set of context menus which should be visible 
+    * for the specified view mode.
+    * 
+    * @param _mode name of the ViewMode
+    * @param _usedWidgets list of used context menus 
+    */
+    virtual void defineViewModeContextMenus(QString /*_mode*/, QStringList /*_usedContextMenus*/){};    
+    
     /** \brief Defines an Icon for a ViewMode
     *
     * With this function you can define an Icon associated with this view mode

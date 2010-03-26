@@ -77,8 +77,6 @@ void Core::readApplicationOptions(INIFile& _ini) {
   // Parse standard options
   if ( _ini.section_exists("Options") ) {
 
-    // TODO: Load View Mode Toolbars and Context Menu Items
-
     // load ViewModes
     int viewModeCount;
     if (_ini.get_entry(viewModeCount,"Options","ViewModeCount") )
@@ -86,26 +84,31 @@ void Core::readApplicationOptions(INIFile& _ini) {
 
         QString entryToolbars;
         QString entryToolboxes;
+        QString entryContextMenus;
         QString entryIcon;
 
-        QString keyToolbars  = "ViewModeToolbars"  + QString::number(i);
-        QString keyToolboxes = "ViewModeToolboxes" + QString::number(i);
-        QString keyIcon      = "ViewModeIcon"      + QString::number(i);
+        QString keyToolbars     = "ViewModeToolbars"     + QString::number(i);
+        QString keyToolboxes    = "ViewModeToolboxes"    + QString::number(i);
+        QString keyContextMenus = "ViewModeContextMenus" + QString::number(i);
+        QString keyIcon         = "ViewModeIcon"         + QString::number(i);
 
         // Read the entries
-        if ( !_ini.get_entry( entryToolbars  , "Options" , keyToolbars ) )  continue;
-        if ( !_ini.get_entry( entryToolboxes , "Options" , keyToolboxes ) ) continue;
-        if ( !_ini.get_entry( entryIcon      , "Options" , keyIcon ) )      continue;
+        if ( !_ini.get_entry( entryToolbars     , "Options" , keyToolbars ) )     continue;
+        if ( !_ini.get_entry( entryToolboxes    , "Options" , keyToolboxes ) )    continue;
+        if ( !_ini.get_entry( entryContextMenus , "Options" , keyContextMenus ) ) continue;
+        if ( !_ini.get_entry( entryIcon         , "Options" , keyIcon ) )         continue;
 
-        QStringList toolBars = entryToolbars.split(";");
-        QStringList toolBoxes = entryToolboxes.split(";");
+        QStringList toolBars     = entryToolbars.split(";");
+        QStringList toolBoxes    = entryToolboxes.split(";");
+        QStringList contextMenus = entryContextMenus.split(";");
 
-        // Get Mode name ( prepended to all toolbox/toolbar lists
+        // Get Mode name ( prepended to all toolbox/toolbar/context menu lists )
         QString mode = toolBoxes.first();
 
         // Remove leading Modes
         toolBoxes.removeFirst();
         toolBars.removeFirst();
+        contextMenus.removeFirst();
 
         // Check if the mode already exists
         bool found = false;
@@ -117,9 +120,10 @@ void Core::readApplicationOptions(INIFile& _ini) {
           ViewMode* vm = new ViewMode();
           vm->name = mode;
           vm->custom = true;
-          vm->visibleToolbars  = toolBars;
-          vm->visibleToolboxes = toolBoxes;
-          vm->icon             = entryIcon;
+          vm->visibleToolbars     = toolBars;
+          vm->visibleToolboxes    = toolBoxes;
+          vm->visibleContextMenus = contextMenus;
+          vm->icon                = entryIcon;
           viewModes_.push_back(vm);
         }
 
@@ -218,9 +222,9 @@ void Core::readApplicationOptions(INIFile& _ini) {
     //============================================================================
     // Load the setting for the default Toolbox mode
     //============================================================================
-    QString toolboxMode = false;
-    if ( _ini.get_entry( toolboxMode, "Options" , "DefaultToolboxMode") )
-      OpenFlipper::Options::defaultToolboxMode(toolboxMode);
+    QString viewmode = false;
+    if ( _ini.get_entry( viewmode, "Options" , "CurrentViewMode") )
+      OpenFlipper::Options::currentViewMode(viewmode);
 
     //============================================================================
     // Load the setting for the translation language
@@ -383,10 +387,10 @@ void Core::writeApplicationOptions(INIFile& _ini) {
     _ini.add_entry( "Options" , key , type );
   }
 
-  // TODO: Save View Mode Toolbars and Context Menu Items
   // save ViewModes
   QVector< QString > toolboxes;
   QVector< QString > toolbars;
+  QVector< QString > contextmenus;
   QVector< QString > icons;
 
   if ( OpenFlipper::Options::gui() )
@@ -410,17 +414,25 @@ void Core::writeApplicationOptions(INIFile& _ini) {
           entryToolbars += ";" + coreWidget_->viewModes_[i]->visibleToolbars[j];
 
         toolbars.push_back(entryToolbars);
+	
+	QString entryContextMenus = coreWidget_->viewModes_[i]->name;
+
+        //store widgets
+        for (int j=0; j < coreWidget_->viewModes_[i]->visibleContextMenus.size(); j++)
+          entryContextMenus += ";" + coreWidget_->viewModes_[i]->visibleContextMenus[j];
+
+        contextmenus.push_back(entryContextMenus);
 
         icons.push_back(coreWidget_->viewModes_[i]->icon);
-
       }
 
   //save viewmodes to ini
   _ini.add_entry("Options","ViewModeCount" ,toolboxes.size());
   for (int i=0; i < toolboxes.size(); i++) {
-    _ini.add_entry("Options","ViewModeToolboxes" + QString::number(i) ,toolboxes[i]);
-    _ini.add_entry("Options","ViewModeToolbars"  + QString::number(i) ,toolbars[i] );
-    _ini.add_entry("Options","ViewModeIcon"      + QString::number(i) ,icons[i] );
+    _ini.add_entry("Options","ViewModeToolboxes"     + QString::number(i) ,toolboxes[i]);
+    _ini.add_entry("Options","ViewModeToolbars"      + QString::number(i) ,toolbars[i] );
+    _ini.add_entry("Options","ViewModeContextMenus"  + QString::number(i) ,contextmenus[i] );
+    _ini.add_entry("Options","ViewModeIcon"          + QString::number(i) ,icons[i] );
   }
 
   //save KeyBindings
@@ -430,8 +442,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   //write default dataType to INI
   _ini.add_entry( "Options" , "default_DataType" , OpenFlipper::Options::lastDataType() );
 
-  //write default ToolboxMode
-  _ini.add_entry("Options","DefaultToolboxMode",OpenFlipper::Options::defaultToolboxMode() );
+  //write current ViewMode
+  _ini.add_entry("Options","CurrentViewMode",OpenFlipper::Options::currentViewMode() );
 
   //============================================================================
   // Debugging

@@ -74,8 +74,8 @@ void Core::applyOptions(){
     coreWidget_->initViewModes();
 
     //Set default Viewmode
-    if (OpenFlipper::Options::defaultToolboxMode() != "")
-      coreWidget_->slotChangeView(OpenFlipper::Options::defaultToolboxMode(), QStringList(), QStringList());
+    if (OpenFlipper::Options::currentViewMode() != "")
+      coreWidget_->slotChangeView(OpenFlipper::Options::currentViewMode(), QStringList(), QStringList(), QStringList());
     //Set Fullscreen
     if ( OpenFlipperSettings().value("Core/Gui/fullscreen",false).toBool() )
       coreWidget_->setWindowState( coreWidget_->windowState() | Qt::WindowFullScreen);

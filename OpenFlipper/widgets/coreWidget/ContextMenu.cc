@@ -469,12 +469,29 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
 
   }
 
+  //find the currently selected view mode
+  int id = -1;
+  for (int i=0; i<viewModes_.size(); i++) {
+    if (viewModes_[i]->name == OpenFlipper::Options::currentViewMode()) {
+      id = i;
+      break;
+    }
+  }
+  
+  /// \todo Sort the menu entries by the order given in visibleContextMenus
   //first add all menus
   QMapIterator<QString, QAction*> it(menuMap);
-
+  
+  QStringList visible = viewModes_[id]->visibleContextMenus;
+  visible.replaceInStrings(QRegExp(".*>"), "");
+  for (int i=0; i < visible.size(); i++)
+    std::cout << visible.at(i).toStdString() << std::endl;
+  
   while (it.hasNext()) {
      it.next();
-    _menu->addAction( it.value() );
+     if (visible.contains(it.key())) {
+        _menu->addAction( it.value() );
+     }
   }
 
   _menu->addSeparator();
@@ -484,7 +501,9 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
 
   while (it2.hasNext()) {
      it2.next();
-    _menu->addAction( it2.value() );
+     if (visible.contains(it2.key())) {
+        _menu->addAction( it2.value() );
+     }
   }
 
   return added;
@@ -586,7 +605,8 @@ void CoreWidget::slotAddContextItem(QAction* _entry, ContextMenuType _type) {
   info.action = _entry;
   info.type   = _type;
 
-  contextMenus_.push_back(info);
+  contextMenus_.push_back(info); 
+  slotAddContextItemToViewMode(_entry);
 }
 
 void CoreWidget::slotAddContextItem( QAction* _entry , DataType _dataType ,ContextMenuType _type ) {
@@ -596,6 +616,44 @@ void CoreWidget::slotAddContextItem( QAction* _entry , DataType _dataType ,Conte
   info.type        = _type;
 
   contextMenus_.push_back(info);
+  slotAddContextItemToViewMode(_entry);
+}
+
+void CoreWidget::slotAddContextItemToViewMode( QAction* _entry ) {
+  int id = -1;
+  // Find the plugin which added this Context Menu
+  for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+    if ( plugins_[i].plugin == sender() ) {
+      id = i;
+      break;
+    }
+  }
+
+  // Find the scripting plugin because we assign this context menu to it as we did not find the original sender
+  if ( id == -1 ) {
+    for ( uint i = 0 ; i < plugins_.size(); ++i ) {
+      if ( plugins_[i].name == "Scripting" ) {
+        id = i;
+        break;
+      }
+    }
+
+
+    if ( id == -1 ) {
+      std::cerr << "Unknown sender plugin when adding Context Menu!" << std::endl;
+      return;
+    }
+  }
+
+  plugins_[id].contextMenus.push_back( std::pair< QString,QAction* >( plugins_[id].name + "->" + _entry->text(), _entry) );
+
+  // add widget name to viewMode 'all'
+  if ( !viewModes_[0]->visibleContextMenus.contains(plugins_[id].name + "->" + _entry->text()) ){
+    viewModes_[0]->visibleContextMenus << plugins_[id].name + "->" + _entry->text();
+    viewModes_[0]->visibleContextMenus.sort();
+  }
+
+  setViewMode( OpenFlipper::Options::currentViewMode() );
 }
 
 void CoreWidget::slotUpdateViewerDrawMenu() {

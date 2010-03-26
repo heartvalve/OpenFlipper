@@ -110,6 +110,7 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringLi
     vm->icon   = "Unknown.png";
 
     vm->visibleToolbars = QString("Main Toolbar;Viewer Toolbar").split(";");
+    vm->visibleContextMenus = viewModes_[0]->visibleContextMenus;
     
     if (_custom) {
       viewModes_.push_back(vm);
@@ -155,6 +156,8 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
     vm->custom = _custom;
     vm->icon   = "Unknown.png";
 
+    vm->visibleContextMenus = viewModes_[0]->visibleContextMenus;
+    
     if (_custom) {
       viewModes_.push_back(vm);
     } else {
@@ -180,6 +183,53 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
     _usedToolbars.prepend("Main Toolbar");
   
   vm->visibleToolbars = _usedToolbars;
+
+  initViewModes();
+}
+
+
+void CoreWidget::slotAddViewModeContextMenus(QString _mode, QStringList _usedContextMenus){
+  slotAddViewModeContextMenus(_mode, false, _usedContextMenus);
+}
+
+void CoreWidget::slotAddViewModeContextMenus(QString _mode, bool _custom, QStringList _usedContextMenus){
+  int id = -1;
+
+  // Check if it already exists
+  for ( int i = 0 ; i < viewModes_.size(); i++) {
+    if ( viewModes_[i]->name == _mode ) {
+      id = i;
+      break;
+    }
+  }
+
+  ViewMode* vm = 0;
+  if ( id == -1 ) {
+    vm         = new ViewMode();
+    vm->name   = _mode;
+    vm->custom = _custom;
+    vm->icon   = "Unknown.png";
+
+    vm->visibleToolbars = QString("Main Toolbar;Viewer Toolbar").split(";");
+    
+    if (_custom) {
+      viewModes_.push_back(vm);
+    } else {
+      //insert before custom viewModes
+      int i = viewModes_.size();
+      for (int k=0; k < viewModes_.size(); k++)
+        if (viewModes_[k]->custom == true){
+          i = k;
+          break;
+        }
+      viewModes_.insert(i,vm);
+    }
+
+  } else {
+    vm = viewModes_[id];
+  }
+  
+  vm->visibleContextMenus = _usedContextMenus;
 
   initViewModes();
 }
@@ -255,12 +305,13 @@ void CoreWidget::slotSetViewMode( QAction* action){
 
 /// Slot for setting the viewMode from menu
 void CoreWidget::setViewMode( QString _mode ){
-  slotChangeView(_mode, QStringList(), QStringList());
+  slotChangeView(_mode, QStringList(), QStringList(), QStringList());
 }
 
-void CoreWidget::slotAddViewModeComplete(QString _mode , bool _custom, QStringList _toolboxes, QStringList _toolbars) {
+void CoreWidget::slotAddViewModeComplete(QString _mode , bool _custom, QStringList _toolboxes, QStringList _toolbars, QStringList _contextmenus) {
   slotAddViewModeToolbars(_mode,_custom,_toolbars);
   slotAddViewModeToolboxes(_mode,_custom,_toolboxes);
+  slotAddViewModeContextMenus(_mode,_custom,_contextmenus);
 }
 
 /// show dialog for changing ViewMode
@@ -270,11 +321,11 @@ void CoreWidget::slotViewModeDialog(){
   if ( !widget ){
     widget = new viewModeWidget(viewModes_);
     widget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
-    connect(widget, SIGNAL(changeView(QString, QStringList, QStringList)), this, SLOT(slotChangeView(QString, QStringList, QStringList)) );
-    connect(widget, SIGNAL(saveMode(QString, bool, QStringList, QStringList)), this, SLOT(slotAddViewModeComplete(QString, bool, QStringList, QStringList)) );
+    connect(widget, SIGNAL(changeView(QString, QStringList, QStringList, QStringList)), this, SLOT(slotChangeView(QString, QStringList, QStringList, QStringList)) );
+    connect(widget, SIGNAL(saveMode(QString, bool, QStringList, QStringList, QStringList)), this, SLOT(slotAddViewModeComplete(QString, bool, QStringList, QStringList, QStringList)) );
     connect(widget, SIGNAL(removeMode(QString)), this, SLOT(slotRemoveViewMode(QString)) );
   }
-  widget->show( OpenFlipper::Options::defaultToolboxMode() );
+  widget->show( OpenFlipper::Options::currentViewMode() );
 }
 
 void CoreWidget::slotViewChangeDialog() {
@@ -284,12 +335,12 @@ void CoreWidget::slotViewChangeDialog() {
   if ( !modeChangeWidget ){
     modeChangeWidget = new viewModeChangeWidget(viewModes_, this);
     modeChangeWidget->setWindowIcon( OpenFlipper::Options::OpenFlipperIcon() );
-    connect(modeChangeWidget, SIGNAL(changeView(QString, QStringList, QStringList)), this, SLOT(slotChangeView(QString, QStringList, QStringList)) );
+    connect(modeChangeWidget, SIGNAL(changeView(QString, QStringList, QStringList, QStringList)), this, SLOT(slotChangeView(QString, QStringList, QStringList, QStringList)) );
   }
 
   // Make it look like a dialog
   modeChangeWidget->setWindowFlags(Qt::Popup);
-  modeChangeWidget->show( OpenFlipper::Options::defaultToolboxMode() );
+  modeChangeWidget->show( OpenFlipper::Options::currentViewMode() );
 
   // Move it to the position of the push button
   QPoint posButton = vmChangeButton_->mapToGlobal(vmChangeButton_->pos());
@@ -298,7 +349,7 @@ void CoreWidget::slotViewChangeDialog() {
 }
 
 /// Slot for Changing visible toolWidgets
-void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars ){
+void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus ){
 
   //try to find Widgets if they aren't given
   if (_mode != "" && _toolboxWidgets.size() == 0 && _toolbars.size() == 0)
@@ -306,6 +357,7 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
       if (viewModes_[i]->name == _mode) {
         _toolboxWidgets = viewModes_[i]->visibleToolboxes;
         _toolbars       = viewModes_[i]->visibleToolbars;
+	_contextmenus	= viewModes_[i]->visibleContextMenus;
       }
   
   // Remove all toolbox entries
@@ -342,7 +394,7 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
 
 
   if (_mode != "")
-    OpenFlipper::Options::defaultToolboxMode(_mode);
+    OpenFlipper::Options::currentViewMode(_mode);
 
 }
 

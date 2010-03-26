@@ -507,13 +507,13 @@ QString helpDirStr();
   DLLEXPORT
   LoggerState loggerState( );
 
-  /// Which mode should be the default for the toolbar?
+  /// Which view mode is currently selected?
   DLLEXPORT
-  QString defaultToolboxMode( );
+  QString currentViewMode( );
 
-  /// Which mode should be the default for the toolbar?
+  /// Which view mode is currently selected?
   DLLEXPORT
-  void defaultToolboxMode( QString _mode );
+  void currentViewMode( QString _mode );
 
   /// Titel of the main window
   DLLEXPORT

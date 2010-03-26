@@ -500,8 +500,8 @@ Core::init() {
     //get keyAssignments from config files
     restoreKeyBindings();
 
-    if ( OpenFlipper::Options::defaultToolboxMode( ) != "" )
-      coreWidget_->setViewMode( OpenFlipper::Options::defaultToolboxMode() );
+    if ( OpenFlipper::Options::currentViewMode( ) != "" )
+      coreWidget_->setViewMode( OpenFlipper::Options::currentViewMode() );
     else
       coreWidget_->setViewMode("All");
 

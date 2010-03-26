@@ -732,7 +732,11 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
               
     if ( checkSignal(plugin, "defineViewModeToolbars(QString,QStringList)"))
       connect(plugin, SIGNAL( defineViewModeToolbars(QString, QStringList) ),
-              coreWidget_, SLOT( slotAddViewModeToolbars(QString, QStringList) ),Qt::DirectConnection );                
+              coreWidget_, SLOT( slotAddViewModeToolbars(QString, QStringList) ),Qt::DirectConnection );    
+              
+    if ( checkSignal(plugin, "defineViewModeContextMenus(QString,QStringList)"))
+      connect(plugin, SIGNAL( defineViewModeContextMenus(QString, QStringList) ),
+              coreWidget_, SLOT( slotAddViewModeContextMenus(QString, QStringList) ),Qt::DirectConnection );                
               
     if ( checkSignal(plugin, "defineViewModeIcon(QString,QString)"))
       connect(plugin, SIGNAL( defineViewModeIcon(QString, QString) ),
