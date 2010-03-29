@@ -298,7 +298,6 @@ void SelectionPlugin::componentSelection(QMouseEvent* _event) {
       if ( PluginFunctions::getPickedObject(node_idx, object) ) {
          if ( object->picked(node_idx) && object->dataType(DATA_TRIANGLE_MESH) ){
 
-#include <../OpenFlipper/Plugin-Selection/SelectionPlugin.hh>
             componentSelection(PluginFunctions::triMesh(object), target_idx);
          }
 
