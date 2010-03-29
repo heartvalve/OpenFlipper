@@ -69,12 +69,12 @@ void
 GlutPrimitiveNode::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
-  if (_bbMin[0] > -size_)  _bbMin[0] = -size_;
-  if (_bbMin[1] > -size_)  _bbMin[1] = -size_;
-  if (_bbMin[2] > -size_)  _bbMin[2] = -size_;
-  if (_bbMax[0] <  size_)  _bbMax[0] =  size_;
-  if (_bbMax[1] <  size_)  _bbMax[1] =  size_;
-  if (_bbMax[2] <  size_)  _bbMax[2] =  size_;
+  if (_bbMin[0] > position_[0]-size_)  _bbMin[0] = position_[0] - size_;
+  if (_bbMin[1] > position_[1]-size_)  _bbMin[1] = position_[1] - size_;
+  if (_bbMin[2] > position_[2]-size_)  _bbMin[2] = position_[2] - size_;
+  if (_bbMax[0] < position_[0]+ size_)  _bbMax[0] = position_[0] + size_;
+  if (_bbMax[1] < position_[1]+ size_)  _bbMax[1] = position_[1] + size_;
+  if (_bbMax[2] < position_[2]+ size_)  _bbMax[2] = position_[2] + size_;
 }
 
 
