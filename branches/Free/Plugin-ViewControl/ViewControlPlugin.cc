@@ -75,6 +75,7 @@ void ViewControlPlugin::pluginsInitialized() {
   emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TetMeshCGAL")   , CONTEXTOBJECTMENU );
   emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Volume")        , CONTEXTOBJECTMENU );
   emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineSurface"), CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TSplineMesh"),    CONTEXTOBJECTMENU );
 
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 
