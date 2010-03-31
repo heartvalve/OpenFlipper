@@ -22,10 +22,16 @@ if( WIN32 )
 else( WIN32 )
    FIND_PATH( FFTW_INCLUDE_DIR fftw3.h
               PATHS /usr/local/include /usr/include )
-   SET( FFTW_LIBRARIES fftw3 fftw3l fftw3f fftw3_threads fftw3l_threads fftw3f_threads )
+
+   IF( APPLE)
+     SET( FFTW_LIBRARIES fftw3 fftw3_threads )
+   else( APPLE )
+     SET( FFTW_LIBRARIES fftw3 fftw3l fftw3f fftw3_threads fftw3l_threads fftw3f_threads )
+   endif(APPLE)
+
    FIND_LIBRARY( FFTW_LIBRARY_LOCATION
                  NAMES ${FFTW_LIBRARIES}
-                 PATHS /usr/lib /usr/local/lib )
+                 PATHS /usr/lib /usr/local/lib /opt/local/lib )
 endif( WIN32 )
 
 GET_FILENAME_COMPONENT( FFTW_LIBRARY_DIR ${FFTW_LIBRARY_LOCATION} PATH )
