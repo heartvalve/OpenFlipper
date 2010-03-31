@@ -208,6 +208,9 @@ void
 MeshNodeT<Mesh>::
 draw(GLState& _state, DrawModes::DrawMode _drawMode) {
   
+  // Update strips if necessary
+  stripProcessor_.stripify();
+  
   /// \todo Whats this? Why is this set here
   glDepthFunc(depthFunc());
 
@@ -482,9 +485,6 @@ draw_faces(FaceMode _mode) {
   
   // If we have all properties per Vertex, we can render with index array from triangle strips!
   if (_mode == PER_VERTEX) {
-    
-    // Update strips if necessary
-    stripProcessor_.stripify();
     
     typename StripProcessorT<Mesh>::StripsIterator strip_it   = stripProcessor_.begin();
     typename StripProcessorT<Mesh>::StripsIterator strip_last = stripProcessor_.end();
