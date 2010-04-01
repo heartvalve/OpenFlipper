@@ -141,10 +141,10 @@ void QtPlaneSelect::slotMouseEvent(QMouseEvent* event)
 
               lineNode->clear( );
 
-              lineNode->add_line( ACG::Vec3f( leftvec*10) , ACG::Vec3f( rightvec*10 ) );
-              lineNode->add_line( ACG::Vec3f(normal*10)   , ACG::Vec3f(0,0,0) );
-              lineNode->add_line( ACG::Vec3f( leftvec*10) , ACG::Vec3f(0,0,0) );
-              lineNode->add_line( ACG::Vec3f(rightvec*10) , ACG::Vec3f(0,0,0) );
+              lineNode->add_line( leftvec  * 10 , rightvec * 10  ); 
+              lineNode->add_line( normal   * 10 , ACG::Vec3d(0,0,0) );
+              lineNode->add_line( leftvec  * 10 , ACG::Vec3d(0,0,0) );
+              lineNode->add_line( rightvec * 10 , ACG::Vec3d(0,0,0) );
 
 
               emit updateViewProxy( );
