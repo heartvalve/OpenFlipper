@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 ( ? , 8870 )</b>
+ * - <b>OpenFlipper 1.0 ( ? , 8890 )</b>
  *      - <b>Core</b>
  *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
  *          - Bugfix for Processmanager when using blocking mode for new threads
@@ -10,10 +10,17 @@
  *      - <b>ACG</b>
  *          - Bugfix for glstate functions returning fovy and aspect ratio
  *          - New PICK_SPLINE Pickmode added
- *          - Fixed MeshNode bug where stripes are sometimes not updated correctly
- *          - Fixed pick Scenegraph multipass bug where picking failed when blending or other color changing enter and leave functions where present
+ *          - SceneGraph
+ *              - Fixed picking multipass bug where picking failed when blending or other color changing enter and leave functions where present
  *          - GlutPrimitive Node
  *              - Fixed bounding box computation which was centered around origin and not around center of object
+ *              - Now handles multiple primitives in one node
+ *          - PointNode
+ *              - Use Vec3d
+ *          - LineNode
+ *              - Use Vec3d
+ *          - MeshNode2
+ *              - Fixed bug where stripes are sometimes not updated correctly
  *      - <b>Plugins</b>
  *              - IsoTropic Remesher
  *                      - Process indicator added
@@ -27,6 +34,7 @@
  *      - <b>Build System</b>
  *              - Added FFTW Finder
  *              - Added Petsc finder
+ *              - Fixed bug wher Mac bundles did not include the Qt Plugins (missing jpeg support/...)
  *
  * - <b>OpenFlipper 1.0 RC6 ( 2010/03/17 , 8742 )</b>
  *      - <b>Core</b>
