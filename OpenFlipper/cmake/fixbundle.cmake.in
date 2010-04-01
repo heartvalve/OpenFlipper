@@ -22,7 +22,7 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
 
   # ...embed qt plugins in the Libraries folder:
   #
-  if(item MATCHES "@QT_PLUGINS_DIR@/.*\\.dylib$")
+  if(item MATCHES "@QT_PLUGINS_DIR@" AND item MATCHES "\\.bundle")
     file (RELATIVE_PATH _plugin "@QT_PLUGINS_DIR@" "${item}")
     get_filename_component(_dir "${_plugin}" PATH)
     set(path "@executable_path/../Resources/QtPlugins/${_dir}")
@@ -41,7 +41,7 @@ include (BundleUtilities)
 
 # copy qt plugins to bundle
 file (GLOB _plugins "@CMAKE_BINARY_DIR@/Build/OpenFlipper.app/Contents/Resources/Plugins/*.so")
-file (GLOB_RECURSE _qtplugins "@QT_PLUGINS_DIR@/*.dylib")
+file (GLOB_RECURSE _qtplugins "@QT_PLUGINS_DIR@/*.bundle")
 foreach (_qtp ${_qtplugins})
   get_filename_component(_dir "${_qtp}" PATH)
   list(APPEND _qtdirs "${_dir}")
