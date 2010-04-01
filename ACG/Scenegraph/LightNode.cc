@@ -45,7 +45,7 @@
 
 //=============================================================================
 //
-//  CLASS LightSourceNode - IMPLEMENTATION
+//  CLASS LightNode - IMPLEMENTATION
 //
 //=============================================================================
 
@@ -53,7 +53,7 @@
 //== INCLUDES =================================================================
 
 
-#include "LightSourceNode.hh"
+#include "LightNode.hh"
 
 
 //== NAMESPACES ===============================================================
@@ -65,7 +65,7 @@ namespace SceneGraph {
 //== IMPLEMENTATION ========================================================== 
 
 
-LightSourceNode::LightSourceNode( BaseNode*            _parent, 
+LightNode::LightNode( BaseNode*            _parent, 
 				  const std::string&   _name) 
   : BaseNode(_parent, _name)
 {
@@ -77,7 +77,7 @@ LightSourceNode::LightSourceNode( BaseNode*            _parent,
     
 //----------------------------------------------------------------------------
 
-void LightSourceNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ ) 
+void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ ) 
 {
   // save old lights
   for(unsigned int i=0; i<lightsSave_.size(); i++)
@@ -116,7 +116,7 @@ void LightSourceNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */
 //----------------------------------------------------------------------------
 
 
-void LightSourceNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode*/ )
+void LightNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode*/ )
 {
   // restore old enabled lights
   for(unsigned int i=0; i<lights_.size(); i++)
@@ -132,7 +132,7 @@ void LightSourceNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _draw
 
 //----------------------------------------------------------------------------
 
-void LightSourceNode::set_parameters(GLenum _index, LightSource& _light)
+void LightNode::set_parameters(GLenum _index, LightSource& _light)
 {
 
   // set preferences of _light for GL_LIGHT#_index
@@ -152,7 +152,7 @@ void LightSourceNode::set_parameters(GLenum _index, LightSource& _light)
 
 //----------------------------------------------------------------------------
 
-void LightSourceNode::get_parameters(GLenum _index, LightSource& _light)
+void LightNode::get_parameters(GLenum _index, LightSource& _light)
 {
   // get preferences of GL_LIGHT#_index and store them in _light
   glGetLightfv(_index, GL_AMBIENT,  (GLfloat *)_light.ambientColor.data());

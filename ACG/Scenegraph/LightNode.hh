@@ -45,12 +45,12 @@
 
 //=============================================================================
 //
-//  CLASS LightSourceNode
+//  CLASS LightNode
 //
 //=============================================================================
 
-#ifndef ACG_LIGHTSOURCE_NODE_HH
-#define ACG_LIGHTSOURCE_NODE_HH
+#ifndef ACG_LIGHT_NODE_HH
+#define ACG_LIGHT_NODE_HH
 
 
 //== INCLUDES =================================================================
@@ -70,7 +70,7 @@ namespace SceneGraph {
 //== CLASS DEFINITION =========================================================
 
   
-/** \class LightSourceNode LightSourceNode.hh <ACG/Scenegraph/LightSourceNode.hh>
+/** \class LightNode LightNode.hh <ACG/Scenegraph/LightNode.hh>
 
     Set LightSources (0 to 7) for this node and all its children.  
     All changes will be done in the enter() method undone
@@ -81,7 +81,7 @@ namespace SceneGraph {
 
 
 
-class ACGDLLEXPORT LightSourceNode : public BaseNode
+class ACGDLLEXPORT LightNode : public BaseNode
 {
 
   /// Structure to hold options for one LightSource
@@ -127,14 +127,14 @@ class ACGDLLEXPORT LightSourceNode : public BaseNode
 public:
 
   /// Default constructor. Applies all properties.
-  LightSourceNode( BaseNode*           _parent = 0,
-		   const std::string&  _name = "<LightSourceNode>");
+  LightNode( BaseNode*           _parent = 0,
+		   const std::string&  _name = "<LightNode>");
 
   /// Destructor.
-  virtual ~LightSourceNode() {}
+  virtual ~LightNode() {}
 
     
-  ACG_CLASSNAME(LightSourceNode);
+  ACG_CLASSNAME(LightNode);
 
   /// set current Light Sources
   void enter(GLState& _state, DrawModes::DrawMode _drawmode);
@@ -207,6 +207,6 @@ private:
 } // namespace SceneGraph
 } // namespace ACG
 //=============================================================================
-#endif // ACG_LIGHTSOURCE_NODE_HH defined
+#endif // ACG_LIGHT_NODE_HH defined
 //=============================================================================
 
