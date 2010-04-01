@@ -1,19 +1,32 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 ( ? , 8813 )</b>
+ * - <b>OpenFlipper 1.0 ( ? , 8870 )</b>
  *      - <b>Core</b>
  *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
  *          - Bugfix for Processmanager when using blocking mode for new threads
  *      - <b>UI</b>
  *              - Improved mouse interaction(translation with middle mouse button is done in world coordinates now)
+ *              - Added Context Menus to view modes (Depending on view mode context menus can be hidden now)
  *      - <b>ACG</b>
  *          - Bugfix for glstate functions returning fovy and aspect ratio
+ *          - New PICK_SPLINE Pickmode added
+ *          - Fixed MeshNode bug where stripes are sometimes not updated correctly
+ *          - Fixed pick Scenegraph multipass bug where picking failed when blending or other color changing enter and leave functions where present
+ *          - GlutPrimitive Node
+ *              - Fixed bounding box computation which was centered around origin and not around center of object
  *      - <b>Plugins</b>
  *              - IsoTropic Remesher
  *                      - Process indicator added
+ *              - Topology Plugin
+ *                      - Added missing updates
+ *              - Info Plugin
+ *                      - Fixed unsigned int/int conversion problem resulting in wrong genus computation
  *      - <b>Documentation</b>
  *              - Added docs for the glstate to describe internal projection matrix construction and parameters
  *              - Improved Documentation for the process manager
+ *      - <b>Build System</b>
+ *              - Added FFTW Finder
+ *              - Added Petsc finder
  *
  * - <b>OpenFlipper 1.0 RC6 ( 2010/03/17 , 8742 )</b>
  *      - <b>Core</b>
