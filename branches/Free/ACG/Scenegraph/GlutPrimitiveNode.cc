@@ -64,22 +64,71 @@ namespace SceneGraph {
 
 //== IMPLEMENTATION ========================================================== 
 
+void 
+GlutPrimitiveNode::
+set_position(const Vec3d& _p, int _idx)
+{
+  if (_idx > -1 && _idx < (int)primitives_.size())
+    primitives_[_idx].position = _p; 
+}
+
+//----------------------------------------------------------------------------
+
+const Vec3d
+GlutPrimitiveNode::
+get_position(int _idx) const 
+{
+  if (_idx > -1 && _idx < (int)primitives_.size())
+    return primitives_[_idx].position; 
+  
+  return Vec3d(-1,-1,-1);
+}
+
+//----------------------------------------------------------------------------
+
+void
+GlutPrimitiveNode::
+set_size(double _s, int _idx) 
+{
+  if (_idx > -1 && _idx < (int)primitives_.size())
+    primitives_[_idx].size = _s; 
+}
+
+//----------------------------------------------------------------------------
+
+double
+GlutPrimitiveNode::
+get_size(int _idx) const
+{
+  if (_idx > -1 && _idx < (int)primitives_.size())
+    return primitives_[_idx].size; 
+  return -1;
+}
+
+//----------------------------------------------------------------------------
 
 void
 GlutPrimitiveNode::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
-  if (_bbMin[0] > position_[0]-size_)  _bbMin[0] = position_[0] - size_;
-  if (_bbMin[1] > position_[1]-size_)  _bbMin[1] = position_[1] - size_;
-  if (_bbMin[2] > position_[2]-size_)  _bbMin[2] = position_[2] - size_;
-  if (_bbMax[0] < position_[0]+ size_)  _bbMax[0] = position_[0] + size_;
-  if (_bbMax[1] < position_[1]+ size_)  _bbMax[1] = position_[1] + size_;
-  if (_bbMax[2] < position_[2]+ size_)  _bbMax[2] = position_[2] + size_;
+  Vec3d bbMin(FLT_MAX,FLT_MAX,FLT_MAX);
+  Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
+  
+  for (int i = 0; i < (int)primitives_.size(); ++i)
+  {
+    Vec3d sizeVec(primitives_[i].size, primitives_[i].size, primitives_[i].size);
+    bbMax.maximize(primitives_[i].position + sizeVec);
+    bbMin.minimize(primitives_[i].position - sizeVec);
+  }
+  
+  Vec3d bbMind = ACG::Vec3d(bbMin);
+  Vec3d bbMaxd = ACG::Vec3d(bbMax);
+  
+  _bbMin.minimize(bbMind);
+  _bbMax.maximize(bbMaxd);
 }
 
-
 //----------------------------------------------------------------------------
-
   
 DrawModes::DrawMode
 GlutPrimitiveNode::
@@ -92,95 +141,119 @@ availableDrawModes() const
 	   DrawModes::SOLID_SMOOTH_SHADED );
 }
 
-
 //----------------------------------------------------------------------------
-
 
 void
 GlutPrimitiveNode::
 draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
   glDepthFunc(depthFunc());
-  glPushMatrix();
-  glTranslatef(position_[0], position_[1], position_[2]);
-
-
-  if (_drawMode & DrawModes::POINTS)
+  
+  for (int i = 0; i < (int)primitives_.size(); ++i)
   {
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-    draw_obj();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  }
+  
+    glPushMatrix();
+    glTranslatef(primitives_[i].position[0], primitives_[i].position[1], primitives_[i].position[2]);
 
 
-  if (_drawMode & DrawModes::WIREFRAME)
-  {
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    draw_obj();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  }
+    if (_drawMode & DrawModes::POINTS)
+    {
+      glDisable(GL_LIGHTING);
+      glShadeModel(GL_FLAT);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+      draw_obj(i);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
 
 
-  if (_drawMode & DrawModes::HIDDENLINE)
-  {
-    Vec4f base_color_backup = _state.base_color();
-
-    glDisable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glColor(_state.clear_color());
-    glDepthRange(0.01, 1.0);
-    draw_obj();
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glColor(base_color_backup);
-    glDepthRange(0.0, 1.0);
-    draw_obj();
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  }
+    if (_drawMode & DrawModes::WIREFRAME)
+    {
+      glDisable(GL_LIGHTING);
+      glShadeModel(GL_FLAT);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      draw_obj(i);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
 
 
-  if (_drawMode & DrawModes::SOLID_FLAT_SHADED)
-  {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_FLAT);
-    draw_obj();
-  }
+    if (_drawMode & DrawModes::HIDDENLINE)
+    {
+      Vec4f base_color_backup = _state.base_color();
+
+      glDisable(GL_LIGHTING);
+      glShadeModel(GL_FLAT);
+
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      glColor(_state.clear_color());
+      glDepthRange(0.01, 1.0);
+      draw_obj(i);
+
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+      glColor(base_color_backup);
+      glDepthRange(0.0, 1.0);
+      draw_obj(i);
+
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
 
 
-  if (_drawMode & DrawModes::SOLID_SMOOTH_SHADED)
-  {
-    glEnable(GL_LIGHTING);
-    glShadeModel(GL_SMOOTH);
-    draw_obj();
-  }
+    if (_drawMode & DrawModes::SOLID_FLAT_SHADED)
+    {
+      glEnable( GL_COLOR_MATERIAL );
+      glEnable(GL_LIGHTING);
+      glShadeModel(GL_FLAT);
+      
+      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+      glColor(primitives_[i].color);
+      
+      draw_obj(i);
+    }
 
 
-  glPopMatrix();
+    if (_drawMode & DrawModes::SOLID_SMOOTH_SHADED)
+    {
+      glEnable( GL_COLOR_MATERIAL );
+      glEnable(GL_LIGHTING);
+      glShadeModel(GL_SMOOTH);
+      
+      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+      glColor(primitives_[i].color);
+
+      draw_obj(i);
+    }
+
+    glPopMatrix();
+  } // end of primitives iter
+  
   glDepthFunc(GL_LESS);
 }
 
+//----------------------------------------------------------------------------
+
+void 
+GlutPrimitiveNode::
+add_primitive(GlutPrimitiveType _type, Vec3d _pos, Vec3d _axis, ACG::Vec3uc _color)
+{
+  Primitive p(_type, _pos, _axis, _color);
+  primitives_.push_back(p);
+}
 
 //----------------------------------------------------------------------------
 
-
 void
-GlutPrimitiveNode::draw_obj() const
+GlutPrimitiveNode::draw_obj(int _idx) const
 {
-  switch (type_)
+  if (_idx < 0 || _idx >= (int)primitives_.size()) // range check
+    return;
+  
+  switch (primitives_[_idx].type)
   {
     case CONE: 
-      glutSolidCone(size_, innersize_, slices_, stacks_);
+      glutSolidCone(primitives_[_idx].size, primitives_[_idx].innersize, primitives_[_idx].slices, primitives_[_idx].stacks);
       break;
- 
+
     case CUBE: 
-      glutSolidCube(size_);
+      glutSolidCube(primitives_[_idx].size);
       break;
     
     case DODECAHEDRON: 
@@ -196,51 +269,49 @@ GlutPrimitiveNode::draw_obj() const
       break;
 
     case  SPHERE: 
-      glutSolidSphere(size_, slices_, stacks_);
+      glutSolidSphere(primitives_[_idx].size, primitives_[_idx].slices, primitives_[_idx].stacks);
       break;
-       
+      
     case TEAPOT: 
-      glutSolidTeapot(size_);
+      glutSolidTeapot(primitives_[_idx].size);
       break;
 
     case TETRAHEDRON: 
       glutSolidTetrahedron();
       break;
- 
+
     case TORUS: 
-      glutSolidTorus(innersize_, size_, slices_, stacks_);
+      glutSolidTorus(primitives_[_idx].innersize, primitives_[_idx].size, primitives_[_idx].slices, primitives_[_idx].stacks);
       break;
   };
 }
 
-
 //----------------------------------------------------------------------------
-
 
 void
 GlutPrimitiveNode::
 pick(GLState& _state , PickTarget _target)
 {
   // initialize picking stack
-  if (!_state.pick_set_maximum (1))
+  if (!_state.pick_set_maximum (primitives_.size()))
   {
-    std::cerr << "Strange pickSetMaximum failed for index 1 in GlutPrimitiveNode\n";
+    std::cerr << "Strange pickSetMaximum failed for index " << primitives_.size() << " in GlutPrimitiveNode\n";
     return;
   }
-  _state.pick_set_name(0);
-
 
   switch (_target)
   {
     case PICK_ANYTHING:
     case PICK_FACE: 
     { 
-      glDisable(GL_LIGHTING);
-      glShadeModel(GL_FLAT);
-      glPushMatrix();
-      glTranslatef(position_[0], position_[1], position_[2]);
-      draw_obj();
-      glPopMatrix();
+      for (int i = 0; i < (int)primitives_.size(); ++i)
+      {
+        _state.pick_set_name(i);
+        glPushMatrix();
+        glTranslatef(primitives_[i].position[0], primitives_[i].position[1], primitives_[i].position[2]);
+        draw_obj(i);
+        glPopMatrix();
+      }
       break; 
     }
 
