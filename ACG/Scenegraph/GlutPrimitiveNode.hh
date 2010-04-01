@@ -94,38 +94,109 @@ public:
     TETRAHEDRON, 
     TORUS
   }; 
+
+  
+  struct Primitive
+  {
+    Vec3d position; // position
+    Vec3d axis;    // direction / axis vector
+
+    GlutPrimitiveType type;    // glut primitive type
+    
+    ACG::Vec3uc color; // color
+    
+    // glut primitive resolution
+    double       size;
+    double       innersize; // size of inner loop for torus, height for cone
+    unsigned int slices, stacks;
+    
+    // Constructor
+    Primitive() 
+    {
+      // set default resolution
+      size = 1.0;  
+      innersize = 0.5;
+      slices = 20;
+      stacks = 20;
+    }
+
+    Primitive(GlutPrimitiveType _t, Vec3d _p, Vec3d _v, ACG::Vec3uc _c)
+    {
+      type     = _t;
+      position = _p;
+      axis     = _v;
+      color    = _c;
+      
+      // set default resolution
+      size = 1.0;  
+      innersize = 0.5;
+      slices = 20;
+      stacks = 20;
+    }
+
+    // Copy Constructor
+    Primitive( const Primitive& _p)
+    {
+      // use defined = operator
+      *this = _p;
+    }
+
+    // = operator
+    Primitive& operator=(const Primitive& _p)
+    {
+      type      = _p.type;
+      position  = _p.position;
+      axis      = _p.axis;
+      color     = _p.color;
+      size      = _p.size;  
+      innersize = _p.innersize;
+      slices    = _p.slices;
+      stacks    = _p.stacks;
+
+      return *this;
+    }
+  };
   
   
-  /// Default constructor.
+  GlutPrimitiveNode( BaseNode*         _parent=0,
+                     std::string       _name="<GlutPrimitive>" )
+    : BaseNode(_parent, _name)
+  {};
+
+
   GlutPrimitiveNode( GlutPrimitiveType _type,
-		     BaseNode*         _parent=0,
-		     std::string       _name="<GlutPrimitive>" )
-    : BaseNode(_parent, _name),
-      type_(_type),
-      size_(1.0),  
-      innersize_(0.5),
-      slices_(20), 
-      stacks_(20),
-      position_(0.0, 0.0, 0.0)
-  {}
-  
+                     BaseNode*         _parent=0,
+                     std::string       _name="<GlutPrimitive>" )
+    : BaseNode(_parent, _name)
+  {
+    // add a single primitive of the given type
+    Primitive p;
+    p.type = _type;
+    primitives_.push_back(p);
+  }
+
 
   /// destructor
   virtual ~GlutPrimitiveNode() {}
 
+  void add_primitive(GlutPrimitiveType _type, Vec3d _pos, Vec3d _axis, ACG::Vec3uc _color);
+
+  void clear(){primitives_.clear();};
+  
   /// set position
-  void set_position(const Vec3f& _p) { position_ = _p; }
+  void set_position(const Vec3d& _p, int _idx = 0);
   /// get position
-  const Vec3f& get_position() const { return position_; }
+  const Vec3d get_position(int _idx = 0) const;
 
+  /// get a primitive
+  Primitive& get_primitive(int _idx){return primitives_[_idx];};
+  
   /// set size
-  void set_size(float _s) { size_ = _s; }
+  void set_size(double _s, int _idx = 0);
   /// get size
-  float get_size() const { return size_; }
-
+  double get_size(int _idx = 0) const;
   
   ACG_CLASSNAME(GlutPrimitiveNode);
-
 
   /// return available draw modes
   DrawModes::DrawMode availableDrawModes() const;
@@ -135,17 +206,15 @@ public:
   
   /// drawing the primitive
   void draw(GLState& _state, DrawModes::DrawMode _drawMode);
-  void draw_obj() const;
+  void draw_obj(int _idx) const;
+  
   /// picking
   void pick(GLState& _state, PickTarget _target);
 
-
 private:
   
-  GlutPrimitiveType  type_;
-  float              size_, innersize_;
-  unsigned int       slices_, stacks_;
-  Vec3f              position_;
+  std::vector<Primitive> primitives_;
+  
 };
 
 

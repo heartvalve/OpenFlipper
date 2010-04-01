@@ -83,7 +83,7 @@ class ACGDLLEXPORT LineNode : public MaterialNode
 public:
 
   // typedefs
-  typedef std::vector<Vec3f>           PointVector;
+  typedef std::vector<Vec3d>           PointVector;
   typedef PointVector::iterator        PointIter;
   typedef PointVector::const_iterator  ConstPointIter;
   typedef std::vector<ACG::Vec3uc>     ColorVector;
@@ -147,10 +147,10 @@ public:
 
 
   /// add point (for LineMode == PolygonMode)
-  void add_point(const Vec3f& _v) { points_.push_back(_v); }
+  void add_point(const Vec3d& _v) { points_.push_back(_v); }
 
   /// add line (for LineMode == LineSegmentsMode)
-  void add_line(const Vec3f& _v0, const Vec3f& _v1) {
+  void add_line(const Vec3d& _v0, const Vec3d& _v1) {
     add_point(_v0);  add_point(_v1);
   }
   /// add color (only for LineMode == LineSegmentsMode)
@@ -168,10 +168,10 @@ public:
 
 
   /// STL conformance
-  void push_back(const Vec3f& _v) { points_.push_back(_v); }
-  typedef Vec3f         value_type;
-  typedef Vec3f&        reference;
-  typedef const Vec3f&  const_reference;
+  void push_back(const Vec3d& _v) { points_.push_back(_v); }
+  typedef Vec3d         value_type;
+  typedef Vec3d&        reference;
+  typedef const Vec3d&  const_reference;
 
 
 protected:

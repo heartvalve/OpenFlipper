@@ -82,7 +82,7 @@ class ACGDLLEXPORT PointNode : public BaseNode
 public:
    
   // typedefs
-  typedef std::vector<ACG::Vec3f>      PointVector;
+  typedef std::vector<ACG::Vec3d>      PointVector;
   typedef PointVector::iterator        PointIter;
   typedef PointVector::const_iterator  ConstPointIter;
   typedef std::vector<ACG::Vec3uc>     ColorVector;
@@ -117,9 +117,9 @@ public:
   }
 
   /// add point
-  void add_point(const ACG::Vec3f& _p) { points_.push_back(_p); }
+  void add_point(const ACG::Vec3d& _p) { points_.push_back(_p); }
   /// add normal
-  void add_normal(const ACG::Vec3f& _n) { normals_.push_back(_n); }
+  void add_normal(const ACG::Vec3d& _n) { normals_.push_back(_n); }
   /// add color
   void add_color(const ACG::Vec3uc& _c) { colors_.push_back(_c); }
 
