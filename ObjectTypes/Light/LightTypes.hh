@@ -20,7 +20,7 @@
 //== TYPEDEFS FOR SCENEGRAPH ===============================================
    
 /// Simple Name for PlaneNode
-typedef  ACG::SceneGraph::LightSourceNode LightNode;
+typedef  ACG::SceneGraph::LightNode LightNode;
 
 //=============================================================================
 #endif // PLANE_TYPES_HH defined
