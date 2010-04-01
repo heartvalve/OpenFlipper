@@ -5,8 +5,8 @@
 //=============================================================================
 
 /**
- * \file PlaneTypes.hh
- * This File contains the required types and typedefs for using Planes
+ * \file LightTypes.hh
+ * This File contains the required types and typedefs for using Lights
  */
 
 #ifndef LIGHT_TYPES_HH
