@@ -6,7 +6,7 @@
 
 /**
  * \file LightObject.hh 
- * This File contains the PolyLine Object
+ * This File contains the Light Object
  */
 
 
@@ -18,7 +18,6 @@
 //== INCLUDES =================================================================
 
 #include <OpenFlipper/common/BaseObjectData.hh>       
-
 #include <OpenFlipper/common/GlobalDefines.hh>
 
 #include "LightTypes.hh"
@@ -53,7 +52,7 @@ class DLLEXPORT LightObject : public BaseObjectData {
 
   protected:
     /// Initialise current object, including all related nodes.
-    virtual void init(LightNode* _plane = 0);
+    virtual void init(LightNode* _light = 0);
 
   //===========================================================================
   /** @name Name and Path handling
