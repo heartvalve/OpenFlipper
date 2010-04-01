@@ -650,7 +650,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     std::vector< int > selection_changes_;
 
     /// vector containing all projected lasso points
-    std::vector< ACG::Vec3f > lasso_points_;
+    std::vector< ACG::Vec3d > lasso_points_;
 
     /// vector containing all lasso points
     QPolygon lasso_2Dpoints_;

@@ -167,7 +167,7 @@ void SelectionPlugin::paintSphereSelection(QMouseEvent* _event) {
 
                if ( PluginFunctions::getPickedObject(node_idx, object) ) {
                   sphere_node_->show();
-                  sphere_node_->set_position((ACG::Vec3f)hit_point);
+                  sphere_node_->set_position(hit_point);
                   sphere_node_->set_size(sphere_radius_);
                   selection_changes_.push_back(object->id());
                   sphere_selection_ = true;
@@ -185,7 +185,7 @@ void SelectionPlugin::paintSphereSelection(QMouseEvent* _event) {
 
                   // update brush sphere
                   sphere_node_->show();
-                  sphere_node_->set_position((ACG::Vec3f)hit_point);
+                  sphere_node_->set_position(hit_point);
                   sphere_node_->set_size(sphere_radius_);
 
                   if ( _event->buttons() != Qt::NoButton ){
@@ -497,7 +497,6 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
 void SelectionPlugin::handleLassoSelection(QMouseEvent* _event, bool _volume) {
    unsigned int        node_idx, target_idx;
    ACG::Vec3d          hit_point;
-   ACG::Vec3f          hit_pointf;
    int                 y = PluginFunctions::viewerProperties().glState().context_height() - _event->pos().y();
 
   if ( _event->button() == Qt::RightButton ){
@@ -587,11 +586,9 @@ void SelectionPlugin::handleLassoSelection(QMouseEvent* _event, bool _volume) {
         if (!PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
           hit_point = PluginFunctions::viewerProperties().glState().unproject(ACG::Vec3d(_event->pos().x(),y,0.5));
 
-        hit_pointf = hit_point;
-        lasso_points_.push_back (hit_pointf);
+        lasso_points_.push_back (hit_point);
         line_node_->clear();
-        for (std::vector< ACG::Vec3f >::iterator it = lasso_points_.begin();
-             it != lasso_points_.end(); ++it)
+        for (std::vector< ACG::Vec3d >::iterator it = lasso_points_.begin(); it != lasso_points_.end(); ++it)
           line_node_->add_point(*it);
         line_node_->add_point(lasso_points_[0]);
 
@@ -609,18 +606,15 @@ void SelectionPlugin::handleLassoSelection(QMouseEvent* _event, bool _volume) {
           if (!PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(),node_idx, target_idx, &hit_point))
             hit_point = PluginFunctions::viewerProperties().glState().unproject(ACG::Vec3d(_event->pos().x(),y,0.5));
 
-          hit_pointf = hit_point;
-
           if (!_event->buttons() && lasso_points_.size () > 1)
           {
             lasso_points_.pop_back ();
             lasso_2Dpoints_.pop_back ();
           }
 
-          lasso_points_.push_back (hit_pointf);
+          lasso_points_.push_back (hit_point);
           line_node_->clear();
-          for (std::vector< ACG::Vec3f >::iterator it = lasso_points_.begin();
-               it != lasso_points_.end(); ++it)
+          for (std::vector< ACG::Vec3d >::iterator it = lasso_points_.begin(); it != lasso_points_.end(); ++it)
             line_node_->add_point(*it);
           line_node_->add_point(lasso_points_[0]);
 
