@@ -61,11 +61,11 @@ void FileLightPlugin::initializePlugin() {
 }
 
 QString FileLightPlugin::getLoadFilters() {
-  return QString( tr("Light files ( *.pla )") );
+  return QString( tr("Light files ( *.lgt )") );
 };
 
 QString FileLightPlugin::getSaveFilters() {
-  return QString( tr("Light files ( *.pla )") );
+  return QString( tr("Light files ( *.lgt )") );
 };
 
 DataType  FileLightPlugin::supportedType() {
