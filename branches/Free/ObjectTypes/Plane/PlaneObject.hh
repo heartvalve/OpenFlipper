@@ -6,7 +6,7 @@
 
 /**
  * \file PlaneObject.hh 
- * This File contains the PolyLine Object
+ * This File contains the Plane Object
  */
 
 
