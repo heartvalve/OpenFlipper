@@ -1051,6 +1051,10 @@ void  glViewer::draw_lights() {
 
 void glViewer::update_lights()
 {
+  // PluginFunction can disable the cores light handling and use its own one
+  if (!PluginFunctions::examinerLightHandling() ) 
+    return;
+  
   makeCurrent();
 
   glMatrixMode(GL_MODELVIEW);

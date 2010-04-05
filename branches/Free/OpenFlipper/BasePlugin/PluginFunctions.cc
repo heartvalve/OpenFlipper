@@ -81,6 +81,8 @@ static glViewer*  examiner_widget_;
 /// Contains the currently active examiner
 static unsigned int activeExaminer_ = 0;
 
+static bool internalLightHandling_ = true;
+
 /** \brief DONT USE DIRECTLY!!
  *
  * The pointer to the beginning of the scenegraph nodes ( only the nodes belonging to objects )
@@ -93,6 +95,10 @@ static SeparatorNode* dataRootNode_ = 0;
 * It is directly below the sceneGraphRootNode_
 */
 static SeparatorNode* dataSeparatorNode_ = 0;
+
+/** \brief Scenegraph global nodes root
+ */
+static SeparatorNode* sceneGraphRootNodeGlobal_ = 0;
 
 /** \brief Scenegraph root node
  */
@@ -135,6 +141,14 @@ void setDataRoot( BaseObject* _root ) {
 
 int viewers( ) {
   return examiner_widgets_.size();
+}
+
+void disableExaminerLightHandling() {
+  internalLightHandling_ = false;  
+}
+
+bool examinerLightHandling() {
+  return internalLightHandling_;  
 }
 
 int viewerId() {
@@ -228,6 +242,10 @@ void setDataSeparatorNodes( SeparatorNode* _dataSeparatorNode ) {
 
 void setSceneGraphRootNode( SeparatorNode* _root_node ) {
    PluginFunctions::sceneGraphRootNode_ = _root_node;
+}
+
+void setSceneGraphRootNodeGlobal( SeparatorNode* _root_node ) {
+   PluginFunctions::sceneGraphRootNodeGlobal_ = _root_node;
 }
 
 bool getPickedObject(const unsigned int _node_idx , BaseObjectData*& _object) {
@@ -815,9 +833,23 @@ ACG::SceneGraph::BaseNode* getRootNode() {
   return PluginFunctions::dataRootNode_;
 }
 
+void addGlobalStatusNode(ACG::SceneGraph::BaseNode* _node) {
+ if (PluginFunctions::sceneGraphRootNode_){
+    
+    // get the current parent Node 
+    ACG::SceneGraph::BaseNode* parent = sceneGraphRootNodeGlobal_->parent();
+
+    // Move the node to the new parent
+    _node->set_parent(parent);
+    
+    // move dataRootNode_ to the new parent
+    sceneGraphRootNodeGlobal_->set_parent(_node);
+  }
+}
+
 void addGlobalNode(ACG::SceneGraph::BaseNode* _node){
   if (PluginFunctions::sceneGraphRootNode_)
-    _node->set_parent( PluginFunctions::sceneGraphRootNode_ );
+    _node->set_parent( PluginFunctions::sceneGraphRootNodeGlobal_ );
 }
 
 

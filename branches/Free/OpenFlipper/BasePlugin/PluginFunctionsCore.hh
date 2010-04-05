@@ -83,9 +83,19 @@ glViewer* viewer(int  _viewerId );
 DLLEXPORT
 void setViewerProperties( std::vector< Viewer::ViewerProperties* > _viewerProperties );
 
-/// Set the internal scenegraph root node pointer ( DO NOT USE!! )
+/** Set the internal scenegraph root node pointer. This is the topmost
+* node of the whole scenegraph ( DO NOT USE!! )
+*/
 DLLEXPORT
 void setSceneGraphRootNode( SeparatorNode* _root_node );
+
+/** Set the internal scenegraph root node pointer for global nodes 
+*
+* This node is below the global status nodes and takes global nodes
+* at one level. ( DO NOT USE!! )
+*/
+DLLEXPORT
+void setSceneGraphRootNodeGlobal( SeparatorNode* _root_node );
 
 /// Set the internal data root node pointers ( DO NOT USE!! )
 DLLEXPORT
