@@ -262,7 +262,7 @@ class DLLEXPORTONLY BaseObject : public QObject {
     /// Sets visiblity
     virtual void visible(bool _visible);
 
-  private :
+  protected :
     /** Show/hide/ Object\n
     * Visibility is handled by DataControlPlugin so emit updated_objects if you changed this value
     * defaults to visible
