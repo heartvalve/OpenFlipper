@@ -9,6 +9,7 @@
 //== INCLUDES =================================================================
 
 #include <OpenFlipper/common/Types.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include "Light.hh"
 
 //== DEFINES ==================================================================
@@ -88,8 +89,14 @@ BaseObject* LightObject::copy() {
 */
 void LightObject::init(LightNode* _light) {
 ///\TODO Add Light Node here
+
+  lightNode_ = new LightNode( 0 , "NEW LightNode");
+
+  // Light nodes have to be on top of all other nodes.
+  PluginFunctions::addObjectRenderingNode(lightNode_);
+  
+  
   /*
-  planeNode_ = new LightNode( materialNode() , "NEW LightNode");
 
   if (_plane){
     planeNode_->setPosition( _plane->position(), _plane->normal() );
@@ -142,10 +149,10 @@ QString LightObject::getObjectinfo() {
     output += "Object Contains Light : ";
 
   ///\TODO Output info
-//   ACG::Vec3f pos = lightNode_->position();
+  ACG::Vec3d pos = lightNode_->position();
 //   ACG::Vec3f nor = lightNode_->normal();
 
-//   output += " Position ( " + QString::number(pos[0]) + ", " + QString::number(pos[1]) + ", " + QString::number(pos[2]) + ")";
+  output += " Position ( " + QString::number(pos[0]) + ", " + QString::number(pos[1]) + ", " + QString::number(pos[2]) + ")";
 //   output += " Normal ( " + QString::number(nor[0]) + ", " + QString::number(nor[1]) + ", " + QString::number(nor[2]) + ")";
 
   output += "========================================================================\n";
@@ -173,6 +180,36 @@ void LightObject::enablePicking( bool _enable ) {
 bool LightObject::pickingEnabled() {
   return lightNode_->pickingEnabled();
 }
+
+void LightObject::show() {
+  if ( !visible_ ) {
+    BaseObjectData::show();
+    lightNode_->setMultipassStatus(ACG::SceneGraph::BaseNode::ALLPASSES);
+    lightNode_->set_status( ACG::SceneGraph::BaseNode::Active  );
+    visible_ = true;
+    
+    emit visibilityChanged( id() );
+  }
+}
+
+void LightObject::hide() {
+  if ( visible_ ) {
+    BaseObjectData::hide();
+    lightNode_->setMultipassStatus(ACG::SceneGraph::BaseNode::NOPASS);
+    lightNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
+    visible_ = false;
+    
+    emit visibilityChanged( id() );
+  }
+}
+
+void LightObject::visible(bool _visible) {
+  if ( _visible )
+    show();
+  else 
+    hide();
+}
+
 
 //=============================================================================
 
