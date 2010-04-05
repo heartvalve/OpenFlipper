@@ -653,6 +653,9 @@ private slots:
    private:
       /// Scenegraphs root node
       SeparatorNode* root_node_scenegraph_;
+      
+      /// Seperator node for global nodes
+      SeparatorNode* root_node_scenegraph_global_;
 
       /// Separator Node holding all core scenegraph nodes
       SeparatorNode* core_nodes_;

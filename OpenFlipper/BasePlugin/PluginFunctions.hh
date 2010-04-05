@@ -189,6 +189,24 @@ int visibleCount();
 DLLEXPORT
 int viewers( );
 
+/** \brief Disable the core light handling
+*
+* Use this function to disable OpenFlippers Core light handling.
+* Use this function only if the light is handled by your plugin
+* Normally this function is called by the light plugin which
+* fully takes control over the glLighting and adds its own light nodes.
+*/
+DLLEXPORT
+void disableExaminerLightHandling();
+
+/** \brief returns if internal light handling is active.
+*
+* Internal light handling could only be deactivated. From than on a plugin
+* has to manage all light handling.
+*/
+DLLEXPORT
+bool examinerLightHandling();
+
 /// Set the active id of the examiner which got the last mouse events
 DLLEXPORT
 void setActiveExaminer( const unsigned int _id );
@@ -295,9 +313,20 @@ ACG::SceneGraph::BaseNode* getSceneGraphRootNode();
 DLLEXPORT
 ACG::SceneGraph::BaseNode* getRootNode();
 
-/// Add a node under the root node
+/** \brief Add a global node
+*
+* The node will be added as a global node. Only the global status nodes
+* will be above this node.
+*/
 DLLEXPORT
 void addGlobalNode(ACG::SceneGraph::BaseNode* _node);
+
+/** \brief Adds a global status node.
+*
+* The node will be added at the top of the scenegraph, before all other nodes except
+* The scenegraphs real node. It will therefore influence all nodes in the scenegraph.
+*/
+void addGlobalStatusNode(ACG::SceneGraph::BaseNode* _node);
 
 /** \brief Add scenegraph node modifing object rendering
 *

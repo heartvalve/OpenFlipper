@@ -133,8 +133,11 @@ Core() :
   //init nodes
   root_node_scenegraph_ = new ACG::SceneGraph::SeparatorNode(0, "SceneGraph Root Node");
   
+  // init global data node
+  root_node_scenegraph_global_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_ , "SceneGraph Root Node");
+  
   // This seperator will manage the cores nodes
-  core_nodes_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_, "Core Nodes");
+  core_nodes_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_global_, "Core Nodes");
   
   // Coordsys rendering nodes
   coordsysMaterialNode_ = new ACG::SceneGraph::MaterialNode(core_nodes_,"Coordsys Material Node");
@@ -142,7 +145,7 @@ Core() :
   coordsysNode_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);
   
   // seperator handling the nodes for data
-  dataSeparatorNode_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_, "Data Separator Root Node");
+  dataSeparatorNode_ = new ACG::SceneGraph::SeparatorNode(root_node_scenegraph_global_, "Data Separator Root Node");
   
   // seperator handling the nodes for data
   dataRootNode_      = new ACG::SceneGraph::SeparatorNode(dataSeparatorNode_, "Data Root Node");
@@ -209,7 +212,12 @@ Core::init() {
   // Make root_node available to the plugins ( defined in PluginFunctions.hh)
   PluginFunctions::setDataSeparatorNodes( dataSeparatorNode_ );
 
+  // Topmost node of the scenegraph
   PluginFunctions::setSceneGraphRootNode( root_node_scenegraph_ );
+  
+  // Node below the global status nodes. All nodes with global rendering
+  // will be attached here.
+  PluginFunctions::setSceneGraphRootNodeGlobal(root_node_scenegraph_global_);
 
   // Initialize the first object as the root Object for the object tree
   objectRoot_ =  dynamic_cast< BaseObject* > ( new GroupObject("ObjectRoot") );
