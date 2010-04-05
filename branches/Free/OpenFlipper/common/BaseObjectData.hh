@@ -172,10 +172,10 @@ class DLLEXPORT BaseObjectData : public BaseObject
 
   public :
     /// Sets the whole Scenegraph subtree of this node to visible
-    void show();
+    virtual void show();
 
     /// Sets the whole Scenegraph subtree of this node to invisible
-    void hide();
+    virtual void hide();
 
     /// return visiblity
     virtual bool visible();
