@@ -84,6 +84,8 @@ namespace SceneGraph {
 class ACGDLLEXPORT LightNode : public BaseNode
 {
 
+  public:
+  
   /// Structure to hold options for one LightSource
   struct LightSource
   {
@@ -94,12 +96,12 @@ class ACGDLLEXPORT LightNode : public BaseNode
       enabled = false;
       fixedPosition = false;
 
-      ambientColor  = Vec4f(0.1,0.1,0.1,1);
-      diffuseColor  = Vec4f(1,1,1,1);
-      specularColor = Vec4f(1,1,1,1);
-      position      = Vec4f(0,0,1,0);
-      realPosition  = Vec4f(0,0,1,0);
-      spotDirection = Vec3f(0,0,-1);
+      ambientColor  = Vec4f(0.1,0.1,0.1,1.0);
+      diffuseColor  = Vec4f(1.0,1.0,1.0,1.0);
+      specularColor = Vec4f(1.0,1.0,1.0,1.0);
+      position      = Vec4f(0.0,0.0,1.0,0.0);
+      realPosition  = Vec4f(0.0,0.0,1.0,0.0);
+      spotDirection = Vec3d(0.0,0.0,-1.0);
       spotExponent  = 0;
       spotCutoff    = 180;
 
@@ -115,7 +117,7 @@ class ACGDLLEXPORT LightNode : public BaseNode
     Vec4f specularColor;
     Vec4f position;
     Vec4f realPosition;
-    Vec3f spotDirection;
+    Vec3d spotDirection;
     float spotExponent;
     float spotCutoff;
     float constantAttenuation;
@@ -124,7 +126,7 @@ class ACGDLLEXPORT LightNode : public BaseNode
   };
 
 
-public:
+
 
   /// Default constructor. Applies all properties.
   LightNode( BaseNode*           _parent = 0,
@@ -133,7 +135,6 @@ public:
   /// Destructor.
   virtual ~LightNode() {}
 
-    
   ACG_CLASSNAME(LightNode);
 
   /// set current Light Sources
@@ -142,64 +143,129 @@ public:
   void leave(GLState& _state, DrawModes::DrawMode _drawmode);
 
   /// enable LightSource _nr
-  void enable(GLenum _nr)
-  { lights_[gl2index(_nr)].enabled = true; }
+  void enable()
+  { light_.enabled = true; }
 
   /// disable LightSource _nr
-  void disable(GLenum _nr)
-  { lights_[gl2index(_nr)].enabled = false; }
+  void disable()
+  { light_.enabled = false; }
+  
+  bool enabled() {
+    return light_.enabled;
+  }
 
-  /// set position ( _pos = 1) or direction ( _pos = 0) of LightSource
-  void set_position(GLenum _nr, Vec4f _pos)
-  { lights_[gl2index(_nr)].position = _pos; }
+  /// set position for LightSource
+  void position( Vec3d _pos)
+  { light_.position = Vec4d( _pos[0],_pos[1],_pos[2],1.0); }
 
-  /// set position for Point-LightSource
-  void set_position(GLenum _nr, Vec3f _pos)
-  { set_position(_nr, Vec4f(_pos[0], _pos[1], _pos[2], 1)); }
+  /// Get the position of the LightSource
+  Vec3d position() {
+    return Vec3d(light_.position[0],light_.position[1],light_.position[2]);
+  }
+  
+  /// set direction for LightSource ( this switches the light source to directional mode
+  void direction( Vec3d _pos)
+  { light_.position = Vec4d( _pos[0],_pos[1],_pos[2],0.0); }
 
   /// set direction for directional LightSource
-  void set_direction(GLenum _nr, Vec3f _pos)
-  { set_position(_nr, Vec4f(_pos[0], _pos[1], _pos[2], 0)); }
+  void spotDirection( Vec3d _pos)
+  { light_.spotDirection = _pos; }
+  
+  /// get direction for directional LightSource
+  Vec3d spotDirection( ) { 
+    return Vec3d(light_.spotDirection[0],light_.spotDirection[1],light_.spotDirection[2]); 
+  }  
 
   /// set Ambient color for LightSource _nr
-  void set_ambient_color( GLenum _nr, Vec4f _color)
-  { lights_[gl2index(_nr)].ambientColor = _color; }
+  void ambientColor(  Vec4f _color)
+  { light_.ambientColor = _color; }
+  
+  /// get Ambient color for LightSource _nr
+  Vec4f ambientColor()
+  { return light_.ambientColor; }
 
   /// set Diffuse color for LightSource _nr
-  void set_diffuse_color( GLenum _nr, Vec4f _color)
-  { lights_[gl2index(_nr)].diffuseColor = _color; }
+  void diffuseColor(  Vec4f _color)
+  { light_.diffuseColor = _color; }
 
+  /// get Diffuse color for LightSource _nr
+  Vec4f diffuseColor()
+  { return light_.diffuseColor; }
+  
   /// set Specular color for LightSource _nr
-  void set_specular_color( GLenum _nr, Vec4f _color)
-  { lights_[gl2index(_nr)].specularColor = _color; }
+  void specularColor(  Vec4f _color)
+  { light_.specularColor = _color; }
+  
+  /// get Specular color for LightSource _nr
+  Vec4f specularColor()
+  { return light_.specularColor; }
 
   /// make LightSource fixed or moveable with ModelViewMatrix
-  void fixed_position(GLenum _nr, bool _state)
-  { lights_[gl2index(_nr)].fixedPosition = _state; }
+  void fixedPosition( bool _state)
+  { light_.fixedPosition = _state; }
+  
+  bool fixedPosition() {
+    return light_.fixedPosition;   
+  }
+  
+  void spotExponent(float _exponent) {
+     light_.spotExponent = _exponent;
+  }
+  
+  float spotExponent() {
+     return light_.spotExponent;
+  }
+  
+  void spotCutoff(float _cutoff) {
+     light_.spotCutoff = _cutoff;
+  }
+  
+  float spotCutoff() {
+     return light_.spotCutoff;
+  }
+  
+  void constantAttenuation(float _constantAttenuation) {
+     light_.constantAttenuation = _constantAttenuation;
+  }
+  
+  float constantAttenuation() {
+     return light_.constantAttenuation;
+  }
+  
+  void linearAttenuation(float _linearAttenuation) {
+     light_.linearAttenuation = _linearAttenuation;
+  }
+  
+  float linearAttenuation() {
+     return light_.linearAttenuation;
+  }
+  
+  void quadraticAttenuation(float _quadraticAttenuation) {
+     light_.quadraticAttenuation = _quadraticAttenuation;
+  }
+  
+  float quadraticAttenuation() {
+     return light_.quadraticAttenuation;
+  }
+  
 
 private:
-
-  /// return index in vector for GL_LIGHT*
-  int gl2index( GLenum _nr)
-  { return( _nr - GL_LIGHT0); }
-
-  /// return GL_LIGHT* for light _nr
-  GLenum index2gl( int _nr)
-  { return( _nr + GL_LIGHT0); }
 
   /// set _light Options in OpenGL for GL_LIGHT#_index
-  void set_parameters(GLenum _index, LightSource& _light);
+  void setParameters(GLenum _index, LightSource& _light);
 
   /// get _light Options in OpenGL for GL_LIGHT#_index
-  void get_parameters(GLenum _index, LightSource& _light);
+  void getParameters(GLenum _index, LightSource& _light);
 
 private:
 
+  GLenum      lightId_;
+  
   /// store LightSources of this node
-  std::vector<LightSource> lights_;
+  LightSource light_;
 
   /// save old LightSources
-  std::vector<LightSource> lightsSave_;
+  LightSource lightSave_;
 };
 
 
