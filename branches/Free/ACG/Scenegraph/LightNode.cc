@@ -61,17 +61,19 @@
 namespace ACG {
 namespace SceneGraph {
 
+GLenum nextLight = GL_LIGHT0;  
   
 //== IMPLEMENTATION ========================================================== 
 
 
 LightNode::LightNode( BaseNode*            _parent, 
-				  const std::string&   _name) 
-  : BaseNode(_parent, _name)
+		      const std::string&   _name) 
+  : BaseNode(_parent, _name),
+    lightId_(0)
 {
-  lights_.resize(8);
-  lightsSave_.resize(8);
-  enable(GL_LIGHT0);;
+  lightId_ = nextLight;
+  nextLight++;
+  //std::cerr << "Maximum light sources : " << GL_MAX_LIGHTS << std::endl;
 }
 
     
@@ -79,37 +81,31 @@ LightNode::LightNode( BaseNode*            _parent,
 
 void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ ) 
 {
-  // save old lights
-  for(unsigned int i=0; i<lightsSave_.size(); i++)
-  {
-    // save only if enabled
-    if(glIsEnabled(index2gl(i)))
-    {
-      lightsSave_[i].enabled = true;
 
-      /// transfer GL-preferences to lightsSave_
-      get_parameters(index2gl(i), lightsSave_[i]);
+
+  /// transfer GL-preferences to lightSave_
+  getParameters(lightId_, lightSave_);
+  
+  // save old light
+  lightSave_.enabled = glIsEnabled(lightId_);
+
+  if(light_.enabled) {
+    // correct Position for fixed Lights
+    if(light_.fixedPosition) {
+      light_.realPosition = _state.inverse_modelview() * light_.position;
+//       std::cerr << "New Light pos :" << _state.inverse_modelview().transform_vector(light_.position) << std::endl;
+    } else {
+      light_.realPosition = light_.position;
+//       std::cerr << "New Light pos :" << light_.position << std::endl;
     }
-    else lightsSave_[i].enabled = false;
-  }
 
-  // set new lights
-  for(unsigned int i=0; i<lights_.size(); i++)
-  {
-    if(lights_[i].enabled)
-    {
-      // correct Position for fixed Lights
-      if(lights_[i].fixedPosition)
-	lights_[i].realPosition = 
-	  _state.inverse_modelview()*lights_[i].position;
-      else lights_[i].realPosition = lights_[i].position;
+    
 
-      glEnable(index2gl(i));
-      set_parameters(index2gl(i), lights_[i]);
-    }
-    else glDisable(index2gl(i));
+    glEnable(lightId_);
+    setParameters(lightId_, light_);
+  } else 
+    glDisable(lightId_);
 
-  }
 }
 
 
@@ -118,21 +114,18 @@ void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 
 void LightNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode*/ )
 {
-  // restore old enabled lights
-  for(unsigned int i=0; i<lights_.size(); i++)
+  // restore old enabled light
+  if(lightSave_.enabled)
   {
-    if(lightsSave_[i].enabled)
-    {
-      glEnable(index2gl(i));
-      set_parameters(index2gl(i), lightsSave_[i]);
-    }
-    else glDisable(index2gl(i));
+    glEnable(lightId_);
+    setParameters(lightId_, lightSave_);
   }
+  else glDisable(lightId_);
 }
 
 //----------------------------------------------------------------------------
 
-void LightNode::set_parameters(GLenum _index, LightSource& _light)
+void LightNode::setParameters(GLenum _index, LightSource& _light)
 {
 
   // set preferences of _light for GL_LIGHT#_index
@@ -148,11 +141,24 @@ void LightNode::set_parameters(GLenum _index, LightSource& _light)
   glLightf(_index, GL_CONSTANT_ATTENUATION,  _light.constantAttenuation);
   glLightf(_index, GL_LINEAR_ATTENUATION,  _light.linearAttenuation);
   glLightf(_index, GL_QUADRATIC_ATTENUATION,  _light.quadraticAttenuation);
+//   std::cerr << " set GL_AMBIENT  : " << _index << " "  << _light.ambientColor << std::endl;
+//   std::cerr << " set GL_DIFFUSE  : " << _index << " "  << _light.diffuseColor << std::endl;
+//   std::cerr << " set GL_SPECULAR  : " << _index << " "  << _light.specularColor << std::endl;
+//   
+//   std::cerr << " set GL_POSITION  : " << _index << " "  << _light.realPosition << std::endl;
+//   std::cerr << " set GL_SPOT_DIRECTION  : " << _index << " "  << _light.spotDirection << std::endl;
+//   
+//   std::cerr << " set GL_SPOT_EXPONENT  : " << _index << " "  << _light.spotExponent << std::endl;
+//   std::cerr << " set GL_SPOT_CUTOFF  : " << _index << " "  << _light.spotCutoff << std::endl;
+//   std::cerr << " set GL_CONSTANT_ATTENUATION  : " << _index << " "  << _light.constantAttenuation << std::endl;
+//   std::cerr << " set GL_LINEAR_ATTENUATION  : " << _index << " "  << _light.linearAttenuation << std::endl;
+//   std::cerr << " set GL_QUADRATIC_ATTENUATION  : " << _index << " "  << _light.quadraticAttenuation << std::endl;
+//   std::cerr << "===============================================================================" << std::endl;
 }
 
 //----------------------------------------------------------------------------
 
-void LightNode::get_parameters(GLenum _index, LightSource& _light)
+void LightNode::getParameters(GLenum _index, LightSource& _light)
 {
   // get preferences of GL_LIGHT#_index and store them in _light
   glGetLightfv(_index, GL_AMBIENT,  (GLfloat *)_light.ambientColor.data());
@@ -166,6 +172,18 @@ void LightNode::get_parameters(GLenum _index, LightSource& _light)
   glGetLightfv(_index, GL_CONSTANT_ATTENUATION,  &_light.constantAttenuation);
   glGetLightfv(_index, GL_LINEAR_ATTENUATION,  &_light.linearAttenuation);
   glGetLightfv(_index, GL_QUADRATIC_ATTENUATION,  &_light.quadraticAttenuation);
+//   std::cerr << " get GL_AMBIENT  : " << _index << " "  << _light.ambientColor << std::endl;
+//   std::cerr << " get GL_DIFFUSE  : " << _index << " "  << _light.diffuseColor << std::endl;
+//   std::cerr << " get GL_SPECULAR  : " << _index << " "  << _light.specularColor << std::endl;
+//   
+//   std::cerr << " get GL_POSITION  : " << _index << " "  << _light.realPosition << std::endl;
+//   std::cerr << " get GL_SPOT_DIRECTION  : " << _index << " "  << _light.spotDirection << std::endl;
+//     
+//   std::cerr << " get GL_SPOT_EXPONENT  : " << _index << " "  << _light.spotExponent << std::endl;
+//   std::cerr << " get GL_SPOT_CUTOFF  : " << _index << " "  << _light.spotCutoff << std::endl;
+//   std::cerr << " get GL_CONSTANT_ATTENUATION  : " << _index << " "  << _light.constantAttenuation << std::endl;
+//   std::cerr << " get GL_LINEAR_ATTENUATION  : " << _index << " "  << _light.linearAttenuation << std::endl;
+//   std::cerr << " get GL_QUADRATIC_ATTENUATION  : " << _index << " "  << _light.quadraticAttenuation << std::endl;
 }
 //=============================================================================
 } // namespace SceneGraph
