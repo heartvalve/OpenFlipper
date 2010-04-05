@@ -94,6 +94,7 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
     
   private slots :
     // BaseInterface
+    void initializePlugin();
     void pluginsInitialized();
     void slotObjectUpdated( int _identifier );
     void slotObjectSelectionChanged( int _identifier );
