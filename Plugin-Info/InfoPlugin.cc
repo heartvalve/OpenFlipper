@@ -524,7 +524,10 @@ bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
 void InfoPlugin::slotObjectUpdated( int _identifier ){
 
   if ( (PluginFunctions::objectCount() == 1) || (PluginFunctions::targetCount() == 1) ){
-    
+
+    if ( !infoBar_ )
+      return;    
+
     bool found = false;
     
     PluginFunctions::IteratorRestriction restriction;
