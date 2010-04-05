@@ -103,6 +103,17 @@ class DLLEXPORT LightObject : public BaseObjectData {
     bool pickingEnabled();
     
   /** @} */  
+  
+  public:
+    
+    /// Show Light Node
+    virtual void visible(bool _visible);
+    
+    /// Show Light Node
+    virtual void show();
+    
+    /// Hide Light Node
+    virtual void hide();
     
 };
 
