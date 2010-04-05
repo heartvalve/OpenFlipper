@@ -69,14 +69,16 @@
 
 //== IMPLEMENTATION ==========================================================
 
+void InfoPlugin::initializePlugin() {
+  infoBar_ = new InfoBar();
+}
+
 /// initialize the plugin
 void InfoPlugin::pluginsInitialized() {
 
   //set the slot descriptions
   setDescriptions();
 
-  infoBar_ = new InfoBar();
-  
   emit addWidgetToStatusbar(infoBar_);
   infoBar_->hideCounts();
   
