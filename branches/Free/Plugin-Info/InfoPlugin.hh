@@ -107,7 +107,7 @@ class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterfa
   public :
 
   // default constructor
-      InfoPlugin(): info_(0) {};
+      InfoPlugin(): info_(0),infoBar_(0) {};
 
   // default destructor
       ~InfoPlugin() {};
