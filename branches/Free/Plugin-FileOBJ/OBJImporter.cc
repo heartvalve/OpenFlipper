@@ -340,11 +340,18 @@ void OBJImporter::addFace(const VHandles& _indices){
     
     size_t n_faces = currentTriMesh()->n_faces();
     
-    currentTriMesh()->add_face( vertices ); 
+    OpenMesh::FaceHandle fh = currentTriMesh()->add_face( vertices );
     
     //remember all new faces
-    for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
-      addedFacesTri_.push_back( TriMesh::FaceHandle(n_faces+i) );
+    if(!fh.is_valid()) {
+    	// Store non-manifold face
+    	invalidFaces_.push_back(vertices);
+
+    } else {
+    	// Store recently added face
+    	for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
+    		addedFacesTri_.push_back( TriMesh::FaceHandle(n_faces+i) );
+    }
     
     
   } else if ( isPolyMesh( currentObject() ) ){
@@ -368,7 +375,14 @@ void OBJImporter::addFace(const VHandles& _indices){
     
     size_t n_faces = currentPolyMesh()->n_faces();
     
-    addedFacePoly_ = currentPolyMesh()->add_face( vertices ); 
+    OpenMesh::FaceHandle fh = currentPolyMesh()->add_face( vertices );
+
+    if(!fh.is_valid()) {
+    	// Store non-manifold face
+    	invalidFaces_.push_back(vertices);
+    } else {
+    	addedFacePoly_ = fh;
+    }
   }
 }
 
@@ -400,13 +414,17 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     
     size_t n_faces = currentTriMesh()->n_faces();
     
-    currentTriMesh()->add_face( vertices ); 
+    OpenMesh::FaceHandle fh = currentTriMesh()->add_face( vertices );
     
     //remember all new faces
-    for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
-      addedFacesTri_.push_back( TriMesh::FaceHandle(n_faces+i) );
+    if(!fh.is_valid()) {
+    	// Store non-manifold face
+    	invalidFaces_.push_back(vertices);
+    }
 
-    
+    // Store recently added face
+    for( size_t i=0; i < currentTriMesh()->n_faces()-n_faces; ++i )
+    	addedFacesTri_.push_back( TriMesh::FaceHandle(n_faces+i) );
     
     //perhaps request texCoords for the mesh
     if ( !currentTriMesh()->has_halfedge_texcoords2D() )
@@ -457,8 +475,15 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
     
     size_t n_faces = currentPolyMesh()->n_faces();
     
-    addedFacePoly_ = currentPolyMesh()->add_face( vertices ); 
+    OpenMesh::FaceHandle fh = currentPolyMesh()->add_face( vertices );
+
+    if(!fh.is_valid()) {
+    	// Store non-manifold face
+    	invalidFaces_.push_back(vertices);
+    }
     
+    addedFacePoly_ = fh;
+
     //perhaps request texCoords for the mesh
     if ( !currentPolyMesh()->has_halfedge_texcoords2D() )
       currentPolyMesh()->request_halfedge_texcoords2D();
@@ -748,6 +773,99 @@ void OBJImporter::setGroup(QString _groupName){
 
 QString OBJImporter::group(){
   return groupName_;
+}
+
+//-----------------------------------------------------------------------------
+
+void OBJImporter::finish() {
+
+	// Duplicate vertices of non-manifold faces
+	// and add them as new isolated face
+	if(invalidFaces_.empty()) return;
+
+	if (isTriangleMesh(currentObject())) {
+
+		// Handle triangle meshes
+		if ( !currentTriMesh() ) return;
+
+		for(std::vector<OMVHandles>::iterator it = invalidFaces_.begin();
+				it != invalidFaces_.end(); ++it) {
+
+			OMVHandles& vhandles = *it;
+
+			// double vertices
+			for (unsigned int j = 0; j < vhandles.size(); ++j)
+			{
+			  TriMesh::Point p = currentTriMesh()->point(vhandles[j]);
+			  vhandles[j] = currentTriMesh()->add_vertex(p);
+			  // DO STORE p, reference may not work since vertex array
+			  // may be relocated after adding a new vertex !
+
+			  // Mark vertices of failed face as non-manifold
+			  if (currentTriMesh()->has_vertex_status()) {
+				  currentTriMesh()->status(vhandles[j]).set_fixed_nonmanifold(true);
+			  }
+			}
+
+			// add face
+			OpenMesh::FaceHandle fh = currentTriMesh()->add_face(vhandles);
+
+			// Mark failed face as non-manifold
+			if (currentTriMesh()->has_face_status())
+				currentTriMesh()->status(fh).set_fixed_nonmanifold(true);
+
+			// Mark edges of failed face as non-two-manifold
+			if (currentTriMesh()->has_edge_status()) {
+				TriMesh::FaceEdgeIter fe_it = currentTriMesh()->fe_iter(fh);
+				for(; fe_it; ++fe_it) {
+					currentTriMesh()->status(fe_it).set_fixed_nonmanifold(true);
+				}
+			}
+		}
+
+	} else {
+
+		// Handle Polymeshes
+		if ( !currentPolyMesh() ) return;
+
+		for(std::vector<OMVHandles>::iterator it = invalidFaces_.begin();
+				it != invalidFaces_.end(); ++it) {
+
+			OMVHandles& vhandles = *it;
+
+			// double vertices
+			for (unsigned int j = 0; j < vhandles.size(); ++j)
+			{
+			  PolyMesh::Point p = currentPolyMesh()->point(vhandles[j]);
+			  vhandles[j] = currentPolyMesh()->add_vertex(p);
+			  // DO STORE p, reference may not work since vertex array
+			  // may be relocated after adding a new vertex !
+
+			  // Mark vertices of failed face as non-manifold
+			  if (currentPolyMesh()->has_vertex_status()) {
+				  currentPolyMesh()->status(vhandles[j]).set_fixed_nonmanifold(true);
+			  }
+			}
+
+			// add face
+			OpenMesh::FaceHandle fh = currentPolyMesh()->add_face(vhandles);
+
+			// Mark failed face as non-manifold
+			if (currentPolyMesh()->has_face_status())
+				currentPolyMesh()->status(fh).set_fixed_nonmanifold(true);
+
+			// Mark edges of failed face as non-two-manifold
+			if (currentPolyMesh()->has_edge_status()) {
+				PolyMesh::FaceEdgeIter fe_it = currentPolyMesh()->fe_iter(fh);
+				for(; fe_it; ++fe_it) {
+					currentPolyMesh()->status(fe_it).set_fixed_nonmanifold(true);
+				}
+			}
+		}
+	}
+
+	// Clear faces
+	invalidFaces_.clear();
 }
 
 //-----------------------------------------------------------------------------
