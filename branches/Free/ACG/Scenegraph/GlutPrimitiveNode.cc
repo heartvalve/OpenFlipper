@@ -111,21 +111,12 @@ void
 GlutPrimitiveNode::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
-  Vec3d bbMin(FLT_MAX,FLT_MAX,FLT_MAX);
-  Vec3d bbMax(-FLT_MAX,-FLT_MAX,-FLT_MAX);
-  
   for (int i = 0; i < (int)primitives_.size(); ++i)
   {
     Vec3d sizeVec(primitives_[i].size, primitives_[i].size, primitives_[i].size);
-    bbMax.maximize(primitives_[i].position + sizeVec);
-    bbMin.minimize(primitives_[i].position - sizeVec);
+    _bbMax.maximize(primitives_[i].position + sizeVec);
+    _bbMin.minimize(primitives_[i].position - sizeVec);
   }
-  
-  Vec3d bbMind = ACG::Vec3d(bbMin);
-  Vec3d bbMaxd = ACG::Vec3d(bbMax);
-  
-  _bbMin.minimize(bbMind);
-  _bbMax.maximize(bbMaxd);
 }
 
 //----------------------------------------------------------------------------
@@ -245,45 +236,71 @@ GlutPrimitiveNode::draw_obj(int _idx) const
 {
   if (_idx < 0 || _idx >= (int)primitives_.size()) // range check
     return;
-  
-  switch (primitives_[_idx].type)
+
+  Vec3d axis  = primitives_[_idx].axis;
+  double size = axis.norm();
+
+  if (size > 1e-10)
   {
-    case CONE: 
-      glutSolidCone(primitives_[_idx].size, primitives_[_idx].innersize, primitives_[_idx].slices, primitives_[_idx].stacks);
-      break;
+    glPushMatrix();
 
-    case CUBE: 
-      glutSolidCube(primitives_[_idx].size);
-      break;
+    Vec3d direction = axis;
+    Vec3d z_axis(0,0,1);
+    Vec3d rot_normal;
+    double rot_angle;
+
+    direction.normalize();
+    rot_angle  = acos((z_axis | direction)) * 180 / M_PI;
+    rot_normal = ((z_axis % direction).normalize());
+  
+
+    if (fabs(rot_angle) > 0.0001 && fabs(180 - rot_angle) > 0.0001)
+      glRotatef(rot_angle,rot_normal[0], rot_normal[1], rot_normal[2]);
+    else
+      glRotatef(rot_angle,1,0,0);
+
     
-    case DODECAHEDRON: 
-      glutSolidDodecahedron();
-      break;
-    
-    case ICOSAHEDRON: 
-      glutSolidIcosahedron();
-      break;
+    switch (primitives_[_idx].type)
+    {
+      case CONE: 
+        glutSolidCone(primitives_[_idx].size, primitives_[_idx].innersize, primitives_[_idx].slices, primitives_[_idx].stacks);
+        break;
 
-    case OCTAHEDRON:
-      glutSolidOctahedron();
-      break;
-
-    case  SPHERE: 
-      glutSolidSphere(primitives_[_idx].size, primitives_[_idx].slices, primitives_[_idx].stacks);
-      break;
+      case CUBE: 
+        glutSolidCube(primitives_[_idx].size);
+        break;
       
-    case TEAPOT: 
-      glutSolidTeapot(primitives_[_idx].size);
-      break;
+      case DODECAHEDRON: 
+        glutSolidDodecahedron();
+        break;
+      
+      case ICOSAHEDRON: 
+        glutSolidIcosahedron();
+        break;
 
-    case TETRAHEDRON: 
-      glutSolidTetrahedron();
-      break;
+      case OCTAHEDRON:
+        glutSolidOctahedron();
+        break;
 
-    case TORUS: 
-      glutSolidTorus(primitives_[_idx].innersize, primitives_[_idx].size, primitives_[_idx].slices, primitives_[_idx].stacks);
-      break;
-  };
+      case  SPHERE: 
+        glutSolidSphere(primitives_[_idx].size, primitives_[_idx].slices, primitives_[_idx].stacks);
+        break;
+        
+      case TEAPOT: 
+        glutSolidTeapot(primitives_[_idx].size);
+        break;
+
+      case TETRAHEDRON: 
+        glutSolidTetrahedron();
+        break;
+
+      case TORUS: 
+        glutSolidTorus(primitives_[_idx].innersize, primitives_[_idx].size, primitives_[_idx].slices, primitives_[_idx].stacks);
+        break;
+    }
+
+    glPopMatrix();
+  }
 }
 
 //----------------------------------------------------------------------------
