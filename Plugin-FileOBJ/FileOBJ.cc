@@ -1411,6 +1411,9 @@ int FileOBJPlugin::loadObject(QString _filename) {
   //then parse the obj
   readOBJFile( _filename, importer );
   
+  // finish up
+  importer.finish();
+
   int returnID = -1;
   
   //perhaps add group

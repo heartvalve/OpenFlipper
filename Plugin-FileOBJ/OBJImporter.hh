@@ -73,6 +73,7 @@
 typedef int VertexHandle;
 typedef int FaceHandle;
 typedef std::vector<VertexHandle> VHandles;
+typedef std::vector<OpenMesh::VertexHandle> OMVHandles;
 typedef OpenMesh::Vec3f Vec3f;
 typedef OpenMesh::Vec2f Vec2f;
 typedef OpenMesh::Vec3uc Vec3uc;
@@ -217,6 +218,11 @@ class OBJImporter
     void setGroup(QString _groupName);
     QString group();
     
+    /// Finish up importing:
+    /// Duplicate vertices of non-manifold faces and
+    /// add new face as isolated one
+    void finish();
+
   private:
     
     // general data
@@ -264,6 +270,10 @@ class OBJImporter
     // for each object a vector of vertex indices
     // this ensures that a vertex defined first gets a lower index
     std::vector< std::set< VertexHandle > > usedVertices_;
+
+    // Store vertices of invalid faces due to non-manifold
+    // configurations.
+    std::vector< OMVHandles > invalidFaces_;
 
 };
 
