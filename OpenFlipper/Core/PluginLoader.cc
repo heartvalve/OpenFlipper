@@ -999,8 +999,39 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
       connect(this   , SIGNAL(addMultiTexture(QString,QString,QString,int,int&) ),
               plugin , SLOT(slotMultiTextureAdded( QString,QString,QString,int,int&) ),Qt::DirectConnection);
 
-  }
+    if ( checkSignal( plugin , "textureGetImage(QString,QImage&,int)" ) )
+      connect(plugin   , SIGNAL(textureGetImage(QString,QImage&,int)),
+              this ,   SLOT(slotTextureGetImage(QString,QImage&,int)),Qt::DirectConnection);
 
+    if ( checkSlot( plugin , "slotTextureGetImage(QString,QImage&,int)" ) )
+      connect(this   , SIGNAL(textureGetImage(QString,QImage&,int)),
+              plugin , SLOT(slotTextureGetImage(QString,QImage&,int)),Qt::DirectConnection);
+
+    if ( checkSignal( plugin , "textureGetImage(QString,QImage&)" ) )
+      connect(plugin   , SIGNAL(textureGetImage(QString,QImage&)),
+              this ,   SLOT(slotTextureGetImage(QString,QImage&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotTextureGetImage(QString,QImage&)" ) )
+      connect(this   , SIGNAL(textureGetImage(QString,QImage&)),
+              plugin , SLOT(slotTextureGetImage(QString,QImage&)),Qt::DirectConnection);
+
+    if ( checkSignal( plugin , "getCurrentTexture(int,QString&)" ) )
+      connect(plugin   , SIGNAL(getCurrentTexture(int,QString&)),
+              this ,   SLOT(slotGetCurrentTexture(int,QString&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotGetCurrentTexture(int,QString&)" ) )
+      connect(this   , SIGNAL(getCurrentTexture(int,QString&)),
+              plugin , SLOT(slotGetCurrentTexture(int,QString&)),Qt::DirectConnection);
+
+    if ( checkSignal( plugin , "getSubTextures(int,QString,QStringList&)" ) )
+      connect(plugin   , SIGNAL(getSubTextures(int,QString,QStringList&)),
+              this ,   SLOT(slotGetSubTextures(int,QString,QStringList&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotGetSubTextures(int,QString,QStringList&)" ) )
+      connect(this   , SIGNAL(getSubTextures(int,QString,QStringList&)),
+              plugin , SLOT(slotGetSubTextures(int,QString,QStringList&)),Qt::DirectConnection);
+  }
+              
   //Check if the plugin supports Backup-Interface
   BackupInterface* backupPlugin = qobject_cast< BackupInterface * >(plugin);
   if ( backupPlugin ) {

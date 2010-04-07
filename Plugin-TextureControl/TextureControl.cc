@@ -447,7 +447,110 @@ void TextureControlPlugin::slotTextureChangeImage( QString _textureName , QImage
 
 }
 
-void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _identifier ) {
+void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _image, int _id ){
+  
+  // Get the object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // ================================================================================
+  // Get Texture data for current object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0) {
+    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    return;
+  }
+
+  // ================================================================================
+  // Check for requested Texture
+  // ================================================================================
+  if ( !texData->textureExists(_textureName) ) {
+    emit log(LOGERR, "Texture not available! " + _textureName );
+    return;
+  }
+
+  if ( texData->texture(_textureName).type() == MULTITEXTURE )
+    _image = QImage();
+  else
+    _image = texData->texture(_textureName).textureImage;
+}
+
+void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _image ){
+  
+  if ( ! globalTextures_.textureExists(_textureName) ) {
+    emit log(LOGERR,"Global texture does not exist: " + _textureName);
+    return;
+  }
+
+  if ( globalTextures_.texture(_textureName).type() == MULTITEXTURE )
+    _image = QImage();
+  else
+    _image = globalTextures_.texture(_textureName).textureImage;
+}
+
+void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName ){
+  
+  // Get the object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // ================================================================================
+  // Get Texture data for current object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0) {
+    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    return;
+  }
+  
+  _textureName = "NONE";
+  
+  // Iterate over all available textures
+  for ( uint i = 0 ; i < texData->textures().size() ; ++i)
+    if ( (texData->textures()[i]).enabled() ){
+      _textureName = (texData->textures()[i]).name();
+      
+      if ( (texData->textures()[i]).type() == MULTITEXTURE )
+        return;
+    }
+}
+
+void TextureControlPlugin::slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures ){
+  // Get the object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // ================================================================================
+  // Get Texture data for current object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0) {
+    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    return;
+  }
+
+  // ================================================================================
+  // Check for requested Texture
+  // ================================================================================
+  if ( !texData->textureExists(_multiTextureName) ) {
+    emit log(LOGERR, "Texture not available! " + _multiTextureName );
+    return;
+  }
+  
+  if ( texData->texture(_multiTextureName).type() == MULTITEXTURE )
+    _subTextures = texData->texture(_multiTextureName).multiTextureList;
+  else
+    _subTextures = QStringList();
+}
+
+void TextureControlPlugin::slotTextureUpdated( QString _textureName , int _identifier ){
 
   // ================================================================================
   // Get updated object
