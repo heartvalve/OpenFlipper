@@ -115,7 +115,11 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void slotUpdateTexture( QString _textureName , int _identifier);
     void slotTextureChangeImage( QString _textureName , QImage& _image , int _id );
     void slotTextureChangeImage( QString _textureName , QImage& _image );
-
+    void slotTextureGetImage( QString _textureName, QImage& _image, int _id );
+    void slotTextureGetImage( QString _textureName, QImage& _image );
+    void slotGetCurrentTexture( int _id, QString& _textureName );
+    void slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures );
+    
     // LoadSaveInterface
     void fileOpened( int _id );
     void addedEmptyObject( int _id );

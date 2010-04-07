@@ -294,6 +294,30 @@ void Core::slotTextureChangeImage( QString _textureName , QImage& _image , int _
   emit textureChangeImage( _textureName , _image , _id );
 }
 
+/** Called by plugins if texture image should be fetched
+ */
+void Core::slotTextureGetImage( QString _textureName , QImage& _image ) {
+  emit textureGetImage( _textureName ,_image );
+}
+
+/** Called by plugins if texture image should be fetched
+ */
+void Core::slotTextureGetImage( QString _textureName , QImage& _image , int _id )  {
+  emit textureGetImage( _textureName , _image , _id );
+}
+
+/** Called by plugins if current texture name should be returned
+ */
+void Core::slotGetCurrentTexture( int _id, QString& _textureName ){
+  emit getCurrentTexture( _id, _textureName );
+}
+
+/** Called by plugins if texture image should be fetched
+ */
+void Core::slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures ){
+  emit getSubTextures( _id, _multiTextureName, _subTextures );
+}
+
 //========================================================================================
 // ===             Backup Communication                       ============================
 //========================================================================================

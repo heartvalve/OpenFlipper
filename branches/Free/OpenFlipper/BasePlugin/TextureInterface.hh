@@ -185,6 +185,36 @@ class TextureInterface {
        */
       virtual void textureChangeImage( QString /*_textureName*/ , QImage& /*_image*/ ) {};
 
+      /** \brief get the texture image of a given texture
+       *
+       *  @param _textureName The name of the texture which should be addressed
+       *  @param _image reference to the image for the texture
+       *  @param _id Id of the object where the texture should be fetched from
+       */
+      virtual void textureGetImage( QString /*_textureName*/ , QImage& /*_image*/ , int /*_id*/ ) {};
+
+      /** \brief Get the texture image of a given global texture
+       *
+       *  @param _textureName The name of the texture which should be addressed
+       *  @param _image reference to the image for the texture
+       */
+      virtual void textureGetImage( QString /*_textureName*/ , QImage& /*_image*/ ) {};
+      
+       /** \brief get the name of the texture which is currently enabled
+       *
+       *  @param _id Id of the object where the current texture should be fetched from
+       *  @param _textureName this returns the name of the texture
+       */
+      virtual void getCurrentTexture( int /*_id*/, QString& /*_textureName*/ ) {};
+      
+       /** \brief get the names of all sub-textures under the given multiTexture
+       *
+       *  @param _id Id of the object where the current texture should be fetched from
+       *  @param _multiTextureName name of a multi texture
+       *  @param _textureName this returns the names of all sub textures that are combined under the given multi texture
+       */
+      virtual void getSubTextures( int /*_id*/, QString /*_multiTextureName*/, QStringList& /*_subTextures*/ ) {};
+
    private slots :
       /** \brief update the texture with the given Name ( if this plugin provides this texture ) for all meshes
        *
@@ -300,6 +330,36 @@ class TextureInterface {
        *  @param _mode New mode flags for the given texture
        */
       virtual void slotSetTextureMode(QString /*_textureName*/ ,QString /*_mode*/) {};
+      
+      /** \brief fetches the texture image of a given texture
+       *
+       *  @param _textureName The name of the texture which should be addressed
+       *  @param _image reference to the image for the texture
+       *  @param _id Id of the object where the texture should be fetched from
+       */
+      virtual void slotTextureGetImage( QString /*_textureName*/ , QImage& /*_image*/ , int /*_id*/ ) {};
+
+      /** \brief fetches the texture image of a given global texture
+       *
+       *  @param _textureName The name of the texture which should be addressed
+       *  @param _image reference to the image for the texture
+       */
+      virtual void slotTextureGetImage( QString /*_textureName*/ , QImage& /*_image*/ ) {};
+      
+       /** \brief fetches the name of the texture which is currently enabled
+       *
+       *  @param _id Id of the object where the current texture should be fetched from
+       *  @param _textureName this returns the name of the texture
+       */
+      virtual void slotGetCurrentTexture( int /*_id*/, QString& /*_textureName*/ ) {};
+      
+       /** \brief fetches the names of all sub-textures under the given multiTexture
+       *
+       *  @param _id Id of the object where the current texture should be fetched from
+       *  @param _multiTextureName name of a multi texture
+       *  @param _textureName this returns the names of all sub textures that are combined under the given multi texture
+       */
+      virtual void slotGetSubTextures( int /*_id*/, QString /*_multiTextureName*/, QStringList& /*_subTextures*/ ) {};
 
    /** @} */
 };

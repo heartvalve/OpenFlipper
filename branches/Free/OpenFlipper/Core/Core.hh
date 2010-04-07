@@ -220,6 +220,18 @@ signals:
    /// Change the image for a given texture
    void textureChangeImage( QString _textureName , QImage& _image , int _id );
 
+   ///fetch texture image
+   void textureGetImage( QString _textureName , QImage& _image );
+
+   ///fetch texture image
+   void textureGetImage( QString _textureName , QImage& _image , int _id );
+    
+   ///get current texture
+   void getCurrentTexture( int _id, QString& _textureName );
+
+   /// get a multi-texture's sub textures
+   void getSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures );
+
    /// If an ini File is opened, this signal is send to Plugins capable of handling ini files
    void iniLoad( INIFile&, int );
 
@@ -322,6 +334,18 @@ signals:
 
       ///Called by plugins if texture image should be changed
       void slotTextureChangeImage( QString _textureName , QImage& _image , int _id );
+
+      ///Called by plugins if texture image should be fetched
+      void slotTextureGetImage( QString _textureName , QImage& _image );
+
+      ///Called by plugins if texture image should be fetched
+      void slotTextureGetImage( QString _textureName , QImage& _image , int _id );
+      
+      ///Called by plugins if current texture should be retrieved
+      void slotGetCurrentTexture( int _id, QString& _textureName );
+
+      ///Called by plugins if a multi-texture's sub textures should be fetched
+      void slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures );
 
       /// Called if a backup is requested by the plugins
       void backupRequest( int _id , QString _name );
