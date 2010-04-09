@@ -225,7 +225,13 @@ signals:
 
    ///fetch texture image
    void textureGetImage( QString _textureName , QImage& _image , int _id );
-    
+
+   /// get the texture index
+   void textureIndex( QString _textureName, int _id, int& _index);
+   
+   /// get the texture name
+   void textureName( int _id, int _textureIndex, QString& _textureName);
+
    ///get current texture
    void getCurrentTexture( int _id, QString& _textureName );
 
@@ -340,6 +346,12 @@ signals:
 
       ///Called by plugins if texture image should be fetched
       void slotTextureGetImage( QString _textureName , QImage& _image , int _id );
+      
+      ///Called by plugins if texture index should be fetched
+      void slotTextureIndex( QString _textureName, int _id, int& _index);
+      
+      ///Called by plugins if texture name should be fetched
+      void slotTextureName( int _id, int _textureIndex, QString& _textureName);
       
       ///Called by plugins if current texture should be retrieved
       void slotGetCurrentTexture( int _id, QString& _textureName );
