@@ -491,6 +491,62 @@ void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _i
     _image = globalTextures_.texture(_textureName).textureImage;
 }
 
+void TextureControlPlugin::slotTextureIndex( QString _textureName, int _id, int& _index){
+  
+  // Get the object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // ================================================================================
+  // Get Texture data for current object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0) {
+    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    return;
+  }
+
+  // ================================================================================
+  // Check for requested Texture
+  // ================================================================================
+  if ( !texData->textureExists(_textureName) ) {
+    emit log(LOGERR, "Texture not available! " + _textureName );
+    return;
+  }
+
+  _index = texData->texture(_textureName).id();
+}
+
+void TextureControlPlugin::slotTextureName( int _id, int _textureIndex, QString& _textureName){
+  
+  // Get the object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // ================================================================================
+  // Get Texture data for current object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0) {
+    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    return;
+  }
+
+  for (uint i=0; i < texData->textures().size(); i++ )
+    if ( (texData->textures()[i]).id() == _textureIndex ){
+      _textureName = (texData->textures()[i]).name();
+      return;
+    }
+
+  emit log(LOGERR, "TextureIndex not available! (" + QString::number(_textureIndex) + ")" );
+  _textureName = "NOT_FOUND";
+  return;
+}
+
 void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName ){
   
   // Get the object
