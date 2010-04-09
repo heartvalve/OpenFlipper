@@ -1015,6 +1015,22 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
       connect(this   , SIGNAL(textureGetImage(QString,QImage&)),
               plugin , SLOT(slotTextureGetImage(QString,QImage&)),Qt::DirectConnection);
 
+    if ( checkSignal( plugin , "textureIndex(QString,int,int&)" ) )
+      connect(plugin   , SIGNAL(textureIndex(QString,int,int&)),
+              this ,   SLOT(slotTextureIndex(QString,int,int&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotTextureIndex(QString,int,int&)" ) )
+      connect(this   , SIGNAL(textureIndex(QString,int,int&)),
+              plugin , SLOT(slotTextureIndex(QString,int,int&)),Qt::DirectConnection);
+
+    if ( checkSignal( plugin , "textureName(int,int,QString&)" ) )
+      connect(plugin   , SIGNAL(textureName(int,int,QString&)),
+              this ,   SLOT(slotTextureName(int,int,QString&)),Qt::DirectConnection);
+
+    if ( checkSlot( plugin , "slotTextureName(int,int,QString&)" ) )
+      connect(this   , SIGNAL(textureName(int,int,QString&)),
+              plugin , SLOT(slotTextureName(int,int,QString&)),Qt::DirectConnection);
+              
     if ( checkSignal( plugin , "getCurrentTexture(int,QString&)" ) )
       connect(plugin   , SIGNAL(getCurrentTexture(int,QString&)),
               this ,   SLOT(slotGetCurrentTexture(int,QString&)),Qt::DirectConnection);
