@@ -432,7 +432,7 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
 
       QFileInfo info(fullName);
       if ( info.exists() )
-        emit addMultiTexture("OBJ Data", fullName, fullName, object->id(), textureId );
+        emit addMultiTexture("OBJ Data", info.baseName(), fullName, object->id(), textureId );
       else {
         emit log(LOGWARN, tr("Unable to load texture image %1").arg( QString(material.map_Kd().c_str()) ) );
         addMultiTexture("OBJ Data","Unknown Texture image " + QString::number(textureId), "unknown.png", object->id(), textureId );
