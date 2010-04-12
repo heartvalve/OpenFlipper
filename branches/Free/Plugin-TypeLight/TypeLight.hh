@@ -72,7 +72,7 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     void emptyObjectAdded( int _id );
     
     // BaseInterface
-    void updatedObject(int _id, UpdateType _type);
+    void updatedObject(int _id, const UpdateType _type);
 
   private slots:
 
