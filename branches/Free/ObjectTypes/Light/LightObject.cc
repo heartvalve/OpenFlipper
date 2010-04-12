@@ -216,7 +216,6 @@ LightSource* LightObject::lightSource() {
 
 void LightObject::update(UpdateType _type) {
   lightNode_->setLightSource(lightSource_);
-  std::cerr << "Update" << std::endl;
 }
 
 

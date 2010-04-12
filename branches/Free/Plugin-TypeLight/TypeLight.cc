@@ -87,7 +87,6 @@ void TypeLightPlugin::pluginsInitialized(){
       light0->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
       light0->enable();
       light0->fixedPosition(true);
-      std::cerr << "Set light 0 " << std::endl;
     }
     
   }
