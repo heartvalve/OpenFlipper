@@ -56,6 +56,7 @@
 //== INCLUDES =================================================================
 
 #include "ACG/Scenegraph/BaseNode.hh"
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include "ACG/GL/gl.hh"
 #include <string>
 #include <vector>
@@ -78,7 +79,7 @@ namespace SceneGraph {
 **/
 
 /// Structure to hold options for one LightSource
-class LightSource
+class DLLEXPORT LightSource
 {
   // Declare Node as friend for direct access to memberss
   friend class LightNode;
@@ -208,7 +209,7 @@ protected:
 };
 
 
-class ACGDLLEXPORT LightNode : public BaseNode
+class DLLEXPORT LightNode : public BaseNode
 {
 
 public:
