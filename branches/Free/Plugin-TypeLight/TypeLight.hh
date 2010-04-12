@@ -70,6 +70,9 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     
     // LoadSave Interface
     void emptyObjectAdded( int _id );
+    
+    // BaseInterface
+    void updatedObject(int _id, UpdateType _type);
 
   private slots:
 
@@ -93,6 +96,8 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     // Type Interface
     int addEmpty();
     DataType supportedType() { return DATA_LIGHT; }; 
+    
+    void pluginsInitialized();
     
   private:
     
