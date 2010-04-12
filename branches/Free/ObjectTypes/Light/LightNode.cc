@@ -104,7 +104,7 @@ void LightSource::direction( Vec3d _pos) {
 }
 
 Vec3d LightSource::direction() {
-    return Vec3d(position_[0], position_[1], position_[2], 0.0);
+    return Vec3d(position_[0], position_[1], position_[2]);
 }
 
 bool LightSource::directional() {
