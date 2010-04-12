@@ -83,4 +83,22 @@ LightObject* lightObject( BaseObjectData* _object ) {
   return dynamic_cast< LightObject* >( _object );
 }
 
+LightSource* lightSource( BaseObjectData* _object ) {
+  
+  if ( ! _object->dataType(DATA_LIGHT) )
+    return 0;
+  LightObject* light =  dynamic_cast< LightObject* >( _object );
+  
+  return light->lightSource();
+}
+
+DLLEXPORT
+LightSource* lightSource( LightObject* _object ) {
+  
+  if ( ! _object )
+    return 0;
+  
+  return _object->lightSource();
+}
+
 }

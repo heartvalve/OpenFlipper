@@ -15,9 +15,12 @@
  
 //== INCLUDES =================================================================
 
-#include <ACG/Scenegraph/LightNode.hh>
+#include <ObjectTypes/Light/LightNode.hh>
 
 //== TYPEDEFS FOR SCENEGRAPH ===============================================
+   
+/// Simple Name for the LightSource
+typedef  ACG::SceneGraph::LightSource LightSource;
    
 /// Simple Name for PlaneNode
 typedef  ACG::SceneGraph::LightNode LightNode;

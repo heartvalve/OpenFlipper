@@ -76,6 +76,22 @@ LightNode* lightNode( BaseObjectData* _object );
 DLLEXPORT
 LightObject* lightObject( BaseObjectData* _object );
 
+/** \brief Get the lightSource in this Object
+*
+* @param _object Try to get a light source from an object. If this Object is not
+*                a light source, the function will return 0
+*/
+DLLEXPORT
+LightSource* lightSource( BaseObjectData* _object );
+
+/** \brief Get the lightSource in this Object
+*
+* @param _object Try to get a light source from an object. If this Object is not
+*                a light source or anything else goes wrong, the function will return 0
+*/
+DLLEXPORT
+LightSource* lightSource( LightObject* _object );
+
 }
 
 #endif // PLUGINFUNCTIONSLIGHT_HH
