@@ -1031,6 +1031,9 @@ int FileOFFPlugin::loadObject(QString _filename) {
     // Parse file
     readOFFFile( _filename, importer );
     
+    // Finish importing
+    importer.finish();
+    
     BaseObject* object = importer.getObject();
     
     if(!object){
@@ -1063,9 +1066,7 @@ int FileOFFPlugin::loadObject(QString _filename) {
         if ( !importer.hasVertexNormals() || userReadOptions_ & OFFImporter::FORCE_NONORMALS )
             triMeshObj->mesh()->update_normals();
         else
-            triMeshObj->mesh()->update_face_normals();
-        
-        
+            triMeshObj->mesh()->update_face_normals();  
         
         triMeshObj->update();
         triMeshObj->show();

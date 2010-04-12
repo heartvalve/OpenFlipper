@@ -62,6 +62,7 @@
 typedef int VertexHandle;
 typedef int FaceHandle;
 typedef std::vector<VertexHandle> VHandles;
+typedef std::vector<OpenMesh::VertexHandle> OMVHandles;
 typedef OpenMesh::Vec3f Vec3f;
 typedef OpenMesh::Vec2f Vec2f;
 typedef OpenMesh::Vec4uc Vec4uc;
@@ -178,6 +179,11 @@ class OFFImporter
     /// get BaseObject data of object
     BaseObject* getObject();
     
+    /// Finish up importing process:
+    /// Duplicate vertices of non-manifold faces and
+    /// add these faces as isolated ones
+    void finish();
+    
   private:
     
     // general data
@@ -206,6 +212,9 @@ class OFFImporter
     //object data
     BaseObject* object_;
     ObjectOptions objectOptions_;
+    
+    // Store invalid face vertex handles
+    std::vector<OMVHandles> invalidFaces_;
 };
 
 //=============================================================================

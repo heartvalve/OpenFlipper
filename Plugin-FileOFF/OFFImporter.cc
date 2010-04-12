@@ -250,9 +250,13 @@ int OFFImporter::addFace(const VHandles& _indices) {
     
     TriMesh::FaceHandle fh = triMesh()->add_face( vertices ); 
     
-    faceMapTri_.push_back( fh );
-    
-    faceIndex = faceMapTri_.size()-1;
+    if(fh.is_valid()) {
+        faceMapTri_.push_back( fh );
+        faceIndex = faceMapTri_.size()-1;
+    } else {
+        // Store non-manifold face
+        invalidFaces_.push_back( vertices );
+    }
     
   } else if ( isPolyMesh() ){
   
@@ -275,12 +279,105 @@ int OFFImporter::addFace(const VHandles& _indices) {
     
     PolyMesh::FaceHandle fh = polyMesh()->add_face( vertices );
     
-    faceMapPoly_.push_back(fh);
-    
-    faceIndex = faceMapPoly_.size()-1;
+    if(fh.is_valid()) {
+        faceMapPoly_.push_back(fh);
+        faceIndex = faceMapPoly_.size()-1;
+    } else {
+        // Store non-manifold face vertices
+        invalidFaces_.push_back( vertices );
+    }
   }
   
   return faceIndex;
+}
+
+//-----------------------------------------------------------------------------
+
+void OFFImporter::finish() {
+    
+    if(invalidFaces_.empty()) return;
+    
+    if ( isTriangleMesh() ) {
+        
+        for(std::vector<OMVHandles>::iterator it = invalidFaces_.begin();
+                it != invalidFaces_.end(); ++it) {
+
+            OMVHandles& vhandles = *it;
+
+            // double vertices
+            for (unsigned int j = 0; j < vhandles.size(); ++j)
+            {
+              TriMesh::Point p = triMesh()->point(vhandles[j]);
+              vhandles[j] = triMesh()->add_vertex(p);
+              // DO STORE p, reference may not work since vertex array
+              // may be relocated after adding a new vertex !
+
+              // Mark vertices of failed face as non-manifold
+              if (triMesh()->has_vertex_status()) {
+                  triMesh()->status(vhandles[j]).set_fixed_nonmanifold(true);
+              }
+            }
+
+            // add face
+            OpenMesh::FaceHandle fh = triMesh()->add_face(vhandles);
+
+            // Mark failed face as non-manifold
+            if (triMesh()->has_face_status())
+                triMesh()->status(fh).set_fixed_nonmanifold(true);
+
+            // Mark edges of failed face as non-two-manifold
+            if (triMesh()->has_edge_status()) {
+                TriMesh::FaceEdgeIter fe_it = triMesh()->fe_iter(fh);
+                for(; fe_it; ++fe_it) {
+                    triMesh()->status(fe_it).set_fixed_nonmanifold(true);
+                }
+            }
+            
+            faceMapTri_.push_back(fh);
+        }
+        
+    } else if ( isPolyMesh() ) {
+        
+        for(std::vector<OMVHandles>::iterator it = invalidFaces_.begin();
+                it != invalidFaces_.end(); ++it) {
+
+            OMVHandles& vhandles = *it;
+
+            // double vertices
+            for (unsigned int j = 0; j < vhandles.size(); ++j)
+            {
+              TriMesh::Point p = polyMesh()->point(vhandles[j]);
+              vhandles[j] = polyMesh()->add_vertex(p);
+              // DO STORE p, reference may not work since vertex array
+              // may be relocated after adding a new vertex !
+
+              // Mark vertices of failed face as non-manifold
+              if (polyMesh()->has_vertex_status()) {
+                  polyMesh()->status(vhandles[j]).set_fixed_nonmanifold(true);
+              }
+            }
+
+            // add face
+            OpenMesh::FaceHandle fh = polyMesh()->add_face(vhandles);
+
+            // Mark failed face as non-manifold
+            if (polyMesh()->has_face_status())
+                polyMesh()->status(fh).set_fixed_nonmanifold(true);
+
+            // Mark edges of failed face as non-two-manifold
+            if (polyMesh()->has_edge_status()) {
+                TriMesh::FaceEdgeIter fe_it = polyMesh()->fe_iter(fh);
+                for(; fe_it; ++fe_it) {
+                    polyMesh()->status(fe_it).set_fixed_nonmanifold(true);
+                }
+            }
+            
+            faceMapPoly_.push_back(fh);
+        }
+    }
+    
+    // Clear all invalid faces
+    invalidFaces_.clear();
 }
 
 //-----------------------------------------------------------------------------
