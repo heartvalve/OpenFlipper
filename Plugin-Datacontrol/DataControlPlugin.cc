@@ -64,6 +64,8 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
+#include <ObjectTypes/Light/Light.hh>
+
 //******************************************************************************
 
 const ACG::Vec4f base_color (0.0,0.0,0.5,1.0);
@@ -125,6 +127,9 @@ void DataControlPlugin::pluginsInitialized() {
 
   PluginFunctions::setDefaultViewObjectMarker (&objectMarker);
   PluginFunctions::setViewObjectMarker (&objectMarker);
+  
+  connect(tool_->lightSources, SIGNAL(stateChanged(int)), this, SLOT(slotShowLightSources(int)));
+  slotShowLightSources(tool_->lightSources->checkState());
 }
 
 
@@ -314,6 +319,8 @@ void DataControlPlugin::fileOpened(int _id){
 
   if ( PluginFunctions::getObject(_id, obj) )
     model_->objectAdded(obj);
+  
+  slotShowLightSources(tool_->lightSources->checkState());
 }
 
 
@@ -438,6 +445,20 @@ void DataControlPlugin::slotMoveBaseObject(int _id, int _newParentId){
     emit deleteObject( oldParent->id() );
 }
 
+
+//******************************************************************************
+
+void DataControlPlugin::slotShowLightSources( int _state ) {
+
+    int rows = model_->rowCount();
+    
+    for(int i = 0; i < rows; ++i) {
+        TreeItem* item = model_->getItem(model_->index(i,0));
+        if(item->dataType() == DATA_LIGHT) {
+            view_->setRowHidden(i, model_->parent(model_->index(i,0)), !(_state == Qt::Checked));
+        }
+    }
+}
 
 //******************************************************************************
 
