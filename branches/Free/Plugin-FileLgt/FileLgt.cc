@@ -90,24 +90,143 @@ int FileLightPlugin::loadObject(QString _filename)
         LightSource* light = PluginFunctions::lightSource(lightObject);
 
         ACG::Vec3d position;
+        ACG::Vec3d direction;
+        ACG::Vec3d spotDirection;
+        ACG::Vec4f ambientColor;
+        ACG::Vec4f diffuseColor;
+        ACG::Vec4f specularColor;
+        bool fixedPosition;
+        float spotExponent;
+        float spotCutOff;
+        float cAttenuation;
+        float lAttenuation;
+        float qAttenuation;
+        bool enabled;
 
         QSettings settings(_filename, QSettings::IniFormat);
         settings.beginGroup("LIGHT");
+        
+        if ( settings.contains("PositionX") ) {
+            
+            position[0] = settings.value("PositionX").toDouble();
+            position[1] = settings.value("PositionY").toDouble();
+            position[2] = settings.value("PositionZ").toDouble();
 
-        if ( settings.contains("Position0") ){
-
-          position[0] = settings.value("PositionX").toDouble();
-          position[1] = settings.value("PositionY").toDouble();
-          position[2] = settings.value("PositionZ").toDouble();
-          settings.endGroup();
-
-          light->position( position );
-
-          lightObject->setFromFileName(_filename);
+            light->position( position );
         }
+        
+        if ( settings.contains("DirectionX") ){
+            
+            direction[0] = settings.value("DirectionX").toDouble();
+            direction[1] = settings.value("DirectionY").toDouble();
+            direction[2] = settings.value("DirectionZ").toDouble();
+
+            light->direction( direction );
+        }
+        
+        if ( settings.contains("SpotDirectionX") ){
+
+            spotDirection[0] = settings.value("SpotDirectionX").toDouble();
+            spotDirection[1] = settings.value("SpotDirectionY").toDouble();
+            spotDirection[2] = settings.value("SpotDirectionZ").toDouble();
+
+            light->spotDirection( spotDirection );
+        }
+        
+        if ( settings.contains("AmbientColorR") ){
+            
+            ambientColor[0] = settings.value("AmbientColorR").toDouble();
+            ambientColor[1] = settings.value("AmbientColorG").toDouble();
+            ambientColor[2] = settings.value("AmbientColorB").toDouble();
+            if(settings.contains("AmbientColorA"))
+                ambientColor[3] = settings.value("AmbientColorA").toDouble();
+            else
+                ambientColor[3] = 1.0f;
+         
+            light->ambientColor( ambientColor );
+        }
+        
+        if ( settings.contains("DiffuseColorR") ){
+
+            diffuseColor[0] = settings.value("DiffuseColorR").toDouble();
+            diffuseColor[1] = settings.value("DiffuseColorG").toDouble();
+            diffuseColor[2] = settings.value("DiffuseColorB").toDouble();
+            if(settings.contains("DiffuseColorA"))
+                diffuseColor[3] = settings.value("DiffuseColorA").toDouble();
+            else
+                diffuseColor[3] = 1.0f;
+
+            light->diffuseColor( diffuseColor );
+        }
+        
+        if ( settings.contains("SpecularColorR") ){
+
+            specularColor[0] = settings.value("SpecularColorR").toDouble();
+            specularColor[1] = settings.value("SpecularColorG").toDouble();
+            specularColor[2] = settings.value("SpecularColorB").toDouble();
+            if(settings.contains("SpecularColorA"))
+                specularColor[3] = settings.value("SpecularColorA").toDouble();
+            else
+                specularColor[3] = 1.0f;
+
+            light->specularColor( specularColor );
+        }
+        
+        if ( settings.contains("FixedPosition") ){
+            
+            fixedPosition = settings.value("FixedPosition").toBool();
+
+            light->fixedPosition( fixedPosition );
+        }
+        
+        if ( settings.contains("SpotExponent") ){
+
+            spotExponent = settings.value("SpotExponent").toDouble();
+
+            light->spotExponent( spotExponent );
+        }
+        
+        if ( settings.contains("SpotCutOff") ){
+
+            spotCutOff = settings.value("SpotCutOff").toDouble();
+
+            light->spotCutoff( spotCutOff );
+        }
+        
+        if ( settings.contains("ConstantAttenuation") ){
+
+            cAttenuation = settings.value("ConstantAttenuation").toDouble();
+
+            light->constantAttenuation( cAttenuation );
+        }
+        
+        if ( settings.contains("LinearAttenuation") ){
+
+            lAttenuation = settings.value("LinearAttenuation").toDouble();
+
+            light->linearAttenuation( lAttenuation );
+        }
+        
+        if ( settings.contains("QuadraticAttenuation") ){
+
+            qAttenuation = settings.value("QuadraticAttenuation").toDouble();
+
+            light->quadraticAttenuation( qAttenuation );
+        }
+        
+        if ( settings.contains("Enabled") ){
+
+            enabled = settings.value("Enabled").toBool();
+
+            enabled ? light->enable() : light->disable();
+        }
+        
+        lightObject->setFromFileName(_filename);
+        settings.endGroup();
       }
     }
-    emit updatedObject( lightObject->id() );
+
+    emit updatedObject( lightObject->id(), UPDATE_ALL );
   }
 
   return id;
@@ -122,25 +241,58 @@ bool FileLightPlugin::saveObject(int _id, QString _filename)
     LightObject* lightObject = PluginFunctions::lightObject(obj);
     if( lightObject )
     {
-      LightSource* light = PluginFunctions::lightSource(lightObject);
+        LightSource* light = PluginFunctions::lightSource(lightObject);
 
-      obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-      obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+        obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
+        obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
 
-      QSettings settings(_filename, QSettings::IniFormat);
-      settings.beginGroup("LIGHT");
-      settings.setValue("PositionX",  light->position()[0]);
-      settings.setValue("PositionY",  light->position()[1]);
-      settings.setValue("PositionZ",  light->position()[2]);
-      
-      //Read : Ambient, Diffuse, Specular color , spot direction, exponent, cutOff , constant ,linear, quadratic,  attenuation 
-//       settings.setValue("XDirection0",  plane->planeNode()->xDirection()[0]);
-//       settings.setValue("XDirection1",  plane->planeNode()->xDirection()[1]);
-//       settings.setValue("XDirection2",  plane->planeNode()->xDirection()[2]);
-//       settings.setValue("YDirection0",  plane->planeNode()->yDirection()[0]);
-//       settings.setValue("YDirection1",  plane->planeNode()->yDirection()[1]);
-//       settings.setValue("YDirection2",  plane->planeNode()->yDirection()[2]);
-      settings.endGroup();
+        QSettings settings(_filename, QSettings::IniFormat);
+        settings.beginGroup("LIGHT");
+
+        if(!light->directional()) {
+            settings.setValue("PositionX", light->position()[0]);
+            settings.setValue("PositionY", light->position()[1]);
+            settings.setValue("PositionZ", light->position()[2]);
+        } else {
+            settings.setValue("DirectionX", light->direction()[0]);
+            settings.setValue("DirectionY", light->direction()[1]);
+            settings.setValue("DirectionZ", light->direction()[2]);
+        }
+
+        settings.setValue("SpotDirectionX", light->spotDirection()[0]);
+        settings.setValue("SpotDirectionY", light->spotDirection()[1]);
+        settings.setValue("SpotDirectionZ", light->spotDirection()[2]);
+        
+        settings.setValue("AmbientColorR", light->ambientColor()[0]);
+        settings.setValue("AmbientColorG", light->ambientColor()[1]);
+        settings.setValue("AmbientColorB", light->ambientColor()[2]);
+        settings.setValue("AmbientColorA", light->ambientColor()[3]);
+        
+        settings.setValue("DiffuseColorR", light->diffuseColor()[0]);
+        settings.setValue("DiffuseColorG", light->diffuseColor()[1]);
+        settings.setValue("DiffuseColorB", light->diffuseColor()[2]);
+        settings.setValue("DiffuseColorA", light->diffuseColor()[3]);
+        
+        settings.setValue("SpecularColorR", light->specularColor()[0]);
+        settings.setValue("SpecularColorG", light->specularColor()[1]);
+        settings.setValue("SpecularColorB", light->specularColor()[2]);
+        settings.setValue("SpecularColorA", light->specularColor()[3]);
+        
+        settings.setValue("FixedPosition", light->fixedPosition());
+        
+        settings.setValue("SpotExponent", light->spotExponent());
+        
+        settings.setValue("SpotCutOff", light->spotCutoff());
+        
+        settings.setValue("ConstantAttenuation", light->constantAttenuation());
+        
+        settings.setValue("LinearAttenuation", light->linearAttenuation());
+        
+        settings.setValue("QuadraticAttenuation", light->quadraticAttenuation());
+        
+        settings.setValue("Enabled", light->enabled());
+                
+        settings.endGroup();
     }
   }
 
