@@ -73,6 +73,8 @@ class FileLightPlugin : public QObject, BaseInterface, FileInterface, LoadSaveIn
     void log(QString _message);
 
     void emptyObjectAdded( int _id );
+    
+    void updatedObject(int _id, UpdateType _type);
 
   private slots:
 

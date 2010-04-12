@@ -111,6 +111,12 @@ public:
   */
   bool directional();
   
+  /** \brief Get direction of the light source
+  *
+  * Get direction of light.
+  */
+  Vec3d direction();
+  
   /** \brief Set the direction of the light source
   *
   * This function creates a directional light source. The position is not used by OpenGL.
