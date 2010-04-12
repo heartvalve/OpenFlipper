@@ -93,7 +93,7 @@ void LightObject::init(LightNode* _light) {
   lightNode_ = new LightNode( 0 , "NEW LightNode");
 
   // Light nodes have to be on top of all other nodes.
-  PluginFunctions::addObjectRenderingNode(lightNode_);
+  PluginFunctions::addGlobalStatusNode(lightNode_);
   
   
   /*
@@ -149,7 +149,7 @@ QString LightObject::getObjectinfo() {
     output += "Object Contains Light : ";
 
   ///\TODO Output info
-  ACG::Vec3d pos = lightNode_->position();
+  ACG::Vec3d pos = lightSource_.position();
 //   ACG::Vec3f nor = lightNode_->normal();
 
   output += " Position ( " + QString::number(pos[0]) + ", " + QString::number(pos[1]) + ", " + QString::number(pos[2]) + ")";
@@ -208,6 +208,15 @@ void LightObject::visible(bool _visible) {
     show();
   else 
     hide();
+}
+
+LightSource* LightObject::lightSource() {
+  return &lightSource_;
+}
+
+void LightObject::update(UpdateType _type) {
+  lightNode_->setLightSource(lightSource_);
+  std::cerr << "Update" << std::endl;
 }
 
 

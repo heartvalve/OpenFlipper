@@ -62,7 +62,28 @@ class DLLEXPORT LightObject : public BaseObjectData {
     
     /// Set the name of the Object
     void setName( QString _name );
-        
+    
+  /** @} */   
+  
+  //===========================================================================
+  /** @name Contents
+   * @{ */
+  //=========================================================================== 
+  public:
+    
+    LightSource* lightSource();
+    
+    /** \brief Update the Light Object
+    *
+    *   Updates the rendering of the light object
+    */
+    virtual void update(UpdateType _type = UPDATE_ALL);
+    
+  private:
+    LightSource lightSource_;
+    
+  /** @} */      
+       
   //===========================================================================
   /** @name Visualization
    * @{ */
