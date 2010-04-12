@@ -549,6 +549,8 @@ void TextureControlPlugin::slotTextureName( int _id, int _textureIndex, QString&
 
 void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName ){
   
+  _textureName = "NONE";
+  
   // Get the object
   BaseObjectData* obj;
   if (! PluginFunctions::getObject(  _id , obj ) ) {
@@ -559,12 +561,8 @@ void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName
   // Get Texture data for current object
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
-  if (texData == 0) {
-    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+  if (texData == 0)
     return;
-  }
-  
-  _textureName = "NONE";
   
   // Iterate over all available textures
   for ( uint i = 0 ; i < texData->textures().size() ; ++i)
