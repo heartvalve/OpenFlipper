@@ -61,9 +61,9 @@
 namespace ACG {
 namespace SceneGraph {
 
-static LightSourceHandle lightSourceHandle;
-  
 //== IMPLEMENTATION ========================================================== 
+
+static LightSourceHandle* lightSourceHandle = 0;
 
 //default Constructor
 LightSource::LightSource()
@@ -200,16 +200,18 @@ LightNode::LightNode( BaseNode* _parent,
   : BaseNode(_parent, _name),
     lightId_(0) {
   
-    lightId_ = lightSourceHandle.getLight(this);
-    //std::cerr << "Getting light id: " << lightId_ << std::endl;
-    //std::cerr << "GL_MAX_LIGHTS: " << GL_MAX_LIGHTS << std::endl;
+    if(lightSourceHandle == 0) {
+        lightSourceHandle = new LightSourceHandle();
+    }
+        
+    lightId_ = lightSourceHandle->getLight(this);
 }
 
 //----------------------------------------------------------------------------
 
 LightNode::~LightNode() {
 
-    lightSourceHandle.removeLight(this);
+    lightSourceHandle->removeLight(this);
 }
     
 //----------------------------------------------------------------------------
