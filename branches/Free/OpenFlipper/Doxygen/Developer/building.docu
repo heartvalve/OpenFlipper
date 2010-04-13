@@ -51,7 +51,7 @@
  *
  * <ul>
  * <li> Get Visual Studio >= 2008 </li>
- * <li> Get and Install Qt ( >= 4.5 ) </li>
+ * <li> Get and Install Qt ( >= 4.5 , Visual Studio Version ) </li>
  * <li> Set the QTDIR Variable to your Qt Installation directory </li>
  * <li> Extract OpenFlipper source code. ( If you want to use svn  you can get a free svn client from http://tortoisesvn.net/downloads ) </li>
  * <li> Download the glew library and install it (The best way is to intall it to c:\\libs\\glew directory )</li>
@@ -59,13 +59,22 @@
  * <li> Rearrange the files in the glut-3.7 directory such that all *.lib and *.dll files are in a c:\\libs\\glut-3.7\\lib subdirectory and the glut.h file is moved to the subdirectory c:\\libs\\glut-3.7\\include\\gl\\glut.h</li>
  * <li> Get cmake for windows from http://www.cmake.org/cmake/resources/software.html <li>
  * <li> Start the cmake gui and select the OpenFlipper toplevel directory as source directory </li>
- * <li> Choose a build directory (e.g. create a directory called \c build in OpenFlipper's root dir)</li>
- * <li> Click on configure and chose a generator for Visual Studio (according to your Visual Studio version)....
- * If the configuration fails because of libraries and/or headers which have not been found,
- * you can adjust the path in cmake-gui manually.  Note that some build variables are only visible in Advanced Mode.
- * You can change view modes of cmake-gui via the select box on the top. Rerun configure until everything is configured correctly </li>
+ * \image html cmake-source.png
+ * <li> Choose a build directory (e.g. a subdirectory called \c build-release in OpenFlipper's root dir)</li>
+ * \image html cmake-builddir.png
+ * <li> Click on configure </li>
+ * \image html cmake-configuregenerate.png
+ * <li>Choose a generator for Visual Studio (according to your Visual Studio version)....</li>
+ * <li>
+ * If the configuration fails because of libraries and/or headers which have not been found, an error message will be printed in the bottom window.
+ * You can adjust the paths in cmake-gui manually in the large window. Note that some build variables are only visible in Advanced Mode.
+ * You can change view modes of cmake-gui via the select box on the top. </li>
+ * <li>Rerun configure until everything is configured correctly and no more red columns are shown.</li>
+ * <li>If you want to build in release mode, you can change the variable CMAKE_BUILD_TYPE to Release and rerun configure.</li>
+ * \image html cmake-buildtype.png
  * <li> Click generate to create the visual studio project files </li>
- * <li> You can now find a Visual Studio solution file (OpenFlipper.sln) in the <b>build</b> directory you chose in cmake </li>
+ * <li> You can now find a Visual Studio solution file (OpenFlipper.sln) in the <b>build directory</b> directory you chose in cmake.</li>
+ * <li> Depending on the BuildType you chose, set Visual Studio to Release Mode or Debug Mode</li>
  * <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file by starting Build Solution. </li>
  * </ul> 
  *
