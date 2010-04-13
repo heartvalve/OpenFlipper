@@ -322,7 +322,7 @@ int getObjectId( const QString _name ) {
 	if(_name.isEmpty()) return -1;
 
 	BaseObject* object = objectRoot_->childExists( _name );
-	return object->id();
+	return object ? object->id() : -1;
 }
 
 // ===============================================================================
