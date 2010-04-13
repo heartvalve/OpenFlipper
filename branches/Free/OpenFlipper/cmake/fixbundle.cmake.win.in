@@ -21,7 +21,7 @@ get_filename_component(_GlutDir "@GLUT_glut_LIBRARY@" PATH)
 
 
 # fix all dependencies
-fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.exe "" "${_GlutDir};@GLEW_LIBRARY_DIR@")
+fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.exe "" "${_GlutDir};@GLEW_LIBRARY_DIR@;@QT_BINARY_DIR@")
 
 
 
