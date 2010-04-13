@@ -57,6 +57,7 @@
 
 #include "ACG/Scenegraph/BaseNode.hh"
 #include <OpenFlipper/common/GlobalDefines.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include "ACG/GL/gl.hh"
 #include <string>
 #include <vector>
@@ -258,13 +259,15 @@ private:
 * Assign a unique OpenGL light source identifier to each of the
 * light source nodes in the scene. These relations are
 * stored in a map. If there is no free light source left,
-* return GL_FALSE as light source enumerator.
+* return GL_INVALID_ENUM as light source enumerant.
 */
 class DLLEXPORT LightSourceHandle {
     public:
         LightSourceHandle() {
-            
-            for(int i = 0; i < GL_MAX_LIGHTS; ++i) {
+            // Get max number of lights
+            GLint maxLights;
+            glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
+            for(int i = 0; i < maxLights; ++i) {
                 lights_.insert(std::pair<GLenum, LightNode*>(GL_LIGHT0 + i, 0));
             }
         };
