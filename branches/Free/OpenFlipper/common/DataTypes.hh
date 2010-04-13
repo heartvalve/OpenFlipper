@@ -107,7 +107,11 @@ class DLLEXPORT DataType  {
     
     bool operator&( const unsigned int& _i );
     bool operator&( const DataType& _i ) const;
- 
+
+    DataType operator!();
+    
+    bool contains( const DataType& _i );
+    
     DataType operator|( const DataType& _i ) const;
 
     bool operator++(int _unused);

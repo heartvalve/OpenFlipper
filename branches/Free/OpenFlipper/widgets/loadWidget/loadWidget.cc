@@ -144,8 +144,14 @@ void LoadWidget::slotSetSaveFilters(DataType _type){
 
   QStringList allFilters;
 
+  bool multipleFiles = (ids_.size() > 1);
+  
   for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if (supportedTypes_[i].type & _type){
+     if ( supportedTypes_[i].type.contains(_type) ){
+       
+       if ( multipleFiles && !supportedTypes_[i].saveMultipleObjects)
+         continue;
+
       QStringList filters = supportedTypes_[i].saveFilters.split(";;");
       for (int f=filters.size()-1; f >= 0;  f--){
         if (filters[f].trimmed() == "") { filters.removeAt(f); continue; }
@@ -280,7 +286,7 @@ void LoadWidget::saveFile(){
   
   for (uint t=0; t < supportedTypes_.size(); t++){
 
-    QString filters = supportedTypes_[t].loadFilters;  
+    QString filters = supportedTypes_[t].saveFilters;  
 
     if (filters.contains( fi.suffix() )){
       pluginForExtension_[ fi.suffix() ] = t;
@@ -308,8 +314,12 @@ void LoadWidget::saveFile(){
       return; //abort if users doesn't want to overwrite
   }
 
-  if ( pluginForExtension_.find( fi.suffix() ) != pluginForExtension_.end() )
-    emit save(id_,filename, pluginForExtension_[fi.suffix()] );
+  if ( pluginForExtension_.find( fi.suffix() ) != pluginForExtension_.end() ){
+    if (ids_.size() == 1)
+      emit save(ids_[0],filename, pluginForExtension_[fi.suffix()] );
+    else
+      emit save(ids_   ,filename, pluginForExtension_[fi.suffix()] );
+  }
 
   OpenFlipperSettings().setValue("Core/CurrentDir", fi.absolutePath() );
 }
@@ -329,12 +339,16 @@ int LoadWidget::showLoad(){
 
 /// show Widget for saving Files
 int LoadWidget::showSave(int _id, QString _filename){
+  
+  std::cerr << "save single file" << std::endl;
+  
   setAcceptMode ( QFileDialog::AcceptSave );
   setFileMode( QFileDialog::AnyFile );
   setWindowTitle(tr("Save Object"));
   loadMode_ = false;
 
-  id_ = _id;
+  ids_.clear();
+  ids_.push_back(_id);
 
   //set dataType
   BaseObjectData* object;
@@ -354,6 +368,76 @@ int LoadWidget::showSave(int _id, QString _filename){
   }
 
   slotSetSaveFilters( object->dataType() );
+
+  //display correct path/name
+  QFileInfo fi(_filename);
+  QFile file(_filename);
+
+  if (file.exists()) {
+    setDirectory( fi.absolutePath() );
+    selectFile ( fi.fileName() );
+  } else {
+//     setDirectory(OpenFlipper::Options::currentDir().absolutePath() );
+    std::cout << "setting filename = " << _filename.toStdString() << std::endl;
+    setDirectory( fi.absolutePath() );
+    selectFile ( fi.fileName() );
+  }
+
+
+  //try to select the best fitting name filter
+  for (int i=0; i < nameFilters().count(); i++){
+    int s = nameFilters()[i].indexOf("*")+2;
+    int e = nameFilters()[i].indexOf(" ", s);
+    int e2 = nameFilters()[i].indexOf(")", s);
+    if (e == -1 || e2 < e) e = e2;
+
+    QString ext = nameFilters()[i].mid(s,e-s);
+
+    if (ext == fi.completeSuffix()){
+      selectNameFilter(nameFilters()[i]);
+      break;
+    }
+  }
+
+  return this->exec();
+}
+
+/// show Widget for saving Files
+int LoadWidget::showSave(IdList _ids, QString _filename){
+  
+  std::cerr << "save multiple files" << std::endl;
+  
+  setAcceptMode ( QFileDialog::AcceptSave );
+  setFileMode( QFileDialog::AnyFile );
+  setWindowTitle(tr("Save Objects"));
+  loadMode_ = false;
+
+  ids_ = _ids;
+
+  DataType types = 0;
+  
+  for (uint i=0; i < _ids.size(); i++){
+    
+    BaseObjectData* object;
+    PluginFunctions::getObject(_ids[i], object);
+    
+    types |= object->dataType();
+  }
+  
+  //check if we can save this dataType
+  bool typeFound = false;
+  
+  for (int i=0; i < (int)supportedTypes_.size(); i++)
+    if ( supportedTypes_[i].type.contains(types) )
+      typeFound = true;
+
+
+  if (!typeFound){
+    std::cerr << "No suitable plugin for saving this dataType." << std::endl;
+    return QDialog::Rejected;
+  }
+
+  slotSetSaveFilters( types );
 
   //display correct path/name
   QFileInfo fi(_filename);

@@ -149,6 +149,11 @@ void initializeTypes() {
 /// Adds a datatype and returns the id for the new type
 DataType addDataType(QString _name, QString _readableName) {
   
+  if ( typeId(_name) != DATA_UNKNOWN ) {
+    std::cerr << "Redefinition of existing data type!" << std::endl;
+    return typeId(_name);
+  }
+  
   int type = nextTypeId_;
 
   stringToTypeInfo[ _name ] = types.size();
@@ -367,6 +372,21 @@ bool DataType::operator&( const unsigned int& _i ) {
 bool DataType::operator&( const DataType& _i ) const {
   return (field & _i.field); 
 }    
+
+//===========================================
+
+DataType DataType::operator!() {
+  DataType inv = (*this);
+  inv.field = !inv.field;
+  return inv; 
+}
+
+//===========================================
+
+bool DataType::contains( const DataType& _i ){
+  //its not magic
+  return ( (_i.field & field) == _i.field);
+}
 
 //===========================================
 

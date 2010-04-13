@@ -179,6 +179,14 @@ public slots:
        */
       virtual bool saveObject(int /*_id*/, QString /*_filename*/) = 0;
 
+      /** \brief Save multiple objects to one file
+       *
+       * The Core will call this slot if the user wants to save multiple files in one file.
+       * The core will check if you support the given object depending on the
+       * provided dataTypes ( see supportedType ).
+       * Additionally to the filename you get ids of the objects to save
+       */
+      virtual bool saveObjects(IdList /*_ids*/, QString /*_filename*/){return false;};
 /** @} */
 
 };

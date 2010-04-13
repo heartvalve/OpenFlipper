@@ -1322,6 +1322,7 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
     ft.saveFilters = filePlugin->getSaveFilters();
     ft.plugin = filePlugin;
     ft.object = plugin;
+    ft.saveMultipleObjects = checkSlot(plugin,"saveObjects(IdList,QString)");
     
     supportedTypes_.push_back(ft);
   }

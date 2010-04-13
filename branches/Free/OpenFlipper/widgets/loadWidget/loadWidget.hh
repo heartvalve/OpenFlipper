@@ -59,7 +59,8 @@ class LoadWidget : public QFileDialog
 
   signals:
     void load(QString _filename, int _pluginID);
-    void save(int _id, QString _filename, int _pluginID);
+    void save(int     _id, QString _filename, int _pluginID);
+    void save(IdList _ids, QString _filename, int _pluginID);
     
   private slots:
     void slotSetPluginForExtension(QString _extension, int _pluginId );
@@ -67,7 +68,8 @@ class LoadWidget : public QFileDialog
     void slotSetSaveFilters(DataType _type);
 
   private:
-    int id_;
+    IdList ids_;
+
     bool loadMode_;
     QStringList lastPaths;
     std::vector<fileTypes>& supportedTypes_;
@@ -76,7 +78,8 @@ class LoadWidget : public QFileDialog
     
   public:
     int showLoad();
-    int showSave(int _id, QString _filename);
+    int showSave(int     _id, QString _filename);
+    int showSave(IdList _ids, QString _filename);
     
   public slots :
     virtual void accept();

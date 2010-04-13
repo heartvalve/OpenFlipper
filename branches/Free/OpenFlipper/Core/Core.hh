@@ -120,6 +120,7 @@ struct fileTypes {
   QString saveFilters;
   FileInterface* plugin;
   QObject* object;
+  bool saveMultipleObjects;
 };
 
 struct dataTypes {
@@ -614,6 +615,8 @@ private slots:
     bool saveObject( int _id, QString _filename );
     
     void saveObject( int _id, QString _filename, int _pluginID );
+    
+    void saveObjects( IdList _ids, QString _filename, int _pluginID );
 
     /** Show dialog for saving an object to a new location
       * @param _id id of the object
@@ -621,6 +624,8 @@ private slots:
       */
     bool saveObjectTo( int _id, QString _filename );
 
+    bool saveObjectsTo( IdList _ids, QString _filename );
+      
     /// Slot for saving objects from Menu
     void saveAllObjects();
 
