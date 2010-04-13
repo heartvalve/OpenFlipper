@@ -61,6 +61,18 @@ endforeach ()
 # add plugins
 of_add_plugins ()
 
+if (WIN32 )
+  # prepare bundle generation cmake file and add a build target for it
+  configure_file ("${CMAKE_SOURCE_DIR}/OpenFlipper/cmake/fixbundle.cmake.win.in"
+     "${CMAKE_BINARY_DIR}/fixbundle.win.cmake" @ONLY IMMEDIATE)
+
+  add_custom_target (fixbundle ALL
+    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.win.cmake"
+  )
+
+endif(WIN32)
+
+
 if (APPLE)
   # prepare bundle generation cmake file and add a build target for it
   configure_file ("${CMAKE_SOURCE_DIR}/OpenFlipper/cmake/fixbundle.cmake.in"
