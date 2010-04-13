@@ -156,18 +156,18 @@ void CoreWidget::setupMenuBar()
   fileMenu_->addSeparator();
 
   //Save object
-  QAction* AC_Save = new QAction(tr("Save Object"), this);
+  QAction* AC_Save = new QAction(tr("Save Objects"), this);
 //   AC_Save->setShortcut (Qt::CTRL + Qt::Key_S);
-  AC_Save->setStatusTip(tr("Save currently selected objects"));
-  AC_Save->setWhatsThis(tr("Saves all currently selected objects"));
+  AC_Save->setStatusTip(tr("Save current objects"));
+  AC_Save->setWhatsThis(tr("Save current objects"));
   AC_Save->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save.png"));
   connect(AC_Save, SIGNAL(triggered()), this, SIGNAL(saveMenu()));
   fileMenu_->addAction(AC_Save);
 
   //Save object to
-  QAction* AC_Save_to = new QAction(tr("Save Object To"), this);
-  AC_Save_to->setStatusTip(tr("Save current Object(s) To"));
-  AC_Save_to->setWhatsThis(tr("Saves all currently selected objects under a new name"));
+  QAction* AC_Save_to = new QAction(tr("Save Objects to"), this);
+  AC_Save_to->setStatusTip(tr("Save current Object(s) to"));
+  AC_Save_to->setWhatsThis(tr("Save current Object(s) under a new name"));
   AC_Save_to->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"document-save-as.png"));
   connect(AC_Save_to, SIGNAL(triggered()), this, SIGNAL(saveToMenu()));
   fileMenu_->addAction(AC_Save_to);
