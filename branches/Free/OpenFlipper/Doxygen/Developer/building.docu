@@ -67,7 +67,6 @@
  * <li> Click generate to create the visual studio project files </li>
  * <li> You can now find a Visual Studio solution file (OpenFlipper.sln) in the <b>build</b> directory you chose in cmake </li>
  * <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file by starting Build Solution. </li>
- * <li> After OpenFlipper is build, move the required DLLs to the Build subdirectory. You need: ...</li>
  * </ul> 
  *
  * Note: If you want to build OpenFlipper as release, you have to set the CMAKE_BUILD_TYPE variable to "Release" before configuring
