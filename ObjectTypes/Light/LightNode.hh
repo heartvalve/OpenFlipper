@@ -70,7 +70,6 @@ namespace SceneGraph {
 
 //== CLASS DEFINITION =========================================================
 
-  
 /** \class LightNode LightNode.hh <ACG/Scenegraph/LightNode.hh>
 
     Set LightSources (0 to 7) for this node and all its children.  
@@ -219,7 +218,7 @@ public:
 		   const std::string&  _name = "<LightNode>");
 
   /// Destructor.
-  virtual ~LightNode() {}
+  virtual ~LightNode();
   
   /// Set the light source parameters
   void setLightSource(LightSource _light ) { light_ = _light; };
@@ -253,6 +252,51 @@ private:
   LightSource lightSave_;
 };
 
+/**
+* \class LightSourceHandle
+*
+* Assign a unique OpenGL light source identifier to each of the
+* light source nodes in the scene. These relations are
+* stored in a map. If there is no free light source left,
+* return GL_FALSE as light source enumerator.
+*/
+class DLLEXPORT LightSourceHandle {
+    public:
+        LightSourceHandle() {
+            
+            for(int i = 0; i < GL_MAX_LIGHTS; ++i) {
+                lights_.insert(std::pair<GLenum, LightNode*>(GL_LIGHT0 + i, 0));
+            }
+        };
+        
+        GLenum getLight(LightNode* _node) {
+            GLenum light = GL_INVALID_ENUM;
+            for(std::map<GLenum, LightNode*>::iterator it = lights_.begin();
+                it != lights_.end(); ++it) {
+                
+                if(it->second == 0) {
+                    lights_[it->first] = _node;
+                    light = it->first;
+                    break;
+                }
+            }
+            return light;
+        };
+        
+        void removeLight(LightNode* _node) {
+            for(std::map<GLenum, LightNode*>::iterator it = lights_.begin();
+                it != lights_.end(); ++it) {
+                
+                if(it->second == _node) {
+                    lights_[it->first] = 0;
+                    break;
+                }
+            }
+        };
+        
+    private:
+        std::map<GLenum, LightNode*> lights_;
+};
 
 //=============================================================================
 } // namespace SceneGraph

@@ -57,8 +57,20 @@ LightObject::~LightObject()
   // perObjectData.
   deleteData();
 
-  // No need to delete the scenegraph Nodes as this will be managed by baseplugin
-  lightNode_    = NULL;
+  // Move children to parent
+  BaseNode* parent = lightNode_->parent();
+  
+  // First, collect all children as the iterator will get invalid if we delete while iterating!
+  std::vector< BaseNode*> children;
+  for (BaseNode::ChildIter cIt=lightNode_->childrenBegin(); cIt!=lightNode_->childrenEnd(); ++cIt) 
+    children.push_back( (*cIt) );
+  
+  // Move the children
+  for (unsigned int i = 0 ; i < children.size(); ++i ) 
+    children[i]->set_parent(parent);   
+  
+  // Delete the scenegraph node
+  delete lightNode_;
 }
 
 /** Cleanup Function for Light Objects. Deletes the contents of the whole object and

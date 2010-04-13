@@ -67,72 +67,98 @@ bool TypeLightPlugin::registerType() {
   return true;
 }
 
+void TypeLightPlugin::slotAllCleared() {
+    
+    // Add default lights to active scene
+    addDefaultLights();
+}
+
+void TypeLightPlugin::addDefaultLights() {
+    
+    // Test if light sources already exist
+    int light0 = PluginFunctions::getObjectId("Default Light 0");
+    int light1 = PluginFunctions::getObjectId("Default Light 1");
+    int light2 = PluginFunctions::getObjectId("Default Light 2");
+    
+    if(light0 == -1) {
+        // Create light 0
+        light0 = addEmpty();
+        
+        BaseObjectData* obj0(0);
+        
+        if(PluginFunctions::getObject( light0, obj0 )) {
+            
+            LightObject* lightObject0 = PluginFunctions::lightObject(obj0);
+            LightSource* lightSrc0 = PluginFunctions::lightSource(lightObject0);
+            
+            if( lightSrc0 ) { 
+                lightSrc0->direction(ACG::Vec3d(0.0,0.0,1.0) );
+                lightSrc0->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
+                lightSrc0->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
+                lightSrc0->enable();
+                lightSrc0->fixedPosition(true);
+                lightObject0->setName("Default Light 0");
+            }
+         
+            emit updatedObject(light0, UPDATE_ALL);       
+        }
+    }
+    
+    if(light1 == -1) {
+    
+        // Create light 1
+        light1 = addEmpty();
+  
+        BaseObjectData* obj1(0);
+        if(PluginFunctions::getObject( light1, obj1 )) {
+            
+            LightObject* lightObject1 = PluginFunctions::lightObject(obj1);
+            LightSource* lightSrc1 = PluginFunctions::lightSource(lightObject1);
+    
+            if( lightSrc1 ) {
+                lightSrc1->direction(ACG::Vec3d(-1.0,  1.0, 0.7) );
+                lightSrc1->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
+                lightSrc1->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
+                lightSrc1->enable();
+                lightSrc1->fixedPosition(true);
+                lightObject1->setName("Default Light 1");
+            }
+        
+            emit updatedObject(light1, UPDATE_ALL);
+        }
+    }
+  
+    if(light2 == -1) {
+        //Generate the default lights
+        light2 = addEmpty();
+  
+        BaseObjectData* obj2(0);
+        if(PluginFunctions::getObject( light2, obj2 )) {
+    
+            LightObject* lightObject2 = PluginFunctions::lightObject(obj2);
+            LightSource* lightSrc2 = PluginFunctions::lightSource(lightObject2);
+    
+            if( lightSrc2 ) {
+                lightSrc2->direction(ACG::Vec3d( 1.0,  1.0, 0.7) );
+                lightSrc2->diffuseColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
+                lightSrc2->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
+                lightSrc2->enable();
+                lightSrc2->fixedPosition(true);
+                lightObject2->setName("Default Light 2");
+            }
+        
+            emit updatedObject(light2, UPDATE_ALL);
+        }
+    }
+}
+
 void TypeLightPlugin::pluginsInitialized(){
   
   // Disable the build in light management and use this plugins light handling
   PluginFunctions::disableExaminerLightHandling();
   
-  // Generate the default lights
-  int objectId0 = addEmpty();
-  
-  BaseObjectData* obj0(0);
-  if(PluginFunctions::getObject( objectId0, obj0))
-  {
-    LightObject* lightObject0 = PluginFunctions::lightObject(obj0);
-    LightSource* light0 = PluginFunctions::lightSource(lightObject0);
-    
-    if( light0 ) { 
-      light0->direction(ACG::Vec3d(0.0,0.0,1.0) );
-      light0->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
-      light0->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
-      light0->enable();
-      light0->fixedPosition(true);
-    }
-    
-  }
-  
-  emit updatedObject(objectId0,UPDATE_ALL);
-  
-  // Generate the default lights
-  int objectId1 = addEmpty();
-  
-  BaseObjectData* obj1(0);
-  if(PluginFunctions::getObject( objectId1, obj1))
-  {
-    LightObject* lightObject1 = PluginFunctions::lightObject(obj1);
-    LightSource* light1 = PluginFunctions::lightSource(lightObject1);
-    
-    if( light1 ) {
-      light1->direction(ACG::Vec3d(-1.0,  1.0, 0.7) );
-      light1->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
-      light1->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
-      light1->enable();
-      light1->fixedPosition(true);
-    }
-  }
-  
-  emit updatedObject(objectId1,UPDATE_ALL);
-  
-  //Generate the default lights
-  int objectId2 = addEmpty();
-  
-  BaseObjectData* obj2(0);
-  if(PluginFunctions::getObject( objectId2, obj2))
-  {
-    LightObject* lightObject2 = PluginFunctions::lightObject(obj2);
-    LightSource* light2 = PluginFunctions::lightSource(lightObject2);
-    
-    if( light2 ) {
-      light2->direction(ACG::Vec3d( 1.0,  1.0, 0.7) );
-      light2->diffuseColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
-      light2->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
-      light2->enable();
-      light2->fixedPosition(true);
-    }
-  }
-  
-  emit updatedObject(objectId2,UPDATE_ALL);
-   
+  // Add default light sources to active scene
+  addDefaultLights();
 }
 
 int TypeLightPlugin::addEmpty(){
