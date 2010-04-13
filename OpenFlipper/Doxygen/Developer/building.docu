@@ -10,11 +10,10 @@
  * \section reqlibs Required libraries
  * <ul>
  * <li> Qt >= 4.5 ( http://www.qtsoftware.com/downloads )</li>
- * <li> OpenGL    ( http://www.opengl.org )</li>
- * <li> GLUT        ( http://www.opengl.org/resources/libraries/glut/ )</li>
- * <li> GLEW       ( http://glew.sourceforge.net )</li>
+ * <li> GLUT      ( http://www.opengl.org/resources/libraries/glut/ )</li>
+ * <li> GLEW      ( http://glew.sourceforge.net )</li>
  * <li> freetype2 ( optional http://www.freetype.org/freetype2/index.html )</li>
- * <li> ftgl           ( optional http://sourceforge.net/projects/ftgl/)</li>
+ * <li> ftgl      ( optional http://sourceforge.net/projects/ftgl/)</li>
  * </ul> 
  *
  * \section bs Build System
@@ -54,9 +53,10 @@
  * <li> Get Visual Studio >= 2008 </li>
  * <li> Get and Install Qt ( >= 4.5 ) </li>
  * <li> Set the QTDIR Variable to your Qt Installation directory </li>
- * <li> Extract OpenFlipper source code. </li>
- * <li> Get all required libraries and install them ( including headers! ). Note for some glut packages:
- * Make sure the glut.h header file is in a "GL" subdirectory. CMake won't compile OpenFlipper otherwise. </li>
+ * <li> Extract OpenFlipper source code. ( If you want to use svn  you can get a free svn client from http://tortoisesvn.net/downloads ) </li>
+ * <li> Download the glew library and install it (The best way is to intall it to c:\libs\glew directory )</li>
+ * <li> Download and install the glut library ( The best way is to intall it to c:\libs\glut-3.7 directory )</li>
+ * <li> Rearrange the files in the glut-3.7 directory such that all *.lib and *.dll files are in a c:\libs\glut-3.7\lib subdirectory and the glut.h file is moved to the subdirectory c:\libs\glut-3.7\include\gl\glut.h</li>
  * <li> Get cmake for windows from http://www.cmake.org/cmake/resources/software.html <li>
  * <li> Start the cmake gui and select the OpenFlipper toplevel directory as source directory </li>
  * <li> Choose a build directory (e.g. create a directory called \c build in OpenFlipper's root dir)</li>
@@ -67,6 +67,7 @@
  * <li> Click generate to create the visual studio project files </li>
  * <li> You can now find a Visual Studio solution file (OpenFlipper.sln) in the <b>build</b> directory you chose in cmake </li>
  * <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file by starting Build Solution. </li>
+ * <li> After OpenFlipper is build, move the required DLLs to the Build subdirectory. You need: ...</li>
  * </ul> 
  *
  * Note: If you want to build OpenFlipper as release, you have to set the CMAKE_BUILD_TYPE variable to "Release" before configuring
