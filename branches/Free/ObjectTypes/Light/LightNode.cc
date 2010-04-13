@@ -61,7 +61,7 @@
 namespace ACG {
 namespace SceneGraph {
 
-GLenum nextLight = GL_LIGHT0;  
+static LightSourceHandle lightSourceHandle;
   
 //== IMPLEMENTATION ========================================================== 
 
@@ -195,22 +195,29 @@ float LightSource::quadraticAttenuation() {
 
 
 
-LightNode::LightNode( BaseNode*            _parent, 
-		      const std::string&   _name) 
+LightNode::LightNode( BaseNode* _parent, 
+    const std::string&   _name) 
   : BaseNode(_parent, _name),
-    lightId_(0)
-{
-  lightId_ = nextLight;
-  nextLight++;
-  //std::cerr << "Maximum light sources : " << GL_MAX_LIGHTS << std::endl;
+    lightId_(0) {
+  
+    lightId_ = lightSourceHandle.getLight(this);
+    //std::cerr << "Getting light id: " << lightId_ << std::endl;
+    //std::cerr << "GL_MAX_LIGHTS: " << GL_MAX_LIGHTS << std::endl;
 }
 
+//----------------------------------------------------------------------------
+
+LightNode::~LightNode() {
+
+    lightSourceHandle.removeLight(this);
+}
     
 //----------------------------------------------------------------------------
 
 void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ ) 
 {
-
+  // Return if we don't have a valid light source
+  if(lightId_ == GL_INVALID_ENUM) return;
 
   /// transfer GL-preferences to lightSave_
   getParameters(lightId_, lightSave_);
@@ -243,6 +250,9 @@ void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 
 void LightNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode*/ )
 {
+  // Return if we don't have a valid light source
+  if(lightId_ == GL_INVALID_ENUM) return;
+      
   // restore old enabled light
   if(lightSave_.enabled_)
   {

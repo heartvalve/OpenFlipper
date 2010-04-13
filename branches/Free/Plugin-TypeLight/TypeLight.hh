@@ -77,6 +77,12 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
   private slots:
 
     void noguiSupported( ) {} ;
+    
+    // Is called whenever the scene is cleared
+    void slotAllCleared();
+    
+    // Adds three default light sources to scene
+    void addDefaultLights();
 
   public :
 
