@@ -65,6 +65,7 @@
  * <li> Click on configure </li>
  * \image html cmake-configuregenerate.png
  * <li>Choose a generator for Visual Studio (according to your Visual Studio version)....</li>
+ * \image html cmake-generator.png
  * <li>
  * If the configuration fails because of libraries and/or headers which have not been found, an error message will be printed in the bottom window.
  * You can adjust the paths in cmake-gui manually in the large window. Note that some build variables are only visible in Advanced Mode.
