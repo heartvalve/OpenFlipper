@@ -17,7 +17,11 @@ endfunction(gp_item_default_embedded_path_override)
 
 include (BundleUtilities)
 
+get_filename_component(_GlutDir "@GLUT_glut_LIBRARY@" PATH)
+
+
 # fix all dependencies
-fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.exe "" "")
+fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.exe "" "${_GlutDir};@GLEW_LIBRARY_DIR@")
+
 
 
