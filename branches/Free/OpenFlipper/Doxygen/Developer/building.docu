@@ -70,17 +70,15 @@
  * If the configuration fails because of libraries and/or headers which have not been found, an error message will be printed in the bottom window.
  * You can adjust the paths in cmake-gui manually in the large window. Note that some build variables are only visible in Advanced Mode.
  * You can change view modes of cmake-gui via the select box on the top. </li>
- * <li>Rerun configure until everything is configured correctly and no more red columns are shown.</li>
- * <li>If you want to build in release mode, you can change the variable CMAKE_BUILD_TYPE to Release and rerun configure.</li>
- * \image html cmake-buildtype.png
- * <li> Click generate to create the visual studio project files </li>
+ * <li>Rerun configure until everything is configured correctly and no more red columns or errors are shown.</li>
+  * <li> Click generate to create the visual studio project files </li>
  * <li> You can now find a Visual Studio solution file (OpenFlipper.sln) in the <b>build directory</b> directory you chose in cmake.</li>
- * <li> Depending on the BuildType you chose, set Visual Studio to Release Mode or Debug Mode</li>
  * <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file by starting Build Solution. </li>
  * </ul> 
  *
  * Note: If you want to build OpenFlipper as release, you have to set the CMAKE_BUILD_TYPE variable to "Release" before configuring
  * and generating the Visual studio solution file. Choose then build type "Release" in Visual Studio and build the solution.
+ * \image html cmake-buildtype.png
  *
  * \subsection cmake_bmacos Building OpenFlipper under MacOS X
  *
