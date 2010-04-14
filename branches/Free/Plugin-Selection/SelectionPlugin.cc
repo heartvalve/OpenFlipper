@@ -168,6 +168,7 @@ void SelectionPlugin::initializePlugin() {
 
   sphere_node_ = new ACG::SceneGraph::GlutPrimitiveNode(ACG::SceneGraph::GlutPrimitiveNode::SPHERE, sphere_mat_node_, tr("Selection Plugin: Selection Sphere").toStdString());
   sphere_node_->drawMode(ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
+  sphere_node_->get_primitive(0).color = ACG::Vec4f(1.0, 0.0, 0.0,0.3);
   sphere_node_->hide();
 
   sphere_radius_ = 0.1 * PluginFunctions::sceneRadius();
