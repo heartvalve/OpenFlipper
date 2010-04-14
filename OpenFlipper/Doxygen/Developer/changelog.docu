@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 ( ? , 8985 RC6 )</b>
+ * - <b>OpenFlipper 1.0 ( ? , 8985 RC7 )</b>
  *      - <b>Core</b>
  *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
  *          - Bugfix for Processmanager when using blocking mode for new threads
