@@ -141,6 +141,18 @@ void setMainGLContext();
 DLLEXPORT
 void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up  , int _viewer = ACTIVE_VIEWER);
 
+/** \brief Set the look at transformation directly
+* @param _eye eye point
+* @param _center center point
+* @param _up up vector
+* @param _viewer Id of the viewer to use.
+*                ALL_VIEWERS    will set all viewers (Default)
+*                ACTIVE_VIEWER active viewer
+*                0..3 Choose viewer explicitly
+*/
+DLLEXPORT
+void lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const ACG::Vec3d& _up, int _viewer = ACTIVE_VIEWER);
+
 /** \brief Set the Scene position
  * @param _center Center of the current scene
  * @param _radius Radius of the scene ( Use scene_radius to get the current radius )

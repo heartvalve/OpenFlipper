@@ -457,6 +457,18 @@ void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
   emit viewChanged();
 }
 
+//-----------------------------------------------------------------------------
+
+void glViewer::lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const ACG::Vec3d& _up) {
+    
+    glstate_->reset_modelview();
+    glstate_->lookAt(_eye, _center, _up);
+    
+    scene_center_ = _center;
+    scene_radius_ = (scene_center_ - _eye).norm();
+    
+    emit viewChanged();
+}
 
 //-----------------------------------------------------------------------------
 
