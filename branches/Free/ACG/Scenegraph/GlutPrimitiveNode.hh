@@ -103,7 +103,7 @@ public:
 
     GlutPrimitiveType type;    // glut primitive type
     
-    ACG::Vec3uc color; // color
+    ACG::Vec4f color; // color
     
     // glut primitive resolution
     double       size;
@@ -123,7 +123,7 @@ public:
       stacks = 20;
     }
 
-    Primitive(GlutPrimitiveType _t, Vec3d _p, Vec3d _a, ACG::Vec3uc _c)
+    Primitive(GlutPrimitiveType _t, Vec3d _p, Vec3d _a, ACG::Vec4f _c)
     {
       type     = _t;
       position = _p;
@@ -182,7 +182,7 @@ public:
   /// destructor
   virtual ~GlutPrimitiveNode() {}
 
-  void add_primitive(GlutPrimitiveType _type, Vec3d _pos, Vec3d _axis, ACG::Vec3uc _color);
+  void add_primitive(GlutPrimitiveType _type, Vec3d _pos, Vec3d _axis, ACG::Vec4f _color);
 
   void clear(){primitives_.clear();};
   

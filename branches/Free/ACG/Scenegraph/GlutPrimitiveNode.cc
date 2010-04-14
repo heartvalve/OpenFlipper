@@ -223,7 +223,7 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
 
 void 
 GlutPrimitiveNode::
-add_primitive(GlutPrimitiveType _type, Vec3d _pos, Vec3d _axis, ACG::Vec3uc _color)
+add_primitive(GlutPrimitiveType _type, Vec3d _pos, Vec3d _axis, ACG::Vec4f _color)
 {
   Primitive p(_type, _pos, _axis, _color);
   primitives_.push_back(p);
