@@ -295,8 +295,8 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
             action->setIcon(icon);
             action = menu.addAction(tr("Switch On/Off"),this,SLOT ( slotSwitchLight() ));
-            //icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-switch-light.png");
-            //action->setIcon(icon);
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"LightType.png");
+            action->setIcon(icon);
         } else {
             action = menu.addAction(tr("Zoom to object"),this,SLOT ( slotZoomTo() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
