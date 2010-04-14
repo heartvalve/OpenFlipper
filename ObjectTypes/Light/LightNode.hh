@@ -231,8 +231,11 @@ public:
   /// restores original Light Sources
   void leave(GLState& _state, DrawModes::DrawMode _drawmode);
 
- 
+  /// Should node be visualized?
+  bool visualize() { return visualize_; }
   
+  /// Set whether node should be visualized
+  void visualize(bool _visualize) { visualize_ = _visualize; }
 
 private:
 
@@ -251,6 +254,9 @@ private:
 
   /// save old LightSources
   LightSource lightSave_;
+  
+  /// Indicates whether light node should be visualized or not
+  bool visualize_;
 };
 
 /**
