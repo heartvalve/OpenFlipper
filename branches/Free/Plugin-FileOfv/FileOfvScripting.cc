@@ -42,8 +42,3 @@
 
 #include "FileOfv.hh"
 
-int FileViewPlugin::addNewLight() {
-  return addEmpty();
-}
-
-
