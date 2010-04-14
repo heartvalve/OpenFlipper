@@ -56,6 +56,7 @@
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/common/Types.hh>
+#include <ObjectTypes/Light/Light.hh>
 #include "Toolbox.hh"
 
 #include "TreeModel.hh"
@@ -206,6 +207,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
 
         ///Called by the popup menu to zoom to an object
         void slotZoomTo();
+        
+        /// Called by the popup menu in order to turn lights on/off
+        void slotSwitchLight();
 
         ///Called by the popup menu to set material properties
         void slotMaterialProperties();

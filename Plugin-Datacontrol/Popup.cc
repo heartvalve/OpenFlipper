@@ -284,23 +284,38 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
       action->setIcon(icon);
     } else {
-      action = menu.addAction(tr("Zoom to object"),this,SLOT ( slotZoomTo() ));
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
-      action->setIcon(icon);
-      action = menu.addAction(tr("Copy"),this,SLOT ( slotCopy() ));
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png");
-      action->setIcon(icon);
-      action = menu.addAction(tr("Rename"),this,SLOT ( slotRename() ));
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
-      action->setIcon(icon);
-      action = menu.addAction(tr("Material Properties"),this,SLOT ( slotMaterialProperties() ));
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
-      action->setIcon(icon);
-      menu.addAction(tr("Group"),this,SLOT ( slotGroup() ));
-      menu.addSeparator();
-      action = menu.addAction(tr("Remove"),this,SLOT ( slotPopupRemove() ));
-      icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
-      action->setIcon(icon);
+        if(item->dataType() == DATA_LIGHT) {
+            action = menu.addAction(tr("Copy"),this,SLOT ( slotCopy() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png");
+            action->setIcon(icon);
+            action = menu.addAction(tr("Rename"),this,SLOT ( slotRename() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
+            action->setIcon(icon);
+            action = menu.addAction(tr("Remove"),this,SLOT ( slotPopupRemove() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
+            action->setIcon(icon);
+            action = menu.addAction(tr("Switch On/Off"),this,SLOT ( slotSwitchLight() ));
+            //icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-switch-light.png");
+            //action->setIcon(icon);
+        } else {
+            action = menu.addAction(tr("Zoom to object"),this,SLOT ( slotZoomTo() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
+            action->setIcon(icon);
+            action = menu.addAction(tr("Copy"),this,SLOT ( slotCopy() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png");
+            action->setIcon(icon);
+            action = menu.addAction(tr("Rename"),this,SLOT ( slotRename() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-rename.png");
+            action->setIcon(icon);
+            action = menu.addAction(tr("Material Properties"),this,SLOT ( slotMaterialProperties() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-material.png");
+            action->setIcon(icon);
+            menu.addAction(tr("Group"),this,SLOT ( slotGroup() ));
+            menu.addSeparator();
+            action = menu.addAction(tr("Remove"),this,SLOT ( slotPopupRemove() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
+            action->setIcon(icon);
+        }
     }
 
 
@@ -506,6 +521,36 @@ void DataControlPlugin::slotMaterialProperties(){
  */
 void DataControlPlugin::slotNodeChanged( ACG::SceneGraph::BaseNode* /*_node*/ ){
   emit updateView();
+}
+
+//******************************************************************************
+
+/**
+ * \brief Switch light source on or off
+ */
+void DataControlPlugin::slotSwitchLight() {
+    
+    QItemSelectionModel* selection = view_->selectionModel();
+    
+    // Get all selected rows
+    QModelIndexList indexList = selection->selectedRows ( 0 );
+    int selectedRows = indexList.size();
+    if (selectedRows == 1) {
+        
+        LightObject* light = 0;
+        int id = model_->itemId( indexList[0]);
+        
+        if (id == -1 || !PluginFunctions::getObject( id, light ) )
+            return;
+        
+        if(light == 0) return;
+        
+        light->lightSource()->enabled() ?
+            light->lightSource()->disable() :
+            light->lightSource()->enable();
+            
+         emit updatedObject(id);
+    }
 }
 
 //******************************************************************************
