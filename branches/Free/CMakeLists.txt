@@ -72,9 +72,6 @@ if (WIN32 )
   # let bundle generation depend on all targets
   add_dependencies (fixbundle OpenFlipper PluginLib ${OPENFLIPPER_PLUGINS})
  
-  message(status ${OPENFLIPPER_PLUGINS} )
-  
-
 endif(WIN32)
 
 
