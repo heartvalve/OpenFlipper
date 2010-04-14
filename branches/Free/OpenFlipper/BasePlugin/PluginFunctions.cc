@@ -605,6 +605,19 @@ void viewingDirection(const ACG::Vec3d &_dir, const ACG::Vec3d &_up , int _viewe
     std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
 }
 
+void lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const ACG::Vec3d& _up, int _viewer) {
+    
+    if ( _viewer == ACTIVE_VIEWER ) {
+        examiner_widgets_[activeExaminer_]->lookAt(_eye,_center, _up);
+    } else if ( _viewer == ALL_VIEWERS )
+        for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+            examiner_widgets_[i]->lookAt(_eye,_center, _up);
+        else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+            examiner_widgets_[_viewer]->lookAt(_eye,_center, _up);
+        else
+            std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
+}
+
 const ACG::Vec3d trackBallCenter(const ACG::Vec3d& _center, int _viewer ) {
   if ( _viewer == ACTIVE_VIEWER ) {
     return examiner_widgets_[activeExaminer_]->trackBallCenter();

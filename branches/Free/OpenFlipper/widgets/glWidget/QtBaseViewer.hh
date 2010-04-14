@@ -243,6 +243,9 @@ public:
 
   /// set the viewing direction
   void viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up );
+  
+  /// Set look at transformation directly
+  void lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const ACG::Vec3d& _up);
 
   /// Automatically normalize normals?
   enum NormalsMode {
