@@ -54,11 +54,11 @@
  * <li> Get and Install Qt ( >= 4.5 , Visual Studio Version ) </li>
  * <li> Set the QTDIR Variable to your Qt Installation directory </li>
  * <li> Extract OpenFlipper source code. ( If you want to use svn  you can get a free svn client from http://tortoisesvn.net/downloads ) </li>
- * <li> Download the glew library and install it (The best way is to install it to c:\\libs\\glew directory ). <br>
-        The c:\\libs\\glew\\lib subdirectory should contain the dll and the *.lib files<br>
+ * <li> Download the glew library and install it (The best way is to install it to c:\\libs\\glew directory ).)<br />
+        The c:\\libs\\glew\\lib subdirectory should contain the dll and the *.lib files)<br />
         The headers should be located in the c:\\libs\\glew\\include\\gl subdirectory</li>
- * <li> Rearrange the files in the glut-3.7 directory such that <br>
-        all *.lib and *.dll files are in a c:\\libs\\glut-3.7\\lib subdirectory <br>
+ * <li> Rearrange the files in the glut-3.7 directory such that)<br />
+        all *.lib and *.dll files are in a c:\\libs\\glut-3.7\\lib subdirectory)<br />
         and the glut.h file is moved to the subdirectory c:\\libs\\glut-3.7\\include\\gl\\glut.h</li>
  * <li> Get cmake for windows from http://www.cmake.org/cmake/resources/software.html <li>
  * <li> Start the cmake gui and select the OpenFlipper toplevel directory as source directory </li>
