@@ -4,8 +4,8 @@
  * 
  * OpenFlipper is developed on top of the Qt framework. This framework provides
  * easy cross platform development. Therefore an installed version of qt with
- * at least version 4.5 is required. As the framework depends on qt we use the
- * qt make tool qmake to build OpenFlipper.
+ * at least version 4.5 is required. We use the cmake MakeFile generator to build 
+ * OpenFlipper.
  *
  * \section reqlibs Required libraries
  * <ul>
@@ -54,7 +54,7 @@
  * <li> Get and Install Qt ( >= 4.5 , Visual Studio Version ) </li>
  * <li> Set the QTDIR Variable to your Qt Installation directory </li>
  * <li> Extract OpenFlipper source code. ( If you want to use svn  you can get a free svn client from http://tortoisesvn.net/downloads ) </li>
- * <li> Download the glew library and install it (The best way is to intall it to c:\\libs\\glew directory ). <br>
+ * <li> Download the glew library and install it (The best way is to install it to c:\\libs\\glew directory ). <br>
         The c:\\libs\\glew\\lib subdirectory should contain the dll and the *.lib files<br>
         The headers should be located in the c:\\libs\\glew\\include\\gl subdirectory</li>
  * <li> Rearrange the files in the glut-3.7 directory such that <br>
@@ -73,14 +73,14 @@
  * If the configuration fails because of libraries and/or headers which have not been found, an error message will be printed in the bottom window.
  * You can adjust the paths in cmake-gui manually in the large window. Note that some build variables are only visible in Advanced Mode.
  * You can change view modes of cmake-gui via the select box on the top. </li>
- * <li>Rerun configure until everything is configured correctly and no more red columns or errors are shown.</li>
+ * <li>Rerun configure until everything is configured correctly and no more red rows or errors are shown.</li>
  * <li> Click generate to create the visual studio project files </li>
  * <li> You can now find a Visual Studio solution file (OpenFlipper.sln) in the <b>build directory</b> directory you chose in cmake.</li>
  * <li> Now you can build OpenFlipper from within Visual Studio using the newly created project file by starting Build Solution. </li>
  * </ul> 
  *
  * Note: If you want to build OpenFlipper as release, you have to set the CMAKE_BUILD_TYPE variable to "Release" before configuring
- * and generating the Visual studio solution file. Choose then build type "Release" in Visual Studio and build the solution.
+ * and generating the Visual Studio solution file. Choose then build type "Release" in Visual Studio and build the solution.
  * \image html cmake-buildtype.png
  *
  * \subsection cmake_bmacos Building OpenFlipper under MacOS X
