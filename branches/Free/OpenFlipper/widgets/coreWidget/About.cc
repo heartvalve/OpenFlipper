@@ -163,7 +163,7 @@ void CoreWidget::showAboutWidget( ) {
     // 0 type is defined as DATA_UNKNOWN
     DataType currentType = 1;
     for ( uint i = 0 ; i < typeCount() - 2  ; ++i) {
-      types += typeName( currentType ) + " ";
+      types += typeName( currentType ) + "\t\t typeId: " + QString::number(currentType.value()) + "\n";
       
       // Advance to next type ( Indices are bits so multiply by to to get next bit)
       currentType++;
