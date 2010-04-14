@@ -107,8 +107,6 @@ class FileViewPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInt
 
     bool saveObject(int _id, QString _filename);
 
-    int addNewLight();
-
     QString version() { return QString("1.0"); };
 };
 
