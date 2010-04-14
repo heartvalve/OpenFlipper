@@ -67,11 +67,13 @@ if (WIN32 )
      "${CMAKE_BINARY_DIR}/fixbundle.win.cmake" @ONLY IMMEDIATE)
 
   add_custom_target (fixbundle ALL
-    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.win.cmake"
+    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_BINARY_DIR}/fixbundle.win.cmake" )
 
   # let bundle generation depend on all targets
   add_dependencies (fixbundle OpenFlipper PluginLib ${OPENFLIPPER_PLUGINS})
-  )
+ 
+  message(status ${OPENFLIPPER_PLUGINS} )
+  
 
 endif(WIN32)
 
