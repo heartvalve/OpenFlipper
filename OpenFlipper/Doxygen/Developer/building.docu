@@ -18,7 +18,6 @@
  *
  * \section bs Build System
  * The build system uses cmake to generate all makefiles.
- * Since v1.0 RC2 it is recommended to use cmake as primary build system.
  *
  * \section build_cmake Building OpenFlipper using Cmake
  *
@@ -41,10 +40,13 @@
  * <li> Now call  <b>make</b> to build OpenFlipper </li>
  * </ul>
  *
- * To switch between debug and release build, use <b>cmake -DCMAKE_BUILD_TYPE=Debug ..</b>
- * Change install path: -DCMAKE_INSTALL_PREFIX=[path] 
+ * To switch between debug and release build, use <br />
+ * <b>cmake -DCMAKE_BUILD_TYPE=Release ..</b><br />
+ * <br />
+ * To change the install path use<br />
+ * <b>-DCMAKE_INSTALL_PREFIX=[path]</b><br />
  *
- * The created application (binaries, libs and shared files) are to be found in the <b>Build</b>
+ * The created application (binaries, libs and shared files) are located in the <b>Build</b>
  * directory.
  *
  * \subsection cmake_bwin Building OpenFlipper under Windows
@@ -86,15 +88,29 @@
  * \subsection cmake_bmacos Building OpenFlipper under MacOS X
  *
  * <ul>
- * <li> First install the required libraries (see above)<br />
+ * <li> First install the required libraries<br />
+ *      To get all required libraries you should use the macports project: http://www.macports.org/ <br />
+ *      <br />
+ *      Install at least the following ports: <br />
+ *      qt4-mac<br />
+ *      glew<br />
+ *      glut<br />
+ *      cmake<br />
+ *<br />
+ *      As additional ports we recommend the following<br />
+ *      ftgl<br />
+ *      fftw-3<br />
+ *      qwt52<br />
+ *      subversion<br />
+ *      doxygen<br />
  * <li> Extract the source code or get it via svn:<br />
  * <code><b> svn co http://www-i8.informatik.rwth-aachen.de/svnrepo/OpenFlipper/branches/Free OpenFlipper</b></code></li>
  * <li> Create a build directory (e.g. <b>build</b>) in the toplevel directory: <code><b>mkdir build</b></code></li>
- * <li> Change to the newly created directory <code><b>cd build</b></code> and type <code><b>cmake ..</b></code></li>
- * <li> Now call  <b>make</b> to build OpenFlipper </li>
+ * <li> Change to the newly created directory ( <code><b>cd build</b></code> ) and type <code><b>cmake ..</b></code> or if you want to build in release mode type <code><b> cmake -DCMAKE_BUILD_TYPE=Release ..</b></code></li>
+ * <li> Now call <b>make</b> to build OpenFlipper </li>
  * </ul>
  *
- * The created application bundle (that contains binaries, libs and shared files) is to be found in the <b>Build</b>
+ * The created application bundle (that contains binaries, libs and shared files) can be found in the <b>Build</b>
  * directory.
  *
  * \section cmake_plugin Building OpenFlipper Plugins with CMake
