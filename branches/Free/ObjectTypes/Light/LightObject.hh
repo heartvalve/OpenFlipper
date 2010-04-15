@@ -52,7 +52,7 @@ class DLLEXPORT LightObject : public BaseObjectData {
 
   protected:
     /// Initialise current object, including all related nodes.
-    virtual void init(LightNode* _light = 0);
+    virtual void init(LightNode* _light = 0, LightNode* _lightVis = 0);
 
   //===========================================================================
   /** @name Name and Path handling
@@ -93,8 +93,15 @@ class DLLEXPORT LightObject : public BaseObjectData {
     /// Get the scenegraph Node
     LightNode* lightNode();
     
+    /// Get the scenegraph Node
+    LightNode* lightNodeVis();
+    
   private:
+    ///  Light status node
     LightNode* lightNode_;
+    
+    /// Light rendering node (only for rendering purposes)
+    LightNode* lightNodeVis_;
 
   /** @} */ 
     

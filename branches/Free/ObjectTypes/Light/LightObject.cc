@@ -22,8 +22,9 @@
 *  You dont need to create an object of this type manually. 
 */
 LightObject::LightObject( ) :
-  BaseObjectData( ),
-  lightNode_(NULL)
+  BaseObjectData(),
+  lightNode_(0),
+  lightNodeVis_(0)
 {
   setDataType(DATA_LIGHT);
   setTypeIcon(DATA_LIGHT,"LightType.png");
@@ -99,14 +100,18 @@ BaseObject* LightObject::copy() {
 
 /** This function initalizes the light object. It creates the scenegraph nodes.
 */
-void LightObject::init(LightNode* _light) {
+void LightObject::init(LightNode* _light, LightNode* _lightVis) {
 ///\TODO Add Light Node here
 
-  lightNode_ = new LightNode( 0 , "NEW LightNode");
+  lightNode_ = new LightNode( 0 , "LightNode");
+  lightNodeVis_ = new LightNode( manipulatorNode() , "LightNode Visualization");
+  lightNodeVis_->show();
+  
+  lightNode_->visualize(false);
+  lightNodeVis_->visualize(true);
 
   // Light nodes have to be on top of all other nodes.
   PluginFunctions::addGlobalStatusNode(lightNode_);
-  
   
   /*
 
@@ -140,6 +145,10 @@ void LightObject::setName( QString _name ) {
 
 LightNode* LightObject::lightNode() {
   return lightNode_;
+}
+
+LightNode* LightObject::lightNodeVis() {
+    return lightNodeVis_;
 }
 
 // ===============================================================================
@@ -196,22 +205,22 @@ bool LightObject::pickingEnabled() {
 void LightObject::show() {
   if ( !visible_ ) {
     BaseObjectData::show();
-    lightNode_->setMultipassStatus(ACG::SceneGraph::BaseNode::ALLPASSES);
-    lightNode_->set_status( ACG::SceneGraph::BaseNode::Active  );
     visible_ = true;
     
+    lightNodeVis_->visualize(true);
+    
     emit visibilityChanged( id() );
+    PluginFunctions::viewAll();
   }
 }
 
 void LightObject::hide() {
   if ( visible_ ) {
     BaseObjectData::hide();
-    lightNode_->setMultipassStatus(ACG::SceneGraph::BaseNode::NOPASS);
-    lightNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
     visible_ = false;
     
     emit visibilityChanged( id() );
+    PluginFunctions::viewAll();
   }
 }
 
@@ -227,7 +236,17 @@ LightSource* LightObject::lightSource() {
 }
 
 void LightObject::update(UpdateType _type) {
+  
+  if(lightSource_.enabled()) {
+    lightNode_->setMultipassStatus(ACG::SceneGraph::BaseNode::ALLPASSES);
+    lightNode_->set_status( ACG::SceneGraph::BaseNode::Active  );
+  } else {
+    lightNode_->setMultipassStatus(ACG::SceneGraph::BaseNode::NOPASS);
+    lightNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
+  }
+  
   lightNode_->setLightSource(lightSource_);
+  lightNodeVis_->setLightSource(lightSource_);
 }
 
 

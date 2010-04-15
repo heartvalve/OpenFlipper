@@ -549,7 +549,7 @@ void DataControlPlugin::slotSwitchLight() {
             light->lightSource()->disable() :
             light->lightSource()->enable();
             
-         emit updatedObject(id);
+        emit updatedObject(id);
     }
 }
 
