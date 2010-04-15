@@ -143,8 +143,6 @@ int FileViewPlugin::loadObject(QString _filename) {
     
     // Now set new projection and view
     
-    ACG::Vec3d new_up;
-    
     // Get number of viewers
     int viewers = PluginFunctions::viewers();
     
@@ -159,7 +157,6 @@ int FileViewPlugin::loadObject(QString _filename) {
         else                 aspect = state.aspect();
         double near   = state.near_plane();
         double far    = state.far_plane();
-        new_up = e_up ? up : state.up();
 
         // Set projection matrix
         //if(e_fovy)
@@ -175,6 +172,7 @@ int FileViewPlugin::loadObject(QString _filename) {
     // LookAt
     ACG::Vec3d new_eye = e_eye ? eye : PluginFunctions::eyePos();
     ACG::Vec3d new_center = e_center ? center : PluginFunctions::sceneCenter();
+    ACG::Vec3d new_up = e_up ? up : PluginFunctions::upVector();
         
     PluginFunctions::lookAt(new_eye, new_center, new_up);
         
