@@ -189,6 +189,12 @@ public:
   
   float quadraticAttenuation();
   
+  /// Get light source radius
+  float radius() { return radius_; }
+  
+  /// Set light source radius
+  void radius(const float _radius) { radius_ = _radius; }
+  
 protected:
 
   Vec4f position_;
@@ -206,6 +212,11 @@ protected:
   float constantAttenuation_;
   float linearAttenuation_;
   float quadraticAttenuation_;
+  
+  /// When using ray tracing, light sources can have
+  /// extent. We simplify to spherical light sources with
+  /// radius radius_.
+  float radius_;
 };
 
 
@@ -226,10 +237,17 @@ public:
 
   ACG_CLASSNAME(LightNode);
 
+  /// Get bounding box (for visualization purposes)
+  void boundingBox(ACG::Vec3d& /* _bbMin */, ACG::Vec3d& /*_bbMax*/ );
+  
   /// set current Light Sources
   void enter(GLState& _state, DrawModes::DrawMode _drawmode);
+  
   /// restores original Light Sources
   void leave(GLState& _state, DrawModes::DrawMode _drawmode);
+  
+  /// Draw light source node
+  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
 
   /// Should node be visualized?
   bool visualize() { return visualize_; }
