@@ -675,6 +675,9 @@ void
 StripProcessorT<Mesh>::
 updatePickingFaces(ACG::GLState& _state ) {
   
+  // Make sure, the face buffers are up to date before generating the picking data!
+  updatePerFaceBuffers();
+   
   // Get total number of triangles
   // Each strip has two vertices more than triangles
   unsigned int n_faces = 0;
