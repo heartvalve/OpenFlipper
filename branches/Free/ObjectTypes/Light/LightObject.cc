@@ -204,7 +204,6 @@ void LightObject::show() {
     lightNodeVis_->visualize(true);
     
     emit visibilityChanged( id() );
-    PluginFunctions::viewAll();
   }
 }
 
@@ -214,7 +213,6 @@ void LightObject::hide() {
     visible_ = false;
     
     emit visibilityChanged( id() );
-    PluginFunctions::viewAll();
   }
 }
 
