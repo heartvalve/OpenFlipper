@@ -89,6 +89,7 @@ int FileLightPlugin::loadObject(QString _filename)
       if ( fi.exists() ){
         LightSource* light = PluginFunctions::lightSource(lightObject);
 
+        QString name = lightObject->name();
         ACG::Vec3d position;
         ACG::Vec3d direction;
         ACG::Vec3d spotDirection;
@@ -101,10 +102,20 @@ int FileLightPlugin::loadObject(QString _filename)
         float cAttenuation;
         float lAttenuation;
         float qAttenuation;
+        float radius; 
         bool enabled;
 
         QSettings settings(_filename, QSettings::IniFormat);
         settings.beginGroup("LIGHT");
+
+        if ( settings.contains("Name") ) {
+          
+          QString name = settings.value("Name").toString();
+          
+          lightObject->setName( name );
+        } else {
+          lightObject->setFromFileName(_filename);
+        }        
         
         if ( settings.contains("PositionX") ) {
             
@@ -214,6 +225,13 @@ int FileLightPlugin::loadObject(QString _filename)
             light->quadraticAttenuation( qAttenuation );
         }
         
+        if ( settings.contains("Radius") ){
+          
+          radius = settings.value("Radius").toDouble();
+          
+          light->radius( radius );
+        }
+        
         if ( settings.contains("Enabled") ){
 
             enabled = settings.value("Enabled").toBool();
@@ -221,12 +239,12 @@ int FileLightPlugin::loadObject(QString _filename)
             enabled ? light->enable() : light->disable();
         }
         
-        lightObject->setFromFileName(_filename);
         settings.endGroup();
       }
     }
 
     emit updatedObject( lightObject->id(), UPDATE_ALL );
+    emit openedFile( lightObject->id() );
   }
 
   return id;
@@ -243,12 +261,11 @@ bool FileLightPlugin::saveObject(int _id, QString _filename)
     {
         LightSource* light = PluginFunctions::lightSource(lightObject);
 
-        obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-        obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
-
         QSettings settings(_filename, QSettings::IniFormat);
         settings.beginGroup("LIGHT");
 
+        settings.setValue("Name",lightObject->name());
+        
         if(!light->directional()) {
             settings.setValue("PositionX", light->position()[0]);
             settings.setValue("PositionY", light->position()[1]);
@@ -290,9 +307,14 @@ bool FileLightPlugin::saveObject(int _id, QString _filename)
         
         settings.setValue("QuadraticAttenuation", light->quadraticAttenuation());
         
+        settings.setValue("Radius", light->radius());
+        
         settings.setValue("Enabled", light->enabled());
                 
         settings.endGroup();
+        
+        obj->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
+        obj->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
     }
   }
 
