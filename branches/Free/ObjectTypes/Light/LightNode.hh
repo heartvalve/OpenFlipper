@@ -189,10 +189,18 @@ public:
   
   float quadraticAttenuation();
   
-  /// Get light source radius
+  /** \brief Get light source radius
+  * 
+  * The light radius is the size of the lightsource. In OpenGL rendering this value is ignored.
+  * You can use it for example in raytracers to implement soft shadows.
+  */
   float radius() { return radius_; }
   
-  /// Set light source radius
+  /** \brief Set light source radius
+  *
+  * The light radius is the size of the lightsource. In OpenGL rendering this value is ignored.
+  * You can use it for example in raytracers to implement soft shadows.
+  */
   void radius(const float _radius) { radius_ = _radius; }
   
 protected:

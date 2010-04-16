@@ -103,26 +103,17 @@ BaseObject* LightObject::copy() {
 void LightObject::init(LightNode* _light, LightNode* _lightVis) {
 ///\TODO Add Light Node here
 
-  lightNode_ = new LightNode( 0 , "LightNode");
-  lightNodeVis_ = new LightNode( manipulatorNode() , "LightNode Visualization");
-  lightNodeVis_->show();
-  
-  lightNode_->visualize(false);
-  lightNodeVis_->visualize(true);
+// Light nodes have to be on top of all other nodes.
 
-  // Light nodes have to be on top of all other nodes.
+  lightNode_ = new LightNode( 0 , "LightNode");
+  lightNode_->visualize(false);
   PluginFunctions::addGlobalStatusNode(lightNode_);
   
-  /*
+  lightNodeVis_ = new LightNode( materialNode() , "LightNode Visualization");
+  lightNodeVis_->show();
+  
+  lightNodeVis_->visualize(true);
 
-  if (_plane){
-    planeNode_->setPosition( _plane->position(), _plane->normal() );
-    planeNode_->setSize( _plane->xDirection().norm(), _plane->yDirection().norm() );
-  } else {
-    planeNode_->setPosition( ACG::Vec3f(0.0, 0.0, 0.0), ACG::Vec3f(0.0, 1.0, 0.0) );
-    planeNode_->setSize( 5.0, 5.0 );
-  }
-  */
 }
 
 // ===============================================================================
@@ -137,6 +128,9 @@ void LightObject::setName( QString _name ) {
 
   std::string nodename = std::string("LightNode for Light "     + _name.toUtf8() );
   lightNode_->name( nodename );
+  
+  std::string nodenameVis = std::string("LightNode Visualization for Light "     + _name.toUtf8() );
+  lightNodeVis_->name( nodenameVis );
 }
 
 // ===============================================================================
