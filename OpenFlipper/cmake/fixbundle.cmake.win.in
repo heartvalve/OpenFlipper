@@ -12,6 +12,12 @@ function(gp_item_default_embedded_path_override item default_embedded_path_var)
   #
   set(path "${${default_embedded_path_var}}")
 
+  # ...embed *.dll in the Plugins folder:
+  #
+  #if(item MATCHES "\\.Plugin-*.dll$")
+  #  set(path "@CMAKE_BINARY_DIR@/Build/Plugins")
+  #endif()
+
   set(${default_embedded_path_var} "${path}" PARENT_SCOPE)
 endfunction(gp_item_default_embedded_path_override)
 
@@ -20,8 +26,15 @@ include (BundleUtilities)
 get_filename_component(_GlutDir "@GLUT_glut_LIBRARY@" PATH)
 
 
+
+# Find all plugins
+file (GLOB _plugins "@CMAKE_BINARY_DIR@/Build/Plugins/*.dll")
+
+#todo: fixup plugins:
+#${_plugins}
+
 # fix all dependencies
-fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.exe "" "${_GlutDir};@GLEW_LIBRARY_DIR@;@QT_BINARY_DIR@")
+fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.exe "" "${_GlutDir};@Qwt5_Qt4_LIBRARY_DIR@;@GLEW_LIBRARY_DIR@;@QT_BINARY_DIR@")
 
 
 
