@@ -6,7 +6,8 @@
 #    - the Qwt .lib is where the other LIBs for Qt are (QT_DIR\lib) or in the path
 #
 # Qwt5_INCLUDE_DIR - where to find qwt.h if Qwt
-# Qwt5_Qt4_LIBRARY - The Qwt5 library linked against Qt4 (if it exists)
+# Qwt5_Qt4_LIBRARY - The Qwt5 library linked against Qt4 (if it exists)#
+# Qwt5_Qt4_LIBRARY_DIR 
 # Qwt5_Qt3_LIBRARY - The Qwt5 library linked against Qt4 (if it exists)
 # Qwt5_Qt4_FOUND   - Qwt5 was found and uses Qt4
 # Qwt5_Qt3_FOUND   - Qwt5 was found and uses Qt3
@@ -43,6 +44,8 @@ IF( QT4_FOUND )
 		IF( NOT WIN32 )
 			# Find Qwt5 library linked to Qt4
 			FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS /usr/local/qwt/lib /usr/local/lib /usr/lib )
+                    get_filename_component(_Qwt5_Qt4_LIBRARY_DIR ${Qwt5_Qt4_TENTATIVE_LIBRARY} PATH)
+                    set ( Qwt5_Qt4_LIBRARY_DIR ${_Qwt5_Qt4_LIBRARY_DIR} CACHE FILEPATH "Library dir of qwt" )
 		ELSE( NOT WIN32)
 			 # Find Qwt5 library linked to Qt4 Release Version
                  FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE NAMES qwt5-qt4 qwt-qt4 qwt5 qwt PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
@@ -50,7 +53,8 @@ IF( QT4_FOUND )
 		      FIND_LIBRARY( Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG NAMES qwt5d PATHS "c:\\Program\ Files\\qwt\\qwt-5.2.0\\lib" "c:\\libs\\qwt-5.2.0\\lib")
 
                  set ( Qwt5_Qt4_TENTATIVE_LIBRARY "optimized;${Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE};debug;${Qwt5_Qt4_TENTATIVE_LIBRARY_DEBUG}")
-			
+                 get_filename_component(_Qwt5_Qt4_LIBRARY_DIR ${Qwt5_Qt4_TENTATIVE_LIBRARY_RELEASE} PATH)
+                 set ( Qwt5_Qt4_LIBRARY_DIR ${_Qwt5_Qt4_LIBRARY_DIR} CACHE FILEPATH "Library dir of qwt" )
 		ENDIF(NOT WIN32)
 
 		IF( UNIX AND NOT CYGWIN AND NOT APPLE)
