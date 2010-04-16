@@ -45,6 +45,7 @@
 
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
+#include <ObjectTypes/Light/Light.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
@@ -69,6 +70,8 @@ void INIPlugin::loadIniFile( INIFile& _ini, int _id ) {
     } else if ( baseObject->dataType() == DATA_TRIANGLE_MESH) {
         triObject = PluginFunctions::triMeshObject(baseObject);
         parseIniFileT(_ini, triObject);
+    }  else if ( baseObject->dataType() == DATA_LIGHT ) {
+      // No special Information needed yet
     } else {
         // Unhandled data type
         emit log(LOGERR, tr("The specified data type is not supported, yet. Aborting!"));
