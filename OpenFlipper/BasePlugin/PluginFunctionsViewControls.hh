@@ -307,7 +307,7 @@ ACG::Vec3d eyePos(int _viewer = ACTIVE_VIEWER);
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-ACG::Vec3d upVector(int _viewer = ALL_VIEWERS);
+ACG::Vec3d upVector(int _viewer = ACTIVE_VIEWER);
 
 /** \brief Switch to orthographic Projection
  *
