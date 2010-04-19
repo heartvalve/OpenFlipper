@@ -280,7 +280,7 @@ void viewAll(int _viewer = ALL_VIEWERS);
  *                0..3 Choose viewer explicitly
  */
 DLLEXPORT
-ACG::Vec3d viewingDirection(int _viewer = ALL_VIEWERS);
+ACG::Vec3d viewingDirection(int _viewer = ACTIVE_VIEWER);
 
 /** \brief Check if the projection is orthographic
  * @param _viewer Id of the viewer to use.
