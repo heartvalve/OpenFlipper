@@ -392,7 +392,7 @@ public:
     float shininess() const { return material_.shininess(); }
     
     /// set reflectance
-    void reflectance(double _m) { material_.reflectance(_m); }
+    void set_reflectance(double _m) { material_.reflectance(_m); }
     /// get reflectance
     double reflectance() const { return material_.reflectance(); }
 
