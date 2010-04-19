@@ -71,24 +71,7 @@ MaterialNode::MaterialNode( BaseNode*            _parent,
 			    const std::string&   _name,
 			    unsigned int         _applyProperties )
   : BaseNode(_parent, _name),
-    applyProperties_(_applyProperties),
-    base_color_(GLState::default_base_color),
-    ambient_color_(GLState::default_ambient_color),
-    diffuse_color_(GLState::default_diffuse_color),
-    specular_color_(GLState::default_specular_color),
-    shininess_(GLState::default_shininess),
-    point_size_(1.0),
-    line_width_(1.0),
-    round_points_(false),
-    lines_smooth_(false),
-    alpha_test_(false),
-    alpha_clip_(0),
-    blending_(false),
-    blend_param1_(GL_ONE),
-    blend_param2_(GL_ZERO),
-    color_material_(true),
-    backface_culling_(false),
-    multiSampling_(true)
+    applyProperties_(_applyProperties)
 {}
 
 
@@ -100,7 +83,7 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
   if (applyProperties_ & BaseColor)
   {
     base_color_backup_ = _state.base_color();
-    _state.set_base_color(base_color_);
+    _state.set_base_color(material_.base_color());
   }
 
   if (applyProperties_ & Material)
@@ -110,22 +93,22 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
     specular_color_backup_ = _state.specular_color();
     shininess_backup_      = _state.shininess();
 
-    _state.set_ambient_color(ambient_color_);
-    _state.set_diffuse_color(diffuse_color_);
-    _state.set_specular_color(specular_color_);
-    _state.set_shininess(shininess_);
+    _state.set_ambient_color(material_.ambient_color());
+    _state.set_diffuse_color(material_.diffuse_color());
+    _state.set_specular_color(material_.specular_color());
+    _state.set_shininess(material_.shininess());
   }
 
   if (applyProperties_ & PointSize)
   {
     point_size_backup_ = _state.point_size();
-    _state.set_point_size(point_size_);
+    _state.set_point_size(material_.point_size());
   }
 
   if (applyProperties_ & LineWidth)
   {
     line_width_backup_ = _state.line_width();
-    _state.set_line_width(line_width_);
+    _state.set_line_width(material_.line_width());
   }
 
   if (applyProperties_ & RoundPoints)
@@ -133,8 +116,8 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
     round_points_backup_ = glIsEnabled(GL_POINT_SMOOTH) &&
                            glIsEnabled(GL_ALPHA_TEST);
 
-    if( round_points_) {
-      glHint(GL_POINT_SMOOTH_HINT,GL_NICEST);
+    if( material_.round_points() ) {
+      glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
       glEnable(GL_POINT_SMOOTH);
     } else
       glDisable(GL_POINT_SMOOTH);
@@ -145,7 +128,7 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
     lines_smooth_backup_ = glIsEnabled(GL_LINE_SMOOTH) &&
                            glIsEnabled(GL_ALPHA_TEST);
 
-    if( lines_smooth_) {
+    if( material_.line_smooth() ) {
       glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
       glEnable(GL_LINE_SMOOTH);
     } else
@@ -155,7 +138,7 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
   if (applyProperties_ & MultiSampling)
   {
     multiSampling_backup_ = _state.multisampling();
-    _state.set_multisampling( multiSampling_ );
+    _state.set_multisampling( material_.multi_sampling() );
   }
 
   if (applyProperties_ & AlphaTest)
@@ -163,9 +146,9 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
     alpha_test_backup_ = glIsEnabled(GL_ALPHA_TEST);
     glGetFloatv(GL_ALPHA_TEST_REF, &alpha_clip_backup_);
 
-    if(alpha_test_)
+    if(material_.alpha_test())
     {
-      glAlphaFunc(GL_GREATER, alpha_clip_);
+      glAlphaFunc(GL_GREATER, material_.alpha_value() );
       glEnable(GL_ALPHA_TEST);
     }
     else
@@ -181,12 +164,12 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
     glGetIntegerv( GL_BLEND_SRC, (GLint*) &blend_param1_backup_);
     glGetIntegerv( GL_BLEND_DST, (GLint*) &blend_param2_backup_);
 
-    _state.set_blending(blending_);
+    _state.set_blending(material_.blending());
 
-    if (blending_)
+    if (material_.blending())
     {
       glDepthFunc(GL_LEQUAL);
-      glBlendFunc(blend_param1_, blend_param2_);
+      glBlendFunc(material_.blending_param1(), material_.blending_param2());
       glEnable(GL_BLEND);
     }
     else
@@ -201,7 +184,7 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
   {
     backface_culling_backup_ = glIsEnabled(GL_CULL_FACE);
 
-    if ( backface_culling_ )
+    if ( material_.backface_culling() )
       glEnable( GL_CULL_FACE );
     else
       glDisable( GL_CULL_FACE );
@@ -213,7 +196,7 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
   {
     color_material_backup_ = glIsEnabled(GL_COLOR_MATERIAL);
 
-    if (color_material_ ) {
+    if (material_.color_material() ) {
       glDisable( GL_COLOR_MATERIAL );
       glColorMaterial( GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE );
       glEnable( GL_COLOR_MATERIAL );
@@ -362,7 +345,7 @@ MaterialNode::read(std::istream& _is)
     {
       if (sscanf(s, "BaseColor %f %f %f %f", &x, &y, &z, &u))
       {
-        base_color_ = Vec4f(x,y,z,u);
+        material_.set_base_color(Vec4f(x,y,z,u));
       }
     }
     // AmbientColor
@@ -370,7 +353,7 @@ MaterialNode::read(std::istream& _is)
     {
       if (sscanf(s, "AmbientColor %f %f %f %f", &x, &y, &z, &u))
       {
-        ambient_color_ = Vec4f(x,y,z,u);
+        material_.set_ambient_color(Vec4f(x,y,z,u));
       }
     }
     // DiffuseColor
@@ -378,7 +361,7 @@ MaterialNode::read(std::istream& _is)
     {
       if (sscanf(s, "DiffuseColor %f %f %f %f", &x, &y, &z, &u))
       {
-        diffuse_color_ = Vec4f(x,y,z,u);
+        material_.set_diffuse_color(Vec4f(x,y,z,u));
       }
     }
     // SpecularColor
@@ -386,7 +369,7 @@ MaterialNode::read(std::istream& _is)
     {
       if (sscanf(s, "SpecularColor %f %f %f %f", &x, &y, &z, &u))
       {
-        specular_color_ = Vec4f(x,y,z,u);
+        material_.set_specular_color(Vec4f(x,y,z,u));
       }
     }
     // Shininess
@@ -394,7 +377,7 @@ MaterialNode::read(std::istream& _is)
     {
       if (sscanf(s, "Shininess %f", &x))
       {
-        shininess_ = x;
+        material_.set_shininess(x);
       }
     }
     // PointSize
@@ -402,7 +385,7 @@ MaterialNode::read(std::istream& _is)
     {
       if (sscanf(s, "PointSize %f", &x))
       {
-        point_size_ = x;
+        material_.set_point_size(x);
       }
     }
     // LineWidth
@@ -410,7 +393,7 @@ MaterialNode::read(std::istream& _is)
     {
       if (sscanf(s, "LineWidth %f", &x))
       {
-        line_width_ = x;
+        material_.set_line_width(x);
       }
     }
 
