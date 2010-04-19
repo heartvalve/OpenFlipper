@@ -200,21 +200,17 @@ float LightSource::quadraticAttenuation() {
 LightNode::LightNode( BaseNode* _parent, 
     const std::string&   _name) 
   : BaseNode(_parent, _name),
-    lightId_(0),
-    visualize_(false) {
+    visualize_(false),
+    lightId_(GL_INVALID_ENUM) {
   
     if(lightSourceHandle == 0) {
         lightSourceHandle = new LightSourceHandle();
     }
-        
-    lightId_ = lightSourceHandle->getLight(this);
 }
 
 //----------------------------------------------------------------------------
 
 LightNode::~LightNode() {
-
-    lightSourceHandle->removeLight(this);   
 }
     
 //----------------------------------------------------------------------------
@@ -237,17 +233,36 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
       ACG::Vec3d p = light_.position();
       ACG::Vec4f c = light_.ambientColor();
       
+      // Backup variables
+      ACG::Vec4f base_color_backup;
+      GLboolean lighting_backup;
+      
+      GLUquadricObj* quadric = gluNewQuadric();
+      
       // Origin
       _state.push_modelview_matrix ();
       //_state.reset_modelview();
       _state.translate(p[0], p[1], p[2]);
       
-      GLUquadricObj* quadric = gluNewQuadric();
+      // Set lighting
+      glGetBooleanv(GL_LIGHTING, &lighting_backup);
+      glDisable(GL_LIGHTING);
       
-      glColor3f(c[0], c[1], c[2]);
+      // Set color
+      base_color_backup = _state.base_color();
+      _state.set_base_color(c);
+      
       gluSphere( quadric, light_.radius(), 10, 10 );
       
-      // TODO: Visualize vieweing direction
+      // TODO: Visualize viewing direction
+      
+      // Undo state changes
+      
+      // Color
+      _state.set_base_color(base_color_backup);
+      
+      // Lighting
+      if(lighting_backup) glEnable(GL_LIGHTING);
       
       gluDeleteQuadric(quadric);
       
@@ -258,30 +273,35 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
 
 void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ ) 
 {
-  // Return if we don't have a valid light source
-  if(lightId_ == GL_INVALID_ENUM || !light_.enabled()) return;
+    if(visualize_) return;
+    
+    // Get light id
+    lightId_ = lightSourceHandle->getLight(this);
+    
+    // Return if we don't have a valid light source
+    if(lightId_ == GL_INVALID_ENUM) return;
+    
+    /// transfer GL-preferences to lightSave_
+    getParameters(lightId_, lightSave_);
   
-  /// transfer GL-preferences to lightSave_
-  getParameters(lightId_, lightSave_);
-  
-  // save old light
-  lightSave_.enabled_ = glIsEnabled(lightId_);
+    // save old light
+    lightSave_.enabled_ = glIsEnabled(lightId_);
 
-  if(light_.enabled_ ) {
-    // correct Position for fixed Lights
-    if(light_.fixedPosition_) {
-      light_.realPosition_ = _state.inverse_modelview() * light_.position_;
-//       std::cerr << "New Light pos :" << _state.inverse_modelview().transform_vector(light_.position) << std::endl;
+    if(light_.enabled_ ) {
+        // correct Position for fixed Lights
+        if(light_.fixedPosition_) {
+            light_.realPosition_ = _state.inverse_modelview() * light_.position_;
+            //std::cerr << "New Light pos :" << _state.inverse_modelview().transform_vector(light_.position) << std::endl;
+        } else {
+            light_.realPosition_ = light_.position_;
+            //std::cerr << "New Light pos :" << light_.position << std::endl;
+        }
+
+        glEnable(lightId_);
+        setParameters(lightId_, light_);
     } else {
-      light_.realPosition_ = light_.position_;
-//       std::cerr << "New Light pos :" << light_.position << std::endl;
+        glDisable(lightId_);
     }
-
-    glEnable(lightId_);
-    setParameters(lightId_, light_);
-  } else 
-    glDisable(lightId_);
-
 }
 
 
@@ -290,16 +310,22 @@ void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 
 void LightNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode*/ )
 {
-  // Return if we don't have a valid light source
-  if(lightId_ == GL_INVALID_ENUM || !light_.enabled()) return;
+    if(visualize_) return;
+    
+    // Return if we don't have a valid light source
+    if(lightId_ == GL_INVALID_ENUM) return;
       
-  // restore old enabled light
-  if(lightSave_.enabled_)
-  {
-    glEnable(lightId_);
-    setParameters(lightId_, lightSave_);
-  }
-  else glDisable(lightId_);
+    // restore old enabled light
+    if(lightSave_.enabled_) {
+        glEnable(lightId_);
+        setParameters(lightId_, lightSave_);
+    }
+    else {
+        glDisable(lightId_);
+    }
+    
+    // Free light id
+    lightSourceHandle->removeLight(this);
 }
 
 //----------------------------------------------------------------------------

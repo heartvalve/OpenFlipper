@@ -273,8 +273,6 @@ private:
 
 private:
 
-  GLenum      lightId_;
-  
   /// store LightSources of this node
   LightSource light_;
 
@@ -283,6 +281,9 @@ private:
   
   /// Indicates whether light node should be visualized or not
   bool visualize_;
+  
+  /// Internal light id
+  GLenum lightId_;
 };
 
 /**
