@@ -70,6 +70,7 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     
     // LoadSave Interface
     void emptyObjectAdded( int _id );
+    void deleteObject(int _id);
     
     // BaseInterface
     void updatedObject(int _id, const UpdateType _type);
@@ -83,6 +84,12 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     
     // Adds three default light sources to scene
     void addDefaultLights();
+    // ... and removes them
+    void removeDefaultLights();
+    
+    // Load/Save Interface
+    void addedEmptyObject(int _id);
+    void objectDeleted(int _id);
 
   public :
 
@@ -105,10 +112,18 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     
     void pluginsInitialized();
     
+    // Add default light
+    int addDefaultLight(QString _name);
+    
   private:
     
     /// Return unique name for object
     QString get_unique_name(LightObject* _object);
+    
+    /// Count light sources in scene
+    std::vector<int> lightSources_;
+    
+    bool defaultLights_;
 
 };
 

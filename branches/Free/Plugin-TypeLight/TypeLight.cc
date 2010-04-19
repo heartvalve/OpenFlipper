@@ -45,24 +45,18 @@
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
-TypeLightPlugin::TypeLightPlugin() {
+#define DEF0 "Default Light 0"
+#define DEF1 "Default Light 1"
+#define DEF2 "Default Light 2"
+
+TypeLightPlugin::TypeLightPlugin() :
+    defaultLights_(true) {
   
 }
 
 bool TypeLightPlugin::registerType() {
   addDataType("Light",tr("Light"));
   setTypeIcon( "Light", "LightType.png");
-  
-   
-  
-  
-//   int objectId1 = -1;
-//   int objectId2 = -1;
-//   emit addEmptyObject(objectId0);
-//   emit addEmptyObject(objectId1);
-//   emit addEmptyObject(objectId2);
-  
-
   
   return true;
 }
@@ -73,16 +67,32 @@ void TypeLightPlugin::slotAllCleared() {
     addDefaultLights();
 }
 
+void TypeLightPlugin::removeDefaultLights() {
+    
+    int light0 = PluginFunctions::getObjectId(DEF0);
+    int light1 = PluginFunctions::getObjectId(DEF1);
+    int light2 = PluginFunctions::getObjectId(DEF2);
+    
+    if(light0 > 0)
+        emit deleteObject(light0);
+    if(light1 > 0)
+        emit deleteObject(light1);
+    if(light2 > 0)
+        emit deleteObject(light2);
+    
+    defaultLights_ = false;
+}
+
 void TypeLightPlugin::addDefaultLights() {
     
     // Test if light sources already exist
-    int light0 = PluginFunctions::getObjectId("Default Light 0");
-    int light1 = PluginFunctions::getObjectId("Default Light 1");
-    int light2 = PluginFunctions::getObjectId("Default Light 2");
+    int light0 = PluginFunctions::getObjectId(DEF0);
+    int light1 = PluginFunctions::getObjectId(DEF1);
+    int light2 = PluginFunctions::getObjectId(DEF2);
     
     if(light0 == -1) {
         // Create light 0
-        light0 = addEmpty();
+        light0 = addDefaultLight(DEF0);
         
         BaseObjectData* obj0(0);
         
@@ -97,7 +107,7 @@ void TypeLightPlugin::addDefaultLights() {
                 lightSrc0->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc0->enable();
                 lightSrc0->fixedPosition(true);
-                lightObject0->setName("Default Light 0");
+                lightObject0->setName(DEF0);
             }
          
             emit updatedObject(light0, UPDATE_ALL);       
@@ -107,7 +117,7 @@ void TypeLightPlugin::addDefaultLights() {
     if(light1 == -1) {
     
         // Create light 1
-        light1 = addEmpty();
+        light1 = addDefaultLight(DEF1);
   
         BaseObjectData* obj1(0);
         if(PluginFunctions::getObject( light1, obj1 )) {
@@ -121,7 +131,7 @@ void TypeLightPlugin::addDefaultLights() {
                 lightSrc1->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc1->enable();
                 lightSrc1->fixedPosition(true);
-                lightObject1->setName("Default Light 1");
+                lightObject1->setName(DEF1);
             }
         
             emit updatedObject(light1, UPDATE_ALL);
@@ -130,7 +140,7 @@ void TypeLightPlugin::addDefaultLights() {
   
     if(light2 == -1) {
         //Generate the default lights
-        light2 = addEmpty();
+        light2 = addDefaultLight(DEF2);
   
         BaseObjectData* obj2(0);
         if(PluginFunctions::getObject( light2, obj2 )) {
@@ -144,12 +154,14 @@ void TypeLightPlugin::addDefaultLights() {
                 lightSrc2->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc2->enable();
                 lightSrc2->fixedPosition(true);
-                lightObject2->setName("Default Light 2");
+                lightObject2->setName(DEF2);
             }
         
             emit updatedObject(light2, UPDATE_ALL);
         }
     }
+    
+    defaultLights_ = true;
 }
 
 void TypeLightPlugin::pluginsInitialized(){
@@ -161,7 +173,24 @@ void TypeLightPlugin::pluginsInitialized(){
   addDefaultLights();
 }
 
-int TypeLightPlugin::addEmpty(){
+int TypeLightPlugin::addDefaultLight(QString _name) {
+    
+    // new object data struct
+    LightObject* object = new LightObject();
+
+    // call the local function to update names
+    object->setName( _name );
+
+    object->update();
+
+    object->hide();
+
+    emit emptyObjectAdded (object->id() );
+
+    return object->id();
+}
+
+int TypeLightPlugin::addEmpty() {
     
   // new object data struct
   LightObject * object = new LightObject();
@@ -181,31 +210,63 @@ int TypeLightPlugin::addEmpty(){
   return object->id();
 }
 
-QString TypeLightPlugin::get_unique_name(LightObject* _object)
-{
-  bool name_unique = false;
+void TypeLightPlugin::addedEmptyObject(int _id) {
+    
+    BaseObject* obj = 0;
+    PluginFunctions::getObject(_id, obj);
+    
+    if(!obj) return;
+    
+    LightObject* light = 0;
+    light = dynamic_cast<LightObject*>(obj);
+    
+    if(!light) return;
+    
+    // Skip default light sources
+    if(light->name() == DEF0) return;
+    if(light->name() == DEF1) return;
+    if(light->name() == DEF2) return;
+    
+    removeDefaultLights();
+    lightSources_.push_back(_id);
+}
 
-  int cur_idx = _object->id();
-
-  while(!name_unique)
-  {
-    name_unique = true;
-
-    QString cur_name = QString(tr("Light %1.lgt").arg( cur_idx ));
-
-    PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_LIGHT );
-    for(; o_it != PluginFunctions::objectsEnd(); ++o_it)
-    {
-      if( o_it->name() == cur_name)
-      {
-        name_unique = false;
-        cur_idx += 10;
-        break;
-      }
+void TypeLightPlugin::objectDeleted(int _id) {
+    
+    for(uint i = 0; i < lightSources_.size(); ++i) {
+        if(lightSources_[i] == _id) lightSources_.erase(lightSources_.begin() + i);
     }
-  }
+    
+    if(lightSources_.empty() && !defaultLights_) {
+        addDefaultLights();
+    }
+    
+}
 
-  return QString(tr("Light %1.lgt").arg( cur_idx ));
+QString TypeLightPlugin::get_unique_name(LightObject* _object) {
+    
+    bool name_unique = false;
+
+    int cur_idx = _object->id();
+
+    while(!name_unique)
+    {
+        name_unique = true;
+
+        QString cur_name = QString(tr("Light %1.lgt").arg( cur_idx ));
+
+        PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS, DATA_LIGHT );
+        for(; o_it != PluginFunctions::objectsEnd(); ++o_it) {
+            
+            if( o_it->name() == cur_name) {
+                name_unique = false;
+                cur_idx += 10;
+                break;
+            }
+        }
+    }
+
+    return QString(tr("Light %1.lgt").arg( cur_idx ));
 }
 
 Q_EXPORT_PLUGIN2( typelightplugin , TypeLightPlugin );
