@@ -110,9 +110,8 @@ void LightObject::init(LightNode* _light, LightNode* _lightVis) {
   PluginFunctions::addGlobalStatusNode(lightNode_);
   
   lightNodeVis_ = new LightNode( materialNode() , "LightNode Visualization");
-  lightNodeVis_->show();
-  
   lightNodeVis_->visualize(true);
+  lightNodeVis_->show();
 
 }
 
