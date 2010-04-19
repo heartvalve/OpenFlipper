@@ -74,6 +74,8 @@ namespace SceneGraph {
 
 class ACGDLLEXPORT Material {
     
+friend class MaterialNode;
+    
 public:
     /// Default constructor
     Material() :
@@ -93,7 +95,7 @@ public:
         blend_param2_(GL_ZERO),
         color_material_(true),
         backface_culling_(false),
-        multiSampling_(true) {};
+        multi_sampling_(true) {};
     
     /// Deconstructor
     virtual ~Material() {};
@@ -117,7 +119,7 @@ public:
         blend_param2_(_m.blend_param2_),
         color_material_(_m.color_material_),
         backface_culling_(_m.backface_culling_),
-        multiSampling_(_m.multiSampling_) {};
+        multi_sampling_(_m.multi_sampling_) {};
         
     /// set color (base, ambient, diffuse, specular) based on _c
     void set_color(const Vec4f& _c) {
@@ -200,22 +202,22 @@ public:
     
     /// Enable Multisampling
     void enable_multisampling() {
-      multiSampling_ = true;
+      multi_sampling_ = true;
     }
 
     /// enable alpha test (draw pixels if alpha >= _clip)
     void disable_multisampling() {
-      multiSampling_ = false;
+      multi_sampling_ = false;
     }
 
     /// Get state of multisampling
     bool multi_sampling() {
-      return multiSampling_;
+      return multi_sampling_;
     }
 
     /// Set state of multisampling
     void set_multisampling( bool _state ) {
-      multiSampling_ = _state;
+      multi_sampling_ = _state;
     }
 
     ///get current alpha value for alpha_test
@@ -240,7 +242,7 @@ public:
     /// disable backface culling (not active by default, see applyProperties)
     void disable_backface_culling() { backface_culling_ = false; }
 
-private:
+protected:
     
     Vec4f    base_color_;
     Vec4f    ambient_color_;
@@ -265,7 +267,7 @@ private:
     bool     color_material_;
     bool     backface_culling_;
     
-    bool     multiSampling_;
+    bool     multi_sampling_;
 };
 
 
@@ -502,30 +504,8 @@ private:
     /// Local material class that actually stores the properties
     ACG::SceneGraph::Material material_;
 
-    Vec4f    base_color_backup_;
-    Vec4f    ambient_color_backup_;
-    Vec4f    diffuse_color_backup_;
-    Vec4f    specular_color_backup_;
-     
-    float    shininess_backup_;
-    double   mirror_backup_;
-    float    point_size_backup_;
-    float    line_width_backup_;
-    
-    bool     round_points_backup_;
-    bool     lines_smooth_backup_;
-    
-    bool     alpha_test_backup_;
-    float    alpha_clip_backup_;
-    
-    bool     blending_backup_;
-    GLenum   blend_param1_backup_;
-    GLenum   blend_param2_backup_;
-    
-    bool     color_material_backup_;
-    bool     backface_culling_backup_;
-    
-    bool     multiSampling_backup_;
+    /// Material backup
+    ACG::SceneGraph::Material materialBackup_;
 };
 
 
