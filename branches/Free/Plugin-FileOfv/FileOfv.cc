@@ -77,9 +77,9 @@ int FileViewPlugin::loadObject(QString _filename) {
     // Declare variables
     int         width = 1;
     int         height = 1;
-    ACG::Vec3d  eye;
-    ACG::Vec3d  center;
-    ACG::Vec3d  up;
+    ACG::Vec3d  eye(1.0,1.0,1.0);
+    ACG::Vec3d  center(0.0,0.0,0.0);
+    ACG::Vec3d  up(1.0,0.0,0.0);
     float       fovy = 0;
     ACG::Vec4f  background;
     
