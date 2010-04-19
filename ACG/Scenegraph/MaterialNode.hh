@@ -74,200 +74,201 @@ namespace SceneGraph {
 
 class ACGDLLEXPORT Material {
     
-friend class MaterialNode;
-    
+  friend class MaterialNode;
+  
 public:
     /// Default constructor
     Material() :
-        base_color_(GLState::default_base_color),
-        ambient_color_(GLState::default_ambient_color),
-        diffuse_color_(GLState::default_diffuse_color),
-        specular_color_(GLState::default_specular_color),
+        baseColor_(GLState::default_base_color),
+        ambientColor_(GLState::default_ambient_color),
+        diffuseColor_(GLState::default_diffuse_color),
+        specularColor_(GLState::default_specular_color),
         shininess_(GLState::default_shininess),
-        point_size_(1.0),
-        line_width_(1.0),
-        round_points_(false),
-        lines_smooth_(false),
-        alpha_test_(false),
-        alpha_clip_(0),
+        reflectance_(0.0),
+        pointSize_(1.0),
+        lineWidth_(1.0),
+        roundPoints_(false),
+        linesSmooth_(false),
+        alphaTest_(false),
+        alphaClip_(0),
         blending_(false),
-        blend_param1_(GL_ONE),
-        blend_param2_(GL_ZERO),
-        color_material_(true),
-        backface_culling_(false),
-        multi_sampling_(true) {};
+        blendParam1_(GL_ONE),
+        blendParam2_(GL_ZERO),
+        colorMaterial_(true),
+        backfaceCulling_(false),
+        multiSampling_(true) {};
     
     /// Deconstructor
     virtual ~Material() {};
     
     /// Copy constructor
     Material(const Material& _m) :
-        base_color_(_m.base_color_),
-        ambient_color_(_m.ambient_color_),
-        diffuse_color_(_m.diffuse_color_),
-        specular_color_(_m.specular_color_),
+        baseColor_(_m.baseColor_),
+        ambientColor_(_m.ambientColor_),
+        diffuseColor_(_m.diffuseColor_),
+        specularColor_(_m.specularColor_),
         shininess_(_m.shininess_),
-        mirror_(_m.mirror_),
-        point_size_(_m.point_size_),
-        line_width_(_m.line_width_),
-        round_points_(_m.round_points_),
-        lines_smooth_(_m.lines_smooth_),
-        alpha_test_(_m.alpha_test_),
-        alpha_clip_(_m.alpha_clip_),
+        reflectance_(_m.reflectance_),
+        pointSize_(_m.pointSize_),
+        lineWidth_(_m.lineWidth_),
+        roundPoints_(_m.roundPoints_),
+        linesSmooth_(_m.linesSmooth_),
+        alphaTest_(_m.alphaTest_),
+        alphaClip_(_m.alphaClip_),
         blending_(_m.blending_),
-        blend_param1_(_m.blend_param1_),
-        blend_param2_(_m.blend_param2_),
-        color_material_(_m.color_material_),
-        backface_culling_(_m.backface_culling_),
-        multi_sampling_(_m.multi_sampling_) {};
+        blendParam1_(_m.blendParam1_),
+        blendParam2_(_m.blendParam2_),
+        colorMaterial_(_m.colorMaterial_),
+        backfaceCulling_(_m.backfaceCulling_),
+        multiSampling_(_m.multiSampling_) {};
         
     /// set color (base, ambient, diffuse, specular) based on _c
-    void set_color(const Vec4f& _c) {
+    void color(const Vec4f& _c) {
         Vec4f c;
-        set_base_color(_c);
-        c = _c * 0.2f;  c[3]=_c[3];  set_ambient_color(c);
-        c = _c * 0.6f;  c[3]=_c[3];  set_diffuse_color(c);
-        c = _c * 0.8f;  c[3]=_c[3];  set_specular_color(c);
+        baseColor(_c);
+        c = _c * 0.2f;  c[3]=_c[3];  ambientColor(c);
+        c = _c * 0.6f;  c[3]=_c[3];  diffuseColor(c);
+        c = _c * 0.8f;  c[3]=_c[3];  specularColor(c);
     }
 
     /// set the base color
-    void set_base_color(const Vec4f& _c) { base_color_ = _c;}
+    void baseColor(const Vec4f& _c) { baseColor_ = _c;}
     /// get the base color
-    const Vec4f& base_color() const { return base_color_; }
+    const Vec4f& baseColor() const { return baseColor_; }
 
     /// set the ambient color.
-    void set_ambient_color(const Vec4f& _a) { ambient_color_ = _a; }
+    void ambientColor(const Vec4f& _a) { ambientColor_ = _a; }
     /// get the ambient color.
-    const Vec4f& ambient_color() const { return ambient_color_; }
+    const Vec4f& ambientColor() const { return ambientColor_; }
 
     /// set the diffuse color.
-    void set_diffuse_color(const Vec4f& _d) { diffuse_color_ = _d; }
+    void diffuseColor(const Vec4f& _d) { diffuseColor_ = _d; }
     /// get the diffuse color.
-    const Vec4f& diffuse_color() const { return diffuse_color_; }
+    const Vec4f& diffuseColor() const { return diffuseColor_; }
 
     /// set the specular color
-    void set_specular_color(const Vec4f& _s) { specular_color_ = _s; }
+    void specularColor(const Vec4f& _s) { specularColor_ = _s; }
     /// get the specular color
-    const Vec4f& specular_color() const { return specular_color_; }
+    const Vec4f& specularColor() const { return specularColor_; }
 
     /// Set colorMaterial
-    void color_material( const bool _cm) { color_material_ = _cm; }
+    void colorMaterial( const bool _cm) { colorMaterial_ = _cm; }
     /// Enable Color Material
-    void enable_color_material() { color_material_ = true; }
+    void enableColorMaterial() { colorMaterial_ = true; }
     /// Disable Color Material
-    void disable_color_material() { color_material_ = false; }
+    void disableColorMaterial() { colorMaterial_ = false; }
     /// get colorMaterial state
-    bool color_material() { return color_material_; }
+    bool colorMaterial() { return colorMaterial_; }
 
     /// set shininess
-    void set_shininess(float _s) { shininess_ = _s; }
+    void shininess(float _s) { shininess_ = _s; }
     /// get shininess
     float shininess() const { return shininess_; }
     
-    /// set mirror
-    void set_mirror(double _m) { mirror_ = _m; }
-    /// get mirror
-    double mirror() const { return mirror_; }
+    /// set reflectance ( not used in OpenGL Rendering)
+    void reflectance(double _m) { reflectance_ = _m; }
+    /// get reflectance ( not used in OpenGL Rendering)
+    double reflectance() const { return reflectance_; }
     
     /// set point size (default: 1.0)
-    void set_point_size(float _sz) { point_size_ = _sz; }
+    void pointSize(float _sz) { pointSize_ = _sz; }
     /// get point size
-    float point_size() const { return point_size_; }
+    float pointSize() const { return pointSize_; }
 
     /// set line width (default: 1.0)
-    void set_line_width(float _sz) { line_width_ = _sz; }
+    void lineWidth(float _sz) { lineWidth_ = _sz; }
     /// get line width
-    float line_width() const { return line_width_; }
+    float lineWidth() const { return lineWidth_; }
 
     /// set: round points enabled
-    void set_round_points(bool _b) { round_points_ = _b; }
+    void roundPoints(bool _b) { roundPoints_ = _b; }
     /// get: round points enabled
-    bool round_points() const { return round_points_; }
+    bool roundPoints() const { return roundPoints_; }
 
     /// set: smooth lines enabled
-    void set_line_smooth(bool _b) { lines_smooth_ = _b; }
+    void lineSmooth(bool _b) { linesSmooth_ = _b; }
     /// get: rsmooth lines enabled
-    bool line_smooth() const { return lines_smooth_; }
+    bool lineSmooth() const { return linesSmooth_; }
     
     /// enable alpha test (draw pixels if alpha >= _clip)
-    void enable_alpha_test(float _clip) {
-      alpha_test_ = true; alpha_clip_ = _clip;
+    void enableAlphaTest(float _clip) {
+      alphaTest_ = true; alphaClip_ = _clip;
     }
 
     /// disable alpha test
-    void disable_alpha_test() { alpha_test_ = false; }
+    void disableAlphaTest() { alphaTest_ = false; }
 
     /// Return state of Alpha test
-    bool alpha_test() { return alpha_test_; };
+    bool alphaTest() { return alphaTest_; };
     
     /// Enable Multisampling
-    void enable_multisampling() {
-      multi_sampling_ = true;
+    void enableMultisampling() {
+      multiSampling_ = true;
     }
 
     /// enable alpha test (draw pixels if alpha >= _clip)
-    void disable_multisampling() {
-      multi_sampling_ = false;
+    void disableMultisampling() {
+      multiSampling_ = false;
     }
 
     /// Get state of multisampling
-    bool multi_sampling() {
-      return multi_sampling_;
+    bool multiSampling() {
+      return multiSampling_;
     }
 
     /// Set state of multisampling
-    void set_multisampling( bool _state ) {
-      multi_sampling_ = _state;
+    void multisampling( bool _state ) {
+      multiSampling_ = _state;
     }
 
     ///get current alpha value for alpha_test
-    float alpha_value(){ return alpha_clip_; };
+    float alphaValue(){ return alphaClip_; };
 
     bool blending() { return blending_; };
 
-    GLenum blending_param1() { return blend_param1_; };
-    GLenum blending_param2() { return blend_param2_; };
+    GLenum blendingParam1() { return blendParam1_; };
+    GLenum blendingParam2() { return blendParam2_; };
 
     /// enable blending with Parameters (_p1, _p2)
-    void enable_blending(GLenum _p1 = GL_SRC_ALPHA,
+    void enableBlending(GLenum _p1 = GL_SRC_ALPHA,
                GLenum _p2 = GL_ONE_MINUS_SRC_ALPHA)
-    { blending_ = true; blend_param1_ = _p1; blend_param2_ = _p2; }
+    { blending_ = true; blendParam1_ = _p1; blendParam2_ = _p2; }
     /// disable blending
-    void disable_blending() { blending_ = false; }
+    void disableBlending() { blending_ = false; }
 
-    bool backface_culling() { return backface_culling_; };
+    bool backfaceCulling() { return backfaceCulling_; };
 
     /// enable backface culling (not active by default, see applyProperties)
-    void enable_backface_culling() { backface_culling_ = true; }
+    void enableBackfaceCulling() { backfaceCulling_ = true; }
     /// disable backface culling (not active by default, see applyProperties)
-    void disable_backface_culling() { backface_culling_ = false; }
+    void disableBackfaceCulling() { backfaceCulling_ = false; }
 
 protected:
     
-    Vec4f    base_color_;
-    Vec4f    ambient_color_;
-    Vec4f    diffuse_color_;
-    Vec4f    specular_color_;
+    Vec4f    baseColor_;
+    Vec4f    ambientColor_;
+    Vec4f    diffuseColor_;
+    Vec4f    specularColor_;
     
     float    shininess_;
-    double   mirror_;
-    float    point_size_;
-    float    line_width_;
+    double   reflectance_;
+    float    pointSize_;
+    float    lineWidth_;
     
-    bool     round_points_;
-    bool     lines_smooth_;
+    bool     roundPoints_;
+    bool     linesSmooth_;
     
-    bool     alpha_test_;
-    float    alpha_clip_;
+    bool     alphaTest_;
+    float    alphaClip_;
     
     bool     blending_;
-    GLenum   blend_param1_;
-    GLenum   blend_param2_;
+    GLenum   blendParam1_;
+    GLenum   blendParam2_;
     
-    bool     color_material_;
-    bool     backface_culling_;
+    bool     colorMaterial_;
+    bool     backfaceCulling_;
     
-    bool     multi_sampling_;
+    bool     multiSampling_;
 };
 
 
@@ -353,47 +354,47 @@ public:
 
     /// set color (base, ambient, diffuse, specular) based on _c
     void set_color(const Vec4f& _c) {
-      material_.set_color(_c);
+      material_.color(_c);
     }
 
     /// set the base color
-    void set_base_color(const Vec4f& _c) { material_.set_base_color(_c); }
+    void set_base_color(const Vec4f& _c) { material_.baseColor(_c); }
     /// get the base color
-    const Vec4f& base_color() const { return material_.base_color(); }
+    const Vec4f& base_color() const { return material_.baseColor(); }
 
     /// set the ambient color.
-    void set_ambient_color(const Vec4f& _a) { material_.set_ambient_color(_a); }
+    void set_ambient_color(const Vec4f& _a) { material_.ambientColor(_a); }
     /// get the ambient color.
-    const Vec4f& ambient_color() const { return material_.ambient_color(); }
+    const Vec4f& ambient_color() const { return material_.ambientColor(); }
 
     /// set the diffuse color.
-    void set_diffuse_color(const Vec4f& _d) { material_.set_diffuse_color(_d); }
+    void set_diffuse_color(const Vec4f& _d) { material_.diffuseColor(_d); }
     /// get the diffuse color.
-    const Vec4f& diffuse_color() const { return material_.diffuse_color(); }
+    const Vec4f& diffuse_color() const { return material_.diffuseColor(); }
 
     /// set the specular color
-    void set_specular_color(const Vec4f& _s) { material_.set_specular_color(_s); }
+    void set_specular_color(const Vec4f& _s) { material_.specularColor(_s); }
     /// get the specular color
-    const Vec4f& specular_color() const { return material_.specular_color(); }
+    const Vec4f& specular_color() const { return material_.specularColor(); }
 
     /// Set colorMaterial
-    void colorMaterial( const bool _cm) { material_.color_material(_cm); }
+    void colorMaterial( const bool _cm) { material_.colorMaterial(_cm); }
     /// Enable Color Material
-    void enable_color_material() { material_.enable_color_material(); }
+    void enable_color_material() { material_.enableColorMaterial(); }
     /// Disable Color Material
-    void disable_color_material() { material_.disable_color_material(); }
+    void disable_color_material() { material_.disableColorMaterial(); }
     /// get colorMaterial state
-    bool colorMaterial() { return material_.color_material(); }
+    bool colorMaterial() { return material_.colorMaterial(); }
 
     /// set shininess
-    void set_shininess(float _s) { material_.set_shininess(_s); }
+    void set_shininess(float _s) { material_.shininess(_s); }
     /// get shininess
     float shininess() const { return material_.shininess(); }
     
-    /// set mirror
-    void set_mirror(double _m) { material_.set_mirror(_m); }
-    /// get mirror
-    double mirror() const { return material_.mirror(); }
+    /// set reflectance
+    void reflectance(double _m) { material_.reflectance(_m); }
+    /// get reflectance
+    double reflectance() const { return material_.reflectance(); }
 
   /** @} */
 
@@ -402,24 +403,24 @@ public:
     * @{ */
   //===========================================================================
     /// set point size (default: 1.0)
-    void set_point_size(float _sz) { material_.set_point_size(_sz); }
+    void set_point_size(float _sz) { material_.pointSize(_sz); }
     /// get point size
-    float point_size() const { return material_.point_size(); }
+    float point_size() const { return material_.pointSize(); }
 
     /// set line width (default: 1.0)
-    void set_line_width(float _sz) { material_.set_line_width(_sz); }
+    void set_line_width(float _sz) { material_.lineWidth(_sz); }
     /// get line width
-    float line_width() const { return material_.line_width(); }
+    float line_width() const { return material_.lineWidth(); }
 
     /// set round points enabled
-    void set_round_points(bool _b) { material_.set_round_points(_b); }
+    void set_round_points(bool _b) { material_.roundPoints(_b); }
     /// get round points enabled
-    bool round_points() const { return material_.round_points(); }
+    bool round_points() const { return material_.roundPoints(); }
 
     /// set: smooth lines enabled
-    void set_line_smooth(bool _b) { material_.set_line_smooth(_b); }
+    void set_line_smooth(bool _b) { material_.lineSmooth(_b); }
     /// get: rsmooth lines enabled
-    bool line_smooth() const { return material_.line_smooth(); }
+    bool line_smooth() const { return material_.lineSmooth(); }
 
   /** @} */
 
@@ -429,13 +430,13 @@ public:
   //===========================================================================
 
     /// enable alpha test (draw pixels if alpha >= _clip)
-    void enable_alpha_test(float _clip) { material_.enable_alpha_test(_clip); }
+    void enable_alpha_test(float _clip) { material_.enableAlphaTest(_clip); }
 
     /// disable alpha test
-    void disable_alpha_test() { material_.disable_alpha_test(); }
+    void disable_alpha_test() { material_.disableAlphaTest(); }
 
     /// Return state of Alpha test
-    bool alpha_test() { return material_.alpha_test(); };
+    bool alpha_test() { return material_.alphaTest(); };
 
   /** @} */
 
@@ -445,42 +446,42 @@ public:
   //===========================================================================
 
     /// Enable Multisampling
-    void enable_multisampling() { material_.enable_multisampling(); }
+    void enable_multisampling() { material_.enableMultisampling(); }
 
     /// enable alpha test (draw pixels if alpha >= _clip)
-    void disable_multisampling() { material_.disable_multisampling(); }
+    void disable_multisampling() { material_.disableMultisampling(); }
 
     /// Get state of multisampling
-    bool multiSampling() { return material_.multi_sampling(); }
+    bool multiSampling() { return material_.multiSampling(); }
 
     /// Set state of multisampling
-    void set_multisampling( bool _state ) { material_.set_multisampling(_state); }
+    void set_multisampling( bool _state ) { material_.multisampling(_state); }
 
   /** @} */
 
   ///get current alpha value for alpha_test
-  float alpha_value(){ return material_.alpha_value(); };
+  float alpha_value(){ return material_.alphaValue(); };
 
   bool blending() { return material_.blending(); };
 
-  GLenum blending_param1() { return material_.blending_param1(); };
-  GLenum blending_param2() { return material_.blending_param2(); };
+  GLenum blending_param1() { return material_.blendingParam1(); };
+  GLenum blending_param2() { return material_.blendingParam2(); };
 
   /// enable blending with Parameters (_p1, _p2)
   void enable_blending(GLenum _p1 = GL_SRC_ALPHA,
 		       GLenum _p2 = GL_ONE_MINUS_SRC_ALPHA) {
-      material_.enable_blending(_p1, _p2);
+      material_.enableBlending(_p1, _p2);
   }
   /// disable blending
-  void disable_blending() { material_.disable_blending(); }
+  void disable_blending() { material_.disableBlending(); }
 
-  bool backface_culling() { return material_.backface_culling(); };
+  bool backface_culling() { return material_.backfaceCulling(); };
 
   /// enable backface culling (not active by default, see applyProperties)
-  void enable_backface_culling() { material_.enable_backface_culling(); }
+  void enable_backface_culling() { material_.enableBackfaceCulling(); }
   
   /// disable backface culling (not active by default, see applyProperties)
-  void disable_backface_culling() { material_.disable_backface_culling(); }
+  void disable_backface_culling() { material_.disableBackfaceCulling(); }
 
   /// get properties that will be applied (OR'ed ApplyProperties)
   unsigned int applyProperties() const { return applyProperties_; }
@@ -504,7 +505,7 @@ private:
     /// Local material class that actually stores the properties
     ACG::SceneGraph::Material material_;
 
-    /// Material backup
+    /// Material Backup
     ACG::SceneGraph::Material materialBackup_;
 };
 
