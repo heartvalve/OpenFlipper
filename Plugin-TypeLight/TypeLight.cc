@@ -174,8 +174,7 @@ int TypeLightPlugin::addEmpty(){
 
   object->update();
 
-  
-  object->show();
+  object->hide();
 
   emit emptyObjectAdded (object->id() );
 
