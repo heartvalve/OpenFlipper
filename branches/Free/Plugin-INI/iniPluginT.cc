@@ -33,8 +33,9 @@ void INIPlugin::parseIniFileT(INIFile& _ini, MeshObject* _object) {
           _object->materialNode()->set_shininess(shininess);
         
         double reflectance;
-        if ( _ini.get_entry( shininess, _object->name() , "Reflectance" ) )
-          _object->materialNode()->reflectance(reflectance);        
+        if ( _ini.get_entry( reflectance, _object->name() , "Reflectance" ) ) {
+          _object->materialNode()->set_reflectance(reflectance);        
+        }
         
         int size = 1;
         if ( _ini.get_entry( size, _object->name() , "PointSize" ) )
