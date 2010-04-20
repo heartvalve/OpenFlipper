@@ -64,7 +64,6 @@
 class QtGraphicsButton : public QObject, public QGraphicsItem
 {
   Q_OBJECT
-  Q_INTERFACES(QGraphicsItem)
 
   public:
 
