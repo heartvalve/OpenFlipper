@@ -96,14 +96,14 @@ public:
   * 1.0. If it is 0.0 the light source will be directional. So a
   * 1.0 is set in this function to get a positioned light source.
   */
-  void position( Vec3d _pos);
+  void position( Vec3f _pos);
   
   /** \brief Get the position of the LightSource
   *
   * Be careful with this function. Check if the light source is not directional with
   * the directional() function
   */
-  Vec3d position();
+  Vec3f position();
   
   /** \brief Check if the light source is a directional light source
   *
@@ -116,14 +116,14 @@ public:
   *
   * Get direction of light.
   */
-  Vec3d direction();
+  Vec3f direction();
   
   /** \brief Set the direction of the light source
   *
   * This function creates a directional light source. The position is not used by OpenGL.
   * Internally the positions homogeneous coordinate is set to 0.0.
   */
-  void direction( Vec3d _pos);
+  void direction( Vec3f _pos);
   
    /// enable LightSource 
   void enable();
@@ -138,13 +138,13 @@ public:
   *
   * \todo Improve documentation
   */
-  void spotDirection( Vec3d _pos);
+  void spotDirection( Vec3f _pos);
   
   /** \brief get spot direction
   *
   * \todo Improve documentation
   */
-  Vec3d spotDirection( );
+  Vec3f spotDirection( );
 
   /// set Ambient color for LightSource 
   void ambientColor(  Vec4f _color);
@@ -214,7 +214,9 @@ protected:
   Vec4f specularColor_;
   
   Vec4f realPosition_;
-  Vec3d spotDirection_;
+  Vec3f spotDirection_;
+  Vec3f realSpotDirection_;
+  
   float spotExponent_;
   float spotCutoff_;
   float constantAttenuation_;

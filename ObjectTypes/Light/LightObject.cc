@@ -163,7 +163,7 @@ QString LightObject::getObjectinfo() {
     output += "Object Contains Light : ";
 
   ///\TODO Output info
-  ACG::Vec3d pos = lightSource_.position();
+  ACG::Vec3f pos = lightSource_.position();
 //   ACG::Vec3f nor = lightNode_->normal();
 
   output += " Position ( " + QString::number(pos[0]) + ", " + QString::number(pos[1]) + ", " + QString::number(pos[2]) + ")";

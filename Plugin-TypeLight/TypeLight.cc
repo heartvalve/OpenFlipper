@@ -102,7 +102,7 @@ void TypeLightPlugin::addDefaultLights() {
             LightSource* lightSrc0 = PluginFunctions::lightSource(lightObject0);
             
             if( lightSrc0 ) { 
-                lightSrc0->direction(ACG::Vec3d(0.0,0.0,1.0) );
+                lightSrc0->direction(ACG::Vec3f(0.0,0.0,1.0) );
                 lightSrc0->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc0->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc0->enable();
@@ -126,7 +126,7 @@ void TypeLightPlugin::addDefaultLights() {
             LightSource* lightSrc1 = PluginFunctions::lightSource(lightObject1);
     
             if( lightSrc1 ) {
-                lightSrc1->direction(ACG::Vec3d(-1.0,  1.0, 0.7) );
+                lightSrc1->direction(ACG::Vec3f(-1.0,  1.0, 0.7) );
                 lightSrc1->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc1->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc1->enable();
@@ -149,7 +149,7 @@ void TypeLightPlugin::addDefaultLights() {
             LightSource* lightSrc2 = PluginFunctions::lightSource(lightObject2);
     
             if( lightSrc2 ) {
-                lightSrc2->direction(ACG::Vec3d( 1.0,  1.0, 0.7) );
+                lightSrc2->direction(ACG::Vec3f( 1.0,  1.0, 0.7) );
                 lightSrc2->diffuseColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc2->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc2->enable();
