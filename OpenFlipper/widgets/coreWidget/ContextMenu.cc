@@ -479,10 +479,15 @@ bool CoreWidget::addContextMenus( QMenu* _menu , ContextMenuType _type , int _id
   }
   
   /// \todo Sort the menu entries by the order given in visibleContextMenus
+  
   //first add all menus
   QMapIterator<QString, QAction*> it(menuMap);
   
   QStringList visible = viewModes_[id]->visibleContextMenus;
+  if (visible.contains("ALL_THAT_EXIST")) {
+    //this plugin adds all context menus, no special configuration so far.
+    visible = viewModes_[0]->visibleContextMenus;
+  }
   visible.replaceInStrings(QRegExp(".*>"), "");
   
   while (it.hasNext()) {

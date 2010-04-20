@@ -110,7 +110,7 @@ void CoreWidget::slotAddViewModeToolboxes(QString _mode, bool _custom, QStringLi
     vm->icon   = "Unknown.png";
 
     vm->visibleToolbars = QString("Main Toolbar;Viewer Toolbar").split(";");
-    vm->visibleContextMenus = viewModes_[0]->visibleContextMenus;
+    vm->visibleContextMenus = QString("ALL_THAT_EXIST").split(" ");
     
     if (_custom) {
       viewModes_.push_back(vm);
@@ -156,7 +156,7 @@ void CoreWidget::slotAddViewModeToolbars(QString _mode, bool _custom, QStringLis
     vm->custom = _custom;
     vm->icon   = "Unknown.png";
 
-    vm->visibleContextMenus = viewModes_[0]->visibleContextMenus;
+    vm->visibleContextMenus = QString("ALL_THAT_EXIST").split(" ");
     
     if (_custom) {
       viewModes_.push_back(vm);
