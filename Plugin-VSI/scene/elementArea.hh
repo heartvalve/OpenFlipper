@@ -50,6 +50,7 @@ class SceneElement;
 class ElementArea : public QObject, public QGraphicsItem
 {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsItem)
 
   public:
 

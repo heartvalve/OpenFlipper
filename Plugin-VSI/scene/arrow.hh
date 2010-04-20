@@ -50,6 +50,7 @@ class GraphicsScene;
 class Arrow : public QObject, public QGraphicsPixmapItem, public QGraphicsLayoutItem
 {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsLayoutItem)
 
   public:
 
