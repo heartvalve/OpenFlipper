@@ -129,7 +129,8 @@ availableDrawModes() const
 	   DrawModes::WIREFRAME           |
 	   DrawModes::HIDDENLINE          |
 	   DrawModes::SOLID_FLAT_SHADED   |
-	   DrawModes::SOLID_SMOOTH_SHADED );
+	   DrawModes::SOLID_SMOOTH_SHADED |
+	   DrawModes::SOLID_FACES_COLORED );
 }
 
 //----------------------------------------------------------------------------
@@ -166,6 +167,19 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
+    if (_drawMode & DrawModes::SOLID_FACES_COLORED)
+    {
+      glDisable(GL_LIGHTING);
+      glShadeModel(GL_FLAT);
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      
+      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+      glColor(primitives_[i].color);
+
+      draw_obj(i);
+      
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
 
     if (_drawMode & DrawModes::HIDDENLINE)
     {
