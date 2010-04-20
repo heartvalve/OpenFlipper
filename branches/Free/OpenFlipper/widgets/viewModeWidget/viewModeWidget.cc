@@ -296,7 +296,7 @@ void viewModeWidget::slotSetIcon() {
 }
 
 // =======================================================================================================
-// ToolBox and ToolBar Lists update functions
+// ToolBox, ToolBar and ContextMenu Lists update functions
 // =======================================================================================================
 void viewModeWidget::slotSetAllWidgets(){
   toolboxList->clear();
@@ -319,6 +319,8 @@ void viewModeWidget::slotSetAllWidgets(){
         toolboxes = modes_[i]->visibleToolboxes;
         toolbars = modes_[i]->visibleToolbars;
 	contextmenus = modes_[i]->visibleContextMenus;
+	if (contextmenus.contains("ALL_THAT_EXIST"))
+	  contextmenus = modes_[0]->visibleContextMenus;
         toolboxList->addItems(toolboxes); //add corresponding widgets
         toolbarList->addItems(toolbars);
 	contextMenuList->addItems(contextmenus);
