@@ -34,7 +34,7 @@
 #define OPENFLIPPERTHREAD_HH
 
 #include <QThread>
-#include <QMutex>
+#include <QSemaphore>
 
 #include <OpenFlipper/common/GlobalDefines.hh>
 
@@ -221,7 +221,15 @@ class DLLEXPORT OpenFlipperThread : public QThread
     */
     QString jobId_;
     
-    QMutex startup_;
+    /** \brief Semaphore to control order of thread startup calls
+    *
+    * This variable is used to control the order of thread startup calls. The Thread itself is
+    * started, and when it is up and running, the resource will be created. The core thread waits
+    * for this resource and afterwards starts execution of the threads processing function.
+    * Without this sync, the processing call of the main thread might get lost as the thread is
+    * not online and listening for the signal.
+    */
+    QSemaphore startup_;
 
     
 };

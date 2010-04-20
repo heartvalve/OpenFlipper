@@ -38,12 +38,9 @@ OpenFlipperThread::OpenFlipperThread( QString _jobId ) :
   job_(0),
   jobId_(_jobId)
 {
-  startup_.lock();
-  
 }
 
 OpenFlipperThread::~OpenFlipperThread() {
-  std::cerr << "Destructor Thread" << std::endl;
 }
 
 void OpenFlipperThread::run()
@@ -62,16 +59,12 @@ void OpenFlipperThread::run()
     // connect the function to start the job
     connect(this,SIGNAL(startProcessingInternal()),job_,SLOT(startJobProcessing()),Qt::QueuedConnection);
   }
-  
-  std::cerr << "Start Event Loop" << std::endl;
 
-  startup_.unlock();
-  
-  // Start event queue
+  // Thread is ready for processing now, tell core that we can continue.
+  startup_.release(1);
+
+  // Start event queue (possibly added events are already queued here
   exec();
-  
-  std::cerr << "End Event Loop " << std::endl;
-  
   
 // TODO: Self destuction sometimes does not work! 
 // Seems to be a race condition!!!
@@ -102,25 +95,20 @@ void OpenFlipperThread::slotJobFinished( ) {
 
 
 void OpenFlipperThread::startProcessing() {
-  std::cerr << "Thread emit startProcessing" << std::endl;
   
-  // Wait for thread to come up with event loop ... otherwise the signals might get lost
-  startup_.lock();
+  // Wait for thread to come up and connect its signals ... otherwise the signals might get lost
+  startup_.acquire(1);
   
   // Tell internal wrapper to start with the processing
   emit startProcessingInternal();
-  
-  startup_.unlock();
-  std::cerr << "Thread emit startProcessing done" << std::endl;
 }
 
 OpenFlipperJob::~OpenFlipperJob() 
 { 
-  std::cerr << "Destructor job called" << std::endl;
 }
 
 void OpenFlipperJob::startJobProcessing() {
-  std::cerr << "job start process" << std::endl;
+  
   // Actually start the process ( This function will block as it uses a direct connection )
   // But it only blocks the current thread.
   emit process(); 
@@ -130,6 +118,4 @@ void OpenFlipperJob::startJobProcessing() {
   
   // Cleanup this object
   deleteLater();
-  
-  std::cerr << "processing done" << std::endl;
 }
