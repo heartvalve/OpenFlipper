@@ -90,9 +90,9 @@ int FileLightPlugin::loadObject(QString _filename)
         LightSource* light = PluginFunctions::lightSource(lightObject);
 
         QString name = lightObject->name();
-        ACG::Vec3d position;
-        ACG::Vec3d direction;
-        ACG::Vec3d spotDirection;
+        ACG::Vec3f position;
+        ACG::Vec3f direction;
+        ACG::Vec3f spotDirection;
         ACG::Vec4f ambientColor;
         ACG::Vec4f diffuseColor;
         ACG::Vec4f specularColor;
