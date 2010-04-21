@@ -523,7 +523,7 @@ bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
 
 //------------------------------------------------------------------------------
 
-void InfoPlugin::slotObjectUpdated( int _identifier , UpdateType _type){
+void InfoPlugin::slotObjectUpdated( int _identifier , const UpdateType _type){
 
   if ( (PluginFunctions::objectCount() == 1) || (PluginFunctions::targetCount() == 1) ){
 

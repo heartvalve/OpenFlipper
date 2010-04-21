@@ -38,7 +38,7 @@ bool UpdateType::operator==(const UpdateType& _type) const {
 };
 
 /// Check if this update contains the given UpdateType
-bool UpdateType::contains( const UpdateType& _type ) {
+bool UpdateType::contains( const UpdateType& _type ) const {
   
   if ( type_ == UPDATE_ALL.type_ )
     return true;

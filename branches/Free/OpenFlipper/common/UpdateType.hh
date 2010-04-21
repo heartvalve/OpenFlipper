@@ -22,7 +22,7 @@ class DLLEXPORT UpdateType {
     bool operator<( const UpdateType& _i ) const;
     
     /// Check if this update contains the given UpdateType
-    bool contains( const UpdateType& _type );
+    bool contains( const UpdateType& _type ) const;
     
   protected:
     UpdateTypeSet type_;

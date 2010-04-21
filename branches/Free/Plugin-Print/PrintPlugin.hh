@@ -45,7 +45,6 @@
 
 #include <QObject>
 #include <QMenuBar>
-#include "PrintPlugin.hh"
 
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
@@ -59,7 +58,7 @@ class PrintPlugin : public QObject, BaseInterface, MenuInterface, KeyInterface
    Q_INTERFACES(MenuInterface)
    Q_INTERFACES(KeyInterface)
 
-   signals:
+  signals:
      void addMenubarAction(QAction* _action, QString _type );
 
   private slots:
