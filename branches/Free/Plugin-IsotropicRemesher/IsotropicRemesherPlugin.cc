@@ -69,7 +69,7 @@ void IsotropicRemesherPlugin::threadFinished(QString _jobId) {
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DataType(DATA_TRIANGLE_MESH | DATA_POLY_MESH)) ;
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
-      emit updatedObject( o_it->id() );
+      emit updatedObject( o_it->id(), UPDATE_ALL );
       emit updateView();
     
   }
@@ -179,7 +179,7 @@ void IsotropicRemesherPlugin::isotropicRemesh(int _objectID, double _targetEdgeL
 
       mesh->update_normals();
 
-      emit updatedObject( object->id() );
+      emit updatedObject( object->id(), UPDATE_ALL );
 
       emit updateView();
 
