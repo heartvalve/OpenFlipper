@@ -34,68 +34,16 @@
 
 /*===========================================================================*\
 *                                                                           *
-*   $Revision: 7714 $                                                       *
-*   $Author: kremer $                                                       *
-*   $Date: 2009-12-01 13:33:56 +0100 (Tue, 01 Dec 2009) $                   *
+*   $Revision: 7920 $                                                       *
+*   $Author: moebius $                                                       *
+*   $Date: 2009-12-15 10:07:03 +0100 (Di, 15. Dez 2009) $                   *
 *                                                                           *
 \*===========================================================================*/
 
-#ifndef INIPLUGIN_HH
-#define INIPLUGIN_HH
+#include "FileSPH.hh"
 
-#include <QObject>
-#include <QMenuBar>
+int FileSPHPlugin::addNewSphere() {
+  return addEmpty();
+}
 
-#include <OpenFlipper/BasePlugin/BaseInterface.hh>
-#include <OpenFlipper/BasePlugin/LoggingInterface.hh>
-#include <OpenFlipper/BasePlugin/ScriptInterface.hh>
-#include <OpenFlipper/BasePlugin/INIInterface.hh>
 
-class INIPlugin : public QObject, BaseInterface, LoggingInterface, ScriptInterface, INIInterface
-{
-    Q_OBJECT
-    Q_INTERFACES(LoggingInterface)
-    Q_INTERFACES(BaseInterface)
-    Q_INTERFACES(ScriptInterface)
-    Q_INTERFACES(INIInterface)
-    
-    signals:
-        void log(Logtype _type, QString _message);
-        void log(QString _message);
-        
-    private slots:
-        void loadIniFile( INIFile& _ini ,int _id);
-        void saveIniFile( INIFile& _ini ,int _id);
-        
-        void noguiSupported( ) {} ;
-        
-    public :
-        
-        INIPlugin();
-        ~INIPlugin() {};
-        
-    public slots:
-        
-        QString name() { return (QString("INIPlugin")); };
-        QString description( ) { return (QString(tr("Handle INI-files."))); };
-        
-        QString version() { return QString("1.0"); };
-        
-    private:
-        // Template function to parse ini file entries
-        template <class Object>
-        void parseIniFileT(INIFile& _ini, Object* _object);
-        
-        // Template function to save ini file entries
-        template <class Object>
-        void saveIniFileT(INIFile& _ini, Object* _object);
-};
-
-//=============================================================================
-#if defined(INCLUDE_TEMPLATES) && !defined(INIPLUGINT_C)
-#define INIPLUGINT_TEMPLATES
-#include "iniPluginT.cc"
-#endif
-//=============================================================================
-
-#endif //INIPLUGIN_HH

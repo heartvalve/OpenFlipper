@@ -53,6 +53,38 @@
 INIPlugin::INIPlugin() {
 }
 
+
+template <>
+void INIPlugin::parseIniFileT(INIFile& _ini, LightObject* _object) {
+  
+  if ( _object ) {
+    std::vector< QString > draw_modes;
+    if( _ini.get_entry(draw_modes, _object->name(), "MaterialDrawMode") )
+      _object->materialNode()->drawMode( listToDrawMode(draw_modes) );
+    
+    bool visible;
+    if ( _ini.get_entry( visible, _object->name() , "Visible" ) ) {
+      _object->visible(visible);        
+      std::cerr << "visible" << std::endl;
+    }
+  }
+}
+
+
+template <>
+void INIPlugin::saveIniFileT(INIFile& _ini, LightObject* _object) {
+  
+  if ( _object ) {
+    _ini.add_entry( _object->name() ,
+                    "MaterialDrawMode" ,
+                    drawModeToList( _object->materialNode()->drawMode()) );
+    _ini.add_entry( _object->name() ,
+                    "Visible" ,
+                    _object->visible() );                        
+    
+  }
+}
+
 void INIPlugin::loadIniFile( INIFile& _ini, int _id ) {
     
     BaseObjectData* baseObject;
@@ -62,7 +94,8 @@ void INIPlugin::loadIniFile( INIFile& _ini, int _id ) {
     }
     
     PolyMeshObject* polyObject(0);
-    TriMeshObject* triObject(0);
+    TriMeshObject*  triObject(0);
+    LightObject*    lightObject(0);
     
     if(baseObject->dataType() == DATA_POLY_MESH) {
         polyObject = PluginFunctions::polyMeshObject(baseObject);
@@ -71,7 +104,8 @@ void INIPlugin::loadIniFile( INIFile& _ini, int _id ) {
         triObject = PluginFunctions::triMeshObject(baseObject);
         parseIniFileT(_ini, triObject);
     }  else if ( baseObject->dataType() == DATA_LIGHT ) {
-      // No special Information needed yet
+      lightObject = PluginFunctions::lightObject(baseObject);
+      parseIniFileT(_ini, lightObject);
     } else {
         // Unhandled data type
         emit log(LOGERR, tr("The specified data type is not supported, yet. Aborting!"));
@@ -87,7 +121,8 @@ void INIPlugin::saveIniFile( INIFile& _ini, int _id) {
     }
     
     PolyMeshObject* polyObject(0);
-    TriMeshObject* triObject(0);
+    TriMeshObject*  triObject(0);
+    LightObject*    lightObject(0);
     
     if(baseObject->dataType() == DATA_POLY_MESH) {
         polyObject = PluginFunctions::polyMeshObject(baseObject);
@@ -95,10 +130,15 @@ void INIPlugin::saveIniFile( INIFile& _ini, int _id) {
     } else if ( baseObject->dataType() == DATA_TRIANGLE_MESH) {
         triObject = PluginFunctions::triMeshObject(baseObject);
         saveIniFileT(_ini, triObject);
+    } else if ( baseObject->dataType() == DATA_LIGHT ) {
+        lightObject = PluginFunctions::lightObject(baseObject);
+        saveIniFileT(_ini, lightObject);
     } else {
-        // Unhandled data type
-        emit log(LOGERR, tr("The specified data type is not supported, yet. Aborting!"));
+      // Unhandled data type
+      emit log(LOGERR, tr("The specified data type is not supported, yet. Aborting!"));
     }
 }
+
+
 
 Q_EXPORT_PLUGIN2( iniplugin , INIPlugin );

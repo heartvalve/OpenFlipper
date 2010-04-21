@@ -45,9 +45,9 @@
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
-#define DEF0 "Default Light 0"
-#define DEF1 "Default Light 1"
-#define DEF2 "Default Light 2"
+#define DEF0 "Default Light 0.lgt"
+#define DEF1 "Default Light 1.lgt"
+#define DEF2 "Default Light 2.lgt"
 
 TypeLightPlugin::TypeLightPlugin() :
     defaultLights_(true) {
