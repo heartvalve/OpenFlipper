@@ -228,7 +228,8 @@ bool FileOFFPlugin::readFileOptions(QString _filename, OFFImporter& _importer) {
     
     const unsigned int LINE_LEN = 4096;
     
-    std::ifstream ifs(_filename.toStdString().c_str());
+    
+    std::ifstream ifs(_filename.toUtf8());
     
     if (!ifs.is_open() | !ifs.good()) {
         
@@ -424,7 +425,7 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
   // Let's see if the user has specified some options
   updateUserOptions();
 
-  std::ifstream ifile(_filename.toStdString().c_str(), (_importer.isBinary() ? std::ios::binary | std::ios::in
+  std::ifstream ifile(_filename.toUtf8(), (_importer.isBinary() ? std::ios::binary | std::ios::in
   : std::ios::in) );
 
   if (!ifile.is_open() || !ifile.good())
