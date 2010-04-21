@@ -55,6 +55,7 @@
 
 #include "LightNode.hh"
 
+#define M_PI 3.14159265358979323846
 
 //== NAMESPACES ===============================================================
 
@@ -80,6 +81,8 @@ LightSource::LightSource()
   realPosition_         = Vec4f(0.0,0.0,1.0,0.0);
   
   spotDirection_        = Vec3d(0.0,0.0,-1.0);
+  realSpotDirection_    = Vec3d(0.0,0.0,-1.0);
+  
   spotExponent_         = 0;
   spotCutoff_           = 180;
 
@@ -218,8 +221,8 @@ LightNode::~LightNode() {
 void LightNode::boundingBox(ACG::Vec3d& _bbMin, ACG::Vec3d& _bbMax) {
     
     if( visualize_ && !light_.directional() ) {
-        _bbMin.minimize( light_.position() - Vec3d(light_.radius()) );
-        _bbMax.maximize( light_.position() + Vec3d(light_.radius()) );
+        _bbMin.minimize( light_.position() - Vec3d(light_.radius()*3) );
+        _bbMax.maximize( light_.position() + Vec3d(light_.radius()*3) );
     }
 }
 
@@ -230,44 +233,72 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
     // Visualize light node
     if(visualize_ && !light_.directional()) {
         
-      ACG::Vec3d p = light_.position();
-      ACG::Vec4f c = light_.ambientColor();
+        if(light_.fixedPosition_) {
+             light_.realPosition_ = _state.inverse_modelview() * light_.position_;
+             light_.realSpotDirection_ = _state.inverse_modelview().transform_vector(light_.spotDirection_);
+         } else {
+             light_.realPosition_ = light_.position_;
+             light_.realSpotDirection_ = light_.spotDirection_;
+         }
+         
+         ACG::Vec3f p = ACG::Vec3f(light_.realPosition_[0],
+                                   light_.realPosition_[1],
+                                   light_.realPosition_[2]);
+         ACG::Vec3d spot = light_.realSpotDirection_;          
+         ACG::Vec4f c = light_.ambientColor();
       
       // Backup variables
-      ACG::Vec4f base_color_backup;
-      GLboolean lighting_backup;
-      
-      GLUquadricObj* quadric = gluNewQuadric();
-      
-      // Origin
-      _state.push_modelview_matrix ();
-      //_state.reset_modelview();
-      _state.translate(p[0], p[1], p[2]);
-      
-      // Set lighting
-      glGetBooleanv(GL_LIGHTING, &lighting_backup);
-      glDisable(GL_LIGHTING);
-      
-      // Set color
-      base_color_backup = _state.base_color();
-      _state.set_base_color(c);
-      
-      gluSphere( quadric, light_.radius(), 10, 10 );
-      
-      // TODO: Visualize viewing direction
-      
-      // Undo state changes
-      
-      // Color
-      _state.set_base_color(base_color_backup);
-      
-      // Lighting
-      if(lighting_backup) glEnable(GL_LIGHTING);
-      
-      gluDeleteQuadric(quadric);
-      
-      _state.pop_modelview_matrix();
-  }
+         ACG::Vec4f base_color_backup;
+         GLboolean lighting_backup;
+ 
+         GLUquadricObj* quadric = gluNewQuadric();
+ 
+         // Origin
+         _state.push_modelview_matrix ();
+         // Transform to light origin and direction
+         _state.translate(p[0], p[1], p[2]);
+             
+         // Set lighting
+         glGetBooleanv(GL_LIGHTING, &lighting_backup);
+         glDisable(GL_LIGHTING);
+ 
+         // Set color
+         base_color_backup = _state.base_color();
+         _state.set_base_color(c);
+ 
+         gluSphere( quadric, light_.radius(), 10, 10 );
+ 
+         // Visualize spot cone (or direction)
+         if(light_.spotCutoff() < 180.0f) {
+             // Note: if the cutoff angle is 180, the light source
+             // is a point light emitting light into all directions equally
+             
+             // Rotate into light direction
+             ACG::Vec3d z = ACG::Vec3d(0.0f, 0.0f, 1.0f);
+             ACG::Vec3d spot = light_.spotDirection();
+             float angle = acos((z | spot)/(z.norm()*spot.norm()));
+             angle = angle*360/(2*M_PI);
+             ACG::Vec3d rA = z % spot;
+             _state.rotate(angle, rA[0], rA[1], rA[2]);
+ 
+             gluCylinder( quadric, light_.radius()/6, light_.radius()/6, light_.radius()*2, 10, 10 );
+             _state.translate(0.0, 0.0, light_.radius()*2);
+             // Draw arrow tip
+             gluCylinder( quadric, light_.radius()/2, 0, light_.radius(), 10, 10 );
+         }
+ 
+         // Undo state changes
+ 
+         // Color
+         _state.set_base_color(base_color_backup);
+ 
+         // Lighting
+         if(lighting_backup) glEnable(GL_LIGHTING);
+ 
+         gluDeleteQuadric(quadric);
+ 
+         _state.pop_modelview_matrix();
+     }
 
 }
 
@@ -291,9 +322,11 @@ void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
         // correct Position for fixed Lights
         if(light_.fixedPosition_) {
             light_.realPosition_ = _state.inverse_modelview() * light_.position_;
+            light_.realSpotDirection_ = _state.inverse_modelview().transform_vector(light_.spotDirection_);
             //std::cerr << "New Light pos :" << _state.inverse_modelview().transform_vector(light_.position) << std::endl;
         } else {
             light_.realPosition_ = light_.position_;
+            light_.realSpotDirection_ = light_.spotDirection_;
             //std::cerr << "New Light pos :" << light_.position << std::endl;
         }
 
@@ -338,8 +371,11 @@ void LightNode::setParameters(GLenum _index, LightSource& _light)
   glLightfv(_index, GL_DIFFUSE,  (GLfloat *)_light.diffuseColor_.data());
   glLightfv(_index, GL_SPECULAR,  (GLfloat *)_light.specularColor_.data());
 
+  Vec3d& d = _light.realSpotDirection_;
+  GLfloat dir[3] = {(float)d[0], (float)d[1], (float)d[2]};
+  
   glLightfv(_index, GL_POSITION,  (GLfloat *)_light.realPosition_.data());
-  glLightfv(_index, GL_SPOT_DIRECTION,  (GLfloat *)_light.spotDirection_.data());
+  glLightfv(_index, GL_SPOT_DIRECTION,  dir);
 
   glLightf(_index, GL_SPOT_EXPONENT,  _light.spotExponent_);
   glLightf(_index, GL_SPOT_CUTOFF,  _light.spotCutoff_);

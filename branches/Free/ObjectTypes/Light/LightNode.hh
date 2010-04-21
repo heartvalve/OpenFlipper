@@ -138,7 +138,7 @@ public:
   *
   * \todo Improve documentation
   */
-  void spotDirection( Vec3d _pos);
+  void spotDirection(Vec3d _pos);
   
   /** \brief get spot direction
   *
@@ -206,6 +206,7 @@ public:
 protected:
 
   Vec4f position_;
+  Vec4f realPosition_;
   
   bool enabled_;
   bool fixedPosition_;
@@ -213,8 +214,9 @@ protected:
   Vec4f diffuseColor_;
   Vec4f specularColor_;
   
-  Vec4f realPosition_;
   Vec3d spotDirection_;
+  Vec3d realSpotDirection_;
+  
   float spotExponent_;
   float spotCutoff_;
   float constantAttenuation_;
