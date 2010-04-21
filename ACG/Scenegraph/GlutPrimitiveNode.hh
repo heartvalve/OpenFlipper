@@ -163,14 +163,16 @@ public:
   
   GlutPrimitiveNode( BaseNode*         _parent=0,
                      std::string       _name="<GlutPrimitive>" )
-    : BaseNode(_parent, _name)
+    : BaseNode(_parent, _name),
+      setColor_(true)
   {};
 
 
   GlutPrimitiveNode( GlutPrimitiveType _type,
                      BaseNode*         _parent=0,
                      std::string       _name="<GlutPrimitive>" )
-    : BaseNode(_parent, _name)
+    : BaseNode(_parent, _name),
+      setColor_(true)
   {
     // add a single primitive of the given type
     Primitive p;
@@ -213,10 +215,19 @@ public:
   
   /// picking
   void pick(GLState& _state, PickTarget _target);
+  
+  /** \brief Disable internal color processing
+  *
+  * Disables the internal color processing of the primitives. If disabled,
+  * a Materialnodes settings will apply here.
+  */
+  void setColorInternal(bool _set) { setColor_ = _set; };
 
 private:
   
   std::vector<Primitive> primitives_;
+  
+  bool setColor_;
   
 };
 
