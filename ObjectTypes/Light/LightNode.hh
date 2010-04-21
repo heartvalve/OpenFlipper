@@ -303,7 +303,7 @@ class DLLEXPORT LightSourceHandle {
             GLint maxLights;
             glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
             for(int i = 0; i < maxLights; ++i) {
-                lights_.insert(std::pair<GLenum, LightNode*>(GL_LIGHT0 + i, 0));
+                lights_.insert(std::pair<GLenum, LightNode*>(GL_LIGHT0 + i, (LightNode*)0 ));
             }
         };
         
