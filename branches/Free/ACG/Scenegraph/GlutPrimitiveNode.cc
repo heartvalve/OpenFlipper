@@ -173,8 +173,10 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
       glShadeModel(GL_FLAT);
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
       
-      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-      glColor(primitives_[i].color);
+      if ( setColor_ ) {
+        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        glColor(primitives_[i].color);
+      }
 
       draw_obj(i);
       
@@ -208,8 +210,10 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
       glEnable(GL_LIGHTING);
       glShadeModel(GL_FLAT);
       
-      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-      glColor(primitives_[i].color);
+      if ( setColor_ ) {
+        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        glColor(primitives_[i].color);
+      }
       
       draw_obj(i);
     }
@@ -221,8 +225,10 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
       glEnable(GL_LIGHTING);
       glShadeModel(GL_SMOOTH);
       
-      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-      glColor(primitives_[i].color);
+      if ( setColor_ ) {
+        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        glColor(primitives_[i].color);
+      }
 
       draw_obj(i);
     }
