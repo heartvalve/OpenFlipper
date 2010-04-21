@@ -155,7 +155,8 @@ void SelectionPlugin::initializePlugin() {
   emit addToolbox("Selections",tool_);
 
   // create sphere for paint sphere selection
-  sphere_mat_node_  = new ACG::SceneGraph::MaterialNode(0, tr("Selection Plugin: Selection Sphere Material").toUtf8() );
+  std::string nodeName = std::string( tr("Selection Plugin: Selection Sphere Material").toUtf8() );
+  sphere_mat_node_  = new ACG::SceneGraph::MaterialNode(0, nodeName );
   PluginFunctions::addGlobalNode(sphere_mat_node_);
   sphere_mat_node_->applyProperties( MaterialNode::Blending  |
                                      MaterialNode::Material  |
@@ -166,7 +167,7 @@ void SelectionPlugin::initializePlugin() {
   sphere_mat_node_->disable_alpha_test();
   sphere_mat_node_->enable_backface_culling();
 
-  std::string nodeName = std::string( tr("Selection Plugin: Selection Sphere").toUtf8() );
+  nodeName = std::string( tr("Selection Plugin: Selection Sphere").toUtf8() );
   sphere_node_ = new ACG::SceneGraph::GlutPrimitiveNode(ACG::SceneGraph::GlutPrimitiveNode::SPHERE, sphere_mat_node_,nodeName);
   sphere_node_->drawMode(ACG::SceneGraph::DrawModes::SOLID_SMOOTH_SHADED);
   sphere_node_->get_primitive(0).color = ACG::Vec4f(1.0, 0.0, 0.0,0.3);
