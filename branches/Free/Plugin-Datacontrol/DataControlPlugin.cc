@@ -302,7 +302,7 @@ void DataControlPlugin::slotObjectPropertiesChanged( int _identifier ){
  *
  * @param _identifier id of an object
  */
-void DataControlPlugin::slotObjectUpdated( int _identifier ){
+void DataControlPlugin::slotObjectUpdated( int _identifier , UpdateType _type ){
 
 }
 

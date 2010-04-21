@@ -80,7 +80,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   signals:
     // BaseInterface
     void updateView();
-    void updatedObject(int);
+    void updatedObject(int _it, UpdateType _type);
 
     void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                             QStringList _parameters, QStringList _descriptions);
@@ -105,7 +105,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     // BaseInterface
     void initializePlugin();
     void pluginsInitialized();
-    void slotObjectUpdated          ( int _identifier );
+    void slotObjectUpdated          ( int _identifier , UpdateType _type);
     void slotVisibilityChanged      ( int _identifier );
     void slotObjectSelectionChanged ( int _identifier );
     void slotObjectPropertiesChanged( int _identifier );
