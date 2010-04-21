@@ -92,6 +92,29 @@ namespace QtWidgets {
 
 //== IMPLEMENTATION ========================================================== 
 
+SceneGraphWidgetGenerator::SceneGraphWidgetGenerator() {
+  std::cerr << "SceneGraphWidgetGenerator constructor " << std::endl;
+}
+
+QWidget* SceneGraphWidgetGenerator::getWidget(SceneGraph::BaseNode* _node ) {
+  std::cerr << "getWidget "  << std::endl;
+  return 0;
+}
+
+bool SceneGraphWidgetGenerator::canHandle(std::string _className) {
+  std::cerr << "canHandle " << _className << std::endl;
+  return false;
+}
+
+std::string SceneGraphWidgetGenerator::handles() {
+  return std::string("Unset Type");
+}
+
+QString SceneGraphWidgetGenerator::contextMenuName() {
+  std::cerr << "contextMenuName " << std::endl;
+  return QString("Context Menu name unset");
+}
+
 QtSceneGraphWidget::
 QtSceneGraphWidget( QWidget              * _parent, 
 		    SceneGraph::BaseNode * _rootNode ) :
@@ -332,6 +355,14 @@ slotItemPressed( QTreeWidgetItem * _item,
 		   this, SLOT( slotEditCoordinateFrame() ) );
 	}
 
+  if ( generatorMap_.contains( node->className() ) ) {
+    std::cerr << "Found generator handles: " << generatorMap_[node->className()]->handles() << std::endl;
+    QWidget* widget = generatorMap_[node->className()]->getWidget( node );
+    modeMenu_->addAction( generatorMap_[node->className()]->contextMenuName() , widget, SLOT(show()) );
+  } else {
+    std::cerr << "No Generator found" << std::endl;
+  }
+
 	modeMenu_->popup( QCursor::pos() );
 
 	break;
@@ -490,6 +521,21 @@ QtSceneGraphWidget::
 slotNodeChanged(ACG::SceneGraph::BaseNode* _node)
 {
   emit signalNodeChanged(_node);
+}
+
+//-----------------------------------------------------------------------------
+
+bool QtSceneGraphWidget::addWidgetGenerator( SceneGraphWidgetGenerator* _generator )  {
+  // Check if we already have a generator for this type.
+  if ( generatorMap_.contains( _generator->handles() ) ) {
+    std::cerr << "Already handled" << std::endl;
+    return false;
+  }
+
+  // Store the generator
+  generatorMap_[_generator->handles() ] = _generator;
+
+  return true;
 }
 
 

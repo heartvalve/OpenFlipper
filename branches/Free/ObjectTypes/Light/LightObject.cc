@@ -10,6 +10,8 @@
 
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctionsCore.hh>
+#include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 #include "Light.hh"
 
 //== DEFINES ==================================================================
@@ -17,6 +19,34 @@
 //== TYPEDEFS =================================================================
 
 //== CLASS DEFINITION =========================================================
+
+class LightWidgetGenerator : public ACG::QtWidgets::SceneGraphWidgetGenerator {
+  public:
+  // constructor
+  LightWidgetGenerator() {
+    std::cerr << "LightWidget Generator constructor" << std::endl;
+  }
+
+
+  virtual QWidget* getWidget(ACG::SceneGraph::BaseNode* _node ) {
+    std::cerr << "Generating widget" << std::endl;
+    return new QWidget();
+  }
+
+  virtual bool canHandle(std::string _className) {
+    return ( _className == std::string("LightNode") );
+  }
+
+  virtual std::string handles() {
+    return std::string("LightNode");
+  }
+
+  virtual QString contextMenuName() {
+    return QString("Light Node Context Menu");
+  }
+};
+
+static LightWidgetGenerator lightWidgetGenerator_;
 
 /** Constructor for Light Objects. 
 *  You dont need to create an object of this type manually. 
@@ -29,6 +59,9 @@ LightObject::LightObject( ) :
   setDataType(DATA_LIGHT);
   setTypeIcon(DATA_LIGHT,"LightType.png");
   init();
+
+  // Make sure, the generator is added to the widget
+  PluginFunctions::addSceneGraphGenerator( &lightWidgetGenerator_  );
 }
 
 //=============================================================================
