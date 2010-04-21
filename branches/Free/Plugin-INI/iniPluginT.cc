@@ -1,7 +1,10 @@
+
 #include "iniPlugin.hh"
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
+#include <ObjectTypes/MeshObject/MeshObjectT.hh>
+#include <OpenFlipper/common/BaseObjectData.hh>
 
 template <class MeshObject>
 void INIPlugin::parseIniFileT(INIFile& _ini, MeshObject* _object) {
@@ -35,6 +38,11 @@ void INIPlugin::parseIniFileT(INIFile& _ini, MeshObject* _object) {
         double reflectance;
         if ( _ini.get_entry( reflectance, _object->name() , "Reflectance" ) ) {
           _object->materialNode()->set_reflectance(reflectance);        
+        }
+        
+        bool visible;
+        if ( _ini.get_entry( visible, _object->name() , "Visible" ) ) {
+          _object->visible(visible);        
         }
         
         int size = 1;
@@ -72,7 +80,10 @@ void INIPlugin::saveIniFileT(INIFile& _ini, MeshObject* _object) {
             _object->materialNode()->shininess());
         _ini.add_entry( _object->name() ,
             "Reflectance" ,
-            _object->materialNode()->reflectance());            
+            _object->materialNode()->reflectance());       
+        _ini.add_entry( _object->name() ,
+            "Visible" ,
+            _object->visible() );     
         _ini.add_entry( _object->name() ,
             "PointSize" ,
             _object->materialNode()->point_size());
@@ -81,3 +92,4 @@ void INIPlugin::saveIniFileT(INIFile& _ini, MeshObject* _object) {
             _object->materialNode()->line_width());
     }
 }
+

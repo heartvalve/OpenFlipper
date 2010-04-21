@@ -34,68 +34,87 @@
 
 /*===========================================================================*\
 *                                                                           *
-*   $Revision: 7714 $                                                       *
-*   $Author: kremer $                                                       *
-*   $Date: 2009-12-01 13:33:56 +0100 (Tue, 01 Dec 2009) $                   *
+*   $Revision: 7920 $                                                       *
+*   $Author: moebius $                                                       *
+*   $Date: 2009-12-15 10:07:03 +0100 (Di, 15. Dez 2009) $                   *
 *                                                                           *
 \*===========================================================================*/
 
-#ifndef INIPLUGIN_HH
-#define INIPLUGIN_HH
+#ifndef FILESPHPLUGIN_HH
+#define FILESPHPLUGIN_HH
 
 #include <QObject>
-#include <QMenuBar>
 
+#include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
+#include <OpenFlipper/BasePlugin/FileInterface.hh>
+#include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/INIInterface.hh>
+#include <ObjectTypes/Sphere/Sphere.hh>
 
-class INIPlugin : public QObject, BaseInterface, LoggingInterface, ScriptInterface, INIInterface
+class FileSPHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInterface, LoggingInterface, ScriptInterface, INIInterface
 {
-    Q_OBJECT
-    Q_INTERFACES(LoggingInterface)
-    Q_INTERFACES(BaseInterface)
-    Q_INTERFACES(ScriptInterface)
-    Q_INTERFACES(INIInterface)
+   Q_OBJECT
+   Q_INTERFACES(FileInterface)
+   Q_INTERFACES(LoadSaveInterface)
+   Q_INTERFACES(LoggingInterface)
+   Q_INTERFACES(BaseInterface)
+   Q_INTERFACES(ScriptInterface)
+   Q_INTERFACES(INIInterface)
+
+  signals:
+    void openedFile( int _id );
+    void addEmptyObject( DataType _type, int& _id);
+    void load(QString _filename, DataType _type, int& _id);
+    void save(int _id , QString _filename );
+    void log(Logtype _type, QString _message);
+    void log(QString _message);
+
+    void emptyObjectAdded( int _id );
     
-    signals:
-        void log(Logtype _type, QString _message);
-        void log(QString _message);
-        
-    private slots:
-        void loadIniFile( INIFile& _ini ,int _id);
-        void saveIniFile( INIFile& _ini ,int _id);
-        
-        void noguiSupported( ) {} ;
-        
-    public :
-        
-        INIPlugin();
-        ~INIPlugin() {};
-        
-    public slots:
-        
-        QString name() { return (QString("INIPlugin")); };
-        QString description( ) { return (QString(tr("Handle INI-files."))); };
-        
-        QString version() { return QString("1.0"); };
-        
-    private:
-        // Template function to parse ini file entries
-        template <class Object>
-        void parseIniFileT(INIFile& _ini, Object* _object);
-        
-        // Template function to save ini file entries
-        template <class Object>
-        void saveIniFileT(INIFile& _ini, Object* _object);
+    void updatedObject(int _id, const UpdateType _type);
+
+  private slots:
+
+    void fileOpened( int /*_id*/ ){};
+
+    void noguiSupported( ) {} ;
+
+    void initializePlugin();
+    
+    // Deprecated!
+    int addEmpty() { return -1; };
+
+  public :
+
+     ~FileSPHPlugin() {};
+
+     QString name() { return (QString("FileSPH")); };
+     QString description( ) { return (QString(tr("Load/Save Spheres"))); };
+
+     DataType supportedType();
+
+     QString getSaveFilters();
+     QString getLoadFilters();
+
+     QWidget* saveOptionsWidget(QString /*_currentFilter*/) { return 0; };
+     QWidget* loadOptionsWidget(QString /*_currentFilter*/) { return 0; };
+
+  public slots:
+
+    int loadObject(QString _filename);
+
+    bool saveObject(int _id, QString _filename);
+
+    int addNewSphere();
+
+    QString version() { return QString("1.0"); };
+
+  private :
+
+    QString get_unique_name(SphereObject* _object);
 };
 
-//=============================================================================
-#if defined(INCLUDE_TEMPLATES) && !defined(INIPLUGINT_C)
-#define INIPLUGINT_TEMPLATES
-#include "iniPluginT.cc"
-#endif
-//=============================================================================
-
-#endif //INIPLUGIN_HH
+#endif //FILESPHPLUGIN_HH
