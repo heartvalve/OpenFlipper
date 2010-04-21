@@ -89,6 +89,13 @@ class INIPlugin : public QObject, BaseInterface, LoggingInterface, ScriptInterfa
         // Template function to save ini file entries
         template <class Object>
         void saveIniFileT(INIFile& _ini, Object* _object);
+        
+        
+        // Parse data from baseObjectData derived objects
+        void parseIniFile(INIFile& _ini, BaseObjectData* _object);
+        
+        // Save data from baseObjectData derived objects
+        void saveIniFile(INIFile& _ini, BaseObjectData* _object);
 };
 
 //=============================================================================
