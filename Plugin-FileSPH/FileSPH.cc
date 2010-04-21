@@ -57,6 +57,7 @@
 
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
+
 void FileSPHPlugin::initializePlugin() {
 }
 

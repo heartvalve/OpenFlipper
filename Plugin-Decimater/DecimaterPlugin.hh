@@ -80,7 +80,7 @@ signals:
 
   // BaseInterface
   void updateView();
-  void updatedObject(int _id, UpdateType _type);
+  void updatedObject(int _id, const UpdateType _type);
   void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                           QStringList _parameters, QStringList _descriptions);
 
@@ -100,7 +100,7 @@ private slots:
     void initializePlugin();
     void pluginsInitialized();
     
-    void slotObjectUpdated( int _identifier , UpdateType _type ); // BaseInterface
+    void slotObjectUpdated( int _identifier , const UpdateType _type ); // BaseInterface
     void slotObjectSelectionChanged( int _identifier ); // BaseInterface
 
 public :
