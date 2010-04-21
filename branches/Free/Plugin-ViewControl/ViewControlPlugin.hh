@@ -89,7 +89,6 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
 
   signals:
     void updateView();
-    void updatedObject(int);
 
     void addHiddenPickMode( const std::string _mode );
 
