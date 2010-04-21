@@ -151,7 +151,7 @@ void SmootherPlugin::simpleLaplace() {
 
       mesh->update_normals();
 
-      emit updatedObject( o_it->id() );
+      emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
 
 
    } else if ( o_it->dataType( DATA_POLY_MESH ) ) {
@@ -218,7 +218,7 @@ void SmootherPlugin::simpleLaplace() {
 
       mesh->update_normals();
 
-      emit updatedObject( o_it->id() );
+      emit updatedObject( o_it->id() , UPDATE_GEOMETRY);
 
     } else {
 
