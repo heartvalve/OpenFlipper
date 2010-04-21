@@ -574,7 +574,7 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
     if ( checkSlot( plugin , "slotObjectUpdated(int)" ) && checkSlot( plugin , "slotObjectUpdated(int,const UpdateType)" ) ){
       
       log(LOGERR,tr("Plugin uses deprecated and(!) new slotObjectUpdated. Only new slotObjectUpdated will be active."));
-      connect(this,SIGNAL(signalObjectUpdated(int)),plugin,SLOT(slotObjectUpdated(int)), Qt::DirectConnection);
+      connect(this,SIGNAL(signalObjectUpdated(int,const UpdateType)),plugin,SLOT(slotObjectUpdated(int,const UpdateType)), Qt::DirectConnection);
     
     } else {
 

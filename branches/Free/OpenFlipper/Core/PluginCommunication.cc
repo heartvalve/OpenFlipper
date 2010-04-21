@@ -95,7 +95,7 @@ void Core::slotObjectUpdated(int _identifier, UpdateType _type) {
     }
   }
 
-  // just inform the plugins as we dont do anything else (Do deprecated and new updatedObjects here
+  // just inform the plugins as we dont do anything else (Do deprecated and new updatedObjects here)
   emit signalObjectUpdated(_identifier);
   emit signalObjectUpdated(_identifier, _type);
 
