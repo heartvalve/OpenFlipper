@@ -347,9 +347,10 @@ void DecimaterPlugin::slotObjectSelectionChanged(int /*_identifier*/)
 
 //-----------------------------------------------------------------------------
 
-void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/)
+void DecimaterPlugin::slotObjectUpdated(int /*_identifier*/ , UpdateType _type )
 {
-  slotUpdateNumVertices ();
+  if ( _type.contains(UPDATE_TOPOLOGY) )
+    slotUpdateNumVertices ();
 }
 
 //-----------------------------------------------------------------------------

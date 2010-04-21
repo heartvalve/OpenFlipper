@@ -100,7 +100,7 @@ private slots:
     void initializePlugin();
     void pluginsInitialized();
     
-    void slotObjectUpdated( int _identifier ); // BaseInterface
+    void slotObjectUpdated( int _identifier , UpdateType _type ); // BaseInterface
     void slotObjectSelectionChanged( int _identifier ); // BaseInterface
 
 public :
