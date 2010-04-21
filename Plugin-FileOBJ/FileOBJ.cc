@@ -137,7 +137,7 @@ bool FileOBJPlugin::readMaterial(QString _filename, OBJImporter& _importer)
   
  
   //open stream
-  std::fstream matStream( _filename.toStdString().c_str(), std::ios_base::in );
+  std::fstream matStream( _filename.toUtf8(), std::ios_base::in );
 
   if ( !matStream ){
     emit log(LOGERR, tr("readMaterial : cannot open file %1").arg(_filename) );
@@ -492,7 +492,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
   
   //setup filestream
   
-  std::fstream input( _filename.toStdString().c_str(), std::ios_base::in );
+  std::fstream input( _filename.toUtf8(), std::ios_base::in );
 
   if ( !input.is_open() || !input.good() ){
     emit log(LOGERR, tr("readOBJFile : cannot open file %1").arg(_filename) );
@@ -1024,7 +1024,7 @@ void FileOBJPlugin::checkTypes(QString _filename, OBJImporter& _importer, QStrin
 {
   //setup filestream
   
-  std::fstream input( _filename.toStdString().c_str(), std::ios_base::in );
+  std::fstream input( _filename.toUtf8(), std::ios_base::in );
 
   if ( !input.is_open() || !input.good() ){
     emit log(LOGERR, tr("readOBJFile : cannot open file %1").arg(_filename) );
