@@ -523,12 +523,19 @@ bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
 
 //------------------------------------------------------------------------------
 
-void InfoPlugin::slotObjectUpdated( int _identifier ){
-
+void InfoPlugin::slotObjectUpdated( int _identifier , UpdateType _type){
+  std::cerr << "Got object updated" << std::endl;
+  
   if ( (PluginFunctions::objectCount() == 1) || (PluginFunctions::targetCount() == 1) ){
 
-    if ( !infoBar_ )
+    // This block is only interesting for topology changes
+    if ( ! _type.contains(UPDATE_TOPOLOGY) ) {
+      return;
+    }
+      
+    if ( !infoBar_ ) {
       return;    
+    }
 
     bool found = false;
     
@@ -553,7 +560,7 @@ void InfoPlugin::slotObjectUpdated( int _identifier ){
       }
       
       if (o_it->dataType(DATA_POLY_MESH)){
-        
+
         PolyMesh* mesh = PluginFunctions::polyMesh(*o_it);
       
         infoBar_->vertices->setText( QLocale::system().toString( mesh->n_vertices() ) );
@@ -579,7 +586,7 @@ void InfoPlugin::slotObjectUpdated( int _identifier ){
 //------------------------------------------------------------------------------
 
 void InfoPlugin::slotObjectSelectionChanged( int _identifier ){
-  slotObjectUpdated( _identifier );
+  slotObjectUpdated( _identifier , UPDATE_ALL );
 }
 
 //------------------------------------------------------------------------------
