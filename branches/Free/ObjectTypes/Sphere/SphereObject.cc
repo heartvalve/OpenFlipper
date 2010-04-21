@@ -93,6 +93,7 @@ void SphereObject::init(SphereNode* _sphere) {
     std::cerr << "Error when creating Sphere Object! materialNode is NULL!" << std::endl;
 
   sphereNode_ = new SphereNode( SphereNode::SPHERE, materialNode() , "NEW SphereNode");
+  
 
   if (_sphere){
     sphereNode_->get_primitive(0).position = _sphere->get_primitive(0).position;
@@ -100,12 +101,14 @@ void SphereObject::init(SphereNode* _sphere) {
     sphereNode_->get_primitive(0).size     = _sphere->get_primitive(0).size;
     sphereNode_->get_primitive(0).slices   = _sphere->get_primitive(0).slices;
     sphereNode_->get_primitive(0).stacks   = _sphere->get_primitive(0).stacks;
+    sphereNode_->setColorInternal(false);
   } else {
     sphereNode_->get_primitive(0).position = ACG::Vec3f(0.0, 0.0, 0.0);
     sphereNode_->get_primitive(0).size     = 1.0;
     sphereNode_->get_primitive(0).slices   = 40;
     sphereNode_->get_primitive(0).stacks   = 40;
     sphereNode_->get_primitive(0).color    = ACG::Vec4f(0.5, 0.5, 0.5, 1.0);
+    sphereNode_->setColorInternal(false);
   }
   
 }
