@@ -138,6 +138,9 @@ class DLLEXPORT LightObject : public BaseObjectData {
     virtual void visible(bool _visible);
     
     /// Show Light Node
+    virtual bool visible();
+    
+    /// Show Light Node
     virtual void show();
     
     /// Hide Light Node

@@ -4,12 +4,12 @@
 //
 //=============================================================================
 
-#define PLANEOBJECT_C
+#define SPHEREOBJECT_C
 
 //== INCLUDES =================================================================
 
 #include <OpenFlipper/common/Types.hh>
-#include "Plane.hh"
+#include "Sphere.hh"
 
 //== DEFINES ==================================================================
 
@@ -17,17 +17,17 @@
 
 //== CLASS DEFINITION =========================================================
 
-/** Constructor for Plane Objects. This object class gets a Separator Node giving
+/** Constructor for Sphere Objects. This object class gets a Separator Node giving
 *  the root node to which it should be connected. The plane is generated internally
 *  and all nodes for visualization will be added below the scenegraph node.\n
 *  You dont need to create an object of this type manually. Use
-*  PluginFunctions::addPlane instead. ( see Types.hh::DataType )
+*  PluginFunctions::addSphere instead. ( see Types.hh::DataType )
 */
-PlaneObject::PlaneObject( ) :
+SphereObject::SphereObject( ) :
   BaseObjectData( ),
-  planeNode_(NULL)
+  sphereNode_(NULL)
 {
-  setDataType(DATA_PLANE);
+  setDataType(DATA_SPHERE);
   init();
 }
 
@@ -37,19 +37,19 @@ PlaneObject::PlaneObject( ) :
 /**
  * Copy Constructor - generates a copy of the given object
  */
-PlaneObject::PlaneObject(const PlaneObject & _object) :
+SphereObject::SphereObject(const SphereObject & _object) :
   BaseObjectData(_object)
 {
 
-    init(_object.planeNode_);
+    init(_object.sphereNode_);
 
     setName( name() );
 }
 
-/** Destructor for Plane Objects. The destructor deletes the Line and all
-*  Scenegraph nodes associated with the Plane or the object.
+/** Destructor for Sphere Objects. The destructor deletes the Line and all
+*  Scenegraph nodes associated with the Sphere or the object.
 */
-PlaneObject::~PlaneObject()
+SphereObject::~SphereObject()
 {
   // Delete the data attached to this object ( this will remove all perObject data)
   // Not the best way to do it but it will work.
@@ -59,20 +59,19 @@ PlaneObject::~PlaneObject()
   deleteData();
 
   // No need to delete the scenegraph Nodes as this will be managed by baseplugin
-  planeNode_    = NULL;
+  sphereNode_    = NULL;
 }
 
-/** Cleanup Function for Plane Objects. Deletes the contents of the whole object and
-* calls PlaneObject::init afterwards.
+/** Cleanup Function for Sphere Objects. Deletes the contents of the whole object and
+* calls SphereObject::init afterwards.
 */
-void PlaneObject::cleanup() {
+void SphereObject::cleanup() {
 
   BaseObjectData::cleanup();
 
-  planeNode_   = NULL;
+  sphereNode_   = NULL;
 
-  setDataType(DATA_PLANE);
-  setTypeIcon(DATA_PLANE,"PlaneType.png");
+  setDataType(DATA_SPHERE);
 
   init();
 
@@ -81,27 +80,34 @@ void PlaneObject::cleanup() {
 /**
  * Generate a copy
  */
-BaseObject* PlaneObject::copy() {
-    PlaneObject* object = new PlaneObject(*this);
+BaseObject* SphereObject::copy() {
+    SphereObject* object = new SphereObject(*this);
     return dynamic_cast< BaseObject* >(object);
 }
 
 /** This function initalizes the plane object. It creates the scenegraph nodes.
 */
-void PlaneObject::init(PlaneNode* _plane) {
+void SphereObject::init(SphereNode* _sphere) {
 
   if ( materialNode() == NULL)
-    std::cerr << "Error when creating Plane Object! materialNode is NULL!" << std::endl;
+    std::cerr << "Error when creating Sphere Object! materialNode is NULL!" << std::endl;
 
-  planeNode_ = new PlaneNode( materialNode() , "NEW PlaneNode");
+  sphereNode_ = new SphereNode( SphereNode::SPHERE, materialNode() , "NEW SphereNode");
 
-  if (_plane){
-    planeNode_->setPosition( _plane->position(), _plane->normal() );
-    planeNode_->setSize( _plane->xDirection().norm(), _plane->yDirection().norm() );
+  if (_sphere){
+    sphereNode_->get_primitive(0).position = _sphere->get_primitive(0).position;
+    sphereNode_->get_primitive(0).color    = _sphere->get_primitive(0).color;
+    sphereNode_->get_primitive(0).size     = _sphere->get_primitive(0).size;
+    sphereNode_->get_primitive(0).slices   = _sphere->get_primitive(0).slices;
+    sphereNode_->get_primitive(0).stacks   = _sphere->get_primitive(0).stacks;
   } else {
-    planeNode_->setPosition( ACG::Vec3f(0.0, 0.0, 0.0), ACG::Vec3f(0.0, 1.0, 0.0) );
-    planeNode_->setSize( 5.0, 5.0 );
+    sphereNode_->get_primitive(0).position = ACG::Vec3f(0.0, 0.0, 0.0);
+    sphereNode_->get_primitive(0).size     = 1.0;
+    sphereNode_->get_primitive(0).slices   = 40;
+    sphereNode_->get_primitive(0).stacks   = 40;
+    sphereNode_->get_primitive(0).color    = ACG::Vec4f(0.5, 0.5, 0.5, 1.0);
   }
+  
 }
 
 // ===============================================================================
@@ -111,19 +117,19 @@ void PlaneObject::init(PlaneNode* _plane) {
 /** Set the name of an object. All Scenegraph nodes are renamed too. It also calls
 * BaseObjectData::setName.
 */
-void PlaneObject::setName( QString _name ) {
+void SphereObject::setName( QString _name ) {
   BaseObjectData::setName(_name);
 
-  std::string nodename = std::string("PlaneNode for Plane "     + _name.toUtf8() );
-  planeNode_->name( nodename );
+  std::string nodename = std::string("SphereNode for Sphere "     + _name.toUtf8() );
+  sphereNode_->name( nodename );
 }
 
 // ===============================================================================
 // Visualization
 // ===============================================================================
 
-PlaneNode* PlaneObject::planeNode() {
-  return planeNode_;
+SphereNode* SphereObject::sphereNode() {
+  return sphereNode_;
 }
 
 // ===============================================================================
@@ -135,20 +141,20 @@ PlaneNode* PlaneObject::planeNode() {
 *
 * @return String containing the object information
 */
-QString PlaneObject::getObjectinfo() {
+QString SphereObject::getObjectinfo() {
   QString output;
 
   output += "========================================================================\n";
   output += BaseObjectData::getObjectinfo();
 
-  if ( dataType( DATA_PLANE ) )
-    output += "Object Contains Plane : ";
+  if ( dataType( DATA_SPHERE ) )
+    output += "Object Contains Sphere : ";
 
-  ACG::Vec3f pos = planeNode_->position();
-  ACG::Vec3f nor = planeNode_->normal();
+  ACG::Vec3d  pos  = sphereNode_->get_primitive(0).position;
+  double      size = sphereNode_->get_primitive(0).size;
 
   output += " Position ( " + QString::number(pos[0]) + ", " + QString::number(pos[1]) + ", " + QString::number(pos[2]) + ")";
-  output += " Normal ( " + QString::number(nor[0]) + ", " + QString::number(nor[1]) + ", " + QString::number(nor[2]) + ")";
+  output += " Size ( " + QString::number(size) + ")";
 
   output += "========================================================================\n";
   return output;
@@ -164,16 +170,16 @@ QString PlaneObject::getObjectinfo() {
 * @param _node_idx Index of the picked plane node
 * @return bool if the planeNode of this object is the picking target.
 */
-bool PlaneObject::picked( uint _node_idx ) {
-  return ( _node_idx == planeNode_->id() );
+bool SphereObject::picked( uint _node_idx ) {
+  return ( _node_idx == sphereNode_->id() );
 }
 
-void PlaneObject::enablePicking( bool _enable ) {
-  planeNode_->enablePicking( _enable );
+void SphereObject::enablePicking( bool _enable ) {
+  sphereNode_->enablePicking( _enable );
 }
 
-bool PlaneObject::pickingEnabled() {
-  return planeNode_->pickingEnabled();
+bool SphereObject::pickingEnabled() {
+  return sphereNode_->pickingEnabled();
 }
 
 //=============================================================================

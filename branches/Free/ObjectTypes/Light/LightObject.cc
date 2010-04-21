@@ -222,6 +222,10 @@ void LightObject::visible(bool _visible) {
     hide();
 }
 
+bool LightObject::visible() {
+  return visible_;
+}
+
 LightSource* LightObject::lightSource() {
   return &lightSource_;
 }
