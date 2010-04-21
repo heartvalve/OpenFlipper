@@ -180,7 +180,7 @@ void DecimaterPlugin::slot_decimate()
     object->mesh()->update_normals();
     object->update();
 
-    emit updatedObject( o_it->id() );
+    emit updatedObject( o_it->id() , UPDATE_TOPOLOGY );
   }
 
   emit updateView();
@@ -288,7 +288,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
     object->mesh()->update_normals();
     object->update();
 
-    emit updatedObject( baseObjectData->id() );
+    emit updatedObject( baseObjectData->id() , UPDATE_TOPOLOGY);
 
   } else {
     emit log(LOGERR,tr("Unsupported object type for decimater"));

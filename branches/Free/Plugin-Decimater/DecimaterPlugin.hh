@@ -80,7 +80,7 @@ signals:
 
   // BaseInterface
   void updateView();
-  void updatedObject(int);
+  void updatedObject(int _id, UpdateType _type);
   void setSlotDescription(QString     _slotName,   QString     _slotDescription,
                           QStringList _parameters, QStringList _descriptions);
 
