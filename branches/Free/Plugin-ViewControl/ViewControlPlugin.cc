@@ -805,7 +805,7 @@ void ViewControlPlugin::slotSetShader(){
               if (shaderList_[index].uniformTypes[u] == "float" ){
                 shaderWidget_->uniforms->setCurrentCell(u,0);
                 float value = shaderWidget_->uniforms->currentItem()->text().toFloat();
-                shader->setUniform(shaderList_[index].uniforms[u].toStdString().c_str(), value);
+                shader->setUniform(shaderList_[index].uniforms[u].toUtf8(), value);
               } else 
               //vec3 uniforms
               if (shaderList_[index].uniformTypes[u] == "vec3" ){
@@ -813,7 +813,7 @@ void ViewControlPlugin::slotSetShader(){
                 QStringList vecStr = shaderWidget_->uniforms->currentItem()->text().split(",");
                 if (vecStr.count() == 3){
                   ACG::Vec3f value( vecStr[0].toFloat(), vecStr[1].toFloat(), vecStr[2].toFloat() );
-                  shader->setUniform(shaderList_[index].uniforms[u].toStdString().c_str(), value);
+                  shader->setUniform(shaderList_[index].uniforms[u].toUtf8(), value);
                 }
               }else
                 std::cerr << "Error: handling of uniformType '" << shaderList_[index].uniformTypes[u].toStdString() << "' not yet implemented" << std::endl;
@@ -1015,14 +1015,14 @@ void ViewControlPlugin::setUniform(int _objID, ACG::SceneGraph::DrawModes::DrawM
 
                   //float uniforms
                   if (shaderList_[i].uniformTypes[u] == "float" )
-                    shader->setUniform(shaderList_[i].uniforms[u].toStdString().c_str(), _value.toFloat() );
+                    shader->setUniform(shaderList_[i].uniforms[u].toUtf8(), _value.toFloat() );
 
                   //vec3 uniforms
                   else if (shaderList_[i].uniformTypes[u] == "vec3" ){
                     QStringList vecStr = _value.split(",");
                     if (vecStr.count() == 3){
                       ACG::Vec3f value( vecStr[0].toFloat(), vecStr[1].toFloat(), vecStr[2].toFloat() );
-                      shader->setUniform(shaderList_[i].uniforms[u].toStdString().c_str(), value);
+                      shader->setUniform(shaderList_[i].uniforms[u].toUtf8(), value);
                     }
                   }else
                     std::cerr << "Error: handling of uniformType '" << shaderList_[i].uniformTypes[u].toStdString() << "' not yet implemented" << std::endl;
