@@ -96,7 +96,7 @@ void Core::slotObjectUpdated(int _identifier, UpdateType _type) {
   }
 
   // just inform the plugins as we dont do anything else
-  emit signalObjectUpdated(_identifier);
+  emit signalObjectUpdated(_identifier, _type);
 
   if ( object != 0 )
     object->update(_type);
