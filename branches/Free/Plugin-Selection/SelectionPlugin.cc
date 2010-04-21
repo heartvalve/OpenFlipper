@@ -155,7 +155,7 @@ void SelectionPlugin::initializePlugin() {
   emit addToolbox("Selections",tool_);
 
   // create sphere for paint sphere selection
-  sphere_mat_node_  = new ACG::SceneGraph::MaterialNode(0, tr("Selection Plugin: Selection Sphere Material").toAscii().constData() );
+  sphere_mat_node_  = new ACG::SceneGraph::MaterialNode(0, tr("Selection Plugin: Selection Sphere Material").toUtf8() );
   PluginFunctions::addGlobalNode(sphere_mat_node_);
   sphere_mat_node_->applyProperties( MaterialNode::Blending  |
                                      MaterialNode::Material  |
