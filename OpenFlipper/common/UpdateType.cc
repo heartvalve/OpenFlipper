@@ -39,6 +39,10 @@ bool UpdateType::operator==(const UpdateType& _type) const {
 
 /// Check if this update contains the given UpdateType
 bool UpdateType::contains( const UpdateType& _type ) {
+  
+  if ( type_ == UPDATE_ALL.type_ )
+    return true;
+  
   // Catch the specialization of updates
   if ( _type == UPDATE_SELECTION ) {
     if ( type_ == UPDATE_SELECTION_VERTICES.type_ || type_ == UPDATE_SELECTION_EDGES.type_ || type_ == UPDATE_SELECTION_FACES.type_ )
