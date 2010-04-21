@@ -135,6 +135,9 @@ static int targetCounter_ = 0;
 /// Map that holds the object handles
 static std::map<int, BaseObject*> objectMap_;
 
+/// Map of scenegraph widget generators
+QMap< std::string ,ACG::QtWidgets::SceneGraphWidgetGenerator* > sceneGraphGenerators_;
+
 void setDataRoot( BaseObject* _root ) {
    objectRoot_ = _root;
 }
@@ -1010,5 +1013,21 @@ void removeObjectFromMap(int _objectId) {
     if(it != objectMap_.end()) objectMap_.erase(it);
 }
 
+
+void addSceneGraphGenerator(ACG::QtWidgets::SceneGraphWidgetGenerator* _generator) {
+   // Check if we already have a generator for this type.
+  if ( sceneGraphGenerators_.contains( _generator->handles() ) ) {
+    std::cerr << "PluginFunctions Already handled" << std::endl;
+  }
+
+  // Store the generator
+  sceneGraphGenerators_[_generator->handles() ] = _generator;
+}
+
+
+QMap< std::string ,ACG::QtWidgets::SceneGraphWidgetGenerator* > getSceneGraphGeneratorList(){
+  std::cerr << "PluginFunctions::getmap" << std::endl;
+  return sceneGraphGenerators_;
+}
 
 } // End namespace PluginFunctions

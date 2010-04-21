@@ -82,6 +82,40 @@ namespace QtWidgets {
 
 //== CLASS DEFINITION =========================================================
 
+class ACGDLLEXPORT SceneGraphWidgetGenerator {
+
+public:
+  // constructor
+  SceneGraphWidgetGenerator();
+
+  /** \brief Get a widget for this Node
+  *
+  * Derive from this class to get a widget for the given node
+  * you have to overload this function. First check, if your
+  * widget can handle nodes of the given type (check for _node->className()
+  * Then generate your widget and handle the _node inside it.
+  * Return 0 if you can not handle it and check if the map already contains
+  * a widget for this node.
+  */
+  virtual QWidget* getWidget(SceneGraph::BaseNode* _node );
+
+  /** \brief returns if the widgets can handle the given class 
+  */
+  virtual bool canHandle(std::string _className);
+
+  /** \brief return the type this generator handles
+  *
+  */
+  virtual std::string handles();
+
+  /** \brief Return a name for your widget in the context menu
+  */
+  virtual QString contextMenuName();
+
+private:
+
+  std::map< SceneGraph::BaseNode* , QWidget* > widgetMap_;
+};
 
 /** \class QtSceneGraphWidget QtSceneGraphWidget.hh <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
@@ -104,7 +138,6 @@ public:
 
   /// destructor
   ~QtSceneGraphWidget() {}
-
 
   enum Columns { Node, Type, Status, Mode };
 
@@ -195,6 +228,21 @@ private:
     QAction * actionHideChildren_;
     QAction * actionHideSubtree_;
   } statusActions_;
+
+  public: 
+
+    /** \brief Add a node widget handler
+    * 
+    * returns true, if the handler was sucessfully added.
+    */
+    bool addWidgetGenerator( SceneGraphWidgetGenerator* _generator );
+
+    /** \brief Set a complete generator map (this will overwrite the existing one!
+    */
+    void setGeneratorMap( QMap< std::string , SceneGraphWidgetGenerator* > _map) { generatorMap_ = _map; }; 
+
+  private:
+    QMap< std::string , SceneGraphWidgetGenerator* > generatorMap_;
 };
 
 
@@ -229,6 +277,11 @@ private slots:
 
   void slotNodeChanged(ACG::SceneGraph::BaseNode* _node);
 
+
+public:
+  /** \brief Set a complete generator map (this will overwrite the existing one!
+  */
+  void setGeneratorMap( QMap< std::string , SceneGraphWidgetGenerator* > _map) { sgw_->setGeneratorMap(_map); }; 
 
 private:
 

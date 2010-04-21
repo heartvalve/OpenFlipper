@@ -976,6 +976,7 @@ CoreWidget::slotShowSceneGraphDialog()
 
     }
 
+    sceneGraphDialog_->setGeneratorMap(PluginFunctions::getSceneGraphGeneratorList() );
     sceneGraphDialog_->show();
   }
 }
