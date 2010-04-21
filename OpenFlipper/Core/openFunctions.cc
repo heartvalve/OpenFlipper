@@ -530,7 +530,8 @@ void Core::slotObjectOpened ( int _id ) {
   // ================================================================================
   // Tell plugins, that the Object is updated and the active object has changed
   // ================================================================================
-  emit signalObjectUpdated(_id);
+  emit signalObjectUpdated(_id );
+  emit signalObjectUpdated(_id, UPDATE_ALL);
 
   // ================================================================================
   // Create initial backup
@@ -578,6 +579,7 @@ void Core::slotEmptyObjectAdded ( int _id ) {
 
   // Tell the Plugins that the Object List and the active object have changed
   emit signalObjectUpdated(_id);
+  emit signalObjectUpdated(_id,UPDATE_ALL);
 
   backupRequest(_id,"Original Object");
 
