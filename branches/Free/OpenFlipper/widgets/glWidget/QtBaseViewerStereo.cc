@@ -410,8 +410,8 @@ glViewer::updateScenePhilipsStereo()
         QString vshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Vertex.glsl";
         QString fshaderFile = OpenFlipper::Options::shaderDirStr() + QDir::separator() + "Philips/Fragment42.glsl";
 
-        vertexShader = GLSL::loadVertexShader(vshaderFile.toStdString().c_str());
-        fragmentShader = GLSL::loadFragmentShader(fshaderFile.toStdString().c_str());
+        vertexShader = GLSL::loadVertexShader(vshaderFile.toUtf8());
+        fragmentShader = GLSL::loadFragmentShader(fshaderFile.toUtf8());
         pProgram_ = GLSL::PtrProgram(new GLSL::Program());
 
         if ((vertexShader == 0) || (fragmentShader == 0) || (pProgram_ == 0)) {
