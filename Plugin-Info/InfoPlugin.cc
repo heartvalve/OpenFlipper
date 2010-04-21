@@ -524,8 +524,7 @@ bool InfoPlugin::getEdgeLengths(int _id, double &min, double &max, double &mean)
 //------------------------------------------------------------------------------
 
 void InfoPlugin::slotObjectUpdated( int _identifier , UpdateType _type){
-  std::cerr << "Got object updated" << std::endl;
-  
+
   if ( (PluginFunctions::objectCount() == 1) || (PluginFunctions::targetCount() == 1) ){
 
     // This block is only interesting for topology changes
