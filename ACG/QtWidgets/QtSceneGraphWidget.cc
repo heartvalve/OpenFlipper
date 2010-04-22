@@ -93,25 +93,29 @@ namespace QtWidgets {
 //== IMPLEMENTATION ========================================================== 
 
 SceneGraphWidgetGenerator::SceneGraphWidgetGenerator() {
-  std::cerr << "SceneGraphWidgetGenerator constructor " << std::endl;
 }
 
 QWidget* SceneGraphWidgetGenerator::getWidget(SceneGraph::BaseNode* _node ) {
-  std::cerr << "getWidget "  << std::endl;
+  // Warn as this you have to derive from this class before it can be used!
+  std::cerr << "SceneGraphWidgetGenerator::getWidget not implemented!"  << std::endl;
   return 0;
 }
 
 bool SceneGraphWidgetGenerator::canHandle(std::string _className) {
-  std::cerr << "canHandle " << _className << std::endl;
+  // Warn as this you have to derive from this class before it can be used!
+  std::cerr << "SceneGraphWidgetGenerator::canHandle  not implemented!" << _className << std::endl;
   return false;
 }
 
 std::string SceneGraphWidgetGenerator::handles() {
+  // Warn as this you have to derive from this class before it can be used!
+  std::cerr << "SceneGraphWidgetGenerator::canHandle  not implemented!" << std::endl;
   return std::string("Unset Type");
 }
 
 QString SceneGraphWidgetGenerator::contextMenuName() {
-  std::cerr << "contextMenuName " << std::endl;
+  // Warn as this you have to derive from this class before it can be used!
+  std::cerr << "SceneGraphWidgetGenerator::contextMenuName  not implemented!" << std::endl;
   return QString("Context Menu name unset");
 }
 
