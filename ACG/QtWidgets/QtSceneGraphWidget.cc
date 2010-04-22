@@ -272,104 +272,102 @@ slotItemPressed( QTreeWidgetItem * _item,
     {
       case 2:
       {
-	statusActions_.actionActive_      ->setChecked( false );
-	statusActions_.actionHideNode_    ->setChecked( false );
-	statusActions_.actionHideChildren_->setChecked( false );
-	statusActions_.actionHideSubtree_ ->setChecked( false );
+        statusActions_.actionActive_      ->setChecked( false );
+        statusActions_.actionHideNode_    ->setChecked( false );
+        statusActions_.actionHideChildren_->setChecked( false );
+        statusActions_.actionHideSubtree_ ->setChecked( false );
 
-	switch ( node->status() )
-	{
-	  case BaseNode::Active:
-	    statusActions_.actionActive_->setChecked( true );
-	    break;
-	  case BaseNode::HideNode:
-	    statusActions_.actionHideNode_->setChecked( true );
-	    break;
-	  case BaseNode::HideChildren:
-	    statusActions_.actionHideChildren_->setChecked( true );
-	    break;
-	  case BaseNode::HideSubtree:
-	    statusActions_.actionHideSubtree_->setChecked( true );
-	    break;
-	}
-	statusActions_.menu_->popup( QCursor::pos() ); 
-	break;
+        switch ( node->status() )
+        {
+          case BaseNode::Active:
+            statusActions_.actionActive_->setChecked( true );
+            break;
+          case BaseNode::HideNode:
+            statusActions_.actionHideNode_->setChecked( true );
+            break;
+          case BaseNode::HideChildren:
+            statusActions_.actionHideChildren_->setChecked( true );
+            break;
+          case BaseNode::HideSubtree:
+            statusActions_.actionHideSubtree_->setChecked( true );
+            break;
+        }
+        statusActions_.menu_->popup( QCursor::pos() ); 
+        break;
       }
       case 0: break;
       case 1: break;
       case 3:
       {
-	modeMenu_->clear();
+        modeMenu_->clear();
 
-	QActionGroup * modeGroup = new QActionGroup( modeMenu_ );
-	modeGroup->setExclusive( true );
-	connect( modeGroup, SIGNAL( triggered( QAction * ) ),
-		 this, SLOT( slotModeMenu( QAction * ) ) );
+        QActionGroup * modeGroup = new QActionGroup( modeMenu_ );
+        modeGroup->setExclusive( true );
+        connect( modeGroup, SIGNAL( triggered( QAction * ) ),
+                  this, SLOT( slotModeMenu( QAction * ) ) );
 
         ACG::SceneGraph::DrawModes::DrawMode availDrawModes( node->availableDrawModes() );
-	availDrawModes |= SceneGraph::DrawModes::DEFAULT;
-	
+        availDrawModes |= SceneGraph::DrawModes::DEFAULT;
+        
         ACG::SceneGraph::DrawModes::DrawMode currentDrawMode( node->drawMode() );
 
         std::vector< ACG::SceneGraph::DrawModes::DrawMode > available_modes( availDrawModes.getAtomicDrawModes() );
 
-	
-	for ( unsigned int i = 0; i < available_modes.size(); ++i )
-	{
+        
+        for ( unsigned int i = 0; i < available_modes.size(); ++i )
+        {
           ACG::SceneGraph::DrawModes::DrawMode id    = available_modes[i];
           std::string  descr = id.description();
 
-	  QAction * action = new QAction( descr.c_str(), modeGroup );
-	  action->setCheckable( true );
+          QAction * action = new QAction( descr.c_str(), modeGroup );
+          action->setCheckable( true );
           action->setChecked ( currentDrawMode.containsAtomicDrawMode(id ) ) ;
-	  action->setData( QVariant( id.getIndex() ) );
-	}
+          action->setData( QVariant( id.getIndex() ) );
+        }
 
-	modeMenu_->addActions( modeGroup->actions() );
+        modeMenu_->addActions( modeGroup->actions() );
 
-	if ( dynamic_cast<SceneGraph::MaterialNode*>( node ) )
-	{
-	  modeMenu_->addSeparator();
-	  QAction * action = modeMenu_->addAction( "Edit material" );
-	  connect( action, SIGNAL( triggered() ),
-		   this, SLOT( slotEditMaterial() ) );
-	}
+        if ( dynamic_cast<SceneGraph::MaterialNode*>( node ) )
+        {
+          modeMenu_->addSeparator();
+          QAction * action = modeMenu_->addAction( "Edit material" );
+          connect( action, SIGNAL( triggered() ),
+                    this, SLOT( slotEditMaterial() ) );
+        }
         
         if ( dynamic_cast<SceneGraph::ShaderNode*>( node ) )
         {
           modeMenu_->addSeparator();
           QAction * action = modeMenu_->addAction( "Edit shaders" );
           connect( action, SIGNAL( triggered() ),
-                   this, SLOT( slotEditShader() ) );
+                    this, SLOT( slotEditShader() ) );
         }        
 
-	if ( dynamic_cast<SceneGraph::ClippingNode*>( node ) )
-	{
-	  modeMenu_->addSeparator();
-	  QAction * action = modeMenu_->addAction( "Edit clip planes" );
-	  connect( action, SIGNAL( triggered() ),
-		   this, SLOT( slotEditClipPlanes() ) );
-	}
+        if ( dynamic_cast<SceneGraph::ClippingNode*>( node ) )
+        {
+          modeMenu_->addSeparator();
+          QAction * action = modeMenu_->addAction( "Edit clip planes" );
+          connect( action, SIGNAL( triggered() ),
+                    this, SLOT( slotEditClipPlanes() ) );
+        }
 
-	if ( dynamic_cast<SceneGraph::CoordFrameNode*>( node ) )
-	{
-	  modeMenu_->addSeparator();
-	  QAction * action = modeMenu_->addAction( "Edit coord frame" );
-	  connect( action, SIGNAL( triggered() ),
-		   this, SLOT( slotEditCoordinateFrame() ) );
-	}
+        if ( dynamic_cast<SceneGraph::CoordFrameNode*>( node ) )
+        {
+          modeMenu_->addSeparator();
+          QAction * action = modeMenu_->addAction( "Edit coord frame" );
+          connect( action, SIGNAL( triggered() ),
+                    this, SLOT( slotEditCoordinateFrame() ) );
+        }
 
-  if ( generatorMap_.contains( node->className() ) ) {
-    std::cerr << "Found generator handles: " << generatorMap_[node->className()]->handles() << std::endl;
-    QWidget* widget = generatorMap_[node->className()]->getWidget( node );
-    modeMenu_->addAction( generatorMap_[node->className()]->contextMenuName() , widget, SLOT(show()) );
-  } else {
-    std::cerr << "No Generator found" << std::endl;
-  }
+        // Add widgets through generator
+        if ( generatorMap_.contains( node->className() ) ) {
+          QWidget* widget = generatorMap_[node->className()]->getWidget( node );
+          modeMenu_->addAction( generatorMap_[node->className()]->contextMenuName() , widget, SLOT(show()) );
+        } 
 
-	modeMenu_->popup( QCursor::pos() );
+        modeMenu_->popup( QCursor::pos() );
 
-	break;
+        break;
       }
       default: break;
     }
