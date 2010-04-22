@@ -195,6 +195,7 @@ function (_build_openflipper_plugin plugin)
       ${OPENGL_INCLUDE_DIR}
       ${GLEW_INCLUDE_DIR}
       ${GLUT_INCLUDE_DIR}
+      ${CMAKE_BINARY_DIR}/OpenFlipper/PluginLib
     )
 
     # Linking for apple is special here as the linker pulls in the dependencies, we have to set them like in PluginLib!
