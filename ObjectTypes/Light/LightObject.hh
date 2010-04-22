@@ -96,6 +96,8 @@ class DLLEXPORT LightObject : public BaseObjectData {
     /// Get the scenegraph Node
     LightNode* lightNodeVis();
     
+    virtual bool hasNode(BaseNode* _node);
+    
   private:
     ///  Light status node
     LightNode* lightNode_;
