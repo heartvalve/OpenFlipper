@@ -54,6 +54,8 @@
 #include <QMessageBox>
 #include "Menu.hh"
 
+#include <ObjectTypes/Light/LightWidget.hh>
+
 
 //******************************************************************************
 
@@ -294,9 +296,14 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
             action = menu.addAction(tr("Remove"),this,SLOT ( slotPopupRemove() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
             action->setIcon(icon);
+            menu.addSeparator();
             action = menu.addAction(tr("Switch On/Off"),this,SLOT ( slotSwitchLight() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"LightType.png");
             action->setIcon(icon);
+            action = menu.addAction(tr("Edit Light"),this,SLOT ( slotEditLight() ));
+            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"LightType.png");
+            action->setIcon(icon);
+            
         } else {
             action = menu.addAction(tr("Zoom to object"),this,SLOT ( slotZoomTo() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"zoom-in.png");
@@ -551,6 +558,33 @@ void DataControlPlugin::slotSwitchLight() {
             
         emit updatedObject(id, UPDATE_ALL);
     }
+}
+
+//******************************************************************************
+
+/**
+* \brief Switch light source on or off
+*/
+void DataControlPlugin::slotEditLight() {
+ 
+  QItemSelectionModel* selection = view_->selectionModel();
+  
+  // Get all selected rows
+  QModelIndexList indexList = selection->selectedRows ( 0 );
+  int selectedRows = indexList.size();
+  if (selectedRows == 1) {
+    
+    LightObject* light = 0;
+    int id = model_->itemId( indexList[0]);
+    
+    if (id == -1 || !PluginFunctions::getObject( id, light ) )
+      return;
+    
+    if(light == 0) return;
+    
+    LightWidget* widget = new LightWidget( light->lightNode() );
+    widget->show();
+  }
 }
 
 //******************************************************************************
