@@ -12,6 +12,7 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctionsCore.hh>
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
+#include "LightWidget.hh"
 #include "Light.hh"
 
 //== DEFINES ==================================================================
@@ -37,7 +38,7 @@ class LightWidgetGenerator : public ACG::QtWidgets::SceneGraphWidgetGenerator {
     if ( widgetMap_.contains(_node) ) {
       return widgetMap_[_node];
     } else {
-      QWidget* widget = new QWidget();
+      QWidget* widget = new LightWidget(_node);
       widgetMap_[_node] = widget;
       return widget;
     }
@@ -186,6 +187,16 @@ LightNode* LightObject::lightNode() {
 
 LightNode* LightObject::lightNodeVis() {
     return lightNodeVis_;
+}
+
+bool LightObject::hasNode(BaseNode* _node) {
+ if ( BaseObjectData::hasNode(_node) )
+   return true;
+ 
+ if ( _node == lightNode_ )
+   return true;
+ 
+ return false;
 }
 
 // ===============================================================================
