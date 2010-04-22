@@ -210,6 +210,9 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         
         /// Called by the popup menu in order to turn lights on/off
         void slotSwitchLight();
+        
+        /// Called by the popup menu in order to edit lights
+        void slotEditLight();
 
         ///Called by the popup menu to set material properties
         void slotMaterialProperties();
