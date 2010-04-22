@@ -92,29 +92,34 @@ public:
   *
   * Derive from this class to get a widget for the given node
   * you have to overload this function. First check, if your
-  * widget can handle nodes of the given type (check for _node->className()
+  * widget can handle nodes of the given type (check for _node->className() )
   * Then generate your widget and handle the _node inside it.
   * Return 0 if you can not handle it and check if the map already contains
-  * a widget for this node.
+  * a widget for this node so that you generate one widget per node.
   */
   virtual QWidget* getWidget(SceneGraph::BaseNode* _node );
 
-  /** \brief returns if the widgets can handle the given class 
+  /** \brief returns if the widgets can handle the given class
+  *
+  * This function has to check if the given classname is supported
   */
   virtual bool canHandle(std::string _className);
 
   /** \brief return the type this generator handles
   *
+  * return the classname of the node this generator can handle
   */
   virtual std::string handles();
 
   /** \brief Return a name for your widget in the context menu
+  *
+  * This name will be the same for all passed in nodes
   */
   virtual QString contextMenuName();
 
-private:
+protected:
 
-  std::map< SceneGraph::BaseNode* , QWidget* > widgetMap_;
+  QMap< SceneGraph::BaseNode* , QWidget* > widgetMap_;
 };
 
 /** \class QtSceneGraphWidget QtSceneGraphWidget.hh <ACG/QtWidgets/QtSceneGraphWidget.hh>

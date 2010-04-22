@@ -1015,10 +1015,10 @@ void removeObjectFromMap(int _objectId) {
 
 
 void addSceneGraphGenerator(ACG::QtWidgets::SceneGraphWidgetGenerator* _generator) {
+  
    // Check if we already have a generator for this type.
-  if ( sceneGraphGenerators_.contains( _generator->handles() ) ) {
-    std::cerr << "PluginFunctions Already handled" << std::endl;
-  }
+  if ( sceneGraphGenerators_.contains( _generator->handles() ) ) 
+    return;
 
   // Store the generator
   sceneGraphGenerators_[_generator->handles() ] = _generator;

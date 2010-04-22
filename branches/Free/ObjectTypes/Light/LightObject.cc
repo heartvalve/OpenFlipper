@@ -24,13 +24,24 @@ class LightWidgetGenerator : public ACG::QtWidgets::SceneGraphWidgetGenerator {
   public:
   // constructor
   LightWidgetGenerator() {
-    std::cerr << "LightWidget Generator constructor" << std::endl;
   }
 
 
   virtual QWidget* getWidget(ACG::SceneGraph::BaseNode* _node ) {
-    std::cerr << "Generating widget" << std::endl;
-    return new QWidget();
+    
+    // Check if we can handle this type
+    if ( ! canHandle( _node->className() ) )
+      return 0;
+   
+    // Check if we already have a widget, otherwise generate a new one.
+    if ( widgetMap_.contains(_node) ) {
+      return widgetMap_[_node];
+    } else {
+      QWidget* widget = new QWidget();
+      widgetMap_[_node] = widget;
+      return widget;
+    }
+  
   }
 
   virtual bool canHandle(std::string _className) {
@@ -42,7 +53,7 @@ class LightWidgetGenerator : public ACG::QtWidgets::SceneGraphWidgetGenerator {
   }
 
   virtual QString contextMenuName() {
-    return QString("Light Node Context Menu");
+    return QString("Edit Light");
   }
 };
 
