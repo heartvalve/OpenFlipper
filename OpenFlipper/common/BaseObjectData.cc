@@ -233,6 +233,28 @@ SeparatorNode* BaseObjectData::baseNode() {
   return separatorNode_;
 }
 
+bool BaseObjectData::hasNode(BaseNode* _node) {
+
+  QList< BaseNode* > list;
+  list.push_back(separatorNode_);
+  
+  BaseNode* currentNode;
+  while (!list.empty()) {
+    currentNode = list.front();
+    
+    if ( currentNode->find(_node) == currentNode->childrenEnd() ) {
+      for ( BaseNode::ChildIter child = currentNode->childrenBegin() ; child != currentNode->childrenEnd(); ++child )
+        list.push_back(*child);
+    } else 
+      return true;
+      
+    list.pop_front();
+  }
+  
+  return false;
+  
+}
+
 BaseNode* BaseObjectData::primaryNode() {
   return separatorNode_;
 }
