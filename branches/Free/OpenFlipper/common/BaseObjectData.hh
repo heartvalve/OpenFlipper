@@ -188,6 +188,13 @@ class DLLEXPORT BaseObjectData : public BaseObject
      */
     SeparatorNode* baseNode();
 
+    /** \brief Check if the given node is owned by this object
+    *
+    * You can overload this function and return true, if your object generated the given node. 
+    * Don't forget to call this baseclass function on overload!
+    */
+    virtual bool hasNode(BaseNode* _node);
+    
     /** get the primary node of this object (Use this node to change drawModes)
      */
     virtual BaseNode* primaryNode();
