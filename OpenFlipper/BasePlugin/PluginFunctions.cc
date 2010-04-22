@@ -1025,7 +1025,6 @@ void addSceneGraphGenerator(ACG::QtWidgets::SceneGraphWidgetGenerator* _generato
 
 
 QMap< std::string ,ACG::QtWidgets::SceneGraphWidgetGenerator* > getSceneGraphGeneratorList(){
-  std::cerr << "PluginFunctions::getmap" << std::endl;
   return sceneGraphGenerators_;
 }
 
