@@ -66,6 +66,8 @@ acg_append_files (ui "*.ui" ${directories})
 # add additional object type sources
 acg_append_files_recursive (headers "*.hh" ${CMAKE_SOURCE_DIR}/ObjectTypes)
 acg_append_files_recursive (sources "*.cc" ${CMAKE_SOURCE_DIR}/ObjectTypes)
+acg_append_files_recursive (ui "*.ui" ${CMAKE_SOURCE_DIR}/ObjectTypes)
+
 
 # remove template cc files from source file list
 acg_drop_templates (sources)
