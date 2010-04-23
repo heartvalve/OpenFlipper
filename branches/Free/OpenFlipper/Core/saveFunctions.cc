@@ -75,8 +75,10 @@ bool Core::saveObject( int _id, QString _filename ) {
       if ( OpenFlipper::Options::gui() ) {
         if (ok)
           coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... done"), 4000 );
-        else
+        else{
+          emit log(LOGERR, tr("Unable to save '%1'. Plugin failed. DataType %2").arg(_filename, dataTypeName(object->dataType()) )  );
           coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... failed!"), 4000 );
+        }
     
         if ( !OpenFlipper::Options::savingSettings() )
           coreWidget_->setStatus(ApplicationStatus::READY );
@@ -91,8 +93,10 @@ bool Core::saveObject( int _id, QString _filename ) {
     }
 
   // no plugin found
-  if ( OpenFlipper::Options::gui() )
+  if ( OpenFlipper::Options::gui() ){
+      emit log(LOGERR, tr("Unable to save '%1'. No plugin found. DataType %2").arg(_filename, dataTypeName(object->dataType()) )  );
       coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... failed!"), 4000 );
+  }
 
   return false;
 }
