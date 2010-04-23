@@ -60,8 +60,8 @@ bool Core::saveObject( int _id, QString _filename ) {
   BaseObjectData* object;
   PluginFunctions::getObject(_id,object);
 
-  for (int i=0; i < (int)supportedTypes_.size(); i++)
-    if (object->dataType() == supportedTypes_[i].type) {
+  for (int i=0; i < (int)supportedTypes_.size(); i++) {
+    if ( supportedTypes_[i].type.contains(object->dataType())) {
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Saving ") + _filename + " ...");
@@ -91,7 +91,8 @@ bool Core::saveObject( int _id, QString _filename ) {
 
       return ok;
     }
-
+  }
+  
   // no plugin found
   if ( OpenFlipper::Options::gui() ){
       emit log(LOGERR, tr("Unable to save '%1'. No plugin found. DataType %2").arg(_filename, dataTypeName(object->dataType()) )  );
