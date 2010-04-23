@@ -1,15 +1,29 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 ( ? , 8985 RC7 )</b>
+ * - <b>OpenFlipper 1.0 ( ? , 9115 RC7 )</b>
  *      - <b>Core</b>
  *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
- *          - Bugfix for Processmanager when using blocking mode for new threads
- *          - Added global nodes to handle light sources
  *          - Improved error handling in some pluginfunctions
  *          - Support writing multiple objects into one file
- *          - Internal light handling can now be switched off via pluginfunctions (Used by TypeLight to take control over lights)
+ *          - Added Light source management
+ *              - Added global nodes to handle light sources
+ *              - Internal light handling can now be switched off via pluginfunctions (Used by TypeLight to take control over lights)
+ *          - About Dialog
+ *              - Show information about registered types
+ *          - Process Manager
+ *              - Replaced Mutex by semaphore for waiting that a thread starts (mutex unlock does not work across threads in qt 4.6)
+ *              - Bugfix when using blocking mode for new threads
+ *          - Added Function to find the object to a node (Based on BaseObjectData)
+ *      - <b>Object Types</b>
+ *          - New Light Object
+ *          - New Sphere Object
  *      - <b>Interfaces</b>
- *          - updated textureInterface to save textures (including multitextures)
+ *          - BaseInterface
+ *              - Added a new parameter to updatedObject which defies the update type (e.g. Topology, Geometry, selection)
+ *          - TextureInterface
+ *              - updated textureInterface to save textures (including multitextures)
+ *          - PluginFunctions
+ *              - New function to directly set lookAt
  *      - <b>UI</b>
  *          - Improved mouse interaction(translation with middle mouse button is done in world coordinates now)
  *          - Added Context Menus to view modes (Depending on view mode context menus can be hidden now)
@@ -20,26 +34,37 @@
  *              - Fixed picking multipass bug where picking failed when blending or other color changing enter and leave functions where present
  *          - GlutPrimitive Node
  *              - Fixed bounding box computation which was centered around origin and not around center of object
- *              - Now handles multiple primitives in one node
+ *              - Now handles multiple primitives in one node( and different colors for each of the primitives)
  *              - Includes a rotation to set the orientation of the objects
+ *              - DrawMode SOLID_FACES_COLORED supported
+ *          - MaterialNode
+ *              - Add extra class to store all Material Information
  *          - PointNode
  *              - Use Vec3d
  *          - LineNode
  *              - Use Vec3d
  *          - MeshNode2
  *              - Fixed bug where stripes are sometimes not updated correctly
+ *              - Fixed pick face bug, where picking buffer was updated to late
+ *          - SceneGraphWidget
+ *              - Added system to register a widget for new nodes without changing the widget code.
  *      - <b>New Plugins</b>
  *          - TypeLight
  *              - New object type handling light sources
  *          - FileLight
  *              - Support for reading and writing light information
  *      - <b>Plugins</b>
+ *          - All
+ *              - Converted all plugins to new updatedObject formats
  *          - DataControl
  *              - Support for Light sources
  *          - FileOFF
  *              - non-manifold inputs are now duplicated and added as manifold meshes (These duplicates are marked in the OpenMesh status flag) 
  *          - FileOBJ
  *              - non-manifold inputs are now duplicated and added as manifold meshes (These duplicates are marked in the OpenMesh status flag) 
+ *          - INI
+ *              - Support Light sources
+ *              - Write material data for all objects with materialnode
  *          - IsoTropic Remesher
  *              - Process indicator added
  *          - Topology Plugin
@@ -51,6 +76,8 @@
  *          - Added docs for the glstate to describe internal projection matrix construction and parameters
  *          - Improved Documentation for the process manager
  *          - Improved building instructions
+ *      - <b>Others</b>
+ *          - Fixed some crashes with Visual Studio 2010 builds (Some may still be there)
  *      - <b>Build System</b>
  *          - Added FFTW Finder
  *          - Added Petsc finder
@@ -58,6 +85,8 @@
  *          - Added fixup bundle for windows such that required dlls are copied to the build directory
  *          - Added a GLUT finder
  *          - Fixed the library dir in GLEW finder
+ *          - Fixup Bundle for Windows (Copies required DLLs to the build directory for easy execution)
+ *          - Build ui files from ObjectTypes (Required to register Widgets to the scenegraph dialog)
  *
  * - <b>OpenFlipper 1.0 RC6 ( 2010/03/17 , 8742 )</b>
  *      - <b>Core</b>
