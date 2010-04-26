@@ -366,6 +366,19 @@
              </property>
             </widget>
            </item>
+           <item row="1" column="3">
+            <widget class="QLineEdit" name="ambientA"/>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="label_27">
+             <property name="text">
+              <string>A</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item row="2" column="0">
@@ -416,6 +429,19 @@
              </property>
             </widget>
            </item>
+           <item row="1" column="3">
+            <widget class="QLineEdit" name="diffuseA"/>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="label_28">
+             <property name="text">
+              <string>A</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item row="3" column="0">
@@ -460,6 +486,19 @@
             <widget class="QLabel" name="label_24">
              <property name="text">
               <string>B</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLineEdit" name="specularA"/>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="label_29">
+             <property name="text">
+              <string>A</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignBottom|Qt::AlignHCenter</set>
