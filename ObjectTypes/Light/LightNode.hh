@@ -163,6 +163,8 @@ public:
   
   /// get Specular color for LightSource 
   Vec4f specularColor();
+  
+  void setColor(const Vec4f& _ambient, const Vec4f& _diffuse, const Vec4f& _specular);
 
   /// make LightSource fixed or moveable with ModelViewMatrix
   void fixedPosition( bool _state);
@@ -188,6 +190,10 @@ public:
   void quadraticAttenuation(float _quadraticAttenuation);
   
   float quadraticAttenuation();
+  
+  void brightness(const float _brightness);
+  
+  float brightness() const;
   
   /** \brief Get light source radius
   * 
@@ -222,6 +228,8 @@ protected:
   float constantAttenuation_;
   float linearAttenuation_;
   float quadraticAttenuation_;
+  
+  float brightness_;
   
   /// When using ray tracing, light sources can have
   /// extent. We simplify to spherical light sources with

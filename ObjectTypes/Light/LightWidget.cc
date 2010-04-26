@@ -78,6 +78,20 @@ LightWidget::LightWidget(  ACG::SceneGraph::BaseNode* _node, QWidget *parent)
   connect(angle,SIGNAL(editingFinished()),this,SLOT(spotChanged()));
   connect(exponent,SIGNAL(editingFinished()),this,SLOT(spotChanged()));
   
+  brightness->setTracking(true);
+  connect(brightness, SIGNAL(valueChanged(int)), this, SLOT(brightnessChanged(int)));
+  
+  connect(ambientR,SIGNAL(editingFinished()),this,SLOT(ambientChanged()));
+  connect(ambientG,SIGNAL(editingFinished()),this,SLOT(ambientChanged()));
+  connect(ambientB,SIGNAL(editingFinished()),this,SLOT(ambientChanged()));
+  
+  connect(diffuseR,SIGNAL(editingFinished()),this,SLOT(diffuseChanged()));
+  connect(diffuseG,SIGNAL(editingFinished()),this,SLOT(diffuseChanged()));
+  connect(diffuseB,SIGNAL(editingFinished()),this,SLOT(diffuseChanged()));
+  
+  connect(specularR,SIGNAL(editingFinished()),this,SLOT(specularChanged()));
+  connect(specularG,SIGNAL(editingFinished()),this,SLOT(specularChanged()));
+  connect(specularB,SIGNAL(editingFinished()),this,SLOT(specularChanged()));
 }
 
 void LightWidget::showEvent ( QShowEvent * event )
@@ -103,7 +117,6 @@ void LightWidget::showEvent ( QShowEvent * event )
   xpos->setText(QString::number(light_->position()[0]));
   ypos->setText(QString::number(light_->position()[1]));
   zpos->setText(QString::number(light_->position()[2]));
-
   
   fixedPosition->setChecked( light_->fixedPosition() );
   
@@ -113,6 +126,20 @@ void LightWidget::showEvent ( QShowEvent * event )
   
   angle->setText(QString::number(light_->spotCutoff()));
   exponent->setText(QString::number(light_->spotExponent()));
+  
+  ambientR->setText(QString::number(light_->ambientColor()[0]));
+  ambientG->setText(QString::number(light_->ambientColor()[1]));
+  ambientB->setText(QString::number(light_->ambientColor()[2]));
+  
+  diffuseR->setText(QString::number(light_->diffuseColor()[0]));
+  diffuseG->setText(QString::number(light_->diffuseColor()[1]));
+  diffuseB->setText(QString::number(light_->diffuseColor()[2]));
+  
+  specularR->setText(QString::number(light_->specularColor()[0]));
+  specularG->setText(QString::number(light_->specularColor()[1]));
+  specularB->setText(QString::number(light_->specularColor()[2]));
+  
+  brightness->setSliderPosition((int)(light_->brightness()*100));
   
   // Allow updates
   updatingWidgets_ = false;
@@ -139,6 +166,59 @@ void LightWidget::directionalToggled() {
   
   updated();
  
+}
+
+void LightWidget::ambientChanged() {
+    
+    // Block if we currently update the widgets or if we dont get the object
+    if (updatingWidgets_ || !getObject() )
+        return;
+  
+    light_->ambientColor(ACG::Vec4f(ambientR->text().toDouble(),
+                                    ambientG->text().toDouble(),
+                                    ambientB->text().toDouble(),
+                                    1.0f));
+    updated();
+}
+
+void LightWidget::diffuseChanged() {
+    
+    // Block if we currently update the widgets or if we dont get the object
+    if (updatingWidgets_ || !getObject() )
+        return;
+  
+    light_->diffuseColor(ACG::Vec4f(diffuseR->text().toDouble(),
+                                    diffuseG->text().toDouble(),
+                                    diffuseB->text().toDouble(),
+                                    1.0f));
+    updated();
+}
+
+void LightWidget::specularChanged() {
+    
+    // Block if we currently update the widgets or if we dont get the object
+    if (updatingWidgets_ || !getObject() )
+        return;
+  
+    light_->specularColor(ACG::Vec4f(specularR->text().toDouble(),
+                                     specularG->text().toDouble(),
+                                     specularB->text().toDouble(),
+                                     1.0f));
+    updated();
+}
+   
+void LightWidget::brightnessChanged(int _newValue) {
+    
+    // Block if we currently update the widgets or if we dont get the object
+    if (updatingWidgets_ || !getObject() )
+        return;
+    
+    float pos = _newValue;
+    pos /= 100.0f;
+    
+    light_->brightness(pos);
+    
+    updated();
 }
 
 void LightWidget::spotChanged() {
