@@ -65,6 +65,9 @@ class DLLEXPORT LightWidget : public QDialog, public Ui::LightWidgetBase
     /// Brightness value has changed
     void brightnessChanged(int _newValue);
     
+    /// Light radius has changed
+    void radiusChanged();
+    
     /// Spot direction changed
     void spotChanged();
     

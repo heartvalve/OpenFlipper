@@ -92,6 +92,8 @@ LightWidget::LightWidget(  ACG::SceneGraph::BaseNode* _node, QWidget *parent)
   connect(specularR,SIGNAL(editingFinished()),this,SLOT(specularChanged()));
   connect(specularG,SIGNAL(editingFinished()),this,SLOT(specularChanged()));
   connect(specularB,SIGNAL(editingFinished()),this,SLOT(specularChanged()));
+  
+  connect(radius,SIGNAL(editingFinished()),this,SLOT(radiusChanged()));
 }
 
 void LightWidget::showEvent ( QShowEvent * event )
@@ -140,6 +142,8 @@ void LightWidget::showEvent ( QShowEvent * event )
   specularB->setText(QString::number(light_->specularColor()[2]));
   
   brightness->setSliderPosition((int)(light_->brightness()*100));
+  
+  radius->setText(QString::number(light_->radius()));
   
   // Allow updates
   updatingWidgets_ = false;
@@ -217,6 +221,17 @@ void LightWidget::brightnessChanged(int _newValue) {
     pos /= 100.0f;
     
     light_->brightness(pos);
+    
+    updated();
+}
+
+void LightWidget::radiusChanged() {
+    
+    // Block if we currently update the widgets or if we dont get the object
+    if (updatingWidgets_ || !getObject() )
+        return;
+    
+    light_->radius(radius->text().toDouble());
     
     updated();
 }
