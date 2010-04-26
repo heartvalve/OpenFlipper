@@ -298,10 +298,10 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
             action->setIcon(icon);
             menu.addSeparator();
             action = menu.addAction(tr("Switch On/Off"),this,SLOT ( slotSwitchLight() ));
-            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-lighttype.png");
+            icon = typeIcon(DATA_LIGHT);
             action->setIcon(icon);
             action = menu.addAction(tr("Edit Light"),this,SLOT ( slotEditLight() ));
-            icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-lighttype.png");
+            icon = typeIcon(DATA_LIGHT);
             action->setIcon(icon);
             
         } else {
