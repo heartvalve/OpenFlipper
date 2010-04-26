@@ -260,7 +260,7 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
          ACG::Vec3f p = ACG::Vec3f(light_.realPosition_[0],
                                    light_.realPosition_[1],
                                    light_.realPosition_[2]);
-         ACG::Vec3d spot = light_.realSpotDirection_;          
+         ACG::Vec3d spotDir = light_.realSpotDirection_;          
          ACG::Vec4f c = light_.ambientColor() * light_.brightness_;
       
       // Backup variables
@@ -270,7 +270,7 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
          GLUquadricObj* quadric = gluNewQuadric();
  
          // Origin
-         _state.push_modelview_matrix ();
+         _state.push_modelview_matrix();
          // Transform to light origin and direction
          _state.translate(p[0], p[1], p[2]);
              
@@ -291,7 +291,7 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
              
              // Rotate into light direction
              ACG::Vec3d z = ACG::Vec3d(0.0f, 0.0f, 1.0f);
-             ACG::Vec3d spot = light_.spotDirection();
+             ACG::Vec3d spot = spotDir;
              float angle = acos((z | spot)/(z.norm()*spot.norm()));
              angle = angle*360/(2*M_PI);
              ACG::Vec3d rA = z % spot;
@@ -394,7 +394,7 @@ void LightNode::setParameters(GLenum _index, LightSource& _light)
                         d[1]*_light.brightness_,
                         d[2]*_light.brightness_,
                         d[3]*_light.brightness_};
-
+                        
   Vec4f& s = _light.specularColor_;
   GLfloat specular[4] = {s[0]*_light.brightness_,
                          s[1]*_light.brightness_,

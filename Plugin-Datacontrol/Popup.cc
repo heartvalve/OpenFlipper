@@ -583,6 +583,7 @@ void DataControlPlugin::slotEditLight() {
     if(light == 0) return;
     
     LightWidget* widget = new LightWidget( light->lightNode() );
+    widget->setWindowFlags(Qt::WindowStaysOnTopHint);
     widget->show();
   }
 }
