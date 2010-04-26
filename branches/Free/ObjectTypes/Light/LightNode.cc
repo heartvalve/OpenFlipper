@@ -92,6 +92,8 @@ LightSource::LightSource()
   linearAttenuation_    = 0;
   quadraticAttenuation_ = 0;
   
+  brightness_           = 1.0f;
+  
   radius_               = 0.1f;
 }
 
@@ -153,6 +155,12 @@ void LightSource::specularColor(  Vec4f _color)
 Vec4f LightSource::specularColor()
 { return specularColor_; }
 
+void LightSource::setColor(const Vec4f& _ambient, const Vec4f& _diffuse, const Vec4f& _specular) {
+    ambientColor_ = _ambient;
+    diffuseColor_ = _diffuse;
+    specularColor_ = _specular;
+}
+
 void LightSource::fixedPosition( bool _state)
 { fixedPosition_ = _state; }
 
@@ -200,7 +208,13 @@ float LightSource::quadraticAttenuation() {
     return quadraticAttenuation_;
 }
 
+void LightSource::brightness(float _brightness) {
+    brightness_ = _brightness;
+}
 
+float LightSource::brightness() const {
+    return brightness_;
+}
 
 LightNode::LightNode( BaseNode* _parent, 
     const std::string&   _name) 
@@ -247,7 +261,7 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
                                    light_.realPosition_[1],
                                    light_.realPosition_[2]);
          ACG::Vec3d spot = light_.realSpotDirection_;          
-         ACG::Vec4f c = light_.ambientColor();
+         ACG::Vec4f c = light_.ambientColor() * light_.brightness_;
       
       // Backup variables
          ACG::Vec4f base_color_backup;
@@ -368,13 +382,32 @@ void LightNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode*/
 void LightNode::setParameters(GLenum _index, LightSource& _light)
 {
 
-  // set preferences of _light for GL_LIGHT#_index
-  glLightfv(_index, GL_AMBIENT,  (GLfloat *)_light.ambientColor_.data());
-  glLightfv(_index, GL_DIFFUSE,  (GLfloat *)_light.diffuseColor_.data());
-  glLightfv(_index, GL_SPECULAR,  (GLfloat *)_light.specularColor_.data());
+  // Multiply colors by brightness
+  Vec4f& a = _light.ambientColor_;
+  GLfloat ambient[4] = {a[0]*_light.brightness_, 
+                        a[1]*_light.brightness_,
+                        a[2]*_light.brightness_,
+                        a[3]*_light.brightness_};
 
-  Vec3d& d = _light.realSpotDirection_;
-  GLfloat dir[3] = {(float)d[0], (float)d[1], (float)d[2]};
+  Vec4f& d = _light.diffuseColor_;
+  GLfloat diffuse[4] = {d[0]*_light.brightness_,
+                        d[1]*_light.brightness_,
+                        d[2]*_light.brightness_,
+                        d[3]*_light.brightness_};
+
+  Vec4f& s = _light.specularColor_;
+  GLfloat specular[4] = {s[0]*_light.brightness_,
+                         s[1]*_light.brightness_,
+                         s[2]*_light.brightness_,
+                         s[3]*_light.brightness_};
+  
+  // set preferences of _light for GL_LIGHT#_index
+  glLightfv(_index, GL_AMBIENT,  ambient);
+  glLightfv(_index, GL_DIFFUSE,  diffuse);
+  glLightfv(_index, GL_SPECULAR, specular);
+
+  Vec3d& sd = _light.realSpotDirection_;
+  GLfloat dir[3] = {(float)sd[0], (float)sd[1], (float)sd[2]};
   
   glLightfv(_index, GL_POSITION,  (GLfloat *)_light.realPosition_.data());
   glLightfv(_index, GL_SPOT_DIRECTION,  dir);
