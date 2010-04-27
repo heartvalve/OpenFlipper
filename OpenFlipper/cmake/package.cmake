@@ -81,15 +81,15 @@ endforeach ()
 
 
 if (WIN32)
-  if ( EXISTS ${CMAKE_SOURCE_DIR}/OpenFlipper/branding ) 
+  if ( EXISTS ${CMAKE_SOURCE_DIR}/branding ) 
     IF ( NOT WINDOWS_INSTALLER_ICON )
         # option to set the used Icon for OpenFlipper
-        set ( WINDOWS_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\branding\\win\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
+        set ( WINDOWS_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\branding\\win\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
     ENDIF(NOT WINDOWS_INSTALLER_ICON )
 
     IF ( NOT WINDOWS_INSTALLER_IMAGE_ICON )
         # option to set the used Icon for OpenFlipper
-        set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/branding/win/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
+        set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/branding/win/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
     ENDIF(NOT WINDOWS_INSTALLER_IMAGE_ICON )
 
   else()
@@ -153,15 +153,15 @@ if (WIN32)
   endif ()
 elseif (APPLE)
 
-  if ( EXISTS ${CMAKE_SOURCE_DIR}/OpenFlipper/branding )
+  if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
     IF ( NOT APPLE_INSTALLER_ICON )
         # option to set the used Icon for OpenFlipper
-        set ( APPLE_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\branding\\mac\\installer-icon.ico" CACHE FILEPATH "Path to the Executables Icon" )
+        set ( APPLE_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\branding\\mac\\installer-icon.ico" CACHE FILEPATH "Path to the Executables Icon" )
     ENDIF(NOT APPLE_INSTALLER_ICON )
 
     IF ( NOT APPLE_INSTALLER_IMAGE_ICON )
         # option to set the used Icon for OpenFlipper
-        set ( APPLE_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/branding/mac/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
+        set ( APPLE_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/branding/mac/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
     ENDIF(NOT APPLE_INSTALLER_IMAGE_ICON )
 
   else()
