@@ -222,12 +222,13 @@ void Core::slotFinishJob(QString _jobId ) {
   if (  getJob(_jobId, id) ) {
 
 	// Update gui
-	if(!currentJobs[id]->blocking)
+	if(!currentJobs[id]->blocking) {
 		processManager_->removeJob(_jobId);
         
         // Hide widget if there's no job left
         if(processManager_->getNumJobs() == 0) processManager_->hide();
-	else {
+        
+    } else {
 		BlockingWidget* w = 0;
 		w = dynamic_cast<BlockingWidget*>(currentJobs[id]->blockingWidget);
 		if(w != 0) {
