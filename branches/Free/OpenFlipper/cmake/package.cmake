@@ -81,15 +81,31 @@ endforeach ()
 
 
 if (WIN32)
-  IF ( NOT WINDOWS_INSTALLER_ICON )
-    # option to set the used Icon for OpenFlipper
-    set ( WINDOWS_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\Icons\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
-  ENDIF(NOT WINDOWS_INSTALLER_ICON )
+  if ( EXISTS ${CMAKE_SOURCE_DIR}/OpenFlipper/branding ) 
+    IF ( NOT WINDOWS_INSTALLER_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( WINDOWS_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\branding\\Icons\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
+    ENDIF(NOT WINDOWS_INSTALLER_ICON )
 
-  IF ( NOT WINDOWS_INSTALLER_IMAGE_ICON )
-    # option to set the used Icon for OpenFlipper
-    set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/installer/win/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
-  ENDIF(NOT WINDOWS_INSTALLER_IMAGE_ICON )
+    IF ( NOT WINDOWS_INSTALLER_IMAGE_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/branding/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
+    ENDIF(NOT WINDOWS_INSTALLER_IMAGE_ICON )
+
+  else()
+
+    IF ( NOT WINDOWS_INSTALLER_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( WINDOWS_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\Icons\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
+    ENDIF(NOT WINDOWS_INSTALLER_ICON )
+
+    IF ( NOT WINDOWS_INSTALLER_IMAGE_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/installer/win/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
+    ENDIF(NOT WINDOWS_INSTALLER_IMAGE_ICON )
+
+  endif()
+
   string(REGEX REPLACE "/" "\\\\\\\\" CLEAN_WINDOWS_INSTALLER_IMAGE_ICON "${WINDOWS_INSTALLER_IMAGE_ICON}"  )
 
   # window NSIS installer
@@ -136,9 +152,45 @@ if (WIN32)
     set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q:a'")
   endif ()
 elseif (APPLE)
+
+  if ( EXISTS ${CMAKE_SOURCE_DIR}/OpenFlipper/branding )
+    IF ( NOT APPLE_INSTALLER_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( APPLE_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\branding\\Icons\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
+    ENDIF(NOT APPLE_INSTALLER_ICON )
+
+    IF ( NOT APPLE_INSTALLER_IMAGE_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( APPLE_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/branding/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
+    ENDIF(NOT APPLE_INSTALLER_IMAGE_ICON )
+
+  else()
+
+    IF ( NOT APPLE_INSTALLER_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( APPLE_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\Icons\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
+    ENDIF(NOT APPLE_INSTALLER_ICON )
+
+    IF ( NOT APPLE_INSTALLER_IMAGE_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( APPLE_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/installer/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
+    ENDIF(NOT APPLE_INSTALLER_IMAGE_ICON )
+
+  endif()
+
+  set (CPACK_NSIS_MUI_ICON ${APPLE_INSTALLER_ICON} )
+
+  # we need a real uninstaller icon here and we have to define both to make the installer icon work
+  set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\OpenFlipper\\\\Icons\\\\OpenFlipper_Icon_128x128x32.ico")
+
+  set (CPACK_PACKAGE_ICON "${APPLE_INSTALLER_IMAGE_ICON}")
+
+
   # apple Drag'n'Drop installer package
   set (CPACK_GENERATOR "DragNDrop;TGZ")
   set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/Icons/OpenFlipper_Icon.icns")
+  
+
 endif ()
 
 # has to be last
