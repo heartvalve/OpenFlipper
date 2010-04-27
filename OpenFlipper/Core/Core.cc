@@ -982,7 +982,11 @@ Core::writeOnExit() {
 
 void Core::slotExit() {
   writeOnExit();
-
+  
+  // Call clearAll() before closing application
+  // in order to call all object's destructors...
+  clearAll();
+  
   if (logFile_)
     logFile_->close();
 
