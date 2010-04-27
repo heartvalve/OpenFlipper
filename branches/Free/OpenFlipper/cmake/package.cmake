@@ -181,14 +181,14 @@ elseif (APPLE)
   set (CPACK_NSIS_MUI_ICON ${APPLE_INSTALLER_ICON} )
 
   # we need a real uninstaller icon here and we have to define both to make the installer icon work
-  set (CPACK_NSIS_MUI_UNIICON "${CMAKE_SOURCE_DIR}\\\\OpenFlipper\\\\Icons\\\\OpenFlipper_Icon_128x128x32.ico")
+  set (CPACK_NSIS_MUI_UNIICON "${APPLE_INSTALLER_ICON}")
 
   set (CPACK_PACKAGE_ICON "${APPLE_INSTALLER_IMAGE_ICON}")
 
 
   # apple Drag'n'Drop installer package
-  set (CPACK_GENERATOR "DragNDrop;TGZ")
-  set (CPACK_PACKAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/Icons/OpenFlipper_Icon.icns")
+  set (CPACK_GENERATOR "DragNDrop")
+#  set (CPACK_GENERATOR "DragNDrop;TGZ")
   
 
 endif ()
