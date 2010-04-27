@@ -103,6 +103,8 @@ class ProcessManagerWidget : public QWidget, public Ui::ProcessManagerWidget
                     int _minSteps = 0, int _maxSteps = 100);
                     
     void removeJob(QString _jobName);
+    
+    int getNumJobs() { return processMap_.size(); }
 
   private slots:
       
