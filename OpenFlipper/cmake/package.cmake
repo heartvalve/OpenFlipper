@@ -101,7 +101,7 @@ if (WIN32)
 
     IF ( NOT WINDOWS_INSTALLER_IMAGE_ICON )
         # option to set the used Icon for OpenFlipper
-        set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/installer/win/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
+        set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/installer/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
     ENDIF(NOT WINDOWS_INSTALLER_IMAGE_ICON )
 
   endif()
@@ -156,7 +156,7 @@ elseif (APPLE)
   if ( EXISTS ${CMAKE_SOURCE_DIR}/OpenFlipper/branding )
     IF ( NOT APPLE_INSTALLER_ICON )
         # option to set the used Icon for OpenFlipper
-        set ( APPLE_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\branding\\Icons\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
+        set ( APPLE_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\OpenFlipper\\branding\\installer-icon.ico" CACHE FILEPATH "Path to the Executables Icon" )
     ENDIF(NOT APPLE_INSTALLER_ICON )
 
     IF ( NOT APPLE_INSTALLER_IMAGE_ICON )
