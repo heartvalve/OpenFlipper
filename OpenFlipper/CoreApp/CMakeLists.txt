@@ -158,6 +158,15 @@ acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Fonts" "${CMAK
 acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Docs" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Docs")
 acg_copy_after_build (OpenFlipper "${CMAKE_CURRENT_SOURCE_DIR}/../Help" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
 
+if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
+  if ( WIN32 ) 
+    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/win" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+  elseif( APPLE )
+    message (status "Branding" ${CMAKE_SOURCE_DIR}/mac/splash.png )
+    acg_copy_after_build (OpenFlipper "${CMAKE_SOURCE_DIR}/branding/mac" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Icons")
+  endif()
+endif()
+
 
 if (NOT APPLE)
   # install all needed files
@@ -172,6 +181,8 @@ if (NOT APPLE)
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Fonts" "${ACG_PROJECT_DATADIR}/Fonts")
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Docs" "${ACG_PROJECT_DATADIR}/Docs")
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Help" "${ACG_PROJECT_DATADIR}/Help")
+
+#todo install splash file for windows and Linux branding
 endif ()
 
 
