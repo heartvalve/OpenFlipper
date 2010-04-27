@@ -109,8 +109,25 @@ if (APPLE)
       MACOSX_BUNDLE_INFO_STRING "ACG OpenFlipper"
       MACOSX_BUNDLE_ICON_FILE "OpenFlipper.icns"
    )
+
+ if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
+    IF ( NOT APPLE_BUNDLE_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( APPLE_BUNDLE_ICON "${CMAKE_SOURCE_DIR}\\branding\\mac\\OpenFlipper_Icon.icns" CACHE FILEPATH "Path to the Bundle Icon" )
+    ENDIF(NOT APPLE_BUNDLE_ICON )
+
+  else()
+
+    IF ( NOT APPLE_BUNDLE_ICON )
+        # option to set the used Icon for OpenFlipper
+        set ( APPLE_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/../Icons/OpenFlipper_Icon.icns" CACHE FILEPATH "Path to the Bundle Icon" )
+    ENDIF(NOT APPLE_BUNDLE_ICON )
+
+  endif()
+  
+ 
    add_custom_command(TARGET OpenFlipper POST_BUILD                                                              
-     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/../Icons/OpenFlipper_Icon.icns" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/OpenFlipper.icns"            
+     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${APPLE_BUNDLE_ICON}" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/OpenFlipper.icns"            
    )    
 
    # Required for Snow leopard, and the latest qt. Then the resources have to be copied
