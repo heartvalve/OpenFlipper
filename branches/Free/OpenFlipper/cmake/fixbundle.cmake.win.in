@@ -34,7 +34,7 @@ file (GLOB _plugins "@CMAKE_BINARY_DIR@/Build/Plugins/*.dll")
 #${_plugins}
 
 # fix all dependencies
-fixup_bundle (@CMAKE_BINARY_DIR@/Build/OpenFlipper.exe "" "${_GlutDir};@Qwt5_Qt4_LIBRARY_DIR@;@GLEW_LIBRARY_DIR@;@QT_BINARY_DIR@")
+fixup_bundle ("@CMAKE_BINARY_DIR@/Build/OpenFlipper.exe" "" "${_GlutDir};@Qwt5_Qt4_LIBRARY_DIR@;@GLEW_LIBRARY_DIR@;@QT_BINARY_DIR@")
 
 
 
