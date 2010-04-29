@@ -1117,21 +1117,25 @@ pick_any(GLState& _state)
     anyPickingBaseIndex_ = _state.pick_current_index ();
   }
   
-  if (_state.color_picking ()) {
+  if (_state.color_picking() ) {
     
     stripProcessor_.updatePickingAny(_state);
     
     // For this version we load the colors directly not from vbo
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     
-    glVertexPointer( stripProcessor_.perFaceVertexBuffer() );
-    glColorPointer(  stripProcessor_.pickFaceColorBuffer() );
-    
-    glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
-    
+    // If we do not have any faces, we generate an empty list here.  
+    if ( mesh_.n_faces() != 0) {
+      
+      glVertexPointer( stripProcessor_.perFaceVertexBuffer() );
+      glColorPointer(  stripProcessor_.pickFaceColorBuffer() );
+      
+      glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
+      
+    }
     
     if (anyPickingList_)
     {
@@ -1141,10 +1145,14 @@ pick_any(GLState& _state)
     
     glDepthFunc(GL_LEQUAL);
     
-    glVertexPointer (stripProcessor_.perEdgeVertexBuffer());
-    glColorPointer(stripProcessor_.pickEdgeColorBuffer());
+    // If we do not have any edges, we generate an empty list here.  
+    if ( mesh_.n_edges() != 0) {
+      
+      glVertexPointer (stripProcessor_.perEdgeVertexBuffer());
+      glColorPointer(stripProcessor_.pickEdgeColorBuffer());
     
-    glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+      glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+    }
     
     if (anyPickingList_)
     {
