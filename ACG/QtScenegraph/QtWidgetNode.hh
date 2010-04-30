@@ -101,6 +101,9 @@ public:
 
   /// draw points and normals
   void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  
+  /// get mouse events
+  virtual void mouseEvent(GLState& _state, QMouseEvent* _event);
 
 private:
   

@@ -67,6 +67,7 @@ void
 QtWidgetNode::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
+  std::cerr << "QtWidgetNode Got boundingbox call " << std::endl;
 //   ConstPointIter p_it=points_.begin(), p_end=points_.end();
 //   for (; p_it!=p_end; ++p_it) {
 //     _bbMin.minimize(*p_it); 
@@ -91,9 +92,33 @@ availableDrawModes() const
 
 void
 QtWidgetNode::
-draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
+draw(GLState&  _state  , DrawModes::DrawMode _drawMode)
 {
- 
+  QPixmap pixmap = QPixmap::grabWidget(widget_);
+  
+  std::cerr << "QtWidgetNode Got draw call " << std::endl;
+}
+
+void
+QtWidgetNode::mouseEvent(GLState& _state, QMouseEvent* _event)
+{
+
+  Vec2i         newPoint2D(_event->pos().x(), _event->pos().y());
+  
+//   if ( _event == QEvent::MouseButtonPress ) {
+//     
+//   } else if ( _event == QEvent::MouseButtonDblClick ) {
+//     
+//   } else if ( _event == QEvent::MouseButtonRelease ) {
+//     
+//   } else if ( _event == QEvent::MouseMove ) {
+//     widget_->mouse
+//   }
+  
+  std::cerr << "QtWidgetNode Got Mouse Event " << newPoint2D << std::endl;
+  
+//   Vec3d         newPoint3D;
+  
 }
 
 
