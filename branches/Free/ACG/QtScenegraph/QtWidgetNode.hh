@@ -58,6 +58,8 @@
 
 #include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <QGraphicsScene>
+#include <QGraphicsProxyWidget>
 #include <QWidget>
 #include <vector>
 
@@ -80,12 +82,20 @@ class ACGDLLEXPORT QtWidgetNode : public BaseNode
 public:
    
   /// default constructor
-  QtWidgetNode( QWidget*     _widget,
+  QtWidgetNode( QWidget*        _widget,
+                QGraphicsScene* _scene,
                 BaseNode*    _parent = 0,
 	        std::string  _name="<QtWidgetNode>" )
     : BaseNode(_parent, _name),
+      position_(ACG::Vec3d(0.0,0.0,0.0)),
       widget_(_widget)
-  {}
+  {
+    // Get the 3d proxxy of the widget
+    QGraphicsProxyWidget *proxy = _scene->addWidget(_widget);
+    
+    // Store the Graphicsitem to apply transforms to it
+    item_ = proxy->graphicsItem ();
+  }
  
   /// destructor
   ~QtWidgetNode() {}
@@ -102,12 +112,17 @@ public:
   /// draw points and normals
   void draw(GLState& _state, DrawModes::DrawMode _drawMode);
   
-  /// get mouse events
-  virtual void mouseEvent(GLState& _state, QMouseEvent* _event);
-
+  void position(ACG::Vec3d _position) { position_ = _position; };
+  
+  ACG::Vec3d position() { return position_; };
+  
 private:
   
+  // The 3d point which should be followed by the widget
+  ACG::Vec3d position_;
+  
   QWidget* widget_;
+  QGraphicsItem* item_;
 };
 
 
