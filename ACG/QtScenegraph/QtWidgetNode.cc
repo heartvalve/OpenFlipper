@@ -63,6 +63,12 @@ namespace SceneGraph {
 //== IMPLEMENTATION ========================================================== 
 
 
+// Example test code
+// QWidget* testwidget = new QWidget();
+// QPushButton* button = new QPushButton(testwidget);
+// button->setText("Testbutton");
+// ACG::SceneGraph::QtWidgetNode* node = new ACG::SceneGraph::QtWidgetNode(testwidget,glScene_,PluginFunctions::getSceneGraphRootNode());
+
 void
 QtWidgetNode::
 boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
