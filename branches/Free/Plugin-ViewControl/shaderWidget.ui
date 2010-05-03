@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ShaderSettings</class>
- <widget class="QWidget" name="ShaderSettings" >
-  <property name="geometry" >
+ <widget class="QWidget" name="ShaderSettings">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,83 +10,16 @@
     <height>636</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2" >
-   <item row="0" column="0" >
-    <widget class="QGroupBox" name="groupBox_4" >
-     <property name="title" >
-      <string>Available Shaders</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3" >
-      <item>
-       <widget class="QListWidget" name="availableShaders" />
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QGroupBox" name="groupBox_3" >
-     <property name="title" >
-      <string>DrawModes using shader</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2" >
-      <item>
-       <widget class="QListWidget" name="drawModes" />
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="2" >
-    <widget class="QGroupBox" name="uniformBox" >
-     <property name="title" >
-      <string>Uniforms</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout" >
-      <item>
-       <widget class="QTableWidget" name="uniforms" />
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="2" >
-    <widget class="QGroupBox" name="groupBox2" >
-     <property name="minimumSize" >
-      <size>
-       <width>250</width>
-       <height>250</height>
-      </size>
-     </property>
-     <property name="maximumSize" >
-      <size>
-       <width>250</width>
-       <height>250</height>
-      </size>
-     </property>
-     <property name="title" >
-      <string>Example</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4" >
-      <item>
-       <widget class="QLabel" name="example" >
-        <property name="text" >
-         <string/>
-        </property>
-        <property name="scaledContents" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="2" >
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="2" column="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>40</height>
@@ -93,14 +27,14 @@
      </property>
     </spacer>
    </item>
-   <item row="3" column="0" colspan="3" >
-    <layout class="QHBoxLayout" name="horizontalLayout_6" >
+   <item row="3" column="0" colspan="3">
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
      <item>
-      <spacer name="horizontalSpacer_3" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer_3">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>418</width>
          <height>17</height>
@@ -109,58 +43,125 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="setGlobalButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="setGlobalButton">
+       <property name="text">
         <string>Set shader Globally</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="setShaderButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="setShaderButton">
+       <property name="text">
         <string>Set shader</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="closeButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
         <string>Close</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item rowspan="2" row="1" column="0" colspan="2" >
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Available Shaders</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QListWidget" name="availableShaders"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>DrawModes using shader</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QListWidget" name="drawModes"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QGroupBox" name="uniformBox">
+     <property name="title">
+      <string>Uniforms</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QTableWidget" name="uniforms"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QGroupBox" name="groupBox2">
+     <property name="minimumSize">
+      <size>
+       <width>250</width>
+       <height>250</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>250</width>
+       <height>250</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Example</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QLabel" name="example">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="2" colspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
       <string>Info</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout" >
-      <item row="0" column="2" >
-       <layout class="QHBoxLayout" name="horizontalLayout_2" >
-        <property name="spacing" >
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="2">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
          <number>4</number>
         </property>
         <item>
-         <widget class="QLineEdit" name="name" />
+         <widget class="QLineEdit" name="shaderName"/>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" >
-          <property name="spacing" >
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
            <number>6</number>
           </property>
           <item>
-           <widget class="QLabel" name="label_3" >
-            <property name="text" >
+           <widget class="QLabel" name="label_3">
+            <property name="text">
              <string>Version</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="version" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+           <widget class="QLineEdit" name="version">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -171,82 +172,77 @@
         </item>
        </layout>
       </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="label_2" >
-        <property name="text" >
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
          <string>Name</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="label" >
-        <property name="text" >
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
          <string>Description</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
-       <widget class="QLineEdit" name="description" />
+      <item row="1" column="2">
+       <widget class="QLineEdit" name="description"/>
       </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="label_4" >
-        <property name="text" >
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
          <string>Details</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="2" >
-       <widget class="QTextEdit" name="details" />
+      <item row="2" column="2">
+       <widget class="QTextEdit" name="details"/>
       </item>
-      <item row="5" column="0" >
-       <widget class="QLabel" name="label_8" >
-        <property name="text" >
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
          <string>FragmentShader</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="2" >
-       <widget class="QLineEdit" name="fragmentShader" />
+      <item row="5" column="2">
+       <widget class="QLineEdit" name="fragmentShader"/>
       </item>
-      <item row="3" column="0" >
-       <widget class="QLabel" name="label_7" >
-        <property name="text" >
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
          <string>VertexShader</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="2" >
-       <widget class="QLineEdit" name="vertexShader" />
+      <item row="3" column="2">
+       <widget class="QLineEdit" name="vertexShader"/>
       </item>
-      <item row="6" column="0" >
-       <widget class="QLabel" name="label_5" >
-        <property name="text" >
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
          <string>Pick Vertex Shader</string>
         </property>
        </widget>
       </item>
-      <item row="7" column="0" >
-       <widget class="QLabel" name="label_6" >
-        <property name="text" >
+      <item row="7" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
          <string>Pick FragmentShader</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="2" >
-       <widget class="QLineEdit" name="pickVertexShader" />
+      <item row="6" column="2">
+       <widget class="QLineEdit" name="pickVertexShader"/>
       </item>
-      <item row="7" column="2" >
-       <widget class="QLineEdit" name="pickFragmentShader" />
+      <item row="7" column="2">
+       <widget class="QLineEdit" name="pickFragmentShader"/>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
-  <zorder>groupBox_4</zorder>
-  <zorder>groupBox_3</zorder>
-  <zorder>uniformBox</zorder>
-  <zorder>groupBox2</zorder>
-  <zorder>groupBox</zorder>
  </widget>
  <resources/>
  <connections/>

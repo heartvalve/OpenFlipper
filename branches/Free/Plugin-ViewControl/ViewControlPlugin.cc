@@ -621,7 +621,7 @@ void ViewControlPlugin::slotShaderClicked( QListWidgetItem * _item ){
       return;
    }
 
-   shaderWidget_->name->setText( shaderList_[index].name );
+   shaderWidget_->shaderName->setText( shaderList_[index].name );
    shaderWidget_->description->setText( shaderList_[index].description );
    shaderWidget_->details->setText( shaderList_[index].details );
    shaderWidget_->version->setText( shaderList_[index].version );
