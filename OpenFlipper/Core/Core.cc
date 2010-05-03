@@ -1289,6 +1289,8 @@ void Core::setDescriptions(){
   emit setSlotDescription("saveSettings()", tr("Show the dialog to save the current setting. (only works if GUI is available)"),QStringList(), QStringList());
   //load slots
   emit setSlotDescription("loadObject()", tr("Show the dialog to load an object. (only works if GUI is available)"),QStringList(), QStringList());
+  emit setSlotDescription("loadObject(QString)", tr("Load an object specified in file filename. This automatically determines which file plugin to use."),
+                          QStringList(tr("filename")), QStringList(tr("Filename")));
   emit setSlotDescription("getObjectId(QString)", tr("Return identifier of object with specified name. Returns -1 if object was not found."),QStringList(), QStringList());
   emit setSlotDescription("loadSettings()", tr("Show the dialog to load settings. (only works if GUI is available)"),QStringList(), QStringList());
   emit setSlotDescription("loadSettings(QString)", tr("load settings from file."),QStringList(), QStringList());
