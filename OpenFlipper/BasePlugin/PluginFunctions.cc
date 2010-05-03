@@ -382,27 +382,27 @@ void setFixedView(int _mode, int _viewer ) {
   switch ( _mode ){
     case VIEW_TOP : //TOP
       PluginFunctions::viewingDirection( ACG::Vec3d(0.0, -1.0, 0.0), ACG::Vec3d(0.0, 0.0, -1.0), _viewer );
-      PluginFunctions::allowRotation(false, _viewer);
+      PluginFunctions::allowRotation(!PluginFunctions::viewerProperties().rotationLocked(), _viewer);
       break;
     case VIEW_BOTTOM : //BOTTOM
       PluginFunctions::viewingDirection( ACG::Vec3d(0.0, 1.0, 0.0), ACG::Vec3d(0.0, 0.0, -1.0), _viewer );
-      PluginFunctions::allowRotation(false, _viewer);
+      PluginFunctions::allowRotation(!PluginFunctions::viewerProperties().rotationLocked(), _viewer);
       break;
     case VIEW_LEFT : //LEFT
       PluginFunctions::viewingDirection( ACG::Vec3d(1.0, 0.0, 0.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
-      PluginFunctions::allowRotation(false, _viewer);
+      PluginFunctions::allowRotation(!PluginFunctions::viewerProperties().rotationLocked(), _viewer);
       break;
     case VIEW_RIGHT : //RIGHT
       PluginFunctions::viewingDirection( ACG::Vec3d(-1.0, 0.0, 0.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
-      PluginFunctions::allowRotation(false, _viewer);
+      PluginFunctions::allowRotation(!PluginFunctions::viewerProperties().rotationLocked(), _viewer);
       break;
     case VIEW_FRONT : //FRONT
       PluginFunctions::viewingDirection( ACG::Vec3d(0.0, 0.0, -1.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
-      PluginFunctions::allowRotation(false, _viewer);
+      PluginFunctions::allowRotation(!PluginFunctions::viewerProperties().rotationLocked(), _viewer);
       break;
     case VIEW_BACK : //BACK
       PluginFunctions::viewingDirection( ACG::Vec3d(0.0, 0.0, 1.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
-      PluginFunctions::allowRotation(false, _viewer);
+      PluginFunctions::allowRotation(!PluginFunctions::viewerProperties().rotationLocked(), _viewer);
       break;
     default : //Free View
       PluginFunctions::allowRotation(true, _viewer);
@@ -576,8 +576,15 @@ void allowRotation(bool _mode, int _viewer ) {
       examiner_widgets_[i]->allowRotation(_mode);
   else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
     examiner_widgets_[_viewer]->allowRotation(_mode);
-  else
+  else {
     std::cerr << "Requested illegal viewer for allowRotation!!" << std::endl;
+    return;
+  }
+  
+  if ( _viewer == ACTIVE_VIEWER )
+    viewerProperties(activeExaminer()).rotationLocked( !_mode );
+  else
+    viewerProperties( _viewer ).rotationLocked( !_mode );
 }
 
 bool allowRotation( int _viewer ) {

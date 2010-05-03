@@ -991,6 +991,9 @@ public:
 
     /// Change the Viewing direction from context-menu
     void slotSetViewingDirection(QAction* _action);
+    
+    /// Lock rotation in current examiner widget
+    void slotLockRotation(bool _lock);
 
 
     /// Set the animation Mode for all viewers

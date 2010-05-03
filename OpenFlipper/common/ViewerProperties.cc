@@ -72,7 +72,8 @@ namespace Viewer {
     multisampling_(true),
     animation_(false),
     glState_(0),
-    objectMarker_(0)
+    objectMarker_(0),
+    rotationLocked_(false)
   {
 
   }
@@ -116,6 +117,14 @@ namespace Viewer {
 
   void ViewerProperties::currentViewingDirection(int _dir){
     currentViewingDirection_ = _dir;
+  }
+  
+  bool ViewerProperties::rotationLocked(){
+    return rotationLocked_;
+  }
+
+  void ViewerProperties::rotationLocked(bool _locked){
+    rotationLocked_ = _locked;
   }
 
 }

@@ -626,6 +626,11 @@ void CoreWidget::slotSetViewingDirection(QAction* _action) {
   PluginFunctions::setFixedView( _action->data().toInt() );
 }
 
+void CoreWidget::slotLockRotation(bool _lock) {
+
+  PluginFunctions::allowRotation( !_lock, PluginFunctions::activeExaminer() );
+}
+
 void CoreWidget::moveBack() {
     examiner_widgets_[PluginFunctions::activeExaminer()]->moveBack();
 }
