@@ -871,7 +871,12 @@ pick_vertices(GLState& _state, bool _front)
     return;
   }
   
-  if (_front) {
+  if ( mesh_.n_vertices() == 0 ) {
+    std::cerr << "pick_vertices: No vertices in Mesh!" << std::endl;
+    return;
+  }
+  
+  if (_front && ( mesh_.n_faces() != 0 ) ) {
     enable_arrays(VERTEX_ARRAY);
     
     Vec4f  clear_color = _state.clear_color();
@@ -950,7 +955,12 @@ pick_edges(GLState& _state, bool _front)
     return;
   }
   
-  if (_front) {
+  if ( mesh_.n_vertices() == 0 ) {
+    std::cerr << "pick_edges: No vertices in Mesh!" << std::endl;
+    return;
+  }
+  
+  if ( _front && ( mesh_.n_faces() != 0 ) ) {
     enable_arrays(VERTEX_ARRAY);
     
     Vec4f  clear_color = _state.clear_color();
@@ -987,25 +997,30 @@ pick_edges(GLState& _state, bool _front)
     edgePickingBaseIndex_ = _state.pick_current_index ();
   }
   
-  if (_state.color_picking ()) {
-    stripProcessor_.updatePickingEdges(_state);
+  if (_state.color_picking () ) {
     
-    // For this version we load the colors directly not from vbo
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    
-    glVertexPointer (stripProcessor_.perEdgeVertexBuffer());
-    glColorPointer(stripProcessor_.pickEdgeColorBuffer());
-    
-    glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
-    
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
+    if ( mesh_.n_edges() != 0 ) {
+      stripProcessor_.updatePickingEdges(_state);
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      
+      glEnableClientState(GL_VERTEX_ARRAY);
+      glEnableClientState(GL_COLOR_ARRAY);
+      
+      glVertexPointer (stripProcessor_.perEdgeVertexBuffer());
+      glColorPointer(stripProcessor_.pickEdgeColorBuffer());
+      
+      glDrawArrays(GL_LINES, 0, mesh_.n_edges() * 2);
+      
+      glDisableClientState(GL_COLOR_ARRAY);
+      glDisableClientState(GL_VERTEX_ARRAY);
 
-    // disable all other arrays
-    enable_arrays(0);
+      // disable all other arrays
+      enable_arrays(0); 
+    } else {
+     std::cerr << "pick_edges: No edges in Mesh!" << std::endl; 
+    }
     
   } else {
     std::cerr << "No fallback pick_edges!" << std::endl;
@@ -1029,6 +1044,10 @@ pick_faces(GLState& _state)
   f_end(mesh_.faces_end());
   typename Mesh::ConstFaceVertexIter  fv_it;
   
+  if ( mesh_.n_vertices() == 0 ) {
+    std::cerr << "pick_faces: No vertices in Mesh!" << std::endl;
+    return;
+  }
   
   if ( mesh_.n_faces() > 0 ) {
     if (!_state.pick_set_maximum (mesh_.n_faces())) {
@@ -1055,24 +1074,28 @@ pick_faces(GLState& _state)
   
   if (_state.color_picking ()) {
 
-    stripProcessor_.updatePickingFaces(_state);
-    
-    // For this version we load the colors directly not from vbo
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-    
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    
-    glVertexPointer( stripProcessor_.perFaceVertexBuffer() );
-    glColorPointer(  stripProcessor_.pickFaceColorBuffer() );
-    
-    glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
-    
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    
-    // disable all other arrays
-    enable_arrays(0);
+    if ( mesh_.n_faces() != 0 ) {
+      stripProcessor_.updatePickingFaces(_state);
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      
+      glEnableClientState(GL_VERTEX_ARRAY);
+      glEnableClientState(GL_COLOR_ARRAY);
+      
+      glVertexPointer( stripProcessor_.perFaceVertexBuffer() );
+      glColorPointer(  stripProcessor_.pickFaceColorBuffer() );
+      
+      glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
+      
+      glDisableClientState(GL_COLOR_ARRAY);
+      glDisableClientState(GL_VERTEX_ARRAY);
+      
+      // disable all other arrays
+      enable_arrays(0);
+    } else {
+      std::cerr << "pick_faces: No faces in Mesh! " << std::endl;
+    }
     
   } else
     std::cerr << "No fallback pick_faces!" << std::endl;
@@ -1091,9 +1114,14 @@ pick_any(GLState& _state)
   
   unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
   
+  if ( mesh_.n_vertices() == 0 ) {
+    std::cerr << "pick_any: No vertices in Mesh!" << std::endl;
+    return;
+  }
+  
   // nothing to pick ?
   if (numElements <= 0) {
-    std::cerr << "Number of elements : 0 " << std::endl;
+    std::cerr << "pick_any: Number of elements : 0 " << std::endl;
     return;
   }
   
