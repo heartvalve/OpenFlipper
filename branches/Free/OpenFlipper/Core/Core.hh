@@ -492,7 +492,7 @@ public slots:
     /** @name Basic functions
     * @{ */
    //===========================================================================
-private slots:
+public slots:
   /** \brief Load a new Object ( this may also be an ini or ofs file )
    *
    * This function tries to get the type of data to be loaded from the filename 
@@ -502,7 +502,8 @@ private slots:
    *  @return id of object otherwise -1
    */
   int loadObject ( QString _filename );
-
+  
+private slots:
   /** Do a reset of the scenegraph (bounding box update,...)
    *
    * @param _resetTrackBall Should the rotation center of the trackball be reset to the scene center?
