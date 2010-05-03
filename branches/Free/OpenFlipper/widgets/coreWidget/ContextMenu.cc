@@ -255,9 +255,22 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_BACK );
   viewingDirectionMenu->addAction( viewAction );
   dirGroup->addAction(viewAction);
+  
+  viewingDirectionMenu->addSeparator();
 
   connect( dirGroup, SIGNAL(triggered(QAction*)), this, SLOT(slotSetViewingDirection(QAction*) ) );
-
+  
+  //===========================================================================
+  // Check box to determine whether rotation should be locked or not
+  
+  QAction* lockAction = viewingDirectionMenu->addAction("Lock rotation");
+  lockAction->setCheckable( true );
+  lockAction->setToolTip(tr("Lock rotation in current examiner"));
+  lockAction->setChecked( PluginFunctions::viewerProperties().rotationLocked() );
+  viewingDirectionMenu->addAction( lockAction );
+  
+  connect( lockAction, SIGNAL(triggered(bool)), this, SLOT(slotLockRotation(bool) ) );
+  
   //====================================================================================================
   // Other Toplevel Action
   //====================================================================================================

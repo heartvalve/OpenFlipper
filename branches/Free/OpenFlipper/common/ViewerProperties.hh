@@ -373,6 +373,16 @@ namespace Viewer {
 
     private:
       int currentViewingDirection_;
+      
+    //===========================================================================
+
+    public:
+      bool rotationLocked();
+
+      void rotationLocked(bool _lock);
+
+    private:
+      bool rotationLocked_;
 
     //===========================================================================
 
