@@ -153,7 +153,7 @@ bool FileSTLPlugin::saveObject(int _id, QString _filename)
         
         if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0){
             
-            if (saveBinary_->isChecked())
+            if (!OpenFlipper::Options::nogui() && saveBinary_->isChecked())
                 opt += OpenMesh::IO::Options::Binary;
             
         }

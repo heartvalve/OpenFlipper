@@ -166,6 +166,7 @@ int FileOMPlugin::loadObject(QString _filename) {
             if(triMesh == false) break;
         }
         
+        // Note: If in non-gui mode, we will never enter this case branch
         QMessageBox msgBox;
         QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
         QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
