@@ -162,6 +162,9 @@ void FileOFFPlugin::updateUserOptions() {
     // If the options dialog has not been initialized, keep
     // the initial values
     
+    if( OpenFlipper::Options::nogui() )
+        return;
+    
     // Load options
     if(loadVertexColor_) {
         if(loadVertexColor_->isChecked()) userReadOptions_ |= OFFImporter::VERTEXCOLOR;
@@ -451,12 +454,7 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
 
   if ( forcePolyMesh_ )
     triMeshControl = TYPEPOLY;
-
-  QMessageBox msgBox;
-  QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
-  QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
-  QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
-
+ 
   DataType type = DATA_TRIANGLE_MESH;
 
   switch (triMeshControl) {
@@ -466,19 +464,31 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
       break;
       
     case TYPEASK:
-      msgBox.setWindowTitle( tr("Mesh types in file") );
-      msgBox.setText( tr("You are about to open a file containing one or more mesh types. \n\n Which mesh type should be used?") );
-      msgBox.setDefaultButton( detectButton );
-      msgBox.exec();
+        if( !OpenFlipper::Options::nogui() ) {
+            // Create message box
+            QMessageBox msgBox;
+            QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
+            QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
+            QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
+            
+            msgBox.setWindowTitle( tr("Mesh types in file") );
+            msgBox.setText( tr("You are about to open a file containing one or more mesh types. \n\n Which mesh type should be used?") );
+            msgBox.setDefaultButton( detectButton );
+            msgBox.exec();
       
-      if (msgBox.clickedButton() == triButton)
-        type = DATA_TRIANGLE_MESH;
-      else if (msgBox.clickedButton() == polyButton)
-        type = DATA_POLY_MESH;
-      else
-        type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
+            if (msgBox.clickedButton() == triButton)
+                type = DATA_TRIANGLE_MESH;
+            else if (msgBox.clickedButton() == polyButton)
+                type = DATA_POLY_MESH;
+            else
+                type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
+            
+        } else {
+            // No gui mode
+            type = _importer.isTriangleMesh() ? DATA_TRIANGLE_MESH : DATA_POLY_MESH;
+        }
       
-      break;
+        break;
       
     case TYPEPOLY:
       // Always load as PolyMesh
@@ -1259,8 +1269,6 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         loadNormals_->setChecked( OpenFlipperSettings().value("FileOff/Load/Normals",true).toBool()  );
         loadTexCoords_->setChecked( OpenFlipperSettings().value("FileOff/Load/TexCoords",true).toBool()  );
     }
-    
-    
     
     return loadOptions_;
 }
