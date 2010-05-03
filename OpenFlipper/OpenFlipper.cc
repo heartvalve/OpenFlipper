@@ -170,10 +170,10 @@ void showHelp() {
 #ifndef NO_EXECINFO
 void backtrace()
 {
-  void *addresses[10];
+  void *addresses[20];
   char **strings;
 
-  int size = backtrace(addresses, 10);
+  int size = backtrace(addresses, 20);
   strings = backtrace_symbols(addresses, size);
   std::cerr << "Stack frames: " << size << std::endl;
   for(int i = 0; i < size; i++)
