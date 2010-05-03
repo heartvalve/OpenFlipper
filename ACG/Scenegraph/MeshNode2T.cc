@@ -450,7 +450,7 @@ template<class Mesh>
 void
 MeshNodeT<Mesh>::
 draw_vertices() {
-  if ( !vertexBufferInitialized_ || ( mesh_.n_verices() == 0 ))
+  if ( !vertexBufferInitialized_ || ( mesh_.n_vertices() == 0 ))
     return;
 
   glDrawArrays(GL_POINTS, 0, mesh_.n_vertices());
