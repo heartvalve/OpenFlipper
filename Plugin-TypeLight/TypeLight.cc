@@ -181,10 +181,12 @@ int TypeLightPlugin::addDefaultLight(QString _name) {
     // call the local function to update names
     object->setName( _name );
 
+    object->defaultLight(true);
+    
     object->update();
 
     object->hide();
-
+    
     emit emptyObjectAdded (object->id() );
 
     return object->id();
@@ -201,6 +203,8 @@ int TypeLightPlugin::addEmpty() {
   QFileInfo f(name);
   object->setName( f.fileName() );
 
+  object->defaultLight(false);
+  
   object->update();
 
   object->hide();
@@ -223,9 +227,7 @@ void TypeLightPlugin::addedEmptyObject(int _id) {
     if(!light) return;
     
     // Skip default light sources
-    if(light->name() == DEF0) return;
-    if(light->name() == DEF1) return;
-    if(light->name() == DEF2) return;
+    if(light->defaultLight()) return;
     
     removeDefaultLights();
     lightSources_.push_back(_id);

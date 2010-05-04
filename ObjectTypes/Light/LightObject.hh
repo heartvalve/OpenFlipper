@@ -79,8 +79,18 @@ class DLLEXPORT LightObject : public BaseObjectData {
     */
     virtual void update(UpdateType _type = UPDATE_ALL);
     
+    /// Is light default light source?
+    bool defaultLight() const { return defaultLightSource_; }
+    
+    /// Set light object to be default light
+    void defaultLight( const bool _default ) { defaultLightSource_ = _default; }
+    
   private:
     LightSource lightSource_;
+    
+    /// True if light is default light source initially
+    /// added to a blank scene
+    bool defaultLightSource_;
     
   /** @} */      
        

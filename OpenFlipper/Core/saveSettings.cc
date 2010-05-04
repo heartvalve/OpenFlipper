@@ -45,6 +45,8 @@
 
 #include "OpenFlipper/common/GlobalOptions.hh"
 
+#include <ObjectTypes/Light/Light.hh>
+
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
 #include "OpenFlipper/widgets/loadWidget/loadWidget.hh"
@@ -209,6 +211,13 @@ void Core::saveSettings(){
           // add obj extension
           filename += "obj";
         }
+      }
+      
+      // Don't save default light source objects
+      LightObject* light = 0;
+      PluginFunctions::getObject( o_it->id(), light );
+      if(light != 0) {
+          if(light->defaultLight()) continue;
       }
 
       // decide whether to use saveObject or saveObjectTo

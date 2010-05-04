@@ -83,7 +83,8 @@ LightObject::LightObject( ) :
  * Copy Constructor - generates a copy of the given object
  */
 LightObject::LightObject(const LightObject & _object) :
-  BaseObjectData(_object)
+  BaseObjectData(_object),
+  defaultLightSource_(false)
 {
 
     init(_object.lightNode_);
