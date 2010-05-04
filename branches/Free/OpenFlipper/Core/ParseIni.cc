@@ -61,6 +61,8 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/common/RecentFiles.hh>
 
+#include <ObjectTypes/Light/Light.hh>
+
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
 #include <QFile>
@@ -704,6 +706,14 @@ void Core::writeIniFile(QString _filename,
     for ( PluginFunctions::ObjectIterator o_it(restriction) ;
                                           o_it != PluginFunctions::objectsEnd(); ++o_it) {
       QString file = o_it->path() + OpenFlipper::Options::dirSeparator() + o_it->name();
+    
+      // Don't save default light source objects
+      LightObject* light = 0;
+      PluginFunctions::getObject( o_it->id(), light );
+      if(light != 0) {
+          if(light->defaultLight()) continue;
+      }
+    
       if (QFile(file).exists()){
         // Add a section for this object
         sectionName = o_it->name();
@@ -729,8 +739,16 @@ void Core::writeIniFile(QString _filename,
 
     // Tell plugins to save their information for the given object
     for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
-                                          o_it != PluginFunctions::objectsEnd(); ++o_it)
+                                          o_it != PluginFunctions::objectsEnd(); ++o_it) {
+      // Don't save default light source objects
+      LightObject* light = 0;
+      PluginFunctions::getObject( o_it->id(), light );
+      if(light != 0) {
+        if(light->defaultLight()) continue;
+      }
+        
       emit iniSave(  ini , o_it->id() );
+    }
   }
 
 
