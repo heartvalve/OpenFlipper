@@ -192,7 +192,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   //============================================================================================================
 
   QMenu* viewingDirectionMenu = new QMenu( tr("Viewing Direction"), _menu);
-//   viewingDirectionMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"renderingOptions.png"));
+  viewingDirectionMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"core_viewingDirection.png"));
   _menu->addMenu(viewingDirectionMenu);
 
   QActionGroup* dirGroup = new QActionGroup(this);
