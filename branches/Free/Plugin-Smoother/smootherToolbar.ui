@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>SmootherToolbar</class>
- <widget class="QWidget" name="SmootherToolbar" >
-  <property name="geometry" >
+ <widget class="QWidget" name="SmootherToolbar">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,71 +10,71 @@
     <height>584</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_7" >
+  <layout class="QVBoxLayout" name="verticalLayout_7">
    <item>
-    <widget class="QGroupBox" name="groupBox_5" >
-     <property name="toolTip" >
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="toolTip">
       <string>Set the smoothing directions</string>
      </property>
-     <property name="statusTip" >
+     <property name="statusTip">
       <string>Set the smoothing directions</string>
      </property>
-     <property name="title" >
+     <property name="title">
       <string>Component</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3" >
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout" >
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
-         <widget class="QRadioButton" name="rbTangential" >
-          <property name="toolTip" >
+         <widget class="QRadioButton" name="rbTangential">
+          <property name="toolTip">
            <string>Smooth in tangent direction</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>Smooth in tangent direction</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Tangential</string>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>false</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="rbNormal" >
-          <property name="toolTip" >
+         <widget class="QRadioButton" name="rbNormal">
+          <property name="toolTip">
            <string>Smooth in normal direction</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>Smooth in normal direction</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Normal</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="rbTangential_and_Normal" >
-          <property name="sizePolicy" >
-           <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+         <widget class="QRadioButton" name="rbTangential_and_Normal">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string>Smooth in tangent and normal direction</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>Smooth in tangent and normal direction</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Tangential+Normal</string>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
@@ -84,44 +85,44 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_4" >
-     <property name="toolTip" >
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="toolTip">
       <string>Set the continuity that should be used</string>
      </property>
-     <property name="statusTip" >
+     <property name="statusTip">
       <string>Set the continuity that should be used</string>
      </property>
-     <property name="title" >
+     <property name="title">
       <string>Continuity</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2" >
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" >
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QRadioButton" name="rB_c0" >
-          <property name="toolTip" >
+         <widget class="QRadioButton" name="rB_c0">
+          <property name="toolTip">
            <string>use C0 continuity</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>use C0 continuity</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>C0</string>
           </property>
-          <property name="checked" >
+          <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="rB_c1" >
-          <property name="toolTip" >
+         <widget class="QRadioButton" name="rB_c1">
+          <property name="toolTip">
            <string>use C1 continuity</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>use C1 continuity</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>C1</string>
           </property>
          </widget>
@@ -132,32 +133,32 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
       <string>Constraints</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4" >
+     <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2" >
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QCheckBox" name="cbDistance" >
-          <property name="toolTip" >
+         <widget class="QCheckBox" name="cbDistance">
+          <property name="toolTip">
            <string>the maximum distance that the smoothed mesh is allowed to differ from the original mesh</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>the maximum distance that the smoothed mesh is allowed to differ from the original mesh</string>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Distance</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="distance" >
-          <property name="toolTip" >
+         <widget class="QLineEdit" name="distance">
+          <property name="toolTip">
            <string>the maximum distance that the smoothed mesh is allowed to differ from the original mesh</string>
           </property>
-          <property name="statusTip" >
+          <property name="statusTip">
            <string>the maximum distance that the smoothed mesh is allowed to differ from the original mesh</string>
           </property>
          </widget>
@@ -165,8 +166,8 @@
        </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="respectFeatures" >
-        <property name="text" >
+       <widget class="QCheckBox" name="respectFeatures">
+        <property name="text">
          <string>Respect Features</string>
         </property>
        </widget>
@@ -175,43 +176,43 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
       <string>Smoothing</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_6" >
+     <layout class="QVBoxLayout" name="verticalLayout_6">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_5" >
+       <layout class="QVBoxLayout" name="verticalLayout_5">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3" >
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
-           <widget class="QLabel" name="label3" >
-            <property name="toolTip" >
+           <widget class="QLabel" name="label3">
+            <property name="toolTip">
              <string>number of smoothing iterations</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>number of smoothing iterations</string>
             </property>
-            <property name="text" >
+            <property name="text">
              <string>Iterations</string>
             </property>
-            <property name="wordWrap" >
+            <property name="wordWrap">
              <bool>false</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QSpinBox" name="sB_iter" >
-            <property name="toolTip" >
+           <widget class="QSpinBox" name="sB_iter">
+            <property name="toolTip">
              <string>number of smoothing iterations</string>
             </property>
-            <property name="statusTip" >
+            <property name="statusTip">
              <string>number of smoothing iterations</string>
             </property>
-            <property name="maximum" >
+            <property name="maximum">
              <number>9999</number>
             </property>
-            <property name="value" >
+            <property name="value">
              <number>5</number>
             </property>
            </widget>
@@ -219,14 +220,14 @@
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="pB_smooth" >
-          <property name="enabled" >
+         <widget class="QPushButton" name="pB_smooth">
+          <property name="enabled">
            <bool>true</bool>
           </property>
-          <property name="toolTip" >
+          <property name="toolTip">
            <string/>
           </property>
-          <property name="text" >
+          <property name="text">
            <string>Smooth</string>
           </property>
          </widget>
@@ -237,11 +238,11 @@
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>40</height>
@@ -251,7 +252,7 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="6" margin="11"/>
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <resources/>
  <connections/>
