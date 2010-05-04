@@ -265,6 +265,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   
   QAction* lockAction = viewingDirectionMenu->addAction("Lock rotation");
   lockAction->setCheckable( true );
+  lockAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"lock_rotation.png") );
   lockAction->setToolTip(tr("Lock rotation in current examiner"));
   lockAction->setChecked( PluginFunctions::viewerProperties().rotationLocked() );
   viewingDirectionMenu->addAction( lockAction );
