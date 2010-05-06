@@ -142,6 +142,7 @@ if (UNIX)
     endif()
   endforeach()
 
+  #TODO : Test and remove it?!
   IF( CMAKE_SYSTEM MATCHES "SunOS*")
     set (CMAKE_CFLAGS_RELEASE "-xO3")
     set (CMAKE_CXX_FLAGS_RELEASE "-xO3")        
