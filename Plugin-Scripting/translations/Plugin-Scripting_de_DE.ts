@@ -126,12 +126,12 @@
     </message>
     <message>
         <location filename="../ScriptingPlugin.cc" line="365"/>
-        <location filename="../ScriptingPlugin.cc" line="404"/>
+        <location filename="../ScriptingPlugin.cc" line="419"/>
         <source>Script Files (*.ofs)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../ScriptingPlugin.cc" line="404"/>
+        <location filename="../ScriptingPlugin.cc" line="419"/>
         <source>Save Script</source>
         <translation type="unfinished"></translation>
     </message>

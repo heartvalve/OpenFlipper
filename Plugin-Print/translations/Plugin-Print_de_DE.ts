@@ -15,7 +15,7 @@
     </message>
     <message>
         <location filename="../PrintPlugin.cc" line="63"/>
-        <location filename="../PrintPlugin.hh" line="72"/>
+        <location filename="../PrintPlugin.hh" line="71"/>
         <source>Print the current view</source>
         <translation>Drucke die aktuelle Ansicht</translation>
     </message>

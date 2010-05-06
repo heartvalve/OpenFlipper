@@ -4,48 +4,53 @@
 <context>
     <name>DecimaterPlugin</name>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="104"/>
+        <location filename="../DecimaterPlugin.cc" line="90"/>
+        <source>Decimater</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DecimaterPlugin.cc" line="98"/>
         <source>Decimate a given object</source>
         <translation>Objekt dezimieren</translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="105"/>
+        <location filename="../DecimaterPlugin.cc" line="99"/>
         <source>objectId,constraints</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="106"/>
+        <location filename="../DecimaterPlugin.cc" line="100"/>
         <source>ID of an object; Object that can has one or more constraint properties (distance,normal_deviation,roundness,vertices)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="150"/>
+        <location filename="../DecimaterPlugin.cc" line="144"/>
         <source>Unable to get object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="175"/>
-        <location filename="../DecimaterPlugin.cc" line="283"/>
+        <location filename="../DecimaterPlugin.cc" line="169"/>
+        <location filename="../DecimaterPlugin.cc" line="277"/>
         <source>Decimater could not be initialized</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="209"/>
+        <location filename="../DecimaterPlugin.cc" line="203"/>
         <source>Unable to get Object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="217"/>
+        <location filename="../DecimaterPlugin.cc" line="211"/>
         <source>Unable to get object ( Only Triangle Meshes supported)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.cc" line="300"/>
+        <location filename="../DecimaterPlugin.cc" line="294"/>
         <source>Unsupported object type for decimater</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../DecimaterPlugin.hh" line="117"/>
+        <location filename="../DecimaterPlugin.hh" line="118"/>
         <source>Mesh Decimation ...</source>
         <translation>Mesh Dezimierung ...</translation>
     </message>
@@ -70,7 +75,7 @@
     <message>
         <location filename="../decimaterToolbar.ui" line="51"/>
         <location filename="../decimaterToolbar.ui" line="54"/>
-        <location filename="../decimaterToolbar.ui" line="72"/>
+        <location filename="../decimaterToolbar.ui" line="75"/>
         <source>Restrict Normal Deviation</source>
         <translation>Normalen Abweichung begrenzen</translation>
     </message>
@@ -80,7 +85,7 @@
         <translation>Normalen Abw.</translation>
     </message>
     <message>
-        <location filename="../decimaterToolbar.ui" line="64"/>
+        <location filename="../decimaterToolbar.ui" line="67"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -95,7 +100,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;dem dezimierungs Schritt in Grad.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../decimaterToolbar.ui" line="91"/>
+        <location filename="../decimaterToolbar.ui" line="94"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -111,32 +116,32 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;dem dezimierungs Schritt in Grad.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../decimaterToolbar.ui" line="99"/>
+        <location filename="../decimaterToolbar.ui" line="102"/>
         <source>Restrict Normal deviation</source>
         <translation>Normalen Abweichung begrenzen</translation>
     </message>
     <message>
-        <location filename="../decimaterToolbar.ui" line="115"/>
+        <location filename="../decimaterToolbar.ui" line="118"/>
         <source>Roundness</source>
         <translation>Rundheit</translation>
     </message>
     <message>
-        <location filename="../decimaterToolbar.ui" line="163"/>
+        <location filename="../decimaterToolbar.ui" line="166"/>
         <source>#Vertices</source>
         <translation>#Knoten</translation>
     </message>
     <message>
-        <location filename="../decimaterToolbar.ui" line="200"/>
+        <location filename="../decimaterToolbar.ui" line="209"/>
         <source>Current number of vertices:</source>
         <translation>Aktuelle Knotenzahl:</translation>
     </message>
     <message>
-        <location filename="../decimaterToolbar.ui" line="213"/>
+        <location filename="../decimaterToolbar.ui" line="222"/>
         <source>&lt;not available&gt;</source>
         <translation>Nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="../decimaterToolbar.ui" line="225"/>
+        <location filename="../decimaterToolbar.ui" line="234"/>
         <source>Decimate</source>
         <translation>Dezimieren</translation>
     </message>

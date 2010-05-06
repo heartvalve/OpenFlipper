@@ -4,36 +4,36 @@
 <context>
     <name>MovePlugin</name>
     <message>
-        <location filename="../MovePlugin.cc" line="131"/>
-        <location filename="../MovePlugin.cc" line="132"/>
+        <location filename="../MovePlugin.cc" line="134"/>
+        <location filename="../MovePlugin.cc" line="135"/>
         <source>Manipulator rotation</source>
         <translation>Manipulator Rotation</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="133"/>
-        <location filename="../MovePlugin.cc" line="134"/>
+        <location filename="../MovePlugin.cc" line="136"/>
+        <location filename="../MovePlugin.cc" line="137"/>
         <source>Resize</source>
         <translation>Skalieren</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="140"/>
+        <location filename="../MovePlugin.cc" line="143"/>
         <source>Apply to all targets</source>
         <translation>Auf alle Objekte anwenden</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="142"/>
+        <location filename="../MovePlugin.cc" line="145"/>
         <source>Apply transformation to all target objects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="145"/>
-        <location filename="../MovePlugin.cc" line="146"/>
+        <location filename="../MovePlugin.cc" line="148"/>
+        <location filename="../MovePlugin.cc" line="149"/>
         <source>Set properties</source>
         <translation>Eigenschaften</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="158"/>
-        <location filename="../MovePlugin.cc" line="179"/>
+        <location filename="../MovePlugin.cc" line="167"/>
+        <location filename="../MovePlugin.cc" line="187"/>
         <source>Transform and Move</source>
         <translation>Transformieren und verschieben</translation>
     </message>
@@ -42,428 +42,439 @@
         <translation type="obsolete">Verschiebe Objekte</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="164"/>
+        <location filename="../MovePlugin.cc" line="172"/>
         <source>Move object in 3D.</source>
         <translation>Verschiebe Objekte in 3D</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="169"/>
+        <location filename="../MovePlugin.cc" line="177"/>
         <source>Move selections on objects</source>
         <translation>Selektionen verschieben</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="170"/>
+        <location filename="../MovePlugin.cc" line="178"/>
         <source>Move selections in 3D.</source>
         <translation>Selektionen auf Objekten verschieben.</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="184"/>
+        <location filename="../MovePlugin.cc" line="192"/>
         <source>Place manipulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="185"/>
-        <location filename="../MovePlugin.cc" line="186"/>
+        <location filename="../MovePlugin.cc" line="193"/>
+        <location filename="../MovePlugin.cc" line="194"/>
         <source>Place manipulator on object. &lt;Doubleclick&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="193"/>
-        <source>Rotate/Translate object</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="194"/>
-        <location filename="../MovePlugin.cc" line="195"/>
-        <source>Rotate/Translate object.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../MovePlugin.cc" line="201"/>
-        <source>Resize object</source>
+        <source>Rotate/Translate object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="202"/>
         <location filename="../MovePlugin.cc" line="203"/>
-        <source>Resize object. &lt;Control&gt;</source>
+        <source>Rotate/Translate object.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="209"/>
+        <source>Resize object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="210"/>
-        <source>Rotate manipulator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../MovePlugin.cc" line="211"/>
-        <location filename="../MovePlugin.cc" line="212"/>
-        <source>Rotate manipulator. &lt;Shift&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="223"/>
-        <source>Decrease size of manipulator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="224"/>
-        <location filename="../MovePlugin.cc" line="225"/>
-        <source>Make manipulator smaller. &lt;Mouse wheel up&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="231"/>
-        <location filename="../MovePlugin.cc" line="232"/>
-        <source>Make manipulator bigger. &lt;Mouse wheel down&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="438"/>
-        <source>moveObject called for unsupported Object Type</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="162"/>
-        <source>Move objects</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../MovePlugin.cc" line="217"/>
-        <source>Locally translate manipulator</source>
+        <source>Resize object. &lt;Control&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../MovePlugin.cc" line="218"/>
+        <source>Rotate manipulator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="219"/>
+        <location filename="../MovePlugin.cc" line="220"/>
+        <source>Rotate manipulator. &lt;Shift&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="231"/>
+        <source>Decrease size of manipulator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="232"/>
+        <location filename="../MovePlugin.cc" line="233"/>
+        <source>Make manipulator smaller. &lt;Mouse wheel up&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="239"/>
+        <location filename="../MovePlugin.cc" line="240"/>
+        <source>Make manipulator bigger. &lt;Mouse wheel down&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="451"/>
+        <source>moveObject called for unsupported Object Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="171"/>
+        <source>Move objects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="153"/>
+        <location filename="../MovePlugin.cc" line="154"/>
+        <source>Hide Manipulator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="225"/>
+        <source>Locally translate manipulator</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="226"/>
         <source>Locally translate manipulator. Press and hold &lt;Alt&gt; for snapping.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="230"/>
+        <location filename="../MovePlugin.cc" line="238"/>
         <source>Increase size of manipulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="787"/>
-        <location filename="../MovePlugin.cc" line="870"/>
-        <location filename="../MovePlugin.cc" line="877"/>
-        <location filename="../MovePlugin.cc" line="947"/>
-        <location filename="../MovePlugin.cc" line="1089"/>
+        <location filename="../MovePlugin.cc" line="273"/>
+        <source>Move</source>
+        <translation type="unfinished">Verschieben</translation>
+    </message>
+    <message>
+        <location filename="../MovePlugin.cc" line="843"/>
+        <location filename="../MovePlugin.cc" line="926"/>
+        <location filename="../MovePlugin.cc" line="933"/>
+        <location filename="../MovePlugin.cc" line="1005"/>
+        <location filename="../MovePlugin.cc" line="1154"/>
         <source>Wrong Format for X Coordinate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="789"/>
-        <location filename="../MovePlugin.cc" line="872"/>
-        <location filename="../MovePlugin.cc" line="879"/>
-        <location filename="../MovePlugin.cc" line="949"/>
-        <location filename="../MovePlugin.cc" line="1091"/>
+        <location filename="../MovePlugin.cc" line="845"/>
+        <location filename="../MovePlugin.cc" line="928"/>
+        <location filename="../MovePlugin.cc" line="935"/>
+        <location filename="../MovePlugin.cc" line="1007"/>
+        <location filename="../MovePlugin.cc" line="1156"/>
         <source>Wrong Format for Y Coordinate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="791"/>
-        <location filename="../MovePlugin.cc" line="874"/>
-        <location filename="../MovePlugin.cc" line="881"/>
-        <location filename="../MovePlugin.cc" line="951"/>
-        <location filename="../MovePlugin.cc" line="1093"/>
+        <location filename="../MovePlugin.cc" line="847"/>
+        <location filename="../MovePlugin.cc" line="930"/>
+        <location filename="../MovePlugin.cc" line="937"/>
+        <location filename="../MovePlugin.cc" line="1009"/>
+        <location filename="../MovePlugin.cc" line="1158"/>
         <source>Wrong Format for Z Coordinate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="820"/>
-        <location filename="../MovePlugin.cc" line="845"/>
+        <location filename="../MovePlugin.cc" line="876"/>
+        <location filename="../MovePlugin.cc" line="901"/>
         <source>X Direction</source>
         <translation type="unfinished">X Richtung</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="821"/>
-        <location filename="../MovePlugin.cc" line="846"/>
+        <location filename="../MovePlugin.cc" line="877"/>
+        <location filename="../MovePlugin.cc" line="902"/>
         <source>Y Direction</source>
         <translation type="unfinished">Y Richtung</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="822"/>
-        <location filename="../MovePlugin.cc" line="847"/>
+        <location filename="../MovePlugin.cc" line="878"/>
+        <location filename="../MovePlugin.cc" line="903"/>
         <source>Z Direction</source>
         <translation type="unfinished">Z Richtung</translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="906"/>
+        <location filename="../MovePlugin.cc" line="962"/>
         <source>The axes of the new direction have to be orthogonal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1018"/>
+        <location filename="../MovePlugin.cc" line="1078"/>
         <source>TODO Project for multiple targets</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1021"/>
+        <location filename="../MovePlugin.cc" line="1081"/>
         <source>TODO Project for one target</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1096"/>
+        <location filename="../MovePlugin.cc" line="1161"/>
         <source>Wrong Format for Angle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1162"/>
+        <location filename="../MovePlugin.cc" line="1233"/>
         <source>Wrong Format for factor 1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1164"/>
+        <location filename="../MovePlugin.cc" line="1235"/>
         <source>Wrong Format for factor 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1166"/>
+        <location filename="../MovePlugin.cc" line="1237"/>
         <source>Wrong Format for factor 3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1228"/>
+        <location filename="../MovePlugin.cc" line="1305"/>
         <source>Use common COG?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1228"/>
+        <location filename="../MovePlugin.cc" line="1305"/>
         <source>Should the targets be moved depending on their common cog?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1306"/>
+        <location filename="../MovePlugin.cc" line="1405"/>
         <source>Use common BB?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1306"/>
+        <location filename="../MovePlugin.cc" line="1405"/>
         <source>Should the targets be scaled depending on their common Bounding Box?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1670"/>
-        <location filename="../MovePlugin.cc" line="1705"/>
+        <location filename="../MovePlugin.cc" line="1808"/>
+        <location filename="../MovePlugin.cc" line="1843"/>
         <source>Enable Vertex Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1677"/>
-        <location filename="../MovePlugin.cc" line="1707"/>
+        <location filename="../MovePlugin.cc" line="1815"/>
+        <location filename="../MovePlugin.cc" line="1845"/>
         <source>Enable Edge Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1680"/>
-        <location filename="../MovePlugin.cc" line="1709"/>
+        <location filename="../MovePlugin.cc" line="1818"/>
+        <location filename="../MovePlugin.cc" line="1847"/>
         <source>Enable Face Selection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.cc" line="1692"/>
+        <location filename="../MovePlugin.cc" line="1830"/>
         <source>Unable to connect to Selection-Plugin. MoveSelection will work on vertices only.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePlugin.hh" line="155"/>
+        <location filename="../MovePlugin.hh" line="163"/>
         <source>Moves Meshes with Manipulators</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="58"/>
+        <location filename="../MovePluginScript.cc" line="61"/>
         <source>Translate object by given vector.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="59"/>
-        <location filename="../MovePluginScript.cc" line="66"/>
+        <location filename="../MovePluginScript.cc" line="62"/>
         <location filename="../MovePluginScript.cc" line="69"/>
         <location filename="../MovePluginScript.cc" line="72"/>
+        <location filename="../MovePluginScript.cc" line="75"/>
         <source>objectId,Vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="59"/>
-        <location filename="../MovePluginScript.cc" line="66"/>
+        <location filename="../MovePluginScript.cc" line="62"/>
         <location filename="../MovePluginScript.cc" line="69"/>
         <location filename="../MovePluginScript.cc" line="72"/>
+        <location filename="../MovePluginScript.cc" line="75"/>
         <source>ID of an object, translation vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="61"/>
+        <location filename="../MovePluginScript.cc" line="64"/>
         <source>Translate vertices by given vector.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="62"/>
+        <location filename="../MovePluginScript.cc" line="65"/>
         <source>objectId,VertexHandles,Vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="63"/>
+        <location filename="../MovePluginScript.cc" line="66"/>
         <source>ID of an object, List of vertex handles, translation vector</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="65"/>
+        <location filename="../MovePluginScript.cc" line="68"/>
         <source>Translate current vertex selection of an object by given vector.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="68"/>
+        <location filename="../MovePluginScript.cc" line="71"/>
         <source>Translate current face selection of an object by given vector.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="71"/>
+        <location filename="../MovePluginScript.cc" line="74"/>
         <source>Translate current edge selection of an object by given vector.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="74"/>
+        <location filename="../MovePluginScript.cc" line="77"/>
         <source>transform object by given matrix.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="75"/>
-        <location filename="../MovePluginScript.cc" line="82"/>
+        <location filename="../MovePluginScript.cc" line="78"/>
+        <location filename="../MovePluginScript.cc" line="85"/>
         <source>objectId,Matrix</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="75"/>
-        <location filename="../MovePluginScript.cc" line="82"/>
+        <location filename="../MovePluginScript.cc" line="78"/>
+        <location filename="../MovePluginScript.cc" line="85"/>
         <source>ID of an object, transformation matrix</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="77"/>
+        <location filename="../MovePluginScript.cc" line="80"/>
         <source>transform vertices by given matrix.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="78"/>
+        <location filename="../MovePluginScript.cc" line="81"/>
         <source>objectId,VertexHandles,Matrix</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="79"/>
+        <location filename="../MovePluginScript.cc" line="82"/>
         <source>ID of an object, List of vertex handles, transformation matrix</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="81"/>
+        <location filename="../MovePluginScript.cc" line="84"/>
         <source>transform current selection of an object by given matrix.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="84"/>
+        <location filename="../MovePluginScript.cc" line="87"/>
         <source>Set the position of the manipulator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="85"/>
+        <location filename="../MovePluginScript.cc" line="88"/>
         <source>objectId,Position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="85"/>
+        <location filename="../MovePluginScript.cc" line="88"/>
         <source>ID of an object, 3D point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="87"/>
+        <location filename="../MovePluginScript.cc" line="90"/>
         <source>Set the direction of the manipulator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="88"/>
+        <location filename="../MovePluginScript.cc" line="91"/>
         <source>objectId,Direction, Direction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="88"/>
+        <location filename="../MovePluginScript.cc" line="91"/>
         <source>ID of an object, x-direction, y-direction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="90"/>
+        <location filename="../MovePluginScript.cc" line="93"/>
         <source>Returns the position of an object&apos;s manipulator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="91"/>
         <location filename="../MovePluginScript.cc" line="94"/>
         <location filename="../MovePluginScript.cc" line="97"/>
         <location filename="../MovePluginScript.cc" line="100"/>
+        <location filename="../MovePluginScript.cc" line="103"/>
         <source>objectId</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="91"/>
         <location filename="../MovePluginScript.cc" line="94"/>
         <location filename="../MovePluginScript.cc" line="97"/>
         <location filename="../MovePluginScript.cc" line="100"/>
+        <location filename="../MovePluginScript.cc" line="103"/>
         <source>ID of an object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="93"/>
+        <location filename="../MovePluginScript.cc" line="96"/>
         <source>Returns the x-direction of an object&apos;s manipulator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="96"/>
+        <location filename="../MovePluginScript.cc" line="99"/>
         <source>Returns the y-direction of an object&apos;s manipulator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="99"/>
+        <location filename="../MovePluginScript.cc" line="102"/>
         <source>Returns the z-direction of an object&apos;s manipulator.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="115"/>
-        <location filename="../MovePluginScript.cc" line="167"/>
-        <location filename="../MovePluginScript.cc" line="222"/>
+        <location filename="../MovePluginScript.cc" line="118"/>
+        <location filename="../MovePluginScript.cc" line="185"/>
+        <location filename="../MovePluginScript.cc" line="258"/>
         <source>translate : unable to get object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="276"/>
-        <location filename="../MovePluginScript.cc" line="337"/>
-        <location filename="../MovePluginScript.cc" line="401"/>
-        <location filename="../MovePluginScript.cc" line="465"/>
-        <location filename="../MovePluginScript.cc" line="545"/>
+        <location filename="../MovePluginScript.cc" line="328"/>
+        <location filename="../MovePluginScript.cc" line="405"/>
+        <location filename="../MovePluginScript.cc" line="491"/>
+        <location filename="../MovePluginScript.cc" line="574"/>
+        <location filename="../MovePluginScript.cc" line="678"/>
         <source>transform : unable to get object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="637"/>
+        <location filename="../MovePluginScript.cc" line="798"/>
         <source>setManipulatorPosition : unable to get object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="681"/>
+        <location filename="../MovePluginScript.cc" line="842"/>
         <source>manipulatorPosition : unable to get object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="701"/>
+        <location filename="../MovePluginScript.cc" line="862"/>
         <source>setManipulatorDirection : unable to get object</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="706"/>
+        <location filename="../MovePluginScript.cc" line="867"/>
         <source>setManipulatorDirection : manipulator position has to be set first</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../MovePluginScript.cc" line="733"/>
-        <location filename="../MovePluginScript.cc" line="752"/>
-        <location filename="../MovePluginScript.cc" line="771"/>
+        <location filename="../MovePluginScript.cc" line="894"/>
+        <location filename="../MovePluginScript.cc" line="913"/>
+        <location filename="../MovePluginScript.cc" line="932"/>
         <source>manipulatorDirection : unable to get object</source>
         <translation type="unfinished"></translation>
     </message>

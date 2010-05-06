@@ -1,215 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="de_DE" sourcelanguage="en_US">
+<context>
+    <name>InfoBar</name>
+    <message>
+        <location filename="../infoBar.cc" line="74"/>
+        <source>%1 targets selected</source>
+        <translation>%1 Ziele ausgewählt</translation>
+    </message>
+    <message>
+        <location filename="../infoBar.ui" line="32"/>
+        <source>Form</source>
+        <translation>Dialog</translation>
+    </message>
+    <message>
+        <location filename="../infoBar.ui" line="66"/>
+        <source>#vertex</source>
+        <translation>#Knoten</translation>
+    </message>
+    <message>
+        <location filename="../infoBar.ui" line="110"/>
+        <source>#edges</source>
+        <translation>#Kanten</translation>
+    </message>
+    <message>
+        <location filename="../infoBar.ui" line="148"/>
+        <source>#faces</source>
+        <translation>#Flächen</translation>
+    </message>
+    <message>
+        <location filename="../infoBar.ui" line="164"/>
+        <source>info</source>
+        <translation>Info</translation>
+    </message>
+</context>
 <context>
     <name>InfoPlugin</name>
     <message>
-        <location filename="../InfoPlugin.cc" line="97"/>
-        <source>&lt;B&gt;Object ID:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
+        <location filename="../InfoPlugin.cc" line="108"/>
+        <source>General object information for %1</source>
+        <translation>Generelle Objekt Informationen für %1</translation>
     </message>
     <message>
-        <location filename="../InfoPlugin.cc" line="99"/>
-        <source>&lt;B&gt;Vertices:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="101"/>
-        <source>&lt;B&gt;Faces:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="103"/>
-        <source>&lt;B&gt;Edges:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="105"/>
-        <source>&lt;B&gt;Closest vertex:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="107"/>
-        <source>&lt;B&gt;Closest edge:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="109"/>
-        <source>&lt;B&gt;Picked face:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="111"/>
-        <source>&lt;B&gt;Components:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="113"/>
-        <source>&lt;B&gt;Boundaries:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="116"/>
-        <source>&lt;B&gt;Genus:&lt;/B&gt; </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="125"/>
-        <source>Min</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="125"/>
-        <source>Mean</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="125"/>
-        <source>Max</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="130"/>
-        <source>X Coordinate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="130"/>
-        <source>Y Coordinate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="130"/>
-        <source>Z Coordinate</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="130"/>
-        <source>Vertex Valence</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="130"/>
-        <source>Edge Length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="130"/>
-        <source>Aspect Ratio</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="131"/>
-        <source>Inner Face Angles</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="131"/>
-        <source>Dihedral Angles</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="136"/>
-        <source>minimum, maximum and arithmetic mean of the vertex x-coordinates</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="137"/>
-        <source>minimum, maximum and arithmetic mean of the vertex y-coordinates</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="138"/>
-        <source>minimum, maximum and arithmetic mean of the vertex z-coordinates</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="139"/>
-        <source>minimum, maximum and arithmetic mean of the vertex valences</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="140"/>
-        <source>minimum, maximum and arithmetic mean of the edge lengthes</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="141"/>
-        <source>minimum, maximum and arithmetic mean of the aspect ratio. i.e. the ratio between longest and shortest edge in a triangle.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="143"/>
-        <source>minimum, maximum and arithmetic mean of the inner angles in a face.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="144"/>
-        <source>minimum, maximum and arithmetic mean of the dihedral angles i.e. the angles between neighboring faces.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="321"/>
-        <source>Bounding Box (Minimum)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="321"/>
-        <source>Bounding Box (Maximum)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="321"/>
-        <source>BoundingBox (Size)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="321"/>
-        <source>Center of Gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="322"/>
-        <source>Picked Face Normal (Handle %1 )</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="327"/>
-        <source>Adjacent Vertex (Handle %1 )</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="336"/>
-        <source>minimum corner coordinates of the bounding box</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="337"/>
-        <source>maximum corner coordinates of the bounding box</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="338"/>
-        <source>diagonal size of the bounding box</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="339"/>
-        <source>coordinates of the center of gravity</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="340"/>
-        <source>direction of the face normal that was picked</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="342"/>
-        <source>Coordinates of a vertex which is adjacent to the picked face</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../InfoPlugin.cc" line="546"/>
+        <location filename="../InfoPlugin.cc" line="494"/>
         <location filename="../InfoScripting.cc" line="131"/>
         <location filename="../InfoScripting.cc" line="173"/>
         <location filename="../InfoScripting.cc" line="215"/>
@@ -225,11 +58,11 @@
         <location filename="../InfoScripting.cc" line="716"/>
         <location filename="../InfoScripting.cc" line="769"/>
         <source>Unable to get object</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Objekt nicht bekommen</translation>
     </message>
     <message>
-        <location filename="../InfoPlugin.cc" line="554"/>
-        <location filename="../InfoPlugin.cc" line="565"/>
+        <location filename="../InfoPlugin.cc" line="502"/>
+        <location filename="../InfoPlugin.cc" line="513"/>
         <location filename="../InfoScripting.cc" line="139"/>
         <location filename="../InfoScripting.cc" line="149"/>
         <location filename="../InfoScripting.cc" line="181"/>
@@ -258,10 +91,10 @@
         <location filename="../InfoScripting.cc" line="777"/>
         <location filename="../InfoScripting.cc" line="801"/>
         <source>Unable to get mesh</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Netz nicht bekommen</translation>
     </message>
     <message>
-        <location filename="../InfoPlugin.hh" line="109"/>
+        <location filename="../InfoPlugin.hh" line="120"/>
         <source>Providing Information about Objects</source>
         <translation type="unfinished"></translation>
     </message>
@@ -457,116 +290,301 @@
 <context>
     <name>InfoWidget</name>
     <message>
-        <location filename="../infoWidget.ui" line="13"/>
+        <location filename="../infoWidget.ui" line="14"/>
         <source>Object Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../infoWidget.ui" line="23"/>
-        <location filename="../infoWidget.ui" line="26"/>
-        <source>internal ID of the object</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="29"/>
+        <location filename="../infoWidget.ui" line="457"/>
         <source>Object ID:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../infoWidget.ui" line="36"/>
-        <location filename="../infoWidget.ui" line="39"/>
-        <source>Number of Vertices</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="42"/>
+        <location filename="../infoWidget.ui" line="483"/>
         <source>Vertices:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../infoWidget.ui" line="49"/>
-        <location filename="../infoWidget.ui" line="52"/>
-        <source>Number of Faces</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="55"/>
+        <location filename="../infoWidget.ui" line="563"/>
         <source>Faces:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../infoWidget.ui" line="62"/>
-        <location filename="../infoWidget.ui" line="65"/>
-        <source>Vertex closest to selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="68"/>
-        <source>Closest vertex</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="75"/>
-        <location filename="../infoWidget.ui" line="78"/>
-        <source>Edge closest to the selection</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="81"/>
-        <source>Closest edge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="88"/>
-        <source>Picked face</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="95"/>
-        <location filename="../infoWidget.ui" line="98"/>
-        <source>Number of Edges</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="101"/>
+        <location filename="../infoWidget.ui" line="523"/>
         <source>Edges:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../infoWidget.ui" line="108"/>
-        <location filename="../infoWidget.ui" line="111"/>
-        <source>Number of independent components</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="114"/>
+        <location filename="../infoWidget.ui" line="643"/>
         <source>Components:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../infoWidget.ui" line="121"/>
-        <location filename="../infoWidget.ui" line="124"/>
-        <source>Number of boundaries</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../infoWidget.ui" line="127"/>
+        <location filename="../infoWidget.ui" line="603"/>
         <source>Boundaries:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../infoWidget.ui" line="134"/>
-        <location filename="../infoWidget.ui" line="137"/>
-        <source>the genus of the object</source>
+        <location filename="../infoWidget.ui" line="26"/>
+        <source>Local Information at clicked position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../infoWidget.ui" line="140"/>
+        <location filename="../infoWidget.ui" line="42"/>
+        <source>Clicked Point:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="67"/>
+        <location filename="../infoWidget.ui" line="160"/>
+        <location filename="../infoWidget.ui" line="253"/>
+        <location filename="../infoWidget.ui" line="948"/>
+        <location filename="../infoWidget.ui" line="1144"/>
+        <source>minX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="80"/>
+        <location filename="../infoWidget.ui" line="173"/>
+        <location filename="../infoWidget.ui" line="266"/>
+        <location filename="../infoWidget.ui" line="961"/>
+        <location filename="../infoWidget.ui" line="1157"/>
+        <source>minY</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="93"/>
+        <location filename="../infoWidget.ui" line="186"/>
+        <location filename="../infoWidget.ui" line="279"/>
+        <location filename="../infoWidget.ui" line="974"/>
+        <location filename="../infoWidget.ui" line="1170"/>
+        <source>minZ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="135"/>
+        <source>Normal of picked face:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="228"/>
+        <source>Closest Vertex on the mesh:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="308"/>
+        <source>mesh handles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="320"/>
+        <source>Closest Vertex:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="333"/>
+        <source>vertexHandle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="346"/>
+        <source>Closest Edge:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="359"/>
+        <source>edgeHandle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="372"/>
+        <source>Picked Face:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="385"/>
+        <source>faceHandle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="398"/>
+        <source>Adjacent Vertices:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="411"/>
+        <source>adjVertexHandles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="433"/>
+        <source>General object information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="470"/>
+        <source>id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="508"/>
+        <source>#vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="548"/>
+        <source>#edges</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="588"/>
+        <source>#faces</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="628"/>
+        <source>#boundaries</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="668"/>
+        <source>#components</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="683"/>
         <source>Genus:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../infoWidget.ui" line="192"/>
+        <location filename="../infoWidget.ui" line="708"/>
+        <source>genus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="752"/>
+        <source>Center of Gravity:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="792"/>
+        <source>cogX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="805"/>
+        <source>cogY</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="818"/>
+        <source>cogZ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="898"/>
+        <source>Bounding Box:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="923"/>
+        <source>Minimum:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1009"/>
+        <source>Maximum:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1034"/>
+        <source>maxX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1047"/>
+        <source>maxY</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1060"/>
+        <source>maxZ</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1119"/>
+        <source>Size:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1247"/>
+        <source>Minimum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1254"/>
+        <source>Mean</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1261"/>
+        <source>Maximum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1278"/>
+        <source>Vertex Valence:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1301"/>
+        <location filename="../infoWidget.ui" line="1367"/>
+        <location filename="../infoWidget.ui" line="1433"/>
+        <location filename="../infoWidget.ui" line="1499"/>
+        <location filename="../infoWidget.ui" line="1565"/>
+        <source>min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1314"/>
+        <location filename="../infoWidget.ui" line="1380"/>
+        <location filename="../infoWidget.ui" line="1446"/>
+        <location filename="../infoWidget.ui" line="1512"/>
+        <location filename="../infoWidget.ui" line="1578"/>
+        <source>mean</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1327"/>
+        <location filename="../infoWidget.ui" line="1393"/>
+        <location filename="../infoWidget.ui" line="1459"/>
+        <location filename="../infoWidget.ui" line="1525"/>
+        <location filename="../infoWidget.ui" line="1591"/>
+        <source>max</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1344"/>
+        <source>Edge Length:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1410"/>
+        <source>Aspect Ratio:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1476"/>
+        <source>Inner Face Angles:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1542"/>
+        <source>Dihedral Angles:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../infoWidget.ui" line="1621"/>
         <source>&amp;Close</source>
         <translation type="unfinished"></translation>
     </message>
