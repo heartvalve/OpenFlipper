@@ -59,22 +59,22 @@
         <translation>Farb Menüleiste</translation>
     </message>
     <message>
-        <location filename="../ColorPlugin.cc" line="150"/>
+        <location filename="../ColorPlugin.cc" line="149"/>
         <source>Set to default Colors</source>
         <translation>Setze Farben auf Standard zurück</translation>
     </message>
     <message>
-        <location filename="../ColorPlugin.cc" line="193"/>
+        <location filename="../ColorPlugin.cc" line="192"/>
         <source>Set to Presentation Colors</source>
         <translation>Setze Präsentations Farben</translation>
     </message>
     <message>
-        <location filename="../ColorPlugin.cc" line="236"/>
+        <location filename="../ColorPlugin.cc" line="235"/>
         <source>Set to Paper Colors</source>
         <translation>Setze Farben auf Paper Schema</translation>
     </message>
     <message>
-        <location filename="../ColorPlugin.cc" line="276"/>
+        <location filename="../ColorPlugin.cc" line="275"/>
         <source>Set background color</source>
         <translation>Setze Hintergrund Farbe</translation>
     </message>
