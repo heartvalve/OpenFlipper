@@ -58,21 +58,28 @@ if (UNIX)
   # Warnings
   ################################################################################
   
-  IF( NOT CMAKE_SYSTEM MATCHES "SunOS*")
-    list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          "-W" "-Wall" "-Wno-unused" )
-    list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        "-W" "-Wall" "-Wno-unused" )
-    list(APPEND ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS "-W" "-Wall" "-Wno-unused" )    
+  # Add the standard compiler warnings
+  if ( NOT COMPILER_WARNINGS )
+    IF( NOT CMAKE_SYSTEM MATCHES "SunOS*")
+      set ( COMPILER_WARNINGS "-W" "-Wall" "-Wno-unused" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
+    ELSE()
+      set ( COMPILER_WARNINGS "" CACHE STRINGLIST "This list contains the warning flags used during compilation " )
+    ENDIF()
+
+    # Skip warning on non-virtual destructor
+    if (APPLE)
+       list( APPEND COMPILER_WARNINGS "-Wno-non-virtual-dtor"  )
+    endif()
+
+  endif ( NOT COMPILER_WARNINGS )
+
+  list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          ${COMPILER_WARNINGS} )
+  list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        ${COMPILER_WARNINGS} )
+  list(APPEND ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS ${COMPILER_WARNINGS} )    
     
-    list(APPEND ADDITIONAL_C_DEBUG_FLAGS            "-W" "-Wall" "-Wno-unused" )
-    list(APPEND ADDITIONAL_C_RELEASE_FLAGS          "-W" "-Wall" "-Wno-unused" )
-    list(APPEND ADDITIONAL_C_RELWITHDEBINFO_FLAGS   "-W" "-Wall" "-Wno-unused" )
-  ENDIF()
-  
-  if (APPLE)
-    list(APPEND ADDITIONAL_CXX_DEBUG_FLAGS          "-Wno-non-virtual-dtor" )
-    list(APPEND ADDITIONAL_CXX_RELEASE_FLAGS        "-Wno-non-virtual-dtor" )
-    list(APPEND ADDITIONAL_CXX_RELWITHDEBINFO_FLAGS "-Wno-non-virtual-dtor" ) 
-  endif ()  
+  list(APPEND ADDITIONAL_C_DEBUG_FLAGS            ${COMPILER_WARNINGS} )
+  list(APPEND ADDITIONAL_C_RELEASE_FLAGS          ${COMPILER_WARNINGS} )
+  list(APPEND ADDITIONAL_C_RELWITHDEBINFO_FLAGS   ${COMPILER_WARNINGS} )
   
   ################################################################################
   # STL Vector checks
