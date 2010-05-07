@@ -460,7 +460,7 @@ void TextureControlPlugin::slotTextureGetImage( QString _textureName, QImage& _i
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
-    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    emit log(LOGERR, tr("slotTextureGetImage: Object has no texture data! Object: %1").arg(_id) );
     return;
   }
 
@@ -504,7 +504,7 @@ void TextureControlPlugin::slotTextureIndex( QString _textureName, int _id, int&
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
-    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    emit log(LOGERR, tr("slotTextureIndex: Object has no texture data! Object: %1").arg(_id) );
     return;
   }
 
@@ -532,7 +532,7 @@ void TextureControlPlugin::slotTextureName( int _id, int _textureIndex, QString&
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
-    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    emit log(LOGERR, tr("slotTextureName: Object has no texture data! Object: %1").arg(_id) );
     return;
   }
 
@@ -586,7 +586,7 @@ void TextureControlPlugin::slotGetSubTextures( int _id, QString _multiTextureNam
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
-    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    emit log(LOGERR, tr("slotGetSubTextures: Object has no texture data! Object: %1").arg(_id) );
     return;
   }
 
@@ -1246,13 +1246,18 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   if (! PluginFunctions::getObject(  _id , obj ) ) {
     emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
   }
+  
+  // Ignore light sources: ( TODO: Maybe use better detetion if textures are usefull )
+  if ( obj->dataType(typeId("Light")) )
+   return;
 
   // ================================================================================
   // Get Texture data for current object
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
-    emit log(LOGERR, tr("Object has no texture data! Object: ").arg(_id) );
+    emit log(LOGERR, tr("doSwitchTexture: Object has no texture data! Object: %1").arg(_id) );
+    std::cerr << "Object name : " << obj->name().toStdString() << std::endl;
     return;
   }
 
