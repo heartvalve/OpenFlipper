@@ -44,6 +44,7 @@ set (directories
   ../common/bsp  
   ../INIFile 
   ../widgets/glWidget
+  ../publicWidgets/objectSelectionWidget
 )
 
 # generate dllexport macros on windows
