@@ -146,6 +146,10 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   //colordialog
   connect(backgroundButton, SIGNAL(clicked()), this, SLOT(getBackgroundColor()) );
   connect(baseColorButton, SIGNAL(clicked()), this, SLOT(getBaseColor()) );
+  
+  // Clear settings and ini buttons
+  connect(clearSettingsButton, SIGNAL(clicked()), this, SLOT(slotClearSettings()));
+  connect(clearINIButton,      SIGNAL(clicked()), this, SLOT(slotClearINI()));
 }
 
 void OptionsWidget::getBackgroundColor(){
@@ -898,4 +902,27 @@ void OptionsWidget::slotPreviewStereoSettings(int /*_tmpParam*/) {
   
   // Update all views
  emit applyOptions();
+}
+
+void OptionsWidget::slotClearSettings() {
+    
+    OpenFlipperSettings().clear();
+}
+
+void OptionsWidget::slotClearINI() {
+    
+    bool success = true;
+    
+    // Iterate over all ini files and clear them
+    QStringList optionFiles = OpenFlipper::Options::optionFiles();
+    for ( int i = 0 ; i < (int)optionFiles.size(); ++i) {
+        success &= QFile::remove(optionFiles[i]);
+    }
+    
+    if(!success) {
+        QMessageBox::warning(this, tr("Warning"),
+                             tr("One or more files could not be removed.\nDelete files manually."),
+                             QMessageBox::Ok,
+                             QMessageBox::Ok);
+    }
 }
