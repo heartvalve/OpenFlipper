@@ -120,6 +120,12 @@ private slots:
    /// Note: The parameter only makes sure that the signals can be connected
    /// to this slot.
    void slotPreviewStereoSettings(int _tmpParam = 0);
+   
+   /// Clear all OpenFlipper settings
+   void slotClearSettings();
+   
+   /// Clear OpenFlipper INI
+   void slotClearINI();
 
 protected:
    void showEvent ( QShowEvent * event );
