@@ -991,6 +991,26 @@ void Core::slotExit() {
     logFile_->close();
 
   OpenFlipper::Options::closeSettings();
+  
+  // Test if ini-file should be cleaned
+  // If so, delete it...
+  if(OpenFlipper::Options::deleteIniFile()) {
+      bool success = true;
+    
+      // Iterate over all ini files and clear them
+      QStringList optionFiles = OpenFlipper::Options::optionFiles();
+      for ( int i = 0 ; i < (int)optionFiles.size(); ++i) {
+          success &= QFile::remove(optionFiles[i]);
+      }
+    
+      if(!success) {
+          QMessageBox::warning(0, tr("Warning"),
+                               tr("One or more files could not be removed.\nDelete files manually."),
+                               QMessageBox::Ok,
+                               QMessageBox::Ok);
+      }
+  }
+  
   qApp->quit();
 }
 

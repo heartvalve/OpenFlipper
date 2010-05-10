@@ -911,18 +911,8 @@ void OptionsWidget::slotClearSettings() {
 
 void OptionsWidget::slotClearINI() {
     
-    bool success = true;
+    QMessageBox::information(this, tr("Restart required!"),
+                             tr("The changes will take effect after next restart."));
     
-    // Iterate over all ini files and clear them
-    QStringList optionFiles = OpenFlipper::Options::optionFiles();
-    for ( int i = 0 ; i < (int)optionFiles.size(); ++i) {
-        success &= QFile::remove(optionFiles[i]);
-    }
-    
-    if(!success) {
-        QMessageBox::warning(this, tr("Warning"),
-                             tr("One or more files could not be removed.\nDelete files manually."),
-                             QMessageBox::Ok,
-                             QMessageBox::Ok);
-    }
+    OpenFlipper::Options::deleteIniFile(true);
 }

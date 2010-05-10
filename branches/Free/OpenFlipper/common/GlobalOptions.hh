@@ -253,6 +253,14 @@ QString helpDirStr();
   /// Returns the base Path of the config Dir
   DLLEXPORT
   QDir configDir();
+  
+  /// Returns true if ini-file should be deleted on exit
+  DLLEXPORT
+  bool deleteIniFile();
+  
+  /// Set option to delete ini-files on exit
+  DLLEXPORT
+  void deleteIniFile(bool _delete);
 
 /** @} */
 
