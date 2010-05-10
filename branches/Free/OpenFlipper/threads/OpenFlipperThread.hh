@@ -166,8 +166,11 @@ class DLLEXPORT OpenFlipperThread : public QThread
     * However you should only use this function if you Dont know how long your job takes. Or when
     * you just want to keep the core responding.\n
     * Otherwise you should reimplement the run(), and cancel() function of OpenFlipperThread and emit the state signal.
+    *
+    * The optional parameter contains the job's id. In some cases the function that is to be called needs
+    * the job's id for further processing (status updates, etc.)
     */
-    void function();
+    void function(const QString _jobId = "");
     
     /** \brief job done
     *
@@ -231,7 +234,6 @@ class DLLEXPORT OpenFlipperThread : public QThread
     */
     QSemaphore startup_;
 
-    
 };
 
 
@@ -254,7 +256,7 @@ class DLLEXPORT OpenFlipperJob : public QObject
   Q_OBJECT
   
   public:
-    OpenFlipperJob() {}
+    OpenFlipperJob(const QString _jobId) : jobId_(_jobId) {}
     ~OpenFlipperJob();
   
   signals:
@@ -265,7 +267,7 @@ class DLLEXPORT OpenFlipperJob : public QObject
     * If this object is created in a QThread, than the slot will be run 
     * inside this thread.
     */
-    void process();
+    void process(const QString _jobId = "");
     
     /** \brief Job done
     *
@@ -281,6 +283,16 @@ class DLLEXPORT OpenFlipperJob : public QObject
     */
     void startJobProcessing();
     
+  public:
+    /// Set job's id
+    void jobId(const QString& _jobId) { jobId_ = _jobId; }
+    
+    /// Get job's id
+    QString jobId() const { return jobId_; }   
+    
+  private:
+    /// The job's id
+    QString jobId_;
 };
 
 
