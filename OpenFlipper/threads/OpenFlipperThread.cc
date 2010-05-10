@@ -47,11 +47,11 @@ void OpenFlipperThread::run()
 {
   if ( job_ == 0 ) {
     // Create a job wrapper to run a slot from within this thread
-    job_ = new OpenFlipperJob();
+    job_ = new OpenFlipperJob( jobId_ );
 
     // Connect the slot which should run in this thread. This has to be a DirectConnection !
     // Otherwisse the slot will run inside its owner context which will be the main loop!!
-    connect(job_, SIGNAL(process()),this,SIGNAL(function() ),Qt::DirectConnection);
+    connect(job_, SIGNAL(process(QString)),this,SIGNAL(function(QString) ),Qt::DirectConnection);
     
     // Connect the jobs finished function
     connect(job_, SIGNAL(finished()),this,SLOT(slotJobFinished() ) );
@@ -111,7 +111,7 @@ void OpenFlipperJob::startJobProcessing() {
   
   // Actually start the process ( This function will block as it uses a direct connection )
   // But it only blocks the current thread.
-  emit process(); 
+  emit process(jobId_); 
   
   // Tell thread that the job is done.
   emit finished();
