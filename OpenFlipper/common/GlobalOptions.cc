@@ -122,6 +122,9 @@ static QDir currentScriptDir_;
 /// Current texture directory of the application
 static QDir currentTextureDir_;
 
+/// Should ini-files be deleted on exit?
+static bool deleteIniFile_ = false;
+
 /// Show gui or not?
 static bool nogui_ = false;
 
@@ -354,6 +357,14 @@ bool currentTextureDir(QString _dir) {
     return true;
   }
   return false;
+}
+
+void deleteIniFile(bool _delete) {
+    deleteIniFile_ = _delete;
+}
+
+bool deleteIniFile() {
+    return deleteIniFile_;
 }
 
 /// Store if a gui should be visible or not
