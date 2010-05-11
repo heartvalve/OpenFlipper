@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<QHelpCollectionProject version="1.0">
-	<docFiles>
-		<register>
-			<file>developer.qch</file>
-			<file>simpleplugin-doc.qch</file>
-		</register>
-	</docFiles>
-</QHelpCollectionProject>

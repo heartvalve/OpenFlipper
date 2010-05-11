@@ -81,20 +81,7 @@
  * in your plugin's directory. You can now open the index.html to see it.
  * When using doxygen >= 1.5.7 an additional .qch file (the filename can be specified
  * in the <b>Doxyfile</b>) has been generated and copied to <b>OpenFlipper/Help/</b>
- * in OpenFlipper's root directory. To integrate it into OpenFlipper's help browser
- * go to <b>OpenFlipper/Help/</b> and open <b>Help.qhcp</b> in a text editor.
- * Now add the line
- *
- * <br/><code><b>&lt;file&gt;plugin-doctest.qch&lt;/file&gt;</b></code><br/>
- *
- * under the <b>register</b> tag (note: <b>plugin-doctest.qch</b> has to be replaced
- * with whatever filename you have chosen before). The file now should look like this:
- *
- * \include Help.qhcp
- *
- * Now (still in <b>OpenFlipper/Help/</b>) execute
- *
- * <br/><code><b>qcollectiongenerator Help.qhcp -o Help.qhc</b></code><br/>
+ * in OpenFlipper's root directory. 
  *
  * Your documentation should now be available in OpenFlipper's help browser.
  *
