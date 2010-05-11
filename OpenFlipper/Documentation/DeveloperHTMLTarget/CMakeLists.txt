@@ -11,8 +11,8 @@ IF (DOXYGEN_FOUND)
 
 
   # copy acg stylesheet data after build
-  if (TARGET doc )
-    acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/../ACGStyleHtml" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHTML/html") 
+  if (TARGET DeveloperHelp )
+    acg_copy_after_build (DeveloperHelp "${CMAKE_CURRENT_SOURCE_DIR}/../ACGStyleHtml" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHTML/html") 
   endif ()
 
   # Add a documentation install target
