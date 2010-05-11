@@ -2,18 +2,23 @@ include (ACGDoxygen)
 
 IF (DOXYGEN_FOUND)
 
-  if (TARGET doc)
-    acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml")
+#  if (TARGET doc)
+#    acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml")
+#  endif ()
+
+  # copy acg stylesheet data after build
+  if (TARGET doc )
+    acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/../ACGStyleHtml" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHTML/html") 
   endif ()
 
   # Add a documentation install target
-  add_custom_target(doc-install COMMENT "Installing Developer HTML Documentation" VERBATIM )
+  add_custom_target(doc-Developer-html-install COMMENT "Installing Developer HTML Documentation" VERBATIM )
 
   # Build Documentation before installing it
-  add_dependencies(doc-install doc)
+  add_dependencies(doc-Developer-html-install doc)
 
-  if (TARGET doc-install)
-    acg_copy_after_build (doc-install "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml"   "${CMAKE_INSTALL_PREFIX}/${ACG_PROJECT_DATADIR}/doc/DeveloperHtml")
+  if (TARGET doc-Developer-html-install)
+    acg_copy_after_build (doc-Developer-html-install "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml"   "${CMAKE_INSTALL_PREFIX}/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml")
   endif()
 
 ENDIF(DOXYGEN_FOUND)
