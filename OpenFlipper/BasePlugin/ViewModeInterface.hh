@@ -67,6 +67,36 @@
   * be visible if the mode is active. Therefore you can define a subset of the
   * full interface for special tasks.
   *
+  * \section ViewModeExample Example using custom view modes
+  *
+  * %OpenFlipper comes along with a lot of plugins each offering a wide variety
+  * of GUI elements such as toolboxes and toolbars. In order to constrain %OpenFlipper's
+  * interface to a certain number of toolboxes and/or toolbar elements, the ViewModeInterface
+  * offers means to filter these elements.
+  *
+  * So, for example, if we only wanted the toolboxes of the Data Control and the
+  * Selection plugin to be visible, we have to emit signal defineViewModeToolboxes(QString, QStringList)
+  * in order to hide out everything else:
+  *
+  * \code
+  * void TestPlugin::pluginsInitialized() {
+  *
+  *     QStringList toolBoxes = QString("Data Control,Selection").split(",");
+  *
+  *     emit defineViewModeToolboxes("My Custom View Mode", toolBoxes);
+  * }
+  * \endcode
+  *
+  * When the user selects "My Custom View Mode" out of the view modes menu, all
+  * toolboxes except for Data Control and Selection will disappear.
+  * This works analogously  for toolbar elements via the signal defineViewModeToolbars(QString, QStringList).
+  * Additionally, if we wanted the "My Custom View Mode" entry in the view modes menu
+  * to appear with a fancy icon, we just have to call defineViewModeIcon(QString, QString):
+  *
+  * \code
+  * emit defineViewModeIcon("My Custom View Mode", "myIconFile.png");
+  * \endcode
+  *
   */
 class ViewModeInterface {
 
