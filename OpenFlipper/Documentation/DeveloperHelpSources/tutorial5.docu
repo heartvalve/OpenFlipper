@@ -1,0 +1,56 @@
+/** \page ex5 Using threads from within a plugin
+
+When developing plugins for %OpenFlipper it is possible to start certain processes
+within their own thread.
+Note that when using threading there are a few things the developer has to be aware of:
+
+- Using threads can cause %OpenFlipper to crash since the threading
+  interface is <b>still under development</b> at the moment.
+- The developer should be aware of the fact that threads run necessarily independent
+  from the main thread (handling all of Qt's user interface elements). So accessing
+  any of these gui objects won't be possible from within a thread. This means
+  in particular that logging, updating of views, etc. always has to be done via a queued
+  signal/slot connection between the thread function and the plugin.
+- The developer will have to pay special attention to avoid race conditions
+  and dead-lock situations himself since %OpenFlipper can obviously not keep track of this.
+  
+\section OFT OpenFlipperThreads in theory and practice
+
+Using threads in %OpenFlipper is quite simple. All necessary class definitions are already
+available to plugins. So the first thing we have to do is instanciate an OpenFlipperThread object
+and tell the core that we just launched a thread via startJob():
+
+\code
+OpenFlipperThread* thread = new OpenFlipperThread("My thread");
+emit startJob( "My thread", "My thread's description" , 0 , 100 , false);
+\endcode
+
+The first parameter of the constructor of the OpenFlipperThread class denotes
+the identifier of the thread. We will use this id to reference our thread later on.
+The signal startJob() just tells the core that we are about to add a new thread
+named "My thread" and having "My thread's description" as the description (OpenFlipper
+displays this in the thread manager). The third and fourth parameter determine the
+progress scale (here going from 0 to 100). This should ideally correspond to the
+number of steps the thread's process consists of with desireably equal computation time
+per step. This is later used to inform the user about the progress of our process.
+The last parameter indicates whether the process should be blocking or not. If it is declared as blocking,
+all input to %OpenFlipper will be ignored until the processing has finished.
+If a thread is declared as non-blocking, the thread will appear in %OpenFlipper's process manager
+and the user will be able to normally use %OpenFlipper while the thread is running in the background.
+
+The next thing we do is connecting the thread's signal to local signals/slots in order to
+keep track of updates concering the processing of our thread:
+
+\code
+connect(thread, SIGNAL(state(QString, int)), this, SIGNAL(setJobState(QString, int)));
+
+connect(thread, SIGNAL(finished(QString)),   this, SIGNAL(finishJob(QString)));
+
+connect(thread, SIGNAL(function(QString)),   this, SLOT(testFunctionThread(QString)), Qt::DirectConnection);
+\endcode
+
+The first signal is later used to update the threads progress status. The second signal is emitted
+if the processing of our thread has been finished and the thread has been destroyed.
+The third signal is actually connected to the function that will be processed in the thread.
+
+*/
