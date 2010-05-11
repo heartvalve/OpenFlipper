@@ -133,7 +133,7 @@ STRIP_FROM_PATH        = @CMAKE_CURRENT_SOURCE_DIR@
 # definition is used. Otherwise one should specify the include paths that
 # are normally passed to the compiler using the -I flag.
 
-STRIP_FROM_INC_PATH    = @CMAKE_CURRENT_SOURCE_DIR@/
+STRIP_FROM_INC_PATH    = @CMAKE_SOURCE_DIR@/
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter
 # (but less readable) file names. This can be useful is your file systems
@@ -663,7 +663,7 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = @CMAKESOURCE_DIR@/OpenFlipper/Doxygen/User
+EXCLUDE                = @CMAKESOURCE_DIR@/OpenFlipper/OpenFlipper/Documentation/UserHelpSources
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix filesystem feature) are excluded
@@ -693,7 +693,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see
 # the \include command).
 
-EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/OpenFlipper/Doxygen/Developer/example/
+EXAMPLE_PATH           = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/example/
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
@@ -713,8 +713,8 @@ EXAMPLE_RECURSIVE      = NO
 # directories that contain image that are included in the documentation (see
 # the \image command).
 
-IMAGE_PATH             = @CMAKE_SOURCE_DIR@/OpenFlipper/Doxygen/Developer/pics/ \
-                         @CMAKE_SOURCE_DIR@/OpenFlipper/Doxygen/Developer/screenshots/
+IMAGE_PATH             = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/pics/ \
+                         @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/screenshots/
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
@@ -848,13 +848,13 @@ HTML_FILE_EXTENSION    = .html
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard header.
 
-HTML_HEADER            = @CMAKE_SOURCE_DIR@/OpenFlipper/Doxygen/Developer/html/acg_header.html
+HTML_HEADER            = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/ACGStyleHtml/acg_header.html
 
 # The HTML_FOOTER tag can be used to specify a personal HTML footer for
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard footer.
 
-HTML_FOOTER            = @CMAKE_SOURCE_DIR@/OpenFlipper/Doxygen/Developer/html/acg_footer.html
+HTML_FOOTER            = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/ACGStyleHtml/acg_footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading
 # style sheet that is used by each HTML page. It can be used to
@@ -863,7 +863,7 @@ HTML_FOOTER            = @CMAKE_SOURCE_DIR@/OpenFlipper/Doxygen/Developer/html/a
 # the style sheet file to the HTML output directory, so don't put your own
 # stylesheet in the HTML output directory as well, or it will be erased!
 
-HTML_STYLESHEET        = @CMAKE_SOURCE_DIR@/OpenFlipper/Doxygen/Developer/html/acg_style.css
+HTML_STYLESHEET        = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/ACGStyleHtml/acg_style.css
 
 # If the HTML_TIMESTAMP tag is set to YES then the footer of each generated HTML
 # page will contain the date and time when the page was generated. Setting
