@@ -79,6 +79,17 @@
  * Provides functions to read and write custom filetypes ( FileInterface )
  *
  *
+ * \section TypePlugin Type Interface
+ * \image html FileInterface.png
+ * Allows plugins to specify custom data types and makes them available
+ * to other plugins ( TypeInterface )
+ *
+ *
+ * \section ViewModePlugin View Mode Interface
+ * \image html FileInterface.png
+ * Specify own view modes ( ViewModeInterface )
+ *
+ *
  * \section ViewPlugin View Interface
  * \image html ViewInterface.png
  * This interface is used to add additional view widgets ( ViewInterface ).
