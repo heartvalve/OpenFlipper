@@ -337,6 +337,13 @@ public:
   */
   void draw(GLState& _state, DrawModes::DrawMode _drawMode);
   
+  /** \brief return available draw modes 
+  *
+  * The drawmodes are constructed based on the mesh properties and the hardware capabilities
+  * of the system.
+  */
+  ACG::SceneGraph::DrawModes::DrawMode  availableDrawModes() const;
+  
 private:
   // types
   enum FaceMode {  PER_VERTEX, PER_FACE };
@@ -356,13 +363,7 @@ private:
   */
   void draw_faces(FaceMode _mode);
   
-  /** \brief return available draw modes 
-  *
-  * The drawmodes are constructed based on the mesh properties and the hardware capabilities
-  * of the system.
-  */
-  ACG::SceneGraph::DrawModes::DrawMode  availableDrawModes() const;
-
+  
 private:
   
 
