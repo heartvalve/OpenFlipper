@@ -6,6 +6,10 @@ IF (DOXYGEN_FOUND)
 #    acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml")
 #  endif ()
 
+  # use the doxyfile here and generate a documentation target
+  acg_create_doc_target( DeveloperHelp )
+
+
   # copy acg stylesheet data after build
   if (TARGET doc )
     acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/../ACGStyleHtml" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHTML/html") 
