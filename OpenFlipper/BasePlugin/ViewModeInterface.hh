@@ -79,7 +79,7 @@
   * in order to hide out everything else:
   *
   * \code
-  * void TestPlugin::pluginsInitialized() {
+  * void ExampleViewModePlugin::pluginsInitialized() {
   *
   *     QStringList toolBoxes = QString("Data Control,Selection").split(",");
   *
