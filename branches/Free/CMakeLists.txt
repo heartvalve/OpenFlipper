@@ -44,6 +44,8 @@ add_subdirectory (ACG)
 add_subdirectory (OpenFlipper/PluginLib)
 add_subdirectory (OpenFlipper/CoreApp)
 
+add_subdirectory (OpenFlipper/Documentation/DeveloperHTMLTarget)
+add_subdirectory (OpenFlipper/Documentation/UserHTMLTarget)
 
 # search all libs in the libs directory 
 file (
