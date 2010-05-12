@@ -61,6 +61,8 @@ class LoggerWidget : public QWidget
 
   public:
     LoggerWidget( QWidget *parent = 0 );
+    
+    ~LoggerWidget();
 
     /** \brief Append a new logmessage to log viewer
     *

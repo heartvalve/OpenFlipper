@@ -136,6 +136,19 @@ LoggerWidget::LoggerWidget( QWidget *parent)
 
 }
 
+LoggerWidget::~LoggerWidget()
+{
+  delete clearButton_;
+  delete errorButton_;
+  delete warnButton_;
+  delete infoButton_;
+  delete allButton_;
+  delete scrollBar_;
+  delete context_;
+  delete list_;
+}
+
+
 //-------------------------------------------------------------------------------------
 
 /// workaround for scrolling
