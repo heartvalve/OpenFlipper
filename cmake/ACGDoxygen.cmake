@@ -84,6 +84,12 @@ IF (DOXYGEN_FOUND)
 
     add_dependencies( doc ${target} )
 
+    # Add winhelp target only once!
+    GET_TARGET_PROPERTY(target_location winhelp EchoString)
+    if ( NOT target_location STREQUAL "Building Windows Documentation" )
+      ADD_CUSTOM_TARGET( winhelp )
+      SET_TARGET_PROPERTIES( winhelp PROPERTIES EchoString "Building Windows Documentation"  )
+    endif()
     
     # create a windows help .chm file using hhc.exe
     # HTMLHelp DLL must be in path!
