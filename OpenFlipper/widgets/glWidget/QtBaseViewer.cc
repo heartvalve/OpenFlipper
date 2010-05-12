@@ -1869,6 +1869,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
       
       // Get the depth at the current mouse position ( projected )
       // This is used to do the translation in world coordinates
+      // As the scene is rendered, we can get the depth directly from the framebuffer.
       GLfloat       depth[1];
       GLint x2d = f.x() - scenePos().x();
       GLint y2d = glHeight() - (f.y() - scenePos().y());
@@ -1913,7 +1914,8 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
 
         makeCurrent();
 
-        // move in z direction
+        // Left and middle button are pressed:
+        // Translate along image planes normal direction -> zoom
         if ((_event->buttons() & Qt::LeftButton) && (_event->buttons() & Qt::MidButton)) {
           switch (projectionMode()) {
             case PERSPECTIVE_PROJECTION: {
@@ -1935,8 +1937,12 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
           }
         }
 
-        // move in x,y direction
-        else if ((_event->buttons() & Qt::MidButton) || (!allowRotation_ && (_event->buttons() & Qt::LeftButton))) {
+        // Middle button is pressed or if rotation is locked, left button can also be used
+        // translation parallel to image plane
+        // If an object was hit when the user started the translation, 
+        // the depth to the object is used to calculate the right translation vectors
+        // such that the hitpoint stays below the mouse.
+        else if ((_event->buttons() & Qt::MidButton) || (!allowRotation_ && (_event->buttons() & Qt::LeftButton))  ) {
           
           ACG::Vec3d translation;
           
@@ -1969,7 +1975,8 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
           
           translate(translation);
 
-        // rotate
+        // left button pressed:
+        // rotate the scene if rotation is not locked
         } else if (allowRotation_ && (_event->buttons() & Qt::LeftButton)) {
             ACG::Vec3d axis(1.0, 0.0, 0.0);
             double angle(0.0);
