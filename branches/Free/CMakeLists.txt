@@ -34,18 +34,31 @@ if (NOT GLUT_FOUND)
   message (FATAL_ERROR "GLUT not found!")
 endif ()
 
-# start with an empty plugin list
-acg_set (OPENFLIPPER_PLUGINS "")
-
-# add the basic componenets
+# ========================================================================
+# Core Components
+# ========================================================================
 add_subdirectory (OpenMesh/src/OpenMesh/Core)
 add_subdirectory (OpenMesh/src/OpenMesh/Tools)
 add_subdirectory (ACG)
 add_subdirectory (OpenFlipper/PluginLib)
 add_subdirectory (OpenFlipper/CoreApp)
 
+# ========================================================================
+# Documentation generators  
+# ========================================================================
+
+# Create dirs to make doxygen happy
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc ) 
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help ) 
+
+# Add the deocumentation targets
 add_subdirectory (OpenFlipper/Documentation/DeveloperTarget)
 add_subdirectory (OpenFlipper/Documentation/UserTarget)
+
+
+# ========================================================================
+# Build all additional libraries  
+# ========================================================================
 
 # search all libs in the libs directory 
 file (
@@ -60,8 +73,19 @@ foreach (_localLib ${_local_libs_in})
   add_subdirectory (${CMAKE_SOURCE_DIR}/${_local_lib_dir})
 endforeach ()
 
+# ========================================================================
+# Plugins
+# ========================================================================
+
+# start with an empty plugin list
+acg_set (OPENFLIPPER_PLUGINS "")
+
 # add plugins
 of_add_plugins ()
+
+# ========================================================================
+# Bundle generation
+# ========================================================================
 
 if (WIN32 )
   # prepare bundle generation cmake file and add a build target for it
@@ -91,6 +115,11 @@ if (APPLE)
   install (DIRECTORY ${CMAKE_BINARY_DIR}/Build/OpenFlipper.app DESTINATION .
            USE_SOURCE_PERMISSIONS)
 endif ()
+
+
+# ========================================================================
+# Output log information
+# ========================================================================
 
 # display results
 acg_print_configure_header (OPENFLIPPER "OpenFlipper")
