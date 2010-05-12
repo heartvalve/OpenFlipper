@@ -625,6 +625,7 @@ Core::~Core()
   for ( uint i = 0 ; i < loggers_.size(); ++i )
     delete loggers_[i];
 
+  delete coreWidget_;
 }
 
 //-----------------------------------------------------------------------------
@@ -857,6 +858,7 @@ Core::exitApplication()
   QTimer* timer = new QTimer();
   connect(timer, SIGNAL(timeout()), this, SLOT(slotExit()));
   timer->start(100);
+  
 
   QApplication::quit();
 }
@@ -981,17 +983,20 @@ Core::writeOnExit() {
 }
 
 void Core::slotExit() {
+  // Write all information on application exit
   writeOnExit();
   
   // Call clearAll() before closing application
   // in order to call all object's destructors...
   clearAll();
   
+  // close the log file to ensure everything is writeen correctly
   if (logFile_)
     logFile_->close();
 
+  // Close the settings file
   OpenFlipper::Options::closeSettings();
-  
+
   // Test if ini-file should be cleaned
   // If so, delete it...
   if(OpenFlipper::Options::deleteIniFile()) {
@@ -1002,7 +1007,7 @@ void Core::slotExit() {
       for ( int i = 0 ; i < (int)optionFiles.size(); ++i) {
           success &= QFile::remove(optionFiles[i]);
       }
-    
+      
       if(!success) {
           QMessageBox::warning(0, tr("Warning"),
                                tr("One or more files could not be removed.\nDelete files manually."),
@@ -1010,6 +1015,9 @@ void Core::slotExit() {
                                QMessageBox::Ok);
       }
   }
+  
+  // Cleanup the widgets here
+  delete coreWidget_;
   
   qApp->quit();
 }
