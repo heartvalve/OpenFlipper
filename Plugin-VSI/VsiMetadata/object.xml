@@ -43,7 +43,7 @@
         [function="content"] (ids[i]);
     </code>
   </element>
-  <element name="constant_object">
+  <element name="constant_object_id">
     <category>Constants</category>
     <short>Constant object id</short>
     <inputs>
