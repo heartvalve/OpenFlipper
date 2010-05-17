@@ -53,7 +53,7 @@
 
 //== INCLUDES =================================================================
 
-// #include <ACG/Geometry/Algorithms.hh>
+#include <ACG/Geometry/Algorithms.hh>
 #include "Math_Tools/Math_Tools.hh"
 
 #include <iostream>
