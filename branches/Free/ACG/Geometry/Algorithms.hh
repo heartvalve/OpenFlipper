@@ -59,96 +59,7 @@ namespace Geometry {
 
 //== 3D STUFF =================================================================
 
-  
-/** barycentric coord of _p w.r.t. (_u,_v,_w) in 3D
-    _p has to lie in plane (_u,_v,_w) **/
-template<typename Scalar>
-bool
-baryCoord( const VectorT<Scalar,3>&  _p,
-	   const VectorT<Scalar,3>&  _u,
-	   const VectorT<Scalar,3>&  _v,
-	   const VectorT<Scalar,3>&  _w,
-	   VectorT<Scalar,3>&        _result );
-
-
-/// return area of triangle (_v0, _v1, _v2)
-template <class Vec>
-typename Vec::value_type
-triangleArea( const Vec& _v0,
-	      const Vec& _v1,
-	      const Vec& _v2 )
-{
-  return sqrt(triangleAreaSquared(_v0,_v1,_v2));
-}
-  
-
-/// return squared area of triangle (_v0, _v1, _v2)
-template <class Vec>
-typename Vec::value_type
-triangleAreaSquared( const Vec& _v0,
-		     const Vec& _v1,
-		     const Vec& _v2 );
-
-
-
-
-/// construct min. enclosing sphere
-template<typename Scalar>
-bool
-minSphere(const VectorT<Scalar,3>&  _v0,
-	  const VectorT<Scalar,3>&  _v1,
-	  const VectorT<Scalar,3>&  _v2,
-	  VectorT<Scalar,3>&        _center,
-	  Scalar&                   _radius);
-
-
-/// return squared radius of min. enclosing circle of triangle (_v0,_v1,_v2)
-template<typename Scalar>
-Scalar
-minRadiusSquared( const VectorT<Scalar,3>&  _v0,
-		  const VectorT<Scalar,3>&  _v1,
-		  const VectorT<Scalar,3>&  _v2 );
-
-  
-/// return radius of min. enclosing circle of triangle (_v0,_v1,_v2)
-template<typename Scalar>
-Scalar
-minRadius( const VectorT<Scalar,3>&  _v0,
-	   const VectorT<Scalar,3>&  _v1,
-	   const VectorT<Scalar,3>&  _v2 )
-{
-  return sqrt(minRadiusSquared(_v0, _v1, _v2));
-}
-
-
-/// return circumcenter of triangle (_v0,_v1,_v2)
-template<typename Scalar>
-bool
-circumCenter( const VectorT<Scalar,3>&  _v0,
-	      const VectorT<Scalar,3>&  _v1,
-	      const VectorT<Scalar,3>&  _v2,
-	      VectorT<Scalar,3>&        _result );
-
-
-/// return squared radius of circumcircle of triangle (_v0,_v1,_v2)
-template<typename Scalar>
-Scalar
-circumRadiusSquared( const VectorT<Scalar,3>&  _v0,
-		     const VectorT<Scalar,3>&  _v1,
-		     const VectorT<Scalar,3>&  _v2 );
-
-
-/// return radius of circumcircle of triangle (_v0,_v1,_v2)
-template<typename Scalar>
-Scalar
-circumRadius( const VectorT<Scalar,3>&  _v0,
-	      const VectorT<Scalar,3>&  _v1,
-	      const VectorT<Scalar,3>&  _v2 )
-{
-  return sqrt(circumRadiusSquared(_v0, _v1, _v2));
-}
-
-
+ 
 
 /// return circumcenter of tetrahedron (_v0,_v1,_v2,_v3)
 template<typename Scalar>
@@ -191,9 +102,6 @@ VectorT<Scalar,3>
 perpendicular( const VectorT<Scalar,3>&  _v );
 
 
-
-
-
 //== 2D STUFF =================================================================
 
 /// orientation of point _p w.r.t. line through _v0,_v1 in 2D
@@ -206,8 +114,6 @@ pointLineOrientation( const VectorT<Scalar,2>&  _p,
   VectorT<Scalar,2> d1(_p-_v0), d2(_v1-_v0);
   return (d1[0]*d2[1]-d1[1]*d2[0]);
 }
-
-
 
 
 /// are 3 vertices in counterclockwise order? in 2D
@@ -248,7 +154,6 @@ lineIntersection( const VectorT<Scalar,2>&  _v0,
 * @{ */
 //===========================================================================     
 
-
 /// distance from point _p to line (_v0,_v1)
 template<class Vec>
 typename Vec::value_type
@@ -286,8 +191,30 @@ distPointTriangleSquared( const Vec& _p,
                           const Vec& _v1,
                           const Vec& _v2,
                           Vec& _nearestPoint );
+                          
+/** \brief Checks the distance from a point to a plane
+*
+*
+* @param _porigin Planes origin
+* @param _pnormal Plane normal ( has to be normalized!)
+* @param _point   point to test
+* @return         distance
+*/
+template < typename VectorT , typename ValueT >
+inline
+ValueT 
+distPointPlane(const VectorT& _porigin, 
+               const VectorT& _pnormal, 
+               const VectorT&  _point);                          
 
-
+          
+/** @} */   
+          
+//===========================================================================
+/** @name Distance Functions ( 3-Dimensional )
+* @{ */
+//===========================================================================                             
+                          
 /// squared distance of lines (_v00, _v01) and (_v10, _v11)
 template<typename Scalar>
 Scalar
@@ -314,23 +241,8 @@ distLineLine( const VectorT<Scalar,3>& _v00,
                                   _min_v0, _min_v1));
 }
 
-/** \brief Checks the distance from a point to a plane
-*
-*
-* @param _porigin Planes origin
-* @param _pnormal Plane normal ( has to be normalized!)
-* @param _point   point to test
-* @return         distance
-*/
-template < typename VectorT , typename ValueT >
-inline
-ValueT 
-distPlane(const VectorT& _porigin, 
-          const VectorT& _pnormal, 
-          const VectorT&  _point);
-
-
-/** @} */       
+/** @} */   
+   
 
 //===========================================================================
 /** @name Projection Functions ( N-Dimensional )
@@ -410,11 +322,109 @@ circumCenter( const VectorT<Scalar,2>&  _v0,
 
 /** @} */   
 
+//===========================================================================
+/** @name Triangle Functions 3-Dimensional
+* @{ */
+//===========================================================================  
+ 
+/** barycentric coord of _p w.r.t. (_u,_v,_w) in 3D
+    _p has to lie in plane (_u,_v,_w) **/
+template<typename Scalar>
+bool
+baryCoord( const VectorT<Scalar,3>&  _p,
+           const VectorT<Scalar,3>&  _u,
+           const VectorT<Scalar,3>&  _v,
+           const VectorT<Scalar,3>&  _w,
+           VectorT<Scalar,3>&        _result );
+
+
+/// construct min. enclosing sphere
+template<typename Scalar>
+bool
+minSphere(const VectorT<Scalar,3>&  _v0,
+          const VectorT<Scalar,3>&  _v1,
+          const VectorT<Scalar,3>&  _v2,
+          VectorT<Scalar,3>&        _center,
+          Scalar&                   _radius);
+
+
+/// return squared radius of min. enclosing circle of triangle (_v0,_v1,_v2)
+template<typename Scalar>
+Scalar
+minRadiusSquared( const VectorT<Scalar,3>&  _v0,
+                  const VectorT<Scalar,3>&  _v1,
+                  const VectorT<Scalar,3>&  _v2 );
+
+  
+/// return radius of min. enclosing circle of triangle (_v0,_v1,_v2)
+template<typename Scalar>
+Scalar
+minRadius( const VectorT<Scalar,3>&  _v0,
+           const VectorT<Scalar,3>&  _v1,
+           const VectorT<Scalar,3>&  _v2 )
+{
+  return sqrt(minRadiusSquared(_v0, _v1, _v2));
+}
+
+
+/// return circumcenter of triangle (_v0,_v1,_v2)
+template<typename Scalar>
+bool
+circumCenter( const VectorT<Scalar,3>&  _v0,
+              const VectorT<Scalar,3>&  _v1,
+              const VectorT<Scalar,3>&  _v2,
+              VectorT<Scalar,3>&        _result );
+
+
+/// return squared radius of circumcircle of triangle (_v0,_v1,_v2)
+template<typename Scalar>
+Scalar
+circumRadiusSquared( const VectorT<Scalar,3>&  _v0,
+                     const VectorT<Scalar,3>&  _v1,
+                     const VectorT<Scalar,3>&  _v2 );
+
+
+/// return radius of circumcircle of triangle (_v0,_v1,_v2)
+template<typename Scalar>
+Scalar
+circumRadius( const VectorT<Scalar,3>&  _v0,
+              const VectorT<Scalar,3>&  _v1,
+              const VectorT<Scalar,3>&  _v2 )
+{
+  return sqrt(circumRadiusSquared(_v0, _v1, _v2));
+}
+
+/** @} */   
 
 //===========================================================================
 /** @name Triangle Functions N-Dimensional
 * @{ */
 //===========================================================================   
+
+
+/** \brief return area of triangle (_v0, _v1, _v2)
+*
+*/
+template <class Vec>
+typename Vec::value_type
+triangleArea( const Vec& _v0,
+              const Vec& _v1,
+              const Vec& _v2 )
+{
+  return sqrt(triangleAreaSquared(_v0,_v1,_v2));
+}
+  
+
+/** \brief return squared area of triangle (_v0, _v1, _v2)
+*
+*/
+template <class Vec>
+typename Vec::value_type
+triangleAreaSquared( const Vec& _v0,
+                     const Vec& _v1,
+                     const Vec& _v2 );
+
+
 
 /** \brief return aspect ratio of triangle
 *

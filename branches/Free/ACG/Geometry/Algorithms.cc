@@ -702,9 +702,9 @@ distLineLineSquared( const VectorT<Scalar,3>& _v00,
 template < typename VectorT , typename ValueT >
 inline
 ValueT
-distPlane(const VectorT& _porigin,
-          const VectorT& _pnormal,
-          const VectorT& _point)
+distPointPlane(const VectorT& _porigin,
+               const VectorT& _pnormal,
+               const VectorT& _point)
 {
   assert( fabs(_pnormal.norm()) > 0.0000000001) ;
   return( ( (_point - _porigin) | _pnormal ) );
@@ -738,7 +738,7 @@ projectToPlane(const VectorT& _porigin,
                const VectorT& _pnormal,
                const VectorT& _point)
 {
-  return (_point - _pnormal * dist_plane< VectorT , double >( _porigin , _pnormal , _point ) );
+  return (_point - _pnormal * distPointPlane< VectorT , double >( _porigin , _pnormal , _point ) );
 }
 
 //-----------------------------------------------------------------------------
