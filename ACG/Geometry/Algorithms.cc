@@ -697,6 +697,49 @@ distLineLineSquared( const VectorT<Scalar,3>& _v00,
   return fabs(fSqrDist);
 }
 
+//-----------------------------------------------------------------------------
+
+template < typename VectorT , typename ValueT >
+inline
+ValueT
+distPlane(const VectorT& _porigin,
+          const VectorT& _pnormal,
+          const VectorT& _point)
+{
+  assert( fabs(_pnormal.norm()) > 0.0000000001) ;
+  return( ( (_point - _porigin) | _pnormal ) );
+}
+
+
+//-----------------------------------------------------------------------------
+
+template < typename VectorT >
+VectorT projectToEdge(const VectorT& _start , const VectorT& _end , const VectorT& _point )
+{
+  VectorT direction = ( _end - _start ).normalize();
+  assert( fabs(direction.norm()) > 0.0000000001) ;
+  const VectorT projected_point = ( ( _point - _start ) | direction ) * direction + _start;
+  
+  if ( ( ( projected_point - _start ) | direction ) > ( ( _end - _start ) | direction ) )
+    return _end;
+  
+  if ( ( ( projected_point - _start ) | direction ) < 0 )
+    return _start;
+  
+  return projected_point;
+}
+
+//-----------------------------------------------------------------------------
+
+template < typename VectorT >
+inline
+VectorT
+projectToPlane(const VectorT& _porigin,
+               const VectorT& _pnormal,
+               const VectorT& _point)
+{
+  return (_point - _pnormal * dist_plane< VectorT , double >( _porigin , _pnormal , _point ) );
+}
 
 //-----------------------------------------------------------------------------
 
