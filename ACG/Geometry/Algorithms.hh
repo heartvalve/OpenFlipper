@@ -394,6 +394,18 @@ circumRadius( const VectorT<Scalar,3>&  _v0,
   return sqrt(circumRadiusSquared(_v0, _v1, _v2));
 }
 
+/**
+* test angles in triangle
+* return 0 if all smaller than 90?
+* return 1 if angle at _p0 ist greater than 90?
+* return 2 if angle at _p1 ist greater than 90?
+* return 3 if angle at _p2 ist greater than 90?
+*/
+template<class VectorT>
+int isObtuse(const VectorT& _p0,
+             const VectorT& _p1,
+             const VectorT& _p2 );
+
 /** @} */   
 
 //===========================================================================

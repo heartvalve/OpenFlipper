@@ -799,6 +799,30 @@ circumRadiusSquared( const VectorT<Scalar,3>&  _v0,
 	   denom );
 }
 
+//-----------------------------------------------------------------------------
+
+template<class VectorT>
+int isObtuse(const VectorT& _p0,
+             const VectorT& _p1,
+             const VectorT& _p2 )
+{
+  const double a0 = ((_p1-_p0)|(_p2-_p0));
+
+  if ( a0<0.0) return 1;
+  else
+  {
+    const double a1 = ((_p0-_p1)|(_p2-_p1));
+
+    if (a1 < 0.0 ) return 2;
+    else
+    {
+      const double a2 = ((_p0-_p2)|(_p1-_p2));
+
+      if (a2 < 0.0 ) return 3;
+      else return 0;
+    }
+  }
+}
 
 //-----------------------------------------------------------------------------
 
