@@ -90,70 +90,6 @@ triangleAreaSquared( const Vec& _v0,
 		     const Vec& _v2 );
 
 
-/// distance from point _p to line (_v0,_v1)
-template<class Vec>
-typename Vec::value_type
-distPointLine( const Vec& _p,
-	       const Vec& _v0,
-	       const Vec& _v1,
-	       Vec*       _min_v=0 )
-{ return sqrt(distPointLineSquared(_p, _v0, _v1, _min_v)); }
-
-
-/// squared distance from point _p to line (_v0,_v1)
-template<class Vec>
-typename Vec::value_type
-distPointLineSquared( const Vec& _p,
-		      const Vec& _v0,
-		      const Vec& _v1,
-		      Vec*       _min_v=0);
-
-/// distance from point _p to triangle (_v0, _v1, _v2)
-template <class Vec>
-typename Vec::value_type
-distPointTriangle( const Vec& _p,
-		   const Vec& _v0,
-		   const Vec& _v1,
-		   const Vec& _v2,
-		   Vec& _nearestPoint )
-{ return sqrt(distPointTriangleSquared(_p, _v0, _v1, _v2, _nearestPoint)); }
-
-
-/// squared distance from point _p to triangle (_v0, _v1, _v2)
-template <class Vec>
-typename Vec::value_type
-distPointTriangleSquared( const Vec& _p,
-			  const Vec& _v0,
-			  const Vec& _v1,
-			  const Vec& _v2,
-			  Vec& _nearestPoint );
-
-
-/// squared distance of lines (_v00, _v01) and (_v10, _v11)
-template<typename Scalar>
-Scalar
-distLineLineSquared( const VectorT<Scalar,3>& _v00,
-		     const VectorT<Scalar,3>& _v01,
-		     const VectorT<Scalar,3>& _v10,
-		     const VectorT<Scalar,3>& _v11,
-		     VectorT<Scalar,3>*       _min_v0=0,
-		     VectorT<Scalar,3>*       _min_v1=0,
-		     bool                          _fastApprox=false );
-
-
-/// distance of lines (_v00, _v01) and (_v10, _v11)
-template<typename Scalar>
-Scalar
-distLineLine( const VectorT<Scalar,3>& _v00,
-	      const VectorT<Scalar,3>& _v01,
-	      const VectorT<Scalar,3>& _v10,
-	      const VectorT<Scalar,3>& _v11,
-	      VectorT<Scalar,3>*       _min_v0=0,
-	      VectorT<Scalar,3>*       _min_v1=0 )
-{
-  return sqrt(distLineLineSquared(_v00, _v01, _v10, _v11,
-				  _min_v0, _min_v1));
-}
 
 
 /// construct min. enclosing sphere
@@ -256,39 +192,11 @@ perpendicular( const VectorT<Scalar,3>&  _v );
 
 
 
+
+
 //== 2D STUFF =================================================================
 
-
-
-/// barycentric coord of _p w.r.t. (_u,_v,_w) in 2D
-template<typename Scalar>
-bool
-baryCoord( const VectorT<Scalar,2>&  _p,
-	   const VectorT<Scalar,2>&  _u,
-	   const VectorT<Scalar,2>&  _v,
-	   const VectorT<Scalar,2>&  _w,
-	   VectorT<Scalar,3>&        _result );
-
-
-/// is point _p in triangle (_v0,_v1,_v2)?
-template<typename Scalar>
-bool
-isInTriangle( const VectorT<Scalar,2>&  _p,
-	      const VectorT<Scalar,2>&  _u,
-	      const VectorT<Scalar,2>&  _v,
-	      const VectorT<Scalar,2>&  _w )
-{
-  VectorT<Scalar,3> bary;
-  if (baryCoord(_p, _u, _v, _w, bary)) 
-    return ((bary[0]>0.0) && (bary[1]>0.0) && (bary[2]>0.0));
-  else {
-    std::cerr << "point in triangle error\n";
-    return false;
-  }
-}
-
-
-/// orientation of point _p w.r.t. line through _v0,_v1
+/// orientation of point _p w.r.t. line through _v0,_v1 in 2D
 template<typename Scalar>
 Scalar
 pointLineOrientation( const VectorT<Scalar,2>&  _p,
@@ -302,7 +210,7 @@ pointLineOrientation( const VectorT<Scalar,2>&  _p,
 
 
 
-/// are 3 vertices in counterclockwise order?
+/// are 3 vertices in counterclockwise order? in 2D
 template<typename Scalar>
 bool
 isCCW( const VectorT<Scalar,2>&  _v0,
@@ -313,7 +221,7 @@ isCCW( const VectorT<Scalar,2>&  _v0,
 }
 
 
-/// are 3 vertices in clockwise order?
+/// are 3 vertices in clockwise order? in 2D
 template<typename Scalar>
 bool
 isCW( const VectorT<Scalar,2>&  _v0,
@@ -335,32 +243,198 @@ lineIntersection( const VectorT<Scalar,2>&  _v0,
 		  Scalar& _t2 );
 
 
-/// return circumcenter of triangle (_v0,_v1,_v2)
+//===========================================================================
+/** @name Distance Functions ( N-Dimensional )
+* @{ */
+//===========================================================================     
+
+
+/// distance from point _p to line (_v0,_v1)
+template<class Vec>
+typename Vec::value_type
+distPointLine( const Vec& _p,
+               const Vec& _v0,
+               const Vec& _v1,
+               Vec*       _min_v=0 )
+{ return sqrt(distPointLineSquared(_p, _v0, _v1, _min_v)); }
+
+
+/// squared distance from point _p to line (_v0,_v1)
+template<class Vec>
+typename Vec::value_type
+distPointLineSquared( const Vec& _p,
+                      const Vec& _v0,
+                      const Vec& _v1,
+                      Vec*       _min_v=0);
+
+/// distance from point _p to triangle (_v0, _v1, _v2)
+template <class Vec>
+typename Vec::value_type
+distPointTriangle( const Vec& _p,
+                   const Vec& _v0,
+                   const Vec& _v1,
+                   const Vec& _v2,
+                   Vec& _nearestPoint )
+{ return sqrt(distPointTriangleSquared(_p, _v0, _v1, _v2, _nearestPoint)); }
+
+
+/// squared distance from point _p to triangle (_v0, _v1, _v2)
+template <class Vec>
+typename Vec::value_type
+distPointTriangleSquared( const Vec& _p,
+                          const Vec& _v0,
+                          const Vec& _v1,
+                          const Vec& _v2,
+                          Vec& _nearestPoint );
+
+
+/// squared distance of lines (_v00, _v01) and (_v10, _v11)
+template<typename Scalar>
+Scalar
+distLineLineSquared( const VectorT<Scalar,3>& _v00,
+                     const VectorT<Scalar,3>& _v01,
+                     const VectorT<Scalar,3>& _v10,
+                     const VectorT<Scalar,3>& _v11,
+                     VectorT<Scalar,3>*       _min_v0=0,
+                     VectorT<Scalar,3>*       _min_v1=0,
+                     bool                          _fastApprox=false );
+
+
+/// distance of lines (_v00, _v01) and (_v10, _v11)
+template<typename Scalar>
+Scalar
+distLineLine( const VectorT<Scalar,3>& _v00,
+              const VectorT<Scalar,3>& _v01,
+              const VectorT<Scalar,3>& _v10,
+              const VectorT<Scalar,3>& _v11,
+              VectorT<Scalar,3>*       _min_v0=0,
+              VectorT<Scalar,3>*       _min_v1=0 )
+{
+  return sqrt(distLineLineSquared(_v00, _v01, _v10, _v11,
+                                  _min_v0, _min_v1));
+}
+
+/** \brief Checks the distance from a point to a plane
+*
+*
+* @param _porigin Planes origin
+* @param _pnormal Plane normal ( has to be normalized!)
+* @param _point   point to test
+* @return         distance
+*/
+template < typename VectorT , typename ValueT >
+inline
+ValueT 
+distPlane(const VectorT& _porigin, 
+          const VectorT& _pnormal, 
+          const VectorT&  _point);
+
+
+/** @} */       
+
+//===========================================================================
+/** @name Projection Functions ( N-Dimensional )
+* @{ */
+//===========================================================================      
+
+
+/**
+project one point to an edge. If its projection is not on the edge itself, the start or the endpoint is returned
+@param _start beginning of edge
+@param _end   end of the edge
+@param _point point to be projected
+*/
+template < typename VectorT >
+VectorT projectToEdge(const VectorT& _start , 
+                      const VectorT& _end , 
+                      const VectorT& _point );
+                      
+                      
+/** \brief projects a point to a plane
+* @param _porigin Planes origin
+* @param _pnormal Plane normal ( has to be normalized! )
+* @param _point   point to project
+* @return         projected point
+*/
+template < typename VectorT >
+inline
+VectorT
+projectToPlane(const VectorT& _porigin, 
+               const VectorT& _pnormal, 
+               const VectorT&  _point);                      
+              
+/** @} */           
+
+//===========================================================================
+/** @name Triangle Functions (2D Only!!)
+* @{ */
+//===========================================================================   
+
+/** \brief return circumcenter of triangle (_v0,_v1,_v2)
+*
+*/
+
+/// barycentric coord of _p w.r.t. (_u,_v,_w) in 2D
+template<typename Scalar>
+bool
+baryCoord( const VectorT<Scalar,2>&  _p,
+           const VectorT<Scalar,2>&  _u,
+           const VectorT<Scalar,2>&  _v,
+           const VectorT<Scalar,2>&  _w,
+           VectorT<Scalar,3>&        _result );
+           
+
+/// is point _p in triangle (_v0,_v1,_v2) in 2D
+template<typename Scalar>
+bool
+isInTriangle( const VectorT<Scalar,2>&  _p,
+              const VectorT<Scalar,2>&  _u,
+              const VectorT<Scalar,2>&  _v,
+              const VectorT<Scalar,2>&  _w )
+{
+  VectorT<Scalar,3> bary;
+  if (baryCoord(_p, _u, _v, _w, bary)) 
+    return ((bary[0]>0.0) && (bary[1]>0.0) && (bary[2]>0.0));
+  else {
+    std::cerr << "point in triangle error\n";
+    return false;
+  }
+}
+
 template<typename Scalar>
 bool
 circumCenter( const VectorT<Scalar,2>&  _v0,
-	      const VectorT<Scalar,2>&  _v1,
-	      const VectorT<Scalar,2>&  _v2,
-	      VectorT<Scalar,2>&        _result );
+              const VectorT<Scalar,2>&  _v1,
+              const VectorT<Scalar,2>&  _v2,
+              VectorT<Scalar,2>&        _result );
+
+/** @} */   
 
 
-//== N-DIM STUFF ==============================================================
+//===========================================================================
+/** @name Triangle Functions N-Dimensional
+* @{ */
+//===========================================================================   
 
-
-/// return aspect ratio of triangle
+/** \brief return aspect ratio of triangle
+*
+*/
 template <typename Scalar, int N>
 Scalar
 aspectRatio( const VectorT<Scalar, N>& _v0,
-	     const VectorT<Scalar, N>& _v1,
-	     const VectorT<Scalar, N>& _v2 );
+             const VectorT<Scalar, N>& _v1,
+             const VectorT<Scalar, N>& _v2 );
 
-/// return roundness of triangle: 1=equilateral, 0=colinear
+/** \brief return roundness of triangle: 1=equilateral, 0=colinear
+*
+*/
 template <typename Scalar, int N>
 Scalar
 roundness( const VectorT<Scalar, N>& _v0,
-	   const VectorT<Scalar, N>& _v1,
-	   const VectorT<Scalar, N>& _v2 );
+           const VectorT<Scalar, N>& _v1,
+           const VectorT<Scalar, N>& _v2 );
 
+/** @} */              
 
 //=============================================================================
 } // namespace Geometry
