@@ -47,19 +47,19 @@
     <category>Constants</category>
     <short>Constant object id</short>
     <inputs>
-      <input name="in" type="ObjectId" external="false">
+      <input name="input" type="ObjectId" external="false">
         <short>Object id</short>
         <default>0</default>
       </input>
     </inputs>
     <outputs>
-      <output name="out" type="ObjectId">
+      <output name="output" type="ObjectId">
         <short>Configured Value</short>
         <long>This element returns the configured value</long>
       </output>
     </outputs>
     <code>
-      [output="out"] = [input="in"];
+      [output="output"] = [input="input"];
     </code>
   </element>
 </OpenFlipper>
