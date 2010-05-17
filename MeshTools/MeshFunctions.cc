@@ -56,7 +56,6 @@
 #include "MeshFunctions.hh"
 
 #include <ACG/Geometry/Algorithms.hh>
-#include "Math_Tools/GeometryFunctions.hh"
 #include "Math_Tools/Math_Tools.hh"
 
 #include <set>
@@ -177,9 +176,9 @@ cut_face(const VectorT& _porigin,
 
   unsigned int npos(0), nneg(0);
 
-  if( GeometryFunctions::dist_plane< VectorT , double >( _porigin, _pnormal, p0) > 0 ) ++npos; else ++nneg;
-  if( GeometryFunctions::dist_plane< VectorT , double >( _porigin, _pnormal, p1) > 0 ) ++npos; else ++nneg;
-  if( GeometryFunctions::dist_plane< VectorT , double >( _porigin, _pnormal, p2) > 0 ) ++npos; else ++nneg;
+  if( ACG::Geometry::distPointPlane< VectorT , double >( _porigin, _pnormal, p0) > 0 ) ++npos; else ++nneg;
+  if( ACG::Geometry::distPointPlane< VectorT , double >( _porigin, _pnormal, p1) > 0 ) ++npos; else ++nneg;
+  if( ACG::Geometry::distPointPlane< VectorT , double >( _porigin, _pnormal, p2) > 0 ) ++npos; else ++nneg;
 
 
   if( npos && nneg ) return true;
