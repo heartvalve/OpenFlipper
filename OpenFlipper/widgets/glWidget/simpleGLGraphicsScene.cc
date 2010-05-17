@@ -79,13 +79,32 @@ SimpleGLGraphicsScene::SimpleGLGraphicsScene () :
 
 void SimpleGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
 {
-  if (_painter->paintEngine()->type() != QPaintEngine::OpenGL) {
-    std::cerr << "SimpleGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
+  
+  // Check for switch in qt4.6 to OpenGL2
+  #if QT_VERSION >= 0x040600
+  if (_painter->paintEngine()->type() != QPaintEngine::OpenGL && _painter->paintEngine()->type() != QPaintEngine::OpenGL2 ) {
+    std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
     return;
   }
+  #else
+  if (_painter->paintEngine()->type() != QPaintEngine::OpenGL ) {
+    std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
+    return;
+  }
+  #endif
+  
+  // Initialize background first
+  _painter->setBackground(QApplication::palette().window());
+  _painter->eraseRect(_rect);
 
   if (!view_)
     return;
+  
+  // From now on we do OpenGL direct painting on the scene
+  #if QT_VERSION >= 0x040600
+  // Tell Qt that we directly use OpenGL
+  _painter->beginNativePainting();
+  #endif
 
   if (!initialized_)
   {
@@ -122,6 +141,11 @@ void SimpleGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_re
   _painter->eraseRect(_rect);
 
   view_->paintGL();
+  
+  #if QT_VERSION >= 0x040600
+  // The rest is painting through QT again. 
+  _painter->endNativePainting();
+  #endif
 }
 
 
