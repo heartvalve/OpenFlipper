@@ -32,7 +32,7 @@ Child nodes:
 <input> : Describes an input of an element / function
 -----------------------------------------------------
 Attributes: 
-	name (string)(required): internal input name (only letters and underscores are allowed)
+	name (string)(required): internal input name (only letters and underscores are allowed, please do not use "in" as input as this is already used by the scripting engine!)
 	type (string)(required): type name. It can be an already supported type name or a new one. New types  can only be connected to outputs of the same type, and will not have a create or runtime configuration dialog.
 	external (bool)(optional): If set to "false", this input will not have a visible connection point and will only be configurable with the type configuration widget
 	user (bool)(optional): If set to "false", this input won't be configurable with the type configuration widget during script creation
