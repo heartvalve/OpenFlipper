@@ -135,10 +135,9 @@ void SimpleGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_re
     glPopMatrix ();
     glClear(GL_DEPTH_BUFFER_BIT);
   }
-
   
-  _painter->setBackground(QApplication::palette().window());
-  _painter->eraseRect(_rect);
+  // Clear the depth buffer (This is required since QT4.6 Otherwise we get an emtpty scene!
+  glClear(GL_DEPTH_BUFFER_BIT);
 
   view_->paintGL();
   
