@@ -73,42 +73,6 @@ inline bool isNan(double x) {
 }
 
 
-template < typename VectorT >
-VectorT project_to_edge(const VectorT& _start , const VectorT& _end , const VectorT& _point )
-{
-  VectorT direction = ( _end - _start );
-  assert( fabs(direction.norm()) > 0.0000000001) ;
-  const VectorT projected_point = ( ( _point - _start ) | direction ) * direction + _start;
-
-  if ( ( ( projected_point - _start ) | direction ) > ( ( _end - _start ) | direction ) )
-     return _end;
-
-  if ( ( ( projected_point - _start ) | direction ) < 0 )
-     return _start;
-
-  return projected_point;
-}
-
-template < typename VectorT , typename ValueT >
-inline
-ValueT
-dist_plane(const VectorT& _porigin,
-                 const VectorT& _pnormal,
-                 const VectorT& _point)
-{
-  assert( fabs(_pnormal.norm()) > 0.0000000001) ;
-  return( ((_point-_porigin) | _pnormal));
-}
-
-template < typename VectorT >
-inline
-VectorT
-project_to_plane(const VectorT& _porigin,
-                           const VectorT& _pnormal,
-                           const VectorT& _point)
-{
-   return (_point - _pnormal * dist_plane< VectorT , double >( _porigin , _pnormal , _point ) );
-}
 
 template < typename VectorT , typename ValueT >
 ValueT
@@ -124,6 +88,7 @@ get_fullangle( VectorT _vector1 , VectorT _vector2 , const VectorT& _normal , bo
    const double right = ( ( _normal % _vector1 ) | _vector2 ) ;
 
    double sp    = ( _vector1 | _vector2 );
+   
    //Catch some errors with scalar product and the following acos
    if (sp < -1.0) {
      sp = -1.0;

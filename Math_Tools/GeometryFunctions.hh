@@ -67,46 +67,7 @@
 /// Namespace providing different geometric functions
 namespace GeometryFunctions {
    
-//== CLASS DEFINITION =========================================================
-   
-/**
-   project one point to an edge. If its projection is not on the edge itself, the start or the endpoint is returned
-   @param _start beginning of edge
-   @param _end   end of the edge
-   @param _point point to be projected
-*/
-template < typename VectorT >
-VectorT project_to_edge(const VectorT& _start , 
-                                         const VectorT& _end , 
-                                         const VectorT& _point );
-
-/**
-   Checks the distance from a point to a plane
-   @param _porigin Planes origin
-   @param _pnormal Plane normal
-   @param _point   point to test
-   @return         distance
-*/
-template < typename VectorT , typename ValueT >
-inline
-ValueT 
-dist_plane(const VectorT& _porigin, 
-                 const VectorT& _pnormal, 
-                 const VectorT&  _point);
-                 
-/**
-   projects a point to a plane
-   @param _porigin Planes origin
-   @param _pnormal Plane normal
-   @param _point   point to project
-   @return         projected point
-*/
-template < typename VectorT >
-inline
-VectorT
-project_to_plane(const VectorT& _porigin, 
-                           const VectorT& _pnormal, 
-                           const VectorT&  _point);
+//== CLASS DEFINITION =========================================================   
                        
 /** Return a fully parametrized angle
    @param _vector1 vector pointing away from center, angle = 0
@@ -117,10 +78,10 @@ project_to_plane(const VectorT& _porigin,
 */
 template < typename VectorT , typename ValueT >
 ValueT
-get_fullangle( VectorT _vector1 , 
-                       VectorT _vector2 , 
-                       const VectorT& _normal  , 
-                       bool& skip );
+get_fullangle( VectorT _vector1, 
+               VectorT _vector2, 
+               const   VectorT& _normal, 
+               bool&   skip );
 
 
 /** Calculate the difference between two angles
