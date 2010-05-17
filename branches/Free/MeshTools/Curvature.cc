@@ -53,12 +53,8 @@
 
 //== INCLUDES =================================================================
 
-// #include "MeshFunctions.hh"
-
 // #include <ACG/Geometry/Algorithms.hh>
-// #include "Math_Tools/GeometryFunctions.hh"
 #include "Math_Tools/Math_Tools.hh"
-#include "Math_Tools/GeometryFunctions.hh"
 
 #include <iostream>
 #include <OpenMesh/Core/Geometry/MathDefs.hh>
@@ -149,7 +145,7 @@ void discrete_mean_curv_op( const MeshT&                           _m,
 #endif
 
     // calculate area
-    const int obt = GeometryFunctions::is_obtuse(p0,p1,p2);
+    const int obt = ACG::Geometry::isObtuse(p0,p1,p2);
     if(obt == 0)
     {
       REALT gamma = acos( OpenMesh::sane_aarg((p0-p1).normalize() | (p2-p1).normalize()) );
