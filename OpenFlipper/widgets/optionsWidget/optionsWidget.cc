@@ -58,8 +58,8 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   : QWidget(parent),
     plugins_(_plugins),
     coreKeys_(_core),
-    keys_(_invKeys)
-
+    keys_(_invKeys),
+    translationIndexChanged_(false)
 {
   setupUi(this);
 
@@ -142,7 +142,6 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
   progressDialog = new QProgressDialog(this);
   connect(progressDialog, SIGNAL(canceled()), this, SLOT(cancelDownload()));
 
-
   //colordialog
   connect(backgroundButton, SIGNAL(clicked()), this, SLOT(getBackgroundColor()) );
   connect(baseColorButton, SIGNAL(clicked()), this, SLOT(getBaseColor()) );
@@ -207,6 +206,10 @@ void OptionsWidget::switchStackedWidget() {
     
     // Preview new settings
     slotPreviewStereoSettings();
+}
+
+void OptionsWidget::slotTranslationIndexChanged(int /*_index*/) {
+    translationIndexChanged_ = true;
 }
 
 void OptionsWidget::updateViewerSettings(int _row){
@@ -393,6 +396,9 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
     translation->setCurrentIndex(1);
   else
     translation->setCurrentIndex(2);
+  
+  // Listen to changes...
+  connect(translation, SIGNAL(currentIndexChanged(int)), this, SLOT(slotTranslationIndexChanged(int)));
 
   updateVersionsTable();
 
@@ -657,6 +663,15 @@ void OptionsWidget::slotApply() {
   OpenFlipper::Options::defaultViewerLayout( viewerLayout->currentIndex() );
   OpenFlipper::Options::gridVisible( gridVisible->isChecked() );
 
+  // Show warning message that restart is required if language has been changed...
+  if(translationIndexChanged_) {
+    int restart = QMessageBox::information(this, tr("Restart required!"),
+                      tr("The changes will take effect after next restart. Do you want to close OpenFlipper now?"),
+                      QMessageBox::Yes | QMessageBox::No);
+                    
+    if(restart == QMessageBox::Yes) emit exit(0);
+  }
+  
   switch ( translation->currentIndex() ){
     case 0 : OpenFlipper::Options::translation("en_US");  break;
     case 1 : OpenFlipper::Options::translation("de_DE");  break;

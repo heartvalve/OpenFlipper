@@ -208,6 +208,9 @@ private slots:
 
    // Update component of OpenFlipper
    void updateComponent();
+   
+   // Tracks whether another language has been selected
+   void slotTranslationIndexChanged(int);
 
 private:
    /** After checking for updates this variable will contain a list of filenames for which updates are available
@@ -221,6 +224,10 @@ private:
    /** Current filename of the plugin to be updated
     */
    QString currentUpdateName_;
+   
+   /** Used to track whether another language has been selected
+   */
+   bool translationIndexChanged_;
 
 
 };
