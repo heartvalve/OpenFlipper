@@ -193,7 +193,7 @@ void LoadWidget::slotSetSaveFilters(DataType _type){
 
 /// find suitable plugin for loading current file
 void LoadWidget::loadFile(){
-
+  
   //get selection
   QStringList files = selectedFiles();
 
@@ -472,14 +472,39 @@ int LoadWidget::showSave(IdList _ids, QString _filename){
   return this->exec();
 }
 
+bool LoadWidget::validFilename() {
+    
+  // Only proceed if selected file is REALLY a file
+  // Consider two cases:
+  // Case 1: Filename is neither a valid file nor a directory -> continue and wait for valid file
+  // Case 2: Entered filename is a directory -> Change to directory and wait for valid file
+  QString firstEntered = selectedFiles()[0];
+  
+  // Test if directory exists
+  QDir testdir(firstEntered);
+  if(testdir.exists()) {
+      setDirectory(testdir);
+      return false;
+  }
+  
+  // Test if file exists
+  QFile file(firstEntered);
+  if(!file.exists()) return false;
+  
+  return true;
+}
+
 void LoadWidget::accept() {
-  if ( loadMode_ )
-    loadFile();
-  else
-    saveFile();
+    
+  if(validFilename()) {
+    
+    if ( loadMode_ )
+      loadFile();
+    else
+      saveFile();
 
-
-  QFileDialog::accept();
+    QFileDialog::accept();
+  }
 }
 
 void LoadWidget::slotSetPluginForExtension(QString _extension, int _pluginId ){

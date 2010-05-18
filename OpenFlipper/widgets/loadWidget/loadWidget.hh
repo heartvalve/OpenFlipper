@@ -81,6 +81,8 @@ class LoadWidget : public QFileDialog
     int showSave(int     _id, QString _filename);
     int showSave(IdList _ids, QString _filename);
     
+    bool validFilename();
+    
   public slots :
     virtual void accept();
     
