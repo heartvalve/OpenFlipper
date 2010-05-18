@@ -52,5 +52,46 @@ connect(thread, SIGNAL(function(QString)),   this, SLOT(testFunctionThread(QStri
 The first signal is later used to update the threads progress status. The second signal is emitted
 if the processing of our thread has been finished and the thread has been destroyed.
 The third signal is actually connected to the function that will be processed in the thread.
+Once having connected these signals, we're about to start our thread:
+
+\code
+// Launch the thread
+thread->start();
+
+// Start processing of the function code (connected via signal OpenFlipperThread::function())
+thread->startProcessing();
+\endcode
+
+Now our function is processed within a new thread and either %OpenFlipper's process manager or
+a blocking widget showing the processes' progress pops up (depending on whether the thread is declared
+to be blocking or not). So the only thing that is still left to take core of is the continuous update
+of the threads progress state. Assuming we want the following function to run in a separate thread:
+
+\code
+void testFunctionThread(QString _jobId) {
+
+    for (int i = 0 ; i < 1000000; ++i) {
+       
+        // Emit new progress state
+        if(i % 10000 == 0)
+            emit setJobState(_jobId, (int)(i / 10000));
+        
+        if(i == 500000) {
+            // When half of the processing is finished
+            // change the job's description
+            emit setJobDescription(_jobId, "Half way done");
+        }
+    }
+}
+\endcode
+
+This function actually contains one loop incrementing variable i 1 mio. times.
+Each k-th iteration (with k % 10000 == 0) we emit the signal setJobState(QString,int)
+where we set the second parameter to an integer value between 0 and 100 (remember that we set
+these limits at the beginning when emitting the startJob() signal).
+%OpenFlipper now updates its progress bar state to the new value.
+If half of the loop is processed (i == 500000), we additionally want to update
+the progresses' description that is also displayed in %OpenFlipper's progress manager or the
+blocking widget of the thread, respectively.
 
 */
