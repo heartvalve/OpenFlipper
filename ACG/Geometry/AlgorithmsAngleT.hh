@@ -134,7 +134,7 @@ degToRad( const ValueT& _angle );
 //=============================================================================
 #if defined(INCLUDE_TEMPLATES) && !defined(ALGORITHMSANGLE_C)
 #define ALGORITHMSANGLE_TEMPLATES
-#include "AlgorithmsAngleT.hh"
+#include "AlgorithmsAngleT.cc"
 #endif
 //=============================================================================
 #endif // ALGORITHMSANGLE_HH defined
