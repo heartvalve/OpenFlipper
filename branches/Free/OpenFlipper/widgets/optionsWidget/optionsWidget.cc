@@ -59,7 +59,8 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
     plugins_(_plugins),
     coreKeys_(_core),
     keys_(_invKeys),
-    translationIndexChanged_(false)
+    translationIndexChanged_(false),
+    exitOnClose_(false)
 {
   setupUi(this);
 
@@ -669,7 +670,7 @@ void OptionsWidget::slotApply() {
                       tr("The changes will take effect after next restart. Do you want to close OpenFlipper now?"),
                       QMessageBox::Yes | QMessageBox::No);
                     
-    if(restart == QMessageBox::Yes) emit exit(0);
+    if(restart == QMessageBox::Yes) exitOnClose_ = true;
   }
   
   switch ( translation->currentIndex() ){
@@ -682,6 +683,9 @@ void OptionsWidget::slotApply() {
 
   emit applyOptions();
   emit saveOptions();
+  
+  // Close OpenFlipper if demanded
+  if(exitOnClose_)  emit exit(0);
 }
 
 void OptionsWidget::slotOk(){
