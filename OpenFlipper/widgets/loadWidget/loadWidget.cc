@@ -496,7 +496,7 @@ bool LoadWidget::validFilename() {
 
 void LoadWidget::accept() {
     
-  if(validFilename()) {
+  if( !loadMode_ | validFilename() ) {
     
     if ( loadMode_ )
       loadFile();
