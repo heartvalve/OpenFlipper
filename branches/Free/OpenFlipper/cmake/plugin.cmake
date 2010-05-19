@@ -231,6 +231,29 @@ function (_build_openflipper_plugin plugin)
        . 
        ${${_PLUGIN}_DIRS}
     )
+    
+    # Add plugin documentation
+    if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Documentation)
+        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doxy.config.in)
+            if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CMakeLists.txt)
+                #message("=========================================================")
+                #message("${plugin}: Adding plugin documentation dir")
+                #message("=========================================================")
+                add_subdirectory(Documentation)
+            endif()
+        else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doxy.config)
+            if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CMakeLists.txt)
+                #message("=========================================================")
+                #message("${plugin}: Adding plugin documentation dir")
+                #message("=========================================================")
+                add_subdirectory(Documentation)
+            endif()
+        endif()
+    else()
+        #message("=========================================================")
+        #message("${plugin} does not have documentation yet, skipping!")
+        #message("=========================================================")
+    endif()
 
     # collect all header,source and ui files
     acg_append_files (headers "*.hh" ${directories})
