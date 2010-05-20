@@ -513,6 +513,8 @@ void SelectionPlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::strin
 
       sphere_node_->set_size(sphere_radius_);
       sphere_node_->show();
+      
+      emit nodeVisibilityChanged( -1 );
       emit updateView();
    }
 }
