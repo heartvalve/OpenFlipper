@@ -71,11 +71,21 @@ void ViewControlPlugin::pluginsInitialized() {
 
   emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH      , CONTEXTOBJECTMENU );
   emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH          , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("PolyVolMesh")   , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TetMeshCGAL")   , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Volume")        , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineSurface"), CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TSplineMesh"),    CONTEXTOBJECTMENU );
+  
+  if ( typeExists("PolyVolMesh") )
+    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("PolyVolMesh")   , CONTEXTOBJECTMENU );
+  
+  if ( typeExists("TetMeshCGAL") )
+    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TetMeshCGAL")   , CONTEXTOBJECTMENU );
+  
+  if ( typeExists("Volume") )
+    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Volume")        , CONTEXTOBJECTMENU );
+  
+  if ( typeExists("BSplineSurface") )
+    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineSurface"), CONTEXTOBJECTMENU );
+  
+  if ( typeExists("TSplineMesh") )
+    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TSplineMesh"),    CONTEXTOBJECTMENU );
 
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 
