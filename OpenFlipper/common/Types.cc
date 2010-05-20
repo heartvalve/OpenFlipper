@@ -149,7 +149,9 @@ void initializeTypes() {
 /// Adds a datatype and returns the id for the new type
 DataType addDataType(QString _name, QString _readableName) {
   
-  if ( typeId(_name) != DATA_UNKNOWN ) {
+  // Check if datatype already exists.
+  // If so, we return the typeId that is used for it
+  if ( stringToTypeInfo.find( _name ) !=  stringToTypeInfo.end() ) {
     std::cerr << "Redefinition of existing data type!" << std::endl;
     return typeId(_name);
   }
@@ -174,9 +176,7 @@ DataType typeId(QString _name) {
   if ( index != stringToTypeInfo.end() )
     return types[ index->second ].type;
   else {
-    #ifdef DEBUG
-      std::cerr << "Unknown Data type with name " << _name.toStdString() << std::endl;
-    #endif
+    std::cerr << "Unknown Data type with name " << _name.toStdString() << std::endl;
     return DATA_UNKNOWN;
   }
 }
