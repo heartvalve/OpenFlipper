@@ -1456,6 +1456,8 @@ update_color() {
   // ==========================================================================
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
   
+  stripProcessor_.invalidatePerEdgeBuffers();
+  stripProcessor_.invalidatePerFaceBuffers();
 }
 
 template<class Mesh>
