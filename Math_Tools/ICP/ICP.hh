@@ -75,14 +75,23 @@ namespace ICP {
 /** \brief Compute rigid transformation from first point set to second point set
    * 
    * Compute ICP Parameters ( No iteration is done ) Points are unchanged, only parameters are computed.
+   *
+   * To transform pointset 1 into pointset 2 do the folowing:\n
+   *  - substract cog1 from pointset 1 \n
+   *  - scale points with 1/scale1 \n
+   *  - rotate with given rotation \n
+   *  - scale with scale2 \n
+   *  - add cog2  \n
+   *
    * @param _points1 first set of points
    * @param _points2 second set of points
    * @param  _cog1 center of gravity first point set
    * @param  _cog2 center of gravity second point set
-   * @param _scale1 variance of first point set
-   * @param _scale1 variance of second point set
+   * @param _scale1 scaling factor of first point set
+   * @param _scale2 scaling factor of second point set
    * @param _rotation Rotation between point sets ( rotation(_points1) -> _points2
    * 
+   *
 */
 template < typename VectorT , typename QuaternionT >
 void icp(std::vector< VectorT >& _points1 , std::vector< VectorT >& _points2  , VectorT& _cog1 ,  VectorT& _cog2 , double& _scale1 , double& _scale2 , QuaternionT& _rotation );
