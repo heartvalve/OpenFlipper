@@ -271,9 +271,17 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
   info_->angleMean->setText( "-" );
   info_->angleMax->setText( QString::number(maxI,'f')  );
 
-  info_->dihedralMin->setText( QString::number(minD,'f') );
-  info_->dihedralMean->setText( QString::number( sumD / (_mesh->n_faces()*3),'f' ) );
-  info_->dihedralMax->setText( QString::number(maxD,'f') );
+  
+  // Only one face or no face -> don't output angles 
+  if ( _mesh->n_faces() > 1 ) {
+    info_->dihedralMin->setText( QString::number(minD,'f') );
+    info_->dihedralMean->setText( QString::number( sumD / (_mesh->n_faces()*3),'f' ) );
+    info_->dihedralMax->setText( QString::number(maxD,'f') );
+  } else {
+    info_->dihedralMin->setText( "-" );
+    info_->dihedralMean->setText( "-" );
+    info_->dihedralMax->setText( "-" );
+  }
 
   typename MeshT::FaceHandle fh = _mesh->face_handle(_face);
 
