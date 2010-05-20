@@ -55,6 +55,7 @@
 #include <QPaintEngine>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneDragDropEvent>
+#include <QApplication>
 
 //== NAMESPACES ===============================================================
 
@@ -71,15 +72,40 @@ QtGLGraphicsScene::QtGLGraphicsScene(QtBaseViewer* _w) :
 }
 
  
-void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &)
+void QtGLGraphicsScene::drawBackground(QPainter *_painter, const QRectF &_rect)
 {
-    if (_painter->paintEngine()->type() != QPaintEngine::OpenGL) {
-        std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
-        return;
-    }
+  // Check for switch in qt4.6 to OpenGL2
+  #if QT_VERSION >= 0x040600
+  if (_painter->paintEngine()->type() != QPaintEngine::OpenGL && _painter->paintEngine()->type() != QPaintEngine::OpenGL2 ) {
+    std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
+    return;
+  }
+  #else
+  if (_painter->paintEngine()->type() != QPaintEngine::OpenGL ) {
+    std::cerr << "QtGLGraphicsScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view\n";
+    return;
+  }
+  #endif
+  
+  // Initialize background first
+  _painter->setBackground(QApplication::palette().window());
+  _painter->eraseRect(_rect);
+  
+  // From now on we do OpenGL direct painting on the scene
+  #if QT_VERSION >= 0x040600
+  // Tell Qt that we directly use OpenGL
+  _painter->beginNativePainting();
+  #endif
 
-    w_->paintGL();
+  // Clear the depth buffer (This is required since QT4.6 Otherwise we get an emtpty scene!
+  glClear(GL_DEPTH_BUFFER_BIT);
+  
+  w_->paintGL();
 
+      #if QT_VERSION >= 0x040600
+  // The rest is painting through QT again. 
+  _painter->endNativePainting();
+  #endif
 }
 
 
