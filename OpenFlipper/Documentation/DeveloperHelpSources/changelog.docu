@@ -1,10 +1,8 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 ( ? , 9345 RC7 )</b>
+ * - <b>OpenFlipper 1.0 ( ? , 9357 RC7 )</b>
  *      - <b>Core</b>
  *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
- *          - Improved error handling in some pluginfunctions
- *          - Support writing multiple objects into one file
  *          - Added Light source management
  *              - Added global nodes to handle light sources
  *              - Internal light handling can now be switched off via pluginfunctions (Used by TypeLight to take control over lights)
@@ -13,6 +11,8 @@
  *          - Process Manager
  *              - Replaced Mutex by semaphore for waiting that a thread starts (mutex unlock does not work across threads in qt 4.6)
  *              - Bugfix when using blocking mode for new threads
+ *          - File Dialog
+ *              - Fixed problems with keyboard interaction
  *          - Added Function to find the object to a node (Based on BaseObjectData)
  *          - Fixed bug in scripted saveObject function where supported type was not correctly detected
  *          - Increased stack frame size when doing debugging.
@@ -26,12 +26,17 @@
  *      - <b>Interfaces</b>
  *          - BaseInterface
  *              - Added a new parameter to updatedObject which defies the update type (e.g. Topology, Geometry, selection)
+ *          - FileInterface
+ *              - Support writing multiple objects into one file
  *          - TextureInterface
  *              - updated textureInterface to save textures (including multitextures)
  *          - PluginFunctions
  *              - New function to directly set lookAt
+ *              - Improved error handling in some functions
  *          - ThreadInterface
  *              - Jobid is now passed to thread and the slots to identify sender
+ *          - Types
+ *              - Added a function to check if types exist
  *      - <b>UI</b>
  *          - Improved mouse interaction(translation with middle mouse button is done in world coordinates now)
  *          - Added Context Menus to view modes (Depending on view mode context menus can be hidden now)
@@ -109,7 +114,7 @@
  *          - Branding support (looks in Toplevel/branding for image files)
  *          - Improved compiler flag settings for unix systems (easier setting of additional compiler flags)
  *          - Made RELWITHDEBINFO build type working. (Release mode with debug symbols)
- *          - Added doc target
+ *          - Added doc target ( For core and plugins )
  *          - Added search engine to help
  *          - Tutorial for ViewModeInterface
  *          - Tutorial for TypeInterface
