@@ -181,6 +181,12 @@ DataType typeId(QString _name);
 DLLEXPORT
 QString typeName(DataType _id);
 
+/** \brief Check if a type with the given name exists
+*
+*/
+DLLEXPORT
+bool typeExists( QString _name );
+
 /** \brief Get the number of registered types
 *
 * This function will return the number of types registered to the core. You can use it to
