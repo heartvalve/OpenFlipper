@@ -174,6 +174,9 @@ icp(std::vector< VectorT >& _points1 , std::vector< VectorT >& _points2  , Vecto
    _rotation[1] = eigvect(1,gr);
    _rotation[2] = eigvect(2,gr);
    _rotation[3] = eigvect(3,gr);
+   
+   _scale1 *= _scale1;
+   _scale2 *= _scale2;
 }
 
 
