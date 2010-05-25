@@ -259,9 +259,12 @@ function (_build_openflipper_plugin plugin)
                     if(NOT (IS_DIRECTORY ${plugin_doc_dir}))
                         file(MAKE_DIRECTORY ${plugin_doc_dir})
                         file(MAKE_DIRECTORY ${plugin_doc_dir}/html)
+                        file(MAKE_DIRECTORY ${plugin_doc_dir}/qthelp)
                     endif()
                     # Add documentation sources to build tree
                     add_subdirectory(Documentation)
+                    # Copy qch file to OpenFlipper's Help dir
+                    acg_copy_after_build (${plugin}-doc "${plugin_doc_dir}/qthelp" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help/")
                 endif()
             endif()
         endif() # documentation dir exists
