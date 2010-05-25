@@ -232,28 +232,37 @@ function (_build_openflipper_plugin plugin)
        ${${_PLUGIN}_DIRS}
     )
     
-    # Add plugin documentation
-    if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Documentation)
-        if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doxy.config.in)
-            if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CMakeLists.txt)
-                #message("=========================================================")
-                #message("${plugin}: Adding plugin documentation dir")
-                #message("=========================================================")
-                add_subdirectory(Documentation)
+    # Add documentation target
+    add_custom_target(${plugin}-doc COMMENT "Building documentation for plugin ${plugin}" VERBATIM)
+    
+    # make doc builds this plugin's documentation as well
+    add_dependencies(doc ${plugin}-doc)
+    
+    # Target for plugin documentation
+    if(TARGET ${plugin}-doc)
+        # Add plugin documentation
+        if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Documentation)
+            # Test if html folder exists. If so, just copy it and ignore
+            # the doxygen branch
+            if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html)
+                # Create target directories
+                if(NOT (IS_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin}))
+                    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin})
+                endif()
+                # Copy the html folder
+                acg_copy_after_build (${plugin}-doc "${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin}/html")
+            else (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doxy.config.in)
+                if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CMakeLists.txt)
+                    add_subdirectory(Documentation)
+                    # Create directories in order to avoid doxygen warnings
+                    if(NOT (IS_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin}))
+                        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin})
+                        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin}/html)
+                    endif()
+                endif()
             endif()
-        else(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doxy.config)
-            if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CMakeLists.txt)
-                #message("=========================================================")
-                #message("${plugin}: Adding plugin documentation dir")
-                #message("=========================================================")
-                add_subdirectory(Documentation)
-            endif()
-        endif()
-    else()
-        #message("=========================================================")
-        #message("${plugin} does not have documentation yet, skipping!")
-        #message("=========================================================")
-    endif()
+        endif() # documentation dir exists
+    endif() # target
 
     # collect all header,source and ui files
     acg_append_files (headers "*.hh" ${directories})
