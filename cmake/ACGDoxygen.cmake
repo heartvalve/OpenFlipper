@@ -21,6 +21,13 @@
 
 FIND_PACKAGE(Doxygen)
 
+  # Add doc target only once!
+  GET_TARGET_PROPERTY(target_location doc EchoString)
+  if ( NOT target_location STREQUAL "Building Documentation" )
+    ADD_CUSTOM_TARGET( doc )
+    SET_TARGET_PROPERTIES( doc PROPERTIES EchoString "Building Documentation"  )
+  endif()
+
 IF (DOXYGEN_FOUND)
 
   # click+jump in Emacs and Visual Studio (for doxy.config) (jw)
@@ -41,14 +48,6 @@ IF (DOXYGEN_FOUND)
   IF    (NOT DVIPS_CONVERTER)
     MESSAGE(STATUS "dvips command DVIPS_CONVERTER not found but usually required.")
   ENDIF (NOT DVIPS_CONVERTER)
-
-  # Add doc target only once!
-  GET_TARGET_PROPERTY(target_location doc EchoString)
-  if ( NOT target_location STREQUAL "Building Documentation" )
-    ADD_CUSTOM_TARGET( doc )
-    SET_TARGET_PROPERTIES( doc PROPERTIES EchoString "Building Documentation"  )
-  endif()
-
  
   macro (acg_create_doc_target target)
   
