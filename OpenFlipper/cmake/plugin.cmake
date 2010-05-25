@@ -238,6 +238,8 @@ function (_build_openflipper_plugin plugin)
     # make doc builds this plugin's documentation as well
     add_dependencies(doc ${plugin}-doc)
     
+    set(plugin_doc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/Plugin-${plugin}")
+    
     # Target for plugin documentation
     if(TARGET ${plugin}-doc)
         # Add plugin documentation
@@ -246,19 +248,20 @@ function (_build_openflipper_plugin plugin)
             # the doxygen branch
             if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html)
                 # Create target directories
-                if(NOT (IS_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin}))
-                    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin})
+                if(NOT (IS_DIRECTORY ${plugin_doc_dir}))
+                    file(MAKE_DIRECTORY ${plugin_doc_dir})
                 endif()
                 # Copy the html folder
-                acg_copy_after_build (${plugin}-doc "${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin}/html")
+                acg_copy_after_build (${plugin}-doc "${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html" "${plugin_doc_dir}/html")
             else (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doxy.config.in)
                 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CMakeLists.txt)
-                    add_subdirectory(Documentation)
                     # Create directories in order to avoid doxygen warnings
-                    if(NOT (IS_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin}))
-                        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin})
-                        file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/${plugin}/html)
+                    if(NOT (IS_DIRECTORY ${plugin_doc_dir}))
+                        file(MAKE_DIRECTORY ${plugin_doc_dir})
+                        file(MAKE_DIRECTORY ${plugin_doc_dir}/html)
                     endif()
+                    # Add documentation sources to build tree
+                    add_subdirectory(Documentation)
                 endif()
             endif()
         endif() # documentation dir exists
