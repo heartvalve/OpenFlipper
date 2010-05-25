@@ -23,6 +23,28 @@ FIND_PACKAGE(Doxygen)
 
 IF (DOXYGEN_FOUND)
 
+#  # Function that writes all generated qch files into one Help.qhcp project file
+#  function (write_qt_help_project)
+#      set(project_file "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help/Help.qhcp")
+#      set(qhc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
+#      file(STRINGS "${PROJECT_SOURCE_DIR}/OpenFlipper/Documentation/QtHelpResources/Help.qhcp" helpfile)
+#      # Initialize new project file
+#      file(WRITE ${project_file} "")
+#      foreach (_line ${helpfile})
+#          string(STRIP ${_line} testvar)
+#          if("${testvar}" STREQUAL "\$files\$")
+#              acg_get_files_in_dir (_files ${qhc_dir})
+#              foreach (_file ${_files})
+#                  if(NOT ("${_file}" STREQUAL "Help.qhcp"))
+#                      file(APPEND ${project_file} "<file>${_file}</file>\n")
+#                  endif()
+#              endforeach()
+#          else()
+#              file(APPEND ${project_file} "${_line}\n")
+#          endif()
+#      endforeach()
+#  endfunction()
+  
   # click+jump in Emacs and Visual Studio (for doxy.config) (jw)
   IF    (CMAKE_BUILD_TOOL MATCHES "(msdev|devenv)")
     SET(DOXY_WARN_FORMAT "\"$file($line) : $text \"")
@@ -83,7 +105,7 @@ IF (DOXYGEN_FOUND)
     ADD_CUSTOM_TARGET(${target} ${DOXYGEN_EXECUTABLE} ${DOXY_CONFIG})
 
     add_dependencies( doc ${target} )
-
+        
     # Add winhelp target only once!
     GET_TARGET_PROPERTY(target_location winhelp EchoString)
     if ( NOT target_location STREQUAL "Building Windows Documentation" )
@@ -141,5 +163,6 @@ IF (DOXYGEN_FOUND)
       ENDIF(HTML_HELP_COMPILER)
       # MESSAGE(SEND_ERROR "HTML_HELP_COMPILER=${HTML_HELP_COMPILER}")
     ENDIF (WIN32) 
-  endmacro ()
+  endmacro ()  
+   
 ENDIF(DOXYGEN_FOUND)
