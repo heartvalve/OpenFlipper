@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<QHelpCollectionProject version="1.0">
-    <namespace>org.openflipper.dev</namespace>
-	<docFiles>
-        	<register>
-	     		$files$
-         	</register>
-     	</docFiles>
-</QHelpCollectionProject>
