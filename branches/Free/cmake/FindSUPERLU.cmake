@@ -12,14 +12,16 @@ if (WIN32)
    )
 
    IF( CMAKE_BUILD_TYPE MATCHES Release )
-     find_library( SUPERLU_LIBRARY 
+     find_library( SUPERLU_LIBRARY_RELEASE 
                    SuperLU
                    PATHS "C:\\libs\\SuperLU_3.0\\lib" )
    ELSE()
-     find_library( SUPERLU_LIBRARY 
+     find_library( SUPERLU_LIBRARY_DEBUG
                    SuperLUd
                    PATHS "C:\\libs\\SuperLU_3.0\\lib" )
    ENDIF()
+
+   set ( SUPERLU_LIBRARY "optimized;${SUPERLU_LIBRARY_RELEASE};debug;${SUPERLU_LIBRARY_DEBUG}")
 
 ELSEIF(APPLE)
 
