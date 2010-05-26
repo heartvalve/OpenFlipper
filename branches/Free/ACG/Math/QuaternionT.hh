@@ -112,10 +112,10 @@ public:
     Z = sin_theta * _axis[2];
   }
 
-  /// construct from rotation matrix (only valid for rotation matrices!)
-  template <class MatrixT>
-  QuaternionT(const MatrixT& _rot)
-  { init_from_matrix( _rot); }
+//   /// construct from rotation matrix (only valid for rotation matrices!)
+//   template <class MatrixT>
+//   QuaternionT(const MatrixT& _rot)
+//   { init_from_matrix( _rot); }
   
 
   /// identity rotation
@@ -146,10 +146,11 @@ public:
 
 
   /// rotate vector
-  Vec3 rotate(const Vec3& _v)
+  template <class Vec3T>
+  Vec3T rotate(const Vec3T& _v) const
   { 
-    Quaternion q = *this * Quaternion(_v) * conjugate();
-    return Vec3(q[1], q[2], q[3]);
+    Quaternion q = *this * Quaternion(0,_v[0],_v[1],_v[2]) * conjugate();
+    return Vec3T(q[1], q[2], q[3]);
   }
 
 
@@ -303,6 +304,22 @@ public:
       n = Vec3(0,0,0);
 
     return Quaternion( 0, n[0], n[1], n[2]);
+  }
+
+  void print_info()
+  {
+    // get axis, angle and matrix
+    Vec3 axis; 
+    Scalar angle;
+    this->axis_angle( axis, angle);
+    Matrix m;
+    m = this->rotation_matrix();
+
+    std::cerr << "quaternion : " << (*this)      << std::endl;
+    std::cerr << "length     : " << this->norm() << std::endl;
+    std::cerr << "axis, angle: " << axis << ", " << angle*180.0/M_PI << "°\n";
+    std::cerr << "rot matrix :\n";
+    std::cerr << m << std::endl;
   }
 
 
