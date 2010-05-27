@@ -583,3 +583,30 @@ function (acg_add_translations _target _languages _sources)
     install (FILES ${_qm_files} DESTINATION "${ACG_PROJECT_DATADIR}/Translations")
   endif ()
 endfunction ()
+
+# Function that writes all generated qch files into one Help.qhcp project file
+function (generate_qhp_file files_loc plugin_name)
+
+    set(qhp_file "${files_loc}/${plugin_name}.qhp")
+    # Read in template file
+    file(STRINGS "${CMAKE_SOURCE_DIR}/OpenFlipper/Documentation/QtHelpResources/QtHelpProject.qhp" qhp_template)
+    
+    # Initialize new project file
+    file(WRITE ${qhp_file} "")
+    foreach (_line ${qhp_template})
+        string(STRIP ${_line} stripped)
+        if("${stripped}" STREQUAL "files")
+            acg_get_files_in_dir (_files ${files_loc})
+            foreach (_file ${_files})
+                string(REGEX MATCH ".+[.]+((html)|(htm)|(xml))$" fileresult ${_file})
+                string(LENGTH "${fileresult}" len)
+                if(${len} GREATER 0)
+                    file(APPEND ${qhp_file} "<file>${_file}</file>\n")
+                endif()
+            endforeach()
+        else()
+            string(REGEX REPLACE "plugin" ${plugin} newline ${_line})
+            file(APPEND ${qhp_file} "${newline}\n")
+        endif()
+    endforeach()
+endfunction()
