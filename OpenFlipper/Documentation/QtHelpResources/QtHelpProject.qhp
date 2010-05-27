@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+ <namespace>org.openflipper.dev.plugin</namespace>
+ <virtualFolder>doc</virtualFolder>
+ <filterSection>
+     <files>
+         files
+     </files>
+ </filterSection>
+</QtHelpProject>
