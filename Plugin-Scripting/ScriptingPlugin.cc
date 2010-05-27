@@ -218,8 +218,6 @@ void ScriptingPlugin::slotExecuteScript( QString _script ) {
   /// Switch scripting mode on
   OpenFlipper::Options::scripting(true);
 
-  emit log(LOGERR, "File for executing script : " + lastFile_ );
-  emit log(LOGERR, "Extracted path for executing script : " + lastFile_.section(OpenFlipper::Options::dirSeparator(), 0, -2) );
 
   // Get the filename of the script and set it in the scripting environment
   engine->globalObject().setProperty("ScriptPath",QScriptValue(engine,lastFile_.section(OpenFlipper::Options::dirSeparator(), 0, -2)));
