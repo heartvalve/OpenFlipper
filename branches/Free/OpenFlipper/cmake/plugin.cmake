@@ -253,6 +253,19 @@ function (_build_openflipper_plugin plugin)
                 endif()
                 # Copy the html folder
                 acg_copy_after_build (${plugin}-doc "${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html" "${plugin_doc_dir}/html")
+                generate_qhp_file("${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html" "Plugin-${plugin}")
+                if(WIN32)
+                    add_custom_command(TARGET ${plugin}-doc POST_BUILD
+                                       COMMAND ${QT_BINARY_DIR}/qhelpgenerator.exe
+                                       ARGS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html/Plugin-${plugin}.qhp)
+                else()
+                    add_custom_command(TARGET ${plugin}-doc POST_BUILD
+                                       COMMAND ${QT_BINARY_DIR}/qhelpgenerator
+                                       ARGS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html/Plugin-${plugin}.qhp)
+                endif()
+                add_custom_command(TARGET ${plugin}-doc POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html/Plugin-${plugin}.qch" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help/Plugin-${plugin}.qch"
+                )
             else (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doxy.config.in)
                 if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CMakeLists.txt)
                     # Create directories in order to avoid doxygen warnings
