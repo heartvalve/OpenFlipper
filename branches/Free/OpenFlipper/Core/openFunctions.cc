@@ -144,7 +144,7 @@ void Core::slotExecuteAfterStartup() {
     // Execute all files ending with ofs
     for ( int i = 0 ; i  < scriptFiles.size(); ++i )
       if ( scriptFiles[i].endsWith("ofs") )
-        emit executeFileScript(scriptDir.path() + QDir::separator() + scriptFiles[i]);
+        emit executeFileScript(scriptDir.path() + "/" + scriptFiles[i]);
 
   }
 
