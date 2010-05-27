@@ -62,6 +62,14 @@
 #include <omp.h>
 #endif
 
+// Includes for windows debugging console
+#ifdef WIN32
+  #ifndef NDEBUG
+    #include <fcntl.h>
+    #include <io.h>
+  #endif
+#endif
+
 // #ifndef WIN32
 //
 // #include <sys/resource.h>
@@ -207,6 +215,33 @@ void segfaultHandling (int) {
   std::abort();
 }
 
+#ifdef WIN32
+#ifndef NDEBUG
+void getConsole() {
+  //Create a console for this application
+        AllocConsole();
+        //Redirect unbuffered STDOUT to the console
+        HANDLE ConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+        int SystemOutput = _open_osfhandle(intptr_t(ConsoleOutput), _O_TEXT);
+        FILE *COutputHandle = _fdopen(SystemOutput, "w" );
+        *stdout = *COutputHandle;
+        setvbuf(stdout, NULL, _IONBF, 0);
+        //Redirect unbuffered STDERR to the console
+        HANDLE ConsoleError = GetStdHandle(STD_ERROR_HANDLE);
+        int SystemError = _open_osfhandle(intptr_t(ConsoleError), _O_TEXT);
+        FILE *CErrorHandle = _fdopen(SystemError, "w" );
+        *stderr = *CErrorHandle;
+        setvbuf(stderr, NULL, _IONBF, 0);
+        //Redirect unbuffered STDIN to the console
+        HANDLE ConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
+        int SystemInput = _open_osfhandle(intptr_t(ConsoleInput), _O_TEXT);
+        FILE *CInputHandle = _fdopen(SystemInput, "r" );
+        *stdin = *CInputHandle;
+        setvbuf(stdin, NULL, _IONBF, 0);
+}
+#endif
+#endif
+
 bool openPolyMeshes = false;
 bool remoteControl  = false;
 
@@ -263,6 +298,13 @@ bool parseCommandLineOptions(CSimpleOpt& args){
 
 int main(int argc, char **argv)
 {
+
+  #ifdef WIN32
+  #ifndef NDEBUG
+  getConsole();
+
+  #endif
+  #endif
   // Remove -psn_0_xxxxx argument which is automatically
   // attached by MacOSX
   for (int i = 0; i < argc; i++) {
