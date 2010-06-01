@@ -104,7 +104,7 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
   {
     glDisable(GL_LIGHTING);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, &points_[0]);
+    glVertexPointer(&points_[0]);
     glDrawArrays(GL_POINTS, 0, points_.size());
   }
 
@@ -116,9 +116,9 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
     {
       glEnable(GL_LIGHTING);
       glEnableClientState(GL_VERTEX_ARRAY);
-      glVertexPointer(3, GL_FLOAT, 0, &points_[0]);
+      glVertexPointer(&points_[0]);
       glEnableClientState(GL_NORMAL_ARRAY);
-      glNormalPointer(GL_FLOAT, 0, &normals_[0]);
+      glNormalPointer(&normals_[0]);
       glDrawArrays(GL_POINTS, 0, points_.size());
     }
   }
@@ -131,9 +131,9 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
     {
       glDisable(GL_LIGHTING);
       glEnableClientState(GL_VERTEX_ARRAY);
-      glVertexPointer(3, GL_FLOAT, 0, &points_[0]);
+      glVertexPointer(&points_[0]);
       glEnableClientState(GL_COLOR_ARRAY);
-      glColorPointer(3, GL_UNSIGNED_BYTE, 0, &colors_[0]);
+      glColorPointer(&colors_[0]);
       glDrawArrays(GL_POINTS, 0, points_.size());
     }
   }
