@@ -444,7 +444,7 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
   PluginInfo info;
   QString supported;
 
-  emit log(LOGOUT,tr("Location : \t %2").arg(filename) );
+  emit log(LOGOUT,tr("Location : \t %1").arg(filename) );
   
   // Check if it is a BasePlugin
   BaseInterface* basePlugin = qobject_cast< BaseInterface * >(plugin);
@@ -1172,10 +1172,9 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
     else
       emit log(LOGERR,"Process Interface defined but no finishJob signal found!");                
               
-              
     if ( checkSlot(plugin,"canceledJob(QString)" ) ) 
       connect(this ,   SIGNAL( jobCanceled( QString ) ) ,
-            plugin   , SLOT( canceledJob(QString) ),Qt::DirectConnection);                
+              plugin   , SLOT( canceledJob(QString) ),Qt::QueuedConnection);                
     else
       emit log(LOGERR,"Process Interface defined but no cancel canceledJob slot found!");
   }
