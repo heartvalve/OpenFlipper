@@ -244,10 +244,13 @@ void Core::slotFinishJob(QString _jobId ) {
 //-----------------------------------------------------------------------------
 
 // A job will be canceled by user request
-void Core::slotJobCancelRequested(QString /*_jobId*/) {
+void Core::slotJobCancelRequested(QString _jobId ) {
     
+  std::cerr << "Cancel requested!" << std::endl;
+  
+  emit jobCanceled(_jobId);
     // Cancel job still to be implemented...
-	std::cerr << "Cancel requested!" << std::endl;
+	
 }
 
 //=============================================================================
