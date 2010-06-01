@@ -21,13 +21,6 @@
 
 FIND_PACKAGE(Doxygen)
 
-  # Add doc target only once!
-  GET_TARGET_PROPERTY(target_location doc EchoString)
-  if ( NOT target_location STREQUAL "Building Documentation" )
-    ADD_CUSTOM_TARGET( doc )
-    SET_TARGET_PROPERTIES( doc PROPERTIES EchoString "Building Documentation"  )
-  endif()
-
 IF (DOXYGEN_FOUND)
 
   # click+jump in Emacs and Visual Studio (for doxy.config) (jw)
