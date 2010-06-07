@@ -133,8 +133,8 @@ DrawMode& DrawMode::operator++() {
   if ( modeFlags_.count() != 1 ) {
     std::cerr << "Operator ++ for drawMode which is not atomic!!" << std::endl;
   }
-  
-  modeFlags_ << 1;
+
+  modeFlags_ <<= 1;
   
   return (*this);
 }
@@ -317,24 +317,21 @@ bool addDrawMode( const std::string & _name, DrawMode & _newId )
 {
   /// \todo Create a new DrawMode correctly
   
-    // check if mode exists already
-    VecDrawModes::iterator modeIter, modeEnd( currentDrawModes_.end() );
+  // check if mode exists already
+  VecDrawModes::iterator modeIter, modeEnd( currentDrawModes_.end() );
 
-    for( modeIter = currentDrawModes_.begin();
-	 modeIter != modeEnd;
-	 ++modeIter )
-    {
-	if( _name == modeIter->name_ )
-	    return modeIter->id_;
-    }
+  for( modeIter = currentDrawModes_.begin(); modeIter != modeEnd; ++modeIter ) {
+    if( _name == modeIter->name_ )
+        return modeIter->id_;
+  }
 
 
-    // add new mode
-    _newId = firstFreeID_;
-    currentDrawModes_.push_back( DrawModeInternal( _name, _newId ) );
-    ++firstFreeID_;
-
-    return true;
+  // add new mode
+  _newId = firstFreeID_;
+  currentDrawModes_.push_back( DrawModeInternal( _name, _newId ) );
+  ++firstFreeID_;
+  
+  return true;
 }
 
 
