@@ -60,6 +60,8 @@
 #include <OpenMesh/Core/Geometry/VectorT.hh>
 #include <vector>
 
+#include "TriangleBSPT.hh"
+
 
 //== CLASS DEFINITION =========================================================
 
@@ -72,11 +74,11 @@ public: //---------------------------------------------------------------------
   typedef BSPTraits                      Traits;
   typedef typename BSPTraits::Point      Point;
   typedef typename BSPTraits::Handle     Handle;
+  typedef typename BSPTraits::Node	 Node;
   typedef typename Point::value_type     Scalar;
   typedef ACG::Geometry::PlaneT<Scalar>  Plane;
   typedef std::vector<Handle>            Handles;
   typedef typename Handles::iterator     HandleIter;
-
 
 
 public: //---------------------------------------------------------------------
@@ -98,26 +100,6 @@ public: //---------------------------------------------------------------------
   void build(unsigned int _max_handles, unsigned int _max_depth);
 
 
-
-protected: //-------------------------------------------------------------------
-
-
-  // Node of the tree: contains parent, children and splitting plane
-  struct Node
-  {
-    Node(const Handles& _handles, Node* _parent);
-    ~Node();
-
-    HandleIter begin() { return handles_.begin(); }
-    HandleIter end()   { return handles_.end();   }
-
-    Handles     handles_;
-    Node        *parent_, *left_child_, *right_child_;
-    Plane       plane_;
-  };
-
-  
-
 private: //---------------------------------------------------------------------
 
 
@@ -135,6 +117,8 @@ protected: //-------------------------------------------------------------------
   BSPTraits  traits_;
   Handles    handles_;
   Node*      root_;
+  int	nodes;
+  
 };
 
 

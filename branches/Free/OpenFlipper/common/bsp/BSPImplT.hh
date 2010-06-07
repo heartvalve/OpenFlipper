@@ -91,10 +91,11 @@ public: //---------------------------------------------------------------------
     Scalar  dist;
   };
 
-
-  /// Return handle of the nearest neighbor
+  /// Return handle of the nearest neighbor face
   NearestNeighbor nearest(const Point& _p) const;
-
+  
+  /// Return handle of the nearest collided face
+  NearestNeighbor raycollision (const Point& _p, const Point& _r) const;
   
 
 private: //---------------------------------------------------------------------
@@ -107,10 +108,22 @@ private: //---------------------------------------------------------------------
     Scalar  dist;
     Handle  nearest;
   };
+  
+  /// Store ray collide information
+  struct RayCollisionData
+  {
+    Point   ref;
+    Point   ray;
+    Scalar  dist;
+    Handle  nearest;
+  };
 
 
   // Recursive part of nearest()
   void _nearest(Node* _node, NearestNeighborData& _data) const;
+  
+  //resursive part of raycollide()
+  void _raycollision(Node* _node, RayCollisionData& _data) const;
 };
 
 

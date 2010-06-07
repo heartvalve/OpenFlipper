@@ -34,7 +34,7 @@ const UpdateType UPDATE_ALL(              UpdateTypeSet(1)       );
 /// This is the update identifier for global Object selections(source/target)
 const UpdateType UPDATE_OBJECT_SELECTION( UpdateTypeSet(1) << 1  );
 
-/// This is the update identifier for global Object visibiölity ( show/hide )
+/// This is the update identifier for global Object visibility ( show/hide )
 const UpdateType UPDATE_VISIBILITY(       UpdateTypeSet(1) << 2  );
 
 
