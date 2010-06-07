@@ -67,7 +67,6 @@
 #include <ObjectTypes/TSplineMesh/TSplineMesh.hh>
 #endif
 
-
 /** \brief Default Constructor
  *
  */
@@ -76,7 +75,8 @@ MovePlugin::MovePlugin() :
     manMode_(QtTranslationManipulatorNode::TranslationRotation),
     contextAction_(0),
     toAllTargets_(0),
-    placeMode_(false)
+    placeMode_(false),
+    recursiveJointTransformation_(true)
 {
     manip_size_          = 1.0;
     manip_size_modifier_ = 1.0;
@@ -129,6 +129,11 @@ void MovePlugin::pluginsInitialized() {
   emit setPickModeMouseTracking ("Move", true);
   emit addHiddenPickMode("MoveSelection");
   emit setPickModeMouseTracking ("MoveSelection", true);
+  
+#ifdef ENABLE_SKELETON_SUPPORT
+  emit addHiddenPickMode("MoveSkeleton");
+  emit setPickModeMouseTracking ("MoveSkeleton", true);
+#endif
 
   //KEYS
   emit registerKey (Qt::Key_Shift, Qt::ShiftModifier, tr("Manipulator rotation"), true);
@@ -168,18 +173,27 @@ void MovePlugin::pluginsInitialized() {
 
   toolBarActions_ = new QActionGroup(toolbar_);
 
-  moveAction_ = new QAction(tr("Move objects"), toolBarActions_);
+  moveAction_ = new QAction(tr("<B>Move Object</B><br>Move an object in 3D"), toolBarActions_);
   moveAction_->setStatusTip(tr("Move object in 3D."));
   moveAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-objects.png") );
   moveAction_->setCheckable(true);
   toolbar_->addAction(moveAction_);
 
-  moveSelectionAction_ = new QAction(tr("Move selections on objects"), toolBarActions_);
+  moveSelectionAction_ = new QAction(tr("<B>Move Selection</B><br>Move a selection on an object"), toolBarActions_);
   moveSelectionAction_->setStatusTip(tr("Move selections in 3D."));
   moveSelectionAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-selections.png") );
   moveSelectionAction_->setCheckable(true);
   toolbar_->addAction(moveSelectionAction_);
 
+  
+#ifdef ENABLE_SKELETON_SUPPORT
+  moveSkeletonAction_ = new QAction(tr("<B>Move Skeleton</B><br>Move joints of a skeleton"), toolBarActions_);
+  moveSkeletonAction_->setStatusTip(tr("Move joints of a skeleton."));
+  moveSkeletonAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-skeleton.png") );
+  moveSkeletonAction_->setCheckable(true);
+  toolbar_->addAction(moveSkeletonAction_);
+#endif
+  
   connect(toolBarActions_, SIGNAL(triggered(QAction*)), this, SLOT(slotSetMoveMode(QAction*)) );
 
   emit addToolbar(toolbar_);
@@ -242,11 +256,26 @@ void MovePlugin::pluginsInitialized() {
   biggerManipAction_->setCheckable(false);
   pickToolbar_->addAction(biggerManipAction_);
 
+#ifdef ENABLE_SKELETON_SUPPORT
+  pickToolbar_->addSeparator();
+  fixChildManipAction_ = new QAction(tr("Keep child joints fixed"), pickToolBarActions_);
+  fixChildManipAction_->setStatusTip(tr("Do not apply transformations to all child joints"));
+  fixChildManipAction_->setToolTip(tr("Do not apply transformations to all child joints"));
+  fixChildManipAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-manipfix.png") );
+  fixChildManipAction_->setCheckable(true);
+  fixChildManipAction_->setChecked(recursiveJointTransformation_);
+  pickToolbar_->addAction(fixChildManipAction_);
+#endif
+  
   connect(pickToolBarActions_, SIGNAL(triggered(QAction*)), this, SLOT(slotPickToolbarAction(QAction*)) );
 
   emit setPickModeToolbar ("Move", pickToolbar_);
   emit setPickModeToolbar ("MoveSelection", pickToolbar_);
-
+  
+#ifdef ENABLE_SKELETON_SUPPORT
+  emit setPickModeToolbar ("MoveSkeleton", pickToolbar_);
+#endif
+  
 }
 
 
@@ -285,7 +314,10 @@ void MovePlugin::initializePlugin()
 void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /*_mode*/)
 {
   // Skip execution if this is not our pick mode
-  if((PluginFunctions::pickMode() != "Move" && PluginFunctions::pickMode() != "MoveSelection") || PluginFunctions::actionMode() != Viewer::PickingMode)
+  if( ( (PluginFunctions::pickMode() != "Move")
+     && (PluginFunctions::pickMode() != "MoveSelection")
+     && (PluginFunctions::pickMode() != "MoveSkeleton") )
+    || PluginFunctions::actionMode() != Viewer::PickingMode)
     return;
   
   // compute the manipulator size modifier based on the mouse wheel change
@@ -307,13 +339,18 @@ void MovePlugin::slotMouseWheelEvent(QWheelEvent * _event, const std::string & /
  * @param _event the event that occured
  */
 void MovePlugin::slotMouseEvent(QMouseEvent* _event) {
-    if (((PluginFunctions::pickMode() == ("Move")) || (PluginFunctions::pickMode() == ("MoveSelection")))
+    if (((PluginFunctions::pickMode() == ("Move"))
+      || (PluginFunctions::pickMode() == ("MoveSelection"))
+      || (PluginFunctions::pickMode() == ("MoveSkeleton")))
             && PluginFunctions::actionMode() == Viewer::PickingMode) {
 
         if (_event->type() == QEvent::MouseButtonDblClick || (_event->type() == QEvent::MouseButtonPress
                 && _event->button() == Qt::LeftButton && (placeAction_->isChecked() || placeMode_))) {
+          
+            bool snap = (placeMode_ && (PluginFunctions::pickMode() == ("MoveSelection")))
+                      || (PluginFunctions::pickMode() == ("MoveSkeleton"));
 
-            placeManip(_event, (placeMode_ && (PluginFunctions::pickMode() == ("MoveSelection"))));
+            placeManip(_event, snap);
             placeAction_->setChecked(false);
             updateManipulatorDialog();
 
@@ -340,9 +377,12 @@ void MovePlugin::slotMouseEvent(QMouseEvent* _event) {
              * Move manipulator along with cursor if placeAndSnap mode
              * is active. Snap to nearest geometry element (vertex, line, face center)
              * depending on which selection type is active.
+             *
+             * For skeletons always snap to nearest joint
+             *
              */
 
-            placeManip(_event, (PluginFunctions::pickMode() == ("MoveSelection")));
+            placeManip(_event, (PluginFunctions::pickMode() != ("Move")));
             updateManipulatorDialog();
             return;
         }
@@ -391,7 +431,12 @@ void MovePlugin::slotPickModeChanged( const std::string& _mode)
   moveAction_->setChecked(_mode == "Move");
   moveSelectionAction_->setChecked(_mode == "MoveSelection");
 
-  hide_ = !(_mode == "Move" || _mode == "MoveSelection");
+#ifdef ENABLE_SKELETON_SUPPORT
+  moveSkeletonAction_->setChecked(_mode == "MoveSkeleton");
+  fixChildManipAction_->setVisible(_mode == "MoveSkeleton");
+#endif
+
+  hide_ = !(_mode == "Move" || _mode == "MoveSelection" || _mode == "MoveSkeleton");
 
   showManipulators();
 
@@ -440,10 +485,14 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
   } else  if  ( object->dataType()  == DATA_TSPLINE_MESH ) {
     transformMesh(mat , *PluginFunctions::tsplineMesh(object) );
 #endif
-  #ifdef ENABLE_POLYLINE_SUPPORT
+#ifdef ENABLE_POLYLINE_SUPPORT
   } else  if  ( object->dataType()  == DATA_POLY_LINE ) {
     transformPolyLine(mat , *PluginFunctions::polyLine(object) );
-  #endif
+#endif
+#ifdef ENABLE_SKELETON_SUPPORT
+  } else  if  ( object->dataType()  == DATA_SKELETON ) {
+    transformSkeleton(mat , *PluginFunctions::skeleton(object) );
+#endif
   } else  if  ( object->dataType()  == DATA_PLANE ) {
     PluginFunctions::planeNode(object)->transform(mat);
   } else {
@@ -483,6 +532,23 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id) {
 
 //------------------------------------------------------------------------------
 
+#ifdef ENABLE_SKELETON_SUPPORT
+/** \brief Move joint of a skeleton with given transformation matrix
+ *
+ * @param mat the transformation matrix
+ * @param _id id of the skeleton
+ */
+void MovePlugin::moveSkeletonJoint(ACG::Matrix4x4d mat, int _id) {
+
+  transformSkeletonJoint( _id , mat );
+
+  emit updatedObject(_id, UPDATE_GEOMETRY);
+//   emit createBackup(_id,"MoveSkeleton");
+}
+#endif
+
+//------------------------------------------------------------------------------
+
 /** \brief Set the manipulator manipulation mode
  *
  * @param _mode Mode
@@ -493,7 +559,8 @@ void MovePlugin::setManipMode (QtTranslationManipulatorNode::ManipulatorMode _mo
   if (_mode != manMode_)
   {
     manMode_ = _mode;
-    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )) {
+    if ((PluginFunctions::pickMode() == "Move" ) || (PluginFunctions::pickMode() == "MoveSelection" )
+                                                 || (PluginFunctions::pickMode() == "MoveSkeleton" )) {
         for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ;
               o_it != PluginFunctions::objectsEnd(); ++o_it)
            if ( o_it->manipPlaced() )
@@ -579,13 +646,15 @@ void MovePlugin::slotUpdateContextMenuNode(int _nodeId) {
 void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseEvent* _event) {
 
   // React on event only in move mode
-  if ( PluginFunctions::pickMode() != "Move" && PluginFunctions::pickMode() != "MoveSelection" )
+  if ( PluginFunctions::pickMode() != "Move"
+    && PluginFunctions::pickMode() != "MoveSelection"
+    && PluginFunctions::pickMode() != "MoveSkeleton" )
     return;
 
   OpenFlipper::Options::redrawDisabled( true );
 
-  // Apply changes only on Release for moveMode and after every movement in MoveSelection Mode
-  if ( ((_event->type() == QEvent::MouseButtonRelease) || (PluginFunctions::pickMode() == "MoveSelection")) && !placeMode_) {
+  // Apply changes only on Release for moveMode and after every movement in MoveSelection/MoveSkeleton Mode
+  if ( ((_event->type() == QEvent::MouseButtonRelease) || (PluginFunctions::pickMode() != "Move")) && !placeMode_) {
 
     int objectId = _node->getIdentifier();
 
@@ -598,20 +667,32 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
     _node->set_center(mat.transform_point(_node->center()));
 
     // move the object which corresponds to the manipulator
-    if (PluginFunctions::pickMode() != "MoveSelection")
+    if (PluginFunctions::pickMode() == "Move")
       moveObject( mat, objectId );
-    else
+    else if (PluginFunctions::pickMode() == "MoveSelection")
       moveSelection( mat, objectId );
+    
+    #ifdef ENABLE_SKELETON_SUPPORT
+    else if (PluginFunctions::pickMode() == "MoveSkeleton")
+      moveSkeletonJoint( mat, objectId );
+    #endif
 
     // move all other targets without manipulator
     if(allTargets_) {
       for (PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS); o_it
           != PluginFunctions::objectsEnd(); ++o_it) {
         if ((o_it->id() != objectId) && !o_it->manipulatorNode()->visible()) { // If it has its own manipulator active, dont move it
-          if (PluginFunctions::pickMode() != "MoveSelection")
-            moveObject(mat, o_it->id());
-          else
-            moveSelection(mat, o_it->id());
+          
+          // move the object which corresponds to the manipulator
+          if (PluginFunctions::pickMode() == "Move")
+            moveObject( mat, o_it->id() );
+          else if (PluginFunctions::pickMode() == "MoveSelection")
+            moveSelection( mat, o_it->id() );
+          
+          #ifdef ENABLE_SKELETON_SUPPORT
+          else if (PluginFunctions::pickMode() == "MoveSkeleton")
+            moveSkeletonJoint( mat, o_it->id() );
+          #endif
         }
       }
     }
@@ -674,44 +755,63 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
      * active.
      */
     if (_snap) {
-        successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx,
+      
+        #ifdef ENABLE_SKELETON_SUPPORT
+        //first pick anything and check if we hit a skeleton
+          
+        successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx,
                 target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
+        
+        if ( object->dataType(DATA_SKELETON) ) {
 
-        if(!successfullyPicked) {
-            //emit log(LOGWARN, tr("Picking failed"));
-            return;
+          hitPoint = getNearestJoint(PluginFunctions::skeleton(object), hitPoint);
+          
+        } else {
+          successfullyPicked = false;
         }
+        #endif
+      
+        if (!successfullyPicked){
+ 
+          successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx,
+                               target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
 
-        if (selectionType_ == VERTEX) {
-            if ( object->dataType(DATA_TRIANGLE_MESH) ) {
-                hitPoint = getNearestVertex(PluginFunctions::triMesh(object), target_idx, hitPoint);
-            } else if ( object->dataType(DATA_POLY_MESH) ) {
-                hitPoint = getNearestVertex(PluginFunctions::polyMesh(object), target_idx, hitPoint);
+          if(!successfullyPicked) {
+              //emit log(LOGWARN, tr("Picking failed"));
+              return;
+          }
+
+          if (selectionType_ == VERTEX) {
+              if ( object->dataType(DATA_TRIANGLE_MESH) ) {
+                  hitPoint = getNearestVertex(PluginFunctions::triMesh(object), target_idx, hitPoint);
+              } else if ( object->dataType(DATA_POLY_MESH) ) {
+                  hitPoint = getNearestVertex(PluginFunctions::polyMesh(object), target_idx, hitPoint);
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-            } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
-                hitPoint = getNearestVertex(PluginFunctions::tsplineMesh(object), target_idx, hitPoint);
+              } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
+                  hitPoint = getNearestVertex(PluginFunctions::tsplineMesh(object), target_idx, hitPoint);
 #endif
-            }
-        } else if (selectionType_ == EDGE) {
-            if ( object->dataType(DATA_TRIANGLE_MESH) ) {
-                hitPoint = getNearestEdge(PluginFunctions::triMesh(object), target_idx, hitPoint);
-            } else if ( object->dataType(DATA_POLY_MESH) ) {
-                hitPoint = getNearestEdge(PluginFunctions::polyMesh(object), target_idx, hitPoint);
+              }
+          } else if (selectionType_ == EDGE) {
+              if ( object->dataType(DATA_TRIANGLE_MESH) ) {
+                  hitPoint = getNearestEdge(PluginFunctions::triMesh(object), target_idx, hitPoint);
+              } else if ( object->dataType(DATA_POLY_MESH) ) {
+                  hitPoint = getNearestEdge(PluginFunctions::polyMesh(object), target_idx, hitPoint);
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-            } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
-                hitPoint = getNearestEdge(PluginFunctions::tsplineMesh(object), target_idx, hitPoint);
+              } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
+                  hitPoint = getNearestEdge(PluginFunctions::tsplineMesh(object), target_idx, hitPoint);
 #endif
-            }
-        } else if (selectionType_ == FACE) {
-            if ( object->dataType(DATA_TRIANGLE_MESH) ) {
-                hitPoint = getNearestFace(PluginFunctions::triMesh(object), target_idx, hitPoint);
-            } else if ( object->dataType(DATA_POLY_MESH) ) {
-                hitPoint = getNearestFace(PluginFunctions::polyMesh(object), target_idx, hitPoint);
+              }
+          } else if (selectionType_ == FACE) {
+              if ( object->dataType(DATA_TRIANGLE_MESH) ) {
+                  hitPoint = getNearestFace(PluginFunctions::triMesh(object), target_idx, hitPoint);
+              } else if ( object->dataType(DATA_POLY_MESH) ) {
+                  hitPoint = getNearestFace(PluginFunctions::polyMesh(object), target_idx, hitPoint);
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
-            } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
-                hitPoint = getNearestFace(PluginFunctions::tsplineMesh(object), target_idx, hitPoint);
+              } else if ( object->dataType(DATA_TSPLINE_MESH) ) {
+                  hitPoint = getNearestFace(PluginFunctions::tsplineMesh(object), target_idx, hitPoint);
 #endif
-            }
+              }
+          }
         }
 
     } else {
@@ -780,7 +880,9 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
 void MovePlugin::showManipulators( )
 {
 
-  if (!hide_ && (toolboxActive_ || (PluginFunctions::pickMode() == "Move") || (PluginFunctions::pickMode() == "MoveSelection"))) {
+  if (!hide_ && (toolboxActive_ || (PluginFunctions::pickMode() == "Move")
+                                || (PluginFunctions::pickMode() == "MoveSelection")
+                                || (PluginFunctions::pickMode() == "MoveSkeleton"))) {
     
     for (uint i=0; i < activeManipulators_.size(); i++){
       
@@ -789,6 +891,12 @@ void MovePlugin::showManipulators( )
       PluginFunctions::getObject( activeManipulators_[i], obj );
       
       if (obj != 0 && obj->manipPlaced()) {
+        
+        #ifdef ENABLE_SKELETON_SUPPORT
+        if ( obj->dataType(DATA_SKELETON) )
+          moveManipulatorOnSkeleton(obj);
+        #endif
+        
         obj->manipulatorNode()->show();
         obj->manipulatorNode()->apply_transformation( PluginFunctions::pickMode() == "Move" );
         emit nodeVisibilityChanged(obj->id());
@@ -1556,6 +1664,16 @@ void MovePlugin::slotSetMoveMode(QAction* _action) {
 
     moveSelectionAction_->setChecked( true );
   }
+  
+#ifdef ENABLE_SKELETON_SUPPORT
+  if (_action == moveSkeletonAction_){
+
+    PluginFunctions::actionMode(Viewer::PickingMode);
+    PluginFunctions::pickMode("MoveSkeleton");
+
+    moveSkeletonAction_->setChecked( true );
+  }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -1603,6 +1721,13 @@ void MovePlugin::slotPickToolbarAction(QAction* _action)
          o_it->manipulatorNode()->set_size(manip_size_ * manip_size_modifier_);
     emit nodeVisibilityChanged (-1);
   }
+#ifdef ENABLE_SKELETON_SUPPORT
+  if (_action == fixChildManipAction_)
+  {
+    recursiveJointTransformation_ = fixChildManipAction_->isChecked();
+  }
+#endif
+
 }
 
 
@@ -1690,6 +1815,52 @@ void MovePlugin::transformPolyLine( ACG::Matrix4x4d _mat , PolyLineT& _polyLine 
   #endif
   for ( int i = 0 ; i < (int)_polyLine.n_vertices(); ++i )
     _polyLine.point(i) = _mat.transform_point( _polyLine.point(i) );
+}
+
+#endif
+
+//------------------------------------------------------------------------------
+
+#ifdef ENABLE_SKELETON_SUPPORT
+
+/** \brief Transform a skeleton with the given transformation matrix
+ *
+ * @param _mat transformation matrix
+ * @param _skeleton the skeleton
+ */
+void MovePlugin::transformSkeleton(ACG::Matrix4x4d _mat , Skeleton& _skeleton ) {
+
+  Skeleton::Joint* root = _skeleton.getRoot();
+  
+  AnimationHandle handle = _skeleton.getCurrentAnimation();
+  
+  if ( !handle.isValid() ){
+    
+    //no current animation found -> transform the reference Pose
+    Skeleton::Pose* pose = _skeleton.getReferencePose();
+    
+    //the transformation only has to be applied to the root joint
+    //it is automatically passed down to the children
+    ACG::Matrix4x4d transform = pose->getGlobal(root->getID()) * _mat;
+    
+    pose->setGlobal( root->getID(), transform, false);
+    
+  } else {
+  
+    Skeleton::Animation* animation = _skeleton.getAnimation(handle);
+    
+    //transform every Pose of the animation
+    for(unsigned long iFrame = 0; iFrame < animation->getFrameCount(); iFrame++){
+    
+      Skeleton::Pose* pose = animation->getPose(iFrame);
+      
+      //the transformation only has to be applied to the root joint
+      //it is automatically passed down to the children
+      ACG::Matrix4x4d transform = _mat * pose->getGlobal(root->getID());
+      
+      pose->setGlobal( root->getID(), transform, false);
+    }
+  }
 }
 
 #endif
@@ -1964,10 +2135,92 @@ OpenMesh::Vec3d MovePlugin::getNearestFace(MeshType* _mesh, uint _fh, OpenMesh::
     return (OpenMesh::Vec3d)cog/count;
 }
 
+//--------------------------------------------------------------------------------
+
+#ifdef ENABLE_SKELETON_SUPPORT
+/**
+ * \brief Get nearest joint to hitPoint (used for snapping)
+ */
+OpenMesh::Vec3d MovePlugin::getNearestJoint(Skeleton* _skeleton, OpenMesh::Vec3d &_hitPoint) {
+
+  ACG::Vec3d    bestJoint;
+  unsigned long bestJointID = 0;
+  double        bestDistance = DBL_MAX;
+  
+  AnimationHandle handle = _skeleton->getCurrentAnimation();
+  
+  if ( !handle.isValid() ){
+    
+    //no current animation found -> transform the reference Pose
+    Skeleton::Pose* pose = _skeleton->getReferencePose();
+    
+    //find the nearest joint
+    for (unsigned long joint = 0; joint < _skeleton->getJointCount(); joint++){
+      
+      double dist = (_hitPoint - pose->getGlobalTranslation(joint)).sqrnorm();
+      
+      if (dist < bestDistance){
+        bestJoint = pose->getGlobalTranslation(joint);
+        bestJointID  = joint;
+        bestDistance = dist;
+      }
+      //clear the selection
+      _skeleton->getJoint(joint)->setSelected(false);
+    }
+    
+  } else {
+  
+    Skeleton::Animation* animation = _skeleton->getAnimation(handle);
+
+    Skeleton::Pose* pose = animation->getPose( handle.getFrame() );
+    
+    //find the nearest joint
+    for (unsigned long joint = 0; joint < _skeleton->getJointCount(); joint++){
+      
+      double dist = (_hitPoint - pose->getGlobalTranslation(joint)).sqrnorm();
+      
+      if (dist < bestDistance){
+        bestJoint    = pose->getGlobalTranslation(joint);
+        bestJointID  = joint;
+        bestDistance = dist;
+      }
+      //clear the selection
+      _skeleton->getJoint(joint)->setSelected(false);
+    }
+  }
+
+  //select best joint so that we know which joint is to be transformed
+  _skeleton->getJoint(bestJointID)->setSelected(true);
+
+  return (OpenMesh::Vec3d) bestJoint;
+}
+
+
+/** \brief make sure the manipulator is positioned on a joint
+ *
+ */
+void MovePlugin::moveManipulatorOnSkeleton(BaseObjectData* _skeletonObj){
+ 
+  
+  Skeleton* skeleton = PluginFunctions::skeleton(_skeletonObj);
+  
+  OpenMesh::Vec3d pos    = _skeletonObj->manipulatorNode()->center();
+  OpenMesh::Vec3d newPos = getNearestJoint(skeleton, pos );
+  
+  
+  _skeletonObj->manipulatorNode()->set_center(newPos);
+}
+
+#endif
+
+//--------------------------------------------------------------------------------
+
 void MovePlugin::slotAllCleared(){
   activeManipulators_.clear();
 }
-    
+
+//--------------------------------------------------------------------------------
+
 void MovePlugin::objectDeleted( int _id ){
   
   for (uint i=0; i < activeManipulators_.size(); i++)
@@ -1976,6 +2229,8 @@ void MovePlugin::objectDeleted( int _id ){
       return;
     }
 }
+
+//--------------------------------------------------------------------------------
 
 Q_EXPORT_PLUGIN2( moveplugin , MovePlugin );
 

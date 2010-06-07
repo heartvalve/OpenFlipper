@@ -783,6 +783,76 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
   emit scriptInfo( "transformEdgeSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
 }
 
+//------------------------------------------------------------------------------
+
+#ifdef ENABLE_SKELETON_SUPPORT
+/** \brief transform selected joints with given matrix
+ *
+ * when a manipulator is placed on a joint, the selection of the skeleton
+ * is cleared and only that joint is selected
+ * the selection is used here to find the joint to be deformed
+ *
+ * @param _objectId id of an object
+ * @param _matrix transformation matrix
+ */
+void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
+    
+  BaseObjectData* obj = 0;
+  
+  PluginFunctions::getObject(_objectId, obj);
+  
+  if (obj == 0){
+    emit log(LOGERR, tr("Unable to get object"));
+    return;
+  }
+  
+  Skeleton* skeleton = PluginFunctions::skeleton(obj);
+
+  if (skeleton == 0){
+    emit log(LOGERR, tr("Unable to get skeleton"));
+    return;
+  }
+  
+  AnimationHandle handle = skeleton->getCurrentAnimation();
+  
+  if ( !handle.isValid() ){
+    
+    //no current animation found -> transform the reference Pose
+    Skeleton::Pose* pose = skeleton->getReferencePose();
+    
+    //transform all selected joints
+    for (unsigned long joint = 0; joint < skeleton->getJointCount(); joint++){
+      
+      if ( skeleton->getJoint(joint)->selected() ){
+        
+        
+        Matrix4x4 transform = _matrix * pose->getGlobal( joint );
+
+        pose->setGlobal( joint, transform, recursiveJointTransformation_);
+        
+      }
+    }
+    
+  } else {
+  
+    Skeleton::Animation* animation = skeleton->getAnimation(handle);
+
+    Skeleton::Pose* pose = animation->getPose( handle.getFrame() );
+    
+    //transform all selected joints
+    for (unsigned long joint = 0; joint < skeleton->getJointCount(); joint++){
+      
+      if ( skeleton->getJoint(joint)->selected() ){
+
+        Matrix4x4 transform = _matrix * pose->getGlobal( joint );
+    
+        pose->setGlobal( joint, transform, recursiveJointTransformation_);
+      }
+    }
+  }
+}
+
+#endif
 
 //------------------------------------------------------------------------------
 

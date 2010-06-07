@@ -62,6 +62,10 @@
 #include <ObjectTypes/Plane/Plane.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#ifdef ENABLE_SKELETON_SUPPORT
+#include <ObjectTypes/Skeleton/Skeleton.hh>
+#endif
+
 #include "MoveToolbar.hh"
 #include "MoveProps.hh"
 #include "MoveObjectMarker.hh"
@@ -224,6 +228,10 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     template <typename MeshType>
     OpenMesh::Vec3d getNearestFace(MeshType* _mesh, uint _fh, OpenMesh::Vec3d& _hitPoint);
 
+    #ifdef ENABLE_SKELETON_SUPPORT
+    OpenMesh::Vec3d getNearestJoint(Skeleton* _skeleton, OpenMesh::Vec3d &_hitPoint);
+    #endif
+    
     /// True if the toolbox widget is active
     bool toolboxActive_;
 
@@ -240,7 +248,8 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
   private :
     QAction* moveAction_;
     QAction* moveSelectionAction_;
-
+    QAction* moveSkeletonAction_;
+    
     QActionGroup* toolBarActions_;
     
     QToolBar* toolbar_;
@@ -268,6 +277,8 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     QAction* biggerManipAction_;
     QAction* smallerManipAction_;
 
+    QAction* fixChildManipAction_;
+    
     QAction* placeAndSnapAction_;
 
     QActionGroup* pickToolBarActions_;
@@ -305,7 +316,11 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     #ifdef ENABLE_POLYLINE_SUPPORT
     ///Transform a polyline with the given transformation matrix
     template< class PolyLineT >
-    void transformPolyLine( ACG::Matrix4x4d _mat , PolyLineT& _polyLine  );
+    void transformPolyLine( ACG::Matrix4x4d _mat , PolyLineT& _polyLine );
+    #endif
+    
+    #ifdef ENABLE_SKELETON_SUPPORT
+    void transformSkeleton(ACG::Matrix4x4d _mat , Skeleton& _skeleton );
     #endif
 
     /** Get the Matrix of the last active Manipulator ( Identity if not found or hidden Manipulator )
@@ -350,10 +365,18 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     /// Move selection on an object with given id
     void moveSelection(ACG::Matrix4x4d mat, int _id);
+    
+    /// Move joint of a skeleton
+    void moveSkeletonJoint(ACG::Matrix4x4d mat, int _id);
 
     /// Object marker to dimm Objects during manipulator transformation
     MoveObjectMarker objectMarker_;
 
+    #ifdef ENABLE_SKELETON_SUPPORT
+    /// make sure the manipulator is positioned on a joint
+    void moveManipulatorOnSkeleton(BaseObjectData* _skeletonObj);
+    #endif
+    
   private:
 
     /// Holds the current manipulator mode
@@ -457,6 +480,9 @@ public slots :
   /// transform current selection of an Object by a given matrix
   void transformEdgeSelection( int _objectId , Matrix4x4 _matrix );
 
+  /// transform selected joint with given matrix
+  void transformSkeletonJoint( int _objectId , Matrix4x4 _matrix );
+  
   /// Set the position of the manipulator
   void setManipulatorPosition( int _objectId , Vector _position );
 
@@ -485,6 +511,8 @@ public slots :
     bool allTargets_;
 
     bool placeMode_;
+    
+    bool recursiveJointTransformation_;
 };
 
 #endif //MOVEPLUGIN_HH
