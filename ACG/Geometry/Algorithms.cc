@@ -1101,6 +1101,124 @@ roundness( const VectorT<Scalar, N>& _v0,
 					(_v2-_v0).sqrnorm() ));
 }
 
+template<typename Vec>
+bool
+triangleIntersection( const Vec&  _o,
+		      const Vec&  _dir,
+		      const Vec&  _v0,
+		      const Vec&  _v1,
+		      const Vec&  _v2,
+		      typename Vec::value_type& _t,
+		      typename Vec::value_type& _u,
+		      typename Vec::value_type& _v )
+{
+    //This code effectively replicates the method described by Moeller et al. in "Fast, Minimum Storage Ray-Triangle Intersection".
+    Vec edge1, edge2, tvec, pvec, qvec;
+    typename Vec::value_type det, inv_det;
+
+    //find vectors for two edges sharing v0
+    edge1 = _v1-_v0;
+    edge2 = _v2-_v0;
+
+    //begin calculating determinant - also used to calculate u parameter
+    pvec = _dir % edge2;
+
+    //if determinant is near zero, the ray lies in plane of triangle
+    det = edge1 | pvec;
+
+    if (det > -0.000001 && det < 0.000001)
+        return false;
+    inv_det = 1.0 / det;
+
+    //calculate distance from vert0 to ray origin
+    tvec = _o - _v0;
+
+    //calculate U parameter and test bounds
+    _u = (tvec | pvec) * inv_det;
+    if (_u < 0.0 || _u > 1.0)
+        return false;
+
+    //prepare to test V parameter
+    qvec = tvec % edge1;
+
+    //calculate V parameter and test bounds
+    _v = (_dir | qvec) * inv_det;
+    if (_v < 0.0 || _u + _v > 1.0)
+        return false;
+
+    //Intersection found! Calculate t and exit...
+    _t = (edge2 | qvec) * inv_det;
+    return true;
+}
+
+template<typename Vec>
+bool
+axisAlignedBBIntersection( const Vec&  _o,
+                  const Vec&  _dir,
+                  const Vec& _bbmin,
+                  const Vec& _bbmax,
+                  typename Vec::value_type& tmin,
+                  typename Vec::value_type& tmax )
+{
+    /*
+    * Ray-box intersection using IEEE numerical properties to ensure that the
+    * test is both robust and efficient, as described in:
+    *
+    *      Amy Williams, Steve Barrus, R. Keith Morley, and Peter Shirley
+    *      "An Efficient and Robust Ray-Box Intersection Algorithm"
+    *      Journal of graphics tools, 10(1):49-54, 2005
+    *
+    */
+    typename Vec::value_type tymin, tymax, tzmin, tzmax;
+    Vec inv_dir;
+
+    inv_dir[0] = 1/_dir[0];
+    inv_dir[1] = 1/_dir[1];
+    inv_dir[2] = 1/_dir[2];
+
+    if (inv_dir[0] >= 0) {
+        tmin = (_bbmin[0] - _o[0]) * inv_dir[0];
+        tmax = (_bbmax[0] - _o[0]) * inv_dir[0];
+    }
+    else {
+        tmin = (_bbmax[0] - _o[0]) * inv_dir[0];
+        tmax = (_bbmin[0] - _o[0]) * inv_dir[0];
+    }
+
+    if (inv_dir[1] >= 0) {
+        tymin = (_bbmin[1] - _o[1]) * inv_dir[1];
+        tymax = (_bbmax[1] - _o[1]) * inv_dir[1];
+    }
+    else {
+        tymin = (_bbmax[1] - _o[1]) * inv_dir[1];
+        tymax = (_bbmin[1] - _o[1]) * inv_dir[1];
+    }
+
+    if ( (tmin > tymax) || (tymin > tmax) )
+        return false;
+    if (tymin > tmin)
+        tmin = tymin;
+    if (tymax < tmax)
+        tmax = tymax;
+
+    if (inv_dir[2] >= 0) {
+        tzmin = (_bbmin[2] - _o[2]) * inv_dir[2];
+        tzmax = (_bbmax[2] - _o[2]) * inv_dir[2];
+    }
+    else {
+        tzmin = (_bbmax[2] - _o[2]) * inv_dir[2];
+        tzmax = (_bbmin[2] - _o[2]) * inv_dir[2];
+    }
+
+    if ( (tmin > tzmax) || (tzmin > tmax) )
+        return false;
+    if (tzmin > tmin)
+        tmin = tzmin;
+    if (tzmax < tmax)
+        tmax = tzmax;
+    
+    return true;
+}
 
 //=============================================================================
 } // namespace Geometry

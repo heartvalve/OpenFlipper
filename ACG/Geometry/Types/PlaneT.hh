@@ -149,7 +149,17 @@ public:
 			      Vec3& _v, Scalar& _t ) const
   { return intersect(_v0, _v1, _v, _t, LineSegment); }
 
-  /// general intersection
+  /**  \brief General intersection function.
+    *
+    * General intersection between a line/ray and the plane.
+    *
+    * @param _v0 start vector of the ray
+    * @param _v1 end vector of the ray
+    * @param _v returned intersection point
+    * @param _t returned relative distance from the interection to _v0 compared to _v1
+    * @param _target type of intersection to test
+    * @return true if an intersection was found
+    */
   bool intersect( const Vec3& _v0,
 		  const Vec3& _v1,
 		  Vec3& _v,
