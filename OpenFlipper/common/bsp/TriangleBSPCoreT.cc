@@ -59,38 +59,6 @@
 
 //== CLASS DEFINITION =========================================================
 
-
-template <class BSPTraits>
-TriangleBSPCoreT<BSPTraits>::Node::
-Node(const Handles& _handles, Node* _parent)
-  : handles_(_handles), 
-    parent_(_parent), left_child_(0), right_child_(0)
-{}
-
-
-//-----------------------------------------------------------------------------
-
-
-template <class BSPTraits>
-TriangleBSPCoreT<BSPTraits>::Node::
-~Node() 
-{ 
-  delete left_child_; 
-  delete right_child_;
-
-  if (parent_) 
-  {
-    if (this == parent_->left_child_) 
-      parent_->left_child_ = 0;
-    else 
-      parent_->right_child_ = 0;
-  }
-}
-
-
-//-----------------------------------------------------------------------------
-
-
 template <class BSPTraits>
 void
 TriangleBSPCoreT<BSPTraits>::
@@ -103,8 +71,12 @@ build(unsigned int _max_handles, unsigned int _max_depth)
   // delete own handles (don't store them twice)
   handles_ = Handles();
 
+  nodes=1;
+  traits_.calculateBoundingBoxRoot (root_);
   // call recursive helper
   _build(root_, _max_handles, _max_depth);
+  
+  std::cout << "Number of nodes:" << nodes << std::endl;
 }
 
 
@@ -121,44 +93,23 @@ _build(Node*         _node,
   // should we stop at this level ?
   if ((_depth == 0) || ((_node->end()-_node->begin()) <= (int)_max_handles))
     return;
-
-
-
-  // compute bounding box
-  HandleIter it;
-  Point p0, p1, p2;
-  Point bb_min; bb_min.vectorize(FLT_MAX);
-  Point bb_max; bb_max.vectorize(-FLT_MAX);
-  for (it=_node->begin(); it!=_node->end(); ++it)
-  {
-    traits_.points(*it, p0, p1, p2);
-    bb_min.minimize(p0);
-    bb_min.minimize(p1);
-    bb_min.minimize(p2);
-    bb_max.maximize(p0);
-    bb_max.maximize(p1);
-    bb_max.maximize(p2);
-  }
-
-
-  // split longest side of bounding box
-  Point   bb     = bb_max - bb_min;
-  Scalar  length = bb[0];
-  int     axis   = 0;
-  if (bb[1] > length) length = bb[ (axis=1) ];
-  if (bb[2] > length) length = bb[ (axis=2) ];
-
-
+  
+  Point median;
+  int axis;
+  // compute bounding boxes for children
+  traits_.calculateBoundingBox (_node, median, axis);
+  
   // construct splitting plane
   const Point XYZ[3] = { Point(1,0,0), Point(0,1,0), Point(0,0,1) };
-  _node->plane_ = Plane((bb_min+bb_max)*0.5, XYZ[axis]);
-
+  _node->plane_ = Plane(median, XYZ[axis]);
 
   // partition for left and right child
   Handles lhandles, rhandles;
   lhandles.reserve(_node->handles_.size()/2);
   rhandles.reserve(_node->handles_.size()/2);
 
+  HandleIter it;
+  Point p0, p1, p2;
   bool left, right;
   for (it=_node->begin(); it!=_node->end(); ++it)
   {
@@ -176,7 +127,6 @@ _build(Node*         _node,
     if (right) rhandles.push_back(*it);
   }
 
-
   // check it
   if (lhandles.size() == _node->handles_.size() ||
       rhandles.size() == _node->handles_.size())
@@ -188,8 +138,25 @@ _build(Node*         _node,
   // create children
   _node->left_child_  = new Node(lhandles, _node);  lhandles = Handles();
   _node->right_child_ = new Node(rhandles, _node);  rhandles = Handles();
-
-
+  nodes+=2;
+  
+  //save bounding boxes for children
+  /*
+  _node->left_child_->bb_min  = _node->bb_min;
+  _node->left_child_->bb_max  = _node->bb_max;
+  _node->left_child_->bb_max[axis] = median [axis];
+  
+  _node->right_child_->bb_min = _node->bb_min;
+  _node->right_child_->bb_min[axis] = median [axis];
+  _node->right_child_->bb_max = _node->bb_max;
+  */
+  _node->right_child_->bb_min  = _node->bb_min;
+  _node->right_child_->bb_max  = _node->bb_max;
+  _node->right_child_->bb_max[axis] = median [axis];
+  
+  _node->left_child_->bb_min = _node->bb_min;
+  _node->left_child_->bb_min[axis] = median [axis];
+  _node->left_child_->bb_max = _node->bb_max;
 
   // recurse to childen
   _build(_node->left_child_,  _max_handles, _depth-1);

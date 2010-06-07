@@ -97,8 +97,6 @@ _nearest(Node* _node, NearestNeighborData& _data) const
       }
     }
   }
-
-
   
   // non-terminal node
   else
@@ -118,6 +116,67 @@ _nearest(Node* _node, NearestNeighborData& _data) const
 	_nearest(_node->left_child_, _data);
     }    
   }
+}
+
+//-----------------------------------------------------------------------------
+
+template <class BSPCore>
+typename BSPImplT<BSPCore>::NearestNeighbor
+BSPImplT<BSPCore>::
+raycollision(const Point& _p, const Point& _r) const
+{
+  RayCollisionData  data;
+  data.ref  = _p;
+  data.dist = FLT_MAX;
+  data.ray  = _r;
+  
+  _raycollision(this->root_, data);
+  return NearestNeighbor(data.nearest, data.dist);
+}
+
+
+//-----------------------------------------------------------------------------
+
+
+template <class BSPCore>
+void
+BSPImplT<BSPCore>::
+_raycollision(Node* _node, RayCollisionData& _data) const
+{
+    // terminal node
+    if (!_node->left_child_)
+    {
+        Scalar dist;
+        Point v0, v1, v2;
+	Scalar u, v;
+
+        for (HandleIter it=_node->begin(); it!=_node->end(); ++it)
+        {
+            this->traits_.points(*it, v0, v1, v2);
+            if (ACG::Geometry::triangleIntersection(_data.ref, _data.ray, v0, v1, v2, dist, u, v)) {
+		
+                //face intersects with ray. But is it closer than any that we have found so far?
+                if (dist < _data.dist)
+                {
+                    _data.dist = dist;
+                    _data.nearest = *it;
+                }
+            }
+        }
+    }
+  
+  // non-terminal node
+  else
+    {
+        Scalar tmin, tmax;
+	bool used = false;
+        if ( _node->left_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->left_child_->bb_min, _node->left_child_->bb_max, tmin, tmax)) {
+            _raycollision(_node->left_child_, _data);
+        }
+	if ( _node->right_child_ && ACG::Geometry::axisAlignedBBIntersection( _data.ref, _data.ray, _node->right_child_->bb_min, _node->right_child_->bb_max, tmin, tmax)) {
+            _raycollision(_node->right_child_, _data);
+        }
+    }
 }
 
 
