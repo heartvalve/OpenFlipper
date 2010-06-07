@@ -90,7 +90,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     void log(QString _message);
 
     // MenuInterface
-    void addMenubarAction(QAction* _action, MenuActionType _type );
+    void addMenubarAction(QAction* _action, QString _type );
 
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action ,DataType _objectType , ContextMenuType _type );

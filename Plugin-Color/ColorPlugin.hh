@@ -81,7 +81,7 @@ class ColorPlugin : public QObject, BaseInterface, MenuInterface, ScriptInterfac
     void scriptInfo( QString _functionName );
 
     // MenuInterface
-    void addMenubarAction(QAction* _action, MenuActionType _type );
+    void addMenubarAction(QAction* _action, QString _type );
 
     // ToolbarInterface
     void addToolbar(QToolBar* _toolbar);
