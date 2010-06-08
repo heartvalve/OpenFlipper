@@ -758,10 +758,16 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
       
         #ifdef ENABLE_SKELETON_SUPPORT
         //first pick anything and check if we hit a skeleton
-          
+         
+        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+          o_it->enablePicking( o_it->dataType(DATA_SKELETON) );
+         
         successfullyPicked = PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_ANYTHING, _event->pos(), node_idx,
                 target_idx, &hitPoint) && PluginFunctions::getPickedObject(node_idx, object);
         
+        for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+          o_it->enablePicking( true );
+                
         if ( object->dataType(DATA_SKELETON) ) {
 
           hitPoint = getNearestJoint(PluginFunctions::skeletonObject(object), hitPoint);
