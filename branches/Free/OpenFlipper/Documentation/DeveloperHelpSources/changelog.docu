@@ -1,8 +1,7 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 ( ? , 9357 RC7 )</b>
+ * - <b>OpenFlipper 1.0 ( ? , 9436 RC7 )</b>
  *      - <b>Core</b>
- *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
  *          - Added Light source management
  *              - Added global nodes to handle light sources
  *              - Internal light handling can now be switched off via pluginfunctions (Used by TypeLight to take control over lights)
@@ -13,13 +12,22 @@
  *              - Bugfix when using blocking mode for new threads
  *          - File Dialog
  *              - Fixed problems with keyboard interaction
- *          - Added Function to find the object to a node (Based on BaseObjectData)
- *          - Fixed bug in scripted saveObject function where supported type was not correctly detected
- *          - Increased stack frame size when doing debugging.
- *          - Made core.loadObject scriptable (automatically detects right file plugin to load object)
+ *          - Scripting
+ *              - Fixed bug with scriptdir not set correctly on command line open
+ *              - Made core.loadObject scriptable (automatically detects right file plugin to load object)
+ *              - Fixed bug in scripted saveObject function where supported type was not correctly detected
+ *          - Debugging
+ *              - Windows debugging console for cerr and cout when building windows debug version
+ *              - Increased stack frame size when doing debugging.
+ *          - Bugfixes
+ *              - Bugfix for segfault on exit
+ *              - Bugfix for simple viewer and qt 4.6
+ *          - BSP Tree
+ *              - Faster generation
+ *              - Tree, Ray intersection (find closest triangle hit by ray)
  *          - Added a global picking dialog to choose an object an algorithm should work on (OpenFlipper/publicWidgets)
- *          - Bugfix for segfault on exit
- *          - Bugfix for simple viewer and qt 4.6
+ *          - Added Function to find the object to a node (Based on BaseObjectData)
+ *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
  *      - <b>Object Types</b>
  *          - New Light Object
  *          - New Sphere Object
@@ -46,6 +54,8 @@
  *      - <b>ACG</b>
  *          - Bugfix for glstate functions returning fovy and aspect ratio
  *          - New PICK_SPLINE Pickmode added
+ *          - Draw Modes
+ *              - Fixed bug with increment operator for drawmodes (shift in underlying bitset)
  *          - SceneGraph
  *              - Fixed picking multipass bug where picking failed when blending or other color changing enter and leave functions where present
  *          - GlutPrimitive Node
@@ -57,17 +67,27 @@
  *              - Add extra class to store all Material Information
  *          - PointNode
  *              - Use Vec3d
+ *              - Fixed bug in pointnode double was send to OpenGL as float 
  *          - LineNode
  *              - Use Vec3d
  *          - MeshNode2
  *              - Fixed bug where stripes are sometimes not updated correctly
  *              - Fixed pick face bug, where picking buffer was updated to late
  *              - Fixed bug with point only meshes, where face and edge buffers were accessed but not there.
+ *              - When updating colors, invalidate face and edge buffers too ( otherwise no update is done)
  *          - SceneGraphWidget
  *              - Added system to register a widget for new nodes without changing the widget code.
  *          - Geometry
  *              - Added more documentation to some algorithms
- *              - New functions ( distances to planes,projections )
+ *              - New functions 
+ *                  - Distances to planes
+ *                  - Projections (Point->Triangle, Point->Plane )
+ *                  - Intersection Ray, Axis aligned Bounding Box
+ *                  - Intersection Ray, triangle
+ *              - Quaternions
+ *                  - changed to template Vector function for rotate
+ *                  - disabled matrix constructor
+ *                  - added print_info function
  *              - Math_Tools/GeometryFunctions.hh integrated into ACG/Geometry/Algorithms.hh
  *      - <b>New Plugins</b>
  *          - TypeLight
@@ -77,6 +97,8 @@
  *      - <b>Plugins</b>
  *          - All
  *              - Converted all plugins to new updatedObject formats
+ *          - Color 
+ *              - Fixed wrong interface definitioni causing plugins not visible in ui menus (Thanks to Sergei Migdalskiy for reporting this bug)
  *          - DataControl
  *              - Support for Light sources
  *          - FileOFF
@@ -88,18 +110,29 @@
  *              - Write material data for all objects with materialnode
  *          - IsoTropic Remesher
  *              - Process indicator added
+ *          - Info Plugin
+ *              - Fixed unsigned int/int conversion problem resulting in wrong genus computation
+ *              - Fixed crash when infobar is not setup and objects are created ( fixed by initializing it earlier)
+ *              - Don't output dihedral angles for no or one face
+ *          - Selection
+ *              - Fixed bounding box update for selection sphere
+ *              - emit updatedobject on color change
  *          - TextureControl
  *              - Fixed bug when trying to create textures for lights (?!!)
+ *              - Fixed wrong interface definitioni causing plugins not visible in ui menus (Thanks to Sergei Migdalskiy for reporting this bug)
  *          - Topology Plugin
  *              - Added missing updates
  *          - Info Plugin
  *              - Fixed unsigned int/int conversion problem resulting in wrong genus computation
  *              - Fixed crash when infobar is not setup and objects are created ( fixed by initializing it earlier)
+ *              - Don't output dihedral angles for no or one face
+ *          - ViewControl
+ *              - Check if types exist before adding context menues (avoids warning)
  *          - VSI Plugin
  *              - Fix script generation for qt 4.6 ( in -> input rename as in causes a parse error )
  *      - <b>Documentation</b>
  *          - Refactored documentation files ( One documentation directory, build targets)
- *          - Internal help files (qhc) are now searched automatically ( no need to specify at bbuild time anymore!)
+ *          - Internal help files (qhc) are now searched automatically ( no need to specify at build time anymore!)
  *          - Added docs for the glstate to describe internal projection matrix construction and parameters
  *          - Improved Documentation for the process manager
  *          - Improved building instructions
@@ -110,6 +143,7 @@
  *          - Added Petsc finder
  *          - Added a GLUT finder
  *          - Fixed the library dir in GLEW finder
+ *          - Make windows capable of choosing debug and release version of superlu
  *          - Build ui files from ObjectTypes (Required to register Widgets to the scenegraph dialog)
  *          - Branding support (looks in Toplevel/branding for image files)
  *          - Improved compiler flag settings for unix systems (easier setting of additional compiler flags)
