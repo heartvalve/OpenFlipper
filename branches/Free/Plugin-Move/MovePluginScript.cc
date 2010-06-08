@@ -806,6 +806,13 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
     return;
   }
   
+  SkeletonObject* skeletonObj = PluginFunctions::skeletonObject(obj);
+  
+  if (skeletonObj == 0){
+    emit log(LOGERR, tr("Unable to get skeletonObject"));
+    return;
+  }
+  
   Skeleton* skeleton = PluginFunctions::skeleton(obj);
 
   if (skeleton == 0){
@@ -813,7 +820,7 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
     return;
   }
   
-  AnimationHandle handle = skeleton->getCurrentAnimation();
+  AnimationHandle handle = skeletonObj->skeletonNode()->getActivePose();
   
   if ( !handle.isValid() ){
     
