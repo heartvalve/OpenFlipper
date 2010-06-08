@@ -491,7 +491,7 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
 #endif
 #ifdef ENABLE_SKELETON_SUPPORT
   } else  if  ( object->dataType()  == DATA_SKELETON ) {
-    transformSkeleton(mat , *PluginFunctions::skeleton(object) );
+    transformSkeleton(mat , PluginFunctions::skeletonObject(object) );
 #endif
   } else  if  ( object->dataType()  == DATA_PLANE ) {
     PluginFunctions::planeNode(object)->transform(mat);
@@ -764,7 +764,7 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
         
         if ( object->dataType(DATA_SKELETON) ) {
 
-          hitPoint = getNearestJoint(PluginFunctions::skeleton(object), hitPoint);
+          hitPoint = getNearestJoint(PluginFunctions::skeletonObject(object), hitPoint);
           
         } else {
           successfullyPicked = false;
@@ -1828,16 +1828,18 @@ void MovePlugin::transformPolyLine( ACG::Matrix4x4d _mat , PolyLineT& _polyLine 
  * @param _mat transformation matrix
  * @param _skeleton the skeleton
  */
-void MovePlugin::transformSkeleton(ACG::Matrix4x4d _mat , Skeleton& _skeleton ) {
+void MovePlugin::transformSkeleton(ACG::Matrix4x4d _mat , SkeletonObject* _skeletonObj ) {
 
-  Skeleton::Joint* root = _skeleton.getRoot();
+  Skeleton* skeleton = PluginFunctions::skeleton(_skeletonObj);
   
-  AnimationHandle handle = _skeleton.getCurrentAnimation();
+  Skeleton::Joint* root = skeleton->getRoot();
+
+  AnimationHandle handle = _skeletonObj->skeletonNode()->getActivePose();
   
   if ( !handle.isValid() ){
     
     //no current animation found -> transform the reference Pose
-    Skeleton::Pose* pose = _skeleton.getReferencePose();
+    Skeleton::Pose* pose = skeleton->getReferencePose();
     
     //the transformation only has to be applied to the root joint
     //it is automatically passed down to the children
@@ -1847,7 +1849,7 @@ void MovePlugin::transformSkeleton(ACG::Matrix4x4d _mat , Skeleton& _skeleton ) 
     
   } else {
   
-    Skeleton::Animation* animation = _skeleton.getAnimation(handle);
+    Skeleton::Animation* animation = skeleton->getAnimation(handle);
     
     //transform every Pose of the animation
     for(unsigned long iFrame = 0; iFrame < animation->getFrameCount(); iFrame++){
@@ -2141,21 +2143,24 @@ OpenMesh::Vec3d MovePlugin::getNearestFace(MeshType* _mesh, uint _fh, OpenMesh::
 /**
  * \brief Get nearest joint to hitPoint (used for snapping)
  */
-OpenMesh::Vec3d MovePlugin::getNearestJoint(Skeleton* _skeleton, OpenMesh::Vec3d &_hitPoint) {
+OpenMesh::Vec3d MovePlugin::getNearestJoint(SkeletonObject* _skeletonObj, OpenMesh::Vec3d &_hitPoint) {
 
   ACG::Vec3d    bestJoint;
   unsigned long bestJointID = 0;
   double        bestDistance = DBL_MAX;
   
-  AnimationHandle handle = _skeleton->getCurrentAnimation();
+  Skeleton* skeleton = PluginFunctions::skeleton(_skeletonObj);
+
+  AnimationHandle handle = _skeletonObj->skeletonNode()->getActivePose();
+
   
   if ( !handle.isValid() ){
     
     //no current animation found -> transform the reference Pose
-    Skeleton::Pose* pose = _skeleton->getReferencePose();
+    Skeleton::Pose* pose = skeleton->getReferencePose();
     
     //find the nearest joint
-    for (unsigned long joint = 0; joint < _skeleton->getJointCount(); joint++){
+    for (unsigned long joint = 0; joint < skeleton->getJointCount(); joint++){
       
       double dist = (_hitPoint - pose->getGlobalTranslation(joint)).sqrnorm();
       
@@ -2165,17 +2170,17 @@ OpenMesh::Vec3d MovePlugin::getNearestJoint(Skeleton* _skeleton, OpenMesh::Vec3d
         bestDistance = dist;
       }
       //clear the selection
-      _skeleton->getJoint(joint)->setSelected(false);
+      skeleton->getJoint(joint)->setSelected(false);
     }
     
   } else {
   
-    Skeleton::Animation* animation = _skeleton->getAnimation(handle);
+    Skeleton::Animation* animation = skeleton->getAnimation(handle);
 
     Skeleton::Pose* pose = animation->getPose( handle.getFrame() );
     
     //find the nearest joint
-    for (unsigned long joint = 0; joint < _skeleton->getJointCount(); joint++){
+    for (unsigned long joint = 0; joint < skeleton->getJointCount(); joint++){
       
       double dist = (_hitPoint - pose->getGlobalTranslation(joint)).sqrnorm();
       
@@ -2185,12 +2190,12 @@ OpenMesh::Vec3d MovePlugin::getNearestJoint(Skeleton* _skeleton, OpenMesh::Vec3d
         bestDistance = dist;
       }
       //clear the selection
-      _skeleton->getJoint(joint)->setSelected(false);
+      skeleton->getJoint(joint)->setSelected(false);
     }
   }
 
   //select best joint so that we know which joint is to be transformed
-  _skeleton->getJoint(bestJointID)->setSelected(true);
+  skeleton->getJoint(bestJointID)->setSelected(true);
 
   return (OpenMesh::Vec3d) bestJoint;
 }
@@ -2200,12 +2205,10 @@ OpenMesh::Vec3d MovePlugin::getNearestJoint(Skeleton* _skeleton, OpenMesh::Vec3d
  *
  */
 void MovePlugin::moveManipulatorOnSkeleton(BaseObjectData* _skeletonObj){
- 
-  
-  Skeleton* skeleton = PluginFunctions::skeleton(_skeletonObj);
+
   
   OpenMesh::Vec3d pos    = _skeletonObj->manipulatorNode()->center();
-  OpenMesh::Vec3d newPos = getNearestJoint(skeleton, pos );
+  OpenMesh::Vec3d newPos = getNearestJoint(PluginFunctions::skeletonObject(_skeletonObj), pos );
   
   
   _skeletonObj->manipulatorNode()->set_center(newPos);

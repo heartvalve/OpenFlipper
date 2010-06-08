@@ -229,7 +229,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     OpenMesh::Vec3d getNearestFace(MeshType* _mesh, uint _fh, OpenMesh::Vec3d& _hitPoint);
 
     #ifdef ENABLE_SKELETON_SUPPORT
-    OpenMesh::Vec3d getNearestJoint(Skeleton* _skeleton, OpenMesh::Vec3d &_hitPoint);
+    OpenMesh::Vec3d getNearestJoint(SkeletonObject* _skeletonObj, OpenMesh::Vec3d &_hitPoint);
     #endif
     
     /// True if the toolbox widget is active
@@ -320,7 +320,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     #endif
     
     #ifdef ENABLE_SKELETON_SUPPORT
-    void transformSkeleton(ACG::Matrix4x4d _mat , Skeleton& _skeleton );
+    void transformSkeleton(ACG::Matrix4x4d _mat , SkeletonObject* _skeletonObj );
     #endif
 
     /** Get the Matrix of the last active Manipulator ( Identity if not found or hidden Manipulator )
