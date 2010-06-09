@@ -541,8 +541,7 @@ void MovePlugin::moveSelection(ACG::Matrix4x4d mat, int _id) {
 void MovePlugin::moveSkeletonJoint(ACG::Matrix4x4d mat, int _id) {
 
   transformSkeletonJoint( _id , mat );
-
-  emit updatedObject(_id, UPDATE_GEOMETRY);
+  
 //   emit createBackup(_id,"MoveSkeleton");
 }
 #endif
@@ -673,8 +672,12 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
       moveSelection( mat, objectId );
     
     #ifdef ENABLE_SKELETON_SUPPORT
-    else if (PluginFunctions::pickMode() == "MoveSkeleton")
+    else if (PluginFunctions::pickMode() == "MoveSkeleton"){
       moveSkeletonJoint( mat, objectId );
+    
+      if (_event->type() == QEvent::MouseButtonRelease)
+        emit updatedObject(objectId, UPDATE_GEOMETRY);
+    }
     #endif
 
     // move all other targets without manipulator
@@ -690,8 +693,12 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
             moveSelection( mat, o_it->id() );
           
           #ifdef ENABLE_SKELETON_SUPPORT
-          else if (PluginFunctions::pickMode() == "MoveSkeleton")
+          else if (PluginFunctions::pickMode() == "MoveSkeleton"){
             moveSkeletonJoint( mat, o_it->id() );
+
+            if (_event->type() == QEvent::MouseButtonRelease)
+              emit updatedObject(objectId, UPDATE_GEOMETRY);
+          }
           #endif
         }
       }
@@ -768,9 +775,11 @@ void MovePlugin::placeManip(QMouseEvent * _event, bool _snap) {
         for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::ALL_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
           o_it->enablePicking( true );
                 
-        if ( object->dataType(DATA_SKELETON) ) {
+        if ( successfullyPicked && object->dataType(DATA_SKELETON) ) {
 
           hitPoint = getNearestJoint(PluginFunctions::skeletonObject(object), hitPoint);
+          
+          PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::WIREFRAME);
           
         } else {
           successfullyPicked = false;
