@@ -40,27 +40,25 @@
  *                                                                           *
 \*===========================================================================*/
 
-#include "Toolbox.hh"
+#include "TreeView.hh"
 #include <QtGui>
 #include <iostream>
 
-DatacontrolToolboxWidget::DatacontrolToolboxWidget(QWidget* _parent)
-    : QWidget(_parent)
+DataControlTreeView::DataControlTreeView(QWidget* _parent)
+    : QTreeView(_parent)
 {
-  setupUi(this);
-  
-  connect(treeView,SIGNAL(keyEvent( QKeyEvent* )), this,SIGNAL(keyEvent( QKeyEvent* )));
-  
   setFocusPolicy(Qt::StrongFocus);
 }
 
-void DatacontrolToolboxWidget::keyPressEvent (QKeyEvent * _event ) {
+void DataControlTreeView::keyPressEvent (QKeyEvent * _event ) {
   
   // Only react on our own key events
   if ( ( (_event->modifiers() & Qt::ControlModifier) && ( _event->key() == Qt::Key_A ) ) ||
      ( _event->key() == Qt::Key_Delete ) )
     emit keyEvent( _event );
-  else
-    _event->ignore();
+  else {
+    // Pass on to Treeview
+    QTreeView::keyPressEvent(_event);
+  }
 
 }
