@@ -879,24 +879,33 @@ void SelectionPlugin::slotDeleteSelection() {
   else
     restriction = PluginFunctions::TARGET_OBJECTS;
 
-#ifndef ENABLE_TSPLINEMESH_SUPPORT
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH )) ;
-        o_it != PluginFunctions::objectsEnd(); ++o_it) {
-#endif
-#ifdef ENABLE_TSPLINEMESH_SUPPORT
-  for ( PluginFunctions::ObjectIterator o_it(restriction,DataType( DATA_TRIANGLE_MESH | DATA_POLY_MESH | DATA_TSPLINE_MESH )) ;
-        o_it != PluginFunctions::objectsEnd(); ++o_it) {
-#endif
+  DataType types( DATA_TRIANGLE_MESH | DATA_POLY_MESH );
+
+  #ifdef ENABLE_TSPLINEMESH_SUPPORT
+    types |= DATA_TSPLINE_MESH;
+  #endif
+
+  #ifdef ENABLE_SKELETON_SUPPORT
+    types |= DATA_SKELETON;
+  #endif
+
+  for ( PluginFunctions::ObjectIterator o_it(restriction, types ); o_it != PluginFunctions::objectsEnd(); ++o_it) {
+
     if ( o_it->visible() ){
-      bool changed = false;
+
       if ( o_it->dataType( DATA_TRIANGLE_MESH ) )
-          changed = changed || deleteSelection(PluginFunctions::triMesh(*o_it));
+          deleteSelection(PluginFunctions::triMesh(*o_it));
       if ( o_it->dataType( DATA_POLY_MESH ) )
-          changed = changed || deleteSelection(PluginFunctions::polyMesh(*o_it));
-#ifdef ENABLE_TSPLINEMESH_SUPPORT
+          deleteSelection(PluginFunctions::polyMesh(*o_it));
+      #ifdef ENABLE_TSPLINEMESH_SUPPORT
       if ( o_it->dataType( DATA_TSPLINE_MESH ) )
-          changed = changed || deleteSelection(PluginFunctions::tsplineMesh(*o_it));
-#endif
+          deleteSelection(PluginFunctions::tsplineMesh(*o_it));
+      #endif
+      #ifdef ENABLE_SKELETON_SUPPORT
+      if ( o_it->dataType( DATA_SKELETON ) )
+          deleteSelection(PluginFunctions::skeleton(*o_it));
+      #endif
+      
       emit updatedObject(o_it->id(), UPDATE_ALL);
     }
   }
