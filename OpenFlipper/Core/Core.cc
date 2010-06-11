@@ -301,7 +301,11 @@ Core::init() {
 
     coreWidget_->resize(width,height);
 
-    coreWidget_->setWindowTitle( OpenFlipper::Options::windowTitle() );
+    #ifdef DEBUG
+      coreWidget_->setWindowTitle( OpenFlipper::Options::windowTitle() + " [DEBUG]" );
+    #else
+      coreWidget_->setWindowTitle( OpenFlipper::Options::windowTitle() );
+    #endif
 
   }
 
