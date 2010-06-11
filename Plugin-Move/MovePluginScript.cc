@@ -832,58 +832,51 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
   Matrix4x4 transform;
   transform.identity();
   
+  Skeleton::Joint* joint = skeleton->getJoint( skeletonObj->manipulatorNode()->getData().toInt() );
+  
+  if (joint == 0)
+    return;
+  
   //get transformation matrix
-  for (unsigned long joint = 0; joint < skeleton->getJointCount(); joint++){
-      
-    if ( skeleton->getJoint(joint)->selected() ){
-
-      Skeleton::Joint* parent = skeleton->getJoint( joint )->getParent();
-      
-      if ( parent != 0 )
-        // new GlobalMatrix after application of _matrix is:  newLocal = _matrix * activePose->getGlobal( joint )
-        // new LocalMatrix : activePose->getGlobalInv( parent->getID() ) * newLocal
-        // Transformation from LocalMatrix to new LocalMatrix:
-        transform = activePose->getGlobalInv( parent->getID() ) * _matrix * activePose->getGlobal( joint ) * activePose->getLocalInv( joint );
-      else
-        transform = _matrix * activePose->getGlobal( joint ) * activePose->getLocalInv( joint );
-      
-      break; // there should only be one joint selected
-    }
-  }
+  Skeleton::Joint* parent = joint->getParent();
+  
+  if ( parent != 0 )
+    // new GlobalMatrix after application of _matrix is:  newLocal = _matrix * activePose->getGlobal( joint )
+    // new LocalMatrix : activePose->getGlobalInv( parent->getID() ) * newLocal
+    // Transformation from LocalMatrix to new LocalMatrix:
+    transform = activePose->getGlobalInv( parent->getID() ) * _matrix * activePose->getGlobal( joint->getID() ) * activePose->getLocalInv( joint->getID() );
+  else
+    transform = _matrix * activePose->getGlobal( joint->getID() ) * activePose->getLocalInv( joint->getID() );
   
 
   // apply transformation to all frames of all animations
   for (unsigned long a=0; a < skeleton->getNumberOfAnimations(); a++)
   for (unsigned long iFrame = 0; iFrame < skeleton->getAnimation(a)->getFrameCount(); iFrame++){
   
+    //if transformCurrentPose is true skip all other poses
+    if (transformCurrentPose_ && ( (handle.getAnimation() != a) || (handle.getFrame() != iFrame) ))
+      continue;
+    
     Skeleton::Pose* pose = skeleton->getAnimation(a)->getPose( iFrame );
     
-    //transform all selected joints
-    for (unsigned long joint = 0; joint < skeleton->getJointCount(); joint++){
-      
-      if ( skeleton->getJoint(joint)->selected() ){
-      
-        Matrix4x4 newMatrix = transform * pose->getLocal( joint );
+    //transform all selected joints         
+    Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
         
-        pose->setLocal( joint, newMatrix, !recursiveJointTransformation_);
-      }
-    }
-  }
-    
-  //transform refPose
-  Skeleton::Pose* pose = skeleton->getReferencePose();
-  
-  //transform all selected joints
-  for (unsigned long joint = 0; joint < skeleton->getJointCount(); joint++){
-    
-    if ( skeleton->getJoint(joint)->selected() ){
-      
-      Matrix4x4 newMatrix = transform * pose->getLocal( joint );
-      
-      pose->setLocal( joint, newMatrix, !recursiveJointTransformation_);
-    }
+    pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
   }
 
+
+  // only apply to refPose if we either are in refPose or if refPoseTransformation is enabled
+  if ( (!transformCurrentPose_ && transformRefPose_) || !handle.isValid() ){
+
+    //transform refPose
+    Skeleton::Pose* pose = skeleton->getReferencePose();
+  
+    //transform all selected joints     
+    Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
+      
+    pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+  }
 }
 
 #endif
