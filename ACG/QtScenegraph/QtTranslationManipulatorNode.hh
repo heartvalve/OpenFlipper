@@ -59,6 +59,7 @@
 #include "ACG/Scenegraph/TranslationManipulatorNode.hh"
 
 // Qt
+#include <QVariant>
 #include <QEvent>
 #include <QMouseEvent>
 
@@ -122,15 +123,20 @@ class ACGDLLEXPORT QtTranslationManipulatorNode : public QObject , public Transl
   /// Get an identifier for that manipulator
   int getIdentifier( ) { return identifier_; };
 
+  /// Set additional data for the node
+  void setData(QVariant _data) {data_ = _data;};
+  
+  /// Get additional data for the node
+  QVariant getData() {return data_;};
+  
   void show() { TranslationManipulatorNode::show(); emit visibilityChanged( this, visible() );  };
   void hide() { TranslationManipulatorNode::hide(); emit visibilityChanged( this, visible() );  };
 
   void set_center( const Vec3d& _c ) { TranslationManipulatorNode::set_center(_c); emit positionChanged( this ); };
 
-
   private:
     int identifier_;
-
+    QVariant  data_;
 };
 
 
