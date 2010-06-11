@@ -8,4 +8,8 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/TSplineMesh)
   add_definitions (-DENABLE_TSPLINEMESH_SUPPORT)
 endif ()
 
-openflipper_plugin (DIRS PolyLine BSplineCurve TSplineMesh widgets TRANSLATION_LANGUAGES de_DE)
+if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/Skeleton)
+  add_definitions (-DENABLE_SKELETON_SUPPORT)
+endif ()
+
+openflipper_plugin (DIRS PolyLine BSplineCurve Skeleton TSplineMesh widgets TRANSLATION_LANGUAGES de_DE)

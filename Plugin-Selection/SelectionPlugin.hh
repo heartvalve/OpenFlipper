@@ -80,6 +80,10 @@
 #include <ObjectTypes/BSplineCurve/BSplineCurve.hh>
 #endif
 
+#ifdef ENABLE_SKELETON_SUPPORT
+#include <ObjectTypes/Skeleton/Skeleton.hh>
+#endif
+
 #include "selectionToolbar.hh"
 
 #include <OpenFlipper/INIFile/INIFile.hh>
@@ -270,6 +274,11 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// Delete all selected elements of a mesh
     template< typename MeshT >
     bool deleteSelection(MeshT* _mesh);
+    
+    #ifdef ENABLE_SKELETON_SUPPORT    
+    /// Delete all selected joints of a skeleton
+    void deleteSelection(Skeleton* _skeleton);
+    #endif
 
     /// Colorize a selection
     template< typename MeshT >
@@ -312,6 +321,11 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     #ifdef ENABLE_BSPLINECURVE_SUPPORT
       /// Toggle the selection state in BSplineCurves
       void toggleBSplineCurveSelection(QMouseEvent* _event);
+    #endif
+
+    #ifdef ENABLE_SKELETON_SUPPORT
+      /// Toggle the selection state in Skeletons
+      void toggleSkeletonSelection(QMouseEvent* _event);
     #endif
 
     /// Handle Mouse move event for sphere painting selection
