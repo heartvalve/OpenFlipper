@@ -229,7 +229,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     OpenMesh::Vec3d getNearestFace(MeshType* _mesh, uint _fh, OpenMesh::Vec3d& _hitPoint);
 
     #ifdef ENABLE_SKELETON_SUPPORT
-    OpenMesh::Vec3d getNearestJoint(SkeletonObject* _skeletonObj, OpenMesh::Vec3d &_hitPoint);
+    OpenMesh::Vec3d getNearestJoint(SkeletonObject* _skeletonObj, OpenMesh::Vec3d &_hitPoint, int& _bestJointID);
     #endif
     
     /// True if the toolbox widget is active
@@ -278,6 +278,8 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     QAction* smallerManipAction_;
 
     QAction* fixChildManipAction_;
+    QAction* transformRefPoseManipAction_;
+    QAction* currentPoseManipAction_;
     
     QAction* placeAndSnapAction_;
 
@@ -512,7 +514,10 @@ public slots :
 
     bool placeMode_;
     
+    // skeleton
     bool recursiveJointTransformation_;
+    bool transformRefPose_;
+    bool transformCurrentPose_;
 };
 
 #endif //MOVEPLUGIN_HH
