@@ -37,6 +37,22 @@ bool UpdateType::operator==(const UpdateType& _type) const {
   return ((type_ & _type.type_).any());
 };
 
+UpdateType 
+UpdateType::operator|(const UpdateType& _type) const
+{
+  return (type_ | _type.type_);
+}
+
+
+UpdateType& 
+UpdateType::operator|=(const UpdateType& _type)
+{
+  type_ |= _type.type_;
+
+  return(*this);
+}
+
+
 /// Check if this update contains the given UpdateType
 bool UpdateType::contains( const UpdateType& _type ) const {
   
