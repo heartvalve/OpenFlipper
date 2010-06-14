@@ -355,14 +355,20 @@
       updateSelection();
       updateFeatures();
       updateModelingRegions();
-    } else if ( _type.contains(UPDATE_GEOMETRY) ) {
-      updateGeometry();
-    } else if ( _type.contains(UPDATE_SELECTION) ) {
-      updateSelection();
-      updateFeatures();
-      updateModelingRegions();
-    } else if ( _type.contains(UPDATE_COLOR) ) {
-      updateColor();
+    }
+    else 
+    {
+      if ( _type.contains(UPDATE_GEOMETRY) ) {
+	updateGeometry();
+      } 
+      if ( _type.contains(UPDATE_SELECTION) ) {
+	updateSelection();
+	updateFeatures();
+	updateModelingRegions();
+      }
+      if ( _type.contains(UPDATE_COLOR) ) {
+	updateColor();
+      }
     }
   }
 
