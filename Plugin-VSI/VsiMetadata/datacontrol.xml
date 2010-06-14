@@ -1,0 +1,94 @@
+<OpenFlipper>  
+  <element name="datacontrol_getobjectname">
+    <category>Object Manipulation</category>
+    <short>Get Object Name</short>
+    <long>Gets the name of an object.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <outputs>
+      <output name="name" type="String">
+        <short>Object name</short>
+        <long>Name of the object given by the input ID.</long>
+      </output>
+    </outputs>
+    <code>
+        [output="name"] = datacontrol.getObjectName([input="obj"]);
+    </code>
+  </element> 
+  <element name="datacontrol_setobjectname">
+    <category>Object Manipulation</category>
+    <short>Set Object Name</short>
+    <long>Sets the name of an object.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="name" type="String">
+        <short>Object name</short>
+        <long>Name of the object given by the input ID.</long>
+      </input>
+    </inputs>
+    <code>
+        datacontrol.setObjectName([input="obj"], [input="name"]);
+    </code>
+  </element>  
+  <element name="datacontrol_objectvisibility">
+    <category>Object Manipulation</category>
+    <short>Object visibility</short>
+    <long>Shows or hides an object.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="visible" type="Bool">
+        <short>Visible?</short>
+        <long>True to set visible, false to set invisible.</long>
+      </input>
+    </inputs>
+    <code>
+	if ([input="visible"])
+            datacontrol.showObject([input="obj"]);
+	else
+            datacontrol.hideObject([input="obj"]);
+    </code>
+  </element>  
+  <element name="datacontrol_objectdelete">
+    <category>Object Manipulation</category>
+    <short>Delete object</short>
+    <long>Deletes an object from the scene.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <code>
+        datacontrol.objectDelete([input="obj"]);
+    </code>
+  </element>
+  <element name="datacontrol_objectcopy">
+    <category>Object Manipulation</category>
+    <short>Copy object</short>
+    <long>Creates a copy of an object.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <code>
+        datacontrol.copyObject([input="obj"]);
+    </code>
+  </element>  
+</OpenFlipper>

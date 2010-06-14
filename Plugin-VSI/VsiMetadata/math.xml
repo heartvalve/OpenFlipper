@@ -33,7 +33,7 @@
     </outputs>
     <code>
       if ([is_connected="add"])
-        [output="add"] = [input="a"] + [input="b"];
+        [output="add"] = Number([input="a"]) + Number([input="b"]);
       if ([is_connected="sub"])
         [output="sub"] = [input="a"] - [input="b"];
       if ([is_connected="mul"])

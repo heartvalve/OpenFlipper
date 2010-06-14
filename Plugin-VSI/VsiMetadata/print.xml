@@ -1,0 +1,13 @@
+<OpenFlipper>  
+  <element name="printing_print">
+    <category>Misc</category>
+    <short>Printing</short>
+    <long>Print the current view.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+    </inputs>
+    <code>
+      printingplugin.printView();
+    </code>
+  </element>
+</OpenFlipper>
