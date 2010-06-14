@@ -91,6 +91,14 @@ class BackupInterface {
     */
     virtual void createBackup( int /*_objectid*/, QString /*_name*/) {};    
     
+    
+    /** \brief Make a backup persistent. 
+    *
+    * A persistent backup will not be removed automatically by the backup plugin.
+    * You have to remove it by yourself by calling removeBackup!
+    */
+    virtual void makeBackupPersistent(int /*_objectid*/, int /*_internalId*/){};
+    
     /** \brief Tell Backup Plugin to restore a backup
     *
     * Plugins which supports backups can this function if they want to restore backups.\n    
@@ -190,7 +198,9 @@ class BackupInterface {
     * @param _objectId Object to restore
     * 
     */
-    virtual void slotRestoreObject(int /*_objectid*/ , QString /*_name*/ , int /*_internalId*/) {}
+    virtual void slotRestoreObject(int /*_objectid*/ , QString /*_name*/ , int /*_internalId*/) {};
+    
+    virtual void slotMakeBackupPersistent(int /*_objectid*/, int /*_internalId*/) {};
 
     
 };
