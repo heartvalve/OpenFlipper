@@ -90,8 +90,6 @@ SceneTools::SceneTools (GraphicsScene *_scene) :
   setGeometry (rect);
   connect (scene_, SIGNAL (sceneRectChanged (const QRectF &)),
            this, SLOT (sceneRectChanged (const QRectF &)));
-  connect (scene_, SIGNAL (changed (const QList<QRectF> &)),
-           this, SLOT (updateArrows ()));
 
   QGraphicsGridLayout *mLayout = new QGraphicsGridLayout;
 
