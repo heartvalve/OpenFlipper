@@ -260,6 +260,9 @@ signals:
    /// Tell plugins to create a backup
    void createBackup( int _objectId , QString _name , int _internalId);
    
+   /// Tell Plugins to make a backup persistent
+   void makeBackupPersistent(int _objectid, int _internalId);
+   
    /// Tell Backup Plugin to restore an object with the given backup id
    void restoreObject( int _objectId, int _internalId);
    

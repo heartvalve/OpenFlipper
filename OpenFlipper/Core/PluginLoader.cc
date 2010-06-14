@@ -1072,6 +1072,18 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
               plugin , SLOT( slotBackup(int,QString,int) ),Qt::DirectConnection);
     }
     
+    // Signal send from plugin to core that a backup should be made persistent
+    if ( checkSignal( plugin , "makeBackupPersistent(int,int)" ) ) {
+      connect(plugin , SIGNAL(makeBackupPersistent(int,int)) ,
+              this , SIGNAL( makeBackupPersistent(int,int)) ,Qt::DirectConnection);
+    }
+    
+    // Signal send from core to Backup plugin that the given backup should be persistent
+    if ( checkSlot( plugin , "slotMakeBackupPersistent(int,int)" ) ) {
+      connect(this   , SIGNAL(makeBackupPersistent(int,int)) ,
+              plugin , SLOT( slotMakeBackupPersistent(int,int) ),Qt::DirectConnection);
+    }
+
     
     // Signal from plugin to restore an object with the given id
     if ( checkSignal( plugin , "restoreObject(int,int)" ) ) {
