@@ -536,7 +536,8 @@ void Core::slotObjectOpened ( int _id ) {
   // ================================================================================
   // Create initial backup
   // ================================================================================
-  backupRequest(_id,"Original Object");
+  int backupId = 0;
+  slotBackup(_id,"Original Object",backupId);
 
   // ================================================================================
   // Add the file to the recent files menu
@@ -581,7 +582,8 @@ void Core::slotEmptyObjectAdded ( int _id ) {
   emit signalObjectUpdated(_id);
   emit signalObjectUpdated(_id,UPDATE_ALL);
 
-  backupRequest(_id,"Original Object");
+  int backupId = 0;
+  slotBackup(_id,"Original Object",backupId);
 
   ///@todo : set a default path for new objects
 //    QString filename = object->path() + OpenFlipper::Options::dirSeparator() + object->name();

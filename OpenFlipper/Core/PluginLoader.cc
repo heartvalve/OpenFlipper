@@ -1053,13 +1053,82 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
   if ( backupPlugin ) {
     supported = supported + "Backups ";
 
-    if ( checkSignal( plugin , "createBackup(int,QString)" ) )
-      connect(plugin , SIGNAL(createBackup( int , QString )) ,
-              this   , SLOT(backupRequest( int , QString )),Qt::DirectConnection );
-
-    if ( checkSlot( plugin , "slotBackupRequested(int,QString,int)" ) )
+    // Incoming Signal that a backup should be created 
+    // send to local slot generating backup id and delivers to all other plugins
+    if ( checkSignal( plugin , "createBackup(int,QString,int&)" ) ) {
+      connect(plugin , SIGNAL(createBackup( int , QString , int&)) ,
+              this   , SLOT(slotBackup( int , QString , int&)),Qt::DirectConnection );
+    }
+    
+    // send to local slot generating backup id and delivers to all other plugins
+    if ( checkSignal( plugin , "createBackup(int,QString)" ) ) {
+      connect(plugin , SIGNAL(createBackup( int , QString)) ,
+              this   , SLOT(slotBackup( int , QString)),Qt::DirectConnection );
+    }
+    
+    // Signal send from core to plugins that they should create a backup
+    if ( checkSlot( plugin , "slotBackup(int,QString,int)" ) ) {
       connect(this   , SIGNAL(createBackup(int,QString,int)) ,
-              plugin , SLOT( slotBackupRequested(int,QString,int) ),Qt::DirectConnection);
+              plugin , SLOT( slotBackup(int,QString,int) ),Qt::DirectConnection);
+    }
+    
+    
+    // Signal from plugin to restore an object with the given id
+    if ( checkSignal( plugin , "restoreObject(int,int)" ) ) {
+      connect(plugin , SIGNAL(restoreObject(int,int)) ,
+              this   , SLOT(slotRestore( int , int)),Qt::DirectConnection );
+    }
+    
+    // Signal send from core to backup plugin that it should restore the given object
+    if ( checkSlot( plugin , "slotRestoreObject(int,int)" ) ) {
+      connect(this   , SIGNAL(restoreObject(int,int)) ,
+              plugin , SLOT( slotRestoreObject(int,int) ),Qt::DirectConnection);
+    }
+    
+    //====================================================================================
+    // Backup PLugin signals for communication with the other plugins about restore state
+    //====================================================================================
+    
+    // Stage one : restore will happen soon
+    if ( checkSignal( plugin , "aboutToRestore(int,int)" ) ) {
+      connect(this   , SIGNAL( aboutToRestore(int,int)) ,
+              plugin , SIGNAL( aboutToRestore(int,int) ),Qt::DirectConnection);
+    }
+    
+    // Stage two: Core restore done, plugins should restore
+    if ( checkSignal( plugin , "restore(int,int)" ) ) {
+      connect(this   , SIGNAL(restore(int,int)) ,
+              plugin , SIGNAL( restore(int,int) ),Qt::DirectConnection);
+    }
+    
+    // Stage three: Restore complete
+    if ( checkSignal( plugin , "restored(int,int)" ) ) {
+      connect(this   , SIGNAL(restored(int,int)) ,
+              plugin , SIGNAL( restored(int,int) ),Qt::DirectConnection);
+    }
+    
+    //====================================================================================
+    //  Plugin slots about restore state
+    //====================================================================================
+     
+     // Stage one : restore will happen soon
+     if ( checkSlot( plugin , "slotAboutToRestore(int,int)" ) ) {
+       connect(this   , SIGNAL( aboutToRestore(int,int)) ,
+               plugin , SLOT( slotAboutToRestore(int,int) ),Qt::DirectConnection);
+     }
+     
+     // Stage one : restore will happen soon
+     if ( checkSlot( plugin , "slotRestore(int,int)" ) ) {
+       connect(this   , SIGNAL( restore(int,int)) ,
+               plugin , SLOT( slotRestore(int,int) ),Qt::DirectConnection);
+     }
+     
+     // Stage one : restore will happen soon
+     if ( checkSlot( plugin , "slotRestored(int,int)" ) ) {
+       connect(this   , SIGNAL( restored(int,int)) ,
+               plugin , SLOT( slotRestored(int,int) ),Qt::DirectConnection);
+     }
+
   }
 
   //Check if the plugin supports LoadSave-Interface

@@ -258,7 +258,23 @@ signals:
    void saveOnExit( INIFile& _ini );
 
    /// Tell plugins to create a backup
-   void createBackup( int _id , QString _name , int nextBackupId_);
+   void createBackup( int _objectId , QString _name , int _internalId);
+   
+   /// Tell Backup Plugin to restore an object with the given backup id
+   void restoreObject( int _objectId, int _internalId);
+   
+   
+   /** \brief Backup Plugin tells other Plugins that a restore will happen
+   */
+   void aboutToRestore(int _objectId , int _internalId);
+   
+   /** \brief Backup Plugin tells other Plugins that they should restore their own data
+   */
+   void restore(int _objectId , int _internalId);
+   
+   /** \brief Backup Plugin tells other Plugins that a restore has happened
+   */
+   void restored( int _objectId , int _internalId);
 
    /// Tell the plugins that a file has been opened ( -> Database)
    void openedFile( int _id );
@@ -361,7 +377,13 @@ signals:
       void slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures );
 
       /// Called if a backup is requested by the plugins
-      void backupRequest( int _id , QString _name );
+      void slotBackup( int _objectId, QString _name, int& _internalId );
+      
+      /// Called if a backup is requested by the plugins
+      void slotBackup( int _objectId, QString _name );
+      
+      /// Called if a backup is requested by the plugins
+      void slotRestore( int _objectId, int _internalId = -1 );
 
       /// A plugin wants to load a given file
       void slotLoad(QString _filename, DataType _type, int& _id);
