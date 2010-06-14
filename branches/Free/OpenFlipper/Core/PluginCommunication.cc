@@ -332,16 +332,6 @@ void Core::slotGetSubTextures( int _id, QString _multiTextureName, QStringList& 
 }
 
 //========================================================================================
-// ===             Backup Communication                       ============================
-//========================================================================================
-
-/// Called if a backup is requested by the plugins
-void Core::backupRequest( int _id , QString _name ) {
-  emit createBackup(  _id , _name , nextBackupId_);
-  ++nextBackupId_;
-}
-
-//========================================================================================
 // ===            Object Manager                              ============================
 //========================================================================================
 
