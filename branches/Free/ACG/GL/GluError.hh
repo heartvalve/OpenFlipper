@@ -51,9 +51,7 @@
 #ifndef GLUDEBUG_H
 #define GLUDEBUG_H
 
-
-#include <ACG/Scenegraph/MaterialNode.hh>
-#include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/GL/gl.hh>
 
 void nurbsError(GLenum errorCode);
 
