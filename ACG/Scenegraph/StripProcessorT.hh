@@ -460,18 +460,14 @@ public:
   *
   * If this function returns true, a per face per vertex texture array is available
   */
-  bool perFaceTextureCoordinateAvailable()  {
-    return ( perFaceTextureCoordinateProperty_.is_valid() );
-  }  
+  bool perFaceTextureCoordinateAvailable();
   
   /** \brief Check if textureindicies are available
   *
   * If this function returns true, the strip processor will respect textures during strip generation.
   * Each returned strip has than an index that has to be used as a texture index during strip rendering.
   */
-  bool perFaceTextureIndexAvailable() {
-    return ( textureIndexProperty_.is_valid() );
-  }
+  bool perFaceTextureIndexAvailable();
   
   /** \brief get a pointer to the per face per vertex texture coor buffer
   *
@@ -497,14 +493,14 @@ private:
   * texture. This means that the generated strips will be independent of texture 
   * information.
   */  
-  OpenMesh::FPropHandleT< int > textureIndexProperty_;
+  std::string textureIndexPropertyName_;
 
   /** \brief Property for the per face texture coordinates.
   *
   * This property is used by the mesh for texture coordinate specification.
   * If this is invalid, then the strip processor will ignore per face textures during processing.
   */  
-  OpenMesh::HPropHandleT< typename Mesh::TexCoord2D > perFaceTextureCoordinateProperty_;
+  std::string perFaceTextureCoordinatePropertyName_;
   
   std::vector< ACG::Vec2f >  perFaceTextureCoordArray_;
   
