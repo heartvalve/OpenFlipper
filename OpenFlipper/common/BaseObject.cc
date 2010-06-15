@@ -790,15 +790,9 @@ deleteData() {
 
 }
 
-QMap<QString, PerObjectData*>* BaseObject::getPerObjectDataMap() {
-  return &dataMap_;
+QMap<QString, PerObjectData*>& BaseObject::getPerObjectDataMap() {
+  return dataMap_;
 }
-
-
-void BaseObject::getPerObjectDataMap( QMap<QString, PerObjectData*>* _map ) {
- dataMap_ = *_map; 
-}
-
 
 
 ObjectManager::ObjectManager() {
