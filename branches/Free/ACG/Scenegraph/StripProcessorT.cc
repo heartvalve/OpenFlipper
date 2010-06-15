@@ -69,8 +69,8 @@ mesh_(_mesh),
 stripsValid_(false),
 updatePerEdgeBuffers_(true),
 updatePerFaceBuffers_(true),
-textureIndexProperty_(-1),
-perFaceTextureCoordinateProperty_(-1)
+textureIndexPropertyName_("Not Set"),
+perFaceTextureCoordinatePropertyName_("Not Set")
 {
 
 }
@@ -318,10 +318,11 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
     // Check if we have to take care of textures
     // If this property is not available, we do not have texture info and will therefore 
     // skip texture handling in strip generation
+    OpenMesh::FPropHandleT< int > textureIndexProperty;
     bool textureHandling = false;
-    if ( perFaceTextureIndexAvailable() ) {
+    if ( mesh_.get_property_handle(textureIndexProperty, textureIndexPropertyName_)  ) {
       textureHandling = true;
-      _strip.textureIndex = mesh_.property(textureIndexProperty_,mesh_.face_handle(_start_hh));
+      _strip.textureIndex = mesh_.property(textureIndexProperty,mesh_.face_handle(_start_hh));
     } 
     
     /// \todo Implement texture processing here
@@ -359,7 +360,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
           if (processed(fh) || used(fh)) break;
           
           // texture check
-          if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) )  break;
+          if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty,fh ) ) )  break;
 
 //           continue;
       } 
@@ -389,7 +390,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         if (processed(fh) || used(fh)) break;
         
         // texture check
-        if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) ) break;
+        if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty,fh ) ) ) break;
 
       }
        
@@ -432,7 +433,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         if (processed(fh) || used(fh)) break;
         
         // texture check
-        if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) ) break;
+        if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty,fh ) ) ) break;
         
         // Test if polygon is convex (only for testing purposes a.t.m.)
         convexityTest(fh);
@@ -465,7 +466,7 @@ buildStripPolyMesh(typename Mesh::HalfedgeHandle _start_hh,
         if (processed(fh) || used(fh)) break;
         
         // texture check
-        if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) ) break;
+        if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty,fh ) ) ) break;
         
         // Test if polygon is convex (only for testing purposes a.t.m.)
         convexityTest(fh);
@@ -518,14 +519,14 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
   strip.push_back(mesh_.from_vertex_handle(_start_hh).idx());
   strip.push_back(mesh_.to_vertex_handle(_start_hh).idx());
 
-  
   // Check if we have to take care of textures
   // If this property is not available, we do not have texture info and will therefore 
   // skip texture handling in strip generation
   bool textureHandling = false;
-  if ( perFaceTextureIndexAvailable() ) {
+  OpenMesh::FPropHandleT< int > textureIndexProperty;
+  if ( mesh_.get_property_handle(textureIndexProperty, textureIndexPropertyName_) ) {
     textureHandling = true;
-    _strip.textureIndex = mesh_.property(textureIndexProperty_,mesh_.face_handle(_start_hh));
+    _strip.textureIndex = mesh_.property(textureIndexProperty,mesh_.face_handle(_start_hh));
   } else {
     // Set to no texture!
     // This is not really necessary but cleans up for debugging
@@ -547,7 +548,7 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
     if (processed(fh) || used(fh)) break;
     
     // texture check
-    if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) ) break;
+    if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty,fh ) ) ) break;
     
     _faces.push_back(fh);
     used(fh) = true;
@@ -562,7 +563,7 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
     if (processed(fh) || used(fh)) break;
     
     // texture check
-    if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) ) break;
+    if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty,fh ) ) ) break;
     
     _faces.push_back(fh);
     used(fh) = true;
@@ -585,7 +586,7 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
     if (processed(fh) || used(fh)) break;
     
     // texture check
-    if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) ) break;
+    if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty,fh ) ) ) break;
     
     _faces.push_back(fh);
     used(fh) = true;
@@ -601,7 +602,7 @@ buildStripTriMesh(typename Mesh::HalfedgeHandle _start_hh,
     if (processed(fh) || used(fh)) break;
     
     // texture check
-    if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty_,fh ) ) ) break;
+    if ( textureHandling && ( _strip.textureIndex != mesh_.property(textureIndexProperty,fh ) ) ) break;
     
     _faces.push_back(fh);
     used(fh) = true;
@@ -794,6 +795,13 @@ updatePerFaceBuffers() {
   if (!updatePerFaceBuffers_) 
     return;
   
+
+  // Get and Recheck property
+  OpenMesh::HPropHandleT< typename Mesh::TexCoord2D >  perFaceTextureCoordinateProperty;  
+  const bool usePerFaceTextureCoordinateProperty = mesh_.get_property_handle(perFaceTextureCoordinateProperty,perFaceTextureCoordinatePropertyName_); 
+  
+  const bool usePerFaceTextureIndex = perFaceTextureIndexAvailable();
+  
   unsigned int n_faces = 0;
 
   // For the polyMeshes we have to count the faces in all strips
@@ -817,14 +825,14 @@ updatePerFaceBuffers() {
   else
     perFaceColorBuffer_.clear();      
   
-  if ( perFaceTextureCoordinateAvailable() ) 
+  if ( usePerFaceTextureCoordinateProperty ) 
     perFaceTextureCoordArray_.resize(n_faces * 3);
   else
     perFaceTextureCoordArray_.clear();   
 
   textureRenderData_.clear();
   
-  if ( perFaceTextureIndexAvailable() )
+  if ( usePerFaceTextureIndex )
     textureRenderData_.reserve( strips_.size() );
   
   // Process all strips
@@ -832,7 +840,7 @@ updatePerFaceBuffers() {
     
     // Record strip information
     // Or store a simple strip info with texture 0
-    if ( perFaceTextureIndexAvailable() ) {
+    if ( usePerFaceTextureIndex ) {
       textureRenderData_.push_back( TextureRenderInfo(strips_[i].textureIndex , strips_[ i ].indexArray.size() -2 ,bufferIndex) );
     }
     
@@ -867,12 +875,12 @@ updatePerFaceBuffers() {
         perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
         perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
         
-        if ( perFaceTextureCoordinateAvailable() ) {
+        if ( usePerFaceTextureCoordinateProperty ) {
           typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(strips_[ i ].faceMap[ stripIndex ]));
           
           for ( ; fhe_it ; ++fhe_it ) {
             typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
-            Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
+            Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty,fhe_it);
 	    
             if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
               perFaceTextureCoordArray_[ bufferIndex + 0 ]  = texcoord; 
@@ -895,12 +903,12 @@ updatePerFaceBuffers() {
         perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
         perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
         
-        if ( perFaceTextureCoordinateAvailable() ) {
+        if ( usePerFaceTextureCoordinateProperty ) {
           typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(strips_[ i ].faceMap[ stripIndex ]));
           
           for ( ; fhe_it ; ++fhe_it ) {
             typename Mesh::VertexHandle cvh = mesh_.to_vertex_handle(fhe_it);
-            const Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty_,fhe_it);
+            const Vec2f texcoord = mesh_.property(perFaceTextureCoordinateProperty,fhe_it);
             
             if ( mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ) == cvh ) {
               perFaceTextureCoordArray_[ bufferIndex + 2 ]  = texcoord; 
@@ -966,23 +974,63 @@ void
 StripProcessorT<Mesh>::
 setPerFaceTextureCoordinatePropertyName( std::string _perFaceTextureCoordinatePropertyName ) {
   
-  if ( !mesh_.get_property_handle(perFaceTextureCoordinateProperty_,_perFaceTextureCoordinatePropertyName) )  {
-    perFaceTextureCoordinateProperty_.invalidate();
+  // Check if the given property exists
+  OpenMesh::HPropHandleT< typename Mesh::TexCoord2D >  perFaceTextureCoordinateProperty;
+  if ( !mesh_.get_property_handle(perFaceTextureCoordinateProperty,_perFaceTextureCoordinatePropertyName) )  {
     std::cerr << "StripProcessor: Unable to get per face texture coordinate property named " << _perFaceTextureCoordinatePropertyName << std::endl;
+    return;
   }
+  
+  // Remember the property name
+  perFaceTextureCoordinatePropertyName_ = _perFaceTextureCoordinatePropertyName;
   
   // mark the buffers as invalid as we have a new per face index array
   invalidatePerFaceBuffers();
 }
 
 template <class Mesh>
+bool 
+StripProcessorT<Mesh>::perFaceTextureCoordinateAvailable()  {
+  
+  // We really have to recheck, as the property might get lost externally (e.g. on restores of the mesh)
+  OpenMesh::HPropHandleT< typename Mesh::TexCoord2D >  perFaceTextureCoordinateProperty;
+  if ( !mesh_.get_property_handle(perFaceTextureCoordinateProperty, perFaceTextureCoordinatePropertyName_) )  {
+    return false;
+  }
+  
+  // Property available
+  return true;
+  
+}  
+
+template <class Mesh>
+bool 
+StripProcessorT<Mesh>::perFaceTextureIndexAvailable() {
+  
+  // We really have to recheck, as the property might get lost externally (e.g. on restores of the mesh)
+  OpenMesh::FPropHandleT< int > textureIndexProperty;
+  if ( !mesh_.get_property_handle(textureIndexProperty, textureIndexPropertyName_) )  {
+    return false;
+  }
+  
+  // Property available
+  return true;
+}
+
+template <class Mesh>
 void
 StripProcessorT<Mesh>::
 setIndexPropertyName( std::string _indexPropertyName ) { 
-  if ( !mesh_.get_property_handle(textureIndexProperty_,_indexPropertyName) )  {
-    textureIndexProperty_.invalidate();
+  
+  // Check if the given property exists
+  OpenMesh::FPropHandleT< int > textureIndexProperty;
+  if ( !mesh_.get_property_handle(textureIndexProperty,_indexPropertyName) )  {
     std::cerr << "StripProcessor: Unable to get per face texture Index property named " << _indexPropertyName << std::endl;
+    return;
   }
+  
+  // Remember the property name
+  textureIndexPropertyName_ = _indexPropertyName;
   
   // mark strips as invalid ( have to be regenerated to collect texture index information)
   stripsValid_ = false;
