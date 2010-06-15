@@ -1098,13 +1098,13 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
     }
     
     //====================================================================================
-    // Backup PLugin signals for communication with the other plugins about restore state
+    // Backup Plugin signals for communication with the other plugins about restore state
     //====================================================================================
     
     // Stage one : restore will happen soon
     if ( checkSignal( plugin , "aboutToRestore(int,int)" ) ) {
-      connect(this   , SIGNAL( aboutToRestore(int,int)) ,
-              plugin , SIGNAL( aboutToRestore(int,int) ),Qt::DirectConnection);
+      connect(plugin  , SIGNAL( aboutToRestore(int,int)) ,
+              this    , SIGNAL( aboutToRestore(int,int) ),Qt::DirectConnection);
     }
     
     // Stage two: Core restore done, plugins should restore
