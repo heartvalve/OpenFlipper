@@ -274,6 +274,7 @@ void initializeDefaultDrawModes( void )
     currentDrawModes_.push_back( DrawModeInternal( "Points (shaded)", POINTS_SHADED  ) );
     
     currentDrawModes_.push_back( DrawModeInternal( "Edges", EDGES ) );
+    currentDrawModes_.push_back( DrawModeInternal( "Edges Colored", EDGES_COLORED ) );
     
     currentDrawModes_.push_back( DrawModeInternal( "Wireframe", WIREFRAME ) );
     
@@ -304,6 +305,9 @@ void initializeDefaultDrawModes( void )
     currentDrawModes_.push_back( DrawModeInternal( "Solid (face textured)", SOLID_2DTEXTURED_FACE ) );
     currentDrawModes_.push_back( DrawModeInternal( "Solid (face textured, shaded)", SOLID_2DTEXTURED_FACE_SHADED ) );
     currentDrawModes_.push_back( DrawModeInternal( "Shader controlled", SOLID_SHADER ) );
+
+    currentDrawModes_.push_back( DrawModeInternal( "Cells", CELLS ) );
+    currentDrawModes_.push_back( DrawModeInternal( "Cells Colored", CELLS_COLORED ) );
     
     firstFreeID_ = UNUSED;
     initialized_ = true;
