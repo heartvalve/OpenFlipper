@@ -488,7 +488,70 @@ bool scenegraphRegionPick( const unsigned int                         _examiner,
   return examiner_widgets_[_examiner]->pick_region( _pickTarget, _region, _list);
 }
 
+bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
+                           const QRegion&                             _region,
+                           QList<QPair<unsigned int, unsigned int> >& _list,
+                           QVector<ACG::Vec3d>&                       _points)
+{
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, _points);
+}
 
+bool scenegraphRegionPick( const unsigned int                         _examiner,
+                           ACG::SceneGraph::PickTarget                _pickTarget,
+                           const QRegion&                             _region,
+                           QList<QPair<unsigned int, unsigned int> >& _list,
+                           QVector<ACG::Vec3d>&                       _points)
+{
+  if ( _examiner >= examiner_widgets_.size() ) {
+    std::cerr << "Wrong examiner id" << std::endl;
+    return false;
+  }
+  return examiner_widgets_[_examiner]->pick_region( _pickTarget, _region, _list, _points);
+}
+
+bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
+                           const QRegion&                             _region,
+                           QList<QPair<unsigned int, unsigned int> >& _list,
+                           QVector<float>&                            _depths)
+{
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, _depths);
+}
+
+bool scenegraphRegionPick( const unsigned int                         _examiner,
+                           ACG::SceneGraph::PickTarget                _pickTarget,
+                           const QRegion&                             _region,
+                           QList<QPair<unsigned int, unsigned int> >& _list,
+                           QVector<float>&                            _depths)
+{
+  if ( _examiner >= examiner_widgets_.size() ) {
+    std::cerr << "Wrong examiner id" << std::endl;
+    return false;
+  }
+  return examiner_widgets_[_examiner]->pick_region( _pickTarget, _region, _list, _depths);
+}
+
+bool scenegraphRegionPick( ACG::SceneGraph::PickTarget                _pickTarget,
+                           const QRegion&                             _region,
+                           QList<QPair<unsigned int, unsigned int> >& _list,
+                           QVector<float>&                            _depths,
+                           QVector<ACG::Vec3d>&                       _points)
+{
+  return examiner_widgets_[activeExaminer_]->pick_region( _pickTarget, _region, _list, _depths, _points);
+}
+
+bool scenegraphRegionPick( const unsigned int                         _examiner,
+                           ACG::SceneGraph::PickTarget                _pickTarget,
+                           const QRegion&                             _region,
+                           QList<QPair<unsigned int, unsigned int> >& _list,
+                           QVector<float>&                            _depths,
+                           QVector<ACG::Vec3d>&                       _points)
+{
+  if ( _examiner >= examiner_widgets_.size() ) {
+    std::cerr << "Wrong examiner id" << std::endl;
+    return false;
+  }
+  return examiner_widgets_[_examiner]->pick_region( _pickTarget, _region, _list, _depths, _points);
+}
 
 //Warning : Dont use template function as external static pointer for examiner widget is not resolved correctly!!
 void traverse( ACG::SceneGraph::MouseEventAction  &_action ) {
