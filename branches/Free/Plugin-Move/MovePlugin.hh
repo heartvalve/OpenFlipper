@@ -368,15 +368,17 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     /// Move selection on an object with given id
     void moveSelection(ACG::Matrix4x4d mat, int _id);
     
-    /// Move joint of a skeleton
-    void moveSkeletonJoint(ACG::Matrix4x4d mat, int _id);
+    #ifdef ENABLE_SKELETON_SUPPORT
+      /// Move joint of a skeleton
+      void moveSkeletonJoint(ACG::Matrix4x4d mat, int _id);
+    #endif
 
     /// Object marker to dimm Objects during manipulator transformation
     MoveObjectMarker objectMarker_;
 
     #ifdef ENABLE_SKELETON_SUPPORT
-    /// make sure the manipulator is positioned on a joint
-    void moveManipulatorOnSkeleton(BaseObjectData* _skeletonObj);
+      /// make sure the manipulator is positioned on a joint
+      void moveManipulatorOnSkeleton(BaseObjectData* _skeletonObj);
     #endif
     
   private:
@@ -482,8 +484,10 @@ public slots :
   /// transform current selection of an Object by a given matrix
   void transformEdgeSelection( int _objectId , Matrix4x4 _matrix );
 
-  /// transform selected joint with given matrix
-  void transformSkeletonJoint( int _objectId , Matrix4x4 _matrix );
+  #ifdef ENABLE_SKELETON_SUPPORT
+    /// transform selected joint with given matrix
+    void transformSkeletonJoint( int _objectId , Matrix4x4 _matrix );
+  #endif
   
   /// Set the position of the manipulator
   void setManipulatorPosition( int _objectId , Vector _position );
