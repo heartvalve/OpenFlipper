@@ -270,6 +270,7 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
 
   std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgba);
 
+  std::cerr << "color " << (ACG::Vec4ui)rgba << std::endl;
   // something wrong with the color stack ?
   if (rv.size () < 2)
     return -1;
@@ -644,6 +645,528 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
 
   return true;
 }
+
+//-----------------------------------------------------------------------------
+
+bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
+                            const QRegion&                             _region,
+                            QList<QPair<unsigned int, unsigned int> >& _list,
+                            QVector<ACG::Vec3d>&                       _points)
+{
+  QRect    rect = _region.boundingRect();
+  GLint    w = glWidth(),
+           h = glHeight(),
+           l = scenePos().x(),
+           b = scene()->height () - scenePos().y() - h,
+           x = rect.x(),
+           y = scene()->height () - rect.bottom();
+  GLubyte* buffer;
+  GLfloat* depths;
+
+  if (pickCacheSupported_)
+  {
+    // delete pick cache if the size changed
+    if (pickCache_ && pickCache_->size () != QSize (glWidth (), glHeight ()))
+    {
+      delete pickCache_;
+      pickCache_ = NULL;
+    }
+    // create a new pick cache frambuffer object
+    if (!pickCache_)
+    {
+      pickCache_ = new QGLFramebufferObject (glWidth (), glHeight (), QGLFramebufferObject::Depth);
+      if (!pickCache_->isValid ())
+      {
+        pickCacheSupported_ = false;
+        delete pickCache_;
+        pickCache_ = NULL;
+      }
+    }
+    if (pickCache_)
+    {
+      // the viewport for the framebuffer object
+      l = 0;
+      b = 0;
+      x = rect.x() - scenePos().x();
+      y = glHeight() - (rect.bottom() - scenePos().y());
+
+      // we can only pick inside of our window
+      if (x < 0 || y < 0 || x >= (int)glWidth() || y >= (int)glHeight())
+        return 0;
+
+      pickCache_->bind ();
+    }
+  }
+
+  const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
+  const ACG::GLMatrixd&  projection = properties_.glState().projection();
+
+  ACG::Vec4f clear_color = properties_.glState().clear_color();
+  properties_.glState().set_clear_color (ACG::Vec4f (0.0, 0.0, 0.0, 0.0));
+
+  // prepare GL state
+  makeCurrent();
+
+  glViewport (l, b, w, h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  glMultMatrixd(projection.get_raw_data());
+  glMatrixMode(GL_MODELVIEW);
+  glLoadMatrixd(modelview.get_raw_data());
+  glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+  properties_.glState().pick_init (true);
+
+  // do the picking
+  ACG::SceneGraph::PickAction action(properties_.glState(), _pickTarget, properties_.drawMode());
+  ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action,properties_.glState());
+
+  // restore GL state
+  glMatrixMode( GL_PROJECTION );
+  glLoadMatrixd(projection.get_raw_data());
+  glMatrixMode( GL_MODELVIEW );
+  glLoadMatrixd(modelview.get_raw_data());
+  glEnable(GL_LIGHTING);
+  glEnable(GL_BLEND);
+
+  properties_.glState().set_clear_color (clear_color);
+
+  if (properties_.glState().pick_error ())
+  {
+    if (pickCache_ && pickCache_->isBound ())
+      pickCache_->release ();
+    return -1;
+  }
+
+  buffer = new GLubyte[4 * rect.width() * rect.height()];
+  depths = new GLfloat[ rect.width() * rect.height() ];
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  glReadPixels (x, y, rect.width(),
+                rect.height(), GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+  glReadPixels (x, y, rect.width(), rect.height(), GL_DEPTH_COMPONENT, GL_FLOAT, depths);
+
+  QImage depthmapimage(rect.width(), rect.height(), QImage::Format_Indexed8);
+  // color map
+  for ( int i = 0 ; i <= 255 ; i++ )
+    depthmapimage.setColor( i, qRgb( i, i, i ) );
+
+  for ( int i = 0 ; i < rect.width() ; i++ )
+    for ( int j = 0 ; j < rect.height() ; j++ ) 
+    {
+      //std::cerr << "("<<i<<","<<j<<") depth " << depths[j*rect.width()+i] << std::endl;
+      depthmapimage.setPixel(i,rect.height()-j-1, (unsigned int)(depths[j*rect.width()+i]*255));
+    }
+
+  depthmapimage.save("test.png");
+
+  // needed for consistent ordering (Set->toList undefined order!!)
+  //QList<QPair<unsigned int, unsigned int> > found;
+  
+
+  // 3d position for unproject
+  ACG::Vec3d pos3d;
+  for (int y = 0; y < rect.height (); y++)
+    for (int x = 0; x < rect.width (); x++)
+    {
+      if (_region.contains (QPoint (rect.x() + x, rect.y() + y)))
+      {
+        int bPos = (((rect.height () - (y + 1)) * rect.width ()) + x) * 4;
+        if (buffer[bPos + 2] != 0 || buffer[bPos + 1] != 0 || buffer[bPos] != 0 || buffer[bPos + 3] != 0)
+        {
+          ACG::Vec4uc rgba;
+          rgba[0] = buffer[bPos];
+          rgba[1] = buffer[bPos + 1];
+          rgba[2] = buffer[bPos + 2];
+          rgba[3] = buffer[bPos + 3];
+
+          std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgba);
+          if (rv.size () < 2)
+            continue;
+
+          QPair< unsigned int, unsigned int> curr(rv[1], rv[0]);
+
+          // check if already contained
+          if( !_list.contains(  curr))
+          {
+            _list << curr;
+          
+            // unproject depth to real (3D) depth value
+            pos3d = properties_.glState().unproject(ACG::Vec3d(x+rect.x(),h-(y+rect.y()),depths[(rect.height()-y-1)*rect.width() + x]));
+            _points << pos3d;
+          }
+        }
+      }
+    }
+
+  delete buffer;
+  //_list = found.toList();
+
+  // unbind pick cache
+  if (pickCache_ && pickCache_->isBound ())
+  {
+    pickCache_->release ();
+    updatePickCache_ = false;
+    pickCacheTarget_ = _pickTarget;
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
+                            const QRegion&                             _region,
+                            QList<QPair<unsigned int, unsigned int> >& _list,
+                            QVector<float>&                            _depths)
+{
+  QRect    rect = _region.boundingRect();
+  GLint    w = glWidth(),
+           h = glHeight(),
+           l = scenePos().x(),
+           b = scene()->height () - scenePos().y() - h,
+           x = rect.x(),
+           y = scene()->height () - rect.bottom();
+  GLubyte* buffer;
+  GLfloat* depths;
+
+  if (pickCacheSupported_)
+  {
+    // delete pick cache if the size changed
+    if (pickCache_ && pickCache_->size () != QSize (glWidth (), glHeight ()))
+    {
+      delete pickCache_;
+      pickCache_ = NULL;
+    }
+    // create a new pick cache frambuffer object
+    if (!pickCache_)
+    {
+      pickCache_ = new QGLFramebufferObject (glWidth (), glHeight (), QGLFramebufferObject::Depth);
+      if (!pickCache_->isValid ())
+      {
+        pickCacheSupported_ = false;
+        delete pickCache_;
+        pickCache_ = NULL;
+      }
+    }
+    if (pickCache_)
+    {
+      // the viewport for the framebuffer object
+      l = 0;
+      b = 0;
+      x = rect.x() - scenePos().x();
+      y = glHeight() - (rect.bottom() - scenePos().y());
+
+      // we can only pick inside of our window
+      if (x < 0 || y < 0 || x >= (int)glWidth() || y >= (int)glHeight())
+        return 0;
+
+      pickCache_->bind ();
+    }
+  }
+
+  const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
+  const ACG::GLMatrixd&  projection = properties_.glState().projection();
+
+  ACG::Vec4f clear_color = properties_.glState().clear_color();
+  properties_.glState().set_clear_color (ACG::Vec4f (0.0, 0.0, 0.0, 0.0));
+
+  // prepare GL state
+  makeCurrent();
+
+  glViewport (l, b, w, h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  glMultMatrixd(projection.get_raw_data());
+  glMatrixMode(GL_MODELVIEW);
+  glLoadMatrixd(modelview.get_raw_data());
+  glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+  properties_.glState().pick_init (true);
+
+  // do the picking
+  ACG::SceneGraph::PickAction action(properties_.glState(), _pickTarget, properties_.drawMode());
+  ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action,properties_.glState());
+
+  // restore GL state
+  glMatrixMode( GL_PROJECTION );
+  glLoadMatrixd(projection.get_raw_data());
+  glMatrixMode( GL_MODELVIEW );
+  glLoadMatrixd(modelview.get_raw_data());
+  glEnable(GL_LIGHTING);
+  glEnable(GL_BLEND);
+
+  properties_.glState().set_clear_color (clear_color);
+
+  if (properties_.glState().pick_error ())
+  {
+    if (pickCache_ && pickCache_->isBound ())
+      pickCache_->release ();
+    return -1;
+  }
+
+  buffer = new GLubyte[4 * rect.width() * rect.height()];
+  depths = new GLfloat[ rect.width() * rect.height() ];
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  glReadPixels (x, y, rect.width(),
+                rect.height(), GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+  glReadPixels (x, y, rect.width(), rect.height(), GL_DEPTH_COMPONENT, GL_FLOAT, depths);
+
+  QImage depthmapimage(rect.width(), rect.height(), QImage::Format_Indexed8);
+  // color map
+  for ( int i = 0 ; i <= 255 ; i++ )
+    depthmapimage.setColor( i, qRgb( i, i, i ) );
+
+  for ( int i = 0 ; i < rect.width() ; i++ )
+    for ( int j = 0 ; j < rect.height() ; j++ ) 
+    {
+      //std::cerr << "("<<i<<","<<j<<") depth " << depths[j*rect.width()+i] << std::endl;
+      depthmapimage.setPixel(i,rect.height()-j-1, (unsigned int)(depths[j*rect.width()+i]*255));
+    }
+
+  depthmapimage.save("test.png");
+
+  //QSet<QPair<unsigned int, unsigned int> > found;
+  
+
+  //int setsize = 0;
+  for (int y = 0; y < rect.height (); y++)
+    for (int x = 0; x < rect.width (); x++)
+    {
+      if (_region.contains (QPoint (rect.x() + x, rect.y() + y)))
+      {
+        int bPos = (((rect.height () - (y + 1)) * rect.width ()) + x) * 4;
+        if (buffer[bPos + 2] != 0 || buffer[bPos + 1] != 0 || buffer[bPos] != 0 || buffer[bPos + 3] != 0)
+        {
+          ACG::Vec4uc rgba;
+          rgba[0] = buffer[bPos];
+          rgba[1] = buffer[bPos + 1];
+          rgba[2] = buffer[bPos + 2];
+          rgba[3] = buffer[bPos + 3];
+
+          std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgba);
+          if (rv.size () < 2)
+            continue;
+
+          QPair<unsigned int, unsigned int> curr(rv[1], rv[0]);
+          //found << QPair<unsigned int, unsigned int>(rv[1], rv[0]);
+          
+          // added a new (targetidx/nodeidx) pair
+          //if( setsize != found.size())
+          if( !_list.contains(curr))
+          {
+            //setsize++;
+            _list << curr;
+            //_depths << depths[(rect.height()-y-1)*rect.width() + x];
+            _depths << depths[(rect.height () - (y + 1)) *rect.width() + x];
+          }
+        }
+      }
+    }
+
+  delete buffer;
+  //_list = found.toList();
+
+  // unbind pick cache
+  if (pickCache_ && pickCache_->isBound ())
+  {
+    pickCache_->release ();
+    updatePickCache_ = false;
+    pickCacheTarget_ = _pickTarget;
+  }
+
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
+bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
+                            const QRegion&                             _region,
+                            QList<QPair<unsigned int, unsigned int> >& _list,
+                            QVector<float>&                            _depths,
+                            QVector<ACG::Vec3d>&                       _points)
+{
+  QRect    rect = _region.boundingRect();
+  GLint    w = glWidth(),
+           h = glHeight(),
+           l = scenePos().x(),
+           b = scene()->height () - scenePos().y() - h,
+           x = rect.x(),
+           y = scene()->height () - rect.bottom();
+  GLubyte* buffer;
+  GLfloat* depths;
+
+  if (pickCacheSupported_)
+  {
+    // delete pick cache if the size changed
+    if (pickCache_ && pickCache_->size () != QSize (glWidth (), glHeight ()))
+    {
+      delete pickCache_;
+      pickCache_ = NULL;
+    }
+    // create a new pick cache frambuffer object
+    if (!pickCache_)
+    {
+      pickCache_ = new QGLFramebufferObject (glWidth (), glHeight (), QGLFramebufferObject::Depth);
+      if (!pickCache_->isValid ())
+      {
+        pickCacheSupported_ = false;
+        delete pickCache_;
+        pickCache_ = NULL;
+      }
+    }
+    if (pickCache_)
+    {
+      // the viewport for the framebuffer object
+      l = 0;
+      b = 0;
+      x = rect.x() - scenePos().x();
+      y = glHeight() - (rect.bottom() - scenePos().y());
+
+      // we can only pick inside of our window
+      if (x < 0 || y < 0 || x >= (int)glWidth() || y >= (int)glHeight())
+        return 0;
+
+      pickCache_->bind ();
+    }
+  }
+
+  const ACG::GLMatrixd&  modelview  = properties_.glState().modelview();
+  const ACG::GLMatrixd&  projection = properties_.glState().projection();
+
+  ACG::Vec4f clear_color = properties_.glState().clear_color();
+  properties_.glState().set_clear_color (ACG::Vec4f (0.0, 0.0, 0.0, 0.0));
+
+  // prepare GL state
+  makeCurrent();
+
+  glViewport (l, b, w, h);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  glMultMatrixd(projection.get_raw_data());
+  glMatrixMode(GL_MODELVIEW);
+  glLoadMatrixd(modelview.get_raw_data());
+  glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+  properties_.glState().pick_init (true);
+
+  // do the picking
+  ACG::SceneGraph::PickAction action(properties_.glState(), _pickTarget, properties_.drawMode());
+  ACG::SceneGraph::traverse_multipass(sceneGraphRoot_, action,properties_.glState());
+
+  // restore GL state
+  glMatrixMode( GL_PROJECTION );
+  glLoadMatrixd(projection.get_raw_data());
+  glMatrixMode( GL_MODELVIEW );
+  glLoadMatrixd(modelview.get_raw_data());
+  glEnable(GL_LIGHTING);
+  glEnable(GL_BLEND);
+
+  properties_.glState().set_clear_color (clear_color);
+
+  if (properties_.glState().pick_error ())
+  {
+    if (pickCache_ && pickCache_->isBound ())
+      pickCache_->release ();
+    return -1;
+  }
+
+  buffer = new GLubyte[4 * rect.width() * rect.height()];
+  depths = new GLfloat[ rect.width() * rect.height() ];
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+  glReadPixels (x, y, rect.width(),
+                rect.height(), GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+  glReadPixels (x, y, rect.width(), rect.height(), GL_DEPTH_COMPONENT, GL_FLOAT, depths);
+
+  QImage depthmapimage(rect.width(), rect.height(), QImage::Format_Indexed8);
+  // color map
+  for ( int i = 0 ; i <= 255 ; i++ )
+    depthmapimage.setColor( i, qRgb( i, i, i ) );
+
+  for ( int i = 0 ; i < rect.width() ; i++ )
+    for ( int j = 0 ; j < rect.height() ; j++ ) 
+    {
+      //std::cerr << "("<<i<<","<<j<<") depth " << depths[j*rect.width()+i] << std::endl;
+      depthmapimage.setPixel(i,rect.height()-j-1, (unsigned int)(depths[j*rect.width()+i]*255));
+    }
+
+  depthmapimage.save("test.png");
+
+  //QSet<QPair<unsigned int, unsigned int> > found;
+  
+
+  //int setsize = 0;
+  for (int y = 0; y < rect.height (); y++)
+    for (int x = 0; x < rect.width (); x++)
+    {
+      if (_region.contains (QPoint (rect.x() + x, rect.y() + y)))
+      {
+        int bPos = (((rect.height () - (y + 1)) * rect.width ()) + x) * 4;
+        if (buffer[bPos + 2] != 0 || buffer[bPos + 1] != 0 || buffer[bPos] != 0 || buffer[bPos + 3] != 0)
+        {
+          ACG::Vec4uc rgba;
+          rgba[0] = buffer[bPos];
+          rgba[1] = buffer[bPos + 1];
+          rgba[2] = buffer[bPos + 2];
+          rgba[3] = buffer[bPos + 3];
+
+          std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgba);
+          if (rv.size () < 2)
+            continue;
+
+          QPair<unsigned int, unsigned int> curr(rv[1], rv[0]);
+          //found << QPair<unsigned int, unsigned int>(rv[1], rv[0]);
+          
+          // added a new (targetidx/nodeidx) pair
+          //if( setsize != found.size())
+          if( !_list.contains(curr))
+          {
+            _list << curr;
+            double curr_depth(depths[(rect.height()-(y+1))*rect.width() + x]);
+
+            _depths << curr_depth;
+
+            // unproject depth to real (3D) depth value
+            _points << properties_.glState().unproject(ACG::Vec3d(x+rect.x(),h-(y+rect.y()),curr_depth));
+          }
+        }
+      }
+    }
+
+  delete buffer;
+  //_list = found.toList();
+
+  // unbind pick cache
+  if (pickCache_ && pickCache_->isBound ())
+  {
+    pickCache_->release ();
+    updatePickCache_ = false;
+    pickCacheTarget_ = _pickTarget;
+  }
+
+  return true;
+}
+
 
 //-----------------------------------------------------------------------------
 

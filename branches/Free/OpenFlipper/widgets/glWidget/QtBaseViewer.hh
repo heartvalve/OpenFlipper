@@ -824,6 +824,61 @@ private:
                       const QRegion&                             _region,
                       QList<QPair<unsigned int, unsigned int> >& _list);
 
+
+    /** Apply pick action. <br>
+     *   Picks all objects in the given Region. Information about the picked primitives is stored in the
+     *   provided list. Resulting values are defined only if \c true
+     *   has been returned!
+     *  <br>
+     *
+     * @param _pickTarget Select what should be picked: Faces/Vertices/...
+     * @param _region     Area for picking
+     * @param _list       List of found scenegraph objects (node/target pairs)
+     * @param _points     back projected 3d points
+     * @return Successful?
+     */
+    bool pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
+                      const QRegion&                             _region,
+                      QList<QPair<unsigned int, unsigned int> >& _list,
+                      QVector<ACG::Vec3d>&                       _points);
+
+    /** Apply pick action. <br>
+     *   Picks all objects in the given Region. Information about the picked primitives is stored in the
+     *   provided list. Resulting values are defined only if \c true
+     *   has been returned!
+     *  <br>
+     *
+     * @param _pickTarget Select what should be picked: Faces/Vertices/...
+     * @param _region     Area for picking
+     * @param _list       List of found scenegraph objects (node/target pairs)
+     * @param _depths     depths [0,1]
+     * @return Successful?
+     */
+    bool pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
+                      const QRegion&                             _region,
+                      QList<QPair<unsigned int, unsigned int> >& _list,
+                      QVector<float>&                            _depths);
+
+  /** Apply pick action. <br>
+     *   Picks all objects in the given Region. Information about the picked primitives is stored in the
+     *   provided list. Resulting values are defined only if \c true
+     *   has been returned!
+     *  <br>
+     *
+     * @param _pickTarget Select what should be picked: Faces/Vertices/...
+     * @param _region     Area for picking
+     * @param _list       List of found scenegraph objects (node/target pairs)
+     * @param _depths     depths [0,1]
+     * @param _points     back projected 3d points
+     * @return Successful?
+     */
+    bool pick_region( ACG::SceneGraph::PickTarget                _pickTarget,
+                      const QRegion&                             _region,
+                      QList<QPair<unsigned int, unsigned int> >& _list,
+                      QVector<float>&                            _depths,
+                      QVector<ACG::Vec3d>&                       _points);
+
+
     /** get the coordinates of the picked point by z-buffer re-projection
      * @param _mousePos The position to pick
      * @param _hitPoint The point returned by the reprojection
