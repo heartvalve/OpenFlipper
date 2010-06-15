@@ -466,6 +466,28 @@ class DLLEXPORTONLY BaseObject : public QObject {
 
     /// Delete all data attached to this object ( calls delete on each object )
     void deleteData();
+    
+    /** @} */
+    
+    //===========================================================================
+    /** @name Object Payload functions for internal use only!
+    * @{ */
+    //===========================================================================
+    
+    /** \brief get map of all perObject Datas
+    *
+    * Don't use this function! It's only for the backup Plugin to store and restore
+    * perObjectDatas!
+    */
+    QMap<QString, PerObjectData*>* getPerObjectDataMap();
+    
+    
+    /** \brief set map of all perObject Datas
+    *
+    * Don't use this function! It's only for the backup Plugin to store and restore
+    * perObjectDatas!
+    */
+    void getPerObjectDataMap( QMap<QString, PerObjectData*>* _map );
 
   private:
 
