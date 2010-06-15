@@ -474,21 +474,14 @@ class DLLEXPORTONLY BaseObject : public QObject {
     * @{ */
     //===========================================================================
     
-    /** \brief get map of all perObject Datas
+    /** \brief get reference to map of all perObject Datas
     *
     * Don't use this function! It's only for the backup Plugin to store and restore
     * perObjectDatas!
     */
-    QMap<QString, PerObjectData*>* getPerObjectDataMap();
+    QMap<QString, PerObjectData*>& getPerObjectDataMap();
     
     
-    /** \brief set map of all perObject Datas
-    *
-    * Don't use this function! It's only for the backup Plugin to store and restore
-    * perObjectDatas!
-    */
-    void getPerObjectDataMap( QMap<QString, PerObjectData*>* _map );
-
   private:
 
     QMap<QString, PerObjectData* > dataMap_;
