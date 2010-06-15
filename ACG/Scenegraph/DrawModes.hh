@@ -185,6 +185,7 @@ namespace DrawModes {
   //======================================================================
   /// draw unlighted points using the default base color
   DrawMode const POINTS         = ModeFlagSet(1) << 1;
+
   /// draw colored, but not lighted points (requires point colors)
   DrawMode const POINTS_COLORED = ModeFlagSet(1) << 2;
   /// draw shaded points (requires point normals)
@@ -193,56 +194,69 @@ namespace DrawModes {
   //======================================================================
   //  Edge Based Rendering Modes
   //======================================================================
-  /// draw wireframe
+  /// draw edges
   DrawMode const EDGES          = ModeFlagSet(1) << 4;
-  
+
+  /// draw edges with colors (without shading)
+  DrawMode const EDGES_COLORED  = ModeFlagSet(1) << 5;
   /// draw wireframe
-  DrawMode const WIREFRAME      = ModeFlagSet(1) << 5;
+  DrawMode const WIREFRAME      = ModeFlagSet(1) << 6;
   
   //======================================================================
   //  Face Based Rendering Modes
   //======================================================================  
-  DrawMode const FACES          = ModeFlagSet(1) << 6;
-
-
+  // draw faces
+  DrawMode const FACES          = ModeFlagSet(1) << 7;
 
   /// draw hidden line (2 rendering passes needed)
-  DrawMode const HIDDENLINE     = ModeFlagSet(1) << 7;
+  DrawMode const HIDDENLINE     = ModeFlagSet(1) << 8;
   /// draw flat shaded faces (requires face normals)
-  DrawMode const SOLID_FLAT_SHADED = ModeFlagSet(1) << 8;
+  DrawMode const SOLID_FLAT_SHADED = ModeFlagSet(1) << 9;
   /// draw smooth shaded (Gouraud shaded) faces (requires halfedge normals)  
-  DrawMode const SOLID_SMOOTH_SHADED = ModeFlagSet(1) << 9;
+  DrawMode const SOLID_SMOOTH_SHADED = ModeFlagSet(1) << 10;
   /// draw phong shaded faces
-  DrawMode const SOLID_PHONG_SHADED = ModeFlagSet(1) << 10;
+  DrawMode const SOLID_PHONG_SHADED = ModeFlagSet(1) << 11;
   /// draw colored, but not lighted faces using face colors
-  DrawMode const SOLID_FACES_COLORED = ModeFlagSet(1) << 11;
+  DrawMode const SOLID_FACES_COLORED = ModeFlagSet(1) << 12;
   /// draw faces, but use Gouraud shading to interpolate vertex colors
-  DrawMode const SOLID_POINTS_COLORED = ModeFlagSet(1) << 12;
+  DrawMode const SOLID_POINTS_COLORED = ModeFlagSet(1) << 13;
   /// draw environment mapped  
-  DrawMode const SOLID_ENV_MAPPED = ModeFlagSet(1) << 13;
+  DrawMode const SOLID_ENV_MAPPED = ModeFlagSet(1) << 14;
   /// draw textured faces
-  DrawMode const SOLID_TEXTURED = ModeFlagSet(1) << 14;
+  DrawMode const SOLID_TEXTURED = ModeFlagSet(1) << 15;
   /// draw smooth shaded textured faces
-  DrawMode const SOLID_TEXTURED_SHADED = ModeFlagSet(1) << 15;
+  DrawMode const SOLID_TEXTURED_SHADED = ModeFlagSet(1) << 16;
   /// draw textured faces
-  DrawMode const SOLID_1DTEXTURED = ModeFlagSet(1) << 16;
+  DrawMode const SOLID_1DTEXTURED = ModeFlagSet(1) << 17;
   /// draw smooth shaded textured faces
-  DrawMode const SOLID_1DTEXTURED_SHADED = ModeFlagSet(1) << 17;
+  DrawMode const SOLID_1DTEXTURED_SHADED = ModeFlagSet(1) << 18;
   /// draw textured faces
-  DrawMode const SOLID_3DTEXTURED = ModeFlagSet(1) << 18;
+  DrawMode const SOLID_3DTEXTURED = ModeFlagSet(1) << 19;
   /// draw smooth shaded textured faces
-  DrawMode const SOLID_3DTEXTURED_SHADED = ModeFlagSet(1) << 19;
+  DrawMode const SOLID_3DTEXTURED_SHADED = ModeFlagSet(1) << 20;
   /// draw flat shaded and colored faces (requires face normals and colors)
-  DrawMode const SOLID_FACES_COLORED_FLAT_SHADED = ModeFlagSet(1) << 20;
+  DrawMode const SOLID_FACES_COLORED_FLAT_SHADED = ModeFlagSet(1) << 21;
   /// draw per halfedge textured faces
-  DrawMode const SOLID_2DTEXTURED_FACE = ModeFlagSet(1) << 21;
+  DrawMode const SOLID_2DTEXTURED_FACE = ModeFlagSet(1) << 22;
   /// draw per halfedge textured faces
-  DrawMode const SOLID_2DTEXTURED_FACE_SHADED = ModeFlagSet(1) << 22;
+  DrawMode const SOLID_2DTEXTURED_FACE_SHADED = ModeFlagSet(1) << 23;
   /// drawing is controlled by shaders
   /// ( Use shadernodes to set them before the actual object to render)
-  DrawMode const SOLID_SHADER = ModeFlagSet(1) << 23;
+  DrawMode const SOLID_SHADER = ModeFlagSet(1) << 24;
+
+  //======================================================================
+  //  Face Based Rendering Modes
+  //======================================================================  
+  // draw cells
+  DrawMode const CELLS          = ModeFlagSet(1) << 25;
+
+  /// draw cells with colors (without shading)
+  DrawMode const CELLS_COLORED  = ModeFlagSet(1) << 26;
+
+
+
   /// marks the last used ID
-  DrawMode const UNUSED = ModeFlagSet(1) << 24;
+  DrawMode const UNUSED = ModeFlagSet(1) << 27;
   
 
   //=======================================================================
