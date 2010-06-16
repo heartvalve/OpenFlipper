@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 ( ? , 9436 RC7 )</b>
+ * - <b>OpenFlipper 1.0 ( ? , 9549 RC7 )</b>
  *      - <b>Core</b>
  *          - Added Light source management
  *              - Added global nodes to handle light sources
@@ -28,10 +28,16 @@
  *          - Added a global picking dialog to choose an object an algorithm should work on (OpenFlipper/publicWidgets)
  *          - Added Function to find the object to a node (Based on BaseObjectData)
  *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
+ *          - Introduced update types to control partial uptdates (color,topology,geometry,...)
+ *          - Added region picking functions ( render picking and get a region of the picking )
  *      - <b>Object Types</b>
  *          - New Light Object
  *          - New Sphere Object
  *      - <b>Interfaces</b>
+ *          - BackupInterface
+ *              - Full redesign
+ *              - Multiple restore stages (before, do restore, after restore
+ *              - External restore and backup signals/slots
  *          - BaseInterface
  *              - Added a new parameter to updatedObject which defies the update type (e.g. Topology, Geometry, selection)
  *          - FileInterface
@@ -53,9 +59,11 @@
  *              - Added functions to reset to factory settings
  *      - <b>ACG</b>
  *          - Bugfix for glstate functions returning fovy and aspect ratio
+ *          - Added gluError handling function
  *          - New PICK_SPLINE Pickmode added
  *          - Draw Modes
  *              - Fixed bug with increment operator for drawmodes (shift in underlying bitset)
+ *              - Added Cells Draw Mode
  *          - SceneGraph
  *              - Fixed picking multipass bug where picking failed when blending or other color changing enter and leave functions where present
  *          - GlutPrimitive Node
@@ -75,6 +83,10 @@
  *              - Fixed pick face bug, where picking buffer was updated to late
  *              - Fixed bug with point only meshes, where face and edge buffers were accessed but not there.
  *              - When updating colors, invalidate face and edge buffers too ( otherwise no update is done)
+ *              - Be more carefull and check if mesh properties used for redering vanished between render passes (e.g. textures after restore from backups)
+ *              -
+ *          -QtTranslationManipulatorNode
+ *              - Added possibility to add QVariants to the node
  *          - SceneGraphWidget
  *              - Added system to register a widget for new nodes without changing the widget code.
  *          - Geometry
@@ -92,6 +104,8 @@
  *      - <b>New Plugins</b>
  *          - TypeLight
  *              - New object type handling light sources
+ *          - TypeSphele
+ *              - Simple sphere type
  *          - FileLight
  *              - Support for reading and writing light information
  *      - <b>Plugins</b>
@@ -101,6 +115,7 @@
  *              - Fixed wrong interface definitioni causing plugins not visible in ui menus (Thanks to Sergei Migdalskiy for reporting this bug)
  *          - DataControl
  *              - Support for Light sources
+ *              - Fixed Bug where delete key was not catched anymore in QT 4.6
  *          - FileOFF
  *              - non-manifold inputs are now duplicated and added as manifold meshes (These duplicates are marked in the OpenMesh status flag) 
  *          - FileOBJ
@@ -120,6 +135,7 @@
  *          - TextureControl
  *              - Fixed bug when trying to create textures for lights (?!!)
  *              - Fixed wrong interface definitioni causing plugins not visible in ui menus (Thanks to Sergei Migdalskiy for reporting this bug)
+ *              - Backup interface support (copy constructors for per object datas and restore functions)
  *          - Topology Plugin
  *              - Added missing updates
  *          - Info Plugin
@@ -130,6 +146,8 @@
  *              - Check if types exist before adding context menues (avoids warning)
  *          - VSI Plugin
  *              - Fix script generation for qt 4.6 ( in -> input rename as in causes a parse error )
+ *              - Fixed draw errors on zooming
+ *              - Additional Metadata for other algorithms
  *      - <b>Documentation</b>
  *          - Refactored documentation files ( One documentation directory, build targets)
  *          - Internal help files (qhc) are now searched automatically ( no need to specify at build time anymore!)
