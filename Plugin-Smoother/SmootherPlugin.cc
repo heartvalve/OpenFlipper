@@ -116,6 +116,8 @@ slot_smooth()
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
+    QString jobDescription = "Smoothed (";
+  
     TriMeshObject* object = PluginFunctions::triMeshObject(*o_it);
 
     if ( object == 0 ) {
@@ -135,18 +137,25 @@ slot_smooth()
 
 
     OpenMesh::Smoother::SmootherT< TriMesh >::Component component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential_and_Normal;
-    if( tool_->rbTangential_and_Normal->isChecked() )
+    if( tool_->rbTangential_and_Normal->isChecked() ) {
       component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential_and_Normal;
-    else if( tool_->rbNormal->isChecked() )
+      jobDescription += "tangential and normal,";
+    } else if( tool_->rbNormal->isChecked() ) {
       component = OpenMesh::Smoother::SmootherT< TriMesh >::Normal;
-    else if( tool_->rbTangential->isChecked() )
+      jobDescription += "normal,";
+    } else if( tool_->rbTangential->isChecked() ) {
       component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential;
+      jobDescription += "tangential,";
+    }
 
     OpenMesh::Smoother::SmootherT< TriMesh >::Continuity continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
-    if( tool_->rB_c0->isChecked() )
+    if( tool_->rB_c0->isChecked() ) {
       continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
-    else if( tool_->rB_c1->isChecked() )
+      jobDescription += "C0";
+    } else if( tool_->rB_c1->isChecked() ) {
       continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C1;
+      jobDescription += "C1";
+    }
 
     // Read maximum distance Error from lineEdit
     if ( tool_->cbDistance->isChecked() ) {
@@ -160,12 +169,16 @@ slot_smooth()
         data->smoother->set_absolute_local_error( absoluteError );
       else
         emit log(LOGWARN , "Unable to read distance error from LineEdit");
+      
+      jobDescription += ",max_error: " + QString::number(absoluteError);
     }
-
+    
     data->smoother->initialize(component,continuity );
     data->smoother->skip_features(tool_->respectFeatures->isChecked());
 
     data->smoother->smooth( tool_->sB_iter->value() );
+    
+    jobDescription +=  ") " + QString::number(tool_->sB_iter->value()) + " iterations";
 
     TriMesh* mesh = PluginFunctions::triMesh(*o_it);
 
@@ -173,6 +186,8 @@ slot_smooth()
       mesh->garbage_collection();
 
     emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
+    
+    emit createBackup(o_it->id(),jobDescription );
   }
 
   if ( !found )
@@ -202,6 +217,8 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
   if ( baseObjectData->dataType() == DATA_TRIANGLE_MESH ) {
     TriMeshObject* object = PluginFunctions::triMeshObject(baseObjectData);
 
+    QString jobDescription = "Smoothed (";
+    
     if ( object == 0 ) {
       emit log(LOGWARN , "Unable to get object ( Only Triangle Meshes supported)");
       return;
@@ -219,12 +236,17 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
     bool tangential = _direction.contains("tangential");
     bool normal     = _direction.contains("normal");
 
-    if ( tangential && normal )
+    if ( tangential && normal ) {
       component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential_and_Normal;
-    else if ( tangential )
+      jobDescription += "tangential and normal,";
+    } else if ( tangential ) {
       component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential;
-    else
+      jobDescription += "normal,";
+    } else {
       component = OpenMesh::Smoother::SmootherT< TriMesh >::Normal;
+      jobDescription += "tangential,";
+    }
+    
 
     OpenMesh::Smoother::SmootherT< TriMesh >::Continuity continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
     bool c0 = _continuity.contains("C0");
@@ -232,14 +254,18 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
 
     if ( c0 && c1 )
       std::cerr << "Continuity C0 + C1 ? Using C1" << std::endl;
-    if( c1 )
+    if( c1 ) {
       continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C1;
-    else if( c0 )
+      jobDescription += "C1";
+    } else if( c0 ) {
       continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
+      jobDescription += "C0";
+    }
 
-    if ( _maxDistance > 0.0)
+    if ( _maxDistance > 0.0) {
       data->smoother->set_absolute_local_error( _maxDistance );
-    else
+      jobDescription += ",max_error: " + QString::number(_maxDistance);
+    } else
       data->smoother->set_absolute_local_error( FLT_MAX );
 
     data->smoother->initialize(component,continuity);
@@ -247,6 +273,8 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
     data->smoother->smooth( _iterations );
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
+    jobDescription +=  ") " + QString::number(_iterations) + " iterations";
+    
     if (mesh != 0) {
       mesh->garbage_collection();
       mesh->update_normals();
@@ -254,6 +282,7 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
 
     emit updatedObject( object->id(), UPDATE_GEOMETRY );
 
+    emit createBackup(object->id(),jobDescription );
 
   } else {
     emit log(LOGERR,"Unsupported object type for smoother");
