@@ -69,9 +69,41 @@ QScriptValue toScriptValueMatrix4x4(QScriptEngine *engine, const Matrix4x4 &s)
 
 void fromScriptValueMatrix4x4(const QScriptValue &obj, Matrix4x4 &s)
 {
-  for ( uint i = 0 ; i < 4 ; ++i )
-    for ( uint j = 0 ; j < 4 ; ++j )
-      s(i,j) = obj.property(QString::number(i) + QString::number(j)).toNumber();
+    if (obj.isObject()) {
+        for ( uint i = 0 ; i < 4 ; ++i )
+            for ( uint j = 0 ; j < 4 ; ++j )
+                s(i,j) = obj.property(QString::number(i) + QString::number(j)).toNumber();
+        return;
+    }
+
+    QString _from = obj.toString();
+    if (_from.startsWith ("Matrix4x4 ("))
+        _from.remove (0, 11);
+    else if (_from.startsWith ("Matrix4x4 : ("))
+        _from.remove (0, 14);
+    if (_from.endsWith (")"))
+        _from.remove (_from.length () - 1, 1);
+
+    QStringList sl = _from.split (',');
+
+    float v[16];
+    bool ok = true;
+
+    if (sl.length () == 16)
+    {
+        for (int i = 0; i < 16 && ok; i++)
+            v[i] = sl[i].toFloat (&ok);
+
+        if (ok)
+            for (int i = 0; i < 16; i++)
+                s(i/4,i%4) = v[i];
+        else
+        {
+            for (int i = 0; i < 16; i++)
+                s(i/4,i%4) = 0;
+            std::cerr << "String to Matrix4x4 conversion failed!" << std::endl;
+        }
+    }
 }
 
 QScriptValue createMatrix4x4(QScriptContext *context, QScriptEngine *engine)

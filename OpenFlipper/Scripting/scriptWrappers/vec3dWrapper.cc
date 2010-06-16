@@ -69,9 +69,39 @@ QScriptValue toScriptValueVector(QScriptEngine *engine, const Vector &s)
 
 void fromScriptValueVector(const QScriptValue &obj, Vector &s)
 {
-  s[0] = obj.property("x").toNumber();
-  s[1] = obj.property("y").toNumber();
-  s[2] = obj.property("z").toNumber(); 
+    if (obj.isObject()) {
+        s[0] = obj.property("x").toNumber();
+        s[1] = obj.property("y").toNumber();
+        s[2] = obj.property("z").toNumber();
+        return;
+    }
+
+    QString _from = obj.toString();
+    if (_from.startsWith ("Vector ("))
+        _from.remove (0, 8);
+    else if (_from.startsWith ("Vector : ( "))
+        _from.remove (0, 11);
+    if (_from.endsWith (")"))
+        _from.remove (_from.length () - 1, 1);
+
+    QStringList sl = _from.split (',');
+
+    float v[3];
+    bool ok = true;
+
+    if (sl.length () == 3) {
+        for (int i = 0; i < 3 && ok; i++)
+            v[i] = sl[i].toFloat (&ok);
+
+        if (ok)
+            for (int i = 0; i < 3; i++)
+                s[i] = v[i];
+        else {
+            for (int i = 0; i < 3; i++)
+                s[i] = 0;
+            std::cerr << "String to Vec3D conversion failed!" << std::endl;
+        }
+    }
 }
 
 QScriptValue createVector(QScriptContext *context, QScriptEngine *engine)
