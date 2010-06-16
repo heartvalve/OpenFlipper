@@ -95,6 +95,26 @@ class TexParameters
 class Texture {
   public :
     Texture();
+    
+    // copy constructor
+    Texture( const Texture& _tex)
+    : parameters(_tex.parameters),
+    multiTextureList(_tex.multiTextureList),
+    name_(_tex.name_),
+    visibleName_(_tex.visibleName_),
+    filename_(_tex.filename_),
+    id_(_tex.id_),
+    glName_(_tex.glName_),
+    dimension_(_tex.dimension_),
+    enabled_(_tex.enabled_),
+    hidden_(_tex.hidden_),
+    dirty_(_tex.dirty_),
+    type_(_tex.type_),
+    indexMappingProperty_(_tex.indexMappingProperty_)
+    {
+      // copy QImage ( we need a deep copy! )
+      textureImage =  _tex.textureImage.copy(_tex.textureImage.rect());
+    }
 
 
     void filename( QString _name ) { filename_ = _name; };
@@ -199,6 +219,15 @@ class TextureData : public PerObjectData
       TextureData();
       /// Destructor
       ~TextureData();
+      
+      // copy Operator returning an exact copy of this Object
+      virtual PerObjectData* copyPerObjectData( ) {
+        
+        // Create an object copy (This will call all copy constructors of the included data objects! )
+        TextureData* copy = new TextureData(*this);
+        
+        return copy;
+      }
 
 
       /// Check if a texture exists
