@@ -98,6 +98,9 @@ signals:
   
   // ToolboxInterface
   void addToolbox( QString _name  , QWidget* _widget );   
+  
+  // BackupInterface
+  void createBackup( int _id , QString _name );
 
 public :
 
