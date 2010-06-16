@@ -52,6 +52,7 @@
 #include <QMenuBar>
 
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
+#include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/BasePlugin/TextureInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/MenuInterface.hh>
@@ -65,7 +66,7 @@
 
 #include "TextureData.hh"
 
-class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, MenuInterface, LoggingInterface, LoadSaveInterface,ContextMenuInterface
+class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, TextureInterface, MenuInterface, LoggingInterface, LoadSaveInterface,ContextMenuInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -74,6 +75,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
   Q_INTERFACES(LoggingInterface)
   Q_INTERFACES(LoadSaveInterface)
   Q_INTERFACES(ContextMenuInterface)
+  Q_INTERFACES(BackupInterface)
 
   public:
 
@@ -125,6 +127,11 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     // LoadSaveInterface
     void fileOpened( int _id );
     void addedEmptyObject( int _id );
+    
+    //BackupInterface
+    void slotAboutToRestore( int _objectid , int _internalId);      
+    void slotRestore( int _objectid, int _internalId);
+    void slotRestored( int _objectid, int _internalId);
 
   private slots:
 
@@ -275,7 +282,7 @@ class TextureControlPlugin : public QObject, BaseInterface, TextureInterface, Me
     QMenu* contextMenu_;
 
     /** @} */
-
+    
   public slots:
     QString version() { return QString("1.0"); };
  };
