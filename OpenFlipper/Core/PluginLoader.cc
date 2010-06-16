@@ -1109,14 +1109,14 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
     
     // Stage two: Core restore done, plugins should restore
     if ( checkSignal( plugin , "restore(int,int)" ) ) {
-      connect(this   , SIGNAL(restore(int,int)) ,
-              plugin , SIGNAL( restore(int,int) ),Qt::DirectConnection);
+      connect(plugin  , SIGNAL(restore(int,int)) ,
+              this    , SIGNAL( restore(int,int) ),Qt::DirectConnection);
     }
     
     // Stage three: Restore complete
     if ( checkSignal( plugin , "restored(int,int)" ) ) {
-      connect(this   , SIGNAL(restored(int,int)) ,
-              plugin , SIGNAL( restored(int,int) ),Qt::DirectConnection);
+      connect(plugin  , SIGNAL(restored(int,int)) ,
+              this    , SIGNAL( restored(int,int) ),Qt::DirectConnection);
     }
     
     //====================================================================================
