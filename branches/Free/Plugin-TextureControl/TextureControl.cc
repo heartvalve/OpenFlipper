@@ -561,17 +561,33 @@ void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName
   // Get Texture data for current object
   // ================================================================================
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
-  if (texData == 0)
+  if (texData == 0) {
+    #ifndef NDEBUG
+    std::cerr << "slotGetCurrentTexture: No Texture Data! "<< obj->getPerObjectDataMap().size() << std::endl;
+    
+      // Iterate over all per Object datas and output them
+      QMap<QString, PerObjectData*>::const_iterator mapIter = obj->getPerObjectDataMap().begin();  
+      while ( mapIter != obj->getPerObjectDataMap().end() ) {
+        std::cerr << "Available Texture Data: " << mapIter.key().toStdString() << std::endl;
+        
+        mapIter++;
+      }
+    #endif
+    
     return;
+  }
   
   // Iterate over all available textures
-  for ( uint i = 0 ; i < texData->textures().size() ; ++i)
+  for ( uint i = 0 ; i < texData->textures().size() ; ++i) {
+  
     if ( (texData->textures()[i]).enabled() ){
       _textureName = (texData->textures()[i]).name();
       
-      if ( (texData->textures()[i]).type() == MULTITEXTURE )
+      if ( (texData->textures()[i]).type() == MULTITEXTURE ) {
         return;
+      }
     }
+  }
 }
 
 void TextureControlPlugin::slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures ){
@@ -1257,7 +1273,6 @@ void TextureControlPlugin::doSwitchTexture( QString _textureName , int _id ) {
   TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
   if (texData == 0) {
     emit log(LOGERR, tr("doSwitchTexture: Object has no texture data! Object: %1").arg(_id) );
-    std::cerr << "Object name : " << obj->name().toStdString() << std::endl;
     return;
   }
 
@@ -1611,6 +1626,55 @@ void TextureControlPlugin::getCoordinates1D(QString _textureName, int _id, std::
     for ( PolyMesh::VertexIter v_it = mesh->vertices_begin() ; v_it != mesh->vertices_end(); ++v_it)
       _x.push_back( mesh->property(coordProp,v_it) );
   }
+}
+
+void TextureControlPlugin::slotAboutToRestore( int _objectid, int _internalId) {
+
+  // ================================================================================
+  // Get  current object
+  // ================================================================================
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _objectid , obj ) ) {
+    emit log(LOGERR,"slotAboutToRestore: Unable to get Object for id " + QString::number(_objectid) );
+  }
+  
+  // ================================================================================
+  // Get Texture data for current object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0) {
+    // Nothing to do
+    return;
+  }
+  
+  // ================================================================================
+  // Disable the Texture mapping in the current objects Meshnode
+  // This will prevent the renderer to crash if the map is wrong after the restore
+  // ================================================================================
+  if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
+    PluginFunctions::triMeshObject(obj)->meshNode()->setTextureMap(0);
+  } else if ( obj->dataType( DATA_POLY_MESH ) ) {
+    PluginFunctions::polyMeshObject(obj)->meshNode()->setTextureMap(0);
+  }
+
+}
+
+void TextureControlPlugin::slotRestore( int _objectid, int _internalId) {
+  
+  // ================================================================================
+  // Get the last active texture in the restored perObjectData
+  // ================================================================================
+  QString currentTexture;
+  slotGetCurrentTexture(_objectid,currentTexture);
+  
+  // ================================================================================
+  // Enable the last active texture 
+  // ================================================================================
+  slotSwitchTexture(currentTexture,_objectid);
+}
+
+void TextureControlPlugin::slotRestored( int _objectid, int _internalId) {
+  // Nothing to do yet
 }
 
 Q_EXPORT_PLUGIN2( texturecontrolplugin , TextureControlPlugin );
