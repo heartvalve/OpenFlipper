@@ -115,10 +115,6 @@ void initializeUpdateTypes() {
   updateTypeToTypeInfo[UPDATE_ALL]   = updateTypes.size();
   updateTypes.push_back( UpdateTypeInfo(UPDATE_ALL, "All", true) );
 
-  stringToUpdateTypeInfo["ObjectSelection"]      = updateTypes.size();
-  updateTypeToTypeInfo[UPDATE_OBJECT_SELECTION]  = updateTypes.size();
-  updateTypes.push_back( UpdateTypeInfo(UPDATE_OBJECT_SELECTION, "ObjectSelection", false) );
-
   stringToUpdateTypeInfo["Visibility"]      = updateTypes.size();
   updateTypeToTypeInfo[UPDATE_VISIBILITY]   = updateTypes.size();
   updateTypes.push_back( UpdateTypeInfo(UPDATE_VISIBILITY, "Visibility", true) );
@@ -152,7 +148,6 @@ void initializeUpdateTypes() {
   updateTypes.push_back( UpdateTypeInfo(UPDATE_COLOR, "Color", true) );
   
   updateTypeToString[UPDATE_ALL]                = "All";
-  updateTypeToString[UPDATE_OBJECT_SELECTION]   = "ObjectSelection";
   updateTypeToString[UPDATE_VISIBILITY]         = "Visibility";
   updateTypeToString[UPDATE_GEOMETRY]           = "Geometry";
   updateTypeToString[UPDATE_TOPOLOGY]           = "Topology";
