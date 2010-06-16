@@ -9,6 +9,7 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
 #include <OpenFlipper/BasePlugin/ProcessInterface.hh>
+#include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
@@ -17,7 +18,7 @@
 #include "ProgressEmitter.hh"
 
 
-class IsotropicRemesherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, RPCInterface, ProcessInterface
+class IsotropicRemesherPlugin : public QObject, BaseInterface, BackupInterface , ToolboxInterface, LoggingInterface, RPCInterface, ProcessInterface
 {
 Q_OBJECT
 Q_INTERFACES(BaseInterface)
@@ -25,6 +26,7 @@ Q_INTERFACES(ToolboxInterface)
 Q_INTERFACES(LoggingInterface)
 Q_INTERFACES(RPCInterface)
 Q_INTERFACES(ProcessInterface)
+Q_INTERFACES(BackupInterface)
 
 
 signals:
@@ -53,6 +55,9 @@ signals:
   void setJobName(QString _jobId, QString _name);
   void finishJob(QString _jobId);
   void setJobDescription(QString _jobId, QString _description);
+  
+  // BackupInterface
+  void createBackup( int _id , QString _name );
 
 private slots:
 
