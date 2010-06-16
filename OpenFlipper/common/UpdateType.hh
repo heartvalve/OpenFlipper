@@ -35,11 +35,8 @@ class DLLEXPORT UpdateType {
 /// Identifier for all updates
 const UpdateType UPDATE_ALL(              UpdateTypeSet(1)       );
 
-/// This is the update identifier for global Object selections(source/target)
-const UpdateType UPDATE_OBJECT_SELECTION( UpdateTypeSet(1) << 1  );
-
 /// This is the update identifier for global Object visibility ( show/hide )
-const UpdateType UPDATE_VISIBILITY(       UpdateTypeSet(1) << 2  );
+const UpdateType UPDATE_VISIBILITY(       UpdateTypeSet(1) << 1  );
 
 
 /// The following update types are predefined for the general use cases
@@ -49,14 +46,14 @@ const UpdateType UPDATE_VISIBILITY(       UpdateTypeSet(1) << 2  );
 * Updated Geometry ( This update type has to be used if you only modify vertex positions of 
 * an object. Everything else has to stay as before the update.
 */
-const UpdateType UPDATE_GEOMETRY( UpdateTypeSet(1) << 3 );
+const UpdateType UPDATE_GEOMETRY( UpdateTypeSet(1) << 2 );
 
 /** \brief Topology updated
 *
 * Updated Topology ( This update type has to be used if you modify the topology
 * of an object. This includes adding vertices or removing them! )
 */
-const UpdateType UPDATE_TOPOLOGY( UpdateTypeSet(1) << 4 );
+const UpdateType UPDATE_TOPOLOGY( UpdateTypeSet(1) << 3 );
 
 
 /** \brief Selection updated
@@ -64,35 +61,35 @@ const UpdateType UPDATE_TOPOLOGY( UpdateTypeSet(1) << 4 );
 * Updated Selection ( This update type has to be used if you modify the internal
 * selection of an object. Like selecting a single vertex or a set of faces. ). 
 */
-const UpdateType UPDATE_SELECTION( UpdateTypeSet(1) << 5 );
+const UpdateType UPDATE_SELECTION( UpdateTypeSet(1) << 4 );
 
 /** \brief Vertex selection has changed
 *
 * This is a more fine grained selection update. UPDATE_SELECTION will also match this update type.
 */
-const UpdateType UPDATE_SELECTION_VERTICES( UpdateTypeSet(1) << 6 );
+const UpdateType UPDATE_SELECTION_VERTICES( UpdateTypeSet(1) << 5 );
 
 
 /** \brief Edge selection has changed
 *
 * This is a more fine grained selection update. UPDATE_SELECTION will also match this update type.
 */
-const UpdateType UPDATE_SELECTION_EDGES( UpdateTypeSet(1) << 7 );
+const UpdateType UPDATE_SELECTION_EDGES( UpdateTypeSet(1) << 6 );
 
 /** \brief Face selection has changed
 *
 * This is a more fine grained selection update. UPDATE_SELECTION will also match this update type.
 */
-const UpdateType UPDATE_SELECTION_FACES( UpdateTypeSet(1) << 8 );
+const UpdateType UPDATE_SELECTION_FACES( UpdateTypeSet(1) << 7 );
 
 /** \brief Colors have changed
 *
 * Update the colors. This does not have to be called when topology is also updated
 */
-const UpdateType UPDATE_COLOR( UpdateTypeSet(1) << 9 );
+const UpdateType UPDATE_COLOR( UpdateTypeSet(1) << 8 );
 
 /// marks the last used ID
-const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 10 );
+const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 9 );
 
 //=====================================================================================
 // FUNCTIONS
