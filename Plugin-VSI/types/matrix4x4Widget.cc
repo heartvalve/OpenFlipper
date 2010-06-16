@@ -54,7 +54,11 @@ Matrix4x4Widget::Matrix4x4Widget(QMap< QString, QString > &_hints, QString _type
   QGridLayout *gL = new QGridLayout;
 
   for (int i = 0; i < 16; i++)
+  {
     default_[i] = 0.0;
+    if (i%5 == 0) //set diagonal to 1, convenient for e.g. transformation matrices
+      default_[i]  = 1.0;
+  }
 
   ok = true;
   if (_hints.contains ("default"))
@@ -110,7 +114,7 @@ Matrix4x4Widget::~ Matrix4x4Widget()
 /// Convert current value to string
 QString Matrix4x4Widget::toValue()
 {
-  QString rv = "Matrix (";
+  QString rv = "Matrix4x4 (";
   for (int i = 0; i < 16; i++)
     rv += QString::number (current_[i]) + ",";
 
@@ -124,8 +128,8 @@ QString Matrix4x4Widget::toValue()
 /// Read value from string
 void Matrix4x4Widget::fromValue(QString _from)
 {
-  if (_from.startsWith ("Matrix ("))
-    _from.remove (0, 8);
+  if (_from.startsWith ("Matrix4x4 ("))
+    _from.remove (0, 11);
   if (_from.endsWith (")"))
     _from.remove (_from.length () - 1, 1);
   

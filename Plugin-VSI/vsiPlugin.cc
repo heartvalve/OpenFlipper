@@ -134,15 +134,23 @@ void VsiPlugin::initContext()
   if (!dir.exists ())
     return;
 
-  dir.makeAbsolute ();
-
-  foreach (QString file, dir.entryList (QStringList("*.xml"), QDir::Files))
+  foreach (QString sub, dir.entryList(QDir::Dirs))
   {
-    QFile f (dir.filePath (file));
-    if (!f.open (QIODevice::ReadOnly))
+    if (sub == "..")
       continue;
+    
+    QDir subdir = dir;
+    subdir.cd (sub);
+    subdir.makeAbsolute();
+    
+    foreach (QString file, subdir.entryList (QStringList("*.xml"), QDir::Files))
+    {
+      QFile f (subdir.filePath (file));
+      if (!f.open (QIODevice::ReadOnly))
+	continue;
 
-    context_->parse (f.readAll ());
+      context_->parse (f.readAll ());
+    }
   }
   
 }
@@ -191,7 +199,8 @@ QScriptValue VsiPlugin::askForInputs(QString _element, QString _inputs)
 
   context_->scriptEngine ()->pushContext ();
   QScriptValue rv = context_->scriptEngine ()->evaluate (script);
-  rv = context_->scriptEngine ()->globalObject ().property ("inputs");
+  context_->scriptEngine ()->globalObject ().setProperty ("inputs", rv);
+  //rv = context_->scriptEngine ()->globalObject ().property ("inputs");
   context_->scriptEngine ()->popContext ();
 
   return rv;
