@@ -54,7 +54,11 @@
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT         
 #include "BSplineCurve/bSplineCurveSelectionT.hh"
-#endif      
+#endif
+
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT         
+#include "BSplineSurface/bSplineSurfaceSelectionT.hh"
+#endif
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
@@ -87,6 +91,10 @@ void SelectionPlugin::selectVertices( int objectId , IdList _vertexList ) {
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
   else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::selectVertices( PluginFunctions::splineCurve(object) , _vertexList );
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT   
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::selectVertices( PluginFunctions::splineSurface(object) , _vertexList );
 #endif            
   else {
       emit log(LOGERR,tr("selectAllVertices : Unsupported object Type") ); 
@@ -132,6 +140,10 @@ void SelectionPlugin::unselectVertices( int objectId , IdList _vertexList ) {
 #ifdef ENABLE_BSPLINECURVE_SUPPORT      
   else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::unselectVertices( PluginFunctions::splineCurve(object) , _vertexList );
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT      
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::unselectVertices( PluginFunctions::splineSurface(object) , _vertexList );
 #endif            
   else {
       emit log(LOGERR,tr("unselectVertices : Unsupported object Type") ); 
@@ -177,6 +189,10 @@ void SelectionPlugin::selectAllVertices( int objectId )
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
   else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::selectAllVertices( PluginFunctions::splineCurve(object) );
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT   
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::selectAllVertices( PluginFunctions::splineSurface(object) );
 #endif            
   else {
       emit log(LOGERR,tr("selectAllVertices : Unsupported object Type") ); 
@@ -212,6 +228,10 @@ void SelectionPlugin::clearVertexSelection( int objectId )
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
   else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::clearVertexSelection( PluginFunctions::splineCurve(object) );
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT   
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::clearVertexSelection( PluginFunctions::splineSurface(object) );
 #endif            
   else {
       emit log(LOGERR,tr("clearVertexSelection : Unsupported object Type") ); 
@@ -247,6 +267,10 @@ void SelectionPlugin::invertVertexSelection( int objectId )
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
   else if ( object->dataType() == DATA_BSPLINE_CURVE )
       BSplineCurveSelection::invertVertexSelection( PluginFunctions::splineCurve(object) );
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT   
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::invertVertexSelection( PluginFunctions::splineSurface(object) );
 #endif                 
   else {
       emit log(LOGERR,tr("invertVertexSelection : Unsupported object Type") ); 
@@ -392,6 +416,10 @@ IdList SelectionPlugin::getVertexSelection( int objectId )
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
   else if ( object->dataType() == DATA_BSPLINE_CURVE )
       return BSplineCurveSelection::getVertexSelection(PluginFunctions::splineCurve(object));
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT   
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      return BSplineSurfaceSelection::getVertexSelection(PluginFunctions::splineSurface(object));
 #endif            
   else {
       emit log(LOGERR,tr("getVertexSelection : Unsupported object Type") ); 
@@ -459,4 +487,4 @@ void SelectionPlugin::colorizeVertexSelection(int objectId, int r, int g, int b 
   emit updatedObject(objectId, UPDATE_COLOR);
 }
   
-
+//=========================================================

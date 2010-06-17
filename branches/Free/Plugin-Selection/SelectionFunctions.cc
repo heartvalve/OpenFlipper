@@ -125,6 +125,13 @@ void SelectionPlugin::toggleSelection(QMouseEvent* _event)
             emit updatedObject(object->id(), UPDATE_SELECTION);
       }
       #endif
+      #ifdef ENABLE_BSPLINESURFACE_SUPPORT
+      // BSPLINESURFACE
+      else if (object->dataType() == DATA_BSPLINE_SURFACE){
+            toggleBSplineSurfaceSelection(_event);
+            emit updatedObject(object->id(), UPDATE_SELECTION);
+      }
+      #endif
       #ifdef ENABLE_SKELETON_SUPPORT
       // SKELETON
       else if (object->dataType() == DATA_SKELETON){

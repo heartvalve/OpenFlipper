@@ -1,9 +1,10 @@
-#define BSPLINESELECTION_C
+#define BSPLINECURVESELECTION_C
 
 
 //== INCLUDES =================================================================
 
 #include "bSplineCurveSelectionT.hh"
+#include "../Knotvector/knotvectorSelectionT.hh"
 
 //== NAMESPACES ===============================================================
 
@@ -12,78 +13,85 @@ namespace BSplineCurveSelection {
 //== DEFINITIONS ==============================================================
 
 //=========================================================
-//== Vertex Selection =======================================
+//== Vertex Selection (selects control points) ============
 //=========================================================  
   
   
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void selectVertices(BSplineT* _bSpline, std::vector< int >& _vertices) {
-  const int max = _bSpline->n_control_points();
-  if(_bSpline->vertex_selections_available())
+void 
+selectVertices(BSplineCurveT* _bSplineCurve, std::vector< int >& _vertices) 
+{
+  const int max = _bSplineCurve->n_control_points();
+  if(_bSplineCurve->controlpoint_selections_available())
     for ( unsigned int i = 0 ; i < _vertices.size(); ++i ) 
       if ( (_vertices[i] > 0) && ( _vertices[i] < max ) )
-        _bSpline->vertex_selection(_vertices[i]) = true;  
+        _bSplineCurve->controlpoint_selection(_vertices[i]) = true;  
 }
   
 //-----------------------------------------------------------------------------    
   
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void unselectVertices(BSplineT* _bSpline, std::vector< int >& _vertices) {
-  const int max = _bSpline->n_control_points();
-  if(_bSpline->vertex_selections_available())
+void 
+unselectVertices(BSplineCurveT* _bSplineCurve, std::vector< int >& _vertices) 
+{
+  const int max = _bSplineCurve->n_control_points();
+  if (_bSplineCurve->controlpoint_selections_available())
     for ( unsigned int i = 0 ; i < _vertices.size(); ++i ) 
       if ( (_vertices[i] > 0) && ( _vertices[i] < max ) )
-        _bSpline->vertex_selection(_vertices[i]) = false;  
+        _bSplineCurve->controlpoint_selection(_vertices[i]) = false;  
 }
   
 //-----------------------------------------------------------------------------  
   
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void selectAllVertices(BSplineT* _bSpline) 
+void 
+selectAllVertices(BSplineCurveT* _bSplineCurve) 
 {
-  if(_bSpline->vertex_selections_available())
-    for(unsigned int i=0; i< _bSpline->n_control_points(); ++i)
-      _bSpline->vertex_selection(i) = true;
+  if (_bSplineCurve->controlpoint_selections_available())
+    for (unsigned int i = 0; i< _bSplineCurve->n_control_points(); ++i)
+      _bSplineCurve->controlpoint_selection(i) = true;
 }
-
 
 //-----------------------------------------------------------------------------
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void clearVertexSelection(BSplineT* _bSpline)
+void 
+clearVertexSelection(BSplineCurveT* _bSplineCurve)
 {
-  if(_bSpline->vertex_selections_available())
-    for(unsigned int i=0; i< _bSpline->n_control_points(); ++i)
-      _bSpline->vertex_selection(i) = false;
+  if (_bSplineCurve->controlpoint_selections_available())
+    for(unsigned int i = 0; i < _bSplineCurve->n_control_points(); ++i)
+      _bSplineCurve->controlpoint_selection(i) = false;
 }
-
 
 //-----------------------------------------------------------------------------
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline      
-void invertVertexSelection(BSplineT* _bSpline)
+void 
+invertVertexSelection(BSplineCurveT* _bSplineCurve)
 {
-  if(_bSpline->vertex_selections_available())
-    for(unsigned int i=0; i< _bSpline->n_control_points(); ++i)
-      _bSpline->vertex_selection(i) = !_bSpline->vertex_selection(i);
+  if (_bSplineCurve->controlpoint_selections_available())
+    for (unsigned int i = 0; i < _bSplineCurve->n_control_points(); ++i)
+      _bSplineCurve->controlpoint_selection(i) = !_bSplineCurve->controlpoint_selection(i);
 }
 
 //-----------------------------------------------------------------------------
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline    
-std::vector< int > getVertexSelection(BSplineT* _bSpline) {
+std::vector< int > 
+getVertexSelection(BSplineCurveT* _bSplineCurve) 
+{
   std::vector< int > selection;  
-  if( ! _bSpline->vertex_selections_available() )
+  if ( !_bSplineCurve->controlpoint_selections_available() )
     return selection;
   
-  for(unsigned int i=0; i< _bSpline->n_control_points(); ++i)
-    if (_bSpline->vertex_selection(i) )
+  for (unsigned int i = 0; i < _bSplineCurve->n_control_points(); ++i)
+    if (_bSplineCurve->controlpoint_selection(i) )
       selection.push_back(i);
   
   return selection;
@@ -91,87 +99,155 @@ std::vector< int > getVertexSelection(BSplineT* _bSpline) {
 
 
 //=========================================================
-//== EdgeSelection =======================================
+//== Knot Selection =======================================
 //=========================================================
 
-template< typename BSplineT >
+  
+template< typename BSplineCurveT >
 inline
-void selectEdges(BSplineT* _bSpline, std::vector< int >& _edges) {
-  const int max = _bSpline->n_control_points();
-  if(_bSpline->edge_selections_available())
-    for ( unsigned int i = 0 ; i < _edges.size(); ++i ) 
-      if ( (_edges[i] > 0) && ( _edges[i] < max ) )
-        _bSpline->edge_selection(_edges[i]) = true;  
+void 
+selectKnots(BSplineCurveT* _bSplineCurve, std::vector< int >& _knots) 
+{
+  KnotvectorSelection::selectKnots(_bSplineCurve->get_knotvector_ref(), _knots);
 }
   
 //-----------------------------------------------------------------------------    
   
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void unselectEdges(BSplineT* _bSpline, std::vector< int >& _edges) {
-  const int max = _bSpline->n_control_points();
-  if(_bSpline->edge_selections_available())
-    for ( unsigned int i = 0 ; i < _edges.size(); ++i ) 
-      if ( (_edges[i] > 0) && ( _edges[i] < max ) )
-        _bSpline->edge_selection(_edges[i]) = false;  
+void 
+unselectKnots(BSplineCurveT* _bSplineCurve, std::vector< int >& _knots) 
+{
+  KnotvectorSelection::unselectKnots(_bSplineCurve->get_knotvector_ref(), _knots);
 }
   
 //-----------------------------------------------------------------------------  
-
-template< typename BSplineT >
+  
+template< typename BSplineCurveT >
 inline
-void selectAllEdges(BSplineT* _bSpline) 
+void 
+selectAllKnots(BSplineCurveT* _bSplineCurve) 
 {
-  if(_bSpline->edge_selections_available())
-    for(unsigned int i=0; i< _bSpline->n_control_points(); ++i)
-      _bSpline->edge_selection(i) = true;
+  KnotvectorSelection::selectAllKnots(_bSplineCurve->get_knotvector_ref());
 }
-
 
 //-----------------------------------------------------------------------------
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void clearEdgeSelection(BSplineT* _bSpline)
+void 
+clearKnotSelection(BSplineCurveT* _bSplineCurve)
 {
-  if(_bSpline->edge_selections_available())
-    for(unsigned int i=0; i< _bSpline->n_control_points(); ++i)
-      _bSpline->edge_selection(i) = false;
+  KnotvectorSelection::clearKnotSelection(_bSplineCurve->get_knotvector_ref());
 }
-
 
 //-----------------------------------------------------------------------------
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline      
-void invertEdgeSelection(BSplineT* _bSpline)
+void 
+invertKnotSelection(BSplineCurveT* _bSplineCurve)
 {
-  if(_bSpline->edge_selections_available())
-    for(unsigned int i=0; i< _bSpline->n_control_points(); ++i)
-      _bSpline->edge_selection(i) = !_bSpline->edge_selection(i);
+  KnotvectorSelection::invertKnotSelection(_bSplineCurve->get_knotvector_ref());
 }
 
 //-----------------------------------------------------------------------------
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline    
-std::vector< int > getEdgeSelection(BSplineT* _bSpline) {
+std::vector< int > 
+getKnotSelection(BSplineCurveT* _bSplineCurve) 
+{
   std::vector< int > selection;  
-  if( ! _bSpline->edge_selections_available() )
-    return selection;
-  
-  for(unsigned int i=0; i< _bSpline->n_control_points(); ++i)
-    if (_bSpline->edge_selection(i) )
-      selection.push_back(i);
-  
+  selection = KnotvectorSelection::getKnotSelection(_bSplineCurve->get_knotvector_ref());
   return selection;
 }
 
 
+//=========================================================
+//== Edge Selection =======================================
+//=========================================================
+
+template< typename BSplineCurveT >
+inline
+void 
+selectEdges(BSplineCurveT* _bSplineCurve, std::vector< int >& _edges) 
+{
+  const int max = _bSplineCurve->n_control_points();
+  if (_bSplineCurve->edge_selections_available())
+    for ( unsigned int i = 0 ; i < _edges.size(); ++i ) 
+      if ( (_edges[i] > 0) && ( _edges[i] < max ) )
+        _bSplineCurve->edge_selection(_edges[i]) = true;  
+}
+  
+//-----------------------------------------------------------------------------    
+  
+template< typename BSplineCurveT >
+inline
+void 
+unselectEdges(BSplineCurveT* _bSplineCurve, std::vector< int >& _edges) 
+{
+  const int max = _bSplineCurve->n_control_points();
+  if (_bSplineCurve->edge_selections_available())
+    for ( unsigned int i = 0 ; i < _edges.size(); ++i ) 
+      if ( (_edges[i] > 0) && ( _edges[i] < max ) )
+        _bSplineCurve->edge_selection(_edges[i]) = false;  
+}
+  
+//-----------------------------------------------------------------------------  
+
+template< typename BSplineCurveT >
+inline
+void 
+selectAllEdges(BSplineCurveT* _bSplineCurve) 
+{
+  if (_bSplineCurve->edge_selections_available())
+    for (unsigned int i = 0; i < _bSplineCurve->n_control_points(); ++i)
+      _bSplineCurve->edge_selection(i) = true;
 }
 
+//-----------------------------------------------------------------------------
+
+template< typename BSplineCurveT >
+inline
+void 
+clearEdgeSelection(BSplineCurveT* _bSplineCurve)
+{
+  if (_bSplineCurve->edge_selections_available())
+    for (unsigned int i = 0; i < _bSplineCurve->n_control_points(); ++i)
+      _bSplineCurve->edge_selection(i) = false;
+}
+
+//-----------------------------------------------------------------------------
+
+template< typename BSplineCurveT >
+inline      
+void 
+invertEdgeSelection(BSplineCurveT* _bSplineCurve)
+{
+  if (_bSplineCurve->edge_selections_available())
+    for (unsigned int i = 0; i < _bSplineCurve->n_control_points(); ++i)
+      _bSplineCurve->edge_selection(i) = !_bSplineCurve->edge_selection(i);
+}
+
+//-----------------------------------------------------------------------------
+
+template< typename BSplineCurveT >
+inline    
+std::vector< int > 
+getEdgeSelection(BSplineCurveT* _bSplineCurve) 
+{
+  std::vector< int > selection;  
+  if (!_bSplineCurve->edge_selections_available())
+    return selection;
+  
+  for (unsigned int i= 0 ; i < _bSplineCurve->n_control_points(); ++i)
+    if (_bSplineCurve->edge_selection(i) )
+      selection.push_back(i);
+  
+  return selection;
+}
 
 //------------------------------------------------------------------------------
 
-
-
+}
