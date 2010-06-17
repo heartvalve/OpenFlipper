@@ -102,7 +102,7 @@ public:
     polygon_color_           = Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0);
     polygon_highlight_color_ = Vec4f(0,1,0,1);
     curve_color_             = Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0);
-    curve_highlight_color_   = Vec4f(1, 69.0 / 255.0, 0, 1);
+    curve_highlight_color_   = Vec4f(1.0, 127.0/255.0, 0.0, 1.0);
     
     pick_init_texturing();
   }

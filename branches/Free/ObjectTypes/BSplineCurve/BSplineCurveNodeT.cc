@@ -551,7 +551,10 @@ pick_spline( GLState& _state, unsigned int _offset )
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-  glEnable(GL_TEXTURE_1D);
+  glEnable(GL_TEXTURE_2D);
+//   glEnable(GL_TEXTURE_1D);
+//   glEnable(GL_MAP1_TEXTURE_COORD_1);
+
 
   if( _state.pick_current_index () != pick_texture_baseidx_)
   {
@@ -564,8 +567,13 @@ pick_spline( GLState& _state, unsigned int _offset )
 
   pick_draw_textured_nurbs( _state);
 
-  glBindTexture( GL_TEXTURE_1D, 0);
-  glDisable(GL_TEXTURE_1D);
+//   glBindTexture( GL_TEXTURE_1D, 0);
+//   glDisable(GL_TEXTURE_1D);
+//   glDisable(GL_MAP1_TEXTURE_COORD_1);
+
+  glBindTexture( GL_TEXTURE_2D, 0);
+  glDisable(GL_TEXTURE_2D);
+
   glPopAttrib( );
 }
 
@@ -771,16 +779,18 @@ pick_draw_textured_nurbs( GLState& _state)
 //   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
   GLfloat   tcoords[2] = {0.0, 1.0};
 
+
   // knots of domain, over which tcoords shall be linearly interpolated
 //   GLfloat   tknots[2] = {minu, maxu};
-//   GLfloat   tknots[4] = {minu, minu, maxu, maxu};
-  GLfloat   tknots[4] = {minu/(maxu - minu), minu/(maxu - minu), maxu/(maxu - minu), maxu/(maxu - minu)};
+  GLfloat   tknots[4] = {minu, minu, maxu, maxu};
+//   GLfloat   tknots[4] = {minu/(maxu - minu), minu/(maxu - minu), maxu/(maxu - minu), maxu/(maxu - minu)};
 
   // begin drawing nurbs
   gluBeginCurve(theNurb);
 
   // first enable texture coordinate mapping
-  gluNurbsCurve(theNurb, 4, tknots, 1, &tcoords[0], 2, GL_MAP1_TEXTURE_COORD_1);
+  gluNurbsCurve(theNurb, 4, tknots, 1, tcoords, 2, GL_MAP1_TEXTURE_COORD_1);
+//   gluNurbsCurve(theNurb, 4, tknots, 1, &tcoords[0], 2, GL_MAP1_TEXTURE_COORD_1);
 
   // draw surface
   gluNurbsCurve(theNurb, numKnots, knots, 3, ctlpoints, order, GL_MAP1_VERTEX_3);
@@ -792,6 +802,177 @@ pick_draw_textured_nurbs( GLState& _state)
   delete[] ctlpoints;
 }
 
+//----------------------------------------------------------------------------
+
+
+/*
+
+template <class BSplineCurve>
+void
+BSplineCurveNodeT<BSplineCurve>::
+pick_init_texturing( )
+{
+  pick_texture_res_     = 256;
+  pick_texture_baseidx_ = 0;
+
+  // generate texture index
+  glGenTextures( 1, &pick_texture_idx_ );
+  // bind texture as current
+  glBindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
+  // do not blend colors (else color picking breaks!)
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+  // avoid aliasing at patch boundaries
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+  // GL_REPLACE to avoid smearing colors (else color picking breaks!)
+  glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+  // unbind current texture
+  glBindTexture( GL_TEXTURE_2D, 0);
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineCurve>
+void
+BSplineCurveNodeT<BSplineCurve>::
+pick_create_texture( GLState& _state)
+{
+  QImage b(pick_texture_res_, 2, QImage::Format_ARGB32);
+  
+  std::cout << "texture of size " << b.width() << " x " << b.height() << std::endl;
+  
+     
+  // fill with colors
+  int cur_idx = 0;
+  bool green = false;
+  for( int i = 0; i < pick_texture_res_; ++i)
+  {
+    Vec4uc cur_col( _state.pick_get_name_color (cur_idx) );
+//     b.setPixel (i, 0, qRgba((int)cur_col[0], (int)cur_col[1], (int)cur_col[2], (int)cur_col[3]));
+//     b.setPixel (i, 1, qRgba((int)cur_col[0], (int)cur_col[1], (int)cur_col[2], (int)cur_col[3]));
+    
+    if (i % 10 == 0)
+      green = !green;
+    
+    if (green){
+      b.setPixel (i, 0, qRgba(0, 255, 0, 255));
+      b.setPixel (i, 1, qRgba(0, 255, 0, 255));
+    }
+    else{
+      b.setPixel (i, 0, qRgba(255, 0, 255, 255));
+      b.setPixel (i, 1, qRgba(255, 0, 255, 255));
+    }
+    
+    cur_idx++;
+  }
+
+  // debug, output image (usually does not look as expected :\ )
+  b.save("2Dcurvetexture.png", "PNG");
+  
+  
+  pick_texture_image_ = QGLWidget::convertToGLFormat( b );
+
+  // bind texture 
+  glBindTexture( GL_TEXTURE_2D, pick_texture_idx_ );
+  glTexImage2D(  GL_TEXTURE_2D,
+                 0, GL_RGBA, pick_texture_image_.width(), pick_texture_image_.height(), 
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, pick_texture_image_.bits() );
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineCurve>
+void
+BSplineCurveNodeT<BSplineCurve>::
+pick_draw_textured_nurbs( GLState& _state)
+{
+  std::cout << "[BSplineCurveNodeT] pick_draw_textured_nurbs" << std::endl;
+  
+  int numKnots     = bsplineCurve_.n_knots();
+  const int numCPs = bsplineCurve_.n_control_points();
+  int order        = bsplineCurve_.degree() + 1;
+
+  // get kntvector
+  std::cout << "knots: " << std::flush;
+  GLfloat *knots = new GLfloat[numKnots];
+  for (int i = 0; i < numKnots; ++i)
+  {
+    knots[i] = bsplineCurve_.get_knot(i);
+    std::cout << bsplineCurve_.get_knot(i) << ", " << std::flush;
+  }
+  std::cout << std::endl;
+ 
+  // get control points
+  GLfloat *ctlpoints = new GLfloat[numCPs * 3];
+  for (int i = 0; i < numCPs; ++i)
+  {
+    Vec3d p = bsplineCurve_.get_control_point(i);
+    ctlpoints[i * 3 + 0] = (GLfloat)p[0];
+    ctlpoints[i * 3 + 1] = (GLfloat)p[1];
+    ctlpoints[i * 3 + 2] = (GLfloat)p[2];
+  }
+  
+  
+  
+
+  GLUnurbsObj *theNurb;
+  theNurb = gluNewNurbsRenderer();
+
+  gluNurbsCallback(theNurb, GLU_ERROR, (GLvoid (*)()) nurbsError);
+
+  // draw filled
+  gluNurbsProperty(theNurb, GLU_DISPLAY_MODE, GLU_FILL);
+
+  // object space -> fixed (non-adaptive) sampling
+  gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_OBJECT_PARAMETRIC_ERROR);
+  gluNurbsProperty(theNurb, GLU_PARAMETRIC_TOLERANCE, 0.2);
+
+  // get min/max knots of domain defining patch (partition of unity)
+  float  minu( knots[bsplineCurve_.degree()]);
+  float  maxu( knots[numKnots - order]);
+  std::cout << "minu = " << minu << ", maxu = " << maxu << std::endl;
+
+  // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
+  GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+
+  // knots of domain, over which tcoords shall be linearly interpolated
+  GLfloat   tknots[4] = {minu, minu, maxu, maxu};
+  GLfloat   sknots[4] = {minu, minu, maxu, maxu};
+//   GLfloat   sknots[4] = {minv, minv, maxv, maxv};
+
+  
+  
+  // begin drawing nurbs
+  gluBeginCurve(theNurb);
+
+  // first enable texture coordinate mapping
+  gluNurbsCurve(theNurb, 4, tknots, 2, tcoords, 2, GL_MAP2_TEXTURE_COORD_2);
+//   gluNurbsCurve(theNurb, 4, tknots, 1, &tcoords[0], 2, GL_MAP1_TEXTURE_COORD_1);
+
+  // draw surface
+  gluNurbsCurve(theNurb, numKnots, knots, 3, ctlpoints, order, GL_MAP1_VERTEX_3);
+  gluEndCurve(theNurb);
+  
+  
+
+//   // begin drawing nurbs
+//   gluBeginSurface(theNurb);
+
+//   // first enable texture coordinate mapping
+//   gluNurbsSurface(theNurb, 4, tknots, 4, sknots, 2*2, 2, &tcoords[0], 2, 2, GL_MAP2_TEXTURE_COORD_2); 
+
+//   // draw surface
+//   gluNurbsSurface(theNurb, numKnots_m, knots_m, numKnots_n, knots_n, numCPs_n * 3, 3, ctlpoints, order_m, order_n, GL_MAP2_VERTEX_3);
+//   gluEndSurface(theNurb);
+
+
+  gluDeleteNurbsRenderer(theNurb);
+
+  delete[] knots;
+  delete[] ctlpoints;
+}
+*/
 
 //=============================================================================
 } // namespace SceneGraph

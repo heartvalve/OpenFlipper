@@ -115,7 +115,7 @@ class DLLEXPORT BSplineCurveObject : public BaseObjectData {
     /// Set the name of the Object
     void setName( QString _name );
 
-
+    
   //===========================================================================
   /** @name Content
    * @{ */
@@ -125,6 +125,9 @@ class DLLEXPORT BSplineCurveObject : public BaseObjectData {
     /// return a pointer to the spline curve
     BSplineCurve* splineCurve();
 
+    /// Update the whole Object (Selection,Topology,...)
+    virtual void update(UpdateType _type = UPDATE_ALL);
+    
   private:
     BSplineCurve* splineCurve_;
 
