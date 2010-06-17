@@ -270,7 +270,6 @@ int glViewer::pickColor( ACG::SceneGraph::PickTarget _pickTarget,
 
   std::vector<unsigned int> rv = properties_.glState().pick_color_to_stack (rgba);
 
-  std::cerr << "color " << (ACG::Vec4ui)rgba << std::endl;
   // something wrong with the color stack ?
   if (rv.size () < 2)
     return -1;
