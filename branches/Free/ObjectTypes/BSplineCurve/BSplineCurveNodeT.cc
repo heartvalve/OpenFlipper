@@ -418,8 +418,8 @@ pick(GLState& _state, PickTarget _target)
     {
       _state.pick_set_maximum (bsplineCurve_.n_control_points() + curve_samples_.size());
       pick_vertices(_state);
-      pick_spline(_state, bsplineCurve_.n_control_points());
-//       pick_curve(_state, bsplineCurve_.n_control_points());
+//       pick_spline(_state, bsplineCurve_.n_control_points());
+      pick_curve(_state, bsplineCurve_.n_control_points());
       break;
     }
 
