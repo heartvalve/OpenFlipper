@@ -112,11 +112,12 @@ toggleBSplineCurveSelection(QMouseEvent* _event)
         // toggle selection
         if( bsco->splineCurve()->get_knotvector_ref()->selections_available() )
         {
-          if( target_idx < bsco->splineCurve()->get_knotvector_ref()->size())
+          if( target_idx < bsco->splineCurve()->get_knotvector_ref()->size()) {
             if( bsco->splineCurve()->get_knotvector_ref()->selection( target_idx) == 0)
               bsco->splineCurve()->get_knotvector_ref()->selection( target_idx ) = 1;
             else
               bsco->splineCurve()->get_knotvector_ref()->selection( target_idx ) = 0;
+          }
         }
   
         emit updateView();
