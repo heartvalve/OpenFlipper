@@ -1,10 +1,19 @@
+//=============================================================================
+//
+//  BSplineCurve Selection
+//
+//  Author:  Ellen Dekkers <dekkers@cs.rwth-aachen.de>
+//
+//  $Date$
+//
+//=============================================================================
 
-#ifndef BSPLINESELECTION_HH
-#define BSPLINESELECTION_HH
+#ifndef BSPLINECURVESELECTION_HH
+#define BSPLINECURVESELECTION_HH
 
 
-/*! \file bSplineCurveSelection.hh
-    \brief Functions for selection on a BSpline
+/*! \file bSplineCurveSelectionT.hh
+    \brief Functions for selection on a BSpline curve
     
 */
 
@@ -23,29 +32,29 @@ namespace BSplineCurveSelection {
  * @{ */
 //===========================================================================    
   
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void selectVertices(BSplineT* _bSpline, std::vector< int >& _vertices);
+void selectVertices(BSplineCurveT* _bSplineCurve, std::vector< int >& _vertices);
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void unselectVertices(BSplineT* _bSpline, std::vector< int >& _vertices);
+void unselectVertices(BSplineCurveT* _bSplineCurve, std::vector< int >& _vertices);
   
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void selectAllVertices(BSplineT* _bSpline);
+void selectAllVertices(BSplineCurveT* _bSplineCurve);
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void clearVertexSelection(BSplineT* _bSpline);
+void clearVertexSelection(BSplineCurveT* _bSplineCurve);
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline      
-void invertVertexSelection(BSplineT* _bSpline);
+void invertVertexSelection(BSplineCurveT* _bSplineCurve);
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline    
-std::vector< int > getVertexSelection(BSplineT* _bSpline);
+std::vector< int > getVertexSelection(BSplineCurveT* _bSplineCurve);
 
 /** @} */  
 
@@ -54,30 +63,61 @@ std::vector< int > getVertexSelection(BSplineT* _bSpline);
  * @{ */
 //===========================================================================  
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void selectEdges(BSplineT* _bSpline, std::vector< int >& _edges);
+void selectEdges(BSplineCurveT* _bSplineCurve, std::vector< int >& _edges);
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void unselectEdges(BSplineT* _bSpline, std::vector< int >& _edges);
+void unselectEdges(BSplineCurveT* _bSplineCurve, std::vector< int >& _edges);
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void selectAllEdges(BSplineT* _bSpline);
+void selectAllEdges(BSplineCurveT* _bSplineCurve);
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline
-void clearEdgeSelection(BSplineT* _bSpline);
+void clearEdgeSelection(BSplineCurveT* _bSplineCurve);
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline      
-void invertEdgeSelection(BSplineT* _bSpline);
+void invertEdgeSelection(BSplineCurveT* _bSplineCurve);
 
 
-template< typename BSplineT >
+template< typename BSplineCurveT >
 inline    
-std::vector< int > getEdgeSelection(BSplineT* _bSpline);
+std::vector< int > getEdgeSelection(BSplineCurveT* _bSplineCurve);
+
+/** @} */ 
+
+//===========================================================================
+/** @name Knot Selection
+ * @{ */
+//===========================================================================  
+
+template< typename BSplineCurveT >
+inline
+void selectKnots(BSplineCurveT* _bSplineCurve, std::vector< int >& _knots);
+
+template< typename BSplineCurveT >
+inline
+void unselectKnots(BSplineCurveT* _bSplineCurve, std::vector< int >& _knots);
+  
+template< typename BSplineCurveT >
+inline
+void selectAllKnots(BSplineCurveT* _bSplineCurve);
+
+template< typename BSplineCurveT >
+inline
+void clearKnotSelection(BSplineCurveT* _bSplineCurve);
+
+template< typename BSplineCurveT >
+inline      
+void invertKnotSelection(BSplineCurveT* _bSplineCurve);
+
+template< typename BSplineCurveT >
+inline    
+std::vector< int > getKnotSelection(BSplineCurveT* _bSplineCurve);
 
 /** @} */ 
 
@@ -85,11 +125,11 @@ std::vector< int > getEdgeSelection(BSplineT* _bSpline);
 } // BSplineCurveSelection Namespace 
 //=============================================================================
 
-#if defined(INCLUDE_TEMPLATES) && !defined(BSPLINESELECTION_C)
-#define BSPLINESELECTION_TEMPLATES
+#if defined(INCLUDE_TEMPLATES) && !defined(BSPLINECURVESELECTION_C)
+#define BSPLINECURVESELECTION_TEMPLATES
 #include "bSplineCurveSelectionT.cc"
 #endif
              
 //=============================================================================
-#endif // BSPLINESELECTION_HH defined
+#endif // BSPLINECURVESELECTION_HH defined
 //=============================================================================

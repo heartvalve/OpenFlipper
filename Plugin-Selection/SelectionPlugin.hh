@@ -80,6 +80,10 @@
 #include <ObjectTypes/BSplineCurve/BSplineCurve.hh>
 #endif
 
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+#include <ObjectTypes/BSplineSurface/BSplineSurface.hh>
+#endif
+
 #ifdef ENABLE_SKELETON_SUPPORT
 #include <ObjectTypes/Skeleton/Skeleton.hh>
 #endif
@@ -101,10 +105,11 @@
 #define CREATEMESH "Create Mesh from Selection"
 
 enum SelectionPrimitive {
-  VERTEX = 0x01,
-  EDGE   = 0x02,
-  FACE   = 0x04,
-  OBJECT = 0x08
+  VERTEX = 1,
+  EDGE   = 2,
+  FACE   = 4,
+  OBJECT = 8,
+  KNOT   = 16
 };
 
 class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, INIInterface, BackupInterface, LoggingInterface, ScriptInterface, ContextMenuInterface, ToolbarInterface, LoadSaveInterface
@@ -321,6 +326,11 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     #ifdef ENABLE_BSPLINECURVE_SUPPORT
       /// Toggle the selection state in BSplineCurves
       void toggleBSplineCurveSelection(QMouseEvent* _event);
+    #endif
+    
+    #ifdef ENABLE_BSPLINESURFACE_SUPPORT
+      /// Toggle the selection state in BSplineSurfaces
+      void toggleBSplineSurfaceSelection(QMouseEvent* _event);
     #endif
 
     #ifdef ENABLE_SKELETON_SUPPORT
@@ -578,6 +588,43 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     /// colorize the face selection
     void colorizeFaceSelection(int objectId, int r, int g, int b );
 
+    
+    //==========================================
+    // KNOT SELECTION
+    //==========================================
+    
+    /// select given knots
+    void selectKnots( int objectId , IdList _knotList );
+
+    /// unselect given knots
+    void unselectKnots( int objectId , IdList _knotList );
+
+    /// Select all knots
+    void selectAllKnots( int objectId );
+
+    /// Unselect all knots
+    void clearKnotSelection( int objectId );
+
+    /// Invert the current knot selection
+    void invertKnotSelection( int objectId );
+
+//    /// Select all boundary vertices of the given object
+//     void selectBoundaryVertices( int objectId );
+
+//    /// Select all vertices of the boundary close to the given vertex
+//    void selectClosestBoundaryVertices( int objectId, int VertexId );
+
+//    /// Shrink the current Knot selection
+//    void shrinkKnotSelection( int objectId );
+
+//    /// Grow the current knot selection
+//    void growKnotSelection( int objectId );
+
+    /// return a list of all selected knots
+    IdList getKnotSelection( int objectId );
+
+    //==========================================
+    
     /// save Selections into File
     void saveSelections();
 
