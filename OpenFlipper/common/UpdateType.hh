@@ -82,14 +82,20 @@ const UpdateType UPDATE_SELECTION_EDGES( UpdateTypeSet(1) << 6 );
 */
 const UpdateType UPDATE_SELECTION_FACES( UpdateTypeSet(1) << 7 );
 
+/** \brief Knot selection has changed
+*
+* This is a more fine grained selection update. UPDATE_SELECTION will also match this update type.
+*/
+const UpdateType UPDATE_SELECTION_KNOTS( UpdateTypeSet(1) << 8 );
+
 /** \brief Colors have changed
 *
 * Update the colors. This does not have to be called when topology is also updated
 */
-const UpdateType UPDATE_COLOR( UpdateTypeSet(1) << 8 );
+const UpdateType UPDATE_COLOR( UpdateTypeSet(1) << 9 );
 
 /// marks the last used ID
-const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 9 );
+const UpdateType UPDATE_UNUSED ( UpdateTypeSet(1) << 10 );
 
 //=====================================================================================
 // FUNCTIONS
