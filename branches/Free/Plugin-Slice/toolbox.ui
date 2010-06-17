@@ -1,0 +1,408 @@
+<ui version="4.0" >
+ <class>SliceTool</class>
+ <widget class="QWidget" name="SliceTool" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>339</width>
+    <height>210</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QFormLayout" name="formLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label_4" >
+       <property name="text" >
+        <string>Bounding Box:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+       <item>
+        <widget class="QRadioButton" name="radioTarget" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>Use only target objects to determine the bounding box for the slice</string>
+         </property>
+         <property name="statusTip" >
+          <string>Use only target objects to determine the bounding box for the slice</string>
+         </property>
+         <property name="text" >
+          <string>Target Objects</string>
+         </property>
+         <property name="autoExclusive" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioAll" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>Use all objects to determine the bounding box for the slice</string>
+         </property>
+         <property name="statusTip" >
+          <string>Use all objects to determine the bounding box for the slice</string>
+         </property>
+         <property name="text" >
+          <string>All Objects</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>Axis:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <layout class="QHBoxLayout" name="horizontalLayout" >
+       <item>
+        <widget class="QRadioButton" name="radioX" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>Uses X as slicing axis</string>
+         </property>
+         <property name="statusTip" >
+          <string>Uses X as slicing axis</string>
+         </property>
+         <property name="text" >
+          <string>X</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+         <property name="autoExclusive" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioY" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>Uses Y as slicing axis</string>
+         </property>
+         <property name="statusTip" >
+          <string>Uses Y as slicing axis</string>
+         </property>
+         <property name="text" >
+          <string>Y</string>
+         </property>
+         <property name="autoExclusive" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="radioZ" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>Uses Z as slicing axis</string>
+         </property>
+         <property name="statusTip" >
+          <string>Uses Z as slicing axis</string>
+         </property>
+         <property name="text" >
+          <string>Z</string>
+         </property>
+         <property name="autoExclusive" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>Position:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="QSlider" name="posSlider" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="toolTip" >
+        <string>Adjust the position of the slice</string>
+       </property>
+       <property name="statusTip" >
+        <string>Adjust the position of the slice</string>
+       </property>
+       <property name="minimum" >
+        <number>-101</number>
+       </property>
+       <property name="maximum" >
+        <number>101</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>Size:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="QSlider" name="sizeSlider" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="toolTip" >
+        <string>Adjust the size of the slice</string>
+       </property>
+       <property name="statusTip" >
+        <string>Adjust the size of the slice</string>
+       </property>
+       <property name="minimum" >
+        <number>0</number>
+       </property>
+       <property name="maximum" >
+        <number>102</number>
+       </property>
+       <property name="value" >
+        <number>102</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" >
+      <widget class="QPushButton" name="resetButton" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="toolTip" >
+        <string>Reset the above parameters</string>
+       </property>
+       <property name="statusTip" >
+        <string>Reset the above parameters</string>
+       </property>
+       <property name="text" >
+        <string>Reset</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="enabled" >
+     <property name="toolTip" >
+      <string>Enable slicing for the current scene</string>
+     </property>
+     <property name="statusTip" >
+      <string>Enable slicing for the current scene</string>
+     </property>
+     <property name="text" >
+      <string>Enable Slicing</string>
+     </property>
+     <property name="checkable" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>enabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sizeSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>154</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>251</x>
+     <y>105</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>posSlider</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>278</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>325</x>
+     <y>83</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>radioZ</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>249</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>324</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>radioX</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>95</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>129</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>radioY</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>146</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>227</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>radioTarget</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>194</x>
+     <y>185</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>170</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>radioAll</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>224</x>
+     <y>171</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>230</x>
+     <y>24</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enabled</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>resetButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>284</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>289</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
