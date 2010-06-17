@@ -53,6 +53,7 @@
 //== INCLUDES =================================================================
 
 #include <OpenFlipper/common/Types.hh>
+#include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include "BSplineCurve.hh"
 
 //== DEFINES ==================================================================
@@ -198,6 +199,35 @@ void BSplineCurveObject::setName( QString _name ) {
 BSplineCurve* BSplineCurveObject::splineCurve() {
   return splineCurve_;
 }
+
+//-----------------------------------------------------------------------------
+
+/// Update the whole Object (Selection,Topology,...)
+void 
+BSplineCurveObject::
+update(UpdateType _type)
+{
+  if ( _type.contains(UPDATE_ALL))
+  {
+    PluginFunctions::setMainGLContext();
+//     splineCurveNode()->updateGeometry();
+  }
+  else 
+  {
+    PluginFunctions::setMainGLContext();
+    
+    if (_type.contains(UPDATE_GEOMETRY) )
+    {
+      splineCurveNode()->updateGeometry();
+    }
+    else if (_type.contains(UPDATE_SELECTION_KNOTS) )
+    {
+      // actually only the color needs to be recomputed, not the samples
+      splineCurveNode()->updateGeometry();
+    }
+  }
+}
+
 
 // ===============================================================================
 // Visualization
