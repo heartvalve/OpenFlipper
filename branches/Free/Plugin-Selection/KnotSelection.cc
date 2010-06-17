@@ -50,9 +50,9 @@
 #include "BSplineCurve/bSplineCurveSelectionT.hh"
 #endif      
 
-// #ifdef ENABLE_BSPLINESURFACE_SUPPORT         
-// #include "BSplineSurface/bSplineSurfaceSelectionT.hh"
-// #endif      
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT         
+#include "BSplineSurface/bSplineSurfaceSelectionT.hh"
+#endif      
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
@@ -95,7 +95,6 @@ selectKnots( int objectId , IdList _knotList )
   
   selection += " ] )";
   
-//   emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit updatedObject(object->id(), UPDATE_SELECTION_KNOTS);
   emit scriptInfo( selection );
 }
@@ -138,7 +137,6 @@ unselectKnots( int objectId , IdList _knotList )
   
   selection += " ] )";
   
-//   emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit updatedObject(object->id(), UPDATE_SELECTION_KNOTS);
   emit scriptInfo( selection );
 }
@@ -173,7 +171,6 @@ selectAllKnots( int objectId )
   }
   
   emit updatedObject(object->id(), UPDATE_SELECTION_KNOTS);
-//   emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit scriptInfo( "selectAllKnots( ObjectId )" );
 }
 
@@ -203,7 +200,6 @@ clearKnotSelection( int objectId )
       return;
   }
   
-//   emit updatedObject(object->id(), UPDATE_SELECTION_VERTICES);
   emit updatedObject(object->id(), UPDATE_SELECTION_KNOTS);
   emit scriptInfo( "clearKnotSelection( ObjectId )" );
 }
@@ -376,7 +372,6 @@ getKnotSelection( int objectId )
   }
   
   return IdList(0);
-
 }
 
 //=========================================================
