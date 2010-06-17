@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 ( ? , 9549 RC7 )</b>
+ * - <b>OpenFlipper 1.0 ( ? , 9595 RC7 )</b>
  *      - <b>Core</b>
  *          - Added Light source management
  *              - Added global nodes to handle light sources
@@ -16,6 +16,8 @@
  *              - Fixed bug with scriptdir not set correctly on command line open
  *              - Made core.loadObject scriptable (automatically detects right file plugin to load object)
  *              - Fixed bug in scripted saveObject function where supported type was not correctly detected
+ *              - Fixed bug when converting matrix and vector types between scripting and core
+ *              - New function to add icon for view modes via script
  *          - Debugging
  *              - Windows debugging console for cerr and cout when building windows debug version
  *              - Increased stack frame size when doing debugging.
@@ -30,9 +32,12 @@
  *          - Parallel plugin loader (The plugins are preloaded in parallel. This gives a large speedup on startup)
  *          - Introduced update types to control partial uptdates (color,topology,geometry,...)
  *          - Added region picking functions ( render picking and get a region of the picking )
+ *          - Removed unused update type
  *      - <b>Object Types</b>
  *          - New Light Object
  *          - New Sphere Object
+ *          - New BSpline Curve Object
+ *          - New BSpline Surface Object
  *      - <b>Interfaces</b>
  *          - BackupInterface
  *              - Full redesign
@@ -84,7 +89,6 @@
  *              - Fixed bug with point only meshes, where face and edge buffers were accessed but not there.
  *              - When updating colors, invalidate face and edge buffers too ( otherwise no update is done)
  *              - Be more carefull and check if mesh properties used for redering vanished between render passes (e.g. textures after restore from backups)
- *              -
  *          -QtTranslationManipulatorNode
  *              - Added possibility to add QVariants to the node
  *          - SceneGraphWidget
@@ -148,6 +152,7 @@
  *              - Fix script generation for qt 4.6 ( in -> input rename as in causes a parse error )
  *              - Fixed draw errors on zooming
  *              - Additional Metadata for other algorithms
+ *              - Fixed bug when converting matrix and vector types between scripting and core
  *      - <b>Documentation</b>
  *          - Refactored documentation files ( One documentation directory, build targets)
  *          - Internal help files (qhc) are now searched automatically ( no need to specify at build time anymore!)
