@@ -1486,10 +1486,7 @@ int FileOBJPlugin::loadObject(QString _filename) {
     if ( bssObj )
       bssObj->setPath( _filename.section(QDir::separator() ,0,-2) );
 #endif
-
-    //general stuff
-    emit openedFile( object->id() );
-    
+ 
     //textures
     if ( importer.hasTexture(i) && !importer.hasOption( i, OBJImporter::FORCE_NOTEXTURES ) ){
       
@@ -1504,6 +1501,9 @@ int FileOBJPlugin::loadObject(QString _filename) {
       PluginFunctions::setDrawMode( ACG::SceneGraph::DrawModes::SOLID_2DTEXTURED_FACE_SHADED, PluginFunctions::ALL_VIEWERS );
 
     }
+    
+    //general stuff
+    emit openedFile( object->id() );
     
     PluginFunctions::viewAll();
   }
