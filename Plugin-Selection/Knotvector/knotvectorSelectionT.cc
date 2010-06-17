@@ -50,7 +50,7 @@ void
 selectAllKnots(KnotvectorT* _knotvector) 
 {
   if(_knotvector->selections_available())
-    for(unsigned int i = 0; i< _knotvector->size(); ++i)
+    for(unsigned int i = 0; i < _knotvector->size(); ++i)
       _knotvector->selection(i) = true;
 }
 
