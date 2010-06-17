@@ -1337,11 +1337,19 @@ void Core::setDescriptions(){
 
   emit setSlotDescription("addViewModeToolboxes(QString,QString)", tr("Set toolboxes for a viewmode (This automatically adds the view mode if it does not exist)"),
                           QString(tr("Name,Toolbox List")).split(","),
-                          QString(tr("Name of the Viewmode, ; seperated list of toolboxes visible in this viewmode")).split(","));
+                          QString(tr("Name of the Viewmode,seperated list of toolboxes visible in this viewmode")).split(","));
 
   emit setSlotDescription("addViewModeToolbars(QString,QString)", tr("Set toolbars for a viewmode (This automatically adds the view mode if it does not exist)"),
                           QString(tr("Name,Toolbar List")).split(","),
-                          QString(tr("Name of the Viewmode, ; seperated list of toolbars visible in this viewmode")).split(","));
+                          QString(tr("Name of the Viewmode,seperated list of toolbars visible in this viewmode")).split(","));
+                          
+  emit setSlotDescription("addViewModeContextMenus(QString,QString)", tr("Set context Menus for a viewmode (This automatically adds the view mode if it does not exist)"),
+                          QString(tr("Name,Context Menu List")).split(","),
+                          QString(tr("Name of the Viewmode,seperated list of Context Menus visible in this viewmode")).split(","));    
+                          
+  emit setSlotDescription("addViewModeIcon(QString,QString)", tr("Set Icon for a viewmode (This automatically adds the view mode if it does not exist)"),
+                          QString(tr("Name,Icon filename")).split(","),
+                          QString(tr("Name of the Viewmode,filename of the icon (will be taken from OpenFlippers icon directory")).split(","));                                                    
 
   emit setSlotDescription("objectList(QString,QStringList)", tr("Returns object list"),
                           QString(tr("Selection type,Object types")).split(","),
