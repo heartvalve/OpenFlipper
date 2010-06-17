@@ -78,7 +78,6 @@ BSplineCurveT( unsigned int _degree )
   ref_count_cpselections_(0),
   ref_count_eselections_(0)
 {
-  parameter_intervals_ = new std::vector< ParameterInterval >();
 }
 
 //-----------------------------------------------------------------------------
@@ -105,7 +104,6 @@ BSplineCurveT( const BSplineCurveT& _curve )
   ref_count_cpselections_ = _curve.ref_count_cpselections_;
   ref_count_eselections_ = _curve.ref_count_eselections_;
 
-  parameter_intervals_ = _curve.parameter_intervals_;
 }
 
 //-----------------------------------------------------------------------------

@@ -61,8 +61,6 @@
 
 #include <ObjectTypes/Knotvector/KnotvectorT.hh>
 
-#include <ObjectTypes/ParameterInterval/ParameterInterval.hh>
-
 //== FORWARDDECLARATIONS ======================================================
 
 //== NAMESPACES ===============================================================
@@ -218,11 +216,6 @@ private: // private functions
 
   /// Returns the upper parameter
   Scalar upper();
-
-
-public:
-
-  std::vector< ParameterInterval > * parameter_intervals_;
 
 
 public :
