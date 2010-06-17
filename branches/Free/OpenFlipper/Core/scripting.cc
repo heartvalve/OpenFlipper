@@ -172,6 +172,10 @@ void Core::addViewModeContextMenus(QString _modeName, QString _contextMenuList) 
   coreWidget_->slotAddViewModeContextMenus(_modeName,list);
 }
 
+void Core::addViewModeIcon(QString _modeName, QString _iconName) {
+  coreWidget_->slotSetViewModeIcon(_modeName,true,_iconName);
+}
+
 //-----------------------------------------------------------------------------
 
 void Core::addToolbox(QString _name ,QWidget* _widget) {

@@ -510,6 +510,13 @@ public slots:
     @param _toolboxList ; seperated list of context menus in the view mode
     */
     void addViewModeContextMenus(QString _modeName, QString _contextMenuList);
+    
+    /** \brief Scripting function to set an icon for a view mode
+    
+    @param _modeName Name of the View Mode
+    @param _toolboxList Name of the Icon File. Will be taken from OpenFlippers Icon directory
+    */
+    void addViewModeIcon(QString _modeName, QString _iconName);    
 
     /** @} */
 
