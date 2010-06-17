@@ -1349,7 +1349,7 @@ void Core::setDescriptions(){
                           
   emit setSlotDescription("addViewModeIcon(QString,QString)", tr("Set Icon for a viewmode (This automatically adds the view mode if it does not exist)"),
                           QString(tr("Name,Icon filename")).split(","),
-                          QString(tr("Name of the Viewmode,filename of the icon (will be taken from OpenFlippers icon directory")).split(","));                                                    
+                          QString(tr("Name of the Viewmode,filename of the icon (will be taken from OpenFlippers icon directory)")).split(","));                                                    
 
   emit setSlotDescription("objectList(QString,QStringList)", tr("Returns object list"),
                           QString(tr("Selection type,Object types")).split(","),
