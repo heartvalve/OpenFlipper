@@ -57,13 +57,6 @@
 #ifndef BSPLINESURFACEOBJECT_HH
 #define BSPLINESURFACEOBJECT_HH
 
-
-#ifdef WIN32
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT
-#endif
-
 //== INCLUDES =================================================================
 
 #include <ACG/Scenegraph/ShaderNode.hh>
@@ -71,6 +64,8 @@
 
 #include "BSplineSurfaceTypes.hh"
 #include <OpenFlipper/common/BaseObjectData.hh>
+#include <OpenFlipper/common/GlobalDefines.hh>
+
 
 #include "BSplineSurfaceNodeT.hh"
 
