@@ -52,7 +52,7 @@
 #define GLUDEBUG_H
 
 #include <ACG/GL/gl.hh>
-#include <ACG/config/ACGDefines.hh>
+#include <ACG/Config/ACGDefines.hh>
 
 void ACGDLLEXPORT nurbsErrorCallback(GLenum errorCode);
 
