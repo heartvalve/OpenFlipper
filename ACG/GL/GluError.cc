@@ -50,7 +50,7 @@
 #include "GluError.hh"
 #include <iostream>
 
-void nurbsError(GLenum errorCode)
+void nurbsErrorCallback(GLenum errorCode)
 {
   const GLubyte *estring;
   estring = gluErrorString(errorCode);
