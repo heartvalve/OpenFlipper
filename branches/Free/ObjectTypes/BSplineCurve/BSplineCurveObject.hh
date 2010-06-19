@@ -59,17 +59,12 @@
 #define BSPLINECURVEOBJECT_HH
 
 
-#ifdef WIN32
-#define DLLEXPORT __declspec(dllexport)
-#else
-#define DLLEXPORT
-#endif
-
 //== INCLUDES =================================================================
 
 #include <OpenFlipper/common/BaseObjectData.hh>
-
 #include <ObjectTypes/BSplineCurve/BSplineCurveNodeT.hh>
+
+#include <OpenFlipper/common/GlobalDefines.hh>
 #include "BSplineCurveTypes.hh"
 
 

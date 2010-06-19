@@ -55,6 +55,7 @@
 #include "BSplineSurfaceNodeT.hh"
 #include <ACG/GL/gl.hh>
 #include <ACG/GL/GluError.hh>
+#include <ACG/Utils/VSToolsT.hh>
 #include <vector>
 
 
@@ -299,7 +300,11 @@ drawGluNurbsMode(GLState& _state, bool _fill)
   GLUnurbsObj *theNurb;
   theNurb = gluNewNurbsRenderer();
 
-  gluNurbsCallback(theNurb, GLU_ERROR, (GLvoid (*)()) nurbsError);
+  #ifdef WIN32
+    gluNurbsCallback(theNurb, GLU_ERROR, (void (__stdcall *)(void))(&nurbsErrorCallback) );
+  #else
+    gluNurbsCallback(theNurb, GLU_ERROR, (GLvoid (*)()) (&nurbsErrorCallback) );  
+  #endif
 
   if (_fill)
     gluNurbsProperty(theNurb, GLU_DISPLAY_MODE, GLU_FILL);
@@ -315,8 +320,12 @@ drawGluNurbsMode(GLState& _state, bool _fill)
   }
   else
   {
-    // object space -> fixed (non-adaptive) sampling
-    gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_OBJECT_PARAMETRIC_ERROR);
+    #ifdef GLU_OBJECT_PARAMETRIC_ERROR
+      // object space -> fixed (non-adaptive) sampling
+      gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_OBJECT_PARAMETRIC_ERROR);
+    #else
+      gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_PARAMETRIC_ERROR);
+    #endif
     gluNurbsProperty(theNurb, GLU_PARAMETRIC_TOLERANCE, 0.2);
   }
 
@@ -762,13 +771,22 @@ pick_draw_textured_nurbs( GLState& _state)
   GLUnurbsObj *theNurb;
   theNurb = gluNewNurbsRenderer();
 
-  gluNurbsCallback(theNurb, GLU_ERROR, (GLvoid (*)()) nurbsError);
+  #ifdef WIN32
+    gluNurbsCallback(theNurb, GLU_ERROR, (void (__stdcall *)(void))(&nurbsErrorCallback) );
+  #else
+    gluNurbsCallback(theNurb, GLU_ERROR, (GLvoid (*)()) (&nurbsErrorCallback) );  
+  #endif
 
   // draw filled
   gluNurbsProperty(theNurb, GLU_DISPLAY_MODE, GLU_FILL);
 
-  // object space -> fixed (non-adaptive) sampling
-  gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_OBJECT_PARAMETRIC_ERROR);
+  #ifdef GLU_OBJECT_PARAMETRIC_ERROR
+    // object space -> fixed (non-adaptive) sampling
+    gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_OBJECT_PARAMETRIC_ERROR);
+  #else
+    gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD,   GLU_PARAMETRIC_ERROR);
+  #endif
+
   gluNurbsProperty(theNurb, GLU_PARAMETRIC_TOLERANCE, 0.2);
 
   // get min/max knots of domain defining patch (partition of unity)
