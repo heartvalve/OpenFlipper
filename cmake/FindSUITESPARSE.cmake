@@ -16,23 +16,22 @@ if( WIN32 )
    # Find cholmod part of the suitesparse library collection
 
    FIND_PATH( CHOLMOD_INCLUDE_DIR cholmod.h
-              PATHS "C:\\libs\\SuiteSparse\\CHOLMOD\\Include"  )
+              PATHS "C:\\libs\\win32\\SuiteSparse\\Include"  )
 
    # Add cholmod include directory to collection include directories
    IF ( CHOLMOD_INCLUDE_DIR )
 	list ( APPEND SUITESPARSE_INCLUDE_DIRS ${CHOLMOD_INCLUDE_DIR} )
    ENDIF( CHOLMOD_INCLUDE_DIR )
 
-   
 
    # find path suitesparse library
    FIND_PATH( SUITESPARSE_LIBRARY_DIRS 
-	         suitesparse.lib
-               PATHS "C:\\libs\\SuiteSparse\\libs" )
+	         amd.lib
+               PATHS "C:\\libs\\win32\\SuiteSparse\\libs" )
 
    # if we found the library, add it to the defined libraries
    IF ( SUITESPARSE_LIBRARY_DIRS )
-	list ( APPEND SUITESPARSE_LIBRARIES suitesparse )
+	list ( APPEND SUITESPARSE_LIBRARIES optimized;amd;optimized;camd;optimized;ccolamd;optimized;cholmod;optimized;colamd;optimized;metis;debug;amdd;debug;camdd;debug;ccolamdd;debug;cholmodd;debug;colamdd;debug;metisd;optimized;blas;optimized;libf2c;optimized;lapack;debug;blasd;debug;libf2cd;debug;lapackd )
    ENDIF( SUITESPARSE_LIBRARY_DIRS )  
 
 else( WIN32 )
