@@ -638,6 +638,15 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     
     /// Create a mesh containing the selection of the given mesh
     int createMeshFromSelection( int _objectId );
+    
+    
+    //=====================================================
+    
+    /// Set the current selection type
+    void setSelectionPrimitiveType(QString _type);
+    
+    /// Set the current selection metaphor (pickmode ...)
+    void setSelectionMetaphor(QString _metaphor);
 
     private slots:
 
