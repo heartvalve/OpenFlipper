@@ -717,8 +717,36 @@ pick_create_texture( GLState& _state)
     }
   }
 
+/*
+  // creates checkerboard texture for debugging purposes
+  
+  bool odd_row = true;
+  bool odd_col = true;
+  bool green = true;
+  for( int i = 0; i < pick_texture_res_; ++i)
+  {
+    if (i % 20 == 0)
+      odd_row = !odd_row;
+    
+    odd_col = true;
+    for( int j = 0; j < pick_texture_res_; ++j)
+    {
+      if (j % 20 == 0)
+        odd_col = !odd_col;
+      
+      green = (odd_row && odd_col) || (!odd_row && !odd_col);      
+      
+      if (green)
+        b.setPixel (i, j, qRgba(0, 255, 0, 255));
+      else
+        b.setPixel (i, j, qRgba(255, 0, 255, 255));
+    }
+  }
+*/
+
   // debug, output image (usually does not look as expected :\ )
   //b.save("/tmp/uvtexture.png");
+//   b.save("surfaceTexture.png", "PNG");
   
   pick_texture_image_ = QGLWidget::convertToGLFormat( b );
 
@@ -753,6 +781,9 @@ pick_draw_textured_nurbs( GLState& _state)
   for (int i = 0; i < numKnots_n; ++i)
     knots_n[i] = bsplineSurface_.get_knot_n(i);
 
+//   std::cout << "knots_m: " << bsplineSurface_.get_knotvector_m() << std::endl;
+//   std::cout << "knots_n: " << bsplineSurface_.get_knotvector_n() << std::endl;
+  
   GLfloat *ctlpoints = new GLfloat[numCPs_m * numCPs_n * 3];
   for (int i = 0; i < numCPs_m; ++i)
   {
@@ -794,6 +825,8 @@ pick_draw_textured_nurbs( GLState& _state)
   float  minv( knots_n[bsplineSurface_.degree_n()]);
   float  maxu( knots_m[numKnots_m  - order_m]);
   float  maxv( knots_n[numKnots_n  - order_n]);
+//   std::cout << "minu = " << minu << ", maxu = " << maxu << std::endl;
+//   std::cout << "minv = " << minv << ", maxv = " << maxv << std::endl;
 
   // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
