@@ -15,6 +15,7 @@ IF (NOT APPLE )
 	# Look for the header file.
 	FIND_PATH(CGAL_INCLUDE_DIR NAMES CGAL/auto_link/auto_link.h
         	                   PATHS ../../External/include
+                                 "C:/libs/CGAL-3.6/include"
 						 "C:/Program Files/CGAL-3.5/include"
                                      "C:/Programme/CGAL-3.5/include"
                                 	 "C:/libs/CGAL-3.5/include"
