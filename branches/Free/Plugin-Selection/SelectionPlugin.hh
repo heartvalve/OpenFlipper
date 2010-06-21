@@ -149,6 +149,8 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     
     //ScriptInterface
     void scriptInfo( QString _functionName );
+    void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                            QStringList _parameters, QStringList _descriptions);
 
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action , ContextMenuType _type);
@@ -692,6 +694,21 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     
     /// Create mesh from selection of picked object
     void createMeshFromSelection(QMouseEvent* _event);
+    
+    //==========================================================
+    
+    /// Set selection mode after button was clicked
+    void setSelectionModeFromAction(QAction* _action);
+    
+    //==========================================================
+    
+    /// Update GUI elements of toolbar and toolbox
+    void updateGUI();
+    
+    //==========================================================
+    
+    /// Set slot descriptions for script functions
+    void setSlotDescriptions();
 
   /** @} */
 

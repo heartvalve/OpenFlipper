@@ -277,8 +277,6 @@ void SelectionPlugin::pluginsInitialized() {
   connect( contextMenu_ , SIGNAL( triggered(QAction*) ),
            this,          SLOT(selectionContextMenu(QAction*)) );
 
-
-
   // TOOLBAR
   toolBar_ = new QToolBar(tr("Selection"));
   emit addToolbar(toolBar_);
@@ -367,7 +365,9 @@ void SelectionPlugin::pluginsInitialized() {
   connect( vertexAction_, SIGNAL(toggled(bool)),tool_->vertexSelection , SLOT(setChecked(bool)) );
   connect( edgeAction_,   SIGNAL(toggled(bool)),tool_->edgeSelection ,   SLOT(setChecked(bool)) );
   connect( faceAction_,   SIGNAL(toggled(bool)),tool_->faceSelection ,   SLOT(setChecked(bool)) );
-
+  
+  // Set scriptable slot descriptions
+  setSlotDescriptions();
 }
 
 //***********************************************************************************
@@ -575,20 +575,21 @@ void SelectionPlugin::slotPickModeChanged( const std::string& _mode) {
 void SelectionPlugin::toolBarActionClicked(QAction * _action)
 {
 
-  //Selction Types
+  //Selection Types
   if ( _action->text() == "Enable Object Selection" ||
        _action->text() == "Enable Vertex Selection" ||
        _action->text() == "Enable Edge Selection" ||
-       _action->text() == "Enable Face Selection"){
+       _action->text() == "Enable Face Selection") {
 
     unsigned char type = 0;
-    if ( objectAction_->isChecked() ){
+    if ( objectAction_->isChecked() ) {
       type = type | OBJECT;
 
-    if ( PluginFunctions::actionMode() == Viewer::ExamineMode )
-      toolBarActionClicked( toggleAction_ ); //automatically switch to toggle
-
-    }if ( vertexAction_->isChecked() )
+      if ( PluginFunctions::actionMode() == Viewer::ExamineMode )
+        toolBarActionClicked( toggleAction_ ); // Automatically switch to toggle
+    }
+    
+    if ( vertexAction_->isChecked() )
       type = type | VERTEX;
     if ( edgeAction_->isChecked() )
       type = type | EDGE;
@@ -613,7 +614,17 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
       _action->setChecked(false);
       return;
     }
-    //Selction Modes
+    
+    // Set selection picking mode
+    setSelectionModeFromAction(_action);
+  }
+}
+
+//******************************************************************************
+
+void SelectionPlugin::setSelectionModeFromAction(QAction* _action) {
+
+    //Selection Modes
     PluginFunctions::actionMode( Viewer::PickingMode );
 
     if (_action == toggleAction_)
@@ -631,11 +642,46 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
     else if (_action == floodFillAction_)
       PluginFunctions::pickMode( FLOOD_FILL_SELECTION );
     else if (_action == createMeshFromSelAction_)
-         PluginFunctions::pickMode( CREATEMESH );
+      PluginFunctions::pickMode( CREATEMESH );
     else if (_action == surfaceLassoAction_){
       waitingForPolyLineSelection_ = true;
       PluginFunctions::pickMode("PolyLine");
     }
+}
+
+//******************************************************************************
+
+void SelectionPlugin::updateGUI() {
+    
+  // Switch toolbar buttons if gui is available
+  if(!OpenFlipper::Options::nogui()) {
+      
+      // Selection modes
+      if(selectionType_ == VERTEX)    vertexAction_->setChecked(true);
+      else if(selectionType_ == EDGE) edgeAction_->setChecked(true);
+      else if(selectionType_ == FACE) faceAction_->setChecked(true);
+      else if(selectionType_ == KNOT) objectAction_->setChecked(true);
+      
+      // Pick modes
+      if (PluginFunctions::pickMode() == TOGGLE_SELECTION)
+          toggleAction_->setChecked(true);
+      else if (PluginFunctions::pickMode() == PAINT_SPHERE_SELECTION)
+          paintSphereAction_->setChecked(true);
+      else if (PluginFunctions::pickMode() == CLOSEST_BOUNDARY_SELECTION)
+          boundaryAction_->setChecked(true);
+      else if (PluginFunctions::pickMode() == LASSO_SELECTION)
+          lassoAction_->setChecked(true);
+      else if (PluginFunctions::pickMode() == VOLUME_LASSO_SELECTION)
+          volumeLassoAction_->setChecked(true);
+      else if (PluginFunctions::pickMode() == CONNECTED_COMPONENT_SELECTION)
+          connectedAction_->setChecked(true);
+      else if (PluginFunctions::pickMode() == FLOOD_FILL_SELECTION)
+          floodFillAction_->setChecked(true);
+      else if (PluginFunctions::pickMode() == CREATEMESH)
+         createMeshFromSelAction_->setChecked(true);
+      else if (PluginFunctions::pickMode() == "PolyLine" && waitingForPolyLineSelection_) {
+          surfaceLassoAction_->setChecked(true);
+      }
   }
 }
 
