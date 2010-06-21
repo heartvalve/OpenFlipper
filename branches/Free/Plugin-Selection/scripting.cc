@@ -102,7 +102,7 @@ void SelectionPlugin::setSelectionMetaphor(QString _metaphor) {
   else if(_metaphor == "FLOOD_FILL_SELECTION")          { if(!objectSelection) PluginFunctions::pickMode( FLOOD_FILL_SELECTION ); }
   else if(_metaphor == "CREATEMESH")                    { if(!objectSelection) PluginFunctions::pickMode( CREATEMESH ); }
 #ifdef ENABLE_POLYLINE_SUPPORT
-  else if(_metaphor == "SURFACE_LASSO_SELECTION")       { if(!objectSelection) PluginFunctions::pickMode("Polyline"); waitingForPolyLineSelection_ = true; }
+  else if(_metaphor == "SURFACE_LASSO_SELECTION")       { if(!objectSelection) { PluginFunctions::pickMode("Polyline"); waitingForPolyLineSelection_ = true; } }
 #endif
 
   // Update GUI elements
