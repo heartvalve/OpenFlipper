@@ -93,18 +93,16 @@ BSplineSurfaceT( const BSplineSurfaceT& _surface )
   knotvector_m_ = _surface.knotvector_m_;
   knotvector_n_ = _surface.knotvector_n_;
 
-  degree_m_                  = _surface.degree_m_;
-  degree_n_                  = _surface.degree_n_;
-//   autocompute_knotvector_    = _curve.autocompute_knotvector_;
-//   fix_number_control_points_ = _curve.fix_number_control_points_;
+  degree_m_     = _surface.degree_m_;
+  degree_n_     = _surface.degree_n_;
 
   // copy properties
   cpselections_ = _surface.cpselections_;
-  eselections_ = _surface.eselections_;
+  eselections_  = _surface.eselections_;
 
   // copy property reference counter
   ref_count_cpselections_ = _surface.ref_count_cpselections_;
-  ref_count_eselections_ = _surface.ref_count_eselections_;
+  ref_count_eselections_  = _surface.ref_count_eselections_;
 }
 
 //-----------------------------------------------------------------------------
@@ -120,14 +118,9 @@ request_prop( unsigned int& _ref_count, PropT& _prop)
     _ref_count = 1;
     
     // always use vertex size!!!
-//     _prop.resize(n_control_points_m() * n_control_points_n());
-//     std::cout << "[BSplineSurfaceT] request_prop: _prop.size() = " << _prop.size() << std::endl;
-        
     _prop.resize(n_control_points_m());
     for (unsigned int i = 0; i < _prop.size(); ++i)
       _prop[i].resize(n_control_points_n());
-    std::cout << "[BSplineSurfaceT] request_prop: _prop.size() = " << _prop.size() << std::endl;
-    
   }
   else ++_ref_count;
 }
@@ -162,8 +155,7 @@ resize(unsigned int _m, unsigned int _n)
 
   dimm_ = _m;
   dimn_ = _n;
-  
-  
+    
   // resize cpselections 
   cpselections_.resize(_m);
   for (unsigned int i = 0; i < cpselections_.size(); ++i)
@@ -174,7 +166,6 @@ resize(unsigned int _m, unsigned int _n)
   for (unsigned int i = 0; i < eselections_.size(); ++i)
     eselections_[i].resize(_n);
 }
-
 
 //-----------------------------------------------------------------------------
 
@@ -285,9 +276,7 @@ insert_vector_n(const std::vector< Point> & _control_polygon, unsigned int _n)
     control_net_[i].insert(control_net_[i].begin() + _n, _control_polygon[i]);
     control_net_[i].pop_back();
   }
-  
-  
-//   std::vector<unsigned char> dummy(_control_polygon[0].size(), 0);
+
   // resize property net cpselection
   for (unsigned int i = 0; i < dimm_; ++i)
   {
@@ -374,8 +363,6 @@ void
 BSplineSurfaceT<PointT>::
 set_knots_m(std::vector< Scalar > _knots)
 {
-//   autocompute_knotvector(false);
-
   // set the knotvector
   knotvector_m_.setKnotvector(_knots);
 }
@@ -387,8 +374,6 @@ void
 BSplineSurfaceT<PointT>::
 set_knots_n(std::vector< Scalar > _knots)
 {
-//   autocompute_knotvector(false);
-
   // set the knotvector
   knotvector_n_.setKnotvector(_knots);
 }

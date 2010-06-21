@@ -165,7 +165,6 @@ add_control_point(const Point& _cp)
     eselections_.push_back(false);
 }
 
-
 //-----------------------------------------------------------------------------
 
 template <class PointT>
@@ -314,7 +313,7 @@ derivativeCurvePoint(double _u, unsigned int _der)
   for (int i = 0; i < n; i++)
   {
     double bf = derivativeBasisFunction(i, p, _u, _der);
-    std::cout << "i = " << i << ": p_i = " << get_control_point(i) << ", derivative BF = " << bf << std::endl;
+//     std::cout << "i = " << i << ": p_i = " << get_control_point(i) << ", derivative BF = " << bf << std::endl;
     point += get_control_point(i) * bf;
 //     point += get_control_point(i) * derivativeBasisFunction(i, p, _u, _der);
   }
@@ -374,7 +373,8 @@ derivativeBasisFunction(int _i, int _n, double _t, int _der)
   double Nin1 = derivativeBasisFunction(_i,   _n-1, _t, _der-1);
   double Nin2 = derivativeBasisFunction(_i+1, _n-1, _t, _der-1);
 //   std::cout << "der = " << _der << ", i = " << _i << ", n = " << _n << ", t = " << _t << "   ===>   " << Nin1 << " , " << Nin2 << std::endl;
-  std::cout << "Nin1 = " << Nin1 << ", Nin2 = " << Nin2 << std::endl;
+//   std::cout << "Nin1 = " << Nin1 << ", Nin2 = " << Nin2 << std::endl;
+
   double fac1 = 0;
   if ( (knotvector_(_i+_n)-knotvector_(_i)) !=0 )
     fac1 = double(_n) / (knotvector_(_i+_n)-knotvector_(_i));
@@ -383,7 +383,7 @@ derivativeBasisFunction(int _i, int _n, double _t, int _der)
   if ( (knotvector_(_i+_n+1)-knotvector_(_i+1)) !=0 )
     fac2 = double(_n) / (knotvector_(_i+_n+1)-knotvector_(_i+1));
 
-  std::cout << "fac1 = " << fac1 << ", fac2 = " << fac2 << std::endl;
+//   std::cout << "fac1 = " << fac1 << ", fac2 = " << fac2 << std::endl;
   return (fac1*Nin1 - fac2*Nin2);
 }
 
@@ -395,18 +395,13 @@ BSplineCurveT<PointT>::
 deBoorAlgorithm( double _u)
 {
 //   std::cout << "\n Evaluating via deBoor algorithm at " << _u << std::endl;
-
-//   std::cout << "Lower: " << lower() << ", upper: " << upper() << std::endl;
   assert(_u >= lower() && _u <= upper());
 
-//   int c = n_control_points();
   int n = degree();
-//   int m = c+n+1;  // length of the knot vector
 
   Point point = Point(0.0, 0.0, 0.0);
 
   ACG::Vec2i span_u = span(_u);
-//   std::cout << "Span = " << span_u << std::endl;
 
   std::vector<Point> allPoints;
 
@@ -415,44 +410,28 @@ deBoorAlgorithm( double _u)
 
   // control points in last iteration
   std::vector<Point> controlPoints_r1;
-  for (int i = span_u[0]; i <= span_u[1]; ++i){
+  for (int i = span_u[0]; i <= span_u[1]; ++i)
     controlPoints_r1.push_back(control_polygon_[i]);
-//     allPoints.push_back(_splineCurve(i)); // TODO delete
-  }
 
+  for (int r = 1; r <= n; ++r)
+  {
+  controlPoints_r.clear();
 
-  for (int r = 1; r <= n; ++r){
-//     std::cout << "\n**************** r = " << r << " *******************" << std::endl;
-    controlPoints_r.clear();
-
-    for (int i = r; i <= n; ++i){
-//       std::cout << "\ni = " << i << ": " << std::flush;
-//       std::cout << "using knot " << span[0]+i << " = " << knotvector[span[0]+i] << " and knot "
-//                                  << span[0]+i + n + 1 - r << " = " << knotvector[span[0]+i + n + 1 - r]
-//                                  << std::flush;
-
+    for (int i = r; i <= n; ++i)
+    {
       // compute alpha _i ^ n-r
       double alpha = (_u - knotvector_(span_u[0]+i)) / (knotvector_(span_u[0]+i + n + 1 - r) - knotvector_(span_u[0]+i));
-
-//       std::cout << " --> alpha = " << alpha << std::endl;
-//       std::cout << "       control points " << i-r << " (" << controlPoints_r1[i-r]
-//                 << ") and " << i-r+1  << " (" << controlPoints_r1[i-r+1] << ") " << std::endl;
       Point c = controlPoints_r1[i-r] * (1.0 - alpha) + controlPoints_r1[i-r+1] * alpha;
 
       // save
       controlPoints_r.push_back(c);
       allPoints.push_back(c);
-
-//       for (unsigned int k = 0; k < controlPoints_r.size(); ++k)
-//         std::cout << controlPoints_r[k] << "; ";
-//       std::cout << std::endl;
     }
 
     controlPoints_r1 = controlPoints_r;
   }
 
   return allPoints;
-//   return controlPoints_r1[0];
 }
 
 //-----------------------------------------------------------------------------
@@ -516,17 +495,11 @@ BSplineCurveT<PointT>::
 insertKnot(double _u)
 {
   // insert a knot at parameter u and recompute controlpoint s.t. curve stays the same
-//   std::cout << "Inserting knot at parameter " << _u << std::endl;
 
 //   std::cout << "Lower: " << lower() << ", upper: " << upper() << std::endl;
   assert(_u >= lower() && _u <= upper());
 
-//   int c = n_control_points();
-//   int n = degree();
-//   int m = c+n+1;  // length of the knot vector
-
   Vec3d point = Vec3d(0.0, 0.0, 0.0);
-//   T_Knotvector knotvector = _splineCurve.knotvector.GetKnotvector();
 
   ACG::Vec2i span_u = span(_u);
 
@@ -556,17 +529,7 @@ insertKnot(double _u)
   knotvector_.insertKnot(index, _u);
 
   // update control points
-//   control_polygon_.clear();
-//   for (unsigned int i = 0; i < updateControlPoints.size(); ++i)
-//     control_polygon_.push_back(updateControlPoints[i]);
-
   set_control_polygon(updateControlPoints);
-
-//   std::cout << "updateControlPoints: " << std::flush;
-//   for (unsigned int i = 0; i < updateControlPoints.size(); ++i)
-//     std::cout << updateControlPoints[i] << ",   " << std::flush;
-//   std::cout << std::endl;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -604,7 +567,6 @@ reverse()
   double a = get_knot(0);
   double b = get_knot(num_knots-1);
 
-
   for (int i = 0; i <= p; ++i)
     reversed_knotvector[i] = get_knot(i);
 
@@ -613,12 +575,6 @@ reverse()
 
   for (int i = 1; i < m - 2*p; ++i)
     reversed_knotvector[m - p - i] = - get_knot(p+i) + a + b;
-
-//   std::cout << "knotvector_: " << knotvector_ << std::endl;
-//   std::cout << "reversed_knotvector: " << std::flush;
-//   for (int i = 0; i < reversed_knotvector.size(); ++i)
-//     std::cout << reversed_knotvector[i] << ", " << std::flush;
-//   std::cout << std::endl;
 
   // reset control polygon
   set_control_polygon(reversed_control_polygon);
