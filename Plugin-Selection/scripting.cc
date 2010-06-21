@@ -50,10 +50,29 @@
 
 // ==================================================================
 
+void SelectionPlugin::setSlotDescriptions() {
+
+    emit setSlotDescription("setSelectionPrimitiveType(QString)",tr("Set selection primitive type. Possible types are VERTEX, EDGE, FACE, OBJECT, KNOT."),
+        QStringList(tr("type")),
+        QStringList(tr("The primitive type to be selected. Possible types are VERTEX, EDGE, FACE, OBJECT, KNOT.")));
+                          
+    emit setSlotDescription("setSelectionMetaphor(QString)",
+        tr("Set selection pick mode. \
+        Possible modes are \
+        TOGGLE_SELECTION, PAINT_SPHERE_SELECTION, CLOSEST_BOUNDARY_SELECTION, LASSO_SELECTION, \
+        VOLUME_SELECTION, CONNECTED_COMPONENT_SELECTION, FLOOD_FILL_SELECTION, CREATEMESH."),
+        QStringList(tr("metaphor")),
+        QStringList(tr("The selection metaphor. Choose between \
+        TOGGLE_SELECTION, PAINT_SPHERE_SELECTION, CLOSEST_BOUNDARY_SELECTION, LASSO_SELECTION, \
+        VOLUME_SELECTION, CONNECTED_COMPONENT_SELECTION, FLOOD_FILL_SELECTION, CREATEMESH.")));
+
+}
+
+// ==================================================================
 
 void SelectionPlugin::setSelectionPrimitiveType(QString _type) {
   if ( _type == "VERTEX" )
-    selectionType_ = VERTEX
+    selectionType_ = VERTEX;
   else if ( _type == "EDGE" )
     selectionType_ = EDGE;
   else if ( _type == "FACE" )
@@ -62,10 +81,29 @@ void SelectionPlugin::setSelectionPrimitiveType(QString _type) {
     selectionType_ = OBJECT; 
   else if ( _type == "KNOT" )
     selectionType_ = KNOT;
+  
+  // Update GUI elements
+  updateGUI();
 }
 
 void SelectionPlugin::setSelectionMetaphor(QString _metaphor) {
   
+  // Is object selection active?
+  // Since for object selection only toggle and lasso are available
+  bool objectSelection = selectionType_ & OBJECT;
+    
+  // Set selection metaphor
+  if(_metaphor == "TOGGLE_SELECTION")                   { if(!objectSelection) PluginFunctions::pickMode( TOGGLE_SELECTION ); }
+  else if(_metaphor == "PAINT_SPHERE_SELECTION")        { PluginFunctions::pickMode( PAINT_SPHERE_SELECTION ); }
+  else if(_metaphor == "CLOSEST_BOUNDARY_SELECTION")    { PluginFunctions::pickMode( CLOSEST_BOUNDARY_SELECTION ); }
+  else if(_metaphor == "LASSO_SELECTION")               { PluginFunctions::pickMode( LASSO_SELECTION ); }
+  else if(_metaphor == "VOLUME_LASSO_SELECTION")        { if(!objectSelection) PluginFunctions::pickMode( VOLUME_LASSO_SELECTION ); }
+  else if(_metaphor == "CONNECTED_COMPONENT_SELECTION") { PluginFunctions::pickMode( CONNECTED_COMPONENT_SELECTION ); }
+  else if(_metaphor == "FLOOD_FILL_SELECTION")          { if(!objectSelection) PluginFunctions::pickMode( FLOOD_FILL_SELECTION ); }
+  else if(_metaphor == "CREATEMESH")                    { if(!objectSelection) PluginFunctions::pickMode( CREATEMESH ); }
+  /* Surface lasso action -> polyline */
+  /* else if(_metaphor == "") {} */
   
-  
+  // Update GUI elements
+  updateGUI();
 }
