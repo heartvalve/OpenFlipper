@@ -568,7 +568,8 @@ pick_spline( GLState& _state, unsigned int _offset )
     pick_create_texture( _state);
   }
   else
-    glBindTexture( GL_TEXTURE_1D, pick_texture_idx_);
+    glBindTexture( GL_TEXTURE_2D, pick_texture_idx_);
+//     glBindTexture( GL_TEXTURE_1D, pick_texture_idx_);
 
 
   pick_draw_textured_nurbs( _state);
@@ -657,7 +658,7 @@ set_random_color()
 }
 
 //----------------------------------------------------------------------------
-
+/*
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
@@ -790,10 +791,8 @@ pick_draw_textured_nurbs( GLState& _state)
   float  maxu( knots[numKnots - order]);
   std::cout << "minu = " << minu << ", maxu = " << maxu << std::endl;
 
-  // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
-//   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+  // control points of 1d texture (0, 1)
   GLfloat   tcoords[2] = {0.0, 1.0};
-
 
   // knots of domain, over which tcoords shall be linearly interpolated
 //   GLfloat   tknots[2] = {minu, maxu};
@@ -806,6 +805,7 @@ pick_draw_textured_nurbs( GLState& _state)
   // first enable texture coordinate mapping
   gluNurbsCurve(theNurb, 4, tknots, 1, tcoords, 2, GL_MAP1_TEXTURE_COORD_1);
 //   gluNurbsCurve(theNurb, 4, tknots, 1, &tcoords[0], 2, GL_MAP1_TEXTURE_COORD_1);
+//   gluNurbsCurve(theNurb, numKnots, knots, 3, ctlpoints, order, GL_MAP1_TEXTURE_COORD_1);
 
   // draw surface
   gluNurbsCurve(theNurb, numKnots, knots, 3, ctlpoints, order, GL_MAP1_VERTEX_3);
@@ -816,11 +816,9 @@ pick_draw_textured_nurbs( GLState& _state)
   delete[] knots;
   delete[] ctlpoints;
 }
+*/
 
 //----------------------------------------------------------------------------
-
-
-/*
 
 template <class BSplineCurve>
 void
@@ -854,37 +852,46 @@ BSplineCurveNodeT<BSplineCurve>::
 pick_create_texture( GLState& _state)
 {
   QImage b(pick_texture_res_, 2, QImage::Format_ARGB32);
-  
-  std::cout << "texture of size " << b.width() << " x " << b.height() << std::endl;
-  
-     
+    
   // fill with colors
-  int cur_idx = 0;
-  bool green = false;
+  int cur_idx=0;
   for( int i = 0; i < pick_texture_res_; ++i)
   {
     Vec4uc cur_col( _state.pick_get_name_color (cur_idx) );
-//     b.setPixel (i, 0, qRgba((int)cur_col[0], (int)cur_col[1], (int)cur_col[2], (int)cur_col[3]));
-//     b.setPixel (i, 1, qRgba((int)cur_col[0], (int)cur_col[1], (int)cur_col[2], (int)cur_col[3]));
-    
-    if (i % 10 == 0)
-      green = !green;
-    
-    if (green){
-      b.setPixel (i, 0, qRgba(0, 255, 0, 255));
-      b.setPixel (i, 1, qRgba(0, 255, 0, 255));
-    }
-    else{
-      b.setPixel (i, 0, qRgba(255, 0, 255, 255));
-      b.setPixel (i, 1, qRgba(255, 0, 255, 255));
-    }
-    
+    b.setPixel (i, 0, qRgba((int)cur_col[0], (int)cur_col[1], (int)cur_col[2], (int)cur_col[3]));
+    b.setPixel (i, 1, qRgba((int)cur_col[0], (int)cur_col[1], (int)cur_col[2], (int)cur_col[3]));
     cur_idx++;
   }
 
+/*
+  // create stripe or checkerboard texture
+  bool odd_row = true;
+  bool odd_col = true;
+  bool green = true;
+  for( int i = 0; i < pick_texture_res_; ++i)
+  {
+    if (i % 20 == 0)
+      odd_row = !odd_row;
+    
+    odd_col = true;
+    for( int j = 0; j < pick_texture_res_; ++j)
+    {
+      if (j % 20 == 0)
+        odd_col = !odd_col;
+      
+//       green = (odd_row && odd_col) || (!odd_row && !odd_col);      // checkerboard texture
+      green = odd_row; // stripe texture
+      if (green)
+        b.setPixel (i, j, qRgba(0, 255, 0, 255));
+      else
+        b.setPixel (i, j, qRgba(255, 0, 255, 255));
+    }
+  }
+*/
+
   // debug, output image (usually does not look as expected :\ )
-  b.save("2Dcurvetexture.png", "PNG");
-  
+  //b.save("/tmp/uvtexture.png");
+  b.save("surfaceTexture.png", "PNG");
   
   pick_texture_image_ = QGLWidget::convertToGLFormat( b );
 
@@ -902,8 +909,6 @@ void
 BSplineCurveNodeT<BSplineCurve>::
 pick_draw_textured_nurbs( GLState& _state)
 {
-  std::cout << "[BSplineCurveNodeT] pick_draw_textured_nurbs" << std::endl;
-  
   int numKnots     = bsplineCurve_.n_knots();
   const int numCPs = bsplineCurve_.n_control_points();
   int order        = bsplineCurve_.degree() + 1;
@@ -917,77 +922,96 @@ pick_draw_textured_nurbs( GLState& _state)
     std::cout << bsplineCurve_.get_knot(i) << ", " << std::flush;
   }
   std::cout << std::endl;
- 
-  // get control points
-  GLfloat *ctlpoints = new GLfloat[numCPs * 3];
+
+  int numCPs_dummy = 2;
+  GLfloat *ctlpoints = new GLfloat[numCPs * numCPs_dummy * 3]; // dummy cps = 2
   for (int i = 0; i < numCPs; ++i)
   {
     Vec3d p = bsplineCurve_.get_control_point(i);
-    ctlpoints[i * 3 + 0] = (GLfloat)p[0];
-    ctlpoints[i * 3 + 1] = (GLfloat)p[1];
-    ctlpoints[i * 3 + 2] = (GLfloat)p[2];
+    
+    for (int j = 0; j < numCPs_dummy; ++j)
+    {
+      int idx0 = i * numCPs_dummy * 3 + j * 3 + 0;
+      int idx1 = i * numCPs_dummy * 3 + j * 3 + 1;
+      int idx2 = i * numCPs_dummy * 3 + j * 3 + 2;
+      ctlpoints[idx0] = (GLfloat)p[0];
+      ctlpoints[idx1] = (GLfloat)p[1];
+      ctlpoints[idx2] = (GLfloat)p[2];
+      
+//       if (j == 1)
+//         ctlpoints[idx1] = (GLfloat)p[1] + 1.0;
+    }
   }
   
   
-  
+  glLineWidth(10);
 
   GLUnurbsObj *theNurb;
   theNurb = gluNewNurbsRenderer();
 
-  gluNurbsCallback(theNurb, GLU_ERROR, (GLvoid (*)()) nurbsError);
+  #ifdef WIN32
+    gluNurbsCallback(theNurb, GLU_ERROR, (void (__stdcall *)(void))(&nurbsErrorCallback) );
+  #else
+    gluNurbsCallback(theNurb, GLU_ERROR, (GLvoid (*)()) (&nurbsErrorCallback) );  
+  #endif
 
   // draw filled
-  gluNurbsProperty(theNurb, GLU_DISPLAY_MODE, GLU_FILL);
+  // use GLU_OUTLINE_POLYGON instead of GLU_FILL since otherwise linewith is 0 when rendered from the side
+//   gluNurbsProperty(theNurb, GLU_DISPLAY_MODE, GLU_FILL);
+  gluNurbsProperty(theNurb, GLU_DISPLAY_MODE, GLU_OUTLINE_POLYGON ); 
 
-  // object space -> fixed (non-adaptive) sampling
-  gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_OBJECT_PARAMETRIC_ERROR);
+  #ifdef GLU_OBJECT_PARAMETRIC_ERROR
+    // object space -> fixed (non-adaptive) sampling
+    gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_OBJECT_PARAMETRIC_ERROR);
+  #else
+    gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD,   GLU_PARAMETRIC_ERROR);
+  #endif
+
   gluNurbsProperty(theNurb, GLU_PARAMETRIC_TOLERANCE, 0.2);
 
   // get min/max knots of domain defining patch (partition of unity)
   float  minu( knots[bsplineCurve_.degree()]);
-  float  maxu( knots[numKnots - order]);
+  float  maxu( knots[numKnots  - order]);
+  
+  float  minv = 0.0;
+  float  maxv = 1.0;
+  
   std::cout << "minu = " << minu << ", maxu = " << maxu << std::endl;
+  std::cout << "minv = " << minv << ", maxv = " << maxv << std::endl;
 
   // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
 
   // knots of domain, over which tcoords shall be linearly interpolated
   GLfloat   tknots[4] = {minu, minu, maxu, maxu};
-  GLfloat   sknots[4] = {minu, minu, maxu, maxu};
-//   GLfloat   sknots[4] = {minv, minv, maxv, maxv};
+  GLfloat   sknots[4] = {minv, minv, maxv, maxv};
 
-  
-  
   // begin drawing nurbs
-  gluBeginCurve(theNurb);
+  gluBeginSurface(theNurb);
 
   // first enable texture coordinate mapping
-  gluNurbsCurve(theNurb, 4, tknots, 2, tcoords, 2, GL_MAP2_TEXTURE_COORD_2);
-//   gluNurbsCurve(theNurb, 4, tknots, 1, &tcoords[0], 2, GL_MAP1_TEXTURE_COORD_1);
+  gluNurbsSurface(theNurb, 4, tknots, 4, sknots, 2*2, 2, &tcoords[0], 2, 2, GL_MAP2_TEXTURE_COORD_2); 
 
-  // draw surface
-  gluNurbsCurve(theNurb, numKnots, knots, 3, ctlpoints, order, GL_MAP1_VERTEX_3);
-  gluEndCurve(theNurb);
+  // draw surface (dummy direction
+  int order_dummy = 1+1; // linear dummy
+  int numKnots_dummy = 4;
+  GLfloat *knots_dummy = new GLfloat[numKnots_dummy]; 
+  knots_dummy[0] = 0.0; 
+  knots_dummy[1] = 0.0;
+  knots_dummy[2] = 1.0;
+  knots_dummy[3] = 1.0;
   
-  
-
-//   // begin drawing nurbs
-//   gluBeginSurface(theNurb);
-
-//   // first enable texture coordinate mapping
-//   gluNurbsSurface(theNurb, 4, tknots, 4, sknots, 2*2, 2, &tcoords[0], 2, 2, GL_MAP2_TEXTURE_COORD_2); 
-
-//   // draw surface
-//   gluNurbsSurface(theNurb, numKnots_m, knots_m, numKnots_n, knots_n, numCPs_n * 3, 3, ctlpoints, order_m, order_n, GL_MAP2_VERTEX_3);
-//   gluEndSurface(theNurb);
-
+  gluNurbsSurface(theNurb, numKnots, knots, numKnots_dummy, knots_dummy, numCPs_dummy * 3, 3, ctlpoints, order, order_dummy, GL_MAP2_VERTEX_3);
+  gluEndSurface(theNurb);
 
   gluDeleteNurbsRenderer(theNurb);
 
   delete[] knots;
+  delete[] knots_dummy;
   delete[] ctlpoints;
 }
-*/
+
+//----------------------------------------------------------------------------
 
 //=============================================================================
 } // namespace SceneGraph
