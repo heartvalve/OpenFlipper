@@ -209,12 +209,12 @@ update(UpdateType _type)
 {
   if ( _type.contains(UPDATE_ALL))
   {
-    PluginFunctions::setMainGLContext();
+//     PluginFunctions::setMainGLContext();
 //     splineCurveNode()->updateGeometry();
   }
   else 
   {
-    PluginFunctions::setMainGLContext();
+//     PluginFunctions::setMainGLContext();
     
     if (_type.contains(UPDATE_GEOMETRY) )
     {
