@@ -34,67 +34,38 @@
 
 /*===========================================================================*\
  *                                                                           *
- *   $Revision$                                                         *
- *   $Author$                                                      *
- *   $Date$                   *
+ *   $Revision: 9595 $                                                       *
+ *   $Author: moebius $                                                      *
+ *   $Date: 2010-06-17 12:48:23 +0200 (Do, 17. Jun 2010) $                   *
  *                                                                           *
 \*===========================================================================*/
 
 
-//=============================================================================
-//
-//  SelectionFunctions BSplineSurface
-//  Author:  Ellen Dekkers <dekkers@cs.rwth-aachen.de>
-//
-//=============================================================================
 
+#include "SelectionPlugin.hh"
 
-#include <Plugin-Selection/SelectionPlugin.hh>
+#include <iostream>
+
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-//-----------------------------------------------------------------------------
+// ==================================================================
 
-void
-SelectionPlugin::
-toggleBSplineSurfaceSelection(QMouseEvent* _event)
-{
-  if ( _event->type() != QEvent::MouseButtonPress )
-    return;
 
-  if (selectionType_ & VERTEX)
-  {
-    unsigned int node_idx, target_idx;
-    ACG::Vec3d   hit_point;
-
-    if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_VERTEX, _event->pos(),node_idx, target_idx, &hit_point)) 
-    {
-      BaseObjectData* object;
-
-      if ( PluginFunctions::getPickedObject(node_idx, object) )
-      {
-        BSplineSurfaceObject* bsso = PluginFunctions::bsplineSurfaceObject( object );
-
-        // toggle selection
-        if( bsso->splineSurface()->controlpoint_selections_available() )
-        {
-          unsigned int max = bsso->splineSurface()->n_control_points_m() * bsso->splineSurface()->n_control_points_n();
-
-          if( target_idx < max)
-          {
-            int idx_m = target_idx / bsso->splineSurface()->n_control_points_n();
-            int idx_n = target_idx % bsso->splineSurface()->n_control_points_n();
-            // TODO try global idx access
-
-            if( bsso->splineSurface()->controlpoint_selection(idx_m, idx_n) == 0)
-              bsso->splineSurface()->controlpoint_selection(idx_m, idx_n) = true;
-            else
-              bsso->splineSurface()->controlpoint_selection(idx_m, idx_n) = 0;
-          }
-        }
-        emit updateView();
-      }
-    }
-  }
+void SelectionPlugin::setSelectionPrimitiveType(QString _type) {
+  if ( _type == "VERTEX" )
+    selectionType_ = VERTEX
+  else if ( _type == "EDGE" )
+    selectionType_ = EDGE;
+  else if ( _type == "FACE" )
+    selectionType_ = FACE;
+  else if ( _type == "OBJECT" )
+    selectionType_ = OBJECT; 
+  else if ( _type == "KNOT" )
+    selectionType_ = KNOT;
 }
 
-//-----------------------------------------------------------------------------
+void SelectionPlugin::setSelectionMetaphor(QString _metaphor) {
+  
+  
+  
+}

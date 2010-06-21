@@ -605,7 +605,7 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
 #endif
     connectedAction_->setEnabled( !objectAction_->isChecked() );
 
-  }else{
+  } else {
 
     //first check if a selection type was set
     if (selectionType_ == 0){
@@ -1804,6 +1804,8 @@ void SelectionPlugin::saveSelection( PolyMesh& _mesh, QString _filename)
 
   fout.close();
 }
+
+
 
 
 Q_EXPORT_PLUGIN2( selectionplugin , SelectionPlugin );
