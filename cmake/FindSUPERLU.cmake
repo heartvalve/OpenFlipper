@@ -19,7 +19,7 @@ if (WIN32)
                    PATHS "C:\\libs\\SuperLU_3.0\\lib" )
 
 
-   set ( SUPERLU_LIBRARY "optimized;${SUPERLU_LIBRARY_RELEASE};debug;${SUPERLU_LIBRARY_DEBUG}")
+   set ( SUPERLU_LIBRARY "optimized;${SUPERLU_LIBRARY_RELEASE};debug;${SUPERLU_LIBRARY_DEBUG}" CACHE  STRING "SuperLU Libraries" )
 
 ELSEIF(APPLE)
 
