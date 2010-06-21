@@ -101,7 +101,7 @@ void CoreWidget::showAboutWidget( ) {
     aboutWidget_->OpenFlipperAbout->append(tr("Vendor:\t") + vendor);
     QString renderer = QString((const char*)glGetString(GL_RENDERER));
     aboutWidget_->OpenFlipperAbout->append(tr("Renderer:\t") + renderer);
-
+    
     QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
 
     if ( flags.testFlag(QGLFormat::OpenGL_Version_3_0) )
@@ -131,8 +131,30 @@ void CoreWidget::showAboutWidget( ) {
     aboutWidget_->OpenFlipperAbout->append(tr("Supported Extensions:"));
     QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
     aboutWidget_->OpenFlipperAbout->append(glExtensions);
-
+    
+    
+    // =====================================================================================
+    // glu Information
+    // =====================================================================================
+    aboutWidget_->OpenFlipperAbout->append("\n");
+    
+    QString gluVersion = QString((const char *)gluGetString(GLU_VERSION));
+    aboutWidget_->OpenFlipperAbout->append(tr("GLU Version:\t") + gluVersion);
+    
+    aboutWidget_->OpenFlipperAbout->append(tr("Supported GLU Extensions:"));
+    QString gluExtensions = QString((const char*)gluGetString(GLU_EXTENSIONS));
+    aboutWidget_->OpenFlipperAbout->append(gluExtensions);
+    
+    
     aboutWidget_->OpenFlipperAbout->moveCursor(QTextCursor::Start);
+    
+    // =====================================================================================
+    // glew Information
+    // =====================================================================================
+    aboutWidget_->OpenFlipperAbout->append("\n");
+    
+    QString glewVersion = QString((const char *)glewGetString(GLEW_VERSION));
+    aboutWidget_->OpenFlipperAbout->append(tr("GLEW Version:\t") + glewVersion);
     
     // =====================================================================================
     // Qt information
