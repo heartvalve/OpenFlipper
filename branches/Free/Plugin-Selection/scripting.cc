@@ -60,11 +60,11 @@ void SelectionPlugin::setSlotDescriptions() {
         tr("Set selection pick mode. \
         Possible modes are \
         TOGGLE_SELECTION, PAINT_SPHERE_SELECTION, CLOSEST_BOUNDARY_SELECTION, LASSO_SELECTION, \
-        VOLUME_SELECTION, CONNECTED_COMPONENT_SELECTION, FLOOD_FILL_SELECTION, CREATEMESH."),
+        VOLUME_SELECTION, CONNECTED_COMPONENT_SELECTION, FLOOD_FILL_SELECTION, CREATEMESH, SURFACE_LASSO_SELECTION."),
         QStringList(tr("metaphor")),
         QStringList(tr("The selection metaphor. Choose between \
         TOGGLE_SELECTION, PAINT_SPHERE_SELECTION, CLOSEST_BOUNDARY_SELECTION, LASSO_SELECTION, \
-        VOLUME_SELECTION, CONNECTED_COMPONENT_SELECTION, FLOOD_FILL_SELECTION, CREATEMESH.")));
+        VOLUME_SELECTION, CONNECTED_COMPONENT_SELECTION, FLOOD_FILL_SELECTION, CREATEMESH, SURFACE_LASSO_SELECTION.")));
 
 }
 
@@ -101,9 +101,10 @@ void SelectionPlugin::setSelectionMetaphor(QString _metaphor) {
   else if(_metaphor == "CONNECTED_COMPONENT_SELECTION") { PluginFunctions::pickMode( CONNECTED_COMPONENT_SELECTION ); }
   else if(_metaphor == "FLOOD_FILL_SELECTION")          { if(!objectSelection) PluginFunctions::pickMode( FLOOD_FILL_SELECTION ); }
   else if(_metaphor == "CREATEMESH")                    { if(!objectSelection) PluginFunctions::pickMode( CREATEMESH ); }
-  /* Surface lasso action -> polyline */
-  /* else if(_metaphor == "") {} */
-  
+#ifdef ENABLE_POLYLINE_SUPPORT
+  else if(_metaphor == "SURFACE_LASSO_SELECTION")       { if(!objectSelection) PluginFunctions::pickMode("Polyline"); waitingForPolyLineSelection_ = true; }
+#endif
+
   // Update GUI elements
   updateGUI();
 }
