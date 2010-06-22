@@ -220,7 +220,7 @@ update(UpdateType _type)
     {
       splineCurveNode()->updateGeometry();
     }
-    else if (_type.contains(UPDATE_SELECTION_KNOTS) )
+    else if (_type.contains(UPDATE_SELECTION_KNOTS) || _type.contains(UPDATE_SELECTION))
     {
       // actually only the color needs to be recomputed, not the samples
       splineCurveNode()->updateGeometry();

@@ -889,9 +889,8 @@ pick_create_texture( GLState& _state)
   }
 */
 
-  // debug, output image (usually does not look as expected :\ )
-  //b.save("/tmp/uvtexture.png");
-  b.save("surfaceTexture.png", "PNG");
+  // debug, output image
+//   b.save("curveTexture.png", "PNG");
   
   pick_texture_image_ = QGLWidget::convertToGLFormat( b );
 
@@ -914,14 +913,14 @@ pick_draw_textured_nurbs( GLState& _state)
   int order        = bsplineCurve_.degree() + 1;
 
   // get kntvector
-  std::cout << "knots: " << std::flush;
+//   std::cout << "knots: " << std::flush;
   GLfloat *knots = new GLfloat[numKnots];
   for (int i = 0; i < numKnots; ++i)
   {
     knots[i] = bsplineCurve_.get_knot(i);
-    std::cout << bsplineCurve_.get_knot(i) << ", " << std::flush;
+//     std::cout << bsplineCurve_.get_knot(i) << ", " << std::flush;
   }
-  std::cout << std::endl;
+//   std::cout << std::endl;
 
   int numCPs_dummy = 2;
   GLfloat *ctlpoints = new GLfloat[numCPs * numCPs_dummy * 3]; // dummy cps = 2
@@ -976,8 +975,8 @@ pick_draw_textured_nurbs( GLState& _state)
   float  minv = 0.0;
   float  maxv = 1.0;
   
-  std::cout << "minu = " << minu << ", maxu = " << maxu << std::endl;
-  std::cout << "minv = " << minv << ", maxv = " << maxv << std::endl;
+//   std::cout << "minu = " << minu << ", maxu = " << maxu << std::endl;
+//   std::cout << "minv = " << minv << ", maxv = " << maxv << std::endl;
 
   // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
