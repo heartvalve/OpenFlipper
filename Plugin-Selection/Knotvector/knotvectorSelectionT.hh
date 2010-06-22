@@ -49,6 +49,11 @@ std::vector< int > getKnotSelection(KnotvectorT* _knotvector);
 
 /** @} */  
 
+// helper function
+template< typename KnotvectorT >
+inline
+int closestKnot(KnotvectorT * _knotvector, double _param);
+
 //=============================================================================
 } // KnotvectorSelection Namespace 
 //=============================================================================

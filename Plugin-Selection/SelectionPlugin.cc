@@ -97,6 +97,7 @@ void SelectionPlugin::initializePlugin() {
   tool_->vertexSelection->setIcon( QIcon(iconPath + "selection_vertex.png") );
   tool_->edgeSelection->setIcon( QIcon(iconPath + "selection_edge.png") );
   tool_->faceSelection->setIcon( QIcon(iconPath + "selection_face.png") );
+  tool_->knotSelection->setIcon( QIcon(iconPath + "selection_knot.png") );
   
   // Set combo box entries for the different modes
   tool_->convertFrom->addItem(tr("Modeling Area"));
@@ -272,7 +273,12 @@ void SelectionPlugin::pluginsInitialized() {
 #ifdef ENABLE_POLYLINE_SUPPORT
   emit addContextMenuItem(contextMenu_->menuAction() , DATA_POLY_LINE     , CONTEXTOBJECTMENU );
 #endif
-  emit addContextMenuItem(contextMenu_->menuAction() , typeId("BSplineCurve") , CONTEXTOBJECTMENU );
+#ifdef ENABLE_BSPLINECURVE_SUPPORT
+  emit addContextMenuItem(contextMenu_->menuAction() , DATA_BSPLINE_CURVE   , CONTEXTOBJECTMENU );
+#endif
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
+  emit addContextMenuItem(contextMenu_->menuAction() , DATA_BSPLINE_SURFACE , CONTEXTOBJECTMENU );
+#endif
 
   connect( contextMenu_ , SIGNAL( triggered(QAction*) ),
            this,          SLOT(selectionContextMenu(QAction*)) );
@@ -302,6 +308,10 @@ void SelectionPlugin::pluginsInitialized() {
   faceAction_ = new QAction( QIcon(iconPath + "selection_face.png"), tr("Enable Face Selection"), toolBarTypes_ );
   faceAction_->setCheckable( true );
   toolBar_->addAction( faceAction_ );
+  knotAction_ = new QAction( QIcon(iconPath + "selection_knot.png"), tr("Enable Knot Selection"), toolBarTypes_ );
+  knotAction_->setCheckable( true );
+  toolBar_->addAction( knotAction_ );
+  
   toolBar_->addSeparator();
 
   // TOOLBAR - SELECTION ACTIONS
@@ -360,11 +370,13 @@ void SelectionPlugin::pluginsInitialized() {
   connect( tool_->vertexSelection, SIGNAL(clicked()), vertexAction_, SLOT(trigger()) );
   connect( tool_->edgeSelection,   SIGNAL(clicked()), edgeAction_,   SLOT(trigger()) );
   connect( tool_->faceSelection,   SIGNAL(clicked()), faceAction_,   SLOT(trigger()) );
+  connect( tool_->knotSelection,   SIGNAL(clicked()), knotAction_,   SLOT(trigger()) );
 
   connect( objectAction_, SIGNAL(toggled(bool)),tool_->objectSelection , SLOT(setChecked(bool)) );
   connect( vertexAction_, SIGNAL(toggled(bool)),tool_->vertexSelection , SLOT(setChecked(bool)) );
   connect( edgeAction_,   SIGNAL(toggled(bool)),tool_->edgeSelection ,   SLOT(setChecked(bool)) );
   connect( faceAction_,   SIGNAL(toggled(bool)),tool_->faceSelection ,   SLOT(setChecked(bool)) );
+  connect( knotAction_,   SIGNAL(toggled(bool)),tool_->knotSelection ,   SLOT(setChecked(bool)) );
   
   // Set scriptable slot descriptions
   setSlotDescriptions();
@@ -578,9 +590,10 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
   //Selection Types
   if ( _action->text() == "Enable Object Selection" ||
        _action->text() == "Enable Vertex Selection" ||
-       _action->text() == "Enable Edge Selection" ||
-       _action->text() == "Enable Face Selection") {
-
+       _action->text() == "Enable Edge Selection"   ||
+       _action->text() == "Enable Face Selection"   ||
+       _action->text() == "Enable Knot Selection"      )
+  {
     unsigned char type = 0;
     if ( objectAction_->isChecked() ) {
       type = type | OBJECT;
@@ -595,6 +608,8 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
       type = type | EDGE;
     if ( faceAction_->isChecked() )
       type = type | FACE;
+    if ( knotAction_->isChecked() )
+      type = type | KNOT;
 
     selectionType_ = type;
 

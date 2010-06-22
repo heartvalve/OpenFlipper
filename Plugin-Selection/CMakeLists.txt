@@ -20,4 +20,4 @@ if (EXISTS ${CMAKE_SOURCE_DIR}/ObjectTypes/BSplineSurface)
   add_definitions (-DENABLE_BSPLINESURFACE_SUPPORT)
 endif ()
 
-openflipper_plugin (DIRS PolyLine BSplineCurve BSplineSurface Skeleton TSplineMesh widgets TRANSLATION_LANGUAGES de_DE)
+openflipper_plugin (DIRS PolyLine BSplineCurve BSplineSurface Skeleton TSplineMesh widgets TRANSLATION_LANGUAGES de_DE INSTALLDATA Icons)

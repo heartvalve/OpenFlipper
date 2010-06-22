@@ -186,7 +186,73 @@ getVertexSelection(BSplineSurfaceT* _bSplineSurface)
 //=========================================================
 
 
+template< typename BSplineSurfaceT >
+inline
+void 
+selectKnots(BSplineSurfaceT* _bSplineSurface, std::vector< int >& _knots) 
+{
+  KnotvectorSelection::selectKnots(_bSplineSurface->get_knotvector_ref(), _knots);
+}
+  
+//-----------------------------------------------------------------------------    
+  
+template< typename BSplineSurfaceT >
+inline
+void 
+unselectKnots(BSplineSurfaceT* _bSplineSurface, std::vector< int >& _knots) 
+{
+  KnotvectorSelection::unselectKnots(_bSplineSurface->get_knotvector_ref(), _knots);
+}
+  
+//-----------------------------------------------------------------------------  
+  
+template< typename BSplineSurfaceT >
+inline
+void 
+selectAllKnots(BSplineSurfaceT* _bSplineSurface) 
+{
+  KnotvectorSelection::selectAllKnots(_bSplineSurface->get_knotvector_m_ref());
+  KnotvectorSelection::selectAllKnots(_bSplineSurface->get_knotvector_n_ref());
+}
 
+//-----------------------------------------------------------------------------
+
+template< typename BSplineSurfaceT >
+inline
+void 
+clearKnotSelection(BSplineSurfaceT* _bSplineSurface)
+{
+  KnotvectorSelection::clearKnotSelection(_bSplineSurface->get_knotvector_m_ref());
+  KnotvectorSelection::clearKnotSelection(_bSplineSurface->get_knotvector_n_ref());
+}
+
+//-----------------------------------------------------------------------------
+
+template< typename BSplineSurfaceT >
+inline      
+void 
+invertKnotSelection(BSplineSurfaceT* _bSplineSurface)
+{
+  KnotvectorSelection::invertKnotSelection(_bSplineSurface->get_knotvector_m_ref());
+  KnotvectorSelection::invertKnotSelection(_bSplineSurface->get_knotvector_n_ref());
+}
+
+//-----------------------------------------------------------------------------
+
+template< typename BSplineCurveT >
+inline    
+std::vector< int > 
+getKnotSelection(BSplineCurveT* _bSplineSurface) 
+{
+  std::vector< int > selection_m;  
+  selection_m = KnotvectorSelection::getKnotSelection(_bSplineSurface->get_knotvector_m_ref());
+  
+  std::vector< int > selection_n;  
+  selection_n = KnotvectorSelection::getKnotSelection(_bSplineSurface->get_knotvector_n_ref());
+  
+  // TODO return what here?
+  return selection_m;
+}
 
 
 //=========================================================

@@ -98,4 +98,27 @@ getKnotSelection(KnotvectorT* _knotvector)
 
 //------------------------------------------------------------------------------
 
+template< typename KnotvectorT >
+inline    
+int 
+closestKnot(KnotvectorT * _knotvector, double _param)
+{
+  int closestIdx = -1;
+  double minDist = DBL_MAX;
+  
+  // find the closest knot oin a knotvector for a given parameter
+  for (unsigned int i = 0; i < _knotvector->size(); ++i)
+  {
+    double dist = fabs(_knotvector->getKnot(i) - _param);
+    if (dist < minDist)
+    {
+      minDist = dist;
+      closestIdx = i;
+    }
+  }
+  return closestIdx;
+}
+
+//------------------------------------------------------------------------------
+
 } // end of namespace KnotvectorSelection
