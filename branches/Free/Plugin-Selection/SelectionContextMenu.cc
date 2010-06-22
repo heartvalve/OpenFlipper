@@ -89,6 +89,9 @@ void SelectionPlugin::selectAll( int objectID ){
 
   if (selectionType_ & FACE)
     selectAllFaces( objectID );
+  
+  if (selectionType_ & KNOT)
+    selectAllKnots( objectID );
 }
 
 //***********************************************************************************
@@ -103,6 +106,9 @@ void SelectionPlugin::clearSelection( int objectID ){
 
   if (selectionType_ & FACE)
     clearFaceSelection( objectID );
+  
+  if (selectionType_ & KNOT)
+    clearKnotSelection( objectID );
 }
 
 //***********************************************************************************
@@ -117,6 +123,9 @@ void SelectionPlugin::invertSelection( int objectID ){
 
   if (selectionType_ & FACE)
     invertFaceSelection( objectID );
+  
+  if (selectionType_ & KNOT)
+    invertKnotSelection( objectID );
 }
 
 //***********************************************************************************
@@ -131,6 +140,9 @@ void SelectionPlugin::shrinkSelection( int objectID ){
 
   if (selectionType_ & FACE)
     shrinkFaceSelection( objectID );
+  
+//   if (selectionType_ & KNOT)
+//     shrinkKnotSelection( objectID );
 }
 
 //***********************************************************************************
@@ -145,6 +157,9 @@ void SelectionPlugin::growSelection( int objectID ){
 
   if (selectionType_ & FACE)
     growFaceSelection( objectID );
+  
+//   if (selectionType_ & KNOT)
+//     growKnotSelection( objectID );
 }
 
 //***********************************************************************************

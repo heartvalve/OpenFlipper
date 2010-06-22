@@ -51,6 +51,7 @@
 
 #include <Plugin-Selection/SelectionPlugin.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include "../Knotvector/knotvectorSelectionT.hh"
 
 //-----------------------------------------------------------------------------
 
@@ -89,11 +90,8 @@ toggleBSplineCurveSelection(QMouseEvent* _event)
               bsco->splineCurve()->controlpoint_selection( target_idx ) = 0;
           }
         }
-  
-        emit updateView();
       }
     }
-
   }
   
   else if (selectionType_ & KNOT)
@@ -104,27 +102,53 @@ toggleBSplineCurveSelection(QMouseEvent* _event)
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_SPLINE, _event->pos(),node_idx, target_idx, &hit_point)) 
     {
       BaseObjectData* object;
-  
+      
       if ( PluginFunctions::getPickedObject(node_idx, object) )
       {
         BSplineCurveObject* bsco = PluginFunctions::bsplineCurveObject( object );
-  
+        BSplineCurve *      bsc  = bsco->splineCurve();
+          
         // toggle selection
-        if( bsco->splineCurve()->get_knotvector_ref()->selections_available() )
+        if (bsc->get_knotvector_ref()->selections_available())
         {
-          if( target_idx < bsco->splineCurve()->get_knotvector_ref()->size()) {
-            if( bsco->splineCurve()->get_knotvector_ref()->selection( target_idx) == 0)
-              bsco->splineCurve()->get_knotvector_ref()->selection( target_idx ) = 1;
-            else
-              bsco->splineCurve()->get_knotvector_ref()->selection( target_idx ) = 0;
-          }
-        }
-  
-        emit updateView();
+          // the target index we are getting here refers to the respective texel in the picking-texture
+          // hence, we have to compute the actual curve parameter from this texel
+          // given the parameter we finally compute the closes knot
+          
+          int numKnots = bsc->n_knots();
+          int order    = bsc->degree() + 1;
+            
+          Knotvector * knotvec = bsc->get_knotvector_ref();
+
+          double minu = knotvec->getKnot(bsc->degree());
+          double maxu = knotvec->getKnot(numKnots - order);
+          double udiff = maxu - minu;
+          
+          int texres = bsco->splineCurveNode()->pick_texture_res();
+          double param = ((double)target_idx/(double)texres) * udiff + minu;
+ 
+          // knot closest to parameter of hitpoint on the curve
+          int knotIdx = KnotvectorSelection::closestKnot(knotvec, param);
+        
+          if( bsc->get_knotvector_ref()->selection( knotIdx ) == 0)
+            bsc->get_knotvector_ref()->selection( knotIdx ) = 1;
+          else
+            bsc->get_knotvector_ref()->selection( knotIdx ) = 0;
+          
+          /*
+          std::cout << "Knotvector selections" << std::endl;
+          for (unsigned int i = 0; i < knotvec->size(); ++i)
+            std::cout << knotvec->getKnot(i) << ", " << std::flush;
+          std::cout << std::endl;
+          for (unsigned int i = 0; i < knotvec->size(); ++i)
+            std::cout << (int)(bsc->get_knotvector_ref()->selection(i)) << ", " << std::flush;
+          std::cout << std::endl;
+          */
+          
+        } // end of if selections available
       }
     }
   }
-  
 }
 
 #endif

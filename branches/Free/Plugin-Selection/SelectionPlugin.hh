@@ -217,6 +217,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     QAction* vertexAction_;
     QAction* edgeAction_;
     QAction* faceAction_;
+    QAction* knotAction_;
     QAction* toggleAction_;
     QAction* paintSphereAction_;
     QAction* boundaryAction_;
