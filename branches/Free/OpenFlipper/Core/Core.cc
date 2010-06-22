@@ -601,6 +601,8 @@ Core::init() {
     scenegraphCheckTimer_->start ();
   }
 
+  // Sanity check for OpenGL capabilities!
+  checkOpenGLCapabilities();
 
   QTimer::singleShot(100, this, SLOT(slotExecuteAfterStartup()));
 }
@@ -1405,17 +1407,59 @@ void Core::slotDeleteAllObjects( ){
   slotObjectUpdated(-1);
 }
 
-// //-----------------------------------------------------------------------------
-//
-// void Core::slotGetPlugin(QString _name, QObject* & _plugin ){
-//   for (uint i=0; i < plugins.size(); i++)
-//     if (plugins[i].name == _name){
-//       _plugin = plugins[i].plugin;
-//       return;
-//     }
-//
-//   _plugin = 0;
-//   return;
-// }
+//-----------------------------------------------------------------------------
+
+
+bool Core::checkOpenGLCapabilities()  {
+  
+  // Status ok?
+  bool ok = true;
+  
+  QString missing;
+  
+  // We need at least version 2.0 or higher 
+  QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
+  if ( !( flags.testFlag(QGLFormat::OpenGL_Version_3_0) | 
+    flags.testFlag(QGLFormat::OpenGL_Version_2_1) | 
+    flags.testFlag(QGLFormat::OpenGL_Version_2_0) ) ) {
+    ok = false; 
+  missing += tr("OpenGL Version less then 2.0!\n");
+  }
+  
+  //Get OpenGL extensions
+  QString glExtensions = QString((const char*)glGetString(GL_EXTENSIONS));
+  
+  // Vertex buffer objects used heavily in mesh node and almost all other nodes
+  if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") ) {
+    ok = false; 
+    missing += tr("Your graphics card does not support the GL_ARB_vertex_buffer_object extension!\n");
+    std::cerr << " a " << glExtensions.toStdString() << std::endl;
+  }
+  
+  if ( !ok ) {
+    QString message = tr("Warning! The OpenGL capabilities of your current machine/driver are not sufficient!\n");
+    message += tr("The following checks failed:\n\n");
+    message += missing;
+    message += tr("\n\nPlease update your driver or graphics card.\n");
+    #ifdef APPLE
+    message += tr("If you have more than one GPU (e.g. MacBook) don't use the internal one!\n");
+    #endif
+    
+    std::cerr << message.toStdString() << std::endl;
+    
+    QMessageBox::critical ( 0, tr( "Insufficient OpenGL Capabilities!"),message );
+    
+    // Unsafe operation, so quit the application
+    exit(1);
+    
+  } 
+  #ifndef NDEBUG
+  else {
+    std::cerr << "OpenGL Version Check succeeded" << std::endl;
+  }
+  #endif
+  
+  return ok;
+}
 
 //=============================================================================
