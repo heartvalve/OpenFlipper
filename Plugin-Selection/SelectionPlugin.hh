@@ -597,10 +597,10 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     //==========================================
     
     /// select given knots
-    void selectKnots( int objectId , IdList _knotList );
+    void selectKnots( int objectId , IdList _knotList_u, IdList _knotList_v = IdList());
 
     /// unselect given knots
-    void unselectKnots( int objectId , IdList _knotList );
+    void unselectKnots( int objectId , IdList _knotList_u, IdList _knotList_v = IdList());
 
     /// Select all knots
     void selectAllKnots( int objectId );
