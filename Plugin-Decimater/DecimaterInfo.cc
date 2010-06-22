@@ -57,8 +57,6 @@ DecimaterInfo::DecimaterInfo(TriMesh* _mesh) :
 
 
 DecimaterInfo::~DecimaterInfo() {
-//  if ( decimater_ )
-//    delete decimater_;
 }
 
 //-----------------------------------------------------------------------------------
