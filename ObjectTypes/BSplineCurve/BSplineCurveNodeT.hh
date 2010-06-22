@@ -147,6 +147,9 @@ public:
   void set_bspline_draw_mode(BSplineDrawMode _mode) {bspline_draw_mode_ = _mode;};
 
   void updateGeometry();
+  
+  //! Should be a power of 2
+  int& pick_texture_res( ) { return pick_texture_res_; }
 
 private:
 
