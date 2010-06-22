@@ -17,14 +17,26 @@ FIND_PATH(FTGL_INCLUDE_DIR NAMES FTGL/ftgl.h
 #MARK_AS_ADVANCED(FTGL_INCLUDE_DIR)
 
 # Look for the library.
-FIND_LIBRARY(FTGL_LIBRARY NAMES ftgl ftgl_dynamic_MTD
+FIND_LIBRARY(FTGL_LIBRARY_RELEASE NAMES ftgl ftgl_dynamic_MTD
                           PATHS /usr/lib64
                                 /usr/local/lib64
                                 /usr/lib
                                 /usr/local/lib
                                 ../../External/lib
                                 "C:\\libs\\ftgl\\msvc\\Build"
-                                ${module_file_path}/../../../External/lib)
+              ${module_file_path}/../../../External/lib)
+
+FIND_LIBRARY(FTGL_LIBRARY_DEBUG NAMES ftgl_d ftgld
+                          PATHS /usr/lib64
+                                /usr/local/lib64
+                                /usr/lib
+                                /usr/local/lib
+                                ../../External/lib
+                                "C:\\libs\\ftgl\\msvc\\Build"    
+                 ${module_file_path}/../../../External/lib)
+
+set( FTGL_LIBRARY optimized;${FTGL_LIBRARY_RELEASE};debug;${FTGL_LIBRARY_DEBUG} )
+
 #MARK_AS_ADVANCED(FTGL_LIBRARY)
 
 IF( WIN32 AND PREFER_STATIC_LIBRARIES )
