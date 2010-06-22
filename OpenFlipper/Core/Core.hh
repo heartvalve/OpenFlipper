@@ -1107,6 +1107,16 @@ private slots:
     
   /** @} */
   
+  
+  private:
+    /** \brief OpenGL capability check 
+    *
+    * Checks if the OpenGL Capabilities of the graphics card are sufficient and
+    * prints an error message if not.
+    */
+    bool checkOpenGLCapabilities();
+  
+  
   private :
 
   /// Id for the next backup
