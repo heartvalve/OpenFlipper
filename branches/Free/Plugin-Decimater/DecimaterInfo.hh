@@ -79,11 +79,11 @@ class DecimaterInfo : public PerObjectData
   void setNormalDeviationConstraint( int _value );
   void setRoundnessConstraint( double _value );
 
-  DecimaterType* decimater() { return decimater_; };
+  DecimaterType* decimater() { return decimater_.get(); };
 
 private :
 
-  OpenMesh::Decimater::DecimaterT< TriMesh >* decimater_;
+  std::tr1::shared_ptr< DecimaterType > decimater_;
 
   bool normalDeviation_;
   bool distance_;
