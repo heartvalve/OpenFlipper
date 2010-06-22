@@ -62,7 +62,7 @@
 
 void 
 SelectionPlugin::
-selectKnots( int objectId , IdList _knotList ) 
+selectKnots( int objectId , IdList _knotList_u, IdList _knotList_v) 
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) 
@@ -71,29 +71,43 @@ selectKnots( int objectId , IdList _knotList )
     return;
   }
   
-  if ( _knotList.size() == 0 )
+  if ( _knotList_u.size() == 0 )
     return;
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
   if ( object->dataType() == DATA_BSPLINE_CURVE )
-      BSplineCurveSelection::selectKnots( PluginFunctions::splineCurve(object) , _knotList );
+      BSplineCurveSelection::selectKnots( PluginFunctions::splineCurve(object) , _knotList_u );
 #endif  
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT   
-//   else if ( object->dataType() == DATA_BSPLINE_SURFACE )
-//       BSplineSurfaceSelection::selectKnots( PluginFunctions::splineSurface(object) , _knotList );
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::selectKnots( PluginFunctions::splineSurface(object) , _knotList_u, _knotList_v );
 #endif            
   else {
       emit log(LOGERR,tr("selectKnots : Unsupported object Type") ); 
       return;
   }
   
-  QString selection = "selectKnots( ObjectId , [ " + QString::number(_knotList[0]);
+  QString selection = "selectKnots( ObjectId , [ " + QString::number(_knotList_u[0]);
   
-  for ( unsigned int i = 1 ; i < _knotList.size(); ++i) {
-    selection +=  " , " + QString::number(_knotList[i]);
+  for ( unsigned int i = 1 ; i < _knotList_u.size(); ++i) 
+    selection +=  " , " + QString::number(_knotList_u[i]);
+  
+  selection += " ]";
+//   selection += " ] )";
+  
+  // only add selection for second knotvector (surface case) if there are any
+  if (_knotList_v.size() != 0)
+  {
+    selection += " , [ " + QString::number(_knotList_v[0]);
+  
+    for ( uint i = 1 ; i < _knotList_v.size(); ++i) 
+      selection +=  " , " + QString::number(_knotList_v[i]);
+  
+    selection += " ]";
   }
   
-  selection += " ] )";
+  selection += " )";
+  
   
   emit updatedObject(object->id(), UPDATE_SELECTION_KNOTS);
   emit scriptInfo( selection );
@@ -103,7 +117,7 @@ selectKnots( int objectId , IdList _knotList )
 
 void 
 SelectionPlugin::
-unselectKnots( int objectId , IdList _knotList ) 
+unselectKnots( int objectId , IdList _knotList_u, IdList _knotList_v ) 
 {
   BaseObjectData* object;
   if ( ! PluginFunctions::getObject(objectId,object) ) 
@@ -112,30 +126,44 @@ unselectKnots( int objectId , IdList _knotList )
     return;
   }
   
-  if ( _knotList.size() == 0 )
+  if ( _knotList_u.size() == 0 )
     return;
   
 
 #ifdef ENABLE_BSPLINECURVE_SUPPORT      
   if ( object->dataType() == DATA_BSPLINE_CURVE )
-      BSplineCurveSelection::unselectKnots( PluginFunctions::splineCurve(object) , _knotList );
+      BSplineCurveSelection::unselectKnots( PluginFunctions::splineCurve(object) , _knotList_u );
 #endif
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT      
-//   else if ( object->dataType() == DATA_BSPLINE_SURFACE )
-//       BSplineSurfaceSelection::unselectKnots( PluginFunctions::splineSurface(object) , _knotList );
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::unselectKnots( PluginFunctions::splineSurface(object) , _knotList_u, _knotList_v );
 #endif            
   else {
       emit log(LOGERR,tr("unselectKnots : Unsupported object Type") ); 
       return;
   }
   
-  QString selection = "unselectKnots( ObjectId , [ " + QString::number(_knotList[0]);
+  QString selection = "unselectKnots( ObjectId , [ " + QString::number(_knotList_u[0]);
   
-  for ( uint i = 1 ; i < _knotList.size(); ++i) {
-    selection +=  " , " + QString::number(_knotList[i]);
+  for ( uint i = 1 ; i < _knotList_u.size(); ++i) {
+    selection +=  " , " + QString::number(_knotList_u[i]);
   }
   
-  selection += " ] )";
+  selection += " ]";
+//   selection += " ] )";
+  
+  // only add selection for second knotvector (surface case) if there are any
+  if (_knotList_v.size() != 0)
+  {
+    selection += " , [ " + QString::number(_knotList_v[0]);
+  
+    for ( uint i = 1 ; i < _knotList_v.size(); ++i) 
+      selection +=  " , " + QString::number(_knotList_v[i]);
+  
+    selection += " ]";
+  }
+  
+  selection += " )";
   
   emit updatedObject(object->id(), UPDATE_SELECTION_KNOTS);
   emit scriptInfo( selection );
