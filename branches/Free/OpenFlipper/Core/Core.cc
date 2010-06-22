@@ -1433,7 +1433,6 @@ bool Core::checkOpenGLCapabilities()  {
   if ( !glExtensions.contains("GL_ARB_vertex_buffer_object") ) {
     ok = false; 
     missing += tr("Your graphics card does not support the GL_ARB_vertex_buffer_object extension!\n");
-    std::cerr << " a " << glExtensions.toStdString() << std::endl;
   }
   
   if ( !ok ) {
@@ -1442,7 +1441,7 @@ bool Core::checkOpenGLCapabilities()  {
     message += missing;
     message += tr("\n\nPlease update your driver or graphics card.\n");
     #ifdef APPLE
-    message += tr("If you have more than one GPU (e.g. MacBook) don't use the internal one!\n");
+      message += tr("If you have more than one GPU (e.g. MacBook) don't use the internal one!\n");
     #endif
     
     std::cerr << message.toStdString() << std::endl;
