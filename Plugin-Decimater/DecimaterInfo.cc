@@ -43,22 +43,22 @@
 #include "DecimaterInfo.hh"
 
 DecimaterInfo::DecimaterInfo(TriMesh* _mesh) :
-  decimater_(0),
+  decimater_(),
   normalDeviation_(false),
   distance_(false),
   roundness_(false)
 {
-  decimater_ = new DecimaterType( *_mesh );
+  decimater_ = std::tr1::shared_ptr< DecimaterType >( new DecimaterType( *_mesh )  );
 
-  decimater_->add( hModQuadric_priority );
-  decimater_->module( hModQuadric_priority ).unset_max_err();
+  decimater()->add( hModQuadric_priority );
+  decimater()->module( hModQuadric_priority ).unset_max_err();
 
 }
 
 
 DecimaterInfo::~DecimaterInfo() {
-  if ( decimater_ )
-    delete decimater_;
+//  if ( decimater_ )
+//    delete decimater_;
 }
 
 //-----------------------------------------------------------------------------------
@@ -66,22 +66,22 @@ DecimaterInfo::~DecimaterInfo() {
 
 void DecimaterInfo::removeConstraints(){
 
-  decimater_->module( hModQuadric_priority ).unset_max_err();
+  decimater()->module( hModQuadric_priority ).unset_max_err();
 
   //remove modules
 
   if ( normalDeviation_ ) {
-    decimater_->remove( hModNormalFlipping );
+    decimater()->remove( hModNormalFlipping );
     normalDeviation_ = false;
   }
 
   if ( distance_ ) {
-    decimater_->remove( hModQuadric );
+    decimater()->remove( hModQuadric );
     distance_ = false;
   }
 
   if ( roundness_ ) {
-    decimater_->remove( hModRoundness );
+    decimater()->remove( hModRoundness );
     roundness_ = false;
   }
 
@@ -92,8 +92,8 @@ void DecimaterInfo::removeConstraints(){
 
 void DecimaterInfo::setDistanceConstraint( double _value ){
 
-  if (  decimater_->add( hModQuadric ) ) {
-    decimater_->module( hModQuadric ).set_max_err( _value );
+  if (  decimater()->add( hModQuadric ) ) {
+    decimater()->module( hModQuadric ).set_max_err( _value );
     distance_ = true;
   }
 }
@@ -103,8 +103,8 @@ void DecimaterInfo::setDistanceConstraint( double _value ){
 
 void DecimaterInfo::setNormalDeviationConstraint( int _value ){
 
-  if ( decimater_->add( hModNormalFlipping ) ) {
-    decimater_->module( hModNormalFlipping ).set_normal_deviation( _value );
+  if ( decimater()->add( hModNormalFlipping ) ) {
+    decimater()->module( hModNormalFlipping ).set_normal_deviation( _value );
     normalDeviation_ = true;
   }
 }
@@ -114,8 +114,8 @@ void DecimaterInfo::setNormalDeviationConstraint( int _value ){
 
 void DecimaterInfo::setRoundnessConstraint( double _value ){
 
-  if ( decimater_->add( hModRoundness ) ) {
-    decimater_->module( hModRoundness ).set_min_roundness( _value , true );
+  if ( decimater()->add( hModRoundness ) ) {
+    decimater()->module( hModRoundness ).set_min_roundness( _value , true );
     roundness_ = true;
   }
 }
