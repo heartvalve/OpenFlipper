@@ -50,6 +50,10 @@
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#ifndef WIN32
+  #include <tr1/memory>
+#endif
+
 class DecimaterInfo : public PerObjectData
 {
 
