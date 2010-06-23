@@ -53,6 +53,7 @@
 //== INCLUDES =================================================================
 
 #include "bSplineSurfaceSelectionT.hh"
+#include "../Knotvector/knotvectorSelectionT.hh"
 
 //== NAMESPACES ===============================================================
 
@@ -128,7 +129,6 @@ selectAllVertices(BSplineSurfaceT* _bSplineSurface)
         _bSplineSurface->controlpoint_selection(i,j) = true;
 }
 
-
 //-----------------------------------------------------------------------------
 
 template< typename BSplineSurfaceT >
@@ -141,7 +141,6 @@ clearVertexSelection(BSplineSurfaceT* _bSplineSurface)
       for(unsigned int j = 0; j < _bSplineSurface->n_control_points_n(); ++j)
         _bSplineSurface->controlpoint_selection(i,j) = false;
 }
-
 
 //-----------------------------------------------------------------------------
 
@@ -266,7 +265,7 @@ inline
 void
 selectEdges(BSplineSurfaceT* _bSplineSurface, std::vector< int >& _edges)
 {
-  const int max = _bSplineSurface->n_control_points_m() * _bSplineSurface->n_control_points_n();
+//   const int max = _bSplineSurface->n_control_points_m() * _bSplineSurface->n_control_points_n();
 
 //   if(_bSplineSurface->edge_selections_available())
 //     for ( unsigned int i = 0 ; i < _edges.size(); ++i )
@@ -281,7 +280,7 @@ inline
 void
 unselectEdges(BSplineSurfaceT* _bSplineSurface, std::vector< int >& _edges)
 {
-  const int max = _bSplineSurface->n_control_points_m() * _bSplineSurface->n_control_points_n();
+//   const int max = _bSplineSurface->n_control_points_m() * _bSplineSurface->n_control_points_n();
 
 //   if(_bSplineSurface->edge_selections_available())
 //     for ( unsigned int i = 0 ; i < _edges.size(); ++i )
@@ -335,8 +334,8 @@ inline
 std::vector< int > getEdgeSelection(BSplineSurfaceT* _bSplineSurface)
 {
   std::vector< int > selection;
-  if( ! _bSplineSurface->edge_selections_available() )
-    return selection;
+//   if( ! _bSplineSurface->edge_selections_available() )
+//     return selection;
 
 //   for(unsigned int i = 0; i < _bSplineSurface->n_control_points_m(); ++i)
 //     for(unsigned int j = 0; j < _bSplineSurface->n_control_points_n(); ++j)
