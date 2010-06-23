@@ -190,8 +190,8 @@ selectAllKnots( int objectId )
       BSplineCurveSelection::selectAllKnots( PluginFunctions::splineCurve(object) );
 #endif
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT   
-//   else if ( object->dataType() == DATA_BSPLINE_SURFACE )
-//       BSplineSurfaceSelection::selectAllKnots( PluginFunctions::splineSurface(object) );
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::selectAllKnots( PluginFunctions::splineSurface(object) );
 #endif            
   else {
       emit log(LOGERR,tr("selectAllKnots : Unsupported object Type") ); 
@@ -220,8 +220,8 @@ clearKnotSelection( int objectId )
       BSplineCurveSelection::clearKnotSelection( PluginFunctions::splineCurve(object) );
 #endif
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-//   else if ( object->dataType() == DATA_BSPLINE_SURFACE )
-//       BSplineSurfaceSelection::clearKnotSelection( PluginFunctions::splineSurface(object) );
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::clearKnotSelection( PluginFunctions::splineSurface(object) );
 #endif            
   else {
       emit log(LOGERR,tr("clearKnotSelection : Unsupported object Type") ); 
@@ -250,8 +250,8 @@ invertKnotSelection( int objectId )
       BSplineCurveSelection::invertKnotSelection( PluginFunctions::splineCurve(object) );
 #endif  
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
-//   else if ( object->dataType() == DATA_BSPLINE_SURFACE )
-//       BSplineSurfaceSelection::invertKnotSelection( PluginFunctions::splineSurface(object) );
+  else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+      BSplineSurfaceSelection::invertKnotSelection( PluginFunctions::splineSurface(object) );
 #endif                 
 
   else {
