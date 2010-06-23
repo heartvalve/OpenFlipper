@@ -46,12 +46,23 @@
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#ifndef WIN32
+  #include <tr1/memory>
+#endif
+
 class SmootherObject : public PerObjectData
 {
   public:
+    
+    typedef OpenMesh::Smoother::JacobiLaplaceSmootherT< TriMesh > SmootherType;
+    
+    
     SmootherObject(TriMesh* _mesh);
     ~SmootherObject();
 
-    OpenMesh::Smoother::JacobiLaplaceSmootherT< TriMesh >* smoother;
+    SmootherType* smoother() { return smoother_.get(); };
+    
+  private:
+    std::tr1::shared_ptr< SmootherType > smoother_;
 };
 
