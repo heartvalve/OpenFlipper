@@ -166,17 +166,17 @@ slot_smooth()
       double absoluteError = value.toDouble(&ok);
 
       if ( ok )
-        data->smoother->set_absolute_local_error( absoluteError );
+        data->smoother()->set_absolute_local_error( absoluteError );
       else
         emit log(LOGWARN , "Unable to read distance error from LineEdit");
       
       jobDescription += ",max_error: " + QString::number(absoluteError);
     }
     
-    data->smoother->initialize(component,continuity );
-    data->smoother->skip_features(tool_->respectFeatures->isChecked());
+    data->smoother()->initialize(component,continuity );
+    data->smoother()->skip_features(tool_->respectFeatures->isChecked());
 
-    data->smoother->smooth( tool_->sB_iter->value() );
+    data->smoother()->smooth( tool_->sB_iter->value() );
     
     jobDescription +=  ") " + QString::number(tool_->sB_iter->value()) + " iterations";
 
@@ -263,14 +263,14 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
     }
 
     if ( _maxDistance > 0.0) {
-      data->smoother->set_absolute_local_error( _maxDistance );
+      data->smoother()->set_absolute_local_error( _maxDistance );
       jobDescription += ",max_error: " + QString::number(_maxDistance);
     } else
-      data->smoother->set_absolute_local_error( FLT_MAX );
+      data->smoother()->set_absolute_local_error( FLT_MAX );
 
-    data->smoother->initialize(component,continuity);
+    data->smoother()->initialize(component,continuity);
 
-    data->smoother->smooth( _iterations );
+    data->smoother()->smooth( _iterations );
     TriMesh* mesh = PluginFunctions::triMesh(object);
 
     jobDescription +=  ") " + QString::number(_iterations) + " iterations";

@@ -44,10 +44,10 @@
 
 
 SmootherObject::SmootherObject(TriMesh* _mesh){
-  smoother = new OpenMesh::Smoother::JacobiLaplaceSmootherT< TriMesh >( *_mesh );
+  smoother_ = std::tr1::shared_ptr< SmootherType >( new SmootherType( *_mesh )  );
+  
 }
 
 SmootherObject::~SmootherObject(){
-  delete smoother;
 }
 
