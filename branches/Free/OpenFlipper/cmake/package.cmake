@@ -156,7 +156,7 @@ elseif (APPLE)
   if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
     IF ( NOT APPLE_INSTALLER_ICON )
         # option to set the used Icon for OpenFlipper
-        set ( APPLE_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\branding\\mac\\installer-icon.ico" CACHE FILEPATH "Path to the Executables Icon" )
+        set ( APPLE_INSTALLER_ICON "${CMAKE_SOURCE_DIR}\\branding\\mac\\OpenFlipper_Icon_128x128x32.ico" CACHE FILEPATH "Path to the Executables Icon" )
     ENDIF(NOT APPLE_INSTALLER_ICON )
 
     IF ( NOT APPLE_INSTALLER_IMAGE_ICON )
