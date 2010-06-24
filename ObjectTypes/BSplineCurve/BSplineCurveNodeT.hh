@@ -105,6 +105,7 @@ public:
     curve_highlight_color_   = Vec4f(1.0, 127.0/255.0, 0.0, 1.0);
     
     pick_init_texturing();
+    selection_init_texturing();
   }
 
   /// Destructor
@@ -148,6 +149,8 @@ public:
 
   void updateGeometry();
   
+  void updateSelectionTexture();
+  
   //! Should be a power of 2
   int& pick_texture_res( ) { return pick_texture_res_; }
 
@@ -168,19 +171,26 @@ private:
   BSplineCurveNodeT& operator=(const BSplineCurveNodeT& _rhs);
 
   void drawGluNurbsMode(GLState& _state);
-//   void drawDirectMode(unsigned int _drawMode, GLState& _state);
+
   void drawDirectMode(DrawModes::DrawMode _drawMode, GLState& _state);
 
+  void drawTexturedGluNurbsMode(GLState& _state);
   
   /** spline curve picking */
-  // generate index and setup texture parameters
+  /// generate index and setup texture parameters
   void pick_init_texturing ( );
-
-  // create texture image
+  /// create texture image
   void pick_create_texture( GLState& _state);
+ 
   
-  // draw textured nurbs patch with color-index texture
-  void pick_draw_textured_nurbs( GLState& _state);
+  /// generate index and setup texture parameters for selection visualization
+  void selection_init_texturing();
+  /// creates texture to put onto nurbs curve for selection visualization
+  void create_selection_texture();
+  
+  /// draw textured nurbs patch
+  void draw_textured_nurbs( GLState& _state);
+
   
 private:
 
@@ -203,12 +213,19 @@ private:
 
   std::vector< std::pair< Vec3d, Vec4f > > curve_samples_;
   
-  // texturing stuff fpr picking
+  // texturing stuff for picking
   QImage pick_texture_image_;
   GLuint pick_texture_idx_;
   int    pick_texture_res_;
   // used to only re-create pick_texture_image_ if picking indices changed...
   unsigned int pick_texture_baseidx_;
+  
+  
+  // texturing stuff for selection highlighting
+  QImage selection_texture_image_;
+  GLuint selection_texture_idx_;
+  int    selection_texture_res_;
+
 
 };
 
