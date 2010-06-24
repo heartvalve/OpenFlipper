@@ -209,7 +209,7 @@ inline std::istream& operator>>(std::istream& _is, KnotvectorT< Scalar >& _knotv
 
   unsigned int size(0);
   _is >> size;
-  _knotvector.Resize(size);
+  _knotvector.resize(size);
   for (unsigned int i = 0; i < size; i++)
     _is >> _knotvector(i);
 
