@@ -123,6 +123,9 @@ class DLLEXPORT BSplineSurfaceObject : public BaseObjectData {
     /// return a pointer to the spline curve
     BSplineSurface* splineSurface();
 
+    /// Update the whole Object (Selection,Topology,...)
+    virtual void update(UpdateType _type = UPDATE_ALL);
+    
   private:
     BSplineSurface* splineSurface_;
 

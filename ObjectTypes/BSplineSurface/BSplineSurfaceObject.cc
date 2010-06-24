@@ -225,6 +225,24 @@ BSplineSurface* BSplineSurfaceObject::splineSurface() {
   return splineSurface_;
 }
 
+//-----------------------------------------------------------------------------
+
+/// Update the whole Object (Selection,Topology,...)
+void 
+BSplineSurfaceObject::
+update(UpdateType _type)
+{
+  if ( _type.contains(UPDATE_ALL))
+  {
+
+  }
+  else 
+  {
+//     if (_type.contains(UPDATE_SELECTION) || _type.contains(UPDATE_SELECTION_KNOTS) )
+//       splineSurfaceNode()->updateSelectionTexture();
+  }
+}
+
 // ===============================================================================
 // Visualization
 // ===============================================================================

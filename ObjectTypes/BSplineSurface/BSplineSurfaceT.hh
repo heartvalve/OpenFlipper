@@ -303,6 +303,18 @@ public:
    */
   Scalar derivativeBasisFunction(Knotvector & _knotvector, int _i, int _n, double _t, int _der);
 
+  /**
+   * Returns the basis functions which are unequal to zero at parameter u
+   * \param _t the parameter
+   */
+  ACG::Vec2i spanm(double _t);
+
+  /**
+   * Returns the basis functions which are unequal to zero at parameter v
+   * \param _t the parameter
+   */
+  ACG::Vec2i spann(double _t);
+  
 
 private: // private functions
 
@@ -316,19 +328,7 @@ private: // private functions
   /// Returns the upper v parameter
   Scalar upperv();
 
-  /**
-   * Returns the basis functions which are unequal to zero at parameter u
-   * \param _t the parameter
-   */
-  ACG::Vec2i spanm(double _t);
-
-  /**
-   * Returns the basis functions which are unequal to zero at parameter v
-   * \param _t the parameter
-   */
-  ACG::Vec2i spann(double _t);
-
-
+  
 public :
 
   // request properties
