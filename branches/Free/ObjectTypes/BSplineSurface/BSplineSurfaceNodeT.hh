@@ -97,7 +97,13 @@ class BSplineSurfaceNodeT : public MaterialNode
     render_bspline_surface_ = true;
     adaptive_sampling_      = false;
 
+    controlnet_color_           = Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0);
+    controlnet_highlight_color_ = Vec4f(0,1,0,1);
+    surface_color_             = Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0);
+    surface_highlight_color_   = Vec4f(1.0, 127.0/255.0, 0.0, 1.0);
+    
     pick_init_texturing();
+    selection_init_texturing();
   }
 
   /// Destructor
@@ -132,6 +138,8 @@ class BSplineSurfaceNodeT : public MaterialNode
 
   void adaptive_sampling(bool _adaptive){adaptive_sampling_ = _adaptive;};
 
+  void updateSelectionTexture();
+  
   //! Should be a power of 2
   int& pick_texture_res( ) { return pick_texture_res_; }
 
@@ -154,20 +162,31 @@ private:
   void render(GLState& _state, bool _fill);
 
   void drawGluNurbsMode(GLState& _state, bool _fill);
+  
+  void drawTexturedGluNurbsMode(GLState& _state);
 
   void drawControlNet(GLState& _state);
 
 
-  /** spline u,v-parameter picking */
-  // generate index and setup texture parameters
+  /** spline surface u,v-parameter picking */
+  /// generate index and setup texture parameters
   void pick_init_texturing ( );
-
-  // create texture image
+  /// create texture image
   void pick_create_texture( GLState& _state);
 
-  // draw textured nurbs patch with color-index texture
+  /// draw textured nurbs patch
   void pick_draw_textured_nurbs( GLState& _state);
+  
+  
+  /// generate index and setup texture parameters for selection visualization
+  void selection_init_texturing();
+  /// creates texture to put onto nurbs curve for selection visualization
+  void create_selection_texture();
+  
+  /// draw textured nurbs patch
+  void draw_textured_nurbs( GLState& _state);
 
+  
 private:
 
   BSplineSurface& bsplineSurface_;
@@ -192,6 +211,12 @@ private:
   int    pick_texture_res_;
   // used to only re-create pick_texture_image_ if picking indices changed...
   unsigned int pick_texture_baseidx_;
+  
+  // texturing stuff for selection highlighting
+  QImage selection_texture_image_;
+  GLuint selection_texture_idx_;
+  int    selection_texture_res_;
+  
 };
 
 
