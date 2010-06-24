@@ -219,11 +219,13 @@ update(UpdateType _type)
     if (_type.contains(UPDATE_GEOMETRY) )
     {
       splineCurveNode()->updateGeometry();
+//       splineCurveNode()->updateSelectionTexture();
     }
     else if (_type.contains(UPDATE_SELECTION_KNOTS) || _type.contains(UPDATE_SELECTION))
     {
       // actually only the color needs to be recomputed, not the samples
       splineCurveNode()->updateGeometry();
+//       splineCurveNode()->updateSelectionTexture();
     }
   }
 }
