@@ -661,9 +661,7 @@ create_selection_texture()
   double maxu  = bsplineCurve_.get_knot( numKnots - degree -1 );
   double diffu = maxu - minu;
 
-  
-  int pixelIdx = 0;
-  
+  int texelIdx = 0;
   for ( int m = 0; m < selection_texture_res_; ++m)
   {
     double step_m = (double)m / (double)selection_texture_res_;
@@ -671,8 +669,9 @@ create_selection_texture()
   
     // get the span and check which knots are selected
     ACG::Vec2i span = bsplineCurve_.span(u);
-    if (span[0] < 0 || span[1] < 0) return; // check for incomple spline 
-//       std::cout << "span(" << u << "): " << span[0] << ", " << span[1] << std::endl;
+    // check for incomple spline 
+    if (span[0] < 0 || span[1] < 0) 
+      return; 
 
     float alpha = 0.0; // blends between curve and highlight colors
     for (int i = 0; i < degree+1; ++i) // degree+1 basis functions (those in the span) contribute
@@ -682,21 +681,16 @@ create_selection_texture()
       // basis functions sum up to 1. hence, we only have to sum up those with selected control point to get the blending weight
       if (bsplineCurve_.controlpoint_selection(idx))
         alpha += bsplineCurve_.basisFunction(idx, degree, u);
-
-//       std::cout << "control point " << idx << ": sel? " << bsplineCurve_.controlpoint_selection(idx) 
-//                 << ", value bf = " << bsplineCurve_.basisFunction(idx, degree, u) << std::endl;
     }
   
     // compute color
     Vec4f color =  curve_color_ * (1.0 - alpha) + curve_highlight_color_ * alpha;
 
     // fill texture
-    b.setPixel (pixelIdx, 0, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
-    b.setPixel (pixelIdx, 1, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
+    b.setPixel (texelIdx, 0, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
+    b.setPixel (texelIdx, 1, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
     
-//     std::cout << "pixel " << pixelIdx << " set" << std::endl;
-    ++pixelIdx;
-    
+    ++texelIdx;
   }
   
   // debug, output image
@@ -806,14 +800,9 @@ draw_textured_nurbs( GLState& _state)
   int order        = bsplineCurve_.degree() + 1;
 
   // get kntvector
-//   std::cout << "knots: " << std::flush;
   GLfloat *knots = new GLfloat[numKnots];
   for (int i = 0; i < numKnots; ++i)
-  {
     knots[i] = bsplineCurve_.get_knot(i);
-//     std::cout << bsplineCurve_.get_knot(i) << ", " << std::flush;
-  }
-//   std::cout << std::endl;
 
   int numCPs_dummy = 2;
   GLfloat *ctlpoints = new GLfloat[numCPs * numCPs_dummy * 3]; // dummy cps = 2
@@ -829,9 +818,6 @@ draw_textured_nurbs( GLState& _state)
       ctlpoints[idx0] = (GLfloat)p[0];
       ctlpoints[idx1] = (GLfloat)p[1];
       ctlpoints[idx2] = (GLfloat)p[2];
-      
-//       if (j == 1)
-//         ctlpoints[idx1] = (GLfloat)p[1] + 1.0;
     }
   }
 
@@ -866,9 +852,6 @@ draw_textured_nurbs( GLState& _state)
   float  minv = 0.0;
   float  maxv = 1.0;
   
-//   std::cout << "minu = " << minu << ", maxu = " << maxu << std::endl;
-//   std::cout << "minv = " << minv << ", maxv = " << maxv << std::endl;
-
   // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
 

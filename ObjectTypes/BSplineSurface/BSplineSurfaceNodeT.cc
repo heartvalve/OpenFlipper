@@ -764,8 +764,9 @@ create_selection_texture()
 
     // get the span and check which knots are selected
     ACG::Vec2i span_u = bsplineSurface_.spanm(u);
-    if (span_u[0] < 0 || span_u[1] < 0) return; // check for incomplete spline
-//       std::cout << "\nspan_u(" << u << "): " << span_u[0] << ", " << span_u[1] << std::endl;
+    // check for incomplete spline
+    if (span_u[0] < 0 || span_u[1] < 0)
+      return; 
 
     // reset texture v coord for every new u coord
     texelIdx_v = 0;
@@ -778,8 +779,9 @@ create_selection_texture()
 
       // get the span and check which knots are selected
       ACG::Vec2i span_v = bsplineSurface_.spann(v);
-      if (span_v[0] < 0 || span_v[1] < 0) return; // check for incomplete spline
-//       std::cout << "span_v(" << v << "): " << span_v[0] << ", " << span_v[1] << std::endl;
+      // check for incomplete spline
+      if (span_v[0] < 0 || span_v[1] < 0)
+        return; 
 
       float alpha = 0.0; // blends between curve and highlight colors
       for (int i = 0; i < degree_m+1; ++i) // degree+1 basis functions (those in the span) contribute
@@ -794,12 +796,6 @@ create_selection_texture()
           if (bsplineSurface_.controlpoint_selection(idx_m, idx_n))
             alpha +=   bsplineSurface_.basisFunction( knotvec_m, idx_m, degree_m, u) 
                      * bsplineSurface_.basisFunction( knotvec_n, idx_n, degree_n, v);
-
-//           std::cout << "control point (" << idx_m << ", " << idx_n << "): sel? " 
-//                     << bsplineSurface_.controlpoint_selection(idx_m, idx_n)
-//                     << ", bf_u = " << bsplineSurface_.basisFunction(knotvec_m, idx_m, degree_m, u)
-//                     << ", bf_v = " << bsplineSurface_.basisFunction(knotvec_n, idx_n, degree_n, v)
-//                     << std::endl;
         }
       }
 
@@ -808,15 +804,11 @@ create_selection_texture()
 
       // fill texture (switch v coord due to axis of texture image)
       b.setPixel (texelIdx_u, 255-texelIdx_v, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
-//         std::cout << "Set pixel " << texelIdx_u << ", " << texelIdx_v << std::endl;
 
       ++texelIdx_v;
-      
     } // end of n direction iter
 
-
     ++texelIdx_u;
-    
   } // end of u direction iter
   
   
@@ -906,7 +898,7 @@ pick_create_texture( GLState& _state)
   }
 */
 
-  // debug, output image (usually does not look as expected :\ )
+  // debug, output image
 //   b.save("surfacePickingTexture.png", "PNG");
   
   pick_texture_image_ = QGLWidget::convertToGLFormat( b );
@@ -942,8 +934,6 @@ draw_textured_nurbs( GLState& _state)
   for (int i = 0; i < numKnots_n; ++i)
     knots_n[i] = bsplineSurface_.get_knot_n(i);
 
-//   std::cout << "knots_m: " << bsplineSurface_.get_knotvector_m() << std::endl;
-//   std::cout << "knots_n: " << bsplineSurface_.get_knotvector_n() << std::endl;
   
   GLfloat *ctlpoints = new GLfloat[numCPs_m * numCPs_n * 3];
   for (int i = 0; i < numCPs_m; ++i)
@@ -986,8 +976,6 @@ draw_textured_nurbs( GLState& _state)
   float  minv( knots_n[bsplineSurface_.degree_n()]);
   float  maxu( knots_m[numKnots_m  - order_m]);
   float  maxv( knots_n[numKnots_n  - order_n]);
-//   std::cout << "minu = " << minu << ", maxu = " << maxu << std::endl;
-//   std::cout << "minv = " << minv << ", maxv = " << maxv << std::endl;
 
   // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
