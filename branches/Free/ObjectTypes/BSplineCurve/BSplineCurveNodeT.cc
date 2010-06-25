@@ -110,15 +110,30 @@ availableDrawModes() const
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-draw(GLState& _state,DrawModes::DrawMode _drawMode)
+draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
   glDepthFunc(depthFunc());
   glDisable(GL_LIGHTING);
 
-  if (bspline_draw_mode_ == DIRECT)
-    drawDirectMode(_drawMode, _state);
-  else
-    drawGluNurbsMode(_state);
+//   if (bspline_draw_mode_ == DIRECT)
+//     drawDirectMode(_drawMode, _state);
+//   else
+//     drawGluNurbsMode(_state);
+  
+  // draw the control polygon (includes selection on the polygon)
+  if (render_control_polygon_)
+    drawControlPolygon(_drawMode, _state);
+  
+  // draw the spline curve itself, dependeing on the type of visualization
+  if ((_drawMode & DrawModes::WIREFRAME) && render_bspline_curve_)
+  {
+    if (bspline_selection_draw_mode_ == NONE)
+      drawCurve(_state);
+    else if (bspline_selection_draw_mode_ == CONTROLPOINT)
+      drawTexturedCurve(_state, cp_selection_texture_idx_);
+    else if (bspline_selection_draw_mode_ == KNOTVECTOR)
+      drawTexturedCurve(_state, knot_selection_texture_idx_);
+  }
 
   glDepthFunc(GL_LESS);
 }
@@ -128,7 +143,7 @@ draw(GLState& _state,DrawModes::DrawMode _drawMode)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-drawGluNurbsMode(GLState& _state)
+drawCurve(GLState& _state)
 {
   int numKnots = bsplineCurve_.n_knots();
   GLfloat *knots = new GLfloat[numKnots];
@@ -136,6 +151,10 @@ drawGluNurbsMode(GLState& _state)
     knots[i] = bsplineCurve_.get_knot(i);
 
   const int numCPs = bsplineCurve_.n_control_points();
+  
+  // check for incomplete curve
+  if (numCPs < (int)bsplineCurve_.degree() + 1)
+    return;
 
   GLfloat *ctlpoints = new GLfloat[numCPs * 3];
   for (int i = 0; i < numCPs; ++i)
@@ -172,7 +191,6 @@ drawGluNurbsMode(GLState& _state)
 
   delete[] knots;
   delete[] ctlpoints;
-
 }
 
 //----------------------------------------------------------------------------
@@ -180,55 +198,10 @@ drawGluNurbsMode(GLState& _state)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-drawDirectMode(DrawModes::DrawMode _drawMode, GLState& _state)
+drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
 {
-  // draw control polygon
-
-  // draw points
-  if ((_drawMode & DrawModes::POINTS) && render_control_polygon_)
-  {
-    // draw selection
-    if( bsplineCurve_.controlpoint_selections_available())
-    {
-      // save old values
-      Vec4f base_color_old = _state.base_color();
-      float point_size_old = _state.point_size();
-
-      glColor(polygon_highlight_color_);
-      glPointSize(10);
-//       glPointSize(4 * point_size_old);
-
-      glBegin(GL_POINTS);
-      // draw control polygon
-      for (unsigned int i = 0; i < bsplineCurve_.n_control_points(); ++i)
-      {
-        if( bsplineCurve_.controlpoint_selection(i))
-          glVertex(bsplineCurve_.get_control_point(i) );
-      }
-      glEnd();
-
-      glPointSize(point_size_old);
-      glColor( base_color_old );
-    }
-
-    // draw all points
-    Vec4f base_color_old = _state.base_color();
-    glColor(polygon_color_);
-    float point_size_old = _state.point_size();
-    glPointSize(point_size_old + 4);
-
-    glBegin(GL_POINTS);
-    for (unsigned int i=0; i< bsplineCurve_.n_control_points(); ++i)
-      glVertex(bsplineCurve_.get_control_point(i));
-    glEnd();
-
-    glColor( base_color_old );
-    glPointSize(point_size_old);
-  }
-
-
   // draw line segments
-  if ((_drawMode & DrawModes::WIREFRAME) && render_control_polygon_)
+  if (_drawMode & DrawModes::WIREFRAME)
   {
     // draw selection
     if( bsplineCurve_.edge_selections_available())
@@ -273,34 +246,49 @@ drawDirectMode(DrawModes::DrawMode _drawMode, GLState& _state)
     glColor( base_color_old );
 //     glLineWidth(line_width_old);
   }
-
-
-
-  // draw the curve
-  if ((_drawMode & DrawModes::WIREFRAME) && render_bspline_curve_)
+  
+  
+  // draw points
+  if ((_drawMode & DrawModes::POINTS) && render_control_polygon_)
   {
-//     float line_width_old = _state.line_width();
-//     glLineWidth(line_width_old + 2.0);
-
-    glBegin(GL_LINE_STRIP);
-    for (unsigned int i = 0; i < curve_samples_.size(); ++i)
+    // draw selection
+    if( bsplineCurve_.controlpoint_selections_available())
     {
-      Vec3d pos = curve_samples_[i].first;
-      Vec4f col = curve_samples_[i].second;
+      // save old values
+      Vec4f base_color_old = _state.base_color();
+      float point_size_old = _state.point_size();
 
-      glColor(col);
-      glVertex3f(pos[0], pos[1], pos[2]);
+      glColor(polygon_highlight_color_);
+      glPointSize(10);
+//       glPointSize(4 * point_size_old);
+
+      glBegin(GL_POINTS);
+      // draw control polygon
+      for (unsigned int i = 0; i < bsplineCurve_.n_control_points(); ++i)
+      {
+        if( bsplineCurve_.controlpoint_selection(i))
+          glVertex(bsplineCurve_.get_control_point(i) );
+      }
+      glEnd();
+
+      glPointSize(point_size_old);
+      glColor( base_color_old );
     }
+
+    // draw all points
+    Vec4f base_color_old = _state.base_color();
+    glColor(polygon_color_);
+    float point_size_old = _state.point_size();
+    glPointSize(point_size_old + 4);
+
+    glBegin(GL_POINTS);
+    for (unsigned int i=0; i< bsplineCurve_.n_control_points(); ++i)
+      glVertex(bsplineCurve_.get_control_point(i));
     glEnd();
 
-//     glLineWidth(line_width_old);
+    glColor( base_color_old );
+    glPointSize(point_size_old);
   }
-
-
-  // draw the curve
-//   if ((_drawMode & DrawModes::WIREFRAME) && render_bspline_curve_)
-//     drawTexturedGluNurbsMode(_state);
-
 }
 
 //----------------------------------------------------------------------------
@@ -308,12 +296,12 @@ drawDirectMode(DrawModes::DrawMode _drawMode, GLState& _state)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-drawTexturedGluNurbsMode(GLState& _state)
+drawTexturedCurve(GLState& _state, GLuint _texture_idx)
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   glEnable(GL_TEXTURE_2D);
 
-  glBindTexture( GL_TEXTURE_2D, selection_texture_idx_);
+  glBindTexture( GL_TEXTURE_2D, _texture_idx);
 
   float line_width_old = _state.line_width();
 //   glLineWidth(6);
@@ -332,6 +320,8 @@ void
 BSplineCurveNodeT<BSplineCurve>::
 updateGeometry()
 {
+  // this function is not used anymore since drawing the curve is done with the gluNurbsRenderer
+  return;
   if (bspline_draw_mode_ == GLU_NURBS)
     return;
 
@@ -613,9 +603,9 @@ set_random_color()
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-updateSelectionTexture()
+updateControlPointSelectionTexture()
 {
-  create_selection_texture();
+  create_cp_selection_texture();
 }
 
 //----------------------------------------------------------------------------
@@ -623,14 +613,22 @@ updateSelectionTexture()
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-selection_init_texturing( )
+updateKnotVectorSelectionTexture()
 {
-  selection_texture_res_ = 256;
+  create_knot_selection_texture();
+}
 
+//----------------------------------------------------------------------------
+
+template <class BSplineCurve>
+void
+BSplineCurveNodeT<BSplineCurve>::
+selection_init_texturing(GLuint & _texture_idx)
+{
   // generate texture index
-  glGenTextures( 1, &selection_texture_idx_ );
+  glGenTextures( 1, &_texture_idx );
   // bind texture as current
-  glBindTexture( GL_TEXTURE_2D, selection_texture_idx_ );
+  glBindTexture( GL_TEXTURE_2D, _texture_idx );
   // do not blend colors (else color picking breaks!)
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
@@ -648,23 +646,25 @@ selection_init_texturing( )
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-create_selection_texture()
+create_cp_selection_texture()
 {
-  selection_texture_res_ = 256;
+  if (bsplineCurve_.n_knots() == 0)
+    return;
+ 
+  QImage b(cp_selection_texture_res_, 2, QImage::Format_ARGB32);
   
-  QImage b(selection_texture_res_, 2, QImage::Format_ARGB32);
-
   int degree   = bsplineCurve_.degree();
   int numKnots = bsplineCurve_.n_knots();
   
   double minu  = bsplineCurve_.get_knot( degree );
   double maxu  = bsplineCurve_.get_knot( numKnots - degree -1 );
   double diffu = maxu - minu;
+  if (diffu == 0.0) return;
 
   int texelIdx = 0;
-  for ( int m = 0; m < selection_texture_res_; ++m)
+  for ( int m = 0; m < cp_selection_texture_res_; ++m)
   {
-    double step_m = (double)m / (double)selection_texture_res_;
+    double step_m = (double)m / (double)cp_selection_texture_res_;
     double u = step_m * diffu;
   
     // get the span and check which knots are selected
@@ -694,15 +694,87 @@ create_selection_texture()
   }
   
   // debug, output image
-//   b.save("curveSelectionTexture.png", "PNG");
+//   b.save("curveCPSelectionTexture.png", "PNG");
   
-  selection_texture_image_ = QGLWidget::convertToGLFormat( b );
+  cp_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
   // bind texture 
-  glBindTexture( GL_TEXTURE_2D, selection_texture_idx_ );
+  glBindTexture( GL_TEXTURE_2D, cp_selection_texture_idx_ );
   glTexImage2D(  GL_TEXTURE_2D,
-                 0, GL_RGBA, selection_texture_image_.width(), selection_texture_image_.height(), 
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, selection_texture_image_.bits() );
+                 0, GL_RGBA, cp_selection_texture_image_.width(), cp_selection_texture_image_.height(), 
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, cp_selection_texture_image_.bits() );
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineCurve>
+void
+BSplineCurveNodeT<BSplineCurve>::
+create_knot_selection_texture()
+{
+  if (bsplineCurve_.n_knots() == 0)
+    return;
+  
+  QImage b(knot_selection_texture_res_, 2, QImage::Format_ARGB32);
+
+  int degree   = bsplineCurve_.degree();
+  int numKnots = bsplineCurve_.n_knots();
+  
+  double minu  = bsplineCurve_.get_knot( degree );
+  double maxu  = bsplineCurve_.get_knot( numKnots - degree -1 );
+  double diffu = maxu - minu;
+  if (diffu == 0.0) return;
+
+  int texelIdx = 0;
+  
+  // if a knot is selected, select all knots in the span of this knot, too
+  std::vector<bool> selectedKnotSpans(numKnots, false);  
+  for (int i = 0; i < numKnots; ++i)
+  {
+    if (bsplineCurve_.get_knotvector_ref()->selection(i))
+    {
+      // get the span and check which knots are selected
+      ACG::Vec2i span = bsplineCurve_.span(bsplineCurve_.get_knot(i));
+      // check for incomple spline 
+      if (span[0] < 0 || span[1] < 0) 
+        return; 
+    
+      for(int j = span[0]; j <= span[1]+degree; ++j)
+        selectedKnotSpans[j] = true;
+    }
+  }
+
+
+  for ( int m = 0; m < knot_selection_texture_res_; ++m)
+  {
+    double step_m = (double)m / (double)knot_selection_texture_res_;
+    double u = step_m * diffu;
+  
+    Vec4f color;
+    Vec2i interval = bsplineCurve_.interval(u);
+    // check if highlighted
+    if (selectedKnotSpans[interval[0]] && selectedKnotSpans[interval[1]])
+      color = curve_highlight_color_;
+    else
+      color = curve_color_;
+
+    // fill texture
+    b.setPixel (texelIdx, 0, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
+    b.setPixel (texelIdx, 1, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
+    
+    ++texelIdx;
+  }
+  
+  // debug, output image
+//   b.save("curveKnotSelectionTexture.png", "PNG");
+  
+  knot_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
+
+  // bind texture 
+  glBindTexture( GL_TEXTURE_2D, knot_selection_texture_idx_ );
+  glTexImage2D(  GL_TEXTURE_2D,
+                 0, GL_RGBA, knot_selection_texture_image_.width(), knot_selection_texture_image_.height(), 
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, knot_selection_texture_image_.bits() );
 }
 
 //----------------------------------------------------------------------------
@@ -1043,6 +1115,36 @@ pick_draw_textured_nurbs( GLState& _state)
 
   delete[] knots;
   delete[] ctlpoints;
+}
+*/
+
+//----------------------------------------------------------------------------
+
+/*
+template <class BSplineCurve>
+void
+BSplineCurveNodeT<BSplineCurve>::
+drawDirectMode(DrawModes::DrawMode _drawMode, GLState& _state)
+{
+  // draw the curve
+  if ((_drawMode & DrawModes::WIREFRAME) && render_bspline_curve_)
+  {
+//     float line_width_old = _state.line_width();
+//     glLineWidth(line_width_old + 2.0);
+
+    glBegin(GL_LINE_STRIP);
+    for (unsigned int i = 0; i < curve_samples_.size(); ++i)
+    {
+      Vec3d pos = curve_samples_[i].first;
+      Vec4f col = curve_samples_[i].second;
+
+      glColor(col);
+      glVertex3f(pos[0], pos[1], pos[2]);
+    }
+    glEnd();
+
+//     glLineWidth(line_width_old);
+  }
 }
 */
 

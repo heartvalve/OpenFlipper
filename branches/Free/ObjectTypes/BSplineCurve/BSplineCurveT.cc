@@ -476,6 +476,22 @@ span(double _t)
 //-----------------------------------------------------------------------------
 
 template <class PointT>
+ACG::Vec2i
+BSplineCurveT<PointT>::
+interval(double _t)
+{
+  Vec2i interval = Vec2i(-1, -1);
+  
+  unsigned int i(0);
+  while (_t >= knotvector_(i)) i++;
+  while (_t <  knotvector_(i)) i--;
+  
+  return Vec2i(i, i+1);
+}
+
+//-----------------------------------------------------------------------------
+
+template <class PointT>
 void
 BSplineCurveT<PointT>::
 print() const

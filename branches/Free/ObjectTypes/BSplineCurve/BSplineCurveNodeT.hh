@@ -95,17 +95,23 @@ public:
     drawMode(DrawModes::WIREFRAME | DrawModes::POINTS);
     resolution_  = 16;
     pick_radius_ = 0.1;
-    render_control_polygon_ = true;
-    render_bspline_curve_   = true;
-    bspline_draw_mode_      = DIRECT;
+    render_control_polygon_      = true;
+    render_bspline_curve_        = true;
+    bspline_draw_mode_           = DIRECT;
+    bspline_selection_draw_mode_ = NONE;
 
     polygon_color_           = Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0);
     polygon_highlight_color_ = Vec4f(0,1,0,1);
     curve_color_             = Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0);
     curve_highlight_color_   = Vec4f(1.0, 127.0/255.0, 0.0, 1.0);
     
+    cp_selection_texture_res_   = 256;
+    knot_selection_texture_res_ = 256;
+    
+    // init texturing for picking and knot and control point selection
     pick_init_texturing();
-    selection_init_texturing();
+    selection_init_texturing(cp_selection_texture_idx_);
+    selection_init_texturing(knot_selection_texture_idx_);
   }
 
   /// Destructor
@@ -116,6 +122,11 @@ public:
     GLU_NURBS = 1
   };
 
+  enum BSplineSelectionDrawMode {
+    NONE = 0,
+    CONTROLPOINT = 1,
+    KNOTVECTOR = 1
+  };
 
   void set_random_color();
 
@@ -127,7 +138,6 @@ public:
   ACG_CLASSNAME(BSplineCurveNodeT);
 
   /// return available draw modes
-//   unsigned int availableDrawModes() const;
   DrawModes::DrawMode availableDrawModes() const;
   
   /// update bounding box
@@ -145,11 +155,14 @@ public:
 
   void render_bspline_curve(bool _render) {render_bspline_curve_ = _render;};
 
+  void set_selection_draw_mode(BSplineSelectionDrawMode _mode) {bspline_selection_draw_mode_ = _mode;};
+  
   void set_bspline_draw_mode(BSplineDrawMode _mode) {bspline_draw_mode_ = _mode;};
 
   void updateGeometry();
   
-  void updateSelectionTexture();
+  void updateControlPointSelectionTexture();
+  void updateKnotVectorSelectionTexture();
   
   //! Should be a power of 2
   int& pick_texture_res( ) { return pick_texture_res_; }
@@ -170,11 +183,16 @@ private:
   /// Assignment operator (not used)
   BSplineCurveNodeT& operator=(const BSplineCurveNodeT& _rhs);
 
-  void drawGluNurbsMode(GLState& _state);
+  /// Renders the control polygon
+  void drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state);
+  /// Renders the curve itself
+  void drawCurve(GLState& _state);
+  
+  // deprecated stuff
+//   void drawGluNurbsMode(GLState& _state);
+//   void drawDirectMode(DrawModes::DrawMode _drawMode, GLState& _state);
 
-  void drawDirectMode(DrawModes::DrawMode _drawMode, GLState& _state);
-
-  void drawTexturedGluNurbsMode(GLState& _state);
+  void drawTexturedCurve(GLState& _state, GLuint _texture_idx);
   
   /** spline curve picking */
   /// generate index and setup texture parameters
@@ -184,9 +202,12 @@ private:
  
   
   /// generate index and setup texture parameters for selection visualization
-  void selection_init_texturing();
-  /// creates texture to put onto nurbs curve for selection visualization
-  void create_selection_texture();
+  void selection_init_texturing(GLuint & _texture_idx);
+  
+  /// creates texture to put onto nurbs curve for visualization of control point selection
+  void create_cp_selection_texture();
+  /// creates texture to put onto nurbs curve for visualization of knotvector selection
+  void create_knot_selection_texture();
   
   /// draw textured nurbs patch
   void draw_textured_nurbs( GLState& _state);
@@ -210,6 +231,8 @@ private:
   bool render_bspline_curve_;
 
   BSplineDrawMode bspline_draw_mode_;
+  
+  BSplineSelectionDrawMode bspline_selection_draw_mode_;
 
   std::vector< std::pair< Vec3d, Vec4f > > curve_samples_;
   
@@ -221,11 +244,15 @@ private:
   unsigned int pick_texture_baseidx_;
   
   
-  // texturing stuff for selection highlighting
-  QImage selection_texture_image_;
-  GLuint selection_texture_idx_;
-  int    selection_texture_res_;
+  // texturing stuff for control point selection highlighting
+  QImage cp_selection_texture_image_;
+  GLuint cp_selection_texture_idx_;
+  int    cp_selection_texture_res_;
 
+  // texturing stuff for knot vector selection highlighting
+  QImage knot_selection_texture_image_;
+  GLuint knot_selection_texture_idx_;
+  int    knot_selection_texture_res_;
 
 };
 
