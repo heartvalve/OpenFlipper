@@ -149,6 +149,8 @@ class BSplineSurfaceNodeT : public MaterialNode
 
   void render_bspline_surface(bool _render) {render_bspline_surface_ = _render;};
 
+  void set_selection_draw_mode(BSplineSelectionDrawMode _mode) {bspline_selection_draw_mode_ = _mode;};
+  
   void adaptive_sampling(bool _adaptive){adaptive_sampling_ = _adaptive;};
 
   void updateControlPointSelectionTexture();
