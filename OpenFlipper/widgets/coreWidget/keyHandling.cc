@@ -535,6 +535,7 @@ void CoreWidget::registerCoreKeys() {
     emit registerKey(Qt::Key_Meta , Qt::NoModifier, "Use Navigation mode while key is pressed");
   } else {
     emit registerKey(Qt::Key_Alt , Qt::AltModifier, "Use Navigation mode while key is pressed");
+    emit registerKey(Qt::Key_Alt , Qt::NoModifier, "Use Navigation mode while key is pressed");
   }
 
   emit registerKey(Qt::Key_Shift  , Qt::ShiftModifier, "Apply context menu action to all Viewers", true);
