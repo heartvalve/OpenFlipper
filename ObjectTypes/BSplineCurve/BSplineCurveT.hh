@@ -177,6 +177,12 @@ public:
    */
   ACG::Vec2i span(double _t);
 
+  /**
+   * returns the index of the knots u and u+1 such that t in [u, u+1)
+   * \param _t the parameter
+   */
+  ACG::Vec2i interval(double _t);
+  
   void autocompute_knotvector(bool _auto) {autocompute_knotvector_ = _auto;};
 
   void fixNumberOfControlPoints(bool _fix) {fix_number_control_points_ = _fix;};

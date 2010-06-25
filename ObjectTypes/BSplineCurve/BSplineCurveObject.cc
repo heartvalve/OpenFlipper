@@ -209,23 +209,27 @@ update(UpdateType _type)
 {
   if ( _type.contains(UPDATE_ALL))
   {
-//     PluginFunctions::setMainGLContext();
 //     splineCurveNode()->updateGeometry();
+      splineCurveNode()->updateControlPointSelectionTexture();
+      splineCurveNode()->updateKnotVectorSelectionTexture();
   }
   else 
   {
-//     PluginFunctions::setMainGLContext();
-    
-    if (_type.contains(UPDATE_GEOMETRY) )
+    if (_type.contains(UPDATE_GEOMETRY) || _type.contains(UPDATE_SELECTION)) 
     {
-      splineCurveNode()->updateGeometry();
-//       splineCurveNode()->updateSelectionTexture();
+//       splineCurveNode()->updateGeometry();
+      splineCurveNode()->updateControlPointSelectionTexture();
+      splineCurveNode()->updateKnotVectorSelectionTexture();
     }
-    else if (_type.contains(UPDATE_SELECTION_KNOTS) || _type.contains(UPDATE_SELECTION))
+    else if (_type.contains(UPDATE_SELECTION_VERTICES))
     {
-      // actually only the color needs to be recomputed, not the samples
-      splineCurveNode()->updateGeometry();
-//       splineCurveNode()->updateSelectionTexture();
+//       splineCurveNode()->updateGeometry();
+      splineCurveNode()->updateControlPointSelectionTexture();
+    }
+    else if (_type.contains(UPDATE_SELECTION_KNOTS))
+    {
+//       splineCurveNode()->updateGeometry();
+      splineCurveNode()->updateKnotVectorSelectionTexture();
     }
   }
 }
