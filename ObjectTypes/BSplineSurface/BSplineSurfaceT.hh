@@ -315,7 +315,19 @@ public:
    */
   ACG::Vec2i spann(double _t);
   
+  /**
+   * Returns the index of the knots u and u+1 such that t in [u, u+1)
+   * \param _t the parameter
+   */
+  ACG::Vec2i interval_m(double _t);
 
+  /**
+   * Returns the index of the knots v and v+1 such that t in [v, v+1)
+   * \param _t the parameter
+   */
+  ACG::Vec2i interval_n(double _t);
+  
+  
 private: // private functions
 
   /// Returns the lower u parameter

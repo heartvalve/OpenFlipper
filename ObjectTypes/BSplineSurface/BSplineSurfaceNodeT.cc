@@ -80,17 +80,9 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
       _bbMax.maximize(bsplineSurface_(i,j));
     }
   }
-
-//   controlnet_color_ = Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0);
-//   controlnet_highlight_color_ = Vec4f(0,1,0,1);
-
-//   surface_color_ = Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0);
-//   surface_highlight_color_ = Vec4f(1, 69.0 / 255.0, 0, 1);
 }
 
-
 //----------------------------------------------------------------------------
-
 
 template <class BSplineSurface>
 DrawModes::DrawMode
@@ -110,21 +102,6 @@ availableDrawModes() const
   drawModes |= DrawModes::SOLID_1DTEXTURED;
 
   return drawModes;
-}
-
-//----------------------------------------------------------------------------
-
-template <class BSplineSurface>
-void
-BSplineSurfaceNodeT<BSplineSurface>::
-render(GLState& _state, bool _fill)
-{
-  if (render_bspline_surface_)
-    drawGluNurbsMode(_state, _fill);
-//     drawTexturedGluNurbsMode(_state);
-
-  if (render_control_net_)
-    drawControlNet(_state);
 }
 
 //----------------------------------------------------------------------------
@@ -260,7 +237,30 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-drawGluNurbsMode(GLState& _state, bool _fill)
+render(GLState& _state, bool _fill)
+{
+  // draw the control net (includes selection on the net)
+  if (render_control_net_)
+    drawControlNet(_state);
+  
+  // draw the spline curve itself, dependeing on the type of visualization
+  if (render_bspline_surface_)
+  {
+    if (bspline_selection_draw_mode_ == NONE)
+      drawSurface(_state, _fill);
+    else if (bspline_selection_draw_mode_ == CONTROLPOINT)
+      drawTexturedSurface(_state, cp_selection_texture_idx_);
+    else if (bspline_selection_draw_mode_ == KNOTVECTOR)
+      drawTexturedSurface(_state, knot_selection_texture_idx_);
+  }
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineSurface>
+void
+BSplineSurfaceNodeT<BSplineSurface>::
+drawSurface(GLState& _state, bool _fill)
 {
   int numKnots_m = bsplineSurface_.n_knots_m();
   int numKnots_n = bsplineSurface_.n_knots_n();
@@ -342,18 +342,17 @@ drawGluNurbsMode(GLState& _state, bool _fill)
   delete[] ctlpoints;
 }
 
-
 //----------------------------------------------------------------------------
 
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-drawTexturedGluNurbsMode(GLState& _state)
+drawTexturedSurface(GLState& _state, GLuint _texture_idx)
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   glEnable(GL_TEXTURE_2D);
 
-  glBindTexture( GL_TEXTURE_2D, selection_texture_idx_);
+  glBindTexture( GL_TEXTURE_2D, _texture_idx);
   
   draw_textured_nurbs( _state);
 
@@ -610,9 +609,9 @@ pick_surface( GLState& _state, unsigned int _offset )
   bool sampling_mode_backup = adaptive_sampling_;
   adaptive_sampling_ = false;
 
-//   _state.pick_set_maximum( 1 ); // pick the whole surface
+  // pick the whole surface
   _state.pick_set_name ( _offset );
-  drawGluNurbsMode( _state, true);
+  drawSurface( _state, true);
 
   adaptive_sampling_ = sampling_mode_backup;
 }
@@ -695,9 +694,9 @@ set_random_color()
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-updateSelectionTexture()
+updateControlPointSelectionTexture()
 {
-  create_selection_texture();
+  create_cp_selection_texture();
 }
 
 //----------------------------------------------------------------------------
@@ -705,14 +704,22 @@ updateSelectionTexture()
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-selection_init_texturing( )
+updateKnotVectorSelectionTexture()
 {
-  selection_texture_res_     = 256;
+  create_knot_selection_texture();
+}
 
+//----------------------------------------------------------------------------
+
+template <class BSplineSurface>
+void
+BSplineSurfaceNodeT<BSplineSurface>::
+selection_init_texturing(GLuint & _texture_idx )
+{
   // generate texture index
-  glGenTextures( 1, &selection_texture_idx_ );
+  glGenTextures( 1, &_texture_idx );
   // bind texture as current
-  glBindTexture( GL_TEXTURE_2D, selection_texture_idx_ );
+  glBindTexture( GL_TEXTURE_2D, _texture_idx );
   // do not blend colors (else color picking breaks!)
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
@@ -730,11 +737,12 @@ selection_init_texturing( )
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-create_selection_texture()
+create_cp_selection_texture()
 {
-  selection_texture_res_ = 256;
-  
-  QImage b(selection_texture_res_, selection_texture_res_, QImage::Format_ARGB32);
+  if (bsplineSurface_.n_knots_m() == 0 || bsplineSurface_.n_knots_n() == 0)
+    return;
+    
+  QImage b(cp_selection_texture_res_, cp_selection_texture_res_, QImage::Format_ARGB32);
   
   int degree_m   = bsplineSurface_.degree_m();
   int degree_n   = bsplineSurface_.degree_n();
@@ -745,21 +753,23 @@ create_selection_texture()
   Knotvector knotvec_m = bsplineSurface_.get_knotvector_m();
   Knotvector knotvec_n = bsplineSurface_.get_knotvector_n();
   
-  
   double minu  = bsplineSurface_.get_knot_m( degree_m );
   double maxu  = bsplineSurface_.get_knot_m( numKnots_m - degree_m -1 );
   double diffu = maxu - minu;
   
   double minv  = bsplineSurface_.get_knot_n( degree_n );
-  double maxv  =  bsplineSurface_.get_knot_n( numKnots_n - degree_n -1 );
+  double maxv  = bsplineSurface_.get_knot_n( numKnots_n - degree_n -1 );
   double diffv = maxv - minv;
+  
+  if (diffu == 0.0 || diffv == 0.0 )
+    return;
   
   int texelIdx_u = 0;
   int texelIdx_v = 0;
   
-  for ( int m = 0; m < selection_texture_res_; ++m)
+  for ( int m = 0; m < cp_selection_texture_res_; ++m)
   {
-    double step_m = (double)m / (double)selection_texture_res_;
+    double step_m = (double)m / (double)cp_selection_texture_res_;
     double u = step_m * diffu;
 
     // get the span and check which knots are selected
@@ -772,9 +782,9 @@ create_selection_texture()
     texelIdx_v = 0;
       
     // iterate over n direction
-    for ( int n = 0; n < selection_texture_res_; ++n)
+    for ( int n = 0; n < cp_selection_texture_res_; ++n)
     {
-      double step_n = double(n) / (double)selection_texture_res_;
+      double step_n = double(n) / (double)cp_selection_texture_res_;
       double v = step_n * diffv;
 
       // get the span and check which knots are selected
@@ -813,15 +823,134 @@ create_selection_texture()
   
   
   // debug, output image
-//   b.save("surfaceSelectionTexture.png", "PNG");
+//   b.save("surfaceCPSelectionTexture.png", "PNG");
   
-  selection_texture_image_ = QGLWidget::convertToGLFormat( b );
+  cp_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
   // bind texture 
-  glBindTexture( GL_TEXTURE_2D, selection_texture_idx_ );
+  glBindTexture( GL_TEXTURE_2D, cp_selection_texture_idx_ );
   glTexImage2D(  GL_TEXTURE_2D,
-                 0, GL_RGBA, selection_texture_image_.width(), selection_texture_image_.height(), 
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, selection_texture_image_.bits() );
+                 0, GL_RGBA, cp_selection_texture_image_.width(), cp_selection_texture_image_.height(), 
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, cp_selection_texture_image_.bits() );
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineSurface>
+void
+BSplineSurfaceNodeT<BSplineSurface>::
+create_knot_selection_texture()
+{
+  if (bsplineSurface_.n_knots_m() == 0 ||bsplineSurface_.n_knots_n() == 0)
+    return;
+  
+  QImage b(knot_selection_texture_res_, knot_selection_texture_res_, QImage::Format_ARGB32);
+
+  int degree_m   = bsplineSurface_.degree_m();
+  int degree_n   = bsplineSurface_.degree_n();
+  
+  int numKnots_m = bsplineSurface_.n_knots_m();
+  int numKnots_n = bsplineSurface_.n_knots_n();
+  
+  Knotvector knotvec_m = bsplineSurface_.get_knotvector_m();
+  Knotvector knotvec_n = bsplineSurface_.get_knotvector_n();
+  
+  double minu  = bsplineSurface_.get_knot_m( degree_m );
+  double maxu  = bsplineSurface_.get_knot_m( numKnots_m - degree_m -1 );
+  double diffu = maxu - minu;
+  
+  double minv  = bsplineSurface_.get_knot_n( degree_n );
+  double maxv  = bsplineSurface_.get_knot_n( numKnots_n - degree_n -1 );
+  double diffv = maxv - minv;
+  
+  if (diffu == 0.0 || diffv == 0.0 )
+    return;
+  
+  int texelIdx_u = 0;
+  int texelIdx_v = 0;
+  
+  // if a knot is selected, select all knots in the span of this knot, too
+  std::vector<bool> selectedKnotSpans_m(numKnots_m, false);  
+  for (int i = 0; i < numKnots_m; ++i)
+  {
+    if (bsplineSurface_.get_knotvector_m_ref()->selection(i))
+    {
+      // get the span and check which knots are selected
+      ACG::Vec2i span = bsplineSurface_.spanm(bsplineSurface_.get_knot_m(i));
+      // check for incomple spline 
+      if (span[0] < 0 || span[1] < 0) 
+        return; 
+    
+      for(int j = span[0]; j <= span[1]+degree_m; ++j)
+        selectedKnotSpans_m[j] = true;
+    }
+  }
+
+  std::vector<bool> selectedKnotSpans_n(numKnots_n, false);  
+  for (int i = 0; i < numKnots_n; ++i)
+  {
+    if (bsplineSurface_.get_knotvector_n_ref()->selection(i))
+    {
+      // get the span and check which knots are selected
+      ACG::Vec2i span = bsplineSurface_.spann(bsplineSurface_.get_knot_n(i));
+      // check for incomple spline 
+      if (span[0] < 0 || span[1] < 0) 
+        return; 
+    
+      for(int j = span[0]; j <= span[1]+degree_n; ++j)
+        selectedKnotSpans_n[j] = true;
+    }
+  }
+
+
+  for ( int m = 0; m < knot_selection_texture_res_; ++m)
+  {
+    double step_m = (double)m / (double)knot_selection_texture_res_;
+    double u = step_m * diffu;
+
+    Vec2i interval_m = bsplineSurface_.interval_m(u);
+    
+    // reset texture v coord for every new u coord
+    texelIdx_v = 0;
+    
+    for ( int n = 0; n < knot_selection_texture_res_; ++n)
+    {
+      double step_n = (double)n / (double)knot_selection_texture_res_;
+      double v = step_n * diffv;
+    
+      Vec2i interval_n = bsplineSurface_.interval_n(v);
+      
+      // check if highlighted
+      bool selected_m = (selectedKnotSpans_m[interval_m[0]] && selectedKnotSpans_m[interval_m[1]]);
+      bool selected_n = (selectedKnotSpans_n[interval_n[0]] && selectedKnotSpans_n[interval_n[1]]); 
+      
+      Vec4f color;
+      if (selected_m && selected_n)
+        color = surface_highlight_color_;
+      else if ((selected_m && !selected_n) || (!selected_m && selected_n) )
+        color = surface_highlight_color_ * 0.5 + surface_color_ * 0.5;
+      else
+        color = surface_color_;
+
+      // fill texture
+      b.setPixel (texelIdx_u, 255-texelIdx_v, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
+    
+      ++texelIdx_v;
+    } // end of v direction
+    
+    ++texelIdx_u;
+  } // end of u direction
+  
+  // debug, output image
+//   b.save("surfaceKnotSelectionTexture.png", "PNG");
+  
+  knot_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
+
+  // bind texture 
+  glBindTexture( GL_TEXTURE_2D, knot_selection_texture_idx_ );
+  glTexImage2D(  GL_TEXTURE_2D,
+                 0, GL_RGBA, knot_selection_texture_image_.width(), knot_selection_texture_image_.height(), 
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, knot_selection_texture_image_.bits() );
 }
 
 //----------------------------------------------------------------------------

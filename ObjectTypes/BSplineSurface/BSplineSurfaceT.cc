@@ -550,15 +550,10 @@ ACG::Vec2i
 BSplineSurfaceT<PointT>::
 spanm(double _t)
 {
-//      return Vec2i(0, _splineSurface.Dimn()-1);
-//              int i(_splineSurface.GetSplineDegm());
-  static int lastSpanm(0);
-  unsigned int i(lastSpanm);
+  unsigned int i(0);
 
   if (i > knotvector_m_.size() - degree_m() - 1)
     i = degree_m();
-
-// if (u>=_splineSurface.knotvectorm.GetKnot(_splineSurface.knotvectorm.Size()-_splineSurface.GetSplineDegm()-1)) i = _splineSurface.Dimm();//-1;
 
   if (_t >= upperu())
     i = dimm_ - 1;
@@ -569,8 +564,6 @@ spanm(double _t)
     while (_t < knotvector_m_(i))
       i--;
   }
-//              i--;
-  lastSpanm = i;
 
   return ACG::Vec2i(i-degree_m(), i);
 }
@@ -582,16 +575,10 @@ ACG::Vec2i
 BSplineSurfaceT<PointT>::
 spann(double _t)
 {
-//      return Vec2i(0, _splineSurface.Dimn()-1);
-//              int i(_splineSurface.GetSplineDegn());
-
-  int lastSpann(0);
-  unsigned int i(lastSpann);
+  unsigned int i(0);
 
   if (i > knotvector_n_.size() - degree_n() - 1)
     i = degree_n();
-
-//              if (v>=_splineSurface.knotvectorn.GetKnot(_splineSurface.knotvectorn.Size()-_splineSurface.GetSplineDegn()-1)) i = _splineSurface.Dimn();//-1;
 
   if (_t >= upperv())
     i = dimn_-1;
@@ -603,9 +590,40 @@ spann(double _t)
       i--;
   }
 
-//              i--;
-  lastSpann = i;
   return Vec2i(i-degree_n(), i);
+}
+
+//-----------------------------------------------------------------------------
+
+template <class PointT>
+ACG::Vec2i
+BSplineSurfaceT<PointT>::
+interval_m(double _t)
+{
+  Vec2i interval = Vec2i(-1, -1);
+  
+  unsigned int i(0);
+  
+  while (_t >= knotvector_m_(i)) i++;
+  while (_t <  knotvector_m_(i)) i--;
+  
+  return Vec2i(i, i+1);
+}
+
+//-----------------------------------------------------------------------------
+
+template <class PointT>
+ACG::Vec2i
+BSplineSurfaceT<PointT>::
+interval_n(double _t)
+{
+  Vec2i interval = Vec2i(-1, -1);
+  
+  unsigned int i(0);
+  while (_t >= knotvector_n_(i)) i++;
+  while (_t <  knotvector_n_(i)) i--;
+  
+  return Vec2i(i, i+1);
 }
 
 //-----------------------------------------------------------------------------

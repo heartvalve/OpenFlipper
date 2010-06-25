@@ -234,12 +234,20 @@ update(UpdateType _type)
 {
   if ( _type.contains(UPDATE_ALL))
   {
-
+      splineSurfaceNode()->updateControlPointSelectionTexture();
+      splineSurfaceNode()->updateKnotVectorSelectionTexture();
   }
   else 
   {
-//     if (_type.contains(UPDATE_SELECTION) || _type.contains(UPDATE_SELECTION_KNOTS) )
-//       splineSurfaceNode()->updateSelectionTexture();
+    if (_type.contains(UPDATE_GEOMETRY) || _type.contains(UPDATE_SELECTION)) 
+    {
+      splineSurfaceNode()->updateControlPointSelectionTexture();
+      splineSurfaceNode()->updateKnotVectorSelectionTexture();
+    }
+    else if (_type.contains(UPDATE_SELECTION_VERTICES))
+      splineSurfaceNode()->updateControlPointSelectionTexture();
+    else if (_type.contains(UPDATE_SELECTION_KNOTS))
+      splineSurfaceNode()->updateKnotVectorSelectionTexture();
   }
 }
 

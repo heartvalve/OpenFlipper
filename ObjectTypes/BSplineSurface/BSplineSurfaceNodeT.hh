@@ -102,12 +102,25 @@ class BSplineSurfaceNodeT : public MaterialNode
     surface_color_             = Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0);
     surface_highlight_color_   = Vec4f(1.0, 127.0/255.0, 0.0, 1.0);
     
+    bspline_selection_draw_mode_ = NONE;
+    
+    cp_selection_texture_res_   = 256;
+    knot_selection_texture_res_ = 256;
+    
+    // init texturing for picking and knot and control point selection
     pick_init_texturing();
-    selection_init_texturing();
+    selection_init_texturing(cp_selection_texture_idx_);
+    selection_init_texturing(knot_selection_texture_idx_);
   }
 
   /// Destructor
   ~BSplineSurfaceNodeT() {}
+
+  enum BSplineSelectionDrawMode {
+    NONE = 0,
+    CONTROLPOINT = 1,
+    KNOTVECTOR = 2
+  };
 
   void set_random_color();
 
@@ -138,7 +151,8 @@ class BSplineSurfaceNodeT : public MaterialNode
 
   void adaptive_sampling(bool _adaptive){adaptive_sampling_ = _adaptive;};
 
-  void updateSelectionTexture();
+  void updateControlPointSelectionTexture();
+  void updateKnotVectorSelectionTexture();
   
   //! Should be a power of 2
   int& pick_texture_res( ) { return pick_texture_res_; }
@@ -161,12 +175,11 @@ private:
 
   void render(GLState& _state, bool _fill);
 
-  void drawGluNurbsMode(GLState& _state, bool _fill);
+  void drawSurface(GLState& _state, bool _fill);
   
-  void drawTexturedGluNurbsMode(GLState& _state);
+  void drawTexturedSurface(GLState& _state, GLuint _texture_idx);
 
   void drawControlNet(GLState& _state);
-
 
   /** spline surface u,v-parameter picking */
   /// generate index and setup texture parameters
@@ -177,20 +190,24 @@ private:
   /// draw textured nurbs patch
   void pick_draw_textured_nurbs( GLState& _state);
   
-  
   /// generate index and setup texture parameters for selection visualization
-  void selection_init_texturing();
-  /// creates texture to put onto nurbs curve for selection visualization
-  void create_selection_texture();
+  void selection_init_texturing(GLuint & _texture_idx);
+  
+  /// creates texture to put onto nurbs curve for visualization of control point selection
+  void create_cp_selection_texture();
+  /// creates texture to put onto nurbs curve for visualization of knotvector selection
+  void create_knot_selection_texture();
   
   /// draw textured nurbs patch
   void draw_textured_nurbs( GLState& _state);
-
+  
   
 private:
 
   BSplineSurface& bsplineSurface_;
 
+  BSplineSelectionDrawMode bspline_selection_draw_mode_;
+  
   double pick_radius_;
 
   int resolution_;
@@ -212,13 +229,17 @@ private:
   // used to only re-create pick_texture_image_ if picking indices changed...
   unsigned int pick_texture_baseidx_;
   
-  // texturing stuff for selection highlighting
-  QImage selection_texture_image_;
-  GLuint selection_texture_idx_;
-  int    selection_texture_res_;
+  // texturing stuff for control point selection highlighting
+  QImage cp_selection_texture_image_;
+  GLuint cp_selection_texture_idx_;
+  int    cp_selection_texture_res_;
+
+  // texturing stuff for knot vector selection highlighting
+  QImage knot_selection_texture_image_;
+  GLuint knot_selection_texture_idx_;
+  int    knot_selection_texture_res_;
   
 };
-
 
 //=============================================================================
 } // namespace SceneGraph
