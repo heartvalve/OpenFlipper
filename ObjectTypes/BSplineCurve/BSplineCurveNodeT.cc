@@ -299,8 +299,20 @@ BSplineCurveNodeT<BSplineCurve>::
 drawTexturedCurve(GLState& _state, GLuint _texture_idx)
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glEnable( GL_COLOR_MATERIAL );
+  glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+  
   glEnable(GL_TEXTURE_2D);
-
+  
+  // blend colors (otherwise lighting does not affect the texture)
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  // avoid aliasing at patch boundaries
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+  // GL_MODULATE to include lighting effects
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  
   glBindTexture( GL_TEXTURE_2D, _texture_idx);
 
   float line_width_old = _state.line_width();
@@ -310,6 +322,7 @@ drawTexturedCurve(GLState& _state, GLuint _texture_idx)
 
   glBindTexture( GL_TEXTURE_2D, 0);
   glDisable(GL_TEXTURE_2D);
+  glDisable( GL_COLOR_MATERIAL );
   glPopAttrib( );
 }
 
@@ -506,8 +519,19 @@ pick_spline( GLState& _state, unsigned int _offset )
     pick_create_texture( _state);
   }
   else
+  {
+    // do not blend colors (else color picking breaks!)
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    // avoid aliasing at patch boundaries
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+    // GL_REPLACE to avoid smearing colors (else color picking breaks!)
+    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+  
     glBindTexture( GL_TEXTURE_2D, pick_texture_idx_);
 //     glBindTexture( GL_TEXTURE_1D, pick_texture_idx_);
+  }
 
   float line_width_old = _state.line_width();
   glLineWidth(10);
@@ -629,14 +653,14 @@ selection_init_texturing(GLuint & _texture_idx)
   glGenTextures( 1, &_texture_idx );
   // bind texture as current
   glBindTexture( GL_TEXTURE_2D, _texture_idx );
-  // do not blend colors (else color picking breaks!)
-  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+  // blend colors (otherwise lighting does not affect the texture)
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   // avoid aliasing at patch boundaries
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-  // GL_REPLACE to avoid smearing colors (else color picking breaks!)
-  glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+  // GL_MODULATE to include lighting effects
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   // unbind current texture
   glBindTexture( GL_TEXTURE_2D, 0);
 }
