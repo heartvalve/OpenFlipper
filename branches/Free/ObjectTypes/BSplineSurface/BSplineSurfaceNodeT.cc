@@ -350,14 +350,27 @@ BSplineSurfaceNodeT<BSplineSurface>::
 drawTexturedSurface(GLState& _state, GLuint _texture_idx)
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glEnable( GL_COLOR_MATERIAL );
+  glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    
   glEnable(GL_TEXTURE_2D);
-
-  glBindTexture( GL_TEXTURE_2D, _texture_idx);
   
+  // blend colors (otherwise lighting does not affect the texture)
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  // avoid aliasing at patch boundaries
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+  // GL_MODULATE to include lighting effects
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  
+  glBindTexture( GL_TEXTURE_2D, _texture_idx);
+
   draw_textured_nurbs( _state);
 
   glBindTexture( GL_TEXTURE_2D, 0);
   glDisable(GL_TEXTURE_2D);
+  glDisable( GL_COLOR_MATERIAL );
   glPopAttrib( );
 }
 
@@ -589,8 +602,18 @@ pick_spline( GLState& _state )
     pick_create_texture( _state);
   }
   else
+  {
+    // do not blend colors (else color picking breaks!)
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+    // avoid aliasing at patch boundaries
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+    // GL_REPLACE to avoid smearing colors (else color picking breaks!)
+    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+    
     glBindTexture( GL_TEXTURE_2D, pick_texture_idx_);
-
+  }
 
   draw_textured_nurbs( _state);
 
@@ -720,14 +743,14 @@ selection_init_texturing(GLuint & _texture_idx )
   glGenTextures( 1, &_texture_idx );
   // bind texture as current
   glBindTexture( GL_TEXTURE_2D, _texture_idx );
-  // do not blend colors (else color picking breaks!)
-  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+  // blend colors (otherwise lighting does not affect the texture)
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   // avoid aliasing at patch boundaries
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-  // GL_REPLACE to avoid smearing colors (else color picking breaks!)
-  glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+  // GL_MODULATE to include lighting effects
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   // unbind current texture
   glBindTexture( GL_TEXTURE_2D, 0);
 }
@@ -885,6 +908,11 @@ create_knot_selection_texture()
         selectedKnotSpans_m[j] = true;
     }
   }
+//   std::cout << "selectedKnotSpans_m: " << std::flush;
+//   for (unsigned int i = 0; i < selectedKnotSpans_m.size(); ++i)
+//     std::cout << selectedKnotSpans_m[i] << ", " << std::flush;
+//   std::cout << std::endl;
+
 
   std::vector<bool> selectedKnotSpans_n(numKnots_n, false);  
   for (int i = 0; i < numKnots_n; ++i)
@@ -901,6 +929,10 @@ create_knot_selection_texture()
         selectedKnotSpans_n[j] = true;
     }
   }
+//   std::cout << "selectedKnotSpans_n: " << std::flush;
+//   for (unsigned int i = 0; i < selectedKnotSpans_n.size(); ++i)
+//     std::cout << selectedKnotSpans_n[i] << ", " << std::flush;
+//   std::cout << std::endl;
 
 
   for ( int m = 0; m < knot_selection_texture_res_; ++m)
@@ -926,11 +958,15 @@ create_knot_selection_texture()
       
       Vec4f color;
       if (selected_m && selected_n)
-        color = surface_highlight_color_;
+        color = base_color();
+//         color = surface_highlight_color_;
       else if ((selected_m && !selected_n) || (!selected_m && selected_n) )
-        color = surface_highlight_color_ * 0.5 + surface_color_ * 0.5;
+        color = base_color() *0.5 + specular_color() * 0.5;        
+//         color = surface_highlight_color_ * 0.5 + surface_color_ * 0.5;
       else
-        color = surface_color_;
+        color = base_color() *0.5 + diffuse_color() * 0.5;
+//         color = surface_color_;
+
 
       // fill texture
       b.setPixel (texelIdx_u, 255-texelIdx_v, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
@@ -942,7 +978,7 @@ create_knot_selection_texture()
   } // end of u direction
   
   // debug, output image
-//   b.save("surfaceKnotSelectionTexture.png", "PNG");
+  b.save("surfaceKnotSelectionTexture.png", "PNG");
   
   knot_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
