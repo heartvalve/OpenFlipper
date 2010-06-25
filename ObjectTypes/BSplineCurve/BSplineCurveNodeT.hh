@@ -125,7 +125,7 @@ public:
   enum BSplineSelectionDrawMode {
     NONE = 0,
     CONTROLPOINT = 1,
-    KNOTVECTOR = 1
+    KNOTVECTOR = 2
   };
 
   void set_random_color();
