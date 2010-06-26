@@ -290,10 +290,16 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
   
   if ( ( _drawMode & DrawModes::SOLID_POINTS_COLORED ) && mesh_.has_vertex_colors() )
   {
-    glDisable(GL_LIGHTING);
+    glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
-    enable_arrays( VERTEX_ARRAY | COLOR_VERTEX_ARRAY );
+    if ( enableNormals_ ) {
+       glEnable(GL_COLOR_MATERIAL);
+       enable_arrays( VERTEX_ARRAY | COLOR_VERTEX_ARRAY | NORMAL_VERTEX_ARRAY  );
+    } else {
+      glDisable(GL_COLOR_MATERIAL);
+      enable_arrays( VERTEX_ARRAY | COLOR_VERTEX_ARRAY  );
+    }
     draw_faces(PER_VERTEX);
     glDepthRange(0.0, 1.0);
   }
