@@ -307,6 +307,9 @@ Core::init() {
       coreWidget_->setWindowTitle( OpenFlipper::Options::windowTitle() );
     #endif
 
+    // Sanity check for OpenGL capabilities!
+    checkOpenGLCapabilities();
+
   }
 
   // ======================================================================
@@ -600,9 +603,6 @@ Core::init() {
     scenegraphCheckTimer_->setInterval (1000 / OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() );
     scenegraphCheckTimer_->start ();
   }
-
-  // Sanity check for OpenGL capabilities!
-  checkOpenGLCapabilities();
 
   QTimer::singleShot(100, this, SLOT(slotExecuteAfterStartup()));
 }
