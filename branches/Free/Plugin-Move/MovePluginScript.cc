@@ -168,6 +168,9 @@ void MovePlugin::translate( int _objectId , Vector _vector) {
                    QString::number( _vector[0] ) + " , " +
                    QString::number( _vector[1] ) + " , " +
                    QString::number( _vector[2] ) + " ) )" );
+                   
+  // Create backup
+  emit createBackup(_objectId, "Translation");
 }
 
 
@@ -240,6 +243,9 @@ void MovePlugin::translate( int _objectId , IdList _vHandles, Vector _vector ){
                    QString::number( _vector[0] ) + " , " +
                    QString::number( _vector[1] ) + " , " +
                    QString::number( _vector[2] ) + " ) )" );
+                   
+  // Create backup
+  emit createBackup(_objectId, "Translation");
 
 }
 
@@ -311,6 +317,9 @@ void MovePlugin::translateSelection( int _objectId , Vector _vector) {
                    QString::number( _vector[0] ) + " , " +
                    QString::number( _vector[1] ) + " , " +
                    QString::number( _vector[2] ) + " ) )" );
+                   
+  // Create backup
+  emit createBackup(_objectId, "Translation of Selection");
 }
 
 
@@ -387,6 +396,9 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
   matString = matString.right( matString.length()-3 );
 
   emit scriptInfo( "transform( ObjectId , Matrix4x4(" + matString + " ) )" );
+  
+  // Create backup
+  emit createBackup(_objectId, "Transformation");
 }
 
 
@@ -474,6 +486,9 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
   matString = matString.right( matString.length()-3 );
 
   emit scriptInfo( "transform( ObjectId , Matrix4x4(" + matString + " ) )" );
+  
+  // Create backup
+  emit createBackup(_objectId, "Transformation");
 }
 
 
@@ -557,6 +572,9 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
   matString = matString.right( matString.length()-3 );
 
   emit scriptInfo( "transformVertexSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
+  
+  // Create backup
+  emit createBackup(_objectId, "Transformation of Vertex Selection");
 }
 
 
@@ -661,6 +679,9 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
   matString = matString.right( matString.length()-3 );
 
   emit scriptInfo( "transformFaceSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
+  
+  // Create backup
+  emit createBackup(_objectId, "Transformation of Face Selection");
 }
 
 
@@ -781,6 +802,9 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
   matString = matString.right( matString.length()-3 );
 
   emit scriptInfo( "transformEdgeSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
+  
+  // Create backup
+  emit createBackup(_objectId, "Transformation of Edge Selection");
 }
 
 //------------------------------------------------------------------------------
@@ -877,6 +901,20 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
       
     pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
   }
+  
+ emit updatedObject(_objectId, UPDATE_GEOMETRY);
+ 
+ QString matString;
+  for (int i=0; i < 4; i++)
+    for (int j=0; j < 4; j++)
+      matString += " , " + QString::number( _matrix(i,j) );
+
+  matString = matString.right( matString.length()-3 );
+
+  emit scriptInfo( "transformSkeletonJoint( ObjectId , Matrix4x4(" + matString + " ) )" );
+  
+  // Create backup
+  emit createBackup(_objectId, "Transformation of Skeleton Joints");
 }
 
 #endif
