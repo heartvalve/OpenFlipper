@@ -180,6 +180,8 @@ void DecimaterPlugin::slot_decimate()
     object->mesh()->update_normals();
     object->update();
 
+    // Create backup
+    emit createBackup(o_it->id(), "Decimation");
     emit updatedObject( o_it->id() , UPDATE_TOPOLOGY );
   }
 
@@ -288,8 +290,6 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
     object->mesh()->update_normals();
     object->update();
 
-    emit updatedObject( baseObjectData->id() , UPDATE_TOPOLOGY);
-
     // Create backup
     emit createBackup(_objID, "Decimation");
     
@@ -299,7 +299,9 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
                     ", " + (_constraints.contains("roundness") ? tr("roundness = %1").arg(_constraints["roundness"].toString()) : "") +
                     ", " + (_constraints.contains("vertices") ? tr("vertices = %1").arg(_constraints["vertices"].toString()) : "") + ")";
     
-    emit scriptInfo( tr("decimate(%1, %2)").arg(QString::number(_objID), param) );
+    emit scriptInfo( "decimate(" + QString::number(_objID) + ", " + param + ")" );
+    
+    emit updatedObject( baseObjectData->id() , UPDATE_TOPOLOGY);
 
   } else {
     emit log(LOGERR,tr("Unsupported object type for decimater"));
