@@ -56,9 +56,10 @@
 //== INCLUDES =================================================================
 
 
+#include <vector>
 #include <ACG/Geometry/Types/PlaneT.hh>
 #include <OpenMesh/Core/Geometry/VectorT.hh>
-#include <vector>
+#include <ObjectTypes/PolyMesh/PolyMeshTypes.hh>
 
 #include "TriangleBSPT.hh"
 
@@ -98,6 +99,8 @@ public: //---------------------------------------------------------------------
   void push_back(Handle _h)     { handles_.push_back(_h); }
   /// Finally build the tree
   void build(unsigned int _max_handles, unsigned int _max_depth);
+  /// Create a PolyMesh object that visualizes the bounding boxes of the BSP tree
+  void visualizeTree(PolyMesh *_object, int _max_depth);
 
 
 private: //---------------------------------------------------------------------

@@ -119,19 +119,24 @@ public:
         bb_max.vectorize(-FLT_MAX);
 	std::list<Point>* vertices = new std::list<Point>;
 	
+	
         for (it_h=_node->begin(); it_h!=_node->end(); ++it_h)
         {
             points(*it_h, p0, p1, p2);
-            bb_min.minimize(p0);
+            /*
+	    bb_min.minimize(p0);
             bb_min.minimize(p1);
             bb_min.minimize(p2);
             bb_max.maximize(p0);
             bb_max.maximize(p1);
-            bb_max.maximize(p2);
+            bb_max.maximize(p2);*/
+	    
 	    vertices->push_back (p0);
 	    vertices->push_back (p1);
 	    vertices->push_back (p2);
         }
+	bb_min = _node->bb_min;
+	bb_max = _node->bb_max;
 	
         // split longest side of bounding box
         Point   bb     = bb_max - bb_min;
