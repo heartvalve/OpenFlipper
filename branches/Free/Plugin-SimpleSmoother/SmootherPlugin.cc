@@ -178,7 +178,9 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
       mesh->update_normals();
 
       emit updatedObject( o_it->id(), UPDATE_GEOMETRY );
-
+      
+      // Create backup
+      emit createBackup(o_it->id(), "Simple Smoothing");
 
    } else if ( o_it->dataType( DATA_POLY_MESH ) ) {
 
@@ -256,7 +258,9 @@ void SmootherPlugin::simpleLaplace(int _iterations) {
   }
   
   // Show script logging
-  emit scriptInfo(tr("simpleLaplace(%1)").arg(_iterations));
+  emit scriptInfo("simpleLaplace(" + QString::number(_iterations) + ")");
+  
+  emit updateView();
 }
 
 
