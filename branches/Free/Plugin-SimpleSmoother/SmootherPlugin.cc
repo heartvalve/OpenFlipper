@@ -77,13 +77,39 @@ void SmootherPlugin::initializePlugin()
    emit addToolbox( tr("Simple Smoother") , toolBox );
 }
 
-/** \brief
+void SmootherPlugin::pluginsInitialized() {
+    
+    // Emit slot description
+    emit setSlotDescription(tr("simpleLaplace(int)"),   tr("Smooth mesh using the Laplace operator with uniform weights."),
+                            QStringList(tr("iterations")), QStringList(tr("Number of iterations")));
+}
+
+/** \brief simpleLaplace
  *
+ *  Smooth mesh using the Laplace operator
+ *  with uniform weights.
  */
 void SmootherPlugin::simpleLaplace() {
 
+    int iterations = 1;
+    
+    if(!OpenFlipper::Options::nogui()) {
+        iterations = iterationsSpinbox_->value();
+    }
+    
+    simpleLaplace(iterations);
+}
 
-  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
+/** \brief simpleLaplace
+ *
+ * Smooth mesh using the Laplace operator
+ * with uniform weights.
+ *
+ * @_iterations Number of iterations
+ */
+void SmootherPlugin::simpleLaplace(int _iterations) {
+    
+    for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS) ; o_it != PluginFunctions::objectsEnd(); ++o_it) {
 
     bool selectionExists = false;
 
@@ -98,7 +124,7 @@ void SmootherPlugin::simpleLaplace() {
       // Add a property to the mesh to store original vertex positions
       mesh->add_property( origPositions, "SmootherPlugin_Original_Positions" );
 
-      for ( int i = 0 ; i < iterationsSpinbox_->value() ; ++i ) {
+      for ( int i = 0 ; i < _iterations ; ++i ) {
 
           // Copy original positions to backup ( in Vertex property )
           TriMesh::VertexIter v_it, v_end=mesh->vertices_end();
@@ -165,7 +191,7 @@ void SmootherPlugin::simpleLaplace() {
       // Add a property to the mesh to store original vertex positions
       mesh->add_property( origPositions, "SmootherPlugin_Original_Positions" );
 
-      for ( int i = 0 ; i < iterationsSpinbox_->value() ; ++i ) {
+      for ( int i = 0 ; i < _iterations ; ++i ) {
 
          // Copy original positions to backup ( in Vertex property )
          PolyMesh::VertexIter v_it, v_end=mesh->vertices_end();
@@ -219,12 +245,18 @@ void SmootherPlugin::simpleLaplace() {
       mesh->update_normals();
 
       emit updatedObject( o_it->id() , UPDATE_GEOMETRY);
+      
+      // Create backup
+      emit createBackup(o_it->id(), "Simple Smoothing");
 
     } else {
 
       emit log(LOGERR, "DataType not supported.");
     }
   }
+  
+  // Show script logging
+  emit scriptInfo(tr("simpleLaplace(%1)").arg(_iterations));
 }
 
 
