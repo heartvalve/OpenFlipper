@@ -43,7 +43,7 @@
 
 /**
  * \file PolyMesh.hh
- * This File contains all required includes for using Triangle Meshes
+ * This File contains all required includes for using Polygon Meshes
 */
 
 #ifndef POLY_MESH_INCLUDE_HH
