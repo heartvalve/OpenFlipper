@@ -48,6 +48,7 @@
 //
 //=============================================================================
 
+#ifdef ENABLE_BSPLINESURFACE_SUPPORT
 
 #include <Plugin-Selection/SelectionPlugin.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
@@ -161,5 +162,7 @@ toggleBSplineSurfaceSelection(QMouseEvent* _event)
   } // end of if KNOT selection  
   
 }
+
+#endif //ENABLE_BSPLINESURFACE_SUPPORT
 
 //-----------------------------------------------------------------------------

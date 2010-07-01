@@ -389,12 +389,14 @@ getKnotSelection( int objectId )
 #ifdef ENABLE_BSPLINECURVE_SUPPORT   
   if ( object->dataType() == DATA_BSPLINE_CURVE )
       return BSplineCurveSelection::getKnotSelection(PluginFunctions::splineCurve(object));
+  else
 #endif
 #ifdef ENABLE_BSPLINESURFACE_SUPPORT   
-//   else if ( object->dataType() == DATA_BSPLINE_SURFACE )
+//   if ( object->dataType() == DATA_BSPLINE_SURFACE )
 //       return BSplineSurfaceSelection::getKnotSelection(PluginFunctions::splineSurface(object));
+//   else
 #endif            
-  else {
+  {
       emit log(LOGERR,tr("getKnotSelection : Unsupported object Type") ); 
       return IdList(0);
   }
