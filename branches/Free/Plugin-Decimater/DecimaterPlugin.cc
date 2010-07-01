@@ -195,7 +195,7 @@ void DecimaterPlugin::slot_decimate()
  * @param _constraints A string containing a comma separated list of constraints (distance,normal_deviation,roundness,triangles)
  * @param _values a string containing a comma separated list of constraint values suited to the _constraints parameter
  */
-void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
+void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
 
   BaseObjectData* baseObjectData;
@@ -289,6 +289,11 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints){
     object->update();
 
     emit updatedObject( baseObjectData->id() , UPDATE_TOPOLOGY);
+
+    // Create backup
+    emit createBackup(_objID, "Decimation");
+    
+    emit scriptInfo( tr("decimate(%1, QVariantMap)").arg(_objID) );
 
   } else {
     emit log(LOGERR,tr("Unsupported object type for decimater"));
