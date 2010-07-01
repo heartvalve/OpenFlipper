@@ -293,7 +293,13 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
     // Create backup
     emit createBackup(_objID, "Decimation");
     
-    emit scriptInfo( tr("decimate(%1, QVariantMap)").arg(_objID) );
+    // Create QVariantMap parameter string
+    QString param = "("  + (_constraints.contains("distance") ? tr("distance = %1").arg(_constraints["distance"].toString()) : "") +
+                    ", " + (_constraints.contains("normal_deviation") ? tr("normal_deviation = %1").arg(_constraints["normal_deviation"].toString()) : "") +
+                    ", " + (_constraints.contains("roundness") ? tr("roundness = %1").arg(_constraints["roundness"].toString()) : "") +
+                    ", " + (_constraints.contains("vertices") ? tr("vertices = %1").arg(_constraints["vertices"].toString()) : "") + ")";
+    
+    emit scriptInfo( tr("decimate(%1, %2)").arg(QString::number(_objID), param) );
 
   } else {
     emit log(LOGERR,tr("Unsupported object type for decimater"));
