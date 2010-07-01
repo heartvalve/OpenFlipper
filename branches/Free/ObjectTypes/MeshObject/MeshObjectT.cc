@@ -646,7 +646,7 @@
       for (; f_it!=f_end; ++f_it)
 	     triangle_bsp_->push_back(f_it.handle());
 
-      triangle_bsp_->build(10, 100);
+      triangle_bsp_->build(10, 100); //max vertices per leaf 10, max depth 100
     }
 
     // return pointer to triangle bsp
