@@ -184,8 +184,6 @@ void IsotropicRemesherPlugin::isotropicRemesh(int _objectID, double _targetEdgeL
 
       emit updatedObject( object->id(), UPDATE_ALL );
       
-      emit createBackup(object->id(),"Isotropic Remeshing with Target length: " + QString::number(edgeLength_) );
-      
       emit scriptInfo("isotropicRemesh(" + QString::number(_objectID) + ", " + QString::number(_targetEdgeLength) + ")");
 
       emit updateView();
