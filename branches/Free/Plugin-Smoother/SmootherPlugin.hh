@@ -58,6 +58,7 @@
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
+#include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
@@ -74,13 +75,14 @@
 
 /** Plugin for Smoother Support
  */
-class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, BackupInterface
+class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, BackupInterface, ScriptInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(ToolboxInterface)
   Q_INTERFACES(BackupInterface)
   Q_INTERFACES(LoggingInterface)
+  Q_INTERFACES(ScriptInterface)
 
 signals:
 
@@ -102,6 +104,9 @@ signals:
   // BackupInterface
   void createBackup( int _id , QString _name );
 
+  // ScriptInterface
+  void scriptInfo(QString _functionName);
+  
 public :
 
   /// default constructor

@@ -282,7 +282,11 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
 
     emit updatedObject( object->id(), UPDATE_GEOMETRY );
 
+    // Create backup
     emit createBackup(object->id(),jobDescription );
+    
+    emit scriptInfo(tr("smooth(%1, %2, %3, %4, %5)").arg(QString::number(_objectId), QString::number(_iterations),
+                                                    _direction, _continuity, QString::number(_maxDistance)));
 
   } else {
     emit log(LOGERR,"Unsupported object type for smoother");
