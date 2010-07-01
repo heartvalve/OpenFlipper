@@ -165,3 +165,16 @@ _build(Node*         _node,
 
 
 //=============================================================================
+
+
+template <class BSPTraits>
+void
+TriangleBSPCoreT<BSPTraits>::
+visualizeTree(PolyMesh *_object, int _max_depth)
+  {
+    root_->visualizeTree(_object, _max_depth-1);
+    _object->update_normals();
+  }
+
+
+//=============================================================================

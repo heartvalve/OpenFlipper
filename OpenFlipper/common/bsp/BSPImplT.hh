@@ -60,6 +60,7 @@
 
 
 //== CLASS DEFINITION =========================================================
+#include <vector>
 
 
 template <class BSPCore>
@@ -90,12 +91,22 @@ public: //---------------------------------------------------------------------
     Handle  handle;
     Scalar  dist;
   };
+  
+  /// Store nearest neighbor information
+  struct RayCollision
+  {
+    RayCollision() {}
+    RayCollision(Handle _h, Scalar _d, std::vector<Handle> _v) : handle(_h), dist(_d), hit_vertices(_v) {}
+    Handle  handle;
+    Scalar  dist;
+    std::vector<Handle> hit_vertices;
+  };
 
   /// Return handle of the nearest neighbor face
   NearestNeighbor nearest(const Point& _p) const;
   
-  /// Return handle of the nearest collided face
-  NearestNeighbor raycollision (const Point& _p, const Point& _r) const;
+  /// Return handles of all hit collided faces, and the handle of the nearest collided face
+  RayCollision raycollision (const Point& _p, const Point& _r) const;
   
 
 private: //---------------------------------------------------------------------
@@ -116,6 +127,7 @@ private: //---------------------------------------------------------------------
     Point   ray;
     Scalar  dist;
     Handle  nearest;
+    std::vector<Handle> hit_vertices;
   };
 
 
