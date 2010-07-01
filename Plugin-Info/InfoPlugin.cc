@@ -209,6 +209,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
   float maxD = FLT_MIN;
   float minD = FLT_MAX;
   float sumD = 0.0;
+  int numD = 0;
 
   //iterate over all faces
   for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it){
@@ -251,7 +252,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
     typename MeshT::Normal n1 = _mesh->normal(f_it);
 
     for (ff_it = _mesh->ff_iter(f_it); ff_it; ++ff_it){
-
+      
       typename MeshT::Normal n2 = _mesh->normal(ff_it);
 
       angle = OpenMesh::rad_to_deg(acos(OpenMesh::sane_aarg( MathTools::sane_normalized(n1) | MathTools::sane_normalized(n2) )));
@@ -259,7 +260,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
       if (angle < minD) minD = angle;
       if (angle > maxD) maxD = angle;
       sumD += angle;
-
+      numD ++;
     }
   }
 
@@ -275,7 +276,7 @@ void InfoPlugin::printMeshInfo( MeshT* _mesh , int _id, unsigned int _face, ACG:
   // Only one face or no face -> don't output angles 
   if ( _mesh->n_faces() > 1 ) {
     info_->dihedralMin->setText( QString::number(minD,'f') );
-    info_->dihedralMean->setText( QString::number( sumD / (_mesh->n_faces()*3),'f' ) );
+    info_->dihedralMean->setText( QString::number( sumD / numD,'f' ) );
     info_->dihedralMax->setText( QString::number(maxD,'f') );
   } else {
     info_->dihedralMin->setText( "-" );
