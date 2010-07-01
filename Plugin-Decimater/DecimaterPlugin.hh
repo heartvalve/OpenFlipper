@@ -53,6 +53,7 @@
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
+#include <OpenFlipper/BasePlugin/ScriptInterface.hh>
 #include <OpenFlipper/BasePlugin/RPCInterface.hh>
 
 #include <OpenFlipper/common/Types.hh>
@@ -67,13 +68,14 @@
 
 /** Plugin for Decimater Support
  */
-class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, BackupInterface, RPCInterface
+class DecimaterPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingInterface, ScriptInterface, BackupInterface, RPCInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(ToolboxInterface)
   Q_INTERFACES(BackupInterface)
   Q_INTERFACES(LoggingInterface)
+  Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(RPCInterface)
 
 signals:
@@ -94,6 +96,12 @@ signals:
   
   // ToolboxInterface
   void addToolbox( QString _name  , QWidget* _widget );   
+  
+  // ScriptInterface
+  void scriptInfo( QString _functionName );
+  
+  // BackupInterface
+  void createBackup( int _id , QString _name );
 
 private slots:
     // BaseInterface
