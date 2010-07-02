@@ -1413,17 +1413,31 @@ void Core::slotDeleteAllObjects( ){
 bool Core::checkOpenGLCapabilities()  {
   
   // Status ok?
-  bool ok = true;
+  bool ok   = true;
+  bool warn = false;
   
   QString missing;
   
   // We need at least version 2.0 or higher 
   QGLFormat::OpenGLVersionFlags flags = QGLFormat::openGLVersionFlags();
-  if ( !( flags.testFlag(QGLFormat::OpenGL_Version_3_0) | 
-    flags.testFlag(QGLFormat::OpenGL_Version_2_1) | 
-    flags.testFlag(QGLFormat::OpenGL_Version_2_0) ) ) {
-    ok = false; 
-  missing += tr("OpenGL Version less then 2.0!\n");
+  
+  if ( QGLFormat::hasOpenGL() ) {
+    if ( flags.testFlag(QGLFormat::OpenGL_Version_None) ) {
+      missing += tr("OpenGL Version Unknown to QT!\n");
+      missing += tr("OpenGL reports version: ") + QString((const char*)glGetString( GL_VERSION  )) ;
+      warn = true;
+    } else {
+      if ( !( flags.testFlag(QGLFormat::OpenGL_Version_3_0) | 
+              flags.testFlag(QGLFormat::OpenGL_Version_2_1) | 
+              flags.testFlag(QGLFormat::OpenGL_Version_2_0) ) ) {
+        ok = false; 
+        missing += tr("OpenGL Version less then 2.0!\n");
+      } 
+    }
+  
+  } else {
+   ok = false;
+   missing += tr("No OpenGL support found!\n");
   }
   
   //Get OpenGL extensions
@@ -1451,7 +1465,16 @@ bool Core::checkOpenGLCapabilities()  {
     // Unsafe operation, so quit the application
     exit(1);
     
-  } 
+  } else if ( warn ) {
+    QString message = tr("Warning! The OpenGL capabilities of your current machine/driver could be insufficient!\n\n");
+    message += tr("The following checks failed:\n\n");
+    message += missing;
+        
+    std::cerr << message.toStdString() << std::endl;
+    
+    QMessageBox::warning ( 0, tr( "Insufficient OpenGL Capabilities!"),message );
+    
+  }
   #ifndef NDEBUG
   else {
     std::cerr << "OpenGL Version Check succeeded" << std::endl;
