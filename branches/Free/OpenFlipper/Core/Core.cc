@@ -208,6 +208,9 @@ Core() :
  */
 void
 Core::init() {
+  
+  // Check library versions
+  checkLibraryVersions();
 
   // Make root_node available to the plugins ( defined in PluginFunctions.hh)
   PluginFunctions::setDataSeparatorNodes( dataSeparatorNode_ );
@@ -1409,8 +1412,72 @@ void Core::slotDeleteAllObjects( ){
 
 //-----------------------------------------------------------------------------
 
+bool Core::checkLibraryVersions()  {
+  
+  bool ok   = true;
+  bool warn = false;
+  
+  QString messages;
+  
+  QString qtCompiledVersion = QString( QT_VERSION_STR );
+  QString qtCurrentVersion = qVersion();
+  
+  if ( qtCompiledVersion != qtCurrentVersion ) {
+    messages += tr("QT Library Version mismatch!\n");
+    
+    messages += tr("Currently used QT Version:\t") + qVersion();
+    messages += tr("Link time QT Version:\t\t") + QString( QT_VERSION_STR );
+    messages += tr("This inconsistency may lead to an unstable behaviour of OpenFLipper!");
+    
+    warn = true;
+  }
+  
+  if ( !ok ) {
+    QString message = tr("Error! Library tests failed!\n");
+    message += tr("The following problems have been found:\n\n");
+    
+    message +=  messages;
+    
+    std::cerr << message.toStdString() << std::endl;
+    
+    if ( OpenFlipper::Options::gui() ) {
+      QMessageBox::critical ( 0, tr( "Library incompatibilities found!"),message );
+    }
+    
+    // Unsafe operation, so quit the application
+    exit(1);
+    
+  } else if ( warn ) {
+    
+    QString message = tr("Warning! The OpenGL capabilities of your current machine/driver could be insufficient!\n\n");
+    message += tr("The following checks failed:\n\n");
+    message += messages;
+    
+    std::cerr << message.toStdString() << std::endl;
+    
+    if ( OpenFlipper::Options::gui() ) {
+      QMessageBox::warning ( 0, tr( "Library incompatibilities found!"),message );
+    }
+    
+  }
+  #ifndef NDEBUG
+  else {
+    std::cerr << "Library Check succeeded" << std::endl;
+    return true;
+  }
+  #endif
+  
+  return true;
+}
+
+//-----------------------------------------------------------------------------
+
 
 bool Core::checkOpenGLCapabilities()  {
+  
+  // No gui->no OpenGL
+  if ( OpenFlipper::Options::nogui() )
+    return true;
   
   // Status ok?
   bool ok   = true;
@@ -1450,7 +1517,7 @@ bool Core::checkOpenGLCapabilities()  {
   }
   
   if ( !ok ) {
-    QString message = tr("Warning! The OpenGL capabilities of your current machine/driver are not sufficient!\n");
+    QString message = tr("Error! The OpenGL capabilities of your current machine/driver are not sufficient!\n");
     message += tr("The following checks failed:\n\n");
     message += missing;
     message += tr("\n\nPlease update your driver or graphics card.\n");

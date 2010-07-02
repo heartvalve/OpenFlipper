@@ -1115,6 +1115,12 @@ private slots:
     * prints an error message if not.
     */
     bool checkOpenGLCapabilities();
+    
+    /** \brief Checks for library inconsistencies
+    *
+    * Checks if the used libraries are consistent
+    */
+    bool checkLibraryVersions();
   
   
   private :
