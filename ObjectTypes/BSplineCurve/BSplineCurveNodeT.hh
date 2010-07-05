@@ -97,7 +97,8 @@ public:
     pick_radius_ = 0.1;
     render_control_polygon_      = true;
     render_bspline_curve_        = true;
-    bspline_draw_mode_           = DIRECT;
+//     bspline_draw_mode_           = DIRECT;
+    bspline_draw_mode_           = NORMAL;
     bspline_selection_draw_mode_ = NONE;
 
     polygon_color_           = Vec4f(34.0/255.0, 139.0/255.0, 34.0/255.0, 1.0);
@@ -117,9 +118,14 @@ public:
   /// Destructor
   ~BSplineCurveNodeT() {}
 
+//   enum BSplineDrawMode {
+//     DIRECT = 0,
+//     GLU_NURBS = 1
+//   };
+  
   enum BSplineDrawMode {
-    DIRECT = 0,
-    GLU_NURBS = 1
+    NORMAL = 0,
+    FANCY = 1
   };
 
   enum BSplineSelectionDrawMode {
@@ -169,13 +175,12 @@ public:
 
 private:
 
-  // only control points can be picked.
   void pick_vertices(GLState& _state);
   void pick_curve( GLState& _state, unsigned int _offset);
   void pick_spline( GLState& _state, unsigned int _offset );
 
-  void draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state);
-  void draw_sphere  ( const Point& _p0, double _r, GLState& _state);
+  void draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state, unsigned int _slices = 16, unsigned int _stacks = 1);
+  void draw_sphere  ( const Point& _p0, double _r, GLState& _state, unsigned int _slices = 5, unsigned int _stacks = 5);
 
   /// Copy constructor (not used)
   BSplineCurveNodeT(const BSplineCurveNodeT& _rhs);
@@ -183,15 +188,22 @@ private:
   /// Assignment operator (not used)
   BSplineCurveNodeT& operator=(const BSplineCurveNodeT& _rhs);
 
+  
+  void render(GLState& _state, bool _fill, DrawModes::DrawMode _drawMode);
+  
   /// Renders the control polygon
   void drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state);
-  /// Renders the curve itself
+  
+  /// Renders the control polygon using cylinders and spheres to include shading effects
+  void drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state);
+  
+  /// Renders the spline curve using gluNurbsRenderer
   void drawCurve(GLState& _state);
   
-  // deprecated stuff
-//   void drawGluNurbsMode(GLState& _state);
-//   void drawDirectMode(DrawModes::DrawMode _drawMode, GLState& _state);
+  /// Renders the spline curve by sampling the curve and rendering cylinders in between the samples
+  void drawFancyCurve(GLState& _state);
 
+  /// renders a textured cuve using the gluNurbsRenderer to vilualize either the control point ot the knot vector selection
   void drawTexturedCurve(GLState& _state, GLuint _texture_idx);
   
   /** spline curve picking */

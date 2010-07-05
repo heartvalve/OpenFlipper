@@ -60,6 +60,7 @@
 
 
 //== NAMESPACES ===============================================================
+#include <CGAL/Plane_3.h>
 
 namespace ACG {
 namespace SceneGraph {
@@ -113,29 +114,76 @@ BSplineCurveNodeT<BSplineCurve>::
 draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
   glDepthFunc(depthFunc());
-  glDisable(GL_LIGHTING);
-
-//   if (bspline_draw_mode_ == DIRECT)
-//     drawDirectMode(_drawMode, _state);
-//   else
-//     drawGluNurbsMode(_state);
   
-  // draw the control polygon (includes selection on the polygon)
-  if (render_control_polygon_)
-    drawControlPolygon(_drawMode, _state);
+  glPushAttrib(GL_ENABLE_BIT);
   
-  // draw the spline curve itself, dependeing on the type of visualization
-  if ((_drawMode & DrawModes::WIREFRAME) && render_bspline_curve_)
+  if (_drawMode & DrawModes::WIREFRAME)
   {
-    if (bspline_selection_draw_mode_ == NONE)
-      drawCurve(_state);
-    else if (bspline_selection_draw_mode_ == CONTROLPOINT)
-      drawTexturedCurve(_state, cp_selection_texture_idx_);
-    else if (bspline_selection_draw_mode_ == KNOTVECTOR)
-      drawTexturedCurve(_state, knot_selection_texture_idx_);
+    glDisable( GL_CULL_FACE );
+    
+    if (bspline_draw_mode_ == NORMAL)
+    {
+      glDisable(GL_LIGHTING);
+    }
+    else if (bspline_draw_mode_ == FANCY)
+    {
+//       glEnable(GL_AUTO_NORMAL);
+//       glEnable(GL_NORMALIZE);
+      glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+      glEnable( GL_COLOR_MATERIAL );
+      glEnable(GL_LIGHTING);
+      glShadeModel(GL_SMOOTH);
+    }
+
+    render( _state, false, _drawMode);
+  }
+  else if (_drawMode & DrawModes::POINTS)
+  {
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    
+    render( _state, false, _drawMode);
   }
 
   glDepthFunc(GL_LESS);
+  glPopAttrib();
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineCurve>
+void
+BSplineCurveNodeT<BSplineCurve>::
+render(GLState& _state, bool _fill, DrawModes::DrawMode _drawMode)
+{
+  // draw the control polygon (includes selection on the polygon)
+  if (render_control_polygon_)
+  {
+    if (bspline_draw_mode_ == NORMAL)
+      drawControlPolygon(_drawMode, _state);
+    else if (bspline_draw_mode_ == FANCY)
+      drawFancyControlPolygon(_drawMode, _state);
+  }
+
+  
+  // draw the spline curve itself, depending on the type of visualization
+  if ((_drawMode & DrawModes::WIREFRAME) && render_bspline_curve_)
+  {
+    if (bspline_selection_draw_mode_ == NONE)
+    {
+      if (bspline_draw_mode_ == NORMAL)
+        drawCurve(_state);
+      else
+        drawFancyCurve(_state);
+    }
+    else
+    {
+      if (bspline_selection_draw_mode_ == CONTROLPOINT)
+        drawTexturedCurve(_state, cp_selection_texture_idx_);
+      else if (bspline_selection_draw_mode_ == KNOTVECTOR)
+        drawTexturedCurve(_state, knot_selection_texture_idx_);
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -198,6 +246,24 @@ drawCurve(GLState& _state)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
+drawFancyCurve(GLState& _state)
+{
+  // draw the curve
+  double cylinderRadius = _state.line_width() * 0.05;
+  glColor(curve_color_);
+  for (int i = 0; i < (int)curve_samples_.size() - 1; ++i)
+  {
+    Vec3d p      = curve_samples_[i].first;
+    Vec3d p_next = curve_samples_[i+1].first;
+    draw_cylinder(p, p_next - p, cylinderRadius, _state);
+  }
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineCurve>
+void
+BSplineCurveNodeT<BSplineCurve>::
 drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
 {
   // draw line segments
@@ -239,7 +305,7 @@ drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
 
     glBegin(GL_LINE_STRIP);
     // draw bspline control polygon
-    for (unsigned int i=0; i< bsplineCurve_.n_control_points(); ++i)
+    for (unsigned int i = 0; i< bsplineCurve_.n_control_points(); ++i)
       glVertex(bsplineCurve_.get_control_point(i % bsplineCurve_.n_control_points()));
     glEnd();
 
@@ -296,6 +362,96 @@ drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
+drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
+{
+  // draw line segments
+  if (_drawMode & DrawModes::WIREFRAME)
+  {
+    double cylinderRadius = _state.line_width() * 0.05;
+    
+    // draw selection
+    if( bsplineCurve_.edge_selections_available())
+    {
+      // save old color
+      Vec4f base_color_old = _state.base_color();
+      glColor(polygon_highlight_color_);
+
+      // draw bspline control polygon
+      for (int i = 0; i < (int)bsplineCurve_.n_control_points()-1; ++i) // #edges
+      {
+        if (bsplineCurve_.edge_selection(i))
+        {
+          Point p    = bsplineCurve_.get_control_point(i);
+          Point axis = bsplineCurve_.get_control_point(i+1) - bsplineCurve_.get_control_point(i);
+          draw_cylinder(p, axis, cylinderRadius, _state);
+        }
+      }
+
+      // reset color
+      glColor( base_color_old );
+    }
+
+    // draw all line segments
+    Vec4f base_color_old = _state.base_color();
+    glColor(polygon_color_);
+
+    // draw bspline control polygon
+    for (unsigned int i = 0; i < bsplineCurve_.n_control_points() - 1; ++i)
+    {
+      Point p    = bsplineCurve_.get_control_point(i);
+      Point axis = bsplineCurve_.get_control_point(i+1) - bsplineCurve_.get_control_point(i);
+      draw_cylinder(p, axis, cylinderRadius, _state);
+    }
+    
+    // reset color
+    glColor( base_color_old );
+    
+  } // end of if wireframe
+  
+  
+  // draw points
+  if ((_drawMode & DrawModes::POINTS) && render_control_polygon_)
+  {
+    if (bsplineCurve_.n_control_points() == 0)
+      return;
+    
+    // radius of sphere
+    double sphereRadius = _state.point_size() * 0.05;
+    
+    // draw selection
+    if( bsplineCurve_.controlpoint_selections_available())
+    {
+      // save old values
+      Vec4f base_color_old = _state.base_color();
+      float point_size_old = _state.point_size();
+
+      glColor(polygon_highlight_color_);
+
+      // draw control polygon
+      for (unsigned int i = 0; i < bsplineCurve_.n_control_points(); ++i)
+        if (bsplineCurve_.controlpoint_selection(i))
+          draw_sphere(bsplineCurve_.get_control_point(i), sphereRadius, _state, 16, 16);
+      
+      glColor( base_color_old );
+    }
+
+    // draw all points
+    Vec4f base_color_old = _state.base_color();
+    glColor(polygon_color_);
+    
+    for (unsigned int i = 0; i < bsplineCurve_.n_control_points(); ++i)
+      draw_sphere(bsplineCurve_.get_control_point(i), sphereRadius, _state, 16, 16);
+
+    // reset color
+    glColor( base_color_old );
+  }
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineCurve>
+void
+BSplineCurveNodeT<BSplineCurve>::
 drawTexturedCurve(GLState& _state, GLuint _texture_idx)
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -316,7 +472,6 @@ drawTexturedCurve(GLState& _state, GLuint _texture_idx)
   glBindTexture( GL_TEXTURE_2D, _texture_idx);
 
   float line_width_old = _state.line_width();
-//   glLineWidth(6);
   draw_textured_nurbs( _state);
   glLineWidth(line_width_old);
 
@@ -333,9 +488,7 @@ void
 BSplineCurveNodeT<BSplineCurve>::
 updateGeometry()
 {
-  // this function is not used anymore since drawing the curve is done with the gluNurbsRenderer
-  return;
-  if (bspline_draw_mode_ == GLU_NURBS)
+  if (bspline_draw_mode_ == NORMAL)
     return;
 
   curve_samples_.clear();
@@ -378,7 +531,6 @@ void
 BSplineCurveNodeT<BSplineCurve>::
 pick(GLState& _state, PickTarget _target)
 {
-
   switch (_target)
   {
     case PICK_VERTEX:
@@ -444,16 +596,6 @@ pick_vertices( GLState& _state )
     double r = l*tan(angle);
 
     // draw 3d sphere
-//     _state.push_modelview_matrix();
-//     _state.translate( bsplineCurve_.get_control_point(i)[0],
-//                       bsplineCurve_.get_control_point(i)[1],
-//                       bsplineCurve_.get_control_point(i)[2]);
-
-//     GLUquadricObj *qobj = gluNewQuadric();
-//     gluSphere(qobj, r, slices, stacks);
-//     gluDeleteQuadric(qobj);
-
-//     _state.pop_modelview_matrix();
     draw_sphere(bsplineCurve_.get_control_point(i), r, _state);
   }
 }
@@ -486,15 +628,6 @@ pick_curve( GLState& _state, unsigned int _offset)
     double r = l*tan(angle);
 
     // draw 3d sphere
-//     _state.push_modelview_matrix();
-//     _state.translate( pos[0], pos[1], pos[2]);
-
-//     GLUquadricObj *qobj = gluNewQuadric();
-//     gluSphere(qobj, r, slices, stacks);
-//     gluDeleteQuadric(qobj);
-
-//     _state.pop_modelview_matrix();
-
     draw_sphere(pos, r, _state);
   }
 }
@@ -535,7 +668,6 @@ pick_spline( GLState& _state, unsigned int _offset )
 
   float line_width_old = _state.line_width();
   glLineWidth(10);
-//   pick_draw_textured_nurbs( _state);
   draw_textured_nurbs( _state);
   glLineWidth(line_width_old);
 
@@ -554,17 +686,14 @@ pick_spline( GLState& _state, unsigned int _offset )
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-draw_sphere( const Point& _p0, double _r, GLState& _state)
+draw_sphere( const Point& _p0, double _r, GLState& _state, unsigned int _slices, unsigned int _stacks)
 {
   // draw 3d sphere
   _state.push_modelview_matrix();
   _state.translate( _p0[0], _p0[1], _p0[2]);
 
-  unsigned int slices(5);
-  unsigned int stacks(5);
-
   GLUquadricObj *qobj = gluNewQuadric();
-  gluSphere(qobj, _r, slices, stacks);
+  gluSphere(qobj, _r, _slices, _stacks);
   gluDeleteQuadric(qobj);
 
   _state.pop_modelview_matrix();
@@ -575,13 +704,10 @@ draw_sphere( const Point& _p0, double _r, GLState& _state)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state)
+draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state, unsigned int _slices, unsigned int _stacks)
 {
   _state.push_modelview_matrix();
   _state.translate(_p0[0], _p0[1], _p0[2]);
-
-  unsigned int slices(6);
-  unsigned int stacks(1);
 
   Point direction = _axis;
   Point z_axis(0,0,1);
@@ -599,7 +725,7 @@ draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state)
     _state.rotate(rot_angle,1,0,0);
 
   GLUquadricObj *qobj = gluNewQuadric();
-  gluCylinder(qobj, _r, _r, _axis.norm(), slices, stacks);
+  gluCylinder(qobj, _r, _r, _axis.norm(), _slices, _stacks);
   gluDeleteQuadric(qobj);
 
   _state.pop_modelview_matrix();
@@ -718,7 +844,7 @@ create_cp_selection_texture()
   }
   
   // debug, output image
-//   b.save("curveCPSelectionTexture.png", "PNG");
+  b.save("curveCPSelectionTexture.png", "PNG");
   
   cp_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 
