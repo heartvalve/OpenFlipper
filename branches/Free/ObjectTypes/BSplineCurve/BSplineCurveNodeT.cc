@@ -60,7 +60,6 @@
 
 
 //== NAMESPACES ===============================================================
-#include <CGAL/Plane_3.h>
 
 namespace ACG {
 namespace SceneGraph {
