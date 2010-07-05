@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 ( ? , 9691 RC7 )</b>
+ * - <b>OpenFlipper 1.0 (  06.23.2010 , 9691 RC7 )</b>
  *      - <b>Core</b>
  *          - Added Light source management
  *              - Added global nodes to handle light sources
