@@ -102,6 +102,7 @@ class BSplineSurfaceNodeT : public MaterialNode
     surface_color_             = Vec4f(178.0/255.0, 34.0/255.0, 34.0/255.0, 1.0);
     surface_highlight_color_   = Vec4f(1.0, 127.0/255.0, 0.0, 1.0);
     
+    bspline_draw_mode_           = FANCY;
     bspline_selection_draw_mode_ = NONE;
     
     cp_selection_texture_res_   = 256;
@@ -115,6 +116,11 @@ class BSplineSurfaceNodeT : public MaterialNode
 
   /// Destructor
   ~BSplineSurfaceNodeT() {}
+
+  enum BSplineDrawMode {
+    NORMAL = 0,
+    FANCY = 1
+  };
 
   enum BSplineSelectionDrawMode {
     NONE = 0,
@@ -149,6 +155,8 @@ class BSplineSurfaceNodeT : public MaterialNode
 
   void render_bspline_surface(bool _render) {render_bspline_surface_ = _render;};
 
+  void set_bspline_draw_mode(BSplineDrawMode _mode) {bspline_draw_mode_ = _mode;};
+  
   void set_selection_draw_mode(BSplineSelectionDrawMode _mode) {bspline_selection_draw_mode_ = _mode;};
   
   void adaptive_sampling(bool _adaptive){adaptive_sampling_ = _adaptive;};
@@ -166,8 +174,8 @@ private:
   void pick_spline( GLState& _state );
   void pick_surface( GLState& _state, unsigned int _offset );
 
-  void draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state);
-  void draw_sphere( const Point& _p0, double _r, GLState& _state);
+  void draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state, unsigned int _slices = 16, unsigned int _stacks = 1);
+  void draw_sphere  ( const Point& _p0, double _r, GLState& _state, unsigned int _slices = 5, unsigned int _stacks = 5);
 
   /// Copy constructor (not used)
   BSplineSurfaceNodeT(const BSplineSurfaceNodeT& _rhs);
@@ -182,6 +190,8 @@ private:
   void drawTexturedSurface(GLState& _state, GLuint _texture_idx);
 
   void drawControlNet(GLState& _state);
+  
+  void drawFancyControlNet(GLState& _state);
 
   /** spline surface u,v-parameter picking */
   /// generate index and setup texture parameters
@@ -207,7 +217,9 @@ private:
 private:
 
   BSplineSurface& bsplineSurface_;
-
+  
+  BSplineDrawMode bspline_draw_mode_;
+  
   BSplineSelectionDrawMode bspline_selection_draw_mode_;
   
   double pick_radius_;

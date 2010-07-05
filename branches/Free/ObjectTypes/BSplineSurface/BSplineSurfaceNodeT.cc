@@ -241,7 +241,12 @@ render(GLState& _state, bool _fill)
 {
   // draw the control net (includes selection on the net)
   if (render_control_net_)
-    drawControlNet(_state);
+  {
+    if (bspline_draw_mode_ == NORMAL)
+      drawControlNet(_state);
+    else if (bspline_draw_mode_ == FANCY)
+      drawFancyControlNet(_state);
+  }
   
   // draw the spline curve itself, dependeing on the type of visualization
   if (render_bspline_surface_)
@@ -512,6 +517,93 @@ drawControlNet(GLState& _state)
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
+drawFancyControlNet(GLState& _state)
+{
+  // draw control net
+//   glPushAttrib(GL_ENABLE_BIT);
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+  glDisable( GL_CULL_FACE );
+  
+  glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+  glEnable( GL_COLOR_MATERIAL );
+  glEnable(GL_LIGHTING);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glShadeModel(GL_SMOOTH);
+
+
+  // draw points
+  double sphereRadius = _state.point_size() * 0.05;
+  
+  // draw selection
+  if( bsplineSurface_.controlpoint_selections_available())
+  {
+    // save old values
+    Vec4f base_color_old = _state.base_color();
+    glColor(controlnet_highlight_color_);
+
+    // draw control polygon
+    for (unsigned int i = 0; i < bsplineSurface_.n_control_points_m(); ++i)
+    {
+      for (unsigned int j = 0; j < bsplineSurface_.n_control_points_n(); ++j)
+      {
+        if( bsplineSurface_.controlpoint_selection(i, j))
+          draw_sphere(bsplineSurface_(i, j), sphereRadius, _state, 16, 16);
+      }
+    }
+
+    glColor( base_color_old );
+  }
+
+  // draw all points
+  Vec4f base_color_old = _state.base_color();
+  glColor(controlnet_color_);
+
+  for (unsigned int i = 0; i < bsplineSurface_.n_control_points_m(); ++i)
+    for (unsigned int j = 0; j < bsplineSurface_.n_control_points_n(); ++j)
+      draw_sphere(bsplineSurface_(i, j), sphereRadius, _state, 16, 16);
+
+  glColor( base_color_old );
+  
+
+  // draw line segments
+
+  double cylinderRadius = _state.line_width() * 0.05;
+
+  base_color_old = _state.base_color();
+  glColor(controlnet_color_);
+
+  // draw bspline control net
+  for (unsigned int i = 0; i < bsplineSurface_.n_control_points_m(); ++i)
+  {
+    for (int j = 0; j < (int)bsplineSurface_.n_control_points_n() - 1; ++j)
+    {
+      Vec3d p      = bsplineSurface_(i, j);
+      Vec3d p_next = bsplineSurface_(i, j+1);
+      draw_cylinder(p, p_next - p, cylinderRadius, _state);
+    }
+  }
+
+  for (int j = 0; j < (int)bsplineSurface_.n_control_points_n(); ++j)
+  {
+    for (int i = 0; i < (int)bsplineSurface_.n_control_points_m() - 1; ++i)
+    {
+      Vec3d p = bsplineSurface_(i, j);
+      Vec3d p_next = bsplineSurface_(i+1,j);
+      draw_cylinder(p, p_next - p, cylinderRadius, _state);
+    }
+  }
+
+  glColor( base_color_old );
+
+  glPopAttrib();
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineSurface>
+void
+BSplineSurfaceNodeT<BSplineSurface>::
 pick(GLState& _state, PickTarget _target)
 {
   switch (_target)
@@ -644,17 +736,14 @@ pick_surface( GLState& _state, unsigned int _offset )
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-draw_sphere( const Point& _p0, double _r, GLState& _state)
+draw_sphere( const Point& _p0, double _r, GLState& _state, unsigned int _slices, unsigned int _stacks)
 {
   // draw 3d sphere
   _state.push_modelview_matrix();
   _state.translate( _p0[0], _p0[1], _p0[2]);
 
-  unsigned int slices(5);
-  unsigned int stacks(5);
-
   GLUquadricObj *qobj = gluNewQuadric();
-  gluSphere(qobj, _r, slices, stacks);
+  gluSphere(qobj, _r, _slices, _stacks);
   gluDeleteQuadric(qobj);
 
   _state.pop_modelview_matrix();
@@ -665,13 +754,10 @@ draw_sphere( const Point& _p0, double _r, GLState& _state)
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state)
+draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state, unsigned int _slices, unsigned int _stacks)
 {
   _state.push_modelview_matrix();
   _state.translate(_p0[0], _p0[1], _p0[2]);
-
-  unsigned int slices(6);
-  unsigned int stacks(1);
 
   Point direction = _axis;
   Point z_axis(0,0,1);
@@ -682,14 +768,13 @@ draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state)
   rot_angle  = acos((z_axis | direction))*180/M_PI;
   rot_normal = ((z_axis % direction).normalize());
 
-
   if( fabs( rot_angle ) > 0.0001 && fabs( 180 - rot_angle ) > 0.0001)
     _state.rotate(rot_angle,rot_normal[0], rot_normal[1], rot_normal[2]);
   else
     _state.rotate(rot_angle,1,0,0);
 
   GLUquadricObj *qobj = gluNewQuadric();
-  gluCylinder(qobj, _r, _r, _axis.norm(), slices, stacks);
+  gluCylinder(qobj, _r, _r, _axis.norm(), _slices, _stacks);
   gluDeleteQuadric(qobj);
 
   _state.pop_modelview_matrix();
@@ -719,7 +804,8 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 updateControlPointSelectionTexture()
 {
-  create_cp_selection_texture();
+  if (bspline_selection_draw_mode_ == CONTROLPOINT)
+    create_cp_selection_texture();
 }
 
 //----------------------------------------------------------------------------
@@ -729,7 +815,8 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 updateKnotVectorSelectionTexture()
 {
-  create_knot_selection_texture();
+  if (bspline_selection_draw_mode_ == KNOTVECTOR)
+    create_knot_selection_texture();
 }
 
 //----------------------------------------------------------------------------
