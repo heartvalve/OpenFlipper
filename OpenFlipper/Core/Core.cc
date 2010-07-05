@@ -1517,7 +1517,7 @@ bool Core::checkOpenGLCapabilities()  {
   }
   
   if ( !ok ) {
-    QString message = tr("Error! The OpenGL capabilities of your current machine/driver are not sufficient!\n");
+    QString message = tr("Error! \nThe OpenGL capabilities of your current machine/driver are not sufficient!\n\n");
     message += tr("The following checks failed:\n\n");
     message += missing;
     message += tr("\n\nPlease update your driver or graphics card.\n");
@@ -1527,10 +1527,16 @@ bool Core::checkOpenGLCapabilities()  {
     
     std::cerr << message.toStdString() << std::endl;
     
-    QMessageBox::critical ( 0, tr( "Insufficient OpenGL Capabilities!"),message );
+    
+    QMessageBox::StandardButton button = QMessageBox::critical ( 0, tr( "Insufficient OpenGL Capabilities!"),message,QMessageBox::Abort|QMessageBox::Ignore , QMessageBox::Abort);
     
     // Unsafe operation, so quit the application
-    exit(1);
+    if ( button == QMessageBox::Abort )
+      exit(1);
+    else 
+      QMessageBox::warning(0,tr( "Insufficient OpenGL Capabilities!"),tr("Ignoring OpenGL capabilities might lead to unstable Operation! Do it at your own risk!"));
+    
+    
     
   } else if ( warn ) {
     QString message = tr("Warning! The OpenGL capabilities of your current machine/driver could be insufficient!\n\n");
