@@ -106,7 +106,7 @@ toggleBSplineSurfaceSelection(QMouseEvent* _event)
     if (PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_SPLINE, _event->pos(),node_idx, target_idx, &hit_point)) 
     {
       BaseObjectData* object;
-
+      
       if ( PluginFunctions::getPickedObject(node_idx, object) )
       {
         BSplineSurfaceObject * bsso = PluginFunctions::bsplineSurfaceObject( object );
@@ -145,7 +145,7 @@ toggleBSplineSurfaceSelection(QMouseEvent* _event)
           // knots closest to parameters of hitpoint on the surface
           int knotIdx_m = KnotvectorSelection::closestKnot(knotvec_u, curu);
           int knotIdx_n = KnotvectorSelection::closestKnot(knotvec_v, curv);
-        
+          
           if( bss->get_knotvector_m_ref()->selection( knotIdx_m ) == 0)
             bss->get_knotvector_m_ref()->selection( knotIdx_m ) = 1;
           else
