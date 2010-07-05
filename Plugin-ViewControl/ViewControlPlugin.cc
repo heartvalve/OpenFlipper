@@ -69,8 +69,8 @@ void ViewControlPlugin::pluginsInitialized() {
   icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"drawModes.png");
   viewControlMenu_->setIcon(icon);
 
-  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH      , CONTEXTOBJECTMENU );
-  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH          , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_TRIANGLE_MESH        , CONTEXTOBJECTMENU );
+  emit addContextMenuItem(viewControlMenu_->menuAction() , DATA_POLY_MESH            , CONTEXTOBJECTMENU );
   
   if ( typeExists("PolyVolMesh") )
     emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("PolyVolMesh")   , CONTEXTOBJECTMENU );
@@ -84,11 +84,14 @@ void ViewControlPlugin::pluginsInitialized() {
   if ( typeExists("BSplineSurface") )
     emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineSurface"), CONTEXTOBJECTMENU );
   
+  if ( typeExists("BSplineCurve") )
+    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("BSplineCurve")  , CONTEXTOBJECTMENU );
+  
   if ( typeExists("TSplineMesh") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TSplineMesh"),    CONTEXTOBJECTMENU );
+    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("TSplineMesh")   , CONTEXTOBJECTMENU );
 
   if ( typeExists("Skeleton") )
-    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Skeleton"),    CONTEXTOBJECTMENU );
+    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Skeleton")      , CONTEXTOBJECTMENU );
   
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 
