@@ -131,9 +131,17 @@ void CoreWidget::showAboutWidget( ) {
     double sbrkAllocated  = double(info.uordblks) / 1024 / 1024;
     double totalAllocated = double(memory)        / 1024 / 1024;
     
-    aboutWidget_->OpenFlipperAbout->append(tr("mmap allocated:\t\t ")       + QString::number(mmapAllocated ,'g' ,2 ) + "MByte" );   
-    aboutWidget_->OpenFlipperAbout->append(tr("sbrk allocated:\t\t ")       + QString::number(sbrkAllocated ,'g' ,2 ) + "MByte" );   
-    aboutWidget_->OpenFlipperAbout->append(tr("Total Memory allocated:\t ") + QString::number(totalAllocated,'g' ,2 ) + "MByte" );   
+    double pageSize       = double(getpagesize()) /1024 ;
+    double availablePages = double( sysconf (_SC_AVPHYS_PAGES) );
+    double freeMem        = availablePages * pageSize / 1024;
+    
+    aboutWidget_->OpenFlipperAbout->append(tr("Total Memory allocated:\t ") + QString::number(totalAllocated,'f' ,2 ) + tr("MB ")
+                                           + tr("( mmap: ") + QString::number(mmapAllocated ,'f' ,2 ) + tr("MB") 
+                                           + tr(", sbrk: ") + QString::number(sbrkAllocated ,'f' ,2 ) + tr("MB )") );
+    
+    aboutWidget_->OpenFlipperAbout->append(tr("Free Memory:\t\t ") + QString::number(freeMem,'f' ,2 )  + tr("MB ")
+                                           + tr("(") + QString::number(availablePages,'f' ,0 ) + tr(" pages of ") 
+                                           + QString::number(pageSize,'f' ,2 ) + tr("KB size)"));
     
   #else
     aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform"));   
