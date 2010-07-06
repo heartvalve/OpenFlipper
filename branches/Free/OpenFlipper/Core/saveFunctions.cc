@@ -60,8 +60,11 @@ bool Core::saveObject( int _id, QString _filename ) {
   BaseObjectData* object;
   PluginFunctions::getObject(_id,object);
 
+  QString file_extension = _filename;
+  file_extension.remove(0, file_extension.length()-4);
+  
   for (int i=0; i < (int)supportedTypes_.size(); i++) {
-    if ( supportedTypes_[i].type.contains(object->dataType())) {
+    if ( supportedTypes_[i].type.contains(object->dataType()) && supportedTypes_[i].saveFilters.contains(file_extension)) {
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Saving ") + _filename + " ...");
