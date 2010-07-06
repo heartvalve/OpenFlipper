@@ -449,7 +449,7 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
 
         cur_heh = currentTriMesh()->next_halfedge_handle(cur_heh);
 
-      }else
+      } else
         std::cerr << "Error: cannot set texture coordinates. undefined index." << std::endl;
     }
     
@@ -468,7 +468,8 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
         vertices.push_back( vertexMapPoly_[ _indices[i] ] );
 
       }else{
-        std::cerr << "Error: cannot add face. undefined index." << std::endl;
+        std::cerr << "Error: cannot add face poly mesh. undefined index(" <<  _indices[i] << ")" << std::endl;
+        std::cerr << "Verticies in Index map: " << vertexMapPoly_.size() << std::endl;
         return;
       }
     }

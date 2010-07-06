@@ -519,6 +519,15 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
   std::vector< double > knotsU,knotsV;
   
   int faceCount = 0;
+  
+  // We have to keep track of the already read number of vertices to resolve relative (negative indices)
+  int currentVertexCount = 0;
+  
+  // We have to keep track of the already read number of Texture coordinates to resolve relative (negative indices)
+  int currentTextureCoordCount = 0;
+  
+  // We have to keep track of the already read number of normals to resolve relative (negative indices)
+  int currentNormalCount = 0;
 
   _importer.setPath( path );
   
@@ -585,11 +594,17 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
           _importer.useMaterial( matname );
         }
       }
+    }     
+    else if (mode == NONE && keyWrd == "v") 
+    {
+     currentVertexCount++;
     }
-
     // texture coord
     else if (mode == NONE && keyWrd == "vt")
     {
+      // New texture coordinate read so increase counter
+      currentTextureCoordCount++;
+      
       stream >> u; stream >> v;
 
       if ( !stream.fail() ){
@@ -607,6 +622,9 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     // normal
     else if (mode == NONE && keyWrd == "vn")
     {
+      // New normal read so increase counter
+      currentNormalCount++;
+      
       stream >> x; stream >> y; stream >> z;
 
       if ( !stream.fail() ){
@@ -724,7 +742,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
                 // Calculation of index :
                 // -1 is the last vertex in the list
                 // As obj counts from 1 and not zero add +1
-                value = _importer.n_vertices() + value + 1;
+                value = currentVertexCount + value + 1;
               }
 
               // Obj counts from 1 and not zero .. array counts from zero therefore -1
@@ -736,7 +754,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
                 // Calculation of index :
                 // -1 is the last vertex in the list
                 // As obj counts from 1 and not zero add +1
-                value = _importer.n_texCoords() + value + 1;
+                value = currentTextureCoordCount + value + 1;
               }
               assert(!vhandles.empty());
               if ( _importer.n_texCoords() > 0 && (unsigned int)(value-1) < _importer.n_texCoords() ) {
@@ -754,7 +772,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
                 // Calculation of index :
                 // -1 is the last vertex in the list
                 // As obj counts from 1 and not zero add +1
-                value = _importer.n_normals() + value + 1;
+                value = currentNormalCount + value + 1;
               }
               assert(!vhandles.empty());
               assert((unsigned int)(value-1) < _importer.n_normals() );
