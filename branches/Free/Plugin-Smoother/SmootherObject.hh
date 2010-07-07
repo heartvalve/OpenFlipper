@@ -54,15 +54,45 @@ class SmootherObject : public PerObjectData
 {
   public:
     
-    typedef OpenMesh::Smoother::JacobiLaplaceSmootherT< TriMesh > SmootherType;
-    
-    
-    SmootherObject(TriMesh* _mesh);
+    SmootherObject();
     ~SmootherObject();
-
-    SmootherType* smoother() { return smoother_.get(); };
+    
+    // Copy function
+    PerObjectData* copyPerObjectData();
+    
+    private:
+        
+        typedef OpenMesh::Smoother::SmootherT< TriMesh >::Component     SmoothingComponent;
+        typedef OpenMesh::Smoother::SmootherT< TriMesh >::Continuity    SmoothingContinuity;
+    
+    public:
+    
+    // Get/Set methods
+    void component(SmoothingComponent _comp)    { component_ = _comp; }
+    void continuity(SmoothingContinuity _cont)  { continuity_ = _cont; }
+    void distance(float _distance)             { distance_ = _distance; }
+    void features(bool _features)               { respectFeatures_ = _features; }
+    void iterations(uint _iterations)           { iterations_ = _iterations; }
+    
+    SmoothingComponent component()      { return component_; }
+    SmoothingContinuity continuity()    { return continuity_; }
+    float distance()                   { return distance_; }
+    bool features()                     { return respectFeatures_; }
+    uint iterations()                   { return iterations_; }
     
   private:
-    std::tr1::shared_ptr< SmootherType > smoother_;
+    // Smoothing attributes
+    // Component:
+    SmoothingComponent component_;
+    
+    // Continuity
+    SmoothingContinuity continuity_;
+    
+    // Constraints
+    float distance_;
+    bool respectFeatures_;
+    
+    // Iterations
+    uint iterations_;
 };
 

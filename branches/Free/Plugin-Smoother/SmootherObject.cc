@@ -43,11 +43,19 @@
 #include "SmootherObject.hh"
 
 
-SmootherObject::SmootherObject(TriMesh* _mesh){
-  smoother_ = std::tr1::shared_ptr< SmootherType >( new SmootherType( *_mesh )  );
-  
+SmootherObject::SmootherObject() :
+distance_(0.0f),
+respectFeatures_(false),
+iterations_(0u) {  
 }
 
-SmootherObject::~SmootherObject(){
+SmootherObject::~SmootherObject() {
+}
+
+PerObjectData* SmootherObject::copyPerObjectData() {
+    
+    SmootherObject* so_copy = new SmootherObject(*this);
+    
+    return so_copy;
 }
 
