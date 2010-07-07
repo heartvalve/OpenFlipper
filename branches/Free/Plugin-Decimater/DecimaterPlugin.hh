@@ -131,12 +131,12 @@ private :
   /// Widget for Toolbox
   DecimaterToolbarWidget* tool_;
   
-  /// Constraint handles for decimation
-  DecimaterInfo::ModNormalFlippingH     hModNormalFlipping_;
-  DecimaterInfo::ModQuadricH            hModDistance_;
-  DecimaterInfo::ModRoundnessH          hModRoundness_;
-  DecimaterInfo::ModQuadricH            hModPriorityQuadric_;
-
+  typedef OpenMesh::Decimater::DecimaterT< TriMesh > DecimaterType;
+  
+  typedef OpenMesh::Decimater::ModNormalFlippingT< DecimaterType >::Handle    ModNormalFlippingH;
+  typedef OpenMesh::Decimater::ModQuadricT< DecimaterType >::Handle           ModQuadricH;
+  typedef OpenMesh::Decimater::ModRoundnessT< DecimaterType >::Handle         ModRoundnessH;
+  
 private slots:
 
   /// decimating called from button in toolbox

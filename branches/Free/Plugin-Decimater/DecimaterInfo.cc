@@ -43,10 +43,12 @@
 #include "DecimaterInfo.hh"
 
 DecimaterInfo::DecimaterInfo() :
-  decimater_(),
   normalDeviation_(false),
   distance_(false),
-  roundness_(false) { }
+  roundness_(false),
+  normalDeviation_value_(0),
+  distance_value_(0),
+  roundness_value_(0) {}
 
 
 DecimaterInfo::~DecimaterInfo() {
@@ -61,77 +63,59 @@ PerObjectData* DecimaterInfo::copyPerObjectData() {
 
 //-----------------------------------------------------------------------------------
 
-void DecimaterInfo::initialize( ModQuadricH& _handle, TriMesh* _mesh ) {
-    
-    decimater_ = std::tr1::shared_ptr< DecimaterType >( new DecimaterType( *_mesh )  );
+void DecimaterInfo::setDistanceConstraint( double _value ){
 
-    decimater()->add( _handle );
-    decimater()->module( _handle ).unset_max_err();
-}
-
-//-----------------------------------------------------------------------------------
-
-void DecimaterInfo::setDistanceConstraint( ModQuadricH& _handle, double _value ){
-
-  if (  decimater()->add( _handle ) ) {
-    decimater()->module( _handle ).set_max_err( _value );
-    distance_ = true;
-  }
+  distance_ = true;
+  distance_value_ = _value;
 }
 
 
 //-----------------------------------------------------------------------------------
 
-void DecimaterInfo::setNormalDeviationConstraint( ModNormalFlippingH& _handle, int _value ){
+void DecimaterInfo::setNormalDeviationConstraint( int _value ){
 
-  if ( decimater()->add( _handle ) ) {
-    decimater()->module( _handle ).set_normal_deviation( _value );
-    normalDeviation_ = true;
-    normalDeviation_value_ = _value;
-  }
+  normalDeviation_ = true;
+  normalDeviation_value_ = _value;
 }
 
 
 //-----------------------------------------------------------------------------------
 
-void DecimaterInfo::setRoundnessConstraint( ModRoundnessH& _handle, double _value ){
+void DecimaterInfo::setRoundnessConstraint( double _value ){
 
-  if ( decimater()->add( _handle ) ) {
-    decimater()->module( _handle ).set_min_roundness( _value , true );
-    roundness_ = true;
-    roundness_value_ = _value;
-  }
+  roundness_ = true;
+  roundness_value_ = _value;
 }
 
 //-----------------------------------------------------------------------------------
 
-void DecimaterInfo::removeDistanceConstraint( ModQuadricH& _handle ){
+void DecimaterInfo::removeDistanceConstraint(){
 
   if (  distance_ ) {
-    decimater()->remove( _handle );
     distance_ = false;
+    distance_value_ = 0;
   }
 }
 
 
 //-----------------------------------------------------------------------------------
 
-void DecimaterInfo::removeNormalDeviationConstraint( ModNormalFlippingH& _handle ){
+void DecimaterInfo::removeNormalDeviationConstraint(){
 
   if ( normalDeviation_ ) {
-    decimater()->remove( _handle );
     normalDeviation_ = false;
+    normalDeviation_value_ = 0;
   }
 }
 
 
 //-----------------------------------------------------------------------------------
 
-void DecimaterInfo::removeRoundnessConstraint( ModRoundnessH& _handle ){
+void DecimaterInfo::removeRoundnessConstraint(){
 
   if ( roundness_ ) {
-    decimater()->remove( _handle );
     roundness_ = false;
+    roundness_value_ = 0;
   }
 }
 
