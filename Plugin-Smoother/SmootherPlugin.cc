@@ -129,12 +129,16 @@ slot_smooth()
 
     SmootherObject* data = dynamic_cast< SmootherObject* > ( o_it->objectData(SMOOTHER) );
 
+    // Get triangle mesh
+    TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+    
     if (data == 0){
-      TriMesh* mesh = PluginFunctions::triMesh(*o_it);
-      data = new SmootherObject(mesh);
+      data = new SmootherObject();
       o_it->setObjectData(SMOOTHER, data);
     }
-
+    
+    // Create smoother
+    SmootherType smoother(*mesh);
 
     OpenMesh::Smoother::SmootherT< TriMesh >::Component component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential_and_Normal;
     if( tool_->rbTangential_and_Normal->isChecked() ) {
@@ -148,6 +152,9 @@ slot_smooth()
       jobDescription += "tangential,";
     }
 
+    // Set perObjectData
+    data->component(component);
+
     OpenMesh::Smoother::SmootherT< TriMesh >::Continuity continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
     if( tool_->rB_c0->isChecked() ) {
       continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
@@ -156,6 +163,9 @@ slot_smooth()
       continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C1;
       jobDescription += "C1";
     }
+    
+    // Set perObjectData
+    data->continuity(continuity);
 
     // Read maximum distance Error from lineEdit
     if ( tool_->cbDistance->isChecked() ) {
@@ -165,22 +175,27 @@ slot_smooth()
 
       double absoluteError = value.toDouble(&ok);
 
-      if ( ok )
-        data->smoother()->set_absolute_local_error( absoluteError );
-      else
+      if ( ok ) {
+        data->distance(absoluteError);
+        smoother.set_absolute_local_error( absoluteError );
+      } else {
         emit log(LOGWARN , "Unable to read distance error from LineEdit");
+      }
       
       jobDescription += ",max_error: " + QString::number(absoluteError);
     }
     
-    data->smoother()->initialize(component,continuity );
-    data->smoother()->skip_features(tool_->respectFeatures->isChecked());
+    // Set perObjectData
+    data->features(tool_->respectFeatures->isChecked());
+    data->iterations(tool_->sB_iter->value());
+    
+    // Initialize smoother
+    smoother.initialize(component,continuity );
+    smoother.skip_features(data->features());
 
-    data->smoother()->smooth( tool_->sB_iter->value() );
+    smoother.smooth( data->iterations() );
     
     jobDescription +=  ") " + QString::number(tool_->sB_iter->value()) + " iterations";
-
-    TriMesh* mesh = PluginFunctions::triMesh(*o_it);
 
     if (mesh != 0)
       mesh->garbage_collection();
@@ -226,11 +241,15 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
 
     SmootherObject* data = dynamic_cast< SmootherObject* > ( object->objectData(SMOOTHER) );
 
+    // Get triangle mesh
+    TriMesh* mesh = PluginFunctions::triMesh(object);
+    
     if (data == 0){
-      TriMesh* mesh = PluginFunctions::triMesh(object);
-      data = new SmootherObject(mesh);
+      data = new SmootherObject();
       object->setObjectData(SMOOTHER, data);
     }
+    
+    SmootherType smoother(*mesh);
 
     OpenMesh::Smoother::SmootherT< TriMesh >::Component component = OpenMesh::Smoother::SmootherT< TriMesh >::Tangential_and_Normal;
     bool tangential = _direction.contains("tangential");
@@ -247,6 +266,8 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
       jobDescription += "tangential,";
     }
     
+    // Set perObjectData
+    data->component(component);
 
     OpenMesh::Smoother::SmootherT< TriMesh >::Continuity continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
     bool c0 = _continuity.contains("C0");
@@ -261,17 +282,24 @@ void SmootherPlugin::smooth(int _objectId , int _iterations , QString _direction
       continuity = OpenMesh::Smoother::SmootherT< TriMesh >::C0;
       jobDescription += "C0";
     }
+    
+    // Set perObjectData
+    data->continuity(continuity);
 
     if ( _maxDistance > 0.0) {
-      data->smoother()->set_absolute_local_error( _maxDistance );
+      // Set perObjectData
+      data->distance(_maxDistance);
+      smoother.set_absolute_local_error( _maxDistance );
       jobDescription += ",max_error: " + QString::number(_maxDistance);
-    } else
-      data->smoother()->set_absolute_local_error( FLT_MAX );
+    } else {
+      // Set perObjectData
+      data->distance( FLT_MAX );
+      smoother.set_absolute_local_error( FLT_MAX );
+    }
 
-    data->smoother()->initialize(component,continuity);
+    smoother.initialize(component,continuity);
 
-    data->smoother()->smooth( _iterations );
-    TriMesh* mesh = PluginFunctions::triMesh(object);
+    smoother.smooth( _iterations );
 
     jobDescription +=  ") " + QString::number(_iterations) + " iterations";
     

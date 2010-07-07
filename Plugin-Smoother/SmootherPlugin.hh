@@ -152,6 +152,8 @@ public slots:
 
 /** @} */
 
+private:
+   typedef OpenMesh::Smoother::JacobiLaplaceSmootherT< TriMesh > SmootherType;
 };
 
 #endif //SMOOTHERPLUGIN_HH
