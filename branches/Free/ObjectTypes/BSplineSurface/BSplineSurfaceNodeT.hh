@@ -112,6 +112,8 @@ class BSplineSurfaceNodeT : public MaterialNode
     pick_init_texturing();
     selection_init_texturing(cp_selection_texture_idx_);
     selection_init_texturing(knot_selection_texture_idx_);
+    selection_init_texturing(arb_texture_idx_);
+
   }
 
   /// Destructor
@@ -166,6 +168,10 @@ class BSplineSurfaceNodeT : public MaterialNode
   
   //! Should be a power of 2
   int& pick_texture_res( ) { return pick_texture_res_; }
+
+  /// use arbitrary texture (in SOLID_TEXTURED mode)
+  void set_arb_texture( const QImage& _texture, bool _repeat = false, float _u_repeat = 1.0f, float _v_repeat = 1.0f);
+
 
 
 private:
@@ -252,6 +258,14 @@ private:
   QImage knot_selection_texture_image_;
   GLuint knot_selection_texture_idx_;
   int    knot_selection_texture_res_;
+  
+  // texturing stuff for using arbitrary textures
+  QImage arb_texture_image_;
+  GLuint arb_texture_idx_;
+  bool   arb_texture_used_;
+  bool   arb_texture_repeat_;
+  float  arb_texture_repeat_u_;
+  float  arb_texture_repeat_v_;
   
 };
 
