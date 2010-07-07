@@ -131,7 +131,7 @@ void DecimaterPlugin::updateRoundness(double _value)
  */
 void DecimaterPlugin::slot_decimate()
 {
-
+  
   for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS,DATA_TRIANGLE_MESH) ;
                                         o_it != PluginFunctions::objectsEnd(); ++o_it)  {
 
@@ -143,44 +143,76 @@ void DecimaterPlugin::slot_decimate()
 
     DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( o_it->objectData(DECIMATER) );
 
+    TriMesh* mesh = PluginFunctions::triMesh(*o_it);
+  
     if (decimater == 0){
-      TriMesh* mesh = PluginFunctions::triMesh(*o_it);
-      decimater = new DecimaterInfo( );
-      decimater->initialize(hModPriorityQuadric_, mesh);
+      decimater = new DecimaterInfo();
       o_it->setObjectData(DECIMATER, decimater);
     }
-
-    //remove old constraints
-    decimater->removeDistanceConstraint(hModDistance_);
-    decimater->removeNormalDeviationConstraint(hModNormalFlipping_);
-    decimater->removeRoundnessConstraint(hModRoundness_);
+    
+    // Constraint handles for decimation
+    ModNormalFlippingH     hModNormalFlipping;
+    ModQuadricH            hModDistance;
+    ModRoundnessH          hModRoundness;
+    ModQuadricH            hModPriorityQuadric;
+    
+    // Create decimater
+    DecimaterType decimater_object( *mesh );
+    decimater_object.add( hModPriorityQuadric );
+    decimater_object.module( hModPriorityQuadric ).unset_max_err();
+    
+    // Remove old constraints
+    if(decimater->distance()) {
+        decimater->removeDistanceConstraint();
+        decimater_object.remove(hModDistance);
+    }
+    if(decimater->normalDeviation()) {
+        decimater->removeNormalDeviationConstraint();
+        decimater_object.remove(hModNormalFlipping);
+    }
+    if(decimater->roundness()) {
+        decimater->removeRoundnessConstraint();
+        decimater_object.remove(hModRoundness);
+    }
 
     //and set new constraints
-    if ( tool_->cbDistance->isChecked() )
-      decimater->setDistanceConstraint( hModDistance_, tool_->distance->value() );
+    if ( tool_->cbDistance->isChecked() ) {
+      if (  decimater_object.add( hModDistance ) ) {
+          decimater->setDistanceConstraint( tool_->distance->value() );
+          decimater_object.module( hModDistance ).set_max_err( decimater->distanceValue() );
+      }
+    }
 
-    if ( tool_->cbNormalDev->isChecked() )
-      decimater->setNormalDeviationConstraint( hModNormalFlipping_, tool_->normalDeviation->value() );
+    if ( tool_->cbNormalDev->isChecked() ) {
+      if (  decimater_object.add( hModNormalFlipping ) ) {
+          decimater->setNormalDeviationConstraint( tool_->normalDeviation->value() );
+          decimater_object.module( hModNormalFlipping ).set_normal_deviation( decimater->normalDeviationValue() );
+      }
+    }
 
-    if ( tool_->cbRoundness->isChecked() )
-      decimater->setRoundnessConstraint( hModRoundness_, tool_->roundness->value() );
+    if ( tool_->cbRoundness->isChecked() ) {      
+      if (  decimater_object.add( hModRoundness ) ) {
+          decimater->setRoundnessConstraint( tool_->roundness->value() );
+          decimater_object.module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
+      }
+    }
 
-    //init the decimater
-    if( ! decimater->decimater()->initialize() ){
+    // Initialize the decimater
+    if( ! decimater_object.initialize() ){
       emit log(LOGWARN, tr("Decimater could not be initialized"));
       continue;
     }
 
     //decimate
     if ( tool_->cbVertices->isChecked() )
-      decimater->decimater()->decimate_to( tool_->verticesCount->value() );         // do decimation
+        decimater_object.decimate_to(tool_->verticesCount->value());
     else
-      decimater->decimater()->decimate();         // do decimation
+        decimater_object.decimate();
 
     object->mesh()->garbage_collection();
     object->mesh()->update_normals();
     object->update();
-
+    
     // Create backup
     emit createBackup(o_it->id(), "Decimation");
     emit updatedObject( o_it->id() , UPDATE_TOPOLOGY );
@@ -217,17 +249,37 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
     DecimaterInfo* decimater = dynamic_cast< DecimaterInfo* > ( object->objectData(DECIMATER) );
 
+    TriMesh* mesh = PluginFunctions::triMesh(baseObjectData);
+    
     if (decimater == 0){
-      TriMesh* mesh = PluginFunctions::triMesh(baseObjectData);
-      decimater = new DecimaterInfo( );
-      decimater->initialize(hModPriorityQuadric_, mesh);
+      decimater = new DecimaterInfo();
       object->setObjectData(DECIMATER, decimater);
     }
+    
+    // Constraint handles for decimation
+    ModNormalFlippingH     hModNormalFlipping;
+    ModQuadricH            hModDistance;
+    ModRoundnessH          hModRoundness;
+    ModQuadricH            hModPriorityQuadric;
+    
+    // Create decimater
+    DecimaterType decimater_object( *mesh );
+    decimater_object.add( hModPriorityQuadric );
+    decimater_object.module( hModPriorityQuadric ).unset_max_err();
 
-    //remove old constraints
-    decimater->removeDistanceConstraint(hModDistance_);
-    decimater->removeNormalDeviationConstraint(hModNormalFlipping_);
-    decimater->removeRoundnessConstraint(hModRoundness_);
+    // Remove old constraints
+    if(decimater->distance()) {
+        decimater->removeDistanceConstraint();
+        decimater_object.remove(hModDistance);
+    }
+    if(decimater->normalDeviation()) {
+        decimater->removeNormalDeviationConstraint();
+        decimater_object.remove(hModNormalFlipping);
+    }
+    if(decimater->roundness()) {
+        decimater->removeRoundnessConstraint();
+        decimater_object.remove(hModRoundness);
+    }
 
     //distance constraint
     if ( _constraints.contains("distance") ){
@@ -236,8 +288,12 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
       double value = _constraints["distance"].toDouble(&ok);
 
-      if (ok)
-        decimater->setDistanceConstraint( hModDistance_, value );
+      if (ok) {
+        if (  decimater_object.add( hModDistance ) ) {
+            decimater->setDistanceConstraint( value );
+            decimater_object.module( hModDistance ).set_max_err( decimater->distanceValue() );
+        }
+      }
     }
 
     //normal deviation constraint
@@ -247,8 +303,12 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
       int value = _constraints["normal_deviation"].toInt(&ok);
 
-      if (ok)
-        decimater->setNormalDeviationConstraint( hModNormalFlipping_, value );
+      if (ok) {
+        if (  decimater_object.add( hModNormalFlipping ) ) {
+            decimater->setNormalDeviationConstraint( value );
+            decimater_object.module( hModNormalFlipping ).set_normal_deviation( decimater->normalDeviationValue() );
+        }
+      }
     }
 
     //roundness constraint
@@ -258,8 +318,12 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
       double value = _constraints["roundness"].toDouble(&ok);
 
-      if (ok)
-        decimater->setRoundnessConstraint( hModRoundness_, value );
+      if (ok) {
+        if (  decimater_object.add( hModRoundness ) ) {
+            decimater->setRoundnessConstraint( value );
+            decimater_object.module( hModRoundness ).set_min_roundness( decimater->roundnessValue(), true );
+        }
+      }
     }
 
     //triangleCount constraint
@@ -279,16 +343,16 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
     }
 
     //init the decimater
-    if( ! decimater->decimater()->initialize() ){
+    if( ! decimater_object.initialize() ){
       emit log(LOGWARN, tr("Decimater could not be initialized"));
       return;
     }
 
     //decimate
     if ( triangleCount )
-      decimater->decimater()->decimate_to( triangles ); // do decimation
+      decimater_object.decimate_to( triangles ); // do decimation
     else
-      decimater->decimater()->decimate(); // do decimation
+      decimater_object.decimate(); // do decimation
 
     object->mesh()->garbage_collection();
     object->mesh()->update_normals();
