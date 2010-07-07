@@ -60,28 +60,39 @@ class DecimaterInfo : public PerObjectData
   public :
 
     typedef OpenMesh::Decimater::DecimaterT< TriMesh > DecimaterType;
-
-  private :
-
-    // Create Normal deviation ordering module
-    OpenMesh::Decimater::ModNormalFlippingT< DecimaterType >::Handle hModNormalFlipping;
-    OpenMesh::Decimater::ModQuadricT< DecimaterType >::Handle        hModQuadric;
-    OpenMesh::Decimater::ModRoundnessT< DecimaterType >::Handle      hModRoundness;
-    OpenMesh::Decimater::ModQuadricT< DecimaterType >::Handle        hModQuadric_priority;
-
-  public :
-
+    
+    typedef OpenMesh::Decimater::ModNormalFlippingT< DecimaterType >::Handle    ModNormalFlippingH;
+    typedef OpenMesh::Decimater::ModQuadricT< DecimaterType >::Handle           ModQuadricH;
+    typedef OpenMesh::Decimater::ModRoundnessT< DecimaterType >::Handle         ModRoundnessH; 
+  
   //Konstruktor
-  DecimaterInfo(TriMesh* _mesh);
+  DecimaterInfo();
 
   //Destruktor
   ~DecimaterInfo();
+  
+  // Copy function
+  PerObjectData* copyPerObjectData();
+  
+  // Initialize decimater
+  void initialize( ModQuadricH& _handle, TriMesh* _mesh );
 
-  void removeConstraints();
-
-  void setDistanceConstraint( double _value );
-  void setNormalDeviationConstraint( int _value );
-  void setRoundnessConstraint( double _value );
+  void setDistanceConstraint( ModQuadricH& _handle, double _value );
+  void setNormalDeviationConstraint( ModNormalFlippingH& _handle, int _value );
+  void setRoundnessConstraint( ModRoundnessH& _handle, double _value );
+  
+  void removeDistanceConstraint( ModQuadricH& _handle );
+  void removeNormalDeviationConstraint( ModNormalFlippingH& _handle );
+  void removeRoundnessConstraint( ModRoundnessH& _handle );
+  
+  // Get/Set methods
+  bool normalDeviation()    { return normalDeviation_; }
+  bool distance()           { return distance_; }
+  bool roundness()          { return roundness_; }
+  
+  int normalDeviationValue()    { return normalDeviation_value_; }
+  double distanceValue()        { return distance_value_; }
+  double roundnessValue()       { return roundness_value_; }
 
   DecimaterType* decimater() { return decimater_.get(); };
 
@@ -90,8 +101,13 @@ private :
   std::tr1::shared_ptr< DecimaterType > decimater_;
 
   bool normalDeviation_;
+  int normalDeviation_value_;
+  
   bool distance_;
+  double distance_value_;
+  
   bool roundness_;
+  double roundness_value_;
 
 };
 

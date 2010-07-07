@@ -61,8 +61,6 @@
 
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 
-#include "DecimaterInfo.hh"
-
 #define DECIMATER "DecimaterData"
 
 //== IMPLEMENTATION ==========================================================
@@ -147,22 +145,25 @@ void DecimaterPlugin::slot_decimate()
 
     if (decimater == 0){
       TriMesh* mesh = PluginFunctions::triMesh(*o_it);
-      decimater = new DecimaterInfo( mesh );
+      decimater = new DecimaterInfo( );
+      decimater->initialize(hModPriorityQuadric_, mesh);
       o_it->setObjectData(DECIMATER, decimater);
     }
 
     //remove old constraints
-    decimater->removeConstraints();
+    decimater->removeDistanceConstraint(hModDistance_);
+    decimater->removeNormalDeviationConstraint(hModNormalFlipping_);
+    decimater->removeRoundnessConstraint(hModRoundness_);
 
     //and set new constraints
     if ( tool_->cbDistance->isChecked() )
-      decimater->setDistanceConstraint( tool_->distance->value() );
+      decimater->setDistanceConstraint( hModDistance_, tool_->distance->value() );
 
     if ( tool_->cbNormalDev->isChecked() )
-      decimater->setNormalDeviationConstraint( tool_->normalDeviation->value() );
+      decimater->setNormalDeviationConstraint( hModNormalFlipping_, tool_->normalDeviation->value() );
 
     if ( tool_->cbRoundness->isChecked() )
-      decimater->setRoundnessConstraint( tool_->roundness->value() );
+      decimater->setRoundnessConstraint( hModRoundness_, tool_->roundness->value() );
 
     //init the decimater
     if( ! decimater->decimater()->initialize() ){
@@ -218,12 +219,15 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
 
     if (decimater == 0){
       TriMesh* mesh = PluginFunctions::triMesh(baseObjectData);
-      decimater = new DecimaterInfo( mesh );
+      decimater = new DecimaterInfo( );
+      decimater->initialize(hModPriorityQuadric_, mesh);
       object->setObjectData(DECIMATER, decimater);
     }
 
     //remove old constraints
-    decimater->removeConstraints();
+    decimater->removeDistanceConstraint(hModDistance_);
+    decimater->removeNormalDeviationConstraint(hModNormalFlipping_);
+    decimater->removeRoundnessConstraint(hModRoundness_);
 
     //distance constraint
     if ( _constraints.contains("distance") ){
@@ -233,7 +237,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       double value = _constraints["distance"].toDouble(&ok);
 
       if (ok)
-        decimater->setDistanceConstraint( value );
+        decimater->setDistanceConstraint( hModDistance_, value );
     }
 
     //normal deviation constraint
@@ -244,7 +248,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       int value = _constraints["normal_deviation"].toInt(&ok);
 
       if (ok)
-        decimater->setNormalDeviationConstraint( value );
+        decimater->setNormalDeviationConstraint( hModNormalFlipping_, value );
     }
 
     //roundness constraint
@@ -255,7 +259,7 @@ void DecimaterPlugin::decimate(int _objID, QVariantMap _constraints) {
       double value = _constraints["roundness"].toDouble(&ok);
 
       if (ok)
-        decimater->setRoundnessConstraint( value );
+        decimater->setRoundnessConstraint( hModRoundness_, value );
     }
 
     //triangleCount constraint
