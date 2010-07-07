@@ -328,7 +328,8 @@ public:
   ACG::Vec2i interval_n(double _t);
   
   
-private: // private functions
+//private: // private functions
+public:
 
   /// Returns the lower u parameter
   Scalar loweru();
