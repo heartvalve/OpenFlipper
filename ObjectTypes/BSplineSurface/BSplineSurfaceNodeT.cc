@@ -228,6 +228,22 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
   }
 
 
+  if ( (_drawMode & DrawModes::SOLID_TEXTURED )  ) {
+    glEnable(GL_AUTO_NORMAL);
+    glEnable(GL_NORMALIZE);
+
+    glEnable(GL_LIGHTING);
+    glShadeModel(GL_SMOOTH);
+    glDepthRange(0.01, 1.0);
+
+    arb_texture_used_ = true;
+    drawTexturedSurface(_state, arb_texture_idx_ );
+    arb_texture_used_ = false;
+
+    glDepthRange(0.0, 1.0);
+  }
+
+
   glDepthFunc(GL_LESS);
   glPopAttrib();
 }
@@ -366,6 +382,14 @@ drawTexturedSurface(GLState& _state, GLuint _texture_idx)
   // avoid aliasing at patch boundaries
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
   glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
+
+  // repeat if arbitrary texture mode
+  if( arb_texture_used_ )
+  {
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  }
+
   // GL_MODULATE to include lighting effects
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
   
@@ -1167,6 +1191,37 @@ pick_create_texture( GLState& _state)
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
+set_arb_texture( const QImage& _texture, bool _repeat, float _u_repeat, float _v_repeat )
+{
+  glBindTexture( GL_TEXTURE_2D, 0);
+
+  arb_texture_repeat_   = _repeat;
+  arb_texture_repeat_u_ = _u_repeat;
+  arb_texture_repeat_v_ = _v_repeat;
+
+  arb_texture_image_ = QGLWidget::convertToGLFormat( _texture );
+  int u_res          = arb_texture_image_.width();
+  int v_res          = arb_texture_image_.height();
+
+  // bind texture as current
+  glBindTexture( GL_TEXTURE_2D, arb_texture_idx_ );
+
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+  glTexImage2D(  GL_TEXTURE_2D,
+                 0, GL_RGBA, u_res, v_res,
+                 0, GL_RGBA, GL_UNSIGNED_BYTE, arb_texture_image_.bits() );
+
+  // unbind current texture
+  glBindTexture( GL_TEXTURE_2D, 0);
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineSurface>
+void
+BSplineSurfaceNodeT<BSplineSurface>::
 draw_textured_nurbs( GLState& _state)
 {
   int numKnots_m = bsplineSurface_.n_knots_m();
@@ -1231,6 +1286,9 @@ draw_textured_nurbs( GLState& _state)
 
   // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
+
+  if( arb_texture_repeat_ && arb_texture_used_ )
+    tcoords = {0.0, 0.0, 0.0, arb_texture_repeat_v_*(maxv-minv), arb_texture_repeat_u_*(maxu-minu), 0.0, arb_texture_repeat_u_*(maxu-minu), arb_texture_repeat_v_*(maxv-minv)};
 
   // knots of domain, over which tcoords shall be linearly interpolated
   GLfloat   tknots[4] = {minu, minu, maxu, maxu};
