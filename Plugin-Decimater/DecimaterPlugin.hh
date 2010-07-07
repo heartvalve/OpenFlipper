@@ -60,6 +60,7 @@
 
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#include "DecimaterInfo.hh"
 
 #include "DecimaterToolbarWidget.hh"
 
@@ -129,6 +130,12 @@ private :
 
   /// Widget for Toolbox
   DecimaterToolbarWidget* tool_;
+  
+  /// Constraint handles for decimation
+  DecimaterInfo::ModNormalFlippingH     hModNormalFlipping_;
+  DecimaterInfo::ModQuadricH            hModDistance_;
+  DecimaterInfo::ModRoundnessH          hModRoundness_;
+  DecimaterInfo::ModQuadricH            hModPriorityQuadric_;
 
 private slots:
 
