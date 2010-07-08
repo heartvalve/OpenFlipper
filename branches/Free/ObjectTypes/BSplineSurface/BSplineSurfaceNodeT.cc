@@ -1287,8 +1287,16 @@ draw_textured_nurbs( GLState& _state)
   // control points of 2d texture ((0,0), (0,1), (1,0), (1,1) )
   GLfloat   tcoords[8] = {0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0};
 
-  if( arb_texture_repeat_ && arb_texture_used_ )
-    tcoords = {0.0, 0.0, 0.0, arb_texture_repeat_v_*(maxv-minv), arb_texture_repeat_u_*(maxu-minu), 0.0, arb_texture_repeat_u_*(maxu-minu), arb_texture_repeat_v_*(maxv-minv)};
+  if( arb_texture_repeat_ && arb_texture_used_ ) {
+    tcoords[0] = 0.0;
+    tcoords[1] = 0.0;
+    tcoords[2] = 0.0;
+    tcoords[3] = arb_texture_repeat_v_*(maxv-minv);
+    tcoords[4] = arb_texture_repeat_u_*(maxu-minu);
+    tcoords[5] = 0.0;
+    tcoords[6] = arb_texture_repeat_u_*(maxu-minu);
+    tcoords[7] = arb_texture_repeat_v_*(maxv-minv);
+  }
 
   // knots of domain, over which tcoords shall be linearly interpolated
   GLfloat   tknots[4] = {minu, minu, maxu, maxu};
