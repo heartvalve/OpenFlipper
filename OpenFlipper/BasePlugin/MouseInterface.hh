@@ -108,7 +108,18 @@ class MouseInterface {
       *
       *  @param _event Mousevent
     */
-    virtual void slotMouseEventIdentify() {};
+    virtual void slotMouseEventIdentify( QMouseEvent* /*_event */) {};
+    
+    /**  \brief Mouse Event from Main App ( Light Mode )
+      *
+      *  This slot is called if a mouse event occured in the Viewer
+      *  This slot will only get called in LightMode.
+      *  Right button clicks will not be passed to the plugins as this is reserved for
+      *  the context Menu.
+      *
+      *  @param _event Mousevent
+    */
+    virtual void slotMouseEventLight( QMouseEvent* /* _event */) {};
 
   public :
 

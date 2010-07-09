@@ -174,9 +174,6 @@ glViewer::glViewer( QGraphicsScene* _scene,
   projectionMode_   = PERSPECTIVE_PROJECTION;
   navigationMode_   = NORMAL_NAVIGATION;
 
-
-  light_matrix_.identity();
-
   trackMouse_ = false;
 
   // stereo
@@ -728,8 +725,6 @@ void glViewer::drawScene_mono()
     cursorPainter_->paintCursor (glstate_);
     glstate_->pop_modelview_matrix ();
   }
-
-  draw_lights();
 }
 
 
@@ -977,11 +972,6 @@ void glViewer::initializeGL()
   // Update all settings which would require a redraw
   applyProperties();
 
-  // light sources
-  light_matrix_.identity();
-  update_lights();
-
-
   // scene pos and size
   scene_center_ = trackball_center_ = ACG::Vec3d( 0.0, 0.0, 0.0 );
   scene_radius_ = trackball_radius_ = 1.0;
@@ -1024,89 +1014,6 @@ void glViewer::initializeGL()
 
 //-----------------------------------------------------------------------------
 
-/**
- *
- */
-void  glViewer::draw_lights() {
-//   makeCurrent();
-// //
-//   glMatrixMode(GL_MODELVIEW);
-//   glPushMatrix();
-//   glLoadIdentity();
-//   glMultMatrixd(light_matrix_.data());
-//
-//   std::cerr << "light_matrix_\n" << light_matrix_ << std::endl;
-// //
-//   glPointSize(3);
-// //
-//   glColor3f(1.0,1.0,1.0);
-// //   glDisable(GL_LIGHTING);
-// //   glDisable(GL_BLEND);
-//   glBegin(GL_LINES);
-//     glVertex3f(0.0,  0.0, -1000.0);
-//     glVertex3f(0.0,  0.0, 10000.0);
-//     glVertex3f(0.0, -1000.0,0.0);
-//     glVertex3f(0.0, 1000.0,0.0);
-//     glVertex3f(1000.0,0.0,0.0);
-//     glVertex3f(-1000.0,0.0,0.0);
-// //     glVertex3d(0.0,  0.0, 1.1);
-// //     glVertex3d(-1.0,  1.0, 0.8);
-// //     glVertex3d( 1.0,  1.0, 0.8);
-//
-//   glEnd();
-// //   glEnable(GL_LIGHTING);
-// //   glEnable(GL_BLEND);
-// //
-//   glPopMatrix();
-
-}
-
-void glViewer::update_lights()
-{
-  // PluginFunction can disable the cores light handling and use its own one
-  if (!PluginFunctions::examinerLightHandling() ) 
-    return;
-  
-  makeCurrent();
-
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-  glMultMatrixd(light_matrix_.data());
-
-  GLfloat pos[4], col[4];
-
-  col[0] = col[1] = col[2] = 0.7;
-  pos[3] = col[3] = 0.0;
-
-#define SET_LIGHT(i,x,y,z) { 			\
-    pos[0]=x; pos[1]=y; pos[2]=z;		\
-    glLightfv(GL_LIGHT##i, GL_POSITION, pos);	\
-    glLightfv(GL_LIGHT##i, GL_DIFFUSE,  col);	\
-    glLightfv(GL_LIGHT##i, GL_SPECULAR, col);	\
-    glEnable(GL_LIGHT##i);			\
-  }
-
-  SET_LIGHT(0,  0.0,  0.0, 1.0);
-  SET_LIGHT(1, -1.0,  1.0, 0.7);
-  SET_LIGHT(2,  1.0,  1.0, 0.7);
-
-  col[0] = col[1] = col[2] = 0.3; col[3] = 1.0;
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, col);
-
-  glPopMatrix();
-}
-
-
-void glViewer::rotate_lights(ACG::Vec3d& _axis, double _angle)
-{
-  light_matrix_.rotate(_angle, _axis[0], _axis[1], _axis[2], ACG::MULT_FROM_LEFT);
-  update_lights();
-}
-
-
-//-----------------------------------------------------------------------------
-
 
 void glViewer::paintGL()
 {
@@ -1136,9 +1043,6 @@ void glViewer::paintGL()
     normalsMode(      normalsMode_      );
 
     applyProperties();
-
-    // light sources
-    update_lights();
 
     glstate_->setState ();
 
@@ -1567,7 +1471,7 @@ void glViewer::mousePressEvent(QGraphicsSceneMouseEvent* _e)
         break;
 
       case Viewer::LightMode:
-        lightMouseEvent(&me);
+        emit(signalMouseEventLight(&me));
         break;
 
       case Viewer::PickingMode: // give event to application
@@ -1604,7 +1508,7 @@ void glViewer::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* _e)
       break;
 
     case Viewer::LightMode:
-      lightMouseEvent(&me);
+      emit(signalMouseEventLight(&me));
       break;
 
     case Viewer::PickingMode: // give event to application
@@ -1636,7 +1540,7 @@ void glViewer::mouseMoveEvent(QGraphicsSceneMouseEvent* _e)
       break;
 
     case Viewer::LightMode:
-      lightMouseEvent(&me);
+      emit(signalMouseEventLight(&me));
       break;
 
     case Viewer::PickingMode:
@@ -1699,7 +1603,7 @@ void glViewer::mouseReleaseEvent(QGraphicsSceneMouseEvent* _e)
         break;
 
       case Viewer::LightMode:
-        lightMouseEvent(&me);
+        emit(signalMouseEventLight(&me));
         break;
 
       case Viewer::PickingMode: // give event to application
@@ -2020,75 +1924,6 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
         timer_->start(0);
       break;
     }
-
-    default: // avoid warning
-      break;
-  }
-}
-
-//-----------------------------------------------------------------------------
-
-void
-glViewer::lightMouseEvent(QMouseEvent* _event)
-{
-  QPointF f (mapFromScene(QPointF(_event->pos().x(), _event->pos().y())));
-  QPoint pos (f.x(), f.y());
-
-  switch (_event->type())
-  {
-    case QEvent::MouseButtonPress:
-    {
-      lastPoint_hitSphere_ = mapToSphere( lastPoint2D_= pos,
-                 lastPoint3D_ );
-      isRotating_ = true;
-      timer_->stop();
-      break;
-    }
-
-
-    case QEvent::MouseMove:
-    {
-      // rotate lights
-      if (_event->buttons() & Qt::LeftButton)
-      {
-   QPoint newPoint2D = pos;
-
-   if ( (newPoint2D.x()<0) || (newPoint2D.x() > (int)glWidth()) ||
-        (newPoint2D.y()<0) || (newPoint2D.y() > (int)glHeight()) )
-     return;
-
-
-   ACG::Vec3d  newPoint3D;
-   bool   newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D );
-
-   makeCurrent();
-
-   ACG::Vec3d axis(1.0,0.0,0.0);
-   double angle(0.0);
-
-   if ( lastPoint_hitSphere_ )
-   {
-     if ( ( newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D ) ) )
-     {
-       axis = lastPoint3D_ % newPoint3D;
-       double cos_angle = ( lastPoint3D_ | newPoint3D );
-       if ( fabs(cos_angle) < 1.0 ) {
-         angle = acos( cos_angle ) * 180.0 / M_PI;
-         angle *= 2.0;
-       }
-     }
-     rotate_lights(axis, angle);
-   }
-
-   lastPoint2D_ = newPoint2D;
-   lastPoint3D_ = newPoint3D;
-   lastPoint_hitSphere_ = newPoint_hitSphere;
-
-   updateGL();
-      }
-      break;
-    }
-
 
     default: // avoid warning
       break;

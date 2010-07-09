@@ -826,6 +826,10 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
     if ( checkSlot( plugin , "slotMouseEventIdentify(QMouseEvent*)" ) )
       connect(this   , SIGNAL(PluginMouseEventIdentify(QMouseEvent*)),
               plugin , SLOT(slotMouseEventIdentify(QMouseEvent*)));
+              
+    if ( checkSlot( plugin , "slotMouseEventLight(QMouseEvent*)" ) )
+      connect(this   , SIGNAL(PluginMouseEventLight(QMouseEvent*)),
+              plugin , SLOT(slotMouseEventLight(QMouseEvent*)));
 
   }
 
