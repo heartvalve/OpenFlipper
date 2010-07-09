@@ -153,6 +153,9 @@ private slots:
 
   /// Handle Mouse events when in Identifier mode
   void slotMouseEventIdentify( QMouseEvent* _event );
+  
+  /// Handle Mouse events when in Light mode
+  void slotMouseEventLight( QMouseEvent* _event );
 
 protected:
 
@@ -178,6 +181,9 @@ signals:
 
    /// Emitted when an identify event occurs
    void PluginMouseEventIdentify( QMouseEvent* );
+   
+   /// Emitted when an light event occurs
+   void PluginMouseEventLight( QMouseEvent* );
 
    /// This signal is emitted if the object has been changed (source/target)
    void objectSelectionChanged( int );

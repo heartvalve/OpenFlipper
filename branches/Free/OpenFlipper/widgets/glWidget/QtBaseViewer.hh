@@ -263,17 +263,6 @@ public:
   /// get treatment of normals
   NormalsMode normalsMode() const { return normalsMode_; }
 
-
-  /// get light rotation matrix
-  ACG::GLMatrixd& light_matrix() { return light_matrix_; }
-  /// rotete light sources
-  void rotate_lights(ACG::Vec3d& _axis, double _angle);
-  /// update light position
-  void update_lights();
-
-  void draw_lights();
-
-
   /// copy current framebuffer to an QImage
   void copyToImage( QImage& _image, GLenum _buffer=GL_BACK) {
     copyToImage(_image, 0, 0, glWidth(), glHeight(), _buffer);
@@ -417,10 +406,15 @@ signals:
   /// Emitted in Pick mode. Uses pick mode.
   void signalWheelEvent(QWheelEvent*, const std::string&);
 
-  /** Emitted instead o signalMouseEvent() if actionMode()==Question
+  /** Emitted instead of signalMouseEvent() if actionMode()==Question
       and \c _event is a mouse press event.
    */
   void signalMouseEventIdentify( QMouseEvent* );
+  
+  /** Emitted instead of signalMouseEvent() if actionMode()==Light
+      and \c _event is a mouse press event.
+   */
+  void signalMouseEventLight( QMouseEvent* );
 
   /// scene graph has changed
   void signalSceneGraphChanged(ACG::SceneGraph::BaseNode* _root);
@@ -481,10 +475,7 @@ protected:
   /// specialized viewer: hande key events
   void viewKeyEvent( QKeyEvent* _event);
 
-  /// optional: hande mouse events to rotate light
-  void lightMouseEvent( QMouseEvent* /* _event */ );
-
-
+  
   protected:
 
 
@@ -574,10 +565,6 @@ private:
   ACG::GLMatrixd               home_modelview_,
                                home_inverse_modelview_;
   double                       homeOrthoWidth_;
-
-
-  // matrix for rotating light position
-  ACG::GLMatrixd               light_matrix_;
 
 
   // modi

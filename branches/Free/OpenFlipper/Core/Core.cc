@@ -528,6 +528,8 @@ Core::init() {
               this                              , SLOT(slotMouseEvent(QMouseEvent*)));
       connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalMouseEventIdentify(QMouseEvent*)),
               this                              , SLOT(slotMouseEventIdentify(QMouseEvent*)));
+      connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalMouseEventLight(QMouseEvent*)),
+              this                              , SLOT(slotMouseEventLight(QMouseEvent*)));
       connect( coreWidget_->examiner_widgets_[i], SIGNAL(signalWheelEvent(QWheelEvent *, const std::string &)),
               this                              , SLOT(slotWheelEvent(QWheelEvent *, const std::string &)));
 
@@ -666,6 +668,35 @@ Core::slotMouseEventIdentify( QMouseEvent* _event )
   PluginFunctions::setActiveExaminer( examinerId );
 
   emit PluginMouseEventIdentify( _event );
+
+
+}
+
+//-----------------------------------------------------------------------------
+
+void
+Core::slotMouseEventLight( QMouseEvent* _event )
+{
+  const QObject* senderPointer = sender();
+  unsigned int examinerId = 0;
+
+  if ( senderPointer == 0 ) {
+    std::cerr << "Error : slotMouseEventLight directly called! This should only be called by an examiner" << std::endl;
+  } else {
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i ) {
+      if ( senderPointer == coreWidget_->examiner_widgets_[i] ) {
+        examinerId = i;
+        if ( OpenFlipper::Options::doSlotDebugging() )
+              emit log(LOGINFO,tr("slotMouseEventLight from examiner ") + QString::number(i) );
+        break;
+      }
+    }
+
+  }
+
+  PluginFunctions::setActiveExaminer( examinerId );
+
+  emit PluginMouseEventLight( _event );
 
 
 }
