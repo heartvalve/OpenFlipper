@@ -70,20 +70,28 @@ void CoreWidget::showAboutWidget( ) {
 
   if ( OpenFlipper::Options::nogui() )
     return;
-
+  
   if ( aboutWidget_ == 0 ) {
     aboutWidget_ = new AboutWidget( this );
   } else {
     aboutWidget_->OpenFlipperAbout->clear();
   }
+  
+  QFont standardFont = aboutWidget_->OpenFlipperAbout->currentFont();
+  QFont boldFont = standardFont;
+  boldFont.setBold(true);
 
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
   aboutWidget_->OpenFlipperAbout->append(tr("OpenFlipper Core Version: ") + OpenFlipper::Options::coreVersion() ) ;
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
 
   // =====================================================================================
   // Directory info
   // =====================================================================================
   aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
   aboutWidget_->OpenFlipperAbout->append(tr("OpenFlipper Directories:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   
   // Get the dataDir
   QDir tempDir = QDir(OpenFlipper::Options::applicationDir());
@@ -103,7 +111,9 @@ void CoreWidget::showAboutWidget( ) {
   // Memory infos
   // =====================================================================================
   aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
   aboutWidget_->OpenFlipperAbout->append(tr("Memory Information:"));    
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   
   #ifndef WIN32
   
@@ -153,7 +163,9 @@ void CoreWidget::showAboutWidget( ) {
   // OpenGL Renderer/Vendor and version info
   // =====================================================================================    
   aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
   aboutWidget_->OpenFlipperAbout->append(tr("OpenGL Specific Info:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
 
 
   QString vendor = QString((const char*)glGetString(GL_VENDOR));
@@ -196,6 +208,9 @@ void CoreWidget::showAboutWidget( ) {
   // glu Information
   // =====================================================================================
   aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
+  aboutWidget_->OpenFlipperAbout->append(tr("Glu Specific Info:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   
   QString gluVersion = QString((const char *)gluGetString(GLU_VERSION));
   aboutWidget_->OpenFlipperAbout->append(tr("GLU Version:\t") + gluVersion);
@@ -211,6 +226,9 @@ void CoreWidget::showAboutWidget( ) {
   // glew Information
   // =====================================================================================
   aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
+  aboutWidget_->OpenFlipperAbout->append(tr("GLEW Specific Info:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   
   QString glewVersion = QString((const char *)glewGetString(GLEW_VERSION));
   aboutWidget_->OpenFlipperAbout->append(tr("GLEW Version:\t") + glewVersion);
@@ -220,7 +238,9 @@ void CoreWidget::showAboutWidget( ) {
   // =====================================================================================
   
   aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
   aboutWidget_->OpenFlipperAbout->append(tr("Qt Version Info:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   aboutWidget_->OpenFlipperAbout->append(tr("Currently used Version:\t") + qVersion() );
   aboutWidget_->OpenFlipperAbout->append(tr("Link time Version:\t\t") + QT_VERSION_STR );
   
@@ -228,14 +248,18 @@ void CoreWidget::showAboutWidget( ) {
   // Compiler information
   // =====================================================================================    
   aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
   aboutWidget_->OpenFlipperAbout->append(tr("Compiler Version Info:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
   aboutWidget_->OpenFlipperAbout->append( OpenFlipper::Options::compilerInfo() );
   
   // =====================================================================================
   // List the currently registered data types
   // =====================================================================================
   aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
   aboutWidget_->OpenFlipperAbout->append(tr("Registered data types:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
 
   QString types;
 
