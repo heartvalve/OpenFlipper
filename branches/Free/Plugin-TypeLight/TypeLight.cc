@@ -44,14 +44,24 @@
 #include "TypeLight.hh"
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
+#include "OpenFlipper/BasePlugin/PluginFunctionsViewControls.hh"
+
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 #define DEF0 "Default Light 0.lgt"
 #define DEF1 "Default Light 1.lgt"
 #define DEF2 "Default Light 2.lgt"
 
 TypeLightPlugin::TypeLightPlugin() :
-    defaultLights_(true) {
-  
+    defaultLights_(true),
+    lightButton_(0),
+    contextmenu_(0),
+    onlyTargets_(false),
+    lastPoint_hitSphere_(false),
+    ratioTrackballs_(1.0) {
+        
+        // Reset transformation matrix
+        light_matrix_.identity();  
 }
 
 bool TypeLightPlugin::registerType() {
@@ -110,7 +120,7 @@ void TypeLightPlugin::addDefaultLights() {
                 lightObject0->setName(DEF0);
             }
          
-            emit updatedObject(light0, UPDATE_ALL);       
+            emit updatedObject(light0, UPDATE_ALL);
         }
     }
     
@@ -166,11 +176,66 @@ void TypeLightPlugin::addDefaultLights() {
 
 void TypeLightPlugin::pluginsInitialized(){
   
-  // Disable the build in light management and use this plugins light handling
-  PluginFunctions::disableExaminerLightHandling();
+    // Add toolbar icon with context menu
+    QToolBar* viewerToolbar = 0;
+
+    emit getToolBar( "Viewer Toolbar", viewerToolbar );
+
+    if ( viewerToolbar == 0 ) {
+        emit log(LOGERR,"Unable to get Viewer Toolbar!");
+    } else {
+        // Create toolbar action
+        lightButton_ = new QToolButton( viewerToolbar );
+        lightButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-mode.png") );
+        lightButton_->setMinimumSize( 16, 16 );
+        lightButton_->setMaximumSize( 32, 32 );
+        lightButton_->setToolTip(tr("Switch to <b>light</b> mode."));
+        lightButton_->setWhatsThis(tr(
+                      "Switch to <b>light</b> mode.<br>"
+                      "Rotate lights using left mouse button."));
+
+        connect( lightButton_, SIGNAL( clicked() ), this, SLOT( setLightMode() ) );
+        viewerToolbar->addWidget( lightButton_ )->setText(tr("Light"));
+        
+        // Create context menu
+        QActionGroup* group = new QActionGroup(lightButton_);
+        QAction* radioOne = new QAction("All lights", group);
+        radioOne->setCheckable(true);
+        radioOne->setChecked((onlyTargets_ ? false : true));
+        QAction* radioTwo  = new QAction("Target lights", group);
+        radioTwo->setCheckable(true);
+        radioTwo->setChecked((onlyTargets_ ? true : false));
+        contextmenu_ = new QMenu("Choose target light sources", 0);
+        contextmenu_->addActions(group->actions());
+        
+        connect( radioOne, SIGNAL(triggered(bool)), this, SLOT(allLights(bool)) );
+        connect( radioTwo, SIGNAL(triggered(bool)), this, SLOT(targetLights(bool)) );
+    }
+    
+    // Disable the build in light management and use this plugins light handling
+    PluginFunctions::disableExaminerLightHandling();
   
-  // Add default light sources to active scene
-  addDefaultLights();
+    // Add default light sources to active scene
+    addDefaultLights();
+}
+
+void TypeLightPlugin::allLights(bool _b) {
+    onlyTargets_ = !_b;
+}
+
+void TypeLightPlugin::targetLights(bool _b) {
+    onlyTargets_ = _b;
+}
+
+void TypeLightPlugin::setLightMode() {
+    
+    // Reset transformation matrix
+    light_matrix_.identity();
+    
+    // Context menu requested
+    contextmenu_->exec(QPoint(lightButton_->mapToGlobal(QPoint(0, lightButton_->height()))));
+    
+    PluginFunctions::actionMode(Viewer::LightMode);
 }
 
 int TypeLightPlugin::addDefaultLight(QString _name) {
@@ -208,7 +273,7 @@ int TypeLightPlugin::addEmpty() {
   object->update();
 
   object->hide();
-
+  
   emit emptyObjectAdded (object->id() );
 
   return object->id();
@@ -269,6 +334,201 @@ QString TypeLightPlugin::get_unique_name(LightObject* _object) {
     }
 
     return QString(tr("Light %1.lgt").arg( cur_idx ));
+}
+
+void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
+    
+    // Only react if in light mode
+    if(PluginFunctions::actionMode() == Viewer::LightMode) {
+    
+        // Get gl state
+        ACG::GLState& state = PluginFunctions::viewerProperties().glState();
+    
+        QPoint pos (_event->x(), _event->y());
+        
+        switch (_event->type())
+        {
+            case QEvent::MouseButtonPress:
+            {
+              lastPoint_hitSphere_ = mapToSphere( lastPoint2D_= pos,
+                         lastPoint3D_, state.viewport_width(), state.viewport_height() );
+              updateLights();
+              break;
+            }
+            
+            case QEvent::MouseMove:
+            {
+              // rotate lights
+              if (_event->buttons() & Qt::LeftButton)
+              {
+                QPoint newPoint2D = pos;
+
+                if ( (newPoint2D.x() < 0) || (newPoint2D.x() > (int)state.viewport_width()) ||
+                     (newPoint2D.y() < 0) || (newPoint2D.y() > (int)state.viewport_height()) )
+                 return;
+
+
+                ACG::Vec3d newPoint3D;
+                bool newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D, state.viewport_width(), state.viewport_height() );
+                int active = PluginFunctions::activeExaminer();
+
+                ACG::Vec3d axis(1.0,0.0,0.0);
+                double angle(0.0);
+
+                if ( lastPoint_hitSphere_ )
+                {
+                    if ( newPoint_hitSphere ) {
+                        
+                        axis = lastPoint3D_ % newPoint3D;
+                        axis.normalize();
+                        axis = state.modelview().transform_vector(axis);
+                        double cos_angle = ( lastPoint3D_ | newPoint3D );
+                        
+                        if ( fabs(cos_angle) < 1.0 ) {
+                            angle = acos( cos_angle );
+                            angle *= 180 / M_PI;
+                        }
+                    }
+                 
+                    rotateLights(axis, angle);
+                }
+
+                lastPoint2D_ = newPoint2D;
+                lastPoint3D_ = newPoint3D;
+                lastPoint_hitSphere_ = newPoint_hitSphere;
+
+              }
+              break;
+            }
+
+        default: // avoid warning
+          break;
+        }
+    }
+    
+    // interaction
+    ACG::SceneGraph::MouseEventAction action(_event,PluginFunctions::viewerProperties().glState());
+    PluginFunctions::traverse(action);
+}
+
+bool TypeLightPlugin::mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D, int _width, int _height) const
+{
+    if ( (_v2D.x() >= 0) && (_v2D.x() < _width) &&
+         (_v2D.y() >= 0) && (_v2D.y() < _height) ) {
+    
+        double x = 2.0 * _v2D.x() / (double)_width - 1;
+        double y = 1 - 2.0 * _v2D.y() / (double)_height;
+        
+        //double x   = (double)(_v2D.x() - ((double)_width / 2.0))  / (double)_width;
+        //double y   = (double)(((double)_height / 2.0) - _v2D.y()) / (double)_height;
+        
+        //double sinx         = sin(0.5 * M_PI * x);
+        //double siny         = sin(0.5 * M_PI * y);
+        
+        double x2y2   =  x*x + y*y; // sinx * sinx + siny * siny;
+
+        _v3D[0] = x; //*/sinx;
+        _v3D[1] = y; //*/siny;
+        _v3D[2] = x2y2 < 1.0 ? sqrt(1.0 - x2y2) : 0.0;
+        
+        _v3D.normalize();
+        
+        return true;
+        
+    } else {
+        return false;
+    }
+}
+
+void TypeLightPlugin::rotateLights(ACG::Vec3d& _axis, double _angle) {
+    
+    ACG::GLState& state = PluginFunctions::viewerProperties().glState();
+    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
+    ACG::Vec3d s_c = PluginFunctions::sceneCenter( PluginFunctions::activeExaminer() );
+    int active = PluginFunctions::activeExaminer();
+    
+    double max_s_radius = 0.0;
+    ratioTrackballs_ = 1.0;
+    
+    for ( PluginFunctions::ObjectIterator o_it((onlyTargets_ ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+        
+        LightObject* lightObject = PluginFunctions::lightObject(o_it);
+        if(lightObject != 0) {
+            
+            LightSource* source = PluginFunctions::lightSource(lightObject);
+            if(source != 0) {
+                
+                // Update max light radius
+                if(!source->directional()) {
+                    
+                    // Get light source's position
+                    ACG::Vec3d p = source->position();
+                    
+                    // Small trackball's radius
+                    double s_radius = (p - c).length();
+                    if(s_radius > max_s_radius) max_s_radius = s_radius;
+                }
+            }
+        }
+    }
+    
+    /*
+    Compute ratio of the trackballs' radia:
+    Choose light source that is most distant to the virtual trackball's
+    rotation center. Compute its corresponding trackball's radius
+    as (position - trackball_center).length().
+    Now when moving the trackball that exactly fills the screen, we
+    scale the angle by which the light sources should be rotated by
+    the ratio between the "big" screen-size trackball and the farthest
+    light source's trackball.
+    */
+    
+    // Big trackball's radius
+    ACG::Vec3d e = PluginFunctions::eyePos(active);
+    double b_radius = ((e + (c-e).normalize()*state.near_plane()) - c).length() * 0.5;
+    // Compute ratio
+    double ratio = max_s_radius != 0.0 ? b_radius/max_s_radius : 0.0;
+    if(ratio > ratioTrackballs_) ratioTrackballs_ = ratio;
+    
+    // Rotate
+    light_matrix_.rotate(_angle * ratioTrackballs_, _axis[0], _axis[1], _axis[2]);
+    
+    // Transform positions
+    updateLights();
+}
+
+void TypeLightPlugin::updateLights() {
+    
+    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
+    
+    for ( PluginFunctions::ObjectIterator o_it((onlyTargets_ ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+        
+        LightObject* lightObject = PluginFunctions::lightObject(o_it);
+        if(lightObject != 0) {
+            
+            LightSource* source = PluginFunctions::lightSource(lightObject);
+            if(source != 0) {
+
+                // Rotate light source relatively to trackball center:
+                
+                // Get light source's position
+                ACG::Vec3d p = source->position();
+                // Vector point from trackball center to light source position
+                ACG::Vec3d r = p - c;
+                // Rotate this vector
+                r = light_matrix_.transform_vector(r);
+                // ... and set new position.
+                source->position(c + r);
+                
+                emit updatedObject(lightObject->id(), UPDATE_ALL);
+            }
+        }
+    }
+    
+    // Reset light source transformation matrix
+    light_matrix_.identity();
 }
 
 Q_EXPORT_PLUGIN2( typelightplugin , TypeLightPlugin );
