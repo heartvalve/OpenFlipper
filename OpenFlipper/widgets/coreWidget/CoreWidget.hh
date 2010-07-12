@@ -591,7 +591,6 @@ public:
 
     QToolButton* stereoButton_;
     QToolButton* moveButton_;
-    QToolButton* lightButton_;
     QToolButton* pickButton_;
     QToolButton* questionButton_;
 
@@ -1060,7 +1059,6 @@ public:
     */
     void setExamineMode() { setActionMode(Viewer::ExamineMode  ); };
     void setPickingMode() { setActionMode(Viewer::PickingMode  ); };
-    void setLightMode()   { setActionMode(Viewer::LightMode    ); };
     void setQuestionMode(){ setActionMode(Viewer::QuestionMode ); };
 
     void setActionMode(const Viewer::ActionMode  _am);
