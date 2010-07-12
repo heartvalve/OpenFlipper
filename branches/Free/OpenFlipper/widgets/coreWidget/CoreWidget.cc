@@ -97,7 +97,6 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   fileMenuEnd_(0),
   stereoButton_(0),
   moveButton_(0),
-  lightButton_(0),
   pickButton_(0),
   questionButton_(0),
   globalDrawMenu_(0),
@@ -357,20 +356,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   viewerToolbar_->addWidget( moveButton_ )->setText(tr("Move"));
   moveButton_->setDown(true);
 
-
-  lightButton_ = new QToolButton( viewerToolbar_ );
-  lightButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-mode.png") );
-  lightButton_->setMinimumSize( 16, 16 );
-  lightButton_->setMaximumSize( 32, 32 );
-  lightButton_->setToolTip(tr("Switch to <b>light</b> mode."));
-  lightButton_->setWhatsThis(tr(
-                  "Switch to <b>light</b> mode.<br>"
-                  "Rotate lights using left mouse button."));
-
-  connect( lightButton_,SIGNAL( clicked() ), this, SLOT( setLightMode() ) );
-  viewerToolbar_->addWidget( lightButton_)->setText(tr("Light"));
-
-
+  
   pickButton_ = new QToolButton( viewerToolbar_ );
   pickButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"pick.png") );
   pickButton_->setMinimumSize( 16, 16 );

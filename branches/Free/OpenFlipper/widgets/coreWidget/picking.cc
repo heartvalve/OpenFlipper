@@ -69,7 +69,6 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
     // update Buttons
 
     moveButton_->setDown(false);
-    lightButton_->setDown(false);
     pickButton_->setDown(false);
     questionButton_->setDown(false);
 
@@ -79,7 +78,6 @@ void CoreWidget::setActionMode(const Viewer::ActionMode _am){
         moveButton_->setDown(true);
         break;
       case Viewer::LightMode:
-        lightButton_->setDown(true);
         break;
       case Viewer::PickingMode:
         pickButton_->setDown(true);
