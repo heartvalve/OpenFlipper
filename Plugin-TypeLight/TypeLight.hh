@@ -54,14 +54,20 @@
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
+#include <OpenFlipper/BasePlugin/MouseInterface.hh>
+#include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
 
-class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface
+#include <ACG/Scenegraph/GlutPrimitiveNode.hh>
+
+class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface, MouseInterface, ToolbarInterface
 {
    Q_OBJECT
    Q_INTERFACES(BaseInterface)
    Q_INTERFACES(LoadSaveInterface)
    Q_INTERFACES(LoggingInterface)
    Q_INTERFACES(TypeInterface)
+   Q_INTERFACES(MouseInterface)
+   Q_INTERFACES(ToolbarInterface)
 
   signals:
     // Logging interface
@@ -74,7 +80,10 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     
     // BaseInterface
     void updatedObject(int _id, const UpdateType _type);
-
+    
+    // ToolbarInterface
+    void getToolBar( QString _name, QToolBar*& _toolbar );
+    
   private slots:
 
     void noguiSupported( ) {} ;
@@ -90,8 +99,25 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     // Load/Save Interface
     void addedEmptyObject(int _id);
     void objectDeleted(int _id);
-
-  public :
+    
+    // MouseInterface
+    void slotMouseEventLight( QMouseEvent* _event);
+    
+    //-----------------------------------------------------------
+    
+    void setLightMode();
+    
+  private:
+        
+    /// Rotate light sources
+    void rotateLights(ACG::Vec3d& _axis, double _angle);
+    
+    /// Update light sources' positions
+    void updateLights();
+    
+    bool mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D, int _width, int _height) const;
+        
+  public:
 
      ~TypeLightPlugin() {};
      TypeLightPlugin();
@@ -115,6 +141,11 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     // Add default light
     int addDefaultLight(QString _name);
     
+  private slots:
+      
+    void allLights(bool _b);
+    void targetLights(bool _b);
+    
   private:
     
     /// Return unique name for object
@@ -124,7 +155,25 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     std::vector<int> lightSources_;
     
     bool defaultLights_;
+    
+    // Matrix for rotating light position
+    ACG::GLMatrixd light_matrix_;
+    
+    // Button for light mode
+    QToolButton* lightButton_;
+    
+    // Context menu which allows to switch between target and all light transformation
+    QMenu* contextmenu_;
+    
+    // True if only target lights should be transformed
+    bool onlyTargets_;
 
+    // Mouse interactions
+    QPoint      lastPoint2D_;
+    ACG::Vec3d  lastPoint3D_;
+    bool        lastPoint_hitSphere_;
+    
+    double ratioTrackballs_;
 };
 
 #endif //TYPELIGHTPLUGIN_HH
