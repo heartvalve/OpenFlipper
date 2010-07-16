@@ -195,7 +195,18 @@ void TypeLightPlugin::pluginsInitialized(){
                       "Rotate lights using left mouse button."));
 
         connect( lightButton_, SIGNAL( clicked() ), this, SLOT( setLightMode() ) );
-        viewerToolbar->addWidget( lightButton_ )->setText(tr("Light"));
+        
+        QList< QAction *> toolbarActions = viewerToolbar->actions();
+        QAction* pickAction = 0;
+        for ( int i = 0 ; i < toolbarActions.size() ; ++i ) {
+          if ( toolbarActions[i]->text() == "Pick" )
+            pickAction = toolbarActions[i];
+        }
+      
+        if (pickAction)
+          viewerToolbar->insertWidget( pickAction, lightButton_ )->setText(tr("Light"));
+        else
+          viewerToolbar->addWidget( lightButton_ )->setText(tr("Light"));
         
         // Create context menu
         QActionGroup* group = new QActionGroup(lightButton_);
