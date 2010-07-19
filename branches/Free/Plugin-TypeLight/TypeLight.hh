@@ -57,8 +57,6 @@
 #include <OpenFlipper/BasePlugin/MouseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
 
-#include <ACG/Scenegraph/GlutPrimitiveNode.hh>
-
 class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface, MouseInterface, ToolbarInterface
 {
    Q_OBJECT
@@ -151,6 +149,9 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     /// Return unique name for object
     QString get_unique_name(LightObject* _object);
     
+    /// Find depth of nearest light source
+    float findDepth();
+    
     /// Count light sources in scene
     std::vector<int> lightSources_;
     
@@ -172,6 +173,11 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     QPoint      lastPoint2D_;
     ACG::Vec3d  lastPoint3D_;
     bool        lastPoint_hitSphere_;
+    // depth of plane olong which objects are translated
+    // if middle mouse button is pressed
+    float       planeDepth_;
+    ACG::Vec3d  transVec_;
+    bool        rotation_;
     
     double ratioTrackballs_;
 };
