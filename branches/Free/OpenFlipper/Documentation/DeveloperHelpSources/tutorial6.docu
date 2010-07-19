@@ -1,0 +1,15 @@
+/** \page ex6 Tracking changes of an object: The Backup Plugin
+
+\section ex6_overview Overview
+
+OpenFlipper offers the opportunity to keep track of the changes that were
+made to an object by different plugins (i.e. topological as well as geometrical
+changes). Hence, every plugin that performs changing actions on meshes should
+be derived from the BackupInterface which provides all necessary signals and
+slots for the handling of backups.
+
+In this tutorial we show the usage of the backup plugin using a simple smoother plugin
+which performs several iterations of the simple Laplace-operator (using uniform weights)
+on all loaded meshes that are tagged as target.
+
+*/
