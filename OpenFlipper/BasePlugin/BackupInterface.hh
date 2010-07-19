@@ -101,7 +101,7 @@ class BackupInterface {
     
     /** \brief Tell Backup Plugin to restore a backup
     *
-    * Plugins which supports backups can this function if they want to restore backups.\n    
+    * Plugins which supports backups can call this function if they want to restore backups.\n    
     * A Backup control Plugin will do the rest.
     * @param _objectid   Identifier of the object to restore
     * @param _internalId The unique identifier of the restore set (-1 for last backup)
@@ -127,7 +127,6 @@ class BackupInterface {
     * If you have any pointers or references to the given object you have to
     * clean them up here.
     * @param _id         Identifier of the object which is about to be restored
-    * @param _name       Name of the restore set
     * @param _internalId Unique Number of the Restore set 
     */
     virtual void slotAboutToRestore( int /*_objectid*/ , int /*_internalId*/) {};      
@@ -141,7 +140,6 @@ class BackupInterface {
     * in your local plugin.\n
     *
     * @param _objectid   Identifier of the object which is about to be restored
-    * @param _name       Name of the restore set
     * @param _internalId Unique Number of the Restore set 
     */
     virtual void slotRestore( int /*_objectid*/ , int /*_internalId*/) {};     
@@ -152,7 +150,6 @@ class BackupInterface {
     * is restored from a backup.
     * perObjectDatas and the object have been reset to the backup state.    
     * @param _objectid   Identifier of the object which is about to be restored
-    * @param _name       Name of the restore set
     * @param _internalId Unique Number of the Restore set 
     */
     virtual void slotRestored( int /*_objectid*/, int /*_internalId*/) {};      
