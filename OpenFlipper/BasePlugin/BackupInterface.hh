@@ -62,6 +62,8 @@
  /** \brief Create or restore backups 
   * 
   * Interface Class for Backup Plugins. The Backup Interface can be used to communicate with or write a backup plugin.
+  *
+  * See tutorial \ref ex6 for detailed information on how to use this plugin interface.
   * 
  */
 class BackupInterface {
