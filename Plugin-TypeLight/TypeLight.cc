@@ -58,6 +58,9 @@ TypeLightPlugin::TypeLightPlugin() :
     contextmenu_(0),
     onlyTargets_(false),
     lastPoint_hitSphere_(false),
+    planeDepth_(0.0f),
+    transVec_(0.0),
+    rotation_(true),
     ratioTrackballs_(1.0) {
         
         // Reset transformation matrix
@@ -240,9 +243,6 @@ void TypeLightPlugin::targetLights(bool _b) {
 
 void TypeLightPlugin::setLightMode() {
     
-    // Reset transformation matrix
-    light_matrix_.identity();
-    
     // Context menu requested
     contextmenu_->exec(QPoint(lightButton_->mapToGlobal(QPoint(0, lightButton_->height()))));
     
@@ -347,6 +347,37 @@ QString TypeLightPlugin::get_unique_name(LightObject* _object) {
     return QString(tr("Light %1.lgt").arg( cur_idx ));
 }
 
+float TypeLightPlugin::findDepth() {
+    
+    // Init depth
+    float d = FLT_MAX;
+    ACG::GLState& state = PluginFunctions::viewerProperties().glState();
+    
+    for ( PluginFunctions::ObjectIterator o_it((onlyTargets_ ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+        
+        LightObject* lightObject = PluginFunctions::lightObject(o_it);
+        if(lightObject != 0) {
+            
+            LightSource* source = PluginFunctions::lightSource(lightObject);
+            if(source != 0) {
+                
+                ACG::Vec3d z = state.project(source->position());
+                
+                if(!source->directional() && z[2] < d) {
+                    
+                    // z-value of light source
+                    d = z[2];
+                }
+            }
+        }
+    }
+    
+    if(d == FLT_MAX) return 0.0f;
+    
+    return d;
+}
+
 void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
     
     // Only react if in light mode
@@ -361,55 +392,89 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
         {
             case QEvent::MouseButtonPress:
             {
-              lastPoint_hitSphere_ = mapToSphere( lastPoint2D_= pos,
-                         lastPoint3D_, state.viewport_width(), state.viewport_height() );
-              updateLights();
-              break;
+                // Reset transformation
+                light_matrix_.identity();
+                
+                if(_event->buttons() & Qt::LeftButton) {
+                    // Trackball rotation
+                    lastPoint_hitSphere_ = mapToSphere( lastPoint2D_= pos,
+                       lastPoint3D_, state.viewport_width(), state.viewport_height() );
+                       
+                    rotation_ = true;
+                    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
+                } else if (_event->buttons() & Qt::MidButton) {
+                    // Translation in plane orthogonal to viewing plane
+                    lastPoint2D_ = pos;
+                    // Get depth of plane along which we want to translate
+                    planeDepth_ = findDepth();
+                    
+                    rotation_ = false;
+                }
+                
+                break;
             }
             
             case QEvent::MouseMove:
             {
-              // rotate lights
-              if (_event->buttons() & Qt::LeftButton)
-              {
-                QPoint newPoint2D = pos;
+                
+                if (_event->buttons() & Qt::LeftButton) {
+                
+                    // rotate lights
+                    QPoint newPoint2D = pos;
 
-                if ( (newPoint2D.x() < 0) || (newPoint2D.x() > (int)state.viewport_width()) ||
-                     (newPoint2D.y() < 0) || (newPoint2D.y() > (int)state.viewport_height()) )
-                 return;
+                    if ( (newPoint2D.x() < 0) || (newPoint2D.x() > (int)state.viewport_width()) ||
+                         (newPoint2D.y() < 0) || (newPoint2D.y() > (int)state.viewport_height()) )
+                     return;
 
 
-                ACG::Vec3d newPoint3D;
-                bool newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D, state.viewport_width(), state.viewport_height() );
-                int active = PluginFunctions::activeExaminer();
+                    ACG::Vec3d newPoint3D;
+                    bool newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D, state.viewport_width(), state.viewport_height() );
+                    int active = PluginFunctions::activeExaminer();
 
-                ACG::Vec3d axis(1.0,0.0,0.0);
-                double angle(0.0);
+                    ACG::Vec3d axis(1.0,0.0,0.0);
+                    double angle(0.0);
 
-                if ( lastPoint_hitSphere_ )
-                {
-                    if ( newPoint_hitSphere ) {
-                        
-                        axis = lastPoint3D_ % newPoint3D;
-                        axis.normalize();
-                        axis = state.modelview().transform_vector(axis);
-                        double cos_angle = ( lastPoint3D_ | newPoint3D );
-                        
-                        if ( fabs(cos_angle) < 1.0 ) {
-                            angle = acos( cos_angle );
-                            angle *= 180 / M_PI;
+                    if ( lastPoint_hitSphere_ )
+                    {
+                        if ( newPoint_hitSphere ) {
+                            
+                            axis = lastPoint3D_ % newPoint3D;
+                            axis.normalize();
+                            axis = state.modelview().transform_vector(axis);
+                            double cos_angle = ( lastPoint3D_ | newPoint3D );
+                            
+                            if ( fabs(cos_angle) < 1.0 ) {
+                                angle = acos( cos_angle );
+                                angle *= 180 / M_PI;
+                            }
                         }
+                     
+                        rotateLights(axis, angle);
                     }
-                 
-                    rotateLights(axis, angle);
+
+                    lastPoint2D_ = newPoint2D;
+                    lastPoint3D_ = newPoint3D;
+                    lastPoint_hitSphere_ = newPoint_hitSphere;
+
+                } else if (_event->buttons() & Qt::MidButton) {
+                    
+                    ACG::Vec3d p0(pos.x(), pos.y(), planeDepth_);
+                    p0 = state.unproject(p0);
+                    
+                    ACG::Vec3d p1(lastPoint2D_.x(), lastPoint2D_.y(), planeDepth_);
+                    p1 = state.unproject(p1);
+                    
+                    // Translation in plane
+                    transVec_ = p0 - p1;
+                    // Invert vertical axis
+                    transVec_[1] *= -1.0;
+                    
+                    lastPoint2D_ = pos;
+                    
+                    updateLights();
                 }
-
-                lastPoint2D_ = newPoint2D;
-                lastPoint3D_ = newPoint3D;
-                lastPoint_hitSphere_ = newPoint_hitSphere;
-
-              }
-              break;
+                    
+                break;
             }
 
         default: // avoid warning
@@ -521,25 +586,43 @@ void TypeLightPlugin::updateLights() {
             
             LightSource* source = PluginFunctions::lightSource(lightObject);
             if(source != 0) {
+                
+                // Skip if light source is directional
+                if(!source->directional() && rotation_) {
 
-                // Rotate light source relatively to trackball center:
+                    // Rotate light source relatively to trackball center:
+                    
+                    // Get light source's position
+                    ACG::Vec3d p = source->position();
+                    // Vector point from trackball center to light source position
+                    ACG::Vec3d r = p - c;
+                    // Rotate this vector
+                    r = light_matrix_.transform_vector(r);
+                    // ... and set new position.
+                    source->position(c + r);
+                    
+                    emit updatedObject(lightObject->id(), UPDATE_ALL);
                 
-                // Get light source's position
-                ACG::Vec3d p = source->position();
-                // Vector point from trackball center to light source position
-                ACG::Vec3d r = p - c;
-                // Rotate this vector
-                r = light_matrix_.transform_vector(r);
-                // ... and set new position.
-                source->position(c + r);
-                
-                emit updatedObject(lightObject->id(), UPDATE_ALL);
+                } else if(!source->directional() && !rotation_) {
+                    
+                    // Translate light on plane
+                    
+                    // Get light source's position
+                    ACG::Vec3d p = source->position();
+                    p += transVec_;
+                    source->position(p);
+                    
+                    emit updatedObject(lightObject->id(), UPDATE_ALL);
+                }
             }
         }
     }
     
     // Reset light source transformation matrix
     light_matrix_.identity();
+    
+    // Reset translation vector
+    transVec_ = ACG::Vec3d(0.0);
 }
 
 Q_EXPORT_PLUGIN2( typelightplugin , TypeLightPlugin );
