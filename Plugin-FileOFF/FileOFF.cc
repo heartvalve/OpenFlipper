@@ -83,6 +83,7 @@ FileOFFPlugin::FileOFFPlugin()
   loadAlpha_(0),
   loadNormals_(0),
   loadTexCoords_(0),
+  loadCheckManifold_(0),
   loadDefaultButton_(0),
   userReadOptions_(0),
   userWriteOptions_(0),
@@ -657,10 +658,20 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
             vhandles.push_back(VertexHandle(idx));
         }
         
-        if(checkDegenerateFace(vhandles)) {
-            fh = _importer.addFace(vhandles);
+        bool checkManifold = true;
+        if(!OpenFlipper::Options::nogui() && loadCheckManifold_ != 0) {
+            checkManifold = loadCheckManifold_->isChecked();
+        }
+        
+        // Check for degenerate faces if spoecified in gui
+        if(checkManifold) {
+            if(checkDegenerateFace(vhandles)) {
+                fh = _importer.addFace(vhandles);
+            } else {
+                continue;
+            }
         } else {
-            continue;
+            fh = _importer.addFace(vhandles);
         }
         
         //perhaps read face COLOR
@@ -1272,6 +1283,9 @@ QWidget* FileOFFPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         
         loadTexCoords_ = new QCheckBox("Load TexCoords");
         layout->addWidget(loadTexCoords_);
+        
+        loadCheckManifold_ = new QCheckBox("Check for manifold configurations");
+        layout->addWidget(loadCheckManifold_);
  
         loadDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(loadDefaultButton_);
