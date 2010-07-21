@@ -236,6 +236,7 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox*   loadAlpha_;
     QCheckBox*   loadNormals_;
     QCheckBox*   loadTexCoords_;
+    QCheckBox*   loadCheckManifold_;
     QPushButton* loadDefaultButton_;
     
     unsigned int userReadOptions_;
