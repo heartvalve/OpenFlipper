@@ -483,3 +483,36 @@ void DataControlPlugin::showAll() {
   }
 
 }
+
+//******************************************************************************
+
+/** \brief Get all target objects of given type
+ *
+ */
+IdList DataControlPlugin::getTargetObjects(DataType _type) {
+
+  IdList list;
+  
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, _type); o_it != PluginFunctions::objectsEnd(); ++o_it)
+    list.push_back( o_it->id() );
+    
+  return list;
+}
+
+//******************************************************************************
+
+/** \brief Get all source objects of given type
+ *
+ */
+IdList DataControlPlugin::getSourceObjects(DataType _type) {
+  
+  IdList list;
+  
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::SOURCE_OBJECTS, _type); o_it != PluginFunctions::objectsEnd(); ++o_it)
+    list.push_back( o_it->id() );
+    
+  return list;  
+}
+
+
+

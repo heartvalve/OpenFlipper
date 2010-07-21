@@ -349,6 +349,12 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
         * @return successfull
         */
         bool unGroupObject(int _id);
+        
+        /// Get all target objects of given type
+        IdList getTargetObjects(DataType _type);
+        
+        /// Get all source objects of given type
+        IdList getSourceObjects(DataType _type);
 
 /** @} */
 
