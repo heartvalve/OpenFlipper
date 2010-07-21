@@ -900,6 +900,14 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
     Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
       
     pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+    
+    //tell segmenation plugin to update the segmentation
+    bool exists = false;
+
+    emit functionExists("segmentationplugin", "updateSegmentation()", exists);
+    
+    if (exists)
+      RPC::callFunction("segmentationplugin", "updateSegmentation");
   }
   
  emit updatedObject(_objectId, UPDATE_GEOMETRY);

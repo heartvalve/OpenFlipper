@@ -57,6 +57,7 @@
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/BasePlugin/LoadSaveInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/Plane/Plane.hh>
@@ -74,7 +75,7 @@ enum SelectionType {VERTEX, EDGE, FACE };
 
 /** Plugin for moving objects and selections
 */
-class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface,ToolbarInterface, ContextMenuInterface, LoadSaveInterface
+class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface,ToolbarInterface, ContextMenuInterface, LoadSaveInterface, RPCInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
@@ -88,6 +89,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
   Q_INTERFACES(ScriptInterface)
   Q_INTERFACES(ToolbarInterface)
   Q_INTERFACES(LoadSaveInterface)
+  Q_INTERFACES(RPCInterface)
 
   signals:
     // BaseInterface
@@ -124,7 +126,11 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
     
     // ToolboxInterface
-    void addToolbox( QString _name  , QWidget* _widget ); 
+    void addToolbox( QString _name  , QWidget* _widget );
+    
+    // RPCInterface
+    void pluginExists(QString _pluginName, bool &_exists);
+    void functionExists(QString _pluginName, QString _functionName, bool &_exists);
 
   private slots :
 
