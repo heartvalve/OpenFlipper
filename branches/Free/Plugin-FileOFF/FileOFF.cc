@@ -504,7 +504,7 @@ bool FileOFFPlugin::readOFFFile(QString _filename, OFFImporter& _importer) {
       break;
       
   }
-
+  
   return _importer.isBinary() ? parseBinary(ifile, _importer, type, _filename) : parseASCII(ifile, _importer, type, _filename);
 }
 
@@ -657,7 +657,11 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
             vhandles.push_back(VertexHandle(idx));
         }
         
-        fh = _importer.addFace(vhandles);
+        if(checkDegenerateFace(vhandles)) {
+            fh = _importer.addFace(vhandles);
+        } else {
+            continue;
+        }
         
         //perhaps read face COLOR
         if ( _importer.hasFaceColors() ){
@@ -714,6 +718,21 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
     
     // File was successfully parsed.
     return true;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+bool FileOFFPlugin::checkDegenerateFace(const std::vector<VertexHandle>& _v) {
+    
+    bool check = true;
+    int size = _v.size();
+    // Check if at least two elements in the list have the same value
+    for(int i = 0; i < size; ++i) {
+        for(int j = i+1; j < size; ++j) {
+            if(_v[i] == _v[j]) check = false;
+        }
+    }
+    return check;
 }
 
 //-----------------------------------------------------------------------------------------------------

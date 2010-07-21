@@ -202,6 +202,9 @@ class FileOFFPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     void trimString( std::string& _string);
     
+    /// Check for degenerate faces before adding them
+    bool checkDegenerateFace(const std::vector<VertexHandle>& _v);
+    
     /// Writer function
     template< class MeshT >
     bool writeMesh(std::ostream& _out, MeshT& _mesh );
