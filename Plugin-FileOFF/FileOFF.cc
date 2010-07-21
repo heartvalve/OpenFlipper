@@ -663,7 +663,7 @@ bool FileOFFPlugin::parseASCII(std::istream& _in, OFFImporter& _importer, DataTy
             checkManifold = loadCheckManifold_->isChecked();
         }
         
-        // Check for degenerate faces if spoecified in gui
+        // Check for degenerate faces if specified in gui
         if(checkManifold) {
             if(checkDegenerateFace(vhandles)) {
                 fh = _importer.addFace(vhandles);
