@@ -94,7 +94,7 @@ namespace ICP {
    *
 */
 template < typename VectorT , typename QuaternionT >
-void icp(std::vector< VectorT >& _points1 , std::vector< VectorT >& _points2  , VectorT& _cog1 ,  VectorT& _cog2 , double& _scale1 , double& _scale2 , QuaternionT& _rotation );
+void icp(const std::vector< VectorT >& _points1 , const std::vector< VectorT >& _points2  , VectorT& _cog1 ,  VectorT& _cog2 , double& _scale1 , double& _scale2 , QuaternionT& _rotation );
 
 //=============================================================================
 } //namespace ICP
