@@ -81,7 +81,7 @@ center_of_gravity(const std::vector< VectorT >& _points ) {
 
 template < typename VectorT , typename QuaternionT >
 void 
-icp(std::vector< VectorT >& _points1 , std::vector< VectorT >& _points2  , VectorT& _cog1 ,  VectorT& _cog2 , double& _scale1 , double& _scale2 , QuaternionT& _rotation )
+icp(const std::vector< VectorT >& _points1 , const std::vector< VectorT >& _points2  , VectorT& _cog1 ,  VectorT& _cog2 , double& _scale1 , double& _scale2 , QuaternionT& _rotation )
 {
    // compute Mean of Points
    _cog1 = center_of_gravity(_points1);
