@@ -117,7 +117,7 @@ public:
         Point p0, p1, p2, bb_min, bb_max;
         bb_min.vectorize(FLT_MAX);
         bb_max.vectorize(-FLT_MAX);
-	std::list<Point>* vertices = new std::list<Point>;
+	std::list<Point> vertices;
 	
 	
         for (it_h=_node->begin(); it_h!=_node->end(); ++it_h)
@@ -131,9 +131,9 @@ public:
             bb_max.maximize(p1);
             bb_max.maximize(p2);*/
 	    
-	    vertices->push_back (p0);
-	    vertices->push_back (p1);
-	    vertices->push_back (p2);
+	    vertices.push_back (p0);
+	    vertices.push_back (p1);
+	    vertices.push_back (p2);
         }
 	bb_min = _node->bb_min;
 	bb_max = _node->bb_max;
@@ -147,16 +147,17 @@ public:
 	
 	//calculate the median value in axis-direction
 	switch (axis) {
-	  case 0: vertices->sort (x_sort() ); break;
-	  case 1: vertices->sort (y_sort() ); break;
-	  case 2: vertices->sort (z_sort() ); break; }
-	vertices->unique(); ///todo: does this work with Points?!
+	  case 0: vertices.sort (x_sort() ); break;
+	  case 1: vertices.sort (y_sort() ); break;
+	  case 2: vertices.sort (z_sort() ); break; }
+	vertices.unique(); ///todo: does this work with Points?!
 	
-	int size = vertices->size();
+	int size = vertices.size();
 	typename std::list<Point>::iterator it_v;
-	it_v = vertices->begin();
+	it_v = vertices.begin();
 	std::advance(it_v, size/2);
 	median = *it_v;
+	
     }
 
     void calculateBoundingBoxRoot(
