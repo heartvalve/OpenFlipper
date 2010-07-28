@@ -112,10 +112,10 @@ public:
     Z = sin_theta * _axis[2];
   }
 
-//   /// construct from rotation matrix (only valid for rotation matrices!)
-//   template <class MatrixT>
-//   QuaternionT(const MatrixT& _rot)
-//   { init_from_matrix( _rot); }
+  /// construct from rotation matrix (only valid for rotation matrices!)
+  template <class MatrixT>
+  QuaternionT(const MatrixT& _rot)
+  { init_from_matrix( _rot); }
   
 
   /// identity rotation
