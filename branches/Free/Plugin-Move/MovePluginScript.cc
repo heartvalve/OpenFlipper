@@ -865,13 +865,15 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
   Skeleton::Joint* parent = joint->getParent();
   
   if ( parent != 0 )
-    // new GlobalMatrix after application of _matrix is:  newLocal = _matrix * activePose->getGlobal( joint )
-    // new LocalMatrix : activePose->getGlobalInv( parent->getID() ) * newLocal
+    // new GlobalMatrix after application of _matrix is:  newGlobal = _matrix * activePose->getGlobal( joint )
+    // new LocalMatrix : activePose->getGlobalInv( parent->getID() ) * newGlobal
     // Transformation from LocalMatrix to new LocalMatrix:
     transform = activePose->getGlobalInv( parent->getID() ) * _matrix * activePose->getGlobal( joint->getID() ) * activePose->getLocalInv( joint->getID() );
   else
-    transform = _matrix * activePose->getGlobal( joint->getID() ) * activePose->getLocalInv( joint->getID() );
-  
+    // the transformation for the root joint has to be applied directly
+    // _matrix defines a post-multiplication but we need a pre-multiplication matrix X in order to apply
+    // the transformation to all frames: _matrix * Global = Global * X --> X = GlobalInverse * _matrix * global
+    transform = activePose->getGlobalInv( joint->getID() ) * _matrix * activePose->getGlobal( joint->getID() );
 
   // apply transformation to all frames of all animations
   for (unsigned long a=0; a < skeleton->getNumberOfAnimations(); a++)
@@ -882,11 +884,20 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
       continue;
     
     Skeleton::Pose* pose = skeleton->getAnimation(a)->getPose( iFrame );
-    
-    //transform all selected joints         
-    Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
+  
+    if ( parent != 0 ){
+      //transform the local matrix
+      Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
         
-    pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+      
+    } else {
+      
+      //directly apply the global transformation
+      Matrix4x4 newMatrix = pose->getGlobal( joint->getID() ) * transform;
+        
+      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+    }
   }
 
 
@@ -896,10 +907,20 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
     //transform refPose
     Skeleton::Pose* pose = skeleton->getReferencePose();
   
-    //transform all selected joints     
-    Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
+    if ( parent != 0 ){
+      //transform all selected joints     
+      Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
       
-    pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+      
+    } else {
+
+      //directly apply the global transformation
+      Matrix4x4 newMatrix = pose->getGlobal( joint->getID() ) * transform;
+        
+      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+      
+    }
     
     //tell segmenation plugin to update the segmentation
     bool exists = false;
