@@ -275,9 +275,17 @@ public:
   *
   * This function will return a pointer to the first element of the per face normal buffer.
   * Use updatePerFaceBuffers to update the buffer before you render it via
-  * glColorPointer. The buffer contains 3 equal normals per face.
+  * glNormalPointer. The buffer contains 3 equal normals per face.
   */  
   ACG::Vec3f * perFaceNormalBuffer();
+  
+  /** \brief get a pointer to the per face per vertex normal buffer
+  *
+  * This function will return a pointer to the first element of the per face per vertex normal buffer.
+  * Use updatePerFaceBuffers to update the buffer before you render it via
+  * glNormalPointer. The buffer contains 3 equal normals per face.
+  */  
+  ACG::Vec3f * perFacePerVertexNormalBuffer();
   
   /** \brief get a pointer to the per face color buffer
   *
@@ -309,6 +317,7 @@ private:
   std::vector< ACG::Vec3f >  perFaceVertexBuffer_;
   std::vector< ACG::Vec4f >  perFaceColorBuffer_;
   std::vector< ACG::Vec3f >  perFaceNormalBuffer_;
+  std::vector< ACG::Vec3f >  perFacePerVertexNormalBuffer_;
 
   /// This flag controls if an update is really necessary
   bool updatePerFaceBuffers_;

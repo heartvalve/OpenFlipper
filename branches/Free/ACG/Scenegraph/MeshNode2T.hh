@@ -308,18 +308,19 @@ private:
   /// Enum controlling which array should be used for rendering
   enum ArrayType
   {
-    NONE                      = 0,
-    VERTEX_ARRAY              = 1,
-    NORMAL_VERTEX_ARRAY       = 2,
-    COLOR_VERTEX_ARRAY        = 4,
-    TEXCOORD_VERTEX_ARRAY     = 8,
-    LINE_INDEX_ARRAY          = 16,
-    PER_EDGE_VERTEX_ARRAY     = 32,
-    PER_EDGE_COLOR_ARRAY      = 64,
-    PER_FACE_VERTEX_ARRAY     = 128,
-    PER_FACE_NORMAL_ARRAY     = 256,
-    PER_FACE_COLOR_ARRAY      = 512,
-    PER_FACE_TEXCOORD_ARRAY   = 1024
+    NONE                             = 0,
+    VERTEX_ARRAY                     = 1,
+    NORMAL_VERTEX_ARRAY              = 2,
+    COLOR_VERTEX_ARRAY               = 4,
+    TEXCOORD_VERTEX_ARRAY            = 8,
+    LINE_INDEX_ARRAY                 = 16,
+    PER_EDGE_VERTEX_ARRAY            = 32,
+    PER_EDGE_COLOR_ARRAY             = 64,
+    PER_FACE_VERTEX_ARRAY            = 128,
+    PER_FACE_NORMAL_ARRAY            = 256,
+    PER_FACE_PER_VERTEX_NORMAL_ARRAY = 512,
+    PER_FACE_COLOR_ARRAY             = 1024,
+    PER_FACE_TEXCOORD_ARRAY          = 2048
   };
   
   /// which arrays are currently enabled?

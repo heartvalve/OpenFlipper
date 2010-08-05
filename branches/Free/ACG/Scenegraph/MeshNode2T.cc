@@ -429,11 +429,11 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
   if ( ( _drawMode & DrawModes::SOLID_2DTEXTURED_FACE_SHADED ) && mesh_.has_face_normals())
   {
     glEnable(GL_TEXTURE_2D);
+    
+    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY | PER_FACE_PER_VERTEX_NORMAL_ARRAY );
+
     glEnable(GL_LIGHTING);
-    
-    enable_arrays( PER_FACE_VERTEX_ARRAY | PER_FACE_TEXCOORD_ARRAY | PER_FACE_NORMAL_ARRAY );
-    
-    glShadeModel(GL_FLAT);
+    glShadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
     draw_faces(PER_FACE);
     glDepthRange(0.0, 1.0);
@@ -741,6 +741,30 @@ enable_arrays(unsigned int _arrays) {
   } else if (enabled_arrays_ & PER_FACE_NORMAL_ARRAY) {
     // Disable Normal array
     enabled_arrays_ &= ~PER_FACE_NORMAL_ARRAY;
+    glDisableClientState(GL_NORMAL_ARRAY);
+  } 
+  
+  //===================================================================
+  // per Face per vertex normal array
+  //===================================================================  
+  
+  // Check if we should enable the per face normal array
+  if (mesh_.has_vertex_normals() && (_arrays & PER_FACE_PER_VERTEX_NORMAL_ARRAY) )  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & PER_FACE_PER_VERTEX_NORMAL_ARRAY)) {
+      enabled_arrays_ |= PER_FACE_PER_VERTEX_NORMAL_ARRAY;
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      glNormalPointer( stripProcessor_.perFacePerVertexNormalBuffer() );   
+      
+      glEnableClientState(GL_NORMAL_ARRAY);
+      
+    }
+  } else if (enabled_arrays_ & PER_FACE_PER_VERTEX_NORMAL_ARRAY) {
+    // Disable Normal array
+    enabled_arrays_ &= ~PER_FACE_PER_VERTEX_NORMAL_ARRAY;
     glDisableClientState(GL_NORMAL_ARRAY);
   } 
   
