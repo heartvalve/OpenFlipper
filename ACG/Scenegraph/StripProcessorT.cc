@@ -820,6 +820,11 @@ updatePerFaceBuffers() {
   else
     perFaceNormalBuffer_.clear();
   
+  if ( mesh_.has_vertex_normals() ) 
+    perFacePerVertexNormalBuffer_.resize(n_faces * 3);
+  else
+    perFacePerVertexNormalBuffer_.clear();
+  
   if ( mesh_.has_face_colors() ) 
     perFaceColorBuffer_.resize(n_faces * 3);
   else
@@ -868,12 +873,20 @@ updatePerFaceBuffers() {
         perFaceColorBuffer_[ bufferIndex + 1 ] = color;
         perFaceColorBuffer_[ bufferIndex + 2 ] = color;
       }
-    
+      
       if ( swap ) {
         // Cant render triangle strips as we need one color per face and this means duplicating vertices
         perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
         perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
         perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+        
+        // Get the normals of all vertices at this face
+        if (  mesh_.has_vertex_normals() ) {
+          perFacePerVertexNormalBuffer_[ bufferIndex + 0 ] = mesh_.normal(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+          perFacePerVertexNormalBuffer_[ bufferIndex + 1 ] = mesh_.normal(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+          perFacePerVertexNormalBuffer_[ bufferIndex + 2 ] = mesh_.normal(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+        }
+        
         
         if ( usePerFaceTextureCoordinateProperty ) {
           typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(strips_[ i ].faceMap[ stripIndex ]));
@@ -902,6 +915,13 @@ updatePerFaceBuffers() {
         perFaceVertexBuffer_[ bufferIndex + 2 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
         perFaceVertexBuffer_[ bufferIndex + 1 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
         perFaceVertexBuffer_[ bufferIndex + 0 ] = mesh_.point(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+        
+        // Get the normals of all vertices at this face
+        if (  mesh_.has_vertex_normals() ) {
+          perFacePerVertexNormalBuffer_[ bufferIndex + 2 ] = mesh_.normal(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 2 ] ));
+          perFacePerVertexNormalBuffer_[ bufferIndex + 1 ] = mesh_.normal(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 1 ] ));
+          perFacePerVertexNormalBuffer_[ bufferIndex + 0 ] = mesh_.normal(mesh_.vertex_handle( strips_[ i ].indexArray[ stripIndex - 0 ] ));
+        }
         
         if ( usePerFaceTextureCoordinateProperty ) {
           typename Mesh::ConstFaceHalfedgeIter fhe_it(mesh_.cfh_iter(strips_[ i ].faceMap[ stripIndex ]));
@@ -956,6 +976,17 @@ perFaceNormalBuffer() {
     updatePerFaceBuffers();
   
   return &(perFaceNormalBuffer_)[0]; 
+};
+
+template <class Mesh>
+ACG::Vec3f * 
+StripProcessorT<Mesh>::
+perFacePerVertexNormalBuffer() { 
+  // Force update of the buffers if required
+  if (updatePerFaceBuffers_)
+    updatePerFaceBuffers();
+  
+  return &(perFacePerVertexNormalBuffer_)[0]; 
 };
 
 template <class Mesh>
