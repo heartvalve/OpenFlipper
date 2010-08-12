@@ -254,7 +254,7 @@ int Core::loadObject( DataType _type, QString _filename) {
 
       QString filters = supportedTypes_[i].plugin->getLoadFilters();
       //check extension
-      if ( ! filters.contains( "*." + fi.completeSuffix() ) )
+      if ( ! filters.contains( "*." + fi.suffix() ) )
         continue;
         
       
