@@ -844,17 +844,34 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
     return;
   }
   
+  bool recursiveJointTransformation = recursiveJointTransformation_;
+  
   AnimationHandle handle = skeletonObj->skeletonNode()->getActivePose();
   
   Skeleton::Pose* activePose;
   
   if ( !handle.isValid() )
     activePose = skeleton->getReferencePose();
-  else
+  else{
+    
     activePose = skeleton->getAnimation( handle.getAnimation() )->getPose( handle.getFrame() );
+    
+    //always tranform children otherwise only the local coordsys is rotated
+    recursiveJointTransformation = false;
+    
+    // translation changes the skeleton structure
+    // this is only allowed in refPose therefore delete translation
+    Matrix4x4 mat = _matrix;
+    mat(0,3) = 0.0;
+    mat(1,3) = 0.0;
+    mat(2,3) = 0.0;
+    if ( mat.is_identity() )
+      _matrix = mat;
+  }
 
   Matrix4x4 transform;
   transform.identity();
+  
   
   Skeleton::Joint* joint = skeleton->getJoint( skeletonObj->manipulatorNode()->getData().toInt() );
   
@@ -889,14 +906,14 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
       //transform the local matrix
       Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
         
-      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation);
       
     } else {
       
       //directly apply the global transformation
       Matrix4x4 newMatrix = pose->getGlobal( joint->getID() ) * transform;
         
-      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation);
     }
   }
 
@@ -911,14 +928,14 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
       //transform all selected joints     
       Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
       
-      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation);
       
     } else {
 
       //directly apply the global transformation
       Matrix4x4 newMatrix = pose->getGlobal( joint->getID() ) * transform;
         
-      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation_);
+      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation);
       
     }
     
@@ -930,7 +947,15 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
     if (exists)
       RPC::callFunction("segmentationplugin", "updateSegmentation");
   }
+
+  //update the skin
+  bool exists = false;
+
+  emit functionExists("skeletonplugin", "updateSkin()", exists);
   
+  if (exists)
+    RPC::callFunction("skeletonplugin", "updateSkin");
+
  emit updatedObject(_objectId, UPDATE_GEOMETRY);
  
  QString matString;
