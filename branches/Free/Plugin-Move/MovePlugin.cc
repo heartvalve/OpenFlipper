@@ -77,7 +77,7 @@ MovePlugin::MovePlugin() :
     toAllTargets_(0),
     placeMode_(false),
     recursiveJointTransformation_(true),
-    transformRefPose_(true),
+    transformRefPose_(false),
     transformCurrentPose_(false)
 {
     manip_size_          = 1.0;
