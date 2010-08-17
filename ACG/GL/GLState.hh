@@ -439,7 +439,7 @@ public:
   void set_multisampling( bool _b );
 
   /// Get current multisampling state
-  bool multisampling(){ return multisampling_; };
+  bool multisampling() { return multisampling_; };
 
   /// Disable multisampling globally
   void allow_multisampling( bool _b ) { allow_multisampling_ = _b; };
@@ -449,6 +449,20 @@ public:
   
   /// Get max number of available texture units
   int max_texture_units() const { return num_texture_units_; }
+  
+  //--- Mipmapping ------------------------------------------------------------
+  
+  /** \brief Allow mipmapping globally
+  *
+  * Note: This actually does not change the opengl state
+  * since mipmapping is turned on/off via texture parameters
+  * To change the behaviour see in TextureNode
+  */
+  
+  void allow_mipmapping(bool _b) { mipmapping_ = _b; }
+  
+  /// Get current global mipmapping state
+  bool mipmapping_allowed() const { return mipmapping_; }
 
   //--- picking ---------------------------------------------------------------
 
@@ -553,6 +567,9 @@ private: //--------------------------------------------------------------------
   bool allow_multisampling_;
   
   int num_texture_units_;
+  
+  // Mipmapping settings
+  bool mipmapping_;
   
   // helper: should GL matrices be updated
   bool updateGL_;

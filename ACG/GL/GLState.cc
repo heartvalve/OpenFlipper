@@ -75,8 +75,9 @@ const float  GLState::default_shininess(100.0);
 GLState::GLState(bool _updateGL)
   : render_pass_(1),
     max_render_passes_(1),
-    multisampling_(false),
+    multisampling_(false),    
     allow_multisampling_(true),
+    mipmapping_(true),
     updateGL_(_updateGL),
     blending_(false),
     msSinceLastRedraw_ (1)
