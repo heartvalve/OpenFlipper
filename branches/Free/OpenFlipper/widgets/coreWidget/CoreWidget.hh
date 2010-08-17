@@ -1020,10 +1020,13 @@ public:
 
 
     /// Set Multisampling for all viewers
-    void slotGlobalChangeMultisampling(bool _lighting);
+    void slotGlobalChangeMultisampling(bool _multisampling);
+    
+    /// Set Mipmapping for all viewers
+    void slotLocalChangeMipmapping(bool _mipmapping);
 
     /// Set Multisampling for active viewer
-    void slotLocalChangeMultisampling(bool _lighting);
+    void slotLocalChangeMultisampling(bool _multisampling);
 
     /// When using first person mode move backward
     void moveBack();

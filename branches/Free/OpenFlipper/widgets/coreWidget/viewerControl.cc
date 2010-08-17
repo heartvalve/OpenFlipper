@@ -227,6 +227,11 @@ void CoreWidget::slotLocalChangeMultisampling(bool _multisampling) {
   PluginFunctions::viewerProperties().multisampling( _multisampling );
 }
 
+/// Set Mipmapping for active viewer
+void CoreWidget::slotLocalChangeMipmapping(bool _mipmapping) {
+  PluginFunctions::viewerProperties().mipmapping( _mipmapping );
+}
+
 /// Take a snapshot of the current Viewer
 void CoreWidget::slotSnapshot() {
 

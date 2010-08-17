@@ -184,7 +184,15 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   multisampling->setCheckable( true );
   multisampling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiSampling.png") );
   multisampling->setChecked( PluginFunctions::viewerProperties().multisampling() );
-  connect(multisampling, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMultisampling(bool) ) );   
+  connect(multisampling, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMultisampling(bool) ) );
+  
+  //====================================================================================================
+
+  QAction* mipmapping = renderingOptionsMenu->addAction(tr("Mipmapping"));
+  mipmapping->setToolTip(tr("Enable Mipmapping"));
+  mipmapping->setCheckable( true );
+  mipmapping->setChecked( PluginFunctions::viewerProperties().mipmapping() );
+  connect(mipmapping, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMipmapping(bool) ) );
 
 
   //============================================================================================================
