@@ -78,6 +78,9 @@ TextureNode::TextureNode( BaseNode*            _parent,
         texture_repeat_( _texture_repeat ),
         tex_mode_( GL_MODULATE ),
         texture_filter_( _texture_filter ),
+        mipmapping_globally_active_(true),
+        last_mipmapping_status_(true),
+        mipmapping_(true),
         activeTexture_(-1)
 {
 }
@@ -149,30 +152,47 @@ TextureNode::applyTextureParameters( int _id )
     const float borderColor[4] = {1.0, 1.0, 1.0, 1.0};
     glTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );
   }
-
-
-  switch(texture_filter_) {
-    case GL_LINEAR:
+  
+  if((mipmapping_globally_active_ && mipmapping_ && textures_[_id].mipmapAvailable) &&
+     (texture_filter_ == GL_LINEAR_MIPMAP_NEAREST ||
+      texture_filter_ == GL_LINEAR_MIPMAP_LINEAR  ||
+      texture_filter_ == GL_NEAREST_MIPMAP_LINEAR ||
+      texture_filter_ == GL_NEAREST_MIPMAP_NEAREST)) {
+      
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+      glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texture_filter_ );
+      
+  } else if(texture_filter_ == GL_LINEAR) {
+      
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-      break;
-    case GL_LINEAR_MIPMAP_LINEAR:
-      if (textures_[_id].mipmapAvailable) {
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-        glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-        break;
-      }
-    default:
-    case GL_NEAREST:
+  
+  } else {
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
       glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-      break;
-
   }
+  
 }
 
+//----------------------------------------------------------------------------
 
+void TextureNode::enable_mipmapping() {
+    
+    if(!mipmapping_) {
+        mipmapping_ = true;
+        updateMipmaps(mipmapping_globally_active_);
+    }
+}
 
+//----------------------------------------------------------------------------
+
+void TextureNode::disable_mipmapping() {
+    
+    if(mipmapping_) {
+        mipmapping_ = false;
+        updateMipmaps(mipmapping_);
+    }
+}
 
 //----------------------------------------------------------------------------
 
@@ -182,14 +202,14 @@ void TextureNode::setTextureDataGL (  GLuint _textureId,
                                       GLint _height,
                                       GLenum _format ,
                                       GLenum _type,
-                                      const void * _data)
-{
+                                      const void * _data) {
+  
   applyGLSettings();
 
   // copy texture to GL
   glBindTexture( GL_TEXTURE_2D, textures_[_textureId].id );
 
-  if ( texture_filter_ == GL_LINEAR_MIPMAP_LINEAR )
+  if ( mipmapping_ )
     textures_[_textureId].mipmapAvailable = true;
   else
     textures_[_textureId].mipmapAvailable = false;
@@ -197,9 +217,9 @@ void TextureNode::setTextureDataGL (  GLuint _textureId,
   applyTextureParameters(_textureId);
 
   // Load the image
-  if (texture_filter_ == GL_LINEAR_MIPMAP_LINEAR  ) {
+  if ( mipmapping_globally_active_ && mipmapping_ ) {
     gluBuild2DMipmaps( _target ,
-                       3 ,
+                       GL_RGBA ,
                        _width ,
                        _height ,
                        _format ,
@@ -207,21 +227,62 @@ void TextureNode::setTextureDataGL (  GLuint _textureId,
                        _data);
 
   } else {
-    glTexImage2D(_target,        // target
+    glTexImage2D(_target,              // target
                   0,                   // level
                   GL_RGBA,             // internal format
                   _width,              // width  (2^n)
                   _height,             // height (2^m)
                   0,                   // border
                   _format,             // format
-                  _type,    // type
-                  _data );    // pointer to pixels
+                  _type,               // type
+                  _data );             // pointer to pixels
   }
-
-
+  
+  // Fill texture info struct width information
+  textures_[_textureId].target      = _target;
+  textures_[_textureId].width       = _width;
+  textures_[_textureId].height      = _height;
 }
 
 
+//----------------------------------------------------------------------------
+
+/** \brief Generate mipmaps for each texture that does not have one yet
+*/
+void TextureNode::updateMipmaps(bool _mipmap) {
+    
+    // Make sure we have at least on element in the textures list
+    checkEmpty();
+
+    for(unsigned int i = 1; i < textures_.size(); ++i) {
+        
+        // Bind texture
+        glBindTexture( GL_TEXTURE_2D, textures_[i].id );
+        
+        // Get pixel data out of texture memory
+        GLubyte* buffer = (GLubyte *)malloc(textures_[i].width*textures_[i].height*4);
+        glGetTexImage(textures_[i].target, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            
+        if(_mipmap) {
+            
+            // Build mipmap
+            gluBuild2DMipmaps(textures_[i].target, GL_RGBA, textures_[i].width, textures_[i].height,
+                              GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+            
+            // Set mipmap available flag
+            textures_[i].mipmapAvailable = true;
+        } else {
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textures_[i].width, textures_[i].height,
+                         0, GL_RGBA, GL_UNSIGNED_BYTE, buffer );
+            
+            // Set mipmap available flag
+            textures_[i].mipmapAvailable = false;
+        }
+        
+        // Update parameters such that changes apply during runtime
+        applyTextureParameters(i);
+    }
+}
 
 //----------------------------------------------------------------------------
 
@@ -441,7 +502,7 @@ TextureNode::add_texture(const QImage& _image)
 //----------------------------------------------------------------------------
 
 
-void TextureNode::enter(GLState& /* _state */ , DrawModes::DrawMode _drawmode)
+void TextureNode::enter(GLState& _state , DrawModes::DrawMode _drawmode)
 {
    if ( _drawmode & ( DrawModes::SOLID_TEXTURED |
                       DrawModes::SOLID_TEXTURED_SHADED |
@@ -451,6 +512,20 @@ void TextureNode::enter(GLState& /* _state */ , DrawModes::DrawMode _drawmode)
                       DrawModes::SOLID_SHADER))
    {
       glEnable( GL_TEXTURE_2D );
+      
+      mipmapping_globally_active_ = _state.mipmapping_allowed();
+      
+      // Check if mipmapping status has changed
+      if(_state.mipmapping_allowed() != last_mipmapping_status_) {
+          
+              // Update mipmaps
+              updateMipmaps(mipmapping_globally_active_ && mipmapping_);
+              
+              // Keep track of changes
+              last_mipmapping_status_ = _state.mipmapping_allowed();
+          
+      }
+      
       if ( !textures_.empty() ) {
         glBindTexture( GL_TEXTURE_2D, textures_[activeTexture_].id );
       }
