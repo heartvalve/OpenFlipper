@@ -122,6 +122,8 @@ protected:
   QMap< SceneGraph::BaseNode* , QWidget* > widgetMap_;
 };
 
+
+
 /** \class QtSceneGraphWidget QtSceneGraphWidget.hh <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
     This class is used within the QtExaminerWidget to display and
@@ -137,8 +139,8 @@ class ACGDLLEXPORT QtSceneGraphWidget : public QTreeWidget
 public:
 
   /// default constructor
-  QtSceneGraphWidget( QWidget              * _parent = 0,
-		      SceneGraph::BaseNode * _rootNode = 0 );
+  QtSceneGraphWidget(QWidget* _parent = 0,
+                     SceneGraph::BaseNode* _rootNode = 0);
 
 
   /// destructor
@@ -151,12 +153,12 @@ public:
   {
   public:
     // root constructor
-    Item( QTreeWidget          * _parent,
-	  SceneGraph::BaseNode * _node );
+    Item(QTreeWidget* _parent,
+         SceneGraph::BaseNode* _node);
 
     // child constructor
-    Item( Item                 * _parent,
-	  SceneGraph::BaseNode * _node );
+    Item(Item* _parent,
+         SceneGraph::BaseNode* _node);
 
     // get node
     SceneGraph::BaseNode * node() { return node_; }
@@ -196,6 +198,7 @@ private slots:
   void slotStatusMenu( QAction * _action );
 
   void slotEditMaterial();
+  void slotEditTexture();
   void slotEditShader();
   void slotEditClipPlanes();
   void slotEditCoordinateFrame();
@@ -233,6 +236,10 @@ private:
     QAction * actionHideChildren_;
     QAction * actionHideSubtree_;
   } statusActions_;
+  
+  public slots:
+  
+    void expandAll();
 
   public: 
 

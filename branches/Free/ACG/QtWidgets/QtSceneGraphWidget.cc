@@ -53,6 +53,7 @@
 
 #include "QtSceneGraphWidget.hh"
 #include "QtMaterialDialog.hh"
+#include "QtTextureDialog.hh"
 #include "QtClippingDialog.hh"
 #include "QtCoordFrameDialog.hh"
 #include "QtShaderDialog.hh"
@@ -60,6 +61,7 @@
 #include "../Scenegraph/BaseNode.hh"
 #include "../Scenegraph/DrawModes.hh"
 #include "../Scenegraph/MaterialNode.hh"
+#include "../Scenegraph/TextureNode.hh"
 #include "../Scenegraph/ClippingNode.hh"
 #include "../Scenegraph/ShaderNode.hh"
 #include "../Scenegraph/CoordFrameNode.hh"
@@ -248,7 +250,7 @@ update(SceneGraph::BaseNode* _node, Item* _parent)
 
 void 
 QtSceneGraphWidget::
-slotItemExpandedOrCollapsed( QTreeWidgetItem * /* _item */  )
+slotItemExpandedOrCollapsed( QTreeWidgetItem* _item )
 {
   resizeColumnToContents( 0 );
 }
@@ -335,6 +337,14 @@ slotItemPressed( QTreeWidgetItem * _item,
                     this, SLOT( slotEditMaterial() ) );
         }
         
+        if ( dynamic_cast<SceneGraph::TextureNode*>( node ) )
+        {
+          modeMenu_->addSeparator();
+          QAction * action = modeMenu_->addAction( "Edit texture" );
+          connect( action, SIGNAL( triggered() ),
+                    this, SLOT( slotEditTexture() ) );
+        }
+        
         if ( dynamic_cast<SceneGraph::ShaderNode*>( node ) )
         {
           modeMenu_->addSeparator();
@@ -391,6 +401,27 @@ void QtSceneGraphWidget::slotEditMaterial()
 	    SIGNAL(signalNodeChanged(ACG::SceneGraph::BaseNode*)),
 	    this, 
 	    SLOT(slotNodeChanged(ACG::SceneGraph::BaseNode*)));
+
+    dialog->show();
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+
+void QtSceneGraphWidget::slotEditTexture()
+{
+  if ( curItem_ )
+  {
+    SceneGraph::TextureNode * node =
+      dynamic_cast< SceneGraph::TextureNode * >( curItem_->node() );
+
+    QtTextureDialog* dialog = new QtTextureDialog( this, node );
+
+    connect(dialog, 
+        SIGNAL(signalNodeChanged(ACG::SceneGraph::BaseNode*)),
+        this, 
+        SLOT(slotNodeChanged(ACG::SceneGraph::BaseNode*)));
 
     dialog->show();
   }
@@ -517,6 +548,14 @@ void QtSceneGraphWidget::keyReleaseEvent(QKeyEvent *_event)
 
 //-----------------------------------------------------------------------------
 
+void QtSceneGraphWidget::expandAll() {
+    
+    QTreeWidget::expandAll();
+    
+    resizeColumnToContents(0);
+}
+
+//-----------------------------------------------------------------------------
 
 void 
 QtSceneGraphWidget::
@@ -595,17 +634,32 @@ QtSceneGraphDialog( QWidget* _parent,
   : QDialog(_parent)
 {
   setModal( false );
+  
   QVBoxLayout* l = new QVBoxLayout( this );
+  
+  QWidget* buttons = new QWidget(this);
+  QHBoxLayout* butLayout = new QHBoxLayout(buttons);
   
   sgw_ = 
     new QtSceneGraphWidget( this, _rootNode );
 
+    // Add buttons to hbox layout
+    QPushButton* expAll = new QPushButton("Expand all");
+    QPushButton* collAll = new QPushButton("Collapse all");
+    
+    butLayout->addWidget(expAll);
+    butLayout->addWidget(collAll);
+    
+  l->addWidget(buttons);
   l->addWidget(sgw_);
 
-  connect( sgw_, 
-	   SIGNAL(signalNodeChanged(ACG::SceneGraph::BaseNode*)),
-	   this, 
-	   SLOT(slotNodeChanged(ACG::SceneGraph::BaseNode*)) );
+  connect(sgw_, 
+        SIGNAL(signalNodeChanged(ACG::SceneGraph::BaseNode*)),
+        this, 
+        SLOT(slotNodeChanged(ACG::SceneGraph::BaseNode*)) );
+       
+  connect(expAll, SIGNAL(pressed()), sgw_, SLOT(expandAll()));
+  connect(collAll, SIGNAL(pressed()), sgw_, SLOT(collapseAll()));
 }
 
 
