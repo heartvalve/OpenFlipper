@@ -325,7 +325,19 @@ namespace Viewer {
       bool multisampling() { return multisampling_; };
 
     private:
-      bool multisampling_;      
+      bool multisampling_;
+      
+    //===========================================================================
+
+    public slots:
+      /// set mipmapping on/off
+      void mipmapping(bool _state ) { glState_->allow_mipmapping(_state); mipmapping_ = _state; emit updated(); }
+
+      /// is mipmapping enabled?
+      bool mipmapping() { return mipmapping_; };
+
+    private:
+      bool mipmapping_;
 
     //===========================================================================
 
