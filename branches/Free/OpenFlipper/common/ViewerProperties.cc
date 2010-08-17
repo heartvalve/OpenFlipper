@@ -70,6 +70,7 @@ namespace Viewer {
     backFaceCulling_(false),
     twoSidedLighting_(true),
     multisampling_(true),
+    mipmapping_(true),
     animation_(false),
     glState_(0),
     objectMarker_(0),
