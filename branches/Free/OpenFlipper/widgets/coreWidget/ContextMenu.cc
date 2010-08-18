@@ -191,6 +191,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   QAction* mipmapping = renderingOptionsMenu->addAction(tr("Mipmapping"));
   mipmapping->setToolTip(tr("Enable Mipmapping"));
   mipmapping->setCheckable( true );
+  mipmapping->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"mipmapping.png") );
   mipmapping->setChecked( PluginFunctions::viewerProperties().mipmapping() );
   connect(mipmapping, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMipmapping(bool) ) );
 
