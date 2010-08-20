@@ -48,18 +48,21 @@ class SnapshotDialog : public QDialog, public Ui::SnapshotDialog
   Q_OBJECT
 
   public:
-    SnapshotDialog(QString _suggest, bool _captureViewers, QWidget *parent = 0);
+    SnapshotDialog(QString _suggest, bool _captureViewers, int _w, int _h, QWidget *parent = 0);
 
   private:
     bool captureViewers_;
+    double aspect_;
 
   private slots:
     void slotOk();
     void findFile();
     void slotChangeResolution();
+    
+    void snapWidthChanged(int _w);
+    void snapHeightChanged(int _h);
 
   signals:
-    void resizeViewers(int _width, int _height);
     void resizeApplication(int _width, int _height);
 };
 

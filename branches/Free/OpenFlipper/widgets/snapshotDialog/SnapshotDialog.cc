@@ -48,13 +48,25 @@
 #include <iostream>
 #include <OpenFlipper/common/GlobalOptions.hh>
 
-SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, QWidget *parent)
+SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, int _h, QWidget *parent)
  : QDialog(parent),
-   captureViewers_(_captureViewers)
+   captureViewers_(_captureViewers),
+   aspect_(_w / _h)
 {
   setupUi(this);
 
   filename->setText( _suggest );
+  
+  // Disable 'change resolution' button if
+  // in viewer snapshot mode
+  resButton->setDisabled(captureViewers_);
+  keepAspect->setDisabled(!captureViewers_);
+  
+  snapWidth->setValue(_w);
+  snapHeight->setValue(_h);
+  
+  connect(snapWidth,  SIGNAL(valueChanged(int)), this, SLOT(snapWidthChanged(int)) );
+  connect(snapHeight, SIGNAL(valueChanged(int)), this, SLOT(snapHeightChanged(int)) );
 
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()) );
   connect(findButton, SIGNAL(clicked()), this, SLOT(findFile()) );
@@ -62,11 +74,23 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, QWidget *
   connect(okButton,  SIGNAL(clicked()), this, SLOT(slotOk()) );
 }
 
+void SnapshotDialog::snapWidthChanged(int _w) {
+    
+    if(keepAspect->isChecked()) {
+        snapHeight->setValue((int)(_w / aspect_));
+    }
+}
+
+void SnapshotDialog::snapHeightChanged(int _h) {
+    
+    if(keepAspect->isChecked()) {
+        snapWidth->setValue((int)(_h * aspect_));
+    }
+}
+
 void SnapshotDialog::slotChangeResolution()
 {
-  if ( captureViewers_ )
-    emit resizeViewers(snapWidth->value(), snapHeight->value());
-  else
+  if ( !captureViewers_ )
     emit resizeApplication(snapWidth->value(), snapHeight->value());
 }
 
@@ -80,9 +104,7 @@ void SnapshotDialog::slotOk()
     return;
   }
 
-  if ( captureViewers_ )
-    emit resizeViewers(snapWidth->value(), snapHeight->value());
-  else
+  if ( !captureViewers_ )
     emit resizeApplication(snapWidth->value(), snapHeight->value());
 
   accept();

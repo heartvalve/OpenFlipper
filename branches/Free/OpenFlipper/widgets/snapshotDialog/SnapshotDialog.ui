@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>416</width>
-    <height>156</height>
+    <width>511</width>
+    <height>165</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -61,7 +61,7 @@
          <number>100</number>
         </property>
         <property name="maximum">
-         <number>2000</number>
+         <number>8192</number>
         </property>
         <property name="value">
          <number>800</number>
@@ -81,7 +81,7 @@
          <number>100</number>
         </property>
         <property name="maximum">
-         <number>2000</number>
+         <number>8192</number>
         </property>
         <property name="value">
          <number>600</number>
@@ -102,9 +102,16 @@
        </spacer>
       </item>
       <item>
+       <widget class="QCheckBox" name="keepAspect">
+        <property name="text">
+         <string>Keep aspect</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="resButton">
         <property name="text">
-         <string>Change now</string>
+         <string>Change Resolution</string>
         </property>
        </widget>
       </item>

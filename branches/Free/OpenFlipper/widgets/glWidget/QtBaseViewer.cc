@@ -2031,11 +2031,24 @@ void glViewer::slotPropertiesUpdated() {
   updateGL();
 }
 
-void glViewer::snapshot(QImage& _image, bool _offScreenRendering)
-{
-
-  if ( _offScreenRendering ){
-    QGLFramebufferObject fb( glstate_->context_width(), glstate_->context_height(), QGLFramebufferObject::CombinedDepthStencil);
+void glViewer::snapshot(QImage& _image, int _width, int _height) {
+  
+    int w = 0, h = 0, bak_w = 0, bak_h = 0;
+    // Test if size is given:
+    if(_width ==0 || _height == 0) {
+        // Get standard viewport size
+        w = glstate_->viewport_width();
+        h = glstate_->viewport_height();
+    } else {
+        w = _width;
+        h = _height;
+        bak_w = glstate_->viewport_width();
+        bak_h = glstate_->viewport_height();
+        // Set viewport to screenshot size
+        glstate_->viewport(0, 0, w, h);
+    }
+    
+    QGLFramebufferObject fb( w, h, QGLFramebufferObject::CombinedDepthStencil);
 
     if ( fb.isValid() ){
 
@@ -2045,22 +2058,14 @@ void glViewer::snapshot(QImage& _image, bool _offScreenRendering)
       glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       paintGL();
       glFinish();
-
-      _image = fb.toImage().copy(scenePos().x(), scenePos().y(), glWidth(), glHeight());
-
-      return;
+      
+      _image = fb.toImage().copy(scenePos().x(), scenePos().y(), w, h);
     }
-  }
-
-  makeCurrent();
-
-  qApp->processEvents();
-  makeCurrent();
-  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  paintGL();
-  glFinish();
-
-  copyToImage(_image, scenePos().x(), scenePos().y(), glWidth(), glHeight(), GL_BACK);
+    
+    if(bak_w != 0 && bak_h != 0) {
+        // Reset viewport to former size
+        glstate_->viewport(0, 0, bak_w, bak_h);
+    }
 }
 
 void glViewer::snapshot()
