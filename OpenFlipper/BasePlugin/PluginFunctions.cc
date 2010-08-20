@@ -591,7 +591,7 @@ QGLWidget *shareGLWidget ()
 }
 
 void getCurrentViewImage(QImage& _image) {
-  viewer( activeExaminer() )->snapshot( _image, true );
+  viewer( activeExaminer() )->snapshot( _image );
 }
 
 Viewer::ViewerProperties& viewerProperties(int _id) {

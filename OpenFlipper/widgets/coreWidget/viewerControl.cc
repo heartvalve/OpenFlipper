@@ -304,15 +304,11 @@ void CoreWidget::applicationSnapshotDialog() {
 
   suggest += format;
 
-
-  SnapshotDialog dialog(suggest, false, 0);
-
   int w = width();
   int h = height();
-  
-  dialog.snapWidth->setValue(w);
-  dialog.snapHeight->setValue(h);
 
+  SnapshotDialog dialog(suggest, false, w, h, 0);
+  
   connect(&dialog, SIGNAL(resizeApplication(int,int)), this, SIGNAL(resizeApplication(int,int)) );
 
   bool ok = dialog.exec();
@@ -394,16 +390,11 @@ void CoreWidget::viewerSnapshotDialog() {
 
   suggest += format;
 
-  SnapshotDialog dialog(suggest, true, 0);
-
   int w = glView_->width();
   int h = glView_->height();
   
-  dialog.snapWidth->setValue(w);
-  dialog.snapHeight->setValue(h);
-
-  connect(&dialog, SIGNAL(resizeViewers(int,int)), this, SIGNAL(resizeViewers(int,int)) );
-
+  SnapshotDialog dialog(suggest, true, w, h, 0);
+  
   bool ok = dialog.exec();
 
   if (ok){
@@ -426,7 +417,8 @@ void CoreWidget::viewerSnapshotDialog() {
       {
         QImage finalImage;
 
-        examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(finalImage);
+        examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(finalImage,
+                dialog.snapWidth->value(), dialog.snapHeight->value());
 
         finalImage.save(newName);
 
@@ -533,7 +525,7 @@ void CoreWidget::viewerSnapshot() {
     case QtMultiViewLayout::Grid:
     {
       QImage img0,img1,img2,img3;
-
+      
       examiner_widgets_[0]->snapshot(img0);
       examiner_widgets_[1]->snapshot(img1);
       examiner_widgets_[2]->snapshot(img2);
