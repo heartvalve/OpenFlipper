@@ -1207,7 +1207,7 @@ void Core::snapshotBaseFileName(const QString& _fname, unsigned int _viewerId ){
 
 }
 
-void Core::snapshot( unsigned int _viewerId ){
+void Core::snapshot( unsigned int _viewerId, int _width, int _height ){
 
 
   if ( OpenFlipper::Options::gui() ) {
@@ -1215,7 +1215,7 @@ void Core::snapshot( unsigned int _viewerId ){
       emit log(LOGERR,tr("Unable to create snapshot for viewer ") + QString::number(_viewerId) );
       return;
     }
-    coreWidget_->examiner_widgets_[_viewerId]->snapshot();
+    coreWidget_->examiner_widgets_[_viewerId]->snapshot(_width, _height);
   }
 
 }
@@ -1334,8 +1334,22 @@ void Core::setDescriptions(){
                           , QStringList(), QStringList());
   emit setSlotDescription("snapshot()", tr("Make a snapshot of the viewer. If no filename"
                           " was set using snapshotBaseFileName() the snapshot is stored"
+                          " in snap.png in the current directory. The captured image will have "
+                          " the same dimensions as the current viewport. "
+                          "For every snapshot a counter is added to the filename."), QStringList(), QStringList());
+  emit setSlotDescription("snapshot(uint)", tr("Make a snapshot of the viewer with id viewerId. If no filename"
+                          " was set using snapshotBaseFileName() the snapshot is stored"
                           " in snap.png in the current directory. For every snapshot"
-                          " a counter is added to the filename."), QStringList(), QStringList());
+                          " a counter is added to the filename."), QStringList("viewerId"), QStringList("Id of viewer to be captured (default is 0)"));
+  emit setSlotDescription("snapshot(uint,int,int)", tr("Make a snapshot of the viewer with id viewerId."
+                          " Pass 0 as viewerId parameter to capture the current viewer. "
+                          " The captured image will have the specified dimensions. "
+                          " If 0 is passed as either width or height parameter, the value will "
+                          " automatically be set to hold the right aspect ratio, respectively. "
+                          " If no filename was set using snapshotBaseFileName() the snapshot is stored"
+                          " in snap.png in the current directory. For every snapshot"
+                          " a counter is added to the filename."), QStringList(QString("viewerId;width;height").split(";")),
+                          QStringList(QString("Id of viewer (default is 0);Width of image;Height of image").split(";")));
   emit setSlotDescription("resizeViewer(int,int)", tr("Resize the viewer"),
                            QString(tr("width,height")).split(","),
                            QString(tr("new width for the viewer,new height for the viewer")).split(","));
