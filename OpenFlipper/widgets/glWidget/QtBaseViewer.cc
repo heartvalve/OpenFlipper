@@ -2035,11 +2035,20 @@ void glViewer::snapshot(QImage& _image, int _width, int _height) {
   
     int w = 0, h = 0, bak_w = 0, bak_h = 0;
     // Test if size is given:
-    if(_width ==0 || _height == 0) {
+    if(_width ==0 && _height == 0) {
         // Get standard viewport size
         w = glstate_->viewport_width();
         h = glstate_->viewport_height();
     } else {
+        // Adapt dimensions if aspect ratio is demanded
+        if(_width == 0) {
+            double aspect = glstate_->viewport_width()/glstate_->viewport_height();
+            _width = (int)(_height * aspect);
+        }
+        if(_height == 0) {
+            double aspect = glstate_->viewport_width()/glstate_->viewport_height();
+            _height = (int)(_width / aspect);
+        }
         w = _width;
         h = _height;
         bak_w = glstate_->viewport_width();
@@ -2068,19 +2077,13 @@ void glViewer::snapshot(QImage& _image, int _width, int _height) {
     }
 }
 
-void glViewer::snapshot()
+void glViewer::snapshot( int _width, int _height )
 {
-   makeCurrent();
-
-   qApp->processEvents();
-   makeCurrent();
-   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   paintGL();
-   glFinish();
-
-   QImage snapshot;
-   copyToImage(snapshot, scenePos().x(), scenePos().y(), glWidth(), glHeight(), GL_BACK);
-
+   QImage image;
+   
+   // Capture image
+   snapshot(image, _width, _height);
+   
    QFileInfo fi(properties_.snapshotName());
 
    QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()) + ".";
@@ -2092,8 +2095,7 @@ void glViewer::snapshot()
 
    fname += format;
 
-   bool rval=snapshot.save(fname,format.toUpper().toLatin1());
-
+   bool rval=image.save(fname,format.toUpper().toLatin1());
 
    if (rval)
    {
