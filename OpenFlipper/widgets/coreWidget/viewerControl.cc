@@ -409,7 +409,7 @@ void CoreWidget::viewerSnapshotDialog() {
       
     }else
       snapshotCounter_++;
-
+    
     //now take the snapshot
     switch ( baseLayout_->mode() ){
 
@@ -418,7 +418,7 @@ void CoreWidget::viewerSnapshotDialog() {
         QImage finalImage;
 
         examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(finalImage,
-                dialog.snapWidth->value(), dialog.snapHeight->value());
+                dialog.snapWidth->value(), dialog.snapHeight->value(), dialog.transparent->isChecked());
 
         finalImage.save(newName);
 
