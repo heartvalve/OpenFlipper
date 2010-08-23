@@ -468,7 +468,7 @@ public slots:
       the current snapshot counter. The \a back buffer will be saved.
       The id of the current viewer is 0 (default).
     */
-    void snapshot(unsigned int _viewerId = 0, int _width = 0, int _height = 0);
+    void snapshot(unsigned int _viewerId = 0, int _width = 0, int _height = 0, bool _alpha = false);
 
     /// Take a snapshot from the whole app
     void applicationSnapshot();

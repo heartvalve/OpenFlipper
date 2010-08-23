@@ -100,6 +100,7 @@
 #include <QGraphicsWidget>
 #include <QGraphicsGridLayout>
 #include <QGraphicsProxyWidget>
+#include <QGLFramebufferObjectFormat>
 #include <QPainter>
 #include <QPaintEngine>
 
@@ -2031,7 +2032,7 @@ void glViewer::slotPropertiesUpdated() {
   updateGL();
 }
 
-void glViewer::snapshot(QImage& _image, int _width, int _height) {
+void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha) {
   
     int w = 0, h = 0, bak_w = 0, bak_h = 0;
     // Test if size is given:
@@ -2057,18 +2058,37 @@ void glViewer::snapshot(QImage& _image, int _width, int _height) {
         glstate_->viewport(0, 0, w, h);
     }
     
-    QGLFramebufferObject fb( w, h, QGLFramebufferObject::CombinedDepthStencil);
+    QGLFramebufferObjectFormat format;
+    format.setInternalTextureFormat(GL_RGBA);
+    format.setTextureTarget(GL_TEXTURE_2D);
+    format.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
+    QGLFramebufferObject fb( w, h, format);
 
     if ( fb.isValid() ){
 
       fb.bind();
       qApp->processEvents();
       makeCurrent();
+      
+      // Turn alpha on if demanded
+      ACG::Vec4f backColorBak;
+      ACG::Vec4f newBack;
+      if(_alpha) {
+          backColorBak = properties()->backgroundColor();
+          newBack = ACG::Vec4f(backColorBak[0], backColorBak[1], backColorBak[2], 0.0f);
+          properties()->backgroundColor(newBack);
+          glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+      }
+      
       glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       paintGL();
       glFinish();
       
-      _image = fb.toImage().copy(scenePos().x(), scenePos().y(), w, h);
+      // Reset alpha settings
+      if(_alpha)
+          properties()->backgroundColor(backColorBak);
+      
+      _image = fb.toImage().copy(scenePos().x(), scenePos().y(), w, h);      
     }
     
     if(bak_w != 0 && bak_h != 0) {
@@ -2077,12 +2097,12 @@ void glViewer::snapshot(QImage& _image, int _width, int _height) {
     }
 }
 
-void glViewer::snapshot( int _width, int _height )
+void glViewer::snapshot( int _width, int _height, bool _alpha )
 {
    QImage image;
    
    // Capture image
-   snapshot(image, _width, _height);
+   snapshot(image, _width, _height, _alpha);
    
    QFileInfo fi(properties_.snapshotName());
 
