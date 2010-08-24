@@ -171,7 +171,8 @@ class BSplineSurfaceNodeT : public MaterialNode
 
   /// use arbitrary texture (in SOLID_TEXTURED mode)
   void set_arb_texture( const QImage& _texture, bool _repeat = false, float _u_repeat = 1.0f, float _v_repeat = 1.0f);
-
+  void set_repeat_arb_texture( bool _repeat = true, float _urep = 5.0f, float _vrep = 5.0f) { arb_texture_repeat_ = _repeat; arb_texture_repeat_u_ = _urep; arb_texture_repeat_v_ = _vrep; }
+  bool get_repeat_arb_texture( ) { return arb_texture_repeat_; }
 
 
 private:
