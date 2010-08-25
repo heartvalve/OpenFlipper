@@ -2033,28 +2033,30 @@ void glViewer::slotPropertiesUpdated() {
 }
 
 void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha) {
-  
-    int w = 0, h = 0, bak_w = 0, bak_h = 0;
+    
+    int w = 0, h = 0, bak_w = 0, bak_h = 0, left = 0, bottom = 0;
+    
+    // Get viewport data
+    glstate_->get_viewport(left, bottom, w, h);
+    
     // Test if size is given:
-    if(_width ==0 && _height == 0) {
-        // Get standard viewport size
-        w = glstate_->viewport_width();
-        h = glstate_->viewport_height();
-    } else {
+    if(_width != 0 || _height != 0) {
+        
         // Adapt dimensions if aspect ratio is demanded
         if(_width == 0) {
-            double aspect = glstate_->viewport_width()/glstate_->viewport_height();
-            _width = (int)(_height * aspect);
+            double aspect = (double)w / (double)h;
+            _width = (int)((double)_height * aspect);
         }
         if(_height == 0) {
-            double aspect = glstate_->viewport_width()/glstate_->viewport_height();
-            _height = (int)(_width / aspect);
+            double aspect = (double)w / (double)h;
+            _height = (int)((double)_width / aspect);
         }
+        bak_w = w;
+        bak_h = h;
         w = _width;
         h = _height;
-        bak_w = glstate_->viewport_width();
-        bak_h = glstate_->viewport_height();
-        // Set viewport to screenshot size
+        
+        // Set new viewport
         glstate_->viewport(0, 0, w, h);
     }
     
@@ -2087,12 +2089,12 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha) {
       if(_alpha)
           properties()->backgroundColor(backColorBak);
       
-      _image = fb.toImage().copy(scenePos().x(), scenePos().y(), w, h);      
+      _image = fb.toImage().copy(0, 0, w, h);      
     }
     
-    if(bak_w != 0 && bak_h != 0) {
+    if(_width != 0 || _height != 0) {
         // Reset viewport to former size
-        glstate_->viewport(0, 0, bak_w, bak_h);
+        glstate_->viewport(left, bottom, bak_w, bak_h);
     }
 }
 

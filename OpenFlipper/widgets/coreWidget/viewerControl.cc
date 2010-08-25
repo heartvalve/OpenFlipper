@@ -426,12 +426,25 @@ void CoreWidget::viewerSnapshotDialog() {
       }
       case QtMultiViewLayout::Grid:
       {
+        // Compute size of each viewer
+        int w = dialog.snapWidth->value();
+        int h = dialog.snapHeight->value();
+        
+        // Relative size of first viewer (in relation to the other viewers
+        double relSizeW = (double)examiner_widgets_[0]->glWidth() / (double)glScene_->width();
+        double relSizeH = (double)examiner_widgets_[0]->glHeight() / (double)glScene_->height();
+          
         QImage img0,img1,img2,img3;
 
-        examiner_widgets_[0]->snapshot(img0);
-        examiner_widgets_[1]->snapshot(img1);
-        examiner_widgets_[2]->snapshot(img2);
-        examiner_widgets_[3]->snapshot(img3);
+        examiner_widgets_[0]->snapshot(img0, (int)((double)w * relSizeW),           (int)((double)h * relSizeH), dialog.transparent->isChecked());
+        examiner_widgets_[1]->snapshot(img1, (int)((double)w * (1.0 - relSizeW)),   (int)((double)h * relSizeH), dialog.transparent->isChecked());
+        examiner_widgets_[2]->snapshot(img2, (int)((double)w * relSizeW),           (int)((double)h * (1.0 - relSizeH)), dialog.transparent->isChecked());
+        examiner_widgets_[3]->snapshot(img3, (int)((double)w * (1.0 - relSizeW)),   (int)((double)h * (1.0 - relSizeH)), dialog.transparent->isChecked());
+        
+        img0.save("/home/kremer/multsnap0.png");
+        img1.save("/home/kremer/multsnap1.png");
+        img2.save("/home/kremer/multsnap2.png");
+        img3.save("/home/kremer/multsnap3.png");
 
         QImage finalImage(img0.width() + img1.width()+2, img0.height() + img2.height()+2, QImage::Format_ARGB32_Premultiplied);
 
@@ -454,12 +467,22 @@ void CoreWidget::viewerSnapshotDialog() {
       }
       case QtMultiViewLayout::HSplit:
       {
+        // Compute size of each viewer
+        int w = dialog.snapWidth->value();
+        int h = dialog.snapHeight->value();
+        
+        // Relative size of first viewer (in relation to the other viewers
+        double relSizeW = (double)examiner_widgets_[0]->glWidth() / (double)glScene_->width();
+        double relSizeH1 = (double)examiner_widgets_[1]->glHeight() / (double)glScene_->height();
+        double relSizeH2 = (double)examiner_widgets_[2]->glHeight() / (double)glScene_->height();
+        double relSizeH3 = (double)examiner_widgets_[3]->glHeight() / (double)glScene_->height();
+          
         QImage img0,img1,img2,img3;
 
-        examiner_widgets_[0]->snapshot(img0);
-        examiner_widgets_[1]->snapshot(img1);
-        examiner_widgets_[2]->snapshot(img2);
-        examiner_widgets_[3]->snapshot(img3);
+        examiner_widgets_[0]->snapshot(img0, (int)((double)w * relSizeW), h, dialog.transparent->isChecked());
+        examiner_widgets_[1]->snapshot(img1, (int)((double)w * (1.0 - relSizeW)), relSizeH1 * (double)h, dialog.transparent->isChecked());
+        examiner_widgets_[2]->snapshot(img2, (int)((double)w * (1.0 - relSizeW)), relSizeH2 * (double)h, dialog.transparent->isChecked());
+        examiner_widgets_[3]->snapshot(img3, (int)((double)w * (1.0 - relSizeW)), relSizeH3 * (double)h, dialog.transparent->isChecked());
 
         QImage finalImage(img0.width() + img1.width() +2, img0.height(), QImage::Format_ARGB32_Premultiplied);
 
@@ -484,7 +507,7 @@ void CoreWidget::viewerSnapshotDialog() {
 
     }
   }
-  glView_->resize(w, h);
+  //glView_->resize(w, h);
 }
 
 ///Take a snapshot of all viewers
