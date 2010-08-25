@@ -53,6 +53,8 @@ class SnapshotDialog : public QDialog, public Ui::SnapshotDialog
   private:
     bool captureViewers_;
     double aspect_;
+    
+    bool blockSpinBox_;
 
   private slots:
     void slotOk();

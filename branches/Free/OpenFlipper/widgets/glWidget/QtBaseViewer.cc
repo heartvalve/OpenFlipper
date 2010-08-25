@@ -2073,12 +2073,11 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha) {
       // Turn alpha on if demanded
       ACG::Vec4f backColorBak;
       ACG::Vec4f newBack;
-      if(_alpha) {
-          backColorBak = properties()->backgroundColor();
-          newBack = ACG::Vec4f(backColorBak[0], backColorBak[1], backColorBak[2], 0.0f);
-          properties()->backgroundColor(newBack);
-          glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-      }
+      
+      backColorBak = properties()->backgroundColor();
+      newBack = ACG::Vec4f(backColorBak[0], backColorBak[1], backColorBak[2], (_alpha ? 0.0f : 1.0f));
+      properties()->backgroundColor(newBack);
+      glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       
       glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       paintGL();

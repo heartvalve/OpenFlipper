@@ -51,7 +51,8 @@
 SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, int _h, QWidget *parent)
  : QDialog(parent),
    captureViewers_(_captureViewers),
-   aspect_(_w / _h)
+   aspect_((double)_w / (double)_h),
+   blockSpinBox_(false)
 {
   setupUi(this);
 
@@ -61,6 +62,7 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, i
   // in viewer snapshot mode
   resButton->setDisabled(captureViewers_);
   keepAspect->setDisabled(!captureViewers_);
+  transparent->setDisabled(!captureViewers_);
   
   snapWidth->setValue(_w);
   snapHeight->setValue(_h);
@@ -76,15 +78,23 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, i
 
 void SnapshotDialog::snapWidthChanged(int _w) {
     
+    if(blockSpinBox_) return;
+    
     if(keepAspect->isChecked()) {
-        snapHeight->setValue((int)(_w / aspect_));
+        blockSpinBox_ = true;
+        snapHeight->setValue((int)((double)_w / aspect_));
+        blockSpinBox_ = false;
     }
 }
 
 void SnapshotDialog::snapHeightChanged(int _h) {
     
+    if(blockSpinBox_) return;
+    
     if(keepAspect->isChecked()) {
-        snapWidth->setValue((int)(_h * aspect_));
+        blockSpinBox_ = true;
+        snapWidth->setValue((int)((double)_h * aspect_));
+        blockSpinBox_ = false;
     }
 }
 
