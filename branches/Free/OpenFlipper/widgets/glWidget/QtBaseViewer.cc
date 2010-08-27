@@ -2101,21 +2101,21 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
       if(_alpha)
           properties()->backgroundColor(backColorBak);
       
-      _image = fb.toImage().copy(0, 0, w, h);      
+      if(_hideCoordsys) {
+          // Find coordsys node
+          ACG::SceneGraph::BaseNode* node = 0;
+          node = sceneGraphRoot_->find("Core Coordsys Node");
+          if(node != 0) {
+              node->show();
+          }
+      }
+      
+      _image = fb.toImage().copy(0, 0, w, h);
     }
     
     if(_width != 0 || _height != 0) {
         // Reset viewport to former size
         glstate_->viewport(left, bottom, bak_w, bak_h);
-    }
-    
-    if(_hideCoordsys) {
-        // Find coordsys node
-        ACG::SceneGraph::BaseNode* node = 0;
-        node = sceneGraphRoot_->find("Core Coordsys Node");
-        if(node != 0) {
-            node->show();
-        }
     }
 }
 
