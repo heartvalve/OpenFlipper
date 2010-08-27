@@ -418,7 +418,8 @@ void CoreWidget::viewerSnapshotDialog() {
         QImage finalImage;
 
         examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(finalImage,
-                dialog.snapWidth->value(), dialog.snapHeight->value(), dialog.transparent->isChecked());
+                dialog.snapWidth->value(), dialog.snapHeight->value(),
+                dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
 
         finalImage.save(newName);
 
@@ -436,10 +437,14 @@ void CoreWidget::viewerSnapshotDialog() {
           
         QImage img0,img1,img2,img3;
 
-        examiner_widgets_[0]->snapshot(img0, (int)((double)w * relSizeW),           (int)((double)h * relSizeH), dialog.transparent->isChecked());
-        examiner_widgets_[1]->snapshot(img1, (int)((double)w * (1.0 - relSizeW)),   (int)((double)h * relSizeH), dialog.transparent->isChecked());
-        examiner_widgets_[2]->snapshot(img2, (int)((double)w * relSizeW),           (int)((double)h * (1.0 - relSizeH)), dialog.transparent->isChecked());
-        examiner_widgets_[3]->snapshot(img3, (int)((double)w * (1.0 - relSizeW)),   (int)((double)h * (1.0 - relSizeH)), dialog.transparent->isChecked());
+        examiner_widgets_[0]->snapshot(img0, (int)((double)w * relSizeW),           (int)((double)h * relSizeH),
+                                       dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
+        examiner_widgets_[1]->snapshot(img1, (int)((double)w * (1.0 - relSizeW)),   (int)((double)h * relSizeH),
+                                       dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
+        examiner_widgets_[2]->snapshot(img2, (int)((double)w * relSizeW),           (int)((double)h * (1.0 - relSizeH)),
+                                       dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
+        examiner_widgets_[3]->snapshot(img3, (int)((double)w * (1.0 - relSizeW)),   (int)((double)h * (1.0 - relSizeH)),
+                                       dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
         
         img0.save("/home/kremer/multsnap0.png");
         img1.save("/home/kremer/multsnap1.png");
@@ -479,10 +484,14 @@ void CoreWidget::viewerSnapshotDialog() {
           
         QImage img0,img1,img2,img3;
 
-        examiner_widgets_[0]->snapshot(img0, (int)((double)w * relSizeW), h, dialog.transparent->isChecked());
-        examiner_widgets_[1]->snapshot(img1, (int)((double)w * (1.0 - relSizeW)), relSizeH1 * (double)h, dialog.transparent->isChecked());
-        examiner_widgets_[2]->snapshot(img2, (int)((double)w * (1.0 - relSizeW)), relSizeH2 * (double)h, dialog.transparent->isChecked());
-        examiner_widgets_[3]->snapshot(img3, (int)((double)w * (1.0 - relSizeW)), relSizeH3 * (double)h, dialog.transparent->isChecked());
+        examiner_widgets_[0]->snapshot(img0, (int)((double)w * relSizeW), h,
+                                       dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
+        examiner_widgets_[1]->snapshot(img1, (int)((double)w * (1.0 - relSizeW)), relSizeH1 * (double)h,
+                                       dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
+        examiner_widgets_[2]->snapshot(img2, (int)((double)w * (1.0 - relSizeW)), relSizeH2 * (double)h,
+                                       dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
+        examiner_widgets_[3]->snapshot(img3, (int)((double)w * (1.0 - relSizeW)), relSizeH3 * (double)h,
+                                       dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
 
         QImage finalImage(img0.width() + img1.width() +2, img0.height(), QImage::Format_ARGB32_Premultiplied);
 
