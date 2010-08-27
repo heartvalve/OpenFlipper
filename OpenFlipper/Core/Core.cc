@@ -1361,6 +1361,18 @@ void Core::setDescriptions(){
                           " in snap.png in the current directory. For every snapshot"
                           " a counter is added to the filename."), QStringList(QString("viewerId;width;height;alpha").split(";")),
                           QStringList(QString("Id of viewer (default is 0);Width of image;Height of image;Transparent background").split(";")));
+  emit setSlotDescription("snapshot(uint,int,int,bool,bool)", tr("Make a snapshot of the viewer with id viewerId."
+                          " Pass 0 as viewerId parameter to capture the current viewer. "
+                          " The captured image will have the specified dimensions. "
+                          " If 0 is passed as either width or height parameter, the value will "
+                          " automatically be set to hold the right aspect ratio, respectively. "
+                          " If 0 is passed for both width and height values, the viewport's current "
+                          " dimension is used. Set alpha to true if you want the background to be transparent. "
+                          " The fifth parameter is used to hide the coordinate system in the upper right corner of the screen. "
+                          " If no filename was set using snapshotBaseFileName() the snapshot is stored"
+                          " in snap.png in the current directory. For every snapshot"
+                          " a counter is added to the filename."), QStringList(QString("viewerId;width;height;alpha;hideCoordsys").split(";")),
+                          QStringList(QString("Id of viewer (default is 0);Width of image;Height of image;Transparent background;Hide coordsys node").split(";")));
   emit setSlotDescription("resizeViewer(int,int)", tr("Resize the viewer"),
                            QString(tr("width,height")).split(","),
                            QString(tr("new width for the viewer,new height for the viewer")).split(","));

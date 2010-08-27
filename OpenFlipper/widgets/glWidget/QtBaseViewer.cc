@@ -2032,7 +2032,7 @@ void glViewer::slotPropertiesUpdated() {
   updateGL();
 }
 
-void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha) {
+void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bool _hideCoordsys) {
     
     int w = 0, h = 0, bak_w = 0, bak_h = 0, left = 0, bottom = 0;
     
@@ -2076,6 +2076,18 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha) {
       ACG::Vec4f backColorBak;
       ACG::Vec4f newBack;
       
+      // Hide coordsys node if demanded
+      if(_hideCoordsys) {
+          // Find coordsys node
+          ACG::SceneGraph::BaseNode* node = 0;
+          node = sceneGraphRoot_->find("Core Coordsys Node");
+          if(node != 0) {
+              node->hide();
+          } else {
+              emit statusMessage(QString(tr("Could not find coordsys node, thus it will appear in the snapshot anyway.")));
+          }
+      }
+      
       backColorBak = properties()->backgroundColor();
       newBack = ACG::Vec4f(backColorBak[0], backColorBak[1], backColorBak[2], (_alpha ? 0.0f : 1.0f));
       properties()->backgroundColor(newBack);
@@ -2095,6 +2107,15 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha) {
     if(_width != 0 || _height != 0) {
         // Reset viewport to former size
         glstate_->viewport(left, bottom, bak_w, bak_h);
+    }
+    
+    if(_hideCoordsys) {
+        // Find coordsys node
+        ACG::SceneGraph::BaseNode* node = 0;
+        node = sceneGraphRoot_->find("Core Coordsys Node");
+        if(node != 0) {
+            node->show();
+        }
     }
 }
 
