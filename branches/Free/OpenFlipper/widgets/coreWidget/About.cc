@@ -59,7 +59,9 @@
 #include <OpenFlipper/common/GlobalOptions.hh>
 
 #ifndef WIN32
-  #include <malloc.h>
+  #ifndef ARCH_DARWIN
+    #include <malloc.h>
+  #endif
 #endif
 
 //== IMPLEMENTATION ==========================================================
@@ -114,9 +116,17 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
   aboutWidget_->OpenFlipperAbout->append(tr("Memory Information:"));    
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
-  
-  #ifndef WIN32
-  
+ 
+ 
+  #ifdef WIN32 
+ 
+    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (WIN32)"));   
+
+  #elif defined ARCH_DARWIN 
+
+    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)"));   
+
+  #else
     unsigned long memory = 0;
     
     struct mallinfo info;
@@ -152,9 +162,6 @@ void CoreWidget::showAboutWidget( ) {
     aboutWidget_->OpenFlipperAbout->append(tr("Free Memory:\t\t ") + QString::number(freeMem,'f' ,2 )  + tr("MB ")
                                            + tr("(") + QString::number(availablePages,'f' ,0 ) + tr(" pages of ") 
                                            + QString::number(pageSize,'f' ,2 ) + tr("KB size)"));
-    
-  #else
-    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform"));   
     
   #endif
   
