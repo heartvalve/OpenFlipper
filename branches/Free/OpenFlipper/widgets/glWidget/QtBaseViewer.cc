@@ -2063,9 +2063,13 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
     QGLFramebufferObjectFormat format;
     format.setInternalTextureFormat(GL_RGBA);
     format.setTextureTarget(GL_TEXTURE_2D);
+    // set the attachments as in the standard rendering
     format.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
+    // 16 samples per pixel as we want a nice snapshot. If this is not supported
+    // it will fall back to the maximal supported number of samples
+    format.setSamples(16);
     QGLFramebufferObject fb( w, h, format);
-
+    
     if ( fb.isValid() ){
 
       fb.bind();
