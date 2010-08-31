@@ -1,5 +1,69 @@
 /*! \page changelog Changelog
  *
+ * - <b>OpenFlipper 1.0 (  ? , 9936 )</b>
+ *
+ *      - <b>ACG</b>
+ *          - Quaternions
+ *              - Matrix constructor added
+ *              - Added dual quaternions
+ *          - MeshNode
+ *              - Added per face per vertex normal buffer
+ *          - TextureNode
+ *              - Enable or disable Mipmapping
+ *          - GLState
+ *              - Enable or disable Mipmapping
+ *          - Dialogs
+ *              - Added Dialog for texture node
+ *      - <b>Core</b>
+ *          - Startup
+ *              - Added some functions to check for correct lib versions (prevent linking against newer qt than compile version)
+ *          - Rendering 
+ *              - Sanity Checks for OpenGL Version. Test for GL capabilities on startup.
+ *              - Removed light handling completely ( -> Plugin-TypeLight)
+ *              - Added options to enable or disable mipmapping
+ *          - Key Handling
+ *              - Fixed alt-key bug where last mode was not restored correctly on windows
+ *          - Info
+ *              - Show memory usage information in about dialog on linux
+ *          - Load/Save
+ *              - Fixed bug when supported extensions are not parsed correctly
+ *          - Snapshots
+ *              - Render snapshots offscreen (Arbitrary size)
+ *              - Added option to hide coordsys in snapshots
+ *              - Added options to set background to alpha in snapshots
+ *      - <b>ObjectTypes</b>
+ *          - MeshObjects 
+ *              - BSP Tree 
+ *                  - Improve cutting planes to speedup search (more balanced tree)
+ *                  - Allow ray intersections for searching in tree (Search for all faces hit by ray)
+ *
+ *      - <b>Plugins</b>
+ *          - Selection
+ *              - BSplineSurface Knot Selection
+ *              - BSplineSurface Selection
+ *              - Render Selections for BSpline Curve and Surface
+ *          - Decimater
+ *              - Support backup plugin ( ->undo )
+ *          - Smoother
+ *              - Support backup plugin ( ->undo )
+ *          - Move
+ *              - Support backup plugin ( ->undo )
+ *          - Info
+ *              - Bugfix -> Dihedral angle for quad meshes computed wrong
+ *          - ViewControl
+ *              - Support Splines
+ *          - FileOBJ
+ *              - Bugfix for negative indices for vertices
+ *          - FileOFF
+ *              - Bugfix for crash when reading degenerate faces
+ *      - <b>Documentation</b>
+ *          - More docs for backup interface (incl. Tutorial)
+ *      - <b>Build System</b>
+ *          - Do not include files starting with a dot when creating build lists
+ *          
+ *       
+ * 
+ *
  * - <b>OpenFlipper 1.0 (  06.23.2010 , 9691 RC7 )</b>
  *      - <b>Core</b>
  *          - Added Light source management
