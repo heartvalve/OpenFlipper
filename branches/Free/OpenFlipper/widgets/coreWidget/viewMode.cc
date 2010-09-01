@@ -304,8 +304,8 @@ void CoreWidget::slotSetViewMode( QAction* action){
 }
 
 /// Slot for setting the viewMode from menu
-void CoreWidget::setViewMode( QString _mode ){
-  slotChangeView(_mode, QStringList(), QStringList(), QStringList());
+void CoreWidget::setViewMode( QString _mode, bool _expandAll ){
+  slotChangeView(_mode, QStringList(), QStringList(), QStringList(), _expandAll);
 }
 
 void CoreWidget::slotAddViewModeComplete(QString _mode , bool _custom, QStringList _toolboxes, QStringList _toolbars, QStringList _contextmenus) {
@@ -349,7 +349,7 @@ void CoreWidget::slotViewChangeDialog() {
 }
 
 /// Slot for Changing visible toolWidgets
-void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus ){
+void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus, bool _expandAll ){
 
   //try to find Widgets if they aren't given
   if (_mode != "" && _toolboxWidgets.size() == 0 && _toolbars.size() == 0)
@@ -357,7 +357,7 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
       if (viewModes_[i]->name == _mode) {
         _toolboxWidgets = viewModes_[i]->visibleToolboxes;
         _toolbars       = viewModes_[i]->visibleToolbars;
-	_contextmenus	= viewModes_[i]->visibleContextMenus;
+        _contextmenus	  = viewModes_[i]->visibleContextMenus;
       }
   
   // Remove all toolbox entries
@@ -370,6 +370,9 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
         if (_toolboxWidgets[i] == plugins_[p].toolboxWidgets[j].first )
           toolBox_->addItem (plugins_[p].toolboxWidgets[j].second, plugins_[p].toolboxWidgets[j].first);
     }
+
+  if (_expandAll)
+    toolBox_->expandAll();
 
   //find all Toolbars that should be visible and hide the others
   for (uint p=0; p < plugins_.size(); p++)

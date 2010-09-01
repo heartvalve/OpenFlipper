@@ -88,6 +88,16 @@ void SideArea::clear ()
 
 //-----------------------------------------------------------------------------
 
+void SideArea::expandAll()
+{
+  foreach (SideElement *e, items_)
+  {
+    e->setActive(true);
+  }
+}
+
+//-----------------------------------------------------------------------------
+    
 void SideArea::saveState (QSettings &_settings)
 {
   _settings.beginGroup ("SideArea");
