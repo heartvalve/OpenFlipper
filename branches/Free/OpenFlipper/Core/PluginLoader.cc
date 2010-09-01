@@ -1060,11 +1060,23 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
   if ( backupPlugin ) {
     supported = supported + "Backups ";
 
+    // Incoming Signal that a backup group should be created 
+    // send to local slot generating group id and delivers to all other plugins
+    if ( checkSignal( plugin , "createBackupGroup(QString,int&)" ) ) {
+      connect(plugin , SIGNAL(createBackupGroup(QString , int&)) ,
+              this   , SLOT(slotBackupGroup(QString , int&)),Qt::DirectConnection );
+    }
+    // Signal send from core to plugins that they should create a backup group
+    if ( checkSlot( plugin , "slotBackupGroup(QString,int)" ) ) {
+      connect(this   , SIGNAL(createBackupGroup(QString,int)) ,
+              plugin , SLOT( slotBackupGroup(QString,int) ),Qt::DirectConnection);
+    }
+    
     // Incoming Signal that a backup should be created 
     // send to local slot generating backup id and delivers to all other plugins
-    if ( checkSignal( plugin , "createBackup(int,QString,int&)" ) ) {
-      connect(plugin , SIGNAL(createBackup( int , QString , int&)) ,
-              this   , SLOT(slotBackup( int , QString , int&)),Qt::DirectConnection );
+    if ( checkSignal( plugin , "createBackup(int,QString,int&,int)" ) ) {
+      connect(plugin , SIGNAL(createBackup( int , QString , int&, int)) ,
+              this   , SLOT(slotBackup( int , QString , int&, int)),Qt::DirectConnection );
     }
     
     // send to local slot generating backup id and delivers to all other plugins
@@ -1074,9 +1086,9 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
     }
     
     // Signal send from core to plugins that they should create a backup
-    if ( checkSlot( plugin , "slotBackup(int,QString,int)" ) ) {
-      connect(this   , SIGNAL(createBackup(int,QString,int)) ,
-              plugin , SLOT( slotBackup(int,QString,int) ),Qt::DirectConnection);
+    if ( checkSlot( plugin , "slotBackup(int,QString,int,int)" ) ) {
+      connect(this   , SIGNAL(createBackup(int,QString,int,int)) ,
+              plugin , SLOT( slotBackup(int,QString,int,int) ),Qt::DirectConnection);
     }
     
     // Signal send from plugin to core that a backup should be made persistent
@@ -1091,7 +1103,6 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
               plugin , SLOT( slotMakeBackupPersistent(int,int) ),Qt::DirectConnection);
     }
 
-    
     // Signal from plugin to restore an object with the given id
     if ( checkSignal( plugin , "restoreObject(int,int)" ) ) {
       connect(plugin , SIGNAL(restoreObject(int,int)) ,
@@ -1103,7 +1114,20 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
       connect(this   , SIGNAL(restoreObject(int,int)) ,
               plugin , SLOT( slotRestoreObject(int,int) ),Qt::DirectConnection);
     }
+
+
+    // Signal from plugin to restore a group with the given id
+    if ( checkSignal( plugin , "restoreGroup(int)" ) ) {
+      connect(plugin , SIGNAL(restoreGroup(int)) ,
+              this   , SLOT(slotRestoreGroup(int)),Qt::DirectConnection );
+    }
     
+    // Signal send from core to backup plugin that it should restore the given group
+    if ( checkSlot( plugin , "slotRestoreGroup(int)" ) ) {
+      connect(this   , SIGNAL(restoreGroup(int)) ,
+              plugin , SLOT( slotRestoreGroup(int) ),Qt::DirectConnection);
+    }
+
     //====================================================================================
     // Backup Plugin signals for communication with the other plugins about restore state
     //====================================================================================

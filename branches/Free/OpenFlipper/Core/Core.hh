@@ -263,11 +263,17 @@ signals:
    /// This signal is emitted before the core deletes its data and exits
    void saveOnExit( INIFile& _ini );
 
+   /// Tell plugins to create a backup group
+   void createBackupGroup( QString _name , int _groupId);
+   
    /// Tell plugins to create a backup
-   void createBackup( int _objectId , QString _name , int _internalId);
+   void createBackup( int _objectId , QString _name , int _internalId, int groupId = -1);
    
    /// Tell Plugins to make a backup persistent
    void makeBackupPersistent(int _objectid, int _internalId);
+   
+   /// Tell Backup Plugin to restore a group with the given group id
+   void restoreGroup( int _groupId);
    
    /// Tell Backup Plugin to restore an object with the given backup id
    void restoreObject( int _objectId, int _internalId);
@@ -385,11 +391,17 @@ signals:
       ///Called by plugins if a multi-texture's sub textures should be fetched
       void slotGetSubTextures( int _id, QString _multiTextureName, QStringList& _subTextures );
 
+      /// Called if a backup group is requested by the plugins
+      void slotBackupGroup(QString _name, int& _groupId );
+      
       /// Called if a backup is requested by the plugins
-      void slotBackup( int _objectId, QString _name, int& _internalId );
+      void slotBackup( int _objectId, QString _name, int& _internalId, int _groupId = -1 );
       
       /// Called if a backup is requested by the plugins
       void slotBackup( int _objectId, QString _name );
+
+      /// Called if a group restore is requested by the plugins
+      void slotRestoreGroup( int _groupId);
       
       /// Called if a backup is requested by the plugins
       void slotRestore( int _objectId, int _internalId = -1 );
@@ -1134,6 +1146,9 @@ private slots:
 
   /// Id for the next backup
   int nextBackupId_;
+  
+  /// Id for the next backup group
+  int nextBackupGroupId_;
 
   /// Logger interfaces between plugins and core logger
   std::vector<PluginLogger*> loggers_;
