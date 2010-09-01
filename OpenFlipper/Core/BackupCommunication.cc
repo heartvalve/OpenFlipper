@@ -62,8 +62,23 @@
 // ===             Backup Communication                       ============================
 //========================================================================================
 
+void Core::slotBackupGroup(QString _name, int& _groupId ) {
+  if ( sender() != 0 ) {
+    if ( sender()->metaObject() != 0 ) {
+      _name = QString(sender()->metaObject()->className()) + ": " + _name;
+      
+      if ( OpenFlipper::Options::doSlotDebugging() ) 
+        emit log(LOGINFO,"slotBackupGroup( " + _name + " ) called by " + QString( sender()->metaObject()->className() ) );
+    }
+  }
+  
+  _groupId = nextBackupGroupId_;
+  emit createBackupGroup( _name , nextBackupGroupId_);
+  ++nextBackupGroupId_;
+}
+
 /// Called if a backup is requested by the plugins
-void Core::slotBackup( int _objectId, QString _name, int& _internalId ) {
+void Core::slotBackup( int _objectId, QString _name, int& _internalId, int _groupId ) {
   if ( sender() != 0 ) {
     if ( sender()->metaObject() != 0 ) {
       _name = QString(sender()->metaObject()->className()) + ": " + _name;
@@ -75,7 +90,7 @@ void Core::slotBackup( int _objectId, QString _name, int& _internalId ) {
   }
   
   _internalId = nextBackupId_;
-  emit createBackup(  _objectId , _name , nextBackupId_);
+  emit createBackup(  _objectId , _name , nextBackupId_, _groupId);
   ++nextBackupId_;
 }
 
@@ -93,6 +108,10 @@ void Core::slotBackup( int _objectId, QString _name ) {
   
   emit createBackup(  _objectId , _name , nextBackupId_);
   ++nextBackupId_;
+}
+
+void Core::slotRestoreGroup( int _groupId) {
+  emit restoreGroup(_groupId);
 }
 
 void Core::slotRestore( int _objectId, int _internalId ) {
