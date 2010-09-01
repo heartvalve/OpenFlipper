@@ -149,7 +149,17 @@ class ViewModeInterface {
     * @param _mode name of the ViewMode
     * @param _iconName Name of the Icon used for this view mode
     */
-    virtual void defineViewModeIcon(QString /*_mode*/, QString /*_iconName*/){};        
+    virtual void defineViewModeIcon(QString /*_mode*/, QString /*_iconName*/){};
+
+    /** \brief Set a ViewMode
+    *
+    * With this function you can set a viewMode
+    * This will show all corresponding toolboxes/toolbars
+    * 
+    * @param _mode name of the ViewMode
+    * @param _expandAll Expand all toolboxes
+    */
+    virtual void setViewMode(QString /*_mode*/, bool /*_expandAll*/ = false){};
 
 };
 
