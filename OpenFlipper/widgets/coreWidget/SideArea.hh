@@ -85,6 +85,9 @@ class SideArea : public QWidget {
 
     /// clears the whole tool widget area
     void clear ();
+    
+    //expand all elements
+    void expandAll();
 
     /// returns the current state
     void saveState (QSettings &_settings);

@@ -89,6 +89,9 @@ class SideElement : public QWidget
     /// Destructor
     ~SideElement ();
 
+    /// Set the element as active
+    void setActive(bool _active);
+    
     /// saves the current state
     void saveState (QSettings &_settings);
 

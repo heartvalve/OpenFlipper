@@ -146,6 +146,29 @@ void SideElement::labelPress ()
 
 //-----------------------------------------------------------------------------
 
+void SideElement::setActive(bool _active)
+{
+  if ( dialog_ )
+  {
+    dialog_->raise ();
+    dialog_->activateWindow ();
+  }
+  else
+  {
+    active_ = _active;
+    if (active_)
+      widget_->show ();
+    else
+      widget_->hide ();
+
+    QFont font;
+    font.setBold (active_);
+    label_->setFont (font);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void SideElement::detachPressed (bool checked_)
 {
   if (checked_)

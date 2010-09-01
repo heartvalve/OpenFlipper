@@ -433,7 +433,7 @@ public:
       void slotSetViewModeIcon(QString _mode, bool _custom, QString _iconName);
 
       /// Slot for Changing visible toolWidgets
-      void slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus);
+      void slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus, bool _expandAll = false);
 
     private slots:
       /// Remove viewMode
@@ -451,7 +451,7 @@ public:
 
       /// Set the view Mode to the given Mode
     public slots :
-      void setViewMode( QString _mode );
+      void setViewMode( QString _mode, bool _expandAll = false );
 
    /** @} */
 
