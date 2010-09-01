@@ -88,6 +88,11 @@ void Core::slotStartJob( QString _jobId, QString _description , int _min , int _
 
 	  info->blockingWidget = widget;
 
+    int x = (coreWidget_->width()  / 2) - (widget->width()  / 2);
+    int y = (coreWidget_->height() / 2) - (widget->height() / 2);
+
+    widget->setGeometry( x, y, widget->width(), widget->height());
+
 	  // Show blocking widget
 	  widget->show();
 
