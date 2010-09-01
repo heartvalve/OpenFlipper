@@ -740,9 +740,12 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
               
     if ( checkSignal(plugin, "defineViewModeIcon(QString,QString)"))
       connect(plugin, SIGNAL( defineViewModeIcon(QString, QString) ),
-              coreWidget_, SLOT( slotSetViewModeIcon(QString, QString) ),Qt::DirectConnection );                          
-              
-  }    
+              coreWidget_, SLOT( slotSetViewModeIcon(QString, QString) ),Qt::DirectConnection );
+
+    if ( checkSignal(plugin, "setViewMode(QString,bool)"))
+      connect(plugin,    SIGNAL( setViewMode(QString, bool) ),
+              coreWidget_, SLOT( setViewMode(QString, bool) ),Qt::DirectConnection );
+  }
 
   //Check if the plugin supports Options-Interface
   OptionsInterface* optionsPlugin = qobject_cast< OptionsInterface * >(plugin);
