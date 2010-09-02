@@ -231,7 +231,8 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
   if ( (_drawMode & DrawModes::SOLID_TEXTURED )  ) {
     glEnable(GL_AUTO_NORMAL);
     glEnable(GL_NORMALIZE);
-
+    glEnable (GL_BLEND); 
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_LIGHTING);
     glShadeModel(GL_SMOOTH);
     glDepthRange(0.01, 1.0);
@@ -241,6 +242,7 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
     arb_texture_used_ = false;
 
     glDepthRange(0.0, 1.0);
+    glDisable(GL_BLEND);
   }
 
 
