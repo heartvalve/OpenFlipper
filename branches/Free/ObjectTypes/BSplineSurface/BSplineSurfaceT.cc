@@ -353,7 +353,7 @@ get_vector_n(std::vector< Point> & _control_polygon, unsigned int _n)
   _control_polygon.resize(dimm_);
 
   for (unsigned int i = 0; i < dimm_; ++i)
-    _control_polygon[i] = _control_polygon[i][_n];
+    _control_polygon[i] = control_net_[i][_n];
 }
 
 //-----------------------------------------------------------------------------
@@ -479,6 +479,28 @@ derivativeSurfacePoint(double _u, double _v, int _derm, int _dern)
                                   * derivativeBasisFunction(knotvector_n_, j, pn, _v, _dern);
   
   return point;
+}
+
+//-----------------------------------------------------------------------------
+
+template <class PointT>
+PointT
+BSplineSurfaceT<PointT>::
+normalSurfacePoint(double _u, double _v)
+{
+  assert(_u >= loweru() && _u <= upperu());
+  assert(_v >= lowerv() && _v <= upperv());
+
+  int pn = degree_n();
+  int pm = degree_m();
+
+
+  Point derivu( derivativeSurfacePoint(_u,_v,1,0));
+  Point derivv( derivativeSurfacePoint(_u,_v,0,1));
+
+  Point normal( (derivu%derivv).normalize());
+
+  return normal;
 }
 
 //-----------------------------------------------------------------------------

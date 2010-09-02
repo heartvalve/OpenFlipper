@@ -272,7 +272,7 @@ public:
 
 
   /**
-   * Returns the _derm'th derivative of a spline curve
+   * Returns the _derm'th derivative of a spline surface
    * \param _u the parameter in u direction
    * \param _u the parameter in v direction
    * \param _derm the _derm'th derivative in m
@@ -281,6 +281,13 @@ public:
    */
   Point derivativeSurfacePoint(double _u, double _v, int _derm, int _dern);
 
+  /**
+   * Returns the normal of a spline surface
+   * \param _u the parameter in u direction
+   * \param _u the parameter in v direction
+   * \return the normal
+   */
+  Point normalSurfacePoint(double _u, double _v);
 public:
 
   /**
