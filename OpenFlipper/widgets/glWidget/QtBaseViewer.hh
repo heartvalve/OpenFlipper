@@ -768,7 +768,7 @@ private:
     virtual void snapshot(int _width = 0, int _height = 0, bool _alpha = false);
 
     /// Take a snapshot and store it in the given image
-    virtual void snapshot(QImage& _image, int _width = 0, int _height = 0, bool _alpha = false, bool _hideCoordsys = false);
+    virtual void snapshot(QImage& _image, int _width = 0, int _height = 0, bool _alpha = false, bool _hideCoordsys = false, int samples = 1);
 
   /** @} */
 

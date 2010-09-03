@@ -233,7 +233,7 @@ void CoreWidget::slotLocalChangeMipmapping(bool _mipmapping) {
 }
 
 /// Take a snapshot of the current Viewer
-void CoreWidget::slotSnapshot() {
+void CoreWidget::slotExaminerSnapshot() {
 
   QFileInfo fi(PluginFunctions::viewerProperties().snapshotName());
   int counter = PluginFunctions::viewerProperties().snapshotCounter();
@@ -419,7 +419,8 @@ void CoreWidget::viewerSnapshotDialog() {
 
         examiner_widgets_[PluginFunctions::activeExaminer()]->snapshot(finalImage,
                 dialog.snapWidth->value(), dialog.snapHeight->value(),
-                dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked());
+                dialog.transparent->isChecked(), dialog.hideCoordsys->isChecked(),
+		dialog.multisampling->isChecked() ? dialog.num_samples->value() : 1);
 
         finalImage.save(newName);
 

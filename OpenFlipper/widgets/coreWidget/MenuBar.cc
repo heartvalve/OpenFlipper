@@ -249,6 +249,15 @@ void CoreWidget::setupMenuBar()
   connect( orthogonalProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalOrthographicProjection() ) );
   renderingOptionsMenu->addAction( orthogonalProjectionAction_);
 
+  perspectiveProjectionAction_ = new QAction( tr("Switch Viewers to Perspective Projection"), viewMenu_ );;
+  perspectiveProjectionAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
+  perspectiveProjectionAction_->setCheckable( false );
+  perspectiveProjectionAction_->setStatusTip( tr("Switch to perspective projection mode."));
+  perspectiveProjectionAction_->setWhatsThis( tr("Switch projection mode<br><br>"
+                                                 "Switch to <b>perspective</b> projection mode."));
+  connect( perspectiveProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalPerspectiveProjection() ) );
+  renderingOptionsMenu->addAction( perspectiveProjectionAction_);
+
   // =====================
 
   globalAnimationAction_ = renderingOptionsMenu->addAction(tr("Animation"));
@@ -346,15 +355,6 @@ void CoreWidget::setupMenuBar()
                                       "Take a snapshot from OpenFlipper."));
   connect( appSnapShotAction,SIGNAL( triggered() ), this, SLOT( applicationSnapshotDialog() ) );
   viewMenu_->addAction( appSnapShotAction);
-
-  perspectiveProjectionAction_ = new QAction( tr("Switch Viewers to Perspective Projection"), viewMenu_ );;
-  perspectiveProjectionAction_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
-  perspectiveProjectionAction_->setCheckable( false );
-  perspectiveProjectionAction_->setStatusTip( tr("Switch to perspective projection mode."));
-  perspectiveProjectionAction_->setWhatsThis( tr("Switch projection mode<br><br>"
-                                                 "Switch to <b>perspective</b> projection mode."));
-  connect( perspectiveProjectionAction_,SIGNAL( triggered() ), this, SLOT( slotGlobalPerspectiveProjection() ) );
-  viewMenu_->addAction( perspectiveProjectionAction_);
 
   viewMenu_->addSeparator();
 
@@ -606,13 +606,13 @@ void CoreWidget::slotViewMenuAboutToShow() {
     else
       orthogonalCount++;
   }
-
-  if ( perspectiveCount == 4 )
+  
+  if ( perspectiveCount == PluginFunctions::viewers() )
     perspectiveProjectionAction_->setVisible(false);
   else
     perspectiveProjectionAction_->setVisible(true);
 
-  if ( orthogonalCount == 4 )
+  if ( orthogonalCount == PluginFunctions::viewers() )
     orthogonalProjectionAction_->setVisible(false);
   else
     orthogonalProjectionAction_->setVisible(true);
