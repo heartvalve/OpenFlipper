@@ -174,6 +174,7 @@ void setScenePos(const ACG::Vec3d& _center, const double _radius  , int _viewer 
 *                ACTIVE_VIEWER active viewer
 *                0..3 Choose viewer explicitly
 */
+DLLEXPORT
 void setTrackBallCenter(const ACG::Vec3d& _center, int _viewer );
 
 
@@ -187,6 +188,7 @@ void setTrackBallCenter(const ACG::Vec3d& _center, int _viewer );
 *                ACTIVE_VIEWER active viewer
 *                0..3 Choose viewer explicitly
 */
+DLLEXPORT
 const ACG::Vec3d trackBallCenter(const ACG::Vec3d& _center, int _viewer );
 
 /** \brief Set the scene position
