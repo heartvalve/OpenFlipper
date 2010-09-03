@@ -597,8 +597,8 @@ void CoreWidget::slotViewMenuAboutToShow() {
     globalMultisamplingAction_->setText(tr("Enable Multisampling"));
   }
 
-  uint perspectiveCount = 0;
-  uint orthogonalCount = 0;
+  int perspectiveCount = 0;
+  int orthogonalCount = 0;
 
   for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i ) {
     if ( examiner_widgets_[ i ]->projectionMode() == glViewer::PERSPECTIVE_PROJECTION )

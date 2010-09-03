@@ -60,9 +60,12 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, i
   
   // Disable 'change resolution' button if
   // in viewer snapshot mode
+  multisampling->setChecked(captureViewers_);
   resButton->setDisabled(captureViewers_);
   keepAspect->setDisabled(!captureViewers_);
   transparent->setDisabled(!captureViewers_);
+  multisampling->setDisabled(!captureViewers_);
+  num_samples->setDisabled(!captureViewers_);
   
   snapWidth->setValue(_w);
   snapHeight->setValue(_h);
