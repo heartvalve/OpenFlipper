@@ -336,10 +336,17 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 
   //====================================================================================================
 
-  QAction* snapshot = _menu->addAction(tr("Snapshot"));
-  snapshot->setToolTip(tr("Make a snapshot"));
-  snapshot->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
-  connect(snapshot, SIGNAL(triggered()), this, SLOT( slotSnapshot() ) );
+  QAction* snapshot_examiner = _menu->addAction(tr("Examiner Snapshot"));
+  snapshot_examiner->setToolTip(tr("Take a snapshot of the current examiner"));
+  snapshot_examiner->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
+  connect(snapshot_examiner, SIGNAL(triggered()), this, SLOT( slotExaminerSnapshot() ) );
+  
+  //====================================================================================================
+  
+  QAction* snapshot_viewer = _menu->addAction(tr("Viewer Snapshot"));
+  snapshot_viewer->setToolTip(tr("Take a snapshot of the whole viewer"));
+  snapshot_viewer->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
+  connect(snapshot_viewer, SIGNAL(triggered()), this, SLOT( viewerSnapshotDialog() ) );
 
 }
 

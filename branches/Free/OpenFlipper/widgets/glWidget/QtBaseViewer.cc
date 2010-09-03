@@ -1,4 +1,4 @@
-/*===========================================================================*\
+ /*===========================================================================*\
  *                                                                           *
  *                              OpenFlipper                                  *
  *      Copyright (C) 2001-2010 by Computer Graphics Group, RWTH Aachen      *
@@ -2032,7 +2032,7 @@ void glViewer::slotPropertiesUpdated() {
   updateGL();
 }
 
-void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bool _hideCoordsys) {
+void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bool _hideCoordsys, int samples) {
     
     int w = 0, h = 0, bak_w = 0, bak_h = 0, left = 0, bottom = 0;
     
@@ -2067,7 +2067,7 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
     format.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
     // 16 samples per pixel as we want a nice snapshot. If this is not supported
     // it will fall back to the maximal supported number of samples
-    format.setSamples(16);
+    format.setSamples(samples);
     QGLFramebufferObject fb( w, h, format);
     
     if ( fb.isValid() ){

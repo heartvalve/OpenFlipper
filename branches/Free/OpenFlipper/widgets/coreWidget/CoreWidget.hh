@@ -693,7 +693,7 @@ public:
     void slotUpdateViewerDrawMenu();
 
     /// Create a snapshot of the last active examiner
-    void slotSnapshot();
+    void slotExaminerSnapshot();
 
     /// Show / hide wheels
     void slotSwitchWheels(bool _state);
