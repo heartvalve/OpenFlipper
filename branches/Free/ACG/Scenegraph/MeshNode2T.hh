@@ -320,7 +320,9 @@ private:
     PER_FACE_NORMAL_ARRAY            = 256,
     PER_FACE_PER_VERTEX_NORMAL_ARRAY = 512,
     PER_FACE_COLOR_ARRAY             = 1024,
-    PER_FACE_TEXCOORD_ARRAY          = 2048
+    PER_FACE_TEXCOORD_ARRAY          = 2048,
+    PER_HALFEDGE_VERTEX_ARRAY        = 4096,
+    PER_HALFEDGE_COLOR_ARRAY         = 8192
   };
   
   /// which arrays are currently enabled?
@@ -358,6 +360,12 @@ private:
   *
   */
   inline void draw_lines();
+
+  /** \brief draws all halfedges of the mesh
+  *
+  */
+  inline void draw_halfedges();
+
   
   /** \brief draws all faces of the mesh 
   *

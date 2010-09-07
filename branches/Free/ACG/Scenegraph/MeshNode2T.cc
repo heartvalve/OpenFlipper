@@ -154,6 +154,7 @@ availableDrawModes() const {
   drawModes |= DrawModes::POINTS;
   drawModes |= DrawModes::HIDDENLINE;
   drawModes |= DrawModes::WIREFRAME;
+  drawModes |= DrawModes::HALFEDGES;
   
   if (mesh_.has_vertex_normals())
   {
@@ -174,6 +175,11 @@ availableDrawModes() const {
   if(mesh_.has_edge_colors())
   {
     drawModes |= DrawModes::EDGES_COLORED;
+  }
+
+  if(mesh_.has_halfedge_colors())
+  {
+    drawModes |= DrawModes::HALFEDGES_COLORED;
   }
   
   if (mesh_.has_face_colors()) {
@@ -302,6 +308,21 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
     draw_lines();
   }  
 
+  if (_drawMode & DrawModes::HALFEDGES)
+  {
+    enable_arrays( PER_HALFEDGE_VERTEX_ARRAY);
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    draw_halfedges();
+  }  
+
+  if (_drawMode & DrawModes::HALFEDGES_COLORED)
+  {
+    enable_arrays( PER_HALFEDGE_VERTEX_ARRAY | PER_HALFEDGE_COLOR_ARRAY );
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    draw_halfedges();
+  }  
   
   if ( ( _drawMode & DrawModes::SOLID_POINTS_COLORED ) && mesh_.has_vertex_colors() )
   {
@@ -497,6 +518,19 @@ draw_lines() {
   // Something went wrong here!
   else
     std::cerr << "Unable to Draw! array configuration is invalid!!" << std::endl;
+}
+
+
+template<class Mesh>
+void
+MeshNodeT<Mesh>::
+draw_halfedges() {
+  // If we are rendering per edge per vertex attributes, we need to use a seperated vertex buffer!
+  if ( enabled_arrays_ & PER_HALFEDGE_VERTEX_ARRAY )
+    glDrawArrays(GL_LINES, 0, mesh_.n_halfedges() * 2);
+  // Something went wrong here!
+  else
+    std::cerr << "Unable to Draw! halfedge array configuration is invalid!!" << std::endl;
 }
 
 template<class Mesh>
@@ -708,6 +742,55 @@ enable_arrays(unsigned int _arrays) {
   } else if (enabled_arrays_ & PER_EDGE_COLOR_ARRAY) {
     // Disable Vertex array
     enabled_arrays_ &= ~PER_EDGE_COLOR_ARRAY;
+    glDisableClientState(GL_COLOR_ARRAY);
+  }   
+
+
+  //===================================================================
+  // per Halfedge Vertex Array
+  //===================================================================  
+  
+  // Check if we should enable the per face vertex array
+  if (_arrays & PER_HALFEDGE_VERTEX_ARRAY)  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & PER_HALFEDGE_VERTEX_ARRAY)) {
+      enabled_arrays_ |= PER_HALFEDGE_VERTEX_ARRAY;
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      glVertexPointer( stripProcessor_.perHalfedgeVertexBuffer() );   
+      
+      glEnableClientState(GL_VERTEX_ARRAY);
+      
+    }
+  } else if (enabled_arrays_ & PER_HALFEDGE_VERTEX_ARRAY) {
+    // Disable Vertex array
+    enabled_arrays_ &= ~PER_HALFEDGE_VERTEX_ARRAY;
+    glDisableClientState(GL_VERTEX_ARRAY);
+  } 
+  
+  //===================================================================
+  // per Halfedge Color Array
+  //===================================================================  
+  
+  // Check if we should enable the per face vertex array
+  if ( mesh_.has_halfedge_colors()  && ( _arrays & PER_HALFEDGE_COLOR_ARRAY) )  {
+    
+    // Check if its already enabled
+    if (!(enabled_arrays_ & PER_HALFEDGE_COLOR_ARRAY)) {
+      enabled_arrays_ |= PER_HALFEDGE_COLOR_ARRAY;
+      
+      // For this version we load the colors directly not from vbo
+      glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+      glColorPointer( stripProcessor_.perHalfedgeColorBuffer() );
+      
+      glEnableClientState(GL_COLOR_ARRAY);
+      
+    }
+  } else if (enabled_arrays_ & PER_HALFEDGE_COLOR_ARRAY) {
+    // Disable Vertex array
+    enabled_arrays_ &= ~PER_HALFEDGE_COLOR_ARRAY;
     glDisableClientState(GL_COLOR_ARRAY);
   }   
   
@@ -1285,6 +1368,9 @@ update_geometry() {
   
   // Set per edge arrays to invalid as they have to be regenerated
   stripProcessor_.invalidatePerEdgeBuffers();
+
+  // Set per halfedge arrays to invalid as they have to be regenerated
+  stripProcessor_.invalidatePerHalfedgeBuffers();
   
   // First of all, we update the bounding box:
   bbMin_ = Vec3d(FLT_MAX,  FLT_MAX,  FLT_MAX);
@@ -1405,6 +1491,9 @@ update_topology() {
   
   // Set per edge arrays to invalid as they have to be regenerated
   stripProcessor_.invalidatePerEdgeBuffers();
+
+  // Set per halfedge arrays to invalid as they have to be regenerated
+  stripProcessor_.invalidatePerHalfedgeBuffers();
   
 //   std::cerr << "Created " << stripProcessor_.nStrips() << " strips\n" << std::endl;
   
@@ -1502,6 +1591,7 @@ update_color() {
   glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
   
   stripProcessor_.invalidatePerEdgeBuffers();
+  stripProcessor_.invalidatePerHalfedgeBuffers();
   stripProcessor_.invalidatePerFaceBuffers();
 }
 

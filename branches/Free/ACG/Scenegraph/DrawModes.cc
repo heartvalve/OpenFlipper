@@ -309,6 +309,9 @@ void initializeDefaultDrawModes( void )
     currentDrawModes_.push_back( DrawModeInternal( "Cells", CELLS ) );
     currentDrawModes_.push_back( DrawModeInternal( "Cells Colored", CELLS_COLORED ) );
     
+    currentDrawModes_.push_back( DrawModeInternal( "Halfedges", HALFEDGES ) );
+    currentDrawModes_.push_back( DrawModeInternal( "Halfedges Colored", HALFEDGES_COLORED ) );
+
     firstFreeID_ = UNUSED;
     initialized_ = true;
 }

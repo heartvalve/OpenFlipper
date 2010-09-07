@@ -254,9 +254,18 @@ namespace DrawModes {
   DrawMode const CELLS_COLORED  = ModeFlagSet(1) << 26;
 
 
+  //======================================================================
+  //  Halfedge Based Rendering Modes
+  //======================================================================
+  /// draw halfedges
+  DrawMode const HALFEDGES          = ModeFlagSet(1) << 27;
+
+  /// draw halfedges with colors (without shading)
+  DrawMode const HALFEDGES_COLORED  = ModeFlagSet(1) << 28;
+
 
   /// marks the last used ID
-  DrawMode const UNUSED = ModeFlagSet(1) << 27;
+  DrawMode const UNUSED = ModeFlagSet(1) << 29;
   
 
   //=======================================================================

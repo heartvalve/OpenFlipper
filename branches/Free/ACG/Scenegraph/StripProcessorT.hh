@@ -256,6 +256,55 @@ private:
   bool updatePerEdgeBuffers_;
 
 /** @} */    
+
+
+//===========================================================================
+/** @name Per halfedge drawing arrays handling
+* @{ */
+//===========================================================================    
+public:  
+  /** \brief get a pointer to the per edge vertex buffer
+  *
+  * This function will return a pointer to the first element of the vertex buffer.
+  */
+  ACG::Vec3f * perHalfedgeVertexBuffer();   
+
+  /** \brief get a pointer to the per edge color buffer
+  *
+  * This function will return a pointer to the first element of the color buffer.
+  */
+  ACG::Vec4f * perHalfedgeColorBuffer();   
+  
+  /** \brief Update of the buffers
+  *
+  * This function will set all per edge buffers to invalid and will force an update
+  * whe they are requested
+  */
+  void invalidatePerHalfedgeBuffers(){ updatePerHalfedgeBuffers_ = true; };
+  
+private:
+  /** \brief Update all per edge drawing buffer
+  *n
+  * The updated buffers are: per edge vertex buffer ( 2 vertices per edge )
+  */
+  void updatePerHalfedgeBuffers();  
+  
+  
+  /** \brief compute halfedge point
+  * compute visulization point for halfedge (shifted to interior of face)
+  */
+  typename Mesh::Point halfedge_point(const typename Mesh::HalfedgeHandle _heh);
+
+  /// Per Edge vertex buffer (glLines)
+  std::vector< ACG::Vec3f >  perHalfedgeVertexBuffer_;
+  
+  /// Per Edge color buffer 
+  std::vector< ACG::Vec4f >  perHalfedgeColorBuffer_;
+  
+  /// This flag controls if an update is really necessary
+  bool updatePerHalfedgeBuffers_;
+
+/** @} */    
   
 //===========================================================================
 /** @name Per face drawing arrays handling
