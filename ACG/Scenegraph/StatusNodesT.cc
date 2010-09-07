@@ -175,6 +175,32 @@ update_cache()
       fh_cache_.push_back(f_it);
     }
   }
+
+
+  typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()),
+                                    he_end(mesh_.halfedges_end());
+  //  mesh_.request_face_normals();
+  he_points_.clear();
+  he_normals_.clear();
+  for (; he_it!=he_end; ++he_it)
+  {
+    if (Mod::is_halfedge_selected(mesh_, he_it))
+    {
+      // add vertices
+      he_points_.push_back( halfedge_point(he_it));
+      he_points_.push_back( halfedge_point(mesh_.prev_halfedge_handle(he_it)));
+
+      // add normals
+      FaceHandle fh;
+      if(!mesh_.is_boundary(he_it))
+	fh = mesh_.face_handle(he_it);
+      else
+	fh = mesh_.face_handle(mesh_.opposite_halfedge_handle(he_it));
+
+      he_normals_.push_back( mesh_.normal(fh));
+      he_normals_.push_back( mesh_.normal(fh));
+    }
+  }
 }
 
 
@@ -204,6 +230,9 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 
   bool edges = ((drawMode() == DrawModes::DEFAULT) |
 		 (_drawMode & DrawModes::WIREFRAME));
+
+  bool halfedges = ((drawMode() == DrawModes::DEFAULT) |
+		    (_drawMode & DrawModes::WIREFRAME));
 
   bool faces = ((drawMode() == DrawModes::DEFAULT) |
 		(_drawMode & DrawModes::SOLID_FLAT_SHADED));
@@ -267,6 +296,17 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
     }
   }
 
+  // edges
+  if (halfedges)
+  {
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glVertexPointer(&he_points_[0]);
+    glNormalPointer(&he_normals_[0]);
+    
+    draw_halfedges();
+  }
+
+
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
 
@@ -304,6 +344,19 @@ draw_edges()
   		             e_cache_.size(),
 		             GL_UNSIGNED_INT,
 		             &e_cache_[0]);
+}
+
+
+//----------------------------------------------------------------------------
+
+
+template <class Mesh, class Mod>
+void
+StatusNodeT<Mesh, Mod>::
+draw_halfedges()
+{
+  if ( !he_points_.empty() )
+    glDrawArrays(GL_LINES, 0, he_points_.size() );
 }
 
 
@@ -362,6 +415,40 @@ draw_faces(bool _per_vertex)
       }
     }
   }
+}
+
+
+//----------------------------------------------------------------------------
+
+
+template <class Mesh, class Mod>
+typename Mesh::Point
+StatusNodeT<Mesh, Mod>::
+halfedge_point(const HalfedgeHandle _heh) 
+{
+  typename Mesh::Point p  = mesh_.point(mesh_.to_vertex_handle  (_heh));
+  typename Mesh::Point pp = mesh_.point(mesh_.from_vertex_handle(_heh));
+  typename Mesh::Point pn = mesh_.point(mesh_.to_vertex_handle(mesh_.next_halfedge_handle(_heh)));
+
+  //  typename Mesh::Point n  = (p-pp)%(pn-p);
+  typename Mesh::Point fn;
+  if( !mesh_.is_boundary(_heh))
+    fn = mesh_.normal(mesh_.face_handle(_heh));
+  else
+    fn = mesh_.normal(mesh_.face_handle(mesh_.opposite_halfedge_handle(_heh)));
+
+  typename Mesh::Point upd = ((fn%(pn-p)).normalize() + (fn%(p-pp)).normalize()).normalize();
+
+  upd *= ((pn-p).norm()+(p-pp).norm())*0.08;
+
+
+  return (p+upd);
+
+  // double alpha = 0.1;
+  // // correct weighting for concave triangles (or at concave boundaries)
+  // if( (fn | n)  < 0.0) alpha *=-1.0;
+
+  // return (p*(1.0-2.0*alpha) + pp*alpha + pn*alpha);
 }
 
 

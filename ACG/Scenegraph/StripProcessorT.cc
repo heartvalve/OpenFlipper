@@ -73,7 +73,7 @@ updatePerFaceBuffers_(true),
 textureIndexPropertyName_("Not Set"),
 perFaceTextureCoordinatePropertyName_("Not Set")
 {
-
+  mesh_.request_face_normals();
 }
 
 template <class Mesh>
@@ -831,7 +831,24 @@ halfedge_point(const typename Mesh::HalfedgeHandle _heh) {
   typename Mesh::Point pp = mesh_.point(mesh_.from_vertex_handle(_heh));
   typename Mesh::Point pn = mesh_.point(mesh_.to_vertex_handle(mesh_.next_halfedge_handle(_heh)));
 
-  return (p*0.8 + pp*0.1 + pn*0.1);
+  //  typename Mesh::Point n  = (p-pp)%(pn-p);
+  typename Mesh::Point fn;
+  if( !mesh_.is_boundary(_heh))
+    fn = mesh_.normal(mesh_.face_handle(_heh));
+  else
+    fn = mesh_.normal(mesh_.face_handle(mesh_.opposite_halfedge_handle(_heh)));
+
+  typename Mesh::Point upd = ((fn%(pn-p)).normalize() + (fn%(p-pp)).normalize()).normalize();
+
+  upd *= ((pn-p).norm()+(p-pp).norm())*0.08;
+
+  return (p+upd);
+
+  // double alpha = 0.1;
+  // // correct weighting for concave triangles (or at concave boundaries)
+  // if( (fn | n)  < 0.0) alpha *=-1.0;
+
+  // return (p*(1.0-2.0*alpha) + pp*alpha + pn*alpha);
 }
 
 template <class Mesh>

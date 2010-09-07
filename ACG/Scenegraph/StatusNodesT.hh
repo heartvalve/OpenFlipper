@@ -110,15 +110,22 @@ public:
 
 private:
 
-  typedef typename Mesh::Face        Face;
-  typedef typename Mesh::Vertex      Vertex;
-  typedef typename Mesh::Halfedge    Halfedge;
-  typedef typename Mesh::Edge        Edge;
-  typedef typename Mesh::FaceHandle  FaceHandle;
+  typedef typename Mesh::Face           Face;
+  typedef typename Mesh::Vertex         Vertex;
+  typedef typename Mesh::Halfedge       Halfedge;
+  typedef typename Mesh::Edge           Edge;
+  typedef typename Mesh::FaceHandle     FaceHandle;
+  typedef typename Mesh::HalfedgeHandle HalfedgeHandle;
+
+  typedef typename Mesh::Point       Point;
+  typedef typename Mesh::Normal      Normal;
 
   void draw_points();
   void draw_edges();
+  void draw_halfedges();
   void draw_faces(bool _per_vertex);
+
+  Point halfedge_point(const HalfedgeHandle _heh);
 
 
 private:
@@ -126,6 +133,9 @@ private:
   const Mesh&                mesh_;
   std::vector<unsigned int>  v_cache_, e_cache_, f_cache_;
   std::vector<FaceHandle>    fh_cache_;
+
+  std::vector<Point>  he_points_;
+  std::vector<Normal> he_normals_;
 
   // bounding box
   Vec3d bbMin_;
@@ -150,6 +160,12 @@ struct StatusModT
                                typename Mesh::EdgeHandle _eh)
   {
     return _mesh.status(_eh).is_bit_set(Bit);
+  }
+
+  static bool is_halfedge_selected(const Mesh& _mesh,
+				   typename Mesh::HalfedgeHandle _heh)
+  {
+    return _mesh.status(_heh).is_bit_set(Bit);
   }
 
   static bool is_face_selected(const Mesh& _mesh,
