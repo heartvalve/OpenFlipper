@@ -98,6 +98,12 @@ struct AreaNodeMod
   }
 
 
+  /// default to false
+  static bool is_halfedge_selected(const MeshT& /*_mesh */, typename MeshT::HalfedgeHandle /* _eh */ )
+  {
+    return false;
+  }
+
   /// tell status node if the face is marked as modeling area
   static bool is_face_selected(const MeshT& _mesh, typename MeshT::FaceHandle _fh)
   {
@@ -155,6 +161,13 @@ template< class MeshT >
   }
 
 
+  /// default to false
+  static bool is_halfedge_selected(const MeshT& /*_mesh */, typename MeshT::HalfedgeHandle /* _eh */ )
+  {
+    return false;
+  }
+
+
   /// tell status node if the face is marked as handle area
   static bool is_face_selected(const MeshT& _mesh, typename MeshT::FaceHandle _fh)
   {
@@ -180,6 +193,12 @@ template< class MeshT >
     return _mesh.status(_eh).feature();
   }
 
+
+  /// default to false
+  static bool is_halfedge_selected(const MeshT& _mesh, typename MeshT::HalfedgeHandle _heh)
+  {
+    return _mesh.status(_heh).feature();
+  }
 
   /// tell status node if the face is marked as feature
   static bool is_face_selected(const MeshT& _mesh, typename MeshT::FaceHandle _fh)
