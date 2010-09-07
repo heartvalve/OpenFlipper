@@ -87,6 +87,9 @@ void SelectionPlugin::selectAll( int objectID ){
   if (selectionType_ & EDGE)
     selectAllEdges( objectID );
 
+  if (selectionType_ & HALFEDGE)
+    selectAllHalfedges( objectID );
+
   if (selectionType_ & FACE)
     selectAllFaces( objectID );
   
@@ -104,6 +107,9 @@ void SelectionPlugin::clearSelection( int objectID ){
   if (selectionType_ & EDGE)
     clearEdgeSelection( objectID );
 
+  if (selectionType_ & HALFEDGE)
+    clearHalfedgeSelection( objectID );
+
   if (selectionType_ & FACE)
     clearFaceSelection( objectID );
   
@@ -120,6 +126,9 @@ void SelectionPlugin::invertSelection( int objectID ){
 
   if (selectionType_ & EDGE)
     invertEdgeSelection( objectID );
+
+  if (selectionType_ & HALFEDGE)
+    invertHalfedgeSelection( objectID );
 
   if (selectionType_ & FACE)
     invertFaceSelection( objectID );
@@ -172,6 +181,9 @@ void SelectionPlugin::selectBoundary( int objectID ){
   if (selectionType_ & EDGE)
     selectBoundaryEdges( objectID );
 
+  if (selectionType_ & HALFEDGE)
+    selectBoundaryHalfedges( objectID );
+
   if (selectionType_ & FACE)
     selectBoundaryFaces( objectID );
 }
@@ -192,5 +204,8 @@ void SelectionPlugin::colorizeSelection( int objectID ){
     
     if (selectionType_ & EDGE)
         colorizeEdgeSelection( objectID, color.red(), color.green(), color.blue() );
+
+    if (selectionType_ & HALFEDGE)
+        colorizeHalfedgeSelection( objectID, color.red(), color.green(), color.blue() );
   }
 }

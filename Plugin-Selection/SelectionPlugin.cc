@@ -96,6 +96,7 @@ void SelectionPlugin::initializePlugin() {
   tool_->objectSelection->setIcon( QIcon(iconPath + "selection_object.png") );
   tool_->vertexSelection->setIcon( QIcon(iconPath + "selection_vertex.png") );
   tool_->edgeSelection->setIcon( QIcon(iconPath + "selection_edge.png") );
+  tool_->halfedgeSelection->setIcon( QIcon(iconPath + "selection_halfedge.png") );
   tool_->faceSelection->setIcon( QIcon(iconPath + "selection_face.png") );
   tool_->knotSelection->setIcon( QIcon(iconPath + "selection_knot.png") );
   
@@ -305,6 +306,9 @@ void SelectionPlugin::pluginsInitialized() {
   edgeAction_ = new QAction( QIcon(iconPath + "selection_edge.png"), tr("Enable Edge Selection"), toolBarTypes_ );
   edgeAction_->setCheckable( true );
   toolBar_->addAction( edgeAction_ );
+  halfedgeAction_ = new QAction( QIcon(iconPath + "selection_halfedge.png"), tr("Enable Halfedge Selection"), toolBarTypes_ );
+  halfedgeAction_->setCheckable( true );
+  toolBar_->addAction( halfedgeAction_ );
   faceAction_ = new QAction( QIcon(iconPath + "selection_face.png"), tr("Enable Face Selection"), toolBarTypes_ );
   faceAction_->setCheckable( true );
   toolBar_->addAction( faceAction_ );
@@ -366,17 +370,19 @@ void SelectionPlugin::pluginsInitialized() {
 
 
   //connect the toolbar Actions to the Toolbox Buttons
-  connect( tool_->objectSelection, SIGNAL(clicked()), objectAction_, SLOT(trigger()) );
-  connect( tool_->vertexSelection, SIGNAL(clicked()), vertexAction_, SLOT(trigger()) );
-  connect( tool_->edgeSelection,   SIGNAL(clicked()), edgeAction_,   SLOT(trigger()) );
-  connect( tool_->faceSelection,   SIGNAL(clicked()), faceAction_,   SLOT(trigger()) );
-  connect( tool_->knotSelection,   SIGNAL(clicked()), knotAction_,   SLOT(trigger()) );
+  connect( tool_->objectSelection,     SIGNAL(clicked()), objectAction_,     SLOT(trigger()) );
+  connect( tool_->vertexSelection,     SIGNAL(clicked()), vertexAction_,     SLOT(trigger()) );
+  connect( tool_->edgeSelection,       SIGNAL(clicked()), edgeAction_,       SLOT(trigger()) );
+  connect( tool_->halfedgeSelection,   SIGNAL(clicked()), halfedgeAction_,   SLOT(trigger()) );
+  connect( tool_->faceSelection,       SIGNAL(clicked()), faceAction_,       SLOT(trigger()) );
+  connect( tool_->knotSelection,       SIGNAL(clicked()), knotAction_,       SLOT(trigger()) );
 
-  connect( objectAction_, SIGNAL(toggled(bool)),tool_->objectSelection , SLOT(setChecked(bool)) );
-  connect( vertexAction_, SIGNAL(toggled(bool)),tool_->vertexSelection , SLOT(setChecked(bool)) );
-  connect( edgeAction_,   SIGNAL(toggled(bool)),tool_->edgeSelection ,   SLOT(setChecked(bool)) );
-  connect( faceAction_,   SIGNAL(toggled(bool)),tool_->faceSelection ,   SLOT(setChecked(bool)) );
-  connect( knotAction_,   SIGNAL(toggled(bool)),tool_->knotSelection ,   SLOT(setChecked(bool)) );
+  connect( objectAction_,   SIGNAL(toggled(bool)),tool_->objectSelection ,  SLOT(setChecked(bool)) );
+  connect( vertexAction_,   SIGNAL(toggled(bool)),tool_->vertexSelection ,  SLOT(setChecked(bool)) );
+  connect( edgeAction_,     SIGNAL(toggled(bool)),tool_->edgeSelection ,    SLOT(setChecked(bool)) );
+  connect( halfedgeAction_, SIGNAL(toggled(bool)),tool_->halfedgeSelection, SLOT(setChecked(bool)) );
+  connect( faceAction_,     SIGNAL(toggled(bool)),tool_->faceSelection ,    SLOT(setChecked(bool)) );
+  connect( knotAction_,     SIGNAL(toggled(bool)),tool_->knotSelection ,    SLOT(setChecked(bool)) );
   
   // Set scriptable slot descriptions
   setSlotDescriptions();
@@ -588,10 +594,11 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
 {
 
   //Selection Types
-  if ( _action->text() == "Enable Object Selection" ||
-       _action->text() == "Enable Vertex Selection" ||
-       _action->text() == "Enable Edge Selection"   ||
-       _action->text() == "Enable Face Selection"   ||
+  if ( _action->text() == "Enable Object Selection"     ||
+       _action->text() == "Enable Vertex Selection"     ||
+       _action->text() == "Enable Edge Selection"       ||
+       _action->text() == "Enable Halfedge Selection"   ||
+       _action->text() == "Enable Face Selection"       ||
        _action->text() == "Enable Knot Selection"      )
   {
     unsigned char type = 0;
@@ -606,6 +613,10 @@ void SelectionPlugin::toolBarActionClicked(QAction * _action)
       type = type | VERTEX;
     if ( edgeAction_->isChecked() )
       type = type | EDGE;
+
+    if ( halfedgeAction_->isChecked() )
+      type = type | HALFEDGE;
+
     if ( faceAction_->isChecked() )
       type = type | FACE;
     if ( knotAction_->isChecked() )
@@ -672,10 +683,11 @@ void SelectionPlugin::updateGUI() {
   if(!OpenFlipper::Options::nogui()) {
       
       // Selection modes
-      if(selectionType_ == VERTEX)    vertexAction_->setChecked(true);
-      else if(selectionType_ == EDGE) edgeAction_->setChecked(true);
-      else if(selectionType_ == FACE) faceAction_->setChecked(true);
-      else if(selectionType_ == KNOT) objectAction_->setChecked(true);
+      if(selectionType_ == VERTEX)        vertexAction_->setChecked(true);
+      else if(selectionType_ == EDGE)     edgeAction_->setChecked(true);
+      else if(selectionType_ == HALFEDGE) halfedgeAction_->setChecked(true);
+      else if(selectionType_ == FACE    ) faceAction_->setChecked(true);
+      else if(selectionType_ == KNOT)     objectAction_->setChecked(true);
       
       // Pick modes
       if (PluginFunctions::pickMode() == TOGGLE_SELECTION)

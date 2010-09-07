@@ -89,7 +89,6 @@ void SelectionPlugin::paintSphereSelection( MeshT* _mesh ,
 
   }
 
-
   //reset tagged status
   typename MeshT::FaceIter f_it, f_end( _mesh->faces_end() );
   for (f_it=_mesh->faces_begin(); f_it!=f_end; ++f_it)
@@ -152,7 +151,7 @@ void SelectionPlugin::paintSphereSelection( MeshT* _mesh ,
 
           if (vertex_handles.size() > 0) tagged = true;
         }
-        if (selectionType_ & EDGE){
+        if (selectionType_ & EDGE || selectionType_ & HALFEDGE){
           for (uint i=0; i < edge_handles.size(); i++)
             _mesh->status( edge_handles[i] ).set_tagged(true);
 
@@ -189,6 +188,13 @@ void SelectionPlugin::paintSphereSelection( MeshT* _mesh ,
       for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
         if (_mesh->status(e_it).tagged())
           _mesh->status(e_it).set_selected(sel);
+  }
+  if (selectionType_ & HALFEDGE){
+    typename MeshT::HalfedgeIter he_it, he_end( _mesh->halfedges_end() );
+
+      for (he_it=_mesh->halfedges_begin(); he_it!=he_end; ++he_it)
+        if (_mesh->status(_mesh->edge_handle(he_it.handle())).tagged())
+          _mesh->status(he_it).set_selected(sel);
   }
   if (selectionType_ & FACE){
     typename MeshT::FaceIter f_it, f_end( _mesh->faces_end() );
@@ -297,6 +303,9 @@ SelectionPlugin::surfaceLassoSelection( MeshT*                     _mesh,
         if (selectionType_ & EDGE)
           _mesh->status( _mesh->edge_handle(voh_it.handle()) ).set_selected( !deselection_ );
 
+        if (selectionType_ & HALFEDGE)
+          _mesh->status( voh_it.handle() ).set_selected( !deselection_ );
+
         if (selectionType_ & FACE){
 
           typename MeshT::FaceHandle fh0 = _mesh->face_handle( voh_it.handle() );
@@ -371,6 +380,13 @@ void SelectionPlugin::closestBoundarySelection( MeshT* _mesh, int _vh, unsigned 
 
             if (_selectionType & EDGE)
               _mesh->status( _mesh->edge_handle( voh_it.handle() ) ).set_selected( !deselection_ );
+
+            if (_selectionType & HALFEDGE)
+	    {
+	      typename MeshT::HalfedgeHandle heh = voh_it.handle();
+	      if(!_mesh->is_boundary(heh)) heh = _mesh->opposite_halfedge_handle(heh);
+              _mesh->status( heh ).set_selected( !deselection_ );
+	    }
           }
 
           if (_selectionType & FACE){
@@ -438,22 +454,22 @@ void SelectionPlugin::toggleMeshSelection(MeshT* _mesh, uint _fh, ACG::Vec3d& _h
   }
 
   //Edge Selection
-  if (selectionType_ & EDGE){
+  if (selectionType_ & EDGE || selectionType_ & HALFEDGE){
 
-    typename MeshT::FaceEdgeIter fe_it(*_mesh, fh);
+    typename MeshT::FaceHalfedgeIter fhe_it(*_mesh, fh);
 
-    typename MeshT::EdgeHandle closest(-1);
-    typename MeshT::Scalar     closest_dist(-1);
+    typename MeshT::HalfedgeHandle closest(-1);
+    typename MeshT::Scalar         closest_dist(-1);
 
     typename MeshT::Point pp = (typename MeshT::Point) _hit_point;
 
-    for( ; fe_it; ++fe_it)
+    for( ; fhe_it; ++fhe_it)
     {
-      typename MeshT::HalfedgeHandle heh0 = _mesh->halfedge_handle( fe_it.handle(), 0);
-      typename MeshT::HalfedgeHandle heh1 = _mesh->halfedge_handle( fe_it.handle(), 1);
+      // typename MeshT::HalfedgeHandle heh0 = _mesh->halfedge_handle( fe_it.handle(), 0);
+      // typename MeshT::HalfedgeHandle heh1 = _mesh->halfedge_handle( fe_it.handle(), 1);
 
-      typename MeshT::Point lp0 = _mesh->point(_mesh->to_vertex_handle(heh0));
-      typename MeshT::Point lp1 = _mesh->point(_mesh->to_vertex_handle(heh1));
+      typename MeshT::Point lp0 = _mesh->point(_mesh->to_vertex_handle  (fhe_it.handle()));
+      typename MeshT::Point lp1 = _mesh->point(_mesh->from_vertex_handle(fhe_it.handle()));
 
       double dist_new = ACG::Geometry::distPointLineSquared( pp, lp0, lp1);
 
@@ -461,16 +477,30 @@ void SelectionPlugin::toggleMeshSelection(MeshT* _mesh, uint _fh, ACG::Vec3d& _h
       {
         // save closest Edge
         closest_dist = dist_new;
-        closest = fe_it.handle();
+        closest = fhe_it.handle();
       }
     }
 
-    _mesh->status(closest).set_selected( !  _mesh->status(closest).selected() );
+    typename MeshT::EdgeHandle closest_eh = _mesh->edge_handle(closest);
 
-    if (_mesh->status(closest).selected())
-      emit scriptInfo( "selectEdges( ObjectId , [" + QString::number(closest.idx()) + "] )" );
+    if( selectionType_ & EDGE)
+    {
+      _mesh->status(closest_eh).set_selected( !_mesh->status(closest_eh).selected() );
+      
+      if (_mesh->status(closest_eh).selected())
+	emit scriptInfo( "selectEdges( ObjectId , [" + QString::number(closest_eh.idx()) + "] )" );
+      else
+	emit scriptInfo( "unselectEdges( ObjectId , [" + QString::number(closest_eh.idx()) + "] )" );
+    }
     else
-      emit scriptInfo( "unselectEdges( ObjectId , [" + QString::number(closest.idx()) + "] )" );
+    {
+      _mesh->status(closest).set_selected( !_mesh->status(closest).selected() );
+      
+      if (_mesh->status(closest).selected())
+	emit scriptInfo( "selectHalfedges( ObjectId , [" + QString::number(closest.idx()) + "] )" );
+      else
+	emit scriptInfo( "unselectHalfedges( ObjectId , [" + QString::number(closest.idx()) + "] )" );
+    }
   }
 
   //Face Selection
@@ -534,6 +564,10 @@ void SelectionPlugin::componentSelection(MeshT* _mesh, uint _fh) {
         if (selectionType_ & EDGE)
           for ( typename MeshT::FaceEdgeIter fe_it(*_mesh,f_it) ; fe_it; ++fe_it )
             _mesh->status(fe_it).set_selected( !deselection_ );
+
+        if (selectionType_ & HALFEDGE)
+          for ( typename MeshT::FaceHalfedgeIter fhe_it(*_mesh,f_it) ; fhe_it; ++fhe_it )
+            _mesh->status(fhe_it).set_selected( !deselection_ );
 
         if (selectionType_ & FACE)
           _mesh->status(f_it).set_selected( !deselection_ );
@@ -600,6 +634,10 @@ void SelectionPlugin::floodFillSelection(MeshT* _mesh, uint _fh) {
           for ( typename MeshT::FaceEdgeIter fe_it(*_mesh,f_it) ; fe_it; ++fe_it )
             _mesh->status(fe_it).set_selected( !deselection_ );
 
+        if (selectionType_ & HALFEDGE)
+          for ( typename MeshT::FaceHalfedgeIter fhe_it(*_mesh,f_it) ; fhe_it; ++fhe_it )
+            _mesh->status(fhe_it).set_selected( !deselection_ );
+
         if (selectionType_ & FACE)
           _mesh->status(f_it).set_selected( !deselection_ );
       }
@@ -641,13 +679,22 @@ bool SelectionPlugin::volumeSelection(MeshT* _mesh, ACG::GLState& _state, QRegio
   }
 
 
-  if (selectionType_ & EDGE) {
+  if (selectionType_ & EDGE || selectionType_ & HALFEDGE) {
     typename MeshT::EdgeIter e_it, e_end(_mesh->edges_end());
     for (e_it=_mesh->edges_begin(); e_it!=e_end; ++e_it)
     {
       if (_mesh->status(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 0))).tagged () ||
           _mesh->status(_mesh->to_vertex_handle(_mesh->halfedge_handle(e_it, 1))).tagged ())
-        _mesh->status(e_it).set_selected ( !deselection_ );
+      {
+	if (selectionType_ & EDGE)
+	  _mesh->status(e_it).set_selected ( !deselection_ );
+
+	if (selectionType_ & HALFEDGE)
+	{
+	  _mesh->status(_mesh->halfedge_handle(e_it,0)).set_selected ( !deselection_ );
+	  _mesh->status(_mesh->halfedge_handle(e_it,1)).set_selected ( !deselection_ );
+	}
+      }
     }
   }
   if (selectionType_ & FACE) {

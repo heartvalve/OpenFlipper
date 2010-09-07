@@ -105,11 +105,12 @@
 #define CREATEMESH "Create Mesh from Selection"
 
 enum SelectionPrimitive {
-  VERTEX = 1,
-  EDGE   = 2,
-  FACE   = 4,
-  OBJECT = 8,
-  KNOT   = 16
+  VERTEX    = 1,
+  EDGE      = 2,
+  HALFEDGE  = 4,
+  FACE      = 8,
+  OBJECT    = 16,
+  KNOT      = 32
 };
 
 class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInterface, PickingInterface, ToolboxInterface, INIInterface, BackupInterface, LoggingInterface, ScriptInterface, ContextMenuInterface, ToolbarInterface, LoadSaveInterface
@@ -216,6 +217,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     QAction* objectAction_;
     QAction* vertexAction_;
     QAction* edgeAction_;
+    QAction* halfedgeAction_;
     QAction* faceAction_;
     QAction* knotAction_;
     QAction* toggleAction_;
@@ -311,7 +313,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     * @{ */
     //===========================================================================
 
-    ///SelectionFlags (VERTEX, EDGE, FACE, OBJECT)
+    ///SelectionFlags (VERTEX, EDGE, HALFEDGE, FACE, OBJECT)
     unsigned char selectionType_;
 
     /// Toggle the selection state
@@ -558,6 +560,32 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     
     /// colorize the edge selection
     void colorizeEdgeSelection(int objectId, int r, int g, int b );
+
+    //==========================================
+
+    /// Select given Halfedges
+    void selectHalfedges( int objectId , IdList _vertexList );
+
+    /// Unselect given Halfedges
+    void unselectHalfedges( int objectId , IdList _vertexList );
+
+    /// Select all Halfedges
+    void selectAllHalfedges( int objectId );
+
+    /// Unselect all Halfedges
+    void invertHalfedgeSelection( int objectId );
+
+    /// Invert the current edge selection
+    void clearHalfedgeSelection( int objectId );
+
+    /// select boundary edges
+    void selectBoundaryHalfedges( int objectId );
+
+    /// return a list of all selected edges
+    IdList getHalfedgeSelection( int objectId );
+    
+    /// colorize the edge selection
+    void colorizeHalfedgeSelection(int objectId, int r, int g, int b );
 
     //==========================================
 
