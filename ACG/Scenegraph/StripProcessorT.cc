@@ -68,6 +68,7 @@ StripProcessorT(Mesh& _mesh) :
 mesh_(_mesh),
 stripsValid_(false),
 updatePerEdgeBuffers_(true),
+updatePerHalfedgeBuffers_(true),
 updatePerFaceBuffers_(true),
 textureIndexPropertyName_("Not Set"),
 perFaceTextureCoordinatePropertyName_("Not Set")
@@ -782,6 +783,75 @@ perEdgeColorBuffer() {
   if (updatePerEdgeBuffers_)
     updatePerEdgeBuffers();
   return &(perEdgeColorBuffer_)[0]; 
+}
+
+
+template <class Mesh>
+void
+StripProcessorT<Mesh>::
+updatePerHalfedgeBuffers() {
+  // Only update buffers if they are invalid
+  if (!updatePerHalfedgeBuffers_) 
+    return;
+  
+  perHalfedgeVertexBuffer_.resize(mesh_.n_halfedges() * 2);
+  
+  if ( mesh_.has_halfedge_colors() ) {
+    perHalfedgeColorBuffer_.resize(mesh_.n_halfedges() * 2);
+  } else
+    perHalfedgeColorBuffer_.clear();    
+  
+  unsigned int idx = 0;
+  
+  typename Mesh::ConstHalfedgeIter  he_it(mesh_.halfedges_sbegin()), he_end(mesh_.halfedges_end());
+  for (; he_it!=he_end; ++he_it) {
+    
+    perHalfedgeVertexBuffer_[idx]   = halfedge_point(he_it);
+    perHalfedgeVertexBuffer_[idx+1] = halfedge_point(mesh_.prev_halfedge_handle(he_it));
+    
+    if (  mesh_.has_halfedge_colors() ) {
+      const Vec4f color = OpenMesh::color_cast<Vec4f>( mesh_.color(he_it) ) ;
+      perHalfedgeColorBuffer_[ idx ]     = color;
+      perHalfedgeColorBuffer_[ idx + 1 ] = color;
+    }
+    
+    idx += 2;
+  }
+  
+  updatePerHalfedgeBuffers_ = false;
+  
+}
+
+template <class Mesh>
+typename Mesh::Point
+StripProcessorT<Mesh>::
+halfedge_point(const typename Mesh::HalfedgeHandle _heh) {
+
+  typename Mesh::Point p  = mesh_.point(mesh_.to_vertex_handle  (_heh));
+  typename Mesh::Point pp = mesh_.point(mesh_.from_vertex_handle(_heh));
+  typename Mesh::Point pn = mesh_.point(mesh_.to_vertex_handle(mesh_.next_halfedge_handle(_heh)));
+
+  return (p*0.8 + pp*0.1 + pn*0.1);
+}
+
+template <class Mesh>
+ACG::Vec3f * 
+StripProcessorT<Mesh>::
+perHalfedgeVertexBuffer() { 
+  // Force update of the buffers if required
+  if (updatePerHalfedgeBuffers_)
+    updatePerHalfedgeBuffers();
+  return &(perHalfedgeVertexBuffer_)[0]; 
+}
+
+template <class Mesh>
+ACG::Vec4f * 
+StripProcessorT<Mesh>::
+perHalfedgeColorBuffer() { 
+  // Force update of the buffers if required
+  if (updatePerHalfedgeBuffers_)
+    updatePerHalfedgeBuffers();
+  return &(perHalfedgeColorBuffer_)[0]; 
 }
 
 template <class Mesh>
