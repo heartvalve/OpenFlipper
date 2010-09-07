@@ -62,7 +62,7 @@ bool UpdateType::contains( const UpdateType& _type ) const {
   // Catch the specialization of updates
   if ( _type == UPDATE_SELECTION ) {
 //     if ( type_ == UPDATE_SELECTION_VERTICES.type_ || type_ == UPDATE_SELECTION_EDGES.type_ || type_ == UPDATE_SELECTION_FACES.type_ )
-    if ( type_ == UPDATE_SELECTION_VERTICES.type_ || type_ == UPDATE_SELECTION_EDGES.type_ || type_ == UPDATE_SELECTION_FACES.type_ || type_ == UPDATE_SELECTION_KNOTS.type_ )
+    if ( type_ == UPDATE_SELECTION_VERTICES.type_ || type_ == UPDATE_SELECTION_EDGES.type_ ||  type_ == UPDATE_SELECTION_HALFEDGES.type_ || type_ == UPDATE_SELECTION_FACES.type_ || type_ == UPDATE_SELECTION_KNOTS.type_ )
       return true;
   }  
   
@@ -140,6 +140,10 @@ void initializeUpdateTypes() {
   updateTypeToTypeInfo[UPDATE_SELECTION_EDGES]   = updateTypes.size();
   updateTypes.push_back( UpdateTypeInfo(UPDATE_SELECTION_EDGES, "EdgeSelection", true) );
   
+  stringToUpdateTypeInfo["HalfedgeSelection"]    = updateTypes.size();
+  updateTypeToTypeInfo[UPDATE_SELECTION_HALFEDGES]   = updateTypes.size();
+  updateTypes.push_back( UpdateTypeInfo(UPDATE_SELECTION_HALFEDGES, "HalfedgeSelection", true) );
+
   stringToUpdateTypeInfo["FaceSelection"]      = updateTypes.size();
   updateTypeToTypeInfo[UPDATE_SELECTION_FACES]   = updateTypes.size();
   updateTypes.push_back( UpdateTypeInfo(UPDATE_SELECTION_FACES, "FaceSelection", true) );
@@ -159,6 +163,7 @@ void initializeUpdateTypes() {
   updateTypeToString[UPDATE_SELECTION]          = "Selection";
   updateTypeToString[UPDATE_SELECTION_VERTICES] = "VertexSelection";
   updateTypeToString[UPDATE_SELECTION_EDGES]    = "EdgeSelection";
+  updateTypeToString[UPDATE_SELECTION_HALFEDGES]= "HalfedgeSelection";
   updateTypeToString[UPDATE_SELECTION_FACES]    = "FaceSelection";
   updateTypeToString[UPDATE_SELECTION_KNOTS]    = "KnotSelection";
   updateTypeToString[UPDATE_COLOR]              = "Color";
