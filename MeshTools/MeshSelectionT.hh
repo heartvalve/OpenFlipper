@@ -282,7 +282,49 @@ template< typename MeshT >
 inline
 void convertEdgeToFaceSelection(MeshT* _mesh);
 
+
+
 /** @} */
+
+//===========================================================================
+/** @name Halfedge Selection
+* @{ */
+//===========================================================================
+
+/// Select given edges of a mesh
+template< typename MeshT >
+inline
+void selectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges);
+
+/// Unselect given edges of a mesh
+template< typename MeshT >
+inline
+void unselectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges);
+
+/// Select all edges of a mesh
+template< typename MeshT >
+inline
+void selectAllHalfedges(MeshT* _mesh);
+
+///  Set all edges to unselected
+template< typename MeshT >
+inline
+void clearHalfedgeSelection(MeshT* _mesh);
+
+/// Invert Edge selection
+template< typename MeshT >
+inline
+void invertHalfedgeSelection(MeshT* _mesh);
+
+/// Select all boundary edges of a mesh
+template< typename MeshT >
+void selectBoundaryHalfedges(MeshT* _mesh);
+
+/** Get the current edge selection
+ */
+template< typename MeshT >
+inline
+std::vector< int > getHalfedgeSelection(MeshT* _mesh);
 
 //===========================================================================
 /** @name Face Selection

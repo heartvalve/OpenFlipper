@@ -581,6 +581,98 @@ void convertEdgeToFaceSelection(MeshT* _mesh) {
     }
 }
 
+
+
+//=========================================================
+//== Halfedge Selection =====================================
+//=========================================================
+
+template< typename MeshT >
+inline
+void selectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges) {
+  const int n_halfedges = (int)_mesh->n_halfedges();
+
+  for ( uint i = 0 ; i < _halfedges.size() ; ++i )
+    if ( (_halfedges[i] > 0) && ( _halfedges[i] < n_halfedges ) )  {
+      typename MeshT::HalfedgeHandle heh(_halfedges[i]);
+      _mesh->status(heh).set_selected(true);
+    }
+}
+
+//=========================================================
+
+template< typename MeshT >
+inline
+void unselectHalfedges(MeshT* _mesh, std::vector< int >& _halfedges) {
+  const int n_halfedges = (int)_mesh->n_halfedges();
+
+  for ( uint i = 0 ; i < _halfedges.size() ; ++i )
+    if ( (_halfedges[i] > 0) && ( _halfedges[i] < n_halfedges ) )  {
+      typename MeshT::HalfedgeHandle heh(_halfedges[i]);
+      _mesh->status(heh).set_selected(false);
+    }
+}
+
+//=========================================================
+
+template< typename MeshT >
+inline
+void selectAllHalfedges(MeshT* _mesh) {
+  typename MeshT::HalfedgeIter he_it, he_end=_mesh->halfedges_end();
+
+  for (he_it = _mesh->halfedges_begin(); he_it != he_end ; ++he_it)
+  _mesh->status(he_it).set_selected(true);
+}
+
+//=========================================================
+
+template< typename MeshT >
+inline
+void clearHalfedgeSelection(MeshT* _mesh) {
+  typename MeshT::HalfedgeIter he_it, he_end=_mesh->halfedges_end();
+
+  for (he_it = _mesh->halfedges_begin(); he_it != he_end ; ++he_it)
+    _mesh->status(he_it).set_selected(false);
+}
+
+//=========================================================
+
+template< typename MeshT >
+inline
+void invertHalfedgeSelection(MeshT* _mesh) {
+  typename MeshT::HalfedgeIter he_it, he_end=_mesh->halfedges_end();
+
+  for (he_it = _mesh->halfedges_begin(); he_it != he_end ; ++he_it)
+    _mesh->status(he_it).set_selected( ! _mesh->status(he_it).selected());
+}
+
+//=========================================================
+
+
+template< typename MeshT >
+inline
+void selectBoundaryHalfedges(MeshT* _mesh) {
+  typename MeshT::HalfedgeIter he_it, he_end=_mesh->halfedges_end();
+
+  for (he_it = _mesh->halfedges_begin(); he_it != he_end ; ++he_it)
+    if ( _mesh->is_boundary( he_it))
+      _mesh->status(he_it).set_selected( true );
+}
+
+//=========================================================
+
+template< typename MeshT >
+inline
+std::vector< int > getHalfedgeSelection(MeshT* _mesh) {
+  std::vector< int > selection;
+
+  for ( typename MeshT::HalfedgeIter he_it= _mesh->halfedges_begin() ; he_it != _mesh->halfedges_end() ; ++he_it )
+    if ( _mesh->status(he_it).selected() )
+      selection.push_back( he_it.handle().idx() );
+
+  return selection;
+}
+
 //=========================================================
 //== Face Selection =======================================
 //=========================================================
