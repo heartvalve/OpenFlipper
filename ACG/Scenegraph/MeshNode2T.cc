@@ -170,6 +170,11 @@ availableDrawModes() const {
     drawModes |= DrawModes::POINTS_COLORED;
     drawModes |= DrawModes::SOLID_POINTS_COLORED;
   }
+
+  if(mesh_.has_edge_colors())
+  {
+    drawModes |= DrawModes::EDGES_COLORED;
+  }
   
   if (mesh_.has_face_colors()) {
     drawModes |= DrawModes::SOLID_FACES_COLORED;
@@ -287,6 +292,16 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
     glDepthFunc(depthFunc());
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
+
+
+  if (_drawMode & DrawModes::EDGES_COLORED)
+  {
+    enable_arrays( PER_EDGE_VERTEX_ARRAY | PER_EDGE_COLOR_ARRAY );
+    glDisable(GL_LIGHTING);
+    glShadeModel(GL_FLAT);
+    draw_lines();
+  }  
+
   
   if ( ( _drawMode & DrawModes::SOLID_POINTS_COLORED ) && mesh_.has_vertex_colors() )
   {
