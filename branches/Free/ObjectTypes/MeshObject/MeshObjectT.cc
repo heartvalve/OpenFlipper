@@ -508,7 +508,7 @@
   void MeshObject< MeshT >::boundingBox( ACG::Vec3d& _bbMin , ACG::Vec3d& _bbMax ) {
     if ( meshNode_ ) {
       _bbMin = ACG::Vec3d(FLT_MAX, FLT_MAX, FLT_MAX);
-      _bbMax = ACG::Vec3d(FLT_MIN, FLT_MIN, FLT_MIN);
+      _bbMax = ACG::Vec3d(-FLT_MAX, -FLT_MAX, -FLT_MAX);
       meshNode_->boundingBox(_bbMin,_bbMax);
     } else {
       std::cerr << "Error: Bounding box computation via Scenegraph not available without gui" << std::endl;
