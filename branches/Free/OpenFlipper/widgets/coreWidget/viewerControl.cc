@@ -164,70 +164,140 @@ void CoreWidget::slotGlobalViewAll() {
     examiner_widgets_[i]->viewAll();
 }
 
-/// Toggle projection Mode of the active viewer
+/// Toggle projection mode of the active viewer
 void CoreWidget::slotContextSwitchProjection() {
   examiner_widgets_[PluginFunctions::activeExaminer()]->toggleProjectionMode();
 }
 
-/// Toggle projection Mode of all viewers to perspective projection
+/// Toggle projection mode of all viewers to perspective projection
 void CoreWidget::slotGlobalPerspectiveProjection() {
   for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i )
     examiner_widgets_[i]->perspectiveProjection();
 }
 
-/// Toggle projection Mode of all viewers to orthogonal projection
+/// Toggle projection mode of all viewers to orthogonal projection
 void CoreWidget::slotGlobalOrthographicProjection() {
   for ( int i = 0 ; i < PluginFunctions::viewers() ; ++i )
     examiner_widgets_[i]->orthographicProjection();
 }
 
-/// Set the animation Mode for all viewers
+
+/// If animation is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+void CoreWidget::slotGlobalToggleAnimation() {
+  int enabledCount  = 0;
+
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).animation() )
+      enabledCount++;
+  }
+  
+  slotGlobalChangeAnimation (enabledCount == 0);
+}
+
+/// Set the animation mode for all viewers
 void CoreWidget::slotGlobalChangeAnimation(bool _animation){
   for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     PluginFunctions::viewerProperties(i).animation(_animation);
 }
 
-/// Set the animation Mode for active viewer
+/// Set the animation mode for active viewer
 void CoreWidget::slotLocalChangeAnimation(bool _animation){
   PluginFunctions::viewerProperties().animation(_animation);
 }
 
-/// Set Backface culling for all viewers
+
+/// If backface culling is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+void CoreWidget::slotGlobalToggleBackFaceCulling() {
+  int enabledCount  = 0;
+
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).backFaceCulling() )
+      enabledCount++;
+  }
+  
+  slotGlobalChangeBackFaceCulling (enabledCount == 0);
+}
+
+/// Set backface culling for all viewers
 void CoreWidget::slotGlobalChangeBackFaceCulling(bool _backFaceCulling){
   for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     PluginFunctions::viewerProperties(i).backFaceCulling(_backFaceCulling);
 
 }
 
-/// Set Backface culling for active viewer
+/// Set backface culling for active viewer
 void CoreWidget::slotLocalChangeBackFaceCulling(bool _backFaceCulling){
   PluginFunctions::viewerProperties().backFaceCulling(_backFaceCulling);
 }
 
 
-/// Set two sided lighting for all viewers
+/// If two-sided lighting is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+void CoreWidget::slotGlobalToggleTwoSidedLighting() {
+  int enabledCount  = 0;
+
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).twoSidedLighting() )
+      enabledCount++;
+  }
+  
+  slotGlobalChangeTwoSidedLighting (enabledCount == 0);
+}
+
+/// Set two-sided lighting for all viewers
 void CoreWidget::slotGlobalChangeTwoSidedLighting(bool _lighting) {
   for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     PluginFunctions::viewerProperties(i).twoSidedLighting(_lighting);
 }
 
-/// Set two sided lighting for active viewer
+/// Set two-sided lighting for active viewer
 void CoreWidget::slotLocalChangeTwoSidedLighting(bool _lighting) {
   PluginFunctions::viewerProperties().twoSidedLighting(_lighting);
 }
 
-/// Set Multisampling for all viewers
+
+/// If multisampling is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+void CoreWidget::slotGlobalToggleMultisampling() {
+  int enabledCount  = 0;
+
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).multisampling() )
+      enabledCount++;
+  }
+  
+  slotGlobalChangeMultisampling (enabledCount == 0);
+}
+
+/// Set multisampling for all viewers
 void CoreWidget::slotGlobalChangeMultisampling(bool _multisampling) {
   for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
     PluginFunctions::viewerProperties(i).multisampling( _multisampling );
 }
 
-/// Set Multisampling for active viewer
+/// Set multisampling for active viewer
 void CoreWidget::slotLocalChangeMultisampling(bool _multisampling) {
   PluginFunctions::viewerProperties().multisampling( _multisampling );
 }
 
-/// Set Mipmapping for active viewer
+
+/// If mipmapping is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+void CoreWidget::slotGlobalToggleMipmapping() {
+  int enabledCount  = 0;
+
+  for ( int i = 0 ; i< PluginFunctions::viewers(); ++i ) {
+    if ( PluginFunctions::viewerProperties(i).mipmapping() )
+      enabledCount++;
+  }
+  
+  slotGlobalChangeMipmapping (enabledCount == 0);
+}
+
+/// Set mipmapping for all viewers
+void CoreWidget::slotGlobalChangeMipmapping(bool _mipmapping) {
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+    PluginFunctions::viewerProperties(i).mipmapping( _mipmapping );
+}
+
+/// Set mipmapping for active viewer
 void CoreWidget::slotLocalChangeMipmapping(bool _mipmapping) {
   PluginFunctions::viewerProperties().mipmapping( _mipmapping );
 }

@@ -633,17 +633,20 @@ public:
     QAction* perspectiveProjectionAction_;
     QAction* orthogonalProjectionAction_;
 
-    /// Action to globally set Animation
+    /// Action to globally set animation
     QAction* globalAnimationAction_;
 
     /// Action to globally set backface culling
     QAction* globalBackfaceCullingAction_;
 
-    /// Action to globally set Two-Sided lighting
+    /// Action to globally set two-sided lighting
     QAction* globalTwosidedLightingAction_;
 
     /// Action to globally set multisampling
     QAction* globalMultisamplingAction_;
+    
+    /// Action to globally set mipmapping
+    QAction* globalMipmappingAction_;
 
     ACG::SceneGraph::DrawModes::DrawMode activeDrawModes_;
 
@@ -978,55 +981,76 @@ public:
     void slotGlobalViewAll();
 
 
-    /// Toggle projection Mode of the active viewer.
+    /// Toggle projection mode of the active viewer.
     void slotContextSwitchProjection();
 
-    /// Toggle projection Mode of all viewers to perspective projection
+    /// Toggle projection mode of all viewers to perspective projection
     void slotGlobalPerspectiveProjection();
 
-    /// Toggle projection Mode of all viewers to orthographic projection
+    /// Toggle projection mode of all viewers to orthographic projection
     void slotGlobalOrthographicProjection();
 
 
-    /// Change the Viewing direction from context-menu
+    /// Change the viewing direction from context-menu
     void slotSetViewingDirection(QAction* _action);
     
     /// Lock rotation in current examiner widget
     void slotLockRotation(bool _lock);
 
-
-    /// Set the animation Mode for all viewers
+    
+    
+    /// If animation is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+    void slotGlobalToggleAnimation();
+    
+    /// Set the animation mode for all viewers
     void slotGlobalChangeAnimation(bool _animation);
 
-    /// Set the animation Mode for active viewer
+    /// Set the animation mode for active viewer
     void slotLocalChangeAnimation(bool _animation);
 
 
+    
+    /// If backface culling is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+    void slotGlobalToggleBackFaceCulling();
 
-    /// Set Backface culling for all viewers
+    /// Set backface culling for all viewers
     void slotGlobalChangeBackFaceCulling(bool _backFaceCulling);
 
-    /// Set Backface culling for active viewer
+    /// Set backface culling for active viewer
     void slotLocalChangeBackFaceCulling(bool _backFaceCulling);
 
 
 
-    /// Set two sided lighting for all viewers
+    /// If two-sided lighting is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+    void slotGlobalToggleTwoSidedLighting();
+    
+    /// Set two-sided lighting for all viewers
     void slotGlobalChangeTwoSidedLighting(bool _lighting);
 
-    /// Set two sided lighting for active viewer
+    /// Set two-sided lighting for active viewer
     void slotLocalChangeTwoSidedLighting(bool _lighting);
 
 
 
-    /// Set Multisampling for all viewers
-    void slotGlobalChangeMultisampling(bool _multisampling);
+    /// If multisampling is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+    void slotGlobalToggleMultisampling();
     
-    /// Set Mipmapping for all viewers
-    void slotLocalChangeMipmapping(bool _mipmapping);
+    /// Set multisampling for all viewers
+    void slotGlobalChangeMultisampling(bool _multisampling);
 
-    /// Set Multisampling for active viewer
+    /// Set multisampling for active viewer
     void slotLocalChangeMultisampling(bool _multisampling);
+    
+    
+    /// If mipmapping is disabled in all viewers, enable it in all viewers. Otherwise disable it.
+    void slotGlobalToggleMipmapping();
+    
+    /// Set mipmapping for all viewers
+    void slotGlobalChangeMipmapping(bool _multisampling);
+    
+    /// Set mipmapping for active viewer
+    void slotLocalChangeMipmapping(bool _mipmapping);
+    
 
     /// When using first person mode move backward
     void moveBack();
