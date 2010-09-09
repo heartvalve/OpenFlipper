@@ -116,7 +116,7 @@ request_prop( unsigned int& _ref_count, PropT& _prop)
   if(_ref_count == 0)
   {
     _ref_count = 1;
-    
+
     // always use vertex size!!!
     _prop.resize(n_control_points_m());
     for (unsigned int i = 0; i < _prop.size(); ++i)
@@ -155,13 +155,13 @@ resize(unsigned int _m, unsigned int _n)
 
   dimm_ = _m;
   dimn_ = _n;
-    
-  // resize cpselections 
+
+  // resize cpselections
   cpselections_.resize(_m);
   for (unsigned int i = 0; i < cpselections_.size(); ++i)
     cpselections_[i].resize(_n);
-  
-  // resize eselections 
+
+  // resize eselections
   eselections_.resize(_m);
   for (unsigned int i = 0; i < eselections_.size(); ++i)
     eselections_[i].resize(_n);
@@ -231,7 +231,7 @@ BSplineSurfaceT<PointT>::
 insert_vector_m(const std::vector< Point> & _control_polygon, unsigned int _m)
 {
   std::cout << "insert_vector_m of size " << _control_polygon.size() << " at m = " << _m << std::endl;
-  
+
   assert(_m <= dimm_);
   if (dimn_ == 0)
     dimn_ =_control_polygon.size();
@@ -249,7 +249,7 @@ insert_vector_m(const std::vector< Point> & _control_polygon, unsigned int _m)
   cpselections_.insert(cpselections_.begin() + _m, dummy);
   cpselections_.pop_back();
   std::cout << "cpselections_: " << cpselections_.size() << " x " << cpselections_[cpselections_.size()-1].size() << std::endl;
-  
+
   // resize property net eselection
   eselections_.insert(eselections_.begin() + _m, dummy);
   eselections_.pop_back();
@@ -303,7 +303,7 @@ delete_vector_m(unsigned int _m)
   control_net_.erase(control_net_.begin() + _m);
 
   resize(dimm_-1, dimn_);
-  
+
   // erase from properties
   cpselections_.erase(cpselections_.begin() + _m);
   eselections_.erase(eselections_.begin() + _m);
@@ -322,11 +322,11 @@ delete_vector_n(unsigned int _n)
     control_net_[i].erase(control_net_[i].begin() + _n);
 
   resize(dimm_, dimn_-1);
-  
+
   // erase from properties
   for (unsigned int i = 0; i < dimm_; ++i)
     cpselections_[i].erase(cpselections_[i].begin() + _n);
-  
+
   for (unsigned int i = 0; i < dimm_; ++i)
     eselections_[i].erase(eselections_[i].begin() + _n);
 }
@@ -381,6 +381,96 @@ set_knots_n(std::vector< Scalar > _knots)
 //-----------------------------------------------------------------------------
 
 template <class PointT>
+void
+BSplineSurfaceT<PointT>::
+insert_knot_m(double _u)
+{
+  // span and interval i,i+1
+  Vec2i span = spanm(_u);
+  Vec2i interval = interval_m(_u);
+
+  // create new knot vector
+  Knotvector newknotvecu( get_knotvector_m() );
+  newknotvecu.insertKnot(interval[1], _u);
+
+  // alphas
+  std::vector<double> alpha;
+  for( int i = span[0]; i < span[1]; ++i)
+  {
+    double a(knotvector_m_.getKnot(i+1));
+    double b(knotvector_m_.getKnot(i+degree_m_+1));
+    alpha.push_back((_u-a)/(b-a));
+  }
+  knotvector_m_ = newknotvecu;
+
+  // new control net
+  ControlNet oldcpts(control_net_);
+
+  resize(n_control_points_m()+1, n_control_points_n());
+
+  for( unsigned int i = 0; i < n_control_points_m(); ++i) // for all v rows
+  {
+    if( i <= span[0])
+      control_net_[i] = oldcpts[i];
+    else if( i <= span[1])
+      for( unsigned int j = 0; j < n_control_points_n(); ++j)
+      {
+        control_net_[i][j] = oldcpts[i-1][j]*(1.0-alpha[i-span[0]-1])+oldcpts[i][j]*alpha[i-span[0]-1];
+      }
+    else
+      control_net_[i] = oldcpts[i-1];
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+template <class PointT>
+void
+BSplineSurfaceT<PointT>::
+insert_knot_n(double _v)
+{
+  // span and interval i,i+1
+  Vec2i span = spann(_v);
+  Vec2i interval = interval_n(_v);
+
+  // create new knot vector
+  Knotvector newknotvecv( get_knotvector_n() );
+  newknotvecv.insertKnot(interval[1], _v);
+
+  // alphas
+  std::vector<double> alpha;
+  for( int i = span[0]; i < span[1]; ++i)
+  {
+    double a(knotvector_n_.getKnot(i+1));
+    double b(knotvector_n_.getKnot(i+degree_n_+1));
+    alpha.push_back((_v-a)/(b-a));
+  }
+  knotvector_n_ = newknotvecv;
+
+  // new control net
+  ControlNet oldcpts(control_net_);
+
+  resize(n_control_points_m(), n_control_points_n()+1);
+
+  for( unsigned int i = 0; i < n_control_points_n(); ++i) // for all v rows
+  {
+    if( i <= span[0])
+      for( unsigned int j = 0; j < n_control_points_m(); ++j)
+        control_net_[j][i] = oldcpts[j][i];
+    else if( i <= span[1])
+      for( unsigned int j = 0; j < n_control_points_m(); ++j)
+      {
+        control_net_[j][i] = oldcpts[j][i-1]*(1.0-alpha[i-span[0]-1])+oldcpts[j][i]*alpha[i-span[0]-1];
+      }
+    else
+      for( unsigned int j = 0; j < n_control_points_m(); ++j)
+        control_net_[j][i] = oldcpts[j][i-1];
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+template <class PointT>
 PointT
 BSplineSurfaceT<PointT>::
 surfacePoint(double _u, double _v)
@@ -389,10 +479,10 @@ surfacePoint(double _u, double _v)
 
   if (_u > upperu() && _u < upperu()+epsilon)
     _u = upperu();
-  
+
   if (_v > upperv() && _v < upperv()+epsilon)
     _v = upperv();
-  
+
   assert(_u >= loweru() && _u <= upperu());
   assert(_v >= lowerv() && _v <= upperv());
 
@@ -419,7 +509,7 @@ BSplineSurfaceT<PointT>::
 basisFunction(Knotvector & _knotvector, int _i, int _n, double _t)
 {
   int m = _knotvector.size() - 1;
-  
+
   // Mansfield Cox deBoor recursion
   if ((_i==0 && _t== _knotvector(0)) || (_i==m-_n-1 && _t==_knotvector(m)))
     return 1.0;
@@ -467,17 +557,17 @@ derivativeSurfacePoint(double _u, double _v, int _derm, int _dern)
   Vec2i span_m(spanm(_u));
   Vec2i span_n(spann(_v));
 
-  
+
 //   for (int i = 0; i < n_control_points_m(); i++)
 //     for (int j = 0; j < n_control_points_n(); j++)
 //       point += control_net_[i][j] * derivativeBasisFunction(knotvector_m_, i, pm, _u, _derm)
 //                                   * derivativeBasisFunction(knotvector_n_, j, pn, _v, _dern);
-                                 
+
   for (int i = span_m[0]; i <= span_m[1]; i++)
     for (int j = span_n[0]; j <= span_n[1]; j++)
       point += control_net_[i][j] * derivativeBasisFunction(knotvector_m_, i, pm, _u, _derm)
                                   * derivativeBasisFunction(knotvector_n_, j, pn, _v, _dern);
-  
+
   return point;
 }
 
@@ -619,9 +709,9 @@ BSplineSurfaceT<PointT>::
 interval_m(double _t)
 {
   Vec2i interval = Vec2i(-1, -1);
-  
+
   unsigned int i(0);
-  
+
   if (_t >= upperu())
     i = dimm_-1;
   else
@@ -629,7 +719,7 @@ interval_m(double _t)
     while (_t >= knotvector_m_(i)) i++;
     while (_t <  knotvector_m_(i)) i--;
   }
-  
+
   return Vec2i(i, i+1);
 }
 
@@ -641,9 +731,9 @@ BSplineSurfaceT<PointT>::
 interval_n(double _t)
 {
   Vec2i interval = Vec2i(-1, -1);
-  
+
   unsigned int i(0);
-  
+
   if (_t >= upperv())
     i = dimn_-1;
   else
