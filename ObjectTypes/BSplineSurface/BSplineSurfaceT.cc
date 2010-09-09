@@ -574,17 +574,15 @@ spanm(double _t)
 {
   unsigned int i(0);
 
-  if (i > knotvector_m_.size() - degree_m() - 1)
-    i = degree_m();
+//   if (i > knotvector_m_.size() - degree_m() - 1)
+//     i = degree_m();
 
   if (_t >= upperu())
     i = dimm_ - 1;
   else
   {
-    while (_t >= knotvector_m_(i))
-      i++;
-    while (_t < knotvector_m_(i))
-      i--;
+    while (_t >= knotvector_m_(i)) i++;
+    while (_t < knotvector_m_(i))  i--;
   }
 
   return ACG::Vec2i(i-degree_m(), i);
@@ -599,17 +597,15 @@ spann(double _t)
 {
   unsigned int i(0);
 
-  if (i > knotvector_n_.size() - degree_n() - 1)
-    i = degree_n();
+//   if (i > knotvector_n_.size() - degree_n() - 1)
+//     i = degree_n();
 
   if (_t >= upperv())
     i = dimn_-1;
   else
   {
-    while (_t >= knotvector_n_(i))
-      i++;
-    while (_t < knotvector_n_(i))
-      i--;
+    while (_t >= knotvector_n_(i)) i++;
+    while (_t < knotvector_n_(i))  i--;
   }
 
   return Vec2i(i-degree_n(), i);
@@ -626,8 +622,13 @@ interval_m(double _t)
   
   unsigned int i(0);
   
-  while (_t >= knotvector_m_(i)) i++;
-  while (_t <  knotvector_m_(i)) i--;
+  if (_t >= upperu())
+    i = dimm_-1;
+  else
+  {
+    while (_t >= knotvector_m_(i)) i++;
+    while (_t <  knotvector_m_(i)) i--;
+  }
   
   return Vec2i(i, i+1);
 }
@@ -642,8 +643,14 @@ interval_n(double _t)
   Vec2i interval = Vec2i(-1, -1);
   
   unsigned int i(0);
-  while (_t >= knotvector_n_(i)) i++;
-  while (_t <  knotvector_n_(i)) i--;
+  
+  if (_t >= upperv())
+    i = dimn_-1;
+  else
+  {
+    while (_t >= knotvector_n_(i)) i++;
+    while (_t <  knotvector_n_(i)) i--;
+  }
   
   return Vec2i(i, i+1);
 }
