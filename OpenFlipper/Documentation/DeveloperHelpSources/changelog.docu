@@ -1,13 +1,16 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 9936 )</b>
- *
+ * - <b>OpenFlipper 1.0 (  ? , 10002 )</b>
  *      - <b>ACG</b>
  *          - Quaternions
  *              - Matrix constructor added
  *              - Added dual quaternions
  *          - MeshNode
  *              - Added per face per vertex normal buffer
+ *              - New EDGE_COLORED draw mode
+ *              - New HALFEDGE and HALFEDGE_COLORED draw mode
+ *          - StatusNode
+ *              - Halfedge Selections
  *          - TextureNode
  *              - Enable or disable Mipmapping
  *          - GLState
@@ -15,6 +18,9 @@
  *          - Dialogs
  *              - Added Dialog for texture node
  *      - <b>Core</b>
+ *          - Backup Interface
+ *              - Icons for undo/redo
+ *              - Intorduced backup groups (create groups of changes for undo/redo .. e.g. if multiple objects are involved)
  *          - Startup
  *              - Added some functions to check for correct lib versions (prevent linking against newer qt than compile version)
  *          - Rendering 
@@ -31,12 +37,18 @@
  *              - Render snapshots offscreen (Arbitrary size)
  *              - Added option to hide coordsys in snapshots
  *              - Added options to set background to alpha in snapshots
+ *              - Added option to enable/disable multisampling in snapshots (and adjust #points used for multisampling)
+ *          - Process Interface
+ *              - Show progress dialog centered at corewidget (not anywhere on screen)
+ *          - ViewMode Interface
+ *              - Allow setting of viewmodes
  *      - <b>ObjectTypes</b>
  *          - MeshObjects 
  *              - BSP Tree 
  *                  - Improve cutting planes to speedup search (more balanced tree)
  *                  - Allow ray intersections for searching in tree (Search for all faces hit by ray)
- *
+ *              - Bugfixes
+ *                  - Fixed wrong lower value computed for bounding boxes (wrong initialization clamping bounding box to upper part of (0.0,0.0,0.0) ) 
  *      - <b>Plugins</b>
  *          - Selection
  *              - BSplineSurface Knot Selection
@@ -56,6 +68,8 @@
  *              - Bugfix for negative indices for vertices
  *          - FileOFF
  *              - Bugfix for crash when reading degenerate faces
+ *          - Selection Plugin
+ *              - Added halfedge selection
  *      - <b>Documentation</b>
  *          - More docs for backup interface (incl. Tutorial)
  *      - <b>Build System</b>
