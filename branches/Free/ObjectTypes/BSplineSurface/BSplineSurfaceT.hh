@@ -130,6 +130,10 @@ public:
   /// set the knotvector of the bspline surface in n direction
   void set_knots_n(std::vector< Scalar > _knots);
 
+  // insert a knot i in m direction without changing the surface
+  void insert_knot_m(double _t);
+  // insert a knot i in n direction without changing the surface
+  void insert_knot_n(double _t);
 
   /// Creates interpolating knotvectors 0...0, 1, 2, ..., n...n
   void createKnots();
@@ -299,7 +303,7 @@ public:
    * Returns N_i^p(_u)
   */
   Scalar basisFunction(Knotvector & _knotvector, int _i, int _n, double _t);
-  
+
   /**
    * Derivative of a Spline Basis Function
    * \param _knotvector the knotvector
@@ -321,7 +325,7 @@ public:
    * \param _t the parameter
    */
   ACG::Vec2i spann(double _t);
-  
+
   /**
    * Returns the index of the knots u and u+1 such that t in [u, u+1)
    * \param _t the parameter
@@ -333,8 +337,8 @@ public:
    * \param _t the parameter
    */
   ACG::Vec2i interval_n(double _t);
-  
-  
+
+
 //private: // private functions
 public:
 
@@ -348,7 +352,7 @@ public:
   /// Returns the upper v parameter
   Scalar upperv();
 
-  
+
 public :
 
   // request properties
@@ -377,7 +381,7 @@ public :
 //  /// acces with row / col indices
 //         unsigned char& controlpoint_selection(unsigned int _i, unsigned int _j)       {int idx = _i * dimn_ + _j; return cpselections_[idx];}
 //   const unsigned char& controlpoint_selection(unsigned int _i, unsigned int _j) const {int idx = _i * dimn_ + _j; return cpselections_[idx];}
-  
+
 //  /// access with global idx
 //         unsigned char& controlpoint_selection(unsigned int _idx)       {return cpselections_[_idx];}
 //   const unsigned char& controlpoint_selection(unsigned int _idx) const {return cpselections_[_idx];}
@@ -419,7 +423,7 @@ private: // private properties
   /// list of control point  properties
 //   std::vector<unsigned char> cpselections_;
   PropertyNet cpselections_;
-  
+
   /// list of edge properties
 //   std::vector<unsigned char> eselections_;
   PropertyNet eselections_;
