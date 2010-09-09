@@ -415,7 +415,7 @@ deBoorAlgorithm( double _u)
 
   for (int r = 1; r <= n; ++r)
   {
-  controlPoints_r.clear();
+    controlPoints_r.clear();
 
     for (int i = r; i <= n; ++i)
     {
@@ -521,7 +521,7 @@ insertKnot(double _u)
 
   std::vector<Point> updateControlPoints;
 
-  // keep control points that are not affected be knot insertion
+  // keep control points that are not affected by knot insertion
   for (int i = 0; i <= span_u[0]; ++i)
     updateControlPoints.push_back(get_control_point(i));
 
