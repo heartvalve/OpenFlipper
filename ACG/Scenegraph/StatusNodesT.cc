@@ -300,10 +300,14 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
   if (halfedges)
   {
     glEnableClientState(GL_NORMAL_ARRAY);
-    glVertexPointer(&he_points_[0]);
-    glNormalPointer(&he_normals_[0]);
+    if ( !he_points_.empty()) {
+      glVertexPointer(&he_points_[0]);
+
+      if ( !he_normals_.empty()) 
+        glNormalPointer(&he_normals_[0]);
     
-    draw_halfedges();
+      draw_halfedges();
+    }
   }
 
 
