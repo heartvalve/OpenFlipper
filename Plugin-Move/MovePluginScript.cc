@@ -49,6 +49,9 @@
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 #include <ObjectTypes/TSplineMesh/TSplineMesh.hh>
 #endif
+#ifdef ENABLE_SKELETON_SUPPORT
+#include <ObjectTypes/Skeleton/SkeletonTransform.hh>
+#endif
 
 #include <MeshTools/MeshFunctions.hh>
 
@@ -850,9 +853,9 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
   
   Skeleton::Pose* activePose;
   
-  if ( !handle.isValid() )
+  if ( !handle.isValid() ){
     activePose = skeleton->getReferencePose();
-  else{
+  }else{
     
     activePose = skeleton->getAnimation( handle.getAnimation() )->getPose( handle.getFrame() );
     
@@ -869,84 +872,27 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
       _matrix = mat;
   }
 
-  Matrix4x4 transform;
-  transform.identity();
-  
-  
   Skeleton::Joint* joint = skeleton->getJoint( skeletonObj->manipulatorNode()->getData().toInt() );
   
-  if (joint == 0)
-    return;
+  SkeletonTransform transformer(*skeleton);
   
-  //get transformation matrix
-  Skeleton::Joint* parent = joint->getParent();
-  
-  if ( parent != 0 )
-    // new GlobalMatrix after application of _matrix is:  newGlobal = _matrix * activePose->getGlobal( joint )
-    // new LocalMatrix : activePose->getGlobalInv( parent->getID() ) * newGlobal
-    // Transformation from LocalMatrix to new LocalMatrix:
-    transform = activePose->getGlobalInv( parent->getID() ) * _matrix * activePose->getGlobal( joint->getID() ) * activePose->getLocalInv( joint->getID() );
+  if ( handle.isValid() )
+    //we are in an animation pose -> only rotation allowed
+    transformer.rotateJoint(joint, activePose, _matrix, !transformCurrentPose_);
   else
-    // the transformation for the root joint has to be applied directly
-    // _matrix defines a post-multiplication but we need a pre-multiplication matrix X in order to apply
-    // the transformation to all frames: _matrix * Global = Global * X --> X = GlobalInverse * _matrix * global
-    transform = activePose->getGlobalInv( joint->getID() ) * _matrix * activePose->getGlobal( joint->getID() );
+    //we are in the refPose apply full transformation
+    transformer.transformJoint(joint, _matrix, recursiveJointTransformation);
 
-  // apply transformation to all frames of all animations
-  for (unsigned long a=0; a < skeleton->getNumberOfAnimations(); a++)
-  for (unsigned long iFrame = 0; iFrame < skeleton->getAnimation(a)->getFrameCount(); iFrame++){
-  
-    //if transformCurrentPose is true skip all other poses
-    if (transformCurrentPose_ && ( (handle.getAnimation() != a) || (handle.getFrame() != iFrame) ))
-      continue;
-    
-    Skeleton::Pose* pose = skeleton->getAnimation(a)->getPose( iFrame );
-  
-    if ( parent != 0 ){
-      //transform the local matrix
-      Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
-        
-      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation);
-      
-    } else {
-      
-      //directly apply the global transformation
-      Matrix4x4 newMatrix = pose->getGlobal( joint->getID() ) * transform;
-        
-      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation);
-    }
-  }
-
-
-  // only apply to refPose if we either are in refPose or if refPoseTransformation is enabled
-  if ( (!transformCurrentPose_ && transformRefPose_) || !handle.isValid() ){
-
-    //transform refPose
-    Skeleton::Pose* pose = skeleton->getReferencePose();
-  
-    if ( parent != 0 ){
-      //transform all selected joints     
-      Matrix4x4 newMatrix = transform * pose->getLocal( joint->getID() );
-      
-      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation);
-      
-    } else {
-
-      //directly apply the global transformation
-      Matrix4x4 newMatrix = pose->getGlobal( joint->getID() ) * transform;
-        
-      pose->setLocal( joint->getID(), newMatrix, !recursiveJointTransformation);
-      
-    }
-    
-    //tell segmenation plugin to update the segmentation
-    bool exists = false;
-
-    emit functionExists("segmentationplugin", "updateSegmentation()", exists);
-    
-    if (exists)
-      RPC::callFunction("segmentationplugin", "updateSegmentation");
-  }
+//   //if we are in refPose update segmentation
+//   if ( !handle.isValid() ){  
+//     //tell segmenation plugin to update the segmentation
+//     bool exists = false;
+// 
+//     emit functionExists("segmentationplugin", "updateSegmentation()", exists);
+// 
+//     if (exists)
+//       RPC::callFunction("segmentationplugin", "updateSegmentation");
+//   }
 
   //update the skin
   bool exists = false;
@@ -956,9 +902,9 @@ void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
   if (exists)
     RPC::callFunction("skeletonplugin", "updateSkin");
 
- emit updatedObject(_objectId, UPDATE_GEOMETRY);
+  emit updatedObject(_objectId, UPDATE_GEOMETRY);
  
- QString matString;
+  QString matString;
   for (int i=0; i < 4; i++)
     for (int j=0; j < 4; j++)
       matString += " , " + QString::number( _matrix(i,j) );
