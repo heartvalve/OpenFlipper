@@ -766,6 +766,7 @@ void TextureControlPlugin::computeValue(Texture& _texture, double _min, double _
    const bool clamp         = _texture.parameters.clamp ;
    const bool center        = _texture.parameters.center;
    const double max_val     = _texture.parameters.max_val;
+   const double min_val     = _texture.parameters.min_val;
    const bool abs           = _texture.parameters.abs;
    const double clamp_max   = _texture.parameters.clamp_max;
    const double clamp_min   = _texture.parameters.clamp_min;
@@ -819,7 +820,8 @@ void TextureControlPlugin::computeValue(Texture& _texture, double _min, double _
       }
    } else {
       _value -= _min;
-      _value *= max_val / (_max - _min);
+      _value *= (max_val - min_val) / (_max - _min);
+      _value += min_val;
    }
 }
 
@@ -913,6 +915,11 @@ bool TextureControlPlugin::parseMode( QString _mode, Texture& _texture ) {
     } else if ( sectionName == "max_val" ) {
       if (value.toDouble() != _texture.parameters.max_val){
         _texture.parameters.max_val = value.toDouble();
+        changed = true;
+      }
+    } else if ( sectionName == "min_val" ) {
+      if (value.toDouble() != _texture.parameters.min_val){
+        _texture.parameters.min_val = value.toDouble();
         changed = true;
       }
     } else if ( sectionName == "repeat" ) {
@@ -1019,6 +1026,11 @@ void TextureControlPlugin::slotSetTextureMode(QString _textureName ,QString _mod
 
         if ( _mode.contains("max_val") && (texture.parameters.max_val != localTex.parameters.max_val) ){
           localTex.parameters.max_val = texture.parameters.max_val;
+          changed = true;
+        }
+        
+        if ( _mode.contains("min_val") && (texture.parameters.min_val != localTex.parameters.min_val) ){
+          localTex.parameters.min_val = texture.parameters.min_val;
           changed = true;
         }
 
@@ -1223,6 +1235,10 @@ void TextureControlPlugin::applyDialogSettings(TextureData* _texData, QString _t
         }
         if (localTexture.parameters.max_val != globalTexture.parameters.max_val){
           localTexture.parameters.max_val = globalTexture.parameters.max_val;
+          changed = true;
+        }
+        if (localTexture.parameters.min_val != globalTexture.parameters.min_val){
+          localTexture.parameters.min_val = globalTexture.parameters.min_val;
           changed = true;
         }
         if (localTexture.parameters.repeat != globalTexture.parameters.repeat){

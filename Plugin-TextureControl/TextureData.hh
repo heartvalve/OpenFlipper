@@ -75,7 +75,8 @@ class TexParameters
           repeat ( false ),
           center ( false ),
           abs ( false ),
-          max_val ( 1.0 ) {};
+          max_val ( 1.0 ),
+          min_val ( 0.0 ) {};
 
     bool scale;
 
@@ -90,6 +91,7 @@ class TexParameters
     bool abs;
 
     double max_val;
+    double min_val;
 };
 
 class Texture {
