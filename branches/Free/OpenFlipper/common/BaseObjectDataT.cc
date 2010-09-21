@@ -106,8 +106,28 @@ bool BaseObjectData::removeAdditionalNode(NodeT*& _node, QString _pluginName, QS
         _node = dynamic_cast<NodeT*>(additionalNodes_[i].first);
         if (_node != NULL) //valid node delete subtree
         {
+           // Delete parent node from additional nodes list
+           additionalNodes_.erase (additionalNodes_.begin()+i);
+           
+           // Remove children from list, too, since the objects will be deleted
+           // on delete_subtree() but (invalid) pointers reside in the additionalNodes_ list
+           // if not removed manually. We need to do this recursively:
+           std::stack<BaseNode *> children;
+           children.push(_node);
+           while(!children.empty())
+           {
+             BaseNode *current = children.top();
+             children.pop();
+             
+             for(BaseNode::ChildIter it = current->childrenBegin(); it != current->childrenEnd(); ++it) 
+               children.push(*it);
+             
+             for(int j = additionalNodes_.size()-1; j >= 0; --j)
+               if(additionalNodes_[j].first == current)
+                 additionalNodes_.erase(additionalNodes_.begin()+j);
+           }
+          // Delete nodes recursively
           _node->delete_subtree();
-          additionalNodes_.erase (additionalNodes_.begin()+i);
         }
         return true;
     }
