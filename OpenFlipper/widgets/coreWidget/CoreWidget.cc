@@ -221,6 +221,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
     splitter_->setSizes(wsizes);
     loggerState_ = OpenFlipper::Options::InScene;
     baseLayout_->setContentsMargins (0, 0, 0, 16);
+    std::cerr << "Logger got new pos : " << slidingLogger_->pos().x() << "," << slidingLogger_->pos().y() << std::endl;
   } else if (OpenFlipper::Options::loggerState() == OpenFlipper::Options::Hidden) {
     splitter_->insertWidget (1, tempLogWidget);
     wsizes[0] = 1;
