@@ -133,6 +133,10 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   vlayout->addLayout( hlayout );
   
   setLayout( vlayout );
+  
+  std::cerr << "Logger Widget created with position : " ;
+  std::cerr << pos().x() ;
+  std::cerr << "," << pos().y() << std::endl;
 
 }
 
