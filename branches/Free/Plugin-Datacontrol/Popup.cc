@@ -286,6 +286,12 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
       icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
       action->setIcon(icon);
     } else {
+	//show object name and id in first entry of the menu
+	int id = model_->itemId( indexList[0] );
+	BaseObject* item = 0;
+	if ( id != -1 && PluginFunctions::getObject(id,item) )
+	menu.addAction(tr("Object ")+QString::number(id)+": "+item->name());
+	
         if(item->dataType() == DATA_LIGHT) {
             action = menu.addAction(tr("Copy"),this,SLOT ( slotCopy() ));
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png");
