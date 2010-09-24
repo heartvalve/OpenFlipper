@@ -57,6 +57,9 @@ class DLLEXPORT LightWidget : public QDialog, public Ui::LightWidgetBase
     /// The directional checkbox changed -> update object
     void directionalToggled();
     
+    /// The fixed position checkbox
+    void fixedPositionChanged();
+    
     /// Color values have changed
     void ambientChanged();
     void diffuseChanged();
