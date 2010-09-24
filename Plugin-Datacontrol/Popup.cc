@@ -291,6 +291,7 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
 	BaseObject* item = 0;
 	if ( id != -1 && PluginFunctions::getObject(id,item) )
 	menu.addAction(tr("Object ")+QString::number(id)+": "+item->name());
+	menu.addSeparator();
 	
         if(item->dataType() == DATA_LIGHT) {
             action = menu.addAction(tr("Copy"),this,SLOT ( slotCopy() ));
