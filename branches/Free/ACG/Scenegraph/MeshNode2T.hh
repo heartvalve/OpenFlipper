@@ -398,7 +398,7 @@ public:
 private:
 
   /** \brief Renders picking for vertices
-  *
+  * _front: Only render front vertices (not occluded by geometry)
   */
   void pick_vertices(GLState& _state, bool _front = false);
   
@@ -422,7 +422,7 @@ private:
 
 private:
   /** \brief Renders picking for edges
-  *
+  * _front: Only render front edges (not occluded by geometry)
   */
   void pick_edges(GLState& _state, bool _front = false);  
   
@@ -445,7 +445,7 @@ private:
 
 private:  
   /** \brief Renders picking for faces
-  *
+  * _front: Only render front faces (not occluded by geometry)
   */
   void pick_faces(GLState& _state);
   

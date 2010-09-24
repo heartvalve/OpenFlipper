@@ -89,13 +89,28 @@ availableDrawModes() const
 
 //----------------------------------------------------------------------------
 
+void
+LineNode::
+enter(GLState& _state , DrawModes::DrawMode _drawMode)
+{
+    MaterialNode::enter(_state, _drawMode);
+    
+    if (alwaysOnTop()) {
+	//store current depth comparison function (needed for lasso selection)
+	glGetIntegerv (GL_DEPTH_FUNC, &prev_depth_);
+	
+	//set depth function and change GLState accordingly
+	glDepthFunc(GL_ALWAYS);
+	_state.depthFunc() = GL_ALWAYS;
+    }
+}
+
+//----------------------------------------------------------------------------
 
 void
 LineNode::
 draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 {
-  glDepthFunc(depthFunc());
-
   if (_drawMode & DrawModes::WIREFRAME)
   {
     glDisable(GL_LIGHTING);
@@ -131,10 +146,22 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 
     glEnd();
   }
-
-  glDepthFunc(GL_LESS);
 }
+  
+//----------------------------------------------------------------------------
 
+void
+LineNode::
+leave(GLState& _state , DrawModes::DrawMode _drawMode)
+{
+    if (alwaysOnTop()) {
+	//restore depth function and change GLState accordingly
+	glDepthFunc(prev_depth_);
+	_state.depthFunc() = prev_depth_;
+    }
+    
+    MaterialNode::leave(_state, _drawMode);
+}
 
 
 //=============================================================================

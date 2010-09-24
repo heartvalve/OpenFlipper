@@ -138,9 +138,7 @@ availableDrawModes() const
 void
 GlutPrimitiveNode::
 draw(GLState& _state, DrawModes::DrawMode _drawMode)
-{
-  glDepthFunc(depthFunc());
-  
+{  
   for (int i = 0; i < (int)primitives_.size(); ++i)
   {
   
@@ -235,8 +233,6 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
 
     glPopMatrix();
   } // end of primitives iter
-  
-  glDepthFunc(GL_LESS);
 }
 
 //----------------------------------------------------------------------------

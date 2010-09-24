@@ -429,15 +429,15 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
 
       if ( PluginFunctions::getPickedObject(node_idx, object) ) {
 
-        if ( polyLineID_ == -1){
-          emit log("Polyline -1");
+        if ( polyLineID_ == -1) {
+	    emit log("Polyline -1");
 
-		      //switch back to PolyLine drawing
-		      PluginFunctions::actionMode( Viewer::PickingMode );
-		      waitingForPolyLineSelection_ = true;
-          PluginFunctions::pickMode("PolyLine");
+	    //switch back to PolyLine drawing
+	    PluginFunctions::actionMode( Viewer::PickingMode );
+	    waitingForPolyLineSelection_ = true;
+	    PluginFunctions::pickMode("PolyLine");
 
-          return;
+	    return;
         }
         //is object a polyLine?
         BaseObjectData *obj;
@@ -464,8 +464,8 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
 
           polyLineID_ = -1;
 
-		      //switch back to PolyLine drawing
-		      PluginFunctions::actionMode( Viewer::PickingMode );
+	  //switch back to PolyLine drawing
+	  PluginFunctions::actionMode( Viewer::PickingMode );
           waitingForPolyLineSelection_ = true;
           PluginFunctions::pickMode("PolyLine");
 
@@ -475,9 +475,9 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
           emit log(LOGERR,tr("PolyLine on quad meshes not fully supported!! "));
           polyLineID_ = -1;
 
-		      //switch back to PolyLine drawing
+	  //switch back to PolyLine drawing
           PluginFunctions::actionMode( Viewer::PickingMode );
-		      waitingForPolyLineSelection_ = true;
+	  waitingForPolyLineSelection_ = true;
           PluginFunctions::pickMode("PolyLine");
 
           return;
@@ -486,9 +486,9 @@ void SelectionPlugin::surfaceLassoSelection(QMouseEvent* _event){
           emit log(LOGERR,tr("PolyLine on tspline meshes not fully supported!! "));
           polyLineID_ = -1;
 
-		      //switch back to PolyLine drawing
+	  //switch back to PolyLine drawing
           PluginFunctions::actionMode( Viewer::PickingMode );
-		      waitingForPolyLineSelection_ = true;
+	  waitingForPolyLineSelection_ = true;
           PluginFunctions::pickMode("PolyLine");
 
           return;

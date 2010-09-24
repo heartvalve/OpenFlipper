@@ -564,8 +564,8 @@ void
 MeshNodeT<Mesh>::
 draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
-  glDepthFunc(depthFunc());
-
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
 
   if (_drawMode & DrawModes::POINTS)
   {
@@ -632,7 +632,7 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
     glDepthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
     draw_faces(PER_VERTEX);
-    glDepthFunc(depthFunc());
+    glDepthFunc(prev_depth);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
@@ -881,7 +881,6 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
 
 
   enable_arrays(0);
-  glDepthFunc(GL_LESS);
 }
 
 
@@ -1238,6 +1237,9 @@ void
 MeshNodeT<Mesh>::
 pick_vertices(GLState& _state, bool _front)
 {
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+      
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
                                  v_end(mesh_.vertices_end());
   GLuint                         idx(0);
@@ -1277,8 +1279,7 @@ pick_vertices(GLState& _state, bool _front)
   if (vertexList_ && !updateVertexList_ && _state.pick_current_index () == vertexBaseIndex_)
   {
     glCallList (vertexList_);
-    if (_front)
-      glDepthFunc(depthFunc());
+    glDepthFunc(prev_depth);
     return;
   }
 
@@ -1326,9 +1327,8 @@ pick_vertices(GLState& _state, bool _front)
     glEndList ();
     glCallList (vertexList_);
   }
-
-  if (_front)
-    glDepthFunc(depthFunc());
+  
+  glDepthFunc(prev_depth);
 }
 
 
@@ -1339,7 +1339,7 @@ template<class Mesh>
 void
 MeshNodeT<Mesh>::
 pick_faces(GLState& _state)
-{
+{  
   typename Mesh::ConstFaceIter        f_it(mesh_.faces_sbegin()),
                                       f_end(mesh_.faces_end());
   typename Mesh::ConstFaceVertexIter  fv_it;
@@ -1492,6 +1492,9 @@ pick_edges(GLState& _state, bool _front)
   typename Mesh::ConstEdgeIter        e_it(mesh_.edges_sbegin()),
                                       e_end(mesh_.edges_end());
 
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  
   if (!_state.pick_set_maximum (mesh_.n_edges()))
   {
     omerr() << "MeshNode::pick_edges: color range too small, "
@@ -1526,8 +1529,7 @@ pick_edges(GLState& _state, bool _front)
   if (edgeList_ && !updateEdgeList_ && _state.pick_current_index () == edgeBaseIndex_)
   {
     glCallList (edgeList_);
-    if (_front)
-      glDepthFunc(depthFunc());
+    glDepthFunc(prev_depth);
     return;
   }
 
@@ -1580,9 +1582,8 @@ pick_edges(GLState& _state, bool _front)
     glEndList ();
     glCallList (edgeList_);
   }
-
-  if (_front)
-    glDepthFunc(depthFunc());
+  
+  glDepthFunc(prev_depth);
 }
 
 //----------------------------------------------------------------------------
@@ -1593,6 +1594,9 @@ void
 MeshNodeT<Mesh>::
 pick_any(GLState& _state)
 {
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  
   unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
 
   // nothing to pick ?
@@ -1740,8 +1744,6 @@ pick_any(GLState& _state)
 
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
-
-    glDepthFunc(depthFunc());
   }
   else
   {
@@ -1808,10 +1810,7 @@ pick_any(GLState& _state)
       glVertex(mesh_.point(v_it));
       glEnd();
     }
-
-    glDepthFunc(depthFunc());
   }
-
 
   if (anyList_)
   {
@@ -1820,6 +1819,8 @@ pick_any(GLState& _state)
     glCallList (anyList_+1);
     glCallList (anyList_+2);
   }
+  
+  glDepthFunc(prev_depth);
 }
 
 //----------------------------------------------------------------------------

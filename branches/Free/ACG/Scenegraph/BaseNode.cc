@@ -79,7 +79,6 @@ BaseNode(BaseNode* _parent, std::string _name)
     name_(_name),
     status_(Active),
     drawMode_(DrawModes::DEFAULT),
-    depth_func_(GL_LESS),
     pickingEnabled_(true),
     dirty_ (false),
     traverseMode_ (BaseNode::NodeFirst)

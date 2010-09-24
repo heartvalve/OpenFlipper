@@ -79,8 +79,6 @@ StatusNodeT( const Mesh&         _mesh,
   bbMin_(FLT_MAX,  FLT_MAX,  FLT_MAX),
   bbMax_(-FLT_MAX, -FLT_MAX, -FLT_MAX)
 {
-  depthFunc(GL_LEQUAL);
-
   set_line_width(3);
   set_point_size(5);
 }
@@ -238,7 +236,10 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 		(_drawMode & DrawModes::SOLID_FLAT_SHADED));
 
 
-  glDepthFunc(depthFunc());
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  
+  glDepthFunc(GL_LEQUAL);
 
   if (shaded)  glEnable(GL_LIGHTING);
   else         glDisable(GL_LIGHTING);
@@ -256,8 +257,7 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glVertexPointer(mesh_.points());
-
-
+  
 
   // points
   if (points)
@@ -310,11 +310,10 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
     }
   }
 
-
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
-
-  glDepthFunc(GL_LESS);
+  
+  glDepthFunc(prev_depth);
 }
 
 
@@ -326,7 +325,6 @@ void
 StatusNodeT<Mesh, Mod>::
 draw_points()
 {
-
   if ( !v_cache_.empty() )
     glDrawElements(GL_POINTS,
   		             v_cache_.size(),
