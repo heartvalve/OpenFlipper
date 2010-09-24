@@ -209,13 +209,6 @@ public:
   /// Handle mouse event (some interaction, e.g. modeling)
   virtual void mouseEvent(GLState& /* _state */, QMouseEvent* /* _event */ ) {}
 
-
-  /// get glDepthFunc() parameter
-  GLenum depthFunc() const { return depth_func_; }
-
-  /// set glDepthFunc parameter (it's GL_LESS by default)
-  void depthFunc(GLenum _func) { depth_func_ = _func; }
-
   /// mark node for redrawn
   void setDirty (bool _dirty = true) { dirty_ = _dirty; }
 
@@ -555,9 +548,6 @@ private:
 
   /// private draw mode
   DrawModes::DrawMode drawMode_;
-
-  /// depth func
-  GLenum depth_func_;
   
   /** Flag indicating if picking should be done for this object
    * This flag has to be checked by your node if you implement picking

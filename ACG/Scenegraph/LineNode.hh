@@ -103,7 +103,9 @@ public:
 		 _name,
 		 MaterialNode::BaseColor |
 		 MaterialNode::LineWidth),
-    line_mode_(_mode)
+    line_mode_(_mode),
+    draw_always_on_top (false),
+    prev_depth_(GL_LESS)
   {
     drawMode(DrawModes::WIREFRAME);
   }
@@ -116,7 +118,6 @@ public:
   void set_line_mode(LineMode _mode) { line_mode_ = _mode; }
 
 
-
   /// static name of this class
   ACG_CLASSNAME(LineNode);
 
@@ -125,16 +126,20 @@ public:
 
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
+  
+  
+  /// set depth function (needed for lasso selection so that the line can be draw in pseudo-2D)
+  void enter(GLState& _state, DrawModes::DrawMode _drawMode);
 
   /// draw lines and normals
   void draw(GLState& _state, DrawModes::DrawMode _drawMode);
-
-
+  
+  /// reset depth function to what it was before enter()
+  void leave(GLState& _state, DrawModes::DrawMode _drawMode);
 
 
   /// reserve mem for _n lines
   void reserve_lines(unsigned int _n) { points_.reserve(2*_n); }
-
   /// reserve mem for _n points
   void reserve_points(unsigned int _n) { points_.reserve(_n); }
 
@@ -163,8 +168,11 @@ public:
   /// return reference to point vector
   const PointVector& points() const { return points_; }
 
-  /// get color container
+  /// get and set color container
   ColorVector& colors() { return colors_; }
+  
+  /// get and set always on top
+  bool& alwaysOnTop() { return draw_always_on_top; }
 
 
   /// STL conformance
@@ -180,6 +188,9 @@ protected:
   ColorVector  colors_;
 
   LineMode     line_mode_;
+  
+  bool	       draw_always_on_top;
+  GLint	       prev_depth_;
 };
 
 

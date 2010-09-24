@@ -132,8 +132,6 @@ void
 QuadNode::
 draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 {
-  glDepthFunc(depthFunc());
-
   if (_drawMode & DrawModes::WIREFRAME ||
       _drawMode & DrawModes::HIDDENLINE )
   {

@@ -203,8 +203,6 @@ void
 MeshNodeT<Mesh>::
 draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
-  glDepthFunc(depthFunc());
-
   if ( ( _drawMode & DrawModes::SOLID_ENV_MAPPED ) && mesh_.has_vertex_normals())
   {
     enable_arrays(VERTEX_ARRAY | NORMAL_ARRAY);

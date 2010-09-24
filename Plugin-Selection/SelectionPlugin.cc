@@ -183,7 +183,7 @@ void SelectionPlugin::initializePlugin() {
   line_node_ = new ACG::SceneGraph::LineNode (ACG::SceneGraph::LineNode::PolygonMode,0, nodeName );
   PluginFunctions::addGlobalNode(line_node_);                                              
   line_node_->set_line_width (2.0);
-  line_node_->depthFunc (GL_ALWAYS);
+  line_node_->alwaysOnTop() = true;
   line_node_->setTraverseMode (BaseNode::NodeFirst | BaseNode::SecondPass);
   line_node_->hide();
 
@@ -341,7 +341,7 @@ void SelectionPlugin::pluginsInitialized() {
   toolBar_->addAction( boundaryAction_ );
   #ifdef ENABLE_POLYLINE_SUPPORT
   surfaceLassoAction_ = new QAction( QIcon(iconPath + "surface-lasso.png"),
-                              tr("<B>Surface Lasso</B><br>Draw a Lasso on the surface."), toolBarActions_ );
+                              tr("<B>Surface Lasso</B><br>Draw a Lasso on the surface. Remember to close it with Shift+Doubleclick!"), toolBarActions_ );
   surfaceLassoAction_->setCheckable( true );
   toolBar_->addAction( surfaceLassoAction_ );
   #endif
@@ -401,25 +401,28 @@ void SelectionPlugin::slotObjectUpdated(int _id, const UpdateType _type){
 #ifdef ENABLE_POLYLINE_SUPPORT
 
   if (waitingForPolyLineSelection_)
-    if ( _type == UPDATE_ALL || _type == UPDATE_GEOMETRY ){
+    if ( _type == UPDATE_ALL || _type == UPDATE_GEOMETRY ) {
     
       //is object a polyLine?
       BaseObjectData *obj;
       PluginFunctions::getObject(_id, obj);
-      // get polyline object
-      PolyLineObject* pline  = PluginFunctions::polyLineObject(obj);
-      if (pline){
-        if (polyLineID_ == -1){
-          polyLineID_ = _id;
-        }else if (polyLineID_ != _id){
-          //the user added a second polyline so delete the first
-          emit deleteObject(polyLineID_);
-          polyLineID_ = _id;
-        }
-        if (pline->line()->is_closed()){
-          PluginFunctions::pickMode(SURFACE_LASSO_SELECTION);
-          waitingForPolyLineSelection_ = false;
-        }
+      if (obj) {
+	// get polyline object
+	PolyLineObject* pline  = PluginFunctions::polyLineObject(obj);
+	if (pline) {
+	    if (polyLineID_ == -1) {
+		polyLineID_ = _id;
+	    } else if (polyLineID_ != _id) {
+		//the user added a second polyline so delete the first
+		emit deleteObject(polyLineID_);
+		polyLineID_ = _id;
+	    }
+	    
+	    if (pline->line()->is_closed()) {
+		PluginFunctions::pickMode(SURFACE_LASSO_SELECTION);
+		waitingForPolyLineSelection_ = false;
+	    }
+	}
       }
     }
 #endif

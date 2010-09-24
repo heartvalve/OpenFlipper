@@ -96,9 +96,6 @@ void
 PointNode::
 draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 {
-  glDepthFunc(depthFunc());
-
-
   // points
   if (_drawMode & DrawModes::POINTS)
   {
@@ -143,8 +140,6 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
   glDisableClientState(GL_VERTEX_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_COLOR_ARRAY);
-
-  glDepthFunc(GL_LESS);
 }
 
 

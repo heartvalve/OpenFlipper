@@ -222,8 +222,8 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
   // Update strips if necessary
   stripProcessor_.stripify();
   
-  /// \todo Whats this? Why is this set here
-  glDepthFunc(depthFunc());
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
 
   unsigned int arrays = VERTEX_ARRAY;
   
@@ -295,7 +295,9 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
     glDepthFunc(GL_LEQUAL);
     _state.set_base_color(base_color);
     draw_lines();
-    glDepthFunc(depthFunc());
+    
+    //restore depth buffer comparison function for the next draw calls inside this function
+    glDepthFunc(prev_depth);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
@@ -481,9 +483,6 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
   
   // Unbind all remaining buffers
   glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB , 0 );
-  
-  /// \todo Whats this? Why is this set here and why isnt it set to the one before entering the function?
-  glDepthFunc(GL_LESS);
   
   glPopAttrib();
 }
@@ -990,9 +989,11 @@ void
 MeshNodeT<Mesh>::
 pick_vertices(GLState& _state, bool _front)
 {
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
   v_end(mesh_.vertices_end());
-  
   
   if (!_state.pick_set_maximum (mesh_.n_vertices())) {
     omerr() << "MeshNode::pick_vertices: color range too small, " << "picking failed\n";
@@ -1030,8 +1031,7 @@ pick_vertices(GLState& _state, bool _front)
   
   if (vertexPickingList_ && !updateVertexPickingList_ && _state.pick_current_index () == vertexPickingBaseIndex_) {
     glCallList (vertexPickingList_);
-    if (_front)
-      glDepthFunc(depthFunc());
+    glDepthFunc(prev_depth);
     return;
   }
   
@@ -1062,14 +1062,13 @@ pick_vertices(GLState& _state, bool _front)
     
   } else 
     std::cerr << "Fallback not available pick_vertices!" << std::endl;
-  
+    
   if (vertexPickingList_) {
     glEndList ();
     glCallList (vertexPickingList_);
   }
   
-  if (_front)
-    glDepthFunc(depthFunc());
+  glDepthFunc(prev_depth);
 }
 
 template<class Mesh>
@@ -1077,7 +1076,9 @@ void
 MeshNodeT<Mesh>::
 pick_edges(GLState& _state, bool _front)
 {
-
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  
   if (!_state.pick_set_maximum (mesh_.n_edges())) {
     omerr() << "MeshNode::pick_edges: color range too small, " << "picking failed\n";
     return;
@@ -1114,8 +1115,7 @@ pick_edges(GLState& _state, bool _front)
   
   if (edgePickingList_ && !updateEdgePickingList_ && _state.pick_current_index () == edgePickingBaseIndex_) {
     glCallList (edgePickingList_);
-    if (_front)
-      glDepthFunc(depthFunc());
+    glDepthFunc(prev_depth);
     return;
   }
   
@@ -1159,8 +1159,7 @@ pick_edges(GLState& _state, bool _front)
     glCallList (edgePickingList_);
   }
   
-  if (_front)
-    glDepthFunc(depthFunc());
+  glDepthFunc(prev_depth);
 }
 
 template<class Mesh>
@@ -1239,7 +1238,9 @@ void
 MeshNodeT<Mesh>::
 pick_any(GLState& _state)
 {
-  
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+    
   unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
   
   if ( mesh_.n_vertices() == 0 ) {
@@ -1277,7 +1278,7 @@ pick_any(GLState& _state)
     
     stripProcessor_.updatePickingAny(_state);
     
-    // For this version we load the colors directly not from vbo
+    // For this version we load the colors directly, not from vbo
     glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -1329,12 +1330,9 @@ pick_any(GLState& _state)
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
     
-    glDepthFunc(depthFunc());
-    
     // disable all other arrays
     enable_arrays(0);
   }
-  
   
   if (anyPickingList_)
   {
@@ -1343,8 +1341,9 @@ pick_any(GLState& _state)
     glCallList (anyPickingList_+1);
     glCallList (anyPickingList_+2);
   }
-
-glCheckErrors();
+  
+  glDepthFunc(prev_depth);
+  glCheckErrors();
 }
 
 template<class Mesh>

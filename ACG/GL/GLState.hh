@@ -314,6 +314,9 @@ public:
       _direction will be nornalized.
   */
   void viewing_ray(int _x, int _y, Vec3d& _origin, Vec3d& _direction) const;
+  
+  /// get and set glDepthFunc() parameter
+  GLenum& depthFunc() { return depth_func_; }
 
 
   //--- project and unproject points ------------------------------------------
@@ -585,6 +588,9 @@ private: //--------------------------------------------------------------------
 
   // are we using color picking
   bool colorPicking_;
+  
+  // depth comparison function (GL_LESS by default)
+  GLenum depth_func_;
 
 };
 
