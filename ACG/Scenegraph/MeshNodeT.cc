@@ -564,8 +564,7 @@ void
 MeshNodeT<Mesh>::
 draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
 
   if (_drawMode & DrawModes::POINTS)
   {
@@ -1237,8 +1236,7 @@ void
 MeshNodeT<Mesh>::
 pick_vertices(GLState& _state, bool _front)
 {
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
       
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
                                  v_end(mesh_.vertices_end());
@@ -1492,8 +1490,7 @@ pick_edges(GLState& _state, bool _front)
   typename Mesh::ConstEdgeIter        e_it(mesh_.edges_sbegin()),
                                       e_end(mesh_.edges_end());
 
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
   
   if (!_state.pick_set_maximum (mesh_.n_edges()))
   {
@@ -1594,8 +1591,7 @@ void
 MeshNodeT<Mesh>::
 pick_any(GLState& _state)
 {
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
   
   unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
 

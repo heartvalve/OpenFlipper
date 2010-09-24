@@ -824,6 +824,27 @@ void GLState::viewing_ray( int _x, int _y,
 
 //-----------------------------------------------------------------------------
 
+const GLenum& GLState::depthFunc() const
+{
+  ///\todo Remove this additional check if there are no errors here ever.
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  if (depth_func_ != prev_depth)
+      std::cerr << "GLState depth_func_ doesn't match actual enabled GL_DEPTH_FUNC!" << std::endl;
+      
+  return depth_func_;
+}
+
+//-----------------------------------------------------------------------------
+
+void GLState:: set_depthFunc(const GLenum& _depth_func)
+{
+    glDepthFunc(_depth_func);
+    depth_func_ = _depth_func;
+}
+
+
+//-----------------------------------------------------------------------------
 
 void GLState::push_projection_matrix()
 {

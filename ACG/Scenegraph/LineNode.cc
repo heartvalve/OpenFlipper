@@ -101,7 +101,7 @@ enter(GLState& _state , DrawModes::DrawMode _drawMode)
 	
 	//set depth function and change GLState accordingly
 	glDepthFunc(GL_ALWAYS);
-	_state.depthFunc() = GL_ALWAYS;
+	_state.set_depthFunc(GL_ALWAYS);
     }
 }
 
@@ -157,7 +157,7 @@ leave(GLState& _state , DrawModes::DrawMode _drawMode)
     if (alwaysOnTop()) {
 	//restore depth function and change GLState accordingly
 	glDepthFunc(prev_depth_);
-	_state.depthFunc() = prev_depth_;
+	_state.set_depthFunc(prev_depth_);
     }
     
     MaterialNode::leave(_state, _drawMode);

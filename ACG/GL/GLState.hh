@@ -315,9 +315,10 @@ public:
   */
   void viewing_ray(int _x, int _y, Vec3d& _origin, Vec3d& _direction) const;
   
-  /// get and set glDepthFunc() parameter
-  GLenum& depthFunc() { return depth_func_; }
-
+  /// get glDepthFunc() parameter
+  const GLenum& depthFunc() const;
+  /// set glDepthFunc() parameter
+  void set_depthFunc(const GLenum& _depth_func);
 
   //--- project and unproject points ------------------------------------------
 
