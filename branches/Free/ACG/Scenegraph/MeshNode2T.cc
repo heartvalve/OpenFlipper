@@ -222,8 +222,7 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
   // Update strips if necessary
   stripProcessor_.stripify();
   
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
 
   unsigned int arrays = VERTEX_ARRAY;
   
@@ -989,8 +988,7 @@ void
 MeshNodeT<Mesh>::
 pick_vertices(GLState& _state, bool _front)
 {
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
   
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
   v_end(mesh_.vertices_end());
@@ -1076,8 +1074,7 @@ void
 MeshNodeT<Mesh>::
 pick_edges(GLState& _state, bool _front)
 {
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
   
   if (!_state.pick_set_maximum (mesh_.n_edges())) {
     omerr() << "MeshNode::pick_edges: color range too small, " << "picking failed\n";
@@ -1238,8 +1235,7 @@ void
 MeshNodeT<Mesh>::
 pick_any(GLState& _state)
 {
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
     
   unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
   

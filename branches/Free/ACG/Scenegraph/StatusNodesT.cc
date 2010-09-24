@@ -208,7 +208,7 @@ update_cache()
 template <class Mesh, class Mod>
 void
 StatusNodeT<Mesh, Mod>::
-draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
+draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
   bool shaded = (_drawMode & ( DrawModes::SOLID_FLAT_SHADED |
 			       DrawModes::SOLID_SMOOTH_SHADED |
@@ -236,8 +236,7 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 		(_drawMode & DrawModes::SOLID_FLAT_SHADED));
 
 
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
   
   glDepthFunc(GL_LEQUAL);
 
