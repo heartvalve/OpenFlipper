@@ -63,6 +63,8 @@ LightWidget::LightWidget(  ACG::SceneGraph::BaseNode* _node, QWidget *parent)
   
   connect(directional,SIGNAL(clicked()),this,SLOT(directionalToggled()));
   
+  connect(fixedPosition ,SIGNAL(clicked()),this,SLOT(fixedPositionChanged()));
+  
   connect(xpos,SIGNAL(editingFinished()),this,SLOT(directionalToggled()));
   connect(ypos,SIGNAL(editingFinished()),this,SLOT(directionalToggled()));
   connect(zpos,SIGNAL(editingFinished()),this,SLOT(directionalToggled()));
@@ -176,6 +178,17 @@ void LightWidget::directionalToggled() {
   
   updated();
  
+}
+
+void LightWidget::fixedPositionChanged() {
+  
+  // Block if we currently update the widgets or if we dont get the object
+  if (updatingWidgets_ || !getObject() )
+    return;
+  
+  light_->fixedPosition( fixedPosition->isChecked() );
+  
+  updated();
 }
 
 void LightWidget::ambientChanged() {
