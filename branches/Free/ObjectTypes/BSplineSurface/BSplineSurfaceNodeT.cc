@@ -111,7 +111,8 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
-  glDepthFunc(depthFunc());
+  GLint prev_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
 
   glPushAttrib(GL_ENABLE_BIT);
 
@@ -162,7 +163,7 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
 
     render( _state, false);
 
-    glDepthFunc(depthFunc());
+    glDepthFunc(prev_depth);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
 
@@ -245,8 +246,6 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
     glDisable(GL_BLEND);
   }
 
-
-  glDepthFunc(GL_LESS);
   glPopAttrib();
 }
 

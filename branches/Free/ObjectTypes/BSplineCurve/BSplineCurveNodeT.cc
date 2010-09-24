@@ -111,9 +111,7 @@ template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
 draw(GLState& _state, DrawModes::DrawMode _drawMode)
-{
-  glDepthFunc(depthFunc());
-  
+{  
   glPushAttrib(GL_ENABLE_BIT);
   
   if (_drawMode & DrawModes::WIREFRAME)
@@ -144,7 +142,7 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
     render( _state, false, _drawMode);
   }
 
-  glDepthFunc(GL_LESS);
+  
   glPopAttrib();
 }
 
