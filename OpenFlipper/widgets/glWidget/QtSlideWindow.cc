@@ -359,15 +359,22 @@ void QtSlideWindow::autohidePressed ()
 
 void QtSlideWindow::updateGeometry ()
 {
+  std::cerr << "SlideWindow update geometry" << std::endl;
   if (parentWidget () && widget ())
   {
     setPos (8, parentWidget ()->geometry ().height () - geometry ().height ());
+    std::cerr << "Logger got new pos 1  : " << pos().x() << "," << pos().y() << std::endl;
     resize (parentWidget ()->geometry ().width () - 20,
             widget ()->size ().height ());
-    if (autohideButton_)
+    
+    if (autohideButton_) {
       autohideButton_->setPos (geometry().width() - 12, -13);
-    if (detachButton_)
+      std::cerr << "Logger got new pos autohide : " << pos().x() << "," << pos().y() << std::endl;
+    }
+    if (detachButton_) {
       detachButton_->setPos (geometry().width() - 25, -13);
+      std::cerr << "Logger got new pos detach: " << pos().x() << "," << pos().y() << std::endl;
+    }
   }
 }
 
