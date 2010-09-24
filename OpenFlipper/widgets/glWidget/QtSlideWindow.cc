@@ -73,6 +73,7 @@
 
 #include "QtSlideWindow.hh"
 #include "QtGraphicsButton.hh"
+#include <iostream>
 
 
 //== IMPLEMENTATION ==========================================================
