@@ -586,35 +586,42 @@ void TypeLightPlugin::updateLights() {
             
             LightSource* source = PluginFunctions::lightSource(lightObject);
             if(source != 0) {
-                
-                // Skip if light source is directional
-                if(!source->directional() && rotation_) {
+              
+              // If light source is directional, we only care about rotations not translations!  
+              if( source->directional() && rotation_) {
+                std::cerr << "Not implemented yet! rotate directional light sources" << std::endl;
+              }
+              
+              
+              // Skip if light source is directional
+              if(!source->directional() && rotation_) {
 
-                    // Rotate light source relatively to trackball center:
-                    
-                    // Get light source's position
-                    ACG::Vec3d p = source->position();
-                    // Vector point from trackball center to light source position
-                    ACG::Vec3d r = p - c;
-                    // Rotate this vector
-                    r = light_matrix_.transform_vector(r);
-                    // ... and set new position.
-                    source->position(c + r);
-                    
-                    emit updatedObject(lightObject->id(), UPDATE_ALL);
-                
-                } else if(!source->directional() && !rotation_) {
-                    
-                    // Translate light on plane
-                    
-                    // Get light source's position
-                    ACG::Vec3d p = source->position();
-                    p += transVec_;
-                    source->position(p);
-                    
-                    emit updatedObject(lightObject->id(), UPDATE_ALL);
-                }
-            }
+                  // Rotate light source relatively to trackball center:
+                  
+                  // Get light source's position
+                  ACG::Vec3d p = source->position();
+                  // Vector point from trackball center to light source position
+                  ACG::Vec3d r = p - c;
+                  // Rotate this vector
+                  r = light_matrix_.transform_vector(r);
+                  // ... and set new position.
+                  source->position(c + r);
+                  
+                  emit updatedObject(lightObject->id(), UPDATE_ALL);
+              
+              } else if(!source->directional() && !rotation_) {
+                  
+                  // Translate light on plane
+                  
+                  // Get light source's position
+                  ACG::Vec3d p = source->position();
+                  p += transVec_;
+                  source->position(p);
+                  
+                  emit updatedObject(lightObject->id(), UPDATE_ALL);
+              }
+          }
+          
         }
     }
     
