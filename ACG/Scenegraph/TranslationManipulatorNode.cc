@@ -688,6 +688,8 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
 void
 TranslationManipulatorNode::draw(GLState& _state, DrawModes::DrawMode /* _drawMode */ )
 {
+   GLenum prev_depth = _state.depthFunc();
+    
    if (draw_manipulator_) {
 
     // Store lighting bits and enable lighting
@@ -737,6 +739,8 @@ TranslationManipulatorNode::draw(GLState& _state, DrawModes::DrawMode /* _drawMo
     // restore active colors
     _state.set_diffuse_color(backup_diffuse);
     _state.set_specular_color(backup_specular);
+    
+    glDepthFunc(prev_depth);
   }
 }
 
@@ -1735,6 +1739,8 @@ void
 TranslationManipulatorNode::
 pick(GLState& _state, PickTarget _target)
 {
+  GLenum prev_depth = _state.depthFunc();
+  
   if (_target == PICK_FACE ||
 	   _target == PICK_ANYTHING) {
 
@@ -1847,8 +1853,10 @@ pick(GLState& _state, PickTarget _target)
 
 	// Restore old attributes and modelview
 	glPopAttrib();
-
 	_state.pop_modelview_matrix();
+	
+	//restore original depth comparison function
+	glDepthFunc(prev_depth);
     }
   }
 }

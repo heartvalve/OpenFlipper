@@ -315,9 +315,9 @@ public:
   */
   void viewing_ray(int _x, int _y, Vec3d& _origin, Vec3d& _direction) const;
   
-  /// get glDepthFunc() parameter
+  /// get glDepthFunc() that is supposed to be active
   const GLenum& depthFunc() const;
-  /// set glDepthFunc() parameter
+  /// Call glDepthFunc() to actually change the depth comparison function, and store the new value in this GLState
   void set_depthFunc(const GLenum& _depth_func);
 
   //--- project and unproject points ------------------------------------------

@@ -210,6 +210,8 @@ void
 CoordsysNode::
 draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
 {
+  GLenum prev_depth = _state.depthFunc();
+    
   GLboolean colorMask[4];
   glGetBooleanv (GL_COLOR_WRITEMASK, colorMask);
   
@@ -287,7 +289,7 @@ draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
     drawCoordsys(_state);
 
     glDepthRange (0.0, 1.0);
-    glDepthFunc (GL_LESS);
+    glDepthFunc (prev_depth);
     glColorMask (colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
 
     // Projection reload
@@ -328,9 +330,8 @@ draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
 
     // reset to default
     glDepthRange (0.0, 1.0);
-    glDepthFunc (GL_LESS);
+    glDepthFunc (prev_depth);
     glColorMask (colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
-
   }
 
   glPopAttrib();
@@ -366,6 +367,8 @@ getMode() const
 void
 CoordsysNode::pick(GLState& _state, PickTarget _target)
 {
+  GLenum prev_depth = _state.depthFunc();  
+    
   if (_target == PICK_ANYTHING) {
 
     GLdouble mat[16];
@@ -453,7 +456,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
         // reset to default
         glDepthRange (0.0, 1.0);
-        glDepthFunc (GL_LESS);
+        glDepthFunc (prev_depth);
         glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       }
 
@@ -523,7 +526,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
         // reset to default
         glDepthRange (0.0, 1.0);
-        glDepthFunc (GL_LESS);
+        glDepthFunc (prev_depth);
         glColorMask (GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
       }
     }
@@ -537,6 +540,8 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
 
 void CoordsysNode::clearPickArea(GLState&  _state, bool _draw, GLfloat _depth)
 {
+  GLenum prev_depth = _state.depthFunc();
+    
   std::vector<Vec2f> points;
   Vec2f center;
   float radius;
@@ -585,7 +590,7 @@ void CoordsysNode::clearPickArea(GLState&  _state, bool _draw, GLfloat _depth)
   // 10% more to ensure everything is in
   gluDisk( quadric, 0, radius * 1.1, 10, 10 );
 
-  glDepthFunc (GL_LESS);
+  glDepthFunc (prev_depth);
   _state.pop_modelview_matrix();
   _state.pop_projection_matrix();
 

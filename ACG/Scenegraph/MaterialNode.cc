@@ -168,13 +168,13 @@ void MaterialNode::enter(GLState& _state, DrawModes::DrawMode  _drawmode  )
 
     if (material_.blending_)
     {
-      glDepthFunc(GL_LEQUAL);
+      _state.set_depthFunc(GL_LEQUAL);
       glBlendFunc(material_.blendParam1_, material_.blendParam2_);
       glEnable(GL_BLEND);
     }
     else
     {
-      glDepthFunc(GL_LESS);
+      _state.set_depthFunc(GL_LESS);
       glDisable(GL_BLEND);
     }
   }
@@ -291,13 +291,13 @@ void MaterialNode::leave(GLState& _state, DrawModes::DrawMode _drawmode )
 
     if (materialBackup_.blending_)
     {
-      glDepthFunc(GL_LEQUAL);
+      _state.set_depthFunc(GL_LEQUAL);
       glBlendFunc(materialBackup_.blendParam1_, materialBackup_.blendParam2_);
       glEnable(GL_BLEND);
     }
     else
     {
-      glDepthFunc(GL_LESS);
+      _state.set_depthFunc(GL_LESS);
       glDisable(GL_BLEND);
     }
   }

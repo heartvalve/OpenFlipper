@@ -1721,8 +1721,10 @@ pick_any(GLState& _state)
 
     if (anyList_)
     {
+      glDepthFunc(prev_depth);
       glEndList ();
       glNewList (anyList_+2, GL_COMPILE);
+      glDepthFunc(GL_LEQUAL);
     }
 
     // vertices
@@ -1776,6 +1778,7 @@ pick_any(GLState& _state)
 
     if (anyList_)
     {
+      glDepthFunc(prev_depth);
       glEndList ();
       glNewList (anyList_+1, GL_COMPILE);
     }
@@ -1794,8 +1797,10 @@ pick_any(GLState& _state)
 
     if (anyList_)
     {
+      glDepthFunc(prev_depth);
       glEndList ();
       glNewList (anyList_+2, GL_COMPILE);
+      glDepthFunc(GL_LEQUAL);
     }
 
     // vertices
@@ -1807,7 +1812,9 @@ pick_any(GLState& _state)
       glEnd();
     }
   }
-
+  
+  glDepthFunc(prev_depth);
+  
   if (anyList_)
   {
     glEndList ();
@@ -1815,8 +1822,6 @@ pick_any(GLState& _state)
     glCallList (anyList_+1);
     glCallList (anyList_+2);
   }
-  
-  glDepthFunc(prev_depth);
 }
 
 //----------------------------------------------------------------------------

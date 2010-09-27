@@ -157,6 +157,7 @@ void Material2Node::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
   if (applyProperties_ & Blending)
   {
     blending_backup_ = _state.blending();
+    depth_backup_ = _state.depthFunc();
     glGetIntegerv( GL_BLEND_SRC, (GLint*) &blend_param1_backup_);
     glGetIntegerv( GL_BLEND_DST, (GLint*) &blend_param2_backup_);
 
@@ -164,13 +165,13 @@ void Material2Node::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 
     if (blending_)
     {
-      glDepthFunc(GL_LEQUAL);
+      _state.set_depthFunc(GL_LEQUAL);
       glBlendFunc(blend_param1_, blend_param2_);
       glEnable(GL_BLEND);
     }
     else
     {
-      glDepthFunc(GL_LESS);
+      _state.set_depthFunc(GL_LESS);
       glDisable(GL_BLEND);
     }
   }
@@ -260,16 +261,15 @@ void Material2Node::leave(GLState& _state, DrawModes::DrawMode /* _drawmode*/ )
   if (applyProperties_ & Blending)
   {
     _state.set_blending(blending_backup_);
+    _state.set_depthFunc(depth_backup_);
 
     if (blending_backup_)
     {
-      glDepthFunc(GL_LEQUAL);
       glBlendFunc(blend_param1_backup_, blend_param2_backup_);
       glEnable(GL_BLEND);
     }
     else
     {
-      glDepthFunc(GL_LESS);
       glDisable(GL_BLEND);
     }
   }

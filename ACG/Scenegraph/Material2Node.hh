@@ -259,6 +259,7 @@ private:
   bool     blending_, blending_backup_;
   GLenum   blend_param1_, blend_param1_backup_;
   GLenum   blend_param2_, blend_param2_backup_;
+  GLenum   depth_backup_;
 
   bool     backface_culling_, backface_culling_backup_;
 
