@@ -221,6 +221,16 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
 
     /// Set the draw mode for a viewer
     void setDrawMode(QString _mode, int _viewer = PluginFunctions::ALL_VIEWERS );
+    
+    /** \brief Set the draw mode for an object
+    *
+    * This function can be used to set the drawmode for an object.
+    * 
+    * @param _mode DrawMode as String ( can be a list of drawmodes which will be combined to a new mode )
+    * @param _objectid Id of the object to set the draw mode
+    * @param _force Set the draw mode even if its not directly supported by the objects nodes
+    */
+    void setObjectDrawMode(QString _mode, int _objectID , bool _force = true );
 
     /// Get a viewers viewing direction
     Vector viewingDirection( int _viewer = PluginFunctions::ACTIVE_VIEWER );
