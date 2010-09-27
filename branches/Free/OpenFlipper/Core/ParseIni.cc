@@ -372,7 +372,7 @@ void Core::readRecentFiles(QString _filename){
 void Core::writeApplicationOptions(INIFile& _ini) {
 
   // Write maximum recent file count to ini
-  _ini.add_entry("Options","MaxRecent", OpenFlipperSettings().value("Core/File/MaxRecent",10).toInt() );
+  _ini.add_entry("Options","MaxRecent", OpenFlipperSettings().value("Core/File/MaxRecent",15).toInt() );
 
   // Write list of recent files to ini
   QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles").toStringList();
