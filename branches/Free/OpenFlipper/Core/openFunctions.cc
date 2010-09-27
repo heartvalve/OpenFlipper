@@ -49,6 +49,7 @@
 #include <ACG/QtWidgets/QtFileDialog.hh>
 
 #include "OpenFlipper/common/GlobalOptions.hh"
+#include <OpenFlipper/common/RecentFiles.hh>
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 
 #include "OpenFlipper/widgets/loadWidget/loadWidget.hh"
@@ -220,9 +221,18 @@ int Core::loadObject ( QString _filename ) {
       int id = supportedTypes_[i].plugin->loadObject(_filename);
 
       if ( OpenFlipper::Options::gui() ) {
-        if ( id != -1 )
+        if ( id != -1 ) {
           coreWidget_->statusMessage( tr("Loading %1 ... done").arg(_filename), 4000 );
-        else
+          
+          // Get the object to figure out the data type
+          BaseObject* object;
+          PluginFunctions::getObject(id,object);
+          
+          // Add to recent files with the given datatype
+          if ( OpenFlipper::Options::gui() )
+            coreWidget_->addRecent(_filename, object->dataType());
+          
+        } else
           coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
 
         if ( !OpenFlipper::Options::loadingSettings() )
@@ -273,9 +283,18 @@ int Core::loadObject( DataType _type, QString _filename) {
         id = supportedTypes_[i].plugin->loadObject(_filename);
 
       if ( OpenFlipper::Options::gui() ) {
-        if ( id != -1 )
+        if ( id != -1 ) {
           coreWidget_->statusMessage( tr("Loading %1 ... done").arg(_filename), 4000 );
-        else
+          
+          // Get the object to figure out the data type
+          BaseObject* object;
+          PluginFunctions::getObject(id,object);
+          
+          // Add to recent files with the given datatype
+          if ( OpenFlipper::Options::gui() )
+            coreWidget_->addRecent(_filename, object->dataType());
+          
+        } else
           coreWidget_->statusMessage( tr("Loading %1 ... failed!").arg(_filename), 4000 );
 
         if ( !OpenFlipper::Options::loadingSettings() )
