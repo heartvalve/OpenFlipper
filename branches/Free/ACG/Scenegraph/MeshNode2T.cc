@@ -575,6 +575,9 @@ draw_faces(FaceMode _mode) {
         
         // We need per face attributes so we have to use seperate vertices per face
         glDrawArrays(GL_TRIANGLES, (*stripProcessor_.textureRenderData())[i].startOffset , (*stripProcessor_.textureRenderData())[i].faceCount * 3 );
+        
+        // Unbind Texture again
+        glBindTexture( GL_TEXTURE_2D, 0 );
       }
       
     } else {
