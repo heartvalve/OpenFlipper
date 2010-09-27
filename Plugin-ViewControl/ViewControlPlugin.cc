@@ -1105,6 +1105,22 @@ ViewControlPlugin::setDrawMode(QString _mode, int _viewer)
 
 //-----------------------------------------------------------------------------
 
+void 
+ViewControlPlugin::setObjectDrawMode(QString _mode, int _objectID, bool _force)
+{
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject( _objectID, object );
+  
+  // Set draw Modes for this object ( force it when we do not set the global draw mode, to override global draw mode and force the modes on the nodes )
+  ACG::SceneGraph::SetDrawModesAction actionActive( activeDrawModes_ , _force );
+  if ( object )
+    ACG::SceneGraph::traverse( object->primaryNode() , actionActive);
+  else
+    PluginFunctions::setDrawMode( activeDrawModes_ , PluginFunctions::activeExaminer() );
+}
+
+//-----------------------------------------------------------------------------
+
 Vector ViewControlPlugin::viewingDirection( int _viewer ) {
   return PluginFunctions::viewingDirection(_viewer);
 }
@@ -1188,7 +1204,12 @@ void ViewControlPlugin::setDescriptions() {
                           QString("DrawMode,Viewer").split(","),
                           QString("the drawMode ( ; separated list ),Viewer id (default is all)").split(","));
   emit setSlotDescription("setDrawMode(QString)", "Set the drawMode for all viewers",
+                          
                           QStringList("DrawMode"), QStringList("the drawMode ( ; separated list )"));
+                          
+  emit setSlotDescription("setObjectDrawMode(QString,int,bool)", "Set the drawMode for an object",
+                          QString("DrawMode,ObjectID,Force").split(","),
+                          QString("the drawMode ( ; separated list ),Object id,Apply without checking support(default is true)").split(","));                        
 
   emit setSlotDescription("viewAll()", "Change View on all viewers to view whole scene",
                           QStringList(), QStringList());
