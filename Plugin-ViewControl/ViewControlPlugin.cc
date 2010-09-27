@@ -1110,13 +1110,21 @@ ViewControlPlugin::setObjectDrawMode(QString _mode, int _objectID, bool _force)
 {
   BaseObjectData* object = 0;
   PluginFunctions::getObject( _objectID, object );
-  
+ 
+  QStringList list = _mode.split(';');
+
+  std::vector< QString > drawModeList;
+
+  for ( int i = 0 ; i < list.size() ; ++i )
+    drawModeList.push_back(list[i]);
+
+  ACG::SceneGraph::DrawModes::DrawMode mode = listToDrawMode(drawModeList);
+ 
   // Set draw Modes for this object ( force it when we do not set the global draw mode, to override global draw mode and force the modes on the nodes )
-  ACG::SceneGraph::SetDrawModesAction actionActive( activeDrawModes_ , _force );
+  ACG::SceneGraph::SetDrawModesAction actionActive( mode , _force );
+
   if ( object )
     ACG::SceneGraph::traverse( object->primaryNode() , actionActive);
-  else
-    PluginFunctions::setDrawMode( activeDrawModes_ , PluginFunctions::activeExaminer() );
 }
 
 //-----------------------------------------------------------------------------
