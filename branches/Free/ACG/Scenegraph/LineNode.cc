@@ -97,10 +97,9 @@ enter(GLState& _state , DrawModes::DrawMode _drawMode)
     
     if (alwaysOnTop()) {
 	//store current depth comparison function (needed for lasso selection)
-	glGetIntegerv (GL_DEPTH_FUNC, &prev_depth_);
+	prev_depth_ = _state.depthFunc();
 	
 	//set depth function and change GLState accordingly
-	glDepthFunc(GL_ALWAYS);
 	_state.set_depthFunc(GL_ALWAYS);
     }
 }
@@ -156,7 +155,6 @@ leave(GLState& _state , DrawModes::DrawMode _drawMode)
 {
     if (alwaysOnTop()) {
 	//restore depth function and change GLState accordingly
-	glDepthFunc(prev_depth_);
 	_state.set_depthFunc(prev_depth_);
     }
     

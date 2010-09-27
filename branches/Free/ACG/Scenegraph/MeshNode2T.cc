@@ -221,9 +221,9 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode) {
   
   // Update strips if necessary
   stripProcessor_.stripify();
-  
+    
   GLenum prev_depth = _state.depthFunc();
-
+  
   unsigned int arrays = VERTEX_ARRAY;
   
   glPushAttrib(GL_ENABLE_BIT);
@@ -490,6 +490,7 @@ template<class Mesh>
 void
 MeshNodeT<Mesh>::
 draw_vertices() {
+    
   if ( !vertexBufferInitialized_ || ( mesh_.n_vertices() == 0 ))
     return;
 
@@ -987,7 +988,7 @@ template<class Mesh>
 void
 MeshNodeT<Mesh>::
 pick_vertices(GLState& _state, bool _front)
-{
+{  
   GLenum prev_depth = _state.depthFunc();
   
   typename Mesh::ConstVertexIter v_it(mesh_.vertices_begin()),
@@ -1060,20 +1061,20 @@ pick_vertices(GLState& _state, bool _front)
     
   } else 
     std::cerr << "Fallback not available pick_vertices!" << std::endl;
-    
+      
+  glDepthFunc(prev_depth);
+  
   if (vertexPickingList_) {
     glEndList ();
     glCallList (vertexPickingList_);
   }
-  
-  glDepthFunc(prev_depth);
 }
 
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
 pick_edges(GLState& _state, bool _front)
-{
+{  
   GLenum prev_depth = _state.depthFunc();
   
   if (!_state.pick_set_maximum (mesh_.n_edges())) {
@@ -1151,12 +1152,12 @@ pick_edges(GLState& _state, bool _front)
     std::cerr << "No fallback pick_edges!" << std::endl;
   }
   
+  glDepthFunc(prev_depth);
+  
   if (edgePickingList_) {
     glEndList ();
     glCallList (edgePickingList_);
   }
-  
-  glDepthFunc(prev_depth);
 }
 
 template<class Mesh>
@@ -1234,9 +1235,8 @@ template<class Mesh>
 void
 MeshNodeT<Mesh>::
 pick_any(GLState& _state)
-{
+{    
   GLenum prev_depth = _state.depthFunc();
-    
   unsigned int numElements = mesh_.n_faces() + mesh_.n_edges() + mesh_.n_vertices();
   
   if ( mesh_.n_vertices() == 0 ) {
@@ -1287,7 +1287,6 @@ pick_any(GLState& _state)
       glColorPointer(  stripProcessor_.pickFaceColorBuffer() );
       
       glDrawArrays(GL_TRIANGLES, 0, stripProcessor_.perFaceVertexBufferSize() );
-      
     }
     
     if (anyPickingList_)
@@ -1309,8 +1308,13 @@ pick_any(GLState& _state)
     
     if (anyPickingList_)
     {
+      //restore depth buffer comparison function for this display list
+      glDepthFunc(prev_depth);
+      
       glEndList ();
       glNewList (anyPickingList_+2, GL_COMPILE);
+      
+      glDepthFunc(GL_LEQUAL);
     }
     
     enable_arrays(VERTEX_ARRAY);
@@ -1330,6 +1334,9 @@ pick_any(GLState& _state)
     enable_arrays(0);
   }
   
+  //restore depth buffer comparison function for the active display list
+  glDepthFunc(prev_depth);
+  
   if (anyPickingList_)
   {
     glEndList ();
@@ -1338,7 +1345,6 @@ pick_any(GLState& _state)
     glCallList (anyPickingList_+2);
   }
   
-  glDepthFunc(prev_depth);
   glCheckErrors();
 }
 

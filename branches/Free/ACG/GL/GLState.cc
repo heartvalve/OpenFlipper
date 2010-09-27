@@ -827,10 +827,10 @@ void GLState::viewing_ray( int _x, int _y,
 const GLenum& GLState::depthFunc() const
 {
   ///\todo Remove this additional check if there are no errors here ever.
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
-  if (depth_func_ != prev_depth)
-      std::cerr << "GLState depth_func_ doesn't match actual enabled GL_DEPTH_FUNC!" << std::endl;
+  GLenum real_depth;
+  glGetIntegerv (GL_DEPTH_FUNC, (GLint*) &real_depth);
+  if (depth_func_ != real_depth)
+      std::cerr << "GLState depth_func_ ("<<depth_func_<<") doesn't match actual enabled GL_DEPTH_FUNC ("<<real_depth<<")!" << std::endl;
       
   return depth_func_;
 }
