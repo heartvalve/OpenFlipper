@@ -242,6 +242,9 @@ void TextureNode::setTextureDataGL (  GLuint _textureId,
   textures_[_textureId].target      = _target;
   textures_[_textureId].width       = _width;
   textures_[_textureId].height      = _height;
+  
+  // Unbind until we use it
+  glBindTexture(GL_TEXTURE_2D,0);
 }
 
 
