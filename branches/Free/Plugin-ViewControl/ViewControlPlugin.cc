@@ -596,8 +596,8 @@ void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
   BaseObjectData* object = 0;
   PluginFunctions::getObject( lastObjectId_, object );
 
-  // Set draw Modes for this object
-  ACG::SceneGraph::SetDrawModesAction actionActive( activeDrawModes_ );
+  // Set draw Modes for this object ( force it when we do not set the global draw mode, to override global draw mode and force the modes on the nodes )
+  ACG::SceneGraph::SetDrawModesAction actionActive( activeDrawModes_ , _action->text() != USEGLOBALDRAWMODE );
   if ( object )
     ACG::SceneGraph::traverse( object->primaryNode() , actionActive);
   else
