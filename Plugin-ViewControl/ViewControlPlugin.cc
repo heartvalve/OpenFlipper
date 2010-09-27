@@ -582,22 +582,33 @@ void ViewControlPlugin::slotDrawModeSelected( QAction * _action) {
   // possibly combine draw modes
   //======================================================================================
   if ( _action->text() != USEGLOBALDRAWMODE ) {
+    // As this is not the global draw mode, filter out default as draw mode or it will interfere with the other modes!
+    activeDrawModes_ = ( ( activeDrawModes_ | ACG::SceneGraph::DrawModes::DEFAULT ) ^ ACG::SceneGraph::DrawModes::DEFAULT );
+    
+    // If shift is pressed, we combine the modes (and toggle therefore xor)
+    // Otherwise we directly take the new mode
     if ( qApp->keyboardModifiers() & Qt::ShiftModifier )
       activeDrawModes_ = ( activeDrawModes_ ^ mode);
     else
       activeDrawModes_ = mode ;
-  } else
+    
+  } else {
+    // Switch back to global drawmode-> default
     activeDrawModes_ = ACG::SceneGraph::DrawModes::DEFAULT;
+  }
 
   //======================================================================================
   // Now do the update in the sceneGraph
   //======================================================================================
 
+  // Get the associated object
   BaseObjectData* object = 0;
   PluginFunctions::getObject( lastObjectId_, object );
 
   // Set draw Modes for this object ( force it when we do not set the global draw mode, to override global draw mode and force the modes on the nodes )
   ACG::SceneGraph::SetDrawModesAction actionActive( activeDrawModes_ , _action->text() != USEGLOBALDRAWMODE );
+  
+  
   if ( object )
     ACG::SceneGraph::traverse( object->primaryNode() , actionActive);
   else
