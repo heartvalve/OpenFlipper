@@ -580,7 +580,15 @@ class SetDrawModesAction
 {
 public:
 
-  SetDrawModesAction(DrawModes::DrawMode _mode) : newModes_(_mode) {}
+  /** \brief Set draw modes for all nodes traversed with this action
+  *
+  * This action can be used to set the drawmodes for all nodes which
+  * are traversed using this action. 
+  *
+  * @param _mode  The draw mode set for the traversed nodes
+  * @param _force If true, the mode is set ignoring if its supported by the nodes
+  */
+  SetDrawModesAction(DrawModes::DrawMode _mode, bool _force = false ) : newModes_(_mode),force_(_force) {}
 
   bool operator()(BaseNode* _node)
   {
@@ -589,16 +597,25 @@ public:
 
     DrawModes::DrawMode availableModes = _node->availableDrawModes();
 
-    if ( availableModes & newModes_ )
+    if ( force_ ) {
+      // if force, we ignore if the mode is supported by the node and set it
+      _node->drawMode( newModes_ );
+    } else if ( availableModes & newModes_ ) {
+      // If its supported, we set it
       _node->drawMode( availableModes & newModes_ );
-    else
+    } else {
+      // otherwise we switch the node to default draw mode (which will use the global mode)
       _node->drawMode( DrawModes::DEFAULT );
-
+    }
+    
+    
     return true;
   }
 
 private:
   DrawModes::DrawMode newModes_;
+  bool                force_; 
+  
 };
 
 
