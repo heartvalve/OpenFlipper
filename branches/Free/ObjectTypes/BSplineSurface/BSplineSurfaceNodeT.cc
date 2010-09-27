@@ -111,8 +111,7 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {
-  GLint prev_depth;
-  glGetIntegerv (GL_DEPTH_FUNC, &prev_depth);
+  GLenum prev_depth = _state.depthFunc();
 
   glPushAttrib(GL_ENABLE_BIT);
 
