@@ -107,7 +107,6 @@
 #include <OpenFlipper/Core/PluginInfo.hh>
 
 #include <ACG/Scenegraph/CoordsysNode.hh>
-#include <ACG/Scenegraph/GridNode.hh>
 
 #include <OpenFlipper/threads/JobInfo.hh>
 
@@ -765,9 +764,6 @@ private slots:
 
       /// Node for the coordinate system
       ACG::SceneGraph::CoordsysNode* coordsysNode_;
-
-      /// Node for the grid
-//       ACG::SceneGraph::GridNode* gridNode_;
 
    /** @} */
 
