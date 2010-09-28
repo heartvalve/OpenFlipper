@@ -423,7 +423,27 @@ private:
   unsigned int max_render_passes_;
 
   /** @} */
+  
+  //===========================================================================
+  /** @name Scene Infos
+  * @{ */
+  //===========================================================================  
 
+  public:
+    /// Provide scene Information about the boundingbox via this function 
+    /// It is not computed by the state itself!!
+    void set_bounding_box(ACG::Vec3d _min, ACG::Vec3d _max );
+    
+    /// Get the current bounding box of the scene.
+    /// This has to be set before traversal happens in the viewer by using set_bounding_box
+    void get_bounding_box(ACG::Vec3d& _min, ACG::Vec3d& _max );
+    
+    
+  private:
+    ACG::Vec3d bb_min_,bb_max_;
+    
+
+  /** @} */
   //--- misc ------------------------------------------------------------------
 
 public:
