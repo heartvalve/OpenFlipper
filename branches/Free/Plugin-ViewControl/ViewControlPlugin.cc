@@ -93,6 +93,9 @@ void ViewControlPlugin::pluginsInitialized() {
   if ( typeExists("Skeleton") )
     emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("Skeleton")      , CONTEXTOBJECTMENU );
   
+  if ( typeExists("PolyLine") )
+    emit addContextMenuItem(viewControlMenu_->menuAction() , typeId("PolyLine")      , CONTEXTOBJECTMENU );
+  
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 
   setDescriptions();
