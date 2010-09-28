@@ -105,6 +105,8 @@ public:
   float gridSize();
 
   void gridSize(float _size);
+  
+  void autoResize(bool _auto);
 
 private:
 
@@ -123,6 +125,8 @@ private:
   /// colors for the grid
   Vec3f baseLineColor_;
   Vec3f midLineColor_;
+  
+  bool autoResize_;
 
   bool ok_;
 };
