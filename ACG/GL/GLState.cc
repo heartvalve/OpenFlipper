@@ -75,6 +75,8 @@ const float  GLState::default_shininess(100.0);
 GLState::GLState(bool _updateGL)
   : render_pass_(1),
     max_render_passes_(1),
+    bb_min_(ACG::Vec3d(0.0,0.0,0.0)),
+    bb_max_(ACG::Vec3d(0.0,0.0,0.0)),
     multisampling_(false),    
     allow_multisampling_(true),
     mipmapping_(true),
@@ -699,6 +701,20 @@ void GLState::set_line_width(float _f)
     makeCurrent();
     glLineWidth(line_width_);
   }
+}
+
+//-----------------------------------------------------------------------------
+
+void GLState::set_bounding_box(ACG::Vec3d _min, ACG::Vec3d _max ) {
+  bb_min_ = _min;
+  bb_max_ = _max;
+}
+
+//-----------------------------------------------------------------------------
+
+void GLState::get_bounding_box(ACG::Vec3d& _min, ACG::Vec3d& _max ) {
+  _min = bb_min_;
+  _max = bb_max_;
 }
 
 
