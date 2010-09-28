@@ -1,23 +1,33 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 10002 )</b>
+ * - <b>OpenFlipper 1.0 (  ? , 10121 )</b>
  *      - <b>ACG</b>
- *          - Quaternions
- *              - Matrix constructor added
- *              - Added dual quaternions
+ *          - GLState
+ *              - Enable or disable Mipmapping
+ *              - Moved depth_func_ from BaseNode to GL_State 
+ *          - Dialogs
+ *              - Added Dialog for texture node
+ *          - MaterialNode
+ *              - Added random color generator
  *          - MeshNode
  *              - Added per face per vertex normal buffer
  *              - New EDGE_COLORED draw mode
  *              - New HALFEDGE and HALFEDGE_COLORED draw mode
+ *              - Fixed a bug in MeshNode2T that would permanently change the depth comparison function instead of only temporarily
+ *              - Correctly unbind texture if bound in MeshNode
+ *          - Quaternions
+ *              - Matrix constructor added
+ *              - Added dual quaternions
+ *          - Scenegraph
+ *              - Extend drawMode Action to include a force mode (forces the given drawmode on all nodes)
  *          - StatusNode
  *              - Halfedge Selections
+ *              - Fixed bug accessing element one of empty array
  *          - TextureNode
  *              - Enable or disable Mipmapping
- *          - GLState
- *              - Enable or disable Mipmapping
- *          - Dialogs
- *              - Added Dialog for texture node
  *      - <b>Core</b>
+ *          - BaseObject
+ *              - Remove all children from additional node when deleting the subtree(otherwise we get dangling pointers)
  *          - Backup Interface
  *              - Icons for undo/redo
  *              - Intorduced backup groups (create groups of changes for undo/redo .. e.g. if multiple objects are involved)
@@ -33,6 +43,7 @@
  *              - Show memory usage information in about dialog on linux
  *          - Load/Save
  *              - Fixed bug when supported extensions are not parsed correctly
+ *              - Add files opened via commandLine to recent files
  *          - Snapshots
  *              - Render snapshots offscreen (Arbitrary size)
  *              - Added option to hide coordsys in snapshots
@@ -49,27 +60,36 @@
  *                  - Allow ray intersections for searching in tree (Search for all faces hit by ray)
  *              - Bugfixes
  *                  - Fixed wrong lower value computed for bounding boxes (wrong initialization clamping bounding box to upper part of (0.0,0.0,0.0) ) 
+ *          - PolyLineObjects
  *      - <b>Plugins</b>
- *          - Selection
- *              - BSplineSurface Knot Selection
- *              - BSplineSurface Selection
- *              - Render Selections for BSpline Curve and Surface
+ *          - DataControl
+ *              - Added Object name and ID display to Datacontrol popup menu
  *          - Decimater
  *              - Support backup plugin ( ->undo )
- *          - Smoother
- *              - Support backup plugin ( ->undo )
- *          - Move
- *              - Support backup plugin ( ->undo )
- *          - Info
- *              - Bugfix -> Dihedral angle for quad meshes computed wrong
- *          - ViewControl
- *              - Support Splines
  *          - FileOBJ
  *              - Bugfix for negative indices for vertices
  *          - FileOFF
  *              - Bugfix for crash when reading degenerate faces
+ *          - Info
+ *              - Bugfix -> Dihedral angle for quad meshes computed wrong
+ *          - Light
+ *              - Added missing Layout to dialog
+ *              - Added missing slot to react on fixed position checkbox change
+ *          - Move
+ *              - Support backup plugin ( ->undo )
  *          - Selection Plugin
  *              - Added halfedge selection
+ *              - BSplineSurface Knot Selection
+ *              - BSplineSurface Selection
+ *              - Render Selections for BSpline Curve and Surface
+ *          - Smoother
+ *              - Support backup plugin ( ->undo )
+ *          - TextureControl
+ *              - Added min_val parameter additionally to max_val
+ *          - ViewControl
+ *              - Support Splines
+ *              - Support PolyLines
+ *              - New Scripting Function to set per object drawMode directly
  *      - <b>Documentation</b>
  *          - More docs for backup interface (incl. Tutorial)
  *      - <b>Build System</b>
