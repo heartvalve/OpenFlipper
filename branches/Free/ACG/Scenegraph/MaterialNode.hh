@@ -130,6 +130,14 @@ public:
         c = _c * 0.6f;  c[3]=_c[3];  diffuseColor(c);
         c = _c * 0.8f;  c[3]=_c[3];  specularColor(c);
     }
+    
+    /// Creates a randomized color and sets it
+    void generateRandomColor() {
+      color( Vec4f(0.2 + double(rand())/double(RAND_MAX)*0.8,
+             0.2 + double(rand())/double(RAND_MAX)*0.8,
+             0.2 + double(rand())/double(RAND_MAX)*0.8,
+             1.0));
+    }
 
     /// set the base color
     void baseColor(const Vec4f& _c) { baseColor_ = _c;}
@@ -355,6 +363,11 @@ public:
     /// set color (base, ambient, diffuse, specular) based on _c
     void set_color(const Vec4f& _c) {
       material_.color(_c);
+    }
+    
+    /// Generates a random color and sets it
+    void set_random_color() {
+      material_.generateRandomColor();
     }
 
     /// set the base color
