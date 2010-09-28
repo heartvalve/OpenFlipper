@@ -190,11 +190,21 @@ GridNode::draw(GLState&  _state  , DrawModes::DrawMode /* _drawMode */ )
     
     // set grid size to the given radius
     gridSize_ = radius;
-    std::cerr << "Set Radius to " << radius << std::endl;
 
-    // update the bounding box
-    bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
-    bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
+    
+    _state.set_line_width(3);
+    glBegin(GL_LINES);
+    glVertex(bb_min);
+    glVertex(bb_max);
+    glEnd();
+    
+//     // update the bounding box
+//     bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
+//     bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
+    
+    std::cerr << "Draw " << bb_min << " "  << bb_max << std::endl;
+    
+
     
   }
 
