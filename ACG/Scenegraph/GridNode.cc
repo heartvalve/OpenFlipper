@@ -74,12 +74,11 @@ GridNode(BaseNode* _parent, const std::string& _name)
     horizontalLines_(7),
     verticalLines_(7),
     maxRefinement_(49),
-    gridSize_(1500.0)
+    gridSize_(1500.0),
+    autoResize_(true)
 {
   baseLineColor_ = Vec3f(0.5, 0.5, 0.5);
   midLineColor_  = Vec3f(0.3, 0.3, 0.3);
-  bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
-  bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
 }
 
 
@@ -100,8 +99,18 @@ GridNode::availableDrawModes() const
 void
 GridNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
-  _bbMin.minimize(bb_min_);
-  _bbMax.maximize(bb_max_);
+  
+  // If we do not autoresize, we set our bounding box here
+  // otherwise we set the size of the grid according to the 
+  // real scene geometry from the state
+  if ( !autoResize_ ) {
+    bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
+    bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
+    
+    _bbMin.minimize(bb_min_);
+    _bbMax.maximize(bb_max_);
+  }
+  
 }
 
 
@@ -168,6 +177,25 @@ GridNode::draw(GLState&  _state  , DrawModes::DrawMode /* _drawMode */ )
 
     vertical   = std::min(vertical, maxRefinement_ );
     horizontal = std::min(vertical, maxRefinement_ );
+  }
+  
+  if ( autoResize_ ) {
+  
+    // Get the current scene size from the glstate
+    ACG::Vec3d bb_min,bb_max;
+    _state.get_bounding_box(bb_min,bb_max);
+    
+    // compute the minimal scene radius from the bounding box
+    double radius = std::min(fabs(bb_max[0]-bb_min[0]) * 2,fabs(bb_max[2]-bb_min[2]) * 2);
+    
+    // set grid size to the given radius
+    gridSize_ = radius;
+    std::cerr << "Set Radius to " << radius << std::endl;
+
+    // update the bounding box
+    bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
+    bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
+    
   }
 
   //now start drawing
