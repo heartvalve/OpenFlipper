@@ -150,10 +150,6 @@ Core() :
   
   // seperator handling the nodes for data
   dataRootNode_      = new ACG::SceneGraph::SeparatorNode(dataSeparatorNode_, "Data Root Node");
-  
-  
-//   gridNode_ = new ACG::SceneGraph::GridNode(core_nodes_,"Grid Node");
-//   gridNode_->hide();
 
    // Add ViewMode All
   ViewMode* vm = new ViewMode();
