@@ -125,6 +125,7 @@ class DLLEXPORT BSplineCurveObject : public BaseObjectData {
     
   private:
     BSplineCurve* splineCurve_;
+    
 
   /** @} */
 
@@ -137,12 +138,12 @@ class DLLEXPORT BSplineCurveObject : public BaseObjectData {
 
     /// Get the scenegraph Node
     ACG::SceneGraph::BSplineCurveNodeT< BSplineCurve >* splineCurveNode();
-
+    
   private :
 
     /// Scenegraph Mesh Node
     ACG::SceneGraph::BSplineCurveNodeT< BSplineCurve >* splineCurveNode_;
-
+        
   /** @} */
 
   //===========================================================================

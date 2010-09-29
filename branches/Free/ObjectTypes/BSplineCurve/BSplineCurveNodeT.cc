@@ -114,6 +114,15 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
 {  
   glPushAttrib(GL_ENABLE_BIT);
   
+  // check if textures are still valid
+  if (    bspline_selection_draw_mode_ == CONTROLPOINT
+       && controlPointSelectionTexture_valid_ == false)
+    updateControlPointSelectionTexture(_state);
+  if (    bspline_selection_draw_mode_ == KNOTVECTOR
+       && knotVectorSelectionTexture_valid_ == false)
+    updateKnotVectorSelectionTexture(_state);
+  
+  
   if (_drawMode & DrawModes::WIREFRAME)
   {
     glDisable( GL_CULL_FACE );
@@ -211,11 +220,7 @@ drawCurve(GLState& _state)
   }
 
   int order = bsplineCurve_.degree() + 1;
-
-  int lineWidth = (int)_state.line_width();
-  glLineWidth(lineWidth);
-  glColor(curve_color_);
-
+ 
   GLUnurbsObj *theNurb;
   theNurb = gluNewNurbsRenderer();
 
@@ -247,7 +252,7 @@ drawFancyCurve(GLState& _state)
 {
   // draw the curve
   double cylinderRadius = _state.line_width() * 0.05;
-  glColor(curve_color_);
+
   for (int i = 0; i < (int)curve_samples_.size() - 1; ++i)
   {
     Vec3d p      = curve_samples_[i].first;
@@ -259,10 +264,32 @@ drawFancyCurve(GLState& _state)
 //----------------------------------------------------------------------------
 
 template <class BSplineCurve>
+ACG::Vec4f
+BSplineCurveNodeT<BSplineCurve>::
+generateHighlightColor(ACG::Vec4f _color)
+{
+  float c1 = _color[0]*1.5; 
+  c1 = c1 > 255.0 ? 255 : c1;
+  
+  float c2 = _color[1]*1.5; 
+  c2 = c2 > 255.0 ? 255 : c2;
+  
+  float c3 = _color[2]*1.5; 
+  c3 = c3 > 255.0 ? 255 : c3;
+  
+  return Vec4f( c1, c2, c3, _color[3]);
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
 drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
 {
+  // remember current base color
+  Vec4f base_color_old = _state.base_color();
+  
   // draw line segments
   if (_drawMode & DrawModes::WIREFRAME)
   {
@@ -270,10 +297,9 @@ drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
     if( bsplineCurve_.edge_selections_available())
     {
       // save old values
-      Vec4f base_color_old = _state.base_color();
       float line_width_old = _state.line_width();
 
-      glColor(polygon_highlight_color_);
+      glColor(generateHighlightColor(polygon_color_));
       glLineWidth(2*line_width_old);
 
       glBegin(GL_LINES);
@@ -290,23 +316,22 @@ drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
       glEnd();
 
       glLineWidth(line_width_old);
-      glColor( base_color_old );
     }
 
     // draw all line segments
-    Vec4f base_color_old = _state.base_color();
     glColor(polygon_color_);
 
 //     float line_width_old = _state.line_width();
 //     glLineWidth(line_width_old+2.0);
 
-    glBegin(GL_LINE_STRIP);
+
     // draw bspline control polygon
+    glBegin(GL_LINE_STRIP);
+    
     for (unsigned int i = 0; i< bsplineCurve_.n_control_points(); ++i)
       glVertex(bsplineCurve_.get_control_point(i % bsplineCurve_.n_control_points()));
     glEnd();
-
-    glColor( base_color_old );
+    
 //     glLineWidth(line_width_old);
   }
   
@@ -318,12 +343,10 @@ drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
     if( bsplineCurve_.controlpoint_selections_available())
     {
       // save old values
-      Vec4f base_color_old = _state.base_color();
       float point_size_old = _state.point_size();
 
-      glColor(polygon_highlight_color_);
+      glColor(generateHighlightColor(polygon_color_));
       glPointSize(10);
-//       glPointSize(4 * point_size_old);
 
       glBegin(GL_POINTS);
       // draw control polygon
@@ -335,11 +358,9 @@ drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
       glEnd();
 
       glPointSize(point_size_old);
-      glColor( base_color_old );
     }
 
     // draw all points
-    Vec4f base_color_old = _state.base_color();
     glColor(polygon_color_);
     float point_size_old = _state.point_size();
     glPointSize(point_size_old + 4);
@@ -349,9 +370,11 @@ drawControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
       glVertex(bsplineCurve_.get_control_point(i));
     glEnd();
 
-    glColor( base_color_old );
     glPointSize(point_size_old);
   }
+  
+  // reset olf color
+  glColor( base_color_old );
 }
 
 //----------------------------------------------------------------------------
@@ -361,6 +384,9 @@ void
 BSplineCurveNodeT<BSplineCurve>::
 drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
 {
+  // save old base color
+  Vec4f base_color_old = _state.base_color();
+  
   // draw line segments
   if (_drawMode & DrawModes::WIREFRAME)
   {
@@ -369,9 +395,7 @@ drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
     // draw selection
     if( bsplineCurve_.edge_selections_available())
     {
-      // save old color
-      Vec4f base_color_old = _state.base_color();
-      glColor(polygon_highlight_color_);
+      glColor(generateHighlightColor(polygon_color_));
 
       // draw bspline control polygon
       for (int i = 0; i < (int)bsplineCurve_.n_control_points()-1; ++i) // #edges
@@ -383,13 +407,9 @@ drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
           draw_cylinder(p, axis, cylinderRadius, _state);
         }
       }
-
-      // reset color
-      glColor( base_color_old );
     }
 
     // draw all line segments
-    Vec4f base_color_old = _state.base_color();
     glColor(polygon_color_);
 
     // draw bspline control polygon
@@ -399,10 +419,6 @@ drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
       Point axis = bsplineCurve_.get_control_point(i+1) - bsplineCurve_.get_control_point(i);
       draw_cylinder(p, axis, cylinderRadius, _state);
     }
-    
-    // reset color
-    glColor( base_color_old );
-    
   } // end of if wireframe
   
   
@@ -418,30 +434,23 @@ drawFancyControlPolygon(DrawModes::DrawMode _drawMode, GLState& _state)
     // draw selection
     if( bsplineCurve_.controlpoint_selections_available())
     {
-      // save old values
-      Vec4f base_color_old = _state.base_color();
-      float point_size_old = _state.point_size();
-
-      glColor(polygon_highlight_color_);
+      glColor(generateHighlightColor(polygon_color_));
 
       // draw control polygon
       for (unsigned int i = 0; i < bsplineCurve_.n_control_points(); ++i)
         if (bsplineCurve_.controlpoint_selection(i))
           draw_sphere(bsplineCurve_.get_control_point(i), sphereRadius, _state, 16, 16);
-      
-      glColor( base_color_old );
     }
 
     // draw all points
-    Vec4f base_color_old = _state.base_color();
     glColor(polygon_color_);
     
     for (unsigned int i = 0; i < bsplineCurve_.n_control_points(); ++i)
       draw_sphere(bsplineCurve_.get_control_point(i), sphereRadius, _state, 16, 16);
-
-    // reset color
-    glColor( base_color_old );
   }
+  
+   // reset color
+   glColor( base_color_old );
 }
 
 //----------------------------------------------------------------------------
@@ -739,10 +748,10 @@ set_random_color()
 #ifndef WIN32
   srand((unsigned) time(NULL));
 #endif
-  set_color(OpenMesh::Vec4f(0.2 + double(rand())/double(RAND_MAX)*0.8,
-			    0.2 + double(rand())/double(RAND_MAX)*0.8,
-			    0.2 + double(rand())/double(RAND_MAX)*0.8,
-			    1.0));
+//   set_color(OpenMesh::Vec4f(0.2 + double(rand())/double(RAND_MAX)*0.8,
+// 			    0.2 + double(rand())/double(RAND_MAX)*0.8,
+// 			    0.2 + double(rand())/double(RAND_MAX)*0.8,
+// 			    1.0));
 }
 
 //----------------------------------------------------------------------------
@@ -750,9 +759,10 @@ set_random_color()
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-updateControlPointSelectionTexture()
+updateControlPointSelectionTexture(GLState& _state)
 {
-  create_cp_selection_texture();
+  create_cp_selection_texture(_state);
+  controlPointSelectionTexture_valid_ == true;
 }
 
 //----------------------------------------------------------------------------
@@ -760,9 +770,10 @@ updateControlPointSelectionTexture()
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-updateKnotVectorSelectionTexture()
+updateKnotVectorSelectionTexture(GLState& _state)
 {
-  create_knot_selection_texture();
+  create_knot_selection_texture(_state);
+  knotVectorSelectionTexture_valid_ == true;
 }
 
 //----------------------------------------------------------------------------
@@ -793,7 +804,7 @@ selection_init_texturing(GLuint & _texture_idx)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-create_cp_selection_texture()
+create_cp_selection_texture(GLState& _state)
 {
   if (bsplineCurve_.n_knots() == 0)
     return;
@@ -807,6 +818,13 @@ create_cp_selection_texture()
   double maxu  = bsplineCurve_.get_knot( numKnots - degree -1 );
   double diffu = maxu - minu;
   if (diffu == 0.0) return;
+
+  // get the colors to create the texture
+//   Vec4f curveColor     = _state.base_color();
+//   Vec4f highlightColor = generateHighlightColor(curveColor);
+  Vec4f curveColor     = curve_color_;
+  Vec4f highlightColor = curve_highlight_color_;
+  
 
   int texelIdx = 0;
   for ( int m = 0; m < cp_selection_texture_res_; ++m)
@@ -831,7 +849,7 @@ create_cp_selection_texture()
     }
   
     // compute color
-    Vec4f color =  curve_color_ * (1.0 - alpha) + curve_highlight_color_ * alpha;
+    Vec4f color =  curveColor * (1.0 - alpha) + highlightColor * alpha;
 
     // fill texture
     b.setPixel (texelIdx, 0, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
@@ -857,7 +875,7 @@ create_cp_selection_texture()
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-create_knot_selection_texture()
+create_knot_selection_texture(GLState& _state)
 {
   if (bsplineCurve_.n_knots() == 0)
     return;
@@ -891,6 +909,10 @@ create_knot_selection_texture()
     }
   }
 
+//   Vec4f curveColor     = _state.base_color();
+//   Vec4f highlightColor = generateHighlightColor(curveColor);
+  Vec4f curveColor     = curve_color_;
+  Vec4f highlightColor = curve_highlight_color_;
 
   for ( int m = 0; m < knot_selection_texture_res_; ++m)
   {
@@ -901,9 +923,9 @@ create_knot_selection_texture()
     Vec2i interval = bsplineCurve_.interval(u);
     // check if highlighted
     if (selectedKnotSpans[interval[0]] && selectedKnotSpans[interval[1]])
-      color = curve_highlight_color_;
+      color = highlightColor;
     else
-      color = curve_color_;
+      color = curveColor;
 
     // fill texture
     b.setPixel (texelIdx, 0, qRgba((int)(color[0]*255.0), (int)(color[1]*255.0), (int)(color[2]*255.0), 255));
@@ -913,7 +935,7 @@ create_knot_selection_texture()
   }
   
   // debug, output image
-//   b.save("curveKnotSelectionTexture.png", "PNG");
+  b.save("curveKnotSelectionTexture.png", "PNG");
   
   knot_selection_texture_image_ = QGLWidget::convertToGLFormat( b );
 

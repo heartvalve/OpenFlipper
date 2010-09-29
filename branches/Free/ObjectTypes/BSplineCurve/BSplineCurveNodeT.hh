@@ -77,7 +77,8 @@ namespace SceneGraph {
 */
 
 template <class BSplineCurve>
-class BSplineCurveNodeT : public MaterialNode
+// class BSplineCurveNodeT : public MaterialNode
+class BSplineCurveNodeT : public BaseNode
 {
 public:
 
@@ -88,9 +89,8 @@ public:
   BSplineCurveNodeT(BSplineCurve& _bsc,
 		    BaseNode*    _parent=0,
 		    std::string  _name="<BSplineCurveNode>" ) :
-    MaterialNode(_parent,
-		 _name, MaterialNode::None),
-                 bsplineCurve_(_bsc)
+    BaseNode(_parent, _name),
+    bsplineCurve_(_bsc)
   {
     drawMode(DrawModes::WIREFRAME | DrawModes::POINTS);
     resolution_  = 16;
@@ -167,11 +167,14 @@ public:
 
   void updateGeometry();
   
-  void updateControlPointSelectionTexture();
-  void updateKnotVectorSelectionTexture();
+  void updateControlPointSelectionTexture(GLState& _state);
+  void updateKnotVectorSelectionTexture(GLState& _state);
   
   //! Should be a power of 2
   int& pick_texture_res( ) { return pick_texture_res_; }
+  
+  void cpSelectionTextureValid  (bool _valid){controlPointSelectionTexture_valid_ = _valid;};
+  void knotSelectionTextureValid(bool _valid){knotVectorSelectionTexture_valid_   = _valid;};
 
 private:
 
@@ -217,12 +220,15 @@ private:
   void selection_init_texturing(GLuint & _texture_idx);
   
   /// creates texture to put onto nurbs curve for visualization of control point selection
-  void create_cp_selection_texture();
+  void create_cp_selection_texture(GLState& _state);
   /// creates texture to put onto nurbs curve for visualization of knotvector selection
-  void create_knot_selection_texture();
+  void create_knot_selection_texture(GLState& _state);
   
   /// draw textured nurbs patch
   void draw_textured_nurbs( GLState& _state);
+  
+  /// generates a color to highlight the curve from the given color
+  ACG::Vec4f generateHighlightColor(ACG::Vec4f _color);
 
   
 private:
@@ -266,6 +272,9 @@ private:
   GLuint knot_selection_texture_idx_;
   int    knot_selection_texture_res_;
 
+  bool controlPointSelectionTexture_valid_;
+  bool knotVectorSelectionTexture_valid_;
+  
 };
 
 
