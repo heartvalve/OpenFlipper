@@ -55,7 +55,7 @@
 
 //== INCLUDES =================================================================
 
-#include <ACG/Scenegraph/MaterialNode.hh>
+#include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 
 #include <QGLWidget>
@@ -77,7 +77,7 @@ namespace SceneGraph {
 */
 
 template <class BSplineSurface>
-class BSplineSurfaceNodeT : public MaterialNode
+class BSplineSurfaceNodeT : public BaseNode
 {
   public:
 
@@ -88,8 +88,7 @@ class BSplineSurfaceNodeT : public MaterialNode
   BSplineSurfaceNodeT(BSplineSurface& _bss,
                       BaseNode*    _parent=0,
                       std::string  _name="<BSplineSurfaceNode>" ) :
-    MaterialNode(_parent,
-                 _name, MaterialNode::None),
+    BaseNode(_parent, _name),
     bsplineSurface_(_bss)
   {
     resolution_ = 16;
@@ -162,9 +161,10 @@ class BSplineSurfaceNodeT : public MaterialNode
   void set_selection_draw_mode(BSplineSelectionDrawMode _mode) {bspline_selection_draw_mode_ = _mode;};
   
   void adaptive_sampling(bool _adaptive){adaptive_sampling_ = _adaptive;};
-
-  void updateControlPointSelectionTexture();
-  void updateKnotVectorSelectionTexture();
+  
+  void cpSelectionTextureValid  (bool _valid){controlPointSelectionTexture_valid_ = _valid;};
+  void knotSelectionTextureValid(bool _valid){knotVectorSelectionTexture_valid_   = _valid;};
+  
   
   //! Should be a power of 2
   int& pick_texture_res( ) { return pick_texture_res_; }
@@ -200,6 +200,10 @@ private:
   
   void drawFancyControlNet(GLState& _state);
 
+  void updateControlPointSelectionTexture(GLState& _state);
+  
+  void updateKnotVectorSelectionTexture(GLState& _state);
+  
   /** spline surface u,v-parameter picking */
   /// generate index and setup texture parameters
   void pick_init_texturing ( );
@@ -213,13 +217,14 @@ private:
   void selection_init_texturing(GLuint & _texture_idx);
   
   /// creates texture to put onto nurbs curve for visualization of control point selection
-  void create_cp_selection_texture();
+  void create_cp_selection_texture(GLState& _state);
   /// creates texture to put onto nurbs curve for visualization of knotvector selection
-  void create_knot_selection_texture();
+  void create_knot_selection_texture(GLState& _state);
   
   /// draw textured nurbs patch
   void draw_textured_nurbs( GLState& _state);
   
+  ACG::Vec4f generateHighlightColor(ACG::Vec4f _color);
   
 private:
 
@@ -244,6 +249,9 @@ private:
 
   bool adaptive_sampling_;
 
+  bool controlPointSelectionTexture_valid_;
+  bool knotVectorSelectionTexture_valid_;
+  
   QImage pick_texture_image_;
   GLuint pick_texture_idx_;
   int    pick_texture_res_;
