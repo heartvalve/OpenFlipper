@@ -55,7 +55,7 @@
 
 //== INCLUDES =================================================================
 
-#include <ACG/Scenegraph/MaterialNode.hh>
+#include <ACG/Scenegraph/BaseNode.hh>
 #include <ACG/Scenegraph/DrawModes.hh>
 
 #include <QGLWidget>
@@ -77,7 +77,6 @@ namespace SceneGraph {
 */
 
 template <class BSplineCurve>
-// class BSplineCurveNodeT : public MaterialNode
 class BSplineCurveNodeT : public BaseNode
 {
 public:
@@ -166,10 +165,7 @@ public:
   void set_bspline_draw_mode(BSplineDrawMode _mode) {bspline_draw_mode_ = _mode;};
 
   void updateGeometry();
-  
-  void updateControlPointSelectionTexture(GLState& _state);
-  void updateKnotVectorSelectionTexture(GLState& _state);
-  
+    
   //! Should be a power of 2
   int& pick_texture_res( ) { return pick_texture_res_; }
   
@@ -215,6 +211,9 @@ private:
   /// create texture image
   void pick_create_texture( GLState& _state);
  
+  void updateControlPointSelectionTexture(GLState& _state);
+  
+  void updateKnotVectorSelectionTexture(GLState& _state);
   
   /// generate index and setup texture parameters for selection visualization
   void selection_init_texturing(GLuint & _texture_idx);
