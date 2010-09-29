@@ -812,23 +812,6 @@ draw_cylinder( const Point& _p0, const Point& _axis, double _r, GLState& _state,
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-set_random_color()
-{
-  // set random color
-#ifndef WIN32
-  srand((unsigned) time(NULL));
-#endif
-//   set_color(OpenMesh::Vec4f(0.2 + double(rand())/double(RAND_MAX)*0.8,
-//                             0.2 + double(rand())/double(RAND_MAX)*0.8,
-//                             0.2 + double(rand())/double(RAND_MAX)*0.8,
-//                             1.0));
-}
-
-//----------------------------------------------------------------------------
-
-template <class BSplineSurface>
-void
-BSplineSurfaceNodeT<BSplineSurface>::
 updateControlPointSelectionTexture(GLState& _state)
 {
   if (bspline_selection_draw_mode_ == CONTROLPOINT)
