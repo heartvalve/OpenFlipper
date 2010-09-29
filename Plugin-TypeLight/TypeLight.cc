@@ -119,6 +119,7 @@ void TypeLightPlugin::addDefaultLights() {
                 lightSrc0->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc0->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc0->enable();
+                lightSrc0->brightness(0.85);
                 lightSrc0->fixedPosition(true);
                 lightObject0->setName(DEF0);
             }
@@ -143,6 +144,7 @@ void TypeLightPlugin::addDefaultLights() {
                 lightSrc1->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc1->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc1->enable();
+                lightSrc1->brightness(0.85);
                 lightSrc1->fixedPosition(true);
                 lightObject1->setName(DEF1);
             }
@@ -166,6 +168,7 @@ void TypeLightPlugin::addDefaultLights() {
                 lightSrc2->diffuseColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc2->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
                 lightSrc2->enable();
+                lightSrc2->brightness(0.85);
                 lightSrc2->fixedPosition(true);
                 lightObject2->setName(DEF2);
             }
