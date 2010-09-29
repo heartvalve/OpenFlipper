@@ -115,6 +115,15 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
 
   glPushAttrib(GL_ENABLE_BIT);
 
+  // check if textures are still valid
+  if (    bspline_selection_draw_mode_ == CONTROLPOINT
+       && controlPointSelectionTexture_valid_ == false)
+    updateControlPointSelectionTexture(_state);
+  if (    bspline_selection_draw_mode_ == KNOTVECTOR
+       && knotVectorSelectionTexture_valid_ == false)
+    updateKnotVectorSelectionTexture(_state);
+  
+  
   if (_drawMode & DrawModes::POINTS)
   {
     glDisable(GL_LIGHTING);
@@ -410,6 +419,9 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 drawControlNet(GLState& _state)
 {
+  // remember old color
+  Vec4f base_color_old = _state.base_color();
+  
   // draw control net
 //   glPushAttrib(GL_ENABLE_BIT);
   glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -425,10 +437,9 @@ drawControlNet(GLState& _state)
   if( bsplineSurface_.controlpoint_selections_available())
   {
     // save old values
-    Vec4f base_color_old = _state.base_color();
     float point_size_old = _state.point_size();
 
-    glColor(controlnet_highlight_color_);
+    glColor(generateHighlightColor(controlnet_color_));
     glPointSize(10);
 //     glPointSize(point_size_old+2);
 
@@ -445,16 +456,13 @@ drawControlNet(GLState& _state)
     glEnd();
 
     glPointSize(point_size_old);
-    glColor( base_color_old );
   }
 
   // draw all points
-  Vec4f base_color_old = _state.base_color();
   glColor(controlnet_color_);
 
   float point_size_old = _state.point_size();
   glPointSize(point_size_old + 4);
-//   glPointSize(6);
   
   glBegin(GL_POINTS);
   for (unsigned int i = 0; i < bsplineSurface_.n_control_points_m(); ++i)
@@ -462,7 +470,6 @@ drawControlNet(GLState& _state)
       glVertex(bsplineSurface_(i, j));
   glEnd();
 
-  glColor( base_color_old );
   glPointSize((int)point_size_old);
   
 
@@ -501,7 +508,6 @@ drawControlNet(GLState& _state)
   }
 */
   // draw all line segments
-  base_color_old = _state.base_color();
   glColor(controlnet_color_);
 
   float line_width_old = _state.line_width();
@@ -531,8 +537,7 @@ drawControlNet(GLState& _state)
 
   glColor( base_color_old );
   glLineWidth(line_width_old);
-
-
+    
   glPopAttrib();
 }
 
@@ -543,6 +548,9 @@ void
 BSplineSurfaceNodeT<BSplineSurface>::
 drawFancyControlNet(GLState& _state)
 {
+  // remember old color
+  Vec4f base_color_old = _state.base_color();
+  
   // draw control net
 //   glPushAttrib(GL_ENABLE_BIT);
   glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -563,8 +571,8 @@ drawFancyControlNet(GLState& _state)
   if( bsplineSurface_.controlpoint_selections_available())
   {
     // save old values
-    Vec4f base_color_old = _state.base_color();
-    glColor(controlnet_highlight_color_);
+//     glColor(controlnet_highlight_color_);
+    glColor(generateHighlightColor(controlnet_color_));
 
     // draw control polygon
     for (unsigned int i = 0; i < bsplineSurface_.n_control_points_m(); ++i)
@@ -575,26 +583,20 @@ drawFancyControlNet(GLState& _state)
           draw_sphere(bsplineSurface_(i, j), sphereRadius, _state, 16, 16);
       }
     }
-
-    glColor( base_color_old );
   }
 
   // draw all points
-  Vec4f base_color_old = _state.base_color();
   glColor(controlnet_color_);
 
   for (unsigned int i = 0; i < bsplineSurface_.n_control_points_m(); ++i)
     for (unsigned int j = 0; j < bsplineSurface_.n_control_points_n(); ++j)
       draw_sphere(bsplineSurface_(i, j), sphereRadius, _state, 16, 16);
 
-  glColor( base_color_old );
-  
 
   // draw line segments
 
   double cylinderRadius = _state.line_width() * 0.05;
 
-  base_color_old = _state.base_color();
   glColor(controlnet_color_);
 
   // draw bspline control net
@@ -618,6 +620,7 @@ drawFancyControlNet(GLState& _state)
     }
   }
 
+  // reset old color
   glColor( base_color_old );
 
   glPopAttrib();
@@ -815,10 +818,10 @@ set_random_color()
 #ifndef WIN32
   srand((unsigned) time(NULL));
 #endif
-  set_color(OpenMesh::Vec4f(0.2 + double(rand())/double(RAND_MAX)*0.8,
-                            0.2 + double(rand())/double(RAND_MAX)*0.8,
-                            0.2 + double(rand())/double(RAND_MAX)*0.8,
-                            1.0));
+//   set_color(OpenMesh::Vec4f(0.2 + double(rand())/double(RAND_MAX)*0.8,
+//                             0.2 + double(rand())/double(RAND_MAX)*0.8,
+//                             0.2 + double(rand())/double(RAND_MAX)*0.8,
+//                             1.0));
 }
 
 //----------------------------------------------------------------------------
@@ -826,10 +829,10 @@ set_random_color()
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-updateControlPointSelectionTexture()
+updateControlPointSelectionTexture(GLState& _state)
 {
   if (bspline_selection_draw_mode_ == CONTROLPOINT)
-    create_cp_selection_texture();
+    create_cp_selection_texture(_state);
 }
 
 //----------------------------------------------------------------------------
@@ -837,10 +840,10 @@ updateControlPointSelectionTexture()
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-updateKnotVectorSelectionTexture()
+updateKnotVectorSelectionTexture(GLState& _state)
 {
   if (bspline_selection_draw_mode_ == KNOTVECTOR)
-    create_knot_selection_texture();
+    create_knot_selection_texture(_state);
 }
 
 //----------------------------------------------------------------------------
@@ -871,7 +874,7 @@ selection_init_texturing(GLuint & _texture_idx )
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-create_cp_selection_texture()
+create_cp_selection_texture(GLState& _state)
 {
   if (bsplineSurface_.n_knots_m() == 0 || bsplineSurface_.n_knots_n() == 0)
     return;
@@ -973,7 +976,7 @@ create_cp_selection_texture()
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-create_knot_selection_texture()
+create_knot_selection_texture(GLState& _state)
 {
   if (bsplineSurface_.n_knots_m() == 0 ||bsplineSurface_.n_knots_n() == 0)
     return;
@@ -1069,13 +1072,13 @@ create_knot_selection_texture()
       
       Vec4f color;
       if (selected_m && selected_n)
-        color = base_color();
+        color = _state.base_color();
 //         color = surface_highlight_color_;
       else if ((selected_m && !selected_n) || (!selected_m && selected_n) )
-        color = base_color() *0.5 + specular_color() * 0.5;        
+        color = _state.base_color() *0.5 + _state.specular_color() * 0.5;        
 //         color = surface_highlight_color_ * 0.5 + surface_color_ * 0.5;
       else
-        color = base_color() *0.5 + diffuse_color() * 0.5;
+        color = _state.base_color() *0.5 + _state.diffuse_color() * 0.5;
 //         color = surface_color_;
 
 
@@ -1317,6 +1320,25 @@ draw_textured_nurbs( GLState& _state)
   delete[] knots_m;
   delete[] knots_n;
   delete[] ctlpoints;
+}
+
+//----------------------------------------------------------------------------
+
+template <class BSplineSurface>
+ACG::Vec4f
+BSplineSurfaceNodeT<BSplineSurface>::
+generateHighlightColor(ACG::Vec4f _color)
+{
+  float c1 = _color[0]*1.5; 
+  c1 = c1 > 255.0 ? 255 : c1;
+  
+  float c2 = _color[1]*1.5; 
+  c2 = c2 > 255.0 ? 255 : c2;
+  
+  float c3 = _color[2]*1.5; 
+  c3 = c3 > 255.0 ? 255 : c3;
+  
+  return Vec4f( c1, c2, c3, _color[3]);
 }
 
 //=============================================================================
