@@ -54,6 +54,7 @@
 #include "Types.hh"
 #include <ACG/Scenegraph/SceneGraph.hh>
 #include <OpenFlipper/common/BaseObjectCore.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <QDir>
 
@@ -145,8 +146,40 @@ void BaseObjectData::init() {
     stencilRefNode_       = new StencilRefNode(boundingBoxNode(),  "New Stencil Reference");
     stencilRefNode_->set_status( ACG::SceneGraph::BaseNode::HideNode );
   }
-  if ( materialNode_ == 0 )
+  if ( materialNode_ == 0 ) {
     materialNode_         = new MaterialNode(stencilRefNode(),  "New Material");
+    
+    QColor color;
+    
+    if ( OpenFlipper::Options::randomBaseColor() ){
+      //init random seed
+      srand ( time(NULL) );
+      
+      QColor bckgrnd = OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
+      int diff;
+      
+      do{
+        color.setRgb(rand()%255, rand()%255, rand()%255);
+        
+        diff = (bckgrnd.red()   - color.red())  *(bckgrnd.red()   - color.red())
+              +(bckgrnd.green() - color.green())*(bckgrnd.green() - color.green())
+              +(bckgrnd.blue()  - color.blue()) *(bckgrnd.blue()  - color.blue());
+      } while (diff < 70000);
+    }
+    else{
+      color = OpenFlipper::Options::defaultBaseColor();
+    }
+    
+    ACG::Vec4f colorV;
+    colorV[0] = color.redF();
+    colorV[1] = color.greenF();
+    colorV[2] = color.blueF();
+    colorV[3] = color.alphaF();
+    
+    materialNode_->set_base_color(colorV);
+    materialNode_->set_color(colorV);
+    
+  }
 }
 
 
@@ -277,11 +310,6 @@ BoundingBoxNode* BaseObjectData::boundingBoxNode() {
 
 StencilRefNode* BaseObjectData::stencilRefNode() {
   return stencilRefNode_;
-}
-
-
-void BaseObjectData::setBaseColor(ACG::Vec4f _color) {
-  materialNode_->set_base_color(_color);
 }
 
 bool BaseObjectData::manipPlaced() {

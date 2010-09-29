@@ -485,35 +485,6 @@ void Core::slotObjectOpened ( int _id ) {
   BaseObjectData* object;
   PluginFunctions::getObject(_id,object);
 
-  QColor color;
-
-  if ( OpenFlipper::Options::randomBaseColor() ){
-      //init random seed
-      srand ( time(NULL) );
-
-      QColor bckgrnd = OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
-      int diff;
-
-      do{
-        color.setRgb(rand()%255, rand()%255, rand()%255);
-
-        diff = (bckgrnd.red()   - color.red())  *(bckgrnd.red()   - color.red())
-              +(bckgrnd.green() - color.green())*(bckgrnd.green() - color.green())
-              +(bckgrnd.blue()  - color.blue()) *(bckgrnd.blue()  - color.blue());
-      }while (diff < 70000);
-  }
-  else{
-      color = OpenFlipper::Options::defaultBaseColor();
-  }
-
-  ACG::Vec4f colorV;
-  colorV[0] = color.redF();
-  colorV[1] = color.greenF();
-  colorV[2] = color.blueF();
-  colorV[3] = color.alphaF();
-
-  object->setBaseColor( colorV );
-
   // ================================================================================
   // Set defaults for DrawMode, ViewingDirection and Projection if this is the first opened object
   // If a plugin changes the drawmode later, this setting will be overridden!
