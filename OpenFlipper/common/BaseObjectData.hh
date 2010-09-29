@@ -220,9 +220,6 @@ class DLLEXPORT BaseObjectData : public BaseObject
     /// get a pointer to the stencil reference node
     StencilRefNode* stencilRefNode();
 
-    /// Set the color of the object
-    void setBaseColor(ACG::Vec4f _color);
-
     /// Check if the manipulator has been placed
     bool manipPlaced();
 
