@@ -117,10 +117,6 @@ public:
   /// Destructor
   ~BSplineCurveNodeT() {}
 
-//   enum BSplineDrawMode {
-//     DIRECT = 0,
-//     GLU_NURBS = 1
-//   };
   
   enum BSplineDrawMode {
     NORMAL = 0,
@@ -133,7 +129,6 @@ public:
     KNOTVECTOR = 2
   };
 
-  void set_random_color();
 
   BSplineCurve& bsplineCurve() { return bsplineCurve_; }
 
