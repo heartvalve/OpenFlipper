@@ -129,7 +129,6 @@ class BSplineSurfaceNodeT : public BaseNode
     KNOTVECTOR = 2
   };
 
-  void set_random_color();
 
   BSplineSurface& bsplineSurface() { return bsplineSurface_; }
 
