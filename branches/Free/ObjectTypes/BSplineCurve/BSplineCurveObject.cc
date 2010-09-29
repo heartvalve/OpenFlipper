@@ -173,6 +173,8 @@ void BSplineCurveObject::init(BSplineCurve* _curve) {
     std::cerr << "Error when creating BSplineCurve Object! materialNode is NULL!" << std::endl;
 
   splineCurveNode_ = new ACG::SceneGraph::BSplineCurveNodeT< BSplineCurve >(*splineCurve_, materialNode() , "NEW BSplineCurveNode");
+
+  materialNode()->set_color(ACG::Vec4f(178.0f/255.0, 34.0/255.0, 34.0/255.0, 1.0));
 }
 
 // ===============================================================================
