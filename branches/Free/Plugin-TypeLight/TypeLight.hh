@@ -57,6 +57,10 @@
 #include <OpenFlipper/BasePlugin/MouseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
 
+#include <ACG/Scenegraph/GlutPrimitiveNode.hh>
+
+#include <ObjectTypes/PolyLine/PolyLine.hh>
+
 class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface, MouseInterface, ToolbarInterface
 {
    Q_OBJECT
@@ -73,11 +77,13 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     void log(QString _message);
     
     // LoadSave Interface
+    void addEmptyObject(DataType _type, int& _id);
     void emptyObjectAdded( int _id );
     void deleteObject(int _id);
     
     // BaseInterface
     void updatedObject(int _id, const UpdateType _type);
+    void updateView();
     
     // ToolbarInterface
     void getToolBar( QString _name, QToolBar*& _toolbar );
@@ -114,6 +120,14 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     void updateLights();
     
     bool mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D, int _width, int _height) const;
+    
+    /** \brief Compute click on trackball of light source
+    *
+    * Compute click on trackball having the trackball center of the scene as center point.
+    * Note: If _aroundLight is set to true, the trackball will be computed around the light
+    * source's center position.
+    */
+    void computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state);
         
   public:
 
@@ -152,6 +166,12 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     /// Find depth of nearest light source
     float findDepth();
     
+    // Find distance of farthest light source from trackball center
+    double getFarthestRadius();
+    
+    /// Get number of non-directional light sources
+    void addAssistLines();
+    
     /// Count light sources in scene
     std::vector<int> lightSources_;
     
@@ -172,14 +192,15 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     // Mouse interactions
     QPoint      lastPoint2D_;
     ACG::Vec3d  lastPoint3D_;
-    bool        lastPoint_hitSphere_;
+    //bool        lastPoint_hitSphere_;
     // depth of plane olong which objects are translated
     // if middle mouse button is pressed
     float       planeDepth_;
     ACG::Vec3d  transVec_;
     bool        rotation_;
     
-    double ratioTrackballs_;
+    // Radius of trackball for most distant light source
+    double radius_;
 };
 
 #endif //TYPELIGHTPLUGIN_HH
