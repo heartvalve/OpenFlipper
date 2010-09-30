@@ -116,10 +116,10 @@ void TypeLightPlugin::addDefaultLights() {
             
             if( lightSrc0 ) { 
                 lightSrc0->direction(ACG::Vec3d(0.0,0.0,1.0) );
-                lightSrc0->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
-                lightSrc0->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
+                lightSrc0->diffuseColor( ACG::Vec4f(0.55,0.55,0.55,0.0));
+                lightSrc0->specularColor(ACG::Vec4f(0.55,0.55,0.55,0.0));
                 lightSrc0->enable();
-                lightSrc0->brightness(0.85);
+                lightSrc0->brightness(1.0);
                 lightSrc0->fixedPosition(true);
                 lightObject0->setName(DEF0);
             }
@@ -141,10 +141,10 @@ void TypeLightPlugin::addDefaultLights() {
     
             if( lightSrc1 ) {
                 lightSrc1->direction(ACG::Vec3d(-1.0,  1.0, 0.7) );
-                lightSrc1->diffuseColor( ACG::Vec4f(0.7,0.7,0.7,0.0));
-                lightSrc1->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
+                lightSrc1->diffuseColor( ACG::Vec4f(0.55,0.55,0.55,0.0));
+                lightSrc1->specularColor(ACG::Vec4f(0.55,0.55,0.55,0.0));
                 lightSrc1->enable();
-                lightSrc1->brightness(0.85);
+                lightSrc1->brightness(1.0);
                 lightSrc1->fixedPosition(true);
                 lightObject1->setName(DEF1);
             }
@@ -165,10 +165,10 @@ void TypeLightPlugin::addDefaultLights() {
     
             if( lightSrc2 ) {
                 lightSrc2->direction(ACG::Vec3d( 1.0,  1.0, 0.7) );
-                lightSrc2->diffuseColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
-                lightSrc2->specularColor(ACG::Vec4f(0.7,0.7,0.7,0.0));
+                lightSrc2->diffuseColor(ACG::Vec4f(0.55,0.55,0.55,0.0));
+                lightSrc2->specularColor(ACG::Vec4f(0.55,0.55,0.55,0.0));
                 lightSrc2->enable();
-                lightSrc2->brightness(0.85);
+                lightSrc2->brightness(1.0);
                 lightSrc2->fixedPosition(true);
                 lightObject2->setName(DEF2);
             }
