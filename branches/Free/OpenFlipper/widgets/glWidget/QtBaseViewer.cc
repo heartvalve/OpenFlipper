@@ -277,6 +277,8 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTra
 
     ACG::Vec3d bbmin = (ACG::Vec3d) act.bbMin();
     ACG::Vec3d bbmax = (ACG::Vec3d) act.bbMax();
+    
+    
 
     if ( ( bbmin[0] > bbmax[0] ) ||
          ( bbmin[1] > bbmax[1] ) ||
@@ -288,10 +290,22 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTra
       // Update bounding box to match the scene geometry after recovery
       bbmin = ACG::Vec3d(-1.0,-1.0,-1.0);
       bbmax = ACG::Vec3d( 1.0, 1.0, 1.0);
-    } else
-      setScenePos( ( bbmin + bbmax )        * 0.5,
-                   ( bbmax - bbmin ).norm() * 0.5,
-                   _resetTrackBall);
+    } else {
+      
+      // For small scenes, we set the scene radius to 10
+      // otherwise we take the real radius
+      if ( ( bbmax - bbmin ).max() < 10.0 )  {
+        setScenePos( ( bbmin + bbmax )        * 0.5,
+                     10.0,
+                     _resetTrackBall);
+                   
+      } else {
+        setScenePos( ( bbmin + bbmax )        * 0.5,
+                     ( bbmax - bbmin ).norm() * 0.5,
+                     _resetTrackBall); 
+      }
+                   
+    }
                    
     // remember the new bounding box for the state
     glstate_->set_bounding_box(bbmin,bbmax);
