@@ -196,7 +196,11 @@ public:
 
   /// translate by (_x, _y, _z)
   void translate( double _x, double _y, double _z,
-		  MultiplyFrom _mult_from = MULT_FROM_RIGHT );
+                  MultiplyFrom _mult_from = MULT_FROM_RIGHT );
+                  
+  /// translate by _vector
+  void translate( Vec3d _vector,
+                  MultiplyFrom _mult_from = MULT_FROM_RIGHT );
 
   /// rotate around axis (_x, _y, _z) by _angle
   void rotate( double _angle, double _x, double _y, double _z,

@@ -469,6 +469,12 @@ void GLState::translate( double _x, double _y, double _z,
   update_matrices();
 }
 
+//-----------------------------------------------------------------------------
+
+void GLState::translate( Vec3d _vector,
+                MultiplyFrom _mult_from = MULT_FROM_RIGHT ) {
+  translate( _vector[0] , _vector[1] , _vector[2] ,_mult_from);
+}
 
 //-----------------------------------------------------------------------------
 
