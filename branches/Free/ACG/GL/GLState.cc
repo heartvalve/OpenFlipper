@@ -472,7 +472,7 @@ void GLState::translate( double _x, double _y, double _z,
 //-----------------------------------------------------------------------------
 
 void GLState::translate( Vec3d _vector,
-                MultiplyFrom _mult_from = MULT_FROM_RIGHT ) {
+                MultiplyFrom _mult_from ) {
   translate( _vector[0] , _vector[1] , _vector[2] ,_mult_from);
 }
 
