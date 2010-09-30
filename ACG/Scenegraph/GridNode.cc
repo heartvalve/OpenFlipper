@@ -156,19 +156,18 @@ GridNode::draw(GLState&  _state  , DrawModes::DrawMode /* _drawMode */ )
     if ( i == 0 && ((orientation_ ) & XZ_PLANE)) {
       direction1 = ACG::Vec3f( 1.0 , 0.0 , 0.0 );
       direction2 = ACG::Vec3f( 0.0 , 0.0 , 1.0 );
-      distance = ( eye | ACG::Vec3d(0.0,1.0,0.0 ) );
+      distance = fabs( eye | ACG::Vec3d(0.0,1.0,0.0 ) );
     } else if ( i == 1 && (orientation_  & XY_PLANE)) {
       direction1 = ACG::Vec3f( 1.0 , 0.0 , 0.0 );
       direction2 = ACG::Vec3f( 0.0 , 1.0 , 0.0 );
-      distance = ( eye | ACG::Vec3d(0.0,0.0,1.0 ) );
+      distance = fabs( eye | ACG::Vec3d(0.0,0.0,1.0 ) );
     } else if ( i == 2 && (orientation_  & YZ_PLANE)) {
       direction1 = ACG::Vec3f( 0.0 , 1.0 , 0.0 );
       direction2 = ACG::Vec3f( 0.0 , 0.0 , 1.0 );
-      distance = ( eye | ACG::Vec3d(1.0,0.0,0.0 ) );
+      distance = fabs( eye | ACG::Vec3d(1.0,0.0,0.0 ) );
     } else {
       continue; 
     }
-    
     
     // Remember original Modelview Matrix
     _state.push_modelview_matrix();
@@ -179,8 +178,7 @@ GridNode::draw(GLState&  _state  , DrawModes::DrawMode /* _drawMode */ )
     int factor =  0.0;
     
     // Block negative distances (grid behind us)
-    if ( distance > 0.0 ) 
-      factor = floor( minRefinementDistance_ / distance) - 1;
+    factor = floor( minRefinementDistance_ / distance) - 1;
     
     int vertical   = verticalLines_;
     int horizontal = horizontalLines_;
