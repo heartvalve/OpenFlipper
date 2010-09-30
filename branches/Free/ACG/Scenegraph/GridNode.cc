@@ -205,34 +205,39 @@ GridNode::draw(GLState&  _state  , DrawModes::DrawMode /* _drawMode */ )
     
     
     
-    if ( autoResize_ ) {
-      
-      // Get the current scene size from the glstate
-      ACG::Vec3d bb_min,bb_max;
-      _state.get_bounding_box(bb_min,bb_max);
-      
-      // compute the minimal scene radius from the bounding box
-      double radius = std::min(fabs(bb_max[0]-bb_min[0]) * 2,fabs(bb_max[2]-bb_min[2]) * 2);
-      
-      // set grid size to the given radius
-      gridSize_ = radius;
-      
-      
-      _state.set_line_width(3);
-      glBegin(GL_LINES);
-      glVertex(bb_min);
-      glVertex(bb_max);
-      glEnd();
-      
-      //     // update the bounding box
-      //     bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
-      //     bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
-      
-      std::cerr << "Draw " << bb_min << " "  << bb_max << std::endl;
-      
-      
-      
-    }
+//     if ( autoResize_ ) {
+//       
+//       // Get the current scene size from the glstate
+//       ACG::Vec3d bb_min,bb_max;
+//       _state.get_bounding_box(bb_min,bb_max);
+//       
+//       double radius = std::max( std::max( fabs(bb_max | direction1) , fabs(bb_min | direction1) ),
+//                       std::max( fabs(bb_max | direction2) , fabs(bb_min | direction2) ) ) * 2.0;
+//       
+//       // compute the minimal scene radius from the bounding box
+// //       double radius = std::min(  fabs(bb_max[0]-bb_min[0]) * 2,fabs(bb_max[2]-bb_min[2]) * 2);
+//       
+//       // set grid size to the given radius if we autoadjust to the scene size
+//       if ( radius > 10.0 )
+//         gridSize_ = radius;
+//       
+//       
+//     /*  
+//       _state.set_line_width(3);
+//       glBegin(GL_LINES);
+//       glVertex(bb_min);
+//       glVertex(bb_max);
+//       glEnd();*/
+//       
+//       //     // update the bounding box
+//       //     bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
+//       //     bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
+//       
+//       std::cerr << "Draw " << bb_min << " "  << bb_max << std::endl;
+//       
+//       
+//       
+//     }
     
     //now start drawing
     _state.translate( direction1 * -0.5 * gridSize_ + direction2 * -0.5 * gridSize_ );
@@ -345,6 +350,13 @@ GridNode::minRefinementDistance()
 void GridNode::setOrientation( unsigned int _orientation)
 {
   orientation_ = _orientation;
+}
+
+//-----------------------------------------------------------------------------
+
+void GridNode::autoResize(bool _auto)
+{
+  autoResize_ = _auto;
 }
 
 
