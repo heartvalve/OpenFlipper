@@ -88,23 +88,52 @@ public:
 
   /// Destructor
   ~GridNode() {}
+  
+  /// Enum for Orientation
+  enum Orientation { NONE     = 0,
+                     XY_PLANE = 1 , 
+                     XZ_PLANE = 2 , 
+                     YZ_PLANE = 4 };
 
   /// implement className()
   ACG_CLASSNAME(GridNode);
+  
   /// return available draw modes
   ACG::SceneGraph::DrawModes::DrawMode  availableDrawModes() const;
+  
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
+  
   /// drawing the primitive
   void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  
   /// don't pick me
   void pick(GLState& _state, PickTarget _target);
+  
 public:
 
-  /// GridSize
+  /// Get GridSize
   float gridSize();
 
+  /// Set Grid Size
   void gridSize(float _size);
+  
+  
+  /** \brief Set the minimum refinement distance
+  *
+  * This is the distance the viewer needs to the grid, when refinement is started.
+  * At a distance greater then the given distance, no refinement takes places.
+  */
+  void minRefinementDistance( double _distance );
+  
+  /** \brief returns the minimal refinement distance
+  */
+  double minRefinementDistance();
+  
+  /** \brief Set the plane orientation
+  *
+  */
+  void setOrientation( unsigned int _orientation ) ;
   
   void autoResize(bool _auto);
 
@@ -114,6 +143,12 @@ private:
   int horizontalLines_;
   int verticalLines_;
   int maxRefinement_;
+  
+  
+  /** This is the distance, which the viewer has to the grid at which the grid is
+   *  shown with minimal refinement ( lowest split count )
+   */
+  double minRefinementDistance_;
 
   /// dimensions of the grid
   float gridSize_;
@@ -127,7 +162,10 @@ private:
   Vec3f midLineColor_;
   
   bool autoResize_;
-
+  
+  /// Contains all orientations to draw
+  unsigned int orientation_;
+  
   bool ok_;
 };
 

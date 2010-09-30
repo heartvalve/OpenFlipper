@@ -74,8 +74,10 @@ GridNode(BaseNode* _parent, const std::string& _name)
     horizontalLines_(7),
     verticalLines_(7),
     maxRefinement_(49),
-    gridSize_(1500.0),
-    autoResize_(true)
+    minRefinementDistance_(10),
+    gridSize_(10.0),
+    autoResize_(false),
+    orientation_(XZ_PLANE)
 {
   baseLineColor_ = Vec3f(0.5, 0.5, 0.5);
   midLineColor_  = Vec3f(0.3, 0.3, 0.3);
@@ -99,7 +101,6 @@ GridNode::availableDrawModes() const
 void
 GridNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 {
-  
   // If we do not autoresize, we set our bounding box here
   // otherwise we set the size of the grid according to the 
   // real scene geometry from the state
@@ -137,142 +138,169 @@ GridNode::draw(GLState&  _state  , DrawModes::DrawMode /* _drawMode */ )
   glEnable( GL_DEPTH_TEST );
 
   glLineWidth(0.1);
-  _state.push_modelview_matrix();
 
-  //first we calculate the hitpoint of the camera direction with the grid
-  GLMatrixd modelview = _state.modelview();
-
-  Vec3d viewDirection(0.0, 1.0, 0.0); // = _state.viewing_direction();
-  Vec3f eye = (Vec3f) _state.eye();
-
-  double lambda = - (eye[1] / viewDirection[1]);
-
-  Vec3f hitPoint;
-  hitPoint[0] = eye[0] + lambda * viewDirection[0];
-  hitPoint[1] = 0;
-  hitPoint[2] = eye[2] + lambda * viewDirection[2];
-
-  //the distance between camera and hitpoint defines a factor that controls
-  //how many lines are drawn
-  double distance = _state.modelview().transform_point( hitPoint ).norm();
-
-  int factor =  floor(2000.0 / distance) - 1;
-
-  int vertical = verticalLines_;
-  int horizontal = horizontalLines_;
-
-  if (factor > 20){
-    vertical = maxRefinement_;
-    horizontal = maxRefinement_;
-
-  } else if (factor > 0){
-    // 'factor' times split the grid (split every cell into 4 new cells)
-    int rest = 0;
-
-    for (int i=0; i < factor; i++)
-      rest -= floor( pow(double(2.0), i));
-
-    vertical   = vertical   * floor( pow(double(2.0),factor)) + rest;
-    horizontal = horizontal * floor( pow(double(2.0),factor)) + rest;
-
-    vertical   = std::min(vertical, maxRefinement_ );
-    horizontal = std::min(vertical, maxRefinement_ );
-  }
+  ACG::Vec3d direction1,direction2;
   
-  if ( autoResize_ ) {
-  
-    // Get the current scene size from the glstate
-    ACG::Vec3d bb_min,bb_max;
-    _state.get_bounding_box(bb_min,bb_max);
+  // For all orientations :
+  for ( unsigned int i = 0 ; i < 3 ; ++i ) {
     
-    // compute the minimal scene radius from the bounding box
-    double radius = std::min(fabs(bb_max[0]-bb_min[0]) * 2,fabs(bb_max[2]-bb_min[2]) * 2);
+    Vec3d viewDirection(0.0, 1.0, 0.0); // = _state.viewing_direction();
+    Vec3d eye = _state.eye();
     
-    // set grid size to the given radius
-    gridSize_ = radius;
-
+    //first we calculate the hitpoint of the camera direction with the grid
+    GLMatrixd modelview = _state.modelview();
     
-    _state.set_line_width(3);
+    // Distance from eye point to the plane
+    double distance = 0.0;
+    
+    if ( i == 0 && ((orientation_ ) & XZ_PLANE)) {
+      direction1 = ACG::Vec3f( 1.0 , 0.0 , 0.0 );
+      direction2 = ACG::Vec3f( 0.0 , 0.0 , 1.0 );
+      distance = ( eye | ACG::Vec3d(0.0,1.0,0.0 ) );
+    } else if ( i == 1 && (orientation_  & XY_PLANE)) {
+      direction1 = ACG::Vec3f( 1.0 , 0.0 , 0.0 );
+      direction2 = ACG::Vec3f( 0.0 , 1.0 , 0.0 );
+      distance = ( eye | ACG::Vec3d(0.0,0.0,1.0 ) );
+    } else if ( i == 2 && (orientation_  & YZ_PLANE)) {
+      direction1 = ACG::Vec3f( 0.0 , 1.0 , 0.0 );
+      direction2 = ACG::Vec3f( 0.0 , 0.0 , 1.0 );
+      distance = ( eye | ACG::Vec3d(1.0,0.0,0.0 ) );
+    } else {
+      continue; 
+    }
+    
+    
+    // Remember original Modelview Matrix
+    _state.push_modelview_matrix();
+    
+    // The factor is means the following
+    // If the viewer is farther away than the minRefinementDistance_, the factor is 0 and no refinement will take place
+    // If the viewer goes closer to the grid, the grid will be refined. 
+    int factor =  0.0;
+    
+    // Block negative distances (grid behind us)
+    if ( distance > 0.0 ) 
+      factor = floor( minRefinementDistance_ / distance) - 1;
+    
+    int vertical   = verticalLines_;
+    int horizontal = horizontalLines_;
+    
+    if (factor > 20){
+      vertical   = maxRefinement_;
+      horizontal = maxRefinement_;
+      
+    } else if (factor > 0){
+      // 'factor' times split the grid (split every cell into 4 new cells)
+      int rest = 0;
+      
+      for (int i=0; i < factor; i++)
+        rest -= floor( pow(double(2.0), i));
+      
+      vertical   = vertical   * floor( pow(double(2.0),factor)) + rest;
+      horizontal = horizontal * floor( pow(double(2.0),factor)) + rest;
+      
+      vertical   = std::min(vertical, maxRefinement_ );
+      horizontal = std::min(vertical, maxRefinement_ );
+    }
+    
+    
+    
+    if ( autoResize_ ) {
+      
+      // Get the current scene size from the glstate
+      ACG::Vec3d bb_min,bb_max;
+      _state.get_bounding_box(bb_min,bb_max);
+      
+      // compute the minimal scene radius from the bounding box
+      double radius = std::min(fabs(bb_max[0]-bb_min[0]) * 2,fabs(bb_max[2]-bb_min[2]) * 2);
+      
+      // set grid size to the given radius
+      gridSize_ = radius;
+      
+      
+      _state.set_line_width(3);
+      glBegin(GL_LINES);
+      glVertex(bb_min);
+      glVertex(bb_max);
+      glEnd();
+      
+      //     // update the bounding box
+      //     bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
+      //     bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
+      
+      std::cerr << "Draw " << bb_min << " "  << bb_max << std::endl;
+      
+      
+      
+    }
+    
+    //now start drawing
+    _state.translate( direction1 * -0.5 * gridSize_ + direction2 * -0.5 * gridSize_ );
+    
     glBegin(GL_LINES);
-    glVertex(bb_min);
-    glVertex(bb_max);
-    glEnd();
-    
-//     // update the bounding box
-//     bb_min_ = Vec3f(-0.5*gridSize_, 0.0, -0.5*gridSize_);
-//     bb_max_ = Vec3f( 0.5*gridSize_, 0.0,  0.5*gridSize_);
-    
-    std::cerr << "Draw " << bb_min << " "  << bb_max << std::endl;
-    
 
+      //red line (x-axis)
+      glColor3f( 0.7, 0.0, 0.0 );
+      glVertex(  direction2 * gridSize_ * 0.5 );
+      glVertex(  direction1 * gridSize_ + direction2 * gridSize_ * 0.5 );
+
+      //blue line (z-axis)
+      glColor3f( 0.0, 0.0, 0.7 );
+      glVertex( direction1 * gridSize_ * 0.5 );
+      glVertex(  direction1 * 0.5 * gridSize_ + direction2 * gridSize_);
+
+      //remaining vertical lines
+      for ( int i = 0 ; i <  vertical ; ++i ) {
+
+        //first draw a baseLine
+        glColor3fv( &baseLineColor_[0] );
+
+        double big  = gridSize_ / (vertical-1) * i;
+        double next = gridSize_ / (vertical-1) * (i+1);
+
+        glVertex( direction1 * big );
+        glVertex( direction1 * big + direction2 * gridSize_ );
+
+        if ( i+1 < vertical)
+          for (int j=1; j < 10; j++){
+
+            //then draw 9 darker lines in between
+            glColor3fv( &midLineColor_[0] );
+    
+            double smallPos = big + (next - big) / 10.0 * j;
+            glVertex( direction1 * smallPos);
+            glVertex( direction1 * smallPos + direction2 * gridSize_);
+          }
+      }
+
+      //remaining horizontal lines
+      for ( int i = 0 ; i <  horizontal; ++i ) {
+
+        //first draw a baseline
+        glColor3fv( &baseLineColor_[0] );
+
+        double big  = gridSize_ / (vertical-1) * i;
+        double next = gridSize_ / (vertical-1) * (i+1);
+
+        glVertex( direction2 * gridSize_ / (horizontal-1) * i);
+        glVertex( direction1 * gridSize_ + direction2 * gridSize_ / (horizontal-1) * i);
+
+        if ( i+1 < vertical)
+          for (int j=1; j < 10; j++){
+
+            //then draw 9 darker lines in between
+            glColor3fv( &midLineColor_[0] );
+    
+            double smallPos = big + (next - big) / 10.0 * j;
+            glVertex( direction2 * smallPos );
+            glVertex( direction1 * gridSize_ + direction2 * smallPos );
+          }   
+      }
+    glEnd();
+
+    _state.pop_modelview_matrix();
     
   }
-
-  //now start drawing
-  _state.translate(-0.5*gridSize_, 0, -0.5*gridSize_);
-
-  glBegin(GL_LINES);
-
-    //red line (x-axis)
-    glColor3f( 0.7, 0.0, 0.0 );
-    glVertex3f(   0.0, 0.0, gridSize_*0.5);
-    glVertex3f(gridSize_, 0.0, gridSize_*0.5);
-
-    //blue line (z-axis)
-    glColor3f( 0.0, 0.0, 0.7 );
-    glVertex3f(gridSize_*0.5, 0.0,     0.0);
-    glVertex3f(gridSize_*0.5, 0.0, gridSize_);
-
-    //remaining vertical lines
-    for ( int i = 0 ; i <  vertical ; ++i ) {
-
-      //first draw a baseLine
-      glColor3fv( &baseLineColor_[0] );
-
-      double big  = gridSize_ / (vertical-1) * i;
-      double next = gridSize_ / (vertical-1) * (i+1);
-
-      glVertex3f( big, 0.0, 0.0);
-      glVertex3f( big, 0.0, gridSize_);
-
-      if ( i+1 < vertical)
-        for (int j=1; j < 10; j++){
-
-          //then draw 9 darker lines in between
-          glColor3fv( &midLineColor_[0] );
-  
-          double smallPos = big + (next - big) / 10.0 * j;
-          glVertex3f( smallPos, 0.0, 0.0);
-          glVertex3f( smallPos, 0.0, gridSize_);
-        }
-    }
-
-    //remaining horizontal lines
-    for ( int i = 0 ; i <  horizontal; ++i ) {
-
-      //first draw a baseline
-      glColor3fv( &baseLineColor_[0] );
-
-      double big  = gridSize_ / (vertical-1) * i;
-      double next = gridSize_ / (vertical-1) * (i+1);
-
-      glVertex3f(   0.0, 0.0, gridSize_ / (horizontal-1) * i);
-      glVertex3f(gridSize_, 0.0, gridSize_ / (horizontal-1) * i);
-
-      if ( i+1 < vertical)
-        for (int j=1; j < 10; j++){
-
-          //then draw 9 darker lines in between
-          glColor3fv( &midLineColor_[0] );
-  
-          double smallPos = big + (next - big) / 10.0 * j;
-          glVertex3f(   0.0, 0.0, smallPos);
-          glVertex3f(gridSize_, 0.0, smallPos);
-        }   
-    }
-  glEnd();
-
-  _state.pop_modelview_matrix();
 
   glLineWidth(1.0);
 
@@ -296,6 +324,29 @@ float
 GridNode::gridSize(){
   return gridSize_;
 }
+
+//-----------------------------------------------------------------------------
+
+void 
+GridNode::minRefinementDistance( double _distance ) {
+  minRefinementDistance_ = _distance;
+}
+
+//-----------------------------------------------------------------------------
+
+double 
+GridNode::minRefinementDistance()
+{
+ return minRefinementDistance_;
+}
+
+//-----------------------------------------------------------------------------
+
+void GridNode::setOrientation( unsigned int _orientation)
+{
+  orientation_ = _orientation;
+}
+
 
 //=============================================================================
 } // namespace SceneGraph
