@@ -57,14 +57,13 @@ TypeLightPlugin::TypeLightPlugin() :
     lightButton_(0),
     contextmenu_(0),
     onlyTargets_(false),
-    lastPoint_hitSphere_(false),
     planeDepth_(0.0f),
     transVec_(0.0),
     rotation_(true),
-    ratioTrackballs_(1.0) {
+    radius_(0.0) {
         
         // Reset transformation matrix
-        light_matrix_.identity();  
+        light_matrix_.identity();
 }
 
 bool TypeLightPlugin::registerType() {
@@ -286,6 +285,8 @@ int TypeLightPlugin::addEmpty() {
   
   object->update();
 
+  object->enablePicking(true);
+  
   object->hide();
   
   emit emptyObjectAdded (object->id() );
@@ -381,6 +382,34 @@ float TypeLightPlugin::findDepth() {
     return d;
 }
 
+double TypeLightPlugin::getFarthestRadius() {
+    
+    // Init distance
+    double d = 0.0;
+    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
+    
+    for ( PluginFunctions::ObjectIterator o_it((onlyTargets_ ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS));
+            o_it != PluginFunctions::objectsEnd(); ++o_it) {
+        
+        LightObject* lightObject = PluginFunctions::lightObject(o_it);
+        if(lightObject != 0) {
+            
+            LightSource* source = PluginFunctions::lightSource(lightObject);
+            if(source != 0) {
+                
+                if(!source->directional()) {
+                    
+                    double tmp_d = fabs((source->position() - c).norm());
+                    if(tmp_d > d) d = tmp_d;
+                    
+                }
+            }
+        }
+    }
+    
+    return d;
+}
+
 void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
     
     // Only react if in light mode
@@ -388,8 +417,12 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
     
         // Get gl state
         ACG::GLState& state = PluginFunctions::viewerProperties().glState();
-    
-        QPoint pos (_event->x(), _event->y());
+        
+        // Invert screen y-axis since the OpenGL y-axis is inverted
+        QPoint pos (_event->x(), state.viewport_height() - _event->y());
+        
+        PolyLineObject* polyObj = 0;
+        PolyLine* polyLine = 0;
         
         switch (_event->type())
         {
@@ -398,13 +431,15 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                 // Reset transformation
                 light_matrix_.identity();
                 
-                if(_event->buttons() & Qt::LeftButton) {
-                    // Trackball rotation
-                    lastPoint_hitSphere_ = mapToSphere( lastPoint2D_= pos,
-                       lastPoint3D_, state.viewport_width(), state.viewport_height() );
+                if(_event->buttons() & Qt::LeftButton && !(_event->modifiers() & Qt::ShiftModifier)) {
+                    
+                    radius_ = getFarthestRadius();
+                    
+                    // Trackball rotation of light source
+                    computeClickOnTrackball(pos, lastPoint3D_, state);
                        
                     rotation_ = true;
-                    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
+                    
                 } else if (_event->buttons() & Qt::MidButton) {
                     // Translation in plane orthogonal to viewing plane
                     lastPoint2D_ = pos;
@@ -417,47 +452,40 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                 break;
             }
             
+            case QEvent::MouseButtonRelease:
+            {
+            }
+            
             case QEvent::MouseMove:
             {
                 
                 if (_event->buttons() & Qt::LeftButton) {
-                
+                    
                     // rotate lights
-                    QPoint newPoint2D = pos;
-
-                    if ( (newPoint2D.x() < 0) || (newPoint2D.x() > (int)state.viewport_width()) ||
-                         (newPoint2D.y() < 0) || (newPoint2D.y() > (int)state.viewport_height()) )
+                    if ( (pos.x() < 0) || (pos.x() > (int)state.viewport_width()) ||
+                         (pos.y() < 0) || (pos.y() > (int)state.viewport_height()) )
                      return;
-
-
-                    ACG::Vec3d newPoint3D;
-                    bool newPoint_hitSphere = mapToSphere( newPoint2D, newPoint3D, state.viewport_width(), state.viewport_height() );
-                    int active = PluginFunctions::activeExaminer();
-
-                    ACG::Vec3d axis(1.0,0.0,0.0);
-                    double angle(0.0);
-
-                    if ( lastPoint_hitSphere_ )
-                    {
-                        if ( newPoint_hitSphere ) {
-                            
-                            axis = lastPoint3D_ % newPoint3D;
-                            axis.normalize();
-                            axis = state.modelview().transform_vector(axis);
-                            double cos_angle = ( lastPoint3D_ | newPoint3D );
-                            
-                            if ( fabs(cos_angle) < 1.0 ) {
-                                angle = acos( cos_angle );
-                                angle *= 180 / M_PI;
-                            }
-                        }
-                     
-                        rotateLights(axis, angle);
-                    }
-
-                    lastPoint2D_ = newPoint2D;
-                    lastPoint3D_ = newPoint3D;
-                    lastPoint_hitSphere_ = newPoint_hitSphere;
+                    
+                    QPoint p(_event->x(), state.viewport_height() - _event->y());
+                    
+                    ACG::Vec3d v1 = lastPoint3D_;
+                    v1.normalize();
+                    
+                    computeClickOnTrackball(p, lastPoint3D_, state);
+                    
+                    ACG::Vec3d v2 = lastPoint3D_;
+                    v2.normalize();
+                    
+                    ACG::Vec3d axis = v1 % v2;
+                    
+                    axis = state.inverse_modelview().transform_vector(axis);
+                    
+                    state.inverse_modelview().transform_vector(axis);
+                    
+                    double angle = acos(v1 | v2) * 180/M_PI;
+                    
+                    rotateLights(axis, angle);
+                    
 
                 } else if (_event->buttons() & Qt::MidButton) {
                     
@@ -469,8 +497,6 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                     
                     // Translation in plane
                     transVec_ = p0 - p1;
-                    // Invert vertical axis
-                    transVec_[1] *= -1.0;
                     
                     lastPoint2D_ = pos;
                     
@@ -488,6 +514,31 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
     // interaction
     ACG::SceneGraph::MouseEventAction action(_event,PluginFunctions::viewerProperties().glState());
     PluginFunctions::traverse(action);
+}
+
+void TypeLightPlugin::computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state) {
+    
+    ACG::Vec3d clickInWorld = _state.unproject(ACG::Vec3d(_v2D.x(), _v2D.y(), 0.5));
+                    
+    clickInWorld = _state.modelview().transform_point(clickInWorld);
+   
+    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
+        
+    c = _state.modelview().transform_point(c);
+    
+    ACG::Vec3d clickRelToC = (clickInWorld - c);
+    
+    double x = clickRelToC[0];
+    double y = clickRelToC[1];
+    
+    // radius_ contains the radius of the trackball of the most
+    // distant light source
+    double sq = radius_*radius_ - x*x - y*y;
+    
+    double z = sq >= 0.0 ? sqrt(sq) : 0.0;
+    
+    // Set point on sphere to referenced variable
+    _clickOnSphere = ACG::Vec3d(x, y, z);
 }
 
 bool TypeLightPlugin::mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D, int _width, int _height) const
@@ -523,55 +574,12 @@ void TypeLightPlugin::rotateLights(ACG::Vec3d& _axis, double _angle) {
     
     ACG::GLState& state = PluginFunctions::viewerProperties().glState();
     ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
-    ACG::Vec3d s_c = PluginFunctions::sceneCenter( PluginFunctions::activeExaminer() );
     int active = PluginFunctions::activeExaminer();
     
     double max_s_radius = 0.0;
-    ratioTrackballs_ = 1.0;
     
-    for ( PluginFunctions::ObjectIterator o_it((onlyTargets_ ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS));
-            o_it != PluginFunctions::objectsEnd(); ++o_it) {
-        
-        LightObject* lightObject = PluginFunctions::lightObject(o_it);
-        if(lightObject != 0) {
-            
-            LightSource* source = PluginFunctions::lightSource(lightObject);
-            if(source != 0) {
-                
-                // Update max light radius
-                if(!source->directional()) {
-                    
-                    // Get light source's position
-                    ACG::Vec3d p = source->position();
-                    
-                    // Small trackball's radius
-                    double s_radius = (p - c).length();
-                    if(s_radius > max_s_radius) max_s_radius = s_radius;
-                }
-            }
-        }
-    }
-    
-    /*
-    Compute ratio of the trackballs' radia:
-    Choose light source that is most distant to the virtual trackball's
-    rotation center. Compute its corresponding trackball's radius
-    as (position - trackball_center).length().
-    Now when moving the trackball that exactly fills the screen, we
-    scale the angle by which the light sources should be rotated by
-    the ratio between the "big" screen-size trackball and the farthest
-    light source's trackball.
-    */
-    
-    // Big trackball's radius
-    ACG::Vec3d e = PluginFunctions::eyePos(active);
-    double b_radius = ((e + (c-e).normalize()*state.near_plane()) - c).length() * 0.5;
-    // Compute ratio
-    double ratio = max_s_radius != 0.0 ? b_radius/max_s_radius : 0.0;
-    if(ratio > ratioTrackballs_) ratioTrackballs_ = ratio;
-    
-    // Rotate
-    light_matrix_.rotate(_angle * ratioTrackballs_, _axis[0], _axis[1], _axis[2]);
+    // Rotate lights
+    light_matrix_.rotate(_angle, _axis[0], _axis[1], _axis[2]);
     
     // Transform positions
     updateLights();
@@ -580,6 +588,7 @@ void TypeLightPlugin::rotateLights(ACG::Vec3d& _axis, double _angle) {
 void TypeLightPlugin::updateLights() {
     
     ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
+    ACG::GLState& state = PluginFunctions::viewerProperties().glState();
     
     for ( PluginFunctions::ObjectIterator o_it((onlyTargets_ ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS));
             o_it != PluginFunctions::objectsEnd(); ++o_it) {
