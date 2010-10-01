@@ -152,9 +152,7 @@ void BaseObjectData::init() {
     QColor color;
     
     if ( OpenFlipper::Options::randomBaseColor() ){
-      //init random seed
-      srand ( time(NULL) );
-      
+
       QColor bckgrnd = OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
       int diff;
       
