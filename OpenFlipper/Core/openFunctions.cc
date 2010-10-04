@@ -144,7 +144,7 @@ void Core::slotExecuteAfterStartup() {
 
     // Execute all files ending with ofs
     for ( int i = 0 ; i  < scriptFiles.size(); ++i )
-      if ( scriptFiles[i].endsWith("ofs") )
+      if ( scriptFiles[i].endsWith("ofs",Qt::CaseInsensitive) )
         emit executeFileScript(scriptDir.path() + "/" + scriptFiles[i]);
 
   }
@@ -154,7 +154,7 @@ void Core::slotExecuteAfterStartup() {
 
     // Skip scripts here as they will be handled by a different function
     QString tmp = QString::fromStdString(commandLineFileNames_[i].first);
-    if ( tmp.endsWith("ofs") ) {
+    if ( tmp.endsWith("ofs",Qt::CaseInsensitive) ) {
       commandLineScriptNames_.push_back(commandLineFileNames_[i].first);
       continue;
     }
@@ -187,7 +187,7 @@ int Core::loadObject ( QString _filename ) {
             matching ones. open it with this plugin.
   */
   
-  if (_filename.endsWith(".ini")) {
+  if (_filename.endsWith(".ini",Qt::CaseInsensitive)) {
 
     // Load all information from the given ini file
     openIniFile(_filename,true,true,true);
@@ -196,8 +196,7 @@ int Core::loadObject ( QString _filename ) {
       coreWidget_->addRecent(_filename, DATA_UNKNOWN);
 
     return -2;
-  } else
-  if (_filename.endsWith(".ofs")) {
+  } else if (_filename.endsWith(".ofs",Qt::CaseInsensitive)) {
      emit log(LOGINFO ,tr("Starting script execution of %1.").arg( _filename)) ;
      emit executeFileScript(_filename);
   } else {
@@ -208,7 +207,7 @@ int Core::loadObject ( QString _filename ) {
 
       QString filters = supportedTypes_[i].plugin->getLoadFilters();
       //check extension
-      if ( ! filters.contains( "*." + fi.completeSuffix() ) )
+      if ( ! filters.contains( "*." + fi.completeSuffix() , Qt::CaseInsensitive) )
         continue;
 
       if ( OpenFlipper::Options::gui() ) {
@@ -264,7 +263,7 @@ int Core::loadObject( DataType _type, QString _filename) {
 
       QString filters = supportedTypes_[i].plugin->getLoadFilters();
       //check extension
-      if ( ! filters.contains( "*." + fi.suffix() ) )
+      if ( ! filters.contains( "*." + fi.suffix() ,Qt::CaseInsensitive ) )
         continue;
         
       
@@ -755,7 +754,7 @@ void Core::loadSettings(){
     QString newpath = complete_name.section(OpenFlipper::Options::dirSeparator(),0,-2);
     OpenFlipperSettings().setValue("Core/CurrentDir", newpath);
 
-    if ( complete_name.endsWith("ini") ) {
+    if ( complete_name.endsWith("ini",Qt::CaseInsensitive) ) {
       openIniFile( complete_name,
                    loadProgramSettings->isChecked(),
                    loadPluginSettings->isChecked(),
@@ -777,11 +776,11 @@ void Core::loadSettings(QString _filename){
   QString newpath = _filename.section(OpenFlipper::Options::dirSeparator(),0,-2);
   OpenFlipperSettings().setValue("Core/CurrentDir", newpath);
 
-  if ( _filename.endsWith("ini") ) {
+  if ( _filename.endsWith("ini",Qt::CaseInsensitive) ) {
     // Loaded function for recent files. Load everything.
     openIniFile(_filename,true,true,true);
     applyOptions();
-  } else if ( _filename.endsWith("obj") ) {
+  } else if ( _filename.endsWith("obj",Qt::CaseInsensitive) ) {
     loadObject(_filename);
     applyOptions();
   }
