@@ -240,7 +240,7 @@ QString LightObject::getObjectinfo() {
 * @return bool if the lightNode of this object is the picking target.
 */
 bool LightObject::picked( uint _node_idx ) {
-  return ( _node_idx == lightNode_->id() );
+  return ( _node_idx == lightNode_->id() || _node_idx == lightNodeVis_->id() );
 }
 
 void LightObject::enablePicking( bool _enable ) {

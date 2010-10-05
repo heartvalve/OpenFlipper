@@ -266,6 +266,9 @@ public:
   
   /// Draw light source node
   void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  
+  /// Picking
+  void pick(GLState& _state, PickTarget _target);
 
   /// Should node be visualized?
   bool visualize() { return visualize_; }

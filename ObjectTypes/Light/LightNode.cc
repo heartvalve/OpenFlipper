@@ -318,6 +318,75 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
 
 }
 
+void LightNode::pick(GLState& _state, PickTarget _target) {
+
+    GLenum prev_depth = _state.depthFunc();
+    
+    if (_target == PICK_FACE ||
+       _target == PICK_ANYTHING) {
+        
+        // Visualize light node
+        if(visualize_ && !light_.directional()) {
+            
+            if(light_.fixedPosition_) {
+                 light_.realPosition_ = _state.inverse_modelview() * light_.position_;
+                 light_.realSpotDirection_ = _state.inverse_modelview().transform_vector(light_.spotDirection_);
+             } else {
+                 light_.realPosition_ = light_.position_;
+                 light_.realSpotDirection_ = light_.spotDirection_;
+             }
+             
+             // Enable depth test but store original status
+             glPushAttrib(GL_DEPTH_BUFFER_BIT);
+             glEnable(GL_DEPTH_TEST);
+             glDepthFunc(GL_LEQUAL);
+             
+             _state.pick_set_maximum(1);
+             _state.pick_set_name(0);
+             
+             ACG::Vec3f p = ACG::Vec3f(light_.realPosition_[0],
+                                       light_.realPosition_[1],
+                                       light_.realPosition_[2]);
+             ACG::Vec3d spotDir = light_.realSpotDirection_;          
+             ACG::Vec4f c = light_.ambientColor() * light_.brightness_;
+          
+             GLUquadricObj* quadric = gluNewQuadric();
+
+             // Origin
+             _state.push_modelview_matrix();
+             // Transform to light origin and direction
+             _state.translate(p[0], p[1], p[2]);
+                 
+             gluSphere( quadric, light_.radius(), 10, 10 );
+
+             // Visualize spot cone (or direction)
+             if(light_.spotCutoff() < 180.0f) {
+                 // Note: if the cutoff angle is 180, the light source
+                 // is a point light emitting light into all directions equally
+                 
+                 // Rotate into light direction
+                 ACG::Vec3d z = ACG::Vec3d(0.0f, 0.0f, 1.0f);
+                 ACG::Vec3d spot = spotDir;
+                 float angle = acos((z | spot)/(z.norm()*spot.norm()));
+                 angle = angle*360/(2*M_PI);
+                 ACG::Vec3d rA = z % spot;
+                 _state.rotate(angle, rA[0], rA[1], rA[2]);
+
+                 gluCylinder( quadric, light_.radius()/6, light_.radius()/6, light_.radius()*2, 10, 10 );
+                 _state.translate(0.0, 0.0, light_.radius()*2);
+                 // Draw arrow tip
+                 gluCylinder( quadric, light_.radius()/2, 0, light_.radius(), 10, 10 );
+             }
+
+             gluDeleteQuadric(quadric);
+
+             _state.pop_modelview_matrix();
+             
+             glDepthFunc(prev_depth);
+         }  
+    }
+}
+
 void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ ) 
 {
     if(visualize_) return;
