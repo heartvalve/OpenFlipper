@@ -116,18 +116,23 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     /// Rotate light sources
     void rotateLights(ACG::Vec3d& _axis, double _angle);
     
+    /// Rotate spot light direction
+    void rotateLightDirection(ACG::Vec3d& _axis, double _angle);
+    
     /// Update light sources' positions
     void updateLights();
     
-    bool mapToSphere(const QPoint& _v2D, ACG::Vec3d& _v3D, int _width, int _height) const;
+    /** \brief Compute click on trackball containing the light source
+    *
+    * Compute click on trackball having the trackball center of the scene as center point.
+    */
+    void computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state);
     
     /** \brief Compute click on trackball of light source
     *
-    * Compute click on trackball having the trackball center of the scene as center point.
-    * Note: If _aroundLight is set to true, the trackball will be computed around the light
-    * source's center position.
+    * Compute click on trackball having the light's center as center point.
     */
-    void computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state);
+    void computeClickOnLightTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state);
         
   public:
 
@@ -201,6 +206,15 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     
     // Radius of trackball for most distant light source
     double radius_;
+    
+    // Depth of light source that is closest to camera
+    float depth_;
+    
+    // Picked light stuff
+    ACG::Vec3d  lightCenter_;
+    double      lightRadius_;
+    int         lightId_;
+    
 };
 
 #endif //TYPELIGHTPLUGIN_HH
