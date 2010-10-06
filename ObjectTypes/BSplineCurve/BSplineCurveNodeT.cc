@@ -745,7 +745,7 @@ BSplineCurveNodeT<BSplineCurve>::
 updateControlPointSelectionTexture(GLState& _state)
 {
   create_cp_selection_texture(_state);
-  controlPointSelectionTexture_valid_ == true;
+  controlPointSelectionTexture_valid_ = true;
 }
 
 //----------------------------------------------------------------------------
@@ -756,7 +756,7 @@ BSplineCurveNodeT<BSplineCurve>::
 updateKnotVectorSelectionTexture(GLState& _state)
 {
   create_knot_selection_texture(_state);
-  knotVectorSelectionTexture_valid_ == true;
+  knotVectorSelectionTexture_valid_ = true;
 }
 
 //----------------------------------------------------------------------------
