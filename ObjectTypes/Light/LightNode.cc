@@ -261,10 +261,29 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
                                    light_.realPosition_[1],
                                    light_.realPosition_[2]);
          ACG::Vec3d spotDir = light_.realSpotDirection_;          
-         ACG::Vec4f c = light_.ambientColor() * light_.brightness_;
+         
+         ACG::Vec4f ac = light_.ambientColor();
+         ACG::Vec4f dc = light_.diffuseColor();
+         ACG::Vec4f sc = light_.specularColor();
+         
+         // Make light sources appear as bright as possible
+         float max = 0;
+         for(int i = 0; i < 3; ++i) {
+             if(ac[i] > max) max = ac[i];
+         }
+         ac += ACG::Vec4f(1.0f - max);
+         max = 0;
+         for(int i = 0; i < 3; ++i) {
+             if(dc[i] > max) max = dc[i];
+         }
+         dc += ACG::Vec4f(1.0f - max);
+         max = 0;
+         for(int i = 0; i < 3; ++i) {
+             if(sc[i] > max) max = sc[i];
+         }
+         sc += ACG::Vec4f(1.0f - max);
       
-      // Backup variables
-         ACG::Vec4f base_color_backup;
+         // Backup variables
          GLboolean lighting_backup;
  
          GLUquadricObj* quadric = gluNewQuadric();
@@ -276,12 +295,44 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
              
          // Set lighting
          glGetBooleanv(GL_LIGHTING, &lighting_backup);
-         glDisable(GL_LIGHTING);
+         glEnable(GL_LIGHTING);
  
-         // Set color
-         base_color_backup = _state.base_color();
-         _state.set_base_color(c);
+         // Make light directional just for the drawing
+         // of itself
+         bool backup_directional = light_.directional();
+         ACG::Vec3d backup_position = light_.position();
+         
+         // Get light id
+         lightId_ = lightSourceHandle->getLight(this);
+    
+         // Return if we don't have a valid light source
+         if(lightId_ == GL_INVALID_ENUM) {
+             
+             // Reset all stored attributes before returning
+             if(!lighting_backup) glDisable(GL_LIGHTING);
  
+             gluDeleteQuadric(quadric);
+ 
+             _state.pop_modelview_matrix();
+             
+             return;
+         }
+         
+         glLightf(lightId_, GL_SPOT_EXPONENT, 0.0f);
+         float pos[] = {backup_position[0], backup_position[1], backup_position[2], 0.0f};
+         glLightfv(lightId_, GL_POSITION, pos);
+         
+         // Set colors
+         float gl_ac[] = {ac[0], ac[1], ac[2], ac[3]};
+         glLightfv(lightId_, GL_AMBIENT, gl_ac);
+         float gl_dc[] = {dc[0], dc[1], dc[2], dc[3]};
+         glLightfv(lightId_, GL_DIFFUSE, gl_dc);
+         float gl_sc[] = {sc[0], sc[1], sc[2], sc[3]};
+         glLightfv(lightId_, GL_SPECULAR, gl_sc);
+         
+         glEnable(lightId_);
+         
+         gluQuadricOrientation(quadric, GLU_OUTSIDE);
          gluSphere( quadric, light_.radius(), 10, 10 );
  
          // Visualize spot cone (or direction)
@@ -297,19 +348,25 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
              ACG::Vec3d rA = z % spot;
              _state.rotate(angle, rA[0], rA[1], rA[2]);
  
+             // Inverse normal orientation
+             gluQuadricOrientation(quadric, GLU_INSIDE);
              gluCylinder( quadric, light_.radius()/6, light_.radius()/6, light_.radius()*2, 10, 10 );
              _state.translate(0.0, 0.0, light_.radius()*2);
              // Draw arrow tip
              gluCylinder( quadric, light_.radius()/2, 0, light_.radius(), 10, 10 );
          }
+         
+         // Free light id
+         lightSourceHandle->removeLight(this);
  
          // Undo state changes
- 
-         // Color
-         _state.set_base_color(base_color_backup);
+         
+         if(!backup_directional) {
+             light_.position(backup_position);
+         }
  
          // Lighting
-         if(lighting_backup) glEnable(GL_LIGHTING);
+         if(!lighting_backup) glDisable(GL_LIGHTING);
  
          gluDeleteQuadric(quadric);
  
