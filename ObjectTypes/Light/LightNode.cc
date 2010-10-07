@@ -535,11 +535,17 @@ void LightNode::setParameters(GLenum _index, LightSource& _light)
   Vec3d& sd = _light.realSpotDirection_;
   GLfloat dir[3] = {(float)sd[0], (float)sd[1], (float)sd[2]};
   
-  glLightfv(_index, GL_POSITION,  (GLfloat *)_light.realPosition_.data());
-  glLightfv(_index, GL_SPOT_DIRECTION,  dir);
-
-  glLightf(_index, GL_SPOT_EXPONENT,  _light.spotExponent_);
-  glLightf(_index, GL_SPOT_CUTOFF,  _light.spotCutoff_);
+  bool directional = _light.directional();
+  
+  Vec4f& p = _light.realPosition_;
+  GLfloat realPos[4] = {(float)p[0], (float)p[1], (float)p[2], (directional ? 0.0f : 1.0f)};
+  
+  glLightfv(_index, GL_POSITION,  realPos);
+  
+  if(!directional) glLightfv(_index, GL_SPOT_DIRECTION,  dir);
+  if(!directional) glLightf(_index, GL_SPOT_EXPONENT,  _light.spotExponent_);
+  if(!directional) glLightf(_index, GL_SPOT_CUTOFF,  _light.spotCutoff_);
+  
   glLightf(_index, GL_CONSTANT_ATTENUATION,  _light.constantAttenuation_);
   glLightf(_index, GL_LINEAR_ATTENUATION,  _light.linearAttenuation_);
   glLightf(_index, GL_QUADRATIC_ATTENUATION,  _light.quadraticAttenuation_);
