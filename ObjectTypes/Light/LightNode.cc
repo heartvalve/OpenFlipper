@@ -85,6 +85,12 @@ LightSource::LightSource()
   spotDirection_        = Vec3d(0.0,0.0,-1.0);
   realSpotDirection_    = Vec3d(0.0,0.0,-1.0);
   
+  // Holds initial light source position
+  // converted to camera coordinates
+  initialPosition_      = Vec4f(0.0, 0.0, 0.0, 0.0);
+  initialSpotDirection_ = Vec3d(0.0, 0.0, -1.0);
+  initialPositionInit_  = false;
+  
   spotExponent_         = 0;
   spotCutoff_           = 180;
 
@@ -237,8 +243,9 @@ LightNode::~LightNode() {
 void LightNode::boundingBox(ACG::Vec3d& _bbMin, ACG::Vec3d& _bbMax) {
     
     if( visualize_ && !light_.directional() ) {
-        _bbMin.minimize( light_.position() - Vec3d(light_.radius()*3) );
-        _bbMax.maximize( light_.position() + Vec3d(light_.radius()*3) );
+        ACG::Vec3d r(light_.realPosition_[0], light_.realPosition_[1], light_.realPosition_[2]);
+        _bbMin.minimize( r - Vec3d(light_.radius()*3) );
+        _bbMax.maximize( r + Vec3d(light_.radius()*3) );
     }
 }
 
@@ -249,9 +256,17 @@ void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
     // Visualize light node
     if(visualize_ && !light_.directional()) {
         
+        // Get initial camera coords of light if in fixed
+        // mode and if they haven't been computed yet
+        if(light_.fixedPosition_ && !light_.initialPositionInit_) {
+            light_.initialPosition_ = _state.modelview() * light_.position_;
+            light_.initialSpotDirection_ = _state.modelview().transform_vector(light_.spotDirection());
+            light_.initialPositionInit_ = true;
+        }
+        
         if(light_.fixedPosition_) {
-             light_.realPosition_ = _state.inverse_modelview() * light_.position_;
-             light_.realSpotDirection_ = _state.inverse_modelview().transform_vector(light_.spotDirection_);
+             light_.realPosition_ = _state.inverse_modelview() * light_.initialPosition_;
+             light_.realSpotDirection_ = _state.inverse_modelview().transform_vector(light_.initialSpotDirection_);
          } else {
              light_.realPosition_ = light_.position_;
              light_.realSpotDirection_ = light_.spotDirection_;
@@ -385,9 +400,17 @@ void LightNode::pick(GLState& _state, PickTarget _target) {
         // Visualize light node
         if(visualize_ && !light_.directional()) {
             
+            // Get initial camera coords of light if in fixed
+            // mode and if they haven't been computed yet
+            if(light_.fixedPosition_ && !light_.initialPositionInit_) {
+                light_.initialPosition_ = _state.modelview() * light_.position_;
+                light_.initialSpotDirection_ = _state.modelview().transform_vector(light_.spotDirection());
+                light_.initialPositionInit_ = true;
+            }
+            
             if(light_.fixedPosition_) {
-                 light_.realPosition_ = _state.inverse_modelview() * light_.position_;
-                 light_.realSpotDirection_ = _state.inverse_modelview().transform_vector(light_.spotDirection_);
+                 light_.realPosition_ = _state.inverse_modelview() * light_.initialPosition_;
+                 light_.realSpotDirection_ = _state.inverse_modelview().transform_vector(light_.initialSpotDirection_);
              } else {
                  light_.realPosition_ = light_.position_;
                  light_.realSpotDirection_ = light_.spotDirection_;
@@ -448,6 +471,14 @@ void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 {
     if(visualize_) return;
     
+    // Get initial camera coords of light if in fixed
+    // mode and if they haven't been computed yet
+    if(light_.fixedPosition_ && !light_.initialPositionInit_) {
+        light_.initialPosition_ = _state.modelview() * light_.position_;
+        light_.initialSpotDirection_ = _state.modelview().transform_vector(light_.spotDirection());
+        light_.initialPositionInit_ = true;
+    }
+    
     // Get light id
     lightId_ = lightSourceHandle->getLight(this);
     
@@ -463,8 +494,8 @@ void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
     if(light_.enabled_ ) {
         // correct Position for fixed Lights
         if(light_.fixedPosition_) {
-            light_.realPosition_ = _state.inverse_modelview() * light_.position_;
-            light_.realSpotDirection_ = _state.inverse_modelview().transform_vector(light_.spotDirection_);
+            light_.realPosition_ = _state.inverse_modelview() * light_.initialPosition_;
+            light_.realSpotDirection_ = _state.inverse_modelview().transform_vector(light_.initialSpotDirection_);
             //std::cerr << "New Light pos :" << _state.inverse_modelview().transform_vector(light_.position) << std::endl;
         } else {
             light_.realPosition_ = light_.position_;
@@ -549,19 +580,6 @@ void LightNode::setParameters(GLenum _index, LightSource& _light)
   glLightf(_index, GL_CONSTANT_ATTENUATION,  _light.constantAttenuation_);
   glLightf(_index, GL_LINEAR_ATTENUATION,  _light.linearAttenuation_);
   glLightf(_index, GL_QUADRATIC_ATTENUATION,  _light.quadraticAttenuation_);
-//   std::cerr << " set GL_AMBIENT  : " << _index << " "  << _light.ambientColor << std::endl;
-//   std::cerr << " set GL_DIFFUSE  : " << _index << " "  << _light.diffuseColor << std::endl;
-//   std::cerr << " set GL_SPECULAR  : " << _index << " "  << _light.specularColor << std::endl;
-//   
-//   std::cerr << " set GL_POSITION  : " << _index << " "  << _light.realPosition << std::endl;
-//   std::cerr << " set GL_SPOT_DIRECTION  : " << _index << " "  << _light.spotDirection << std::endl;
-//   
-//   std::cerr << " set GL_SPOT_EXPONENT  : " << _index << " "  << _light.spotExponent << std::endl;
-//   std::cerr << " set GL_SPOT_CUTOFF  : " << _index << " "  << _light.spotCutoff << std::endl;
-//   std::cerr << " set GL_CONSTANT_ATTENUATION  : " << _index << " "  << _light.constantAttenuation << std::endl;
-//   std::cerr << " set GL_LINEAR_ATTENUATION  : " << _index << " "  << _light.linearAttenuation << std::endl;
-//   std::cerr << " set GL_QUADRATIC_ATTENUATION  : " << _index << " "  << _light.quadraticAttenuation << std::endl;
-//   std::cerr << "===============================================================================" << std::endl;
 }
 
 //----------------------------------------------------------------------------
@@ -580,18 +598,6 @@ void LightNode::getParameters(GLenum _index, LightSource& _light)
   glGetLightfv(_index, GL_CONSTANT_ATTENUATION,  &_light.constantAttenuation_);
   glGetLightfv(_index, GL_LINEAR_ATTENUATION,  &_light.linearAttenuation_);
   glGetLightfv(_index, GL_QUADRATIC_ATTENUATION,  &_light.quadraticAttenuation_);
-//   std::cerr << " get GL_AMBIENT  : " << _index << " "  << _light.ambientColor << std::endl;
-//   std::cerr << " get GL_DIFFUSE  : " << _index << " "  << _light.diffuseColor << std::endl;
-//   std::cerr << " get GL_SPECULAR  : " << _index << " "  << _light.specularColor << std::endl;
-//   
-//   std::cerr << " get GL_POSITION  : " << _index << " "  << _light.realPosition << std::endl;
-//   std::cerr << " get GL_SPOT_DIRECTION  : " << _index << " "  << _light.spotDirection << std::endl;
-//     
-//   std::cerr << " get GL_SPOT_EXPONENT  : " << _index << " "  << _light.spotExponent << std::endl;
-//   std::cerr << " get GL_SPOT_CUTOFF  : " << _index << " "  << _light.spotCutoff << std::endl;
-//   std::cerr << " get GL_CONSTANT_ATTENUATION  : " << _index << " "  << _light.constantAttenuation << std::endl;
-//   std::cerr << " get GL_LINEAR_ATTENUATION  : " << _index << " "  << _light.linearAttenuation << std::endl;
-//   std::cerr << " get GL_QUADRATIC_ATTENUATION  : " << _index << " "  << _light.quadraticAttenuation << std::endl;
 }
 //=============================================================================
 } // namespace SceneGraph

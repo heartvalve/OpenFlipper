@@ -223,6 +223,11 @@ protected:
   Vec3d spotDirection_;
   Vec3d realSpotDirection_;
   
+  // Only if in fixed mode
+  Vec4f initialPosition_;
+  Vec3d initialSpotDirection_;
+  bool initialPositionInit_;
+  
   float spotExponent_;
   float spotCutoff_;
   float constantAttenuation_;
