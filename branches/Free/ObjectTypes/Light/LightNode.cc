@@ -243,7 +243,13 @@ LightNode::~LightNode() {
 void LightNode::boundingBox(ACG::Vec3d& _bbMin, ACG::Vec3d& _bbMax) {
     
     if( visualize_ && !light_.directional() ) {
-        ACG::Vec3d r(light_.realPosition_[0], light_.realPosition_[1], light_.realPosition_[2]);
+        ACG::Vec3d r;
+        if(light_.fixedPosition())
+            r = ACG::Vec3d((double)light_.realPosition_[0],
+                           (double)light_.realPosition_[1],
+                           (double)light_.realPosition_[2]);
+        else
+            r = light_.position();
         _bbMin.minimize( r - Vec3d(light_.radius()*3) );
         _bbMax.maximize( r + Vec3d(light_.radius()*3) );
     }
