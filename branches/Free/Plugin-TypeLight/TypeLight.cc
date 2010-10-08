@@ -53,8 +53,13 @@
 
 TypeLightPlugin::TypeLightPlugin() :
     defaultLights_(true),
-    lightButton_(0),
-    contextmenu_(0),
+    toolbar_(0),
+    lightOptions_(0),
+    lightAction_(0),
+    moveMode_(0),
+    translateMode_(0),
+    rotateMode_(0),
+    allLightsMode_(0),
     onlyTargets_(false),
     planeDepth_(0.0f),
     transVec_(0.0),
@@ -184,6 +189,26 @@ void TypeLightPlugin::addDefaultLights() {
 
 void TypeLightPlugin::pluginsInitialized(){
   
+    //PICKMODES
+    emit addPickMode("Separator");
+    emit addHiddenPickMode("MoveLights");
+    emit setPickModeMouseTracking ("MoveLights", true);
+    emit addHiddenPickMode("TranslateLights");
+    emit setPickModeMouseTracking ("TranslateLights", true);
+    emit addHiddenPickMode("RotateLights");
+    emit setPickModeMouseTracking ("RotateLights", true);
+    
+    // Create tool bar
+    toolbar_ = new QToolBar(tr("Transform light sources"));
+    
+    lightAction_ = new QAction(tr("<B>Light mode</B><br>Transform light sources in 3D."), toolbar_);
+    lightAction_->setStatusTip(tr("Transform light sources in 3D."));
+    lightAction_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-mode.png") );
+    lightAction_->setCheckable(true);
+    toolbar_->addAction(lightAction_);
+    
+    connect(lightAction_, SIGNAL(triggered(bool)), this, SLOT(slotLightModeRequest(bool)) );
+
     // Add toolbar icon with context menu
     QToolBar* viewerToolbar = 0;
 
@@ -192,44 +217,104 @@ void TypeLightPlugin::pluginsInitialized(){
     if ( viewerToolbar == 0 ) {
         emit log(LOGERR,"Unable to get Viewer Toolbar!");
     } else {
-        // Create toolbar action
-        lightButton_ = new QToolButton( viewerToolbar );
-        lightButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-mode.png") );
-        lightButton_->setMinimumSize( 16, 16 );
-        lightButton_->setMaximumSize( 32, 32 );
-        lightButton_->setToolTip(tr("Switch to <b>light</b> mode."));
-        lightButton_->setWhatsThis(tr(
-                      "Switch to <b>light</b> mode.<br>"
-                      "Rotate lights using left mouse button."));
-
-        connect( lightButton_, SIGNAL( clicked() ), this, SLOT( setLightMode() ) );
         
+        // Search for picking action...
         QList< QAction *> toolbarActions = viewerToolbar->actions();
         QAction* pickAction = 0;
         for ( int i = 0 ; i < toolbarActions.size() ; ++i ) {
-          if ( toolbarActions[i]->text() == "Pick" )
-            pickAction = toolbarActions[i];
+            if ( toolbarActions[i]->text() == "Pick" )
+                pickAction = toolbarActions[i];
         }
       
+        // And append light mode button if found.
         if (pickAction)
-          viewerToolbar->insertWidget( pickAction, lightButton_ )->setText(tr("Light"));
+            viewerToolbar->insertWidget( pickAction, toolbar_ )->setText(tr("Light"));
         else
-          viewerToolbar->addWidget( lightButton_ )->setText(tr("Light"));
+            viewerToolbar->addWidget( toolbar_ )->setText(tr("Light"));
         
-        // Create context menu
-        QActionGroup* group = new QActionGroup(lightButton_);
-        QAction* radioOne = new QAction("All lights", group);
-        radioOne->setCheckable(true);
-        radioOne->setChecked((onlyTargets_ ? false : true));
-        QAction* radioTwo  = new QAction("Target lights", group);
-        radioTwo->setCheckable(true);
-        radioTwo->setChecked((onlyTargets_ ? true : false));
-        contextmenu_ = new QMenu("Choose target light sources", 0);
-        contextmenu_->addActions(group->actions());
-        
-        connect( radioOne, SIGNAL(triggered(bool)), this, SLOT(allLights(bool)) );
-        connect( radioTwo, SIGNAL(triggered(bool)), this, SLOT(targetLights(bool)) );
     }
+    
+    lightOptions_ = new QToolBar(tr("Transform light sources"));
+    lightOptions_->setAttribute(Qt::WA_AlwaysShowToolTips, true);
+    
+    QActionGroup* pickGroup = new QActionGroup(lightOptions_);
+    pickGroup->setExclusive (false);
+
+    moveMode_ = new QAction(tr("Move light source"), pickGroup);
+    moveMode_->setStatusTip(tr("Move light source on virtual trackball around trackball center."));
+    moveMode_->setToolTip(tr("Move light source on virtual trackball around trackball center."));
+    moveMode_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-move.png") );
+    moveMode_->setCheckable(true);
+    lightOptions_->addAction(moveMode_);
+
+    translateMode_ = new QAction(tr("Translate light source"), pickGroup);
+    translateMode_->setStatusTip(tr("Translate light source on plane parallely to viewing plane."));
+    translateMode_->setToolTip(tr("Translate light source on plane parallely to viewing plane."));
+    translateMode_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-translate.png") );
+    translateMode_->setCheckable(true);
+    lightOptions_->addAction(translateMode_);
+
+    rotateMode_ = new QAction(tr("Rotate spotlight direction"), pickGroup);
+    rotateMode_->setStatusTip(tr("Rotate the spotlight direction of a light source."));
+    rotateMode_->setToolTip(tr("Rotate the spotlight direction of a light source."));
+    rotateMode_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-rotate.png") );
+    rotateMode_->setCheckable(true);
+    lightOptions_->addAction(rotateMode_);
+    
+    lightOptions_->addSeparator ();
+    
+    allLightsMode_ = new QAction(tr("All lights"), lightOptions_);
+    allLightsMode_->setStatusTip(tr("Transform all light sources if checked. If not, only apply to target light sources."));
+    allLightsMode_->setToolTip(tr("Transform all light sources if checked. If not, only apply to target light sources."));
+    allLightsMode_->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-alllights.png") );
+    allLightsMode_->setCheckable(true);
+    lightOptions_->addAction(allLightsMode_);
+        
+    connect(pickGroup, SIGNAL(triggered(QAction*)), this, SLOT(slotPickModeRequest(QAction*)) );
+    connect(allLightsMode_, SIGNAL(triggered(bool)), this, SLOT(slotSetAllOrTarget(bool)) );
+
+    emit setPickModeToolbar ("MoveLights", lightOptions_);
+    emit setPickModeToolbar ("TranslateLights", lightOptions_);
+    emit setPickModeToolbar ("RotateLights", lightOptions_);
+        
+        //         // Create toolbar action
+//         lightButton_ = new QToolButton( viewerToolbar );
+//         lightButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-mode.png") );
+//         lightButton_->setMinimumSize( 16, 16 );
+//         lightButton_->setMaximumSize( 32, 32 );
+//         lightButton_->setToolTip(tr("Switch to <b>light</b> mode."));
+//         lightButton_->setWhatsThis(tr(
+//                       "Switch to <b>light</b> mode.<br>"
+//                       "Rotate lights using left mouse button."));
+// 
+//         connect( lightButton_, SIGNAL( clicked() ), this, SLOT( setLightMode() ) );
+//         
+//         QList< QAction *> toolbarActions = viewerToolbar->actions();
+//         QAction* pickAction = 0;
+//         for ( int i = 0 ; i < toolbarActions.size() ; ++i ) {
+//           if ( toolbarActions[i]->text() == "Pick" )
+//             pickAction = toolbarActions[i];
+//         }
+//       
+//         if (pickAction)
+//           viewerToolbar->insertWidget( pickAction, lightButton_ )->setText(tr("Light"));
+//         else
+//           viewerToolbar->addWidget( lightButton_ )->setText(tr("Light"));
+//         
+//         // Create context menu
+//         QActionGroup* group = new QActionGroup(lightButton_);
+//         QAction* radioOne = new QAction("All lights", group);
+//         radioOne->setCheckable(true);
+//         radioOne->setChecked((onlyTargets_ ? false : true));
+//         QAction* radioTwo  = new QAction("Target lights", group);
+//         radioTwo->setCheckable(true);
+//         radioTwo->setChecked((onlyTargets_ ? true : false));
+//         contextmenu_ = new QMenu("Choose target light sources", 0);
+//         contextmenu_->addActions(group->actions());
+//         
+//         connect( radioOne, SIGNAL(triggered(bool)), this, SLOT(allLights(bool)) );
+//         connect( radioTwo, SIGNAL(triggered(bool)), this, SLOT(targetLights(bool)) );
+//     }
     
     // Disable the build in light management and use this plugins light handling
     PluginFunctions::disableExaminerLightHandling();
@@ -238,20 +323,53 @@ void TypeLightPlugin::pluginsInitialized(){
     addDefaultLights();
 }
 
-void TypeLightPlugin::allLights(bool _b) {
-    onlyTargets_ = !_b;
-}
-
-void TypeLightPlugin::targetLights(bool _b) {
-    onlyTargets_ = _b;
-}
-
-void TypeLightPlugin::setLightMode() {
-    
-    // Context menu requested
-    contextmenu_->exec(QPoint(lightButton_->mapToGlobal(QPoint(0, lightButton_->height()))));
+void TypeLightPlugin::slotLightModeRequest(bool /*_checked*/) {
     
     PluginFunctions::actionMode(Viewer::LightMode);
+    PluginFunctions::pickMode("MoveLights");
+
+    lightAction_->setChecked(true);
+    
+    // Chose "MoveLights" pick mode per default
+    moveMode_->setChecked(true);
+    translateMode_->setChecked(false);
+    rotateMode_->setChecked(false);
+}
+
+void TypeLightPlugin::slotPickModeRequest(QAction* _action) {
+    
+    PluginFunctions::actionMode(Viewer::LightMode);
+    
+    if (_action == moveMode_){
+        PluginFunctions::pickMode("MoveLights");
+
+        lightAction_->setChecked(true);
+        moveMode_->setChecked(true);
+        translateMode_->setChecked(false);
+        rotateMode_->setChecked(false);
+        
+    } else if (_action == translateMode_){
+        PluginFunctions::pickMode("TranslateLights");
+
+        lightAction_->setChecked(true);
+        moveMode_->setChecked(false);
+        translateMode_->setChecked(true);
+        rotateMode_->setChecked(false);
+        
+    } else if (_action == rotateMode_){
+        PluginFunctions::pickMode("RotateLights");
+
+        lightAction_->setChecked(true);
+        moveMode_->setChecked(false);
+        translateMode_->setChecked(false);
+        rotateMode_->setChecked(true);   
+    }
+}
+
+void TypeLightPlugin::slotSetAllOrTarget(bool _checked) {
+    
+    allLightsMode_->setChecked(_checked);
+    onlyTargets_ = !_checked;
 }
 
 int TypeLightPlugin::addDefaultLight(QString _name) {
@@ -417,7 +535,6 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
     
     // Only react if in light mode
     if(PluginFunctions::actionMode() == Viewer::LightMode) {
-    
         // Get gl state
         ACG::GLState& state = PluginFunctions::viewerProperties().glState();
         
@@ -431,7 +548,7 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                 // Reset transformation
                 light_matrix_.identity();
                 
-                if(_event->buttons() & Qt::LeftButton && !(_event->modifiers() & Qt::ShiftModifier)) {
+                if(PluginFunctions::pickMode() == "MoveLights" && _event->buttons() & Qt::LeftButton) {
                     
                     radius_ = getFarthestRadius();
                     
@@ -442,7 +559,7 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                        
                     rotation_ = true;
                     
-                } else if (_event->buttons() & Qt::MidButton) {
+                } else if (PluginFunctions::pickMode() == "TranslateLights" && _event->buttons() & Qt::LeftButton) {
                     // Translation in plane orthogonal to viewing plane
                     lastPoint2D_ = pos;
                     // Get depth of plane along which we want to translate
@@ -450,7 +567,7 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                     
                     rotation_ = false;
                     
-                } else if(_event->buttons() & Qt::LeftButton && (_event->modifiers() & Qt::ShiftModifier)) {
+                } else if(PluginFunctions::pickMode() == "RotateLights" && _event->buttons() & Qt::LeftButton) {
                     
                     QPoint p(_event->x(), _event->y());
                     
@@ -497,7 +614,7 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
             case QEvent::MouseMove:
             {
                 
-                if (_event->buttons() & Qt::LeftButton && !(_event->modifiers() & Qt::ShiftModifier)) {
+                if (PluginFunctions::pickMode() == "MoveLights" && _event->buttons() & Qt::LeftButton) {
                     
                     // rotate lights
                     if ( (pos.x() < 0) || (pos.x() > (int)state.viewport_width()) ||
@@ -522,7 +639,7 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                     
                     rotateLights(axis, angle);
 
-                } else if (_event->buttons() & Qt::MidButton) {
+                } else if (PluginFunctions::pickMode() == "TranslateLights" && _event->buttons() & Qt::LeftButton) {
                     
                     ACG::Vec3d p0(pos.x(), pos.y(), planeDepth_);
                     p0 = state.unproject(p0);
@@ -537,7 +654,7 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                     
                     updateLights();
                     
-                } else if (_event->buttons() & Qt::LeftButton && (_event->modifiers() & Qt::ShiftModifier)) {
+                } else if (PluginFunctions::pickMode() == "RotateLights" && _event->buttons() & Qt::LeftButton) {
                     
                     ACG::Vec3d v1 = lastPoint3D_;
                     v1.normalize();

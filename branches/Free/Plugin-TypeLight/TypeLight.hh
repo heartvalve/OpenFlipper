@@ -56,12 +56,10 @@
 #include <OpenFlipper/BasePlugin/TypeInterface.hh>
 #include <OpenFlipper/BasePlugin/MouseInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
+#include <OpenFlipper/BasePlugin/PickingInterface.hh>
 
-#include <ACG/Scenegraph/GlutPrimitiveNode.hh>
-
-#include <ObjectTypes/PolyLine/PolyLine.hh>
-
-class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface, MouseInterface, ToolbarInterface
+class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, LoggingInterface, TypeInterface, MouseInterface,
+    ToolbarInterface, PickingInterface
 {
    Q_OBJECT
    Q_INTERFACES(BaseInterface)
@@ -70,6 +68,7 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
    Q_INTERFACES(TypeInterface)
    Q_INTERFACES(MouseInterface)
    Q_INTERFACES(ToolbarInterface)
+   Q_INTERFACES(PickingInterface)
 
   signals:
     // Logging interface
@@ -88,6 +87,12 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     // ToolbarInterface
     void getToolBar( QString _name, QToolBar*& _toolbar );
     
+    // PickingInterface
+    void addPickMode(const std::string _mode);
+    void addHiddenPickMode(const std::string _mode);
+    void setPickModeMouseTracking (const std::string _mode, bool _mouseTracking);
+    void setPickModeToolbar(const std::string _mode, QToolBar * _toolbar);
+    
   private slots:
 
     void noguiSupported( ) {} ;
@@ -105,11 +110,8 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     void objectDeleted(int _id);
     
     // MouseInterface
-    void slotMouseEventLight( QMouseEvent* _event);
-    
-    //-----------------------------------------------------------
-    
-    void setLightMode();
+    //void slotMouseEventLight( QMouseEvent* _event);
+    void slotMouseEventLight( QMouseEvent* _event );
     
   private:
         
@@ -159,9 +161,11 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     int addDefaultLight(QString _name);
     
   private slots:
-      
-    void allLights(bool _b);
-    void targetLights(bool _b);
+    
+    void slotLightModeRequest(bool _checked);
+    void slotPickModeRequest(QAction* _action);
+    
+    void slotSetAllOrTarget(bool _checked);
     
   private:
     
@@ -185,11 +189,20 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     // Matrix for rotating light position
     ACG::GLMatrixd light_matrix_;
     
-    // Button for light mode
-    QToolButton* lightButton_;
+    // Toolbar for light mode
+    QToolBar* toolbar_;
     
-    // Context menu which allows to switch between target and all light transformation
-    QMenu* contextmenu_;
+    // Toolbar that show detailed options for light mode
+    QToolBar* lightOptions_;
+    
+    // GUI elements
+    QAction* lightAction_;
+    
+    QAction* moveMode_;
+    QAction* translateMode_;
+    QAction* rotateMode_;
+    
+    QAction* allLightsMode_;
     
     // True if only target lights should be transformed
     bool onlyTargets_;
