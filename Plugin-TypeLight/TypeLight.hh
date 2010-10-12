@@ -128,13 +128,13 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     *
     * Compute click on trackball having the trackball center of the scene as center point.
     */
-    void computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state);
+    bool computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state);
     
     /** \brief Compute click on trackball of light source
     *
     * Compute click on trackball having the light's center as center point.
     */
-    void computeClickOnLightTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state);
+    bool computeClickOnLightTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state);
         
   public:
 
@@ -227,6 +227,9 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     ACG::Vec3d  lightCenter_;
     double      lightRadius_;
     int         lightId_;
+    
+    bool        hitLightTrackball_;
+    bool        hitTrackball_;
     
 };
 

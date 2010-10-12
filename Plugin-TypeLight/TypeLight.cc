@@ -68,7 +68,9 @@ TypeLightPlugin::TypeLightPlugin() :
     depth_(0.0f),
     lightCenter_(0.0),
     lightRadius_(0.0),
-    lightId_(-1) {
+    lightId_(-1),
+    hitLightTrackball_(false),
+    hitTrackball_(false) {
         
         // Reset transformation matrix
         light_matrix_.identity();
@@ -276,45 +278,6 @@ void TypeLightPlugin::pluginsInitialized(){
     emit setPickModeToolbar ("MoveLights", lightOptions_);
     emit setPickModeToolbar ("TranslateLights", lightOptions_);
     emit setPickModeToolbar ("RotateLights", lightOptions_);
-        
-        //         // Create toolbar action
-//         lightButton_ = new QToolButton( viewerToolbar );
-//         lightButton_->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"light-mode.png") );
-//         lightButton_->setMinimumSize( 16, 16 );
-//         lightButton_->setMaximumSize( 32, 32 );
-//         lightButton_->setToolTip(tr("Switch to <b>light</b> mode."));
-//         lightButton_->setWhatsThis(tr(
-//                       "Switch to <b>light</b> mode.<br>"
-//                       "Rotate lights using left mouse button."));
-// 
-//         connect( lightButton_, SIGNAL( clicked() ), this, SLOT( setLightMode() ) );
-//         
-//         QList< QAction *> toolbarActions = viewerToolbar->actions();
-//         QAction* pickAction = 0;
-//         for ( int i = 0 ; i < toolbarActions.size() ; ++i ) {
-//           if ( toolbarActions[i]->text() == "Pick" )
-//             pickAction = toolbarActions[i];
-//         }
-//       
-//         if (pickAction)
-//           viewerToolbar->insertWidget( pickAction, lightButton_ )->setText(tr("Light"));
-//         else
-//           viewerToolbar->addWidget( lightButton_ )->setText(tr("Light"));
-//         
-//         // Create context menu
-//         QActionGroup* group = new QActionGroup(lightButton_);
-//         QAction* radioOne = new QAction("All lights", group);
-//         radioOne->setCheckable(true);
-//         radioOne->setChecked((onlyTargets_ ? false : true));
-//         QAction* radioTwo  = new QAction("Target lights", group);
-//         radioTwo->setCheckable(true);
-//         radioTwo->setChecked((onlyTargets_ ? true : false));
-//         contextmenu_ = new QMenu("Choose target light sources", 0);
-//         contextmenu_->addActions(group->actions());
-//         
-//         connect( radioOne, SIGNAL(triggered(bool)), this, SLOT(allLights(bool)) );
-//         connect( radioTwo, SIGNAL(triggered(bool)), this, SLOT(targetLights(bool)) );
-//     }
     
     // Disable the build in light management and use this plugins light handling
     PluginFunctions::disableExaminerLightHandling();
@@ -555,15 +518,13 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                     depth_ = findDepth();
                     
                     // Trackball rotation of light source
-                    computeClickOnTrackball(pos, lastPoint3D_, state);
+                    hitTrackball_ = computeClickOnTrackball(pos, lastPoint3D_, state);
                        
                     rotation_ = true;
                     
                 } else if (PluginFunctions::pickMode() == "TranslateLights" && _event->buttons() & Qt::LeftButton) {
                     // Translation in plane orthogonal to viewing plane
                     lastPoint2D_ = pos;
-                    // Get depth of plane along which we want to translate
-                    planeDepth_ = findDepth();
                     
                     rotation_ = false;
                     
@@ -600,7 +561,9 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                         }
                     }
                     
-                    computeClickOnLightTrackball(pos, lastPoint3D_, state);
+                    if(lightId_ == -1) break;
+                    
+                    hitLightTrackball_ = computeClickOnLightTrackball(pos, lastPoint3D_, state);
                 }
                 
                 break;
@@ -609,6 +572,8 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
             case QEvent::MouseButtonRelease:
             {
                 lightId_ = -1;
+                hitLightTrackball_  = false;
+                hitTrackball_       = false;
             }
             
             case QEvent::MouseMove:
@@ -617,29 +582,41 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                 if (PluginFunctions::pickMode() == "MoveLights" && _event->buttons() & Qt::LeftButton) {
                     
                     // rotate lights
-                    if ( (pos.x() < 0) || (pos.x() > (int)state.viewport_width()) ||
-                         (pos.y() < 0) || (pos.y() > (int)state.viewport_height()) )
-                     return;
+                    if ((pos.x() < 0) || (pos.x() > (int)state.viewport_width())  ||
+                        (pos.y() < 0) || (pos.y() > (int)state.viewport_height()))
+                        break;
                     
-                    ACG::Vec3d v1 = lastPoint3D_;
-                    v1.normalize();
+                    // Compute first intersection if this is the first
+                    // hit of the trackball
+                    if(hitTrackball_ == false) {
+                        
+                        hitTrackball_ = computeClickOnTrackball(pos, lastPoint3D_, state);
+                        
+                    } else {
                     
-                    computeClickOnTrackball(pos, lastPoint3D_, state);
-                    
-                    ACG::Vec3d v2 = lastPoint3D_;
-                    v2.normalize();
-                    
-                    ACG::Vec3d axis = v1 % v2;
-                    
-                    axis = state.inverse_modelview().transform_vector(axis);
-                    
-                    axis.normalize();
-                    
-                    double angle = acos(v1 | v2) * 180/M_PI;
-                    
-                    rotateLights(axis, angle);
+                        ACG::Vec3d v1 = lastPoint3D_;
+                        v1.normalize();
+                        
+                        hitTrackball_ = computeClickOnTrackball(pos, lastPoint3D_, state);
+                        
+                        ACG::Vec3d v2 = lastPoint3D_;
+                        v2.normalize();
+                        
+                        ACG::Vec3d axis = v1 % v2;
+                        
+                        axis = state.inverse_modelview().transform_vector(axis);
+                        
+                        axis.normalize();
+                        
+                        double angle = acos(v1 | v2) * 180/M_PI;
+                        
+                        rotateLights(axis, angle);
+                    }
 
                 } else if (PluginFunctions::pickMode() == "TranslateLights" && _event->buttons() & Qt::LeftButton) {
+                    
+                    // Get depth of plane along which we want to translate
+                    planeDepth_ = findDepth();
                     
                     ACG::Vec3d p0(pos.x(), pos.y(), planeDepth_);
                     p0 = state.unproject(p0);
@@ -656,23 +633,37 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
                     
                 } else if (PluginFunctions::pickMode() == "RotateLights" && _event->buttons() & Qt::LeftButton) {
                     
-                    ACG::Vec3d v1 = lastPoint3D_;
-                    v1.normalize();
+                    // rotate spot light direction
+                    if ( (pos.x() < 0) || (pos.x() > (int)state.viewport_width())  ||
+                         (pos.y() < 0) || (pos.y() > (int)state.viewport_height()) ||
+                         (lightId_ == -1)) break;
                     
-                    computeClickOnLightTrackball(pos, lastPoint3D_, state);
+                    // Compute first intersection if this is the first
+                    // hit of the trackball
+                    if(hitLightTrackball_ == false) {
+                        
+                        hitLightTrackball_ = computeClickOnLightTrackball(pos, lastPoint3D_, state);
+                        
+                    } else {
                     
-                    ACG::Vec3d v2 = lastPoint3D_;
-                    v2.normalize();
-                    
-                    ACG::Vec3d axis = v1 % v2;
-                    
-                    axis = state.inverse_modelview().transform_vector(axis);
-                    
-                    axis.normalize();
-                    
-                    double angle = acos(v1 | v2) * 180/M_PI;
-                    
-                    rotateLightDirection(axis, angle);
+                        ACG::Vec3d v1 = lastPoint3D_;
+                        v1.normalize();
+                        
+                        hitLightTrackball_ = computeClickOnLightTrackball(pos, lastPoint3D_, state);
+                        
+                        ACG::Vec3d v2 = lastPoint3D_;
+                        v2.normalize();
+                        
+                        ACG::Vec3d axis = v1 % v2;
+                        
+                        axis = state.inverse_modelview().transform_vector(axis);
+                        
+                        axis.normalize();
+                        
+                        double angle = acos(v1 | v2) * 180/M_PI;
+                        
+                        rotateLightDirection(axis, angle);
+                    }
                 }
                     
                 break;
@@ -688,7 +679,9 @@ void TypeLightPlugin::slotMouseEventLight(QMouseEvent* _event) {
     PluginFunctions::traverse(action);
 }
 
-void TypeLightPlugin::computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state) {
+bool TypeLightPlugin::computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state) {
+    
+    bool hit = true;
     
     ACG::Vec3d clickInWorld = _state.unproject(ACG::Vec3d(_v2D.x(), _v2D.y(), depth_));
                     
@@ -709,11 +702,17 @@ void TypeLightPlugin::computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _c
     
     double z = sq > 0.0 ? sqrt(sq) : 0.0;
     
+    if(sq <= 0.0) hit = false;
+    
     // Set point on sphere to referenced variable
     _clickOnSphere = ACG::Vec3d(x, y, z);
+    
+    return hit;
 }
 
-void TypeLightPlugin::computeClickOnLightTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state) {
+bool TypeLightPlugin::computeClickOnLightTrackball(const QPoint& _v2D, ACG::Vec3d& _clickOnSphere, ACG::GLState& _state) {
+    
+    bool hit = true;
     
     ACG::Vec3d clickInWorld = _state.unproject(ACG::Vec3d(_v2D.x(), _v2D.y(), depth_));
                     
@@ -734,8 +733,12 @@ void TypeLightPlugin::computeClickOnLightTrackball(const QPoint& _v2D, ACG::Vec3
     
     double z = sq > 0.0 ? sqrt(sq) : 0.0;
     
+    if(sq <= 0.0) hit = false;
+    
     // Set point on sphere to referenced variable
     _clickOnSphere = ACG::Vec3d(x, y, z);
+    
+    return hit;
 }
 
 void TypeLightPlugin::rotateLights(ACG::Vec3d& _axis, double _angle) {
