@@ -114,6 +114,12 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   colorMaterialActive_   = bak_colorMaterialActive_   = node_->applyProperties() & SceneGraph::MaterialNode::ColorMaterial;
   multiSamplingActive_   = bak_multiSamplingActive_   = node_->applyProperties() & SceneGraph::MaterialNode::MultiSampling;
 
+  if( round_points_ || line_smooth_)
+  {
+    ui_.alphaTest->setEnabled(false);
+    ui_.alpha    ->setEnabled(false);
+  }
+
   setButtonColor( ui_.baseColorButton, color_ );
   setButtonColor( ui_.ambientColorButton, ambient_ );
   setButtonColor( ui_.diffuseColorButton, diffuse_ );
@@ -126,7 +132,7 @@ QtMaterialDialog::QtMaterialDialog( QWidget                  * _parent,
   ui_.lineSmoothCheckBox->setChecked(line_smooth_);
   ui_.backfaceCulling->setChecked( backfaceCulling_ );
   ui_.alphaTest->setChecked( alphaTest_ );
-  ui_.alpha->setValue((int) alphaValue_ * 100.0f );
+  ui_.alpha->setValue((int) (alphaValue_ * 100.0f) );
   ui_.colorMaterial->setChecked( colorMaterial_ );
   ui_.multiSampling->setChecked( multiSampling_ );
   ui_.blending->setChecked( blending_ );
@@ -367,11 +373,11 @@ void QtMaterialDialog::applyChanges()
   else
     node_->disable_multisampling();
 
-  // this is not optimal !
-  if(round_points_ || line_smooth_ )
-    node_->enable_alpha_test(0.5);
-  else
-    node_->disable_alpha_test();
+  // // this is not optimal !
+  // if(round_points_ || line_smooth_ )
+  //   node_->enable_alpha_test(0.5);
+  // else
+  //   node_->disable_alpha_test();
 
   setButtonColor( ui_.diffuseColorButton, diffuse_ );
   setButtonColor( ui_.ambientColorButton, ambient_ );
@@ -556,6 +562,19 @@ void
 QtMaterialDialog::changeRoundPoints(bool _b)
 {
   round_points_ = (bool)_b;
+
+  // update alpha test
+  bool b2 = _b || round_points_;
+  if(b2)
+  {
+    changeAlphaTest(true);
+    changeAlphaValue(50);
+    ui_.alpha    ->setValue(50);
+  }
+  ui_.alphaTest->setEnabled(!b2);
+  ui_.alpha    ->setEnabled(!b2);
+  ui_.alphaTest->setChecked( b2);
+
   applyChanges();
 }
 
@@ -566,6 +585,19 @@ void
 QtMaterialDialog::changeLineSmooth(bool _b)
 {
   line_smooth_ = (bool)_b;
+
+  // update alpha test
+  bool b2 = _b || round_points_;
+  if(b2)
+  {
+    changeAlphaTest(true);
+    changeAlphaValue(50);
+    ui_.alpha    ->setValue(50);
+  }
+  ui_.alphaTest->setEnabled(!b2);
+  ui_.alpha    ->setEnabled(!b2);
+  ui_.alphaTest->setChecked( b2);
+
   applyChanges();
 }
 
@@ -612,7 +644,7 @@ QtMaterialDialog::changeMultiSampling(bool _b)
 void
 QtMaterialDialog::changeAlphaValue(int _new)
 {
-  alphaValue_ = _new / 100.0f;
+  alphaValue_ = float(_new) / 100.0f;
   applyChanges();
 }
 
