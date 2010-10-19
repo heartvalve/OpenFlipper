@@ -188,8 +188,8 @@ void
 BSplineSurfaceT<PointT>::
 createKnots()
 {
-  knotvector_m_.createKnots(degree_m_, dimm_-1);
-  knotvector_n_.createKnots(degree_n_, dimn_-1);
+  knotvector_m_.createKnots(degree_m_, dimm_);
+  knotvector_n_.createKnots(degree_n_, dimn_);
 }
 
 //-----------------------------------------------------------------------------
