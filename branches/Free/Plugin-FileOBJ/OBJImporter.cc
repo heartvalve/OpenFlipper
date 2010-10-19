@@ -559,7 +559,7 @@ void OBJImporter::addMaterial(std::string _materialName){
         bool textureAllowed = ! ( objectOptions_[ currentObject() ] & FORCE_NOTEXTURES );
 
         // Set the texture index in the face index property
-        if ( mat.has_map_Kd() ) {
+        if ( mat.has_Texture() ) {
 
           if ( hasTexture( currentObject() ) && textureAllowed )
             currentTriMesh()->property(indexProperty, addedFacesTri_[i]) = mat.map_Kd_index();
@@ -607,7 +607,7 @@ void OBJImporter::addMaterial(std::string _materialName){
       bool textureAllowed = ! ( objectOptions_[ currentObject() ] & FORCE_NOTEXTURES );
 
       // Set the texture index in the face index property
-      if ( mat.has_map_Kd() ) {
+      if ( mat.has_Texture() ) {
 
         if ( hasTexture( currentObject() ) && textureAllowed && addedFacePoly_.is_valid())
           currentPolyMesh()->property(indexProperty, addedFacePoly_) = mat.map_Kd_index();

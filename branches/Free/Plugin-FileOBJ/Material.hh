@@ -17,6 +17,16 @@ class Material
   public:
 
     Material() { cleanup(); }
+    
+    void cleanup() {
+      
+        Kd_is_set_     = false;
+        Ka_is_set_     = false;
+        Ks_is_set_     = false;
+        Tr_is_set_     = false;
+        map_Kd_is_set_ = false;
+        localNum_      = 0;
+    }
 
     bool is_valid(void) const
     { return Kd_is_set_ || Ka_is_set_ || Ks_is_set_ || Tr_is_set_; }
@@ -94,17 +104,7 @@ class Material
     const int& map_Kd_index( void ) { return index_Kd_ ; }
     
   private:
-      
-    void cleanup() {
-      
-        Kd_is_set_     = false;
-        Ka_is_set_     = false;
-        Ks_is_set_     = false;
-        Tr_is_set_     = false;
-        map_Kd_is_set_ = false;
-        localNum_      = 0;
-    }
-
+    
     unsigned int localNum_;
     Vec3f Kd_;                          bool Kd_is_set_; // diffuse
     Vec3f Ka_;                          bool Ka_is_set_; // ambient

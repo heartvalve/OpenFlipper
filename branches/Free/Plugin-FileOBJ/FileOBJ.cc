@@ -603,7 +603,7 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         
         Material& mat = _importer.materials()[matname];
     
-        if ( mat.has_map_Kd() ){
+        if ( mat.has_Texture() ){
           //add object if not already there
           if (_importer.currentObject() == -1)
             addNewObject(_importer, currentFileName ); 
