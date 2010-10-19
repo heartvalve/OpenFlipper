@@ -319,6 +319,12 @@ void Core::slotTextureName( int _id, int _textureIndex, QString& _textureName){
   emit textureName( _id, _textureIndex, _textureName);
 }
 
+/** Called by plugins if texture filename should be fetched
+ */
+void Core::slotTextureFilename( int _id, QString _textureName, QString& _textureFilename){
+  emit textureFilename( _id, _textureName, _textureFilename);
+}
+
 /** Called by plugins if current texture name should be returned
  */
 void Core::slotGetCurrentTexture( int _id, QString& _textureName ){
