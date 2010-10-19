@@ -207,18 +207,30 @@ class TextureInterface {
        *  @param _index the index of the texture (used for multiTexturing)
        */
       virtual void textureIndex( QString /*_textureName*/, int /*_id*/, int& /*_index*/) {};
-
+      
        /** \brief get the name of the texture with given texture index
        *
-       *  When using multiTexturing you can retrieve the texture index of a face with 'mesh->texture_index'
+       *  When using multiTexturing you can retrieve the texture index of a face with 'mesh.texture_index(Handle)'
        *  This function maps the texture index to the name of the actual texture that is used to texture
-       *  the face.
+       *  the face. Note that some plugins may change the mesh's internal property name for the texture
+       *  index such that mesh.texture_index(Handle) won't return a valid texture index.
        *
        *  @param _id Id of the object where the texture should be fetched from
        *  @param _textureIndex texture index of the wanted texture
        *  @param _textureName this returns the name of the texture
        */
       virtual void textureName( int /*_id*/, int /*_textureIndex*/, QString& /*_textureName*/ ) {};
+      
+      /** \brief get the filename of the texture with given texture index
+       *
+       *  Get the filename of a given texture with name _textureName. Retrieve the texture's
+       *  name via signal textureName(int,int,QString&) first.
+       *
+       *  @param _id Id of the object where the texture should be fetched from
+       *  @param _textureName The name of the texture whose filename will be fetched
+       *  @param _textureFilename this returns the name of the texture
+       */
+      virtual void textureFilename( int /*_id*/, QString /*_textureName*/, QString& /*_textureFilename*/ ) {};
 
        /** \brief get the name of the texture which is currently enabled
        *
@@ -381,6 +393,25 @@ class TextureInterface {
        *  @param _textureName this returns the name of the texture
        */
       virtual void slotTextureName( int /*_id*/, int /*_textureIndex*/, QString& /*_textureName*/ ) {};
+      
+      /** \brief get the filename of the texture with given texture name
+       *
+       *  Get the filename to texture with name _textureName. Retrieve texture names
+       *  via signal textureName(int,int,QString&) using the object's id and
+       *  the texture index.
+       *
+       *  @param _id Id of the object where the texture should be fetched from
+       *  @param _textureName texture name of the wanted texture
+       *  @param _textureFilename this returns the filename of the texture
+       */
+      virtual void slotTextureFilename( int /*_id*/, QString /*_textureName*/, QString& /*_textureFilename*/ ) {};
+      
+      /** \brief get the number of textures per object
+       *
+       *  @param _id Id of the object
+       *  @param _numTextures returns the number of textures
+       */
+      virtual void slotNumberOfTextures( int /*_id*/, int& /*_numTextures*/ ) {};
 
        /** \brief fetches the name of the texture which is currently enabled
        *

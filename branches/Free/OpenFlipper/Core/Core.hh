@@ -237,6 +237,9 @@ signals:
    
    /// get the texture name
    void textureName( int _id, int _textureIndex, QString& _textureName);
+   
+   /// get the texture's filename
+   void textureFilename( int _id, QString _textureName, QString& _textureFilename);
 
    ///get current texture
    void getCurrentTexture( int _id, QString& _textureName );
@@ -383,6 +386,9 @@ signals:
       
       ///Called by plugins if texture name should be fetched
       void slotTextureName( int _id, int _textureIndex, QString& _textureName);
+      
+      ///Called by plugins if texture name should be fetched
+      void slotTextureFilename( int _id, QString _textureName, QString& _textureFilename);
       
       ///Called by plugins if current texture should be retrieved
       void slotGetCurrentTexture( int _id, QString& _textureName );
