@@ -69,6 +69,7 @@
 #endif
 
 #include "OBJImporter.hh"
+#include "Material.hh"
 
 enum ReaderMode
 {
@@ -114,6 +115,11 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void setTextureMode(QString _textureName, QString _mode, int _id );
     void switchTexture( QString _textureName, int _id );
     void addMultiTexture( QString _textureGroup, QString _name, QString _filename, int _id, int& _textureId);
+    void textureFilename( int /*_id*/, QString /*_textureName*/, QString& /*_textureFilename*/ );
+    void textureIndex(QString _name,int _id, int& _index);
+    void getCurrentTexture(int /*_id*/, QString& /*_name*/);
+    void textureName (int, int, QString &);
+    void getSubTextures (int, QString, QStringList &);
     
   private slots:
 
@@ -123,12 +129,13 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
     void initializePlugin();
     
-    
     /// Slot called when user wants to save the given Load options as default
     void slotLoadDefault();
     
     /// Slot called when user wants to save the given Save options as default
     void slotSaveDefault();
+    
+    void slotHandleCheckBoxes(bool _checked);
 
   public :
     
@@ -170,17 +177,18 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
   private :
 
-    ///TODO replace by real materials
-    std::vector< OpenMesh::Vec4f > materials_;
+    /// List that contains the material properties
+    MaterialList materials_;
 
-    int getMaterial(OpenMesh::Vec4f _color);
+    template< class MeshT >
+    Material& getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _fh, int _objId);
     
     ///writer functions
     template< class MeshT >
-    bool writeMaterial(QString _filename, MeshT& _mesh );
+    bool writeMaterial(QString _filename, MeshT& _mesh, int _objId );
     
     template< class MeshT >
-    bool writeMesh(std::ostream& _out, QString _filename, MeshT& _mesh );
+    bool writeMesh(std::ostream& _out, QString _filename, MeshT& _mesh, int _objId );
     
     #ifdef ENABLE_BSPLINECURVE_SUPPORT
     bool writeCurve(std::ostream& _out, QString _filename, BSplineCurve* _curve );
@@ -203,6 +211,9 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox*   saveAlpha_;
     QCheckBox*   saveNormals_;
     QCheckBox*   saveTexCoords_;
+    QCheckBox*   saveTextures_;
+    QCheckBox*   saveCopyTextures_;
+    QCheckBox*   saveCreateTexFolder_;
     QPushButton* saveDefaultButton_;
     
 
@@ -212,6 +223,7 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QCheckBox*   loadAlpha_;
     QCheckBox*   loadNormals_;
     QCheckBox*   loadTexCoords_;
+    QCheckBox*   loadTextures_;
     QPushButton* loadDefaultButton_;
     
     bool forceTriangleMesh_;
