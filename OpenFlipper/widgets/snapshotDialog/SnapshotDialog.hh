@@ -55,7 +55,7 @@ class SnapshotDialog : public QDialog, public Ui::SnapshotDialog
     double aspect_;
     
     bool blockSpinBox_;
-
+  
   private slots:
     void slotOk();
     void findFile();
@@ -63,6 +63,9 @@ class SnapshotDialog : public QDialog, public Ui::SnapshotDialog
     
     void snapWidthChanged(int _w);
     void snapHeightChanged(int _h);
+    
+    void saveStates();
+    void loadStates();
 
   signals:
     void resizeApplication(int _width, int _height);
