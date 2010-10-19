@@ -115,7 +115,7 @@ createKnots(unsigned int _splineDeg, unsigned int _dim)
   spline_degree_ = _splineDeg;
 
   if (knotvectorType_ == UNIFORM)
-    createUniformKnots(_splineDeg, _dim+1);
+    createUniformKnots(_splineDeg, _dim);
   else if (knotvectorType_ == UNIFORM_INTERPOL)
     createUniformInterpolatingKnots(_splineDeg, _dim);
 };
@@ -188,20 +188,17 @@ createUniformInterpolatingKnots(unsigned int _splineDeg, unsigned int _dim)
 {
   knots_.clear();
 
-  int p = _splineDeg;
-  int n = _dim;
-
   float last=0.0;
 
-  for (int i = 0; i <= p-1; i++)
+  for (unsigned int i = 0; i < _splineDeg; i++)
     knots_.push_back(0);  // p+1
 
-  for (int i = 0; i < n-p+2; i++) {     // m+1 - 2p-2 = n-p
+  for (int i = 0; i < (int)_dim - (int)_splineDeg + 1; i++) {
     knots_.push_back(i);
     last=i;
   }
 
-  for (int i=0; i<=p -1; i++)
+  for (unsigned int i = 0; i < _splineDeg; i++)
     knots_.push_back(last); // p+1
 
   selections_.clear();
