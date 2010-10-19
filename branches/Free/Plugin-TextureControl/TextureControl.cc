@@ -547,6 +547,47 @@ void TextureControlPlugin::slotTextureName( int _id, int _textureIndex, QString&
   return;
 }
 
+void TextureControlPlugin::slotTextureFilename( int _id, QString _textureName, QString& _textureFilename){
+  
+  // Get the object
+  BaseObjectData* obj;
+  if (! PluginFunctions::getObject(  _id , obj ) ) {
+    emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+  }
+
+  // ================================================================================
+  // Get Texture data for current object
+  // ================================================================================
+  TextureData* texData = dynamic_cast< TextureData* > ( obj->objectData(TEXTUREDATA) );
+  if (texData == 0) {
+    emit log(LOGERR, tr("slotTextureName: Object has no texture data! Object: %1").arg(_id) );
+    return;
+  }
+
+  // Search in local textures
+  for (uint i=0; i < texData->textures().size(); i++ ) {
+      for (int j=0; j < texData->textures()[i].multiTextureList.size(); j++ ) {
+          if ( (texData->textures()[i]).name() == _textureName ){
+              Texture& tex = texData->texture((texData->textures()[i]).name());
+              _textureFilename = tex.filename();
+              return;
+          } else if ( (texData->textures()[i]).multiTextureList[j] == _textureName ){
+              Texture& tex = texData->texture((texData->textures()[i]).multiTextureList[j]);
+              _textureFilename = tex.filename();
+              return;
+          }
+      }
+  }
+  
+  _textureFilename = OpenFlipper::Options::textureDir().path() + 
+      QDir::separator().toAscii() + (globalTextures_.texture(_textureName)).filename();
+  
+  QFile f(_textureFilename);
+  if(!f.exists()) _textureFilename = "NOT_FOUND";
+  
+  return;
+}
+
 void TextureControlPlugin::slotGetCurrentTexture( int _id, QString& _textureName ){
   
   _textureName = "NONE";

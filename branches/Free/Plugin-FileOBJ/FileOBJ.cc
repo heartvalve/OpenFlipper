@@ -68,7 +68,24 @@
 FileOBJPlugin::FileOBJPlugin()
 : loadOptions_(0),
   saveOptions_(0),
+  saveBinary_(0),
+  saveVertexColor_(0),
+  saveFaceColor_(0),
+  saveAlpha_(0),
+  saveNormals_(0),
+  saveTexCoords_(0),
+  saveTextures_(0),
+  saveCopyTextures_(0),
+  saveCreateTexFolder_(0),
+  saveDefaultButton_(0),
   triMeshHandling_(0),
+  loadVertexColor_(0),
+  loadFaceColor_(0),
+  loadAlpha_(0),
+  loadNormals_(0),
+  loadTexCoords_(0),
+  loadTextures_(0),
+  loadDefaultButton_(0),
   forceTriangleMesh_(false),
   forcePolyMesh_(false)
 {
@@ -352,7 +369,7 @@ void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
     if ( !loadNormals_->isChecked() )
       _importer.objectOptions()[ _importer.currentObject() ] |= OBJImporter::FORCE_NONORMALS;
     
-    if ( !loadTexCoords_->isChecked() )
+    if ( !loadTexCoords_->isChecked() || !loadTextures_->isChecked())
       _importer.objectOptions()[ _importer.currentObject() ] |= OBJImporter::FORCE_NOTEXTURES;
   }
   
@@ -1550,19 +1567,6 @@ int FileOBJPlugin::loadObject(QString _filename, DataType _type){
 
 //-----------------------------------------------------------------------------------------------------
 
-int FileOBJPlugin::getMaterial(OpenMesh::Vec4f _color)
-{
-  for (uint i=0; i < materials_.size(); i++)
-    if(materials_[i] == _color)
-      return i;
-
-  //not found add new material
-  materials_.push_back( _color );
-  return materials_.size()-1;
-}
-
-//-----------------------------------------------------------------------------------------------------
-
 bool FileOBJPlugin::saveObject(int _id, QString _filename)
 {
   BaseObjectData* object;
@@ -1589,7 +1593,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
     PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
 
 
-    if ( writeMesh( objStream, _filename, *polyObj->mesh() ) ){
+    if ( writeMesh( objStream, _filename, *polyObj->mesh(), polyObj->id() ) ){
       
       emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
       objStream.close();
@@ -1610,7 +1614,7 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
     TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
 
 
-    if ( writeMesh( objStream, _filename, *triObj->mesh()) ) {
+    if ( writeMesh( objStream, _filename, *triObj->mesh(), triObj->id() )) {
       
       emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
       objStream.close();
@@ -1679,6 +1683,16 @@ bool FileOBJPlugin::saveObject(int _id, QString _filename)
 
 //-----------------------------------------------------------------------------------------------------
 
+void FileOBJPlugin::slotHandleCheckBoxes(bool _checked) {
+    
+    if(saveCopyTextures_) {
+        saveCreateTexFolder_->setEnabled(_checked);
+        saveCreateTexFolder_->setChecked(_checked);
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------
+
 QWidget* FileOBJPlugin::saveOptionsWidget(QString _currentFilter) {
     
     if (saveOptions_ == 0){
@@ -1699,18 +1713,32 @@ QWidget* FileOBJPlugin::saveOptionsWidget(QString _currentFilter) {
         saveTexCoords_ = new QCheckBox("Save Texture Coordinates");
         layout->addWidget(saveTexCoords_);
         
+        saveTextures_ = new QCheckBox("Save Textures");
+        layout->addWidget(saveTextures_);
+        
+        saveCopyTextures_ = new QCheckBox("Copy Texture Files");
+        layout->addWidget(saveCopyTextures_);
+        
+        saveCreateTexFolder_ = new QCheckBox("Create Textures Folder");
+        layout->addWidget(saveCreateTexFolder_);
+        
         saveDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(saveDefaultButton_);       
         
         saveOptions_->setLayout(layout);
         
         connect(saveDefaultButton_, SIGNAL(clicked()), this, SLOT(slotSaveDefault()));
+        connect(saveCopyTextures_, SIGNAL(toggled(bool)), this, SLOT(slotHandleCheckBoxes(bool)));
         
         saveFaceColor_->setChecked( OpenFlipperSettings().value("FileObj/Save/FaceColor",true).toBool() );
         saveAlpha_->setChecked( OpenFlipperSettings().value("FileObj/Save/Alpha",true).toBool() );
         saveNormals_->setChecked( OpenFlipperSettings().value("FileObj/Save/Normals",true).toBool() );
-        saveTexCoords_->setChecked( OpenFlipperSettings().value("FileObj/Save/Textures",true).toBool() );
+        saveTexCoords_->setChecked( OpenFlipperSettings().value("FileObj/Save/TexCoords",true).toBool() );
+        saveTextures_->setChecked( OpenFlipperSettings().value("FileObj/Save/Textures",true).toBool() );
+        saveCopyTextures_->setChecked( OpenFlipperSettings().value("FileObj/Save/CopyTextures",true).toBool() );
+        saveCreateTexFolder_->setChecked( OpenFlipperSettings().value("FileObj/Save/CreateTexFolder",true).toBool() );
         
+        slotHandleCheckBoxes(saveCopyTextures_->isChecked());
     } 
     
     return saveOptions_;
@@ -1744,8 +1772,11 @@ QWidget* FileOBJPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         loadNormals_ = new QCheckBox("Load Normals");
         layout->addWidget(loadNormals_);
         
-        loadTexCoords_ = new QCheckBox("Load Textures");
+        loadTexCoords_ = new QCheckBox("Load Texture Coordinates");
         layout->addWidget(loadTexCoords_);
+        
+        loadTextures_ = new QCheckBox("Load Textures");
+        layout->addWidget(loadTextures_);
  
         loadDefaultButton_ = new QPushButton("Make Default");
         layout->addWidget(loadDefaultButton_);
@@ -1759,7 +1790,8 @@ QWidget* FileOBJPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
         
         loadFaceColor_->setChecked( OpenFlipperSettings().value("FileObj/Load/FaceColor",true).toBool()  );
         loadNormals_->setChecked( OpenFlipperSettings().value("FileObj/Load/Normals",true).toBool()  );
-        loadTexCoords_->setChecked( OpenFlipperSettings().value("FileObj/Load/Textures",true).toBool()  );
+        loadTexCoords_->setChecked( OpenFlipperSettings().value("FileObj/Load/TexCoords",true).toBool()  );
+        loadTextures_->setChecked( OpenFlipperSettings().value("FileObj/Load/Textures",true).toBool()  );
     }
     
     return loadOptions_;
@@ -1768,7 +1800,8 @@ QWidget* FileOBJPlugin::loadOptionsWidget(QString /*_currentFilter*/) {
 void FileOBJPlugin::slotLoadDefault() {
   OpenFlipperSettings().setValue( "FileObj/Load/FaceColor",   loadFaceColor_->isChecked()  );
   OpenFlipperSettings().setValue( "FileObj/Load/Normals",     loadNormals_->isChecked()  );
-  OpenFlipperSettings().setValue( "FileObj/Load/Textures",   loadTexCoords_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileObj/Load/TexCoords",   loadTexCoords_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileObj/Load/Textures",    loadTextures_->isChecked()  );
   OpenFlipperSettings().setValue("FileObj/Load/TriMeshHandling", triMeshHandling_->currentIndex() );
   
   OpenFlipperSettings().setValue( "Core/File/UseLoadDefaults", true );
@@ -1776,9 +1809,12 @@ void FileOBJPlugin::slotLoadDefault() {
 
 
 void FileOBJPlugin::slotSaveDefault() {
-  OpenFlipperSettings().setValue( "FileObj/Save/FaceColor",   saveFaceColor_->isChecked()  );
-  OpenFlipperSettings().setValue( "FileObj/Save/Normals",     saveNormals_->isChecked()  );
-  OpenFlipperSettings().setValue( "FileObj/Save/Textures",   saveTexCoords_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileObj/Save/FaceColor",         saveFaceColor_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileObj/Save/Normals",           saveNormals_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileObj/Save/TexCoords",         saveTexCoords_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileObj/Save/Textures",          saveTextures_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileObj/Save/CopyTextures",      saveCopyTextures_->isChecked()  );
+  OpenFlipperSettings().setValue( "FileObj/Save/CreateTexFolder",   saveCreateTexFolder_->isChecked()  );
   
 }
 
