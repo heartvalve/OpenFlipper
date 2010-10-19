@@ -154,8 +154,7 @@ add_control_point(const Point& _cp)
 
   // update knot vector
   if (autocompute_knotvector_)
-    knotvector_.createKnots(degree_, control_polygon_.size()-1);
-
+    knotvector_.createKnots(degree_, control_polygon_.size());
 
   // add available properties
   if( controlpoint_selections_available())
@@ -180,7 +179,7 @@ insert_control_point(int _idx, const Point& _cp)
 
   // update knot vector
   if (autocompute_knotvector_)
-    knotvector_.createKnots(degree_, control_polygon_.size()-1);
+    knotvector_.createKnots(degree_, control_polygon_.size());
   else{
      // compute knot in between its wo neighbors
      double knot = ( knotvector_(_idx-1) + knotvector_(_idx+1) ) / 2.0;
@@ -211,7 +210,7 @@ delete_control_point(int _idx)
 
   // update knot vector
   if (autocompute_knotvector_)
-    knotvector_.createKnots(degree_, control_polygon_.size()-1);
+    knotvector_.createKnots(degree_, control_polygon_.size());
   else{
     // delete knot at given index
     knotvector_.deleteKnot(_idx);
