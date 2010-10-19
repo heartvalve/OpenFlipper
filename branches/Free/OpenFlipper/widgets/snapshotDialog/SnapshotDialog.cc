@@ -70,6 +70,9 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, i
   snapWidth->setValue(_w);
   snapHeight->setValue(_h);
   
+  // Load button states
+  loadStates();
+  
   connect(snapWidth,  SIGNAL(valueChanged(int)), this, SLOT(snapWidthChanged(int)) );
   connect(snapHeight, SIGNAL(valueChanged(int)), this, SLOT(snapHeightChanged(int)) );
 
@@ -77,6 +80,28 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, i
   connect(findButton, SIGNAL(clicked()), this, SLOT(findFile()) );
   connect(resButton,  SIGNAL(clicked()), this, SLOT(slotChangeResolution()) );
   connect(okButton,  SIGNAL(clicked()), this, SLOT(slotOk()) );
+}
+
+void SnapshotDialog::saveStates() {
+    
+    OpenFlipperSettings().setValue( "Viewer/SnapshotDialog/SnapWidth",      snapWidth->value());
+    OpenFlipperSettings().setValue( "Viewer/SnapshotDialog/SnapHeight",     snapHeight->value());
+    OpenFlipperSettings().setValue( "Viewer/SnapshotDialog/KeepAspect",     keepAspect->isChecked());
+    OpenFlipperSettings().setValue( "Viewer/SnapshotDialog/Transparent",    transparent->isChecked());
+    OpenFlipperSettings().setValue( "Viewer/SnapshotDialog/HideCoordsys",   hideCoordsys->isChecked());
+    OpenFlipperSettings().setValue( "Viewer/SnapshotDialog/Multisampling",  multisampling->isChecked());
+    OpenFlipperSettings().setValue( "Viewer/SnapshotDialog/NumSamples",     num_samples->value());
+}
+
+void SnapshotDialog::loadStates() {
+    
+    snapWidth->setValue(        OpenFlipperSettings().value( "Viewer/SnapshotDialog/SnapWidth",     snapWidth->value()).toInt());
+    snapHeight->setValue(       OpenFlipperSettings().value( "Viewer/SnapshotDialog/SnapHeight",    snapHeight->value()).toInt());
+    keepAspect->setChecked(     OpenFlipperSettings().value( "Viewer/SnapshotDialog/KeepAspect",    false).toBool());
+    transparent->setChecked(    OpenFlipperSettings().value( "Viewer/SnapshotDialog/Transparent",   false).toBool());
+    hideCoordsys->setChecked(   OpenFlipperSettings().value( "Viewer/SnapshotDialog/HideCoordsys",  false).toBool());
+    multisampling->setChecked(  OpenFlipperSettings().value( "Viewer/SnapshotDialog/Multisampling", true).toBool());
+    num_samples->setValue(      OpenFlipperSettings().value( "Viewer/SnapshotDialog/NumSamples",    16).toInt());
 }
 
 void SnapshotDialog::snapWidthChanged(int _w) {
@@ -120,6 +145,9 @@ void SnapshotDialog::slotOk()
   if ( !captureViewers_ )
     emit resizeApplication(snapWidth->value(), snapHeight->value());
 
+  // Remember button states for next time...
+  saveStates();
+  
   accept();
 }
 
