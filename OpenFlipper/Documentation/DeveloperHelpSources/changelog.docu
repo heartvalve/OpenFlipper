@@ -1,12 +1,23 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 10121 )</b>
+ * - <b>OpenFlipper 1.0 (  ? , 10200 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - Enable or disable Mipmapping
- *              - Moved depth_func_ from BaseNode to GL_State 
+ *              - Moved depth_func_ from BaseNode to GL_State
+ *              - Pass Scene boundingbox through glstate (Allow nodes to get current boundingbox)
  *          - Dialogs
  *              - Added Dialog for texture node
+ *              - QtMaterialDialog (Fixed bugs and interference with round_points/smooth_line)
+ *          - BSlineCurveNode
+ *              - Get colors from materialNode rather than setting it in the node directly
+ *          - BSlineSurfaceNode
+ *              - Get colors from materialNode rather than setting it in the node directly
+ *          - Gridnode
+ *              - Fixed size now works correctly
+ *          - LightNode
+ *              - Picking implemented
+ *              - Fixed BoundingBox computation
  *          - MaterialNode
  *              - Added random color generator
  *          - MeshNode
@@ -37,14 +48,18 @@
  *              - Sanity Checks for OpenGL Version. Test for GL capabilities on startup.
  *              - Removed light handling completely ( -> Plugin-TypeLight)
  *              - Added options to enable or disable mipmapping
+ *              - Set minimal scene size for startup to 10 
  *          - Key Handling
  *              - Fixed alt-key bug where last mode was not restored correctly on windows
  *          - Info
  *              - Show memory usage information in about dialog on linux
  *          - Load/Save
  *              - Fixed bug when supported extensions are not parsed correctly
+ *              - Fixed bug when filename extensions with capital letters where not marked as supported
  *              - Add files opened via commandLine to recent files
+ *              - Fixed bug which overrides colors loaded from files with random colors
  *          - Snapshots
+ *              - Remember last states for snapshot dialog
  *              - Render snapshots offscreen (Arbitrary size)
  *              - Added option to hide coordsys in snapshots
  *              - Added options to set background to alpha in snapshots
@@ -68,13 +83,17 @@
  *              - Support backup plugin ( ->undo )
  *          - FileOBJ
  *              - Bugfix for negative indices for vertices
+ *              - Save texxtures and material files
  *          - FileOFF
  *              - Bugfix for crash when reading degenerate faces
  *          - Info
  *              - Bugfix -> Dihedral angle for quad meshes computed wrong
  *          - Light
+ *              - Reduced brightness for default lights (Otherwise colors of objects are almost always white)
  *              - Added missing Layout to dialog
  *              - Added missing slot to react on fixed position checkbox change
+ *              - Added functions to rotate and move lights
+ *              - Fixed OpenGL handling of directional light sources
  *          - Move
  *              - Support backup plugin ( ->undo )
  *          - Selection Plugin
