@@ -120,6 +120,7 @@ class TextureControlPlugin : public QObject, BaseInterface, BackupInterface, Tex
     void slotTextureGetImage( QString _textureName, QImage& _image, int _id );
     void slotTextureGetImage( QString _textureName, QImage& _image );
     void slotTextureIndex( QString _textureName, int _id, int& _index);
+    void slotTextureIndexPropertyName( int _id, QString& _propertyName);
     void slotTextureName( int _id, int _textureIndex, QString& _textureName);
     void slotTextureFilename( int _id, QString _textureName, QString& _textureFilename);
     void slotGetCurrentTexture( int _id, QString& _textureName );
