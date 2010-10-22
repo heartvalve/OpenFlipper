@@ -120,6 +120,7 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void getCurrentTexture(int /*_id*/, QString& /*_name*/);
     void textureName (int, int, QString &);
     void getSubTextures (int, QString, QStringList &);
+    void textureIndexPropertyName(int, QString&);
     
   private slots:
 
