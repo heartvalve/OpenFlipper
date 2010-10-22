@@ -540,8 +540,9 @@ void OBJImporter::addMaterial(std::string _materialName){
         
         if ( textureAllowed ){
         
-          if (! currentTriMesh()->get_property_handle(indexProperty,"OriginalTexIndexMapping") )
-            currentTriMesh()->add_property(indexProperty,"OriginalTexIndexMapping");
+          // Add texture index property if it doesn't exist yet
+          if (! currentTriMesh()->get_property_handle(indexProperty,TEXTUREINDEX) )
+            currentTriMesh()->add_property(indexProperty,TEXTUREINDEX);
         }
       }
 
@@ -590,8 +591,8 @@ void OBJImporter::addMaterial(std::string _materialName){
         
         if ( textureAllowed ){
 
-          if (! currentPolyMesh()->get_property_handle(indexProperty,"OriginalTexIndexMapping") )
-            currentPolyMesh()->add_property(indexProperty,"OriginalTexIndexMapping");
+          if (! currentPolyMesh()->get_property_handle(indexProperty,TEXTUREINDEX) )
+            currentPolyMesh()->add_property(indexProperty,TEXTUREINDEX);
         }
       }
       

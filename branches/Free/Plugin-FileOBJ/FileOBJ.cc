@@ -472,7 +472,7 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
       PolyMesh::FaceIter f_it;
       PolyMesh::FaceIter f_end = mesh.faces_end();
 
-      if (! mesh.get_property_handle(indexProperty,"OriginalTexIndexMapping") )
+      if (! mesh.get_property_handle(indexProperty,TEXTUREINDEX) )
         return;
       
       for (f_it = mesh.faces_begin(); f_it != f_end; ++f_it)
@@ -491,7 +491,7 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
       TriMesh::FaceIter f_it;
       TriMesh::FaceIter f_end = mesh.faces_end();
 
-      if (! mesh.get_property_handle(indexProperty,"OriginalTexIndexMapping") )
+      if (! mesh.get_property_handle(indexProperty,TEXTUREINDEX) )
         return;
       
       for (f_it = mesh.faces_begin(); f_it != f_end; ++f_it)

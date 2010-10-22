@@ -101,9 +101,12 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
     OpenMesh::Vec4f c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color( _fh ));
     
     // First off, try to fetch texture index of current face/object...
+    QString textureIndexProperty;
+    emit textureIndexPropertyName(_objId, textureIndexProperty);
+    
     int texIndex = 0;
     OpenMesh::FPropHandleT< int > texture_index_property;
-    if ( _mesh.get_property_handle(texture_index_property,"OriginalTexIndexMapping") ) {
+    if ( _mesh.get_property_handle(texture_index_property,textureIndexProperty.toStdString()) ) {
         texIndex = _mesh.property(texture_index_property, _fh);
     } else if ( _mesh.get_property_handle(texture_index_property,"f:textureindex") ) {
         texIndex = _mesh.property(texture_index_property, _fh);

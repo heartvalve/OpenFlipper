@@ -43,6 +43,7 @@
 #ifndef OBJIMPORTER_HH
 #define OBJIMPORTER_HH
 
+#define TEXTUREINDEX "OriginalTexIndexMapping"
 
 //=== INCLUDES ================================================================
 
