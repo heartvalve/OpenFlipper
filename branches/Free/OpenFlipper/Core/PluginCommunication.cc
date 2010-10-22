@@ -313,6 +313,12 @@ void Core::slotTextureIndex( QString _textureName, int _id, int& _index){
   emit textureIndex( _textureName, _id, _index);
 }
 
+/** Called by plugins if texture index property name should be fetched
+ */
+void Core::slotTextureIndexPropertyName( int _id, QString& _propertyName){
+  emit textureIndexPropertyName( _id, _propertyName);
+}
+
 /** Called by plugins if texture name should be fetched
  */
 void Core::slotTextureName( int _id, int _textureIndex, QString& _textureName){

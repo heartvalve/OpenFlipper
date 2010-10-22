@@ -208,6 +208,15 @@ class TextureInterface {
        */
       virtual void textureIndex( QString /*_textureName*/, int /*_id*/, int& /*_index*/) {};
       
+      /** \brief Get the name of the texture index property
+       *
+       *  Get the name of the property that holds the texture index (face property).
+       *
+       *  @param _id The id of the mesh object
+       *  @param _propertyName The name of the property that holds the texture indices
+       */
+      virtual void textureIndexPropertyName( int /*_id*/, QString& /*_propertyName*/) {};
+      
        /** \brief get the name of the texture with given texture index
        *
        *  When using multiTexturing you can retrieve the texture index of a face with 'mesh.texture_index(Handle)'
@@ -385,6 +394,15 @@ class TextureInterface {
        *  @param _index the index of the texture (used for multiTexturing)
        */
       virtual void slotTextureIndex( QString /*_textureName*/, int /*_id*/, int& /*_index*/) {};
+      
+      /** \brief Get the name of the texture index property
+       *
+       *  Get the name of the property that holds the texture index (face property).
+       *
+       *  @param _id The id of the mesh object
+       *  @param _propertyName The name of the property that holds the texture indices
+       */
+      virtual void slotTextureIndexPropertyName( int /*_id*/, QString& /*_propertyName*/) {};
       
        /** \brief get the name of the texture with given texture index
        *

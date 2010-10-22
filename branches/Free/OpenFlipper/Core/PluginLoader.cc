@@ -1030,6 +1030,14 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
       connect(this   , SIGNAL(textureIndex(QString,int,int&)),
               plugin , SLOT(slotTextureIndex(QString,int,int&)),Qt::DirectConnection);
               
+    if ( checkSignal( plugin , "textureIndexPropertyName(int,QString&)" ) )
+      connect(plugin   , SIGNAL(textureIndexPropertyName(int,QString&)),
+              this ,   SLOT(slotTextureIndexPropertyName(int,QString&)),Qt::DirectConnection);
+    
+    if ( checkSlot( plugin , "slotTextureIndexPropertyName(int,QString&)" ) )
+      connect(this   , SIGNAL(textureIndexPropertyName(int,QString&)),
+              plugin , SLOT(slotTextureIndexPropertyName(int,QString&)),Qt::DirectConnection);
+              
     if ( checkSignal( plugin , "textureName(int,int,QString&)" ) )
       connect(plugin   , SIGNAL(textureName(int,int,QString&)),
               this ,   SLOT(slotTextureName(int,int,QString&)),Qt::DirectConnection);

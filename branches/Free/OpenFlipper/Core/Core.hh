@@ -235,6 +235,9 @@ signals:
    /// get the texture index
    void textureIndex( QString _textureName, int _id, int& _index);
    
+   /// get the texture index property name
+   void textureIndexPropertyName( int _id, QString& _propertyName);
+   
    /// get the texture name
    void textureName( int _id, int _textureIndex, QString& _textureName);
    
@@ -383,6 +386,9 @@ signals:
       
       ///Called by plugins if texture index should be fetched
       void slotTextureIndex( QString _textureName, int _id, int& _index);
+      
+      ///Called by plugins if texture index property name should be fetched
+      void slotTextureIndexPropertyName( int _id, QString& _propertyName);
       
       ///Called by plugins if texture name should be fetched
       void slotTextureName( int _id, int _textureIndex, QString& _textureName);
