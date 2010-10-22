@@ -501,8 +501,10 @@ public:
   *\todo Remove the external texture loading and do it here.
   *
   */
-  
   void setIndexPropertyName( std::string _indexPropertyName );
+  
+  /// \brief Get current texture index property name
+  const std::string& indexPropertyName() const;
   
   
   /** \brief Set the name of the per face texture coordinate property

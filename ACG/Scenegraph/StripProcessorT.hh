@@ -506,6 +506,9 @@ public:
   */
   void setIndexPropertyName( std::string _indexPropertyName );
   
+  /// \brief get the name of the texture index property
+  const std::string& indexPropertyName() const { return textureIndexPropertyName_; };
+  
   /** \brief set the name of the property used for texture coordinate
   *
   * The given property name will define per face Texture coordinates. This property has to be a

@@ -1611,6 +1611,14 @@ setIndexPropertyName( std::string _indexPropertyName ) {
 };
 
 template<class Mesh>
+const std::string&
+MeshNodeT<Mesh>::
+indexPropertyName() const {
+    
+    return stripProcessor_.indexPropertyName();
+}
+
+template<class Mesh>
 void
 MeshNodeT<Mesh>::
 setHalfedgeTextcoordPropertyName( std::string _halfedgeTextcoordPropertyName ){ 
