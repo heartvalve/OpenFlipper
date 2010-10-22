@@ -519,6 +519,25 @@ void TextureControlPlugin::slotTextureIndex( QString _textureName, int _id, int&
   _index = texData->texture(_textureName).id();
 }
 
+void TextureControlPlugin::slotTextureIndexPropertyName(int _id, QString& _propertyName) {
+    
+    // Get the object
+    BaseObjectData* obj;
+    if (! PluginFunctions::getObject(  _id , obj ) ) {
+        emit log(LOGERR,"Unable to get Object for id " + QString::number(_id) );
+        return;
+    }
+    
+    // Get texture index property name
+    if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
+        _propertyName = PluginFunctions::triMeshObject(obj)->meshNode()->indexPropertyName().c_str();
+    } else if( obj->dataType( DATA_TRIANGLE_MESH ) ) {
+        _propertyName = PluginFunctions::polyMeshObject(obj)->meshNode()->indexPropertyName().c_str();
+    } else {
+        emit log(LOGERR,"Unable to access mesh for object with id " + QString::number(_id) );
+    }
+}
+
 void TextureControlPlugin::slotTextureName( int _id, int _textureIndex, QString& _textureName){
   
   // Get the object
