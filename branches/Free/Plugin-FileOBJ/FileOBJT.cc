@@ -101,14 +101,16 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
     OpenMesh::Vec4f c = OpenMesh::color_cast<OpenMesh::Vec4f> (_mesh.color( _fh ));
     
     // First off, try to fetch texture index of current face/object...
-    QString textureIndexProperty;
-    emit textureIndexPropertyName(_objId, textureIndexProperty);
+    if(!textureIndexPropFetched_) {
+        emit textureIndexPropertyName(_objId, textureIndexPropertyName_);
+        textureIndexPropFetched_ = true;
+    }
     
-    int texIndex = 0;
+    int texIndex = -1;
     OpenMesh::FPropHandleT< int > texture_index_property;
-    if ( _mesh.get_property_handle(texture_index_property,textureIndexProperty.toStdString()) ) {
+    if ( _mesh.get_property_handle(texture_index_property, textureIndexPropertyName_.toStdString()) ) {
         texIndex = _mesh.property(texture_index_property, _fh);
-    } else if ( _mesh.get_property_handle(texture_index_property,"f:textureindex") ) {
+    } else if ( _mesh.get_property_handle(texture_index_property, "f:textureindex") ) {
         texIndex = _mesh.property(texture_index_property, _fh);
     } else if(_mesh.has_face_texture_index()) {
         texIndex = _mesh.texture_index(_fh);
@@ -119,15 +121,35 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
     }
     
     QString filename;
-    QString texName;
+    bool hasTexture = false;
+     
+    if(texIndex != -1) {
     
-    emit textureName(_objId, texIndex, texName);
-    emit textureFilename( _objId, texName, filename );
+        // Search for texture index in local map
+        std::map<int,QString>::iterator it = texIndexFileMap_.find(texIndex);
+        
+        if(it != texIndexFileMap_.end()) {
+            // We already know this file
+            filename = (*it).second;
+            hasTexture = true;
+        } else {
+            // A new texture file has been found
+            QString texName;
+            emit textureName(_objId, texIndex, texName);
+            
+            if(texName != "NOT_FOUND") {
+                emit textureFilename( _objId, texName, filename );
+                // => Add to local map
+                texIndexFileMap_.insert(std::pair<int,QString>(texIndex, filename));
+                hasTexture = true;
+            }
+        }
+    }
     
     for (MaterialList::iterator it = materials_.begin(); it != materials_.end(); ++it) {
     
         // No texture has been found
-        if(filename == "NOT_FOUND") {
+        if(!hasTexture) {
             // ... just look for diffuse color in materials list
             if(((*it).second).Kd() == ACG::Vec3f(c[0], c[1], c[2]) &&
                 ((optionColorAlpha && ((*it).second).Tr() == c[3]) || !optionColorAlpha))
@@ -150,7 +172,8 @@ Material& FileOBJPlugin::getMaterial(MeshT& _mesh, const OpenMesh::FaceHandle& _
     if(optionColorAlpha) mat.set_Tr(c[3]);
     mat.material_number(materials_.size());
     // Set texture info
-    mat.set_map_Kd(filename.toStdString(), texIndex);
+    if(hasTexture)
+        mat.set_map_Kd(filename.toStdString(), texIndex);
     
     materials_.insert(std::pair<std::string, Material>("Material" + mat.material_number(), mat));
     MaterialList::iterator it = materials_.end();
@@ -354,6 +377,8 @@ bool FileOBJPlugin::writeMesh(std::ostream& _out, QString _filename, MeshT& _mes
   }
 
   materials_.clear();
+  texIndexFileMap_.clear();
+  textureIndexPropFetched_ = false;
 
   return true;
 }  

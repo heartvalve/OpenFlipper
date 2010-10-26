@@ -230,6 +230,10 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     bool forceTriangleMesh_;
     bool forcePolyMesh_;
     
+    QString textureIndexPropertyName_;
+    bool    textureIndexPropFetched_;
+    std::map<int,QString> texIndexFileMap_;
+    
 };
 
 

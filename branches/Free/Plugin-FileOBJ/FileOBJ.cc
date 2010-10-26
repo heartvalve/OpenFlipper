@@ -87,7 +87,8 @@ FileOBJPlugin::FileOBJPlugin()
   loadTextures_(0),
   loadDefaultButton_(0),
   forceTriangleMesh_(false),
-  forcePolyMesh_(false)
+  forcePolyMesh_(false),
+  textureIndexPropFetched_(false)
 {
 }
 
