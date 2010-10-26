@@ -125,15 +125,17 @@ int componentCount(MeshT* _mesh ) {
     _mesh->property(visited, v_it) = false;
 
   typename MeshT::VertexHandle vh;
+  typename MeshT::VertexIter current_pos = _mesh->vertices_begin();
 
   while( true ){
     //find an unvisited vertex
     bool found = false;
-    for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it)
+    for (v_it = current_pos ; v_it != v_end; ++v_it)
       if ( !_mesh->property(visited, v_it) ){
         found = true;
         vh = v_it.handle();
         _mesh->property(visited, v_it) = true;
+        current_pos = v_it;
         break;
       }
 
