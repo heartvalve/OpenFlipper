@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 10200 )</b>
+ * - <b>OpenFlipper 1.0 (  ? , 10214 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - Enable or disable Mipmapping
@@ -88,6 +88,7 @@
  *              - Bugfix for crash when reading degenerate faces
  *          - Info
  *              - Bugfix -> Dihedral angle for quad meshes computed wrong
+ *              - Improved performance when floodfilling mesh in order to count connected components.
  *          - Light
  *              - Reduced brightness for default lights (Otherwise colors of objects are almost always white)
  *              - Added missing Layout to dialog
