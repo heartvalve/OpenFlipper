@@ -91,12 +91,16 @@ void SelectionPlugin::deleteSelection(Skeleton* _skeleton)
   if (_skeleton == 0)
     return;
   
+  std::vector< Skeleton::Joint* > deleteJoints;
+  
   for (Skeleton::JointIter it = _skeleton->begin(); it != _skeleton->end(); ++it){
   
     if ( (*it)->selected() )
-      _skeleton->removeJoint( *it );
+      deleteJoints.push_back( *it );
   }
   
+  for (uint i=0; i < deleteJoints.size(); i++)
+    _skeleton->removeJoint( deleteJoints[i] );
 }
 
 
