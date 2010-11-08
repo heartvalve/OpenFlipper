@@ -1438,6 +1438,8 @@ void Core::slotDeleteObject( int _id ){
     std::cerr << "Error while deleting object, does not exist!!" << std::endl;
     return;
   }
+  
+  emit objectDeleted(_id);
 
   // remove the whole subtree below this item
   object->deleteSubtree();
@@ -1447,8 +1449,6 @@ void Core::slotDeleteObject( int _id ){
 
   // delete it
   delete object;
-
-  emit objectDeleted(_id);
 
   slotObjectUpdated(-1);
 }
@@ -1464,13 +1464,13 @@ void Core::slotDeleteAllObjects( ){
     ids.push_back( current->id() );
     current = current->next();
   }
-
-  // remove the whole subtree below the root
-  objectRoot_->deleteSubtree();
-
+  
   for ( uint i = 0 ; i < ids.size(); ++i ) {
     emit objectDeleted(ids[i]);
   }
+
+  // remove the whole subtree below the root
+  objectRoot_->deleteSubtree();
 
   slotObjectUpdated(-1);
 }
