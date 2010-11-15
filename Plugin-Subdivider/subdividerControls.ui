@@ -121,7 +121,7 @@ of SIGGRAPH 1996, ACM SIGGRAPH, 1996, pp. 189-192.</string>
         <item>
          <widget class="QToolButton" name="subdivide_uniform_toolButton">
           <property name="text">
-           <string>Subdivide</string>
+           <string>Uniform Subdivide</string>
           </property>
          </widget>
         </item>
@@ -167,7 +167,7 @@ of SIGGRAPH 1996, ACM SIGGRAPH, 1996, pp. 189-192.</string>
         <item>
          <widget class="QToolButton" name="subdivide__adaptive_toolButton">
           <property name="text">
-           <string>Subdivide</string>
+           <string>Adaptive Subdivide</string>
           </property>
          </widget>
         </item>
