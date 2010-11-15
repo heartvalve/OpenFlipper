@@ -31,6 +31,9 @@ void SubdividerPlugin::initializePlugin()
 
 void SubdividerPlugin::pluginsInitialized() 
 {
+  emit setSlotDescription("subdivide(int,QString,int)", "Smooth a triangular mesh",
+                          QString("object_id,algorithm,iterations").split(","),
+                          QString("id of an object, algorithm to use (loop | sqrt3 | interpolating_sqrt(3) | modifiedButterfly ), number of iterations").split(","));
 }
 
 //-----------------------------------------------------------------------------
@@ -42,58 +45,83 @@ void SubdividerPlugin::slotSubdivideUniform()
   {
     for (unsigned int i = 0; i < ids.size(); ++i)
     {
-      BaseObjectData* object;
-      if(!test_trimesh_object(ids[i], object))
-        return;
-
-      int steps  = tool_->subdivision_steps_spinBox->value();
-      TriMesh* mesh = PluginFunctions::triMesh(object);
-
+     
       if(tool_->loop_radioButton->isChecked())
       {
-        OpenMesh::Subdivider::Uniform::LoopT<TriMesh,double> subdivider;
-        
-        subdivider.attach(*mesh);
-        subdivider(steps);
-        subdivider.detach();
+        subdivide(ids[i],"loop",tool_->subdivision_steps_spinBox->value());
       }
       else if ( tool_->sqrt3_radioButton->isChecked() )
       {
-        OpenMesh::Subdivider::Uniform::Sqrt3T<TriMesh,double> subdivider;
-        
-        subdivider.attach(*mesh);
-        subdivider(steps);
-        subdivider.detach();
+        subdivide(ids[i],"sqrt3",tool_->subdivision_steps_spinBox->value());
       }
       else if ( tool_->LabsikGreiner_radioButton->isChecked()  )
       {
-        OpenMesh::Subdivider::Uniform::InterpolatingSqrt3LGT<TriMesh,double> subdivider;
-        
-        subdivider.attach(*mesh);
-        subdivider(steps);
-        subdivider.detach();
+        subdivide(ids[i],"interpolating_sqrt(3)",tool_->subdivision_steps_spinBox->value());
       }
       else if ( tool_->modifiedButterfly_radioButton->isChecked()  )
       {
-        OpenMesh::Subdivider::Uniform::ModifiedButterflyT<TriMesh,double> subdivider;
-        
-        subdivider.attach(*mesh);
-        subdivider(steps);
-        subdivider.detach();
+        subdivide(ids[i],"modifiedButterfly",tool_->subdivision_steps_spinBox->value());
       }
-
-
-      mesh->update_face_normals();
-      mesh->update_vertex_normals();
-      TriMeshObject* tmo = PluginFunctions::triMeshObject(object);
-      tmo->update();
-    
-      // Create backup
-      emit createBackup(object->id(), "Subdivider");
-      emit updatedObject(object->id(), UPDATE_TOPOLOGY);
     }
   }
   emit updateView();
+}
+
+//-----------------------------------------------------------------------------
+
+void SubdividerPlugin::subdivide(int _objectId, QString _algorithm , int _steps) {
+
+  BaseObjectData* object;
+  if(!test_trimesh_object(_objectId , object))
+    return;
+
+  TriMesh* mesh = PluginFunctions::triMesh(object);
+
+  if(_algorithm.contains("loop",Qt::CaseInsensitive))
+  {
+    OpenMesh::Subdivider::Uniform::LoopT<TriMesh,double> subdivider;
+    
+    subdivider.attach(*mesh);
+    subdivider(_steps);
+    subdivider.detach();
+  }
+  else if ( _algorithm.contains("sqrt3",Qt::CaseInsensitive) )
+  {
+    OpenMesh::Subdivider::Uniform::Sqrt3T<TriMesh,double> subdivider;
+    
+    subdivider.attach(*mesh);
+    subdivider(_steps);
+    subdivider.detach();
+  }
+  else if ( _algorithm.contains("interpolating_sqrt(3)",Qt::CaseInsensitive)  )
+  {
+    OpenMesh::Subdivider::Uniform::InterpolatingSqrt3LGT<TriMesh,double> subdivider;
+    
+    subdivider.attach(*mesh);
+    subdivider(_steps);
+    subdivider.detach();
+  }
+  else if ( _algorithm.contains("modifiedButterfly",Qt::CaseInsensitive)  )
+  {
+    OpenMesh::Subdivider::Uniform::ModifiedButterflyT<TriMesh,double> subdivider;
+    
+    subdivider.attach(*mesh);
+    subdivider(_steps);
+    subdivider.detach();
+  }
+
+
+  mesh->update_face_normals();
+  mesh->update_vertex_normals();
+  TriMeshObject* tmo = PluginFunctions::triMeshObject(object);
+  tmo->update();
+
+  // Create backup
+  emit createBackup(object->id(), "Subdivider");
+  
+  // Geometry and topology changed!
+  emit updatedObject(object->id(), UPDATE_ALL);
+
 }
 
 

@@ -45,13 +45,15 @@ signals:
 
   void defineViewMode(QString _mode, QStringList _usedWidgets);
 
-  void scriptInfo( QString _functionName  );
-
   // ToolboxInterface
   void addToolbox( QString _name  , QWidget* _widget );   
   
   // BackupInterface
   void createBackup( int _id , QString _name );
+  
+  // ScriptInterface
+  void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                          QStringList _parameters, QStringList _descriptions);
 
 private slots:
 
@@ -61,10 +63,14 @@ private slots:
   
   /// Make plugin available in no-GUI mode
   void noguiSupported( ) {} ;
+  
+  void slotSubdivideUniform();
 
 public slots:
 
-  void slotSubdivideUniform();
+  /// Scripting slot for subdivision
+  void subdivide(int _objectId, QString _algorithm , int _steps);
+  
 
 public :
   ~SubdividerPlugin() {};
