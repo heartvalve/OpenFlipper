@@ -192,7 +192,7 @@ void PlaneNode::setPosition(const Vec3f& _position, const Vec3f& _normal)
 
   //find a non zero component
   int comp = -1;
-  for (int i=0; i < 2; i++)
+  for (int i=0; i < 3; i++)
     if ( _normal[i] != 0.0 ){
       comp = i;
       break;
