@@ -23,14 +23,10 @@ void SubdividerPlugin::initializePlugin()
     QSize size(300, 300);
     tool_->resize(size);
     
-    connect(tool_->subdivide_toolButton,    SIGNAL( clicked() ),  this, SLOT( slot_subdivide() ) );
+    connect(tool_->subdivide_uniform_toolButton,    SIGNAL( clicked() ),  this, SLOT( slotSubdivideUniform() ) );
     
     emit addToolbox( tr("Subdivider") , tool_ );
   }
-}
-
-void SubdividerPlugin::slotPickModeChanged( const std::string& /*_mode*/) 
-{
 }
 
 void SubdividerPlugin::pluginsInitialized() 
@@ -39,7 +35,7 @@ void SubdividerPlugin::pluginsInitialized()
 
 //-----------------------------------------------------------------------------
 
-void SubdividerPlugin::slot_subdivide()
+void SubdividerPlugin::slotSubdivideUniform()
 {
   std::vector< int > ids;
   if ( PluginFunctions::getTargetIdentifiers( ids ) )
@@ -116,23 +112,5 @@ bool SubdividerPlugin::test_trimesh_object(int _identifier, BaseObjectData*& _ob
     return false;
   return true;
 }
-
-
-//-----------------------------------------------------------------------------
-
-void SubdividerPlugin::slotMouseEvent( QMouseEvent* /*_event*/ )
-{
-}
-
-//-----------------------------------------------------------------------------
-
-void SubdividerPlugin::slotKeyEvent( QKeyEvent* _event )
-{
-  switch (_event->key()) 
-  {
-    default:
-      break;
-  }
-} // END slotKeyEvent
 
 Q_EXPORT_PLUGIN2( subdividerplugin , SubdividerPlugin );
