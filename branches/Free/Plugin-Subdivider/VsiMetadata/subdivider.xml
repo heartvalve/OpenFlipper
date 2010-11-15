@@ -1,0 +1,94 @@
+<OpenFlipper>
+  <element name="loop_subdivider">
+    <category>Algorithms</category>
+    <short>Subdivider(Loop)</short>
+    <long>Loop subdivision algorithm: C. T. Loop, Smooth Subdivision Surfaces Based on Triangles, M.S. Thesis, Department of Mathematics, University of Utah, August 1987.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+      <input name="steps" type="Number" external="false">
+        <short>Number of iterations</short>
+        <long>Desired number of subdivision steps</long>
+        <default>1</default>
+        <min>1</min>
+        <max>1000</max>
+        <precision>1</precision>
+     </input>
+    </inputs>
+    <code>
+      subdivider.subdivide([input="obj"],"loop",[input="steps"]);
+    </code>
+  </element>
+  <element name="sqrt3_subdivider">
+    <category>Algorithms</category>
+    <short>Subdivider(Sqrt(3) )</short>
+    <long>Sqrt(3): L. Kobbelt, Sqrt(3) subdivision, Proceedings of SIGGRAPH 2000.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+      <input name="steps" type="Number" external="false">
+        <short>Number of iterations</short>
+        <long>Desired number of subdivision steps</long>
+        <default>1</default>
+        <min>1</min>
+        <max>1000</max>
+        <precision>1</precision>
+     </input>
+    </inputs>
+    <code>
+      subdivider.subdivide([input="obj"],"sqrt3",[input="steps"]);
+    </code>
+  </element>
+  <element name="interpolating_sqrt3_subdivider">
+    <category>Algorithms</category>
+    <short>Subdivider(Interpolating Sqrt(3) )</short>
+    <long>Interpolating Labsik Greiner Subdivider as described in Interpolating sqrt(3) subdivision Labsik  and Greiner, 2000</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+      <input name="steps" type="Number" external="false">
+        <short>Number of iterations</short>
+        <long>Desired number of subdivision steps</long>
+        <default>1</default>
+        <min>1</min>
+        <max>1000</max>
+        <precision>1</precision>
+     </input>
+    </inputs>
+    <code>
+      subdivider.subdivide([input="obj"],"interpolating_sqrt3",[input="steps"]);
+    </code>
+  </element>  
+  <element name="modifiedButterfly_subdivider">
+    <category>Algorithms</category>
+    <short>Subdivider(Modified Butterfly)</short>
+    <long>Modified butterfly scheme of Denis Zorin, Peter Schröder and Wim Sweldens, Interpolating subdivision for meshes with arbitrary topology, in Proceedings of SIGGRAPH 1996, ACM SIGGRAPH, 1996, pp. 189-192.</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an Object</short>
+        <long>ID of an Object</long>
+      </input>
+      <input name="steps" type="Number" external="false">
+        <short>Number of iterations</short>
+        <long>Desired number of subdivision steps</long>
+        <default>1</default>
+        <min>1</min>
+        <max>1000</max>
+        <precision>1</precision>
+     </input>
+    </inputs>
+    <code>
+      subdivider.subdivide([input="obj"],"modifiedButterfly",[input="steps"]);
+    </code>
+  </element>      
+</OpenFlipper>
