@@ -33,7 +33,7 @@ void SubdividerPlugin::pluginsInitialized()
 {
   emit setSlotDescription("subdivide(int,QString,int)", "Smooth a triangular mesh",
                           QString("object_id,algorithm,iterations").split(","),
-                          QString("id of an object, algorithm to use (loop | sqrt3 | interpolating_sqrt(3) | modifiedButterfly ), number of iterations").split(","));
+                          QString("id of an object, algorithm to use (loop | sqrt3 | interpolating_sqrt3 | modifiedButterfly ), number of iterations").split(","));
 }
 
 //-----------------------------------------------------------------------------
@@ -56,7 +56,7 @@ void SubdividerPlugin::slotSubdivideUniform()
       }
       else if ( tool_->LabsikGreiner_radioButton->isChecked()  )
       {
-        subdivide(ids[i],"interpolating_sqrt(3)",tool_->subdivision_steps_spinBox->value());
+        subdivide(ids[i],"interpolating_sqrt3",tool_->subdivision_steps_spinBox->value());
       }
       else if ( tool_->modifiedButterfly_radioButton->isChecked()  )
       {
