@@ -19,9 +19,6 @@
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
-#include <OpenMesh/Tools/Subdivider/Uniform/LoopT.hh>
-#include <OpenMesh/Tools/Subdivider/Uniform/Sqrt3T.hh>
-
 #include "subdividerToolbar.hh"
 
 // Subdivider types

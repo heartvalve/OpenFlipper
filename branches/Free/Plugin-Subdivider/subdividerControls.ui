@@ -47,6 +47,10 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QRadioButton" name="loop_radioButton">
+           <property name="toolTip">
+            <string>C. T. Loop, &quot;Smooth Subdivision Surfaces Based on Triangles&quot;,
+M.S. Thesis, Department of Mathematics, University of Utah, August 1987.</string>
+           </property>
            <property name="text">
             <string>Loop</string>
            </property>
@@ -59,8 +63,33 @@
        </item>
        <item>
         <widget class="QRadioButton" name="sqrt3_radioButton">
+         <property name="toolTip">
+          <string>L. Kobbelt, &lt;a href=&quot;http://www-i8.informatik.rwth-aachen.de/publications/downloads/sqrt3.pdf&quot;&gt;&quot;Sqrt(3) subdivision&quot;&lt;/a&gt;, Proceedings of SIGGRAPH 2000.</string>
+         </property>
          <property name="text">
           <string>Sqrt3</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="LabsikGreiner_radioButton">
+         <property name="toolTip">
+          <string>Interpolating Labsik Greiner Subdivider as described in &quot;interpolating sqrt(3) subdivision&quot; Labsik &amp; Greiner, 2000</string>
+         </property>
+         <property name="text">
+          <string>Interpolating Sqrt3</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="modifiedButterfly_radioButton">
+         <property name="toolTip">
+          <string>The modified butterfly scheme of Denis Zorin, Peter Schröder and Wim Sweldens, 
+``Interpolating subdivision for meshes with arbitrary topology,'' in Proceedings 
+of SIGGRAPH 1996, ACM SIGGRAPH, 1996, pp. 189-192.</string>
+         </property>
+         <property name="text">
+          <string>Modified Butterfly</string>
          </property>
         </widget>
        </item>
