@@ -11,6 +11,11 @@
 #include <OpenFlipper/INIFile/INIFile.hh>
 #include <ACG/Scenegraph/PointNode.hh>
 
+#include <OpenMesh/Tools/Subdivider/Uniform/LoopT.hh>
+#include <OpenMesh/Tools/Subdivider/Uniform/Sqrt3T.hh>
+#include <OpenMesh/Tools/Subdivider/Uniform/Sqrt3InterpolatingSubdividerLabsikGreinerT.hh>
+#include <OpenMesh/Tools/Subdivider/Uniform/ModifiedButterFlyT.hh>
+
 void SubdividerPlugin::initializePlugin() 
 {
   if ( OpenFlipper::Options::gui() ) {
@@ -56,7 +61,7 @@ void SubdividerPlugin::slot_subdivide()
         subdivider(steps);
         subdivider.detach();
       }
-      else
+      else if ( tool_->sqrt3_radioButton->isChecked() )
       {
         OpenMesh::Subdivider::Uniform::Sqrt3T<TriMesh,double> subdivider;
         
@@ -64,6 +69,23 @@ void SubdividerPlugin::slot_subdivide()
         subdivider(steps);
         subdivider.detach();
       }
+      else if ( tool_->LabsikGreiner_radioButton->isChecked()  )
+      {
+        OpenMesh::Subdivider::Uniform::InterpolatingSqrt3LGT<TriMesh,double> subdivider;
+        
+        subdivider.attach(*mesh);
+        subdivider(steps);
+        subdivider.detach();
+      }
+      else if ( tool_->modifiedButterfly_radioButton->isChecked()  )
+      {
+        OpenMesh::Subdivider::Uniform::ModifiedButterflyT<TriMesh,double> subdivider;
+        
+        subdivider.attach(*mesh);
+        subdivider(steps);
+        subdivider.detach();
+      }
+
 
       mesh->update_face_normals();
       mesh->update_vertex_normals();
