@@ -50,6 +50,9 @@
 
 #include <OpenFlipper/common/Types.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
+#include <OpenFlipper/common/GlobalOptions.hh>
+
+#include <ObjectTypes/Light/LightWidget.hh>
 
 
 //******************************************************************************
@@ -126,7 +129,16 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
 
       // If we are setting the name, also add the icon
       if ( role == Qt::DecorationRole ) {
-        return QVariant( typeIcon(item->dataType()) );
+	  if (item->dataType() == DATA_LIGHT)
+	  {
+	    LightObject* light = 0;
+	    if (item->id() != -1 && PluginFunctions::getObject( item->id(), light ) ) {
+		if (light != 0 && !light->lightSource()->enabled())
+		    return QVariant (QIcon (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"LightOff.png"));
+	    }
+	  }
+	  
+	  return QVariant( typeIcon(item->dataType()) );
       }
 
       if (role != Qt::DisplayRole && role != Qt::EditRole )

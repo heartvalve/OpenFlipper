@@ -308,9 +308,22 @@ void DataControlPlugin::slotCustomContextMenuRequested ( const QPoint & _pos ) {
             icon.addFile(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-delete-item.png");
             action->setIcon(icon);
             menu.addSeparator();
-            action = menu.addAction(tr("Switch On/Off"),this,SLOT ( slotSwitchLight() ));
-            icon = typeIcon(DATA_LIGHT);
+	    
+	    LightObject* light = 0;
+	    if ( item->id() != -1 && PluginFunctions::getObject( item->id(), light ) ) {
+		if (light != 0 && !light->lightSource()->enabled()) {
+		
+		    action = menu.addAction(tr("Switch On"),this,SLOT ( slotSwitchLight() ));
+		    icon = typeIcon(DATA_LIGHT);
+		}
+	    }
+	    if (light == 0 || light->lightSource()->enabled())
+	    {
+		action = menu.addAction(tr("Switch Off"),this,SLOT ( slotSwitchLight() ));
+		icon = QIcon (OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"LightOff.png");
+	    }
             action->setIcon(icon);
+	    
             action = menu.addAction(tr("Edit Light"),this,SLOT ( slotEditLight() ));
             icon = typeIcon(DATA_LIGHT);
             action->setIcon(icon);
@@ -574,7 +587,7 @@ void DataControlPlugin::slotSwitchLight() {
 //******************************************************************************
 
 /**
-* \brief Switch light source on or off
+* \brief Edit the light source's parameters
 */
 void DataControlPlugin::slotEditLight() {
  
