@@ -64,6 +64,7 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, i
   resButton->setDisabled(captureViewers_);
   keepAspect->setDisabled(!captureViewers_);
   transparent->setDisabled(!captureViewers_);
+  hideCoordsys->setDisabled(!captureViewers_);
   multisampling->setDisabled(!captureViewers_);
   num_samples->setDisabled(!captureViewers_);
   
@@ -75,6 +76,8 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, i
   
   connect(snapWidth,  SIGNAL(valueChanged(int)), this, SLOT(snapWidthChanged(int)) );
   connect(snapHeight, SIGNAL(valueChanged(int)), this, SLOT(snapHeightChanged(int)) );
+  connect(keepAspect, SIGNAL(stateChanged(int)), this, SLOT(keepAspectChanged()) );
+  connect(multisampling, SIGNAL(stateChanged(int)), this, SLOT(multisampleChanged()) );
 
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()) );
   connect(findButton, SIGNAL(clicked()), this, SLOT(findFile()) );
@@ -126,6 +129,18 @@ void SnapshotDialog::snapHeightChanged(int _h) {
     }
 }
 
+void SnapshotDialog::keepAspectChanged() {
+
+    if(keepAspect->isChecked()) {
+        blockSpinBox_ = true;
+	snapHeight->setValue((int)((double)snapWidth->value() / aspect_));
+        blockSpinBox_ = false;
+    }
+}
+
+void SnapshotDialog::multisampleChanged() {
+    num_samples->setDisabled (!multisampling->isChecked());
+}
 void SnapshotDialog::slotChangeResolution()
 {
   if ( !captureViewers_ )

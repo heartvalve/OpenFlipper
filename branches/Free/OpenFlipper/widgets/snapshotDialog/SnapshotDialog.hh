@@ -63,6 +63,8 @@ class SnapshotDialog : public QDialog, public Ui::SnapshotDialog
     
     void snapWidthChanged(int _w);
     void snapHeightChanged(int _h);
+    void keepAspectChanged();
+    void multisampleChanged();
     
     void saveStates();
     void loadStates();

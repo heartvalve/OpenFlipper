@@ -60,8 +60,9 @@
 //-----------------------------------------------------------------------------
 
 void Core::startVideoCapture(QString _baseName, int _fps, bool _captureViewers) {
-  connect( &videoTimer_ , SIGNAL(timeout()), this, SLOT( viewUpdated() ) ,Qt::DirectConnection );
-  // set track auf true;
+  
+    connect( &videoTimer_ , SIGNAL(timeout()), this, SLOT( viewUpdated() ) ,Qt::DirectConnection );
+  // set track to true;
   videoTimer_.setSingleShot(false);
 
   // 25 fps
@@ -85,7 +86,7 @@ void Core::startVideoCapture(QString _baseName, int _fps, bool _captureViewers) 
 void Core::captureVideo() {
   int elapsed = lastVideoTime_.elapsed();
 
-  if ( elapsed < 40 ) {
+  if ( elapsed < videoTimer_.interval() ) {
 //     std::cerr << "Too early to capture" << std::endl;
     return;
   }
