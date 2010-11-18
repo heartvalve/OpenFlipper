@@ -286,6 +286,12 @@ void TypeLightPlugin::pluginsInitialized(){
     addDefaultLights();
 }
 
+void TypeLightPlugin::slotPickModeChanged (const std::string& _pickMode) {
+    
+    if(PluginFunctions::actionMode() != Viewer::LightMode)
+        lightAction_->setChecked(false);
+}
+
 void TypeLightPlugin::slotLightModeRequest(bool /*_checked*/) {
     
     PluginFunctions::actionMode(Viewer::LightMode);

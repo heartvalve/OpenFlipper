@@ -95,7 +95,11 @@ class TypeLightPlugin : public QObject, BaseInterface, LoadSaveInterface, Loggin
     
   private slots:
 
-    void noguiSupported( ) {} ;
+    // BaseInterface
+    void noguiSupported( ) {};
+    
+    // PickingInterface
+    void slotPickModeChanged (const std::string& _pickMode);
     
     // Is called whenever the scene is cleared
     void slotAllCleared();
