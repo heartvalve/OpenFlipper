@@ -298,6 +298,9 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename){
         
         object->update();
         
+        if ( object->mesh()->n_faces() == 0 )
+          PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::POINTS);
+        
         return object->id();
         
     } else {
