@@ -197,12 +197,16 @@ void OptionsWidget::switchStackedWidget() {
     // Show right stacked widget of stereo settings
     if (stereoCustomAnaglyph->isChecked()) {
         stackedWidget->setCurrentIndex(0);
+        customAnaGlyphSettings->setVisible(true);
     } else if (stereoAnaglyph->isChecked()) {
         stackedWidget->setCurrentIndex(0);
+        customAnaGlyphSettings->setVisible(false);
     } else if (stereoPhilips->isChecked()) {
         stackedWidget->setCurrentIndex(1);
+        customAnaGlyphSettings->setVisible(false);
     } else {
         stackedWidget->setCurrentIndex(0);
+        customAnaGlyphSettings->setVisible(false);
     }
     
     // Preview new settings
@@ -296,10 +300,14 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   headerSelect->blockSignals(false);
   
   // Show right stacked widget
+  customAnaGlyphSettings->setVisible(false);
   if (stereoPhilips->isChecked()) {
       stackedWidget->setCurrentIndex(1);
   } else {
       stackedWidget->setCurrentIndex(0);
+      
+      if (stereoCustomAnaglyph->isChecked())
+          customAnaGlyphSettings->setVisible(true);
   }
 
   std::vector<float> mat = OpenFlipper::Options::anaglyphLeftEyeColorMatrix ();

@@ -7,8 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>427</width>
-    <height>362</height>
+    <height>370</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Stereo Settings</string>
@@ -16,6 +22,12 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="groupBox_5">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Stereo Mode</string>
      </property>
@@ -50,8 +62,14 @@
       </item>
       <item>
        <widget class="QStackedWidget" name="stackedWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="page">
          <widget class="QGroupBox" name="groupBox_7">
@@ -178,8 +196,14 @@
             <x>0</x>
             <y>20</y>
             <width>391</width>
-            <height>161</height>
+            <height>171</height>
            </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
           <property name="title">
            <string>Philips Stereo properties</string>
@@ -189,7 +213,7 @@
             <rect>
              <x>10</x>
              <y>30</y>
-             <width>369</width>
+             <width>375</width>
              <height>121</height>
             </rect>
            </property>
