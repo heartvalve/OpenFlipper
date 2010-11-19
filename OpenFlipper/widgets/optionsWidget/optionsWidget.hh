@@ -178,6 +178,9 @@ private:
   std::vector< int >  defaultViewingDirections_;
 
   bool updatingViewerSettings_;
+  
+  // Store current background color
+  QColor backgroundColor_;
 
 private:
    /// Starts the download of the given file

@@ -155,10 +155,10 @@ OptionsWidget::OptionsWidget(std::vector<PluginInfo>& _plugins, std::vector<KeyB
 void OptionsWidget::getBackgroundColor(){
   QColor newColor = QColorDialog::getColor ( OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>() );
 
-  OpenFlipperSettings().setValue("Core/Gui/glViewer/defaultBackgroundColor", newColor);
-
+  backgroundColor_ = newColor;
+  
   QPixmap color(16,16);
-  color.fill( OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>() );
+  color.fill( newColor );
   backgroundButton->setIcon( QIcon(color) );
 }
 
@@ -368,8 +368,8 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
 
   //Init Viewer Settings
-  wZoomFactor->setText( QString::number(OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactor").toDouble(), 'f') );
-  wZoomFactorShift->setText( QString::number(OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift").toDouble(), 'f') );
+  wZoomFactor->setValue( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactor").toDouble() );
+  wZoomFactorShift->setValue( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift").toDouble() );
 
   wheelBox->setChecked( OpenFlipperSettings().value("Core/Gui/glViewer/showControlWheels").toBool() );
 
@@ -378,6 +378,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
 
   QPixmap color(16,16);
   color.fill( OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>() );
+  backgroundColor_ = OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
   backgroundButton->setIcon( QIcon(color) );
 
   color.fill( OpenFlipper::Options::defaultBaseColor() );
@@ -396,8 +397,6 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   updateViewerSettings(0);
 
   viewerLayout->setCurrentIndex( OpenFlipper::Options::defaultViewerLayout() );
-
-  gridVisible->setChecked (OpenFlipper::Options::gridVisible());
 
   if (OpenFlipper::Options::translation() == "en_US")
     translation->setCurrentIndex(0);
@@ -670,7 +669,23 @@ void OptionsWidget::slotApply() {
   }
 
   OpenFlipper::Options::defaultViewerLayout( viewerLayout->currentIndex() );
-  OpenFlipper::Options::gridVisible( gridVisible->isChecked() );
+  
+  // Restrict fps if desired
+  if(restrictFPS->isChecked()) {
+      OpenFlipperSettings().setValue("Core/Gui/glViewer/restrictFrameRate", true);
+      OpenFlipperSettings().setValue("Core/Gui/glViewer/maxFrameRate",FPS->value());
+  } else {
+      OpenFlipperSettings().setValue("Core/Gui/glViewer/restrictFrameRate", false);
+  }
+  
+  // Set background color
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/defaultBackgroundColor", backgroundColor_);
+  
+  for ( uint i = 0 ; i < OpenFlipper::Options::examinerWidgets(); ++i )
+      PluginFunctions::viewerProperties(i).backgroundColor(ACG::Vec4f(((double) backgroundColor_.redF()),
+                                                                      ((double) backgroundColor_.greenF()),
+                                                                      ((double) backgroundColor_.blueF()),
+                                                                        1.0));
 
   // Show warning message that restart is required if language has been changed...
   if(translationIndexChanged_) {
