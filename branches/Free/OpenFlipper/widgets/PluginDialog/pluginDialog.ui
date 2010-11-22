@@ -1,61 +1,62 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>PluginDialog</class>
- <widget class="QDialog" name="PluginDialog" >
-  <property name="windowModality" >
+ <widget class="QDialog" name="PluginDialog">
+  <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
-  <property name="geometry" >
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>316</height>
+    <height>765</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Plugins</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QFrame" name="frame_3" >
-     <property name="maximumSize" >
+    <widget class="QFrame" name="frame_3">
+     <property name="maximumSize">
       <size>
        <width>16777215</width>
        <height>40</height>
       </size>
      </property>
-     <property name="autoFillBackground" >
+     <property name="autoFillBackground">
       <bool>false</bool>
      </property>
-     <property name="frameShape" >
+     <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>
-     <property name="frameShadow" >
+     <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <property name="midLineWidth" >
+     <property name="midLineWidth">
       <number>0</number>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="label_2" >
-        <property name="minimumSize" >
+       <widget class="QLabel" name="label_2">
+        <property name="minimumSize">
          <size>
           <width>0</width>
           <height>0</height>
          </size>
         </property>
-        <property name="font" >
+        <property name="font">
          <font>
           <pointsize>10</pointsize>
           <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
-        <property name="text" >
+        <property name="text">
          <string>Loaded Plugins</string>
         </property>
-        <property name="alignment" >
+        <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
@@ -64,55 +65,55 @@
     </widget>
    </item>
    <item>
-    <widget class="QListWidget" name="list" >
-     <property name="editTriggers" >
+    <widget class="QListWidget" name="list">
+     <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
-     <property name="alternatingRowColors" >
+     <property name="alternatingRowColors">
       <bool>true</bool>
      </property>
-     <property name="selectionMode" >
+     <property name="selectionMode">
       <enum>QAbstractItemView::ExtendedSelection</enum>
      </property>
-     <property name="selectionBehavior" >
+     <property name="selectionBehavior">
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
-     <property name="viewMode" >
+     <property name="viewMode">
       <enum>QListView::ListMode</enum>
      </property>
-     <property name="selectionRectVisible" >
+     <property name="selectionRectVisible">
       <bool>false</bool>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="loadButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="loadButton">
+       <property name="text">
         <string>Load Plugin</string>
        </property>
-       <property name="autoDefault" >
+       <property name="autoDefault">
         <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="unloadButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="unloadButton">
+       <property name="text">
         <string>Unload Plugin</string>
        </property>
-       <property name="autoDefault" >
+       <property name="autoDefault">
         <bool>false</bool>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -121,8 +122,8 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="closeButton" >
-       <property name="text" >
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
         <string>Close</string>
        </property>
       </widget>
@@ -132,7 +133,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../../resources.qrc" />
+  <include location="../../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
