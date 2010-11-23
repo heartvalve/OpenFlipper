@@ -404,7 +404,7 @@ int FilePLYPlugin::loadTriMeshObject(QString _filename, const PLYHeader _header)
             }
         }
         
-        // Switch to point mode if mesh does not contain one signle face
+        // Switch to point mode if mesh does not contain one single face
         if(_header.numFaces == 0)
             PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::POINTS);
         
@@ -456,7 +456,7 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader _header
             }
         }
         
-        // Switch to point mode if mesh does not contain one signle face
+        // Switch to point mode if mesh does not contain one single face
         if(_header.numFaces == 0)
             PluginFunctions::setDrawMode(ACG::SceneGraph::DrawModes::POINTS);
         
