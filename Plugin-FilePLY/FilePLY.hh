@@ -97,20 +97,43 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
   public :
     
-     FilePLYPlugin();
+    FilePLYPlugin();
 
-     ~FilePLYPlugin() {};
+    ~FilePLYPlugin() {};
 
-     QString name() { return (QString("FilePLY")); };
-     QString description( ) { return (QString(tr("Load/Save PLY-Files"))); };
+    QString name() { return (QString("FilePLY")); };
+    QString description( ) { return (QString(tr("Load/Save PLY-Files"))); };
 
-     DataType supportedType();
+    DataType supportedType();
 
-     QString getSaveFilters();
-     QString getLoadFilters();
+    QString getSaveFilters();
+    QString getLoadFilters();
 
-     QWidget* saveOptionsWidget(QString /*_currentFilter*/);
-     QWidget* loadOptionsWidget(QString /*_currentFilter*/);
+    QWidget* saveOptionsWidget(QString /*_currentFilter*/);
+    QWidget* loadOptionsWidget(QString /*_currentFilter*/);
+     
+  private:
+    
+    // Helper class that stores general file information
+    struct PLYHeader {
+        bool    binary;
+        bool    isTriangleMesh;
+        
+        int     numVertices;
+        bool    hasVertexNormals;
+        bool    hasVertexColors;
+        // If true, colors are separated in ambient, diffuse and specular
+        bool    hasVertexColorsADS;
+        bool    hasVertexTexCoords;
+        std::vector<std::string> vOrder;
+        
+        int     numFaces;
+        bool    hasFaceNormals;
+        bool    hasFaceColors;
+        // If true, colors are separated in ambient, diffuse and specular
+        bool    hasFaceColorsADS;
+        std::vector<std::string> fOrder;
+    };
 
   public slots:
 
@@ -118,16 +141,27 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     int loadObject(QString _filename);
     
     /// Always loads mesh as polymesh
-    int loadPolyMeshObject(QString _filename);
+    int loadPolyMeshObject(QString _filename, const PLYHeader _header);
     
     /// Loads a triangle mesh
-    int loadTriMeshObject(QString _filename);
+    int loadTriMeshObject(QString _filename, const PLYHeader _header);
 
     bool saveObject(int _id, QString _filename);
 
     QString version() { return QString("1.0"); };
 
-  private :
+  private:
+    
+    // Parse header of PLY file
+    bool parseHeader(QString _filename, PLYHeader& _header);
+    
+    // Template functions
+    
+    template <class MeshT>
+    bool readMeshFileAscii(QString _filename, MeshT* _mesh, const PLYHeader& _header);
+    
+    template <class MeshT>
+    bool readMeshFileBinary(QString _filename, MeshT* _mesh, const PLYHeader& _header);
     
     //Option Widgets
     QWidget* loadOptions_;
@@ -135,17 +169,24 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     QCheckBox*   saveBinary_;
     QCheckBox*   saveVertexNormal_;
-    QCheckBox*   saveVertexTexCoord_;
     QCheckBox*   saveVertexColor_;
+    QCheckBox*   saveVertexTexCoord_;
+    QCheckBox*   saveFaceNormal_;
     QCheckBox*   saveFaceColor_;
     QPushButton* saveDefaultButton_;
     
     QComboBox*   triMeshHandling_;
     QCheckBox*   loadVertexNormal_;
-    QCheckBox*   loadVertexTexCoord_;
     QCheckBox*   loadVertexColor_;
+    QCheckBox*   loadVertexTexCoord_;
+    QCheckBox*   loadFaceNormal_;
     QCheckBox*   loadFaceColor_;
     QPushButton* loadDefaultButton_;
 };
+
+#if defined(INCLUDE_TEMPLATES) && !defined(FILEPLYPLUGIN_C)
+#define FILEPLYPLUGIN_TEMPLATES
+#include "FilePLYT.cc"
+#endif
 
 #endif //FILEPLYPLUGIN_HH
