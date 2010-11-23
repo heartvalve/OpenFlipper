@@ -865,14 +865,65 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
     }
     else
     {
-      // Zoom in or out?
-      orthoWidth_ *= _move_back ? 2.0 : 0.5;
+
+      // Project hitpoint to get depth
+      ACG::Vec3d hitPointProjected = glstate_->project(hitPoint);
+
+      // Create projected center point with same depth as hitpoint
+      ACG::Vec3d centerPointProjected = hitPointProjected;
+      centerPointProjected[0] = glstate_->viewport_width() / 2.0 ;
+      centerPointProjected[1] = glstate_->viewport_height() / 2.0 ;
+
+      // unproject center point
+      ACG::Vec3d centerPointUnProjected = glstate_->unproject(centerPointProjected);
+      
+      // translation vector to make hitpoint project to center point (both need same depth)
+      ACG::Vec3d t = hitPoint - centerPointUnProjected;
+
+      // Transform to correct translation vector with modelview.
+      t = glstate_->modelview().transform_vector(t);
+      
+      // originalWidth 
+      double orthoWidthOriginal = orthoWidth_;
 
       // Set the double click point as the new trackball center
       // Rotations will use this point as the center.
       trackball_center_ = hitPoint;
-
-      /// @todo : Translate view such that hitpoint is in center of viewport
+      
+      // how many frames in _time ms ?
+      unsigned int  frames = (unsigned int)(300 / frame_time_);
+      if (frames > 1000) frames=1000;
+      
+      // animate it
+      if (frames > 10)
+      {
+        
+        for (unsigned int i=1; i<frames; ++i)
+        {
+          // zoom back one frame 
+          if ( _move_back ) {
+            // Move back by factor 2
+            orthoWidth_ = orthoWidthOriginal * (1.0 + 1.0 / (double)frames * i );
+          } else
+            // Move forward with factor 0.5
+            orthoWidth_ = orthoWidthOriginal * (1.0 - 0.5 / (double)frames * i );
+          
+          // apply translation
+          translate(t * (- 1.0 / (double)frames  ) );
+          
+          update();
+          qApp->processEvents();
+        }
+        updatePickCache_ = true;
+      } else {
+        
+        // direct translation
+        translate(-t);
+        
+        // set the zoom factor when no animation is performed
+        orthoWidth_ *= _move_back ? 2.0 : -0.5;
+        
+      }
 
       // Update the projection matrix
       updateProjectionMatrix();
