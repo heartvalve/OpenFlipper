@@ -62,7 +62,6 @@ SnapshotDialog::SnapshotDialog(QString _suggest, bool _captureViewers, int _w, i
   // in viewer snapshot mode
   multisampling->setChecked(captureViewers_);
   resButton->setDisabled(captureViewers_);
-  keepAspect->setDisabled(!captureViewers_);
   transparent->setDisabled(!captureViewers_);
   hideCoordsys->setDisabled(!captureViewers_);
   multisampling->setDisabled(!captureViewers_);

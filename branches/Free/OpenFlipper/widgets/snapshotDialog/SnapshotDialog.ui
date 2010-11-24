@@ -260,7 +260,7 @@ Allowed values: any number between 2 and 16.</string>
      <item>
       <widget class="QPushButton" name="okButton">
        <property name="text">
-        <string>OK</string>
+        <string>Take snapshot!</string>
        </property>
       </widget>
      </item>
