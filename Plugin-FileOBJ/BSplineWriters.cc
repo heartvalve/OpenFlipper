@@ -65,8 +65,8 @@ bool FileOBJPlugin::writeSurface(std::ostream& _out, QString _filename, BSplineS
                   << _surface->get_knot_n(0) << " " << _surface->get_knot_n(_surface->n_knots_n()-1) << " ";
 
   // save control point indices
-  for (unsigned int i = 0; i < num_cp_m; ++i)
-    for (unsigned int j = 0; j < num_cp_n; ++j)
+  for (unsigned int j = 0; j < num_cp_n; ++j)
+    for (unsigned int i = 0; i < num_cp_m; ++i)
       _out << (i*num_cp_n) + j+1 << " "; // obj enumerates the cps starting with 1
 
   _out << "\n";
