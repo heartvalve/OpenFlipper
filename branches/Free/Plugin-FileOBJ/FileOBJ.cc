@@ -893,6 +893,13 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       while ( !lineData.eof() && !lineData.fail() )
       {
         lineData >> index;
+        
+        if ( index < 0 ) {
+          // Calculation of index :
+          // -1 is the last vertex in the list
+          // As obj counts from 1 and not zero add +1
+          index = currentVertexCount + index + 1;
+        }
 
         if ( !lineData.fail() )
           cpIndices.push_back( index -1 );
@@ -999,6 +1006,13 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
       {
         lineData >> index;
 
+        if ( index < 0 ) {
+          // Calculation of index :
+          // -1 is the last vertex in the list
+          // As obj counts from 1 and not zero add +1
+          index = currentVertexCount + index + 1;
+        }
+        
         if ( !lineData.fail() )
           cpIndices.push_back( index -1 );
       }
@@ -1025,16 +1039,12 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
         // add the control points
         std::vector< ACG::Vec3d > controlPolygon;
         
-        int cnt = 0;
-        
         for (int i = 0; i < dimU; ++i)
         {
           controlPolygon.clear();
           
           for (int j = 0; j < dimV; ++j){
-            
-            controlPolygon.push_back( (ACG::Vec3d) _importer.vertex( cpIndices[cnt] ) );
-            ++cnt;
+            controlPolygon.push_back( (ACG::Vec3d) _importer.vertex( cpIndices[dimU * j + i] ) );
           }
 
           _importer.currentSurface()->add_vector_m(controlPolygon);
