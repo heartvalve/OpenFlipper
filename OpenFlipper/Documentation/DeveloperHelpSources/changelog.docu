@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 10214 )</b>
+ * - <b>OpenFlipper 1.0 (  ? , 10318 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - Enable or disable Mipmapping
@@ -26,6 +26,8 @@
  *              - New HALFEDGE and HALFEDGE_COLORED draw mode
  *              - Fixed a bug in MeshNode2T that would permanently change the depth comparison function instead of only temporarily
  *              - Correctly unbind texture if bound in MeshNode
+ *          - PlaneNode
+ *              - Fixed an error in the nonzero normal detection in PlaneNode::setPosition.
  *          - Quaternions
  *              - Matrix constructor added
  *              - Added dual quaternions
@@ -49,6 +51,7 @@
  *              - Removed light handling completely ( -> Plugin-TypeLight)
  *              - Added options to enable or disable mipmapping
  *              - Set minimal scene size for startup to 10 
+ *              - Implemented zoom to for orthogonal projection mode
  *          - Key Handling
  *              - Fixed alt-key bug where last mode was not restored correctly on windows
  *          - Info
@@ -58,6 +61,9 @@
  *              - Fixed bug when filename extensions with capital letters where not marked as supported
  *              - Add files opened via commandLine to recent files
  *              - Fixed bug which overrides colors loaded from files with random colors
+ *              - Fixed bug where objectDeleted(int) was called after the actual object is delete (making it impossible to cleanup on that signal)
+ *          - Options
+ *              - Some gui cleanup for options widget
  *          - Snapshots
  *              - Remember last states for snapshot dialog
  *              - Render snapshots offscreen (Arbitrary size)
@@ -76,16 +82,26 @@
  *              - Bugfixes
  *                  - Fixed wrong lower value computed for bounding boxes (wrong initialization clamping bounding box to upper part of (0.0,0.0,0.0) ) 
  *          - PolyLineObjects
+ *      - <b>New Plugins</b> 
+ *          - Backup
+ *              - Added Backup plugin to free branch
+ *          - Subdivider
+ *              - Added OpenMesh subdivider plugin to the free branch 
  *      - <b>Plugins</b>
  *          - DataControl
  *              - Added Object name and ID display to Datacontrol popup menu
+ *              - Better on/off visualization for light sources
  *          - Decimater
  *              - Support backup plugin ( ->undo )
  *          - FileOBJ
  *              - Bugfix for negative indices for vertices
  *              - Save texxtures and material files
+ *              - Support negative vertex index for spline curves and surfaces
+ *              - Fixed bug reading knot vector in wrong order for spline surfaces
  *          - FileOFF
  *              - Bugfix for crash when reading degenerate faces
+ *          - FilePLY
+ *              - Switch to point rendering if only points where read
  *          - Info
  *              - Bugfix -> Dihedral angle for quad meshes computed wrong
  *              - Improved performance when floodfilling mesh in order to count connected components.
