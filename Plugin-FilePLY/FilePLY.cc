@@ -67,7 +67,20 @@
 FilePLYPlugin::FilePLYPlugin()
 : loadOptions_(0),
   saveOptions_(0),
-  triMeshHandling_(0) {
+  saveBinary_(0),
+  saveVertexNormal_(0),
+  saveVertexColor_(0),
+  saveVertexTexCoord_(0),
+  saveFaceNormal_(0),
+  saveFaceColor_(0),
+  saveDefaultButton_(0),
+  triMeshHandling_(0),
+  loadVertexNormal_(0),
+  loadVertexColor_(0),
+  loadVertexTexCoord_(0),
+  loadFaceNormal_(0),
+  loadFaceColor_(0),
+  loadDefaultButton_(0) {
 }
 
 //-----------------------------------------------------------------------------------------------------
@@ -96,11 +109,31 @@ DataType  FilePLYPlugin::supportedType() {
 
 //-----------------------------------------------------------------------------------------------------
 
+size_t FilePLYPlugin::getTypeSize(std::string _type) {
+    
+    if(_type == "char" || _type == "uchar")
+        return sizeof(char);
+    else if(_type == "short" || _type == "ushort")
+        return sizeof(short);
+    else if(_type == "float" || _type == "float32")
+        return sizeof(float);
+    else if(_type == "int" || _type == "int32" || _type == "uint" || _type == "uint32")
+        return sizeof(int);
+    else if(_type == "double" || _type == "int64" || _type == "uint64" || _type == "uint64")
+        return sizeof(double);
+    
+    // We don't support long type since its size differs depending on
+    // the host architecture
+    return 0;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
 bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
     
     std::ifstream ifs(_filename.toUtf8());
     
-    if (!ifs.is_open() | !ifs.good() | ifs.eof()) {
+    if (!ifs.is_open() || !ifs.good() || ifs.eof()) {
         
         emit log(LOGERR, tr("Error: Could not read header data of specified PLY-file! Aborting."));
         return false;
@@ -110,6 +143,7 @@ bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
     std::istringstream sstr;
     
     std::string dString = "";
+    std::string dStringPType = "";
     int         dInt;
     std::string lastElement = "";
     
@@ -145,62 +179,69 @@ bool FilePLYPlugin::parseHeader(QString _filename, PLYHeader& _header) {
             // Skip processing of rest of line
             continue;
         } else if(dString == "property") {
-            // Discard property type
-            sstr >> dString;
+            // Get property data type
+            sstr >> dStringPType;
             // Get property name
             sstr >> dString;
-            if(dString == "x" || dString == "y" || dString == "z") {
-                _header.vOrder.push_back("xyz");
+            if(dStringPType == "list") {
+                _header.valenceType = dString;
+                // Get index type
+                sstr >> dString;
+                _header.indexType = dString;
+            } else if(dString == "x" || dString == "y" || dString == "z") {
+                _header.vProps.push_back(PPair("xyz",dStringPType));
             } else if(dString == "nx" || dString == "ny" || dString == "nz") {
                 if(lastElement == "vertex") {
                     _header.hasVertexNormals = true;
-                    _header.vOrder.push_back("n_xyz");
+                    _header.vProps.push_back(PPair("n_xyz",dStringPType));
                 } else if(lastElement == "face") {
                     _header.hasFaceNormals = true;
-                    _header.fOrder.push_back("n_xyz");
+                    _header.fProps.push_back(PPair("n_xyz",dStringPType));
                 }
             } else if(dString == "red" || dString == "green" || dString == "blue") {
                 if(lastElement == "vertex") {
                     _header.hasVertexColors = true;
-                    _header.vOrder.push_back("rgb");
+                    _header.vProps.push_back(PPair("rgb",dStringPType));
                 } else if(lastElement == "face") {
                     _header.hasFaceColors = true;
-                    _header.fOrder.push_back("rgb");
+                    _header.fProps.push_back(PPair("rgb",dStringPType));
+                }
+            } else if(dString == "alpha" || dString == "a") {
+                if(lastElement == "vertex") {
+                    _header.hasVertexColorAlpha = true;
+                    _header.vProps.push_back(PPair("rgb",dStringPType));
+                } else if(lastElement == "face") {
+                    _header.hasFaceColorAlpha = true;
+                    _header.vProps.push_back(PPair("rgb",dStringPType));
                 }
             } else if(dString == "u" || dString == "v") {
                 if(lastElement == "vertex") {
                     _header.hasVertexTexCoords = true;
-                    _header.vOrder.push_back("uv");
+                    _header.vProps.push_back(PPair("uv",dStringPType));
                 }
             } else if(dString == "ambient_red" || dString == "ambient_green" || dString == "ambient_blue") {
                 if(lastElement == "vertex") {
                     _header.hasVertexColors = true;
-                    _header.hasVertexColorsADS = true;
-                    _header.vOrder.push_back("a_rgb");
+                    _header.vProps.push_back(PPair("a_rgb",dStringPType));
                 } else if(lastElement == "face") {
                     _header.hasFaceColors = true;
-                    _header.hasFaceColorsADS = true;
-                    _header.fOrder.push_back("a_rgb");
+                    _header.fProps.push_back(PPair("a_rgb",dStringPType));
                 }
             } else if(dString == "diffuse_red" || dString == "diffuse_green" || dString == "diffuse_blue") {
                 if(lastElement == "vertex") {
                     _header.hasVertexColors = true;
-                    _header.hasVertexColorsADS = true;
-                    _header.vOrder.push_back("d_rgb");
+                    _header.vProps.push_back(PPair("d_rgb",dStringPType));
                 } else if(lastElement == "face") {
                     _header.hasFaceColors = true;
-                    _header.hasFaceColorsADS = true;
-                    _header.fOrder.push_back("d_rgb");
+                    _header.fProps.push_back(PPair("d_rgb",dStringPType));
                 }
             } else if(dString == "specular_red" || dString == "specular_green" || dString == "specular_blue") {
                 if(lastElement == "vertex") {
                     _header.hasVertexColors = true;
-                    _header.hasVertexColorsADS = true;
-                    _header.vOrder.push_back("s_rgb");
+                    _header.vProps.push_back(PPair("s_rgb",dStringPType));
                 } else if(lastElement == "face") {
                     _header.hasFaceColors = true;
-                    _header.hasFaceColorsADS = true;
-                    _header.fOrder.push_back("s_rgb");
+                    _header.fProps.push_back(PPair("s_rgb",dStringPType));
                 }
             }
         } else {
@@ -257,8 +298,8 @@ int FilePLYPlugin::loadObject(QString _filename) {
     }
     
     // Create header and initialize with binary zeros
-    PLYHeader header = {0,0,0,0,0,0,0,std::vector<std::string>(),
-                        0,0,0,0,std::vector<std::string>()};
+    PLYHeader header = {0,0,0,0,0,0,0,std::vector<PPair>(),
+                        0,0,0,0,"","",std::vector<PPair>()};
     
     // Parse header in order to extract important information
     if(!parseHeader(_filename, header)) {
@@ -446,6 +487,8 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader _header
                 emit log(LOGERR, "Error while reading ascii PLY file!");
                 emit deleteObject(id);
                 return -1;
+            } else {
+                emit log(LOGINFO, tr("Successfully loaded file ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
             }
         } else {
             // Read binary file
@@ -453,6 +496,8 @@ int FilePLYPlugin::loadPolyMeshObject(QString _filename, const PLYHeader _header
                 emit log(LOGERR, "Error while reading binary PLY file!");
                 emit deleteObject(id);
                 return -1;
+            } else {
+                emit log(LOGINFO, tr("Successfully loaded file ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
             }
         }
         
@@ -478,82 +523,55 @@ bool FilePLYPlugin::saveObject(int _id, QString _filename)
     BaseObjectData* object;
     PluginFunctions::getObject(_id,object);
     
-    std::string filename = std::string( _filename.toUtf8() );
+    object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
+    object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2));
     
-    if ( object->dataType( DATA_POLY_MESH ) ) {
+    bool gui = OpenFlipper::Options::gui() && (saveBinary_ != 0) /*buttons initialized?*/;
+    bool binary = ((gui && saveBinary_->isChecked()) ||
+                    OpenFlipperSettings().value("FilePLY/Save/Binary",false).toBool());
+    
+    if ( object->dataType(DATA_POLY_MESH) ) {
         
-        object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-        object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+        PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject*>(object);
         
-        PolyMeshObject* polyObj = dynamic_cast<PolyMeshObject* >( object );
-        
-        OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
-        
-        if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0){
-            
-            if (saveBinary_->isChecked())
-                opt += OpenMesh::IO::Options::Binary;
-            
-            if (saveVertexNormal_->isChecked())
-                opt += OpenMesh::IO::Options::VertexNormal;
-            
-            if (saveVertexTexCoord_->isChecked())
-                opt += OpenMesh::IO::Options::VertexTexCoord;
-            
-            if (saveVertexColor_->isChecked())
-                opt += OpenMesh::IO::Options::VertexColor;
-            
-            if (saveFaceColor_->isChecked())
-                opt += OpenMesh::IO::Options::FaceColor;
-            
-        }
-        
-        if (OpenMesh::IO::write_mesh(*polyObj->mesh(), filename.c_str(), opt) ){
-            emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
-            return true;
+        if(binary) {
+            if(!writeMeshFileBinary(_filename, polyObj->mesh())) {
+                emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+                return false;
+            } else {
+                emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            }
         } else {
-            emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
-            return false;
+            if(!writeMeshFileAscii(_filename, polyObj->mesh())) {
+                emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+                return false;
+            } else {
+                emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            }
         }
+        
     } else if ( object->dataType( DATA_TRIANGLE_MESH ) ) {
         
-        object->setName(_filename.section(OpenFlipper::Options::dirSeparator(),-1));
-        object->setPath(_filename.section(OpenFlipper::Options::dirSeparator(),0,-2) );
+        TriMeshObject* triObj = dynamic_cast<TriMeshObject*>(object);
         
-        TriMeshObject* triObj = dynamic_cast<TriMeshObject* >( object );
-        
-        OpenMesh::IO::Options opt = OpenMesh::IO::Options::Default;
-        
-        if ( !OpenFlipper::Options::savingSettings() && saveOptions_ != 0){
-            
-            if (saveBinary_->isChecked())
-                opt += OpenMesh::IO::Options::Binary;
-            
-            if (saveVertexNormal_->isChecked())
-                opt += OpenMesh::IO::Options::VertexNormal;
-            
-            if (saveVertexTexCoord_->isChecked())
-                opt += OpenMesh::IO::Options::VertexTexCoord;
-            
-            if (saveVertexColor_->isChecked())
-                opt += OpenMesh::IO::Options::VertexColor;
-            
-            if (saveFaceColor_->isChecked())
-                opt += OpenMesh::IO::Options::FaceColor;
-            
-        }
-        
-        if (OpenMesh::IO::write_mesh(*triObj->mesh(), filename.c_str(), opt) ) {
-            emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
-            return true;
+        if(binary) {
+            if(!writeMeshFileBinary(_filename, triObj->mesh())) {
+                emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+                return false;
+            } else {
+                emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            }
         } else {
-            emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
-            return false;
+            if(!writeMeshFileAscii(_filename, triObj->mesh())) {
+                emit log(LOGERR, tr("Unable to save ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name());
+                return false;
+            } else {
+                emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
+            }
         }
-    } else {
-        emit log(LOGERR, tr("Unable to save (object is not a compatible mesh type)"));
-        return false;
     }
+    
+    return true;
 }
 
 //-----------------------------------------------------------------------------------------------------
