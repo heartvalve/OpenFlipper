@@ -113,8 +113,9 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     QWidget* loadOptionsWidget(QString /*_currentFilter*/);
      
   private:
-    
+     
     // Helper class that stores general file information
+    typedef std::pair<std::string,std::string> PPair;
     struct PLYHeader {
         bool    binary;
         bool    isTriangleMesh;
@@ -122,18 +123,23 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
         int     numVertices;
         bool    hasVertexNormals;
         bool    hasVertexColors;
+        bool    hasVertexColorAlpha;
         // If true, colors are separated in ambient, diffuse and specular
-        bool    hasVertexColorsADS;
         bool    hasVertexTexCoords;
-        std::vector<std::string> vOrder;
+        std::vector<PPair> vProps;
         
         int     numFaces;
         bool    hasFaceNormals;
         bool    hasFaceColors;
+        bool    hasFaceColorAlpha;
+        std::string valenceType;
+        std::string  indexType;
         // If true, colors are separated in ambient, diffuse and specular
-        bool    hasFaceColorsADS;
-        std::vector<std::string> fOrder;
+        std::vector<PPair> fProps;
     };
+    
+    // Get data type size in bytes
+    size_t getTypeSize(std::string _type);
 
   public slots:
 
@@ -162,6 +168,31 @@ class FilePLYPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     template <class MeshT>
     bool readMeshFileBinary(QString _filename, MeshT* _mesh, const PLYHeader& _header);
+    
+    template <class MeshT>
+    bool writeMeshFileAscii(QString _filename, MeshT* _mesh);
+    
+    template <class MeshT>
+    bool writeMeshFileBinary(QString _filename, MeshT* _mesh);
+    
+    template <class MeshT>
+    void writeHeader(std::ofstream& _os, MeshT* _mesh, bool _binary);
+    
+    /// \brief Helper functions for writing/reading of binary data
+
+    template <class T>
+    void readValue(std::istream& _in, T& _value) const {
+        T tmp;    
+        OpenMesh::IO::restore(_in , tmp, false); //assuming LSB byte order
+        _value = tmp;
+    }
+    
+    template <class T>
+    void writeValue(std::ostream& _out, T value) const {
+        T tmp = value;
+        OpenMesh::IO::store(_out, tmp, false);
+    }
+    
     
     //Option Widgets
     QWidget* loadOptions_;
