@@ -1,7 +1,7 @@
 /** \page ex5 Using threads from within a plugin
 
-When developing plugins for %OpenFlipper it is possible to start certain processes
-within their own thread.
+When developing plugins for %OpenFlipper it is possible to start certain functions
+in a new thread.
 Note that when using threading there are a few things the developer has to be aware of:
 
 - Using threads can cause %OpenFlipper to crash since the threading
@@ -29,7 +29,7 @@ The first parameter of the constructor of the OpenFlipperThread class denotes
 the identifier of the thread. We will use this id to reference our thread later on.
 The signal startJob() just tells the core that we are about to add a new thread
 named "My thread" and having "My thread's description" as the description (OpenFlipper
-displays this in the thread manager). The third and fourth parameter determine the
+displays this in the process manager). The third and fourth parameter determine the
 progress scale (here going from 0 to 100). This should ideally correspond to the
 number of steps the thread's process consists of with desireably equal computation time
 per step. This is later used to inform the user about the progress of our process.
@@ -42,16 +42,16 @@ The next thing we do is connecting the thread's signal to local signals/slots in
 keep track of updates concering the processing of our thread:
 
 \code
-connect(thread, SIGNAL(state(QString, int)), this, SIGNAL(setJobState(QString, int)));
-
 connect(thread, SIGNAL(finished(QString)),   this, SIGNAL(finishJob(QString)));
 
 connect(thread, SIGNAL(function(QString)),   this, SLOT(testFunctionThread(QString)), Qt::DirectConnection);
 \endcode
 
-The first signal is later used to update the threads progress status. The second signal is emitted
-if the processing of our thread has been finished and the thread has been destroyed.
-The third signal is actually connected to the function that will be processed in the thread.
+The thread emits the finished() signal when processing is done and the thread has been destroyed.
+We need to make sure to at least connect this signal to the global finishJob() signal of the ProcessInterface so that the thread is removed from the process manager window.
+Additionally, if we want to do additional steps after the processing has finished (e.g. call updatedObject() so that our change to an object are made visible), we can connect finished() to a function that takes care of that.
+
+The function() signal needs to be connected to the function that will actually be processed in the thread.
 Once having connected these signals, we're about to start our thread:
 
 \code
@@ -63,9 +63,9 @@ thread->startProcessing();
 \endcode
 
 Now our function is processed within a new thread and either %OpenFlipper's process manager or
-a blocking widget showing the processes' progress pops up (depending on whether the thread is declared
+a blocking widget showing the thread's progress pops up (depending on whether the thread is declared
 to be blocking or not). So the only thing that is still left to take core of is the continuous update
-of the threads progress state. Assuming we want the following function to run in a separate thread:
+of the thread's progress state. Assuming we run the following function in a separate thread:
 
 \code
 void testFunctionThread(QString _jobId) {
@@ -85,11 +85,11 @@ void testFunctionThread(QString _jobId) {
 }
 \endcode
 
-This function actually contains one loop incrementing variable i 1 mio. times.
-Each k-th iteration (with k % 10000 == 0) we emit the signal setJobState(QString,int)
+This function contains a loop incrementing variable i one million times.
+Each 10000-th iteration we emit the signal setJobState(QString,int)
 where we set the second parameter to an integer value between 0 and 100 (remember that we set
 these limits at the beginning when emitting the startJob() signal).
-%OpenFlipper now updates its progress bar state to the new value.
+%OpenFlipper now updates its progress bar state to the new value (scaled to a percentage of the interval that was defined in startJob).
 If half of the loop is processed (i == 500000), we additionally want to update
 the progresses' description that is also displayed in %OpenFlipper's progress manager or the
 blocking widget of the thread, respectively.
