@@ -379,7 +379,7 @@ ortho(Scalar left, Scalar right,
   Scalar t_b = top - bottom;
   Scalar f_n = far_plane - near_plane;
 
-  assert(r_l > 0.0 && t_b > 0.0  && f_n > 0.0);
+//   assert(r_l > 0.0 && t_b > 0.0  && f_n > 0.0);
 
   m(1,0) = m(0,1) = m(0,2) =
   m(2,0) = m(2,1) = m(1,2) =
