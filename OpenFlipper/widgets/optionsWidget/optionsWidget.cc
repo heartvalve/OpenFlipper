@@ -266,6 +266,9 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   //paths
   logFile->setText( OpenFlipperSettings().value("Core/Log/logFile").toString()  );
 
+  // UI settings
+  toolBoxOrientation->setCurrentIndex((OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight").toBool() ? 0 : 1));
+  
   //stereo
 
   // Grey out OpenGL stereo mode option if not available
@@ -584,6 +587,13 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/Log/logFileEnabled",enableLogFile->isChecked());
   OpenFlipperSettings().setValue("Core/Log/logFile",logFile->text());
 
+  
+  // Toolbox orientation
+  bool toolBoxOrientationChanged = !((OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight", true).toBool()   && (toolBoxOrientation->currentIndex() == 0)) ||
+                                    ((!OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight", true).toBool()) && (toolBoxOrientation->currentIndex() == 1)));
+  OpenFlipperSettings().setValue("Core/Gui/ToolBoxOnTheRight", (toolBoxOrientation->currentIndex() == 0));
+   
+  
   if ( iconDefault->isChecked() )
     OpenFlipperSettings().setValue("Core/Toolbar/iconSize", 0);
   else if ( iconSmall->isChecked() )
