@@ -379,8 +379,8 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   // Projection settings
   
   // Get field of view in radiant
-  double fov = PluginFunctions::fovy() * 180/M_PI;
-  fieldOfView->setValue(fov);
+  double fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
+  fieldOfView->setValue(fovy);
 
   restrictFPS->setChecked( OpenFlipperSettings().value("Core/Gui/glViewer/restrictFrameRate",false).toBool() );
   FPS->setValue( OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() );
@@ -613,12 +613,10 @@ void OptionsWidget::slotApply() {
   
   // Projection settings
   double fovy = fieldOfView->value();
-  double old_fovy = OpenFlipperSettings().value("Core/Projection/FOV", 45.0).toDouble();
+  double old_fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
   
   if(fovy != old_fovy) {
-      OpenFlipperSettings().setValue("Core/Projection/FOV", fovy);
-      // Reset projection with new fovy
-      PluginFunctions::fovy(fovy);
+      OpenFlipperSettings().setValue("Core/Projection/FOVY", fovy);
   }
 
   OpenFlipperSettings().setValue("Core/Gui/glViewer/showControlWheels", wheelBox->isChecked() );

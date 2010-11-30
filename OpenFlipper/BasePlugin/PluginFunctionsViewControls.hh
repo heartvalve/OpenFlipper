@@ -311,25 +311,6 @@ ACG::Vec3d eyePos(int _viewer = ACTIVE_VIEWER);
 DLLEXPORT
 ACG::Vec3d upVector(int _viewer = ACTIVE_VIEWER);
 
-/** \brief Get the current fovy value
- *
- * @param _viewer Id of the viewer to use.
- *                ACTIVE_VIEWER active viewer
- *                0..3 Choose viewer explicitly
- */
-DLLEXPORT
-double fovy(int _viewer = ACTIVE_VIEWER);
-
-/** \brief Set the fovy value
- *
- * @param _fovy   The new fovy value
- * @param _viewer Id of the viewer to use.
- *                ACTIVE_VIEWER active viewer
- *                0..3 Choose viewer explicitly
- */
-DLLEXPORT
-void fovy(double _fovy, int _viewer = ACTIVE_VIEWER);
-
 /** \brief Switch to orthographic Projection
  *
  * @param _viewer Id of the viewer to use.
