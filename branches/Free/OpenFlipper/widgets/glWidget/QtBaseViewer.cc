@@ -495,6 +495,13 @@ void glViewer::lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const A
 
 //-----------------------------------------------------------------------------
 
+void glViewer::setFOVY(double _fovy) {
+    
+    fovy_ = _fovy;
+    updateProjectionMatrix();
+}
+
+//-----------------------------------------------------------------------------
 
 void glViewer::normalsMode(NormalsMode _mode)
 {
