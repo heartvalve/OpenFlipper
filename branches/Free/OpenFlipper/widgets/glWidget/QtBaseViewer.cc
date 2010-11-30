@@ -167,7 +167,6 @@ glViewer::glViewer( QGraphicsScene* _scene,
   lookAround_       = false;
   near_             = 0.1;
   far_              = 100.0;
-  fovy_             = 45.0;
 
   sceneGraphRoot_   = 0;
 
@@ -404,7 +403,10 @@ void glViewer::updateProjectionMatrix()
     else
       aspect = 1.0;
 
-    glstate_->perspective(fovy_, (GLdouble) aspect,
+    // Get fovy
+    double fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
+
+    glstate_->perspective(fovy, (GLdouble) aspect,
                           near_, far_);
   }
   else
@@ -491,14 +493,6 @@ void glViewer::lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const A
     scene_radius_ = (scene_center_ - _eye).norm();
     
     emit viewChanged();
-}
-
-//-----------------------------------------------------------------------------
-
-void glViewer::setFOVY(double _fovy) {
-    
-    fovy_ = _fovy;
-    updateProjectionMatrix();
 }
 
 //-----------------------------------------------------------------------------

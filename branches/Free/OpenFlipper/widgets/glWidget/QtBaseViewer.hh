@@ -247,9 +247,6 @@ public:
   /// Set look at transformation directly
   void lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const ACG::Vec3d& _up);
   
-  /// Set the field of view value
-  void setFOVY(double _fovy);
-
   /// Automatically normalize normals?
   enum NormalsMode {
     /// use provided normals as is
@@ -551,7 +548,7 @@ protected:
 
   // projection stuff
   GLdouble                     orthoWidth_;
-  GLdouble                     near_, far_, fovy_;
+  GLdouble                     near_, far_;
 
   // helper
   bool                         isRotating_;
