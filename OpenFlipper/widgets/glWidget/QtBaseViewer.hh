@@ -246,6 +246,9 @@ public:
   
   /// Set look at transformation directly
   void lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const ACG::Vec3d& _up);
+  
+  /// Set the field of view value
+  void setFOVY(double _fovy);
 
   /// Automatically normalize normals?
   enum NormalsMode {
