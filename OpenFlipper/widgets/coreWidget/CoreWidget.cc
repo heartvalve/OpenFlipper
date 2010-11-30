@@ -474,9 +474,23 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   wsizes = toolSplitter_->sizes();
 
-  wsizes[0] = 480;
-  wsizes[1] = 240;
-  toolSplitter_->setSizes(wsizes);
+  // if the toolbox should be on the right, use the defaults. Otherwise, we have to reorder them.
+  if ( OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight", true).toBool() ) {
+    // Set relative sizes of windows
+    wsizes[0] = 480;
+    wsizes[1] = 240;
+    toolSplitter_->setSizes(wsizes);  
+  } else {
+    // Show tool box on the left side of the main window
+    toolSplitter_->insertWidget(0, toolBoxArea_);
+    toolSplitter_->insertWidget(1, splitter_);
+
+    // Default sizes are swaped when toolbox is on the left.
+    wsizes[0] = 240;
+    wsizes[1] = 480;
+    toolSplitter_->setSizes(wsizes);
+  }
+  
 
   // ======================================================================
   // Create pick ToolBar
@@ -815,6 +829,43 @@ CoreWidget::showToolbox( bool _state ) {
     toolBoxArea_->setVisible(true);
   }
 }
+
+//=============================================================================
+
+void CoreWidget::setToolBoxOrientation(bool _toolBoxRight) {
+  QList<int> wsizes;
+  if(_toolBoxRight) {
+    
+    // Show tool box on the right side of the main window
+    toolSplitter_->insertWidget(0, splitter_);
+    toolSplitter_->insertWidget(1, toolBoxArea_);
+    wsizes = toolSplitter_->sizes();
+    
+    // Set relative sizes of windows
+    std::swap(wsizes[0],wsizes[1]);
+    toolSplitter_->setSizes(wsizes);
+    
+  } else {
+    
+    // Show tool box on the left side of the main window
+    toolSplitter_->insertWidget(0, toolBoxArea_);
+    toolSplitter_->insertWidget(1, splitter_);
+    wsizes = toolSplitter_->sizes();
+    
+    // Set relative sizes of windows
+    std::swap(wsizes[0],wsizes[1]);
+    toolSplitter_->setSizes(wsizes);
+  }
+  
+  // remove the windowstates definition for the toolboxes, as it changed anyway.
+  QSettings windowStates(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
+                         OpenFlipper::Options::dirSeparator() +  "WindowStates.dat", QSettings::IniFormat);
+                         
+  windowStates.value("Core/ToolSplitter");
+    
+  toolSplitter_->refresh();
+}
+      
 
 //=============================================================================
 
