@@ -137,10 +137,10 @@ void Core::applyOptions(){
     if ( OpenFlipperSettings().value("Core/Gui/glViewer/useMultipleViewers",true).toBool() )
       coreWidget_->setViewerLayout( OpenFlipper::Options::defaultViewerLayout() );
 
-//     if ( OpenFlipper::Options::gridVisible() )
-//       gridNode_->show();
-//     else
-//       gridNode_->hide();
+
+    // toolbox orientation
+    coreWidget_->setToolBoxOrientationOnTheRight(OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight").toBool());
+
 
     //set defaultBackgroundColor
     QColor c =  OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>();
