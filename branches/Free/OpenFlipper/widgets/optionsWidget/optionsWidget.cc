@@ -267,7 +267,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   logFile->setText( OpenFlipperSettings().value("Core/Log/logFile").toString()  );
 
   // UI settings
-  toolBoxOrientation->setCurrentIndex((OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight").toBool() ? 0 : 1));
+  toolBoxOrientation->setCurrentIndex((OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool() ? 0 : 1));
   
   //stereo
 
@@ -595,9 +595,7 @@ void OptionsWidget::slotApply() {
 
   
   // Toolbox orientation
-  bool toolBoxOrientationChanged = !((OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight", true).toBool()   && (toolBoxOrientation->currentIndex() == 0)) ||
-                                    ((!OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight", true).toBool()) && (toolBoxOrientation->currentIndex() == 1)));
-  OpenFlipperSettings().setValue("Core/Gui/ToolBoxOnTheRight", (toolBoxOrientation->currentIndex() == 0));
+  OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/ToolBoxOnTheRight", (toolBoxOrientation->currentIndex() == 0));
    
   
   if ( iconDefault->isChecked() )
