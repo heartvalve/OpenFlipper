@@ -476,11 +476,13 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   // if the toolbox should be on the right, use the defaults. Otherwise, we have to reorder them.
   if ( OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight", true).toBool() ) {
+
     // Set relative sizes of windows
     wsizes[0] = 480;
     wsizes[1] = 240;
     toolSplitter_->setSizes(wsizes);  
   } else {
+
     // Show tool box on the left side of the main window
     toolSplitter_->insertWidget(0, toolBoxArea_);
     toolSplitter_->insertWidget(1, splitter_);
@@ -832,12 +834,14 @@ CoreWidget::showToolbox( bool _state ) {
 
 //=============================================================================
 
-void CoreWidget::setToolBoxOrientation(bool _toolBoxRight) {
+void CoreWidget::setToolBoxOrientationOnTheRight(bool _toolBoxRight) {
   QList<int> wsizes;
   
-  bool currentstate = OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight",true).toBool();
+  // Is toolbox currently on the right hand side?
+  bool currentstate = toolSplitter_->widget(1) == toolBoxArea_;
   
   if ( _toolBoxRight != currentstate ) {
+    
     if(_toolBoxRight ) {
       
       // Show tool box on the right side of the main window
@@ -850,18 +854,12 @@ void CoreWidget::setToolBoxOrientation(bool _toolBoxRight) {
       toolSplitter_->insertWidget(1, splitter_);
     }
     
-    wsizes = toolSplitter_->sizes();
-    
-    // Set relative sizes of windows
-    std::swap(wsizes[0],wsizes[1]);
-    toolSplitter_->setSizes(wsizes);
-    
     // Store new setting
     OpenFlipperSettings().setValue("Core/Gui/ToolBoxOnTheRight",_toolBoxRight);
     
     // remove the windowstates definition for the toolboxes, as it changed anyway.
     QSettings windowStates(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
-    OpenFlipper::Options::dirSeparator() +  "WindowStates.dat", QSettings::IniFormat);
+                            OpenFlipper::Options::dirSeparator() +  "WindowStates.dat", QSettings::IniFormat);
     
     windowStates.value("Core/ToolSplitter");
     

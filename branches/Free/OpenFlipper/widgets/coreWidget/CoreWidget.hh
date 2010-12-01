@@ -436,7 +436,7 @@ public:
       void slotChangeView(QString _mode, QStringList _toolboxWidgets, QStringList _toolbars, QStringList _contextmenus, bool _expandAll = false);
       
       /// Set orientation of tool box (either on the right or the left side of the screen)
-      void setToolBoxOrientation(bool _toolBoxRight);
+      void setToolBoxOrientationOnTheRight(bool _toolBoxRight);
 
     private slots:
       /// Remove viewMode
