@@ -475,7 +475,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   wsizes = toolSplitter_->sizes();
 
   // if the toolbox should be on the right, use the defaults. Otherwise, we have to reorder them.
-  if ( OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight", true).toBool() ) {
+  if ( OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight", true).toBool() ) {
 
     // Set relative sizes of windows
     wsizes[0] = 480;
@@ -855,7 +855,7 @@ void CoreWidget::setToolBoxOrientationOnTheRight(bool _toolBoxRight) {
     }
     
     // Store new setting
-    OpenFlipperSettings().setValue("Core/Gui/ToolBoxOnTheRight",_toolBoxRight);
+    OpenFlipperSettings().setValue("Core/Gui/ToolBoxes/ToolBoxOnTheRight",_toolBoxRight);
     
     // remove the windowstates definition for the toolboxes, as it changed anyway.
     QSettings windowStates(QDir::home().absolutePath() + OpenFlipper::Options::dirSeparator() + ".OpenFlipper" +
