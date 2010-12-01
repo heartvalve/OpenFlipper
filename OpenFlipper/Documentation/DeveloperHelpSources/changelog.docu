@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 10318 )</b>
+ * - <b>OpenFlipper 1.0 (  ? , 10353 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - Enable or disable Mipmapping
@@ -52,6 +52,7 @@
  *              - Added options to enable or disable mipmapping
  *              - Set minimal scene size for startup to 10 
  *              - Implemented zoom to for orthogonal projection mode
+ *              - Added option to set fov for the viewers
  *          - Key Handling
  *              - Fixed alt-key bug where last mode was not restored correctly on windows
  *          - Info
@@ -72,6 +73,8 @@
  *              - Added option to enable/disable multisampling in snapshots (and adjust #points used for multisampling)
  *          - Process Interface
  *              - Show progress dialog centered at corewidget (not anywhere on screen)
+ *          - User Interface
+ *              - Added option to show toolbox on the left
  *          - ViewMode Interface
  *              - Allow setting of viewmodes
  *      - <b>ObjectTypes</b>
@@ -102,6 +105,7 @@
  *              - Bugfix for crash when reading degenerate faces
  *          - FilePLY
  *              - Switch to point rendering if only points where read
+ *              - Separate Reader from OpenMesh reader (created a new integrated reader/writer independent of OpenMesh IO)
  *          - Info
  *              - Bugfix -> Dihedral angle for quad meshes computed wrong
  *              - Improved performance when floodfilling mesh in order to count connected components.
