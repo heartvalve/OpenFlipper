@@ -443,6 +443,9 @@ signals:
 
       /// Called when a plugin wants to delete all objects
       void slotDeleteAllObjects( );
+      
+      /// Called to create inter plugin connections
+      void slotCrossPluginConnect( QString _pluginName1, const char* _signal, QString _pluginName2, const char* _slot);
 
       /// Get a Pointer to the Plugin with given _name (if it is loaded)
 //       void slotGetPlugin(QString _name, QObject* & _plugin );

@@ -85,6 +85,7 @@
 #include "OpenFlipper/BasePlugin/ScriptInterface.hh"
 #include "OpenFlipper/BasePlugin/SecurityInterface.hh"
 #include "OpenFlipper/BasePlugin/TypeInterface.hh"
+#include "OpenFlipper/BasePlugin/PluginConnectionInterface.hh"
 
 #include "OpenFlipper/INIFile/INIFile.hh"
 
@@ -1327,6 +1328,17 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
     if ( checkSignal(plugin,"getValue(QString,QVariant&)" ) )
       connect(plugin  , SIGNAL(getValue(QString,QVariant&)),
               this    , SLOT(slotGetValue(QString,QVariant&)) ,Qt::DirectConnection );
+  }
+  
+  //Check if the plugin supports PluginConnectionInterface
+  PluginConnectionInterface* interconnectionPlugin = qobject_cast< PluginConnectionInterface * >(plugin);
+  if ( interconnectionPlugin ) {
+    supported = supported + "Plugin Interconnection ";
+    
+    if ( checkSignal(plugin,"crossPluginConnect(QString,const char*,QString,const char*)" ) ) {
+      connect(plugin  , SIGNAL( crossPluginConnect(QString,const char*,QString,const char*) ),
+              this    , SLOT( slotCrossPluginConnect(QString,const char*,QString,const char*) ));
+    }
   }
 
   //========================================================================================

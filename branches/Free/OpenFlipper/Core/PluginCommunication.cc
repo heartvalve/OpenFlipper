@@ -368,6 +368,38 @@ void Core::deletedObject(int _objectId) {
 }
 
 
+//========================================================================================
+// ===            Cross Plugin connections                    ============================
+//========================================================================================
+void Core::slotCrossPluginConnect( QString _pluginName1, const char* _signal, QString _pluginName2, const char* _slot) {
+  QObject* plugin1 = 0;
+  QObject* plugin2 = 0;
+  
+  for ( int i = 0 ; i < (int)plugins.size(); ++i ) {
+    if ( plugins[i].rpcName == _pluginName1 ) {
+      plugin1 = plugins[i].plugin;
+    }
+    if ( plugins[i].rpcName == _pluginName2 ) {
+      plugin2 = plugins[i].plugin;
+    }
+  }
+
+  if (  plugin1 == 0 ) {
+    emit log(LOGERR,tr("Cross Plugin Interconnection failed because plugin %1 was not found!").arg(_pluginName1)); 
+    return;
+  }
+
+  if (  plugin2 == 0 ) {
+    emit log(LOGERR,tr("Cross Plugin Interconnection failed because plugin %1 was not found!").arg(_pluginName2)); 
+    return;
+  }
+  
+  // now connect them
+  connect(plugin1,_signal,plugin2,_slot);
+}
+
+
+
 
 
 
