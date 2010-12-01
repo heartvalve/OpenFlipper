@@ -55,7 +55,7 @@
 #include "TransformNode.hh"
 
 
-//== IMPLEMENTATION ========================================================== 
+//== IMPLEMENTATION ==========================================================
 
 
 namespace ACG {
@@ -64,13 +64,19 @@ namespace SceneGraph {
 
 //----------------------------------------------------------------------------
 
-  
+
 TransformNode::
 TransformNode(BaseNode* _parent, const std::string& _name)
   : BaseNode(_parent,_name),
     center_(0.0, 0.0, 0.0),
     applyTransformation_(true)
 {
+  // ortho 2d stuff
+  is2DObject_ = false;
+  scaleFactor2D_ = 1.0;
+  offset_ = ACG::Vec2d(0.0,0.0);
+  imageDimensions_ = ACG::Vec2i(-1,-1); // no image per default
+
   loadIdentity();
 }
 
@@ -194,9 +200,54 @@ TransformNode::
 enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 {
   _state.push_modelview_matrix();
+  _state.push_projection_matrix();
+
+  /*
+  double modelview[16];
+  glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+  double projection[16];
+  glGetDoublev( GL_PROJECTION_MATRIX, projection );
+  GLint viewport[4];
+  glGetIntegerv(GL_VIEWPORT, viewport);
+
+
+  std::cout << "****************************** enter " << name() << std::endl;
+
+  std::cout << "\nenter: mv:" << std::endl;
+  for (uint i = 0; i < 16; ++i)
+  {
+    if (i%4==0)
+      std::cerr << std::endl;
+    std::cerr << modelview[i] << ", " << std::flush;
+  }
+
+
+  std::cout << "\nenter: pr:" << std::endl;
+  for (uint i = 0; i < 16; ++i)
+  {
+    if (i%4==0)
+      std::cerr << std::endl;
+    std::cerr << projection[i] << ", " << std::flush;
+  }
+
+  std::cout << "\nenter: vp:" << std::endl;
+  for (uint i = 0; i < 4; ++i)
+  {
+    std::cerr << viewport[i] << ", " << std::flush;
+  }
+
+
+  std::cout << "enter: mv = " << _state.modelview() << std::endl;
+  std::cout << "enter: pr = " << _state.projection() << std::endl;
+  std::cout << "enter: vp = " << _state.viewport() << std::endl;
+  */
+
 
   if ( applyTransformation_ )
     _state.mult_matrix(matrix_, inverse_matrix_);
+
+  if (is2DObject_)
+    ortho2DMode(_state);
 }
 
 
@@ -207,9 +258,111 @@ void
 TransformNode::
 leave(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 {
+//   _state.pop_projection_matrix();
   _state.pop_modelview_matrix();
+  _state.pop_projection_matrix();
 }
 
+//----------------------------------------------------------------------------
+/*
+void
+TransformNode::
+ortho2DMode(GLState& _state)
+{
+//   return;
+
+  double modelview[16];
+  glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+  double projection[16];
+  glGetDoublev( GL_PROJECTION_MATRIX, projection );
+  GLint viewport[4];
+  glGetIntegerv(GL_VIEWPORT, viewport);
+
+  std::cout << "\n**************************************" << std::endl;
+  std::cout << "modelview: " << std::flush;
+  for (uint i = 0; i < 16; ++i)
+    std::cout << modelview[i] << ", " << std::flush;
+
+  std::cout << "\nprojection: " << std::flush;
+  for (uint i = 0; i < 16; ++i)
+    std::cout << projection[i] << ", " << std::flush;
+
+
+
+//   std::cout << "****************************** ortho2DMode *******************************" << std::endl;
+  // set the whole GL matrices such that subsequent rendering of 2d
+  // image coordinates produces correct results
+  int width  = _state.viewport_width();
+  int height = _state.viewport_height();
+
+  glViewport(0, 0, width, height);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+
+  gluOrtho2D(0.0, (GLdouble)width, (GLdouble)height, 0.0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  // move image center to window center
+  glTranslatef( 0.5*(width-1),  0.5*(height-1), 0);
+  glScalef(scaleFactor2D_, scaleFactor2D_, 1.0);
+
+  if (imageDimensions_[0] != -1)
+    glTranslatef( -0.5*(imageDimensions_[0]-1),  -0.5*(imageDimensions_[1]-1), 0);
+  glTranslatef(offset_[0], offset_[1], 0);
+
+
+  glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+  glGetDoublev( GL_PROJECTION_MATRIX, projection );
+  glGetIntegerv(GL_VIEWPORT, viewport);
+
+  std::cout << "\nmodelview: " << std::flush;
+  for (uint i = 0; i < 16; ++i)
+    std::cout << modelview[i] << ", " << std::flush;
+
+  std::cout << "\nprojection: " << std::flush;
+  for (uint i = 0; i < 16; ++i)
+    std::cout << projection[i] << ", " << std::flush;
+
+}
+*/
+
+//----------------------------------------------------------------------------
+
+
+void
+TransformNode::
+ortho2DMode(GLState& _state)
+{
+//   return;
+
+  // set ortho 2D mode in glstate
+  int width  = _state.viewport_width();
+  int height = _state.viewport_height();
+
+  if (width == 0 || height == 0)
+    return;
+  
+//   _state.viewport(0,0,width, height);
+  _state.reset_projection();
+
+
+  _state.ortho(0.0, (GLdouble)width, (GLdouble)height, 0.0, -1000.0, 1000.0);
+//   _state.ortho(0.0, (GLdouble)width, (GLdouble)height, 0.0, -1.0, 1.0);
+//   _state.ortho(0.0, (GLdouble)width, 0.0, (GLdouble)height, -1.0, 1.0);
+  _state.reset_modelview();
+
+//   move image center to window center
+  _state.translate( 0.5*(width-1),  0.5*(height-1), 0);
+  _state.scale(scaleFactor2D_, scaleFactor2D_, 1.0);
+
+
+  if (imageDimensions_[0] != -1)
+    _state.translate(-0.5*(imageDimensions_[0]-1),  -0.5*(imageDimensions_[1]-1), 0);
+
+  _state.translate(offset_[0], offset_[1], 0);
+}
+
+//----------------------------------------------------------------------------
 
 //=============================================================================
 } // namespace SceneGraph

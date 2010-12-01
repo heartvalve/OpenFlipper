@@ -80,12 +80,12 @@ namespace SceneGraph {
     TrackballNode and the ManipulatorNode, that only add a GUI for
     generating the transformations.
 */
-  
+
 class ACGDLLEXPORT TransformNode : public BaseNode
 {
 public:
-  
-  
+
+
   /// Constructor
   TransformNode( BaseNode* _parent=0,
 		 const std::string& _name="<TransformNode>" );
@@ -93,10 +93,10 @@ public:
   /// Destructor.
   virtual ~TransformNode(){}
 
-  /// set name 
+  /// set name
   ACG_CLASSNAME(TransformNode);
 
-    
+
   /// set current GL-color and GL-material
   void enter(GLState& _state, DrawModes::DrawMode _drawmode);
   /// restores original GL-color and GL-material
@@ -109,8 +109,8 @@ public:
   /// get center
   const Vec3d& center() const { return center_; }
 
-  
-  /** Reset transformation to identity, i.e. reset rotation, translating and 
+
+  /** Reset transformation to identity, i.e. reset rotation, translating and
       scaling factor. */
   void loadIdentity();
   /** set the current transformation to the identity transformation,
@@ -149,17 +149,17 @@ public:
   const GLMatrixd& inverse_matrix() const { return inverse_matrix_; }
 
   /// return rotation axis & angle
-  void rotation(Vec3d& _axis, double& _angle) const { 
+  void rotation(Vec3d& _axis, double& _angle) const {
     quaternion_.axis_angle(_axis, _angle);
     _angle *= 180.0/M_PI;
   }
   /// return rotation matrix
-  const GLMatrixd& rotation() const { 
-    return rotation_matrix_; 
+  const GLMatrixd& rotation() const {
+    return rotation_matrix_;
   }
   /// return inverse rotation matrix
-  const GLMatrixd& inverse_rotation() const { 
-    return inverse_rotation_matrix_; 
+  const GLMatrixd& inverse_rotation() const {
+    return inverse_rotation_matrix_;
   }
 
 
@@ -179,12 +179,20 @@ public:
 
   void apply_transformation(bool _applyTransformation) { applyTransformation_ = _applyTransformation; }
 
-  
+
+  // ortho 2d mode
+  bool is2D(){return is2DObject_;};
+  void set2D(bool _2d){is2DObject_ = _2d;};
+  void ortho2DMode(GLState& _state);
+  void update2DOffset(ACG::Vec2d _offset){offset_ += _offset;};
+  void scale2D(double _scale){scaleFactor2D_ += _scale;};
+  void setImageDimensions(ACG::Vec2i _dim){imageDimensions_ = _dim;};
+
 private:
 
   /// update matrix
   void updateMatrix();
-    
+
 
   // ELEMENTS
   GLMatrixd         matrix_, inverse_matrix_;
@@ -195,6 +203,14 @@ private:
 
 
   bool applyTransformation_;
+
+public:
+  // ortho 2d mode
+  bool is2DObject_;
+  double scaleFactor2D_;
+  ACG::Vec2i imageDimensions_;
+  ACG::Vec2d offset_;
+
 };
 
 
