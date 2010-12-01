@@ -139,7 +139,7 @@ void Core::applyOptions(){
 
 
     // toolbox orientation
-    coreWidget_->setToolBoxOrientationOnTheRight(OpenFlipperSettings().value("Core/Gui/ToolBoxOnTheRight").toBool());
+    coreWidget_->setToolBoxOrientationOnTheRight(OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool());
 
 
     //set defaultBackgroundColor
