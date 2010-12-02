@@ -1423,6 +1423,9 @@ void Core::setDescriptions(){
   emit setSlotDescription("objectList(QString,QStringList)", tr("Returns object list"),
                           QString(tr("Selection type,Object types")).split(","),
                           QString(tr("Type of object selection (all,source,target),Object type (All,PolyMesh,TriangleMesh,...)")).split(";"));
+
+  emit setSlotDescription("setToolBoxSide(QString)", tr("Determine whether the toolboxes should be displayed on the right or on the left side."),
+                          QStringList(tr("side")), QStringList(tr("The desired side of the toolboxes (either 'left' or 'right')")));
 }
 
 void Core::slotDeleteObject( int _id ){
