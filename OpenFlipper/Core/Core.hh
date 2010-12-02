@@ -550,6 +550,12 @@ public slots:
     @param _toolboxList Name of the Icon File. Will be taken from OpenFlippers Icon directory
     */
     void addViewModeIcon(QString _modeName, QString _iconName);    
+    
+    /** \brief Scripting function to set the side of the main window on which the toolbox should be displayed
+    
+    @param _side The desired side (either "left" or "right")
+    */
+    void setToolBoxSide(QString _side);
 
     /** @} */
 

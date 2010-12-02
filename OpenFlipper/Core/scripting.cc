@@ -178,6 +178,19 @@ void Core::addViewModeIcon(QString _modeName, QString _iconName) {
 
 //-----------------------------------------------------------------------------
 
+void Core::setToolBoxSide(QString _side) {
+  
+    if(_side.toLower() == "left") {
+        coreWidget_->setToolBoxOrientationOnTheRight(false);
+    } else if(_side.toLower() == "right") {
+        coreWidget_->setToolBoxOrientationOnTheRight(true);
+    } else {
+        emit log(LOGERR, QString("Could not display toolboxes on side '%1'. Use either 'left' or 'right' as string!").arg(_side));
+    }
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::addToolbox(QString _name ,QWidget* _widget) {
   int id = -1;
 
