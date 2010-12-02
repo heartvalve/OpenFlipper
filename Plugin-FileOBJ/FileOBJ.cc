@@ -282,7 +282,8 @@ bool FileOBJPlugin::readMaterial(QString _filename, OBJImporter& _importer)
 
 void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
 {
-  
+  convertToOBJName(_name);
+    
   //if no additional object is needed return
   if ( _importer.currentObject()+1 >= (int)_importer.objectOptions().size() )
     return;
@@ -301,6 +302,7 @@ void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
       _importer.addObject( object );
 
       object->setPath( _importer.path() );
+      std::cerr << "Adding object " << _name.toStdString() << std::endl;
       object->setName( _name );
     }
   
@@ -374,6 +376,15 @@ void FileOBJPlugin::addNewObject( OBJImporter& _importer, QString _name )
       _importer.objectOptions()[ _importer.currentObject() ] |= OBJImporter::FORCE_NOTEXTURES;
   }
   
+}
+
+void FileOBJPlugin::convertToOBJName(QString& _name) {
+    
+    QFileInfo fi(_name);
+    
+    QString n = fi.baseName();
+    
+    _name = n.trimmed() + ".obj";
 }
 
 
@@ -450,7 +461,7 @@ void FileOBJPlugin::addTextures(OBJImporter& _importer, int _objectID ){
 
       QFileInfo info(fullName);
       if ( info.exists() )
-        emit addMultiTexture("OBJ Data", info.baseName(), fullName, object->id(), textureId );
+        emit addMultiTexture("OBJ Data", info.baseName().trimmed(), fullName, object->id(), textureId );
       else {
         emit log(LOGWARN, tr("Unable to load texture image %1").arg( QString(material.map_Kd().c_str()) ) );
         addMultiTexture("OBJ Data","Unknown Texture image " + QString::number(textureId), "unknown.png", object->id(), textureId );
@@ -606,8 +617,9 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
     
         if ( mat.has_Texture() ){
           //add object if not already there
-          if (_importer.currentObject() == -1)
+          if (_importer.currentObject() == -1) {
             addNewObject(_importer, currentFileName ); 
+          }
 
           _importer.useMaterial( matname );
         }
@@ -672,8 +684,9 @@ void FileOBJPlugin::readOBJFile(QString _filename, OBJImporter& _importer)
 
       if ( faceCount > 0 )
         addNewObject( _importer, QString(groupName.c_str()) );
-      else
+      else {
         currentFileName = QString(groupName.c_str());
+      }
 
       //since obj-groups are used, all new objects will be grouped together in OpenFlipper
       if ( _importer.objectOptions().size() > 1 )

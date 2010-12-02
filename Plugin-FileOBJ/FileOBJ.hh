@@ -176,6 +176,9 @@ class FileOBJPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     void addNewObject(OBJImporter& _importer, QString _name );
     void addTextures(OBJImporter& _importer, int _objectID );
     
+    /// Convert non-valid filenames (e.g. of groups that end with .jpg) to valid .objs.
+    void convertToOBJName(QString& _name);
+    
   private :
 
     /// List that contains the material properties
