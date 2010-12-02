@@ -631,6 +631,19 @@ void orthographicProjection( int _viewer ) {
     std::cerr << "Requested illegal viewer for orthographicProjection()!!" << std::endl;
 }
 
+void setFOVY( double _fovy, int _viewer ) {
+  
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->setFOVY(_fovy);
+  } else if ( _viewer == ALL_VIEWERS )
+    for ( uint i = 0 ; i < examiner_widgets_.size(); ++i )
+      examiner_widgets_[i]->setFOVY(_fovy);
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->setFOVY(_fovy);
+  else
+    std::cerr << "Requested illegal viewer for setFOVY()!!" << std::endl;
+}
+
 void allowRotation(bool _mode, int _viewer ) {
   if ( _viewer == ACTIVE_VIEWER ) {
     examiner_widgets_[activeExaminer_]->allowRotation(_mode);

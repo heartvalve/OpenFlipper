@@ -370,6 +370,9 @@ public slots:
   virtual void toggleProjectionMode();
   /// toggle navigation mode
   virtual void toggleNavigationMode();
+  
+  /// Set fovy
+  virtual void setFOVY(double _fovy);
 
   signals:
 
