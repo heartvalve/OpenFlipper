@@ -73,9 +73,12 @@ void Core::applyOptions(){
     //Init ViewModes
     coreWidget_->initViewModes();
 
-    //Set default Viewmode
-    if (OpenFlipper::Options::currentViewMode() != "")
-      coreWidget_->slotChangeView(OpenFlipper::Options::currentViewMode(), QStringList(), QStringList(), QStringList());
+    //Set default Viewmode (note: This always resets all toolboxes and should be skipped
+    // here. Setting the initial view mode is instead done when initializing the core
+    // and reading the ini-files.)
+    //if (OpenFlipper::Options::currentViewMode() != "")
+    //  coreWidget_->slotChangeView(OpenFlipper::Options::currentViewMode(), QStringList(), QStringList(), QStringList());
+      
     //Set Fullscreen
     if ( OpenFlipperSettings().value("Core/Gui/fullscreen",false).toBool() )
       coreWidget_->setWindowState( coreWidget_->windowState() | Qt::WindowFullScreen);
@@ -121,7 +124,7 @@ void Core::applyOptions(){
     //set viewer properties
     for (int i=0; i < PluginFunctions::viewers(); i++){
 
-      PluginFunctions::setDrawMode( OpenFlipper::Options::defaultDrawMode(i), i );
+      // PluginFunctions::setDrawMode( OpenFlipper::Options::defaultDrawMode(i), i );
       PluginFunctions::setFixedView(OpenFlipper::Options::defaultViewingDirection(i), i );
 
       //only switch projection here if an object is opened
