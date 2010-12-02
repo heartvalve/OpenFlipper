@@ -1203,6 +1203,12 @@ void ViewControlPlugin::perspectiveProjection(int _viewer) {
   PluginFunctions::perspectiveProjection(_viewer);
 }
 
+void ViewControlPlugin::setFOVY( double _fovy, int _viewer ) {
+  PluginFunctions::setFOVY(_fovy, _viewer);
+  
+  emit updateView();
+}
+
 void ViewControlPlugin::setDescriptions() {
   emit setSlotDescription("translate(Vector,int)", "Translate Scene",
                           QString("TranslationVector,Viewer").split(","),
@@ -1254,6 +1260,12 @@ void ViewControlPlugin::setDescriptions() {
                           QStringList(), QStringList());
   emit setSlotDescription("perspectiveProjection(int)", "Change all Viewers to perspective projection",
                           QStringList("Viewer"), QStringList("Id of the viewer to change"));
+                          
+  emit setSlotDescription("setFOVY(double,int)", "Set fovy angle of projection for a viewer.",
+                          QString("fovy;viewer").split(";"), QString("FOVY angle;Id of the target viewer").split(";"));
+                          
+  emit setSlotDescription("setFOVY(double)", "Set fovy angle of projection for all viewers.",
+                          QStringList("fovy"), QStringList("FOVY angle"));
 
 }
 

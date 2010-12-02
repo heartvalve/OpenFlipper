@@ -383,6 +383,17 @@ void glViewer::navigationMode(NavigationMode _n)
     emit navigationModeChanged( false );
 }
 
+void glViewer::setFOVY(double _fovy) {
+    
+  if(_fovy <= 0.0 || _fovy >= 180) {
+    std::cerr << "Error: Minimum or maximum fovy angle exceeded!" << std::endl;
+    return;
+  }
+  
+  OpenFlipperSettings().setValue("Core/Projection/FOVY", _fovy);
+  updateProjectionMatrix();
+}
+
 
 void glViewer::updateProjectionMatrix()
 {
