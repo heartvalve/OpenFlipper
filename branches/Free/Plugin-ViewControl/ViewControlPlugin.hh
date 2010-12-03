@@ -282,7 +282,7 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     void perspectiveProjection(int _viewer);
     
     /// Set fovy angle of projection
-    void setFOVY( double _fovy, int _viewer = PluginFunctions::ALL_VIEWERS );
+    void setFOVY( double _fovy );
 
 };
 
