@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Shader Settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="2" column="2">
@@ -41,13 +41,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="setGlobalButton">
-       <property name="text">
-        <string>Set shader Globally</string>
-       </property>
-      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="setShaderButton">

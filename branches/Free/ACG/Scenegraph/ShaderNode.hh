@@ -110,9 +110,13 @@ public:
   std::string vertexShaderName(DrawModes::DrawMode _drawmode, bool _pick = false);
 
   std::string fragmentShaderName(DrawModes::DrawMode _drawmode, bool _pick = false);
-
-
-  /** Sets a Shader for this draw Mode
+  
+  /** Removes the shader for the given draw mode
+   * @param _drawmode Set the drawmode for which the shader should be deactivated
+  */
+  void disableShader (DrawModes::DrawMode _drawmode);
+    
+  /** Sets a Shader for the given draw mode
    * @param _drawmode Set the drawmode for which the shader should be activated
    * @param _vertexShader filename of the Vertex Shader within the shader directory
    * @param _fragmentShader filename of the Fragment Shader within the shader directory

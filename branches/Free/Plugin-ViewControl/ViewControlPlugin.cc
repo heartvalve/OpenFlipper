@@ -692,11 +692,15 @@ void ViewControlPlugin::slotShaderClicked( QListWidgetItem * _item ){
 
          PluginFunctions::getObject( lastObjectId_, object );
          if ( object && object->shaderNode() ){
-         if ( object->shaderNode()->vertexShaderName( id ) == vertexFile.toStdString() &&
-               object->shaderNode()->fragmentShaderName( id ) == fragmentFile.toStdString() )
-            item->setCheckState( Qt::Checked );
-         else
-            item->setCheckState( Qt::Unchecked );
+	    if ( object->shaderNode()->vertexShaderName( id ) == vertexFile.toStdString() &&
+		object->shaderNode()->fragmentShaderName( id ) == fragmentFile.toStdString() )
+		item->setCheckState( Qt::Checked );
+	    else
+	    {
+		//std::cerr << "vertex:" << object->shaderNode()->vertexShaderName( id ) << ", this: " <<  vertexFile.toStdString() << std::endl;
+		//std::cerr << "fragment:" << object->shaderNode()->fragmentShaderName( id ) << ", this: " <<  fragmentFile.toStdString() << std::endl;
+		item->setCheckState( Qt::Unchecked );
+	    }
          }
          shaderWidget_->drawModes->addItem(item);
       }
@@ -787,131 +791,126 @@ void ViewControlPlugin::slotSetShader(){
       return;
    }
 
-   //get shader paths
-   QStringList shadersDirs = OpenFlipper::Options::shaderDir().entryList( QDir::Dirs| QDir::NoDotAndDotDot ,QDir::Name);
-   QString shaderDir = OpenFlipper::Options::shaderDirStr() + OpenFlipper::Options::dirSeparator();
-
-   QString vertexFile = shadersDirs[ shaderWidget_->availableShaders->currentRow() ] +
-                        OpenFlipper::Options::dirSeparator() + shaderWidget_->vertexShader->text();
-   QString fragmentFile = shadersDirs[ shaderWidget_->availableShaders->currentRow() ] +
-                           OpenFlipper::Options::dirSeparator() + shaderWidget_->fragmentShader->text();
-   QString pickVertexFile = shadersDirs[ shaderWidget_->availableShaders->currentRow() ] +
-                            OpenFlipper::Options::dirSeparator() + shaderWidget_->pickVertexShader->text();
-   QString pickFragmentFile = shadersDirs[ shaderWidget_->availableShaders->currentRow() ] +
-                              OpenFlipper::Options::dirSeparator() + shaderWidget_->pickFragmentShader->text();
-   //get drawmodes
-   std::vector< QString > mode;
-
+   std::vector <QString> mode;
    for (int i=0; i < shaderWidget_->drawModes->count(); i++)
-      if (shaderWidget_->drawModes->item(i)->checkState() == Qt::Checked){
-         mode.push_back( shaderWidget_->drawModes->item(i)->text() );
+   {
+      if (shaderWidget_->drawModes->item(i)->checkState() == Qt::Checked)  
+      {
+	  mode.push_back (shaderWidget_->drawModes->item(i)->text());
+	  setShader(lastObjectId_, descriptionsToDrawMode(mode), shaderList_[index]);
+	  mode.clear();
       }
+      else
+      {
+	  mode.push_back (shaderWidget_->drawModes->item(i)->text());
+	  disableShader(lastObjectId_, descriptionsToDrawMode(mode), &shaderList_[index] );
+	  mode.clear();
+      }
+   }
+}
 
-   //set the shader
-   if ( QFile( shaderDir + vertexFile ).exists() && QFile( shaderDir + fragmentFile ).exists() ) {
-      BaseObjectData* object = 0;
+void ViewControlPlugin::disableShader(int _objectId, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ShaderInfo* _shader) {
+    
+    BaseObjectData* object = 0;
+    PluginFunctions::getObject( _objectId, object );
+    
+    
+    if (object)
+    {
+	if (!_shader)
+	    object->shaderNode()->disableShader( _drawMode );
+	else
+	{
+	    std::string shadeDir = _shader->directory.toStdString() + OpenFlipper::Options::dirSeparator().toStdString();
+	    
+	    if (object->shaderNode()->vertexShaderName( _drawMode ) == shadeDir + _shader->vertexShader.toStdString() &&
+		object->shaderNode()->fragmentShaderName( _drawMode ) == shadeDir + _shader->fragmentShader.toStdString() )
+		    object->shaderNode()->disableShader( _drawMode );	
+	}
+    }
+    
+    emit updateView();
+}
 
-      PluginFunctions::getObject( lastObjectId_, object );
-      if ( object && object->shaderNode() ){
-        if ( shaderWidget_->pickVertexShader->text() != "" &&
-             shaderWidget_->pickFragmentShader->text() != "" &&
-             QFile( shaderDir + pickVertexFile ).exists() &&
-             QFile( shaderDir + pickFragmentFile ).exists() )
-          object->shaderNode()->setShader(descriptionsToDrawMode(mode), vertexFile.toStdString() , fragmentFile.toStdString(),
-                                          pickVertexFile.toStdString() , pickFragmentFile.toStdString());
+void ViewControlPlugin::setShader(int _id, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ShaderInfo _shader) {
+
+    if ( OpenFlipper::Options::nogui() )
+        return;
+
+    BaseObjectData* object = 0;
+    PluginFunctions::getObject( _id, object );
+    
+   //get shader paths
+   QFileInfo vertexFile (_shader.name + OpenFlipper::Options::dirSeparator() + _shader.vertexShader);
+   QFileInfo fragmentFile (_shader.name + OpenFlipper::Options::dirSeparator() + _shader.fragmentShader);
+   QFileInfo pickVertexFile (_shader.name + OpenFlipper::Options::dirSeparator() + _shader.pickVertexShader);
+   QFileInfo pickFragmentFile (_shader.name + OpenFlipper::Options::dirSeparator() + _shader.pickFragmentShader);      
+
+    if ( object && object->shaderNode()
+	&& _shader.vertexShader.length() && _shader.fragmentShader.length()) {
+
+        if (vertexFile.absolutePath() != fragmentFile.absolutePath()) {
+            emit log(LOGERR, "Cannot set shader. Currently shader files have to be in the same folder.");
+            return;
+        }
+
+        if (_shader.pickVertexShader.length() && _shader.pickFragmentShader.length())
+        {
+            if (vertexFile.absolutePath() != pickVertexFile.absolutePath() ||
+                vertexFile.absolutePath() != pickFragmentFile.absolutePath()) {
+                emit log(LOGERR, "Cannot set picking shader. Currently shader files have to be in the same folder.");
+                return;
+            }
+            
+	    object->shaderNode()->setShaderDir( (_shader.directory + OpenFlipper::Options::dirSeparator()).toStdString() );
+
+            object->shaderNode()->setShader(_drawMode,
+					    vertexFile.fileName().toStdString(),
+                                            fragmentFile.fileName().toStdString(),
+                                            pickVertexFile.fileName().toStdString(),
+                                            pickFragmentFile.fileName().toStdString());
+        }
         else
-          object->shaderNode()->setShader(descriptionsToDrawMode(mode), vertexFile.toStdString() , fragmentFile.toStdString());
+        {
+	    object->shaderNode()->setShaderDir( (_shader.directory + OpenFlipper::Options::dirSeparator()).toStdString() );
+            object->shaderNode()->setShader(_drawMode, vertexFile.fileName().toStdString(), fragmentFile.fileName().toStdString());
+        }
+    }
 
-        // set uniforms if available
-        if (shaderList_[index].hasUniforms){
-          GLSL::PtrProgram shader = object->shaderNode()->getShader( descriptionsToDrawMode(mode) );
-          if ( shader == 0 ) {
+
+    // set uniforms if available
+    if (_shader.hasUniforms) {
+        GLSL::PtrProgram shader = object->shaderNode()->getShader( _drawMode );
+        if ( shader == 0 ) {
             std::cerr << "Error: Unable to get shader for shader mode" << std::endl;
-          } else {
+        } else {
             shader->use();
 
-            for (int u=0; u < shaderList_[index].uniforms.count(); u++){
-              //float uniforms
-              if (shaderList_[index].uniformTypes[u] == "float" ){
-                shaderWidget_->uniforms->setCurrentCell(u,0);
-                float value = shaderWidget_->uniforms->currentItem()->text().toFloat();
-                shader->setUniform(shaderList_[index].uniforms[u].toUtf8(), value);
-              } else 
-              //vec3 uniforms
-              if (shaderList_[index].uniformTypes[u] == "vec3" ){
-                shaderWidget_->uniforms->setCurrentCell(u,0);
-                QStringList vecStr = shaderWidget_->uniforms->currentItem()->text().split(",");
-                if (vecStr.count() == 3){
-                  ACG::Vec3f value( vecStr[0].toFloat(), vecStr[1].toFloat(), vecStr[2].toFloat() );
-                  shader->setUniform(shaderList_[index].uniforms[u].toUtf8(), value);
-                }
-              }else
-                std::cerr << "Error: handling of uniformType '" << shaderList_[index].uniformTypes[u].toStdString() << "' not yet implemented" << std::endl;
+            for (int u=0; u < _shader.uniforms.count(); u++) {
+                //float uniforms
+                if (_shader.uniformTypes[u] == "float" ) {
+                    shaderWidget_->uniforms->setCurrentCell(u,0);
+                    float value = shaderWidget_->uniforms->currentItem()->text().toFloat();
+                    shader->setUniform(_shader.uniforms[u].toUtf8(), value);
+                } else
+                    //vec3 uniforms
+                    if (_shader.uniformTypes[u] == "vec3" ) {
+                        shaderWidget_->uniforms->setCurrentCell(u,0);
+                        QStringList vecStr = shaderWidget_->uniforms->currentItem()->text().split(",");
+                        if (vecStr.count() == 3) {
+                            ACG::Vec3f value( vecStr[0].toFloat(), vecStr[1].toFloat(), vecStr[2].toFloat() );
+                            shader->setUniform(_shader.uniforms[u].toUtf8(), value);
+                        }
+                    } else
+                        std::cerr << "Error: handling of uniformType '" << _shader.uniformTypes[u].toStdString() << "' not yet implemented" << std::endl;
 
             }
 
             shader->disable();
-          }
         }
-
-
-      }
-   }
-
-
-   emit updateView();
-}
-
-void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _vertexShader, QString _fragmentShader,
-                                  QString _pickVertexShader, QString _pickFragmentShader){
-
-  if ( OpenFlipper::Options::nogui() )
-    return;
-
-  BaseObjectData* object = 0;
-  PluginFunctions::getObject( _id, object );
-
-  std::vector< QString > mode;
-  mode.push_back( _drawMode );
-
-  if ( object && object->shaderNode() ){
-
-    QFileInfo vertexFile(_vertexShader);
-    QFileInfo fragmentFile(_fragmentShader);
-
-    if (vertexFile.absolutePath() != fragmentFile.absolutePath()){
-      emit log(LOGERR, "Cannot set shader. Currently shader files have to be in the same folder.");
-      return;
     }
 
-    if (_pickVertexShader.length () && _pickFragmentShader.length ())
-    {
-      QFileInfo pickVertexFile(_pickVertexShader);
-      QFileInfo pickFragmentFile(_pickFragmentShader);
-
-      if (vertexFile.absolutePath() != pickVertexFile.absolutePath() ||
-          vertexFile.absolutePath() != pickFragmentFile.absolutePath()){
-        emit log(LOGERR, "Cannot set shader. Currently shader files have to be in the same folder.");
-        return;
-      }
-
-      object->shaderNode()->setShaderDir( (vertexFile.absolutePath() + OpenFlipper::Options::dirSeparator()).toStdString() );
-
-      object->shaderNode()->setShader(listToDrawMode( mode ), vertexFile.fileName().toStdString(),
-                                      fragmentFile.fileName().toStdString(),
-                                      pickVertexFile.fileName().toStdString(),
-                                      pickFragmentFile.fileName().toStdString());
-    }
-    else
-    {
-      object->shaderNode()->setShaderDir( (vertexFile.absolutePath() + OpenFlipper::Options::dirSeparator()).toStdString() );
-
-      object->shaderNode()->setShader(listToDrawMode( mode ), vertexFile.fileName().toStdString(),
-                                      fragmentFile.fileName().toStdString());
-    }
-  }
-
-  emit updateView();
+    emit updateView();
 }
 
 void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
@@ -934,24 +933,11 @@ void ViewControlPlugin::setShader(int _id, QString _drawMode, QString _name ){
       std::cerr << "Error: Shader not found! " << std::endl;
       return;
    }
-
-  BaseObjectData* object = 0;
-  PluginFunctions::getObject( _id, object );
-
-  std::vector< QString > mode;
-  mode.push_back( _drawMode );
-
-  if ( object && object->shaderNode() ){
-
-    object->shaderNode()->setShaderDir( (shaderList_[index].directory + OpenFlipper::Options::dirSeparator()).toStdString() );
-
-    object->shaderNode()->setShader(listToDrawMode( mode ), shaderList_[index].vertexShader.toStdString(),
-                                    shaderList_[index].fragmentShader.toStdString(),
-                                    shaderList_[index].pickVertexShader.toStdString(),
-                                    shaderList_[index].pickFragmentShader.toStdString());
-  }
-
-  emit updateView();
+   
+   std::vector <QString> mode;
+   mode.push_back(_drawMode);
+   
+   setShader(_id, listToDrawMode(mode), shaderList_[index]);
 }
 
 //-----------------------------------------------------------------------------
