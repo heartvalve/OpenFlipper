@@ -62,7 +62,7 @@
 
 //== TYPEDEFS FOR SCENEGRAPH ===============================================
    
-/// Simple Name for PlaneNode
+/// Simple Name for SphereNode
 typedef  ACG::SceneGraph::GlutPrimitiveNode SphereNode;
 
 //=============================================================================
