@@ -258,6 +258,28 @@ getShader( DrawModes::DrawMode _drawmode, bool _pick ) {
 
 //----------------------------------------------------------------------------
 
+void
+ShaderNode::
+disableShader (DrawModes::DrawMode _drawmode) {
+
+    unsigned int index = _drawmode.getIndex();
+
+    // Cleanup old shaders for this mode, if they exist
+    if ( shaders[index].initialized ) {
+        if ( shaders[index].program != 0 )
+            delete shaders[index].program;
+
+        if ( shaders[index].vertexShader != 0 )
+            delete shaders[index].vertexShader;
+
+        if ( shaders[index].fragmentShader != 0 )
+            delete shaders[index].fragmentShader;
+
+        shaders[index].initialized    = false;
+    }
+}
+
+//----------------------------------------------------------------------------
 
 void
 ShaderNode::
@@ -269,31 +291,18 @@ setShader( DrawModes::DrawMode _drawmode ,
 
   // OpenGl 2.0 is needed for GLSL support
   if (!glewIsSupported("GL_VERSION_2_0")) {
-    std::cerr << "No shader support... unable to load shaders!" << std::endl;
+    std::cerr << "No shader support on this machine. Unable to load shaders!" << std::endl;
     return;
 
   }
 
   if ( shaderDir_ == "" ) {
-    std::cerr << "No shader dir set for shadernode! Unable to load shaders" << std::endl;
+    std::cerr << "No shader dir set for shadernode. Unable to load shaders!" << std::endl;
     return;
   }
-
-  unsigned int index = _drawmode.getIndex();
   
-  // Cleanup old shaders for this mode, if they exist
-  if ( shaders[index].initialized ) {
-    if ( shaders[index].program != 0 )
-      delete shaders[index].program;
-
-    if ( shaders[index].vertexShader != 0 )
-      delete shaders[index].vertexShader;
-
-    if ( shaders[index].fragmentShader != 0 )
-      delete shaders[index].fragmentShader;
-
-    shaders[index].initialized    = false;
-  }
+  disableShader (_drawmode);
+  unsigned int index = _drawmode.getIndex();
 
   shaders[index].vertexShaderFile   = shaderDir_ + _vertexShader;
   shaders[index].fragmentShaderFile = shaderDir_ + _fragmentShader;

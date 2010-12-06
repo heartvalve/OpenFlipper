@@ -182,6 +182,15 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     /// Allows to enable/disable visualization of the objects modeling area for meshes
     void showModelingAreas( int _id , bool _state  );
 
+    /** Disable the given shader for a given object and draw mode.
+     * @param _objectId ID of the object for which to disable the shader
+     * @param _drawMode _drawMode for which the shader is disabled
+     * @param _shader Shader which is disabled. If this shader is not currently active for
+     *                the given _drawMode, nothing will be disabled. In order to disable
+     *                all shaders for the given _drawMode, use _shader=0 (default).
+     */
+    void disableShader(int _objectId, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ShaderInfo* _shader=0);
+    
     /** Sets a shader for the object and the given drawMode( can be a combination of draw modes )
      *  @param _id Object Id
      *  @param _drawMode ; seperated list of drawmodes used by the shader
@@ -190,8 +199,7 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
      *  @param _pickVertexShader   File with the picking vertex shader code
      *  @param _pickFragmentShader File with the picking fragment shader code
      */
-    void setShader(int _id, QString _drawMode, QString _vertexShader, QString _fragmentShader,
-                   QString _pickVertexShader = "", QString _pickFragmentShader = "");
+    void setShader(int _id, ACG::SceneGraph::DrawModes::DrawMode _drawMode, ShaderInfo _shader);
 
     /** Sets a Shader from the Shader directory of OpenFlipper ( Name of the one given inside the ini file )
      *
@@ -218,7 +226,7 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
 
     /// translate Scene
     void translate( Vector _vec , int _viewer = PluginFunctions::ALL_VIEWERS );
-
+    
     /// Set the draw mode for a viewer
     void setDrawMode(QString _mode, int _viewer = PluginFunctions::ALL_VIEWERS );
     
