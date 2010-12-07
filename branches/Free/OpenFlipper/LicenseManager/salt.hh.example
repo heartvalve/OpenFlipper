@@ -64,13 +64,17 @@
     LICENSEMANAGER 
 
     to your CMakeLists generator (e.g.  openflipper_plugin (LICENSEMANAGER ) )
+    
     Additionally dont derive your Plugin from QObject but from LicenseManager
     which has to be the first one in your class definition.
 
-    When the plugin is now build, an additional file
+    When the plugin is now build, an additional LicenseManager is generated which shows
+    a widget on execution. Enter the information which is given by OpenFlipper when
+    plugin loading fails due to a license issue and execute it. It will create the required
+    license file to run the plugin.
 */
 
-/// Specify part your contact mail address
+/// Specify your contact mail address
 #define CONTACTMAIL QString("contact@openflipper.org")
 
 /// Specify part one of your salt 
@@ -88,4 +92,9 @@
        s += char(83);                           \
        s += char(44);                           \
        s += char(99);
+       
+/// Specify the filename of your plugin (not secured)
+#define ADD_PLUGIN_FILENAME(s)                  \
+s += "Plugin-Backup";
+
 

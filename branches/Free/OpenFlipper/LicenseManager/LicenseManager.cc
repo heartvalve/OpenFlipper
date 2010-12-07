@@ -164,33 +164,31 @@ LicenseManager::~LicenseManager()
 LicenseManager::LicenseManager()
 {
   authenticated_ = false;
-  std::cerr << "Constructor Security Interface" << std::endl;
+  
+  // On startup, block all signals by default until the plugin is authenticated!
   QObject::blockSignals( true );
 }
 
+// Override default block signals. Transparent if authenticated, otherwise
+// the function will always block the signals automatically
 void LicenseManager::blockSignals( bool _state) {
-  std::cerr << "Block Signals called" << std::endl;
+
   if ( !authenticated() ) {
     QObject::blockSignals( true );
-    std::cerr << "Request to unblock plugin denied" << std::endl;
   } else {
     QObject::blockSignals(_state);
-    std::cerr << "Unblocked Signal" << std::endl;
   }
 
 }
 
-bool LicenseManager::authenticate() {
-  std::cerr << "Auth slot" << std::endl;
+// Plugin authentication function.
+bool LicenseManager::authenticate(QString& _authstring) {
 
-  std::cerr << "Application Directory: " << OpenFlipper::Options::applicationDirStr().toStdString() << std::endl;
-  std::cerr << "Plugin Directory: " << OpenFlipper::Options::pluginDirStr().toStdString() << std::endl;
+  // Cleanup auth string
+  _authstring = "";
   
-
-  std::cerr << "Name: " << name().toStdString() << std::endl;
-
   // ===============================================================================================
-  // Compute hash of Core application
+  // Compute hash value of Core application binary
   // ===============================================================================================
 
   #ifdef WIN32
@@ -213,17 +211,18 @@ bool LicenseManager::authenticate() {
   
 
   // ===============================================================================================
-  // Compute hash of Plugin application
+  // Compute hash of Plugin binary
   // ===============================================================================================
 
   #ifdef WIN32
     QFile pluginFile(OpenFlipper::Options::pluginDirStr() + QDir::separator() + pluginFileName() + ".dll");
   #else
-    QFile pluginFile(OpenFlipper::Options::pluginDirStr() + QDir::separator() + pluginFileName() + ".so");
+    QFile pluginFile(OpenFlipper::Options::pluginDirStr() + QDir::separator() + "lib" + pluginFileName() + ".so");
   #endif
 
   if ( ! pluginFile.exists() ) {
     std::cerr << "Error finding plugin file for security check!" << std::endl;
+    std::cerr << "Path: " << pluginFile.fileName().toStdString() << std::endl;
     return false;
   }
 
@@ -234,6 +233,9 @@ bool LicenseManager::authenticate() {
 
   QString pluginHash = QString(sha1sumPlugin.result().toHex());
 
+  // ===============================================================================================
+  // Compute hash of network interfaces
+  // ===============================================================================================  
 
   QString mac;
 
@@ -250,11 +252,11 @@ bool LicenseManager::authenticate() {
 
   QString saltPre;
   ADD_SALT_PRE(saltPre);
-
+  
   QString saltPost;
   ADD_SALT_POST(saltPost);
 
-    QString licenseFileName = OpenFlipper::Options::licenseDirStr() + QDir::separator() + pluginFileName() + ".lic";
+  QString licenseFileName = OpenFlipper::Options::licenseDirStr() + QDir::separator() + pluginFileName() + ".lic";
   QFile file( licenseFileName );
 
   if (!file.open(QIODevice::ReadOnly|QIODevice::Text)) {
@@ -279,68 +281,68 @@ bool LicenseManager::authenticate() {
       QDate expiryDate  = QDate::fromString(elements[4],Qt::ISODate);
 
       if ( licenseHash !=  elements[5] ) {
-        QString signatureMismatchMessage = tr("The license file signature for plugin \"") + name() + tr("\" is invalid!");
-        QMessageBox::critical(0,tr("License file signature invalid"),signatureMismatchMessage );   
+        _authstring = tr("The license file signature for plugin \"") + name() + tr("\" is invalid!\n\n");
       } else  if ( elements[0] != pluginFileName() ) {
-        QString nameMismatchMessage = tr("The license file contains plugin name\"") + elements[0] + tr("\" but this is plugin \"") + name() + "\"!";
-        QMessageBox::critical(0,tr("License invalid for this plugin"),nameMismatchMessage );
+        _authstring = tr("The license file contains plugin name\"") + elements[0] + tr("\" but this is plugin \"") + name() + "\"!\n\n";
       } else if ( elements[1] != coreHash ) {
-        QString coreMismatchMessage = tr("The license file for plugin \"") + name() + tr("\" is invalid for the currently running OpenFlipper Core!");
-        QMessageBox::critical(0,tr("License invalid for current core"),coreMismatchMessage );
+        _authstring = tr("The license file for plugin \"") + name() + tr("\" is invalid for the currently running OpenFlipper Core!\n\n");
       } else if ( elements[2] != pluginHash ) {
-        QString pluginMismatchMessage = tr("The plugin \"") + name() + tr("\" is a different version than specified in license file!");
-        QMessageBox::critical(0,tr("License invalid for this plugin"),pluginMismatchMessage );
+        _authstring = tr("The plugin \"") + name() + tr("\" is a different version than specified in license file!\n\n");
       } else if ( elements[3] != macHash ) {
-        QString hardwareMismatchMessage = "The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Hardware?)!";
-        QMessageBox::critical(0,tr("License invalid for current System"),hardwareMismatchMessage );    
+        _authstring = "The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Hardware?)!\n\n";
       } else if ( currentDate > expiryDate ) {
-        QString expiredMessage = tr("The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!";
-        QMessageBox::critical(0,tr("License expired"),expiredMessage );
+        _authstring = tr("The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!\n\n";
       } else {
         authenticated_ = true;
       }
+
+      // Add some more info to auth string.
+      if ( ! authenticated_ ) 
+        _authstring = tr("License check for plugin %1 failed.\n\n").arg( pluginFileName() ) + _authstring;
     }
   }
 
-  if ( authenticated_ ) 
-    std::cerr << "Authentication succcessfull for Plugin " << name().toStdString() << std::endl;
-  else {
-    QString text = tr("License check for plugin has failed.\n");
-    text += tr("Please get a valid License!\n");
-    text += tr("Send the following Information to ") + CONTACTMAIL + "\n\n";
-    text += pluginFileName() +"\n";
-    text += coreHash +"\n";
-    text += pluginHash +"\n";
-    text += macHash +"\n";
+  if ( authenticated_ ) {
+    blockSignals(false);
+  } else {
+    _authstring += tr("License check for plugin failed.\n");
+    _authstring += tr("Please get a valid License!\n");
+    _authstring += tr("Send the following Information to ") + CONTACTMAIL + "\n\n";
+    _authstring += pluginFileName() +"\n";
+    _authstring += coreHash +"\n";
+    _authstring += pluginHash +"\n";
+    _authstring += macHash +"\n";
 
     QString keyRequest = saltPre + pluginFileName() + coreHash+pluginHash+macHash +saltPost;
     QString requestSig = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-    text += requestSig + "\n";
+    _authstring += requestSig + "\n";
 
-    QMessageBox::warning ( 0, tr("Plugin License check failed"),  text );
-    std::cerr << "Authentication failed" << std::endl;
     authenticated_ = false;
   }
 
-//   authenticated_ = true;
   return authenticated_;
 }
 
 bool LicenseManager::authenticated() {
+  // Function to check if the plugin is authenticated
   return authenticated_;
 }
 
 void LicenseManager::connectNotify ( const char * /*signal*/ ) {
-  std::cerr << "connectNotify Security Interface" << std::endl;
+
+  // if the plugin is not authenticated and something wants to connect, we block all signals and force a direct disconnect
+  // here, rendering all signal/slot connections useless.
   if ( !authenticated() ) {
     blockSignals(true);
-    std::cerr << "Connects failed due to blocked Plugin" << std::endl;
+    disconnect();
   }
-
-  disconnect();
+  
 }
 
 QString LicenseManager::pluginFileName() {
-  return QString("unset");
+  // FileName of the plugin. has to be set via the salt file
+  QString pluginFileName;
+  ADD_PLUGIN_FILENAME(pluginFileName);
+  return pluginFileName;
 }
 
