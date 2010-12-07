@@ -160,6 +160,9 @@ bool Core::checkSignal(QObject* _plugin , const char* _signalSignature) {
   */
 void Core::loadPlugins()
 {
+  
+  QString licenseTexts = "";
+  
   //try to load plugins from new location
   QDir tempDir = QDir(OpenFlipper::Options::pluginDir());
 
@@ -258,7 +261,9 @@ void Core::loadPlugins()
     loaderThreads[i]->wait();
     
     if ( loaderThreads[i]->getInstance() != 0 ) {
-      loadPlugin(loaderThreads[i]->filename(),true,loaderThreads[i]->getInstance());
+      QString pluginLicenseText  = "";
+      loadPlugin(loaderThreads[i]->filename(),true,pluginLicenseText, loaderThreads[i]->getInstance());
+      licenseTexts += pluginLicenseText;
     } else {
       emit log(LOGERR,tr("Unable to load Plugin :\t %1").arg( loaderThreads[i]->filename() ) );
       emit log(LOGERR,tr("Error was : ") + loaderThreads[i]->getError() );
@@ -269,6 +274,15 @@ void Core::loadPlugins()
   }
 
   splashMessage_ = "";
+  
+  if ( licenseTexts != "" ) {
+    if ( OpenFlipper::Options::gui() )
+      QMessageBox::warning ( 0, tr("Plugin License check failed"),  licenseTexts );
+    else {
+      std::cerr << "Plugin License check failed" << std::endl;
+      std::cerr << licenseTexts.toStdString() << std::endl;
+    }
+  } 
 
   emit pluginsInitialized();
 
@@ -344,7 +358,17 @@ void Core::slotLoadPlugin(){
     }
   }
   
-  loadPlugin(filename,false);
+  QString licenseText = "";
+  loadPlugin(filename,false,licenseText);
+  
+  if ( licenseText != "" ) {
+    if ( OpenFlipper::Options::gui() )
+      QMessageBox::warning ( 0, tr("Plugin License check failed"),  licenseText );
+    else {
+      std::cerr << "Plugin License check failed" << std::endl;
+      std::cerr << licenseText.toStdString() << std::endl;
+    }
+  } 
 }
 
 /** @brief slot for showing loaded Plugins
@@ -404,10 +428,13 @@ void Core::unloadPlugin(QString name){
 /** @brief Load a Plugin with given filename
  *  @param filename complete path + filename of the plugin
  *  @param silent if 'true': user isn't asked what to do if a plugin is already loaded
+ *  @param _licenseErrors String will be epty when no license issues occured, otherwise it contains the required information for obtaining a license
  *  @param _plugin You can provide a preloaded plugin here. If this is 0 the filename will be used to load the plugin.
  */
-void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
+void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QObject* _plugin){
 
+  _licenseErrors = "";
+  
   // Only load .dll under windows
   if ( OpenFlipper::Options::isWindows() ) {
     QString dllname = filename;
@@ -502,13 +529,15 @@ void Core::loadPlugin(QString filename, bool silent, QObject* _plugin){
       emit log(LOGINFO,tr("Plugin uses security interface. Trying to authenticate against plugin ..."));
 
       bool success = false;
-      QMetaObject::invokeMethod(plugin,"authenticate", Q_RETURN_ARG( bool , success ) ) ;
+      QMetaObject::invokeMethod(plugin,"authenticate", Q_RETURN_ARG( bool , success ) , Q_ARG(QString&, _licenseErrors)) ;
 
       if ( success )
         emit log(LOGINFO,tr("... ok. Loading plugin "));
       else {
         emit log(LOGERR,tr("... failed. Plugin access denied."));
         emit log(LOGOUT,"================================================================================");
+        
+        // Abort here, as the plugin will not do anything else until correct authentication.
         return;
       }
     }
