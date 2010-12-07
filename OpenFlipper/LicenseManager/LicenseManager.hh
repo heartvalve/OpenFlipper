@@ -88,8 +88,10 @@ Q_INTERFACES(SecurityInterface)
         the authentication has been successfull. Otherwise the core will 
         stop loading the plugin. Additionally the plugin will make itself
         unusable by not allowing any signal slot connections.
+        
+        @param _authstring String returned, containing hashed license request, if something went wrong or no valid license available.
     */
-    bool authenticate();
+    bool authenticate(QString& _authstring);
 
   private:
     /** This is used to get the plugins Name from derived classes
