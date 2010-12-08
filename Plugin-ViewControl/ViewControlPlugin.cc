@@ -99,7 +99,28 @@ void ViewControlPlugin::pluginsInitialized() {
   connect( viewControlMenu_,  SIGNAL( triggered(QAction*) ), this, SLOT( contextMenuTriggered(QAction*) ));
 
   setDescriptions();
+  
+  // TOOLBAR
+  toolbar_ = new QToolBar(tr("Viewing Directions"));
+  emit addToolbar(toolbar_);
+  toolbarViewingDirections_ = new QActionGroup(toolbar_);
 
+  QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+
+  viewTop_ = new QAction( QIcon(iconPath + "viewcontrol_top.png"), tr("View from top") , toolbarViewingDirections_);
+  toolbar_->addAction( viewTop_ );
+  viewBottom_ = new QAction( QIcon(iconPath + "viewcontrol_bottom.png"), tr("View from bottom") , toolbarViewingDirections_);
+  toolbar_->addAction( viewBottom_ );
+  viewLeft_ = new QAction( QIcon(iconPath + "viewcontrol_left.png"), tr("View from left") , toolbarViewingDirections_);
+  toolbar_->addAction( viewLeft_ );
+  viewRight_ = new QAction( QIcon(iconPath + "viewcontrol_right.png"), tr("View from right") , toolbarViewingDirections_);
+  toolbar_->addAction( viewRight_ );
+  viewFront_ = new QAction( QIcon(iconPath + "viewcontrol_front.png"), tr("View from front") , toolbarViewingDirections_);
+  toolbar_->addAction( viewFront_ );
+  viewBack_ = new QAction( QIcon(iconPath + "viewcontrol_back.png"), tr("View from back") , toolbarViewingDirections_);
+  toolbar_->addAction( viewBack_ );
+  
+  connect( toolbarViewingDirections_, SIGNAL( triggered(QAction*) ), this, SLOT(setView(QAction*)) );
 }
 
 void ViewControlPlugin::updateShaderList() {
@@ -1147,6 +1168,51 @@ void ViewControlPlugin::setSceneCenter( Vector _center, int _viewer ) {
 
 Vector ViewControlPlugin::sceneCenter( int _viewer ) {
   return PluginFunctions::sceneCenter(_viewer);
+}
+
+//-----------------------------------------------------------------------------
+
+void ViewControlPlugin::setView(int _mode, int _viewer ) {
+
+  switch ( _mode ){
+      case PluginFunctions::VIEW_TOP : //TOP
+      setViewingDirection( ACG::Vec3d(0.0, -1.0, 0.0), ACG::Vec3d(0.0, 0.0, -1.0), _viewer );
+      break;
+    case PluginFunctions::VIEW_BOTTOM : //BOTTOM
+      setViewingDirection( ACG::Vec3d(0.0, 1.0, 0.0), ACG::Vec3d(0.0, 0.0, -1.0), _viewer );
+      break;
+    case PluginFunctions::VIEW_LEFT : //LEFT
+      setViewingDirection( ACG::Vec3d(1.0, 0.0, 0.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
+      break;
+    case PluginFunctions::VIEW_RIGHT : //RIGHT
+      setViewingDirection( ACG::Vec3d(-1.0, 0.0, 0.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
+      break;
+    case PluginFunctions::VIEW_FRONT : //FRONT
+      setViewingDirection( ACG::Vec3d(0.0, 0.0, -1.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
+      break;
+    case PluginFunctions::VIEW_BACK : //BACK
+      setViewingDirection( ACG::Vec3d(0.0, 0.0, 1.0), ACG::Vec3d(0.0, 1.0, 0.0), _viewer );
+      break;
+    default : 
+      emit log(LOGERR, "ViewControl: Unknown view mode: " + QString::number(_mode));
+      break;
+  }
+  
+  PluginFunctions::allowRotation(true, _viewer);
+  updateView();
+}
+
+//-----------------------------------------------------------------------------
+
+void ViewControlPlugin::setView(QAction* _action) {
+
+  if ( _action == viewTop_) 		setView (PluginFunctions::VIEW_TOP, 	PluginFunctions::ACTIVE_VIEWER);
+  else if ( _action == viewBottom_) 	setView (PluginFunctions::VIEW_BOTTOM, 	PluginFunctions::ACTIVE_VIEWER);
+  else if ( _action == viewLeft_) 	setView (PluginFunctions::VIEW_LEFT, 	PluginFunctions::ACTIVE_VIEWER);
+  else if ( _action == viewRight_) 	setView (PluginFunctions::VIEW_RIGHT, 	PluginFunctions::ACTIVE_VIEWER);
+  else if ( _action == viewFront_) 	setView (PluginFunctions::VIEW_FRONT, 	PluginFunctions::ACTIVE_VIEWER);
+  else if ( _action == viewBack_) 	setView (PluginFunctions::VIEW_BACK, 	PluginFunctions::ACTIVE_VIEWER);
+  else emit log(LOGERR, "ViewControl: Unknown view mode action!");
 }
 
 //-----------------------------------------------------------------------------
