@@ -929,7 +929,7 @@ private slots:
     int toolboxindex_;
 
     /// Function for loading Plugins
-    void loadPlugin(QString filename, bool silent, QObject* _plugin = 0 );
+    void loadPlugin(QString filename, bool silent, QString& _licenseErrors , QObject* _plugin = 0 );
 
     /// Load all plugins from default plugin directory and from INI-File
     void loadPlugins();
