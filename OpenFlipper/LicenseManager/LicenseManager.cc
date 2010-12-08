@@ -184,8 +184,9 @@ void LicenseManager::blockSignals( bool _state) {
 // Plugin authentication function.
 bool LicenseManager::authenticate(QString& _authstring) {
 
-  // Cleanup auth string
-  _authstring = "";
+  // Construct license string (will be cleaned up if license valid)
+  _authstring = "==\n";
+  _authstring += "PluginName: " + pluginFileName() + "\n";
   
   // ===============================================================================================
   // Compute hash value of Core application binary
@@ -281,33 +282,35 @@ bool LicenseManager::authenticate(QString& _authstring) {
       QDate expiryDate  = QDate::fromString(elements[4],Qt::ISODate);
 
       if ( licenseHash !=  elements[5] ) {
-        _authstring = tr("The license file signature for plugin \"") + name() + tr("\" is invalid!\n\n");
+        _authstring += tr("License Error: The license file signature for plugin \"") + name() + tr("\" is invalid!\n\n");
       } else  if ( elements[0] != pluginFileName() ) {
-        _authstring = tr("The license file contains plugin name\"") + elements[0] + tr("\" but this is plugin \"") + name() + "\"!\n\n";
+        _authstring += tr("License Error: The license file contains plugin name\"") + elements[0] + tr("\" but this is plugin \"") + name() + "\"!\n\n";
       } else if ( elements[1] != coreHash ) {
-        _authstring = tr("The license file for plugin \"") + name() + tr("\" is invalid for the currently running OpenFlipper Core!\n\n");
+        _authstring += tr("License Error: The license file for plugin \"") + name() + tr("\" is invalid for the currently running OpenFlipper Core!\n\n");
       } else if ( elements[2] != pluginHash ) {
-        _authstring = tr("The plugin \"") + name() + tr("\" is a different version than specified in license file!\n\n");
+        _authstring += tr("License Error: The plugin \"") + name() + tr("\" is a different version than specified in license file!\n\n");
       } else if ( elements[3] != macHash ) {
-        _authstring = "The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Hardware?)!\n\n";
+        _authstring += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Hardware?)!\n\n";
       } else if ( currentDate > expiryDate ) {
-        _authstring = tr("The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!\n\n";
+        _authstring += tr("License Error: The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!\n\n";
       } else {
         authenticated_ = true;
       }
 
-      // Add some more info to auth string.
-      if ( ! authenticated_ ) 
-        _authstring = tr("License check for plugin %1 failed.\n\n").arg( pluginFileName() ) + _authstring;
+      // Clean it on success
+      if (  authenticated_ ) 
+        _authstring = "";
+      
     }
   }
 
   if ( authenticated_ ) {
     blockSignals(false);
   } else {
-    _authstring += tr("License check for plugin failed.\n");
-    _authstring += tr("Please get a valid License!\n");
-    _authstring += tr("Send the following Information to ") + CONTACTMAIL + "\n\n";
+    _authstring += tr("Message: License check for plugin failed.\n");
+    _authstring += tr("Message: Please get a valid License!\n");
+    _authstring += tr("Message: Send the following Information to \n");
+    _authstring += tr("Contact mail: ") + CONTACTMAIL + "\n\n";
     _authstring += pluginFileName() +"\n";
     _authstring += coreHash +"\n";
     _authstring += pluginHash +"\n";
