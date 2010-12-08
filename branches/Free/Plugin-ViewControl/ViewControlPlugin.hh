@@ -50,6 +50,7 @@
 #include <OpenFlipper/BasePlugin/BaseInterface.hh>
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/PickingInterface.hh>
+#include <OpenFlipper/BasePlugin/ToolbarInterface.hh>
 #include <OpenFlipper/BasePlugin/ContextMenuInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
@@ -79,21 +80,29 @@ struct ShaderInfo {
       QStringList uniformsMin;
 };
 
-class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, LoggingInterface, ContextMenuInterface
+class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, LoggingInterface, ToolbarInterface, ContextMenuInterface
 {
   Q_OBJECT
   Q_INTERFACES(BaseInterface)
   Q_INTERFACES(PickingInterface)
   Q_INTERFACES(LoggingInterface)
+  Q_INTERFACES(ToolbarInterface)
   Q_INTERFACES(ContextMenuInterface)
 
   signals:
+    //BaseInterface
     void updateView();
 
+    //PickingInterface
     void addHiddenPickMode( const std::string _mode );
-
+    
+    //LoggingInterface
     void log(Logtype _type, QString _message);
     void log(QString _message);
+    
+    //ToolbarInterface
+    void addToolbar(QToolBar* _toolbar);
+    void getToolBar(QString _name, QToolBar*& _toolbar);
 
     // ContextMenuInterface
     void addContextMenuItem(QAction* _action , ContextMenuType _type);
@@ -139,6 +148,15 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     /** List of available shaders
     */
     std::vector <ShaderInfo> shaderList_;
+    
+    QToolBar* toolbar_;
+    QActionGroup* toolbarViewingDirections_;
+    QAction* viewTop_;
+    QAction* viewBottom_;
+    QAction* viewLeft_;
+    QAction* viewRight_;
+    QAction* viewFront_;
+    QAction* viewBack_;
 
   private slots:
     QString version() { return QString("1.0"); };
@@ -157,6 +175,12 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
 
     // slot is called when the data of the uniforms-table changes
     void itemChanged(QTableWidgetItem* item);
+    
+    // Set the view to one of the six possible look-at directions
+    void setView(int _mode, int _viewer = PluginFunctions::ACTIVE_VIEWER );
+    
+    // Set the view mode using the defined actions
+    void setView(QAction* _action);
 
   private:
     // Update the list of available shaders
