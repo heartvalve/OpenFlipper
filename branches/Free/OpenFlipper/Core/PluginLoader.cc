@@ -276,10 +276,69 @@ void Core::loadPlugins()
   splashMessage_ = "";
   
   if ( licenseTexts != "" ) {
-    if ( OpenFlipper::Options::gui() )
-      QMessageBox::warning ( 0, tr("Plugin License check failed"),  licenseTexts );
-    else {
-      std::cerr << "Plugin License check failed" << std::endl;
+    if ( OpenFlipper::Options::gui() ) {
+      
+      // split for each license block
+      QStringList licenseBlocks = licenseTexts.split("==");
+
+      // Cleanup lists to get only the ones containing valid plugins.
+      for ( QStringList::iterator it = licenseBlocks.begin(); it != licenseBlocks.end() ; ++it )
+        if ( ! it->contains("PluginName") ) {
+          licenseBlocks.erase(it);
+          it = licenseBlocks.begin();
+        }
+      
+      // sort by the contact mails
+      QMap< QString , QString > contacts;
+      
+      for ( QStringList::iterator it = licenseBlocks.begin(); it != licenseBlocks.end() ; ++it ) {
+        QStringList lines = it->split("\n");
+        
+        lines = lines.filter ( "Contact mail", Qt::CaseInsensitive );
+        
+        // Corect one found:
+        if (lines.size() == 1)  {
+          QString mail = lines[0].section(":",-1).simplified();
+          QString list = contacts.take(mail);
+          list.append(*it);
+          contacts.insert(mail,list);
+        } else {
+          emit log(LOGWARN,tr("Can't extract mail contact from license request"));
+        }
+          
+      }
+      
+      for ( QMap<QString , QString>::iterator it = contacts.begin() ; it != contacts.end() ; ++it ) {
+        
+        QStringList request = it.value().split("\n");
+        
+        // Cleanup lists to get only the relevant part
+        for ( QStringList::iterator lit = request.begin(); lit != request.end() ; ++lit ) {
+          if ( lit->contains("==") ) {
+            request.erase(lit);
+            lit = request.begin();
+          }
+          
+          if ( lit->contains("Message:")  ) {
+            *lit = lit->section(":",-1).simplified();
+          }
+          
+          if ( lit->contains("Contact mail:")  ) {
+            *lit = lit->section(":",-1).simplified();
+          }
+          
+        }
+        
+        QMessageBox::StandardButton button = QMessageBox::warning ( 0, tr("Plugin License check failed, issuer is: %1").arg( it.key() ),  request.join("\n") + tr("\n\n Open in Mail program?"),QMessageBox::Yes | QMessageBox::No,QMessageBox::Yes  );
+        
+        if ( button == QMessageBox::Yes )
+           QDesktopServices::openUrl(QUrl(tr("mailto:%1?subject=License Request&body=%2").arg(it.key()).arg(it.value()), QUrl::TolerantMode));
+        
+      }
+
+      
+    } else {
+      emit log(LOGWARN,tr("Plugin License check failed: "));
       std::cerr << licenseTexts.toStdString() << std::endl;
     }
   } 
@@ -362,9 +421,12 @@ void Core::slotLoadPlugin(){
   loadPlugin(filename,false,licenseText);
   
   if ( licenseText != "" ) {
-    if ( OpenFlipper::Options::gui() )
+    if ( OpenFlipper::Options::gui() ) {
       QMessageBox::warning ( 0, tr("Plugin License check failed"),  licenseText );
-    else {
+      
+      std::cerr << "OpenURL: " << std::endl;
+      QDesktopServices::openUrl(QUrl(tr("mailto:contact@openflipper.com?subject=License Request&body=%1").arg(licenseText), QUrl::TolerantMode));
+    } else {
       std::cerr << "Plugin License check failed" << std::endl;
       std::cerr << licenseText.toStdString() << std::endl;
     }
