@@ -314,10 +314,6 @@ void Core::loadPlugins()
         
         // Cleanup lists to get only the relevant part
         for ( QStringList::iterator lit = request.begin(); lit != request.end() ; ++lit ) {
-          if ( lit->contains("==") ) {
-            request.erase(lit);
-            lit = request.begin();
-          }
           
           if ( lit->contains("Message:")  ) {
             *lit = lit->section(":",-1).simplified();
