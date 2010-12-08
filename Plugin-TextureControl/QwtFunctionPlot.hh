@@ -108,6 +108,11 @@ public:
 
   void setImage(QImage* _image);
 
+public slots:
+  void zoomIn();
+  void zoomOut();
+  void clamp();
+  
   void replot();
 
 private:

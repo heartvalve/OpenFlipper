@@ -84,7 +84,11 @@ QwtFunctionPlot::QwtFunctionPlot(QWidget* _parent) :
   setupUi( this );
 
   plot_zoomer_ = new QwtPlotZoomer( qwtPlot->canvas());
-
+  connect(zoomInButton, SIGNAL( clicked() ), this,SLOT( zoomIn() )  );
+  connect(zoomOutButton,SIGNAL( clicked() ), this,SLOT( zoomOut() ) );
+  connect(clampButton,  SIGNAL( clicked() ), this,SLOT( clamp() )   );
+  
+  
   // delete widget on close
   setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -187,6 +191,30 @@ void QwtFunctionPlot::initValues()
     currentMin_ = std::min(currentMin_, tranformed );
     currentMax_ = std::max(currentMax_, tranformed );
   }
+}
+
+//------------------------------------------------------------------------------
+
+void QwtFunctionPlot::zoomIn()
+{
+    emit plot_zoomer_->zoom(1);
+}
+
+//------------------------------------------------------------------------------
+
+void QwtFunctionPlot::zoomOut()
+{
+    emit plot_zoomer_->zoom(-1);
+}
+
+//------------------------------------------------------------------------------
+
+void QwtFunctionPlot::clamp()
+{
+    QwtDoubleRect clamped = plot_zoomer_->zoomRect();
+    clamped.setLeft( transform(min_) );
+    clamped.setRight( transform(max_) );
+    emit plot_zoomer_->zoom(clamped);
 }
 
 //------------------------------------------------------------------------------
