@@ -89,6 +89,9 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   logWidget_(0),
   recentFilesMenu_(0),
   helpMenu_(0),
+  windowMenu_(0),
+  AC_ShowViewModeControls_(0),
+  AC_ShowToolbox_(0),
   cursorPainter_(0),
   sceneGraphDialog_(0),
   fileMenu_(0),
@@ -662,6 +665,11 @@ CoreWidget::showViewModeControls(bool _show) {
   
     // Update setting in Conf storage
     OpenFlipperSettings().setValue("Core/Gui/TaskSwitcher/Hide",!_show);
+    
+    // Update The Checkbox in the Menu
+    AC_ShowViewModeControls_->blockSignals(true);
+    AC_ShowViewModeControls_->setChecked( _show  );
+    AC_ShowViewModeControls_->blockSignals(false);
     
     if ( _show ) {
       viewModeControlBox_->show();

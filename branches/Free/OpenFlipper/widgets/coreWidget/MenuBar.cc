@@ -436,6 +436,35 @@ void CoreWidget::setupMenuBar()
   AC_Plugins->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"network-connect.png"));
   connect(AC_Plugins, SIGNAL(triggered()), this, SIGNAL(showPlugins()));
   toolsMenu_->addAction(AC_Plugins);
+  
+  // ======================================================================
+  // Window Menu
+  // ======================================================================
+  windowMenu_ = new QMenu(tr("Windows"));
+  menuBar()->addMenu(windowMenu_);
+  menus_[tr("Windows")] = windowMenu_;
+  
+  
+  // Show or Hide the View Mode Controls
+  AC_ShowViewModeControls_ = new QAction(tr("Show View Mode Controls"), this);
+  AC_ShowViewModeControls_->setStatusTip(tr("Show or Hide View Mode Control Widget"));
+  //   AC_HelpBrowser->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png"));
+  AC_ShowViewModeControls_->setWhatsThis(tr("Show or Hide View Mode Control Widget"));
+  AC_ShowViewModeControls_->setCheckable(true);
+  AC_ShowViewModeControls_->setChecked( ! OpenFlipperSettings().value("Core/Gui/TaskSwitcher/Hide",false).toBool()  );
+  connect(AC_ShowViewModeControls_, SIGNAL(toggled( bool )), this, SLOT(showViewModeControls(bool)));
+  windowMenu_->addAction(AC_ShowViewModeControls_);
+  
+  // Show or Hide the View Mode Controls
+  AC_ShowToolbox_ = new QAction(tr("Show Toolboxes"), this);
+  AC_ShowToolbox_->setStatusTip(tr("Show or Hide the Toolbox Widget"));
+  //   AC_HelpBrowser->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"help-browser.png"));
+  AC_ShowToolbox_->setWhatsThis(tr("Show or Hide the Toolbox Widget"));
+  AC_ShowToolbox_->setCheckable(true);
+  AC_ShowToolbox_->setChecked( ! OpenFlipperSettings().value("Core/Gui/ToolBoxes/hidden",false).toBool()  );
+  connect(AC_ShowToolbox_, SIGNAL( toggled( bool )), this, SLOT(showToolbox(bool)));
+  windowMenu_->addAction(AC_ShowToolbox_);
+  
 
   // ======================================================================
   // help Menu

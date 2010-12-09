@@ -363,13 +363,15 @@ public:
     /// Hide or show toolbox area
     void toggleToolbox();
 
-    /// Show or hide toolbox
-    void showToolbox( bool _state );
-
     /// Use native or gl painted cursor
     void setForceNativeCursor ( bool _state );
 
     QSize defaultIconSize();
+    
+  public slots:
+    
+    /// Show or hide toolbox
+    void showToolbox( bool _state );
 
   private:
     OpenFlipper::Options::LoggerState loggerState_;
@@ -490,7 +492,16 @@ public:
 
     /// Help Menu
     QMenu* helpMenu_;
+    
+    /// Window Menu
+    QMenu* windowMenu_;
+    
+    /// Action for View Mode Widget Conrol in Menu
+    QAction* AC_ShowViewModeControls_;
 
+    /// Action for View Mode Widget Conrol in Menu
+    QAction* AC_ShowToolbox_;
+    
     /// gl widget used as drawing area to paint the graphics scene
     QGLWidget* glWidget_;
 
