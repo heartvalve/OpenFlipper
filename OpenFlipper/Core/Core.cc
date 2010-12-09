@@ -605,6 +605,9 @@ Core::init() {
     scenegraphCheckTimer_->start ();
   }
 
+  // System is ready now.
+  OpenFlipper::Options::finishedStartup();
+  
   QTimer::singleShot(100, this, SLOT(slotExecuteAfterStartup()));
 }
 
@@ -1203,6 +1206,19 @@ void Core::snapshotBaseFileName(const QString& _fname, unsigned int _viewerId ){
 
 }
 
+void Core::snapshotFileType(const QString& _type, unsigned int _viewerId ){
+  
+  if ( OpenFlipper::Options::gui() ) {
+    if ( _viewerId >= OpenFlipper::Options::examinerWidgets() ) {
+      emit log(LOGERR,tr("Unable to snapshotFileType for viewer ") + QString::number(_viewerId) );
+      return;
+    }
+    
+    PluginFunctions::viewerProperties(_viewerId).snapshotBaseFileName( _type );
+  }
+  
+}
+
 void Core::snapshot( unsigned int _viewerId, int _width, int _height, bool _alpha ){
 
 
@@ -1328,6 +1344,8 @@ void Core::setDescriptions(){
                         QStringList(tr("frameRate")), QStringList(tr("Maximum frameRate")));
   emit setSlotDescription("snapshotBaseFileName(QString&)", tr("Set a filename for storing snapshots.")
                           , QStringList(), QStringList());
+  emit setSlotDescription("snapshotFileType(QString&)", tr("Set a filetype for storing snapshots.")
+                          , QStringList(), QStringList());                          
   emit setSlotDescription("snapshot()", tr("Make a snapshot of the viewer. If no filename"
                           " was set using snapshotBaseFileName() the snapshot is stored"
                           " in snap.png in the current directory. The captured image will have "
