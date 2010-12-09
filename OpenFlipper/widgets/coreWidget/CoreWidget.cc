@@ -446,7 +446,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   toolBoxArea_ = new QWidget (toolSplitter_);
 
-  QGroupBox *gb = new QGroupBox (tr("ViewMode"));
+  viewModeControlBox_ = new QGroupBox (tr("ViewMode"));
 
   QHBoxLayout *hLayout = new QHBoxLayout;
 
@@ -455,7 +455,7 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
 
   hLayout->addWidget(vmChangeButton_);
   hLayout->addWidget(vmEditButton);
-  gb->setLayout (hLayout);
+  viewModeControlBox_->setLayout (hLayout);
 
   connect(vmChangeButton_, SIGNAL(clicked()), this, SLOT(slotViewChangeDialog()));
   connect(vmEditButton, SIGNAL(clicked()), this, SLOT(slotViewModeDialog()));
@@ -467,8 +467,11 @@ CoreWidget( QVector<ViewMode*>& _viewModes,
   toolBoxScroll_->setFrameStyle (QFrame::StyledPanel);
 
   QVBoxLayout *vLayout = new QVBoxLayout;
-  vLayout->addWidget(gb);
+  vLayout->addWidget(viewModeControlBox_);
   vLayout->addWidget(toolBoxScroll_);
+  
+  if ( OpenFlipperSettings().value("Core/Gui/TaskSwitcher/Hide",false).toBool() )
+    viewModeControlBox_->hide();
 
   toolBoxArea_->setLayout (vLayout);
 
@@ -649,6 +652,27 @@ CoreWidget::setFullscreen(bool _state ) {
 
   show();
 }
+
+//-----------------------------------------------------------------------------
+
+void 
+CoreWidget::showViewModeControls(bool _show) {
+  // Only change if the actual setting has changed!
+  if ( OpenFlipper::Options::gui() && ( !_show != OpenFlipperSettings().value("Core/Gui/TaskSwitcher/Hide",false).toBool() ) ) {
+  
+    // Update setting in Conf storage
+    OpenFlipperSettings().setValue("Core/Gui/TaskSwitcher/Hide",!_show);
+    
+    if ( _show ) {
+      viewModeControlBox_->show();
+    } else {
+      viewModeControlBox_->hide();
+    }
+    
+  }
+  
+}
+
 
 //-----------------------------------------------------------------------------
 

@@ -911,6 +911,14 @@ void Core::fullscreen( bool _state ) {
 
 //-----------------------------------------------------------------------------
 
+void Core::showViewModeControls( bool _show ) {
+  if ( OpenFlipper::Options::gui() ) {
+    coreWidget_->showViewModeControls(_show);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::loggerState(int _state) {
   OpenFlipper::Options::LoggerState state = static_cast<OpenFlipper::Options::LoggerState> (_state);
   if ( OpenFlipper::Options::gui() &&
@@ -1333,6 +1341,9 @@ void Core::setDescriptions(){
   emit setSlotDescription("fullscreen(bool)", tr("Enable or disable fullscreen mode"),
                            QStringList(tr("enabled")) ,
                            QStringList(tr("Enable or disable fullscreen mode")));
+  emit setSlotDescription("showViewModeControls(bool)", tr("Show or hide the view mode control box"),
+                           QStringList(tr("Show?")) ,
+                           QStringList());                           
   emit setSlotDescription("loggerState(int)", tr("Change the logger window state"), QStringList(tr("Change the logger window state")), QStringList());
   emit setSlotDescription("showToolbox(bool)", tr("Show or hide toolbox"), QStringList(tr("Show or hide the toolbox")), QStringList());
   emit setSlotDescription("multiViewMode(int)", tr("Switch MultiView Mode"),

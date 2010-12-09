@@ -58,7 +58,7 @@ namespace Viewer {
 
   ViewerProperties::ViewerProperties():
     currentDrawMode_(ACG::SceneGraph::DrawModes::NONE),
-    snapshotName_("snap.png"),
+    snapshotName_("snap"),
     snapshotFileType_("png"),
     snapshotCounter_(0),
     wZoomFactor_(1.0),

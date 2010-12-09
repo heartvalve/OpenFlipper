@@ -2220,9 +2220,7 @@ void glViewer::snapshot( int _width, int _height, bool _alpha )
    
    QFileInfo fi(properties_.snapshotName());
 
-   QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()) + ".";
-
-   fname += properties_.snapshotFileType();
+   QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()) + "." + properties_.snapshotFileType();
 
    bool rval=image.save(fname,properties_.snapshotFileType().toUpper().toLatin1());
 

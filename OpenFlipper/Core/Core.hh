@@ -469,6 +469,9 @@ public slots:
 
     /// set fullscreen mode
     void fullscreen( bool _state );
+    
+    /// Show or Hide the viewmode control widget.
+    void showViewModeControls( bool _show );
 
     /// Change the logging window state
     void loggerState(int _state);
