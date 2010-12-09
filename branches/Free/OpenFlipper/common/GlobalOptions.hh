@@ -271,6 +271,14 @@ QString helpDirStr();
 * @{ */
 //===========================================================================
 
+  ///  Returns if the system is currently in a startup phase
+  DLLEXPORT
+  bool startup();
+  
+  /// Set status to startup complete
+  DLLEXPORT
+  void finishedStartup();
+
   /// return the current script-directory
   DLLEXPORT
   QString currentScriptDirStr();

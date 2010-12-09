@@ -122,6 +122,9 @@ static QDir currentScriptDir_;
 /// Current texture directory of the application
 static QDir currentTextureDir_;
 
+/// Is system in startup phase
+static bool startup_ = false;
+
 /// Should ini-files be deleted on exit?
 static bool deleteIniFile_ = false;
 
@@ -314,6 +317,10 @@ QString currentTextureDirStr() { return currentTextureDir_.absolutePath(); }
 QStringList optionFiles()   { return optionFiles_; }
 
 void optionFiles(QStringList _list) { optionFiles_ = _list; }
+
+bool startup() { return startup_; };
+
+void finishedStartup() { startup_ = false;};
 
 QIcon& OpenFlipperIcon() {
 
