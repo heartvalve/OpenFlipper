@@ -2222,14 +2222,9 @@ void glViewer::snapshot( int _width, int _height, bool _alpha )
 
    QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()) + ".";
 
-   QString format="png";
+   fname += properties_.snapshotFileType();
 
-   if (fi.completeSuffix() == "ppm")
-     format="ppmraw";
-
-   fname += format;
-
-   bool rval=image.save(fname,format.toUpper().toLatin1());
+   bool rval=image.save(fname,properties_.snapshotFileType().toUpper().toLatin1());
 
    if (rval)
    {
