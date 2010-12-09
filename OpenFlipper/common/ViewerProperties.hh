@@ -127,12 +127,14 @@ namespace Viewer {
         counter to 0.
       */
       void snapshotBaseFileName(const QString& _fname);
-      
 
       /** Set the file type for snapshots. defaults to png"
       */
       void snapshotFileType(const QString& _type);
 
+      /** Get the file type for the current snapshot */
+      QString snapshotFileType() { return snapshotFileType_; };
+      
       /** Get the name for the current snapshot */
       QString snapshotName() { return snapshotName_; };
 
