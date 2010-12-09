@@ -104,6 +104,8 @@
 #include <QPainter>
 #include <QPaintEngine>
 
+#include <QImageWriter>
+
 #ifdef max
 #  undef max
 #endif
@@ -2220,19 +2222,19 @@ void glViewer::snapshot( int _width, int _height, bool _alpha )
    
    QFileInfo fi(properties_.snapshotName());
 
-   QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()) + "." + properties_.snapshotFileType();
-
-   bool rval=image.save(fname,properties_.snapshotFileType().toUpper().toLatin1());
-
+   QString fname = fi.path() + QDir::separator() +fi.baseName() + "." + QString::number(properties_.snapshotCounter()) + "." + properties_.snapshotFileType().toLower();
+   
+   QImageWriter writer(fname);
+   writer.setFormat(properties_.snapshotFileType().simplified().toLatin1());
+   
+   bool rval = writer.canWrite();
    if (rval)
-   {
-     emit statusMessage (QString(tr("snapshot: "))+fname,5000);
-   }
+     writer.write(image);
+   
+   if (rval)
+     emit statusMessage (QString(tr("Snapshot: "))+fname,5000);
    else
-   {
-     emit statusMessage (QString(tr("could not save snapshot to "))+fname);
-   }
-
+     emit statusMessage (QString(tr("Could not save snapshot to ")) + fname + QString(tr(" Error: ")) + writer.errorString() );
 }
 
 void glViewer::slotHideWheels() {
