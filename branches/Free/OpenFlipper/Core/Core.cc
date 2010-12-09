@@ -1214,7 +1214,7 @@ void Core::snapshotFileType(const QString& _type, unsigned int _viewerId ){
       return;
     }
     
-    PluginFunctions::viewerProperties(_viewerId).snapshotBaseFileName( _type );
+    PluginFunctions::viewerProperties(_viewerId).snapshotFileType( _type );
   }
   
 }
