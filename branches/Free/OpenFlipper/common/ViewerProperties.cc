@@ -59,6 +59,7 @@ namespace Viewer {
   ViewerProperties::ViewerProperties():
     currentDrawMode_(ACG::SceneGraph::DrawModes::NONE),
     snapshotName_("snap.png"),
+    snapshotFileType_("png"),
     snapshotCounter_(0),
     wZoomFactor_(1.0),
     wZoomFactorShift_(0.2),
@@ -89,6 +90,10 @@ namespace Viewer {
   void ViewerProperties::snapshotBaseFileName(const QString& _fname) {
     snapshotName_    = _fname;
     snapshotCounter_ = 0;
+  }
+  
+  void ViewerProperties::snapshotFileType(const QString& _type) {
+    snapshotFileType_  = _type;
   }
 
   std::string ViewerProperties::pickMode(){
