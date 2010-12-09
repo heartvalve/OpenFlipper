@@ -490,7 +490,7 @@ public slots:
     void snapshotBaseFileName(const QString& _fname, unsigned int _viewerId = 0);
     
     /// Set the file type for snapshots.
-    void snapshotFileType(const QString& _type, unsigned int _viewerId );
+    void snapshotFileType(const QString& _type, unsigned int _viewerId = 0);
 
     /** Trigger a snapshot and increase the snapshot counter.
       Save snapshot to file determined by snapshotBaseFileName() and
