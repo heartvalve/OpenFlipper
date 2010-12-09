@@ -437,6 +437,9 @@ public:
       
       /// Set orientation of tool box (either on the right or the left side of the screen)
       void setToolBoxOrientationOnTheRight(bool _toolBoxRight);
+      
+      /// Hide or show the View Mode controls
+      void showViewModeControls(bool _show);
 
     private slots:
       /// Remove viewMode
@@ -473,6 +476,9 @@ public:
     ///Spliter between toplevel objects and the textedit at the bottom
     QSplitter* splitter_;
 
+    /// Group box containing Task Switcher Controls
+    QGroupBox *viewModeControlBox_;
+    
     /// Textedit at the bottom for log messages
     LoggerWidget* logWidget_;
 

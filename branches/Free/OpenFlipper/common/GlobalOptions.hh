@@ -95,6 +95,7 @@
 * * Core/Gui/glViewer/useMultipleViewers     Use only one viewer or automatically generate multiple viewers (bool)\n
 * * Core/Gui/ToolBoxes/hidden                Hide the toolbox sidebar (bool)\n
 * * Core/Gui/ToolBoxes/ToolBoxOnTheRight     Toolbox on the right or on the left (bool)\n
+* * Core/Gui/TaskSwitcher/Hide               Show or Hide the task switcher(bool)\n
 * * Core/Gui/LogWindow/LogWindowMode         Log Window Mode .. 0 InScene, 1 Window, 2 Hidden (int)\n
 * * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)\n
 * * Core/Gui/fullscreen                      Show OpenFlipper in Fullscreen Mode(bool)\n
