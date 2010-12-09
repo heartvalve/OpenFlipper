@@ -120,9 +120,6 @@ namespace Viewer {
     public slots:
       /** Set the base file name and reset the counter for snapshots.
 
-        The image file format is determined from the file name extension,
-        the \a QImageIO formats are supported (e.g. ".ppm" [raw], ".png").
-
         The current snapshot counter will be added in front of the last "."
         in the filename.
 
@@ -130,6 +127,11 @@ namespace Viewer {
         counter to 0.
       */
       void snapshotBaseFileName(const QString& _fname);
+      
+
+      /** Set the file type for snapshots. defaults to png"
+      */
+      void snapshotFileType(const QString& _type);
 
       /** Get the name for the current snapshot */
       QString snapshotName() { return snapshotName_; };
@@ -139,6 +141,7 @@ namespace Viewer {
 
     private:
       QString                      snapshotName_;
+      QString                      snapshotFileType_;
       int                          snapshotCounter_;
 
     /** @} */
