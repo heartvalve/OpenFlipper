@@ -966,8 +966,8 @@ void Core::multiViewMode( int _mode ) {
 void
 Core::slotRecentOpen(QAction* _action)
 {
-  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles").toStringList();
-  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes").toStringList();
+  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles", QStringList()).toStringList();
+  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes", QStringList()).toStringList();
   
   for (int i = 0 ; i < recentFiles.size() ; ++i )
     if ( recentFiles[i] == _action->text() ){

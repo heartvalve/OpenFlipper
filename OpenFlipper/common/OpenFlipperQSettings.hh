@@ -34,62 +34,32 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 10413 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2010-12-09 15:40:04 +0100 (Thu, 09 Dec 2010) $                     *
 *                                                                            *
 \*===========================================================================*/
 
+#ifndef OPENLFLIPPERQSETTINGS_HH
+#define OPENLFLIPPERQSETTINGS_HH
 
+#include <QSettings>
 
+class OpenFlipperQSettings : public QSettings
+{
+public:
+    explicit OpenFlipperQSettings(const QString &organization,
+                       const QString &application = QString(), QObject *parent = 0) : QSettings(organization, application, parent) {};
+    OpenFlipperQSettings(QSettings::Scope scope, const QString &organization,
+              const QString &application = QString(), QObject *parent = 0) : QSettings(scope, organization, application, parent) {};
+    OpenFlipperQSettings(QSettings::Format format, QSettings::Scope scope, const QString &organization,
+	      const QString &application = QString(), QObject *parent = 0) : QSettings (format, scope, organization, application, parent) {};
+    OpenFlipperQSettings(const QString &fileName, QSettings::Format format, QObject *parent = 0) : QSettings(fileName, format, parent) {};
+    explicit OpenFlipperQSettings(QObject *parent = 0) : QSettings(parent) {};
+    
+    /// Wrapper function for QSettings::value() that outputs an error message to console if the key was not found and no default value given.
+    /// This is supposed to prevent Plugin authors from forgetting to specify the defaultValue. ;)
+    QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const;
+};
 
-//=============================================================================
-//
-//  Options used throughout the System
-//
-//=============================================================================
-
-#include <QDir>
-
-#include "RecentFiles.hh"
-
-#include <OpenFlipper/common/GlobalOptions.hh>
-#include <OpenFlipper/common/Types.hh>
-
-namespace OpenFlipper {
-namespace Options {
-  
-
-void addRecentFile(QString _file, DataType _type) {
-  
-  
-  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles", QStringList()).toStringList();
-  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes", QStringList()).toStringList();
-  
-  QString type = typeName(_type);
-  
-  // Check if file already in recent list
-  for ( int i = 0 ; i < recentFiles.size() ; ++i)
-    if ( _file == recentFiles[i] && type == recentTypes[i] ){
-      recentFiles.removeAt(i);
-      recentTypes.removeAt(i);
-    }
-  
-  // Erase if too many files in list
-  if ( recentFiles.size() >= OpenFlipperSettings().value("Core/File/MaxRecent",15).toInt() ) {
-    recentFiles.pop_back();
-    recentTypes.pop_back();
-  }
-
-  recentFiles.push_front(_file);
-  recentTypes.push_front(type);
-  
-  OpenFlipperSettings().setValue("Core/File/RecentFiles", recentFiles);
-  OpenFlipperSettings().setValue("Core/File/RecentTypes", recentTypes); 
-}
-
-}
-}
-
-//=============================================================================
-
+#endif // OPENFLIPPERQSETTINGS_HH

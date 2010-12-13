@@ -117,10 +117,10 @@ glViewer::drawScene_glStereo()
   h = glHeight();
   a = w / h;
 
-  double fovy = OpenFlipperSettings().value("Core/Projection/FOVY").toDouble();
+  double fovy = OpenFlipperSettings().value("Core/Projection/FOVY",45.0).toDouble();
   radians = fovy * 0.5 / 180.0 * M_PI;
   wd2     = near_ * tan(radians);
-  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance").toDouble() );
+  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance",0.5).toDouble() );
   ndfl    = near_ / zerop ;
   xrange  = a * wd2 * 2 * zerop / near_;
 
@@ -129,7 +129,7 @@ glViewer::drawScene_glStereo()
   t =  wd2;
   b = -wd2;
 
-  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble()  * xrange;
+  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance",0.07).toDouble()  * xrange;
   double offset2 = offset * ndfl;
 
   // left eye
@@ -513,10 +513,10 @@ glViewer::drawScene_anaglyphStereo()
   h = glHeight();
   a = w / h;
 
-  double fovy = OpenFlipperSettings().value("Core/Projection/FOVY").toDouble();
+  double fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
   radians = fovy * 0.5 / 180.0 * M_PI;
   wd2     = near_ * tan(radians);
-  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance").toDouble() );
+  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance", 0.5).toDouble() );
   ndfl    = near_ / zerop ;
   xrange  = a * wd2 * 2 * zerop / near_;
 
@@ -525,7 +525,7 @@ glViewer::drawScene_anaglyphStereo()
   t =  wd2;
   b = -wd2;
 
-  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble() * xrange;
+  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance", 0.07).toDouble() * xrange;
   double offset2 = offset * ndfl;
 
   // left eye
@@ -645,10 +645,10 @@ glViewer::drawScene_customAnaglyphStereo()
   h = glHeight();
   a = w / h;
 
-  double fovy = OpenFlipperSettings().value("Core/Projection/FOVY").toDouble();
+  double fovy = OpenFlipperSettings().value("Core/Projection/FOVY",45.0).toDouble();
   radians = fovy * 0.5 / 180.0 * M_PI;
   wd2     = near_ * tan(radians);
-  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance").toDouble() );
+  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance",0.5).toDouble() );
   ndfl    = near_ / zerop ;
   xrange  = a * wd2 * 2 * zerop / near_;
 
@@ -657,7 +657,7 @@ glViewer::drawScene_customAnaglyphStereo()
   t =  wd2;
   b = -wd2;
 
-  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance").toDouble() * xrange;
+  double offset  = 0.5 * OpenFlipperSettings().value("Core/Stereo/EyeDistance",0.07).toDouble() * xrange;
   double offset2 = offset * ndfl;
 
   int vp_l, vp_b, vp_w, vp_h;

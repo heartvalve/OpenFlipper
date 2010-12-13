@@ -34,62 +34,20 @@
 
 /*===========================================================================*\
 *                                                                            *
-*   $Revision$                                                       *
-*   $LastChangedBy$                                                *
-*   $Date$                     *
+*   $Revision: 10413 $                                                       *
+*   $LastChangedBy: moebius $                                                *
+*   $Date: 2010-12-09 15:40:04 +0100 (Thu, 09 Dec 2010) $                     *
 *                                                                            *
 \*===========================================================================*/
 
+#include <iostream>
+#include "OpenFlipperQSettings.hh"
 
-
-
-//=============================================================================
-//
-//  Options used throughout the System
-//
-//=============================================================================
-
-#include <QDir>
-
-#include "RecentFiles.hh"
-
-#include <OpenFlipper/common/GlobalOptions.hh>
-#include <OpenFlipper/common/Types.hh>
-
-namespace OpenFlipper {
-namespace Options {
-  
-
-void addRecentFile(QString _file, DataType _type) {
-  
-  
-  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles", QStringList()).toStringList();
-  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes", QStringList()).toStringList();
-  
-  QString type = typeName(_type);
-  
-  // Check if file already in recent list
-  for ( int i = 0 ; i < recentFiles.size() ; ++i)
-    if ( _file == recentFiles[i] && type == recentTypes[i] ){
-      recentFiles.removeAt(i);
-      recentTypes.removeAt(i);
-    }
-  
-  // Erase if too many files in list
-  if ( recentFiles.size() >= OpenFlipperSettings().value("Core/File/MaxRecent",15).toInt() ) {
-    recentFiles.pop_back();
-    recentTypes.pop_back();
-  }
-
-  recentFiles.push_front(_file);
-  recentTypes.push_front(type);
-  
-  OpenFlipperSettings().setValue("Core/File/RecentFiles", recentFiles);
-  OpenFlipperSettings().setValue("Core/File/RecentTypes", recentTypes); 
+QVariant OpenFlipperQSettings::value(const QString& key, const QVariant& defaultValue) const
+{
+    QVariant var = QSettings::value(key, defaultValue);
+    if (!var.isValid())
+	std::cerr << "Tried loading OpenFlipper settings value for " << key.toStdString() << ", but it was not found and no default value given!" << std::endl;
+    
+    return var;
 }
-
-}
-}
-
-//=============================================================================
-

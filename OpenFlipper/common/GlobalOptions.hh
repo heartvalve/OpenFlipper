@@ -64,7 +64,7 @@
 #include <QStringList>
 #include <QColor>
 #include <QIcon>
-#include <QSettings>
+#include "OpenFlipperQSettings.hh"
 
 //===========================================================================
 /** @name Persistent settings
@@ -133,7 +133,7 @@
 * Anaglyph stereo mode settings:\n
 */
 DLLEXPORT
-QSettings& OpenFlipperSettings();
+OpenFlipperQSettings& OpenFlipperSettings();
 
 /** @} */
 

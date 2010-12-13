@@ -142,7 +142,7 @@ void Core::applyOptions(){
 
 
     // toolbox orientation
-    coreWidget_->setToolBoxOrientationOnTheRight(OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool());
+    coreWidget_->setToolBoxOrientationOnTheRight(OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool());
 
 
     //set defaultBackgroundColor
@@ -150,8 +150,8 @@ void Core::applyOptions(){
 
     for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i ) {
       //wheel zoom factor
-      PluginFunctions::viewerProperties(i).wheelZoomFactor( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactor").toDouble() );
-      PluginFunctions::viewerProperties(i).wheelZoomFactorShift( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift").toDouble() );
+      PluginFunctions::viewerProperties(i).wheelZoomFactor( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactor",1).toDouble() );
+      PluginFunctions::viewerProperties(i).wheelZoomFactorShift( OpenFlipperSettings().value("Core/Mouse/Wheel/ZoomFactorShift",0.2).toDouble() );
 
       // Picking Debugger
       PluginFunctions::viewerProperties(i).renderPicking( OpenFlipperSettings().value("Core/Debug/Picking/RenderPicking",false).toBool() , target );

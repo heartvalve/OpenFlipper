@@ -145,7 +145,7 @@ void PluginDialog::slotUnload()
 
     // Store the new setting and remove plugin from all lists
     if (buttonState == QMessageBox::Yes || buttonState == QMessageBox::YesToAll) {
-      QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
+      QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames",QStringList()).toStringList();
       if ( !dontLoadPlugins.contains(name) ){
         dontLoadPlugins << name;
         OpenFlipperSettings().setValue("PluginControl/DontLoadNames",dontLoadPlugins);

@@ -336,8 +336,8 @@ void Core::writeApplicationOptions(INIFile& _ini) {
   _ini.add_entry("Options","MaxRecent", OpenFlipperSettings().value("Core/File/MaxRecent",15).toInt() );
 
   // Write list of recent files to ini
-  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles").toStringList();
-  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes").toStringList();
+  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles", QStringList()).toStringList();
+  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes", QStringList()).toStringList();
   
   for ( int j = 0 ; j < recentFiles.size(); ++j) {
     // Save filename

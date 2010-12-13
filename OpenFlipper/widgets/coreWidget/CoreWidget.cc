@@ -927,8 +927,8 @@ CoreWidget::updateRecent()
 
   recentFilesMenu_->clear();
 
-  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles").toStringList();
-  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes").toStringList();
+  QStringList recentFiles = OpenFlipperSettings().value("Core/File/RecentFiles", QStringList()).toStringList();
+  QStringList recentTypes = OpenFlipperSettings().value("Core/File/RecentTypes", QStringList()).toStringList();
 
   for (int i = 0 ; i < recentFiles.size() ; ++i ) {
 

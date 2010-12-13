@@ -406,7 +406,7 @@ void glViewer::updateProjectionMatrix()
 
   glstate_->reset_projection();
 
-  // In scereo mode we have to use a perspective matrix
+  // In stereo mode we have to use a perspective matrix
   if (stereo_ || projectionMode_ == PERSPECTIVE_PROJECTION)
   {
     double aspect;
