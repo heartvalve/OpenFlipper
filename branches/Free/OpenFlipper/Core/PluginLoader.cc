@@ -185,14 +185,14 @@ void Core::loadPlugins()
   }
 
   // get all Plugin Names which will not be loaded
-  QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
+  QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames", QStringList()).toStringList();
   
   // Output info about additional plugins
   for ( int i = 0 ; i < dontLoadPlugins.size(); ++i) 
     emit log(LOGOUT,tr("dontLoadPlugins Plugin from ini file: %1").arg( dontLoadPlugins[i] ) );
   
   // get all Plugins which should be loaded in addition to the standard plugins 
-  QStringList additionalPlugins = OpenFlipperSettings().value("PluginControl/AdditionalPlugins").toStringList();
+  QStringList additionalPlugins = OpenFlipperSettings().value("PluginControl/AdditionalPlugins", QStringList()).toStringList();
   
   // Output info about additional plugins
   for ( int i = 0 ; i < additionalPlugins.size(); ++i) {
@@ -385,7 +385,7 @@ void Core::slotLoadPlugin(){
     return;
 
   // Ask if the plugin is on the block list
-  QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
+  QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames", QStringList()).toStringList();
   if (dontLoadPlugins.contains(name)){
       int ret = QMessageBox::question(0, tr("Plugin Loading Prevention"),
                    tr("OpenFlipper is currently configured to prevent loading this plugin.\n"
@@ -400,7 +400,7 @@ void Core::slotLoadPlugin(){
   }
   
   // check if the plugin is not on the additional plugin list
-  QStringList additionalPlugins = OpenFlipperSettings().value("PluginControl/AdditionalPlugins").toStringList();
+  QStringList additionalPlugins = OpenFlipperSettings().value("PluginControl/AdditionalPlugins", QStringList()).toStringList();
   if (!additionalPlugins.contains(name)){
     int ret = QMessageBox::question(0, tr("Plugin Loading ..."),
                                        tr("Should OpenFlipper load this plugin on next startup?"),
@@ -426,7 +426,7 @@ void Core::slotLoadPlugin(){
       std::cerr << "Plugin License check failed" << std::endl;
       std::cerr << licenseText.toStdString() << std::endl;
     }
-  } 
+  }
 }
 
 /** @brief slot for showing loaded Plugins
@@ -573,7 +573,7 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       }
     }
 
-    QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames").toStringList();
+    QStringList dontLoadPlugins = OpenFlipperSettings().value("PluginControl/DontLoadNames",QStringList()).toStringList();
     
     if ( dontLoadPlugins.contains(basePlugin->name(), Qt::CaseInsensitive) ) {
       emit log(LOGWARN,tr("OpenFlipper.ini prevented Plugin %1 from being loaded! ").arg( basePlugin->name() ));

@@ -69,7 +69,7 @@ namespace Options {
 static QString compilerInfo_ = "";
   
 /// Pointer to the internal settings object storing OpenFlippers program options ( and the pplugins Options)  
-static QSettings* settings_ = 0;  
+static OpenFlipperQSettings* settings_ = 0;  
 
 /// Stores the base Path of the application
 static QDir applicationDir_;
@@ -140,7 +140,7 @@ static bool glStereo_ = true;
 /// Stereo mode
 static StereoMode stereoMode_ = OpenGL;
 
-/// vectroy containing left/right color matrices for custom anaglyph mode
+/// vector containing left/right color matrices for custom anaglyph mode
 static std::vector<float> anaglyphLeftEyeColors_ = std::vector<float> (9, 0.0);
 static std::vector<float> anaglyphRightEyeColors_ = std::vector<float> (9, 0.0);
 
@@ -762,7 +762,7 @@ bool initializeSettings() {
   QSettings::setPath( QSettings::IniFormat, QSettings::UserScope , configDir_.absolutePath() );
 
   // Finally attach the settings object.
-  settings_ = new QSettings(QSettings::IniFormat, QSettings::UserScope, "ACG","OpenFlipper");
+  settings_ = new OpenFlipperQSettings(QSettings::IniFormat, QSettings::UserScope, "ACG", "OpenFlipper");
 
   //==================================================================================================
   // Now create special directories in th OpenFlipper config dir
@@ -930,9 +930,9 @@ QString compilerInfo() {
 }
 }
 
-QSettings& OpenFlipperSettings() {
+OpenFlipperQSettings& OpenFlipperSettings() {
   // Empty standard settings object if the right settings are not available!
-  static QSettings emptySettings;
+  static OpenFlipperQSettings emptySettings;
   
   if ( OpenFlipper::Options::settings_ )
     return *OpenFlipper::Options::settings_;

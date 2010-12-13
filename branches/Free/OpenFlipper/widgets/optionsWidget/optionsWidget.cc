@@ -267,7 +267,7 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   logFile->setText( OpenFlipperSettings().value("Core/Log/logFile").toString()  );
 
   // UI settings
-  toolBoxOrientation->setCurrentIndex((OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight").toBool() ? 0 : 1));
+  toolBoxOrientation->setCurrentIndex((OpenFlipperSettings().value("Core/Gui/ToolBoxes/ToolBoxOnTheRight",true).toBool() ? 0 : 1));
   
   //stereo
 
