@@ -59,6 +59,10 @@ add_definitions (
     -DCORE_VERSION="${OPENFLIPPER_VERSION}"
 )
 
+# Mark this build part as building OpenFLippers Core
+add_definitions(-DOPENFLIPPERPLUGINLIB )
+
+
 # collect all header,source and ui files
 acg_append_files (headers "*.hh" ${directories})
 acg_append_files (sources "*.cc" ${directories})

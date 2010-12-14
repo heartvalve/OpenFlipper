@@ -59,6 +59,18 @@
 #ifndef PLUGINFUNCTIONSCORE_HH
 #define PLUGINFUNCTIONSCORE_HH
 
+#ifndef OPENFLIPPERCORE
+  #ifndef OPENFLIPPERPLUGINLIB
+    #ifdef WIN32
+      #pragma message("PluginFunctionsCore is only allowed to be used from within OpenFlippers Core application!")
+      
+    #else
+      #warning PluginFunctionsCore is only allowed to be used from within OpenFlippers Core application!
+      #error Bla
+    #endif
+  #endif
+#endif
+
 #include <OpenFlipper/common/GlobalDefines.hh>
 
 #include <OpenFlipper/widgets/glWidget/QtBaseViewer.hh>

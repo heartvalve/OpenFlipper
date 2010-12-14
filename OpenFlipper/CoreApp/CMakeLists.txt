@@ -86,6 +86,9 @@ else ()
   acg_add_executable (OpenFlipper ${uic_targets} ${sources} ${headers} ${moc_targets})
 endif ()
 
+# Mark this build part as building OpenFLippers Core
+add_definitions(-DOPENFLIPPERCORE )
+
 
 target_link_libraries (OpenFlipper
   OpenMeshCore
