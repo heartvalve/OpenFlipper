@@ -420,17 +420,47 @@ namespace Viewer {
       /// Set the width of the gl scene in orthogonal projection mode
       void orthoWidth(double _width){ orthoWidth_ = _width; emit updated(); };
       
+      
       /// Return distance to near Plane
       double nearPlane(){ return nearPlane_;};
       
       /// set new near Plane distance
       void nearPlane(double _near){nearPlane_ = _near; emit updated(); };
       
+      
       /// Return distance to far Plane
       double farPlane(){ return farPlane_;};
       
       /// set new near Plane distance
       void farPlane(double _far){farPlane_ = _far; emit updated(); };
+      
+      
+      /// Get current scene center (rendering center)
+      ACG::Vec3d sceneCenter(){ return sceneCenter_; };
+      
+      /// Set current scene center (rendering center)
+      void sceneCenter(ACG::Vec3d _center){ sceneCenter_ = _center; emit updated(); };
+
+      
+      /// Get radius of the current scene
+      double sceneRadius() {return sceneRadius_;};
+      
+      /// Set radius of the current scene
+      void sceneRadius(double _radius ) { sceneRadius_ = _radius; emit updated();};
+      
+      
+      /// Get virtual trackball center (rotation center when using mouse)
+      ACG::Vec3d trackballCenter(){ return trackballCenter_; };
+      
+      /// Set virtual trackball center (rotation center when using mouse)
+      void trackballCenter(ACG::Vec3d _center){ trackballCenter_ = _center; emit updated(); };
+      
+      
+      /// Get trackball radius (rotation sphere when using mouse)
+      double trackballRadius() {return trackballRadius_;};
+      
+      /// Set trackball radius   (rotation sphere when using mouse)
+      void trackballRadius(double _radius ) { trackballRadius_ = _radius; emit updated();};
       
     private:
       
@@ -442,8 +472,19 @@ namespace Viewer {
       
       ///distance to far Plane
       double farPlane_;
-
-
+      
+      /// Current scene center (rendering center)
+      ACG::Vec3d sceneCenter_;
+      
+      /// Radius of the current scene
+      double sceneRadius_;
+      
+      /// Virtual trackball center (rotation center when using mouse)
+      ACG::Vec3d trackballCenter_;
+      
+      /// trackball radius   (rotation sphere when using mouse)
+      double trackballRadius_;
+      
     /** @} */
     
 

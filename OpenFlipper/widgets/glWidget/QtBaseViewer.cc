@@ -442,20 +442,21 @@ void glViewer::updateProjectionMatrix()
 void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool _resetTrackBall)
 {
   if(_resetTrackBall) {
-    trackball_center_ = _center;
+    properties_.trackballCenter(_center);
   }
 
-  scene_center_ = _center;
+  properties_.sceneCenter(_center);
 
-  scene_radius_ = trackball_radius_ = _radius;
+  properties_.sceneRadius(_radius);
+  properties_.trackballRadius(_radius);
 
-  ACG::Vec3d c = glstate_->modelview().transform_point(scene_center_);
+  ACG::Vec3d c = glstate_->modelview().transform_point(properties_.sceneCenter());
 
   // Set far plane
-  properties_.farPlane( std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_)) );
+  properties_.farPlane( std::max(0.0002f * properties_.sceneRadius(),  -(c[2] - properties_.sceneRadius() )) );
 
   // Set near plane
-  properties_.nearPlane( std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_)) );
+  properties_.nearPlane( std::max(0.0001f * properties_.sceneRadius(),  -(c[2] + properties_.sceneRadius())) );
   
   updateProjectionMatrix();
   updateGL();
@@ -463,19 +464,6 @@ void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool
   emit viewChanged();
 }
 
-//-----------------------------------------------------------------------------
-
-void glViewer::setSceneCenter( const ACG::Vec3d& _center ) {
-
-	scene_center_ = _center;
-}
-
-//-----------------------------------------------------------------------------
-
-void glViewer::setTrackBallCenter( const ACG::Vec3d& _center ) {
-
-  trackball_center_ = _center;
-}
 
 //----------------------------------------------------------------------------
 
@@ -483,10 +471,10 @@ void glViewer::setTrackBallCenter( const ACG::Vec3d& _center ) {
 void glViewer::viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up )
 {
   // calc eye point for this direction
-  ACG::Vec3d eye = scene_center_ - _dir*(3.0*scene_radius_);
+  ACG::Vec3d eye = properties_.sceneCenter() - _dir * ( 3.0 * properties_.sceneRadius());
 
   glstate_->reset_modelview();
-  glstate_->lookAt((ACG::Vec3d)eye, (ACG::Vec3d)scene_center_, (ACG::Vec3d)_up);
+  glstate_->lookAt((ACG::Vec3d)eye, (ACG::Vec3d)properties_.sceneCenter(), (ACG::Vec3d)_up);
 
   emit viewChanged();
 }
@@ -498,8 +486,8 @@ void glViewer::lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const A
     glstate_->reset_modelview();
     glstate_->lookAt(_eye, _center, _up);
     
-    scene_center_ = _center;
-    scene_radius_ = (scene_center_ - _eye).norm();
+    properties_.sceneCenter( _center );
+    properties_.sceneRadius( (properties_.sceneCenter() - _eye).norm() );
     
     emit viewChanged();
 }
@@ -571,13 +559,13 @@ void glViewer::drawScene()
   // Adjust clipping planes
   // *****************************************************************
   // Far plane
-  ACG::Vec3d c = glstate_->modelview().transform_point(scene_center_);
+  ACG::Vec3d c = glstate_->modelview().transform_point(properties_.sceneCenter());
 
   // Set far plane
-  properties_.farPlane( std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_)) );
+  properties_.farPlane( std::max(0.0002f * properties_.sceneRadius(),  -(c[2] - properties_.sceneRadius())) );
 
   // Set near plane
-  properties_.nearPlane( std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_)) );
+  properties_.nearPlane( std::max(0.0001f * properties_.sceneRadius(),  -(c[2] + properties_.sceneRadius())) );
 
   updateProjectionMatrix();
 
@@ -791,8 +779,8 @@ void glViewer::setHome()
   home_modelview_          = glstate_->modelview();
   home_inverse_modelview_  = glstate_->inverse_modelview();
   homeOrthoWidth_          = properties_.orthoWidth();
-  home_center_             = trackball_center_;
-  home_radius_             = trackball_radius_;
+  home_center_             = properties_.trackballCenter();
+  home_radius_             = properties_.trackballRadius();
 }
 
 
@@ -801,8 +789,8 @@ void glViewer::home()
   makeCurrent();
   glstate_->set_modelview(home_modelview_, home_inverse_modelview_);
   properties_.orthoWidth( homeOrthoWidth_ );
-  trackball_center_ = home_center_;
-  trackball_radius_ = home_radius_;
+  properties_.trackballCenter( home_center_ );
+  properties_.trackballRadius(home_radius_);
   updateProjectionMatrix();
   updateGL();
 
@@ -816,27 +804,27 @@ void glViewer::home()
 
 void glViewer::viewAll()
 {
-	makeCurrent();
+  makeCurrent();
 
-	// update scene graph (get new bounding box and set projection right, including near and far plane)
-	properties_.lockUpdate();
+  // update scene graph (get new bounding box and set projection right, including near and far plane)
+  properties_.lockUpdate();
 
-	// move center (in camera coords) to origin and translate in -z dir
-	translate(-(glstate_->modelview().transform_point(scene_center_))
-			- ACG::Vec3d(0.0, 0.0, 3.0 * scene_radius_));
+  // move center (in camera coords) to origin and translate in -z dir
+  translate(-(glstate_->modelview().transform_point(properties_.sceneCenter()))
+            - ACG::Vec3d(0.0, 0.0, 3.0 * properties_.sceneRadius()));
 
-        properties_.orthoWidth( 1.1 * scene_radius_ );
-	double aspect = (double) glWidth() / (double) glHeight();
-	if (aspect > 1.0)
-          properties_.orthoWidth( aspect * properties_.orthoWidth() ) ;
+  properties_.orthoWidth( 1.1 * properties_.sceneRadius() );
+  double aspect = (double) glWidth() / (double) glHeight();
+  if (aspect > 1.0)
+    properties_.orthoWidth( aspect * properties_.orthoWidth() ) ;
 
-	sceneGraph(PluginFunctions::getSceneGraphRootNode(), true);
+  sceneGraph(PluginFunctions::getSceneGraphRootNode(), true);
 
-	properties_.unLockUpdate();
-	updateProjectionMatrix();
-	updateGL();
+  properties_.unLockUpdate();
+  updateProjectionMatrix();
+  updateGL();
 
-    emit viewChanged();
+  emit viewChanged();
 
 }
 
@@ -885,7 +873,7 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
 
       // Set the double click point as the new trackball center
       // Rotations will use this point as the center.
-      trackball_center_ = hitPoint;
+      properties_.trackballCenter( hitPoint );
       
       // how many frames in _time ms ?
       unsigned int  frames = (unsigned int)(300 / frame_time_);
@@ -1004,9 +992,8 @@ void glViewer::flyTo(const ACG::Vec3d&  _position,
   }
 
 
-  trackball_center_ = _center;
-  trackball_radius_ = std::max(scene_radius_,
-			       (_center-_position).norm()*0.9f);
+  properties_.trackballCenter( _center );
+  properties_.trackballRadius( std::max( properties_.sceneRadius(),( _center - _position ).norm() * 0.9f  ) );
 }
 
 
@@ -1048,11 +1035,6 @@ void glViewer::initializeGL()
 
   // Update all settings which would require a redraw
   applyProperties();
-
-  // scene pos and size
-  scene_center_ = trackball_center_ = ACG::Vec3d( 0.0, 0.0, 0.0 );
-  scene_radius_ = trackball_radius_ = 1.0;
-
 
   // modelview
   glstate_->translate(0.0, 0.0, -3.0);
@@ -1459,7 +1441,7 @@ void glViewer::slotWheelY(double _dAngle)
 
 void glViewer::slotWheelZ(double _dist)
 {
-  double dz=_dist*0.5/M_PI*scene_radius_*2.0;
+  double dz = _dist * 0.5 / M_PI * properties_.sceneRadius() * 2.0;
   translate(ACG::Vec3d(0,0,dz));
   updateGL();
 
@@ -1860,8 +1842,8 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
       if (_event->modifiers() & Qt::ShiftModifier) {
           ACG::Vec3d c;
           if (fast_pick(pos, c)) {
-              trackball_center_ = c;
-              trackball_radius_ = std::max(scene_radius_, (c - glstate_->eye()).norm() * 0.9f);
+              properties_.trackballCenter( c );
+              properties_.trackballRadius( std::max(properties_.sceneRadius(), (c - glstate_->eye()).norm() * 0.9f) );
           }
       }
 
@@ -1899,7 +1881,7 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
         if ((_event->buttons() & Qt::LeftButton) && (_event->buttons() & Qt::MidButton)) {
           switch (projectionMode()) {
             case PERSPECTIVE_PROJECTION: {
-                value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 3.0 / (double) glHeight();
+                value_y = properties_.sceneRadius() * ((newPoint2D.y() - lastPoint2D_.y())) * 3.0 / (double) glHeight();
                 translate(ACG::Vec3d(0.0, 0.0, value_y * factor));
                 updateGL();
                 emit viewChanged();
@@ -1929,8 +1911,8 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
           // if start depth is 1, no object was hit when starting translation
           if ( startDepth_ == 1 ) {
             
-            value_x = scene_radius_ * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
-            value_y = scene_radius_ * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();
+            value_x = properties_.sceneRadius() * ((newPoint2D.x() - lastPoint2D_.x())) * 2.0 / (double) glWidth();
+            value_y = properties_.sceneRadius() * ((newPoint2D.y() - lastPoint2D_.y())) * 2.0 / (double) glHeight();
             translation = ACG::Vec3d(value_x * factor, -value_y * factor, 0.0);
             
           } else {
@@ -2017,7 +1999,7 @@ void glViewer::viewWheelEvent( QWheelEvent* _event)
 
   if (projectionMode() == PERSPECTIVE_PROJECTION || stereo_)
   {
-    double d = -(double)_event->delta() / 120.0 * 0.2 * factor * trackball_radius_/3;
+    double d = -(double)_event->delta() / 120.0 * 0.2 * factor * properties_.trackballRadius() / 3.0;
     translate( ACG::Vec3d(0.0, 0.0, d) );
     updateGL();
   }
