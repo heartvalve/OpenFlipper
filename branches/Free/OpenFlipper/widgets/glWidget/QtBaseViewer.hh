@@ -215,32 +215,6 @@ public:
     */
   void setScenePos( const ACG::Vec3d& _center, double _radius, const bool _resetTrackBall = false );
 
-  /**
-   * Set new center point of scene
-   */
-  void setSceneCenter( const ACG::Vec3d& _center ) { properties_.sceneCenter(_center); };
-
-  /** \brief Set Trackball Center point of scene
-  *
-  * The scene is rotated around the trackball center when using the mouse
-  */
-  void setTrackBallCenter( const ACG::Vec3d& _center ) { properties_.trackballCenter(_center); }
-
-  /** \brief Get Trackball Center point of scene
-  *
-  * The scene is rotated around the trackball center when using the mouse
-  */
-  const ACG::Vec3d trackBallCenter( ) { return properties_.trackballCenter(); };
-
-  /** Get scene's center
-      \see setScenePos()
-  */
-  const ACG::Vec3d scene_center() const { return properties_.sceneCenter(); }
-  /** Get scene's radius
-      \see setScenePos()
-  */
-  double scene_radius() const { return properties_.sceneRadius(); }
-
   /// set the viewing direction
   void viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up );
   
@@ -639,6 +613,41 @@ private:
     /// make this widget active
     void signalMakeActive ();
 
+  /** @} */
+  
+  
+  //===========================================================================
+  /** @name Projection settings
+  * @{ */
+    //===========================================================================
+    
+    public:
+    /**
+    * Set new center point of scene
+    */
+    void setSceneCenter( const ACG::Vec3d& _center ) { properties_.sceneCenter(_center); };
+    
+    /** \brief Set Trackball Center point of scene
+    *
+    * The scene is rotated around the trackball center when using the mouse
+    */
+    void setTrackBallCenter( const ACG::Vec3d& _center ) { properties_.trackballCenter(_center); }
+    
+    /** \brief Get Trackball Center point of scene
+    *
+    * The scene is rotated around the trackball center when using the mouse
+    */
+    const ACG::Vec3d trackBallCenter( ) { return properties_.trackballCenter(); };
+    
+    /** Get scene's center
+    \see setScenePos()
+    */
+    const ACG::Vec3d scene_center() const { return properties_.sceneCenter(); }
+    /** Get scene's radius
+    \see setScenePos()
+    */
+    double scene_radius() const { return properties_.sceneRadius(); }
+  
   /** @} */
 
   //===========================================================================
