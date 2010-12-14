@@ -78,7 +78,11 @@ namespace Viewer {
     rotationLocked_(false),
     orthoWidth_(2.0),
     nearPlane_(0.01),
-    farPlane_(100.0)
+    farPlane_(100.0),
+    sceneCenter_(ACG::Vec3d( 0.0, 0.0, 0.0 )),
+    sceneRadius_(1.0),
+    trackballCenter_(ACG::Vec3d( 0.0, 0.0, 0.0 )),
+    trackballRadius_(1.0)
   {
 
   }

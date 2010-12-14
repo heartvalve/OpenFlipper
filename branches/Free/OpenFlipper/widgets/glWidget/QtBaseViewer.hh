@@ -218,28 +218,28 @@ public:
   /**
    * Set new center point of scene
    */
-  void setSceneCenter( const ACG::Vec3d& _center );
+  void setSceneCenter( const ACG::Vec3d& _center ) { properties_.sceneCenter(_center); };
 
   /** \brief Set Trackball Center point of scene
   *
   * The scene is rotated around the trackball center when using the mouse
   */
-  void setTrackBallCenter( const ACG::Vec3d& _center );
+  void setTrackBallCenter( const ACG::Vec3d& _center ) { properties_.trackballCenter(_center); }
 
   /** \brief Get Trackball Center point of scene
   *
   * The scene is rotated around the trackball center when using the mouse
   */
-  const ACG::Vec3d trackBallCenter( ) { return trackball_center_; };
+  const ACG::Vec3d trackBallCenter( ) { return properties_.trackballCenter(); };
 
   /** Get scene's center
       \see setScenePos()
   */
-  const ACG::Vec3d& scene_center() const { return scene_center_; }
+  const ACG::Vec3d scene_center() const { return properties_.sceneCenter(); }
   /** Get scene's radius
       \see setScenePos()
   */
-  double scene_radius() const { return scene_radius_; }
+  double scene_radius() const { return properties_.sceneRadius(); }
 
   /// set the viewing direction
   void viewingDirection( const ACG::Vec3d& _dir, const ACG::Vec3d& _up );
@@ -311,7 +311,7 @@ public:
 
   /// rotate the scene (around its center) and update modelview matrix
   void rotate(const ACG::Vec3d& axis, double angle)
-  { rotate(axis, angle, trackball_center_); }
+  { rotate(axis, angle, properties_.trackballCenter()); }
 
   /// rotate the scene and update modelview matrix
   void rotate(const ACG::Vec3d& axis, double angle, const ACG::Vec3d& _center);
@@ -542,11 +542,6 @@ private:
 
 //-------------------------------------------------------------- protected data
 protected:
-
-
-  // scene center and radius
-  ACG::Vec3d                   scene_center_, trackball_center_;
-  double                       scene_radius_, trackball_radius_;
 
   // helper
   bool                         isRotating_;
