@@ -548,11 +548,6 @@ protected:
   ACG::Vec3d                   scene_center_, trackball_center_;
   double                       scene_radius_, trackball_radius_;
 
-
-  // projection stuff
-  GLdouble                     orthoWidth_;
-  GLdouble                     near_, far_;
-
   // helper
   bool                         isRotating_;
   bool                         lookAround_;

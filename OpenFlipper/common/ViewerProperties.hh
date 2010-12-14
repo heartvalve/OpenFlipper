@@ -404,6 +404,48 @@ namespace Viewer {
     //===========================================================================
 
     /** @} */
+    
+    //===========================================================================
+    //===========================================================================
+    /** @name Projection controls and information
+    * @{ */
+    //===========================================================================
+    //===========================================================================
+
+    public:
+      
+      /// Get width of the gl scene in orthogonal projection mode (defaults to 2.0)
+      double orthoWidth() { return orthoWidth_; };
+      
+      /// Set the width of the gl scene in orthogonal projection mode
+      void orthoWidth(double _width){ orthoWidth_ = _width; emit updated(); };
+      
+      /// Return distance to near Plane
+      double nearPlane(){ return nearPlane_;};
+      
+      /// set new near Plane distance
+      void nearPlane(double _near){nearPlane_ = _near; emit updated(); };
+      
+      /// Return distance to far Plane
+      double farPlane(){ return farPlane_;};
+      
+      /// set new near Plane distance
+      void farPlane(double _far){farPlane_ = _far; emit updated(); };
+      
+    private:
+      
+      /// Width of the gl scene in orthogonal mode ( defaults to 2.0 )
+      double orthoWidth_;
+      
+      /// Distance to near Plane
+      double nearPlane_;
+      
+      ///distance to far Plane
+      double farPlane_;
+
+
+    /** @} */
+    
 
     signals:
       /** \brief This signal is emitted when the configuration has been changed
