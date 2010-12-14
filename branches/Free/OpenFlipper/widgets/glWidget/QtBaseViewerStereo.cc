@@ -119,10 +119,10 @@ glViewer::drawScene_glStereo()
 
   double fovy = OpenFlipperSettings().value("Core/Projection/FOVY",45.0).toDouble();
   radians = fovy * 0.5 / 180.0 * M_PI;
-  wd2     = near_ * tan(radians);
-  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance",0.5).toDouble() );
-  ndfl    = near_ / zerop ;
-  xrange  = a * wd2 * 2 * zerop / near_;
+  wd2     = properties_.nearPlane() * tan(radians);
+  zerop   = properties_.nearPlane() + ((properties_.farPlane() - properties_.nearPlane()) * OpenFlipperSettings().value("Core/Stereo/FocalDistance",0.5).toDouble() );
+  ndfl    = properties_.nearPlane() / zerop ;
+  xrange  = a * wd2 * 2 * zerop / properties_.nearPlane();
 
   l = -a*wd2;
   r =  a*wd2;
@@ -135,7 +135,7 @@ glViewer::drawScene_glStereo()
   // left eye
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glFrustum(l+offset2, r+offset2, b, t, near_, far_);
+  glFrustum(l+offset2, r+offset2, b, t, properties_.nearPlane(), properties_.farPlane());
   glTranslatef(+offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glDrawBuffer(GL_BACK_LEFT);
@@ -147,7 +147,7 @@ glViewer::drawScene_glStereo()
   // right eye
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glFrustum(l-offset2, r-offset2, b, t, near_, far_);
+  glFrustum(l-offset2, r-offset2, b, t, properties_.nearPlane(), properties_.farPlane());
   glTranslatef(-offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glDrawBuffer(GL_BACK_RIGHT);
@@ -197,6 +197,8 @@ void glViewer::drawScenePhilipsStereo() {
 
     pDepthStencilTexture_.disable();
 
+    glClearColor(.5, .4, .3, 0);
+    
     // Turn on shader program
     pProgram_->use();
 
@@ -240,7 +242,7 @@ void glViewer::drawScenePhilipsStereo() {
     // ======================================================================================================
     // Clear buffers
     // ======================================================================================================
-    glClearColor(.0, .0, .0, 0);
+    glClearColor(.5, .4, .3, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // ======================================================================================================
@@ -515,10 +517,10 @@ glViewer::drawScene_anaglyphStereo()
 
   double fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
   radians = fovy * 0.5 / 180.0 * M_PI;
-  wd2     = near_ * tan(radians);
-  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance", 0.5).toDouble() );
-  ndfl    = near_ / zerop ;
-  xrange  = a * wd2 * 2 * zerop / near_;
+  wd2     = properties_.nearPlane() * tan(radians);
+  zerop   = properties_.nearPlane() + ((properties_.farPlane() - properties_.nearPlane()) * OpenFlipperSettings().value("Core/Stereo/FocalDistance", 0.5).toDouble() );
+  ndfl    = properties_.nearPlane() / zerop ;
+  xrange  = a * wd2 * 2 * zerop / properties_.nearPlane();
 
   l = -a*wd2;
   r =  a*wd2;
@@ -531,7 +533,7 @@ glViewer::drawScene_anaglyphStereo()
   // left eye
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glFrustum(l+offset2, r+offset2, b, t, near_, far_);
+  glFrustum(l+offset2, r+offset2, b, t, properties_.nearPlane(), properties_.farPlane());
   glTranslatef(offset, 0.0, 0.0);
 
   glMatrixMode(GL_MODELVIEW);
@@ -547,7 +549,7 @@ glViewer::drawScene_anaglyphStereo()
   // right eye
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glFrustum(l-offset2, r-offset2, b, t, near_, far_);
+  glFrustum(l-offset2, r-offset2, b, t, properties_.nearPlane(), properties_.farPlane());
   glTranslatef(-offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glClear(GL_DEPTH_BUFFER_BIT);
@@ -647,10 +649,10 @@ glViewer::drawScene_customAnaglyphStereo()
 
   double fovy = OpenFlipperSettings().value("Core/Projection/FOVY",45.0).toDouble();
   radians = fovy * 0.5 / 180.0 * M_PI;
-  wd2     = near_ * tan(radians);
-  zerop   = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalDistance",0.5).toDouble() );
-  ndfl    = near_ / zerop ;
-  xrange  = a * wd2 * 2 * zerop / near_;
+  wd2     = properties_.nearPlane() * tan(radians);
+  zerop   = properties_.nearPlane() + ((properties_.farPlane() - properties_.nearPlane()) * OpenFlipperSettings().value("Core/Stereo/FocalDistance",0.5).toDouble() );
+  ndfl    = properties_.nearPlane() / zerop ;
+  xrange  = a * wd2 * 2 * zerop / properties_.nearPlane();
 
   l = -a*wd2;
   r =  a*wd2;
@@ -669,7 +671,7 @@ glViewer::drawScene_customAnaglyphStereo()
   // left eye
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glFrustum(l+offset2, r+offset2, b, t, near_, far_);
+  glFrustum(l+offset2, r+offset2, b, t, properties_.nearPlane(), properties_.farPlane());
   glTranslatef(offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glstate_->clearBuffers ();
@@ -683,7 +685,7 @@ glViewer::drawScene_customAnaglyphStereo()
   // right eye
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glFrustum(l-offset2, r-offset2, b, t, near_, far_);
+  glFrustum(l-offset2, r-offset2, b, t, properties_.nearPlane(), properties_.farPlane());
   glTranslatef(-offset, 0.0, 0.0);
   glMatrixMode(GL_MODELVIEW);
   glstate_->clearBuffers ();

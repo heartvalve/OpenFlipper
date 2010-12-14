@@ -75,7 +75,10 @@ namespace Viewer {
     animation_(false),
     glState_(0),
     objectMarker_(0),
-    rotationLocked_(false)
+    rotationLocked_(false),
+    orthoWidth_(2.0),
+    nearPlane_(0.01),
+    farPlane_(100.0)
   {
 
   }

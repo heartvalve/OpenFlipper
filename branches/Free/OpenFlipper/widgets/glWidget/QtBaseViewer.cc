@@ -164,11 +164,8 @@ glViewer::glViewer( QGraphicsScene* _scene,
   properties_.setglState( glstate_ );
 
   // state
-  orthoWidth_       = 2.0;
   isRotating_       = false;
   lookAround_       = false;
-  near_             = 0.1;
-  far_              = 100.0;
 
   sceneGraphRoot_   = 0;
 
@@ -420,7 +417,7 @@ void glViewer::updateProjectionMatrix()
     double fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
 
     glstate_->perspective(fovy, (GLdouble) aspect,
-                          near_, far_);
+                          properties_.nearPlane(), properties_.farPlane());
   }
   else
   {
@@ -431,9 +428,9 @@ void glViewer::updateProjectionMatrix()
     else
       aspect = 1.0;
 
-    glstate_->ortho( -orthoWidth_, orthoWidth_,
-                     -orthoWidth_/aspect, orthoWidth_/aspect,
-                     near_, far_ );
+    glstate_->ortho( -properties_.orthoWidth(), properties_.orthoWidth(),
+                     -properties_.orthoWidth()/aspect, properties_.orthoWidth()/aspect,
+                      properties_.nearPlane(), properties_.farPlane() );
   }
 
 }
@@ -455,12 +452,11 @@ void glViewer::setScenePos(const ACG::Vec3d& _center, double _radius, const bool
   ACG::Vec3d c = glstate_->modelview().transform_point(scene_center_);
 
   // Set far plane
-  far_    = std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_));
+  properties_.farPlane( std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_)) );
 
   // Set near plane
-  near_   = std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_));
-
-
+  properties_.nearPlane( std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_)) );
+  
   updateProjectionMatrix();
   updateGL();
 
@@ -578,23 +574,10 @@ void glViewer::drawScene()
   ACG::Vec3d c = glstate_->modelview().transform_point(scene_center_);
 
   // Set far plane
-  far_    = std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_));
+  properties_.farPlane( std::max(0.0002f * scene_radius_,  -(c[2] - scene_radius_)) );
 
   // Set near plane
-  near_   = std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_));
-
-  // measure distance from scene center ( as projection onto the z-Axis )
-//   if ( -c[2] < scene_radius_ ) {
-//     std::cerr << "Camera in scene radius" << std::endl;
-//
-//   }
-//
-//   std::cerr << "-c[2]   : " << -c[2] << std::endl;
-//   std::cerr << "radius  : " << scene_radius_ << std::endl;
-//   std::cerr << "z-range : " << far_ - near_ << std::endl;
-//   std::cerr << "Near    : " << near_ << std::endl;
-//   std::cerr << "Far     : " << far_ << std::endl;
-//   near_   = std::max(far_ / 256.0f,  -(c[2] + scene_radius_));
+  properties_.nearPlane( std::max(0.0001f * scene_radius_,  -(c[2] + scene_radius_)) );
 
   updateProjectionMatrix();
 
@@ -807,7 +790,7 @@ void glViewer::setHome()
 {
   home_modelview_          = glstate_->modelview();
   home_inverse_modelview_  = glstate_->inverse_modelview();
-  homeOrthoWidth_          = orthoWidth_;
+  homeOrthoWidth_          = properties_.orthoWidth();
   home_center_             = trackball_center_;
   home_radius_             = trackball_radius_;
 }
@@ -817,7 +800,7 @@ void glViewer::home()
 {
   makeCurrent();
   glstate_->set_modelview(home_modelview_, home_inverse_modelview_);
-  orthoWidth_ = homeOrthoWidth_;
+  properties_.orthoWidth( homeOrthoWidth_ );
   trackball_center_ = home_center_;
   trackball_radius_ = home_radius_;
   updateProjectionMatrix();
@@ -842,10 +825,10 @@ void glViewer::viewAll()
 	translate(-(glstate_->modelview().transform_point(scene_center_))
 			- ACG::Vec3d(0.0, 0.0, 3.0 * scene_radius_));
 
-	orthoWidth_ = 1.1 * scene_radius_;
+        properties_.orthoWidth( 1.1 * scene_radius_ );
 	double aspect = (double) glWidth() / (double) glHeight();
 	if (aspect > 1.0)
-		orthoWidth_ *= aspect;
+          properties_.orthoWidth( aspect * properties_.orthoWidth() ) ;
 
 	sceneGraph(PluginFunctions::getSceneGraphRootNode(), true);
 
@@ -898,7 +881,7 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
       t = glstate_->modelview().transform_vector(t);
       
       // originalWidth 
-      double orthoWidthOriginal = orthoWidth_;
+      double orthoWidthOriginal = properties_.orthoWidth();
 
       // Set the double click point as the new trackball center
       // Rotations will use this point as the center.
@@ -917,10 +900,10 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
           // zoom back one frame 
           if ( _move_back ) {
             // Move back by factor 2
-            orthoWidth_ = orthoWidthOriginal * (1.0 + 1.0 / (double)frames * i );
+            properties_.orthoWidth( orthoWidthOriginal * (1.0 + 1.0 / (double)frames * i ) );
           } else
             // Move forward with factor 0.5
-            orthoWidth_ = orthoWidthOriginal * (1.0 - 0.5 / (double)frames * i );
+            properties_.orthoWidth( orthoWidthOriginal * (1.0 - 0.5 / (double)frames * i ) );
           
           // apply translation
           translate(t * (- 1.0 / (double)frames  ) );
@@ -935,7 +918,10 @@ void glViewer::flyTo(const QPoint& _pos, bool _move_back)
         translate(-t);
         
         // set the zoom factor when no animation is performed
-        orthoWidth_ *= _move_back ? 2.0 : -0.5;
+        if ( _move_back )
+          properties_.orthoWidth( properties_.orthoWidth() * 2.0 );
+        else
+          properties_.orthoWidth(properties_.orthoWidth() * -0.5);
         
       }
 
@@ -1066,7 +1052,6 @@ void glViewer::initializeGL()
   // scene pos and size
   scene_center_ = trackball_center_ = ACG::Vec3d( 0.0, 0.0, 0.0 );
   scene_radius_ = trackball_radius_ = 1.0;
-  orthoWidth_   = 2.0;
 
 
   // modelview
@@ -1215,7 +1200,7 @@ void glViewer::encodeView(QString& _view)
   _view += QString::number(p(3,0)) + " " + QString::number(p(3,1)) + " " + QString::number(p(3,2)) + " " + QString::number(p(3,3)) + "\n";
 
   // add gl width/height, current projection Mode and the ortho mode width to output
-  _view += QString::number(glWidth()) + " " +  QString::number(glHeight()) + " " + QString::number(projectionMode_) + " " + QString::number(orthoWidth_) + "\n";
+  _view += QString::number(glWidth()) + " " +  QString::number(glHeight()) + " " + QString::number(projectionMode_) + " " + QString::number(properties_.orthoWidth()) + "\n";
 }
 
 
@@ -1282,7 +1267,7 @@ bool glViewer::decodeView(const QString& _view)
   w =  split[32].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
   h =  split[33].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
   pMode =  split[34].toInt(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
-  orthoWidth_ = split[35].toDouble(&ok); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
+  properties_.orthoWidth( split[35].toDouble(&ok) ); if ( !ok ) { std::cerr << "Error in decoding View!" << std::endl; return false; }
 
   // Switch to our gl context
   makeCurrent();
@@ -1922,8 +1907,8 @@ void glViewer::handleNormalNavigation( QMouseEvent* _event ) {
             }
 
             case ORTHOGRAPHIC_PROJECTION: {
-                value_y = ((newPoint2D.y() - lastPoint2D_.y())) * orthoWidth_ / (double) glHeight();
-                orthoWidth_ -= value_y * factor;
+                value_y = ((newPoint2D.y() - lastPoint2D_.y())) * properties_.orthoWidth() / (double) glHeight();
+                properties_.orthoWidth( properties_.orthoWidth() - value_y * factor );
                 updateProjectionMatrix();
                 updateGL();
                 emit viewChanged();
@@ -2038,8 +2023,8 @@ void glViewer::viewWheelEvent( QWheelEvent* _event)
   }
   else
   {
-    double d = (double)_event->delta() / 120.0 * 0.2 * factor * orthoWidth_;
-    orthoWidth_ += d;
+    double d = (double)_event->delta() / 120.0 * 0.2 * factor * properties_.orthoWidth();
+    properties_.orthoWidth( properties_.orthoWidth() + d );
     updateProjectionMatrix();
     updateGL();
   }
@@ -2323,7 +2308,7 @@ void glViewer::updateCursorPosition (QPointF _scenePos)
 
     // Project the depth value of the stereo mode zero paralax plane.
     // We need to use this depth to to get the cursor exactly on zero paralax plane in stereo mode
-    double zerop = near_ + ((far_ - near_) * OpenFlipperSettings().value("Core/Stereo/FocalLength").toDouble() );
+    double zerop = properties_.nearPlane() + ((properties_.farPlane() - properties_.nearPlane()) * OpenFlipperSettings().value("Core/Stereo/FocalLength").toDouble() );
     ACG::Vec3d zerod = glstate_->project (ACG::Vec3d (0.0, 0.0, -zerop));
 
     // unproject the cursor into the scene
