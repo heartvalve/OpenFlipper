@@ -555,9 +555,12 @@ void glViewer::updateGL()
 
 void glViewer::drawScene()
 {
+  
+  // Inside the glWidget rendering, the system should not send extra updates
+  properties_.blockSignals(true);
+  
   QTime  timer;
   timer.start();
-
 
   // *****************************************************************
   // Adjust clipping planes
@@ -581,9 +584,14 @@ void glViewer::drawScene()
   if (stereo_) drawScene_stereo();
   else         drawScene_mono();
 
+  
+  
   glFinish();
   frame_time_ = timer.elapsed();
 
+  
+  // Inside the glWidget rendering, the system should not send extra updates
+  properties_.blockSignals(false);
 
 }
 
