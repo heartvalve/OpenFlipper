@@ -490,29 +490,9 @@ private:
   void drawScene();
   // helper called by drawScene().
   void drawScene_mono();
-  // helper called by drawScene() when stereo viewing is active.
-  void drawScene_stereo();
 
-  // helper called by drawScene_stereo() when opengl stereo viewing is active.
-  void drawScene_glStereo();
+  
 
-  // helper called by drawScene_stereo() when anaglyph stereo viewing is active.
-  void drawScene_anaglyphStereo();
-
-  // helper called by drawScene_stereo() when custom anaglyph stereo viewing is active.
-  void drawScene_customAnaglyphStereo();
-
-  // helper called to initialize/update custom anaglyph stereo
-  void updateCustomAnaglyphStereo();
-
-  // helper called to cleanup custom anaglyph stereo
-  void finiCustomAnaglyphStereo();
-
-  // Draws the scene for a philips stereo display ( Header, left color image, right depth map )
-  void drawScenePhilipsStereo();
-
-  // Updates the scene for a philips stereo display
-  void updateScenePhilipsStereo();
 
 //-------------------------------------------------------------- protected data
 protected:
@@ -659,9 +639,37 @@ private:
 
     /// enable/disable stereo mode
     virtual void setStereoMode(bool _b);
+    
+  private:
+    
+    /// helper called by drawScene() when stereo viewing is active.
+    void drawScene_stereo();
+    
+    /// helper called by drawScene_stereo() when opengl stereo viewing is active.
+    void drawScene_glStereo();
+    
+    /// helper called by drawScene_stereo() when anaglyph stereo viewing is active.
+    void drawScene_anaglyphStereo();
+    
+    /// helper called by drawScene_stereo() when custom anaglyph stereo viewing is active.
+    void drawScene_customAnaglyphStereo();
+    
+    /// helper called to initialize/update custom anaglyph stereo
+    void updateCustomAnaglyphStereo();
+    
+    /// helper called to cleanup custom anaglyph stereo
+    void finiCustomAnaglyphStereo();
+    
+    /// Draws the scene for a philips stereo display ( Header, left color image, right depth map )
+    void drawScenePhilipsStereo();
+    
+    /// Updates the scene for a philips stereo display
+    void updateScenePhilipsStereo();
+    
 
   private:
-    // stereo stuff
+    
+    /// Stereo enabled?
     bool                         stereo_;
 
     // custom anaglyph stuff
@@ -671,16 +679,41 @@ private:
     GLuint agProgram_;
     bool   customAnaglyphSupported_;
 
-    // Philips stereo mode stuff
-    int     pTexWidth_;
-    int     pTexHeight_;
-    ACG::Texture2D pColorTexture_;
-    ACG::Texture2D pDepthStencilTexture_;
     GLSL::PtrProgram pProgram_;
     bool philipsStereoInitialized_;
 
   /** @} */
 
+  //===========================================================================
+  /** @name Buffers
+  * @{ */
+  //===========================================================================
+  
+  private:
+    
+    /// Updates the Color Texture Buffer to the current size and initializes it if necessary
+    void updateColorTextureBuffer();
+    
+    /// Updates the DepthStencil Texture Buffer to the current size and initializes it if necessary
+    void updateDepthStencilTextureBuffer();
+    
+    /// color texture buffer
+    ACG::Texture2D pColorTexture_;
+    
+    /// depthStencil texture buffer
+    ACG::Texture2D pDepthStencilTexture_;
+
+    /// Current width of the color texture buffer
+    int     colorTextureBufferWidth_;
+    
+    /// Current height of the color texture buffer
+    int     colorTextureBufferHeight_;
+    
+    /// Current width of the depthStencil texture buffer
+    int     depthStencilTextureBufferWidth_;
+    
+    /// Current height of the depthStencil texture buffer
+    int     depthStencilTextureBufferHeight_;
 
   //===========================================================================
   /** @name Key handling

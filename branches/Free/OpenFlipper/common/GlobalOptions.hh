@@ -129,6 +129,7 @@
 * <b>Rendering debugger Settings<b>\n
 * * Core/Debug/Picking/RenderPicking      Enable picking rendering (bool)\n
 * * Core/Debug/Picking/RenderPickingMode  The Mode used for picking rendering(QString) \n
+* * Core/Debug/Picking/RenderDepthImage   Renders the depth buffer as a grayscale image (bool) \n
 * \n
 * Anaglyph stereo mode settings:\n
 */
