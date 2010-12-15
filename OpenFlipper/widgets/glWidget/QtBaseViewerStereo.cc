@@ -396,6 +396,107 @@ void glViewer::drawScenePhilipsStereo() {
 //-----------------------------------------------------------------------------
 
 void
+glViewer::updateColorTextureBuffer() {
+  
+  int vp_l, vp_b, vp_w, vp_h;
+  glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
+  
+  // Does color texture exist?
+  if (!pColorTexture_.is_valid()) {
+    // ======================================================================================================
+    // creating a color texture
+    // ======================================================================================================
+    
+    pColorTexture_.enable();
+    pColorTexture_.bind();
+    GLenum texTarget = GL_TEXTURE_2D;
+    GLenum texInternalFormat = GL_RGBA;
+    GLenum texFormat = GL_RGBA;
+    GLenum texType = GL_UNSIGNED_BYTE;
+    GLenum texFilterMode = GL_NEAREST;
+    glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
+    
+    glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
+    glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
+    glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+    
+    if(!pColorTexture_.is_valid()) {
+      philipsStereoInitialized_ = false;
+    }
+  }
+  
+  // Resize target textures
+  if (glstate_->viewport_width() != colorTextureBufferWidth_ || glstate_->viewport_height() != colorTextureBufferHeight_) {
+    
+    // Color texture
+    pColorTexture_.bind();
+    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 0);
+    
+    colorTextureBufferWidth_  = glstate_->viewport_width();
+    colorTextureBufferHeight_ = glstate_->viewport_height();
+  }
+  
+}
+
+//-----------------------------------------------------------------------------
+
+void 
+glViewer::updateDepthStencilTextureBuffer() {
+  
+  int vp_l, vp_b, vp_w, vp_h;
+  glstate_->get_viewport (vp_l, vp_b, vp_w, vp_h);
+  
+  // Does depth stencil texture exist?
+  if (!pDepthStencilTexture_.is_valid()) {
+    // ======================================================================================================
+    // creating an 24-bit depth + 8-bit stencil texture
+    // ======================================================================================================
+    
+    pDepthStencilTexture_.enable();
+    pDepthStencilTexture_.bind();
+    GLenum texTarget = GL_TEXTURE_2D;
+    GLenum texInternalFormat = GL_DEPTH24_STENCIL8_EXT;
+    GLenum texFormat = GL_DEPTH_STENCIL_EXT;
+    GLenum texType = GL_UNSIGNED_INT_24_8_EXT;
+    GLenum texFilterMode = GL_NEAREST;
+    glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
+    
+    glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
+    glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
+    glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
+    
+    if(!pDepthStencilTexture_.is_valid()) {
+      philipsStereoInitialized_ = false;
+    }
+  }
+  
+  // Resize target texture
+  if (glstate_->viewport_width() != depthStencilTextureBufferWidth_ || glstate_->viewport_height() != depthStencilTextureBufferHeight_) {
+    
+    // Depth stencil texture
+    pDepthStencilTexture_.bind();
+    
+    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
+                GL_RGB, GL_UNSIGNED_BYTE, 0);
+                
+    glBindTexture(GL_TEXTURE_RECTANGLE_NV, 0);
+    
+    depthStencilTextureBufferWidth_  = glstate_->viewport_width();
+    depthStencilTextureBufferHeight_ = glstate_->viewport_height();
+  }
+  
+}
+
+//-----------------------------------------------------------------------------
+
+void
 glViewer::updateScenePhilipsStereo()
 {
      int vp_l, vp_b, vp_w, vp_h;
@@ -428,77 +529,9 @@ glViewer::updateScenePhilipsStereo()
         pProgram_->link();
     }
 
-    // Does color texture exist?
-    if (!pColorTexture_.is_valid()) {
-        // ======================================================================================================
-        // creating a color texture
-        // ======================================================================================================
-
-        pColorTexture_.enable();
-        pColorTexture_.bind();
-        GLenum texTarget = GL_TEXTURE_2D;
-        GLenum texInternalFormat = GL_RGBA;
-        GLenum texFormat = GL_RGBA;
-        GLenum texType = GL_UNSIGNED_BYTE;
-        GLenum texFilterMode = GL_NEAREST;
-        glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
-
-        glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
-        glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
-        glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
-
-        if(!pColorTexture_.is_valid()) {
-            philipsStereoInitialized_ = false;
-        }
-    }
-
-    // Does depth stencil texture exist?
-    if (!pDepthStencilTexture_.is_valid()) {
-        // ======================================================================================================
-        // creating an 24-bit depth + 8-bit stencil texture
-        // ======================================================================================================
-
-        pDepthStencilTexture_.enable();
-        pDepthStencilTexture_.bind();
-        GLenum texTarget = GL_TEXTURE_2D;
-        GLenum texInternalFormat = GL_DEPTH24_STENCIL8_EXT;
-        GLenum texFormat = GL_DEPTH_STENCIL_EXT;
-        GLenum texType = GL_UNSIGNED_INT_24_8_EXT;
-        GLenum texFilterMode = GL_NEAREST;
-        glTexImage2D(texTarget, 0, texInternalFormat, vp_w, vp_h, 0, texFormat, texType, NULL);
-
-        glTexParameterf(texTarget, GL_TEXTURE_MIN_FILTER, texFilterMode);
-        glTexParameterf(texTarget, GL_TEXTURE_MAG_FILTER, texFilterMode);
-        glTexParameterf(texTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(texTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(texTarget, GL_TEXTURE_COMPARE_FUNC_ARB, GL_LEQUAL);
-
-        if(!pDepthStencilTexture_.is_valid()) {
-            philipsStereoInitialized_ = false;
-        }
-    }
-
-    // Resize target textures
-    if (glstate_->viewport_width() != pTexWidth_ ||
-            glstate_->viewport_height() != pTexHeight_) {
-
-        // Color texture
-        pColorTexture_.bind();
-        glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
-                GL_RGB, GL_UNSIGNED_BYTE, 0);
-
-        // Depth stencil texture
-        pDepthStencilTexture_.bind();
-        glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGB, glstate_->viewport_width(), glstate_->viewport_height(), 0,
-                GL_RGB, GL_UNSIGNED_BYTE, 0);
-
-        glBindTexture(GL_TEXTURE_RECTANGLE_NV, 0);
-
-        pTexWidth_ = glstate_->viewport_width();
-        pTexHeight_ = glstate_->viewport_height();
-    }
+    updateColorTextureBuffer();
+   
+    updateDepthStencilTextureBuffer();
 
     philipsStereoInitialized_ = true;
 }
