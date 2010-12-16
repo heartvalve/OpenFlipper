@@ -494,6 +494,9 @@ public slots:
     
     /// Set the file type for snapshots.
     void snapshotFileType(const QString& _type, unsigned int _viewerId = 0);
+    
+    /// Set the start index for the snapshot counter
+    void snapshotCounterStart(const int _counter, unsigned int _viewerId = 0);
 
     /** Trigger a snapshot and increase the snapshot counter.
       Save snapshot to file determined by snapshotBaseFileName() and

@@ -1227,6 +1227,20 @@ void Core::snapshotFileType(const QString& _type, unsigned int _viewerId ){
   
 }
 
+
+void Core::snapshotCounterStart(const int _counter, unsigned int _viewerId ){
+
+  if ( OpenFlipper::Options::gui() ) {
+    if ( _viewerId >= OpenFlipper::Options::examinerWidgets() ) {
+      emit log(LOGERR,tr("Unable to snapshotFileType for viewer ") + QString::number(_viewerId) );
+      return;
+    }
+    
+    PluginFunctions::viewerProperties(_viewerId).snapshotCounter( _counter );
+  }
+  
+}
+
 void Core::snapshot( unsigned int _viewerId, int _width, int _height, bool _alpha ){
 
 
