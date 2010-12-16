@@ -73,6 +73,18 @@ bool getObject(  int _identifier , SphereObject*& _object ) {
   return ( _object != 0 );
 }
 
+SphereObject* sphereObject( int _objectId ) {
+  
+  if ( _objectId == -1 ) {
+    return 0;
+  }
+  
+  BaseObject* object = objectRoot()->childExists( _objectId );
+  SphereObject* sphereObject = dynamic_cast< SphereObject* >(object);
+  return sphereObject;
+  
+}
+
 
 // ===============================================================================
 // Getting data from objects and casting between them

@@ -85,6 +85,13 @@ SphereNode* sphereNode( BaseObjectData* _object );
 DLLEXPORT
 SphereObject* sphereObject( BaseObjectData* _object );
 
+/** \brief Get a SphereObject from id if possible
+*
+* @param _object If the content is a sphere, a SphereObject is returned. Otherwise a NULL pointer is returned.
+*/
+DLLEXPORT
+SphereObject* sphereObject( int _objectId );
+
 }
 
 #endif // PLUGINFUNCTIONSSPHERE_HH
