@@ -1013,10 +1013,23 @@ void get_all_objects( std::vector < BaseObjectData*>& _objects ) {
 
 }
 
-///   Fly to point and viewing direction (animated).
+
+/// Fly to point and viewing direction (animated).
 void flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time) {
    examiner_widgets_[activeExaminer_]->flyTo(_position,_center,_time);
 }
+
+
+/// Fly to point and keep viewing direction (animated).
+void flyTo (const ACG::Vec3d &_center, bool _move_back, double _time) {
+  ACG::Vec3d eye = PluginFunctions::viewerProperties().glState().eye();
+  ACG::Vec3d t = _center - eye;
+  ACG::Vec3d e = eye + t * (_move_back ? -0.5f : 0.5f);
+  examiner_widgets_[activeExaminer_]->flyTo(e, _center, _time);
+}
+
+
+
 
 // ===============================================================================
 // Getting data from objects and casting between them

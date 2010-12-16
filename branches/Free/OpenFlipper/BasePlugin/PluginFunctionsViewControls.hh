@@ -394,6 +394,16 @@ void setFixedView(int _mode, int _viewer = ACTIVE_VIEWER );
 DLLEXPORT
 void flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time=1000.0);
 
+
+/**  Fly to point and keep viewing direction (animated).
+ * @param _center    The new scene center ( the point we are looking at )
+ * @param _move_back Get closer if \c _move_back=\c true, get more distant else.
+ * @param _time      Animation time in ms
+ */
+DLLEXPORT
+void flyTo (const ACG::Vec3d &_center, bool _move_back = true, double _time=1000.0);
+
+
 /** @} */
 
 }
