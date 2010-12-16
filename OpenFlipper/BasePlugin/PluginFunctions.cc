@@ -1014,8 +1014,14 @@ void get_all_objects( std::vector < BaseObjectData*>& _objects ) {
 }
 
 ///   Fly to point and viewing direction (animated).
-void   flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time) {
+void flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time) {
    examiner_widgets_[activeExaminer_]->flyTo(_position,_center,_time);
+}
+
+
+///   Fly to point (animated).
+void flyTo (const ACG::Vec3d &_center, bool _back) {
+  examiner_widgets_[activeExaminer_]->flyTo(_center,_back);
 }
 
 
