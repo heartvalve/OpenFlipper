@@ -394,14 +394,6 @@ void setFixedView(int _mode, int _viewer = ACTIVE_VIEWER );
 DLLEXPORT
 void flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time=1000.0);
 
-
-/**  Fly to point (animated).
-* @param _center New point to look at
-* @param _back     ??
-*/
-DLLEXPORT
-void   flyTo (const ACG::Vec3d &_center, bool _back);
-
 /** @} */
 
 }

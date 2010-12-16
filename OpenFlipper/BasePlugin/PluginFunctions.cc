@@ -1018,13 +1018,6 @@ void flyTo (const ACG::Vec3d &_position, const ACG::Vec3d &_center, double _time
    examiner_widgets_[activeExaminer_]->flyTo(_position,_center,_time);
 }
 
-
-///   Fly to point (animated).
-void flyTo (const ACG::Vec3d &_center, bool _back) {
-  examiner_widgets_[activeExaminer_]->flyTo(_center,_back);
-}
-
-
 // ===============================================================================
 // Getting data from objects and casting between them
 // ===============================================================================
