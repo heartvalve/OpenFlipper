@@ -763,7 +763,7 @@ void setSceneCenter(const ACG::Vec3d& _center, int _viewer) {
   }
 }
 
-const ACG::Vec3d& sceneCenter(int _viewer) {
+const ACG::Vec3d sceneCenter(int _viewer) {
 
   if (_viewer == ACTIVE_VIEWER) {
     return examiner_widgets_[activeExaminer_]->scene_center();
