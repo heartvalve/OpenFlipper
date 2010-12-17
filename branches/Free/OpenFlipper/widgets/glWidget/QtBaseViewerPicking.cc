@@ -631,7 +631,7 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
       }
     }
 
-  delete buffer;
+  delete[] buffer;
   _list = found.toList();
 
   // unbind pick cache
@@ -804,7 +804,7 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
       }
     }
 
-  delete buffer;
+  delete[] buffer;
   //_list = found.toList();
 
   // unbind pick cache
@@ -976,7 +976,8 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
       }
     }
 
-  delete buffer;
+  delete[] buffer;
+  delete[] depths;
   //_list = found.toList();
 
   // unbind pick cache
@@ -1152,7 +1153,8 @@ bool glViewer::pick_region( ACG::SceneGraph::PickTarget                _pickTarg
       }
     }
 
-  delete buffer;
+  delete[] buffer;
+  delete[] depths;
   //_list = found.toList();
 
   // unbind pick cache
