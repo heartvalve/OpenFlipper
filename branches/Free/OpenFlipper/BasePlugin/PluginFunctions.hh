@@ -237,12 +237,6 @@ void setEncodedExaminerView(int _viewerId , QString _view );
 DLLEXPORT
 void setSceneCenter(const ACG::Vec3d& _center, int _viewer );
 
-/**
- * Get scene center
- */
-DLLEXPORT
-const ACG::Vec3d& sceneCenter( int _viewer );
-
 /** Execute picking operation on scenegraph
  * This picking function will pick in the last active examiner context which is automatically
  * Set by mouseevents from the core
