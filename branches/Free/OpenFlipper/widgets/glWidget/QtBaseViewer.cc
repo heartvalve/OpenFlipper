@@ -2182,6 +2182,9 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
     
     int w = 0, h = 0, bak_w = 0, bak_h = 0, left = 0, bottom = 0;
     
+    glstate_->push_modelview_matrix();
+    glstate_->push_projection_matrix();
+    
     // Get viewport data
     glstate_->get_viewport(left, bottom, w, h);
     
@@ -2268,7 +2271,11 @@ void glViewer::snapshot(QImage& _image, int _width, int _height, bool _alpha, bo
         // Reset viewport to former size
         glstate_->viewport(left, bottom, bak_w, bak_h);
     }
+    
+    glstate_->pop_modelview_matrix();
+    glstate_->pop_projection_matrix();
 }
+
 
 void glViewer::snapshot( int _width, int _height, bool _alpha )
 {
