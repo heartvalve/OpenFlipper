@@ -333,11 +333,6 @@ void
 TransformNode::
 ortho2DMode(GLState& _state)
 {
-//   return;
-//   double currentNear = _state.near_plane();
-//   double currentFar  = _state.far_plane();
-//   std::cout << "currentNear =" << currentNear << ", currentFar = " << currentFar << std::endl;
-
   // set ortho 2D mode in glstate
   int width  = _state.viewport_width();
   int height = _state.viewport_height();
@@ -357,7 +352,6 @@ ortho2DMode(GLState& _state)
                  Vec3d(0.0,0.0,1.0), 
                  Vec3d(0.0,-1.0,0.0));  // flip up direction (y-axis) s.t. opengl coordsys matches image coordsys
   
-//   _state.translate( 0.5*(width-1),  0.5*(height-1), 0);
   _state.scale(scaleFactor2D_, scaleFactor2D_, 1.0);
 
   //   move image center to window center
