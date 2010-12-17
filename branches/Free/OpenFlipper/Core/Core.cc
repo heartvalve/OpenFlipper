@@ -1280,7 +1280,8 @@ void Core::resizeViewers(int _width, int _height ){
 
 
     //+4,+20 to to get the correct dimension when using snapshotFunction
-    coreWidget_->glView_->resize(_width+4, _height+20);
+//     coreWidget_->glView_->resize(_width+4, _height+20);
+    coreWidget_->glView_->resize(_width+6, _height+6);
   }
 }
 
