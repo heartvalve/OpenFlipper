@@ -185,7 +185,7 @@ public:
   void set2D(bool _2d){is2DObject_ = _2d;};
   void ortho2DMode(GLState& _state);
   void update2DOffset(ACG::Vec2d _offset){offset_ += _offset;};
-  void scale2D(double _scale){scaleFactor2D_ += _scale;};
+  void scale2D(double _scale){scaleFactor2D_ = _scale;};
   void setImageDimensions(ACG::Vec2i _dim){imageDimensions_ = _dim;};
 
 private:
