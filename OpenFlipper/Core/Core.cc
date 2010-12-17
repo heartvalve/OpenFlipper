@@ -1241,7 +1241,7 @@ void Core::snapshotCounterStart(const int _counter, unsigned int _viewerId ){
   
 }
 
-void Core::snapshot( unsigned int _viewerId, int _width, int _height, bool _alpha ){
+void Core::snapshot( unsigned int _viewerId, int _width, int _height, bool _alpha, bool _hideCoordsys ){
 
 
   if ( OpenFlipper::Options::gui() ) {
@@ -1249,7 +1249,7 @@ void Core::snapshot( unsigned int _viewerId, int _width, int _height, bool _alph
       emit log(LOGERR,tr("Unable to create snapshot for viewer ") + QString::number(_viewerId) );
       return;
     }
-    coreWidget_->examiner_widgets_[_viewerId]->snapshot(_width, _height, _alpha);
+    coreWidget_->examiner_widgets_[_viewerId]->snapshot(_width, _height, _alpha, _hideCoordsys);
   }
 
 }
