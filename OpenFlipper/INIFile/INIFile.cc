@@ -359,6 +359,25 @@ void INIFile::add_entry( const QString & _section,
 
 // -----------------------------------------------------------------------------
 
+
+void INIFile::add_entry( const QString & _section,
+                         const QString & _key,
+                         const std::vector<bool> & _value)
+{
+  QString list;
+  std::vector<bool>::const_iterator viter;
+  for(viter = _value.begin();viter!=_value.end();++viter){
+    if (*viter == true)
+      list += "true;";
+    else
+      list += "false;";
+  }
+  m_iniData[ _section ][ _key ] = list;
+}
+
+
+// -----------------------------------------------------------------------------
+
 void INIFile::add_entry( const QString & _section,
           const QString & _key,
           const std::vector<int> & _value)
@@ -636,6 +655,42 @@ bool INIFile::get_entry( std::vector<double> & _val,
 // -----------------------------------------------------------------------------
 
 
+bool INIFile::get_entry( std::vector<bool> & _val,
+                         const QString & _section,
+                         const QString & _key ) const
+{
+  SectionMap::const_iterator sIter;
+  EntryMap::const_iterator eIter;
+
+  _val.clear();
+
+  // does the given section exist?
+  if( (sIter = m_iniData.find( _section )) == m_iniData.end() )
+    return false;
+
+  // does the given entry exist?
+  if( (eIter = sIter->second.find( _key )) == sIter->second.end() )
+    return false;
+
+  QStringList list = eIter->second.split(';');
+
+  bool ok = true;
+  for ( int i = 0 ; i < list.size(); ++i) {
+    if ( list[i].isEmpty() )
+      continue;
+    if (list[i] == "true")
+      _val.push_back(true);
+    else
+      _val.push_back(false);
+  }
+
+  return ok;
+}
+
+
+// -----------------------------------------------------------------------------
+
+
 bool INIFile::get_entry( std::vector<int> & _val,
           const QString & _section,
           const QString & _key ) const
@@ -668,9 +723,12 @@ bool INIFile::get_entry( std::vector<int> & _val,
 }
 
 
+// -----------------------------------------------------------------------------
+
+
 bool INIFile::get_entry( std::vector<QString> & _val,
-          const QString & _section,
-          const QString & _key ) const
+                         const QString & _section,
+                         const QString & _key ) const
 {
   SectionMap::const_iterator sIter;
   EntryMap::const_iterator eIter;
@@ -697,9 +755,13 @@ bool INIFile::get_entry( std::vector<QString> & _val,
   return ok;
 }
 
+
+// -----------------------------------------------------------------------------
+
+
 bool INIFile::get_entry( QStringList & _val,
-          const QString & _section,
-          const QString & _key ) const
+                         const QString & _section,
+                         const QString & _key ) const
 {
   SectionMap::const_iterator sIter;
   EntryMap::const_iterator eIter;
@@ -722,3 +784,7 @@ bool INIFile::get_entry( QStringList & _val,
 
   return ok;
 }
+
+
+// -----------------------------------------------------------------------------
+
