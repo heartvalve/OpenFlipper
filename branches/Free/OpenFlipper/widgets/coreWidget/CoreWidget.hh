@@ -96,6 +96,7 @@
 #include <ACG/QtWidgets/QtSceneGraphWidget.hh>
 
 #include <ACG/Scenegraph/DrawModes.hh>
+#include <ACG/Scenegraph/CoordsysNode.hh>
 
 #include <OpenFlipper/INIFile/INIFile.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
@@ -1003,6 +1004,12 @@ public:
 
     /// Toggle projection mode of the active viewer.
     void slotContextSwitchProjection();
+    
+    /// Toggle coordsys projection mode of the active viewer.
+    ACG::SceneGraph::CoordsysNode::ProjectionMode getCoordsysProjection();
+    
+    /// Toggle coordsys projection mode of the active viewer.
+    void slotContextSwitchCoordsysProjection();
 
     /// Toggle projection mode of all viewers to perspective projection
     void slotGlobalPerspectiveProjection();
