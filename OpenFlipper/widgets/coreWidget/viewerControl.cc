@@ -184,21 +184,24 @@ ACG::SceneGraph::CoordsysNode::ProjectionMode CoreWidget::getCoordsysProjection(
 }
 
 /// Toggle coordsys projection mode of the active viewer
-void CoreWidget::slotContextSwitchCoordsysProjection() {  
+void CoreWidget::slotContextSwitchCoordsysProjection() {
     // Find coordsys node
     ACG::SceneGraph::BaseNode* node = 0;
     node = PluginFunctions::getSceneGraphRootNode()->find("Core Coordsys Node");
     if (node != 0) {
-	ACG::SceneGraph::CoordsysNode* cnode = dynamic_cast<ACG::SceneGraph::CoordsysNode*> (node);
-	if (cnode->getProjectionMode() == ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION) {
-	    cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::ORTHOGRAPHIC_PROJECTION);
-	}
-	else {
-	    cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION);
-	}
+        ACG::SceneGraph::CoordsysNode* cnode = dynamic_cast<ACG::SceneGraph::CoordsysNode*> (node);
+        if (cnode->getProjectionMode() == ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION) {
+            cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::ORTHOGRAPHIC_PROJECTION);
+        }
+        else {
+            cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION);
+        }
     } else {
         emit statusMessage(QString(tr("slotContextSwitchCoordsysProjection(): Could not find coordsys node, thus its projection mode will not be toggled.")));
     }
+
+    for ( unsigned int i = 0 ; i < OpenFlipper::Options::examinerWidgets() ; ++i )
+        examiner_widgets_[i]->updateGL();
 }
 
 /// Toggle projection mode of all viewers to perspective projection

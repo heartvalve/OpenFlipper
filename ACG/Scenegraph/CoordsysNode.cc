@@ -243,7 +243,7 @@ draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
     if (projectionMode_ == PERSPECTIVE_PROJECTION)
         _state.perspective(45.0, aspect, 0.8, 20.0);
     else
-        _state.ortho(-0.5*aspect, 0.5*aspect, -0.5, 0.5, 0.8, 20.0);
+        _state.ortho(-0.65*aspect, 0.65*aspect, -0.65, 0.65, 0.8, 20.0);
 
     _state.push_modelview_matrix();
     _state.reset_modelview();
@@ -411,7 +411,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       if (projectionMode_ == PERSPECTIVE_PROJECTION)
         _state.perspective(45.0, aspect, 0.8, 20.0);
       else
-        _state.ortho(-0.5*aspect, 0.5*aspect, -0.5, 0.5, 0.8, 20.0);
+        _state.ortho(-0.65*aspect, 0.65*aspect, -0.65, 0.65, 0.8, 20.0);
 
       _state.push_modelview_matrix();
       _state.reset_modelview();
