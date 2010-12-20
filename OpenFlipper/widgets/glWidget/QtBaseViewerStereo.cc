@@ -196,8 +196,6 @@ void glViewer::drawScenePhilipsStereo() {
     glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, vp_l, vp_b, vp_w, vp_h);
 
     pDepthStencilTexture_.disable();
-
-    glClearColor(.5, .4, .3, 0);
     
     // Turn on shader program
     pProgram_->use();
@@ -242,7 +240,7 @@ void glViewer::drawScenePhilipsStereo() {
     // ======================================================================================================
     // Clear buffers
     // ======================================================================================================
-    glClearColor(.5, .4, .3, 0);
+    glClearColor(.0, .0, .0, 0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // ======================================================================================================

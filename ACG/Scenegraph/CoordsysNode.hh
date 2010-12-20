@@ -81,6 +81,12 @@ class ACGDLLEXPORT CoordsysNode : public BaseNode
 
 public:
   
+  /// projection mode
+  enum ProjectionMode {
+    ORTHOGRAPHIC_PROJECTION, //!< orthographic
+    PERSPECTIVE_PROJECTION   //!< perspective
+  };
+  
   enum CoordsysMode
   {
     POSITION,   // Draws the Coordsys at the coordsys origin
@@ -93,9 +99,10 @@ public:
    */
   CoordsysNode( BaseNode*         _parent=0,
 	         std::string  _name="<TextNode>",
-            CoordsysMode _mode = SCREENPOS )
+            CoordsysMode _mode = SCREENPOS, ProjectionMode _projectionMode = PERSPECTIVE_PROJECTION)
             : BaseNode(_parent, _name),
-              mode_(_mode) {};
+              mode_(_mode),
+              projectionMode_(_projectionMode) {};
 
   /// destructor
   ~CoordsysNode() {};
@@ -118,11 +125,17 @@ public:
   /// set mode to either POSITION or SCREENPOS
   void setMode(const CoordsysMode _mode);
 	
+  /// set mode to either ORTHOGRAPHIC_PROJECTION or PERSPECTIVE_PROJECTION
+  void setProjectionMode(const ProjectionMode _mode);
+	
   /// set position of the coordsys
   void setPosition(const Vec3f& _pos);
 	
   /// get current mode
   CoordsysMode getMode() const;
+	
+  /// get current projection mode
+  ProjectionMode getProjectionMode() const;
 	
   private:
 
@@ -132,6 +145,7 @@ public:
     void boundingCircle(std::vector<Vec2f> &_in, Vec2f &_center, float &_radius);
 
     CoordsysMode mode_;
+    ProjectionMode projectionMode_;
 	
     Vec3f pos3f_;
 };

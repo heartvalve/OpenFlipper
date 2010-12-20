@@ -53,6 +53,7 @@
 
 #include "CoreWidget.hh"
 
+#include <ACG/Scenegraph/CoordsysNode.hh>
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <OpenFlipper/widgets/snapshotDialog/SnapshotDialog.hh>
@@ -167,6 +168,37 @@ void CoreWidget::slotGlobalViewAll() {
 /// Toggle projection mode of the active viewer
 void CoreWidget::slotContextSwitchProjection() {
   examiner_widgets_[PluginFunctions::activeExaminer()]->toggleProjectionMode();
+}
+
+/// Toggle coordsys projection mode of the active viewer
+ACG::SceneGraph::CoordsysNode::ProjectionMode CoreWidget::getCoordsysProjection() {  
+    // Find coordsys node
+    ACG::SceneGraph::BaseNode* node = 0;
+    node = PluginFunctions::getSceneGraphRootNode()->find("Core Coordsys Node");
+    if (node != 0) {
+	return dynamic_cast<ACG::SceneGraph::CoordsysNode*> (node)->getProjectionMode();
+    } else {
+        emit statusMessage(QString(tr("getCoordsysProjection(): Could not find coordsys node. Assuming default orthographic projection.")));
+	return ACG::SceneGraph::CoordsysNode::ORTHOGRAPHIC_PROJECTION;
+    }
+}
+
+/// Toggle coordsys projection mode of the active viewer
+void CoreWidget::slotContextSwitchCoordsysProjection() {  
+    // Find coordsys node
+    ACG::SceneGraph::BaseNode* node = 0;
+    node = PluginFunctions::getSceneGraphRootNode()->find("Core Coordsys Node");
+    if (node != 0) {
+	ACG::SceneGraph::CoordsysNode* cnode = dynamic_cast<ACG::SceneGraph::CoordsysNode*> (node);
+	if (cnode->getProjectionMode() == ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION) {
+	    cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::ORTHOGRAPHIC_PROJECTION);
+	}
+	else {
+	    cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION);
+	}
+    } else {
+        emit statusMessage(QString(tr("slotContextSwitchCoordsysProjection(): Could not find coordsys node, thus its projection mode will not be toggled.")));
+    }
 }
 
 /// Toggle projection mode of all viewers to perspective projection
@@ -724,11 +756,18 @@ if (_visible)
 void CoreWidget::slotSetViewingDirection(QAction* _action) {
 
   PluginFunctions::setFixedView( _action->data().toInt() );
+  if (_action->data().toInt() != PluginFunctions::VIEW_FREE)
+    PluginFunctions::allowRotation( false, PluginFunctions::activeExaminer() );
+  
+    // Update view
+    examiner_widgets_[PluginFunctions::activeExaminer()]->updateGL();
 }
 
 void CoreWidget::slotLockRotation(bool _lock) {
 
   PluginFunctions::allowRotation( !_lock, PluginFunctions::activeExaminer() );
+  if (!_lock)
+    PluginFunctions::setFixedView( PluginFunctions::VIEW_FREE );
 }
 
 void CoreWidget::moveBack() {

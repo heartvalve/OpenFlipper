@@ -107,7 +107,7 @@ drawCoordsys( GLState&  _state) {
   // Origin
   glColor3f(0.5, 0.5, 0.5);
   gluSphere( quadric, sphereRadius, slices, stacks );
-
+  
   // X-Axis
   glColor3f(1.0, 0.0, 0.0);
   _state.push_modelview_matrix ();
@@ -232,25 +232,27 @@ draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
   if ( mode_ == SCREENPOS ) {
 
     int left, bottom, width, height;
-    double aspect = 1.0;
+    double aspect = _state.aspect();
 
     _state.get_viewport(left, bottom, width, height);
-
-    if (width && height)
-      aspect = (double)width / (double)height;
 
     // Projection reset
     _state.push_projection_matrix();
     _state.reset_projection();
-    _state.perspective(45.0, aspect, 0.8, 20.0);
 
-    float posx = left + width - 30.0 ;
-    float posy = bottom + height - 30.0 ;
-
-    Vec3d screenposCenterPoint( posx , posy , 0.0);
+    if (projectionMode_ == PERSPECTIVE_PROJECTION)
+        _state.perspective(45.0, aspect, 0.8, 20.0);
+    else
+        _state.ortho(-0.5*aspect, 0.5*aspect, -0.5, 0.5, 0.8, 20.0);
 
     _state.push_modelview_matrix();
     _state.reset_modelview();
+
+    float rel_size = 50.0;
+    float projdist = sqrt ( (width*height) / rel_size );
+
+    float posx = left + width - projdist ;
+    float posy = bottom + height - projdist ;
 
     // get our desired coordsys position in scene coordinates
     pos3D = _state.unproject (Vec3d (posx, posy, 0.5));
@@ -265,7 +267,7 @@ draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
     modelview(2,3) = 0.0;
 
     _state.set_modelview (modelview);
-    _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
+    _state.translate (pos3D[0], pos3D[1], pos3D[2], MULT_FROM_LEFT);
 
 
     // clear the depth buffer behind the coordsys
@@ -280,7 +282,7 @@ draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
     // draw coordsys
     drawCoordsys(_state);
 
-    // set depth buffer to 0 so tah nothing can paint over cordsys
+    // set depth buffer to 0 so that nothing can paint over cordsys
     glDepthRange (0.0, 0.0);
     glDepthFunc (GL_ALWAYS);
     glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
@@ -320,7 +322,7 @@ draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
     // Koordinatensystem zeichnen
     drawCoordsys(_state);
 
-    // set depth buffer to 0 so tah nothing can paint over cordsys
+    // set depth buffer to 0 so that nothing can paint over cordsys
     glDepthRange (0.0, 0.0);
     glDepthFunc (GL_ALWAYS);
     glColorMask(GL_FALSE,GL_FALSE,GL_FALSE,GL_FALSE);
@@ -352,6 +354,13 @@ setMode(const CoordsysMode _mode)
 
 void
 CoordsysNode::
+setProjectionMode(const ProjectionMode _mode)
+{
+  projectionMode_ = _mode;
+}
+
+void
+CoordsysNode::
 setPosition(const Vec3f& _pos)
 {
   pos3f_ = _pos;
@@ -362,6 +371,13 @@ CoordsysNode::
 getMode() const
 {
   return mode_;
+}
+
+CoordsysNode::ProjectionMode
+CoordsysNode::
+getProjectionMode() const
+{
+  return projectionMode_;
 }
 
 void
@@ -384,26 +400,29 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
     if ( mode_ == SCREENPOS ) {
 
       int left, bottom, width, height;
-      double aspect = 1.0;
+      double aspect = _state.aspect();
 
       _state.get_viewport(left, bottom, width, height);
-
-      if (width && height)
-        aspect = (double)width / (double)height;
-
+      
       // Projection reset
       _state.push_projection_matrix();
       _state.reset_projection();
-      _state.perspective(45.0, aspect, 0.8, 20.0);
 
-      float posx = left + width - 30.0 ;
-      float posy = bottom + height - 30.0 ;
-
-      Vec3d screenposCenterPoint( posx , posy , 0.0);
+      if (projectionMode_ == PERSPECTIVE_PROJECTION)
+        _state.perspective(45.0, aspect, 0.8, 20.0);
+      else
+        _state.ortho(-0.5*aspect, 0.5*aspect, -0.5, 0.5, 0.8, 20.0);
 
       _state.push_modelview_matrix();
       _state.reset_modelview();
 
+      float rel_size = 50.0;
+      float projdist = sqrt ( (width*height) / rel_size );
+
+      float posx = left + width - projdist ;
+      float posy = bottom + height - projdist ;
+
+      // get our desired coordsys position in scene coordinates
       pos3D = _state.unproject (Vec3d (posx, posy, 0.5));
       _state.pop_modelview_matrix();
 
@@ -415,7 +434,7 @@ CoordsysNode::pick(GLState& _state, PickTarget _target)
       modelview(2,3) = 0.0;
 
       _state.set_modelview (modelview);
-      _state.translate (pos3D[0], pos3D[1], pos3D[2]-0.3, MULT_FROM_LEFT);
+      _state.translate (pos3D[0], pos3D[1], pos3D[2], MULT_FROM_LEFT);
 
       // We don't have access to the pick matrix used during selection buffer picking
       // so we can't draw our pick area circle in this case

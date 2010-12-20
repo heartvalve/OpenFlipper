@@ -59,6 +59,7 @@
 #include "../../common/GlobalOptions.hh"
 
 //== IMPLEMENTATION ==========================================================
+#include <ACG/Scenegraph/CoordsysNode.hh>
 
 void CoreWidget::slotCustomContextMenu( const QPoint& _point ) {
 
@@ -110,33 +111,48 @@ void CoreWidget::updatePopupMenuNode(QMenu* _menu , ACG::SceneGraph::BaseNode* _
  * @param _part id of the coordsys part which has been clicked on.
  */
 void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/) {
-//   std::cerr << "Coordsys part was : " << _part << std::endl;
+    
+  QString iconPath = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
+  
   QAction* typeEntry = new QAction(tr("Viewer Settings"),_menu);
   _menu->addAction( typeEntry );
+  typeEntry->setDisabled(true);
   _menu->addSeparator();
+  
+  QAction* orthogonalCoordsys = 0;
+  if ( getCoordsysProjection() == ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION ) {
+    orthogonalCoordsys = new QAction( tr("Switch to Orthogonal coordinate system"), _menu );
+    orthogonalCoordsys->setIcon( QIcon(iconPath+"orthogonal.png") );
+  } else {
+    orthogonalCoordsys = new QAction( tr("Switch to Perspective coordinate system"), _menu );
+    orthogonalCoordsys->setIcon( QIcon(iconPath+"perspective.png") );
+  }
+  connect( orthogonalCoordsys,SIGNAL( triggered() ), this, SLOT( slotContextSwitchCoordsysProjection() ) );
+  _menu->addAction(orthogonalCoordsys);
 
   //====================================================================================================
   // DrawModes
   //====================================================================================================
   slotUpdateViewerDrawMenu();
-  _menu->addMenu( viewerDrawMenu_ );
+  if (! viewerDrawMenu_->isEmpty())
+    _menu->addMenu( viewerDrawMenu_ );
 
   //====================================================================================================
   // RenderingOptions
   //====================================================================================================
-
+  
   QMenu* renderingOptionsMenu = new QMenu(tr("Rendering Options"),_menu);
-  renderingOptionsMenu->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"core_renderingOptions.png") );
+  renderingOptionsMenu->setIcon( QIcon(iconPath+"core_renderingOptions.png") );
   _menu->addMenu(renderingOptionsMenu);
 
   QAction* projectionAction = 0;
   if ( examiner_widgets_[PluginFunctions::activeExaminer() ]->projectionMode() == glViewer::PERSPECTIVE_PROJECTION ) {
     projectionAction = new QAction( tr("Switch to Orthogonal Projection"), renderingOptionsMenu );
-    projectionAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+    projectionAction->setIcon( QIcon(iconPath+"orthogonal.png") );
     projectionAction->setToolTip(   tr("Switch to perspective orthogonal mode."));
   } else {
     projectionAction = new QAction( tr("Switch to Perspective Projection"), renderingOptionsMenu );
-    projectionAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"perspective.png") );
+    projectionAction->setIcon( QIcon(iconPath+"perspective.png") );
     projectionAction->setToolTip(   tr("Switch to perspective projection mode."));
   }
 
@@ -154,7 +170,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 
   animation->setToolTip(tr("Animate rotation of objects"));
   animation->setCheckable( true );
-  animation->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"animation.png") );
+  animation->setIcon( QIcon(iconPath+"animation.png") );
   animation->setChecked( PluginFunctions::viewerProperties(PluginFunctions::activeExaminer()).animation() );
   connect(animation, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeAnimation(bool) ) );
 
@@ -164,7 +180,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   QAction* backfaceCulling = renderingOptionsMenu->addAction(tr("Backface Culling"));
   backfaceCulling->setToolTip(tr("Enable backface culling"));
   backfaceCulling->setCheckable( true );
-  backfaceCulling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"backFaceCulling.png") );
+  backfaceCulling->setIcon( QIcon(iconPath+"backFaceCulling.png") );
   backfaceCulling->setChecked( PluginFunctions::viewerProperties().backFaceCulling() );
   connect(backfaceCulling, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeBackFaceCulling(bool) ) );
 
@@ -173,7 +189,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   QAction* twoSidedLighting = renderingOptionsMenu->addAction(tr("Two-sided Lighting"));
   twoSidedLighting->setToolTip(tr("Enable two-sided lighting"));
   twoSidedLighting->setCheckable( true );
-  twoSidedLighting->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"twosidedLighting.png") );
+  twoSidedLighting->setIcon( QIcon(iconPath+"twosidedLighting.png") );
   twoSidedLighting->setChecked( PluginFunctions::viewerProperties().twoSidedLighting() );
   connect(twoSidedLighting, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeTwoSidedLighting(bool) ) );
   
@@ -182,7 +198,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   QAction* multisampling = renderingOptionsMenu->addAction(tr("Multisampling"));
   multisampling->setToolTip(tr("Enable Multisampling"));
   multisampling->setCheckable( true );
-  multisampling->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"multiSampling.png") );
+  multisampling->setIcon( QIcon(iconPath+"multiSampling.png") );
   multisampling->setChecked( PluginFunctions::viewerProperties().multisampling() );
   connect(multisampling, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMultisampling(bool) ) );
   
@@ -191,7 +207,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   QAction* mipmapping = renderingOptionsMenu->addAction(tr("Mipmapping"));
   mipmapping->setToolTip(tr("Enable Mipmapping"));
   mipmapping->setCheckable( true );
-  mipmapping->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"mipmapping.png") );
+  mipmapping->setIcon( QIcon(iconPath+"mipmapping.png") );
   mipmapping->setChecked( PluginFunctions::viewerProperties().mipmapping() );
   connect(mipmapping, SIGNAL(triggered(bool)), this , SLOT( slotLocalChangeMipmapping(bool) ) );
 
@@ -201,7 +217,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   //============================================================================================================
 
   QMenu* viewingDirectionMenu = new QMenu( tr("Viewing Direction"), _menu);
-  viewingDirectionMenu->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"core_viewingDirection.png"));
+  viewingDirectionMenu->setIcon(QIcon(iconPath+"core_viewingDirection.png"));
   _menu->addMenu(viewingDirectionMenu);
 
   QActionGroup* dirGroup = new QActionGroup(this);
@@ -209,7 +225,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   QAction* viewAction;
   // freeView
   viewAction = new QAction( tr("Free View"), viewingDirectionMenu );
-//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setIcon( QIcon(iconPath+"orthogonal.png") );
   viewAction->setCheckable( true );
   viewAction->setData( PluginFunctions::VIEW_FREE );
   viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_FREE );
@@ -218,7 +234,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   viewingDirectionMenu->addSeparator();
   // TOP
   viewAction = new QAction( tr("Top View"), viewingDirectionMenu );
-//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setIcon( QIcon(iconPath+"viewcontrol_top.png") );
   viewAction->setCheckable( true );
   viewAction->setData( PluginFunctions::VIEW_TOP );
   viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_TOP );
@@ -226,7 +242,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   dirGroup->addAction(viewAction);
   // BOTTOM
   viewAction = new QAction( tr("Bottom View"), viewingDirectionMenu );
-//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setIcon( QIcon(iconPath+"viewcontrol_bottom.png") );
   viewAction->setCheckable( true );
   viewAction->setData( PluginFunctions::VIEW_BOTTOM );
   viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_BOTTOM );
@@ -234,7 +250,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   dirGroup->addAction(viewAction);
   // LEFT
   viewAction = new QAction( tr("Left View"), viewingDirectionMenu );
-//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setIcon( QIcon(iconPath+"viewcontrol_left.png") );
   viewAction->setCheckable( true );
   viewAction->setData( PluginFunctions::VIEW_LEFT );
   viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_LEFT );
@@ -242,7 +258,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   dirGroup->addAction(viewAction);
   // RIGHT
   viewAction = new QAction( tr("Right View"), viewingDirectionMenu );
-//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setIcon( QIcon(iconPath+"viewcontrol_right.png") );
   viewAction->setCheckable( true );
   viewAction->setData( PluginFunctions::VIEW_RIGHT );
   viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_RIGHT );
@@ -250,7 +266,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   dirGroup->addAction(viewAction);
   // FRONT
   viewAction = new QAction( tr("Front View"), viewingDirectionMenu );
-//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setIcon( QIcon(iconPath+"viewcontrol_front.png") );
   viewAction->setCheckable( true );
   viewAction->setData( PluginFunctions::VIEW_FRONT );
   viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_FRONT );
@@ -258,7 +274,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   dirGroup->addAction(viewAction);
   // BACK
   viewAction = new QAction( tr("Back View"), viewingDirectionMenu );
-//   viewAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"orthogonal.png") );
+  viewAction->setIcon( QIcon(iconPath+"viewcontrol_back.png") );
   viewAction->setCheckable( true );
   viewAction->setData( PluginFunctions::VIEW_BACK );
   viewAction->setChecked( PluginFunctions::viewerProperties().currentViewingDirection() == PluginFunctions::VIEW_BACK );
@@ -274,7 +290,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   
   QAction* lockAction = viewingDirectionMenu->addAction("Lock rotation");
   lockAction->setCheckable( true );
-  lockAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"lock_rotation.png") );
+  lockAction->setIcon( QIcon(iconPath+"lock_rotation.png") );
   lockAction->setToolTip(tr("Lock rotation in current examiner"));
   lockAction->setChecked( PluginFunctions::viewerProperties().rotationLocked() );
   viewingDirectionMenu->addAction( lockAction );
@@ -290,7 +306,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   //====================================================================================================
 
   QAction* homeAction = new QAction(tr("Restore home view"),_menu);
-  homeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"go-home.png") );
+  homeAction->setIcon( QIcon(iconPath+"go-home.png") );
   homeAction->setCheckable( false );
   homeAction->setToolTip(tr("Restore <b>home</b> view."));
   homeAction->setWhatsThis( tr("Restore home view<br><br>"
@@ -299,7 +315,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   connect( homeAction,SIGNAL( triggered() ), this, SLOT( slotContextHomeView() ) );
 
   QAction* setHomeAction = new QAction( tr("Set Home View") , _menu );
-  setHomeAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"set-home.png") );
+  setHomeAction->setIcon( QIcon(iconPath+"set-home.png") );
   setHomeAction->setCheckable( false );
   setHomeAction->setToolTip(tr("Set <b>home</b> view"));
   setHomeAction->setWhatsThis( tr("Store home view<br><br>"
@@ -308,7 +324,7 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
   connect( setHomeAction,SIGNAL( triggered() ), this, SLOT( slotContextSetHomeView() ) );
 
   QAction* viewAllAction = new QAction( tr("View all"), _menu );
-  viewAllAction->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"viewall.png") );
+  viewAllAction->setIcon( QIcon(iconPath+"viewall.png") );
   viewAllAction->setCheckable( false );
   viewAllAction->setToolTip(tr("View all."));
   viewAllAction->setWhatsThis( tr("View all<br><br>"
@@ -324,28 +340,28 @@ void CoreWidget::updatePopupMenuCoordsysNode(QMenu* _menu  , const int /*_part*/
 
   QAction* copyView = _menu->addAction(tr("Copy View"));
   copyView->setToolTip(tr("Copy current view to clipboard"));
-  copyView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-copy.png") );
+  copyView->setIcon( QIcon(iconPath+"edit-copy.png") );
   connect(copyView, SIGNAL(triggered()), this, SLOT(slotCopyView()) );
 
   //====================================================================================================
 
   QAction* pasteView = _menu->addAction(tr("Paste View"));
   pasteView->setToolTip(tr("Paste current view from clipboard"));
-  pasteView->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"edit-paste.png") );
+  pasteView->setIcon( QIcon(iconPath+"edit-paste.png") );
   connect(pasteView, SIGNAL(triggered()), this , SLOT( slotPasteView( ) ) );
 
   //====================================================================================================
 
   QAction* snapshot_examiner = _menu->addAction(tr("Examiner Snapshot"));
   snapshot_examiner->setToolTip(tr("Take a snapshot of the current examiner"));
-  snapshot_examiner->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
+  snapshot_examiner->setIcon( QIcon(iconPath+"snapshot.png") );
   connect(snapshot_examiner, SIGNAL(triggered()), this, SLOT( slotExaminerSnapshot() ) );
   
   //====================================================================================================
   
   QAction* snapshot_viewer = _menu->addAction(tr("Viewer Snapshot"));
   snapshot_viewer->setToolTip(tr("Take a snapshot of the whole viewer"));
-  snapshot_viewer->setIcon( QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"snapshot.png") );
+  snapshot_viewer->setIcon( QIcon(iconPath+"snapshot.png") );
   connect(snapshot_viewer, SIGNAL(triggered()), this, SLOT( viewerSnapshotDialog() ) );
 
 }
@@ -368,7 +384,7 @@ void CoreWidget::updatePopupMenuBackground(QMenu* _menu , const QPoint& /*_point
   _menu->addMenu( viewerDrawMenu_ );
 
   _menu->addSeparator();
-
+  
   QAction* action = _menu->addAction(tr("Set Background Color"));
   action->setToolTip(tr("Set the background color for the current viewer"));
   action->setStatusTip(tr("Set the background color for the current viewer"));

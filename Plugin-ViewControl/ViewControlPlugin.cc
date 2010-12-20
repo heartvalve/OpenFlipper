@@ -1198,7 +1198,6 @@ void ViewControlPlugin::setView(int _mode, int _viewer ) {
       break;
   }
   
-  PluginFunctions::allowRotation(true, _viewer);
   updateView();
 }
 
