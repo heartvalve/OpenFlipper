@@ -669,6 +669,7 @@ QtMaterialDialog::changeBlendingParam1(const QString& _name)
   else if (_name == "GL_ONE_MINUS_SRC_COLOR")      blendParam1_ = GL_ONE_MINUS_SRC_COLOR;
   else if (_name == "GL_DST_COLOR")                blendParam1_ = GL_DST_COLOR;
   else if (_name == "GL_ONE_MINUS_DST_COLOR")      blendParam1_ = GL_ONE_MINUS_DST_COLOR;
+  else if (_name == "GL_SRC_ALPHA")                blendParam1_ = GL_SRC_ALPHA;
   else if (_name == "GL_ONE_MINUS_SRC_ALPHA")      blendParam1_ = GL_ONE_MINUS_SRC_ALPHA;
   else if (_name == "GL_DST_ALPHA")                blendParam1_ = GL_DST_ALPHA;
   else if (_name == "GL_ONE_MINUS_DST_ALPHA")      blendParam1_ = GL_ONE_MINUS_DST_ALPHA;
@@ -695,6 +696,7 @@ QtMaterialDialog::changeBlendingParam2(const QString& _name)
   else if (_name == "GL_ONE_MINUS_SRC_COLOR")      blendParam2_ = GL_ONE_MINUS_SRC_COLOR;
   else if (_name == "GL_DST_COLOR")                blendParam2_ = GL_DST_COLOR;
   else if (_name == "GL_ONE_MINUS_DST_COLOR")      blendParam2_ = GL_ONE_MINUS_DST_COLOR;
+  else if (_name == "GL_SRC_ALPHA")                blendParam2_ = GL_SRC_ALPHA;
   else if (_name == "GL_ONE_MINUS_SRC_ALPHA")      blendParam2_ = GL_ONE_MINUS_SRC_ALPHA;
   else if (_name == "GL_DST_ALPHA")                blendParam2_ = GL_DST_ALPHA;
   else if (_name == "GL_ONE_MINUS_DST_ALPHA")      blendParam2_ = GL_ONE_MINUS_DST_ALPHA;
@@ -784,6 +786,7 @@ QString QtMaterialDialog::paramToStr(GLenum _param)
   else if (_param == GL_ONE_MINUS_SRC_COLOR)      return "GL_ONE_MINUS_SRC_COLOR";
   else if (_param == GL_DST_COLOR)                return "GL_DST_COLOR";
   else if (_param == GL_ONE_MINUS_DST_COLOR)      return "GL_ONE_MINUS_DST_COLOR";
+  else if (_param == GL_SRC_ALPHA)                return "GL_SRC_ALPHA";
   else if (_param == GL_ONE_MINUS_SRC_ALPHA)      return "GL_ONE_MINUS_SRC_ALPHA";
   else if (_param == GL_DST_ALPHA)                return "GL_DST_ALPHA";
   else if (_param == GL_ONE_MINUS_DST_ALPHA)      return "GL_ONE_MINUS_DST_ALPHA";
