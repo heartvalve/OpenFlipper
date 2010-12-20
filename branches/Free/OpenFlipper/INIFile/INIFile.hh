@@ -191,6 +191,11 @@ public :
     void add_entry( const QString & _section,
                     const QString & _key ,
                     const std::vector<double> & _value);
+                    
+    //! Addition / modification of a bool vector
+    void add_entry( const QString & _section,
+                    const QString & _key ,
+                    const std::vector<bool> & _value);
 
     //! Addition of a Vec_n_something
     template < typename VectorT >
@@ -280,6 +285,11 @@ public :
 
     //! Access to a double vector
     bool get_entry( std::vector<double> & _val,
+                    const QString & _section,
+                    const QString & _key) const;
+                    
+    //! Access to a bool vector
+    bool get_entry( std::vector<bool> & _val,
                     const QString & _section,
                     const QString & _key) const;
 
