@@ -534,7 +534,7 @@ Core::init() {
                this, SLOT( viewUpdated()) ,Qt::DirectConnection);
 
       connect( coreWidget_->examiner_widgets_[i], SIGNAL( viewChanged() ),
-               this, SIGNAL( pluginViewChanged() ) ,Qt::DirectConnection);
+               coreWidget_->examiner_widgets_[i], SLOT( updateGL() ) ,Qt::DirectConnection);
     }
 
   }
