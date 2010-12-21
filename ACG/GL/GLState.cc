@@ -204,13 +204,16 @@ void GLState::clearBuffers ()
     glPushMatrix();
     glLoadIdentity ();
 
-    glColor4fv(clear_color_.data());
-    glBegin (GL_QUADS);
-    glVertex3f (-1.0, -1.0, 1.0);
-    glVertex3f (1.0, -1.0, 1.0);
-    glVertex3f (1.0, 1.0, 1.0);
-    glVertex3f (-1.0, 1.0, 1.0);
-    glEnd ();
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    
+    // Rendering a quad? Why???? Using clear now
+//     glColor4fv(clear_color_.data());
+//     glBegin (GL_QUADS);
+//     glVertex3f (-1.0, -1.0, 1.0);
+//     glVertex3f (1.0, -1.0, 1.0);
+//     glVertex3f (1.0, 1.0, 1.0);
+//     glVertex3f (-1.0, 1.0, 1.0);
+//     glEnd ();
 
     glPopMatrix ();
     glMatrixMode(GL_PROJECTION);
