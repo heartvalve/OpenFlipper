@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 10353 )</b>
+ * - <b>OpenFlipper 1.0 (  ? , 10485 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - Enable or disable Mipmapping
@@ -13,6 +13,10 @@
  *              - Get colors from materialNode rather than setting it in the node directly
  *          - BSlineSurfaceNode
  *              - Get colors from materialNode rather than setting it in the node directly
+ *          - Coordsys Node
+ *              - Implemented orthogonal mode
+ *          - GLState
+ *              - Correctly clear buffers
  *          - Gridnode
  *              - Fixed size now works correctly
  *          - LightNode
@@ -28,6 +32,8 @@
  *              - Correctly unbind texture if bound in MeshNode
  *          - PlaneNode
  *              - Fixed an error in the nonzero normal detection in PlaneNode::setPosition.
+ *          - QtMaterialDialog
+ *              - Bugfixi( GL_SCR_ALPHA was missing as choice for blending param)
  *          - Quaternions
  *              - Matrix constructor added
  *              - Added dual quaternions
@@ -38,6 +44,8 @@
  *              - Fixed bug accessing element one of empty array
  *          - TextureNode
  *              - Enable or disable Mipmapping
+ *          - Transform Node
+ *              - Support planar 2D objects
  *      - <b>Core</b>
  *          - BaseObject
  *              - Remove all children from additional node when deleting the subtree(otherwise we get dangling pointers)
@@ -53,10 +61,16 @@
  *              - Set minimal scene size for startup to 10 
  *              - Implemented zoom to for orthogonal projection mode
  *              - Added option to set fov for the viewers
+ *              - Added option to directly render depth buffer as image
+ *              - Bugfix (lookat wrong for ortho mode)
+ *              - Bugfix (Wrong parameters when resizing viewer)
+ *              - Improved fly to functions
  *          - Key Handling
  *              - Fixed alt-key bug where last mode was not restored correctly on windows
  *          - Info
  *              - Show memory usage information in about dialog on linux
+ *          - License Manager
+ *              - Improved license checks
  *          - Load/Save
  *              - Fixed bug when supported extensions are not parsed correctly
  *              - Fixed bug when filename extensions with capital letters where not marked as supported
@@ -65,16 +79,25 @@
  *              - Fixed bug where objectDeleted(int) was called after the actual object is delete (making it impossible to cleanup on that signal)
  *          - Options
  *              - Some gui cleanup for options widget
+ *          - Settings
+ *              - Sanity checks if no default is given for OpenFlipperSettings
+ *          - Scripting
+ *              - Set fovy via scipting
+ *              - set toolbox orientation via scripting
  *          - Snapshots
  *              - Remember last states for snapshot dialog
  *              - Render snapshots offscreen (Arbitrary size)
  *              - Added option to hide coordsys in snapshots
  *              - Added options to set background to alpha in snapshots
  *              - Added option to enable/disable multisampling in snapshots (and adjust #points used for multisampling)
+ *              - Improved scripting functions for snapshots
+ *          - PluginConnection Interface
+ *              - Allow to connect signals and slots across plugins
  *          - Process Interface
  *              - Show progress dialog centered at corewidget (not anywhere on screen)
  *          - User Interface
  *              - Added option to show toolbox on the left
+ *              - Added option to show/hide view mode controls
  *          - ViewMode Interface
  *              - Allow setting of viewmodes
  *      - <b>ObjectTypes</b>
@@ -126,10 +149,13 @@
  *              - Support backup plugin ( ->undo )
  *          - TextureControl
  *              - Added min_val parameter additionally to max_val
+ *              - Added histogramm controls
  *          - ViewControl
  *              - Support Splines
  *              - Support PolyLines
  *              - New Scripting Function to set per object drawMode directly
+ *              - Fixed shader assignment
+ *              - Preset buttons for basic viewing directions
  *      - <b>Documentation</b>
  *          - More docs for backup interface (incl. Tutorial)
  *      - <b>Build System</b>
