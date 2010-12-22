@@ -33,7 +33,7 @@
  *          - PlaneNode
  *              - Fixed an error in the nonzero normal detection in PlaneNode::setPosition.
  *          - QtMaterialDialog
- *              - Bugfixi( GL_SCR_ALPHA was missing as choice for blending param)
+ *              - Bugfix ( GL_SCR_ALPHA was missing as choice for blending param)
  *          - Quaternions
  *              - Matrix constructor added
  *              - Added dual quaternions
