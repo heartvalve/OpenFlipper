@@ -96,6 +96,9 @@ void
 PointNode::
 draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 {
+  if (points_.size() == 0)
+    return;
+  
   // points
   if (_drawMode & DrawModes::POINTS)
   {
