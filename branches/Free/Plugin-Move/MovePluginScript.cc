@@ -49,10 +49,6 @@
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
 #include <ObjectTypes/TSplineMesh/TSplineMesh.hh>
 #endif
-#ifdef ENABLE_SKELETON_SUPPORT
-#include <ObjectTypes/Skeleton/SkeletonTransform.hh>
-#endif
-
 #include <MeshTools/MeshFunctions.hh>
 
 
@@ -809,115 +805,6 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
   // Create backup
   emit createBackup(_objectId, "Transformation of Edge Selection");
 }
-
-//------------------------------------------------------------------------------
-
-#ifdef ENABLE_SKELETON_SUPPORT
-/** \brief transform selected joints with given matrix
- *
- * when a manipulator is placed on a joint, the selection of the skeleton
- * is cleared and only that joint is selected
- * the selection is used here to find the joint to be deformed
- *
- * @param _objectId id of an object
- * @param _matrix transformation matrix
- */
-void MovePlugin::transformSkeletonJoint( int _objectId , Matrix4x4 _matrix ){
-    
-  BaseObjectData* obj = 0;
-  
-  PluginFunctions::getObject(_objectId, obj);
-  
-  if (obj == 0){
-    emit log(LOGERR, tr("Unable to get object"));
-    return;
-  }
-  
-  SkeletonObject* skeletonObj = PluginFunctions::skeletonObject(obj);
-  
-  if (skeletonObj == 0){
-    emit log(LOGERR, tr("Unable to get skeletonObject"));
-    return;
-  }
-  
-  Skeleton* skeleton = PluginFunctions::skeleton(obj);
-
-  if (skeleton == 0){
-    emit log(LOGERR, tr("Unable to get skeleton"));
-    return;
-  }
-  
-  bool recursiveJointTransformation = recursiveJointTransformation_;
-  
-  AnimationHandle handle = skeletonObj->skeletonNode()->getActivePose();
-  
-  Skeleton::Pose* activePose;
-  
-  if ( !handle.isValid() ){
-    activePose = skeleton->getReferencePose();
-  }else{
-    
-    activePose = skeleton->getAnimation( handle.getAnimation() )->getPose( handle.getFrame() );
-    
-    //always tranform children otherwise only the local coordsys is rotated
-    recursiveJointTransformation = false;
-    
-    // translation changes the skeleton structure
-    // this is only allowed in refPose therefore delete translation
-    Matrix4x4 mat = _matrix;
-    mat(0,3) = 0.0;
-    mat(1,3) = 0.0;
-    mat(2,3) = 0.0;
-    if ( mat.is_identity() )
-      _matrix = mat;
-  }
-
-  Skeleton::Joint* joint = skeleton->getJoint( skeletonObj->manipulatorNode()->getData().toInt() );
-  
-  SkeletonTransform transformer(*skeleton);
-  
-  if ( handle.isValid() )
-    //we are in an animation pose -> only rotation allowed
-    transformer.rotateJoint(joint, activePose, _matrix, !transformCurrentPose_);
-  else
-    //we are in the refPose apply full transformation
-    transformer.transformJoint(joint, _matrix, recursiveJointTransformation);
-
-//   //if we are in refPose update segmentation
-//   if ( !handle.isValid() ){  
-//     //tell segmenation plugin to update the segmentation
-//     bool exists = false;
-// 
-//     emit functionExists("segmentationplugin", "updateSegmentation()", exists);
-// 
-//     if (exists)
-//       RPC::callFunction("segmentationplugin", "updateSegmentation");
-//   }
-
-  //update the skin
-  bool exists = false;
-
-  emit functionExists("skeletonplugin", "updateSkin()", exists);
-  
-  if (exists)
-    RPC::callFunction("skeletonplugin", "updateSkin");
-
-  emit updatedObject(_objectId, UPDATE_GEOMETRY);
- 
-  QString matString;
-  for (int i=0; i < 4; i++)
-    for (int j=0; j < 4; j++)
-      matString += " , " + QString::number( _matrix(i,j) );
-
-  matString = matString.right( matString.length()-3 );
-
-  emit scriptInfo( "transformSkeletonJoint( ObjectId , Matrix4x4(" + matString + " ) )" );
-  
-  // Create backup
-  emit createBackup(_objectId, "Transformation of Skeleton Joints");
-}
-
-#endif
 
 //------------------------------------------------------------------------------
 
