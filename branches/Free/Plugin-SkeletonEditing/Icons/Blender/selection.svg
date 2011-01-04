@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   width="48"
+   height="48"
+   sodipodi:docname="selection.svg"
+   inkscape:export-filename="/home/wilden/projects/OpenFlipper-Free/Plugin-SkeletonEditing/Icons/skeleton_selectJoint.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective10" />
+    <inkscape:perspective
+       id="perspective2826"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective2822"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <filter
+       inkscape:collect="always"
+       id="filter3618">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.30508475"
+         id="feGaussianBlur3620" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1154"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="4.9166667"
+     inkscape:cx="-17.79661"
+     inkscape:cy="24"
+     inkscape:window-x="-4"
+     inkscape:window-y="-3"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <image
+     y="0.6101703"
+     x="-0.81355971"
+     id="image2824"
+     height="48"
+     width="48"
+     xlink:href="file:///data1/home2/wilden/projects/OpenFlipper-Free/Plugin-SkeletonEditing/Icons/bla.png" />
+  <path
+     sodipodi:type="arc"
+     style="fill:#ff0000;fill-opacity:0.84070794;stroke:none"
+     id="path2828"
+     sodipodi:cx="-26.745762"
+     sodipodi:cy="14.338984"
+     sodipodi:rx="4.3728814"
+     sodipodi:ry="4.3728814"
+     d="m -22.37288,14.338984 a 4.3728814,4.3728814 0 1 1 -8.745763,0 4.3728814,4.3728814 0 1 1 8.745763,0 z"
+     transform="matrix(0.88372093,0,0,0.88372093,36.212062,-9.0106424)" />
+  <path
+     style="fill:#ffffff;fill-opacity:0.79227053999999986;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;opacity:0.80800000000000005;stroke-dashoffset:0;filter:url(#filter3618)"
+     d="m 14.847458,5.8983049 5.898304,23.3898301 6.305085,-5.898304 12,14.033899 5.288136,-4.474577 -12.20339,-13.220339 6.915255,-5.898305 -24.20339,-7.9322041 z"
+     id="path2832"
+     sodipodi:nodetypes="cccccccc"
+     inkscape:export-xdpi="90"
+     inkscape:export-ydpi="90" />
+</svg>
