@@ -132,13 +132,6 @@ void SelectionPlugin::toggleSelection(QMouseEvent* _event)
             emit updatedObject(object->id(), UPDATE_SELECTION);
       }
       #endif
-      #ifdef ENABLE_SKELETON_SUPPORT
-      // SKELETON
-      else if (object->dataType() == DATA_SKELETON){
-            toggleSkeletonSelection(_event);
-            emit updatedObject(object->id(), UPDATE_SELECTION);
-      }
-      #endif
       else{
         emit log(LOGERR,tr("toggleSelection : Unsupported dataType"));
       }

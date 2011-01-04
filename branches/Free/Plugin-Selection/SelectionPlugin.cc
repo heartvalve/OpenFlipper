@@ -961,10 +961,6 @@ void SelectionPlugin::slotDeleteSelection() {
     types |= DATA_TSPLINE_MESH;
   #endif
 
-  #ifdef ENABLE_SKELETON_SUPPORT
-    types |= DATA_SKELETON;
-  #endif
-
   for ( PluginFunctions::ObjectIterator o_it(restriction, types ); o_it != PluginFunctions::objectsEnd(); ++o_it) {
 
     if ( o_it->visible() ){
@@ -977,11 +973,7 @@ void SelectionPlugin::slotDeleteSelection() {
       if ( o_it->dataType( DATA_TSPLINE_MESH ) )
           deleteSelection(PluginFunctions::tsplineMesh(*o_it));
       #endif
-      #ifdef ENABLE_SKELETON_SUPPORT
-      if ( o_it->dataType( DATA_SKELETON ) )
-          deleteSelection(PluginFunctions::skeleton(*o_it));
-      #endif
-      
+
       emit updatedObject(o_it->id(), UPDATE_ALL);
     }
   }
