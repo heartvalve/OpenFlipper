@@ -1,0 +1,319 @@
+#define INTERPOLATIONANIMATIONT_C
+
+#include "AnimationT.hh"
+
+#include <vector>
+#include <assert.h>
+#include <math.h>
+
+using namespace std;
+
+//-----------------------------------------------------------------------------------------------------
+
+/**
+ * @brief Copy constructor
+ *
+ * This animation will copy all frames from the given animation. After the call returns they are completely
+ * independent.
+ *
+ * @param _other The animation to copy from
+ */
+template<typename Scalar>
+InterpolationAnimationT<Scalar>::InterpolationAnimationT(const InterpolationAnimationT<Scalar> &_other) :
+	AnimationT<Scalar>(_other.name_),
+        hierarchy_(_other.hierarchy_),
+        reference_(_other.reference_),
+        matrixManipulator_(_other.matrixManipulator_),
+        frames_(0)
+{
+        
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+/**
+ * @brief Creates a new empty animation
+ *
+ * @param _hierarchy The skeleton that will hold this animation
+ * @param _reference The skeletons reference pose
+ */
+template<typename Scalar>
+InterpolationAnimationT<Scalar>::InterpolationAnimationT(SkeletonHierarchyI *_hierarchy, ReferencePose *_reference, MatrixManipulator *_matrixManipulator) :
+        hierarchy_(_hierarchy),
+        reference_(_reference),
+        matrixManipulator_(_matrixManipulator),
+        frames_(0)
+{
+
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+InterpolationAnimationT<Scalar>::~InterpolationAnimationT()
+{
+  clearPoseCache();
+  delete hierarchy_;
+  delete reference_;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+AnimationT<Scalar>* InterpolationAnimationT<Scalar>::copy() {
+  return new InterpolationAnimationT<Scalar>(*this);
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+PoseT<Scalar>* InterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame)
+{
+  return getPose(_iFrame, reference_);
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+/**
+ * @brief Returns a pointer to the pose calculated for the given frame
+ *
+ * @param _iFrame The frame number for which the pose should be calculated.
+ *                This is always from 0..#frames even if the animation starts with an input value other than 0.
+ */
+template<typename Scalar>
+PoseT<Scalar>* InterpolationAnimationT<Scalar>::getPose(unsigned long _iFrame, Pose* _reference)
+{
+//          std::cerr << "Frame " << _iFrame << ": ";
+  
+        if (interpolatedPoses_.find(_iFrame) != interpolatedPoses_.end()) {
+//           std::cerr << "(from cache)" << std::endl;
+          return (interpolatedPoses_[_iFrame]);
+        } else {
+        
+          if (_iFrame == 0) {
+            interpolatedPoses_.insert( make_pair(0, new Pose(*_reference)) );
+//             std::cerr << "Insert reference to posecache. &_reference: " << _reference << ", &cacheref: " << getPose(_iFrame, _reference) << std::endl;
+            return getPose(_iFrame, _reference);
+          } else {
+            //Find the correct interpolator
+            Interpolator* interpolator = NULL;
+            unsigned long min = 0, max = 0;
+            
+            uint i;
+            for (i=0; i<interpolators_.size(); ++i) {
+              min = (i==0 ? 0.0 : calcAbsoluteMaxForInterpolator(i-1) + 1);
+              max = calcAbsoluteMaxForInterpolator(i);
+              if (_iFrame >= min && _iFrame <= max) {
+                interpolator = interpolators_[i];
+                break;
+              }
+            }
+            
+            if (interpolator == NULL) {
+//               std::cerr << "No appropriate interpolator found for this frame!" << std::endl;
+              return _reference;
+            }
+            
+//             std::cerr << "Using interpolator " << i << " - ";
+            
+            //Create a new pose that is a copy of the reference and apply the interpolated transformations to it
+            Pose *generatedPose = new Pose(*_reference);
+            
+            for (uint i=0; i<influencedJoints_.size(); ++i) {
+              ACG::GLMatrixT<Scalar> transformation(generatedPose->getGlobal(influencedJoints_[i]).raw());
+              //The frames for each interpolator are stored from 0..max, i.e. in "interpolator local time space".
+              // So, they have to be mapped to the global space here.
+              TargetType precalcVal = precalculations_[interpolator][_iFrame - min];
+              
+              matrixManipulator_->doManipulation(transformation, precalcVal);
+              generatedPose->setGlobal(influencedJoints_[i], transformation, false);
+            }
+            
+//             std::cerr << std::endl;
+            
+            interpolatedPoses_.insert(std::pair<unsigned long, Pose*>(_iFrame, generatedPose));
+            return (interpolatedPoses_.find(_iFrame)->second);
+          }
+          
+          
+      }
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+/**
+ * @brief Returns the number of frames stored in this pose
+ */
+template<typename Scalar>
+unsigned long InterpolationAnimationT<Scalar>::getFrameCount()
+{
+  return frames_;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+/**
+ * @brief Called by the skeleton as a new joint is inserted
+ *
+ * The call is dispatched to all poses stored in this animation. See BasePoseT::insert_at for more information.
+ *
+ * @param _index The new joint is inserted at this position. Insert new joints at the end by passing
+ *                               SkeletonT::joints_.size as parameter.
+ */
+template<typename Scalar>
+void InterpolationAnimationT<Scalar>::insert_at(unsigned long _index)
+{
+  //NOOP
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+/**
+ * @brief Called by the skeleton as a joint is deleted
+ *
+ * The call is dispatched to all poses stored in this animation. See BasePoseT::remove_at for more information.
+ *
+ * @param _index The index of the joint that is being deleted.
+ */
+template<typename Scalar>
+void InterpolationAnimationT<Scalar>::remove_at(unsigned long _index)
+{
+  //NOOP
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+/**
+ * @brief Updates the local matrix using the global matrix
+ *
+ * Called when a joints parent is changed.
+ * Note: Does nothing at the moment
+ *
+ * @param _index The joints index
+ */
+template<typename Scalar>
+void InterpolationAnimationT<Scalar>::UpdateFromGlobal(unsigned long _index)
+{
+  //NOOP
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+void InterpolationAnimationT<Scalar>::addInterpolator(InterpolationT<double> *_interpolator) {
+  if (_interpolator == NULL)
+    return;
+  
+  interpolators_.push_back(_interpolator);
+//   std::cerr << "Precalc for interpolator " << interpolators_.size()-1 << ":" << std::endl;
+  
+  std::vector < TargetType > valueVector;
+  
+  //Precalc values for this interpolator
+  uint i=0;
+  for (i=_interpolator->getMinInput()*FPS;i<=(_interpolator->getMaxInput()) * FPS;++i) {
+    TargetType precalcValue;
+    double input = ((double)i) / ((double)FPS);
+    precalcValue = _interpolator->getValue(input);
+    valueVector.push_back(precalcValue);
+    
+//      std::cerr << "Frame " << i << "(t=" << input << "): " << precalcValue[0] << std::endl;
+  }
+  
+//   std::cerr << std::endl;
+  
+  precalculations_.insert( std::pair< Interpolator*, std::vector < TargetType > >(_interpolator, valueVector) );
+  
+  frames_ = max<long unsigned int>(frames_, i+1);
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+InterpolationT<Scalar>*
+InterpolationAnimationT<Scalar>::interpolator(unsigned int _index)
+{
+  if ( _index < interpolators_.size() )
+    return interpolators_[ _index ];
+  else 
+    return 0;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+unsigned int  InterpolationAnimationT<Scalar>::interpolatorCount()
+{
+  return interpolators_.size();
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+/**
+* \brief Calculates the last frame that interpolator _index is responsible for
+*/
+template<typename Scalar>
+unsigned long InterpolationAnimationT<Scalar>::calcAbsoluteMaxForInterpolator(uint _index) {
+  assert (_index < interpolators_.size());
+  
+  if (_index == 0) {
+    return precalculations_[interpolators_[_index]].size() - 1;
+  } else {
+    return precalculations_[interpolators_[_index]].size() + calcAbsoluteMaxForInterpolator(_index - 1);
+  }
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+bool InterpolationAnimationT<Scalar>::getMinInput(Scalar& _result) {
+  if (interpolators_.size() == 0)
+    return false;
+  else
+    _result = interpolators_[0]->getMinInput();
+  
+  for (uint i=0;i<interpolators_.size();++i) {
+    if (interpolators_[i]->getMinInput() < _result)
+      _result = interpolators_[i]->getMinInput();
+  }
+  
+  return true;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+bool InterpolationAnimationT<Scalar>::getMaxInput(Scalar& _result) {
+  if (interpolators_.size() == 0)
+    return false;
+  else
+    _result = interpolators_[0]->getMaxInput();
+  
+  for (uint i=0;i<interpolators_.size();++i) {
+    if (interpolators_[i]->getMaxInput() > _result)
+      _result = interpolators_[i]->getMaxInput();
+  }
+  
+  return true;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+bool InterpolationAnimationT<Scalar>::isInfluenced(int _joint) {
+  for (uint i=0; i<influencedJoints_.size(); ++i) 
+    if ( influencedJoints_[i] == _joint )
+      return true;
+    
+  return false;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
+template<typename Scalar>
+std::vector<int>& InterpolationAnimationT<Scalar>::influencedJoints() {
+  return influencedJoints_;
+}
+
+//-----------------------------------------------------------------------------------------------------
+
