@@ -249,7 +249,10 @@ void SkeletonEditingPlugin::slotPickModeChanged( const std::string& _mode)
   insertJointAction_->setChecked( _mode == "InsertJoints" );
   deleteJointAction_->setChecked( _mode == "DeleteJoints" );
   selectJointAction_->setChecked( _mode == "SelectJoints" );
-
+  
+  skeletonEditingAction_->setChecked( (_mode == "MoveJoints")  ||(_mode == "InsertJoints")
+                                    ||(_mode == "DeleteJoints")||(_mode == "SelectJoints") );
+  
   showManipulators();
 }
 
