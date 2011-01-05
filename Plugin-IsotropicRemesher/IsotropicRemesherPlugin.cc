@@ -61,7 +61,8 @@ void IsotropicRemesherPlugin::initializePlugin() {
   connect(tool_->maxEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMaxLength()) );
   connect(tool_->meanEdgeLength, SIGNAL(clicked()), this, SLOT(slotSetMeanLength()) );
 
-  emit addToolbox( tr("Isotropic Remesher") , tool_ );
+  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"remesher.png");
+  emit addToolbox( tr("Isotropic Remesher") , tool_, toolIcon_ );
 }
 
 void IsotropicRemesherPlugin::slotRemeshButtonClicked() {
