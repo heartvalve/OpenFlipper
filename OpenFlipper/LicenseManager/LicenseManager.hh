@@ -56,13 +56,14 @@
 #define LICENSEMANAGER_HH
 
 #include <OpenFlipper/BasePlugin/SecurityInterface.hh>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
 /** The salt file has to be provided for each plugin. It can be the same
   for all plugins. See example for details on how this file has to be setup
 */
 #include "salt.hh"
 
-class LicenseManager : public QObject, SecurityInterface  {
+class DLLEXPORT LicenseManager : public QObject, SecurityInterface  {
 
 Q_OBJECT
 Q_INTERFACES(SecurityInterface)
@@ -91,7 +92,11 @@ Q_INTERFACES(SecurityInterface)
         
         @param _authstring String returned, containing hashed license request, if something went wrong or no valid license available.
     */
-    bool authenticate(QString& _authstring);
+    bool authenticate();
+    
+    /** if authenticate returns false, this string will containe the license information
+    */
+    QString licenseError();
 
   private:
     /** This is used to get the plugins Name from derived classes
@@ -106,6 +111,9 @@ Q_INTERFACES(SecurityInterface)
 
     /// This flag is true if authentication was successfull
     bool authenticated_;
+    
+    /// License information string
+    QString authstring_;
 
 
   protected :
