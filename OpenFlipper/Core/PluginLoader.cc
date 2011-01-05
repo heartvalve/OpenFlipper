@@ -488,6 +488,9 @@ void Core::unloadPlugin(QString name){
         if (plugins[i].toolboxWidgets[j].second ){
           plugins[i].toolboxWidgets[j].second->setVisible(false);
           delete plugins[i].toolboxWidgets[j].second;
+
+          if( plugins[i].toolboxIcons[j] != 0 )
+            delete plugins[i].toolboxIcons[j];
         }
 
       plugins.erase(plugins.begin() + i);
@@ -826,8 +829,9 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       connect(plugin, SIGNAL( addToolbox(QString,QWidget*) ),
               this, SLOT( addToolbox(QString,QWidget*) ),Qt::DirectConnection );
 
-
-
+    if ( checkSignal(plugin, "addToolbox(QString,QWidget*,QIcon*)"))
+      connect(plugin, SIGNAL( addToolbox(QString,QWidget*,QIcon*) ),
+              this, SLOT( addToolbox(QString,QWidget*,QIcon*) ),Qt::DirectConnection );
   }
   
   //Check if the plugin supports ViewMode-Interface

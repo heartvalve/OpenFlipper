@@ -83,13 +83,18 @@ class ToolboxInterface {
       virtual ~ToolboxInterface() {};
 
     signals :
-        
+
       /** \brief Add a toolbox widget to the gui with the given name
        *
        * This signal adds a toolbox widget to the toolbar on the right.
        */
       virtual void addToolbox( QString /* _name */ , QWidget* /*_widget*/ ) {};
 
+      /** \brief Add a toolbox widget to the gui with the given name
+       *
+       * This signal adds a toolbox widget to the toolbar on the right.
+       */
+      virtual void addToolbox( QString /* _name */ , QWidget* /*_widget*/, QIcon* /*_icon*/) {};
 };
 
 Q_DECLARE_INTERFACE(ToolboxInterface,"OpenFlipper.ToolboxInterface/1.1")

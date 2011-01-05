@@ -48,7 +48,7 @@
 
 #include "SideArea.hh"
 #include "SideElement.hh"
-
+#include <OpenFlipper/common/GlobalOptions.hh>
 //== IMPLEMENTATION ==========================================================
 
 SideArea::SideArea (QWidget *_parent) :
@@ -63,6 +63,16 @@ SideArea::SideArea (QWidget *_parent) :
   l->addStretch(1);
 
   setLayout (l);
+}
+
+//-----------------------------------------------------------------------------
+
+void SideArea::addItem (QWidget *_w, QString _name, QIcon *_icon)
+{
+
+  SideElement *e = new SideElement (this, _w, _name, _icon);
+  layout_->addWidget (e);
+  items_.push_back (e);
 }
 
 //-----------------------------------------------------------------------------
@@ -109,6 +119,7 @@ void SideArea::saveState (QSettings &_settings)
 }
 
 //-----------------------------------------------------------------------------
+
 void SideArea::restoreState (QSettings &_settings)
 {
   _settings.beginGroup ("SideArea");
@@ -117,6 +128,17 @@ void SideArea::restoreState (QSettings &_settings)
     e->restoreState (_settings);
   }
   _settings.endGroup ();
+}
+
+//-----------------------------------------------------------------------------
+
+void SideArea::setElementActive(QString _name, bool _active)
+{
+  for (int i=0; i < items_.count(); i++)
+    if ( items_[i]->name() == _name ){
+      items_[i]->setActive(_active);
+      return;
+    }
 }
 
 //=============================================================================

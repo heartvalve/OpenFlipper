@@ -82,6 +82,7 @@ class PluginInfo{
      slotInfos.clear();
      keys.clear();
      toolboxWidgets.clear();
+     toolboxIcons.clear();
      toolbars.clear();
      contextMenus.clear();
      optionsWidget = 0;
@@ -100,6 +101,7 @@ class PluginInfo{
      slotInfos = _i.slotInfos;
      keys = _i.keys;
      toolboxWidgets = _i.toolboxWidgets;
+     toolboxIcons = _i.toolboxIcons;
      toolbars = _i.toolbars;
      contextMenus = _i.contextMenus;
      optionsWidget = _i.optionsWidget;
@@ -134,6 +136,9 @@ class PluginInfo{
 
   /// Pointer to plugins toolbox widget (if available)
   std::vector< std::pair< QString , QWidget* > > toolboxWidgets;
+
+  /// Pointer to plugins toolbox widget icons (if available)
+  std::vector< QIcon* > toolboxIcons;
   
   /// Pointer to plugins toolbars (if available)
   std::vector< std::pair< QString , QToolBar* > > toolbars;
