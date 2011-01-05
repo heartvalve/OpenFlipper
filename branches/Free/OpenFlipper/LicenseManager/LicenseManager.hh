@@ -56,14 +56,13 @@
 #define LICENSEMANAGER_HH
 
 #include <OpenFlipper/BasePlugin/SecurityInterface.hh>
-#include <OpenFlipper/common/GlobalDefines.hh>
 
 /** The salt file has to be provided for each plugin. It can be the same
   for all plugins. See example for details on how this file has to be setup
 */
 #include "salt.hh"
 
-class DLLEXPORT LicenseManager : public QObject, SecurityInterface  {
+class LicenseManager : public QObject, SecurityInterface  {
 
 Q_OBJECT
 Q_INTERFACES(SecurityInterface)
