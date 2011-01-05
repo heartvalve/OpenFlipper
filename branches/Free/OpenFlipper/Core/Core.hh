@@ -566,6 +566,12 @@ public slots:
     */
     void setToolBoxSide(QString _side);
 
+    /** \brief Scripting function to set the side of the main window on which the toolbox should be displayed
+    
+    @param _side The desired side (either "left" or "right")
+    */
+    void setToolBoxActive(QString _toolBoxName, bool _active);
+    
     /** @} */
 
    //===========================================================================
@@ -764,6 +770,9 @@ private slots:
 
     /// Add a Toolbox from a plugin or from scripting
      void addToolbox(QString _name ,QWidget* _widget);
+
+    /// Add a Toolbox from a plugin or from scripting (with icon)
+     void addToolbox(QString _name ,QWidget* _widget, QIcon* _icon);
 
    private :
 

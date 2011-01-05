@@ -60,10 +60,11 @@
 
 //== IMPLEMENTATION ==========================================================
 
-SideElement::SideElement (SideArea *_parent, QWidget *_w, QString _name) :
+SideElement::SideElement (SideArea *_parent, QWidget *_w, QString _name, QIcon* _icon) :
   parent_ (_parent),
   widget_ (_w),
   name_ (_name),
+  icon_ (_icon),
   active_ (0),
   dialog_ (0)
 {
@@ -77,8 +78,20 @@ SideElement::SideElement (SideArea *_parent, QWidget *_w, QString _name) :
   label_ = new QLabel (_name);
   label_->setFont (font);
 
+  iconHolder_ = new QLabel ();
+
+  if (icon_ != 0)
+    iconHolder_->setPixmap( icon_->pixmap(22,22) );
+  else{
+    QPixmap pic(QSize(22,22));
+    pic.fill( QColor(0,0,0,0) );
+
+    iconHolder_->setPixmap( pic );
+  }
+
   detachButton_ = new QToolButton ();
   detachButton_->setAutoRaise(true);
+  hl->addWidget (iconHolder_);
   hl->addWidget (label_);
   hl->addStretch (1);
   hl->addWidget (detachButton_);
@@ -263,6 +276,12 @@ void SideElement::restoreState (QSettings &_settings)
 
 //-----------------------------------------------------------------------------
 
+const QString& SideElement::name(){
+  return name_;
+}
+
+//-----------------------------------------------------------------------------
+    
 SideElement::TopArea::TopArea (SideElement *_e) :
   e_ (_e)
 {

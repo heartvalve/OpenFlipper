@@ -56,6 +56,7 @@
 
 //== FORWARDDECLARATIONS ======================================================
 
+class QIcon;
 class QLabel;
 class QToolButton;
 class QAction;
@@ -84,7 +85,7 @@ class SideElement : public QWidget
       \param _w Plugin tool widget
       \param _name Plugin name
     */
-    SideElement (SideArea *_parent, QWidget *_w, QString _name);
+    SideElement (SideArea *_parent, QWidget *_w, QString _name, QIcon* _icon = 0);
 
     /// Destructor
     ~SideElement ();
@@ -97,6 +98,9 @@ class SideElement : public QWidget
 
     /// restores the state
     void restoreState (QSettings &_settings);
+    
+    /// return the name
+    const QString& name();
 
   private:
 
@@ -133,6 +137,9 @@ class SideElement : public QWidget
     // plugin name
     QString name_;
 
+    // Icon
+    QIcon* icon_;
+
     // main layout
     QVBoxLayout *mainLayout_;
 
@@ -141,6 +148,7 @@ class SideElement : public QWidget
 
     // label that display the plugin name
     QLabel *label_;
+    QLabel *iconHolder_;
 
     // detach button & action
     QToolButton *detachButton_;

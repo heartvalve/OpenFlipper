@@ -53,6 +53,7 @@
 
 //== INCLUDES =================================================================
 
+#include <QIcon>
 #include <QWidget>
 #include <QString>
 #include <QSettings>
@@ -83,6 +84,13 @@ class SideArea : public QWidget {
     */
     void addItem (QWidget *_w, QString _name);
 
+    /** Adds a plugin tool widget
+      \param _w Plugin widget
+      \param _name Plugin name
+      \param _icon an icon
+    */
+    void addItem (QWidget *_w, QString _name, QIcon* _icon);
+
     /// clears the whole tool widget area
     void clear ();
     
@@ -94,6 +102,9 @@ class SideArea : public QWidget {
 
     /// restores the state
     void restoreState (QSettings &_settings);
+
+    /// set the active state of given element
+    void setElementActive(QString _name, bool _active);
 
   private:
     // elements

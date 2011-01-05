@@ -368,7 +368,7 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
     for (uint p=0; p < plugins_.size(); p++){
       for ( uint j = 0 ; j < plugins_[p].toolboxWidgets.size(); ++j )
         if (_toolboxWidgets[i] == plugins_[p].toolboxWidgets[j].first )
-          toolBox_->addItem (plugins_[p].toolboxWidgets[j].second, plugins_[p].toolboxWidgets[j].first);
+          toolBox_->addItem (plugins_[p].toolboxWidgets[j].second, plugins_[p].toolboxWidgets[j].first, plugins_[p].toolboxIcons[j] );
     }
 
   if (_expandAll)
