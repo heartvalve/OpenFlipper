@@ -483,6 +483,7 @@ void DataControlPlugin::slotRename(){
                                               item->name(), &ok);
       if (ok && !newName.isEmpty()){
         item->setName(newName);
+        view_->resizeColumnToContents(0);
       }
     }
   }

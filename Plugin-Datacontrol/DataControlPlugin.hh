@@ -99,7 +99,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
     void copyObject( int _oldId, int& _newId);
     
     // ToolboxInterface
-    void addToolbox( QString _name  , QWidget* _widget ); 
+    void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
 
   private slots :
     // BaseInterface
@@ -136,6 +136,7 @@ class DataControlPlugin : public QObject, BaseInterface, ToolboxInterface, KeyIn
   private :
     /// Widget for Toolbox
     DatacontrolToolboxWidget* tool_;
+    QIcon* toolIcon_;
 
     /// Layout for Toolbox
     QGridLayout* MeshDialogLayout_;

@@ -179,10 +179,21 @@ void DataControlPlugin::initializePlugin()
    connect( viewHeader_, SIGNAL(customContextMenuRequested ( const QPoint &  )  ),
             this,        SLOT(slotHeaderCustomContextMenuRequested ( const QPoint & ) ));
 
-   emit addToolbox("Data Control", tool_);
+   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-toolbox.png");
+
+   emit addToolbox("Data Control", tool_, toolIcon_);
    
    onlyDown_ = 0;
    onlyUp_   = 0;
+   
+   QIcon icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-boundingBox.png");
+   tool_->boundingBoxBtn->setIcon( icon );
+   icon = QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"datacontrol-hide-object.png");
+   tool_->visibleDataBtn->setIcon( icon );
+   
+   //hide additional boxes
+   tool_->visibleDataBtn->setChecked(false);
+   tool_->boundingBoxBtn->setChecked(false);
 }
 
 
@@ -321,6 +332,7 @@ void DataControlPlugin::fileOpened(int _id){
     model_->objectAdded(obj);
   
   slotShowLightSources(tool_->lightSources->checkState());
+  view_->resizeColumnToContents(0);
 }
 
 
