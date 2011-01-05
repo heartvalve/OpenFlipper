@@ -47,7 +47,7 @@ signals:
   void functionExists(QString _pluginName, QString _functionName, bool &_exists);
 
   // ToolboxInterface
-  void addToolbox( QString _name  , QWidget* _widget );   
+  void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );   
 
 public slots:
   // BaseInterface
@@ -124,6 +124,7 @@ private:
 
 protected:
   AnimationToolboxWidget *pToolbox_;         ///< A pointer to the toolbox widget
+  QIcon* toolIcon_;
 
 private:
   BaseSkin::Method method_; ///< The current blending method for the skin
