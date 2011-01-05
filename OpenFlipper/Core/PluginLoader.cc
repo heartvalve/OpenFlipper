@@ -325,8 +325,15 @@ void Core::loadPlugins()
           
         }
         
-        QMessageBox::StandardButton button = QMessageBox::warning ( 0, tr("Plugin License check failed, issuer is: %1").arg( it.key() ),  request.join("\n") + tr("\n\n Open in Mail program?"),QMessageBox::Yes | QMessageBox::No,QMessageBox::Yes  );
+        QMessageBox::StandardButton button = QMessageBox::warning ( 0, tr("Plugin License check failed, issuer is: %1").arg( it.key() ),  request.join("\n") + tr("\n\n The text has been copied to your clipboard.\n Open in Mail program?"),QMessageBox::Yes | QMessageBox::No,QMessageBox::Yes  );
         
+        
+        QClipboard *cb = QApplication::clipboard();
+        
+        // set a text to the Clipboard
+        cb->setText(request.join("\n"));
+
+
         if ( button == QMessageBox::Yes ) {
            QString url = "mailto:" + it.key();
            url += "?subject=License Request&body=";
@@ -335,6 +342,7 @@ void Core::loadPlugins()
 #else
            url += request.join("\n");
 #endif
+
            QUrl encodedURL(url, QUrl::TolerantMode);
            QDesktopServices::openUrl(encodedURL);
         }
