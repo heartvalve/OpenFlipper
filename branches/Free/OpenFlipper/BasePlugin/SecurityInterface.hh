@@ -66,7 +66,11 @@ class SecurityInterface {
     SecurityInterface(){};
 
   public slots:
-    bool authenticate();
+    /// Function starting the authentication process
+    bool    authenticate();
+    
+    /// If authenticate returns fals, this string will containe the license info
+    QString licenseError();
 
   private :
     bool authenticated();

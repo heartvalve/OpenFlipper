@@ -182,11 +182,11 @@ void LicenseManager::blockSignals( bool _state) {
 }
 
 // Plugin authentication function.
-bool LicenseManager::authenticate(QString& _authstring) {
+bool LicenseManager::authenticate() {
 
   // Construct license string (will be cleaned up if license valid)
-  _authstring = "==\n";
-  _authstring += "PluginName: " + pluginFileName() + "\n";
+  authstring_ = "==\n";
+  authstring_ += "PluginName: " + pluginFileName() + "\n";
   
   // ===============================================================================================
   // Compute hash value of Core application binary
@@ -282,24 +282,24 @@ bool LicenseManager::authenticate(QString& _authstring) {
       QDate expiryDate  = QDate::fromString(elements[4],Qt::ISODate);
 
       if ( licenseHash !=  elements[5] ) {
-        _authstring += tr("License Error: The license file signature for plugin \"") + name() + tr("\" is invalid!\n\n");
+        authstring_ += tr("License Error: The license file signature for plugin \"") + name() + tr("\" is invalid!\n\n");
       } else  if ( elements[0] != pluginFileName() ) {
-        _authstring += tr("License Error: The license file contains plugin name\"") + elements[0] + tr("\" but this is plugin \"") + name() + "\"!\n\n";
+        authstring_ += tr("License Error: The license file contains plugin name\"") + elements[0] + tr("\" but this is plugin \"") + name() + "\"!\n\n";
       } else if ( elements[1] != coreHash ) {
-        _authstring += tr("License Error: The license file for plugin \"") + name() + tr("\" is invalid for the currently running OpenFlipper Core!\n\n");
+        authstring_ += tr("License Error: The license file for plugin \"") + name() + tr("\" is invalid for the currently running OpenFlipper Core!\n\n");
       } else if ( elements[2] != pluginHash ) {
-        _authstring += tr("License Error: The plugin \"") + name() + tr("\" is a different version than specified in license file!\n\n");
+        authstring_ += tr("License Error: The plugin \"") + name() + tr("\" is a different version than specified in license file!\n\n");
       } else if ( elements[3] != macHash ) {
-        _authstring += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Hardware?)!\n\n";
+        authstring_ += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Hardware?)!\n\n";
       } else if ( currentDate > expiryDate ) {
-        _authstring += tr("License Error: The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!\n\n";
+        authstring_ += tr("License Error: The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!\n\n";
       } else {
         authenticated_ = true;
       }
 
       // Clean it on success
       if (  authenticated_ ) 
-        _authstring = "";
+        authstring_ = "";
       
     }
   }
@@ -307,23 +307,27 @@ bool LicenseManager::authenticate(QString& _authstring) {
   if ( authenticated_ ) {
     blockSignals(false);
   } else {
-    _authstring += tr("Message: License check for plugin failed.\n");
-    _authstring += tr("Message: Please get a valid License!\n");
-    _authstring += tr("Message: Send the following Information to \n");
-    _authstring += tr("Contact mail: ") + CONTACTMAIL + "\n\n";
-    _authstring += pluginFileName() +"\n";
-    _authstring += coreHash +"\n";
-    _authstring += pluginHash +"\n";
-    _authstring += macHash +"\n";
+    authstring_ += tr("Message: License check for plugin failed.\n");
+    authstring_ += tr("Message: Please get a valid License!\n");
+    authstring_ += tr("Message: Send the following Information to \n");
+    authstring_ += tr("Contact mail: ") + CONTACTMAIL + "\n\n";
+    authstring_ += pluginFileName() +"\n";
+    authstring_ += coreHash +"\n";
+    authstring_ += pluginHash +"\n";
+    authstring_ += macHash +"\n";
 
     QString keyRequest = saltPre + pluginFileName() + coreHash+pluginHash+macHash +saltPost;
     QString requestSig = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-    _authstring += requestSig + "\n";
+    authstring_ += requestSig + "\n";
 
     authenticated_ = false;
   }
 
   return authenticated_;
+}
+
+QString LicenseManager::licenseError() {
+  return authstring_;
 }
 
 bool LicenseManager::authenticated() {

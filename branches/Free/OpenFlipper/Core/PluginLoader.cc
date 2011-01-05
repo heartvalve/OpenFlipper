@@ -35,7 +35,7 @@
 /*===========================================================================*\
 *                                                                            *
 *   $Revision$                                                       *
-*   $LastChangedBy$                                                *
+*   $LastChangedBy$                                         *
 *   $Date$                     *
 *                                                                            *
 \*===========================================================================*/
@@ -587,7 +587,11 @@ void Core::loadPlugin(QString filename, bool silent, QString& _licenseErrors, QO
       emit log(LOGINFO,tr("Plugin uses security interface. Trying to authenticate against plugin ..."));
 
       bool success = false;
-      QMetaObject::invokeMethod(plugin,"authenticate", Q_RETURN_ARG( bool , success ) , Q_ARG(QString&, _licenseErrors)) ;
+      QMetaObject::invokeMethod(plugin,"authenticate", Q_RETURN_ARG( bool , success ) ) ;
+      
+      QString message = "";
+      QMetaObject::invokeMethod(plugin,"licenseError", Q_RETURN_ARG( QString , message ) ) ;
+      _licenseErrors = message;
 
       if ( success )
         emit log(LOGINFO,tr("... ok. Loading plugin "));
