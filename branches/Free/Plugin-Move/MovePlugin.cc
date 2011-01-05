@@ -268,7 +268,8 @@ void MovePlugin::initializePlugin()
 
    lastActiveManipulator_ = -1;
 
-   emit addToolbox( tr("Move") , tool_ );
+   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"move-toolBox.png");
+   emit addToolbox( tr("Move") , tool_, toolIcon_ );
 }
 
 
