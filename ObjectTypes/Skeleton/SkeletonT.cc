@@ -375,7 +375,7 @@ void SkeletonT<PointT>::removeJoint(typename SkeletonT<PointT>::Joint *_pJoint)
 
   if( _pJoint->parent() == 0 ){
     //root removal
-    SkeletonT<PointT>::Joint* newRoot = *c_it; //first child is new root
+    typename SkeletonT<PointT>::Joint* newRoot = *c_it; //first child is new root
     newRoot->parent_ = 0;
     ++c_it;
 
