@@ -153,8 +153,9 @@ void SelectionPlugin::initializePlugin() {
   connect( tool_->clearVertexSelection, SIGNAL(clicked()), this,SLOT(slotClearAllVertexSelections()) );
   connect( tool_->clearEdgeSelection, SIGNAL(clicked()), this,SLOT(slotClearAllEdgeSelections()));
   connect( tool_->clearFaceSelection, SIGNAL(clicked()), this,SLOT(slotClearAllFaceSelections()));
-  
-  emit addToolbox("Selections",tool_);
+
+  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"selection_toolbox.png");
+  emit addToolbox("Selections",tool_,toolIcon_);
 
   // create sphere for paint sphere selection
   std::string nodeName = std::string( tr("Selection Plugin: Selection Sphere Material").toUtf8() );

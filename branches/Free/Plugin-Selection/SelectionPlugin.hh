@@ -157,7 +157,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
     void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
 
     // ToolboxInterface
-    void addToolbox( QString _name  , QWidget* _widget ); 
+    void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon ); 
     
     //ToolbarInterface
     void addToolbar(QToolBar* _toolbar);
@@ -205,6 +205,7 @@ class SelectionPlugin : public QObject, BaseInterface , MouseInterface, KeyInter
   //GUI objects
     /// Widget for Toolbox
     selectionToolbarWidget* tool_;
+    QIcon* toolIcon_;
 
     /// Selection Toolbar
     QToolBar* toolBar_;
