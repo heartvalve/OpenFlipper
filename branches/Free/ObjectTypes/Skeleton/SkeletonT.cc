@@ -216,13 +216,13 @@ typename SkeletonT<PointT>::Joint *SkeletonT<PointT>::Iterator::nextSibling(Join
 {
   // first find the current node in the parents list of children
   typename Joint::ChildIter it;
-  for(it = _pParent->children_.begin(); it != _pParent->children_.end(); ++it)
+  for(it = _pParent->begin(); it != _pParent->end(); ++it)
   {
     if(*it == _pJoint)
     {
       // found it. If there is another child it is the wanted sibling
       ++it;
-      if(it == _pParent->children_.end())
+      if(it == _pParent->end())
         return 0;  // oh no, we ran out of siblings
 
       return *it;
