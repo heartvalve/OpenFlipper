@@ -74,7 +74,7 @@ class SmootherPlugin : public QObject, BaseInterface, ToolboxInterface, LoggingI
     void log(QString _message);
     
     // ToolboxInterface
-    void addToolbox( QString _name  , QWidget* _widget );
+    void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon);
     
     // ScriptInterface
     void scriptInfo(QString _functionName);
