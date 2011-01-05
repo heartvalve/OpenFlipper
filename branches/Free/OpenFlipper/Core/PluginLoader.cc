@@ -327,8 +327,17 @@ void Core::loadPlugins()
         
         QMessageBox::StandardButton button = QMessageBox::warning ( 0, tr("Plugin License check failed, issuer is: %1").arg( it.key() ),  request.join("\n") + tr("\n\n Open in Mail program?"),QMessageBox::Yes | QMessageBox::No,QMessageBox::Yes  );
         
-        if ( button == QMessageBox::Yes )
-           QDesktopServices::openUrl(QUrl(tr("mailto:%1?subject=License Request&body=%2").arg(it.key()).arg(it.value()), QUrl::TolerantMode));
+        if ( button == QMessageBox::Yes ) {
+           QString url = "mailto:" + it.key();
+           url += "?subject=License Request&body=";
+#ifdef WIN32
+           url += request.join(";;");
+#else
+           url += request.join("\n");
+#endif
+           QUrl encodedURL(url, QUrl::TolerantMode);
+           QDesktopServices::openUrl(encodedURL);
+        }
         
       }
 
