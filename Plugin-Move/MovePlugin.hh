@@ -122,7 +122,7 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     void registerKey(int _key, Qt::KeyboardModifiers _modifiers, QString _description, bool _multiUse = false);
     
     // ToolboxInterface
-    void addToolbox( QString _name  , QWidget* _widget );
+    void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
     
     // RPCInterface
     void pluginExists(QString _pluginName, bool &_exists);
@@ -235,6 +235,8 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
 
     /// Widget for Toolbox
     moveToolbarWidget* tool_;
+    
+    QIcon* toolIcon_;
 
 /** @} */
 
