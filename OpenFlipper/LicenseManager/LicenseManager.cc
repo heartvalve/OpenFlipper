@@ -193,7 +193,7 @@ bool LicenseManager::authenticate() {
   // ===============================================================================================
 
   #ifdef WIN32
-    QFile coreApp(OpenFlipper::Options::applicationDirStr() + QDir::separator() + "bin" + QDir::separator() + "OpenFlipper.exe");
+    QFile coreApp(OpenFlipper::Options::applicationDirStr() + QDir::separator() + "OpenFlipper.exe");
   #else
     QFile coreApp(OpenFlipper::Options::applicationDirStr() + QDir::separator() + "bin" + QDir::separator() + "OpenFlipper");
   #endif
@@ -242,8 +242,8 @@ bool LicenseManager::authenticate() {
 
   // Get all Network Interfaces
   QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-  foreach ( QNetworkInterface interface, interfaces ) {
-    mac = mac + interface.hardwareAddress().remove(":");
+  foreach ( QNetworkInterface netInterface, interfaces ) {
+    mac = mac + netInterface.hardwareAddress().remove(":");
   }
 
   QString macHash = QCryptographicHash::hash ( mac.toAscii()  , QCryptographicHash::Sha1 ).toHex();
