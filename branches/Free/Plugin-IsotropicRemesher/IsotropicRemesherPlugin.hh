@@ -91,7 +91,7 @@ signals:
   void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
   
   // ToolboxInterface
-  void addToolbox( QString _name  , QWidget* _widget );   
+  void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );   
     
   // ProcessInterface 
   void startJob( QString _jobId, QString _description, int _min, int _max, bool _blocking = false);
@@ -122,6 +122,7 @@ public :
 //GUI
 private :
   IsotropicRemesherToolBox* tool_;
+  QIcon* toolIcon_;
   double edgeLength_;
 
 private slots:
