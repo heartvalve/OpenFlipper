@@ -44,8 +44,9 @@
 #define OPENLFLIPPERQSETTINGS_HH
 
 #include <QSettings>
+#include <OpenFlipper/common/GlobalDefines.hh>
 
-class OpenFlipperQSettings : public QSettings
+class DLLEXPORT OpenFlipperQSettings : public QSettings
 {
 public:
     explicit OpenFlipperQSettings(const QString &organization,
