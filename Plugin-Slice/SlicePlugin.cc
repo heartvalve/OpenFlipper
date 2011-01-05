@@ -48,7 +48,7 @@
 #include <iostream>
 
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
-
+#include <OpenFlipper/common/GlobalOptions.hh>
 
 void SlicePlugin::initializePlugin(){
   //init the slice node
@@ -88,8 +88,9 @@ void SlicePlugin::initializePlugin(){
   connect(tool_->radioZ, SIGNAL( released() ), this, SLOT( updateSlice() ) );
   connect(tool_->posSlider, SIGNAL( sliderMoved(int) ), this, SLOT( updateSlice(int) ) );
   connect(tool_->sizeSlider, SIGNAL( sliderMoved(int) ), this, SLOT( updateSlice(int) ) );
-  
-  emit addToolbox( tr("Slice") , tool_ );
+
+  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"slice.png");
+  emit addToolbox( tr("Slice") , tool_, toolIcon_);
 }
 
 void SlicePlugin::resetParameters(){
