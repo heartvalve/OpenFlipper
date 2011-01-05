@@ -57,7 +57,8 @@ void SkeletalAnimationPlugin::initializePlugin()
   connect( pToolbox_->cbMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(slotMethodChanged(int)) );
   method_ = BaseSkin::M_LBS;
 
-  emit addToolbox( tr("Skeletal Animation") , pToolbox_ );
+  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeletalAnimation.png");
+  emit addToolbox( tr("Skeletal Animation") , pToolbox_, toolIcon_ );
 }
 
 //------------------------------------------------------------------------------
