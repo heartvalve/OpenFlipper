@@ -78,7 +78,8 @@ initializePlugin()
   // connect signals->slots
   connect(tool_->pB_smooth,SIGNAL(clicked() ),this,SLOT(slot_smooth()));
 
-  emit addToolbox( tr("Smoother") , tool_ );
+  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"smoother2.png");
+  emit addToolbox( tr("Smoother") , tool_, toolIcon_ );
 }
 
 //-----------------------------------------------------------------------------

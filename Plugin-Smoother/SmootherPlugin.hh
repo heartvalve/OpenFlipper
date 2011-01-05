@@ -99,7 +99,7 @@ signals:
   void log(QString _message);
   
   // ToolboxInterface
-  void addToolbox( QString _name  , QWidget* _widget );   
+  void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
   
   // BackupInterface
   void createBackup( int _id , QString _name );
@@ -132,6 +132,7 @@ private :
 
   /// Widget for Toolbox
   SmootherToolbarWidget* tool_;
+  QIcon* toolIcon_;
 
 private slots:
 
