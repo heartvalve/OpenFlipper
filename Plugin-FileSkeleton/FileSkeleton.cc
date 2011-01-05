@@ -13,12 +13,8 @@
 
 #include <OpenMesh/Core/IO/IOManager.hh>
 
-#include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
-
-
 void FileSkeletonPlugin::initializePlugin() {
 }
-    
 
 QString FileSkeletonPlugin::getLoadFilters() {
   return QString( "Skeleton files ( *.skl )" );

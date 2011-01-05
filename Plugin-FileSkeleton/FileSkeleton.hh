@@ -53,8 +53,6 @@ class FileSkeletonPlugin : public QObject, BaseInterface, FileInterface, LoadSav
 
      int addEmpty( );
 
-     QString typeName() { return (QString("Skeleton")); };
-
      DataType supportedType();
 
      QString getSaveFilters();
