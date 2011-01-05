@@ -85,7 +85,8 @@ void DecimaterPlugin::initializePlugin()
   // Force update if the Toolbox gets visible
   connect(tool_, SIGNAL(showing()), this, SLOT( slotUpdateNumVertices() ) );
 
-  emit addToolbox( tr("Decimater") , tool_ );
+  toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"decimater.png");
+  emit addToolbox( tr("Decimater") , tool_, toolIcon_ );
 }
 
 /** \brief Initialization of the plugin when it is loaded by the core

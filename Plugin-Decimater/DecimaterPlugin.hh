@@ -96,7 +96,7 @@ signals:
   void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
   
   // ToolboxInterface
-  void addToolbox( QString _name  , QWidget* _widget );   
+  void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
   
   // ScriptInterface
   void scriptInfo( QString _functionName );
@@ -130,6 +130,7 @@ private :
 
   /// Widget for Toolbox
   DecimaterToolbarWidget* tool_;
+  QIcon* toolIcon_;
   
   typedef OpenMesh::Decimater::DecimaterT< TriMesh > DecimaterType;
   
