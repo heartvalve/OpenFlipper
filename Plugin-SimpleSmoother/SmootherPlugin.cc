@@ -74,7 +74,8 @@ void SmootherPlugin::initializePlugin()
 
    connect( smoothButton, SIGNAL(clicked()), this, SLOT(simpleLaplace()) );
 
-   emit addToolbox( tr("Simple Smoother") , toolBox );
+   QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"smoother1.png");
+   emit addToolbox( tr("Simple Smoother") , toolBox, toolIcon );
 }
 
 void SmootherPlugin::pluginsInitialized() {
