@@ -83,7 +83,7 @@ signals:
   void defineViewMode(QString _mode, QStringList _usedWidgets);
 
   // ToolboxInterface
-  void addToolbox( QString _name  , QWidget* _widget );   
+  void addToolbox( QString _name  , QWidget* _widget, QIcon* _icon );
   
   // BackupInterface
   void createBackup( int _id , QString _name );
@@ -118,6 +118,7 @@ public :
 private :
   /// Widget for Toolbox
   subdividerToolbarWidget* tool_;
+  QIcon* toolIcon_;
 
 private:
 

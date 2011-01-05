@@ -67,7 +67,8 @@ void SubdividerPlugin::initializePlugin()
     
     connect(tool_->subdivide_uniform_toolButton,    SIGNAL( clicked() ),  this, SLOT( slotSubdivideUniform() ) );
     
-    emit addToolbox( tr("Subdivider") , tool_ );
+    toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"subdivider.png");
+    emit addToolbox( tr("Subdivider") , tool_, toolIcon_ );
   }
 }
 
