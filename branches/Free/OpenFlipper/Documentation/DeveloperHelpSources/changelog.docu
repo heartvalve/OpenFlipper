@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 10485 )</b>
+ * - <b>OpenFlipper 1.0 (  ? , 10543 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - Enable or disable Mipmapping
@@ -32,6 +32,8 @@
  *              - Correctly unbind texture if bound in MeshNode
  *          - PlaneNode
  *              - Fixed an error in the nonzero normal detection in PlaneNode::setPosition.
+ *          - Pointnode
+ *              - Fixed null pointer dereference when no points are available
  *          - QtMaterialDialog
  *              - Bugfix ( GL_SCR_ALPHA was missing as choice for blending param)
  *          - Quaternions
@@ -95,6 +97,8 @@
  *              - Allow to connect signals and slots across plugins
  *          - Process Interface
  *              - Show progress dialog centered at corewidget (not anywhere on screen)
+ *          - Toolbox interface 
+ *              - Support icons for toolboxes
  *          - User Interface
  *              - Added option to show toolbox on the left
  *              - Added option to show/hide view mode controls
@@ -108,15 +112,25 @@
  *              - Bugfixes
  *                  - Fixed wrong lower value computed for bounding boxes (wrong initialization clamping bounding box to upper part of (0.0,0.0,0.0) ) 
  *          - PolyLineObjects
+ *          - new Skeleton object type
  *      - <b>New Plugins</b> 
  *          - Backup
  *              - Added Backup plugin to free branch
+ *          - FileSKL 
+ *              - Load/Save Skeleton files (skl) 
+ *          - SkeletalAnimation
+ *              - Animates skeletons
+ *          - SkeletonEditing
+ *              - Edit Skeletons
  *          - Subdivider
  *              - Added OpenMesh subdivider plugin to the free branch 
+ *          - TypeSkeleton
+ *              - Handles skeleton data type 
  *      - <b>Plugins</b>
  *          - DataControl
  *              - Added Object name and ID display to Datacontrol popup menu
  *              - Better on/off visualization for light sources
+ *              - Collapse Additional boxes to save space
  *          - Decimater
  *              - Support backup plugin ( ->undo )
  *          - FileOBJ
