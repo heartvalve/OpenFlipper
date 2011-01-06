@@ -90,9 +90,9 @@ class ToolboxInterface {
        */
       virtual void addToolbox( QString /* _name */ , QWidget* /*_widget*/ ) {};
 
-      /** \brief Add a toolbox widget to the gui with the given name
+      /** \brief Add a toolbox widget to the gui with the given name and an icon
        *
-       * This signal adds a toolbox widget to the toolbar on the right.
+       * This signal adds a toolbox widget to the toolbar on the right. And sets an icon for it
        */
       virtual void addToolbox( QString /* _name */ , QWidget* /*_widget*/, QIcon* /*_icon*/) {};
 };
