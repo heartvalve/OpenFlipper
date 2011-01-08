@@ -58,8 +58,6 @@
 #include <math.h>
 
 #define TEXTUREDATA "TextureData"
-
-
  
 
 void TextureControlPlugin::slotTextureAdded( QString _textureName , QString _filename , uint _dimension , int _id)
@@ -207,11 +205,20 @@ bool TextureControlPlugin::getImage( QString _fileName, QImage& _image ) {
   else
     loadFilename = OpenFlipper::Options::textureDirStr() + QDir::separator() + _fileName;
 
-  if ( !_image.load( loadFilename ) ){
-    _image.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
-    return false;
-  }
+  //qimage cannot handle tga directly
+  if ( QFileInfo(loadFilename).suffix().toLower() == "tga" ){
 
+    QPixmap pic(loadFilename);
+    _image = pic.toImage();
+    
+  } else {
+    //load the image
+    if ( !_image.load( loadFilename ) ){
+      _image.load(OpenFlipper::Options::textureDirStr() + QDir::separator() + "unknown.png");
+      return false;
+    }
+  }
+  
   return true;
 }
 
