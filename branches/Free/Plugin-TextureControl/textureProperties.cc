@@ -54,8 +54,6 @@
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
-
-
 texturePropertiesWidget::texturePropertiesWidget(QWidget *parent)
     : QDialog(parent)
 {
@@ -339,21 +337,20 @@ void texturePropertiesWidget::slotChangeImage() {
 
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
                                                   OpenFlipper::Options::currentTextureDirStr(),
-                                                  tr("Images (*.png *.xpm *.jpg)"));
+                                                  tr("Images (*.png *.xpm *.jpg, *.tga)"));
 
   if ( QFile(fileName).exists() ){
     QFileInfo fileInfo(fileName);
     OpenFlipper::Options::currentTextureDir( fileInfo.absolutePath() );
 
-    imageLabel->setPixmap( QPixmap(fileName) );
+    imageLabel->setPixmap( fileName );
     imageLabel->setScaledContents(true);
 
     fileLabel->setText( "File: " + fileName );
 
     currentImage_ = fileName;
-
     image_ = imageLabel->pixmap()->toImage();
-
+    
     #ifdef WITH_QWT
     functionPlot_->setImage( &image_ );
     functionPlot_->replot();
