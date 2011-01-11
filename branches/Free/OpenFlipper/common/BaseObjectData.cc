@@ -329,10 +329,10 @@ void BaseObjectData::getBoundingBox(ACG::Vec3d& bbmin, ACG::Vec3d& bbmax){
   bbmax = (ACG::Vec3d) act.bbMax();
 }
 
-void BaseObjectData::setObjectDrawMode(const ACG::SceneGraph::DrawModes::DrawMode _mode) {
+void BaseObjectData::setObjectDrawMode(const ACG::SceneGraph::DrawModes::DrawMode _mode, bool _force) {
     
   // Set draw mode for this object
-  ACG::SceneGraph::SetDrawModesAction actionActive(_mode, false /*not globally*/);
+  ACG::SceneGraph::SetDrawModesAction actionActive(_mode, _force);
   
   // Traverse scenegraph in order to set new draw mode
   ACG::SceneGraph::traverse(primaryNode(), actionActive);
