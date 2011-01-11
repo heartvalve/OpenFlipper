@@ -228,6 +228,9 @@ class DLLEXPORT BaseObjectData : public BaseObject
 
     /// get the bounding box of the object
     void getBoundingBox(ACG::Vec3d& bbmin, ACG::Vec3d& bbmax);
+    
+    /// Set the draw mode for the object
+    void setObjectDrawMode(const ACG::SceneGraph::DrawModes::DrawMode _mode);
 
   private :
 
