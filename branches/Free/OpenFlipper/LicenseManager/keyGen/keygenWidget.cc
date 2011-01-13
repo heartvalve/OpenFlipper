@@ -53,11 +53,40 @@ KeyGenWidget::KeyGenWidget(QMainWindow *parent)
   setupUi(this);
   connect(generateButton,SIGNAL(clicked()),this,SLOT(slotGenerateButton()));
   
-  // Automatically set expire date to current date + 1 Year
-  QDate today = QDate::currentDate();
-  expires->setDate(today.addYears(1));
+  
+  connect(splitButton,SIGNAL(clicked()),this,SLOT(slotSplit()));
+  connect(validButton,SIGNAL(clicked()),this,SLOT(slotValid()));
+  
+  // Automatically set expire date to current date
+  // For security reasons no default span is set here!
+  expires->setDate( QDate::currentDate());
   
 }
+
+void KeyGenWidget::slotValid() {
+  std::cerr << "Valid" << std::endl;
+  QDate today = QDate::currentDate();
+  today = today.addDays(days->value());
+  today = today.addMonths(months->value());
+  today = today.addYears(years->value());
+  
+  expires->setDate(today);
+}
+
+
+void KeyGenWidget::slotSplit() {
+  // Get request data
+  QString inputData = requestData->toPlainText();
+  
+  // Split with ;
+  QStringList data = inputData.split(";",QString::SkipEmptyParts);
+  
+  QString newText = data.join("\n");
+  
+  requestData->setText(newText);
+  
+}
+
 
 KeyGenWidget::~KeyGenWidget() {
 

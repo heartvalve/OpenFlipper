@@ -57,6 +57,12 @@ public:
 
 public slots:
   void slotGenerateButton();
+  
+  // Button slot taking license duration and convert to expiration date
+  void slotValid();
+  
+  // Split Code based on ;; for broken windows requests
+  void slotSplit();
 
 };
 
