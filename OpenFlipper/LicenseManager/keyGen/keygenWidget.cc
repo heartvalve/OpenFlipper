@@ -64,7 +64,6 @@ KeyGenWidget::KeyGenWidget(QMainWindow *parent)
 }
 
 void KeyGenWidget::slotValid() {
-  std::cerr << "Valid" << std::endl;
   QDate today = QDate::currentDate();
   today = today.addDays(days->value());
   today = today.addMonths(months->value());
