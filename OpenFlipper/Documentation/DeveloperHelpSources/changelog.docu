@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 10543 )</b>
+ * - <b>OpenFlipper 1.0 (  ? , 10603 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - Enable or disable Mipmapping
@@ -51,6 +51,7 @@
  *      - <b>Core</b>
  *          - BaseObject
  *              - Remove all children from additional node when deleting the subtree(otherwise we get dangling pointers)
+ *              - Function to set drawmode for all child nodes in an object
  *          - Backup Interface
  *              - Icons for undo/redo
  *              - Intorduced backup groups (create groups of changes for undo/redo .. e.g. if multiple objects are involved)
@@ -73,6 +74,7 @@
  *              - Show memory usage information in about dialog on linux
  *          - License Manager
  *              - Improved license checks
+ *              - Improved license keygen ui
  *          - Load/Save
  *              - Fixed bug when supported extensions are not parsed correctly
  *              - Fixed bug when filename extensions with capital letters where not marked as supported
@@ -118,6 +120,8 @@
  *              - Added Backup plugin to free branch
  *          - FileSKL 
  *              - Load/Save Skeleton files (skl) 
+ *          - FileBVH
+ *              - Load/Save BVH Skeleton Files (BioVision)
  *          - SkeletalAnimation
  *              - Animates skeletons
  *          - SkeletonEditing
@@ -164,6 +168,7 @@
  *          - TextureControl
  *              - Added min_val parameter additionally to max_val
  *              - Added histogramm controls
+ *              - Added reader for tga files
  *          - ViewControl
  *              - Support Splines
  *              - Support PolyLines
@@ -172,8 +177,10 @@
  *              - Preset buttons for basic viewing directions
  *      - <b>Documentation</b>
  *          - More docs for backup interface (incl. Tutorial)
+ *          - Do not include svn, standard build dirs in docs
  *      - <b>Build System</b>
  *          - Do not include files starting with a dot when creating build lists
+ *          - Copy qt_menu.nib on mac 
  *          
  *       
  * 
