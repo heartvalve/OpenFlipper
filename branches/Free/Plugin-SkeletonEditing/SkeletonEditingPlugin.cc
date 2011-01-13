@@ -306,7 +306,13 @@ void SkeletonEditingPlugin::slotRotateManipulator(bool _toggled)
 {
   QtTranslationManipulatorNode::ManipulatorMode mode;
 
-  if (_toggled){
+  bool ourPickMode = (PluginFunctions::actionMode() == Viewer::PickingMode)
+                   &&( ( PluginFunctions::pickMode() == ("DeleteJoints") )
+                     ||( PluginFunctions::pickMode() == ("InsertJoints") )
+                     ||( PluginFunctions::pickMode() == ("MoveJoints") )
+                     ||( PluginFunctions::pickMode() == ("SelectJoints") ));
+
+  if (_toggled && ourPickMode){
     mode = QtTranslationManipulatorNode::LocalRotation;
     PluginFunctions::setViewObjectMarker (&objectMarker_);
   } else {
