@@ -228,7 +228,7 @@ void SelectionPlugin::pluginsInitialized() {
   emit addHiddenPickMode(CONNECTED_COMPONENT_SELECTION);
   emit addHiddenPickMode(FLOOD_FILL_SELECTION);
   
-  emit addPickMode(CREATEMESH);
+  emit addHiddenPickMode(CREATEMESH);
 
   emit setPickModeMouseTracking(PAINT_SPHERE_SELECTION, true);
   emit setPickModeMouseTracking(LASSO_SELECTION, true);
