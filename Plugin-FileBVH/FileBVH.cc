@@ -557,9 +557,6 @@ ACG::Vec3d MatrixToEuler(ACG::Matrix4x4d _matrix){
 //-----------------------------------------------------------------------------------------------------
 
 bool FileBVHPlugin::writeSkeleton( std::ostream& _out, QString _filename, Skeleton& _skeleton ) {
-
-  std::cerr << "Not implemented, yet." << std::endl;
-  return false;
   
   Skeleton::Pose* refPose = _skeleton.referencePose();
   
@@ -611,9 +608,9 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, QString _filename, Skelet
     if ( (*it)->size() > 0 ){ //end-effectors have no channel
       
       if ( (*it)->parent() == 0)
-        _out << indent << "CHANNELS 6 Xposition Yposition Zposition Xrotation Yrotation Zrotation" << std::endl;
+        _out << indent << "CHANNELS 6 Xposition Yposition Zposition Zrotation Yrotation Xrotation" << std::endl;
       else
-        _out << indent << "CHANNELS 3 Xrotation Yrotation Zrotation" << std::endl;
+        _out << indent << "CHANNELS 3 Zrotation Yrotation Xrotation" << std::endl;
 
       lastJoint = *it;
       
@@ -665,21 +662,14 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, QString _filename, Skelet
   std::string name = _skeleton.animationName(iAnimation);
   AnimationHandle animHandle = _skeleton.animationHandle(name);
 
-
-  std::vector<double> channels;
-  int cIndex;
-
-  
+ 
   // and every frame of that animation
   for(unsigned long k = 0; k < animation->frameCount(); ++k)
   {
-    cIndex =0;
     
     animHandle.setFrame(k);
     
     Skeleton::Pose* pose = _skeleton.pose( animHandle );
-    
-    std::string initialSpace = "";
     
     for (Skeleton::Iterator it = _skeleton.begin(); it != _skeleton.end(); ++it )
     {
@@ -687,60 +677,35 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, QString _filename, Skelet
       if ( (*it)->size() == 0)
         continue;
 
-      ACG::Matrix4x4d rotation;
-
       if ( (*it)->parent() == 0 ){
         //root joint
-        ACG::Vec3d translation = pose->globalTranslation( (*it)->id() ) - refPose->globalTranslation( (*it)->id() );;
-        rotation = pose->globalMatrix( (*it)->id() );
+        ACG::Vec3d translation = pose->globalTranslation( (*it)->id() ) - refPose->globalTranslation( (*it)->id() );
 
-        _out << initialSpace << translation[0] << " " << translation[1] << " " << translation[2] << " ";
-
-      } else {
-        //normal joint
-        rotation    = pose->localMatrix( (*it)->id() );
-        _out << initialSpace;
+        _out << translation[0] << " " << translation[1] << " " << translation[2];
       }
+      
+      ACG::Matrix4x4d rotMat = _skeleton.referencePose()->localMatrixInv( (*it)->id() ) * pose->localMatrix( (*it)->id() );
 
-      ACG::Vec3d refBoneDir  = _skeleton.referencePose()->globalTranslation( (*it)->child(0)->id() ) - _skeleton.referencePose()->globalTranslation( (*it)->id() );
-      ACG::Vec3d poseBoneDir = pose->globalTranslation( (*it)->child(0)->id() ) -pose->globalTranslation( (*it)->id() );
-
-      refBoneDir.normalize();
-      poseBoneDir.normalize();
-
-      ACG::Vec3d axis = poseBoneDir % refBoneDir;
-      axis.normalize();
-
-      //  create angles
-      double angle = acos( poseBoneDir | refBoneDir);
-      angle = ACG::Geometry::radToDeg( angle * 180/M_PI );
-
-      ACG::Vec3d angles = convertToAxisRotation(axis, angle);
-
-      if (k == 0){
-        channels.push_back( angles[2] );
-        channels.push_back( angles[1] );
-        channels.push_back( angles[0] );
-      } else {
-
-        if ( fabs( channels[cIndex+0] - angles[2]) > 120 )
-          std::cerr << "Gap for joint " << (*it)->id() << " frame : " << k << " this Z: " << angles[2] << " last:" << channels[cIndex+0] << std::endl; 
-        channels[cIndex+0] = angles[2];
-
-        if ( fabs( channels[cIndex+1] - angles[1]) > 120 )
-          std::cerr << "Gap for joint " << (*it)->id() << " frame : " << k << " this X: " << angles[1] << " last:" << channels[cIndex+1] << std::endl;
-        channels[cIndex+1] = angles[1];
-
-        if ( fabs( channels[cIndex+2] - angles[0]) > 120 )
-          std::cerr << "Gap for joint " << (*it)->id() << " frame : " << k << " this Y: " <<angles[0] << " last:" << channels[cIndex+2] << std::endl;
-        channels[cIndex+2] = angles[0];
-
-        cIndex += 3;
-      }
-
-      initialSpace = " ";
+      ACG::Vec3d angles = convertToAxisRotation(rotMat);
+      
+      _out << " " << angles[2] << " " << angles[1] << " " << angles[0];
+      
+//       ACG::GLMatrixd testMat( _skeleton.referencePose()->localMatrix( (*it)->id() ).raw() );
+//       
+//       if ( (*it)->isRoot() )
+//         testMat.translate( pose->globalTranslation( (*it)->id() ) );
+//       
+//       testMat.rotateZ( angles[2] );
+//       testMat.rotateY( angles[1] );
+//       testMat.rotateX( angles[0] );
+//       
+//       
+//       if ( testMat != pose->localMatrix( (*it)->id() ) ){
+//         std::cerr << "Decomposition failed (frame : " << k << " joint: " << (*it)->id() << ")" << std::endl;
+//         std::cerr << "Original:" << pose->localMatrix( (*it)->id() ) << std::endl;
+//         std::cerr << "Test    :" << testMat << std::endl;
+//       }
     }
-    
     _out << std::endl;
   }
   
@@ -749,17 +714,16 @@ bool FileBVHPlugin::writeSkeleton( std::ostream& _out, QString _filename, Skelet
 
 //-----------------------------------------------------------------------------------------------------
 
-ACG::Vec3d FileBVHPlugin::convertToAxisRotation(ACG::Vec3d _axis, double _angle)
+ACG::Vec3d FileBVHPlugin::convertToAxisRotation(ACG::Matrix4x4d& _rotationMatrix)
 {
   //  conversion to quaternion
+  ACG::Quaterniond quat(_rotationMatrix);
+
   double x,y,z,w;
-  _axis.normalize();
-  double theta = 0.5 * (_angle/180*M_PI );
-  double sin_theta = sin(theta);
-  w = cos(theta);
-  x = sin_theta * _axis[0];
-  y = sin_theta * _axis[1];
-  z = sin_theta * _axis[2];
+  w = quat[0];
+  x = quat[1];
+  y = quat[2];
+  z = quat[3];
 
   //  convert quaternion to euler
   //  create special rotation matrix

@@ -109,7 +109,7 @@ class FileBVHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
     
     bool writeSkeleton( std::ostream& _out, QString _filename, Skeleton& _skeleton );
 
-    ACG::Vec3d convertToAxisRotation(ACG::Vec3d _axis, double _angle);
+    ACG::Vec3d convertToAxisRotation(ACG::Matrix4x4d& _rotationMatrix);
     
     bool ignoreJointScaling_;
 
