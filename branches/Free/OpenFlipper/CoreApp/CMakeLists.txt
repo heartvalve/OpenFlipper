@@ -170,6 +170,17 @@ if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
 endif()
 
 
+if ( APPLE ) 
+  # we need qt_menu.nib in our resources dir so try to get it
+
+  if ( EXISTS /usr/bin/qt_menu.nib )
+    acg_copy_after_build( OpenFlipper "/usr/bin/qt_menu.nib" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/qt_menu.nib")
+  endif()
+
+endif( APPLE )
+
+
+
 if (NOT APPLE)
   # install all needed files
   # the install_dir macro (common.cmake) installs the whole directory without svn files
