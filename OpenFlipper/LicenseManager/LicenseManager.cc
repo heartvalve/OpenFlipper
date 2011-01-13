@@ -261,16 +261,23 @@ bool LicenseManager::authenticate() {
   QFile file( licenseFileName );
 
   if (!file.open(QIODevice::ReadOnly|QIODevice::Text)) {
-    std::cerr << "Unable to find license File " <<  licenseFileName.toStdString() << std::endl;
+    QMessageBox::critical(0,tr("Unable to find license File"),licenseFileName.toStdString() );
   } else {
     QString licenseContents = file.readAll();
-    QStringList elements = licenseContents.split('\n');
+    QStringList elements = licenseContents.split('\n',QString::SkipEmptyParts);
 
     for ( int i = 0 ; i < elements.size(); ++i )
       elements[i] = elements[i].simplified();
 
     if ( elements.size() != 6 ) {
-      QString sizeMismatchMessage = "The license file for plugin \"" + name() + "\" is invalid!";
+      QString sizeMismatchMessage = "The license file for plugin \"" + name() + "\" is invalid!\n";
+      sizeMismatchMessage += "License File contains " + QString::number(elements.size()) + " lines but it should contain exactly 6!\n";
+      sizeMismatchMessage += "Read data: \n";
+      sizeMismatchMessage += "======================================== \n";
+      for ( int i = 0 ; i < elements.size(); ++i )
+        sizeMismatchMessage += elements[i] + "\n";
+      sizeMismatchMessage += "======================================== \n";
+      
       QMessageBox::critical(0,tr("License file size invalid"),sizeMismatchMessage );
     } else {
 
