@@ -261,7 +261,7 @@ bool LicenseManager::authenticate() {
   QFile file( licenseFileName );
 
   if (!file.open(QIODevice::ReadOnly|QIODevice::Text)) {
-    QMessageBox::critical(0,tr("Unable to find license File"),licenseFileName.toStdString() );
+    QMessageBox::critical(0,tr("Unable to find license File"),licenseFileName );
   } else {
     QString licenseContents = file.readAll();
     QStringList elements = licenseContents.split('\n',QString::SkipEmptyParts);
