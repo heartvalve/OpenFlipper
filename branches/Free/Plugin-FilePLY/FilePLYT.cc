@@ -56,7 +56,6 @@ bool FilePLYPlugin::readMeshFileAscii(QString _filename, MeshT* _mesh, const PLY
     int         dInt;
     uint        du, dv;
     double      dx, dy, dz;
-    uchar       ducr, ducg, ducb;
     double      alpha;
     
     PolyMesh::VertexHandle currentVertex;
