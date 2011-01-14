@@ -234,7 +234,6 @@ void setDataSeparatorNodes( SeparatorNode* _dataSeparatorNode ) {
   if ( PluginFunctions::dataSeparatorNode_->nChildren() != 1 ){
     std::cerr << "Only one child allowed for dataSeparatorNode on initialization!" << std::endl;
     std::cerr << "The Core has initialized the scenegraph in a strange way!" << std::endl;
-    ACG::SceneGraph::BaseNode* child = *(PluginFunctions::dataSeparatorNode_->childrenBegin());
   }
   
   // Set the root node for the data objects
@@ -697,7 +696,7 @@ void lookAt(const ACG::Vec3d& _eye, const ACG::Vec3d& _center, const ACG::Vec3d&
             std::cerr << "Requested illegal viewer for viewingDirection!!" << std::endl;
 }
 
-const ACG::Vec3d trackBallCenter(const ACG::Vec3d& _center, int _viewer ) {
+const ACG::Vec3d trackBallCenter( int _viewer ) {
   if ( _viewer == ACTIVE_VIEWER ) {
     return examiner_widgets_[activeExaminer_]->trackBallCenter();
   } else if ( _viewer == ALL_VIEWERS )

@@ -517,8 +517,6 @@ void Core::openIniFile( QString _filename,
     // Parse File section for files to open
     if ( ini.section_exists("OpenFiles") && ini.get_entry(openFiles,"OpenFiles","open") ) {
 
-      bool newActiveObject = false;
-
       for ( int i = 0 ; i < openFiles.size(); ++i ) {
 
         QString sectionName = openFiles[i];

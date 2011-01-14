@@ -155,7 +155,7 @@ void QtPickToolbar::paintWindowFrame(QPainter *_painter,
 
 //-----------------------------------------------------------------------------
 
-Qt::WindowFrameSection QtPickToolbar::windowFrameSectionAt(const QPointF &_pos) const
+Qt::WindowFrameSection QtPickToolbar::windowFrameSectionAt(const QPointF &/*_pos*/) const
 {
   return Qt::NoSection;
 }

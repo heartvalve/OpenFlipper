@@ -115,7 +115,7 @@ public:
     @param _color color used for blending
     @return should blending be berformed for this reference
   */
-  virtual bool blendForStencilRefNumber (GLuint _reference, GLenum &_src, GLenum &_dst, ACG::Vec4f &_color) { return false; };
+  virtual bool blendForStencilRefNumber (GLuint /*_reference*/, GLenum &/*_src*/, GLenum &/*_dst*/, ACG::Vec4f &/*_color*/) { return false; };
 
   /** Per reference bit blending values
     @param _refbit stencil reference bit for blending
@@ -124,7 +124,7 @@ public:
     @param _color color used for blending
     @return should blending be berformed for this reference
   */
-  virtual bool blendForStencilRefBit (GLuint _refbit, GLenum &_src, GLenum &_dst, ACG::Vec4f &_color) { return false; };
+  virtual bool blendForStencilRefBit (GLuint /*_refbit*/, GLenum &/*_src*/, GLenum &/*_dst*/, ACG::Vec4f &/*_color*/) { return false; };
 
 };
 

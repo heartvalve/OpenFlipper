@@ -415,7 +415,7 @@ DataType DataType::operator|( const DataType& _i ) const {
 
 //===========================================
 
-bool DataType::operator++(int _unused) {
+bool DataType::operator++(int /*_unused*/) {
   return (field *= 2); 
 }  
 

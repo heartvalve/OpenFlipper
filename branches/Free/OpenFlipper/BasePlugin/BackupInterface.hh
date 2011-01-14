@@ -119,7 +119,7 @@ class BackupInterface {
     * @param _objectid   Identifier of the object to restore
     * @param _internalId The unique identifier of the restore set (-1 for last backup)
     */
-    virtual void restoreObject( int /*_objectid*/, int _internalId =-1) {};
+    virtual void restoreObject( int /*_objectid*/, int /*_internalId*/ =-1) {};
 
     /** \brief Tell Backup Plugin to restore a backup group
     *

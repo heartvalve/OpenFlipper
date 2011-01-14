@@ -364,7 +364,7 @@ void Core::newObject(int _objectId) {
 }
 
 /// This slot is called by the object manager when a object is deleted
-void Core::deletedObject(int _objectId) {
+void Core::deletedObject(int /*_objectId*/) {
 }
 
 

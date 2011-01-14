@@ -99,7 +99,7 @@ class StatusbarInterface {
       /** \brief Add a widget on the right side of the statusBar
        * 
        */
-      void addWidgetToStatusbar(QWidget* _widget) {};
+      void addWidgetToStatusbar(QWidget* /*_widget*/) {};
       
 };
 

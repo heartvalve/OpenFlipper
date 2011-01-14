@@ -155,9 +155,6 @@ Qt::ItemFlags TreeModelObjectSelection::flags(const QModelIndex &index) const
   else
     flags = Qt::ItemIsEnabled;
 
-  // Get the corresponding tree item
-  TreeItemObjectSelection *item = static_cast<TreeItemObjectSelection*>(index.internalPointer());
-
   return flags;
 }
 

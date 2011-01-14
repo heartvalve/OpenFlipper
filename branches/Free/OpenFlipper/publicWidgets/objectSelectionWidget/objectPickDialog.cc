@@ -176,7 +176,7 @@ void ObjectPickDialog::activated(const QModelIndex & _index)
 
 //------------------------------------------------------------------------------
 
-void ObjectPickDialog::slotMouseEventClick(QMouseEvent * _event, bool _double)
+void ObjectPickDialog::slotMouseEventClick(QMouseEvent * _event, bool /*_double*/)
 {
   unsigned int nodeIdx, targetIdx;
 
