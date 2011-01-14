@@ -95,7 +95,7 @@ ZoomButton::~ZoomButton ()
 //------------------------------------------------------------------------------
 
 // make the widget opaque if the mouse is over it
-void ZoomButton::hoverEnterEvent (QGraphicsSceneHoverEvent */*_event*/)
+void ZoomButton::hoverEnterEvent (QGraphicsSceneHoverEvent * /*_event*/)
 {
   setOpacity (1.0);
 }
@@ -103,7 +103,7 @@ void ZoomButton::hoverEnterEvent (QGraphicsSceneHoverEvent */*_event*/)
 //------------------------------------------------------------------------------
 
 // make the widget transparent if the mouse leaves it
-void ZoomButton::hoverLeaveEvent (QGraphicsSceneHoverEvent */*_event*/)
+void ZoomButton::hoverLeaveEvent (QGraphicsSceneHoverEvent * /*_event*/)
 {
   setOpacity (0.4);
 }
