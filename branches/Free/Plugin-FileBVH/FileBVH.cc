@@ -51,7 +51,6 @@
 #include "OpenFlipper/common/GlobalOptions.hh"
 
 #include <ACG/Geometry/AlgorithmsAngleT.hh>
-#include "EulerAngles.hh"
 
 #include <bitset>
 
@@ -505,7 +504,7 @@ bool FileBVHPlugin::saveObject(int _id, QString _filename)
 
     Skeleton* skeleton = PluginFunctions::skeleton(object);
 
-    if ( writeSkeleton( stream, _filename, *skeleton ) ){
+    if ( writeSkeleton( stream, *skeleton ) ){
       
       emit log(LOGINFO, tr("Saved object to ") + object->path() + OpenFlipper::Options::dirSeparator() + object->name() );
       stream.close();
@@ -556,7 +555,7 @@ ACG::Vec3d MatrixToEuler(ACG::Matrix4x4d _matrix){
 
 //-----------------------------------------------------------------------------------------------------
 
-bool FileBVHPlugin::writeSkeleton( std::ostream& _out, QString _filename, Skeleton& _skeleton ) {
+bool FileBVHPlugin::writeSkeleton( std::ostream& _out, Skeleton& _skeleton ) {
   
   Skeleton::Pose* refPose = _skeleton.referencePose();
   
