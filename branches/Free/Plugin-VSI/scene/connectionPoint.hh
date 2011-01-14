@@ -66,6 +66,7 @@ class ElementInOut;
 class ConnectionPoint : public QObject, public QGraphicsEllipseItem, public QGraphicsLayoutItem
 {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsLayoutItem)
 
   public:
 

@@ -94,7 +94,7 @@ Button::~Button ()
 //------------------------------------------------------------------------------
 
 // glow on mouse enter
-void Button::hoverEnterEvent (QGraphicsSceneHoverEvent *_event)
+void Button::hoverEnterEvent (QGraphicsSceneHoverEvent */*_event*/)
 {
   glow_ = true;
   update ();
@@ -108,7 +108,7 @@ void Button::hoverEnterEvent (QGraphicsSceneHoverEvent *_event)
 //------------------------------------------------------------------------------
 
 // stop glowing on mouse leave
-void Button::hoverLeaveEvent (QGraphicsSceneHoverEvent *_event)
+void Button::hoverLeaveEvent (QGraphicsSceneHoverEvent */*_event*/)
 {
   glow_ = false;
   update ();

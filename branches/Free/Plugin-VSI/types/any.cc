@@ -60,7 +60,7 @@ TypeAny::TypeAny()
 
 //------------------------------------------------------------------------------
 
-bool TypeAny::canConvertTo(QString _type)
+bool TypeAny::canConvertTo(QString /*_type*/)
 {
   return true;
 }

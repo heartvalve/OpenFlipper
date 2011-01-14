@@ -1117,7 +1117,7 @@ void GraphicsScene::contentChange ()
 
 //------------------------------------------------------------------------------
 
-void VSI::GraphicsScene::sceneResized(const QRectF & _rect)
+void VSI::GraphicsScene::sceneResized(const QRectF & /*_rect*/)
 {
   if (dontMoveStart_)
     return;

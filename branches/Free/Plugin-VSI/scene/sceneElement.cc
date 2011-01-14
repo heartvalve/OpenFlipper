@@ -250,7 +250,6 @@ SceneElement::SceneElement (GraphicsScene *_scene, Element *_element) :
     {
       ElementFunction *ef = new ElementFunction (f, this);
 
-      QGraphicsLinearLayout *hl = new QGraphicsLinearLayout (Qt::Horizontal);
       Button *config = new Button ("Edit:" + f->shortDescription (), this);
       config->setBrush (Qt::black);
       config->setBackgroundBrush (Qt::lightGray);
@@ -362,8 +361,6 @@ void SceneElement::paint (QPainter *_painter, const QStyleOptionGraphicsItem *_o
 {
   int w = geometry().width() - 20;
   int h = geometry().height();
-
-  int div = 2;
 
   _painter->setRenderHint(QPainter::Antialiasing, true);
   if (isSelected ())

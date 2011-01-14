@@ -53,7 +53,7 @@ namespace VSI {
 //=============================================================================
 
 /// Constructor
-TypeWidget::TypeWidget(QMap< QString, QString > &_hints, QString _typeName, QWidget* _parent) :
+TypeWidget::TypeWidget(QMap< QString, QString > &/*_hints*/, QString /*_typeName*/, QWidget* _parent) :
   QWidget (_parent)
 {
 }
