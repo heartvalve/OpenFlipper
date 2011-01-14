@@ -50,7 +50,7 @@ const ACG::Vec4f base_color (0.4,0.4,0.4,1.0);
 
 //******************************************************************************
 
-bool MoveObjectMarker::stencilRefForObject(BaseObjectData * _obj, GLuint & _reference)
+bool MoveObjectMarker::stencilRefForObject(BaseObjectData * /*_obj*/, GLuint & _reference)
 {
   _reference = 1;
   return true;

@@ -1417,7 +1417,7 @@ void MovePlugin::slotUnifyBoundingBoxDiagonal()
 
 
     useCommonBB =  ( button == QMessageBox::Yes );
-    double count = 0.0;
+
 
     if ( useCommonBB ) {
 
@@ -1780,14 +1780,13 @@ template< typename MeshT >
 void MovePlugin::unifyBBDiag( MeshT& _mesh, ACG::Vec3d& _bb_min, ACG::Vec3d& _bb_max  )
 {
 
-  typename MeshT::VertexIter v_it  = _mesh.vertices_begin();
-  typename MeshT::VertexIter v_end = _mesh.vertices_end();
-
   typename MeshT::Point bb_center =  0.5 * (_bb_min + _bb_max) ;
 
   typename MeshT::Scalar scale = 1.0/(_bb_max-_bb_min).norm();
 
-  for( v_it ; v_it!=v_end; ++v_it)
+  typename MeshT::VertexIter v_it;
+
+  for( v_it = _mesh.vertices_begin(); v_it!=_mesh.vertices_end(); ++v_it)
     _mesh.point(v_it) = (_mesh.point(v_it) - bb_center) * scale + bb_center;
 
   _mesh.update_normals();
