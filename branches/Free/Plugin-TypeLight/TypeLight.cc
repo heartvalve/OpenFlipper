@@ -286,7 +286,7 @@ void TypeLightPlugin::pluginsInitialized(){
     addDefaultLights();
 }
 
-void TypeLightPlugin::slotPickModeChanged (const std::string& _pickMode) {
+void TypeLightPlugin::slotPickModeChanged (const std::string& /*_pickMode*/) {
     
     if(PluginFunctions::actionMode() != Viewer::LightMode)
         lightAction_->setChecked(false);
@@ -476,7 +476,7 @@ double TypeLightPlugin::getFarthestRadius() {
     
     // Init distance
     double d = 0.0;
-    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
+    ACG::Vec3d c = PluginFunctions::trackBallCenter( PluginFunctions::activeExaminer() );
     
     for ( PluginFunctions::ObjectIterator o_it((onlyTargets_ ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS));
             o_it != PluginFunctions::objectsEnd(); ++o_it) {
@@ -693,7 +693,7 @@ bool TypeLightPlugin::computeClickOnTrackball(const QPoint& _v2D, ACG::Vec3d& _c
                     
     clickInWorld = _state.modelview().transform_point(clickInWorld);
    
-    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
+    ACG::Vec3d c = PluginFunctions::trackBallCenter( PluginFunctions::activeExaminer() );
         
     c = _state.modelview().transform_point(c);
     
@@ -749,12 +749,6 @@ bool TypeLightPlugin::computeClickOnLightTrackball(const QPoint& _v2D, ACG::Vec3
 
 void TypeLightPlugin::rotateLights(ACG::Vec3d& _axis, double _angle) {
     
-    ACG::GLState& state = PluginFunctions::viewerProperties().glState();
-    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
-    int active = PluginFunctions::activeExaminer();
-    
-    double max_s_radius = 0.0;
-    
     // Rotate lights
     light_matrix_.rotate(_angle, _axis[0], _axis[1], _axis[2]);
     
@@ -792,8 +786,7 @@ void TypeLightPlugin::rotateLightDirection(ACG::Vec3d& _axis, double _angle) {
 
 void TypeLightPlugin::updateLights() {
     
-    ACG::Vec3d c = PluginFunctions::trackBallCenter( ACG::Vec3d(), PluginFunctions::activeExaminer() );
-    ACG::GLState& state = PluginFunctions::viewerProperties().glState();
+    ACG::Vec3d c = PluginFunctions::trackBallCenter( PluginFunctions::activeExaminer() );
     
     for ( PluginFunctions::ObjectIterator o_it((onlyTargets_ ? PluginFunctions::TARGET_OBJECTS : PluginFunctions::ALL_OBJECTS));
             o_it != PluginFunctions::objectsEnd(); ++o_it) {
