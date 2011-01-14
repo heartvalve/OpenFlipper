@@ -341,7 +341,7 @@ int FilePLYPlugin::loadObject(QString _filename) {
         // If Ask is selected -> show dialog
         QMessageBox msgBox;
         QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
-        QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
+//         QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
         QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
         
         msgBox.setWindowTitle( tr("Mesh types in file") );
@@ -576,7 +576,7 @@ bool FilePLYPlugin::saveObject(int _id, QString _filename)
 
 //-----------------------------------------------------------------------------------------------------
 
-QWidget* FilePLYPlugin::saveOptionsWidget(QString _currentFilter) {
+QWidget* FilePLYPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
     
     if (saveOptions_ == 0){
         //generate widget
