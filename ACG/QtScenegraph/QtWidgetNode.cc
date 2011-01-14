@@ -71,7 +71,7 @@ namespace SceneGraph {
 
 void
 QtWidgetNode::
-boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
+boundingBox(Vec3d& /*_bbMin*/, Vec3d& /*_bbMax*/)
 {
   // No bounding box as this experiment is not really in the scene but above it
 }
@@ -93,12 +93,8 @@ availableDrawModes() const
 
 void
 QtWidgetNode::
-draw(GLState&  _state  , DrawModes::DrawMode _drawMode)
+draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
 {
-
-  double height = 0.0;
-  double width = 0.0;
-
   // Project 3d point onto screen 
   ACG::Vec3d projected = _state.project(position_);
   

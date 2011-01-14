@@ -191,7 +191,6 @@ buildStripsPolyMesh() {
     typename FaceHandles::iterator                fh_it, fh_end;
     typename Mesh::FaceIter                       f_it, f_end=mesh_.faces_end();
     
-    uint k = 0;
     for (f_it=mesh_.faces_begin(); true; ) {
 
       // find start face

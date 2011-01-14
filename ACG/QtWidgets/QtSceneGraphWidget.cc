@@ -97,7 +97,7 @@ namespace QtWidgets {
 SceneGraphWidgetGenerator::SceneGraphWidgetGenerator() {
 }
 
-QWidget* SceneGraphWidgetGenerator::getWidget(SceneGraph::BaseNode* _node ) {
+QWidget* SceneGraphWidgetGenerator::getWidget(SceneGraph::BaseNode* /*_node*/ ) {
   // Warn as this you have to derive from this class before it can be used!
   std::cerr << "SceneGraphWidgetGenerator::getWidget not implemented!"  << std::endl;
   return 0;
@@ -250,7 +250,7 @@ update(SceneGraph::BaseNode* _node, Item* _parent)
 
 void 
 QtSceneGraphWidget::
-slotItemExpandedOrCollapsed( QTreeWidgetItem* _item )
+slotItemExpandedOrCollapsed( QTreeWidgetItem* /*_item*/ )
 {
   resizeColumnToContents( 0 );
 }

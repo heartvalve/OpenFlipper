@@ -83,7 +83,7 @@ StencilRefNode::StencilRefNode (BaseNode*          _parent,
 
 //----------------------------------------------------------------------------
 
-void StencilRefNode::enter(GLState& _state, DrawModes::DrawMode _drawmode)
+void StencilRefNode::enter(GLState& /*_state*/, DrawModes::DrawMode /*_drawmode*/)
 {
   if(visible()) {
     glPushAttrib (GL_STENCIL_BUFFER_BIT);
@@ -94,7 +94,7 @@ void StencilRefNode::enter(GLState& _state, DrawModes::DrawMode _drawmode)
 
 //----------------------------------------------------------------------------
 
-void StencilRefNode::leave(GLState& _state, DrawModes::DrawMode _drawmode)
+void StencilRefNode::leave(GLState& /*_state*/, DrawModes::DrawMode /*_drawmode*/)
 {
   if(visible()) {
     glPopAttrib ();

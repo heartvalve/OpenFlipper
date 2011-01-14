@@ -556,7 +556,6 @@ draw_faces(FaceMode _mode) {
     if ( stripProcessor_.perFaceTextureIndexAvailable()  && (textureMap_ != 0) ) {
 
       int lastTexture = -1;
-      int texture = 0;
       
       for ( uint i = 0 ; i < stripProcessor_.textureRenderData()->size() ; ++i ) {
         int texture =  (*stripProcessor_.textureRenderData())[i].textureId;

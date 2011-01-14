@@ -276,7 +276,7 @@ void
 traverse_multipass( BaseNode*           _node,
                     Action&             _action,
                     GLState&            _state,
-                    DrawModes::DrawMode _drawmode=DrawModes::DEFAULT)
+                    DrawModes::DrawMode /*_drawmode*/=DrawModes::DEFAULT)
 {
     // Reset render pass counter
     _state.reset_render_pass();
