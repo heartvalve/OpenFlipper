@@ -107,7 +107,7 @@ class FileBVHPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
 
   private:
     
-    bool writeSkeleton( std::ostream& _out, QString _filename, Skeleton& _skeleton );
+    bool writeSkeleton( std::ostream& _out, Skeleton& _skeleton );
 
     ACG::Vec3d convertToAxisRotation(ACG::Matrix4x4d& _rotationMatrix);
     
