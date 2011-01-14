@@ -52,7 +52,7 @@ void SkeletalAnimationPlugin::setDescriptions(){
                           QStringList(tr("SkeletonObjectId")), QStringList(tr("ID of the skeleton object")));
 }
 
-bool SkeletalAnimationPlugin::attachSkin(int skeletonId, int skinId) {
+bool SkeletalAnimationPlugin::attachSkin(int /*skeletonId*/, int /*skinId*/) {
 //   BaseObjectData* skeleton = NULL;
 //   if (!PluginFunctions::getObject(skeletonId, skeleton)) {
 //     emit log(LOGERR, "Could not retrieve skeleton");
@@ -70,7 +70,7 @@ bool SkeletalAnimationPlugin::attachSkin(int skeletonId, int skinId) {
   return true;
 }
 
-bool SkeletalAnimationPlugin::detachSkin(int skeletonId) {
+bool SkeletalAnimationPlugin::detachSkin(int /*skeletonId*/) {
 //   BaseObjectData* skeleton = NULL;
 //   if (!PluginFunctions::getObject(skeletonId, skeleton)) {
 //     emit log(LOGERR, "Could not retrieve skeleton");

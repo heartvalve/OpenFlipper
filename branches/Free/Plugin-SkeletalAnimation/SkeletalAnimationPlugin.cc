@@ -143,7 +143,7 @@ void SkeletalAnimationPlugin::slotAllCleared()
 /** \brief Update ui when the object selection changes
  *
  */
-void SkeletalAnimationPlugin::slotObjectSelectionChanged(int _id)
+void SkeletalAnimationPlugin::slotObjectSelectionChanged(int /*_id*/)
 {
   checkObjectSelection();
 }
@@ -153,7 +153,7 @@ void SkeletalAnimationPlugin::slotObjectSelectionChanged(int _id)
 /** \brief Update ui when the object is loaded
  *
  */
-void SkeletalAnimationPlugin::fileOpened( int _id) {
+void SkeletalAnimationPlugin::fileOpened( int /*_id*/) {
   checkObjectSelection();
 }
 
@@ -162,7 +162,7 @@ void SkeletalAnimationPlugin::fileOpened( int _id) {
 /** \brief Update ui when the object is added
  *
  */
-void SkeletalAnimationPlugin::addedEmptyObject(int _id) {
+void SkeletalAnimationPlugin::addedEmptyObject(int /*_id*/) {
   checkObjectSelection();
 }
 
@@ -171,7 +171,7 @@ void SkeletalAnimationPlugin::addedEmptyObject(int _id) {
 /** \brief Update ui when the object is deleted
  *
  */
-void SkeletalAnimationPlugin::objectDeleted(int _id) {
+void SkeletalAnimationPlugin::objectDeleted(int /*_id*/) {
   checkObjectSelection();
 }
 
@@ -309,7 +309,7 @@ void SkeletalAnimationPlugin::UpdateSkin(BaseObjectData *_pSkeletonObject, Anima
 /**
  * @brief Check activePose if a skeleton was updated
  */
-void SkeletalAnimationPlugin::slotObjectUpdated( int _id, const UpdateType _type )
+void SkeletalAnimationPlugin::slotObjectUpdated( int _id, const UpdateType /*_type*/ )
 {
   // do nothing during animation
   if ( animationTimer_.isActive() )
@@ -663,7 +663,7 @@ void SkeletalAnimationPlugin::slotBindMesh()
 
 //------------------------------------------------------------------------------
 
-void SkeletalAnimationPlugin::rig(BaseObjectData *_skin, BaseObjectData* _skeletonObj) {
+void SkeletalAnimationPlugin::rig(BaseObjectData */*_skin*/, BaseObjectData* /*_skeletonObj*/) {
   
 //   // stop if the skeleton already has a skin
 //   if(_skeletonObj->objectData(OBJECTDATA_SKELETON) != 0)
@@ -739,7 +739,7 @@ void SkeletalAnimationPlugin::slotUnbindMesh()
 
 //------------------------------------------------------------------------------
 
-void SkeletalAnimationPlugin::unrig(BaseObjectData *_pSkeleton) {
+void SkeletalAnimationPlugin::unrig(BaseObjectData */*_pSkeleton*/) {
   
 //   if(_pSkeleton == 0 || _pSkeleton->objectData(OBJECTDATA_SKELETON) == 0)
 //           return;
