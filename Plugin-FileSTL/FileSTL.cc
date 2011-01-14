@@ -173,7 +173,7 @@ bool FileSTLPlugin::saveObject(int _id, QString _filename)
 
 //-----------------------------------------------------------------------------------------------------
 
-QWidget* FileSTLPlugin::saveOptionsWidget(QString _currentFilter) {
+QWidget* FileSTLPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
     
     if (saveOptions_ == 0){
         //generate widget
