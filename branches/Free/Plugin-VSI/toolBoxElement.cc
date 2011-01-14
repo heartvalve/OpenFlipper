@@ -102,7 +102,7 @@ ToolBoxElement::~ToolBoxElement ()
 //------------------------------------------------------------------------------
 
 // Paint a rounded rect as background
-void ToolBoxElement::paintEvent(QPaintEvent */*_event*/)
+void ToolBoxElement::paintEvent(QPaintEvent * /*_event*/)
 {
   QPainter p (this);
   p.setRenderHint(QPainter::Antialiasing);

@@ -186,7 +186,7 @@ void ConnectionPoint::setState(State _state)
 //------------------------------------------------------------------------------
 
 // highlight connection if mouse over
-void ConnectionPoint::hoverEnterEvent (QGraphicsSceneHoverEvent */*_event*/)
+void ConnectionPoint::hoverEnterEvent (QGraphicsSceneHoverEvent * /*_event*/)
 {
   foreach (Connection *c, inout_->connections ())
   {
@@ -205,7 +205,7 @@ void ConnectionPoint::hoverEnterEvent (QGraphicsSceneHoverEvent */*_event*/)
 //------------------------------------------------------------------------------
 
 // remove highlight 
-void ConnectionPoint::hoverLeaveEvent (QGraphicsSceneHoverEvent */*_event*/)
+void ConnectionPoint::hoverLeaveEvent (QGraphicsSceneHoverEvent * /*_event*/)
 {
   foreach (Connection *c, inout_->connections ())
   {

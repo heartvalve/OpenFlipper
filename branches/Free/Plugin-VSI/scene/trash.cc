@@ -84,7 +84,7 @@ Trash::~Trash ()
 //------------------------------------------------------------------------------
 
 // make the trash opaque if mouse is over and we have selected elements
-void Trash::hoverEnterEvent (QGraphicsSceneHoverEvent */*_event*/)
+void Trash::hoverEnterEvent (QGraphicsSceneHoverEvent * /*_event*/)
 {
   if (!scene_->selectedItems ().isEmpty ())
     setOpacity (1.0);
@@ -93,7 +93,7 @@ void Trash::hoverEnterEvent (QGraphicsSceneHoverEvent */*_event*/)
 //------------------------------------------------------------------------------
 
 // make trash transparent on mouse leave
-void Trash::hoverLeaveEvent (QGraphicsSceneHoverEvent */*_event*/)
+void Trash::hoverLeaveEvent (QGraphicsSceneHoverEvent * /*_event*/)
 {
   setOpacity (0.4);
 }
@@ -101,7 +101,7 @@ void Trash::hoverLeaveEvent (QGraphicsSceneHoverEvent */*_event*/)
 //------------------------------------------------------------------------------
 
 // delete selected elements on mouse press
-void Trash::mousePressEvent (QGraphicsSceneMouseEvent */*_event*/)
+void Trash::mousePressEvent (QGraphicsSceneMouseEvent * /*_event*/)
 {
   if (!scene_->selectedItems ().isEmpty ())
     foreach (QGraphicsItem *e, scene_->selectedItems ())
