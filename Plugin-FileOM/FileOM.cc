@@ -169,7 +169,7 @@ int FileOMPlugin::loadObject(QString _filename) {
         // Note: If in non-gui mode, we will never enter this case branch
         QMessageBox msgBox;
         QPushButton *detectButton = msgBox.addButton(tr("Auto-Detect"), QMessageBox::ActionRole);
-        QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
+//         QPushButton *triButton    = msgBox.addButton(tr("Open as triangle mesh"), QMessageBox::ActionRole);
         QPushButton *polyButton   = msgBox.addButton(tr("Open as poly mesh"), QMessageBox::ActionRole);
         
         msgBox.setWindowTitle( tr("Mesh types in file") );
@@ -462,7 +462,7 @@ bool FileOMPlugin::saveObject(int _id, QString _filename)
 
 //-----------------------------------------------------------------------------------------------------
 
-QWidget* FileOMPlugin::saveOptionsWidget(QString _currentFilter) {
+QWidget* FileOMPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
     
     if (saveOptions_ == 0){
         //generate widget
