@@ -155,8 +155,6 @@ int FileViewPlugin::loadObject(QString _filename) {
         double aspect = 0.0;
         if(e_widthAndHeight) aspect = width / height;
         else                 aspect = state.aspect();
-        double nearPlane   = state.near_plane();
-        double farPlane    = state.far_plane();
 
         // Set projection matrix
         //if(e_fovy)
