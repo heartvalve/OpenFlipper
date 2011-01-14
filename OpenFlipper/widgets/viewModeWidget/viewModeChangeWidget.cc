@@ -68,7 +68,7 @@ viewModeChangeWidget::viewModeChangeWidget(const QVector< ViewMode* >& _modes, Q
 // =======================================================================================================
 
 /// Slot for changing View and closing widget
-void viewModeChangeWidget::slotModeClicked(QModelIndex _idx ){
+void viewModeChangeWidget::slotModeClicked(QModelIndex /*_idx*/ ){
   
   // Search for current mode 
   int id = -1;

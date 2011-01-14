@@ -121,8 +121,6 @@ int PluginDialog::exec()
 void PluginDialog::slotUnload()
 {
   int buttonState = QMessageBox::No;
-
-  bool yesToAll = false;
   
   for (int i=0; i < list->selectedItems().size(); i++){
 

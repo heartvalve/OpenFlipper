@@ -292,7 +292,7 @@ void LoggerWidget::updateList(){
 }
 
 //-------------------------------------------------------------------------------------
-void LoggerWidget::showEvent ( QShowEvent * event ) {
+void LoggerWidget::showEvent ( QShowEvent * /*event*/ ) {
   list_->scrollToBottom();
 }
 
@@ -317,9 +317,6 @@ void LoggerWidget::keyPressEvent (QKeyEvent * _event ) {
 void LoggerWidget::contextMenuEvent ( QContextMenuEvent * event ){
  
   QPoint p = list_->mapToGlobal( list_->pos() );
-  
-  int x = event->globalX();
-  int y = event->y() + p.y();
   
   context_->popup( event->globalPos() );
 }

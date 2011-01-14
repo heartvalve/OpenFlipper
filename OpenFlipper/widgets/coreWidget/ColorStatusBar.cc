@@ -65,7 +65,7 @@ void ColorStatusBar::showMessage(const QString & message, QColor _color, int tim
   QStatusBar::showMessage(message, timeout);
 }
 
-void ColorStatusBar::slotMessageChanged(const QString & message)
+void ColorStatusBar::slotMessageChanged(const QString & /*message*/)
 {
   if ( !colored_ ){
 

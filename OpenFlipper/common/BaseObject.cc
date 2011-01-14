@@ -711,7 +711,7 @@ void BaseObject::setName(QString _name ) {
 // ===============================================================================
 // Content
 // ===============================================================================
-void BaseObject::update(UpdateType _type) {
+void BaseObject::update(UpdateType /*_type*/) {
 }
 
 void BaseObject::dumpTree() {

@@ -60,7 +60,7 @@
 //=============================================================================
 
 /// Constructor
-ObjectSelectionWidget::ObjectSelectionWidget(QMap< QString, QString > &_hints, QString _typeName, QWidget *_parent) :
+ObjectSelectionWidget::ObjectSelectionWidget(QMap< QString, QString > &_hints, QString /*_typeName*/, QWidget */*_parent*/) :
   QWidget(0),
   pickButton_ (0),
   combo_ (0)
