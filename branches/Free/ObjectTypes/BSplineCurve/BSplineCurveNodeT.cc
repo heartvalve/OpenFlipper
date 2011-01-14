@@ -160,7 +160,7 @@ draw(GLState& _state, DrawModes::DrawMode _drawMode)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-render(GLState& _state, bool _fill, DrawModes::DrawMode _drawMode)
+render(GLState& _state, bool /*_fill*/, DrawModes::DrawMode _drawMode)
 {
   // draw the control polygon (includes selection on the polygon)
   if (render_control_polygon_)
@@ -197,7 +197,7 @@ render(GLState& _state, bool _fill, DrawModes::DrawMode _drawMode)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-drawCurve(GLState& _state)
+drawCurve(GLState& /*_state*/)
 {
   int numKnots = bsplineCurve_.n_knots();
   GLfloat *knots = new GLfloat[numKnots];
@@ -643,7 +643,7 @@ pick_curve( GLState& _state, unsigned int _offset)
 template <class BSplineCurve >
 void
 BSplineCurveNodeT<BSplineCurve>::
-pick_spline( GLState& _state, unsigned int _offset )
+pick_spline( GLState& _state, unsigned int /*_offset*/ )
 {
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -787,7 +787,7 @@ selection_init_texturing(GLuint & _texture_idx)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-create_cp_selection_texture(GLState& _state)
+create_cp_selection_texture(GLState& /*_state*/)
 {
   if (bsplineCurve_.n_knots() == 0)
     return;
@@ -858,7 +858,7 @@ create_cp_selection_texture(GLState& _state)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-create_knot_selection_texture(GLState& _state)
+create_knot_selection_texture(GLState& /*_state*/)
 {
   if (bsplineCurve_.n_knots() == 0)
     return;
@@ -1017,7 +1017,7 @@ pick_create_texture( GLState& _state)
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-draw_textured_nurbs( GLState& _state)
+draw_textured_nurbs( GLState& /*_state*/)
 {
   int numKnots     = bsplineCurve_.n_knots();
   const int numCPs = bsplineCurve_.n_control_points();

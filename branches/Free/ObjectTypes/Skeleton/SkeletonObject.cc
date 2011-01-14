@@ -502,8 +502,6 @@ void SkeletonObject::updateMotionPath(const AnimationHandle &_hAni)
   if(!getAdditionalNode(pMatNode, "SkeletonPlugin", "Motion material node"))
     return;
 
-  PoseT<OpenMesh::Vec3d>* ref = skeleton_->referencePose();
-
   // update the position of existing nodes
   PoseT<OpenMesh::Vec3d>* pose = skeleton_->pose(_hAni);
 
