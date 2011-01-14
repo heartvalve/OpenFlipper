@@ -118,7 +118,7 @@ GridNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 //----------------------------------------------------------------
 
 void
-GridNode::pick(GLState& _state, PickTarget _target)
+GridNode::pick(GLState& /*_state*/, PickTarget /*_target*/)
 {
 
 

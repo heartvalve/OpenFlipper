@@ -95,7 +95,7 @@ bool PickAction::operator()(BaseNode* _node)
   return true;
 }
 
-bool PickAction::operator()(BaseNode* _node, GLState& _state) {
+bool PickAction::operator()(BaseNode* _node, GLState& /*_state*/) {
   return operator()(_node);
 }
 
