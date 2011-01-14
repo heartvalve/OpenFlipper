@@ -60,11 +60,11 @@ bool Core::saveObject( int _id, QString _filename ) {
   BaseObjectData* object;
   PluginFunctions::getObject(_id,object);
 
-  QString file_extension = _filename;
-  file_extension.remove(0, file_extension.length()-4);
+  QString file_extension = QFileInfo(_filename).suffix();
   
   for (int i=0; i < (int)supportedTypes_.size(); i++) {
-    if ( supportedTypes_[i].type.contains(object->dataType()) && supportedTypes_[i].saveFilters.contains(file_extension)) {
+    if ( supportedTypes_[i].type.contains(object->dataType()) &&
+       ( supportedTypes_[i].saveFilters.contains(file_extension) || file_extension.isEmpty() ) ) {
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Saving ") + _filename + " ...");
@@ -73,6 +73,7 @@ bool Core::saveObject( int _id, QString _filename ) {
       }
 
       //save object
+      
       bool ok = supportedTypes_[i].plugin->saveObject(_id,_filename);
     
       if ( OpenFlipper::Options::gui() ) {
@@ -80,6 +81,7 @@ bool Core::saveObject( int _id, QString _filename ) {
           coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... done"), 4000 );
         else{
           emit log(LOGERR, tr("Unable to save '%1'. Plugin failed. DataType %2").arg(_filename, dataTypeName(object->dataType()) )  );
+          emit log(LOGERR, tr("Plugin was: '%1'. File Extension was: %2").arg(supportedTypes_[i].name, file_extension )  );
           coreWidget_->statusMessage( tr("Saving ") + _filename + tr(" ... failed!"), 4000 );
         }
     
