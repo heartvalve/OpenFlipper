@@ -415,8 +415,6 @@ void OBJImporter::addFace(const VHandles& _indices){
       }
     }
     
-    size_t n_faces = currentPolyMesh()->n_faces();
-    
     OpenMesh::FaceHandle fh = currentPolyMesh()->add_face( vertices );
 
     if(!fh.is_valid()) {
@@ -515,8 +513,6 @@ void OBJImporter::addFace(const VHandles& _indices, const std::vector<int>& _fac
         return;
       }
     }
-    
-    size_t n_faces = currentPolyMesh()->n_faces();
     
     OpenMesh::FaceHandle fh = currentPolyMesh()->add_face( vertices );
 

@@ -1434,9 +1434,6 @@ int FileOBJPlugin::loadObject(QString _filename) {
   
   OBJImporter importer;
   
-  //for recursive obj's only the first obj locks/unlocks the loadingSettings Option
-  bool topLevelObj = false;
-  
   //included filenames
   QStringList includes;
   
@@ -1717,7 +1714,7 @@ void FileOBJPlugin::slotHandleCheckBoxes(bool _checked) {
 
 //-----------------------------------------------------------------------------------------------------
 
-QWidget* FileOBJPlugin::saveOptionsWidget(QString _currentFilter) {
+QWidget* FileOBJPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
     
     if (saveOptions_ == 0){
         //generate widget
