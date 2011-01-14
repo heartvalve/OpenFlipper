@@ -101,7 +101,7 @@ LightWidget::LightWidget(  ACG::SceneGraph::BaseNode* _node, QWidget *parent)
   connect(radius,SIGNAL(editingFinished()),this,SLOT(radiusChanged()));
 }
 
-void LightWidget::showEvent ( QShowEvent * event )
+void LightWidget::showEvent ( QShowEvent * /*event*/ )
 {
   if ( !getObject() )
     return;

@@ -857,7 +857,7 @@ selection_init_texturing(GLuint & _texture_idx )
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-create_cp_selection_texture(GLState& _state)
+create_cp_selection_texture(GLState& /*_state*/)
 {
   if (bsplineSurface_.n_knots_m() == 0 || bsplineSurface_.n_knots_n() == 0)
     return;
@@ -1208,7 +1208,7 @@ set_arb_texture( const QImage& _texture, bool _repeat, float _u_repeat, float _v
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-draw_textured_nurbs( GLState& _state)
+draw_textured_nurbs( GLState& /*_state*/)
 {
   int numKnots_m = bsplineSurface_.n_knots_m();
   int numKnots_n = bsplineSurface_.n_knots_n();

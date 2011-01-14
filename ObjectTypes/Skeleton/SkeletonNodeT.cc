@@ -464,7 +464,6 @@ template <class Skeleton>
 void SkeletonNodeT<Skeleton>::pick(GLState& _state, PickTarget _target)
 {
   unsigned int n_of_vertices = skeleton_.jointCount();
-  unsigned int n_of_edges = n_of_vertices - 1;
 
   switch (_target)
   {
