@@ -663,7 +663,7 @@ void SkeletalAnimationPlugin::slotBindMesh()
 
 //------------------------------------------------------------------------------
 
-void SkeletalAnimationPlugin::rig(BaseObjectData */*_skin*/, BaseObjectData* /*_skeletonObj*/) {
+void SkeletalAnimationPlugin::rig(BaseObjectData * /*_skin*/, BaseObjectData* /*_skeletonObj*/) {
   
 //   // stop if the skeleton already has a skin
 //   if(_skeletonObj->objectData(OBJECTDATA_SKELETON) != 0)
@@ -739,7 +739,7 @@ void SkeletalAnimationPlugin::slotUnbindMesh()
 
 //------------------------------------------------------------------------------
 
-void SkeletalAnimationPlugin::unrig(BaseObjectData */*_pSkeleton*/) {
+void SkeletalAnimationPlugin::unrig(BaseObjectData * /*_pSkeleton*/) {
   
 //   if(_pSkeleton == 0 || _pSkeleton->objectData(OBJECTDATA_SKELETON) == 0)
 //           return;
