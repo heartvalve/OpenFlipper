@@ -107,7 +107,7 @@ Arrow::~Arrow ()
 //------------------------------------------------------------------------------
 
 // make the widget opaque if the mouse is over it
-void Arrow::hoverEnterEvent (QGraphicsSceneHoverEvent *_event)
+void Arrow::hoverEnterEvent (QGraphicsSceneHoverEvent */*_event*/)
 {
   setOpacity (1.0);
 }
@@ -115,7 +115,7 @@ void Arrow::hoverEnterEvent (QGraphicsSceneHoverEvent *_event)
 //------------------------------------------------------------------------------
 
 // make the widget transparent if the mouse leaves it
-void Arrow::hoverLeaveEvent (QGraphicsSceneHoverEvent *_event)
+void Arrow::hoverLeaveEvent (QGraphicsSceneHoverEvent */*_event*/)
 {
   setOpacity ((highlight_)? 0.5 : 0.2);
 }
@@ -266,7 +266,7 @@ void Arrow::setGeometry (const QRectF &_rect)
 //------------------------------------------------------------------------------
 
 // return size information for layouting
-QSizeF Arrow::sizeHint (Qt::SizeHint _which, const QSizeF &_constraint) const
+QSizeF Arrow::sizeHint (Qt::SizeHint _which, const QSizeF &/*_constraint*/) const
 {
   QSizeF sh;
   switch (_which) {

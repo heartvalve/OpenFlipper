@@ -149,8 +149,6 @@ void FunctionDisplay::paint (QPainter *_painter, const QStyleOptionGraphicsItem 
   int w = geometry().width();
   int h = geometry().height();
 
-  int div = 2;
-
   _painter->setRenderHint(QPainter::Antialiasing, true);
 
   _painter->setBrush(QBrush(QColor(BACKGROUND_RED,
@@ -172,8 +170,6 @@ void FunctionDisplay::paint (QPainter *_painter, const QStyleOptionGraphicsItem 
   path.lineTo (0, 0);
   _painter->drawPath (path);
 
-  float wH = w / 2.0;
-  float wT = w / 3.0;
 
   QLinearGradient lG;
   QRadialGradient rG;

@@ -66,6 +66,7 @@ class GraphicsScene;
 class Text : public QObject, public QGraphicsSimpleTextItem, public QGraphicsLayoutItem
 {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsLayoutItem)
 
   public:
 

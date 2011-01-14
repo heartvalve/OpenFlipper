@@ -108,7 +108,7 @@ void ConnectionPoint::setGeometry (const QRectF &_rect)
 //------------------------------------------------------------------------------
 
 // size informations for layouting
-QSizeF ConnectionPoint::sizeHint (Qt::SizeHint _which, const QSizeF &_constraint) const
+QSizeF ConnectionPoint::sizeHint (Qt::SizeHint _which, const QSizeF &/*_constraint*/) const
 {
   QSizeF sh;
   switch (_which) {
@@ -186,7 +186,7 @@ void ConnectionPoint::setState(State _state)
 //------------------------------------------------------------------------------
 
 // highlight connection if mouse over
-void ConnectionPoint::hoverEnterEvent (QGraphicsSceneHoverEvent *_event)
+void ConnectionPoint::hoverEnterEvent (QGraphicsSceneHoverEvent */*_event*/)
 {
   foreach (Connection *c, inout_->connections ())
   {
@@ -205,7 +205,7 @@ void ConnectionPoint::hoverEnterEvent (QGraphicsSceneHoverEvent *_event)
 //------------------------------------------------------------------------------
 
 // remove highlight 
-void ConnectionPoint::hoverLeaveEvent (QGraphicsSceneHoverEvent *_event)
+void ConnectionPoint::hoverLeaveEvent (QGraphicsSceneHoverEvent */*_event*/)
 {
   foreach (Connection *c, inout_->connections ())
   {
@@ -239,7 +239,6 @@ void ConnectionPoint::paint(QPainter *_painter, const QStyleOptionGraphicsItem *
 
   float wH = width_ / 2.0;
   float wT = width_ / 3.0;
-  float wF = width_ / 4.0;
   float wS = width_ / 6.0;
 
   QPainterPath path;

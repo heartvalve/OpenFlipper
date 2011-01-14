@@ -61,6 +61,7 @@ class SceneElement;
 class ElementArea : public QObject, public QGraphicsItem
 {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsItem)
 
   public:
 
@@ -83,7 +84,7 @@ class ElementArea : public QObject, public QGraphicsItem
     const QList<SceneElement *>& elements () const;
 
     /// for QGraphicsItem
-    void paint (QPainter *_painter, const QStyleOptionGraphicsItem *_option, QWidget *_widget = 0) {};
+    void paint (QPainter */*_painter*/, const QStyleOptionGraphicsItem */*_option*/, QWidget */*_widget*/ = 0) {};
 
   private:
     GraphicsScene *scene_;

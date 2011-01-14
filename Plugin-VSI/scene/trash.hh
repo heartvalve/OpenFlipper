@@ -62,6 +62,7 @@ class GraphicsScene;
 class Trash : public QObject, public QGraphicsPixmapItem, public QGraphicsLayoutItem
 {
   Q_OBJECT
+  Q_INTERFACES(QGraphicsLayoutItem)
 
   public:
 

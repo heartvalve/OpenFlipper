@@ -132,7 +132,7 @@ void Text::setGeometry (const QRectF &_rect)
 //------------------------------------------------------------------------------
 
 // size information for layouting
-QSizeF Text::sizeHint (Qt::SizeHint _which, const QSizeF &_constraint) const
+QSizeF Text::sizeHint (Qt::SizeHint _which, const QSizeF &/*_constraint*/) const
 {
   QFontMetrics fn (font ());
   QSizeF sh;
@@ -185,11 +185,6 @@ void Text::paint (QPainter *_painter, const QStyleOptionGraphicsItem *_option, Q
 
   if (backgroundSet_)
   {
-
-    float w = geometry ().size ().width ();
-    float wH = w / 2.0;
-    float wT = w / 3.0;
-
     QPainterPath path;
 
     path.moveTo (geometry ().size ().width () / 2, 0);
