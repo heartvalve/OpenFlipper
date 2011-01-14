@@ -83,7 +83,7 @@ class Type {
     virtual bool hasWidget () { return false; };
 
     /// Returns the configuration widget
-    virtual TypeWidget *widget (QMap<QString, QString> /*_hints*/, QString /*_typeName*/, QWidget */*_parent*/ = NULL) { return 0; };
+    virtual TypeWidget *widget (QMap<QString, QString> /*_hints*/, QString /*_typeName*/, QWidget * /*_parent*/ = NULL) { return 0; };
 
   protected:
     QStringList types_;
