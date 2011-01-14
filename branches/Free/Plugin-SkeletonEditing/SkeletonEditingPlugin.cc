@@ -294,7 +294,7 @@ void SkeletonEditingPlugin::slotPickToolbarAction(QAction* _action)
 
 //--------------------------------------------------------------------------------
 
-void SkeletonEditingPlugin::slotSetEditingMode(QAction* _action)
+void SkeletonEditingPlugin::slotSetEditingMode(QAction* /*_action*/)
 {
   PluginFunctions::actionMode(Viewer::PickingMode);
   PluginFunctions::pickMode("MoveJoints");
@@ -820,8 +820,6 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
       if (skeleton == 0)
         return;
 
-      Skeleton::Joint* joint = skeleton->joint( currentJoint_ );
-
       for (Skeleton::Iterator it=skeleton->begin(); it != skeleton->end(); ++it)
         (*it)->setSelected(false);
   }
@@ -834,8 +832,6 @@ Skeleton::Pose* SkeletonEditingPlugin::activePose(SkeletonObject* _skeletonObj){
   Skeleton* skeleton = PluginFunctions::skeleton(_skeletonObj);
 
   AnimationHandle handle = _skeletonObj->skeletonNode()->activePose();
-
-  Skeleton::Pose* pose = 0;
 
   if ( !handle.isValid() ){
     //no current animation found -> transform the reference Pose

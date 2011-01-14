@@ -156,7 +156,6 @@ void SkeletonEditingPlugin::addJoint( int _objectId , int _parent, Vector _posit
   skeleton->addJoint(parent, jointNew);
 
   //set the position
-  Skeleton::Pose* refPose = skeleton->referencePose();
 
   setJointPosition(PluginFunctions::skeletonObject(baseObject), jointNew, _position);
   emit updatedObject(_objectId, UPDATE_ALL);
@@ -542,8 +541,6 @@ int SkeletonEditingPlugin::activeAnimation(int _objectId){
     return -1;
   }
 
-  Skeleton* skeleton = PluginFunctions::skeleton(obj);
-
   AnimationHandle handle = skeletonObj->skeletonNode()->activePose();
 
   emit scriptInfo("activeAnimation( ObjectId )" );
@@ -569,8 +566,6 @@ int SkeletonEditingPlugin::activeFrame(int _objectId){
     emit log(LOGERR, tr("Unable to get skeletonObject"));
     return -1;
   }
-
-  Skeleton* skeleton = PluginFunctions::skeleton(obj);
 
   AnimationHandle handle = skeletonObj->skeletonNode()->activePose();
 
