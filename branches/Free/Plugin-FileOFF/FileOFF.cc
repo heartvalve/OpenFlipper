@@ -1202,7 +1202,7 @@ bool FileOFFPlugin::saveObject(int _id, QString _filename)
 
 //-----------------------------------------------------------------------------------------------------
 
-QWidget* FileOFFPlugin::saveOptionsWidget(QString _currentFilter) {
+QWidget* FileOFFPlugin::saveOptionsWidget(QString /*_currentFilter*/) {
     
     if (saveOptions_ == 0){
         //generate widget
