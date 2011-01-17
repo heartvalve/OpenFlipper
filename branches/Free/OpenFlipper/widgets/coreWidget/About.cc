@@ -166,83 +166,83 @@ void CoreWidget::showAboutWidget( ) {
   aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);  
   
   #ifdef WIN32 
-  
-  QSettings registryCPU("HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor", QSettings::NativeFormat);
+    
+    QSettings registryCPU("HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor", QSettings::NativeFormat);
 
-  QStringList cpus = registryCPU.childGroups(); 
-  if ( cpus.size() != 0 ) { 
+    QStringList cpus = registryCPU.childGroups(); 
+    if ( cpus.size() != 0 ) { 
 
-    aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t ") + 
-                                           registryCPU.value( cpus[0]+"/VendorIdentifier", "Unknown" ).toString() );
-    aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t ") + 
-                                           registryCPU.value( cpus[0]+"/ProcessorNameString", "Unknown" ).toString() );
-    aboutWidget_->OpenFlipperAbout->append(tr("CPU identifier:\t\t ") + 
-                                           registryCPU.value( cpus[0]+"/Identifier", "Unknown" ).toString() );
-    aboutWidget_->OpenFlipperAbout->append(tr("CPU Speed:\t\t ") + 
-                                           registryCPU.value( cpus[0]+"/~MHz", "Unknown" ).toString()+ " MHz" );
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t ") + 
+                                            registryCPU.value( cpus[0]+"/VendorIdentifier", "Unknown" ).toString() );
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t ") + 
+                                            registryCPU.value( cpus[0]+"/ProcessorNameString", "Unknown" ).toString() );
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU identifier:\t\t ") + 
+                                            registryCPU.value( cpus[0]+"/Identifier", "Unknown" ).toString() );
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU Speed:\t\t ") + 
+                                            registryCPU.value( cpus[0]+"/~MHz", "Unknown" ).toString()+ " MHz" );
 
-    aboutWidget_->OpenFlipperAbout->append("CPU Cores:\t\t " + QString::number(cpus.size())); 
+      aboutWidget_->OpenFlipperAbout->append("CPU Cores:\t\t " + QString::number(cpus.size())); 
 
-  } else {
-    aboutWidget_->OpenFlipperAbout->append(tr("Unable to retrieve CPU information"));
-  }
+    } else {
+      aboutWidget_->OpenFlipperAbout->append(tr("Unable to retrieve CPU information"));
+    }
   
   #elif defined ARCH_DARWIN 
   
-  aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)"));   
+    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)"));   
   
   #else
-  QFile cpuinfo("/proc/cpuinfo");
-  if (! cpuinfo.exists() )
-    aboutWidget_->OpenFlipperAbout->append(tr("Unable to retrieve CPU information"));
-  else {
+    QFile cpuinfo("/proc/cpuinfo");
+    if (! cpuinfo.exists() )
+      aboutWidget_->OpenFlipperAbout->append(tr("Unable to retrieve CPU information"));
+    else {
+      
+      cpuinfo.open(QFile::ReadOnly);
+      QTextStream stream(&cpuinfo);
+      QStringList splitted = stream.readAll().split("\n",QString::SkipEmptyParts);
     
-    cpuinfo.open(QFile::ReadOnly);
-    QTextStream stream(&cpuinfo);
-    QStringList splitted = stream.readAll().split("\n",QString::SkipEmptyParts);
-  
-    int position = splitted.indexOf ( QRegExp("^vendor_id.*") );
-    if ( position != -1 ){
-      QString cpuVendor = splitted[position].section(':', -1).simplified();
-      aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t ") + cpuVendor );
-    } else {
-      aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t vendor specification not found")); 
+      int position = splitted.indexOf ( QRegExp("^vendor_id.*") );
+      if ( position != -1 ){
+        QString cpuVendor = splitted[position].section(':', -1).simplified();
+        aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t ") + cpuVendor );
+      } else {
+        aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t vendor specification not found")); 
+      }
+      
+      position = splitted.indexOf ( QRegExp("^model name.*") );
+      if ( position != -1 ){
+        QString cpuModel = splitted[position].section(':', -1).simplified();
+        aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t ") + cpuModel );
+      } else {
+        aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t Model specification not found")); 
+      }
+      
+      position = splitted.indexOf ( QRegExp("^cpu cores.*") );
+      if ( position != -1 ){
+        QString cpuCoresPhysical = splitted[position].section(':', -1).simplified();
+        aboutWidget_->OpenFlipperAbout->append(tr("Physical CPU cores:\t\t ") + cpuCoresPhysical );
+      } else {
+        aboutWidget_->OpenFlipperAbout->append(tr("Physical CPU cores:\t\t CPU Core specification not found")); 
+      }
+      
+      position = splitted.indexOf ( QRegExp("^siblings.*") );
+      if ( position != -1 ){
+        QString cpuCoresLogical = splitted[position].section(':', -1).simplified();
+        aboutWidget_->OpenFlipperAbout->append(tr("Logical CPU cores:\t\t ") + cpuCoresLogical );
+      } else {
+        aboutWidget_->OpenFlipperAbout->append(tr("Logical CPU cores:\t\t CPU Core specification not found")); 
+      }    
+      
+      position = splitted.indexOf ( QRegExp("^flags.*") );
+      if ( position != -1 ){
+        QString cpuFlags = splitted[position].section(':', -1).simplified();
+        aboutWidget_->OpenFlipperAbout->append(tr("CPU capabilities:\t\t ") + cpuFlags );
+      } else {
+        aboutWidget_->OpenFlipperAbout->append(tr("CPU capabilities:\t\t CPU flag specification not found")); 
+      }    
+      
+      
     }
-    
-    position = splitted.indexOf ( QRegExp("^model name.*") );
-    if ( position != -1 ){
-      QString cpuModel = splitted[position].section(':', -1).simplified();
-      aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t ") + cpuModel );
-    } else {
-      aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t Model specification not found")); 
-    }
-    
-    position = splitted.indexOf ( QRegExp("^cpu cores.*") );
-    if ( position != -1 ){
-      QString cpuCoresPhysical = splitted[position].section(':', -1).simplified();
-      aboutWidget_->OpenFlipperAbout->append(tr("Physical CPU cores:\t\t ") + cpuCoresPhysical );
-    } else {
-      aboutWidget_->OpenFlipperAbout->append(tr("Physical CPU cores:\t\t CPU Core specification not found")); 
-    }
-    
-    position = splitted.indexOf ( QRegExp("^siblings.*") );
-    if ( position != -1 ){
-      QString cpuCoresLogical = splitted[position].section(':', -1).simplified();
-      aboutWidget_->OpenFlipperAbout->append(tr("Logical CPU cores:\t\t ") + cpuCoresLogical );
-    } else {
-      aboutWidget_->OpenFlipperAbout->append(tr("Logical CPU cores:\t\t CPU Core specification not found")); 
-    }    
-    
-    position = splitted.indexOf ( QRegExp("^flags.*") );
-    if ( position != -1 ){
-      QString cpuFlags = splitted[position].section(':', -1).simplified();
-      aboutWidget_->OpenFlipperAbout->append(tr("CPU capabilities:\t\t ") + cpuFlags );
-    } else {
-      aboutWidget_->OpenFlipperAbout->append(tr("CPU capabilities:\t\t CPU flag specification not found")); 
-    }    
-    
-    
-  }
   
   #endif
   
@@ -263,7 +263,69 @@ void CoreWidget::showAboutWidget( ) {
   #elif defined ARCH_DARWIN 
     aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)")); 
   #else
-    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (Linux)")); 
+    QFile versionInfo("/proc/version");
+    if (! versionInfo.exists() )
+      aboutWidget_->OpenFlipperAbout->append(tr("Unable to retrieve Kernel information"));
+    else {
+      versionInfo.open(QFile::ReadOnly);
+      QTextStream versionStream(&versionInfo);
+      aboutWidget_->OpenFlipperAbout->append(tr("Kernel Version:\t\t ") + versionStream.readAll().simplified()); 
+      
+      QString program = "/usr/bin/lsb_release";
+      
+      QFile lsb(program);
+      if ( lsb.exists() ) {
+        QStringList arguments;
+        arguments << "-a";
+        
+        QProcess myProcess;
+        myProcess.start(program, arguments);
+        
+        if ( myProcess.waitForFinished ( 4000 ) ) {
+          QStringList outputLSB = QString(myProcess.readAllStandardOutput()).split('\n');
+          
+          
+          int position = outputLSB.indexOf ( QRegExp("^Distributor ID.*") );
+          if ( position != -1 ){
+            QString distributorID = outputLSB[position].section(':', -1).simplified();
+            aboutWidget_->OpenFlipperAbout->append(tr("Distributor ID:\t\t ") + distributorID );
+          } else {
+            aboutWidget_->OpenFlipperAbout->append(tr("Distributor ID:\t\t Unknown")); 
+          }
+          
+          position = outputLSB.indexOf ( QRegExp("^Description.*") );
+          if ( position != -1 ){
+            QString description = outputLSB[position].section(':', -1).simplified();
+            aboutWidget_->OpenFlipperAbout->append(tr("Description:\t\t ") + description );
+          } else {
+            aboutWidget_->OpenFlipperAbout->append(tr("Description:\t\t Unknown")); 
+          }          
+          
+          position = outputLSB.indexOf ( QRegExp("^Release.*") );
+          if ( position != -1 ){
+            QString release = outputLSB[position].section(':', -1).simplified();
+            aboutWidget_->OpenFlipperAbout->append(tr("Release number:\t\t ") + release );
+          } else {
+            aboutWidget_->OpenFlipperAbout->append(tr("Release number:\t\t Unknown")); 
+          }    
+          
+          position = outputLSB.indexOf ( QRegExp("^Codename.*") );
+          if ( position != -1 ){
+            QString codename = outputLSB[position].section(':', -1).simplified();
+            aboutWidget_->OpenFlipperAbout->append(tr("Codename:\t\t ") + codename );
+          } else {
+            aboutWidget_->OpenFlipperAbout->append(tr("Codename:\t\t Unknown")); 
+          }                      
+          
+        } else {
+          aboutWidget_->OpenFlipperAbout->append(tr("Unable to get LSB info")); 
+        }
+        
+      } else {
+        aboutWidget_->OpenFlipperAbout->append(tr("No additional information. Unable to get info via LSB.")); 
+      }
+      
+    }
   #endif
 
 
