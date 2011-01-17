@@ -64,6 +64,7 @@
   #endif
 #endif
 
+
 //== IMPLEMENTATION ==========================================================
 
 
@@ -131,16 +132,7 @@ void CoreWidget::showAboutWidget( ) {
     
     struct mallinfo info;
     info = mallinfo();
-    
-    //    std::cout << "**********************" << std::endl;
-    //    std::cout << "arena: " << info.arena << std::endl;
-    //    std::cout << "ordblks: " << info.ordblks << std::endl;
-    //    std::cout << "hblks: " << info.hblks << std::endl;
-    //    std::cout << "hblkhd: " << info.hblkhd << std::endl;
-    //    std::cout << "uordblks: " << info.uordblks << std::endl;
-    //    std::cout << "fordblks: " << info.fordblks << std::endl;
-    //    std::cout << "keepcost: " << info.keepcost << std::endl;
-    
+
     // add mmap-allocated memory
     memory += info.hblkhd;
     
@@ -164,6 +156,78 @@ void CoreWidget::showAboutWidget( ) {
                                            + QString::number(pageSize,'f' ,2 ) + tr("KB size)"));
     
   #endif
+  
+  // =====================================================================================
+  // Memory infos
+  // =====================================================================================
+  aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
+  aboutWidget_->OpenFlipperAbout->append(tr("CPU Information:"));    
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);  
+  
+  #ifdef WIN32 
+  
+  aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (WIN32)"));   
+  
+  #elif defined ARCH_DARWIN 
+  
+  aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)"));   
+  
+  #else
+  QFile cpuinfo("/proc/cpuinfo");
+  if (! cpuinfo.exists() )
+    aboutWidget_->OpenFlipperAbout->append(tr("Unable to retrieve CPU information"));
+  else {
+    
+    cpuinfo.open(QFile::ReadOnly);
+    QTextStream stream(&cpuinfo);
+    QStringList splitted = stream.readAll().split("\n",QString::SkipEmptyParts);
+  
+    int position = splitted.indexOf ( QRegExp("^vendor_id.*") );
+    if ( position != -1 ){
+      QString cpuVendor = splitted[position].section(':', -1).simplified();
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t ") + cpuVendor );
+    } else {
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t vendor specification not found")); 
+    }
+    
+    position = splitted.indexOf ( QRegExp("^model name.*") );
+    if ( position != -1 ){
+      QString cpuModel = splitted[position].section(':', -1).simplified();
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t ") + cpuModel );
+    } else {
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t Model specification not found")); 
+    }
+    
+    position = splitted.indexOf ( QRegExp("^cpu cores.*") );
+    if ( position != -1 ){
+      QString cpuCoresPhysical = splitted[position].section(':', -1).simplified();
+      aboutWidget_->OpenFlipperAbout->append(tr("Physical CPU cores:\t\t ") + cpuCoresPhysical );
+    } else {
+      aboutWidget_->OpenFlipperAbout->append(tr("Physical CPU cores:\t\t CPU Core specification not found")); 
+    }
+    
+    position = splitted.indexOf ( QRegExp("^siblings.*") );
+    if ( position != -1 ){
+      QString cpuCoresLogical = splitted[position].section(':', -1).simplified();
+      aboutWidget_->OpenFlipperAbout->append(tr("Logical CPU cores:\t\t ") + cpuCoresLogical );
+    } else {
+      aboutWidget_->OpenFlipperAbout->append(tr("Logical CPU cores:\t\t CPU Core specification not found")); 
+    }    
+    
+    position = splitted.indexOf ( QRegExp("^flags.*") );
+    if ( position != -1 ){
+      QString cpuFlags = splitted[position].section(':', -1).simplified();
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU capabilities:\t\t ") + cpuFlags );
+    } else {
+      aboutWidget_->OpenFlipperAbout->append(tr("CPU capabilities:\t\t CPU flag specification not found")); 
+    }    
+    
+    
+  }
+  
+  #endif
+  
   
 
   // =====================================================================================
