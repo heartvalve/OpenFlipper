@@ -98,6 +98,7 @@ void KeyGenWidget::slotGenerateButton() {
 
   if ( data.size() != 5) {
     QMessageBox::critical(this,tr("Wrong request data"),tr("The request has to contain 5 lines of data"));
+    return;
   } else {
 
     // Clean strings
@@ -157,7 +158,5 @@ void KeyGenWidget::slotGenerateButton() {
   }
   
   close();
-
-  
  
 }
