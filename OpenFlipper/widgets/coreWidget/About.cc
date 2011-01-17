@@ -167,7 +167,25 @@ void CoreWidget::showAboutWidget( ) {
   
   #ifdef WIN32 
   
-  aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (WIN32)"));   
+  QSettings settings("HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor", QSettings::NativeFormat);
+
+  QStringList cpus = settings.childGroups(); 
+  if ( cpus.size() != 0 ) { 
+
+    aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t ") + 
+                                           settings.value( cpus[0]+"/VendorIdentifier", "Unknown" ).toString() );
+    aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t ") + 
+                                           settings.value( cpus[0]+"/ProcessorNameString", "Unknown" ).toString() );
+    aboutWidget_->OpenFlipperAbout->append(tr("CPU identifier:\t\t ") + 
+                                           settings.value( cpus[0]+"/Identifier", "Unknown" ).toString() );
+    aboutWidget_->OpenFlipperAbout->append(tr("CPU Speed:\t\t ") + 
+                                           settings.value( cpus[0]+"/~MHz", "Unknown" ).toString()+ " MHz" );
+
+    aboutWidget_->OpenFlipperAbout->append("CPU Cores:\t\t " + QString::number(cpus.size())); 
+
+  } else {
+    aboutWidget_->OpenFlipperAbout->append(tr("Unable to retrieve CPU information"));
+  }
   
   #elif defined ARCH_DARWIN 
   
