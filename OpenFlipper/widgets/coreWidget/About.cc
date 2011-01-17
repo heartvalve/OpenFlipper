@@ -167,19 +167,19 @@ void CoreWidget::showAboutWidget( ) {
   
   #ifdef WIN32 
   
-  QSettings settings("HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor", QSettings::NativeFormat);
+  QSettings registryCPU("HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor", QSettings::NativeFormat);
 
-  QStringList cpus = settings.childGroups(); 
+  QStringList cpus = registryCPU.childGroups(); 
   if ( cpus.size() != 0 ) { 
 
     aboutWidget_->OpenFlipperAbout->append(tr("CPU vendor:\t\t ") + 
-                                           settings.value( cpus[0]+"/VendorIdentifier", "Unknown" ).toString() );
+                                           registryCPU.value( cpus[0]+"/VendorIdentifier", "Unknown" ).toString() );
     aboutWidget_->OpenFlipperAbout->append(tr("CPU model:\t\t ") + 
-                                           settings.value( cpus[0]+"/ProcessorNameString", "Unknown" ).toString() );
+                                           registryCPU.value( cpus[0]+"/ProcessorNameString", "Unknown" ).toString() );
     aboutWidget_->OpenFlipperAbout->append(tr("CPU identifier:\t\t ") + 
-                                           settings.value( cpus[0]+"/Identifier", "Unknown" ).toString() );
+                                           registryCPU.value( cpus[0]+"/Identifier", "Unknown" ).toString() );
     aboutWidget_->OpenFlipperAbout->append(tr("CPU Speed:\t\t ") + 
-                                           settings.value( cpus[0]+"/~MHz", "Unknown" ).toString()+ " MHz" );
+                                           registryCPU.value( cpus[0]+"/~MHz", "Unknown" ).toString()+ " MHz" );
 
     aboutWidget_->OpenFlipperAbout->append("CPU Cores:\t\t " + QString::number(cpus.size())); 
 
@@ -246,7 +246,26 @@ void CoreWidget::showAboutWidget( ) {
   
   #endif
   
-  
+  // =====================================================================================
+  // OS info
+  // =====================================================================================    
+  aboutWidget_->OpenFlipperAbout->append("\n");
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(boldFont);
+  aboutWidget_->OpenFlipperAbout->append(tr("Operating System Info:"));
+  aboutWidget_->OpenFlipperAbout->setCurrentFont(standardFont);
+
+  #ifdef WIN32 
+     QSettings registryOS("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", QSettings::NativeFormat);
+     aboutWidget_->OpenFlipperAbout->append(tr("Product Name:\t\t ") + 
+                                               registryOS.value( "ProductName", "Unknown" ).toString() );
+     aboutWidget_->OpenFlipperAbout->append(tr("Current Version:\t\t ") + 
+                                               registryOS.value( "CurrentVersion", "Unknown" ).toString() );
+  #elif defined ARCH_DARWIN 
+    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)")); 
+  #else
+    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (Linux)")); 
+  #endif
+
 
   // =====================================================================================
   // OpenGL Renderer/Vendor and version info
