@@ -64,6 +64,10 @@
   #endif
 #endif
 
+#ifdef ARCH_DARWIN
+  #include <sys/types.h>
+  #include <sys/sysctl.h>
+#endif
 
 //== IMPLEMENTATION ==========================================================
 
@@ -189,8 +193,55 @@ void CoreWidget::showAboutWidget( ) {
   
   #elif defined ARCH_DARWIN 
   
-    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)"));   
   
+    /*   
+    int i, mib[4];
+    size_t len;
+    struct kinfo_proc kp;
+    
+    //
+    //hw.physicalcpu
+    //hw.logicalcpu
+    //machdep.cpu.features
+    len = 4;
+    sysctlnametomib("kern.proc.pid", mib, &len);*/
+    
+    size_t lenCPU;
+    char *pCPU;
+    
+    // First call to get required size
+    sysctlbyname("machdep.cpu.brand_string", NULL, &lenCPU, NULL, 0);
+    
+    // allocate
+    pCPU = (char * )malloc(lenCPU);
+    
+    // Second call to get data
+    sysctlbyname("machdep.cpu.brand_string", pCPU, &lenCPU, NULL, 0);
+    
+    // Output
+    aboutWidget_->OpenFlipperAbout->append(tr("CPU Brand:\t\t ") + QString(pCPU) );
+    
+    // free memory
+    delete pCPU;
+    
+    int physicalCPUS = 0;
+    
+    // Get data
+    lenCPU = sizeof(int);
+    sysctlbyname("hw.physicalcpu", &physicalCPUS, &lenCPU , NULL, 0);
+    
+    // Output
+    aboutWidget_->OpenFlipperAbout->append(tr("Physical Cores:\t\t ") + QString::number(physicalCPUS) );
+
+    int logicalCPUS = 0;
+    
+    // Get data
+    lenCPU = sizeof(int);
+    sysctlbyname("hw.logicalcpu", &logicalCPUS, &lenCPU, NULL, 0);
+    
+    // Output
+    aboutWidget_->OpenFlipperAbout->append(tr("LogicalCores:\t\t ") + QString::number(logicalCPUS) );
+    
   #else
     QFile cpuinfo("/proc/cpuinfo");
     if (! cpuinfo.exists() )
@@ -261,7 +312,22 @@ void CoreWidget::showAboutWidget( ) {
      aboutWidget_->OpenFlipperAbout->append(tr("Current Version:\t\t ") + 
                                                registryOS.value( "CurrentVersion", "Unknown" ).toString() );
   #elif defined ARCH_DARWIN 
-    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)")); 
+    
+    int mib[2];
+    size_t len;
+    char *p;
+    
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_VERSION;
+    
+    sysctl(mib, 2, NULL, &len, NULL, 0);
+    p = (char * )malloc(len);
+    sysctl(mib, 2, p, &len, NULL, 0);
+    
+    aboutWidget_->OpenFlipperAbout->append(tr("OS Version:\t\t ") + QString(p) );
+    
+    delete(p);
+
   #else
     QFile versionInfo("/proc/version");
     if (! versionInfo.exists() )
