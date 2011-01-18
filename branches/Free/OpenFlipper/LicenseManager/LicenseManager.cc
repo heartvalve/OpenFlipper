@@ -138,8 +138,61 @@ bool LicenseManager::authenticate() {
 
   QString macHash = QCryptographicHash::hash ( mac.toAscii()  , QCryptographicHash::Sha1 ).toHex();
 
-//   std::cerr << "CPUID Supported : " << CpuIDSupported() << std::endl;
-//   std::cerr << "GenuineIntel    : " << GenuineIntel() << std::endl;
+  // ===============================================================================================
+  // Compute hash of processor information
+  // ===============================================================================================  
+
+  QString processor = "Unknown";
+
+  #ifdef WIN32
+    QSettings registryCPU("HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor", QSettings::NativeFormat);
+
+    QStringList cpus = registryCPU.childGroups(); 
+    if ( cpus.size() != 0 ) { 
+      processor = registryCPU.value( cpus[0]+"/ProcessorNameString", "Unknown" ).toString();
+    } 
+
+  #elif defined ARCH_DARWIN 
+
+    size_t lenCPU;
+    char *pCPU;
+    
+    // First call to get required size
+    sysctlbyname("machdep.cpu.brand_string", NULL, &lenCPU, NULL, 0);
+    
+    // allocate
+    pCPU = (char * )malloc(lenCPU);
+    
+    // Second call to get data
+    sysctlbyname("machdep.cpu.brand_string", pCPU, &lenCPU, NULL, 0);
+    
+    // Output
+    processor = QString(pCPU);
+    
+    // free memory
+    delete pCPU;
+
+  #else
+    QFile cpuinfo("/proc/cpuinfo");
+    if ( cpuinfo.exists() ) {   
+      cpuinfo.open(QFile::ReadOnly);
+      QTextStream stream(&cpuinfo);
+      QStringList splitted = stream.readAll().split("\n",QString::SkipEmptyParts);
+      
+      position = splitted.indexOf ( QRegExp("^model name.*") );
+      if ( position != -1 ){
+        QString cpuModel = splitted[position].section(':', -1).simplified();
+        processor = cpuModel );
+      } 
+    }
+  #endif
+
+  QString cpuHash = QCryptographicHash::hash ( processor.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+
+
+  // ===============================================================================================
+  // Check License or generate request
+  // =============================================================================================== 
 
   QString saltPre;
   ADD_SALT_PRE(saltPre);
@@ -159,9 +212,9 @@ bool LicenseManager::authenticate() {
     for ( int i = 0 ; i < elements.size(); ++i )
       elements[i] = elements[i].simplified();
 
-    if ( elements.size() != 6 ) {
+    if ( elements.size() != 7 ) {
       QString sizeMismatchMessage = "The license file for plugin \"" + name() + "\" is invalid!\n";
-      sizeMismatchMessage += "License File contains " + QString::number(elements.size()) + " lines but it should contain exactly 6!\n";
+      sizeMismatchMessage += "License File contains " + QString::number(elements.size()) + " lines but it should contain exactly 7!\n";
       sizeMismatchMessage += "Read data: \n";
       sizeMismatchMessage += "======================================== \n";
       for ( int i = 0 ; i < elements.size(); ++i )
@@ -172,13 +225,13 @@ bool LicenseManager::authenticate() {
     } else {
 
       // Check signature of license file
-      QString license = saltPre + elements[0] + elements[1] + elements[2] + elements[3] + elements[4] + saltPost;
+      QString license = saltPre + elements[0] + elements[1] + elements[2] + elements[3] + elements[4] + elements[5] + saltPost;
       QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
       
       QDate currentDate = QDate::currentDate();
-      QDate expiryDate  = QDate::fromString(elements[4],Qt::ISODate);
+      QDate expiryDate  = QDate::fromString(elements[5],Qt::ISODate);
 
-      if ( licenseHash !=  elements[5] ) {
+      if ( licenseHash !=  elements[6] ) {
         authstring_ += tr("License Error: The license file signature for plugin \"") + name() + tr("\" is invalid!\n\n");
       } else  if ( elements[0] != pluginFileName() ) {
         authstring_ += tr("License Error: The license file contains plugin name\"") + elements[0] + tr("\" but this is plugin \"") + name() + "\"!\n\n";
@@ -187,7 +240,9 @@ bool LicenseManager::authenticate() {
       } else if ( elements[2] != pluginHash ) {
         authstring_ += tr("License Error: The plugin \"") + name() + tr("\" is a different version than specified in license file!\n\n");
       } else if ( elements[3] != macHash ) {
-        authstring_ += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Hardware?)!\n\n";
+        authstring_ += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Network?)!\n\n";
+      } else if ( elements[4] != cpuHash ) {
+        authstring_ += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed CPU?)!\n\n";
       } else if ( currentDate > expiryDate ) {
         authstring_ += tr("License Error: The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!\n\n";
       } else {
@@ -212,8 +267,9 @@ bool LicenseManager::authenticate() {
     authstring_ += coreHash +"\n";
     authstring_ += pluginHash +"\n";
     authstring_ += macHash +"\n";
+    authstring_ += cpuHash +"\n";
 
-    QString keyRequest = saltPre + pluginFileName() + coreHash+pluginHash+macHash +saltPost;
+    QString keyRequest = saltPre + pluginFileName() + coreHash + pluginHash + macHash + cpuHash + saltPost;
     QString requestSig = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
     authstring_ += requestSig + "\n";
 

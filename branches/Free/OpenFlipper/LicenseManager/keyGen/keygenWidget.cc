@@ -96,8 +96,8 @@ void KeyGenWidget::slotGenerateButton() {
   QString inputData = requestData->toPlainText();
   QStringList data = inputData.split('\n',QString::SkipEmptyParts);
 
-  if ( data.size() != 5) {
-    QMessageBox::critical(this,tr("Wrong request data"),tr("The request has to contain 5 lines of data"));
+  if ( data.size() != 6) {
+    QMessageBox::critical(this,tr("Wrong request data"),tr("The request has to contain 6 lines of data"));
     return;
   } else {
 
@@ -106,7 +106,8 @@ void KeyGenWidget::slotGenerateButton() {
     QString coreHash   = data[1].simplified();
     QString pluginHash = data[2].simplified();
     QString macHash    = data[3].simplified();
-    QString requestSig = data[4].simplified();
+    QString cpuHash    = data[4].simplified();
+    QString requestSig = data[5].simplified();
 
     QString expiryDate = expires->date().toString(Qt::ISODate);
 
@@ -114,8 +115,10 @@ void KeyGenWidget::slotGenerateButton() {
     std::cerr << "Core Hash                 : " << coreHash.toStdString()   << std::endl;
     std::cerr << "Plugin Hash               : " << pluginHash.toStdString() << std::endl;
     std::cerr << "macHash is                : " << macHash.toStdString()    << std::endl;
-    std::cerr << "requestSignature is       : " << requestSig.toStdString() << std::endl;
+    std::cerr << "cpuHash is                : " << cpuHash.toStdString()    << std::endl;
     std::cerr << "expiryDate is             : " << expiryDate.toStdString() << std::endl;
+    std::cerr << "requestSignature is       : " << requestSig.toStdString() << std::endl;
+
 
     // Get the salts
     QString saltPre;
@@ -123,7 +126,7 @@ void KeyGenWidget::slotGenerateButton() {
     QString saltPost;
     ADD_SALT_POST(saltPost);
 
-    QString keyRequest = saltPre + name + coreHash + pluginHash + macHash + saltPost;
+    QString keyRequest = saltPre + name + coreHash + pluginHash + macHash + cpuHash + saltPost;
     QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
     
     if ( requestSig != requestSigCheck ) {
@@ -146,10 +149,11 @@ void KeyGenWidget::slotGenerateButton() {
     output << coreHash     << "\n";
     output << pluginHash   << "\n";
     output << macHash      << "\n";
-    output << expiryDate << "\n";
+    output << cpuHash      << "\n";
+    output << expiryDate   << "\n";
     
     // Sign the license file
-    QString license = saltPre + name + coreHash + pluginHash + macHash + expiryDate + saltPost;
+    QString license = saltPre + name + coreHash + pluginHash + macHash + cpuHash + expiryDate + saltPost;
     QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
     
     output << licenseHash;
