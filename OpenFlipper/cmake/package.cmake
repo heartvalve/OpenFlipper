@@ -23,10 +23,9 @@ set (CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME}")
 set (CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 set (CPACK_SOURCE_STRIP_FILES "")
 
-# set (CPACK_PACKAGE_DESCRIPTION_FILE "/home/andy/vtk/CMake/Copyright.txt")
-# set (CPACK_RESOURCE_FILE_LICENSE "/home/andy/vtk/CMake/Copyright.txt")
+
 # set (CPACK_RESOURCE_FILE_README "/home/andy/vtk/CMake/Templates/CPack.GenericDescription.txt")
-# set (CPACK_RESOURCE_FILE_WELCOME "/home/andy/vtk/CMake/Templates/CPack.GenericWelcome.txt")
+
 
 set (CPACK_STRIP_FILES "bin/OpenFlipper")
 
@@ -98,6 +97,16 @@ if (WIN32)
         set ( WINDOWS_LICENSE_FILE "${CMAKE_SOURCE_DIR}\\branding\\win\\License.txt" CACHE FILEPATH "Path to the License file for installer" )
     ENDIF(NOT WINDOWS_LICENSE_FILE )
 
+    IF ( NOT WINDOWS_WELCOME_FILE )
+        # option to set the used License file for OpenFlipper
+        set ( WINDOWS_WELCOME_FILE "${CMAKE_SOURCE_DIR}\\branding\\win\\Welcome.txt" CACHE FILEPATH "Path to the welcome file for installer" )
+    ENDIF(NOT WINDOWS_WELCOME_FILE )
+
+    IF ( NOT WINDOWS_DESCRIPTION_FILE )
+        # option to set the used License file for OpenFlipper
+        set ( WINDOWS_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}\\branding\\win\\Description.txt" CACHE FILEPATH "Path to the description file for installer" )
+    ENDIF(NOT WINDOWS_DESCRIPTION_FILE )
+
   else()
 
     IF ( NOT WINDOWS_INSTALLER_ICON )
@@ -113,10 +122,25 @@ if (WIN32)
 
     IF ( NOT WINDOWS_LICENSE_FILE )
         # option to set the used License file for OpenFlipper
-        set ( WINDOWS_LICENSE_FILE "${CMAKE_SOURCE_DIR}\\OpenFlipper\\License.txt" CACHE FILEPATH "Path to the License file for installer" )
+        set ( WINDOWS_LICENSE_FILE "${CMAKE_SOURCE_DIR}\\OpenFlipper\\installer\\win\\License.txt" CACHE FILEPATH "Path to the License file for installer" )
     ENDIF(NOT WINDOWS_LICENSE_FILE )
 
+    IF ( NOT WINDOWS_WELCOME_FILE )
+        # option to set the used License file for OpenFlipper
+        set ( WINDOWS_WELCOME_FILE "${CMAKE_SOURCE_DIR}\\OpenFlipper\\installer\\win\\Welcome.txt" CACHE FILEPATH "Path to the welcome file for installer" )
+    ENDIF(NOT WINDOWS_WELCOME_FILE )
+
+    IF ( NOT WINDOWS_DESCRIPTION_FILE )
+        # option to set the used License file for OpenFlipper
+        set ( WINDOWS_DESCRIPTION_FILE "${CMAKE_SOURCE_DIR}\\OpenFlipper\\installer\\win\\Description.txt" CACHE FILEPATH "Path to the description file for installer" )
+    ENDIF(NOT WINDOWS_DESCRIPTION_FILE )
+
   endif()
+
+  set (CPACK_RESOURCE_FILE_LICENSE ${WINDOWS_LICENSE_FILE} )
+  set (CPACK_RESOURCE_FILE_WELCOME ${WINDOWS_WELCOME_FILE} )
+  set (CPACK_RESOURCE_DESCRIPTION_FILE ${WINDOWS_DESCRIPTION_FILE} )
+
 
   string(REGEX REPLACE "/" "\\\\\\\\" CLEAN_WINDOWS_INSTALLER_IMAGE_ICON "${WINDOWS_INSTALLER_IMAGE_ICON}"  )
 
