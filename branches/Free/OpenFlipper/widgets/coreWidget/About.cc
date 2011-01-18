@@ -128,9 +128,10 @@ void CoreWidget::showAboutWidget( ) {
     aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (WIN32)"));   
 
   #elif defined ARCH_DARWIN 
-
-    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)"));   
-
+  
+  aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)"));   
+    
+    
   #else
     unsigned long memory = 0;
     
@@ -193,18 +194,6 @@ void CoreWidget::showAboutWidget( ) {
   
   #elif defined ARCH_DARWIN 
   
-  
-    /*   
-    int i, mib[4];
-    size_t len;
-    struct kinfo_proc kp;
-    
-    //
-    //hw.physicalcpu
-    //hw.logicalcpu
-    //machdep.cpu.features
-    len = 4;
-    sysctlnametomib("kern.proc.pid", mib, &len);*/
     
     size_t lenCPU;
     char *pCPU;
