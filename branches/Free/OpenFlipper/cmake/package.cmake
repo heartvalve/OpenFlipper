@@ -169,24 +169,24 @@ if (WIN32)
   set (CPACK_NSIS_DELETE_ICONS
        "Delete \\\"$SMPROGRAMS\\\\$MUI_TEMP\\\\OpenFlipper.lnk\\\""
       )
+    
+  file (GLOB _files "${CMAKE_BINARY_DIR}/Build/*.dll")
+  install(FILES ${_files}
+    DESTINATION ${ACG_PROJECT_BINDIR}
+  )
 
   # append dll's to installed package
-  if (EXISTS ${CMAKE_SOURCE_DIR}/WIN)
-    file (GLOB _files "${CMAKE_SOURCE_DIR}/WIN/DLLs/DLLs 32 debug/*.dll")
-    install(FILES ${_files}
-      DESTINATION ${ACG_PROJECT_BINDIR}
-      CONFIGURATIONS Debug
-    )
-    file (GLOB _files "${CMAKE_SOURCE_DIR}/WIN/DLLs/DLLs 32 release/*.dll")
-    install (FILES ${_files}
-      DESTINATION ${ACG_PROJECT_BINDIR}
-      CONFIGURATIONS Release
-    )
-    install (FILES "${CMAKE_SOURCE_DIR}/WIN/DLLs/Redistributables/Visual Studio 2008/vcredist_x86.exe"
+  if (EXISTS "${CMAKE_SOURCE_DIR}/win/vcredist_x86.exe")
+
+     install (FILES "${CMAKE_SOURCE_DIR}/win/vcredist_x86.exe"
       DESTINATION ${ACG_PROJECT_BINDIR}
     )
     set (CPACK_NSIS_EXTRA_INSTALL_COMMANDS "ExecWait '\\\"$INSTDIR\\\\vcredist_x86.exe\\\" /q:a'")
+
+  else()
+    message("Warning! No vcredist_x86 found. Please copy it to a directory called win in your source tree!!")
   endif ()
+
 elseif (APPLE)
 
   if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
