@@ -92,6 +92,12 @@ if (WIN32)
         set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/branding/win/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
     ENDIF(NOT WINDOWS_INSTALLER_IMAGE_ICON )
 
+    
+    IF ( NOT WINDOWS_LICENSE_FILE )
+        # option to set the used License file for OpenFlipper
+        set ( WINDOWS_LICENSE_FILE "${CMAKE_SOURCE_DIR}\\branding\\win\\License.txt" CACHE FILEPATH "Path to the License file for installer" )
+    ENDIF(NOT WINDOWS_LICENSE_FILE )
+
   else()
 
     IF ( NOT WINDOWS_INSTALLER_ICON )
@@ -103,6 +109,12 @@ if (WIN32)
         # option to set the used Icon for OpenFlipper
         set ( WINDOWS_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/installer/win/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
     ENDIF(NOT WINDOWS_INSTALLER_IMAGE_ICON )
+
+
+    IF ( NOT WINDOWS_LICENSE_FILE )
+        # option to set the used License file for OpenFlipper
+        set ( WINDOWS_LICENSE_FILE "${CMAKE_SOURCE_DIR}\\OpenFlipper\\License.txt" CACHE FILEPATH "Path to the License file for installer" )
+    ENDIF(NOT WINDOWS_LICENSE_FILE )
 
   endif()
 
@@ -164,6 +176,11 @@ elseif (APPLE)
         set ( APPLE_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/branding/mac/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
     ENDIF(NOT APPLE_INSTALLER_IMAGE_ICON )
 
+    IF ( NOT APPLE_LICENSE_FILE )
+        # option to set the used License file for OpenFlipper
+        set ( APPLE_LICENSE_FILE "${CMAKE_SOURCE_DIR}\\branding\\mac\\License.txt" CACHE FILEPATH "Path to the License file for installer" )
+    ENDIF(NOT APPLE_LICENSE_FILE )
+
   else()
 
     IF ( NOT APPLE_INSTALLER_ICON )
@@ -175,6 +192,11 @@ elseif (APPLE)
         # option to set the used Icon for OpenFlipper
         set ( APPLE_INSTALLER_IMAGE_ICON "${CMAKE_SOURCE_DIR}/OpenFlipper/installer/mac/installer.bmp" CACHE FILEPATH "Path to the Installer Image Icon ( This has to be a bmp )" )
     ENDIF(NOT APPLE_INSTALLER_IMAGE_ICON )
+
+    IF ( NOT APPLE_LICENSE_FILE )
+        # option to set the used License file for OpenFlipper
+        set ( APPLE_LICENSE_FILE "${CMAKE_SOURCE_DIR}\\OpenFlipper\\License.txt" CACHE FILEPATH "Path to the License file for installer" )
+    ENDIF(NOT APPLE_LICENSE_FILE )
 
   endif()
 
