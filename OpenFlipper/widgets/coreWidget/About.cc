@@ -124,9 +124,23 @@ void CoreWidget::showAboutWidget( ) {
  
  
   #ifdef WIN32 
- 
-    aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (WIN32)"));   
 
+    // Define memory structure
+    MEMORYSTATUSEX ms;
+    // Set the size ( required according to spec ... why???? )
+    ms.dwLength = sizeof (ms);
+
+    // Get the info
+    GlobalMemoryStatusEx(&ms);
+
+    // Output to widget
+    aboutWidget_->OpenFlipperAbout->append(tr("Physical Memory:\t")+ QString::number(ms.ullAvailPhys/1024/1024) + "MB/"+ 
+                                                                     QString::number(ms.ullTotalPhys/1024/1024) + "MB used ("+
+                                                                     QString::number(ms.dwMemoryLoad) + "%)");   
+    aboutWidget_->OpenFlipperAbout->append(tr("Pagefile Memory:\t")+ QString::number(ms.ullAvailPageFile/1024/1024) + "MB/"
+                                                                   + QString::number(ms.ullTotalPageFile/1024/1024) + "MB used");   
+
+ 
   #elif defined ARCH_DARWIN 
   
   aboutWidget_->OpenFlipperAbout->append(tr("Not available for this platform (MacOS)"));   
