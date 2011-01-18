@@ -179,10 +179,10 @@ bool LicenseManager::authenticate() {
       QTextStream stream(&cpuinfo);
       QStringList splitted = stream.readAll().split("\n",QString::SkipEmptyParts);
       
-      position = splitted.indexOf ( QRegExp("^model name.*") );
+      int position = splitted.indexOf ( QRegExp("^model name.*") );
       if ( position != -1 ){
         QString cpuModel = splitted[position].section(':', -1).simplified();
-        processor = cpuModel );
+        processor = cpuModel;
       } 
     }
   #endif
