@@ -260,7 +260,7 @@ void LoadWidget::saveFile(){
   QStringList files = selectedFiles();
 
   if ( files.size() != 1 ) {
-    std::cerr << "Error no or multiple save files selected" << std::endl;
+    std::cerr << "Error: zero or multiple save files selected!" << std::endl;
     return;
   }
 
@@ -339,9 +339,6 @@ int LoadWidget::showLoad(){
 
 /// show Widget for saving Files
 int LoadWidget::showSave(int _id, QString _filename){
-  
-  std::cerr << "save single file" << std::endl;
-  
   setAcceptMode ( QFileDialog::AcceptSave );
   setFileMode( QFileDialog::AnyFile );
   setWindowTitle(tr("Save Object"));
@@ -372,17 +369,9 @@ int LoadWidget::showSave(int _id, QString _filename){
   //display correct path/name
   QFileInfo fi(_filename);
   QFile file(_filename);
-
-  if (file.exists()) {
-    setDirectory( fi.absolutePath() );
-    selectFile ( fi.fileName() );
-  } else {
-//     setDirectory(OpenFlipper::Options::currentDir().absolutePath() );
-    std::cout << "setting filename = " << _filename.toStdString() << std::endl;
-    setDirectory( fi.absolutePath() );
-    selectFile ( fi.fileName() );
-  }
-
+  
+  setDirectory(OpenFlipperSettings().value("Core/CurrentDir").toString() );
+  selectFile ( fi.fileName() );
 
   //try to select the best fitting name filter
   for (int i=0; i < nameFilters().count(); i++){
@@ -404,9 +393,6 @@ int LoadWidget::showSave(int _id, QString _filename){
 
 /// show Widget for saving Files
 int LoadWidget::showSave(IdList _ids, QString _filename){
-  
-  std::cerr << "save multiple files" << std::endl;
-  
   setAcceptMode ( QFileDialog::AcceptSave );
   setFileMode( QFileDialog::AnyFile );
   setWindowTitle(tr("Save Objects"));
@@ -443,16 +429,8 @@ int LoadWidget::showSave(IdList _ids, QString _filename){
   QFileInfo fi(_filename);
   QFile file(_filename);
 
-  if (file.exists()) {
-    setDirectory( fi.absolutePath() );
-    selectFile ( fi.fileName() );
-  } else {
-//     setDirectory(OpenFlipper::Options::currentDir().absolutePath() );
-    std::cout << "setting filename = " << _filename.toStdString() << std::endl;
-    setDirectory( fi.absolutePath() );
-    selectFile ( fi.fileName() );
-  }
-
+  setDirectory(OpenFlipperSettings().value("Core/CurrentDir").toString() );
+  selectFile ( fi.fileName() );
 
   //try to select the best fitting name filter
   for (int i=0; i < nameFilters().count(); i++){
