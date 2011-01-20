@@ -91,21 +91,19 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   // ============================
   filterMenu_ = new QMenu(tr("Log Viewer"));
   
-  QAction* openMeshFilterAction  = new QAction(QIcon(path + "edit-copy.png"), tr("Enable OpenMesh error messages"),0);
-  openMeshFilterAction->setCheckable(true);
+  openMeshFilterAction_  = new QAction(QIcon(path + "edit-copy.png"), tr("Enable OpenMesh error messages"),0);
+  openMeshFilterAction_->setCheckable(true);
   
 
   if ( OpenFlipperSettings().value("Core/Gui/LogWindow/OpenMeshErrors",true).toBool() ) {
-    openMeshFilterAction->setChecked( true );
+    openMeshFilterAction_->setChecked( true );
     omerr().enable();
   } else {
-    openMeshFilterAction->setChecked( false );
+    openMeshFilterAction_->setChecked( false );
     omerr().disable();
   }
   
-  filterMenu_->addAction(openMeshFilterAction);
-  
-  connect (openMeshFilterAction, SIGNAL(toggled(bool)), this, SLOT(slotOpenMeshERR(bool)));
+  filterMenu_->addAction(openMeshFilterAction_);
   
   // ============================
   // Scrollbar
@@ -378,17 +376,4 @@ void LoggerWidget::copySelected (){
 void LoggerWidget::slotFilterMenu() {
   filterMenu_->popup( list_->mapToGlobal(filterButton_->pos()) );
 }
-
-//-------------------------------------------------------------------------------------
-void LoggerWidget::slotOpenMeshERR(bool _state) {
-  
-  if ( _state ) {
-    omerr().enable();
-  } else {
-    omerr().disable();
-  }
-      
-  OpenFlipperSettings().setValue("Core/Gui/LogWindow/OpenMeshErrors",_state);
-}
-
 
