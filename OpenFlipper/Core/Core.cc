@@ -279,6 +279,8 @@ Core::init() {
     connect(coreWidget_, SIGNAL(showPlugins())       , this, SLOT(slotShowPlugins()));
 
     connect(coreWidget_, SIGNAL(call(QString,bool&)), this, SLOT(slotCall(QString,bool&)));
+    
+    connect( coreWidget_->logWidget_->openMeshFilterAction_,SIGNAL(toggled(bool)), this, SLOT(enableOpenMeshErrorLog(bool)) );
 
     QRect rect = QApplication::desktop()->screenGeometry();
 
@@ -930,6 +932,29 @@ void Core::loggerState(int _state) {
 
 //-----------------------------------------------------------------------------
 
+void Core::enableOpenMeshErrorLog(bool _state) {
+  std::cerr << "Script" << std::endl;
+  
+  // Set the state on openmesh stream
+  if ( _state ) {
+    omerr().enable();
+  } else {
+    omerr().disable();
+  }
+  
+  if ( OpenFlipper::Options::gui() ) {
+    // store in application settings
+    OpenFlipperSettings().setValue("Core/Gui/LogWindow/OpenMeshErrors",_state);
+    
+    coreWidget_->logWidget_->openMeshFilterAction_->blockSignals(true);
+    coreWidget_->logWidget_->openMeshFilterAction_->setChecked(_state);
+    coreWidget_->logWidget_->openMeshFilterAction_->blockSignals(false);
+  }
+  
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::showToolbox( bool _state ) {
   if ( OpenFlipper::Options::gui() )
     coreWidget_->showToolbox(_state);
@@ -1358,6 +1383,7 @@ void Core::setDescriptions(){
                            QStringList(tr("Show?")) ,
                            QStringList());                           
   emit setSlotDescription("loggerState(int)", tr("Change the logger window state"), QStringList(tr("Change the logger window state")), QStringList());
+  emit setSlotDescription("enableOpenMeshErrorLog(bool)", tr("Enable or disable OpenMesh error logging"), QStringList(tr("OpenMesh error logging enabled")), QStringList());
   emit setSlotDescription("showToolbox(bool)", tr("Show or hide toolbox"), QStringList(tr("Show or hide the toolbox")), QStringList());
   emit setSlotDescription("multiViewMode(int)", tr("Switch MultiView Mode"),
                           QStringList(tr("Mode")), QStringList(tr("0: One Viewer\n 1: Grid \n 2: Horizontal split")));

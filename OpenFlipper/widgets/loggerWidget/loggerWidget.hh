@@ -117,6 +117,10 @@ class LoggerWidget : public QWidget
     // true if new data is available
     bool newData_;
     
+  public:
+    // Action for OpenMesh filters
+    QAction* openMeshFilterAction_;
+    
   private slots:
     /// update the list if a button was pressed
     void updateList();
@@ -130,9 +134,6 @@ class LoggerWidget : public QWidget
     
     /// Called when we want to scroll to the bottom
     void slotScrollUpdate();
-    
-    /// Called when OpenMesh error checkbox is changed
-    void slotOpenMeshERR(bool _state);
     
     /// Called when filter button is pressed
     void slotFilterMenu();

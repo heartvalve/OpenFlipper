@@ -475,6 +475,9 @@ public slots:
 
     /// Change the logging window state
     void loggerState(int _state);
+    
+    /// Enable or disable OpenMesh error logging
+    void enableOpenMeshErrorLog(bool _state);
 
     /// Show or hide toolbox
     void showToolbox( bool _state );
