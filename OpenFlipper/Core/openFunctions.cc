@@ -202,13 +202,17 @@ int Core::loadObject ( QString _filename ) {
   } else {
     
     QFileInfo fi(_filename);
-    
+
     for (int i=0; i < (int)supportedTypes_.size(); i++){
 
       QString filters = supportedTypes_[i].plugin->getLoadFilters();
       //check extension
       if ( ! filters.contains( "*." + fi.completeSuffix() , Qt::CaseInsensitive) )
-        continue;
+        if (  ! filters.contains( "*." + fi.suffix() , Qt::CaseInsensitive) ) {
+          continue;
+        } else {
+          emit log(LOGWARN,"Found supported datatype but only the suffix is matched not the complete suffix!"); 
+        }
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
@@ -252,7 +256,7 @@ int Core::loadObject( DataType _type, QString _filename) {
   /** \todo this function has to be checked. test for the plugin which can handle 
             the given file and then use it. 
   */
-
+  
   if (_type == DATA_UNKNOWN)
     return loadObject(_filename);
 
