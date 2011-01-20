@@ -104,9 +104,13 @@ class LoggerWidget : public QWidget
     QPushButton* warnButton_;
     QPushButton* errorButton_;
     
+    QPushButton* filterButton_;
+    
     QPushButton* clearButton_;
     
     QMenu* context_;
+    
+    QMenu* filterMenu_;
     
     QTimer loggerUpdateTimer_;
     
@@ -126,6 +130,12 @@ class LoggerWidget : public QWidget
     
     /// Called when we want to scroll to the bottom
     void slotScrollUpdate();
+    
+    /// Called when OpenMesh error checkbox is changed
+    void slotOpenMeshERR(bool _state);
+    
+    /// Called when filter button is pressed
+    void slotFilterMenu();
 };
 
 #endif //LOGGERWIDGET_HH

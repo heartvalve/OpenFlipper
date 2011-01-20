@@ -97,6 +97,7 @@
 * * Core/Gui/ToolBoxes/ToolBoxOnTheRight     Toolbox on the right or on the left (bool)\n
 * * Core/Gui/TaskSwitcher/Hide               Show or Hide the task switcher(bool)\n
 * * Core/Gui/LogWindow/LogWindowMode         Log Window Mode .. 0 InScene, 1 Window, 2 Hidden (int)\n
+* * Core/Gui/LogWindow/OpenMeshErrors        Log OpenMesh Errors? (bool)\n
 * * Core/Gui/splash                          This setting controls if the splash screen is shown at startup(bool)\n
 * * Core/Gui/fullscreen                      Show OpenFlipper in Fullscreen Mode(bool)\n
 * * Core/Projection/FOVY                     Field of view for projection matrix in perspective mode(double)\n

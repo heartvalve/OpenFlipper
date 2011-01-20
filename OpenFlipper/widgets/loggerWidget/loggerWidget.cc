@@ -49,6 +49,8 @@
 #include <iostream>
 #include <math.h>
 
+#include <OpenMesh/Core/System/omstream.hh>
+
 LoggerWidget::LoggerWidget( QWidget *parent)
   : QWidget(parent),
   newData_(true)
@@ -65,7 +67,10 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   list_->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   QString path = OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator();
-  
+
+  // ============================
+  // Context Menu
+  // ============================
   context_ = new QMenu(tr("Log Viewer"));
   
   QAction* copyAction  = new QAction(QIcon(path + "edit-copy.png"), tr("Copy"),0);
@@ -80,6 +85,31 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   context_->addSeparator();
   context_->addAction(selectAction);
   
+  
+  // ============================
+  // Filters Menu
+  // ============================
+  filterMenu_ = new QMenu(tr("Log Viewer"));
+  
+  QAction* openMeshFilterAction  = new QAction(QIcon(path + "edit-copy.png"), tr("Enable OpenMesh error messages"),0);
+  openMeshFilterAction->setCheckable(true);
+  
+
+  if ( OpenFlipperSettings().value("Core/Gui/LogWindow/OpenMeshErrors",true).toBool() ) {
+    openMeshFilterAction->setChecked( true );
+    omerr().enable();
+  } else {
+    openMeshFilterAction->setChecked( false );
+    omerr().disable();
+  }
+  
+  filterMenu_->addAction(openMeshFilterAction);
+  
+  connect (openMeshFilterAction, SIGNAL(toggled(bool)), this, SLOT(slotOpenMeshERR(bool)));
+  
+  // ============================
+  // Scrollbar
+  // ============================
   scrollBar_ = new QScrollBar(Qt::Vertical);
   blockNext_ = false;
   
@@ -106,6 +136,9 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   errorButton_ = new QPushButton(QIcon(path + "status_red.png"),tr("Errors"));
   errorButton_->setCheckable(true);
   errorButton_->setAutoExclusive(true);
+  
+  filterButton_ = new QPushButton(QIcon(path + "status_red.png"),tr("Filters"));
+  filterButton_->setCheckable(true);
 
   allButton_->setChecked(true);
 
@@ -113,6 +146,7 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   connect(infoButton_,  SIGNAL(clicked()), this, SLOT(updateList()));
   connect(warnButton_,  SIGNAL(clicked()), this, SLOT(updateList()));
   connect(errorButton_, SIGNAL(clicked()), this, SLOT(updateList()));
+  connect(filterButton_,SIGNAL(clicked()), this, SLOT(slotFilterMenu()));
 
   clearButton_ = new QPushButton(QIcon(path + "edit-clear.png"),tr("Clear Messages"));
   connect(clearButton_, SIGNAL(clicked()), list_, SLOT(clear()));
@@ -121,6 +155,8 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   hlayout->addWidget( infoButton_ );
   hlayout->addWidget( warnButton_ );
   hlayout->addWidget( errorButton_ );
+  hlayout->addStretch();
+  hlayout->addWidget( filterButton_ );
   hlayout->addStretch();
   hlayout->addWidget( clearButton_ );
   
@@ -316,9 +352,10 @@ void LoggerWidget::keyPressEvent (QKeyEvent * _event ) {
 /// show context menu
 void LoggerWidget::contextMenuEvent ( QContextMenuEvent * event ){
  
-  QPoint p = list_->mapToGlobal( list_->pos() );
+  QPoint p = list_->mapToGlobal( event->pos() );
   
-  context_->popup( event->globalPos() );
+  context_->popup( p );
+  
 }
 
 //-------------------------------------------------------------------------------------
@@ -335,3 +372,23 @@ void LoggerWidget::copySelected (){
 
  clipboard->setText(str);
 }
+
+//-------------------------------------------------------------------------------------
+
+void LoggerWidget::slotFilterMenu() {
+  filterMenu_->popup( list_->mapToGlobal(filterButton_->pos()) );
+}
+
+//-------------------------------------------------------------------------------------
+void LoggerWidget::slotOpenMeshERR(bool _state) {
+  
+  if ( _state ) {
+    omerr().enable();
+  } else {
+    omerr().disable();
+  }
+      
+  OpenFlipperSettings().setValue("Core/Gui/LogWindow/OpenMeshErrors",_state);
+}
+
+
