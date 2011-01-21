@@ -21,7 +21,7 @@ if( WIN32 )
                PATHS "C:/libs/libxml2/lib" )  
 
  GET_FILENAME_COMPONENT( XML2_LIBRARY_DIR ${XML2_LIBRARY} PATH ) 
-
+ list(APPEND XML2_LIBRARY_DIR "${XML2_LIBRARY_DIR}/../bin" )
 else (WIN32)
 
  FIND_LIBRARY( XML2_LIBRARY
