@@ -19,11 +19,13 @@ if( WIN32 )
  FIND_LIBRARY( PCRE_LIBRARY
                NAMES pcrecpp.lib
                PATHS "C:/libs/PCRE/lib")
+ GET_FILENAME_COMPONENT( PCRE_LIBRARY_DIR ${PCRE_LIBRARY} PATH )
 else (WIN32)
 
  FIND_LIBRARY( PCRE_LIBRARY
                NAMES pcrecpp
                PATHS /lib /usr/lib /usr/local/lib )
+
 endif( WIN32)
 
 
