@@ -19,6 +19,8 @@ if( WIN32 )
  FIND_LIBRARY( PCRE_LIBRARY
                NAMES pcrecpp.lib
                PATHS "C:/libs/PCRE/lib")
+               
+ # Store the library dir. May be used for linking to dll!
  GET_FILENAME_COMPONENT( PCRE_LIBRARY_DIR ${PCRE_LIBRARY} PATH )
 else (WIN32)
 
