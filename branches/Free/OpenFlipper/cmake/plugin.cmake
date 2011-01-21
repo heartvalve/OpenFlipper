@@ -170,9 +170,15 @@ function (_build_openflipper_plugin plugin)
   # get upper plugin name
   string (TOUPPER ${plugin} _PLUGIN)
 
+  #============================================================================================
   # parse parameters
+  #============================================================================================
+  
   _get_plugin_parameters (${_PLUGIN} ${ARGN})
 
+  #============================================================================================
+  # Collect dependencies
+  #============================================================================================
 
   # check dependencies
   acg_unset (_${_PLUGIN}_MISSING_DEPS)
@@ -182,6 +188,22 @@ function (_build_openflipper_plugin plugin)
   acg_unset (_${_PLUGIN}_MISSING_DEPS)
   set (${_PLUGIN}_HAS_DEPS)
   _check_plugin_deps (${_PLUGIN} ${${_PLUGIN}_DEPS})
+
+  #============================================================================================
+  # Remember Lib dirs for bundle generation
+  #============================================================================================
+
+  # On Windows we collect the library paths in a global property.
+  # These paths will be used in the toplevel cmakefile
+  # to configure the fixup_bundle to copy the required libs to the bundle.
+  if (WIN32)
+    # Get the required directories and remeber them to build the bundle later
+    list(APPEND WINDOWS_COPY_LIBDIRS  ${${_PLUGIN}_DEPS_LIBDIRS} )
+    # Remove duplicates from the list
+    list(REMOVE_DUPLICATES WINDOWS_COPY_LIBDIRS)
+    # Has to be a global property because we need it in the main cmakefile
+    set_property(GLOBAL APPEND PROPERTY WINDOWS_LIBRARY_DIR_LIST "${WINDOWS_COPY_LIBDIRS}")
+  endif(WIN32)
 
   if (${_PLUGIN}_HAS_DEPS)
     include_directories (
@@ -406,15 +428,7 @@ function (_build_openflipper_plugin plugin)
     message (STATUS "[WARNING] One or more dependencies for plugin ${plugin} not found. Skipping plugin.")
     message (STATUS "Missing dependencies :${_${_PLUGIN}_MISSING_DEPS}")
   endif ()
-
-  if (WIN32)
-       # Get the required directories and remeber them to build the bundle later
-  	list(APPEND WINDOWS_COPY_LIBDIRS  ${${_PLUGIN}_DEPS_LIBDIRS} )
-       # Remove duplicates from the list
-       list(REMOVE_DUPLICATES WINDOWS_COPY_LIBDIRS)
-       # Has to be a global property because we need it in the main cmakefile
-       set_property(GLOBAL APPEND PROPERTY WINDOWS_LIBRARY_DIR_LIST "${WINDOWS_COPY_LIBDIRS}")
-  endif(WIN32)
+  
 endfunction ()
 
 macro (openflipper_plugin)
