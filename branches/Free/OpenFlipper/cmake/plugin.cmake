@@ -209,7 +209,7 @@ function (_build_openflipper_plugin plugin)
       )
 
    
-      # include all cmake files fouund for objecttypes here
+      # include all cmake files found for objecttypes here
       foreach ( _buildInfo ${_plugin_buildinfos})
         include ("${CMAKE_SOURCE_DIR}/${_buildInfo}")
       endforeach ()
@@ -406,6 +406,15 @@ function (_build_openflipper_plugin plugin)
     message (STATUS "[WARNING] One or more dependencies for plugin ${plugin} not found. Skipping plugin.")
     message (STATUS "Missing dependencies :${_${_PLUGIN}_MISSING_DEPS}")
   endif ()
+
+  if (WIN32)
+       # Get the required directories and remeber them to build the bundle later
+  	list(APPEND WINDOWS_COPY_LIBDIRS  ${${_PLUGIN}_DEPS_LIBDIRS} )
+       # Remove duplicates from the list
+       list(REMOVE_DUPLICATES WINDOWS_COPY_LIBDIRS)
+       # Has to be a global property because we need it in the main cmakefile
+       set_property(GLOBAL APPEND PROPERTY WINDOWS_LIBRARY_DIR_LIST "${WINDOWS_COPY_LIBDIRS}")
+  endif(WIN32)
 endfunction ()
 
 macro (openflipper_plugin)
