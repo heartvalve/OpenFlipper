@@ -589,11 +589,12 @@ void MovePlugin::manipulatorMoved( QtTranslationManipulatorNode* _node , QMouseE
   if ( PluginFunctions::pickMode() != "Move"
     && PluginFunctions::pickMode() != "MoveSelection" )
     return;
-
+  
   OpenFlipper::Options::redrawDisabled( true );
 
   // Apply changes only on Release for moveMode and after every movement in MoveSelection Mode
-  if ( ((_event->type() == QEvent::MouseButtonRelease) || (PluginFunctions::pickMode() != "Move")) && !placeMode_) {
+  if ( !placeMode_ && ((_event->type() == QEvent::MouseButtonRelease) || 
+             (PluginFunctions::pickMode() != "Move" && _event->buttons() != Qt::NoButton)) ) {
 
     int objectId = _node->getIdentifier();
 
