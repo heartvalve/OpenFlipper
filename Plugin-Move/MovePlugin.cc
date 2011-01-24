@@ -439,11 +439,14 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
 
   if  ( object->dataType()  == DATA_TRIANGLE_MESH ) {
     transformMesh(mat , *PluginFunctions::triMesh(object) );
+    PluginFunctions::triMesh(object)->update_normals();
   } else  if  ( object->dataType()  == DATA_POLY_MESH ) {
     transformMesh(mat , *PluginFunctions::polyMesh(object) );
+    PluginFunctions::polyMesh(object)->update_normals();
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
   } else  if  ( object->dataType()  == DATA_TSPLINE_MESH ) {
     transformMesh(mat , *PluginFunctions::tsplineMesh(object) );
+    PluginFunctions::tsplineMesh(object)->update_normals();
 #endif
 #ifdef ENABLE_POLYLINE_SUPPORT
   } else  if  ( object->dataType()  == DATA_POLY_LINE ) {
