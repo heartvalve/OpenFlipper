@@ -197,6 +197,7 @@ function (_build_openflipper_plugin plugin)
   # These paths will be used in the toplevel cmakefile
   # to configure the fixup_bundle to copy the required libs to the bundle.
   if (WIN32)
+    set(WINDOWS_COPY_LIBDIRS "")
     # Get the required directories and remeber them to build the bundle later
     list(APPEND WINDOWS_COPY_LIBDIRS  ${${_PLUGIN}_DEPS_LIBDIRS} )
     # Remove duplicates from the list
