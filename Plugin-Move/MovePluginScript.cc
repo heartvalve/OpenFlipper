@@ -396,8 +396,9 @@ void MovePlugin::transform( int _objectId , Matrix4x4 _matrix ){
 
   emit scriptInfo( "transform( ObjectId , Matrix4x4(" + matString + " ) )" );
   
-  // Create backup
-  emit createBackup(_objectId, "Transformation");
+  // Create backup if there was a change
+  if (!_matrix.is_identity())
+    emit createBackup(_objectId, "Transformation");
 }
 
 
@@ -486,8 +487,9 @@ void MovePlugin::transform( int _objectId , IdList _vHandles, Matrix4x4 _matrix 
 
   emit scriptInfo( "transform( ObjectId , Matrix4x4(" + matString + " ) )" );
   
-  // Create backup
-  emit createBackup(_objectId, "Transformation");
+  // Create backup if there was a change
+  if (!_matrix.is_identity())
+    emit createBackup(_objectId, "Transformation");
 }
 
 
@@ -572,8 +574,9 @@ void MovePlugin::transformVertexSelection( int _objectId , Matrix4x4 _matrix ){
 
   emit scriptInfo( "transformVertexSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
   
-  // Create backup
-  emit createBackup(_objectId, "Transformation of Vertex Selection");
+  // Create backup if there was a change
+  if (!_matrix.is_identity())
+    emit createBackup(_objectId, "Transformation of Vertex Selection");
 }
 
 
@@ -679,8 +682,9 @@ void MovePlugin::transformFaceSelection( int _objectId , Matrix4x4 _matrix ){
 
   emit scriptInfo( "transformFaceSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
   
-  // Create backup
-  emit createBackup(_objectId, "Transformation of Face Selection");
+  // Create backup if there was a change
+  if (!_matrix.is_identity())
+    emit createBackup(_objectId, "Transformation of Face Selection");
 }
 
 
@@ -802,8 +806,9 @@ void MovePlugin::transformEdgeSelection( int _objectId , Matrix4x4 _matrix ){
 
   emit scriptInfo( "transformEdgeSelection( ObjectId , Matrix4x4(" + matString + " ) )" );
   
-  // Create backup
-  emit createBackup(_objectId, "Transformation of Edge Selection");
+  // Create backup if there was a change
+  if (!_matrix.is_identity())
+    emit createBackup(_objectId, "Transformation of Edge Selection");
 }
 
 //------------------------------------------------------------------------------
