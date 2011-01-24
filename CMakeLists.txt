@@ -83,11 +83,17 @@ acg_set (OPENFLIPPER_PLUGINS "")
 # add plugins
 of_add_plugins ()
 
+
 # ========================================================================
 # Bundle generation
 # ========================================================================
 
 if (WIN32 )
+  # Plugins collected a list of required libdirs for getting 
+  # their DLLS on windows:
+  get_property( WINDOWS_COPY_LIBDIRS GLOBAL PROPERTY WINDOWS_LIBRARY_DIR_LIST )
+  list(REMOVE_DUPLICATES WINDOWS_COPY_LIBDIRS)
+
   # prepare bundle generation cmake file and add a build target for it
   configure_file ("${CMAKE_SOURCE_DIR}/OpenFlipper/cmake/fixbundle.cmake.win.in"
      "${CMAKE_BINARY_DIR}/fixbundle.win.cmake" @ONLY IMMEDIATE)
