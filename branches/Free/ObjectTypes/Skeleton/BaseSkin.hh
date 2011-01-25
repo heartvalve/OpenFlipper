@@ -43,15 +43,23 @@
 #ifndef BASESKIN_HH
 #define BASESKIN_HH
 
+#include "OpenFlipper/common/perObjectData.hh"
+
 #include <ObjectTypes/Skeleton/SkeletonT.hh>
+#include <OpenMesh/Core/IO/MeshIO.hh>
+
+#define OBJECTDATA_SKIN   "Skin Object-Data"
+#define SKIN_WEIGHTS_PROP "skin-weights"
+#define DEFAULTPOSE_PROP  "Default pose"
 
 /**
  * @brief Abstract base class for the skin template, wrapping all template versions of the skin
  */
-class BaseSkin
+class BaseSkin : public PerObjectData
 {
 
 public:
+
   /**
    * @name Properties
    * These structures store mesh properties used to make the mesh a skin.
@@ -80,7 +88,6 @@ public:
    * vertex are supposed to sum to one.
    */
     typedef map<unsigned int, double> SkinWeights;
-    SkinWeights weights;
   //@}
   
   /**
@@ -106,9 +113,10 @@ public:
    * These methods are related to using a mesh as skin with this skeleton.
    */
   //@{
-  virtual void AttachSkin() = 0;
-  virtual void DeformSkin(const AnimationHandle &_hAni, Method _method = M_LBS) = 0;
-  virtual void ReleaseSkin() = 0;
+  virtual void attachSkin() = 0;
+  virtual void deformSkin() = 0;
+  virtual void deformSkin(const AnimationHandle &_hAni, Method _method = M_LBS) = 0;
+  virtual void releaseSkin() = 0;
   //@}
 };
 

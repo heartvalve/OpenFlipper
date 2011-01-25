@@ -40,55 +40,91 @@
 *                                                                            *
 \*===========================================================================*/
 
-#ifndef SKELETONOBJECTDATAT_HH
-#define SKELETONOBJECTDATAT_HH
+#ifndef SKELETONOBJECTDATA_HH
+#define SKELETONOBJECTDATA_HH
 
-#include <OpenFlipper/common/Types.hh>
 #include "OpenFlipper/common/perObjectData.hh"
-#include "OpenFlipper/common/BaseObjectData.hh"
 
 #define OBJECTDATA_SKELETON "Skeleton Object Data"
 
 /**
  * @brief Data object attached to the skeleton
  *
- * It stores the skin attached to this skeleton, by both holding a pointer to the mesh as well as to the
- * object that stores the mesh.
+ * It stores the object ids of skins attached to this skeleton
+ *
  */
-template<typename BaseSkinT>
-class SkeletonObjectDataT : public PerObjectData
+class SkeletonObjectData : public PerObjectData
 {
 public:
-  SkeletonObjectDataT()
-  {
-    pSkin_ = 0;
-    pSkinObjectId_ = -1;
+  SkeletonObjectData(){
   }
 
-  SkeletonObjectDataT(const SkeletonObjectDataT& _copy)
-  {
-    pSkin_         = _copy.pSkin_;
-    pSkinObjectId_ = _copy.pSkinObjectId_;
+  SkeletonObjectData(const SkeletonObjectData& _copy){
+    skins_         = _copy.skins_;
   }
 
-  ~SkeletonObjectDataT()
-  {
-    delete pSkin_;
+  ~SkeletonObjectData(){
   }
 
   // Copy function
   PerObjectData* copyPerObjectData() {
-    
-    SkeletonObjectDataT* copy = new SkeletonObjectDataT(*this);
+    SkeletonObjectData* copy = new SkeletonObjectData(*this);
     return copy;
   }
 
 public:
-  /// The skin object, an instance of SkinT or one of its derivatives
-  BaseSkinT *pSkin_;
+  /**
+   *  \brief Get the skin with given index (0 <= _index < skinCount())
+   */ 
+  int skin( unsigned int _index ){
+    if ( _index >= skins_.size() )
+      return -1;
+    return skins_[_index];
+  }
 
-  /// The id of the mesh object used as skin
-  int pSkinObjectId_;
+  /**
+   *  \brief Get the number of associated skins
+   */ 
+  unsigned int skinCount(){
+    return skins_.size();
+  }
+
+  /**
+   *  \brief Add a skin to the skeleton
+   */ 
+  void addSkin(int _objectId){
+    //check if already available
+    for(unsigned int i=0; i < skins_.size(); i++)
+      if ( skins_[i] == _objectId )
+        return;
+    //add the skin
+    skins_.push_back(_objectId);
+  }
+
+  /**
+   *  \brief Remove a skin from the skeleton
+   */ 
+  void removeSkin(int _objectId){
+    //check if already available
+    for(unsigned int i=0; i < skins_.size(); i++)
+      if ( skins_[i] == _objectId ){
+        skins_.erase( skins_.begin() + i );
+        return;
+      }
+    //not found
+    std::cerr << "Cannot remove skin with object id:" << _objectId << ". Not found!" << std::endl;
+  }
+
+  /**
+   *  \brief Remove all skins from the skeleton
+   */ 
+  void clearSkins(){
+    skins_.clear();
+  }
+
+private:
+  //vector of object ids from all skins attached to this skeleton
+  std::vector< int > skins_;
 };
 
-#endif //SKELETONOBJECTDATAT_HH
+#endif //SKELETONOBJECTDATA_HH
