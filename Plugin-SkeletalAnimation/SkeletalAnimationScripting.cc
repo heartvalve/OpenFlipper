@@ -48,47 +48,76 @@ void SkeletalAnimationPlugin::setDescriptions(){
                           QString(tr("SkeletonObjectId,SkinObjectId")).split(","),
                           QString(tr("id of the skeleton object, id of the skin object")).split(","));
 
-  emit setSlotDescription("detachSkin(int)",tr("Removes a skeleton's skin"),
+  emit setSlotDescription("detachSkin(int,int)",tr("Remove a specific skin from the skeleton"),
+                          QString(tr("SkeletonObjectId,SkinObjectId")).split(","),
+                          QString(tr("id of the skeleton object, id of the skin object")).split(","));
+
+  emit setSlotDescription("clearSkins(int)",tr("Remove all skins from a skeleton"),
                           QStringList(tr("SkeletonObjectId")), QStringList(tr("ID of the skeleton object")));
 }
 
-bool SkeletalAnimationPlugin::attachSkin(int /*skeletonId*/, int /*skinId*/) {
-//   BaseObjectData* skeleton = NULL;
-//   if (!PluginFunctions::getObject(skeletonId, skeleton)) {
-//     emit log(LOGERR, "Could not retrieve skeleton");
-//     return false;
-//   }
-//   
-//   BaseObjectData* skin = NULL;
-//   if (!PluginFunctions::getObject(skinId, skin)) {
-//     emit log(LOGERR, "Could not retrieve skin");
-//     return false;
-//   }
-//   
-//   rig(skin, skeleton);
-//   
-  return true;
-}
-
-bool SkeletalAnimationPlugin::detachSkin(int /*skeletonId*/) {
-//   BaseObjectData* skeleton = NULL;
-//   if (!PluginFunctions::getObject(skeletonId, skeleton)) {
-//     emit log(LOGERR, "Could not retrieve skeleton");
-//     return false;
-//   }
-//   
-//   unrig(skeleton);
-//   
-  return true;
-}
-
-void SkeletalAnimationPlugin::updateSkin(){
+bool SkeletalAnimationPlugin::attachSkin(int skeletonId, int skinId) {
+  BaseObjectData* skeleton = NULL;
+  if (!PluginFunctions::getObject(skeletonId, skeleton)) {
+    emit log(LOGERR, "Could not retrieve skeleton");
+    return false;
+  }
   
-//   BaseObjectData *pMeshObject = 0, *pSkeletonObject = 0;
-//   GetSelectedPair(&pMeshObject, &pSkeletonObject);
-// 
-//   if (pSkeletonObject != 0){
-//     AnimationHandle hAni = PluginFunctions::skeletonObject(pSkeletonObject)->skeletonNode()->getActivePose();
-//     UpdateSkin(pSkeletonObject, hAni);
-//   }
+  BaseObjectData* skin = NULL;
+  if (!PluginFunctions::getObject(skinId, skin)) {
+    emit log(LOGERR, "Could not retrieve skin");
+    return false;
+  }
+  
+  attachSkin(skin, skeleton);
+
+  return true;
+}
+
+bool SkeletalAnimationPlugin::detachSkin(int skeletonId, int skinId) {
+  BaseObjectData* skeleton = NULL;
+  if (!PluginFunctions::getObject(skeletonId, skeleton)) {
+    emit log(LOGERR, "Could not retrieve skeleton");
+    return false;
+  }
+  
+  BaseObjectData* skin = NULL;
+  if (!PluginFunctions::getObject(skinId, skin)) {
+    emit log(LOGERR, "Could not retrieve skin");
+    return false;
+  }
+
+  detachSkin(skin, skeleton);
+
+  return true;
+}
+
+bool SkeletalAnimationPlugin::clearSkins(int skeletonId) {
+  BaseObjectData* skeleton = NULL;
+  if (!PluginFunctions::getObject(skeletonId, skeleton)) {
+    emit log(LOGERR, "Could not retrieve skeleton");
+    return false;
+  }
+
+  clearSkins(skeleton);
+
+  return true;
+}
+
+void SkeletalAnimationPlugin::updateSkins(){
+  
+  for (unsigned int i=0; i < activeSkeletons_.size(); i++){
+
+    //get active skeleton
+    BaseObjectData* baseObject = 0;
+    PluginFunctions::getObject(activeSkeletons_[i], baseObject);
+
+    if ( baseObject == 0 )
+      continue;
+
+    SkeletonObject* skeletonObject = dynamic_cast<SkeletonObject*>(baseObject);
+
+    AnimationHandle hAni = skeletonObject->skeletonNode()->activePose();
+    UpdateSkins(skeletonObject, hAni);
+  }
 }

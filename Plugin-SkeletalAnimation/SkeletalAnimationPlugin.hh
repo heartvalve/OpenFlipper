@@ -52,7 +52,6 @@
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include "AnimationToolbox.hh"
-#include "ObjectTypes/Skeleton/SkeletonObjectDataT.hh"
 #include "ObjectTypes/Skeleton/Skeleton.hh"
 #include "ObjectTypes/Skeleton/PoseT.hh"
 #include "ObjectTypes/Skeleton/BaseSkin.hh"
@@ -109,7 +108,8 @@ public slots:
   //@{
   int  getNumberOfFrames();
   bool attachSkin(int skeletonId, int skinId);
-  bool detachSkin(int skeletonId);
+  bool detachSkin(int skeletonId, int skinId);
+  bool clearSkins(int skeletonId);
 
   void setFrame(int _iFrame);
   int  getFrame();
@@ -121,7 +121,7 @@ public slots:
   void nextFrame();
   void prevFrame();
 
-  void updateSkin();
+  void updateSkins();
   //@}
 
   void UpdateUI();
@@ -135,12 +135,13 @@ private slots:
   
   void exit();
 
-  void slotBindMesh();
-  void slotUnbindMesh();
+  void slotAttachSkin();
+  void slotClearSkins();
   void slotMethodChanged(int _index);
   void slotAnimationIndexChanged(int /*_index*/);
   void slotFrameChanged(int /*_index*/);
   void slotSkipFramesChanged(int _state);
+  void slotAddAnimation();
 
   void animate();
 
@@ -153,15 +154,16 @@ protected:
 
   AnimationHandle currentAnimationHandle();
 
-  void UpdateSkin(BaseObjectData *_pSkeletonObject, AnimationHandle &_hAni);
+  void UpdateSkins(BaseObjectData *_pSkeletonObject, AnimationHandle &_hAni);
 
 private:
   /**
-  * @name Rigging
+  * @name Skin management
   */
   //@{
-  void rig(BaseObjectData *pSkin, BaseObjectData *pSkeleton);
-  void unrig(BaseObjectData *_pSkeleton);
+  void attachSkin(BaseObjectData *pSkin, BaseObjectData *pSkeleton);
+  void detachSkin(BaseObjectData *pSkin, BaseObjectData *pSkeleton);
+  void clearSkins(BaseObjectData *_pSkeleton);
   //@}
 
 protected:
