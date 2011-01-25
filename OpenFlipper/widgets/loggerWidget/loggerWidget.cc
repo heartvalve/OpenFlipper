@@ -135,7 +135,7 @@ LoggerWidget::LoggerWidget( QWidget *parent)
   errorButton_->setCheckable(true);
   errorButton_->setAutoExclusive(true);
   
-  filterButton_ = new QPushButton(QIcon(path + "status_red.png"),tr("Filters"));
+  filterButton_ = new QPushButton(QIcon(path + "status_filter.png"),tr("Filters"));
   filterButton_->setCheckable(true);
 
   allButton_->setChecked(true);
