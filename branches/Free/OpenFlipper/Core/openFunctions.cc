@@ -207,12 +207,13 @@ int Core::loadObject ( QString _filename ) {
 
       QString filters = supportedTypes_[i].plugin->getLoadFilters();
       //check extension
-      if ( ! filters.contains( "*." + fi.completeSuffix() , Qt::CaseInsensitive) )
+      if ( ! filters.contains( "*." + fi.completeSuffix() , Qt::CaseInsensitive) ) {
         if (  ! filters.contains( "*." + fi.suffix() , Qt::CaseInsensitive) ) {
           continue;
         } else {
           emit log(LOGWARN,"Found supported datatype but only the suffix is matched not the complete suffix!"); 
         }
+      }
 
       if ( OpenFlipper::Options::gui() ) {
         coreWidget_->statusMessage( tr("Loading %1 ... ").arg(_filename));
