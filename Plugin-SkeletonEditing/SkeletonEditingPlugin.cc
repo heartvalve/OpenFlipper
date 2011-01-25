@@ -5,7 +5,8 @@
 #include <OpenFlipper/BasePlugin/PluginFunctions.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <ObjectTypes/Skeleton/Skeleton.hh>
-
+#include <ObjectTypes/Skeleton/BaseSkin.hh>
+#include <ObjectTypes/Skeleton/SkeletonObjectData.hh>
 //--------------------------------------------------------------------------------
 
 /** \brief Default Constructor
@@ -439,6 +440,37 @@ void SkeletonEditingPlugin::manipulatorMoved( QtTranslationManipulatorNode* _nod
 
   transformJoint( objectId, _node->getData().toInt(), mat );
 
+  BaseObjectData* object = 0;
+  PluginFunctions::getObject(objectId, object);
+  
+  if ( object != 0)
+    //check if there is a skin which has to be deformed
+    if ( object->hasObjectData(OBJECTDATA_SKELETON) ){
+
+      SkeletonObjectData* skeletonData = reinterpret_cast< SkeletonObjectData* >( object->objectData(OBJECTDATA_SKELETON) );
+
+      AnimationHandle hAni = PluginFunctions::skeletonObject(object)->activePose();
+      
+      for (unsigned int i=0; i < skeletonData->skinCount(); i++){
+        //deform all attached skin meshes
+        int meshId = skeletonData->skin(i);
+
+        BaseObjectData* meshObject = 0;
+        PluginFunctions::getObject(meshId, meshObject);
+        
+        if (meshObject == 0)
+          continue;
+
+        if ( !meshObject->hasObjectData(OBJECTDATA_SKIN) )
+          continue;
+
+        BaseSkin* skin = reinterpret_cast< BaseSkin* > ( meshObject->objectData(OBJECTDATA_SKIN) );
+        skin->deformSkin( hAni, BaseSkin::M_LBS );
+
+        emit updatedObject(meshObject->id(), UPDATE_GEOMETRY);
+      }
+    }
+
   if (_event->type() == QEvent::MouseButtonRelease)
     emit updatedObject(objectId, UPDATE_GEOMETRY);
 
@@ -655,8 +687,15 @@ void SkeletonEditingPlugin::insertJoint(QMouseEvent* _event)
     }
 
     // add a new skeleton at this position
-    ACG::Vec3d viewCoords   = ACG::Vec3d(_event->pos().x(), PluginFunctions::viewerProperties().glState().context_height() - _event->pos().y(), 0.5);
-    ACG::Vec3d lastHitPoint = PluginFunctions::viewerProperties().glState().unproject(viewCoords);
+    unsigned int    node_idx, target_idx;
+    ACG::Vec3d      lastHitPoint(0.0, 0.0, 0.0);
+
+    // first try to pick something
+    if( !PluginFunctions::scenegraphPick(ACG::SceneGraph::PICK_FACE, _event->pos(), node_idx, target_idx, &lastHitPoint) ){
+      //if picking fails just unproject at position
+      ACG::Vec3d viewCoords   = ACG::Vec3d(_event->pos().x(), PluginFunctions::viewerProperties().glState().context_height() - _event->pos().y(), 0.5);
+      lastHitPoint = PluginFunctions::viewerProperties().glState().unproject(viewCoords);
+    }
 
     int newSkeletonID = -1;
     emit addEmptyObject(DATA_SKELETON, newSkeletonID);
