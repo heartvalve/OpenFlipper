@@ -359,8 +359,10 @@ int FileBVHPlugin::loadObject(QString _filename) {
       
       stream >> frameCount;
       
-      FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(skeleton, frameCount);
-      animHandle = skeleton->addAnimation(baseName.toStdString(), animation);
+      if (frameCount > 0){
+        FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(skeleton, frameCount);
+        animHandle = skeleton->addAnimation(baseName.toStdString(), animation);
+      }
       
       waitingFor = FRAME_TIME;
       continue;
@@ -375,8 +377,9 @@ int FileBVHPlugin::loadObject(QString _filename) {
       double frameTime;
       stream >> frameTime;
 
-      skeleton->animation(animHandle)->setFps( frameTime * 1000 );
-      
+      if (frameCount > 0)
+        skeleton->animation(animHandle)->setFps( frameTime * 1000 );
+
       waitingFor = CHANNEL_DATA;
       continue;
     }
@@ -392,18 +395,17 @@ int FileBVHPlugin::loadObject(QString _filename) {
       if ( currentFrame < frameCount ){
         animHandle.setFrame( currentFrame );
         pose = skeleton->pose(animHandle);
-        
-        }
+      }
       else
-        {std::cerr << "Warning: Too many frames specified in file." << std::endl;}
-      
+        std::cerr << "Warning: Too many frames specified in file." << std::endl;
+
       //since we dont have a keyWrd here
       // keyWrd is already the first data
       data[0] = QString( keyWrd.c_str() ).toDouble();
       //read the data for this frame
       for (uint i=1; i < data.size(); i++){
           stream >> data[i];
-        }
+      }
 
       //now the channel for this timeFrame is complete
       //apply them to the joints
