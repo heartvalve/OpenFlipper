@@ -43,6 +43,10 @@
 #include "SkeletalAnimationPlugin.hh"
 #include "OpenFlipper/BasePlugin/PluginFunctions.hh"
 #include "OpenFlipper/common/GlobalOptions.hh"
+#include <ObjectTypes/Skeleton/SkeletonObjectData.hh>
+#include <ObjectTypes/Skeleton/SkinT.hh>
+
+#include "AddAnimationDialog.hh"
 
 using namespace std;
 
@@ -79,8 +83,8 @@ void SkeletalAnimationPlugin::initializePlugin()
   QSize size(300, 300);
   pToolbox_->resize(size);
 
-  connect( pToolbox_->pbBindMesh,   SIGNAL(clicked()), this, SLOT(slotBindMesh()) );
-  connect( pToolbox_->pbUnbindMesh, SIGNAL(clicked()), this, SLOT(slotUnbindMesh()) );
+  connect( pToolbox_->pbAttachSkin, SIGNAL(clicked()), this, SLOT(slotAttachSkin()) );
+  connect( pToolbox_->pbClearSkins, SIGNAL(clicked()), this, SLOT(slotClearSkins()) );
 
   connect( pToolbox_->cbAnimation,                SIGNAL(currentIndexChanged(int)), this, SLOT(slotAnimationIndexChanged(int)) );
   connect( pToolbox_->hsFrame,                    SIGNAL(sliderMoved(int)),         this, SLOT(slotFrameChanged(int)) );
@@ -91,7 +95,10 @@ void SkeletalAnimationPlugin::initializePlugin()
   connect( pToolbox_->pbNextFrame,                SIGNAL(clicked()),                this, SLOT( nextFrame() ) );
   connect( pToolbox_->sbFPS,                      SIGNAL(valueChanged ( int )),     this, SLOT( changeFPS(int) ) );
   connect( pToolbox_->cbSkipFrames,               SIGNAL(stateChanged(int)),        this, SLOT(slotSkipFramesChanged(int)) );
-
+  connect( pToolbox_->pbAddAnimation,             SIGNAL(clicked()),                this, SLOT(slotAddAnimation()) );
+  
+  pToolbox_->pbAddAnimation->setIcon(QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"addAnimation.png") );
+  
   pToolbox_->cbMethod->addItem("Linear Blend Skinning");
   pToolbox_->cbMethod->addItem("Dual Quaternion Blend Skinning");
 
@@ -101,9 +108,6 @@ void SkeletalAnimationPlugin::initializePlugin()
 
   toolIcon_ = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"skeletalAnimation.png");
   emit addToolbox( tr("Skeletal Animation") , pToolbox_, toolIcon_ );
-  
-  //hide rigging box
-  pToolbox_->riggingBox->hide();
 }
 
 //------------------------------------------------------------------------------
@@ -221,7 +225,6 @@ void SkeletalAnimationPlugin::checkObjectSelection(){
 int SkeletalAnimationPlugin::getNumberOfFrames()
 {
 
-  // deform the skin(s) using the new method
   for (unsigned int i=0; i < activeSkeletons_.size(); i++){
 
     //get active skeleton
@@ -281,26 +284,33 @@ void SkeletalAnimationPlugin::changeFPS(int _fps) {
  * @param _pSkeletonObject The object holding the skeleton, it is holding the pointer to the skin object
  * @param _hAni A handle of the new pose
  */
-void SkeletalAnimationPlugin::UpdateSkin(BaseObjectData *_pSkeletonObject, AnimationHandle &_hAni)
+void SkeletalAnimationPlugin::UpdateSkins(BaseObjectData *_skeletonObject, AnimationHandle &_hAni)
 {
-  // deform the skin, if attached to the skeleton
-  if(_pSkeletonObject->objectData(OBJECTDATA_SKELETON) != 0 &&
-      reinterpret_cast< SkeletonObjectDataT<BaseSkin>* >(_pSkeletonObject->objectData(OBJECTDATA_SKELETON)) != 0)
-  {
-    SkeletonObjectDataT<BaseSkin> *pData = reinterpret_cast< SkeletonObjectDataT<BaseSkin>* >(_pSkeletonObject->objectData(OBJECTDATA_SKELETON));
-    BaseObjectData *pMeshObject = NULL;
-    PluginFunctions::getObject(pData->pSkinObjectId_, pMeshObject);//pData->pSkinObject_;
-    BaseSkin *pSkin = pData->pSkin_;
+  
+  if( !_skeletonObject->hasObjectData(OBJECTDATA_SKELETON) )
+    return;
 
-    if (pMeshObject != NULL && pSkin != NULL) {
-      pSkin->DeformSkin(_hAni, method_ );
-      if(pMeshObject->dataType(DATA_TRIANGLE_MESH))
-        dynamic_cast<TriMeshObject*>(pMeshObject)->updateGeometry();
-      else if(pMeshObject->dataType(DATA_POLY_MESH))
-        dynamic_cast<PolyMeshObject*>(pMeshObject)->updateGeometry();
-      
-      emit updatedObject(pMeshObject->id(), UPDATE_GEOMETRY);
+  SkeletonObjectData* skeletonData = dynamic_cast< SkeletonObjectData* >( _skeletonObject->objectData(OBJECTDATA_SKELETON) );
+  
+  for (unsigned int i=0; i < skeletonData->skinCount(); i++){
+    //deform all attached skin meshes
+    int meshId = skeletonData->skin(i);
+
+    BaseObjectData* object = 0;
+    PluginFunctions::getObject(meshId, object);
+    
+    if (object == 0)
+      continue;
+
+    if ( !object->hasObjectData(OBJECTDATA_SKIN) ){
+      emit log(LOGERR, tr("Error: Attached skin mesh has no skin-object-data."));
+      continue;
     }
+    
+    BaseSkin* skin = dynamic_cast< BaseSkin* > ( object->objectData(OBJECTDATA_SKIN) );
+    skin->deformSkin(_hAni, method_ );
+
+    emit updatedObject(object->id(), UPDATE_GEOMETRY);
   }
 }
 
@@ -385,8 +395,8 @@ void SkeletalAnimationPlugin::slotAnimationIndexChanged(int /*_index*/)
 
     emit updatedObject(skelObject->id(), UPDATE_GEOMETRY);
 
-    // update skin if available
-    UpdateSkin(skelObject, hAni);
+    // update skins if available
+    UpdateSkins(skelObject, hAni);
 
     slotFrameChanged(0);
   }
@@ -414,10 +424,10 @@ void SkeletalAnimationPlugin::slotFrameChanged(int /*_index*/)
       
       // pass the current frame
       AnimationHandle hAni = currentAnimationHandle();
-      dynamic_cast<SkeletonObject*>(skelObject)->setActivePose(hAni);
+      PluginFunctions::skeletonObject(skelObject)->setActivePose(hAni);
 
       // and update the skin if available
-      UpdateSkin(skelObject, hAni);
+      UpdateSkins(skelObject, hAni);
 
       emit updatedObject(skelObject->id(), UPDATE_GEOMETRY);
   }
@@ -567,7 +577,7 @@ void SkeletalAnimationPlugin::slotMethodChanged(int _index)
     AnimationHandle hAni = skeletonObject->skeletonNode()->activePose();
 
     // and update the skin
-    UpdateSkin(skeletonObject, hAni);
+    UpdateSkins(skeletonObject, hAni);
   }
 
   emit updateView();
@@ -596,21 +606,26 @@ void SkeletalAnimationPlugin::UpdateUI()
 
     SkeletonObject* skeletonObj = PluginFunctions::skeletonObject(baseObject);
     Skeleton*          skeleton = PluginFunctions::skeleton(baseObject);
-
+    
     // update the rigging and skinning group
     // enable UI
     if(skeletonObj->objectData(OBJECTDATA_SKELETON) == 0)
     {
-      pToolbox_->pbBindMesh->setEnabled(true);
-      pToolbox_->pbUnbindMesh->setEnabled(false);
+      pToolbox_->pbAttachSkin->setEnabled(true);
+      pToolbox_->pbClearSkins->setEnabled(false);
+      pToolbox_->skinningBox->setTitle(tr("Attached Skins"));
     }else{
-      pToolbox_->pbBindMesh->setEnabled(false);
-      pToolbox_->pbUnbindMesh->setEnabled(true);
+      pToolbox_->pbAttachSkin->setEnabled(true);
+      pToolbox_->pbClearSkins->setEnabled(true);
+
+      SkeletonObjectData* skelData = dynamic_cast<SkeletonObjectData*>( skeletonObj->objectData(OBJECTDATA_SKELETON) );
+      pToolbox_->skinningBox->setTitle(tr("Attached Skins (Currently: %1)").arg(skelData->skinCount())  );
     }
 
     // update the Skeleton group
     AnimationHandle hAni = skeletonObj->skeletonNode()->activePose();
 
+    pToolbox_->pbAddAnimation->setEnabled(true);
     pToolbox_->cbAnimation->setEnabled(true);
     pToolbox_->cbAnimation->clear();
 
@@ -631,14 +646,16 @@ void SkeletalAnimationPlugin::UpdateUI()
 
   }else{
     // disable UI
+    pToolbox_->pbAddAnimation->setEnabled(false);
     pToolbox_->cbAnimation->setEnabled(false);
     pToolbox_->cbAnimation->clear();
     pToolbox_->hsFrame->setEnabled(false);
     pToolbox_->hsFrame->setRange(0, 0);
     pToolbox_->hsFrame->setTickInterval(1);
 
-    pToolbox_->pbBindMesh->setEnabled(false);
-    pToolbox_->pbUnbindMesh->setEnabled(false);
+    pToolbox_->pbAttachSkin->setEnabled(false);
+    pToolbox_->pbClearSkins->setEnabled(false);
+    pToolbox_->skinningBox->setTitle(tr("Attached Skins"));
   }
 
   bGuiUpdating_ = false;
@@ -649,71 +666,96 @@ void SkeletalAnimationPlugin::UpdateUI()
 /**
  * @brief Called by Qt as the user is trying to connect a mesh to a skeleton
  */
-void SkeletalAnimationPlugin::slotBindMesh()
+void SkeletalAnimationPlugin::slotAttachSkin()
 {
-//   // get the selected object and mesh
-//   BaseObjectData *pMeshObject = 0, *pSkeletonObject = 0;
-// 
-//   GetSelectedPair(&pMeshObject, &pSkeletonObject);
-//   if(pMeshObject == 0 || pSkeletonObject == 0)
-//     return;
-// 
-//   rig(pMeshObject, pSkeletonObject);
+  
+  if( activeSkeletons_.size() != 1 ){
+    emit log(LOGERR, tr("Cannot bind mesh. Please select only one skeleton."));
+    return;
+  }
+
+  int meshCount = 0;
+
+  for ( PluginFunctions::ObjectIterator o_it(PluginFunctions::TARGET_OBJECTS, DataType(DATA_TRIANGLE_MESH|DATA_POLY_MESH)) ; o_it != PluginFunctions::objectsEnd(); ++o_it)
+  {
+    attachSkin(activeSkeletons_[0], o_it->id());
+    meshCount++;
+  }
+  
+  if (meshCount == 0){
+    emit log(LOGERR, tr("Cannot bind mesh. Please select at least one mesh as target."));
+    return;
+  }
 }
 
 //------------------------------------------------------------------------------
 
-void SkeletalAnimationPlugin::rig(BaseObjectData * /*_skin*/, BaseObjectData* /*_skeletonObj*/) {
+void SkeletalAnimationPlugin::attachSkin(BaseObjectData* _skin, BaseObjectData* _skeletonObj) {
   
-//   // stop if the skeleton already has a skin
-//   if(_skeletonObj->objectData(OBJECTDATA_SKELETON) != 0)
-//     return;
-// 
-//   // get the skeleton and make it prepare the mesh
-//   Skeleton *skeleton = dynamic_cast<SkeletonObject*>(_skeletonObj)->skeleton();
-// 
-//   // prepare the skin template class used to deform the skin
-//   SkeletonObjectDataT<BaseSkin> *pData = new SkeletonObjectDataT<BaseSkin>();
-//   pData->pSkinObjectId_ = pSkin->id();
-// 
-//   if(pSkin->dataType(DATA_TRIANGLE_MESH))
-//   {
-//     pData->pSkin_ = dynamic_cast<BaseSkin*>( new SkinT<TriMesh>(skeleton, PluginFunctions::triMesh(pSkin)) );
-// 
-//     pData->pSkin_->AttachSkin();
-//     pData->pSkin_->MakeInfluenceGroups();
-//     emit updatedObject(pSkin->id(), UPDATE_GEOMETRY);
-// 
-//   }else if(pSkin->dataType(DATA_POLY_MESH)){
-//     pData->pSkin_ = dynamic_cast<BaseSkin*>( new SkinT<PolyMesh>(skeleton, PluginFunctions::polyMesh(pSkin)) );
-// 
-//     pData->pSkin_->AttachSkin();
-//     pData->pSkin_->MakeInfluenceGroups();
-//     emit updatedObject(pSkin->id(), UPDATE_GEOMETRY);
-//   }
-// 
-//   //add skelSegment Property @TODO remove the skelSegment stuff
-//   PropertyHandleT<short unsigned int> propSkeletonSegment;
-//   skeleton->add_property(propSkeletonSegment, "Skeleton Segment");
-// 
-//   //copy boundaries from old object data
-//   if ( pSkeleton->hasObjectData(OBJECTDATA_SKELETON) ){
-//     SkeletonObjectDataT<BaseSkin>* oldData = reinterpret_cast< SkeletonObjectDataT<BaseSkin>* >(pSkeleton->objectData(OBJECTDATA_SKELETON));
-// 
-//     pData->boundaryMap_ = oldData->boundaryMap_;
-//     pSkeleton->clearObjectData(OBJECTDATA_SKELETON);
-//     delete oldData;
-//   }
-// 
-//   pSkeleton->setObjectData(OBJECTDATA_SKELETON, pData);
-//   dynamic_cast<BaseObject*>(pSkeleton)->target(true);
-//   dynamic_cast<BaseObject*>(pSkeleton)->source(false);
-//   
-//   //Add a reference to the skin to the skeletonObject's name, so that the user can see the connection in the UI (in the DataControl plugin)
-//   pSkeleton->setName(pSkeleton->name() + " (" + pSkin->name() + ")");
-// 
-//   emit updateView();
-//   UpdateUI();
+  // get the skeleton and make it prepare the mesh
+  Skeleton* skeleton = dynamic_cast<SkeletonObject*>(_skeletonObj)->skeleton();
+
+  //check if mesh is already a skin
+  if (_skin->hasObjectData(OBJECTDATA_SKIN) ){
+    emit log(LOGERR, tr("Cannot bind mesh as skin. Mesh is already a skin."));
+    return;
+  }
+
+  // prepare the skin template class used to deform the skin
+  SkeletonObjectData* skelData = 0;
+
+  if ( _skeletonObj->hasObjectData(OBJECTDATA_SKELETON) )
+    skelData = dynamic_cast< SkeletonObjectData* >(_skeletonObj->objectData(OBJECTDATA_SKELETON));
+  else {
+    skelData = new SkeletonObjectData();
+    _skeletonObj->setObjectData(OBJECTDATA_SKELETON, skelData);
+  }
+
+  skelData->addSkin( _skin->id() );
+
+  BaseSkin* baseSkin = 0;
+
+  OpenMesh::VPropHandleT<BaseSkin::SkinWeights> propWeights;
+  bool hasSkinWeights = true;
+
+  if(_skin->dataType(DATA_TRIANGLE_MESH)){
+    hasSkinWeights = PluginFunctions::triMesh(_skin)->get_property_handle(propWeights, SKIN_WEIGHTS_PROP);
+    baseSkin       = dynamic_cast<BaseSkin*>( new TriMeshSkin(skeleton, PluginFunctions::triMesh(_skin)) );
+  }else if(_skin->dataType(DATA_POLY_MESH)){
+    hasSkinWeights = PluginFunctions::polyMesh(_skin)->get_property_handle(propWeights, SKIN_WEIGHTS_PROP);
+    baseSkin       = dynamic_cast<BaseSkin*>( new PolyMeshSkin(skeleton, PluginFunctions::polyMesh(_skin)) );
+  }
+
+  baseSkin->attachSkin();
+
+  if (hasSkinWeights)
+    baseSkin->deformSkin(currentAnimationHandle(), method_);
+
+  emit updatedObject(_skin->id(), UPDATE_GEOMETRY);
+  _skin->setObjectData(OBJECTDATA_SKIN, baseSkin);
+
+  _skeletonObj->target(true);
+  _skeletonObj->source(false);
+
+  if( !hasSkinWeights ){
+    //ask if they should be computed automatically
+    bool canCompute;
+    emit pluginExists("skinningplugin", canCompute);
+    
+    if (canCompute){
+      QMessageBox msgBox;
+      msgBox.setText("The mesh is not equipped with skin weights.");
+      msgBox.setInformativeText("Do you want to compute them automatically?");
+      msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+      msgBox.setDefaultButton(QMessageBox::Yes);
+      int ret = msgBox.exec();
+
+      if (ret == QMessageBox::Yes)
+        RPC::callFunction("skinningplugin", "computeSkinWeights");
+    }
+  }
+  
+  UpdateUI();
 }
 
 //------------------------------------------------------------------------------
@@ -721,54 +763,146 @@ void SkeletalAnimationPlugin::rig(BaseObjectData * /*_skin*/, BaseObjectData* /*
 /**
  * @brief Called by Qt as the user is trying to unbind a mesh from as a skeleton
  */
-void SkeletalAnimationPlugin::slotUnbindMesh()
+void SkeletalAnimationPlugin::slotClearSkins()
 {
-//   // get the selected object and mesh
-//   BaseObjectData *pSkeletonObject = 0;
-// 
-//   // Test if there is a skeleton object selected as target
-//   for(PluginFunctions::ObjectIterator it_o(PluginFunctions::TARGET_OBJECTS, DATA_SKELETON);
-//     it_o != PluginFunctions::objectsEnd(); ++it_o)
-//   {
-//     pSkeletonObject = *it_o;
-//     break;
-//   }
-// 
-//   unrig(pSkeletonObject);
+  for (unsigned int i=0; i < activeSkeletons_.size(); i++)
+    clearSkins( activeSkeletons_[i] );
 }
 
 //------------------------------------------------------------------------------
 
-void SkeletalAnimationPlugin::unrig(BaseObjectData * /*_pSkeleton*/) {
+void SkeletalAnimationPlugin::clearSkins(BaseObjectData* _skeletonObj) {
+
+  // prepare the skin template class used to deform the skin
+  SkeletonObjectData* skelData = 0;
+
+  if ( !_skeletonObj->hasObjectData(OBJECTDATA_SKELETON) )
+    return;
+
+  skelData = dynamic_cast< SkeletonObjectData* >(_skeletonObj->objectData(OBJECTDATA_SKELETON));
+
+  for (int i=skelData->skinCount()-1; i >= 0; i--){
+    //deform all attached skin meshes
+    int meshId = skelData->skin(i);
+
+    BaseObjectData* object = 0;
+    PluginFunctions::getObject(meshId, object);
+    
+    if (object == 0)
+      continue;
+
+    detachSkin(object, _skeletonObj);
+  }
+}
+
+//------------------------------------------------------------------------------
+
+void SkeletalAnimationPlugin::detachSkin(BaseObjectData* _skin, BaseObjectData* _skeletonObj) {
+
+  // get the skeleton and make it prepare the mesh
+  Skeleton* skeleton = dynamic_cast<SkeletonObject*>(_skeletonObj)->skeleton();
+
+  if ( !_skeletonObj->hasObjectData(OBJECTDATA_SKELETON) ){
+    emit log(LOGERR, tr("Cannot detach skin. Skeleton has no object data."));
+    return;
+  }
+
+  //first try to remove the skin from the mesh
+  if (_skin->hasObjectData(OBJECTDATA_SKIN) ){
+
+    BaseSkin* baseSkin = 0;
+
+    if(_skin->dataType(DATA_TRIANGLE_MESH))
+      baseSkin = dynamic_cast<BaseSkin*>( new TriMeshSkin(skeleton, PluginFunctions::triMesh(_skin)) );
+    else if(_skin->dataType(DATA_POLY_MESH))
+      baseSkin = dynamic_cast<BaseSkin*>( new PolyMeshSkin(skeleton, PluginFunctions::polyMesh(_skin)) );
+
+    baseSkin->releaseSkin();
+    _skin->clearObjectData(OBJECTDATA_SKIN);
+    delete baseSkin;
+
+    emit updatedObject(_skin->id(), UPDATE_GEOMETRY);
+  }
+
+  // then remove the skin from the skeleton data
+  SkeletonObjectData* skelData = dynamic_cast< SkeletonObjectData* >(_skeletonObj->objectData(OBJECTDATA_SKELETON));
+
+  skelData->removeSkin( _skin->id() );
   
-//   if(_pSkeleton == 0 || _pSkeleton->objectData(OBJECTDATA_SKELETON) == 0)
-//           return;
-// 
-//           
-//   //Remove the reference to the skin from the skeletonObject's name
-//   QStringList parts = _pSkeleton->name().split(" (", QString::KeepEmptyParts);
-//   _pSkeleton->setName(parts[0]);
-//   
-//   // reset the skin it to its former shape
-//   SkeletonObjectDataT<BaseSkin> *pData = reinterpret_cast< SkeletonObjectDataT<BaseSkin>* >(_pSkeleton->objectData(OBJECTDATA_SKELETON));
-//   BaseSkin *pSkin = pData->pSkin_;
-//   Skeleton *pSkeleton = dynamic_cast<SkeletonObject*>(_pSkeleton)->skeleton();
-// 
-//   pSkin->ReleaseSkin();
-// 
-//   BaseObjectData *pSkinObject;
-//   if (PluginFunctions::getObject(pData->pSkinObjectId_, pSkinObject) && pSkinObject != NULL)
-//     emit updatedObject(pData->pSkinObjectId_, UPDATE_GEOMETRY);
-// 
-//   delete pData;
-//   _pSkeleton->clearObjectData(OBJECTDATA_SKELETON);
-//   emit updateView();
-// 
-//   UpdateUI();
+  //remove the objectData if all skins are removed
+  if ( skelData->skinCount() == 0 ){
+    _skeletonObj->clearObjectData(OBJECTDATA_SKELETON);
+    delete skelData;
+  }
+
+  UpdateUI();
 }
 
 //------------------------------------------------------------------------------
 
+void SkeletalAnimationPlugin::slotAddAnimation()
+{
+  
+  if( activeSkeletons_.size() != 1 ){
+    emit log(LOGERR, tr("Cannot add animation. Please select only one skeleton."));
+    return;
+  }
+
+  AddAnimationDialog dialog;
+  dialog.animationName->selectAll();
+  dialog.animationName->setFocus();
+  
+  if ( dialog.exec() == QDialog::Accepted ){
+    if ( dialog.animationName->text() == "" ){
+      emit log(LOGERR, tr("Cannot add animation with empty name"));
+      return;
+    }
+
+    BaseObjectData* obj = 0;
+
+    PluginFunctions::getObject(activeSkeletons_[0], obj);
+
+    if (obj == 0){
+      emit log(LOGERR, tr("Unable to get object"));
+      return;
+    }
+
+    SkeletonObject* skeletonObj = PluginFunctions::skeletonObject(obj);
+
+    if (skeletonObj == 0){
+      emit log(LOGERR, tr("Unable to get skeletonObject"));
+      return;
+    }
+
+    Skeleton* skeleton = PluginFunctions::skeleton(obj);
+
+    std::string stdName = dialog.animationName->text().toStdString();
+
+    if ( skeleton->animation(stdName) != 0 ){
+      emit log(LOGERR, tr("Animation with this name already exists"));
+      return;
+    }
+
+    FrameAnimationT<ACG::Vec3d>* animation = new FrameAnimationT<ACG::Vec3d>(skeleton, dialog.frames->value());
+    AnimationHandle handle = skeleton->addAnimation(stdName, animation);
+
+    //init pose to refPose
+    for (unsigned int i=0; i < skeleton->animation(handle)->frameCount(); i++){
+      handle.setFrame(i);
+      Skeleton::Pose* pose = skeleton->pose(handle);
+
+      for (unsigned int j=0; j < skeleton->jointCount(); j++)
+        pose->setGlobalMatrix(j, skeleton->referencePose()->globalMatrix(j) );
+    }
+
+    emit updatedObject(activeSkeletons_[0], UPDATE_ALL);
+
+    //select the new animation
+    pToolbox_->cbAnimation->setCurrentIndex( pToolbox_->cbAnimation->count()-1 );
+  }
+}
+
+//------------------------------------------------------------------------------
 
 /**
  * @brief Returns a handle describing the current frame in the active animation
@@ -778,7 +912,7 @@ void SkeletalAnimationPlugin::unrig(BaseObjectData * /*_pSkeleton*/) {
 AnimationHandle SkeletalAnimationPlugin::currentAnimationHandle()
 {
   int iAnimation = pToolbox_->cbAnimation->currentIndex();
-
+  
   if(iAnimation == 0)
     return AnimationHandle(); //This will be the reference pose, i.e. an empty animation
   else if(iAnimation > 0)
