@@ -1,0 +1,64 @@
+#ifndef SKINT_HH
+#define SKINT_HH
+
+#include <ObjectTypes/Skeleton/BaseSkin.hh>
+
+/**
+ * @brief General skin class, used to bind skeleton and mesh and deform the mesh
+ *
+ * The mesh is given to the constructor. To prepare the mesh for deformation, call the SkinT::AttachSkin method.
+ */
+template<typename MeshT>
+class SkinT : public BaseSkin
+{
+public:
+  typedef typename MeshT::Point                 PointT;
+  typedef PointT                                Point;
+  typedef typename PointT::value_type           Scalar;
+  typedef SkeletonT<PointT>                     Skeleton;
+  typedef JointT<PointT>                        Joint;
+  typedef PoseT<PointT>                         Pose;
+  typedef typename ACG::Matrix4x4T<Scalar>      Matrix;
+  typedef typename ACG::QuaternionT<Scalar>     Quaternion;
+  typedef typename ACG::DualQuaternionT<Scalar> DualQuaternion;
+
+public:
+  SkinT(SkeletonT<PointT> *_skeleton, MeshT *_mesh);
+  virtual ~SkinT();
+
+public:
+  /**
+    * @name Skinning
+    * These methods are related to using a mesh as skin with this skeleton.
+    */
+  //@{
+  void attachSkin();
+  void deformSkin();
+  void deformSkin(const AnimationHandle &_hAni, Method _method = M_LBS);
+  void releaseSkin();
+  //@}
+
+  Skeleton* skeleton();
+
+private:
+  Skeleton*       skeleton_;
+  MeshT*          mesh_;
+
+  AnimationHandle lastAnimationHandle_;
+  Method          lastmethod_;
+};
+
+typedef SkinT< TriMesh >   TriMeshSkin;
+typedef SkinT< PolyMesh > PolyMeshSkin;
+
+//=============================================================================
+//=============================================================================
+#if defined(INCLUDE_TEMPLATES) && !defined(SKINT_C)
+#define SKINT_TEMPLATES
+#include "SkinT.cc"
+#endif
+//=============================================================================
+#endif
+//=============================================================================
+
+
