@@ -45,7 +45,7 @@
 #include <QFileInfo>
 #include <QSettings>
 
-#include "FilePlane.hh"
+#include "FilePla.hh"
 
 #include <iostream>
 #include <ACG/GL/GLState.hh>
@@ -57,23 +57,23 @@
 
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
 
-void FilePlanePlugin::initializePlugin() {
+void FilePlaPlugin::initializePlugin() {
 }
 
-QString FilePlanePlugin::getLoadFilters() {
+QString FilePlaPlugin::getLoadFilters() {
   return QString( tr("Plane files ( *.pla )") );
 };
 
-QString FilePlanePlugin::getSaveFilters() {
+QString FilePlaPlugin::getSaveFilters() {
   return QString( tr("Plane files ( *.pla )") );
 };
 
-DataType  FilePlanePlugin::supportedType() {
+DataType  FilePlaPlugin::supportedType() {
   DataType type = DATA_PLANE;
   return type;
 }
 
-int FilePlanePlugin::loadObject(QString _filename)
+int FilePlaPlugin::loadObject(QString _filename)
 {
   int id = -1;
   emit addEmptyObject( DATA_PLANE, id );
@@ -120,7 +120,7 @@ int FilePlanePlugin::loadObject(QString _filename)
   return id;
 };
 
-bool FilePlanePlugin::saveObject(int _id, QString _filename)
+bool FilePlaPlugin::saveObject(int _id, QString _filename)
 {
 
   BaseObjectData*     obj(0);
@@ -151,7 +151,7 @@ bool FilePlanePlugin::saveObject(int _id, QString _filename)
   return true;
 }
 
-QString FilePlanePlugin::get_unique_name(PlaneObject* _object)
+QString FilePlaPlugin::get_unique_name(PlaneObject* _object)
 {
   bool name_unique = false;
 
@@ -178,5 +178,5 @@ QString FilePlanePlugin::get_unique_name(PlaneObject* _object)
   return QString(tr("Plane %1.pla").arg( cur_idx ));
 }
 
-Q_EXPORT_PLUGIN2( fileplaneplugin , FilePlanePlugin );
+Q_EXPORT_PLUGIN2( fileplaplugin , FilePlaPlugin );
 
