@@ -196,6 +196,13 @@ if (NOT APPLE)
   acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Fonts" "${ACG_PROJECT_DATADIR}/Fonts")
  # acg_install_dir ("${CMAKE_CURRENT_SOURCE_DIR}/../Help" "${ACG_PROJECT_DATADIR}/Help")
 
+if ( EXISTS ${CMAKE_SOURCE_DIR}/branding )
+  if ( WIN32 ) 
+    acg_install_dir ( "${CMAKE_SOURCE_DIR}/branding/win" "${ACG_PROJECT_DATADIR}/Icons")
+   endif()
+endif()
+
+
 #todo install splash file for windows and Linux branding
 endif ()
 
