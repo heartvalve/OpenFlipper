@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0 (  ? , 10710 )</b>
+ * - <b>OpenFlipper 1.0 (  01.26.2011 , 10764 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - Enable or disable Mipmapping
@@ -132,6 +132,8 @@
  *              - Load/Save Skeleton files (skl) 
  *          - FileBVH
  *              - Load/Save BVH Skeleton Files (BioVision)
+ *          - Mesh Repair
+ *              - Detect and remove some simple defects on meshes
  *          - SkeletalAnimation
  *              - Animates skeletons
  *          - SkeletonEditing
@@ -195,6 +197,7 @@
  *          - Improved branding support (Including license text for installers)
  *          - When creating windows bundles, copy dlls required by plugins as well as core libraries (Creates independent bundle)
  *          - Fixed bug with integration of visual studio redistributable in installers 
+ *          - Don't integrate OpenMesh libs and headers in installer package
  *          
  *       
  * 
