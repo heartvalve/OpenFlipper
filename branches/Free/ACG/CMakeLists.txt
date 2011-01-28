@@ -1,5 +1,11 @@
 include (ACGCommon)
 
+# Disable Library installation when not building ACG on its own but as part of another project!
+if ( ${PROJECT_NAME} MATCHES "OpenFlipper")
+  set(ACG_NO_LIBRARY_INSTALL true)
+endif()
+
+
 acg_qt4 (REQUIRED 4.5)
 acg_openmp ()
 acg_ftgl ()
