@@ -86,6 +86,33 @@ void SideArea::addItem (QWidget *_w, QString _name)
 
 //-----------------------------------------------------------------------------
 
+void SideArea::moveItemToPosition(const QString& _name, int _position) {
+    
+    // Position is in valid range
+    if(_position < 0 || _position >= items_.size())
+        return;
+    
+    // Search item
+    QVector<SideElement*>::iterator it = items_.begin();
+    for(; it != items_.end(); ++it) {
+        if((*it)->name() == _name)
+            break;
+    }
+    
+    if(it != items_.end()) {
+        layout_->removeWidget(*it);
+        layout_->insertWidget(_position, (*it));
+    }
+}
+
+//-----------------------------------------------------------------------------
+
+int SideArea::getNumberOfWidgets() const {
+    return items_.size();
+}
+
+//-----------------------------------------------------------------------------
+
 void SideArea::clear ()
 {
   foreach (SideElement *e, items_)

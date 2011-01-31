@@ -150,6 +150,24 @@ void Core::setViewModeIcon(QString _mode, QString _iconName){
 
 //-----------------------------------------------------------------------------
 
+void Core::moveToolboxToTop(QString _name) {
+    
+  if(OpenFlipper::Options::gui()) {
+    coreWidget_->moveToolboxToTop(_name);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+void Core::moveToolboxToBottom(QString _name) {
+    
+  if(OpenFlipper::Options::gui()) {
+    coreWidget_->moveToolboxToBottom(_name);
+  }
+}
+
+//-----------------------------------------------------------------------------
+
 void Core::addViewModeToolboxes(QString _modeName, QString _toolboxList) {
 
   QStringList list = _toolboxList.split(";");
