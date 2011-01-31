@@ -315,6 +315,10 @@ class ViewControlPlugin : public QObject, BaseInterface , PickingInterface, Logg
     
     /// Set fovy angle of projection
     void setFOVY( double _fovy );
+    
+    /// Set the mode for the coordinate system
+    /// Perspective or orthogonal
+    void setCoordsysProjection(bool _orthogonal);
 
 };
 

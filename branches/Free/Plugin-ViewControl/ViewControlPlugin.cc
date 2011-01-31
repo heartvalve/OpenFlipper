@@ -49,6 +49,7 @@
 
 #include <ACG/Geometry/Algorithms.hh>
 #include <OpenFlipper/ACGHelper/DrawModeConverter.hh>
+#include <ACG/Scenegraph/CoordsysNode.hh>
 
 #define SHOW_SELECTION "Selections"
 #define SHOW_AREAS "Modeling Areas"
@@ -1260,6 +1261,31 @@ void ViewControlPlugin::setFOVY( double _fovy ) {
   emit updateView();
 }
 
+void ViewControlPlugin::setCoordsysProjection(bool _orthogonal) {
+  
+  // Find coordsys node
+  ACG::SceneGraph::BaseNode* node = 0;
+  node = PluginFunctions::getSceneGraphRootNode()->find("Core Coordsys Node");
+  if (node != 0) {
+    ACG::SceneGraph::CoordsysNode* cnode = dynamic_cast<ACG::SceneGraph::CoordsysNode*> (node);
+    if (cnode->getProjectionMode() == ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION) {
+      if ( _orthogonal) {
+        cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::ORTHOGRAPHIC_PROJECTION);
+        emit updateView();
+      }
+    } else {
+      if ( !_orthogonal) {
+        cnode->setProjectionMode(ACG::SceneGraph::CoordsysNode::PERSPECTIVE_PROJECTION);
+        emit updateView();
+      }
+    }
+    
+  } else {
+    emit log(LOGERR,tr("setCoordsysProjection(): Could not find coordsys node, thus its projection mode will not be toggled."));
+  }
+  
+}
+
 void ViewControlPlugin::setDescriptions() {
   emit setSlotDescription("translate(Vector,int)", "Translate Scene",
                           QString("TranslationVector,Viewer").split(","),
@@ -1314,7 +1340,10 @@ void ViewControlPlugin::setDescriptions() {
                           
   emit setSlotDescription("setFOVY(double)", "Set fovy angle of projection for all viewers.",
                           QStringList("fovy"), QStringList("FOVY angle"));
-
+                          
+  emit setSlotDescription("setCoordsysProjection(bool)", "Set the projection mode of the coordinate system.",
+                          QStringList("orthogonal"), QStringList("If true, orthogonal projection otherwise perspective projection"));                        
+                          
 }
 
 
