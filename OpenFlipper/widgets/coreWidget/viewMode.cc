@@ -401,12 +401,12 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
 
 }
 
-void CoreWidget::moveToolboxToTop(QString _name) {
+void CoreWidget::moveToolBoxToTop(QString _name) {
   
   toolBox_->moveItemToPosition(_name, 0);
 }
 
-void CoreWidget::moveToolboxToBottom(QString _name) {
+void CoreWidget::moveToolBoxToBottom(QString _name) {
 
   toolBox_->moveItemToPosition(_name, toolBox_->getNumberOfWidgets()-1);
 }
