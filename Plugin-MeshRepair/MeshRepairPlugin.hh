@@ -50,19 +50,23 @@
 #include <OpenFlipper/BasePlugin/LoggingInterface.hh>
 #include <OpenFlipper/BasePlugin/ToolboxInterface.hh>
 #include <OpenFlipper/BasePlugin/BackupInterface.hh>
+#include <OpenFlipper/BasePlugin/ScriptInterface.hh>
+#include <OpenFlipper/BasePlugin/RPCInterface.hh>
 #include <OpenFlipper/common/Types.hh>
 #include <ObjectTypes/PolyMesh/PolyMesh.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
 #include "MeshRepairToolbar.hh"
 
-class MeshRepairPlugin : public QObject, BaseInterface , ToolboxInterface, BackupInterface, LoggingInterface
+class MeshRepairPlugin : public QObject, BaseInterface , ToolboxInterface, BackupInterface, LoggingInterface, ScriptInterface, RPCInterface
 {
     Q_OBJECT
     Q_INTERFACES(BaseInterface)
     Q_INTERFACES(ToolboxInterface)
     Q_INTERFACES(BackupInterface)
     Q_INTERFACES(LoggingInterface)
+    Q_INTERFACES(ScriptInterface)
+    Q_INTERFACES(RPCInterface)
 
 signals:
 
@@ -70,7 +74,10 @@ signals:
 
     // Base Interface
     void updatedObject(int _identifier, const UpdateType _type);
+    void setSlotDescription(QString     _slotName,   QString     _slotDescription,
+                            QStringList _parameters, QStringList _descriptions);
 
+    // Logging interface
     void log(Logtype _type, QString _message);
     void log(QString _message);
 
@@ -80,9 +87,17 @@ signals:
     // Backup Interface
     void createBackup( int _objectid, QString _name);
 
+    // RPC Interface
+    void pluginExists( QString _pluginName , bool& _exists  ) ;
+    void functionExists( QString _pluginName , QString _functionName , bool& _exists  );
+
+    // ScriptInterface
+    void scriptInfo( QString _functionName );
+
 private slots:
 
     void initializePlugin();
+    void pluginsInitialized();
     void slotActiveObjectChanged() {};
 
 public :
@@ -105,13 +120,13 @@ private :
 private slots:
 
     /// Button slot
-    void slotDetectFlatTriangle();
+    void slotDetectFlatTriangles();
     
     /// Button slot
     void slotRemoveSelectedVal3Vertices();
 
     /// Button Slot
-    void slotDetectEdgesLarger();
+    void slotDetectEdgesLonger();
 
     /// Button Slot
     void slotDetectEdgesShorter();
@@ -123,10 +138,10 @@ private slots:
     void slotFlipOrientation();
 
     /// Button slot
-    void slotDetectCaps();
+    void slotDetectSkinnyTriangleByAngle();
 
     /// Button slot
-    void slotRemoveCaps();
+    void slotRemoveSkinnyTriangleByAngle();
 
     /// Button slot
     void slotDetectFoldover();
@@ -141,7 +156,7 @@ public slots:
     void selectEdgesShorterThan(int _objectId,double _length);
 
     /// Selects all edges of an oobject which are larger than the given length
-    void selectEdgesLargerThan(int _objectId,double _length);
+    void selectEdgesLongerThan(int _objectId,double _length);
 
     /// Removes all selected edges
     void removeSelectedEdges(int _objectId);
@@ -150,7 +165,10 @@ public slots:
     void flipOrientation(int _objectId);
 
     /// Detect/Remove edges where neighbouring faces form angle > _angle degrees
-    void detectCaps(int _objectId, double _angle, bool _remove);
+    void detectSkinnyTriangleByAngle(int _objectId, double _angle, bool _remove);
+    
+    /// Detect valence 3 triangles that lie in the plane of their adjacent triangles
+    void detectFlatTriangles(int _objectId, double _angle);
 
 private:
     /** \brief select edges based on length
