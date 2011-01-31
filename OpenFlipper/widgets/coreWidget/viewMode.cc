@@ -401,6 +401,16 @@ void CoreWidget::slotChangeView(QString _mode, QStringList _toolboxWidgets, QStr
 
 }
 
+void CoreWidget::moveToolboxToTop(QString _name) {
+  
+  toolBox_->moveItemToPosition(_name, 0);
+}
+
+void CoreWidget::moveToolboxToBottom(QString _name) {
+
+  toolBox_->moveItemToPosition(_name, toolBox_->getNumberOfWidgets()-1);
+}
+
 void CoreWidget::stereoButtonContextMenu(const QPoint& _pos) {
 
     // Grey out OpenGL stereo mode option if not available

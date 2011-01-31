@@ -998,6 +998,12 @@ private slots:
 
     /// Set the icon of a viewMode
     void setViewModeIcon(QString _mode, QString _iconName);
+    
+    /// Move selected toolbox to top of side area
+    void moveToolboxToTop(QString _name);
+    
+    /// Move selected toolbox to bottom of side area
+    void moveToolboxToBottom(QString _name);
 
   private :
     /// Core scripting engine

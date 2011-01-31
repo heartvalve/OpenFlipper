@@ -451,16 +451,23 @@ public:
       /// Slot for setting ViewMode from Menu
       void slotSetViewMode( QAction* action);
 
-
       /// Show a dialog in which the viewMode can be edited
       void slotViewModeDialog();
 
       /// Show a dialog in which the viewMode can be changed
       void slotViewChangeDialog();
 
-      /// Set the view Mode to the given Mode
     public slots :
+      
+      /// Set the view Mode to the given Mode
       void setViewMode( QString _mode, bool _expandAll = false );
+      
+      /// Move a specific toolbox widget to the top of the side area
+      void moveToolboxToTop(QString _name);
+      
+      /// Move a specific toolbox widget to the bottom of the side area
+      void moveToolboxToBottom(QString _name);
+      
 
    /** @} */
 
