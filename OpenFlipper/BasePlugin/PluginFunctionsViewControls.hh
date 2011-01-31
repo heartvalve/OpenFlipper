@@ -412,7 +412,7 @@ void flyTo (const ACG::Vec3d &_center, bool _move_back = true, double _time=1000
     * @{ */
 //=======================================
 
-/**  Fly to point and keep viewing direction (animated).
+/**  Take a snapshot of the current view
  * @param _viewer   Viewer id
  * @param _image    An image to store pixel data in
  * @param _width    Image width 
