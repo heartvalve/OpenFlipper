@@ -202,7 +202,7 @@ QScriptValue VsiPlugin::askForInputs(QString _element, QString _inputs)
   QString script = "inputs = { ";
 
   foreach (QString s, _inputs.split (",", QString::SkipEmptyParts))
-    script += s + ": '" + results[s] + "',";
+    script += s + ": " + results[s] + ",";
 
   script.remove (script.length () - 1, 1);
 

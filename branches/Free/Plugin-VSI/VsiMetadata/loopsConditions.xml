@@ -18,8 +18,8 @@
       </function>
     </functions>
     <code>
-      while ([function="test"]().out)
-        [function="content"]()
+      while ([function="condition"]().out)
+        [function="content"]();
     </code>
   </element>
 
@@ -29,7 +29,7 @@
     <long>IF condition</long>
     <dataflow>true</dataflow>
     <inputs>
-      <input name="test" type="Bool" user="false">
+      <input name="condition" type="Bool" user="false">
         <short>Test</short>
       </input>
     </inputs>
@@ -42,7 +42,7 @@
       </function>
     </functions>
     <code>
-      if ([input="test"])
+      if ([input="condition"])
         [function="true"]();
       else
         [function="false"]();
