@@ -1,0 +1,119 @@
+<OpenFlipper>
+  <element name="repair_selectedgeslongerthan">
+    <category>Mesh Repair</category>
+    <short>Select long edges</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="length" type="Number">
+        <short>Minimal edge length</short>
+        <long>Minimal length of edges that will be selected</long>
+        <min>0.0</min>
+        <max>100.0</max>
+        <precision>0.0001</precision>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.selectEdgesLongerThan ([input="obj"], [input="length"]);
+    </code>
+  </element>
+  <element name="repair_selectedgesshorterthan">
+    <category>Mesh Repair</category>
+    <short>Select short edges</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="length" type="Number">
+        <short>Maximal edge length</short>
+        <long>Maximal length of edges that will be selected</long>
+        <min>0.0</min>
+        <max>100.0</max>
+        <precision>0.0001</precision>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.selectEdgesShorterThan ([input="obj"], [input="length"]);
+    </code>
+  </element>
+  <element name="repair_removeselected">
+    <category>Mesh Repair</category>
+    <short>Merge selected edges</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.removeSelectedEdges ([input="obj"]);
+    </code>
+  </element>
+  <element name="repair_flipfaceorientation">
+    <category>Mesh Repair</category>
+    <short>Flips selected face normals</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.flipOrientation ([input="obj"]);
+    </code>
+  </element>
+  <element name="repair_detectremoveskinnyangle">
+    <category>Mesh Repair</category>
+    <short>Detect/Repair skinny triangles by angle</short>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="angle" type="Number">
+        <short>Minimal angle</short>
+        <long>Minimal angle between adjacent faces such that an edge is selected/flipped</long>
+        <min>0.0</min>
+        <max>180.0</max>
+        <precision>0.0001</precision>
+      </input>
+      <input name="remove" type="Bool">
+        <short>Flip found edges?</short>
+        <long>True if found sharp edges should be flipped, false to only select them</long>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.detectSkinnyTriangleByAngle ([input="obj"], [input="angle"], [input="remove"]);
+    </code>
+  </element>
+  <element name="repair_detectflattriangles">
+    <category>Mesh Repair</category>
+    <short>Detect flat triangles</short>
+    <long>Detect flat triangles of valence 3</long>
+    <dataflow>true</dataflow>
+    <inputs>
+      <input name="obj" type="ObjectId">
+        <short>ID of an object</short>
+        <long>ID of an object</long>
+      </input>
+      <input name="angle" type="Number">
+        <short>Maximal angle</short>
+        <long>Maximal angle difference to adjacent triangles such that a triangle is selected</long>
+        <min>0.0</min>
+        <max>180.0</max>
+        <precision>0.0001</precision>
+      </input>
+    </inputs>
+    <code>
+      meshrepair.detectFlatTriangles ([input="obj"], [input="angle"]);
+    </code>
+  </element>
+</OpenFlipper>

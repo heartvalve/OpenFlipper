@@ -519,7 +519,7 @@ Function* Context::parseFunction (QXmlQuery &_xml, Element *_e)
 
     QString endCode = "return { ";
     foreach (Input *i, f->end_->inputs ())
-      endCode += i->name () + " : '[input=\"" + i->name () + "\"]', ";
+      endCode += i->name () + " : [input=\"" + i->name () + "\"], ";
     endCode.remove (endCode.length () - 2, 2);
     endCode += " };\n";
 
