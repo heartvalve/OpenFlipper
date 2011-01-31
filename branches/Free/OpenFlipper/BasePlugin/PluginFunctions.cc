@@ -1028,6 +1028,20 @@ void flyTo (const ACG::Vec3d &_center, bool _move_back, double _time) {
 }
 
 
+/// Take a snapshot of a viewer
+void viewerSnapshot(int _viewer, QImage& _image, int _width, int _height, bool _alpha,
+                    bool _hideCoordsys, int _samples) {
+    
+  if ( _viewer == ACTIVE_VIEWER ) {
+    examiner_widgets_[activeExaminer_]->snapshot(_image, _width, _height, _alpha, _hideCoordsys, _samples);
+  } else if ( _viewer == ALL_VIEWERS )
+    std::cerr << "Please select viewer to get snapshot!" << std::endl;
+  else if ( ( _viewer >= 0 ) && _viewer < (int)examiner_widgets_.size() )
+    examiner_widgets_[_viewer]->snapshot(_image, _width, _height, _alpha, _hideCoordsys, _samples);
+  else
+    std::cerr << "Requested illegal viewer for snapshot!!" << std::endl;
+}
+
 
 
 // ===============================================================================

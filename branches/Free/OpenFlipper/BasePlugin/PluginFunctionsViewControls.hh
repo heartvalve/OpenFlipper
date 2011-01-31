@@ -406,6 +406,27 @@ void flyTo (const ACG::Vec3d &_center, bool _move_back = true, double _time=1000
 
 /** @} */
 
+//=======================================
+// Provide snapshot functions
+    /** @name Snapshots
+    * @{ */
+//=======================================
+
+/**  Fly to point and keep viewing direction (animated).
+ * @param _viewer   Viewer id
+ * @param _image    An image to store pixel data in
+ * @param _width    Image width 
+ * @param _height   Image height
+ * @param _alpha    Make background transparent
+ * @param _hideCoordsys   Hide coordsys node
+ * @param _samples  Number of samples (multisampling)
+ */
+DLLEXPORT
+void viewerSnapshot(int _viewer, QImage& _image, int _width = 0, int _height = 0,
+                    bool _alpha = false, bool _hideCoordsys = false, int _samples = 1);
+
+/** @} */
+
 }
 
 #endif //PLUGINFUNCTIONS_HH
