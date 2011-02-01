@@ -439,10 +439,8 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
 
   if  ( object->dataType()  == DATA_TRIANGLE_MESH ) {
     transformMesh(mat , *PluginFunctions::triMesh(object) );
-    PluginFunctions::triMesh(object)->update_normals();
   } else  if  ( object->dataType()  == DATA_POLY_MESH ) {
     transformMesh(mat , *PluginFunctions::polyMesh(object) );
-    PluginFunctions::polyMesh(object)->update_normals();
 #ifdef ENABLE_TSPLINEMESH_SUPPORT
   } else  if  ( object->dataType()  == DATA_TSPLINE_MESH ) {
     transformMesh(mat , *PluginFunctions::tsplineMesh(object) );
@@ -1646,15 +1644,21 @@ ACG::Matrix4x4d MovePlugin::getLastManipulatorMatrix(bool _reset) {
 
 /** \brief Transform a mesh with the given transformation matrix
  *
+ * Note: The normals have to be transformed with the inverse
+ * transposed transformation matrix in order to yield correct results
+ *
  * @param _mat transformation matrix
  * @param _mesh the mesh
  */
 template< typename MeshT >
 void MovePlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
   // Get the inverse matrix of the transformation for the normals
-  ACG::Matrix4x4d invMat = _mat;
-  invMat.invert ();
-
+  ACG::Matrix4x4d invTranspMat = _mat;
+  
+  // Build inverse transposed matrix of _mat
+  invTranspMat.invert();
+  invTranspMat.transpose();
+  
   typename MeshT::VertexIter v_it     = _mesh.vertices_begin();
   typename MeshT::VertexIter v_end = _mesh.vertices_end();
   for (; v_it!=v_end; ++v_it) {
@@ -1663,11 +1667,9 @@ void MovePlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
     _mesh.set_point(v_it,_mat.transform_point(_mesh.point(v_it)));
     
     // transform the vertex normal
-    typename MeshT::Point n = invMat.transform_vector(_mesh.normal(v_it));
+    typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(v_it));
     
-    //re-normalize the vertex normal
-    if (n.length () != 0.0)
-        n *= (1.0/n.length ());
+    n.normalize();
     
     _mesh.set_normal(v_it,n);
   }
@@ -1677,11 +1679,9 @@ void MovePlugin::transformMesh(ACG::Matrix4x4d _mat , MeshT& _mesh ) {
   for (; f_it != f_end; ++f_it) {
     
     // transform the face normal
-    typename MeshT::Point n = invMat.transform_vector(_mesh.normal(f_it));
+    typename MeshT::Normal n = invTranspMat.transform_vector(_mesh.normal(f_it));
     
-    //re-normalize the face normal
-    if (n.length () != 0.0)
-        n *= (1.0/n.length ());
+    n.normalize();
     
     _mesh.set_normal(f_it,n);
   }
