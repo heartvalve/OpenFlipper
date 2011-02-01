@@ -1,5 +1,21 @@
 /*! \page changelog Changelog
  *
+ * - <b>OpenFlipper 1.0.1 (  ? , 10790 )</b>
+ *      - <b>Core</b>
+ *          - Log Window
+ *              - Fixed log filter button staying pressed
+ *          - User Interface
+ *              - Scripting function to move toolboxes to top or bottom
+ *      - <b>Plugins</b>
+ *          - MeshRepair
+ *              - Made most functions scriptable
+ *              - Some minor bugfixes
+ *          - ViewControl
+ *              - Scripting function to set projection mode of coordinate system
+ *          - VSI (Visual scripting interface)
+ *              - Fixed bug that prevented usage of conditions and loops
+ *              - Scripting functions for Mesh Repair Plugin
+ * 
  * - <b>OpenFlipper 1.0 (  01.26.2011 , 10764 )</b>
  *      - <b>ACG</b>
  *          - GLState
