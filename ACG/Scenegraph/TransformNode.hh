@@ -79,6 +79,10 @@ namespace SceneGraph {
     specified center. This is the base class for e.g. the
     TrackballNode and the ManipulatorNode, that only add a GUI for
     generating the transformations.
+    
+    Note that in order for the transformations to apply in
+    each traversal of the scenegraph, one has to call
+    apply_transformation(true) once.
 */
 
 class ACGDLLEXPORT TransformNode : public BaseNode
