@@ -40,6 +40,26 @@
 *                                                                            *
 \*===========================================================================*/
 
+
+
+/*
+License File format:
+
+0:    Signature     over all other entries
+1:    Expiry date
+2:    Plugin filename
+3:    coreHash
+4:    pluginHash
+5:    cpuHash
+6:    windowsProductId (Windows only otherwise filled with "-" before hashing)
+7..?: mac Address hashes
+
+*/
+
+
+
+
+
 #include <OpenFlipper/LicenseManager/LicenseManager.hh>
 #include <OpenFlipper/common/GlobalOptions.hh>
 #include <QFile>
@@ -136,35 +156,34 @@ bool LicenseManager::authenticate() {
   QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
   foreach ( QNetworkInterface netInterface, interfaces ) {
     
-    
-    if ( !( netInterface.flags() & QNetworkInterface::IsLoopBack ) ) {
-      std::cerr << "Got MAC: " << netInterface.humanReadableName().toStdString() << " " << netInterface.hardwareAddress().toStdString() << std::endl;
-      
-      std::cerr << "Flags: " << netInterface.flags() << std::endl;
-      
-      if ( netInterface.hardwareAddress().count(":") == 5 ) {
-      
-        macHashes.push_back(netInterface.hardwareAddress().toAscii().toUpper());
-      } else {
-        std::cerr << "Skipped non ethernet mac" << std::endl;
-      }
+    // Ignore loopback interfaces
+    if ( ( netInterface.flags() & QNetworkInterface::IsLoopBack ) ) {
+        std::cerr << "Loopback" << std::endl;
+        continue;
     }
+
+    // Ignore non ethernet macs
+    if ( netInterface.hardwareAddress().count(":") != 5 ) {
+      continue;
+    }
+
+    // Cleanup mac adress
+    QString currentMac = netInterface.hardwareAddress().toAscii().toUpper();
+    currentMac = currentMac.remove(":");
     
-    mac = mac + netInterface.hardwareAddress().remove(":");
-    
+    macHashes.push_back(currentMac);
   }
   
   std::cerr << "Got " << macHashes.size() << " macs" << std::endl;
   
+  // cleanup the list from duplicates (virtual interfaces on windows connected to an existing device ... )
   macHashes.removeDuplicates();
   
   std::cerr << "Got " << macHashes.size() << " macs after cleanup" << std::endl;
   
-  for (uint i = 0 ; i < macHashes.size(); ++i ) {
-    std::cerr << "Got mac : " << macHashes[i].toStdString() << std::endl;
-  }
-
-  QString macHash = QCryptographicHash::hash ( mac.toAscii()  , QCryptographicHash::Sha1 ).toHex();  
+  // generate hashes
+  for (int i = 0 ; i < macHashes.size(); ++i ) 
+    macHashes[i] = QCryptographicHash::hash ( macHashes[i].toAscii() , QCryptographicHash::Sha1 ).toHex();  
 
   // ===============================================================================================
   // Compute hash of processor information
@@ -217,6 +236,22 @@ bool LicenseManager::authenticate() {
 
   QString cpuHash = QCryptographicHash::hash ( processor.toAscii()  , QCryptographicHash::Sha1 ).toHex();
 
+  // ===============================================================================================
+  // Get windows product id
+  // =============================================================================================== 
+  
+  QString productId = "-";
+  
+  #ifdef WIN32
+    
+    QSettings registryProduct("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion", QSettings::NativeFormat);
+
+    productId = registryProduct.value( "ProductId", "Unknown" ).toString();
+
+    std::cerr<< "Got product id : " << productHash.toStdString() << std::endl;
+  #endif
+  
+  QString productHash = QCryptographicHash::hash ( productId.toAscii()  , QCryptographicHash::Sha1 ).toHex();
 
   // ===============================================================================================
   // Check License or generate request
@@ -237,51 +272,64 @@ bool LicenseManager::authenticate() {
     QString licenseContents = file.readAll();
     QStringList elements = licenseContents.split('\n',QString::SkipEmptyParts);
 
+    // simplify license file entries
     for ( int i = 0 ; i < elements.size(); ++i )
       elements[i] = elements[i].simplified();
+    
+    // Check the signature of the file (excluding first element as this is the signature itself)
+    QString license = saltPre;
+    for ( int i = 1 ; i < elements.size(); ++i )
+      license += elements[i];
+    license += saltPost;
+    QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+    bool signatureOk = licenseHash == elements[0];
 
-    if ( elements.size() != 7 ) {
-      QString sizeMismatchMessage = "The license file for plugin \"" + name() + "\" is invalid!\n";
-      sizeMismatchMessage += "License File contains " + QString::number(elements.size()) + " lines but it should contain exactly 7!\n";
-      sizeMismatchMessage += "Read data: \n";
-      sizeMismatchMessage += "======================================== \n";
-      for ( int i = 0 ; i < elements.size(); ++i )
-        sizeMismatchMessage += elements[i] + "\n";
-      sizeMismatchMessage += "======================================== \n";
-      
-      QMessageBox::critical(0,tr("License file size invalid"),sizeMismatchMessage );
-    } else {
-
-      // Check signature of license file
-      QString license = saltPre + elements[0] + elements[1] + elements[2] + elements[3] + elements[4] + elements[5] + saltPost;
-      QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-      
-      QDate currentDate = QDate::currentDate();
-      QDate expiryDate  = QDate::fromString(elements[5],Qt::ISODate);
-
-      if ( licenseHash !=  elements[6] ) {
-        authstring_ += tr("License Error: The license file signature for plugin \"") + name() + tr("\" is invalid!\n\n");
-      } else  if ( elements[0] != pluginFileName() ) {
-        authstring_ += tr("License Error: The license file contains plugin name\"") + elements[0] + tr("\" but this is plugin \"") + name() + "\"!\n\n";
-      } else if ( elements[1] != coreHash ) {
-        authstring_ += tr("License Error: The license file for plugin \"") + name() + tr("\" is invalid for the currently running OpenFlipper Core!\n\n");
-      } else if ( elements[2] != pluginHash ) {
-        authstring_ += tr("License Error: The plugin \"") + name() + tr("\" is a different version than specified in license file!\n\n");
-      } else if ( elements[3] != macHash ) {
-        authstring_ += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Network?)!\n\n";
-      } else if ( elements[4] != cpuHash ) {
-        authstring_ += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed CPU?)!\n\n";
-      } else if ( currentDate > expiryDate ) {
-        authstring_ += tr("License Error: The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!\n\n";
-      } else {
-        authenticated_ = true;
-      }
-
-      // Clean it on success
-      if (  authenticated_ ) 
-        authstring_ = "";
-      
+    // Check expiry date
+    QDate currentDate = QDate::currentDate();
+    QDate expiryDate  = QDate::fromString(elements[1],Qt::ISODate);
+    bool expired = (currentDate > expiryDate);
+    
+    // Get number of available mac adresses
+    QStringList licensedMacs;
+    for ( int i = 7 ; i < elements.size(); ++i ) {
+      std::cerr << "MacHash: " << elements[i].toStdString() << std::endl; 
+      licensedMacs.push_back(elements[i]);
     }
+    
+    bool macFound = false;
+    for ( int i = 0; i < macHashes.size(); ++i ) {
+      if ( licensedMacs.contains(macHashes[i]) ) {
+        macFound = true;
+        std::cerr << "Found mac" << std::endl;
+      } else {
+        std::cerr << "not matching Mac!" << std::endl;
+      }
+    }
+    
+    if ( !signatureOk ) {
+      authstring_ += tr("License Error: The license file signature for Plugin \"") + name() + tr("\" is invalid!\n\n");
+    } else if ( expired ) {
+      authstring_ += tr("License Error: The license for plugin \"") + name() + tr("\" has expired on ") + elements[1] + "!\n\n";       
+    } else if ( elements[2] != pluginFileName() ) {
+      authstring_ += tr("License Error: The license file contains plugin name\"") + elements[2] + tr("\" but this is plugin \"") + name() + "\"!\n\n";
+    } else if ( elements[3] != coreHash ) {
+      authstring_ += tr("License Error: The license file for plugin \"") + name() + tr("\" is invalid for the currently running OpenFlipper Core!\n\n");
+    } else if ( elements[4] != pluginHash ) {
+      authstring_ += tr("License Error: The plugin \"") + name() + tr("\" is a different version than specified in license file!\n\n");
+    } else if ( elements[5] != cpuHash ) {
+      authstring_ += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed CPU?)!\n\n";       
+    } else if ( elements[6] != productHash ) {
+      authstring_ += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed OS?)!\n\n";       
+    } else if ( !macFound ) {
+      authstring_ += "License Error: The plugin \"" + name() + "\" is not allowed to run on the current system (Changed Network?)!\n\n";
+    } else {
+      authenticated_ = true;
+    }
+    
+    // Clean it on success
+    if (  authenticated_ ) 
+      authstring_ = "";
+      
   }
 
   if ( authenticated_ ) {
@@ -294,10 +342,13 @@ bool LicenseManager::authenticate() {
     authstring_ += pluginFileName() +"\n";
     authstring_ += coreHash +"\n";
     authstring_ += pluginHash +"\n";
-    authstring_ += macHash +"\n";
     authstring_ += cpuHash +"\n";
+    authstring_ += productHash +"\n";
+    
+    for ( int i = 0 ; i < macHashes.size(); ++i )  
+      authstring_ += macHashes[i] +"\n";
 
-    QString keyRequest = saltPre + pluginFileName() + coreHash + pluginHash + macHash + cpuHash + saltPost;
+    QString keyRequest = saltPre + pluginFileName() + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
     QString requestSig = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
     authstring_ += requestSig + "\n";
 

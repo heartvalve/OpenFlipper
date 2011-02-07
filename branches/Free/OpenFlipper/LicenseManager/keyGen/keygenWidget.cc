@@ -48,14 +48,21 @@
 #include "salt.hh"
 
 KeyGenWidget::KeyGenWidget(QMainWindow *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent),
+    valid_(false)
 {
   setupUi(this);
   connect(generateButton,SIGNAL(clicked()),this,SLOT(slotGenerateButton()));
   
   
   connect(splitButton,SIGNAL(clicked()),this,SLOT(slotSplit()));
-  connect(validButton,SIGNAL(clicked()),this,SLOT(slotValid()));
+  
+  connect(requestData,SIGNAL(textChanged()),this,SLOT(slotAnalyze()));
+  
+  // connect spinboxes forexpiry date
+  connect(days  ,SIGNAL(valueChanged(int)),this,SLOT(slotDate()));
+  connect(months,SIGNAL(valueChanged(int)),this,SLOT(slotDate()));
+  connect(years ,SIGNAL(valueChanged(int)),this,SLOT(slotDate()));
   
   // Automatically set expire date to current date
   // For security reasons no default span is set here!
@@ -63,13 +70,114 @@ KeyGenWidget::KeyGenWidget(QMainWindow *parent)
   
 }
 
-void KeyGenWidget::slotValid() {
+void KeyGenWidget::slotDate() {
   QDate today = QDate::currentDate();
   today = today.addDays(days->value());
   today = today.addMonths(months->value());
   today = today.addYears(years->value());
   
   expires->setDate(today);
+}
+
+void KeyGenWidget::slotAnalyze() {
+  
+  // Convert to text and split to elements
+  QString inputData = requestData->toPlainText();
+  QStringList data = inputData.split('\n',QString::SkipEmptyParts);
+  
+  // This is never avalid request!
+  if ( data.size() < 6 ) {
+    
+    QPalette p = requestData->palette();
+    p.setColor( QPalette::Base, QColor(255,0,0) );
+    requestData->setPalette(p);
+    
+    valid_ = false;
+    
+    return;
+  } else {
+    QPalette p = requestData->palette();
+    p.setColor( QPalette::Base, QColor(255,255,255) );
+    requestData->setPalette(p);
+  }
+  
+  // Get strings
+  QString name        = data[0].simplified();
+  QString coreHash    = data[1].simplified();
+  QString pluginHash  = data[2].simplified();
+  QString cpuHash     = data[3].simplified();
+  QString productHash = data[4].simplified();
+  
+  QStringList macHashes;
+  for ( int i = 5 ; i < data.size() - 1; ++i)
+    macHashes.push_back(data[i].simplified());
+  
+  QString requestSig = data[data.size() - 1].simplified();
+
+  fileNameBox->setText(name);
+  coreHashBox->setText(coreHash);
+  pluginHashBox->setText(pluginHash);
+  cpuHashBox->setText(cpuHash);
+  productIDBox->setText(productHash);
+  
+  macHashBox->setText(macHashes.join("\n"));
+  
+  signatureBox->setText(requestSig);
+  
+  
+  // Get the salts
+  QString saltPre;
+  ADD_SALT_PRE(saltPre);
+  QString saltPost;
+  ADD_SALT_POST(saltPost);
+  
+
+  QString keyRequest      = saltPre + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
+  QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+  
+  if ( requestSig != requestSigCheck ) {
+    QPalette p = signatureBox->palette();
+    p.setColor( QPalette::Base, QColor(255,0,0) );
+    signatureBox->setPalette(p);
+    
+    valid_ = false;
+    return;
+    
+  } else {
+    QPalette p = signatureBox->palette();
+    p.setColor( QPalette::Base, QColor(0,255,0) );
+    signatureBox->setPalette(p);
+    
+  }
+
+  QString expiryDate = expires->date().toString(Qt::ISODate);
+
+  license_ = "";
+  
+  // Add basic hashes
+  license_ += expiryDate + "\n";
+  license_ += name + "\n";
+  license_ += coreHash + "\n";
+  license_ += pluginHash + "\n";
+  license_ += cpuHash + "\n";
+  license_ += productHash + "\n";
+  license_ += macHashes.join("\n") + "\n";
+  
+  QString licenseTmp = saltPre + expiryDate + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
+  QString licenseHash = QCryptographicHash::hash ( licenseTmp.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+  
+  std::cerr << "license : " << licenseTmp.toStdString() << std::endl;
+  std::cerr << "hash : " << licenseHash.toStdString() << std::endl;
+  
+  
+  // Prepend signature
+  license_ = licenseHash + "\n" + license_;
+  
+  std::cerr << "Full license : " << license_.toStdString() << std::endl;
+  
+  valid_ = true;
+  
+  licenseFileName_ = name;
 }
 
 
@@ -86,81 +194,29 @@ void KeyGenWidget::slotSplit() {
   
 }
 
-
 KeyGenWidget::~KeyGenWidget() {
 
 }
 
 void KeyGenWidget::slotGenerateButton() {
 
-  QString inputData = requestData->toPlainText();
-  QStringList data = inputData.split('\n',QString::SkipEmptyParts);
-
-  if ( data.size() != 6) {
-    QMessageBox::critical(this,tr("Wrong request data"),tr("The request has to contain 6 lines of data"));
+  if ( ! valid_ ) {
+    std::cerr << "Invalid! " << std::endl;
     return;
-  } else {
-
-    // Clean strings
-    QString name       = data[0].simplified();
-    QString coreHash   = data[1].simplified();
-    QString pluginHash = data[2].simplified();
-    QString macHash    = data[3].simplified();
-    QString cpuHash    = data[4].simplified();
-    QString requestSig = data[5].simplified();
-
-    QString expiryDate = expires->date().toString(Qt::ISODate);
-
-    std::cerr << "Generating key for Plugin : " << name.toStdString()       << std::endl;
-    std::cerr << "Core Hash                 : " << coreHash.toStdString()   << std::endl;
-    std::cerr << "Plugin Hash               : " << pluginHash.toStdString() << std::endl;
-    std::cerr << "macHash is                : " << macHash.toStdString()    << std::endl;
-    std::cerr << "cpuHash is                : " << cpuHash.toStdString()    << std::endl;
-    std::cerr << "expiryDate is             : " << expiryDate.toStdString() << std::endl;
-    std::cerr << "requestSignature is       : " << requestSig.toStdString() << std::endl;
-
-
-    // Get the salts
-    QString saltPre;
-    ADD_SALT_PRE(saltPre);
-    QString saltPost;
-    ADD_SALT_POST(saltPost);
-
-    QString keyRequest = saltPre + name + coreHash + pluginHash + macHash + cpuHash + saltPost;
-    QString requestSigCheck = QCryptographicHash::hash ( keyRequest.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-    
-    if ( requestSig != requestSigCheck ) {
-      QMessageBox::critical(this,tr("Signature of request invalid"),tr("The signature of the request is not valid"));
-      return;
-    }
-
-    std::cerr << "Writing License file to output : " << name.toStdString() << std::endl;
-    QFile outFile(name + ".lic");
-
-    if (!outFile.open(QIODevice::WriteOnly|QIODevice::Text)) {
-      QMessageBox::critical(this,tr("Unable to open file"),tr("Unable to Open output File"));
-      return;
-    }
-
-    QTextStream output(&outFile);
-
-    // Add basic hashes
-    output << name         << "\n";
-    output << coreHash     << "\n";
-    output << pluginHash   << "\n";
-    output << macHash      << "\n";
-    output << cpuHash      << "\n";
-    output << expiryDate   << "\n";
-    
-    // Sign the license file
-    QString license = saltPre + name + coreHash + pluginHash + macHash + cpuHash + expiryDate + saltPost;
-    QString licenseHash = QCryptographicHash::hash ( license.toAscii()  , QCryptographicHash::Sha1 ).toHex();
-    
-    output << licenseHash;
-
-    outFile.close();
   }
   
-  close();
- 
+  std::cerr << "Writing License file to output : " << licenseFileName_.toStdString() << std::endl;
+  QFile outFile(licenseFileName_ + ".lic");
+
+  if (!outFile.open(QIODevice::WriteOnly|QIODevice::Text)) {
+    QMessageBox::critical(this,tr("Unable to open file"),tr("Unable to Open output File"));
+    return;
+  }
+
+  QTextStream output(&outFile);
+  
+  output << license_;
+
+  outFile.close();
+  
 }
