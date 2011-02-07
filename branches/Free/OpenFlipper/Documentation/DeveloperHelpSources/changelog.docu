@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.1 (  ? , 10790 )</b>
+ * - <b>OpenFlipper 1.0.1 (  ? , 10800 )</b>
  *      - <b>Core</b>
  *          - Log Window
  *              - Fixed log filter button staying pressed
@@ -10,6 +10,8 @@
  *          - MeshRepair
  *              - Made most functions scriptable
  *              - Some minor bugfixes
+ *          - Move
+ *              -Fixed wrong update of normals
  *          - ViewControl
  *              - Scripting function to set projection mode of coordinate system
  *          - VSI (Visual scripting interface)
