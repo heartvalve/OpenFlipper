@@ -135,14 +135,27 @@ bool LicenseManager::authenticate() {
   // Get all Network Interfaces
   QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
   foreach ( QNetworkInterface netInterface, interfaces ) {
-    std::cerr << "Got MAC: " << netInterface.humanReadableName().toStdString() << " " << netInterface.hardwareAddress().toStdString() << std::endl;
     
-    if (  netInterface.flags() & QNetworkInterface::IsLoopBack) {
+    
+    if ( !( netInterface.flags() & QNetworkInterface::IsLoopBack ) ) {
       std::cerr << "Loopback" << std::endl;
+      std::cerr << "Got MAC: " << netInterface.humanReadableName().toStdString() << " " << netInterface.hardwareAddress().toStdString() << std::endl;
+      
+      macHashes.push_back(netInterface.hardwareAddress().toAscii().toUpper());
     }
     
     mac = mac + netInterface.hardwareAddress().remove(":");
     
+  }
+  
+  std::cerr << "Got " << macHashes.size() << " macs" << std::endl;
+  
+  macHashes.removeDuplicates();
+  
+  std::cerr << "Got " << macHashes.size() << " macs after cleanup" << std::endl;
+  
+  for (uint i = 0 ; i < macHashes.size(); ++i ) {
+    std::cerr << "Got mac : " << macHashes[i].toStdString() << std::endl;
   }
 
   QString macHash = QCryptographicHash::hash ( mac.toAscii()  , QCryptographicHash::Sha1 ).toHex();  
