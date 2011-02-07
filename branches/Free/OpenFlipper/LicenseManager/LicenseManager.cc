@@ -57,6 +57,10 @@ License File format:
 */
 
 
+#include <winsock2.h>
+#include <iphlpapi.h>
+#include <stdio.h>
+#pragma comment(lib, "IPHLPAPI.lib")
 
 
 
@@ -65,6 +69,9 @@ License File format:
 #include <QFile>
 #include <QCryptographicHash>
 #include <QNetworkInterface>
+
+
+
 
 LicenseManager::~LicenseManager() 
 { 
@@ -148,9 +155,77 @@ bool LicenseManager::authenticate() {
   // Compute hash of network interfaces
   // ===============================================================================================  
 
-  QString mac;
-  
   QStringList macHashes;
+
+#ifdef WIN32
+
+  #define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
+  #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
+
+  // Pointer for iterating over adapters
+  PIP_ADAPTER_ADDRESSES pAddresses = NULL;
+
+  // Length of the buffer to get information
+  ULONG outBufLen = 0;
+
+  // Allocate enough for one info struct
+  outBufLen = sizeof (IP_ADAPTER_ADDRESSES);
+  pAddresses = (IP_ADAPTER_ADDRESSES *) MALLOC(outBufLen);
+
+  // default to unspecified address family ( get all interfaces .. 4 and 6)
+  ULONG family = AF_UNSPEC;
+
+  // Set the flags to pass to GetAdaptersAddresses
+  ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
+
+  // Make an initial call to GetAdaptersAddresses to get the 
+  // size needed into the outBufLen variable
+  if (GetAdaptersAddresses(family, flags, NULL, pAddresses, &outBufLen) == ERROR_BUFFER_OVERFLOW) {
+      FREE(pAddresses);
+      pAddresses = (IP_ADAPTER_ADDRESSES *) MALLOC(outBufLen);
+  }
+
+  if (pAddresses != NULL) {
+    
+    // Get the required info
+    DWORD dwRetVal = GetAdaptersAddresses(family, flags, NULL, pAddresses, &outBufLen);
+
+    if (dwRetVal == NO_ERROR) {
+        
+        // pointer to iterate over all available structs .. initialize to first one
+        PIP_ADAPTER_ADDRESSES pCurrAddresses = pAddresses;
+
+        while (pCurrAddresses) {
+
+            if (pCurrAddresses->PhysicalAddressLength != 0) {
+              QString currentMac = "";
+              
+                for (uint i = 0; i < pCurrAddresses->PhysicalAddressLength; i++) {
+                  currentMac += QString("%1").arg( (int) pCurrAddresses->PhysicalAddress[i] , 2 ,16,QChar('0'));
+                    if (i != (pCurrAddresses->PhysicalAddressLength - 1))
+                      currentMac +=":";
+                }
+
+                // Ignore non ethernet macs
+                if ( (currentMac.count(":") == 5) ) {
+                      // Cleanup and remember mac adress
+                      currentMac = currentMac.toAscii().toUpper();
+                      currentMac = currentMac.remove(":");
+                      macHashes.push_back(currentMac);
+                }
+
+            }
+
+           pCurrAddresses = pCurrAddresses->Next;
+
+        }
+    }
+
+  }
+
+  FREE(pAddresses);
+
+#else
 
   // Get all Network Interfaces
   QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
@@ -173,9 +248,12 @@ bool LicenseManager::authenticate() {
     macHashes.push_back(currentMac);
   }
 
+#endif
+  std::cerr << "Got " << macHashes.size() << " addresses" << std::endl;
   // cleanup the list from duplicates (virtual interfaces on windows connected to an existing device ... )
   macHashes.removeDuplicates();
 
+  std::cerr << "Got " << macHashes.size() << " addresses after cleanup" << std::endl;
   // generate hashes
   for (int i = 0 ; i < macHashes.size(); ++i ) 
     macHashes[i] = QCryptographicHash::hash ( macHashes[i].toAscii() , QCryptographicHash::Sha1 ).toHex();  
