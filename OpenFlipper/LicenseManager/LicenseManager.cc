@@ -57,10 +57,12 @@ License File format:
 */
 
 
-#include <winsock2.h>
-#include <iphlpapi.h>
-#include <stdio.h>
-#pragma comment(lib, "IPHLPAPI.lib")
+// Windows required to get network address infos
+#ifdef WIN32
+  #include <winsock2.h>
+  #include <iphlpapi.h>
+  #pragma comment(lib, "IPHLPAPI.lib")
+#endif
 
 
 
@@ -185,6 +187,7 @@ bool LicenseManager::authenticate() {
       pAddresses = (IP_ADAPTER_ADDRESSES *) MALLOC(outBufLen);
   }
 
+  // If we allocated the required memory
   if (pAddresses != NULL) {
     
     // Get the required info
@@ -192,33 +195,37 @@ bool LicenseManager::authenticate() {
 
     if (dwRetVal == NO_ERROR) {
         
-        // pointer to iterate over all available structs .. initialize to first one
-        PIP_ADAPTER_ADDRESSES pCurrAddresses = pAddresses;
+      // pointer to iterate over all available structs .. initialize to first one
+      PIP_ADAPTER_ADDRESSES pCurrAddresses = pAddresses;
 
-        while (pCurrAddresses) {
+      while (pCurrAddresses) {
 
-            if (pCurrAddresses->PhysicalAddressLength != 0) {
-              QString currentMac = "";
-              
-                for (uint i = 0; i < pCurrAddresses->PhysicalAddressLength; i++) {
-                  currentMac += QString("%1").arg( (int) pCurrAddresses->PhysicalAddress[i] , 2 ,16,QChar('0'));
-                    if (i != (pCurrAddresses->PhysicalAddressLength - 1))
-                      currentMac +=":";
-                }
+        // Check if this device contains a mac
+        if (pCurrAddresses->PhysicalAddressLength != 0) {
+          QString currentMac = "";
+          
+          for (uint i = 0; i < pCurrAddresses->PhysicalAddressLength; i++) {
+            
+            currentMac += QString("%1").arg( (int) pCurrAddresses->PhysicalAddress[i] , 2 ,16,QChar('0'));
+            
+            if (i != (pCurrAddresses->PhysicalAddressLength - 1))
+              currentMac +=":";
+          }
 
-                // Ignore non ethernet macs
-                if ( (currentMac.count(":") == 5) ) {
-                      // Cleanup and remember mac adress
-                      currentMac = currentMac.toAscii().toUpper();
-                      currentMac = currentMac.remove(":");
-                      macHashes.push_back(currentMac);
-                }
-
-            }
-
-           pCurrAddresses = pCurrAddresses->Next;
+          // Ignore non ethernet macs
+          if ( (currentMac.count(":") == 5) ) {
+                // Cleanup and remember mac adress
+                currentMac = currentMac.toAscii().toUpper();
+                currentMac = currentMac.remove(":");
+                macHashes.push_back(currentMac);
+          }
 
         }
+
+        // Next interface
+        pCurrAddresses = pCurrAddresses->Next;
+      }
+      
     }
 
   }
@@ -249,11 +256,11 @@ bool LicenseManager::authenticate() {
   }
 
 #endif
-  std::cerr << "Got " << macHashes.size() << " addresses" << std::endl;
+
+
   // cleanup the list from duplicates (virtual interfaces on windows connected to an existing device ... )
   macHashes.removeDuplicates();
 
-  std::cerr << "Got " << macHashes.size() << " addresses after cleanup" << std::endl;
   // generate hashes
   for (int i = 0 ; i < macHashes.size(); ++i ) 
     macHashes[i] = QCryptographicHash::hash ( macHashes[i].toAscii() , QCryptographicHash::Sha1 ).toHex();  
