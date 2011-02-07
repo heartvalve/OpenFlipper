@@ -158,8 +158,7 @@ bool LicenseManager::authenticate() {
     
     // Ignore loopback interfaces
     if ( ( netInterface.flags() & QNetworkInterface::IsLoopBack ) ) {
-        std::cerr << "Loopback" << std::endl;
-        continue;
+      continue;
     }
 
     // Ignore non ethernet macs
@@ -173,14 +172,10 @@ bool LicenseManager::authenticate() {
     
     macHashes.push_back(currentMac);
   }
-  
-  std::cerr << "Got " << macHashes.size() << " macs" << std::endl;
-  
+
   // cleanup the list from duplicates (virtual interfaces on windows connected to an existing device ... )
   macHashes.removeDuplicates();
-  
-  std::cerr << "Got " << macHashes.size() << " macs after cleanup" << std::endl;
-  
+
   // generate hashes
   for (int i = 0 ; i < macHashes.size(); ++i ) 
     macHashes[i] = QCryptographicHash::hash ( macHashes[i].toAscii() , QCryptographicHash::Sha1 ).toHex();  
@@ -243,12 +238,8 @@ bool LicenseManager::authenticate() {
   QString productId = "-";
   
   #ifdef WIN32
-    
-    QSettings registryProduct("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion", QSettings::NativeFormat);
-
+    QSettings registryProduct("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion", QSettings::NativeFormat);
     productId = registryProduct.value( "ProductId", "Unknown" ).toString();
-
-    std::cerr<< "Got product id : " << productHash.toStdString() << std::endl;
   #endif
   
   QString productHash = QCryptographicHash::hash ( productId.toAscii()  , QCryptographicHash::Sha1 ).toHex();
@@ -292,18 +283,13 @@ bool LicenseManager::authenticate() {
     // Get number of available mac adresses
     QStringList licensedMacs;
     for ( int i = 7 ; i < elements.size(); ++i ) {
-      std::cerr << "MacHash: " << elements[i].toStdString() << std::endl; 
       licensedMacs.push_back(elements[i]);
     }
     
     bool macFound = false;
     for ( int i = 0; i < macHashes.size(); ++i ) {
-      if ( licensedMacs.contains(macHashes[i]) ) {
+      if ( licensedMacs.contains(macHashes[i]) ) 
         macFound = true;
-        std::cerr << "Found mac" << std::endl;
-      } else {
-        std::cerr << "not matching Mac!" << std::endl;
-      }
     }
     
     if ( !signatureOk ) {
