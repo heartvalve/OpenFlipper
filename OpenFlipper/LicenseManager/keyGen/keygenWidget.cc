@@ -166,14 +166,10 @@ void KeyGenWidget::slotAnalyze() {
   QString licenseTmp = saltPre + expiryDate + name + coreHash + pluginHash + cpuHash + productHash + macHashes.join("") +  saltPost;
   QString licenseHash = QCryptographicHash::hash ( licenseTmp.toAscii()  , QCryptographicHash::Sha1 ).toHex();
   
-  std::cerr << "license : " << licenseTmp.toStdString() << std::endl;
-  std::cerr << "hash : " << licenseHash.toStdString() << std::endl;
-  
-  
   // Prepend signature
   license_ = licenseHash + "\n" + license_;
   
-  std::cerr << "Full license : " << license_.toStdString() << std::endl;
+  std::cerr << "Full license : \n" << license_.toStdString() << std::endl;
   
   valid_ = true;
   
