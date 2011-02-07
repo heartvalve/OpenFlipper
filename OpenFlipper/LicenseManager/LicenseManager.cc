@@ -212,8 +212,10 @@ bool LicenseManager::authenticate() {
               currentMac +=":";
           }
 
-          // Ignore non ethernet macs
-          if ( (currentMac.count(":") == 5) ) {
+          // Ignore non ethernet macs with more than 5 blocks
+          // Only check ethernet and wireless interfaces
+          if ( (currentMac.count(":") == 5) && 
+               ( pCurrAddresses->IfType == IF_TYPE_IEEE80211 || pCurrAddresses->IfType == IF_TYPE_ETHERNET_CSMACD )  ) {
                 // Cleanup and remember mac adress
                 currentMac = currentMac.toAscii().toUpper();
                 currentMac = currentMac.remove(":");
