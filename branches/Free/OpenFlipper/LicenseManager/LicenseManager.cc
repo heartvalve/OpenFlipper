@@ -129,14 +129,23 @@ bool LicenseManager::authenticate() {
   // ===============================================================================================  
 
   QString mac;
+  
+  QStringList macHashes;
 
   // Get all Network Interfaces
   QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
   foreach ( QNetworkInterface netInterface, interfaces ) {
+    std::cerr << "Got MAC: " << netInterface.humanReadableName().toStdString() << " " << netInterface.hardwareAddress().toStdString() << std::endl;
+    
+    if (  netInterface.flags() & QNetworkInterface::IsLoopBack) {
+      std::cerr << "Loopback" << std::endl;
+    }
+    
     mac = mac + netInterface.hardwareAddress().remove(":");
+    
   }
 
-  QString macHash = QCryptographicHash::hash ( mac.toAscii()  , QCryptographicHash::Sha1 ).toHex();
+  QString macHash = QCryptographicHash::hash ( mac.toAscii()  , QCryptographicHash::Sha1 ).toHex();  
 
   // ===============================================================================================
   // Compute hash of processor information
