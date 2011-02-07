@@ -161,12 +161,6 @@ bool LicenseManager::authenticate() {
       continue;
     }
     
-    // Ignore offline interfaces
-    if ( ! ( netInterface.flags() & QNetworkInterface::IsUp ) ) {
-      std::cerr << "Not up" << std::endl;
-      continue;
-    }
-
     // Ignore non ethernet macs
     if ( netInterface.hardwareAddress().count(":") != 5 ) {
       continue;
@@ -179,12 +173,8 @@ bool LicenseManager::authenticate() {
     macHashes.push_back(currentMac);
   }
 
-  std::cerr << "Got  " << macHashes.size() << " Interfaces" << std::endl;
-  
   // cleanup the list from duplicates (virtual interfaces on windows connected to an existing device ... )
   macHashes.removeDuplicates();
-  
-  std::cerr << "Got  " << macHashes.size() << " Interfaces after cleanup" << std::endl;
 
   // generate hashes
   for (int i = 0 ; i < macHashes.size(); ++i ) 
