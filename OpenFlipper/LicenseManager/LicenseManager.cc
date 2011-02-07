@@ -138,10 +138,16 @@ bool LicenseManager::authenticate() {
     
     
     if ( !( netInterface.flags() & QNetworkInterface::IsLoopBack ) ) {
-      std::cerr << "Loopback" << std::endl;
       std::cerr << "Got MAC: " << netInterface.humanReadableName().toStdString() << " " << netInterface.hardwareAddress().toStdString() << std::endl;
       
-      macHashes.push_back(netInterface.hardwareAddress().toAscii().toUpper());
+      std::cerr << "Flags: " << netInterface.flags() << std::endl;
+      
+      if ( netInterface.hardwareAddress().count(":") == 5 ) {
+      
+        macHashes.push_back(netInterface.hardwareAddress().toAscii().toUpper());
+      } else {
+        std::cerr << "Skipped non ethernet mac" << std::endl;
+      }
     }
     
     mac = mac + netInterface.hardwareAddress().remove(":");
