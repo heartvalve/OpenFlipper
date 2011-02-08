@@ -781,15 +781,8 @@ bool initializeSettings() {
   // Remember the main application directory (assumed to be one above executable Path)
   applicationDir_ =  QCoreApplication::applicationDirPath();
 
-  /// \todo remove the else branch here which is only used by qmake
-  #ifdef OPENFLIPPER_APPDIR
-    // When using cmake, we get the absolute path to the Application directory via a define
-    applicationDir_.cd(OPENFLIPPER_APPDIR);
-  #else
-    // For qmake the path of the application will be one directory up.
-    // Remove this as we will remove qmake support!
-    applicationDir_.cd(".." + OpenFlipper::Options::dirSeparator() );
-  #endif
+  // When using cmake, we get the absolute path to the Application directory via a define
+  applicationDir_.cd(OPENFLIPPER_APPDIR);
   
   //==================================================================================================
   // Setup directory containing plugins
@@ -798,41 +791,11 @@ bool initializeSettings() {
   // start at application directory 
   pluginDir_ = applicationDir_;
   
-  /// \todo remove the qmake specific else branch here!
-  #ifdef OPENFLIPPER_PLUGINDIR
-    // cmake style: Path is directly given from define!
-    pluginDir_.cd(OPENFLIPPER_PLUGINDIR);
-  #else
-     // qmake stuff. Remove when removing qmake!
-     pluginDir_.cd("Plugins");
-
-    #if defined(WIN32)
-      pluginDir_.cd("Windows");
-    #elif defined(ARCH_DARWIN)
-      pluginDir_.cd("Darwin");
-    #else
-      pluginDir_.cd("Linux");
-    #endif
-
-    if ( OpenFlipper::Options::is64bit() )
-      pluginDir_.cd("64");
-    else
-      pluginDir_.cd("32");
-
-    #ifdef WIN32
-      #ifndef NDEBUG
-        #define DEBUG
-      #endif
-    #endif
-
-    #ifdef DEBUG
-      pluginDir_.cd("Debug");
-    #else
-      pluginDir_.cd("Release");
-    #endif
-  #endif
+  // cmake style: Path is directly given from define!
+  pluginDir_.cd(OPENFLIPPER_PLUGINDIR);
   
   dataDir_ = OpenFlipper::Options::applicationDir();
+  
   #ifdef OPENFLIPPER_DATADIR
     dataDir_.cd(OPENFLIPPER_DATADIR);
   #else
