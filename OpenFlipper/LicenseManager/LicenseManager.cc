@@ -354,9 +354,7 @@ bool LicenseManager::authenticate() {
   QString licenseFileName = OpenFlipper::Options::licenseDirStr() + QDir::separator() + pluginFileName() + ".lic";
   QFile file( licenseFileName );
 
-  if (!file.open(QIODevice::ReadOnly|QIODevice::Text)) {
-    QMessageBox::critical(0,tr("Unable to find license File"),licenseFileName );
-  } else {
+  if (file.open(QIODevice::ReadOnly|QIODevice::Text)) {
     QString licenseContents = file.readAll();
     QStringList elements = licenseContents.split('\n',QString::SkipEmptyParts);
 
