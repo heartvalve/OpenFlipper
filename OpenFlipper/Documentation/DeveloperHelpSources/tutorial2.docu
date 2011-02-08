@@ -179,5 +179,4 @@
  * \include example/SmootherPlugin.cc
  * 
  * We use the cmake project file presented in \ref ex1c to build this plugin.
- * (Or you can also use the obsolete qmake project file presented in \ref ex1b.)
  */
