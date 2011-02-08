@@ -58,7 +58,7 @@
  * \include example/simplePlugin.cc
  *
  *
- * \section ex1c How to build the plugin with cmake (recommended)
+ * \section ex1c How to build the plugin with CMake
  * 
  * The only thing that's still left to be created is our cmake project file
  * that is used to generate the Makefiles for the plugin.
@@ -76,30 +76,6 @@
  * leave this line as it is.
  *
  * Now, when building OpenFlipper with cmake, your plugin should be found and built automatically.
- *
- * \section ex1b How to build the plugin with qmake (obsolete)
- * 
- * If you use QMake to generate your makefiles, you can drop the previous section.
- * Note: Using QMake as build system has become obsolete since OpenFlipper 1.0 RC1.
- * For general information on how to build
- * OpenFlipper with qmake see \ref buildingOpenFlipper.
- * So lets get started! First off we create a file \c Plugin-SimplePlugin.pro in the plugins's directory.
- * It is mandatory to name the project file after the project's directory.
- *
- * Our first line includes OpenFlipper's predefined qmake functions. This allows us to simply call
- * \c Plugin() in order to build our code as a plugin. The variable \c DIRECTORY holds
- * the directories that are to be build (we only need the plugin's directory here since the plugin does not
- * depend on external libraries or sources). Our project file looks like this:
- *
- * Plugin-SimplePlugin.pro
- * \include example/Plugin-SimplePlugin.pro
- *
- * The \c HEADERS and \c SOURCES variables should be self-explanatory. \c FORMS contains qt user interface
- * files which aren't needed at this time but become important when using user forms for the plugin.
- *
- * Now go to the root path of OpenFlipper and enter \c qmake (be sure to use version 4 of qmake; some
- * linux distributions use the link \c qmake-qt4 against the executable) in order to create
- * the new Makefiles now containing our plugin. We now build OpenFlipper by entering \c make.
  *
  * To test if our plugin has been successfully loaded, we launch OpenFlipper and select \c Plugins->Unload \c Plugin.
  * If our plugin \c SimplePlugin is listed, everything is fine. If it's not listed, read OpenFlippers
