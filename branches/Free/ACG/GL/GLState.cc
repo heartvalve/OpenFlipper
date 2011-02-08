@@ -204,17 +204,29 @@ void GLState::clearBuffers ()
     glPushMatrix();
     glLoadIdentity ();
 
+
+    // GetoriginalScissor settings
+    bool scissor =  glIsEnabled(GL_SCISSOR_TEST);
+        
+    GLint origBox[4];
+    glGetIntegerv(GL_SCISSOR_BOX,&origBox[0]);
+    
+    //Enable scissor 
+    if (!scissor)
+      glEnable(GL_SCISSOR_TEST);
+    
+    // Restrict to our current viewport
+    glScissor(  left_,bottom_,width_,height_ );
+    
+    // Clear restricted region
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     
-    // Rendering a quad? Why???? Using clear now
-//     glColor4fv(clear_color_.data());
-//     glBegin (GL_QUADS);
-//     glVertex3f (-1.0, -1.0, 1.0);
-//     glVertex3f (1.0, -1.0, 1.0);
-//     glVertex3f (1.0, 1.0, 1.0);
-//     glVertex3f (-1.0, 1.0, 1.0);
-//     glEnd ();
-
+    // Reset to originalsettings
+    glScissor(  origBox[0], origBox[1], origBox[2], origBox[3] );
+    
+    if (!scissor)
+      glDisable(GL_SCISSOR_TEST);
+      
     glPopMatrix ();
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
