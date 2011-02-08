@@ -45,7 +45,7 @@ IF (DOXYGEN_FOUND)
   macro (acg_create_doc_target target)
   
     IF   (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doxy.config.in")
-      MESSAGE(STATUS "configured ${CMAKE_CURRENT_SOURCE_DIR}/doxy.config.in --> ${CMAKE_CURRENT_BINARY_DIR}/doxy.config")
+      #MESSAGE(STATUS "configured ${CMAKE_CURRENT_SOURCE_DIR}/doxy.config.in --> ${CMAKE_CURRENT_BINARY_DIR}/doxy.config")
       CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/doxy.config.in 
         ${CMAKE_CURRENT_BINARY_DIR}/doxy.config
         @ONLY )
@@ -59,7 +59,7 @@ IF (DOXYGEN_FOUND)
       ELSE (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doxy.config")
         IF   (EXISTS "${CMAKE_MODULE_PATH}/doxy.config.in")
           # using template doxy.config.in
-          MESSAGE(STATUS "configured ${CMAKE_CMAKE_MODULE_PATH}/doxy.config.in --> ${CMAKE_CURRENT_BINARY_DIR}/doxy.config")
+          #MESSAGE(STATUS "configured ${CMAKE_CMAKE_MODULE_PATH}/doxy.config.in --> ${CMAKE_CURRENT_BINARY_DIR}/doxy.config")
           CONFIGURE_FILE(${CMAKE_MODULE_PATH}/doxy.config.in 
             ${CMAKE_CURRENT_BINARY_DIR}/doxy.config
             @ONLY )
