@@ -64,6 +64,10 @@ License File format:
   #pragma comment(lib, "IPHLPAPI.lib")
 #endif
 
+#ifdef ARCH_DARWIN
+  #include <sys/types.h>
+  #include <sys/sysctl.h>
+#endif
 
 
 #include <OpenFlipper/LicenseManager/LicenseManager.hh>
@@ -113,7 +117,11 @@ bool LicenseManager::authenticate() {
 
   #ifdef WIN32
     QFile coreApp(OpenFlipper::Options::applicationDirStr() + QDir::separator() + "OpenFlipper.exe");
-  #else
+  #elif defined ARCH_DARWIN
+    QFile coreApp(OpenFlipper::Options::applicationDirStr() + QDir::separator() + ".." + 
+                                                              QDir::separator() + "MacOS"+
+							      QDir::separator() + "OpenFlipper");
+  #else 
     QFile coreApp(OpenFlipper::Options::applicationDirStr() + QDir::separator() + "bin" + QDir::separator() + "OpenFlipper");
   #endif
 
@@ -136,6 +144,8 @@ bool LicenseManager::authenticate() {
 
   #ifdef WIN32
     QFile pluginFile(OpenFlipper::Options::pluginDirStr() + QDir::separator() + pluginFileName() + ".dll");
+  #elif defined ARCH_DARWIN
+    QFile pluginFile(OpenFlipper::Options::pluginDirStr() + QDir::separator() + "lib" + pluginFileName() + ".so");
   #else
     QFile pluginFile(OpenFlipper::Options::pluginDirStr() + QDir::separator() + "lib" + pluginFileName() + ".so");
   #endif
