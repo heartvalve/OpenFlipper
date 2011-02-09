@@ -69,8 +69,10 @@
 //== CLASS DEFINITION =========================================================
 
 
-/** Plugin for Info Support
- */
+/** \brief Plugin to visualize information about objects in the scene
+ 
+  Plugin to visualize information about objects in the scene
+*/
 class InfoPlugin : public QObject, BaseInterface, MouseInterface, LoggingInterface, StatusbarInterface
 {
   Q_OBJECT
