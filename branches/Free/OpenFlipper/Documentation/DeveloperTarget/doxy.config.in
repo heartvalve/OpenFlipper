@@ -584,9 +584,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = @CMAKE_SOURCE_DIR@/OpenFlipper \
-                         @CMAKE_SOURCE_DIR@/ObjectTypes \
-                         @CMAKE_SOURCE_DIR@/ACG
+INPUT                  = @CMAKE_SOURCE_DIR@
                         
 
 # This tag can be used to specify the character encoding of the source files
