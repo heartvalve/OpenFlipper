@@ -206,7 +206,7 @@ void GLState::clearBuffers ()
 
 
     // GetoriginalScissor settings
-    bool scissor =  glIsEnabled(GL_SCISSOR_TEST);
+    GLboolean scissor =  glIsEnabled(GL_SCISSOR_TEST);
         
     GLint origBox[4];
     glGetIntegerv(GL_SCISSOR_BOX,&origBox[0]);
