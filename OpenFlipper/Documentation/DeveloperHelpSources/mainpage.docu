@@ -1,5 +1,5 @@
 /*! \mainpage OpenFlipper Developer Documentation
- *\image html splash.png
+ * \image html splash.png
  * \section intro_sec Introduction
  *
  * This is the developer documentation for the OpenFlipper project.
@@ -20,4 +20,12 @@
  * - \subpage dataStructure "Datastructures"
  * - \subpage dataFlow "Dataflow"
  * - \subpage options "Command line options and config files"
+ *
+ * \subpage misc
+ * - \ref changelog
+ * - \ref todo
+ *
+ * \page integrated_libs Integrated libraries
+ * - \subpage OpenMeshDoc
+ * - \subpage ACGDoc
  */
