@@ -97,7 +97,9 @@ HelpWidget::HelpWidget(QWidget* parent, const QString& _homeSite)
   
   for ( int i = 0 ; i < helpFiles.size() ; ++i ) 
     if ( !helpEngine_->registerDocumentation( helpDir.path()+ QDir::separator() + helpFiles[i]) ) 
-      std::cerr << helpEngine_->error().toStdString() << std::endl;
+      std::cerr << helpFiles[i].toStdString() << " :" << helpEngine_->error().toStdString() << std::endl;
+    else 
+      std::cerr << "Loaded Help file : " << helpFiles[i].toStdString() << std::endl;
 
   searchEngine_ = new QHelpSearchEngine(helpEngine_, this);
 

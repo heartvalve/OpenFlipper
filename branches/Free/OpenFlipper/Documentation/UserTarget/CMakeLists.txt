@@ -2,26 +2,25 @@ include (ACGDoxygen)
 
 IF (DOXYGEN_FOUND)
 
-#  if (TARGET doc)
-#    acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml")
-#  endif ()
+  set(user_html_doc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/UserHTML")
+  set(user_qt_help_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
 
-  # use the doxyfile here and generate a documentation target
+  # Create directories in order to avoid doxygen warnings
+  if(NOT (IS_DIRECTORY ${user_html_doc_dir}) )
+     file(MAKE_DIRECTORY ${user_html_doc_dir} )
+  endif()
+
+  # Create directories in order to avoid doxygen warnings
+  if(NOT (IS_DIRECTORY ${user_qt_help_dir}) )
+     file(MAKE_DIRECTORY ${user_qt_help_dir} )
+  endif()                                     
+
+  # use the doxyfile here and generate a documentation target which builds only the user Help
+  # Function defaults to current dir and adds a dependency to the global doc target
   acg_create_doc_target( doc-UserHelp )
 
-  # copy acg stylesheet data after build
-  if (TARGET doc-UserHelp )
-    acg_copy_after_build (doc-UserHelp "${CMAKE_CURRENT_SOURCE_DIR}/../ACGStyleHtml" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/UserHTML/html") 
-  endif ()
-
-  # Add a documentation install target
-  add_custom_target(doc-User-html-install COMMENT "Installing User HTML Documentation" VERBATIM )
-
-  # Build Documentation before installing it
-  add_dependencies(doc-User-html-install doc)
-
-  if (TARGET doc-Developer-html-install)
-    acg_copy_after_build (doc-User-html-install "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/UserHtml"   "${CMAKE_INSTALL_PREFIX}/${ACG_PROJECT_DATADIR}/Doc/UserHtml")
-  endif()
+  # install the UserHelp on install
+  # This will also install the plugin User Documentations
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/UserHTML" DESTINATION "${ACG_PROJECT_DATADIR}/Doc" )
 
 ENDIF(DOXYGEN_FOUND)

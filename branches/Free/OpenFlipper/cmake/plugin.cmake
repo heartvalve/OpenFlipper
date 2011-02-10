@@ -254,57 +254,43 @@ function (_build_openflipper_plugin plugin)
        . 
        ${${_PLUGIN}_DIRS}
     )
+
+    #============================================================================================
+    # User Documentation build
+    #============================================================================================
     
-    # Add documentation target
-    add_custom_target(doc-${plugin} COMMENT "Building documentation for plugin ${plugin}" VERBATIM)
+    # Only build the documentation if a userdoc subdirectory exists for the plugin
+    if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/userDoc)
+
+      set(plugin_html_doc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/UserHTML/Plugin-${plugin}")
+      set(plugin_qt_help_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
     
-    # make doc builds this plugin's documentation as well
-    add_dependencies(doc doc-${plugin})
-    
-    set(plugin_doc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/Plugin-${plugin}")
-    
-    # Target for plugin documentation
-    if(TARGET doc-${plugin})
-        # Add plugin documentation
-        if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Documentation)
-            # Test if html folder exists. If so, just copy it and ignore
-            # the doxygen branch
-            if(IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html)
-                # Create target directories
-                if(NOT (IS_DIRECTORY ${plugin_doc_dir}))
-                    file(MAKE_DIRECTORY ${plugin_doc_dir})
-                endif()
-                # Copy the html folder
-                acg_copy_after_build (doc-${plugin} "${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html" "${plugin_doc_dir}/html")
-                generate_qhp_file("${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html" "Plugin-${plugin}")
-                if(WIN32)
-                    add_custom_command(TARGET doc-${plugin} POST_BUILD
-                                       COMMAND ${QT_BINARY_DIR}/qhelpgenerator.exe
-                                       ARGS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html/Plugin-${plugin}.qhp)
-                else()
-                    add_custom_command(TARGET doc-${plugin} POST_BUILD
-                                       COMMAND ${QT_BINARY_DIR}/qhelpgenerator
-                                       ARGS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html/Plugin-${plugin}.qhp)
-                endif()
-                add_custom_command(TARGET doc-${plugin} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/Documentation/html/Plugin-${plugin}.qch" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help/Plugin-${plugin}.qch"
-                )
-            else (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doxy.config.in)
-                if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/CMakeLists.txt)
-                    # Create directories in order to avoid doxygen warnings
-                    if(NOT (IS_DIRECTORY ${plugin_doc_dir}))
-                        file(MAKE_DIRECTORY ${plugin_doc_dir})
-                        file(MAKE_DIRECTORY ${plugin_doc_dir}/html)
-                        file(MAKE_DIRECTORY ${plugin_doc_dir}/qthelp)
-                    endif()
-                    # Add documentation sources to build tree
-                    add_subdirectory(Documentation)
-                    # Copy qch file to OpenFlipper's Help dir
-                    acg_copy_after_build (doc-${plugin} "${plugin_doc_dir}/qthelp" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help/")
-                endif()
-            endif()
-        endif() # documentation dir exists
-    endif() # target
+      if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/userDoc/doxy.config.in)
+
+        # Create user documentation target from userDoc subdir of the plugin
+        acg_create_doc_target( doc-User-${plugin} ${CMAKE_CURRENT_SOURCE_DIR}/userDoc )
+
+        # make doc builds this plugin's documentation as well
+        add_dependencies(doc-UserHelp doc-User-${plugin})
+
+        # Create directories in order to avoid doxygen warnings
+        if(NOT (IS_DIRECTORY ${plugin_html_doc_dir}) )
+           file(MAKE_DIRECTORY ${plugin_html_doc_dir} )
+        endif()
+
+        # Create directories in order to avoid doxygen warnings
+        if(NOT (IS_DIRECTORY ${plugin_qt_help_dir}) )
+           file(MAKE_DIRECTORY ${plugin_qt_help_dir} )
+        endif()                                                
+
+      endif()
+
+    endif()
+
+    #============================================================================================
+    # Binary build
+    #============================================================================================
+
 
     # collect all header,source and ui files
     acg_append_files (headers "*.hh" ${directories})
