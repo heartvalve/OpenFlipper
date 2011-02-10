@@ -715,7 +715,8 @@ EXAMPLE_RECURSIVE      = NO
 # the \image command).
 
 IMAGE_PATH             = @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/pics/ \
-                         @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/screenshots/
+                         @CMAKE_SOURCE_DIR@/OpenFlipper/Documentation/DeveloperHelpSources/screenshots/ \
+                         @CMAKE_SOURCE_DIR@/OpenMesh/Doc/images/
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
