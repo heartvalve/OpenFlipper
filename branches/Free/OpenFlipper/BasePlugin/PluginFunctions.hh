@@ -507,10 +507,10 @@ class DLLEXPORT ObjectIterator {
    operator value_handle() { return pos_;  };
 
    /// compare iterators
-   bool operator==( const ObjectIterator& _rhs);
+   bool operator==( const ObjectIterator& _rhs) const;
 
    /// compare iterators
-   bool operator!=( const ObjectIterator& _rhs);
+   bool operator!=( const ObjectIterator& _rhs) const;
 
    /// assign iterators
    ObjectIterator& operator=( const ObjectIterator& _rhs);

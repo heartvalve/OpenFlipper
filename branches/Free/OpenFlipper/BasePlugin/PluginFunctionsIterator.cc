@@ -108,11 +108,11 @@ ObjectIterator::ObjectIterator(BaseObjectData* pos, IteratorRestriction _restric
 };
 
 
-bool ObjectIterator::operator==( const ObjectIterator& _rhs) {
+bool ObjectIterator::operator==( const ObjectIterator& _rhs) const {
    return ( _rhs.pos_ == pos_ );
 }
 
-bool ObjectIterator::operator!=( const ObjectIterator& _rhs) {
+bool ObjectIterator::operator!=( const ObjectIterator& _rhs) const {
    return ( _rhs.pos_ != pos_ );
 }
 
