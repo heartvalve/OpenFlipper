@@ -2,27 +2,25 @@ include (ACGDoxygen)
 
 IF (DOXYGEN_FOUND)
 
-#  if (TARGET doc)
-#    acg_copy_after_build (doc "${CMAKE_CURRENT_SOURCE_DIR}/html" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml")
-#  endif ()
+  set(developer_html_doc_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHTML")
+  set(developer_qt_help_dir "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Help")
+
+  # Create directories in order to avoid doxygen warnings
+  if(NOT (IS_DIRECTORY ${developer_html_doc_dir}) )
+     file(MAKE_DIRECTORY ${developer_html_doc_dir} )
+  endif()
+
+  # Create directories in order to avoid doxygen warnings
+  if(NOT (IS_DIRECTORY ${developer_qt_help_dir}) )
+     file(MAKE_DIRECTORY ${developer_qt_help_dir} )
+  endif()             
 
   # use the doxyfile here and generate a documentation target
+  # Use the local doxygen config
+  # and automatically append to doc target
   acg_create_doc_target( doc-DeveloperHelp )
-
-
-  # copy acg stylesheet data after build
-  if (TARGET doc-DeveloperHelp )
-    acg_copy_after_build (doc-DeveloperHelp "${CMAKE_CURRENT_SOURCE_DIR}/../ACGStyleHtml" "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHTML/html") 
-  endif ()
-
-  # Add a documentation install target
-  add_custom_target(doc-Developer-html-install COMMENT "Installing Developer HTML Documentation" VERBATIM )
-
-  # Build Documentation before installing it
-  add_dependencies(doc-Developer-html-install doc)
-
-  if (TARGET doc-Developer-html-install)
-    acg_copy_after_build (doc-Developer-html-install "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml"   "${CMAKE_INSTALL_PREFIX}/${ACG_PROJECT_DATADIR}/Doc/DeveloperHtml")
-  endif()
+ 
+  # install the DeveloperHelp on install
+  install(DIRECTORY "${CMAKE_BINARY_DIR}/Build/${ACG_PROJECT_DATADIR}/Doc/DeveloperHTML" DESTINATION "${ACG_PROJECT_DATADIR}/Doc" )
 
 ENDIF(DOXYGEN_FOUND)

@@ -38,7 +38,7 @@ PROJECT_NUMBER         =
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @CMAKE_BINARY_DIR@/Build/@ACG_PROJECT_DATADIR@/Doc/UserHTML
+OUTPUT_DIRECTORY       = @user_html_doc_dir@
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create
 # 4096 sub-directories (in 2 levels) under the output directory of each output
@@ -835,7 +835,7 @@ GENERATE_HTML          = YES
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be
 # put in front of it. If left blank `html' will be used as the default path.
 
-HTML_OUTPUT            = html
+HTML_OUTPUT            = .
 
 # The HTML_FILE_EXTENSION tag can be used to specify the file extension for
 # each generated HTML page (for example: .htm,.php,.asp). If it is left blank
@@ -965,7 +965,7 @@ GENERATE_QHP           = YES
 # be used to specify the file name of the resulting .qch file.
 # The path specified is relative to the HTML output folder.
 
-QCH_FILE               = ../../../Help/user.qch
+QCH_FILE               = @user_qt_help_dir@/user.qch
 
 # The QHP_NAMESPACE tag specifies the namespace to use when generating
 # Qt Help Project output. For more information please see
