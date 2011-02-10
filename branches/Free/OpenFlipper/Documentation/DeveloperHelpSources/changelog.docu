@@ -1,6 +1,6 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.1 (  ? , 10824 )</b>
+ * - <b>OpenFlipper 1.0.1 (  ? , 10884 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - clearallbuffers fixed (cleared whole buffer instead of the viewport only( broke multiview of OpenFlipper ) 
@@ -9,11 +9,14 @@
  *              - Fixed log filter button staying pressed
  *          - User Interface
  *              - Scripting function to move toolboxes to top or bottom
+ *          - Interfaces
+ *              - Make operator functions for == an != const in ObjectIterator
  *      - <b>LicenseManager</b>
  *          - Use separate Hashes for each network interface
  *          - Use more reliable windows native code to get windows interfaces
  *          - Include product id on windows
  *          - Fixed wrong coreApp path on Mac
+ *          - Get rid of extra message box when license files are not found
  *      - <b>Plugins</b>
  *          - MeshRepair
  *              - Made most functions scriptable
@@ -25,8 +28,16 @@
  *          - VSI (Visual scripting interface)
  *              - Fixed bug that prevented usage of conditions and loops
  *              - Scripting functions for Mesh Repair Plugin
+ *      - <b>Documentation</b>
+ *          - Developer Documentation
+ *              - Include all code in OpenFlippers directory in the developer docs
+ *          - User Documentation
  *      - <b>Build System</b>
  *          - Moved VERSION file to OpenFlipper subdir, as this represents more or less the core version
+ *          - Be less verbose in doxygen configs
+ *          - Updated doxygen macro
+ *          - plugins can now provide user documentation in the userDoc subdir
+ *          - install documentation along with OpenFlipper
  * 
  * - <b>OpenFlipper 1.0 (  01.26.2011 , 10764 )</b>
  *      - <b>ACG</b>
