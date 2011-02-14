@@ -294,9 +294,9 @@ void glViewer::sceneGraph(ACG::SceneGraph::BaseNode* _root, const bool _resetTra
       bbmax = ACG::Vec3d( 1.0, 1.0, 1.0);
     } else {
       
-      // For small scenes, we set the scene radius to 10
+      // For small scenes, we set the scene radius to 5
       // otherwise we take the real radius
-      if ( ( bbmax - bbmin ).max() < 10.0 )  {
+      if ( ( bbmax - bbmin ).max() < 5.0 )  {
         setScenePos( ( bbmin + bbmax )        * 0.5,
                      10.0,
                      _resetTrackBall);
