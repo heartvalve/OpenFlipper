@@ -5,7 +5,7 @@ data.
 You can freely redistribute the binaries provided by this installer.
 
 The source code and binaries are published on OpenFlipper.org based on 
-the following licese:
+the following license:
 
                         OpenFlipper                                 
 Copyright (C) 2001-2011 by Computer Graphics Group, RWTH Aachen     
