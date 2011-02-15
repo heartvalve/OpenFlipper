@@ -93,8 +93,6 @@ class FileSKLPlugin : public QObject, BaseInterface, FileInterface, LoadSaveInte
      QString name() { return (QString("FileSKL")); };
      QString description( ) { return (QString("Load/Save Skeletons")); };
 
-     int addEmpty( );
-
      DataType supportedType();
 
      QString getSaveFilters();

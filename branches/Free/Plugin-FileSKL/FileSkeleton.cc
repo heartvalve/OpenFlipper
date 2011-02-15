@@ -71,33 +71,6 @@ DataType  FileSKLPlugin::supportedType() {
 }
 
 
-int FileSKLPlugin::addEmpty( ){
-  // new object data struct
-  SkeletonObject * object = new SkeletonObject();
-
-  if ( PluginFunctions::objectCount() == 1 )
-    object->target(true);
-
-  if (PluginFunctions::targetCount() == 0 )
-    object->target(true);
-
-  QString name = get_unique_name(object);
-
-  // call the local function to update names
-  QFileInfo f(name);
-  object->setName( f.fileName() );
-
-  object->update();
-
-  object->show();
-
-  emit log(LOGINFO,object->getObjectinfo());
-
-  emit emptyObjectAdded ( object->id() );
-
-  return object->id();
-}
-
 template<typename Skeleton>
 bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
 {
@@ -204,7 +177,9 @@ bool FileSKLPlugin::LoadSkeleton(Skeleton *_pSkeleton, QString _filename)
 
 int FileSKLPlugin::loadObject(QString _filename)
 {
-  int id = addEmpty();
+  int id = -1;
+  emit addEmptyObject(DATA_SKELETON, id);
+  
   BaseObjectData *obj(0);
   if(PluginFunctions::getObject(id, obj))
   {
@@ -217,7 +192,10 @@ int FileSKLPlugin::loadObject(QString _filename)
     emit updatedObject( obj->id(), UPDATE_ALL );
     emit openedFile( obj->id() );
     PluginFunctions::viewAll();
+  } else {
+    emit log(LOGERR,tr("Unable to add empty skeleton"));
   }
+    
 
   return id;
 };
