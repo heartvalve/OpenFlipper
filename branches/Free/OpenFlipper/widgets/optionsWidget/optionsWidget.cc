@@ -378,13 +378,12 @@ void OptionsWidget::showEvent ( QShowEvent * /*event*/ ) {
   wheelBox->setChecked( OpenFlipperSettings().value("Core/Gui/glViewer/showControlWheels").toBool() );
   
   // Projection settings
-  
-  // Get field of view in radiant
-  double fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
-  fieldOfView->setValue(fovy);
+  fieldOfView->setValue(OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble() );
 
   restrictFPS->setChecked( OpenFlipperSettings().value("Core/Gui/glViewer/restrictFrameRate",false).toBool() );
   FPS->setValue( OpenFlipperSettings().value("Core/Gui/glViewer/maxFrameRate",35).toInt() );
+  
+  minimalSceneSize->setValue( OpenFlipperSettings().value("Core/Gui/glViewer/minimalSceneSize",0.1).toDouble());
 
   QPixmap color(16,16);
   color.fill( OpenFlipperSettings().value("Core/Gui/glViewer/defaultBackgroundColor").value<QColor>() );
@@ -611,12 +610,8 @@ void OptionsWidget::slotApply() {
   OpenFlipperSettings().setValue("Core/Mouse/Wheel/ZoomFactorShift", wZoomFactorShift->text().toDouble());
   
   // Projection settings
-  double fovy = fieldOfView->value();
-  double old_fovy = OpenFlipperSettings().value("Core/Projection/FOVY", 45.0).toDouble();
-  
-  if(fovy != old_fovy) {
-      OpenFlipperSettings().setValue("Core/Projection/FOVY", fovy);
-  }
+  OpenFlipperSettings().setValue("Core/Projection/FOVY", fieldOfView->value());
+  OpenFlipperSettings().setValue("Core/Gui/glViewer/minimalSceneSize",minimalSceneSize->value());
 
   OpenFlipperSettings().setValue("Core/Gui/glViewer/showControlWheels", wheelBox->isChecked() );
 

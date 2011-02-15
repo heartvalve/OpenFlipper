@@ -93,6 +93,7 @@
 * * Core/Gui/glViewer/restrictFrameRate      This setting controls if the maximum frame rate should be restricted (bool)\n
 * * Core/Gui/glViewer/maxFrameRate           If restrictFrameRate is set to yes, this setting controls the maximum frameRate used (unsigned int)\n
 * * Core/Gui/glViewer/useMultipleViewers     Use only one viewer or automatically generate multiple viewers (bool)\n
+* * Core/Gui/glViewer/minimalSceneSize       The minimal scene radius. If the scene is smaller, than the size will be set to this value (double)\n
 * * Core/Gui/ToolBoxes/hidden                Hide the toolbox sidebar (bool)\n
 * * Core/Gui/ToolBoxes/ToolBoxOnTheRight     Toolbox on the right or on the left (bool)\n
 * * Core/Gui/TaskSwitcher/Hide               Show or Hide the task switcher(bool)\n
