@@ -188,7 +188,7 @@ int FileSKLPlugin::loadObject(QString _filename)
     LoadSkeleton(skel->skeleton(), _filename);
 
     //general stuff
-    object->source( PluginFunctions::objectCount() > 4 );
+    obj->source( PluginFunctions::objectCount() > 4 );
     emit updatedObject( obj->id(), UPDATE_ALL );
     emit openedFile( obj->id() );
     PluginFunctions::viewAll();
