@@ -20,6 +20,7 @@
  * - \subpage dataStructure "Datastructures"
  * - \subpage dataFlow "Dataflow"
  * - \subpage options "Command line options and config files"
+ * - \subpage datatypes "Integrated Datatypes"
  *
  * \subpage misc
  * - \ref changelog

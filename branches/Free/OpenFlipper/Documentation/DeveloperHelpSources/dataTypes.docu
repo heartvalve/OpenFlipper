@@ -1,0 +1,23 @@
+/*! \page datatypes OpenFlipper Datatypes
+
+\section datatypes_intro Datatypes in OpenFlipper
+
+\section datatypes_integrated Integrated data types
+
+The following datatypes are available in OpenFlipper:
+- \subpage polyMeshType "Polygonal Meshes"
+  \image html type_poly_thumb.png
+- \subpage triMesheType "Triangular Meshes"
+  \image html type_triangle_thumb.png
+- \subpage skeletonType "Skeletons"
+  \image html type_skeleton_thumb.png
+- \subpage planeType    "Planes"
+  \image html type_plane_thumb.png
+- \subpage sphereType   "Spheres"
+  \image html type_Sphere_thumb.png
+- \subpage BSplineCurveType "BSplineCurves"
+  \image html type_SplineCurve_thumb.png
+- \subpage BSplineSurfaceType "BSplineSurfaces"
+  \image html type_SplineSurface_thumb.png
+
+*/
