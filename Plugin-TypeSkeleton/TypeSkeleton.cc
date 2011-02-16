@@ -232,5 +232,6 @@ QString TypeSkeletonPlugin::get_unique_name(SkeletonObject* _object)
   return QString(tr("Skeleton %1").arg( cur_idx ));
 }
 
+
 Q_EXPORT_PLUGIN2( typeskeletonplugin , TypeSkeletonPlugin );
 
