@@ -7,7 +7,7 @@
 The following datatypes are available in OpenFlipper:
 - \subpage polyMeshType "Polygonal Meshes"
   \image html type_poly_thumb.png
-- \subpage triMesheType "Triangular Meshes"
+- \subpage triMeshType "Triangular Meshes"
   \image html type_triangle_thumb.png
 - \subpage skeletonType "Skeletons"
   \image html type_skeleton_thumb.png
