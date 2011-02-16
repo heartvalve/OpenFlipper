@@ -125,8 +125,9 @@ public:
   inline void clear();
   //@}
 
-  /**
-    * @name Basic Joint Access
+  /** \anchor JointAccess
+    * @name   Basic Joint Access
+    *
     * Use these methods to access joints in the skeleton.
     */
   //@{
@@ -143,8 +144,8 @@ public:
   //@}
  
 
-  /**
-    * @name Animation
+  /** \anchor AnimationAccess
+    * @name   Animation
     * Use these methods to equip the skeleton with animation data.
     */
   //@{
