@@ -533,7 +533,7 @@ template<typename PointT>
 unsigned int SkeletonT<PointT>::childCount(unsigned int _joint)
 {
   if ( _joint >= joints_.size() ){
-    std::cerr << "SkeletonT : getChildCount() called with non-existing joint " << _joint << std::endl;
+    std::cerr << "SkeletonT : childCount() called with non-existing joint " << _joint << std::endl;
     return 0;
   }
   
@@ -613,9 +613,9 @@ inline typename SkeletonT<PointT>::Pose* SkeletonT<PointT>::pose(const Animation
  * @brief Returns a pointer to the reference pose
  *
  * Use this if you need access to the special data members of the reference pose. Notice you can also
- * get the reference pose by passing AnimationHandle() to the SkeletonT::getPose method:
+ * get the reference pose by passing AnimationHandle() to the SkeletonT::pose method:
  * @code
- *   skeleton.getPose(AnimationHandle());
+ *   skeleton.pose(AnimationHandle());
  * @endcode
  */
 template<typename PointT>

@@ -83,8 +83,8 @@ public:
   /// Destructor
   virtual ~PoseT();
 
-  /**
-    * @name Pose editing
+  /** @anchor PoseEditing
+    * @name   Pose editing
     * These methods update the other coordinate systems, changing the local coordinates will also change the global and vice versa.
     */
   //@{
@@ -131,8 +131,8 @@ protected:
   //@}
   
 public:
-  /**
-    * @name Precalculated values
+  /** @anchor UnifiedMatrices
+    * @name Unified Matrices
     * Use these methods to gain access to the precalculations performed by this derivation.
     */
   //@{

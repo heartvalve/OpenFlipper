@@ -1,0 +1,80 @@
+ 
+/** \page skeletonType Skeleton Datatype
+
+\section skeletonStructure Skeleton Structure
+
+\image html type_skeleton_thumb.png
+
+A \ref SkeletonT "skeleton" represents a hierarchical tree structure of \ref JointT "joints". The joints can be
+accessed through the skeleton. Therefore the skeleton class provides and \ref SkeletonT::Iterator "iterator" over its joints.
+Additional ways to access joints from the skeleton are defined in the \ref JointAccess "Joint Access Section".\n
+The \ref JointT "joint class" does not directly store information about the position and orientation of the joint, since
+this is dependent on the current pose. The joint class can be used to traverse from a joint to its neighbors in
+the tree structure and to set the selection state of a joint. Each joint is equipped with a unique id which is guaranteed
+to lie in a range between \f$[0,\cdots, (n-1)]\f$, where \f$ n \f$ is the number of joints. So when a joint is deleted
+from the skeleton the ids may change.
+
+\section skeletonPoses Poses and Animations
+
+\image html poses.png
+
+A skeleton consists of a set of different poses. Initially a skeleton has only one attached pose. The so called reference pose.
+This pose defines the original position and orientation of each joint in the skeleton. For each animation defined on the skeleton
+poses store the position of joints in each frame of the animation. So for every frame of the animation we have an associated pose.
+\n \n
+The \ref SkeletonT::referencePose "referencePose()" can directly be accessed from the skeleton. In order to access 
+specific poses from the animation we first have to get a handle for that pose. These handles are called \ref AnimationHandle "AnimationHandles"
+and they store the index of an animation and index of a frame (or pose). All functions needed to access animations and poses
+from a skeleton are defined in the \ref AnimationAccess "Animation Section".
+
+\section transformations Joint Transformations
+
+\image html transform.png
+
+A \ref PoseT "pose" of the skeleton defines the skeleton configuration for one frame in the animation. Thus if we want to change
+the position of joints this is only meaningful when a pose is given. The \ref PoseT "Pose class" can then be used to alter the
+transformation of joints. Basically there are two \f$ 4 \times 4 \f$ matrices for every joint which store its alignment.\n \n
+
+For every joint \f$ J_i \f$ in the skeleton we define a matrix \f$ G_i \f$ to prescribe the global position and orientation of
+the joint. Hence, \f$ G_i \f$ is also referred to as the global matrix: \n
+
+\f[
+ G_i = \left[  \begin{array}{cccc}
+                  &   &   & p_x\\
+                  & r &   & p_y\\
+                  &   &   & p_z\\
+                0 & 0 & 0 &   1\\
+              \end{array} \right] \f] \n \n
+
+where \f$ r \in R^{3 \times 3} \f$ is a rotation matrix and \f$ p = (p_x,p_y,p_z)^\top \f$ denotes the global joint
+position. The global matrix can also be seen as a transformation for the change of a basis. The global matrix
+transforms points from the local coordinate frame of the joint to global Cartesian coordinates.\n \n
+
+The representation of joints using global matrices is sufficient to represent the geometry of a skeleton, but for
+computational efficiency we add another representation. We also express the position and orientation of a
+joint relative to its parent joint. This local representation of the joints is also stored in matrices, yielding
+a local matrix \f$ L_i \f$ for every joint \f$ J_i \f$:\n
+
+\f[ L_i = G_p^{-1} \cdot G_i \f] \n
+
+The functions to access and alter the transformations are defined in the \ref PoseEditing "Pose Editing section" of the
+\ref PoseT class.\n \n
+<B>Note:</B> When using the functions \ref PoseT::setLocalMatrix and \ref PoseT::setLocalTranslation the second parameter
+'_keepLocalChildPositions' defines if a change of the local matrix, keeps the local matrices of the child joints and thus
+updates the global matrices of the child joints or vice versa.\n \n
+<B>Note:</B> When using the functions \ref PoseT::setGlobalMatrix and \ref PoseT::setGlobalTranslation the second parameter
+'_keepGlobalChildPositions' defines if a change of the global matrix, keeps the global matrices of the child joints and thus
+updates the local matrices of the child joints or vice versa.\n
+\n
+The \ref PoseT "Pose class" also provides unified matrices. These matrices are stored to minimize computations since they
+are used often when the skeleton is equipped with a skin mesh. The unified matrix maps a point from global coordinates
+in the reference pose to global coordinates in another pose. If the global matrix of a joint in reference pose is denoted as
+\f$ G_0 \f$ and the global matrix in a target pose is denoted as \f$ G_f \f$ then the unified matrix \f$ U \f$ is given as:
+
+\f[ U = G_f \cdot G_0^{-1} \f] \n
+
+Functions to access the unified matrices of a pose are defined in the \ref UnifiedMatrices "Unified Matrices section".
+
+
+
+*/
