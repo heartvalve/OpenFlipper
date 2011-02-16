@@ -1,4 +1,20 @@
-/** \page triMeshType Triangular Mesh
+/** 
+
+\page triMeshType Triangular Mesh
+
 \image html type_triangle_thumb.png
+
+\section type_TriMesh_info Datatype Information
+OpenFlipper includes a datatype for triangular Meshes. The datastructure used to represent the
+Mesh is \ref OpenMeshDoc "OpenMesh". %OpenMesh is a generic and efficient data structure for 
+representing and manipulating polygonal meshes. You can directly use it inside of OpenFlipper.\n
+
+The basic object type for handling triangular meshes is the TriMeshObject. This object manages
+rendering and data storage of a triangular %OpenMesh.\n
+
+To get the actual mesh you can call the TriMeshObject::mesh() function which returns a pointer 
+to the %OpenMesh structure, which can be directly manipulated with the functions described in
+the \ref OpenMeshDoc "OpenMesh Documentation".\n
+
 */
 
