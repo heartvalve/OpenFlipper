@@ -1,16 +1,20 @@
 /*! \page changelog Changelog
  *
- * - <b>OpenFlipper 1.0.1 (  ? , 10884 )</b>
+ * - <b>OpenFlipper 1.0.1 (  ? , 10914 )</b>
  *      - <b>ACG</b>
  *          - GLState
  *              - clearallbuffers fixed (cleared whole buffer instead of the viewport only( broke multiview of OpenFlipper ) 
  *      - <b>Core</b>
  *          - Log Window
  *              - Fixed log filter button staying pressed
+ *          - About widget
+ *              - Added section about developers
  *          - User Interface
  *              - Scripting function to move toolboxes to top or bottom
  *          - Interfaces
  *              - Make operator functions for == an != const in ObjectIterator
+ *          - Rendering
+ *              - Added option to set minimal scene size
  *      - <b>LicenseManager</b>
  *          - Use separate Hashes for each network interface
  *          - Use more reliable windows native code to get windows interfaces
@@ -18,6 +22,8 @@
  *          - Fixed wrong coreApp path on Mac
  *          - Get rid of extra message box when license files are not found
  *      - <b>Plugins</b>
+ *          - FileSkeleton
+ *              - Removed ( Is now FileSKL)
  *          - MeshRepair
  *              - Made most functions scriptable
  *              - Some minor bugfixes
@@ -31,6 +37,9 @@
  *      - <b>Documentation</b>
  *          - Developer Documentation
  *              - Include all code in OpenFlippers directory in the developer docs
+ *              - Overview for datatypes
+ *              - Document skeleton class
+ *              - Document Mesh datatypes
  *          - User Documentation
  *      - <b>Build System</b>
  *          - Moved VERSION file to OpenFlipper subdir, as this represents more or less the core version
