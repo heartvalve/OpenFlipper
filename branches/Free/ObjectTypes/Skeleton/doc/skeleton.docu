@@ -6,7 +6,7 @@
 \image html type_skeleton_thumb.png
 
 A \ref SkeletonT "skeleton" represents a hierarchical tree structure of \ref JointT "joints". The joints can be
-accessed through the skeleton. Therefore the skeleton class provides and \ref SkeletonT::Iterator "iterator" over its joints.
+accessed through the skeleton. Therefore the skeleton class provides an \ref SkeletonT::Iterator "iterator" over its joints.
 Additional ways to access joints from the skeleton are defined in the \ref JointAccess "Joint Access Section".\n
 The \ref JointT "joint class" does not directly store information about the position and orientation of the joint, since
 this is dependent on the current pose. The joint class can be used to traverse from a joint to its neighbors in
