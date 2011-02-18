@@ -86,9 +86,13 @@ else ()
   acg_add_executable (OpenFlipper ${uic_targets} ${sources} ${headers} ${moc_targets})
 endif ()
 
-# Mark this build part as building OpenFLippers Core
+# Mark this build part as building OpenFlippers Core
 add_definitions(-DOPENFLIPPERCORE )
 
+if (WIN32)
+  add_definitions( -DACGDLL
+                   -DUSEACG )
+endif ()
 
 target_link_libraries (OpenFlipper
   OpenMeshCore
