@@ -67,7 +67,7 @@ namespace DrawModes {
 
 // == Default Draw Mode intitialization ======================================  
 
-DrawMode NONE                                  = ModeFlagSet(0);
+DrawMode NONE                            = ModeFlagSet(0);
 DrawMode DEFAULT                         = ModeFlagSet(1);
 DrawMode POINTS                          = ModeFlagSet(1) << 1;
 DrawMode POINTS_COLORED                  = ModeFlagSet(1) << 2;
