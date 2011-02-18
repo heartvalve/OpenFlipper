@@ -176,96 +176,96 @@ namespace DrawModes {
   
   
   /// not a valid draw mode
-  DrawMode const NONE           = ModeFlagSet(0);
+  extern ACGDLLEXPORT DrawMode NONE;
   /// use the default (global) draw mode and not the node's own.
-  DrawMode const DEFAULT        = ModeFlagSet(1);
+  extern ACGDLLEXPORT DrawMode const DEFAULT;
   
   //======================================================================
   //  Point Based Rendering Modes
   //======================================================================
   /// draw unlighted points using the default base color
-  DrawMode const POINTS         = ModeFlagSet(1) << 1;
+  extern ACGDLLEXPORT DrawMode const POINTS;
 
   /// draw colored, but not lighted points (requires point colors)
-  DrawMode const POINTS_COLORED = ModeFlagSet(1) << 2;
+  extern ACGDLLEXPORT DrawMode const POINTS_COLORED;
   /// draw shaded points (requires point normals)
-  DrawMode const POINTS_SHADED  = ModeFlagSet(1) << 3;
+  extern ACGDLLEXPORT DrawMode const POINTS_SHADED;
   
   //======================================================================
   //  Edge Based Rendering Modes
   //======================================================================
   /// draw edges
-  DrawMode const EDGES          = ModeFlagSet(1) << 4;
+  extern ACGDLLEXPORT DrawMode const EDGES;
 
   /// draw edges with colors (without shading)
-  DrawMode const EDGES_COLORED  = ModeFlagSet(1) << 5;
+  extern ACGDLLEXPORT DrawMode const EDGES_COLORED;
   /// draw wireframe
-  DrawMode const WIREFRAME      = ModeFlagSet(1) << 6;
+  extern ACGDLLEXPORT DrawMode const WIREFRAME;
   
   //======================================================================
   //  Face Based Rendering Modes
   //======================================================================  
   // draw faces
-  DrawMode const FACES          = ModeFlagSet(1) << 7;
+  extern ACGDLLEXPORT DrawMode const FACES;
 
   /// draw hidden line (2 rendering passes needed)
-  DrawMode const HIDDENLINE     = ModeFlagSet(1) << 8;
+  extern ACGDLLEXPORT DrawMode const HIDDENLINE;
   /// draw flat shaded faces (requires face normals)
-  DrawMode const SOLID_FLAT_SHADED = ModeFlagSet(1) << 9;
+  extern ACGDLLEXPORT DrawMode const SOLID_FLAT_SHADED;
   /// draw smooth shaded (Gouraud shaded) faces (requires halfedge normals)  
-  DrawMode const SOLID_SMOOTH_SHADED = ModeFlagSet(1) << 10;
+  extern ACGDLLEXPORT DrawMode const SOLID_SMOOTH_SHADED;
   /// draw phong shaded faces
-  DrawMode const SOLID_PHONG_SHADED = ModeFlagSet(1) << 11;
+  extern ACGDLLEXPORT DrawMode const SOLID_PHONG_SHADED;
   /// draw colored, but not lighted faces using face colors
-  DrawMode const SOLID_FACES_COLORED = ModeFlagSet(1) << 12;
+  extern ACGDLLEXPORT DrawMode const SOLID_FACES_COLORED;
   /// draw faces, but use Gouraud shading to interpolate vertex colors
-  DrawMode const SOLID_POINTS_COLORED = ModeFlagSet(1) << 13;
+  extern ACGDLLEXPORT DrawMode const SOLID_POINTS_COLORED;
   /// draw environment mapped  
-  DrawMode const SOLID_ENV_MAPPED = ModeFlagSet(1) << 14;
+  extern ACGDLLEXPORT DrawMode const SOLID_ENV_MAPPED;
   /// draw textured faces
-  DrawMode const SOLID_TEXTURED = ModeFlagSet(1) << 15;
+  extern ACGDLLEXPORT DrawMode const SOLID_TEXTURED;
   /// draw smooth shaded textured faces
-  DrawMode const SOLID_TEXTURED_SHADED = ModeFlagSet(1) << 16;
+  extern ACGDLLEXPORT DrawMode const SOLID_TEXTURED_SHADED;
   /// draw textured faces
-  DrawMode const SOLID_1DTEXTURED = ModeFlagSet(1) << 17;
+  extern ACGDLLEXPORT DrawMode const SOLID_1DTEXTURED;
   /// draw smooth shaded textured faces
-  DrawMode const SOLID_1DTEXTURED_SHADED = ModeFlagSet(1) << 18;
+  extern ACGDLLEXPORT DrawMode const SOLID_1DTEXTURED_SHADED;
   /// draw textured faces
-  DrawMode const SOLID_3DTEXTURED = ModeFlagSet(1) << 19;
+  extern ACGDLLEXPORT DrawMode const SOLID_3DTEXTURED;
   /// draw smooth shaded textured faces
-  DrawMode const SOLID_3DTEXTURED_SHADED = ModeFlagSet(1) << 20;
+  extern ACGDLLEXPORT DrawMode const SOLID_3DTEXTURED_SHADED;
   /// draw flat shaded and colored faces (requires face normals and colors)
-  DrawMode const SOLID_FACES_COLORED_FLAT_SHADED = ModeFlagSet(1) << 21;
+  extern ACGDLLEXPORT DrawMode const SOLID_FACES_COLORED_FLAT_SHADED;
   /// draw per halfedge textured faces
-  DrawMode const SOLID_2DTEXTURED_FACE = ModeFlagSet(1) << 22;
+  extern ACGDLLEXPORT DrawMode const SOLID_2DTEXTURED_FACE;
   /// draw per halfedge textured faces
-  DrawMode const SOLID_2DTEXTURED_FACE_SHADED = ModeFlagSet(1) << 23;
+  extern ACGDLLEXPORT DrawMode const SOLID_2DTEXTURED_FACE_SHADED;
   /// drawing is controlled by shaders
   /// ( Use shadernodes to set them before the actual object to render)
-  DrawMode const SOLID_SHADER = ModeFlagSet(1) << 24;
+  extern ACGDLLEXPORT DrawMode const SOLID_SHADER;
 
   //======================================================================
   //  Face Based Rendering Modes
   //======================================================================  
   // draw cells
-  DrawMode const CELLS          = ModeFlagSet(1) << 25;
+  extern ACGDLLEXPORT DrawMode const CELLS;
 
   /// draw cells with colors (without shading)
-  DrawMode const CELLS_COLORED  = ModeFlagSet(1) << 26;
+  extern ACGDLLEXPORT DrawMode const CELLS_COLORED;
 
 
   //======================================================================
   //  Halfedge Based Rendering Modes
   //======================================================================
   /// draw halfedges
-  DrawMode const HALFEDGES          = ModeFlagSet(1) << 27;
+  extern ACGDLLEXPORT DrawMode const HALFEDGES;
 
   /// draw halfedges with colors (without shading)
-  DrawMode const HALFEDGES_COLORED  = ModeFlagSet(1) << 28;
+  extern ACGDLLEXPORT DrawMode const HALFEDGES_COLORED;
 
 
   /// marks the last used ID
-  DrawMode const UNUSED = ModeFlagSet(1) << 29;
+  extern ACGDLLEXPORT DrawMode const UNUSED;
   
 
   //=======================================================================
