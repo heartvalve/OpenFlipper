@@ -1,6 +1,5 @@
 include (ACGCommon)
 
-
 set ( ADDITIONAL_PLUGINLIB_LIBS "")
 set ( ADDITIONAL_PLUGINLIB_INCS "")
 set ( ADDITIONAL_PLUGINLIB_COMPILER_FLAGS "")
@@ -50,7 +49,9 @@ set (directories
 # generate dllexport macros on windows
 if (WIN32)
   add_definitions (
-    -DPLUGINLIBDLL
+    -DPLUGINLIBDLL 
+    -DACGDLL
+    -DUSEACG
   )
 endif ()
 
