@@ -79,7 +79,7 @@ BoundingBoxNode::~BoundingBoxNode() {
 
 void
 BoundingBoxNode::
-draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
+draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
 {
 
   ACG::SceneGraph::BoundingBoxAction act;

@@ -119,7 +119,7 @@ SliceNode::availableDrawModes() const
 
 
 void
-SliceNode::draw( GLState & /* _state */ , DrawModes::DrawMode /* _drawMode */ )
+SliceNode::draw( GLState & /* _state */ , const DrawModes::DrawMode& /* _drawMode */ )
 {
   
   if ( is_enabled( NONE ) )

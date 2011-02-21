@@ -99,7 +99,7 @@ public:
   DrawModes::DrawMode availableDrawModes() const;
 
   /// draw lines and normals
-  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
 };
 
 

@@ -92,14 +92,14 @@ public:
   ACG_CLASSNAME(ShaderNode);
 
   /// set shader
-  void enter(GLState& /*_state*/, DrawModes::DrawMode _drawmode);
+  void enter(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode);
   /// disable shader
-  void leave(GLState& /*_state*/, DrawModes::DrawMode _drawmode);
+  void leave(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode);
 
   /// set shader
-  void enterPick(GLState& /*_state*/, PickTarget _target, DrawModes::DrawMode _drawmode);
+  void enterPick(GLState& /*_state*/, PickTarget _target, const DrawModes::DrawMode& _drawmode);
   /// disable shader
-  void leavePick(GLState& /*_state*/, PickTarget _target, DrawModes::DrawMode _drawmode);
+  void leavePick(GLState& /*_state*/, PickTarget _target, const DrawModes::DrawMode& _drawmode);
 
 
   /// Sets the shader dir.

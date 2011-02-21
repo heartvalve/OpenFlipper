@@ -129,13 +129,13 @@ public:
   
   
   /// set depth function (needed for lasso selection so that the line can be draw in pseudo-2D)
-  void enter(GLState& _state, DrawModes::DrawMode _drawMode);
+  void enter(GLState& _state, const DrawModes::DrawMode& _drawMode);
 
   /// draw lines and normals
-  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
   
   /// reset depth function to what it was before enter()
-  void leave(GLState& _state, DrawModes::DrawMode _drawMode);
+  void leave(GLState& _state, const DrawModes::DrawMode& _drawMode);
 
 
   /// reserve mem for _n lines

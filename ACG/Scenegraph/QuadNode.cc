@@ -130,7 +130,7 @@ availableDrawModes() const
 
 void
 QuadNode::
-draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
+draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
 {
   if (_drawMode & DrawModes::WIREFRAME ||
       _drawMode & DrawModes::HIDDENLINE )

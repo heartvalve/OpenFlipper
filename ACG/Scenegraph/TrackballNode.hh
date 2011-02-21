@@ -154,7 +154,7 @@ public:
   
   
   /// Draw the trackball + axes (if enabled)
-  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
 
 
   /// get mouse events

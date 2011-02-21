@@ -94,7 +94,7 @@ availableDrawModes() const
 
 void
 PointNode::
-draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
+draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
 {
   if (points_.size() == 0)
     return;

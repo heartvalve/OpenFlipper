@@ -105,7 +105,7 @@ CoordFrameNode::boundingBox(Vec3d& _bbMin, Vec3d& _bbMax)
 
 
 void 
-CoordFrameNode::draw(GLState& /* _state */ , DrawModes::DrawMode /* _drawMode */ )
+CoordFrameNode::draw(GLState& /* _state */ , const DrawModes::DrawMode& /* _drawMode */ )
 {
   // draw bounding box
 

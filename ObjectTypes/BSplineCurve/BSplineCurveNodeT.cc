@@ -110,7 +110,7 @@ availableDrawModes() const
 template <class BSplineCurve>
 void
 BSplineCurveNodeT<BSplineCurve>::
-draw(GLState& _state, DrawModes::DrawMode _drawMode)
+draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {  
   glPushAttrib(GL_ENABLE_BIT);
   

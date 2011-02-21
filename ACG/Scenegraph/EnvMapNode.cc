@@ -87,7 +87,7 @@ DrawModes::DrawMode EnvMapNode::availableDrawModes() const
 //----------------------------------------------------------------------------
 
 
-void EnvMapNode::enter(GLState& _state, DrawModes::DrawMode _drawmode)
+void EnvMapNode::enter(GLState& _state, const DrawModes::DrawMode& _drawmode)
 {
   if (_drawmode==DrawModes::SOLID_ENV_MAPPED)
   {
@@ -105,7 +105,7 @@ void EnvMapNode::enter(GLState& _state, DrawModes::DrawMode _drawmode)
 //----------------------------------------------------------------------------
 
 
-void EnvMapNode::leave(GLState& _state, DrawModes::DrawMode _drawmode)
+void EnvMapNode::leave(GLState& _state, const DrawModes::DrawMode& _drawmode)
 {
   if (_drawmode==DrawModes::SOLID_ENV_MAPPED)
   {
@@ -117,15 +117,11 @@ void EnvMapNode::leave(GLState& _state, DrawModes::DrawMode _drawmode)
     TextureNode::leave( _state, _drawmode);
 }
 
-void EnvMapNode::enterPick(GLState& /*_state*/ ,
-                           PickTarget /*_target*/,
-                           DrawModes::DrawMode /*_drawMode*/ ) {
+void EnvMapNode::enterPick(GLState& /*_state*/ , PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
 
 }
 
-void EnvMapNode::leavePick(GLState& /*_state*/,
-                           PickTarget /*_target*/,
-                           DrawModes::DrawMode /*_drawMode*/ ) {
+void EnvMapNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
 }
 
 

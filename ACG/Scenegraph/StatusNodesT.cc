@@ -208,7 +208,7 @@ update_cache()
 template <class Mesh, class Mod>
 void
 StatusNodeT<Mesh, Mod>::
-draw(GLState& _state, DrawModes::DrawMode _drawMode)
+draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
   bool shaded = (_drawMode & ( DrawModes::SOLID_FLAT_SHADED |
 			       DrawModes::SOLID_SMOOTH_SHADED |

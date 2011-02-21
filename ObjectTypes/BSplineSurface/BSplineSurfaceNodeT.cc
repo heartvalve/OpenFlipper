@@ -109,7 +109,7 @@ availableDrawModes() const
 template <class BSplineSurface>
 void
 BSplineSurfaceNodeT<BSplineSurface>::
-draw(GLState& _state, DrawModes::DrawMode _drawMode)
+draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
   GLenum prev_depth = _state.depthFunc();
 

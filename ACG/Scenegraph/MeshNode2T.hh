@@ -338,7 +338,7 @@ public:
   /** \brief Draws the object
   *
   */
-  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
   
   /** \brief return available draw modes 
   *

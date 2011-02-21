@@ -119,7 +119,7 @@ hasShader( DrawModes::DrawMode _drawmode, bool _pick ) {
 
 
 void
-ShaderNode::enter(GLState& /*_state*/, DrawModes::DrawMode _drawmode  )
+ShaderNode::enter(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode  )
 {
   for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) {
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) {
@@ -131,7 +131,7 @@ ShaderNode::enter(GLState& /*_state*/, DrawModes::DrawMode _drawmode  )
 //----------------------------------------------------------------------------
 
 void
-ShaderNode::enterPick(GLState& /*_state*/, PickTarget /*_target*/, DrawModes::DrawMode _drawmode  )
+ShaderNode::enterPick(GLState& /*_state*/, PickTarget /*_target*/, const DrawModes::DrawMode& _drawmode  )
 {
   for ( std::map<unsigned int,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it) {
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) {
@@ -198,7 +198,7 @@ ShaderNode::fragmentShaderName(DrawModes::DrawMode _drawmode, bool _pick) {
 //----------------------------------------------------------------------------
 
 
-void ShaderNode::leave(GLState& /*_state*/, DrawModes::DrawMode _drawmode )
+void ShaderNode::leave(GLState& /*_state*/, const DrawModes::DrawMode& _drawmode )
 {
   for ( std::map<unsigned int,ShaderInfo>::iterator it = shaders.begin(); it != shaders.end(); ++it) 
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) 
@@ -208,7 +208,7 @@ void ShaderNode::leave(GLState& /*_state*/, DrawModes::DrawMode _drawmode )
 //----------------------------------------------------------------------------
 
 
-void ShaderNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, DrawModes::DrawMode _drawmode )
+void ShaderNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, const DrawModes::DrawMode& _drawmode )
 {
   for ( std::map<unsigned int,ShaderInfo>::iterator it = pickShaders.begin(); it != pickShaders.end(); ++it) 
     if ( _drawmode.containsAtomicDrawMode(it->first) && it->second.initialized ) 

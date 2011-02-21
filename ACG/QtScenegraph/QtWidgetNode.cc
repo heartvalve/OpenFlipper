@@ -93,7 +93,7 @@ availableDrawModes() const
 
 void
 QtWidgetNode::
-draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
+draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 {
   // Project 3d point onto screen 
   ACG::Vec3d projected = _state.project(position_);

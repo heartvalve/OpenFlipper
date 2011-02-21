@@ -104,7 +104,7 @@ public:
 
   DrawModes::DrawMode  availableDrawModes() const;
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
-  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
   void pick(GLState& /* _state */ , PickTarget /* _target */ ) {}
 
 

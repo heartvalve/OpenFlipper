@@ -686,7 +686,7 @@ void TranslationManipulatorNode::drawManipulator (GLState& _state, bool _active)
 
 
 void
-TranslationManipulatorNode::draw(GLState& _state, DrawModes::DrawMode /* _drawMode */ )
+TranslationManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* _drawMode */ )
 {
    GLenum prev_depth = _state.depthFunc();
     
@@ -757,7 +757,7 @@ TranslationManipulatorNode::drawCircle(const float outerRadius, const float inne
 //----------------------------------------------------------------------------
 
 // void
-// TranslationManipulatorNode::leave(GLState& _state, DrawModes::DrawMode /* _drawMode */ )
+// TranslationManipulatorNode::leave(GLState& _state, const DrawModes::DrawMode& /* _drawMode */ )
 // {
 
 // }

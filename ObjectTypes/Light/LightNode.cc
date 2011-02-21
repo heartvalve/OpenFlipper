@@ -257,7 +257,7 @@ void LightNode::boundingBox(ACG::Vec3d& _bbMin, ACG::Vec3d& _bbMax) {
 
 //----------------------------------------------------------------------------
 
-void LightNode::draw(GLState& _state, DrawModes::DrawMode /*_drawMode*/) {
+void LightNode::draw(GLState& _state, const DrawModes::DrawMode& /*_drawMode*/) {
     
     // Visualize light node
     if(visualize_ && !light_.directional()) {
@@ -473,7 +473,7 @@ void LightNode::pick(GLState& _state, PickTarget _target) {
     }
 }
 
-void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ ) 
+void LightNode::enter(GLState& _state, const DrawModes::DrawMode& /* _drawmode */ ) 
 {
     if(visualize_) return;
     
@@ -520,7 +520,7 @@ void LightNode::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 //----------------------------------------------------------------------------
 
 
-void LightNode::leave(GLState& /* _state */ , DrawModes::DrawMode /* _drawmode*/ )
+void LightNode::leave(GLState& /* _state */ , const DrawModes::DrawMode& /* _drawmode*/ )
 {
     if(visualize_) return;
     

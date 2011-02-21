@@ -208,7 +208,7 @@ CoordsysNode::drawCoordsysPick( GLState&  _state) {
 
 void
 CoordsysNode::
-draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
+draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 {
   GLenum prev_depth = _state.depthFunc();
     

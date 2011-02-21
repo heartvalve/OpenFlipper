@@ -164,7 +164,7 @@ void PlaneNode::drawPlanePick( GLState&  _state) {
 
 //----------------------------------------------------------------
 
-void PlaneNode::draw(GLState&  _state  , DrawModes::DrawMode /*_drawMode*/)
+void PlaneNode::draw(GLState&  _state  , const DrawModes::DrawMode& /*_drawMode*/)
 {
 
   _state.push_modelview_matrix();

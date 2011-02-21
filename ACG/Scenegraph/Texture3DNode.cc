@@ -88,8 +88,7 @@ Texture3DNode::~Texture3DNode()
   
 
 void
-Texture3DNode::enter( GLState &    /*_state */,
-                      DrawModes::DrawMode /* _drawmode */ ) 
+Texture3DNode::enter( GLState &    /*_state */, const DrawModes::DrawMode& /* _drawmode */ ) 
 {
   if ( glIsTexture( texture_ ) )
   {
@@ -112,8 +111,7 @@ Texture3DNode::enter( GLState &    /*_state */,
 
 
 void
-Texture3DNode::leave( GLState &    /* _state */ ,
-                      DrawModes::DrawMode /* _drawmode */  )
+Texture3DNode::leave( GLState &    /* _state */ , const DrawModes::DrawMode& /* _drawmode */  )
 {
   glBindTexture( GL_TEXTURE_3D, 0 );
 }

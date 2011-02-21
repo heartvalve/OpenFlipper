@@ -169,7 +169,7 @@ setup_sphere_system(GLState& _state)
 
 
 void
-ManipulatorNode::draw(GLState& _state, DrawModes::DrawMode /* _drawMode */ )
+ManipulatorNode::draw(GLState& _state, const DrawModes::DrawMode& /* _drawMode */ )
 {
   if (draw_cylinder_)
   {

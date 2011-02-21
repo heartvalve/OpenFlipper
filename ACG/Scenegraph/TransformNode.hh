@@ -102,9 +102,9 @@ public:
 
 
   /// set current GL-color and GL-material
-  void enter(GLState& _state, DrawModes::DrawMode _drawmode);
+  void enter(GLState& _state, const DrawModes::DrawMode& _drawmode);
   /// restores original GL-color and GL-material
-  void leave(GLState& _state, DrawModes::DrawMode _drawmode);
+  void leave(GLState& _state, const DrawModes::DrawMode& _drawmode);
 
 
 

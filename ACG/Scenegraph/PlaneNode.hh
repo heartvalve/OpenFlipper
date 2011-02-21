@@ -92,7 +92,7 @@ class ACGDLLEXPORT PlaneNode : public BaseNode
     void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
 
     /// draw Plane
-    void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+    void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
 
     /// draw Plane for object picking
     void pick(GLState& _state, PickTarget _target);
