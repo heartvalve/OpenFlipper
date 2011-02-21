@@ -79,7 +79,16 @@ struct AreaNodeMod
 
   /// tell status node if the face is marked as modeling area
   static inline bool is_area(const MeshT& _m, typename MeshT::FaceHandle _fh)
-  { return _m.status(_fh).is_bit_set(AREA); }
+  {
+      bool isArea = true;
+      for(typename MeshT::ConstFaceVertexIter cfv_it = _m.cfv_iter(_fh); cfv_it; ++cfv_it) {
+          if(!_m.status(cfv_it.handle()).is_bit_set(AREA)) {
+              isArea = false;
+              break;
+          }
+      }
+      return isArea;
+  }
 
   /// tell status node if the vertex is marked as modeling area
   static bool is_vertex_selected(const MeshT& _mesh, typename MeshT::VertexHandle _vh)
@@ -123,7 +132,16 @@ template< class MeshT >
 
   /// tell status node if the face is marked as handle area
   static inline bool is_handle(const MeshT& _m, typename MeshT::FaceHandle _fh)
-  { return _m.status(_fh).is_bit_set(HANDLEAREA); }
+  {
+      bool isArea = true;
+      for(typename MeshT::ConstFaceVertexIter cfv_it = _m.cfv_iter(_fh); cfv_it; ++cfv_it) {
+          if(!_m.status(cfv_it.handle()).is_bit_set(HANDLEAREA)) {
+              isArea = false;
+              break;
+          }
+      }
+      return isArea;
+  }
 
 
   /// tell status node if the vertex is marked as handle area
