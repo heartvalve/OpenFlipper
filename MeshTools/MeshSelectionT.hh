@@ -154,6 +154,21 @@ inline
 void convertVertexToEdgeSelection(MeshT* _mesh);
 
 /**
+ * Select for each vertex in _vertices all incident halfedges
+ * @param _vertices List of vertices to be converted
+ */
+template< typename MeshT >
+inline
+void convertVertexToHalfedgeSelection(MeshT* _mesh, std::vector< int >& _vertices);
+
+/**
+ * For each selected vertex select all incident halfedges
+ */
+template< typename MeshT >
+inline
+void convertVertexToHalfedgeSelection(MeshT* _mesh);
+
+/**
  * Select for each vertex in _vertices all adjacent faces
  * @param _vertices List of vertices to be converted
  */
@@ -282,6 +297,13 @@ template< typename MeshT >
 inline
 void convertEdgeToFaceSelection(MeshT* _mesh);
 
+/**
+ * For each selected edge select all halfedges
+ */
+template< typename MeshT >
+inline
+void convertEdgeToHalfedgeSelection(MeshT* _mesh);
+
 
 
 /** @} */
@@ -325,6 +347,27 @@ void selectBoundaryHalfedges(MeshT* _mesh);
 template< typename MeshT >
 inline
 std::vector< int > getHalfedgeSelection(MeshT* _mesh);
+
+/**
+ * For each halfedge select all incident vertices
+ */
+template< typename MeshT >
+inline
+void convertHalfedgeToVertexSelection(MeshT* _mesh);
+
+/**
+ * For each halfedge select all edges
+ */
+template< typename MeshT >
+inline
+void convertHalfedgeToEdgeSelection(MeshT* _mesh);
+
+/**
+ * For each halfedge select all incident faces
+ */
+template< typename MeshT >
+inline
+void convertHalfedgeToFaceSelection(MeshT* _mesh);
 
 //===========================================================================
 /** @name Face Selection
@@ -410,6 +453,14 @@ void convertFaceToVertexSelection(MeshT* _mesh);
 template< typename MeshT >
 inline
 void convertFaceToEdgeSelection(MeshT* _mesh);
+
+/**
+ * For each selected face select all incident halfedges
+ */
+template< typename MeshT >
+inline
+void convertFaceToHalfedgeSelection(MeshT* _mesh);
+
 /** @} */
 
 //=============================================================================
