@@ -1,19 +1,17 @@
 if (OPENNI_INCLUDE_DIR)
   # in cache already
   set(OPENNI_FOUND TRUE)
-message(status "check1")
 else (OPENNI_INCLUDE_DIR)
 
-message(status "check")
 
 find_path(OPENNI_INCLUDE_DIR NAMES XnOpenNI.h
-	  PATHS /usr/include/ni
+	  PATHS /usr/include/ni "C:/Program Files/OpenNI/Include"
 	  ${OPENNI_INCLUDE_PATH}
           )
 
 find_library( OPENNI_LIBRARY 
               OpenNI
-              PATHS /usr/lib)
+              PATHS /usr/lib "C:/Program Files/OpenNI/Lib" )
 
 if (OPENNI_INCLUDE_DIR)
   # in cache already
