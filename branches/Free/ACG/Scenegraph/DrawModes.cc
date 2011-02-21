@@ -257,7 +257,7 @@ DrawMode::getAtomicDrawModes( )
 
 //----------------------------------------------------------------------------
 
-bool DrawMode::isAtomic() {
+bool DrawMode::isAtomic() const {
   return(modeFlags_.count() == 1 );
 }
  

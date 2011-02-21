@@ -150,7 +150,7 @@ namespace DrawModes {
       *
       * This function checks, if this is a atomic drawmode ( no combination of multiple draw modes )
       */
-      bool isAtomic();
+      bool isAtomic() const;
       
       /** \brief Check whether an Atomic DrawMode is active in this draw Mode
       */ 
