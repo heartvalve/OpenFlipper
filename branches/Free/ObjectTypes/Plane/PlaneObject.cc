@@ -63,7 +63,7 @@
 *  the root node to which it should be connected. The plane is generated internally
 *  and all nodes for visualization will be added below the scenegraph node.\n
 *  You dont need to create an object of this type manually. Use
-*  PluginFunctions::addPlane instead. ( see Types.hh::DataType )
+*  the functions from LoadSaveInterface ( addEmpty() )
 */
 PlaneObject::PlaneObject( ) :
   BaseObjectData( ),
