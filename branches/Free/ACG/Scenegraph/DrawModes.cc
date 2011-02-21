@@ -174,7 +174,7 @@ DrawMode& DrawMode::operator++() {
   return (*this);
 }
 
-DrawMode DrawMode::operator&(const DrawMode& _mode) {
+DrawMode DrawMode::operator&(const DrawMode& _mode) const {
   
   // If we are asked for Point, also return the Modes for Points shaded and colors
 //   if ( (_mode.modeFlags_ & POINTS.modeFlags_).any() ) 
@@ -265,7 +265,7 @@ bool DrawMode::isAtomic() {
 //----------------------------------------------------------------------------
  
 bool
-DrawMode::containsAtomicDrawMode( DrawMode _atomicDrawMode)
+DrawMode::containsAtomicDrawMode( DrawMode _atomicDrawMode) const
 {
   return (*this) & _atomicDrawMode;
 }

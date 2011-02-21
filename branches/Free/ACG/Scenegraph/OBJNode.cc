@@ -108,7 +108,7 @@ availableDrawModes() const
 
 void
 OBJNode::
-draw(GLState& _state, DrawModes::DrawMode _drawMode)
+draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
   if (_drawMode & DrawModes::POINTS)
   {

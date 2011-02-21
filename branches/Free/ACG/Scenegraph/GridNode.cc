@@ -128,7 +128,7 @@ GridNode::pick(GLState& /*_state*/, PickTarget /*_target*/)
 
 
 void
-GridNode::draw(GLState&  _state  , DrawModes::DrawMode /* _drawMode */ )
+GridNode::draw(GLState&  _state  , const DrawModes::DrawMode& /* _drawMode */ )
 {
 
   glPushAttrib( GL_LIGHTING_BIT ); // STACK_ATTRIBUTES <- LIGHTING_ATTRIBUTE

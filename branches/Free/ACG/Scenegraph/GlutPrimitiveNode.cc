@@ -137,7 +137,7 @@ availableDrawModes() const
 
 void
 GlutPrimitiveNode::
-draw(GLState& _state, DrawModes::DrawMode _drawMode)
+draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {  
   for (int i = 0; i < (int)primitives_.size(); ++i)
   {

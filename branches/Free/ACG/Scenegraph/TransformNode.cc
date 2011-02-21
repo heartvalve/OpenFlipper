@@ -197,7 +197,7 @@ updateMatrix()
 
 void
 TransformNode::
-enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
+enter(GLState& _state, const DrawModes::DrawMode& /* _drawmode */ )
 {
   _state.push_modelview_matrix();
   _state.push_projection_matrix();
@@ -256,7 +256,7 @@ enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 
 void
 TransformNode::
-leave(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
+leave(GLState& _state, const DrawModes::DrawMode& /* _drawmode */ )
 {
 //   _state.pop_projection_matrix();
   _state.pop_modelview_matrix();

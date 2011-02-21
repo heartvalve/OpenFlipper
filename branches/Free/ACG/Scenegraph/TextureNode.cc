@@ -505,7 +505,7 @@ TextureNode::add_texture(const QImage& _image)
 //----------------------------------------------------------------------------
 
 
-void TextureNode::enter(GLState& _state , DrawModes::DrawMode _drawmode)
+void TextureNode::enter(GLState& _state , const DrawModes::DrawMode& _drawmode)
 {
    if ( _drawmode & ( DrawModes::SOLID_TEXTURED |
                       DrawModes::SOLID_TEXTURED_SHADED |
@@ -540,7 +540,7 @@ void TextureNode::enter(GLState& _state , DrawModes::DrawMode _drawmode)
 //----------------------------------------------------------------------------
 
 
-void TextureNode::leave(GLState& /* _state */ , DrawModes::DrawMode _drawmode)
+void TextureNode::leave(GLState& /* _state */ , const DrawModes::DrawMode& _drawmode)
 {
    if ( _drawmode & ( DrawModes::SOLID_TEXTURED |
                       DrawModes::SOLID_TEXTURED_SHADED |
@@ -554,15 +554,11 @@ void TextureNode::leave(GLState& /* _state */ , DrawModes::DrawMode _drawmode)
    }
 }
 
-void TextureNode::enterPick(GLState& /*_state*/ ,
-                            PickTarget /*_target*/,
-                            DrawModes::DrawMode /*_drawMode*/ ) {
+void TextureNode::enterPick(GLState& /*_state*/ , PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
 
 }
 
-void TextureNode::leavePick(GLState& /*_state*/,
-                            PickTarget /*_target*/,
-                            DrawModes::DrawMode /*_drawMode*/ ) {
+void TextureNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
 }
 
 //----------------------------------------------------------------------------

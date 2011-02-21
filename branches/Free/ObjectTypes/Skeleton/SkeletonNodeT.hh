@@ -99,7 +99,7 @@ public:
   /// Returns the bounding box of this node
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
   /// Renders the nodes contents using the given render state and draw mode
-  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
   /// Renders the node in picking mode, restricted to the node components given by \e _target
   void pick(GLState& _state, PickTarget _target);
 

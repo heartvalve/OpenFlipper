@@ -92,7 +92,7 @@ Material2Node::Material2Node( BaseNode*            _parent,
 //----------------------------------------------------------------------------
   
 
-void Material2Node::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ ) 
+void Material2Node::enter(GLState& _state, const DrawModes::DrawMode& /* _drawmode */ ) 
 {
   if (applyProperties_ & BaseColor)
   {
@@ -207,7 +207,7 @@ void Material2Node::enter(GLState& _state, DrawModes::DrawMode /* _drawmode */ )
 //----------------------------------------------------------------------------
 
 
-void Material2Node::leave(GLState& _state, DrawModes::DrawMode /* _drawmode*/ )
+void Material2Node::leave(GLState& _state, const DrawModes::DrawMode& /* _drawmode*/ )
 {
   if (applyProperties_ & BaseColor)
   {

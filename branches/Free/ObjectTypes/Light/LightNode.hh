@@ -264,13 +264,13 @@ public:
   void boundingBox(ACG::Vec3d& /* _bbMin */, ACG::Vec3d& /*_bbMax*/ );
   
   /// set current Light Sources
-  void enter(GLState& _state, DrawModes::DrawMode _drawmode);
+  void enter(GLState& _state, const DrawModes::DrawMode& _drawmode);
   
   /// restores original Light Sources
-  void leave(GLState& _state, DrawModes::DrawMode _drawmode);
+  void leave(GLState& _state, const DrawModes::DrawMode& _drawmode);
   
   /// Draw light source node
-  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
   
   /// Picking
   void pick(GLState& _state, PickTarget _target);

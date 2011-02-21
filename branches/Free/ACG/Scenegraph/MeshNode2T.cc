@@ -217,7 +217,7 @@ boundingBox(Vec3d& _bbMin, Vec3d& _bbMax) {
 template<class Mesh>
 void
 MeshNodeT<Mesh>::
-draw(GLState& _state, DrawModes::DrawMode _drawMode) {
+draw(GLState& _state, const DrawModes::DrawMode& _drawMode) {
   
   // Update strips if necessary
   stripProcessor_.stripify();

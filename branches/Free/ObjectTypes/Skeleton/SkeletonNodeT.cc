@@ -291,7 +291,7 @@ void SkeletonNodeT<Skeleton>::RGBtoHSV(const Vec4f& _RGB, Vec4f& _HSV)
  * 
  */
 template <class Skeleton>
-void SkeletonNodeT<Skeleton>::draw(GLState& _state, DrawModes::DrawMode _drawMode)
+void SkeletonNodeT<Skeleton>::draw(GLState& _state, const DrawModes::DrawMode& _drawMode)
 {
   
   glDisable(GL_LIGHTING);

@@ -106,7 +106,7 @@ public:
   /// update bounding box
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
   /// drawing
-  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
   /// picking
   void pick(GLState& _state, PickTarget _target);
 

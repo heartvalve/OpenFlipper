@@ -109,7 +109,7 @@ public:
   void boundingBox(Vec3d& _bbMin, Vec3d& _bbMax);
 
   /// draw points and normals
-  void draw(GLState& _state, DrawModes::DrawMode _drawMode);
+  void draw(GLState& _state, const DrawModes::DrawMode& _drawMode);
 
   /// reserve mem for _np points and _nn normals
   void reserve(unsigned int _np, unsigned int _nn, unsigned int _nc) {

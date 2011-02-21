@@ -91,7 +91,7 @@ availableDrawModes() const
 
 void
 LineNode::
-enter(GLState& _state , DrawModes::DrawMode _drawMode)
+enter(GLState& _state , const DrawModes::DrawMode& _drawMode)
 {
     MaterialNode::enter(_state, _drawMode);
     
@@ -108,7 +108,7 @@ enter(GLState& _state , DrawModes::DrawMode _drawMode)
 
 void
 LineNode::
-draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
+draw(GLState& /* _state */ , const DrawModes::DrawMode& _drawMode)
 {
   if (_drawMode & DrawModes::WIREFRAME)
   {
@@ -151,14 +151,14 @@ draw(GLState& /* _state */ , DrawModes::DrawMode _drawMode)
 
 void
 LineNode::
-leave(GLState& _state , DrawModes::DrawMode _drawMode)
+leave(GLState& _state , const DrawModes::DrawMode& _drawMode)
 {
-    if (alwaysOnTop()) {
-	//restore depth function and change GLState accordingly
-	_state.set_depthFunc(prev_depth_);
-    }
-    
-    MaterialNode::leave(_state, _drawMode);
+  if (alwaysOnTop()) {
+    //restore depth function and change GLState accordingly
+    _state.set_depthFunc(prev_depth_);
+  }
+
+  MaterialNode::leave(_state, _drawMode);
 }
 
 

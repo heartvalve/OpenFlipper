@@ -110,7 +110,7 @@ availableDrawModes() const
 
 void
 TextNode::
-draw(GLState& /* _state */ , DrawModes::DrawMode /*_drawMode*/)
+draw(GLState& /* _state */ , const DrawModes::DrawMode& /*_drawMode*/)
 {
   glRasterPos3f(0.0f, 0.0f, 0.0f);
 

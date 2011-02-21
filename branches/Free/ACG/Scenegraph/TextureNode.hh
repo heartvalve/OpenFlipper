@@ -264,19 +264,19 @@ public:
 public:
   /** \brief set default texture and states for the nodes children
    */
-  void enter(GLState& _state, DrawModes::DrawMode _drawmode);
+  void enter(GLState& _state, const DrawModes::DrawMode& _drawmode);
 
   /** \brief Unbind Texture
    */
-  void leave(GLState& _state, DrawModes::DrawMode _drawmode);
+  void leave(GLState& _state, const DrawModes::DrawMode& _drawmode);
 
   /** \brief Do nothing in picking
    */
-  void enterPick(GLState& _state, PickTarget _target, DrawModes::DrawMode _drawMode );
+  void enterPick(GLState& _state, PickTarget _target, const DrawModes::DrawMode& _drawMode );
 
   /** \brief Do nothing in picking
    */
-  void leavePick(GLState& _state, PickTarget _target, DrawModes::DrawMode _drawMode );
+  void leavePick(GLState& _state, PickTarget _target, const DrawModes::DrawMode& _drawMode );
 
 /** @} */
 

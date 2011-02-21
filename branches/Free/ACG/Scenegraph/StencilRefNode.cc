@@ -83,7 +83,7 @@ StencilRefNode::StencilRefNode (BaseNode*          _parent,
 
 //----------------------------------------------------------------------------
 
-void StencilRefNode::enter(GLState& /*_state*/, DrawModes::DrawMode /*_drawmode*/)
+void StencilRefNode::enter(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/)
 {
   if(visible()) {
     glPushAttrib (GL_STENCIL_BUFFER_BIT);
@@ -94,7 +94,7 @@ void StencilRefNode::enter(GLState& /*_state*/, DrawModes::DrawMode /*_drawmode*
 
 //----------------------------------------------------------------------------
 
-void StencilRefNode::leave(GLState& /*_state*/, DrawModes::DrawMode /*_drawmode*/)
+void StencilRefNode::leave(GLState& /*_state*/, const DrawModes::DrawMode& /*_drawmode*/)
 {
   if(visible()) {
     glPopAttrib ();
@@ -103,17 +103,13 @@ void StencilRefNode::leave(GLState& /*_state*/, DrawModes::DrawMode /*_drawmode*
 
 //----------------------------------------------------------------------------
 
-void StencilRefNode::enterPick(GLState& /*_state*/ ,
-                           PickTarget /*_target*/,
-                               DrawModes::DrawMode /*_drawMode*/ ) {
+void StencilRefNode::enterPick(GLState& /*_state*/ , PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
 
 }
 
 //----------------------------------------------------------------------------
 
-void StencilRefNode::leavePick(GLState& /*_state*/,
-                           PickTarget /*_target*/,
-                               DrawModes::DrawMode /*_drawMode*/ ) {
+void StencilRefNode::leavePick(GLState& /*_state*/, PickTarget /*_target*/, const DrawModes::DrawMode& /*_drawMode*/ ) {
 }
 
 void StencilRefNode::setReference(GLuint _ref)

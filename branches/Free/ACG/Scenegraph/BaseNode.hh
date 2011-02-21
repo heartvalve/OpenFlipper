@@ -166,23 +166,22 @@ public:
       function.  
       \see MaterialNode 
   */
-  virtual void enter(GLState& /*_state */, DrawModes::DrawMode /*_drawMode*/ ) {}
+  virtual void enter(GLState& /*_state */, const DrawModes::DrawMode& /*_drawMode*/ ) {}
 
   /** Draw this node using the draw modes _drawMode */
-  virtual void draw(GLState& /* _state */, DrawModes::DrawMode /* _drawMode */)  {}
+  virtual void draw(GLState& /* _state */, const DrawModes::DrawMode& /* _drawMode */)  {}
 
   /** The leave function is used to restore GL states the have been changed.
       This function must restore the status before enter() ! 
   */
-  virtual void leave(GLState& /* _state */, DrawModes::DrawMode /* _drawMode */) {}
+  virtual void leave(GLState& /* _state */, const DrawModes::DrawMode& /* _drawMode */) {}
 
   /** This function is called when traversing the scene graph during picking
       and arriving at this node. It can be used to store GL states that
       will be changed in order to restore then in the leavePick()
       function. Its default implementation will call the enter() function.
   */
-  virtual void enterPick(GLState& _state , PickTarget _target,
-                         DrawModes::DrawMode _drawMode );
+  virtual void enterPick(GLState& _state , PickTarget _target, const DrawModes::DrawMode& _drawMode );
   
   /** Draw the node using the GL picking name stack. The node's ID
       will already be on the name stack, so only names identifing e.g. faces
@@ -194,8 +193,7 @@ public:
       This function must restore the status before enterPick() !
       Its default implementation will call the leave() function.
   */
-  virtual void leavePick(GLState& _state, PickTarget _target,
-                         DrawModes::DrawMode _drawMode );
+  virtual void leavePick(GLState& _state, PickTarget _target, const DrawModes::DrawMode& _drawMode );
   
   /** Enable or Disable picking for this node
    *  ( default: enabled )

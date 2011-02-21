@@ -117,7 +117,7 @@ namespace DrawModes {
       
       bool operator==(const DrawMode& _mode) const;
       
-      DrawMode operator&(const DrawMode& _mode);
+      DrawMode operator&(const DrawMode& _mode) const;
       
       DrawMode& operator++();
       
@@ -154,7 +154,7 @@ namespace DrawModes {
       
       /** \brief Check whether an Atomic DrawMode is active in this draw Mode
       */ 
-      bool containsAtomicDrawMode( DrawMode _atomicDrawMode );
+      bool containsAtomicDrawMode( DrawMode _atomicDrawMode ) const;
       
       /** \brief Seperates this drawMode into a list of all seperate atomic drawmodes
       *
