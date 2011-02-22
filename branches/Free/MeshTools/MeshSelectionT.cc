@@ -276,10 +276,18 @@ void convertVertexToEdgeSelection(MeshT* _mesh, std::vector< int >& _vertices) {
   for (std::vector<int>::iterator v = _vertices.begin(); v != _vertices.end(); ++v) {
 
     typename MeshT::VertexHandle vh(*v);
-    typename MeshT::VertexEdgeIter e_iter = _mesh->ve_iter(vh);
+    typename MeshT::VertexOHalfedgeIter ohe_iter = _mesh->voh_iter(vh);
 
-    for (; e_iter; ++e_iter) {
-      _mesh->status(e_iter).set_selected(true);
+    for (; ohe_iter; ++ohe_iter) {
+      // test if both incident vertices are in _vertices
+      typename MeshT::VertexHandle ovh = _mesh->to_vertex_handle(ohe_iter.handle());
+      // search for ovh in _vertices
+      for(std::vector<int>::iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
+        if((*it) == ovh.idx()) {
+          _mesh->status(_mesh->edge_handle(ohe_iter.handle())).set_selected(true);
+          break;
+        }
+      }
     }
   }
 }
@@ -289,16 +297,19 @@ inline
 void convertVertexToEdgeSelection(MeshT* _mesh) {
 
   typename MeshT::VertexIter v_it, v_end = _mesh->vertices_end();
-  
-  for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it)
+  for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it) {
 
-    if ( _mesh->status( v_it ).selected() ){
+    if ( _mesh->status( v_it ).selected() ) {
+      typename MeshT::VertexOHalfedgeIter ohe_iter = _mesh->voh_iter(v_it);
 
-      typename MeshT::VertexEdgeIter e_iter = _mesh->ve_iter(v_it);
-
-      for (; e_iter; ++e_iter)
-        _mesh->status(e_iter).set_selected(true);
+      for (; ohe_iter; ++ohe_iter) {    
+        // test if both incident vertices are in _vertices
+        typename MeshT::VertexHandle ovh = _mesh->to_vertex_handle(ohe_iter.handle());
+        if (_mesh->status(ovh).selected())
+          _mesh->status(_mesh->edge_handle(ohe_iter.handle())).set_selected(true);
+      }
     }
+  }
 }
 
 template< typename MeshT >
@@ -308,11 +319,19 @@ void convertVertexToHalfedgeSelection(MeshT* _mesh, std::vector< int >& _vertice
   for (std::vector<int>::iterator v = _vertices.begin(); v != _vertices.end(); ++v) {
 
     typename MeshT::VertexHandle vh(*v);
-    typename MeshT::VertexEdgeIter e_iter = _mesh->ve_iter(vh);
+    typename MeshT::VertexOHalfedgeIter ohe_iter = _mesh->voh_iter(vh);
 
-    for (; e_iter; ++e_iter) {
-      _mesh->status(_mesh->halfedge_handle(e_iter, 0)).set_selected(true);
-      _mesh->status(_mesh->halfedge_handle(e_iter, 1)).set_selected(true);
+    for (; ohe_iter; ++ohe_iter) {
+      // test if both incident vertices are in _vertices
+      typename MeshT::VertexHandle ovh = _mesh->to_vertex_handle(ohe_iter.handle());
+      // search for ovh in _vertices
+      for(std::vector<int>::iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
+        if((*it) == ovh.idx()) {
+          _mesh->status(ohe_iter.handle()).set_selected(true);
+          _mesh->status(_mesh->opposite_halfedge_handle(ohe_iter.handle())).set_selected(true);
+          break;
+        }
+      }
     }
   }
 }
@@ -323,49 +342,70 @@ void convertVertexToHalfedgeSelection(MeshT* _mesh) {
 
   typename MeshT::VertexIter v_it, v_end = _mesh->vertices_end();
   
-  for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it)
+  for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it) {
 
-    if ( _mesh->status( v_it ).selected() ){
+    if ( _mesh->status( v_it ).selected() ) {
 
-      typename MeshT::VertexEdgeIter e_iter = _mesh->ve_iter(v_it);
+      typename MeshT::VertexOHalfedgeIter ohe_iter = _mesh->voh_iter(v_it);
 
-      for (; e_iter; ++e_iter) {   
-        _mesh->status(_mesh->halfedge_handle(e_iter, 0)).set_selected(true);
-        _mesh->status(_mesh->halfedge_handle(e_iter, 1)).set_selected(true);
+      for (; ohe_iter; ++ohe_iter) {    
+        // test if both incident vertices are in _vertices
+        typename MeshT::VertexHandle ovh = _mesh->to_vertex_handle(ohe_iter.handle());
+        if (_mesh->status(ovh).selected()) {
+          _mesh->status(ohe_iter.handle()).set_selected(true);
+          _mesh->status(_mesh->opposite_halfedge_handle(ohe_iter.handle())).set_selected(true);
+        }
       }
     }
+  }
 }
 
 template< typename MeshT >
 inline
 void convertVertexToFaceSelection(MeshT* _mesh, std::vector< int >& _vertices) {
 
-	for (std::vector<int>::iterator v = _vertices.begin(); v != _vertices.end(); ++v) {
-
-		typename MeshT::VertexHandle vh(*v);
-		typename MeshT::VertexFaceIter f_iter = _mesh->vf_iter(vh);
-
-		for (; f_iter; ++f_iter) {
-			_mesh->status(f_iter).set_selected(true);
-		}
-	}
+  for(typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
+    typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(f_it);
+    // go over each vertex of each face and test if it's selected
+    bool allfound = true;
+    for(; fv_it; ++fv_it) {
+      // search fv_it in _vertices
+      bool onefound = false;
+      for(std::vector<int>::iterator it = _vertices.begin(); it != _vertices.end(); ++it) {
+        if((*it) == fv_it.handle().idx()) { onefound = true; break; }
+      }
+      if(!onefound) {
+        allfound = false;
+        break;
+      }
+    }
+    if(allfound) {
+      // all incident vertices are selected -> select face
+      _mesh->status(f_it).set_selected(true);
+    }
+  }
 }
 
 template< typename MeshT >
 inline
 void convertVertexToFaceSelection(MeshT* _mesh) {
 
-  typename MeshT::VertexIter v_it, v_end = _mesh->vertices_end();
+  typename MeshT::FaceIter f_it, f_end = _mesh->faces_end();
   
-  for (v_it = _mesh->vertices_begin(); v_it != v_end; ++v_it)
+  for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it) {
 
-    if ( _mesh->status( v_it ).selected() ){
-
-      typename MeshT::VertexFaceIter f_iter = _mesh->vf_iter(v_it);
-
-      for (; f_iter; ++f_iter)
-        _mesh->status(f_iter).set_selected(true);
+    typename MeshT::FaceVertexIter fv_it = _mesh->fv_iter(f_it);
+    // test if all incident vertices are selected
+    bool allfound = true;
+    for(; fv_it; ++fv_it) {
+      if(!_mesh->status(fv_it.handle()).selected()) {
+        allfound = false;
+        break;
+      }
     }
+    if(allfound)
+      _mesh->status(f_it).set_selected(true);
+  }
 }
 
 //=========================================================
@@ -582,38 +622,48 @@ template< typename MeshT >
 inline
 void convertEdgeToFaceSelection(MeshT* _mesh, std::vector< int >& _edges) {
 
-	for (std::vector<int>::iterator e = _edges.begin(); e != _edges.end(); ++e) {
-
-		typename MeshT::EdgeHandle eh(*e);
-		typename MeshT::HalfedgeHandle heh0 = _mesh->halfedge_handle(eh, 0);
-		typename MeshT::HalfedgeHandle heh1 = _mesh->halfedge_handle(eh, 1);
-
-		typename MeshT::FaceHandle fh0 = _mesh->face_handle(heh0);
-		typename MeshT::FaceHandle fh1 = _mesh->face_handle(heh1);
-
-		_mesh->status(fh0).set_selected(true);
-		_mesh->status(fh1).set_selected(true);
-	}
+  for(typename MeshT::FaceIter f_it = _mesh->faces_begin(); f_it != _mesh->faces_end(); ++f_it) {
+    typename MeshT::FaceEdgeIter fe_it = _mesh->fe_iter(f_it);
+    // go over each edge of each face and test if it's selected
+    bool allfound = true;
+    for(; fe_it; ++fe_it) {
+      // search fe_it in _edges
+      bool onefound = false;
+      for(std::vector<int>::iterator it = _edges.begin(); it != _edges.end(); ++it) {
+        if((*it) == fe_it.handle().idx()) { onefound = true; break; }
+      }
+      if(!onefound) {
+        allfound = false;
+        break;
+      }
+    }
+    if(allfound) {
+      // all incident vertices are selected -> select face
+      _mesh->status(f_it).set_selected(true);
+    }
+  }
 }
 
 template< typename MeshT >
 inline
 void convertEdgeToFaceSelection(MeshT* _mesh) {
 
-  for ( typename MeshT::EdgeIter e_it= _mesh->edges_begin() ; e_it != _mesh->edges_end() ; ++e_it )
-    
-    if ( _mesh->status(e_it).selected() ){
+  typename MeshT::FaceIter f_it, f_end = _mesh->faces_end();
+  
+  for (f_it = _mesh->faces_begin(); f_it != f_end; ++f_it) {
 
-      
-      typename MeshT::HalfedgeHandle heh0 = _mesh->halfedge_handle(e_it.handle(), 0);
-      typename MeshT::HalfedgeHandle heh1 = _mesh->halfedge_handle(e_it.handle(), 1);
-
-      typename MeshT::FaceHandle fh0 = _mesh->face_handle(heh0);
-      typename MeshT::FaceHandle fh1 = _mesh->face_handle(heh1);
-
-      _mesh->status(fh0).set_selected(true);
-      _mesh->status(fh1).set_selected(true);
+    typename MeshT::FaceEdgeIter fe_it = _mesh->fe_iter(f_it);
+    // test if all incident edges are selected
+    bool allfound = true;
+    for(; fe_it; ++fe_it) {
+      if(!_mesh->status(fe_it.handle()).selected()) {
+        allfound = false;
+        break;
+      }
     }
+    if(allfound)
+      _mesh->status(f_it).set_selected(true);
+  }
 }
 
 template< typename MeshT >
@@ -749,7 +799,10 @@ void convertHalfedgeToEdgeSelection(MeshT* _mesh) {
 template< typename MeshT >
 inline
 void convertHalfedgeToFaceSelection(MeshT* _mesh) {
-    
+    // Note: A face is not only selected
+    // iff all incident halfedges are selected but
+    // at least one of them. This is, however,
+    // desired in some cases.
     for ( typename MeshT::HalfedgeIter he_it= _mesh->halfedges_begin() ; he_it != _mesh->halfedges_end() ; ++he_it ) {
         
         if(_mesh->status(he_it).selected()) {
