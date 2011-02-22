@@ -53,10 +53,10 @@
  * Provides functions to create a separate widget in the toolbox on the right ( ToolboxInterface ).
  *
  *
- * \section LoggingPlugin Logging Interface
+ * \section LoggingInterface Logging Interface
  * \image html LoggingInterface.png
- * This is an Interface for Logging to the included textedit widget. You can log to different levels
- * (LOGOUT,LOGWARN,LOGERR,LOGINFO) ( LoggingInterface ).
+ * This is an Interface for Logging to the included log widget. You can log to different levels
+ * (LOGOUT,LOGWARN,LOGERR,LOGINFO) ( \subpage loggingInterfacePage ).
  *
  *
  * \section TexturePlugin Texture Interface
