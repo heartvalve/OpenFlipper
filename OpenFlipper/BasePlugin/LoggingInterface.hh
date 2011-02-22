@@ -42,30 +42,72 @@
 
 
 
-
-//
-// C++ Interface: LoggingInterface
-//
-// Description: 
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef LOGGINGINTERFACE_HH 
 #define LOGGINGINTERFACE_HH 
 
-/// Log types for Message Window 
-enum Logtype { LOGOUT, LOGINFO , LOGWARN , LOGERR };
+/** \file LoggingInterface.hh
+*
+* Interface for sending log messages to the log widget.\ref 
+*/
+
+/** \page loggingInterfacePage Logging Interface
+\image html logWindow.png
+The Logging interface can be used by plugins to print messages in OpenFlippers log widget below 
+the gl viewer (See image). The log widget can apply filters to visualize only the messages
+of a certain importance. The widget has 3 different modes, which can be toggled by pressing Ctrl + L:
+<ul>
+<li> Docked automatic mode: In this mode the widget is at the bottom and will hide itself if not used.
+<li> Docked mode: The widget is always visible and docked at the bottom
+<li> Undocked: The widget is undocked into a separate window
+</ul>
+
+The message importance level can be specified by the Logtype enum. There are four different levels which 
+describe the importance and are represented by different colors in the log widget.
+<ul>
+<li> Out:    Simple output messages in black
+<li> Info:   Information messages printed in green
+<li> Warn:   Warnings in yellow
+<li> Errors: Error messages printed in red
+</ul>
+
+To use the LoggingInterface:
+<ul>
+<li> include LoggingInterface.hh in your plugins header file
+<li> derive your plugin from the class LoggingInterface
+<li> add Q_INTERFACES(LoggingInterface) to your class 
+<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
+</ul>
+
+If you use the interface, all messages printed from that plugin will be prepended with the name of the plugin
+to identify the origin of the message.\n
+The following code sends a log message
+\code 
+  emit log(LOGERR,tr("Error message"));
+\endcode
+
+*/
+
+/** \brief Log types for Message Window 
+*
+* Use this enum to specify the importance of log messages.
+*/
+enum Logtype {  LOGOUT  , /*!< Standard log messages. Will be printed in black in the logwidget */
+                LOGINFO , /*!< Info log messages. Will be printed in green in the logwidget */
+                LOGWARN , /*!< Warning messages. Will be printed in yellow in the logwidget */
+                LOGERR   /*!< Error messages. Will be printed in red in the logwidget */
+             };
 
 /** \brief Interface for all Plugins which do logging to the logging window of the framework
   * 
+  * \ref loggingInterfacePage "Detailed description" 
+  * \n
   * By emitting the given signals you can log information to the main logger window of the core.
-  * To simplify debugging the core will prepend the plugin name to every log message. You dont
+  * To simplify debugging, the core will prepend the plugin name to every log message. You dont
   * have to do this yourself!\n
   * The log message will either be black or will be colored depending on the Logtype you specified.
   *
-  * Read our tutorials \ref ex2 and \ref ex3 for an example of how to use logging output.
+  * A more detailed description of the LoggingInterface can be found \ref loggingInterfacePage "here" or
+  * read our tutorials \ref ex2 and \ref ex3 for an example of how to use logging output.
  */ 
 class LoggingInterface {
   
