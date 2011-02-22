@@ -40,35 +40,72 @@
 *                                                                            *
 \*===========================================================================*/
 
-
-
-
-//
-// C++ Interface: BasePlugin
-//
-// Description:
-//
-//
-// Author: Jan Moebius <jan_moebius@web.de>, (C) 2007
-//
-
 #ifndef TOOLBOXINTERFACE_HH
 #define TOOLBOXINTERFACE_HH
 
- #include <QtGui>
- #include <QMenuBar>
- #include <QStringList>
- #include <OpenFlipper/common/Types.hh>
+#include <QtGui>
+#include <QMenuBar>
+#include <QStringList>
+#include <OpenFlipper/common/Types.hh>
+
+/** \file ToolboxInterface.hh
+*
+* Interface for adding per plugin toolboxes to OpenFlippers UI.\ref toolboxInterfacePage
+*/
+
+/** \page toolboxInterfacePage Toolbox Interface
+\image html ToolboxInterface.png
+
+The ToolboxInterface can be used by plugins to add widgets to the list of toolboxes in OpenFlippers
+UI. The toolboxes are located left or right of the gl viewer (See image). 
+
+The list can be hidden by pressing Ctrl + t.
+
+To use the ToolboxInterface:
+<ul>
+<li> include ToolboxInterface.hh in your plugins header file
+<li> derive your plugin from the class ToolboxInterface
+<li> add Q_INTERFACES(ToolboxInterface) to your plugin class 
+<li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
+</ul>
+
+Usually you should implement the initializePlugin() function from BaseInterface. In this function you can setup
+your toolbox ( some kind of QWidget, can also be any widget created with qt-designer). Optionally you can also 
+add an icon to the toolbox. 
+
+The following code shows a simple example to create an empty toolbox.
+\code 
+void SmootherPlugin::initializePlugin()
+{
+  // Create the Toolbox Widget
+  QWidget* toolBox = new QWidget();
+  
+  // Create an icon which is shown along with the toolbox
+  QIcon* toolIcon = new QIcon(OpenFlipper::Options::iconDirStr()+OpenFlipper::Options::dirSeparator()+"smoother1.png");
+  
+  // Tell the core to include the new toolbox widget with the name Simple Smoother, a pointer to the widget and a pointer to the icon
+  emit addToolbox( tr("Simple Smoother") , toolBox, toolIcon );
+}
+\endcode
+
+Signals and slots of your toolbox (e.g. from a QPushButton inside it) can be directly connected to signals and slots in
+your plugin. Therefore the embedding of the widget into the toolbox list is fully transparent.
+
+*/
+
+
 
  /**
   * \brief Plugins can add its own toolbox to the main widget's toolbox area by using this interface.
   *
-  * This Interface should be used by plugins which will provide a toolbox widget.
+  * \ref toolboxInterfacePage "Detailed description" 
+  * \n
+  *
+  * This Interface can be used by plugins which will provide a toolbox widget.
   * Each Plugin can create own Widgets in the Toolbox area. Just create your widget and then add it with \n
   * emit addToolbox( QString  _name  , QWidget* _widget ) \n
-  * to the user interface. You can create extra Signals and slots in your Plugin.
-  * These can be connected between your toolbox and your plugin. Signals and slots across plugins are currently
-  * not available but may be possible via an internal message system later.\n
+  * to the user interface. You can create extra signals and slots in your Plugin.
+  * These can be connected between your toolbox and your plugin.\n
   *
   * See our tutorials \ref ex2 and \ref ex3 for an example of to add custom toolboxes to
   * OpenFlipper.
