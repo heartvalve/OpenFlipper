@@ -48,9 +48,9 @@
  * Provides a function to create an entry in the menubar ( MenuInterface ).
  *
  *
- * \section ToolboxPlugin Toolbox Interface
+ * \section ToolboxInterface Toolbox Interface
  * \image html ToolboxInterface.png
- * Provides functions to create a separate widget in the toolbox on the right ( ToolboxInterface ).
+ * Provides functions to create a separate widget in the toolbox on the right ( \subpage toolboxInterfacePage ).
  *
  *
  * \section LoggingInterface Logging Interface

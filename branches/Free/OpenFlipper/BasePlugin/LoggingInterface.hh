@@ -51,7 +51,7 @@
 */
 
 /** \page loggingInterfacePage Logging Interface
-\image html logWindow.png
+\image html LoggingInterface.png
 The Logging interface can be used by plugins to print messages in OpenFlippers log widget below 
 the gl viewer (See image). The log widget can apply filters to visualize only the messages
 of a certain importance. The widget has 3 different modes, which can be toggled by pressing Ctrl + L:
@@ -74,7 +74,7 @@ To use the LoggingInterface:
 <ul>
 <li> include LoggingInterface.hh in your plugins header file
 <li> derive your plugin from the class LoggingInterface
-<li> add Q_INTERFACES(LoggingInterface) to your class 
+<li> add Q_INTERFACES(LoggingInterface) to your plugin class 
 <li> And add the signals or slots you want to use to your plugin class (You don't need to implement all of them)
 </ul>
 
