@@ -67,6 +67,10 @@
 #include <ObjectTypes/TSplineMesh/TSplineMesh.hh>
 #endif
 
+#ifdef ENABLE_SKELETON_SUPPORT
+#include <ObjectTypes/Skeleton/Helper/SkeletonTransform.hh>
+#endif
+
 /** \brief Default Constructor
  *
  */
@@ -448,6 +452,10 @@ void MovePlugin::moveObject(ACG::Matrix4x4d mat, int _id) {
 #ifdef ENABLE_POLYLINE_SUPPORT
   } else  if  ( object->dataType()  == DATA_POLY_LINE ) {
     transformPolyLine(mat , *PluginFunctions::polyLine(object) );
+#endif
+#ifdef ENABLE_SKELETON_SUPPORT
+  } else  if  ( object->dataType()  == DATA_SKELETON ) {
+    transformSkeleton(mat , *PluginFunctions::skeleton(object) );
 #endif
   } else  if  ( object->dataType()  == DATA_PLANE ) {
     PluginFunctions::planeNode(object)->transform(mat);
@@ -1704,6 +1712,24 @@ void MovePlugin::transformPolyLine( ACG::Matrix4x4d _mat , PolyLineT& _polyLine 
   #endif
   for ( int i = 0 ; i < (int)_polyLine.n_vertices(); ++i )
     _polyLine.point(i) = _mat.transform_point( _polyLine.point(i) );
+}
+
+#endif
+
+
+//------------------------------------------------------------------------------
+
+#ifdef ENABLE_SKELETON_SUPPORT
+
+/** \brief Transform a skeleton with the given transformation matrix
+ *
+ * @param _mat transformation matrix
+ * @param _skeleton the skeleton
+ */
+void MovePlugin::transformSkeleton( ACG::Matrix4x4d _mat , Skeleton& _skeleton  ) {
+
+  SkeletonTransform transformer(_skeleton);
+  transformer.transformSkeleton(_mat);
 }
 
 #endif

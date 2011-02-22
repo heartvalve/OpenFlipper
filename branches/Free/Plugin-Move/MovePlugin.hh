@@ -63,6 +63,10 @@
 #include <ObjectTypes/Plane/Plane.hh>
 #include <ObjectTypes/TriangleMesh/TriangleMesh.hh>
 
+#ifdef ENABLE_SKELETON_SUPPORT
+  #include <ObjectTypes/Skeleton/Skeleton.hh>
+#endif
+
 #include "MoveToolbar.hh"
 #include "MoveProps.hh"
 #include "MoveObjectMarker.hh"
@@ -318,6 +322,11 @@ class MovePlugin : public QObject, BaseInterface, MouseInterface, KeyInterface, 
     ///Transform a polyline with the given transformation matrix
     template< class PolyLineT >
     void transformPolyLine( ACG::Matrix4x4d _mat , PolyLineT& _polyLine );
+    #endif
+
+    #ifdef ENABLE_SKELETON_SUPPORT
+    ///Transform a skeleton with the given transformation matrix
+    void transformSkeleton( ACG::Matrix4x4d _mat , Skeleton& _skeleton );
     #endif
 
     /** Get the Matrix of the last active Manipulator ( Identity if not found or hidden Manipulator )
